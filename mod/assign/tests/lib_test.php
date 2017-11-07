@@ -847,7 +847,7 @@ class mod_assign_lib_testcase extends mod_assign_base_testcase {
             'eventtype' => 'SOME RANDOM EVENT'
         ]);
 
-        list($min, $max) = mod_assign_core_calendar_get_valid_event_timestart_range($event);
+        list($min, $max) = mod_assign_core_calendar_get_valid_event_timestart_range($event, $instance);
         $this->assertNull($min);
         $this->assertNull($max);
     }
@@ -882,9 +882,9 @@ class mod_assign_lib_testcase extends mod_assign_base_testcase {
 
         $DB->insert_record('assign_overrides', $record);
 
-        list($min, $max) = mod_assign_core_calendar_get_valid_event_timestart_range($event);
-        $this->assertNull($min);
-        $this->assertNull($max);
+        list($min, $max) = mod_assign_core_calendar_get_valid_event_timestart_range($event, $instance);
+        $this->assertFalse($min);
+        $this->assertFalse($max);
     }
 
     /**
@@ -914,7 +914,7 @@ class mod_assign_lib_testcase extends mod_assign_base_testcase {
             'eventtype' => ASSIGN_EVENT_TYPE_DUE
         ]);
 
-        list($min, $max) = mod_assign_core_calendar_get_valid_event_timestart_range($event);
+        list($min, $max) = mod_assign_core_calendar_get_valid_event_timestart_range($event, $instance);
         $this->assertNull($min);
         $this->assertNull($max);
     }
@@ -948,7 +948,7 @@ class mod_assign_lib_testcase extends mod_assign_base_testcase {
             'eventtype' => ASSIGN_EVENT_TYPE_DUE
         ]);
 
-        list($min, $max) = mod_assign_core_calendar_get_valid_event_timestart_range($event);
+        list($min, $max) = mod_assign_core_calendar_get_valid_event_timestart_range($event, $instance);
         $this->assertEquals($submissionsfromdate, $min[0]);
         $this->assertNotEmpty($min[1]);
         $this->assertEquals($cutoffdate, $max[0]);
@@ -979,7 +979,7 @@ class mod_assign_lib_testcase extends mod_assign_base_testcase {
             'eventtype' => ASSIGN_EVENT_TYPE_GRADINGDUE
         ]);
 
-        list($min, $max) = mod_assign_core_calendar_get_valid_event_timestart_range($event);
+        list($min, $max) = mod_assign_core_calendar_get_valid_event_timestart_range($event, $instance);
         $this->assertNull($min);
         $this->assertNull($max);
     }
@@ -1008,305 +1008,10 @@ class mod_assign_lib_testcase extends mod_assign_base_testcase {
             'eventtype' => ASSIGN_EVENT_TYPE_GRADINGDUE
         ]);
 
-        list($min, $max) = mod_assign_core_calendar_get_valid_event_timestart_range($event);
+        list($min, $max) = mod_assign_core_calendar_get_valid_event_timestart_range($event, $instance);
         $this->assertEquals($duedate, $min[0]);
         $this->assertNotEmpty($min[1]);
         $this->assertNull($max);
-    }
-
-    /**
-     * Calendar events without and instance id should be ignored by the validate
-     * event function.
-     */
-    public function test_mod_assign_core_calendar_validate_event_timestart_no_instance_id() {
-        global $CFG;
-        require_once($CFG->dirroot . '/calendar/lib.php');
-
-        $this->resetAfterTest();
-        $this->setAdminUser();
-
-        $event = new \calendar_event((object) [
-            'modulename' => 'assign',
-            'eventtype' => ASSIGN_EVENT_TYPE_DUE
-        ]);
-
-        mod_assign_core_calendar_validate_event_timestart($event);
-        // The function above throws an exception so all we need to do is make sure
-        // it gets here and that is considered success.
-        $this->assertTrue(true);
-    }
-
-    /**
-     * Calendar events for an unknown instance should throw an exception.
-     */
-    public function test_mod_assign_core_calendar_validate_event_timestart_no_instance_found() {
-        global $CFG;
-        require_once($CFG->dirroot . '/calendar/lib.php');
-
-        $this->resetAfterTest();
-        $this->setAdminUser();
-
-        $event = new \calendar_event((object) [
-            'modulename' => 'assign',
-            'instance' => 1234,
-            'eventtype' => ASSIGN_EVENT_TYPE_DUE
-        ]);
-
-        $this->expectException('moodle_exception');
-        mod_assign_core_calendar_validate_event_timestart($event);
-    }
-
-    /**
-     * Assignments configured without any limits on the due date should not
-     * throw an exception.
-     */
-    public function test_mod_assign_core_calendar_validate_event_timestart_no_limit() {
-        global $CFG, $DB;
-        require_once($CFG->dirroot . '/calendar/lib.php');
-
-        $this->resetAfterTest();
-        $this->setAdminUser();
-
-        $assign = $this->create_instance([
-            'duedate' => 0,
-            'allowsubmissionsfromdate' => 0,
-            'cutoffdate' => 0,
-        ]);
-        $instance = $assign->get_instance();
-
-        $event = new \calendar_event((object) [
-            'courseid' => $instance->course,
-            'modulename' => 'assign',
-            'instance' => $instance->id,
-            'eventtype' => ASSIGN_EVENT_TYPE_DUE,
-            'timestart' => time()
-        ]);
-
-        mod_assign_core_calendar_validate_event_timestart($event);
-        // The function above throws an exception so all we need to do is make sure
-        // it gets here and that is considered success.
-        $this->assertTrue(true);
-    }
-
-    /**
-     * Due date events with a timestart equal to or greater than the minimum limit
-     * should not throw an exception. Timestart values below the minimum limit should
-     * throw an exception.
-     */
-    public function test_mod_assign_core_calendar_validate_due_event_min_limit() {
-        global $CFG, $DB;
-        require_once($CFG->dirroot . '/calendar/lib.php');
-
-        $this->resetAfterTest();
-        $this->setAdminUser();
-
-        $duedate = time();
-        $submissionsfromdate = $duedate - DAYSECS;
-        $cutoffdate = $duedate + DAYSECS;
-        $assign = $this->create_instance([
-            'duedate' => $duedate,
-            'allowsubmissionsfromdate' => $submissionsfromdate,
-            'cutoffdate' => $cutoffdate,
-        ]);
-        $instance = $assign->get_instance();
-
-        $event = new \calendar_event((object) [
-            'courseid' => $instance->course,
-            'modulename' => 'assign',
-            'instance' => $instance->id,
-            'eventtype' => ASSIGN_EVENT_TYPE_DUE,
-            'timestart' => $submissionsfromdate + 1,
-        ]);
-
-        // No exception when new time is above minimum cutoff.
-        mod_assign_core_calendar_validate_event_timestart($event);
-        $this->assertTrue(true);
-
-        // No exception when new time is equal to minimum cutoff.
-        $event->timestart = $submissionsfromdate;
-        mod_assign_core_calendar_validate_event_timestart($event);
-        $this->assertTrue(true);
-
-        // Exception when new time is earlier than minimum cutoff.
-        $event->timestart = $submissionsfromdate - 1;
-        $this->expectException('moodle_exception');
-        mod_assign_core_calendar_validate_event_timestart($event);
-    }
-
-    /**
-     * A due date event with a timestart less than or equal to the max limit should
-     * not throw an exception. A timestart greater than the max limit should throw
-     * an exception.
-     */
-    public function test_mod_assign_core_calendar_validate_due_event_max_limit() {
-        global $CFG, $DB;
-        require_once($CFG->dirroot . '/calendar/lib.php');
-
-        $this->resetAfterTest();
-        $this->setAdminUser();
-
-        $duedate = time();
-        $submissionsfromdate = $duedate - DAYSECS;
-        $cutoffdate = $duedate + DAYSECS;
-        $assign = $this->create_instance([
-            'duedate' => $duedate,
-            'allowsubmissionsfromdate' => $submissionsfromdate,
-            'cutoffdate' => $cutoffdate,
-        ]);
-        $instance = $assign->get_instance();
-
-        $event = new \calendar_event((object) [
-            'courseid' => $instance->course,
-            'modulename' => 'assign',
-            'instance' => $instance->id,
-            'eventtype' => ASSIGN_EVENT_TYPE_DUE,
-            'timestart' => $cutoffdate - 1,
-        ]);
-
-        // No exception when new time is below maximum cutoff.
-        mod_assign_core_calendar_validate_event_timestart($event);
-        $this->assertTrue(true);
-
-        // No exception when new time is equal to maximum cutoff.
-        $event->timestart = $cutoffdate;
-        mod_assign_core_calendar_validate_event_timestart($event);
-        $this->assertTrue(true);
-
-        // Exception when new time is later than maximum cutoff.
-        $event->timestart = $submissionsfromdate - 1;
-        $this->expectException('moodle_exception');
-        mod_assign_core_calendar_validate_event_timestart($event);
-    }
-
-    /**
-     * Due date override events should not throw an exception.
-     */
-    public function test_mod_assign_core_calendar_validate_due_event_override() {
-        global $CFG, $DB;
-        require_once($CFG->dirroot . '/calendar/lib.php');
-
-        $this->resetAfterTest();
-        $this->setAdminUser();
-
-        $duedate = time();
-        $submissionsfromdate = $duedate - DAYSECS;
-        $cutoffdate = $duedate + DAYSECS;
-        $assign = $this->create_instance([
-            'duedate' => $duedate,
-            'allowsubmissionsfromdate' => $submissionsfromdate,
-            'cutoffdate' => $cutoffdate,
-        ]);
-        $instance = $assign->get_instance();
-        $userid = $this->students[0]->id;
-
-        $event = new \calendar_event((object) [
-            'courseid' => $instance->course,
-            'modulename' => 'assign',
-            'instance' => $instance->id,
-            'userid' => $userid,
-            'eventtype' => ASSIGN_EVENT_TYPE_DUE,
-            'timestart' => $duedate + (2 * DAYSECS)
-        ]);
-
-        $record = (object) [
-            'assignid' => $instance->id,
-            'userid' => $userid,
-            'duedate' => $duedate + (2 * DAYSECS)
-        ];
-
-        $DB->insert_record('assign_overrides', $record);
-
-        // No exception when dealing with an override.
-        mod_assign_core_calendar_validate_event_timestart($event);
-        $this->assertTrue(true);
-    }
-
-    /**
-     * Grading due date event should throw an exception if it's timestart is less than the
-     * assignment due date.
-     */
-    public function test_mod_assign_core_calendar_validate_gradingdue_event_min_limit_duedate() {
-        global $CFG, $DB;
-        require_once($CFG->dirroot . '/calendar/lib.php');
-
-        $this->resetAfterTest();
-        $this->setAdminUser();
-
-        $duedate = time();
-        $submissionsfromdate = $duedate - DAYSECS;
-        $cutoffdate = $duedate + DAYSECS;
-        $assign = $this->create_instance([
-            'duedate' => $duedate,
-            'allowsubmissionsfromdate' => $submissionsfromdate,
-            'cutoffdate' => $cutoffdate,
-        ]);
-        $instance = $assign->get_instance();
-
-        $event = new \calendar_event((object) [
-            'courseid' => $instance->course,
-            'modulename' => 'assign',
-            'instance' => $instance->id,
-            'eventtype' => ASSIGN_EVENT_TYPE_GRADINGDUE,
-            'timestart' => $duedate + 1,
-        ]);
-
-        // No exception when new time is above minimum cutoff.
-        mod_assign_core_calendar_validate_event_timestart($event);
-        $this->assertTrue(true);
-
-        // No exception when new time is equal to minimum cutoff.
-        $event->timestart = $duedate;
-        mod_assign_core_calendar_validate_event_timestart($event);
-        $this->assertTrue(true);
-
-        // Exception when new time is earlier than minimum cutoff.
-        $event->timestart = $duedate - 1;
-        $this->expectException('moodle_exception');
-        mod_assign_core_calendar_validate_event_timestart($event);
-    }
-
-    /**
-     * Grading due date event should throw an exception if it's timestart is less than the
-     * submissions allowed from date if there is no due date set.
-     */
-    public function test_mod_assign_core_calendar_validate_gradingdue_event_min_limit_submissionsfromdate() {
-        global $CFG, $DB;
-        require_once($CFG->dirroot . '/calendar/lib.php');
-
-        $this->resetAfterTest();
-        $this->setAdminUser();
-
-        $duedate = 0;
-        $submissionsfromdate = time() - DAYSECS;
-        $cutoffdate = time() + DAYSECS;
-        $assign = $this->create_instance([
-            'duedate' => $duedate,
-            'allowsubmissionsfromdate' => $submissionsfromdate,
-            'cutoffdate' => $cutoffdate,
-        ]);
-        $instance = $assign->get_instance();
-
-        $event = new \calendar_event((object) [
-            'courseid' => $instance->course,
-            'modulename' => 'assign',
-            'instance' => $instance->id,
-            'eventtype' => ASSIGN_EVENT_TYPE_GRADINGDUE,
-            'timestart' => $submissionsfromdate + 1,
-        ]);
-
-        // No exception when new time is above minimum cutoff.
-        mod_assign_core_calendar_validate_event_timestart($event);
-        $this->assertTrue(true);
-
-        // No exception when new time is equal to minimum cutoff.
-        $event->timestart = $submissionsfromdate;
-        mod_assign_core_calendar_validate_event_timestart($event);
-        $this->assertTrue(true);
-
-        // Exception when new time is earlier than minimum cutoff.
-        $event->timestart = $submissionsfromdate - 1;
-        $this->expectException('moodle_exception');
-        mod_assign_core_calendar_validate_event_timestart($event);
     }
 
     /**
@@ -1337,7 +1042,7 @@ class mod_assign_lib_testcase extends mod_assign_base_testcase {
             'timestart' => $duedate + 1
         ]);
 
-        mod_assign_core_calendar_event_timestart_updated($event);
+        mod_assign_core_calendar_event_timestart_updated($event, $instance);
 
         $newinstance = $DB->get_record('assign', ['id' => $instance->id]);
         $this->assertEquals($duedate, $newinstance->duedate);
@@ -1381,7 +1086,7 @@ class mod_assign_lib_testcase extends mod_assign_base_testcase {
 
         $DB->insert_record('assign_overrides', $record);
 
-        mod_assign_core_calendar_event_timestart_updated($event);
+        mod_assign_core_calendar_event_timestart_updated($event, $instance);
 
         $newinstance = $DB->get_record('assign', ['id' => $instance->id]);
         $this->assertEquals($duedate, $newinstance->duedate);
@@ -1416,7 +1121,7 @@ class mod_assign_lib_testcase extends mod_assign_base_testcase {
             'timestart' => $newduedate
         ]);
 
-        mod_assign_core_calendar_event_timestart_updated($event);
+        mod_assign_core_calendar_event_timestart_updated($event, $instance);
 
         $newinstance = $DB->get_record('assign', ['id' => $instance->id]);
         $this->assertEquals($newduedate, $newinstance->duedate);

@@ -2253,3 +2253,145 @@ function mod_quiz_get_completion_active_rule_descriptions($cm) {
     }
     return $descriptions;
 }
+
+/**
+ * Returns the min and max values for the timestart property of a quiz
+ * activity event.
+ *
+ * The min and max values will be the timeopen and timeclose properties
+ * of the quiz, respectively, if they are set.
+ *
+ * If either value isn't set then null will be returned instead to
+ * indicate that there is no cutoff for that value.
+ *
+ * If the vent has no valid timestart range then [false, false] will
+ * be returned. This is the case for overriden events.
+ *
+ * A minimum and maximum cutoff return value will look like:
+ * [
+ *     [1505704373, 'The date must be after this date'],
+ *     [1506741172, 'The date must be before this date']
+ * ]
+ *
+ * @throws \moodle_exception
+ * @param \calendar_event $event The calendar event to get the time range for
+ * @param stdClass $quiz The module instance to get the range from
+ * @return array
+ */
+function mod_quiz_core_calendar_get_valid_event_timestart_range(\calendar_event $event, \stdClass $quiz) {
+    global $CFG, $DB;
+    require_once($CFG->dirroot . '/mod/quiz/locallib.php');
+
+    // Overrides do not have a valid timestart range.
+    if (quiz_is_overriden_calendar_event($event)) {
+        return [false, false];
+    }
+
+    $mindate = null;
+    $maxdate = null;
+
+    if ($event->eventtype == QUIZ_EVENT_TYPE_OPEN) {
+        if (!empty($quiz->timeclose)) {
+            $maxdate = [
+                $quiz->timeclose,
+                get_string('openafterclose', 'quiz')
+            ];
+        }
+    } else if ($event->eventtype == QUIZ_EVENT_TYPE_CLOSE) {
+        if (!empty($quiz->timeopen)) {
+            $mindate = [
+                $quiz->timeopen,
+                get_string('closebeforeopen', 'quiz')
+            ];
+        }
+    }
+
+    return [$mindate, $maxdate];
+}
+
+/**
+ * This function will update the quiz module according to the
+ * event that has been modified.
+ *
+ * It will set the timeopen or timeclose value of the quiz instance
+ * according to the type of event provided.
+ *
+ * @throws \moodle_exception
+ * @param \calendar_event $event A quiz activity calendar event
+ * @param \stdClass $quiz A quiz activity instance
+ */
+function mod_quiz_core_calendar_event_timestart_updated(\calendar_event $event, \stdClass $quiz) {
+    global $CFG, $DB;
+    require_once($CFG->dirroot . '/mod/quiz/locallib.php');
+
+    if (!in_array($event->eventtype, [QUIZ_EVENT_TYPE_OPEN, QUIZ_EVENT_TYPE_CLOSE])) {
+        // This isn't an event that we care about so we can ignore it.
+        return;
+    }
+
+    $courseid = $event->courseid;
+    $modulename = $event->modulename;
+    $instanceid = $event->instance;
+    $modified = false;
+    $closedatechanged = false;
+
+    // Something weird going on. The event is for a different module so
+    // we should ignore it.
+    if ($modulename != 'quiz') {
+        return;
+    }
+
+    if ($quiz->id != $instanceid) {
+        // The provided quiz instance doesn't match the event so
+        // there is nothing to do here.
+        return;
+    }
+
+    // We don't update the activity if it's an override event that has
+    // been modified.
+    if (quiz_is_overriden_calendar_event($event)) {
+        return;
+    }
+
+    $coursemodule = get_fast_modinfo($courseid)->instances[$modulename][$instanceid];
+    $context = context_module::instance($coursemodule->id);
+
+    // The user does not have the capability to modify this activity.
+    if (!has_capability('moodle/course:manageactivities', $context)) {
+        return;
+    }
+
+    if ($event->eventtype == QUIZ_EVENT_TYPE_OPEN) {
+        // If the event is for the quiz activity opening then we should
+        // set the start time of the quiz activity to be the new start
+        // time of the event.
+        if ($quiz->timeopen != $event->timestart) {
+            $quiz->timeopen = $event->timestart;
+            $modified = true;
+        }
+    } else if ($event->eventtype == QUIZ_EVENT_TYPE_CLOSE) {
+        // If the event is for the quiz activity closing then we should
+        // set the end time of the quiz activity to be the new start
+        // time of the event.
+        if ($quiz->timeclose != $event->timestart) {
+            $quiz->timeclose = $event->timestart;
+            $modified = true;
+            $closedatechanged = true;
+        }
+    }
+
+    if ($modified) {
+        $quiz->timemodified = time();
+        $DB->update_record('quiz', $quiz);
+
+        if ($closedatechanged) {
+            quiz_update_open_attempts(array('quizid' => $quiz->id));
+        }
+
+        // Delete any previous preview attempts.
+        quiz_delete_previews($quiz);
+        quiz_update_events($quiz);
+        $event = \core\event\course_module_updated::create_from_cm($coursemodule, $context);
+        $event->trigger();
+    }
+}

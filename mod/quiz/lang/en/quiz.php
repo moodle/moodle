@@ -565,6 +565,7 @@ $string['onlyteachersexport'] = 'Only teachers can export questions';
 $string['onlyteachersimport'] = 'Only teachers with editing rights can import questions';
 $string['onthispage'] = 'This page';
 $string['open'] = 'Not answered';
+$string['openafterclose'] = 'Could not update the quiz. You have specified an open date after the close date.';
 $string['openclosedatesupdated'] = 'Quiz open and close dates updated';
 $string['optional'] = 'optional';
 $string['orderandpaging'] = 'Order and paging';

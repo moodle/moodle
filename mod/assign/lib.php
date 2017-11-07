@@ -1946,31 +1946,22 @@ function mod_assign_core_calendar_event_action_shows_item_count(calendar_event $
  *     [1506741172, 'The due date must be before the cutoff date']
  * ]
  *
+ * If the event does not have a valid timestart range then [false, false] will
+ * be returned.
+ *
  * @param calendar_event $event The calendar event to get the time range for
- * @param stdClass|null $instance The module instance to get the range from
+ * @param stdClass $instance The module instance to get the range from
+ * @return array
  */
-function mod_assign_core_calendar_get_valid_event_timestart_range(\calendar_event $event, \stdClass $instance = null) {
-    global $CFG, $DB;
+function mod_assign_core_calendar_get_valid_event_timestart_range(\calendar_event $event, \stdClass $instance) {
+    global $CFG;
 
     require_once($CFG->dirroot . '/mod/assign/locallib.php');
 
-    if (!$instance) {
-        $instance = $DB->get_record('assign', ['id' => $event->instance]);
-    }
-
-    $coursemodule = get_coursemodule_from_instance('assign',
-                                         $event->instance,
-                                         $event->courseid,
-                                         false,
-                                         MUST_EXIST);
-
-    if (empty($coursemodule)) {
-        // If we don't have a course module yet then it likely means
-        // the activity is still being set up. In this case there is
-        // nothing for us to do anyway.
-        return;
-    }
-
+    $courseid = $event->courseid;
+    $modulename = $event->modulename;
+    $instanceid = $event->instance;
+    $coursemodule = get_fast_modinfo($courseid)->instances[$modulename][$instanceid];
     $context = context_module::instance($coursemodule->id);
     $assign = new assign($context, null, null);
     $assign->set_instance($instance);
@@ -1979,45 +1970,14 @@ function mod_assign_core_calendar_get_valid_event_timestart_range(\calendar_even
 }
 
 /**
- * This function will check that the given event is valid for it's
- * corresponding assign module instance.
- *
- * An exception is thrown if the event fails validation.
- *
- * @throws \moodle_exception
- * @param \calendar_event $event
- * @return bool
- */
-function mod_assign_core_calendar_validate_event_timestart(\calendar_event $event) {
-    global $DB;
-
-    if (!isset($event->instance)) {
-        return;
-    }
-
-    // We need to read from the DB directly because course module may
-    // currently be getting created so it won't be in mod info yet.
-    $instance = $DB->get_record('assign', ['id' => $event->instance], '*', MUST_EXIST);
-    $timestart = $event->timestart;
-    list($min, $max) = mod_assign_core_calendar_get_valid_event_timestart_range($event, $instance);
-
-    if ($min && $timestart < $min[0]) {
-        throw new \moodle_exception($min[1]);
-    }
-
-    if ($max && $timestart > $max[0]) {
-        throw new \moodle_exception($max[1]);
-    }
-}
-
-/**
  * This function will update the assign module according to the
  * event that has been modified.
  *
  * @throws \moodle_exception
  * @param \calendar_event $event
+ * @param stdClass $instance The module instance to get the range from
  */
-function mod_assign_core_calendar_event_timestart_updated(\calendar_event $event) {
+function mod_assign_core_calendar_event_timestart_updated(\calendar_event $event, \stdClass $instance) {
     global $CFG, $DB;
 
     require_once($CFG->dirroot . '/mod/assign/locallib.php');
@@ -2026,19 +1986,19 @@ function mod_assign_core_calendar_event_timestart_updated(\calendar_event $event
         return;
     }
 
-    $coursemodule = get_coursemodule_from_instance('assign',
-                                         $event->instance,
-                                         $event->courseid,
-                                         false,
-                                         MUST_EXIST);
-
-    if (empty($coursemodule)) {
-        // If we don't have a course module yet then it likely means
-        // the activity is still being set up. In this case there is
-        // nothing for us to do anyway.
+    if ($instance->id != $event->instance) {
         return;
     }
 
+    if (!in_array($event->eventtype, [ASSIGN_EVENT_TYPE_DUE, ASSIGN_EVENT_TYPE_GRADINGDUE])) {
+        return;
+    }
+
+    $courseid = $event->courseid;
+    $modulename = $event->modulename;
+    $instanceid = $event->instance;
+    $modified = false;
+    $coursemodule = get_fast_modinfo($courseid)->instances[$modulename][$instanceid];
     $context = context_module::instance($coursemodule->id);
 
     // The user does not have the capability to modify this activity.
@@ -2047,7 +2007,7 @@ function mod_assign_core_calendar_event_timestart_updated(\calendar_event $event
     }
 
     $assign = new assign($context, $coursemodule, null);
-    $modified = false;
+    $assign->set_instance($instance);
 
     if ($event->eventtype == ASSIGN_EVENT_TYPE_DUE) {
         // This check is in here because due date events are currently
@@ -2058,26 +2018,23 @@ function mod_assign_core_calendar_event_timestart_updated(\calendar_event $event
             return;
         }
 
-        $instance = $assign->get_instance();
         $newduedate = $event->timestart;
 
         if ($newduedate != $instance->duedate) {
             $instance->duedate = $newduedate;
-            $instance->timemodified = time();
             $modified = true;
         }
     } else if ($event->eventtype == ASSIGN_EVENT_TYPE_GRADINGDUE) {
-        $instance = $assign->get_instance();
         $newduedate = $event->timestart;
 
         if ($newduedate != $instance->gradingduedate) {
             $instance->gradingduedate = $newduedate;
-            $instance->timemodified = time();
             $modified = true;
         }
     }
 
     if ($modified) {
+        $instance->timemodified = time();
         // Persist the assign instance changes.
         $DB->update_record('assign', $instance);
         $assign->update_calendar($coursemodule->id);

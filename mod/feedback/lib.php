@@ -3575,16 +3575,10 @@ function mod_feedback_get_completion_active_rule_descriptions($cm) {
  * ]
  *
  * @param calendar_event $event The calendar event to get the time range for
- * @param stdClass|null $instance The module instance to get the range from
+ * @param stdClass $instance The module instance to get the range from
  * @return array
  */
-function mod_feedback_core_calendar_get_valid_event_timestart_range(\calendar_event $event, \stdClass $instance = null) {
-    global $DB;
-
-    if (!$instance) {
-        $instance = $DB->get_record('feedback', ['id' => $event->instance], '*', MUST_EXIST);
-    }
-
+function mod_feedback_core_calendar_get_valid_event_timestart_range(\calendar_event $event, \stdClass $instance) {
     $mindate = null;
     $maxdate = null;
 
@@ -3612,32 +3606,6 @@ function mod_feedback_core_calendar_get_valid_event_timestart_range(\calendar_ev
 }
 
 /**
- * This function will check that the given event is valid for it's
- * corresponding feedback module.
- *
- * An exception is thrown if the event fails validation.
- *
- * @throws \moodle_exception
- * @param \calendar_event $event
- */
-function mod_feedback_core_calendar_validate_event_timestart(\calendar_event $event) {
-    global $DB;
-
-    $record = $DB->get_record('feedback', ['id' => $event->instance], '*', MUST_EXIST);
-    $timestart = $event->timestart;
-
-    list($min, $max) = mod_feedback_core_calendar_get_valid_event_timestart_range($event, $record);
-
-    if ($min && $timestart < $min[0]) {
-        throw new \moodle_exception($min[1]);
-    }
-
-    if ($max && $timestart > $max[0]) {
-        throw new \moodle_exception($max[1]);
-    }
-}
-
-/**
  * This function will update the feedback module according to the
  * event that has been modified.
  *
@@ -3646,27 +3614,29 @@ function mod_feedback_core_calendar_validate_event_timestart(\calendar_event $ev
  *
  * @throws \moodle_exception
  * @param \calendar_event $event
+ * @param stdClass $feedback The module instance to get the range from
  */
-function mod_feedback_core_calendar_event_timestart_updated(\calendar_event $event) {
+function mod_feedback_core_calendar_event_timestart_updated(\calendar_event $event, \stdClass $feedback) {
     global $CFG, $DB;
 
     if (empty($event->instance) || $event->modulename != 'feedback') {
         return;
     }
 
-    $coursemodule = get_coursemodule_from_instance('feedback',
-                                         $event->instance,
-                                         $event->courseid,
-                                         false,
-                                         MUST_EXIST);
-
-    if (empty($coursemodule)) {
-        // If we don't have a course module yet then it likely means
-        // the activity is still being set up. In this case there is
-        // nothing for us to do anyway.
+    if ($event->instance != $feedback->id) {
         return;
     }
 
+    if (!in_array($event->eventtype, [FEEDBACK_EVENT_TYPE_OPEN, FEEDBACK_EVENT_TYPE_CLOSE])) {
+        return;
+    }
+
+    $courseid = $event->courseid;
+    $modulename = $event->modulename;
+    $instanceid = $event->instance;
+    $modified = false;
+
+    $coursemodule = get_fast_modinfo($courseid)->instances[$modulename][$instanceid];
     $context = context_module::instance($coursemodule->id);
 
     // The user does not have the capability to modify this activity.
@@ -3674,34 +3644,28 @@ function mod_feedback_core_calendar_event_timestart_updated(\calendar_event $eve
         return;
     }
 
-    $modified = false;
-
     if ($event->eventtype == FEEDBACK_EVENT_TYPE_OPEN) {
         // If the event is for the feedback activity opening then we should
         // set the start time of the feedback activity to be the new start
         // time of the event.
-        $record = $DB->get_record('feedback', ['id' => $event->instance], '*', MUST_EXIST);
-
-        if ($record->timeopen != $event->timestart) {
-            $record->timeopen = $event->timestart;
-            $record->timemodified = time();
+        if ($feedback->timeopen != $event->timestart) {
+            $feedback->timeopen = $event->timestart;
+            $feedback->timemodified = time();
             $modified = true;
         }
     } else if ($event->eventtype == FEEDBACK_EVENT_TYPE_CLOSE) {
         // If the event is for the feedback activity closing then we should
         // set the end time of the feedback activity to be the new start
         // time of the event.
-        $record = $DB->get_record('feedback', ['id' => $event->instance], '*', MUST_EXIST);
-
-        if ($record->timeclose != $event->timestart) {
-            $record->timeclose = $event->timestart;
-            $record->timemodified = time();
+        if ($feedback->timeclose != $event->timestart) {
+            $feedback->timeclose = $event->timestart;
             $modified = true;
         }
     }
 
     if ($modified) {
-        $DB->update_record('feedback', $record);
+        $feedback->timemodified = time();
+        $DB->update_record('feedback', $feedback);
         $event = \core\event\course_module_updated::create_from_cm($coursemodule, $context);
         $event->trigger();
     }

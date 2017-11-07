@@ -231,9 +231,12 @@ class api {
         event_interface $event,
         \DateTimeInterface $startdate
     ) {
+        global $DB;
+
         $mapper = container::get_event_mapper();
         $legacyevent = $mapper->from_event_to_legacy_event($event);
         $hascoursemodule = !empty($event->get_course_module());
+        $moduleinstance = null;
         $starttime = $event->get_times()->get_start_time()->setDate(
             $startdate->format('Y'),
             $startdate->format('n'),
@@ -241,15 +244,38 @@ class api {
         );
 
         if ($hascoursemodule) {
-            $legacyevent->timestart = $starttime->getTimestamp();
-            // If this event is from an activity then we need to call
-            // the activity callback to let it validate that the changes
-            // to the event are correct.
-            component_callback(
-                'mod_' . $event->get_course_module()->get('modname'),
-                'core_calendar_validate_event_timestart',
-                [$legacyevent]
+            $moduleinstance = $DB->get_record(
+                $event->get_course_module()->get('modname'),
+                ['id' => $event->get_course_module()->get('instance')],
+                '*',
+                MUST_EXIST
             );
+            $legacyevent->timestart = $starttime->getTimestamp();
+
+            // If there is a timestart range callback implemented then we can
+            // use the values returned from the valid timestart range to apply
+            // some default validation on the event's timestart value to ensure
+            // that it falls within the specified range.
+            list($min, $max) = component_callback(
+                'mod_' . $event->get_course_module()->get('modname'),
+                'core_calendar_get_valid_event_timestart_range',
+                [$legacyevent, $moduleinstance],
+                [false, false]
+            );
+
+            // If the callback returns false for either value it means that
+            // there is no valid time start range.
+            if ($min === false || $max === false) {
+                throw new \moodle_exception('The start day of this event can not be modified');
+            }
+
+            if ($min && $legacyevent->timestart < $min[0]) {
+                throw new \moodle_exception($min[1]);
+            }
+
+            if ($max && $legacyevent->timestart > $max[0]) {
+                throw new \moodle_exception($max[1]);
+            }
         }
 
         // This function does our capability checks.
@@ -262,7 +288,7 @@ class api {
         // We don't want to call the event update callback if the user isn't allowed
         // to modify course modules because depending on the callback it can make
         // some changes that would be considered security issues, such as updating the
-        // due date for and assignment.
+        // due date for an assignment.
         if ($hascoursemodule && calendar_edit_event_allowed($legacyevent, true)) {
             // If this event is from an activity then we need to call
             // the activity callback to let it know that the event it
@@ -270,7 +296,7 @@ class api {
             component_callback(
                 'mod_' . $event->get_course_module()->get('modname'),
                 'core_calendar_event_timestart_updated',
-                [$legacyevent]
+                [$legacyevent, $moduleinstance]
             );
         }
 

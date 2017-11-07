@@ -45,6 +45,37 @@ class core_calendar_local_api_testcase extends advanced_testcase {
     }
 
     /**
+     * Create a feedback activity instance and a calendar event for
+     * that instance.
+     *
+     * @param array $feedbackproperties Properties to set on the feedback activity
+     * @param array $eventproperties Properties to set on the calendar event
+     * @return array The feedback activity and the calendar event
+     */
+    protected function create_feedback_activity_and_event(array $feedbackproperties = [], array $eventproperties = []) {
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $mapper = container::get_event_mapper();
+        $feedbackgenerator = $generator->get_plugin_generator('mod_feedback');
+        $feedback = $feedbackgenerator->create_instance(array_merge(
+            ['course' => $course->id],
+            $feedbackproperties
+        ));
+
+        $event = create_event(array_merge(
+            [
+                'courseid' => $course->id,
+                'modulename' => 'feedback',
+                'instance' => $feedback->id
+            ],
+             $eventproperties
+        ));
+        $event = $mapper->from_legacy_event_to_event($event);
+
+        return [$feedback, $event];
+    }
+
+    /**
      * Requesting calendar events from a given time should return all events with a sort
      * time at or after the requested time. All events prior to that time should not
      * be return.
@@ -927,5 +958,331 @@ class core_calendar_local_api_testcase extends advanced_testcase {
         assign_capability('moodle/calendar:manageownentries', CAP_PROHIBIT, $roleid, $context, true);
         $this->expectException('moodle_exception');
         $newEvent = \core_calendar\local\api::update_event_start_day($event, $newstartdate);
+    }
+
+    /**
+     * Updating the start day of an event with no maximum cutoff should
+     * update the corresponding activity property.
+     *
+     * Note: This test uses the feedback activity because it requires
+     * module callbacks to be in place to test.
+     */
+    public function test_update_event_start_day_activity_event_no_max() {
+        global $CFG, $DB;
+        require_once($CFG->dirroot . '/mod/feedback/lib.php');
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $timeopen = new DateTimeImmutable('2017-01-1T15:00:00+08:00');
+        $newstartdate = new DateTimeImmutable('2018-02-2T10:00:00+08:00');
+        $expected = new DateTimeImmutable('2018-02-2T15:00:00+08:00');
+        list($feedback, $event) = $this->create_feedback_activity_and_event(
+            [
+                'timeopen' => $timeopen->getTimestamp(),
+                'timeclose' => 0
+            ],
+            [
+                'eventtype' => FEEDBACK_EVENT_TYPE_OPEN,
+                'timestart' => $timeopen->getTimestamp()
+            ]
+        );
+        $newevent = \core_calendar\local\api::update_event_start_day($event, $newstartdate);
+        $actual = $newevent->get_times()->get_start_time();
+        $feedback = $DB->get_record('feedback', ['id' => $feedback->id]);
+
+        $this->assertEquals($expected->getTimestamp(), $actual->getTimestamp());
+        $this->assertEquals($expected->getTimestamp(), $feedback->timeopen);
+    }
+
+    /**
+     * Updating the start day of an event belonging to an activity to a value
+     * less than the maximum cutoff should update the corresponding activity
+     * property.
+     *
+     * Note: This test uses the feedback activity because it requires
+     * module callbacks to be in place to test.
+     */
+    public function test_update_event_start_day_activity_event_less_than_max() {
+        global $CFG, $DB;
+        require_once($CFG->dirroot . '/mod/feedback/lib.php');
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $timeopen = new DateTimeImmutable('2017-01-1T15:00:00+08:00');
+        $timeclose = new DateTimeImmutable('2019-01-1T15:00:00+08:00');
+        $newstartdate = new DateTimeImmutable('2018-02-2T10:00:00+08:00');
+        $expected = new DateTimeImmutable('2018-02-2T15:00:00+08:00');
+        list($feedback, $event) = $this->create_feedback_activity_and_event(
+            [
+                'timeopen' => $timeopen->getTimestamp(),
+                'timeclose' => $timeclose->getTimestamp()
+            ],
+            [
+                'eventtype' => FEEDBACK_EVENT_TYPE_OPEN,
+                'timestart' => $timeopen->getTimestamp()
+            ]
+        );
+
+        $newevent = \core_calendar\local\api::update_event_start_day($event, $newstartdate);
+        $actual = $newevent->get_times()->get_start_time();
+        $feedback = $DB->get_record('feedback', ['id' => $feedback->id]);
+
+        $this->assertEquals($expected->getTimestamp(), $actual->getTimestamp());
+        $this->assertEquals($expected->getTimestamp(), $feedback->timeopen);
+    }
+
+    /**
+     * Updating the start day of an event belonging to an activity to a value
+     * equal to the maximum cutoff should update the corresponding activity
+     * property.
+     *
+     * Note: This test uses the feedback activity because it requires
+     * module callbacks to be in place to test.
+     */
+    public function test_update_event_start_day_activity_event_equal_to_max() {
+        global $CFG, $DB;
+        require_once($CFG->dirroot . '/mod/feedback/lib.php');
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $timeopen = new DateTimeImmutable('2017-01-1T15:00:00+08:00');
+        $timeclose = new DateTimeImmutable('2018-02-2T15:00:00+08:00');
+        $newstartdate = new DateTimeImmutable('2018-02-2T10:00:00+08:00');
+        list($feedback, $event) = $this->create_feedback_activity_and_event(
+            [
+                'timeopen' => $timeopen->getTimestamp(),
+                'timeclose' => $timeclose->getTimestamp(),
+            ],
+            [
+                'eventtype' => FEEDBACK_EVENT_TYPE_OPEN,
+                'timestart' => $timeopen->getTimestamp()
+            ]
+        );
+
+        $newevent = \core_calendar\local\api::update_event_start_day($event, $newstartdate);
+        $actual = $newevent->get_times()->get_start_time();
+        $feedback = $DB->get_record('feedback', ['id' => $feedback->id]);
+
+        $this->assertEquals($timeclose->getTimestamp(), $actual->getTimestamp());
+        $this->assertEquals($timeclose->getTimestamp(), $feedback->timeopen);
+    }
+
+    /**
+     * Updating the start day of an event belonging to an activity to a value
+     * after the maximum cutoff should not update the corresponding activity
+     * property. Instead it should throw an exception.
+     *
+     * Note: This test uses the feedback activity because it requires
+     * module callbacks to be in place to test.
+     */
+    public function test_update_event_start_day_activity_event_after_max() {
+        global $CFG, $DB;
+        require_once($CFG->dirroot . '/mod/feedback/lib.php');
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $timeopen = new DateTimeImmutable('2017-01-1T15:00:00+08:00');
+        $timeclose = new DateTimeImmutable('2017-02-2T15:00:00+08:00');
+        $newstartdate = new DateTimeImmutable('2018-02-2T10:00:00+08:00');
+        list($feedback, $event) = $this->create_feedback_activity_and_event(
+            [
+                'timeopen' => $timeopen->getTimestamp(),
+                'timeclose' => $timeclose->getTimestamp(),
+            ],
+            [
+                'eventtype' => FEEDBACK_EVENT_TYPE_OPEN,
+                'timestart' => $timeopen->getTimestamp()
+            ]
+        );
+
+        $this->expectException('moodle_exception');
+        $newevent = \core_calendar\local\api::update_event_start_day($event, $newstartdate);
+    }
+
+    /**
+     * Updating the start day of an event with no minimum cutoff should
+     * update the corresponding activity property.
+     *
+     * Note: This test uses the feedback activity because it requires
+     * module callbacks to be in place to test.
+     */
+    public function test_update_event_start_day_activity_event_no_min() {
+        global $CFG, $DB;
+        require_once($CFG->dirroot . '/mod/feedback/lib.php');
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $timeclose = new DateTimeImmutable('2017-01-1T15:00:00+08:00');
+        $newstartdate = new DateTimeImmutable('2016-02-2T10:00:00+08:00');
+        $expected = new DateTimeImmutable('2016-02-2T15:00:00+08:00');
+        list($feedback, $event) = $this->create_feedback_activity_and_event(
+            [
+                'timeopen' => 0,
+                'timeclose' => $timeclose->getTimestamp()
+            ],
+            [
+                'eventtype' => FEEDBACK_EVENT_TYPE_OPEN,
+                'timestart' => $timeclose->getTimestamp()
+            ]
+        );
+
+        $newevent = \core_calendar\local\api::update_event_start_day($event, $newstartdate);
+        $actual = $newevent->get_times()->get_start_time();
+        $feedback = $DB->get_record('feedback', ['id' => $feedback->id]);
+
+        $this->assertEquals($expected->getTimestamp(), $actual->getTimestamp());
+        $this->assertEquals($expected->getTimestamp(), $feedback->timeopen);
+    }
+
+    /**
+     * Updating the start day of an event belonging to an activity to a value
+     * greater than the minimum cutoff should update the corresponding activity
+     * property.
+     *
+     * Note: This test uses the feedback activity because it requires
+     * module callbacks to be in place to test.
+     */
+    public function test_update_event_start_day_activity_event_greater_than_min() {
+        global $CFG, $DB;
+        require_once($CFG->dirroot . '/mod/feedback/lib.php');
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $timeopen = new DateTimeImmutable('2016-01-1T15:00:00+08:00');
+        $timeclose = new DateTimeImmutable('2019-01-1T15:00:00+08:00');
+        $newstartdate = new DateTimeImmutable('2018-02-2T10:00:00+08:00');
+        $expected = new DateTimeImmutable('2018-02-2T15:00:00+08:00');
+        list($feedback, $event) = $this->create_feedback_activity_and_event(
+            [
+                'timeopen' => $timeopen->getTimestamp(),
+                'timeclose' => $timeclose->getTimestamp()
+            ],
+            [
+                'eventtype' => FEEDBACK_EVENT_TYPE_CLOSE,
+                'timestart' => $timeclose->getTimestamp()
+            ]
+        );
+
+        $newevent = \core_calendar\local\api::update_event_start_day($event, $newstartdate);
+        $actual = $newevent->get_times()->get_start_time();
+        $feedback = $DB->get_record('feedback', ['id' => $feedback->id]);
+
+        $this->assertEquals($expected->getTimestamp(), $actual->getTimestamp());
+        $this->assertEquals($expected->getTimestamp(), $feedback->timeclose);
+    }
+
+    /**
+     * Updating the start day of an event belonging to an activity to a value
+     * equal to the minimum cutoff should update the corresponding activity
+     * property.
+     *
+     * Note: This test uses the feedback activity because it requires
+     * module callbacks to be in place to test.
+     */
+    public function test_update_event_start_day_activity_event_equal_to_min() {
+        global $CFG, $DB;
+        require_once($CFG->dirroot . '/mod/feedback/lib.php');
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $timeopen = new DateTimeImmutable('2017-01-1T15:00:00+08:00');
+        $timeclose = new DateTimeImmutable('2018-02-2T15:00:00+08:00');
+        $newstartdate = new DateTimeImmutable('2017-01-1T10:00:00+08:00');
+        $expected = new DateTimeImmutable('2017-01-1T15:00:00+08:00');
+        list($feedback, $event) = $this->create_feedback_activity_and_event(
+            [
+                'timeopen' => $timeopen->getTimestamp(),
+                'timeclose' => $timeclose->getTimestamp(),
+            ],
+            [
+                'eventtype' => FEEDBACK_EVENT_TYPE_CLOSE,
+                'timestart' => $timeclose->getTimestamp()
+            ]
+        );
+
+        $newevent = \core_calendar\local\api::update_event_start_day($event, $newstartdate);
+        $actual = $newevent->get_times()->get_start_time();
+        $feedback = $DB->get_record('feedback', ['id' => $feedback->id]);
+
+        $this->assertEquals($expected->getTimestamp(), $actual->getTimestamp());
+        $this->assertEquals($expected->getTimestamp(), $feedback->timeclose);
+    }
+
+    /**
+     * Updating the start day of an event belonging to an activity to a value
+     * before the minimum cutoff should not update the corresponding activity
+     * property. Instead it should throw an exception.
+     *
+     * Note: This test uses the feedback activity because it requires
+     * module callbacks to be in place to test.
+     */
+    public function test_update_event_start_day_activity_event_before_min() {
+        global $CFG, $DB;
+        require_once($CFG->dirroot . '/mod/feedback/lib.php');
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $timeopen = new DateTimeImmutable('2017-01-1T15:00:00+08:00');
+        $timeclose = new DateTimeImmutable('2017-02-2T15:00:00+08:00');
+        $newstartdate = new DateTimeImmutable('2016-02-2T10:00:00+08:00');
+        list($feedback, $event) = $this->create_feedback_activity_and_event(
+            [
+                'timeopen' => $timeopen->getTimestamp(),
+                'timeclose' => $timeclose->getTimestamp(),
+            ],
+            [
+                'eventtype' => FEEDBACK_EVENT_TYPE_CLOSE,
+                'timestart' => $timeclose->getTimestamp()
+            ]
+        );
+
+        $this->expectException('moodle_exception');
+        $newevent = \core_calendar\local\api::update_event_start_day($event, $newstartdate);
+    }
+
+    /**
+     * Updating the start day of an overridden event belonging to an activity
+     * should result in an exception. This is to prevent the drag and drop
+     * of override events.
+     *
+     * Note: This test uses the quiz activity because it requires
+     * module callbacks to be in place and override event support to test.
+     */
+    public function test_update_event_start_day_activity_event_override() {
+        global $CFG, $DB;
+        require_once($CFG->dirroot . '/calendar/lib.php');
+        require_once($CFG->dirroot . '/mod/quiz/lib.php');
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $mapper = container::get_event_mapper();
+        $timeopen = new DateTimeImmutable('2017-01-1T15:00:00+08:00');
+        $newstartdate = new DateTimeImmutable('2016-02-2T10:00:00+08:00');
+        $generator = $this->getDataGenerator();
+        $user = $generator->create_user();
+        $course = $generator->create_course();
+        $quizgenerator = $generator->get_plugin_generator('mod_quiz');
+        $quiz = $quizgenerator->create_instance([
+            'course' => $course->id,
+            'timeopen' => $timeopen->getTimestamp(),
+        ]);
+        $event = create_event([
+            'courseid' => $course->id,
+            'userid' => $user->id,
+            'modulename' => 'quiz',
+            'instance' => $quiz->id,
+            'eventtype' => QUIZ_EVENT_TYPE_OPEN,
+            'timestart' => $timeopen->getTimestamp()
+        ]);
+        $event = $mapper->from_legacy_event_to_event($event);
+        $record = (object) [
+            'quiz' => $quiz->id,
+            'userid' => $user->id
+        ];
+
+        $DB->insert_record('quiz_overrides', $record);
+
+        $this->expectException('moodle_exception');
+        $newevent = \core_calendar\local\api::update_event_start_day($event, $newstartdate);
     }
 }

@@ -1258,15 +1258,9 @@ function mod_choice_core_calendar_provide_event_action(calendar_event $event,
  * ]
  *
  * @param calendar_event $event The calendar event to get the time range for
- * @param stdClass|null $instance The module instance to get the range from
+ * @param stdClass $choice The module instance to get the range from
  */
-function mod_choice_core_calendar_get_valid_event_timestart_range(\calendar_event $event, \stdClass $choice = null) {
-    global $DB;
-
-    if (!$choice) {
-        $choice = $DB->get_record('choice', ['id' => $event->instance]);
-    }
-
+function mod_choice_core_calendar_get_valid_event_timestart_range(\calendar_event $event, \stdClass $choice) {
     $mindate = null;
     $maxdate = null;
 
@@ -1290,38 +1284,6 @@ function mod_choice_core_calendar_get_valid_event_timestart_range(\calendar_even
 }
 
 /**
- * This function will check that the given event is valid for it's
- * corresponding choice module.
- *
- * An exception is thrown if the event fails validation.
- *
- * @throws \moodle_exception
- * @param \calendar_event $event
- * @return bool
- */
-function mod_choice_core_calendar_validate_event_timestart(\calendar_event $event) {
-    global $DB;
-
-    if (!isset($event->instance)) {
-        return;
-    }
-
-    // We need to read from the DB directly because course module may
-    // currently be getting created so it won't be in mod info yet.
-    $instance = $DB->get_record('choice', ['id' => $event->instance], '*', MUST_EXIST);
-    $timestart = $event->timestart;
-    list($min, $max) = mod_choice_core_calendar_get_valid_event_timestart_range($event, $instance);
-
-    if ($min && $timestart < $min[0]) {
-        throw new \moodle_exception($min[1]);
-    }
-
-    if ($max && $timestart > $max[0]) {
-        throw new \moodle_exception($max[1]);
-    }
-}
-
-/**
  * This function will update the choice module according to the
  * event that has been modified.
  *
@@ -1330,9 +1292,14 @@ function mod_choice_core_calendar_validate_event_timestart(\calendar_event $even
  *
  * @throws \moodle_exception
  * @param \calendar_event $event
+ * @param stdClass $choice The module instance to get the range from
  */
-function mod_choice_core_calendar_event_timestart_updated(\calendar_event $event) {
+function mod_choice_core_calendar_event_timestart_updated(\calendar_event $event, \stdClass $choice) {
     global $DB;
+
+    if (!in_array($event->eventtype, [CHOICE_EVENT_TYPE_OPEN, CHOICE_EVENT_TYPE_CLOSE])) {
+        return;
+    }
 
     $courseid = $event->courseid;
     $modulename = $event->modulename;
@@ -1342,6 +1309,10 @@ function mod_choice_core_calendar_event_timestart_updated(\calendar_event $event
     // Something weird going on. The event is for a different module so
     // we should ignore it.
     if ($modulename != 'choice') {
+        return;
+    }
+
+    if ($choice->id != $instanceid) {
         return;
     }
 
@@ -1357,29 +1328,24 @@ function mod_choice_core_calendar_event_timestart_updated(\calendar_event $event
         // If the event is for the choice activity opening then we should
         // set the start time of the choice activity to be the new start
         // time of the event.
-        $record = $DB->get_record('choice', ['id' => $instanceid], '*', MUST_EXIST);
-
-        if ($record->timeopen != $event->timestart) {
-            $record->timeopen = $event->timestart;
-            $record->timemodified = time();
+        if ($choice->timeopen != $event->timestart) {
+            $choice->timeopen = $event->timestart;
             $modified = true;
         }
     } else if ($event->eventtype == CHOICE_EVENT_TYPE_CLOSE) {
         // If the event is for the choice activity closing then we should
         // set the end time of the choice activity to be the new start
         // time of the event.
-        $record = $DB->get_record('choice', ['id' => $instanceid], '*', MUST_EXIST);
-
-        if ($record->timeclose != $event->timestart) {
-            $record->timeclose = $event->timestart;
-            $record->timemodified = time();
+        if ($choice->timeclose != $event->timestart) {
+            $choice->timeclose = $event->timestart;
             $modified = true;
         }
     }
 
     if ($modified) {
+        $choice->timemodified = time();
         // Persist the instance changes.
-        $DB->update_record('choice', $record);
+        $DB->update_record('choice', $choice);
         $event = \core\event\course_module_updated::create_from_cm($coursemodule, $context);
         $event->trigger();
     }

@@ -490,196 +490,6 @@ class mod_choice_lib_testcase extends externallib_advanced_testcase {
     }
 
     /**
-     * You can't create a choice module event when the module doesn't exist.
-     */
-    public function test_mod_choice_core_calendar_validate_event_timestart_no_activity() {
-        global $CFG;
-        require_once($CFG->dirroot . "/calendar/lib.php");
-
-        $this->resetAfterTest(true);
-        $this->setAdminUser();
-        $generator = $this->getDataGenerator();
-        $course = $generator->create_course();
-
-        $event = new \calendar_event([
-            'name' => 'Test event',
-            'description' => '',
-            'format' => 1,
-            'courseid' => $course->id,
-            'groupid' => 0,
-            'userid' => 2,
-            'modulename' => 'choice',
-            'instance' => 1234,
-            'eventtype' => CHOICE_EVENT_TYPE_OPEN,
-            'timestart' => time(),
-            'timeduration' => 86400,
-            'visible' => 1
-        ]);
-
-        $this->expectException('moodle_exception');
-        mod_choice_core_calendar_validate_event_timestart($event);
-    }
-
-    /**
-     * A CHOICE_EVENT_TYPE_OPEN must be before the close time of the choice activity.
-     */
-    public function test_mod_choice_core_calendar_validate_event_timestart_valid_open_event() {
-        global $CFG, $DB;
-        require_once($CFG->dirroot . "/calendar/lib.php");
-
-        $this->resetAfterTest(true);
-        $this->setAdminUser();
-        $generator = $this->getDataGenerator();
-        $course = $generator->create_course();
-        $choicegenerator = $generator->get_plugin_generator('mod_choice');
-        $timeopen = time();
-        $timeclose = $timeopen + DAYSECS;
-        $choice = $choicegenerator->create_instance(['course' => $course->id]);
-        $choice->timeopen = $timeopen;
-        $choice->timeclose = $timeclose;
-        $DB->update_record('choice', $choice);
-
-        $event = new \calendar_event([
-            'name' => 'Test event',
-            'description' => '',
-            'format' => 1,
-            'courseid' => $course->id,
-            'groupid' => 0,
-            'userid' => 2,
-            'modulename' => 'choice',
-            'instance' => $choice->id,
-            'eventtype' => CHOICE_EVENT_TYPE_OPEN,
-            'timestart' => $timeopen,
-            'timeduration' => 86400,
-            'visible' => 1
-        ]);
-
-        mod_choice_core_calendar_validate_event_timestart($event);
-        // The function above will throw an exception if the event is
-        // invalid.
-        $this->assertTrue(true);
-    }
-
-    /**
-     * A CHOICE_EVENT_TYPE_OPEN can not have a start time set after the close time
-     * of the choice activity.
-     */
-    public function test_mod_choice_core_calendar_validate_event_timestart_invalid_open_event() {
-        global $CFG, $DB;
-        require_once($CFG->dirroot . "/calendar/lib.php");
-
-        $this->resetAfterTest(true);
-        $this->setAdminUser();
-        $generator = $this->getDataGenerator();
-        $course = $generator->create_course();
-        $choicegenerator = $generator->get_plugin_generator('mod_choice');
-        $timeopen = time();
-        $timeclose = $timeopen + DAYSECS;
-        $choice = $choicegenerator->create_instance(['course' => $course->id]);
-        $choice->timeopen = $timeopen;
-        $choice->timeclose = $timeclose;
-        $DB->update_record('choice', $choice);
-
-        $event = new \calendar_event([
-            'name' => 'Test event',
-            'description' => '',
-            'format' => 1,
-            'courseid' => $course->id,
-            'groupid' => 0,
-            'userid' => 2,
-            'modulename' => 'choice',
-            'instance' => $choice->id,
-            'eventtype' => CHOICE_EVENT_TYPE_OPEN,
-            'timestart' => $timeclose + 1,
-            'timeduration' => 86400,
-            'visible' => 1
-        ]);
-
-        $this->expectException('moodle_exception');
-        mod_choice_core_calendar_validate_event_timestart($event);
-    }
-
-    /**
-     * A CHOICE_EVENT_TYPE_CLOSE must be after the open time of the choice activity.
-     */
-    public function test_mod_choice_core_calendar_validate_event_timestart_valid_close_event() {
-        global $CFG, $DB;
-        require_once($CFG->dirroot . "/calendar/lib.php");
-
-        $this->resetAfterTest(true);
-        $this->setAdminUser();
-        $generator = $this->getDataGenerator();
-        $course = $generator->create_course();
-        $choicegenerator = $generator->get_plugin_generator('mod_choice');
-        $timeopen = time();
-        $timeclose = $timeopen + DAYSECS;
-        $choice = $choicegenerator->create_instance(['course' => $course->id]);
-        $choice->timeopen = $timeopen;
-        $choice->timeclose = $timeclose;
-        $DB->update_record('choice', $choice);
-
-        $event = new \calendar_event([
-            'name' => 'Test event',
-            'description' => '',
-            'format' => 1,
-            'courseid' => $course->id,
-            'groupid' => 0,
-            'userid' => 2,
-            'modulename' => 'choice',
-            'instance' => $choice->id,
-            'eventtype' => CHOICE_EVENT_TYPE_CLOSE,
-            'timestart' => $timeclose,
-            'timeduration' => 86400,
-            'visible' => 1
-        ]);
-
-        mod_choice_core_calendar_validate_event_timestart($event);
-        // The function above will throw an exception if the event isn't
-        // valid.
-        $this->assertTrue(true);
-    }
-
-    /**
-     * A CHOICE_EVENT_TYPE_CLOSE can not have a start time set before the open time
-     * of the choice activity.
-     */
-    public function test_mod_choice_core_calendar_validate_event_timestart_invalid_close_event() {
-        global $CFG, $DB;
-        require_once($CFG->dirroot . "/calendar/lib.php");
-
-        $this->resetAfterTest(true);
-        $this->setAdminUser();
-        $generator = $this->getDataGenerator();
-        $course = $generator->create_course();
-        $choicegenerator = $generator->get_plugin_generator('mod_choice');
-        $timeopen = time();
-        $timeclose = $timeopen + DAYSECS;
-        $choice = $choicegenerator->create_instance(['course' => $course->id]);
-        $choice->timeopen = $timeopen;
-        $choice->timeclose = $timeclose;
-        $DB->update_record('choice', $choice);
-
-        // Create a valid event.
-        $event = new \calendar_event([
-            'name' => 'Test event',
-            'description' => '',
-            'format' => 1,
-            'courseid' => $course->id,
-            'groupid' => 0,
-            'userid' => 2,
-            'modulename' => 'choice',
-            'instance' => $choice->id,
-            'eventtype' => CHOICE_EVENT_TYPE_CLOSE,
-            'timestart' => $timeopen - 1,
-            'timeduration' => 86400,
-            'visible' => 1
-        ]);
-
-        $this->expectException('moodle_exception');
-        mod_choice_core_calendar_validate_event_timestart($event);
-    }
-
-    /**
      * An unkown event type should not change the choice instance.
      */
     public function test_mod_choice_core_calendar_event_timestart_updated_unknown_event() {
@@ -714,7 +524,7 @@ class mod_choice_lib_testcase extends externallib_advanced_testcase {
             'visible' => 1
         ]);
 
-        mod_choice_core_calendar_event_timestart_updated($event);
+        mod_choice_core_calendar_event_timestart_updated($event, $choice);
 
         $choice = $DB->get_record('choice', ['id' => $choice->id]);
         $this->assertEquals($timeopen, $choice->timeopen);
@@ -763,7 +573,7 @@ class mod_choice_lib_testcase extends externallib_advanced_testcase {
         // Trigger and capture the event when adding a contact.
         $sink = $this->redirectEvents();
 
-        mod_choice_core_calendar_event_timestart_updated($event);
+        mod_choice_core_calendar_event_timestart_updated($event, $choice);
 
         $triggeredevents = $sink->get_events();
         $moduleupdatedevents = array_filter($triggeredevents, function($e) {
@@ -824,7 +634,7 @@ class mod_choice_lib_testcase extends externallib_advanced_testcase {
         // Trigger and capture the event when adding a contact.
         $sink = $this->redirectEvents();
 
-        mod_choice_core_calendar_event_timestart_updated($event);
+        mod_choice_core_calendar_event_timestart_updated($event, $choice);
 
         $triggeredevents = $sink->get_events();
         $moduleupdatedevents = array_filter($triggeredevents, function($e) {
