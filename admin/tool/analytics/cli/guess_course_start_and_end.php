@@ -156,11 +156,12 @@ function tool_analytics_calculate_course_dates($course, $options) {
         $format = course_get_format($course);
         $formatoptions = $format->get_format_options();
 
-        if ($course->format === 'weeks' && $formatoptions['automaticenddate']) {
-            // Special treatment for weeks with automatic end date.
+        // Change this for a course formats API level call in MDL-60702.
+        if (method_exists($format, 'update_end_date') && $formatoptions['automaticenddate']) {
+            // Special treatment for weeks-based formats with automatic end date.
 
             if ($options['update']) {
-                format_weeks::update_end_date($course->id);
+                $format::update_end_date($course->id);
                 $course->enddate = $DB->get_field('course', 'enddate', array('id' => $course->id));
                 $notification .= PHP_EOL . '  ' . get_string('weeksenddateautomaticallyset', 'tool_analytics') . ': ' .
                     userdate($course->enddate);

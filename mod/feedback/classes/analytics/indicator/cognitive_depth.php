@@ -51,9 +51,9 @@ class cognitive_depth extends activity_base {
     }
 
     public function get_cognitive_depth_level(\cm_info $cm) {
-        $this->fill_publishstats($cm);
+        $this->fill_instance_data($cm);
 
-        if (!empty($this->publishstats[$cm->instance])) {
+        if (!empty($this->instancedata[$cm->instance]->publish_stats)) {
             // If stats are published we count that the user viewed feedback.
             return self::COGNITIVE_LEVEL_3;
         }

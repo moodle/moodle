@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Unit tests for course activities.
+ * Unit tests for activities completed by classification.
  *
  * @package   core_analytics
  * @copyright 2017 David Monllaó {@link http://www.davidmonllao.com}
@@ -25,13 +25,13 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Unit tests for course activities
+ * Unit tests for activities completed by classification.
  *
  * @package   core_analytics
  * @copyright 2017 David Monllaó {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_analytics_course_activities_testcase extends advanced_testcase {
+class community_of_inquiry_activities_completed_by_testcase extends advanced_testcase {
 
     /**
      * availability_levels
@@ -58,8 +58,6 @@ class core_analytics_course_activities_testcase extends advanced_testcase {
 
         // Forum1 is ignored as section 0 does not count.
         $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
-
-        $courseman = new \core_analytics\course($course);
 
         $modinfo = get_fast_modinfo($course, $stu1->id);
         $cm = $modinfo->get_cm($forum->cmid);
@@ -93,20 +91,23 @@ class core_analytics_course_activities_testcase extends advanced_testcase {
 
         $cm = $modinfo->get_cm($forum->cmid);
 
+        $course = new \core_analytics\course($course);
+        list($indicator, $method) = $this->instantiate_indicator('mod_forum', $course);
+
         // Condition from after provided end time.
-        $this->assertCount(0, $courseman->get_activities('forum', strtotime('2015-10-20 00:00:00 GMT'),
+        $this->assertCount(0, $method->invoke($indicator, strtotime('2015-10-20 00:00:00 GMT'),
             strtotime('2015-10-21 00:00:00 GMT'), $stu1));
 
         // Condition until before provided start time
-        $this->assertCount(0, $courseman->get_activities('forum', strtotime('2015-10-25 00:00:00 GMT'),
+        $this->assertCount(0, $method->invoke($indicator, strtotime('2015-10-25 00:00:00 GMT'),
             strtotime('2015-10-26 00:00:00 GMT'), $stu1));
 
         // Condition until after provided end time.
-        $this->assertCount(0, $courseman->get_activities('forum', strtotime('2015-10-22 00:00:00 GMT'),
+        $this->assertCount(0, $method->invoke($indicator, strtotime('2015-10-22 00:00:00 GMT'),
             strtotime('2015-10-23 00:00:00 GMT'), $stu1));
 
         // Condition until after provided start time and before provided end time.
-        $this->assertCount(1, $courseman->get_activities('forum', strtotime('2015-10-22 00:00:00 GMT'),
+        $this->assertCount(1, $method->invoke($indicator, strtotime('2015-10-22 00:00:00 GMT'),
             strtotime('2015-10-25 00:00:00 GMT'), $stu1));
     }
 
@@ -138,7 +139,8 @@ class core_analytics_course_activities_testcase extends advanced_testcase {
         $forum5 = $this->getDataGenerator()->create_module('forum', array('course' => $course->id),
             array('section' => 4));
 
-        $courseman = new \core_analytics\course($course);
+        $course = new \core_analytics\course($course);
+        list($indicator, $method) = $this->instantiate_indicator('mod_forum', $course);
 
         $this->setUser($stu1);
 
@@ -146,10 +148,10 @@ class core_analytics_course_activities_testcase extends advanced_testcase {
         $second = $startdate + WEEKSECS;
         $third = $startdate + (WEEKSECS * 2);
         $forth = $startdate + (WEEKSECS * 3);
-        $this->assertCount(1, $courseman->get_activities('forum', $first, $first + WEEKSECS, $stu1));
-        $this->assertCount(1, $courseman->get_activities('forum', $second, $second + WEEKSECS, $stu1));
-        $this->assertCount(0, $courseman->get_activities('forum', $third, $third + WEEKSECS, $stu1));
-        $this->assertCount(2, $courseman->get_activities('forum', $forth, $forth + WEEKSECS, $stu1));
+        $this->assertCount(1, $method->invoke($indicator, $first, $first + WEEKSECS, $stu1));
+        $this->assertCount(1, $method->invoke($indicator, $second, $second + WEEKSECS, $stu1));
+        $this->assertCount(0, $method->invoke($indicator, $third, $third + WEEKSECS, $stu1));
+        $this->assertCount(2, $method->invoke($indicator, $forth, $forth + WEEKSECS, $stu1));
     }
 
     /**
@@ -189,7 +191,8 @@ class core_analytics_course_activities_testcase extends advanced_testcase {
         $forum6 = $this->getDataGenerator()->create_module('forum', array('course' => $course->id),
             array('section' => 12));
 
-        $courseman = new \core_analytics\course($course);
+        $course = new \core_analytics\course($course);
+        list($indicator, $method) = $this->instantiate_indicator('mod_forum', $course);
 
         $this->setUser($stu1);
 
@@ -199,10 +202,10 @@ class core_analytics_course_activities_testcase extends advanced_testcase {
         $second = $startdate + $duration;
         $third = $startdate + ($duration * 2);
         $forth = $startdate + ($duration * 3);
-        $this->assertCount(1, $courseman->get_activities('forum', $first, $first + $duration, $stu1));
-        $this->assertCount(1, $courseman->get_activities('forum', $second, $second + $duration, $stu1));
-        $this->assertCount(1, $courseman->get_activities('forum', $third, $third + $duration, $stu1));
-        $this->assertCount(2, $courseman->get_activities('forum', $forth, $forth + $duration, $stu1));
+        $this->assertCount(1, $method->invoke($indicator, $first, $first + $duration, $stu1));
+        $this->assertCount(1, $method->invoke($indicator, $second, $second + $duration, $stu1));
+        $this->assertCount(1, $method->invoke($indicator, $third, $third + $duration, $stu1));
+        $this->assertCount(2, $method->invoke($indicator, $forth, $forth + $duration, $stu1));
 
         // Split the course in as many parts as sections.
         $duration = ($enddate - $startdate) / $numsections;
@@ -210,15 +213,94 @@ class core_analytics_course_activities_testcase extends advanced_testcase {
             // The -1 because section 1 start represents the course start.
             $timeranges[$i] = $startdate + ($duration * ($i - 1));
         }
-        $this->assertCount(1, $courseman->get_activities('forum', $timeranges[1], $timeranges[1] + $duration, $stu1));
-        $this->assertCount(1, $courseman->get_activities('forum', $timeranges[4], $timeranges[4] + $duration, $stu1));
-        $this->assertCount(1, $courseman->get_activities('forum', $timeranges[8], $timeranges[8] + $duration, $stu1));
-        $this->assertCount(1, $courseman->get_activities('forum', $timeranges[10], $timeranges[10] + $duration, $stu1));
-        $this->assertCount(1, $courseman->get_activities('forum', $timeranges[12], $timeranges[12] + $duration, $stu1));
+        $this->assertCount(1, $method->invoke($indicator, $timeranges[1], $timeranges[1] + $duration, $stu1));
+        $this->assertCount(1, $method->invoke($indicator, $timeranges[4], $timeranges[4] + $duration, $stu1));
+        $this->assertCount(1, $method->invoke($indicator, $timeranges[8], $timeranges[8] + $duration, $stu1));
+        $this->assertCount(1, $method->invoke($indicator, $timeranges[10], $timeranges[10] + $duration, $stu1));
+        $this->assertCount(1, $method->invoke($indicator, $timeranges[12], $timeranges[12] + $duration, $stu1));
 
         // Nothing here.
-        $this->assertCount(0, $courseman->get_activities('forum', $timeranges[2], $timeranges[2] + $duration, $stu1));
-        $this->assertCount(0, $courseman->get_activities('forum', $timeranges[3], $timeranges[3] + $duration, $stu1));
+        $this->assertCount(0, $method->invoke($indicator, $timeranges[2], $timeranges[2] + $duration, $stu1));
+        $this->assertCount(0, $method->invoke($indicator, $timeranges[3], $timeranges[3] + $duration, $stu1));
+    }
+
+    /**
+     * test_get_activities_with_specific_restrictions
+     *
+     * @return void
+     */
+    public function test_get_activities_with_specific_restrictions() {
+
+        list($course, $stu1) = $this->setup_course();
+
+        $end = strtotime('2015-10-24 00:00:00 GMT');
+
+        // 1 with time close, one without.
+        $params = array('course' => $course->id);
+        $assign1 = $this->getDataGenerator()->create_module('assign', $params);
+        $params['duedate'] = $end;
+        $assign2 = $this->getDataGenerator()->create_module('assign', $params);
+
+        // 1 with time close, one without.
+        $params = array('course' => $course->id);
+        $choice1 = $this->getDataGenerator()->create_module('choice', $params);
+        $params['timeclose'] = $end;
+        $choice1 = $this->getDataGenerator()->create_module('choice', $params);
+
+        // 1 with time close, one without.
+        $params = array('course' => $course->id);
+        $data1 = $this->getDataGenerator()->create_module('data', $params);
+        $params['timeavailableto'] = $end;
+        $data1 = $this->getDataGenerator()->create_module('data', $params);
+
+        // 1 with time close, one without.
+        $params = array('course' => $course->id);
+        $feedback1 = $this->getDataGenerator()->create_module('feedback', $params);
+        $params['timeclose'] = $end;
+        $feedback1 = $this->getDataGenerator()->create_module('feedback', $params);
+
+        // 1 with time close, one without.
+        $params = array('course' => $course->id);
+        $lesson1 = $this->getDataGenerator()->create_module('lesson', $params);
+        $params['deadline'] = $end;
+        $lesson1 = $this->getDataGenerator()->create_module('lesson', $params);
+
+        // 1 with time close, one without.
+        $params = array('course' => $course->id);
+        $quiz1 = $this->getDataGenerator()->create_module('quiz', $params);
+        $params['timeclose'] = $end;
+        $quiz1 = $this->getDataGenerator()->create_module('quiz', $params);
+
+        // 1 with time close, one without.
+        $params = array('course' => $course->id);
+        $scorm1 = $this->getDataGenerator()->create_module('scorm', $params);
+        $params['timeclose'] = $end;
+        $scorm1 = $this->getDataGenerator()->create_module('scorm', $params);
+
+        // 1 with time close, one without.
+        $params = array('course' => $course->id);
+        $workshop1 = $this->getDataGenerator()->create_module('workshop', $params);
+        $params['submissionend'] = $end;
+        $workshop1 = $this->getDataGenerator()->create_module('workshop', $params);
+
+        $course = new \core_analytics\course($course);
+
+        $activitytypes = array('mod_assign', 'mod_choice', 'mod_data', 'mod_feedback', 'mod_lesson',
+            'mod_quiz', 'mod_scorm', 'mod_workshop');
+        foreach ($activitytypes as $activitytype) {
+
+            list($indicator, $method) = $this->instantiate_indicator($activitytype, $course);
+
+            $message = $activitytype . ' activity type returned activities do not match expected size';
+            $this->assertCount(0, $method->invoke($indicator, strtotime('2015-10-20 00:00:00 GMT'),
+                strtotime('2015-10-21 00:00:00 GMT'), $stu1), $message);
+
+            $this->assertCount(0, $method->invoke($indicator, strtotime('2015-10-25 00:00:00 GMT'),
+                strtotime('2015-10-26 00:00:00 GMT'), $stu1), $message);
+
+            $this->assertCount(1, $method->invoke($indicator, strtotime('2015-10-22 00:00:00 GMT'),
+                strtotime('2015-10-25 00:00:00 GMT'), $stu1), $message);
+        }
     }
 
     /**
@@ -241,6 +323,29 @@ class core_analytics_course_activities_testcase extends advanced_testcase {
         $this->getDataGenerator()->enrol_user($stu1->id, $course->id, 'student');
 
         return array($course, $stu1);
+    }
+
+    /**
+     * Returns the module cognitive depth indicator and the reflection method.
+     *
+     * @param string $modulename
+     * @param \core_analytics\course $course
+     * @return array
+     */
+    private function instantiate_indicator($modulename, \core_analytics\course $course) {
+
+        $classname = '\\' . $modulename . '\analytics\indicator\cognitive_depth';
+        $indicator = new $classname();
+        $class = new ReflectionClass($indicator);
+
+        $property = $class->getProperty('course');
+        $property->setAccessible(true);
+        $property->setValue($indicator, $course);
+
+        $method = new ReflectionMethod($indicator, 'get_activities');
+        $method->setAccessible(true);
+
+        return array($indicator, $method);
     }
 
 }

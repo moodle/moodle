@@ -36,25 +36,6 @@ defined('MOODLE_INTERNAL') || die();
 abstract class activity_base extends \core_analytics\local\indicator\community_of_inquiry_activity {
 
     /**
-     * @var int[] Tiny cache to hold feedback instance - publish_stats field relation.
-     */
-    protected $publishstats = array();
-
-    /**
-     * fill_publishstats
-     *
-     * @param \cm_info $cm
-     * @return void
-     */
-    protected function fill_publishstats(\cm_info $cm) {
-        global $DB;
-
-        if (!isset($this->publishstats[$cm->instance])) {
-            $this->publishstats[$cm->instance] = $DB->get_field('feedback', 'publish_stats', array('id' => $cm->instance));
-        }
-    }
-
-    /**
      * Overwritten to mark as viewed if stats are published.
      *
      * @param \cm_info $cm
@@ -65,11 +46,20 @@ abstract class activity_base extends \core_analytics\local\indicator\community_o
      */
     protected function feedback_viewed(\cm_info $cm, $contextid, $userid, $after = null) {
         // If stats are published any write action counts as viewed feedback.
-        if (!empty($this->publishstats[$cm->instance])) {
+        if (!empty($this->instancedata[$cm->instance]->publish_stats)) {
             $user = (object)['id' => $userid];
             return $this->any_write_log($contextid, $user);
         }
 
         return parent::feedback_viewed($cm, $contextid, $userid, $after);
+    }
+
+    /**
+     * Returns the name of the field that controls activity availability.
+     *
+     * @return null|string
+     */
+    protected function get_timeclose_field() {
+        return 'timeclose';
     }
 }

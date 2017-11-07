@@ -36,6 +36,13 @@ defined('MOODLE_INTERNAL') || die();
 abstract class community_of_inquiry_activity extends linear {
 
     /**
+     * instancedata
+     *
+     * @var array
+     */
+    protected $instancedata = array();
+
+    /**
      * @var \core_analytics\course
      */
     protected $course = null;
@@ -478,8 +485,8 @@ abstract class community_of_inquiry_activity extends linear {
             // Samples are at cm level or below.
             $useractivities = array(\context_module::instance($cm->id)->id => $cm);
         } else {
-            // All course activities.
-            $useractivities = $this->course->get_activities($this->get_activity_type(), $starttime, $endtime, $user);
+            // Activities that should be completed during this time period.
+            $useractivities = $this->get_activities($starttime, $endtime, $user);
         }
 
         return $useractivities;
@@ -739,6 +746,250 @@ abstract class community_of_inquiry_activity extends linear {
     protected function fetch_student_grades(\core_analytics\course $course) {
         $courseactivities = $course->get_all_activities($this->get_activity_type());
         $this->grades = $course->get_student_grades($courseactivities);
+    }
+
+    /**
+     * Guesses all activities that were available during a period of time.
+     *
+     * @param int $starttime
+     * @param int $endtime
+     * @param \stdClass|false $student
+     * @return array
+     */
+    protected function get_activities($starttime, $endtime, $student = false) {
+
+        $activitytype = $this->get_activity_type();
+
+        // Var $student may not be available, default to not calculating dynamic data.
+        $studentid = -1;
+        if ($student) {
+            $studentid = $student->id;
+        }
+        $modinfo = get_fast_modinfo($this->course->get_course_data(), $studentid);
+        $activities = $modinfo->get_instances_of($activitytype);
+
+        $timerangeactivities = array();
+        foreach ($activities as $activity) {
+
+            if (!$this->activity_completed_by($activity, $starttime, $endtime, $student)) {
+                continue;
+            }
+
+            $timerangeactivities[$activity->context->id] = $activity;
+        }
+
+        return $timerangeactivities;
+    }
+
+    /**
+     * Was the activity supposed to be completed during the provided time range?.
+     *
+     * @param \cm_info $activity
+     * @param int $starttime
+     * @param int $endtime
+     * @param \stdClass|false $student
+     * @return bool
+     */
+    protected function activity_completed_by(\cm_info $activity, $starttime, $endtime, $student = false) {
+
+        // We can't check uservisible because:
+        // - Any activity with available until would not be counted.
+        // - Sites may block student's course view capabilities once the course is closed.
+
+        // Students can not view hidden activities by default, this is not reliable 100% but accurate in most of the cases.
+        if ($activity->visible === false) {
+            return false;
+        }
+
+        // Give priority to the different methods activities have to set a "due" date.
+        $return = $this->activity_type_completed_by($activity, $starttime, $endtime, $student);
+        if (!is_null($return)) {
+            // Method activity_type_completed_by returns null if there is no due date method or there is but it is not set.
+            return $return;
+        }
+
+        // We skip activities that were not yet visible or their 'until' was not in this $starttime - $endtime range.
+        if ($activity->availability) {
+            $info = new \core_availability\info_module($activity);
+            $activityavailability = $this->availability_completed_by($info, $starttime, $endtime);
+            if ($activityavailability === false) {
+                return false;
+            } else if ($activityavailability === true) {
+                // This activity belongs to this time range.
+                return true;
+            }
+        }
+
+        // We skip activities in sections that were not yet visible or their 'until' was not in this $starttime - $endtime range.
+        $section = $activity->get_modinfo()->get_section_info($activity->sectionnum);
+        if ($section->availability) {
+            $info = new \core_availability\info_section($section);
+            $sectionavailability = $this->availability_completed_by($info, $starttime, $endtime);
+            if ($sectionavailability === false) {
+                return false;
+            } else if ($sectionavailability === true) {
+                // This activity belongs to this section time range.
+                return true;
+            }
+        }
+
+        // When the course is using format weeks we use the week's end date.
+        $format = course_get_format($activity->get_modinfo()->get_course());
+        // We should change this in MDL-60702.
+        if (method_exists($format, 'get_section_dates')) {
+            $dates = $format->get_section_dates($section);
+
+            // We need to consider the +2 hours added by get_section_dates.
+            // Avoid $starttime <= $dates->end because $starttime may be the start of the next week.
+            if ($starttime < ($dates->end - 7200) && $endtime >= ($dates->end - 7200)) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        if ($activity->sectionnum == 0) {
+            return false;
+        }
+
+        if (!$this->course->get_end() || !$this->course->get_start()) {
+            debugging('Activities which due date is in a time range can not be calculated ' .
+                'if the course doesn\'t have start and end date', DEBUG_DEVELOPER);
+            return false;
+        }
+
+        if (!course_format_uses_sections($this->course->get_course_data()->format)) {
+            // If it does not use sections and there are no availability conditions to access it it is available
+            // and we can not magically classify it into any other time range than this one.
+            return true;
+        }
+
+        // Split the course duration in the number of sections and consider the end of each section the due
+        // date of all activities contained in that section.
+        $formatoptions = $format->get_format_options();
+        if (!empty($formatoptions['numsections'])) {
+            $nsections = $formatoptions['numsections'];
+        } else {
+            // There are course format that use sections but without numsections, we fallback to the number
+            // of cached sections in get_section_info_all, not that accurate though.
+            $coursesections = $activity->get_modinfo()->get_section_info_all();
+            $nsections = count($coursesections);
+            if (isset($coursesections[0])) {
+                // We don't count section 0 if it exists.
+                $nsections--;
+            }
+        }
+
+        $courseduration = $this->course->get_end() - $this->course->get_start();
+        $sectionduration = round($courseduration / $nsections);
+        $activitysectionenddate = $this->course->get_start() + ($sectionduration * $activity->sectionnum);
+        if ($activitysectionenddate > $starttime && $activitysectionenddate <= $endtime) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * True if the activity is due or it has been closed during this period, false if during another period, null if no due time.
+     *
+     * It can be overwritten by activities that allow teachers to set a due date or a time close separately
+     * from Moodle availability system. Note that in most of the cases overwriting get_timeclose_field should
+     * be enough.
+     *
+     * Returns true or false if the time close date falls into the provided time range. Null otherwise.
+     *
+     * @param \cm_info $activity
+     * @param int $starttime
+     * @param int $endtime
+     * @param \stdClass|false $student
+     * @return null
+     */
+    protected function activity_type_completed_by(\cm_info $activity, $starttime, $endtime, $student = false) {
+
+        $fieldname = $this->get_timeclose_field();
+        if (!$fieldname) {
+            // This activity type do not have its own availability control.
+            return null;
+        }
+
+        $this->fill_instance_data($activity);
+        $instance = $this->instancedata[$activity->instance];
+
+        if (!$instance->{$fieldname}) {
+            return null;
+        }
+
+        if ($starttime < $instance->{$fieldname} && $endtime >= $instance->{$fieldname}) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Returns the name of the field that controls activity availability.
+     *
+     * Should be overwritten by activities that allow teachers to set a due date or a time close separately
+     * from Moodle availability system.
+     *
+     * Just 1 field will not be enough for all cases, but for the most simple ones without
+     * overrides and stuff like that.
+     *
+     * @return null|string
+     */
+    protected function get_timeclose_field() {
+        return null;
+    }
+
+    /**
+     * Check if the activity/section should have been completed during the provided period according to its availability rules.
+     *
+     * @param \core_availability\info $info
+     * @param int $starttime
+     * @param int $endtime
+     * @return bool|null
+     */
+    protected function availability_completed_by(\core_availability\info $info, $starttime, $endtime) {
+
+        $dateconditions = $info->get_availability_tree()->get_all_children('\availability_date\condition');
+        foreach ($dateconditions as $condition) {
+            // Availability API does not allow us to check from / to dates nicely, we need to be naughty.
+            $conditiondata = $condition->save();
+
+            if ($conditiondata->d === \availability_date\condition::DIRECTION_FROM &&
+                    $conditiondata->t > $endtime) {
+                // Skip this activity if any 'from' date is later than the end time.
+                return false;
+
+            } else if ($conditiondata->d === \availability_date\condition::DIRECTION_UNTIL &&
+                    ($conditiondata->t < $starttime || $conditiondata->t > $endtime)) {
+                // Skip activity if any 'until' date is not in $starttime - $endtime range.
+                return false;
+            } else if ($conditiondata->d === \availability_date\condition::DIRECTION_UNTIL &&
+                    $conditiondata->t < $endtime && $conditiondata->t > $starttime) {
+                return true;
+            }
+        }
+
+        // This can be interpreted as 'the activity was available but we don't know if its expected completion date
+        // was during this period.
+        return null;
+    }
+
+    /**
+     * Fills in activity instance data.
+     *
+     * @param \cm_info $cm
+     * @return void
+     */
+    protected function fill_instance_data(\cm_info $cm) {
+        global $DB;
+
+        if (!isset($this->instancedata[$cm->instance])) {
+            $this->instancedata[$cm->instance] = $DB->get_record($this->get_activity_type(), array('id' => $cm->instance),
+                '*', MUST_EXIST);
+        }
     }
 
     /**
