@@ -5908,6 +5908,9 @@ img.iconsmall {
 .calendarwrapper {
   position: relative;
 }
+.summary-modal-container .description-content > p {
+  margin: 0;
+}
 /* course.less */
 /* COURSE CONTENT */
 /* stylelint-disable unit-blacklist */

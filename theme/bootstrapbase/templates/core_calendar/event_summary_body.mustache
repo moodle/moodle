@@ -29,6 +29,7 @@
     }
 }}
 <div{{!
+    }} class="summary-modal-container"{{!
     }} data-region="summary-modal-container"{{!
     }} data-event-id="{{id}}"{{!
     }} data-event-title="{{name}}"{{!
@@ -49,7 +50,7 @@
         {{#description}}
         <div class="row-fluid m-t-1">
             <div class="span1">{{#pix}} i/calendareventdescription, core, {{#str}} description {{/str}} {{/pix}}</div>
-            <div class="span11">{{{.}}}</div>
+            <div class="description-content span11">{{{.}}}</div>
         </div>
         {{/description}}
         {{#iscategoryevent}}

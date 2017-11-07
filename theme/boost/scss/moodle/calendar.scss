@@ -417,3 +417,11 @@ table.calendartable caption {
         display: block;
     }
 }
+
+.summary-modal-container {
+    .description-content {
+        > p {
+            margin: 0;
+        }
+    }
+}
