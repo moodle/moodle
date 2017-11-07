@@ -112,7 +112,7 @@ class cc_forum extends entities {
 
     public function get_topic_data ($instance) {
 
-        $topic_data = '';
+        $topic_data = array();
 
         $topic_file = $this->get_external_xml($instance['resource_indentifier']);
 
