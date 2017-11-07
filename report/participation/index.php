@@ -25,6 +25,7 @@
 
 require('../../config.php');
 require_once($CFG->dirroot.'/lib/tablelib.php');
+require_once($CFG->dirroot.'/notes/lib.php');
 require_once($CFG->dirroot.'/report/participation/locallib.php');
 
 define('DEFAULT_PAGE_SIZE', 20);
@@ -336,7 +337,7 @@ if (!empty($instanceid) && !empty($roleid)) {
     echo '<h2>'.get_string('counteditems', '', $a).'</h2>'."\n";
 
     if (!empty($CFG->messaging)) {
-        echo '<form action="'.$CFG->wwwroot.'/user/action_redir.php" method="post" id="studentsform">'."\n";
+        echo '<form action="'.$CFG->wwwroot.'/user/action_redir.php" method="post" id="participantsform">'."\n";
         echo '<div>'."\n";
         echo '<input type="hidden" name="id" value="'.$id.'" />'."\n";
         echo '<input type="hidden" name="returnto" value="'. s($PAGE->url) .'" />'."\n";
@@ -372,23 +373,25 @@ if (!empty($instanceid) && !empty($roleid)) {
     if (!empty($CFG->messaging)) {
         $buttonclasses = 'btn btn-secondary';
         echo '<div class="selectbuttons btn-group">';
-        echo '<input type="button" id="checkall" value="'.get_string('selectall').'" class="'. $buttonclasses .'"> '."\n";
+        echo '<input type="button" id="checkallonpage" value="'.get_string('selectall').'" class="'. $buttonclasses .'"> '."\n";
         echo '<input type="button" id="checknone" value="'.get_string('deselectall').'" class="'. $buttonclasses .'"> '."\n";
         if ($perpage >= $matchcount) {
-            echo '<input type="button" id="checknos" value="'.get_string('selectnos').'" class="'. $buttonclasses .'">'."\n";
+            echo '<input type="button" id="checkallnos" value="'.get_string('selectnos').'" class="'. $buttonclasses .'">'."\n";
         }
         echo '</div>';
         echo '<div class="p-y-1">';
         echo html_writer::label(get_string('withselectedusers'), 'formactionselect');
-        $displaylist['messageselect.php'] = get_string('messageselectadd');
-        echo html_writer::select($displaylist, 'formaction', '', array('' => 'choosedots'), array('id' => 'formactionselect'));
-        echo $OUTPUT->help_icon('withselectedusers');
-        echo '<input type="submit" value="' . get_string('ok') . '" class="'. $buttonclasses .'"/>'."\n";
+        $displaylist['#messageselect'] = get_string('messageselectadd');
+        echo html_writer::select($displaylist, 'formaction', '', array('' => 'choosedots'), array('id' => 'formactionid'));
         echo '</div>';
         echo '</div>'."\n";
         echo '</form>'."\n";
 
-        $PAGE->requires->js_init_call('M.report_participation.init');
+        $options = new stdClass();
+        $options->courseid = $course->id;
+        $options->noteStateNames = note_get_state_names();
+        $options->stateHelpIcon = $OUTPUT->help_icon('publishstate', 'notes');
+        $PAGE->requires->js_call_amd('core_user/participants', 'init', [$options]);
     }
     echo '</div>'."\n";
 }

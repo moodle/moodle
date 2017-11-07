@@ -159,3 +159,7 @@ privacy,core_hub
 privacy_help,core_hub
 configloginhttps,core_admin
 loginhttps,core_admin
+groupaddnewnote,core_notes
+selectnotestate,core_notes
+extendenrol,core
+groupextendenrol,core

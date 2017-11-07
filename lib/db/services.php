@@ -1034,6 +1034,7 @@ $functions = array(
         'classpath' => 'notes/externallib.php',
         'description' => 'Create notes',
         'type' => 'write',
+        'ajax' => true,
         'capabilities' => 'moodle/notes:manage',
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
