@@ -53,6 +53,12 @@
             <div class="description-content span11">{{{.}}}</div>
         </div>
         {{/description}}
+        {{#isactionevent}}
+        <div class="row-fluid m-t-1">
+            <div class="span1">{{#pix}} i/courseevent, core, {{#str}} course {{/str}} {{/pix}}</div>
+            <div class="span11"><a href="{{course.viewurl}}">{{{course.fullname}}}</a></div>
+        </div>
+        {{/isactionevent}}
         {{#iscategoryevent}}
         <div class="row-fluid m-t-1">
             <div class="span1">{{#pix}} i/categoryevent, core, {{#str}} category {{/str}} {{/pix}}</div>
