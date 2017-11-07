@@ -36,7 +36,7 @@
 </label>
 <select name="state" id="bulk-state" class="custom-select">
 {{#stateNames}}
-    <option value="{{value}}">{{label}}</option>
+    <option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>
 {{/stateNames}}
 </select>
 {{{stateHelpIcon}}}

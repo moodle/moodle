@@ -147,7 +147,17 @@ define(['jquery', 'core/str', 'core/modal_factory', 'core/modal_events', 'core/t
 
         var states = [];
         for (var key in this.noteStateNames) {
-            states.push({value: key, label: this.noteStateNames[key]});
+            switch (key) {
+                case 'draft':
+                    states.push({value: 'personal', label: this.noteStateNames[key]});
+                    break;
+                case 'public':
+                    states.push({value: 'course', label: this.noteStateNames[key], selected: 1});
+                    break;
+                case 'site':
+                    states.push({value: key, label: this.noteStateNames[key]});
+                    break;
+            }
         }
 
         var context = {stateNames: states, stateHelpIcon: this.stateHelpIcon};
