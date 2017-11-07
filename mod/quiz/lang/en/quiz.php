@@ -285,37 +285,27 @@ $string['editquestion'] = 'Edit question';
 $string['editquestions'] = 'Edit questions';
 $string['editquiz'] = 'Edit quiz';
 $string['editquizquestions'] = 'Edit quiz questions';
-$string['emailconfirmbody'] = 'Dear {$a->username},
+$string['emailconfirmbody'] = 'Hi {$a->username},
 
-Thank you for submitting your answers to
-\'{$a->quizname}\'
-in course \'{$a->coursename}\'
-at {$a->submissiontime}.
+Thank you for submitting your answers to \'{$a->quizname}\' in course \'{$a->coursename}\' at {$a->submissiontime}.
 
-This message confirms that we have safely received your answers.
+This message confirms that your answers have been saved.
 
 You can access this quiz at {$a->quizurl}.';
 $string['emailconfirmsmall'] = 'Thank you for submitting your answers to \'{$a->quizname}\'';
 $string['emailconfirmsubject'] = 'Submission confirmation: {$a->quizname}';
-$string['emailnotifybody'] = 'Dear {$a->username},
+$string['emailnotifybody'] = 'Hi {$a->username},
 
-{$a->studentname} has completed
-\'{$a->quizname}\' ({$a->quizurl})
-in course \'{$a->coursename}\'
+{$a->studentname} has completed \'{$a->quizname}\' ({$a->quizurl}) in course \'{$a->coursename}\'.
 
 You can review this attempt at {$a->quizreviewurl}.';
 $string['emailnotifysmall'] = '{$a->studentname} has completed {$a->quizname}. See {$a->quizreviewurl}';
 $string['emailnotifysubject'] = '{$a->studentname} has completed {$a->quizname}';
-$string['emailoverduebody'] = 'Dear {$a->studentname},
+$string['emailoverduebody'] = 'Hi {$a->studentname},
 
-You started an attempt at \'{$a->quizname}\'
-in course \'{$a->coursename}\', but you never submitted it. It should have been
-submitted by {$a->attemptduedate}.
+You started an attempt at \'{$a->quizname}\' in course \'{$a->coursename}\', but you never submitted it. It should have been submitted by {$a->attemptduedate}.
 
-If you would still like to submit this attempt, please go to
-{$a->attemptsummaryurl} and click the submit button.
-You must do this before {$a->attemptgraceend}
-otherwise your attempt will not be counted.';
+If you would still like to submit this attempt, please go to {$a->attemptsummaryurl} and click the submit button. You must do this before {$a->attemptgraceend} otherwise your attempt will not be counted.';
 $string['emailoverduesmall'] = 'You did not submit your attempt at {$a->quizname}. Please go to {$a->attemptsummaryurl} before {$a->attemptgraceend} if you would still like to submit.';
 $string['emailoverduesubject'] = 'Attempt now overdue: {$a->quizname}';
 $string['empty'] = 'Empty';
