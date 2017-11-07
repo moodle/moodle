@@ -764,4 +764,69 @@ class core_enrol_externallib_testcase extends externallib_advanced_testcase {
         $ue = $DB->get_record('user_enrolments', ['id' => $ueid], '*', MUST_EXIST);
         $this->assertEquals(ENROL_USER_SUSPENDED, $ue->status);
     }
+
+    /**
+     * Test for core_enrol_external::unenrol_user_enrolment().
+     */
+    public function test_unenerol_user_enrolment() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+        $datagen = $this->getDataGenerator();
+
+        /** @var enrol_manual_plugin $manualplugin */
+        $manualplugin = enrol_get_plugin('manual');
+        $this->assertNotNull($manualplugin);
+
+        $studentroleid = $DB->get_field('role', 'id', ['shortname' => 'student'], MUST_EXIST);
+        $teacherroleid = $DB->get_field('role', 'id', ['shortname' => 'editingteacher'], MUST_EXIST);
+        $course = $datagen->create_course();
+        $user = $datagen->create_user();
+        $teacher = $datagen->create_user();
+
+        $instanceid = null;
+        $instances = enrol_get_instances($course->id, true);
+        foreach ($instances as $inst) {
+            if ($inst->enrol == 'manual') {
+                $instanceid = (int)$inst->id;
+                break;
+            }
+        }
+        if (empty($instanceid)) {
+            $instanceid = $manualplugin->add_default_instance($course);
+            if (empty($instanceid)) {
+                $instanceid = $manualplugin->add_instance($course);
+            }
+        }
+        $this->assertNotNull($instanceid);
+
+        $instance = $DB->get_record('enrol', ['id' => $instanceid], '*', MUST_EXIST);
+        $manualplugin->enrol_user($instance, $user->id, $studentroleid, 0, 0, ENROL_USER_ACTIVE);
+        $manualplugin->enrol_user($instance, $teacher->id, $teacherroleid, 0, 0, ENROL_USER_ACTIVE);
+        $ueid = (int)$DB->get_field(
+            'user_enrolments',
+            'id',
+            ['enrolid' => $instance->id, 'userid' => $user->id],
+            MUST_EXIST
+        );
+
+        // Login as teacher.
+        $this->setUser($teacher);
+
+        // Invalid data by passing invalid ueid.
+        $data = core_enrol_external::unenrol_user_enrolment(101010);
+        $data = external_api::clean_returnvalue(core_enrol_external::unenrol_user_enrolment_returns(), $data);
+        $this->assertFalse($data['result']);
+        $this->assertNotEmpty($data['errors']);
+
+        // Valid data.
+        $data = core_enrol_external::unenrol_user_enrolment($ueid);
+        $data = external_api::clean_returnvalue(core_enrol_external::unenrol_user_enrolment_returns(), $data);
+        $this->assertTrue($data['result']);
+        $this->assertEmpty($data['errors']);
+
+        // Check unenrol user enrolment.
+        $ue = $DB->count_records('user_enrolments', ['id' => $ueid]);
+        $this->assertEquals(0, $ue);
+    }
 }

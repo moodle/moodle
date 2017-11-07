@@ -249,6 +249,8 @@ if ($bulkoperations) {
 
 echo $participanttablehtml;
 
+$PAGE->requires->js_call_amd('core_user/name_page_filter', 'init');
+
 $perpageurl = clone($baseurl);
 $perpageurl->remove_params('perpage');
 if ($perpage == SHOW_ALL_PAGE_SIZE && $participanttable->totalrows > DEFAULT_PAGE_SIZE) {

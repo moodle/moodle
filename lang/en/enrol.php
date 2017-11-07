@@ -96,6 +96,7 @@ $string['instanceeditselfwarning'] = 'Warning:';
 $string['instanceeditselfwarningtext'] = 'You are enrolled into this course through this enrolment method, changes may affect your access to this course.';
 $string['invalidenrolinstance'] = 'Invalid enrolment instance';
 $string['invalidrole'] = 'Invalid role';
+$string['invalidrequest'] = 'Invalid request';
 $string['manageenrols'] = 'Manage enrol plugins';
 $string['manageinstance'] = 'Manage';
 $string['migratetomanual'] = 'Migrate to manual enrolments';

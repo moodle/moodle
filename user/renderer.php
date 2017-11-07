@@ -212,31 +212,34 @@ class core_user_renderer extends plugin_renderer_base {
             // Days.
             for ($i = 1; $i < 7; $i++) {
                 $timestamp = strtotime('-' . $i . ' days', $now);
-                if ($timestamp >= $minlastaccess) {
-                    $value = get_string('numdays', 'moodle', $i);
-                    $timeoptions += $this->format_filter_option(USER_FILTER_LAST_ACCESS, $criteria, $timestamp, $value);
+                if ($timestamp < $minlastaccess) {
+                    break;
                 }
+                $value = get_string('numdays', 'moodle', $i);
+                $timeoptions += $this->format_filter_option(USER_FILTER_LAST_ACCESS, $criteria, $timestamp, $value);
             }
             // Weeks.
             for ($i = 1; $i < 10; $i++) {
                 $timestamp = strtotime('-'.$i.' weeks', $now);
-                if ($timestamp >= $minlastaccess) {
-                    $value = get_string('numweeks', 'moodle', $i);
-                    $timeoptions += $this->format_filter_option(USER_FILTER_LAST_ACCESS, $criteria, $timestamp, $value);
+                if ($timestamp < $minlastaccess) {
+                    break;
                 }
+                $value = get_string('numweeks', 'moodle', $i);
+                $timeoptions += $this->format_filter_option(USER_FILTER_LAST_ACCESS, $criteria, $timestamp, $value);
             }
             // Months.
             for ($i = 2; $i < 12; $i++) {
                 $timestamp = strtotime('-'.$i.' months', $now);
-                if ($timestamp >= $minlastaccess) {
-                    $value = get_string('nummonths', 'moodle', $i);
-                    $timeoptions += $this->format_filter_option(USER_FILTER_LAST_ACCESS, $criteria, $timestamp, $value);
+                if ($timestamp < $minlastaccess) {
+                    break;
                 }
+                $value = get_string('nummonths', 'moodle', $i);
+                $timeoptions += $this->format_filter_option(USER_FILTER_LAST_ACCESS, $criteria, $timestamp, $value);
             }
             // Try a year.
-            $timestamp = strtotime('-'.$i.' year', $now);
+            $timestamp = strtotime('-1 year', $now);
             if ($timestamp >= $minlastaccess) {
-                $value = get_string('lastyear', 'moodle');
+                $value = get_string('numyear', 'moodle', 1);
                 $timeoptions += $this->format_filter_option(USER_FILTER_LAST_ACCESS, $criteria, $timestamp, $value);
             }
             if (!empty($lastaccess0exists)) {
@@ -298,6 +301,9 @@ class core_user_renderer extends plugin_renderer_base {
                 get_string('inactive'));
         }
 
+        // Add missing applied filters to the filter options.
+        $filteroptions = $this->handle_missing_applied_filters($filtersapplied, $filteroptions);
+
         $indexpage = new \core_user\output\unified_filter($filteroptions, $filtersapplied);
         $context = $indexpage->export_for_template($this->output);
 
@@ -317,6 +323,71 @@ class core_user_renderer extends plugin_renderer_base {
         $optionlabel = get_string('filteroption', 'moodle', (object)['criteria' => $criteria, 'value' => $label]);
         $optionvalue = "$filtertype:$value";
         return [$optionvalue => $optionlabel];
+    }
+
+    /**
+     * Handles cases when after reloading the applied filters are missing in the filter options.
+     *
+     * @param array $filtersapplied The applied filters.
+     * @param array $filteroptions The filter options.
+     * @return array The formatted options with the ['filtertype:value' => 'criteria: label'] format.
+     */
+    private function handle_missing_applied_filters($filtersapplied, $filteroptions) {
+        global $DB;
+
+        foreach ($filtersapplied as $filter) {
+            if (!array_key_exists($filter, $filteroptions)) {
+                $filtervalue = explode(':', $filter);
+                $key = $filtervalue[0];
+                $value = $filtervalue[1];
+
+                switch($key) {
+                    case USER_FILTER_LAST_ACCESS:
+                        $now = usergetmidnight(time());
+                        $criteria = get_string('usersnoaccesssince');
+                        // Days.
+                        for ($i = 1; $i < 7; $i++) {
+                            $timestamp = strtotime('-' . $i . ' days', $now);
+                            if ($timestamp < $value) {
+                                break;
+                            }
+                            $val = get_string('numdays', 'moodle', $i);
+                            $filteroptions += $this->format_filter_option(USER_FILTER_LAST_ACCESS, $criteria, $timestamp, $val);
+                        }
+                        // Weeks.
+                        for ($i = 1; $i < 10; $i++) {
+                            $timestamp = strtotime('-'.$i.' weeks', $now);
+                            if ($timestamp < $value) {
+                                break;
+                            }
+                            $val = get_string('numweeks', 'moodle', $i);
+                            $filteroptions += $this->format_filter_option(USER_FILTER_LAST_ACCESS, $criteria, $timestamp, $val);
+                        }
+                        // Months.
+                        for ($i = 2; $i < 12; $i++) {
+                            $timestamp = strtotime('-'.$i.' months', $now);
+                            if ($timestamp < $value) {
+                                break;
+                            }
+                            $val = get_string('nummonths', 'moodle', $i);
+                            $filteroptions += $this->format_filter_option(USER_FILTER_LAST_ACCESS, $criteria, $timestamp, $val);
+                        }
+                        // Try a year.
+                        $timestamp = strtotime('-1 year', $now);
+                        if ($timestamp >= $value) {
+                            $val = get_string('numyear', 'moodle', 1);
+                            $filteroptions += $this->format_filter_option(USER_FILTER_LAST_ACCESS, $criteria, $timestamp, $val);
+                        }
+                    case USER_FILTER_ROLE:
+                        $criteria = get_string('role');
+                        if ($role = $DB->get_record('role', array('id' => $value))) {
+                            $role = role_get_name($role);
+                            $filteroptions += $this->format_filter_option(USER_FILTER_ROLE, $criteria, $value, $role);
+                        }
+                }
+            }
+        }
+        return $filteroptions;
     }
 }
 
