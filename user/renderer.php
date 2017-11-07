@@ -32,67 +32,6 @@ defined('MOODLE_INTERNAL') || die();
 class core_user_renderer extends plugin_renderer_base {
 
     /**
-     * Prints user files tree view
-     * @return string
-     */
-    public function user_files_tree() {
-        return $this->render(new user_files_tree);
-    }
-
-    /**
-     * Render user files tree
-     *
-     * @param user_files_tree $tree
-     * @return string HTML
-     */
-    public function render_user_files_tree(user_files_tree $tree) {
-        if (empty($tree->dir['subdirs']) && empty($tree->dir['files'])) {
-            $html = $this->output->box(get_string('nofilesavailable', 'repository'));
-        } else {
-            $htmlid = 'user_files_tree_'.uniqid();
-            $module = array('name' => 'core_user', 'fullpath' => '/user/module.js');
-            $this->page->requires->js_init_call('M.core_user.init_tree', array(false, $htmlid), false, $module);
-            $html = '<div id="'.$htmlid.'">';
-            $html .= $this->htmllize_tree($tree, $tree->dir);
-            $html .= '</div>';
-        }
-        return $html;
-    }
-
-    /**
-     * Internal function - creates htmls structure suitable for YUI tree.
-     * @param user_files_tree $tree
-     * @param array $dir
-     * @return string HTML
-     */
-    protected function htmllize_tree($tree, $dir) {
-        global $CFG;
-        $yuiconfig = array();
-        $yuiconfig['type'] = 'html';
-
-        if (empty($dir['subdirs']) and empty($dir['files'])) {
-            return '';
-        }
-        $result = '<ul>';
-        foreach ($dir['subdirs'] as $subdir) {
-            $image = $this->output->pix_icon(file_folder_icon(), $subdir['dirname'], 'moodle', array('class' => 'icon'));
-            $result .= '<li yuiConfig=\''.json_encode($yuiconfig).'\'><div>'.$image.' '.s($subdir['dirname']).'</div> '.
-                $this->htmllize_tree($tree, $subdir).'</li>';
-        }
-        foreach ($dir['files'] as $file) {
-            $url = file_encode_url("$CFG->wwwroot/pluginfile.php", '/'.$tree->context->id.'/user/private'.
-                $file->get_filepath().$file->get_filename(), true);
-            $filename = $file->get_filename();
-            $image = $this->output->pix_icon(file_file_icon($file), $filename, 'moodle', array('class' => 'icon'));
-            $result .= '<li yuiConfig=\''.json_encode($yuiconfig).'\'><div>'.$image.' '.html_writer::link($url, $filename).
-                '</div></li>';
-        }
-        $result .= '</ul>';
-
-        return $result;
-    }
-
-    /**
      * Prints user search utility that can search user by first initial of firstname and/or first initial of lastname
      * Prints a header with a title and the number of users found within that subset
      * @param string $url the url to return to, complete with any parameters needed for the return
@@ -317,33 +256,5 @@ class core_user_renderer extends plugin_renderer_base {
         $optionlabel = get_string('filteroption', 'moodle', (object)['criteria' => $criteria, 'value' => $label]);
         $optionvalue = "$filtertype:$value";
         return [$optionvalue => $optionlabel];
-    }
-}
-
-/**
- * User files tree
- * @copyright  2010 Dongsheng Cai <dongsheng@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class user_files_tree implements renderable {
-
-    /**
-     * @var context_user $context
-     */
-    public $context;
-
-    /**
-     * @var array $dir
-     */
-    public $dir;
-
-    /**
-     * Create user files tree object
-     */
-    public function __construct() {
-        global $USER;
-        $this->context = context_user::instance($USER->id);
-        $fs = get_file_storage();
-        $this->dir = $fs->get_area_tree($this->context->id, 'user', 'private', 0);
     }
 }
