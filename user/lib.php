@@ -564,6 +564,14 @@ function user_get_user_details($user, $course = null, array $userfields = array(
         }
     }
 
+    // Clean lang and auth fields for external functions (it may content uninstalled themes or language packs).
+    if (isset($userdetails['lang'])) {
+        $userdetails['lang'] = clean_param($userdetails['lang'], PARAM_LANG);
+    }
+    if (isset($userdetails['theme'])) {
+        $userdetails['theme'] = clean_param($userdetails['theme'], PARAM_THEME);
+    }
+
     return $userdetails;
 }
 
