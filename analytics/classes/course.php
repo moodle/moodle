@@ -356,7 +356,7 @@ class course implements \core_analytics\analysable {
         $monthsago = time() - (WEEKSECS * 4 * 2);
         $select = $filterselect . ' AND timeaccess > :timeaccess';
         $params = $filterparams + array('timeaccess' => $monthsago);
-        $sql = "SELECT timeaccess FROM {user_lastaccess} ula
+        $sql = "SELECT DISTINCT timeaccess FROM {user_lastaccess} ula
                   JOIN {enrol} e ON e.courseid = ula.courseid
                   JOIN {user_enrolments} ue ON e.id = ue.enrolid AND ue.userid = ula.userid
                  WHERE $select";
@@ -364,7 +364,7 @@ class course implements \core_analytics\analysable {
             return 0;
         }
 
-        $sql = "SELECT timeaccess FROM {user_lastaccess} ula
+        $sql = "SELECT DISTINCT timeaccess FROM {user_lastaccess} ula
                   JOIN {enrol} e ON e.courseid = ula.courseid
                   JOIN {user_enrolments} ue ON e.id = ue.enrolid AND ue.userid = ula.userid
                  WHERE $filterselect AND ula.timeaccess != 0
