@@ -121,6 +121,7 @@ class core_user_renderer extends plugin_renderer_base {
         global $CFG, $DB, $USER;
 
         require_once($CFG->dirroot . '/enrol/locallib.php');
+        require_once($CFG->dirroot . '/lib/grouplib.php');
         $manager = new course_enrolment_manager($this->page, $course);
 
         $filteroptions = [];
@@ -135,21 +136,19 @@ class core_user_renderer extends plugin_renderer_base {
         $filteroptions += $roleoptions;
 
         // Filter options for groups, if available.
-        if ($course->groupmode != NOGROUPS) {
-            if (has_capability('moodle/site:accessallgroups', $context) || $course->groupmode == VISIBLEGROUPS) {
-                // List all groups if the user can access all groups, or we are in visible group mode.
-                $groups = $manager->get_all_groups();
-            } else {
-                // Otherwise, just list the groups the user belongs to.
-                $groups = groups_get_all_groups($course->id, $USER->id);
-            }
-            $criteria = get_string('group');
-            $groupoptions = [];
-            foreach ($groups as $id => $group) {
-                $groupoptions += $this->format_filter_option(USER_FILTER_GROUP, $criteria, $id, $group->name);
-            }
-            $filteroptions += $groupoptions;
+        if (has_capability('moodle/site:accessallgroups', $context) || $course->groupmode != SEPARATEGROUPS) {
+            // List all groups if the user can access all groups, or we are in visible group mode or no groups mode.
+            $groups = $manager->get_all_groups();
+        } else {
+            // Otherwise, just list the groups the user belongs to.
+            $groups = groups_get_all_groups($course->id, $USER->id);
         }
+        $criteria = get_string('group');
+        $groupoptions = [];
+        foreach ($groups as $id => $group) {
+            $groupoptions += $this->format_filter_option(USER_FILTER_GROUP, $criteria, $id, $group->name);
+        }
+        $filteroptions += $groupoptions;
 
         $canreviewenrol = has_capability('moodle/course:enrolreview', $context);
 
@@ -237,7 +236,6 @@ class core_user_renderer extends plugin_renderer_base {
                 $filteroptions += $timeoptions;
             }
         }
-
 
         $indexpage = new \core_user\output\unified_filter($filteroptions, $filtersapplied);
         $context = $indexpage->export_for_template($this->output);
