@@ -619,7 +619,6 @@ abstract class oauth2_client extends curl {
             }
         }
 
-        // Force JSON format content in response.
         if ($acceptheader) {
             $this->setHeader('Accept: ' . $acceptheader);
         }
