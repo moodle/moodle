@@ -93,6 +93,8 @@ class calendar_event_exporter extends event_exporter_base {
 
         $values = parent::get_other_values($output);
         $event = $this->event;
+        $course = $this->related['course'];
+        $hascourse = !empty($course);
 
         // By default all events that can be edited are
         // draggable.
@@ -109,12 +111,9 @@ class calendar_event_exporter extends event_exporter_base {
             $values['editurl'] = $editurl->out(false);
         } else if ($event->get_type() == 'category') {
             $url = $event->get_category()->get_proxied_instance()->get_view_link();
-        } else if ($event->get_type() == 'course') {
-            $url = course_get_url($event->get_course()->get('id') ?: SITEID);
         } else {
             // TODO MDL-58866 We do not have any way to find urls for events outside of course modules.
-            $course = $event->get_course()->get('id') ?: SITEID;
-            $url = course_get_url($course);
+            $url = course_get_url($hascourse ? $course : SITEID);
         }
 
         $values['url'] = $url->out(false);
@@ -165,11 +164,10 @@ class calendar_event_exporter extends event_exporter_base {
         }
 
         // Include course's shortname into the event name, if applicable.
-        $course = $this->event->get_course();
-        if ($course && $course->get('id') && $course->get('id') !== SITEID) {
+        if ($hascourse && $course->id !== SITEID) {
             $eventnameparams = (object) [
                 'name' => $values['popupname'],
-                'course' => format_string($course->get('shortname'), true, [
+                'course' => format_string($course->shortname, true, [
                         'context' => $this->related['context'],
                     ])
             ];
