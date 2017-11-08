@@ -126,6 +126,8 @@ define(['core/templates',
          * @private
          */
         StatusFieldActions.prototype.bindUnenrol = function() {
+            var statusFieldInstsance = this;
+
             $(SELECTORS.UNENROL).click(function(e) {
                 e.preventDefault();
                 var unenrolLink = $(this);
@@ -161,12 +163,12 @@ define(['core/templates',
                     modal.getRoot().on(ModalEvents.save, function() {
                         // Build params.
                         var unenrolParams = {
-                            confirm: 1,
-                            sesskey: Config.sesskey,
-                            ue: $(unenrolLink).attr('rel')
+                            'ueid': $(unenrolLink).attr('rel')
                         };
-                        // Send data to unenrol page (which will redirect back to the participants page after unenrol).
-                        window.location.href = Config.wwwroot + '/enrol/unenroluser.php?' + $.param(unenrolParams);
+                        // Don't close the modal yet.
+                        e.preventDefault();
+                        // Submit data.
+                        statusFieldInstsance.submitUnenrolFormAjax(modal, unenrolParams);
                     });
 
                     // Handle hidden event.
@@ -306,11 +308,41 @@ define(['core/templates',
                         window.M.core_formchangechecker.reset_form_dirty_state();
                     }
                     window.location.reload();
-
                 } else {
                     // Serialise the form data and reload the form fragment to show validation errors.
                     var formData = JSON.stringify(form.serialize());
                     modal.setBody(statusFieldInstsance.getBody(ueid, formData));
+                }
+            }).fail(Notification.exception);
+        };
+
+         /**
+         * Private method
+         *
+         * @method submitUnenrolFormAjax
+         * @param {Object} modal The the AMD modal object containing the form.
+         * @param {Object} unenrolParams The unenrol parameters.
+         * @private
+         */
+        StatusFieldActions.prototype.submitUnenrolFormAjax = function(modal, unenrolParams) {
+            var request = {
+                methodname: 'core_enrol_unenrol_user_enrolment',
+                args: unenrolParams
+            };
+
+            Ajax.call([request])[0].done(function(data) {
+                if (data.result) {
+                    // Dismiss the modal.
+                    modal.hide();
+
+                    // Reload the page, don't show changed data warnings.
+                    if (typeof window.M.core_formchangechecker !== "undefined") {
+                        window.M.core_formchangechecker.reset_form_dirty_state();
+                    }
+                    window.location.reload();
+                } else {
+                    // Display an alert containing the error message
+                    Notification.alert(data.errors[0].key, data.errors[0].message);
                 }
             }).fail(Notification.exception);
         };
