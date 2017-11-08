@@ -720,14 +720,16 @@ class core_userliblib_testcase extends advanced_testcase {
      * calling user_get_user_details() function.
      */
     public function test_user_get_user_details_missing_fields() {
+        global $CFG;
+
         $this->resetAfterTest(true);
         $this->setAdminUser(); // We need capabilities to view the data.
         $user = self::getDataGenerator()->create_user([
                                                           'auth'       => 'auth_something',
                                                           'confirmed'  => '0',
                                                           'idnumber'   => 'someidnumber',
-                                                          'lang'       => 'en_ar',
-                                                          'theme'      => 'mytheme',
+                                                          'lang'       => 'en',
+                                                          'theme'      => $CFG->theme,
                                                           'timezone'   => '50',
                                                           'mailformat' => '0',
                                                       ]);
@@ -737,8 +739,8 @@ class core_userliblib_testcase extends advanced_testcase {
         self::assertSame('auth_something', $got['auth']);
         self::assertSame('0', $got['confirmed']);
         self::assertSame('someidnumber', $got['idnumber']);
-        self::assertSame('en_ar', $got['lang']);
-        self::assertSame('mytheme', $got['theme']);
+        self::assertSame('en', $got['lang']);
+        self::assertSame($CFG->theme, $got['theme']);
         self::assertSame('50', $got['timezone']);
         self::assertSame('0', $got['mailformat']);
     }
