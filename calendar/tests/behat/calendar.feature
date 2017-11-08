@@ -141,7 +141,7 @@ Feature: Perform basic calendar functionality
     When I click on "Test choice opens" "link"
     Then "Delete" "button" should not exist
     And "Edit" "button" should not exist
-    And I should see "Open event"
+    And I should see "Course event"
     When I click on "Go to activity" "link"
     And I wait to be redirected
     Then I should see "Test choice"
@@ -150,7 +150,7 @@ Feature: Perform basic calendar functionality
     When I click on "Test choice closes" "link"
     Then "Delete" "button" should not exist
     And "Edit" "button" should not exist
-    And I should see "Close event"
+    And I should see "Course event"
     When I click on "Go to activity" "link"
     And I wait to be redirected
     Then I should see "Test choice"
