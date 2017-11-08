@@ -604,9 +604,10 @@ abstract class oauth2_client extends curl {
      *
      * @param string $url The URL to request
      * @param array $options
+     * @param mixed $acceptheader mimetype (as string) or false to skip sending an accept header.
      * @return bool
      */
-    protected function request($url, $options = array()) {
+    protected function request($url, $options = array(), $acceptheader = 'application/json') {
         $murl = new moodle_url($url);
 
         if ($this->accesstoken) {
@@ -619,7 +620,9 @@ abstract class oauth2_client extends curl {
         }
 
         // Force JSON format content in response.
-        $this->setHeader('Accept: application/json');
+        if ($acceptheader) {
+            $this->setHeader('Accept: ' . $acceptheader);
+        }
 
         $response = parent::request($murl->out(false), $options);
 
