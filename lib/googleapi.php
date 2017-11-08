@@ -448,4 +448,17 @@ class google_oauth extends oauth2_client {
         $this->header = array();
         $this->response = array();
     }
+
+    /**
+     * Make a HTTP request, we override the parents because we do not
+     * want to send accept headers (this was a change in the parent class and we want to keep the old behaviour).
+     *
+     * @param string $url The URL to request
+     * @param array $options
+     * @param mixed $acceptheader Not used.
+     * @return bool
+     */
+    protected function request($url, $options = array(), $acceptheader = 'application/json') {
+        return parent::request($url, $options, false);
+    }
 }
