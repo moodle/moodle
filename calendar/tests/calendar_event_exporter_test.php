@@ -229,4 +229,83 @@ class core_calendar_event_exporter_testcase extends advanced_testcase {
         // The exported URL should be for the site course.
         $this->assertEquals($expected, $exportedevent->url);
     }
+
+    /**
+     * Popup name respects filters for course shortname.
+     */
+    public function test_calendar_event_exporter_popupname_course_shortname_strips_links() {
+        global $CFG, $PAGE;
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $generator = $this->getDataGenerator();
+        $user = $generator->create_user();
+        $rawshortname = 'Shortname <a href="#">link</a>';
+        $nolinkshortname = strip_links($rawshortname);
+        $course = $generator->create_course(['shortname' => $rawshortname]);
+        $coursecontext = context_course::instance($course->id);
+        $now = time();
+        $mapper = container::get_event_mapper();
+        $renderer = $PAGE->get_renderer('core_calendar');
+        $legacyevent = create_event([
+            'courseid' => $course->id,
+            'userid' => 1,
+            'eventtype' => 'course',
+            'timestart' => $now
+        ]);
+        $event = $mapper->from_legacy_event_to_event($legacyevent);
+        $exporter = new calendar_event_exporter($event, [
+            'context' => $coursecontext,
+            'course' => $course,
+            'moduleinstance' => null,
+            'daylink' => new moodle_url(''),
+            'type' => type_factory::get_calendar_instance(),
+            'today' => $now
+        ]);
+
+        $exportedevent = $exporter->export($renderer);
+        // Links should always be stripped from the course short name.
+        $this->assertRegExp("/$nolinkshortname/", $exportedevent->popupname);
+    }
+
+    /**
+     * Exported event contains the exported course.
+     */
+    public function test_calendar_event_exporter_exports_course() {
+        global $CFG, $PAGE;
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $generator = $this->getDataGenerator();
+        $user = $generator->create_user();
+        $rawshortname = 'Shortname <a href="#">link</a>';
+        $nolinkshortname = strip_links($rawshortname);
+        $course = $generator->create_course(['shortname' => $rawshortname]);
+        $coursecontext = context_course::instance($course->id);
+        $now = time();
+        $mapper = container::get_event_mapper();
+        $renderer = $PAGE->get_renderer('core_calendar');
+        $legacyevent = create_event([
+            'courseid' => $course->id,
+            'userid' => 1,
+            'eventtype' => 'course',
+            'timestart' => $now
+        ]);
+        $event = $mapper->from_legacy_event_to_event($legacyevent);
+        $exporter = new calendar_event_exporter($event, [
+            'context' => $coursecontext,
+            'course' => $course,
+            'moduleinstance' => null,
+            'daylink' => new moodle_url(''),
+            'type' => type_factory::get_calendar_instance(),
+            'today' => $now
+        ]);
+
+        $exportedevent = $exporter->export($renderer);
+        $courseexporter = new \core_course\external\course_summary_exporter($course, [
+            'context' => $coursecontext
+        ]);
+        $exportedcourse = $courseexporter->export($renderer);
+        $this->assertEquals($exportedevent->course, $exportedcourse);
+    }
 }

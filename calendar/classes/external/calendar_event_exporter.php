@@ -167,9 +167,7 @@ class calendar_event_exporter extends event_exporter_base {
         if ($hascourse && $course->id !== SITEID) {
             $eventnameparams = (object) [
                 'name' => $values['popupname'],
-                'course' => format_string($course->shortname, true, [
-                        'context' => $this->related['context'],
-                    ])
+                'course' => $values['course']->shortname,
             ];
             $values['popupname'] = get_string('eventnameandcourse', 'calendar', $eventnameparams);
         }
