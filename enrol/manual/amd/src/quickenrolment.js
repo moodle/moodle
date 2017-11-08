@@ -66,45 +66,44 @@ define(['core/templates',
     QuickEnrolment.prototype.initModal = function() {
         var triggerButtons = $(SELECTORS.TRIGGERBUTTONS);
 
-        var stringsPromise = Str.get_strings([
-            {key: 'enroluserscohorts', component: 'enrol_manual'},
-            {key: 'enrolusers', component: 'enrol_manual'},
-        ]);
-
-        var titlePromise = stringsPromise.then(function(strings) {
-            return strings[1];
-        });
-
-        return ModalFactory.create({
-            type: ModalFactory.types.SAVE_CANCEL,
-            large: true,
-            title: titlePromise,
-            body: this.getBody()
-        }, triggerButtons)
-        .then(function(modal) {
+        $.when(
+            Str.get_strings([
+                {key: 'enroluserscohorts', component: 'enrol_manual'},
+                {key: 'enrolusers', component: 'enrol_manual'},
+            ]),
+            ModalFactory.create({
+                type: ModalFactory.types.SAVE_CANCEL,
+                large: true,
+            }, triggerButtons)
+        )
+        .then(function(strings, modal) {
             this.modal = modal;
 
-            // The save button text depends on whether or not cohorts exist.
-            var stringindex = 1;
-            if (this.modal.getRoot().find('form').find(SELECTORS.COHORTSELECT).length !== 0) {
-                stringindex = 0;
-            }
+            modal.setTitle(strings[1]);
+            modal.setSaveButtonText(strings[1]);
 
-            var buttonPromise = stringsPromise.then(function(strings) {
-                return strings[stringindex];
-            });
-
-            this.modal.setSaveButtonText(buttonPromise);
+            modal.getRoot().on(ModalEvents.save, this.submitForm.bind(this));
+            modal.getRoot().on('submit', 'form', this.submitFormAjax.bind(this));
 
             // We want the reset the form every time it is opened.
-            this.modal.getRoot().on(ModalEvents.hidden, function() {
-                this.modal.setBody(this.getBody());
+            modal.getRoot().on(ModalEvents.hidden, function() {
+                modal.setBody('');
+            });
+
+            modal.getRoot().on(ModalEvents.shown, function() {
+                var bodyPromise = this.getBody();
+                bodyPromise.then(function(html) {
+                    var stringIndex = $(html).find(SELECTORS.COHORTSELECT).length ? 0 : 1;
+                    modal.setSaveButtonText(strings[stringIndex]);
+
+                    return;
+                })
+                .fail(Notification.exception);
+
+                modal.setBody(bodyPromise);
             }.bind(this));
 
-            this.modal.getRoot().on(ModalEvents.save, this.submitForm.bind(this));
-            this.modal.getRoot().on('submit', 'form', this.submitFormAjax.bind(this));
-
-            return modal;
+            return;
         }.bind(this))
         .fail(Notification.exception);
     };
@@ -137,7 +136,7 @@ define(['core/templates',
         // Before send the data through AJAX, we need to parse and remove some unwanted hidden fields.
         // This hidden fields are added automatically by mforms and when it reaches the AJAX we get an error.
         var hidden = form.find(SELECTORS.UNWANTEDHIDDENFIELDS);
-        hidden.each(function () {
+        hidden.each(function() {
             this.remove();
         });
 
