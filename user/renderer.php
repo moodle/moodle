@@ -277,6 +277,9 @@ class core_user_renderer extends plugin_renderer_base {
         foreach ($filtersapplied as $filter) {
             if (!array_key_exists($filter, $filteroptions)) {
                 $filtervalue = explode(':', $filter);
+                if (count($filtervalue) !== 2) {
+                    continue;
+                }
                 $key = $filtervalue[0];
                 $value = $filtervalue[1];
 
