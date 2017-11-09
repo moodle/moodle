@@ -59,10 +59,10 @@ define(['jquery', 'core/notification', 'core/str', 'core/ajax', 'core/log', 'cor
             args: {userid: userId, competencyid: competencyId, courseid: courseId},
         }]);
 
-        $.when.apply($, requests).then(function() {
-            this._contextLoaded.bind(this);
+        $.when.apply($, requests).then(function(context) {
+            this._contextLoaded.bind(this)(context);
             return;
-        }).catch(notification.exception);
+        }.bind(this)).catch(notification.exception);
     };
 
     /**
