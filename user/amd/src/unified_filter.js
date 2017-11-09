@@ -70,12 +70,14 @@ define(['jquery', 'core/form-autocomplete', 'core/str', 'core/notification'],
         $(SELECTORS.UNIFIED_FILTERS).on('change', function() {
             var current = $(this).val();
             var listoffilters = [];
+            var textfilters = [];
             var updatedselectedfilters = false;
 
             $.each(current, function(index, catoption) {
                 var catandoption = catoption.split(':', 2);
                 if (catandoption.length !== 2) {
-                    return true; // Skip.
+                    textfilters.push(catoption);
+                    return true; // Text search filter.
                 }
 
                 var category = catandoption[0];
@@ -101,6 +103,7 @@ define(['jquery', 'core/form-autocomplete', 'core/str', 'core/notification'],
                 for (var category in listoffilters) {
                     updatefilters.push(category + ":" + listoffilters[category]);
                 }
+                updatefilters = updatefilters.concat(textfilters);
                 $(this).val(updatefilters);
             }
 
