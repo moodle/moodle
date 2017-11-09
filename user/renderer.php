@@ -320,12 +320,14 @@ class core_user_renderer extends plugin_renderer_base {
                             $val = get_string('numyear', 'moodle', 1);
                             $filteroptions += $this->format_filter_option(USER_FILTER_LAST_ACCESS, $criteria, $timestamp, $val);
                         }
+                        break;
                     case USER_FILTER_ROLE:
                         $criteria = get_string('role');
                         if ($role = $DB->get_record('role', array('id' => $value))) {
                             $role = role_get_name($role);
                             $filteroptions += $this->format_filter_option(USER_FILTER_ROLE, $criteria, $value, $role);
                         }
+                        break;
                 }
             }
         }
