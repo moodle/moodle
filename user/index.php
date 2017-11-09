@@ -32,12 +32,6 @@ require_once($CFG->dirroot.'/enrol/locallib.php');
 
 define('DEFAULT_PAGE_SIZE', 20);
 define('SHOW_ALL_PAGE_SIZE', 5000);
-define('USER_FILTER_ENROLMENT', 1);
-define('USER_FILTER_GROUP', 2);
-define('USER_FILTER_LAST_ACCESS', 3);
-define('USER_FILTER_ROLE', 4);
-define('USER_FILTER_STATUS', 5);
-define('USER_FILTER_STRING', 6);
 
 $page         = optional_param('page', 0, PARAM_INT); // Which page to show.
 $perpage      = optional_param('perpage', DEFAULT_PAGE_SIZE, PARAM_INT); // How many per page.
