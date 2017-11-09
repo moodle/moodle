@@ -106,7 +106,7 @@ echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('participants'));
 
 // Get the currently applied filters.
-$filtersapplied = optional_param_array('unified-filters', [], PARAM_TEXT);
+$filtersapplied = optional_param_array('unified-filters', [], PARAM_NOTAGS);
 $filterwassubmitted = optional_param('unified-filter-submitted', 0, PARAM_BOOL);
 
 // If they passed a role make sure they can view that role.
