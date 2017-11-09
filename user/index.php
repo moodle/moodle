@@ -37,6 +37,7 @@ define('USER_FILTER_GROUP', 2);
 define('USER_FILTER_LAST_ACCESS', 3);
 define('USER_FILTER_ROLE', 4);
 define('USER_FILTER_STATUS', 5);
+define('USER_FILTER_STRING', 6);
 
 $page         = optional_param('page', 0, PARAM_INT); // Which page to show.
 $perpage      = optional_param('perpage', DEFAULT_PAGE_SIZE, PARAM_INT); // How many per page.
@@ -153,7 +154,8 @@ foreach ($filtersapplied as $filter) {
         $value = clean_param($filtervalue[1], PARAM_INT);
     } else {
         // Search string.
-        $key = clean_param($filtervalue[0], PARAM_TEXT);
+        $key = USER_FILTER_STRING;
+        $value = clean_param($filtervalue[0], PARAM_TEXT);
     }
 
     switch ($key) {
@@ -178,9 +180,7 @@ foreach ($filtersapplied as $filter) {
             break;
         default:
             // Search string.
-            if (!empty($key) && empty($value)) {
-                $searchkeywords[] = $key;
-            }
+            $searchkeywords[] = $value;
             break;
     }
 }
