@@ -68,7 +68,7 @@ class cc11_quiz extends entities11 {
         $last_question_id = 0;
         $last_answer_id = 0;
 
-        $instances = '';
+        $instances = array();
 
         $types = array(MOODLE_TYPE_QUIZ, MOODLE_TYPE_QUESTION_BANK);
 
