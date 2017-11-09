@@ -117,12 +117,21 @@ function tool_analytics_calculate_course_dates($course, $options) {
 
     $notification = $course->shortname . ' (id = ' . $course->id . '): ';
 
+    $originalenddate = null;
+    $guessedstartdate = null;
+    $guessedenddate = null;
+    $samestartdate = null;
+    $lowerenddate = null;
+
     if ($options['guessstart'] || $options['guessall']) {
 
         $originalstartdate = $course->startdate;
 
         $guessedstartdate = $courseman->guess_start();
-        if ($guessedstartdate == $originalstartdate) {
+        $samestartdate = ($guessedstartdate == $originalstartdate);
+        $lowerenddate = ($course->enddate && ($course->enddate < $guessedstartdate));
+
+        if ($samestartdate) {
             if (!$guessedstartdate) {
                 $notification .= PHP_EOL . '  ' . get_string('cantguessstartdate', 'tool_analytics');
             } else {
@@ -131,6 +140,9 @@ function tool_analytics_calculate_course_dates($course, $options) {
             }
         } else if (!$guessedstartdate) {
             $notification .= PHP_EOL . '  ' . get_string('cantguessstartdate', 'tool_analytics');
+        } else if ($lowerenddate) {
+            $notification .= PHP_EOL . '  ' . get_string('cantguessstartdate', 'tool_analytics') . ': ' .
+                get_string('enddatebeforestartdate', 'error') . ' - ' . userdate($guessedstartdate);
         } else {
             // Update it to something we guess.
 
@@ -150,6 +162,10 @@ function tool_analytics_calculate_course_dates($course, $options) {
     }
 
     if ($options['guessend'] || $options['guessall']) {
+
+        if (!empty($lowerenddate) && !empty($guessedstartdate)) {
+            $course->startdate = $guessedstartdate;
+        }
 
         $originalenddate = $course->enddate;
 
@@ -196,10 +212,8 @@ function tool_analytics_calculate_course_dates($course, $options) {
                     $updateit = true;
                 }
 
-                if ($options['update']) {
-                    if ($course->enddate > $course->startdate) {
-                        update_course($course);
-                    }
+                if ($options['update'] && $updateit) {
+                    update_course($course);
                 }
             }
         }
