@@ -277,6 +277,9 @@ class core_user_renderer extends plugin_renderer_base {
         foreach ($filtersapplied as $filter) {
             if (!array_key_exists($filter, $filteroptions)) {
                 $filtervalue = explode(':', $filter);
+                if (count($filtervalue) !== 2) {
+                    continue;
+                }
                 $key = $filtervalue[0];
                 $value = $filtervalue[1];
 
@@ -317,12 +320,14 @@ class core_user_renderer extends plugin_renderer_base {
                             $val = get_string('numyear', 'moodle', 1);
                             $filteroptions += $this->format_filter_option(USER_FILTER_LAST_ACCESS, $criteria, $timestamp, $val);
                         }
+                        break;
                     case USER_FILTER_ROLE:
                         $criteria = get_string('role');
                         if ($role = $DB->get_record('role', array('id' => $value))) {
                             $role = role_get_name($role);
                             $filteroptions += $this->format_filter_option(USER_FILTER_ROLE, $criteria, $value, $role);
                         }
+                        break;
                 }
             }
         }

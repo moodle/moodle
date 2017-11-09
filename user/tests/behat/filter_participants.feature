@@ -108,6 +108,7 @@ Feature: Course participants can be filtered
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I navigate to course participants
+    # Note: This is the literal string "student", not the Role student.
     When I set the field "Filters" to "student"
     And I press key "13" in the field "Filters"
     Then I should see "Student 1" in the "participants" "table"

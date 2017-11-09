@@ -52,23 +52,32 @@ define(['jquery', 'core/form-autocomplete', 'core/str', 'core/notification'],
             }
         ];
 
+        M.util.js_pending('unified_filter_datasource');
         Str.get_strings(stringkeys).done(function(langstrings) {
             var placeholder = langstrings[0];
             var noSelectionString = langstrings[1];
             Autocomplete.enhance(SELECTORS.UNIFIED_FILTERS, true, 'core_user/unified_filter_datasource', placeholder,
-                false, true, noSelectionString, true);
+                false, true, noSelectionString, true)
+            .then(function() {
+                M.util.js_complete('unified_filter_datasource');
+
+                return;
+            })
+            .fail(Notification.exception);
         }).fail(Notification.exception);
 
         var last = $(SELECTORS.UNIFIED_FILTERS).val();
         $(SELECTORS.UNIFIED_FILTERS).on('change', function() {
             var current = $(this).val();
             var listoffilters = [];
+            var textfilters = [];
             var updatedselectedfilters = false;
 
             $.each(current, function(index, catoption) {
                 var catandoption = catoption.split(':', 2);
                 if (catandoption.length !== 2) {
-                    return true; // Skip.
+                    textfilters.push(catoption);
+                    return true; // Text search filter.
                 }
 
                 var category = catandoption[0];
@@ -94,6 +103,7 @@ define(['jquery', 'core/form-autocomplete', 'core/str', 'core/notification'],
                 for (var category in listoffilters) {
                     updatefilters.push(category + ":" + listoffilters[category]);
                 }
+                updatefilters = updatefilters.concat(textfilters);
                 $(this).val(updatefilters);
             }
 
@@ -108,30 +118,29 @@ define(['jquery', 'core/form-autocomplete', 'core/str', 'core/notification'],
      * Return the unified user filter form.
      *
      * @method getForm
-     * @private
-     * @return {Form object}
+     * @return {DOMElement}
      */
     var getForm = function() {
         return $(SELECTORS.UNIFIED_FILTERS).closest('form');
     };
 
     return /** @alias module:core/form-autocomplete */ {
-        // Public variables and functions.
         /**
          * Initialise the unified user filter.
          *
          * @method init
          */
-        'init': function() {
+        init: function() {
             init();
         },
+
         /**
          * Return the unified user filter form.
          *
          * @method getForm
-         * @return {Form object}
+         * @return {DOMElement}
          */
-        'getForm': function() {
+        getForm: function() {
             return getForm();
         }
     };

@@ -32,11 +32,6 @@ require_once($CFG->dirroot.'/enrol/locallib.php');
 
 define('DEFAULT_PAGE_SIZE', 20);
 define('SHOW_ALL_PAGE_SIZE', 5000);
-define('USER_FILTER_ENROLMENT', 1);
-define('USER_FILTER_GROUP', 2);
-define('USER_FILTER_LAST_ACCESS', 3);
-define('USER_FILTER_ROLE', 4);
-define('USER_FILTER_STATUS', 5);
 
 $page         = optional_param('page', 0, PARAM_INT); // Which page to show.
 $perpage      = optional_param('perpage', DEFAULT_PAGE_SIZE, PARAM_INT); // How many per page.
@@ -105,7 +100,7 @@ echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('participants'));
 
 // Get the currently applied filters.
-$filtersapplied = optional_param_array('unified-filters', [], PARAM_TEXT);
+$filtersapplied = optional_param_array('unified-filters', [], PARAM_NOTAGS);
 $filterwassubmitted = optional_param('unified-filter-submitted', 0, PARAM_BOOL);
 
 // If they passed a role make sure they can view that role.
@@ -153,7 +148,8 @@ foreach ($filtersapplied as $filter) {
         $value = clean_param($filtervalue[1], PARAM_INT);
     } else {
         // Search string.
-        $key = clean_param($filtervalue[0], PARAM_TEXT);
+        $key = USER_FILTER_STRING;
+        $value = clean_param($filtervalue[0], PARAM_TEXT);
     }
 
     switch ($key) {
@@ -178,9 +174,7 @@ foreach ($filtersapplied as $filter) {
             break;
         default:
             // Search string.
-            if (!empty($key) && empty($value)) {
-                $searchkeywords[] = $key;
-            }
+            $searchkeywords[] = $value;
             break;
     }
 }
