@@ -87,7 +87,7 @@ class cc11_basiclti extends entities11 {
 
     public function get_basiclti_data($instance) {
 
-        $topic_data = '';
+        $topic_data = array();
 
         $basiclti_file = $this->get_external_xml($instance['resource_indentifier']);
 
