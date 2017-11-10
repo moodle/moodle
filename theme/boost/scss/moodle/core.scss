@@ -1933,7 +1933,6 @@ dd:after {
 }
 
 .inplaceeditable {
-    display: block;
     &.inplaceeditingon {
         position: relative;
 
@@ -1974,6 +1973,10 @@ dd:after {
 
     &.inplaceeditable-toggle .quickediticon {
         display: none;
+    }
+
+    &.inplaceeditable-autocomplete {
+        display: block;
     }
 }
 
