@@ -40,6 +40,6 @@
 </div>
 {{#js}}
 require(['jquery', 'core_calendar/calendar_mini'], function($, CalendarMini) {
-    CalendarMini.init($("#calendar-month-{{date.year}}-{{date.month}}-{{uniqid}}"));
+    CalendarMini.init($("#calendar-month-{{date.year}}-{{date.month}}-{{uniqid}}"), !{{initialeventsloaded}});
 });
 {{/js}}

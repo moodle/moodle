@@ -60,6 +60,11 @@ class month_exporter extends exporter {
     protected $includenavigation = true;
 
     /**
+     * @var bool $initialeventsloaded Whether the events have been loaded for this month.
+     */
+    protected $initialeventsloaded = true;
+
+    /**
      * Constructor for month_exporter.
      *
      * @param \calendar_information $calendar The calendar being represented
@@ -139,6 +144,12 @@ class month_exporter extends exporter {
                 'type' => PARAM_BOOL,
                 'default' => true,
             ],
+            // Tracks whether the first set of events have been loaded and provided
+            // to the exporter.
+            'initialeventsloaded' => [
+                'type' => PARAM_BOOL,
+                'default' => true,
+            ],
             'previousperiod' => [
                 'type' => date_exporter::read_properties_definition(),
             ],
@@ -210,6 +221,7 @@ class month_exporter extends exporter {
             'larrow' => $output->larrow(),
             'rarrow' => $output->rarrow(),
             'includenavigation' => $this->includenavigation,
+            'initialeventsloaded' => $this->initialeventsloaded,
         ];
 
         if ($context = $this->get_default_add_context()) {
@@ -376,6 +388,19 @@ class month_exporter extends exporter {
      */
     public function set_includenavigation($include) {
         $this->includenavigation = $include;
+
+        return $this;
+    }
+
+    /**
+     * Set whether the initial events have already been loaded and
+     * provided to the exporter.
+     *
+     * @param   bool    $loaded
+     * @return  $this
+     */
+    public function set_initialeventsloaded(bool $loaded) {
+        $this->initialeventsloaded = $loaded;
 
         return $this;
     }
