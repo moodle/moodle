@@ -87,6 +87,9 @@ class calendar_upcoming_exporter extends exporter {
                 'optional' => true,
                 'default' => 0,
             ],
+            'isloggedin' => [
+                'type' => PARAM_BOOL,
+            ],
         ];
     }
 
@@ -106,6 +109,7 @@ class calendar_upcoming_exporter extends exporter {
             'course' => $this->calendar->course->id,
         ]);
         $this->url = $url;
+        $return['isloggedin'] = isloggedin();
         $return['events'] = array_map(function($event) use ($cache, $output, $url) {
             $context = $cache->get_context($event);
             $course = $cache->get_course($event);
