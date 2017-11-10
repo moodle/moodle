@@ -264,8 +264,13 @@ class models_list implements \renderable, \templatable {
         } else {
             $url = new \moodle_url('/admin/settings.php', array('section' => 'analyticssettings'),
                 'id_s_analytics_onlycli');
+
+            $langstrid = 'clievaluationandpredictionsnoadmin';
+            if (is_siteadmin()) {
+                $langstrid = 'clievaluationandpredictions';
+            }
             $data->infos = array(
-                (object)array('message' => get_string('clievaluationandpredictions', 'tool_analytics', $url->out()),
+                (object)array('message' => get_string($langstrid, 'tool_analytics', $url->out()),
                     'closebutton' => true)
             );
         }
