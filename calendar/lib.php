@@ -1428,6 +1428,77 @@ function calendar_get_starting_weekday() {
 }
 
 /**
+ * Gets the calendar upcoming event.
+ *
+ * @param array $courses array of courses
+ * @param array|int|bool $groups array of groups, group id or boolean for all/no group events
+ * @param array|int|bool $users array of users, user id or boolean for all/no user events
+ * @param int $daysinfuture number of days in the future we 'll look
+ * @param int $maxevents maximum number of events
+ * @param int $fromtime start time
+ * @return array $output array of upcoming events
+ */
+function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxevents, $fromtime=0) {
+    global $COURSE;
+
+    $display = new \stdClass;
+    $display->range = $daysinfuture; // How many days in the future we 'll look.
+    $display->maxevents = $maxevents;
+
+    $output = array();
+
+    $processed = 0;
+    $now = time(); // We 'll need this later.
+    $usermidnighttoday = usergetmidnight($now);
+
+    if ($fromtime) {
+        $display->tstart = $fromtime;
+    } else {
+        $display->tstart = $usermidnighttoday;
+    }
+
+    // This works correctly with respect to the user's DST, but it is accurate
+    // only because $fromtime is always the exact midnight of some day!
+    $display->tend = usergetmidnight($display->tstart + DAYSECS * $display->range + 3 * HOURSECS) - 1;
+
+    // Get the events matching our criteria.
+    $events = calendar_get_legacy_events($display->tstart, $display->tend, $users, $groups, $courses);
+
+    // This is either a genius idea or an idiot idea: in order to not complicate things, we use this rule: if, after
+    // possibly removing SITEID from $courses, there is only one course left, then clicking on a day in the month
+    // will also set the $SESSION->cal_courses_shown variable to that one course. Otherwise, we 'd need to add extra
+    // arguments to this function.
+    $hrefparams = array();
+    if (!empty($courses)) {
+        $courses = array_diff($courses, array(SITEID));
+        if (count($courses) == 1) {
+            $hrefparams['course'] = reset($courses);
+        }
+    }
+
+    if ($events !== false) {
+        foreach ($events as $event) {
+            if (!empty($event->modulename)) {
+                $instances = get_fast_modinfo($event->courseid)->get_instances_of($event->modulename);
+                if (empty($instances[$event->instance]->uservisible)) {
+                    continue;
+                }
+            }
+
+            if ($processed >= $display->maxevents) {
+                break;
+            }
+
+            $event->time = calendar_format_event_time($event, $now, $hrefparams);
+            $output[] = $event;
+            $processed++;
+        }
+    }
+
+    return $output;
+}
+
+/**
  * Get a HTML link to a course.
  *
  * @param int|stdClass $course the course id or course object
