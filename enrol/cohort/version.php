@@ -24,7 +24,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2017051500;        // The current plugin version (Date: YYYYMMDDXX)
-$plugin->requires  = 2017050500;        // Requires this Moodle version
+$plugin->version   = 2017111300;        // The current plugin version (Date: YYYYMMDDXX)
+$plugin->requires  = 2017110800;        // Requires this Moodle version
 $plugin->component = 'enrol_cohort';    // Full name of the plugin (used for diagnostics)
 $plugin->cron      = 60*60;             // run cron every hour by default, it is not out-of-sync often
