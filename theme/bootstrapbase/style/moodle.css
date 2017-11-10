@@ -4674,9 +4674,6 @@ dd:after {
 .nav-tabs > .active > a[href]:focus {
   cursor: pointer;
 }
-.inplaceeditable {
-  display: block;
-}
 .inplaceeditable.inplaceeditingon {
   position: relative;
 }
@@ -4711,6 +4708,9 @@ dd:after {
 }
 .inplaceeditable.inplaceeditable-toggle .quickediticon {
   display: none;
+}
+.inplaceeditable.inplaceeditable-autocomplete {
+  display: block;
 }
 h3.sectionname .inplaceeditable.inplaceeditingon .editinstructions {
   margin-top: -20px;
