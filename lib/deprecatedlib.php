@@ -6244,7 +6244,7 @@ function calendar_get_block_upcoming($events, $linkhref = null, $showcourselink 
     global $CFG;
 
     debugging(
-            __FUNCTION__ . '() has been deprecated. ' +
+            __FUNCTION__ . '() has been deprecated. ' .
             'Please see block_calendar_upcoming::get_content() for the correct API usage.',
             DEBUG_DEVELOPER
         );
@@ -6448,7 +6448,7 @@ function calendar_get_mini($courses, $groups, $users, $calmonth = false, $calyea
  */
 function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxevents, $fromtime=0) {
     debugging(
-            'calendar_get_upcoming() has been deprecated. ' +
+            'calendar_get_upcoming() has been deprecated. ' .
             'Please see block_calendar_upcoming::get_content() for the correct API usage.',
             DEBUG_DEVELOPER
         );

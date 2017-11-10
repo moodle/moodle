@@ -81,7 +81,7 @@ class block_calendar_upcoming extends block_base {
      */
     public static function get_upcoming_content($events, $linkhref = null, $showcourselink = false) {
         debugging(
-                'get_upcoming_content() is deprecated. ' +
+                'get_upcoming_content() is deprecated. ' .
                 'Please see block_calendar_upcoming::get_content() for the correct API usage.',
                 DEBUG_DEVELOPER
             );
