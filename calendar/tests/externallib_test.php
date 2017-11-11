@@ -2266,7 +2266,7 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         // Admin can load the course.
         $data = external_api::clean_returnvalue(
             core_calendar_external::get_calendar_monthly_view_returns(),
-            core_calendar_external::get_calendar_monthly_view($timestart->format('n'), $timestart->format('Y'),
+            core_calendar_external::get_calendar_monthly_view($timestart->format('Y'), $timestart->format('n'),
                                                               $course->id, null, false)
         );
         $this->assertEquals($data['courseid'], $course->id);
@@ -2274,7 +2274,7 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         $this->setUser($user1);
         $data = external_api::clean_returnvalue(
             core_calendar_external::get_calendar_monthly_view_returns(),
-            core_calendar_external::get_calendar_monthly_view($timestart->format('n'), $timestart->format('Y'),
+            core_calendar_external::get_calendar_monthly_view($timestart->format('Y'), $timestart->format('n'),
                                                               $course->id, null, false)
         );
         $this->assertEquals($data['courseid'], $course->id);
@@ -2283,7 +2283,7 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         $this->expectException('require_login_exception');
         $data = external_api::clean_returnvalue(
             core_calendar_external::get_calendar_monthly_view_returns(),
-            core_calendar_external::get_calendar_monthly_view($timestart->format('n'), $timestart->format('Y'),
+            core_calendar_external::get_calendar_monthly_view($timestart->format('Y'), $timestart->format('n'),
                                                               $course->id, null, false)
         );
     }
@@ -2310,7 +2310,7 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         // Admin can load the course.
         $data = external_api::clean_returnvalue(
             core_calendar_external::get_calendar_day_view_returns(),
-            core_calendar_external::get_calendar_day_view($timestart->format('n'), $timestart->format('Y'),
+            core_calendar_external::get_calendar_day_view($timestart->format('Y'), $timestart->format('n'),
                                                           $timestart->format('j'), $course->id, null)
         );
         $this->assertEquals($data['courseid'], $course->id);
@@ -2318,7 +2318,7 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         $this->setUser($user1);
         $data = external_api::clean_returnvalue(
             core_calendar_external::get_calendar_day_view_returns(),
-            core_calendar_external::get_calendar_day_view($timestart->format('n'), $timestart->format('Y'),
+            core_calendar_external::get_calendar_day_view($timestart->format('Y'), $timestart->format('n'),
                                                           $timestart->format('j'), $course->id, null)
         );
         $this->assertEquals($data['courseid'], $course->id);
@@ -2327,7 +2327,7 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         $this->expectException('require_login_exception');
         $data = external_api::clean_returnvalue(
             core_calendar_external::get_calendar_day_view_returns(),
-            core_calendar_external::get_calendar_day_view($timestart->format('n'), $timestart->format('Y'),
+            core_calendar_external::get_calendar_day_view($timestart->format('Y'), $timestart->format('n'),
                                                           $timestart->format('j'), $course->id, null)
         );
     }
