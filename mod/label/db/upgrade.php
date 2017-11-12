@@ -67,5 +67,8 @@ function xmldb_label_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2017062800, 'label');
     }
 
+    // Automatically generated Moodle v3.4.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }
