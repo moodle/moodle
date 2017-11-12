@@ -1685,5 +1685,29 @@ function xmldb_local_iomad_upgrade($oldversion) {
         // Iomad savepoint reached.
         upgrade_plugin_savepoint(true, 2017090305, 'local', 'iomad');
     }
+
+    if ($oldversion < 2017090307) {
+
+        // Remove capabilities incorrectly added.
+        // They do not exist.
+        $roles = $DB->get_records('role');
+        foreach ($roles as $role) {
+            unassign_capability('block/iomad_company_admin:view', $role->id); 
+            unassign_capability('block/side_bar_block:editblock', $role->id); 
+            unassign_capability('block/side_bar_block:viewblock', $role->id); 
+            unassign_capability('enrol/authorize:manage', $role->id); 
+            unassign_capability('mod/certificate:manage', $role->id); 
+            unassign_capability('mod/certificate:view', $role->id); 
+        }
+
+        // Fix capability typo in company department manager role
+        $companydepartmentmanager = $DB->get_record('role', array('shortname' => 'companydepartmentmanager')), '*', MUST_EXIST);
+        unassign_capability('block/iomad_report:view', $companydepartmentmanager->id);
+        assign_capability('block/iomad_reports:view', $companydepartmentmanager->id);
+
+        // Iomad savepoint reached.
+        upgrade_plugin_savepoint(true, 2017090307, 'local', 'iomad');
+    }
+
     return $result;
 }
