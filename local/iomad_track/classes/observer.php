@@ -236,7 +236,9 @@ class observer {
         $trackid = $DB->insert_record('local_iomad_track', $completion);
 
         // Debug
-        mtrace('Iomad completion recorded for userid ' . $userid . ' in courseid ' . $courseid);
+        if (!PHPUNIT_TEST) {
+            mtrace('Iomad completion recorded for userid ' . $userid . ' in courseid ' . $courseid);
+        }
 
         self::record_certificates($courseid, $userid, $trackid);
 
