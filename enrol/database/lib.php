@@ -850,7 +850,7 @@ class enrol_database_plugin extends enrol_plugin {
         require_once($CFG->libdir.'/adodb/adodb.inc.php');
 
         // Connect to the external database (forcing new connection).
-        $extdb = ADONewConnection($this->get_config('dbtype'));
+        $extdb = ADONewConnection($CFG->dbtype);
         if ($this->get_config('debugdb')) {
             $extdb->debug = true;
             ob_start(); // Start output buffer to allow later use of the page headers.
