@@ -46,7 +46,10 @@
         <testsuite name="core_testsuite">
             <directory suffix="_test.php">lib/tests</directory>
             <exclude>lib/tests/accesslib_test.php</exclude>
-            <exclude>lib/tests/filter_manager_test.php</exclude>
+	    <exclude>lib/tests/filter_manager_test.php</exclude>
+	    <exclude>lib/tests/navigationlib_test.php</exclude>
+	    <exclude>lib/tests/outputcomponents_test.php</exclude>
+	    <exclude>lib/tests/weblib_format_text_test.php</exclude>
             <directory suffix="_test.php">lib/ajax/tests</directory>
         </testsuite>
         <testsuite name="core_form_testsuite">
@@ -124,9 +127,11 @@
         </testsuite>
         <testsuite name="core_repository_testsuite">
             <directory suffix="_test.php">repository/tests</directory>
+            <exclude>repository/tests/repositorylib_test.php</exclude>
         </testsuite>
         <testsuite name="core_user_testsuite">
             <directory suffix="_test.php">user/tests</directory>
+            <exclude>user/tests/userlib_test.php</exclude>
         </testsuite>
         <testsuite name="core_webservice_testsuite">
             <directory suffix="_test.php">webservice/tests</directory>
