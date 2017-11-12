@@ -125,7 +125,6 @@ function xmldb_local_iomad_install() {
         'block/iomad_company_admin:createcourse',
         'block/iomad_company_admin:user_create',
         'block/iomad_company_admin:user_upload',
-        'block/iomad_company_admin:view',
         'block/iomad_company_admin:restrict_capabilities',
         'block/iomad_link:view',
 
@@ -139,12 +138,12 @@ function xmldb_local_iomad_install() {
     foreach ($clientadministratorcaps as $cap) {
         assign_capability( $cap, CAP_ALLOW, $clientadministratorid, $systemcontext->id);
     }
-    $companydepartmentmanagercaps = array('block/iomad_report:view',
+    $companydepartmentmanagercaps = array(
+        'block/iomad_reports:view',
         'local/iomad_dashboard:view',
         'block/iomad_onlineusers:viewlist',
         'block/iomad_link:view',
         'block/iomad_company_admin:view_licenses',
-        'block/iomad_company_admin:view',
         'block/iomad_company_admin:user_upload',
         'block/iomad_company_admin:user_create',
         'block/iomad_company_admin:editusers',
@@ -193,7 +192,6 @@ function xmldb_local_iomad_install() {
         'block/iomad_onlineusers:viewlist',
         'block/iomad_link:view',
         'block/iomad_company_admin:view_licenses',
-        'block/iomad_company_admin:view',
         'block/iomad_company_admin:user_upload',
         'block/iomad_company_admin:user_create',
         'block/iomad_company_admin:editusers',
@@ -245,13 +243,11 @@ function xmldb_local_iomad_install() {
 
     );
 
-    $companycoursenoneditorcaps = array('block/side_bar_block:viewblock',
+    $companycoursenoneditorcaps = array(
         'gradereport/grader:view',
         'gradereport/user:view',
         'mod/assignment:view',
         'mod/book:read',
-        'mod/certificate:manage',
-        'mod/certificate:view',
         'mod/choice:readresponses',
         'mod/feedback:view',
         'mod/forum:addquestion',
@@ -276,11 +272,9 @@ function xmldb_local_iomad_install() {
         'moodle/competency:coursecompetencyview',
     );
 
-    $companycourseeditorcaps = array('block/side_bar_block:editblock',
-        'block/side_bar_block:viewblock',
+    $companycourseeditorcaps = array(
         'booktool/importhtml:import',
         'booktool/print:print',
-        'enrol/authorize:manage',
         'enrol/license:manage',
         'enrol/license:unenrol',
         'enrol/manual:enrol',
@@ -294,8 +288,6 @@ function xmldb_local_iomad_install() {
         'mod/book:edit',
         'mod/book:read',
         'mod/book:viewhiddenchapters',
-        'mod/certificate:manage',
-        'mod/certificate:view',
         'mod/choice:choose',
         'mod/choice:deleteresponses',
         'mod/choice:downloadresponses',
