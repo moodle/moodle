@@ -945,7 +945,6 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
         // and add in shared courses.
         // If unit testing we generally don't know about companies
         if (!is_siteadmin() && !PHPUNIT_TEST) {
-echo "HERE!!!!"; die;
             if (!isloggedin()) {
                 $whereclause .= " AND c.id NOT IN (SELECT courseid FROM {company_course})";
             } else {
