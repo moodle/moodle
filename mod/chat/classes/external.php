@@ -383,7 +383,7 @@ class mod_chat_external extends external_api {
             $returnedmessages[] = array(
                 'id' => $message->id,
                 'userid' => $message->userid,
-                'system' => (bool) $message->system,
+                'system' => (bool) $message->issystem,
                 'message' => $messageformatted,
                 'timestamp' => $message->timestamp,
             );
