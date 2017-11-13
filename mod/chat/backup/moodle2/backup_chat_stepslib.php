@@ -39,10 +39,12 @@ class backup_chat_activity_structure_step extends backup_activity_structure_step
 
         // It is not cool to have two tags with same name, so we need to rename message field to message_text.
         $message->set_source_alias('message', 'message_text');
+        // Renamed 'issystem' into 'system', for backward compatibility: 'system' is now a reserved word in MySQL 8.0.3+.
+        $message->set_source_alias('issystem', 'system');
 
         // Build the tree.
         $chat->add_child($messages);
-            $messages->add_child($message);
+        $messages->add_child($message);
 
         // Define sources.
         $chat->set_source_table('chat', array('id' => backup::VAR_ACTIVITYID));

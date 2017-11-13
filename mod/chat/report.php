@@ -235,7 +235,7 @@ foreach ($messages as $message) {  // We are walking BACKWARDS through the messa
         $sessionend = $message->timestamp;
     }
     if ((($lasttime - $message->timestamp) < $sessiongap) and $messagesleft) {  // Same session.
-        if ($message->userid and !$message->system) {       // Remember user and count messages.
+        if ($message->userid and !$message->issystem) {     // Remember user and count messages.
             if (empty($sessionusers[$message->userid])) {
                 $sessionusers[$message->userid] = 1;
             } else {
