@@ -94,9 +94,6 @@ $PAGE->set_heading(get_string('pluginname', 'block_iomad_reports') . " - $linkte
 // Build the nav bar.
 company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
 
-// Set the companyid
-$companyid = iomad::get_my_companyid($systemcontext);
-
 echo $OUTPUT->header();
 
 // Check the department is valid.
@@ -204,7 +201,6 @@ $mform = new iomad_user_filter_form(null, array('companyid' => $companyid));
 $mform->set_data(array('departmentid' => $departmentid));
 $mform->set_data($params);
 
-
 // Display the user filter form.
 $mform->display();
 
@@ -272,6 +268,7 @@ if (!empty($parentcompanies)) {
                          WHERE companyid IN (" . implode(',', array_keys($parentcompanies)) . "))";
 } else {
     $userfilter = "";
+    $userfilterwithu = "";
 }
 
 // Get all or company users depending on capability.
