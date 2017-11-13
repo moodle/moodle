@@ -686,7 +686,7 @@ class manager {
             // Notify the engine that an area is starting.
             $this->engine->area_index_starting($searcharea, $fullindex);
 
-            $indexingstart = time();
+            $indexingstart = (int)self::get_current_time();
             $elapsed = self::get_current_time();
 
             // This is used to store this component config.
@@ -751,7 +751,7 @@ class manager {
 
                 // Store last index run once documents have been committed to the search engine.
                 set_config($varname . '_indexingstart', $indexingstart, $componentconfigname);
-                set_config($varname . '_indexingend', time(), $componentconfigname);
+                set_config($varname . '_indexingend', (int)self::get_current_time(), $componentconfigname);
                 set_config($varname . '_docsignored', $numdocsignored, $componentconfigname);
                 set_config($varname . '_docsprocessed', $numdocs, $componentconfigname);
                 set_config($varname . '_recordsprocessed', $numrecords, $componentconfigname);

@@ -240,6 +240,9 @@ class search_manager_testcase extends advanced_testcase {
         $this->assertEquals('Frog', $added[0]->get('title'));
         $this->assertEquals('Toad', $added[1]->get('title'));
         $this->assertEquals(1, get_config($componentname, $varname . '_partial'));
+        // Whilst 2.4 seconds of "time" have elapsed, the indexing duration is
+        // measured in seconds, so should be 2.
+        $this->assertEquals(2, $searcharea->get_last_indexing_duration());
 
         // Add a label.
         $generator->create_module('label', ['course' => $course->id, 'intro' => 'Vampire']);
