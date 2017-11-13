@@ -311,10 +311,12 @@ if (!empty($companyrecords)) {
 }
 if (!empty($companylist)) {
     $companies = iomad::get_companies_listing($sort, $dir, $page * $perpage, $perpage, '', '', '', $companylist);
+    $allmycompanies = iomad::get_companies_listing($sort, $dir, 0, 0, '', '', '', $companylist);
+    $companycount = count($allmycompanies);
 } else {
     $companies = array();
+    $companycount = 0;
 }
-$companycount = count($companyrecords);
 
 if ($companycount == 1) {
     echo $OUTPUT->heading(get_string('companycount', 'block_iomad_company_admin', $companycount));
