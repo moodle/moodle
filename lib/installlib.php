@@ -525,4 +525,7 @@ function install_cli_database(array $options, $interactive) {
     if (isset($options['summary'])) {
         $DB->set_field('course', 'summary', $options['summary'], array('format' => 'site'));
     }
+
+    // Redirect to site registration on first login.
+    set_config('registrationpending', 1);
 }

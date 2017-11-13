@@ -276,12 +276,19 @@ class core_admin_renderer extends plugin_renderer_base {
      * @param int|null $availableupdatesfetch timestamp of the most recent updates fetch or null (unknown)
      * @param string[] $cachewarnings An array containing warnings from the Cache API.
      * @param array $eventshandlers Events 1 API handlers.
+     * @param bool $themedesignermode Warn about the theme designer mode.
+     * @param bool $devlibdir Warn about development libs directory presence.
+     * @param bool $mobileconfigured Whether the mobile web services have been enabled
+     * @param bool $overridetossl Whether or not ssl is being forced.
+     * @param bool $invalidforgottenpasswordurl Whether the forgotten password URL does not link to a valid URL.
      *
      * @return string HTML to output.
      */
     public function admin_notifications_page($maturity, $insecuredataroot, $errorsdisplayed,
             $cronoverdue, $dbproblems, $maintenancemode, $availableupdates, $availableupdatesfetch,
-            $buggyiconvnomb, $registered, array $cachewarnings = array(), $eventshandlers = 0, $themedesignermode = false) {
+            $buggyiconvnomb, $registered, array $cachewarnings = array(), $eventshandlers = 0,
+            $themedesignermode = false, $devlibdir = false, $mobileconfigured = false,
+            $overridetossl = false, $invalidforgottenpasswordurl = false) {
         global $CFG;
         $output = '';
 
@@ -290,15 +297,19 @@ class core_admin_renderer extends plugin_renderer_base {
         $output .= $this->legacy_log_store_writing_error();
         $output .= empty($CFG->disableupdatenotifications) ? $this->available_updates($availableupdates, $availableupdatesfetch) : '';
         $output .= $this->insecure_dataroot_warning($insecuredataroot);
+        $output .= $this->development_libs_directories_warning($devlibdir);
         $output .= $this->themedesignermode_warning($themedesignermode);
         $output .= $this->display_errors_warning($errorsdisplayed);
         $output .= $this->buggy_iconv_warning($buggyiconvnomb);
         $output .= $this->cron_overdue_warning($cronoverdue);
         $output .= $this->db_problems($dbproblems);
         $output .= $this->maintenance_mode_warning($maintenancemode);
+        $output .= $this->overridetossl_warning($overridetossl);
         $output .= $this->cache_warnings($cachewarnings);
         $output .= $this->events_handlers($eventshandlers);
         $output .= $this->registration_warning($registered);
+        $output .= $this->mobile_configuration_warning($mobileconfigured);
+        $output .= $this->forgotten_password_url_warning($invalidforgottenpasswordurl);
 
         //////////////////////////////////////////////////////////////////////////////////////////////////
         ////  IT IS ILLEGAL AND A VIOLATION OF THE GPL TO HIDE, REMOVE OR MODIFY THIS COPYRIGHT NOTICE ///
@@ -521,6 +532,24 @@ class core_admin_renderer extends plugin_renderer_base {
     }
 
     /**
+     * Render a warning that a directory with development libs is present.
+     *
+     * @param bool $devlibdir True if the warning should be displayed.
+     * @return string
+     */
+    protected function development_libs_directories_warning($devlibdir) {
+
+        if ($devlibdir) {
+            $moreinfo = new moodle_url('/report/security/index.php');
+            $warning = get_string('devlibdirpresent', 'core_admin', ['moreinfourl' => $moreinfo->out()]);
+            return $this->warning($warning, 'error');
+
+        } else {
+            return '';
+        }
+    }
+
+    /**
      * Render an appropriate message if dataroot is insecure.
      * @param bool $errorsdisplayed
      * @return string HTML to output.
@@ -642,6 +671,20 @@ class core_admin_renderer extends plugin_renderer_base {
         $url = $url->out(); // get_string() does not support objects in params
 
         return $this->warning(get_string('sitemaintenancewarning2', 'admin', $url));
+    }
+
+    /**
+     * Render a warning that ssl is forced because the site was on loginhttps.
+     *
+     * @param bool $overridetossl Whether or not ssl is being forced.
+     * @return string
+     */
+    protected function overridetossl_warning($overridetossl) {
+        if (!$overridetossl) {
+            return '';
+        }
+        $warning = get_string('overridetossl', 'core_admin');
+        return $this->warning($warning, 'warning');
     }
 
     /**
@@ -783,8 +826,7 @@ class core_admin_renderer extends plugin_renderer_base {
         if (!$registered) {
 
             if (has_capability('moodle/site:config', context_system::instance())) {
-                $registerbutton = $this->single_button(new moodle_url('/admin/registration/register.php',
-                    array('huburl' =>  HUB_MOODLEORGHUBURL, 'hubname' => 'Moodle.net')),
+                $registerbutton = $this->single_button(new moodle_url('/admin/registration/index.php'),
                     get_string('register', 'admin'));
                 $str = 'registrationwarning';
             } else {
@@ -806,10 +848,42 @@ class core_admin_renderer extends plugin_renderer_base {
      * @return string
      */
     public function warn_if_not_registered() {
-        global $CFG;
-        require_once($CFG->dirroot . '/' . $CFG->admin . '/registration/lib.php');
-        $registrationmanager = new registration_manager();
-        return $this->registration_warning($registrationmanager->get_registeredhub(HUB_MOODLEORGHUBURL) ? true : false);
+        return $this->registration_warning(\core\hub\registration::is_registered());
+    }
+
+    /**
+     * Display a warning about the Mobile Web Services being disabled.
+     *
+     * @param boolean $mobileconfigured true if mobile web services are enabled
+     * @return string HTML to output.
+     */
+    protected function mobile_configuration_warning($mobileconfigured) {
+        $output = '';
+        if (!$mobileconfigured) {
+            $settingslink = new moodle_url('/admin/settings.php', ['section' => 'mobilesettings']);
+            $configurebutton = $this->single_button($settingslink, get_string('enablemobilewebservice', 'admin'));
+            $output .= $this->warning(get_string('mobilenotconfiguredwarning', 'admin') . '&nbsp;' . $configurebutton);
+        }
+
+        return $output;
+    }
+
+    /**
+     * Display a warning about the forgotten password URL not linking to a valid URL.
+     *
+     * @param boolean $invalidforgottenpasswordurl true if the forgotten password URL is not valid
+     * @return string HTML to output.
+     */
+    protected function forgotten_password_url_warning($invalidforgottenpasswordurl) {
+        $output = '';
+        if ($invalidforgottenpasswordurl) {
+            $settingslink = new moodle_url('/admin/settings.php', ['section' => 'manageauths']);
+            $configurebutton = $this->single_button($settingslink, get_string('check', 'moodle'));
+            $output .= $this->warning(get_string('invalidforgottenpasswordurl', 'admin') . '&nbsp;' . $configurebutton,
+                'error alert alert-danger');
+        }
+
+        return $output;
     }
 
     /**

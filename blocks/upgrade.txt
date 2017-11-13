@@ -9,6 +9,7 @@ information provided here is intended especially for developers.
 * Blocks can now be included in Moodle global search, with some limitations (at present, the search
   works only for blocks located directly on course pages or site home page). See the HTML block for
   an example.
+* Block block_messages is no longer a part of core.
 
 === 3.3 ===
 

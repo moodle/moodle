@@ -23,7 +23,7 @@ Feature: Enable the calendar block in a course and test it's functionality
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
     When I add the "Calendar" block
-    Then I should see "Events key" in the "Calendar" "block"
+    Then "Calendar" "block" should exist
 
   @javascript
   Scenario: View a global event in the calendar block
@@ -136,9 +136,14 @@ Feature: Enable the calendar block in a course and test it's functionality
     And I press "Save and display"
     And I turn editing mode on
     And I add the "Calendar" block
-    And I create a calendar event with form data:
+    And I click on "This month" "link"
+    And I click on "New event" "button"
+    And I set the following fields to these values:
       | id_eventtype | Group |
       | id_name | Group Event |
+    And I set the following fields to these values:
+      | Group | Group 1 |
+    And I press "Save"
     And I log out
     Then I log in as "student1"
     And I am on "Course 1" course homepage
@@ -173,9 +178,14 @@ Feature: Enable the calendar block in a course and test it's functionality
       | id_eventtype | Course |
       | id_name | Course Event 1 |
     And I am on "Course 1" course homepage
-    And I create a calendar event with form data:
+    And I click on "This month" "link"
+    And I click on "New event" "button"
+    And I set the following fields to these values:
       | id_eventtype | Group |
       | id_name | Group Event 1 |
+    And I set the following fields to these values:
+      | Group | Group 1 |
+    And I press "Save"
     And I log out
     Then I log in as "student1"
     And I am on "Course 1" course homepage

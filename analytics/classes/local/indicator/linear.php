@@ -63,7 +63,7 @@ abstract class linear extends base {
     }
 
     /**
-     * should_be_displayed
+     * Show only the main feature.
      *
      * @param float $value
      * @param string $subtype

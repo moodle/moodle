@@ -48,15 +48,6 @@ function assignsubmission_comments_comment_validate(stdClass $options) {
     if ($assignment->get_instance()->id != $submission->assignment) {
         throw new comment_exception('invalidcontext');
     }
-    $canview = false;
-    if ($submission->userid) {
-        $canview = $assignment->can_view_submission($submission->userid);
-    } else {
-        $canview = $assignment->can_view_group_submission($submission->groupid);
-    }
-    if (!$canview) {
-        throw new comment_exception('nopermissiontocomment');
-    }
 
     return true;
 }

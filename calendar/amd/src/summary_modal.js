@@ -21,11 +21,32 @@
  * @copyright  2017 Simey Lameze <simey@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'core/str', 'core/notification', 'core/custom_interaction_events', 'core/modal',
-    'core/modal_registry', 'core/modal_factory', 'core/modal_events', 'core_calendar/repository',
-    'core_calendar/events'],
-    function($, Str, Notification, CustomEvents, Modal, ModalRegistry, ModalFactory, ModalEvents, CalendarRepository,
-             CalendarEvents) {
+define([
+    'jquery',
+    'core/str',
+    'core/notification',
+    'core/custom_interaction_events',
+    'core/modal',
+    'core/modal_registry',
+    'core/modal_factory',
+    'core/modal_events',
+    'core_calendar/repository',
+    'core_calendar/events',
+    'core_calendar/crud',
+],
+function(
+    $,
+    Str,
+    Notification,
+    CustomEvents,
+    Modal,
+    ModalRegistry,
+    ModalFactory,
+    ModalEvents,
+    CalendarRepository,
+    CalendarEvents,
+    CalendarCrud
+) {
 
     var registered = false;
     var SELECTORS = {
@@ -90,6 +111,30 @@ define(['jquery', 'core/str', 'core/notification', 'core/custom_interaction_even
     };
 
     /**
+     * Get the title for the event being shown in this modal. This value is
+     * not cached because it will change depending on which event is
+     * being displayed.
+     *
+     * @method getEventTitle
+     * @return {String}
+     */
+    ModalEventSummary.prototype.getEventTitle = function() {
+        return this.getBody().find(SELECTORS.ROOT).attr('data-event-title');
+    };
+
+    /**
+     * Get the number of events in the series for the event being shown in
+     * this modal. This value is not cached because it will change
+     * depending on which event is being displayed.
+     *
+     * @method getEventCount
+     * @return {int}
+     */
+    ModalEventSummary.prototype.getEventCount = function() {
+        return this.getBody().find(SELECTORS.ROOT).attr('data-event-count');
+    };
+
+    /**
      * Get the url for the event being shown in this modal.
      *
      * @method getEventUrl
@@ -118,33 +163,22 @@ define(['jquery', 'core/str', 'core/notification', 'core/custom_interaction_even
         // Apply parent event listeners.
         Modal.prototype.registerEventListeners.call(this);
 
-        var confirmPromise = ModalFactory.create(
-            {
-                type: ModalFactory.types.CONFIRM
-            },
-            this.getDeleteButton()
-        ).then(function(modal) {
-            modal.getRoot().on(ModalEvents.yes, function() {
-                var eventId = this.getEventId();
-
-                CalendarRepository.deleteEvent(eventId)
-                    .then(function() {
-                        $('body').trigger(CalendarEvents.deleted, [eventId]);
-                        this.hide();
-                    }.bind(this))
-                    .catch(Notification.exception);
-            }.bind(this));
-
-            return modal;
-        }.bind(this));
-
         // We have to wait for the modal to finish rendering in order to ensure that
         // the data-event-title property is available to use as the modal title.
         this.getRoot().on(ModalEvents.bodyRendered, function() {
-            var eventTitle = this.getBody().find(SELECTORS.ROOT).attr('data-event-title');
-            confirmPromise.then(function(modal) {
-                modal.setBody(Str.get_string('confirmeventdelete', 'core_calendar', eventTitle));
-            });
+            this.getModal().data({
+                eventTitle: this.getEventTitle(),
+                eventId: this.getEventId(),
+                eventCount: this.getEventCount(),
+            })
+            .attr('data-type', 'event');
+            CalendarCrud.registerRemove(this.getModal());
+
+        }.bind(this));
+
+        $('body').on(CalendarEvents.deleted, function() {
+            // Close the dialogue on delete.
+            this.hide();
         }.bind(this));
 
         CustomEvents.define(this.getEditButton(), [
@@ -152,7 +186,6 @@ define(['jquery', 'core/str', 'core/notification', 'core/custom_interaction_even
         ]);
 
         this.getEditButton().on(CustomEvents.events.activate, function(e, data) {
-
             if (this.isActionEvent()) {
                 // Action events cannot be edited on the event form and must be redirected to the module UI.
                 $('body').trigger(CalendarEvents.editActionEvent, [this.getEditUrl()]);

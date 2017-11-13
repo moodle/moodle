@@ -26,7 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 
 if ($hassiteconfig) {
     $settings = new admin_settingpage('analyticssettings', new lang_string('analyticssettings', 'analytics'));
-    $ADMIN->add('appearance', $settings);
+    $ADMIN->add('analytics', $settings);
 
     if ($ADMIN->fulltree) {
         // Select the site prediction's processor.
@@ -79,7 +79,7 @@ if ($hassiteconfig) {
 
         $timesplittingoptions = array();
         $timesplittingdefaults = array('\core\analytics\time_splitting\quarters_accum',
-            '\core\analytics\time_splitting\quarters', '\core\analytics\time_splitting\no_splitting');
+            '\core\analytics\time_splitting\quarters', '\core\analytics\time_splitting\single_range');
         foreach ($alltimesplittings as $key => $timesplitting) {
             $timesplittingoptions[$key] = $timesplitting->get_name();
         }
@@ -97,5 +97,14 @@ if ($hassiteconfig) {
         }
         $settings->add(new admin_setting_configdirectory('analytics/modeloutputdir', new lang_string('modeloutputdir', 'analytics'),
             new lang_string('modeloutputdirinfo', 'analytics'), $defaultmodeloutputdir));
+
+        // Disable web interface evaluation and get predictions.
+        $settings->add(new admin_setting_configcheckbox('analytics/onlycli', new lang_string('onlycli', 'analytics'),
+            new lang_string('onlycliinfo', 'analytics'), 1));
+
+        // Training and prediction time limit per model.
+        $settings->add(new admin_setting_configduration('analytics/modeltimelimit', new lang_string('modeltimelimit', 'analytics'),
+            new lang_string('modeltimelimitinfo', 'analytics'), 20 * MINSECS));
+
     }
 }

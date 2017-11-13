@@ -840,6 +840,9 @@ class mod_quiz_renderer extends plugin_renderer_base {
 
         $button = new single_button($url, $buttontext);
         $button->class .= ' quizstartbuttondiv';
+        if ($popuprequired) {
+            $button->class .= ' quizsecuremoderequired';
+        }
 
         $popupjsoptions = null;
         if ($popuprequired && $popupoptions) {

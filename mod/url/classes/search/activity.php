@@ -36,6 +36,15 @@ defined('MOODLE_INTERNAL') || die();
 class activity extends \core_search\base_activity {
 
     /**
+     * Returns true if this area uses file indexing.
+     *
+     * @return bool
+     */
+    public function uses_file_indexing() {
+        return true;
+    }
+
+    /**
      * Returns the document associated with this activity.
      *
      * Overwrites base_activity to add the provided URL as description.

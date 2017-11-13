@@ -22,6 +22,7 @@
  */
 require_once('../config.php');
 require_once('lib.php');
+require_once($CFG->dirroot . '/course/lib.php');
 
 $courseid     = optional_param('course', SITEID, PARAM_INT);
 $userid       = optional_param('user', 0, PARAM_INT);
@@ -110,9 +111,7 @@ if ($userid && $course->id == SITEID) {
     $PAGE->set_context(context_course::instance($courseid));
 } else {
     $link = null;
-    if (has_capability('moodle/course:viewparticipants', $coursecontext)
-        || has_capability('moodle/site:viewparticipants', $systemcontext)) {
-
+    if (course_can_view_participants($coursecontext) || course_can_view_participants($systemcontext)) {
         $link = new moodle_url('/user/index.php', array('id' => $course->id));
     }
 }

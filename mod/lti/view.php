@@ -130,7 +130,7 @@ if ( $launchcontainer == LTI_LAUNCH_CONTAINER_WINDOW ) {
     echo html_writer::end_tag('p');
 } else {
     // Request the launch content with an iframe tag.
-    echo '<iframe id="contentframe" height="600px" width="100%" src="launch.php?id='.$cm->id.'&triggerview=0"></iframe>';
+    echo '<iframe id="contentframe" height="600px" width="100%" src="launch.php?id='.$cm->id.'&triggerview=0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>';
 
     // Output script to make the iframe tag be as large as possible.
     $resize = '

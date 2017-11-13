@@ -889,12 +889,7 @@ function lti_tool_configuration_from_content_item($typeid, $messagetype, $ltiver
         }
         if (isset($item->url)) {
             $url = new moodle_url($item->url);
-            // Assign item URL to securetoolurl or toolurl depending on its scheme.
-            if (strtolower($url->get_scheme()) === 'https') {
-                $config->securetoolurl = $url->out(false);
-            } else {
-                $config->toolurl = $url->out(false);
-            }
+            $config->toolurl = $url->out(false);
             $config->typeid = 0;
         } else {
             $config->typeid = $typeid;
@@ -1165,7 +1160,7 @@ function lti_get_enabled_capabilities($tool) {
  * @param string    $customstr      String containing the parameters
  * @param boolean   $islti2         True if an LTI 2 tool is being launched
  *
- * @return Array of custom parameters
+ * @return array of custom parameters
  */
 function lti_split_custom_parameters($toolproxy, $tool, $params, $customstr, $islti2 = false) {
     $customstr = str_replace("\r\n", "\n", $customstr);
@@ -1179,11 +1174,12 @@ function lti_split_custom_parameters($toolproxy, $tool, $params, $customstr, $is
             continue;
         }
         $key = trim(core_text::substr($line, 0, $pos));
+        $key = lti_map_keyname($key, false);
         $val = trim(core_text::substr($line, $pos + 1, strlen($line)));
         $val = lti_parse_custom_parameter($toolproxy, $tool, $params, $val, $islti2);
         $key2 = lti_map_keyname($key);
         $retval['custom_'.$key2] = $val;
-        if ($islti2 && ($key != $key2)) {
+        if ($key != $key2) {
             $retval['custom_'.$key] = $val;
         }
     }
@@ -1247,6 +1243,8 @@ function lti_parse_custom_parameter($toolproxy, $tool, $params, $value, $islti2)
                             $value = str_replace('<br>' , ' ', $value);
                             $value = format_string($value);
                         }
+                    } else {
+                        $value = lti_calculate_custom_parameter($value1);
                     }
                 } else if ($islti2) {
                     $val = $value;
@@ -1266,17 +1264,36 @@ function lti_parse_custom_parameter($toolproxy, $tool, $params, $value, $islti2)
 }
 
 /**
+ * Calculates the value of a custom parameter that has not been specified earlier
+ *
+ * @param string    $value          Custom parameter value
+ *
+ * @return string Calculated value of custom parameter
+ */
+function lti_calculate_custom_parameter($value) {
+    global $USER, $COURSE;
+
+    switch ($value) {
+        case 'Moodle.Person.userGroupIds':
+            return implode(",", groups_get_user_groups($COURSE->id, $USER->id)[0]);
+    }
+    return null;
+}
+
+/**
  * Used for building the names of the different custom parameters
  *
  * @param string $key   Parameter name
- *
+ * @param bool $tolower Do we want to convert the key into lower case?
  * @return string       Processed name
  */
-function lti_map_keyname($key) {
+function lti_map_keyname($key, $tolower = true) {
     $newkey = "";
-    $key = core_text::strtolower(trim($key));
+    if ($tolower) {
+        $key = core_text::strtolower(trim($key));
+    }
     foreach (str_split($key) as $ch) {
-        if ( ($ch >= 'a' && $ch <= 'z') || ($ch >= '0' && $ch <= '9') ) {
+        if ( ($ch >= 'a' && $ch <= 'z') || ($ch >= '0' && $ch <= '9') || (!$tolower && ($ch >= 'A' && $ch <= 'Z'))) {
             $newkey .= $ch;
         } else {
             $newkey .= '_';
@@ -2361,7 +2378,7 @@ function lti_get_launch_container($lti, $toolconfig) {
 
 function lti_request_is_using_ssl() {
     global $CFG;
-    return (stripos($CFG->httpswwwroot, 'https://') === 0);
+    return (stripos($CFG->wwwroot, 'https://') === 0);
 }
 
 function lti_ensure_url_is_https($url) {
@@ -2554,7 +2571,8 @@ function lti_get_capabilities() {
        'Person.webaddress' => '$USER->url',
        'Membership.role' => 'roles',
        'Result.sourcedId' => 'lis_result_sourcedid',
-       'Result.autocreate' => 'lis_outcome_service_url');
+       'Result.autocreate' => 'lis_outcome_service_url',
+       'Moodle.Person.userGroupIds' => null);
 
     return $capabilities;
 

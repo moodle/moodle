@@ -43,7 +43,7 @@ Feature: Average grades are displayed in the gradebook
     And I turn editing mode off
     # Suspend a user
     And I navigate to "Enrolled users" node in "Course administration > Users"
-    And I click on "Edit" "link" in the "Student 2" "table_row"
+    And I click on "Edit enrolment" "link" in the "Student 2" "table_row"
     And I set the following fields to these values:
       | Status | Suspended |
     And I press "Save changes"

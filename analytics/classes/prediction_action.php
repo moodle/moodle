@@ -36,33 +36,51 @@ defined('MOODLE_INTERNAL') || die();
 class prediction_action {
 
     /**
+     * @var string
+     */
+    protected $actionname = null;
+
+    /**
      * @var \action_menu_link
      */
     protected $actionlink = null;
 
     /**
-     * __construct
+     * Prediction action constructor.
      *
-     * @param string $actionname
+     * @param string $actionname They should match a-zA-Z_0-9-, as we apply a PARAM_ALPHANUMEXT filter
      * @param \core_analytics\prediction $prediction
      * @param \moodle_url $actionurl
-     * @param \pix_icon $icon
-     * @param string $text
-     * @param bool $primary
+     * @param \pix_icon $icon Link icon
+     * @param string $text Link text
+     * @param bool $primary Primary button or secondary.
+     * @param array $attributes Link attributes
      * @return void
      */
-    public function __construct($actionname, \core_analytics\prediction $prediction, \moodle_url $actionurl, \pix_icon $icon, $text, $primary = false) {
+    public function __construct($actionname, \core_analytics\prediction $prediction, \moodle_url $actionurl, \pix_icon $icon,
+                                $text, $primary = false, $attributes = array()) {
+
+        $this->actionname = $actionname;
 
         // We want to track how effective are our suggested actions, we pass users through a script that will log these actions.
-        $params = array('action' => $actionname, 'predictionid' => $prediction->get_prediction_data()->id,
+        $params = array('action' => $this->actionname, 'predictionid' => $prediction->get_prediction_data()->id,
             'forwardurl' => $actionurl->out(false));
         $url = new \moodle_url('/report/insights/action.php', $params);
 
         if ($primary === false) {
-            $this->actionlink = new \action_menu_link_secondary($url, $icon, $text);
+            $this->actionlink = new \action_menu_link_secondary($url, $icon, $text, $attributes);
         } else {
-            $this->actionlink = new \action_menu_link_primary($url, $icon, $text);
+            $this->actionlink = new \action_menu_link_primary($url, $icon, $text, $attributes);
         }
+    }
+
+    /**
+     * Returns the action name.
+     *
+     * @return string
+     */
+    public function get_action_name() {
+        return $this->actionname;
     }
 
     /**

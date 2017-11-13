@@ -70,8 +70,8 @@ $module = array(
                          array('modulename', 'chat'), array('beep', 'chat'), array('talk', 'chat'))
 );
 $modulecfg = array(
-    'home' => $CFG->httpswwwroot.'/mod/chat/view.php?id='.$cm->id,
-    'chaturl' => $CFG->httpswwwroot.'/mod/chat/gui_ajax/index.php?id='.$id,
+    'home' => $CFG->wwwroot.'/mod/chat/view.php?id='.$cm->id,
+    'chaturl' => $CFG->wwwroot.'/mod/chat/gui_ajax/index.php?id='.$id,
     'theme' => $theme,
     'userid' => $USER->id,
     'sid' => $chatsid,

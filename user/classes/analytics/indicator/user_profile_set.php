@@ -36,12 +36,14 @@ defined('MOODLE_INTERNAL') || die();
 class user_profile_set extends \core_analytics\local\indicator\linear {
 
     /**
-     * get_name
+     * Returns the name.
      *
-     * @return string
+     * If there is a corresponding '_help' string this will be shown as well.
+     *
+     * @return \lang_string
      */
-    public static function get_name() {
-        return get_string('indicator:completeduserprofile');
+    public static function get_name() : \lang_string {
+        return new \lang_string('indicator:completeduserprofile');
     }
 
     /**

@@ -851,7 +851,7 @@ class core_event_testcase extends advanced_testcase {
     }
 
     /**
-     * @expectedException PHPUnit_Framework_Error_Notice
+     * @expectedException PHPUnit\Framework\Error\Notice
      */
     public function test_context_not_used() {
         $event = \core_tests\event\context_used_in_event::create(array('other' => array('sample' => 1, 'xx' => 10)));

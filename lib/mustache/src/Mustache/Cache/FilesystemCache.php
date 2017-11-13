@@ -3,7 +3,7 @@
 /*
  * This file is part of Mustache.php.
  *
- * (c) 2010-2016 Justin Hileman
+ * (c) 2010-2017 Justin Hileman
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -108,9 +108,11 @@ class Mustache_Cache_FilesystemCache extends Mustache_Cache_AbstractCache
             );
 
             @mkdir($dirName, 0777, true);
+            // @codeCoverageIgnoreStart
             if (!is_dir($dirName)) {
                 throw new Mustache_Exception_RuntimeException(sprintf('Failed to create cache directory "%s".', $dirName));
             }
+            // @codeCoverageIgnoreEnd
         }
 
         return $dirName;
@@ -143,13 +145,17 @@ class Mustache_Cache_FilesystemCache extends Mustache_Cache_AbstractCache
                 return;
             }
 
+            // @codeCoverageIgnoreStart
             $this->log(
                 Mustache_Logger::ERROR,
                 'Unable to rename Mustache temp cache file: "{tempName}" -> "{fileName}"',
                 array('tempName' => $tempFile, 'fileName' => $fileName)
             );
+            // @codeCoverageIgnoreEnd
         }
 
+        // @codeCoverageIgnoreStart
         throw new Mustache_Exception_RuntimeException(sprintf('Failed to write cache file "%s".', $fileName));
+        // @codeCoverageIgnoreEnd
     }
 }

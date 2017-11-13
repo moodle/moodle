@@ -36,6 +36,21 @@ defined('MOODLE_INTERNAL') || die();
 class prediction {
 
     /**
+     * Prediction details (one of the default prediction actions)
+     */
+    const ACTION_PREDICTION_DETAILS = 'predictiondetails';
+
+    /**
+     * Prediction not useful (one of the default prediction actions)
+     */
+    const ACTION_NOT_USEFUL = 'notuseful';
+
+    /**
+     * Prediction already fixed (one of the default prediction actions)
+     */
+    const ACTION_FIXED = 'fixed';
+
+    /**
      * @var \stdClass
      */
     private $prediction;
@@ -53,7 +68,7 @@ class prediction {
     /**
      * Constructor
      *
-     * @param \stdClass $prediction
+     * @param \stdClass|int $prediction
      * @param array $sampledata
      * @return void
      */
@@ -95,6 +110,51 @@ class prediction {
      */
     public function get_calculations() {
         return $this->calculations;
+    }
+
+    /**
+     * Stores the executed action.
+
+     * Prediction instances should be retrieved using \core_analytics\manager::get_prediction,
+     * It is the caller responsability to check that the user can see the prediction.
+     *
+     * @param string $actionname
+     * @param \core_analytics\local\target\base $target
+     */
+    public function action_executed($actionname, \core_analytics\local\target\base $target) {
+        global $USER, $DB;
+
+        $context = \context::instance_by_id($this->get_prediction_data()->contextid, IGNORE_MISSING);
+        if (!$context) {
+            throw new \moodle_exception('errorpredictioncontextnotavailable', 'analytics');
+        }
+
+        // Check that the provided action exists.
+        $actions = $target->prediction_actions($this, true);
+        foreach ($actions as $action) {
+            if ($action->get_action_name() === $actionname) {
+                $found = true;
+            }
+        }
+        if (empty($found)) {
+            throw new \moodle_exception('errorunknownaction', 'analytics');
+        }
+
+        $predictionid = $this->get_prediction_data()->id;
+
+        $action = new \stdClass();
+        $action->predictionid = $predictionid;
+        $action->userid = $USER->id;
+        $action->actionname = $actionname;
+        $action->timecreated = time();
+        $DB->insert_record('analytics_prediction_actions', $action);
+
+        $eventdata = array (
+            'context' => $context,
+            'objectid' => $predictionid,
+            'other' => array('actionname' => $actionname)
+        );
+        \core\event\prediction_action_started::create($eventdata)->trigger();
     }
 
     /**

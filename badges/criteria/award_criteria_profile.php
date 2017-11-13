@@ -62,7 +62,9 @@ class award_criteria_profile extends award_criteria {
 
         // Get custom fields.
         $cfields = $DB->get_records_sql($sql);
-        $cfids = array_map(create_function('$o', 'return $o->fieldid;'), $cfields);
+        $cfids = array_map(function($o) {
+            return $o->fieldid;
+        }, $cfields);
 
         if ($this->id !== 0) {
             $existing = array_keys($this->params);

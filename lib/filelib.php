@@ -237,6 +237,9 @@ function file_postupdate_standard_editor($data, $field, array $options, $context
     if (!isset($options['maxbytes'])) {
         $options['maxbytes'] = 0; // unlimited
     }
+    if (!isset($options['removeorphaneddrafts'])) {
+        $options['removeorphaneddrafts'] = false; // Don't remove orphaned draft files by default.
+    }
 
     if ($options['trusttext']) {
         $data->{$field.'trust'} = trusttext_trusted($context);
@@ -249,6 +252,10 @@ function file_postupdate_standard_editor($data, $field, array $options, $context
     if ($options['maxfiles'] == 0 or is_null($filearea) or is_null($itemid) or empty($editor['itemid'])) {
         $data->{$field} = $editor['text'];
     } else {
+        // Clean the user drafts area of any files not referenced in the editor text.
+        if ($options['removeorphaneddrafts']) {
+            file_remove_editor_orphaned_files($editor);
+        }
         $data->{$field} = file_save_draft_area_files($editor['itemid'], $context->id, $component, $filearea, $itemid, $options, $editor['text'], $options['forcehttps']);
     }
     $data->{$field.'format'} = $editor['format'];
@@ -429,7 +436,7 @@ function file_prepare_draft_area(&$draftitemid, $contextid, $component, $fileare
             // at this point there should not be any draftfile links yet,
             // because this is a new text from database that should still contain the @@pluginfile@@ links
             // this happens when developers forget to post process the text
-            $text = str_replace("\"$CFG->httpswwwroot/draftfile.php", "\"$CFG->httpswwwroot/brokenfile.php#", $text);
+            $text = str_replace("\"$CFG->wwwroot/draftfile.php", "\"$CFG->wwwroot/brokenfile.php#", $text);
         }
     } else {
         // nothing to do
@@ -724,11 +731,22 @@ function file_get_drafarea_files($draftitemid, $filepath = '/') {
                 $item->url = $itemurl->out();
                 $item->icon = $OUTPUT->image_url(file_file_icon($file, 24))->out(false);
                 $item->thumbnail = $OUTPUT->image_url(file_file_icon($file, 90))->out(false);
-                if ($imageinfo = $file->get_imageinfo()) {
-                    $item->realthumbnail = $itemurl->out(false, array('preview' => 'thumb', 'oid' => $file->get_timemodified()));
-                    $item->realicon = $itemurl->out(false, array('preview' => 'tinyicon', 'oid' => $file->get_timemodified()));
-                    $item->image_width = $imageinfo['width'];
-                    $item->image_height = $imageinfo['height'];
+
+                // The call to $file->get_imageinfo() fails with an exception if the file can't be read on the file system.
+                // We still want to add such files to the list, so the owner can view and delete them if needed. So, we only call
+                // get_imageinfo() on files that can be read, and we also spoof the file status based on whether it was found.
+                // We'll use the same status types used by stored_file->get_status(), where 0 = OK. 1 = problem, as these will be
+                // used by the widget to display a warning about the problem files.
+                // The value of stored_file->get_status(), and the file record are unaffected by this. It's only superficially set.
+                $item->status = $fs->get_file_system()->is_file_readable_remotely_by_storedfile($file) ? 0 : 1;
+                if ($item->status == 0) {
+                    if ($imageinfo = $file->get_imageinfo()) {
+                        $item->realthumbnail = $itemurl->out(false, array('preview' => 'thumb',
+                            'oid' => $file->get_timemodified()));
+                        $item->realicon = $itemurl->out(false, array('preview' => 'tinyicon', 'oid' => $file->get_timemodified()));
+                        $item->image_width = $imageinfo['width'];
+                        $item->image_height = $imageinfo['height'];
+                    }
                 }
             }
             $list[] = $item;
@@ -792,6 +810,38 @@ function file_restore_source_field_from_draft_file($storedfile) {
     }
     return $storedfile;
 }
+
+/**
+ * Removes those files from the user drafts filearea which are not referenced in the editor text.
+ *
+ * @param stdClass $editor The online text editor element from the submitted form data.
+ */
+function file_remove_editor_orphaned_files($editor) {
+    global $CFG, $USER;
+
+    // Find those draft files included in the text, and generate their hashes.
+    $context = context_user::instance($USER->id);
+    $baseurl = $CFG->wwwroot . '/draftfile.php/' . $context->id . '/user/draft/' . $editor['itemid'] . '/';
+    $pattern = "/" . preg_quote($baseurl, '/') . "(.+?)[\?\"']/";
+    preg_match_all($pattern, $editor['text'], $matches);
+    $usedfilehashes = [];
+    foreach ($matches[1] as $matchedfilename) {
+        $matchedfilename = urldecode($matchedfilename);
+        $usedfilehashes[] = \file_storage::get_pathname_hash($context->id, 'user', 'draft', $editor['itemid'], '/',
+                                                             $matchedfilename);
+    }
+
+    // Now, compare the hashes of all draft files, and remove those which don't match used files.
+    $fs = get_file_storage();
+    $files = $fs->get_area_files($context->id, 'user', 'draft', $editor['itemid'], 'id', false);
+    foreach ($files as $file) {
+        $tmphash = $file->get_pathnamehash();
+        if (!in_array($tmphash, $usedfilehashes)) {
+            $file->delete();
+        }
+    }
+}
+
 /**
  * Saves files from a draft file area to a real one (merging the list of files).
  * Can rewrite URLs in some content at the same time if desired.
@@ -2375,7 +2425,7 @@ function send_stored_file($stored_file, $lifetime=null, $filter=0, $forcedownloa
                 $size = 256;
             }
             $fileicon = file_file_icon($stored_file, $size);
-            send_file($CFG->dirroot.'/pix/'.$fileicon.'.svg', basename($fileicon).'.svg');
+            send_file($CFG->dirroot.'/pix/'.$fileicon.'.png', basename($fileicon).'.png');
         } else {
             // preview images have fixed cache lifetime and they ignore forced download
             // (they are generated by GD and therefore they are considered reasonably safe).
@@ -4573,7 +4623,8 @@ function file_pluginfile($relativepath, $forcedownload, $preview = null, $offlin
             // Backup files that were generated by the automated backup systems.
 
             require_login($course);
-            require_capability('moodle/site:config', $context);
+            require_capability('moodle/backup:downloadfile', $context);
+            require_capability('moodle/restore:userinfo', $context);
 
             $filename = array_pop($args);
             $filepath = $args ? '/'.implode('/', $args).'/' : '/';

@@ -98,36 +98,13 @@ class quiz_overview_report extends quiz_attempts_report {
         $this->course = $course; // Hack to make this available in process_actions.
         $this->process_actions($quiz, $cm, $currentgroup, $groupstudentsjoins, $allowedjoins, $options->get_url());
 
+        $hasquestions = quiz_has_questions($quiz->id);
+
         // Start output.
         if (!$table->is_downloading()) {
             // Only print headers if not asked to download data.
-            $this->print_header_and_tabs($cm, $course, $quiz, $this->mode);
-        }
-
-        if ($groupmode = groups_get_activity_groupmode($cm)) {
-            // Groups are being used, so output the group selector if we are not downloading.
-            if (!$table->is_downloading()) {
-                groups_print_activity_menu($cm, $options->get_url());
-            }
-        }
-
-        // Print information on the number of existing attempts.
-        if (!$table->is_downloading()) {
-            // Do not print notices when downloading.
-            if ($strattemptnum = quiz_num_attempt_summary($quiz, $cm, true, $currentgroup)) {
-                echo '<div class="quizattemptcounts">' . $strattemptnum . '</div>';
-            }
-        }
-
-        $hasquestions = quiz_has_questions($quiz->id);
-        if (!$table->is_downloading()) {
-            if (!$hasquestions) {
-                echo quiz_no_questions_message($quiz, $cm, $this->context);
-            } else if (!$hasstudents) {
-                echo $OUTPUT->notification(get_string('nostudentsyet'));
-            } else if ($currentgroup && !$this->hasgroupstudents) {
-                echo $OUTPUT->notification(get_string('nostudentsingroup'));
-            }
+            $this->print_standard_header_and_messages($cm, $course, $quiz,
+                    $options, $currentgroup, $hasquestions, $hasstudents);
 
             // Print the display options.
             $this->form->display();
@@ -136,24 +113,7 @@ class quiz_overview_report extends quiz_attempts_report {
         $hasstudents = $hasstudents && (!$currentgroup || $this->hasgroupstudents);
         if ($hasquestions && ($hasstudents || $options->attempts == self::ALL_WITH)) {
             // Construct the SQL.
-            list($fields, $from, $where, $params) = $table->base_sql($allowedjoins);
-
-            $table->set_count_sql("SELECT COUNT(1) FROM $from WHERE $where", $params);
-
-            // Test to see if there are any regraded attempts to be listed.
-            $fields .= ", COALESCE((
-                                SELECT MAX(qqr.regraded)
-                                  FROM {quiz_overview_regrades} qqr
-                                 WHERE qqr.questionusageid = quiza.uniqueid
-                          ), -1) AS regraded";
-            if ($options->onlyregraded) {
-                $where .= " AND COALESCE((
-                                    SELECT MAX(qqr.regraded)
-                                      FROM {quiz_overview_regrades} qqr
-                                     WHERE qqr.questionusageid = quiza.uniqueid
-                                ), -1) <> -1";
-            }
-            $table->set_sql($fields, $from, $where, $params);
+            $table->setup_sql_queries($allowedjoins);
 
             if (!$table->is_downloading()) {
                 // Output the regrade buttons.
@@ -218,7 +178,7 @@ class quiz_overview_report extends quiz_attempts_report {
             $this->add_grade_columns($quiz, $options->usercanseegrades, $columns, $headers, false);
 
             if (!$table->is_downloading() && has_capability('mod/quiz:regrade', $this->context) &&
-                    $this->has_regraded_questions($from, $where, $params)) {
+                    $this->has_regraded_questions($table->sql->from, $table->sql->where, $table->sql->params)) {
                 $columns[] = 'regraded';
                 $headers[] = get_string('regrade', 'quiz_overview');
             }

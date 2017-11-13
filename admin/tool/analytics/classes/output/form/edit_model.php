@@ -45,7 +45,7 @@ class edit_model extends \moodleform {
 
         $mform = $this->_form;
 
-        if ($this->_customdata['model']->get_model_obj()->trained == 1) {
+        if ($this->_customdata['model']->is_trained()) {
             $message = get_string('edittrainedwarning', 'tool_analytics');
             $mform->addElement('html', $OUTPUT->notification($message, \core\output\notification::NOTIFY_WARNING));
         }

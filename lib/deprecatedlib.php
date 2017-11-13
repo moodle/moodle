@@ -501,10 +501,10 @@ function filter_text($text, $courseid = NULL) {
 }
 
 /**
- * @deprecated use $PAGE->https_required() instead
+ * @deprecated Loginhttps is no longer supported
  */
 function httpsrequired() {
-    throw new coding_exception('httpsrequired() can not be used any more use $PAGE->https_required() instead.');
+    throw new coding_exception('httpsrequired() can not be used any more. Loginhttps is no longer supported.');
 }
 
 /**
@@ -533,9 +533,6 @@ function get_file_url($path, $options=null, $type='coursefile') {
             break;
        case 'rssfile':
             $url = $CFG->wwwroot."/rss/file.php";
-            break;
-        case 'httpscoursefile':
-            $url = $CFG->httpswwwroot."/file.php";
             break;
          case 'coursefile':
         default:
@@ -6246,8 +6243,11 @@ function calendar_wday_name($englishname) {
 function calendar_get_block_upcoming($events, $linkhref = null, $showcourselink = false) {
     global $CFG;
 
-    debugging(__FUNCTION__ . '() is deprecated, please use block_calendar_upcoming::get_upcoming_content() instead.',
-        DEBUG_DEVELOPER);
+    debugging(
+            __FUNCTION__ . '() has been deprecated. ' .
+            'Please see block_calendar_upcoming::get_content() for the correct API usage.',
+            DEBUG_DEVELOPER
+        );
 
     require_once($CFG->dirroot . '/blocks/moodleblock.class.php');
     require_once($CFG->dirroot . '/blocks/calendar_upcoming/block_calendar_upcoming.php');
@@ -6382,4 +6382,132 @@ function get_user_access_sitewide($userid) {
     }
 
     return $accessdata;
+}
+
+/**
+ * Generates the HTML for a miniature calendar.
+ *
+ * @param array $courses list of course to list events from
+ * @param array $groups list of group
+ * @param array $users user's info
+ * @param int|bool $calmonth calendar month in numeric, default is set to false
+ * @param int|bool $calyear calendar month in numeric, default is set to false
+ * @param string|bool $placement the place/page the calendar is set to appear - passed on the the controls function
+ * @param int|bool $courseid id of the course the calendar is displayed on - passed on the the controls function
+ * @param int $time the unixtimestamp representing the date we want to view, this is used instead of $calmonth
+ *     and $calyear to support multiple calendars
+ * @return string $content return html table for mini calendar
+ * @deprecated since Moodle 3.4. MDL-59333
+ */
+function calendar_get_mini($courses, $groups, $users, $calmonth = false, $calyear = false, $placement = false,
+                           $courseid = false, $time = 0) {
+    global $PAGE;
+
+    debugging('calendar_get_mini() has been deprecated. Please update your code to use calendar_get_view.',
+        DEBUG_DEVELOPER);
+
+    if (!empty($calmonth) && !empty($calyear)) {
+        // Do this check for backwards compatibility.
+        // The core should be passing a timestamp rather than month and year.
+        // If a month and year are passed they will be in Gregorian.
+        // Ensure it is a valid date, else we will just set it to the current timestamp.
+        if (checkdate($calmonth, 1, $calyear)) {
+            $time = make_timestamp($calyear, $calmonth, 1);
+        } else {
+            $time = time();
+        }
+    } else if (empty($time)) {
+        // Get the current date in the calendar type being used.
+        $time = time();
+    }
+
+    if ($courseid == SITEID) {
+        $course = get_site();
+    } else {
+        $course = get_course($courseid);
+    }
+    $calendar = new calendar_information(0, 0, 0, $time);
+    $calendar->prepare_for_view($course, $courses);
+
+    $renderer = $PAGE->get_renderer('core_calendar');
+    list($data, $template) = calendar_get_view($calendar, 'mini');
+    return $renderer->render_from_template($template, $data);
+}
+
+/**
+ * Gets the calendar upcoming event.
+ *
+ * @param array $courses array of courses
+ * @param array|int|bool $groups array of groups, group id or boolean for all/no group events
+ * @param array|int|bool $users array of users, user id or boolean for all/no user events
+ * @param int $daysinfuture number of days in the future we 'll look
+ * @param int $maxevents maximum number of events
+ * @param int $fromtime start time
+ * @return array $output array of upcoming events
+ * @deprecated since Moodle 3.4. MDL-59333
+ */
+function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxevents, $fromtime=0) {
+    debugging(
+            'calendar_get_upcoming() has been deprecated. ' .
+            'Please see block_calendar_upcoming::get_content() for the correct API usage.',
+            DEBUG_DEVELOPER
+        );
+
+    global $COURSE;
+
+    $display = new \stdClass;
+    $display->range = $daysinfuture; // How many days in the future we 'll look.
+    $display->maxevents = $maxevents;
+
+    $output = array();
+
+    $processed = 0;
+    $now = time(); // We 'll need this later.
+    $usermidnighttoday = usergetmidnight($now);
+
+    if ($fromtime) {
+        $display->tstart = $fromtime;
+    } else {
+        $display->tstart = $usermidnighttoday;
+    }
+
+    // This works correctly with respect to the user's DST, but it is accurate
+    // only because $fromtime is always the exact midnight of some day!
+    $display->tend = usergetmidnight($display->tstart + DAYSECS * $display->range + 3 * HOURSECS) - 1;
+
+    // Get the events matching our criteria.
+    $events = calendar_get_legacy_events($display->tstart, $display->tend, $users, $groups, $courses);
+
+    // This is either a genius idea or an idiot idea: in order to not complicate things, we use this rule: if, after
+    // possibly removing SITEID from $courses, there is only one course left, then clicking on a day in the month
+    // will also set the $SESSION->cal_courses_shown variable to that one course. Otherwise, we 'd need to add extra
+    // arguments to this function.
+    $hrefparams = array();
+    if (!empty($courses)) {
+        $courses = array_diff($courses, array(SITEID));
+        if (count($courses) == 1) {
+            $hrefparams['course'] = reset($courses);
+        }
+    }
+
+    if ($events !== false) {
+        foreach ($events as $event) {
+            if (!empty($event->modulename)) {
+                $instances = get_fast_modinfo($event->courseid)->get_instances_of($event->modulename);
+                if (empty($instances[$event->instance]->uservisible)) {
+                    continue;
+                }
+            }
+
+            if ($processed >= $display->maxevents) {
+                break;
+            }
+
+            $event->time = calendar_format_event_time($event, $now, $hrefparams);
+            $output[] = $event;
+            $processed++;
+        }
+    }
+
+    return $output;
 }

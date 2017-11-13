@@ -246,10 +246,53 @@ abstract class base {
      * - Order the returned data by time modified in ascending order, as \core_search::manager will need to store the modified time
      *   of the last indexed document.
      *
+     * Since Moodle 3.4, subclasses should instead implement get_document_recordset, which has
+     * an additional context parameter. This function continues to work for implementations which
+     * haven't been updated, or where the context parameter is not required.
+     *
      * @param int $modifiedfrom
-     * @return moodle_recordset
+     * @return \moodle_recordset
      */
-    abstract public function get_recordset_by_timestamp($modifiedfrom = 0);
+    public function get_recordset_by_timestamp($modifiedfrom = 0) {
+        $result = $this->get_document_recordset($modifiedfrom);
+        if ($result === false) {
+            throw new \coding_exception(
+                    'Search area must implement get_document_recordset or get_recordset_by_timestamp');
+        }
+        return $result;
+    }
+
+    /**
+     * Returns a recordset containing all items from this area, optionally within the given context,
+     * and including only items modifed from (>=) the specified time. The recordset must be ordered
+     * in ascending order of modified time.
+     *
+     * Each record can include any data self::get_document might need. It must include an 'id'
+     * field,a unique identifier (in this area's scope) of a document to index in the search engine.
+     * If the indexed content field can contain embedded files, the 'id' value should match the
+     * filearea itemid.
+     *
+     * The return value can be a recordset, null (if this area does not provide any results in the
+     * given context and there is no need to do a database query to find out), or false (if this
+     * facility is not currently supported by this search area).
+     *
+     * If this function returns false, then:
+     * - If indexing the entire system (no context restriction) the search indexer will try
+     *   get_recordset_by_timestamp instead
+     * - If trying to index a context (e.g. when restoring a course), the search indexer will not
+     *   index this area, so that restored content may not be indexed.
+     *
+     * The default implementation returns false, indicating that this facility is not supported and
+     * the older get_recordset_by_timestamp function should be used.
+     *
+     * @param int $modifiedfrom Return only records modified after this date
+     * @param \context|null $context Context (null means no context restriction)
+     * @return \moodle_recordset|null|false Recordset / null if no results / false if not supported
+     * @since Moodle 3.4
+     */
+    public function get_document_recordset($modifiedfrom = 0, \context $context = null) {
+        return false;
+    }
 
     /**
      * Returns the document related with the provided record.
@@ -267,6 +310,9 @@ abstract class base {
      *     indexfiles => File indexing is enabled if true.
      *     lastindexedtime => The last time this area was indexed. 0 if never indexed.
      *
+     * The lastindexedtime value is not set if indexing a specific context rather than the whole
+     * system.
+     *
      * @param \stdClass $record A record containing, at least, the indexed document id and a modified timestamp
      * @param array     $options Options for document creation
      * @return \core_search\document
@@ -274,13 +320,48 @@ abstract class base {
     abstract public function get_document($record, $options = array());
 
     /**
-     * Add any files to the document that should be indexed.
+     * Return the context info required to index files for
+     * this search area.
+     *
+     * Should be onerridden by each search area.
+     *
+     * @return array
+     */
+    public function get_search_fileareas() {
+        $fileareas = array();
+
+        return $fileareas;
+    }
+
+    /**
+     * Files related to the current document are attached,
+     * to the document object ready for indexing by
+     * Global Search.
+     *
+     * The default implementation retrieves all files for
+     * the file areas returned by get_search_fileareas().
+     * If you need to filter files to specific items per
+     * file area, you will need to override this method
+     * and explicitly provide the items.
      *
      * @param document $document The current document
      * @return void
      */
     public function attach_files($document) {
-        return;
+        $fileareas = $this->get_search_fileareas();
+        $contextid = $document->get('contextid');
+        $component = $this->get_component_name();
+        $itemid = $document->get('itemid');
+
+        foreach ($fileareas as $filearea) {
+            $fs = get_file_storage();
+            $files = $fs->get_area_files($contextid, $component, $filearea, $itemid, '', false);
+
+            foreach ($files as $file) {
+                $document->add_stored_file($file);
+            }
+        }
+
     }
 
     /**
@@ -306,4 +387,91 @@ abstract class base {
      * @return \moodle_url
      */
     abstract public function get_context_url(\core_search\document $doc);
+
+    /**
+     * Helper function that gets SQL useful for restricting a search query given a passed-in
+     * context, for data stored at course level.
+     *
+     * The SQL returned will be zero or more JOIN statements, surrounded by whitespace, which act
+     * as restrictions on the query based on the rows in a module table.
+     *
+     * You can pass in a null or system context, which will both return an empty string and no
+     * params.
+     *
+     * Returns an array with two nulls if there can be no results for a course within this context.
+     *
+     * If named parameters are used, these will be named gclcrs0, gclcrs1, etc. The table aliases
+     * used in SQL also all begin with gclcrs, to avoid conflicts.
+     *
+     * @param \context|null $context Context to restrict the query
+     * @param string $coursetable Name of alias for course table e.g. 'c'
+     * @param int $paramtype Type of SQL parameters to use (default question mark)
+     * @return array Array with SQL and parameters; both null if no need to query
+     * @throws \coding_exception If called with invalid params
+     */
+    protected function get_course_level_context_restriction_sql(\context $context = null,
+            $coursetable, $paramtype = SQL_PARAMS_QM) {
+        global $DB;
+
+        if (!$context) {
+            return ['', []];
+        }
+
+        switch ($paramtype) {
+            case SQL_PARAMS_QM:
+                $param1 = '?';
+                $param2 = '?';
+                $key1 = 0;
+                $key2 = 1;
+                break;
+            case SQL_PARAMS_NAMED:
+                $param1 = ':gclcrs0';
+                $param2 = ':gclcrs1';
+                $key1 = 'gclcrs0';
+                $key2 = 'gclcrs1';
+                break;
+            default:
+                throw new \coding_exception('Unexpected $paramtype: ' . $paramtype);
+        }
+
+        $params = [];
+        switch ($context->contextlevel) {
+            case CONTEXT_SYSTEM:
+                $sql = '';
+                break;
+
+            case CONTEXT_COURSECAT:
+                // Find all courses within the specified category or any sub-category.
+                $pathmatch = $DB->sql_like('gclcrscc2.path',
+                        $DB->sql_concat('gclcrscc1.path', $param2));
+                $sql = " JOIN {course_categories} gclcrscc1 ON gclcrscc1.id = $param1
+                         JOIN {course_categories} gclcrscc2 ON gclcrscc2.id = $coursetable.category
+                              AND (gclcrscc2.id = gclcrscc1.id OR $pathmatch) ";
+                $params[$key1] = $context->instanceid;
+                // Note: This param is a bit annoying as it obviously never changes, but sql_like
+                // throws a debug warning if you pass it anything with quotes in, so it has to be
+                // a bound parameter.
+                $params[$key2] = '/%';
+                break;
+
+            case CONTEXT_COURSE:
+                // We just join again against the same course entry and confirm that it has the
+                // same id as the context.
+                $sql = " JOIN {course} gclcrsc ON gclcrsc.id = $coursetable.id
+                              AND gclcrsc.id = $param1";
+                $params[$key1] = $context->instanceid;
+                break;
+
+            case CONTEXT_BLOCK:
+            case CONTEXT_MODULE:
+            case CONTEXT_USER:
+                // Context cannot contain any courses.
+                return [null, null];
+
+            default:
+                throw new \coding_exception('Unexpected contextlevel: ' . $context->contextlevel);
+        }
+
+        return [$sql, $params];
+    }
 }

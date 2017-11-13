@@ -2,7 +2,7 @@ This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
 === 3.4 ===
-
+* oauth2_client::request method has an extra parameter to specify the accept header for the response (MDL-60733)
 * The following functions, previously used (exclusively) by upgrade steps are not available
   anymore because of the upgrade cleanup performed for this version. See MDL-57432 for more info:
     - upgrade_mimetypes()
@@ -32,6 +32,13 @@ information provided here is intended especially for developers.
   These attributes enable enrol actions to be rendered via modals. If not added, clicking on the enrolment action buttons will still
   redirect the user to the appropriate enrolment action page. Though optional, it is recommended to add these attributes for a
   better user experience when performing enrol actions.
+* The enrol_plugin::get_user_enrolment_actions() implementations for core enrol plugins have been removed and moved to
+  the parent method itself. New enrol plugins don't have to implement get_user_enrolment_actions(), but just need to
+  make sure that they override:
+  - enrol_plugin::allow_manage(), and/or
+  - enrol_plugin::allow_unenrol_user() or enrol_plugin::allow_unenrol()
+  Existing enrol plugins that override enrol_plugin::get_user_enrolment_actions() don't have to do anything, but can
+  also opt to remove their own implementation of the method if they basically have the same logic as the parent method.
 * New optional parameter $enrolid for the following functions:
   - get_enrolled_join()
   - get_enrolled_sql()
@@ -42,6 +49,15 @@ information provided here is intended especially for developers.
   close the suggestions popup immediately after an option has been selected. If not specified, it defaults to true for single-select
   elements and false for multiple-select elements.
 * user_can_view_profile() now also checks the moodle/user:viewalldetails capability.
+* The core/modal_confirm dialogue has been deprecated. Please use the core/modal_save_cancel dialogue instead. Please ensure you
+  update to use the ModalEvents.save and ModalEvents.cancel events instead of their yes/no counterparts.
+* Instead of checking the 'moodle/course:viewparticipants' and 'moodle/site:viewparticipants' capabilities use the
+  new functions course_can_view_participants() and course_require_view_participants().
+* $stored_file->add_to_curl_request() now adds the filename to the curl request.
+* The option for Login HTTPS (authentication-only SSL) has been removed
+* $CFG->loginhttps is now deprecated, do not use it.
+* $PAGE->https_required and $PAGE->verify_https_required() are now deprecated. They are no longer used and will throw a coding_exception.
+* $CFG->httpswwwroot is now deprecated and will always result in the same value as wwwroot.
 
 === 3.3.1 ===
 

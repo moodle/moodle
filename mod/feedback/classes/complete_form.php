@@ -70,6 +70,7 @@ class mod_feedback_complete_form extends moodleform {
         $isanonymous = $this->structure->is_anonymous() ? ' ianonymous' : '';
         parent::__construct(null, $customdata, 'POST', '',
                 array('id' => $formid, 'class' => 'feedback_form' . $isanonymous), true);
+        $this->set_display_vertical();
     }
 
     /**

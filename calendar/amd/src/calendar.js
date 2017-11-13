@@ -37,7 +37,10 @@ define([
             'core_calendar/modal_event_form',
             'core_calendar/summary_modal',
             'core_calendar/repository',
-            'core_calendar/events'
+            'core_calendar/events',
+            'core_calendar/view_manager',
+            'core_calendar/crud',
+            'core_calendar/selectors',
         ],
         function(
             $,
@@ -51,130 +54,83 @@ define([
             ModalEventForm,
             SummaryModal,
             CalendarRepository,
-            CalendarEvents
+            CalendarEvents,
+            CalendarViewManager,
+            CalendarCrud,
+            CalendarSelectors
         ) {
 
     var SELECTORS = {
         ROOT: "[data-region='calendar']",
-        EVENT_LINK: "[data-action='view-event']",
-        NEW_EVENT_BUTTON: "[data-action='new-event-button']"
+        DAY: "[data-region='day']",
+        NEW_EVENT_BUTTON: "[data-action='new-event-button']",
+        DAY_CONTENT: "[data-region='day-content']",
+        LOADING_ICON: '.loading-icon',
+        VIEW_DAY_LINK: "[data-action='view-day-link']",
+        CALENDAR_MONTH_WRAPPER: ".calendarwrapper",
+        TODAY: '.today',
     };
 
     /**
-     * Get the event type lang string.
+     * Handler for the drag and drop move event. Provides a loading indicator
+     * while the request is sent to the server to update the event start date.
      *
-     * @param {String} eventType The event type.
-     * @return {promise} The lang string promise.
-     */
-    var getEventType = function(eventType) {
-        var lang = 'type' + eventType;
-        return Str.get_string(lang, 'core_calendar').then(function(langStr) {
-            return langStr;
-        });
-    };
-
-    /**
-     * Get the event source.
+     * Triggers a eventMoved calendar javascript event if the event was successfully
+     * updated.
      *
-     * @param {Object} subscription The event subscription object.
-     * @return {promise} The lang string promise.
+     * @param {event} e The calendar move event
+     * @param {int} eventId The event id being moved
+     * @param {object|null} originElement The jQuery element for where the event is moving from
+     * @param {object} destinationElement The jQuery element for where the event is moving to
      */
-    var getEventSource = function(subscription) {
-        return Str.get_string('subsource', 'core_calendar', subscription).then(function(langStr) {
-            if (subscription.url) {
-                return '<a href="' + subscription.url + '">' + langStr + '</a>';
-            }
-            return langStr;
-        });
-    };
+    var handleMoveEvent = function(e, eventId, originElement, destinationElement) {
+        var originTimestamp = null;
+        var destinationTimestamp = destinationElement.attr('data-day-timestamp');
 
-    /**
-     * Render the event summary modal.
-     *
-     * @param {Number} eventId The calendar event id.
-     */
-    var renderEventSummaryModal = function(eventId) {
-        // Calendar repository promise.
-        CalendarRepository.getEventById(eventId).then(function(getEventResponse) {
-            if (!getEventResponse.event) {
-                throw new Error('Error encountered while trying to fetch calendar event with ID: ' + eventId);
-            }
-            var eventData = getEventResponse.event;
-            var eventTypePromise = getEventType(eventData.eventtype);
+        if (originElement) {
+            originTimestamp = originElement.attr('data-day-timestamp');
+        }
 
-            // If the calendar event has event source, get the source's language string/link.
-            if (eventData.displayeventsource) {
-                eventData.subscription = JSON.parse(eventData.subscription);
-                var eventSourceParams = {
-                    url: eventData.subscription.url,
-                    name: eventData.subscription.name
-                };
-                var eventSourcePromise = getEventSource(eventSourceParams);
+        // If the event has actually changed day.
+        if (!originElement || originTimestamp != destinationTimestamp) {
+            Templates.render('core/loading', {})
+                .then(function(html, js) {
+                    // First we show some loading icons in each of the days being affected.
+                    destinationElement.find(SELECTORS.DAY_CONTENT).addClass('hidden');
+                    Templates.appendNodeContents(destinationElement, html, js);
 
-                // Return event data with event type and event source info.
-                return $.when(eventTypePromise, eventSourcePromise).then(function(eventType, eventSource) {
-                    eventData.eventtype = eventType;
-                    eventData.source = eventSource;
-                    return eventData;
-                });
-            }
+                    if (originElement) {
+                        originElement.find(SELECTORS.DAY_CONTENT).addClass('hidden');
+                        Templates.appendNodeContents(originElement, html, js);
+                    }
+                    return;
+                })
+                .then(function() {
+                    // Send a request to the server to make the change.
+                    return CalendarRepository.updateEventStartDay(eventId, destinationTimestamp);
+                })
+                .then(function() {
+                    // If the update was successful then broadcast an event letting the calendar
+                    // know that an event has been moved.
+                    $('body').trigger(CalendarEvents.eventMoved, [eventId, originElement, destinationElement]);
+                    return;
+                })
+                .always(function() {
+                    // Always remove the loading icons regardless of whether the update
+                    // request was successful or not.
+                    var destinationLoadingElement = destinationElement.find(SELECTORS.LOADING_ICON);
+                    destinationElement.find(SELECTORS.DAY_CONTENT).removeClass('hidden');
+                    Templates.replaceNode(destinationLoadingElement, '', '');
 
-            // Return event data with event type info.
-            return eventTypePromise.then(function(eventType) {
-                eventData.eventtype = eventType;
-                return eventData;
-            });
-
-        }).then(function(eventData) {
-            // Build the modal parameters from the event data.
-            var modalParams = {
-                title: eventData.name,
-                type: SummaryModal.TYPE,
-                body: Templates.render('core_calendar/event_summary_body', eventData),
-                templateContext: {
-                    canedit: eventData.canedit,
-                    candelete: eventData.candelete
-                }
-            };
-
-            // Create the modal.
-            return ModalFactory.create(modalParams);
-
-        }).done(function(modal) {
-            // Handle hidden event.
-            modal.getRoot().on(ModalEvents.hidden, function() {
-                // Destroy when hidden.
-                modal.destroy();
-            });
-
-            // Finally, render the modal!
-            modal.show();
-
-        }).fail(Notification.exception);
-    };
-
-    /**
-     * Create the event form modal for creating new events and
-     * editing existing events.
-     *
-     * @method registerEventFormModal
-     * @param {object} root The calendar root element
-     * @return {object} The create modal promise
-     */
-    var registerEventFormModal = function(root) {
-        var newEventButton = root.find(SELECTORS.NEW_EVENT_BUTTON);
-        var contextId = newEventButton.attr('data-context-id');
-
-        return ModalFactory.create(
-            {
-                type: ModalEventForm.TYPE,
-                large: true,
-                templateContext: {
-                    contextid: contextId
-                }
-            },
-            newEventButton
-        );
+                    if (originElement) {
+                        var originLoadingElement = originElement.find(SELECTORS.LOADING_ICON);
+                        originElement.find(SELECTORS.DAY_CONTENT).removeClass('hidden');
+                        Templates.replaceNode(originLoadingElement, '', '');
+                    }
+                    return;
+                })
+                .fail(Notification.exception);
+        }
     };
 
     /**
@@ -187,54 +143,82 @@ define([
     var registerCalendarEventListeners = function(root, eventFormModalPromise) {
         var body = $('body');
 
-        // TODO: Replace these with actual logic to update
-        // the UI without having to force a page reload.
         body.on(CalendarEvents.created, function() {
-            window.location.reload();
+            CalendarViewManager.reloadCurrentMonth(root);
         });
         body.on(CalendarEvents.deleted, function() {
-            window.location.reload();
+            CalendarViewManager.reloadCurrentMonth(root);
         });
         body.on(CalendarEvents.updated, function() {
-            window.location.reload();
+            CalendarViewManager.reloadCurrentMonth(root);
         });
         body.on(CalendarEvents.editActionEvent, function(e, url) {
             // Action events needs to be edit directly on the course module.
             window.location.assign(url);
         });
-
-        eventFormModalPromise.then(function(modal) {
-            // When something within the calendar tells us the user wants
-            // to edit an event then show the event form modal.
-            body.on(CalendarEvents.editEvent, function(e, eventId) {
-                modal.setEventId(eventId);
-                modal.show();
-            });
-
-            return;
+        // Handle the event fired by the drag and drop code.
+        body.on(CalendarEvents.moveEvent, handleMoveEvent);
+        // When an event is successfully moved we should updated the UI.
+        body.on(CalendarEvents.eventMoved, function() {
+            CalendarViewManager.reloadCurrentMonth(root);
         });
+
+        CalendarCrud.registerEditListeners(root, eventFormModalPromise);
     };
 
     /**
      * Register event listeners for the module.
+     *
+     * @param {object} root The calendar root element
      */
-    var registerEventListeners = function() {
-        var root = $(SELECTORS.ROOT);
-
-        // Bind click events to event links.
-        $(SELECTORS.EVENT_LINK).click(function(e) {
-            e.preventDefault();
-            var eventId = $(this).attr('data-event-id');
-            renderEventSummaryModal(eventId);
+    var registerEventListeners = function(root) {
+        root.on('change', CalendarSelectors.elements.courseSelector, function() {
+            var selectElement = $(this);
+            var courseId = selectElement.val();
+            CalendarViewManager.reloadCurrentMonth(root, courseId, null)
+                .then(function() {
+                    // We need to get the selector again because the content has changed.
+                    return root.find(CalendarSelectors.elements.courseSelector).val(courseId);
+                })
+                .fail(Notification.exception);
         });
 
-        var eventFormPromise = registerEventFormModal(root);
+        var eventFormPromise = CalendarCrud.registerEventFormModal(root);
         registerCalendarEventListeners(root, eventFormPromise);
+
+        // Bind click events to calendar days.
+        root.on('click', SELECTORS.DAY, function(e) {
+
+            var target = $(e.target);
+
+            if (!target.is(SELECTORS.VIEW_DAY_LINK)) {
+                var startTime = $(this).attr('data-new-event-timestamp');
+                eventFormPromise.then(function(modal) {
+                    var wrapper = target.closest(CalendarSelectors.wrapper);
+                    modal.setCourseId(wrapper.data('courseid'));
+
+                    var categoryId = wrapper.data('categoryid');
+                    if (typeof categoryId !== 'undefined') {
+                        modal.setCategoryId(categoryId);
+                    }
+
+                    modal.setContextId(wrapper.data('contextId'));
+                    modal.setStartTime(startTime);
+                    modal.show();
+                    return;
+                })
+                .fail(Notification.exception);
+
+                e.preventDefault();
+            }
+        });
     };
 
     return {
-        init: function() {
-            registerEventListeners();
+        init: function(root) {
+            root = $(root);
+            CalendarViewManager.init(root);
+            registerEventListeners(root);
         }
     };
 });

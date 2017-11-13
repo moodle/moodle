@@ -88,18 +88,60 @@ class insights_list implements \renderable, \templatable {
         global $PAGE;
 
         $data = new \stdClass();
+        $data->insightname = format_string($this->model->get_target()->get_name());
+
         $total = 0;
 
         if ($this->model->uses_insights()) {
-            list($total, $predictions) = $this->model->get_predictions($this->context, $this->page, $this->perpage);
+            $predictionsdata = $this->model->get_predictions($this->context, true, $this->page, $this->perpage);
 
-            $data->insights = array();
-            foreach ($predictions as $prediction) {
-                $insightrenderable = new \report_insights\output\insight($prediction, $this->model, true);
-                $data->insights[] = $insightrenderable->export_for_template($output);
+            if (!$this->model->is_static()) {
+                $notification = new \core\output\notification(get_string('justpredictions', 'report_insights'));
+                $data->nostaticmodelnotification = $notification->export_for_template($output);
             }
 
-            if (empty($data->insights) && $this->page == 0) {
+            $data->predictions = array();
+            $predictionvalues = array();
+            $insights = array();
+            if ($predictionsdata) {
+                list($total, $predictions) = $predictionsdata;
+
+                foreach ($predictions as $prediction) {
+                    $predictedvalue = $prediction->get_prediction_data()->prediction;
+
+                    // Only need to fill this data once.
+                    if (!isset($predictionvalues[$predictedvalue])) {
+                        $preddata = array();
+                        $preddata['predictiondisplayvalue'] = $this->model->get_target()->get_display_value($predictedvalue);
+                        list($preddata['style'], $preddata['outcomeicon']) =
+                            insight::get_calculation_display($this->model->get_target(), floatval($predictedvalue), $output);
+                        $predictionvalues[$predictedvalue] = $preddata;
+                    }
+
+                    $insightrenderable = new \report_insights\output\insight($prediction, $this->model, true);
+                    $insights[$predictedvalue][] = $insightrenderable->export_for_template($output);
+                }
+
+                // Order predicted values.
+                if ($this->model->get_target()->is_linear()) {
+                    // During regression what we will be interested on most of the time is in low values so let's show them first.
+                    ksort($predictionvalues);
+                } else {
+                    // During classification targets flag "not that important" samples as 0 so let's show them at the end.
+                    krsort($predictionvalues);
+                }
+
+                // Ok, now we have all the data we want, put it into a format that mustache can handle.
+                foreach ($predictionvalues as $key => $prediction) {
+                    if (isset($insights[$key])) {
+                        $prediction['insights'] = $insights[$key];
+                    }
+
+                    $data->predictions[] = $prediction;
+                }
+            }
+
+            if (empty($insights) && $this->page == 0) {
                 if ($this->model->any_prediction_obtained()) {
                     $data->noinsights = get_string('noinsights', 'analytics');
                 } else {

@@ -288,6 +288,17 @@ class filetypes_util_testcase extends advanced_testcase {
             }
         }
 
+        // Confirm that the reserved type '.xxx' isn't present in the 'Other files' section.
+        $types = array_reduce($data, function($carry, $group) {
+            if ($group->name === 'Other files') {
+                return $group->types;
+            }
+        });
+        $typekeys = array_map(function($type) {
+            return $type->key;
+        }, $types);
+        $this->assertNotContains('.xxx', $typekeys);
+
         // All these three files are in both "image" and also "web_image"
         // groups. We display both groups.
         $data = $util->data_for_browser('jpg png gif', true, '.gif');
@@ -456,6 +467,10 @@ class filetypes_util_testcase extends advanced_testcase {
                 'filetypes' => '.txt application/xml web_file ©ç√√ß∂å√©åß©√ .png ricefield/rat document',
                 'expected' => ['.©ç√√ß∂å√©åß©√', 'ricefield/rat']
             ],
+            'Reserved file type xxx included' => [
+                'filetypes' => '.xxx .html .jpg',
+                'expected' => ['.xxx']
+            ]
         ];
     }
 

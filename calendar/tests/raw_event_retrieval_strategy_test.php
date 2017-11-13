@@ -277,4 +277,69 @@ class core_calendar_raw_event_retrieval_strategy_testcase extends advanced_testc
         $events = $retrievalstrategy->get_raw_events();
         $this->assertCount(3, $events);
     }
+
+    /**
+     * Test retrieval strategy with category specifications.
+     */
+    public function test_get_raw_events_category() {
+        global $DB;
+
+        $this->resetAfterTest();
+        $retrievalstrategy = new raw_event_retrieval_strategy();
+        $generator = $this->getDataGenerator();
+        $category1 = $generator->create_category();
+        $category2 = $generator->create_category();
+        $events = [
+            [
+                'name' => 'E1',
+                'eventtype' => 'category',
+                'description' => '',
+                'format' => 1,
+                'categoryid' => $category1->id,
+                'userid' => 2,
+                'timestart' => time(),
+            ],
+            [
+                'name' => 'E2',
+                'eventtype' => 'category',
+                'description' => '',
+                'format' => 1,
+                'categoryid' => $category2->id,
+                'userid' => 2,
+                'timestart' => time() + 1,
+            ],
+        ];
+
+        foreach ($events as $event) {
+            calendar_event::create($event, false);
+        }
+
+        // Get all events.
+        $events = $retrievalstrategy->get_raw_events(null, null, null, null);
+        $this->assertCount(2, $events);
+
+        $event = array_shift($events);
+        $this->assertEquals('E1', $event->name);
+        $event = array_shift($events);
+        $this->assertEquals('E2', $event->name);
+
+        // Get events for C1 events.
+        $events = $retrievalstrategy->get_raw_events(null, null, null, [$category1->id]);
+        $this->assertCount(1, $events);
+
+        $event = array_shift($events);
+        $this->assertEquals('E1', $event->name);
+
+        // Get events for C2 events.
+        $events = $retrievalstrategy->get_raw_events(null, null, null, [$category2->id]);
+        $this->assertCount(1, $events);
+
+        $event = array_shift($events);
+        $this->assertEquals('E2', $event->name);
+
+        // Get events for several categories.
+        $events = $retrievalstrategy->get_raw_events(null, null, null, [$category1->id, $category2->id]);
+        $this->assertCount(2, $events);
+    }
 }
+

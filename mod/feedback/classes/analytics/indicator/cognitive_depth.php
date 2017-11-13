@@ -36,36 +36,27 @@ defined('MOODLE_INTERNAL') || die();
 class cognitive_depth extends activity_base {
 
     /**
-     * get_name
+     * Returns the name.
      *
-     * @return string
+     * If there is a corresponding '_help' string this will be shown as well.
+     *
+     * @return \lang_string
      */
-    public static function get_name() {
-        return get_string('indicator:cognitivedepthfeedback', 'mod_feedback');
+    public static function get_name() : \lang_string {
+        return new \lang_string('indicator:cognitivedepth', 'mod_feedback');
     }
 
-    /**
-     * get_indicator_type
-     *
-     * @return string
-     */
-    protected function get_indicator_type() {
+    public function get_indicator_type() {
         return self::INDICATOR_COGNITIVE;
     }
 
-    /**
-     * get_cognitive_depth_level
-     *
-     * @param \cm_info $cm
-     * @return int
-     */
-    protected function get_cognitive_depth_level(\cm_info $cm) {
-        $this->fill_publishstats($cm);
+    public function get_cognitive_depth_level(\cm_info $cm) {
+        $this->fill_instance_data($cm);
 
-        if (!empty($this->publishstats[$cm->instance])) {
+        if (!empty($this->instancedata[$cm->instance]->publish_stats)) {
             // If stats are published we count that the user viewed feedback.
-            return 3;
+            return self::COGNITIVE_LEVEL_3;
         }
-        return 2;
+        return self::COGNITIVE_LEVEL_2;
     }
 }

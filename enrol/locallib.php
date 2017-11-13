@@ -38,7 +38,7 @@ class course_enrolment_manager {
 
     /**
      * The course context
-     * @var stdClass
+     * @var context
      */
     protected $context;
     /**
@@ -554,7 +554,7 @@ class course_enrolment_manager {
     }
 
     /**
-     * Gets all of the enrolment plugins that are active for this course.
+     * Gets all of the enrolment plugins that are available for this course.
      *
      * @param bool $onlyenabled return only enabled enrol plugins
      * @return array
@@ -803,7 +803,7 @@ class course_enrolment_manager {
      */
     public function edit_enrolment($userenrolment, $data) {
         //Only allow editing if the user has the appropriate capability
-        //Already checked in /enrol/users.php but checking again in case this function is called from elsewhere
+        //Already checked in /user/index.php but checking again in case this function is called from elsewhere
         list($instance, $plugin) = $this->get_user_enrolment_components($userenrolment);
         if ($instance && $plugin && $plugin->allow_manage($instance) && has_capability("enrol/$instance->enrol:manage", $this->context)) {
             if (!isset($data->status)) {
@@ -933,7 +933,7 @@ class course_enrolment_manager {
     /**
      * Returns the course context
      *
-     * @return stdClass
+     * @return context
      */
     public function get_context() {
         return $this->context;

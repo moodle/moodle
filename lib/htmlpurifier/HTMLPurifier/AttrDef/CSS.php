@@ -27,13 +27,38 @@ class HTMLPurifier_AttrDef_CSS extends HTMLPurifier_AttrDef
         $definition = $config->getCSSDefinition();
         $allow_duplicates = $config->get("CSS.AllowDuplicates");
 
-        // we're going to break the spec and explode by semicolons.
-        // This is because semicolon rarely appears in escaped form
-        // Doing this is generally flaky but fast
-        // IT MIGHT APPEAR IN URIs, see HTMLPurifier_AttrDef_CSSURI
-        // for details
 
-        $declarations = explode(';', $css);
+        // According to the CSS2.1 spec, the places where a
+        // non-delimiting semicolon can appear are in strings
+        // escape sequences.   So here is some dumb hack to
+        // handle quotes.
+        $len = strlen($css);
+        $accum = "";
+        $declarations = array();
+        $quoted = false;
+        for ($i = 0; $i < $len; $i++) {
+            $c = strcspn($css, ";'\"", $i);
+            $accum .= substr($css, $i, $c);
+            $i += $c;
+            if ($i == $len) break;
+            $d = $css[$i];
+            if ($quoted) {
+                $accum .= $d;
+                if ($d == $quoted) {
+                    $quoted = false;
+                }
+            } else {
+                if ($d == ";") {
+                    $declarations[] = $accum;
+                    $accum = "";
+                } else {
+                    $accum .= $d;
+                    $quoted = $d;
+                }
+            }
+        }
+        if ($accum != "") $declarations[] = $accum;
+
         $propvalues = array();
         $new_declarations = '';
 

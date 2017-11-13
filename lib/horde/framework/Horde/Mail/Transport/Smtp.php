@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2010-2014 Horde LLC (http://www.horde.org/)
+ * Copyright 2010-2017 Horde LLC (http://www.horde.org/)
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,7 +29,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  * @category  Horde
- * @copyright 2010-2014 Horde LLC
+ * @copyright 2010-2017 Horde LLC
  * @license   http://www.horde.org/licenses/bsd New BSD License
  * @package   Mail
  */
@@ -37,13 +37,14 @@
 /**
  * SMTP implementation.
  *
- * @author    Chuck Hagenbuch <chuck@horde.org>
- * @author    Jon Parise <jon@php.net>
- * @author    Michael Slusarz <slusarz@horde.org>
- * @category  Horde
- * @copyright 2010-2014 Horde LLC
- * @license   http://www.horde.org/licenses/bsd New BSD License
- * @package   Mail
+ * @author     Chuck Hagenbuch <chuck@horde.org>
+ * @author     Jon Parise <jon@php.net>
+ * @author     Michael Slusarz <slusarz@horde.org>
+ * @category   Horde
+ * @copyright  2010-2016 Horde LLC
+ * @deprecated Use Horde_Mail_Transport_Hordesmtp instead
+ * @license    http://www.horde.org/licenses/bsd New BSD License
+ * @package    Mail
  */
 class Horde_Mail_Transport_Smtp extends Horde_Mail_Transport
 {

@@ -1,12 +1,12 @@
 <?php
 /**
- * Copyright 2010-2014 Horde LLC (http://www.horde.org/)
+ * Copyright 2010-2017 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file COPYING for license information (LGPL). If you
  * did not receive this file, see http://www.horde.org/licenses/lgpl21.
  *
  * @category  Horde
- * @copyright 2010-2014 Horde LLC
+ * @copyright 2010-2017 Horde LLC
  * @license   http://www.horde.org/licenses/lgpl21 LGPL 2.1
  * @package   Translation
  */
@@ -18,7 +18,7 @@
  *
  * @author    Jan Schneider <jan@horde.org>
  * @category  Horde
- * @copyright 2010-2014 Horde LLC
+ * @copyright 2010-2017 Horde LLC
  * @license   http://www.horde.org/licenses/lgpl21 LGPL 2.1
  * @package   Translation
  */
@@ -30,23 +30,21 @@ abstract class Horde_Translation
      *
      * @var string
      */
-    static protected $_domain;
+    protected static $_domain;
 
     /**
      * The relative path to the translations for the default gettext handler.
      *
-     * This path is relative to the
-     *
      * @var string
      */
-    static protected $_directory;
+    protected static $_directory;
 
     /**
      * The handlers providing the actual translations.
      *
      * @var array
      */
-    static protected $_handlers = array();
+    protected static $_handlers = array();
 
     /**
      * Loads a translation handler class pointing to the library's translations
@@ -55,12 +53,12 @@ abstract class Horde_Translation
      * @param string $handlerClass  The name of a class implementing the
      *                              Horde_Translation_Handler interface.
      */
-    static public function loadHandler($handlerClass)
+    public static function loadHandler($handlerClass)
     {
-        if (!self::$_domain || !self::$_directory) {
+        if (!static::$_domain || !static::$_directory) {
             throw new Horde_Translation_Exception('The domain and directory properties must be set by the class that extends Horde_Translation.');
         }
-        self::setHandler(self::$_domain, new $handlerClass(self::$_domain, self::$_directory));
+        static::setHandler(static::$_domain, new $handlerClass(static::$_domain, static::$_directory));
     }
 
     /**
@@ -76,9 +74,9 @@ abstract class Horde_Translation
      *                                            Horde_Translation_Handler
      *                                            interface.
      */
-    static public function setHandler($domain, $handler)
+    public static function setHandler($domain, $handler)
     {
-        self::$_handlers[$domain] = $handler;
+        static::$_handlers[$domain] = $handler;
     }
 
     /**
@@ -89,12 +87,12 @@ abstract class Horde_Translation
      * @return string  The string translation, or the original string if no
      *                 translation exists.
      */
-    static public function t($message)
+    public static function t($message)
     {
-        if (!isset(self::$_handlers[self::$_domain])) {
-            self::loadHandler('Horde_Translation_Handler_Gettext');
+        if (!isset(static::$_handlers[static::$_domain])) {
+            static::loadHandler('Horde_Translation_Handler_Gettext');
         }
-        return self::$_handlers[self::$_domain]->t($message);
+        return static::$_handlers[static::$_domain]->t($message);
     }
 
     /**
@@ -107,12 +105,12 @@ abstract class Horde_Translation
      * @return string  The string translation, or the original string if no
      *                 translation exists.
      */
-    static public function ngettext($singular, $plural, $number)
+    public static function ngettext($singular, $plural, $number)
     {
-        if (!isset(self::$_handlers[self::$_domain])) {
-            self::loadHandler('Horde_Translation_Handler_Gettext');
+        if (!isset(static::$_handlers[static::$_domain])) {
+            static::loadHandler('Horde_Translation_Handler_Gettext');
         }
-        return self::$_handlers[self::$_domain]->ngettext($singular, $plural, $number);
+        return static::$_handlers[static::$_domain]->ngettext($singular, $plural, $number);
     }
 
     /**
@@ -126,7 +124,7 @@ abstract class Horde_Translation
      *
      * @return string  The raw string.
      */
-    static public function r($message)
+    public static function r($message)
     {
         return $message;
     }

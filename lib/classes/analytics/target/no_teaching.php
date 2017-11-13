@@ -45,12 +45,14 @@ class no_teaching extends \core_analytics\local\target\binary {
     }
 
     /**
-     * get_name
+     * Returns the name.
      *
-     * @return string
+     * If there is a corresponding '_help' string this will be shown as well.
+     *
+     * @return \lang_string
      */
-    public static function get_name() {
-        return get_string('target:noteachingactivity');
+    public static function get_name() : \lang_string {
+        return new \lang_string('target:noteachingactivity');
     }
 
     /**
@@ -61,33 +63,32 @@ class no_teaching extends \core_analytics\local\target\binary {
      * @return \core_analytics\prediction_action[]
      */
     public function prediction_actions(\core_analytics\prediction $prediction, $includedetailsaction = false) {
+        global $CFG;
 
-        // No need to call the parent as the parent's action is view details and this target only have 1 feature.
-        $actions = array();
+        require_once($CFG->dirroot . '/course/lib.php');
 
         $sampledata = $prediction->get_sample_data();
         $course = $sampledata['course'];
 
+        $actions = array();
+
         $url = new \moodle_url('/course/view.php', array('id' => $course->id));
         $pix = new \pix_icon('i/course', get_string('course'));
-        $actions['viewcourse'] = new \core_analytics\prediction_action('viewcourse', $prediction,
+        $actions[] = new \core_analytics\prediction_action('viewcourse', $prediction,
             $url, $pix, get_string('view'));
 
-        if (has_capability('moodle/course:enrolreview', $sampledata['context'])) {
-            $url = new \moodle_url('/enrol/users.php', array('id' => $course->id));
-            $pix = new \pix_icon('i/enrolusers', get_string('enrolledusers', 'enrol'));
-            $actions['enrolusers'] = new \core_analytics\prediction_action('enrolusers', $prediction,
-                $url, $pix, get_string('enrolledusers', 'enrol'));
-        }
-
-        if (has_capability('moodle/course:viewparticipants', $sampledata['context'])) {
+        if (course_can_view_participants($sampledata['context'])) {
             $url = new \moodle_url('/user/index.php', array('id' => $course->id));
             $pix = new \pix_icon('i/cohort', get_string('participants'));
-            $actions['viewparticipants'] = new \core_analytics\prediction_action('viewparticipants', $prediction,
+            $actions[] = new \core_analytics\prediction_action('viewparticipants', $prediction,
                 $url, $pix, get_string('participants'));
         }
 
-        return $actions;
+        $parentactions = parent::prediction_actions($prediction, $includedetailsaction);
+        // No need to show details as there is only 1 indicator.
+        unset($parentactions[\core_analytics\prediction::ACTION_PREDICTION_DETAILS]);
+
+        return array_merge($actions, $parentactions);
     }
 
     /**
@@ -139,7 +140,7 @@ class no_teaching extends \core_analytics\local\target\binary {
      * @param int $sampleid
      * @param \core_analytics\analysable $analysable
      * @param bool $fortraining
-     * @return true|string
+     * @return bool
      */
     public function is_valid_sample($sampleid, \core_analytics\analysable $analysable, $fortraining = true) {
 
@@ -167,8 +168,10 @@ class no_teaching extends \core_analytics\local\target\binary {
     protected function calculate_sample($sampleid, \core_analytics\analysable $analysable, $starttime = false, $endtime = false) {
 
         $noteachersindicator = $this->retrieve('\core_course\analytics\indicator\no_teacher', $sampleid);
-        if ($noteachersindicator == \core_course\analytics\indicator\no_teacher::get_min_value()) {
-            // No teachers :( we flag this as 1.
+        $nostudentsindicator = $this->retrieve('\core_course\analytics\indicator\no_student', $sampleid);
+        if ($noteachersindicator == \core_course\analytics\indicator\no_teacher::get_min_value() ||
+                $nostudentsindicator == \core_course\analytics\indicator\no_student::get_min_value()) {
+            // No teachers or no students :(.
             return 1;
         }
         return 0;

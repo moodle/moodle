@@ -4,8 +4,25 @@
 
 // Add support for card. We map it to well.
 // This is not meant to be perfect - but at least applies some styles to a bs4 card.
-.card:extend(.well) {
+.card {
+    position: relative;
+    display: block;
+    margin-bottom: .75rem;
+    background-color: #fff;
+    border: 1px solid @wellBorder;
+    border-radius: 0;
 }
+
+.card-header {
+    padding: .75rem 1.25rem;
+    background-color: @wellBackground;
+    border-bottom: 1px solid @wellBorder;
+}
+
+.card-block {
+    padding: 1.25rem;
+}
+
 
 // Due to lessphp limitations, the following classes must be declared statically without use of a loop.
 .p-l-1 {
@@ -236,4 +253,51 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+
+.text-white {
+    color: @white;
+}
+
+// Bg utilities.
+.bg {
+    // Important (red)
+    &-danger {
+        background-color: @errorText;
+    }
+    &-danger[href] {
+        background-color: darken(@errorText, 10%);
+    }
+    // Warnings (orange)
+    &-warning {
+        background-color: @orange;
+    }
+    &-warning[href] {
+        background-color: darken(@orange, 10%);
+    }
+    // Success (green)
+    &-success {
+        background-color: @successText;
+    }
+    &-success[href] {
+        background-color: darken(@successText, 10%);
+    }
+    // Info (turquoise)
+    &-info {
+        background-color: @infoText;
+    }
+    &-info[href] {
+        background-color: darken(@infoText, 10%);
+    }
+    // Primary (blue)
+    &-primary {
+        background-color: @blue;
+    }
+    &-primary[href] {
+        background-color: darken(@blue, 10%);
+    }
+}
+
+.bg-faded {
+    background-color: @grayLighter;
 }

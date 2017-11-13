@@ -14,10 +14,9 @@ use Box\Spout\Common\Helper\EncodingHelper;
 class RowIterator implements IteratorInterface
 {
     /**
-     * If no value is given to fgetcsv(), it defaults to 8192 (which may be too low).
-     * Alignement with other functions like fgets() is discussed here: https://bugs.php.net/bug.php?id=48421
+     * Value passed to fgetcsv. 0 means "unlimited" (slightly slower but accomodates for very long lines).
      */
-    const MAX_READ_BYTES_PER_LINE = 32768;
+    const MAX_READ_BYTES_PER_LINE = 0;
 
     /** @var resource Pointer to the CSV file to read */
     protected $filePointer;
@@ -40,6 +39,12 @@ class RowIterator implements IteratorInterface
     /** @var string Encoding of the CSV file to be read */
     protected $encoding;
 
+    /** @var string End of line delimiter, given by the user as input. */
+    protected $inputEOLDelimiter;
+
+    /** @var bool Whether empty rows should be returned or skipped */
+    protected $shouldPreserveEmptyRows;
+
     /** @var \Box\Spout\Common\Helper\GlobalFunctionsHelper Helper to work with global functions */
     protected $globalFunctionsHelper;
 
@@ -49,24 +54,19 @@ class RowIterator implements IteratorInterface
     /** @var string End of line delimiter, encoded using the same encoding as the CSV */
     protected $encodedEOLDelimiter;
 
-    /** @var string End of line delimiter, given by the user as input. */
-    protected $inputEOLDelimiter;
-
     /**
      * @param resource $filePointer Pointer to the CSV file to read
-     * @param string $fieldDelimiter Character that delimits fields
-     * @param string $fieldEnclosure Character that enclose fields
-     * @param string $encoding Encoding of the CSV file to be read
-     * @param string $endOfLineDelimiter End of line delimiter
+     * @param \Box\Spout\Reader\CSV\ReaderOptions $options
      * @param \Box\Spout\Common\Helper\GlobalFunctionsHelper $globalFunctionsHelper
      */
-    public function __construct($filePointer, $fieldDelimiter, $fieldEnclosure, $encoding, $endOfLineDelimiter, $globalFunctionsHelper)
+    public function __construct($filePointer, $options, $globalFunctionsHelper)
     {
         $this->filePointer = $filePointer;
-        $this->fieldDelimiter = $fieldDelimiter;
-        $this->fieldEnclosure = $fieldEnclosure;
-        $this->encoding = $encoding;
-        $this->inputEOLDelimiter = $endOfLineDelimiter;
+        $this->fieldDelimiter = $options->getFieldDelimiter();
+        $this->fieldEnclosure = $options->getFieldEnclosure();
+        $this->encoding = $options->getEncoding();
+        $this->inputEOLDelimiter = $options->getEndOfLineCharacter();
+        $this->shouldPreserveEmptyRows = $options->shouldPreserveEmptyRows();
         $this->globalFunctionsHelper = $globalFunctionsHelper;
 
         $this->encodingHelper = new EncodingHelper($globalFunctionsHelper);
@@ -106,7 +106,7 @@ class RowIterator implements IteratorInterface
      * Checks if current position is valid
      * @link http://php.net/manual/en/iterator.valid.php
      *
-     * @return boolean
+     * @return bool
      */
     public function valid()
     {
@@ -114,7 +114,7 @@ class RowIterator implements IteratorInterface
     }
 
     /**
-     * Move forward to next element. Empty rows are skipped.
+     * Move forward to next element. Reads data for the next unprocessed row.
      * @link http://php.net/manual/en/iterator.next.php
      *
      * @return void
@@ -124,23 +124,46 @@ class RowIterator implements IteratorInterface
     {
         $this->hasReachedEndOfFile = $this->globalFunctionsHelper->feof($this->filePointer);
 
-        if ($this->hasReachedEndOfFile) {
-            return;
+        if (!$this->hasReachedEndOfFile) {
+            $this->readDataForNextRow();
         }
+    }
 
+    /**
+     * @return void
+     * @throws \Box\Spout\Common\Exception\EncodingConversionException If unable to convert data to UTF-8
+     */
+    protected function readDataForNextRow()
+    {
         do {
             $rowData = $this->getNextUTF8EncodedRow();
-            $hasNowReachedEndOfFile = $this->globalFunctionsHelper->feof($this->filePointer);
-        } while (($rowData === false && !$hasNowReachedEndOfFile) || $this->isEmptyLine($rowData));
+        } while ($this->shouldReadNextRow($rowData));
 
         if ($rowData !== false) {
-            $this->rowDataBuffer = $rowData;
+            // str_replace will replace NULL values by empty strings
+            $this->rowDataBuffer = str_replace(null, null, $rowData);
             $this->numReadRows++;
         } else {
             // If we reach this point, it means end of file was reached.
             // This happens when the last lines are empty lines.
-            $this->hasReachedEndOfFile = $hasNowReachedEndOfFile;
+            $this->hasReachedEndOfFile = true;
         }
+    }
+
+    /**
+     * @param array|bool $currentRowData
+     * @return bool Whether the data for the current row can be returned or if we need to keep reading
+     */
+    protected function shouldReadNextRow($currentRowData)
+    {
+        $hasSuccessfullyFetchedRowData = ($currentRowData !== false);
+        $hasNowReachedEndOfFile = $this->globalFunctionsHelper->feof($this->filePointer);
+        $isEmptyLine = $this->isEmptyLine($currentRowData);
+
+        return (
+            (!$hasSuccessfullyFetchedRowData && !$hasNowReachedEndOfFile) ||
+            (!$this->shouldPreserveEmptyRows && $isEmptyLine)
+        );
     }
 
     /**
@@ -154,7 +177,7 @@ class RowIterator implements IteratorInterface
     protected function getNextUTF8EncodedRow()
     {
         $encodedRowData = $this->globalFunctionsHelper->fgetcsv($this->filePointer, self::MAX_READ_BYTES_PER_LINE, $this->fieldDelimiter, $this->fieldEnclosure);
-        if (false === $encodedRowData) {
+        if ($encodedRowData === false) {
             return false;
         }
 
@@ -195,7 +218,7 @@ class RowIterator implements IteratorInterface
     }
 
     /**
-     * @param array $lineData Array containing the cells value for the line
+     * @param array|bool $lineData Array containing the cells value for the line
      * @return bool Whether the given line is empty
      */
     protected function isEmptyLine($lineData)

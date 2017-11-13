@@ -232,7 +232,7 @@ class SimplePie_Locator
 			}
 			if ($link->hasAttribute('href') && $link->hasAttribute('rel'))
 			{
-				$rel = array_unique($this->registry->call('Misc', 'space_seperated_tokens', array(strtolower($link->getAttribute('rel')))));
+				$rel = array_unique($this->registry->call('Misc', 'space_separated_tokens', array(strtolower($link->getAttribute('rel')))));
 				$line = method_exists($link, 'getLineNo') ? $link->getLineNo() : 1;
 
 				if ($this->base_location < $line)

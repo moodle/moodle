@@ -44,7 +44,7 @@ class core_htmlpurifier_testcase extends basic_testcase {
         // Also note we do not need to test links with an existing rel attribute as the HTML Purifier is configured to remove
         // the rel attribute.
         $text = '<a href="http://moodle.org" target="_blank">Some link</a>';
-        $expected = '<a href="http://moodle.org" target="_blank" rel="noreferrer">Some link</a>';
+        $expected = '<a href="http://moodle.org" target="_blank" rel="noreferrer noopener">Some link</a>';
         $result = format_text($text, FORMAT_HTML);
         $this->assertSame($expected, $result);
 
@@ -317,6 +317,30 @@ class core_htmlpurifier_testcase extends basic_testcase {
 
         $text = '<a href="hmmm://www.example.com">link</a>';
         $this->assertSame('<a>link</a>', purify_html($text));
+    }
+
+    /**
+     * Test non-ascii domain names
+     */
+    public function test_idn() {
+
+        // Example of domain that gives the same result in IDNA2003 and IDNA2008 .
+        $text = '<a href="http://правительство.рф">правительство.рф</a>';
+        $expected = '<a href="http://xn--80aealotwbjpid2k.xn--p1ai">правительство.рф</a>';
+        $this->assertSame($expected, purify_html($text));
+
+        // Examples of deviations from http://www.unicode.org/reports/tr46/#Table_Deviation_Characters .
+        $text = '<a href="http://teßt.de">teßt.de</a>';
+        $expected = '<a href="http://xn--tet-6ka.de">teßt.de</a>';
+        $this->assertSame($expected, purify_html($text));
+
+        $text = '<a href="http://βόλος.com">http://βόλος.com</a>';
+        $expected = '<a href="http://xn--nxasmm1c.com">http://βόλος.com</a>';
+        $this->assertSame($expected, purify_html($text));
+
+        $text = '<a href="http://نامه‌ای.com">http://نامه‌ای.com</a>';
+        $expected = '<a href="http://xn--mgba3gch31f060k.com">http://نامه‌ای.com</a>';
+        $this->assertSame($expected, purify_html($text));
     }
 
     /**

@@ -32,6 +32,7 @@ use core_calendar\local\event\entities\action_event;
 use core_calendar\local\event\entities\event;
 use core_calendar\local\event\entities\repeat_event_collection;
 use core_calendar\local\event\proxies\std_proxy;
+use core_calendar\local\event\proxies\coursecat_proxy;
 use core_calendar\local\event\proxies\cm_info_proxy;
 use core_calendar\local\event\value_objects\action;
 use core_calendar\local\event\value_objects\event_description;
@@ -108,6 +109,7 @@ class action_event_test_factory implements event_factory_interface {
             $record->id,
             $record->name,
             new event_description($record->description, $record->format),
+            new coursecat_proxy($record->categoryid),
             new std_proxy($record->courseid, function($id) {
                 $course = new \stdClass();
                 $course->id = $id;

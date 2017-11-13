@@ -13,11 +13,11 @@ language: php
 
 php:
     # We only run the highest and lowest supported versions to reduce the load on travis-ci.org.
-    - 7.1
+    - 7.2
     - 7.0
 
 addons:
-  postgresql: "9.3"
+  postgresql: "9.6"
   packages:
     - mysql-server-5.6
     - mysql-client-core-5.6
@@ -30,7 +30,7 @@ env:
     # Although we want to run these jobs and see failures as quickly as possible, we also want to get the slowest job to
     # start first so that the total run time is not too high.
     #
-    # We only run MySQL on PHP 7.1, so run that first.
+    # We only run MySQL on PHP 7.2, so run that first.
     # CI Tests should be second-highest in priority as these only take <= 60 seconds to run under normal circumstances.
     # Postgres is significantly is pretty reasonable in its run-time.
 
@@ -53,16 +53,13 @@ matrix:
     fast_finish: true
 
     include:
-          # Run grunt/npm install on lowest supported npm version
-        - php: 7.1
-          env: DB=none     TASK=GRUNT   NVM_VERSION='4'
           # Run grunt/npm install on highest version ('node' is an alias for the latest node.js version.)
-        - php: 7.1
-          env: DB=none     TASK=GRUNT   NVM_VERSION='node'
+        - php: 7.2
+          env: DB=none     TASK=GRUNT   NVM_VERSION='8.9'
 
     exclude:
         # MySQL - it's just too slow.
-        # Exclude it on all versions except for 7.1
+        # Exclude it on all versions except for 7.2
 
         - env: DB=mysqli   TASK=PHPUNIT
           php: 7.0
@@ -91,7 +88,7 @@ install:
             sudo service postgresql stop
             sudo mv /var/lib/postgresql /mnt/ramdisk
             sudo ln -s /mnt/ramdisk/postgresql /var/lib/postgresql
-            sudo service postgresql start 9.3
+            sudo service postgresql start 9.6
         fi
     - >
         if [ "$TASK" = 'PHPUNIT' ];

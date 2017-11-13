@@ -2245,7 +2245,12 @@ function xmldb_main_upgrade($oldversion) {
             ['hub', '%' . $DB->sql_like_escape('_' . $cleanoldhuburl)]);
         foreach ($entries as $entry) {
             $newname = substr($entry->name, 0, -strlen($cleanoldhuburl)) . $cleannewhuburl;
-            $DB->update_record('config_plugins', ['id' => $entry->id, 'name' => $newname]);
+            try {
+                $DB->update_record('config_plugins', ['id' => $entry->id, 'name' => $newname]);
+            } catch (dml_exception $e) {
+                // Entry with new name already exists, remove the one with an old name.
+                $DB->delete_records('config_plugins', ['id' => $entry->id]);
+            }
         }
 
         // Update published courses.
@@ -2306,6 +2311,501 @@ function xmldb_main_upgrade($oldversion) {
 
         // Main savepoint reached.
         upgrade_main_savepoint(true, 2017080700.01);
+    }
+
+    if ($oldversion < 2017082200.00) {
+        $plugins = ['radius', 'fc', 'nntp', 'pam', 'pop3', 'imap'];
+
+        foreach ($plugins as $plugin) {
+            // Check to see if the plugin exists on disk.
+            // If it does not, remove the config for it.
+            if (!file_exists($CFG->dirroot . "/auth/{$plugin}/auth.php")) {
+                // Clean config.
+                unset_all_config_for_plugin("auth_{$plugin}");
+            }
+        }
+        upgrade_main_savepoint(true, 2017082200.00);
+    }
+
+    if ($oldversion < 2017082200.01) {
+
+        // Define table analytics_indicator_calc to be created.
+        $table = new xmldb_table('analytics_indicator_calc');
+
+        // Adding fields to table analytics_indicator_calc.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('starttime', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('endtime', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('contextid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('sampleorigin', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('sampleid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('indicator', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('value', XMLDB_TYPE_NUMBER, '10, 2', null, null, null, null);
+        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+
+        // Adding keys to table analytics_indicator_calc.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+
+        // Adding indexes to table analytics_indicator_calc.
+        $table->add_index('starttime-endtime-contextid', XMLDB_INDEX_NOTUNIQUE, array('starttime', 'endtime', 'contextid'));
+
+        // Conditionally launch create table for analytics_indicator_calc.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2017082200.01);
+    }
+
+    if ($oldversion < 2017082300.01) {
+
+        // This script in included in each major version upgrade process so make sure we don't run it twice.
+        if (empty($CFG->linkcoursesectionsupgradescriptwasrun)) {
+            // Check if the site is using a boost-based theme.
+            // If value of 'linkcoursesections' is set to the old default value, change it to the new default.
+            if (upgrade_theme_is_from_family('boost', $CFG->theme)) {
+                set_config('linkcoursesections', 1);
+            }
+            set_config('linkcoursesectionsupgradescriptwasrun', 1);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2017082300.01);
+    }
+
+    if ($oldversion < 2017082500.00) {
+        // Handle FKs for the table 'analytics_models_log'.
+        $table = new xmldb_table('analytics_models_log');
+
+        // Remove the existing index before adding FK (which creates an index).
+        $index = new xmldb_index('modelid', XMLDB_INDEX_NOTUNIQUE, array('modelid'));
+
+        // Conditionally launch drop index.
+        if ($dbman->index_exists($table, $index)) {
+            $dbman->drop_index($table, $index);
+        }
+
+        // Now, add the FK.
+        $key = new xmldb_key('modelid', XMLDB_KEY_FOREIGN, array('modelid'), 'analytics_models', array('id'));
+        $dbman->add_key($table, $key);
+
+        // Handle FKs for the table 'analytics_predictions'.
+        $table = new xmldb_table('analytics_predictions');
+        $key = new xmldb_key('modelid', XMLDB_KEY_FOREIGN, array('modelid'), 'analytics_models', array('id'));
+        $dbman->add_key($table, $key);
+
+        $key = new xmldb_key('contextid', XMLDB_KEY_FOREIGN, array('contextid'), 'context', array('id'));
+        $dbman->add_key($table, $key);
+
+        // Handle FKs for the table 'analytics_train_samples'.
+        $table = new xmldb_table('analytics_train_samples');
+        $key = new xmldb_key('modelid', XMLDB_KEY_FOREIGN, array('modelid'), 'analytics_models', array('id'));
+        $dbman->add_key($table, $key);
+
+        $key = new xmldb_key('fileid', XMLDB_KEY_FOREIGN, array('fileid'), 'files', array('id'));
+        $dbman->add_key($table, $key);
+
+        // Handle FKs for the table 'analytics_predict_samples'.
+        $table = new xmldb_table('analytics_predict_samples');
+        $key = new xmldb_key('modelid', XMLDB_KEY_FOREIGN, array('modelid'), 'analytics_models', array('id'));
+        $dbman->add_key($table, $key);
+
+        // Handle FKs for the table 'analytics_used_files'.
+        $table = new xmldb_table('analytics_used_files');
+        $key = new xmldb_key('modelid', XMLDB_KEY_FOREIGN, array('modelid'), 'analytics_models', array('id'));
+        $dbman->add_key($table, $key);
+
+        $key = new xmldb_key('fileid', XMLDB_KEY_FOREIGN, array('fileid'), 'files', array('id'));
+        $dbman->add_key($table, $key);
+
+        // Handle FKs for the table 'analytics_indicator_calc'.
+        $table = new xmldb_table('analytics_indicator_calc');
+        $key = new xmldb_key('contextid', XMLDB_KEY_FOREIGN, array('contextid'), 'context', array('id'));
+        $dbman->add_key($table, $key);
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2017082500.00);
+    }
+
+    if ($oldversion < 2017082800.00) {
+
+        // Changing type of field prediction on table analytics_predictions to number.
+        $table = new xmldb_table('analytics_predictions');
+        $field = new xmldb_field('prediction', XMLDB_TYPE_NUMBER, '10, 2', null, XMLDB_NOTNULL, null, null, 'rangeindex');
+
+        // Launch change of type for field prediction.
+        $dbman->change_field_type($table, $field);
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2017082800.00);
+    }
+
+    if ($oldversion < 2017090700.01) {
+
+        // Define table analytics_prediction_actions to be created.
+        $table = new xmldb_table('analytics_prediction_actions');
+
+        // Adding fields to table analytics_prediction_actions.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('predictionid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('actionname', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+
+        // Adding keys to table analytics_prediction_actions.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('predictionid', XMLDB_KEY_FOREIGN, array('predictionid'), 'analytics_predictions', array('id'));
+        $table->add_key('userid', XMLDB_KEY_FOREIGN, array('userid'), 'user', array('id'));
+
+        // Adding indexes to table analytics_prediction_actions.
+        $table->add_index('predictionidanduseridandactionname', XMLDB_INDEX_NOTUNIQUE,
+            array('predictionid', 'userid', 'actionname'));
+
+        // Conditionally launch create table for analytics_prediction_actions.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2017090700.01);
+    }
+
+    if ($oldversion < 2017091200.00) {
+        // Force all messages to be reindexed.
+        set_config('core_message_message_sent_lastindexrun', '0', 'core_search');
+        set_config('core_message_message_received_lastindexrun', '0', 'core_search');
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2017091200.00);
+    }
+
+    if ($oldversion < 2017091201.00) {
+        // Define field userid to be added to task_adhoc.
+        $table = new xmldb_table('task_adhoc');
+        $field = new xmldb_field('userid', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'customdata');
+
+        // Conditionally launch add field userid.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $key = new xmldb_key('useriduser', XMLDB_KEY_FOREIGN, array('userid'), 'user', array('id'));
+
+        // Launch add key userid_user.
+        $dbman->add_key($table, $key);
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2017091201.00);
+    }
+
+    if ($oldversion < 2017092201.00) {
+
+        // Remove duplicate registrations.
+        $newhuburl = "https://moodle.net";
+        $registrations = $DB->get_records('registration_hubs', ['huburl' => $newhuburl], 'confirmed DESC, id ASC');
+        if (count($registrations) > 1) {
+            $reg = array_shift($registrations);
+            $DB->delete_records_select('registration_hubs', 'huburl = ? AND id <> ?', [$newhuburl, $reg->id]);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2017092201.00);
+    }
+
+    if ($oldversion < 2017092202.00) {
+
+        if (!file_exists($CFG->dirroot . '/blocks/messages/block_messages.php')) {
+
+            // Delete instances.
+            $instances = $DB->get_records_list('block_instances', 'blockname', ['messages']);
+            $instanceids = array_keys($instances);
+
+            if (!empty($instanceids)) {
+                $DB->delete_records_list('block_positions', 'blockinstanceid', $instanceids);
+                $DB->delete_records_list('block_instances', 'id', $instanceids);
+                list($sql, $params) = $DB->get_in_or_equal($instanceids, SQL_PARAMS_NAMED);
+                $params['contextlevel'] = CONTEXT_BLOCK;
+                $DB->delete_records_select('context', "contextlevel=:contextlevel AND instanceid " . $sql, $params);
+
+                $preferences = array();
+                foreach ($instances as $instanceid => $instance) {
+                    $preferences[] = 'block' . $instanceid . 'hidden';
+                    $preferences[] = 'docked_block_instance_' . $instanceid;
+                }
+                $DB->delete_records_list('user_preferences', 'name', $preferences);
+            }
+
+            // Delete the block from the block table.
+            $DB->delete_records('block', array('name' => 'messages'));
+
+            // Remove capabilities.
+            capabilities_cleanup('block_messages');
+
+            // Clean config.
+            unset_all_config_for_plugin('block_messages');
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2017092202.00);
+    }
+
+    if ($oldversion < 2017092700.00) {
+
+        // Rename several fields in registration data to match the names of the properties that are sent to moodle.net.
+        $renames = [
+            'site_address_httpsmoodlenet' => 'site_street_httpsmoodlenet',
+            'site_region_httpsmoodlenet' => 'site_regioncode_httpsmoodlenet',
+            'site_country_httpsmoodlenet' => 'site_countrycode_httpsmoodlenet'];
+        foreach ($renames as $oldparamname => $newparamname) {
+            try {
+                $DB->execute("UPDATE {config_plugins} SET name = ? WHERE name = ? AND plugin = ?",
+                    [$newparamname, $oldparamname, 'hub']);
+            } catch (dml_exception $e) {
+                // Exception can happen if the config value with the new name already exists, ignore it and move on.
+            }
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2017092700.00);
+    }
+
+    if ($oldversion < 2017092900.00) {
+        // Define field categoryid to be added to event.
+        $table = new xmldb_table('event');
+        $field = new xmldb_field('categoryid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'format');
+
+        // Conditionally launch add field categoryid.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Add the categoryid key.
+        $key = new xmldb_key('categoryid', XMLDB_KEY_FOREIGN, array('categoryid'), 'course_categories', array('id'));
+        $dbman->add_key($table, $key);
+
+        // Add a new index for groupid/courseid/categoryid/visible/userid.
+        // Do this before we remove the old index.
+        $index = new xmldb_index('groupid-courseid-categoryid-visible-userid', XMLDB_INDEX_NOTUNIQUE, array('groupid', 'courseid', 'categoryid', 'visible', 'userid'));
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Drop the old index.
+        $index = new xmldb_index('groupid-courseid-visible-userid', XMLDB_INDEX_NOTUNIQUE, array('groupid', 'courseid', 'visible', 'userid'));
+        if ($dbman->index_exists($table, $index)) {
+            $dbman->drop_index($table, $index);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2017092900.00);
+    }
+
+    if ($oldversion < 2017100900.00) {
+        // Add index on time modified to grade_outcomes_history, grade_categories_history,
+        // grade_items_history, and scale_history.
+        $table = new xmldb_table('grade_outcomes_history');
+        $index = new xmldb_index('timemodified', XMLDB_INDEX_NOTUNIQUE, array('timemodified'));
+
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        $table = new xmldb_table('grade_items_history');
+        $index = new xmldb_index('timemodified', XMLDB_INDEX_NOTUNIQUE, array('timemodified'));
+
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        $table = new xmldb_table('grade_categories_history');
+        $index = new xmldb_index('timemodified', XMLDB_INDEX_NOTUNIQUE, array('timemodified'));
+
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        $table = new xmldb_table('scale_history');
+        $index = new xmldb_index('timemodified', XMLDB_INDEX_NOTUNIQUE, array('timemodified'));
+
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2017100900.00);
+    }
+
+    if ($oldversion < 2017101000.00) {
+
+        // Define table analytics_used_analysables to be created.
+        $table = new xmldb_table('analytics_used_analysables');
+
+        // Adding fields to table analytics_used_analysables.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('modelid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('action', XMLDB_TYPE_CHAR, '50', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('analysableid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('timeanalysed', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+
+        // Adding keys to table analytics_used_analysables.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('modelid', XMLDB_KEY_FOREIGN, array('modelid'), 'analytics_models', array('id'));
+
+        // Adding indexes to table analytics_used_analysables.
+        $table->add_index('modelid-action', XMLDB_INDEX_NOTUNIQUE, array('modelid', 'action'));
+
+        // Conditionally launch create table for analytics_used_analysables.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2017101000.00);
+    }
+
+    if ($oldversion < 2017101000.01) {
+        // Define field override to be added to course_modules_completion.
+        $table = new xmldb_table('course_modules_completion');
+        $field = new xmldb_field('overrideby', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'viewed');
+
+        // Conditionally launch add field override.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2017101000.01);
+    }
+
+    if ($oldversion < 2017101000.02) {
+        // Define field 'timestart' to be added to 'analytics_predictions'.
+        $table = new xmldb_table('analytics_predictions');
+        $field = new xmldb_field('timestart', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'timecreated');
+
+        // Conditionally launch add field 'timestart'.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field 'timeend' to be added to 'analytics_predictions'.
+        $field = new xmldb_field('timeend', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'timestart');
+
+        // Conditionally launch add field 'timeend'.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2017101000.02);
+    }
+
+    if ($oldversion < 2017101200.00) {
+        // Define table search_index_requests to be created.
+        $table = new xmldb_table('search_index_requests');
+
+        // Adding fields to table search_index_requests.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('contextid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('searcharea', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('timerequested', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('partialarea', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('partialtime', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+
+        // Adding keys to table search_index_requests.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('contextid', XMLDB_KEY_FOREIGN, array('contextid'), 'context', array('id'));
+
+        // Conditionally launch create table for search_index_requests.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2017101200.00);
+    }
+
+    // Index modification upgrade step.
+    if ($oldversion < 2017101300.01) {
+
+        $table = new xmldb_table('analytics_used_files');
+
+        // Define index modelidandfileidandaction (not unique) to be dropped form analytics_used_files.
+        $index = new xmldb_index('modelidandfileidandaction', XMLDB_INDEX_NOTUNIQUE, array('modelid', 'fileid', 'action'));
+
+        // Conditionally launch drop index modelidandfileidandaction.
+        if ($dbman->index_exists($table, $index)) {
+            $dbman->drop_index($table, $index);
+        }
+
+        // Define index modelidandactionandfileid (not unique) to be dropped form analytics_used_files.
+        $index = new xmldb_index('modelidandactionandfileid', XMLDB_INDEX_NOTUNIQUE, array('modelid', 'action', 'fileid'));
+
+        // Conditionally launch add index modelidandactionandfileid.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2017101300.01);
+    }
+
+    if ($oldversion < 2017101900.01) {
+
+        $fs = get_file_storage();
+        $models = $DB->get_records('analytics_models');
+        foreach ($models as $model) {
+            $files = $fs->get_directory_files(\context_system::instance()->id, 'analytics', 'unlabelled', $model->id,
+                '/analysable/', true, true);
+            foreach ($files as $file) {
+                $file->delete();
+            }
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2017101900.01);
+    }
+
+    if ($oldversion < 2017101900.02) {
+        // Create adhoc task for upgrading of existing calendar events.
+        $record = new \stdClass();
+        $record->classname = '\core\task\refresh_mod_calendar_events_task';
+        $record->component = 'core';
+
+        // Next run time based from nextruntime computation in \core\task\manager::queue_adhoc_task().
+        $nextruntime = time() - 1;
+        $record->nextruntime = $nextruntime;
+        $DB->insert_record('task_adhoc', $record);
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2017101900.02);
+    }
+
+    if ($oldversion < 2017102100.01) {
+        // We will need to force them onto ssl if loginhttps is set.
+        if (!empty($CFG->loginhttps)) {
+            set_config('overridetossl', 1);
+        }
+        // Loginhttps should no longer be set.
+        unset_config('loginhttps');
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2017102100.01);
+    }
+
+    if ($oldversion < 2017110300.01) {
+
+        // Define field categoryid to be added to event_subscriptions.
+        $table = new xmldb_table('event_subscriptions');
+        $field = new xmldb_field('categoryid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'url');
+
+        // Conditionally launch add field categoryid.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2017110300.01);
     }
 
     return true;

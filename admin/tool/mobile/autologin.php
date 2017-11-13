@@ -31,8 +31,6 @@ $urltogo = optional_param('urltogo', $CFG->wwwroot, PARAM_URL);    // URL to red
 
 $context = context_system::instance();
 $PAGE->set_context($context);
-// Force https.
-$PAGE->https_required();
 
 // Check if the user is already logged-in.
 if (isloggedin() and !isguestuser()) {

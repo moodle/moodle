@@ -199,6 +199,10 @@ class api {
         // Make sure to limit searches to enrolled courses.
         $enrolledcourses = enrol_get_my_courses(array('id', 'cacherev'));
         $courses = array();
+        // Really we want the user to be able to view the participants if they have the capability
+        // 'moodle/course:viewparticipants' or 'moodle/course:enrolreview', but since the search_courses function
+        // only takes required parameters we can't. However, the chance of a user having 'moodle/course:enrolreview' but
+        // *not* 'moodle/course:viewparticipants' are pretty much zero, so it is not worth addressing.
         if ($arrcourses = \coursecat::search_courses(array('search' => $search), array('limit' => $limitnum),
                 array('moodle/course:viewparticipants'))) {
             foreach ($arrcourses as $course) {

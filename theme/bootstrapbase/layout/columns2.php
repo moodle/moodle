@@ -75,6 +75,9 @@ echo $OUTPUT->doctype() ?>
         <p class="helplink"><?php echo $OUTPUT->page_doc_link(); ?></p>
         <?php
         echo $OUTPUT->login_info();
+        ?>
+        <div class="tool_usertours-resettourcontainer"></div>
+        <?php
         echo $OUTPUT->home_link();
         echo $OUTPUT->standard_footer_html();
         ?>

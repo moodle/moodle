@@ -1,4 +1,4 @@
-<div class="form-group {{#error}}has-danger{{/error}} fitem {{#advanced}}advanced{{/advanced}} {{{element.extraclasses}}}">
+<div class="form-group {{#error}}has-danger{{/error}} fitem {{#advanced}}advanced{{/advanced}} {{{element.extraclasses}}}" {{#element.groupname}}data-groupname="{{.}}"{{/element.groupname}}>
     <label class="col-form-label {{#element.hiddenlabel}}sr-only{{/element.hiddenlabel}}" for="{{element.id}}">
         {{{label}}} {{{helpbutton}}}
         {{#required}}<abbr class="initialism text-danger" title="{{#str}}required{{/str}}">{{#pix}}req, core, {{#str}}required{{/str}}{{/pix}}</abbr>{{/required}}

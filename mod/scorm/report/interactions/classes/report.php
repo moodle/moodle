@@ -475,6 +475,7 @@ class report extends \mod_scorm\report {
                         $row[] = scorm_grade_user_attempt($scorm, $scouser->userid, $scouser->attempt);
                     }
                     // Print out all scores of attempt.
+                    $emptyrow = $download ? '' : '&nbsp;';
                     foreach ($scoes as $sco) {
                         if ($sco->launch != '') {
                             if ($trackdata = scorm_get_tracks($sco->id, $scouser->userid, $scouser->attempt)) {
@@ -507,7 +508,7 @@ class report extends \mod_scorm\report {
                                         if (isset($trackdata->$element)) {
                                             $row[] = s($trackdata->$element);
                                         } else {
-                                            $row[] = '&nbsp;';
+                                            $row[] = $emptyrow;
                                         }
                                     }
                                     if ($displayoptions['resp']) {
@@ -515,7 +516,7 @@ class report extends \mod_scorm\report {
                                         if (isset($trackdata->$element)) {
                                             $row[] = s($trackdata->$element);
                                         } else {
-                                            $row[] = '&nbsp;';
+                                            $row[] = $emptyrow;
                                         }
                                     }
                                     if ($displayoptions['right']) {
@@ -533,7 +534,7 @@ class report extends \mod_scorm\report {
                                             }
                                             $row[] = $rightans;
                                         } else {
-                                            $row[] = '&nbsp;';
+                                            $row[] = $emptyrow;
                                         }
                                     }
                                     if ($displayoptions['result']) {
@@ -541,7 +542,7 @@ class report extends \mod_scorm\report {
                                         if (isset($trackdata->$element)) {
                                             $row[] = s($trackdata->$element);
                                         } else {
-                                            $row[] = '&nbsp;';
+                                            $row[] = $emptyrow;
                                         }
                                     }
                                 }
@@ -556,7 +557,7 @@ class report extends \mod_scorm\report {
                                 }
                                 // Complete the empty cells.
                                 for ($i = 0; $i < count($columns) - $nbmaincolumns; $i++) {
-                                    $row[] = '&nbsp;';
+                                    $row[] = $emptyrow;
                                 }
                             }
                         }

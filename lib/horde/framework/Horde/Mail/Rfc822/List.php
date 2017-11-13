@@ -1,12 +1,12 @@
 <?php
 /**
- * Copyright 2012-2014 Horde LLC (http://www.horde.org/)
+ * Copyright 2012-2017 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file COPYING for license information (BSD). If you
  * did not receive this file, see http://www.horde.org/licenses/bsd.
  *
  * @category  Horde
- * @copyright 2012-2014 Horde LLC
+ * @copyright 2012-2017 Horde LLC
  * @license   http://www.horde.org/licenses/bsd New BSD License
  * @package   Mail
  */
@@ -16,7 +16,7 @@
  *
  * @author    Michael Slusarz <slusarz@horde.org>
  * @category  Horde
- * @copyright 2012-2014 Horde LLC
+ * @copyright 2012-2017 Horde LLC
  * @license   http://www.horde.org/licenses/bsd New BSD License
  * @package   Mail
  *
@@ -31,7 +31,9 @@
  * @property-read array $raw_addresses  The list of all addresses (Address
  *                                      objects).
  */
-class Horde_Mail_Rfc822_List extends Horde_Mail_Rfc822_Object implements ArrayAccess, Countable, SeekableIterator, Serializable
+class Horde_Mail_Rfc822_List
+    extends Horde_Mail_Rfc822_Object
+    implements ArrayAccess, Countable, SeekableIterator, Serializable
 {
     /** Filter masks. */
     const HIDE_GROUPS = 1;
@@ -273,6 +275,21 @@ class Horde_Mail_Rfc822_List extends Horde_Mail_Rfc822_Object implements ArrayAc
         }
 
         return false;
+    }
+
+    /**
+     * Convenience method to return the first element in a list.
+     *
+     * Useful since it allows chaining; older PHP versions did not allow array
+     * access dereferencing from the results of a function call.
+     *
+     * @since 2.5.0
+     *
+     * @return Horde_Mail_Rfc822_Object  Rfc822 object, or null if no object.
+     */
+    public function first()
+    {
+        return $this[0];
     }
 
     /**

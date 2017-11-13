@@ -236,7 +236,7 @@ $string['forum:exportdiscussion'] = 'Export whole discussion';
 $string['forum:exportownpost'] = 'Export own post';
 $string['forum:exportpost'] = 'Export post';
 $string['forumintro'] = 'Description';
-$string['forum:managesubscriptions'] = 'Manage subscriptions';
+$string['forum:managesubscriptions'] = 'Manage subscribers';
 $string['forum:movediscussions'] = 'Move discussions';
 $string['forum:pindiscussions'] = 'Pin discussions';
 $string['forum:postwithoutthrottling'] = 'Exempt from post threshold';
@@ -269,8 +269,10 @@ $string['forum:viewsubscribers'] = 'View subscribers';
 $string['generalforum'] = 'Standard forum for general use';
 $string['generalforums'] = 'General forums';
 $string['hiddenforumpost'] = 'Hidden forum post';
-$string['indicator:cognitivedepthforum'] = 'Forum cognitive';
-$string['indicator:socialbreadthforum'] = 'Forum social';
+$string['indicator:cognitivedepth'] = 'Forum cognitive';
+$string['indicator:cognitivedepth_help'] = 'This indicator is based on the cognitive depth reached by the student in a Forum activity.';
+$string['indicator:socialbreadth'] = 'Forum social';
+$string['indicator:socialbreadth_help'] = 'This indicator is based on the social breadth reached by the student in a Forum activity.';
 $string['inforum'] = 'in {$a}';
 $string['introblog'] = 'The posts in this forum were copied here automatically from blogs of users in this course because those blog entries are no longer available';
 $string['intronews'] = 'General news and announcements';
@@ -293,7 +295,7 @@ $string['longpost'] = 'Long post';
 $string['mailnow'] = 'Send forum post notifications with no editing-time delay';
 $string['manydiscussions'] = 'Discussions per page';
 $string['managesubscriptionsoff'] = 'Finish managing subscriptions';
-$string['managesubscriptionson'] = 'Manage subscriptions';
+$string['managesubscriptionson'] = 'Manage subscribers';
 $string['markalldread'] = 'Mark all posts in this discussion read.';
 $string['markallread'] = 'Mark all posts in this forum read.';
 $string['markasreadonnotification'] = 'When sending forum post notifications';
@@ -503,9 +505,7 @@ $string['subscriptionmode_help'] = 'When a participant is subscribed to a forum 
 * Optional subscription - Participants can choose whether to be subscribed
 * Forced subscription - Everyone is subscribed and cannot unsubscribe
 * Auto subscription - Everyone is subscribed initially but can choose to unsubscribe at any time
-* Subscription disabled - Subscriptions are not allowed
-
-Note: Any subscription mode changes will only affect users who enrol in the course in the future, and not existing users.';
+* Subscription disabled - Subscriptions are not allowed';
 $string['subscriptionoptional'] = 'Optional subscription';
 $string['subscriptionforced'] = 'Forced subscription';
 $string['subscriptionauto'] = 'Auto subscription';
@@ -513,7 +513,6 @@ $string['subscriptiondisabled'] = 'Subscription disabled';
 $string['subscriptions'] = 'Subscriptions';
 $string['tagarea_forum_posts'] = 'Forum posts';
 $string['tagsdeleted'] = 'Forum tags have been deleted';
-$string['tagtitle'] = 'See the "{$a}" tag';
 $string['thisforumisthrottled'] = 'This forum has a limit to the number of forum postings you can make in a given time period - this is currently set at {$a->blockafter} posting(s) in {$a->blockperiod}';
 $string['timedhidden'] = 'Timed status: Hidden from students';
 $string['timedposts'] = 'Timed posts';

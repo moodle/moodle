@@ -8,6 +8,7 @@ Feature: View course participants
     Given the following "users" exist:
       | username  | firstname | lastname | email                 |
       | teacher1  | Teacher   | 1        | teacher1@example.com  |
+      | student0  | Student   | 0        | student0@example.com  |
       | student1  | Student   | 1        | student1@example.com  |
       | student2  | Student   | 2        | student2@example.com  |
       | student3  | Student   | 3        | student3@example.com  |
@@ -27,13 +28,13 @@ Feature: View course participants
       | student17 | Student   | 17       | student17@example.com |
       | student18 | Student   | 18       | student18@example.com |
       | student19 | Student   | 19       | student19@example.com |
-      | student20 | Student   | 20       | student20@example.com |
     And the following "courses" exist:
       | fullname | shortname | format |
       | Course 1 | C1        | topics |
     And the following "course enrolments" exist:
       | user      | course | role           | status | timeend |
       | teacher1  | C1     | editingteacher |    0   |    0    |
+      | student0  | C1     | student        |    0   |    0    |
       | student1  | C1     | student        |    0   |    0    |
       | student2  | C1     | student        |    0   |    0    |
       | student3  | C1     | student        |    0   |    0    |
@@ -52,7 +53,6 @@ Feature: View course participants
       | student16 | C1     | student        |    0   |    0    |
       | student17 | C1     | student        |    0   |    0    |
       | student18 | C1     | student        |    0   |    0    |
-      | student19 | C1     | student        |    0   |    0    |
 
   @javascript
   Scenario: Use select and deselect all buttons
@@ -107,26 +107,26 @@ Feature: View course participants
     Given I log in as "teacher1"
     And the following "course enrolments" exist:
       | user      | course | role           |
-      | student20 | C1     | student |
+      | student19 | C1     | student |
     And I am on "Course 1" course homepage
     And I navigate to course participants
     And I follow "Email address"
     When I follow "2"
-    Then I should not see "student1@example.com"
-    And I should not see "student20@example.com"
+    Then I should not see "student0@example.com"
+    And I should not see "student19@example.com"
     And I should see "teacher1@example.com"
     And I follow "Email address"
     And I follow "2"
     And I should not see "teacher1@example.com"
-    And I should not see "student20@example.com"
+    And I should not see "student19@example.com"
     And I should not see "student1@example.com"
-    And I should see "student10@example.com"
+    And I should see "student0@example.com"
 
   @javascript
   Scenario: Use select all users on this page, select all n users and deselect all
     Given the following "course enrolments" exist:
       | user      | course | role    |
-      | student20 | C1     | student |
+      | student19 | C1     | student |
     When I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I navigate to course participants
@@ -227,7 +227,8 @@ Feature: View course participants
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage
     When I navigate to course participants
-    Then I should see "Active" in the "student1" "table_row"
+    Then I should see "Active" in the "student0" "table_row"
+    And I should see "Active" in the "student1" "table_row"
     And I should see "Active" in the "student2" "table_row"
     And I should see "Active" in the "student3" "table_row"
     And I should see "Active" in the "student4" "table_row"
@@ -245,7 +246,6 @@ Feature: View course participants
     And I should see "Active" in the "student16" "table_row"
     And I should see "Active" in the "student17" "table_row"
     And I should see "Active" in the "student18" "table_row"
-    And I should see "Active" in the "student19" "table_row"
 
   Scenario: View the participants page as a student
     Given I log in as "student1"

@@ -53,6 +53,11 @@ class event implements event_interface {
     protected $description;
 
     /**
+     * @var proxy_interface $category Category for this event.
+     */
+    protected $category;
+
+    /**
      * @var proxy_interface $course Course for this event.
      */
     protected $course;
@@ -103,6 +108,7 @@ class event implements event_interface {
      * @param int                        $id             The event's ID in the database.
      * @param string                     $name           The event's name.
      * @param description_interface      $description    The event's description.
+     * @param proxy_interface            $category       The category associated with the event.
      * @param proxy_interface            $course         The course associated with the event.
      * @param proxy_interface            $group          The group associated with the event.
      * @param proxy_interface            $user           The user associated with the event.
@@ -117,6 +123,7 @@ class event implements event_interface {
         $id,
         $name,
         description_interface $description,
+        proxy_interface $category = null,
         proxy_interface $course = null,
         proxy_interface $group = null,
         proxy_interface $user = null,
@@ -130,6 +137,7 @@ class event implements event_interface {
         $this->id = $id;
         $this->name = $name;
         $this->description = $description;
+        $this->category = $category;
         $this->course = $course;
         $this->group = $group;
         $this->user = $user;
@@ -151,6 +159,10 @@ class event implements event_interface {
 
     public function get_description() {
         return $this->description;
+    }
+
+    public function get_category() {
+        return $this->category;
     }
 
     public function get_course() {

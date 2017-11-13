@@ -20,7 +20,6 @@ typeof
 extends
 package
 private
-continue
 function
 protected
 implements

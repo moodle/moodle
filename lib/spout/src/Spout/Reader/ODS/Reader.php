@@ -20,6 +20,19 @@ class Reader extends AbstractReader
     protected $sheetIterator;
 
     /**
+     * Returns the reader's current options
+     *
+     * @return ReaderOptions
+     */
+    protected function getOptions()
+    {
+        if (!isset($this->options)) {
+            $this->options = new ReaderOptions();
+        }
+        return $this->options;
+    }
+
+    /**
      * Returns whether stream wrappers are supported
      *
      * @return bool
@@ -42,7 +55,7 @@ class Reader extends AbstractReader
         $this->zip = new \ZipArchive();
 
         if ($this->zip->open($filePath) === true) {
-            $this->sheetIterator = new SheetIterator($filePath, $this->shouldFormatDates);
+            $this->sheetIterator = new SheetIterator($filePath, $this->getOptions());
         } else {
             throw new IOException("Could not open $filePath for reading.");
         }
@@ -53,7 +66,7 @@ class Reader extends AbstractReader
      *
      * @return SheetIterator To iterate over sheets
      */
-    public function getConcreteSheetIterator()
+    protected function getConcreteSheetIterator()
     {
         return $this->sheetIterator;
     }

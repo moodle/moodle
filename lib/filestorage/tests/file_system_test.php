@@ -904,8 +904,8 @@ class core_files_file_system_testcase extends advanced_testcase {
         $filecontent = 'example content';
         $file = $this->get_stored_file($filecontent);
 
-        $fs = $this->get_testable_mock(['get_remote_path_from_storedfile']);
-        $fs->method('get_remote_path_from_storedfile')
+        $fs = $this->get_testable_mock(['get_local_path_from_storedfile']);
+        $fs->method('get_local_path_from_storedfile')
             ->willReturn(__DIR__ . "/fixtures/test.tgz");
 
         // Note: We are unable to determine the mode in which the $fh was opened.
@@ -951,14 +951,13 @@ class core_files_file_system_testcase extends advanced_testcase {
      * a locally available file whose filename does not suggest mimetype.
      */
     public function test_mimetype_from_hash_using_file_content() {
-        $filepath = '/path/to/file/not/currently/on/disk';
         $filecontent = 'example content';
         $contenthash = file_storage::hash_from_string($filecontent);
         $filename = 'example';
 
         $filepath = __DIR__ . "/fixtures/testimage.jpg";
-        $fs = $this->get_testable_mock(['get_remote_path_from_hash']);
-        $fs->method('get_remote_path_from_hash')->willReturn($filepath);
+        $fs = $this->get_testable_mock(['get_local_path_from_hash']);
+        $fs->method('get_local_path_from_hash')->willReturn($filepath);
 
         $result = $fs->mimetype_from_hash($contenthash, $filename);
         $this->assertEquals('image/jpeg', $result);
@@ -1023,8 +1022,8 @@ class core_files_file_system_testcase extends advanced_testcase {
      */
     public function test_mimetype_from_storedfile_using_file_content() {
         $filepath = __DIR__ . "/fixtures/testimage.jpg";
-        $fs = $this->get_testable_mock(['get_remote_path_from_storedfile']);
-        $fs->method('get_remote_path_from_storedfile')->willReturn($filepath);
+        $fs = $this->get_testable_mock(['get_local_path_from_hash']);
+        $fs->method('get_local_path_from_hash')->willReturn($filepath);
 
         $file = $this->get_stored_file('example content');
 
@@ -1040,14 +1039,12 @@ class core_files_file_system_testcase extends advanced_testcase {
         $filepath = __DIR__ . "/fixtures/testimage.jpg";
 
         $fs = $this->get_testable_mock([
-            'get_remote_path_from_storedfile',
-            'is_file_readable_locally_by_storedfile',
-            'get_local_path_from_storedfile',
+            'is_file_readable_locally_by_hash',
+            'get_local_path_from_hash',
         ]);
 
-        $fs->method('get_remote_path_from_storedfile')->willReturn('/path/to/remote/file');
-        $fs->method('is_file_readable_locally_by_storedfile')->willReturn(false);
-        $fs->method('get_local_path_from_storedfile')->willReturn($filepath);
+        $fs->method('is_file_readable_locally_by_hash')->willReturn(false);
+        $fs->method('get_local_path_from_hash')->will($this->onConsecutiveCalls('/path/to/remote/file', $filepath));
 
         $file = $this->get_stored_file('example content');
 

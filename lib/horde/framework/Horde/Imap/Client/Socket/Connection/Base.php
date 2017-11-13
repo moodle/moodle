@@ -1,12 +1,12 @@
 <?php
 /**
- * Copyright 2014 Horde LLC (http://www.horde.org/)
+ * Copyright 2014-2017 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file COPYING for license information (LGPL). If you
  * did not receive this file, see http://www.horde.org/licenses/lgpl21.
  *
  * @category  Horde
- * @copyright 2014 Horde LLC
+ * @copyright 2014-2017 Horde LLC
  * @license   http://www.horde.org/licenses/lgpl21 LGPL 2.1
  * @package   Imap_Client
  */
@@ -20,7 +20,7 @@
  *
  * @author    Michael Slusarz <slusarz@horde.org>
  * @category  Horde
- * @copyright 2014 Horde LLC
+ * @copyright 2014-2017 Horde LLC
  * @internal
  * @license   http://www.horde.org/licenses/lgpl21 LGPL 2.1
  * @package   Imap_Client
@@ -36,15 +36,16 @@ class Horde_Imap_Client_Socket_Connection_Base extends Horde\Socket\Client
 
     /**
      */
-    protected function _connect($host, $port, $timeout, $secure, $retries = 0)
+    protected function _connect($host, $port, $timeout, $secure, $context, $retries = 0)
     {
         if ($retries || !$this->_params['debug']->debug) {
             $timer = null;
         } else {
-            $url = new Horde_Imap_Client_Url();
-            $url->hostspec = $host;
+            $url = ($this->_protocol == 'imap')
+                ? new Horde_Imap_Client_Url_Imap()
+                : new Horde_Imap_Client_Url_Pop3();
+            $url->host = $host;
             $url->port = $port;
-            $url->protocol = $this->_protocol;
             $this->_params['debug']->info(sprintf(
                 'Connection to: %s',
                 strval($url)
@@ -54,7 +55,15 @@ class Horde_Imap_Client_Socket_Connection_Base extends Horde\Socket\Client
             $timer->push();
         }
 
-        parent::_connect($host, $port, $timeout, $secure, $retries);
+        try {
+            parent::_connect($host, $port, $timeout, $secure, $context, $retries);
+        } catch (Horde\Socket\Client\Exception $e) {
+            $this->_params['debug']->info(sprintf(
+                'Connection failed: %s',
+                $e->getMessage()
+            ));
+            throw $e;
+        }
 
         if ($timer) {
             $this->_params['debug']->info(sprintf(

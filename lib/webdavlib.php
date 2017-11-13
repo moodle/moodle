@@ -16,6 +16,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * A Moodle-modified WebDAV client, based on
  * webdav_client v0.1.5, a php based webdav client class.
  * class webdav client. a php based nearly RFC 2518 conforming client.
  *
@@ -26,11 +27,13 @@
  * Please notice that all Filenames coming from or going to the webdav server should be UTF-8 encoded (see RFC 2518).
  * This class tries to convert all you filenames into utf-8 when it's needed.
  *
+ * Moodle modifications:
+ * * Moodle 3.4: Add support for OAuth 2 bearer token-based authentication
+ *
  * @package moodlecore
  * @author Christian Juerges <christian.juerges@xwave.ch>, Xwave GmbH, Josefstr. 92, 8005 Zuerich - Switzerland
  * @copyright (C) 2003/2004, Christian Juerges
  * @license http://opensource.org/licenses/lgpl-license.php GNU Lesser General Public License
- * @version 0.1.5
  */
 
 class webdav_client {
@@ -79,12 +82,24 @@ class webdav_client {
     private $_cnonce = '';
     private $_nc = 0;
 
+    /**
+     * OAuth token used for bearer auth.
+     * @var string
+     */
+    private $oauthtoken;
+
     /**#@-*/
 
     /**
      * Constructor - Initialise class variables
+     * @param string $server Hostname of the server to connect to
+     * @param string $user Username (for basic/digest auth, see $auth)
+     * @param string $pass Password (for basic/digest auth, see $auth)
+     * @param bool $auth Authentication type; one of ['basic', 'digest', 'bearer']
+     * @param string $socket Used protocol for fsockopen, usually: '' (empty) or 'ssl://'
+     * @param string $oauthtoken OAuth 2 bearer token (for bearer auth, see $auth)
      */
-    function __construct($server = '', $user = '', $pass = '', $auth = false, $socket = '') {
+    public function __construct($server = '', $user = '', $pass = '', $auth = false, $socket = '', $oauthtoken = '') {
         if (!empty($server)) {
             $this->_server = $server;
         }
@@ -94,6 +109,9 @@ class webdav_client {
         }
         $this->_auth = $auth;
         $this->_socket = $socket;
+        if ($auth == 'bearer') {
+            $this->oauthtoken = $oauthtoken;
+        }
     }
     public function __set($key, $value) {
         $property = '_' . $key;
@@ -936,7 +954,7 @@ EOD;
 
         $result = true;
 
-        while (list($localpath, $destpath) = each($filelist)) {
+        foreach ($filelist as $localpath => $destpath) {
 
             $localpath = rtrim($localpath, "/");
             $destpath  = rtrim($destpath, "/");
@@ -993,7 +1011,7 @@ EOD;
 
         $result = true;
 
-        while (list($remotepath, $localpath) = each($filelist)) {
+        foreach ($filelist as $remotepath => $localpath) {
 
             $localpath   = rtrim($localpath, "/");
             $remotepath  = rtrim($remotepath, "/");
@@ -1323,6 +1341,8 @@ EOD;
             if ($signature = $this->digest_signature($method)){
                 $this->header_add($signature);
             }
+        } else if ($this->_auth == 'bearer') {
+            $this->header_add(sprintf('Authorization: Bearer %s', $this->oauthtoken));
         }
     }
 

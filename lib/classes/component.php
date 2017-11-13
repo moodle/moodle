@@ -84,6 +84,7 @@ class core_component {
         'MatthiasMullie\\PathConverter' => 'lib/minify/matthiasmullie-pathconverter/src/',
         'IMSGlobal\LTI' => 'lib/ltiprovider/src',
         'Phpml' => 'lib/mlbackend/php/phpml/src/Phpml',
+        'PHPMailer\\PHPMailer' => 'lib/phpmailer/src',
     );
 
     /**
@@ -443,7 +444,7 @@ $cache = '.var_export($cache, true).';
             'filepicker'  => null,
             'fileconverter' => $CFG->dirroot.'/files/converter',
             'files'       => $CFG->dirroot.'/files',
-            'filters'     => null,
+            'filters'     => $CFG->dirroot.'/filter',
             //'fonts'       => null, // Bogus.
             'form'        => $CFG->dirroot.'/lib/form',
             'grades'      => $CFG->dirroot.'/grade',

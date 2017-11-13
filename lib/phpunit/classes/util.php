@@ -217,10 +217,10 @@ class phpunit_util extends testing_util {
         core_filetypes::reset_caches();
         \core_search\manager::clear_static();
         core_user::reset_caches();
+        \core\output\icon_system::reset_caches();
         if (class_exists('core_media_manager', false)) {
             core_media_manager::reset_caches();
         }
-        \core_analytics\course::reset_caches();
 
         // Reset static unit test options.
         if (class_exists('\availability_date\condition', false)) {
@@ -277,6 +277,9 @@ class phpunit_util extends testing_util {
 
         // Reset the log manager cache.
         get_log_manager(true);
+
+        // Reset user agent.
+        core_useragent::instance(true, null);
 
         // verify db writes just in case something goes wrong in reset
         if (self::$lastdbwrites != $DB->perf_get_writes()) {
@@ -618,7 +621,7 @@ class phpunit_util extends testing_util {
 
         foreach ($backtrace as $bt) {
             if (isset($bt['object']) and is_object($bt['object'])
-                    && $bt['object'] instanceof PHPUnit_Framework_TestCase) {
+                    && $bt['object'] instanceof PHPUnit\Framework\TestCase) {
                 $debug = new stdClass();
                 $debug->message = $message;
                 $debug->level   = $level;

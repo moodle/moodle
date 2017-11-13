@@ -35,19 +35,14 @@ defined('MOODLE_INTERNAL') || die();
 class message_sent extends base_message {
 
     /**
-     * Returns recordset containing message records.
+     * Returns a recordset with the messages for indexing.
      *
-     * @param int $modifiedfrom timestamp
-     * @return \moodle_recordset
+     * @param int $modifiedfrom
+     * @param \context|null $context Optional context to restrict scope of returned results
+     * @return moodle_recordset|null Recordset (or null if no results)
      */
-    public function get_recordset_by_timestamp($modifiedfrom = 0) {
-        global $DB;
-
-        // We don't want to index messages sent by noreply and support users.
-        $params = array('modifiedfrom' => $modifiedfrom, 'noreplyuser' => \core_user::NOREPLY_USER,
-            'supportuser' => \core_user::SUPPORT_USER);
-        return $DB->get_recordset_select('message_read', 'timecreated >= :modifiedfrom AND
-            useridfrom != :noreplyuser AND useridfrom != :supportuser', $params, 'timecreated ASC');
+    public function get_document_recordset($modifiedfrom = 0, \context $context = null) {
+        return $this->get_document_recordset_helper($modifiedfrom, $context, 'useridfrom');
     }
 
     /**

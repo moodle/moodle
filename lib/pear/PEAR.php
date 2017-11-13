@@ -759,7 +759,7 @@ function _PEAR_call_destructors()
             $_PEAR_destructor_object_list = array_reverse($_PEAR_destructor_object_list);
         }
 
-        while (list($k, $objref) = each($_PEAR_destructor_object_list)) {
+        foreach ($_PEAR_destructor_object_list as $k => $objref) {
             $classname = get_class($objref);
             while ($classname) {
                 $destructor = "_$classname";

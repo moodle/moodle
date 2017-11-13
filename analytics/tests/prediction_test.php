@@ -24,6 +24,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+global $CFG;
 require_once(__DIR__ . '/fixtures/test_indicator_max.php');
 require_once(__DIR__ . '/fixtures/test_indicator_min.php');
 require_once(__DIR__ . '/fixtures/test_indicator_fullname.php');
@@ -107,10 +108,11 @@ class core_analytics_prediction_testcase extends advanced_testcase {
      * @dataProvider provider_ml_training_and_prediction
      * @param string $timesplittingid
      * @param int $predictedrangeindex
+     * @param int $nranges
      * @param string $predictionsprocessorclass
      * @return void
      */
-    public function test_ml_training_and_prediction($timesplittingid, $predictedrangeindex, $predictionsprocessorclass) {
+    public function test_ml_training_and_prediction($timesplittingid, $predictedrangeindex, $nranges, $predictionsprocessorclass) {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -153,6 +155,10 @@ class core_analytics_prediction_testcase extends advanced_testcase {
         $this->assertEquals(1, $model->is_enabled());
         $this->assertEquals(1, $model->is_trained());
 
+        // 20 courses * the 3 model indicators * the number of time ranges of this time splitting method.
+        $indicatorcalc = 20 * 3 * $nranges;
+        $this->assertEquals($indicatorcalc, $DB->count_records('analytics_indicator_calc'));
+
         // 1 training file was created.
         $trainedsamples = $DB->get_records('analytics_train_samples', array('modelid' => $model->get_id()));
         $this->assertCount(1, $trainedsamples);
@@ -160,6 +166,12 @@ class core_analytics_prediction_testcase extends advanced_testcase {
         $this->assertCount($ncourses * 2, $samples);
         $this->assertEquals(1, $DB->count_records('analytics_used_files',
             array('modelid' => $model->get_id(), 'action' => 'trained')));
+        // Check that analysable files for training are stored under labelled filearea.
+        $fs = get_file_storage();
+        $this->assertCount(1, $fs->get_directory_files(\context_system::instance()->id, 'analytics',
+            \core_analytics\dataset_manager::LABELLED_FILEAREA, $model->get_id(), '/analysable/', true, false));
+        $this->assertEmpty($fs->get_directory_files(\context_system::instance()->id, 'analytics',
+            \core_analytics\dataset_manager::UNLABELLED_FILEAREA, $model->get_id(), '/analysable/', true, false));
 
         $courseparams = $params + array('shortname' => 'aaaaaa', 'fullname' => 'aaaaaa', 'visible' => 0);
         $course1 = $this->getDataGenerator()->create_course($courseparams);
@@ -193,6 +205,12 @@ class core_analytics_prediction_testcase extends advanced_testcase {
         // 2 predictions.
         $this->assertEquals(2, $DB->count_records('analytics_predictions',
             array('modelid' => $model->get_id())));
+
+        // Check that analysable files to get predictions are stored under unlabelled filearea.
+        $this->assertCount(1, $fs->get_directory_files(\context_system::instance()->id, 'analytics',
+            \core_analytics\dataset_manager::LABELLED_FILEAREA, $model->get_id(), '/analysable/', true, false));
+        $this->assertCount(1, $fs->get_directory_files(\context_system::instance()->id, 'analytics',
+            \core_analytics\dataset_manager::UNLABELLED_FILEAREA, $model->get_id(), '/analysable/', true, false));
 
         // No new generated files nor records as there are no new courses available.
         $model->predict();
@@ -229,6 +247,10 @@ class core_analytics_prediction_testcase extends advanced_testcase {
             array('modelid' => $model->get_id(), 'action' => 'predicted')));
         $this->assertEquals(4, $DB->count_records('analytics_predictions',
             array('modelid' => $model->get_id())));
+        $this->assertCount(1, $fs->get_directory_files(\context_system::instance()->id, 'analytics',
+            \core_analytics\dataset_manager::LABELLED_FILEAREA, $model->get_id(), '/analysable/', true, false));
+        $this->assertCount(2, $fs->get_directory_files(\context_system::instance()->id, 'analytics',
+            \core_analytics\dataset_manager::UNLABELLED_FILEAREA, $model->get_id(), '/analysable/', true, false));
 
         // New visible course (for training).
         $course5 = $this->getDataGenerator()->create_course(array('shortname' => 'aaa', 'fullname' => 'aa'));
@@ -236,18 +258,10 @@ class core_analytics_prediction_testcase extends advanced_testcase {
         $result = $model->train();
         $this->assertEquals(2, $DB->count_records('analytics_used_files',
             array('modelid' => $model->get_id(), 'action' => 'trained')));
-
-        // Update one of the courses to not visible, it should be used again for prediction.
-        $course5->visible = 0;
-        update_course($course5);
-
-        $model->predict();
-        $this->assertEquals(1, $DB->count_records('analytics_predict_samples',
-            array('modelid' => $model->get_id())));
-        $this->assertEquals(2, $DB->count_records('analytics_used_files',
-            array('modelid' => $model->get_id(), 'action' => 'predicted')));
-        $this->assertEquals(4, $DB->count_records('analytics_predictions',
-            array('modelid' => $model->get_id())));
+        $this->assertCount(2, $fs->get_directory_files(\context_system::instance()->id, 'analytics',
+            \core_analytics\dataset_manager::LABELLED_FILEAREA, $model->get_id(), '/analysable/', true, false));
+        $this->assertCount(2, $fs->get_directory_files(\context_system::instance()->id, 'analytics',
+            \core_analytics\dataset_manager::UNLABELLED_FILEAREA, $model->get_id(), '/analysable/', true, false));
 
         set_config('enabled_stores', '', 'tool_log');
         get_log_manager(true);
@@ -260,14 +274,104 @@ class core_analytics_prediction_testcase extends advanced_testcase {
      */
     public function provider_ml_training_and_prediction() {
         $cases = array(
-            'no_splitting' => array('\core\analytics\time_splitting\no_splitting', 0),
-            'quarters' => array('\core\analytics\time_splitting\quarters', 3)
+            'no_splitting' => array('\core\analytics\time_splitting\no_splitting', 0, 1),
+            'quarters' => array('\core\analytics\time_splitting\quarters', 3, 4)
         );
 
         // We need to test all system prediction processors.
         return $this->add_prediction_processors($cases);
     }
 
+    /**
+     * Test the system classifiers returns.
+     *
+     * This test checks that all mlbackend plugins in the system are able to return proper status codes
+     * even under weird situations.
+     *
+     * @dataProvider provider_ml_classifiers_return
+     * @param int $success
+     * @param int $nsamples
+     * @param int $classes
+     * @param string $predictionsprocessorclass
+     * @return void
+     */
+    public function test_ml_classifiers_return($success, $nsamples, $classes, $predictionsprocessorclass) {
+        $this->resetAfterTest();
+
+        $predictionsprocessor = \core_analytics\manager::get_predictions_processor($predictionsprocessorclass, false);
+        if ($predictionsprocessor->is_ready() !== true) {
+            $this->markTestSkipped('Skipping ' . $predictionsprocessorclass . ' as the predictor is not ready.');
+        }
+
+        if ($nsamples % count($classes) != 0) {
+            throw new \coding_exception('The number of samples should be divisible by the number of classes');
+        }
+        $samplesperclass = $nsamples / count($classes);
+
+        // Metadata (we pass 2 classes even if $classes only provides 1 class samples as we want to test
+        // what the backend does in this case.
+        $dataset = "nfeatures,targetclasses,targettype" . PHP_EOL;
+        $dataset .= "3,\"[0,1]\",\"discrete\"" . PHP_EOL;
+
+        // Headers.
+        $dataset .= "feature1,feature2,feature3,target" . PHP_EOL;
+        foreach ($classes as $class) {
+            for ($i = 0; $i < $samplesperclass; $i++) {
+                $dataset .= "1,0,1,$class" . PHP_EOL;
+            }
+        }
+
+        $trainingfile = array(
+            'contextid' => \context_system::instance()->id,
+            'component' => 'analytics',
+            'filearea' => 'labelled',
+            'itemid' => 123,
+            'filepath' => '/',
+            'filename' => 'whocares.csv'
+        );
+        $fs = get_file_storage();
+        $dataset = $fs->create_file_from_string($trainingfile, $dataset);
+
+        // Training should work correctly if at least 1 sample of each class is included.
+        $dir = make_request_directory();
+        $result = $predictionsprocessor->train_classification('whatever', $dataset, $dir);
+
+        switch ($success) {
+            case 'yes':
+                $this->assertEquals(\core_analytics\model::OK, $result->status);
+                break;
+            case 'no':
+                $this->assertNotEquals(\core_analytics\model::OK, $result->status);
+                break;
+            case 'maybe':
+            default:
+                // We just check that an object is returned so we don't have an empty check,
+                // what we really want to check is that an exception was not thrown.
+                $this->assertInstanceOf(\stdClass::class, $result);
+        }
+    }
+
+    /**
+     * test_ml_classifiers_return provider
+     *
+     * We can not be very specific here as test_ml_classifiers_return only checks that
+     * mlbackend plugins behave and expected and control properly backend errors even
+     * under weird situations.
+     *
+     * @return array
+     */
+    public function provider_ml_classifiers_return() {
+        // Using verbose options as the first argument for readability.
+        $cases = array(
+            '1-samples' => array('maybe', 1, [0]),
+            '2-samples-same-class' => array('maybe', 2, [0]),
+            '2-samples-different-classes' => array('yes', 2, [0, 1]),
+            '4-samples-different-classes' => array('yes', 4, [0, 1])
+        );
+
+        // We need to test all system prediction processors.
+        return $this->add_prediction_processors($cases);
+    }
 
     /**
      * Basic test to check that prediction processors work as expected.
@@ -335,6 +439,79 @@ class core_analytics_prediction_testcase extends advanced_testcase {
     }
 
     /**
+     * test_read_indicator_calculations
+     *
+     * @return void
+     */
+    public function test_read_indicator_calculations() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        $starttime = 123;
+        $endtime = 321;
+        $sampleorigin = 'whatever';
+
+        $indicator = $this->getMockBuilder('test_indicator_max')->setMethods(['calculate_sample'])->getMock();
+        $indicator->expects($this->never())->method('calculate_sample');
+
+        $existingcalcs = array(111 => 1, 222 => 0.5);
+        $sampleids = array(111 => 111, 222 => 222);
+        list($values, $unused) = $indicator->calculate($sampleids, $sampleorigin, $starttime, $endtime, $existingcalcs);
+    }
+
+    /**
+     * test_not_null_samples
+     */
+    public function test_not_null_samples() {
+        $this->resetAfterTest(true);
+
+        $classname = '\core\analytics\time_splitting\quarters';
+        $timesplitting = \core_analytics\manager::get_time_splitting($classname);
+        $timesplitting->set_analysable(new \core_analytics\site());
+
+        $ranges = array(
+            array('start' => 111, 'end' => 222, 'time' => 222),
+            array('start' => 222, 'end' => 333, 'time' => 333)
+        );
+        $samples = array(123 => 123, 321 => 321);
+
+        $indicator1 = $this->getMockBuilder('test_indicator_max')
+            ->setMethods(['calculate_sample'])
+            ->getMock();
+        $indicator1->method('calculate_sample')
+            ->willReturn(null);
+
+        $indicator2 = \core_analytics\manager::get_indicator('test_indicator_min');
+
+        // Samples with at least 1 not null value are returned.
+        $params = array(
+            $samples,
+            'whatever',
+            array($indicator1, $indicator2),
+            $ranges
+        );
+        $dataset = phpunit_util::call_internal_method($timesplitting, 'calculate_indicators', $params, $classname);
+        $this->assertArrayHasKey('123-0', $dataset);
+        $this->assertArrayHasKey('123-1', $dataset);
+        $this->assertArrayHasKey('321-0', $dataset);
+        $this->assertArrayHasKey('321-1', $dataset);
+
+        // Samples with only null values are not returned.
+        $params = array(
+            $samples,
+            'whatever',
+            array($indicator1),
+            $ranges
+        );
+        $dataset = phpunit_util::call_internal_method($timesplitting, 'calculate_indicators', $params, $classname);
+        $this->assertArrayNotHasKey('123-0', $dataset);
+        $this->assertArrayNotHasKey('123-1', $dataset);
+        $this->assertArrayNotHasKey('321-0', $dataset);
+        $this->assertArrayNotHasKey('321-1', $dataset);
+    }
+
+    /**
      * provider_ml_test_evaluation
      *
      * @return array
@@ -348,8 +525,8 @@ class core_analytics_prediction_testcase extends advanced_testcase {
                 'expectedresults' => array(
                     // The course duration is too much to be processed by in weekly basis.
                     '\core\analytics\time_splitting\weekly' => \core_analytics\model::NO_DATASET,
-                    '\core\analytics\time_splitting\single_range' => \core_analytics\model::EVALUATE_LOW_SCORE,
-                    '\core\analytics\time_splitting\quarters' => \core_analytics\model::EVALUATE_LOW_SCORE,
+                    '\core\analytics\time_splitting\single_range' => \core_analytics\model::LOW_SCORE,
+                    '\core\analytics\time_splitting\quarters' => \core_analytics\model::LOW_SCORE,
                 )
             ),
             'good' => array(

@@ -356,4 +356,13 @@ $tasks = array(
         'dayofweek' => '*',
         'month' => '*'
     ),
+    array(
+        'classname' => 'core\task\analytics_cleanup_task',
+        'blocking' => 0,
+        'minute' => '42',
+        'hour' => '*',
+        'day' => '*',
+        'dayofweek' => '*',
+        'month' => '*'
+    ),
 );

@@ -112,6 +112,7 @@ class HTMLPurifier_DefinitionCache_Serializer extends HTMLPurifier_DefinitionCac
             }
             unlink($dir . '/' . $filename);
         }
+        closedir($dh);
         return true;
     }
 
@@ -142,6 +143,7 @@ class HTMLPurifier_DefinitionCache_Serializer extends HTMLPurifier_DefinitionCac
                 unlink($dir . '/' . $filename);
             }
         }
+        closedir($dh);
         return true;
     }
 
@@ -215,9 +217,14 @@ class HTMLPurifier_DefinitionCache_Serializer extends HTMLPurifier_DefinitionCac
         $directory = $this->generateDirectoryPath($config);
         $chmod = $config->get('Cache.SerializerPermissions');
         if ($chmod === null) {
-            // TODO: This races
-            if (is_dir($directory)) return true;
-            return mkdir($directory);
+            if (!@mkdir($directory) && !is_dir($directory)) {
+                trigger_error(
+                    'Could not create directory ' . $directory . '',
+                    E_USER_WARNING
+                );
+                return false;
+            }
+            return true;
         }
         if (!is_dir($directory)) {
             $base = $this->generateBaseDirectoryPath($config);
@@ -231,7 +238,7 @@ class HTMLPurifier_DefinitionCache_Serializer extends HTMLPurifier_DefinitionCac
             } elseif (!$this->_testPermissions($base, $chmod)) {
                 return false;
             }
-            if (!mkdir($directory, $chmod)) {
+            if (!@mkdir($directory, $chmod) && !is_dir($directory)) {
                 trigger_error(
                     'Could not create directory ' . $directory . '',
                     E_USER_WARNING

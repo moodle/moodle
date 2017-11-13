@@ -28,6 +28,8 @@ require_once(__DIR__ . '/fixtures/test_indicator_max.php');
 require_once(__DIR__ . '/fixtures/test_indicator_min.php');
 require_once(__DIR__ . '/fixtures/test_indicator_fullname.php');
 require_once(__DIR__ . '/fixtures/test_target_shortname.php');
+require_once(__DIR__ . '/fixtures/test_target_course_level_shortname.php');
+require_once(__DIR__ . '/fixtures/test_analyser.php');
 
 /**
  * Unit tests for the model.
@@ -77,6 +79,99 @@ class analytics_model_testcase extends advanced_testcase {
         $this->assertInstanceOf('\core_analytics\model', $model);
     }
 
+    /**
+     * test_delete
+     */
+    public function test_delete() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+        set_config('enabled_stores', 'logstore_standard', 'tool_log');
+
+        $coursepredict1 = $this->getDataGenerator()->create_course(array('visible' => 0));
+        $coursepredict2 = $this->getDataGenerator()->create_course(array('visible' => 0));
+        $coursetrain1 = $this->getDataGenerator()->create_course(array('visible' => 1));
+        $coursetrain2 = $this->getDataGenerator()->create_course(array('visible' => 1));
+
+        $this->model->enable('\core\analytics\time_splitting\no_splitting');
+
+        $this->model->train();
+        $this->model->predict();
+
+        // Fake evaluation results record to check that it is actually deleted.
+        $this->add_fake_log();
+
+        $modeloutputdir = $this->model->get_output_dir(array(), true);
+        $this->assertTrue(is_dir($modeloutputdir));
+
+        // Generate a prediction action to confirm that it is deleted when there is an important update.
+        $predictions = $DB->get_records('analytics_predictions');
+        $prediction = reset($predictions);
+        $prediction = new \core_analytics\prediction($prediction, array('whatever' => 'not used'));
+        $prediction->action_executed(\core_analytics\prediction::ACTION_FIXED, $this->model->get_target());
+
+        $this->model->delete();
+        $this->assertEmpty($DB->count_records('analytics_models', array('id' => $this->modelobj->id)));
+        $this->assertEmpty($DB->count_records('analytics_models_log', array('modelid' => $this->modelobj->id)));
+        $this->assertEmpty($DB->count_records('analytics_predictions'));
+        $this->assertEmpty($DB->count_records('analytics_prediction_actions'));
+        $this->assertEmpty($DB->count_records('analytics_train_samples'));
+        $this->assertEmpty($DB->count_records('analytics_predict_samples'));
+        $this->assertEmpty($DB->count_records('analytics_used_files'));
+        $this->assertFalse(is_dir($modeloutputdir));
+
+        set_config('enabled_stores', '', 'tool_log');
+        get_log_manager(true);
+    }
+
+    /**
+     * test_clear
+     */
+    public function test_clear() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+        set_config('enabled_stores', 'logstore_standard', 'tool_log');
+
+        $coursepredict1 = $this->getDataGenerator()->create_course(array('visible' => 0));
+        $coursepredict2 = $this->getDataGenerator()->create_course(array('visible' => 0));
+        $coursetrain1 = $this->getDataGenerator()->create_course(array('visible' => 1));
+        $coursetrain2 = $this->getDataGenerator()->create_course(array('visible' => 1));
+
+        $this->model->enable('\core\analytics\time_splitting\no_splitting');
+
+        $this->model->train();
+        $this->model->predict();
+
+        // Fake evaluation results record to check that it is actually deleted.
+        $this->add_fake_log();
+
+        // Generate a prediction action to confirm that it is deleted when there is an important update.
+        $predictions = $DB->get_records('analytics_predictions');
+        $prediction = reset($predictions);
+        $prediction = new \core_analytics\prediction($prediction, array('whatever' => 'not used'));
+        $prediction->action_executed(\core_analytics\prediction::ACTION_FIXED, $this->model->get_target());
+
+        $modelversionoutputdir = $this->model->get_output_dir();
+        $this->assertTrue(is_dir($modelversionoutputdir));
+
+        // Update to an empty time splitting method to force model::clear execution.
+        $this->model->clear();
+        $this->assertFalse(is_dir($modelversionoutputdir));
+
+        // Check that most of the stuff got deleted.
+        $this->assertEquals(1, $DB->count_records('analytics_models', array('id' => $this->modelobj->id)));
+        $this->assertEquals(1, $DB->count_records('analytics_models_log', array('modelid' => $this->modelobj->id)));
+        $this->assertEmpty($DB->count_records('analytics_predictions'));
+        $this->assertEmpty($DB->count_records('analytics_prediction_actions'));
+        $this->assertEmpty($DB->count_records('analytics_train_samples'));
+        $this->assertEmpty($DB->count_records('analytics_predict_samples'));
+        $this->assertEmpty($DB->count_records('analytics_used_files'));
+
+        set_config('enabled_stores', '', 'tool_log');
+        get_log_manager(true);
+    }
+
     public function test_model_manager() {
         $this->resetAfterTest(true);
 
@@ -99,7 +194,7 @@ class analytics_model_testcase extends advanced_testcase {
 
         $modeldir = $dir . DIRECTORY_SEPARATOR . $this->modelobj->id . DIRECTORY_SEPARATOR . $this->modelobj->version;
         $this->assertEquals($modeldir, $this->model->get_output_dir());
-        $this->assertEquals($modeldir . DIRECTORY_SEPARATOR . 'asd', $this->model->get_output_dir(array('asd')));
+        $this->assertEquals($modeldir . DIRECTORY_SEPARATOR . 'testing', $this->model->get_output_dir(array('testing')));
     }
 
     public function test_unique_id() {
@@ -150,15 +245,91 @@ class analytics_model_testcase extends advanced_testcase {
 
         global $DB;
 
-        // 2 built-in models + the testing one.
-        $this->assertCount(3, $DB->get_records('analytics_models'));
+        $count = $DB->count_records('analytics_models');
 
         // No new models added if the builtin ones already exist.
         \core_analytics\manager::add_builtin_models();
-        $this->assertCount(3, $DB->get_records('analytics_models'));
+        $this->assertCount($count, $DB->get_records('analytics_models'));
 
         $target = \core_analytics\manager::get_target('\core\analytics\target\no_teaching');
         $this->assertTrue(\core_analytics\model::exists($target));
+    }
+
+    /**
+     * test_model_timelimit
+     *
+     * @return null
+     */
+    public function test_model_timelimit() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        set_config('modeltimelimit', 2, 'analytics');
+
+        $courses = array();
+        for ($i = 0; $i < 5; $i++) {
+            $course = $this->getDataGenerator()->create_course();
+            $analysable = new \core_analytics\course($course);
+            $courses[$analysable->get_id()] = $course;
+        }
+
+        $target = new test_target_course_level_shortname();
+        $analyser = new test_analyser(1, $target, [], [], []);
+
+        // Each analysable element takes 1.1 secs, so the max (and likely) number of analysable
+        // elements that will be processed is 2.
+        $analyser->get_analysable_data(false);
+        $params = array('modelid' => 1, 'action' => 'prediction');
+        $this->assertLessThanOrEqual(2, $DB->count_records('analytics_used_analysables', $params));
+
+        $analyser->get_analysable_data(false);
+        $this->assertLessThanOrEqual(4, $DB->count_records('analytics_used_analysables', $params));
+
+        // Check that analysable elements have been processed following the analyser order
+        // (course->sortorder here). We can not check this nicely after next get_analysable_data round
+        // because the first analysed element will be analysed again.
+        $analysedelems = $DB->get_records('analytics_used_analysables', $params, 'timeanalysed ASC');
+        // Just a default for the first checked element.
+        $last = (object)['sortorder' => PHP_INT_MAX];
+        foreach ($analysedelems as $analysed) {
+            if ($courses[$analysed->analysableid]->sortorder > $last->sortorder) {
+                $this->fail('Analysable elements have not been analysed sorted by course sortorder.');
+            }
+            $last = $courses[$analysed->analysableid];
+        }
+
+        $analyser->get_analysable_data(false);
+        $this->assertGreaterThanOrEqual(5, $DB->count_records('analytics_used_analysables', $params));
+
+        // New analysable elements are immediately pulled.
+        $this->getDataGenerator()->create_course();
+        $analyser->get_analysable_data(false);
+        $this->assertGreaterThanOrEqual(6, $DB->count_records('analytics_used_analysables', $params));
+
+        // Training and prediction data do not get mixed.
+        $analyser->get_analysable_data(true);
+        $params = array('modelid' => 1, 'action' => 'training');
+        $this->assertLessThanOrEqual(2, $DB->count_records('analytics_used_analysables', $params));
+    }
+
+    /**
+     * Generates a model log record.
+     */
+    private function add_fake_log() {
+        global $DB, $USER;
+
+        $log = new stdClass();
+        $log->modelid = $this->modelobj->id;
+        $log->version = $this->modelobj->version;
+        $log->target = $this->modelobj->target;
+        $log->indicators = $this->modelobj->indicators;
+        $log->score = 1;
+        $log->info = json_encode([]);
+        $log->dir = 'not important';
+        $log->timecreated = time();
+        $log->usermodified = $USER->id;
+        $DB->insert_record('analytics_models_log', $log);
     }
 }
 
@@ -175,10 +346,11 @@ class testable_model extends \core_analytics\model {
      * get_output_dir
      *
      * @param array $subdirs
+     * @param bool $onlymodelid
      * @return string
      */
-    public function get_output_dir($subdirs = array()) {
-        return parent::get_output_dir($subdirs);
+    public function get_output_dir($subdirs = array(), $onlymodelid = false) {
+        return parent::get_output_dir($subdirs, $onlymodelid);
     }
 
     /**

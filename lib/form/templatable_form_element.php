@@ -81,6 +81,7 @@ trait templatable_form_element {
         $context['extraclasses'] = $extraclasses;
         $context['type'] = $this->getType();
         $context['attributes'] = implode(' ', $otherattributes);
+        $context['emptylabel'] = ($this->getLabel() === '');
 
         // Elements with multiple values need array syntax.
         if ($this->getAttribute('multiple')) {

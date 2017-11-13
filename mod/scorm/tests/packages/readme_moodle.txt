@@ -6,6 +6,7 @@ Sample Packages downloaded from http://scorm.com/scorm-explained/technical-scorm
 * singlescobasic.zip - Single SCO with basic runtime calls. SCORM 1.2.
 * singlesco_scorm12.zip - Single SCO content packaging example. SCORM 1.2.
 * RuntimeMinimumCalls_SCORM12.zip - Multi-SCO packaging example. SCORM 1.2.
+* RuntimeBasicCalls_SCORM20043rdEdition.zip - Multi-SCO packaging example. SCORM 2004 3rd edition.
 
 These packages were downloaded from http://scorm.com/ website,  the website
 disclaimer states that *Content on this site is licensed under a Creative

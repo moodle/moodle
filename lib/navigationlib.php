@@ -136,7 +136,9 @@ class navigation_node implements renderable {
     /** @var bool Set to true if we KNOW that this node can be expanded.  */
     public $isexpandable = false;
     /** @var array */
-    protected $namedtypes = array(0=>'system',10=>'category',20=>'course',30=>'structure',40=>'activity',50=>'resource',60=>'custom',70=>'setting',71=>'siteadmin', 80=>'user');
+    protected $namedtypes = array(0 => 'system', 10 => 'category', 20 => 'course', 30 => 'structure', 40 => 'activity',
+                                  50 => 'resource', 60 => 'custom', 70 => 'setting', 71 => 'siteadmin', 80 => 'user',
+                                  90 => 'container');
     /** @var moodle_url */
     protected static $fullmeurl = null;
     /** @var bool toogles auto matching of active node */
@@ -843,7 +845,7 @@ class navigation_node implements renderable {
  * @copyright 2010 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class navigation_node_collection implements IteratorAggregate {
+class navigation_node_collection implements IteratorAggregate, Countable {
     /**
      * A multidimensional array to where the first key is the type and the second
      * key is the nodes key.
@@ -2282,6 +2284,8 @@ class global_navigation extends navigation_node {
     protected function load_for_user($user=null, $forceforcontext=false) {
         global $DB, $CFG, $USER, $SITE;
 
+        require_once($CFG->dirroot . '/course/lib.php');
+
         if ($user === null) {
             // We can't require login here but if the user isn't logged in we don't
             // want to show anything
@@ -2328,7 +2332,7 @@ class global_navigation extends navigation_node {
         } else if ($USER->id != $user->id) {
             // This is the site so add a users node to the root branch.
             $usersnode = $this->rootnodes['users'];
-            if (has_capability('moodle/course:viewparticipants', $coursecontext)) {
+            if (course_can_view_participants($coursecontext)) {
                 $usersnode->action = new moodle_url('/user/index.php', array('id' => $course->id));
             }
             $userviewurl = new moodle_url('/user/profile.php', $baseargs);
@@ -2471,7 +2475,7 @@ class global_navigation extends navigation_node {
                 $reports = core_component::get_plugin_list('gradereport');
                 arsort($reports); // User is last, we want to test it first.
 
-                $userscourses = enrol_get_users_courses($user->id);
+                $userscourses = enrol_get_users_courses($user->id, false, '*');
                 $userscoursesnode = $usernode->add(get_string('courses'));
 
                 $count = 0;
@@ -2518,8 +2522,8 @@ class global_navigation extends navigation_node {
 
                     $reporttab = $usercoursenode->add(get_string('activityreports'));
 
-                    $reports = get_plugin_list_with_function('report', 'extend_navigation_user', 'lib.php');
-                    foreach ($reports as $reportfunction) {
+                    $reportfunctions = get_plugin_list_with_function('report', 'extend_navigation_user', 'lib.php');
+                    foreach ($reportfunctions as $reportfunction) {
                         $reportfunction($reporttab, $user, $usercourse);
                     }
 
@@ -2785,7 +2789,8 @@ class global_navigation extends navigation_node {
             // Just a link to course competency.
             $title = get_string('competencies', 'core_competency');
             $path = new moodle_url("/admin/tool/lp/coursecompetencies.php", array('courseid' => $course->id));
-            $coursenode->add($title, $path, navigation_node::TYPE_SETTING, null, null, new pix_icon('i/competencies', ''));
+            $coursenode->add($title, $path, navigation_node::TYPE_SETTING, null, 'competencies',
+                    new pix_icon('i/competencies', ''));
         }
         if ($navoptions->grades) {
             $url = new moodle_url('/grade/report/index.php', array('id'=>$course->id));
@@ -2806,7 +2811,7 @@ class global_navigation extends navigation_node {
      * @return bool True for successfull generation
      */
     public function add_front_page_course_essentials(navigation_node $coursenode, stdClass $course) {
-        global $CFG, $USER;
+        global $CFG, $USER, $COURSE, $SITE;
         require_once($CFG->dirroot . '/course/lib.php');
 
         if ($coursenode == false || $coursenode->get('frontpageloaded', navigation_node::TYPE_CUSTOM)) {
@@ -2858,8 +2863,14 @@ class global_navigation extends navigation_node {
         }
 
         if ($navoptions->calendar) {
+            $courseid = $COURSE->id;
+            $params = array('view' => 'month');
+            if ($courseid != $SITE->id) {
+                $params['course'] = $courseid;
+            }
+
             // Calendar
-            $calendarurl = new moodle_url('/calendar/view.php', array('view' => 'month'));
+            $calendarurl = new moodle_url('/calendar/view.php', $params);
             $node = $coursenode->add(get_string('calendar', 'calendar'), $calendarurl, self::TYPE_CUSTOM, null, 'calendar');
             $node->showinflatnavigation = true;
         }
@@ -4456,7 +4467,8 @@ class settings_navigation extends navigation_node {
         // Publish course on a hub
         if ($adminoptions->publish) {
             $url = new moodle_url('/course/publish/index.php', array('id'=>$course->id));
-            $coursenode->add(get_string('publish'), $url, self::TYPE_SETTING, null, 'publish', new pix_icon('i/publish', ''));
+            $coursenode->add(get_string('publish', 'core_hub'), $url, self::TYPE_SETTING, null, 'publish',
+                new pix_icon('i/publish', ''));
         }
 
         // Reset this course

@@ -168,8 +168,8 @@ class helper {
      * @return array
      */
     public static function get_category_listitem_actions(\coursecat $category) {
-        global $PAGE;
-        $baseurl = new \moodle_url('/course/management.php', array('categoryid' => $category->id, 'sesskey' => \sesskey()));
+        $manageurl = new \moodle_url('/course/management.php', array('categoryid' => $category->id));
+        $baseurl = new \moodle_url($manageurl, array('sesskey' => \sesskey()));
         $actions = array();
         // Edit.
         if ($category->can_edit()) {
@@ -254,7 +254,7 @@ class helper {
         if ($category->can_review_roles()) {
             $actions['assignroles'] = array(
                 'url' => new \moodle_url('/admin/roles/assign.php', array('contextid' => $category->get_context()->id,
-                    'returnurl' => $PAGE->url->out_as_local_url(false))),
+                    'returnurl' => $manageurl->out_as_local_url(false))),
                 'icon' => new \pix_icon('t/assignroles', new \lang_string('assignroles', 'role')),
                 'string' => new \lang_string('assignroles', 'role')
             );
@@ -264,7 +264,7 @@ class helper {
         if ($category->can_review_permissions()) {
             $actions['permissions'] = array(
                 'url' => new \moodle_url('/admin/roles/permissions.php', array('contextid' => $category->get_context()->id,
-                    'returnurl' => $PAGE->url->out_as_local_url(false))),
+                    'returnurl' => $manageurl->out_as_local_url(false))),
                 'icon' => new \pix_icon('i/permissions', new \lang_string('permissions', 'role')),
                 'string' => new \lang_string('permissions', 'role')
             );
@@ -274,7 +274,7 @@ class helper {
         if ($category->can_review_permissions()) {
             $actions['checkroles'] = array(
                 'url' => new \moodle_url('/admin/roles/check.php', array('contextid' => $category->get_context()->id,
-                    'returnurl' => $PAGE->url->out_as_local_url(false))),
+                    'returnurl' => $manageurl->out_as_local_url(false))),
                 'icon' => new \pix_icon('i/checkpermissions', new \lang_string('checkpermissions', 'role')),
                 'string' => new \lang_string('checkpermissions', 'role')
             );
@@ -395,7 +395,7 @@ class helper {
         // Permissions.
         if ($course->can_review_enrolments()) {
             $actions['enrolledusers'] = array(
-                'url' => new \moodle_url('/enrol/users.php', array('id' => $course->id)),
+                'url' => new \moodle_url('/user/index.php', array('id' => $course->id)),
                 'string' => \get_string('enrolledusers', 'enrol')
             );
         }

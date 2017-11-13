@@ -13,10 +13,10 @@ namespace MatthiasMullie\PathConverter;
  * Please report bugs on https://github.com/matthiasmullie/path-converter/issues
  *
  * @author Matthias Mullie <pathconverter@mullie.eu>
- * @copyright Copyright (c) 2015, Matthias Mullie. All rights reserved.
+ * @copyright Copyright (c) 2015, Matthias Mullie. All rights reserved
  * @license MIT License
  */
-class Converter
+class Converter implements ConverterInterface
 {
     /**
      * @var string
@@ -129,9 +129,9 @@ class Converter
      *     ../../core/layout/images/img.gif relative to
      *     /home/forkcms/frontend/cache/minified_css
      *
-     * @param string $path The relative path that needs to be converted.
+     * @param string $path The relative path that needs to be converted
      *
-     * @return string The new relative path.
+     * @return string The new relative path
      */
     public function convert($path)
     {
@@ -167,7 +167,7 @@ class Converter
      *
      * @return string
      */
-    public function dirname($path)
+    protected function dirname($path)
     {
         if (is_file($path)) {
             return dirname($path);

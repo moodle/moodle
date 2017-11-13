@@ -57,6 +57,7 @@ class user_search_testcase extends advanced_testcase {
      * @return void
      */
     public function test_users_indexing() {
+        global $SITE;
 
         // Returns the instance as long as the area is supported.
         $searcharea = \core_search\manager::get_search_area($this->userareaid);
@@ -87,6 +88,15 @@ class user_search_testcase extends advanced_testcase {
         // No new records.
         $this->assertFalse($recordset->valid());
         $recordset->close();
+
+        // Context support; first, try an unsupported context type.
+        $coursecontext = context_course::instance($SITE->id);
+        $this->assertNull($searcharea->get_document_recordset(0, $coursecontext));
+
+        // Try a specific user, will only return 1 record (that user).
+        $rs = $searcharea->get_document_recordset(0, context_user::instance($user1->id));
+        $this->assertEquals(1, iterator_count($rs));
+        $rs->close();
     }
 
     /**

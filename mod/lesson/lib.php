@@ -211,7 +211,7 @@ function lesson_update_events($lesson, $override = null) {
                 } else {
                     unset($event->id);
                 }
-                $event->name = $eventname.' ('.get_string('lessonopens', 'lesson').')';
+                $event->name = get_string('lessoneventopens', 'lesson', $eventname);
                 // The method calendar_event::create will reuse a db record if the id field is set.
                 calendar_event::create($event);
             }
@@ -222,7 +222,7 @@ function lesson_update_events($lesson, $override = null) {
                     unset($event->id);
                 }
                 $event->type      = CALENDAR_EVENT_TYPE_ACTION;
-                $event->name      = $eventname.' ('.get_string('lessoncloses', 'lesson').')';
+                $event->name      = get_string('lessoneventcloses', 'lesson', $eventname);
                 $event->timestart = $deadline;
                 $event->timesort  = $deadline;
                 $event->eventtype = LESSON_EVENT_TYPE_CLOSE;

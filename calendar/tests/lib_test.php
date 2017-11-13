@@ -188,7 +188,7 @@ class core_calendar_lib_testcase extends advanced_testcase {
         $this->assertEquals($ical->parser_errors, array());
 
         $sub = calendar_get_subscription($id);
-        calendar_import_icalendar_events($ical, $sub->courseid, $sub->id);
+        calendar_import_icalendar_events($ical, null, $sub->id);
         $count = $DB->count_records('event', array('subscriptionid' => $sub->id));
         $this->assertEquals($count, 1);
 
@@ -205,7 +205,7 @@ class core_calendar_lib_testcase extends advanced_testcase {
         $this->assertEquals($ical->parser_errors, array());
 
         $sub = calendar_get_subscription($id);
-        calendar_import_icalendar_events($ical, $sub->courseid, $sub->id);
+        calendar_import_icalendar_events($ical, null, $sub->id);
         $count = $DB->count_records('event', array('subscriptionid' => $sub->id));
         $this->assertEquals($count, 1);
 
@@ -222,7 +222,7 @@ class core_calendar_lib_testcase extends advanced_testcase {
         $this->assertEquals($ical->parser_errors, array());
 
         $sub = calendar_get_subscription($id);
-        calendar_import_icalendar_events($ical, $sub->courseid, $sub->id);
+        calendar_import_icalendar_events($ical, null, $sub->id);
         $count = $DB->count_records('event', array('subscriptionid' => $sub->id));
         $this->assertEquals($count, 1);
     }
@@ -499,7 +499,7 @@ class core_calendar_lib_testcase extends advanced_testcase {
         $types = calendar_get_all_allowed_types();
         $typecourses = $types['course'];
         $this->assertCount(1, $typecourses);
-        $this->assertEquals($course1->id, $typecourses[0]->id);
+        $this->assertEquals($course1->id, $typecourses[$course1->id]->id);
 
         assign_capability('moodle/calendar:manageentries', CAP_ALLOW, $roleid, $context2, true);
 
@@ -543,7 +543,7 @@ class core_calendar_lib_testcase extends advanced_testcase {
         $types = calendar_get_all_allowed_types();
         $typecourses = $types['course'];
         $this->assertCount(1, $typecourses);
-        $this->assertEquals($course->id, $typecourses[0]->id);
+        $this->assertEquals($course->id, $typecourses[$course->id]->id);
         $this->assertArrayNotHasKey('group', $types);
         $this->assertArrayNotHasKey('groupcourses', $types);
     }
@@ -570,7 +570,7 @@ class core_calendar_lib_testcase extends advanced_testcase {
         $types = calendar_get_all_allowed_types();
         $typecourses = $types['course'];
         $this->assertCount(1, $typecourses);
-        $this->assertEquals($course->id, $typecourses[0]->id);
+        $this->assertEquals($course->id, $typecourses[$course->id]->id);
         $this->assertArrayNotHasKey('group', $types);
         $this->assertArrayNotHasKey('groupcourses', $types);
     }
@@ -622,7 +622,7 @@ class core_calendar_lib_testcase extends advanced_testcase {
         $this->assertEquals($course1->id, $typecourses[0]->id);
         $this->assertEquals($course2->id, $typecourses[1]->id);
         $this->assertCount(1, $typegroupcourses);
-        $this->assertEquals($course1->id, $typegroupcourses[0]->id);
+        $this->assertEquals($course1->id, $typegroupcourses[$course1->id]->id);
         $this->assertCount(2, $typegroups);
         $this->assertEquals($group1->id, $typegroups[0]->id);
         $this->assertEquals($group2->id, $typegroups[1]->id);
@@ -667,9 +667,65 @@ class core_calendar_lib_testcase extends advanced_testcase {
         usort($typegroups, $idascfunc);
 
         $this->assertCount(1, $typegroupcourses);
-        $this->assertEquals($course->id, $typegroupcourses[0]->id);
+        $this->assertEquals($course->id, $typegroupcourses[$course->id]->id);
         $this->assertCount(2, $typegroups);
         $this->assertEquals($group1->id, $typegroups[0]->id);
         $this->assertEquals($group2->id, $typegroups[1]->id);
+    }
+
+    public function test_calendar_get_default_courses() {
+        global $USER, $CFG;
+
+        $this->resetAfterTest(true);
+
+        $generator = $this->getDataGenerator();
+        $user = $generator->create_user();
+        $course1 = $generator->create_course();
+        $course2 = $generator->create_course();
+        $course3 = $generator->create_course();
+        $context = context_course::instance($course1->id);
+
+        $this->setAdminUser();
+        $admin = clone $USER;
+
+        $teacher = $generator->create_user();
+        $generator->enrol_user($teacher->id, $course1->id, 'teacher');
+        $generator->enrol_user($admin->id, $course1->id, 'teacher');
+
+        $CFG->calendar_adminseesall = false;
+
+        $courses = calendar_get_default_courses();
+        // Only enrolled in one course.
+        $this->assertCount(1, $courses);
+        $courses = calendar_get_default_courses($course2->id);
+        // Enrolled course + current course.
+        $this->assertCount(2, $courses);
+        $CFG->calendar_adminseesall = true;
+        $courses = calendar_get_default_courses();
+        // All courses + SITE.
+        $this->assertCount(4, $courses);
+        $courses = calendar_get_default_courses($course2->id);
+        // All courses + SITE.
+        $this->assertCount(4, $courses);
+
+        $this->setUser($teacher);
+
+        $CFG->calendar_adminseesall = false;
+
+        $courses = calendar_get_default_courses();
+        // Only enrolled in one course.
+        $this->assertCount(1, $courses);
+        $courses = calendar_get_default_courses($course2->id);
+        // Enrolled course only (ignore current).
+        $this->assertCount(1, $courses);
+        // This setting should not affect teachers.
+        $CFG->calendar_adminseesall = true;
+        $courses = calendar_get_default_courses();
+        // Only enrolled in one course.
+        $this->assertCount(1, $courses);
+        $courses = calendar_get_default_courses($course2->id);
+        // Enrolled course only (ignore current).
+        $this->assertCount(1, $courses);
+
     }
 }

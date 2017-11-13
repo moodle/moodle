@@ -275,6 +275,15 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         // Create what we expect to be returned when querying the discussion.
         $expectedposts = array(
             'posts' => array(),
+            'ratinginfo' => array(
+                'contextid' => $forum1context->id,
+                'component' => 'mod_forum',
+                'ratingarea' => 'post',
+                'canviewall' => null,
+                'canviewany' => null,
+                'scales' => array(),
+                'ratings' => array(),
+            ),
             'warnings' => array(),
         );
 
@@ -1066,4 +1075,95 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
 
     }
 
+    /**
+     * Test get forum posts discussions including rating information.
+     */
+    public function test_mod_forum_get_forum_discussion_rating_information() {
+        global $DB, $CFG;
+        require_once($CFG->dirroot . '/rating/lib.php');
+
+        $this->resetAfterTest(true);
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+        $teacher = self::getDataGenerator()->create_user();
+
+        // Create course to add the module.
+        $course = self::getDataGenerator()->create_course();
+
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $teacherrole = $DB->get_record('role', array('shortname' => 'editingteacher'));
+        $this->getDataGenerator()->enrol_user($user1->id, $course->id, $studentrole->id, 'manual');
+        $this->getDataGenerator()->enrol_user($user2->id, $course->id, $studentrole->id, 'manual');
+        $this->getDataGenerator()->enrol_user($user3->id, $course->id, $studentrole->id, 'manual');
+        $this->getDataGenerator()->enrol_user($teacher->id, $course->id, $teacherrole->id, 'manual');
+
+        // Create the forum.
+        $record = new stdClass();
+        $record->course = $course->id;
+        // Set Aggregate type = Average of ratings.
+        $record->assessed = RATING_AGGREGATE_AVERAGE;
+        $record->scale = 100;
+        $forum = self::getDataGenerator()->create_module('forum', $record);
+        $context = context_module::instance($forum->cmid);
+
+        // Add discussion to the forum.
+        $record = new stdClass();
+        $record->course = $course->id;
+        $record->userid = $user1->id;
+        $record->forum = $forum->id;
+        $discussion = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record);
+
+        // Retrieve the first post.
+        $post = $DB->get_record('forum_posts', array('discussion' => $discussion->id));
+
+        // Rate the discussion as user2.
+        $rating1 = new stdClass();
+        $rating1->contextid = $context->id;
+        $rating1->component = 'mod_forum';
+        $rating1->ratingarea = 'post';
+        $rating1->itemid = $post->id;
+        $rating1->rating = 50;
+        $rating1->scaleid = 100;
+        $rating1->userid = $user2->id;
+        $rating1->timecreated = time();
+        $rating1->timemodified = time();
+        $rating1->id = $DB->insert_record('rating', $rating1);
+
+        // Rate the discussion as user3.
+        $rating2 = new stdClass();
+        $rating2->contextid = $context->id;
+        $rating2->component = 'mod_forum';
+        $rating2->ratingarea = 'post';
+        $rating2->itemid = $post->id;
+        $rating2->rating = 100;
+        $rating2->scaleid = 100;
+        $rating2->userid = $user3->id;
+        $rating2->timecreated = time() + 1;
+        $rating2->timemodified = time() + 1;
+        $rating2->id = $DB->insert_record('rating', $rating2);
+
+        // Retrieve the rating for the post as student.
+        $this->setUser($user1);
+        $posts = mod_forum_external::get_forum_discussion_posts($discussion->id);
+        $posts = external_api::clean_returnvalue(mod_forum_external::get_forum_discussion_posts_returns(), $posts);
+        $this->assertCount(1, $posts['ratinginfo']['ratings']);
+        $this->assertTrue($posts['ratinginfo']['ratings'][0]['canviewaggregate']);
+        $this->assertFalse($posts['ratinginfo']['canviewall']);
+        $this->assertFalse($posts['ratinginfo']['ratings'][0]['canrate']);
+        $this->assertEquals(2, $posts['ratinginfo']['ratings'][0]['count']);
+        $this->assertEquals(($rating1->rating + $rating2->rating) / 2, $posts['ratinginfo']['ratings'][0]['aggregate']);
+
+        // Retrieve the rating for the post as teacher.
+        $this->setUser($teacher);
+        $posts = mod_forum_external::get_forum_discussion_posts($discussion->id);
+        $posts = external_api::clean_returnvalue(mod_forum_external::get_forum_discussion_posts_returns(), $posts);
+        $this->assertCount(1, $posts['ratinginfo']['ratings']);
+        $this->assertTrue($posts['ratinginfo']['ratings'][0]['canviewaggregate']);
+        $this->assertTrue($posts['ratinginfo']['canviewall']);
+        $this->assertTrue($posts['ratinginfo']['ratings'][0]['canrate']);
+        $this->assertEquals(2, $posts['ratinginfo']['ratings'][0]['count']);
+        $this->assertEquals(($rating1->rating + $rating2->rating) / 2, $posts['ratinginfo']['ratings'][0]['aggregate']);
+    }
 }

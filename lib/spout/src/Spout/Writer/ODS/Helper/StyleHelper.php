@@ -214,64 +214,143 @@ EOD;
      */
     protected function getStyleSectionContent($style)
     {
-        $defaultStyle = $this->getDefaultStyle();
         $styleIndex = $style->getId() + 1; // 1-based
 
         $content = '<style:style style:data-style-name="N0" style:family="table-cell" style:name="ce' . $styleIndex . '" style:parent-style-name="Default">';
 
-        if ($style->shouldApplyFont()) {
-            $content .= '<style:text-properties';
-
-            $fontColor = $style->getFontColor();
-            if ($fontColor !== $defaultStyle->getFontColor()) {
-                $content .= ' fo:color="#' . $fontColor . '"';
-            }
-
-            $fontName = $style->getFontName();
-            if ($fontName !== $defaultStyle->getFontName()) {
-                $content .= ' style:font-name="' . $fontName . '" style:font-name-asian="' . $fontName . '" style:font-name-complex="' . $fontName . '"';
-            }
-
-            $fontSize = $style->getFontSize();
-            if ($fontSize !== $defaultStyle->getFontSize()) {
-                $content .= ' fo:font-size="' . $fontSize . 'pt" style:font-size-asian="' . $fontSize . 'pt" style:font-size-complex="' . $fontSize . 'pt"';
-            }
-
-            if ($style->isFontBold()) {
-                $content .= ' fo:font-weight="bold" style:font-weight-asian="bold" style:font-weight-complex="bold"';
-            }
-            if ($style->isFontItalic()) {
-                $content .= ' fo:font-style="italic" style:font-style-asian="italic" style:font-style-complex="italic"';
-            }
-            if ($style->isFontUnderline()) {
-                $content .= ' style:text-underline-style="solid" style:text-underline-type="single"';
-            }
-            if ($style->isFontStrikethrough()) {
-                $content .= ' style:text-line-through-style="solid"';
-            }
-
-            $content .= '/>';
-        }
-
-        if ($style->shouldWrapText()) {
-            $content .= '<style:table-cell-properties fo:wrap-option="wrap" style:vertical-align="automatic"/>';
-        }
-
-        if ($style->shouldApplyBorder()) {
-            $borderProperty = '<style:table-cell-properties %s />';
-            $borders = array_map(function (BorderPart $borderPart) {
-                return BorderHelper::serializeBorderPart($borderPart);
-            }, $style->getBorder()->getParts());
-            $content .= sprintf($borderProperty, implode(' ', $borders));
-        }
-
-        if ($style->shouldApplyBackgroundColor()) {
-            $content .= sprintf('
-                <style:table-cell-properties fo:background-color="#%s"/>', $style->getBackgroundColor());
-        }
+        $content .= $this->getTextPropertiesSectionContent($style);
+        $content .= $this->getTableCellPropertiesSectionContent($style);
 
         $content .= '</style:style>';
 
         return $content;
+    }
+
+    /**
+     * Returns the contents of the "<style:text-properties>" section, inside "<style:style>" section
+     *
+     * @param \Box\Spout\Writer\Style\Style $style
+     * @return string
+     */
+    private function getTextPropertiesSectionContent($style)
+    {
+        $content = '';
+
+        if ($style->shouldApplyFont()) {
+            $content .= $this->getFontSectionContent($style);
+        }
+
+        return $content;
+    }
+
+    /**
+     * Returns the contents of the "<style:text-properties>" section, inside "<style:style>" section
+     *
+     * @param \Box\Spout\Writer\Style\Style $style
+     * @return string
+     */
+    private function getFontSectionContent($style)
+    {
+        $defaultStyle = $this->getDefaultStyle();
+
+        $content = '<style:text-properties';
+
+        $fontColor = $style->getFontColor();
+        if ($fontColor !== $defaultStyle->getFontColor()) {
+            $content .= ' fo:color="#' . $fontColor . '"';
+        }
+
+        $fontName = $style->getFontName();
+        if ($fontName !== $defaultStyle->getFontName()) {
+            $content .= ' style:font-name="' . $fontName . '" style:font-name-asian="' . $fontName . '" style:font-name-complex="' . $fontName . '"';
+        }
+
+        $fontSize = $style->getFontSize();
+        if ($fontSize !== $defaultStyle->getFontSize()) {
+            $content .= ' fo:font-size="' . $fontSize . 'pt" style:font-size-asian="' . $fontSize . 'pt" style:font-size-complex="' . $fontSize . 'pt"';
+        }
+
+        if ($style->isFontBold()) {
+            $content .= ' fo:font-weight="bold" style:font-weight-asian="bold" style:font-weight-complex="bold"';
+        }
+        if ($style->isFontItalic()) {
+            $content .= ' fo:font-style="italic" style:font-style-asian="italic" style:font-style-complex="italic"';
+        }
+        if ($style->isFontUnderline()) {
+            $content .= ' style:text-underline-style="solid" style:text-underline-type="single"';
+        }
+        if ($style->isFontStrikethrough()) {
+            $content .= ' style:text-line-through-style="solid"';
+        }
+
+        $content .= '/>';
+
+        return $content;
+    }
+
+    /**
+     * Returns the contents of the "<style:table-cell-properties>" section, inside "<style:style>" section
+     *
+     * @param \Box\Spout\Writer\Style\Style $style
+     * @return string
+     */
+    private function getTableCellPropertiesSectionContent($style)
+    {
+        $content = '';
+
+        if ($style->shouldWrapText()) {
+            $content .= $this->getWrapTextXMLContent();
+        }
+
+        if ($style->shouldApplyBorder()) {
+            $content .= $this->getBorderXMLContent($style);
+        }
+
+        if ($style->shouldApplyBackgroundColor()) {
+            $content .= $this->getBackgroundColorXMLContent($style);
+        }
+
+        return $content;
+    }
+
+    /**
+     * Returns the contents of the wrap text definition for the "<style:table-cell-properties>" section
+     *
+     * @return string
+     */
+    private function getWrapTextXMLContent()
+    {
+        return '<style:table-cell-properties fo:wrap-option="wrap" style:vertical-align="automatic"/>';
+    }
+
+    /**
+     * Returns the contents of the borders definition for the "<style:table-cell-properties>" section
+     *
+     * @param \Box\Spout\Writer\Style\Style $style
+     * @return string
+     */
+    private function getBorderXMLContent($style)
+    {
+        $borderProperty = '<style:table-cell-properties %s />';
+
+        $borders = array_map(function (BorderPart $borderPart) {
+            return BorderHelper::serializeBorderPart($borderPart);
+        }, $style->getBorder()->getParts());
+
+        return sprintf($borderProperty, implode(' ', $borders));
+    }
+
+    /**
+     * Returns the contents of the background color definition for the "<style:table-cell-properties>" section
+     *
+     * @param \Box\Spout\Writer\Style\Style $style
+     * @return string
+     */
+    private function getBackgroundColorXMLContent($style)
+    {
+        return sprintf(
+            '<style:table-cell-properties fo:background-color="#%s"/>',
+            $style->getBackgroundColor()
+        );
     }
 }

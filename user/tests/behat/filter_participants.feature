@@ -42,7 +42,6 @@ Feature: Course participants can be filtered
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I navigate to course participants
-    When I press "Filter"
     Then I should see "Student 1" in the "participants" "table"
     And I should see "Student 2" in the "participants" "table"
     And I should see "Student 3" in the "participants" "table"
@@ -55,7 +54,6 @@ Feature: Course participants can be filtered
     And I navigate to course participants
     When I open the autocomplete suggestions list
     And I click on "<filter1>" item in the autocomplete list
-    And I press "Filter"
     Then I should see "<expected1>" in the "participants" "table"
     And I should see "<expected2>" in the "participants" "table"
     And I should see "<expected3>" in the "participants" "table"
@@ -79,11 +77,30 @@ Feature: Course participants can be filtered
     And I click on "Role: Student" item in the autocomplete list
     And I open the autocomplete suggestions list
     And I click on "Status: Active" item in the autocomplete list
-    And I press "Filter"
     Then I should see "Student 1" in the "participants" "table"
     And I should see "Student 3" in the "participants" "table"
     And I should not see "Student 2" in the "participants" "table"
     And I should not see "Student 4" in the "participants" "table"
+    And I should not see "Teacher 1" in the "participants" "table"
+    # Add more filters.
+    And I open the autocomplete suggestions list
+    And I click on "Enrolment methods: Manual enrolments" item in the autocomplete list
+    And I open the autocomplete suggestions list
+    And I click on "Group: Group 2" item in the autocomplete list
+    And I should see "Student 3" in the "participants" "table"
+    But I should not see "Teacher 1" in the "participants" "table"
+    And I should not see "Student 1" in the "participants" "table"
+    And I should not see "Student 2" in the "participants" "table"
+    And I should not see "Student 4" in the "participants" "table"
+    # Deselect the active status filter.
+    And I click on "Status: Active" "text" in the ".form-autocomplete-selection" "css_element"
+    # Apply Status: Inactive filter.
+    And I open the autocomplete suggestions list
+    And I click on "Status: Inactive" item in the autocomplete list
+    Then I should see "Student 2" in the "participants" "table"
+    But I should not see "Student 4" in the "participants" "table"
+    And I should not see "Student 1" in the "participants" "table"
+    And I should not see "Student 3" in the "participants" "table"
     And I should not see "Teacher 1" in the "participants" "table"
 
   @javascript
@@ -91,9 +108,9 @@ Feature: Course participants can be filtered
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I navigate to course participants
+    # Note: This is the literal string "student", not the Role student.
     When I set the field "Filters" to "student"
     And I press key "13" in the field "Filters"
-    And I press "Filter"
     Then I should see "Student 1" in the "participants" "table"
     And I should see "Student 2" in the "participants" "table"
     And I should see "Student 3" in the "participants" "table"

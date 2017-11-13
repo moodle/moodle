@@ -43,8 +43,11 @@ class user_roles_editable extends \core\output\inplace_editable {
     /** @var $context */
     private $context = null;
 
-    /** @var $courseroles Array */
-    private $courseroles = null;
+    /** @var \stdClass[] $courseroles */
+    private $courseroles;
+
+    /** @var \stdClass[] $profileroles */
+    private $profileroles;
 
     /**
      * Constructor.
@@ -54,25 +57,39 @@ class user_roles_editable extends \core\output\inplace_editable {
      * @param \stdClass $user The current user
      * @param \stdClass[] $courseroles The list of course roles.
      * @param \stdClass[] $assignableroles The list of assignable roles in this course.
-     * @param array $value Array of role ids.
+     * @param \stdClass[] $profileroles The list of roles that should be visible in a users profile.
+     * @param \stdClass[] $userroles The list of user roles.
      */
-    public function __construct($course, $context, $user, $courseroles, $assignableroles, $value) {
+    public function __construct($course, $context, $user, $courseroles, $assignableroles, $profileroles, $userroles) {
         // Check capabilities to get editable value.
         $editable = has_capability('moodle/role:assign', $context);
 
         // Invent an itemid.
         $itemid = $course->id . ':' . $user->id;
 
-        $value = json_encode($value);
+        $getrole = function($role) {
+            return $role->roleid;
+        };
+        $ids = array_values(array_unique(array_map($getrole, $userroles)));
+
+        $value = json_encode($ids);
 
         // Remember these for the display value.
         $this->courseroles = $courseroles;
+        $this->profileroles = $profileroles;
         $this->context = $context;
 
         parent::__construct('core_user', 'user_roles', $itemid, $editable, $value, $value);
 
-        // Assignable roles.
+        // Removed the roles that were assigned to the user at a different context.
         $options = $assignableroles;
+        foreach ($userroles as $role) {
+            if (isset($assignableroles[$role->roleid])) {
+                if ($role->contextid != $context->id) {
+                    unset($options[$role->roleid]);
+                }
+            }
+        }
         $this->edithint = get_string('xroleassignments', 'role', fullname($user));
         $this->editlabel = get_string('xroleassignments', 'role', fullname($user));
 
@@ -89,8 +106,12 @@ class user_roles_editable extends \core\output\inplace_editable {
     public function export_for_template(\renderer_base $output) {
         $listofroles = [];
         $roleids = json_decode($this->value);
+
         foreach ($roleids as $id) {
-            $listofroles[] = format_string($this->courseroles[$id]->localname, true, ['context' => $this->context]);
+            // If this is a student, we only show a subset of the roles.
+            if ($this->editable || array_key_exists($id, $this->profileroles)) {
+                $listofroles[] = format_string($this->courseroles[$id]->localname, true, ['context' => $this->context]);
+            }
         }
 
         if (!empty($listofroles)) {
@@ -139,35 +160,46 @@ class user_roles_editable extends \core\output\inplace_editable {
         // Check that all the groups belong to the course.
         $allroles = role_fix_names(get_all_roles($context), $context);
         $assignableroles = get_assignable_roles($context, ROLENAME_ALIAS, false);
-        $userroles = get_user_roles($context, $userid, true, 'c.contextlevel DESC, r.sortorder ASC');
-        $ids = [];
+        $userrolesbyid = get_user_roles($context, $userid, true, 'c.contextlevel DESC, r.sortorder ASC');
+        $profileroles = get_profile_roles($context);
 
-        foreach ($userroles as $role) {
-            $ids[$role->roleid] = $role->roleid;
+        // Set an array where the index is the roleid.
+        $userroles = array();
+        foreach ($userrolesbyid as $id => $role) {
+            $userroles[$role->roleid] = $role;
         }
 
-        $byid = [];
+        $rolestoprocess = [];
         foreach ($roleids as $roleid) {
             if (!isset($assignableroles[$roleid])) {
                 throw new coding_exception('Role cannot be assigned in this course.');
             }
-            $byid[$roleid] = $roleid;
+            $rolestoprocess[$roleid] = $roleid;
         }
-        $roleids = $byid;
+
         // Process adds.
-        foreach ($roleids as $roleid) {
-            if (!isset($ids[$roleid])) {
+        foreach ($rolestoprocess as $roleid) {
+            if (!isset($userroles[$roleid])) {
                 // Add them.
-                role_assign($roleid, $userid, $context);
+                $id = role_assign($roleid, $userid, $context);
                 // Keep this variable in sync.
-                $ids[$roleid] = $roleid;
+                $role = new \stdClass();
+                $role->id = $id;
+                $role->roleid = $roleid;
+                $role->contextid = $context->id;
+                $userroles[$role->roleid] = $role;
             }
         }
 
         // Process removals.
-        foreach ($assignableroles as $id => $role) {
-            if (isset($ids[$id]) && !isset($roleids[$id])) {
-                $ras = $DB->get_records('role_assignments', ['contextid' => $context->id, 'userid' => $userid, 'roleid' => $id]);
+        foreach ($assignableroles as $roleid => $rolename) {
+            if (isset($userroles[$roleid]) && !isset($rolestoprocess[$roleid])) {
+                // Do not remove the role if we are not in the same context.
+                if ($userroles[$roleid]->contextid != $context->id) {
+                    continue;
+                }
+                $ras = $DB->get_records('role_assignments', ['contextid' => $context->id, 'userid' => $userid,
+                    'roleid' => $roleid]);
                 $allremoved = true;
                 foreach ($ras as $ra) {
                     if ($ra->component) {
@@ -185,13 +217,13 @@ class user_roles_editable extends \core\output\inplace_editable {
                     role_unassign($ra->roleid, $ra->userid, $ra->contextid, $ra->component, $ra->itemid);
                 }
                 if ($allremoved) {
-                    unset($ids[$id]);
+                    unset($userroles[$roleid]);
                 }
             }
         }
 
         $course = get_course($courseid);
         $user = core_user::get_user($userid);
-        return new self($course, $context, $user, $allroles, $assignableroles, array_values(array_unique($ids)));
+        return new self($course, $context, $user, $allroles, $assignableroles, $profileroles, $userroles);
     }
 }

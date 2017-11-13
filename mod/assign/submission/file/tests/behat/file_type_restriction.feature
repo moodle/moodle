@@ -35,10 +35,13 @@ Feature: In an assignment, limit submittable file types
     And I press "Save and display"
     And I navigate to "Edit settings" in current page administration
     And the field "Accepted file types" matches value "image/png,spreadsheet"
-    And I set the field "Accepted file types" to "image"
+    And I set the field "Accepted file types" to ""
+    And I press "Choose"
+    And I set the field "Image files" to "1"
+    And I press "Save changes"
     And I press "Save and display"
     And I navigate to "Edit settings" in current page administration
-    Then I should see "Image files"
+    Then the field "Accepted file types" matches value "image"
 
   @javascript @_file_upload
   Scenario: Uploading permitted file types for an assignment

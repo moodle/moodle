@@ -23,6 +23,7 @@
  */
 
 require_once(__DIR__ . '/../../config.php');
+require_once($CFG->libdir . '/adminlib.php');
 
 $predictionid = required_param('id', PARAM_INT);
 
@@ -37,15 +38,30 @@ $url = new \moodle_url('/report/insights/prediction.php', $params);
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('report');
 
+$navurl = new \moodle_url('/report/insights/insights.php', array('contextid' => $context->id));
+if ($context->contextlevel === CONTEXT_SYSTEM) {
+    admin_externalpage_setup('reportinsights', '', null, '', array('pagelayout' => 'report'));
+} else if ($context->contextlevel === CONTEXT_USER) {
+    $user = \core_user::get_user($context->instanceid, '*', MUST_EXIST);
+    $PAGE->navigation->extend_for_user($user);
+
+    $modelinsightsurl = clone $navurl;
+    $modelinsightsurl->param('modelid', $model->get_id());
+    $PAGE->add_report_nodes($user->id, array(
+        'name' => get_string('insights', 'report_insights'),
+        'url' => $url
+    ));
+}
+$PAGE->navigation->override_active_url($navurl);
+
 $renderer = $PAGE->get_renderer('report_insights');
 
 $insightinfo = new stdClass();
 $insightinfo->contextname = $context->get_context_name();
 $insightinfo->insightname = $model->get_target()->get_name();
-$title = get_string('insightinfo', 'analytics', $insightinfo);
 
 $modelready = $model->is_enabled() && $model->is_trained() && $model->predictions_exist($context);
-if (!$modelready && !has_capability('moodle/analytics:managemodels', $context)) {
+if (!$modelready) {
     echo $renderer->render_model_disabled($insightinfo);
     exit(0);
 }
@@ -55,8 +71,8 @@ if (!$model->uses_insights()) {
     exit(0);
 }
 
-$PAGE->set_title($title);
-$PAGE->set_heading($title);
+$PAGE->set_title($insightinfo->insightname);
+$PAGE->set_heading($insightinfo->contextname);
 
 echo $OUTPUT->header();
 

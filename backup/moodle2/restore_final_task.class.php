@@ -114,6 +114,15 @@ class restore_final_task extends restore_task {
         // Clean the temp dir (conditionally) and drop temp table
         $this->add_step(new restore_drop_and_clean_temp_stuff('drop_and_clean_temp_stuff'));
 
+        // If restoring to a new course or overwriting config, reindex the whole course.
+        if (\core_search\manager::is_indexing_enabled()) {
+            $wholecourse = $this->get_target() == backup::TARGET_NEW_COURSE;
+            $wholecourse = $wholecourse || $this->setting_exists('overwrite_conf') && $this->get_setting_value('overwrite_conf');
+            if ($wholecourse) {
+                $this->add_step(new restore_course_search_index('course_search_index'));
+            }
+        }
+
         $this->built = true;
     }
 

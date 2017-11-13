@@ -360,11 +360,13 @@ table.quizattemptsummary .noreviewmessage {
     font-size: 0.7em;
 }
 
-.quizstartbuttondiv.quizsecuremoderequired input {
+.quizstartbuttondiv.quizsecuremoderequired input,
+.quizstartbuttondiv.quizsecuremoderequired button {
     display: none;
 }
 
-.jsenabled .quizstartbuttondiv.quizsecuremoderequired input {
+.jsenabled .quizstartbuttondiv.quizsecuremoderequired input,
+.jsenabled .quizstartbuttondiv.quizsecuremoderequired button {
     display: inline;
 }
 
@@ -1064,6 +1066,11 @@ table#categoryquestions {
 .modulespecificbuttonscontainer {
     padding-left: 0.3em;
     padding-right: 0.3em;
+}
+
+.questionbankformforpopup .modulespecificbuttonscontainer {
+    padding-top: 10px;
+    padding-left: 0;
 }
 
 .quizquestionlistcontrols {

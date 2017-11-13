@@ -1,17 +1,25 @@
 <?php
 /**
- * This class parses a multipart/related MIME part (RFC 2387) to provide
- * information on the part contents.
- *
- * Copyright 2012-2014 Horde LLC (http://www.horde.org/)
+ * Copyright 2012-2017 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file COPYING for license information (LGPL). If you
  * did not receive this file, see http://www.horde.org/licenses/lgpl21.
  *
- * @author   Michael Slusarz <slusarz@horde.org>
- * @category Horde
- * @license  http://www.horde.org/licenses/lgpl21 LGPL 2.1
- * @package  Mime
+ * @category  Horde
+ * @copyright 2012-2017 Horde LLC
+ * @license   http://www.horde.org/licenses/lgpl21 LGPL 2.1
+ * @package   Mime
+ */
+
+/**
+ * This class parses a multipart/related MIME part (RFC 2387) to provide
+ * information on the part contents.
+ *
+ * @author    Michael Slusarz <slusarz@horde.org>
+ * @category  Horde
+ * @copyright 2012-2017 Horde LLC
+ * @license   http://www.horde.org/licenses/lgpl21 LGPL 2.1
+ * @package   Mime
  */
 class Horde_Mime_Related implements IteratorAggregate
 {
@@ -41,24 +49,26 @@ class Horde_Mime_Related implements IteratorAggregate
             throw new InvalidArgumentException('MIME part must be of type multipart/related');
         }
 
-        $ids = array_keys($mime_part->contentTypeMap());
-        $related_id = $mime_part->getMimeId();
         $id = null;
+        $ids = array();
+        $related_id = $mime_part->getMimeId();
 
         /* Build a list of parts -> CIDs. */
-        foreach ($ids as $val) {
-            if ((strcmp($related_id, $val) !== 0) &&
-                ($cid = $mime_part->getPart($val)->getContentId())) {
-                $this->_cids[$val] = $cid;
+        foreach ($mime_part->partIterator() as $val) {
+            $part_id = $val->getMimeId();
+            $ids[] = $part_id;
+
+            if ((strcmp($related_id, $part_id) !== 0) &&
+                ($cid = $val->getContentId())) {
+                $this->_cids[$part_id] = $cid;
             }
         }
 
         /* Look at the 'start' parameter to determine which part to start
          * with. If no 'start' parameter, use the first part (RFC 2387
          * [3.1]). */
-        $start = $mime_part->getContentTypeParameter('start');
-        if (!empty($start)) {
-            $id = $this->cidSearch($start);
+        if ($start = $mime_part->getContentTypeParameter('start')) {
+            $id = $this->cidSearch(trim($start, '<> '));
         }
 
         if (empty($id)) {

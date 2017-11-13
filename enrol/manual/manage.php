@@ -69,7 +69,7 @@ $PAGE->set_url('/enrol/manual/manage.php', array('enrolid'=>$instance->id));
 $PAGE->set_pagelayout('admin');
 $PAGE->set_title($enrol_manual->get_instance_name($instance));
 $PAGE->set_heading($course->fullname);
-navigation_node::override_active_url(new moodle_url('/enrol/users.php', array('id'=>$course->id)));
+navigation_node::override_active_url(new moodle_url('/user/index.php', array('id'=>$course->id)));
 
 // Create the user selector objects.
 $options = array('enrolid' => $enrolid, 'accesscontext' => $context);

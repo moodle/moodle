@@ -421,7 +421,7 @@ class quiz_grading_report extends quiz_default_report {
         }
 
         echo html_writer::tag('div', html_writer::empty_tag('input', array(
-                'type' => 'submit', 'value' => get_string('saveandnext', 'quiz_grading'))),
+                'type' => 'submit', 'class' => 'btn btn-primary', 'value' => get_string('saveandnext', 'quiz_grading'))),
                 array('class' => 'mdl-align')) .
                 html_writer::end_tag('div') . html_writer::end_tag('form');
     }

@@ -29,10 +29,10 @@
 }}
 {{< core/hover_tooltip }}
     {{$anchor}}
-        <a href="{{url}}">{{day}}</a>
+        <a href="{{url}}">{{$day}}{{day}}{{/day}}</a>
     {{/anchor}}
     {{$tooltip}}
-        <b>{{title}}</b>
-        {{{content}}}
+        <b>{{$title}}{{title}}{{/title}}</b>
+        {{$content}}{{{content}}}{{/content}}
     {{/tooltip}}
 {{/ core/hover_tooltip }}

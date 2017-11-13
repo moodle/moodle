@@ -20,7 +20,7 @@ class Writer extends AbstractMultiSheetsWriter
     /** @var string Temporary folder where the files to create the ODS will be stored */
     protected $tempFolder;
 
-    /** @var Internal\Workbook The workbook for the XLSX file */
+    /** @var Internal\Workbook The workbook for the ODS file */
     protected $book;
 
     /**

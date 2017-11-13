@@ -36,18 +36,35 @@ defined('MOODLE_INTERNAL') || die();
 class activity extends \core_search\base_activity {
 
     /**
+     * Returns true if this area uses file indexing.
+     *
+     * @return bool
+     */
+    public function uses_file_indexing() {
+        return true;
+    }
+
+    /**
      * Returns recordset containing required data for indexing activities.
      *
-     * Overwritten to discard records with courseid = 0.
+     * Overridden to discard records with courseid = 0.
      *
      * @param int $modifiedfrom timestamp
-     * @return \moodle_recordset
+     * @param \context|null $context Context
+     * @return \moodle_recordset|null Recordset, or null if no possible activities in given context
      */
-    public function get_recordset_by_timestamp($modifiedfrom = 0) {
+    public function get_document_recordset($modifiedfrom = 0, \context $context = null) {
         global $DB;
-        $select = 'course != ? AND ' . static::MODIFIED_FIELD_NAME . ' >= ?';
-        return $DB->get_recordset_select($this->get_module_name(), $select, array(0, $modifiedfrom),
-                static::MODIFIED_FIELD_NAME . ' ASC');
+        list ($contextjoin, $contextparams) = $this->get_context_restriction_sql(
+                $context, $this->get_module_name(), 'modtable');
+        if ($contextjoin === null) {
+            return null;
+        }
+        return $DB->get_recordset_sql('SELECT modtable.* FROM {' . $this->get_module_name() .
+                '} modtable ' . $contextjoin . ' WHERE modtable.' . static::MODIFIED_FIELD_NAME .
+                ' >= ? AND modtable.course != ? ORDER BY modtable.' . static::MODIFIED_FIELD_NAME .
+                ' ASC',
+                array_merge($contextparams, [$modifiedfrom, 0]));
     }
 
 }

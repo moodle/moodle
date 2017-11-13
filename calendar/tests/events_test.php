@@ -423,9 +423,9 @@ class core_calendar_events_testcase extends advanced_testcase {
     }
 
     /**
-     * Tests for calendar_subscription_added event.
+     * Tests for calendar_subscription_added event for a site subscription.
      */
-    public function test_calendar_subscription_created() {
+    public function test_calendar_subscription_created_site() {
         global $CFG;
         require_once($CFG->dirroot . '/calendar/lib.php');
         $this->resetAfterTest(true);
@@ -447,15 +447,115 @@ class core_calendar_events_testcase extends advanced_testcase {
         $this->assertEquals($id, $event->objectid);
         $this->assertEquals($subscription->courseid, $event->other['courseid']);
         $this->assertEquals($subscription->eventtype, $event->other['eventtype']);
+        $this->assertArrayNotHasKey('categoryid', $event->other);
+        $this->assertArrayNotHasKey('groupid', $event->other);
+        $this->assertDebuggingNotCalled();
+        $sink->close();
+    }
+
+    /**
+     * Tests for calendar_subscription_added event for a category subscription.
+     */
+    public function test_calendar_subscription_created_category() {
+        global $CFG;
+        require_once($CFG->dirroot . '/calendar/lib.php');
+        $this->resetAfterTest(true);
+
+        $categoryid = $this->course->category;
+
+        // Create a mock subscription.
+        $subscription = new stdClass();
+        $subscription->eventtype = 'category';
+        $subscription->name = 'test';
+        $subscription->categoryid = $categoryid;
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $id = calendar_add_subscription($subscription);
+
+        $events = $sink->get_events();
+        $event = reset($events);
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\core\event\calendar_subscription_created', $event);
+        $this->assertEquals($id, $event->objectid);
+        $this->assertEquals($categoryid, $event->other['categoryid']);
+        $this->assertEquals($subscription->eventtype, $event->other['eventtype']);
+        $this->assertArrayNotHasKey('courseid', $event->other);
+        $this->assertArrayNotHasKey('groupid', $event->other);
+        $this->assertDebuggingNotCalled();
+        $sink->close();
+    }
+
+    /**
+     * Tests for calendar_subscription_added event for a course subscription.
+     */
+    public function test_calendar_subscription_created_course() {
+        global $CFG;
+        require_once($CFG->dirroot . '/calendar/lib.php');
+        $this->resetAfterTest(true);
+
+        // Create a mock subscription.
+        $subscription = new stdClass();
+        $subscription->eventtype = 'course';
+        $subscription->name = 'test';
+        $subscription->courseid = $this->course->id;
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $id = calendar_add_subscription($subscription);
+
+        $events = $sink->get_events();
+        $event = reset($events);
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\core\event\calendar_subscription_created', $event);
+        $this->assertEquals($id, $event->objectid);
+        $this->assertEquals($subscription->courseid, $event->other['courseid']);
+        $this->assertEquals($subscription->eventtype, $event->other['eventtype']);
+        $this->assertArrayNotHasKey('categoryid', $event->other);
+        $this->assertArrayNotHasKey('groupid', $event->other);
         $this->assertDebuggingNotCalled();
         $sink->close();
 
     }
 
     /**
-     * Tests for calendar_subscription_updated event.
+     * Tests for calendar_subscription_added event for a group subscription.
      */
-    public function test_calendar_subscription_updated() {
+    public function test_calendar_subscription_created_group() {
+        global $CFG;
+        require_once($CFG->dirroot . '/calendar/lib.php');
+        $this->resetAfterTest(true);
+
+        $courseid = $this->course->id;
+        $groupid = 42;
+
+        // Create a mock subscription.
+        $subscription = new stdClass();
+        $subscription->eventtype = 'group';
+        $subscription->name = 'test';
+        $subscription->groupid = "{$courseid}-{$groupid}";
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $id = calendar_add_subscription($subscription);
+
+        $events = $sink->get_events();
+        $event = reset($events);
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\core\event\calendar_subscription_created', $event);
+        $this->assertEquals($id, $event->objectid);
+        $this->assertEquals($courseid, $event->other['courseid']);
+        $this->assertEquals($groupid, $event->other['groupid']);
+        $this->assertEquals($subscription->eventtype, $event->other['eventtype']);
+        $this->assertArrayNotHasKey('categoryid', $event->other);
+        $this->assertDebuggingNotCalled();
+        $sink->close();
+    }
+
+    /**
+     * Tests for calendar_subscription_updated event for a site subscription.
+     */
+    public function test_calendar_subscription_updated_site() {
         global $CFG;
         require_once($CFG->dirroot . '/calendar/lib.php');
         $this->resetAfterTest(true);
@@ -479,15 +579,120 @@ class core_calendar_events_testcase extends advanced_testcase {
         $this->assertEquals($subscription->id, $event->objectid);
         $this->assertEquals($subscription->courseid, $event->other['courseid']);
         $this->assertEquals($subscription->eventtype, $event->other['eventtype']);
+        $this->assertArrayNotHasKey('categoryid', $event->other);
+        $this->assertArrayNotHasKey('groupid', $event->other);
         $this->assertDebuggingNotCalled();
         $sink->close();
-
     }
 
     /**
-     * Tests for calendar_subscription_deleted event.
+     * Tests for calendar_subscription_updated event for a category subscription.
      */
-    public function test_calendar_subscription_deleted() {
+    public function test_calendar_subscription_updated_category() {
+        global $CFG;
+        require_once($CFG->dirroot . '/calendar/lib.php');
+        $this->resetAfterTest(true);
+
+        $categoryid = $this->course->category;
+
+        // Create a mock subscription.
+        $subscription = new stdClass();
+        $subscription->eventtype = 'category';
+        $subscription->name = 'test';
+        $subscription->categoryid = $categoryid;
+        $subscription->id = calendar_add_subscription($subscription);
+        // Now edit it.
+        $subscription->name = 'awesome';
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        calendar_update_subscription($subscription);
+        $events = $sink->get_events();
+        $event = reset($events);
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\core\event\calendar_subscription_updated', $event);
+        $this->assertEquals($subscription->id, $event->objectid);
+        $this->assertEquals($categoryid, $event->other['categoryid']);
+        $this->assertEquals($subscription->eventtype, $event->other['eventtype']);
+        $this->assertArrayNotHasKey('courseid', $event->other);
+        $this->assertArrayNotHasKey('groupid', $event->other);
+        $this->assertDebuggingNotCalled();
+        $sink->close();
+    }
+
+    /**
+     * Tests for calendar_subscription_updated event for a group subscription.
+     */
+    public function test_calendar_subscription_updated_course() {
+        global $CFG;
+        require_once($CFG->dirroot . '/calendar/lib.php');
+        $this->resetAfterTest(true);
+
+        // Create a mock subscription.
+        $subscription = new stdClass();
+        $subscription->eventtype = 'course';
+        $subscription->name = 'test';
+        $subscription->courseid = $this->course->id;
+        $subscription->id = calendar_add_subscription($subscription);
+        // Now edit it.
+        $subscription->name = 'awesome';
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        calendar_update_subscription($subscription);
+        $events = $sink->get_events();
+        $event = reset($events);
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\core\event\calendar_subscription_updated', $event);
+        $this->assertEquals($subscription->id, $event->objectid);
+        $this->assertEquals($this->course->id, $event->other['courseid']);
+        $this->assertEquals($subscription->eventtype, $event->other['eventtype']);
+        $this->assertArrayNotHasKey('categoryid', $event->other);
+        $this->assertArrayNotHasKey('groupid', $event->other);
+        $this->assertDebuggingNotCalled();
+        $sink->close();
+    }
+
+    /**
+     * Tests for calendar_subscription_updated event for a course subscription.
+     */
+    public function test_calendar_subscription_updated_group() {
+        global $CFG;
+        require_once($CFG->dirroot . '/calendar/lib.php');
+        $this->resetAfterTest(true);
+
+        $courseid = $this->course->id;
+        $groupid = 42;
+
+        // Create a mock subscription.
+        $subscription = new stdClass();
+        $subscription->eventtype = 'group';
+        $subscription->name = 'test';
+        $subscription->groupid = "{$courseid}-{$groupid}";
+        $subscription->id = calendar_add_subscription($subscription);
+        // Now edit it.
+        $subscription->name = 'awesome';
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        calendar_update_subscription($subscription);
+        $events = $sink->get_events();
+        $event = reset($events);
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\core\event\calendar_subscription_updated', $event);
+        $this->assertEquals($subscription->id, $event->objectid);
+        $this->assertEquals($this->course->id, $event->other['courseid']);
+        $this->assertEquals($groupid, $event->other['groupid']);
+        $this->assertEquals($subscription->eventtype, $event->other['eventtype']);
+        $this->assertArrayNotHasKey('categoryid', $event->other);
+        $this->assertDebuggingNotCalled();
+        $sink->close();
+    }
+
+    /**
+     * Tests for calendar_subscription_deleted event for a site subscription.
+     */
+    public function test_calendar_subscription_deleted_site() {
         global $CFG;
         require_once($CFG->dirroot . '/calendar/lib.php');
         $this->resetAfterTest(true);
@@ -511,5 +716,103 @@ class core_calendar_events_testcase extends advanced_testcase {
         $this->assertDebuggingNotCalled();
         $sink->close();
 
+    }
+
+    /**
+     * Tests for calendar_subscription_deleted event for a category subscription.
+     */
+    public function test_calendar_subscription_deleted_category() {
+        global $CFG;
+        require_once($CFG->dirroot . '/calendar/lib.php');
+        $this->resetAfterTest(true);
+
+        $categoryid = $this->course->category;
+
+        // Create a mock subscription.
+        $subscription = new stdClass();
+        $subscription->eventtype = 'category';
+        $subscription->name = 'test';
+        $subscription->categoryid = $categoryid;
+        $subscription->id = calendar_add_subscription($subscription);
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        calendar_delete_subscription($subscription);
+        $events = $sink->get_events();
+        $event = reset($events);
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\core\event\calendar_subscription_deleted', $event);
+        $this->assertEquals($subscription->id, $event->objectid);
+        $this->assertEquals($categoryid, $event->other['categoryid']);
+        $this->assertEquals($subscription->eventtype, $event->other['eventtype']);
+        $this->assertArrayNotHasKey('courseid', $event->other);
+        $this->assertArrayNotHasKey('groupid', $event->other);
+        $this->assertDebuggingNotCalled();
+        $sink->close();
+    }
+
+    /**
+     * Tests for calendar_subscription_deleted event for a course.
+     */
+    public function test_calendar_subscription_deleted_course() {
+        global $CFG;
+        require_once($CFG->dirroot . '/calendar/lib.php');
+        $this->resetAfterTest(true);
+
+        // Create a mock subscription.
+        $subscription = new stdClass();
+        $subscription->eventtype = 'course';
+        $subscription->name = 'test';
+        $subscription->courseid = $this->course->id;
+        $subscription->id = calendar_add_subscription($subscription);
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        calendar_delete_subscription($subscription);
+        $events = $sink->get_events();
+        $event = reset($events);
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\core\event\calendar_subscription_deleted', $event);
+        $this->assertEquals($subscription->id, $event->objectid);
+        $this->assertEquals($this->course->id, $event->other['courseid']);
+        $this->assertEquals($subscription->eventtype, $event->other['eventtype']);
+        $this->assertArrayNotHasKey('categoryid', $event->other);
+        $this->assertArrayNotHasKey('groupid', $event->other);
+        $this->assertDebuggingNotCalled();
+        $sink->close();
+    }
+
+    /**
+     * Tests for calendar_subscription_deleted event for a group.
+     */
+    public function test_calendar_subscription_deleted_group() {
+        global $CFG;
+        require_once($CFG->dirroot . '/calendar/lib.php');
+        $this->resetAfterTest(true);
+
+        $courseid = $this->course->id;
+        $groupid = 42;
+
+        // Create a mock subscription.
+        $subscription = new stdClass();
+        $subscription->eventtype = 'group';
+        $subscription->name = 'test';
+        $subscription->groupid = "{$courseid}-{$groupid}";
+        $subscription->id = calendar_add_subscription($subscription);
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        calendar_delete_subscription($subscription);
+        $events = $sink->get_events();
+        $event = reset($events);
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\core\event\calendar_subscription_deleted', $event);
+        $this->assertEquals($subscription->id, $event->objectid);
+        $this->assertEquals($this->course->id, $event->other['courseid']);
+        $this->assertEquals($groupid, $event->other['groupid']);
+        $this->assertEquals($subscription->eventtype, $event->other['eventtype']);
+        $this->assertArrayNotHasKey('categoryid', $event->other);
+        $this->assertDebuggingNotCalled();
+        $sink->close();
     }
 }

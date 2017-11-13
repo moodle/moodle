@@ -29,16 +29,19 @@ define(['jquery', 'core/ajax'], function($, Ajax) {
      *
      * @method deleteEvent
      * @param {int} eventId The event id.
+     * @param {bool} deleteSeries Whether to delete all events in the series
      * @return {promise} Resolved with requested calendar event
      */
-    var deleteEvent = function(eventId) {
-
+    var deleteEvent = function(eventId, deleteSeries) {
+        if (typeof deleteSeries === 'undefined') {
+            deleteSeries = false;
+        }
         var request = {
             methodname: 'core_calendar_delete_calendar_events',
             args: {
                 events: [{
                     eventid: eventId,
-                    repeat: 1
+                    repeat: deleteSeries,
                 }]
             }
         };
@@ -83,9 +86,106 @@ define(['jquery', 'core/ajax'], function($, Ajax) {
         return Ajax.call([request])[0];
     };
 
+    /**
+     * Get calendar data for the month view.
+     *
+     * @method getCalendarMonthData
+     * @param {Number} year Year
+     * @param {Number} month Month
+     * @param {Number} courseid The course id.
+     * @param {Number} categoryid The category id.
+     * @param {Bool} includenavigation Whether to include navigation.
+     * @return {promise} Resolved with the month view data.
+     */
+    var getCalendarMonthData = function(year, month, courseid, categoryid, includenavigation) {
+        var request = {
+            methodname: 'core_calendar_get_calendar_monthly_view',
+            args: {
+                year: year,
+                month: month,
+                courseid: courseid,
+                categoryid: categoryid,
+                includenavigation: includenavigation,
+            }
+        };
+
+        return Ajax.call([request])[0];
+    };
+
+    /**
+     * Get calendar data for the day view.
+     *
+     * @method getCalendarDayData
+     * @param {Number} year Year
+     * @param {Number} month Month
+     * @param {Number} day Day
+     * @param {Number} courseid The course id.
+     * @param {Number} categoryId The id of the category whose events are shown
+     * @return {promise} Resolved with the day view data.
+     */
+    var getCalendarDayData = function(year, month, day, courseid, categoryId) {
+        var request = {
+            methodname: 'core_calendar_get_calendar_day_view',
+            args: {
+                year: year,
+                month: month,
+                day: day,
+                courseid: courseid,
+                categoryid: categoryId,
+            }
+        };
+
+        return Ajax.call([request])[0];
+    };
+
+    /**
+     * Change the start day for the given event id. The day timestamp
+     * only has to be any time during the target day because only the
+     * date information is extracted, the time of the day is ignored.
+     *
+     * @param {int} eventId The id of the event to update
+     * @param {int} dayTimestamp A timestamp for some time during the target day
+     * @return {promise}
+     */
+    var updateEventStartDay = function(eventId, dayTimestamp) {
+        var request = {
+            methodname: 'core_calendar_update_event_start_day',
+            args: {
+                eventid: eventId,
+                daytimestamp: dayTimestamp
+            }
+        };
+
+        return Ajax.call([request])[0];
+    };
+
+    /**
+     * Get calendar upcoming data.
+     *
+     * @method getCalendarUpcomingData
+     * @param {Number} courseid The course id.
+     * @param {Number} categoryid The category id.
+     * @return {promise} Resolved with the month view data.
+     */
+    var getCalendarUpcomingData = function(courseid, categoryid) {
+        var request = {
+            methodname: 'core_calendar_get_calendar_upcoming_view',
+            args: {
+                courseid: courseid,
+                categoryid: categoryid,
+            }
+        };
+
+        return Ajax.call([request])[0];
+    };
+
     return {
         getEventById: getEventById,
         deleteEvent: deleteEvent,
-        submitCreateUpdateForm: submitCreateUpdateForm
+        updateEventStartDay: updateEventStartDay,
+        submitCreateUpdateForm: submitCreateUpdateForm,
+        getCalendarMonthData: getCalendarMonthData,
+        getCalendarDayData: getCalendarDayData,
+        getCalendarUpcomingData: getCalendarUpcomingData
     };
 });

@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * CLI script to purge caches without asking for confirmation.
+ *
  * @package    core
  * @subpackage cli
  * @copyright  2011 David Mudrak <david@moodle.com>

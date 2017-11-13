@@ -74,6 +74,12 @@ if ($format !== '') {
 if ($start !== 0) {
     $url->param('start', $start);
 }
+if ($sifirst !== 'all') {
+    $url->param('sifirst', $sifirst);
+}
+if ($silast !== 'all') {
+    $url->param('silast', $silast);
+}
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('report');
 
@@ -173,6 +179,7 @@ if ($csv && $grandtotal && count($activities)>0) { // Only show CSV if there are
     $PAGE->set_title($strcompletion);
     $PAGE->set_heading($course->fullname);
     echo $OUTPUT->header();
+    $PAGE->requires->js_call_amd('report_progress/completion_override', 'init', [fullname($USER)]);
 
     // Handle groups (if enabled)
     groups_print_course_menu($course,$CFG->wwwroot.'/report/progress/?course='.$course->id);
@@ -360,28 +367,41 @@ foreach($progress as $user) {
     foreach($activities as $activity) {
 
         // Get progress information and state
-        if (array_key_exists($activity->id,$user->progress)) {
-            $thisprogress=$user->progress[$activity->id];
-            $state=$thisprogress->completionstate;
-            $date=userdate($thisprogress->timemodified);
+        if (array_key_exists($activity->id, $user->progress)) {
+            $thisprogress = $user->progress[$activity->id];
+            $state = $thisprogress->completionstate;
+            $overrideby = $thisprogress->overrideby;
+            $date = userdate($thisprogress->timemodified);
         } else {
-            $state=COMPLETION_INCOMPLETE;
-            $date='';
+            $state = COMPLETION_INCOMPLETE;
+            $overrideby = 0;
+            $date = '';
         }
 
         // Work out how it corresponds to an icon
         switch($state) {
-            case COMPLETION_INCOMPLETE : $completiontype='n'; break;
-            case COMPLETION_COMPLETE : $completiontype='y'; break;
-            case COMPLETION_COMPLETE_PASS : $completiontype='pass'; break;
-            case COMPLETION_COMPLETE_FAIL : $completiontype='fail'; break;
+            case COMPLETION_INCOMPLETE :
+                $completiontype = 'n'.($overrideby ? '-override' : '');
+                break;
+            case COMPLETION_COMPLETE :
+                $completiontype = 'y'.($overrideby ? '-override' : '');
+                break;
+            case COMPLETION_COMPLETE_PASS :
+                $completiontype = 'pass';
+                break;
+            case COMPLETION_COMPLETE_FAIL :
+                $completiontype = 'fail';
+                break;
         }
+        $completiontrackingstring = $activity->completion == COMPLETION_TRACKING_AUTOMATIC ? 'auto' : 'manual';
+        $completionicon = 'completion-' . $completiontrackingstring. '-' . $completiontype;
 
-        $completionicon='completion-'.
-            ($activity->completion==COMPLETION_TRACKING_AUTOMATIC ? 'auto' : 'manual').
-            '-'.$completiontype;
-
-        $describe = get_string('completion-' . $completiontype, 'completion');
+        if ($overrideby) {
+            $overridebyuser = \core_user::get_user($overrideby, '*', MUST_EXIST);
+            $describe = get_string('completion-' . $completiontype, 'completion', fullname($overridebyuser));
+        } else {
+            $describe = get_string('completion-' . $completiontype, 'completion');
+        }
         $a=new StdClass;
         $a->state=$describe;
         $a->date=$date;
@@ -392,8 +412,20 @@ foreach($progress as $user) {
         if ($csv) {
             print $sep.csv_quote($describe).$sep.csv_quote($date);
         } else {
+            $celltext = $OUTPUT->pix_icon('i/' . $completionicon, s($fulldescribe));
+            if (has_capability('moodle/course:overridecompletion', $context) &&
+                    $state != COMPLETION_COMPLETE_PASS && $state != COMPLETION_COMPLETE_FAIL) {
+                $newstate = ($state == COMPLETION_COMPLETE) ? COMPLETION_INCOMPLETE : COMPLETION_COMPLETE;
+                $changecompl = $user->id . '-' . $activity->id . '-' . $newstate;
+                $url = new moodle_url($PAGE->url, ['sesskey' => sesskey()]);
+                $celltext = html_writer::link($url, $celltext, array('class' => 'changecompl', 'data-changecompl' => $changecompl,
+                                                                     'data-activityname' => $a->activity,
+                                                                     'data-userfullname' => $a->user,
+                                                                     'data-completiontracking' => $completiontrackingstring,
+                                                                     'aria-role' => 'button'));
+            }
             print '<td class="completion-progresscell '.$formattedactivities[$activity->id]->datepassedclass.'">'.
-                $OUTPUT->pix_icon('i/' . $completionicon, $fulldescribe) . '</td>';
+                $celltext . '</td>';
         }
     }
 

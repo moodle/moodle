@@ -118,9 +118,13 @@
     text-align: center;
 }
 
-.userlist table#participants td,
-.userlist table#participants th {
+.userlist table#participants td {
+    text-align: left;
+    padding: 4px;
     vertical-align: middle;
+}
+
+.userlist table#participants th {
     text-align: left;
     padding: 4px;
 }
@@ -194,6 +198,22 @@
     white-space: nowrap;
     vertical-align: top;
     font-weight: bold;
+}
+
+.group-edit {
+    position: absolute;
+    right: 0;
+    margin-right: 0.6em;
+}
+
+.group-image {
+    display: block;
+    float: left;
+    margin-right: 1em;
+
+    .grouppicture {
+        border-radius: 50%;
+    }
 }
 
 .groupinfobox {

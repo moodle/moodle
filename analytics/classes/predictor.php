@@ -43,34 +43,35 @@ interface predictor {
     public function is_ready();
 
     /**
-     * Train the provided dataset.
+     * Delete all stored information of the current model id.
      *
-     * @param int $modelid
-     * @param \stored_file $dataset
-     * @param string $outputdir
-     * @return \stdClass
+     * This method is called when there are important changes to a model,
+     * all previous training algorithms using that version of the model
+     * should be deleted.
+     *
+     * In case you want to perform extra security measures before deleting
+     * a directory you can check that $modelversionoutputdir subdirectories
+     * can only be named 'execution', 'evaluation' or 'testing'.
+     *
+     * @param string $uniqueid The site model unique id string
+     * @param string $modelversionoutputdir The output dir of this model version
+     * @return null
      */
-    public function train($modelid, \stored_file $dataset, $outputdir);
+    public function clear_model($uniqueid, $modelversionoutputdir);
 
     /**
-     * Predict the provided dataset samples.
+     * Delete the output directory.
      *
-     * @param int $modelid
-     * @param \stored_file $dataset
-     * @param string $outputdir
-     * @return \stdClass
+     * This method is called when a model is completely deleted.
+     *
+     * In case you want to perform extra security measures before deleting
+     * a directory you can check that the subdirectories are timestamps
+     * (the model version) and each of this subdirectories' subdirectories
+     * can only be named 'execution', 'evaluation' or 'testing'.
+     *
+     * @param string $modeloutputdir The model directory id (parent of all model versions subdirectories).
+     * @return null
      */
-    public function predict($modelid, \stored_file $dataset, $outputdir);
+    public function delete_output_dir($modeloutputdir);
 
-    /**
-     * evaluate
-     *
-     * @param int $modelid
-     * @param float $maxdeviation
-     * @param int $niterations
-     * @param \stored_file $dataset
-     * @param string $outputdir
-     * @return \stdClass
-     */
-    public function evaluate($modelid, $maxdeviation, $niterations, \stored_file $dataset, $outputdir);
 }

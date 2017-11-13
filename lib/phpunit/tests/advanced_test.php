@@ -223,7 +223,7 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
         try {
             self::resetAllData(true);
         } catch (Exception $e) {
-            $this->assertInstanceOf('PHPUnit_Framework_Error_Warning', $e);
+            $this->assertInstanceOf('PHPUnit\Framework\Error\Warning', $e);
         }
         $this->assertEquals(1, $DB->get_field('user', 'confirmed', array('id'=>2)));
 
@@ -234,7 +234,7 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
         try {
             self::resetAllData(true);
         } catch (Exception $e) {
-            $this->assertInstanceOf('PHPUnit_Framework_Error_Warning', $e);
+            $this->assertInstanceOf('PHPUnit\Framework\Error\Warning', $e);
             $this->assertContains('xx', $e->getMessage());
             $this->assertContains('admin', $e->getMessage());
             $this->assertContains('rolesactive', $e->getMessage());
@@ -276,7 +276,7 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
         try {
             self::resetAllData(true);
         } catch (Exception $e) {
-            $this->assertInstanceOf('PHPUnit_Framework_Error_Warning', $e);
+            $this->assertInstanceOf('PHPUnit\Framework\Error\Warning', $e);
             $this->assertEquals(1, $SITE->id);
             $this->assertSame($SITE, $COURSE);
             $this->assertSame($SITE, $COURSE);
@@ -287,7 +287,7 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
         try {
             self::resetAllData(true);
         } catch (Exception $e) {
-            $this->assertInstanceOf('PHPUnit_Framework_Error_Warning', $e);
+            $this->assertInstanceOf('PHPUnit\Framework\Error\Warning', $e);
             $this->assertEquals(0, $USER->id);
         }
     }
@@ -377,7 +377,7 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
             $this->assertTimeCurrent(time()+10);
             $this->fail('Failed assert expected');
         } catch (Exception $e) {
-            $this->assertInstanceOf('PHPUnit_Framework_ExpectationFailedException', $e);
+            $this->assertInstanceOf('PHPUnit\Framework\ExpectationFailedException', $e);
         }
 
         try {
@@ -385,7 +385,7 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
             $this->assertTimeCurrent(time()-10);
             $this->fail('Failed assert expected');
         } catch (Exception $e) {
-            $this->assertInstanceOf('PHPUnit_Framework_ExpectationFailedException', $e);
+            $this->assertInstanceOf('PHPUnit\Framework\ExpectationFailedException', $e);
         }
     }
 
@@ -600,19 +600,19 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
         try {
             $this->setTimezone('Pacific/Auckland', '');
         } catch (Exception $e) {
-            $this->assertInstanceOf('PHPUnit_Framework_Error_Warning', $e);
+            $this->assertInstanceOf('PHPUnit\Framework\Error\Warning', $e);
         }
 
         try {
             $this->setTimezone('Pacific/Auckland', 'xxxx');
         } catch (Exception $e) {
-            $this->assertInstanceOf('PHPUnit_Framework_Error_Warning', $e);
+            $this->assertInstanceOf('PHPUnit\Framework\Error\Warning', $e);
         }
 
         try {
             $this->setTimezone('Pacific/Auckland', null);
         } catch (Exception $e) {
-            $this->assertInstanceOf('PHPUnit_Framework_Error_Warning', $e);
+            $this->assertInstanceOf('PHPUnit\Framework\Error\Warning', $e);
         }
 
     }
@@ -637,7 +637,7 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
         try {
             self::resetAllData(true);
         } catch (Exception $e) {
-            $this->assertInstanceOf('PHPUnit_Framework_Error_Warning', $e);
+            $this->assertInstanceOf('PHPUnit\Framework\Error\Warning', $e);
         }
 
         if ($CFG->ostype === 'WINDOWS') {
@@ -661,5 +661,24 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
         } else {
             $this->assertSame('en_AU.UTF-8', setlocale(LC_TIME, 0));
         }
+    }
+
+    /**
+     * This test sets a user agent and makes sure that it is cleared when the test is reset.
+     */
+    public function test_it_resets_useragent_after_test() {
+        $this->resetAfterTest();
+        $fakeagent = 'New user agent set.';
+
+        // Sanity check: it should not be set when test begins.
+        self::assertFalse(core_useragent::get_user_agent_string(), 'It should not be set at first.');
+
+        // Set a fake useragent and check it was set properly.
+        core_useragent::instance(true, $fakeagent);
+        self::assertSame($fakeagent, core_useragent::get_user_agent_string(), 'It should be the forced agent.');
+
+        // Reset test data and ansure the useragent was cleaned.
+        self::resetAllData(false);
+        self::assertFalse(core_useragent::get_user_agent_string(), 'It should not be set again, data was reset.');
     }
 }

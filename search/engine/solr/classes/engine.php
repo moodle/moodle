@@ -1144,6 +1144,7 @@ class engine extends \core_search\engine {
      * @return \SolrClient
      */
     protected function get_search_client($triggerexception = true) {
+        global $CFG;
 
         // Type comparison as it is set to false if not available.
         if ($this->client !== null) {
@@ -1164,6 +1165,11 @@ class engine extends \core_search\engine {
             'ssl_capath' => !empty($this->config->ssl_capath) ? $this->config->ssl_capath : '',
             'timeout' => !empty($this->config->server_timeout) ? $this->config->server_timeout : '30'
         );
+
+        if ($CFG->proxyhost && !is_proxybypass('http://' . $this->config->server_hostname . '/')) {
+            $options['proxy_host'] = $CFG->proxyhost;
+            $options['proxy_port'] = $CFG->proxyport;
+        }
 
         if (!class_exists('\SolrClient')) {
             throw new \core_search\engine_exception('enginenotinstalled', 'search', '', 'solr');
@@ -1192,7 +1198,8 @@ class engine extends \core_search\engine {
             return $this->curl;
         }
 
-        $this->curl = new \curl();
+        // Connection to Solr is allowed to use 'localhost' and other potentially blocked hosts/ports.
+        $this->curl = new \curl(['ignoresecurity' => true]);
 
         $options = array();
         // Build the SSL options. Based on pecl-solr and general testing.

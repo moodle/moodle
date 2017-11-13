@@ -486,6 +486,7 @@ class mod_glossary_external extends external_api {
         return array(
             'count' => $count,
             'entries' => $entries,
+            'ratinginfo' => \core_rating\external\util::get_rating_info($glossary, $context, 'mod_glossary', 'entry', $entries),
             'warnings' => $warnings
         );
     }
@@ -502,6 +503,7 @@ class mod_glossary_external extends external_api {
             'entries' => new external_multiple_structure(
                 self::get_entry_return_structure()
             ),
+            'ratinginfo' => \core_rating\external\util::external_ratings_structure(),
             'warnings' => new external_warnings()
         ));
     }
@@ -583,6 +585,7 @@ class mod_glossary_external extends external_api {
         return array(
             'count' => $count,
             'entries' => $entries,
+            'ratinginfo' => \core_rating\external\util::get_rating_info($glossary, $context, 'mod_glossary', 'entry', $entries),
             'warnings' => $warnings
         );
     }
@@ -599,6 +602,7 @@ class mod_glossary_external extends external_api {
             'entries' => new external_multiple_structure(
                 self::get_entry_return_structure()
             ),
+            'ratinginfo' => \core_rating\external\util::external_ratings_structure(),
             'warnings' => new external_warnings()
         ));
     }
@@ -760,6 +764,7 @@ class mod_glossary_external extends external_api {
         return array(
             'count' => $count,
             'entries' => $entries,
+            'ratinginfo' => \core_rating\external\util::get_rating_info($glossary, $context, 'mod_glossary', 'entry', $entries),
             'warnings' => $warnings
         );
     }
@@ -776,6 +781,7 @@ class mod_glossary_external extends external_api {
             'entries' => new external_multiple_structure(
                 self::get_entry_return_structure(true)
             ),
+            'ratinginfo' => \core_rating\external\util::external_ratings_structure(),
             'warnings' => new external_warnings()
         ));
     }
@@ -954,6 +960,7 @@ class mod_glossary_external extends external_api {
         return array(
             'count' => $count,
             'entries' => $entries,
+            'ratinginfo' => \core_rating\external\util::get_rating_info($glossary, $context, 'mod_glossary', 'entry', $entries),
             'warnings' => $warnings
         );
     }
@@ -970,6 +977,7 @@ class mod_glossary_external extends external_api {
             'entries' => new external_multiple_structure(
                 self::get_entry_return_structure()
             ),
+            'ratinginfo' => \core_rating\external\util::external_ratings_structure(),
             'warnings' => new external_warnings()
         ));
     }
@@ -1057,6 +1065,7 @@ class mod_glossary_external extends external_api {
         return array(
             'count' => $count,
             'entries' => $entries,
+            'ratinginfo' => \core_rating\external\util::get_rating_info($glossary, $context, 'mod_glossary', 'entry', $entries),
             'warnings' => $warnings
         );
     }
@@ -1073,6 +1082,7 @@ class mod_glossary_external extends external_api {
             'entries' => new external_multiple_structure(
                 self::get_entry_return_structure()
             ),
+            'ratinginfo' => \core_rating\external\util::external_ratings_structure(),
             'warnings' => new external_warnings()
         ));
     }
@@ -1158,6 +1168,7 @@ class mod_glossary_external extends external_api {
         return array(
             'count' => $count,
             'entries' => $entries,
+            'ratinginfo' => \core_rating\external\util::get_rating_info($glossary, $context, 'mod_glossary', 'entry', $entries),
             'warnings' => $warnings
         );
     }
@@ -1174,6 +1185,7 @@ class mod_glossary_external extends external_api {
             'entries' => new external_multiple_structure(
                 self::get_entry_return_structure()
             ),
+            'ratinginfo' => \core_rating\external\util::external_ratings_structure(),
             'warnings' => new external_warnings()
         ));
     }
@@ -1238,6 +1250,7 @@ class mod_glossary_external extends external_api {
         return array(
             'count' => $count,
             'entries' => $entries,
+            'ratinginfo' => \core_rating\external\util::get_rating_info($glossary, $context, 'mod_glossary', 'entry', $entries),
             'warnings' => $warnings
         );
     }
@@ -1254,6 +1267,7 @@ class mod_glossary_external extends external_api {
             'entries' => new external_multiple_structure(
                 self::get_entry_return_structure()
             ),
+            'ratinginfo' => \core_rating\external\util::external_ratings_structure(),
             'warnings' => new external_warnings()
         ));
     }
@@ -1324,6 +1338,7 @@ class mod_glossary_external extends external_api {
         return array(
             'count' => $count,
             'entries' => $entries,
+            'ratinginfo' => \core_rating\external\util::get_rating_info($glossary, $context, 'mod_glossary', 'entry', $entries),
             'warnings' => $warnings
         );
     }
@@ -1340,6 +1355,7 @@ class mod_glossary_external extends external_api {
             'entries' => new external_multiple_structure(
                 self::get_entry_return_structure()
             ),
+            'ratinginfo' => \core_rating\external\util::external_ratings_structure(),
             'warnings' => new external_warnings()
         ));
     }
@@ -1385,6 +1401,8 @@ class mod_glossary_external extends external_api {
 
         return array(
             'entry' => $entry,
+            'ratinginfo' => \core_rating\external\util::get_rating_info($glossary, $context, 'mod_glossary', 'entry',
+                array($entry)),
             'warnings' => $warnings
         );
     }
@@ -1398,6 +1416,7 @@ class mod_glossary_external extends external_api {
     public static function get_entry_by_id_returns() {
         return new external_single_structure(array(
             'entry' => self::get_entry_return_structure(),
+            'ratinginfo' => \core_rating\external\util::external_ratings_structure(),
             'warnings' => new external_warnings()
         ));
     }

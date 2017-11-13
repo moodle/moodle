@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20170721" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20171026" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -322,6 +322,7 @@
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="ID of user who has (or hasn't) completed the activity."/>
         <FIELD NAME="completionstate" TYPE="int" LENGTH="1" NOTNULL="true" SEQUENCE="false" COMMENT="Whether or not the user has completed the activity. Available states: 0 = not completed [if there's no row in this table, that also counts as 0] 1 = completed 2 = completed, show passed 3 = completed, show failed"/>
         <FIELD NAME="viewed" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" COMMENT="Tracks whether or not this activity has been viewed. NULL = we are not tracking viewed for this activity 0 = not viewed 1 = viewed"/>
+        <FIELD NAME="overrideby" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Tracks whether this completion state has been set manually to override a previous state."/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Time at which the completion state last changed."/>
       </FIELDS>
       <KEYS>
@@ -426,6 +427,7 @@
         <FIELD NAME="name" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="description" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="format" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="categoryid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="groupid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
@@ -446,6 +448,7 @@
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="categoryid" TYPE="foreign" FIELDS="categoryid" REFTABLE="course_categories" REFFIELDS="id"/>
       </KEYS>
       <INDEXES>
         <INDEX NAME="courseid" UNIQUE="false" FIELDS="courseid"/>
@@ -453,7 +456,7 @@
         <INDEX NAME="timestart" UNIQUE="false" FIELDS="timestart"/>
         <INDEX NAME="timeduration" UNIQUE="false" FIELDS="timeduration"/>
         <INDEX NAME="type-timesort" UNIQUE="false" FIELDS="type, timesort"/>
-        <INDEX NAME="groupid-courseid-visible-userid" UNIQUE="false" FIELDS="groupid, courseid, visible, userid" COMMENT="used for calendar view"/>
+        <INDEX NAME="groupid-courseid-categoryid-visible-userid" UNIQUE="false" FIELDS="groupid, courseid, categoryid, visible, userid" COMMENT="used for calendar view"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="cache_filters" COMMENT="For keeping information about cached data">
@@ -813,6 +816,7 @@
       </KEYS>
       <INDEXES>
         <INDEX NAME="action" UNIQUE="false" FIELDS="action" COMMENT="insert/update/delete"/>
+        <INDEX NAME="timemodified" UNIQUE="false" FIELDS="timemodified"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="stats_daily" COMMENT="to accumulate daily stats">
@@ -1814,6 +1818,7 @@
       </KEYS>
       <INDEXES>
         <INDEX NAME="action" UNIQUE="false" FIELDS="action" COMMENT="insert/update/delete"/>
+        <INDEX NAME="timemodified" UNIQUE="false" FIELDS="timemodified"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="grade_categories_history" COMMENT="History of grade_categories">
@@ -1846,6 +1851,7 @@
       </KEYS>
       <INDEXES>
         <INDEX NAME="action" UNIQUE="false" FIELDS="action" COMMENT="insert/update/delete"/>
+        <INDEX NAME="timemodified" UNIQUE="false" FIELDS="timemodified"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="grade_items_history" COMMENT="History of grade_items">
@@ -1896,6 +1902,7 @@
       </KEYS>
       <INDEXES>
         <INDEX NAME="action" UNIQUE="false" FIELDS="action" COMMENT="insert/update/delete"/>
+        <INDEX NAME="timemodified" UNIQUE="false" FIELDS="timemodified"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="grade_grades_history" COMMENT="History table">
@@ -2851,6 +2858,7 @@
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="url" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="categoryid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="groupid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
@@ -3088,10 +3096,12 @@
         <FIELD NAME="nextruntime" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="faildelay" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="customdata" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Custom data to be passed to the adhoc task. Must be serialisable using json_encode()"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="blocking" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="useriduser" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
       </KEYS>
       <INDEXES>
         <INDEX NAME="nextruntime_idx" UNIQUE="false" FIELDS="nextruntime"/>
@@ -3600,10 +3610,8 @@
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="modelid" TYPE="foreign" FIELDS="modelid" REFTABLE="analytics_models" REFFIELDS="id"/>
       </KEYS>
-      <INDEXES>
-        <INDEX NAME="modelid" UNIQUE="false" FIELDS="modelid" COMMENT="Index on modelid"/>
-      </INDEXES>
     </TABLE>
     <TABLE NAME="analytics_predictions" COMMENT="Predictions">
       <FIELDS>
@@ -3612,13 +3620,17 @@
         <FIELD NAME="contextid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="sampleid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="rangeindex" TYPE="int" LENGTH="5" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="prediction" TYPE="int" LENGTH="2" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="prediction" TYPE="number" LENGTH="10" NOTNULL="true" SEQUENCE="false" DECIMALS="2"/>
         <FIELD NAME="predictionscore" TYPE="number" LENGTH="10" NOTNULL="true" SEQUENCE="false" DECIMALS="5"/>
         <FIELD NAME="calculations" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timestart" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="timeend" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="modelid" TYPE="foreign" FIELDS="modelid" REFTABLE="analytics_models" REFFIELDS="id"/>
+        <KEY NAME="contextid" TYPE="foreign" FIELDS="contextid" REFTABLE="context" REFFIELDS="id"/>
       </KEYS>
       <INDEXES>
         <INDEX NAME="modelidandcontextid" UNIQUE="false" FIELDS="modelid, contextid" COMMENT="Index on modelid and contextid"/>
@@ -3636,6 +3648,8 @@
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="modelid" TYPE="foreign" FIELDS="modelid" REFTABLE="analytics_models" REFFIELDS="id"/>
+        <KEY NAME="fileid" TYPE="foreign" FIELDS="fileid" REFTABLE="files" REFFIELDS="id"/>
       </KEYS>
       <INDEXES>
         <INDEX NAME="modelidandanalysableidandtimesplitting" UNIQUE="false" FIELDS="modelid, analysableid, timesplitting" COMMENT="Index on modelid and analysableid and timesplitting"/>
@@ -3654,6 +3668,7 @@
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="modelid" TYPE="foreign" FIELDS="modelid" REFTABLE="analytics_models" REFFIELDS="id"/>
       </KEYS>
       <INDEXES>
         <INDEX NAME="modelidandanalysableidandtimesplittingandrangeindex" UNIQUE="false" FIELDS="modelid, analysableid, timesplitting, rangeindex" COMMENT="Index on modelid and analysableid and timesplitting"/>
@@ -3669,10 +3684,79 @@
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="modelid" TYPE="foreign" FIELDS="modelid" REFTABLE="analytics_models" REFFIELDS="id"/>
+        <KEY NAME="fileid" TYPE="foreign" FIELDS="fileid" REFTABLE="files" REFFIELDS="id"/>
       </KEYS>
       <INDEXES>
-        <INDEX NAME="modelidandfileidandaction" UNIQUE="false" FIELDS="modelid, fileid, action" COMMENT="Index on modelid and fileid and action"/>
+        <INDEX NAME="modelidandactionandfileid" UNIQUE="false" FIELDS="modelid, action, fileid" COMMENT="Index on modelid and action and fileid"/>
       </INDEXES>
+    </TABLE>
+    <TABLE NAME="analytics_indicator_calc" COMMENT="Stored indicator calculations">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="starttime" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="endtime" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="contextid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="sampleorigin" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="sampleid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="indicator" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="value" TYPE="number" LENGTH="10" NOTNULL="false" SEQUENCE="false" DECIMALS="2" COMMENT="The calculated value, it can be null."/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="contextid" TYPE="foreign" FIELDS="contextid" REFTABLE="context" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="starttime-endtime-contextid" UNIQUE="false" FIELDS="starttime, endtime, contextid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="analytics_prediction_actions" COMMENT="Register of user actions over predictions.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="predictionid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="actionname" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="predictionid" TYPE="foreign" FIELDS="predictionid" REFTABLE="analytics_predictions" REFFIELDS="id"/>
+        <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="predictionidanduseridandactionname" UNIQUE="false" FIELDS="predictionid, userid, actionname"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="analytics_used_analysables" COMMENT="List of analysables used by each model">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="modelid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="action" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="analysableid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="timeanalysed" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="modelid" TYPE="foreign" FIELDS="modelid" REFTABLE="analytics_models" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="modelid-action" UNIQUE="false" FIELDS="modelid, action"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="search_index_requests" COMMENT="Records requests for (re)indexing of specific contexts. Entries will be removed from this table when indexing of that context is complete. (This table is not used for normal time-based indexing of new content.)">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="contextid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Context ID that has been requested for reindexing."/>
+        <FIELD NAME="searcharea" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Set (e.g. 'forum-post') if a specific area is to be reindexed. Blank indicates all areas."/>
+        <FIELD NAME="timerequested" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Time at which this index update was requested."/>
+        <FIELD NAME="partialarea" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="If processing of this context partially completed, set to the area that needs processing next. Blank indicates not processed yet."/>
+        <FIELD NAME="partialtime" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="If processing partially completed, set to the timestamp within the next area where processing should start. 0 indicates not processed yet."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="contextid" TYPE="foreign" FIELDS="contextid" REFTABLE="context" REFFIELDS="id"/>
+      </KEYS>
     </TABLE>
   </TABLES>
 </XMLDB>

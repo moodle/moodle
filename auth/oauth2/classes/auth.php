@@ -339,7 +339,7 @@ class auth extends \auth_plugin_base {
         $PAGE->set_title($title);
         $PAGE->set_heading($PAGE->course->fullname);
         echo $OUTPUT->header();
-        notice($message, "$CFG->httpswwwroot/index.php");
+        notice($message, "$CFG->wwwroot/index.php");
     }
 
     /**
@@ -363,7 +363,7 @@ class auth extends \auth_plugin_base {
             $errormsg = get_string('loginerror_nouserinfo', 'auth_oauth2');
             $SESSION->loginerrormsg = $errormsg;
             $client->log_out();
-            redirect(new moodle_url($CFG->httpswwwroot . '/login/index.php'));
+            redirect(new moodle_url('/login/index.php'));
         }
         if (empty($userinfo['username']) || empty($userinfo['email'])) {
             // Trigger login failed event.
@@ -375,7 +375,7 @@ class auth extends \auth_plugin_base {
             $errormsg = get_string('loginerror_userincomplete', 'auth_oauth2');
             $SESSION->loginerrormsg = $errormsg;
             $client->log_out();
-            redirect(new moodle_url($CFG->httpswwwroot . '/login/index.php'));
+            redirect(new moodle_url('/login/index.php'));
         }
 
         $userinfo['username'] = trim(core_text::strtolower($userinfo['username']));
@@ -416,7 +416,7 @@ class auth extends \auth_plugin_base {
                 $errormsg = get_string('confirmationpending', 'auth_oauth2');
                 $SESSION->loginerrormsg = $errormsg;
                 $client->log_out();
-                redirect(new moodle_url($CFG->httpswwwroot . '/login/index.php'));
+                redirect(new moodle_url('/login/index.php'));
             }
         } else if (!empty($linkedlogin)) {
             // Trigger login failed event.
@@ -428,7 +428,7 @@ class auth extends \auth_plugin_base {
             $errormsg = get_string('confirmationpending', 'auth_oauth2');
             $SESSION->loginerrormsg = $errormsg;
             $client->log_out();
-            redirect(new moodle_url($CFG->httpswwwroot . '/login/index.php'));
+            redirect(new moodle_url('/login/index.php'));
         }
 
         $issuer = $client->get_issuer();
@@ -442,7 +442,7 @@ class auth extends \auth_plugin_base {
             $errormsg = get_string('notloggedindebug', 'auth_oauth2', get_string('loginerror_invaliddomain', 'auth_oauth2'));
             $SESSION->loginerrormsg = $errormsg;
             $client->log_out();
-            redirect(new moodle_url($CFG->httpswwwroot . '/login/index.php'));
+            redirect(new moodle_url('/login/index.php'));
         }
 
         if (!$userwasmapped) {
@@ -481,7 +481,7 @@ class auth extends \auth_plugin_base {
                     $errormsg = get_string('accountexists', 'auth_oauth2');
                     $SESSION->loginerrormsg = $errormsg;
                     $client->log_out();
-                    redirect(new moodle_url($CFG->httpswwwroot . '/login/index.php'));
+                    redirect(new moodle_url('/login/index.php'));
                 }
 
                 if (email_is_not_allowed($userinfo['email'])) {
@@ -495,7 +495,7 @@ class auth extends \auth_plugin_base {
                     $errormsg = get_string('notloggedindebug', 'auth_oauth2', $reason);
                     $SESSION->loginerrormsg = $errormsg;
                     $client->log_out();
-                    redirect(new moodle_url($CFG->httpswwwroot . '/login/index.php'));
+                    redirect(new moodle_url('/login/index.php'));
                 }
 
                 if (!empty($CFG->authpreventaccountcreation)) {
@@ -509,7 +509,7 @@ class auth extends \auth_plugin_base {
                     $errormsg = get_string('notloggedindebug', 'auth_oauth2', $reason);
                     $SESSION->loginerrormsg = $errormsg;
                     $client->log_out();
-                    redirect(new moodle_url($CFG->httpswwwroot . '/login/index.php'));
+                    redirect(new moodle_url('/login/index.php'));
                 }
 
                 if ($issuer->get('requireconfirmation')) {
@@ -542,5 +542,3 @@ class auth extends \auth_plugin_base {
         redirect($redirecturl);
     }
 }
-
-

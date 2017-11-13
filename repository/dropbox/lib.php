@@ -591,7 +591,7 @@ class repository_dropbox extends repository {
     public static function get_oauth2callbackurl() {
         global $CFG;
 
-        return new moodle_url($CFG->httpswwwroot . '/admin/oauth2callback.php');
+        return new moodle_url('/admin/oauth2callback.php');
     }
 
     /**

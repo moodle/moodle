@@ -35,6 +35,7 @@ $return_types = optional_param('return_types', null, PARAM_INT);
 $areamaxbytes = optional_param('areamaxbytes', FILE_AREA_MAX_BYTES_UNLIMITED, PARAM_INT);
 $contextid = optional_param('context', SYSCONTEXTID, PARAM_INT);
 $elementid = optional_param('elementid', '', PARAM_TEXT);
+$removeorphaneddrafts = optional_param('removeorphaneddrafts', 0, PARAM_INT);
 
 $context = context::instance_by_id($contextid);
 if ($context->contextlevel == CONTEXT_MODULE) {
@@ -75,7 +76,7 @@ $options = array(
     'accepted_types' => $accepted_types,
     'areamaxbytes' => $areamaxbytes,
     'return_types' => $return_types,
-    'context' => $context,
+    'context' => $context
 );
 
 $usercontext = context_user::instance($USER->id);
@@ -87,8 +88,8 @@ foreach ($files as $file) {
 }
 
 $mform = new atto_managefiles_manage_form(null,
-    array('options' => $options, 'draftitemid' => $itemid, 'files' => $filenames, 'elementid' => $elementid),
-    'post', '', array('id' => 'atto_managefiles_manageform'));
+    array('options' => $options, 'draftitemid' => $itemid, 'files' => $filenames, 'elementid' => $elementid,
+        'removeorphaneddrafts' => $removeorphaneddrafts), 'post', '', array('id' => 'atto_managefiles_manageform'));
 
 if ($data = $mform->get_data()) {
     if (!empty($data->deletefile)) {

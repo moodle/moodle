@@ -55,15 +55,23 @@ abstract class base_activity extends base_mod {
     protected static $levels = [CONTEXT_MODULE];
 
     /**
-     * Returns recordset containing required data for indexing activities.
+     * Returns recordset containing all activities within the given context.
      *
-     * @param int $modifiedfrom timestamp
-     * @return \moodle_recordset
+     * @param \context|null $context Context
+     * @param int $modifiedfrom Return only records modified after this date
+     * @return \moodle_recordset|null Recordset, or null if no possible activities in given context
      */
-    public function get_recordset_by_timestamp($modifiedfrom = 0) {
+    public function get_document_recordset($modifiedfrom = 0, \context $context = null) {
         global $DB;
-        return $DB->get_recordset_select($this->get_module_name(), static::MODIFIED_FIELD_NAME . ' >= ?', array($modifiedfrom),
-                static::MODIFIED_FIELD_NAME . ' ASC');
+        list ($contextjoin, $contextparams) = $this->get_context_restriction_sql(
+                $context, $this->get_module_name(), 'modtable');
+        if ($contextjoin === null) {
+            return null;
+        }
+        return $DB->get_recordset_sql('SELECT modtable.* FROM {' . $this->get_module_name() .
+                '} modtable ' . $contextjoin . ' WHERE modtable.' . static::MODIFIED_FIELD_NAME .
+                ' >= ? ORDER BY modtable.' . static::MODIFIED_FIELD_NAME . ' ASC',
+                array_merge($contextparams, [$modifiedfrom]));
     }
 
     /**
@@ -149,7 +157,7 @@ abstract class base_activity extends base_mod {
      * @param \core_search\document $doc
      * @return \moodle_url
      */
-    public function get_doc_url(\core_search\document $doc) {;
+    public function get_doc_url(\core_search\document $doc) {
         return $this->get_context_url($doc);
     }
 
@@ -162,15 +170,6 @@ abstract class base_activity extends base_mod {
     public function get_context_url(\core_search\document $doc) {
         $cminfo = $this->get_cm($this->get_module_name(), strval($doc->get('itemid')), $doc->get('courseid'));
         return new \moodle_url('/mod/' . $this->get_module_name() . '/view.php', array('id' => $cminfo->id));
-    }
-
-    /**
-     * Returns the module name.
-     *
-     * @return string
-     */
-    protected function get_module_name() {
-        return substr($this->componentname, 4);
     }
 
     /**
@@ -188,5 +187,55 @@ abstract class base_activity extends base_mod {
         }
         return $this->activitiesdata[$this->get_module_name()][$instanceid];
 
+    }
+
+    /**
+     * Return the context info required to index files for
+     * this search area.
+     *
+     * Should be onerridden by each search area.
+     *
+     * @return array
+     */
+    public function get_search_fileareas() {
+        $fileareas = array(
+                'intro' // Fileareas.
+        );
+
+        return $fileareas;
+    }
+
+    /**
+     * Files related to the current document are attached,
+     * to the document object ready for indexing by
+     * Global Search.
+     *
+     * The default implementation retrieves all files for
+     * the file areas returned by get_search_fileareas().
+     * If you need to filter files to specific items per
+     * file area, you will need to override this method
+     * and explicitly provide the items.
+     *
+     * @param document $document The current document
+     * @return void
+     */
+    public function attach_files($document) {
+        $fileareas = $this->get_search_fileareas();
+
+        if (!empty($fileareas)) {
+            $cm = $this->get_cm($this->get_module_name(), $document->get('itemid'), $document->get('courseid'));
+
+            $context = \context_module::instance($cm->id);
+            $contextid = $context->id;
+
+            $fs = get_file_storage();
+            $files = $fs->get_area_files($contextid, $this->get_component_name(), $fileareas, false, '', false);
+
+            foreach ($files as $file) {
+                $document->add_stored_file($file);
+            }
+        }
+
+        return;
     }
 }

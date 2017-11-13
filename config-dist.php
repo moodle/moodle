@@ -259,6 +259,8 @@ $CFG->admin = 'admin';
 //      $CFG->session_memcached_prefix = 'memc.sess.key.';
 //      $CFG->session_memcached_acquire_lock_timeout = 120;
 //      $CFG->session_memcached_lock_expire = 7200;       // Ignored if PECL memcached is below version 2.2.0
+//      $CFG->session_memcached_lock_retry_sleep = 150;   // Spin-lock retry sleeptime (msec). Only effective
+//                                                        // for tuning php-memcached 3.0.x (PHP 7)
 //
 //   Redis session handler (requires redis server and redis extension):
 //      $CFG->session_handler_class = '\core\session\redis';
@@ -464,6 +466,13 @@ $CFG->admin = 'admin';
 // server administration web interface.
 //
 //      $CFG->disableupdateautodeploy = true;
+//
+// Use the following flag to disable the warning on the system notifications page
+// about present development libraries. This flag will not disable the warning within
+// the security overview report. Use this flag only if you really have prohibited web
+// access to the development libraries in your webserver configuration.
+//
+//      $CFG->disabledevlibdirscheck = true;
 //
 // Use the following flag to disable modifications to scheduled tasks
 // whilst still showing the state of tasks.

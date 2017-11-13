@@ -30,34 +30,20 @@
 
     Example context (json):
     {
-        "samplelink": "<a href=\"#\">Link</a>",
-        "sampledescription": "Sample description",
-        "predictionstyle": "alert alert-success",
-        "predictiondisplayvalue": "This dev will understand it"
+        "sampleimage": "<a href=\"#\">Link</a>",
+        "sampledescription": "Sample description"
     }
 }}
-<div class="card">
-    <div class="row m-a-1">
-        {{#samplelink}}
-            <div class="col-sm-1 span1 m-b-1">
-                {{{samplelink}}}
-            </div>
-            <div class="col-sm-3 span3 m-b-1">
-                {{{sampledescription}}}
-            </div>
-        {{/samplelink}}
-        {{^samplelink}}
-            <div class="col-sm-4 span4 m-b-1">
-                {{{sampledescription}}}
-            </div>
-        {{/samplelink}}
-        <div class="col-sm-4 span4">
-            <div class="{{predictionstyle}}">{{predictiondisplayvalue}}</div>
-        </div>
-        <div class="col-sm-4 span4">
-            {{#actions}}
-                    {{> core/action_menu}}
-            {{/actions}}
-        </div>
-    </div>
-</div>
+<tr>
+    <td class="col-sm-10">
+        {{#sampleimage}}
+            {{{sampleimage}}}
+        {{/sampleimage}}
+        {{{sampledescription}}}
+    </td>
+    <td class="col-sm-2">
+    {{#actions}}
+        {{> core/action_menu}}
+    {{/actions}}
+    </td>
+</tr>

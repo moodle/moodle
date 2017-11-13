@@ -1,12 +1,12 @@
 <?php
 /**
- * Copyright 2011-2014 Horde LLC (http://www.horde.org/)
+ * Copyright 2011-2017 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file COPYING for license information (LGPL). If you
  * did not receive this file, see http://www.horde.org/licenses/lgpl21.
  *
  * @category  Horde
- * @copyright 2011-2014 Horde LLC
+ * @copyright 2011-2017 Horde LLC
  * @license   http://www.horde.org/licenses/lgpl21 LGPL 2.1
  * @package   Imap_Client
  */
@@ -16,7 +16,7 @@
  *
  * @author    Michael Slusarz <slusarz@horde.org>
  * @category  Horde
- * @copyright 2011-2014 Horde LLC
+ * @copyright 2011-2017 Horde LLC
  * @license   http://www.horde.org/licenses/lgpl21 LGPL 2.1
  * @package   Imap_Client
  */
@@ -184,9 +184,12 @@ class Horde_Imap_Client_Fetch_Query implements ArrayAccess, Countable, Iterator
      */
     public function headers($label, $search, array $opts = array())
     {
-        $this->_data[Horde_Imap_Client::FETCH_HEADERS][$label] = array_merge($opts, array(
-            'headers' => $search
-        ));
+        $this->_data[Horde_Imap_Client::FETCH_HEADERS][$label] = array_merge(
+            $opts,
+            array(
+                'headers' => array_map('strval', $search)
+            )
+        );
     }
 
     /**
@@ -292,10 +295,7 @@ class Horde_Imap_Client_Fetch_Query implements ArrayAccess, Countable, Iterator
      */
     public function hash()
     {
-        return hash(
-            (PHP_MINOR_VERSION >= 4) ? 'fnv132' : 'sha1',
-            serialize($this)
-        );
+        return hash('md5', serialize($this));
     }
 
     /* ArrayAccess methods. */

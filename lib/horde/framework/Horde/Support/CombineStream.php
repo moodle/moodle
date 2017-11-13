@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2009-2014 Horde LLC (http://www.horde.org/)
+ * Copyright 2009-2017 Horde LLC (http://www.horde.org/)
  *
  * @author   Michael Slusarz <slusarz@horde.org>
  * @license  http://www.horde.org/licenses/bsd BSD

@@ -295,6 +295,22 @@ class quiz_overview_table extends quiz_attempts_report_table {
         }
     }
 
+    protected function update_sql_after_count($fields, $from, $where, $params) {
+        $fields .= ", COALESCE((
+                                SELECT MAX(qqr.regraded)
+                                  FROM {quiz_overview_regrades} qqr
+                                 WHERE qqr.questionusageid = quiza.uniqueid
+                          ), -1) AS regraded";
+        if ($this->options->onlyregraded) {
+            $where .= " AND COALESCE((
+                                    SELECT MAX(qqr.regraded)
+                                      FROM {quiz_overview_regrades} qqr
+                                     WHERE qqr.questionusageid = quiza.uniqueid
+                                ), -1) <> -1";
+        }
+        return [$fields, $from, $where, $params];
+    }
+
     protected function requires_latest_steps_loaded() {
         return $this->options->slotmarks;
     }

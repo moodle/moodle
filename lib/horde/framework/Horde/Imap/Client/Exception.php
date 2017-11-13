@@ -1,12 +1,12 @@
 <?php
 /**
- * Copyright 2008-2014 Horde LLC (http://www.horde.org/)
+ * Copyright 2008-2017 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file COPYING for license information (LGPL). If you
  * did not receive this file, see http://www.horde.org/licenses/lgpl21.
  *
  * @category  Horde
- * @copyright 2008-2014 Horde LLC
+ * @copyright 2008-2017 Horde LLC
  * @license   http://www.horde.org/licenses/lgpl21 LGPL 2.1
  * @package   Imap_Client
  */
@@ -19,7 +19,7 @@
  *
  * @author    Michael Slusarz <slusarz@horde.org>
  * @category  Horde
- * @copyright 2008-2014 Horde LLC
+ * @copyright 2008-2017 Horde LLC
  * @license   http://www.horde.org/licenses/lgpl21 LGPL 2.1
  * @package   Imap_Client
  */
@@ -199,6 +199,11 @@ class Horde_Imap_Client_Exception extends Horde_Exception_Wrapped
      */
     const LOGIN_PRIVACYREQUIRED = 106;
 
+    /**
+     * Server verification failed (SCRAM authentication).
+     */
+    const LOGIN_SERVER_VERIFICATION_FAILED = 107;
+
 
     // Mailbox access failures
 
@@ -247,15 +252,17 @@ class Horde_Imap_Client_Exception extends Horde_Exception_Wrapped
     /**
      * Constructor.
      *
-     * @param string $msg  Error message (non-translated).
-     * @param code $code   Error code.
+     * @param string $message  Error message (non-translated).
+     * @param code $code       Error code.
      */
     public function __construct($message = null, $code = null)
     {
         parent::__construct($message, $code);
 
         $this->raw_msg = $this->message;
-        $this->message = Horde_Imap_Client_Translation::t($this->message);
+        try {
+            $this->message = Horde_Imap_Client_Translation::t($this->message);
+        } catch (Horde_Translation_Exception $e) {}
     }
 
     /**
@@ -276,6 +283,21 @@ class Horde_Imap_Client_Exception extends Horde_Exception_Wrapped
     public function setCode($code)
     {
         $this->code = intval($code);
+    }
+
+    /**
+     * Perform substitution of variables in the error message.
+     *
+     * Needed to allow for correct translation of error message.
+     *
+     * @since 2.22.0
+     *
+     * @param array $args  Arguments used for substitution.
+     */
+    public function messagePrintf(array $args = array())
+    {
+        $this->raw_msg = vsprintf($this->raw_msg, $args);
+        $this->message = vsprintf($this->message, $args);
     }
 
 }

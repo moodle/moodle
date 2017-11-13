@@ -2,17 +2,17 @@
 /**
  * Copyright 2005-2008 Matthew Fonda <mfonda@php.net>
  * Copyright 2008 Philippe Jausions <jausions@php.net>
- * Copyright 2012-2014 Horde LLC (http://www.horde.org/)
+ * Copyright 2012-2017 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file COPYING for license information (LGPL). If you
  * did not receive this file, see http://www.horde.org/licenses/lgpl21.
  *
- * @category  Horde
- * @copyright 2005-2008 Matthew Fonda
- * @copyright 2008 Philippe Jausions
- * @copyright 2012-2014 Horde LLC
- * @license   http://www.horde.org/licenses/lgpl21 LGPL 2.1
- * @package   Crypt_Blowfish
+ * @author   Matthew Fonda <mfonda@php.net>
+ * @author   Philippe Jausions <jausions@php.net>
+ * @author   Michael Slusarz <slusarz@horde.org>
+ * @category Horde
+ * @license  http://www.horde.org/licenses/lgpl21 LGPL 2.1
+ * @package  Crypt_Blowfish
  */
 
 /**
@@ -24,7 +24,7 @@
  * @category  Horde
  * @copyright 2005-2008 Matthew Fonda
  * @copyright 2008 Philippe Jausions
- * @copyright 2012-2014 Horde LLC
+ * @copyright 2012-2017 Horde LLC
  * @license   http://www.horde.org/licenses/lgpl21 LGPL 2.1
  * @package   Crypt_Blowfish
  */

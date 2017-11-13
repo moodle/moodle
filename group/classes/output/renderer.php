@@ -47,4 +47,15 @@ class renderer extends plugin_renderer_base {
         $data = $page->export_for_template($this);
         return parent::render_from_template('core_group/index', $data);
     }
+
+    /**
+     * Defer to template.
+     *
+     * @param group_details $page Group details page object.
+     * @return string HTML to render the group details.
+     */
+    public function group_details(group_details $page) {
+        $data = $page->export_for_template($this);
+        return parent::render_from_template('core_group/group_details', $data);
+    }
 }

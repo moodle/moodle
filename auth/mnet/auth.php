@@ -1073,7 +1073,7 @@ class auth_plugin_mnet extends auth_plugin_base {
         global $DB, $CFG;
 
         // strip off wwwroot, since the remote site will prefix it's return url with this
-        $wantsurl = preg_replace('/(' . preg_quote($CFG->wwwroot, '/') . '|' . preg_quote($CFG->httpswwwroot, '/') . ')/', '', $wantsurl);
+        $wantsurl = preg_replace('/(' . preg_quote($CFG->wwwroot, '/') . ')/', '', $wantsurl);
 
         $sql = "SELECT DISTINCT h.id, h.wwwroot, h.name, a.sso_jump_url, a.name as application
                   FROM {mnet_host} h

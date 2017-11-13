@@ -220,7 +220,7 @@ abstract class engine {
             // Stop if we have exceeded the time limit (and there are still more items). Always
             // do at least one second's worth of documents otherwise it will never make progress.
             if ($lastindexeddoc !== $firstindexeddoc &&
-                    !empty($options['stopat']) && microtime(true) >= $options['stopat']) {
+                    !empty($options['stopat']) && manager::get_current_time() >= $options['stopat']) {
                 $partial = true;
                 break;
             }
@@ -229,7 +229,7 @@ abstract class engine {
                 continue;
             }
 
-            if ($options['lastindexedtime'] == 0) {
+            if (isset($options['lastindexedtime']) && $options['lastindexedtime'] == 0) {
                 // If we have never indexed this area before, it must be new.
                 $document->set_is_new(true);
             }

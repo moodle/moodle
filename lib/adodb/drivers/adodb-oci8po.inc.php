@@ -1,6 +1,6 @@
 <?php
 /*
-@version   v5.20.7  20-Sep-2016
+@version   v5.20.9  21-Dec-2016
 @copyright (c) 2000-2013 John Lim. All rights reserved.
 @copyright (c) 2014      Damien Regad, Mark Newnham and the ADOdb community
   Released under both BSD license and Lesser GPL library license.
@@ -56,6 +56,21 @@ class ADODB_oci8po extends ADODB_oci8 {
 		return ADOConnection::Execute($sql,$inputarr);
 	}
 
+	/**
+	 * The optimizations performed by ADODB_oci8::SelectLimit() are not
+	 * compatible with the oci8po driver, so we rely on the slower method
+	 * from the base class.
+	 * We can't properly handle prepared statements either due to preprocessing
+	 * of query parameters, so we treat them as regular SQL statements.
+	 */
+	function SelectLimit($sql, $nrows=-1, $offset=-1, $inputarr=false, $secs2cache=0)
+	{
+		if(is_array($sql)) {
+//			$sql = $sql[0];
+		}
+		return ADOConnection::SelectLimit($sql, $nrows, $offset, $inputarr, $secs2cache);
+	}
+
 	// emulate handling of parameters ? ?, replacing with :bind0 :bind1
 	function _query($sql,$inputarr=false)
 	{
@@ -74,11 +89,14 @@ class ADODB_oci8po extends ADODB_oci8 {
 					$sql = str_replace($qmMatch, $qmReplace, $sql);
 				}
 
+				// Replace parameters if any were found
 				$sqlarr = explode('?',$sql);
-				$sql = $sqlarr[0];
+				if(count($sqlarr) > 1) {
+					$sql = $sqlarr[0];
 
-				foreach($inputarr as $k => $v) {
-					$sql .=  ":$k" . $sqlarr[++$i];
+					foreach ($inputarr as $k => $v) {
+						$sql .= ":$k" . $sqlarr[++$i];
+					}
 				}
 
 				$sql = str_replace('-QUESTIONMARK-', '?', $sql);

@@ -47,6 +47,9 @@ class backup_data_activity_structure_step extends backup_activity_structure_step
             'assessed', 'assesstimestart', 'assesstimefinish', 'defaultsort',
             'defaultsortdir', 'editany', 'notification', 'timemodified', 'config', 'completionentries'));
 
+        $tags = new backup_nested_element('recordstags');
+        $tag = new backup_nested_element('tag', array('id'), array('itemid', 'rawname'));
+
         $fields = new backup_nested_element('fields');
 
         $field = new backup_nested_element('field', array('id'), array(
@@ -84,6 +87,9 @@ class backup_data_activity_structure_step extends backup_activity_structure_step
         $record->add_child($ratings);
         $ratings->add_child($rating);
 
+        $data->add_child($tags);
+        $tags->add_child($tag);
+
         // Define sources
         $data->set_source_table('data', array('id' => backup::VAR_ACTIVITYID));
 
@@ -104,6 +110,18 @@ class backup_data_activity_structure_step extends backup_activity_structure_step
                                                       'component'  => backup_helper::is_sqlparam('mod_data'),
                                                       'ratingarea' => backup_helper::is_sqlparam('entry')));
             $rating->set_source_alias('rating', 'value');
+            if (core_tag_tag::is_enabled('mod_data', 'data_records')) {
+                $tag->set_source_sql('SELECT t.id, ti.itemid, t.rawname
+                                        FROM {tag} t
+                                        JOIN {tag_instance} ti
+                                          ON ti.tagid = t.id
+                                       WHERE ti.itemtype = ?
+                                         AND ti.component = ?
+                                         AND ti.contextid = ?', array(
+                    backup_helper::is_sqlparam('data_records'),
+                    backup_helper::is_sqlparam('mod_data'),
+                    backup::VAR_CONTEXTID));
+            }
         }
 
         // Define id annotations

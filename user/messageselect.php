@@ -24,6 +24,7 @@
 
 require_once('../config.php');
 require_once($CFG->dirroot.'/message/lib.php');
+require_once($CFG->dirroot . '/course/lib.php');
 
 $id = required_param('id', PARAM_INT);
 $messagebody = optional_param('messagebody', '', PARAM_CLEANHTML);
@@ -115,8 +116,7 @@ if ($course->id == SITEID) {
 }
 
 $link = null;
-if (has_capability('moodle/course:viewparticipants', $coursecontext) ||
-    has_capability('moodle/site:viewparticipants', $systemcontext)) {
+if (course_can_view_participants($coursecontext) || course_can_view_participants($systemcontext)) {
     $link = new moodle_url("/user/index.php", array('id' => $course->id));
 }
 $PAGE->navbar->add(get_string('participants'), $link);

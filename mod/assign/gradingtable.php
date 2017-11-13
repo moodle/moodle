@@ -130,6 +130,7 @@ class assign_grading_table extends table_sql implements renderable {
         $params['assignmentid1'] = (int)$this->assignment->get_instance()->id;
         $params['assignmentid2'] = (int)$this->assignment->get_instance()->id;
         $params['assignmentid3'] = (int)$this->assignment->get_instance()->id;
+        $params['newstatus'] = ASSIGN_SUBMISSION_STATUS_NEW;
 
         $extrauserfields = get_extra_user_fields($this->assignment->get_context());
 
@@ -138,7 +139,7 @@ class assign_grading_table extends table_sql implements renderable {
         $fields .= 's.status as status, ';
         $fields .= 's.id as submissionid, ';
         $fields .= 's.timecreated as firstsubmission, ';
-        $fields .= 's.timemodified as timesubmitted, ';
+        $fields .= "CASE WHEN status <> :newstatus THEN s.timemodified ELSE NULL END as timesubmitted, ";
         $fields .= 's.attemptnumber as attemptnumber, ';
         $fields .= 'g.id as gradeid, ';
         $fields .= 'g.grade as grade, ';
@@ -269,7 +270,7 @@ class assign_grading_table extends table_sql implements renderable {
                 $params['submitted'] = ASSIGN_SUBMISSION_STATUS_SUBMITTED;
 
             } else if ($filter == ASSIGN_FILTER_NOT_SUBMITTED) {
-                $where .= ' AND (s.timemodified IS NULL OR s.status != :submitted) ';
+                $where .= ' AND (s.timemodified IS NULL OR s.status <> :submitted) ';
                 $params['submitted'] = ASSIGN_SUBMISSION_STATUS_SUBMITTED;
             } else if ($filter == ASSIGN_FILTER_REQUIRE_GRADING) {
                 $where .= ' AND (s.timemodified IS NOT NULL AND

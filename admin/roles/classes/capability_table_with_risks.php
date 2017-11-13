@@ -183,9 +183,14 @@ abstract class core_role_capability_table_with_risks extends core_role_capabilit
     public function get_risk_icon($type) {
         global $OUTPUT;
 
-        $text = $OUTPUT->pix_icon('i/' . str_replace('risk', 'risk_', $type), get_string($type . 'short', 'admin'));
+        $alt = get_string("{$type}short", "admin");
+        $title = get_string($type, "admin");
+
+        $text = $OUTPUT->pix_icon('i/' . str_replace('risk', 'risk_', $type), $alt, 'moodle', [
+                'title' => $title,
+            ]);
         $action = new popup_action('click', $this->risksurl, 'docspopup');
-        $riskicon = $OUTPUT->action_link($this->risksurl, $text, $action, array('title'=>get_string($type, 'admin')));
+        $riskicon = $OUTPUT->action_link($this->risksurl, $text, $action);
 
         return $riskicon;
     }

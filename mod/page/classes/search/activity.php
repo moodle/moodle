@@ -35,7 +35,6 @@ defined('MOODLE_INTERNAL') || die();
  */
 class activity extends \core_search\base_activity {
 
-
     /**
      * Returns the document associated with this activity.
      *
@@ -73,5 +72,26 @@ class activity extends \core_search\base_activity {
         $doc->set('description1', content_to_text($record->intro, $record->introformat));
 
         return $doc;
+    }
+
+    /**
+     * Returns true if this area uses file indexing.
+     *
+     * @return bool
+     */
+    public function uses_file_indexing() {
+        return true;
+    }
+
+    /**
+     * Return the context info required to index files for
+     * this search area.
+     *
+     * @return array
+     */
+    public function get_search_fileareas() {
+        $fileareas = array('intro', 'content'); // Fileareas.
+
+        return $fileareas;
     }
 }

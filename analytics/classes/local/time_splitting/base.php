@@ -67,6 +67,11 @@ abstract class base {
     protected static $indicators = [];
 
     /**
+     * @var bool
+     */
+    protected $evaluation = false;
+
+    /**
      * Define the time splitting methods ranges.
      *
      * 'time' value defines when predictions are executed, their values will be compared with
@@ -77,14 +82,15 @@ abstract class base {
     abstract protected function define_ranges();
 
     /**
-     * The time splitting method name.
+     * Returns a lang_string object representing the name for the time splitting method.
      *
-     * It is very recommendable to overwrite this method as this name appears in the UI.
-     * @return string
+     * Used as column identificator.
+     *
+     * If there is a corresponding '_help' string this will be shown as well.
+     *
+     * @return \lang_string
      */
-    public function get_name() {
-        return $this->get_id();
-    }
+    public static abstract function get_name() : \lang_string;
 
     /**
      * Returns the time splitting method id.
@@ -93,6 +99,24 @@ abstract class base {
      */
     public function get_id() {
         return '\\' . get_class($this);
+    }
+
+    /**
+     * Returns current evaluation value.
+     *
+     * @return bool
+     */
+    public function is_evaluating() {
+        return $this->evaluation;
+    }
+
+    /**
+     * Sets the evaluation flag.
+     *
+     * @param bool $evaluation
+     */
+    public function set_evaluating($evaluation) {
+        $this->evaluation = (bool)$evaluation;
     }
 
     /**
@@ -173,6 +197,10 @@ abstract class base {
 
         $dataset = $this->calculate_indicators($sampleids, $samplesorigin, $indicators, $ranges);
 
+        if (empty($dataset)) {
+            return false;
+        }
+
         // Now that we have the indicators in place we can add the time range indicators (and target if provided) to each of them.
         $this->fill_dataset($dataset, $calculatedtarget);
 
@@ -195,11 +223,27 @@ abstract class base {
      * @return array
      */
     protected function calculate_indicators($sampleids, $samplesorigin, $indicators, $ranges) {
+        global $DB;
 
         $dataset = array();
 
+        // Faster to run 1 db query per range.
+        $existingcalculations = array();
+        foreach ($ranges as $rangeindex => $range) {
+            // Load existing calculations.
+            $existingcalculations[$rangeindex] = \core_analytics\manager::get_indicator_calculations($this->analysable,
+                $range['start'], $range['end'], $samplesorigin);
+        }
+
+        // Here we store samples which calculations are not all null.
+        $notnulls = array();
+
         // Fill the dataset samples with indicators data.
+        $newcalculations = array();
         foreach ($indicators as $indicator) {
+
+            // Hook to allow indicators to store analysable-dependant data.
+            $indicator->fill_per_analysable_caches($this->analysable);
 
             // Per-range calculations.
             foreach ($ranges as $rangeindex => $range) {
@@ -207,23 +251,80 @@ abstract class base {
                 // Indicator instances are per-range.
                 $rangeindicator = clone $indicator;
 
-                // Calculate the indicator for each sample in this time range.
-                $calculated = $rangeindicator->calculate($sampleids, $samplesorigin, $range['start'], $range['end']);
+                $prevcalculations = array();
+                if (!empty($existingcalculations[$rangeindex][$rangeindicator->get_id()])) {
+                    $prevcalculations = $existingcalculations[$rangeindex][$rangeindicator->get_id()];
+                }
 
-                // Copy the calculated data to the dataset.
-                foreach ($calculated as $analysersampleid => $calculatedvalues) {
+                // Calculate the indicator for each sample in this time range.
+                list($samplesfeatures, $newindicatorcalculations, $indicatornotnulls) = $rangeindicator->calculate($sampleids,
+                    $samplesorigin, $range['start'], $range['end'], $prevcalculations);
+
+                // Copy the features data to the dataset.
+                foreach ($samplesfeatures as $analysersampleid => $features) {
 
                     $uniquesampleid = $this->append_rangeindex($analysersampleid, $rangeindex);
+
+                    if (!isset($notnulls[$uniquesampleid]) && !empty($indicatornotnulls[$analysersampleid])) {
+                        $notnulls[$uniquesampleid] = $uniquesampleid;
+                    }
 
                     // Init the sample if it is still empty.
                     if (!isset($dataset[$uniquesampleid])) {
                         $dataset[$uniquesampleid] = array();
                     }
 
-                    // Append the calculated indicator features at the end of the sample.
-                    $dataset[$uniquesampleid] = array_merge($dataset[$uniquesampleid], $calculatedvalues);
+                    // Append the features indicator features at the end of the sample.
+                    $dataset[$uniquesampleid] = array_merge($dataset[$uniquesampleid], $features);
+                }
+
+                if (!$this->is_evaluating()) {
+                    $timecreated = time();
+                    foreach ($newindicatorcalculations as $sampleid => $calculatedvalue) {
+                        // Prepare the new calculations to be stored into DB.
+
+                        $indcalc = new \stdClass();
+                        $indcalc->contextid = $this->analysable->get_context()->id;
+                        $indcalc->starttime = $range['start'];
+                        $indcalc->endtime = $range['end'];
+                        $indcalc->sampleid = $sampleid;
+                        $indcalc->sampleorigin = $samplesorigin;
+                        $indcalc->indicator = $rangeindicator->get_id();
+                        $indcalc->value = $calculatedvalue;
+                        $indcalc->timecreated = $timecreated;
+                        $newcalculations[] = $indcalc;
+                    }
                 }
             }
+
+            if (!$this->is_evaluating()) {
+                $batchsize = self::get_insert_batch_size();
+                if (count($newcalculations) > $batchsize) {
+                    // We don't want newcalculations array to grow too much as we already keep the
+                    // system memory busy storing $dataset contents.
+
+                    // Insert from the beginning.
+                    $remaining = array_splice($newcalculations, $batchsize);
+
+                    // Sorry mssql and oracle, this will be slow.
+                    $DB->insert_records('analytics_indicator_calc', $newcalculations);
+                    $newcalculations = $remaining;
+                }
+            }
+        }
+
+        if (!$this->is_evaluating() && $newcalculations) {
+            // Insert the remaining records.
+            $DB->insert_records('analytics_indicator_calc', $newcalculations);
+        }
+
+        // Delete rows where all calculations are null.
+        // We still store the indicator calculation and we still store the sample id as
+        // processed so we don't have to process this sample again, but we exclude it
+        // from the dataset because it is not useful.
+        $nulls = array_diff_key($dataset, $notnulls);
+        foreach ($nulls as $uniqueid => $ignoredvalues) {
+            unset($dataset[$uniqueid]);
         }
 
         return $dataset;
@@ -293,12 +394,9 @@ abstract class base {
         $metadata = array(
             'timesplitting' => $this->get_id(),
             // If no target the first column is the sampleid, if target the last column is the target.
+            // This will need to be updated when we support unsupervised learning models.
             'nfeatures' => count(current($dataset)) - 1
         );
-        if ($target) {
-            $metadata['targetclasses'] = json_encode($target::get_classes());
-            $metadata['targettype'] = ($target->is_linear()) ? 'linear' : 'discrete';
-        }
 
         // The first 2 samples will be used to store metadata about the dataset.
         $metadatacolumns = [];
@@ -409,5 +507,33 @@ abstract class base {
                     '" range is not fully defined. We need a start timestamp and an end timestamp.');
             }
         }
+    }
+
+    /**
+     * Returns the batch size used for insert_records.
+     *
+     * This method tries to find the best batch size without getting
+     * into dml internals. Maximum 1000 records to save memory.
+     *
+     * @return int
+     */
+    private static function get_insert_batch_size() {
+        global $DB;
+
+        // 500 is pgsql default so using 1000 is fine, no other db driver uses a hardcoded value.
+        if (empty($DB->dboptions['bulkinsertsize'])) {
+            return 1000;
+        }
+
+        $bulkinsert = $DB->dboptions['bulkinsertsize'];
+        if ($bulkinsert < 1000) {
+            return $bulkinsert;
+        }
+
+        while ($bulkinsert > 1000) {
+            $bulkinsert = round($bulkinsert / 2, 0);
+        }
+
+        return (int)$bulkinsert;
     }
 }

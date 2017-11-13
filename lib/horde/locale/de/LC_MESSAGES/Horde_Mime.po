@@ -1,5 +1,5 @@
 # German translations for Horde_Mime module.
-# Copyright 2010-2014 Horde LLC (http://www.horde.org/)
+# Copyright 2010-2017 Horde LLC (http://www.horde.org/)
 # This file is distributed under the same license as the Horde_Mime module.
 # Automatically generated, 2010.
 #
@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Horde_Mime\n"
 "Report-Msgid-Bugs-To: dev@lists.horde.org\n"
-"POT-Creation-Date: 2014-06-04 11:28+0200\n"
+"POT-Creation-Date: 2015-01-08 11:22+0100\n"
 "PO-Revision-Date: 2010-10-13 01:27+0200\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: i18n@lists.horde.org\n"
@@ -21,43 +21,15 @@ msgstr ""
 msgid "Disposition Notification"
 msgstr "Empfangsbestätigung"
 
-#: lib/Horde/Mime/Mail.php:421
+#: lib/Horde/Mime/Mail.php:439
 msgid "HTML Version of Message"
 msgstr "HTML-Version der Nachricht"
 
-#: lib/Horde/Mime/Headers.php:547
-msgid "List-Archive"
-msgstr "Listen-Archiv"
-
-#: lib/Horde/Mime/Headers.php:542
-msgid "List-Help"
-msgstr "Listen-Hilfe"
-
-#: lib/Horde/Mime/Headers.php:549
-msgid "List-Id"
-msgstr "Listen-Id"
-
-#: lib/Horde/Mime/Headers.php:545
-msgid "List-Owner"
-msgstr "Listen-Besitzer"
-
-#: lib/Horde/Mime/Headers.php:546
-msgid "List-Post"
-msgstr "Listen-Adresse"
-
-#: lib/Horde/Mime/Headers.php:544
-msgid "List-Subscribe"
-msgstr "Listen-Anmeldung"
-
-#: lib/Horde/Mime/Headers.php:543
-msgid "List-Unsubscribe"
-msgstr "Listen-Abmeldung"
-
-#: lib/Horde/Mime/Mail.php:419
+#: lib/Horde/Mime/Mail.php:437
 msgid "Plaintext Version of Message"
 msgstr "Textversion der Nachricht"
 
-#: lib/Horde/Mime/Mdn.php:200
+#: lib/Horde/Mime/Mdn.php:201
 #, php-format
 msgid ""
 "The message sent on %s to %s with subject \"%s\" has been displayed.\n"

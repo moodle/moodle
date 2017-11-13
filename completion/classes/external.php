@@ -115,6 +115,86 @@ class core_completion_external extends external_api {
     }
 
     /**
+     * Describes the parameters for override_activity_completion_status.
+     *
+     * @return external_external_function_parameters
+     * @since Moodle 3.4
+     */
+    public static function override_activity_completion_status_parameters() {
+        return new external_function_parameters (
+            array(
+                'userid' => new external_value(PARAM_INT, 'user id'),
+                'cmid' => new external_value(PARAM_INT, 'course module id'),
+                'newstate' => new external_value(PARAM_INT, 'the new activity completion state'),
+            )
+        );
+    }
+
+    /**
+     * Update completion status for a user in an activity.
+     * @param  int $userid    User id
+     * @param  int $cmid      Course module id
+     * @param  int $newstate  Activity completion
+     * @return array          Array containing the current (updated) completion status.
+     * @since Moodle 3.4
+     * @throws moodle_exception
+     */
+    public static function override_activity_completion_status($userid, $cmid, $newstate) {
+        // Validate and normalize parameters.
+        $params = self::validate_parameters(self::override_activity_completion_status_parameters(),
+            array('userid' => $userid, 'cmid' => $cmid, 'newstate' => $newstate));
+        $userid = $params['userid'];
+        $cmid = $params['cmid'];
+        $newstate = $params['newstate'];
+
+        $context = context_module::instance($cmid);
+        self::validate_context($context);
+
+        list($course, $cm) = get_course_and_cm_from_cmid($cmid);
+
+        // Set up completion object and check it is enabled.
+        $completion = new completion_info($course);
+        if (!$completion->is_enabled()) {
+            throw new moodle_exception('completionnotenabled', 'completion');
+        }
+
+        // Update completion state and get the new state back.
+        $completion->update_state($cm, $newstate, $userid, true);
+        $completiondata = $completion->get_data($cm, false, $userid);
+
+        // Return the current state of completion.
+        return [
+            'cmid' => $completiondata->coursemoduleid,
+            'userid' => $completiondata->userid,
+            'state' => $completiondata->completionstate,
+            'timecompleted' => $completiondata->timemodified,
+            'overrideby' => $completiondata->overrideby,
+            'tracking' => $completion->is_enabled($cm)
+        ];
+    }
+
+    /**
+     * Describes the override_activity_completion_status return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.4
+     */
+    public static function override_activity_completion_status_returns() {
+
+        return new external_single_structure(
+            array(
+                'cmid' => new external_value(PARAM_INT, 'The course module id'),
+                'userid' => new external_value(PARAM_INT, 'The user id to which the completion info belongs'),
+                'state'   => new external_value(PARAM_INT, 'The current completion state.'),
+                'timecompleted' => new external_value(PARAM_INT, 'time of completion'),
+                'overrideby' => new external_value(PARAM_INT, 'The user id who has overriden the status, or null'),
+                'tracking'      => new external_value(PARAM_INT, 'type of tracking:
+                                                                    0 means none, 1 manual, 2 automatic'),
+            )
+        );
+    }
+
+    /**
      * Returns description of method parameters
      *
      * @return external_function_parameters

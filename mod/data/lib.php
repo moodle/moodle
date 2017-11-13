@@ -32,6 +32,7 @@ define ('DATA_LASTNAME', -2);
 define ('DATA_APPROVED', -3);
 define ('DATA_TIMEADDED', 0);
 define ('DATA_TIMEMODIFIED', -4);
+define ('DATA_TAGS', -5);
 
 define ('DATA_CAP_EXPORT', 'mod/data:viewalluserpresets');
 
@@ -622,6 +623,17 @@ function data_generate_default_template(&$data, $template, $recordid=0, $form=fa
                 $token
             );
         }
+
+        if (core_tag_tag::is_enabled('mod_data', 'data_records')) {
+            $label = new html_table_cell(get_string('tags') . ':');
+            if ($form) {
+                $cell = data_generate_tag_form();
+            } else {
+                $cell = new html_table_cell('##tags##');
+            }
+            $table->data[] = new html_table_row(array($label, $cell));
+        }
+
         if ($template == 'listtemplate') {
             $cell = new html_table_cell('##edit##  ##more##  ##delete##  ##approve##  ##disapprove##  ##export##');
             $cell->colspan = 2;
@@ -664,6 +676,75 @@ function data_generate_default_template(&$data, $template, $recordid=0, $form=fa
 
         return $str;
     }
+}
+
+/**
+ * Build the form elements to manage tags for a record.
+ *
+ * @param int|bool $recordid
+ * @param string[] $selected raw tag names
+ * @return string
+ */
+function data_generate_tag_form($recordid = false, $selected = []) {
+    global $CFG, $DB, $OUTPUT, $PAGE;
+
+    $tagtypestoshow = \core_tag_area::get_showstandard('mod_data', 'data_records');
+    $showstandard = ($tagtypestoshow != core_tag_tag::HIDE_STANDARD);
+    $typenewtags = ($tagtypestoshow != core_tag_tag::STANDARD_ONLY);
+
+    $str = html_writer::start_tag('div', array('class' => 'datatagcontrol'));
+
+    $namefield = empty($CFG->keeptagnamecase) ? 'name' : 'rawname';
+
+    $tagcollid = \core_tag_area::get_collection('mod_data', 'data_records');
+    $tags = [];
+    $selectedtags = [];
+
+    if ($showstandard) {
+        $tags += $DB->get_records_menu('tag', array('isstandard' => 1, 'tagcollid' => $tagcollid),
+            $namefield, 'id,' . $namefield . ' as fieldname');
+    }
+
+    if ($recordid) {
+        $selectedtags += core_tag_tag::get_item_tags_array('mod_data', 'data_records', $recordid);
+    }
+
+    if (!empty($selected)) {
+        list($sql, $params) = $DB->get_in_or_equal($selected, SQL_PARAMS_NAMED);
+        $params['tagcollid'] = $tagcollid;
+        $sql = "SELECT id, $namefield FROM {tag} WHERE tagcollid = :tagcollid AND rawname $sql";
+        $selectedtags += $DB->get_records_sql_menu($sql, $params);
+    }
+
+    $tags += $selectedtags;
+
+    $str .= '<select class="custom-select" name="tags[]" id="tags" multiple>';
+    foreach ($tags as $tagid => $tag) {
+        $selected = key_exists($tagid, $selectedtags) ? 'selected' : '';
+        $str .= "<option value='$tag' $selected>$tag</option>";
+    }
+    $str .= '</select>';
+
+    if (has_capability('moodle/tag:manage', context_system::instance()) && $showstandard) {
+        $url = new moodle_url('/tag/manage.php', array('tc' => core_tag_area::get_collection('mod_data',
+            'data_records')));
+        $str .= ' ' . $OUTPUT->action_link($url, get_string('managestandardtags', 'tag'));
+    }
+
+    $PAGE->requires->js_call_amd('core/form-autocomplete', 'enhance', $params = array(
+            '#tags',
+            $typenewtags,
+            '',
+            get_string('entertags', 'tag'),
+            false,
+            $showstandard,
+            get_string('noselection', 'form')
+        )
+    );
+
+    $str .= html_writer::end_tag('div');
+
+    return $str;
 }
 
 
@@ -1442,6 +1523,12 @@ function data_print_template($template, $records, $data, $search='', $page=0, $r
             $replacement[] = '';
         }
 
+        if (core_tag_tag::is_enabled('mod_data', 'data_records')) {
+            $patterns[] = "##tags##";
+            $replacement[] = $OUTPUT->tag_list(
+                core_tag_tag::get_item_tags('mod_data', 'data_records', $record->id), '', 'data-tags');
+        }
+
         // actual replacement of the tags
         $newtext = str_ireplace($patterns, $replacement, $data->{$template});
 
@@ -1823,6 +1910,12 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
     $patterns[]    = '/##lastname##/';
     $replacement[] = '<label class="accesshide" for="u_ln">' . get_string('authorlastname', 'data') . '</label>' .
                      '<input type="text" class="form-control" size="16" id="u_ln" name="u_ln" value="' . s($ln) . '" />';
+
+    if (core_tag_tag::is_enabled('mod_data', 'data_records')) {
+        $patterns[] = "/##tags##/";
+        $selectedtags = isset($search_array[DATA_TAGS]->rawtagnames) ? $search_array[DATA_TAGS]->rawtagnames : [];
+        $replacement[] = data_generate_tag_form(false, $selectedtags);
+    }
 
     // actual replacement of the tags
     $newtext = preg_replace($patterns, $replacement, $data->asearchtemplate);
@@ -2707,6 +2800,9 @@ function data_reset_course_form_definition(&$mform) {
 
     $mform->addElement('checkbox', 'reset_data_comments', get_string('deleteallcomments'));
     $mform->disabledIf('reset_data_comments', 'reset_data', 'checked');
+
+    $mform->addElement('checkbox', 'reset_data_tags', get_string('removealldatatags', 'data'));
+    $mform->disabledIf('reset_data_tags', 'reset_data', 'checked');
 }
 
 /**
@@ -2791,6 +2887,8 @@ function data_reset_userdata($data) {
 
                 $ratingdeloptions->contextid = $datacontext->id;
                 $rm->delete_ratings($ratingdeloptions);
+
+                core_tag_tag::delete_instances('mod_data', null, $datacontext->id);
             }
         }
 
@@ -2833,6 +2931,8 @@ function data_reset_userdata($data) {
                 }
                 $notenrolled[$record->userid] = true;
 
+                core_tag_tag::remove_all_item_tags('mod_data', 'data_records', $record->id);
+
                 $DB->delete_records('comments', array('itemid' => $record->id, 'commentarea' => 'database_entry'));
                 $DB->delete_records('data_content', array('recordid' => $record->id));
                 $DB->delete_records('data_records', array('id' => $record->id));
@@ -2868,6 +2968,22 @@ function data_reset_userdata($data) {
     if (!empty($data->reset_data_comments)) {
         $DB->delete_records_select('comments', "itemid IN ($allrecordssql) AND commentarea='database_entry'", array($data->courseid));
         $status[] = array('component'=>$componentstr, 'item'=>get_string('deleteallcomments'), 'error'=>false);
+    }
+
+    // Remove all the tags.
+    if (!empty($data->reset_data_tags)) {
+        if ($datas = $DB->get_records_sql($alldatassql, array($data->courseid))) {
+            foreach ($datas as $dataid => $unused) {
+                if (!$cm = get_coursemodule_from_instance('data', $dataid)) {
+                    continue;
+                }
+
+                $context = context_module::instance($cm->id);
+                core_tag_tag::delete_instances('mod_data', null, $context->id);
+
+            }
+        }
+        $status[] = array('component' => $componentstr, 'item' => get_string('tagsdeleted', 'data'), 'error' => false);
     }
 
     // updating dates - shift may be negative too
@@ -3016,10 +3132,11 @@ function data_export_ods($export, $dataname, $count) {
  * @param bool $userdetails whether to include the details of the record author
  * @param bool $time whether to include time created/modified
  * @param bool $approval whether to include approval status
+ * @param bool $tags whether to include tags
  * @return array
  */
 function data_get_exportdata($dataid, $fields, $selectedfields, $currentgroup=0, $context=null,
-                             $userdetails=false, $time=false, $approval=false) {
+                             $userdetails=false, $time=false, $approval=false, $tags = false) {
     global $DB;
 
     if (is_null($context)) {
@@ -3038,6 +3155,9 @@ function data_get_exportdata($dataid, $fields, $selectedfields, $currentgroup=0,
         } else {
             $exportdata[0][] = $field->field->name;
         }
+    }
+    if ($tags) {
+        $exportdata[0][] = get_string('tags', 'data');
     }
     if ($userdetails) {
         $exportdata[0][] = get_string('user');
@@ -3072,6 +3192,10 @@ function data_get_exportdata($dataid, $fields, $selectedfields, $currentgroup=0,
                     $contents = $field->export_text_value($content[$field->field->id]);
                 }
                 $exportdata[$line][] = $contents;
+            }
+            if ($tags) {
+                $itemtags = \core_tag_tag::get_item_tags_array('mod_data', 'data_records', $record->id);
+                $exportdata[$line][] = implode(', ', $itemtags);
             }
             if ($userdetails) { // Add user details to the export data
                 $userdata = get_complete_user_data('id', $record->userid);
@@ -3783,14 +3907,14 @@ function data_get_recordids($alias, $searcharray, $dataid, $recordids) {
     }
     list($insql, $params) = $DB->get_in_or_equal($recordids, SQL_PARAMS_NAMED);
     $nestselect = 'SELECT c' . $alias . '.recordid
-                     FROM {data_content} c' . $alias . ',
-                          {data_fields} f,
-                          {data_records} r,
-                          {user} u ';
-    $nestwhere = 'WHERE u.id = r.userid
-                    AND f.id = c' . $alias . '.fieldid
-                    AND r.id = c' . $alias . '.recordid
-                    AND r.dataid = :dataid
+                     FROM {data_content} c' . $alias . '
+               INNER JOIN {data_fields} f
+                       ON f.id = c' . $alias . '.fieldid
+               INNER JOIN {data_records} r
+                       ON r.id = c' . $alias . '.recordid
+               INNER JOIN {user} u
+                       ON u.id = r.userid ';
+    $nestwhere = 'WHERE r.dataid = :dataid
                     AND c' . $alias .'.recordid ' . $insql . '
                     AND ';
 
@@ -3801,6 +3925,25 @@ function data_get_recordids($alias, $searcharray, $dataid, $recordids) {
     } else if ($searchcriteria == DATA_TIMEMODIFIED) {
         $nestsql = $nestselect . $nestwhere . $nestsearch->field . ' >= :timemodified GROUP BY c' . $alias . '.recordid';
         $params['timemodified'] = $nestsearch->data;
+    } else if ($searchcriteria == DATA_TAGS) {
+        if (empty($nestsearch->rawtagnames)) {
+            return [];
+        }
+        $i = 0;
+        $tagwhere = [];
+        $tagselect = '';
+        foreach ($nestsearch->rawtagnames as $tagrawname) {
+            $tagselect .= " INNER JOIN {tag_instance} ti_$i
+                                    ON ti_$i.component = 'mod_data'
+                                   AND ti_$i.itemtype = 'data_records'
+                                   AND ti_$i.itemid = r.id
+                            INNER JOIN {tag} t_$i
+                                    ON ti_$i.tagid = t_$i.id ";
+            $tagwhere[] = " t_$i.rawname = :trawname_$i ";
+            $params["trawname_$i"] = $tagrawname;
+            $i++;
+        }
+        $nestsql = $nestselect . $tagselect . $nestwhere . implode(' AND ', $tagwhere);
     } else {    // First name or last name.
         $thing = $DB->sql_like($nestsearch->field, ':search1', false);
         $nestsql = $nestselect . $nestwhere . $thing . ' GROUP BY c' . $alias . '.recordid';
@@ -3946,6 +4089,8 @@ function data_delete_record($recordid, $data, $courseid, $cmid) {
                     require_once($CFG->dirroot.'/mod/data/rsslib.php');
                     data_rss_delete_file($data);
                 }
+
+                core_tag_tag::remove_all_item_tags('mod_data', 'data_records', $recordid);
 
                 // Trigger an event for deleting this record.
                 $event = \mod_data\event\record_deleted::create(array(

@@ -51,14 +51,7 @@ class behat_forms extends behat_base {
      * @param string $button
      */
     public function press_button($button) {
-
-        // Ensures the button is present.
-        $buttonnode = $this->find_button($button);
-        // Focus on button to ensure it is in viewport, before pressing it.
-        if ($this->running_javascript()) {
-            $buttonnode->focus();
-        }
-        $buttonnode->press();
+        $this->execute('behat_general::i_click_on', [$button, 'button']);
     }
 
     /**
@@ -532,7 +525,7 @@ class behat_forms extends behat_base {
      * @param string $item
      */
     public function i_click_on_item_in_the_autocomplete_list($item) {
-        $xpathtarget = "//ul[@class='form-autocomplete-suggestions']//*[contains(.,'" . $item . "')]";
+        $xpathtarget = "//ul[@class='form-autocomplete-suggestions']//*[contains(concat('|', string(.), '|'),'|" . $item . "|')]";
 
         $this->execute('behat_general::i_click_on', [$xpathtarget, 'xpath_element']);
 

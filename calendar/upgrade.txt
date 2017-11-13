@@ -1,6 +1,11 @@
 This files describes API changes in /calendar/* ,
 information provided here is intended especially for developers.
 
+=== 3.4 ===
+* calendar_get_mini, and calendar_get_upcoming have been deprecated. Please update to use the new exporters and renderers.
+* added core_calendar_get_valid_event_timestart_range and core_calendar_event_timestart_updated callbacks for module events
+  when the update_event_start_day function is used in the local api.
+
 === 3.3 ===
 * calendar_event_hook() has been removed. Developers should be using the Moodle events system to achieve this behaviour,
   rather than using a hacky calendar specific implementation.

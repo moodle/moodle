@@ -75,6 +75,7 @@ class filter_urltolink extends moodle_text_filter {
         //&lt;a href="blah">
         $filterignoretagsopen  = array('<a\s[^>]+?>', '<span[^>]+?class="nolink"[^>]*?>');
         $filterignoretagsclose = array('</a>', '</span>');
+        $ignoretags = [];
         filter_save_ignore_tags($text,$filterignoretagsopen,$filterignoretagsclose,$ignoretags);
 
         // Check if we support unicode modifiers in regular expressions. Cache it.

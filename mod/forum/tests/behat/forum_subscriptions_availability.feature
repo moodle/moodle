@@ -76,7 +76,7 @@ Feature: As a teacher I need to see an accurate list of subscribed users
     And I should see "Student 1"
     And I should see "Student 2"
     And I should see "Student 3"
-    And I should not see "Manage subscriptions"
+    And I should not see "Manage subscribers"
 
   Scenario: A forced and hidden forum lists only teachers
     When I add a "Forum" to section "1" and I fill the form with:

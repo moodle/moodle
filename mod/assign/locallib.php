@@ -50,6 +50,9 @@ define('ASSIGN_ATTEMPT_REOPEN_METHOD_UNTILPASS', 'untilpass');
 // Special value means allow unlimited attempts.
 define('ASSIGN_UNLIMITED_ATTEMPTS', -1);
 
+// Special value means no grade has been set.
+define('ASSIGN_GRADE_NOT_SET', -1);
+
 // Grading states.
 define('ASSIGN_GRADING_STATUS_GRADED', 'graded');
 define('ASSIGN_GRADING_STATUS_NOT_GRADED', 'notgraded');
@@ -166,6 +169,12 @@ class assign {
 
     /** @var array cached list of IDs of users who share group membership with the user. The cache key will be the user. */
     private $sharedgroupmembers = array();
+
+    /**
+     * @var stdClass The most recent team submission. Used to determine additional attempt numbers and whether
+     * to update the gradebook.
+     */
+    private $mostrecentteamsubmission = null;
 
     /**
      * Constructor for the base assign class.
@@ -600,6 +609,8 @@ class assign {
             $o .= $this->view_batch_markingallocation($mform);
         } else if ($action == 'viewsubmitforgradingerror') {
             $o .= $this->view_error_page(get_string('submitforgrading', 'assign'), $notices);
+        } else if ($action == 'fixrescalednullgrades') {
+            $o .= $this->view_fix_rescaled_null_grades();
         } else {
             $o .= $this->view_submission_page();
         }
@@ -933,6 +944,132 @@ class assign {
     }
 
     /**
+     * Check if the given calendar_event is either a user or group override
+     * event.
+     *
+     * @return bool
+     */
+    public function is_override_calendar_event(\calendar_event $event) {
+        global $DB;
+
+        if (!isset($event->modulename)) {
+            return false;
+        }
+
+        if ($event->modulename != 'assign') {
+            return false;
+        }
+
+        if (!isset($event->instance)) {
+            return false;
+        }
+
+        if (!isset($event->userid) && !isset($event->groupid)) {
+            return false;
+        }
+
+        $overrideparams = [
+            'assignid' => $event->instance
+        ];
+
+        if (isset($event->groupid)) {
+            $overrideparams['groupid'] = $event->groupid;
+        } else if (isset($event->userid)) {
+            $overrideparams['userid'] = $event->userid;
+        }
+
+        if ($DB->get_record('assign_overrides', $overrideparams)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * This function calculates the minimum and maximum cutoff values for the timestart of
+     * the given event.
+     *
+     * It will return an array with two values, the first being the minimum cutoff value and
+     * the second being the maximum cutoff value. Either or both values can be null, which
+     * indicates there is no minimum or maximum, respectively.
+     *
+     * If a cutoff is required then the function must return an array containing the cutoff
+     * timestamp and error string to display to the user if the cutoff value is violated.
+     *
+     * A minimum and maximum cutoff return value will look like:
+     * [
+     *     [1505704373, 'The due date must be after the sbumission start date'],
+     *     [1506741172, 'The due date must be before the cutoff date']
+     * ]
+     *
+     * If the event does not have a valid timestart range then [false, false] will
+     * be returned.
+     *
+     * @param calendar_event $event The calendar event to get the time range for
+     * @return array
+     */
+    function get_valid_calendar_event_timestart_range(\calendar_event $event) {
+        $instance = $this->get_instance();
+        $submissionsfromdate = $instance->allowsubmissionsfromdate;
+        $cutoffdate = $instance->cutoffdate;
+        $duedate = $instance->duedate;
+        $gradingduedate = $instance->gradingduedate;
+        $mindate = null;
+        $maxdate = null;
+
+        if ($event->eventtype == ASSIGN_EVENT_TYPE_DUE) {
+            // This check is in here because due date events are currently
+            // the only events that can be overridden, so we can save a DB
+            // query if we don't bother checking other events.
+            if ($this->is_override_calendar_event($event)) {
+                // This is an override event so there is no valid timestart
+                // range to set it to.
+                return [false, false];
+            }
+
+            if ($submissionsfromdate) {
+                $mindate = [
+                    $submissionsfromdate,
+                    get_string('duedatevalidation', 'assign'),
+                ];
+            }
+
+            if ($cutoffdate) {
+                $maxdate = [
+                    $cutoffdate,
+                    get_string('cutoffdatevalidation', 'assign'),
+                ];
+            }
+
+            if ($gradingduedate) {
+                // If we don't have a cutoff date or we've got a grading due date
+                // that is earlier than the cutoff then we should use that as the
+                // upper limit for the due date.
+                if (!$cutoffdate || $gradingduedate < $cutoffdate) {
+                    $maxdate = [
+                        $gradingduedate,
+                        get_string('gradingdueduedatevalidation', 'assign'),
+                    ];
+                }
+            }
+        } else if ($event->eventtype == ASSIGN_EVENT_TYPE_GRADINGDUE) {
+            if ($duedate) {
+                $mindate = [
+                    $duedate,
+                    get_string('gradingdueduedatevalidation', 'assign'),
+                ];
+            } else if ($submissionsfromdate) {
+                $mindate = [
+                    $submissionsfromdate,
+                    get_string('gradingduefromdatevalidation', 'assign'),
+                ];
+            }
+        }
+
+        return [$mindate, $maxdate];
+    }
+
+    /**
      * Actual implementation of the reset course functionality, delete all the
      * assignment submissions for course $data->courseid.
      *
@@ -1151,7 +1288,6 @@ class assign {
         $event->groupid = 0;
         $event->userid  = 0;
         $event->instance  = $instance->id;
-        $event->name = $instance->name;
         $event->type = CALENDAR_EVENT_TYPE_ACTION;
 
         // Convert the links to pluginfile. It is a bit hacky but at this stage the files
@@ -1178,6 +1314,7 @@ class assign {
 
         $eventtype = ASSIGN_EVENT_TYPE_DUE;
         if ($instance->duedate) {
+            $event->name = get_string('calendardue', 'assign', $instance->name);
             $event->eventtype = $eventtype;
             $event->timestart = $instance->duedate;
             $event->timesort = $instance->duedate;
@@ -1203,6 +1340,7 @@ class assign {
 
         $eventtype = ASSIGN_EVENT_TYPE_GRADINGDUE;
         if ($instance->gradingduedate) {
+            $event->name = get_string('calendargradingdue', 'assign', $instance->name);
             $event->eventtype = $eventtype;
             $event->timestart = $instance->gradingduedate;
             $event->timesort = $instance->gradingduedate;
@@ -1904,9 +2042,13 @@ class assign {
      * @return null|stdClass user record
      */
     public function get_participant($userid) {
-        global $DB;
+        global $DB, $USER;
 
-        $participant = $DB->get_record('user', array('id' => $userid));
+        if ($userid == $USER->id) {
+            $participant = clone ($USER);
+        } else {
+            $participant = $DB->get_record('user', array('id' => $userid));
+        }
         if (!$participant) {
             return null;
         }
@@ -2473,13 +2615,16 @@ class assign {
 
         $submission = null;
         if ($this->get_instance()->teamsubmission) {
-            $submission = $this->get_group_submission($grade->userid, 0, false);
+            if (isset($this->mostrecentteamsubmission)) {
+                $submission = $this->mostrecentteamsubmission;
+            } else {
+                $submission = $this->get_group_submission($grade->userid, 0, false);
+            }
         } else {
             $submission = $this->get_user_submission($grade->userid, false);
         }
 
-        // Only push to gradebook if the update is for the latest attempt.
-        // Not the latest attempt.
+        // Only push to gradebook if the update is for the most recent attempt.
         if ($submission && $submission->attemptnumber != $grade->attemptnumber) {
             return true;
         }
@@ -2889,7 +3034,12 @@ class assign {
             $item = $this->get_submission($submissionid);
 
             // Check permissions.
-            $this->require_view_submission($item->userid);
+            if (empty($item->userid)) {
+                // Group submission.
+                $this->require_view_group_submission($item->groupid);
+            } else {
+                $this->require_view_submission($item->userid);
+            }
             $o .= $this->get_renderer()->render(new assign_header($this->get_instance(),
                                                               $this->get_context(),
                                                               $this->show_intro(),
@@ -2944,11 +3094,17 @@ class assign {
      * @param assign_plugin $plugin - The assignment plugin
      */
     public function download_rewrite_pluginfile_urls($text, $user, $plugin) {
-        $groupmode = groups_get_activity_groupmode($this->get_course_module());
+        // The groupname prefix for the urls doesn't depend on the group mode of the assignment instance.
+        // Rather, it should be determined by checking the group submission settings of the instance,
+        // which is what download_submission() does when generating the file name prefixes.
         $groupname = '';
-        if ($groupmode) {
-            $groupid = groups_get_activity_group($this->get_course_module(), true);
-            $groupname = groups_get_group_name($groupid).'-';
+        if ($this->get_instance()->teamsubmission) {
+            $submissiongroup = $this->get_submission_group($user->id);
+            if ($submissiongroup) {
+                $groupname = $submissiongroup->name . '-';
+            } else {
+                $groupname = get_string('defaultteam', 'assign') . '-';
+            }
         }
 
         if ($this->is_blind_marking()) {
@@ -2961,10 +3117,14 @@ class assign {
             $prefix = clean_filename($prefix . '_' . $this->get_uniqueid_for_user($user->id) . '_');
         }
 
-        $subtype = $plugin->get_subtype();
-        $type = $plugin->get_type();
-        $prefix = $prefix . $subtype . '_' . $type . '_';
-
+        // Only prefix files if downloadasfolders user preference is NOT set.
+        if (!get_user_preferences('assign_downloadasfolders', 1)) {
+            $subtype = $plugin->get_subtype();
+            $type = $plugin->get_type();
+            $prefix = $prefix . $subtype . '_' . $type . '_';
+        } else {
+            $prefix = "";
+        }
         $result = str_replace('@@PLUGINFILE@@/', $prefix, $text);
 
         return $result;
@@ -3085,6 +3245,18 @@ class assign {
     }
 
     /**
+     * Throw an error if the permissions to view this users' group submission are missing.
+     *
+     * @param int $groupid Group id.
+     * @throws required_capability_exception
+     */
+    public function require_view_group_submission($groupid) {
+        if (!$this->can_view_group_submission($groupid)) {
+            throw new required_capability_exception($this->context, 'mod/assign:viewgrades', 'nopermission', '');
+        }
+    }
+
+    /**
      * Throw an error if the permissions to view this users submission are missing.
      *
      * @throws required_capability_exception
@@ -3172,7 +3344,9 @@ class assign {
         $groupname = '';
         if ($groupmode) {
             $groupid = groups_get_activity_group($this->get_course_module(), true);
-            $groupname = groups_get_group_name($groupid).'-';
+            if (!empty($groupid)) {
+                $groupname = groups_get_group_name($groupid) . '-';
+            }
         }
 
         // Construct the zip file name.
@@ -4205,6 +4379,8 @@ class assign {
         $this->require_view_grades();
         require_once($CFG->dirroot . '/mod/assign/gradeform.php');
 
+        $this->add_grade_notices();
+
         // Only load this if it is.
         $o .= $this->view_grading_table();
 
@@ -5178,6 +5354,8 @@ class assign {
 
         $instance = $this->get_instance();
 
+        $this->add_grade_notices();
+
         $o = '';
 
         $postfix = '';
@@ -5551,11 +5729,15 @@ class assign {
             return false;
         }
 
-        if ($userid == $graderid &&
-                $this->submissions_open($userid) &&
-                has_capability('mod/assign:submit', $this->context, $graderid)) {
-            // User can edit their own submission.
-            return true;
+        if ($userid == $graderid) {
+            if ($this->submissions_open($userid) &&
+                    has_capability('mod/assign:submit', $this->context, $graderid)) {
+                // User can edit their own submission.
+                return true;
+            } else {
+                // We need to return here because editothersubmission should never apply to a users own submission.
+                return false;
+            }
         }
 
         if (!has_capability('mod/assign:editothersubmission', $this->context, $graderid)) {
@@ -7897,6 +8079,12 @@ class assign {
         $instance = $this->get_instance();
         $submission = null;
         if ($instance->teamsubmission) {
+            // We need to know what the most recent group submission is.
+            // Specifically when determining if we are adding another attempt (we only want to add one attempt per team),
+            // and when deciding if we need to update the gradebook with an edited grade.
+            $mostrecentsubmission = $this->get_group_submission($userid, 0, false, -1);
+            $this->set_most_recent_team_submission($mostrecentsubmission);
+            // Get the submission that we are saving grades for. The data attempt number determines which submission attempt.
             $submission = $this->get_group_submission($userid, 0, false, $data->attemptnumber);
         } else {
             $submission = $this->get_user_submission($userid, false, $data->attemptnumber);
@@ -7911,8 +8099,10 @@ class assign {
             }
             $members = $this->get_submission_group_members($groupid, true, $this->show_only_active_users());
             foreach ($members as $member) {
-                // User may exist in multple groups (which should put them in the default group).
-                $this->apply_grade_to_user($data, $member->id, $data->attemptnumber);
+                // We only want to update the grade for this group submission attempt. The data attempt number could be
+                // -1 which may end up in additional attempts being created for each group member instead of just one
+                // additional attempt for the group.
+                $this->apply_grade_to_user($data, $member->id, $submission->attemptnumber);
                 $this->process_outcomes($member->id, $data, $userid);
             }
         } else {
@@ -8083,6 +8273,11 @@ class assign {
             }
 
             if (empty($groupsprocessed[$groupid])) {
+                // We need to know what the most recent group submission is.
+                // Specifically when determining if we are adding another attempt (we only want to add one attempt per team),
+                // and when deciding if we need to update the gradebook with an edited grade.
+                $currentsubmission = $this->get_group_submission($userid, 0, false, -1);
+                $this->set_most_recent_team_submission($currentsubmission);
                 $result = $this->process_add_attempt($userid) && $result;
                 $groupsprocessed[$groupid] = true;
             }
@@ -8133,7 +8328,18 @@ class assign {
 
         // Create the new submission record for the group/user.
         if ($this->get_instance()->teamsubmission) {
-            $newsubmission = $this->get_group_submission($userid, 0, true, $oldsubmission->attemptnumber + 1);
+            if (isset($this->mostrecentteamsubmission)) {
+                // Team submissions can end up in this function for each user (via save_grade). We don't want to create
+                // more than one attempt for the whole team.
+                if ($this->mostrecentteamsubmission->attemptnumber == $oldsubmission->attemptnumber) {
+                    $newsubmission = $this->get_group_submission($userid, 0, true, $oldsubmission->attemptnumber + 1);
+                } else {
+                    $newsubmission = $this->get_group_submission($userid, 0, false, $oldsubmission->attemptnumber);
+                }
+            } else {
+                debugging('Please use set_most_recent_team_submission() before calling add_attempt', DEBUG_DEVELOPER);
+                $newsubmission = $this->get_group_submission($userid, 0, true, $oldsubmission->attemptnumber + 1);
+            }
         } else {
             $newsubmission = $this->get_user_submission($userid, true, $oldsubmission->attemptnumber + 1);
         }
@@ -8510,6 +8716,104 @@ class assign {
     public function set_module_viewed() {
         $completion = new completion_info($this->get_course());
         $completion->set_module_viewed($this->get_course_module());
+    }
+
+    /**
+     * Checks for any grade notices, and adds notifications. Will display on assignment main page and grading table.
+     *
+     * @return void The notifications API will render the notifications at the appropriate part of the page.
+     */
+    protected function add_grade_notices() {
+        if (has_capability('mod/assign:grade', $this->get_context()) && get_config('assign', 'has_rescaled_null_grades_' . $this->get_instance()->id)) {
+            $link = new \moodle_url('/mod/assign/view.php', array('id' => $this->get_course_module()->id, 'action' => 'fixrescalednullgrades'));
+            \core\notification::warning(get_string('fixrescalednullgrades', 'mod_assign', ['link' => $link->out()]));
+        }
+    }
+
+    /**
+     * View fix rescaled null grades.
+     *
+     * @return bool True if null all grades are now fixed.
+     */
+    protected function fix_null_grades() {
+        global $DB;
+        $result = $DB->set_field_select(
+            'assign_grades',
+            'grade',
+            ASSIGN_GRADE_NOT_SET,
+            'grade <> ? AND grade < 0',
+            [ASSIGN_GRADE_NOT_SET]
+        );
+        $assign = clone $this->get_instance();
+        $assign->cmidnumber = $this->get_course_module()->idnumber;
+        assign_update_grades($assign);
+        return $result;
+    }
+
+    /**
+     * View fix rescaled null grades.
+     *
+     * @return void The notifications API will render the notifications at the appropriate part of the page.
+     */
+    protected function view_fix_rescaled_null_grades() {
+        global $OUTPUT;
+
+        $o = '';
+
+        require_capability('mod/assign:grade', $this->get_context());
+
+        $instance = $this->get_instance();
+
+        $o .= $this->get_renderer()->render(
+            new assign_header(
+                $instance,
+                $this->get_context(),
+                $this->show_intro(),
+                $this->get_course_module()->id
+            )
+        );
+
+        $confirm = optional_param('confirm', 0, PARAM_BOOL);
+
+        if ($confirm) {
+            confirm_sesskey();
+
+            // Fix the grades.
+            $this->fix_null_grades();
+            unset_config('has_rescaled_null_grades_' . $instance->id, 'assign');
+
+            // Display the notice.
+            $o .= $this->get_renderer()->notification(get_string('fixrescalednullgradesdone', 'assign'), 'notifysuccess');
+            $url = new moodle_url(
+                '/mod/assign/view.php',
+                array(
+                    'id' => $this->get_course_module()->id,
+                    'action' => 'grading'
+                )
+            );
+            $o .= $this->get_renderer()->continue_button($url);
+        } else {
+            // Ask for confirmation.
+            $continue = new \moodle_url('/mod/assign/view.php', array('id' => $this->get_course_module()->id, 'action' => 'fixrescalednullgrades', 'confirm' => true, 'sesskey' => sesskey()));
+            $cancel = new \moodle_url('/mod/assign/view.php', array('id' => $this->get_course_module()->id));
+            $o .= $OUTPUT->confirm(get_string('fixrescalednullgradesconfirm', 'mod_assign'), $continue, $cancel);
+        }
+
+        $o .= $this->view_footer();
+
+        return $o;
+    }
+
+    /**
+     * Set the most recent submission for the team.
+     * The most recent team submission is used to determine if another attempt should be created when allowing another
+     * attempt on a group assignment, and whether the gradebook should be updated.
+     *
+     * @since Moodle 3.4
+     * @param stdClass $submission The most recent submission of the group.
+     */
+    public function set_most_recent_team_submission($submission) {
+        $this->mostrecentteamsubmission = $submission;
     }
 }
 

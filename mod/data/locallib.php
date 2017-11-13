@@ -772,6 +772,250 @@ function data_get_entries_left_to_view($data, $numentries, $canmanageentries) {
 }
 
 /**
+ * Returns data records tagged with a specified tag.
+ *
+ * This is a callback used by the tag area mod_data/data_records to search for data records
+ * tagged with a specific tag.
+ *
+ * @param core_tag_tag $tag
+ * @param bool $exclusivemode if set to true it means that no other entities tagged with this tag
+ *             are displayed on the page and the per-page limit may be bigger
+ * @param int $fromctx context id where the link was displayed, may be used by callbacks
+ *            to display items in the same context first
+ * @param int $ctx context id where to search for records
+ * @param bool $rec search in subcontexts as well
+ * @param int $page 0-based number of page being displayed
+ * @return \core_tag\output\tagindex
+ */
+function mod_data_get_tagged_records($tag, $exclusivemode = false, $fromctx = 0, $ctx = 0, $rec = true, $page = 0) {
+    global $DB, $OUTPUT, $USER;
+    $perpage = $exclusivemode ? 20 : 5;
+
+    // Build the SQL query.
+    $ctxselect = context_helper::get_preload_record_columns_sql('ctx');
+    $query = "SELECT dr.id, dr.dataid, dr.approved, d.timeviewfrom, d.timeviewto, dr.groupid, d.approval, dr.userid,
+                     d.requiredentriestoview, cm.id AS cmid, c.id AS courseid, c.shortname, c.fullname, $ctxselect
+                FROM {data_records} dr
+                JOIN {data} d
+                  ON d.id = dr.dataid
+                JOIN {modules} m
+                  ON m.name = 'data'
+                JOIN {course_modules} cm
+                  ON cm.module = m.id AND cm.instance = d.id
+                JOIN {tag_instance} tt
+                  ON dr.id = tt.itemid
+                JOIN {course} c
+                  ON cm.course = c.id
+                JOIN {context} ctx
+                  ON ctx.instanceid = cm.id AND ctx.contextlevel = :coursemodulecontextlevel
+               WHERE tt.itemtype = :itemtype
+                 AND tt.tagid = :tagid
+                 AND tt.component = :component
+                 AND cm.deletioninprogress = 0
+                 AND dr.id %ITEMFILTER%
+                 AND c.id %COURSEFILTER%";
+
+    $params = array(
+        'itemtype' => 'data_records',
+        'tagid' => $tag->id,
+        'component' => 'mod_data',
+        'coursemodulecontextlevel' => CONTEXT_MODULE
+    );
+
+    if ($ctx) {
+        $context = $ctx ? context::instance_by_id($ctx) : context_system::instance();
+        $query .= $rec ? ' AND (ctx.id = :contextid OR ctx.path LIKE :path)' : ' AND ctx.id = :contextid';
+        $params['contextid'] = $context->id;
+        $params['path'] = $context->path . '/%';
+    }
+
+    $query .= " ORDER BY ";
+    if ($fromctx) {
+        // In order-clause specify that modules from inside "fromctx" context should be returned first.
+        $fromcontext = context::instance_by_id($fromctx);
+        $query .= ' (CASE WHEN ctx.id = :fromcontextid OR ctx.path LIKE :frompath THEN 0 ELSE 1 END),';
+        $params['fromcontextid'] = $fromcontext->id;
+        $params['frompath'] = $fromcontext->path . '/%';
+    }
+    $query .= ' c.sortorder, cm.id, dr.id';
+
+    $totalpages = $page + 1;
+
+    // Use core_tag_index_builder to build and filter the list of items.
+    $builder = new core_tag_index_builder('mod_data', 'data_records', $query, $params, $page * $perpage, $perpage + 1);
+    $now = time();
+    $entrycount = [];
+    $activitygroupmode = [];
+    $usergroups = [];
+    $titlefields = [];
+    while ($item = $builder->has_item_that_needs_access_check()) {
+        context_helper::preload_from_record($item);
+        $modinfo = get_fast_modinfo($item->courseid);
+        $cm = $modinfo->get_cm($item->cmid);
+        $context = \context_module::instance($cm->id);
+        $courseid = $item->courseid;
+
+        if (!$builder->can_access_course($courseid)) {
+            $builder->set_accessible($item, false);
+            continue;
+        }
+
+        if (!$cm->uservisible) {
+            $builder->set_accessible($item, false);
+            continue;
+        }
+
+        if (!has_capability('mod/data:viewentry', $context)) {
+            $builder->set_accessible($item, false);
+            continue;
+        }
+
+        if ($USER->id != $item->userid && (($item->timeviewfrom && $now < $item->timeviewfrom)
+                || ($item->timeviewto && $now > $item->timeviewto))) {
+            $builder->set_accessible($item, false);
+            continue;
+        }
+
+        if ($USER->id != $item->userid && $item->approval && !$item->approved) {
+            $builder->set_accessible($item, false);
+            continue;
+        }
+
+        if ($item->requiredentriestoview) {
+            if (!isset($entrycount[$item->dataid])) {
+                $entrycount[$item->dataid] = $DB->count_records('data_records', array('dataid' => $item->dataid));
+            }
+            $sufficiententries = $item->requiredentriestoview > $entrycount[$item->dataid];
+            $builder->set_accessible($item, $sufficiententries);
+        }
+
+        if (!isset($activitygroupmode[$cm->id])) {
+            $activitygroupmode[$cm->id] = groups_get_activity_groupmode($cm);
+        }
+
+        if (!isset($usergroups[$item->groupid])) {
+            $usergroups[$item->groupid] = groups_is_member($item->groupid, $USER->id);
+        }
+
+        if ($activitygroupmode[$cm->id] == SEPARATEGROUPS && !$usergroups[$item->groupid]) {
+            $builder->set_accessible($item, false);
+            continue;
+        }
+
+        $builder->set_accessible($item, true);
+    }
+
+    $items = $builder->get_items();
+    if (count($items) > $perpage) {
+        $totalpages = $page + 2; // We don't need exact page count, just indicate that the next page exists.
+        array_pop($items);
+    }
+
+    // Build the display contents.
+    if ($items) {
+        $tagfeed = new core_tag\output\tagfeed();
+        foreach ($items as $item) {
+            context_helper::preload_from_record($item);
+            $modinfo = get_fast_modinfo($item->courseid);
+            $cm = $modinfo->get_cm($item->cmid);
+            $pageurl = new moodle_url('/mod/data/view.php', array(
+                    'rid' => $item->id,
+                    'd' => $item->dataid
+            ));
+
+            if (!isset($titlefields[$item->dataid])) {
+                $titlefields[$item->dataid] = data_get_tag_title_field($item->dataid);
+            }
+
+            $pagename = data_get_tag_title_for_entry($titlefields[$item->dataid], $item);
+            $pagename = html_writer::link($pageurl, $pagename);
+            $courseurl = course_get_url($item->courseid, $cm->sectionnum);
+            $cmname = html_writer::link($cm->url, $cm->get_formatted_name());
+            $coursename = format_string($item->fullname, true, array('context' => context_course::instance($item->courseid)));
+            $coursename = html_writer::link($courseurl, $coursename);
+            $icon = html_writer::link($pageurl, html_writer::empty_tag('img', array('src' => $cm->get_icon_url())));
+            $tagfeed->add($icon, $pagename, $cmname . '<br>' . $coursename);
+        }
+        $content = $OUTPUT->render_from_template('core_tag/tagfeed', $tagfeed->export_for_template($OUTPUT));
+
+        return new core_tag\output\tagindex($tag, 'mod_data', 'data_records', $content, $exclusivemode,
+            $fromctx, $ctx, $rec, $page, $totalpages);
+    }
+}
+
+/**
+ * Get the title of a field to show when displaying tag results.
+ *
+ * @param int $dataid The id of the data field
+ * @return stdClass The field data from the 'data_fields' table as well as it's priority
+ */
+function data_get_tag_title_field($dataid) {
+    global $DB, $CFG;
+
+    $validfieldtypes = array('text', 'textarea', 'menu', 'radiobutton', 'checkbox', 'multimenu', 'url');
+    $fields = $DB->get_records('data_fields', ['dataid' => $dataid]);
+    $template = $DB->get_field('data', 'addtemplate', ['id' => $dataid]);
+
+    $filteredfields = [];
+
+    foreach ($fields as $field) {
+        if (!in_array($field->type, $validfieldtypes)) {
+            continue;
+        }
+        $field->addtemplateposition = strpos($template, '[['.$field->name.']]');
+        if ($field->addtemplateposition === false) {
+            continue;
+        }
+        require_once($CFG->dirroot . '/mod/data/field/' . $field->type . '/field.class.php');
+        $classname = 'data_field_' . $field->type;
+        $field->priority = $classname::get_priority();
+        $filteredfields[] = $field;
+    }
+
+    $sort = function($record1, $record2) {
+        // If a content's fieldtype is compulsory in the database than it would have priority than any other non-compulsory content.
+        if (($record1->required && $record2->required) || (!$record1->required && !$record2->required)) {
+            if ($record1->priority === $record2->priority) {
+                return $record1->id < $record2->id ? 1 : -1;
+            }
+
+            return $record1->priority < $record2->priority ? -1 : 1;
+        } else if ($record1->required && !$record2->required) {
+            return 1;
+        } else {
+            return -1;
+        }
+    };
+
+    usort($filteredfields, $sort);
+
+    return array_shift($filteredfields);
+}
+
+/**
+ * Get the title of an entry to show when displaying tag results.
+ *
+ * @param stdClass $field The field from the 'data_fields' table
+ * @param stdClass $entry The entry from the 'data_records' table
+ * @return string The title of the entry
+ */
+function data_get_tag_title_for_entry($field, $entry) {
+    global $CFG, $DB;
+    require_once($CFG->dirroot . '/mod/data/field/' . $field->type . '/field.class.php');
+
+    $classname = 'data_field_' . $field->type;
+    $sql = "SELECT dc.*
+              FROM {data_content} dc
+        INNER JOIN {data_fields} df
+                ON dc.fieldid = df.id
+             WHERE df.id = :fieldid
+               AND dc.recordid = :recordid";
+    $fieldcontents = $DB->get_record_sql($sql, array('recordid' => $entry->id, 'fieldid' => $field->id));
+
+    return $classname::get_content_value($fieldcontents);
+}
+
+/**
  * Search entries in a database.
  *
  * @param  stdClass  $data         database object
@@ -908,26 +1152,7 @@ function data_search_entries($data, $cm, $context, $mode, $currentgroup, $search
             $initialparams['myid3'] = $params['myid2'];
         }
 
-        if (!empty($advanced)) {                    // If advanced box is checked.
-            $i = 0;
-            foreach ($searcharray as $key => $val) { // what does $searcharray hold?
-                if ($key == DATA_FIRSTNAME or $key == DATA_LASTNAME) {
-                    $i++;
-                    $searchselect .= " AND ".$DB->sql_like($val->field, ":search_flname_$i", false);
-                    $params['search_flname_'.$i] = "%$val->data%";
-                    continue;
-                }
-                if ($key == DATA_TIMEMODIFIED) {
-                    $searchselect .= " AND $val->field >= :timemodified";
-                    $params['timemodified'] = $val->data;
-                    continue;
-                }
-                $advtables .= ', {data_content} c'.$key.' ';
-                $advwhere .= ' AND c'.$key.'.recordid = r.id';
-                $advsearchselect .= ' AND ('.$val->sql.') ';
-                $advparams = array_merge($advparams, $val->params);
-            }
-        } else if ($search) {
+        if ($search) {
             $searchselect = " AND (".$DB->sql_like('c.content', ':search1', false)."
                               OR ".$DB->sql_like('u.firstname', ':search2', false)."
                               OR ".$DB->sql_like('u.lastname', ':search3', false)." ) ";
@@ -965,26 +1190,8 @@ function data_search_entries($data, $cm, $context, $mode, $currentgroup, $search
             $params['myid2'] = $USER->id;
             $initialparams['myid3'] = $params['myid2'];
         }
-        $i = 0;
-        if (!empty($advanced)) {                      // If advanced box is checked.
-            foreach ($searcharray as $key => $val) {   // what does $searcharray hold?
-                if ($key == DATA_FIRSTNAME or $key == DATA_LASTNAME) {
-                    $i++;
-                    $searchselect .= " AND ".$DB->sql_like($val->field, ":search_flname_$i", false);
-                    $params['search_flname_'.$i] = "%$val->data%";
-                    continue;
-                }
-                if ($key == DATA_TIMEMODIFIED) {
-                    $searchselect .= " AND $val->field >= :timemodified";
-                    $params['timemodified'] = $val->data;
-                    continue;
-                }
-                $advtables .= ', {data_content} c'.$key.' ';
-                $advwhere .= ' AND c'.$key.'.recordid = r.id AND c'.$key.'.fieldid = '.$key;
-                $advsearchselect .= ' AND ('.$val->sql.') ';
-                $advparams = array_merge($advparams, $val->params);
-            }
-        } else if ($search) {
+
+        if ($search) {
             $searchselect = " AND (".$DB->sql_like('c.content', ':search1', false)." OR
                 ".$DB->sql_like('u.firstname', ':search2', false)." OR
                 ".$DB->sql_like('u.lastname', ':search3', false)." ) ";
@@ -1144,6 +1351,17 @@ function data_build_search_array($data, $paging, $searcharray, $defaults = null,
                 unset($searcharray[$field->id]);
             }
         }
+    }
+
+    $rawtagnames = optional_param_array('tags', false, PARAM_TAGLIST);
+
+    if ($rawtagnames) {
+        $searcharray[DATA_TAGS] = new stdClass();
+        $searcharray[DATA_TAGS]->params = [];
+        $searcharray[DATA_TAGS]->rawtagnames = $rawtagnames;
+        $searcharray[DATA_TAGS]->sql = '';
+    } else {
+        unset($searcharray[DATA_TAGS]);
     }
 
     if (!$paging) {

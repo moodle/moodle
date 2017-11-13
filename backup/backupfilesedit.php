@@ -42,6 +42,9 @@ $url = new moodle_url('/backup/backupfilesedit.php', array('currentcontext'=>$cu
 
 require_login($course, false, $cm);
 require_capability('moodle/restore:uploadfile', $context);
+if ($filearea == 'automated' && !can_download_from_backup_filearea($filearea, $context)) {
+    throw new required_capability_exception($context, 'moodle/backup:downloadfile', 'nopermissions', '');
+}
 
 $PAGE->set_url($url);
 $PAGE->set_context($context);

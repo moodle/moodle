@@ -40,9 +40,19 @@ require_once($CFG->dirroot . '/lib/enrollib.php');
 class course implements \core_analytics\analysable {
 
     /**
-     * @var \core_analytics\course[] $instances
+     * @var bool Has this course data been already loaded.
      */
-    protected static $instances = array();
+    protected $loaded = false;
+
+    /**
+     * @var int $cachedid self::$cachedinstance analysable id.
+     */
+    protected static $cachedid = 0;
+
+    /**
+     * @var \core_analytics\course $cachedinstance
+     */
+    protected static $cachedinstance = null;
 
     /**
      * Course object
@@ -122,7 +132,7 @@ class course implements \core_analytics\analysable {
      * Use self::instance() instead to get cached copies of the course. Instances obtained
      * through this constructor will not be cached.
      *
-     * Loads course students and teachers.
+     * Lazy load of course data, students and teachers.
      *
      * @param int|stdClass $course Course id
      * @return void
@@ -130,27 +140,19 @@ class course implements \core_analytics\analysable {
     public function __construct($course) {
 
         if (is_scalar($course)) {
-            $this->course = get_course($course);
+            $this->course = new \stdClass();
+            $this->course->id = $course;
         } else {
             $this->course = $course;
         }
-
-        $this->coursecontext = \context_course::instance($this->course->id);
-
-        $this->now = time();
-
-        // Get the course users, including users assigned to student and teacher roles at an higher context.
-        $studentroles = array_keys(get_archetype_roles('student'));
-        $this->studentids = $this->get_user_ids($studentroles);
-
-        $teacherroles = array_keys(get_archetype_roles('editingteacher') + get_archetype_roles('teacher'));
-        $this->teacherids = $this->get_user_ids($teacherroles);
     }
 
     /**
      * Returns an analytics course instance.
      *
-     * @param int|stdClass $course Course id
+     * Lazy load of course data, students and teachers.
+     *
+     * @param int|stdClass $course Course object or course id
      * @return \core_analytics\course
      */
     public static function instance($course) {
@@ -160,22 +162,14 @@ class course implements \core_analytics\analysable {
             $courseid = $course->id;
         }
 
-        if (!empty(self::$instances[$courseid])) {
-            return self::$instances[$courseid];
+        if (self::$cachedid === $courseid) {
+            return self::$cachedinstance;
         }
 
-        $instance = new \core_analytics\course($course);
-        self::$instances[$courseid] = $instance;
-        return self::$instances[$courseid];
-    }
-
-    /**
-     * Clears all statically cached instances.
-     *
-     * @return void
-     */
-    public static function reset_caches() {
-        self::$instances = array();
+        $cachedinstance = new \core_analytics\course($course);
+        self::$cachedinstance = $cachedinstance;
+        self::$cachedid = (int)$courseid;
+        return self::$cachedinstance;
     }
 
     /**
@@ -185,6 +179,51 @@ class course implements \core_analytics\analysable {
      */
     public function get_id() {
         return $this->course->id;
+    }
+
+    /**
+     * Loads the analytics course object.
+     *
+     * @return null
+     */
+    protected function load() {
+
+        // The instance constructor could be already loaded with the full course object. Using shortname
+        // because it is a required course field.
+        if (empty($this->course->shortname)) {
+            $this->course = get_course($this->course->id);
+        }
+
+        $this->coursecontext = $this->get_context();
+
+        $this->now = time();
+
+        // Get the course users, including users assigned to student and teacher roles at an higher context.
+        $cache = \cache::make_from_params(\cache_store::MODE_REQUEST, 'core_analytics', 'rolearchetypes');
+
+        // Flag the instance as loaded.
+        $this->loaded = true;
+
+        if (!$studentroles = $cache->get('student')) {
+            $studentroles = array_keys(get_archetype_roles('student'));
+            $cache->set('student', $studentroles);
+        }
+        $this->studentids = $this->get_user_ids($studentroles);
+
+        if (!$teacherroles = $cache->get('teacher')) {
+            $teacherroles = array_keys(get_archetype_roles('editingteacher') + get_archetype_roles('teacher'));
+            $cache->set('teacher', $teacherroles);
+        }
+        $this->teacherids = $this->get_user_ids($teacherroles);
+    }
+
+    /**
+     * The course short name
+     *
+     * @return string
+     */
+    public function get_name() {
+        return format_string($this->get_course_data()->shortname, true, array('context' => $this->get_context()));
     }
 
     /**
@@ -211,8 +250,8 @@ class course implements \core_analytics\analysable {
         }
 
         // The field always exist but may have no valid if the course is created through a sync process.
-        if (!empty($this->course->startdate)) {
-            $this->starttime = (int)$this->course->startdate;
+        if (!empty($this->get_course_data()->startdate)) {
+            $this->starttime = (int)$this->get_course_data()->startdate;
         } else {
             $this->starttime = 0;
         }
@@ -239,7 +278,7 @@ class course implements \core_analytics\analysable {
 
         // We first try to find current course student logs.
         $firstlogs = array();
-        foreach ($this->studentids as $studentid) {
+        foreach ($this->get_students() as $studentid) {
             // Grrr, we are limited by logging API, we could do this easily with a
             // select min(timecreated) from xx where courseid = yy group by userid.
 
@@ -261,7 +300,7 @@ class course implements \core_analytics\analysable {
         sort($firstlogs);
         $firstlogsmedian = $this->median($firstlogs);
 
-        $studentenrolments = enrol_get_course_users($this->get_id(), $this->studentids);
+        $studentenrolments = enrol_get_course_users($this->get_id(), $this->get_students());
         if (empty($studentenrolments)) {
             return 0;
         }
@@ -289,8 +328,8 @@ class course implements \core_analytics\analysable {
         }
 
         // The enddate field is only available from Moodle 3.2 (MDL-22078).
-        if (!empty($this->course->enddate)) {
-            $this->endtime = (int)$this->course->enddate;
+        if (!empty($this->get_course_data()->enddate)) {
+            $this->endtime = (int)$this->get_course_data()->enddate;
             return $this->endtime;
         }
 
@@ -317,7 +356,7 @@ class course implements \core_analytics\analysable {
         $monthsago = time() - (WEEKSECS * 4 * 2);
         $select = $filterselect . ' AND timeaccess > :timeaccess';
         $params = $filterparams + array('timeaccess' => $monthsago);
-        $sql = "SELECT timeaccess FROM {user_lastaccess} ula
+        $sql = "SELECT DISTINCT timeaccess FROM {user_lastaccess} ula
                   JOIN {enrol} e ON e.courseid = ula.courseid
                   JOIN {user_enrolments} ue ON e.id = ue.enrolid AND ue.userid = ula.userid
                  WHERE $select";
@@ -325,7 +364,7 @@ class course implements \core_analytics\analysable {
             return 0;
         }
 
-        $sql = "SELECT timeaccess FROM {user_lastaccess} ula
+        $sql = "SELECT DISTINCT timeaccess FROM {user_lastaccess} ula
                   JOIN {enrol} e ON e.courseid = ula.courseid
                   JOIN {user_enrolments} ue ON e.id = ue.enrolid AND ue.userid = ula.userid
                  WHERE $filterselect AND ula.timeaccess != 0
@@ -345,21 +384,12 @@ class course implements \core_analytics\analysable {
      * @return \stdClass
      */
     public function get_course_data() {
-        return $this->course;
-    }
 
-    /**
-     * Is the course valid to extract indicators from it?
-     *
-     * @return bool
-     */
-    public function is_valid() {
-
-        if (!$this->was_started() || !$this->is_finished()) {
-            return false;
+        if (!$this->loaded) {
+            $this->load();
         }
 
-        return true;
+        return $this->course;
     }
 
     /**
@@ -410,7 +440,7 @@ class course implements \core_analytics\analysable {
     public function get_user_ids($roleids) {
 
         // We need to index by ra.id as a user may have more than 1 $roles role.
-        $records = get_role_users($roleids, $this->coursecontext, true, 'ra.id, u.id AS userid, r.id AS roleid', 'ra.id ASC');
+        $records = get_role_users($roleids, $this->get_context(), true, 'ra.id, u.id AS userid, r.id AS roleid', 'ra.id ASC');
 
         // If a user have more than 1 $roles role array_combine will discard the duplicate.
         $callable = array($this, 'filter_user_id');
@@ -424,6 +454,11 @@ class course implements \core_analytics\analysable {
      * @return stdClass[]
      */
     public function get_students() {
+
+        if (!$this->loaded) {
+            $this->load();
+        }
+
         return $this->studentids;
     }
 
@@ -436,7 +471,7 @@ class course implements \core_analytics\analysable {
         global $DB;
 
         // No logs if no students.
-        if (empty($this->studentids)) {
+        if (empty($this->get_students())) {
             return 0;
         }
 
@@ -513,172 +548,6 @@ class course implements \core_analytics\analysable {
     }
 
     /**
-     * Guesses all activities that were available during a period of time.
-     *
-     * @param string $activitytype
-     * @param int $starttime
-     * @param int $endtime
-     * @param \stdClass $student
-     * @return array
-     */
-    public function get_activities($activitytype, $starttime, $endtime, $student = false) {
-
-        // Var $student may not be available, default to not calculating dynamic data.
-        $studentid = -1;
-        if ($student) {
-            $studentid = $student->id;
-        }
-        $modinfo = get_fast_modinfo($this->get_course_data(), $studentid);
-        $activities = $modinfo->get_instances_of($activitytype);
-
-        $timerangeactivities = array();
-        foreach ($activities as $activity) {
-            if (!$this->completed_by($activity, $starttime, $endtime)) {
-                continue;
-            }
-
-            $timerangeactivities[$activity->context->id] = $activity;
-        }
-
-        return $timerangeactivities;
-    }
-
-    /**
-     * Was the activity supposed to be completed during the provided time range?.
-     *
-     * @param \cm_info $activity
-     * @param int $starttime
-     * @param int $endtime
-     * @return bool
-     */
-    protected function completed_by(\cm_info $activity, $starttime, $endtime) {
-
-        // We can't check uservisible because:
-        // - Any activity with available until would not be counted.
-        // - Sites may block student's course view capabilities once the course is closed.
-
-        // Students can not view hidden activities by default, this is not reliable 100% but accurate in most of the cases.
-        if ($activity->visible === false) {
-            return false;
-        }
-
-        // We skip activities that were not yet visible or their 'until' was not in this $starttime - $endtime range.
-        if ($activity->availability) {
-            $info = new \core_availability\info_module($activity);
-            $activityavailability = $this->availability_completed_by($info, $starttime, $endtime);
-            if ($activityavailability === false) {
-                return false;
-            } else if ($activityavailability === true) {
-                // This activity belongs to this time range.
-                return true;
-            }
-        }
-
-        // We skip activities in sections that were not yet visible or their 'until' was not in this $starttime - $endtime range.
-        $section = $activity->get_modinfo()->get_section_info($activity->sectionnum);
-        if ($section->availability) {
-            $info = new \core_availability\info_section($section);
-            $sectionavailability = $this->availability_completed_by($info, $starttime, $endtime);
-            if ($sectionavailability === false) {
-                return false;
-            } else if ($sectionavailability === true) {
-                // This activity belongs to this section time range.
-                return true;
-            }
-        }
-
-        // When the course is using format weeks we use the week's end date.
-        $format = course_get_format($activity->get_modinfo()->get_course());
-        if ($this->course->format === 'weeks') {
-            $dates = $format->get_section_dates($section);
-
-            // We need to consider the +2 hours added by get_section_dates.
-            // Avoid $starttime <= $dates->end because $starttime may be the start of the next week.
-            if ($starttime < ($dates->end - 7200) && $endtime >= ($dates->end - 7200)) {
-                return true;
-            } else {
-                return false;
-            }
-        }
-
-        if ($activity->sectionnum == 0) {
-            return false;
-        }
-
-        if (!$this->get_end() || !$this->get_start()) {
-            debugging('Activities which due date is in a time range can not be calculated ' .
-                'if the course doesn\'t have start and end date', DEBUG_DEVELOPER);
-            return false;
-        }
-
-        if (!course_format_uses_sections($this->course->format)) {
-            // If it does not use sections and there are no availability conditions to access it it is available
-            // and we can not magically classify it into any other time range than this one.
-            return true;
-        }
-
-        // Split the course duration in the number of sections and consider the end of each section the due
-        // date of all activities contained in that section.
-        $formatoptions = $format->get_format_options();
-        if (!empty($formatoptions['numsections'])) {
-            $nsections = $formatoptions['numsections'];
-        } else {
-            // There are course format that use sections but without numsections, we fallback to the number
-            // of cached sections in get_section_info_all, not that accurate though.
-            $coursesections = $activity->get_modinfo()->get_section_info_all();
-            $nsections = count($coursesections);
-            if (isset($coursesections[0])) {
-                // We don't count section 0 if it exists.
-                $nsections--;
-            }
-        }
-
-        $courseduration = $this->get_end() - $this->get_start();
-        $sectionduration = round($courseduration / $nsections);
-        $activitysectionenddate = $this->get_start() + ($sectionduration * $activity->sectionnum);
-        if ($activitysectionenddate > $starttime && $activitysectionenddate <= $endtime) {
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * Check if the activity/section should have been completed during the provided period according to its availability rules.
-     *
-     * @param \core_availability\info $info
-     * @param int $starttime
-     * @param int $endtime
-     * @return bool|null
-     */
-    protected function availability_completed_by(\core_availability\info $info, $starttime, $endtime) {
-
-        $dateconditions = $info->get_availability_tree()->get_all_children('\availability_date\condition');
-        foreach ($dateconditions as $condition) {
-            // Availability API does not allow us to check from / to dates nicely, we need to be naughty.
-            $conditiondata = $condition->save();
-
-            if ($conditiondata->d === \availability_date\condition::DIRECTION_FROM &&
-                    $conditiondata->t > $endtime) {
-                // Skip this activity if any 'from' date is later than the end time.
-                return false;
-
-            } else if ($conditiondata->d === \availability_date\condition::DIRECTION_UNTIL &&
-                    ($conditiondata->t < $starttime || $conditiondata->t > $endtime)) {
-                // Skip activity if any 'until' date is not in $starttime - $endtime range.
-                return false;
-            } else if ($conditiondata->d === \availability_date\condition::DIRECTION_UNTIL &&
-                    $conditiondata->t < $endtime && $conditiondata->t > $starttime) {
-                return true;
-            }
-        }
-
-        // This can be interpreted as 'the activity was available but we don't know if its expected completion date
-        // was during this period.
-        return null;
-    }
-
-    /**
      * Used by get_user_ids to extract the user id.
      *
      * @param \stdClass $record
@@ -714,7 +583,7 @@ class course implements \core_analytics\analysable {
         }
 
         // Check the amount of student logs in the 4 previous weeks.
-        list($studentssql, $studentsparams) = $DB->get_in_or_equal($this->studentids, SQL_PARAMS_NAMED);
+        list($studentssql, $studentsparams) = $DB->get_in_or_equal($this->get_students(), SQL_PARAMS_NAMED);
         $filterselect = $prefix . 'courseid = :courseid AND ' . $prefix . 'userid ' . $studentssql;
         $filterparams = array('courseid' => $this->course->id) + $studentsparams;
 

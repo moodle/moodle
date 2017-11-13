@@ -51,14 +51,14 @@
         ]
     }
 }}
-<form method="post" action="{{action}}" class="form-inline m-b-2" role="search">
+<form method="post" action="{{action}}" class="m-b-1" role="search">
     <label for="unified-filters" class="sr-only">{{#str}}filters{{/str}}</label>
-    <select name="unified-filters[]" id="unified-filters" multiple="multiple" data-originaloptionsjson="{{originaloptionsjson}}">
+    <select name="unified-filters[]" id="unified-filters" multiple="multiple" data-originaloptionsjson="{{originaloptionsjson}}" class="form-autocomplete-original-select">
         {{#filteroptions}}
             <option value="{{value}}" {{#selected}}selected="selected"{{/selected}}>{{{label}}}</option>
         {{/filteroptions}}
     </select>
-    <input type="submit" class="btn btn-primary" id="user-filter-button" value={{#quote}}{{#str}}filter{{/str}}{{/quote}}>
+    <input type="hidden" name="unified-filter-submitted" value="1">
 </form>
 {{#js}}
 require(['core_user/unified_filter'], function(Filter) {

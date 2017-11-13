@@ -108,13 +108,13 @@ if ($action === 'delete' && $eventid > 0) {
 }
 
 $calendar = new calendar_information(0, 0, 0, $time);
-$calendar->prepare_for_view($course, $courses);
+$calendar->set_sources($course, $courses);
 
 $formoptions = new stdClass;
 if ($eventid !== 0) {
     $title = get_string('editevent', 'calendar');
     $event = calendar_event::load($eventid);
-    if (!calendar_edit_event_allowed($event)) {
+    if (!calendar_edit_event_allowed($event, true)) {
         print_error('nopermissions');
     }
     $event->action = $action;

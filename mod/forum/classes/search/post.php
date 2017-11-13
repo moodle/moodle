@@ -56,17 +56,25 @@ class post extends \core_search\base_mod {
      * Returns recordset containing required data for indexing forum posts.
      *
      * @param int $modifiedfrom timestamp
-     * @return moodle_recordset
+     * @param \context|null $context Optional context to restrict scope of returned results
+     * @return moodle_recordset|null Recordset (or null if no results)
      */
-    public function get_recordset_by_timestamp($modifiedfrom = 0) {
+    public function get_document_recordset($modifiedfrom = 0, \context $context = null) {
         global $DB;
 
-        $sql = 'SELECT fp.*, f.id AS forumid, f.course AS courseid
+        list ($contextjoin, $contextparams) = $this->get_context_restriction_sql(
+                $context, 'forum', 'f');
+        if ($contextjoin === null) {
+            return null;
+        }
+
+        $sql = "SELECT fp.*, f.id AS forumid, f.course AS courseid
                   FROM {forum_posts} fp
                   JOIN {forum_discussions} fd ON fd.id = fp.discussion
                   JOIN {forum} f ON f.id = fd.forum
-                 WHERE fp.modified >= ? ORDER BY fp.modified ASC';
-        return $DB->get_recordset_sql($sql, array($modifiedfrom));
+          $contextjoin
+                 WHERE fp.modified >= ? ORDER BY fp.modified ASC";
+        return $DB->get_recordset_sql($sql, array_merge($contextparams, [$modifiedfrom]));
     }
 
     /**
@@ -121,6 +129,21 @@ class post extends \core_search\base_mod {
     }
 
     /**
+     * Return the context info required to index files for
+     * this search area.
+     *
+     * @return array
+     */
+    public function get_search_fileareas() {
+        $fileareas = array(
+            'attachment',
+            'post'
+        );
+
+        return $fileareas;
+    }
+
+    /**
      * Add the forum post attachments.
      *
      * @param document $document The current document
@@ -142,14 +165,21 @@ class post extends \core_search\base_mod {
         // Because this is used during indexing, we don't want to cache posts. Would result in memory leak.
         unset($this->postsdata[$postid]);
 
-        $cm = $this->get_cm('forum', $post->forum, $document->get('courseid'));
+        $cm = $this->get_cm($this->get_module_name(), $post->forum, $document->get('courseid'));
         $context = \context_module::instance($cm->id);
+        $contextid = $context->id;
+
+        $fileareas = $this->get_search_fileareas();
+        $component = $this->get_component_name();
 
         // Get the files and attach them.
-        $fs = get_file_storage();
-        $files = $fs->get_area_files($context->id, 'mod_forum', 'attachment', $postid, "filename", false);
-        foreach ($files as $file) {
-            $document->add_stored_file($file);
+        foreach ($fileareas as $filearea) {
+            $fs = get_file_storage();
+            $files = $fs->get_area_files($contextid, $component, $filearea, $postid, '', false);
+
+            foreach ($files as $file) {
+                $document->add_stored_file($file);
+            }
         }
     }
 

@@ -1,7 +1,7 @@
 <?php
 /*
 
-  @version   v5.20.7  20-Sep-2016
+  @version   v5.20.9  21-Dec-2016
   @copyright (c) 2000-2013 John Lim. All rights reserved.
   @copyright (c) 2014      Damien Regad, Mark Newnham and the ADOdb community
 
@@ -703,9 +703,19 @@ END;
 	 * This implementation does not appear to work with oracle 8.0.5 or earlier.
 	 * Comment out this function then, and the slower SelectLimit() in the base
 	 * class will be used.
+	 *
+	 * Note: FIRST_ROWS hinting is only used if $sql is a string; when
+	 * processing a prepared statement's handle, no hinting is performed.
 	 */
 	function SelectLimit($sql,$nrows=-1,$offset=-1, $inputarr=false,$secs2cache=0)
 	{
+		// Since the methods used to limit the number of returned rows rely
+		// on modifying the provided SQL query, we can't work with prepared
+		// statements so we just extract the SQL string.
+		if(is_array($sql)) {
+			$sql = $sql[0];
+		}
+
 		// seems that oracle only supports 1 hint comment in 8i
 		if ($this->firstrows) {
 			if ($nrows > 500 && $nrows < 1000) {
@@ -731,20 +741,13 @@ END;
 				if ($offset > 0) {
 					$nrows += $offset;
 				}
-				//$inputarr['adodb_rownum'] = $nrows;
-				if ($this->databaseType == 'oci8po') {
-					$sql = "select * from (".$sql.") where rownum <= ?";
-				} else {
-					$sql = "select * from (".$sql.") where rownum <= :adodb_offset";
-				}
+				$sql = "select * from (".$sql.") where rownum <= :adodb_offset";
 				$inputarr['adodb_offset'] = $nrows;
 				$nrows = -1;
 			}
 			// note that $nrows = 0 still has to work ==> no rows returned
 
-			$rs = ADOConnection::SelectLimit($sql,$nrows,$offset,$inputarr,$secs2cache);
-			return $rs;
-
+			return ADOConnection::SelectLimit($sql, $nrows, $offset, $inputarr, $secs2cache);
 		} else {
 			// Algorithm by Tomas V V Cox, from PEAR DB oci8.php
 
@@ -758,13 +761,19 @@ END;
 
 			if (is_array($inputarr)) {
 				foreach($inputarr as $k => $v) {
+					$i=0;
+					if ($this->databaseType == 'oci8po') {
+						$bv_name = ":".$i++;
+					} else {
+						$bv_name = ":".$k;
+					}
 					if (is_array($v)) {
 						// suggested by g.giunta@libero.
 						if (sizeof($v) == 2) {
-							oci_bind_by_name($stmt,":$k",$inputarr[$k][0],$v[1]);
+							oci_bind_by_name($stmt,$bv_name,$inputarr[$k][0],$v[1]);
 						}
 						else {
-							oci_bind_by_name($stmt,":$k",$inputarr[$k][0],$v[1],$v[2]);
+							oci_bind_by_name($stmt,$bv_name,$inputarr[$k][0],$v[1],$v[2]);
 						}
 					} else {
 						$len = -1;
@@ -774,7 +783,7 @@ END;
 						if (isset($bindarr)) {	// is prepared sql, so no need to oci_bind_by_name again
 							$bindarr[$k] = $v;
 						} else { 				// dynamic sql, so rebind every time
-							oci_bind_by_name($stmt,":$k",$inputarr[$k],$len);
+							oci_bind_by_name($stmt,$bv_name,$inputarr[$k],$len);
 						}
 					}
 				}
@@ -801,24 +810,19 @@ END;
 			}
 			$offset += 1; // in Oracle rownum starts at 1
 
-			if ($this->databaseType == 'oci8po') {
-					$sql = "SELECT $hint $fields FROM".
-						"(SELECT rownum as adodb_rownum, $fields FROM".
-						" ($sql) WHERE rownum <= ?".
-						") WHERE adodb_rownum >= ?";
-				} else {
-					$sql = "SELECT $hint $fields FROM".
-						"(SELECT rownum as adodb_rownum, $fields FROM".
-						" ($sql) WHERE rownum <= :adodb_nrows".
-						") WHERE adodb_rownum >= :adodb_offset";
-				}
-				$inputarr['adodb_nrows'] = $nrows;
-				$inputarr['adodb_offset'] = $offset;
+			$sql = "SELECT $hint $fields FROM".
+				"(SELECT rownum as adodb_rownum, $fields FROM".
+				" ($sql) WHERE rownum <= :adodb_nrows".
+				") WHERE adodb_rownum >= :adodb_offset";
+			$inputarr['adodb_nrows'] = $nrows;
+			$inputarr['adodb_offset'] = $offset;
 
 			if ($secs2cache > 0) {
 				$rs = $this->CacheExecute($secs2cache, $sql,$inputarr);
 			}
-			else $rs = $this->Execute($sql,$inputarr);
+			else {
+				$rs = $this->Execute($sql, $inputarr);
+			}
 			return $rs;
 		}
 	}

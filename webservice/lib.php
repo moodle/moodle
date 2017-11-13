@@ -913,7 +913,6 @@ abstract class webservice_server implements webservice_server_interface {
         }
 
         $loginfaileddefaultparams = array(
-            'context' => context_system::instance(),
             'other' => array(
                 'method' => $this->authmethod,
                 'reason' => null
@@ -1062,7 +1061,6 @@ abstract class webservice_server implements webservice_server_interface {
         global $DB;
 
         $loginfaileddefaultparams = array(
-            'context' => context_system::instance(),
             'other' => array(
                 'method' => $this->authmethod,
                 'reason' => null

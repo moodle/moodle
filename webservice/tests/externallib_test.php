@@ -161,4 +161,21 @@ class core_webservice_externallib_testcase extends externallib_advanced_testcase
 
     }
 
+    /**
+     * Test get_site_info with values > PHP_INT_MAX. We check only userquota since maxbytes require PHP ini changes.
+     */
+    public function test_get_site_info_max_int() {
+        $this->resetAfterTest(true);
+
+        self::setUser(self::getDataGenerator()->create_user());
+
+        // Check values higher than PHP_INT_MAX. This value may come from settings (as string).
+        $userquota = PHP_INT_MAX . '000';
+        set_config('userquota', $userquota);
+
+        $result = core_webservice_external::get_site_info();
+        $result = external_api::clean_returnvalue(core_webservice_external::get_site_info_returns(), $result);
+        $this->assertEquals(PHP_INT_MAX, $result['userquota']);
+    }
+
 }

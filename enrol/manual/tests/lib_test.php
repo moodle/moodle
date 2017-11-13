@@ -493,4 +493,51 @@ class enrol_manual_lib_testcase extends advanced_testcase {
         $manualplugin->send_expiry_notifications($trace);
         $this->assertEquals(6, $sink->count());
     }
+
+    /**
+     * Test for getting user enrolment actions.
+     */
+    public function test_get_user_enrolment_actions() {
+        global $CFG, $PAGE;
+        $this->resetAfterTest();
+
+        // Set page URL to prevent debugging messages.
+        $PAGE->set_url('/enrol/editinstance.php');
+
+        $pluginname = 'manual';
+
+        // Only enable the manual enrol plugin.
+        $CFG->enrol_plugins_enabled = $pluginname;
+
+        $generator = $this->getDataGenerator();
+
+        // Get the enrol plugin.
+        $plugin = enrol_get_plugin($pluginname);
+
+        // Create a course.
+        $course = $generator->create_course();
+        // Enable this enrol plugin for the course.
+        $plugin->add_instance($course);
+
+        // Create a teacher.
+        $teacher = $generator->create_user();
+        // Enrol the teacher to the course.
+        $generator->enrol_user($teacher->id, $course->id, 'editingteacher', $pluginname);
+        // Create a student.
+        $student = $generator->create_user();
+        // Enrol the student to the course.
+        $generator->enrol_user($student->id, $course->id, 'student', $pluginname);
+
+        // Login as the teacher.
+        $this->setUser($teacher);
+        require_once($CFG->dirroot . '/enrol/locallib.php');
+        $manager = new course_enrolment_manager($PAGE, $course);
+        $userenrolments = $manager->get_user_enrolments($student->id);
+        $this->assertCount(1, $userenrolments);
+
+        $ue = reset($userenrolments);
+        $actions = $plugin->get_user_enrolment_actions($manager, $ue);
+        // Manual enrol has 2 enrol actions -- edit and unenrol.
+        $this->assertCount(2, $actions);
+    }
 }

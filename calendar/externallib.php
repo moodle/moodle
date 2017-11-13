@@ -138,7 +138,12 @@ class core_calendar_external extends external_api {
                                             new external_value(PARAM_INT, 'group ids')
                                             , 'List of group ids for which events should be returned',
                                             VALUE_DEFAULT, array(), NULL_ALLOWED
-                                                )
+                                                ),
+                                    'categoryids' => new external_multiple_structure(
+                                            new external_value(PARAM_INT, 'Category ids'),
+                                            'List of category ids for which events will be returned',
+                                            VALUE_DEFAULT, array()
+                                ),
                             ), 'Event details', VALUE_DEFAULT, array()),
                     'options' => new external_single_structure(
                             array(
@@ -177,7 +182,7 @@ class core_calendar_external extends external_api {
 
         // Parameter validation.
         $params = self::validate_parameters(self::get_calendar_events_parameters(), array('events' => $events, 'options' => $options));
-        $funcparam = array('courses' => array(), 'groups' => array());
+        $funcparam = array('courses' => array(), 'groups' => array(), 'categories' => array());
         $hassystemcap = has_capability('moodle/calendar:manageentries', context_system::instance());
         $warnings = array();
 
@@ -220,6 +225,62 @@ class core_calendar_external extends external_api {
             $funcparam['groups'] = $groups;
         }
 
+        $categories = array();
+        if (empty($params['events']['categoryids']) && !empty($courses)) {
+            list($wheresql, $sqlparams) = $DB->get_in_or_equal($courses);
+            $wheresql = "id $wheresql";
+            $courseswithcategory = $DB->get_records_select('course', $wheresql, $sqlparams);
+
+            // Grab the list of course categories for the requested course list.
+            $coursecategories = array();
+            foreach ($courseswithcategory as $course) {
+                if (empty($course->visible)) {
+                    if (!has_capability('moodle/course:viewhidden', context_course::instance($course->id))) {
+                        continue;
+                    }
+                }
+                $category = \coursecat::get($course->category);
+                $coursecategories[] = $category;
+            }
+
+            foreach (\coursecat::get_all() as $category) {
+                if (has_capability('moodle/category:manage', $category->get_context(), $USER, false)) {
+                    // If a user can manage a category, then they can see all child categories. as well as all parent categories.
+                    $categories[] = $category->id;
+
+                    foreach (\coursecat::get_all() as $cat) {
+                        if (array_search($category->id, $cat->get_parents()) !== false) {
+                            $categories[] = $cat->id;
+                        }
+                    }
+                    $categories = array_merge($categories, $category->get_parents());
+                } else if (isset($coursecategories[$category->id])) {
+                    // The user has access to a course in this category.
+                    // Fetch all of the parents too.
+                    $categories = array_merge($categories, [$category->id], $category->get_parents());
+                    $categories[] = $category->id;
+                }
+            }
+        } else {
+            // Build the category list.
+            // This includes the current category.
+            foreach ($params['events']['categoryids'] as $categoryid) {
+                $category = \coursecat::get($categoryid);
+                $categories = [$category->id];
+                // All of its descendants.
+                foreach (\coursecat::get_all() as $cat) {
+                    if (array_search($categoryid, $cat->get_parents()) !== false) {
+                        $categories[] = $cat->id;
+                    }
+                }
+
+                // And all of its parents.
+                $categories = array_merge($categories, $category->get_parents());
+            }
+        }
+
+        $funcparam['categories'] = array_unique($categories);
+
         // Do we need user events?
         if (!empty($params['options']['userevents'])) {
             $funcparam['users'] = array($USER->id);
@@ -239,7 +300,8 @@ class core_calendar_external extends external_api {
 
         // Event list does not check visibility and permissions, we'll check that later.
         $eventlist = calendar_get_legacy_events($params['options']['timestart'], $params['options']['timeend'],
-            $funcparam['users'], $funcparam['groups'], $funcparam['courses'], true, $params['options']['ignorehidden']);
+                $funcparam['users'], $funcparam['groups'], $funcparam['courses'], true,
+                $params['options']['ignorehidden'], $funcparam['categories']);
 
         // WS expects arrays.
         $events = array();
@@ -248,7 +310,6 @@ class core_calendar_external extends external_api {
         if ($eventsbyid = calendar_get_events_by_id($params['events']['eventids'])) {
             $eventlist += $eventsbyid;
         }
-
         foreach ($eventlist as $eventid => $eventobj) {
             $event = (array) $eventobj;
             // Description formatting.
@@ -273,11 +334,12 @@ class core_calendar_external extends external_api {
             } else {
                 // Can the user actually see this event?
                 $eventobj = calendar_event::load($eventobj);
-                if (($eventobj->courseid == $SITE->id) ||
+                if ((($eventobj->courseid == $SITE->id) && (empty($eventobj->categoryid))) ||
+                            (!empty($eventobj->categoryid) && in_array($eventobj->categoryid, $categories)) ||
                             (!empty($eventobj->groupid) && in_array($eventobj->groupid, $groups)) ||
                             (!empty($eventobj->courseid) && in_array($eventobj->courseid, $courses)) ||
                             ($USER->id == $eventobj->userid) ||
-                            (calendar_edit_event_allowed($eventid))) {
+                            (calendar_edit_event_allowed($eventobj))) {
                     $events[$eventid] = $event;
                 } else {
                     $warnings[] = array('item' => $eventid, 'warningcode' => 'nopermissions', 'message' => 'you do not have permissions to view this event');
@@ -705,6 +767,7 @@ class core_calendar_external extends external_api {
             )
         );
     }
+
     /**
      * Get calendar event by id.
      *
@@ -715,14 +778,21 @@ class core_calendar_external extends external_api {
         global $CFG, $PAGE, $USER;
         require_once($CFG->dirroot."/calendar/lib.php");
 
-        $params = ['eventid' => $eventid];
-        self::validate_parameters(self::get_calendar_event_by_id_parameters(), $params);
+        $params = self::validate_parameters(self::get_calendar_event_by_id_parameters(), ['eventid' => $eventid]);
         $context = \context_user::instance($USER->id);
 
         self::validate_context($context);
         $warnings = array();
 
         $legacyevent = calendar_event::load($eventid);
+        // Must check we can see this event.
+        if (!calendar_view_event_allowed($legacyevent)) {
+            // We can't return a warning in this case because the event is not optional.
+            // We don't know the context for the event and it's not worth loading it.
+            $syscontext = context_system::instance();
+            throw new \required_capability_exception($syscontext, 'moodle/course:view', 'nopermission', '');
+        }
+
         $legacyevent->count_repeats();
 
         $eventmapper = event_container::get_event_mapper();
@@ -745,7 +815,7 @@ class core_calendar_external extends external_api {
      *
      * @return external_description
      */
-    public static function  get_calendar_event_by_id_returns() {
+    public static function get_calendar_event_by_id_returns() {
         $eventstructure = event_exporter::get_read_structure();
 
         return new external_single_structure(array(
@@ -778,6 +848,7 @@ class core_calendar_external extends external_api {
     public static function submit_create_update_form($formdata) {
         global $CFG, $USER, $PAGE;
         require_once($CFG->dirroot."/calendar/lib.php");
+        require_once($CFG->libdir."/filelib.php");
 
         // Parameter validation.
         $params = self::validate_parameters(self::submit_create_update_form_parameters(), ['formdata' => $formdata]);
@@ -810,7 +881,36 @@ class core_calendar_external extends external_api {
                 $properties = $legacyevent->properties(true);
             }
 
+            if (!calendar_edit_event_allowed($legacyevent, true)) {
+                print_error('nopermissiontoupdatecalendar');
+            }
+
             $legacyevent->update($properties);
+            $eventcontext = $legacyevent->context;
+
+            file_remove_editor_orphaned_files($validateddata->description);
+
+            // Take any files added to the description draft file area and
+            // convert them into the proper event description file area. Also
+            // parse the description text and replace the URLs to the draft files
+            // with the @@PLUGIN_FILE@@ placeholder to be persisted in the DB.
+            $description = file_save_draft_area_files(
+                $validateddata->description['itemid'],
+                $eventcontext->id,
+                'calendar',
+                'event_description',
+                $legacyevent->id,
+                create_event_form::build_editor_options($eventcontext),
+                $validateddata->description['text']
+            );
+
+            // If draft files were found then we need to save the new
+            // description value.
+            if ($description != $validateddata->description['text']) {
+                $properties->id = $legacyevent->id;
+                $properties->description = $description;
+                $legacyevent->update($properties);
+            }
 
             $eventmapper = event_container::get_event_mapper();
             $event = $eventmapper->from_legacy_event_to_event($legacyevent);
@@ -843,5 +943,270 @@ class core_calendar_external extends external_api {
                 'validationerror' => new external_value(PARAM_BOOL, 'Invalid form data', VALUE_DEFAULT, false),
             )
         );
+    }
+
+    /**
+     * Get data for the monthly calendar view.
+     *
+     * @param   int     $year The year to be shown
+     * @param   int     $month The month to be shown
+     * @param   int     $courseid The course to be included
+     * @param   int     $categoryid The category to be included
+     * @param   bool    $includenavigation Whether to include navigation
+     * @return  array
+     */
+    public static function get_calendar_monthly_view($year, $month, $courseid, $categoryid, $includenavigation) {
+        global $CFG, $DB, $USER, $PAGE;
+        require_once($CFG->dirroot."/calendar/lib.php");
+
+        // Parameter validation.
+        $params = self::validate_parameters(self::get_calendar_monthly_view_parameters(), [
+            'year' => $year,
+            'month' => $month,
+            'courseid' => $courseid,
+            'categoryid' => $categoryid,
+            'includenavigation' => $includenavigation,
+        ]);
+
+        $context = \context_user::instance($USER->id);
+        self::validate_context($context);
+        $PAGE->set_url('/calendar/');
+
+        $type = \core_calendar\type_factory::get_calendar_instance();
+
+        $time = $type->convert_to_timestamp($params['year'], $params['month'], 1);
+        $calendar = \calendar_information::create($time, $params['courseid'], $params['categoryid']);
+        self::validate_context($calendar->context);
+
+        list($data, $template) = calendar_get_view($calendar, 'month', $params['includenavigation']);
+
+        return $data;
+    }
+
+    /**
+     * Returns description of method parameters.
+     *
+     * @return external_function_parameters
+     */
+    public static function get_calendar_monthly_view_parameters() {
+        return new external_function_parameters(
+            [
+                'year' => new external_value(PARAM_INT, 'Month to be viewed', VALUE_REQUIRED),
+                'month' => new external_value(PARAM_INT, 'Year to be viewed', VALUE_REQUIRED),
+                'courseid' => new external_value(PARAM_INT, 'Course being viewed', VALUE_DEFAULT, SITEID, NULL_ALLOWED),
+                'categoryid' => new external_value(PARAM_INT, 'Category being viewed', VALUE_DEFAULT, null, NULL_ALLOWED),
+                'includenavigation' => new external_value(
+                    PARAM_BOOL,
+                    'Whether to show course navigation',
+                    VALUE_DEFAULT,
+                    true,
+                    NULL_ALLOWED
+                ),
+            ]
+        );
+    }
+
+    /**
+     * Returns description of method result value.
+     *
+     * @return external_description
+     */
+    public static function get_calendar_monthly_view_returns() {
+        return \core_calendar\external\month_exporter::get_read_structure();
+    }
+
+    /**
+     * Get data for the daily calendar view.
+     *
+     * @param   int     $year The year to be shown
+     * @param   int     $month The month to be shown
+     * @param   int     $day The day to be shown
+     * @param   int     $courseid The course to be included
+     * @return  array
+     */
+    public static function get_calendar_day_view($year, $month, $day, $courseid, $categoryid) {
+        global $CFG, $DB, $USER, $PAGE;
+        require_once($CFG->dirroot."/calendar/lib.php");
+
+        // Parameter validation.
+        $params = self::validate_parameters(self::get_calendar_day_view_parameters(), [
+            'year' => $year,
+            'month' => $month,
+            'day' => $day,
+            'courseid' => $courseid,
+            'categoryid' => $categoryid,
+        ]);
+
+        $context = \context_user::instance($USER->id);
+        self::validate_context($context);
+
+        $type = \core_calendar\type_factory::get_calendar_instance();
+
+        $time = $type->convert_to_timestamp($params['year'], $params['month'], $params['day']);
+        $calendar = \calendar_information::create($time, $params['courseid'], $params['categoryid']);
+        self::validate_context($calendar->context);
+
+        list($data, $template) = calendar_get_view($calendar, 'day');
+
+        return $data;
+    }
+
+    /**
+     * Returns description of method parameters.
+     *
+     * @return external_function_parameters
+     */
+    public static function get_calendar_day_view_parameters() {
+        return new external_function_parameters(
+            [
+                'year' => new external_value(PARAM_INT, 'Year to be viewed', VALUE_REQUIRED),
+                'month' => new external_value(PARAM_INT, 'Month to be viewed', VALUE_REQUIRED),
+                'day' => new external_value(PARAM_INT, 'Day to be viewed', VALUE_REQUIRED),
+                'courseid' => new external_value(PARAM_INT, 'Course being viewed', VALUE_DEFAULT, SITEID, NULL_ALLOWED),
+                'categoryid' => new external_value(PARAM_INT, 'Category being viewed', VALUE_DEFAULT, null, NULL_ALLOWED),
+            ]
+        );
+    }
+
+    /**
+     * Returns description of method result value.
+     *
+     * @return external_description
+     */
+    public static function get_calendar_day_view_returns() {
+        return \core_calendar\external\calendar_day_exporter::get_read_structure();
+    }
+
+
+    /**
+     * Returns description of method parameters.
+     *
+     * @return external_function_parameters
+     */
+    public static function update_event_start_day_parameters() {
+        return new external_function_parameters(
+            [
+                'eventid' => new external_value(PARAM_INT, 'Id of event to be updated', VALUE_REQUIRED),
+                'daytimestamp' => new external_value(PARAM_INT, 'Timestamp for the new start day', VALUE_REQUIRED),
+            ]
+        );
+    }
+
+    /**
+     * Change the start day for the given calendar event to the day that
+     * corresponds with the provided timestamp.
+     *
+     * The timestamp only needs to be anytime within the desired day as only
+     * the date data is extracted from it.
+     *
+     * The event's original time of day is maintained, only the date is shifted.
+     *
+     * @param int $eventid Id of event to be updated
+     * @param int $daytimestamp Timestamp for the new start day
+     * @return  array
+     */
+    public static function update_event_start_day($eventid, $daytimestamp) {
+        global $USER, $PAGE;
+
+        // Parameter validation.
+        $params = self::validate_parameters(self::update_event_start_day_parameters(), [
+            'eventid' => $eventid,
+            'daytimestamp' => $daytimestamp,
+        ]);
+
+        $vault = event_container::get_event_vault();
+        $mapper = event_container::get_event_mapper();
+        $event = $vault->get_event_by_id($eventid);
+
+        if (!$event) {
+            throw new \moodle_exception('Unable to find event with id ' . $eventid);
+        }
+
+        $legacyevent = $mapper->from_event_to_legacy_event($event);
+
+        if (!calendar_edit_event_allowed($legacyevent, true)) {
+            print_error('nopermissiontoupdatecalendar');
+        }
+
+        self::validate_context($legacyevent->context);
+
+        $newdate = usergetdate($daytimestamp);
+        $startdatestring = implode('-', [$newdate['year'], $newdate['mon'], $newdate['mday']]);
+        $startdate = new DateTimeImmutable($startdatestring);
+        $event = local_api::update_event_start_day($event, $startdate);
+        $cache = new events_related_objects_cache([$event]);
+        $relatedobjects = [
+            'context' => $cache->get_context($event),
+            'course' => $cache->get_course($event),
+        ];
+        $exporter = new event_exporter($event, $relatedobjects);
+        $renderer = $PAGE->get_renderer('core_calendar');
+
+        return array('event' => $exporter->export($renderer));
+    }
+
+    /**
+     * Returns description of method result value.
+     *
+     * @return external_description
+     */
+    public static function update_event_start_day_returns() {
+        return new external_single_structure(
+            array(
+                'event' => event_exporter::get_read_structure()
+            )
+        );
+    }
+
+    /**
+     * Get data for the monthly calendar view.
+     *
+     * @param   int     $courseid The course to be included
+     * @param   int     $categoryid The category to be included
+     * @return  array
+     */
+    public static function get_calendar_upcoming_view($courseid, $categoryid) {
+        global $CFG, $DB, $USER, $PAGE;
+        require_once($CFG->dirroot."/calendar/lib.php");
+
+        // Parameter validation.
+        $params = self::validate_parameters(self::get_calendar_upcoming_view_parameters(), [
+            'courseid' => $courseid,
+            'categoryid' => $categoryid,
+        ]);
+
+        $context = \context_user::instance($USER->id);
+        self::validate_context($context);
+        $PAGE->set_url('/calendar/');
+
+        $calendar = \calendar_information::create(time(), $params['courseid'], $params['categoryid']);
+        self::validate_context($calendar->context);
+
+        list($data, $template) = calendar_get_view($calendar, 'upcoming');
+
+        return $data;
+    }
+
+    /**
+     * Returns description of method parameters.
+     *
+     * @return external_function_parameters
+     */
+    public static function get_calendar_upcoming_view_parameters() {
+        return new external_function_parameters(
+            [
+                'courseid' => new external_value(PARAM_INT, 'Course being viewed', VALUE_DEFAULT, SITEID, NULL_ALLOWED),
+                'categoryid' => new external_value(PARAM_INT, 'Category being viewed', VALUE_DEFAULT, null, NULL_ALLOWED),
+            ]
+        );
+    }
+
+    /**
+     * Returns description of method result value.
+     *
+     * @return external_description
+     */
+    public static function get_calendar_upcoming_view_returns() {
+        return \core_calendar\external\calendar_upcoming_exporter::get_read_structure();
     }
 }

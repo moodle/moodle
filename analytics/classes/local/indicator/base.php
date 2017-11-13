@@ -122,6 +122,22 @@ abstract class base extends \core_analytics\calculable {
     }
 
     /**
+     * Hook to allow indicators to pre-fill data that is shared accross time range calculations.
+     *
+     * Useful to fill analysable-dependant data that does not depend on the time ranges. Use
+     * instance vars to cache data that can be re-used across samples calculations but changes
+     * between time ranges (indicator instances are reset between time ranges to avoid unexpected
+     * problems).
+     *
+     * You are also responsible of emptying previous analysable caches.
+     *
+     * @param \core_analytics\analysable $analysable
+     * @return void
+     */
+    public function fill_per_analysable_caches(\core_analytics\analysable $analysable) {
+    }
+
+    /**
      * Calculates the indicator.
      *
      * Returns an array of values which size matches $sampleids size.
@@ -130,29 +146,40 @@ abstract class base extends \core_analytics\calculable {
      * @param string $samplesorigin
      * @param integer $starttime Limit the calculation to this timestart
      * @param integer $endtime Limit the calculation to this timeend
-     * @return array The format to follow is [userid] = int|float[]
+     * @param array $existingcalculations Existing calculations of this indicator, indexed by sampleid.
+     * @return array [0] = [$sampleid => int[]|float[]], [1] = [$sampleid => int|float], [2] = [$sampleid => $sampleid]
      */
-    public function calculate($sampleids, $samplesorigin, $starttime = false, $endtime = false) {
+    public function calculate($sampleids, $samplesorigin, $starttime = false, $endtime = false, $existingcalculations = array()) {
 
         if (!PHPUNIT_TEST && CLI_SCRIPT) {
             echo '.';
         }
 
         $calculations = array();
+        $newcalculations = array();
+        $notnulls = array();
         foreach ($sampleids as $sampleid => $unusedsampleid) {
 
-            $calculatedvalue = $this->calculate_sample($sampleid, $samplesorigin, $starttime, $endtime);
+            if (isset($existingcalculations[$sampleid])) {
+                $calculatedvalue = $existingcalculations[$sampleid];
+            } else {
+                $calculatedvalue = $this->calculate_sample($sampleid, $samplesorigin, $starttime, $endtime);
+                $newcalculations[$sampleid] = $calculatedvalue;
+            }
 
-            if (!is_null($calculatedvalue) && ($calculatedvalue > self::MAX_VALUE || $calculatedvalue < self::MIN_VALUE)) {
-                throw new \coding_exception('Calculated values should be higher than ' . self::MIN_VALUE .
-                    ' and lower than ' . self::MAX_VALUE . ' ' . $calculatedvalue . ' received');
+            if (!is_null($calculatedvalue)) {
+                $notnulls[$sampleid] = $sampleid;
+                if ($calculatedvalue > self::MAX_VALUE || $calculatedvalue < self::MIN_VALUE) {
+                    throw new \coding_exception('Calculated values should be higher than ' . self::MIN_VALUE .
+                        ' and lower than ' . self::MAX_VALUE . ' ' . $calculatedvalue . ' received');
+                }
             }
 
             $calculations[$sampleid] = $calculatedvalue;
         }
 
-        $calculations = $this->to_features($calculations);
+        $features = $this->to_features($calculations);
 
-        return $calculations;
+        return array($features, $newcalculations, $notnulls);
     }
 }

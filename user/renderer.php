@@ -32,67 +32,6 @@ defined('MOODLE_INTERNAL') || die();
 class core_user_renderer extends plugin_renderer_base {
 
     /**
-     * Prints user files tree view
-     * @return string
-     */
-    public function user_files_tree() {
-        return $this->render(new user_files_tree);
-    }
-
-    /**
-     * Render user files tree
-     *
-     * @param user_files_tree $tree
-     * @return string HTML
-     */
-    public function render_user_files_tree(user_files_tree $tree) {
-        if (empty($tree->dir['subdirs']) && empty($tree->dir['files'])) {
-            $html = $this->output->box(get_string('nofilesavailable', 'repository'));
-        } else {
-            $htmlid = 'user_files_tree_'.uniqid();
-            $module = array('name' => 'core_user', 'fullpath' => '/user/module.js');
-            $this->page->requires->js_init_call('M.core_user.init_tree', array(false, $htmlid), false, $module);
-            $html = '<div id="'.$htmlid.'">';
-            $html .= $this->htmllize_tree($tree, $tree->dir);
-            $html .= '</div>';
-        }
-        return $html;
-    }
-
-    /**
-     * Internal function - creates htmls structure suitable for YUI tree.
-     * @param user_files_tree $tree
-     * @param array $dir
-     * @return string HTML
-     */
-    protected function htmllize_tree($tree, $dir) {
-        global $CFG;
-        $yuiconfig = array();
-        $yuiconfig['type'] = 'html';
-
-        if (empty($dir['subdirs']) and empty($dir['files'])) {
-            return '';
-        }
-        $result = '<ul>';
-        foreach ($dir['subdirs'] as $subdir) {
-            $image = $this->output->pix_icon(file_folder_icon(), $subdir['dirname'], 'moodle', array('class' => 'icon'));
-            $result .= '<li yuiConfig=\''.json_encode($yuiconfig).'\'><div>'.$image.' '.s($subdir['dirname']).'</div> '.
-                $this->htmllize_tree($tree, $subdir).'</li>';
-        }
-        foreach ($dir['files'] as $file) {
-            $url = file_encode_url("$CFG->wwwroot/pluginfile.php", '/'.$tree->context->id.'/user/private'.
-                $file->get_filepath().$file->get_filename(), true);
-            $filename = $file->get_filename();
-            $image = $this->output->pix_icon(file_file_icon($file), $filename, 'moodle', array('class' => 'icon'));
-            $result .= '<li yuiConfig=\''.json_encode($yuiconfig).'\'><div>'.$image.' '.html_writer::link($url, $filename).
-                '</div></li>';
-        }
-        $result .= '</ul>';
-
-        return $result;
-    }
-
-    /**
      * Prints user search utility that can search user by first initial of firstname and/or first initial of lastname
      * Prints a header with a title and the number of users found within that subset
      * @param string $url the url to return to, complete with any parameters needed for the return
@@ -181,7 +120,57 @@ class core_user_renderer extends plugin_renderer_base {
     public function unified_filter($course, $context, $filtersapplied) {
         global $CFG, $DB, $USER;
 
+        require_once($CFG->dirroot . '/enrol/locallib.php');
+        require_once($CFG->dirroot . '/lib/grouplib.php');
+        $manager = new course_enrolment_manager($this->page, $course);
+
         $filteroptions = [];
+
+        // Filter options for role.
+        $roles = role_fix_names(get_profile_roles($context), $context, ROLENAME_ALIAS, true);
+        $criteria = get_string('role');
+        $roleoptions = [];
+        foreach ($roles as $id => $role) {
+            $roleoptions += $this->format_filter_option(USER_FILTER_ROLE, $criteria, $id, $role);
+        }
+        $filteroptions += $roleoptions;
+
+        // Filter options for groups, if available.
+        if (has_capability('moodle/site:accessallgroups', $context) || $course->groupmode != SEPARATEGROUPS) {
+            // List all groups if the user can access all groups, or we are in visible group mode or no groups mode.
+            $groups = $manager->get_all_groups();
+        } else {
+            // Otherwise, just list the groups the user belongs to.
+            $groups = groups_get_all_groups($course->id, $USER->id);
+        }
+        $criteria = get_string('group');
+        $groupoptions = [];
+        foreach ($groups as $id => $group) {
+            $groupoptions += $this->format_filter_option(USER_FILTER_GROUP, $criteria, $id, $group->name);
+        }
+        $filteroptions += $groupoptions;
+
+        $canreviewenrol = has_capability('moodle/course:enrolreview', $context);
+
+        // Filter options for status.
+        if ($canreviewenrol) {
+            $criteria = get_string('status');
+            // Add statuses.
+            $filteroptions += $this->format_filter_option(USER_FILTER_STATUS, $criteria, ENROL_USER_ACTIVE, get_string('active'));
+            $filteroptions += $this->format_filter_option(USER_FILTER_STATUS, $criteria, ENROL_USER_SUSPENDED,
+                get_string('inactive'));
+        }
+
+        // Filter options for enrolment methods.
+        if ($canreviewenrol && $enrolmentmethods = $manager->get_enrolment_instance_names(true)) {
+            $criteria = get_string('enrolmentinstances', 'enrol');
+            $enroloptions = [];
+            foreach ($enrolmentmethods as $id => $enrolname) {
+                $enroloptions += $this->format_filter_option(USER_FILTER_ENROLMENT, $criteria, $id, $enrolname);
+            }
+            $filteroptions += $enroloptions;
+        }
+
         $isfrontpage = ($course->id == SITEID);
 
         // Get the list of fields we have to hide.
@@ -212,31 +201,34 @@ class core_user_renderer extends plugin_renderer_base {
             // Days.
             for ($i = 1; $i < 7; $i++) {
                 $timestamp = strtotime('-' . $i . ' days', $now);
-                if ($timestamp >= $minlastaccess) {
-                    $value = get_string('numdays', 'moodle', $i);
-                    $timeoptions += $this->format_filter_option(USER_FILTER_LAST_ACCESS, $criteria, $timestamp, $value);
+                if ($timestamp < $minlastaccess) {
+                    break;
                 }
+                $value = get_string('numdays', 'moodle', $i);
+                $timeoptions += $this->format_filter_option(USER_FILTER_LAST_ACCESS, $criteria, $timestamp, $value);
             }
             // Weeks.
             for ($i = 1; $i < 10; $i++) {
                 $timestamp = strtotime('-'.$i.' weeks', $now);
-                if ($timestamp >= $minlastaccess) {
-                    $value = get_string('numweeks', 'moodle', $i);
-                    $timeoptions += $this->format_filter_option(USER_FILTER_LAST_ACCESS, $criteria, $timestamp, $value);
+                if ($timestamp < $minlastaccess) {
+                    break;
                 }
+                $value = get_string('numweeks', 'moodle', $i);
+                $timeoptions += $this->format_filter_option(USER_FILTER_LAST_ACCESS, $criteria, $timestamp, $value);
             }
             // Months.
             for ($i = 2; $i < 12; $i++) {
                 $timestamp = strtotime('-'.$i.' months', $now);
-                if ($timestamp >= $minlastaccess) {
-                    $value = get_string('nummonths', 'moodle', $i);
-                    $timeoptions += $this->format_filter_option(USER_FILTER_LAST_ACCESS, $criteria, $timestamp, $value);
+                if ($timestamp < $minlastaccess) {
+                    break;
                 }
+                $value = get_string('nummonths', 'moodle', $i);
+                $timeoptions += $this->format_filter_option(USER_FILTER_LAST_ACCESS, $criteria, $timestamp, $value);
             }
             // Try a year.
-            $timestamp = strtotime('-'.$i.' year', $now);
+            $timestamp = strtotime('-1 year', $now);
             if ($timestamp >= $minlastaccess) {
-                $value = get_string('lastyear', 'moodle');
+                $value = get_string('numyear', 'moodle', 1);
                 $timeoptions += $this->format_filter_option(USER_FILTER_LAST_ACCESS, $criteria, $timestamp, $value);
             }
             if (!empty($lastaccess0exists)) {
@@ -248,55 +240,8 @@ class core_user_renderer extends plugin_renderer_base {
             }
         }
 
-        require_once($CFG->dirroot . '/enrol/locallib.php');
-        $manager = new course_enrolment_manager($this->page, $course);
-
-        $canreviewenrol = has_capability('moodle/course:enrolreview', $context);
-
-        // Filter options for enrolment methods.
-        if ($canreviewenrol && $enrolmentmethods = $manager->get_enrolment_instance_names(true)) {
-            $criteria = get_string('enrolmentinstances', 'enrol');
-            $enroloptions = [];
-            foreach ($enrolmentmethods as $id => $enrolname) {
-                $enroloptions += $this->format_filter_option(USER_FILTER_ENROLMENT, $criteria, $id, $enrolname);
-            }
-            $filteroptions += $enroloptions;
-        }
-
-        // Filter options for groups, if available.
-        if ($course->groupmode != NOGROUPS) {
-            if (has_capability('moodle/site:accessallgroups', $context)) {
-                // List all groups if the user can access all groups.
-                $groups = $manager->get_all_groups();
-            } else {
-                // Otherwise, just list the groups the user belongs to.
-                $groups = groups_get_all_groups($course->id, $USER->id);
-            }
-            $criteria = get_string('group');
-            $groupoptions = [];
-            foreach ($groups as $id => $group) {
-                $groupoptions += $this->format_filter_option(USER_FILTER_GROUP, $criteria, $id, $group->name);
-            }
-            $filteroptions += $groupoptions;
-        }
-
-        // Filter options for role.
-        $roles = role_fix_names(get_profile_roles($context), $context, ROLENAME_ALIAS, true);
-        $criteria = get_string('role');
-        $roleoptions = [];
-        foreach ($roles as $id => $role) {
-            $roleoptions += $this->format_filter_option(USER_FILTER_ROLE, $criteria, $id, $role);
-        }
-        $filteroptions += $roleoptions;
-
-        // Filter options for status.
-        if ($canreviewenrol) {
-            $criteria = get_string('status');
-            // Add statuses.
-            $filteroptions += $this->format_filter_option(USER_FILTER_STATUS, $criteria, ENROL_USER_ACTIVE, get_string('active'));
-            $filteroptions += $this->format_filter_option(USER_FILTER_STATUS, $criteria, ENROL_USER_SUSPENDED,
-                get_string('inactive'));
-        }
+        // Add missing applied filters to the filter options.
+        $filteroptions = $this->handle_missing_applied_filters($filtersapplied, $filteroptions);
 
         $indexpage = new \core_user\output\unified_filter($filteroptions, $filtersapplied);
         $context = $indexpage->export_for_template($this->output);
@@ -318,32 +263,74 @@ class core_user_renderer extends plugin_renderer_base {
         $optionvalue = "$filtertype:$value";
         return [$optionvalue => $optionlabel];
     }
-}
-
-/**
- * User files tree
- * @copyright  2010 Dongsheng Cai <dongsheng@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class user_files_tree implements renderable {
 
     /**
-     * @var context_user $context
+     * Handles cases when after reloading the applied filters are missing in the filter options.
+     *
+     * @param array $filtersapplied The applied filters.
+     * @param array $filteroptions The filter options.
+     * @return array The formatted options with the ['filtertype:value' => 'criteria: label'] format.
      */
-    public $context;
+    private function handle_missing_applied_filters($filtersapplied, $filteroptions) {
+        global $DB;
 
-    /**
-     * @var array $dir
-     */
-    public $dir;
+        foreach ($filtersapplied as $filter) {
+            if (!array_key_exists($filter, $filteroptions)) {
+                $filtervalue = explode(':', $filter);
+                if (count($filtervalue) !== 2) {
+                    continue;
+                }
+                $key = $filtervalue[0];
+                $value = $filtervalue[1];
 
-    /**
-     * Create user files tree object
-     */
-    public function __construct() {
-        global $USER;
-        $this->context = context_user::instance($USER->id);
-        $fs = get_file_storage();
-        $this->dir = $fs->get_area_tree($this->context->id, 'user', 'private', 0);
+                switch($key) {
+                    case USER_FILTER_LAST_ACCESS:
+                        $now = usergetmidnight(time());
+                        $criteria = get_string('usersnoaccesssince');
+                        // Days.
+                        for ($i = 1; $i < 7; $i++) {
+                            $timestamp = strtotime('-' . $i . ' days', $now);
+                            if ($timestamp < $value) {
+                                break;
+                            }
+                            $val = get_string('numdays', 'moodle', $i);
+                            $filteroptions += $this->format_filter_option(USER_FILTER_LAST_ACCESS, $criteria, $timestamp, $val);
+                        }
+                        // Weeks.
+                        for ($i = 1; $i < 10; $i++) {
+                            $timestamp = strtotime('-'.$i.' weeks', $now);
+                            if ($timestamp < $value) {
+                                break;
+                            }
+                            $val = get_string('numweeks', 'moodle', $i);
+                            $filteroptions += $this->format_filter_option(USER_FILTER_LAST_ACCESS, $criteria, $timestamp, $val);
+                        }
+                        // Months.
+                        for ($i = 2; $i < 12; $i++) {
+                            $timestamp = strtotime('-'.$i.' months', $now);
+                            if ($timestamp < $value) {
+                                break;
+                            }
+                            $val = get_string('nummonths', 'moodle', $i);
+                            $filteroptions += $this->format_filter_option(USER_FILTER_LAST_ACCESS, $criteria, $timestamp, $val);
+                        }
+                        // Try a year.
+                        $timestamp = strtotime('-1 year', $now);
+                        if ($timestamp >= $value) {
+                            $val = get_string('numyear', 'moodle', 1);
+                            $filteroptions += $this->format_filter_option(USER_FILTER_LAST_ACCESS, $criteria, $timestamp, $val);
+                        }
+                        break;
+                    case USER_FILTER_ROLE:
+                        $criteria = get_string('role');
+                        if ($role = $DB->get_record('role', array('id' => $value))) {
+                            $role = role_get_name($role);
+                            $filteroptions += $this->format_filter_option(USER_FILTER_ROLE, $criteria, $value, $role);
+                        }
+                        break;
+                }
+            }
+        }
+        return $filteroptions;
     }
 }

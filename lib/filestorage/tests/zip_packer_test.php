@@ -463,7 +463,7 @@ class core_files_zip_packer_testcase extends advanced_testcase implements file_p
             $result = $zip_archive->close();
         } catch (Exception $e) {
             // New PHP versions print PHP Warning.
-            $this->assertInstanceOf('PHPUnit_Framework_Error_Warning', $e);
+            $this->assertInstanceOf('PHPUnit\Framework\Error\Warning', $e);
             $this->assertContains('ZipArchive::close', $e->getMessage());
         }
         // This is crazy, but it shows how some PHP versions do return true.
@@ -472,7 +472,7 @@ class core_files_zip_packer_testcase extends advanced_testcase implements file_p
             $this->assertFalse($result);
         } catch (Exception $e) {
             // But others do insist into returning true (5.6.13...). Only can accept them.
-            $this->assertInstanceOf('PHPUnit_Framework_ExpectationFailedException', $e);
+            $this->assertInstanceOf('PHPUnit\Framework\ExpectationFailedException', $e);
             $this->assertTrue($result);
         }
         $this->assertFileNotExists($archive);

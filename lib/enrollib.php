@@ -436,7 +436,7 @@ function enrol_add_course_navigation(navigation_node $coursenode, $course) {
     if ($course->id != SITEID) {
         // list all participants - allows assigning roles, groups, etc.
         if (has_capability('moodle/course:enrolreview', $coursecontext)) {
-            $url = new moodle_url('/enrol/users.php', array('id'=>$course->id));
+            $url = new moodle_url('/user/index.php', array('id'=>$course->id));
             $usersnode->add(get_string('enrolledusers', 'enrol'), $url, navigation_node::TYPE_SETTING, null, 'review', new pix_icon('i/enrolusers', ''));
         }
 
@@ -548,19 +548,25 @@ function enrol_add_course_navigation(navigation_node $coursenode, $course) {
  *   so name the fields you really need, which will
  *   be added and uniq'd
  *
+ * If $allaccessible is true, this will additionally return courses that the current user is not
+ * enrolled in, but can access because they are open to the user for other reasons (course view
+ * permission, currently viewing course as a guest, or course allows guest access without
+ * password).
+ *
  * @param string|array $fields
  * @param string $sort
  * @param int $limit max number of courses
  * @param array $courseids the list of course ids to filter by
+ * @param bool $allaccessible Include courses user is not enrolled in, but can access
  * @return array
  */
 function enrol_get_my_courses($fields = null, $sort = 'visible DESC,sortorder ASC',
-                              $limit = 0, $courseids = []) {
-    global $DB, $USER;
+          $limit = 0, $courseids = [], $allaccessible = false) {
+    global $DB, $USER, $CFG;
 
-    // Guest account does not have any courses
-    if (isguestuser() or !isloggedin()) {
-        return(array());
+    // Guest account does not have any enrolled courses.
+    if (!$allaccessible && (isguestuser() or !isloggedin())) {
+        return array();
     }
 
     $basefields = array('id', 'category', 'sortorder',
@@ -621,22 +627,86 @@ function enrol_get_my_courses($fields = null, $sort = 'visible DESC,sortorder AS
         $params = array_merge($params, $courseidsparams);
     }
 
-    //note: we can not use DISTINCT + text fields due to Oracle and MS limitations, that is why we have the subselect there
+    $courseidsql = "";
+    // Logged-in, non-guest users get their enrolled courses.
+    if (!isguestuser() && isloggedin()) {
+        $courseidsql .= "
+                SELECT DISTINCT e.courseid
+                  FROM {enrol} e
+                  JOIN {user_enrolments} ue ON (ue.enrolid = e.id AND ue.userid = :userid)
+                 WHERE ue.status = :active AND e.status = :enabled AND ue.timestart < :now1
+                       AND (ue.timeend = 0 OR ue.timeend > :now2)";
+        $params['userid'] = $USER->id;
+        $params['active'] = ENROL_USER_ACTIVE;
+        $params['enabled'] = ENROL_INSTANCE_ENABLED;
+        $params['now1'] = round(time(), -2); // Improves db caching.
+        $params['now2'] = $params['now1'];
+    }
+
+    // When including non-enrolled but accessible courses...
+    if ($allaccessible) {
+        if (is_siteadmin()) {
+            // Site admins can access all courses.
+            $courseidsql = "SELECT DISTINCT c2.id AS courseid FROM {course} c2";
+        } else {
+            // If we used the enrolment as well, then this will be UNIONed.
+            if ($courseidsql) {
+                $courseidsql .= " UNION ";
+            }
+
+            // Include courses with guest access and no password.
+            $courseidsql .= "
+                    SELECT DISTINCT e.courseid
+                      FROM {enrol} e
+                     WHERE e.enrol = 'guest' AND e.password = :emptypass AND e.status = :enabled2";
+            $params['emptypass'] = '';
+            $params['enabled2'] = ENROL_INSTANCE_ENABLED;
+
+            // Include courses where the current user is currently using guest access (may include
+            // those which require a password).
+            $courseids = [];
+            $accessdata = get_user_accessdata($USER->id);
+            foreach ($accessdata['ra'] as $contextpath => $roles) {
+                if (array_key_exists($CFG->guestroleid, $roles)) {
+                    // Work out the course id from context path.
+                    $context = context::instance_by_id(preg_replace('~^.*/~', '', $contextpath));
+                    if ($context instanceof context_course) {
+                        $courseids[$context->instanceid] = true;
+                    }
+                }
+            }
+
+            // Include courses where the current user has moodle/course:view capability.
+            $courses = get_user_capability_course('moodle/course:view', null, false);
+            if (!$courses) {
+                $courses = [];
+            }
+            foreach ($courses as $course) {
+                $courseids[$course->id] = true;
+            }
+
+            // If there are any in either category, list them individually.
+            if ($courseids) {
+                list ($allowedsql, $allowedparams) = $DB->get_in_or_equal(
+                        array_keys($courseids), SQL_PARAMS_NAMED);
+                $courseidsql .= "
+                        UNION
+                       SELECT DISTINCT c3.id AS courseid
+                         FROM {course} c3
+                        WHERE c3.id $allowedsql";
+                $params = array_merge($params, $allowedparams);
+            }
+        }
+    }
+
+    // Note: we can not use DISTINCT + text fields due to Oracle and MS limitations, that is why
+    // we have the subselect there.
     $sql = "SELECT $coursefields $ccselect
               FROM {course} c
-              JOIN (SELECT DISTINCT e.courseid
-                      FROM {enrol} e
-                      JOIN {user_enrolments} ue ON (ue.enrolid = e.id AND ue.userid = :userid)
-                     WHERE ue.status = :active AND e.status = :enabled AND ue.timestart < :now1 AND (ue.timeend = 0 OR ue.timeend > :now2)
-                   ) en ON (en.courseid = c.id)
+              JOIN ($courseidsql) en ON (en.courseid = c.id)
            $ccjoin
              WHERE $wheres
           $orderby";
-    $params['userid']  = $USER->id;
-    $params['active']  = ENROL_USER_ACTIVE;
-    $params['enabled'] = ENROL_INSTANCE_ENABLED;
-    $params['now1']    = round(time(), -2); // improves db caching
-    $params['now2']    = $params['now1'];
 
     $courses = $DB->get_records_sql($sql, $params, 0, $limit);
 
@@ -1349,8 +1419,8 @@ function get_enrolled_join(context $context, $useridcolumn, $onlyactive = false,
                 "{$prefix}e1.courseid = :{$prefix}_e1_courseid",
             );
             if ($enrolid) {
-                $enrolconditions[] = "{$prefix}e1.id = :{$prefix}e1.enrolid";
-                $params[$prefix . 'e1.enrolid'] = $enrolid;
+                $enrolconditions[] = "{$prefix}e1.id = :{$prefix}e1_enrolid";
+                $params[$prefix . 'e1_enrolid'] = $enrolid;
             }
             $enrolconditionssql = implode(" AND ", $enrolconditions);
             $joins[] = "JOIN {enrol} {$prefix}e1 ON ($enrolconditionssql)";
@@ -1458,9 +1528,12 @@ function enrol_output_fragment_user_enrolment_form($args) {
 
     $ueid = $args->ueid;
     $userenrolment = $DB->get_record('user_enrolments', ['id' => $ueid], '*', MUST_EXIST);
+    $instance = $DB->get_record('enrol', ['id' => $userenrolment->enrolid], '*', MUST_EXIST);
+    $plugin = enrol_get_plugin($instance->enrol);
     $customdata = [
         'ue' => $userenrolment,
         'modal' => true,
+        'enrolinstancename' => $plugin->get_instance_name($instance)
     ];
 
     // Set the data if applicable.
@@ -2518,7 +2591,38 @@ abstract class enrol_plugin {
      * @return array An array of user_enrolment_actions
      */
     public function get_user_enrolment_actions(course_enrolment_manager $manager, $ue) {
-        return array();
+        $actions = [];
+        $context = $manager->get_context();
+        $instance = $ue->enrolmentinstance;
+        $params = $manager->get_moodlepage()->url->params();
+        $params['ue'] = $ue->id;
+
+        // Edit enrolment action.
+        if ($this->allow_manage($instance) && has_capability("enrol/{$instance->enrol}:manage", $context)) {
+            $title = get_string('editenrolment', 'enrol');
+            $icon = new pix_icon('t/edit', $title);
+            $url = new moodle_url('/enrol/editenrolment.php', $params);
+            $actionparams = [
+                'class' => 'editenrollink',
+                'rel' => $ue->id,
+                'data-action' => ENROL_ACTION_EDIT
+            ];
+            $actions[] = new user_enrolment_action($icon, $title, $url, $actionparams);
+        }
+
+        // Unenrol action.
+        if ($this->allow_unenrol_user($instance, $ue) && has_capability("enrol/{$instance->enrol}:unenrol", $context)) {
+            $title = get_string('unenrol', 'enrol');
+            $icon = new pix_icon('t/delete', $title);
+            $url = new moodle_url('/enrol/unenroluser.php', $params);
+            $actionparams = [
+                'class' => 'unenrollink',
+                'rel' => $ue->id,
+                'data-action' => ENROL_ACTION_UNENROL
+            ];
+            $actions[] = new user_enrolment_action($icon, $title, $url, $actionparams);
+        }
+        return $actions;
     }
 
     /**
@@ -2873,7 +2977,7 @@ abstract class enrol_plugin {
         $a->course    = format_string($course->fullname, true, array('context'=>$context));
         $a->threshold = get_string('numdays', '', $instance->expirythreshold / (60*60*24));
         $a->users     = implode("\n", $users);
-        $a->extendurl = (string)new moodle_url('/enrol/users.php', array('id'=>$instance->courseid));
+        $a->extendurl = (string)new moodle_url('/user/index.php', array('id'=>$instance->courseid));
 
         $subject = get_string('expirymessageenrollersubject', 'enrol_'.$name, $a);
         $body = get_string('expirymessageenrollerbody', 'enrol_'.$name, $a);

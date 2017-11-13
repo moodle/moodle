@@ -33,8 +33,7 @@ define([
             'core/modal_registry',
             'core/fragment',
             'core_calendar/events',
-            'core_calendar/repository',
-            'core_calendar/event_form'
+            'core_calendar/repository'
         ],
         function(
             $,
@@ -47,13 +46,11 @@ define([
             ModalRegistry,
             Fragment,
             CalendarEvents,
-            Repository,
-            EventForm
+            Repository
         ) {
 
     var registered = false;
     var SELECTORS = {
-        MORELESS_BUTTON: '[data-action="more-less-toggle"]',
         SAVE_BUTTON: '[data-action="save"]',
         LOADING_ICON_CONTAINER: '[data-region="loading-icon-container"]',
     };
@@ -66,15 +63,98 @@ define([
     var ModalEventForm = function(root) {
         Modal.call(this, root);
         this.eventId = null;
+        this.startTime = null;
+        this.courseId = null;
+        this.categoryId = null;
+        this.contextId = null;
         this.reloadingBody = false;
         this.reloadingTitle = false;
         this.saveButton = this.getFooter().find(SELECTORS.SAVE_BUTTON);
-        this.moreLessButton = this.getFooter().find(SELECTORS.MORELESS_BUTTON);
     };
 
     ModalEventForm.TYPE = 'core_calendar-modal_event_form';
     ModalEventForm.prototype = Object.create(Modal.prototype);
     ModalEventForm.prototype.constructor = ModalEventForm;
+
+    /**
+     * Set the context id to the given value.
+     *
+     * @method setContextId
+     * @param {Number} id The event id
+     */
+    ModalEventForm.prototype.setContextId = function(id) {
+        this.contextId = id;
+    };
+
+    /**
+     * Retrieve the current context id, if any.
+     *
+     * @method getContextId
+     * @return {Number|null} The event id
+     */
+    ModalEventForm.prototype.getContextId = function() {
+        return this.contextId;
+    };
+
+    /**
+     * Set the course id to the given value.
+     *
+     * @method setCourseId
+     * @param {int} id The event id
+     */
+    ModalEventForm.prototype.setCourseId = function(id) {
+        this.courseId = id;
+    };
+
+    /**
+     * Retrieve the current course id, if any.
+     *
+     * @method getCourseId
+     * @return {int|null} The event id
+     */
+    ModalEventForm.prototype.getCourseId = function() {
+        return this.courseId;
+    };
+
+    /**
+     * Set the category id to the given value.
+     *
+     * @method setCategoryId
+     * @param {int} id The event id
+     */
+    ModalEventForm.prototype.setCategoryId = function(id) {
+        this.categoryId = id;
+    };
+
+    /**
+     * Retrieve the current category id, if any.
+     *
+     * @method getCategoryId
+     * @return {int|null} The event id
+     */
+    ModalEventForm.prototype.getCategoryId = function() {
+        return this.categoryId;
+    };
+
+    /**
+     * Check if the modal has an course id.
+     *
+     * @method hasCourseId
+     * @return {bool}
+     */
+    ModalEventForm.prototype.hasCourseId = function() {
+        return this.courseId !== null;
+    };
+
+    /**
+     * Check if the modal has an category id.
+     *
+     * @method hasCategoryId
+     * @return {bool}
+     */
+    ModalEventForm.prototype.hasCategoryId = function() {
+        return this.categoryId !== null;
+    };
 
     /**
      * Set the event id to the given value.
@@ -107,6 +187,36 @@ define([
     };
 
     /**
+     * Set the start time to the given value.
+     *
+     * @method setStartTime
+     * @param {int} time The start time
+     */
+    ModalEventForm.prototype.setStartTime = function(time) {
+        this.startTime = time;
+    };
+
+    /**
+     * Retrieve the current start time, if any.
+     *
+     * @method getStartTime
+     * @return {int|null} The start time
+     */
+    ModalEventForm.prototype.getStartTime = function() {
+        return this.startTime;
+    };
+
+    /**
+     * Check if the modal has start time.
+     *
+     * @method hasStartTime
+     * @return {bool}
+     */
+    ModalEventForm.prototype.hasStartTime = function() {
+        return this.startTime !== null;
+    };
+
+    /**
      * Get the form element from the modal.
      *
      * @method getForm
@@ -123,7 +233,6 @@ define([
      */
     ModalEventForm.prototype.disableButtons = function() {
         this.saveButton.prop('disabled', true);
-        this.moreLessButton.prop('disabled', true);
     };
 
     /**
@@ -133,53 +242,6 @@ define([
      */
     ModalEventForm.prototype.enableButtons = function() {
         this.saveButton.prop('disabled', false);
-        this.moreLessButton.prop('disabled', false);
-    };
-
-    /**
-     * Set the more/less button in the footer to the "more"
-     * state.
-     *
-     * @method setMoreButton
-     */
-    ModalEventForm.prototype.setMoreButton = function() {
-        this.moreLessButton.attr('data-collapsed', 'true');
-        Str.get_string('more', 'calendar').then(function(string) {
-            this.moreLessButton.text(string);
-            return;
-        }.bind(this));
-    };
-
-    /**
-     * Set the more/less button in the footer to the "less"
-     * state.
-     *
-     * @method setLessButton
-     */
-    ModalEventForm.prototype.setLessButton = function() {
-        this.moreLessButton.attr('data-collapsed', 'false');
-        Str.get_string('less', 'calendar').then(function(string) {
-            this.moreLessButton.text(string);
-            return;
-        }.bind(this));
-    };
-
-    /**
-     * Toggle the more/less button in the footer from the current
-     * state to it's opposite state.
-     *
-     * @method toggleMoreLessButton
-     */
-    ModalEventForm.prototype.toggleMoreLessButton = function() {
-        var form = this.getForm();
-
-        if (this.moreLessButton.attr('data-collapsed') == 'true') {
-            form.trigger(EventForm.events.SHOW_ADVANCED);
-            this.setLessButton();
-        } else {
-            form.trigger(EventForm.events.HIDE_ADVANCED);
-            this.setMoreButton();
-        }
     };
 
     /**
@@ -210,7 +272,8 @@ define([
         .always(function() {
             this.reloadingTitle = false;
             return;
-        }.bind(this));
+        }.bind(this))
+        .fail(Notification.exception);
 
         return this.titlePromise;
     };
@@ -226,10 +289,9 @@ define([
      *
      * @method reloadBodyContent
      * @param {string} formData The serialised form data
-     * @param {bool} hasError True if we know the form data is erroneous
      * @return {object} A promise resolved with the fragment html and js from
      */
-    ModalEventForm.prototype.reloadBodyContent = function(formData, hasError) {
+    ModalEventForm.prototype.reloadBodyContent = function(formData) {
         if (this.reloadingBody) {
             return this.bodyPromise;
         }
@@ -237,20 +299,29 @@ define([
         this.reloadingBody = true;
         this.disableButtons();
 
-        var contextId = this.saveButton.attr('data-context-id');
         var args = {};
 
         if (this.hasEventId()) {
             args.eventid = this.getEventId();
         }
 
+        if (this.hasStartTime()) {
+            args.starttime = this.getStartTime();
+        }
+
+        if (this.hasCourseId()) {
+            args.courseid = this.getCourseId();
+        }
+
+        if (this.hasCategoryId()) {
+            args.categoryid = this.getCategoryId();
+        }
+
         if (typeof formData !== 'undefined') {
             args.formdata = formData;
         }
 
-        args.haserror = (typeof hasError == 'undefined') ? false : hasError;
-
-        this.bodyPromise = Fragment.loadFragment('calendar', 'event_form', contextId, args);
+        this.bodyPromise = Fragment.loadFragment('calendar', 'event_form', this.getContextId(), args);
 
         this.setBody(this.bodyPromise);
 
@@ -258,11 +329,12 @@ define([
             this.enableButtons();
             return;
         }.bind(this))
-        .catch(Notification.exception)
+        .fail(Notification.exception)
         .always(function() {
             this.reloadingBody = false;
             return;
-        }.bind(this));
+        }.bind(this))
+        .fail(Notification.exception);
 
         return this.bodyPromise;
     };
@@ -305,6 +377,9 @@ define([
     ModalEventForm.prototype.hide = function() {
         Modal.prototype.hide.call(this);
         this.setEventId(null);
+        this.setStartTime(null);
+        this.setCourseId(null);
+        this.setCategoryId(null);
     };
 
     /**
@@ -345,14 +420,18 @@ define([
                     // If there was a server side validation error then
                     // we need to re-request the rendered form from the server
                     // in order to display the error for the user.
-                    return this.reloadBodyContent(formData, true);
+                    this.reloadBodyContent(formData);
+                    return;
                 } else {
+                    // Check whether this was a new event or not.
+                    // The hide function unsets the form data so grab this before the hide.
+                    var isExisting = this.hasEventId();
+
                     // No problemo! Our work here is done.
                     this.hide();
 
-                    // Trigger the appropriate calendar event so that the view can
-                    // be updated.
-                    if (this.hasEventId()) {
+                    // Trigger the appropriate calendar event so that the view can be updated.
+                    if (isExisting) {
                         $('body').trigger(CalendarEvents.updated, [response.event]);
                     } else {
                         $('body').trigger(CalendarEvents.created, [response.event]);
@@ -366,8 +445,10 @@ define([
                 // the loading icon and re-enable the buttons.
                 loadingContainer.addClass('hidden');
                 this.enableButtons();
+
+                return;
             }.bind(this))
-            .catch(Notification.exception);
+            .fail(Notification.exception);
     };
 
     /**
@@ -397,28 +478,6 @@ define([
             // propagation because we have already handled the event.
             e.preventDefault();
             e.stopPropagation();
-        }.bind(this));
-
-        // Toggle the state of the more/less button in the footer.
-        this.getModal().on(CustomEvents.events.activate, SELECTORS.MORELESS_BUTTON, function(e, data) {
-            this.toggleMoreLessButton();
-
-            data.originalEvent.preventDefault();
-            e.stopPropagation();
-        }.bind(this));
-
-        // When the event form tells us that the advanced fields are shown
-        // then the more/less button should be set to less to allow the user
-        // to hide the advanced fields.
-        this.getModal().on(EventForm.events.ADVANCED_SHOWN, function() {
-            this.setLessButton();
-        }.bind(this));
-
-        // When the event form tells us that the advanced fields are hidden
-        // then the more/less button should be set to more to allow the user
-        // to show the advanced fields.
-        this.getModal().on(EventForm.events.ADVANCED_HIDDEN, function() {
-            this.setMoreButton();
         }.bind(this));
     };
 

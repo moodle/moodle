@@ -30,13 +30,8 @@ $id = required_param('id', PARAM_INT);
 $PAGE->set_url('/user/action_redir.php', array('formaction' => $formaction, 'id' => $id));
 list($formaction) = explode('?', $formaction, 2);
 
-// Add every page will be redirected by this script.
-$actions = array(
-        'messageselect.php',
-        'addnote.php',
-        'groupaddnote.php',
-        'bulkchange.php'
-        );
+// This page now only handles the bulk enrolment change actions, other actions are done with ajax.
+$actions = array('bulkchange.php');
 
 if (array_search($formaction, $actions) === false) {
     print_error('unknownuseraction');
@@ -114,6 +109,18 @@ if ($formaction == 'bulkchange.php') {
 
     $users = $manager->get_users_enrolments($userids);
 
+    $removed = array_diff($userids, array_keys($users));
+    if (!empty($removed)) {
+        // This manager does not filter by enrolment method - so we can get the removed users details.
+        $removedmanager = new course_enrolment_manager($PAGE, $course);
+        $removedusers = $removedmanager->get_users_enrolments($removed);
+
+        foreach ($removedusers as $removeduser) {
+            $msg = get_string('userremovedfromselectiona', 'enrol', fullname($removeduser));
+            \core\notification::warning($msg);
+        }
+    }
+
     // We may have users from any kind of enrolment, we need to filter for the enrolment plugin matching the bulk action.
     $matchesplugin = function($user) use ($plugin) {
         foreach ($user->enrolments as $enrolment) {
@@ -123,11 +130,13 @@ if ($formaction == 'bulkchange.php') {
         }
         return false;
     };
-    $users = array_filter($users, $matchesplugin);
+    $filteredusers = array_filter($users, $matchesplugin);
 
-    if (empty($users)) {
+    if (empty($filteredusers)) {
         redirect($returnurl, get_string('noselectedusers', 'bulkusers'));
     }
+
+    $users = $filteredusers;
 
     // Get the form for the bulk operation.
     $mform = $operation->get_form($PAGE->url, array('users' => $users));
@@ -161,5 +170,5 @@ if ($formaction == 'bulkchange.php') {
     exit();
 
 } else {
-    require_once($formaction);
+    throw new coding_exception('invalidaction');
 }

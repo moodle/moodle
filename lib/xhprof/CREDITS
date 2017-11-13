@@ -1,5 +1,7 @@
 Originally developed at Facebook, XHProf was open sourced in Mar, 2009.
 
+XHProf is now maintained by Phacility.
+
 Creators:
   Changhao Jiang
   Kannan Muthukkaruppan
@@ -9,4 +11,3 @@ Creators:
 Additional Contributors:
   George Cabrera      - UI enhancements
   Paul Saab           - FreeBSD port
-

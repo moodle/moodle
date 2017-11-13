@@ -55,6 +55,12 @@ class core_session_redis_testcase extends advanced_testcase {
         if (!defined('TEST_SESSION_REDIS_HOST')) {
             $this->markTestSkipped('Session test server not set. define: TEST_SESSION_REDIS_HOST');
         }
+        $version = phpversion('Redis');
+        if (!$version) {
+            $this->markTestSkipped('Redis extension version missing');
+        } else if (version_compare($version, '2.0') <= 0) {
+            $this->markTestSkipped('Redis extension version must be at least 2.0: now running "' . $version . '"');
+        }
 
         $this->resetAfterTest();
 

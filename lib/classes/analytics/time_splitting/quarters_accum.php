@@ -36,12 +36,16 @@ defined('MOODLE_INTERNAL') || die();
 class quarters_accum extends \core_analytics\local\time_splitting\accumulative_parts {
 
     /**
-     * get_name
+     * Returns a lang_string object representing the name for the time spliting method.
      *
-     * @return string
+     * Used as column identificator.
+     *
+     * If there is a corresponding '_help' string this will be shown as well.
+     *
+     * @return \lang_string
      */
-    public function get_name() {
-        return get_string('timesplitting:quartersaccum');
+    public static function get_name() : \lang_string {
+        return new \lang_string('timesplitting:quartersaccum');
     }
 
     /**

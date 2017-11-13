@@ -677,6 +677,31 @@ class core_user_externallib_testcase extends externallib_advanced_testcase {
     }
 
     /**
+     * Test update_users using duplicated email.
+     */
+    public function test_update_users_duplicated_email() {
+        global $DB, $CFG;
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user2toupdate = array(
+            'id' => $user2->id,
+            'email' => $user1->email,
+        );
+        // E-mail duplicated not allowed.
+        $CFG->allowaccountssameemail = 0;
+        core_user_external::update_users(array($user2toupdate));
+        $this->assertNotEquals($user1->email, $DB->get_field('user', 'email', array('id' => $user2->id)));
+        // E-mail duplicated allowed.
+        $CFG->allowaccountssameemail = 1;
+        core_user_external::update_users(array($user2toupdate));
+        $this->assertEquals($user1->email, $DB->get_field('user', 'email', array('id' => $user2->id)));
+    }
+
+    /**
      * Test add_user_private_files
      */
     public function test_add_user_private_files() {
@@ -1200,7 +1225,7 @@ class core_user_externallib_testcase extends externallib_advanced_testcase {
         $user2 = self::getDataGenerator()->create_user();
         $this->setUser($user1);
 
-        $this->setExpectedException('required_capability_exception');
+        $this->expectException('required_capability_exception');
         // Try to retrieve other user private files info.
         core_user_external::get_private_files_info($user2->id);
     }

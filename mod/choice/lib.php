@@ -1241,6 +1241,117 @@ function mod_choice_core_calendar_provide_event_action(calendar_event $event,
 }
 
 /**
+ * This function calculates the minimum and maximum cutoff values for the timestart of
+ * the given event.
+ *
+ * It will return an array with two values, the first being the minimum cutoff value and
+ * the second being the maximum cutoff value. Either or both values can be null, which
+ * indicates there is no minimum or maximum, respectively.
+ *
+ * If a cutoff is required then the function must return an array containing the cutoff
+ * timestamp and error string to display to the user if the cutoff value is violated.
+ *
+ * A minimum and maximum cutoff return value will look like:
+ * [
+ *     [1505704373, 'The date must be after this date'],
+ *     [1506741172, 'The date must be before this date']
+ * ]
+ *
+ * @param calendar_event $event The calendar event to get the time range for
+ * @param stdClass $choice The module instance to get the range from
+ */
+function mod_choice_core_calendar_get_valid_event_timestart_range(\calendar_event $event, \stdClass $choice) {
+    $mindate = null;
+    $maxdate = null;
+
+    if ($event->eventtype == CHOICE_EVENT_TYPE_OPEN) {
+        if (!empty($choice->timeclose)) {
+            $maxdate = [
+                $choice->timeclose,
+                get_string('openafterclose', 'choice')
+            ];
+        }
+    } else if ($event->eventtype == CHOICE_EVENT_TYPE_CLOSE) {
+        if (!empty($choice->timeopen)) {
+            $mindate = [
+                $choice->timeopen,
+                get_string('closebeforeopen', 'choice')
+            ];
+        }
+    }
+
+    return [$mindate, $maxdate];
+}
+
+/**
+ * This function will update the choice module according to the
+ * event that has been modified.
+ *
+ * It will set the timeopen or timeclose value of the choice instance
+ * according to the type of event provided.
+ *
+ * @throws \moodle_exception
+ * @param \calendar_event $event
+ * @param stdClass $choice The module instance to get the range from
+ */
+function mod_choice_core_calendar_event_timestart_updated(\calendar_event $event, \stdClass $choice) {
+    global $DB;
+
+    if (!in_array($event->eventtype, [CHOICE_EVENT_TYPE_OPEN, CHOICE_EVENT_TYPE_CLOSE])) {
+        return;
+    }
+
+    $courseid = $event->courseid;
+    $modulename = $event->modulename;
+    $instanceid = $event->instance;
+    $modified = false;
+
+    // Something weird going on. The event is for a different module so
+    // we should ignore it.
+    if ($modulename != 'choice') {
+        return;
+    }
+
+    if ($choice->id != $instanceid) {
+        return;
+    }
+
+    $coursemodule = get_fast_modinfo($courseid)->instances[$modulename][$instanceid];
+    $context = context_module::instance($coursemodule->id);
+
+    // The user does not have the capability to modify this activity.
+    if (!has_capability('moodle/course:manageactivities', $context)) {
+        return;
+    }
+
+    if ($event->eventtype == CHOICE_EVENT_TYPE_OPEN) {
+        // If the event is for the choice activity opening then we should
+        // set the start time of the choice activity to be the new start
+        // time of the event.
+        if ($choice->timeopen != $event->timestart) {
+            $choice->timeopen = $event->timestart;
+            $modified = true;
+        }
+    } else if ($event->eventtype == CHOICE_EVENT_TYPE_CLOSE) {
+        // If the event is for the choice activity closing then we should
+        // set the end time of the choice activity to be the new start
+        // time of the event.
+        if ($choice->timeclose != $event->timestart) {
+            $choice->timeclose = $event->timestart;
+            $modified = true;
+        }
+    }
+
+    if ($modified) {
+        $choice->timemodified = time();
+        // Persist the instance changes.
+        $DB->update_record('choice', $choice);
+        $event = \core\event\course_module_updated::create_from_cm($coursemodule, $context);
+        $event->trigger();
+    }
+}
+
+/**
  * Get icon mapping for font-awesome.
  */
 function mod_choice_get_fontawesome_icon_map() {

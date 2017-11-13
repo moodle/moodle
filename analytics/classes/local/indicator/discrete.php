@@ -85,7 +85,7 @@ abstract class discrete extends base {
      */
     public function get_display_value($value, $subtype = false) {
 
-        $displayvalue = array_search($subtype, static::get_classes());
+        $displayvalue = array_search($subtype, static::get_classes(), false);
 
         debugging('Please overwrite \core_analytics\local\indicator\discrete::get_display_value to show something ' .
             'different than the default "' . $displayvalue . '"', DEBUG_DEVELOPER);

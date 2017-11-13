@@ -26,7 +26,7 @@ class CellValueFormatter
     const XML_NODE_A = 'text:a';
     const XML_NODE_SPAN = 'text:span';
 
-    /** Definition of XML attribute used to parse data */
+    /** Definition of XML attributes used to parse data */
     const XML_ATTRIBUTE_TYPE = 'office:value-type';
     const XML_ATTRIBUTE_VALUE = 'office:value';
     const XML_ATTRIBUTE_BOOLEAN_VALUE = 'office:boolean-value';

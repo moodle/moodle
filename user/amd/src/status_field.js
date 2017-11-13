@@ -126,6 +126,8 @@ define(['core/templates',
          * @private
          */
         StatusFieldActions.prototype.bindUnenrol = function() {
+            var statusFieldInstsance = this;
+
             $(SELECTORS.UNENROL).click(function(e) {
                 e.preventDefault();
                 var unenrolLink = $(this);
@@ -140,31 +142,33 @@ define(['core/templates',
                         component: 'enrol',
                         param: {
                             user: parentContainer.data('fullname'),
-                            course: parentContainer.data('coursename')
+                            course: parentContainer.data('coursename'),
+                            enrolinstancename: parentContainer.data('enrolinstancename')
                         }
                     }
                 ];
 
-                $.when(Str.get_strings(strings)).then(function(results) {
+                var deleteModalPromise = ModalFactory.create({
+                    type: ModalFactory.types.SAVE_CANCEL
+                });
+
+                $.when(Str.get_strings(strings), deleteModalPromise).done(function(results, modal) {
                     var title = results[0];
                     var confirmMessage = results[1];
-                    return ModalFactory.create({
-                        body: confirmMessage,
-                        large: true,
-                        title: title,
-                        type: ModalFactory.types.CONFIRM
-                    });
-                }).done(function(modal) {
+                    modal.setTitle(title);
+                    modal.setBody(confirmMessage);
+                    modal.setSaveButtonText(title);
+
                     // Handle confirm event.
-                    modal.getRoot().on(ModalEvents.yes, function() {
+                    modal.getRoot().on(ModalEvents.save, function() {
                         // Build params.
                         var unenrolParams = {
-                            confirm: 1,
-                            sesskey: Config.sesskey,
-                            ue: $(unenrolLink).attr('rel')
+                            'ueid': $(unenrolLink).attr('rel')
                         };
-                        // Send data to unenrol page (which will redirect back to the participants page after unenrol).
-                        window.location.href = Config.wwwroot + '/enrol/unenroluser.php?' + $.param(unenrolParams);
+                        // Don't close the modal yet.
+                        e.preventDefault();
+                        // Submit data.
+                        statusFieldInstsance.submitUnenrolFormAjax(modal, unenrolParams);
                     });
 
                     // Handle hidden event.
@@ -201,12 +205,37 @@ define(['core/templates',
                     "timeend": parentContainer.data('timeend')
                 };
 
-                var modalTitlePromise = Str.get_string('enroldetails', 'enrol');
+                // Get default string for the modal and modal type.
+                var strings = [
+                    {
+                        key: 'enroldetails',
+                        component: 'enrol'
+                    }
+                ];
+
+                // Find the edit enrolment link.
+                var editEnrolLink = detailsButton.next(SELECTORS.EDIT_ENROLMENT);
+                if (editEnrolLink.length) {
+                    // If there's an edit enrolment link for this user, clone it into the context for the modal.
+                    context.editenrollink = $('<div>').append(editEnrolLink.clone()).html();
+                }
+
+                var modalStringsPromise = Str.get_strings(strings);
                 var modalPromise = ModalFactory.create({large: true, type: ModalFactory.types.CANCEL});
-                $.when(modalTitlePromise, modalPromise).done(function(modalTitle, modal) {
+                $.when(modalStringsPromise, modalPromise).done(function(strings, modal) {
                     var modalBodyPromise = Template.render('core_user/status_details', context);
-                    modal.setTitle(modalTitle);
+                    modal.setTitle(strings[0]);
                     modal.setBody(modalBodyPromise);
+
+                    if (editEnrolLink.length) {
+                        modal.getRoot().on('click', SELECTORS.EDIT_ENROLMENT, function(e) {
+                            e.preventDefault();
+                            modal.hide();
+                            // Trigger click event for the edit enrolment link to show the edit enrolment modal.
+                            $(editEnrolLink).trigger('click');
+                        });
+                    }
+
                     modal.show();
 
                     // Handle hidden event.
@@ -279,11 +308,41 @@ define(['core/templates',
                         window.M.core_formchangechecker.reset_form_dirty_state();
                     }
                     window.location.reload();
-
                 } else {
                     // Serialise the form data and reload the form fragment to show validation errors.
                     var formData = JSON.stringify(form.serialize());
                     modal.setBody(statusFieldInstsance.getBody(ueid, formData));
+                }
+            }).fail(Notification.exception);
+        };
+
+         /**
+         * Private method
+         *
+         * @method submitUnenrolFormAjax
+         * @param {Object} modal The the AMD modal object containing the form.
+         * @param {Object} unenrolParams The unenrol parameters.
+         * @private
+         */
+        StatusFieldActions.prototype.submitUnenrolFormAjax = function(modal, unenrolParams) {
+            var request = {
+                methodname: 'core_enrol_unenrol_user_enrolment',
+                args: unenrolParams
+            };
+
+            Ajax.call([request])[0].done(function(data) {
+                if (data.result) {
+                    // Dismiss the modal.
+                    modal.hide();
+
+                    // Reload the page, don't show changed data warnings.
+                    if (typeof window.M.core_formchangechecker !== "undefined") {
+                        window.M.core_formchangechecker.reset_form_dirty_state();
+                    }
+                    window.location.reload();
+                } else {
+                    // Display an alert containing the error message
+                    Notification.alert(data.errors[0].key, data.errors[0].message);
                 }
             }).fail(Notification.exception);
         };

@@ -22,10 +22,26 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-
+$string['calculatedvalue'] = 'Calculated value';
 $string['disabledmodel'] = 'Sorry, this model has been disabled by the administrator';
+$string['indicator'] = 'Indicator';
+$string['insightprediction'] = '{$a} prediction';
+$string['insight'] = 'Insight';
 $string['insights'] = 'Insights';
+$string['justpredictions'] = 'Please note that the following insights are only predictions. It is not possible to predict the future with any certainty. The insights are provided so that action can be taken as necessary to prevent any negative predictions becoming reality.';
+$string['outcome'] = 'Outcome';
+$string['outcomenegative'] = 'Negative outcome';
+$string['outcomeneutral'] = 'Neutral outcome';
+$string['outcomeok'] = 'OK outcome';
+$string['outcomepositive'] = 'Positive outcome';
+$string['outcomeverypositive'] = 'Very positive outcome';
+$string['outcomeverynegative'] = 'Very negative outcome';
 $string['pluginname'] = 'Insights';
 $string['prediction'] = 'Prediction';
+$string['predictioncalculations'] = 'Indicator calculations';
 $string['predictiondetails'] = 'Prediction details';
+$string['nodetailsavailable'] = 'No prediction details are relevant.';
+$string['timecreated'] = 'Time predicted';
+$string['timerange'] = 'Time range';
+$string['timerangewithdata'] = '{$a->timestart} to {$a->timeend}';
 $string['selectotherinsights'] = 'Select other insights...';

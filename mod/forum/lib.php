@@ -5362,6 +5362,8 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions = -1, $
                                         $currentgroup = -1, $groupmode = -1, $page = -1, $perpage = 100, $cm = null) {
     global $CFG, $USER, $OUTPUT;
 
+    require_once($CFG->dirroot . '/course/lib.php');
+
     if (!$cm) {
         if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $forum->course)) {
             print_error('invalidcoursemodule');
@@ -5498,7 +5500,7 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions = -1, $
         }
     }
 
-    $canviewparticipants = has_capability('moodle/course:viewparticipants',$context);
+    $canviewparticipants = course_can_view_participants($context);
     $canviewhiddentimedposts = has_capability('mod/forum:viewhiddentimedposts', $context);
 
     $strdatestring = get_string('strftimerecentfull');
@@ -7016,13 +7018,17 @@ function forum_reset_userdata($data) {
 
     $forumssql = $forums = $rm = null;
 
-    if( $removeposts || !empty($data->reset_forum_ratings) ) {
-        $forumssql      = "$allforumssql $typesql";
-        $forums = $forums = $DB->get_records_sql($forumssql, $params);
+    // Check if we need to get additional data.
+    if ($removeposts || !empty($data->reset_forum_ratings) || !empty($data->reset_forum_tags)) {
+        // Set this up if we have to remove ratings.
         $rm = new rating_manager();
         $ratingdeloptions = new stdClass;
         $ratingdeloptions->component = 'mod_forum';
         $ratingdeloptions->ratingarea = 'post';
+
+        // Get the forums for actions that require it.
+        $forumssql = "$allforumssql $typesql";
+        $forums = $DB->get_records_sql($forumssql, $params);
     }
 
     if ($removeposts) {
@@ -7043,6 +7049,8 @@ function forum_reset_userdata($data) {
                 //remove ratings
                 $ratingdeloptions->contextid = $context->id;
                 $rm->delete_ratings($ratingdeloptions);
+
+                core_tag_tag::delete_instances('mod_forum', null, $context->id);
             }
         }
 
@@ -7095,6 +7103,22 @@ function forum_reset_userdata($data) {
         if (empty($data->reset_gradebook_grades)) {
             forum_reset_gradebook($data->courseid);
         }
+    }
+
+    // Remove all the tags.
+    if (!empty($data->reset_forum_tags)) {
+        if ($forums) {
+            foreach ($forums as $forumid => $unused) {
+                if (!$cm = get_coursemodule_from_instance('forum', $forumid)) {
+                    continue;
+                }
+
+                $context = context_module::instance($cm->id);
+                core_tag_tag::delete_instances('mod_forum', null, $context->id);
+            }
+        }
+
+        $status[] = array('component' => $componentstr, 'item' => get_string('tagsdeleted', 'forum'), 'error' => false);
     }
 
     // remove all digest settings unconditionally - even for users still enrolled in course.
@@ -7153,6 +7177,9 @@ function forum_reset_course_form_definition(&$mform) {
 
     $mform->addElement('checkbox', 'reset_forum_ratings', get_string('deleteallratings'));
     $mform->disabledIf('reset_forum_ratings', 'reset_forum_all', 'checked');
+
+    $mform->addElement('checkbox', 'reset_forum_tags', get_string('removeallforumtags', 'forum'));
+    $mform->disabledIf('reset_forum_tags', 'reset_forum_all', 'checked');
 }
 
 /**

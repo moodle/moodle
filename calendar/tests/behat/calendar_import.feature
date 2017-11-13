@@ -22,7 +22,7 @@ Feature: Import and edit calendar events
     And I set the following fields to these values:
       | Calendar name  | Test Import |
       | Import from    | Calendar file (.ics) |
-      | Type of event  | User events |
+      | Type of event  | User |
     And I upload "calendar/tests/fixtures/import.ics" file to "Calendar file (.ics)" filemanager
     And I press "Add"
     And I should see "Events imported: 2"

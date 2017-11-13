@@ -97,11 +97,13 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
         set_config('typeoflogin', api::LOGIN_VIA_BROWSER, 'tool_mobile');
         set_config('logo', 'mock.png', 'core_admin');
         set_config('logocompact', 'mock.png', 'core_admin');
+        set_config('forgottenpasswordurl', 'mailto:fake@email.zy'); // Test old hack.
 
         list($authinstructions, $notusedformat) = external_format_text($authinstructions, FORMAT_MOODLE, $context->id);
         $expected['registerauth'] = 'email';
         $expected['authinstructions'] = $authinstructions;
         $expected['typeoflogin'] = api::LOGIN_VIA_BROWSER;
+        $expected['forgottenpasswordurl'] = ''; // Expect empty when it's not an URL.
 
         if ($logourl = $OUTPUT->get_logo_url()) {
             $expected['logourl'] = $logourl->out(false);
@@ -123,6 +125,10 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
         require_once($CFG->dirroot . '/course/format/lib.php');
 
         $this->resetAfterTest(true);
+
+        $mysitepolicy = 'http://mysite.is/policy/';
+        set_config('sitepolicy', $mysitepolicy);
+
         $result = external::get_config();
         $result = external_api::clean_returnvalue(external::get_config_returns(), $result);
 
@@ -143,6 +149,7 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
             array('name' => 'numsections', 'value' => course_get_format($SITE)->get_last_section_number()),
             array('name' => 'newsitems', 'value' => $SITE->newsitems),
             array('name' => 'commentsperpage', 'value' => $CFG->commentsperpage),
+            array('name' => 'sitepolicy', 'value' => $mysitepolicy),
             array('name' => 'disableuserimages', 'value' => $CFG->disableuserimages),
             array('name' => 'mygradesurl', 'value' => user_mygrades_url()->out(false)),
             array('name' => 'tool_mobile_forcelogout', 'value' => 0),
@@ -230,7 +237,6 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
 
         // Need to simulate a non HTTPS site here.
         $CFG->wwwroot = str_replace('https:', 'http:', $CFG->wwwroot);
-        $CFG->httpswwwroot = str_replace('https:', 'http:', $CFG->wwwroot);
 
         $this->resetAfterTest(true);
         $this->setAdminUser();

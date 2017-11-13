@@ -8,9 +8,6 @@ define('NO_MOODLE_COOKIES', true);
 
 require(__DIR__.'/../../config.php');
 
-//HTTPS is required in this page when $CFG->loginhttps enabled
-$PAGE->https_required();
-
 $PAGE->set_context(context_system::instance());
 
 $authsequence = get_enabled_auth_plugins(true); // auths, in sequence
@@ -29,8 +26,7 @@ $file = $CFG->dirroot.'/pix/spacer.gif';
 if ($authplugin->ntlmsso_magic($sesskey) && file_exists($file)) {
     if (!empty($authplugin->config->ntlmsso_ie_fastpath)) {
         if (core_useragent::is_ie()) {
-            // $PAGE->https_required() up above takes care of what $CFG->httpswwwroot should be.
-            redirect($CFG->httpswwwroot.'/auth/ldap/ntlmsso_finish.php');
+            redirect($CFG->wwwroot.'/auth/ldap/ntlmsso_finish.php');
         }
     }
 

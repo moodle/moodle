@@ -63,4 +63,35 @@ class tool_mobile_api_testcase extends externallib_advanced_testcase {
         $this->assertTimeCurrent($key->validuntil - api::LOGIN_KEY_TTL);
         $this->assertEquals('0.0.0.0', $key->iprestriction);
     }
+
+    /**
+     * Test get_potential_config_issues.
+     */
+    public function test_get_potential_config_issues() {
+        global $CFG;
+        require_once($CFG->dirroot . '/message/lib.php');
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        $CFG->userquota = '73289234723498234723423489273423497234234';
+        $CFG->debugdisplay = 1;
+        set_config('debugauthdb', 1, 'auth_db');
+        set_config('debugdb', 1, 'enrol_database');
+        $expectedissues = array('nohttpsformobilewarning', 'invaliduserquotawarning', 'adodbdebugwarning', 'displayerrorswarning',
+            'mobilenotificationsdisabledwarning');
+
+        $processors = get_message_processors();
+        foreach ($processors as $processor => $status) {
+            if ($processor == 'airnotifier' && $status->enabled) {
+                unset($expectedissues['mobilenotificationsdisabledwarning']);
+            }
+        }
+
+        $issues = api::get_potential_config_issues();
+        $this->assertCount(count($expectedissues), $issues);
+        foreach ($issues as $issue) {
+            $this->assertTrue(in_array($issue[0], $expectedissues));
+        }
+    }
 }

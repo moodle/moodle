@@ -1301,8 +1301,8 @@ class moodle_page {
 
         if (is_string($url) && strpos($url, 'http') !== 0) {
             if (strpos($url, '/') === 0) {
-                // We have to use httpswwwroot here, because of loginhttps pages.
-                $url = $CFG->httpswwwroot . $url;
+                // Add the wwwroot to the relative url.
+                $url = $CFG->wwwroot . $url;
             } else {
                 throw new coding_exception('Invalid parameter $url, has to be full url or in shortened form starting with /.');
             }
@@ -1311,10 +1311,10 @@ class moodle_page {
         $this->_url = new moodle_url($url, $params);
 
         $fullurl = $this->_url->out_omit_querystring();
-        if (strpos($fullurl, "$CFG->httpswwwroot/") !== 0) {
-            debugging('Most probably incorrect set_page() url argument, it does not match the httpswwwroot!');
+        if (strpos($fullurl, "$CFG->wwwroot/") !== 0) {
+            debugging('Most probably incorrect set_page() url argument, it does not match the wwwroot!');
         }
-        $shorturl = str_replace("$CFG->httpswwwroot/", '', $fullurl);
+        $shorturl = str_replace("$CFG->wwwroot/", '', $fullurl);
 
         if (is_null($this->_pagetype)) {
             $this->initialise_default_pagetype($shorturl);
@@ -1461,71 +1461,28 @@ class moodle_page {
 
     /**
      * This function indicates that current page requires the https when $CFG->loginhttps enabled.
+     * Since loginhttps was removed this is no longer required or functional.
      *
-     * By using this function properly, we can ensure 100% https-ized pages
-     * at our entire discretion (login, forgot_password, change_password)
+     * @deprecated since Moodle 3.4 MDL-42834 - please do not use this function any more.
+     * @todo MDL-46267 This will be deleted in Moodle 3.8
      *
-     * @return void
      * @throws coding_exception
      */
     public function https_required() {
-        global $CFG;
-
-        if (!is_null($this->_url)) {
-            throw new coding_exception('https_required() must be used before setting page url!');
-        }
-
-        $this->ensure_theme_not_set();
-
-        $this->_https_login_required = true;
-
-        if (!empty($CFG->loginhttps)) {
-            $CFG->httpswwwroot = str_replace('http:', 'https:', $CFG->wwwroot);
-        } else {
-            $CFG->httpswwwroot = $CFG->wwwroot;
-        }
+        debugging('https_required() has been deprecated. It no longer needs to be called.', DEBUG_DEVELOPER);
     }
 
     /**
      * Makes sure that page previously marked with https_required() is really using https://, if not it redirects to https://
+     * Since loginhttps was removed this is no longer required or functional.
      *
-     * @return void (may redirect to https://self)
+     * @deprecated since Moodle 3.4 MDL-42834 - please do not use this function any more.
+     * @todo MDL-46267 This will be deleted in Moodle 3.8
+     *
      * @throws coding_exception
      */
     public function verify_https_required() {
-        global $CFG, $FULLME;
-
-        if (is_null($this->_url)) {
-            throw new coding_exception('verify_https_required() must be called after setting page url!');
-        }
-
-        if (!$this->_https_login_required) {
-            throw new coding_exception('verify_https_required() must be called only after https_required()!');
-        }
-
-        if (empty($CFG->loginhttps)) {
-            // Https not required, so stop checking.
-            return;
-        }
-
-        if (strpos($this->_url, 'https://')) {
-            // Detect if incorrect PAGE->set_url() used, it is recommended to use root-relative paths there.
-            throw new coding_exception('Invalid page url. It must start with https:// for pages that set https_required()!');
-        }
-
-        if (!empty($CFG->sslproxy)) {
-            // It does not make much sense to use sslproxy and loginhttps at the same time.
-            return;
-        }
-
-        // Now the real test and redirect!
-        // NOTE: do NOT use this test for detection of https on current page because this code is not compatible with SSL proxies,
-        //       instead use is_https().
-        if (strpos($FULLME, 'https:') !== 0) {
-            // This may lead to infinite redirect on an incorrectly configured site.
-            // In that case set $CFG->loginhttps=0; within /config.php.
-            redirect($this->_url);
-        }
+        debugging('verify_https_required() has been deprecated. It no longer needs to be called.', DEBUG_DEVELOPER);
     }
 
     // Initialisation methods =====================================================

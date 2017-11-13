@@ -51,6 +51,14 @@ abstract class base_message extends \core_search\base {
      * @return \core_search\document
      */
     public function get_document($record, $options = array()) {
+
+        // Check if user still exists, before proceeding.
+        $user = \core_user::get_user($options['user1id'], 'deleted');
+        if ($user->deleted == 1) {
+            return false;
+        }
+
+        // Get user context.
         try {
             $usercontext = \context_user::instance($options['user1id']);
         } catch (\moodle_exception $ex) {
@@ -124,4 +132,53 @@ abstract class base_message extends \core_search\base {
         return $users;
     }
 
+    /**
+     * Helper function to implement get_document_recordset for subclasses.
+     *
+     * @param int $modifiedfrom Modified from date
+     * @param \context|null $context Context or null
+     * @param string $userfield Name of user field (from or to) being considered
+     * @return \moodle_recordset|null Recordset or null if no results possible
+     * @throws \coding_exception If context invalid
+     */
+    protected function get_document_recordset_helper($modifiedfrom, \context $context = null,
+            $userfield) {
+        global $DB;
+
+        // Set up basic query.
+        $where = $userfield . ' != :noreplyuser AND ' . $userfield .
+                ' != :supportuser AND timecreated >= :modifiedfrom';
+        $params = [
+            'noreplyuser' => \core_user::NOREPLY_USER,
+            'supportuser' => \core_user::SUPPORT_USER,
+            'modifiedfrom' => $modifiedfrom
+        ];
+
+        // Check context to see whether to add other restrictions.
+        if ($context === null) {
+            $context = \context_system::instance();
+        }
+        switch ($context->contextlevel) {
+            case CONTEXT_COURSECAT:
+            case CONTEXT_COURSE:
+            case CONTEXT_MODULE:
+            case CONTEXT_BLOCK:
+                // There are no messages in any of these contexts so nothing can be found.
+                return null;
+
+            case CONTEXT_USER:
+                // Add extra restriction to specific user context.
+                $where .= ' AND ' . $userfield . ' = :userid';
+                $params['userid'] = $context->instanceid;
+                break;
+
+            case CONTEXT_SYSTEM:
+                break;
+
+            default:
+                throw new \coding_exception('Unexpected contextlevel: ' . $context->contextlevel);
+        }
+
+        return $DB->get_recordset_select('message_read', $where, $params, 'timeread ASC');
+    }
 }

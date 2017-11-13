@@ -23,6 +23,8 @@
  */
 namespace core_calendar\local\event\forms;
 
+use context_system;
+
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot.'/lib/formslib.php');
@@ -34,15 +36,41 @@ require_once($CFG->dirroot.'/lib/formslib.php');
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class create extends \moodleform {
+
+    use eventtype;
+
+    /**
+     * Build the editor options using the given context.
+     *
+     * @param \context $context A Moodle context
+     * @return array
+     */
+    public static function build_editor_options(\context $context) {
+        global $CFG;
+
+        return [
+            'context' => $context,
+            'maxfiles' => EDITOR_UNLIMITED_FILES,
+            'maxbytes' => $CFG->maxbytes,
+            'noclean' => true,
+            'autosave' => false
+        ];
+    }
+
     /**
      * The form definition
      */
-    public function definition () {
+    public function definition() {
         global $PAGE;
 
         $mform = $this->_form;
-        $haserror = !empty($this->_customdata['haserror']);
+        $starttime = isset($this->_customdata['starttime']) ? $this->_customdata['starttime'] : 0;
+        $editoroptions = !(empty($this->_customdata['editoroptions'])) ? $this->_customdata['editoroptions'] : null;
         $eventtypes = calendar_get_all_allowed_types();
+
+        if (empty($eventtypes)) {
+            print_error('nopermissiontoupdatecalendar');
+        }
 
         $mform->setDisableShortforms();
         $mform->disable_form_change_checker();
@@ -58,7 +86,7 @@ class create extends \moodleform {
         $mform->setType('name', PARAM_TEXT);
 
         // Event time start field.
-        $mform->addElement('date_time_selector', 'timestart', get_string('date'));
+        $mform->addElement('date_time_selector', 'timestart', get_string('date'), ['defaulttime' => $starttime]);
 
         // Add the select elements for the available event types.
         $this->add_event_type_elements($mform, $eventtypes);
@@ -66,7 +94,7 @@ class create extends \moodleform {
         // Start of advanced elements.
         // Advanced elements are not visible to the user by default.
         // They are displayed through the user of a show more / less button.
-        $mform->addElement('editor', 'description', get_string('eventdescription', 'calendar'), ['rows' => 3]);
+        $mform->addElement('editor', 'description', get_string('eventdescription', 'calendar'), ['rows' => 3], $editoroptions);
         $mform->setType('description', PARAM_RAW);
         $mform->setAdvanced('description');
 
@@ -77,8 +105,7 @@ class create extends \moodleform {
         $this->add_event_repeat_elements($mform);
 
         // Add the javascript required to enhance this mform.
-        // Including the show/hide of advanced elements and the display of the correct select elements for event types.
-        $PAGE->requires->js_call_amd('core_calendar/event_form', 'init', [$mform->getAttribute('id'), $haserror]);
+        $PAGE->requires->js_call_amd('core_calendar/event_form', 'init', [$mform->getAttribute('id')]);
     }
 
     /**
@@ -93,6 +120,12 @@ class create extends \moodleform {
 
         $errors = parent::validation($data, $files);
         $coursekey = isset($data['groupcourseid']) ? 'groupcourseid' : 'courseid';
+        $eventtypes = calendar_get_all_allowed_types();
+        $eventtype = isset($data['eventtype']) ? $data['eventtype'] : null;
+
+        if (empty($eventtype) || !isset($eventtypes[$eventtype])) {
+            $errors['eventtype'] = get_string('invalideventtype', 'calendar');
+        }
 
         if (isset($data[$coursekey]) && $data[$coursekey] > 0) {
             if ($course = $DB->get_record('course', ['id' => $data[$coursekey]])) {
@@ -102,6 +135,14 @@ class create extends \moodleform {
             } else {
                 $errors[$coursekey] = get_string('invalidcourse', 'error');
             }
+        }
+
+        if ($eventtype == 'course' && empty($data['courseid'])) {
+            $errors['courseid'] = get_string('selectacourse');
+        }
+
+        if ($eventtype == 'group' && empty($data['groupcourseid'])) {
+            $errors['groupcourseid'] = get_string('selectacourse');
         }
 
         if ($data['duration'] == 1 && $data['timestart'] > $data['timedurationuntil']) {
@@ -142,92 +183,6 @@ class create extends \moodleform {
         $mform->addElement('hidden', 'visible');
         $mform->setType('visible', PARAM_INT);
         $mform->setDefault('visible', 1);
-    }
-
-    /**
-     * Add the appropriate elements for the available event types.
-     *
-     * If the only event type available is 'user' then we add a hidden
-     * element because there is nothing for the user to choose.
-     *
-     * If more than one type is available then we add the elements as
-     * follows:
-     *      - Always add the event type selector
-     *      - Elements per type:
-     *          - course: add an additional select element with each
-     *                    course as an option.
-     *          - group: add a select element for the course (different
-     *                   from the above course select) and a select
-     *                   element for the group.
-     *
-     * @param MoodleQuickForm $mform
-     * @param array $eventtypes The available event types for the user
-     */
-    protected function add_event_type_elements($mform, $eventtypes) {
-        $options = [];
-
-        if (isset($eventtypes['user'])) {
-            $options['user'] = get_string('user');
-        }
-        if (isset($eventtypes['group'])) {
-            $options['group'] = get_string('group');
-        }
-        if (isset($eventtypes['course'])) {
-            $options['course'] = get_string('course');
-        }
-        if (isset($eventtypes['site'])) {
-            $options['site'] = get_string('site');
-        }
-
-        // If we only have one event type and it's 'user' event then don't bother
-        // rendering the select boxes because there is no choice for the user to
-        // make.
-        if (count(array_keys($eventtypes)) == 1 && isset($eventtypes['user'])) {
-            $mform->addElement('hidden', 'eventtype');
-            $mform->setType('eventtype', PARAM_TEXT);
-            $mform->setDefault('eventtype', 'user');
-
-            // Render a static element to tell the user what type of event will
-            // be created.
-            $mform->addElement('static', 'staticeventtype', get_string('eventkind', 'calendar'), $options['user']);
-            return;
-        } else {
-            $mform->addElement('select', 'eventtype', get_string('eventkind', 'calendar'), $options);
-        }
-
-        if (isset($eventtypes['course'])) {
-            $courseoptions = [];
-            foreach ($eventtypes['course'] as $course) {
-                $courseoptions[$course->id] = format_string($course->fullname, true,
-                    ['context' => \context_course::instance($course->id)]);
-            }
-
-            $mform->addElement('select', 'courseid', get_string('course'), $courseoptions);
-            $mform->disabledIf('courseid', 'eventtype', 'noteq', 'course');
-        }
-
-        if (isset($eventtypes['group'])) {
-            $courseoptions = [];
-            foreach ($eventtypes['groupcourses'] as $course) {
-                $courseoptions[$course->id] = format_string($course->fullname, true,
-                    ['context' => \context_course::instance($course->id)]);
-            }
-
-            $mform->addElement('select', 'groupcourseid', get_string('course'), $courseoptions);
-            $mform->disabledIf('groupcourseid', 'eventtype', 'noteq', 'group');
-
-            $groupoptions = [];
-            foreach ($eventtypes['group'] as $group) {
-                // We are formatting it this way in order to provide the javascript both
-                // the course and group ids so that it can enhance the form for the user.
-                $index = "{$group->courseid}-{$group->id}";
-                $groupoptions[$index] = format_string($group->name, true,
-                    ['context' => \context_course::instance($group->courseid)]);
-            }
-
-            $mform->addElement('select', 'groupid', get_string('group'), $groupoptions);
-            $mform->disabledIf('groupid', 'eventtype', 'noteq', 'group');
-        }
     }
 
     /**

@@ -227,7 +227,7 @@ class SimplePie_File
 						if ($parser->parse())
 						{
 							$this->headers = $parser->headers;
-							$this->body = trim($parser->body);
+							$this->body = $parser->body;
 							$this->status_code = $parser->status_code;
 							if ((in_array($this->status_code, array(300, 301, 302, 303, 307)) || $this->status_code > 307 && $this->status_code < 400) && isset($this->headers['location']) && $this->redirects < $redirects)
 							{

@@ -53,4 +53,13 @@ abstract class activity_base extends \core_analytics\local\indicator\community_o
         // We don't need to check grades as we get the feedback while completing the activity.
         return false;
     }
+
+    /**
+     * Returns the name of the field that controls activity availability.
+     *
+     * @return null|string
+     */
+    protected function get_timeclose_field() {
+        return 'deadline';
+    }
 }

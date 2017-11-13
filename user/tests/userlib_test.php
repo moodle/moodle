@@ -531,6 +531,11 @@ class core_userliblib_testcase extends advanced_testcase {
         $this->getDataGenerator()->enrol_user($user4->id, $course3->id);
         $this->getDataGenerator()->enrol_user($user5->id, $course3->id);
 
+        // User 3 should not be able to see user 1, either by passing their own course (course 2) or user 1's course (course 1).
+        $this->setUser($user3);
+        $this->assertFalse(user_can_view_profile($user1, $course2));
+        $this->assertFalse(user_can_view_profile($user1, $course1));
+
         // Remove capability moodle/user:viewdetails in course 2.
         assign_capability('moodle/user:viewdetails', CAP_PROHIBIT, $studentrole->id, $coursecontext);
         $coursecontext->mark_dirty();
@@ -624,6 +629,40 @@ class core_userliblib_testcase extends advanced_testcase {
         foreach ($users as $user) {
             $this->assertTrue(user_can_view_profile($user));
         }
+
+        // Testing non-shared courses where capabilities are met, using system role overrides.
+        $CFG->forceloginforprofiles = $tempcfg;
+        $course4 = $this->getDataGenerator()->create_course();
+        $this->getDataGenerator()->enrol_user($user1->id, $course4->id);
+
+        // Assign a manager role at the system context.
+        $managerrole = $DB->get_record('role', array('shortname' => 'manager'));
+        $user9 = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->role_assign($managerrole->id, $user9->id);
+
+        // Make sure viewalldetails and viewdetails are overridden to 'prevent' (i.e. can be overridden at a lower context).
+        $systemcontext = context_system::instance();
+        assign_capability('moodle/user:viewdetails', CAP_PREVENT, $managerrole->id, $systemcontext, true);
+        assign_capability('moodle/user:viewalldetails', CAP_PREVENT, $managerrole->id, $systemcontext, true);
+        $systemcontext->mark_dirty();
+
+        // And override these to 'Allow' in a specific course.
+        $course4context = context_course::instance($course4->id);
+        assign_capability('moodle/user:viewalldetails', CAP_ALLOW, $managerrole->id, $course4context, true);
+        assign_capability('moodle/user:viewdetails', CAP_ALLOW, $managerrole->id, $course4context, true);
+        $course4context->mark_dirty();
+
+        // The manager now shouldn't have viewdetails in the system or user context.
+        $this->setUser($user9);
+        $user1context = context_user::instance($user1->id);
+        $this->assertFalse(has_capability('moodle/user:viewdetails', $systemcontext));
+        $this->assertFalse(has_capability('moodle/user:viewdetails', $user1context));
+
+        // Confirm that user_can_view_profile() returns true for $user1 when called without $course param. It should find $course1.
+        $this->assertTrue(user_can_view_profile($user1));
+
+        // Confirm this also works when restricting scope to just that course.
+        $this->assertTrue(user_can_view_profile($user1, $course4));
     }
 
     /**
@@ -848,8 +887,8 @@ class core_userliblib_testcase extends advanced_testcase {
         // the group and has the name 'searchforthis' and has also accessed the course in the last day.
         $userset = user_get_participants($course->id, $group->id, $accesssince + 1, $roleids['student'], 0, -1, 'searchforthis');
 
-        $this->assertEquals(1, sizeof($userset));
         $this->assertEquals($student1->id, $userset->current()->id);
+        $this->assertEquals(1, iterator_count($userset));
     }
 
     /**

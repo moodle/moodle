@@ -407,21 +407,43 @@ function enrol_meta_sync($courseid = NULL, $verbose = false) {
     $onecourse = $courseid ? "AND e.courseid = :courseid" : "";
     list($enabled, $params) = $DB->get_in_or_equal(explode(',', $CFG->enrol_plugins_enabled), SQL_PARAMS_NAMED, 'e');
     $params['courseid'] = $courseid;
-    $sql = "SELECT ue.userid, ue.enrolid, pue.pstatus, pue.ptimestart, pue.ptimeend
+    // The query builds a a list of all the non-meta enrolments that are on courses (the children) that are linked to by a meta
+    // enrolment, it then groups them by the course that linked to them (the parents).
+    //
+    // It will only return results where the there is a difference between the status of the parent and the lowest status
+    // of the children (remember that 0 is active, any other status is some form of inactive), or the time the earliest non-zero
+    // start time of a child is different to the parent, or the longest effective end date has changed.
+    //
+    // The last two case statements in the HAVING clause are designed to ignore any inactive child records when calculating
+    // the start and end time.
+    $sql = "SELECT ue.userid, ue.enrolid,
+                   MIN(xpue.status + xpe.status) AS pstatus,
+                   MIN(CASE WHEN (xpue.status + xpe.status = 0) THEN xpue.timestart ELSE 9999999999 END) AS ptimestart,
+                   MAX(CASE WHEN (xpue.status + xpe.status = 0) THEN
+                                 (CASE WHEN xpue.timeend = 0 THEN 9999999999 ELSE xpue.timeend END)
+                            ELSE 0 END) AS ptimeend
               FROM {user_enrolments} ue
               JOIN {enrol} e ON (e.id = ue.enrolid AND e.enrol = 'meta' $onecourse)
-              JOIN (SELECT xpue.userid, xpe.courseid, MIN(xpue.status + xpe.status) AS pstatus,
-                      MIN(CASE WHEN (xpue.status + xpe.status = 0) THEN xpue.timestart ELSE 9999999999 END) AS ptimestart,
-                      MAX(CASE WHEN (xpue.status + xpe.status = 0) THEN
-                                (CASE WHEN xpue.timeend = 0 THEN 9999999999 ELSE xpue.timeend END)
-                                ELSE 0 END) AS ptimeend
-                      FROM {user_enrolments} xpue
-                      JOIN {enrol} xpe ON (xpe.id = xpue.enrolid AND xpe.enrol <> 'meta' AND xpe.enrol $enabled)
-                  GROUP BY xpue.userid, xpe.courseid
-                   ) pue ON (pue.courseid = e.customint1 AND pue.userid = ue.userid)
-             WHERE (pue.pstatus = 0 AND ue.status > 0) OR (pue.pstatus > 0 and ue.status = 0)
-             OR ((CASE WHEN pue.ptimestart = 9999999999 THEN 0 ELSE pue.ptimestart END) <> ue.timestart)
-             OR ((CASE WHEN pue.ptimeend = 9999999999 THEN 0 ELSE pue.ptimeend END) <> ue.timeend)";
+              JOIN {user_enrolments} xpue ON (xpue.userid = ue.userid)
+              JOIN {enrol} xpe ON (xpe.id = xpue.enrolid AND xpe.enrol <> 'meta'
+                   AND xpe.enrol $enabled AND xpe.courseid = e.customint1)
+          GROUP BY ue.userid, ue.enrolid
+            HAVING (MIN(xpue.status + xpe.status) = 0 AND MIN(ue.status) > 0)
+                   OR (MIN(xpue.status + xpe.status) > 0 AND MIN(ue.status) = 0)
+                   OR ((CASE WHEN
+                                  MIN(CASE WHEN (xpue.status + xpe.status = 0) THEN xpue.timestart ELSE 9999999999 END) = 9999999999
+                             THEN 0
+                             ELSE
+                                  MIN(CASE WHEN (xpue.status + xpe.status = 0) THEN xpue.timestart ELSE 9999999999 END)
+                              END) <> MIN(ue.timestart))
+                   OR ((CASE
+                         WHEN MAX(CASE WHEN (xpue.status + xpe.status = 0)
+                                       THEN (CASE WHEN xpue.timeend = 0 THEN 9999999999 ELSE xpue.timeend END)
+                                       ELSE 0 END) = 9999999999
+                         THEN 0 ELSE MAX(CASE WHEN (xpue.status + xpe.status = 0)
+                                              THEN (CASE WHEN xpue.timeend = 0 THEN 9999999999 ELSE xpue.timeend END)
+                                              ELSE 0 END)
+                          END) <> MAX(ue.timeend))";
     $rs = $DB->get_recordset_sql($sql, $params);
     foreach($rs as $ue) {
         if (!isset($instances[$ue->enrolid])) {

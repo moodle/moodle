@@ -529,7 +529,7 @@ class backup_enrolments_structure_step extends backup_structure_step {
         $enrol->annotate_ids('role', 'roleid');
 
         // Add enrol plugin structure.
-        $this->add_plugin_structure('enrol', $enrol, false);
+        $this->add_plugin_structure('enrol', $enrol, true);
 
         return $enrolments;
     }

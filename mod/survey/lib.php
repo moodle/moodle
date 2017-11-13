@@ -539,7 +539,7 @@ function survey_print_multi($question) {
 
     echo "<tr class=\"smalltext\"><th scope=\"row\">$strresponses</th>";
     echo "<th scope=\"col\" class=\"hresponse\">". get_string('notyetanswered', 'survey'). "</th>";
-    while (list ($key, $val) = each ($options)) {
+    foreach ($options as $key => $val) {
         echo "<th scope=\"col\" class=\"hresponse\">$val</th>\n";
     }
     echo "</tr>\n";

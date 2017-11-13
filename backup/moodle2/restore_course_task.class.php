@@ -69,6 +69,11 @@ class restore_course_task extends restore_task {
         // Executed conditionally if restoring to new course or if overwrite_conf setting is enabled
         if ($this->get_target() == backup::TARGET_NEW_COURSE || $this->get_setting_value('overwrite_conf') == true) {
             $this->add_step(new restore_course_structure_step('course_info', 'course.xml'));
+
+            // Search reindexing (if enabled).
+            if (\core_search\manager::is_indexing_enabled()) {
+                $this->add_step(new restore_course_search_index('course_search_index'));
+            }
         }
 
         $this->add_step(new restore_course_legacy_files_step('legacy_files'));

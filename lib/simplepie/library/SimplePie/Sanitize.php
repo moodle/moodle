@@ -273,10 +273,6 @@ class SimplePie_Sanitize
 				$document = new DOMDocument();
 				$document->encoding = 'UTF-8';
 
-				// See https://github.com/simplepie/simplepie/issues/334
-				$unique_tag = '#'.uniqid().'#';
-				$data = trim($unique_tag . $data . $unique_tag);
-
 				$data = $this->preprocess($data, $type);
 
 				set_error_handler(array('SimplePie_Misc', 'silence_errors'));
@@ -366,11 +362,17 @@ class SimplePie_Sanitize
 					}
 				}
 
+				// Get content node
+				$div = $document->getElementsByTagName('body')->item(0)->firstChild;
 				// Finally, convert to a HTML string
-				$data = trim($document->saveHTML());
-				$result = explode($unique_tag, $data);
-				// The tags may not be found again if there was invalid markup.
-				$data = count($result) === 3 ? $result[1] : '';
+				if (version_compare(PHP_VERSION, '5.3.6', '>='))
+				{
+					$data = trim($document->saveHTML($div));
+				}
+				else
+				{
+					$data = trim($document->saveXML($div));
+				}
 
 				if ($this->remove_div)
 				{

@@ -98,6 +98,13 @@ class manager {
     protected $engine = null;
 
     /**
+     * Note: This should be removed once possible (see MDL-60644).
+     *
+     * @var float Fake current time for use in PHPunit tests
+     */
+    protected static $phpunitfaketime = 0;
+
+    /**
      * Constructor, use \core_search\manager::instance instead to get a class instance.
      *
      * @param \core_search\base The search engine to use
@@ -136,8 +143,11 @@ class manager {
 
         $serverstatus = $engine->is_server_ready();
         if ($serverstatus !== true) {
-            // Error message with no details as this is an exception that any user may find if the server crashes.
-            throw new \core_search\engine_exception('engineserverstatus', 'search');
+            // Skip this error in Behat when faking seach results.
+            if (!defined('BEHAT_SITE_RUNNING') || !get_config('core_search', 'behat_fakeresult')) {
+                // Error message with no details as this is an exception that any user may find if the server crashes.
+                throw new \core_search\engine_exception('engineserverstatus', 'search');
+            }
         }
 
         static::$instance = new \core_search\manager($engine);
@@ -152,6 +162,17 @@ class manager {
     public static function is_global_search_enabled() {
         global $CFG;
         return !empty($CFG->enableglobalsearch);
+    }
+
+    /**
+     * Returns whether indexing is enabled or not (you can enable indexing even when search is not
+     * enabled at the moment, so as to have it ready for students).
+     *
+     * @return bool True if indexing is enabled.
+     */
+    public static function is_indexing_enabled() {
+        global $CFG;
+        return !empty($CFG->enableglobalsearch) || !empty($CFG->searchindexwhendisabled);
     }
 
     /**
@@ -376,7 +397,8 @@ class manager {
         }
 
         // Get the courses where the current user has access.
-        $courses = enrol_get_my_courses(array('id', 'cacherev'));
+        $courses = enrol_get_my_courses(array('id', 'cacherev'), 'id', 0, [],
+                (bool)get_config('core', 'searchallavailablecourses'));
 
         if (empty($limitcourseids) || in_array(SITEID, $limitcourseids)) {
             $courses[SITEID] = get_course(SITEID);
@@ -552,7 +574,39 @@ class manager {
      * @return \core_search\document[]
      */
     public function search(\stdClass $formdata, $limit = 0) {
-        global $USER;
+        // For Behat testing, the search results can be faked using a special step.
+        if (defined('BEHAT_SITE_RUNNING')) {
+            $fakeresult = get_config('core_search', 'behat_fakeresult');
+            if ($fakeresult) {
+                // Clear config setting.
+                unset_config('core_search', 'behat_fakeresult');
+
+                // Check query matches expected value.
+                $details = json_decode($fakeresult);
+                if ($formdata->q !== $details->query) {
+                    throw new \coding_exception('Unexpected search query: ' . $formdata->q);
+                }
+
+                // Create search documents from the JSON data.
+                $docs = [];
+                foreach ($details->results as $result) {
+                    $doc = new \core_search\document($result->itemid, $result->componentname,
+                            $result->areaname);
+                    foreach ((array)$result->fields as $field => $value) {
+                        $doc->set($field, $value);
+                    }
+                    foreach ((array)$result->extrafields as $field => $value) {
+                        $doc->set_extra($field, $value);
+                    }
+                    $area = $this->get_search_area($doc->get('areaid'));
+                    $doc->set_doc_url($area->get_doc_url($doc));
+                    $doc->set_context_url($area->get_context_url($doc));
+                    $docs[] = $doc;
+                }
+
+                return $docs;
+            }
+        }
 
         $limitcourseids = false;
         if (!empty($formdata->courseids)) {
@@ -585,11 +639,13 @@ class manager {
      *
      * @param bool $fullindex Whether we should reindex everything or not.
      * @param float $timelimit Time limit in seconds (0 = no time limit)
-     * @param \progress_trace $progress Optional class for tracking progress
+     * @param \progress_trace|null $progress Optional class for tracking progress
      * @throws \moodle_exception
      * @return bool Whether there was any updated document or not.
      */
     public function index($fullindex = false, $timelimit = 0, \progress_trace $progress = null) {
+        global $DB;
+
         // Cannot combine time limit with reindex.
         if ($timelimit && $fullindex) {
             throw new \coding_exception('Cannot apply time limit when reindexing');
@@ -620,7 +676,7 @@ class manager {
             });
 
             // Decide time to stop.
-            $stopat = microtime(true) + $timelimit;
+            $stopat = self::get_current_time() + $timelimit;
         }
 
         foreach ($searchareas as $areaid => $searcharea) {
@@ -631,7 +687,7 @@ class manager {
             $this->engine->area_index_starting($searcharea, $fullindex);
 
             $indexingstart = time();
-            $elapsed = microtime(true);
+            $elapsed = self::get_current_time();
 
             // This is used to store this component config.
             list($componentconfigname, $varname) = $searcharea->get_config_var_name();
@@ -640,6 +696,10 @@ class manager {
 
             if ($fullindex === true) {
                 $referencestarttime = 0;
+
+                // For full index, we delete any queued context index requests, as those will
+                // obviously be met by the full index.
+                $DB->delete_records('search_index_requests');
             } else {
                 $partial = get_config($componentconfigname, $varname . '_partial');
                 if ($partial) {
@@ -662,8 +722,10 @@ class manager {
             if ($timelimit) {
                 $options['stopat'] = $stopat;
             }
-            $iterator = new \core\dml\recordset_walk($recordset, array($searcharea, 'get_document'), $options);
+            $iterator = new skip_future_documents_iterator(new \core\dml\recordset_walk(
+                    $recordset, array($searcharea, 'get_document'), $options));
             $result = $this->engine->add_documents($iterator, $searcharea, $options);
+            $recordset->close();
             if (count($result) === 5) {
                 list($numrecords, $numdocs, $numdocsignored, $lastindexeddoc, $partial) = $result;
             } else {
@@ -675,7 +737,7 @@ class manager {
             }
 
             if ($numdocs > 0) {
-                $elapsed = round((microtime(true) - $elapsed), 3);
+                $elapsed = round((self::get_current_time() - $elapsed), 3);
                 $progress->output('Processed ' . $numrecords . ' records containing ' . $numdocs .
                         ' documents, in ' . $elapsed . ' seconds' .
                         ($partial ? ' (not complete)' : '') . '.', 1);
@@ -705,7 +767,7 @@ class manager {
                 $progress->output('Engine reported error.');
             }
 
-            if ($timelimit && (microtime(true) >= $stopat)) {
+            if ($timelimit && (self::get_current_time() >= $stopat)) {
                 $progress->output('Stopping indexing due to time limit.');
                 break;
             }
@@ -720,6 +782,150 @@ class manager {
         $this->engine->index_complete($sumdocs, $fullindex);
 
         return (bool)$sumdocs;
+    }
+
+    /**
+     * Indexes or reindexes a specific context of the system, e.g. one course.
+     *
+     * The function returns an object with field 'complete' (true or false).
+     *
+     * This function supports partial indexing via the time limit parameter. If the time limit
+     * expires, it will return values for $startfromarea and $startfromtime which can be passed
+     * next time to continue indexing.
+     *
+     * @param \context $context Context to restrict index.
+     * @param string $singleareaid If specified, indexes only the given area.
+     * @param float $timelimit Time limit in seconds (0 = no time limit)
+     * @param \progress_trace|null $progress Optional class for tracking progress
+     * @param string $startfromarea Area to start from
+     * @param int $startfromtime Timestamp to start from
+     * @return \stdClass Object indicating success
+     */
+    public function index_context($context, $singleareaid = '', $timelimit = 0,
+            \progress_trace $progress = null, $startfromarea = '', $startfromtime = 0) {
+        if (!$progress) {
+            $progress = new \null_progress_trace();
+        }
+
+        // Work out time to stop, if limited.
+        if ($timelimit) {
+            // Decide time to stop.
+            $stopat = self::get_current_time() + $timelimit;
+        }
+
+        // No PHP time limit.
+        \core_php_time_limit::raise();
+
+        // Notify the engine that an index starting.
+        $this->engine->index_starting(false);
+
+        $sumdocs = 0;
+
+        // Get all search areas, in consistent order.
+        $searchareas = $this->get_search_areas_list(true);
+        ksort($searchareas);
+
+        // Are we skipping past some that were handled previously?
+        $skipping = $startfromarea ? true : false;
+
+        foreach ($searchareas as $areaid => $searcharea) {
+            // If we're only processing one area id, skip all the others.
+            if ($singleareaid && $singleareaid !== $areaid) {
+                continue;
+            }
+
+            // If we're skipping to a later area, continue through the loop.
+            $referencestarttime = 0;
+            if ($skipping) {
+                if ($areaid !== $startfromarea) {
+                    continue;
+                }
+                // Stop skipping and note the reference start time.
+                $skipping = false;
+                $referencestarttime = $startfromtime;
+            }
+
+            $progress->output('Processing area: ' . $searcharea->get_visible_name());
+
+            $elapsed = self::get_current_time();
+
+            // Get the recordset of all documents from the area for this context.
+            $recordset = $searcharea->get_document_recordset($referencestarttime, $context);
+            if (!$recordset) {
+                if ($recordset === null) {
+                    $progress->output('Skipping (not relevant to context).', 1);
+                } else {
+                    $progress->output('Skipping (does not support context indexing).', 1);
+                }
+                continue;
+            }
+
+            // Notify the engine that an area is starting.
+            $this->engine->area_index_starting($searcharea, false);
+
+            // Work out search options.
+            $options = [];
+            $options['indexfiles'] = $this->engine->file_indexing_enabled() &&
+                    $searcharea->uses_file_indexing();
+            if ($timelimit) {
+                $options['stopat'] = $stopat;
+            }
+
+            // Construct iterator which will use get_document on the recordset results.
+            $iterator = new \core\dml\recordset_walk($recordset,
+                    array($searcharea, 'get_document'), $options);
+
+            // Use this iterator to add documents.
+            $result = $this->engine->add_documents($iterator, $searcharea, $options);
+            if (count($result) === 5) {
+                list($numrecords, $numdocs, $numdocsignored, $lastindexeddoc, $partial) = $result;
+            } else {
+                // Backward compatibility for engines that don't support partial adding.
+                list($numrecords, $numdocs, $numdocsignored, $lastindexeddoc) = $result;
+                debugging('engine::add_documents() should return $partial (4-value return is deprecated)',
+                        DEBUG_DEVELOPER);
+                $partial = false;
+            }
+
+            if ($numdocs > 0) {
+                $elapsed = round((self::get_current_time() - $elapsed), 3);
+                $progress->output('Processed ' . $numrecords . ' records containing ' . $numdocs .
+                        ' documents, in ' . $elapsed . ' seconds' .
+                        ($partial ? ' (not complete)' : '') . '.', 1);
+            } else {
+                $progress->output('No documents to index.', 1);
+            }
+
+            // Notify the engine this area is complete, but don't store any times as this is not
+            // part of the 'normal' search index.
+            if (!$this->engine->area_index_complete($searcharea, $numdocs, false)) {
+                $progress->output('Engine reported error.', 1);
+            }
+
+            if ($partial && $timelimit && (self::get_current_time() >= $stopat)) {
+                $progress->output('Stopping indexing due to time limit.');
+                break;
+            }
+        }
+
+        if ($sumdocs > 0) {
+            $event = \core\event\search_indexed::create(
+                    array('context' => $context));
+            $event->trigger();
+        }
+
+        $this->engine->index_complete($sumdocs, false);
+
+        // Indicate in result whether we completed indexing, or only part of it.
+        $result = new \stdClass();
+        if ($partial) {
+            $result->complete = false;
+            $result->startfromarea = $areaid;
+            $result->startfromtime = $lastindexeddoc;
+        } else {
+            $result->complete = true;
+        }
+        return $result;
     }
 
     /**
@@ -857,5 +1063,124 @@ class manager {
         }
 
         return false;
+    }
+
+    /**
+     * Requests that a specific context is indexed by the scheduled task. The context will be
+     * added to a queue which is processed by the task.
+     *
+     * This is used after a restore to ensure that restored items are indexed, even though their
+     * modified time will be older than the latest indexed.
+     *
+     * @param \context $context Context to index within
+     * @param string $areaid Area to index, '' = all areas
+     */
+    public static function request_index(\context $context, $areaid = '') {
+        global $DB;
+
+        // Check through existing requests for this context or any parent context.
+        list ($contextsql, $contextparams) = $DB->get_in_or_equal(
+                $context->get_parent_context_ids(true));
+        $existing = $DB->get_records_select('search_index_requests',
+                'contextid ' . $contextsql, $contextparams, '', 'id, searcharea, partialarea');
+        foreach ($existing as $rec) {
+            // If we haven't started processing the existing request yet, and it covers the same
+            // area (or all areas) then that will be sufficient so don't add anything else.
+            if ($rec->partialarea === '' && ($rec->searcharea === $areaid || $rec->searcharea === '')) {
+                return;
+            }
+        }
+
+        // No suitable existing request, so add a new one.
+        $newrecord = [ 'contextid' => $context->id, 'searcharea' => $areaid,
+                'timerequested' => time(), 'partialarea' => '', 'partialtime' => 0 ];
+        $DB->insert_record('search_index_requests', $newrecord);
+    }
+
+    /**
+     * Processes outstanding index requests. This will take the first item from the queue and
+     * process it, continuing until an optional time limit is reached.
+     *
+     * If there are no index requests, the function will do nothing.
+     *
+     * @param float $timelimit Time limit (0 = none)
+     * @param \progress_trace|null $progress Optional progress indicator
+     */
+    public function process_index_requests($timelimit = 0.0, \progress_trace $progress = null) {
+        global $DB;
+
+        if (!$progress) {
+            $progress = new \null_progress_trace();
+        }
+
+        $complete = false;
+        $before = self::get_current_time();
+        if ($timelimit) {
+            $stopat = $before + $timelimit;
+        }
+        while (true) {
+            // Retrieve first request, using fully defined ordering.
+            $requests = $DB->get_records('search_index_requests', null,
+                    'timerequested, contextid, searcharea',
+                    'id, contextid, searcharea, partialarea, partialtime', 0, 1);
+            if (!$requests) {
+                // If there are no more requests, stop.
+                $complete = true;
+                break;
+            }
+            $request = reset($requests);
+
+            // Calculate remaining time.
+            $remainingtime = 0;
+            $beforeindex = self::get_current_time();
+            if ($timelimit) {
+                $remainingtime = $stopat - $beforeindex;
+            }
+
+            // Show a message before each request, indicating what will be indexed.
+            $context = \context::instance_by_id($request->contextid);
+            $contextname = $context->get_context_name();
+            if ($request->searcharea) {
+                $contextname .= ' (search area: ' . $request->searcharea . ')';
+            }
+            $progress->output('Indexing requested context: ' . $contextname);
+
+            // Actually index the context.
+            $result = $this->index_context($context, $request->searcharea, $remainingtime,
+                    $progress, $request->partialarea, $request->partialtime);
+
+            // Work out shared part of message.
+            $endmessage = $contextname . ' (' . round(self::get_current_time() - $beforeindex, 1) . 's)';
+
+            // Update database table and continue/stop as appropriate.
+            if ($result->complete) {
+                // If we completed the request, remove it from the table.
+                $DB->delete_records('search_index_requests', ['id' => $request->id]);
+                $progress->output('Completed requested context: ' . $endmessage);
+            } else {
+                // If we didn't complete the request, store the partial details (how far it got).
+                $DB->update_record('search_index_requests', ['id' => $request->id,
+                        'partialarea' => $result->startfromarea,
+                        'partialtime' => $result->startfromtime]);
+                $progress->output('Ending requested context: ' . $endmessage);
+
+                // The time limit must have expired, so stop looping.
+                break;
+            }
+        }
+    }
+
+    /**
+     * Gets current time for use in search system.
+     *
+     * Note: This should be replaced with generic core functionality once possible (see MDL-60644).
+     *
+     * @return float Current time in seconds (with decimals)
+     */
+    public static function get_current_time() {
+        if (PHPUNIT_TEST && self::$phpunitfaketime) {
+            return self::$phpunitfaketime;
+        }
+        return microtime(true);
     }
 }

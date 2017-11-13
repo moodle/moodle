@@ -25,11 +25,13 @@
 namespace core\oauth2;
 
 use \core\task\scheduled_task;
+use core_user;
+use moodle_exception;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Simple task to delete old messaging records.
+ * Task to refresh system tokens regularly. Admins are notified in case an authorisation expires.
  * @package    core
  * @copyright  2017 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -50,6 +52,7 @@ class refresh_system_tokens_task extends scheduled_task {
      * @param \core\oauth2\issuer $issuer
      */
     protected function notify_admins(\core\oauth2\issuer $issuer) {
+        global $CFG;
         $admins = get_admins();
 
         if (empty($admins)) {
@@ -62,8 +65,8 @@ class refresh_system_tokens_task extends scheduled_task {
             $message = new \core\message\message();
             $message->courseid          = SITEID;
             $message->component         = 'moodle';
-            $message->name              = 'oauthrefreshtokenexpired';
-            $message->userfrom          = core\user::get_noreply_user();
+            $message->name              = 'errors';
+            $message->userfrom          = core_user::get_noreply_user();
             $message->userto            = $admin;
             $message->subject           = $short;
             $message->fullmessage       = $long;
@@ -84,7 +87,14 @@ class refresh_system_tokens_task extends scheduled_task {
         $issuers = \core\oauth2\api::get_all_issuers();
         foreach ($issuers as $issuer) {
             if ($issuer->is_system_account_connected()) {
-                if (!\core\oauth2\api::get_system_oauth_client($issuer)) {
+                try {
+                    // Try to get an authenticated client; renew token if necessary.
+                    // Returns false or throws a moodle_exception on error.
+                    $success = \core\oauth2\api::get_system_oauth_client($issuer);
+                } catch (moodle_exception $e) {
+                    $success = false;
+                }
+                if ($success === false) {
                     $this->notify_admins($issuer);
                 }
             }

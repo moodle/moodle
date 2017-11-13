@@ -5,10 +5,21 @@
 require_once('../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 
+redirect_if_major_upgrade_required();
+
 $query = trim(optional_param('query', '', PARAM_NOTAGS));  // Search string
 
 $context = context_system::instance();
 $PAGE->set_context($context);
+
+$hassiteconfig = has_capability('moodle/site:config', $context);
+
+if ($hassiteconfig && moodle_needs_upgrading()) {
+    redirect(new moodle_url('/admin/index.php'));
+}
+
+// If site registration needs updating, redirect.
+\core\hub\registration::registration_reminder('/admin/search.php');
 
 admin_externalpage_setup('search', '', array('query' => $query)); // now hidden page
 
@@ -55,7 +66,7 @@ if ($errormsg !== '') {
 
 $showsettingslinks = true;
 
-if (has_capability('moodle/site:config', $context)) {
+if ($hassiteconfig) {
     require_once("admin_settings_search_form.php");
     $form = new admin_settings_search_form();
     $form->display();

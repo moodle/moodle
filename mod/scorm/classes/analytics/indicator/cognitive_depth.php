@@ -36,30 +36,21 @@ defined('MOODLE_INTERNAL') || die();
 class cognitive_depth extends activity_base {
 
     /**
-     * get_name
+     * Returns the name.
      *
-     * @return string
+     * If there is a corresponding '_help' string this will be shown as well.
+     *
+     * @return \lang_string
      */
-    public static function get_name() {
-        return get_string('indicator:cognitivedepthscorm', 'mod_scorm');
+    public static function get_name() : \lang_string {
+        return new \lang_string('indicator:cognitivedepth', 'mod_scorm');
     }
 
-    /**
-     * get_indicator_type
-     *
-     * @return string
-     */
-    protected function get_indicator_type() {
+    public function get_indicator_type() {
         return self::INDICATOR_COGNITIVE;
     }
 
-    /**
-     * get_cognitive_depth_level
-     *
-     * @param \cm_info $cm
-     * @return int
-     */
     public function get_cognitive_depth_level(\cm_info $cm) {
-        return 3;
+        return self::COGNITIVE_LEVEL_3;
     }
 }

@@ -1398,7 +1398,8 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
             $this->markTestSkipped("No message processors found");
         }
 
-        list($name, $processor) = each($processors);
+        $name = key($processors);
+        $processor = current($processors);
         $testprocessor = \core_message\api::get_message_processor($name);
         $this->assertEquals($processor->name, $testprocessor->name);
         $this->assertEquals($processor->enabled, $testprocessor->enabled);
@@ -1431,7 +1432,8 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         if (empty($processors)) {
             $this->markTestSkipped("No message processors found");
         }
-        list($name, $testprocessor) = each($processors);
+        $name = key($processors);
+        $testprocessor = current($processors);
 
         // Enable.
         \core_message\api::update_processor_status($testprocessor, 1);
@@ -1457,7 +1459,8 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         if (empty($processors)) {
             $this->markTestSkipped("No message processors found");
         }
-        list($name, $testprocessor) = each($processors);
+        $name = key($processors);
+        $testprocessor = current($processors);
 
         // Enable.
         \core_message\api::update_processor_status($testprocessor, 1);

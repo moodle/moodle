@@ -43,16 +43,24 @@ class chapter extends \core_search\base_mod {
      * Returns a recordset with all required chapter information.
      *
      * @param int $modifiedfrom
-     * @return moodle_recordset
+     * @param \context|null $context Optional context to restrict scope of returned results
+     * @return moodle_recordset|null Recordset (or null if no results)
      */
-    public function get_recordset_by_timestamp($modifiedfrom = 0) {
+    public function get_document_recordset($modifiedfrom = 0, \context $context = null) {
         global $DB;
 
-        $sql = 'SELECT c.*, b.id AS bookid, b.course AS courseid
+        list ($contextjoin, $contextparams) = $this->get_context_restriction_sql(
+                $context, 'book', 'b');
+        if ($contextjoin === null) {
+            return null;
+        }
+
+        $sql = "SELECT c.*, b.id AS bookid, b.course AS courseid
                   FROM {book_chapters} c
                   JOIN {book} b ON b.id = c.bookid
-                 WHERE c.timemodified >= ? ORDER BY c.timemodified ASC';
-        return $DB->get_recordset_sql($sql, array($modifiedfrom));
+          $contextjoin
+                 WHERE c.timemodified >= ? ORDER BY c.timemodified ASC";
+        return $DB->get_recordset_sql($sql, array_merge($contextparams, [$modifiedfrom]));
     }
 
     /**
@@ -157,5 +165,26 @@ class chapter extends \core_search\base_mod {
     public function get_context_url(\core_search\document $doc) {
         $contextmodule = \context::instance_by_id($doc->get('contextid'));
         return new \moodle_url('/mod/book/view.php', array('id' => $contextmodule->instanceid));
+    }
+
+    /**
+     * Returns true if this area uses file indexing.
+     *
+     * @return bool
+     */
+    public function uses_file_indexing() {
+        return true;
+    }
+
+    /**
+     * Return the context info required to index files for
+     * this search area.
+     *
+     * @return array
+     */
+    public function get_search_fileareas() {
+        $fileareas = array('chapter'); // Filearea.
+
+        return $fileareas;
     }
 }

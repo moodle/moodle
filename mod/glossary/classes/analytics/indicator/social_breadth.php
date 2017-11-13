@@ -36,30 +36,21 @@ defined('MOODLE_INTERNAL') || die();
 class social_breadth extends activity_base {
 
     /**
-     * get_name
+     * Returns the name.
      *
-     * @return string
+     * If there is a corresponding '_help' string this will be shown as well.
+     *
+     * @return \lang_string
      */
-    public static function get_name() {
-        return get_string('indicator:socialbreadthglossary', 'mod_glossary');
+    public static function get_name() : \lang_string {
+        return new \lang_string('indicator:socialbreadth', 'mod_glossary');
     }
 
-    /**
-     * get_indicator_type
-     *
-     * @return string
-     */
-    protected function get_indicator_type() {
+    public function get_indicator_type() {
         return self::INDICATOR_SOCIAL;
     }
 
-    /**
-     * get_social_breadth_level
-     *
-     * @param \cm_info $cm
-     * @return int
-     */
-    protected function get_social_breadth_level(\cm_info $cm) {
-        return 1;
+    public function get_social_breadth_level(\cm_info $cm) {
+        return self::SOCIAL_LEVEL_1;
     }
 }

@@ -305,6 +305,10 @@ $capabilities = array(
 
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => array(
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        ),
     ),
 
     'moodle/restore:restoretargethub' => array(
@@ -500,7 +504,7 @@ $capabilities = array(
 
     'moodle/user:delete' => array(
 
-        'riskbitmask' => RISK_PERSONAL, RISK_DATALOSS,
+        'riskbitmask' => RISK_PERSONAL | RISK_DATALOSS,
 
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
@@ -1921,6 +1925,15 @@ $capabilities = array(
         )
     ),
     'moodle/course:markcomplete' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => array(
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        )
+    ),
+    'moodle/course:overridecompletion' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
         'archetypes' => array(

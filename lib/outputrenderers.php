@@ -1898,7 +1898,7 @@ class core_renderer extends renderer_base {
 
         $output = $this->box_start('generalbox modal modal-dialog modal-in-page show', 'notice');
         $output .= $this->box_start('modal-content', 'modal-content');
-        $output .= $this->box_start('modal-header', 'modal-header');
+        $output .= $this->box_start('modal-header p-x-1', 'modal-header');
         $output .= html_writer::tag('h4', get_string('confirm'));
         $output .= $this->box_end();
         $output .= $this->box_start('modal-body', 'modal-body');
@@ -4185,12 +4185,12 @@ EOD;
             }
 
             // Only provide user information if the user is the current user, or a user which the current user can view.
-            $canviewdetails = false;
-            if ($user->id == $USER->id || user_can_view_profile($user)) {
-                $canviewdetails = true;
-            }
+            // When checking user_can_view_profile(), either:
+            // If the page context is course, check the course context (from the page object) or;
+            // If page context is NOT course, then check across all courses.
+            $course = ($this->page->context->contextlevel == CONTEXT_COURSE) ? $this->page->course : null;
 
-            if ($canviewdetails) {
+            if (user_can_view_profile($user, $course)) {
                 // Use the user's full name if the heading isn't set.
                 if (!isset($heading)) {
                     $heading = fullname($user);

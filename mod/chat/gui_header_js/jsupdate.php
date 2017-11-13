@@ -173,7 +173,11 @@ if ($refreshusers) {
     <body>
 <?php
 if ($beep) {
-    echo '<embed src="../beep.wav" autostart="true" hidden="true" name="beep" />';
+    echo '<script> (function() {';
+    echo 'var audioElement = document.createElement("audio");';
+    echo 'audioElement.setAttribute("src", "../beep.mp3");';
+    echo 'audioElement.play(); })();';
+    echo '</script>';
 }
 ?>
        <a href="<?php echo $refreshurlamp ?>" name="refreshLink">Refresh link</a>

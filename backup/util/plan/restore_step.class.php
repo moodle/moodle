@@ -96,6 +96,66 @@ abstract class restore_step extends base_step {
         // Return the passed value with cached offset applied.
         return $value + $cache[$this->get_restoreid()];
     }
+
+    /**
+     * Returns symmetric-key AES-256 decryption of base64 encoded contents.
+     *
+     * This method is used in restore operations to decrypt contents encrypted with
+     * {@link encrypted_final_element} automatically decoding (base64) and decrypting
+     * contents using the key stored in backup_encryptkey config.
+     *
+     * Requires openssl, cipher availability, and key existence (backup
+     * automatically sets it if missing). Integrity is provided via HMAC.
+     *
+     * @param string $value {@link encrypted_final_element} value to decode and decrypt.
+     * @return string|null decoded and decrypted value or null if the operation can not be performed.
+     */
+    public function decrypt($value) {
+
+        // No openssl available, skip this field completely.
+        if (!function_exists('openssl_encrypt')) {
+            return null;
+        }
+
+        // No hash available, skip this field completely.
+        if (!function_exists('hash_hmac')) {
+            return null;
+        }
+
+        // Cypher not available, skip this field completely.
+        if (!in_array(backup::CIPHER, openssl_get_cipher_methods())) {
+            return null;
+        }
+
+        // Get the decrypt key. Skip if missing.
+        $key = get_config('backup', 'backup_encryptkey');
+        if ($key === false) {
+            return null;
+        }
+
+        // And decode it.
+        $key = base64_decode($key);
+
+        // Arrived here, let's proceed with authentication (provides integrity).
+        $hmaclen = 32; // SHA256 is 32 bytes.
+        $ivlen = openssl_cipher_iv_length(backup::CIPHER);
+        list($hmac, $iv, $text) = array_values(unpack("a{$hmaclen}hmac/a{$ivlen}iv/a*text", base64_decode($value)));
+
+        // Verify HMAC matches expectations, skip if not (integrity failed).
+        if (!hash_equals($hmac, hash_hmac('sha256', $iv . $text, $key, true))) {
+            return null;
+        }
+
+        // Arrived here, integrity is ok, let's decrypt.
+        $result = openssl_decrypt($text, backup::CIPHER, $key, OPENSSL_RAW_DATA, $iv);
+
+        // For some reason decrypt failed (strange, HMAC check should have deteted it), skip this field completely.
+        if ($result === false) {
+            return null;
+        }
+
+        return $result;
+    }
 }
 
 /*

@@ -49,7 +49,7 @@ class student_enrolments extends \core_analytics\local\analyser\by_course {
      *
      * @return string
      */
-    protected function get_samples_origin() {
+    public function get_samples_origin() {
         return 'user_enrolments';
     }
 

@@ -58,7 +58,8 @@ function xmldb_filter_mathjaxloader_upgrade($oldversion) {
         // setting. Since it is preferably to always load the secure resource.
 
         $httpurl = get_config('filter_mathjaxloader', 'httpurl');
-        if ($httpurl !== 'http://cdn.mathjax.org/mathjax/2.6-latest/MathJax.js') {
+        if ($httpurl !== 'http://cdn.mathjax.org/mathjax/2.6-latest/MathJax.js' &&
+            $httpurl !== 'http://cdn.mathjax.org/mathjax/2.6.1/MathJax.js') {
             // If the http setting has been changed, we make the admin choose the https setting because
             // it indicates some sort of custom setup. This will be supported by the release notes.
             unset_config('httpsurl', 'filter_mathjaxloader');
@@ -119,6 +120,82 @@ function xmldb_filter_mathjaxloader_upgrade($oldversion) {
 
     // Automatically generated Moodle v3.3.0 release upgrade line.
     // Put any upgrade step following this.
+
+    if ($oldversion < 2017091900) {
+
+        $httpsurl = get_config('filter_mathjaxloader', 'httpsurl');
+        if (empty($httpsurl)) {
+            // URL is empty, most likely because of bad upgrade path. See MDL-59780.
+            set_config('httpsurl', 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js', 'filter_mathjaxloader');
+        }
+        upgrade_plugin_savepoint(true, 2017091900, 'filter', 'mathjaxloader');
+    }
+
+    if ($oldversion < 2017100900) {
+        // Update the MathJax CDN URL to the new default if the site has been using default value.
+        $httpsurl = get_config('filter_mathjaxloader', 'httpsurl');
+        if ($httpsurl === 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js') {
+            set_config('httpsurl', 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js', 'filter_mathjaxloader');
+        }
+        upgrade_plugin_savepoint(true, 2017100900, 'filter', 'mathjaxloader');
+    }
+
+    if ($oldversion < 2017101200) {
+        // Update default MathJax configuration so that it does not use the Accessible.js config (causes JS errors due to upstream bug).
+        $previousdefault = '
+MathJax.Hub.Config({
+    config: ["Accessible.js", "Safe.js"],
+    errorSettings: { message: ["!"] },
+    skipStartupTypeset: true,
+    messageStyle: "none"
+});
+';
+
+        $newdefault = '
+MathJax.Hub.Config({
+    config: ["default.js", "MMLorHTML.js", "Safe.js"],
+    errorSettings: { message: ["!"] },
+    skipStartupTypeset: true,
+    messageStyle: "none"
+});
+';
+
+        $mathjaxconfig = get_config('filter_mathjaxloader', 'mathjaxconfig');
+
+        if (empty($mathjaxconfig) || filter_mathjaxloader_upgrade_mathjaxconfig_equal($mathjaxconfig, $previousdefault)) {
+            set_config('mathjaxconfig', $newdefault, 'filter_mathjaxloader');
+        }
+
+        upgrade_plugin_savepoint(true, 2017101200, 'filter', 'mathjaxloader');
+    }
+
+    if ($oldversion < 2017102000) {
+        // Re-add Accessible.js (we should not have removed it).
+        $previousdefault = '
+MathJax.Hub.Config({
+    config: ["default.js", "MMLorHTML.js", "Safe.js"],
+    errorSettings: { message: ["!"] },
+    skipStartupTypeset: true,
+    messageStyle: "none"
+});
+';
+        $newdefault = '
+MathJax.Hub.Config({
+    config: ["Accessible.js", "Safe.js"],
+    errorSettings: { message: ["!"] },
+    skipStartupTypeset: true,
+    messageStyle: "none"
+});
+';
+
+        $mathjaxconfig = get_config('filter_mathjaxloader', 'mathjaxconfig');
+
+        if (empty($mathjaxconfig) || filter_mathjaxloader_upgrade_mathjaxconfig_equal($mathjaxconfig, $previousdefault)) {
+            set_config('mathjaxconfig', $newdefault, 'filter_mathjaxloader');
+        }
+
+        upgrade_plugin_savepoint(true, 2017102000, 'filter', 'mathjaxloader');
+    }
 
     return true;
 }

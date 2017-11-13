@@ -55,25 +55,11 @@ $PAGE->set_title($workshop->name);
 $PAGE->set_heading($course->fullname);
 $PAGE->navbar->add(get_string('assessingsubmission', 'workshop'));
 
-$canviewallassessments  = has_capability('mod/workshop:viewallassessments', $workshop->context);
-$canviewallsubmissions  = has_capability('mod/workshop:viewallsubmissions', $workshop->context);
 $cansetassessmentweight = has_capability('mod/workshop:allocate', $workshop->context);
 $canoverridegrades      = has_capability('mod/workshop:overridegrades', $workshop->context);
 $isreviewer             = ($USER->id == $assessment->reviewerid);
-$isauthor               = ($USER->id == $submission->authorid);
 
-$canviewallsubmissions = $canviewallsubmissions && $workshop->check_group_membership($submission->authorid);
-
-if ($isreviewer or $isauthor or ($canviewallassessments and $canviewallsubmissions)) {
-    // such a user can continue
-} else {
-    print_error('nopermissions', 'error', $workshop->view_url(), 'view this assessment');
-}
-
-if ($isauthor and !$isreviewer and !$canviewallassessments and $workshop->phase != workshop::PHASE_CLOSED) {
-    // authors can see assessments of their work at the end of workshop only
-    print_error('nopermissions', 'error', $workshop->view_url(), 'view assessment of own work before workshop is closed');
-}
+$workshop->check_view_assessment($assessment, $submission);
 
 // only the reviewer is allowed to modify the assessment
 if ($isreviewer and $workshop->assessing_allowed($USER->id)) {
@@ -83,31 +69,15 @@ if ($isreviewer and $workshop->assessing_allowed($USER->id)) {
 }
 
 // check that all required examples have been assessed by the user
-if ($assessmenteditable and $workshop->useexamples and $workshop->examplesmode == workshop::EXAMPLES_BEFORE_ASSESSMENT
-        and !has_capability('mod/workshop:manageexamples', $workshop->context)) {
-    // the reviewer must have submitted their own submission
-    $reviewersubmission = $workshop->get_submission_by_author($assessment->reviewerid);
-    $output = $PAGE->get_renderer('mod_workshop');
-    if (!$reviewersubmission) {
-        // no money, no love
-        $assessmenteditable = false;
+if ($assessmenteditable) {
+
+    list($assessed, $notice) = $workshop->check_examples_assessed_before_assessment($assessment->reviewerid);
+    if (!$assessed) {
         echo $output->header();
         echo $output->heading(format_string($workshop->name));
-        notice(get_string('exampleneedsubmission', 'workshop'), new moodle_url('/mod/workshop/view.php', array('id' => $cm->id)));
+        notice(get_string($notice, 'workshop'), new moodle_url('/mod/workshop/view.php', array('id' => $cm->id)));
         echo $output->footer();
         exit;
-    } else {
-        $examples = $workshop->get_examples_for_reviewer($assessment->reviewerid);
-        foreach ($examples as $exampleid => $example) {
-            if (is_null($example->grade)) {
-                $assessmenteditable = false;
-                echo $output->header();
-                echo $output->heading(format_string($workshop->name));
-                notice(get_string('exampleneedassessed', 'workshop'), new moodle_url('/mod/workshop/view.php', array('id' => $cm->id)));
-                echo $output->footer();
-                exit;
-            }
-        }
     }
 }
 
@@ -148,53 +118,8 @@ if (is_null($assessment->grade) and !$assessmenteditable) {
         redirect($workshop->view_url());
     } elseif ($assessmenteditable and ($data = $mform->get_data())) {
 
-        // Let the grading strategy subplugin save its data.
-        $rawgrade = $strategy->save_assessment($assessment, $data);
-
-        // Store the data managed by the workshop core.
-        $coredata = (object)array('id' => $assessment->id);
-        if (isset($data->feedbackauthor_editor)) {
-            $coredata->feedbackauthor_editor = $data->feedbackauthor_editor;
-            $coredata = file_postupdate_standard_editor($coredata, 'feedbackauthor', $workshop->overall_feedback_content_options(),
-                $workshop->context, 'mod_workshop', 'overallfeedback_content', $assessment->id);
-            unset($coredata->feedbackauthor_editor);
-        }
-        if (isset($data->feedbackauthorattachment_filemanager)) {
-            $coredata->feedbackauthorattachment_filemanager = $data->feedbackauthorattachment_filemanager;
-            $coredata = file_postupdate_standard_filemanager($coredata, 'feedbackauthorattachment',
-                $workshop->overall_feedback_attachment_options(), $workshop->context, 'mod_workshop', 'overallfeedback_attachment',
-                $assessment->id);
-            unset($coredata->feedbackauthorattachment_filemanager);
-            if (empty($coredata->feedbackauthorattachment)) {
-                $coredata->feedbackauthorattachment = 0;
-            }
-        }
-        if (isset($data->weight) and $cansetassessmentweight) {
-            $coredata->weight = $data->weight;
-        }
-        // Update the assessment data if there is something other than just the 'id'.
-        if (count((array)$coredata) > 1 ) {
-            $DB->update_record('workshop_assessments', $coredata);
-            $params = array(
-                'relateduserid' => $submission->authorid,
-                'objectid' => $assessment->id,
-                'context' => $workshop->context,
-                'other' => array(
-                    'workshopid' => $workshop->id,
-                    'submissionid' => $assessment->submissionid
-                )
-            );
-
-            if (is_null($assessment->grade)) {
-                // All workshop_assessments are created when allocations are made. The create event is of more use located here.
-                $event = \mod_workshop\event\submission_assessed::create($params);
-                $event->trigger();
-            } else {
-                $params['other']['grade'] = $assessment->grade;
-                $event = \mod_workshop\event\submission_reassessed::create($params);
-                $event->trigger();
-            }
-        }
+        // Add or update assessment.
+        $rawgrade = $workshop->edit_assessment($assessment, $submission, $data, $strategy);
 
         // And finally redirect the user's browser.
         if (!is_null($rawgrade) and isset($data->saveandclose)) {
@@ -222,19 +147,7 @@ if ($canoverridegrades or $cansetassessmentweight) {
         'overridablegradinggrade' => $canoverridegrades);
     $feedbackform = $workshop->get_feedbackreviewer_form($PAGE->url, $assessment, $options);
     if ($data = $feedbackform->get_data()) {
-        $data = file_postupdate_standard_editor($data, 'feedbackreviewer', array(), $workshop->context);
-        $record = new stdclass();
-        $record->id = $assessment->id;
-        if ($cansetassessmentweight) {
-            $record->weight = $data->weight;
-        }
-        if ($canoverridegrades) {
-            $record->gradinggradeover = $workshop->raw_grade_value($data->gradinggradeover, $workshop->gradinggrade);
-            $record->gradinggradeoverby = $USER->id;
-            $record->feedbackreviewer = $data->feedbackreviewer;
-            $record->feedbackreviewerformat = $data->feedbackreviewerformat;
-        }
-        $DB->update_record('workshop_assessments', $record);
+        $workshop->evaluate_assessment($assessment, $data, $cansetassessmentweight, $canoverridegrades);
         redirect($workshop->view_url());
     }
 }

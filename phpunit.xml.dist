@@ -13,6 +13,7 @@
         stopOnFailure="false"
         stopOnIncomplete="false"
         stopOnSkipped="false"
+        beStrictAboutTestsThatDoNotTestAnything="false"
         printerClass="Hint_ResultPrinter"
         testSuiteLoaderClass="phpunit_autoloader"
         >
@@ -50,7 +51,11 @@
         </testsuite>
         <testsuite name="core_files_testsuite">
             <directory suffix="_test.php">lib/filestorage/tests</directory>
+            <directory suffix="_test.php">lib/filebrowser/tests</directory>
             <directory suffix="_test.php">files/tests</directory>
+        </testsuite>
+        <testsuite name="core_filter_testsuite">
+            <directory suffix="_test.php">filter/tests</directory>
         </testsuite>
         <testsuite name="core_role_testsuite">
             <directory suffix="_test.php">admin/roles/tests</directory>

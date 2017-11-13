@@ -32,7 +32,7 @@
  * @copyright  2015 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class phpunit_constraint_object_is_equal_with_exceptions extends PHPUnit_Framework_Constraint_IsEqual {
+class phpunit_constraint_object_is_equal_with_exceptions extends PHPUnit\Framework\Constraint\IsEqual {
 
     /**
      * @var array $keys The list of exceptions.
@@ -41,7 +41,7 @@ class phpunit_constraint_object_is_equal_with_exceptions extends PHPUnit_Framewo
 
     /**
      * Add an exception for the named key to use a different comparison
-     * method. Any assertion provided by PHPUnit_Framework_Assert is
+     * method. Any assertion provided by PHPUnit\Framework\Assert is
      * acceptable.
      *
      * @param string $key The key to except.
@@ -65,13 +65,13 @@ class phpunit_constraint_object_is_equal_with_exceptions extends PHPUnit_Framewo
      * @param  string   $description        Additional information about the test
      * @param  bool     $shouldreturnesult  Whether to return a result or throw an exception
      * @return mixed
-     * @throws PHPUnit_Framework_ExpectationFailedException
+     * @throws PHPUnit\Framework\ExpectationFailedException
      */
     public function evaluate($other, $description = '', $shouldreturnesult = false) {
         foreach ($this->keys as $key => $comparison) {
             if (isset($other->$key) || isset($this->value->$key)) {
                 // One of the keys is present, therefore run the comparison.
-                PHPUnit_Framework_Assert::$comparison($this->value->$key, $other->$key);
+                PHPUnit\Framework\Assert::$comparison($this->value->$key, $other->$key);
 
                 // Unset the keys, otherwise the standard evaluation will take place.
                 unset($other->$key);

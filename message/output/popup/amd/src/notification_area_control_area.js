@@ -249,7 +249,7 @@ define(['jquery', 'core/templates', 'core/notification', 'core/custom_interactio
         // If the element isn't in the view window.
         if (relativeTop > container.innerHeight()) {
             var height = notificationElement.outerHeight();
-            // offset enough to make sure the notification will be in view.
+            // Offset enough to make sure the notification will be in view.
             height = height * 4;
             var scrollTo = position.top - height;
             container.scrollTop(scrollTo);

@@ -22,6 +22,13 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+define('USER_FILTER_ENROLMENT', 1);
+define('USER_FILTER_GROUP', 2);
+define('USER_FILTER_LAST_ACCESS', 3);
+define('USER_FILTER_ROLE', 4);
+define('USER_FILTER_STATUS', 5);
+define('USER_FILTER_STRING', 6);
+
 /**
  * Creates a user
  *
@@ -331,34 +338,28 @@ function user_get_user_details($user, $course = null, array $userfields = array(
     $userdetails['fullname'] = fullname($user);
 
     if (in_array('customfields', $userfields)) {
-        $fields = $DB->get_recordset_sql("SELECT f.*
-                                            FROM {user_info_field} f
-                                            JOIN {user_info_category} c
-                                                 ON f.categoryid=c.id
-                                        ORDER BY c.sortorder ASC, f.sortorder ASC");
+        $categories = profile_get_user_fields_with_data_by_category($user->id);
         $userdetails['customfields'] = array();
-        foreach ($fields as $field) {
-            require_once($CFG->dirroot.'/user/profile/field/'.$field->datatype.'/field.class.php');
-            $newfield = 'profile_field_'.$field->datatype;
-            $formfield = new $newfield($field->id, $user->id);
-            if ($formfield->is_visible() and !$formfield->is_empty()) {
+        foreach ($categories as $categoryid => $fields) {
+            foreach ($fields as $formfield) {
+                if ($formfield->is_visible() and !$formfield->is_empty()) {
 
-                // TODO: Part of MDL-50728, this conditional coding must be moved to
-                // proper profile fields API so they are self-contained.
-                // We only use display_data in fields that require text formatting.
-                if ($field->datatype == 'text' or $field->datatype == 'textarea') {
-                    $fieldvalue = $formfield->display_data();
-                } else {
-                    // Cases: datetime, checkbox and menu.
-                    $fieldvalue = $formfield->data;
+                    // TODO: Part of MDL-50728, this conditional coding must be moved to
+                    // proper profile fields API so they are self-contained.
+                    // We only use display_data in fields that require text formatting.
+                    if ($formfield->field->datatype == 'text' or $formfield->field->datatype == 'textarea') {
+                        $fieldvalue = $formfield->display_data();
+                    } else {
+                        // Cases: datetime, checkbox and menu.
+                        $fieldvalue = $formfield->data;
+                    }
+
+                    $userdetails['customfields'][] =
+                        array('name' => $formfield->field->name, 'value' => $fieldvalue,
+                            'type' => $formfield->field->datatype, 'shortname' => $formfield->field->shortname);
                 }
-
-                $userdetails['customfields'][] =
-                    array('name' => $formfield->field->name, 'value' => $fieldvalue,
-                        'type' => $field->datatype, 'shortname' => $formfield->field->shortname);
             }
         }
-        $fields->close();
         // Unset customfields if it's empty.
         if (empty($userdetails['customfields'])) {
             unset($userdetails['customfields']);
@@ -1108,10 +1109,15 @@ function user_mygrades_url($userid = null, $courseid = SITEID) {
 }
 
 /**
- * Check if a user has the permission to viewdetails in a shared course's context.
+ * Check if the current user has permission to view details of the supplied user.
+ *
+ * This function supports two modes:
+ * If the optional $course param is omitted, then this function finds all shared courses and checks whether the current user has
+ * permission in any of them, returning true if so.
+ * If the $course param is provided, then this function checks permissions in ONLY that course.
  *
  * @param object $user The other user's details.
- * @param object $course Use this course to see if we have permission to see this user's profile.
+ * @param object $course if provided, only check permissions in this course.
  * @param context $usercontext The user context if available.
  * @return bool true for ability to view this user, else false.
  */
@@ -1122,9 +1128,7 @@ function user_can_view_profile($user, $course = null, $usercontext = null) {
         return false;
     }
 
-    // Perform some quick checks and eventually return early.
-
-    // Number 1.
+    // Do we need to be logged in?
     if (empty($CFG->forceloginforprofiles)) {
         return true;
     } else {
@@ -1134,38 +1138,44 @@ function user_can_view_profile($user, $course = null, $usercontext = null) {
         }
     }
 
-    // Number 2.
+    // Current user can always view their profile.
     if ($USER->id == $user->id) {
         return true;
     }
 
-    if (empty($usercontext)) {
-        $usercontext = context_user::instance($user->id);
-    }
-    // Number 3.
-    if (has_capability('moodle/user:viewdetails', $usercontext) || has_capability('moodle/user:viewalldetails', $usercontext)) {
-        return true;
-    }
-
-    // Number 4.
+    // Course contacts have visible profiles always.
     if (has_coursecontact_role($user->id)) {
         return true;
     }
 
+    // If we're only checking the capabilities in the single provided course.
     if (isset($course)) {
-        $sharedcourses = array($course);
+        // Confirm that $user is enrolled in the $course we're checking.
+        if (is_enrolled(context_course::instance($course->id), $user)) {
+            $userscourses = array($course);
+        }
     } else {
-        $sharedcourses = enrol_get_shared_courses($USER->id, $user->id, true);
+        // Else we're checking whether the current user can view $user's profile anywhere, so check user context first.
+        if (empty($usercontext)) {
+            $usercontext = context_user::instance($user->id);
+        }
+        if (has_capability('moodle/user:viewdetails', $usercontext) || has_capability('moodle/user:viewalldetails', $usercontext)) {
+            return true;
+        }
+        // This returns context information, so we can preload below.
+        $userscourses = enrol_get_all_users_courses($user->id);
     }
 
-    if (empty($sharedcourses)) {
+    if (empty($userscourses)) {
         return false;
     }
 
-    foreach ($sharedcourses as $sharedcourse) {
-        $coursecontext = context_course::instance($sharedcourse->id);
-        if (has_capability('moodle/user:viewdetails', $coursecontext)) {
-            if (!groups_user_groups_visible($sharedcourse, $user->id)) {
+    foreach ($userscourses as $userscourse) {
+        context_helper::preload_from_record($userscourse);
+        $coursecontext = context_course::instance($userscourse->id);
+        if (has_capability('moodle/user:viewdetails', $coursecontext) ||
+            has_capability('moodle/user:viewalldetails', $coursecontext)) {
+            if (!groups_user_groups_visible($userscourse, $user->id)) {
                 // Not a member of the same group.
                 continue;
             }
@@ -1229,7 +1239,7 @@ function user_get_tagged_users($tag, $exclusivemode = false, $fromctx = 0, $ctx 
  */
 function user_get_participants_sql($courseid, $groupid = 0, $accesssince = 0, $roleid = 0, $enrolid = 0, $statusid = -1,
                                    $search = '', $additionalwhere = '', $additionalparams = array()) {
-    global $DB;
+    global $DB, $USER;
 
     // Get the context.
     $context = \context_course::instance($courseid, MUST_EXIST);
@@ -1305,10 +1315,40 @@ function user_get_participants_sql($courseid, $groupid = 0, $accesssince = 0, $r
             $searchkey1 = 'search' . $index . '1';
             $searchkey2 = 'search' . $index . '2';
             $searchkey3 = 'search' . $index . '3';
+
+            $conditions = array();
+            // Search by fullname.
             $fullname = $DB->sql_fullname('u.firstname', 'u.lastname');
-            $wheres[] = '(' . $DB->sql_like($fullname, ':' . $searchkey1, false, false) .
-                ' OR ' . $DB->sql_like('email', ':' . $searchkey2, false, false) .
-                ' OR ' . $DB->sql_like('idnumber', ':' . $searchkey3, false, false) . ') ';
+            $conditions[] = $DB->sql_like($fullname, ':' . $searchkey1, false, false);
+
+            // Search by email.
+            $email = $DB->sql_like('email', ':' . $searchkey2, false, false);
+            if (!in_array('email', $userfields)) {
+                $maildisplay = 'maildisplay' . $index;
+                $userid1 = 'userid' . $index . '1';
+                // Prevent users who hide their email address from being found by others
+                // who aren't allowed to see hidden email addresses.
+                $email = "(". $email ." AND (" .
+                        "u.maildisplay <> :$maildisplay " .
+                        "OR u.id = :$userid1". // User can always find himself.
+                        "))";
+                $params[$maildisplay] = core_user::MAILDISPLAY_HIDE;
+                $params[$userid1] = $USER->id;
+            }
+            $conditions[] = $email;
+
+            // Search by idnumber.
+            $idnumber = $DB->sql_like('idnumber', ':' . $searchkey3, false, false);
+            if (!in_array('idnumber', $userfields)) {
+                $userid2 = 'userid' . $index . '2';
+                // Users who aren't allowed to see idnumbers should at most find themselves
+                // when searching for an idnumber.
+                $idnumber = "(". $idnumber . " AND u.id = :$userid2)";
+                $params[$userid2] = $USER->id;
+            }
+            $conditions[] = $idnumber;
+
+            $wheres[] = "(". implode(" OR ", $conditions) .") ";
             $params[$searchkey1] = "%$keyword%";
             $params[$searchkey2] = "%$keyword%";
             $params[$searchkey3] = "%$keyword%";

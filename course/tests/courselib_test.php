@@ -1901,6 +1901,52 @@ class core_course_courselib_testcase extends advanced_testcase {
     }
 
     /**
+     * Test that triggering a course_backup_created event works as expected.
+     */
+    public function test_course_backup_created_event() {
+        global $CFG;
+
+        // Get the necessary files to perform backup and restore.
+        require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
+        require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
+
+        $this->resetAfterTest();
+
+        // Set to admin user.
+        $this->setAdminUser();
+
+        // The user id is going to be 2 since we are the admin user.
+        $userid = 2;
+
+        // Create a course.
+        $course = $this->getDataGenerator()->create_course();
+
+        // Create backup file and save it to the backup location.
+        $bc = new backup_controller(backup::TYPE_1COURSE, $course->id, backup::FORMAT_MOODLE,
+            backup::INTERACTIVE_NO, backup::MODE_GENERAL, $userid);
+        $sink = $this->redirectEvents();
+        $bc->execute_plan();
+
+        // Capture the event.
+        $events = $sink->get_events();
+        $sink->close();
+
+        // Validate the event.
+        $event = array_pop($events);
+        $this->assertInstanceOf('\core\event\course_backup_created', $event);
+        $this->assertEquals('course', $event->objecttable);
+        $this->assertEquals($bc->get_courseid(), $event->objectid);
+        $this->assertEquals(context_course::instance($bc->get_courseid())->id, $event->contextid);
+
+        $url = new moodle_url('/course/view.php', array('id' => $event->objectid));
+        $this->assertEquals($url, $event->get_url());
+        $this->assertEventContextNotUsed($event);
+
+        // Destroy the resource controller since we are done using it.
+        $bc->destroy();
+    }
+
+    /**
      * Test that triggering a course_restored event works as expected.
      */
     public function test_course_restored_event() {
@@ -2978,23 +3024,6 @@ class core_course_courselib_testcase extends advanced_testcase {
         $this->assertTrue($navoptions->tags);
         $this->assertTrue($navoptions->search);
         $this->assertTrue($navoptions->calendar);
-
-        // Standar using viewing frontpage settings from a course where is enrolled.
-        $course = self::getDataGenerator()->create_course();
-        // Create a viewer user.
-        $viewer = self::getDataGenerator()->create_user();
-        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
-        $this->getDataGenerator()->enrol_user($viewer->id, $course->id, $studentrole->id);
-        $this->setUser($viewer);
-
-        $navoptions = course_get_user_navigation_options($context, $course);
-        $this->assertTrue($navoptions->blogs);
-        $this->assertFalse($navoptions->notes);
-        $this->assertTrue($navoptions->participants);
-        $this->assertTrue($navoptions->badges);
-        $this->assertTrue($navoptions->tags);
-        $this->assertTrue($navoptions->search);
-        $this->assertTrue($navoptions->calendar);
     }
 
     /**
@@ -3814,7 +3843,7 @@ class core_course_courselib_testcase extends advanced_testcase {
             }
             if ($event->eventtype == ASSIGN_EVENT_TYPE_DUE) {
                 $this->assertEquals($newduedate, $event->timestart);
-                $this->assertEquals($newmodulename, $event->name);
+                $this->assertEquals(get_string('calendardue', 'assign', $newmodulename), $event->name);
             }
         }
     }
@@ -3874,5 +3903,225 @@ class core_course_courselib_testcase extends advanced_testcase {
         $this->assertTrue(course_module_bulk_update_calendar_events('assign'));
         // Update the assign instances for this course.
         $this->assertTrue(course_module_bulk_update_calendar_events('assign', $course->id));
+    }
+
+    /**
+     * Test that a student can view participants in a course they are enrolled in.
+     */
+    public function test_course_can_view_participants_as_student() {
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+        $coursecontext = context_course::instance($course->id);
+
+        $user = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($user->id, $course->id);
+
+        $this->setUser($user);
+
+        $this->assertTrue(course_can_view_participants($coursecontext));
+    }
+
+    /**
+     * Test that a student in a course can not view participants on the site.
+     */
+    public function test_course_can_view_participants_as_student_on_site() {
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+
+        $user = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($user->id, $course->id);
+
+        $this->setUser($user);
+
+        $this->assertFalse(course_can_view_participants(context_system::instance()));
+    }
+
+    /**
+     * Test that an admin can view participants on the site.
+     */
+    public function test_course_can_view_participants_as_admin_on_site() {
+        $this->resetAfterTest();
+
+        $this->setAdminUser();
+
+        $this->assertTrue(course_can_view_participants(context_system::instance()));
+    }
+
+    /**
+     * Test teachers can view participants in a course they are enrolled in.
+     */
+    public function test_course_can_view_participants_as_teacher() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+        $coursecontext = context_course::instance($course->id);
+
+        $user = $this->getDataGenerator()->create_user();
+        $roleid = $DB->get_field('role', 'id', array('shortname' => 'editingteacher'));
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, $roleid);
+
+        $this->setUser($user);
+
+        $this->assertTrue(course_can_view_participants($coursecontext));
+    }
+
+    /**
+     * Check the teacher can still view the participants page without the 'viewparticipants' cap.
+     */
+    public function test_course_can_view_participants_as_teacher_without_view_participants_cap() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+        $coursecontext = context_course::instance($course->id);
+
+        $user = $this->getDataGenerator()->create_user();
+        $roleid = $DB->get_field('role', 'id', array('shortname' => 'editingteacher'));
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, $roleid);
+
+        $this->setUser($user);
+
+        // Disable one of the capabilties.
+        assign_capability('moodle/course:viewparticipants', CAP_PROHIBIT, $roleid, $coursecontext);
+
+        // Should still be able to view the page as they have the 'moodle/course:enrolreview' cap.
+        $this->assertTrue(course_can_view_participants($coursecontext));
+    }
+
+    /**
+     * Check the teacher can still view the participants page without the 'moodle/course:enrolreview' cap.
+     */
+    public function test_course_can_view_participants_as_teacher_without_enrol_review_cap() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+        $coursecontext = context_course::instance($course->id);
+
+        $user = $this->getDataGenerator()->create_user();
+        $roleid = $DB->get_field('role', 'id', array('shortname' => 'editingteacher'));
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, $roleid);
+
+        $this->setUser($user);
+
+        // Disable one of the capabilties.
+        assign_capability('moodle/course:enrolreview', CAP_PROHIBIT, $roleid, $coursecontext);
+
+        // Should still be able to view the page as they have the 'moodle/course:viewparticipants' cap.
+        $this->assertTrue(course_can_view_participants($coursecontext));
+    }
+
+    /**
+     * Check the teacher can not view the participants page without the required caps.
+     */
+    public function test_course_can_view_participants_as_teacher_without_required_caps() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+        $coursecontext = context_course::instance($course->id);
+
+        $user = $this->getDataGenerator()->create_user();
+        $roleid = $DB->get_field('role', 'id', array('shortname' => 'editingteacher'));
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, $roleid);
+
+        $this->setUser($user);
+
+        // Disable the capabilities.
+        assign_capability('moodle/course:viewparticipants', CAP_PROHIBIT, $roleid, $coursecontext);
+        assign_capability('moodle/course:enrolreview', CAP_PROHIBIT, $roleid, $coursecontext);
+
+        $this->assertFalse(course_can_view_participants($coursecontext));
+    }
+
+    /**
+     * Check that an exception is not thrown if we can view the participants page.
+     */
+    public function test_course_require_view_participants() {
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+        $coursecontext = context_course::instance($course->id);
+
+        $user = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($user->id, $course->id);
+
+        $this->setUser($user);
+
+        course_require_view_participants($coursecontext);
+    }
+
+    /**
+     * Check that an exception is thrown if we can't view the participants page.
+     */
+    public function test_course_require_view_participants_as_student_on_site() {
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+
+        $user = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($user->id, $course->id);
+
+        $this->setUser($user);
+
+        $this->expectException('required_capability_exception');
+        course_require_view_participants(context_system::instance());
+    }
+
+    /**
+     *  Testing the can_download_from_backup_filearea fn.
+     */
+    public function test_can_download_from_backup_filearea() {
+        global $DB;
+        $this->resetAfterTest();
+        $course = $this->getDataGenerator()->create_course();
+        $context = context_course::instance($course->id);
+        $user = $this->getDataGenerator()->create_user();
+        $teacherrole = $DB->get_record('role', array('shortname' => 'teacher'));
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, $teacherrole->id);
+
+        // The 'automated' backup area. Downloading from this area requires two capabilities.
+        // If the user has only the 'backup:downloadfile' capability.
+        unassign_capability('moodle/restore:userinfo', $teacherrole->id, $context);
+        assign_capability('moodle/backup:downloadfile', CAP_ALLOW, $teacherrole->id, $context);
+        $this->assertFalse(can_download_from_backup_filearea('automated', $context, $user));
+
+        // If the user has only the 'restore:userinfo' capability.
+        unassign_capability('moodle/backup:downloadfile', $teacherrole->id, $context);
+        assign_capability('moodle/restore:userinfo', CAP_ALLOW, $teacherrole->id, $context);
+        $this->assertFalse(can_download_from_backup_filearea('automated', $context, $user));
+
+        // If the user has both capabilities.
+        assign_capability('moodle/backup:downloadfile', CAP_ALLOW, $teacherrole->id, $context);
+        assign_capability('moodle/restore:userinfo', CAP_ALLOW, $teacherrole->id, $context);
+        $this->assertTrue(can_download_from_backup_filearea('automated', $context, $user));
+
+        // Is the user has neither of the capabilities.
+        unassign_capability('moodle/backup:downloadfile', $teacherrole->id, $context);
+        unassign_capability('moodle/restore:userinfo', $teacherrole->id, $context);
+        $this->assertFalse(can_download_from_backup_filearea('automated', $context, $user));
+
+        // The 'course ' and 'backup' backup file areas. These are governed by the same download capability.
+        // User has the capability.
+        unassign_capability('moodle/restore:userinfo', $teacherrole->id, $context);
+        assign_capability('moodle/backup:downloadfile', CAP_ALLOW, $teacherrole->id, $context);
+        $this->assertTrue(can_download_from_backup_filearea('course', $context, $user));
+        $this->assertTrue(can_download_from_backup_filearea('backup', $context, $user));
+
+        // User doesn't have the capability.
+        unassign_capability('moodle/backup:downloadfile', $teacherrole->id, $context);
+        $this->assertFalse(can_download_from_backup_filearea('course', $context, $user));
+        $this->assertFalse(can_download_from_backup_filearea('backup', $context, $user));
+
+        // A file area that doesn't exist. No permissions, regardless of capabilities.
+        assign_capability('moodle/backup:downloadfile', CAP_ALLOW, $teacherrole->id, $context);
+        $this->assertFalse(can_download_from_backup_filearea('testing', $context, $user));
     }
 }

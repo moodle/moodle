@@ -31,6 +31,9 @@ require_once($CFG->dirroot . '/mod/assign/lib.php');
 require_once($CFG->dirroot . '/mod/assign/locallib.php');
 require_once($CFG->dirroot . '/mod/assign/tests/base_test.php');
 
+use \core_calendar\local\api as calendar_local_api;
+use \core_calendar\local\event\container as calendar_event_container;
+
 /**
  * Unit tests for (some of) mod/assign/lib.php.
  *
@@ -108,7 +111,7 @@ class mod_assign_lib_testcase extends mod_assign_base_testcase {
         $this->setAdminUser();
         $courses = $DB->get_records('course', array('id' => $this->course->id));
         // Past assignments should not show up.
-        $pastassign = $this->create_instance(array('duedate' => time(),
+        $pastassign = $this->create_instance(array('duedate' => time() - 370001,
                                                    'cutoffdate' => time() - 370000,
                                                    'nosubmissions' => 0,
                                                    'assignsubmission_onlinetext_enabled' => 1));
@@ -413,8 +416,8 @@ class mod_assign_lib_testcase extends mod_assign_base_testcase {
         // Set the user to a teacher.
         $this->setUser($this->editingteachers[0]);
 
-        // The teacher should not care about the due date event.
-        $this->assertFalse(mod_assign_core_calendar_is_event_visible($event));
+        // The teacher should see the due date event.
+        $this->assertTrue(mod_assign_core_calendar_is_event_visible($event));
     }
 
     public function test_assign_core_calendar_is_event_visible_duedate_event_as_student() {
@@ -483,12 +486,8 @@ class mod_assign_lib_testcase extends mod_assign_base_testcase {
         // Decorate action event.
         $actionevent = mod_assign_core_calendar_provide_event_action($event, $factory);
 
-        // Confirm the event was decorated.
-        $this->assertInstanceOf('\core_calendar\local\event\value_objects\action', $actionevent);
-        $this->assertEquals(get_string('addsubmission', 'assign'), $actionevent->get_name());
-        $this->assertInstanceOf('moodle_url', $actionevent->get_url());
-        $this->assertEquals(1, $actionevent->get_item_count());
-        $this->assertFalse($actionevent->is_actionable());
+        // The teacher should not have an action for a due date event.
+        $this->assertNull($actionevent);
     }
 
     public function test_assign_core_calendar_provide_event_action_duedate_as_student() {
@@ -654,5 +653,601 @@ class mod_assign_lib_testcase extends mod_assign_base_testcase {
         $this->assertEquals(mod_assign_get_completion_active_rule_descriptions($cm2), []);
         $this->assertEquals(mod_assign_get_completion_active_rule_descriptions($moddefaults), $activeruledescriptions);
         $this->assertEquals(mod_assign_get_completion_active_rule_descriptions(new stdClass()), []);
+    }
+
+    /**
+     * Test that if some grades are not set, they are left alone and not rescaled
+     */
+    public function test_assign_rescale_activity_grades_some_unset() {
+        $this->resetAfterTest();
+
+        // As a teacher...
+        $this->setUser($this->editingteachers[0]);
+        $assign = $this->create_instance();
+
+        // Grade the student.
+        $data = ['grade' => 50];
+        $assign->testable_apply_grade_to_user((object)$data, $this->students[0]->id, 0);
+
+        // Try getting another students grade. This will give a grade of ASSIGN_GRADE_NOT_SET (-1).
+        $assign->get_user_grade($this->students[1]->id, true);
+
+        // Rescale.
+        assign_rescale_activity_grades($this->course, $assign->get_course_module(), 0, 100, 0, 10);
+
+        // Get the grades for both students.
+        $student0grade = $assign->get_user_grade($this->students[0]->id, true);
+        $student1grade = $assign->get_user_grade($this->students[1]->id, true);
+
+        // Make sure the real grade is scaled, but the ASSIGN_GRADE_NOT_SET stays the same.
+        $this->assertEquals($student0grade->grade, 5);
+        $this->assertEquals($student1grade->grade, ASSIGN_GRADE_NOT_SET);
+    }
+
+    /**
+     * Return false when there are not overrides for this assign instance.
+     */
+    public function test_assign_is_override_calendar_event_no_override() {
+        global $CFG, $DB;
+        require_once($CFG->dirroot . '/calendar/lib.php');
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $userid = 1234;
+        $duedate = time();
+        $assign = $this->create_instance(['duedate' => $duedate]);
+
+        $instance = $assign->get_instance();
+        $event = new \calendar_event((object)[
+            'modulename' => 'assign',
+            'instance' => $instance->id,
+            'userid' => $userid
+        ]);
+
+        $this->assertFalse($assign->is_override_calendar_event($event));
+    }
+
+    /**
+     * Return false if the given event isn't an assign module event.
+     */
+    public function test_assign_is_override_calendar_event_no_nodule_event() {
+        global $CFG, $DB;
+        require_once($CFG->dirroot . '/calendar/lib.php');
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $userid = $this->students[0]->id;
+        $duedate = time();
+        $assign = $this->create_instance(['duedate' => $duedate]);
+
+        $instance = $assign->get_instance();
+        $event = new \calendar_event((object)[
+            'userid' => $userid
+        ]);
+
+        $this->assertFalse($assign->is_override_calendar_event($event));
+    }
+
+    /**
+     * Return false if there is overrides for this use but they belong to another assign
+     * instance.
+     */
+    public function test_assign_is_override_calendar_event_different_assign_instance() {
+        global $CFG, $DB;
+        require_once($CFG->dirroot . '/calendar/lib.php');
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $userid = 1234;
+        $duedate = time();
+        $assign = $this->create_instance(['duedate' => $duedate]);
+        $assign2 = $this->create_instance(['duedate' => $duedate]);
+
+        $instance = $assign->get_instance();
+        $event = new \calendar_event((object) [
+            'modulename' => 'assign',
+            'instance' => $instance->id,
+            'userid' => $userid
+        ]);
+
+        $record = (object) [
+            'assignid' => $assign2->get_instance()->id,
+            'userid' => $userid
+        ];
+
+        $DB->insert_record('assign_overrides', $record);
+
+        $this->assertFalse($assign->is_override_calendar_event($event));
+    }
+
+    /**
+     * Return true if there is a user override for this event and assign instance.
+     */
+    public function test_assign_is_override_calendar_event_user_override() {
+        global $CFG, $DB;
+        require_once($CFG->dirroot . '/calendar/lib.php');
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $userid = 1234;
+        $duedate = time();
+        $assign = $this->create_instance(['duedate' => $duedate]);
+
+        $instance = $assign->get_instance();
+        $event = new \calendar_event((object) [
+            'modulename' => 'assign',
+            'instance' => $instance->id,
+            'userid' => $userid
+        ]);
+
+        $record = (object) [
+            'assignid' => $instance->id,
+            'userid' => $userid
+        ];
+
+        $DB->insert_record('assign_overrides', $record);
+
+        $this->assertTrue($assign->is_override_calendar_event($event));
+    }
+
+    /**
+     * Return true if there is a group override for the event and assign instance.
+     */
+    public function test_assign_is_override_calendar_event_group_override() {
+        global $CFG, $DB;
+        require_once($CFG->dirroot . '/calendar/lib.php');
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $duedate = time();
+        $assign = $this->create_instance(['duedate' => $duedate]);
+        $instance = $assign->get_instance();
+        $group = $this->getDataGenerator()->create_group(array('courseid' => $instance->course));
+        $groupid = $group->id;
+
+        $event = new \calendar_event((object) [
+            'modulename' => 'assign',
+            'instance' => $instance->id,
+            'groupid' => $groupid
+        ]);
+
+        $record = (object) [
+            'assignid' => $instance->id,
+            'groupid' => $groupid
+        ];
+
+        $DB->insert_record('assign_overrides', $record);
+
+        $this->assertTrue($assign->is_override_calendar_event($event));
+    }
+
+    /**
+     * Unknown event types should not have any limit restrictions returned.
+     */
+    public function test_mod_assign_core_calendar_get_valid_event_timestart_range_unkown_event_type() {
+        global $CFG;
+        require_once($CFG->dirroot . '/calendar/lib.php');
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $duedate = time();
+        $assign = $this->create_instance(['duedate' => $duedate]);
+        $instance = $assign->get_instance();
+
+        $event = new \calendar_event((object) [
+            'courseid' => $instance->course,
+            'modulename' => 'assign',
+            'instance' => $instance->id,
+            'eventtype' => 'SOME RANDOM EVENT'
+        ]);
+
+        list($min, $max) = mod_assign_core_calendar_get_valid_event_timestart_range($event, $instance);
+        $this->assertNull($min);
+        $this->assertNull($max);
+    }
+
+    /**
+     * Override events should not have any limit restrictions returned.
+     */
+    public function test_mod_assign_core_calendar_get_valid_event_timestart_range_override_event() {
+        global $CFG, $DB;
+        require_once($CFG->dirroot . '/calendar/lib.php');
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $duedate = time();
+        $assign = $this->create_instance(['duedate' => $duedate]);
+        $instance = $assign->get_instance();
+        $userid = $this->students[0]->id;
+
+        $event = new \calendar_event((object) [
+            'courseid' => $instance->course,
+            'modulename' => 'assign',
+            'instance' => $instance->id,
+            'userid' => $userid,
+            'eventtype' => ASSIGN_EVENT_TYPE_DUE
+        ]);
+
+        $record = (object) [
+            'assignid' => $instance->id,
+            'userid' => $userid
+        ];
+
+        $DB->insert_record('assign_overrides', $record);
+
+        list($min, $max) = mod_assign_core_calendar_get_valid_event_timestart_range($event, $instance);
+        $this->assertFalse($min);
+        $this->assertFalse($max);
+    }
+
+    /**
+     * Assignments configured without a submissions from and cutoff date should not have
+     * any limits applied.
+     */
+    public function test_mod_assign_core_calendar_get_valid_event_timestart_range_due_no_limit() {
+        global $CFG, $DB;
+        require_once($CFG->dirroot . '/calendar/lib.php');
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $duedate = time();
+        $assign = $this->create_instance([
+            'duedate' => $duedate,
+            'allowsubmissionsfromdate' => 0,
+            'cutoffdate' => 0,
+        ]);
+        $instance = $assign->get_instance();
+        $userid = $this->students[0]->id;
+
+        $event = new \calendar_event((object) [
+            'courseid' => $instance->course,
+            'modulename' => 'assign',
+            'instance' => $instance->id,
+            'eventtype' => ASSIGN_EVENT_TYPE_DUE
+        ]);
+
+        list($min, $max) = mod_assign_core_calendar_get_valid_event_timestart_range($event, $instance);
+        $this->assertNull($min);
+        $this->assertNull($max);
+    }
+
+    /**
+     * Assignments should be bottom and top bound by the submissions from date and cutoff date
+     * respectively.
+     */
+    public function test_mod_assign_core_calendar_get_valid_event_timestart_range_due_with_limits() {
+        global $CFG, $DB;
+        require_once($CFG->dirroot . '/calendar/lib.php');
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $duedate = time();
+        $submissionsfromdate = $duedate - DAYSECS;
+        $cutoffdate = $duedate + DAYSECS;
+        $assign = $this->create_instance([
+            'duedate' => $duedate,
+            'allowsubmissionsfromdate' => $submissionsfromdate,
+            'cutoffdate' => $cutoffdate,
+        ]);
+        $instance = $assign->get_instance();
+        $userid = $this->students[0]->id;
+
+        $event = new \calendar_event((object) [
+            'courseid' => $instance->course,
+            'modulename' => 'assign',
+            'instance' => $instance->id,
+            'eventtype' => ASSIGN_EVENT_TYPE_DUE
+        ]);
+
+        list($min, $max) = mod_assign_core_calendar_get_valid_event_timestart_range($event, $instance);
+        $this->assertEquals($submissionsfromdate, $min[0]);
+        $this->assertNotEmpty($min[1]);
+        $this->assertEquals($cutoffdate, $max[0]);
+        $this->assertNotEmpty($max[1]);
+    }
+
+    /**
+     * Assignment grading due date should not have any limits of no due date and cutoff date is set.
+     */
+    public function test_mod_assign_core_calendar_get_valid_event_timestart_range_gradingdue_no_limit() {
+        global $CFG, $DB;
+        require_once($CFG->dirroot . '/calendar/lib.php');
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $assign = $this->create_instance([
+            'duedate' => 0,
+            'allowsubmissionsfromdate' => 0,
+            'cutoffdate' => 0,
+        ]);
+        $instance = $assign->get_instance();
+
+        $event = new \calendar_event((object) [
+            'courseid' => $instance->course,
+            'modulename' => 'assign',
+            'instance' => $instance->id,
+            'eventtype' => ASSIGN_EVENT_TYPE_GRADINGDUE
+        ]);
+
+        list($min, $max) = mod_assign_core_calendar_get_valid_event_timestart_range($event, $instance);
+        $this->assertNull($min);
+        $this->assertNull($max);
+    }
+
+    /**
+     * Assignment grading due event is minimum bound by the due date, if it is set.
+     */
+    public function test_mod_assign_core_calendar_get_valid_event_timestart_range_gradingdue_with_due_date() {
+        global $CFG, $DB;
+        require_once($CFG->dirroot . '/calendar/lib.php');
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $duedate = time();
+        $assign = $this->create_instance([
+            'duedate' => $duedate
+        ]);
+        $instance = $assign->get_instance();
+        $userid = $this->students[0]->id;
+
+        $event = new \calendar_event((object) [
+            'courseid' => $instance->course,
+            'modulename' => 'assign',
+            'instance' => $instance->id,
+            'eventtype' => ASSIGN_EVENT_TYPE_GRADINGDUE
+        ]);
+
+        list($min, $max) = mod_assign_core_calendar_get_valid_event_timestart_range($event, $instance);
+        $this->assertEquals($duedate, $min[0]);
+        $this->assertNotEmpty($min[1]);
+        $this->assertNull($max);
+    }
+
+    /**
+     * Non due date events should not update the assignment due date.
+     */
+    public function test_mod_assign_core_calendar_event_timestart_updated_non_due_event() {
+        global $CFG, $DB;
+        require_once($CFG->dirroot . '/calendar/lib.php');
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $duedate = time();
+        $submissionsfromdate = $duedate - DAYSECS;
+        $cutoffdate = $duedate + DAYSECS;
+        $assign = $this->create_instance([
+            'duedate' => $duedate,
+            'allowsubmissionsfromdate' => $submissionsfromdate,
+            'cutoffdate' => $cutoffdate,
+        ]);
+        $instance = $assign->get_instance();
+
+        $event = new \calendar_event((object) [
+            'courseid' => $instance->course,
+            'modulename' => 'assign',
+            'instance' => $instance->id,
+            'eventtype' => ASSIGN_EVENT_TYPE_GRADINGDUE,
+            'timestart' => $duedate + 1
+        ]);
+
+        mod_assign_core_calendar_event_timestart_updated($event, $instance);
+
+        $newinstance = $DB->get_record('assign', ['id' => $instance->id]);
+        $this->assertEquals($duedate, $newinstance->duedate);
+    }
+
+    /**
+     * Due date override events should not change the assignment due date.
+     */
+    public function test_mod_assign_core_calendar_event_timestart_updated_due_event_override() {
+        global $CFG, $DB;
+        require_once($CFG->dirroot . '/calendar/lib.php');
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $duedate = time();
+        $submissionsfromdate = $duedate - DAYSECS;
+        $cutoffdate = $duedate + DAYSECS;
+        $assign = $this->create_instance([
+            'duedate' => $duedate,
+            'allowsubmissionsfromdate' => $submissionsfromdate,
+            'cutoffdate' => $cutoffdate,
+        ]);
+        $instance = $assign->get_instance();
+        $userid = $this->students[0]->id;
+
+        $event = new \calendar_event((object) [
+            'courseid' => $instance->course,
+            'modulename' => 'assign',
+            'instance' => $instance->id,
+            'userid' => $userid,
+            'eventtype' => ASSIGN_EVENT_TYPE_DUE,
+            'timestart' => $duedate + 1
+        ]);
+
+        $record = (object) [
+            'assignid' => $instance->id,
+            'userid' => $userid,
+            'duedate' => $duedate + 1
+        ];
+
+        $DB->insert_record('assign_overrides', $record);
+
+        mod_assign_core_calendar_event_timestart_updated($event, $instance);
+
+        $newinstance = $DB->get_record('assign', ['id' => $instance->id]);
+        $this->assertEquals($duedate, $newinstance->duedate);
+    }
+
+    /**
+     * Due date events should update the assignment due date.
+     */
+    public function test_mod_assign_core_calendar_event_timestart_updated_due_event() {
+        global $CFG, $DB;
+        require_once($CFG->dirroot . '/calendar/lib.php');
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $duedate = time();
+        $newduedate = $duedate + 1;
+        $submissionsfromdate = $duedate - DAYSECS;
+        $cutoffdate = $duedate + DAYSECS;
+        $assign = $this->create_instance([
+            'duedate' => $duedate,
+            'allowsubmissionsfromdate' => $submissionsfromdate,
+            'cutoffdate' => $cutoffdate,
+        ]);
+        $instance = $assign->get_instance();
+
+        $event = new \calendar_event((object) [
+            'courseid' => $instance->course,
+            'modulename' => 'assign',
+            'instance' => $instance->id,
+            'eventtype' => ASSIGN_EVENT_TYPE_DUE,
+            'timestart' => $newduedate
+        ]);
+
+        mod_assign_core_calendar_event_timestart_updated($event, $instance);
+
+        $newinstance = $DB->get_record('assign', ['id' => $instance->id]);
+        $this->assertEquals($newduedate, $newinstance->duedate);
+    }
+
+    /**
+     * If a student somehow finds a way to update the due date calendar event
+     * then the callback should not be executed to update the assignment due
+     * date as well otherwise that would be a security issue.
+     */
+    public function test_student_role_cant_update_due_event() {
+        global $CFG, $DB;
+        require_once($CFG->dirroot . '/calendar/lib.php');
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $mapper = calendar_event_container::get_event_mapper();
+        $generator = $this->getDataGenerator();
+        $user = $generator->create_user();
+        $course = $generator->create_course();
+        $context = context_course::instance($course->id);
+        $roleid = $generator->create_role();
+        $now = time();
+        $duedate = (new DateTime())->setTimestamp($now);
+        $newduedate = (new DateTime())->setTimestamp($now)->modify('+1 day');
+        $assign = $this->create_instance([
+            'course' => $course->id,
+            'duedate' => $duedate->getTimestamp(),
+        ]);
+        $instance = $assign->get_instance();
+
+        $generator->enrol_user($user->id, $course->id, 'student');
+        $generator->role_assign($roleid, $user->id, $context->id);
+
+        $record = $DB->get_record('event', [
+            'courseid' => $course->id,
+            'modulename' => 'assign',
+            'instance' => $instance->id,
+            'eventtype' => ASSIGN_EVENT_TYPE_DUE
+        ]);
+
+        $event = new \calendar_event($record);
+
+        assign_capability('moodle/calendar:manageentries', CAP_ALLOW, $roleid, $context, true);
+        assign_capability('moodle/course:manageactivities', CAP_PROHIBIT, $roleid, $context, true);
+
+        $this->setUser($user);
+
+        calendar_local_api::update_event_start_day(
+            $mapper->from_legacy_event_to_event($event),
+            $newduedate
+        );
+
+        $newinstance = $DB->get_record('assign', ['id' => $instance->id]);
+        $newevent = \calendar_event::load($event->id);
+        // The due date shouldn't have changed even though we updated the calendar
+        // event.
+        $this->assertEquals($duedate->getTimestamp(), $newinstance->duedate);
+        $this->assertEquals($newduedate->getTimestamp(), $newevent->timestart);
+    }
+
+    /**
+     * A teacher with the capability to modify an assignment module should be
+     * able to update the assignment due date by changing the due date calendar
+     * event.
+     */
+    public function test_teacher_role_can_update_due_event() {
+        global $CFG, $DB;
+        require_once($CFG->dirroot . '/calendar/lib.php');
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $mapper = calendar_event_container::get_event_mapper();
+        $generator = $this->getDataGenerator();
+        $user = $generator->create_user();
+        $course = $generator->create_course();
+        $context = context_course::instance($course->id);
+        $roleid = $generator->create_role();
+        $now = time();
+        $duedate = (new DateTime())->setTimestamp($now);
+        $newduedate = (new DateTime())->setTimestamp($now)->modify('+1 day');
+        $assign = $this->create_instance([
+            'course' => $course->id,
+            'duedate' => $duedate->getTimestamp(),
+        ]);
+        $instance = $assign->get_instance();
+
+        $generator->enrol_user($user->id, $course->id, 'teacher');
+        $generator->role_assign($roleid, $user->id, $context->id);
+
+        $record = $DB->get_record('event', [
+            'courseid' => $course->id,
+            'modulename' => 'assign',
+            'instance' => $instance->id,
+            'eventtype' => ASSIGN_EVENT_TYPE_DUE
+        ]);
+
+        $event = new \calendar_event($record);
+
+        assign_capability('moodle/calendar:manageentries', CAP_ALLOW, $roleid, $context, true);
+        assign_capability('moodle/course:manageactivities', CAP_ALLOW, $roleid, $context, true);
+
+        $this->setUser($user);
+        // Trigger and capture the event when adding a contact.
+        $sink = $this->redirectEvents();
+
+        calendar_local_api::update_event_start_day(
+            $mapper->from_legacy_event_to_event($event),
+            $newduedate
+        );
+
+        $triggeredevents = $sink->get_events();
+        $moduleupdatedevents = array_filter($triggeredevents, function($e) {
+            return is_a($e, 'core\event\course_module_updated');
+        });
+
+        $newinstance = $DB->get_record('assign', ['id' => $instance->id]);
+        $newevent = \calendar_event::load($event->id);
+        // The due date shouldn't have changed even though we updated the calendar
+        // event.
+        $this->assertEquals($newduedate->getTimestamp(), $newinstance->duedate);
+        $this->assertEquals($newduedate->getTimestamp(), $newevent->timestart);
+        // Confirm that a module updated event is fired when the module
+        // is changed.
+        $this->assertNotEmpty($moduleupdatedevents);
     }
 }

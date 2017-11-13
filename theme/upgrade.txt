@@ -11,6 +11,8 @@ information provided here is intended especially for theme designer.
   access properties from the underlying navigation nodes in the browser - see MDL-59425.
 * Navigation between activities via a previous and next link was added to Boost, Clean and Bootstrapbase. This
   is made possible by a new function core_renderer->activity_navigation().
+* Theme designers may now place the Reset tour on this page link where required by adding an empty
+  container (e.g. <div class="tool_usertours-resettourcontainer"></div>) to their layouts.
 
 === 3.3 ===
 

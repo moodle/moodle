@@ -1,6 +1,10 @@
 This files describes API changes in /mod/workshop - activity modules,
 information provided here is intended especially for developers.
 
+=== 3.4 ===
+
+* workshop_strategy::get_dimensions_info now returns also the scale items (if scales are being used).
+
 === 3.3.2 ===
 
 * workshop_refresh_events() Now takes two additional parameters to refine the update to a specific instance. This function

@@ -28,7 +28,8 @@ $string['errorcreatingschema'] = 'Error creating the Solr schema: {$a}';
 $string['errorvalidatingschema'] = 'Error validating Solr schema: field {$a->fieldname} does not exist. Please <a href="{$a->setupurl}">follow this link</a> to set up the required fields.';
 $string['extensionerror'] = 'The Apache Solr PHP extension is not installed. Please check the documentation.';
 $string['fileindexing'] = 'Enable file indexing';
-$string['fileindexing_help'] = 'If your Solr install supports it, this feature allows Moodle to send files to be indexed.';
+$string['fileindexing_help'] = 'If your Solr install supports it, this feature allows Moodle to send files to be indexed.<br/>
+You will need to reindex all site contents after enabling this option for all files to be added.';
 $string['fileindexsettings'] = 'File indexing settings';
 $string['maxindexfilekb'] = 'Maximum file size to index (kB)';
 $string['maxindexfilekb_help'] = 'Files larger than this number of kilobytes will not be included in search indexing. If set to zero, files of any size will be indexed.';

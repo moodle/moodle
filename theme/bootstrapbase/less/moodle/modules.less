@@ -21,57 +21,9 @@ select {
 }
 
 // Feedback module
-.path-mod-feedback .mform.feedback_form .fitem .fitemtitle {
-    display: block;
-    margin-top: 4px;
-    margin-bottom: 4px;
-    text-align: left;
-    width: 100%;
-}
-
-.path-mod-feedback .mform.feedback_form .fitem .felement {
-    margin-left: 0;
-    width: 100%;
-    float: left;
-    padding-left: 0;
-    padding-right: 0;
-}
-
-.path-mod-feedback .mform.feedback_form .fitem .fstatic:empty {
-    display: none;
-}
-
-.path-mod-feedback .mform.feedback_form .fitem .fcheckbox > span,
-.path-mod-feedback .mform.feedback_form .fitem .fradio > span,
-.path-mod-feedback .mform.feedback_form .fitem .fgroup > span {
-    margin-top: 4px;
-}
-
-body.path-mod-feedback #region-main .mform.feedback_form .femptylabel .fitemtitle {
-    display: inline-block;
-    width: auto;
-    margin-right: 0;
-}
-
-.path-mod-feedback .mform.feedback_form .femptylabel .felement {
-    display: inline-block;
-    margin-top: 4px;
-    padding-top: 5px;
-    width: auto;
-}
 
 body.path-mod-feedback #region-main .mform.feedback_form .feedback-item-pagebreak .felement {
     width: 100%;
-}
-
-.path-mod-feedback .mform.feedback_form .fitem_fcheckbox .fitemtitle,
-.path-mod-feedback .mform.feedback_form .fitem_fcheckbox .felement {
-    display: inline-block;
-    width: auto;
-}
-
-.path-mod-feedback .mform.feedback_form .fitem_fcheckbox .felement {
-    padding: 6px;
 }
 
 .path-mod-feedback .mform.feedback_form#feedback_viewresponse_form .fitem.feedback_hasvalue:not(.feedback-item-captcha) .felement {
@@ -313,6 +265,10 @@ div#dock {
     .media-left {
         float: left;
         padding-right: 1em;
+    }
+
+    .horizontal .choices .option {
+        display: inline-block;
     }
 }
 
@@ -942,5 +898,9 @@ div#dock {
 
 .path-mod-scorm.jsenabled .scorm-center {
     display: block;
+}
+
+.path-mod-scorm #region-main #intro {
+    width: auto;
 }
 

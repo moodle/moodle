@@ -30,6 +30,7 @@ require_once($CFG->dirroot . '/calendar/lib.php');
 
 use core_calendar\local\event\entities\event;
 use core_calendar\local\event\entities\repeat_event_collection;
+use core_calendar\local\event\proxies\coursecat_proxy;
 use core_calendar\local\event\proxies\std_proxy;
 use core_calendar\local\event\value_objects\event_description;
 use core_calendar\local\event\value_objects\event_times;
@@ -161,6 +162,7 @@ class core_calendar_repeat_event_collection_event_test_factory implements event_
             $dbrow->id,
             $dbrow->name,
             new event_description($dbrow->description, $dbrow->format),
+            new coursecat_proxy($dbrow->categoryid),
             new std_proxy($dbrow->courseid, $identity),
             new std_proxy($dbrow->groupid, $identity),
             new std_proxy($dbrow->userid, $identity),

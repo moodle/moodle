@@ -1533,6 +1533,7 @@ class core_accesslib_testcase extends advanced_testcase {
 
         $teacherrole = $DB->get_record('role', array('shortname'=>'editingteacher'), '*', MUST_EXIST);
         $studentrole = $DB->get_record('role', array('shortname'=>'student'), '*', MUST_EXIST);
+        $managerrole = $DB->get_record('role', array('shortname' => 'manager'), '*', MUST_EXIST);
         $course = $this->getDataGenerator()->create_course();
         $coursecontext = context_course::instance($course->id);
         $teacherrename = (object)array('roleid'=>$teacherrole->id, 'name'=>'Učitel', 'contextid'=>$coursecontext->id);
@@ -1541,6 +1542,7 @@ class core_accesslib_testcase extends advanced_testcase {
         $roleids = explode(',', $CFG->profileroles); // Should include teacher and student in new installs.
         $this->assertTrue(in_array($teacherrole->id, $roleids));
         $this->assertTrue(in_array($studentrole->id, $roleids));
+        $this->assertFalse(in_array($managerrole->id, $roleids));
 
         $user1 = $this->getDataGenerator()->create_user();
         role_assign($teacherrole->id, $user1->id, $coursecontext->id);
@@ -1548,6 +1550,8 @@ class core_accesslib_testcase extends advanced_testcase {
         $user2 = $this->getDataGenerator()->create_user();
         role_assign($studentrole->id, $user2->id, $coursecontext->id);
         $user3 = $this->getDataGenerator()->create_user();
+        $user4 = $this->getDataGenerator()->create_user();
+        role_assign($managerrole->id, $user4->id, $coursecontext->id);
 
         $roles = get_user_roles_in_course($user1->id, $course->id);
         $this->assertEquals(1, preg_match_all('/,/', $roles, $matches));
@@ -1559,6 +1563,25 @@ class core_accesslib_testcase extends advanced_testcase {
 
         $roles = get_user_roles_in_course($user3->id, $course->id);
         $this->assertSame('', $roles);
+
+        // Managers should be able to see a link to their own role type, given they can assign it in the context.
+        $this->setUser($user4);
+        $roles = get_user_roles_in_course($user4->id, $course->id);
+        $this->assertNotEmpty($roles);
+        $this->assertEquals(1, count(explode(',', $roles)));
+        $this->assertTrue(strpos($roles, role_get_name($managerrole, $coursecontext)) !== false);
+
+        // Managers should see 2 roles if viewing a user who has been enrolled as a student and a teacher in the course.
+        $roles = get_user_roles_in_course($user1->id, $course->id);
+        $this->assertEquals(2, count(explode(',', $roles)));
+        $this->assertTrue(strpos($roles, role_get_name($studentrole, $coursecontext)) !== false);
+        $this->assertTrue(strpos($roles, role_get_name($teacherrole, $coursecontext)) !== false);
+
+        // Students should not see the manager role if viewing a manager's profile.
+        $this->setUser($user2);
+        $roles = get_user_roles_in_course($user4->id, $course->id);
+        $this->assertEmpty($roles); // Should see 0 roles on the manager's profile.
+        $this->assertFalse(strpos($roles, role_get_name($managerrole, $coursecontext)) !== false);
     }
 
     /**
@@ -1671,6 +1694,165 @@ class core_accesslib_testcase extends advanced_testcase {
         $this->assertFalse(has_capability('moodle/site:approvecourse', $coursecontext, 0));
         $this->assertFalse(has_any_capability($sca, $coursecontext, 0));
         $this->assertFalse(has_all_capabilities($sca, $coursecontext, 0));
+    }
+
+    /**
+     * Tests get_user_capability_course() which checks a capability across all courses.
+     */
+    public function test_get_user_capability_course() {
+        global $CFG, $USER;
+
+        $this->resetAfterTest();
+
+        $generator = $this->getDataGenerator();
+        $cap = 'moodle/course:view';
+
+        // Create a role which allows course:view and one that prohibits it, and one neither.
+        $allowroleid = $generator->create_role();
+        $prohibitroleid = $generator->create_role();
+        $emptyroleid = $generator->create_role();
+        $systemcontext = context_system::instance();
+        assign_capability($cap, CAP_ALLOW, $allowroleid, $systemcontext->id);
+        assign_capability($cap, CAP_PROHIBIT, $prohibitroleid, $systemcontext->id);
+
+        // Create two categories (nested).
+        $cat1 = $generator->create_category();
+        $cat2 = $generator->create_category(['parent' => $cat1->id]);
+
+        // Create six courses - two in cat1, two in cat2, and two in default category.
+        $c1 = $generator->create_course(['category' => $cat1->id, 'shortname' => 'Z']);
+        $c2 = $generator->create_course(['category' => $cat1->id, 'shortname' => 'Y']);
+        $c3 = $generator->create_course(['category' => $cat2->id, 'shortname' => 'X']);
+        $c4 = $generator->create_course(['category' => $cat2->id]);
+        $c5 = $generator->create_course();
+        $c6 = $generator->create_course();
+
+        // Category overrides: in cat 1, empty role is allowed; in cat 2, empty role is prevented.
+        assign_capability($cap, CAP_ALLOW, $emptyroleid,
+                context_coursecat::instance($cat1->id)->id);
+        assign_capability($cap, CAP_PREVENT, $emptyroleid,
+                context_coursecat::instance($cat2->id)->id);
+
+        // Course overrides: in C5, allow role is prevented; in C6, empty role is prohibited; in
+        // C3, empty role is allowed.
+        assign_capability($cap, CAP_PREVENT, $allowroleid,
+                context_course::instance($c5->id)->id);
+        assign_capability($cap, CAP_PROHIBIT, $emptyroleid,
+                context_course::instance($c6->id)->id);
+        assign_capability($cap, CAP_ALLOW, $emptyroleid,
+                context_course::instance($c3->id)->id);
+
+        // User 1 has no roles except default user role.
+        $u1 = $generator->create_user();
+
+        // It returns false (annoyingly) if there are no courses.
+        $this->assertFalse(get_user_capability_course($cap, $u1->id, true, '', 'id'));
+
+        // Final override: in C1, default user role is allowed.
+        assign_capability($cap, CAP_ALLOW, $CFG->defaultuserroleid,
+                context_course::instance($c1->id)->id);
+
+        // Should now get C1 only.
+        $courses = get_user_capability_course($cap, $u1->id, true, '', 'id');
+        $this->assert_course_ids([$c1->id], $courses);
+
+        // User 2 has allow role (system wide).
+        $u2 = $generator->create_user();
+        role_assign($allowroleid, $u2->id, $systemcontext->id);
+
+        // Should get everything except C5.
+        $courses = get_user_capability_course($cap, $u2->id, true, '', 'id');
+        $this->assert_course_ids([SITEID, $c1->id, $c2->id, $c3->id, $c4->id, $c6->id], $courses);
+
+        // User 3 has empty role (system wide).
+        $u3 = $generator->create_user();
+        role_assign($emptyroleid, $u3->id, $systemcontext->id);
+
+        // Should get cat 1 courses but not cat2, except C3.
+        $courses = get_user_capability_course($cap, $u3->id, true, '', 'id');
+        $this->assert_course_ids([$c1->id, $c2->id, $c3->id], $courses);
+
+        // User 4 has allow and empty role (system wide).
+        $u4 = $generator->create_user();
+        role_assign($allowroleid, $u4->id, $systemcontext->id);
+        role_assign($emptyroleid, $u4->id, $systemcontext->id);
+
+        // Should get everything except C5 and C6.
+        $courses = get_user_capability_course($cap, $u4->id, true, '', 'id');
+        $this->assert_course_ids([SITEID, $c1->id, $c2->id, $c3->id, $c4->id], $courses);
+
+        // User 5 has allow role in default category only.
+        $u5 = $generator->create_user();
+        role_assign($allowroleid, $u5->id, context_coursecat::instance($c5->category)->id);
+
+        // Should get C1 and the default category courses but not C5.
+        $courses = get_user_capability_course($cap, $u5->id, true, '', 'id');
+        $this->assert_course_ids([$c1->id, $c6->id], $courses);
+
+        // User 6 has a bunch of course roles: prohibit role in C1, empty role in C3, allow role in
+        // C6.
+        $u6 = $generator->create_user();
+        role_assign($prohibitroleid, $u6->id, context_course::instance($c1->id)->id);
+        role_assign($emptyroleid, $u6->id, context_course::instance($c3->id)->id);
+        role_assign($allowroleid, $u6->id, context_course::instance($c5->id)->id);
+
+        // Should get C3 only because the allow role is prevented in C5.
+        $courses = get_user_capability_course($cap, $u6->id, true, '', 'id');
+        $this->assert_course_ids([$c3->id], $courses);
+
+        // Admin user gets everything....
+        $courses = get_user_capability_course($cap, get_admin()->id, true, '', 'id');
+        $this->assert_course_ids([SITEID, $c1->id, $c2->id, $c3->id, $c4->id, $c5->id, $c6->id],
+                $courses);
+
+        // Unless you turn off doanything, when it only has the things a user with no role does.
+        $courses = get_user_capability_course($cap, get_admin()->id, false, '', 'id');
+        $this->assert_course_ids([$c1->id], $courses);
+
+        // Using u3 as an example, test the limit feature.
+        $courses = get_user_capability_course($cap, $u3->id, true, '', 'id', 2);
+        $this->assert_course_ids([$c1->id, $c2->id], $courses);
+
+        // Check sorting.
+        $courses = get_user_capability_course($cap, $u3->id, true, '', 'shortname');
+        $this->assert_course_ids([$c3->id, $c2->id, $c1->id], $courses);
+
+        // Check returned fields - default.
+        $courses = get_user_capability_course($cap, $u3->id, true, '', 'id');
+        $this->assertEquals((object)['id' => $c1->id], $courses[0]);
+
+        // Add a selection of fields, including the context ones with special handling.
+        $courses = get_user_capability_course($cap, $u3->id, true, 'shortname, ctxlevel, ctxdepth, ctxinstance', 'id');
+        $this->assertEquals((object)['id' => $c1->id, 'shortname' => 'Z', 'ctxlevel' => 50,
+                'ctxdepth' => 3, 'ctxinstance' => $c1->id], $courses[0]);
+
+        // Test front page role - user 1 has no roles, but if we change the front page role
+        // definition so that it has our capability, then they should see the front page course.
+        // as well as C1.
+        assign_capability($cap, CAP_ALLOW, $CFG->defaultfrontpageroleid, $systemcontext->id);
+        $courses = get_user_capability_course($cap, $u1->id, true, '', 'id');
+        $this->assert_course_ids([SITEID, $c1->id], $courses);
+
+        // Check that temporary guest access (in this case, given on course 2 for user 1)
+        // also is included, if it has this capability.
+        assign_capability($cap, CAP_ALLOW, $CFG->guestroleid, $systemcontext->id);
+        $this->setUser($u1);
+        load_temp_course_role(context_course::instance($c2->id), $CFG->guestroleid);
+        $courses = get_user_capability_course($cap, $USER->id, true, '', 'id');
+        $this->assert_course_ids([SITEID, $c1->id, $c2->id], $courses);
+    }
+
+    /**
+     * Extracts an array of course ids to make the above test script shorter.
+     *
+     * @param int[] $expected Array of expected course ids
+     * @param stdClass[] $courses Array of course objects
+     */
+    protected function assert_course_ids(array $expected, array $courses) {
+        $courseids = array_map(function($c) {
+            return $c->id;
+        }, $courses);
+        $this->assertEquals($expected, $courseids);
     }
 
     /**
@@ -3165,6 +3347,143 @@ class core_accesslib_testcase extends advanced_testcase {
         $this->assertFalse(array_key_exists($admin->id, $users));
         $this->assertTrue(array_key_exists($student->id, $users));
         $this->assertFalse(array_key_exists($guest->id, $users));
+    }
+
+    /**
+     * Test the get_profile_roles() function.
+     */
+    public function test_get_profile_roles() {
+        global $DB;
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+        $coursecontext = context_course::instance($course->id);
+
+        // Assign a student role.
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'), '*', MUST_EXIST);
+        $user1 = $this->getDataGenerator()->create_user();
+        role_assign($studentrole->id, $user1->id, $coursecontext);
+
+        // Assign an editing teacher role.
+        $teacherrole = $DB->get_record('role', array('shortname' => 'editingteacher'), '*', MUST_EXIST);
+        $user2 = $this->getDataGenerator()->create_user();
+        role_assign($teacherrole->id, $user2->id, $coursecontext);
+
+        // Create a custom role that can be assigned at course level, but don't assign it yet.
+        create_role('Custom role', 'customrole', 'Custom course role');
+        $customrole = $DB->get_record('role', array('shortname' => 'customrole'), '*', MUST_EXIST);
+        set_role_contextlevels($customrole->id, [CONTEXT_COURSE]);
+        allow_assign($teacherrole->id, $customrole->id); // Allow teacher to assign the role in the course.
+
+        // Set the site policy 'profileroles' to show student, teacher and non-editing teacher roles (i.e. not the custom role).
+        $neteacherrole = $DB->get_record('role', array('shortname' => 'teacher'), '*', MUST_EXIST);
+        set_config('profileroles', "{$studentrole->id}, {$teacherrole->id}, {$neteacherrole->id}");
+
+        // A student in the course (given they can't assign roles) should see those roles which are:
+        // - listed in the 'profileroles' site policy AND
+        // - are assigned in the course context (or parent contexts).
+        // In this case, the non-editing teacher role is not assigned and should not be returned.
+        $expected = [
+            $teacherrole->id => (object) [
+                'id' => $teacherrole->id,
+                'name' => '',
+                'shortname' => $teacherrole->shortname,
+                'sortorder' => $teacherrole->sortorder,
+                'coursealias' => null
+            ],
+            $studentrole->id => (object) [
+                'id' => $studentrole->id,
+                'name' => '',
+                'shortname' => $studentrole->shortname,
+                'sortorder' => $studentrole->sortorder,
+                'coursealias' => null
+            ]
+        ];
+        $this->setUser($user1);
+        $this->assertEquals($expected, get_profile_roles($coursecontext));
+
+        // An editing teacher should also see only 2 roles at this stage as only 2 roles are assigned: 'teacher' and 'student'.
+        $this->setUser($user2);
+        $this->assertEquals($expected, get_profile_roles($coursecontext));
+
+        // Assign a custom role in the course.
+        $user3 = $this->getDataGenerator()->create_user();
+        role_assign($customrole->id, $user3->id, $coursecontext);
+
+        // Confirm that the teacher can see the custom role now that it's assigned.
+        $expectedteacher = [
+            $teacherrole->id => (object) [
+                'id' => $teacherrole->id,
+                'name' => '',
+                'shortname' => $teacherrole->shortname,
+                'sortorder' => $teacherrole->sortorder,
+                'coursealias' => null
+            ],
+            $studentrole->id => (object) [
+                'id' => $studentrole->id,
+                'name' => '',
+                'shortname' => $studentrole->shortname,
+                'sortorder' => $studentrole->sortorder,
+                'coursealias' => null
+            ],
+            $customrole->id => (object) [
+                'id' => $customrole->id,
+                'name' => 'Custom role',
+                'shortname' => $customrole->shortname,
+                'sortorder' => $customrole->sortorder,
+                'coursealias' => null
+            ]
+        ];
+        $this->setUser($user2);
+        $this->assertEquals($expectedteacher, get_profile_roles($coursecontext));
+
+        // And that the student can't, because the role isn't included in the 'profileroles' site policy.
+        $expectedstudent = [
+            $teacherrole->id => (object) [
+                'id' => $teacherrole->id,
+                'name' => '',
+                'shortname' => $teacherrole->shortname,
+                'sortorder' => $teacherrole->sortorder,
+                'coursealias' => null
+            ],
+            $studentrole->id => (object) [
+                'id' => $studentrole->id,
+                'name' => '',
+                'shortname' => $studentrole->shortname,
+                'sortorder' => $studentrole->sortorder,
+                'coursealias' => null
+            ]
+        ];
+        $this->setUser($user1);
+        $this->assertEquals($expectedstudent, get_profile_roles($coursecontext));
+
+        // If we have no roles listed in the site policy, the teacher should be able to see the assigned roles.
+        $expectedteacher = [
+            $studentrole->id => (object) [
+                'id' => $studentrole->id,
+                'name' => '',
+                'shortname' => $studentrole->shortname,
+                'sortorder' => $studentrole->sortorder,
+                'coursealias' => null
+            ],
+            $customrole->id => (object) [
+                'id' => $customrole->id,
+                'name' => 'Custom role',
+                'shortname' => $customrole->shortname,
+                'sortorder' => $customrole->sortorder,
+                'coursealias' => null
+            ],
+            $teacherrole->id => (object) [
+                'id' => $teacherrole->id,
+                'name' => '',
+                'shortname' => $teacherrole->shortname,
+                'sortorder' => $teacherrole->sortorder,
+                'coursealias' => null
+            ],
+        ];
+        set_config('profileroles', "");
+        $this->setUser($user2);
+        $this->assertEquals($expectedteacher, get_profile_roles($coursecontext));
     }
 }
 

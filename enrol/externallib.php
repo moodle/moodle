@@ -86,6 +86,8 @@ class core_enrol_external extends external_api {
      */
     public static function get_enrolled_users_with_capability($coursecapabilities, $options) {
         global $CFG, $DB;
+
+        require_once($CFG->dirroot . '/course/lib.php');
         require_once($CFG->dirroot . "/user/lib.php");
 
         if (empty($coursecapabilities)) {
@@ -145,11 +147,8 @@ class core_enrol_external extends external_api {
                 throw new moodle_exception(get_string('errorcoursecontextnotvalid' , 'webservice', $exceptionparam));
             }
 
-            if ($courseid == SITEID) {
-                require_capability('moodle/site:viewparticipants', $context);
-            } else {
-                require_capability('moodle/course:viewparticipants', $context);
-            }
+            course_require_view_participants($context);
+
             // The accessallgroups capability is needed to use this option.
             if (!empty($groupid) && groups_is_member($groupid)) {
                 require_capability('moodle/site:accessallgroups', $coursecontext);
@@ -293,7 +292,9 @@ class core_enrol_external extends external_api {
      * @return array of courses
      */
     public static function get_users_courses($userid) {
-        global $USER, $DB;
+        global $CFG, $USER, $DB;
+
+        require_once($CFG->dirroot . '/course/lib.php');
 
         // Do basic automatic PARAM checks on incoming data, using params description
         // If any problems are found then exceptions are thrown with helpful error messages
@@ -312,7 +313,7 @@ class core_enrol_external extends external_api {
                 continue;
             }
 
-            if ($userid != $USER->id and !has_capability('moodle/course:viewparticipants', $context)) {
+            if ($userid != $USER->id and !course_can_view_participants($context)) {
                 // we need capability to view participants
                 continue;
             }
@@ -520,6 +521,8 @@ class core_enrol_external extends external_api {
      */
     public static function get_enrolled_users($courseid, $options = array()) {
         global $CFG, $USER, $DB;
+
+        require_once($CFG->dirroot . '/course/lib.php');
         require_once($CFG->dirroot . "/user/lib.php");
 
         $params = self::validate_parameters(
@@ -600,11 +603,8 @@ class core_enrol_external extends external_api {
             throw new moodle_exception('errorcoursecontextnotvalid' , 'webservice', '', $exceptionparam);
         }
 
-        if ($courseid == SITEID) {
-            require_capability('moodle/site:viewparticipants', $context);
-        } else {
-            require_capability('moodle/course:viewparticipants', $context);
-        }
+        course_require_view_participants($context);
+
         // to overwrite this parameter, you need role:review capability
         if ($withcapability) {
             require_capability('moodle/role:review', $coursecontext);
@@ -859,10 +859,13 @@ class core_enrol_external extends external_api {
         $errors = [];
 
         // Validate data against the edit user enrolment form.
+        $instance = $DB->get_record('enrol', ['id' => $userenrolment->enrolid], '*', MUST_EXIST);
+        $plugin = enrol_get_plugin($instance->enrol);
         require_once("$CFG->dirroot/enrol/editenrolment_form.php");
         $customformdata = [
             'ue' => $userenrolment,
             'modal' => true,
+            'enrolinstancename' => $plugin->get_instance_name($instance)
         ];
         $mform = new \enrol_user_enrolment_form(null, $customformdata, 'post', '', null, true, $userenroldata);
         $mform->set_data($userenroldata);
@@ -892,6 +895,89 @@ class core_enrol_external extends external_api {
      * @return external_description
      */
     public static function edit_user_enrolment_returns() {
+        return new external_single_structure(
+            array(
+                'result' => new external_value(PARAM_BOOL, 'True if the user\'s enrolment was successfully updated'),
+                'errors' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'key' => new external_value(PARAM_TEXT, 'The data that failed the validation'),
+                            'message' => new external_value(PARAM_TEXT, 'The error message'),
+                        )
+                    ), 'List of validation errors'
+                ),
+            )
+        );
+    }
+
+    /**
+     * Returns description of unenrol_user_enrolment() parameters
+     *
+     * @return external_function_parameters
+     */
+    public static function unenrol_user_enrolment_parameters() {
+        return new external_function_parameters(
+            array(
+                'ueid' => new external_value(PARAM_INT, 'User enrolment ID')
+            )
+        );
+    }
+
+    /**
+     * External function that unenrols a given user enrolment.
+     *
+     * @param int $ueid The user enrolment ID.
+     * @return array An array consisting of the processing result, errors.
+     */
+    public static function unenrol_user_enrolment($ueid) {
+        global $CFG, $DB, $PAGE;
+
+        $params = self::validate_parameters(self::unenrol_user_enrolment_parameters(), [
+            'ueid' => $ueid
+        ]);
+
+        $result = false;
+        $errors = [];
+
+        $userenrolment = $DB->get_record('user_enrolments', ['id' => $params['ueid']], '*');
+        if ($userenrolment) {
+            $userid = $userenrolment->userid;
+            $enrolid = $userenrolment->enrolid;
+            $enrol = $DB->get_record('enrol', ['id' => $enrolid], '*', MUST_EXIST);
+            $courseid = $enrol->courseid;
+            $course = get_course($courseid);
+            $context = context_course::instance($course->id);
+            self::validate_context($context);
+        } else {
+            $validationerrors['invalidrequest'] = get_string('invalidrequest', 'enrol');
+        }
+
+        // If the userenrolment exists, unenrol the user.
+        if (!isset($validationerrors)) {
+            require_once($CFG->dirroot . '/enrol/locallib.php');
+            $manager = new course_enrolment_manager($PAGE, $course);
+            $result = $manager->unenrol_user($userenrolment);
+        } else {
+            foreach ($validationerrors as $key => $errormessage) {
+                $errors[] = (object)[
+                    'key' => $key,
+                    'message' => $errormessage
+                ];
+            }
+        }
+
+        return [
+            'result' => $result,
+            'errors' => $errors,
+        ];
+    }
+
+    /**
+     * Returns description of unenrol_user_enrolment() result value
+     *
+     * @return external_description
+     */
+    public static function unenrol_user_enrolment_returns() {
         return new external_single_structure(
             array(
                 'result' => new external_value(PARAM_BOOL, 'True if the user\'s enrolment was successfully updated'),

@@ -651,10 +651,10 @@ class auth_plugin_base {
         $data = [];
         foreach ($identityproviders as $idp) {
             if (!empty($idp['icon'])) {
-                // Pre-3.3 auth plugins provide icon as a pix_icon instance.
+                // Pre-3.3 auth plugins provide icon as a pix_icon instance. New auth plugins (since 3.3) provide iconurl.
                 $idp['iconurl'] = $output->image_url($idp['icon']->pix, $idp['icon']->component);
-            } else if ($idp['iconurl'] instanceof moodle_url) {
-                // New auth plugins (since 3.3) provide iconurl.
+            }
+            if ($idp['iconurl'] instanceof moodle_url) {
                 $idp['iconurl'] = $idp['iconurl']->out(false);
             }
             unset($idp['icon']);
@@ -887,7 +887,9 @@ function signup_validate_data($data, $files) {
         $errors['email'] = get_string('invalidemail');
 
     } else if ($DB->record_exists('user', array('email' => $data['email']))) {
-        $errors['email'] = get_string('emailexists').' <a href="forgot_password.php">'.get_string('newpassword').'?</a>';
+        $errors['email'] = get_string('emailexists') . ' ' .
+                get_string('emailexistssignuphint', 'moodle',
+                        html_writer::link(new moodle_url('/login/forgot_password.php'), get_string('emailexistshintlink')));
     }
     if (empty($data['email2'])) {
         $errors['email2'] = get_string('missingemail');

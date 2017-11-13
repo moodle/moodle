@@ -4564,6 +4564,9 @@ class core_competency_api_testcase extends advanced_testcase {
     }
 
     public function test_list_user_competencies_to_review() {
+        global $CFG;
+        require_once($CFG->dirroot . '/user/lib.php');
+
         $dg = $this->getDataGenerator();
         $this->resetAfterTest();
         $ccg = $dg->get_plugin_generator('core_competency');
@@ -4580,10 +4583,12 @@ class core_competency_api_testcase extends advanced_testcase {
 
         $u1 = $dg->create_user();
         $u2 = $dg->create_user();
+        $u3 = $dg->create_user();
         $f1 = $ccg->create_framework();
         $c1 = $ccg->create_competency(['competencyframeworkid' => $f1->get('id')]);
         $c2 = $ccg->create_competency(['competencyframeworkid' => $f1->get('id')]);
         $c3 = $ccg->create_competency(['competencyframeworkid' => $f1->get('id')]);
+        $c4 = $ccg->create_competency(['competencyframeworkid' => $f1->get('id')]);
         $uc1a = $ccg->create_user_competency(['userid' => $u1->id, 'competencyid' => $c1->get('id'),
             'status' => user_competency::STATUS_IDLE]);
         $uc1b = $ccg->create_user_competency(['userid' => $u1->id, 'competencyid' => $c2->get('id'),
@@ -4596,14 +4601,23 @@ class core_competency_api_testcase extends advanced_testcase {
             'status' => user_competency::STATUS_IDLE]);
         $uc2c = $ccg->create_user_competency(['userid' => $u2->id, 'competencyid' => $c3->get('id'),
             'status' => user_competency::STATUS_IN_REVIEW]);
+        $uc3a = $ccg->create_user_competency(['userid' => $u3->id, 'competencyid' => $c4->get('id'),
+            'status' => user_competency::STATUS_WAITING_FOR_REVIEW]);
 
         // The reviewer can review all plans waiting for review, or in review where they are the reviewer.
         $this->setUser($reviewer);
         $result = api::list_user_competencies_to_review();
-        $this->assertEquals(3, $result['count']);
+        $this->assertEquals(4, $result['count']);
         $this->assertEquals($uc2a->get('id'), $result['competencies'][0]->usercompetency->get('id'));
         $this->assertEquals($uc1b->get('id'), $result['competencies'][1]->usercompetency->get('id'));
         $this->assertEquals($uc1c->get('id'), $result['competencies'][2]->usercompetency->get('id'));
+        $this->assertEquals($uc3a->get('id'), $result['competencies'][3]->usercompetency->get('id'));
+
+        // Now, let's delete user 3.
+        // It should not be listed on user competencies to review any more.
+        user_delete_user($u3);
+        $result = api::list_user_competencies_to_review();
+        $this->assertEquals(3, $result['count']);
 
         // The reviewer cannot view the plans when they do not have the permission in the user's context.
         role_assign($roleprohibit, $reviewer->id, context_user::instance($u2->id)->id);

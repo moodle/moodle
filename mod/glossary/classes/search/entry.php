@@ -46,15 +46,23 @@ class entry extends \core_search\base_mod {
      * Returns recordset containing required data for indexing glossary entries.
      *
      * @param int $modifiedfrom timestamp
-     * @return moodle_recordset
+     * @param \context|null $context Optional context to restrict scope of returned results
+     * @return moodle_recordset|null Recordset (or null if no results)
      */
-    public function get_recordset_by_timestamp($modifiedfrom = 0) {
+    public function get_document_recordset($modifiedfrom = 0, \context $context = null) {
         global $DB;
+
+        list ($contextjoin, $contextparams) = $this->get_context_restriction_sql(
+                $context, 'glossary', 'g');
+        if ($contextjoin === null) {
+            return null;
+        }
 
         $sql = "SELECT ge.*, g.course FROM {glossary_entries} ge
                   JOIN {glossary} g ON g.id = ge.glossaryid
-                WHERE ge.timemodified >= ? ORDER BY ge.timemodified ASC";
-        return $DB->get_recordset_sql($sql, array($modifiedfrom));
+          $contextjoin
+                 WHERE ge.timemodified >= ? ORDER BY ge.timemodified ASC";
+        return $DB->get_recordset_sql($sql, array_merge($contextparams, [$modifiedfrom]));
     }
 
     /**
@@ -192,5 +200,26 @@ class entry extends \core_search\base_mod {
                                                                 WHERE ge.id = ?", array('id' => $entryid), MUST_EXIST);
         }
         return $this->entriesdata[$entryid];
+    }
+
+    /**
+     * Returns true if this area uses file indexing.
+     *
+     * @return bool
+     */
+    public function uses_file_indexing() {
+        return true;
+    }
+
+    /**
+     * Return the context info required to index files for
+     * this search area.
+     *
+     * @return array
+     */
+    public function get_search_fileareas() {
+        $fileareas = array('attachment', 'entry'); // Fileareas.
+
+        return $fileareas;
     }
 }

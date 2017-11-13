@@ -125,9 +125,10 @@ class cache_disabled extends cache {
      * Checks if the cache has the requested key.
      *
      * @param int|string $key Unused.
+     * @param bool $tryloadifpossible Unused.
      * @return bool
      */
-    public function has($key) {
+    public function has($key, $tryloadifpossible = false) {
         return false;
     }
 

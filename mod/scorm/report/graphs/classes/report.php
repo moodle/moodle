@@ -77,7 +77,7 @@ class report extends \mod_scorm\report {
         foreach ($attempts as $attempt) {
             if ($trackdata = scorm_get_tracks($scoid, $attempt->userid, $attempt->attempt)) {
                 if (isset($trackdata->score_raw)) {
-                    $score = $trackdata->score_raw;
+                    $score = (int) $trackdata->score_raw;
                     if (empty($trackdata->score_min)) {
                         $minmark = 0;
                     } else {

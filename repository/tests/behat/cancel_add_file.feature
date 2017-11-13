@@ -23,7 +23,7 @@ Feature: A selected file can be cancelled
     And I click on "Recent files" "link" in the ".fp-repo-area" "css_element"
     And I click on "//a[contains(concat(' ', normalize-space(@class), ' '), ' fp-file ')][normalize-space(.)='empty.txt']" "xpath_element"
     And I click on ".moodle-dialogue-focused .fp-select .fp-select-cancel" "css_element"
-    And I click on ".moodle-dialogue-focused.filepicker .yui3-button.closebutton" "css_element"
+    And I click on "Close" "button" in the "File picker" "dialogue"
     And I press "Save and display"
     Then I should see "upload_users.csv"
     And I should not see "empty.txt"

@@ -35,7 +35,7 @@ interface WriterInterface
      * @param  array $dataRow Array containing data to be streamed.
      *          Example $dataRow = ['data1', 1234, null, '', 'data5'];
      * @return WriterInterface
-     * @throws \Box\Spout\Writer\Exception\WriterNotOpenedException If the writer has not been opened yetthe writer
+     * @throws \Box\Spout\Writer\Exception\WriterNotOpenedException If the writer has not been opened yet
      * @throws \Box\Spout\Common\Exception\IOException If unable to write data
      */
     public function addRow(array $dataRow);

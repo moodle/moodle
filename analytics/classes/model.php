@@ -53,12 +53,12 @@ class model {
     /**
      * Model with low prediction accuracy.
      */
-    const EVALUATE_LOW_SCORE = 4;
+    const LOW_SCORE = 4;
 
     /**
      * Not enough data to evaluate the model properly.
      */
-    const EVALUATE_NOT_ENOUGH_DATA = 8;
+    const NOT_ENOUGH_DATA = 8;
 
     /**
      * Invalid analysable for the time splitting method.
@@ -79,6 +79,11 @@ class model {
      * Minimum score to consider a non-static prediction model as good.
      */
     const MIN_SCORE = 0.7;
+
+    /**
+     * Minimum prediction confidence (from 0 to 1) to accept a prediction as reliable enough.
+     */
+    const PREDICTION_MIN_SCORE = 0.6;
 
     /**
      * Maximum standard deviation between different evaluation repetitions to consider that evaluation results are stable.
@@ -242,15 +247,15 @@ class model {
     /**
      * Returns the model analyser (defined by the model target).
      *
+     * @param array $options Default initialisation with no options.
      * @return \core_analytics\local\analyser\base
      */
-    public function get_analyser() {
+    public function get_analyser($options = array()) {
         if ($this->analyser !== null) {
             return $this->analyser;
         }
 
-        // Default initialisation with no options.
-        $this->init_analyser();
+        $this->init_analyser($options);
 
         return $this->analyser;
     }
@@ -271,26 +276,35 @@ class model {
             throw new \moodle_exception('errornotarget', 'analytics');
         }
 
-        if (!empty($options['evaluation'])) {
-            // The evaluation process will run using all available time splitting methods unless one is specified.
-            if (!empty($options['timesplitting'])) {
-                $timesplitting = \core_analytics\manager::get_time_splitting($options['timesplitting']);
-                $timesplittings = array($timesplitting->get_id() => $timesplitting);
+        $timesplittings = array();
+        if (empty($options['notimesplitting'])) {
+            if (!empty($options['evaluation'])) {
+                // The evaluation process will run using all available time splitting methods unless one is specified.
+                if (!empty($options['timesplitting'])) {
+                    $timesplitting = \core_analytics\manager::get_time_splitting($options['timesplitting']);
+                    $timesplittings = array($timesplitting->get_id() => $timesplitting);
+                } else {
+                    $timesplittings = \core_analytics\manager::get_enabled_time_splitting_methods();
+                }
             } else {
-                $timesplittings = \core_analytics\manager::get_enabled_time_splitting_methods();
-            }
-        } else {
 
-            if (empty($this->model->timesplitting)) {
-                throw new \moodle_exception('invalidtimesplitting', 'analytics', '', $this->model->id);
+                if (empty($this->model->timesplitting)) {
+                    throw new \moodle_exception('invalidtimesplitting', 'analytics', '', $this->model->id);
+                }
+
+                // Returned as an array as all actions (evaluation, training and prediction) go through the same process.
+                $timesplittings = array($this->model->timesplitting => $this->get_time_splitting());
             }
 
-            // Returned as an array as all actions (evaluation, training and prediction) go through the same process.
-            $timesplittings = array($this->model->timesplitting => $this->get_time_splitting());
+            if (empty($timesplittings)) {
+                throw new \moodle_exception('errornotimesplittings', 'analytics');
+            }
         }
 
-        if (empty($timesplittings)) {
-            throw new \moodle_exception('errornotimesplittings', 'analytics');
+        if (!empty($options['evaluation'])) {
+            foreach ($timesplittings as $timesplitting) {
+                $timesplitting->set_evaluating(true);
+            }
         }
 
         $classname = $target->get_analyser_class();
@@ -421,18 +435,26 @@ class model {
 
         if ($this->model->timesplitting !== $timesplittingid ||
                 $this->model->indicators !== $indicatorsstr) {
+
+            // Delete generated predictions before changing the model version.
+            $this->clear();
+
+            // It needs to be reset as the version changes.
+            $this->uniqueid = null;
+
             // We update the version of the model so different time splittings are not mixed up.
             $this->model->version = $now;
 
-            // Delete generated predictions.
-            $this->clear_model();
-
-            // Purge all generated files.
-            \core_analytics\dataset_manager::clear_model_files($this->model->id);
-
             // Reset trained flag.
-            $this->model->trained = 0;
+            if (!$this->is_static()) {
+                $this->model->trained = 0;
+            }
+
+        } else if ($this->model->enabled != $enabled) {
+            // We purge the cached contexts with insights as some will not be visible anymore.
+            $this->purge_insights_cache();
         }
+
         $this->model->enabled = intval($enabled);
         $this->model->indicators = $indicatorsstr;
         $this->model->timesplitting = $timesplittingid;
@@ -440,9 +462,6 @@ class model {
         $this->model->usermodified = $USER->id;
 
         $DB->update_record('analytics_models', $this->model);
-
-        // It needs to be reset (just in case, we may already used it).
-        $this->uniqueid = null;
     }
 
     /**
@@ -455,8 +474,14 @@ class model {
 
         \core_analytics\manager::check_can_manage_models();
 
-        $this->clear_model();
+        $this->clear();
+
+        // Method self::clear is already clearing the current model version.
+        $predictor = \core_analytics\manager::get_predictions_processor();
+        $predictor->delete_output_dir($this->get_output_dir(array(), true));
+
         $DB->delete_records('analytics_models', array('id' => $this->model->id));
+        $DB->delete_records('analytics_models_log', array('modelid' => $this->model->id));
     }
 
     /**
@@ -518,8 +543,13 @@ class model {
             $outputdir = $this->get_output_dir(array('evaluation', $dashestimesplittingid));
 
             // Evaluate the dataset, the deviation we accept in the results depends on the amount of iterations.
-            $predictorresult = $predictor->evaluate($this->model->id, self::ACCEPTED_DEVIATION,
+            if ($this->get_target()->is_linear()) {
+                $predictorresult = $predictor->evaluate_regression($this->get_unique_id(), self::ACCEPTED_DEVIATION,
                 self::EVALUATION_ITERATIONS, $dataset, $outputdir);
+            } else {
+                $predictorresult = $predictor->evaluate_classification($this->get_unique_id(), self::ACCEPTED_DEVIATION,
+                self::EVALUATION_ITERATIONS, $dataset, $outputdir);
+            }
 
             $result->status = $predictorresult->status;
             $result->info = $predictorresult->info;
@@ -593,11 +623,19 @@ class model {
         $samplesfile = $datasets[$this->model->timesplitting];
 
         // Train using the dataset.
-        $predictorresult = $predictor->train($this->get_unique_id(), $samplesfile, $outputdir);
+        if ($this->get_target()->is_linear()) {
+            $predictorresult = $predictor->train_regression($this->get_unique_id(), $samplesfile, $outputdir);
+        } else {
+            $predictorresult = $predictor->train_classification($this->get_unique_id(), $samplesfile, $outputdir);
+        }
 
         $result = new \stdClass();
         $result->status = $predictorresult->status;
         $result->info = $predictorresult->info;
+
+        if ($result->status !== self::OK) {
+            return $result;
+        }
 
         $this->flag_file_as_used($samplesfile, 'trained');
 
@@ -655,7 +693,7 @@ class model {
         $samplesfile = $samplesdata[$this->model->timesplitting];
 
         // We need to throw an exception if we are trying to predict stuff that was already predicted.
-        $params = array('modelid' => $this->model->id, 'fileid' => $samplesfile->get_id(), 'action' => 'predicted');
+        $params = array('modelid' => $this->model->id, 'action' => 'predicted', 'fileid' => $samplesfile->get_id());
         if ($predicted = $DB->get_record('analytics_used_files', $params)) {
             throw new \moodle_exception('erroralreadypredict', 'analytics', '', $samplesfile->get_id());
         }
@@ -672,11 +710,19 @@ class model {
             $result->predictions = $this->get_static_predictions($indicatorcalculations);
 
         } else {
-            // Prediction process runs on the machine learning backend.
-            $predictorresult = $predictor->predict($this->get_unique_id(), $samplesfile, $outputdir);
+            // Estimation and classification processes run on the machine learning backend side.
+            if ($this->get_target()->is_linear()) {
+                $predictorresult = $predictor->estimate($this->get_unique_id(), $samplesfile, $outputdir);
+            } else {
+                $predictorresult = $predictor->classify($this->get_unique_id(), $samplesfile, $outputdir);
+            }
             $result->status = $predictorresult->status;
             $result->info = $predictorresult->info;
             $result->predictions = $this->format_predictor_predictions($predictorresult);
+        }
+
+        if ($result->status !== self::OK) {
+            return $result;
         }
 
         if ($result->predictions) {
@@ -701,7 +747,7 @@ class model {
     private function format_predictor_predictions($predictorresult) {
 
         $predictions = array();
-        if ($predictorresult->predictions) {
+        if (!empty($predictorresult->predictions)) {
             foreach ($predictorresult->predictions as $sampleinfo) {
 
                 // We parse each prediction.
@@ -742,17 +788,21 @@ class model {
 
         // Here we will store all predictions' contexts, this will be used to limit which users will see those predictions.
         $samplecontexts = array();
+        $records = array();
 
         foreach ($predictions as $uniquesampleid => $prediction) {
 
+            // The unique sample id contains both the sampleid and the rangeindex.
+            list($sampleid, $rangeindex) = $this->get_time_splitting()->infer_sample_info($uniquesampleid);
+
             if ($this->get_target()->triggers_callback($prediction->prediction, $prediction->predictionscore)) {
 
-                // The unique sample id contains both the sampleid and the rangeindex.
-                list($sampleid, $rangeindex) = $this->get_time_splitting()->infer_sample_info($uniquesampleid);
-
-                // Store the predicted values.
-                $samplecontext = $this->save_prediction($sampleid, $rangeindex, $prediction->prediction,
+                // Prepare the record to store the predicted values.
+                list($record, $samplecontext) = $this->prepare_prediction_record($sampleid, $rangeindex, $prediction->prediction,
                     $prediction->predictionscore, json_encode($indicatorcalculations[$uniquesampleid]));
+
+                // We will later bulk-insert them all.
+                $records[$uniquesampleid] = $record;
 
                 // Also store all samples context to later generate insights or whatever action the target wants to perform.
                 $samplecontexts[$samplecontext->id] = $samplecontext;
@@ -760,6 +810,10 @@ class model {
                 $this->get_target()->prediction_callback($this->model->id, $sampleid, $rangeindex, $samplecontext,
                     $prediction->prediction, $prediction->predictionscore);
             }
+        }
+
+        if (!empty($records)) {
+            $this->save_predictions($records);
         }
 
         return $samplecontexts;
@@ -888,9 +942,7 @@ class model {
      * @param string $calculations
      * @return \context
      */
-    protected function save_prediction($sampleid, $rangeindex, $prediction, $predictionscore, $calculations) {
-        global $DB;
-
+    protected function prepare_prediction_record($sampleid, $rangeindex, $prediction, $predictionscore, $calculations) {
         $context = $this->get_analyser()->sample_access_context($sampleid);
 
         $record = new \stdClass();
@@ -902,9 +954,27 @@ class model {
         $record->predictionscore = $predictionscore;
         $record->calculations = $calculations;
         $record->timecreated = time();
-        $DB->insert_record('analytics_predictions', $record);
 
-        return $context;
+        $analysable = $this->get_analyser()->get_sample_analysable($sampleid);
+        $timesplitting = $this->get_time_splitting();
+        $timesplitting->set_analysable($analysable);
+        $range = $timesplitting->get_range_by_index($rangeindex);
+        if ($range) {
+            $record->timestart = $range['start'];
+            $record->timeend = $range['end'];
+        }
+
+        return array($record, $context);
+    }
+
+    /**
+     * Save the prediction objects.
+     *
+     * @param \stdClass[] $records
+     */
+    protected function save_predictions($records) {
+        global $DB;
+        $DB->insert_records('analytics_predictions', $records);
     }
 
     /**
@@ -914,7 +984,7 @@ class model {
      * @return void
      */
     public function enable($timesplittingid = false) {
-        global $DB;
+        global $DB, $USER;
 
         \core_analytics\manager::check_can_manage_models();
 
@@ -930,17 +1000,32 @@ class model {
                 throw new \moodle_exception('errorinvalidtimesplitting', 'analytics');
             }
 
+            // Delete generated predictions before changing the model version.
+            $this->clear();
+
+            // It needs to be reset as the version changes.
+            $this->uniqueid = null;
+
             $this->model->timesplitting = $timesplittingid;
             $this->model->version = $now;
+
+            // Reset trained flag.
+            if (!$this->is_static()) {
+                $this->model->trained = 0;
+            }
         }
+
+        // Purge pages with insights as this may change things.
+        if ($this->model->enabled != 1) {
+            $this->purge_insights_cache();
+        }
+
         $this->model->enabled = 1;
         $this->model->timemodified = $now;
+        $this->model->usermodified = $USER->id;
 
         // We don't always update timemodified intentionally as we reserve it for target, indicators or timesplitting updates.
         $DB->update_record('analytics_models', $this->model);
-
-        // It needs to be reset (just in case, we may already used it).
-        $this->uniqueid = null;
     }
 
     /**
@@ -991,15 +1076,29 @@ class model {
     /**
      * Get the contexts with predictions.
      *
+     * @param bool $skiphidden Skip hidden predictions
      * @return \stdClass[]
      */
-    public function get_predictions_contexts() {
-        global $DB;
+    public function get_predictions_contexts($skiphidden = true) {
+        global $DB, $USER;
 
         $sql = "SELECT DISTINCT ap.contextid FROM {analytics_predictions} ap
                   JOIN {context} ctx ON ctx.id = ap.contextid
-                 WHERE ap.modelid = ?";
-        return $DB->get_records_sql($sql, array($this->model->id));
+                 WHERE ap.modelid = :modelid";
+        $params = array('modelid' => $this->model->id);
+
+        if ($skiphidden) {
+            $sql .= " AND NOT EXISTS (
+              SELECT 1
+                FROM {analytics_prediction_actions} apa
+               WHERE apa.predictionid = ap.id AND apa.userid = :userid AND (apa.actionname = :fixed OR apa.actionname = :notuseful)
+            )";
+            $params['userid'] = $USER->id;
+            $params['fixed'] = \core_analytics\prediction::ACTION_FIXED;
+            $params['notuseful'] = \core_analytics\prediction::ACTION_NOT_USEFUL;
+        }
+
+        return $DB->get_records_sql($sql, $params);
     }
 
     /**
@@ -1046,12 +1145,13 @@ class model {
      * Gets the predictions for this context.
      *
      * @param \context $context
+     * @param bool $skiphidden Skip hidden predictions
      * @param int $page The page of results to fetch. False for all results.
      * @param int $perpage The max number of results to fetch. Ignored if $page is false.
      * @return array($total, \core_analytics\prediction[])
      */
-    public function get_predictions(\context $context, $page = false, $perpage = 100) {
-        global $DB;
+    public function get_predictions(\context $context, $skiphidden = true, $page = false, $perpage = 100) {
+        global $DB, $USER;
 
         \core_analytics\manager::check_can_list_insights($context);
 
@@ -1061,12 +1161,27 @@ class model {
                   JOIN (
                     SELECT sampleid, max(rangeindex) AS rangeindex
                       FROM {analytics_predictions}
-                     WHERE modelid = ? and contextid = ?
+                     WHERE modelid = :modelidsubap and contextid = :contextidsubap
                     GROUP BY sampleid
                   ) apsub
                   ON ap.sampleid = apsub.sampleid AND ap.rangeindex = apsub.rangeindex
-                 WHERE ap.modelid = ? and ap.contextid = ?";
-        $params = array($this->model->id, $context->id, $this->model->id, $context->id);
+                WHERE ap.modelid = :modelid and ap.contextid = :contextid";
+
+        $params = array('modelid' => $this->model->id, 'contextid' => $context->id,
+            'modelidsubap' => $this->model->id, 'contextidsubap' => $context->id);
+
+        if ($skiphidden) {
+            $sql .= " AND NOT EXISTS (
+              SELECT 1
+                FROM {analytics_prediction_actions} apa
+               WHERE apa.predictionid = ap.id AND apa.userid = :userid AND (apa.actionname = :fixed OR apa.actionname = :notuseful)
+            )";
+            $params['userid'] = $USER->id;
+            $params['fixed'] = \core_analytics\prediction::ACTION_FIXED;
+            $params['notuseful'] = \core_analytics\prediction::ACTION_NOT_USEFUL;
+        }
+
+        $sql .= " ORDER BY ap.timecreated DESC";
         if (!$predictions = $DB->get_records_sql($sql, $params)) {
             return array();
         }
@@ -1148,9 +1263,10 @@ class model {
      *   models/$model->id/$model->version/execution
      *
      * @param array $subdirs
+     * @param bool $onlymodelid Preference over $subdirs
      * @return string
      */
-    protected function get_output_dir($subdirs = array()) {
+    protected function get_output_dir($subdirs = array(), $onlymodelid = false) {
         global $CFG;
 
         $subdirstr = '';
@@ -1164,8 +1280,12 @@ class model {
             $outputdir = rtrim($CFG->dataroot, '/') . DIRECTORY_SEPARATOR . 'models';
         }
 
-        // Append model id and version + subdirs.
-        $outputdir .= DIRECTORY_SEPARATOR . $this->model->id . DIRECTORY_SEPARATOR . $this->model->version . $subdirstr;
+        // Append model id.
+        $outputdir .= DIRECTORY_SEPARATOR . $this->model->id;
+        if (!$onlymodelid) {
+            // Append version + subdirs.
+            $outputdir .= DIRECTORY_SEPARATOR . $this->model->version . $subdirstr;
+        }
 
         make_writable_directory($outputdir);
 
@@ -1188,7 +1308,7 @@ class model {
 
         // Generate a unique id for this site, this model and this time splitting method, considering the last time
         // that the model target and indicators were updated.
-        $ids = array($CFG->wwwroot, $CFG->dirroot, $CFG->prefix, $this->model->id, $this->model->version);
+        $ids = array($CFG->wwwroot, $CFG->prefix, $this->model->id, $this->model->version);
         $this->uniqueid = sha1(implode('$$', $ids));
 
         return $this->uniqueid;
@@ -1231,6 +1351,19 @@ class model {
 
         return $DB->get_records('analytics_models_log', array('modelid' => $this->get_id()), 'timecreated DESC', '*',
             $limitfrom, $limitnum);
+    }
+
+    /**
+     * Merges all training data files into one and returns it.
+     *
+     * @return \stored_file|false
+     */
+    public function get_training_data() {
+
+        \core_analytics\manager::check_can_manage_models();
+
+        $timesplittingid = $this->get_time_splitting()->get_id();
+        return \core_analytics\dataset_manager::export_training_data($this->get_id(), $timesplittingid);
     }
 
     /**
@@ -1314,16 +1447,45 @@ class model {
      *
      * @return void
      */
-    private function clear_model() {
-        global $DB;
+    public function clear() {
+        global $DB, $USER;
+
+        \core_analytics\manager::check_can_manage_models();
+
+        // Delete current model version stored stuff.
+        $predictor = \core_analytics\manager::get_predictions_processor();
+        $predictor->clear_model($this->get_unique_id(), $this->get_output_dir());
+
+        $predictionids = $DB->get_fieldset_select('analytics_predictions', 'id', 'modelid = :modelid',
+            array('modelid' => $this->get_id()));
+        if ($predictionids) {
+            list($sql, $params) = $DB->get_in_or_equal($predictionids);
+            $DB->delete_records_select('analytics_prediction_actions', "predictionid $sql", $params);
+        }
 
         $DB->delete_records('analytics_predictions', array('modelid' => $this->model->id));
         $DB->delete_records('analytics_predict_samples', array('modelid' => $this->model->id));
         $DB->delete_records('analytics_train_samples', array('modelid' => $this->model->id));
         $DB->delete_records('analytics_used_files', array('modelid' => $this->model->id));
+        $DB->delete_records('analytics_used_analysables', array('modelid' => $this->model->id));
+
+        // Purge all generated files.
+        \core_analytics\dataset_manager::clear_model_files($this->model->id);
 
         // We don't expect people to clear models regularly and the cost of filling the cache is
         // 1 db read per context.
+        $this->purge_insights_cache();
+
+        $this->model->trained = 0;
+        $this->model->timemodified = time();
+        $this->model->usermodified = $USER->id;
+        $DB->update_record('analytics_models', $this->model);
+    }
+
+    /**
+     * Purges the insights cache.
+     */
+    private function purge_insights_cache() {
         $cache = \cache::make('core', 'contextwithinsights');
         $cache->purge();
     }

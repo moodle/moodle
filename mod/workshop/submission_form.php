@@ -74,25 +74,7 @@ class workshop_submission_form extends moodleform {
 
         $errors = parent::validation($data, $files);
 
-        if (empty($data['id']) and empty($data['example'])) {
-            // make sure there is no submission saved meanwhile from another browser window
-            $sql = "SELECT COUNT(s.id)
-                      FROM {workshop_submissions} s
-                      JOIN {workshop} w ON (s.workshopid = w.id)
-                      JOIN {course_modules} cm ON (w.id = cm.instance)
-                      JOIN {modules} m ON (m.name = 'workshop' AND m.id = cm.module)
-                     WHERE cm.id = ? AND s.authorid = ? AND s.example = 0";
-
-            if ($DB->count_records_sql($sql, array($data['cmid'], $USER->id))) {
-                $errors['title'] = get_string('err_multiplesubmissions', 'mod_workshop');
-            }
-        }
-
-        $getfiles = file_get_drafarea_files($data['attachment_filemanager']);
-        if (empty($getfiles->list) and html_is_blank($data['content_editor']['text'])) {
-            $errors['content_editor'] = get_string('submissionrequiredcontent', 'mod_workshop');
-            $errors['attachment_filemanager'] = get_string('submissionrequiredfile', 'mod_workshop');
-        }
+        $errors += $this->_customdata['workshop']->validate_submission_data($data);
 
         return $errors;
     }

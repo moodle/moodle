@@ -4709,6 +4709,9 @@ dd:after {
 .inplaceeditable.inplaceeditable-toggle .quickediticon {
   display: none;
 }
+.inplaceeditable.inplaceeditable-autocomplete {
+  display: block;
+}
 h3.sectionname .inplaceeditable.inplaceeditingon .editinstructions {
   margin-top: -20px;
 }
@@ -4773,6 +4776,30 @@ h3.sectionname .inplaceeditable.inplaceeditingon .editinstructions {
   opacity: 1;
   visibility: visible;
   transition: opacity 0.15s 0.5s, visibility 0.15s 0.5s;
+}
+.clickable {
+  cursor: pointer;
+}
+.overlay-icon-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.6);
+}
+.overlay-icon-container .loading-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.overlay-icon-container .loading-icon .icon {
+  height: 40px;
+  width: 40px;
+}
+[data-drag-type="move"] {
+  cursor: move;
 }
 /* admin.less */
 .formtable tbody th {
@@ -5538,11 +5565,17 @@ img.iconsmall {
 #overriderolestable .overriddenpermission {
   background-color: #fcf8e3;
 }
+#page-admin-registration-index form .mark {
+  background-color: #fcf8e3;
+}
 /* calendar.less */
+.calendar_event_category {
+  background-color: #d8bfd8;
+}
 .calendar_event_course {
   background-color: #ffd3bd;
 }
-.calendar_event_global {
+.calendar_event_site {
   background-color: #d6f8cd;
 }
 .calendar_event_group {
@@ -5551,11 +5584,9 @@ img.iconsmall {
 .calendar_event_user {
   background-color: #dce7ec;
 }
-.path-calendar #dateselector-calendar-panel {
-  z-index: 4054;
-}
 .path-calendar .calendartable {
   width: 100%;
+  table-layout: fixed;
 }
 .path-calendar .calendartable th,
 .path-calendar .calendartable td {
@@ -5573,6 +5604,8 @@ img.iconsmall {
 }
 .path-calendar .calendar-controls .previous {
   text-align: left;
+  border: 1px solid transparent;
+  box-sizing: border-box;
 }
 .path-calendar .calendar-controls .current {
   text-align: center;
@@ -5580,17 +5613,17 @@ img.iconsmall {
 }
 .path-calendar .calendar-controls .next {
   text-align: right;
+  border: 1px solid transparent;
+  box-sizing: border-box;
+}
+.path-calendar .calendar-controls .drop-target {
+  box-sizing: border-box;
+  border: 1px dashed #049cdb;
 }
 .path-calendar .filters table {
   border-collapse: separate;
   border-spacing: 2px;
   width: 100%;
-}
-.path-calendar .cal_courses_flt {
-  float: left;
-}
-.path-calendar .cal_courses_flt label {
-  margin-right: .45em;
 }
 .path-calendar .maincalendar {
   vertical-align: top;
@@ -5610,13 +5643,57 @@ img.iconsmall {
 }
 .path-calendar .maincalendar .calendarmonth ul {
   margin: 0;
+  padding: 0;
 }
 .path-calendar .maincalendar .calendarmonth ul li {
   list-style-type: none;
-  margin-top: 4px;
+}
+.path-calendar .maincalendar .calendarmonth ul li > a {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+  display: inline-block;
+}
+.path-calendar .maincalendar .calendarmonth ul li > a:hover {
+  text-decoration: none;
+}
+.path-calendar .maincalendar .calendarmonth ul li > a:hover .eventname {
+  text-decoration: underline;
+}
+.path-calendar .maincalendar .calendarmonth ul li .icon {
+  margin-left: 0.25em;
+  margin-right: 0.25em;
+  padding: 0;
+  vertical-align: initial;
+}
+.path-calendar .maincalendar .calendarmonth ul li .badge.badge-circle {
+  width: 12px;
+  height: 12px;
+  padding: 0;
+  border-radius: 6px;
+  vertical-align: middle;
+}
+.path-calendar .maincalendar .calendarmonth ul li .badge.badge-circle.calendar_event_category {
+  background-color: #d8bfd8;
+}
+.path-calendar .maincalendar .calendarmonth ul li .badge.badge-circle.calendar_event_course {
+  background-color: #ffd3bd;
+}
+.path-calendar .maincalendar .calendarmonth ul li .badge.badge-circle.calendar_event_site {
+  background-color: #d6f8cd;
+}
+.path-calendar .maincalendar .calendarmonth ul li .badge.badge-circle.calendar_event_group {
+  background-color: #fee7ae;
+}
+.path-calendar .maincalendar .calendarmonth ul li .badge.badge-circle.calendar_event_user {
+  background-color: #dce7ec;
 }
 .path-calendar .maincalendar .calendarmonth td {
   height: 5em;
+}
+.path-calendar .maincalendar .calendarmonth .clickable:hover {
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
 }
 .path-calendar .maincalendar .calendar-controls .previous,
 .path-calendar .maincalendar .calendar-controls .next {
@@ -5629,17 +5706,21 @@ img.iconsmall {
   width: 98%;
   margin: 10px auto;
 }
-.path-calendar .maincalendar .calendar_event_course,
-.path-calendar .maincalendar .calendar_event_global,
-.path-calendar .maincalendar .calendar_event_group,
-.path-calendar .maincalendar .calendar_event_user {
-  border-width: 1px 1px 1px 12px;
-  border-style: solid;
+.path-calendar .maincalendar .calendar_event_category:hover a,
+.path-calendar .maincalendar .calendar_event_course:hover a,
+.path-calendar .maincalendar .calendar_event_site:hover a,
+.path-calendar .maincalendar .calendar_event_group:hover a,
+.path-calendar .maincalendar .calendar_event_user:hover a {
+  color: #003d5c;
+  text-decoration: underline;
+}
+.path-calendar .maincalendar .calendar_event_category {
+  border-color: #d8bfd8;
 }
 .path-calendar .maincalendar .calendar_event_course {
   border-color: #ffd3bd;
 }
-.path-calendar .maincalendar .calendar_event_global {
+.path-calendar .maincalendar .calendar_event_site {
   border-color: #d6f8cd;
 }
 .path-calendar .maincalendar .calendar_event_group {
@@ -5657,10 +5738,9 @@ img.iconsmall {
 }
 .path-calendar .maincalendar .calendartable td,
 .path-calendar .maincalendar .calendartable li {
-  padding: 5px;
+  padding: 0 4px 4px 4px;
 }
 .path-calendar .maincalendar .calendartable li {
-  padding-left: 10px;
   text-align: left;
 }
 .path-calendar .maincalendar .header {
@@ -5692,14 +5772,14 @@ img.iconsmall {
   margin-right: 0.5rem;
 }
 .path-calendar .maincalendar .eventlist .event .name,
-.path-calendar .maincalendar .eventlist .event .course {
+.path-calendar .maincalendar .eventlist .event .action {
   margin-bottom: 5px;
 }
 .path-calendar .maincalendar .eventlist .event .date {
   float: right;
 }
-.path-calendar .maincalendar .eventlist .event .course,
-.path-calendar .maincalendar .eventlist .event .subscription {
+.path-calendar .maincalendar .eventlist .event .subscription,
+.path-calendar .maincalendar .eventlist .event .action {
   float: left;
   clear: left;
 }
@@ -5708,7 +5788,6 @@ img.iconsmall {
 }
 .path-calendar .maincalendar .eventlist .event .description {
   background-color: #fff;
-  padding: 5px;
   clear: both;
 }
 .path-calendar .maincalendar .eventlist .event .commands a {
@@ -5742,6 +5821,13 @@ img.iconsmall {
 }
 .block .minicalendar td.duration_global.duration_finish {
   background-color: #d6f8cd;
+}
+.block .minicalendar td.duration_category {
+  border-top: 1px solid #d8bfd8;
+  border-bottom: 1px solid #d8bfd8;
+}
+.block .minicalendar td.duration_category.duration_finish {
+  background-color: #d8bfd8;
 }
 .block .minicalendar td.duration_course {
   border-top: 1px solid #ffd3bd;
@@ -5796,36 +5882,34 @@ img.iconsmall {
   margin-bottom: 0.2em;
 }
 .block .calendar_filters li span img {
+  margin: 0 0.25em;
+}
+.block .calendar_filters li span .icon {
   padding: 0 0.2em;
 }
-.block .calendar_filters .eventname {
-  padding-left: 0.2em;
+.block .calendar_filters li .icon {
+  padding: 0;
+  margin-left: 0.25em;
+}
+.block .calendar_filters li > a:hover {
+  text-decoration: none;
+}
+.block .calendar_filters li > a:hover .eventname {
+  text-decoration: underline;
 }
 .block .content h3.eventskey {
   margin-top: 0.5em;
-}
-.ical-link {
-  font-size: 10px;
-  font-weight: bold;
-  background-color: #f60;
-  padding: 0 5px;
-  color: #fff;
-  border-top: 1px solid #f93;
-  border-left: 1px solid #f93;
-  border-bottom: 1px solid #013;
-  border-right: 1px solid #013;
-}
-.ical-link:hover,
-.ical-link:active,
-.ical-link:focus,
-.ical-link:visited {
-  color: #fff;
-  text-decoration: none;
 }
 @media (min-width: 768px) {
   #page-calender-view .container-fluid {
     min-width: 1024px;
   }
+}
+.calendarwrapper {
+  position: relative;
+}
+.summary-modal-container .description-content > p {
+  margin: 0;
 }
 /* course.less */
 /* COURSE CONTENT */
@@ -5960,6 +6044,7 @@ img.iconsmall {
 .editing_hide + .editing_assign {
   margin-left: 20px;
 }
+.section_action_menu,
 .section .activity .commands {
   white-space: nowrap;
   display: inline;
@@ -9237,6 +9322,12 @@ body.path-question-type .fitem_fgroup .accesshide {
   width: auto;
   vertical-align: baseline;
 }
+.que.multianswer .formulation .yui3-widget-positioned .feedbackspan {
+  box-sizing: content-box;
+  padding-bottom: 0;
+  max-width: inherit;
+  width: inherit;
+}
 .path-mod-quiz input[size] {
   width: auto;
 }
@@ -9741,9 +9832,12 @@ body.path-question-type .mform fieldset.hidden {
 .userlist table#participants {
   text-align: center;
 }
-.userlist table#participants td,
-.userlist table#participants th {
+.userlist table#participants td {
+  text-align: left;
+  padding: 4px;
   vertical-align: middle;
+}
+.userlist table#participants th {
   text-align: left;
   padding: 4px;
 }
@@ -9815,15 +9909,29 @@ body.path-question-type .mform fieldset.hidden {
   -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
   border-color: #e3e3e3;
+  position: relative;
 }
 .groupinfobox blockquote {
   border-color: #ddd;
   border-color: rgba(0, 0, 0, 0.15);
 }
+.groupinfobox h3 {
+  margin-top: 0px;
+}
 .groupinfobox .left {
   padding: 10px;
   width: 100px;
   vertical-align: top;
+}
+.group-image {
+  display: block;
+  float: left;
+  margin-right: 1em;
+}
+.group-edit {
+  position: absolute;
+  right: 0;
+  margin-right: 0.6em;
 }
 .course-participation #showall {
   text-align: center;
@@ -12929,8 +13037,7 @@ table th[class*="span"],
   -moz-border-radius: 4px;
   border-radius: 4px;
 }
-.well,
-.card {
+.well {
   min-height: 20px;
   padding: 19px;
   margin-bottom: 20px;
@@ -14899,6 +15006,7 @@ input[type="submit"].btn.btn-mini {
 .popover {
   position: absolute;
   top: 0;
+  /*rtl:ignore*/
   left: 0;
   z-index: 1010;
   display: none;
@@ -15631,8 +15739,7 @@ legend {
 .breadcrumb {
   background-color: #f5f5f5;
 }
-.well,
-.card {
+.well {
   border-color: #e3e3e3;
 }
 sup {
@@ -16533,6 +16640,12 @@ form {
 .singleselect label {
   margin-right: .3em;
 }
+.custom-select {
+  max-width: 100%;
+}
+.custom-select + input[type="submit"] {
+  margin: 0 0 0 5px;
+}
 #portfolio-add-button {
   display: inline;
 }
@@ -16714,6 +16827,49 @@ fieldset.coursesearchbox label {
   font-weight: bold;
 }
 /**
+ * Forms marked as vertical always display this way;
+ */
+.mform.full-width-labels:not(.unresponsive) .fitem .fitemtitle {
+  display: block;
+  margin-top: 4px;
+  margin-bottom: 4px;
+  text-align: left;
+  width: 100%;
+}
+.mform.full-width-labels:not(.unresponsive) .fitem .felement {
+  margin-left: 0;
+  width: 100%;
+  float: left;
+  padding-left: 0;
+  padding-right: 0;
+}
+.mform.full-width-labels:not(.unresponsive) .fitem .fstatic:empty {
+  display: none;
+}
+.mform.full-width-labels:not(.unresponsive) .fitem .fcheckbox > span,
+.mform.full-width-labels:not(.unresponsive) .fitem .fradio > span,
+.mform.full-width-labels:not(.unresponsive) .fitem .fgroup > span {
+  margin-top: 4px;
+}
+.mform.full-width-labels:not(.unresponsive) .femptylabel .fitemtitle {
+  display: inline-block;
+  width: auto;
+  margin-right: 8px;
+}
+.mform.full-width-labels:not(.unresponsive) .femptylabel .felement {
+  display: inline-block;
+  margin-top: 4px;
+  padding-top: 5px;
+}
+.mform.full-width-labels:not(.unresponsive) .fitem_fcheckbox .fitemtitle,
+.mform.full-width-labels:not(.unresponsive) .fitem_fcheckbox .felement {
+  display: inline-block;
+  width: auto;
+}
+.mform.full-width-labels:not(.unresponsive) .fitem_fcheckbox .felement {
+  padding: 6px;
+}
+/**
  * Make forms vertical when the screen is less than 1200px;
  */
 @media (max-width: 1199px) {
@@ -16748,7 +16904,6 @@ fieldset.coursesearchbox label {
     display: inline-block;
     margin-top: 4px;
     padding-top: 5px;
-    width: auto;
   }
   body #region-main .mform:not(.unresponsive) .fitem_fcheckbox .fitemtitle,
   body #region-main .mform:not(.unresponsive) .fitem_fcheckbox .felement {
@@ -16801,7 +16956,6 @@ fieldset.coursesearchbox label {
     display: inline-block;
     margin-top: 4px;
     padding-top: 5px;
-    width: auto;
   }
   .used-region-side-pre.used-region-side-post #region-main .mform:not(.unresponsive) .fitem_fcheckbox .fitemtitle,
   .used-region-side-pre.used-region-side-post #region-main .mform:not(.unresponsive) .fitem_fcheckbox .felement {
@@ -16902,9 +17056,26 @@ input[size] {
   width: auto;
 }
 /* Custom styles for autocomplete form element */
+[data-fieldtype=autocomplete] select,
+[data-fieldtype=tags] select,
+select.form-autocomplete-original-select {
+  visibility: hidden;
+  overflow: hidden;
+  width: 15rem;
+  height: 67px;
+  margin: 0;
+  margin-bottom: 0.2em;
+  padding: 0;
+  border: 0;
+  vertical-align: top;
+}
+.form-autocomplete-container {
+  display: inline-block;
+  min-height: 4.2rem;
+}
 .form-autocomplete-selection {
   margin: 0.2em;
-  min-height: 21px;
+  min-height: 27px;
 }
 .form-autocomplete-multiple [role=listitem] {
   cursor: pointer;
@@ -17045,6 +17216,19 @@ body.modal-open {
 .modal-container .modal .modal-body {
   max-height: none;
 }
+.modal-container .modal .modal-body > .loading-icon {
+  display: block;
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+.modal-container .modal .modal-body > .loading-icon .icon {
+  position: absolute;
+  top: 50%;
+  /*rtl:ignore*/
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
 .modal-container .modal .modal-footer {
   border-top: 1px solid #bbb;
   text-align: center;
@@ -17054,7 +17238,6 @@ body.modal-open {
   border-radius: 0 0 10px 10px;
 }
 .modal-backdrop {
-  z-index: 4049;
   background-color: #aaa;
   opacity: 0.4;
 }
@@ -17069,49 +17252,8 @@ select {
   border-top: 1px solid #ddd;
   padding: 8px 0;
 }
-.path-mod-feedback .mform.feedback_form .fitem .fitemtitle {
-  display: block;
-  margin-top: 4px;
-  margin-bottom: 4px;
-  text-align: left;
-  width: 100%;
-}
-.path-mod-feedback .mform.feedback_form .fitem .felement {
-  margin-left: 0;
-  width: 100%;
-  float: left;
-  padding-left: 0;
-  padding-right: 0;
-}
-.path-mod-feedback .mform.feedback_form .fitem .fstatic:empty {
-  display: none;
-}
-.path-mod-feedback .mform.feedback_form .fitem .fcheckbox > span,
-.path-mod-feedback .mform.feedback_form .fitem .fradio > span,
-.path-mod-feedback .mform.feedback_form .fitem .fgroup > span {
-  margin-top: 4px;
-}
-body.path-mod-feedback #region-main .mform.feedback_form .femptylabel .fitemtitle {
-  display: inline-block;
-  width: auto;
-  margin-right: 0;
-}
-.path-mod-feedback .mform.feedback_form .femptylabel .felement {
-  display: inline-block;
-  margin-top: 4px;
-  padding-top: 5px;
-  width: auto;
-}
 body.path-mod-feedback #region-main .mform.feedback_form .feedback-item-pagebreak .felement {
   width: 100%;
-}
-.path-mod-feedback .mform.feedback_form .fitem_fcheckbox .fitemtitle,
-.path-mod-feedback .mform.feedback_form .fitem_fcheckbox .felement {
-  display: inline-block;
-  width: auto;
-}
-.path-mod-feedback .mform.feedback_form .fitem_fcheckbox .felement {
-  padding: 6px;
 }
 .path-mod-feedback .mform.feedback_form#feedback_viewresponse_form .fitem.feedback_hasvalue:not(.feedback-item-captcha) .felement {
   background: #fbfbf1;
@@ -17314,6 +17456,9 @@ div#dock {
 .path-mod-choice .media-left {
   float: left;
   padding-right: 1em;
+}
+.path-mod-choice .horizontal .choices .option {
+  display: inline-block;
 }
 .path-mod-lesson .firstpageoptions {
   margin: auto;
@@ -17818,6 +17963,9 @@ div#dock {
 }
 .path-mod-scorm.jsenabled .scorm-center {
   display: block;
+}
+.path-mod-scorm #region-main #intro {
+  width: auto;
 }
 .yui-skin-sam .yui-layout.path-mod-chat-gui_ajax {
   background-color: #fff;
@@ -19309,7 +19457,6 @@ div[data-flexitour="backdrop"] {
   background-color: #000;
   opacity: 0.8;
   filter: alpha(opacity=80);
-  z-index: 4049;
   background-color: #aaa;
   opacity: 0.4;
   z-index: 4030;
@@ -21614,6 +21761,22 @@ ul.indented-list {
   margin-left: 20px;
 }
 /* stylelint-disable declaration-no-important, block-no-empty */
+.card {
+  position: relative;
+  display: block;
+  margin-bottom: .75rem;
+  background-color: #fff;
+  border: 1px solid #e3e3e3;
+  border-radius: 0;
+}
+.card-header {
+  padding: .75rem 1.25rem;
+  background-color: #f5f5f5;
+  border-bottom: 1px solid #e3e3e3;
+}
+.card-block {
+  padding: 1.25rem;
+}
 .p-l-1 {
   padding-left: 14px !important;
 }
@@ -21807,4 +21970,40 @@ ul.indented-list {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+.text-white {
+  color: #fff;
+}
+.bg-danger {
+  background-color: #b94a48;
+}
+.bg-danger[href] {
+  background-color: #953b39;
+}
+.bg-warning {
+  background-color: #f89406;
+}
+.bg-warning[href] {
+  background-color: #c67605;
+}
+.bg-success {
+  background-color: #468847;
+}
+.bg-success[href] {
+  background-color: #356635;
+}
+.bg-info {
+  background-color: #3a87ad;
+}
+.bg-info[href] {
+  background-color: #2d6987;
+}
+.bg-primary {
+  background-color: #049cdb;
+}
+.bg-primary[href] {
+  background-color: #0378a9;
+}
+.bg-faded {
+  background-color: #eee;
 }

@@ -46,10 +46,11 @@ class base_block_testcase extends advanced_testcase {
     /**
      * Tests getting the recordset.
      */
-    public function test_get_recordset_by_timestamp() {
-        global $DB;
+    public function test_get_document_recordset() {
+        global $DB, $USER;
 
         $this->resetAfterTest();
+        $this->setAdminUser();
 
         // Create course and activity module.
         $generator = $this->getDataGenerator();
@@ -58,10 +59,19 @@ class base_block_testcase extends advanced_testcase {
         $page = $generator->create_module('page', ['course' => $course->id]);
         $pagecontext = \context_module::instance($page->cmid);
 
+        // Create another 2 courses (in same category and in a new category).
+        $cat1context = \context_coursecat::instance($course->category);
+        $course2 = $generator->create_course();
+        $course2context = \context_course::instance($course2->id);
+        $cat2 = $generator->create_category();
+        $cat2context = \context_coursecat::instance($cat2->id);
+        $course3 = $generator->create_course(['category' => $cat2->id]);
+        $course3context = \context_course::instance($course3->id);
+
         // Add blocks by hacking table (because it's not a real block type).
 
         // 1. Block on course page.
-        $configdata = base64_encode(serialize(new \stdClass()));
+        $configdata = base64_encode(serialize((object) ['example' => 'content']));
         $instance = (object)['blockname' => 'mockblock', 'parentcontextid' => $coursecontext->id,
                 'showinsubcontexts' => 0, 'pagetypepattern' => 'course-view-*',
                 'defaultweight' => 0, 'timecreated' => 1, 'timemodified' => 1,
@@ -113,17 +123,24 @@ class base_block_testcase extends advanced_testcase {
         $block7id = $DB->insert_record('block_instances', $instance);
         \context_block::instance($block7id);
 
+        // 8. Block on course 2.
+        $instance->parentcontextid = $course2context->id;
+        $instance->timemodified = 8;
+        $block8id = $DB->insert_record('block_instances', $instance);
+        \context_block::instance($block8id);
+
+        // 9. Block on course 3.
+        $instance->parentcontextid = $course3context->id;
+        $instance->timemodified = 9;
+        $block9id = $DB->insert_record('block_instances', $instance);
+        \context_block::instance($block9id);
+
         // Get all the blocks.
         $area = new block_mockblock\search\area();
-        $rs = $area->get_recordset_by_timestamp();
-        $results = [];
-        foreach ($rs as $rec) {
-            $results[] = $rec;
-        }
-        $rs->close();
+        $results = self::recordset_to_indexed_array($area->get_document_recordset());
 
-        // Only blocks 1, 3, 6, and 7 should be returned. Check all the fields for the first two.
-        $this->assertCount(4, $results);
+        // Only blocks 1, 3, 6, 7, 8, 9 should be returned. Check all the fields for the first two.
+        $this->assertCount(6, $results);
 
         $this->assertEquals($block1id, $results[0]->id);
         $this->assertEquals(1, $results[0]->timemodified);
@@ -142,20 +159,93 @@ class base_block_testcase extends advanced_testcase {
         // For the later ones, just check it got the right ones!
         $this->assertEquals($block6id, $results[2]->id);
         $this->assertEquals($block7id, $results[3]->id);
+        $this->assertEquals($block8id, $results[4]->id);
+        $this->assertEquals($block9id, $results[5]->id);
 
         // Repeat with a time restriction.
-        $rs = $area->get_recordset_by_timestamp(2);
+        $results = self::recordset_to_indexed_array($area->get_document_recordset(2));
+
+        // Only block 3, 6, 7, 8, and 9 are returned.
+        $this->assertEquals([$block3id, $block6id, $block7id, $block8id, $block9id],
+                self::records_to_ids($results));
+
+        // Now use context restrictions. First, the whole site (no change).
+        $results = self::recordset_to_indexed_array($area->get_document_recordset(
+                0, context_system::instance()));
+        $this->assertEquals([$block1id, $block3id, $block6id, $block7id, $block8id, $block9id],
+                self::records_to_ids($results));
+
+        // Course page only (leave out the one on site page and other courses).
+        $results = self::recordset_to_indexed_array($area->get_document_recordset(
+                0, $coursecontext));
+        $this->assertEquals([$block1id, $block6id, $block7id],
+                self::records_to_ids($results));
+
+        // Other course page only.
+        $results = self::recordset_to_indexed_array($area->get_document_recordset(
+                0, $course2context));
+        $this->assertEquals([$block8id], self::records_to_ids($results));
+
+        // Activity module only (no results).
+        $results = self::recordset_to_indexed_array($area->get_document_recordset(
+                0, $pagecontext));
+        $this->assertCount(0, $results);
+
+        // Specific block context.
+        $results = self::recordset_to_indexed_array($area->get_document_recordset(
+                0, $block3context));
+        $this->assertEquals([$block3id], self::records_to_ids($results));
+
+        // User context (no results).
+        $usercontext = context_user::instance($USER->id);
+        $results = self::recordset_to_indexed_array($area->get_document_recordset(
+                0, $usercontext));
+        $this->assertCount(0, $results);
+
+        // Category 1 context (courses 1 and 2).
+        $results = self::recordset_to_indexed_array($area->get_document_recordset(
+                0, $cat1context));
+        $this->assertEquals([$block1id, $block6id, $block7id, $block8id],
+                self::records_to_ids($results));
+
+        // Category 2 context (course 3).
+        $results = self::recordset_to_indexed_array($area->get_document_recordset(
+                0, $cat2context));
+        $this->assertEquals([$block9id], self::records_to_ids($results));
+
+        // Combine context restriction (category 1) with timemodified.
+        $results = self::recordset_to_indexed_array($area->get_document_recordset(
+                7, $cat1context));
+        $this->assertEquals([$block7id, $block8id], self::records_to_ids($results));
+    }
+
+    /**
+     * Utility function to convert recordset to array for testing.
+     *
+     * @param moodle_recordset $rs Recordset to convert
+     * @return array Array indexed by number (0, 1, 2, ...)
+     */
+    protected static function recordset_to_indexed_array(moodle_recordset $rs) {
         $results = [];
         foreach ($rs as $rec) {
             $results[] = $rec;
         }
         $rs->close();
+        return $results;
+    }
 
-        // Only block 3, 6, and 7 are returned.
-        $this->assertCount(3, $results);
-        $this->assertEquals($block3id, $results[0]->id);
-        $this->assertEquals($block6id, $results[1]->id);
-        $this->assertEquals($block7id, $results[2]->id);
+    /**
+     * Utility function to convert records to array of IDs.
+     *
+     * @param array $recs Records which should have an 'id' field
+     * @return array Array of ids
+     */
+    protected static function records_to_ids(array $recs) {
+        $ids = [];
+        foreach ($recs as $rec) {
+            $ids[] = $rec->id;
+        }
+        return $ids;
     }
 
     /**

@@ -126,11 +126,13 @@ class workshop_edit_rubric_strategy_form extends workshop_edit_strategy_form {
             }
 
             // Make sure the levels grades are unique within the criterion.
+            $atleastonelevel = false;
             for ($j = 0; isset($data['levelid__idx_'.$i.'__idy_'.$j]); $j++) {
                 if (0 == strlen(trim($data['definition__idx_'.$i.'__idy_'.$j]))) {
                     // The level definition is empty and will not be saved.
                     continue;
                 }
+                $atleastonelevel = true;
 
                 $levelgrade = $data['grade__idx_'.$i.'__idy_'.$j];
 
@@ -142,6 +144,9 @@ class workshop_edit_rubric_strategy_form extends workshop_edit_strategy_form {
                 } else {
                     $dimgrades[$levelgrade] = $j;
                 }
+            }
+            if (!$atleastonelevel) {
+                $errors['level__idx_'.$i.'__idy_0'] = get_string('mustdefinelevel', 'workshopform_rubric');
             }
         }
 

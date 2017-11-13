@@ -1,17 +1,21 @@
 /* calendar.less */
 
 // Calendar colour variables defined.
+$calendarEventCategoryColor: #d8bfd8 !default; // Pale purple.
 $calendarEventCourseColor: #ffd3bd !default; // Pale red.
 $calendarEventGlobalColor: #d6f8cd !default; // Pale green.
 $calendarEventGroupColor: #fee7ae !default; // Pale yellow.
 $calendarEventUserColor: #dce7ec !default; // Pale blue.
 
 // Calendar event background colours defined.
+.calendar_event_category {
+    background-color: $calendarEventCategoryColor;
+}
 .calendar_event_course {
     background-color: $calendarEventCourseColor;
 }
 
-.calendar_event_global {
+.calendar_event_site {
     background-color: $calendarEventGlobalColor;
 }
 
@@ -48,6 +52,7 @@ $calendarEventUserColor: #dce7ec !default; // Pale blue.
 
         .previous {
             text-align: left;
+            border: 1px solid transparent;
         }
 
         .current {
@@ -57,6 +62,12 @@ $calendarEventUserColor: #dce7ec !default; // Pale blue.
 
         .next {
             text-align: right;
+            border: 1px solid transparent;
+        }
+
+        .drop-target {
+            box-sizing: border-box;
+            border: 1px dashed $brand-primary;
         }
     }
 
@@ -85,20 +96,70 @@ $calendarEventUserColor: #dce7ec !default; // Pale blue.
         .calendarmonth {
             width: 98%;
             margin: 10px auto;
-        }
 
-        .calendarmonth {
             ul {
                 margin: 0;
+                padding: 0;
 
                 li {
                     list-style-type: none;
-                    margin-top: 4px;
+
+                    > a {
+                        @include text-truncate;
+                        max-width: 100%;
+                        display: inline-block;
+
+                        &:hover {
+                            text-decoration: $link-decoration;
+
+                            .eventname {
+                                text-decoration: $link-hover-decoration;
+                            }
+                        }
+                    }
+
+                    .icon {
+                        margin-left: 0.25em;
+                        margin-right: 0.25em;
+                        vertical-align: initial;
+                    }
+
+                    .badge {
+                        &.badge-circle {
+                            width: 12px;
+                            height: 12px;
+                            border-radius: 6px;
+                            vertical-align: middle;
+
+                            &.calendar_event_category {
+                                background-color: $calendarEventCategoryColor;
+                            }
+                            &.calendar_event_course {
+                                background-color: $calendarEventCourseColor;
+                            }
+
+                            &.calendar_event_site {
+                                background-color: $calendarEventGlobalColor;
+                            }
+
+                            &.calendar_event_group {
+                                background-color: $calendarEventGroupColor;
+                            }
+
+                            &.calendar_event_user {
+                                background-color: $calendarEventUserColor;
+                            }
+                        }
+                    }
                 }
             }
 
             td {
                 height: 5em;
+            }
+
+            .clickable:hover {
+                box-shadow: 0 2px 2px 0 rgba(0, 0, 0, .14), 0 3px 1px -2px rgba(0, 0, 0, .2), 0 1px 5px 0 rgba(0, 0, 0, .12);
             }
         }
 
@@ -118,19 +179,28 @@ $calendarEventUserColor: #dce7ec !default; // Pale blue.
             margin: 10px auto;
         }
 
+        .calendar_event_category,
         .calendar_event_course,
-        .calendar_event_global,
+        .calendar_event_site,
         .calendar_event_group,
         .calendar_event_user {
-            border-width: 1px 1px 1px 12px;
-            border-style: solid;
+            &:hover {
+                a {
+                    color: $link-hover-color;
+                    text-decoration: $link-hover-decoration;
+                }
+            }
+        }
+
+        .calendar_event_category {
+            border-color: $calendarEventCategoryColor;
         }
 
         .calendar_event_course {
             border-color: $calendarEventCourseColor;
         }
 
-        .calendar_event_global {
+        .calendar_event_site {
             border-color: $calendarEventGlobalColor;
         }
 
@@ -151,11 +221,10 @@ $calendarEventUserColor: #dce7ec !default; // Pale blue.
         .calendartable {
             td,
             li {
-                padding: 5px;
+                padding: 0 4px 4px 4px;
             }
 
             li {
-                padding-left: 10px;
                 text-align: left;
             }
         }
@@ -213,6 +282,15 @@ $calendarEventUserColor: #dce7ec !default; // Pale blue.
 
                 &.duration_finish {
                     background-color: $calendarEventGlobalColor;
+                }
+            }
+
+            &.duration_category {
+                border-top: 1px solid $calendarEventCategoryColor;
+                border-bottom: 1px solid $calendarEventCategoryColor;
+
+                &.duration_finish {
+                    background-color: $calendarEventCategoryColor;
                 }
             }
 
@@ -292,10 +370,19 @@ $calendarEventUserColor: #dce7ec !default; // Pale blue.
                     margin: 0;
                 }
             }
-        }
+            .icon {
+                vertical-align: initial;
+            }
 
-        .eventname {
-            padding-left: 0.2em;
+            > a {
+                &:hover {
+                    text-decoration: $link-decoration;
+
+                    .eventname {
+                        text-decoration: $link-hover-decoration;
+                    }
+                }
+            }
         }
     }
 
@@ -313,30 +400,28 @@ table.calendartable caption {
     caption-side: top;
 }
 
-.ical-link {
-    font-size: 10px;
-    font-weight: bold;
-    background-color: #f60;
-    padding: 0 5px;
-    color: #fff;
-    border-top: 1px solid #f93;
-    border-left: 1px solid #f93;
-    border-bottom: 1px solid #013;
-    border-right: 1px solid #013;
-}
-
-.ical-link:hover,
-.ical-link:active,
-.ical-link:focus,
-.ical-link:visited {
-    color: #fff;
-    text-decoration: none;
-}
-
 @media (min-width: 768px) {
     #page-calender-view {
         .container-fluid {
             min-width: 1024px;
+        }
+    }
+}
+
+.calendarwrapper {
+    position: relative;
+}
+
+.day-popover-content {
+    &:empty + .day-popover-alternate {
+        display: block;
+    }
+}
+
+.summary-modal-container {
+    .description-content {
+        > p {
+            margin: 0;
         }
     }
 }

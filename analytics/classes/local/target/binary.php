@@ -78,7 +78,7 @@ abstract class binary extends discrete {
             throw new \moodle_exception('errorpredictionformat', 'analytics');
         }
 
-        if (in_array($value, $this->ignored_predicted_classes())) {
+        if (in_array($value, $this->ignored_predicted_classes(), false)) {
             // Just in case, if it is ignored the prediction should not even be recorded but if it would, it is ignored now,
             // which should mean that is it nothing serious.
             return self::OUTCOME_VERY_POSITIVE;

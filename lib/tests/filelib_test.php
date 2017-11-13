@@ -545,6 +545,29 @@ class core_filelib_testcase extends advanced_testcase {
         $this->assertSame('OK', $contents);
     }
 
+    public function test_curl_file_name() {
+        $this->resetAfterTest();
+        $testurl = $this->getExternalTestFileUrl('/test_file_name.php');
+
+        $fs = get_file_storage();
+        $filerecord = array(
+            'contextid' => context_system::instance()->id,
+            'component' => 'test',
+            'filearea' => 'curl_post',
+            'itemid' => 0,
+            'filepath' => '/',
+            'filename' => 'test.txt'
+        );
+        $teststring = 'moodletest';
+        $testfile = $fs->create_file_from_string($filerecord, $teststring);
+
+        // Test post with file.
+        $data = array('testfile' => $testfile);
+        $curl = new curl();
+        $contents = $curl->post($testurl, $data);
+        $this->assertSame('OK', $contents);
+    }
+
     public function test_curl_protocols() {
 
         // HTTP and HTTPS requests were verified in previous requests. Now check
@@ -1339,6 +1362,51 @@ EOF;
         $this->assertEquals($file->get_filesize(), $fileinfo['filesize']);
         $this->assertEquals(0, $fileinfo['foldercount']);   // No subdirectories inside the directory.
         $this->assertEquals($file->get_filesize(), $fileinfo['filesize_without_references']);
+    }
+
+    /**
+     * Test confirming that draft files not referenced in the editor text are removed.
+     */
+    public function test_file_remove_editor_orphaned_files() {
+        global $USER, $CFG;
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        // Create three draft files.
+        $filerecord = ['filename'  => 'file1.png'];
+        $file = self::create_draft_file($filerecord);
+        $draftitemid = $file->get_itemid();
+
+        $filerecord['itemid'] = $draftitemid;
+
+        $filerecord['filename'] = 'file2.png';
+        self::create_draft_file($filerecord);
+
+        $filerecord['filename'] = 'file 3.png';
+        self::create_draft_file($filerecord);
+
+        // Confirm the user drafts area lists 3 files.
+        $fs = get_file_storage();
+        $usercontext = context_user::instance($USER->id);
+        $draftfiles = $fs->get_area_files($usercontext->id, 'user', 'draft', $draftitemid, 'itemid', 0);
+        $this->assertCount(3, $draftfiles);
+
+        // Now, spoof some editor text content, referencing 2 of the files; one requiring name encoding, one not.
+        $editor = [
+            'itemid' => $draftitemid,
+            'text' => '
+                <img src="'.$CFG->wwwroot.'/draftfile.php/'.$usercontext->id.'/user/draft/'.$draftitemid.'/file%203.png" alt="">
+                <img src="'.$CFG->wwwroot.'/draftfile.php/'.$usercontext->id.'/user/draft/'.$draftitemid.'/file1.png" alt="">'
+        ];
+
+        // Run the remove orphaned drafts function and confirm that only the referenced files remain in the user drafts.
+        $expected = ['file1.png', 'file 3.png']; // The drafts we expect will not be removed (are referenced in the online text).
+        file_remove_editor_orphaned_files($editor);
+        $draftfiles = $fs->get_area_files($usercontext->id, 'user', 'draft', $draftitemid, 'itemid', 0);
+        $this->assertCount(2, $draftfiles);
+        foreach ($draftfiles as $file) {
+            $this->assertContains($file->get_filename(), $expected);
+        }
     }
 }
 

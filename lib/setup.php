@@ -528,8 +528,8 @@ global $FULLSCRIPT;
  */
 global $SCRIPT;
 
-// Set httpswwwroot default value (this variable will replace $CFG->wwwroot
-// inside some URLs used in HTTPSPAGEREQUIRED pages.
+// Set httpswwwroot to $CFG->wwwroot for backwards compatibility
+// The loginhttps option is deprecated, so httpswwwroot is no longer necessary. See MDL-42834.
 $CFG->httpswwwroot = $CFG->wwwroot;
 
 require_once($CFG->libdir .'/setuplib.php');        // Functions that MUST be loaded first

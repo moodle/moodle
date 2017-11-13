@@ -130,7 +130,7 @@ class renderer extends plugin_renderer_base {
         }
 
         if (!CLI_SCRIPT) {
-            $output .= $OUTPUT->single_button(new \moodle_url('/admin/tool/analytics/index.php'), get_string('continue'));
+            $output .= $OUTPUT->single_button(new \moodle_url('/admin/tool/analytics/index.php'), get_string('continue'), 'get');
         }
 
         return $output;
@@ -159,11 +159,12 @@ class renderer extends plugin_renderer_base {
             if ($trainresults->status == 0) {
                 $output .= $OUTPUT->notification(get_string('trainingprocessfinished', 'tool_analytics'),
                     \core\output\notification::NOTIFY_SUCCESS);
-            } else if ($trainresults->status === \core_analytics\model::NO_DATASET) {
+            } else if ($trainresults->status === \core_analytics\model::NO_DATASET ||
+                    $trainresults->status === \core_analytics\model::NOT_ENOUGH_DATA) {
                 $output .= $OUTPUT->notification(get_string('nodatatotrain', 'tool_analytics'),
                     \core\output\notification::NOTIFY_WARNING);
             } else {
-                $output .= $OUTPUT->notification(get_string('generalerror', 'analytics', $trainresults->status),
+                $output .= $OUTPUT->notification(get_string('generalerror', 'tool_analytics', $trainresults->status),
                     \core\output\notification::NOTIFY_ERROR);
             }
         }
@@ -183,11 +184,12 @@ class renderer extends plugin_renderer_base {
             if ($predictresults->status == 0) {
                 $output .= $OUTPUT->notification(get_string('predictionprocessfinished', 'tool_analytics'),
                     \core\output\notification::NOTIFY_SUCCESS);
-            } else if ($predictresults->status === \core_analytics\model::NO_DATASET) {
+            } else if ($predictresults->status === \core_analytics\model::NO_DATASET ||
+                    $predictresults->status === \core_analytics\model::NOT_ENOUGH_DATA) {
                 $output .= $OUTPUT->notification(get_string('nodatatopredict', 'tool_analytics'),
                     \core\output\notification::NOTIFY_WARNING);
             } else {
-                $output .= $OUTPUT->notification(get_string('generalerror', 'analytics', $predictresults->status),
+                $output .= $OUTPUT->notification(get_string('generalerror', 'tool_analytics', $predictresults->status),
                     \core\output\notification::NOTIFY_ERROR);
             }
         }
@@ -200,9 +202,20 @@ class renderer extends plugin_renderer_base {
         }
 
         if (!CLI_SCRIPT) {
-            $output .= $OUTPUT->single_button(new \moodle_url('/admin/tool/analytics/index.php'), get_string('continue'));
+            $output .= $OUTPUT->single_button(new \moodle_url('/admin/tool/analytics/index.php'), get_string('continue'), 'get');
         }
 
         return $output;
+    }
+
+    /**
+     * Defer to template.
+     *
+     * @param \tool_analytics\output\invalid_analysables $invalidanalysables
+     * @return string HTML
+     */
+    protected function render_invalid_analysables(\tool_analytics\output\invalid_analysables $invalidanalysables) {
+        $data = $invalidanalysables->export_for_template($this);
+        return parent::render_from_template('tool_analytics/invalid_analysables', $data);
     }
 }

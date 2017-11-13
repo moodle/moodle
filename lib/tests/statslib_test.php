@@ -188,16 +188,16 @@ class core_statslib_testcase extends advanced_testcase {
         static $replacements = null;
 
         $raw   = $this->createXMLDataSet($file);
-        $clean = new PHPUnit_Extensions_Database_DataSet_ReplacementDataSet($raw);
+        $clean = new PHPUnit\DbUnit\DataSet\ReplacementDataSet($raw);
 
         foreach ($this->replacements as $placeholder => $value) {
             $clean->addFullReplacement($placeholder, $value);
         }
 
-        $logs = new PHPUnit_Extensions_Database_DataSet_DataSetFilter($clean);
+        $logs = new PHPUnit\DbUnit\DataSet\Filter($clean);
         $logs->addIncludeTables(array('log'));
 
-        $stats = new PHPUnit_Extensions_Database_DataSet_DataSetFilter($clean);
+        $stats = new PHPUnit\DbUnit\DataSet\Filter($clean);
         $stats->addIncludeTables(array('stats_daily', 'stats_user_daily'));
 
         return array($logs, $stats);

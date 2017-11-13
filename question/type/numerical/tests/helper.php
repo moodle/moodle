@@ -35,7 +35,7 @@ defined('MOODLE_INTERNAL') || die();
  */
 class qtype_numerical_test_helper extends question_test_helper {
     public function get_test_questions() {
-        return array('pi', 'unit', 'currency');
+        return array('pi', 'unit', 'currency', 'pi3tries');
     }
 
     /**
@@ -71,6 +71,15 @@ class qtype_numerical_test_helper extends question_test_helper {
         return $num;
     }
 
+    /**
+     * Get the form data that corresponds to saving a numerical question.
+     *
+     * This question asks for Pi to two decimal places. It has feedback
+     * for various wrong responses. There is hint data there, but
+     * it is all blank, so no hints are created if this question is saved.
+     *
+     * @return stdClass simulated question form data.
+     */
     public function get_numerical_question_form_data_pi() {
         $form = new stdClass();
         $form->name = 'Pi to two d.p.';
@@ -153,6 +162,22 @@ class qtype_numerical_test_helper extends question_test_helper {
         $form->hint[1]['text'] = '';
 
         $form->qtype = 'numerical';
+        return $form;
+    }
+
+    /**
+     * Get the form data that corresponds to saving a numerical question.
+     *
+     * Like {@link get_numerical_question_form_data_pi()}, but
+     * this time with two hints, making this suitable for use
+     * with the Interactive with multiple tries behaviour.
+     *
+     * @return stdClass simulated question form data.
+     */
+    public function get_numerical_question_form_data_pi3tries() {
+        $form = $this->get_numerical_question_form_data_pi();
+        $form->hint[0]['text'] = 'First hint';
+        $form->hint[1]['text'] = 'Second hint';
         return $form;
     }
 

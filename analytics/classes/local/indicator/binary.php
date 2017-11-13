@@ -47,6 +47,23 @@ abstract class binary extends discrete {
     }
 
     /**
+     * It should always be displayed.
+     *
+     * Binary values have no subtypes by default, please overwrite if
+     * your indicator is adding extra features.
+     *
+     * @param float $value
+     * @param string $subtype
+     * @return bool
+     */
+    public function should_be_displayed($value, $subtype) {
+        if ($subtype != false) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
      * get_display_value
      *
      * @param float $value

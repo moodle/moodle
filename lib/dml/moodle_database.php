@@ -2341,10 +2341,12 @@ abstract class moodle_database {
     /**
      * Returns the driver specific syntax (SQL part) for matching regex positively or negatively (inverted matching).
      * Eg: 'REGEXP':'NOT REGEXP' or '~*' : '!~*'
+     *
      * @param bool $positivematch
+     * @param bool $casesensitive
      * @return string or empty if not supported
      */
-    public function sql_regex($positivematch=true) {
+    public function sql_regex($positivematch = true, $casesensitive = false) {
         return '';
     }
 
@@ -2398,7 +2400,8 @@ abstract class moodle_database {
         // NOTE: override this methods if following standard compliant SQL
         //       does not work for your driver.
 
-        $columnname = $column->name;
+        // Enclose the column name by the proper quotes if it's a reserved word.
+        $columnname = $this->get_manager()->generator->getEncQuoted($column->name);
         $sql = "UPDATE {".$table."}
                        SET $columnname = REPLACE($columnname, ?, ?)
                      WHERE $columnname IS NOT NULL";

@@ -84,7 +84,7 @@ class mod_resource_search_testcase extends advanced_testcase {
         );
         $fs->create_file_from_string($filerecord, 'Test resource file');
 
-        // Attach a second file that shouldn't be returned with the search doc.
+        // Attach a second file.
         $filerecord['filename'] = 'extrafile';
         $filerecord['sortorder'] = 0;
         $fs->create_file_from_string($filerecord, 'Test resource file 2');
@@ -101,10 +101,15 @@ class mod_resource_search_testcase extends advanced_testcase {
             $searcharea->attach_files($doc);
             $files = $doc->get_files();
 
-            // Resources should only return their main file.
-            $this->assertCount(1, $files);
-            $file = reset($files);
-            $this->assertEquals('mainfile', $file->get_filename());
+            // Resources should return all added files.
+            $this->assertCount(2, $files);
+
+            $filenames = array();
+            foreach ($files as $file) {
+                $filenames[] = $file->get_filename();
+            }
+            $this->assertContains('mainfile', $filenames);
+            $this->assertContains('extrafile', $filenames);
 
             $nrecords++;
         }

@@ -76,7 +76,7 @@ class user_enrolment_deleted extends base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/enrol/users.php', array('id' => $this->courseid));
+        return new \moodle_url('/user/index.php', array('id' => $this->courseid));
     }
 
     /**

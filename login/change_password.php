@@ -35,9 +35,6 @@ $return = optional_param('return', 0, PARAM_BOOL); // redirect after password ch
 
 $systemcontext = context_system::instance();
 
-//HTTPS is required in this page when $CFG->loginhttps enabled
-$PAGE->https_required();
-
 $PAGE->set_url('/login/change_password.php', array('id'=>$id));
 
 $PAGE->set_context($systemcontext);
@@ -64,7 +61,7 @@ if (!$course = $DB->get_record('course', array('id'=>$id))) {
 // require proper login; guest user can not change password
 if (!isloggedin() or isguestuser()) {
     if (empty($SESSION->wantsurl)) {
-        $SESSION->wantsurl = $CFG->httpswwwroot.'/login/change_password.php';
+        $SESSION->wantsurl = $CFG->wwwroot.'/login/change_password.php';
     }
     redirect(get_login_url());
 }
@@ -147,9 +144,6 @@ if ($mform->is_cancelled()) {
     echo $OUTPUT->footer();
     exit;
 }
-
-// make sure we really are on the https page when https login required
-$PAGE->verify_https_required();
 
 $strchangepassword = get_string('changepassword');
 

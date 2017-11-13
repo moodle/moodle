@@ -213,6 +213,7 @@ class MoodleQuickForm_group extends HTML_QuickForm_group implements templatable 
             $i++;
         }
 
+        $context['groupname'] = $name;
         $context['elements'] = $elements;
         return $context;
     }

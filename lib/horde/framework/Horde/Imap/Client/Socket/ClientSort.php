@@ -1,12 +1,12 @@
 <?php
 /**
- * Copyright 2012-2014 Horde LLC (http://www.horde.org/)
+ * Copyright 2012-2017 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file COPYING for license information (LGPL). If you
  * did not receive this file, see http://www.horde.org/licenses/lgpl21.
  *
  * @category  Horde
- * @copyright 2012-2014 Horde LLC
+ * @copyright 2012-2017 Horde LLC
  * @license   http://www.horde.org/licenses/lgpl21 LGPL 2.1
  * @package   Imap_Client
  */
@@ -20,13 +20,20 @@
  *
  * @author    Michael Slusarz <slusarz@horde.org>
  * @category  Horde
- * @copyright 2012-2014 Horde LLC
+ * @copyright 2012-2017 Horde LLC
  * @internal
  * @license   http://www.horde.org/licenses/lgpl21 LGPL 2.1
  * @package   Imap_Client
  */
 class Horde_Imap_Client_Socket_ClientSort
 {
+    /**
+     * Collator object to use for sotring.
+     *
+     * @var Collator
+     */
+    protected $_collator;
+
     /**
      * Socket object.
      *
@@ -42,6 +49,10 @@ class Horde_Imap_Client_Socket_ClientSort
     public function __construct(Horde_Imap_Client_Socket $socket)
     {
         $this->_socket = $socket;
+
+        if (class_exists('Collator')) {
+            $this->_collator = new Collator(null);
+        }
     }
 
     /**
@@ -82,6 +93,10 @@ class Horde_Imap_Client_Socket_ClientSort
             case Horde_Imap_Client::SORT_SUBJECT:
             case Horde_Imap_Client::SORT_TO:
                 $query->envelope();
+                break;
+
+            case Horde_Imap_Client::SORT_SEQUENCE:
+                $query->seq();
                 break;
 
             case Horde_Imap_Client::SORT_SIZE:
@@ -125,13 +140,13 @@ class Horde_Imap_Client_Socket_ClientSort
         /* Step 1: Sort by base subject (already done).
          * Step 2: Sort by sent date within each thread. */
         foreach (array_keys($sorted) as $key) {
-            asort($sorted[$key], SORT_NUMERIC);
+            $this->_stableAsort($sorted[$key]);
             $tsort[$key] = reset($sorted[$key]);
         }
 
         /* Step 3: Sort by the sent date of the first message in the
          * thread. */
-        asort($tsort, SORT_NUMERIC);
+        $this->_stableAsort($tsort);
 
         /* Now, $tsort contains the order of the threads, and each thread
          * is sorted in $sorted. */
@@ -142,7 +157,10 @@ class Horde_Imap_Client_Socket_ClientSort
             ) + array_fill_keys(array_slice($keys, 1) , 1);
         }
 
-        return new Horde_Imap_Client_Data_Thread($out, $uids ? 'uid' : 'sequence');
+        return new Horde_Imap_Client_Data_Thread(
+            $out,
+            $uids ? 'uid' : 'sequence'
+        );
     }
 
     /**
@@ -164,10 +182,6 @@ class Horde_Imap_Client_Socket_ClientSort
 
             foreach ($slices_list as $slice_start => $slice) {
                 $sorted = array();
-
-                if ($reverse) {
-                    $slice = array_reverse($slice);
-                }
 
                 switch ($val) {
                 case Horde_Imap_Client::SORT_SEQUENCE:
@@ -192,19 +206,13 @@ class Horde_Imap_Client_Socket_ClientSort
                         : 'to';
 
                     foreach ($slice as $num) {
-                        $env = $fetch_res[$num]->getEnvelope();
-
-                        if (empty($env->$field)) {
-                            $sorted[$num] = null;
-                        } else {
-                            $addr_ob = reset($env->$field);
-                            if (is_null($sorted[$num] = $addr_ob->personal)) {
-                                $sorted[$num] = $addr_ob->mailbox;
-                            }
-                        }
+                        $ob = $fetch_res[$num]->getEnvelope()->$field;
+                        $sorted[$num] = ($addr_ob = $ob[0])
+                            ? $addr_ob->personal ?: $addr_ob->mailbox
+                            : null;
                     }
 
-                    asort($sorted, SORT_LOCALE_STRING);
+                    $this->_sortString($sorted);
                     break;
 
                 case Horde_Imap_Client::SORT_CC:
@@ -224,7 +232,8 @@ class Horde_Imap_Client_Socket_ClientSort
                             ? $tmp[0]->mailbox
                             : null;
                     }
-                    asort($sorted, SORT_LOCALE_STRING);
+
+                    $this->_sortString($sorted);
                     break;
 
                 case Horde_Imap_Client::SORT_ARRIVAL:
@@ -243,13 +252,18 @@ class Horde_Imap_Client_Socket_ClientSort
                     foreach ($slice as $num) {
                         $sorted[$num] = strval(new Horde_Imap_Client_Data_BaseSubject($fetch_res[$num]->getEnvelope()->subject));
                     }
-                    asort($sorted, SORT_LOCALE_STRING);
+
+                    $this->_sortString($sorted);
                     break;
                 }
 
                 // At this point, keys of $sorted are sequence/UID and values
                 // are the sort strings
                 if (!empty($sorted)) {
+                    if ($reverse) {
+                        $sorted = array_reverse($sorted, true);
+                    }
+
                     if (count($sorted) === count($res)) {
                         $res = array_keys($sorted);
                     } else {
@@ -259,11 +273,12 @@ class Horde_Imap_Client_Socket_ClientSort
                     // Check for ties.
                     $last = $start = null;
                     $i = 0;
-                    reset($sorted);
-                    while (list($k, $v) = each($sorted)) {
+                    $todo = array();
+
+                    foreach ($sorted as $k => $v) {
                         if (is_null($last) || ($last != $v)) {
                             if ($i) {
-                                $slices[array_search($start, $res)] = array_slice($sorted, array_search($start, $sorted), $i + 1);
+                                $todo[] = array($start, $i);
                                 $i = 0;
                             }
                             $last = $v;
@@ -273,7 +288,18 @@ class Horde_Imap_Client_Socket_ClientSort
                         }
                     }
                     if ($i) {
-                        $slices[array_search($start, $res)] = array_slice($sorted, array_search($start, $sorted), $i + 1);
+                        $todo[] = array($start, $i);
+                    }
+
+                    foreach ($todo as $v) {
+                        $slices[array_search($v[0], $res)] = array_keys(
+                            array_slice(
+                                $sorted,
+                                array_search($v[0], $sorted),
+                                $v[1] + 1,
+                                true
+                            )
+                        );
                     }
                 }
             }
@@ -312,6 +338,36 @@ class Horde_Imap_Client_Socket_ClientSort
         }
 
         return $dates;
+    }
+
+    /**
+     * Stable asort() function.
+     *
+     * PHP's asort() (BWT) is not a stable sort - identical values have no
+     * guarantee of key order. Use Schwartzian Transform instead. See:
+     * http://notmysock.org/blog/php/schwartzian-transform.html
+     *
+     * @param array &$a  Array to sort.
+     */
+    protected function _stableAsort(&$a)
+    {
+        array_walk($a, function(&$v, $k) { $v = array($v, $k); });
+        asort($a);
+        array_walk($a, function(&$v, $k) { $v = $v[0]; });
+    }
+
+    /**
+     * Sort an array of strings based on current locale.
+     *
+     * @param array &$sorted  Array of strings.
+     */
+    protected function _sortString(&$sorted)
+    {
+        if (empty($this->_collator)) {
+            asort($sorted, SORT_LOCALE_STRING);
+        } else {
+            $this->_collator->asort($sorted, Collator::SORT_STRING);
+        }
     }
 
 }

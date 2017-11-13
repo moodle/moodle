@@ -63,17 +63,18 @@ class behat_calendar extends behat_base {
         $eventname = $data->getRow(1);
         $eventname = $eventname[1];
 
-        // Click to create new event.
-        $this->execute("behat_general::i_wait_seconds", 1);
+        $this->execute("behat_general::wait_until_the_page_is_ready");
 
-        // Click to create new event.
-        $this->execute("behat_general::i_click_on", array(get_string('newevent', 'calendar'), "button"));
+        if ($this->running_javascript()) {
+            // Click to create new event.
+            $this->execute("behat_general::i_click_on", array(get_string('newevent', 'calendar'), "button"));
 
-        // Set form fields.
-        $this->execute("behat_forms::i_set_the_following_fields_to_these_values", $data);
+            // Set form fields.
+            $this->execute("behat_forms::i_set_the_following_fields_to_these_values", $data);
 
-        // Save event.
-        $this->execute("behat_forms::press_button", get_string('save'));
+            // Save event.
+            $this->execute("behat_forms::press_button", get_string('save'));
+        }
     }
 
     /**
@@ -83,9 +84,9 @@ class behat_calendar extends behat_base {
      * @param int $day The day of the current month
      */
     public function i_hover_over_day_of_this_month_in_calendar($day) {
-        $summarytitle = get_string('calendarheading', 'calendar', userdate(time(), get_string('strftimemonthyear')));
+        $summarytitle = userdate(time(), get_string('strftimemonthyear'));
         // The current month table.
-        $currentmonth = "table[contains(concat(' ', normalize-space(@summary), ' '), ' {$summarytitle} ')]";
+        $currentmonth = "table[descendant::*[self::caption[contains(concat(' ', normalize-space(.), ' '), ' {$summarytitle} ')]]]";
 
         // Strings for the class cell match.
         $cellclasses  = "contains(concat(' ', normalize-space(@class), ' '), ' day ')";
@@ -94,6 +95,7 @@ class behat_calendar extends behat_base {
         $dayofmonth   = "a[{$daycontains}]";
 
         $xpath = '//' . $currentmonth . '/descendant::' . $daycell . '/' . $dayofmonth;
+        $this->execute("behat_general::wait_until_the_page_is_ready");
         $this->execute("behat_general::i_hover", array($xpath, "xpath_element"));
 
     }

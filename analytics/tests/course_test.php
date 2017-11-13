@@ -86,7 +86,6 @@ class core_analytics_course_testcase extends advanced_testcase {
         $courseman = new \core_analytics\course($this->course->id);
         $this->assertFalse($courseman->was_started());
         $this->assertFalse($courseman->is_finished());
-        $this->assertFalse($courseman->is_valid());
 
         // Nothing should change when assigning as teacher.
         for ($i = 0; $i < 10; $i++) {
@@ -94,7 +93,8 @@ class core_analytics_course_testcase extends advanced_testcase {
             $this->getDataGenerator()->enrol_user($user->id, $this->course->id, $this->teacherroleid);
         }
         $courseman = new \core_analytics\course($this->course->id);
-        $this->assertFalse($courseman->is_valid());
+        $this->assertFalse($courseman->was_started());
+        $this->assertFalse($courseman->is_finished());
 
         // More students now.
         for ($i = 0; $i < 10; $i++) {
@@ -102,7 +102,8 @@ class core_analytics_course_testcase extends advanced_testcase {
             $this->getDataGenerator()->enrol_user($user->id, $this->course->id, $this->studentroleid);
         }
         $courseman = new \core_analytics\course($this->course->id);
-        $this->assertFalse($courseman->is_valid());
+        $this->assertFalse($courseman->was_started());
+        $this->assertFalse($courseman->is_finished());
 
         // Valid start date unknown end date.
         $this->course->startdate = gmmktime('0', '0', '0', 10, 24, 2015);
@@ -110,7 +111,6 @@ class core_analytics_course_testcase extends advanced_testcase {
         $courseman = new \core_analytics\course($this->course->id);
         $this->assertTrue($courseman->was_started());
         $this->assertFalse($courseman->is_finished());
-        $this->assertFalse($courseman->is_valid());
 
         // Valid start and end date.
         $this->course->enddate = gmmktime('0', '0', '0', 8, 27, 2016);
@@ -118,7 +118,6 @@ class core_analytics_course_testcase extends advanced_testcase {
         $courseman = new \core_analytics\course($this->course->id);
         $this->assertTrue($courseman->was_started());
         $this->assertTrue($courseman->is_finished());
-        $this->assertTrue($courseman->is_valid());
 
         // Valid start and ongoing course.
         $this->course->enddate = gmmktime('0', '0', '0', 8, 27, 2286);
@@ -126,7 +125,6 @@ class core_analytics_course_testcase extends advanced_testcase {
         $courseman = new \core_analytics\course($this->course->id);
         $this->assertTrue($courseman->was_started());
         $this->assertFalse($courseman->is_finished());
-        $this->assertFalse($courseman->is_valid());
     }
 
     /**

@@ -57,6 +57,14 @@ if ($ADMIN->fulltree) {
         array('maxfiles' => 20, 'accepted_types' => array('.scss')));
     $page->add($setting);
 
+    // Background image setting.
+    $name = 'theme_boost/backgroundimage';
+    $title = get_string('backgroundimage', 'theme_boost');
+    $description = get_string('backgroundimage_desc', 'theme_boost');
+    $setting = new admin_setting_configstoredfile($name, $title, $description, 'backgroundimage');
+    $setting->set_updatedcallback('theme_reset_all_caches');
+    $page->add($setting);
+
     // Variable $body-color.
     // We use an empty default value because the default colour should come from the preset.
     $name = 'theme_boost/brandcolor';

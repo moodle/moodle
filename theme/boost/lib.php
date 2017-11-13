@@ -42,7 +42,43 @@ function theme_boost_css_tree_post_processor($tree, $theme) {
  * @return string
  */
 function theme_boost_get_extra_scss($theme) {
-    return !empty($theme->settings->scss) ? $theme->settings->scss : '';
+    $content = '';
+    $imageurl = $theme->setting_file_url('backgroundimage', 'backgroundimage');
+
+    // Sets the background image, and its settings.
+    if (!empty($imageurl)) {
+        $content .= 'body { ';
+        $content .= "background-image: url('$imageurl');";
+        $content .= ' }';
+    }
+
+    // Always return the background image with the scss when we have it.
+    return !empty($theme->settings->scss) ? $theme->settings->scss . ' ' . $content : $content;
+}
+
+/**
+ * Serves any files associated with the theme settings.
+ *
+ * @param stdClass $course
+ * @param stdClass $cm
+ * @param context $context
+ * @param string $filearea
+ * @param array $args
+ * @param bool $forcedownload
+ * @param array $options
+ * @return bool
+ */
+function theme_boost_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = array()) {
+    if ($context->contextlevel == CONTEXT_SYSTEM && ($filearea === 'logo' || $filearea === 'backgroundimage')) {
+        $theme = theme_config::load('boost');
+        // By default, theme files must be cache-able by both browsers and proxies.
+        if (!array_key_exists('cacheability', $options)) {
+            $options['cacheability'] = 'public';
+        }
+        return $theme->setting_file_serve($filearea, $args, $forcedownload, $options);
+    } else {
+        send_file_not_found();
+    }
 }
 
 /**

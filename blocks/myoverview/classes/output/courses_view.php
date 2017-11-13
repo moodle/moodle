@@ -83,6 +83,9 @@ class courses_view implements renderable, templatable {
             // Convert summary to plain text.
             $exportedcourse->summary = content_to_text($exportedcourse->summary, $exportedcourse->summaryformat);
 
+            // Include course visibility.
+            $exportedcourse->visible = (bool)$course->visible;
+
             $courseprogress = null;
 
             $classified = course_classify_for_timeline($course);

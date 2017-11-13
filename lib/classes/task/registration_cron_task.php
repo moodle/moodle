@@ -42,11 +42,7 @@ class registration_cron_task extends scheduled_task {
      * Throw exceptions on errors (the job will be retried).
      */
     public function execute() {
-        global $CFG;
-
-        require_once($CFG->dirroot . '/' . $CFG->admin . '/registration/lib.php');
-        $registrationmanager = new \registration_manager();
-        $registrationmanager->cron();
+        \core\hub\registration::update_cron();
     }
 
 }

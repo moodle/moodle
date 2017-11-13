@@ -203,7 +203,7 @@ function qualified_me() {
 /**
  * Determines whether or not the Moodle site is being served over HTTPS.
  *
- * This is done simply by checking the value of $CFG->httpswwwroot, which seems
+ * This is done simply by checking the value of $CFG->wwwroot, which seems
  * to be the only reliable method.
  *
  * @return boolean True if site is served over HTTPS, false otherwise.
@@ -211,7 +211,7 @@ function qualified_me() {
 function is_https() {
     global $CFG;
 
-    return (strpos($CFG->httpswwwroot, 'https://') === 0);
+    return (strpos($CFG->wwwroot, 'https://') === 0);
 }
 
 /**
@@ -347,12 +347,9 @@ class moodle_url {
 
             // Normalise shortened form of our url ex.: '/course/view.php'.
             if (strpos($url, '/') === 0) {
-                // We must not use httpswwwroot here, because it might be url of other page,
-                // devs have to use httpswwwroot explicitly when creating new moodle_url.
                 $url = $CFG->wwwroot.$url;
             }
 
-            // Now fix the admin links if needed, no need to mess with httpswwwroot.
             if ($CFG->admin !== 'admin') {
                 if (strpos($url, "$CFG->wwwroot/admin/") === 0) {
                     $url = str_replace("$CFG->wwwroot/admin/", "$CFG->wwwroot/$CFG->admin/", $url);
@@ -781,7 +778,7 @@ class moodle_url {
     public static function make_pluginfile_url($contextid, $component, $area, $itemid, $pathname, $filename,
                                                $forcedownload = false) {
         global $CFG;
-        $urlbase = "$CFG->httpswwwroot/pluginfile.php";
+        $urlbase = "$CFG->wwwroot/pluginfile.php";
         if ($itemid === null) {
             return self::make_file_url($urlbase, "/$contextid/$component/$area".$pathname.$filename, $forcedownload);
         } else {
@@ -807,7 +804,7 @@ class moodle_url {
     public static function make_webservice_pluginfile_url($contextid, $component, $area, $itemid, $pathname, $filename,
                                                $forcedownload = false) {
         global $CFG;
-        $urlbase = "$CFG->httpswwwroot/webservice/pluginfile.php";
+        $urlbase = "$CFG->wwwroot/webservice/pluginfile.php";
         if ($itemid === null) {
             return self::make_file_url($urlbase, "/$contextid/$component/$area".$pathname.$filename, $forcedownload);
         } else {
@@ -826,7 +823,7 @@ class moodle_url {
      */
     public static function make_draftfile_url($draftid, $pathname, $filename, $forcedownload = false) {
         global $CFG, $USER;
-        $urlbase = "$CFG->httpswwwroot/draftfile.php";
+        $urlbase = "$CFG->wwwroot/draftfile.php";
         $context = context_user::instance($USER->id);
 
         return self::make_file_url($urlbase, "/$context->id/user/draft/$draftid".$pathname.$filename, $forcedownload);
@@ -861,14 +858,10 @@ class moodle_url {
         global $CFG;
 
         $url = $this->out($escaped, $overrideparams);
-        $httpswwwroot = str_replace("http://", "https://", $CFG->wwwroot);
 
-        // Url should be equal to wwwroot or httpswwwroot. If not then throw exception.
+        // Url should be equal to wwwroot. If not then throw exception.
         if (($url === $CFG->wwwroot) || (strpos($url, $CFG->wwwroot.'/') === 0)) {
             $localurl = substr($url, strlen($CFG->wwwroot));
-            return !empty($localurl) ? $localurl : '';
-        } else if (($url === $httpswwwroot) || (strpos($url, $httpswwwroot.'/') === 0)) {
-            $localurl = substr($url, strlen($httpswwwroot));
             return !empty($localurl) ? $localurl : '';
         } else {
             throw new coding_exception('out_as_local_url called on a non-local URL');
@@ -1318,7 +1311,7 @@ function format_text($text, $format = FORMAT_MOODLE, $options = null, $courseidd
         // this happens when developers forget to post process the text.
         // The only potential problem is that somebody might try to format
         // the text before storing into database which would be itself big bug..
-        $text = str_replace("\"$CFG->httpswwwroot/draftfile.php", "\"$CFG->httpswwwroot/brokenfile.php#", $text);
+        $text = str_replace("\"$CFG->wwwroot/draftfile.php", "\"$CFG->wwwroot/brokenfile.php#", $text);
 
         if ($CFG->debugdeveloper) {
             if (strpos($text, '@@PLUGINFILE@@/') !== false) {
@@ -2215,7 +2208,7 @@ function send_headers($contenttype, $cacheable = true) {
  * @param string $addclass Additional class names for the link, or the arrow character.
  * @return string HTML string.
  */
-function link_arrow_right($text, $url='', $accesshide=false, $addclass='') {
+function link_arrow_right($text, $url='', $accesshide=false, $addclass='', $addparams = []) {
     global $OUTPUT; // TODO: move to output renderer.
     $arrowclass = 'arrow ';
     if (!$url) {
@@ -2234,7 +2227,16 @@ function link_arrow_right($text, $url='', $accesshide=false, $addclass='') {
         if ($addclass) {
             $class .= ' '.$addclass;
         }
-        return '<a class="'.$class.'" href="'.$url.'" title="'.preg_replace('/<.*?>/', '', $text).'">'.$htmltext.$arrow.'</a>';
+
+        $linkparams = [
+            'class' => $class,
+            'href' => $url,
+            'title' => preg_replace('/<.*?>/', '', $text),
+        ];
+
+        $linkparams += $addparams;
+
+        return html_writer::link($url, $htmltext . $arrow, $linkparams);
     }
     return $htmltext.$arrow;
 }
@@ -2248,7 +2250,7 @@ function link_arrow_right($text, $url='', $accesshide=false, $addclass='') {
  * @param string $addclass Additional class names for the link, or the arrow character.
  * @return string HTML string.
  */
-function link_arrow_left($text, $url='', $accesshide=false, $addclass='') {
+function link_arrow_left($text, $url='', $accesshide=false, $addclass='', $addparams = []) {
     global $OUTPUT; // TODO: move to utput renderer.
     $arrowclass = 'arrow ';
     if (! $url) {
@@ -2267,7 +2269,16 @@ function link_arrow_left($text, $url='', $accesshide=false, $addclass='') {
         if ($addclass) {
             $class .= ' '.$addclass;
         }
-        return '<a class="'.$class.'" href="'.$url.'" title="'.preg_replace('/<.*?>/', '', $text).'">'.$arrow.$htmltext.'</a>';
+
+        $linkparams = [
+            'class' => $class,
+            'href' => $url,
+            'title' => preg_replace('/<.*?>/', '', $text),
+        ];
+
+        $linkparams += $addparams;
+
+        return html_writer::link($url, $arrow . $htmltext, $linkparams);
     }
     return $arrow.$htmltext;
 }
@@ -2412,23 +2423,56 @@ function print_group_picture($group, $courseid, $large=false, $return=false, $li
         }
     }
 
+    $pictureurl = get_group_picture_url($group, $courseid, $large);
+
+    // If there is no picture, do nothing.
+    if (!isset($pictureurl)) {
+        return;
+    }
+
+    $context = context_course::instance($courseid);
+
+    $groupname = s($group->name);
+    $pictureimage = html_writer::img($pictureurl, $groupname, ['title' => $groupname]);
+
+    $output = '';
+    if ($link or has_capability('moodle/site:accessallgroups', $context)) {
+        $linkurl = new moodle_url('/user/index.php', ['id' => $courseid, 'group' => $group->id]);
+        $output .= html_writer::link($linkurl, $pictureimage);
+    } else {
+        $output .= $pictureimage;
+    }
+
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
+    }
+}
+
+/**
+ * Return the url to the group picture.
+ *
+ * @param  stdClass $group A group object.
+ * @param  int $courseid The course ID for the group.
+ * @param  bool $large A large or small group picture? Default is small.
+ * @return moodle_url Returns the url for the group picture.
+ */
+function get_group_picture_url($group, $courseid, $large = false) {
+    global $CFG;
+
     $context = context_course::instance($courseid);
 
     // If there is no picture, do nothing.
     if (!$group->picture) {
-        return '';
+        return;
     }
 
     // If picture is hidden, only show to those with course:managegroups.
     if ($group->hidepicture and !has_capability('moodle/course:managegroups', $context)) {
-        return '';
+        return;
     }
 
-    if ($link or has_capability('moodle/site:accessallgroups', $context)) {
-        $output = '<a href="'. $CFG->wwwroot .'/user/index.php?id='. $courseid .'&amp;group='. $group->id .'">';
-    } else {
-        $output = '';
-    }
     if ($large) {
         $file = 'f1';
     } else {
@@ -2437,18 +2481,7 @@ function print_group_picture($group, $courseid, $large=false, $return=false, $li
 
     $grouppictureurl = moodle_url::make_pluginfile_url($context->id, 'group', 'icon', $group->id, '/', $file);
     $grouppictureurl->param('rev', $group->picture);
-    $output .= '<img class="grouppicture" src="'.$grouppictureurl.'"'.
-        ' alt="'.s(get_string('group').' '.$group->name).'" title="'.s($group->name).'"/>';
-
-    if ($link or has_capability('moodle/site:accessallgroups', $context)) {
-        $output .= '</a>';
-    }
-
-    if ($return) {
-        return $output;
-    } else {
-        echo $output;
-    }
+    return $grouppictureurl;
 }
 
 
@@ -3242,8 +3275,7 @@ class text_progress_trace extends progress_trace {
      * @return void Output is echo'd
      */
     public function output($message, $depth = 0) {
-        echo str_repeat('  ', $depth), $message, "\n";
-        flush();
+        mtrace(str_repeat('  ', $depth) . $message);
     }
 }
 

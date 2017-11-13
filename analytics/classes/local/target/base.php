@@ -112,23 +112,49 @@ abstract class base extends \core_analytics\calculable {
      * @return \core_analytics\prediction_action[]
      */
     public function prediction_actions(\core_analytics\prediction $prediction, $includedetailsaction = false) {
+        global $PAGE;
+
+        $predictionid = $prediction->get_prediction_data()->id;
+
+        $PAGE->requires->js_call_amd('report_insights/actions', 'init', array($predictionid));
+
         $actions = array();
 
         if ($includedetailsaction) {
 
             $predictionurl = new \moodle_url('/report/insights/prediction.php',
-                array('id' => $prediction->get_prediction_data()->id));
+                array('id' => $predictionid));
 
-            $actions['predictiondetails'] = new \core_analytics\prediction_action('predictiondetails', $prediction,
+            $actions[] = new \core_analytics\prediction_action(\core_analytics\prediction::ACTION_PREDICTION_DETAILS, $prediction,
                 $predictionurl, new \pix_icon('t/preview', get_string('viewprediction', 'analytics')),
                 get_string('viewprediction', 'analytics'));
         }
+
+        // Flag as fixed / solved.
+        $fixedattrs = array(
+            'data-prediction-id' => $predictionid,
+            'data-prediction-methodname' => 'report_insights_set_fixed_prediction'
+        );
+        $actions[] = new \core_analytics\prediction_action(\core_analytics\prediction::ACTION_FIXED,
+            $prediction, new \moodle_url(''), new \pix_icon('t/check', get_string('fixedack', 'analytics')),
+            get_string('fixedack', 'analytics'), false, $fixedattrs);
+
+        // Flag as not useful.
+        $notusefulattrs = array(
+            'data-prediction-id' => $predictionid,
+            'data-prediction-methodname' => 'report_insights_set_notuseful_prediction'
+        );
+        $actions[] = new \core_analytics\prediction_action(\core_analytics\prediction::ACTION_NOT_USEFUL,
+            $prediction, new \moodle_url(''), new \pix_icon('t/delete', get_string('notuseful', 'analytics')),
+            get_string('notuseful', 'analytics'), false, $notusefulattrs);
 
         return $actions;
     }
 
     /**
      * Callback to execute once a prediction has been returned from the predictions processor.
+     *
+     * Note that the analytics_predictions db record is not yet inserted.
      *
      * @param int $modelid
      * @param int $sampleid
@@ -231,11 +257,11 @@ abstract class base extends \core_analytics\calculable {
      */
     protected function min_prediction_score() {
         // The default minimum discards predictions with a low score.
-        return \core_analytics\model::MIN_SCORE;
+        return \core_analytics\model::PREDICTION_MIN_SCORE;
     }
 
     /**
-     * Should the model callback be triggered?
+     * This method determines if a prediction is interesing for the model or not.
      *
      * @param mixed $predictedvalue
      * @param float $predictionscore

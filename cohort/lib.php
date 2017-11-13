@@ -234,7 +234,9 @@ function cohort_get_available_cohorts($currentcontext, $withmembers = 0, $offset
     // Build context subquery. Find the list of parent context where user is able to see any or visible-only cohorts.
     // Since this method is normally called for the current course all parent contexts are already preloaded.
     $contextsany = array_filter($currentcontext->get_parent_context_ids(),
-        create_function('$a', 'return has_capability("moodle/cohort:view", context::instance_by_id($a));'));
+        function($a) {
+            return has_capability("moodle/cohort:view", context::instance_by_id($a));
+        });
     $contextsvisible = array_diff($currentcontext->get_parent_context_ids(), $contextsany);
     if (empty($contextsany) && empty($contextsvisible)) {
         // User does not have any permissions to view cohorts.
