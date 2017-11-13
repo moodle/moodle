@@ -47,8 +47,8 @@ if ($ADMIN->fulltree) {
                      1 => get_string('emaildisplayyes'),
                      2 => get_string('emaildisplaycourse'));
     $maildisplay = isset($CFG->defaultpreference_maildisplay) ? $CFG->defaultpreference_maildisplay : 2;
-    $settings->add(new admin_setting_configselect('enrol_lti/emaildisplay', get_string('emaildisplay'), '',
-        $maildisplay, $choices));
+    $settings->add(new admin_setting_configselect('enrol_lti/emaildisplay', get_string('emaildisplay'),
+        get_string('emaildisplay_help'), $maildisplay, $choices));
 
     $city = '';
     if (!empty($CFG->defaultcity)) {
