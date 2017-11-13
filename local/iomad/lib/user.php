@@ -693,6 +693,9 @@ class iomad_user_filter_form extends moodleform {
     protected $companyid;
     protected $useshowall;
     protected $showhistoric;
+    protected $addfrom;
+    protected $addto;
+    protected $licensestatus;
 
     public function definition() {
         global $CFG, $DB, $USER, $SESSION;
@@ -709,6 +712,26 @@ class iomad_user_filter_form extends moodleform {
             $showhistoric = false;
         }
 
+        if (!empty($this->_customdata['addfrom'])) {
+            $addfrom = true;
+            $fromname = $this->_customdata['addfrom'];
+        } else {
+            $addfrom = false;
+        }
+
+        if (!empty($this->_customdata['addto'])) {
+            $addto = true;
+            $toname = $this->_customdata['addto'];
+        } else {
+            $addto = false;
+        }
+
+        if (!empty($this->_customdata['licensestatus'])) {
+            $licensestatus = true;
+        } else {
+            $licensestatus = false;
+        }
+
         $mform =& $this->_form;
         $filtergroup = array();
         $mform->addElement('header', 'usersearchfields', format_string(get_string('usersearchfields', 'local_iomad')));
@@ -718,6 +741,7 @@ class iomad_user_filter_form extends moodleform {
         $mform->addElement('hidden', 'departmentid');
         $mform->addElement('hidden', 'eventid');
         $mform->addElement('hidden', 'courseid');
+        $mform->addElement('hidden', 'licenseid');
         $mform->addElement('hidden', 'sort');
         $mform->setType('firstname', PARAM_CLEAN);
         $mform->setType('lastname', PARAM_CLEAN);
@@ -725,6 +749,7 @@ class iomad_user_filter_form extends moodleform {
         $mform->setType('departmentid', PARAM_INT);
         $mform->setType('eventid', PARAM_INT);
         $mform->setType('courseid', PARAM_INT);
+        $mform->setType('licenseid', PARAM_INT);
         $mform->setType('sort', PARAM_ALPHA);
         $mform->setExpanded('usersearchfields', false);
 
@@ -766,6 +791,21 @@ class iomad_user_filter_form extends moodleform {
             $mform->setType('showhistoric', PARAM_BOOL);
         } else {
             $mform->addElement('checkbox', 'showhistoric', get_string('showhistoricusers', 'block_iomad_company_admin'));
+        }
+
+        if ($addfrom) {
+            $mform->addElement('date_selector', $fromname, get_string($fromname, 'block_iomad_company_admin'));
+        }
+
+        if ($addto) {
+            $mform->addElement('date_selector', $toname, get_string($toname, 'block_iomad_company_admin'));
+        }
+
+        if ($licensestatus) {
+            $licenseusearray = array ('0' => get_string('any'),
+                                      '1' => get_string('notinuse', 'block_iomad_company_admin'),
+                                      '2' => get_string('inuse', 'block_iomad_company_admin'));
+            $mform->addElement('select', 'licensestatus', get_string('licensestatus', 'block_iomad_company_admin'), $licenseusearray);
         }
 
         $this->add_action_buttons(false, get_string('userfilter', 'local_iomad'));
