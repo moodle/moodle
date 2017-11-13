@@ -252,7 +252,7 @@ class core_enrol_external extends external_api {
                     'preferences' => new external_multiple_structure(
                         new external_single_structure(
                             array(
-                                'name'  => new external_value(PARAM_ALPHANUMEXT, 'The name of the preferences'),
+                                'name'  => new external_value(PARAM_RAW, 'The name of the preferences'),
                                 'value' => new external_value(PARAM_RAW, 'The value of the custom field'),
                             )
                     ), 'User preferences', VALUE_OPTIONAL),
@@ -725,7 +725,7 @@ class core_enrol_external extends external_api {
                     'preferences' => new external_multiple_structure(
                         new external_single_structure(
                             array(
-                                'name'  => new external_value(PARAM_ALPHANUMEXT, 'The name of the preferences'),
+                                'name'  => new external_value(PARAM_RAW, 'The name of the preferences'),
                                 'value' => new external_value(PARAM_RAW, 'The value of the custom field'),
                             )
                     ), 'User preferences', VALUE_OPTIONAL),
