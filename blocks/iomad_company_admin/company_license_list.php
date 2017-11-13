@@ -214,14 +214,27 @@ if ($departmentid == $companydepartment->id) {
         }
         $licensecourses = $DB->get_records('companylicense_courses', array('licenseid' => $license->id));
         $coursestring = "";
+        if (is_siteadmin()) {
+            $issiteadmin = true;
+        } else {
+            $issiteadmin = false;
+        }
         foreach ($licensecourses as $licensecourse) {
             $coursename = $DB->get_record('course', array('id' => $licensecourse->courseid));
             if (empty($coursestring)) {
-                $coursestring = "<a href='".new moodle_url('/course/view.php',
-                                   array('id' => $licensecourse->courseid))."'>".$coursename->fullname."</a>";
+                if ($issiteadmin) {
+                    $coursestring = "<a href='".new moodle_url('/course/view.php',
+                                       array('id' => $licensecourse->courseid))."'>".$coursename->fullname."</a>";
+                } else {
+                    $coursestring = $coursename->fullname;
+                }
             } else {
-                $coursestring .= ",</br><a href='".new moodle_url('/course/view.php',
+                if ($issiteadmin) {
+                    $coursestring .= ",</br><a href='".new moodle_url('/course/view.php',
                                    array('id' => $licensecourse->courseid))."'>".$coursename->fullname."</a>";
+                } else {
+                    $coursestring .= ",</br>".$coursename->fullname;
+                }
             }
         }
 
