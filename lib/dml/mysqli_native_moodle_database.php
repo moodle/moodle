@@ -307,6 +307,18 @@ class mysqli_native_moodle_database extends moodle_database {
                       FROM INFORMATION_SCHEMA.TABLES
                      WHERE table_schema = DATABASE() AND table_name = '{$this->prefix}$table'";
         } else {
+            if (($this->get_dbtype() == 'mysqli') &&
+                // Breaking change in MySQL 8.0.0+: antelope file format support has been removed.
+                version_compare($this->get_server_info()['version'], '8.0.0', '>=')) {
+                $dbengine = $this->get_dbengine();
+                $supporteddbengines = array('InnoDB', 'XtraDB');
+                if (in_array($dbengine, $supporteddbengines)) {
+                    $rowformat = 'Barracuda';
+                }
+
+                return $rowformat;
+            }
+
             $sql = "SHOW VARIABLES LIKE 'innodb_file_format'";
         }
         $this->query_start($sql, NULL, SQL_QUERY_AUX);
@@ -384,6 +396,12 @@ class mysqli_native_moodle_database extends moodle_database {
      * @return bool True if on otherwise false.
      */
     public function is_large_prefix_enabled() {
+        if (($this->get_dbtype() == 'mysqli') &&
+            // Breaking change since 8.0.0: there is only one file format and 'innodb_large_prefix' has been removed.
+            version_compare($this->get_server_info()['version'], '8.0.0', '>=')) {
+            return true;
+        }
+
         if ($largeprefix = $this->get_record_sql("SHOW VARIABLES LIKE 'innodb_large_prefix'")) {
             if ($largeprefix->value == 'ON') {
                 return true;
