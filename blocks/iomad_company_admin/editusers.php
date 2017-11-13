@@ -441,7 +441,6 @@ if ($sort == "name") {
 }
 
 // Get all or company users depending on capability.
-
 //  Check if has capability edit all users.
 if (iomad::has_capability('block/iomad_company_admin:editallusers', $systemcontext)) {
     // Make sure we dont display site admins.
@@ -811,8 +810,16 @@ function iomad_get_users_listing($sort='lastaccess', $dir='ASC', $page=0, $recor
     if (!empty($extraparams['showall'])) {
         $companysql = "";
     } else {
-        $companysql = " AND c.id = :companyid";
-        $params['companyid'] = $extraparams['companyid'];
+        $company = new company($extraparams['companyid']);
+
+        if ($parentslist = $company->get_parent_companies_recursive()) {
+            $companysql = " AND c.id = :companyid AND u.id NOT IN (
+                            SELECT userid FROM {company_users}
+                            WHERE companyid IN (" . implode(',', array_keys($parentslist)) ."))";
+        } else {
+            $companysql = " AND c.id = :companyid";
+        }
+           $params['companyid'] = $extraparams['companyid'];
     }
     return $DB->get_records_sql("SELECT concat(c.id, '-', u.id), u.*, d.name as departmentname, c.name as companyname
                                  FROM {user} u, {department} d, {company_users} cu, {company} c
