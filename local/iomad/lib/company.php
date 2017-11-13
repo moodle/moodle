@@ -435,7 +435,7 @@ class company {
         global $DB;
 
         // Deal with any children.
-        $children = $this->get_child_companies();
+        $children = $this->get_child_companies_recursive();
         foreach ($children as $child) {
             $childcompany = new company($child->id);
             $childcompany->assign_role_templates($templates, $clear);
@@ -2137,7 +2137,7 @@ class company {
         $DB->set_field('company', 'suspended', $suspend, array('id' => $this->id));
 
         // Deal with child companies.
-        $childcompanies = $this->get_child_companies();
+        $childcompanies = $this->get_child_companies_recursive();
         if (!empty($childcompanies)) {
             foreach ($childcompanies as $childcomprec) {
 
@@ -2720,7 +2720,7 @@ class company {
         $userid = $event->userid;
         
         $company = new company($companyid);
-        $childcompanies = $company->get_child_companies();
+        $childcompanies = $company->get_child_companies_recursive();
 
         foreach ($childcompanies as $child) {
             $childcompany = new company($child->id);
@@ -2747,7 +2747,7 @@ class company {
         $userid = $event->userid;
         
         $company = new company($companyid);
-        $childcompanies = $company->get_child_companies();
+        $childcompanies = $company->get_child_companies_recursive();
 
         foreach ($childcompanies as $child) {
             $childcompany = new company($child->id);
