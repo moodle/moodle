@@ -676,6 +676,11 @@ class company {
         $userrecord['managertype'] = $managertype;
         $userrecord['companyid'] = $this->id;
 
+        if ($DB->get_record('company_users', array('companyid' => $this->id, 'userid' => $userid))) {
+            // Already in this company.  Nothing left to do.
+            return true;
+        }
+
         // Moving a user.
         if (!$DB->insert_record('company_users', $userrecord)) {
             if ($ws) {
