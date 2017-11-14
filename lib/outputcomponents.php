@@ -1133,7 +1133,7 @@ class single_select implements renderable, templatable {
                             'selected' => strval($this->selected) === strval($optvalue),
                         ];
 
-                        if ($hasnothing && $nothingkey == $optvalue) {
+                        if ($hasnothing && $nothingkey === $optvalue) {
                             $option['ignore'] = 'data-ignore';
                         }
 
@@ -1153,7 +1153,7 @@ class single_select implements renderable, templatable {
                     'optgroup' => false
                 ];
 
-                if ($hasnothing && $nothingkey == $value) {
+                if ($hasnothing && $nothingkey === $value) {
                     $option['ignore'] = 'data-ignore';
                 }
 
