@@ -63,6 +63,23 @@ class core_blocklib_testcase extends advanced_testcase {
         }
     }
 
+    /**
+     * Gets the last block created.
+     *
+     * @return stdClass a record from block_instances
+     */
+    protected function get_last_created_block() {
+        global $DB;
+        // The newest block should be the record with the highest id.
+        $records = $DB->get_records('block_instances', [], 'id DESC', '*', 0, 1);
+        $return = null;
+        foreach ($records as $record) {
+            // There should only be one.
+            $return = $record;
+        }
+        return $return;
+    }
+
     public function test_no_regions_initially() {
         // Exercise SUT & Validate.
         $this->assertEquals(array(), $this->blockmanager->get_regions());
@@ -205,6 +222,7 @@ class core_blocklib_testcase extends advanced_testcase {
         $page->set_context($context);
         $page->set_pagetype($pagetype);
         $page->set_subpage($subpage);
+        $page->set_url(new moodle_url('/'));
 
         $blockmanager = new testable_block_manager($page);
         $blockmanager->add_regions($regions, false);
@@ -688,13 +706,124 @@ class core_blocklib_testcase extends advanced_testcase {
                 $newblockdata->timemodified > $blockdata->timemodified);
         $this->assertEquals($blockdata->timecreated, $newblockdata->timecreated);
     }
+
+    /**
+     * Tests that dashboard pages get their blocks loaded correctly.
+     */
+    public function test_default_dashboard() {
+        global $CFG, $PAGE, $DB;
+        $storedpage = $PAGE;
+        require_once($CFG->dirroot . '/my/lib.php');
+        $this->purge_blocks();
+        $regionname = 'a-region';
+        $blockname = $this->get_a_known_block_type();
+        $user = self::getDataGenerator()->create_user();
+        $syscontext = context_system::instance();
+        $usercontext = context_user::instance($user->id);
+        // Add sitewide 'sticky' blocks. The page is not setup exactly as a site page would be...
+        // but it does seem to mean that the bloacks are added correctly.
+        list($sitepage, $sitebm) = $this->get_a_page_and_block_manager(array($regionname), $syscontext, 'site-index');
+        $sitebm->add_block($blockname, $regionname, 0, true, '*');
+        $sitestickyblock1 = $this->get_last_created_block();
+        $sitebm->add_block($blockname, $regionname, 1, true, '*');
+        $sitestickyblock2 = $this->get_last_created_block();
+        $sitebm->add_block($blockname, $regionname, 8, true, '*');
+        $sitestickyblock3 = $this->get_last_created_block();
+        // Blocks that should not be picked up by any other pages in this unit test.
+        $sitebm->add_block($blockname, $regionname, -8, true, 'site-index-*');
+        $sitebm->add_block($blockname, $regionname, -9, true, 'site-index');
+        $sitebm->load_blocks();
+        // This repositioning should not be picked up.
+        $sitebm->reposition_block($sitestickyblock3->id, $regionname, 9);
+        // Setup the default dashboard page. This adds the blocks with the correct parameters, but seems to not be
+        // an exact page/blockmanager setup for the default dashboard setup page.
+        $defaultmy = my_get_page(null, MY_PAGE_PRIVATE);
+        list($defaultmypage, $defaultmybm) = $this->get_a_page_and_block_manager(array($regionname), null, 'my-index', $defaultmy->id);
+        $PAGE = $defaultmypage;
+        $defaultmybm->add_block($blockname, $regionname, -2, false, $defaultmypage->pagetype, $defaultmypage->subpage);
+        $defaultblock1 = $this->get_last_created_block();
+        $defaultmybm->add_block($blockname, $regionname, 3, false, $defaultmypage->pagetype, $defaultmypage->subpage);
+        $defaultblock2 = $this->get_last_created_block();
+        $defaultmybm->load_blocks();
+        $defaultmybm->reposition_block($sitestickyblock1->id, $regionname, 4);
+        // Setup the user's dashboard.
+        $usermy = my_copy_page($user->id);
+        list($mypage, $mybm) = $this->get_a_page_and_block_manager(array($regionname), $usercontext, 'my-index', $usermy->id);
+        $PAGE = $mypage;
+        $mybm->add_block($blockname, $regionname, 5, false, $mypage->pagetype, $mypage->subpage);
+        $block1 = $this->get_last_created_block();
+        $mybm->load_blocks();
+        $mybm->reposition_block($sitestickyblock2->id, $regionname, -1);
+        // Reload the blocks in the managers.
+        context_helper::reset_caches();
+        $defaultmybm->reset_caches();
+        $this->assertNull($defaultmybm->get_loaded_blocks());
+        $defaultmybm->load_blocks();
+        $this->assertNotNull($defaultmybm->get_loaded_blocks());
+        $defaultbr = $defaultmybm->get_blocks_for_region($regionname);
+        $mybm->reset_caches();
+        $this->assertNull($mybm->get_loaded_blocks());
+        $mybm->load_blocks();
+        $this->assertNotNull($mybm->get_loaded_blocks());
+        $mybr = $mybm->get_blocks_for_region($regionname);
+        // Test that a user dashboard when forced to use the default finds the correct blocks.
+        list($forcedmypage, $forcedmybm) = $this->get_a_page_and_block_manager(array($regionname), $usercontext, 'my-index', $defaultmy->id);
+        $forcedmybm->load_blocks();
+        $forcedmybr = $forcedmybm->get_blocks_for_region($regionname);
+        // Check that the default page is in the expected order.
+        $this->assertCount(5, $defaultbr);
+        $this->assertEquals($defaultblock1->id, $defaultbr[0]->instance->id);
+        $this->assertEquals('-2', $defaultbr[0]->instance->weight);
+        $this->assertEquals($sitestickyblock2->id, $defaultbr[1]->instance->id);
+        $this->assertEquals('1', $defaultbr[1]->instance->weight);
+        $this->assertEquals($defaultblock2->id, $defaultbr[2]->instance->id);
+        $this->assertEquals('3', $defaultbr[2]->instance->weight);
+        $this->assertEquals($sitestickyblock1->id, $defaultbr[3]->instance->id);
+        $this->assertEquals('4', $defaultbr[3]->instance->weight);
+        $this->assertEquals($sitestickyblock3->id, $defaultbr[4]->instance->id);
+        $this->assertEquals('8', $defaultbr[4]->instance->weight);
+        // Check that the correct block are present in the expected order for a.
+        $this->assertCount(5, $forcedmybr);
+        $this->assertEquals($defaultblock1->id, $forcedmybr[0]->instance->id);
+        $this->assertEquals('-2', $forcedmybr[0]->instance->weight);
+        $this->assertEquals($sitestickyblock2->id, $forcedmybr[1]->instance->id);
+        $this->assertEquals('1', $forcedmybr[1]->instance->weight);
+        $this->assertEquals($defaultblock2->id, $forcedmybr[2]->instance->id);
+        $this->assertEquals('3', $forcedmybr[2]->instance->weight);
+        $this->assertEquals($sitestickyblock1->id, $forcedmybr[3]->instance->id);
+        $this->assertEquals('4', $forcedmybr[3]->instance->weight);
+        $this->assertEquals($sitestickyblock3->id, $forcedmybr[4]->instance->id);
+        $this->assertEquals('8', $forcedmybr[4]->instance->weight);
+        // Check that the correct blocks are present in the standard my page.
+        $this->assertCount(6, $mybr);
+        $this->assertEquals('-2', $mybr[0]->instance->weight);
+        $this->assertEquals($sitestickyblock2->id, $mybr[1]->instance->id);
+        $this->assertEquals('-1', $mybr[1]->instance->weight);
+        $this->assertEquals('3', $mybr[2]->instance->weight);
+        // Test the override on the first sticky block was copied and picked up.
+        $this->assertEquals($sitestickyblock1->id, $mybr[3]->instance->id);
+        $this->assertEquals('4', $mybr[3]->instance->weight);
+        $this->assertEquals($block1->id, $mybr[4]->instance->id);
+        $this->assertEquals('5', $mybr[4]->instance->weight);
+        $this->assertEquals($sitestickyblock3->id, $mybr[5]->instance->id);
+        $this->assertEquals('8', $mybr[5]->instance->weight);
+        $PAGE = $storedpage;
+    }
 }
 
 /**
  * Test-specific subclass to make some protected things public.
  */
 class testable_block_manager extends block_manager {
-
+    /**
+     * Resets the caches in the block manager.
+     * This allows blocks to be reloaded correctly.
+     */
+    public function reset_caches() {
+        $this->birecordsbyregion = null;
+        $this->blockinstances = array();
+        $this->visibleblockcontent = array();
+    }
     public function mark_loaded() {
         $this->birecordsbyregion = array();
     }
