@@ -63,6 +63,12 @@ if ($hassiteconfig) {
                          'M d, y, ' => 'Mon n, YYYY');
     $settings->add(new admin_setting_configselect('iomad_date_format', get_string('dateformat', 'local_iomad_settings'), '', 'Y-m-d', $dateformats));
 
+    $settings->add(new admin_setting_configtext('iomad_report_fields',
+                                                get_string('iomad_report_fields', 'local_iomad_settings'),
+                                                get_string('iomad_report_fields_help', 'local_iomad_settings'),
+                                                '',
+                                                PARAM_TEXT));
+
     $name = 'local_iomad_settings/iomadcertificate_logo';
     $title = get_string('iomadcertificate_logo', 'local_iomad_settings');
     $description = get_string('iomadcertificate_logodesc', 'local_iomad_settings');

@@ -794,11 +794,11 @@ class iomad_user_filter_form extends moodleform {
         }
 
         if ($addfrom) {
-            $mform->addElement('date_selector', $fromname, get_string($fromname, 'block_iomad_company_admin'));
+            $mform->addElement('date_selector', $fromname, get_string($fromname, 'block_iomad_company_admin'), array('optional' => 'yes'));
         }
 
         if ($addto) {
-            $mform->addElement('date_selector', $toname, get_string($toname, 'block_iomad_company_admin'));
+            $mform->addElement('date_selector', $toname, get_string($toname, 'block_iomad_company_admin'), array('optional' => 'yes'));
         }
 
         if ($licensestatus) {

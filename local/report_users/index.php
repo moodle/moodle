@@ -69,7 +69,7 @@ if ($showsuspended) {
 }
 
 $systemcontext = context_system::instance();
-require_login(); // Adds to $PAGE, creates $OUTPUT.
+require_login(); // Adds to $PAGE, creates $output.
 iomad::require_capability('local/report_completion:view', $systemcontext);
 
 // Set the companyid
@@ -91,10 +91,17 @@ $PAGE->set_title($linktext);
 // Set the page heading.
 $PAGE->set_heading(get_string('pluginname', 'block_iomad_reports') . " - $linktext");
 
+// Get the renderer.
+$output = $PAGE->get_renderer('block_iomad_company_admin');
+
+// Javascript for fancy select.
+// Parameter is name of proper select form element followed by 1=submit its form
+$PAGE->requires->js_call_amd('block_iomad_company_admin/department_select', 'init', array('departmentid', 1, optional_param('departmentid', 0, PARAM_INT)));
+
 // Build the nav bar.
 company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
 
-echo $OUTPUT->header();
+echo $output->header();
 
 // Check the department is valid.
 if (!empty($departmentid) && !company::check_valid_department($companyid, $departmentid)) {
@@ -188,21 +195,30 @@ $subhierarchieslist = company::get_all_subdepartments($userhierarchylevel);
 $select = new single_select($baseurl, 'departmentid', $subhierarchieslist, $departmentid);
 $select->label = get_string('department', 'block_iomad_company_admin');
 $select->formid = 'choosedepartment';
-echo html_writer::tag('div', $OUTPUT->render($select), array('id' => 'iomad_department_selector'));
-$fwselectoutput = html_writer::tag('div', $OUTPUT->render($select),
-                                    array('id' => 'iomad_company_selector'));
-//if (!(iomad::has_capability('block/iomad_company_admin:editusers', $systemcontext)
-//    or iomad::has_capability('block/iomad_company_admin:editallusers', $systemcontext))) {
-//    print_error('nopermissions', 'error', '', 'edit/delete users');
-//}
+$fwselectoutput = html_writer::tag('div', $output->render($select), array('id' => 'iomad_department_selector'));
+
+$departmenttree = company::get_all_subdepartments_raw($userhierarchylevel);
+$treehtml = $output->department_tree($departmenttree, optional_param('departmentid', 0, PARAM_INT));
 
 // Set up the filter form.
 $mform = new iomad_user_filter_form(null, array('companyid' => $companyid));
 $mform->set_data(array('departmentid' => $departmentid));
 $mform->set_data($params);
 
+// Display the tree selector thing.
+echo html_writer::start_tag('div', array('class' => 'iomadclear'));
+echo html_writer::start_tag('div', array('class' => 'fitem'));
+echo $treehtml;
+echo html_writer::start_tag('div', array('style' => 'display:none'));
+echo $fwselectoutput;
+echo html_writer::end_tag('div');
+echo html_writer::end_tag('div');
+echo html_writer::end_tag('div');
+echo html_writer::start_tag('div', array('class' => 'iomadclear', 'style' => 'padding-top: 5px;'));
+
 // Display the user filter form.
 $mform->display();
+echo html_writer::end_tag('div');
 
 $stredit   = get_string('edit');
 $strdelete = get_string('delete');
@@ -217,10 +233,24 @@ if (empty($CFG->loginhttps)) {
 
 $returnurl = $CFG->wwwroot."/local/report_users/index.php";
 
+// Do we have any additional reporting fields?
+$extrafields = array();
+if (!empty($CFG->iomad_report_fields)) {
+    foreach (explode(',', $CFG->iomad_report_fields) as $extrafield) {
+        $extrafields[$extrafield] = new stdclass();
+        $extrafields[$extrafield]->name = $extrafield;
+        if (strpos($extrafield, 'profile_field') !== false) {
+            // Its an optional profile field.
+            $profilefield = $DB->get_record('user_info_field', array('shortname' => str_replace('profile_field_', '', $extrafield)));
+            $extrafields[$extrafield]->title = $profilefield->name;
+        } else {
+            $extrafields[$extrafield]->title = get_string($extrafield);
+        }
+    }
+}
 
 // Carry on with the user listing.
-
-$columns = array("firstname", "lastname", "department", "email", "city", "country", "timecreated", "lastaccess");
+$columns = array("firstname", "lastname", "department", "email", "timecreated", "lastaccess");
 
 foreach ($columns as $column) {
     if ($column == 'timecreated') {
@@ -242,7 +272,7 @@ foreach ($columns as $column) {
         } else {
             $columnicon = $dir == "ASC" ? "down":"up";
         }
-        $columnicon = " <img src=\"" . $OUTPUT->image_url('t/' . $columnicon) . "\" alt=\"\" />";
+        $columnicon = " <img src=\"" . $output->image_url('t/' . $columnicon) . "\" alt=\"\" />";
 
     }
     $$column = $string[$column].$columnicon;
@@ -350,10 +380,6 @@ $dbsort = "";
         $userrecords = array();
     }
 
-//}
-//  if (iomad::has_capability('block/iomad_company_admin:editusers', $systemcontext)) {
-    // Check if has role edit company users.
-
     // Check we havent looked and discounted everyone.
     if ((empty($idlist) && !$foundfields) || (!empty($idlist) && $foundfields)) {
         // Get users company association.
@@ -460,19 +486,19 @@ if (!empty($userlist)) {
 
 $usercount = count($userrecords);
 
-echo $OUTPUT->heading("$usercount ".get_string('users'));
+echo $output->heading("$usercount ".get_string('users'));
 
 $alphabet = explode(',', get_string('alphabet', 'block_iomad_company_admin'));
 $strall = get_string('all');
 
-echo $OUTPUT->paging_bar($usercount, $page, $perpage, $baseurl);
+echo $output->paging_bar($usercount, $page, $perpage, $baseurl);
 
 flush();
 
 
 if (!$users) {
     $match = array();
-    echo $OUTPUT->heading(get_string('nousersfound'));
+    echo $output->heading(get_string('nousersfound'));
 
     echo "<p><a class='btn' href='" . new moodle_url('/blocks/iomad_company_admin/company_user_create_form.php') . "'>" .
          get_string('createuser', 'block_iomad_company_admin') . "</a></p>";
@@ -487,16 +513,6 @@ if (!$users) {
         if (!empty($user->country)) {
             $users[$key]->country = $countries[$user->country];
         }
-    }
-    if ($sort == "country") {  // Need to resort by full country name, not code.
-        foreach ($users as $user) {
-            $susers[$user->id] = $user->country;
-        }
-        asort($susers);
-        foreach ($susers as $key => $value) {
-            $nusers[] = $users[$key];
-        }
-        $users = $nusers;
     }
 
     $mainadmin = get_admin();
@@ -525,10 +541,6 @@ if (!$users) {
         $timecreatedurl = new moodle_url('index.php', $linkparams);
         $linkparams['sort'] = 'lastaccess';
         $accessurl = new moodle_url('index.php', $linkparams);
-        $linkparams['sort'] = 'city';
-        $cityurl = new moodle_url('index.php', $linkparams);
-        $linkparams['sort'] = 'country';
-        $countryurl = new moodle_url('index.php', $linkparams);
 
         // Set the options if there is alread a sort.
         if (!empty($params['sort'])) {
@@ -586,42 +598,29 @@ if (!$users) {
                     $linkparams['dir'] = 'ASC';
                     $timecreatedurl = new moodle_url('index.php', $linkparams);
                 }
-            } else if ($params['sort'] == 'country') {
-                $linkparams['sort'] = 'country';
-                if ($params['dir'] == 'ASC') {
-                    $linkparams['dir'] = 'DESC';
-                    $countryurl = new moodle_url('index.php', $linkparams);
-                } else {
-                    $linkparams['dir'] = 'ASC';
-                    $countryurl = new moodle_url('index.php', $linkparams);
-                }
-            } else if ($params['sort'] == 'city') {
-                $linkparams['sort'] = 'city';
-                if ($params['dir'] == 'ASC') {
-                    $linkparams['dir'] = 'DESC';
-                    $cityurl = new moodle_url('index.php', $linkparams);
-                } else {
-                    $linkparams['dir'] = 'ASC';
-                    $cityurl = new moodle_url('index.php', $linkparams);
-                }
             }
         }
     }
-    $fullnamedisplay = $OUTPUT->action_link($firstnameurl, $firstname)." / ".
-                               $OUTPUT->action_link($lastnameurl, $lastname);
+    $fullnamedisplay = $output->action_link($firstnameurl, $firstname)." / ".
+                               $output->action_link($lastnameurl, $lastname);
 
     $table = new html_table();
-    $table->head = array ($fullnamedisplay,
-                          $OUTPUT->action_link($emailurl, $email),
-                          $OUTPUT->action_link($departmenturl,
-                          $department),
-                          $OUTPUT->action_link($cityurl, $city),
-                          $OUTPUT->action_link($countryurl,
-                          $country),
-                          $OUTPUT->action_link($timecreatedurl, $timecreated),
-                          $OUTPUT->action_link($accessurl, $lastaccess));
+    $headstart = array($fullnamedisplay => $fullnamedisplay,
+                       $email => $output->action_link($emailurl, $email),
+                       $department => $output->action_link($departmenturl, $department));
+    $headmid = array();
+    if (!empty($extrafields)) {
+        foreach ($extrafields as $extrafield) {
+            $headmid[$extrafield->name] = $extrafield->title;
+        }
+    }
+
+    $headend = array ($timecreated => $output->action_link($timecreatedurl, $timecreated),
+                      $lastaccess => $output->action_link($accessurl, $lastaccess));
+    $table->head = $headstart + $headmid + $headend;
     $table->align = array ("left", "left", "left", "left", "left", "left", "center", "center", "center");
     $table->width = "95%";
+
     foreach ($users as $user) {
         if ($user->username == 'guest') {
             continue; // Do not dispaly dummy new user and guest here.
@@ -645,21 +644,32 @@ if (!$users) {
             $fullname .= " (S)";
         }
 
-        $table->data[] = array ("<a href='".$CFG->wwwroot.
-                                "/local/report_users/userdisplay.php?userid=".
-                                $user->id."'>$fullname</a>",
-                            "$user->email",
-                            "$user->departmentname",
-                            "$user->city",
-                            "$user->country",
-                            $strtimecreated,
-                            $strlastaccess);
+        // load the full user profile.
+        profile_load_data($user);
+
+        $userurl = "/local/report_users/userdisplay.php";
+        $rowstart = array('fullname' => "<a href='".new moodle_url($userurl, array('userid' => $user->id)).
+                                        "'>$fullname</a>",
+                          'email' => $user->email,
+                          'department' => $user->departmentname);
+        $rowmid = array();
+        if (!empty($extrafields)) {
+            foreach($extrafields as $extrafield) {
+                $fieldname = $extrafield->name;
+                $rowmid[$extrafield->name] = $user->$fieldname;
+            }
+        }
+
+        $rowend = array('timecreated' => $strtimecreated,
+                        'lastaccess' => $strlastaccess);
+        $table->data[] = $rowstart + $rowmid + $rowend;
+                            
     }
 }
 
 if (!empty($table)) {
     echo html_writer::table($table);
-    echo $OUTPUT->paging_bar($usercount, $page, $perpage, $baseurl);
+    echo $output->paging_bar($usercount, $page, $perpage, $baseurl);
 }
 
-echo $OUTPUT->footer();
+echo $output->footer();

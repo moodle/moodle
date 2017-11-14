@@ -143,6 +143,13 @@ $PAGE->requires->jquery();
 // Set the page heading.
 $PAGE->set_heading(get_string('pluginname', 'block_iomad_reports') . " - $strcompletion");
 
+// Get the renderer.
+$output = $PAGE->get_renderer('block_iomad_company_admin');
+
+// Javascript for fancy select.
+// Parameter is name of proper select form element followed by 1=submit its form
+$PAGE->requires->js_call_amd('block_iomad_company_admin/department_select', 'init', array('departmentid', 1, optional_param('departmentid', 0, PARAM_INT)));
+
 // Set the companyid
 $companyid = iomad::get_my_companyid($context);
 
@@ -174,13 +181,15 @@ $url = new moodle_url('/local/report_completion/index.php', $params);
 
 // Get the appropriate list of departments.
 $selectparams = $params;
-$selectparams['courseid'] = 0;
 $selecturl = new moodle_url('/local/report_completion/index.php', $selectparams);
 $subhierarchieslist = company::get_all_subdepartments($userhierarchylevel);
 $select = new single_select($selecturl, 'departmentid', $subhierarchieslist, $departmentid);
 $select->label = get_string('department', 'block_iomad_company_admin') . "&nbsp";
 $select->formid = 'choosedepartment';
-$fwselectoutput = html_writer::tag('div', $OUTPUT->render($select), array('id' => 'iomad_department_selector'));
+$fwselectoutput = html_writer::tag('div', $output->render($select), array('id' => 'iomad_department_selector'));
+
+$departmenttree = company::get_all_subdepartments_raw($userhierarchylevel);
+$treehtml = $output->department_tree($departmenttree, optional_param('departmentid', 0, PARAM_INT));
 
 // Get the appropriate list of departments.
 $selectparams = $params;
@@ -192,7 +201,7 @@ $completiontypelist = array('0' => get_string('all'),
 $select = new single_select($selecturl, 'completiontype', $completiontypelist, $completiontype);
 $select->label = get_string('choosecompletiontype', 'block_iomad_company_admin') . "&nbsp";
 $select->formid = 'choosecompletiontype';
-$completiontypeselectoutput = html_writer::tag('div', $OUTPUT->render($select), array('id' => 'iomad_completiontype_selector'));
+$completiontypeselectoutput = html_writer::tag('div', $output->render($select), array('id' => 'iomad_completiontype_selector'));
 
 //if (!(iomad::has_capability('block/iomad_company_admin:editusers', $context) or
 //      iomad::has_capability('block/iomad_company_admin:editallusers', $context))) {
@@ -212,7 +221,7 @@ $options['dodownload'] = 1;
 
 // Only print the header if we are not downloading.
 if (empty($dodownload) && empty($showchart)) {
-    echo $OUTPUT->header();
+    echo $output->header();
     // Check the department is valid.
     if (!empty($departmentid) && !company::check_valid_department($companyid, $departmentid)) {
         print_error('invaliddepartment', 'block_iomad_company_admin');
@@ -225,47 +234,64 @@ if (empty($dodownload) && empty($showchart)) {
     }   
 }
 
+$courseinfo = report_completion::get_course_summary_info ($departmentid, 0, $showsuspended);
 if (empty($dodownload) && empty($showchart)) {
-    echo "<h3>".get_string('coursesummary', 'local_report_completion')."</h3>";
-    if (!empty($companyid) && !empty($courseid)) {
-        echo $fwselectoutput;
-        $dateform = new iomad_date_filter_form($params);
-        $dateform->display();
-
+    if (empty($courseid)) {
+        echo "<h3>".get_string('coursesummary', 'local_report_completion')."</h3>";
+    } else if ($courseid == 1) {
+        echo "<h3>".get_string('reportallusers', 'local_report_completion')."</h3>";
+    } else {
+        echo "<h3>".get_string('courseusers', 'local_report_completion').$courseinfo[$courseid]->coursename."</h3>";
     }
-    if (!empty($courseid)) {
+
+    if (!empty($companyid) && !empty($courseid)) {
+        echo html_writer::start_tag('div', array('class' => 'iomadclear'));
+        echo html_writer::start_tag('div', array('class' => 'fitem'));
+        echo $treehtml;
+        echo html_writer::start_tag('div', array('style' => 'display:none'));
+        echo $fwselectoutput;
+        echo html_writer::end_tag('div');
+        echo html_writer::end_tag('div');
+        echo html_writer::end_tag('div');
+        echo html_writer::start_tag('div', array('class' => 'iomadclear', 'style' => 'padding-top: 5px;'));
+        echo html_writer::start_tag('div', array('style' => 'float:left;'));
+        echo $completiontypeselectoutput;
+        echo html_writer::end_tag('div');
         // Navigation and header.
 		if (empty($params['charttype'])) {
-            echo $OUTPUT->single_button(new moodle_url('index.php', $options), get_string("downloadcsv", 'local_report_completion'));
+            echo html_writer::start_tag('div', array('style' => 'float:right;'));
+            echo $output->single_button(new moodle_url('index.php', $options), get_string("downloadcsv", 'local_report_completion'));
+            echo html_writer::end_tag('div');
         }
+        echo html_writer::end_tag('div');
+    }
+    if (!empty($courseid)) {
 		$options['charttype'] = 'summary';
         $options['dodownload'] = false;
-        //echo $OUTPUT->single_button(new moodle_url('index.php', $options), get_string("summarychart", 'local_report_completion'));
     } else {
         $options['charttype'] = 'summary';
         $options['dodownload'] = false;
-        //echo $OUTPUT->single_button(new moodle_url('index.php', $options), get_string("summarychart", 'local_report_completion'));
         $alluserslink = new moodle_url($url, array(
             'courseid' => 1,
             'departmentid' => $departmentid,
             'showchart' => 0,
             'charttype' => '',
         ));
-        echo $OUTPUT->single_button($alluserslink, get_string("allusers", 'local_report_completion'));
+        echo $output->single_button($alluserslink, get_string("allusers", 'local_report_completion'));
         if (!$showhistoric) {
             $historicuserslink = new moodle_url($url, array('departmentid' => $departmentid,
                                                             'showchart' => 0,
                                                             'charttype' => '',
                                                             'showhistoric' => 1
                                                             ));
-            echo $OUTPUT->single_button($historicuserslink, get_string("historicusers", 'local_report_completion'));
+            echo $output->single_button($historicuserslink, get_string("historicusers", 'local_report_completion'));
         } else {
             $historicuserslink = new moodle_url($url, array('departmentid' => $departmentid,
                                                             'showchart' => 0,
                                                             'charttype' => '',
                                                             'showhistoric' => 0
                                                             ));
-            echo $OUTPUT->single_button($historicuserslink, get_string("hidehistoricusers", 'local_report_completion'));
+            echo $output->single_button($historicuserslink, get_string("hidehistoricusers", 'local_report_completion'));
         }
     }
 
@@ -309,7 +335,6 @@ if (!empty($dodownload)) {
     header("Pragma: public");
 
 }
-$courseinfo = report_completion::get_course_summary_info ($departmentid, 0, $showsuspended);
 $chartnumusers = array();
 $chartnotstarted = array();
 $chartinprogress = array();
@@ -404,12 +429,23 @@ if (empty($dodownload) && empty($showchart)) {
     if (empty($courseid)) {
         echo html_writer::table($coursecomptable);
     }
-    if (!empty($courseid)  && empty($charttype)) {
-        // Get the data.
-        echo $completiontypeselectoutput;
-    }
 }
 
+// Do we have any additional reporting fields?
+$extrafields = array();
+if (!empty($CFG->iomad_report_fields)) {
+    foreach (explode(',', $CFG->iomad_report_fields) as $extrafield) {
+        $extrafields[$extrafield] = new stdclass();
+        $extrafields[$extrafield]->name = $extrafield;
+        if (strpos($extrafield, 'profile_field') !== false) {
+            // Its an optional profile field.
+            $profilefield = $DB->get_record('user_info_field', array('shortname' => str_replace('profile_field_', '', $extrafield)));
+            $extrafields[$extrafield]->title = $profilefield->name;
+        } else {
+            $extrafields[$extrafield]->title = get_string($extrafield);
+        }
+    }
+}
 
 if (empty($charttype)) {
     if (!empty($courseid)) {
@@ -457,39 +493,30 @@ if (empty($charttype)) {
                 }
             }
         }
-        if (empty($dodownload)) {
-            if ($courseid == 1) {
-                echo "<h3>".get_string('reportallusers', 'local_report_completion')."</h3>";
-            } else {
-                echo "<h3>".get_string('courseusers', 'local_report_completion').$courseinfo[$courseid]->coursename."</h3>";
-            }
-        }
         $compusertable = new html_table();
     
         // Deal with table columns.
+        $startcolumns = array('firstname' => 'firstname',
+                              'lastname' => 'lastname',
+                              'department' => 'department',
+                              'email' => 'email');
+
         if (!$showexpiry) {
-            $columns = array('firstname',
-                             'lastname',
-                             'department',
-                             'email',
-                             'status',
-                             'timeenrolled',
-                             'timestarted',
-                             'timecompleted',
-                             'finalscore');
+            $endcolumns = array('status' => 'status',
+                                'timeenrolled' => 'timeenrolled',
+                                'timestarted' => 'timestarted',
+                                'timecompleted' => 'timecompleted',
+                                'finalscore' => 'finalscore');
         } else {
-            $columns = array('firstname',
-                             'lastname',
-                             'department',
-                             'email',
-                             'status',
-                             'timeenrolled',
-                             'timestarted',
-                             'timecompleted',
-                             'timeexpires',
-                             'finalscore');
+            $endcolumns = array('status' => 'status',
+                                'timeenrolled' => 'timeenrolled',
+                                'timestarted' => 'timestarted',
+                                'timecompleted' => 'timecompleted',
+                                'timeexpires' => 'timeexpires',
+                                'finalscore' => 'finalscore');
         }
-    
+
+        $columns = $startcolumns + $endcolumns;
         foreach ($columns as $column) {
             if ($column != 'timeexpires') {
                 $string[$column] = get_string($column, 'local_report_completion');
@@ -499,7 +526,7 @@ if (empty($charttype)) {
                 } else {
                     $columndir = $dir == "ASC" ? "DESC":"ASC";
                     $columnicon = $dir == "ASC" ? "down":"up";
-                    $columnicon = " <img src=\"" . $OUTPUT->image_url('t/' . $columnicon) . "\" alt=\"\" />";
+                    $columnicon = " <img src=\"" . $output->image_url('t/' . $columnicon) . "\" alt=\"\" />";
 
                 }
                 $$column = $string[$column].$columnicon;
@@ -516,15 +543,23 @@ if (empty($charttype)) {
             } else {
                 echo $courseinfo[$courseid]->coursename."\n";
             }
-            echo '"'.get_string('name', 'local_report_completion').'","'
-                 .get_string('email', 'local_report_completion').'","'
-                 .get_string('course').'","'
-                 .get_string('department', 'block_iomad_company_admin').'","'
-                 .get_string('status', 'local_report_completion').'","'
-                 .get_string('timeenrolled', 'local_report_completion').'","'
-                 .get_string('timestarted', 'local_report_completion').'","'
-                 .get_string('timecompleted', 'local_report_completion').'","'
-                 .get_string('finalscore', 'local_report_completion')."\"\n";
+            $startcolumns = '"'.get_string('name', 'local_report_completion').'","'
+                            .get_string('email', 'local_report_completion').'","'
+                            .get_string('course').'","'
+                            .get_string('department', 'block_iomad_company_admin').'",';
+            $endcolumns = '"' . get_string('status', 'local_report_completion').'","'
+                          .get_string('timeenrolled', 'local_report_completion').'","'
+                          .get_string('timestarted', 'local_report_completion').'","'
+                          .get_string('timecompleted', 'local_report_completion').'","'
+                          .get_string('finalscore', 'local_report_completion')."\"\n";
+            $midcolumns = "";
+            if (!empty($extrafields)) {
+                foreach ($extrafields as $extrafield) {
+                    $midcolumns .= '"' . $extrafield->title . '",';
+                }
+            }
+
+            echo $startcoulmns . $midcolumns . $endcolumns;
             $xlsrow = 1;
         }
         // Set the initial parameters for the table header links.
@@ -645,38 +680,41 @@ if (empty($charttype)) {
                 }
             }
         }
-        $fullnamedisplay = $OUTPUT->action_link($firstnameurl, 'Name'); //." / ". $OUTPUT->action_link($lastnameurl, $lastname);
+        $fullnamedisplay = $output->action_link($firstnameurl, 'Name'); //." / ". $output->action_link($lastnameurl, $lastname);
     
+        $headstart = array($fullnamedisplay => $fullnamedisplay,
+                           $email => $output->action_link($emailurl, $email),
+                           'course' => get_string('course'),
+                           $department => $output->action_link($departmenturl, $department));
+        $headmid = array();
+        if (!empty($extrafields)) {
+            foreach ($extrafields as $extrafield) {
+                $headmid[$extrafield->name] = $extrafield->title;
+            }
+        }
         if (!$showexpiry) {
-            $compusertable->head = array ($fullnamedisplay,
-                                          $OUTPUT->action_link($emailurl, $email),
-                                          get_string('course'),
-                                          $OUTPUT->action_link($departmenturl, $department),
-                                          $OUTPUT->action_link($timeenrolledurl, $timeenrolled),
-                                          $OUTPUT->action_link($statusurl, $status),
-                                          $OUTPUT->action_link($timestartedurl, $timestarted),
-                                          $OUTPUT->action_link($timecompletedurl, $timecompleted),
-                                          $finalscore);
+            
+            $headend = array ($timeenrolled => $output->action_link($timeenrolledurl, $timeenrolled),
+                              $status => $output->action_link($statusurl, $status),
+                              $timestarted => $output->action_link($timestartedurl, $timestarted),
+                              $timecompleted => $output->action_link($timecompletedurl, $timecompleted),
+                              $finalscore =>$finalscore);
             $compusertable->align = array('center', 'center', 'center', 'center', 'center', 'center', 'center', 'center', 'center');
         } else {
-            $compusertable->head = array ($fullnamedisplay,
-                                          $OUTPUT->action_link($emailurl, $email),
-                                          get_string('course'),
-                                          $OUTPUT->action_link($departmenturl, $department),
-                                          $OUTPUT->action_link($timeenrolledurl, $timeenrolled),
-                                          $OUTPUT->action_link($statusurl, $status),
-                                          $OUTPUT->action_link($timestartedurl, $timestarted),
-                                          $OUTPUT->action_link($timecompletedurl, $timecompleted),
-                                          $timeexpires,
-                                          $finalscore);
-                                          $compusertable->align = array('center', 'center', 'center', 'center', 'center', 'center', 'center', 'center', 'center', 'center');
+            $headend = array ($timeenrolled => $output->action_link($timeenrolledurl, $timeenrolled),
+                              $status => $output->action_link($statusurl, $status),
+                              $timestarted => $output->action_link($timestartedurl, $timestarted),
+                              $timecompleted => $output->action_link($timecompletedurl, $timecompleted),
+                              $timeexpires => $timeexpires,
+                              $finalscore =>$finalscore);
+            $compusertable->align = array('center', 'center', 'center', 'center', 'center', 'center', 'center', 'center', 'center', 'center');
         }
+        $compusertable->head = $headstart + $headmid + $headend;
 		$compusertable->id = 'ReportTable';
         if ($hascertificate) {
             $compusertable->head[] = get_string('certificate', 'local_report_completion');
             $compusertable->align[] = 'center';
         }
-        //$compusertable->width = '95%';
     
         $userurl = '/local/report_users/userdisplay.php';
     
@@ -722,8 +760,11 @@ if (empty($charttype)) {
                 } else {
                     $scorestring = "-";
                 }
-    
-                $user->fullname = $user->firstname . ' ' . $user->lastname;
+
+                // load the full user profile.
+                profile_load_data($user);
+                $user->fullname = fullname($user);
+
                 // Deal with the certificate.
                 if ($hascertificate) {
                     // Check if user has completed the course - if so, show the certificate.
@@ -750,107 +791,115 @@ if (empty($charttype)) {
                     } else {
                         $certtabledata = get_string('nocerttodownload', 'local_report_users');
                     }
-                    if (!$showexpiry) {
-                        $compusertable->data[] = array("<a href='".new moodle_url($userurl,
-                                                                                  array('userid' => $user->uid,
-                                                                                        'courseid' => $courseid)).
-                                                       "'>$user->fullname</a>",
-                                                        $user->email,
-                                                        $user->coursename,
-                                                        $user->department,
-                                                        $enrolledtime,
-                                                        $statusstring,
-                                                        $starttime,
-                                                        $completetime,
-                                                        $scorestring,
-                                                        $certtabledata);
-                    } else {
-                        $compusertable->data[] = array("<a href='".new moodle_url($userurl,
-                                                                                  array('userid' => $user->uid,
-                                                                                        'courseid' => $courseid)).
-                                                       "'>$user->fullname</a>",
-                                                        $user->email,
-                                                        $user->coursename,
-                                                        $user->department,
-                                                        $enrolledtime,
-                                                        $statusstring,
-                                                        $starttime,
-                                                        $completetime,
-                                                        $expirytime,
-                                                        $scorestring,
-                                                        $certtabledata);
+
+                    $rowstart = array('fullname' => "<a href='".new moodle_url($userurl, array('userid' => $user->uid,
+                                                                                 'courseid' => $courseid)).
+                                                    "'>$user->fullname</a>",
+                                      'email' => $user->email,
+                                      'coursename' => $user->coursename,
+                                      'department' => $user->department);
+                    $rowmid = array();
+                    if (!empty($extrafields)) {
+                        foreach($extrafields as $extrafield) {
+                            $fieldname = $extrafield->name;
+                            $rowmid[$extrafield->name] = $user->$fieldname;
+                        }
                     }
+                    if (!$showexpiry) {
+                        $rowend = array($enrolledtime => $enrolledtime,
+                                        $statusstring => $statusstring,
+                                        $starttime => $starttime,
+                                        $completetime => $completetime,
+                                        $scorestring => $scorestring,
+                                        $certtabledata => $certtabledata);
+                    } else {
+                        $rowend = array($enrolledtime => $enrolledtime,
+                                        $statusstring => $statusstring,
+                                        $starttime => $starttime,
+                                        $completetime => $completetime,
+                                        $expirytime => $expirytime,
+                                        $scorestring => $scorestring,
+                                        $certtabledata => $certtabledata);
+                    }
+                    $compusertable->data[] = $rowstart + $rowmid + $rowend;
                 } else {
-                    if (!$showexpiry) {
-                        $compusertable->data[] = array("<a href='".new moodle_url($userurl,
-                                                                                  array('userid' => $user->uid,
-                                                                                        'courseid' => $courseid)).
-                                                       "'>$user->fullname</a>",
-                                                        $user->email,
-                                                        $user->coursename,
-                                                        $user->department,
-                                                        $enrolledtime,
-                                                        $statusstring,
-                                                        $starttime,
-                                                        $completetime,
-                                                        $scorestring);
-                    } else {
-                        $compusertable->data[] = array("<a href='".new moodle_url($userurl,
-                                                                                  array('userid' => $user->uid,
-                                                                                        'courseid' => $courseid)).
-                                                       "'>$user->fullname</a>",
-                                                        $user->email,
-                                                        $user->coursename,
-                                                        $user->department,
-                                                        $enrolledtime,
-                                                        $statusstring,
-                                                        $starttime,
-                                                        $completetime,
-                                                        $expirytime,
-                                                        $scorestring);
+                    $rowstart = array('fullname' => "<a href='".new moodle_url($userurl, array('userid' => $user->uid,
+                                                                                 'courseid' => $courseid)).
+                                                    "'>$user->fullname</a>",
+                                      'email' => $user->email,
+                                      'coursename' => $user->coursename,
+                                      'department' => $user->department);
+                    $rowmid = array();
+                    if (!empty($extrafields)) {
+                        foreach($extrafields as $extrafield) {
+                            $fieldname = $extrafield->name;
+                            $rowmid[$extrafield->name] = $user->$fieldname;
+                        }
                     }
+                    if (!$showexpiry) {
+                        $rowend = array($enrolledtime => $enrolledtime,
+                                        $statusstring => $statusstring,
+                                        $starttime => $starttime,
+                                        $completetime => $completetime,
+                                        $scorestring => $scorestring);
+                    } else {
+                        $rowend = array($enrolledtime => $enrolledtime,
+                                        $statusstring => $statusstring,
+                                        $starttime => $starttime,
+                                        $completetime => $completetime,
+                                        $expirytime => $expirytime,
+                                        $scorestring => $scorestring);
+                    }
+                    $compusertable->data[] = $rowstart + $rowmid + $rowend;
                 }
                 if (!empty($dodownload)) {
-                    if (!$showexpiry) {
-                        echo '"'.$user->fullname.
-                             '","'.$user->email.
-                             '","'.$user->coursename.
-                             '","'.$user->department.
-                             '","'.$statusstring.
-                             '","'.$enrolledtime.
-                             '","'.$starttime.
-                             '","'.$completetime.
-                             '","'.$scorestring.
-                             "\"\n";
-                    } else {
-                        echo '"'.$user->fullname.
-                             '","'.$user->email.
-                             '","'.$user->coursename.
-                             '","'.$user->department.
-                             '","'.$statusstring.
-                             '","'.$enrolledtime.
-                             '","'.$starttime.
-                             '","'.$completetime.
-                             '","'.$expirytime.
-                             '","'.$scorestring.
-                             "\"\n";
+                    $rowstart = '"'.$user->fullname.
+                                '","'.$user->email.
+                                '","'.$user->coursename.
+                                '","'.$user->department;
+                              
+                    $rowmid = '';
+                    if (!empty($extrafields)) {
+                        foreach($extrafields as $extrafield) {
+                            $fieldname = $extrafield->name;
+                            $rowmid .= ',"'.$user->$fieldname .'"';
+                        }
                     }
+                    if (!$showexpiry) {
+                        $rowend = '","'.$statusstring.
+                                  '","'.$enrolledtime.
+                                  '","'.$starttime.
+                                  '","'.$completetime.
+                                  '","'.$scorestring.
+                                  "\"\n";
+                    } else {
+                        $rowend = '","'.$statusstring.
+                                  '","'.$enrolledtime.
+                                  '","'.$starttime.
+                                  '","'.$completetime.
+                                  '","'.$expirytime.
+                                  '","'.$scorestring.
+                                  "\"\n";
+                    }
+                    echo $rowstart . $rowmid . $rowend;
                 }
             }
         }
         if (empty($dodownload)) {
             // Set up the filter form.
-            $mform = new iomad_user_filter_form(null, array('companyid' => $companyid, 'showhistoric' => true));
+            $mform = new iomad_user_filter_form(null, array('companyid' => $companyid, 'showhistoric' => true, 'addfrom' => 'compfrom', 'addto' => 'compto'));
 
             $mform->set_data(array('departmentid' => $departmentid));
             $mform->set_data($params);
     
             // Display the user filter form.
+            echo html_writer::start_tag('div', array('class' => 'iomadclear'));
             $mform->display();
+            echo html_writer::end_tag('div');
     
             // Display the paging bar.
             if (empty($idlist['0'])) {
-                echo $OUTPUT->paging_bar($totalcount, $page, $perpage, new moodle_url('/local/report_completion/index.php', $params));
+                echo $output->paging_bar($totalcount, $page, $perpage, new moodle_url('/local/report_completion/index.php', $params));
 				echo "<br />";
             }
     
@@ -919,4 +968,4 @@ if (empty($dodownload) && !empty($charttype)) {
 if (!empty($dodownload)) {
     exit;
 }
-echo $OUTPUT->footer();
+echo $output->footer();

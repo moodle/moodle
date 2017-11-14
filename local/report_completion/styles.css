@@ -22,3 +22,7 @@ div#piechart {
     border: 2px #888 solid;
     background-color: #fff;
     }
+
+#page-local-report_completion-index .col-md-9 {
+    clear:both;
+}
