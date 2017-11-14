@@ -134,7 +134,7 @@ class course implements \core_analytics\analysable {
      *
      * Lazy load of course data, students and teachers.
      *
-     * @param int|stdClass $course Course id
+     * @param int|\stdClass $course Course id
      * @return void
      */
     public function __construct($course) {
@@ -152,7 +152,7 @@ class course implements \core_analytics\analysable {
      *
      * Lazy load of course data, students and teachers.
      *
-     * @param int|stdClass $course Course object or course id
+     * @param int|\stdClass $course Course object or course id
      * @return \core_analytics\course
      */
     public static function instance($course) {
@@ -184,7 +184,7 @@ class course implements \core_analytics\analysable {
     /**
      * Loads the analytics course object.
      *
-     * @return null
+     * @return void
      */
     protected function load() {
 
@@ -451,7 +451,7 @@ class course implements \core_analytics\analysable {
     /**
      * Returns the course students.
      *
-     * @return stdClass[]
+     * @return int[]
      */
     public function get_students() {
 
@@ -595,7 +595,7 @@ class course implements \core_analytics\analysable {
      *
      * Keys are ignored.
      *
-     * @param int|float $values Sorted array of values
+     * @param int[]|float[] $values Sorted array of values
      * @return int
      */
     protected function median($values) {
@@ -605,7 +605,7 @@ class course implements \core_analytics\analysable {
             return reset($values);
         }
 
-        $middlevalue = floor(($count - 1) / 2);
+        $middlevalue = (int)floor(($count - 1) / 2);
 
         if ($count % 2) {
             // Odd number, middle is the median.
