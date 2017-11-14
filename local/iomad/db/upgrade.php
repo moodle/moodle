@@ -1688,6 +1688,8 @@ function xmldb_local_iomad_upgrade($oldversion) {
 
     if ($oldversion < 2017090307) {
 
+        $systemcontext = context_system::instance();
+
         // Remove capabilities incorrectly added.
         // They do not exist.
         $roles = $DB->get_records('role');
@@ -1701,9 +1703,9 @@ function xmldb_local_iomad_upgrade($oldversion) {
         }
 
         // Fix capability typo in company department manager role
-        $companydepartmentmanager = $DB->get_record('role', array('shortname' => 'companydepartmentmanager')), '*', MUST_EXIST);
+        $companydepartmentmanager = $DB->get_record('role', array('shortname' => 'companydepartmentmanager'), '*', MUST_EXIST);
         unassign_capability('block/iomad_report:view', $companydepartmentmanager->id);
-        assign_capability('block/iomad_reports:view', $companydepartmentmanager->id);
+        assign_capability('block/iomad_reports:view', CAP_ALLOW, $companydepartmentmanager->id, $systemcontext->id);
 
         // Iomad savepoint reached.
         upgrade_plugin_savepoint(true, 2017090307, 'local', 'iomad');
