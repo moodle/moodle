@@ -127,23 +127,19 @@ class core_calendar_external extends external_api {
                                     'eventids' => new external_multiple_structure(
                                             new external_value(PARAM_INT, 'event ids')
                                             , 'List of event ids',
-                                            VALUE_DEFAULT, array(), NULL_ALLOWED
-                                                ),
+                                            VALUE_DEFAULT, array()),
                                     'courseids' => new external_multiple_structure(
                                             new external_value(PARAM_INT, 'course ids')
                                             , 'List of course ids for which events will be returned',
-                                            VALUE_DEFAULT, array(), NULL_ALLOWED
-                                                ),
+                                            VALUE_DEFAULT, array()),
                                     'groupids' => new external_multiple_structure(
                                             new external_value(PARAM_INT, 'group ids')
                                             , 'List of group ids for which events should be returned',
-                                            VALUE_DEFAULT, array(), NULL_ALLOWED
-                                                ),
+                                            VALUE_DEFAULT, array()),
                                     'categoryids' => new external_multiple_structure(
                                             new external_value(PARAM_INT, 'Category ids'),
                                             'List of category ids for which events will be returned',
-                                            VALUE_DEFAULT, array()
-                                ),
+                                            VALUE_DEFAULT, array()),
                             ), 'Event details', VALUE_DEFAULT, array()),
                     'options' => new external_single_structure(
                             array(
