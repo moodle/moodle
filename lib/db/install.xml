@@ -1077,6 +1077,20 @@
         <INDEX NAME="roleid-allowoverride" UNIQUE="true" FIELDS="roleid, allowswitch" COMMENT="Each pair (roleid, allowswitch) must appear at most once."/>
       </INDEXES>
     </TABLE>
+    <TABLE NAME="role_allow_view" COMMENT="This table stores which which other roles a user is allowed to view to if they have one role.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="roleid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The role the user has."/>
+        <FIELD NAME="allowview" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The id of a role that the user is allowed to view to as a result of having this role."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="roleid" TYPE="foreign" FIELDS="roleid" REFTABLE="role" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="roleid-allowview" UNIQUE="true" FIELDS="roleid, allowview" COMMENT="Each pair (roleid, allowview) must appear at most once."/>
+      </INDEXES>
+    </TABLE>
     <TABLE NAME="role_assignments" COMMENT="assigning roles in different context">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>

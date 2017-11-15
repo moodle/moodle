@@ -117,6 +117,7 @@ class course_enrolment_manager {
     private $_plugins = null;
     private $_allplugins = null;
     private $_roles = null;
+    private $_visibleroles = null;
     private $_assignableroles = null;
     private $_assignablerolesothers = null;
     private $_groups = null;
@@ -594,6 +595,18 @@ class course_enrolment_manager {
     }
 
     /**
+     * Gets all of the roles this course can contain.
+     *
+     * @return array
+     */
+    public function get_viewable_roles() {
+        if ($this->_visibleroles === null) {
+            $this->_visibleroles = get_viewable_roles($this->context);
+        }
+        return $this->_visibleroles;
+    }
+
+    /**
      * Gets all of the assignable roles for this course.
      *
      * @return array
@@ -1032,7 +1045,7 @@ class course_enrolment_manager {
         $strunenrol = get_string('unenrol', 'enrol');
         $stredit = get_string('edit');
 
-        $allroles   = $this->get_all_roles();
+        $visibleroles   = $this->get_viewable_roles();
         $assignable = $this->get_assignable_roles();
         $allgroups  = $this->get_all_groups();
         $context    = $this->get_context();
@@ -1054,7 +1067,15 @@ class course_enrolment_manager {
                 if (!is_siteadmin() and !isset($assignable[$rid])) {
                     $unchangeable = true;
                 }
-                $details['roles'][$rid] = array('text'=>$allroles[$rid]->localname, 'unchangeable'=>$unchangeable);
+
+                if (isset($visibleroles[$rid])) {
+                    $label = $visibleroles[$rid];
+                } else {
+                    $label = get_string('novisibleroles', 'role');
+                    $unchangeable = true;
+                }
+
+                $details['roles'][$rid] = array('text' => $label, 'unchangeable' => $unchangeable);
             }
 
             // Users

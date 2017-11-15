@@ -42,6 +42,7 @@ class core_role_define_role_table_advanced extends core_role_capability_table_wi
     protected $allowassign;
     protected $allowoverride;
     protected $allowswitch;
+    protected $allowview;
 
     public function __construct($context, $roleid) {
         $this->roleid = $roleid;
@@ -72,6 +73,7 @@ class core_role_define_role_table_advanced extends core_role_capability_table_wi
             $this->allowassign = array_keys($this->get_allow_roles_list('assign'));
             $this->allowoverride = array_keys($this->get_allow_roles_list('override'));
             $this->allowswitch = array_keys($this->get_allow_roles_list('switch'));
+            $this->allowview = array_keys($this->get_allow_roles_list('view'));
 
         } else {
             $this->role = new stdClass;
@@ -83,6 +85,7 @@ class core_role_define_role_table_advanced extends core_role_capability_table_wi
             $this->allowassign = array();
             $this->allowoverride = array();
             $this->allowswitch = array();
+            $this->allowview = array();
         }
         parent::load_current_permissions();
     }
@@ -162,6 +165,10 @@ class core_role_define_role_table_advanced extends core_role_capability_table_wi
         if (!is_null($allow)) {
             $this->allowswitch = $allow;
         }
+        $allow = optional_param_array('allowview', null, PARAM_INT);
+        if (!is_null($allow)) {
+            $this->allowview = $allow;
+        }
 
         // Now read the permissions for each capability.
         parent::read_submitted_permissions();
@@ -178,7 +185,8 @@ class core_role_define_role_table_advanced extends core_role_capability_table_wi
      * @param int $roleid role id or 0 for no role
      * @param array $options array with following keys:
      *      'name', 'shortname', 'description', 'permissions', 'archetype',
-     *      'contextlevels', 'allowassign', 'allowoverride', 'allowswitch'
+     *      'contextlevels', 'allowassign', 'allowoverride', 'allowswitch',
+     *      'allowview'
      */
     public function force_duplicate($roleid, array $options) {
         global $DB;
@@ -214,6 +222,9 @@ class core_role_define_role_table_advanced extends core_role_capability_table_wi
             }
             if ($options['allowswitch']) {
                 $this->allowswitch = array();
+            }
+            if ($options['allowview']) {
+                $this->allowview = array();
             }
 
             if ($options['permissions']) {
@@ -260,6 +271,9 @@ class core_role_define_role_table_advanced extends core_role_capability_table_wi
         if ($options['allowswitch']) {
             $this->allowswitch = array_keys($this->get_allow_roles_list('switch', $roleid));
         }
+        if ($options['allowview']) {
+            $this->allowview = array_keys($this->get_allow_roles_list('view', $roleid));
+        }
 
         if ($options['permissions']) {
             $this->permissions = $DB->get_records_menu('role_capabilities',
@@ -280,7 +294,8 @@ class core_role_define_role_table_advanced extends core_role_capability_table_wi
      * @param string $archetype
      * @param array $options array with following keys:
      *      'name', 'shortname', 'description', 'permissions', 'archetype',
-     *      'contextlevels', 'allowassign', 'allowoverride', 'allowswitch'
+     *      'contextlevels', 'allowassign', 'allowoverride', 'allowswitch',
+     *      'allowview'
      */
     public function force_archetype($archetype, array $options) {
         $archetypes = get_role_archetypes();
@@ -321,6 +336,9 @@ class core_role_define_role_table_advanced extends core_role_capability_table_wi
         if ($options['allowswitch']) {
             $this->allowswitch = get_default_role_archetype_allows('switch', $archetype);
         }
+        if ($options['allowview']) {
+            $this->allowview = get_default_role_archetype_allows('view', $archetype);
+        }
 
         if ($options['permissions']) {
             $defaultpermissions = get_default_capabilities($archetype);
@@ -340,7 +358,8 @@ class core_role_define_role_table_advanced extends core_role_capability_table_wi
      * @param string $xml
      * @param array $options array with following keys:
      *      'name', 'shortname', 'description', 'permissions', 'archetype',
-     *      'contextlevels', 'allowassign', 'allowoverride', 'allowswitch'
+     *      'contextlevels', 'allowassign', 'allowoverride', 'allowswitch',
+     *      'allowview'
      */
     public function force_preset($xml, array $options) {
         if (!$info = core_role_preset::parse_preset($xml)) {
@@ -377,7 +396,7 @@ class core_role_define_role_table_advanced extends core_role_capability_table_wi
             }
         }
 
-        foreach (array('assign', 'override', 'switch') as $type) {
+        foreach (array('assign', 'override', 'switch', 'view') as $type) {
             if ($options['allow'.$type]) {
                 if (isset($info['allow'.$type])) {
                     $this->{'allow'.$type} = $info['allow'.$type];
@@ -438,6 +457,7 @@ class core_role_define_role_table_advanced extends core_role_capability_table_wi
         $this->save_allow('assign');
         $this->save_allow('override');
         $this->save_allow('switch');
+        $this->save_allow('view');
 
         // Permissions.
         parent::save_changes();
@@ -523,7 +543,7 @@ class core_role_define_role_table_advanced extends core_role_capability_table_wi
     protected function get_allow_roles_list($type, $roleid = null) {
         global $DB;
 
-        if ($type !== 'assign' and $type !== 'switch' and $type !== 'override') {
+        if ($type !== 'assign' and $type !== 'switch' and $type !== 'override' and $type !== 'view') {
             debugging('Invalid role allowed type specified', DEBUG_DEVELOPER);
             return array();
         }
@@ -547,11 +567,11 @@ class core_role_define_role_table_advanced extends core_role_capability_table_wi
     /**
      * Returns an array of roles with the allowed type.
      *
-     * @param string $type Must be one of: assign, switch, or override.
+     * @param string $type Must be one of: assign, switch, override or view.
      * @return array Am array of role names with the allowed type
      */
     protected function get_allow_role_control($type) {
-        if ($type !== 'assign' and $type !== 'switch' and $type !== 'override') {
+        if ($type !== 'assign' and $type !== 'switch' and $type !== 'override' and $type !== 'view') {
             debugging('Invalid role allowed type specified', DEBUG_DEVELOPER);
             return '';
         }
@@ -641,6 +661,7 @@ class core_role_define_role_table_advanced extends core_role_capability_table_wi
         $this->print_field('menuallowassign', get_string('allowassign', 'core_role'), $this->get_allow_role_control('assign'));
         $this->print_field('menuallowoverride', get_string('allowoverride', 'core_role'), $this->get_allow_role_control('override'));
         $this->print_field('menuallowswitch', get_string('allowswitch', 'core_role'), $this->get_allow_role_control('switch'));
+        $this->print_field('menuallowview', get_string('allowview', 'core_role'), $this->get_allow_role_control('view'));
         if ($risks = $this->get_role_risks_info()) {
             $this->print_field('', get_string('rolerisks', 'core_role'), $risks);
         }

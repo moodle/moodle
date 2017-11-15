@@ -127,7 +127,12 @@ class core_user_renderer extends plugin_renderer_base {
         $filteroptions = [];
 
         // Filter options for role.
-        $roles = role_fix_names(get_profile_roles($context), $context, ROLENAME_ALIAS, true);
+        $roleseditable = has_capability('moodle/role:assign', $context);
+        $roles = get_viewable_roles($context);
+        if ($roleseditable) {
+            $roles += get_assignable_roles($context, ROLENAME_ALIAS);
+        }
+
         $criteria = get_string('role');
         $roleoptions = [];
         foreach ($roles as $id => $role) {

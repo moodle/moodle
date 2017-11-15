@@ -266,7 +266,7 @@ function xmldb_main_install() {
 
     // Default allow role matrices.
     foreach ($DB->get_records('role') as $role) {
-        foreach (array('assign', 'override', 'switch') as $type) {
+        foreach (array('assign', 'override', 'switch', 'view') as $type) {
             $function = 'allow_'.$type;
             $allows = get_default_role_archetype_allows($type, $role->archetype);
             foreach ($allows as $allowid) {

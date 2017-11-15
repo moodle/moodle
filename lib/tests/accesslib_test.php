@@ -918,6 +918,9 @@ class core_accesslib_testcase extends advanced_testcase {
 
             $result = get_default_role_archetype_allows('switch', $archetype);
             $this->assertInternalType('array', $result);
+
+            $result = get_default_role_archetype_allows('view', $archetype);
+            $this->assertInternalType('array', $result);
         }
 
         $result = get_default_role_archetype_allows('assign', '');
@@ -929,6 +932,9 @@ class core_accesslib_testcase extends advanced_testcase {
         $result = get_default_role_archetype_allows('switch', '');
         $this->assertSame(array(), $result);
 
+        $result = get_default_role_archetype_allows('view', '');
+        $this->assertSame(array(), $result);
+
         $result = get_default_role_archetype_allows('assign', 'wrongarchetype');
         $this->assertSame(array(), $result);
         $this->assertDebuggingCalled();
@@ -938,6 +944,10 @@ class core_accesslib_testcase extends advanced_testcase {
         $this->assertDebuggingCalled();
 
         $result = get_default_role_archetype_allows('switch', 'wrongarchetype');
+        $this->assertSame(array(), $result);
+        $this->assertDebuggingCalled();
+
+        $result = get_default_role_archetype_allows('view', 'wrongarchetype');
         $this->assertSame(array(), $result);
         $this->assertDebuggingCalled();
     }
@@ -1024,6 +1034,35 @@ class core_accesslib_testcase extends advanced_testcase {
         $event = array_pop($events);
         $this->assertInstanceOf('\core\event\role_allow_switch_updated', $event);
         $mode = 'switch';
+        $baseurl = new moodle_url('/admin/roles/allow.php', array('mode' => $mode));
+        $expectedlegacylog = array(SITEID, 'role', 'edit allow ' . $mode, str_replace($CFG->wwwroot . '/', '', $baseurl));
+        $this->assertEventLegacyLogData($expectedlegacylog, $event);
+    }
+
+    /**
+     * Test allowing of role switching.
+     */
+    public function test_allow_view() {
+        global $DB, $CFG;
+
+        $this->resetAfterTest();
+
+        $otherid = create_role('Other role', 'other', 'Some other role', '');
+        $student = $DB->get_record('role', array('shortname' => 'student'), '*', MUST_EXIST);
+
+        $this->assertFalse($DB->record_exists('role_allow_view', array('roleid' => $otherid, 'allowview' => $student->id)));
+        allow_view($otherid, $student->id);
+        $this->assertTrue($DB->record_exists('role_allow_view', array('roleid' => $otherid, 'allowview' => $student->id)));
+
+        // Test event trigger.
+        $allowroleassignevent = \core\event\role_allow_view_updated::create(array('context' => context_system::instance()));
+        $sink = $this->redirectEvents();
+        $allowroleassignevent->trigger();
+        $events = $sink->get_events();
+        $sink->close();
+        $event = array_pop($events);
+        $this->assertInstanceOf('\core\event\role_allow_view_updated', $event);
+        $mode = 'view';
         $baseurl = new moodle_url('/admin/roles/allow.php', array('mode' => $mode));
         $expectedlegacylog = array(SITEID, 'role', 'edit allow ' . $mode, str_replace($CFG->wwwroot . '/', '', $baseurl));
         $this->assertEventLegacyLogData($expectedlegacylog, $event);
@@ -1285,6 +1324,74 @@ class core_accesslib_testcase extends advanced_testcase {
             }
             $this->assertSame("$name ($rolecounts[$roleid])", $nameswithcounts[$roleid]);
         }
+    }
+
+    /**
+     * Test getting of all overridable roles.
+     */
+    public function test_get_viewable_roles_course() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+        $coursecontext = context_course::instance($course->id);
+
+        $teacherrole = $DB->get_record('role', array('shortname' => 'editingteacher'), '*', MUST_EXIST);
+        $teacher = $this->getDataGenerator()->create_user();
+        role_assign($teacherrole->id, $teacher->id, $coursecontext);
+
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'), '*', MUST_EXIST);
+        $studentrolerename = (object) array('roleid' => $studentrole->id, 'name' => 'Učitel', 'contextid' => $coursecontext->id);
+        $DB->insert_record('role_names', $studentrolerename);
+
+        // By default teacher can see student.
+        $this->setUser($teacher);
+        $viewableroles = get_viewable_roles($coursecontext);
+        $this->assertContains($studentrolerename->name, array_values($viewableroles));
+        // Remove view permission.
+        $DB->delete_records('role_allow_view', array('roleid' => $teacherrole->id, 'allowview' => $studentrole->id));
+        $viewableroles = get_viewable_roles($coursecontext);
+        // Teacher can no longer see student role.
+        $this->assertNotContains($studentrolerename->name, array_values($viewableroles));
+        // Allow again teacher to view student.
+        allow_view($teacherrole->id, $studentrole->id);
+        // Teacher can now see student role.
+        $viewableroles = get_viewable_roles($coursecontext);
+        $this->assertContains($studentrolerename->name, array_values($viewableroles));
+    }
+
+    /**
+     * Test getting of all overridable roles.
+     */
+    public function test_get_viewable_roles_system() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $context = context_system::instance();
+
+        $teacherrole = $DB->get_record('role', array('shortname' => 'editingteacher'), '*', MUST_EXIST);
+        $teacher = $this->getDataGenerator()->create_user();
+        role_assign($teacherrole->id, $teacher->id, $context);
+
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'), '*', MUST_EXIST);
+        $studentrolename = role_get_name($studentrole, $context);
+
+        // By default teacher can see student.
+        $this->setUser($teacher);
+        $viewableroles = get_viewable_roles($context);
+        $this->assertContains($studentrolename, array_values($viewableroles));
+        // Remove view permission.
+        $DB->delete_records('role_allow_view', array('roleid' => $teacherrole->id, 'allowview' => $studentrole->id));
+        $viewableroles = get_viewable_roles($context);
+        // Teacher can no longer see student role.
+        $this->assertNotContains($studentrolename, array_values($viewableroles));
+        // Allow again teacher to view student.
+        allow_view($teacherrole->id, $studentrole->id);
+        // Teacher can now see student role.
+        $viewableroles = get_viewable_roles($context);
+        $this->assertContains($studentrolename, array_values($viewableroles));
     }
 
     /**
@@ -1552,6 +1659,8 @@ class core_accesslib_testcase extends advanced_testcase {
         $user3 = $this->getDataGenerator()->create_user();
         $user4 = $this->getDataGenerator()->create_user();
         role_assign($managerrole->id, $user4->id, $coursecontext->id);
+
+        $this->setAdminUser();
 
         $roles = get_user_roles_in_course($user1->id, $course->id);
         $this->assertEquals(1, preg_match_all('/,/', $roles, $matches));

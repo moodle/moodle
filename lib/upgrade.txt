@@ -58,6 +58,9 @@ information provided here is intended especially for developers.
 * $CFG->loginhttps is now deprecated, do not use it.
 * $PAGE->https_required and $PAGE->verify_https_required() are now deprecated. They are no longer used and will throw a coding_exception.
 * $CFG->httpswwwroot is now deprecated and will always result in the same value as wwwroot.
+* Added function core_role_set_view_allowed() to check if a user should be able to see a given role.
+  This should be checked whenever displaying a list of roles to a user, however, core_role_set_assign_allowed may need to override it
+  in some cases.
 
 === 3.3.1 ===
 
