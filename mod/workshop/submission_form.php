@@ -42,6 +42,7 @@ class workshop_submission_form extends moodleform {
         $mform->addElement('text', 'title', get_string('submissiontitle', 'workshop'));
         $mform->setType('title', PARAM_TEXT);
         $mform->addRule('title', null, 'required', null, 'client');
+        $mform->addRule('title', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
 
         $mform->addElement('editor', 'content_editor', get_string('submissioncontent', 'workshop'), null, $contentopts);
         $mform->setType('content', PARAM_RAW);
