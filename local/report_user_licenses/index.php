@@ -168,6 +168,22 @@ $foundfields = $foundobj->foundfields;
 company_admin_fix_breadcrumb($PAGE, $strcompletion, $url);
 $url = new moodle_url('/local/report_user_licenses/index.php', $params);
 
+// Do we have any additional reporting fields?
+$extrafields = array();
+if (!empty($CFG->iomad_report_fields)) {
+    foreach (explode(',', $CFG->iomad_report_fields) as $extrafield) {
+        $extrafields[$extrafield] = new stdclass();
+        $extrafields[$extrafield]->name = $extrafield;
+        if (strpos($extrafield, 'profile_field') !== false) {
+            // Its an optional profile field.
+            $profilefield = $DB->get_record('user_info_field', array('shortname' => str_replace('profile_field_', '', $extrafield)));
+            $extrafields[$extrafield]->title = $profilefield->name;
+        } else {
+            $extrafields[$extrafield]->title = get_string($extrafield);
+        }
+    }
+}
+
 // Get the renderer.
 $output = $PAGE->get_renderer('block_iomad_company_admin');
 
@@ -247,6 +263,12 @@ if (!empty($companyid)) {
             die;
         }
 
+        echo $licenseselectoutput;
+        if (empty($licenseid)) {
+            echo $output->footer();
+            die;
+        }
+
         echo html_writer::start_tag('div', array('class' => 'iomadclear'));
         echo html_writer::start_tag('div', array('class' => 'fitem'));
         echo $treehtml;
@@ -315,7 +337,7 @@ foreach ($columns as $column) {
         } else {
             $columnicon = $dir == "ASC" ? "down":"up";
         }
-        $columnicon = " <img src=\"" . $output->pix_url('t/' . $columnicon) . "\" alt=\"\" />";
+        $columnicon = " <img src=\"" . $output->image_url('t/' . $columnicon) . "\" alt=\"\" />";
 
     }
     $params['sort'] = $column;
@@ -488,13 +510,32 @@ if (!$users) {
     // set up the table.
     $table = new html_table();
     $table->id = 'ReportTable';
+    $headstart = array('fullnamedisplay' => $fullnamedisplay,
+                       'email' => $email,
+                       'department' => $department);
+
+    $headmid = array();
+    if (!empty($extrafields)) {
+        foreach ($extrafields as $extrafield) {
+            $headmid[$extrafield->name] = $extrafield->title;
+        }
+    }
+
     if (empty($license->program)) {
-        $table->head = array ($fullnamedisplay, $email, $department, $course, $licenseallocated, $licenseinuse, $licenseused, $lastaccess);
+        $headend = array('course' => $course,
+                         'licenseallocated' => $licenseallocated,
+                         'licenseinuse' => $licenseinuse,
+                         'licenseused' => $licenseused,
+                         'lastaccess' => $lastaccess);
         $table->align = array ("left", "center", "center", "center", "center", "center", "center", "center");
     } else {
-        $table->head = array ($fullnamedisplay, $email, $department, $licenseallocated, $licenseinuse, $licenseused, $lastaccess);
+        $headend = array('licenseallocated' => $licenseallocated,
+                         'licenseinuse' => $licenseinuse,
+                         'licenseused' => $licenseused,
+                         'lastaccess' => $lastaccess);
         $table->align = array ("left", "center", "center", "center", "center", "center", "center");
     }
+    $table->head = $headstart + $headmid + $headend;
 
     $stringyesno = array(0 => get_string('no'), 1 => get_string('yes'));
     $stringnever = get_string('never');
@@ -561,26 +602,30 @@ if (!$users) {
 
         $user->department = $user->departmentname;
 
-        if (empty($license->program)) {
-            $table->data[] = array("$fullname",
-                                    "$user->email",
-                                    "$user->department",
-                                    $user->coursename,
-                                    $strissuedate,
-                                    $strisusing,
-                                    $struseddate,
-                                    $strlastaccess
-                                    );
-        } else {
-            $table->data[] = array("$fullname",
-                                    "$user->email",
-                                    "$user->department",
-                                    $strissuedate,
-                                    $strisusing,
-                                    $struseddate,
-                                    $strlastaccess
-                                    );
+        $rowstart = array('fullname' => $fullname,
+                          'email' => $user->email,
+                          'department' => $user->departmentname);
+        $rowmid = array();
+        if (!empty($extrafields)) {
+            foreach($extrafields as $extrafield) {
+                $fieldname = $extrafield->name;
+                $rowmid[$extrafield->name] = $user->$fieldname;
+            }
         }
+
+        if (empty($license->program)) {
+            $rowend = array('coursename' => $user->coursename,
+                            'strissuedate' => $strissuedate,
+                            'strisusing' => $strisusing,
+                            'struseddate' => $struseddate,
+                            'strlastaccess' => $strlastaccess);
+        } else {
+            $rowend = array('strissuedate' => $strissuedate,
+                            'strisusing' => $strisusing,
+                            'struseddate' => $struseddate,
+                            'strlastaccess' => $strlastaccess);
+        }
+        $table->data[] = $rowstart + $rowmid + $rowend;
     }
 }
 

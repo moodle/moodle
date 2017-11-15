@@ -192,6 +192,22 @@ company_admin_fix_breadcrumb($PAGE, $strcompletion, $url);
 
 $url = new moodle_url('/local/report_user_logins/index.php', $params);
 
+// Do we have any additional reporting fields?
+$extrafields = array();
+if (!empty($CFG->iomad_report_fields)) {
+    foreach (explode(',', $CFG->iomad_report_fields) as $extrafield) {
+        $extrafields[$extrafield] = new stdclass();
+        $extrafields[$extrafield]->name = $extrafield;
+        if (strpos($extrafield, 'profile_field') !== false) {
+            // Its an optional profile field.
+            $profilefield = $DB->get_record('user_info_field', array('shortname' => str_replace('profile_field_', '', $extrafield)));
+            $extrafields[$extrafield]->title = $profilefield->name;
+        } else {
+            $extrafields[$extrafield]->title = get_string($extrafield);
+        }
+    }
+}
+
 // Get the appropriate list of departments.
 $selectparams = $params;
 $selectparams['courseid'] = 0;
@@ -292,7 +308,7 @@ foreach ($columns as $column) {
         } else {
             $columnicon = $dir == "ASC" ? "down":"up";
         }
-        $columnicon = " <img src=\"" . $output->pix_url('t/' . $columnicon) . "\" alt=\"\" />";
+        $columnicon = " <img src=\"" . $output->image_url('t/' . $columnicon) . "\" alt=\"\" />";
 
     }
     $params['sort'] = $column;
@@ -465,7 +481,23 @@ if (!$users) {
     // set up the table.
     $table = new html_table();
     $table->id = 'ReportTable';
-    $table->head = array ($fullnamedisplay, $email, $department, $created, $firstaccess, $lastaccess, $numlogins);
+    $headstart = array('fullnamedisplay' => $fullnamedisplay,
+                       'email' => $email,
+                       'department' => $department);
+
+    $headmid = array();
+    if (!empty($extrafields)) {
+        foreach ($extrafields as $extrafield) {
+            $headmid[$extrafield->name] = $extrafield->title;
+        }
+    }
+
+    $headend = array ($created => $created,
+                      $firstaccess => $firstaccess,
+                      $lastaccess => $lastaccess,
+                      $numlogins => $numlogins);
+    $table->head = $headstart + $headmid + $headend;
+    
     $table->align = array ("left", "center", "center", "center", "center", "center", "center");
 
     foreach ($users as $user) {
@@ -505,16 +537,22 @@ if (!$users) {
         $numlogins = $DB->count_records('logstore_standard_log', array('userid' => $user->id, 'eventname' => '\core\event\user_loggedin'));
 
         $user->department = $user->departmentname;
+        $rowstart = array('fullname' => $fullname,
+                          'email' => $user->email,
+                          'department' => $user->departmentname);
+        $rowmid = array();
+        if (!empty($extrafields)) {
+            foreach($extrafields as $extrafield) {
+                $fieldname = $extrafield->name;
+                $rowmid[$extrafield->name] = $user->$fieldname;
+            }
+        }
 
-
-        $table->data[] = array("$fullname",
-                                "$user->email",
-                                "$user->department",
-                                $strtimecreated,
-                                $strfirstaccess,
-                                $strlastaccess,
-                                $numlogins
-                                );
+        $rowend = array('timecreated' => $strtimecreated,
+                        'firstaccess' => $strfirstaccess,
+                        'lastaccess' => $strlastaccess,
+                        'numlogins' => $numlogins);
+        $table->data[] = $rowstart + $rowmid + $rowend;
     }
 }
 
