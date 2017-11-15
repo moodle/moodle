@@ -423,6 +423,7 @@ function cron_execute_plugin_type($plugintype, $description = null) {
         }
 
         mtrace('Processing cron function for ' . $component . '...');
+        debugging("Use of legacy cron is deprecated ($cronfunction). Please use scheduled tasks.", DEBUG_DEVELOPER);
         cron_trace_time_and_memory();
         $pre_dbqueries = $DB->perf_get_queries();
         $pre_time = microtime(true);
