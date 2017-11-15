@@ -56,6 +56,7 @@ function create_event($properties) {
     $record->timesort = 0;
     $record->type = CALENDAR_EVENT_TYPE_STANDARD;
     $record->courseid = 0;
+    $record->categoryid = 0;
 
     foreach ($properties as $name => $value) {
         $record->$name = $value;
