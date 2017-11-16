@@ -31,14 +31,14 @@ Feature: Add badges to the system
   Scenario: Add a badge
     Given I navigate to "Add a new badge" node in "Site administration > Badges"
     And I set the following fields to these values:
-      | Name | Test Badge |
+      | Name | Test badge with 'apostrophe' and other friends (<>&@#) |
       | Description | Test badge description |
       | issuername | Test Badge Site |
       | issuercontact | testuser@example.com |
     And I upload "badges/tests/behat/badge.png" file to "Image" filemanager
     When I press "Create badge"
     Then I should see "Edit details"
-    And I should see "Test Badge"
+    And I should see "Test badge with 'apostrophe' and other friends (&@#)"
     And I should not see "Create badge"
     And I follow "Manage badges"
     And I should see "Number of badges available: 1"

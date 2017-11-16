@@ -72,6 +72,7 @@ if ($hide) {
     require_sesskey();
     $badge = new badge($download);
     $name = str_replace(' ', '_', $badge->name) . '.png';
+    $name = clean_param($name, PARAM_FILE);
     $filehash = badges_bake($hash, $download, $USER->id, true);
     $fs = get_file_storage();
     $file = $fs->get_file_by_hash($filehash);
