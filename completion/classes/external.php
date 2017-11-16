@@ -265,9 +265,11 @@ class core_completion_external extends external_api {
                 $thisprogress  = $userprogress->progress[$activity->id];
                 $state         = $thisprogress->completionstate;
                 $timecompleted = $thisprogress->timemodified;
+                $overrideby    = $thisprogress->overrideby;
             } else {
                 $state = COMPLETION_INCOMPLETE;
                 $timecompleted = 0;
+                $overrideby = null;
             }
 
             $results[] = array(
@@ -276,7 +278,8 @@ class core_completion_external extends external_api {
                        'instance'      => $activity->instance,
                        'state'         => $state,
                        'timecompleted' => $timecompleted,
-                       'tracking'      => $activity->completion
+                       'tracking'      => $activity->completion,
+                       'overrideby'    => $overrideby
             );
         }
 
@@ -308,6 +311,8 @@ class core_completion_external extends external_api {
                             'timecompleted' => new external_value(PARAM_INT, 'timestamp for completed activity'),
                             'tracking'      => new external_value(PARAM_INT, 'type of tracking:
                                                                     0 means none, 1 manual, 2 automatic'),
+                            'overrideby' => new external_value(PARAM_INT, 'The user id who has overriden the status, or null',
+                                VALUE_OPTIONAL),
                         ), 'Activity'
                     ), 'List of activities status'
                 ),

@@ -164,7 +164,25 @@ class core_completion_externallib_testcase extends externallib_advanced_testcase
         // We added 4 activities, but only 3 with completion enabled and one of those is hidden.
         $this->assertCount(3, $result['statuses']);
 
-        // Change teacher role capabilities (disable access al goups).
+        // Override status by teacher.
+        $completion->update_state($cmforum, COMPLETION_INCOMPLETE, $student->id, true);
+
+        $result = core_completion_external::get_activities_completion_status($course->id, $student->id);
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $result = external_api::clean_returnvalue(
+            core_completion_external::get_activities_completion_status_returns(), $result);
+
+        // Check forum has been overriden by the teacher.
+        foreach ($result['statuses'] as $status) {
+            if ($status['cmid'] == $forum->cmid) {
+                $this->assertEquals(COMPLETION_INCOMPLETE, $status['state']);
+                $this->assertEquals(COMPLETION_TRACKING_MANUAL, $status['tracking']);
+                $this->assertEquals($teacher->id, $status['overrideby']);
+                break;
+            }
+        }
+
+        // Change teacher role capabilities (disable access all groups).
         $context = context_course::instance($course->id);
         assign_capability('moodle/site:accessallgroups', CAP_PROHIBIT, $teacherrole->id, $context);
         accesslib_clear_all_caches_for_unit_testing();
