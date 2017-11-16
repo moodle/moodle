@@ -1227,6 +1227,9 @@ class engine extends \core_search\engine {
             }
         }
 
+        // Set timeout as for Solr client.
+        $options['CURLOPT_TIMEOUT'] = !empty($this->config->server_timeout) ? $this->config->server_timeout : '30';
+
         $this->curl->setopt($options);
 
         if (!empty($this->config->server_username) && !empty($this->config->server_password)) {
