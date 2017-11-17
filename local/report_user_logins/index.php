@@ -35,8 +35,8 @@ $perpage      = optional_param('perpage', 30, PARAM_INT);        // How many per
 $acl          = optional_param('acl', '0', PARAM_INT);           // Id of user to tweak mnet ACL (requires $access).
 $search      = optional_param('search', '', PARAM_CLEAN);// Search string.
 $departmentid = optional_param('departmentid', 0, PARAM_INTEGER);
-$createdfromraw = optional_param_array('createdfrom', null, PARAM_INT);
-$createdtoraw = optional_param_array('createdto', null, PARAM_INT);
+$loginfromraw = optional_param_array('loginfrom', null, PARAM_INT);
+$logintoraw = optional_param_array('loginto', null, PARAM_INT);
 
 require_login($SITE);
 $systemcontext = context_system::instance();
@@ -71,6 +71,33 @@ if ($departmentid) {
 }
 if ($showsuspended) {
     $params['showsuspended'] = $showsuspended;
+}
+
+if ($loginfromraw) {
+    if (is_array($loginfromraw)) {
+        $loginfrom = mktime(0, 0, 0, $loginfromraw['month'], $loginfromraw['day'], $loginfromraw['year']);
+    } else {
+        $loginfrom = $loginfromraw;
+    }
+    $params['loginfrom'] = $loginfrom;
+} else {
+    $loginfrom = null;
+}
+
+if ($logintoraw) {
+    if (is_array($logintoraw)) {
+        $loginto = mktime(0, 0, 0, $logintoraw['month'], $logintoraw['day'], $logintoraw['year']);
+    } else {
+        $loginto = $logintoraw;
+    }
+    $params['loginto'] = $loginto;
+} else {
+    if (!empty($comptfrom)) {
+        $loginto = time();
+        $params['loginto'] = $loginto;
+    } else {
+        $loginto = null;
+    }
 }
 
 // Set the companyid
@@ -120,28 +147,6 @@ if (!empty($fieldnames)) {
         }
 
     }
-}
-
-if ($createdfromraw) {
-    if (is_array($createdfromraw)) {
-        $createdfrom = mktime(0, 0, 0, $createdfromraw['month'], $createdfromraw['day'], $createdfromraw['year']);
-    } else {
-        $createdfrom = $createdfromraw;
-    }
-    $params['createdfrom'] = $createdfrom;
-} else {
-    $createdfrom = 0;
-}
-
-if ($createdtoraw) {
-    if (is_array($createdtoraw)) {
-        $createdto = mktime(0, 0, 0, $createdtoraw['month'], $createdtoraw['day'], $createdtoraw['year']);
-    } else {
-        $createdto = $createdtoraw;
-    }
-    $params['createdto'] = $createdto;
-} else {
-    $createdto = 0;
 }
 
 // Url stuff.
@@ -262,7 +267,7 @@ if (!empty($companyid)) {
         echo html_writer::end_tag('div');
 
         // Set up the filter form.
-        $mform = new iomad_user_filter_form(null, array('companyid' => $companyid));
+        $mform = new iomad_user_filter_form(null, array('companyid' => $companyid, 'addfrom' => 'loginfrom', 'addto' => 'loginto'));
         $mform->set_data(array('departmentid' => $departmentid));
         $mform->set_data($params);
 
@@ -429,8 +434,11 @@ if (!empty($userrecords)) {
     $userlist = "1=2";
 }
 if (!empty($userlist)) {
-    $users = iomad_get_users_listing($sort, $dir, $page * $perpage, $perpage, '', '', '', $userlist, array('companyid' => $companyid));
-    $totalusers = iomad_get_users_listing($sort, $dir, 0, 0, '', '', '', $userlist, array('companyid' => $companyid));
+    $userlistarray = array('companyid' => $companyid,
+                           'loginfrom' => $loginfrom,
+                           'loginto' => $loginto);
+    $users = iomad_get_users_listing($sort, $dir, $page * $perpage, $perpage, '', '', '', $userlist, $userlistarray);
+    $totalusers = iomad_get_users_listing($sort, $dir, 0, 0, '', '', '', $userlist, $userlistarray);
 
 } else {
     $users = array();
@@ -606,6 +614,20 @@ function iomad_get_users_listing($sort='lastaccess', $dir='ASC', $page=0, $recor
         }
     }
 
+    $loginsql = "";
+    if ($extraparams['loginfrom'] != null) {
+        $loginsql .= " AND u.id IN (SELECT userid FROM {logstore_standard_log}
+                        WHERE timecreated >= :loginfrom
+                        AND eventname = :loginevent1) ";
+        $params['loginevent1'] = '\core\event\user_loggedin'; 
+    }
+    if ($extraparams['loginto'] != null) {
+        $loginsql .= " AND u.id IN (SELECT userid FROM {logstore_standard_log}
+                        WHERE timecreated <= :loginto
+                        AND eventname = :loginevent2) "; 
+        $params['loginevent2'] = '\core\event\user_loggedin'; 
+    }
+
     // Warning: will return UNCONFIRMED USERS!
     if (!is_siteadmin($USER->id)) {
         // only show normal users.
@@ -630,6 +652,7 @@ function iomad_get_users_listing($sort='lastaccess', $dir='ASC', $page=0, $recor
                                  WHERE $select and cu.userid = u.id and d.id = cu.departmentid AND c.id = cu.companyid
                                  $companysql
                                  $managertypesql
+                                 $loginsql
                                  $sort", $params, $page, $recordsperpage);
 
 }
