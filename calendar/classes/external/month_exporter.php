@@ -274,13 +274,12 @@ class month_exporter extends exporter {
 
         // Calculate which day number is the first, and last day of the week.
         $firstdayofweek = $this->firstdayofweek;
-        $lastdayofweek = ($firstdayofweek + $daysinweek - 1) % $daysinweek;
 
         // The first week is special as it may have padding at the beginning.
         $day = reset($alldays);
         $firstdayno = $day['wday'];
 
-        $prepadding = ($firstdayno + $daysinweek - 1) % $daysinweek;
+        $prepadding = ($firstdayno + $daysinweek - $firstdayofweek) % $daysinweek;
         $daysinfirstweek = $daysinweek - $prepadding;
         $days = array_slice($alldays, 0, $daysinfirstweek);
         $week = new week_exporter($this->calendar, $days, $prepadding, ($daysinweek - count($days) - $prepadding), $this->related);
