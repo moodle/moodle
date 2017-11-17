@@ -678,7 +678,7 @@ function iomad_get_users_listing($sort='lastaccess', $dir='ASC', $page=0, $recor
             $sort = " ORDER by co.fullname $dir";
         } else if ($sort == "licenseused") {
             $sort = " ORDER by clu.isusing $dir";
-        } else if ($sort == "issuedate") {
+        } else if ($sort == "licenseallocated") {
             $sort = " ORDER by clu.issuedate $dir";
         } else {
             $sort = " ORDER BY u.$sort $dir";
