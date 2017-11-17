@@ -53,8 +53,8 @@ class backup_workshop_activity_structure_step extends backup_activity_structure_
             'instructauthorsformat', 'instructreviewers',
             'instructreviewersformat', 'timemodified', 'phase', 'useexamples',
             'usepeerassessment', 'useselfassessment', 'grade', 'gradinggrade',
-            'strategy', 'evaluation', 'gradedecimals', 'nattachments', 'submissionfiletypes',
-            'latesubmissions', 'maxbytes', 'examplesmode', 'submissionstart',
+            'strategy', 'evaluation', 'gradedecimals', 'submissiontypetext', 'submissiontypefile', 'nattachments',
+            'submissionfiletypes', 'latesubmissions', 'maxbytes', 'examplesmode', 'submissionstart',
             'submissionend', 'assessmentstart', 'assessmentend',
             'conclusion', 'conclusionformat', 'overallfeedbackmode',
             'overallfeedbackfiles', 'overallfeedbackfiletypes', 'overallfeedbackmaxbytes'));

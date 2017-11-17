@@ -171,6 +171,12 @@ class workshop {
     /** @var int maximum size of one file attached to the overall feedback */
     public $overallfeedbackmaxbytes;
 
+    /** @var int Should the submission form show the text field? */
+    public $submissiontypetext;
+
+    /** @var int Should the submission form show the file attachment field? */
+    public $submissiontypefile;
+
     /**
      * @var workshop_strategy grading strategy instance
      * Do not use directly, get the instance using {@link workshop::grading_strategy_instance()}
@@ -2870,9 +2876,39 @@ class workshop {
                 $errors['title'] = get_string('err_multiplesubmissions', 'mod_workshop');
             }
         }
+        // Get the workshop record by id or cmid, depending on whether we're creating or editing a submission.
+        if (empty($data['workshopid'])) {
+            $workshop = $DB->get_record_select('workshop', 'id = (SELECT instance FROM {course_modules} WHERE id = ?)',
+                    [$data['cmid']]);
+        } else {
+            $workshop = $DB->get_record('workshop', ['id' => $data['workshopid']]);
+        }
 
-        $getfiles = file_get_drafarea_files($data['attachment_filemanager']);
-        if (empty($getfiles->list) and html_is_blank($data['content_editor']['text'])) {
+        if (isset($data['attachment_filemanager'])) {
+            $getfiles = file_get_drafarea_files($data['attachment_filemanager']);
+            $attachments = $getfiles->list;
+        } else {
+            $attachments = array();
+        }
+
+        if ($workshop->submissiontypefile == WORKSHOP_SUBMISSION_TYPE_REQUIRED) {
+            if (empty($attachments)) {
+                $errors['attachment_filemanager'] = get_string('err_required', 'form');
+            }
+        } else if ($workshop->submissiontypefile == WORKSHOP_SUBMISSION_TYPE_DISABLED && !empty($data['attachment_filemanager'])) {
+            $errors['attachment_filemanager'] = get_string('submissiontypedisabled', 'mod_workshop');
+        }
+
+        if ($workshop->submissiontypetext == WORKSHOP_SUBMISSION_TYPE_REQUIRED && html_is_blank($data['content_editor']['text'])) {
+            $errors['content_editor'] = get_string('err_required', 'form');
+        } else if ($workshop->submissiontypetext == WORKSHOP_SUBMISSION_TYPE_DISABLED && !empty($data['content_editor']['text'])) {
+            $errors['content_editor'] = get_string('submissiontypedisabled', 'mod_workshop');
+        }
+
+        // If neither type is explicitly required, one or the other must be submitted.
+        if ($workshop->submissiontypetext != WORKSHOP_SUBMISSION_TYPE_REQUIRED
+                && $workshop->submissiontypefile != WORKSHOP_SUBMISSION_TYPE_REQUIRED
+                && empty($attachments) && html_is_blank($data['content_editor']['text'])) {
             $errors['content_editor'] = get_string('submissionrequiredcontent', 'mod_workshop');
             $errors['attachment_filemanager'] = get_string('submissionrequiredfile', 'mod_workshop');
         }
@@ -2939,8 +2975,10 @@ class workshop {
         $params['objectid'] = $submission->id;
 
         // Save and relink embedded images and save attachments.
-        $submission = file_postupdate_standard_editor($submission, 'content', $this->submission_content_options(),
-            $this->context, 'mod_workshop', 'submission_content', $submission->id);
+        if ($this->submissiontypetext != WORKSHOP_SUBMISSION_TYPE_DISABLED) {
+            $submission = file_postupdate_standard_editor($submission, 'content', $this->submission_content_options(),
+                    $this->context, 'mod_workshop', 'submission_content', $submission->id);
+        }
 
         $submission = file_postupdate_standard_filemanager($submission, 'attachment', $this->submission_attachment_options(),
             $this->context, 'mod_workshop', 'submission_attachment', $submission->id);

@@ -1,6 +1,11 @@
 This files describes API changes in /mod/workshop - activity modules,
 information provided here is intended especially for developers.
 
+=== 3.6 ===
+
+* The external function get_workshops_by_courses now returns 2 additional fields: submissiontypetext and
+  submissiontypefile, indicating which submission types are available and required.
+
 === 3.4 ===
 
 * workshop_strategy::get_dimensions_info now returns also the scale items (if scales are being used).
