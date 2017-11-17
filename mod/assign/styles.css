@@ -56,11 +56,6 @@
     padding: 0;
 }
 
-.path-mod-assign .gradingbatchoperationsform .mform fieldset {
-    margin: 0;
-    padding: 0;
-}
-
 .path-mod-assign td.submissionstatus,
 .path-mod-assign div.submissionstatus,
 .path-mod-assign a:link.submissionstatus {
