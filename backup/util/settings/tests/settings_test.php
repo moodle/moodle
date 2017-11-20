@@ -45,7 +45,7 @@ class backp_settings_testcase extends basic_testcase {
     /**
      * test base_setting class
      */
-    function test_base_setting() {
+    public function test_base_setting() {
         // Instantiate base_setting and check everything
         $bs = new mock_base_setting('test', base_setting::IS_BOOLEAN);
         $this->assertTrue($bs instanceof base_setting);
@@ -294,12 +294,12 @@ class backp_settings_testcase extends basic_testcase {
      * Test that locked and unlocked states on dependent backup settings at the same level
      * correctly do not flow from the parent to the child setting when the setting is locked by permissions.
      */
-    function test_dependency_empty_locked_by_permission_child_is_not_unlocked() {
-        // Check dependencies are working ok
+    public function test_dependency_empty_locked_by_permission_child_is_not_unlocked() {
+        // Check dependencies are working ok.
         $bs1 = new mock_backup_setting('test1', base_setting::IS_INTEGER, 2);
         $bs1->set_level(1);
         $bs2 = new mock_backup_setting('test2', base_setting::IS_INTEGER, 2);
-        $bs2->set_level(1); // Same level *must* work
+        $bs2->set_level(1); // Same level *must* work.
         $bs1->add_dependency($bs2, setting_dependency::DISABLED_EMPTY);
 
         $bs1->set_status(base_setting::LOCKED_BY_PERMISSION);
@@ -318,11 +318,11 @@ class backp_settings_testcase extends basic_testcase {
      * Test that locked and unlocked states on dependent backup settings at the same level
      * correctly do flow from the parent to the child setting when the setting is locked by config.
      */
-    function test_dependency_not_empty_locked_by_config_parent_is_unlocked() {
+    public function test_dependency_not_empty_locked_by_config_parent_is_unlocked() {
         $bs1 = new mock_backup_setting('test1', base_setting::IS_INTEGER, 0);
         $bs1->set_level(1);
         $bs2 = new mock_backup_setting('test2', base_setting::IS_INTEGER, 0);
-        $bs2->set_level(1); // Same level *must* work
+        $bs2->set_level(1); // Same level *must* work.
         $bs1->add_dependency($bs2, setting_dependency::DISABLED_NOT_EMPTY);
 
         $bs1->set_status(base_setting::LOCKED_BY_CONFIG);
@@ -337,7 +337,7 @@ class backp_settings_testcase extends basic_testcase {
     /**
      * test backup_setting class
      */
-    function test_backup_setting() {
+    public function test_backup_setting() {
         // Instantiate backup_setting class and set level
         $bs = new mock_backup_setting('test', base_setting::IS_INTEGER, null);
         $bs->set_level(1);
@@ -384,7 +384,7 @@ class backp_settings_testcase extends basic_testcase {
     /**
      * test activity_backup_setting class
      */
-    function test_activity_backup_setting() {
+    public function test_activity_backup_setting() {
         $bs = new mock_activity_backup_setting('test', base_setting::IS_INTEGER, null);
         $this->assertEquals($bs->get_level(), backup_setting::ACTIVITY_LEVEL);
 
@@ -399,7 +399,7 @@ class backp_settings_testcase extends basic_testcase {
     /**
      * test section_backup_setting class
      */
-    function test_section_backup_setting() {
+    public function test_section_backup_setting() {
         $bs = new mock_section_backup_setting('test', base_setting::IS_INTEGER, null);
         $this->assertEquals($bs->get_level(), backup_setting::SECTION_LEVEL);
 
@@ -414,7 +414,7 @@ class backp_settings_testcase extends basic_testcase {
     /**
      * test course_backup_setting class
      */
-    function test_course_backup_setting() {
+    public function test_course_backup_setting() {
         $bs = new mock_course_backup_setting('test', base_setting::IS_INTEGER, null);
         $this->assertEquals($bs->get_level(), backup_setting::COURSE_LEVEL);
 
