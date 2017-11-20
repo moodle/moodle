@@ -1056,7 +1056,7 @@ class calendar_information {
             }
 
             $courses = [$course->id => $course];
-            $category = (\coursecat::get($course->category))->get_db_record();
+            $category = (\coursecat::get($course->category, MUST_EXIST, true))->get_db_record();
         } else if (!empty($categoryid)) {
             $course = get_site();
             $courses = calendar_get_default_courses();
@@ -1147,7 +1147,7 @@ class calendar_information {
             // A specific course was requested.
             // Fetch the category that this course is in, along with all parents.
             // Do not include child categories of this category, as the user many not have enrolments in those siblings or children.
-            $category = \coursecat::get($course->category);
+            $category = \coursecat::get($course->category, MUST_EXIST, true);
             $this->categoryid = $category->id;
 
             $this->categories = $category->get_parents();
