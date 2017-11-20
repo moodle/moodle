@@ -68,6 +68,9 @@ class webservice_xmlrpc_client {
      * @throws moodle_exception
      */
     public function call($functionname, $params = array()) {
+        global $CFG;
+        require_once($CFG->libdir . '/filelib.php');
+
         if ($this->token) {
             $this->serverurl->param('wstoken', $this->token);
         }
