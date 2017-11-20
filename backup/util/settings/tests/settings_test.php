@@ -291,6 +291,50 @@ class backp_settings_testcase extends basic_testcase {
     }
 
     /**
+     * Test that locked and unlocked states on dependent backup settings at the same level
+     * correctly do not flow from the parent to the child setting when the setting is locked by permissions.
+     */
+    function test_dependency_empty_locked_by_permission_child_is_not_unlocked() {
+        // Check dependencies are working ok
+        $bs1 = new mock_backup_setting('test1', base_setting::IS_INTEGER, 2);
+        $bs1->set_level(1);
+        $bs2 = new mock_backup_setting('test2', base_setting::IS_INTEGER, 2);
+        $bs2->set_level(1); // Same level *must* work
+        $bs1->add_dependency($bs2, setting_dependency::DISABLED_EMPTY);
+
+        $bs1->set_status(base_setting::LOCKED_BY_PERMISSION);
+        $this->assertEquals(base_setting::LOCKED_BY_HIERARCHY, $bs2->get_status());
+        $this->assertEquals(base_setting::LOCKED_BY_PERMISSION, $bs1->get_status());
+        $bs2->set_status(base_setting::LOCKED_BY_PERMISSION);
+        $this->assertEquals(base_setting::LOCKED_BY_PERMISSION, $bs1->get_status());
+
+        // Unlocking the parent should NOT unlock the child.
+        $bs1->set_status(base_setting::NOT_LOCKED);
+
+        $this->assertEquals(base_setting::LOCKED_BY_PERMISSION, $bs2->get_status());
+    }
+
+    /**
+     * Test that locked and unlocked states on dependent backup settings at the same level
+     * correctly do flow from the parent to the child setting when the setting is locked by config.
+     */
+    function test_dependency_not_empty_locked_by_config_parent_is_unlocked() {
+        $bs1 = new mock_backup_setting('test1', base_setting::IS_INTEGER, 0);
+        $bs1->set_level(1);
+        $bs2 = new mock_backup_setting('test2', base_setting::IS_INTEGER, 0);
+        $bs2->set_level(1); // Same level *must* work
+        $bs1->add_dependency($bs2, setting_dependency::DISABLED_NOT_EMPTY);
+
+        $bs1->set_status(base_setting::LOCKED_BY_CONFIG);
+        $this->assertEquals(base_setting::LOCKED_BY_HIERARCHY, $bs2->get_status());
+        $this->assertEquals(base_setting::LOCKED_BY_CONFIG, $bs1->get_status());
+
+        // Unlocking the parent should unlock the child.
+        $bs1->set_status(base_setting::NOT_LOCKED);
+        $this->assertEquals(base_setting::NOT_LOCKED, $bs2->get_status());
+    }
+
+    /**
      * test backup_setting class
      */
     function test_backup_setting() {
