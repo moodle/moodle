@@ -88,7 +88,7 @@ class profile_field_base {
         $this->set_userid($userid);
         if ($fielddata) {
             $this->set_field($fielddata);
-            if ($userid && !empty($fielddata->hasuserdata)) {
+            if ($userid > 0 && !empty($fielddata->hasuserdata)) {
                 $this->set_user_data($fielddata->data, $fielddata->dataformat);
             }
         } else {
@@ -395,7 +395,7 @@ class profile_field_base {
             $this->set_field($field);
         }
 
-        if (!empty($this->field) && $this->userid) {
+        if (!empty($this->field) && $this->userid > 0) {
             $params = array('userid' => $this->userid, 'fieldid' => $this->fieldid);
             if ($data = $DB->get_record('user_info_data', $params, 'data, dataformat')) {
                 $this->set_user_data($data->data, $data->dataformat);
@@ -413,7 +413,7 @@ class profile_field_base {
     public function is_visible() {
         global $USER;
 
-        $context = $this->userid ? context_user::instance($this->userid) : context_system::instance();
+        $context = ($this->userid > 0) ? context_user::instance($this->userid) : context_system::instance();
 
         switch ($this->field->visible) {
             case PROFILE_VISIBLE_ALL:
@@ -507,12 +507,12 @@ function profile_get_user_fields_with_data($userid) {
 
     // Join any user info data present with each user info field for the user object.
     $sql = 'SELECT uif.*, uic.name AS categoryname ';
-    if ($userid) {
+    if ($userid > 0) {
         $sql .= ', uind.id AS hasuserdata, uind.data, uind.dataformat ';
     }
     $sql .= 'FROM {user_info_field} uif ';
     $sql .= 'LEFT JOIN {user_info_category} uic ON uif.categoryid = uic.id ';
-    if ($userid) {
+    if ($userid > 0) {
         $sql .= 'LEFT JOIN {user_info_data} uind ON uif.id = uind.fieldid AND uind.userid = :userid ';
     }
     $sql .= 'ORDER BY uic.sortorder ASC, uif.sortorder ASC ';
