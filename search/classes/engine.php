@@ -215,6 +215,7 @@ abstract class engine {
         $lastindexeddoc = 0;
         $firstindexeddoc = 0;
         $partial = false;
+        $lastprogress = manager::get_current_time();
 
         foreach ($iterator as $document) {
             // Stop if we have exceeded the time limit (and there are still more items). Always
@@ -250,6 +251,17 @@ abstract class engine {
                 $firstindexeddoc = $lastindexeddoc;
             }
             $numrecords++;
+
+            // If indexing the area takes a long time, periodically output progress information.
+            if (isset($options['progress'])) {
+                $now = manager::get_current_time();
+                if ($now - $lastprogress >= manager::DISPLAY_INDEXING_PROGRESS_EVERY) {
+                    $lastprogress = $now;
+                    // The first date format is the same used in cron_trace_time_and_memory().
+                    $options['progress']->output(date('H:i:s', $now) . ': Done to ' . userdate(
+                            $lastindexeddoc, get_string('strftimedatetimeshort', 'langconfig')), 1);
+                }
+            }
         }
 
         return array($numrecords, $numdocs, $numdocsignored, $lastindexeddoc, $partial);

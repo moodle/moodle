@@ -281,6 +281,90 @@ class search_manager_testcase extends advanced_testcase {
     }
 
     /**
+     * Tests the progress display while indexing.
+     *
+     * This tests the different logic about displaying progress for slow/fast and
+     * complete/incomplete processing.
+     */
+    public function test_index_progress() {
+        $this->resetAfterTest();
+        $generator = $this->getDataGenerator();
+
+        // Set up the fake search area.
+        $search = testable_core_search::instance();
+        $area = new \core_mocksearch\search\mock_search_area();
+        $search->add_search_area('whatever', $area);
+        $searchgenerator = $generator->get_plugin_generator('core_search');
+        $searchgenerator->setUp();
+
+        // Add records with specific time modified values.
+        $time = strtotime('2017-11-01 01:00');
+        for ($i = 0; $i < 8; $i ++) {
+            $searchgenerator->create_record((object)['timemodified' => $time]);
+            $time += 60;
+        }
+
+        // Simulate slow progress on indexing and initial query.
+        $now = strtotime('2017-11-11 01:00');
+        \testable_core_search::fake_current_time($now);
+        $area->set_indexing_delay(10.123);
+        $search->get_engine()->set_add_delay(15.789);
+
+        // Run search indexing and check output.
+        $progress = new progress_trace_buffer(new text_progress_trace(), false);
+        $search->index(false, 75, $progress);
+        $out = $progress->get_buffer();
+        $progress->reset_buffer();
+
+        // Check for the standard text.
+        $this->assertContains('Processing area: Mock search area', $out);
+        $this->assertContains('Stopping indexing due to time limit', $out);
+
+        // Check for initial query performance indication.
+        $this->assertContains('Initial query took 10.1 seconds.', $out);
+
+        // Check for the two (approximately) every-30-seconds messages.
+        $this->assertContains('01:00:41: Done to 1/11/17, 01:01', $out);
+        $this->assertContains('01:01:13: Done to 1/11/17, 01:03', $out);
+
+        // Check for the 'not complete' indicator showing when it was done until.
+        $this->assertContains('Processed 5 records containing 5 documents, in 89.1 seconds ' .
+                '(not complete; done to 1/11/17, 01:04)', $out);
+
+        // Make the initial query delay less than 5 seconds, so it won't appear. Make the documents
+        // quicker, so that the 30-second delay won't be needed.
+        $area->set_indexing_delay(4.9);
+        $search->get_engine()->set_add_delay(1);
+
+        // Run search indexing (still partial) and check output.
+        $progress = new progress_trace_buffer(new text_progress_trace(), false);
+        $search->index(false, 5, $progress);
+        $out = $progress->get_buffer();
+        $progress->reset_buffer();
+
+        $this->assertContains('Processing area: Mock search area', $out);
+        $this->assertContains('Stopping indexing due to time limit', $out);
+        $this->assertNotContains('Initial query took', $out);
+        $this->assertNotContains(': Done to', $out);
+        $this->assertContains('Processed 2 records containing 2 documents, in 6.9 seconds ' .
+                '(not complete; done to 1/11/17, 01:05).', $out);
+
+        // Run the remaining items to complete it.
+        $progress = new progress_trace_buffer(new text_progress_trace(), false);
+        $search->index(false, 100, $progress);
+        $out = $progress->get_buffer();
+        $progress->reset_buffer();
+
+        $this->assertContains('Processing area: Mock search area', $out);
+        $this->assertNotContains('Stopping indexing due to time limit', $out);
+        $this->assertNotContains('Initial query took', $out);
+        $this->assertNotContains(': Done to', $out);
+        $this->assertContains('Processed 3 records containing 3 documents, in 7.9 seconds.', $out);
+
+        $searchgenerator->tearDown();
+    }
+
+    /**
      * Tests that documents with modified time in the future are NOT indexed (as this would cause
      * a problem by preventing it from indexing other documents modified between now and the future
      * date).
