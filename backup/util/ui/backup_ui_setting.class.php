@@ -307,10 +307,12 @@ abstract class backup_setting_ui extends base_setting_ui {
      * 2. The setting is locked but only by settings that are of the same level (same page)
      *
      * Condition 2 is really why we have this function
-     *
+     * @param int $level Optional, if provided only depedency_settings below or equal to this level are considered,
+     *          when checking if the ui_setting is changeable. Although dependencies might cause a lock on this setting,
+     *          they could be changeable in the same view.
      * @return bool
      */
-    public function is_changeable() {
+    public function is_changeable($level = null) {
         if ($this->setting->get_status() === backup_setting::NOT_LOCKED) {
             // Its not locked so its chanegable.
             return true;
@@ -319,6 +321,9 @@ abstract class backup_setting_ui extends base_setting_ui {
             return false;
         } else if ($this->setting->has_dependencies_on_settings()) {
             foreach ($this->setting->get_settings_depended_on() as $dependency) {
+                if ($level && $dependency->get_setting()->get_level() >= $level) {
+                    continue;
+                }
                 if ($dependency->is_locked() && $dependency->get_setting()->get_level() !== $this->setting->get_level()) {
                     // Its not changeable because one or more dependancies arn't changeable.
                     return false;
@@ -458,13 +463,16 @@ class backup_setting_ui_checkbox extends backup_setting_ui {
 
     /**
      * Returns true if the setting is changeable
+     * @param int $level Optional, if provided only depedency_settings below or equal to this level are considered,
+     *          when checking if the ui_setting is changeable. Although dependencies might cause a lock on this setting,
+     *          they could be changeable in the same view.
      * @return bool
      */
-    public function is_changeable() {
+    public function is_changeable($level = null) {
         if ($this->changeable === false) {
             return false;
         } else {
-            return parent::is_changeable();
+            return parent::is_changeable($level);
         }
     }
 
@@ -639,13 +647,16 @@ class backup_setting_ui_select extends backup_setting_ui {
     /**
      * Returns true if the setting is changeable, false otherwise
      *
+     * @param int $level Optional, if provided only depedency_settings below or equal to this level are considered,
+     *          when checking if the ui_setting is changeable. Although dependencies might cause a lock on this setting,
+     *          they could be changeable in the same view.
      * @return bool
      */
-    public function is_changeable() {
+    public function is_changeable($level = null) {
         if (count($this->values) == 1) {
             return false;
         } else {
-            return parent::is_changeable();
+            return parent::is_changeable($level);
         }
     }
 
