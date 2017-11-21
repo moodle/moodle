@@ -2811,7 +2811,7 @@ function xmldb_main_upgrade($oldversion) {
     // Automatically generated Moodle v3.4.0 release upgrade line.
     // Put any upgrade step following this.
 
-    if ($oldversion < 2017111300.011) {
+    if ($oldversion < 2017111300.02) {
 
         // Define field basicauth to be added to oauth2_issuer.
         $table = new xmldb_table('oauth2_issuer');
@@ -2823,7 +2823,7 @@ function xmldb_main_upgrade($oldversion) {
         }
 
         // Main savepoint reached.
-        upgrade_main_savepoint(true, 2017111300.011);
+        upgrade_main_savepoint(true, 2017111300.02);
     }
 
     return true;
