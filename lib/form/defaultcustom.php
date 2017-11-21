@@ -77,7 +77,7 @@ class MoodleQuickForm_defaultcustom extends MoodleQuickForm_group {
             'startyear' => $calendartype->get_min_year(),
             'stopyear' => $calendartype->get_max_year(),
             'defaulttime' => 0,
-            'step' => 5,
+            'step' => 1,
             'optional' => false,
         ];
 
