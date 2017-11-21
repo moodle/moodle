@@ -566,7 +566,7 @@ function chat_get_latest_message($chatid, $groupid=0) {
 
     $sql = "SELECT *
         FROM {chat_messages_current} WHERE chatid = :chatid $groupselect
-        ORDER BY timestamp DESC";
+        ORDER BY timestamp DESC, id DESC";
 
     // Return the lastest one message.
     return $DB->get_record_sql($sql, $params, true);
