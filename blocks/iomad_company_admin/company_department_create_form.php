@@ -48,12 +48,16 @@ class department_edit_form extends company_moodleform {
         $mform =& $this->_form;
         $company = new company($this->selectedcompany);
 
+        if (!empty($this->departmentid)) {
+            $ignorecurrentbranch = $this->departmentid;
+        } else {
+            $ignorecurrentbranch = false;
+        }
         $userdepartment = $company->get_userlevel($USER);
         $departmentslist = company::get_all_subdepartments($userdepartment->id);
-        $departmenttree = company::get_all_subdepartments_raw($userdepartment->id);
-        $treehtml = $this->output->department_tree($departmenttree, optional_param('deptid', 0, PARAM_INT));
-
+        $departmenttree = company::get_all_subdepartments_raw($userdepartment->id, $ignorecurrentbranch);
         $department = company::get_departmentbyid($this->departmentid);
+        $treehtml = $this->output->department_tree($departmenttree, optional_param('deptid', 0, PARAM_INT));
 
         // Then show the fields about where this block appears.
         if ($this->action == 0) {
@@ -113,11 +117,13 @@ class department_edit_form extends company_moodleform {
 
         $errors = array();
 
+$DB->set_debug(true);
         if ($departmentbyname = $DB->get_record('department', array('company' => $this->selectedcompany, 'shortname' => $data['shortname']))) {
             if ($departmentbyname->id != $this->departmentid) {
                 $errors['shortname'] = get_string('departmentnameinuse', 'block_iomad_company_admin');
             }
         }
+$DB->set_debug(false);
         return $errors;
     }
 }

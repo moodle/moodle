@@ -913,15 +913,21 @@ class company {
      * Returns array();
      *
      **/
-    public static function get_subdepartments($parent) {
+    public static function get_subdepartments($parent, $ignorecurrentbranch = false) {
         global $DB;
+
+        // Are we trimming a current branch?
+        if (isset($parent->id) && $parent->id == $ignorecurrentbranch) {
+            return $parent;
+        }
+
 
         $returnarray = $parent;
         // Check to see if its the top node.
         if (isset($parent->id)) {
-            if ($children = $DB->get_records('department', array('parent' => $parent->id))) {
+            if ($children = $DB->get_records('department', array('parent' => $parent->id), 'name', '*')) {
                 foreach ($children as $child) {
-                    $returnarray->children[] = self::get_subdepartments($child);
+                    $returnarray->children[] = self::get_subdepartments($child, $ignorecurrentbranch);
                 }
             }
         }
@@ -1118,9 +1124,15 @@ class company {
      * @param int companyid
      * @return array
      */
-    public static function get_all_subdepartments_raw($departmentid) {
+    public static function get_all_subdepartments_raw($departmentid, $ignorecurrentbranch = false) {
+
+        // Are we trimming a current branch?
+        if ($departmentid == $ignorecurrentbranch) {
+            return;
+        }
+
         $departmentnode = self::get_departmentbyid($departmentid);
-        $departmenttree = self::get_subdepartments($departmentnode);
+        $departmenttree = self::get_subdepartments($departmentnode, $ignorecurrentbranch);
 
         return $departmenttree;
     }
