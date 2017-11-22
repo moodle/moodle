@@ -242,7 +242,7 @@ class block_mycourses_renderer extends plugin_renderer_base {
 
         $returntext .= '</div></div>';
 
-        $returntext .= '<div class='coursearchivebutton'><a class="btn" href="' . new moodle_url('/blocks/mycourses/archive.php') . '">'
+        $returntext .= '<div class="coursearchivebutton"><a class="btn" href="' . new moodle_url('/blocks/mycourses/archive.php') . '">'
                        . get_string('archive', 'block_mycourses') . '</a></div>';
         return $returntext;
     }
