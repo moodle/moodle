@@ -533,6 +533,10 @@ class company_edit_form extends company_moodleform {
             $mform->addElement('hidden', 'createnew', 1);
             $mform->setType('createnew', PARAM_INT);
         }
+
+        // Disable the onchange popup.
+        $mform->disable_form_change_checker();
+
         $this->add_action_buttons(true, $submitlabel);
     }
 
