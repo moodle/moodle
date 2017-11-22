@@ -102,10 +102,9 @@ class convert_submissions extends scheduled_task {
             foreach ($users as $userid) {
                 try {
                     $combineddocument = document_services::get_combined_pdf_for_attempt($assignment, $userid, $attemptnumber);
-                    $status = $combineddocument->get_status();
-
                     switch ($combineddocument->get_status()) {
                         case combined_document::STATUS_READY:
+                        case combined_document::STATUS_READY_PARTIAL:
                         case combined_document::STATUS_PENDING_INPUT:
                             // The document has not been converted yet or is somehow still ready.
                             continue 2;
