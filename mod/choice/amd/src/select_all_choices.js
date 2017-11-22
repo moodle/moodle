@@ -21,21 +21,12 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-define(['jquery', 'core/str'], function($, str) {
+define(['jquery'], function($) {
     return {
         init: function () {
             $('.selectallnone a').on('click', function(e) {
                 e.preventDefault();
-
-                var flag = false;
-                var selectedtext = $(this).text();
-
-                str.get_string('selectall', 'core').done(function(string) {
-                    if (selectedtext === string) {
-                        flag = true;
-                    }
-                    $('#attemptsform').find('input:checkbox').prop('checked', flag);
-                });
+                $('#attemptsform').find('input:checkbox').prop('checked', $(this).data('selectInfo'));
             });
         }
     };
