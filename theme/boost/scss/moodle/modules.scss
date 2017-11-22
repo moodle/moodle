@@ -642,8 +642,8 @@ $popout-header-height: 4rem;
 }
 
 .assignfeedback_editpdf_widget .label {
-    @extend .tag;
-    @extend .tag-info;
+    @extend .alert;
+    @extend .alert-info;
 }
 
 .assignfeedback_editpdf_menu {
