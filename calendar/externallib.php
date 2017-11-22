@@ -222,25 +222,36 @@ class core_calendar_external extends external_api {
         }
 
         $categories = array();
-        if (empty($params['events']['categoryids']) && !empty($courses)) {
-            list($wheresql, $sqlparams) = $DB->get_in_or_equal($courses);
-            $wheresql = "id $wheresql";
-            $courseswithcategory = $DB->get_records_select('course', $wheresql, $sqlparams);
+        if ($hassystemcap || !empty($courses)) {
 
-            // Grab the list of course categories for the requested course list.
             $coursecategories = array();
-            foreach ($courseswithcategory as $course) {
-                if (empty($course->visible)) {
-                    if (!has_capability('moodle/course:viewhidden', context_course::instance($course->id))) {
-                        continue;
+            if (!empty($courses)) {
+                list($wheresql, $sqlparams) = $DB->get_in_or_equal($courses);
+                $wheresql = "id $wheresql";
+                $courseswithcategory = $DB->get_records_select('course', $wheresql, $sqlparams);
+
+                // Grab the list of course categories for the requested course list.
+                foreach ($courseswithcategory as $course) {
+                    if (empty($course->visible)) {
+                        if (!has_capability('moodle/course:viewhidden', context_course::instance($course->id))) {
+                            continue;
+                        }
                     }
+                    $category = \coursecat::get($course->category);
+                    // Fetch parent categories.
+                    $coursecategories = array_merge($coursecategories, [$category->id], $category->get_parents());
                 }
-                $category = \coursecat::get($course->category);
-                $coursecategories[] = $category;
             }
 
             foreach (\coursecat::get_all() as $category) {
-                if (has_capability('moodle/category:manage', $category->get_context(), $USER, false)) {
+                // Skip categories not requested.
+                if (!empty($params['events']['categoryids'])) {
+                    if (!in_array($category->id, $params['events']['categoryids'])) {
+                        continue;
+                    }
+                }
+
+                if (has_capability('moodle/category:manage', $category->get_context())) {
                     // If a user can manage a category, then they can see all child categories. as well as all parent categories.
                     $categories[] = $category->id;
 
@@ -250,28 +261,13 @@ class core_calendar_external extends external_api {
                         }
                     }
                     $categories = array_merge($categories, $category->get_parents());
-                } else if (isset($coursecategories[$category->id])) {
+                } else if (in_array($category->id, $coursecategories)) {
+
                     // The user has access to a course in this category.
                     // Fetch all of the parents too.
                     $categories = array_merge($categories, [$category->id], $category->get_parents());
                     $categories[] = $category->id;
                 }
-            }
-        } else {
-            // Build the category list.
-            // This includes the current category.
-            foreach ($params['events']['categoryids'] as $categoryid) {
-                $category = \coursecat::get($categoryid);
-                $categories = [$category->id];
-                // All of its descendants.
-                foreach (\coursecat::get_all() as $cat) {
-                    if (array_search($categoryid, $cat->get_parents()) !== false) {
-                        $categories[] = $cat->id;
-                    }
-                }
-
-                // And all of its parents.
-                $categories = array_merge($categories, $category->get_parents());
             }
         }
 

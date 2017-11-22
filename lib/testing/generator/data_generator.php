@@ -1124,6 +1124,7 @@ EOD;
         $record->timesort = 0;
         $record->eventtype = 'user';
         $record->courseid = 0;
+        $record->categoryid = 0;
 
         foreach ($data as $key => $value) {
             $record->$key = $value;
