@@ -76,6 +76,9 @@ class combined_document {
 
     /**
      * Check the current status of the document combination.
+     * Note that the combined document may not contain all the source files if some of the
+     * source files were not able to be converted. An example is an audio file with a pdf cover sheet. Only
+     * the cover sheet will be included in the combined document.
      *
      * @return  int
      */
@@ -107,9 +110,6 @@ class combined_document {
                     case \core_files\conversion::STATUS_PENDING:
                         $pending = true;
                         break;
-
-                    case \core_files\conversion::STATUS_FAILED:
-                        return self::STATUS_FAILED;
                 }
             }
         }
@@ -235,7 +235,10 @@ class combined_document {
             // Note: We drop non-compatible files.
             $compatiblepdf = false;
             if (is_a($file, \core_files\conversion::class)) {
-                $compatiblepdf = pdf::ensure_pdf_compatible($file->get_destfile());
+                $status = $file->get('status');
+                if ($status == \core_files\conversion::STATUS_COMPLETE) {
+                    $compatiblepdf = pdf::ensure_pdf_compatible($file->get_destfile());
+                }
             } else {
                 $compatiblepdf = pdf::ensure_pdf_compatible($file);
             }
