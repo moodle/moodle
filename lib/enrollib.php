@@ -554,15 +554,23 @@ function enrol_add_course_navigation(navigation_node $coursenode, $course) {
  * password).
  *
  * @param string|array $fields
- * @param string $sort
+ * @param string|null $sort
  * @param int $limit max number of courses
  * @param array $courseids the list of course ids to filter by
  * @param bool $allaccessible Include courses user is not enrolled in, but can access
  * @return array
  */
-function enrol_get_my_courses($fields = null, $sort = 'visible DESC,sortorder ASC',
+function enrol_get_my_courses($fields = null, $sort = null,
           $limit = 0, $courseids = [], $allaccessible = false) {
-    global $DB, $USER, $CFG;
+    global $CFG, $DB, $USER;
+
+    if (is_null($sort)) {
+        if (empty($CFG->navsortmycoursessort)) {
+            $sort = 'visible DESC, sortorder ASC';
+        } else {
+            $sort = 'visible DESC, '.$CFG->navsortmycoursessort.' ASC';
+        }
+    }
 
     // Guest account does not have any enrolled courses.
     if (!$allaccessible && (isguestuser() or !isloggedin())) {
