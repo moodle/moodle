@@ -119,6 +119,7 @@ class event_mapper implements event_mapper_interface {
             'description'      => $event->get_description()->get_value(),
             'format'           => $event->get_description()->get_format(),
             'courseid'         => $event->get_course() ? $event->get_course()->get('id') : null,
+            'categoryid'       => $event->get_category() ? $event->get_category()->get('id') : null,
             'groupid'          => $event->get_group() ? $event->get_group()->get('id') : null,
             'userid'           => $event->get_user() ? $event->get_user()->get('id') : null,
             'repeatid'         => $event->get_repeats()->get_id(),
