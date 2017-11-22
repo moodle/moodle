@@ -78,6 +78,12 @@ class block_globalsearch extends block_base {
             'type' => 'text', 'size' => '15');
         $this->content->text .= html_writer::empty_tag('input', $inputoptions);
 
+        // Context id.
+        if ($this->page->context && $this->page->context->contextlevel !== CONTEXT_SYSTEM) {
+            $this->content->text .= html_writer::empty_tag('input', ['type' => 'hidden',
+                    'name' => 'context', 'value' => $this->page->context->id]);
+        }
+
         // Search button.
         $this->content->text .= html_writer::tag('button', get_string('search', 'search'),
             array('id' => 'searchform_button', 'type' => 'submit', 'title' => 'globalsearch', 'class' => 'btn btn-secondary'));

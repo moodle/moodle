@@ -7,10 +7,13 @@ Feature: Use global search interface
   Background:
     Given the following config values are set as admin:
       | enableglobalsearch | 1 |
+    And the following "courses" exist:
+      | shortname | fullname   |
+      | F1        | Amphibians |
     And the following "activities" exist:
-      | activity | name       | intro      | course               | idnumber |
-      | page     | PageName1  | PageDesc1  | Acceptance test site | PAGE1    |
-      | forum    | ForumName1 | ForumDesc1 | Acceptance test site | FORUM1   |
+      | activity | name       | intro      | course | idnumber |
+      | page     | PageName1  | PageDesc1  | F1     | PAGE1    |
+      | forum    | ForumName1 | ForumDesc1 | F1     | FORUM1   |
     And I log in as "admin"
 
   @javascript
@@ -47,3 +50,44 @@ Feature: Use global search interface
     # Check the link works.
     And I follow "ForumName1"
     And I should see "ForumName1" in the ".breadcrumb" "css_element"
+
+  @javascript
+  Scenario: Search starting from site context (no within option)
+    Given global search expects the query "frogs" and will return:
+      | type     | idnumber |
+      | activity | PAGE1    |
+    When I search for "frogs" using the header global search box
+    And I expand all fieldsets
+    Then I should not see "Search within"
+    And I should see "Courses"
+
+  @javascript
+  Scenario: Search starting from course context (within option lists course)
+    Given global search expects the query "frogs" and will return:
+      | type     | idnumber |
+      | activity | PAGE1    |
+    When I am on "Amphibians" course homepage
+    And I search for "frogs" using the header global search box
+    And I expand all fieldsets
+    Then I should see "Search within"
+    And I select "Everywhere you can access" from the "Search within" singleselect
+    And I should see "Courses"
+    And I select "Course: Amphibians" from the "Search within" singleselect
+    And I should not see "Courses"
+
+  @javascript
+  Scenario: Search starting from forum context (within option lists course and forum)
+    Given global search expects the query "frogs" and will return:
+      | type     | idnumber |
+      | activity | PAGE1    |
+    When I am on "Amphibians" course homepage
+    And I follow "ForumName1"
+    And I search for "frogs" using the header global search box
+    And I expand all fieldsets
+    And I should see "Search within"
+    And I select "Everywhere you can access" from the "Search within" singleselect
+    And I should see "Courses"
+    And I select "Course: Amphibians" from the "Search within" singleselect
+    And I should not see "Courses"
+    And I select "Forum: ForumName1" from the "Search within" singleselect
+    And I should not see "Courses"
