@@ -267,9 +267,9 @@ class mod_choice_renderer extends plugin_renderer_base {
             $selecturl = new moodle_url('#');
 
             $actiondata .= html_writer::start_div('selectallnone');
-            $actiondata .= html_writer::link($selecturl, get_string('selectall')) . ' / ';
+            $actiondata .= html_writer::link($selecturl, get_string('selectall'), ['data-select-info' => true]) . ' / ';
 
-            $actiondata .= html_writer::link($selecturl, get_string('deselectall'));
+            $actiondata .= html_writer::link($selecturl, get_string('deselectall'), ['data-select-info' => false]);
 
             $actiondata .= html_writer::end_div();
 
