@@ -140,7 +140,7 @@ $stdfields = array('id', 'firstname', 'lastname', 'username', 'email',
         'mnethostid', 'institution', 'department', 'idnumber', 'skype',
         'msn', 'aim', 'yahoo', 'icq', 'phone1', 'phone2', 'address',
         'url', 'description', 'descriptionformat', 'oldusername', 'deleted',
-        'password', 'temppassword');
+        'password', 'temppassword', 'suspended');
 
 $prffields = array();
 
@@ -595,8 +595,10 @@ if ($mform->is_cancelled()) {
                                         $forcechangepassword = true;
                                     }
                                 }
-    
-                                $upt->track($column, '', 'normal', false); // Clear previous.
+
+                                if ($column != 'suspended') {
+                                    $upt->track($column, '', 'normal', false); // Clear previous.
+                                }
                                 if ($column != 'password' && in_array($column, $upt->columns)) {
                                     $upt->track($column, $existinguser->$column.'-->'.$user->$column, 'info');
                                 }
@@ -608,7 +610,6 @@ if ($mform->is_cancelled()) {
                             }
                         }
                     }
-    
                     // Do not update record if new auth plugin does not exist!
                     if (!in_array($existinguser->auth, $availableauths)) {
                         $upt->track('auth', get_string('userautherror', 'error', $existinguser->auth), 'error');
@@ -666,7 +667,7 @@ if ($mform->is_cancelled()) {
                     // Save custom profile fields data from csv file.
                     profile_save_data($existinguser);
     
-                    \core\event\user_updated::create(array('context'=>$systemcontext, 'relateduserid' => $USER->id, 'userid' => $existinguser->id))->trigger();
+                    \core\event\user_updated::create_from_userid($existinguser->id)->trigger();
      
                 }
     
