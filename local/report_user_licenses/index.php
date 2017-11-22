@@ -602,8 +602,14 @@ if (!$users && empty($dodownload)) {
 
             // Get the date the user accessed the course.
             if ($user->isusing) {
-                $compinfo = $DB->get_record('course_completions', array('userid' => $user->id, 'course' => $user->licensecourseid));
-                $struseddate = date($CFG->iomad_date_format, $compinfo->timeenrolled);
+                $enrolinfo = $DB->get_record_sql("SELECT ue.* FROM {user_enrolments} ue
+                                                  JOIN {enrol} e ON (ue.enrolid = e.id AND e.enrol = :license)
+                                                  WHERE ue.userid = :userid
+                                                  AND e.courseid = :courseid",
+                                                  array('userid' => $user->id,
+                                                        'courseid' => $user->licensecourseid,
+                                                        'license' => 'license'));
+                $struseddate = date($CFG->iomad_date_format, $enrolinfo->timestart);
             } else {
                 $struseddate =  $stringnever;
             }
@@ -616,8 +622,14 @@ if (!$users && empty($dodownload)) {
                 $strisusing = $stringyesno[1];
                 $userlicense = array_pop($userlicenseinfo);
                 $strissuedate = date($CFG->iomad_date_format, $userlicense->issuedate);
-                $compinfo = $DB->get_record('course_completions', array('userid' => $user->id, 'course' => $userlicense->licensecourseid));
-                $struseddate = date($CFG->iomad_date_format, $compinfo->timeenrolled);
+                $enrolinfo = $DB->get_record_sql("SELECT ue.* FROM {user_enrolments} ue
+                                                  JOIN {enrol} e ON (ue.enrolid = e.id AND e.enrol = :license)
+                                                  WHERE ue.userid = :userid
+                                                  AND e.courseid = :courseid",
+                                                  array('userid' => $user->id,
+                                                        'courseid' => $userlicense->licensecourseid,
+                                                        'license' => 'license'));
+                $struseddate = date($CFG->iomad_date_format, $enrolinfo->timestart);
             } else {
                 $strisusing = $stringyesno[0];
                 $strissuedate = $stringnever;
