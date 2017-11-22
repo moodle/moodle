@@ -8,8 +8,14 @@ html.yui3-js-enabled body#page-my-index.format-site.path-my.gecko.dir-ltr.lang-e
 
 .mycourselisting .courseimage {
     float:left;
+    padding-right: 10px;
 }
 
 hr {
     clear: both;
+}
+
+.coursearchivebutton {
+    clear: both;
+    padding-top: 10px;
 }
