@@ -71,6 +71,9 @@ if ($contextid) {
         }
         $customdata['searchwithin'] = $searchwithin;
     }
+
+    // Get available ordering options from search engine.
+    $customdata['orderoptions'] = $search->get_engine()->get_supported_orders($context);
 }
 $mform = new \core_search\output\form\search(null, $customdata);
 
@@ -110,6 +113,11 @@ if ($data && !empty($data->searchwithin)) {
             $data->contextids = [$context->id];
             break;
     }
+}
+
+// Inform search engine about source context.
+if (!empty($context) && $data) {
+    $data->context = $context;
 }
 
 // Set the page URL.
