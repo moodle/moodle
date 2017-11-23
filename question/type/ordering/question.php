@@ -37,7 +37,7 @@ class qtype_ordering_question extends question_graded_automatically {
     const SELECT_ALL = 0;
     /** Select random set of answers */
     const SELECT_RANDOM = 1;
-    /** Select contignous subset of answers */
+    /** Select contiguous subset of answers */
     const SELECT_CONTIGUOUS = 2;
 
     /** Show answers in vertical list */
@@ -60,7 +60,7 @@ class qtype_ordering_question extends question_graded_automatically {
     const GRADING_RELATIVE_ALL_PREVIOUS_AND_NEXT = 4;
     /** @var int Only longest ordered subset is graded */
     const GRADING_LONGEST_ORDERED_SUBSET = 5;
-    /** @var int Only longest ordered and contignous subset is graded */
+    /** @var int Only longest ordered and contiguous subset is graded */
     const GRADING_LONGEST_CONTIGUOUS_SUBSET = 6;
     /** @var int Items are graded relative to their position in the correct answer */
     const GRADING_RELATIVE_TO_CORRECT = 7;

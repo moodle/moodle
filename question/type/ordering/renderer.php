@@ -94,12 +94,12 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
             $script = "\n";
             $script .= "//<![CDATA[\n";
             $script .= "if (window.$) {\n";
-            $script .= "    $(function() {\n";
+            $script .= "    $(function(){\n";
             $script .= "        $('#$sortableid').sortable({\n";
             $script .= "            axis: '$axis',\n";
             $script .= "            containment: '#$ablockid',\n";
             $script .= "            opacity: 0.6,\n";
-            $script .= "            update: function(event, ui) {\n";
+            $script .= "            update: function(event, ui){\n";
             $script .= "                if (typeof($(this).sortable)=='function') {\n";
             $script .= "                    var ItemsOrder = $(this).sortable('toArray');\n";
             $script .= "                } else {\n";
@@ -114,7 +114,7 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
             $script .= "        });\n";
             $script .= "        $('#$sortableid').disableSelection();\n";
             $script .= "    });\n";
-            $script .= "    $(document).ready(function() {\n";
+            $script .= "    $(document).ready(function(){\n";
             $script .= "        var ItemsOrder = $('#$sortableid').sortable('toArray');\n";
             $script .= "        $('#$responseid').val(ItemsOrder).toString();\n";
             $script .= "    });\n";

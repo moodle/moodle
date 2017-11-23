@@ -381,6 +381,7 @@ class qtype_ordering extends question_type {
                           'RELATIVE_NEXT_INCLUDE_LAST|'.
                           'RELATIVE_ONE_PREVIOUS_AND_NEXT|'.
                           'RELATIVE_ALL_PREVIOUS_AND_NEXT|'.
+                          'RELATIVE_TO_CORRECT|'.
                           'RELATIVE|REL'.
                           'LONGEST_ORDERED_SUBSET|'.
                           'LONGEST_CONTIGUOUS_SUBSET)?';
