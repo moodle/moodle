@@ -6511,3 +6511,48 @@ function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxeve
 
     return $output;
 }
+
+/**
+ * Creates a record in the role_allow_override table
+ *
+ * @param int $sroleid source roleid
+ * @param int $troleid target roleid
+ * @return void
+ * @deprecated since Moodle 3.4. MDL-50666
+ */
+function allow_override($sroleid, $troleid) {
+    debugging('allow_override() has been deprecated. Please update your code to use core_role_set_override_allowed.',
+            DEBUG_DEVELOPER);
+
+    core_role_set_override_allowed($sroleid, $troleid);
+}
+
+/**
+ * Creates a record in the role_allow_assign table
+ *
+ * @param int $fromroleid source roleid
+ * @param int $targetroleid target roleid
+ * @return void
+ * @deprecated since Moodle 3.4. MDL-50666
+ */
+function allow_assign($fromroleid, $targetroleid) {
+    debugging('allow_assign() has been deprecated. Please update your code to use core_role_set_assign_allowed.',
+            DEBUG_DEVELOPER);
+
+    core_role_set_assign_allowed($fromroleid, $targetroleid);
+}
+
+/**
+ * Creates a record in the role_allow_switch table
+ *
+ * @param int $fromroleid source roleid
+ * @param int $targetroleid target roleid
+ * @return void
+ * @deprecated since Moodle 3.4. MDL-50666
+ */
+function allow_switch($fromroleid, $targetroleid) {
+    debugging('allow_switch() has been deprecated. Please update your code to use core_role_set_switch_allowed.',
+            DEBUG_DEVELOPER);
+
+    core_role_set_switch_allowed($fromroleid, $targetroleid);
+}

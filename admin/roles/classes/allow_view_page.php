@@ -49,7 +49,7 @@ class core_role_allow_view_page extends core_role_allow_role_page {
      * @param int $targetroleid
      */
     protected function set_allow($fromroleid, $targetroleid) {
-        allow_view($fromroleid, $targetroleid);
+        core_role_set_view_allowed($fromroleid, $targetroleid);
     }
 
     /**

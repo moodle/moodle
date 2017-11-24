@@ -795,7 +795,7 @@ EOD;
                 foreach ($types as $type) {
                     $rolestocopy = get_default_role_archetype_allows($type, $record['archetype']);
                     foreach ($rolestocopy as $tocopy) {
-                        $functionname = 'allow_' . $type;
+                        $functionname = "core_role_set_{$type}_allowed";
                         $functionname($newroleid, $tocopy);
                     }
                 }

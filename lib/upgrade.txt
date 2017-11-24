@@ -61,6 +61,7 @@ information provided here is intended especially for developers.
 * Added function core_role_set_view_allowed() to check if a user should be able to see a given role.
   This should be checked whenever displaying a list of roles to a user, however, core_role_set_assign_allowed may need to override it
   in some cases.
+* Deprecated allow_override, allow_assign and allow_switch and replaced with core_role_set_*_allowed to avoid function names conflicting.
 
 === 3.3.1 ===
 

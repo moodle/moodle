@@ -469,7 +469,7 @@ class core_role_define_role_table_advanced extends core_role_capability_table_wi
         $current = array_keys($this->get_allow_roles_list($type));
         $wanted = $this->{'allow'.$type};
 
-        $addfunction = 'allow_'.$type;
+        $addfunction = "core_role_set_{$type}_allowed";
         $deltable = 'role_allow_'.$type;
         $field = 'allow'.$type;
 

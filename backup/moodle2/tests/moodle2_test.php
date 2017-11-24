@@ -596,7 +596,7 @@ class core_backup_moodle2_testcase extends advanced_testcase {
             assign_capability($cap, CAP_ALLOW, $roleidcat, $categorycontext);
         }
 
-        allow_assign($roleidcat, $studentrole->id);
+        core_role_set_assign_allowed($roleidcat, $studentrole->id);
         role_assign($roleidcat, $user->id, $categorycontext);
         accesslib_clear_all_caches_for_unit_testing();
 

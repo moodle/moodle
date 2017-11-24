@@ -2852,16 +2852,16 @@ function get_user_roles_with_special(context $context, $userid = 0) {
 /**
  * Creates a record in the role_allow_override table
  *
- * @param int $sroleid source roleid
- * @param int $troleid target roleid
+ * @param int $fromroleid source roleid
+ * @param int $targetroleid target roleid
  * @return void
  */
-function allow_override($sroleid, $troleid) {
+function core_role_set_override_allowed($fromroleid, $targetroleid) {
     global $DB;
 
     $record = new stdClass();
-    $record->roleid        = $sroleid;
-    $record->allowoverride = $troleid;
+    $record->roleid        = $fromroleid;
+    $record->allowoverride = $targetroleid;
     $DB->insert_record('role_allow_override', $record);
 }
 
@@ -2872,7 +2872,7 @@ function allow_override($sroleid, $troleid) {
  * @param int $targetroleid target roleid
  * @return void
  */
-function allow_assign($fromroleid, $targetroleid) {
+function core_role_set_assign_allowed($fromroleid, $targetroleid) {
     global $DB;
 
     $record = new stdClass();
@@ -2888,7 +2888,7 @@ function allow_assign($fromroleid, $targetroleid) {
  * @param int $targetroleid target roleid
  * @return void
  */
-function allow_switch($fromroleid, $targetroleid) {
+function core_role_set_switch_allowed($fromroleid, $targetroleid) {
     global $DB;
 
     $record = new stdClass();

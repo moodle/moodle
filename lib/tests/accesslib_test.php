@@ -955,7 +955,7 @@ class core_accesslib_testcase extends advanced_testcase {
     /**
      * Test allowing of role assignments.
      */
-    public function test_allow_assign() {
+    public function test_core_role_set_assign_allowed() {
         global $DB, $CFG;
 
         $this->resetAfterTest();
@@ -964,7 +964,7 @@ class core_accesslib_testcase extends advanced_testcase {
         $student = $DB->get_record('role', array('shortname'=>'student'), '*', MUST_EXIST);
 
         $this->assertFalse($DB->record_exists('role_allow_assign', array('roleid'=>$otherid, 'allowassign'=>$student->id)));
-        allow_assign($otherid, $student->id);
+        core_role_set_assign_allowed($otherid, $student->id);
         $this->assertTrue($DB->record_exists('role_allow_assign', array('roleid'=>$otherid, 'allowassign'=>$student->id)));
 
         // Test event trigger.
@@ -984,7 +984,7 @@ class core_accesslib_testcase extends advanced_testcase {
     /**
      * Test allowing of role overrides.
      */
-    public function test_allow_override() {
+    public function test_core_role_set_override_allowed() {
         global $DB, $CFG;
 
         $this->resetAfterTest();
@@ -993,7 +993,7 @@ class core_accesslib_testcase extends advanced_testcase {
         $student = $DB->get_record('role', array('shortname'=>'student'), '*', MUST_EXIST);
 
         $this->assertFalse($DB->record_exists('role_allow_override', array('roleid'=>$otherid, 'allowoverride'=>$student->id)));
-        allow_override($otherid, $student->id);
+        core_role_set_override_allowed($otherid, $student->id);
         $this->assertTrue($DB->record_exists('role_allow_override', array('roleid'=>$otherid, 'allowoverride'=>$student->id)));
 
         // Test event trigger.
@@ -1013,7 +1013,7 @@ class core_accesslib_testcase extends advanced_testcase {
     /**
      * Test allowing of role switching.
      */
-    public function test_allow_switch() {
+    public function test_core_role_set_switch_allowed() {
         global $DB, $CFG;
 
         $this->resetAfterTest();
@@ -1022,7 +1022,7 @@ class core_accesslib_testcase extends advanced_testcase {
         $student = $DB->get_record('role', array('shortname'=>'student'), '*', MUST_EXIST);
 
         $this->assertFalse($DB->record_exists('role_allow_switch', array('roleid'=>$otherid, 'allowswitch'=>$student->id)));
-        allow_switch($otherid, $student->id);
+        core_role_set_switch_allowed($otherid, $student->id);
         $this->assertTrue($DB->record_exists('role_allow_switch', array('roleid'=>$otherid, 'allowswitch'=>$student->id)));
 
         // Test event trigger.
@@ -1042,7 +1042,7 @@ class core_accesslib_testcase extends advanced_testcase {
     /**
      * Test allowing of role switching.
      */
-    public function test_allow_view() {
+    public function test_core_role_set_view_allowed() {
         global $DB, $CFG;
 
         $this->resetAfterTest();
@@ -1051,7 +1051,7 @@ class core_accesslib_testcase extends advanced_testcase {
         $student = $DB->get_record('role', array('shortname' => 'student'), '*', MUST_EXIST);
 
         $this->assertFalse($DB->record_exists('role_allow_view', array('roleid' => $otherid, 'allowview' => $student->id)));
-        allow_view($otherid, $student->id);
+        core_role_set_view_allowed($otherid, $student->id);
         $this->assertTrue($DB->record_exists('role_allow_view', array('roleid' => $otherid, 'allowview' => $student->id)));
 
         // Test event trigger.
@@ -1355,7 +1355,7 @@ class core_accesslib_testcase extends advanced_testcase {
         // Teacher can no longer see student role.
         $this->assertNotContains($studentrolerename->name, array_values($viewableroles));
         // Allow again teacher to view student.
-        allow_view($teacherrole->id, $studentrole->id);
+        core_role_set_view_allowed($teacherrole->id, $studentrole->id);
         // Teacher can now see student role.
         $viewableroles = get_viewable_roles($coursecontext);
         $this->assertContains($studentrolerename->name, array_values($viewableroles));
@@ -1388,7 +1388,7 @@ class core_accesslib_testcase extends advanced_testcase {
         // Teacher can no longer see student role.
         $this->assertNotContains($studentrolename, array_values($viewableroles));
         // Allow again teacher to view student.
-        allow_view($teacherrole->id, $studentrole->id);
+        core_role_set_view_allowed($teacherrole->id, $studentrole->id);
         // Teacher can now see student role.
         $viewableroles = get_viewable_roles($context);
         $this->assertContains($studentrolename, array_values($viewableroles));
@@ -3520,7 +3520,7 @@ class core_accesslib_testcase extends advanced_testcase {
         create_role('Custom role', 'customrole', 'Custom course role');
         $customrole = $DB->get_record('role', array('shortname' => 'customrole'), '*', MUST_EXIST);
         set_role_contextlevels($customrole->id, [CONTEXT_COURSE]);
-        allow_assign($teacherrole->id, $customrole->id); // Allow teacher to assign the role in the course.
+        core_role_set_assign_allowed($teacherrole->id, $customrole->id); // Allow teacher to assign the role in the course.
 
         // Set the site policy 'profileroles' to show student, teacher and non-editing teacher roles (i.e. not the custom role).
         $neteacherrole = $DB->get_record('role', array('shortname' => 'teacher'), '*', MUST_EXIST);
