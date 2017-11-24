@@ -680,7 +680,7 @@ if (empty($charttype)) {
                 }
             }
         }
-        $fullnamedisplay = $output->action_link($firstnameurl, 'Name'); //." / ". $output->action_link($lastnameurl, $lastname);
+        $fullnamedisplay = $output->action_link($firstnameurl, get_string('name')); //." / ". $OUTPUT->action_link($lastnameurl, $lastname);
     
         $headstart = array($fullnamedisplay => $fullnamedisplay,
                            $email => $output->action_link($emailurl, $email),
