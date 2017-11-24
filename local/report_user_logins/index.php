@@ -609,6 +609,8 @@ function iomad_get_users_listing($sort='lastaccess', $dir='ASC', $page=0, $recor
             $sort = " ORDER by d.name $dir";
         } else if ($sort == "company") {
             $sort = " ORDER by c.name $dir";
+        } else if ($sort == "created") {
+            $sort = " ORDER by u.timecreated $dir";
         } else {
             $sort = " ORDER BY u.$sort $dir";
         }
