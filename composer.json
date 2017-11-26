@@ -7,7 +7,7 @@
     "require-dev": {
         "phpunit/phpunit": "6.4.*",
         "phpunit/dbUnit": "3.0.*",
-        "moodlehq/behat-extension": "3.34.1",
+        "moodlehq/behat-extension": "3.35.0",
         "mikey179/vfsStream": "^1.6"
     }
 }
