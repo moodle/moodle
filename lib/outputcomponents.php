@@ -4464,7 +4464,9 @@ class action_menu implements renderable, templatable {
 
         if ($actionicon instanceof pix_icon) {
             $primary->icon = $actionicon->export_for_pix();
-            $primary->title = !empty($actionicon->attributes['alt']) ? $this->actionicon->attributes['alt'] : '';
+            if (!empty($actionicon->attributes['alt'])) {
+                $primary->title = $actionicon->attributes['alt'];
+            }
         } else {
             $primary->iconraw = $actionicon ? $output->render($actionicon) : '';
         }
