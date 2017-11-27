@@ -1,0 +1,6 @@
+coursename,groupname
+C1,group7
+C-non-existing,group-will-not-be-created
+C1,group8
+C2,group9
+,group10
