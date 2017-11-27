@@ -472,38 +472,54 @@ function groups_get_user_groups($courseid, $userid=0) {
         $userid = $USER->id;
     }
 
-    $sql = "SELECT g.id, gg.groupingid
-              FROM {groups} g
-                   JOIN {groups_members} gm   ON gm.groupid = g.id
-              LEFT JOIN {groupings_groups} gg ON gg.groupid = g.id
-             WHERE gm.userid = ? AND g.courseid = ?";
-    $params = array($userid, $courseid);
+    $cache = cache::make('core', 'user_group_groupings');
 
-    $rs = $DB->get_recordset_sql($sql, $params);
+    // Try to retrieve group ids from the cache.
+    $usergroups = $cache->get($userid);
 
-    if (!$rs->valid()) {
-        $rs->close(); // Not going to iterate (but exit), close rs
+    if ($usergroups === false) {
+        $sql = "SELECT g.id, g.courseid, gg.groupingid
+                  FROM {groups} g
+                  JOIN {groups_members} gm ON gm.groupid = g.id
+             LEFT JOIN {groupings_groups} gg ON gg.groupid = g.id
+                 WHERE gm.userid = ?";
+
+        $rs = $DB->get_recordset_sql($sql, array($userid));
+
+        $usergroups = array();
+        $allgroups  = array();
+
+        foreach ($rs as $group) {
+            if (!array_key_exists($group->courseid, $allgroups)) {
+                $allgroups[$group->courseid] = array();
+            }
+            $allgroups[$group->courseid][$group->id] = $group->id;
+            if (!array_key_exists($group->courseid, $usergroups)) {
+                $usergroups[$group->courseid] = array();
+            }
+            if (is_null($group->groupingid)) {
+                continue;
+            }
+            if (!array_key_exists($group->groupingid, $usergroups[$group->courseid])) {
+                $usergroups[$group->courseid][$group->groupingid] = array();
+            }
+            $usergroups[$group->courseid][$group->groupingid][$group->id] = $group->id;
+        }
+        $rs->close();
+
+        foreach (array_keys($allgroups) as $cid) {
+            $usergroups[$cid]['0'] = array_keys($allgroups[$cid]); // All user groups in the course.
+        }
+
+        // Cache the data.
+        $cache->set($userid, $usergroups);
+    }
+
+    if (array_key_exists($courseid, $usergroups)) {
+        return $usergroups[$courseid];
+    } else {
         return array('0' => array());
     }
-
-    $result    = array();
-    $allgroups = array();
-
-    foreach ($rs as $group) {
-        $allgroups[$group->id] = $group->id;
-        if (is_null($group->groupingid)) {
-            continue;
-        }
-        if (!array_key_exists($group->groupingid, $result)) {
-            $result[$group->groupingid] = array();
-        }
-        $result[$group->groupingid][$group->id] = $group->id;
-    }
-    $rs->close();
-
-    $result['0'] = array_keys($allgroups); // all groups
-
-    return $result;
 }
 
 /**
