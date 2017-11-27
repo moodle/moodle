@@ -297,6 +297,7 @@ $string['notattempted'] = 'Not attempted';
 $string['not_corr_type'] = 'Type mismatch for tag {$a->tag}';
 $string['notopenyet'] = 'Sorry, this activity is not available until {$a}';
 $string['objectives'] = 'Objectives';
+$string['openafterclose'] = 'You have specified an open date after the close date';
 $string['optallstudents'] = 'all users';
 $string['optattemptsonly'] = 'users with attempts only';
 $string['optnoattemptsonly'] = 'users with no attempts only';

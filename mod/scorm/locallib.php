@@ -51,9 +51,6 @@ define('LASTATTEMPT', '3');
 define('TOCJSLINK', 1);
 define('TOCFULLURL', 2);
 
-define('SCORM_EVENT_TYPE_OPEN', 'open');
-define('SCORM_EVENT_TYPE_CLOSE', 'close');
-
 // Local Library of functions for module scorm.
 
 /**
