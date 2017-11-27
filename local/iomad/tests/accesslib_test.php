@@ -2090,7 +2090,7 @@ class core_accesslib_testcase extends advanced_testcase {
     private function get_archetype_roles() {
         global $DB;
 
-        $roles = $DB->get_records_sql('select archetype, id from {role} where archetype<>"" order by id');
+        $roles = $DB->get_records_sql('select archetype, id from {role} where archetype<>:archetype order by id', array('archetype' => ''));
         $menu = [];
         foreach ($roles as $role) {
             $menu[$role->archetype] = $role->id;

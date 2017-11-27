@@ -599,7 +599,9 @@ class core_userliblib_testcase extends advanced_testcase {
         $this->setUser($user8);
         $this->assertFalse(user_can_view_profile($user1));
 
-        $allroles = $DB->get_records_menu('role', array(), 'id', 'archetype, id');
+        // IOMAD
+        //$allroles = $DB->get_records_menu('role', array(), 'id', 'archetype, id');
+        $allroles = $this->get_archetype_roles();
         // Let us test with guest user.
         $this->setGuestUser();
         $CFG->forceloginforprofiles = 1;
@@ -747,4 +749,21 @@ class core_userliblib_testcase extends advanced_testcase {
         self::assertSame('50', $got['timezone']);
         self::assertSame('0', $got['mailformat']);
     }
+
+    /**
+     * Get 'all standard Moodle roles' in archetype => id
+     * Ignore Iomad ones that do not specify an archetype
+     */
+    private function get_archetype_roles() {
+        global $DB;
+
+        $roles = $DB->get_records_sql('select archetype, id from {role} where archetype<>:archetype order by id', array('archetype' => ''));
+        $menu = [];
+        foreach ($roles as $role) {
+            $menu[$role->archetype] = $role->id;
+        }
+
+        return $menu;
+    }
+
 }
