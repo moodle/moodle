@@ -2111,7 +2111,7 @@ function make_timestamp($year, $month=1, $day=1, $hour=0, $minute=0, $second=0, 
  * Format a date/time (seconds) as weeks, days, hours etc as needed
  *
  * Given an amount of time in seconds, returns string
- * formatted nicely as weeks, days, hours etc as needed
+ * formatted nicely as years, days, hours etc as needed
  *
  * @package core
  * @category time
