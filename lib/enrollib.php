@@ -2431,7 +2431,11 @@ abstract class enrol_plugin {
         $participants->close();
 
         // now clean up all remainders that were not removed correctly
-        $DB->delete_records('groups_members', array('itemid'=>$instance->id, 'component'=>'enrol_'.$name));
+        if ($gms = $DB->get_records('groups_members', array('itemid' => $instance->id, 'component' => 'enrol_' . $name))) {
+            foreach ($gms as $gm) {
+                groups_remove_member($gm->groupid, $gm->userid);
+            }
+        }
         $DB->delete_records('role_assignments', array('itemid'=>$instance->id, 'component'=>'enrol_'.$name));
         $DB->delete_records('user_enrolments', array('enrolid'=>$instance->id));
 
