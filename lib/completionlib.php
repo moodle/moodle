@@ -356,19 +356,19 @@ class completion_info {
      * @return array
      */
     public function get_completions($user_id, $criteriatype = null) {
-        $criterion = $this->get_criteria($criteriatype);
+        $criteria = $this->get_criteria($criteriatype);
 
         $completions = array();
 
-        foreach ($criterion as $criteria) {
+        foreach ($criteria as $criterion) {
             $params = array(
                 'course'        => $this->course_id,
                 'userid'        => $user_id,
-                'criteriaid'    => $criteria->id
+                'criteriaid'    => $criterion->id
             );
 
             $completion = new completion_criteria_completion($params);
-            $completion->attach_criteria($criteria);
+            $completion->attach_criteria($criterion);
 
             $completions[] = $completion;
         }
