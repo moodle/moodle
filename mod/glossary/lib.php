@@ -1226,10 +1226,9 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode='',$h
 
     $context = context_module::instance($cm->id);
 
-    $output = false;   //To decide if we must really return text in "return". Activate when needed only!
+    $output = false;   // To decide if we must really return text in "return". Activate when needed only!
     $importedentry = ($entry->sourceglossaryid == $glossary->id);
     $ismainglossary = $glossary->mainglossary;
-
 
     $return = '<span class="commands">';
     // Differentiate links for each entry.
@@ -1240,6 +1239,11 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode='',$h
         $return .= html_writer::tag('span', get_string('entryishidden','glossary'),
             array('class' => 'glossary-hidden-note'));
     }
+
+    // Entry link.
+    $return .= '<a class="icon" title="' . get_string('entrylink', 'glossary', $altsuffix) . '" ' .
+               ' href="showentry.php?eid=' . $entry->id . '">' .
+               $OUTPUT->pix_icon('e/insert_edit_link', get_string('entrylink', 'glossary', $altsuffix)) . '</a>';
 
     if (has_capability('mod/glossary:approve', $context) && !$glossary->defaultapproval && $entry->approved) {
         $output = true;
