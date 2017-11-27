@@ -225,9 +225,16 @@ function quiz_delete_override($quiz, $overrideid) {
     $override = $DB->get_record('quiz_overrides', array('id' => $overrideid), '*', MUST_EXIST);
 
     // Delete the events.
-    $events = $DB->get_records('event', array('modulename' => 'quiz',
-            'instance' => $quiz->id, 'groupid' => (int)$override->groupid,
-            'userid' => (int)$override->userid));
+    if (isset($override->groupid)) {
+        // Create the search array for a group override.
+        $eventsearcharray = array('modulename' => 'quiz',
+            'instance' => $quiz->id, 'groupid' => (int)$override->groupid);
+    } else {
+        // Create the search array for a user override.
+        $eventsearcharray = array('modulename' => 'quiz',
+            'instance' => $quiz->id, 'userid' => (int)$override->userid);
+    }
+    $events = $DB->get_records('event', $eventsearcharray);
     foreach ($events as $event) {
         $eventold = calendar_event::load($event);
         $eventold->delete();
