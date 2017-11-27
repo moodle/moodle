@@ -2971,7 +2971,6 @@ class curl {
      * Set HTTP Request Header
      *
      * @param array $header
-     * @param bool $replace If true, will remove any existing headers before appending the new one.
      */
     public function setHeader($header) {
         if (is_array($header)) {
