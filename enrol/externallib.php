@@ -342,7 +342,7 @@ class core_enrol_external extends external_api {
                 'summaryformat' => $course->summaryformat,
                 'format' => $course->format,
                 'showgrades' => $course->showgrades,
-                'lang' => $course->lang,
+                'lang' => clean_param($course->lang, PARAM_LANG),
                 'enablecompletion' => $course->enablecompletion,
                 'category' => $course->category,
                 'progress' => $progress,
