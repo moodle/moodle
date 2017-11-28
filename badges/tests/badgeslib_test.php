@@ -48,7 +48,7 @@ class core_badges_badgeslib_testcase extends advanced_testcase {
 
         $fordb = new stdClass();
         $fordb->id = null;
-        $fordb->name = "Test badge";
+        $fordb->name = "Test badge with 'apostrophe' and other friends (<>&@#)";
         $fordb->description = "Testing badges";
         $fordb->timecreated = time();
         $fordb->timemodified = time();

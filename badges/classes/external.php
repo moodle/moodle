@@ -159,7 +159,7 @@ class core_badges_external extends external_api {
                     new external_single_structure(
                         array(
                             'id' => new external_value(PARAM_INT, 'Badge id.', VALUE_OPTIONAL),
-                            'name' => new external_value(PARAM_FILE, 'Badge name.'),
+                            'name' => new external_value(PARAM_TEXT, 'Badge name.'),
                             'description' => new external_value(PARAM_NOTAGS, 'Badge description.'),
                             'badgeurl' => new external_value(PARAM_URL, 'Badge URL.'),
                             'timecreated' => new external_value(PARAM_INT, 'Time created.', VALUE_OPTIONAL),
