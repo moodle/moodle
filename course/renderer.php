@@ -2382,6 +2382,137 @@ class core_course_renderer extends plugin_renderer_base {
 
         return $output;
     }
+
+    /**
+     * Output news for the frontpage (extract from site-wide news forum)
+     *
+     * @param stdClass $newsforum record from db table 'forum' that represents the site news forum
+     * @return string
+     */
+    protected function frontpage_news($newsforum) {
+        global $CFG, $SITE, $SESSION, $USER;
+        require_once($CFG->dirroot .'/mod/forum/lib.php');
+
+        $output = '';
+
+        if (isloggedin()) {
+            $SESSION->fromdiscussion = $CFG->wwwroot;
+            $subtext = '';
+            if (\mod_forum\subscriptions::is_subscribed($USER->id, $newsforum)) {
+                if (!\mod_forum\subscriptions::is_forcesubscribed($newsforum)) {
+                    $subtext = get_string('unsubscribe', 'forum');
+                }
+            } else {
+                $subtext = get_string('subscribe', 'forum');
+            }
+            $suburl = new moodle_url('/mod/forum/subscribe.php', array('id' => $newsforum->id, 'sesskey' => sesskey()));
+            $output .= html_writer::tag('div', html_writer::link($suburl, $subtext), array('class' => 'subscribelink'));
+        }
+
+        ob_start();
+        forum_print_latest_discussions($SITE, $newsforum, $SITE->newsitems, 'plain', 'p.modified DESC');
+        $output .= ob_get_contents();
+        ob_end_clean();
+
+        return $output;
+    }
+
+    /**
+     * Renders part of frontpage with a skip link (i.e. "My courses", "Site news", etc.)
+     *
+     * @param string $skipdivid
+     * @param string $contentsdivid
+     * @param string $header Header of the part
+     * @param string $contents Contents of the part
+     * @return string
+     */
+    protected function frontpage_part($skipdivid, $contentsdivid, $header, $contents) {
+        $output = html_writer::link('#' . $skipdivid,
+            get_string('skipa', 'access', core_text::strtolower(strip_tags($header))),
+            array('class' => 'skip-block skip'));
+
+        // Wrap frontpage part in div container.
+        $output .= html_writer::start_tag('div', array('id' => $contentsdivid));
+        $output .= $this->heading($header);
+
+        $output .= $contents;
+
+        // End frontpage part div container.
+        $output .= html_writer::end_tag('div');
+
+        $output .= html_writer::tag('span', '', array('class' => 'skip-block-to', 'id' => $skipdivid));
+        return $output;
+    }
+
+    /**
+     * Outputs contents for frontpage as configured in $CFG->frontpage or $CFG->frontpageloggedin
+     *
+     * @return string
+     */
+    public function frontpage() {
+        global $CFG, $SITE;
+
+        $output = '';
+
+        if (isloggedin() and !isguestuser() and isset($CFG->frontpageloggedin)) {
+            $frontpagelayout = $CFG->frontpageloggedin;
+        } else {
+            $frontpagelayout = $CFG->frontpage;
+        }
+
+        foreach (explode(',', $frontpagelayout) as $v) {
+            switch ($v) {
+                // Display the main part of the front page.
+                case FRONTPAGENEWS:
+                    if ($SITE->newsitems) {
+                        // Print forums only when needed.
+                        require_once($CFG->dirroot .'/mod/forum/lib.php');
+                        if (($newsforum = forum_get_course_forum($SITE->id, 'news')) &&
+                                ($forumcontents = $this->frontpage_news($newsforum))) {
+                            $newsforumcm = get_fast_modinfo($SITE)->instances['forum'][$newsforum->id];
+                            $output .= $this->frontpage_part('skipsitenews', 'site-news-forum',
+                                $newsforumcm->get_formatted_name(), $forumcontents);
+                        }
+                    }
+                    break;
+
+                case FRONTPAGEENROLLEDCOURSELIST:
+                    $mycourseshtml = $this->frontpage_my_courses();
+                    if (!empty($mycourseshtml)) {
+                        $output .= $this->frontpage_part('skipmycourses', 'frontpage-course-list',
+                            get_string('mycourses'), $mycourseshtml);
+                        break;
+                    }
+                    // No "break" here. If there are no enrolled courses - continue to 'Available courses'.
+
+                case FRONTPAGEALLCOURSELIST:
+                    $availablecourseshtml = $this->frontpage_available_courses();
+                    if (!empty($availablecourseshtml)) {
+                        $output .= $this->frontpage_part('skipavailablecourses', 'frontpage-available-course-list',
+                            get_string('availablecourses'), $availablecourseshtml);
+                    }
+                    break;
+
+                case FRONTPAGECATEGORYNAMES:
+                    $output .= $this->frontpage_part('skipcategories', 'frontpage-category-names',
+                        get_string('categories'), $this->frontpage_categories_list());
+                    break;
+
+                case FRONTPAGECATEGORYCOMBO:
+                    $output .= $this->frontpage_part('skipcourses', 'frontpage-category-combo',
+                        get_string('courses'), $this->frontpage_combo_list());
+                    break;
+
+                case FRONTPAGECOURSESEARCH:
+                    $output .= $this->box($this->course_search_form('', 'short'), 'mdl-align');
+                    break;
+
+            }
+            $output .= '<br />';
+        }
+
+        return $output;
+    }
 }
 
 /**
