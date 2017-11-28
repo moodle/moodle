@@ -1499,9 +1499,9 @@ class table_sql extends flexible_table {
      * method or if other_cols returns NULL then put the data straight into the
      * table.
      *
-     * @return void
+     * After calling this function, don't forget to call close_recordset.
      */
-    function build_table() {
+    public function build_table() {
 
         if ($this->rawdata instanceof \Traversable && !$this->rawdata->valid()) {
             return;
@@ -1515,10 +1515,16 @@ class table_sql extends flexible_table {
             $this->add_data_keyed($formattedrow,
                 $this->get_row_class($row));
         }
+    }
 
-        if ($this->rawdata instanceof \core\dml\recordset_walk ||
-                $this->rawdata instanceof moodle_recordset) {
+    /**
+     * Closes recordset (for use after building the table).
+     */
+    public function close_recordset() {
+        if ($this->rawdata && ($this->rawdata instanceof \core\dml\recordset_walk ||
+                $this->rawdata instanceof moodle_recordset)) {
             $this->rawdata->close();
+            $this->rawdata = null;
         }
     }
 
@@ -1629,6 +1635,7 @@ class table_sql extends flexible_table {
         $this->setup();
         $this->query_db($pagesize, $useinitialsbar);
         $this->build_table();
+        $this->close_recordset();
         $this->finish_output();
     }
 }

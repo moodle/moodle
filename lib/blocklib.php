@@ -800,6 +800,7 @@ class block_manager {
                 $unknown[] = $bi;
             }
         }
+        $blockinstances->close();
 
         // Pages don't necessarily have a defaultregion. The  one time this can
         // happen is when there are no theme block regions, but the script itself

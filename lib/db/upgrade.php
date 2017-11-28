@@ -1183,6 +1183,7 @@ function xmldb_main_upgrade($oldversion) {
             $i++;
             $pbar->update($i, $total, "Updating duplicate question category stamp - $i/$total.");
         }
+        $rs->close();
         unset($usedstamps);
 
         // The uniqueness of each (contextid, stamp) pair is now guaranteed, so add the unique index to stop future duplicates.

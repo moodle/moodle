@@ -676,6 +676,7 @@ abstract class testing_util {
                     $mysqlsequences[$table] = $info->auto_increment;
                 }
             }
+            $rs->close();
         }
 
         foreach ($data as $table => $records) {
