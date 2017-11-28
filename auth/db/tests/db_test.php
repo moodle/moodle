@@ -317,6 +317,12 @@ class auth_db_testcase extends advanced_testcase {
         $DB->update_record('auth_db_users', $user3);
         $this->assertTrue($auth->user_login('u3', 'heslo'));
 
+        set_config('passtype', 'pbkdf2', 'auth_db');
+        $auth->config->passtype = 'pbkdf2django';
+        $user3->pass = password_hash('heslo', PASSWORD_SHA256);
+        $DB->update_record('auth_db_users', $user3);
+        $this->assertTrue($auth->user_login('u3', 'heslo'));
+
         set_config('passtype', 'internal', 'auth_db');
         $auth->config->passtype = 'internal';
         create_user_record('u3', 'heslo', 'db');
