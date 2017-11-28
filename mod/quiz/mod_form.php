@@ -37,7 +37,7 @@ require_once($CFG->dirroot . '/mod/quiz/locallib.php');
  */
 class mod_quiz_mod_form extends moodleform_mod {
     /** @var array options to be used with date_time_selector fields in the quiz. */
-    public static $datefieldoptions = array('optional' => true, 'step' => 1);
+    public static $datefieldoptions = array('optional' => true);
 
     protected $_feedbacks;
     protected static $reviewfields = array(); // Initialised in the constructor.
