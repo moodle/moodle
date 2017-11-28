@@ -123,21 +123,10 @@ echo $renderer->start_layout();
 echo html_writer::start_tag('div', array('class'=>'heightcontainer'));
 echo $OUTPUT->heading(get_string('calendar', 'calendar'));
 
-if ($view == 'day' || $view == 'upcoming') {
-    switch($view) {
-        case 'day':
-            list($data, $template) = calendar_get_view($calendar, $view);
-            echo $renderer->render_from_template($template, $data);
-        break;
-        case 'upcoming':
-            list($data, $template) = calendar_get_view($calendar, $view);
-            echo $renderer->render_from_template($template, $data);
-        break;
-    }
-} else if ($view == 'month') {
-    list($data, $template) = calendar_get_view($calendar, $view);
-    echo $renderer->render_from_template($template, $data);
-}
+
+list($data, $template) = calendar_get_view($calendar, $view);
+echo $renderer->render_from_template($template, $data);
+
 echo html_writer::end_tag('div');
 
 list($data, $template) = calendar_get_footer_options($calendar);
