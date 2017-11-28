@@ -94,6 +94,7 @@ if ($ADMIN->fulltree) {
     $passtype["md5"]         = get_string("md5", "auth");
     $passtype["sha1"]        = get_string("sha1", "auth");
     $passtype["saltedcrypt"] = get_string("auth_dbsaltedcrypt", "auth_db");
+    $passtype["pbkdf2django"]      = get_string("auth_pbkdf2django", "auth_db");
     $passtype["internal"]    = get_string("internal", "auth");
 
     $settings->add(new admin_setting_configselect('auth_db/passtype',
