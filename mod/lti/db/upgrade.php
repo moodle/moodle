@@ -143,6 +143,8 @@ function xmldb_lti_upgrade($oldversion) {
             }
 
             if (!$acceptgrades) {
+                // Required when doing CLI upgrade.
+                require_once($CFG->libdir . '/gradelib.php');
                 grade_update('mod/lti', $lti->course, 'mod', 'lti', $lti->id, 0, null, array('deleted' => 1));
             }
 
