@@ -2211,6 +2211,21 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         $this->assertCount(0, $result['courses']);
     }
 
+    /**
+     * Test get_courses_by_field_invalid_theme_and_lang
+     */
+    public function test_get_courses_by_field_invalid_theme_and_lang() {
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        $course = self::getDataGenerator()->create_course(array('theme' => 'kkt', 'lang' => 'kkl'));
+        $result = core_course_external::get_courses_by_field('id', $course->id);
+        $result = external_api::clean_returnvalue(core_course_external::get_courses_by_field_returns(), $result);
+        $this->assertEmpty($result['courses']['0']['theme']);
+        $this->assertEmpty($result['courses']['0']['lang']);
+    }
+
+
     public function test_check_updates() {
         global $DB;
         $this->resetAfterTest(true);
