@@ -1,0 +1,2187 @@
+/* core.less */
+
+// When we upgrade boostrap to v4 release, we will need to change this to be used by the text-white class.
+// Because a primary colour that is both AA accessible on grey (footer) and white is not possible, we always
+// want white default colour.
+$bg-inverse-link-color: #fff !default;
+
+#region-main > .card {
+    overflow-x: auto;
+    overflow-y: visible;
+    min-height: 45rem;
+}
+
+.context-header-settings-menu,
+.region-main-settings-menu {
+    float: right;
+    width: auto;
+    max-width: 4em;
+    height: 2em;
+    display: block;
+    margin-top: 4px;
+}
+
+.context-header-settings-menu .dropdown-toggle > .icon,
+#region-main-settings-menu .dropdown-toggle > .icon {
+    height: 24px;
+    font-size: 24px;
+    width: auto;
+}
+/** Prevent user notifications overlapping with region main settings menu */
+#user-notifications {
+    display: block;
+    overflow: hidden;
+}
+
+/** Page layout CSS starts **/
+.layout-option-noheader #page-header,
+.layout-option-nonavbar #page-navbar,
+.layout-option-nofooter #page-footer,
+.layout-option-nocourseheader .course-content-header,
+.layout-option-nocoursefooter .course-content-footer {
+    display: none;
+}
+
+/** Page layout CSS ends **/
+
+.mdl-left {
+    text-align: left;
+}
+
+.mdl-right {
+    text-align: right;
+}
+
+/*rtl:ignore*/
+.text-ltr {
+    direction: ltr !important; /* stylelint-disable-line declaration-no-important */
+}
+
+#add,
+#remove,
+.centerpara,
+.mdl-align {
+    text-align: center;
+}
+
+a.dimmed,
+a.dimmed:link,
+a.dimmed:visited,
+a.dimmed_text,
+a.dimmed_text:link,
+a.dimmed_text:visited,
+.dimmed_text,
+.dimmed_text a,
+.dimmed_text a:link,
+.dimmed_text a:visited,
+.usersuspended,
+.usersuspended a,
+.usersuspended a:link,
+.usersuspended a:visited,
+.dimmed_category,
+.dimmed_category a {
+    @extend .text-muted;
+}
+
+.unlist,
+.unlist li,
+.inline-list,
+.inline-list li,
+.block .list,
+.block .list li,
+.section li.activity,
+.section li.movehere,
+.tabtree li {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.inline,
+.inline-list li {
+    display: inline;
+}
+
+.notifytiny {
+    font-size: $font-size-xs;
+}
+
+.notifytiny li,
+.notifytiny td {
+    font-size: 100%;
+}
+
+.red,
+.notifyproblem {
+    @extend .text-warning;
+}
+
+.green,
+.notifysuccess {
+    @extend .text-success;
+}
+
+.highlight {
+    @extend .text-info;
+}
+
+.fitem.advanced .text-info {
+    font-weight: bold;
+}
+
+.reportlink {
+    text-align: right;
+}
+
+a.autolink.glossary:hover {
+    cursor: help;
+}
+/* Block which is hidden if javascript enabled, prevents fickering visible when JS from footer used! */
+.collapsibleregioncaption {
+    white-space: nowrap;
+    min-height: $line-height-base * $font-size-base;
+}
+
+.pagelayout-mydashboard.jsenabled .collapsibleregioncaption {
+    cursor: pointer;
+}
+
+.collapsibleregioncaption img {
+    vertical-align: middle;
+}
+
+.jsenabled .hiddenifjs {
+    display: none;
+}
+
+.visibleifjs {
+    display: none;
+}
+
+.jsenabled .visibleifjs {
+    display: inline;
+}
+
+.jsenabled .collapsibleregion {
+    overflow: hidden;
+    box-sizing: content-box;
+}
+
+.jsenabled .collapsed .collapsibleregioninner {
+    visibility: hidden;
+}
+
+.collapsible-actions {
+    display: none;
+    text-align: right;
+}
+
+.jsenabled .collapsible-actions {
+    display: block;
+}
+
+.collapsible-actions .collapseexpand {
+    padding-left: 20px;
+    background: url([[pix:t/collapsed]]) 2px center no-repeat;
+}
+/*rtl:raw:
+.collapsible-actions .collapseexpand {
+    background: url([[pix:t/collapsed_rtl]]) right center no-repeat;
+}
+*/
+.collapsible-actions .collapse-all {
+    background-image: url([[pix:t/expanded]]);
+}
+
+.yui-overlay .yui-widget-bd {
+    background-color: #ffee69;
+    border: 1px solid #a6982b;
+    border-top-color: #d4c237;
+    color: #000;
+    left: 0;
+    padding: 2px 5px;
+    position: relative;
+    top: 0;
+    z-index: 1;
+}
+
+.clearer {
+    background: transparent;
+    border-width: 0;
+    clear: both;
+    display: block;
+    height: 1px;
+    margin: 0;
+    padding: 0;
+}
+
+.bold,
+.warning,
+.errorbox .title,
+.pagingbar .title,
+.pagingbar .thispage {
+    font-weight: bold;
+}
+
+img.userpicture {
+    margin-right: 0.5rem;
+}
+
+img.resize {
+    height: 1em;
+    width: 1em;
+}
+
+.action-menu .dropdown-toggle {
+    text-decoration: none;
+}
+
+.action-menu {
+    white-space: nowrap;
+}
+
+.action-menu .userpicture {
+    margin-left: 1rem;
+}
+
+.block img.resize,
+.breadcrumb img.resize {
+    height: 0.9em;
+    width: 0.8em;
+}
+/* Icon styles */
+img.activityicon {
+    height: 24px;
+    width: 24px;
+    vertical-align: middle;
+}
+
+.headermain {
+    font-weight: bold;
+}
+
+#maincontent {
+    display: block;
+    height: 1px;
+    overflow: hidden;
+}
+
+img.uihint {
+    cursor: help;
+}
+
+#addmembersform table {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+table.flexible .emptyrow {
+    display: none;
+}
+
+form.popupform,
+form.popupform div {
+    display: inline;
+}
+
+.arrow_button input {
+    overflow: hidden;
+}
+.no-overflow {
+    overflow: auto;
+}
+
+.no-overflow > .generaltable {
+    margin-bottom: 0;
+}
+// Accessibility features
+
+// Accessibility: text 'seen' by screen readers but not visual users.
+.accesshide {
+    position: absolute;
+    left: -10000px;
+    font-weight: normal;
+    font-size: 1em;
+}
+
+span.hide,
+div.hide,
+.hidden {
+    display: none;
+}
+// Accessibility: Skip block link, for keyboard-only users.
+a.skip-block,
+a.skip {
+    position: absolute;
+    top: -1000em;
+    font-size: 0.85em;
+    text-decoration: none;
+}
+
+a.skip-block:focus,
+a.skip-block:active,
+a.skip:focus,
+a.skip:active {
+    position: static;
+    display: block;
+}
+
+.skip-block-to {
+    display: block;
+    height: 1px;
+    overflow: hidden;
+}
+// Blogs
+.addbloglink {
+    text-align: center;
+}
+
+.blog_entry .audience {
+    text-align: right;
+    padding-right: 4px;
+}
+
+.blog_entry .tags {
+    margin-top: 15px;
+}
+
+.blog_entry .content {
+    margin-left: 43px;
+}
+// Group
+
+#doc-contents h1 {
+    margin: 1em 0 0 0;
+}
+
+#doc-contents ul {
+    margin: 0;
+    padding: 0;
+    width: 90%;
+}
+
+#doc-contents ul li {
+    list-style-type: none;
+}
+
+.groupmanagementtable td {
+    vertical-align: top;
+}
+
+.groupmanagementtable #existingcell,
+.groupmanagementtable #potentialcell {
+    width: 42%;
+}
+
+.groupmanagementtable #buttonscell {
+    width: 16%;
+}
+
+.groupmanagementtable #buttonscell p.arrow_button input {
+    width: auto;
+    min-width: 80%;
+    margin: 0 auto;
+}
+
+.groupmanagementtable #removeselect_wrapper,
+.groupmanagementtable #addselect_wrapper {
+    width: 100%;
+}
+
+.groupmanagementtable #removeselect_wrapper label,
+.groupmanagementtable #addselect_wrapper label {
+    font-weight: normal;
+}
+
+#group-usersummary {
+    width: 14em;
+}
+
+.groupselector {
+    margin-top: 3px;
+    margin-bottom: 3px;
+    display: inline-block;
+}
+
+.groupselector label {
+    display: inline-block;
+}
+
+// Login
+.login-page {
+    [name="username"] {
+        margin-bottom: -1px;
+        border-bottom-right-radius: 0;
+        border-bottom-left-radius: 0;
+    }
+
+    [type="password"] {
+        margin-bottom: 10px;
+        border-top-left-radius: 0;
+        border-top-right-radius: 0;
+    }
+}
+
+// Notes
+.notepost {
+    margin-bottom: 1em;
+}
+
+.notepost .userpicture {
+    float: left;
+    margin-right: 5px;
+}
+
+.notepost .content,
+.notepost .footer {
+    clear: both;
+}
+
+.notesgroup {
+    margin-left: 20px;
+}
+
+// My Moodle
+.path-my .coursebox {
+    margin: $spacer-y 0;
+    padding: 0;
+
+    .overview {
+        margin: 15px 30px 10px 30px;
+    }
+}
+
+.path-my .coursebox .info {
+    float: none;
+    margin: 0;
+}
+
+// Modules
+.mod_introbox {
+    padding: 10px;
+}
+
+table.mod_index {
+    width: 100%;
+}
+
+// Comments
+.comment-ctrl {
+    font-size: 12px;
+    display: none;
+    margin: 0;
+    padding: 0;
+}
+
+.comment-ctrl h5 {
+    margin: 0;
+    padding: 5px;
+}
+
+.comment-area {
+    max-width: 400px;
+    padding: 5px;
+}
+
+.comment-area textarea {
+    width: 100%;
+    overflow: auto;
+
+    &.fullwidth {
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+    }
+}
+
+.comment-area .fd {
+    text-align: right;
+}
+
+.comment-meta span {
+    color: gray;
+}
+
+.comment-link img {
+    vertical-align: text-bottom;
+}
+
+.comment-list {
+    font-size: 11px;
+    overflow: auto;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.comment-list li {
+    margin: 2px;
+    list-style: none;
+    margin-bottom: 5px;
+    clear: both;
+    padding: .3em;
+    position: relative;
+}
+
+.comment-list li.first {
+    display: none;
+}
+
+.comment-paging {
+    text-align: center;
+}
+
+.comment-paging .pageno {
+    padding: 2px;
+}
+
+.comment-paging .curpage {
+    border: 1px solid #ccc;
+}
+
+.comment-message .picture {
+    width: 20px;
+    float: left;
+}
+
+.comment-message .text {
+    margin: 0;
+    padding: 0;
+}
+
+.comment-message .text p {
+    padding: 0;
+    margin: 0 18px 0 0;
+}
+
+.comment-delete {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: .3em;
+}
+
+.comment-report-selectall {
+    display: none;
+}
+
+.comment-link {
+    display: none;
+}
+
+.jsenabled .comment-link {
+    display: block;
+}
+
+.jsenabled .showcommentsnonjs {
+    display: none;
+}
+
+.jsenabled .comment-report-selectall {
+    display: inline;
+}
+/**
+* Completion progress report
+*/
+.completion-expired {
+    @extend .text-warning;
+}
+
+.completion-expected {
+    font-size: $font-size-xs;
+}
+
+.completion-sortchoice,
+.completion-identifyfield {
+    font-size: $font-size-xs;
+    vertical-align: bottom;
+}
+
+.completion-progresscell {
+    text-align: right;
+}
+
+.completion-expired .completion-expected {
+    font-weight: bold;
+}
+/**
+* Tags
+*/
+img.user-image {
+    height: 100px;
+    width: 100px;
+}
+
+#tag-search-box {
+    text-align: center;
+    margin: 10px auto;
+}
+
+.path-tag .tag-index-items .tagarea {
+    border: 1px solid #e3e3e3;
+    border-radius: 4px;
+    padding: 10px;
+    margin-top: 10px;
+}
+
+.path-tag .tag-index-items .tagarea h3 {
+    display: block;
+    padding: 3px 0 10px 0;
+    margin: 0;
+    font-size: 1.1em;
+    font-weight: bold;
+    line-height: 20px;
+    color: #999;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+    text-transform: uppercase;
+    word-wrap: break-word;
+    border-bottom: solid 1px #e3e3e3;
+    margin-bottom: 10px;
+}
+
+.path-tag .tagarea .controls,
+.path-tag .tagarea .taggeditems {
+    @include clearfix();
+}
+
+.path-tag .tagarea .controls,
+.path-tag .tag-backtoallitems {
+    text-align: center;
+}
+
+.path-tag .tagarea .controls .gotopage.nextpage {
+    float: right;
+}
+
+.path-tag .tagarea .controls .gotopage.prevpage {
+    float: left;
+}
+
+.path-tag .tagarea .controls .exclusivemode {
+    display: inline-block;
+}
+
+.path-tag .tagarea .controls.controls-bottom {
+    margin-top: 5px;
+}
+
+.path-tag .tagarea .controls .gotopage.nextpage::after {
+    padding-right: 5px;
+    padding-left: 5px;
+    content: "»";
+}
+
+.path-tag .tagarea .controls .gotopage.prevpage::before {
+    padding-right: 5px;
+    padding-left: 5px;
+    content: "«";
+}
+
+span.flagged-tag,
+tr.flagged-tag,
+span.flagged-tag a,
+tr.flagged-tag a {
+    @extend .text-warning;
+}
+
+.tag-management-table td,
+.tag-management-table th {
+    vertical-align: middle;
+    padding: 4px;
+}
+
+.tag-management-table .inplaceeditable.inplaceeditingon input {
+    width: 150px;
+}
+
+.path-admin-tag .addstandardtags {
+    float: right;
+
+    img {
+        margin: 0 5px;
+    }
+}
+
+.path-tag .tag-relatedtags {
+    padding-top: 10px;
+}
+
+.path-tag .tag-management-box {
+    text-align: right;
+}
+
+.path-tag .tag-index-toc {
+    padding: 10px;
+    text-align: center;
+}
+
+.path-tag .tag-index-toc li,
+.path-tag .tag-management-box li {
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.path-tag .tag-management-box li a.edittag {
+    background-image: url([[pix:moodle|i/settings]]);
+}
+
+.path-tag .tag-management-box li a.flagasinappropriate {
+    background-image: url([[pix:moodle|i/flagged]]);
+}
+
+.path-tag .tag-management-box li a.removefrommyinterests {
+    background-image: url([[pix:moodle|t/delete]]);
+}
+
+.path-tag .tag-management-box li a.addtomyinterests {
+    background-image: url([[pix:moodle|t/add]]);
+}
+
+.path-tag .tag-management-box li a {
+    background-repeat: no-repeat;
+    background-position: left;
+    padding-left: 17px;
+}
+
+.tag_feed.media-list .media .itemimage {
+    float: left;
+}
+
+.tag_feed.media-list .media .itemimage img {
+    height: 35px;
+    width: 35px;
+}
+
+.tag_feed.media-list .media .media-body {
+    padding-right: 10px;
+    padding-left: 10px;
+}
+
+.tag_feed .media .muted a {
+    @extend .text-muted;
+}
+
+.tag_cloud {
+    text-align: center;
+}
+
+.tag_cloud .inline-list li {
+    padding: 0 0.2em;
+}
+
+.tag_cloud .tag_overflow {
+    margin-top: 1em;
+    font-style: italic;
+}
+
+.tag_cloud .s20 {
+    font-size: 2.7em;
+}
+
+.tag_cloud .s19 {
+    font-size: 2.6em;
+}
+
+.tag_cloud .s18 {
+    font-size: 2.5em;
+}
+
+.tag_cloud .s17 {
+    font-size: 2.4em;
+}
+
+.tag_cloud .s16 {
+    font-size: 2.3em;
+}
+
+.tag_cloud .s15 {
+    font-size: 2.2em;
+}
+
+.tag_cloud .s14 {
+    font-size: 2.1em;
+}
+
+.tag_cloud .s13 {
+    font-size: 2em;
+}
+
+.tag_cloud .s12 {
+    font-size: 1.9em;
+}
+
+.tag_cloud .s11 {
+    font-size: 1.8em;
+}
+
+.tag_cloud .s10 {
+    font-size: 1.7em;
+}
+
+.tag_cloud .s9 {
+    font-size: 1.6em;
+}
+
+.tag_cloud .s8 {
+    font-size: 1.5em;
+}
+
+.tag_cloud .s7 {
+    font-size: 1.4em;
+}
+
+.tag_cloud .s6 {
+    font-size: 1.3em;
+}
+
+.tag_cloud .s5 {
+    font-size: 1.2em;
+}
+
+.tag_cloud .s4 {
+    font-size: 1.1em;
+}
+
+.tag_cloud .s3 {
+    font-size: 1em;
+}
+
+.tag_cloud .s2 {
+    font-size: 0.9em;
+}
+
+.tag_cloud .s1 {
+    font-size: 0.8em;
+}
+
+.tag_cloud .s0 {
+    font-size: 0.7em;
+}
+
+.tag_list ul {
+    display: inline;
+}
+
+.tag_list.hideoverlimit .overlimit {
+    display: none;
+}
+
+.tag_list .tagmorelink {
+    display: none;
+}
+
+.tag_list.hideoverlimit .tagmorelink {
+    display: inline;
+}
+
+.tag_list.hideoverlimit .taglesslink {
+    display: none;
+}
+
+/**
+* Web Service
+*/
+#webservice-doc-generator td {
+    text-align: left;
+    border: 0 solid black;
+}
+
+/**
+* Enrol
+*/
+.userenrolment {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.userenrolment tr {
+    vertical-align: top;
+}
+
+.userenrolment td {
+    padding: 0;
+    height: 41px;
+}
+
+.userenrolment .subfield {
+    margin-right: 5px;
+}
+
+.userenrolment .col_userdetails .subfield {
+    margin-left: 40px;
+}
+
+.userenrolment .col_userdetails .subfield_picture {
+    float: left;
+    margin-left: 0;
+}
+
+.userenrolment .col_lastseen {
+    width: 150px;
+}
+
+.userenrolment .col_role {
+    width: 262px;
+}
+
+.userenrolment .col_role .roles,
+.userenrolment .col_group .groups {
+    margin-right: 30px;
+}
+
+.userenrolment .col_role .role {
+    float: left;
+    padding: 0 3px 3px;
+    margin: 0 3px 3px;
+    white-space: nowrap;
+}
+
+.userenrolment .col_group .group {
+    float: left;
+    padding: 3px;
+    margin: 3px;
+    white-space: nowrap;
+}
+
+.userenrolment .col_role .role a,
+.userenrolment .col_group .group a {
+    margin-left: 3px;
+    cursor: pointer;
+}
+
+.userenrolment .col_role .addrole,
+.userenrolment .col_group .addgroup {
+    float: right;
+    padding: 3px;
+    margin: 3px;
+
+    > a:hover {
+        border-bottom: 1px solid #666;
+    }
+}
+
+.userenrolment .col_role .addrole img,
+.userenrolment .col_group .addgroup img {
+    vertical-align: baseline;
+}
+
+.userenrolment .hasAllRoles .col_role .addrole {
+    display: none;
+}
+
+.userenrolment .col_enrol .enrolment {
+    float: left;
+    padding: 0 3px 3px;
+    margin: 0 3px 3px;
+}
+
+.userenrolment .col_enrol .enrolment a {
+    float: right;
+    margin-left: 3px;
+}
+
+#page-enrol-users {
+    .enrol_user_buttons {
+        text-align: right;
+
+    }
+
+    #filterform {
+        @extend .card;
+        @extend .card-block;
+    }
+}
+
+#page-enrol-users .enrol-users-page-action input {
+    margin-left: 0;
+}
+
+.corelightbox {
+    background-color: #ccc;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+}
+
+.corelightbox img {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+}
+
+.mod-indent-outer {
+    display: table;
+}
+
+.mod-indent {
+    display: table-cell;
+}
+
+.label .mod-indent {
+    float: left;
+    padding-top: 20px;
+}
+$mod-indent-size: 30px;
+/* Creates a series of .mod-indent-# rule declarations based on indent size and number of indent levels. */
+
+@for $i from 1 through 16 {
+    $width: ($i * $mod-indent-size);
+
+    .mod-indent-#{$i} {
+        width: $width;
+    }
+}
+
+.mod-indent-huge {
+    width: (16 * $mod-indent-size);
+}
+
+/* Audio player size in 'block' mode (can only change width, height is hardcoded in JS) */
+.resourcecontent .mediaplugin_mp3 object {
+    height: 25px;
+    width: 600px;
+}
+
+.resourcecontent audio.mediaplugin_html5audio {
+    width: 600px;
+}
+/** Large resource images should avoid hidden overflow **/
+.resourceimage {
+    max-width: 100%;
+}
+/* Audio player size in 'inline' mode (can only change width, as above) */
+.mediaplugin_mp3 object {
+    height: 15px;
+    width: 300px;
+}
+
+audio.mediaplugin_html5audio {
+    width: 300px;
+}
+/* TinyMCE moodle media preview frame should not have padding */
+.core_media_preview.pagelayout-embedded #content {
+    padding: 0;
+}
+
+.core_media_preview.pagelayout-embedded #maincontent {
+    height: 0;
+}
+
+body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
+    padding: 0;
+    margin: 0;
+    min-width: 0;
+    background: none;
+}
+
+.path-rating .ratingtable {
+    width: 100%;
+    margin-bottom: 1em;
+}
+
+.path-rating .ratingtable th.rating {
+    width: 100%;
+}
+
+.path-rating .ratingtable td.rating,
+.path-rating .ratingtable td.time {
+    white-space: nowrap;
+    text-align: center;
+}
+
+.initialbar {
+
+    overflow: auto;
+
+    .initialbarlabel {
+        display: inline-block;
+        width: 6em;
+        float: left;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .initialbarall {
+        float: left;
+        width: 4em;
+        margin-bottom: 2px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .initialbargroups {
+        float: left;
+    }
+
+    .initialbargroup {
+        float: left;
+        display: inline-block;
+        white-space: nowrap;
+        margin: 0;
+        padding: 0;
+
+        li {
+            float: left;
+            list-style: none;
+        }
+    }
+
+    .letter {
+        display: inline-block;
+        height: 1.5em;
+        min-width: 1.5em;
+        text-align: center;
+
+        color: $pagination-color;
+        border-width: $pagination-border-width;
+        border-color: $pagination-border-color;
+        border-style: solid;
+        background-color: $pagination-bg;
+    }
+    .letter:hover {
+        color: $pagination-hover-color;
+        border-color: $pagination-hover-border;
+        background-color: $pagination-hover-bg;
+    }
+
+    .letter.active {
+        color: $pagination-active-color;
+        border-color: $pagination-active-border;
+        background-color: $pagination-active-bg;
+    }
+
+}
+
+@media (max-width: 400px) {
+    .initialbar {
+        .letter {
+            /* This is chosen so that 23 letter at 320px just fits */
+            font-size: 11.5px;
+        }
+    }
+}
+
+
+/* Moodle Dialogue Settings (moodle-core-dialogue)  */
+.moodle-dialogue-base .moodle-dialogue-lightbox {
+    background-color: $gray;
+}
+
+.moodle-dialogue-base .hidden,
+.moodle-dialogue-base .moodle-dialogue-hidden {
+    display: none;
+}
+
+.no-scrolling {
+    overflow: hidden;
+}
+
+.moodle-dialogue-base .moodle-dialogue-fullscreen {
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: -50px;
+    position: fixed;
+}
+
+.moodle-dialogue-base .moodle-dialogue-fullscreen .moodle-dialogue-content {
+    overflow: auto;
+}
+
+.moodle-dialogue-base .moodle-dialogue-fullscreen .closebutton {
+    width: 28px;
+    height: 16px;
+    background-size: 100%;
+}
+
+.moodle-dialogue-base .moodle-dialogue-wrap {
+    background-color: #fff;
+    border: 1px solid #ccc;
+}
+
+// Show is a bootstrap 2 class - but we use it for modals. We don't want to enable it everywhere because they removed
+// it for a reason (conflicts with jquery .show()).
+.modal.show {
+    display: block;
+}
+
+.moodle-dialogue-base .moodle-dialogue-wrap.moodle-dialogue-content {
+    @extend .modal-content;
+}
+
+.moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd {
+    @extend .modal-header;
+}
+
+.moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd.yui3-widget-hd {
+    // Undo some YUI damage.
+    min-height: 3rem;
+    color: initial;
+    background: initial;
+    font-size: 1.5rem;
+    line-height: 1.5;
+}
+
+.moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd h1 {
+    @extend .modal-title;
+}
+
+.moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd .yui3-widget-buttons {
+    /*rtl:raw:
+        left: 0;
+        right: auto;
+    */
+    padding: $spacer;
+}
+
+.moodle-dialogue-base .closebutton {
+    @extend .close;
+    box-shadow: none;
+    &::after {
+        content: "×";
+    }
+}
+
+.moodle-dialogue-base .moodle-dialogue .moodle-dialogue-bd {
+    @extend .modal-body;
+}
+
+.moodle-dialogue-base .moodle-dialogue-fullscreen .moodle-dialogue-content {
+    overflow: auto;
+    position: absolute;
+    top: 0;
+    bottom: 50px;
+    left: 0;
+    right: 0;
+    margin: 0;
+    border: 0;
+}
+
+.moodle-dialogue-exception .moodle-exception-param label {
+    font-weight: bold;
+}
+
+.moodle-dialogue-exception .param-stacktrace label {
+    background-color: #eee;
+    border: 1px solid #ccc;
+    border-bottom-width: 0;
+}
+
+.moodle-dialogue-exception .param-stacktrace pre {
+    border: 1px solid #ccc;
+    background-color: #fff;
+}
+
+.moodle-dialogue-exception .param-stacktrace .stacktrace-file {
+    color: navy;
+    font-size: $font-size-sm;
+}
+
+.moodle-dialogue-exception .param-stacktrace .stacktrace-line {
+    @extend .text-warning;
+    font-size: $font-size-sm;
+}
+
+.moodle-dialogue-exception .param-stacktrace .stacktrace-call {
+    color: #333;
+    font-size: 90%;
+    border-bottom: 1px solid #eee;
+}
+
+.moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft {
+    @extend .modal-footer;
+}
+
+.moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft:empty {
+    display: none;
+}
+
+.moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft.yui3-widget-ft {
+    // Undo some YUI damage.
+    background: initial;
+}
+
+.moodle-dialogue-confirm .confirmation-message {
+    margin: 0.5em 1em;
+}
+.moodle-dialogue-confirm .confirmation-buttons {
+    text-align: right;
+}
+
+.moodle-dialogue-confirm .confirmation-dialogue input {
+    min-width: 80px;
+}
+
+.moodle-dialogue-exception .moodle-exception-message {
+    margin: 1em;
+}
+
+.moodle-dialogue-exception .moodle-exception-param {
+    margin-bottom: 0.5em;
+}
+
+.moodle-dialogue-exception .moodle-exception-param label {
+    width: 150px;
+}
+
+.moodle-dialogue-exception .param-stacktrace label {
+    display: block;
+    margin: 0;
+    padding: 4px 1em;
+}
+
+.moodle-dialogue-exception .param-stacktrace pre {
+    display: block;
+    height: 200px;
+    overflow: auto;
+}
+
+.moodle-dialogue-exception .param-stacktrace .stacktrace-file {
+    display: inline-block;
+    margin: 4px 0;
+}
+
+.moodle-dialogue-exception .param-stacktrace .stacktrace-line {
+    display: inline-block;
+    width: 50px;
+    margin: 4px 1em;
+}
+
+.moodle-dialogue-exception .param-stacktrace .stacktrace-call {
+    padding-left: 25px;
+    margin-bottom: 4px;
+    padding-bottom: 4px;
+}
+
+.moodle-dialogue .moodle-dialogue-bd .content-lightbox {
+    opacity: 0.75;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-color: white;
+    text-align: center;
+    padding: 10% 0;
+}
+/* Apply a default max-height on tooltip text */
+.moodle-dialogue .tooltiptext {
+    max-height: 300px;
+}
+
+.moodle-dialogue-base .moodle-dialogue.moodle-dialogue-tooltip {
+    z-index: 3001;
+
+    .moodle-dialogue-bd {
+        overflow: auto;
+    }
+}
+
+/**
+ * Chooser Dialogues (moodle-core-chooserdialogue)
+ *
+ * This CSS belong to the chooser dialogue which should work both with, and
+ * without javascript enabled
+ */
+/* Hide the dialog and it's title */
+.chooserdialoguebody,
+.choosertitle {
+    display: none;
+}
+
+.moodle-dialogue.chooserdialogue .moodle-dialogue-content .moodle-dialogue-ft {
+    margin: 0;
+}
+
+.chooserdialogue .moodle-dialogue-wrap .moodle-dialogue-bd {
+    padding: 0;
+    background: #f2f2f2;
+
+    @include border-bottom-radius(10px);
+}
+/* Center the submit buttons within the area */
+.choosercontainer #chooseform .submitbuttons {
+    padding: 0.7em 0;
+    text-align: right;
+}
+/* Fixed for safari browser on iPhone4S with ios7@mixin */
+
+@media (max-height: 639px) {
+    .ios.safari .choosercontainer #chooseform .submitbuttons {
+        padding: 45px 0;
+    }
+}
+
+.choosercontainer #chooseform .submitbuttons input {
+    min-width: 100px;
+    margin: 0 0.5em;
+}
+/* Various settings for the options area */
+.choosercontainer #chooseform .options {
+    position: relative;
+    border-bottom: 1px solid #bbb;
+}
+/* Only set these options if we're showing the js container */
+.jschooser .choosercontainer #chooseform .alloptions {
+    overflow-x: hidden;
+    overflow-y: auto;
+    max-width: 240px;
+
+    .option {
+        input[type=radio] {
+            display: inline-block;
+        }
+
+        .typename {
+            display: inline-block;
+            width: 55%;
+        }
+    }
+}
+/* Settings for option rows and option subtypes */
+.choosercontainer #chooseform .moduletypetitle,
+.choosercontainer #chooseform .option,
+.choosercontainer #chooseform .nonoption {
+    margin-bottom: 0;
+    padding: 0 1.6em 0 1.6em;
+}
+
+.choosercontainer #chooseform .moduletypetitle {
+    text-transform: uppercase;
+    padding-top: 1.2em;
+    padding-bottom: 0.4em;
+}
+
+.choosercontainer #chooseform .option .typename,
+.choosercontainer #chooseform .nonoption .typename {
+    padding: 0 0 0 0.5em;
+}
+
+.choosercontainer #chooseform .modicon + .typename {
+    padding-left: 0;
+}
+
+.choosercontainer #chooseform .option input[type=radio],
+.choosercontainer #chooseform .option span.typename {
+    vertical-align: middle;
+}
+
+.choosercontainer #chooseform .option label {
+    display: block;
+    margin: 0;
+    padding: ($spacer / 2) 0;
+    border-bottom: 1px solid #fff;
+}
+
+.choosercontainer #chooseform .option .icon {
+    margin: 0;
+    padding: 0 $spacer;
+}
+
+.choosercontainer #chooseform .nonoption {
+    padding-left: 2.7em;
+    padding-top: 0.3em;
+    padding-bottom: 0.1em;
+}
+
+.choosercontainer #chooseform .subtype {
+    margin-bottom: 0;
+    padding: 0 1.6em 0 3.2em;
+}
+
+.choosercontainer #chooseform .subtype .typename {
+    margin: 0 0 0 0.2em;
+}
+/* The instruction/help area */
+.jschooser .choosercontainer #chooseform .instruction,
+.jschooser .choosercontainer #chooseform .typesummary {
+    display: none;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 240px;
+    margin: 0;
+    padding: 1.6em;
+    background-color: #fff;
+    overflow-x: hidden;
+    overflow-y: auto;
+    line-height: 2em;
+}
+/* Selected option settings */
+.jschooser .choosercontainer #chooseform .instruction,
+.choosercontainer #chooseform .selected .typesummary {
+    display: block;
+}
+
+.choosercontainer #chooseform .selected {
+    background-color: #fff;
+    margin-top: -1px;
+    padding-top: 1px;
+}
+
+.chooserdialogue-course-modchooser .modicon .icon {
+    width: 24px;
+    height: 24px;
+    font-size: 24px;
+}
+
+@include media-breakpoint-down(xs) {
+    .jsenabled .choosercontainer #chooseform .alloptions {
+        max-width: 100%;
+    }
+
+    .jsenabled .choosercontainer #chooseform .instruction,
+    .jsenabled .choosercontainer #chooseform .typesummary {
+        position: static;
+    }
+}
+
+/* Form element: listing */
+.formlistingradio {
+    padding-bottom: 25px;
+    padding-right: 10px;
+}
+
+.formlistinginputradio {
+    float: left;
+}
+
+.formlistingmain {
+    min-height: 225px;
+}
+
+.formlisting {
+    position: relative;
+    margin: 15px 0;
+    padding: 1px 19px 14px;
+    background-color: white;
+    border: 1px solid #ddd;
+
+    @include border-radius(4px);
+}
+
+.formlistingmore {
+    position: absolute;
+    cursor: pointer;
+    bottom: -1px;
+    right: -1px;
+    padding: 3px 7px;
+    font-size: 12px;
+    font-weight: bold;
+    background-color: whitesmoke;
+    border: 1px solid #ddd;
+    color: #9da0a4;
+
+    @include border-radius(4px 0 4px 0);
+}
+
+.formlistingall {
+    margin: 15px 0;
+    padding: 0;
+
+    @include border-radius(4px);
+}
+
+.formlistingrow {
+    cursor: pointer;
+    border-bottom: 1px solid;
+    border-color: #e1e1e8;
+    border-left: 1px solid #e1e1e8;
+    border-right: 1px solid #e1e1e8;
+    background-color: #f7f7f9;
+
+    @include border-radius(0 0 4px 4px);
+    padding: 6px;
+    top: 50%;
+    left: 50%;
+    min-height: 34px;
+    float: left;
+    width: 150px;
+}
+
+body.jsenabled .formlistingradio {
+    display: none;
+}
+
+body.jsenabled .formlisting {
+    display: block;
+}
+
+/* Badges styles */
+table.collection {
+    @extend .table;
+    @extend .table-bordered;
+    @extend .table-striped;
+}
+
+a.criteria-action {
+    padding: 0 3px;
+    float: right;
+}
+
+div.criteria-description {
+    padding: 10px 15px;
+    margin: 5px 0;
+    background: none repeat scroll 0 0 #f9f9f9;
+    border: 1px solid #eee;
+}
+
+ul.badges {
+    margin: 0;
+    list-style: none;
+}
+
+.badges li {
+    position: relative;
+    display: inline-block;
+    padding-top: 1em;
+    text-align: center;
+    vertical-align: top;
+    width: 150px;
+}
+
+.badges li .badge-name {
+    display: block;
+    padding: 5px;
+}
+
+.badges li > img {
+    position: absolute;
+}
+
+.badges li .badge-image {
+    width: 100px;
+    height: 100px;
+    left: 10px;
+    top: 0;
+    z-index: 1;
+}
+
+.badges li .badge-actions {
+    position: relative;
+}
+
+.badges li .expireimage {
+    width: 100px;
+    height: 100px;
+    left: 25px;
+    top: 0;
+    position: absolute;
+    z-index: 10;
+    opacity: 0.85;
+}
+
+#badge-image {
+    background-color: transparent;
+    padding: 0;
+    position: relative;
+    min-width: 100px;
+    width: 20%;
+    display: inline-block;
+    vertical-align: top;
+    margin-top: 17px;
+    margin-bottom: 20px;
+
+    .expireimage {
+        width: 100px;
+        height: 100px;
+        left: 0;
+        top: 0;
+        opacity: 0.85;
+        position: absolute;
+        z-index: 10;
+    }
+
+    .singlebutton {
+        padding-top: 5px;
+        display: block;
+
+        button {
+            margin-left: 4px;
+        }
+    }
+}
+
+#badge-details {
+    display: inline-block;
+    width: 79%;
+}
+
+#badge-overview dl,
+#badge-details dl {
+    margin: 0;
+
+    dt,
+    dd {
+        vertical-align: top;
+        padding: 3px 0;
+    }
+
+    dt {
+        clear: both;
+        display: inline-block;
+        width: 20%;
+        min-width: 100px;
+    }
+
+    dd {
+        display: inline-block;
+        width: 79%;
+        margin-left: 1%;
+    }
+}
+
+.badge-profile {
+    vertical-align: top;
+}
+
+.connected {
+    @extend .text-success;
+}
+
+.notconnected {
+    @extend .text-danger;
+}
+
+.connecting {
+    @extend .text-warning;
+}
+
+#page-badges-award .recipienttable tr td {
+    vertical-align: top;
+}
+
+#page-badges-award .recipienttable tr td.actions .actionbutton {
+    margin: 0.3em 0;
+    padding: 0.5em 0;
+    width: 100%;
+}
+
+#page-badges-award .recipienttable tr td.existing,
+#page-badges-award .recipienttable tr td.potential {
+    width: 42%;
+}
+
+#issued-badge-table .activatebadge {
+    display: inline-block;
+}
+
+.statusbox.active {
+    background-color: $state-success-bg;
+}
+
+.statusbox.inactive {
+    background-color: $state-warning-bg;
+}
+
+.statusbox {
+    text-align: center;
+    margin-bottom: 5px;
+    padding: 5px;
+}
+
+.statusbox .activatebadge {
+    display: inline-block;
+}
+
+.statusbox .activatebadge input[type=submit] {
+    margin: 3px;
+}
+
+.activatebadge {
+    margin: 0;
+    text-align: left;
+    vertical-align: middle;
+}
+
+img#persona_signin {
+    cursor: pointer;
+}
+
+.addcourse {
+    float: right;
+}
+
+.invisiblefieldset {
+    display: inline;
+    padding: 0;
+    border-width: 0;
+}
+
+.breadcrumb-nav {
+    float: left;
+}
+
+.breadcrumb-button .singlebutton div {
+    margin-right: 0;
+}
+
+.breadcrumb-nav .breadcrumb {
+    margin: 0;
+}
+
+/** Page header */
+#page-header {
+    .logo {
+        margin: $spacer 0;
+        img {
+            max-height: 75px;
+        }
+    }
+}
+
+/** Header. */
+header {
+    .logo img {
+        max-height: 35px;
+    }
+    .collapse.in,
+    .collapsing {
+        display: block;
+        clear: both;
+    }
+}
+
+/** Header-bar styles **/
+.page-context-header {
+    // We need to be explicit about the height of the header.
+    $pageHeaderHeight: 140px;
+
+    // Do not remove these rules.
+    overflow: hidden;
+
+    .page-header-image,
+    .page-header-headings {
+        float: left;
+        display: block;
+        position: relative;
+    }
+
+    .page-header-image {
+        margin-right: 1em;
+        margin-bottom: 1em;
+    }
+
+    .page-header-headings,
+    .header-button-group {
+        position: relative;
+        line-height: 24px;
+        vertical-align: middle;
+    }
+
+    .header-button-group {
+        display: block;
+        float: left;
+
+        a {
+            position: relative;
+
+            // Don't touch it unless you know exactly what you are doing.
+            top: -0.4em;
+        }
+    }
+}
+
+ul.dragdrop-keyboard-drag li {
+    list-style-type: none;
+}
+
+a.disabled:hover,
+a.disabled {
+    text-decoration: none;
+    cursor: default;
+    font-style: italic;
+    color: #808080;
+}
+
+body.lockscroll {
+    height: 100%;
+    overflow: hidden;
+}
+
+.progressbar_container {
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+/* IE10 only fix for calendar titling */
+.ie10 .yui3-calendar-header-label {
+    display: inline-block;
+}
+
+dd:before,
+dd:after {
+    display: block;
+    content: " ";
+}
+
+dd:after {
+    clear: both;
+}
+
+// Active tabs with links should have a different
+// cursor to indicate they are clickable.
+.nav-tabs > .active > a[href],
+.nav-tabs > .active > a[href]:hover,
+.nav-tabs > .active > a[href]:focus {
+    cursor: pointer;
+}
+
+.inplaceeditable {
+    &.inplaceeditingon {
+        position: relative;
+
+        .editinstructions {
+            margin-top: -30px;
+            font-weight: normal;
+            margin-right: 0;
+            margin-left: 0;
+            left: 0;
+            right: auto;
+            white-space: nowrap;
+        }
+
+        input {
+            width: 330px;
+            vertical-align: text-bottom;
+            margin-bottom: 0;
+        }
+
+        select {
+            margin-bottom: 0;
+        }
+    }
+
+    .quickediticon img {
+        opacity: 0.2;
+    }
+
+    .quickeditlink {
+        color: inherit;
+        text-decoration: inherit;
+    }
+
+    &:hover .quickeditlink .quickediticon img,
+    .quickeditlink:focus .quickediticon img {
+        opacity: 1;
+    }
+
+    &.inplaceeditable-toggle .quickediticon {
+        display: none;
+    }
+
+    &.inplaceeditable-autocomplete {
+        display: block;
+    }
+}
+
+h3.sectionname .inplaceeditable.inplaceeditingon .editinstructions {
+    margin-top: -20px;
+}
+
+/** Chart area. */
+.chart-area {
+
+    .chart-table-data {
+        display: none;
+    }
+
+    .chart-table {
+        .chart-output-htmltable caption {
+            white-space: nowrap;
+        }
+        /** When accessible, we display the table only. */
+        &.accesshide {
+            .chart-table-expand {
+                display: none;
+            }
+            .chart-table-data {
+                display: block;
+            }
+        }
+    }
+}
+
+// Reset for ul.
+ul {
+    padding-left: 1rem;
+}
+
+/* YUI 2 Tree View */
+/*rtl:raw:
+.ygtvtn,
+.ygtvtm,
+.ygtvtmh,
+.ygtvtmhh,
+.ygtvtp,
+.ygtvtph,
+.ygtvtphh,
+.ygtvln,
+.ygtvlm,
+.ygtvlmh,
+.ygtvlmhh,
+.ygtvlp,
+.ygtvlph,
+.ygtvlphh,
+.ygtvdepthcell,
+.ygtvok,
+.ygtvok:hover,
+.ygtvcancel,
+.ygtvcancel:hover {
+    background-image: url([[pix:theme|yui2-treeview-sprite-rtl]]);
+}
+*/
+
+.hover-tooltip-container {
+    position: relative;
+
+    .hover-tooltip {
+        opacity: 0;
+        visibility: hidden;
+        position: absolute;
+        /*rtl:ignore*/
+        left: 50%;
+        top: calc(-50% - 5px);
+        transform: translate(-50%, -50%);
+        background-color: #fff;
+        border: 1px solid rgba(0, 0, 0, .2);
+        border-radius: .3rem;
+        box-sizing: border-box;
+        padding: 5px;
+        white-space: nowrap;
+        transition: opacity 0.15s, visibility 0.15s;
+        z-index: 1000;
+
+        &:before {
+            content: '';
+            display: inline-block;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-top: 8px solid rgba(0, 0, 0, .2);
+            position: absolute;
+            bottom: -8px;
+            left: calc(50% - 8px);
+        }
+
+        &:after {
+            content: '';
+            display: inline-block;
+            border-left: 7px solid transparent;
+            border-right: 7px solid transparent;
+            border-top: 7px solid #fff;
+            position: absolute;
+            bottom: -6px;
+            left: calc(50% - 7px);
+            z-index: 2;
+        }
+    }
+
+    &:hover {
+        .hover-tooltip {
+            opacity: 1;
+            visibility: visible;
+            transition: opacity 0.15s 0.5s, visibility 0.15s 0.5s;
+        }
+    }
+}
+
+#region-flat-nav {
+    padding-right: 0;
+    padding-left: 0;
+    .nav {
+        margin-right: $grid-gutter-width / 2;
+        background-color: $card-bg;
+    }
+    @include media-breakpoint-down(sm) {
+        .nav {
+            margin-top: $grid-gutter-width;
+            margin-right: 0;
+        }
+    }
+}
+
+// Footer link colour was added to allow the colour of footer links to be changed,
+// but really in bootstrap we want the colour of links on .bg-inverse to be changed
+// rather than being specific to the footer. This is kept for backwards compatibility.
+$footer-link-color: $bg-inverse-link-color !default;
+#page-footer a {
+    color: $footer-link-color;
+    text-decoration: underline;
+    .icon {
+        color: $footer-link-color;
+    }
+}
+
+.bg-inverse a {
+    color: $bg-inverse-link-color;
+    text-decoration: underline;
+    .icon {
+        color: $bg-inverse-link-color;
+    }
+}
+
+.sitelink {
+    img {
+        width: 112px;
+    }
+}
+
+// Make links in a menu clickable anywhere in the row.
+.dropdown-item a {
+    display: block;
+    width: 100%;
+    color: $body-color;
+}
+
+.competency-tree {
+    ul {
+        padding-left: 1.5rem;
+    }
+}
+
+.sr-only-focusable {
+    &:active,
+    &:focus {
+        z-index: $zindex-navbar-fixed + 1;
+        position: fixed;
+        background: #fff;
+        padding: 7px;
+        left: 0;
+        top: 0;
+    }
+}
+
+[data-drag-type="move"] {
+    cursor: move;
+}
+
+.clickable {
+    cursor: pointer;
+}
+
+.overlay-icon-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.6);
+
+    .loading-icon {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+
+        .icon {
+            height: 40px;
+            width: 40px;
+
+        }
+    }
+}

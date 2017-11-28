@@ -37,7 +37,7 @@ class repository extends base {
      */
     public static function get_enabled_plugins() {
         global $DB;
-        return $DB->get_records_menu('repository', array('visible'=>1), 'type ASC', 'type, type AS val');
+        return $DB->get_records_menu('repository', null, 'type ASC', 'type, type AS val');
     }
 
     public function get_settings_section_name() {

@@ -21,7 +21,7 @@
  * @copyright  2011 Lancaster University Network Services Limited
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-require_once(dirname(__FILE__) . '/../config.php');
+require_once(__DIR__ . '/../config.php');
 require_once($CFG->dirroot . '/message/lib.php');
 require_once($CFG->libdir.'/adminlib.php');
 
@@ -41,7 +41,7 @@ if (!empty($disable) && confirm_sesskey()) {
     if (!$processor = $DB->get_record('message_processors', array('id'=>$disable))) {
         print_error('outputdoesnotexist', 'message');
     }
-    $DB->set_field('message_processors', 'enabled', '0', array('id'=>$processor->id));      // Disable output
+    \core_message\api::update_processor_status($processor, 0);     // Disable output.
     core_plugin_manager::reset_caches();
 }
 
@@ -49,7 +49,7 @@ if (!empty($enable) && confirm_sesskey()) {
     if (!$processor = $DB->get_record('message_processors', array('id'=>$enable))) {
         print_error('outputdoesnotexist', 'message');
     }
-    $DB->set_field('message_processors', 'enabled', '1', array('id'=>$processor->id));      // Enable output
+    \core_message\api::update_processor_status($processor, 1);      // Enable output.
     core_plugin_manager::reset_caches();
 }
 

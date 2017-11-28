@@ -84,6 +84,9 @@ class report_log_renderable implements renderable {
     /** @var string order to sort */
     public $order;
 
+    /** @var string origin to filter event origin */
+    public $origin;
+
     /** @var int group id */
     public $groupid;
 
@@ -113,7 +116,7 @@ class report_log_renderable implements renderable {
      */
     public function __construct($logreader = "", $course = 0, $userid = 0, $modid = 0, $action = "", $groupid = 0, $edulevel = -1,
             $showcourses = false, $showusers = false, $showreport = true, $showselectorform = true, $url = "", $date = 0,
-            $logformat='showashtml', $page = 0, $perpage = 100, $order = "timecreated ASC") {
+            $logformat='showashtml', $page = 0, $perpage = 100, $order = "timecreated ASC", $origin ='') {
 
         global $PAGE;
 
@@ -157,6 +160,7 @@ class report_log_renderable implements renderable {
         $this->showreport = $showreport;
         $this->showselectorform = $showselectorform;
         $this->logformat = $logformat;
+        $this->origin = $origin;
     }
 
     /**
@@ -282,7 +286,7 @@ class report_log_renderable implements renderable {
                 'r' => get_string('view'),
                 'u' => get_string('update'),
                 'd' => get_string('delete'),
-                '' => get_string('allchanges')
+                'cud' => get_string('allchanges')
                 );
         return $actions;
     }
@@ -433,6 +437,22 @@ class report_log_renderable implements renderable {
     }
 
     /**
+     * Return list of components to show in selector.
+     *
+     * @return array list of origins.
+     */
+    public function get_origin_options() {
+        $ret = array();
+        $ret[''] = get_string('allsources', 'report_log');
+        $ret['cli'] = get_string('cli', 'report_log');
+        $ret['restore'] = get_string('restore', 'report_log');
+        $ret['web'] = get_string('web', 'report_log');
+        $ret['ws'] = get_string('ws', 'report_log');
+        $ret['---'] = get_string('other', 'report_log');
+        return $ret;
+    }
+
+    /**
      * Return list of edulevel.
      *
      * @todo MDL-44528 Get list from log_store.
@@ -469,7 +489,7 @@ class report_log_renderable implements renderable {
         $filter->action = $this->action;
         $filter->date = $this->date;
         $filter->orderby = $this->order;
-
+        $filter->origin = $this->origin;
         // If showing site_errors.
         if ('site_errors' === $this->modid) {
             $filter->siteerrors = true;
@@ -487,6 +507,12 @@ class report_log_renderable implements renderable {
      */
     public function download() {
         $filename = 'logs_' . userdate(time(), get_string('backupnameformat', 'langconfig'), 99, false);
+        if ($this->course->id !== SITEID) {
+            $courseshortname = format_string($this->course->shortname, true,
+                    array('context' => context_course::instance($this->course->id)));
+            $filename = clean_filename('logs_' . $courseshortname . '_' . userdate(time(),
+                    get_string('backupnameformat', 'langconfig'), 99, false));
+        }
         $this->tablelog->is_downloading($this->logformat, $filename);
         $this->tablelog->out($this->perpage, false);
     }

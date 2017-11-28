@@ -1,5 +1,5 @@
 @mod @mod_quiz
-Feature: Attemp a quiz where some questions require that the previous question has been answered.
+Feature: Attempt a quiz where some questions require that the previous question has been answered.
   In order to complete a quiz where questions require previous ones to be complete
   As a student
   I need later questions to appear once earlier ones have been answered.
@@ -35,7 +35,7 @@ Feature: Attemp a quiz where some questions require that the previous question h
       | TF2      | 1    | 1               |
 
     When I log in as "student"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Quiz 1"
     And I press "Attempt quiz now"
 
@@ -44,7 +44,7 @@ Feature: Attemp a quiz where some questions require that the previous question h
     And I should not see "Second question"
     And I log out
     And I log in as "teacher"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Quiz 1"
     And I follow "Attempts: 1"
     And I follow "Review attempt"
@@ -69,7 +69,7 @@ Feature: Attemp a quiz where some questions require that the previous question h
       | TF2      | 1    | 1               |
 
     When I log in as "student"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Quiz 1"
     And I press "Attempt quiz now"
     And I click on "True" "radio" in the "First question" "question"
@@ -96,10 +96,10 @@ Feature: Attemp a quiz where some questions require that the previous question h
       | TF2      | 1    | 1               |
 
     When I log in as "student"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Quiz 1"
     And I press "Attempt quiz now"
-    And I press "Next"
+    And I press "Finish attempt ..."
     And I press "Submit all and finish"
     And I click on "Submit all and finish" "button" in the "Confirmation" "dialogue"
 
@@ -121,7 +121,7 @@ Feature: Attemp a quiz where some questions require that the previous question h
       | TF2      | 1    | 1               |
 
     When I log in as "student"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Quiz 1"
     And I press "Attempt quiz now"
 
@@ -147,7 +147,7 @@ Feature: Attemp a quiz where some questions require that the previous question h
       | Section 1 | 1         | 1       |
 
     When I log in as "student"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Quiz 1"
     And I press "Attempt quiz now"
 
@@ -174,10 +174,10 @@ Feature: Attemp a quiz where some questions require that the previous question h
       | Section 2 | 2         | 0       |
 
     When I log in as "student"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Quiz 1"
     And I press "Attempt quiz now"
-    And I press "Next"
+    And I press "Next page"
 
     Then I should see "Second question"
     And I should not see "This question cannot be attempted until the previous question has been completed."
@@ -197,7 +197,7 @@ Feature: Attemp a quiz where some questions require that the previous question h
       | TF2      | 1    | 1               |
 
     When I log in as "student"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Quiz 1"
     And I press "Attempt quiz now"
 
@@ -220,7 +220,7 @@ Feature: Attemp a quiz where some questions require that the previous question h
       | TF2      | 1    | 1               |
 
     When I log in as "student"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Quiz 1"
     And I press "Attempt quiz now"
 
@@ -243,7 +243,7 @@ Feature: Attemp a quiz where some questions require that the previous question h
       | TF1      | 1    | 1               |
 
     When I log in as "student"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Quiz 1"
     And I press "Attempt quiz now"
 

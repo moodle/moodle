@@ -149,9 +149,10 @@ switch ($mode) {
             if ($course->id == SITEID) {
                 $activenode = $PAGE->navigation->find('user' . $user->id, null);
             } else {
-                $currentcoursenode = $PAGE->navigation->find('currentcourse', null);
+                $currentcoursenode = $PAGE->navigation->find($course->id, navigation_node::TYPE_COURSE);
                 $activenode = $currentcoursenode->find_active_node();
             }
+
             // Check to see if the active node is a user name.
             if (!preg_match('/^user\d{0,}$/', $activenode->key)) { // No user name found.
                 $userurl = new moodle_url('/user/view.php', array('id' => $user->id, 'course' => $course->id));

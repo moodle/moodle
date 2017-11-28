@@ -40,13 +40,14 @@ class backup_scorm_activity_structure_step extends backup_activity_structure_ste
             'name', 'scormtype', 'reference', 'intro',
             'introformat', 'version', 'maxgrade', 'grademethod',
             'whatgrade', 'maxattempt', 'forcecompleted', 'forcenewattempt',
-            'lastattemptlock', 'displayattemptstatus', 'displaycoursestructure', 'updatefreq',
+            'lastattemptlock', 'masteryoverride', 'displayattemptstatus', 'displaycoursestructure', 'updatefreq',
             'sha1hash', 'md5hash', 'revision', 'launch',
             'skipview', 'hidebrowse', 'hidetoc', 'nav', 'navpositionleft', 'navpositiontop',
             'auto', 'popup', 'options', 'width',
             'height', 'timeopen', 'timeclose', 'timemodified',
             'completionstatusrequired', 'completionscorerequired',
-            'displayactivityname'));
+            'completionstatusallscos', 'displayactivityname',
+            'autocommit'));
 
         $scoes = new backup_nested_element('scoes');
 

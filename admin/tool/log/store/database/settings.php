@@ -54,6 +54,8 @@ if ($hassiteconfig) {
         'logstore_database'), '', ''));
     $settings->add(new admin_setting_configtext('logstore_database/dbcollation', get_string('databasecollation',
         'logstore_database'), '', ''));
+    $settings->add(new admin_setting_configcheckbox('logstore_database/dbhandlesoptions', get_string('databasehandlesoptions',
+        'logstore_database'), get_string('databasehandlesoptions_help', 'logstore_database'), '0'));
     $settings->add(new admin_setting_configtext('logstore_database/buffersize', get_string('buffersize',
         'logstore_database'), get_string('buffersize_help', 'logstore_database'), 50));
 

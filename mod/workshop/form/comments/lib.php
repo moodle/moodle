@@ -25,7 +25,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once(dirname(dirname(__FILE__)) . '/lib.php');  // interface definition
+require_once(__DIR__ . '/../lib.php');  // interface definition
 require_once($CFG->libdir . '/gradelib.php');           // to handle float vs decimal issues
 
 /**
@@ -117,7 +117,7 @@ class workshop_comments_strategy implements workshop_strategy {
         global $CFG;    // needed because the included files use it
         global $PAGE;
 
-        require_once(dirname(__FILE__) . '/edit_form.php');
+        require_once(__DIR__ . '/edit_form.php');
 
         $fields             = $this->prepare_form_fields($this->dimensions);
         $nodimensions       = count($this->dimensions);
@@ -208,7 +208,7 @@ class workshop_comments_strategy implements workshop_strategy {
         global $CFG;    // needed because the included files use it
         global $PAGE;
         global $DB;
-        require_once(dirname(__FILE__) . '/assessment_form.php');
+        require_once(__DIR__ . '/assessment_form.php');
 
         $fields         = $this->prepare_form_fields($this->dimensions);
         $nodimensions   = count($this->dimensions);

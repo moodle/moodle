@@ -20,7 +20,7 @@ var QUIZBASE = function() {
  */
 Y.extend(QUIZBASE, Y.Base, {
     // Registered Modules
-    registermodules : [],
+    registermodules: [],
 
     /**
      * Register a new Javascript Module
@@ -29,7 +29,7 @@ Y.extend(QUIZBASE, Y.Base, {
      * @param {Object} The instantiated module to call functions on
      * @chainable
      */
-    register_module : function(object) {
+    register_module: function(object) {
         this.registermodules.push(object);
 
         return this;
@@ -43,7 +43,7 @@ Y.extend(QUIZBASE, Y.Base, {
      * @param {mixed} args The argument supplied to the function
      * @chainable
      */
-    invoke_function : function(functionname, args) {
+    invoke_function: function(functionname, args) {
         var module;
         for (module in this.registermodules) {
             if (functionname in this.registermodules[module]) {
@@ -54,8 +54,8 @@ Y.extend(QUIZBASE, Y.Base, {
         return this;
     }
 }, {
-    NAME : QUIZBASENAME,
-    ATTRS : {}
+    NAME: QUIZBASENAME,
+    ATTRS: {}
 });
 
 // Ensure that M.course exists and that coursebase is initialised correctly
@@ -75,8 +75,8 @@ M.mod_quiz.edit = M.mod_quiz.edit || {};
  */
 M.mod_quiz.edit.swap_sections = function(Y, node1, node2) {
     var CSS = {
-        COURSECONTENT : 'mod-quiz-edit-content',
-        SECTIONADDMENUS : 'section_add_menus'
+        COURSECONTENT: 'mod-quiz-edit-content',
+        SECTIONADDMENUS: 'section_add_menus'
     };
 
     var sectionlist = Y.Node.all('.' + CSS.COURSECONTENT + ' li.section');
@@ -98,10 +98,10 @@ M.mod_quiz.edit.swap_sections = function(Y, node1, node2) {
  */
 M.mod_quiz.edit.process_sections = function(Y, sectionlist, response, sectionfrom, sectionto) {
     var CSS = {
-        SECTIONNAME : 'sectionname'
+        SECTIONNAME: 'sectionname'
     },
     SELECTORS = {
-        SECTIONLEFTSIDE : '.left .section-handle img'
+        SECTIONLEFTSIDE: '.left .section-handle .icon'
     };
 
     if (response.action === 'move') {

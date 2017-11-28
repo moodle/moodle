@@ -143,12 +143,12 @@ class tiynce_subplugins_settings extends admin_setting {
                 $displayname = html_writer::tag('span', $name, array('class'=>'error'));
             } else if ($plugininfo->is_enabled()) {
                 $url = new moodle_url('/lib/editor/tinymce/subplugins.php', array('sesskey'=>sesskey(), 'return'=>'settings', 'disable'=>$name));
-                $hideshow = html_writer::empty_tag('img', array('src'=>$OUTPUT->pix_url('t/hide'), 'class'=>'iconsmall', 'alt'=>$strdisable));
+                $hideshow = $OUTPUT->pix_icon('t/hide', $strdisable);
                 $hideshow = html_writer::link($url, $hideshow);
                 $displayname = $namestr;
             } else {
                 $url = new moodle_url('/lib/editor/tinymce/subplugins.php', array('sesskey'=>sesskey(), 'return'=>'settings', 'enable'=>$name));
-                $hideshow = html_writer::empty_tag('img', array('src'=>$OUTPUT->pix_url('t/show'), 'class'=>'iconsmall', 'alt'=>$strenable));
+                $hideshow = $OUTPUT->pix_icon('t/show', $strenable);
                 $hideshow = html_writer::link($url, $hideshow);
                 $displayname = $namestr;
                 $class = 'dimmed_text';

@@ -1,0 +1,71 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Horde LLC (http://www.horde.org/)
+# This file is distributed under the same license as the Horde_Idna package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Horde_Idna\n"
+"Report-Msgid-Bugs-To: dev@lists.horde.org\n"
+"POT-Creation-Date: 2017-06-09 15:53+0300\n"
+"PO-Revision-Date: 2017-06-09 16:18+0300\n"
+"Language-Team: İTÜ BİDB <sistemdestek@itu.edu.tr>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.8.12\n"
+"Last-Translator: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: tr\n"
+
+#: lib/Horde/Idna.php:83
+msgid "ACE label does not contain a valid label string"
+msgstr "ACE etiketi geçerli bir etiket dizesi içermiyor"
+
+#: lib/Horde/Idna.php:79
+msgid "Contains a dot"
+msgstr "Bir nokta içeriyor"
+
+#: lib/Horde/Idna.php:71
+msgid "Contains disallowed characters"
+msgstr "İzin verilmeyen karakterler içeriyor"
+
+#: lib/Horde/Idna.php:63
+msgid "Contains hyphen in the third and fourth positions"
+msgstr "Üçüncü ve dördüncü konumda tire içeriyor"
+
+#: lib/Horde/Idna.php:87
+msgid "Does not meet the IDNA BiDi requirements (for right-to-left characters)"
+msgstr "IDNA BiDi gereksinimlerini karşılamıyor (sağdan sola karakterler için)"
+
+#: lib/Horde/Idna.php:91
+msgid "Does not meet the IDNA CONTEXTJ requirements"
+msgstr "IDNA CONTEXTJ gereksinimlerini karşılamıyor"
+
+#: lib/Horde/Idna.php:46
+msgid "Domain name is empty"
+msgstr "Alan adı boş"
+
+#: lib/Horde/Idna.php:51
+msgid "Domain name is too long"
+msgstr "Alan adı çok uzun"
+
+#: lib/Horde/Idna.php:59
+msgid "Ends with a hyphen"
+msgstr "Tire ile bitiyor"
+
+#: lib/Horde/Idna.php:75
+msgid "Starts with \"xn--\" but does not contain valid Punycode"
+msgstr "\"Xn--\" ile başlıyor ancak geçerli Punycode içermiyor"
+
+#: lib/Horde/Idna.php:67
+msgid "Starts with a combining mark"
+msgstr "Birleştirme işaretiyle başlıyor"
+
+#: lib/Horde/Idna.php:55
+msgid "Starts with a hyphen"
+msgstr "Tire ile başlıyor"
+
+#: lib/Horde/Idna.php:95
+msgid "Unknown error"
+msgstr "Bilinmeyen hata"

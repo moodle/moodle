@@ -124,6 +124,9 @@ abstract class moodle_database {
     /** @var cache_application for column info */
     protected $metacache;
 
+    /** @var cache_request for column info on temp tables */
+    protected $metacachetemp;
+
     /** @var bool flag marking database instance as disposed */
     protected $disposed;
 
@@ -135,6 +138,11 @@ abstract class moodle_database {
      * @var int internal temporary variable used to guarantee unique parameters in each request. Its used by {@link get_in_or_equal()}.
      */
     private $inorequaluniqueindex = 1;
+
+    /**
+     * @var boolean variable use to temporarily disable logging.
+     */
+    protected $skiplogging = false;
 
     /**
      * Constructor - Instantiates the database, specifying if it's external (connect to other systems) or not (Moodle DB).
@@ -325,6 +333,33 @@ abstract class moodle_database {
     }
 
     /**
+     * Handle the creation and caching of the databasemeta information for all databases.
+     *
+     * @return cache_application The databasemeta cachestore to complete operations on.
+     */
+    protected function get_metacache() {
+        if (!isset($this->metacache)) {
+            $properties = array('dbfamily' => $this->get_dbfamily(), 'settings' => $this->get_settings_hash());
+            $this->metacache = cache::make('core', 'databasemeta', $properties);
+        }
+        return $this->metacache;
+    }
+
+    /**
+     * Handle the creation and caching of the temporary tables.
+     *
+     * @return cache_application The temp_tables cachestore to complete operations on.
+     */
+    protected function get_temp_tables_cache() {
+        if (!isset($this->metacachetemp)) {
+            // Using connection data to prevent collisions when using the same temp table name with different db connections.
+            $properties = array('dbfamily' => $this->get_dbfamily(), 'settings' => $this->get_settings_hash());
+            $this->metacachetemp = cache::make('core', 'temp_tables', $properties);
+        }
+        return $this->metacachetemp;
+    }
+
+    /**
      * Attempt to create the database
      * @param string $dbhost The database host.
      * @param string $dbuser The database user to connect as.
@@ -404,6 +439,14 @@ abstract class moodle_database {
             case SQL_QUERY_UPDATE:
             case SQL_QUERY_STRUCTURE:
                 $this->writes++;
+            default:
+                if ((PHPUNIT_TEST) || (defined('BEHAT_TEST') && BEHAT_TEST) ||
+                    defined('BEHAT_SITE_RUNNING')) {
+
+                    // Set list of tables that are updated.
+                    require_once(__DIR__.'/../testing/classes/util.php');
+                    testing_util::set_table_modified_by_sql($sql);
+                }
         }
 
         $this->print_debug($sql, $params);
@@ -456,6 +499,11 @@ abstract class moodle_database {
      * @return void
      */
     public function query_log($error=false) {
+        // Logging disabled by the driver.
+        if ($this->skiplogging) {
+            return;
+        }
+
         $logall    = !empty($this->dboptions['logall']);
         $logslow   = !empty($this->dboptions['logslow']) ? $this->dboptions['logslow'] : false;
         $logerrors = !empty($this->dboptions['logerrors']);
@@ -492,6 +540,20 @@ abstract class moodle_database {
             }
             $this->loggingquery = false;
         }
+    }
+
+    /**
+     * Disable logging temporarily.
+     */
+    protected function query_log_prevent() {
+        $this->skiplogging = true;
+    }
+
+    /**
+     * Restore old logging behavior.
+     */
+    protected function query_log_allow() {
+        $this->skiplogging = false;
     }
 
     /**
@@ -532,19 +594,29 @@ abstract class moodle_database {
             return;
         }
         if (CLI_SCRIPT) {
-            echo "--------------------------------\n";
-            echo $sql."\n";
+            $separator = "--------------------------------\n";
+            echo $separator;
+            echo "{$sql}\n";
             if (!is_null($params)) {
-                echo "[".var_export($params, true)."]\n";
+                echo "[" . var_export($params, true) . "]\n";
             }
-            echo "--------------------------------\n";
+            echo $separator;
+        } else if (AJAX_SCRIPT) {
+            $separator = "--------------------------------";
+            error_log($separator);
+            error_log($sql);
+            if (!is_null($params)) {
+                error_log("[" . var_export($params, true) . "]");
+            }
+            error_log($separator);
         } else {
-            echo "<hr />\n";
-            echo s($sql)."\n";
+            $separator = "<hr />\n";
+            echo $separator;
+            echo s($sql) . "\n";
             if (!is_null($params)) {
-                echo "[".s(var_export($params, true))."]\n";
+                echo "[" . s(var_export($params, true)) . "]\n";
             }
-            echo "<hr />\n";
+            echo $separator;
         }
     }
 
@@ -561,6 +633,9 @@ abstract class moodle_database {
         if (CLI_SCRIPT) {
             echo $message;
             echo "--------------------------------\n";
+        } else if (AJAX_SCRIPT) {
+            error_log($message);
+            error_log("--------------------------------");
         } else {
             echo s($message);
             echo "<hr />\n";
@@ -577,6 +652,11 @@ abstract class moodle_database {
     protected function where_clause($table, array $conditions=null) {
         // We accept nulls in conditions
         $conditions = is_null($conditions) ? array() : $conditions;
+
+        if (empty($conditions)) {
+            return array('', array());
+        }
+
         // Some checks performed under debugging only
         if (debugging()) {
             $columns = $this->get_columns($table);
@@ -600,9 +680,6 @@ abstract class moodle_database {
         }
 
         $allowed_types = $this->allowed_param_types();
-        if (empty($conditions)) {
-            return array('', array());
-        }
         $where = array();
         $params = array();
 
@@ -1018,13 +1095,30 @@ abstract class moodle_database {
 
     /**
      * Resets the internal column details cache
+     *
+     * @param array|null $tablenames an array of xmldb table names affected by this request.
      * @return void
      */
-    public function reset_caches() {
-        $this->tables = null;
-        // Purge MUC as well
-        $identifiers = array('dbfamily' => $this->get_dbfamily(), 'settings' => $this->get_settings_hash());
-        cache_helper::purge_by_definition('core', 'databasemeta', $identifiers);
+    public function reset_caches($tablenames = null) {
+        if (!empty($tablenames)) {
+            $dbmetapurged = false;
+            foreach ($tablenames as $tablename) {
+                if ($this->temptables->is_temptable($tablename)) {
+                    $this->get_temp_tables_cache()->delete($tablename);
+                } else if ($dbmetapurged === false) {
+                    $this->tables = null;
+                    $this->get_metacache()->purge();
+                    $this->metacache = null;
+                    $dbmetapurged = true;
+                }
+            }
+        } else {
+            $this->get_temp_tables_cache()->purge();
+            $this->tables = null;
+            // Purge MUC as well.
+            $this->get_metacache()->purge();
+            $this->metacache = null;
+        }
     }
 
     /**
@@ -1085,20 +1179,19 @@ abstract class moodle_database {
      * Enable/disable detailed sql logging
      *
      * @deprecated since Moodle 2.9
-     * @todo MDL-49824 This will be deleted in Moodle 3.1.
-     * @param bool $state
      */
     public function set_logging($state) {
-        debugging('set_logging() is deprecated and will not be replaced.', DEBUG_DEVELOPER);
+        throw new coding_exception('set_logging() can not be used any more.');
     }
 
     /**
      * Do NOT use in code, this is for use by database_manager only!
      * @param string|array $sql query or array of queries
+     * @param array|null $tablenames an array of xmldb table names affected by this request.
      * @return bool true
      * @throws ddl_change_structure_exception A DDL specific exception is thrown for any errors.
      */
-    public abstract function change_database_structure($sql);
+    public abstract function change_database_structure($sql, $tablenames = null);
 
     /**
      * Executes a general sql query. Should be used only when no other method suitable.
@@ -2002,6 +2095,33 @@ abstract class moodle_database {
     }
 
     /**
+     * Returns an equal (=) or not equal (<>) part of a query.
+     *
+     * Note the use of this method may lead to slower queries (full scans) so
+     * use it only when needed and against already reduced data sets.
+     *
+     * @since Moodle 3.2
+     *
+     * @param string $fieldname Usually the name of the table column.
+     * @param string $param Usually the bound query parameter (?, :named).
+     * @param bool $casesensitive Use case sensitive search when set to true (default).
+     * @param bool $accentsensitive Use accent sensitive search when set to true (default). (not all databases support accent insensitive)
+     * @param bool $notequal True means not equal (<>)
+     * @return string The SQL code fragment.
+     */
+    public function sql_equal($fieldname, $param, $casesensitive = true, $accentsensitive = true, $notequal = false) {
+        // Note that, by default, it's assumed that the correct sql equal operations are
+        // case sensitive. Only databases not observing this behavior must override the method.
+        // Also, accent sensitiveness only will be handled by databases supporting it.
+        $equalop = $notequal ? '<>' : '=';
+        if ($casesensitive) {
+            return "$fieldname $equalop $param";
+        } else {
+            return "LOWER($fieldname) $equalop LOWER($param)";
+        }
+    }
+
+    /**
      * Returns 'LIKE' part of a query.
      *
      * @param string $fieldname Usually the name of the table column.
@@ -2221,10 +2341,12 @@ abstract class moodle_database {
     /**
      * Returns the driver specific syntax (SQL part) for matching regex positively or negatively (inverted matching).
      * Eg: 'REGEXP':'NOT REGEXP' or '~*' : '!~*'
+     *
      * @param bool $positivematch
+     * @param bool $casesensitive
      * @return string or empty if not supported
      */
-    public function sql_regex($positivematch=true) {
+    public function sql_regex($positivematch = true, $casesensitive = false) {
         return '';
     }
 
@@ -2278,7 +2400,8 @@ abstract class moodle_database {
         // NOTE: override this methods if following standard compliant SQL
         //       does not work for your driver.
 
-        $columnname = $column->name;
+        // Enclose the column name by the proper quotes if it's a reserved word.
+        $columnname = $this->get_manager()->generator->getEncQuoted($column->name);
         $sql = "UPDATE {".$table."}
                        SET $columnname = REPLACE($columnname, ?, ?)
                      WHERE $columnname IS NOT NULL";
@@ -2431,10 +2554,14 @@ abstract class moodle_database {
      * automatically if exceptions not caught.
      *
      * @param moodle_transaction $transaction An instance of a moodle_transaction.
-     * @param Exception $e The related exception to this transaction rollback.
+     * @param Exception|Throwable $e The related exception/throwable to this transaction rollback.
      * @return void This does not return, instead the exception passed in will be rethrown.
      */
-    public function rollback_delegated_transaction(moodle_transaction $transaction, Exception $e) {
+    public function rollback_delegated_transaction(moodle_transaction $transaction, $e) {
+        if (!($e instanceof Exception) && !($e instanceof Throwable)) {
+            // PHP7 - we catch Throwables in phpunit but can't use that as the type hint in PHP5.
+            $e = new \coding_exception("Must be given an Exception or Throwable object!");
+        }
         if ($transaction->is_disposed()) {
             throw new dml_transaction_exception('Transactions already disposed', $transaction);
         }

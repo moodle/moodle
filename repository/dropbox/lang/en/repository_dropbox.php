@@ -34,3 +34,4 @@ $string['cachelimit'] = 'Cache limit';
 $string['cachelimit_info'] = 'Enter the maximum size of files (in bytes) to be cached on server for Dropbox aliases/shortcuts. Cached files will be served when the source is no longer available. Empty value or zero mean caching of all files regardless of size.';
 $string['dropbox:view'] = 'View a Dropbox folder';
 $string['logoutdesc'] = '(Logout when you finish using Dropbox)';
+$string['oauth2redirecturi'] = 'OAuth 2 Redirect URI';

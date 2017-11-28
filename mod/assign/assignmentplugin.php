@@ -384,6 +384,16 @@ abstract class assign_plugin {
     }
 
     /**
+     * Get a list of file areas associated with the plugin configuration.
+     * This is used for backup/restore.
+     *
+     * @return array names of the fileareas, can be an empty array
+     */
+    public function get_config_file_areas() {
+        return array();
+    }
+
+    /**
      * Should not output anything - return the result as a string so it can be consumed by webservices.
      *
      * @param stdClass $submissionorgrade assign_submission or assign_grade
@@ -570,17 +580,30 @@ abstract class assign_plugin {
     public function get_file_info($browser, $filearea, $itemid, $filepath, $filename) {
         global $CFG, $DB, $USER;
         $urlbase = $CFG->wwwroot.'/pluginfile.php';
-
+        $writeaccess = false;
         // Permission check on the itemid.
+        $assignment = $this->assignment;
 
         if ($this->get_subtype() == 'assignsubmission') {
             if ($itemid) {
-                $record = $DB->get_record('assign_submission', array('id'=>$itemid), 'userid', IGNORE_MISSING);
+                $record = $DB->get_record('assign_submission', array('id' => $itemid), 'userid,groupid', IGNORE_MISSING);
                 if (!$record) {
                     return null;
                 }
-                if (!$this->assignment->can_view_submission($record->userid)) {
-                    return null;
+                if (!empty($record->userid)) {
+                    if (!$assignment->can_view_submission($record->userid)) {
+                        return null;
+                    }
+
+                    // We only report write access for teachers.
+                    $writeaccess = $assignment->can_grade() && $assignment->can_edit_submission($record->userid);
+                } else {
+                    // Must be a team submission with a group.
+                    if (!$assignment->can_view_group_submission($record->groupid)) {
+                        return null;
+                    }
+                    // We only report write access for teachers.
+                    $writeaccess = $assignment->can_grade() && $assignment->can_edit_group_submission($record->groupid);
                 }
             }
         } else {
@@ -591,7 +614,7 @@ abstract class assign_plugin {
         $fs = get_file_storage();
         $filepath = is_null($filepath) ? '/' : $filepath;
         $filename = is_null($filename) ? '.' : $filename;
-        if (!($storedfile = $fs->get_file($this->assignment->get_context()->id,
+        if (!($storedfile = $fs->get_file($assignment->get_context()->id,
                                           $this->get_subtype() . '_' . $this->get_type(),
                                           $filearea,
                                           $itemid,
@@ -599,14 +622,15 @@ abstract class assign_plugin {
                                           $filename))) {
             return null;
         }
+
         return new file_info_stored($browser,
-                                    $this->assignment->get_context(),
+                                    $assignment->get_context(),
                                     $storedfile,
                                     $urlbase,
                                     $filearea,
                                     $itemid,
                                     true,
-                                    true,
+                                    $writeaccess,
                                     false);
     }
 
@@ -666,5 +690,16 @@ abstract class assign_plugin {
      */
     public function is_configurable() {
         return true;
+    }
+
+    /**
+     * Return the plugin configs for external functions,
+     * in some cases the configs will need formatting or be returned only if the current user has some capabilities enabled.
+     *
+     * @return array the list of settings
+     * @since Moodle 3.2
+     */
+    public function get_config_for_external() {
+        return array();
     }
 }

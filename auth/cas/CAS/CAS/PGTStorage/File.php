@@ -180,8 +180,10 @@ class CAS_PGTStorage_File extends CAS_PGTStorage_AbstractStorage
     function getPGTIouFilename($pgt_iou)
     {
         phpCAS::traceBegin();
-        $filename = $this->getPath().$pgt_iou.'.plain';
-        phpCAS::traceEnd($filename);
+        $filename = $this->getPath()."phpcas-".hash("sha256", $pgt_iou);
+//        $filename = $this->getPath().$pgt_iou.'.plain';
+        phpCAS::trace("Sha256 filename:" . $filename);
+        phpCAS::traceEnd();
         return $filename;
     }
 

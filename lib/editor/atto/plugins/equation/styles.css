@@ -2,7 +2,9 @@
     border: none;
 }
 
-.atto_equation_library .yui3-tab-selected .yui3-tab-label, .yui3-skin-sam #atto_equation_library .yui3-tab-selected .yui3-tab-label:focus, .yui3-skin-sam #atto_equation_library .yui3-tab-selected .yui3-tab-label:hover {
+.atto_equation_library .yui3-tab-selected .yui3-tab-label,
+.yui3-skin-sam #atto_equation_library .yui3-tab-selected .yui3-tab-label:focus,
+.yui3-skin-sam #atto_equation_library .yui3-tab-selected .yui3-tab-label:hover {
     background: none;
     color: black;
     border-top-left-radius: 4px;
@@ -22,5 +24,5 @@
 }
 
 .atto_form .atto_equation_preview {
-    margin-bottom: 0px; /* Turn off the margin-bottom from the class "well" */
+    margin-bottom: 0; /* Turn off the margin-bottom from the class "well" */
 }

@@ -61,12 +61,7 @@ if ($entries) {
             }
         }
         $entries[$key]->footer = "<p style=\"text-align:right\">&raquo;&nbsp;<a href=\"$CFG->wwwroot/mod/glossary/view.php?g=$entry->glossaryid\">".format_string($entry->glossaryname,true)."</a></p>";
-        $event = \mod_glossary\event\entry_viewed::create(array(
-            'objectid' => $entry->id,
-            'context' => $modinfo->cms[$entry->cmid]->context
-        ));
-        $event->add_record_snapshot('glossary_entries', $entry);
-        $event->trigger();
+        glossary_entry_view($entry, $modinfo->cms[$entry->cmid]->context);
     }
 }
 

@@ -30,8 +30,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
-require_once(dirname(__FILE__) . '/../lib.php');
-require_once(dirname(__FILE__) . '/helpers.php');
+require_once(__DIR__ . '/../lib.php');
+require_once(__DIR__ . '/helpers.php');
 
 
 /**
@@ -107,36 +107,6 @@ class question_attempt_testcase extends advanced_testcase {
     public function test_get_submitted_var_not_present_var_returns_null() {
         $this->assertNull($this->qa->get_submitted_var(
                 'reallyunlikelyvariablename', PARAM_BOOL));
-    }
-
-    public function test_get_submitted_var_param_mark_not_present() {
-        $this->assertNull($this->qa->get_submitted_var(
-                'name', question_attempt::PARAM_MARK, array()));
-    }
-
-    public function test_get_submitted_var_param_mark_blank() {
-        $this->assertSame('', $this->qa->get_submitted_var(
-                'name', question_attempt::PARAM_MARK, array('name' => '')));
-    }
-
-    public function test_get_submitted_var_param_mark_number() {
-        $this->assertSame(123.0, $this->qa->get_submitted_var(
-                'name', question_attempt::PARAM_MARK, array('name' => '123')));
-    }
-
-    public function test_get_submitted_var_param_mark_number_uk_decimal() {
-        $this->assertSame(123.45, $this->qa->get_submitted_var(
-                'name', question_attempt::PARAM_MARK, array('name' => '123.45')));
-    }
-
-    public function test_get_submitted_var_param_mark_number_eu_decimal() {
-        $this->assertSame(123.45, $this->qa->get_submitted_var(
-                'name', question_attempt::PARAM_MARK, array('name' => '123,45')));
-    }
-
-    public function test_get_submitted_var_param_mark_invalid() {
-        $this->assertSame(0.0, $this->qa->get_submitted_var(
-                'name', question_attempt::PARAM_MARK, array('name' => 'frog')));
     }
 
     public function test_get_all_submitted_qt_vars() {

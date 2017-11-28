@@ -25,3 +25,4 @@
  */
 
 $string['pluginname'] = 'Date';
+$string['fieldtypelabel'] = 'Date field';

@@ -1,12 +1,12 @@
 <?php
 /**
- * Copyright 2012-2014 Horde LLC (http://www.horde.org/)
+ * Copyright 2012-2017 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file COPYING for license information (LGPL). If you
  * did not receive this file, see http://www.horde.org/licenses/lgpl21.
  *
  * @category  Horde
- * @copyright 2012-2014 Horde LLC
+ * @copyright 2012-2017 Horde LLC
  * @license   http://www.horde.org/licenses/lgpl21 LGPL 2.1
  * @package   Imap_Client
  */
@@ -21,7 +21,7 @@
  *
  * @author    Michael Slusarz <slusarz@horde.org>
  * @category  Horde
- * @copyright 2012-2014 Horde LLC
+ * @copyright 2012-2017 Horde LLC
  * @internal
  * @license   http://www.horde.org/licenses/lgpl21 LGPL 2.1
  * @package   Imap_Client
@@ -78,6 +78,11 @@ class Horde_Imap_Client_Base_Mailbox
         }
 
         switch ($entry) {
+        case Horde_Imap_Client::STATUS_FLAGS:
+        case Horde_Imap_Client::STATUS_SYNCFLAGUIDS:
+        case Horde_Imap_Client::STATUS_SYNCVANISHED:
+            return array();
+
         case Horde_Imap_Client::STATUS_FIRSTUNSEEN:
             /* If we know there are no messages in the current mailbox, we
              * know there are no unseen messages. */
@@ -89,13 +94,9 @@ class Horde_Imap_Client_Base_Mailbox
         case Horde_Imap_Client::STATUS_SYNCMODSEQ:
             return 0;
 
-        case Horde_Imap_Client::STATUS_SYNCFLAGUIDS:
-        case Horde_Imap_Client::STATUS_SYNCVANISHED:
-            return array();
-
         case Horde_Imap_Client::STATUS_PERMFLAGS:
             /* If PERMFLAGS is not returned by server, must assume that all
-             * flags can be change permanently (RFC 3501 [6.3.1]). */
+             * flags can be changed permanently (RFC 3501 [6.3.1]). */
             $flags = isset($this->_status[Horde_Imap_Client::STATUS_FLAGS])
                 ? $this->_status[Horde_Imap_Client::STATUS_FLAGS]
                 : array();

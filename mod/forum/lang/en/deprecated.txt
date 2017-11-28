@@ -1,0 +1,6 @@
+postmailinfo,mod_forum
+emaildigestupdated,mod_forum
+emaildigestupdated_default,mod_forum
+emaildigest_0,mod_forum
+emaildigest_1,mod_forum
+emaildigest_2,mod_forum

@@ -116,6 +116,7 @@ class message_output_email extends message_output {
         $current = $preferences->mailformat;
         $string .= $OUTPUT->container(html_writer::label(get_string('emailformat'), 'mailformat'));
         $string .= $OUTPUT->container(html_writer::select($choices, 'mailformat', $current, false, array('id' => 'mailformat')));
+        $string .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'userid', 'value' => $USER->id));
 
         if (!empty($CFG->allowusermailcharset)) {
             $choices = array();
@@ -160,11 +161,23 @@ class message_output_email extends message_output {
      * @param array $preferences preferences array
      */
     function process_form($form, &$preferences){
+        global $CFG;
+
         if (isset($form->email_email)) {
-            $preferences['message_processor_email_email'] = $form->email_email;
+            $preferences['message_processor_email_email'] = clean_param($form->email_email, PARAM_EMAIL);
         }
         if (isset($form->preference_mailcharset)) {
             $preferences['mailcharset'] = $form->preference_mailcharset;
+            if (!array_key_exists($preferences['mailcharset'], get_list_of_charsets())) {
+                $preferences['mailcharset'] = '0';
+            }
+        }
+        if (isset($form->mailformat) && isset($form->userid)) {
+            require_once($CFG->dirroot.'/user/lib.php');
+
+            $user = core_user::get_user($form->userid, '*', MUST_EXIST);
+            $user->mailformat = clean_param($form->mailformat, PARAM_INT);
+            user_update_user($user, false, false);
         }
     }
 

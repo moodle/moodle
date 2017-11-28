@@ -16,23 +16,26 @@
  */
 
 /**
- * Service definition for CloudMonitoring (v2beta1).
+ * Service definition for CloudMonitoring (v2beta2).
  *
  * <p>
  * API for accessing Google Cloud and API monitoring data.</p>
  *
  * <p>
  * For more information about this service, see the API
- * <a href="https://developers.google.com/cloud-monitoring/" target="_blank">Documentation</a>
+ * <a href="https://cloud.google.com/monitoring/v2beta2/" target="_blank">Documentation</a>
  * </p>
  *
  * @author Google, Inc.
  */
 class Google_Service_CloudMonitoring extends Google_Service
 {
-  /** View monitoring data for all of your Google Cloud and API projects. */
-  const MONITORING_READONLY =
-      "https://www.googleapis.com/auth/monitoring.readonly";
+  /** View and manage your data across Google Cloud Platform services. */
+  const CLOUD_PLATFORM =
+      "https://www.googleapis.com/auth/cloud-platform";
+  /** View and write monitoring data for all of your Google and third-party Cloud and API projects. */
+  const MONITORING =
+      "https://www.googleapis.com/auth/monitoring";
 
   public $metricDescriptors;
   public $timeseries;
@@ -47,8 +50,9 @@ class Google_Service_CloudMonitoring extends Google_Service
   public function __construct(Google_Client $client)
   {
     parent::__construct($client);
-    $this->servicePath = 'cloudmonitoring/v2beta1/projects/';
-    $this->version = 'v2beta1';
+    $this->rootUrl = 'https://www.googleapis.com/';
+    $this->servicePath = 'cloudmonitoring/v2beta2/projects/';
+    $this->version = 'v2beta2';
     $this->serviceName = 'cloudmonitoring';
 
     $this->metricDescriptors = new Google_Service_CloudMonitoring_MetricDescriptors_Resource(
@@ -57,7 +61,32 @@ class Google_Service_CloudMonitoring extends Google_Service
         'metricDescriptors',
         array(
           'methods' => array(
-            'list' => array(
+            'create' => array(
+              'path' => '{project}/metricDescriptors',
+              'httpMethod' => 'POST',
+              'parameters' => array(
+                'project' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+              ),
+            ),'delete' => array(
+              'path' => '{project}/metricDescriptors/{metric}',
+              'httpMethod' => 'DELETE',
+              'parameters' => array(
+                'project' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+                'metric' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+              ),
+            ),'list' => array(
               'path' => '{project}/metricDescriptors',
               'httpMethod' => 'GET',
               'parameters' => array(
@@ -116,6 +145,10 @@ class Google_Service_CloudMonitoring extends Google_Service
                   'location' => 'query',
                   'type' => 'string',
                 ),
+                'aggregator' => array(
+                  'location' => 'query',
+                  'type' => 'string',
+                ),
                 'labels' => array(
                   'location' => 'query',
                   'type' => 'string',
@@ -125,9 +158,23 @@ class Google_Service_CloudMonitoring extends Google_Service
                   'location' => 'query',
                   'type' => 'string',
                 ),
+                'window' => array(
+                  'location' => 'query',
+                  'type' => 'string',
+                ),
                 'oldest' => array(
                   'location' => 'query',
                   'type' => 'string',
+                ),
+              ),
+            ),'write' => array(
+              'path' => '{project}/timeseries:write',
+              'httpMethod' => 'POST',
+              'parameters' => array(
+                'project' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
                 ),
               ),
             ),
@@ -167,12 +214,20 @@ class Google_Service_CloudMonitoring extends Google_Service
                   'location' => 'query',
                   'type' => 'string',
                 ),
+                'aggregator' => array(
+                  'location' => 'query',
+                  'type' => 'string',
+                ),
                 'labels' => array(
                   'location' => 'query',
                   'type' => 'string',
                   'repeated' => true,
                 ),
                 'pageToken' => array(
+                  'location' => 'query',
+                  'type' => 'string',
+                ),
+                'window' => array(
                   'location' => 'query',
                   'type' => 'string',
                 ),
@@ -199,6 +254,37 @@ class Google_Service_CloudMonitoring extends Google_Service
  */
 class Google_Service_CloudMonitoring_MetricDescriptors_Resource extends Google_Service_Resource
 {
+
+  /**
+   * Create a new metric. (metricDescriptors.create)
+   *
+   * @param string $project The project id. The value can be the numeric project
+   * ID or string-based project name.
+   * @param Google_MetricDescriptor $postBody
+   * @param array $optParams Optional parameters.
+   * @return Google_Service_CloudMonitoring_MetricDescriptor
+   */
+  public function create($project, Google_Service_CloudMonitoring_MetricDescriptor $postBody, $optParams = array())
+  {
+    $params = array('project' => $project, 'postBody' => $postBody);
+    $params = array_merge($params, $optParams);
+    return $this->call('create', array($params), "Google_Service_CloudMonitoring_MetricDescriptor");
+  }
+
+  /**
+   * Delete an existing metric. (metricDescriptors.delete)
+   *
+   * @param string $project The project ID to which the metric belongs.
+   * @param string $metric Name of the metric.
+   * @param array $optParams Optional parameters.
+   * @return Google_Service_CloudMonitoring_DeleteMetricDescriptorResponse
+   */
+  public function delete($project, $metric, $optParams = array())
+  {
+    $params = array('project' => $project, 'metric' => $metric);
+    $params = array_merge($params, $optParams);
+    return $this->call('delete', array($params), "Google_Service_CloudMonitoring_DeleteMetricDescriptorResponse");
+  }
 
   /**
    * List metric descriptors that match the query. If the query is not set, then
@@ -269,6 +355,9 @@ class Google_Service_CloudMonitoring_Timeseries_Resource extends Google_Service_
    *
    * If neither oldest nor timespan is specified, the default time interval will
    * be (youngest - 4 hours, youngest].
+   * @opt_param string aggregator The aggregation function that will reduce the
+   * data points in each window to a single point. This parameter is only valid
+   * for non-cumulative metrics with a value type of INT64 or DOUBLE.
    * @opt_param string labels A collection of labels for the matching time series,
    * which are represented as: - key==value: key equals the value  - key=~value:
    * key regex matches the value  - key!=value: key does not equal the value  -
@@ -278,6 +367,11 @@ class Google_Service_CloudMonitoring_Timeseries_Resource extends Google_Service_
    * @opt_param string pageToken The pagination token, which is used to page
    * through large result sets. Set this value to the value of the nextPageToken
    * to retrieve the next page of results.
+   * @opt_param string window The sampling window. At most one data point will be
+   * returned for each window in the requested time interval. This parameter is
+   * only valid for non-cumulative metric types. Units: - m: minute  - h: hour  -
+   * d: day  - w: week  Examples: 3m, 4w. Only one unit is allowed, for example:
+   * 2w3d is not allowed; you should use 17d instead.
    * @opt_param string oldest Start of the time interval (exclusive), which is
    * expressed as an RFC 3339 timestamp. If neither oldest nor timespan is
    * specified, the default time interval will be (youngest - 4 hours, youngest]
@@ -288,6 +382,28 @@ class Google_Service_CloudMonitoring_Timeseries_Resource extends Google_Service_
     $params = array('project' => $project, 'metric' => $metric, 'youngest' => $youngest);
     $params = array_merge($params, $optParams);
     return $this->call('list', array($params), "Google_Service_CloudMonitoring_ListTimeseriesResponse");
+  }
+
+  /**
+   * Put data points to one or more time series for one or more metrics. If a time
+   * series does not exist, a new time series will be created. It is not allowed
+   * to write a time series point that is older than the existing youngest point
+   * of that time series. Points that are older than the existing youngest point
+   * of that time series will be discarded silently. Therefore, users should make
+   * sure that points of a time series are written sequentially in the order of
+   * their end time. (timeseries.write)
+   *
+   * @param string $project The project ID. The value can be the numeric project
+   * ID or string-based project name.
+   * @param Google_WriteTimeseriesRequest $postBody
+   * @param array $optParams Optional parameters.
+   * @return Google_Service_CloudMonitoring_WriteTimeseriesResponse
+   */
+  public function write($project, Google_Service_CloudMonitoring_WriteTimeseriesRequest $postBody, $optParams = array())
+  {
+    $params = array('project' => $project, 'postBody' => $postBody);
+    $params = array_merge($params, $optParams);
+    return $this->call('write', array($params), "Google_Service_CloudMonitoring_WriteTimeseriesResponse");
   }
 }
 
@@ -329,6 +445,9 @@ class Google_Service_CloudMonitoring_TimeseriesDescriptors_Resource extends Goog
    *
    * If neither oldest nor timespan is specified, the default time interval will
    * be (youngest - 4 hours, youngest].
+   * @opt_param string aggregator The aggregation function that will reduce the
+   * data points in each window to a single point. This parameter is only valid
+   * for non-cumulative metrics with a value type of INT64 or DOUBLE.
    * @opt_param string labels A collection of labels for the matching time series,
    * which are represented as: - key==value: key equals the value  - key=~value:
    * key regex matches the value  - key!=value: key does not equal the value  -
@@ -338,6 +457,11 @@ class Google_Service_CloudMonitoring_TimeseriesDescriptors_Resource extends Goog
    * @opt_param string pageToken The pagination token, which is used to page
    * through large result sets. Set this value to the value of the nextPageToken
    * to retrieve the next page of results.
+   * @opt_param string window The sampling window. At most one data point will be
+   * returned for each window in the requested time interval. This parameter is
+   * only valid for non-cumulative metric types. Units: - m: minute  - h: hour  -
+   * d: day  - w: week  Examples: 3m, 4w. Only one unit is allowed, for example:
+   * 2w3d is not allowed; you should use 17d instead.
    * @opt_param string oldest Start of the time interval (exclusive), which is
    * expressed as an RFC 3339 timestamp. If neither oldest nor timespan is
    * specified, the default time interval will be (youngest - 4 hours, youngest]
@@ -353,6 +477,23 @@ class Google_Service_CloudMonitoring_TimeseriesDescriptors_Resource extends Goog
 
 
 
+
+class Google_Service_CloudMonitoring_DeleteMetricDescriptorResponse extends Google_Model
+{
+  protected $internal_gapi_mappings = array(
+  );
+  public $kind;
+
+
+  public function setKind($kind)
+  {
+    $this->kind = $kind;
+  }
+  public function getKind()
+  {
+    return $this->kind;
+  }
+}
 
 class Google_Service_CloudMonitoring_ListMetricDescriptorsRequest extends Google_Model
 {
@@ -950,4 +1091,81 @@ class Google_Service_CloudMonitoring_TimeseriesDescriptorLabel extends Google_Mo
 
 class Google_Service_CloudMonitoring_TimeseriesDescriptorLabels extends Google_Model
 {
+}
+
+class Google_Service_CloudMonitoring_TimeseriesPoint extends Google_Model
+{
+  protected $internal_gapi_mappings = array(
+  );
+  protected $pointType = 'Google_Service_CloudMonitoring_Point';
+  protected $pointDataType = '';
+  protected $timeseriesDescType = 'Google_Service_CloudMonitoring_TimeseriesDescriptor';
+  protected $timeseriesDescDataType = '';
+
+
+  public function setPoint(Google_Service_CloudMonitoring_Point $point)
+  {
+    $this->point = $point;
+  }
+  public function getPoint()
+  {
+    return $this->point;
+  }
+  public function setTimeseriesDesc(Google_Service_CloudMonitoring_TimeseriesDescriptor $timeseriesDesc)
+  {
+    $this->timeseriesDesc = $timeseriesDesc;
+  }
+  public function getTimeseriesDesc()
+  {
+    return $this->timeseriesDesc;
+  }
+}
+
+class Google_Service_CloudMonitoring_WriteTimeseriesRequest extends Google_Collection
+{
+  protected $collection_key = 'timeseries';
+  protected $internal_gapi_mappings = array(
+  );
+  public $commonLabels;
+  protected $timeseriesType = 'Google_Service_CloudMonitoring_TimeseriesPoint';
+  protected $timeseriesDataType = 'array';
+
+
+  public function setCommonLabels($commonLabels)
+  {
+    $this->commonLabels = $commonLabels;
+  }
+  public function getCommonLabels()
+  {
+    return $this->commonLabels;
+  }
+  public function setTimeseries($timeseries)
+  {
+    $this->timeseries = $timeseries;
+  }
+  public function getTimeseries()
+  {
+    return $this->timeseries;
+  }
+}
+
+class Google_Service_CloudMonitoring_WriteTimeseriesRequestCommonLabels extends Google_Model
+{
+}
+
+class Google_Service_CloudMonitoring_WriteTimeseriesResponse extends Google_Model
+{
+  protected $internal_gapi_mappings = array(
+  );
+  public $kind;
+
+
+  public function setKind($kind)
+  {
+    $this->kind = $kind;
+  }
+  public function getKind()
+  {
+    return $this->kind;
+  }
 }

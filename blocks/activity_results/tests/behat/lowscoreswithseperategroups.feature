@@ -1,5 +1,5 @@
 @block @block_activity_results
-Feature: The activity results block displays student scores
+Feature: The activity results block displays students in separate groups scores
   In order to be display student scores
   As a user
   I need to see the activity results block
@@ -33,28 +33,23 @@ Feature: The activity results block displays student scores
       | student4 | C1 | student |
       | student5 | C1 | student |
       | student6 | C1 | student |
-
-  @javascript
-  Scenario: Configure the block on the course page to show 1 low score
-    Given I log in as "teacher1"
-    And I follow "Course 1"
-    And I expand "Users" node
-    And I follow "Groups"
-    And I add "Student 1 (student1@example.com)" user to "Group 1" group members
-    And I add "Student 2 (student2@example.com)" user to "Group 1" group members
-    And I add "Student 3 (student3@example.com)" user to "Group 2" group members
-    And I add "Student 4 (student4@example.com)" user to "Group 2" group members
-    And I add "Student 5 (student5@example.com)" user to "Group 3" group members
-    And I add "Student 6 (student6@example.com)" user to "Group 3" group members
-    And I follow "Course 1"
-    And I turn editing mode on
+    And the following "group members" exist:
+      | user     | group   |
+      | student1 | G1 |
+      | student2 | G1 |
+      | student3 | G2 |
+      | student4 | G2 |
+      | student5 | G3 |
+      | student6 | G3 |
+    And I log in as "teacher1"
+    And I am on "Course 1" course homepage with editing mode on
     And I add a "Assignment" to section "1" and I fill the form with:
       | Assignment name | Test assignment |
       | Description | Offline text |
       | assignsubmission_file_enabled | 0 |
       | Group mode | Separate groups |
-    And I follow "Course 1"
-    And I navigate to "Grades" node in "Course administration"
+    And I am on "Course 1" course homepage
+    And I navigate to "View > Grader report" in the course gradebook
     And I turn editing mode on
     And I give the grade "100.00" to the user "Student 1" for the grade item "Test assignment"
     And I give the grade "90.00" to the user "Student 2" for the grade item "Test assignment"
@@ -63,8 +58,10 @@ Feature: The activity results block displays student scores
     And I give the grade "80.00" to the user "Student 5" for the grade item "Test assignment"
     And I give the grade "70.00" to the user "Student 6" for the grade item "Test assignment"
     And I press "Save changes"
-    And I follow "Course 1"
-    And I add the "Activity results" block
+    And I am on "Course 1" course homepage
+
+  Scenario: Configure the block on the course page to show 1 low score
+    Given I add the "Activity results" block
     When I configure the "Activity results" block
     And I set the following fields to these values:
       | id_config_showbest | 0 |
@@ -77,37 +74,8 @@ Feature: The activity results block displays student scores
     Then I should see "Group 3" in the "Activity results" "block"
     And I should see "75%" in the "Activity results" "block"
 
-  @javascript
   Scenario: Try to configure the block on the course page to show 1 low score as a fraction
-    Given I log in as "teacher1"
-    And I follow "Course 1"
-    And I expand "Users" node
-    And I follow "Groups"
-    And I add "Student 1 (student1@example.com)" user to "Group 1" group members
-    And I add "Student 2 (student2@example.com)" user to "Group 1" group members
-    And I add "Student 3 (student3@example.com)" user to "Group 2" group members
-    And I add "Student 4 (student4@example.com)" user to "Group 2" group members
-    And I add "Student 5 (student5@example.com)" user to "Group 3" group members
-    And I add "Student 6 (student6@example.com)" user to "Group 3" group members
-    And I follow "Course 1"
-    And I turn editing mode on
-    And I add a "Assignment" to section "1" and I fill the form with:
-      | Assignment name | Test assignment |
-      | Description | Offline text |
-      | assignsubmission_file_enabled | 0 |
-      | Group mode | Separate groups |
-    And I follow "Course 1"
-    And I navigate to "Grades" node in "Course administration"
-    And I turn editing mode on
-    And I give the grade "100.00" to the user "Student 1" for the grade item "Test assignment"
-    And I give the grade "90.00" to the user "Student 2" for the grade item "Test assignment"
-    And I give the grade "90.00" to the user "Student 3" for the grade item "Test assignment"
-    And I give the grade "80.00" to the user "Student 4" for the grade item "Test assignment"
-    And I give the grade "80.00" to the user "Student 5" for the grade item "Test assignment"
-    And I give the grade "70.00" to the user "Student 6" for the grade item "Test assignment"
-    And I press "Save changes"
-    And I follow "Course 1"
-    And I add the "Activity results" block
+    Given I add the "Activity results" block
     When I configure the "Activity results" block
     And I set the following fields to these values:
       | id_config_showbest | 0 |
@@ -120,41 +88,12 @@ Feature: The activity results block displays student scores
     And I should see "75.00/100.00" in the "Activity results" "block"
     And I log out
     And I log in as "student5"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I should see "Student 6" in the "Activity results" "block"
     And I should see "70.00/100.00" in the "Activity results" "block"
 
-  @javascript
   Scenario: Try to configure the block on the course page to show 1 low score as a absolute numbers
-    Given I log in as "teacher1"
-    And I follow "Course 1"
-    And I expand "Users" node
-    And I follow "Groups"
-    And I add "Student 1 (student1@example.com)" user to "Group 1" group members
-    And I add "Student 2 (student2@example.com)" user to "Group 1" group members
-    And I add "Student 3 (student3@example.com)" user to "Group 2" group members
-    And I add "Student 4 (student4@example.com)" user to "Group 2" group members
-    And I add "Student 5 (student5@example.com)" user to "Group 3" group members
-    And I add "Student 6 (student6@example.com)" user to "Group 3" group members
-    And I follow "Course 1"
-    And I turn editing mode on
-    And I add a "Assignment" to section "1" and I fill the form with:
-      | Assignment name | Test assignment |
-      | Description | Offline text |
-      | assignsubmission_file_enabled | 0 |
-      | Group mode | Separate groups |
-    And I follow "Course 1"
-    And I navigate to "Grades" node in "Course administration"
-    And I turn editing mode on
-    And I give the grade "100.00" to the user "Student 1" for the grade item "Test assignment"
-    And I give the grade "90.00" to the user "Student 2" for the grade item "Test assignment"
-    And I give the grade "90.00" to the user "Student 3" for the grade item "Test assignment"
-    And I give the grade "80.00" to the user "Student 4" for the grade item "Test assignment"
-    And I give the grade "80.00" to the user "Student 5" for the grade item "Test assignment"
-    And I give the grade "70.00" to the user "Student 6" for the grade item "Test assignment"
-    And I press "Save changes"
-    And I follow "Course 1"
-    And I add the "Activity results" block
+    Given I add the "Activity results" block
     When I configure the "Activity results" block
     And I set the following fields to these values:
       | id_config_showbest | 0 |
@@ -167,41 +106,12 @@ Feature: The activity results block displays student scores
     And I should see "75.00" in the "Activity results" "block"
     And I log out
     And I log in as "student5"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I should see "Student 6" in the "Activity results" "block"
     And I should see "70.00" in the "Activity results" "block"
 
-  @javascript
   Scenario: Try to configure the block on the course page to show multiple low scores as percentages
-    Given I log in as "teacher1"
-    And I follow "Course 1"
-    And I expand "Users" node
-    And I follow "Groups"
-    And I add "Student 1 (student1@example.com)" user to "Group 1" group members
-    And I add "Student 2 (student2@example.com)" user to "Group 1" group members
-    And I add "Student 3 (student3@example.com)" user to "Group 2" group members
-    And I add "Student 4 (student4@example.com)" user to "Group 2" group members
-    And I add "Student 5 (student5@example.com)" user to "Group 3" group members
-    And I add "Student 6 (student6@example.com)" user to "Group 3" group members
-    And I follow "Course 1"
-    And I turn editing mode on
-    And I add a "Assignment" to section "1" and I fill the form with:
-      | Assignment name | Test assignment |
-      | Description | Offline text |
-      | assignsubmission_file_enabled | 0 |
-      | Group mode | Separate groups |
-    And I follow "Course 1"
-    And I navigate to "Grades" node in "Course administration"
-    And I turn editing mode on
-    And I give the grade "100.00" to the user "Student 1" for the grade item "Test assignment"
-    And I give the grade "90.00" to the user "Student 2" for the grade item "Test assignment"
-    And I give the grade "90.00" to the user "Student 3" for the grade item "Test assignment"
-    And I give the grade "80.00" to the user "Student 4" for the grade item "Test assignment"
-    And I give the grade "80.00" to the user "Student 5" for the grade item "Test assignment"
-    And I give the grade "70.00" to the user "Student 6" for the grade item "Test assignment"
-    And I press "Save changes"
-    And I follow "Course 1"
-    And I add the "Activity results" block
+    Given I add the "Activity results" block
     When I configure the "Activity results" block
     And I set the following fields to these values:
       | id_config_showbest | 0 |
@@ -217,43 +127,14 @@ Feature: The activity results block displays student scores
     And I should see "75%" in the "Activity results" "block"
     And I log out
     And I log in as "student5"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I should see "Student 6" in the "Activity results" "block"
     And I should see "70%" in the "Activity results" "block"
     And I should see "Student 5" in the "Activity results" "block"
     And I should see "80%" in the "Activity results" "block"
 
-  @javascript
   Scenario: Try to configure the block on the course page to show multiple low scores as fractions
-    Given I log in as "teacher1"
-    And I follow "Course 1"
-    And I expand "Users" node
-    And I follow "Groups"
-    And I add "Student 1 (student1@example.com)" user to "Group 1" group members
-    And I add "Student 2 (student2@example.com)" user to "Group 1" group members
-    And I add "Student 3 (student3@example.com)" user to "Group 2" group members
-    And I add "Student 4 (student4@example.com)" user to "Group 2" group members
-    And I add "Student 5 (student5@example.com)" user to "Group 3" group members
-    And I add "Student 6 (student6@example.com)" user to "Group 3" group members
-    And I follow "Course 1"
-    And I turn editing mode on
-    And I add a "Assignment" to section "1" and I fill the form with:
-      | Assignment name | Test assignment |
-      | Description | Offline text |
-      | assignsubmission_file_enabled | 0 |
-      | Group mode | Separate groups |
-    And I follow "Course 1"
-    And I navigate to "Grades" node in "Course administration"
-    And I turn editing mode on
-    And I give the grade "100.00" to the user "Student 1" for the grade item "Test assignment"
-    And I give the grade "90.00" to the user "Student 2" for the grade item "Test assignment"
-    And I give the grade "90.00" to the user "Student 3" for the grade item "Test assignment"
-    And I give the grade "80.00" to the user "Student 4" for the grade item "Test assignment"
-    And I give the grade "80.00" to the user "Student 5" for the grade item "Test assignment"
-    And I give the grade "70.00" to the user "Student 6" for the grade item "Test assignment"
-    And I press "Save changes"
-    And I follow "Course 1"
-    And I add the "Activity results" block
+    Given I add the "Activity results" block
     When I configure the "Activity results" block
     And I set the following fields to these values:
       | id_config_showbest | 0 |
@@ -268,43 +149,14 @@ Feature: The activity results block displays student scores
     And I should see "75.00/100.00" in the "Activity results" "block"
     And I log out
     And I log in as "student3"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I should see "Student 3" in the "Activity results" "block"
     And I should see "90.00/100.00" in the "Activity results" "block"
     And I should see "Student 4" in the "Activity results" "block"
     And I should see "80.00/100.00" in the "Activity results" "block"
 
-  @javascript
   Scenario: Try to configure the block on the course page to show multiple low scores as absolute numbers
-    Given I log in as "teacher1"
-    And I follow "Course 1"
-    And I expand "Users" node
-    And I follow "Groups"
-    And I add "Student 1 (student1@example.com)" user to "Group 1" group members
-    And I add "Student 2 (student2@example.com)" user to "Group 1" group members
-    And I add "Student 3 (student3@example.com)" user to "Group 2" group members
-    And I add "Student 4 (student4@example.com)" user to "Group 2" group members
-    And I add "Student 5 (student5@example.com)" user to "Group 3" group members
-    And I add "Student 6 (student6@example.com)" user to "Group 3" group members
-    And I follow "Course 1"
-    And I turn editing mode on
-    And I add a "Assignment" to section "1" and I fill the form with:
-      | Assignment name | Test assignment |
-      | Description | Offline text |
-      | assignsubmission_file_enabled | 0 |
-      | Group mode | Separate groups |
-    And I follow "Course 1"
-    And I navigate to "Grades" node in "Course administration"
-    And I turn editing mode on
-    And I give the grade "100.00" to the user "Student 1" for the grade item "Test assignment"
-    And I give the grade "90.00" to the user "Student 2" for the grade item "Test assignment"
-    And I give the grade "90.00" to the user "Student 3" for the grade item "Test assignment"
-    And I give the grade "80.00" to the user "Student 4" for the grade item "Test assignment"
-    And I give the grade "80.00" to the user "Student 5" for the grade item "Test assignment"
-    And I give the grade "70.00" to the user "Student 6" for the grade item "Test assignment"
-    And I press "Save changes"
-    And I follow "Course 1"
-    And I add the "Activity results" block
+    Given I add the "Activity results" block
     When I configure the "Activity results" block
     And I set the following fields to these values:
       | id_config_showbest | 0 |
@@ -319,43 +171,14 @@ Feature: The activity results block displays student scores
     And I should see "75.00" in the "Activity results" "block"
     And I log out
     And I log in as "student5"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I should see "Student 5" in the "Activity results" "block"
     And I should see "80.00" in the "Activity results" "block"
     And I should see "Student 6" in the "Activity results" "block"
     And I should see "70.00" in the "Activity results" "block"
 
-  @javascript
   Scenario: Try to configure the block on the course page to show multiple low scores using ID numbers
-    Given I log in as "teacher1"
-    And I follow "Course 1"
-    And I expand "Users" node
-    And I follow "Groups"
-    And I add "Student 1 (student1@example.com)" user to "Group 1" group members
-    And I add "Student 2 (student2@example.com)" user to "Group 1" group members
-    And I add "Student 3 (student3@example.com)" user to "Group 2" group members
-    And I add "Student 4 (student4@example.com)" user to "Group 2" group members
-    And I add "Student 5 (student5@example.com)" user to "Group 3" group members
-    And I add "Student 6 (student6@example.com)" user to "Group 3" group members
-    And I follow "Course 1"
-    And I turn editing mode on
-    And I add a "Assignment" to section "1" and I fill the form with:
-      | Assignment name | Test assignment |
-      | Description | Offline text |
-      | assignsubmission_file_enabled | 0 |
-      | Group mode | Separate groups |
-    And I follow "Course 1"
-    And I navigate to "Grades" node in "Course administration"
-    And I turn editing mode on
-    And I give the grade "100.00" to the user "Student 1" for the grade item "Test assignment"
-    And I give the grade "90.00" to the user "Student 2" for the grade item "Test assignment"
-    And I give the grade "90.00" to the user "Student 3" for the grade item "Test assignment"
-    And I give the grade "80.00" to the user "Student 4" for the grade item "Test assignment"
-    And I give the grade "80.00" to the user "Student 5" for the grade item "Test assignment"
-    And I give the grade "70.00" to the user "Student 6" for the grade item "Test assignment"
-    And I press "Save changes"
-    And I follow "Course 1"
-    And I add the "Activity results" block
+    Given I add the "Activity results" block
     When I configure the "Activity results" block
     And I set the following fields to these values:
       | id_config_showbest | 0 |
@@ -369,43 +192,14 @@ Feature: The activity results block displays student scores
     And I should see "75.00%" in the "Activity results" "block"
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I should see "User S1" in the "Activity results" "block"
     And I should see "100.00%" in the "Activity results" "block"
     And I should see "User S2" in the "Activity results" "block"
     And I should see "90.00%" in the "Activity results" "block"
 
-  @javascript
   Scenario: Try to configure the block on the course page to show multiple low scores using anonymous names
-    Given I log in as "teacher1"
-    And I follow "Course 1"
-    And I expand "Users" node
-    And I follow "Groups"
-    And I add "Student 1 (student1@example.com)" user to "Group 1" group members
-    And I add "Student 2 (student2@example.com)" user to "Group 1" group members
-    And I add "Student 3 (student3@example.com)" user to "Group 2" group members
-    And I add "Student 4 (student4@example.com)" user to "Group 2" group members
-    And I add "Student 5 (student5@example.com)" user to "Group 3" group members
-    And I add "Student 6 (student6@example.com)" user to "Group 3" group members
-    And I follow "Course 1"
-    And I turn editing mode on
-    And I add a "Assignment" to section "1" and I fill the form with:
-      | Assignment name | Test assignment |
-      | Description | Offline text |
-      | assignsubmission_file_enabled | 0 |
-      | Group mode | Separate groups |
-    And I follow "Course 1"
-    And I navigate to "Grades" node in "Course administration"
-    And I turn editing mode on
-    And I give the grade "100.00" to the user "Student 1" for the grade item "Test assignment"
-    And I give the grade "90.00" to the user "Student 2" for the grade item "Test assignment"
-    And I give the grade "90.00" to the user "Student 3" for the grade item "Test assignment"
-    And I give the grade "80.00" to the user "Student 4" for the grade item "Test assignment"
-    And I give the grade "80.00" to the user "Student 5" for the grade item "Test assignment"
-    And I give the grade "70.00" to the user "Student 6" for the grade item "Test assignment"
-    And I press "Save changes"
-    And I follow "Course 1"
-    And I add the "Activity results" block
+    Given I add the "Activity results" block
     When I configure the "Activity results" block
     And I set the following fields to these values:
       | id_config_showbest | 0 |
@@ -419,7 +213,7 @@ Feature: The activity results block displays student scores
     And I should see "75.00%" in the "Activity results" "block"
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I should see "User" in the "Activity results" "block"
     And I should see "100.00%" in the "Activity results" "block"
     And I should see "90.00%" in the "Activity results" "block"

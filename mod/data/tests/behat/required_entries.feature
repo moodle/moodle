@@ -20,7 +20,7 @@ Feature: Users can be required to specify certain fields when adding entries to 
       | activity | name               | intro | course | idnumber |
       | data     | Test database name | n     | C1     | data1    |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I add a "Text input" field to "Test database name" database and I fill the form with:
       | Field name | Base Text input |
       | Required | yes |
@@ -31,13 +31,12 @@ Feature: Users can be required to specify certain fields when adding entries to 
       | Required | yes |
       | Options | Required Checkbox Option 1 |
     And I follow "Fields"
-    And I set the field "newtype" to "Checkbox"
-    And I click on "Go" "button" in the ".fieldadd" "css_element"
+    And I select "Checkbox" from the "newtype" singleselect
     And I set the following fields to these values:
       | Field name | Required Two-Option Checkbox |
       | Field description | Required Two-Option Checkbox |
       | Required | yes |
-    And I set the field "Options" to multiline
+    And I set the field "Options" to multiline:
     """
     RTOC Option 1
     RTOC Option 2
@@ -79,13 +78,12 @@ Feature: Users can be required to specify certain fields when adding entries to 
       | Required | yes |
       | Options | Option 1 |
     And I follow "Fields"
-    And I set the field "newtype" to "Multimenu"
-    And I click on "Go" "button" in the ".fieldadd" "css_element"
+    And I select "Multimenu" from the "newtype" singleselect
     And I set the following fields to these values:
       | Field name | Required Two-Option Multimenu |
       | Field description | Required Two-Option Multimenu |
       | Required | yes |
-    And I set the field "Options" to multiline
+    And I set the field "Options" to multiline:
     """
     Option 1
     Option 2
@@ -127,36 +125,36 @@ Feature: Users can be required to specify certain fields when adding entries to 
 
   Scenario: Students receive errors for empty required fields but not for optional fields
     When I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I add an entry to "Test database name" database with:
        | Base Text input | Some input to allow us to submit the otherwise empty form |
     And I press "Save and view"
-    Then ".alert.alert-error" "css_element" should exist in the "Required Checkbox" "table_row"
-    And ".alert.alert-error" "css_element" should exist in the "Required Two-Option Checkbox" "table_row"
-    And ".alert.alert-error" "css_element" should exist in the "Required Latlong" "table_row"
-    And ".alert.alert-error" "css_element" should exist in the "Required Menu" "table_row"
-    And ".alert.alert-error" "css_element" should exist in the "Required Number" "table_row"
-    And ".alert.alert-error" "css_element" should exist in the "Required Radio" "table_row"
-    And ".alert.alert-error" "css_element" should exist in the "Required Text input" "table_row"
-    And ".alert.alert-error" "css_element" should exist in the "Required Text area" "table_row"
-    And ".alert.alert-error" "css_element" should exist in the "Required URL" "table_row"
-    And ".alert.alert-error" "css_element" should exist in the "Required Multimenu" "table_row"
-    And ".alert.alert-error" "css_element" should exist in the "Required Two-Option Multimenu" "table_row"
-    And ".alert.alert-error" "css_element" should not exist in the "Not required Checkbox" "table_row"
-    And ".alert.alert-error" "css_element" should not exist in the "Not required Latlong" "table_row"
-    And ".alert.alert-error" "css_element" should not exist in the "Not required Menu" "table_row"
-    And ".alert.alert-error" "css_element" should not exist in the "Not required Number" "table_row"
-    And ".alert.alert-error" "css_element" should not exist in the "Not required Radio" "table_row"
-    And ".alert.alert-error" "css_element" should not exist in the "Not required Text input" "table_row"
-    And ".alert.alert-error" "css_element" should not exist in the "Not required Text area" "table_row"
-    And ".alert.alert-error" "css_element" should not exist in the "Not required URL" "table_row"
-    And ".alert.alert-error" "css_element" should not exist in the "Not required Multimenu" "table_row"
+    Then ".alert" "css_element" should exist in the "Required Checkbox" "table_row"
+    And ".alert" "css_element" should exist in the "Required Two-Option Checkbox" "table_row"
+    And ".alert" "css_element" should exist in the "Required Latlong" "table_row"
+    And ".alert" "css_element" should exist in the "Required Menu" "table_row"
+    And ".alert" "css_element" should exist in the "Required Number" "table_row"
+    And ".alert" "css_element" should exist in the "Required Radio" "table_row"
+    And ".alert" "css_element" should exist in the "Required Text input" "table_row"
+    And ".alert" "css_element" should exist in the "Required Text area" "table_row"
+    And ".alert" "css_element" should exist in the "Required URL" "table_row"
+    And ".alert" "css_element" should exist in the "Required Multimenu" "table_row"
+    And ".alert" "css_element" should exist in the "Required Two-Option Multimenu" "table_row"
+    And ".alert" "css_element" should not exist in the "Not required Checkbox" "table_row"
+    And ".alert" "css_element" should not exist in the "Not required Latlong" "table_row"
+    And ".alert" "css_element" should not exist in the "Not required Menu" "table_row"
+    And ".alert" "css_element" should not exist in the "Not required Number" "table_row"
+    And ".alert" "css_element" should not exist in the "Not required Radio" "table_row"
+    And ".alert" "css_element" should not exist in the "Not required Text input" "table_row"
+    And ".alert" "css_element" should not exist in the "Not required Text area" "table_row"
+    And ".alert" "css_element" should not exist in the "Not required URL" "table_row"
+    And ".alert" "css_element" should not exist in the "Not required Multimenu" "table_row"
     And I follow "View list"
     And I should see "No entries in database"
 
   Scenario: Students recieve no error for filled in required fields
     When I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I add an entry to "Test database name" database with:
        | Base Text input               | Some input to allow us to submit the otherwise empty form |
        | Required Checkbox Option 1    | 1                                                         |
@@ -178,7 +176,7 @@ Feature: Users can be required to specify certain fields when adding entries to 
 
   Scenario: Fields refill with data after having an error
     When I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I add an entry to "Test database name" database with:
        | RTOC Option 1                 | 1                   |
        | Latitude                      | 0                   |
@@ -204,3 +202,46 @@ Feature: Users can be required to specify certain fields when adding entries to 
        | Required URL                  | http://example.com/ |
        | Required Multimenu            | Option 1            |
        | Required Two-Option Multimenu | Option 1            |
+
+  Scenario: A student fills in Latitude but not Longitude will see an error
+    Given I log in as "student1"
+    And I am on "Course 1" course homepage
+    When I add an entry to "Test database name" database with:
+       | Base Text input               | Some input to allow us to submit the otherwise empty form |
+       | Required Checkbox Option 1    | 1                                                         |
+       | RTOC Option 1                 | 1                                                         |
+       | Latitude                      | 24                                                        |
+       | Required Menu                 | 1                                                         |
+       | Required Number               | 1                                                         |
+       | Required Radio Option 1       | 1                                                         |
+       | Required Text input           | New entry text                                            |
+       | Required Text area            | More text                                                 |
+       | Required URL                  | http://example.com/                                       |
+       | Required Multimenu            | 1                                                         |
+       | Required Two-Option Multimenu | 1                                                         |
+    And I set the field with xpath "//div[@title='Not required Latlong']//tr[td/label[normalize-space(.)='Latitude']]/td/input" to "20"
+    And I press "Save and view"
+    Then ".alert" "css_element" should exist in the "Required Latlong" "table_row"
+    And ".alert" "css_element" should exist in the "Not required Latlong" "table_row"
+
+  Scenario: A student filling in number and text fields with zero will not see an error.
+    Given I log in as "student1"
+    And I am on "Course 1" course homepage
+    When I add an entry to "Test database name" database with:
+       | Base Text input               | Some input to allow us to submit the otherwise empty form |
+       | Required Checkbox Option 1    | 1                                                         |
+       | RTOC Option 1                 | 1                                                         |
+       | Latitude                      | 0                                                         |
+       | Longitude                     | 0                                                         |
+       | Required Menu                 | 1                                                         |
+       | Required Number               | 0                                                         |
+       | Required Radio Option 1       | 1                                                         |
+       | Required Text input           | 0                                                         |
+       | Required Text area            | 0                                                         |
+       | Required URL                  | http://example.com/                                       |
+       | Required Multimenu            | 1                                                         |
+       | Required Two-Option Multimenu | 1                                                         |
+    And I press "Save and view"
+    And I follow "View list"
+    Then I should not see "No entries in database"
+    And I should see "Some input to allow us to submit the otherwise empty form"

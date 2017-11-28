@@ -74,7 +74,7 @@ class editor_tinymce_testcase extends advanced_testcase {
                 'xhtmlxtras,template,pagebreak',
             'gecko_spellcheck' => true,
             'theme_advanced_font_sizes' => "1,2,3,4,5,6,7",
-            'moodle_plugin_base' => "$CFG->httpswwwroot/lib/editor/tinymce/plugins/",
+            'moodle_plugin_base' => "$CFG->wwwroot/lib/editor/tinymce/plugins/",
             'theme_advanced_font_sizes' => "1,2,3,4,5,6,7",
             'theme_advanced_layout_manager' => "SimpleLayout",
             'theme_advanced_buttons1' => 'one,two,|,three,four',

@@ -1,0 +1,147 @@
+/**
+ * Tour step must sit above all other UI components.
+ * The backdrop is the lowest point in the tour.
+ * Everything else is in the container, and the target background should be at the same z-index.
+ * ----- moodle
+ *  ---- step backdrop
+ *   --- step container
+ *   --- step target background
+ */
+@flexitour-base-zindex: 4030;
+
+// The backdrop is the backdrop used in 'modal' step display.
+div[data-flexitour="backdrop"] {
+    .modal-backdrop();
+
+    // The backdrop needs to have a lower z-index than everything else in the tour, but higher than everything else in Moodle.
+    z-index: @flexitour-base-zindex;
+}
+
+// The step-background is used to highlight the region targetted in the step.
+div[data-flexitour="step-background-fader"],
+div[data-flexitour="step-background"] {
+    .border-radius(6px);
+
+    // The step target background should be above the base.
+    z-index: (@flexitour-base-zindex + 1);
+}
+
+span[data-flexitour="container"],
+div[data-flexitour="step-background-fader"],
+[data-flexitour="step-backdrop"] > td,
+[data-flexitour="step-backdrop"] {
+    // The step target background should be above the base.
+    z-index: (@flexitour-base-zindex + 2);
+}
+
+span[data-flexitour="container"] {
+    div[data-role="flexitour-step"] {
+        background-color: #fff;
+        color: #333;
+        border-radius: 6px;
+        border: 1px solid rgba(0, 0, 0, .2);
+        box-shadow: 0 5px 10px rgba(0, 0, 0, .2);
+
+        > div {
+            // When targetting some regions, the selectors override the modal ones.
+            display: block;
+            margin: 0;
+        }
+    }
+
+    .modal {
+        position: static;
+        margin-left: 0;
+    }
+
+    div[data-role="arrow"] {
+        border-width: @popoverArrowOuterWidth;
+    }
+
+    div[data-role="arrow"]:after {
+        content: " ";
+    }
+
+    div[data-role="arrow"],
+    div[data-role="arrow"]:after {
+        position: absolute;
+        display: block;
+        width: 0;
+        height: 0;
+        border-color: transparent;
+        border-style: solid;
+        border-width: @popoverArrowWidth;
+    }
+
+    &[x-placement="top"],
+    &[x-placement="top-start"] {
+        margin-bottom: @popoverArrowWidth;
+        div[data-role="arrow"] {
+            bottom: -@popoverArrowWidth;
+            left: 50%;
+            margin-left: -@popoverArrowOuterWidth;
+            border-bottom-width: 0;
+            border-top-color: @popoverArrowOuterColor;
+        }
+        div[data-role="arrow"]:after {
+            bottom: 1px;
+            margin-left: -@popoverArrowWidth;
+            border-bottom-width: 0;
+            border-top-color: @popoverArrowColor;
+        }
+    }
+
+    &[x-placement="bottom"],
+    &[x-placement="bottom-start"] {
+        margin-top: @popoverArrowWidth;
+        div[data-role="arrow"] {
+            top: -@popoverArrowWidth;
+            left: 50%;
+            margin-left: -@popoverArrowOuterWidth;
+            border-top-width: 0;
+            border-bottom-color: @popoverArrowOuterColor;
+        }
+        div[data-role="arrow"]:after {
+            top: 1px;
+            margin-left: -@popoverArrowWidth;
+            border-top-width: 0;
+            border-bottom-color: @popoverArrowColor;
+        }
+    }
+
+    &[x-placement="left"],
+    &[x-placement="left-start"] {
+        margin-right: @popoverArrowWidth;
+        div[data-role="arrow"] {
+            right: -@popoverArrowWidth;
+            top: 50%;
+            margin-top: -@popoverArrowOuterWidth;
+            border-right-width: 0;
+            border-left-color: @popoverArrowOuterColor;
+        }
+        div[data-role="arrow"]:after {
+            right: 1px;
+            margin-top: -@popoverArrowWidth;
+            border-right-width: 0;
+            border-left-color: @popoverArrowColor;
+        }
+    }
+
+    &[x-placement="right"],
+    &[x-placement="right-start"] {
+        margin-left: @popoverArrowWidth;
+        div[data-role="arrow"] {
+            left: -@popoverArrowWidth;
+            top: 50%;
+            margin-top: -@popoverArrowOuterWidth;
+            border-left-width: 0;
+            border-right-color: @popoverArrowOuterColor;
+        }
+        div[data-role="arrow"]:after {
+            left: 1px;
+            margin-top: -@popoverArrowWidth;
+            border-left-width: 0;
+            border-right-color: @popoverArrowColor;
+        }
+    }
+}

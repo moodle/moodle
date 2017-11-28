@@ -57,9 +57,10 @@ class restore_wiki_activity_structure_step extends restore_activity_structure_st
         $oldid = $data->id;
         $data->course = $this->get_courseid();
 
+        // Any changes to the list of dates that needs to be rolled should be same during course restore and course reset.
+        // See MDL-9367.
         $data->editbegin = $this->apply_date_offset($data->editbegin);
         $data->editend = $this->apply_date_offset($data->editend);
-        $data->timemodified = $this->apply_date_offset($data->timemodified);
 
         // insert the wiki record
         $newitemid = $DB->insert_record('wiki', $data);
@@ -101,9 +102,6 @@ class restore_wiki_activity_structure_step extends restore_activity_structure_st
         $oldid = $data->id;
         $data->subwikiid = $this->get_new_parentid('wiki_subwiki');
         $data->userid = $this->get_mappingid('user', $data->userid);
-        $data->timemodified = $this->apply_date_offset($data->timemodified);
-        $data->timecreated = $this->apply_date_offset($data->timecreated);
-        $data->timerendered = $this->apply_date_offset($data->timerendered);
 
         // Check that we were able to get a parentid for this page.
         if ($data->subwikiid !== false) {
@@ -122,7 +120,6 @@ class restore_wiki_activity_structure_step extends restore_activity_structure_st
         $oldid = $data->id;
         $data->pageid = $this->get_new_parentid('wiki_page');
         $data->userid = $this->get_mappingid('user', $data->userid);
-        $data->timecreated = $this->apply_date_offset($data->timecreated);
 
         $newitemid = $DB->insert_record('wiki_versions', $data);
         $this->set_mapping('wiki_version', $oldid, $newitemid);
@@ -159,7 +156,7 @@ class restore_wiki_activity_structure_step extends restore_activity_structure_st
         $data = (object)$data;
         $oldid = $data->id;
 
-        if (empty($CFG->usetags)) { // tags disabled in server, nothing to process
+        if (!core_tag_tag::is_enabled('mod_wiki', 'wiki_pages')) { // Tags disabled in server, nothing to process.
             return;
         }
 
@@ -167,8 +164,8 @@ class restore_wiki_activity_structure_step extends restore_activity_structure_st
         $itemid = $this->get_new_parentid('wiki_page');
         $wikiid = $this->get_new_parentid('wiki');
 
-        $cm = get_coursemodule_from_instance('wiki', $wikiid);
-        tag_set_add('wiki_pages', $itemid, $tag, 'mod_wiki', context_module::instance($cm->id)->id);
+        $context = context_module::instance($this->task->get_moduleid());
+        core_tag_tag::add_item_tag('mod_wiki', 'wiki_pages', $itemid, $context, $tag);
     }
 
     protected function after_execute() {

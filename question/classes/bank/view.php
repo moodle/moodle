@@ -756,11 +756,11 @@ class view {
 
             // Print delete and move selected question.
             if ($caneditall) {
-                echo '<input type="submit" name="deleteselected" value="' . get_string('delete') . "\" />\n";
+                echo '<input type="submit" class="btn btn-secondary" name="deleteselected" value="' . get_string('delete') . "\" />\n";
             }
 
             if ($canmoveall && count($addcontexts)) {
-                echo '<input type="submit" name="move" value="' . get_string('moveto', 'question') . "\" />\n";
+                echo '<input type="submit" class="btn btn-secondary" name="move" value="' . get_string('moveto', 'question') . "\" />\n";
                 question_category_select_menu($addcontexts, false, 0, "{$category->id},{$category->contextid}");
             }
         }
@@ -923,7 +923,8 @@ class view {
             $deleteurl = new \moodle_url($baseurl, array('deleteselected' => $questionlist, 'confirm' => md5($questionlist),
                                                  'sesskey' => sesskey()));
 
-            echo $OUTPUT->confirm(get_string('deletequestionscheck', 'question', $questionnames), $deleteurl, $baseurl);
+            $continue = new \single_button($deleteurl, get_string('delete'), 'post');
+            echo $OUTPUT->confirm(get_string('deletequestionscheck', 'question', $questionnames), $continue, $baseurl);
 
             return true;
         }

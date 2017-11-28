@@ -103,18 +103,9 @@ foreach ($plugins as $plugin => $name) {
 
     // Make enable control. This is a POST request (using a form control rather
     // than just a link) because it makes a database change.
-    $enablecontrol = html_writer::tag('form', html_writer::div(
-            html_writer::empty_tag('input', array('type' => 'hidden',
-                    'name' => 'sesskey', 'value' => sesskey())) .
-            html_writer::empty_tag('input', array('type' => 'hidden',
-                    'name' => 'plugin', 'value' => $plugin)) .
-            html_writer::empty_tag('input', array('type' => 'hidden',
-                    'name' => 'action', 'value' => $enabledaction)) .
-            html_writer::empty_tag('input', array('type' => 'image',
-                    'src' => $OUTPUT->pix_url('t/' . $enabledaction), 'alt' => $enabledstr,
-                    'title' => $enabledstr))
-            ), array(
-            'method' => 'post', 'action' => './'));
+    $params = array('sesskey' => sesskey(), 'plugin' => $plugin, 'action' => $enabledaction);
+    $url = new moodle_url('/' . $CFG->admin . '/tool/availabilityconditions/', $params);
+    $enablecontrol = html_writer::link($url, $OUTPUT->pix_icon('t/' . $enabledaction, $enabledstr));
 
     $table->add_data(array($namespan, $version, $enablecontrol));
 }

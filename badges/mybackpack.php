@@ -24,7 +24,7 @@
  * @author     Yuliya Bozhko <yuliya.bozhko@totaralms.com>
  */
 
-require_once(dirname(dirname(__FILE__)) . '/config.php');
+require_once(__DIR__ . '/../config.php');
 require_once($CFG->libdir . '/badgeslib.php');
 require_once($CFG->dirroot . '/badges/backpack_form.php');
 require_once($CFG->dirroot . '/badges/lib/backpacklib.php');
@@ -50,7 +50,7 @@ $PAGE->set_context($context);
 $title = get_string('backpackdetails', 'badges');
 $PAGE->set_title($title);
 $PAGE->set_heading(fullname($USER));
-$PAGE->set_pagelayout('mydashboard');
+$PAGE->set_pagelayout('standard');
 
 $backpack = $DB->get_record('badge_backpack', array('userid' => $USER->id));
 $badgescache = cache::make('core', 'externalbadges');
@@ -110,23 +110,39 @@ if ($backpack) {
     }
 } else {
     // If backpack is not connected, need to connect first.
-    $form = new edit_backpack_form();
+    // To create a new connection to the backpack, first we need to verify the user's email address:
+    // 1. User enters email and clicks 'Connect to backpack'.
+    // 2. After cross-checking the email address against the backpack provider, an email is sent to the specified address,
+    // and the email and secret are stored in user preferences. These will be cleared upon successful verification.
+    // 3. User clicks verification link in the email to confirm the backpack connection.
+    // 4. User redirected to the mybackpack page.
+    // While the verification process is pending, the edit_backpack_form form will present the user with options to resend the
+    // verification email, and to cancel the current verification attempt and start over.
 
+    // To pass through the current state of the verification attempt to the form.
+    $params['email'] = get_user_preferences('badges_email_verify_address');
+
+    $form = new edit_backpack_form(new moodle_url('/badges/mybackpack.php'), $params);
     if ($form->is_cancelled()) {
         redirect(new moodle_url('/badges/mybadges.php'));
     } else if ($data = $form->get_data()) {
-        $bp = new OpenBadgesBackpackHandler($data);
-
-        $obj = new stdClass();
-        $obj->userid = $data->userid;
-        $obj->email = $data->email;
-        $obj->backpackurl = $data->backpackurl;
-        $obj->backpackuid = $bp->curl_request('user')->userId;
-        $obj->autosync = 0;
-        $obj->password = '';
-        $DB->insert_record('badge_backpack', $obj);
-
-        redirect(new moodle_url('/badges/mybackpack.php'));
+        // The form may have been submitted under one of the following circumstances:
+        // 1. After clicking 'Connect to backpack'. We'll have $data->email.
+        // 2. After clicking 'Resend verification email'. We'll have $data->email.
+        // 3. After clicking 'Connect using a different email' to cancel the verification process. We'll have $data->revertbutton.
+        if (isset($data->revertbutton)) {
+            unset_user_preference('badges_email_verify_secret');
+            unset_user_preference('badges_email_verify_address');
+            redirect(new moodle_url('/badges/mybackpack.php'));
+        } else if (isset($data->email)) {
+            if (send_verification_email($data->email)) {
+                redirect(new moodle_url('/badges/mybackpack.php'),
+                    get_string('backpackemailverifypending', 'badges', $data->email),
+                    null, \core\output\notification::NOTIFY_INFO);
+            } else {
+                print_error ('backpackcannotsendverification', 'badges');
+            }
+        }
     }
 }
 

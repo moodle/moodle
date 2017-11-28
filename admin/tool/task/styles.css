@@ -4,3 +4,12 @@
     color: #888;
     font-size: 0.75em;
 }
+
+#page-admin-tool-task-scheduledtasks input[type=text] {
+    /*rtl:ignore*/
+    direction: ltr;
+}
+
+#page-admin-tool-task-scheduledtasks .task-runnow {
+    font-size: 0.75em;
+}

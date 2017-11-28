@@ -1,6 +1,32 @@
 This files describes API changes in /auth/* - plugins,
 information provided here is intended especially for developers.
 
+=== 3.3 ===
+
+* Authentication plugins have been migrated to use the admin settings API.  Plugins should use a settings.php file to
+  manage configurations rather than using the old config.html files. See how the helper function
+  upgrade_fix_config_auth_plugin_names() can be used to convert the legacy settings to the new ones. Another helper
+  function upgrade_fix_config_auth_plugin_defaults() can be used to populate the settings with default values so that
+  they are not falsely reported as newly added ones.
+* The function 'print_auth_lock_options' has been replaced by 'display_auth_lock_options' which uses the admin settings API.
+  See auth_manual as an exmple of how it can be used.  More information can be found in MDL-12689.
+* The list of supported identity providers (SSO IdP) returned by the 'loginpage_idp_list' method (used to render the
+  login page and login block links) now supports a new key 'iconurl' which should be used instead of the legacy 'icon'.
+
+=== 3.2 ===
+
+* New auth hook - pre_user_login_hook() - available, triggered right after the user object is created.
+  This can be used to modify the user object before any authentication errors are raised.
+* The block_login now displays the loginpage_idp_list() links as well as main login page.
+* The authentication plugin auth_radius has been moved to https://github.com/moodlehq/moodle-auth_radius
+* New auth_email::user_signup_with_confirmation() method has a new optional parameter $confirmationurl to provide a different
+  confirmation URL.
+* New signup_is_enabled() function available in lib/authlib.php to safely check if sign-up is enabled in the site.
+
+=== 3.0 ===
+
+* login_signup_form::signup_captcha_enabled() now calls is_captcha_enabled() from the current auth plugin instead of from auth_email
+
 === 2.9 ===
 
 * Do not update user->firstaccess from any auth plugin, the complete_user_login() does it automatically.

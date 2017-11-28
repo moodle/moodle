@@ -117,3 +117,45 @@ class OpenBadgesBackpackHandler {
         return $this->backpack;
     }
 }
+
+/**
+ * Create and send a verification email to the email address supplied.
+ *
+ * Since we're not sending this email to a user, email_to_user can't be used
+ * but this function borrows largely the code from that process.
+ *
+ * @param string $email the email address to send the verification email to.
+ * @return true if the email was sent successfully, false otherwise.
+ */
+function send_verification_email($email) {
+    global $DB, $USER;
+
+    // Store a user secret (badges_email_verify_secret) and the address (badges_email_verify_address) as users prefs.
+    // The address will be used by edit_backpack_form for display during verification and to facilitate the resending
+    // of verification emails to said address.
+    $secret = random_string(15);
+    set_user_preference('badges_email_verify_secret', $secret);
+    set_user_preference('badges_email_verify_address', $email);
+
+    // To, from.
+    $tempuser = $DB->get_record('user', array('id' => $USER->id), '*', MUST_EXIST);
+    $tempuser->email = $email;
+    $noreplyuser = core_user::get_noreply_user();
+
+    // Generate the verification email body.
+    $verificationurl = '/badges/backpackemailverify.php';
+    $verificationurl = new moodle_url($verificationurl);
+    $verificationpath = $verificationurl->out(false);
+
+    $site = get_site();
+    $args = new stdClass();
+    $args->link = $verificationpath . '?data='. $secret;
+    $args->sitename = $site->fullname;
+    $args->admin = generate_email_signoff();
+
+    $messagesubject = get_string('backpackemailverifyemailsubject', 'badges', $site->fullname);
+    $messagetext = get_string('backpackemailverifyemailbody', 'badges', $args);
+    $messagehtml = text_to_html($messagetext, false, false, true);
+
+    return email_to_user($tempuser, $noreplyuser, $messagesubject, $messagetext, $messagehtml);
+}

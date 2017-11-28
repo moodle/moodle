@@ -123,4 +123,8 @@ class webservice_login_failed extends base {
            throw new \coding_exception('The \'token\' value must not be set in other.');
         }
     }
+
+    public static function get_other_mapping() {
+        return false;
+    }
 }

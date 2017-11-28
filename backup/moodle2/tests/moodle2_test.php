@@ -39,13 +39,6 @@ require_once($CFG->libdir . '/completionlib.php');
 class core_backup_moodle2_testcase extends advanced_testcase {
 
     /**
-     * Tidy up open files that may be left open.
-     */
-    protected function tearDown() {
-        gc_collect_cycles();
-    }
-
-    /**
      * Tests the availability field on modules and sections is correctly
      * backed up and restored.
      */
@@ -161,11 +154,6 @@ class core_backup_moodle2_testcase extends advanced_testcase {
                     $thrown->getFile() . ':' . $thrown->getLine(). "]\n\n";
         }
 
-        // Must set restore_controller variable to null so that php
-        // garbage-collects it; otherwise the file will be left open and
-        // attempts to delete it will cause a permission error on Windows
-        // systems, breaking unit tests.
-        $rc = null;
         $this->assertNull($thrown);
 
         // Get information about the resulting course and check that it is set
@@ -352,7 +340,9 @@ class core_backup_moodle2_testcase extends advanced_testcase {
         // Create a course with specific start date.
         $generator = $this->getDataGenerator();
         $course = $generator->create_course(array(
-                'startdate' => strtotime('1 Jan 2014 00:00 GMT')));
+            'startdate' => strtotime('1 Jan 2014 00:00 GMT'),
+            'enddate' => strtotime('3 Aug 2014 00:00 GMT')
+        ));
 
         // Add a forum with conditional availability date restriction, including
         // one of them nested inside a tree.
@@ -372,6 +362,9 @@ class core_backup_moodle2_testcase extends advanced_testcase {
 
         // Do backup and restore.
         $newcourseid = $this->backup_and_restore($course, strtotime('3 Jan 2015 00:00 GMT'));
+
+        $newcourse = $DB->get_record('course', array('id' => $newcourseid));
+        $this->assertEquals(strtotime('5 Aug 2015 00:00 GMT'), $newcourse->enddate);
 
         $modinfo = get_fast_modinfo($newcourseid);
 
@@ -471,9 +464,10 @@ class core_backup_moodle2_testcase extends advanced_testcase {
      *
      * @param stdClass $course Course object to backup
      * @param int $newdate If non-zero, specifies custom date for new course
+     * @param callable|null $inbetween If specified, function that is called before restore
      * @return int ID of newly restored course
      */
-    protected function backup_and_restore($course, $newdate = 0) {
+    protected function backup_and_restore($course, $newdate = 0, $inbetween = null) {
         global $USER, $CFG;
 
         // Turn off file logging, otherwise it can't delete the file (Windows).
@@ -487,6 +481,10 @@ class core_backup_moodle2_testcase extends advanced_testcase {
         $backupid = $bc->get_backupid();
         $bc->execute_plan();
         $bc->destroy();
+
+        if ($inbetween) {
+            $inbetween($backupid);
+        }
 
         // Do restore to new course with default settings.
         $newcourseid = restore_dbops::create_new_course(
@@ -547,5 +545,414 @@ class core_backup_moodle2_testcase extends advanced_testcase {
             throw new coding_exception('Unexpected: failure to find restored cmid');
         }
         return $newcmid;
+    }
+
+    /**
+     * Help function for enrolment methods backup/restore tests:
+     *
+     * - Creates a course ($course), adds self-enrolment method and a user
+     * - Makes a backup
+     * - Creates a target course (if requested) ($newcourseid)
+     * - Initialises restore controller for this backup file ($rc)
+     *
+     * @param int $target target for restoring: backup::TARGET_NEW_COURSE etc.
+     * @param array $additionalcaps - additional capabilities to give to user
+     * @return array array of original course, new course id, restore controller: [$course, $newcourseid, $rc]
+     */
+    protected function prepare_for_enrolments_test($target, $additionalcaps = []) {
+        global $CFG, $DB;
+        $this->resetAfterTest(true);
+
+        // Turn off file logging, otherwise it can't delete the file (Windows).
+        $CFG->backup_file_logger_level = backup::LOG_NONE;
+
+        $user = $this->getDataGenerator()->create_user();
+        $roleidcat = create_role('Category role', 'dummyrole1', 'dummy role description');
+
+        $course = $this->getDataGenerator()->create_course();
+
+        // Enable instance of self-enrolment plugin (it should already be present) and enrol a student with it.
+        $selfplugin = enrol_get_plugin('self');
+        $selfinstance = $DB->get_record('enrol', array('courseid' => $course->id, 'enrol' => 'self'));
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $selfplugin->update_status($selfinstance, ENROL_INSTANCE_ENABLED);
+        $selfplugin->enrol_user($selfinstance, $user->id, $studentrole->id);
+
+        // Give current user capabilities to do backup and restore and assign student role.
+        $categorycontext = context_course::instance($course->id)->get_parent_context();
+
+        $caps = array_merge([
+            'moodle/course:view',
+            'moodle/course:create',
+            'moodle/backup:backupcourse',
+            'moodle/backup:configure',
+            'moodle/backup:backuptargetimport',
+            'moodle/restore:restorecourse',
+            'moodle/role:assign',
+            'moodle/restore:configure',
+        ], $additionalcaps);
+
+        foreach ($caps as $cap) {
+            assign_capability($cap, CAP_ALLOW, $roleidcat, $categorycontext);
+        }
+
+        allow_assign($roleidcat, $studentrole->id);
+        role_assign($roleidcat, $user->id, $categorycontext);
+        accesslib_clear_all_caches_for_unit_testing();
+
+        $this->setUser($user);
+
+        // Do backup with default settings. MODE_IMPORT means it will just
+        // create the directory and not zip it.
+        $bc = new backup_controller(backup::TYPE_1COURSE, $course->id,
+            backup::FORMAT_MOODLE, backup::INTERACTIVE_NO, backup::MODE_SAMESITE,
+            $user->id);
+        $backupid = $bc->get_backupid();
+        $backupbasepath = $bc->get_plan()->get_basepath();
+        $bc->execute_plan();
+        $results = $bc->get_results();
+        $file = $results['backup_destination'];
+        $bc->destroy();
+
+        // Restore the backup immediately.
+
+        // Check if we need to unzip the file because the backup temp dir does not contains backup files.
+        if (!file_exists($backupbasepath . "/moodle_backup.xml")) {
+            $file->extract_to_pathname(get_file_packer('application/vnd.moodle.backup'), $backupbasepath);
+        }
+
+        if ($target == backup::TARGET_NEW_COURSE) {
+            $newcourseid = restore_dbops::create_new_course($course->fullname . '_2',
+                $course->shortname . '_2',
+                $course->category);
+        } else {
+            $newcourse = $this->getDataGenerator()->create_course();
+            $newcourseid = $newcourse->id;
+        }
+        $rc = new restore_controller($backupid, $newcourseid,
+            backup::INTERACTIVE_NO, backup::MODE_SAMESITE, $user->id, $target);
+
+        return [$course, $newcourseid, $rc];
+    }
+
+    /**
+     * Backup a course with enrolment methods and restore it without user data and without enrolment methods
+     */
+    public function test_restore_without_users_without_enrolments() {
+        global $DB;
+
+        list($course, $newcourseid, $rc) = $this->prepare_for_enrolments_test(backup::TARGET_NEW_COURSE);
+
+        // Ensure enrolment methods will not be restored without capability.
+        $this->assertEquals(backup::ENROL_NEVER, $rc->get_plan()->get_setting('enrolments')->get_value());
+        $this->assertEquals(false, $rc->get_plan()->get_setting('users')->get_value());
+
+        $this->assertTrue($rc->execute_precheck());
+        $rc->execute_plan();
+        $rc->destroy();
+
+        // Self-enrolment method was not enabled, users were not restored.
+        $this->assertEmpty($DB->count_records('enrol', ['enrol' => 'self', 'courseid' => $newcourseid,
+            'status' => ENROL_INSTANCE_ENABLED]));
+        $sql = "select ue.id, ue.userid, e.enrol from {user_enrolments} ue
+          join {enrol} e on ue.enrolid = e.id WHERE e.courseid = ?";
+        $enrolments = $DB->get_records_sql($sql, [$newcourseid]);
+        $this->assertEmpty($enrolments);
+    }
+
+    /**
+     * Backup a course with enrolment methods and restore it without user data with enrolment methods
+     */
+    public function test_restore_without_users_with_enrolments() {
+        global $DB;
+
+        list($course, $newcourseid, $rc) = $this->prepare_for_enrolments_test(backup::TARGET_NEW_COURSE,
+            ['moodle/course:enrolconfig']);
+
+        // Ensure enrolment methods will be restored.
+        $this->assertEquals(backup::ENROL_NEVER, $rc->get_plan()->get_setting('enrolments')->get_value());
+        $this->assertEquals(false, $rc->get_plan()->get_setting('users')->get_value());
+        // Set "Include enrolment methods" to "Always" so they can be restored without users.
+        $rc->get_plan()->get_setting('enrolments')->set_value(backup::ENROL_ALWAYS);
+
+        $this->assertTrue($rc->execute_precheck());
+        $rc->execute_plan();
+        $rc->destroy();
+
+        // Self-enrolment method was restored (it is enabled), users were not restored.
+        $enrol = $DB->get_records('enrol', ['enrol' => 'self', 'courseid' => $newcourseid,
+            'status' => ENROL_INSTANCE_ENABLED]);
+        $this->assertNotEmpty($enrol);
+
+        $sql = "select ue.id, ue.userid, e.enrol from {user_enrolments} ue
+            join {enrol} e on ue.enrolid = e.id WHERE e.courseid = ?";
+        $enrolments = $DB->get_records_sql($sql, [$newcourseid]);
+        $this->assertEmpty($enrolments);
+    }
+
+    /**
+     * Backup a course with enrolment methods and restore it with user data and without enrolment methods
+     */
+    public function test_restore_with_users_without_enrolments() {
+        global $DB;
+
+        list($course, $newcourseid, $rc) = $this->prepare_for_enrolments_test(backup::TARGET_NEW_COURSE,
+            ['moodle/backup:userinfo', 'moodle/restore:userinfo']);
+
+        // Ensure enrolment methods will not be restored without capability.
+        $this->assertEquals(backup::ENROL_NEVER, $rc->get_plan()->get_setting('enrolments')->get_value());
+        $this->assertEquals(true, $rc->get_plan()->get_setting('users')->get_value());
+
+        global $qwerty;
+        $qwerty = 1;
+        $this->assertTrue($rc->execute_precheck());
+        $rc->execute_plan();
+        $rc->destroy();
+        $qwerty = 0;
+
+        // Self-enrolment method was not restored, student was restored as manual enrolment.
+        $this->assertEmpty($DB->count_records('enrol', ['enrol' => 'self', 'courseid' => $newcourseid,
+            'status' => ENROL_INSTANCE_ENABLED]));
+
+        $enrol = $DB->get_record('enrol', ['enrol' => 'manual', 'courseid' => $newcourseid]);
+        $this->assertEquals(1, $DB->count_records('user_enrolments', ['enrolid' => $enrol->id]));
+    }
+
+    /**
+     * Backup a course with enrolment methods and restore it with user data with enrolment methods
+     */
+    public function test_restore_with_users_with_enrolments() {
+        global $DB;
+
+        list($course, $newcourseid, $rc) = $this->prepare_for_enrolments_test(backup::TARGET_NEW_COURSE,
+            ['moodle/backup:userinfo', 'moodle/restore:userinfo', 'moodle/course:enrolconfig']);
+
+        // Ensure enrolment methods will be restored.
+        $this->assertEquals(backup::ENROL_WITHUSERS, $rc->get_plan()->get_setting('enrolments')->get_value());
+        $this->assertEquals(true, $rc->get_plan()->get_setting('users')->get_value());
+
+        $this->assertTrue($rc->execute_precheck());
+        $rc->execute_plan();
+        $rc->destroy();
+
+        // Self-enrolment method was restored (it is enabled), student was restored.
+        $enrol = $DB->get_records('enrol', ['enrol' => 'self', 'courseid' => $newcourseid,
+            'status' => ENROL_INSTANCE_ENABLED]);
+        $this->assertNotEmpty($enrol);
+
+        $sql = "select ue.id, ue.userid, e.enrol from {user_enrolments} ue
+            join {enrol} e on ue.enrolid = e.id WHERE e.courseid = ?";
+        $enrolments = $DB->get_records_sql($sql, [$newcourseid]);
+        $this->assertEquals(1, count($enrolments));
+        $enrolment = reset($enrolments);
+        $this->assertEquals('self', $enrolment->enrol);
+    }
+
+    /**
+     * Backup a course with enrolment methods and restore it with user data with enrolment methods merging into another course
+     */
+    public function test_restore_with_users_with_enrolments_merging() {
+        global $DB;
+
+        list($course, $newcourseid, $rc) = $this->prepare_for_enrolments_test(backup::TARGET_EXISTING_ADDING,
+            ['moodle/backup:userinfo', 'moodle/restore:userinfo', 'moodle/course:enrolconfig']);
+
+        // Ensure enrolment methods will be restored.
+        $this->assertEquals(backup::ENROL_WITHUSERS, $rc->get_plan()->get_setting('enrolments')->get_value());
+        $this->assertEquals(true, $rc->get_plan()->get_setting('users')->get_value());
+
+        $this->assertTrue($rc->execute_precheck());
+        $rc->execute_plan();
+        $rc->destroy();
+
+        // User was restored with self-enrolment method.
+        $enrol = $DB->get_records('enrol', ['enrol' => 'self', 'courseid' => $newcourseid,
+            'status' => ENROL_INSTANCE_ENABLED]);
+        $this->assertNotEmpty($enrol);
+
+        $sql = "select ue.id, ue.userid, e.enrol from {user_enrolments} ue
+            join {enrol} e on ue.enrolid = e.id WHERE e.courseid = ?";
+        $enrolments = $DB->get_records_sql($sql, [$newcourseid]);
+        $this->assertEquals(1, count($enrolments));
+        $enrolment = reset($enrolments);
+        $this->assertEquals('self', $enrolment->enrol);
+    }
+
+    /**
+     * Backup a course with enrolment methods and restore it with user data with enrolment methods into another course deleting it's contents
+     */
+    public function test_restore_with_users_with_enrolments_deleting() {
+        global $DB;
+
+        list($course, $newcourseid, $rc) = $this->prepare_for_enrolments_test(backup::TARGET_EXISTING_DELETING,
+            ['moodle/backup:userinfo', 'moodle/restore:userinfo', 'moodle/course:enrolconfig']);
+
+        // Ensure enrolment methods will be restored.
+        $this->assertEquals(backup::ENROL_WITHUSERS, $rc->get_plan()->get_setting('enrolments')->get_value());
+        $this->assertEquals(true, $rc->get_plan()->get_setting('users')->get_value());
+
+        $this->assertTrue($rc->execute_precheck());
+        $rc->execute_plan();
+        $rc->destroy();
+
+        // Self-enrolment method was restored (it is enabled), student was restored.
+        $enrol = $DB->get_records('enrol', ['enrol' => 'self', 'courseid' => $newcourseid,
+            'status' => ENROL_INSTANCE_ENABLED]);
+        $this->assertNotEmpty($enrol);
+
+        $sql = "select ue.id, ue.userid, e.enrol from {user_enrolments} ue
+            join {enrol} e on ue.enrolid = e.id WHERE e.courseid = ?";
+        $enrolments = $DB->get_records_sql($sql, [$newcourseid]);
+        $this->assertEquals(1, count($enrolments));
+        $enrolment = reset($enrolments);
+        $this->assertEquals('self', $enrolment->enrol);
+    }
+
+    /**
+     * Test the block instance time fields (timecreated, timemodified) through a backup and restore.
+     */
+    public function test_block_instance_times_backup() {
+        global $DB;
+        $this->resetAfterTest();
+
+        $this->setAdminUser();
+        $generator = $this->getDataGenerator();
+
+        // Create course and add HTML block.
+        $course = $generator->create_course();
+        $context = context_course::instance($course->id);
+        $page = new moodle_page();
+        $page->set_context($context);
+        $page->set_course($course);
+        $page->set_pagelayout('standard');
+        $page->set_pagetype('course-view');
+        $page->blocks->load_blocks();
+        $page->blocks->add_block_at_end_of_default_region('html');
+
+        // Update (hack in database) timemodified and timecreated to specific values for testing.
+        $blockdata = $DB->get_record('block_instances',
+                ['blockname' => 'html', 'parentcontextid' => $context->id]);
+        $originalblockid = $blockdata->id;
+        $blockdata->timecreated = 12345;
+        $blockdata->timemodified = 67890;
+        $DB->update_record('block_instances', $blockdata);
+
+        // Do backup and restore.
+        $newcourseid = $this->backup_and_restore($course);
+
+        // Confirm that values were transferred correctly into HTML block on new course.
+        $newcontext = context_course::instance($newcourseid);
+        $blockdata = $DB->get_record('block_instances',
+                ['blockname' => 'html', 'parentcontextid' => $newcontext->id]);
+        $this->assertEquals(12345, $blockdata->timecreated);
+        $this->assertEquals(67890, $blockdata->timemodified);
+
+        // Simulate what happens with an older backup that doesn't have those fields, by removing
+        // them from the backup before doing a restore.
+        $before = time();
+        $newcourseid = $this->backup_and_restore($course, 0, function($backupid) use($originalblockid) {
+            global $CFG;
+            $path = $CFG->dataroot . '/temp/backup/' . $backupid . '/course/blocks/html_' .
+                    $originalblockid . '/block.xml';
+            $xml = file_get_contents($path);
+            $xml = preg_replace('~<timecreated>.*?</timemodified>~s', '', $xml);
+            file_put_contents($path, $xml);
+        });
+        $after = time();
+
+        // The fields not specified should default to current time.
+        $newcontext = context_course::instance($newcourseid);
+        $blockdata = $DB->get_record('block_instances',
+                ['blockname' => 'html', 'parentcontextid' => $newcontext->id]);
+        $this->assertTrue($before <= $blockdata->timecreated && $after >= $blockdata->timecreated);
+        $this->assertTrue($before <= $blockdata->timemodified && $after >= $blockdata->timemodified);
+    }
+
+    /**
+     * When you restore a site with global search (or search indexing) turned on, then it should
+     * add entries to the search index requests table so that the data gets indexed.
+     */
+    public function test_restore_search_index_requests() {
+        global $DB, $CFG, $USER;
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $CFG->enableglobalsearch = true;
+
+        // Create a course.
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+
+        // Add a forum.
+        $forum = $generator->create_module('forum', ['course' => $course->id]);
+
+        // Add a block.
+        $context = context_course::instance($course->id);
+        $page = new moodle_page();
+        $page->set_context($context);
+        $page->set_course($course);
+        $page->set_pagelayout('standard');
+        $page->set_pagetype('course-view');
+        $page->blocks->load_blocks();
+        $page->blocks->add_block_at_end_of_default_region('html');
+
+        // Initially there should be no search index requests.
+        $this->assertEquals(0, $DB->count_records('search_index_requests'));
+
+        // Do backup and restore.
+        $newcourseid = $this->backup_and_restore($course);
+
+        // Now the course should be requested for index (all search areas).
+        $newcontext = context_course::instance($newcourseid);
+        $requests = array_values($DB->get_records('search_index_requests'));
+        $this->assertCount(1, $requests);
+        $this->assertEquals($newcontext->id, $requests[0]->contextid);
+        $this->assertEquals('', $requests[0]->searcharea);
+
+        get_fast_modinfo($newcourseid);
+
+        // Backup the new course...
+        $CFG->backup_file_logger_level = backup::LOG_NONE;
+        $bc = new backup_controller(backup::TYPE_1COURSE, $newcourseid,
+                backup::FORMAT_MOODLE, backup::INTERACTIVE_NO, backup::MODE_IMPORT,
+                $USER->id);
+        $backupid = $bc->get_backupid();
+        $bc->execute_plan();
+        $bc->destroy();
+
+        // Restore it on top of old course (should duplicate the forum).
+        $rc = new restore_controller($backupid, $course->id,
+                backup::INTERACTIVE_NO, backup::MODE_GENERAL, $USER->id,
+                backup::TARGET_EXISTING_ADDING);
+        $this->assertTrue($rc->execute_precheck());
+        $rc->execute_plan();
+        $rc->destroy();
+
+        // Get the forums now on the old course.
+        $modinfo = get_fast_modinfo($course->id);
+        $forums = $modinfo->get_instances_of('forum');
+        $this->assertCount(2, $forums);
+
+        // The newer one will be the one with larger ID. (Safe to assume for unit test.)
+        $biggest = null;
+        foreach ($forums as $forum) {
+            if ($biggest === null || $biggest->id < $forum->id) {
+                $biggest = $forum;
+            }
+        }
+        $restoredforumcontext = \context_module::instance($biggest->id);
+
+        // Get the HTML blocks now on the old course.
+        $blockdata = array_values($DB->get_records('block_instances',
+                ['blockname' => 'html', 'parentcontextid' => $context->id], 'id DESC'));
+        $restoredblockcontext = \context_block::instance($blockdata[0]->id);
+
+        // Check that we have requested index update on both the module and the block.
+        $requests = array_values($DB->get_records('search_index_requests', null, 'id'));
+        $this->assertCount(3, $requests);
+        $this->assertEquals($restoredblockcontext->id, $requests[1]->contextid);
+        $this->assertEquals('', $requests[1]->searcharea);
+        $this->assertEquals($restoredforumcontext->id, $requests[2]->contextid);
+        $this->assertEquals('', $requests[2]->searcharea);
     }
 }

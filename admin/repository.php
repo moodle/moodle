@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-require_once(dirname(dirname(__FILE__)) . '/config.php');
+require_once(__DIR__ . '/../config.php');
 require_once($CFG->dirroot . '/repository/lib.php');
 require_once($CFG->libdir . '/adminlib.php');
 
@@ -370,14 +370,14 @@ if (($action == 'edit') || ($action == 'new')) {
 
             if ($updowncount > 1) {
                 $updown .= "<a href=\"$sesskeyurl&amp;action=moveup&amp;repos=".$typename."\">";
-                $updown .= "<img src=\"" . $OUTPUT->pix_url('t/up') . "\" alt=\"up\" /></a>&nbsp;";
+                $updown .= $OUTPUT->pix_icon('t/up', get_string('moveup')) . "</a>&nbsp;";
             }
             else {
                 $updown .= $spacer;
             }
             if ($updowncount < $totalrepositorytypes) {
                 $updown .= "<a href=\"$sesskeyurl&amp;action=movedown&amp;repos=".$typename."\">";
-                $updown .= "<img src=\"" . $OUTPUT->pix_url('t/down') . "\" alt=\"down\" /></a>";
+                $updown .= $OUTPUT->pix_icon('t/down', get_string('movedown')) . "</a>&nbsp;";
             }
             else {
                 $updown .= $spacer;

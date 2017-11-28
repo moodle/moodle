@@ -27,10 +27,8 @@ $string['additionaldelimiters'] = 'Additional equation delimiters';
 $string['additionaldelimiters_help'] = 'MathJax filter parses text for equations contained within delimiter characters.
 
 The list of recognised delimiter characters can be added to here (e.g. AsciiMath uses `). Delimiters can contain multiple characters and multiple delimiters can be separated with commas.';
-$string['httpurl'] = 'HTTP MathJax URL';
-$string['httpurl_help'] = 'Full URL to MathJax library. Used when the page is loaded via http.';
-$string['httpsurl'] = 'HTTPS MathJax URL';
-$string['httpsurl_help'] = 'Full URL to MathJax library. Used when the page is loaded via https (secure). ';
+$string['httpsurl'] = 'MathJax URL';
+$string['httpsurl_help'] = 'Full URL to MathJax library.';
 $string['texfiltercompatibility'] = 'TeX filter compatibility';
 $string['texfiltercompatibility_help'] = 'The MathJax filter can be used as a replacement for the TeX notation filter.
 

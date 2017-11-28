@@ -23,10 +23,12 @@ var CSS = {
         HASCHILDREN: 'with_children'
     },
     SELECTORS = {
+        WITHCHILDRENTREES: '.with_children',
         LOADEDTREES: '.with_children.loaded',
         CONTENTNODE: '.content',
         CATEGORYLISTENLINK: '.category .info .categoryname',
         CATEGORYSPINNERLOCATION: '.categoryname',
+        CATEGORYWITHCOLLAPSEDCHILDREN: '.category.with_children.collapsed',
         CATEGORYWITHCOLLAPSEDLOADEDCHILDREN: '.category.with_children.loaded.collapsed',
         CATEGORYWITHMAXIMISEDLOADEDCHILDREN: '.category.with_children.loaded:not(.collapsed)',
         COLLAPSEEXPAND: '.collapseexpand',
@@ -78,6 +80,58 @@ NS.setup_keyboard_listeners = function() {
     Y.one(Y.config.doc).delegate('key', this.toggle_category_expansion, 'enter', SELECTORS.CATEGORYLISTENLINK, this);
     Y.one(Y.config.doc).delegate('key', this.toggle_coursebox_expansion, 'enter', SELECTORS.COURSEBOXLISTENLINK, this);
     Y.one(Y.config.doc).delegate('key', this.collapse_expand_all, 'enter', SELECTORS.COLLAPSEEXPAND, this);
+};
+
+/**
+ * Expand all categories.
+ *
+ * @method expand_category
+ * @private
+ * @param {Node} categorynode The node to expand
+ */
+NS.expand_category = function(categorynode) {
+    // Load the actual dependencies now that we've been called.
+    Y.use('io-base', 'json-parse', 'moodle-core-notification', 'anim-node-plugin', function() {
+        // Overload the expand_category with the _expand_category function to ensure that
+        // this function isn't called in the future, and call it for the first time.
+        NS.expand_category = NS._expand_category;
+        NS.expand_category(categorynode);
+    });
+};
+
+NS._expand_category = function(categorynode) {
+    var categoryid,
+        depth;
+
+    if (!categorynode.hasClass(CSS.HASCHILDREN)) {
+        // Nothing to do here - this category has no children.
+        return;
+    }
+
+    if (categorynode.hasClass(CSS.LOADED)) {
+        // We've already loaded this content so we just need to toggle the view of it.
+        this.run_expansion(categorynode);
+        return;
+    }
+
+    // We use Data attributes to store the category.
+    categoryid = categorynode.getData('categoryid');
+    depth = categorynode.getData('depth');
+    if (typeof categoryid === "undefined" || typeof depth === "undefined") {
+        return;
+    }
+
+    this._toggle_generic_expansion({
+        parentnode: categorynode,
+        childnode: categorynode.one(SELECTORS.CONTENTNODE),
+        spinnerhandle: SELECTORS.CATEGORYSPINNERLOCATION,
+        data: {
+            categoryid: categoryid,
+            depth: depth,
+            showcourses: categorynode.getData('showcourses'),
+            type: TYPE_CATEGORY
+        }
+    });
 };
 
 /**
@@ -308,12 +362,12 @@ NS._collapse_expand_all = function(e) {
 NS.expand_all = function(ancestor) {
     var finalexpansions = [];
 
-    ancestor.all(SELECTORS.CATEGORYWITHCOLLAPSEDLOADEDCHILDREN)
+    ancestor.all(SELECTORS.CATEGORYWITHCOLLAPSEDCHILDREN)
         .each(function(c) {
-        if (c.ancestor(SELECTORS.CATEGORYWITHCOLLAPSEDLOADEDCHILDREN)) {
+        if (c.ancestor(SELECTORS.CATEGORYWITHCOLLAPSEDCHILDREN)) {
             // Expand the hidden children first without animation.
             c.removeClass(CSS.SECTIONCOLLAPSED);
-            c.all(SELECTORS.LOADEDTREES).removeClass(CSS.SECTIONCOLLAPSED);
+            c.all(SELECTORS.WITHCHILDRENTREES).removeClass(CSS.SECTIONCOLLAPSED);
         } else {
             finalexpansions.push(c);
         }
@@ -321,7 +375,7 @@ NS.expand_all = function(ancestor) {
 
     // Run the final expansion with animation on the visible items.
     Y.all(finalexpansions).each(function(c) {
-        this.run_expansion(c);
+        this.expand_category(c);
     }, this);
 
 };

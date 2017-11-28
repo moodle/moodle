@@ -26,6 +26,11 @@
 require_once($CFG->dirroot . '/repository/lib.php');
 require_once($CFG->dirroot . '/repository/s3/S3.php');
 
+// This constant is not defined in php 5.4. Set it to avoid errors.
+if (!defined('CURL_SSLVERSION_TLSv1')) {
+    define('CURL_SSLVERSION_TLSv1', 1);
+}
+
 /**
  * This is a repository class used to browse Amazon S3 content.
  *
@@ -43,6 +48,7 @@ class repository_s3 extends repository {
      * @param array $options
      */
     public function __construct($repositoryid, $context = SYSCONTEXTID, $options = array()) {
+        global $CFG;
         parent::__construct($repositoryid, $context, $options);
         $this->access_key = get_config('s3', 'access_key');
         $this->secret_key = get_config('s3', 'secret_key');
@@ -52,6 +58,26 @@ class repository_s3 extends repository {
         }
         $this->s = new S3($this->access_key, $this->secret_key, false, $this->endpoint);
         $this->s->setExceptions(true);
+
+        // Port of curl::__construct().
+        if (!empty($CFG->proxyhost)) {
+            if (empty($CFG->proxyport)) {
+                $proxyhost = $CFG->proxyhost;
+            } else {
+                $proxyhost = $CFG->proxyhost . ':' . $CFG->proxyport;
+            }
+            $proxytype = CURLPROXY_HTTP;
+            $proxyuser = null;
+            $proxypass = null;
+            if (!empty($CFG->proxyuser) and !empty($CFG->proxypassword)) {
+                $proxyuser = $CFG->proxyuser;
+                $proxypass = $CFG->proxypassword;
+            }
+            if (!empty($CFG->proxytype) && $CFG->proxytype == 'SOCKS5') {
+                $proxytype = CURLPROXY_SOCKS5;
+            }
+            $this->s->setProxy($proxyhost, $proxyuser, $proxypass, $proxytype);
+        }
     }
 
     /**
@@ -117,7 +143,7 @@ class repository_s3 extends repository {
                 $folder = array(
                     'title' => $bucket,
                     'children' => array(),
-                    'thumbnail' => $OUTPUT->pix_url(file_folder_icon(90))->out(false),
+                    'thumbnail' => $OUTPUT->image_url(file_folder_icon(90))->out(false),
                     'path' => $bucket
                     );
                 $tree[] = $folder;
@@ -162,7 +188,7 @@ class repository_s3 extends repository {
                     $folders[] = array(
                         'title' => $title,
                         'children' => array(),
-                        'thumbnail'=> $OUTPUT->pix_url(file_folder_icon(90))->out(false),
+                        'thumbnail'=> $OUTPUT->image_url(file_folder_icon(90))->out(false),
                         'path' => $bucket . '/' . $object['prefix']
                     );
                 } else {
@@ -171,7 +197,7 @@ class repository_s3 extends repository {
                         'size' => $object['size'],
                         'datemodified' => $object['time'],
                         'source' => $bucket . '/' . $object['name'],
-                        'thumbnail' => $OUTPUT->pix_url(file_extension_icon($title, 90))->out(false)
+                        'thumbnail' => $OUTPUT->image_url(file_extension_icon($title, 90))->out(false)
                     );
                 }
             }

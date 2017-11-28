@@ -27,8 +27,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
-require_once(dirname(__FILE__) . '/../../../engine/lib.php');
-require_once(dirname(__FILE__) . '/../../../engine/tests/helpers.php');
+require_once(__DIR__ . '/../../../engine/lib.php');
+require_once(__DIR__ . '/../../../engine/tests/helpers.php');
 
 
 /**
@@ -88,7 +88,7 @@ class qbehaviour_informationitem_walkthrough_testcase extends qbehaviour_walkthr
                 new question_pattern_expectation('/' . preg_quote('Not good enough!', '/') . '/'));
 
         // Check that trying to process a manual comment with a grade causes an exception.
-        $this->setExpectedException('moodle_exception');
+        $this->expectException('moodle_exception');
         $this->manual_grade('Not good enough!', 1, FORMAT_HTML);
     }
 }

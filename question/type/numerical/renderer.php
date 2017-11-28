@@ -49,6 +49,7 @@ class qtype_numerical_renderer extends qtype_renderer {
             'value' => $currentanswer,
             'id' => $inputname,
             'size' => 80,
+            'class' => 'form-control',
         );
 
         if ($options->readonly) {
@@ -65,7 +66,7 @@ class qtype_numerical_renderer extends qtype_renderer {
             } else {
                 $fraction = 0;
             }
-            $inputattributes['class'] = $this->feedback_class($fraction);
+            $inputattributes['class'] .= ' ' . $this->feedback_class($fraction);
             $feedbackimg = $this->feedback_image($fraction);
         }
 
@@ -123,7 +124,7 @@ class qtype_numerical_renderer extends qtype_renderer {
         $result = html_writer::tag('div', $questiontext, array('class' => 'qtext'));
 
         if (!$placeholder) {
-            $result .= html_writer::start_tag('div', array('class' => 'ablock'));
+            $result .= html_writer::start_tag('div', array('class' => 'ablock form-inline'));
             $result .= html_writer::tag('label', get_string('answercolon', 'qtype_numerical'), array('for' => $inputattributes['id']));
             $result .= html_writer::tag('span', $input, array('class' => 'answer'));
             $result .= html_writer::end_tag('div');

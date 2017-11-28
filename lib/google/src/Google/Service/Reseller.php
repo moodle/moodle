@@ -49,6 +49,7 @@ class Google_Service_Reseller extends Google_Service
   public function __construct(Google_Client $client)
   {
     parent::__construct($client);
+    $this->rootUrl = 'https://www.googleapis.com/';
     $this->servicePath = 'apps/reseller/v1/';
     $this->version = 'v1';
     $this->serviceName = 'reseller';
@@ -697,6 +698,7 @@ class Google_Service_Reseller_Customer extends Google_Model
   );
   public $alternateEmail;
   public $customerDomain;
+  public $customerDomainVerified;
   public $customerId;
   public $kind;
   public $phoneNumber;
@@ -720,6 +722,14 @@ class Google_Service_Reseller_Customer extends Google_Model
   public function getCustomerDomain()
   {
     return $this->customerDomain;
+  }
+  public function setCustomerDomainVerified($customerDomainVerified)
+  {
+    $this->customerDomainVerified = $customerDomainVerified;
+  }
+  public function getCustomerDomainVerified()
+  {
+    return $this->customerDomainVerified;
   }
   public function setCustomerId($customerId)
   {
@@ -833,10 +843,12 @@ class Google_Service_Reseller_Seats extends Google_Model
   }
 }
 
-class Google_Service_Reseller_Subscription extends Google_Model
+class Google_Service_Reseller_Subscription extends Google_Collection
 {
+  protected $collection_key = 'suspensionReasons';
   protected $internal_gapi_mappings = array(
   );
+  public $billingMethod;
   public $creationTime;
   public $customerId;
   public $kind;
@@ -851,12 +863,21 @@ class Google_Service_Reseller_Subscription extends Google_Model
   public $skuId;
   public $status;
   public $subscriptionId;
+  public $suspensionReasons;
   protected $transferInfoType = 'Google_Service_Reseller_SubscriptionTransferInfo';
   protected $transferInfoDataType = '';
   protected $trialSettingsType = 'Google_Service_Reseller_SubscriptionTrialSettings';
   protected $trialSettingsDataType = '';
 
 
+  public function setBillingMethod($billingMethod)
+  {
+    $this->billingMethod = $billingMethod;
+  }
+  public function getBillingMethod()
+  {
+    return $this->billingMethod;
+  }
   public function setCreationTime($creationTime)
   {
     $this->creationTime = $creationTime;
@@ -944,6 +965,14 @@ class Google_Service_Reseller_Subscription extends Google_Model
   public function getSubscriptionId()
   {
     return $this->subscriptionId;
+  }
+  public function setSuspensionReasons($suspensionReasons)
+  {
+    $this->suspensionReasons = $suspensionReasons;
+  }
+  public function getSuspensionReasons()
+  {
+    return $this->suspensionReasons;
   }
   public function setTransferInfo(Google_Service_Reseller_SubscriptionTransferInfo $transferInfo)
   {

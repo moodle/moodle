@@ -22,7 +22,7 @@
  * @copyright 2012 Dongsheng Cai {@link http://dongsheng.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
+require(__DIR__.'/../../config.php');
 $json = required_param('tlelinks', PARAM_RAW);
 
 require_login();

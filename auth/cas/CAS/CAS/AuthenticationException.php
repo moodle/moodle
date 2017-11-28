@@ -68,6 +68,7 @@ implements CAS_Exception
     public function __construct($client,$failure,$cas_url,$no_response,
         $bad_response='',$cas_response='',$err_code='',$err_msg=''
     ) {
+        $messages = array();
         phpCAS::traceBegin();
         $lang = $client->getLangObj();
         $client->printHTMLHeader($lang->getAuthenticationFailed());
@@ -76,32 +77,34 @@ implements CAS_Exception
             htmlentities($client->getURL()),
             isset($_SERVER['SERVER_ADMIN']) ? $_SERVER['SERVER_ADMIN']:''
         );
-        phpCAS::trace('CAS URL: '.$cas_url);
-        phpCAS::trace('Authentication failure: '.$failure);
+        phpCAS::trace($messages[] = 'CAS URL: '.$cas_url);
+        phpCAS::trace($messages[] = 'Authentication failure: '.$failure);
         if ( $no_response ) {
-            phpCAS::trace('Reason: no response from the CAS server');
+            phpCAS::trace($messages[] = 'Reason: no response from the CAS server');
         } else {
             if ( $bad_response ) {
-                phpCAS::trace('Reason: bad response from the CAS server');
+                phpCAS::trace($messages[] = 'Reason: bad response from the CAS server');
             } else {
                 switch ($client->getServerVersion()) {
                 case CAS_VERSION_1_0:
-                    phpCAS::trace('Reason: CAS error');
+                    phpCAS::trace($messages[] = 'Reason: CAS error');
                     break;
                 case CAS_VERSION_2_0:
                 case CAS_VERSION_3_0:
                     if ( empty($err_code) ) {
-                        phpCAS::trace('Reason: no CAS error');
+                        phpCAS::trace($messages[] = 'Reason: no CAS error');
                     } else {
-                        phpCAS::trace('Reason: ['.$err_code.'] CAS error: '.$err_msg);
+                        phpCAS::trace($messages[] = 'Reason: ['.$err_code.'] CAS error: '.$err_msg);
                     }
                     break;
                 }
             }
-            phpCAS::trace('CAS response: '.$cas_response);
+            phpCAS::trace($messages[] = 'CAS response: '.$cas_response);
         }
         $client->printHTMLFooter();
         phpCAS::traceExit();
+
+        parent::__construct(implode("\n", $messages));
     }
 
 }

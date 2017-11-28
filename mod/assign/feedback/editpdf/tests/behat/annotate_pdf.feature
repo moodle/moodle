@@ -26,10 +26,10 @@ Feature: In an assignment, teacher can annotate PDF files during grading
     Then I should see "Changes saved"
     And I follow "Test ghostscript path"
     And I should see "The ghostscript path appears to be OK"
+    And I am on site homepage
     And I log out
     And I log in as "teacher1"
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I add a "Assignment" to section "1" and I fill the form with:
       | Assignment name | Test assignment name |
       | Description | Submit your PDF file |
@@ -37,7 +37,7 @@ Feature: In an assignment, teacher can annotate PDF files during grading
       | Maximum number of uploaded files | 2 |
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test assignment name"
     And I press "Add submission"
     And I upload "mod/assign/feedback/editpdf/tests/fixtures/submission.pdf" file to "File submissions" filemanager
@@ -48,22 +48,22 @@ Feature: In an assignment, teacher can annotate PDF files during grading
     And I should see "Not graded"
     And I log out
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test assignment name"
-    And I follow "View/grade all submissions"
+    And I navigate to "View all submissions" in current page administration
+    And I click on "Edit" "link" in the "Submitted for grading" "table_row"
     And I click on "Grade" "link" in the "Submitted for grading" "table_row"
-    And I follow "Launch PDF editor..."
-    And I change window size to "large"
+    And I should see "Page 1 of 3"
     And I click on ".navigate-next-button" "css_element"
+    And I should see "Page 2 of 3"
     And I click on ".stampbutton" "css_element"
     And I click on ".linebutton" "css_element"
     And I click on ".commentcolourbutton" "css_element"
-    And I click on "//img[@alt=\"Blue\"]" "xpath_element"
-    And I change window size to "medium"
+    And I click on "//img[@alt=\"Blue\"]/parent::button" "xpath_element"
     And I wait until the page is ready
-    And I click on "Close" "button"
     And I press "Save changes"
-    And I should see "The grade changes were saved"
+    And I wait until the page is ready
+    And I should see "The changes to the grade and feedback were saved"
 
   @javascript
   Scenario: Submit a PDF file as a student in a team and annotate the PDF as a teacher
@@ -103,8 +103,7 @@ Feature: In an assignment, teacher can annotate PDF files during grading
       | G1       | G1    |
       | G1       | G2    |
     And I log in as "teacher1"
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I add a "Assignment" to section "1" and I fill the form with:
       | Assignment name | Test assignment name |
       | Description | Submit your PDF file |
@@ -114,7 +113,7 @@ Feature: In an assignment, teacher can annotate PDF files during grading
       | Grouping for student groups | G1 |
     And I log out
     When I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test assignment name"
     And I press "Add submission"
     And I upload "mod/assign/feedback/editpdf/tests/fixtures/submission.pdf" file to "File submissions" filemanager
@@ -124,18 +123,18 @@ Feature: In an assignment, teacher can annotate PDF files during grading
     And I should see "Not graded"
     And I log out
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test assignment name"
-    And I follow "View/grade all submissions"
+    And I navigate to "View all submissions" in current page administration
+    And I click on "Edit" "link" in the "Student 2" "table_row"
     And I click on "Grade" "link" in the "Student 2" "table_row"
-    And I follow "Launch PDF editor..."
-    And I change window size to "large"
-    And I click on ".stampbutton" "css_element"
-    And I click on ".drawingcanvas" "css_element"
-    And I change window size to "medium"
-    And I wait until the page is ready
-    And I click on "Close" "button"
+    And I wait for the complete PDF to load
+    And I click on ".linebutton" "css_element"
+    And I draw on the pdf
     And I press "Save changes"
-    And I should see "The grade changes were saved"
-    And I press "Continue"
-    And I should see "View annotated PDF..." in the "student1@example.com" "table_row"
+    And I should see "The changes to the grade and feedback were saved"
+    And I press "Ok"
+    And I click on "Edit settings" "link"
+    And I follow "Test assignment name"
+    And I navigate to "View all submissions" in current page administration
+    And I should see "View annotated PDF..." in the "student2@example.com" "table_row"

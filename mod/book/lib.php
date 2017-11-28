@@ -31,7 +31,7 @@ defined('MOODLE_INTERNAL') || die;
 function book_get_numbering_types() {
     global $CFG; // required for the include
 
-    require_once(dirname(__FILE__).'/locallib.php');
+    require_once(__DIR__.'/locallib.php');
 
     return array (
         BOOK_NUM_NONE       => get_string('numbering0', 'mod_book'),
@@ -46,7 +46,7 @@ function book_get_numbering_types() {
  * @return array
  */
 function book_get_nav_types() {
-    require_once(dirname(__FILE__).'/locallib.php');
+    require_once(__DIR__.'/locallib.php');
 
     return array (
         BOOK_LINK_TOCONLY   => get_string('navtoc', 'mod_book'),
@@ -88,7 +88,12 @@ function book_add_instance($data, $mform) {
         $data->customtitles = 0;
     }
 
-    return $DB->insert_record('book', $data);
+    $id = $DB->insert_record('book', $data);
+
+    $completiontimeexpected = !empty($data->completionexpected) ? $data->completionexpected : null;
+    \core_completion\api::update_completion_date_event($data->coursemodule, 'book', $id, $completiontimeexpected);
+
+    return $id;
 }
 
 /**
@@ -112,6 +117,9 @@ function book_update_instance($data, $mform) {
     $book = $DB->get_record('book', array('id'=>$data->id));
     $DB->set_field('book', 'revision', $book->revision+1, array('id'=>$book->id));
 
+    $completiontimeexpected = !empty($data->completionexpected) ? $data->completionexpected : null;
+    \core_completion\api::update_completion_date_event($data->coursemodule, 'book', $book->id, $completiontimeexpected);
+
     return true;
 }
 
@@ -127,6 +135,9 @@ function book_delete_instance($id) {
     if (!$book = $DB->get_record('book', array('id'=>$id))) {
         return false;
     }
+
+    $cm = get_coursemodule_from_instance('book', $id);
+    \core_completion\api::update_completion_date_event($cm->id, 'book', $id, null);
 
     $DB->delete_records('book_chapters', array('bookid'=>$book->id));
     $DB->delete_records('book', array('id'=>$book->id));
@@ -153,7 +164,44 @@ function book_print_recent_activity($course, $viewfullnames, $timestart) {
  * @return array status array
  */
 function book_reset_userdata($data) {
-    return array();
+    global $DB;
+    // Any changes to the list of dates that needs to be rolled should be same during course restore and course reset.
+    // See MDL-9367.
+
+    $status = [];
+
+    if (!empty($data->reset_book_tags)) {
+        // Loop through the books and remove the tags from the chapters.
+        if ($books = $DB->get_records('book', array('course' => $data->courseid))) {
+            foreach ($books as $book) {
+                if (!$cm = get_coursemodule_from_instance('book', $book->id)) {
+                    continue;
+                }
+
+                $context = context_module::instance($cm->id);
+                core_tag_tag::delete_instances('mod_book', null, $context->id);
+            }
+        }
+
+
+        $status[] = [
+            'component' => get_string('modulenameplural', 'book'),
+            'item' => get_string('tagsdeleted', 'book'),
+            'error' => false
+        ];
+    }
+
+    return $status;
+}
+
+/**
+ * The elements to add the course reset form.
+ *
+ * @param moodleform $mform
+ */
+function book_reset_course_form_definition(&$mform) {
+    $mform->addElement('header', 'bookheader', get_string('modulenameplural', 'book'));
+    $mform->addElement('checkbox', 'reset_book_tags', get_string('removeallbooktags', 'book'));
 }
 
 /**
@@ -291,7 +339,30 @@ function book_supports($feature) {
  * @return void
  */
 function book_extend_settings_navigation(settings_navigation $settingsnav, navigation_node $booknode) {
-    global $USER, $PAGE;
+    global $USER, $PAGE, $OUTPUT;
+
+    if ($booknode->children->count() > 0) {
+        $firstkey = $booknode->children->get_key_list()[0];
+    } else {
+        $firstkey = null;
+    }
+
+    $params = $PAGE->url->params();
+
+    if ($PAGE->cm->modname === 'book' and !empty($params['id']) and !empty($params['chapterid'])
+            and has_capability('mod/book:edit', $PAGE->cm->context)) {
+        if (!empty($USER->editing)) {
+            $string = get_string("turneditingoff");
+            $edit = '0';
+        } else {
+            $string = get_string("turneditingon");
+            $edit = '1';
+        }
+        $url = new moodle_url('/mod/book/view.php', array('id'=>$params['id'], 'chapterid'=>$params['chapterid'], 'edit'=>$edit, 'sesskey'=>sesskey()));
+        $editnode = navigation_node::create($string, $url, navigation_node::TYPE_SETTING);
+        $booknode->add_node($editnode, $firstkey);
+        $PAGE->set_button($OUTPUT->single_button($url, $string));
+    }
 
     $plugins = core_component::get_plugin_list('booktool');
     foreach ($plugins as $plugin => $dir) {
@@ -302,20 +373,6 @@ function book_extend_settings_navigation(settings_navigation $settingsnav, navig
         if (function_exists($function)) {
             $function($settingsnav, $booknode);
         }
-    }
-
-    $params = $PAGE->url->params();
-
-    if (!empty($params['id']) and !empty($params['chapterid']) and has_capability('mod/book:edit', $PAGE->cm->context)) {
-        if (!empty($USER->editing)) {
-            $string = get_string("turneditingoff");
-            $edit = '0';
-        } else {
-            $string = get_string("turneditingon");
-            $edit = '1';
-        }
-        $url = new moodle_url('/mod/book/view.php', array('id'=>$params['id'], 'chapterid'=>$params['chapterid'], 'edit'=>$edit, 'sesskey'=>sesskey()));
-        $booknode->add($string, $url, navigation_node::TYPE_SETTING);
     }
 }
 
@@ -359,7 +416,7 @@ function book_get_file_info($browser, $areas, $course, $cm, $context, $filearea,
         return null;
     }
 
-    require_once(dirname(__FILE__).'/locallib.php');
+    require_once(__DIR__.'/locallib.php');
 
     if (is_null($itemid)) {
         return new book_file_info($browser, $course, $cm, $context, $areas, $filearea);
@@ -429,13 +486,26 @@ function book_pluginfile($course, $cm, $context, $filearea, $args, $forcedownloa
     if ($args[0] == 'index.html') {
         $filename = "index.html";
 
+        // We need to rewrite the pluginfile URLs so the media filters can work.
+        $content = file_rewrite_pluginfile_urls($chapter->content, 'webservice/pluginfile.php', $context->id, 'mod_book', 'chapter',
+                                                $chapter->id);
+        $formatoptions = new stdClass;
+        $formatoptions->noclean = true;
+        $formatoptions->overflowdiv = true;
+        $formatoptions->context = $context;
+
+        $content = format_text($content, $chapter->contentformat, $formatoptions);
+
         // Remove @@PLUGINFILE@@/.
-        $content = str_replace('@@PLUGINFILE@@/', '', $chapter->content);
+        $options = array('reverse' => true);
+        $content = file_rewrite_pluginfile_urls($content, 'webservice/pluginfile.php', $context->id, 'mod_book', 'chapter',
+                                                $chapter->id, $options);
+        $content = str_replace('@@PLUGINFILE@@/', '', $content);
 
         $titles = "";
         // Format the chapter titles.
         if (!$book->customtitles) {
-            require_once(dirname(__FILE__).'/locallib.php');
+            require_once(__DIR__.'/locallib.php');
             $chapters = book_preload_chapters($book);
 
             if (!$chapter->subchapter) {
@@ -451,12 +521,7 @@ function book_pluginfile($course, $cm, $context, $filearea, $args, $forcedownloa
             }
         }
 
-        $formatoptions = new stdClass;
-        $formatoptions->noclean = true;
-        $formatoptions->overflowdiv = true;
-        $formatoptions->context = $context;
-
-        $content = $titles . format_text($content, $chapter->contentformat, $formatoptions);
+        $content = $titles . $content;
 
         send_file($content, $filename, 0, 0, true, true);
     } else {
@@ -548,8 +613,8 @@ function book_export_contents($cm, $baseurl) {
         $chapterindexfile['filesize']     = 0;
         $chapterindexfile['fileurl']      = moodle_url::make_webservice_pluginfile_url(
                     $context->id, 'mod_book', 'chapter', $chapter->id, '/', 'index.html')->out(false);
-        $chapterindexfile['timecreated']  = $book->timecreated;
-        $chapterindexfile['timemodified'] = $book->timemodified;
+        $chapterindexfile['timecreated']  = $chapter->timecreated;
+        $chapterindexfile['timemodified'] = $chapter->timemodified;
         $chapterindexfile['content']      = format_string($chapter->title, true, array('context' => $context));
         $chapterindexfile['sortorder']    = 0;
         $chapterindexfile['userid']       = null;
@@ -563,7 +628,7 @@ function book_export_contents($cm, $baseurl) {
             $file = array();
             $file['type']         = 'file';
             $file['filename']     = $fileinfo->get_filename();
-            $file['filepath']     = "/{$chapter->id}/";
+            $file['filepath']     = "/{$chapter->id}" . $fileinfo->get_filepath();
             $file['filesize']     = $fileinfo->get_filesize();
             $file['fileurl']      = moodle_url::make_webservice_pluginfile_url(
                                         $context->id, 'mod_book', 'chapter', $chapter->id,
@@ -574,6 +639,11 @@ function book_export_contents($cm, $baseurl) {
             $file['userid']       = $fileinfo->get_userid();
             $file['author']       = $fileinfo->get_author();
             $file['license']      = $fileinfo->get_license();
+            $file['mimetype']     = $fileinfo->get_mimetype();
+            $file['isexternalfile'] = $fileinfo->is_external_file();
+            if ($file['isexternalfile']) {
+                $file['repositorytype'] = $fileinfo->get_repository_type();
+            }
             $contents[] = $file;
         }
     }
@@ -597,4 +667,117 @@ function book_export_contents($cm, $baseurl) {
     array_unshift($contents, $structurefile);
 
     return $contents;
+}
+
+/**
+ * Mark the activity completed (if required) and trigger the course_module_viewed event.
+ *
+ * @param  stdClass $book       book object
+ * @param  stdClass $chapter    chapter object
+ * @param  bool $islaschapter   is the las chapter of the book?
+ * @param  stdClass $course     course object
+ * @param  stdClass $cm         course module object
+ * @param  stdClass $context    context object
+ * @since Moodle 3.0
+ */
+function book_view($book, $chapter, $islastchapter, $course, $cm, $context) {
+
+    // First case, we are just opening the book.
+    if (empty($chapter)) {
+        \mod_book\event\course_module_viewed::create_from_book($book, $context)->trigger();
+
+    } else {
+        \mod_book\event\chapter_viewed::create_from_chapter($book, $context, $chapter)->trigger();
+
+        if ($islastchapter) {
+            // We cheat a bit here in assuming that viewing the last page means the user viewed the whole book.
+            $completion = new completion_info($course);
+            $completion->set_module_viewed($cm);
+        }
+    }
+}
+
+/**
+ * Check if the module has any update that affects the current user since a given time.
+ *
+ * @param  cm_info $cm course module data
+ * @param  int $from the time to check updates from
+ * @param  array $filter  if we need to check only specific updates
+ * @return stdClass an object with the different type of areas indicating if they were updated or not
+ * @since Moodle 3.2
+ */
+function book_check_updates_since(cm_info $cm, $from, $filter = array()) {
+    global $DB;
+
+    $context = $cm->context;
+    $updates = new stdClass();
+    if (!has_capability('mod/book:read', $context)) {
+        return $updates;
+    }
+    $updates = course_check_module_updates_since($cm, $from, array('content'), $filter);
+
+    $select = 'bookid = :id AND (timecreated > :since1 OR timemodified > :since2)';
+    $params = array('id' => $cm->instance, 'since1' => $from, 'since2' => $from);
+    if (!has_capability('mod/book:viewhiddenchapters', $context)) {
+        $select .= ' AND hidden = 0';
+    }
+    $updates->entries = (object) array('updated' => false);
+    $entries = $DB->get_records_select('book_chapters', $select, $params, '', 'id');
+    if (!empty($entries)) {
+        $updates->entries->updated = true;
+        $updates->entries->itemids = array_keys($entries);
+    }
+
+    return $updates;
+}
+
+/**
+ * Get icon mapping for font-awesome.
+ */
+function mod_book_get_fontawesome_icon_map() {
+    return [
+        'mod_book:chapter' => 'fa-bookmark-o',
+        'mod_book:nav_prev' => 'fa-arrow-left',
+        'mod_book:nav_prev_dis' => 'fa-angle-left',
+        'mod_book:nav_sep' => 'fa-minus',
+        'mod_book:add' => 'fa-plus',
+        'mod_book:nav_next' => 'fa-arrow-right',
+        'mod_book:nav_next_dis' => 'fa-angle-right',
+        'mod_book:nav_exit' => 'fa-arrow-up',
+    ];
+}
+
+/**
+ * This function receives a calendar event and returns the action associated with it, or null if there is none.
+ *
+ * This is used by block_myoverview in order to display the event appropriately. If null is returned then the event
+ * is not displayed on the block.
+ *
+ * @param calendar_event $event
+ * @param \core_calendar\action_factory $factory
+ * @return \core_calendar\local\event\entities\action_interface|null
+ */
+function mod_book_core_calendar_provide_event_action(calendar_event $event,
+                                                     \core_calendar\action_factory $factory) {
+    $cm = get_fast_modinfo($event->courseid)->instances['book'][$event->instance];
+    $context = context_module::instance($cm->id);
+
+    if (!has_capability('mod/book:read', $context)) {
+        return null;
+    }
+
+    $completion = new \completion_info($cm->get_course());
+
+    $completiondata = $completion->get_data($cm, false);
+
+    if ($completiondata->completionstate != COMPLETION_INCOMPLETE) {
+        return null;
+    }
+
+    return $factory->create_instance(
+        get_string('view'),
+        new \moodle_url('/mod/book/view.php', ['id' => $cm->id]),
+        1,
+        true
+    );
 }

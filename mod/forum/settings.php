@@ -29,9 +29,6 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configselect('forum_displaymode', get_string('displaymode', 'forum'),
                        get_string('configdisplaymode', 'forum'), FORUM_MODE_NESTED, forum_get_layout_modes()));
 
-    $settings->add(new admin_setting_configcheckbox('forum_replytouser', get_string('replytouser', 'forum'),
-                       get_string('configreplytouser', 'forum'), 1));
-
     // Less non-HTML characters than this is short
     $settings->add(new admin_setting_configtext('forum_shortpost', get_string('shortpost', 'forum'),
                        get_string('configshortpost', 'forum'), 300, PARAM_INT));
@@ -56,6 +53,11 @@ if ($ADMIN->fulltree) {
     // Default number of attachments allowed per post in all forums
     $settings->add(new admin_setting_configtext('forum_maxattachments', get_string('maxattachments', 'forum'),
                        get_string('configmaxattachments', 'forum'), 9, PARAM_INT));
+
+    // Default Subscription mode setting.
+    $options = forum_get_subscriptionmode_options();
+    $settings->add(new admin_setting_configselect('forum_subscription', get_string('subscriptionmode', 'forum'),
+        get_string('configsubscriptiontype', 'forum'), FORUM_CHOOSESUBSCRIBE, $options));
 
     // Default Read Tracking setting.
     $options = array();
@@ -133,6 +135,6 @@ if ($ADMIN->fulltree) {
     }
 
     $settings->add(new admin_setting_configcheckbox('forum_enabletimedposts', get_string('timedposts', 'forum'),
-                       get_string('configenabletimedposts', 'forum'), 0));
+                       get_string('configenabletimedposts', 'forum'), 1));
 }
 

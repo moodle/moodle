@@ -80,4 +80,13 @@ class assessment_evaluated extends \core\event\base {
     public function get_url() {
         return new \moodle_url('/mod/workshop/view.php', array('id' => $this->contextinstanceid));
     }
+
+    public static function get_objectid_mapping() {
+        return array('db' => 'workshop_aggregations', 'restore' => 'workshop_aggregation');
+    }
+
+    public static function get_other_mapping() {
+        // Nothing to map.
+        return false;
+    }
 }

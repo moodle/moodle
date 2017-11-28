@@ -38,7 +38,7 @@ if ($data = $DB->get_record('data', array('id'=>$d))) {
     header('Expires: ' . gmdate("D, d M Y H:i:s", time() + $lifetime) . ' GMT');
     header('Cache-control: max_age = '. $lifetime);
     header('Pragma: ');
-    header('Content-type: text/css; charset=utf-8');  // Correct MIME type
+    header('Content-type: application/javascript; charset=utf-8');  // Correct MIME type.
 
     echo $data->jstemplate;
 }

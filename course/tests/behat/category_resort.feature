@@ -105,7 +105,6 @@ Feature: Test we can resort categories in the management interface.
     And I should see the "Course categories and courses" management page
     And I click on <sortby> action for "Master cat" in management category listing
     And a new page should have loaded since I started watching
-    And I start watching to see if a new page loads
     And I should see the "Course categories and courses" management page
     And I should see category listing <cat1> before <cat2>
     And I should see category listing <cat2> before <cat3>

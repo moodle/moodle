@@ -48,7 +48,7 @@ class calc_formula {
      * @param string $formula with leading =
      * @param array $params associative array of parameters used in formula. All parameter names must be lowercase!
      */
-    function calc_formula($formula, $params=false) {
+    public function __construct($formula, $params=false) {
         $this->_em = new EvalMath();
         $this->_em->suppress_errors = true; // no PHP errors!
         if (strpos($formula, '=') !== 0) {
@@ -68,6 +68,16 @@ class calc_formula {
         if ($params != false) {
             $this->set_params($params);
         }
+    }
+
+    /**
+     * Old syntax of class constructor. Deprecated in PHP7.
+     *
+     * @deprecated since Moodle 3.1
+     */
+    public function calc_formula($formula, $params=false) {
+        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
+        self::__construct($formula, $params);
     }
 
     /**

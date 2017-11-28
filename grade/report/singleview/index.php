@@ -22,6 +22,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+define('NO_OUTPUT_BUFFERING', true);
+
 require_once('../../../config.php');
 require_once($CFG->dirroot.'/lib/gradelib.php');
 require_once($CFG->dirroot.'/grade/lib.php');
@@ -35,17 +37,31 @@ $userid   = optional_param('userid', null, PARAM_INT);
 
 $defaulttype = $userid ? 'user' : 'select';
 
-$itemid   = optional_param('itemid', $userid, PARAM_INT);
+$itemid = optional_param('itemid', null, PARAM_INT);
 $itemtype = optional_param('item', $defaulttype, PARAM_TEXT);
 $page = optional_param('page', 0, PARAM_INT);
 $perpage = optional_param('perpage', 100, PARAM_INT);
 
+if (empty($itemid)) {
+    $itemid = $userid;
+    $itemtype = $defaulttype;
+}
+
 $courseparams = array('id' => $courseid);
-$PAGE->set_url(new moodle_url('/grade/report/singleview/index.php', $courseparams));
+$pageparams = array(
+        'id'        => $courseid,
+        'group'     => $groupid,
+        'userid'    => $userid,
+        'itemid'    => $itemid,
+        'item'      => $itemtype,
+        'page'      => $page,
+        'perpage'   => $perpage,
+    );
+$PAGE->set_url(new moodle_url('/grade/report/singleview/index.php', $pageparams));
 $PAGE->set_pagelayout('incourse');
 
 if (!$course = $DB->get_record('course', $courseparams)) {
-    print_error('nocourseid');
+    print_error('invalidcourseid');
 }
 
 require_login($course);
@@ -73,9 +89,8 @@ if (!isset($USER->grade_last_report)) {
 }
 $USER->grade_last_report[$course->id] = 'singleview';
 
-// First make sure we have proper final grades -
-// this must be done before constructing of the grade tree.
-grade_regrade_final_grades($courseid);
+// First make sure we have proper final grades.
+grade_regrade_final_grades_if_required($course);
 
 $report = new gradereport_singleview($courseid, $gpr, $context, $itemtype, $itemid);
 
@@ -171,6 +186,7 @@ if ($report->screen->display_group_selector()) {
 echo $report->output();
 
 if ($report->screen->supports_paging()) {
+    echo $report->screen->perpage_select();
     echo $report->screen->pager();
 }
 

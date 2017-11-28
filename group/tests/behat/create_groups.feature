@@ -24,9 +24,8 @@ Feature: Organize students into groups
       | student2 | C1 | student |
       | student3 | C1 | student |
     And I log in as "teacher1"
-    And I follow "Course 1"
-    And I expand "Users" node
-    And I follow "Groups"
+    And I am on "Course 1" course homepage
+    And I navigate to "Users > Groups" in current page administration
     And I press "Create group"
     And I set the following fields to these values:
       | Group name | Group 1 |
@@ -47,17 +46,19 @@ Feature: Organize students into groups
     And the "members" select box should contain "Student 2"
     And the "members" select box should contain "Student 3"
     And the "members" select box should not contain "Student 0"
-    And I follow "Participants"
-    And I set the field "Separate groups" to "Group 1"
+    And I navigate to course participants
+    And I open the autocomplete suggestions list
+    And I click on "Group: Group 1" item in the autocomplete list
     And I should see "Student 0"
     And I should see "Student 1"
     And I should not see "Student 2"
-    And I set the field "Separate groups" to "Group 2"
+    And I click on "Group: Group 1" "text" in the ".form-autocomplete-selection" "css_element"
+    And I open the autocomplete suggestions list
+    And I click on "Group: Group 2" item in the autocomplete list
     And I should see "Student 2"
     And I should see "Student 3"
     And I should not see "Student 0"
 
-  @javascript
   Scenario: Create groups and groupings without the 'moodle/course:changeidnumber' capability
     Given the following "courses" exist:
       | fullname | shortname | category | groupmode |
@@ -73,9 +74,8 @@ Feature: Organize students into groups
       | moodle/course:changeidnumber | Prevent |
     And I log out
     And I log in as "teacher1"
-    And I follow "Course 1"
-    And I expand "Users" node
-    And I follow "Groups"
+    And I am on "Course 1" course homepage
+    And I navigate to "Users > Groups" in current page administration
     When I press "Create group"
     Then the "idnumber" "field" should be readonly
     And I set the following fields to these values:
@@ -96,10 +96,8 @@ Feature: Organize students into groups
       | Course 1 | C1 | 0 | 1 |
       | Course 2 | C2 | 0 | 1 |
     And I log in as "admin"
-    And I am on site homepage
-    And I follow "Course 1"
-    And I expand "Users" node
-    And I follow "Groups"
+    And I am on "Course 1" course homepage
+    And I navigate to "Users > Groups" in current page administration
     When I press "Create group"
     And I set the following fields to these values:
       | Group name | Group A |
@@ -120,10 +118,8 @@ Feature: Organize students into groups
       | Enrolment key | Abcdef-2 |
     And I press "Save changes"
     And the "groups" select box should contain "Group B (0)"
-    And I am on site homepage
-    And I follow "Course 2"
-    And I expand "Users" node
-    And I follow "Groups"
+    And I am on "Course 2" course homepage
+    And I navigate to "Users > Groups" in current page administration
     And I press "Create group"
     And I set the following fields to these values:
       | Group name | Group A |

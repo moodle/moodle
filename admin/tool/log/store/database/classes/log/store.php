@@ -88,6 +88,7 @@ class store implements \tool_log\log\writer, \core\log\sql_reader {
         $dboptions['dbport'] = $this->get_config('dbport', '');
         $dboptions['dbschema'] = $this->get_config('dbschema', '');
         $dboptions['dbcollation'] = $this->get_config('dbcollation', '');
+        $dboptions['dbhandlesoptions'] = $this->get_config('dbhandlesoptions', false);
         try {
             $db->connect($this->get_config('dbhost'), $this->get_config('dbuser'), $this->get_config('dbpass'),
                 $this->get_config('dbname'), false, $dboptions);
@@ -256,6 +257,30 @@ class store implements \tool_log\log\writer, \core\log\sql_reader {
         }
 
         return $this->extdb->count_records_select($dbtable, $selectwhere, $params);
+    }
+
+    /**
+     * Get a config value for the store.
+     *
+     * @param string $name Config name
+     * @param mixed $default default value
+     * @return mixed config value if set, else the default value.
+     */
+    public function get_config_value($name, $default = null) {
+        return $this->get_config($name, $default);
+    }
+
+    /**
+     * Get the external database object.
+     *
+     * @return \moodle_database $extdb
+     */
+    public function get_extdb() {
+        if (!$this->init()) {
+            return false;
+        }
+
+        return $this->extdb;
     }
 
     /**

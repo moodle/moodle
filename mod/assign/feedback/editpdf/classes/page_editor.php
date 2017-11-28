@@ -50,7 +50,8 @@ class page_editor {
         if (!$draft) {
             $params['draft'] = 0;
         }
-        $records = $DB->get_records('assignfeedback_editpdf_cmnt', $params);
+        // Fetch comments ordered by position on the page.
+        $records = $DB->get_records('assignfeedback_editpdf_cmnt', $params, 'y, x');
         foreach ($records as $record) {
             array_push($comments, new comment($record));
         }
@@ -159,7 +160,7 @@ class page_editor {
     public static function set_annotations($gradeid, $pageno, $annotations) {
         global $DB;
 
-        $DB->delete_records('assignfeedback_editpdf_annot', array('gradeid'=>$gradeid, 'pageno'=>$pageno));
+        $DB->delete_records('assignfeedback_editpdf_annot', array('gradeid' => $gradeid, 'pageno' => $pageno, 'draft' => 1));
         $added = 0;
         foreach ($annotations as $record) {
             // Force these.

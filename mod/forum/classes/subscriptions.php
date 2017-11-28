@@ -164,7 +164,8 @@ class subscriptions {
      * @return bool
      */
     public static function is_subscribable($forum) {
-        return (!\mod_forum\subscriptions::is_forcesubscribed($forum) &&
+        return (isloggedin() && !isguestuser() &&
+                !\mod_forum\subscriptions::is_forcesubscribed($forum) &&
                 !\mod_forum\subscriptions::subscription_disabled($forum));
     }
 

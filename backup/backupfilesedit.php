@@ -23,7 +23,7 @@
  */
 
 require_once('../config.php');
-require_once(dirname(__FILE__) . '/backupfilesedit_form.php');
+require_once(__DIR__ . '/backupfilesedit_form.php');
 require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
 require_once($CFG->dirroot . '/repository/lib.php');
 
@@ -42,6 +42,9 @@ $url = new moodle_url('/backup/backupfilesedit.php', array('currentcontext'=>$cu
 
 require_login($course, false, $cm);
 require_capability('moodle/restore:uploadfile', $context);
+if ($filearea == 'automated' && !can_download_from_backup_filearea($filearea, $context)) {
+    throw new required_capability_exception($context, 'moodle/backup:downloadfile', 'nopermissions', '');
+}
 
 $PAGE->set_url($url);
 $PAGE->set_context($context);

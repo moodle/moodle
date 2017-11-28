@@ -9,9 +9,18 @@ Feature: Comment on a blog entry
       | username | firstname | lastname | email |
       | testuser | Test | User | moodle@example.com |
       | testuser2 | Test2 | User2 | moodle2@example.com |
+    And I log in as "admin"
+    And I am on site homepage
+    And I turn editing mode on
+    # TODO MDL-57120 "Site blogs" link not accessible without navigation block.
+    And I add the "Navigation" block if not present
+    And I configure the "Navigation" block
+    And I set the following fields to these values:
+      | Page contexts | Display throughout the entire site |
+    And I press "Save changes"
+    And I log out
     And I log in as "testuser"
-    And I expand "Site pages" node
-    And I follow "Site blogs"
+    And I navigate to "Site blogs" node in "Site pages"
     And I follow "Add a new entry"
     And I set the following fields to these values:
       | Entry title | Blog post from user 1 |
@@ -23,8 +32,7 @@ Feature: Comment on a blog entry
   Scenario: Commenting on my own blog entry
     Given I am on site homepage
     And I log in as "testuser"
-    And I expand "Site pages" node
-    And I follow "Site blogs"
+    And I navigate to "Site blogs" node in "Site pages"
     And I follow "Blog post from user 1"
     And I should see "User 1 blog post content"
     And I follow "Comments (0)"
@@ -39,8 +47,7 @@ Feature: Comment on a blog entry
   Scenario: Deleting my own comment
     Given I am on site homepage
     And I log in as "testuser"
-    And I expand "Site pages" node
-    And I follow "Site blogs"
+    And I navigate to "Site blogs" node in "Site pages"
     And I follow "Blog post from user 1"
     And I should see "User 1 blog post content"
     And I follow "Comments (0)"
@@ -60,8 +67,7 @@ Feature: Comment on a blog entry
     Given I am on site homepage
     And I log in as "testuser2"
     And I am on site homepage
-    And I expand "Site pages" node
-    And I follow "Site blogs"
+    And I navigate to "Site blogs" node in "Site pages"
     And I follow "Blog post from user 1"
     When I follow "Comments (0)"
     And I set the field "content" to "$My own >nasty< \"string\"!"

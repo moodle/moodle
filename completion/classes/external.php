@@ -43,7 +43,7 @@ class core_completion_external extends external_api {
     /**
      * Describes the parameters for update_activity_completion_status_manually.
      *
-     * @return external_external_function_parameters
+     * @return external_function_parameters
      * @since Moodle 2.9
      */
     public static function update_activity_completion_status_manually_parameters() {
@@ -115,6 +115,86 @@ class core_completion_external extends external_api {
     }
 
     /**
+     * Describes the parameters for override_activity_completion_status.
+     *
+     * @return external_external_function_parameters
+     * @since Moodle 3.4
+     */
+    public static function override_activity_completion_status_parameters() {
+        return new external_function_parameters (
+            array(
+                'userid' => new external_value(PARAM_INT, 'user id'),
+                'cmid' => new external_value(PARAM_INT, 'course module id'),
+                'newstate' => new external_value(PARAM_INT, 'the new activity completion state'),
+            )
+        );
+    }
+
+    /**
+     * Update completion status for a user in an activity.
+     * @param  int $userid    User id
+     * @param  int $cmid      Course module id
+     * @param  int $newstate  Activity completion
+     * @return array          Array containing the current (updated) completion status.
+     * @since Moodle 3.4
+     * @throws moodle_exception
+     */
+    public static function override_activity_completion_status($userid, $cmid, $newstate) {
+        // Validate and normalize parameters.
+        $params = self::validate_parameters(self::override_activity_completion_status_parameters(),
+            array('userid' => $userid, 'cmid' => $cmid, 'newstate' => $newstate));
+        $userid = $params['userid'];
+        $cmid = $params['cmid'];
+        $newstate = $params['newstate'];
+
+        $context = context_module::instance($cmid);
+        self::validate_context($context);
+
+        list($course, $cm) = get_course_and_cm_from_cmid($cmid);
+
+        // Set up completion object and check it is enabled.
+        $completion = new completion_info($course);
+        if (!$completion->is_enabled()) {
+            throw new moodle_exception('completionnotenabled', 'completion');
+        }
+
+        // Update completion state and get the new state back.
+        $completion->update_state($cm, $newstate, $userid, true);
+        $completiondata = $completion->get_data($cm, false, $userid);
+
+        // Return the current state of completion.
+        return [
+            'cmid' => $completiondata->coursemoduleid,
+            'userid' => $completiondata->userid,
+            'state' => $completiondata->completionstate,
+            'timecompleted' => $completiondata->timemodified,
+            'overrideby' => $completiondata->overrideby,
+            'tracking' => $completion->is_enabled($cm)
+        ];
+    }
+
+    /**
+     * Describes the override_activity_completion_status return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.4
+     */
+    public static function override_activity_completion_status_returns() {
+
+        return new external_single_structure(
+            array(
+                'cmid' => new external_value(PARAM_INT, 'The course module id'),
+                'userid' => new external_value(PARAM_INT, 'The user id to which the completion info belongs'),
+                'state'   => new external_value(PARAM_INT, 'The current completion state.'),
+                'timecompleted' => new external_value(PARAM_INT, 'time of completion'),
+                'overrideby' => new external_value(PARAM_INT, 'The user id who has overriden the status, or null'),
+                'tracking'      => new external_value(PARAM_INT, 'type of tracking:
+                                                                    0 means none, 1 manual, 2 automatic'),
+            )
+        );
+    }
+
+    /**
      * Returns description of method parameters
      *
      * @return external_function_parameters
@@ -152,7 +232,8 @@ class core_completion_external extends external_api {
         $params = self::validate_parameters(self::get_activities_completion_status_parameters(), $arrayparams);
 
         $course = get_course($params['courseid']);
-        $user = core_user::get_user($params['userid'], 'id', MUST_EXIST);
+        $user = core_user::get_user($params['userid'], '*', MUST_EXIST);
+        core_user::require_active_user($user);
 
         $context = context_course::instance($course->id);
         self::validate_context($context);
@@ -184,9 +265,11 @@ class core_completion_external extends external_api {
                 $thisprogress  = $userprogress->progress[$activity->id];
                 $state         = $thisprogress->completionstate;
                 $timecompleted = $thisprogress->timemodified;
+                $overrideby    = $thisprogress->overrideby;
             } else {
                 $state = COMPLETION_INCOMPLETE;
                 $timecompleted = 0;
+                $overrideby = null;
             }
 
             $results[] = array(
@@ -195,7 +278,8 @@ class core_completion_external extends external_api {
                        'instance'      => $activity->instance,
                        'state'         => $state,
                        'timecompleted' => $timecompleted,
-                       'tracking'      => $activity->completion
+                       'tracking'      => $activity->completion,
+                       'overrideby'    => $overrideby
             );
         }
 
@@ -227,6 +311,8 @@ class core_completion_external extends external_api {
                             'timecompleted' => new external_value(PARAM_INT, 'timestamp for completed activity'),
                             'tracking'      => new external_value(PARAM_INT, 'type of tracking:
                                                                     0 means none, 1 manual, 2 automatic'),
+                            'overrideby' => new external_value(PARAM_INT, 'The user id who has overriden the status, or null',
+                                VALUE_OPTIONAL),
                         ), 'Activity'
                     ), 'List of activities status'
                 ),
@@ -270,7 +356,9 @@ class core_completion_external extends external_api {
         $params = self::validate_parameters(self::get_course_completion_status_parameters(), $arrayparams);
 
         $course = get_course($params['courseid']);
-        $user = core_user::get_user($params['userid'], 'id', MUST_EXIST);
+        $user = core_user::get_user($params['userid'], '*', MUST_EXIST);
+        core_user::require_active_user($user);
+
         $context = context_course::instance($course->id);
         self::validate_context($context);
 
@@ -365,7 +453,7 @@ class core_completion_external extends external_api {
                                          'type' => new external_value(PARAM_TEXT, 'Type description'),
                                          'criteria' => new external_value(PARAM_RAW, 'Criteria description'),
                                          'requirement' => new external_value(PARAM_TEXT, 'Requirement description'),
-                                         'status' => new external_value(PARAM_TEXT, 'Status description'),
+                                         'status' => new external_value(PARAM_RAW, 'Status description, can be anything'),
                                          ), 'details'),
                                  ), 'Completions'
                             ), ''
@@ -374,6 +462,86 @@ class core_completion_external extends external_api {
                 ),
                 'warnings' => new external_warnings()
             ), 'Course completion status'
+        );
+    }
+
+    /**
+     * Describes the parameters for mark_course_self_completed.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.0
+     */
+    public static function mark_course_self_completed_parameters() {
+        return new external_function_parameters (
+            array(
+                'courseid' => new external_value(PARAM_INT, 'Course ID')
+            )
+        );
+    }
+
+    /**
+     * Update the course completion status for the current user (if course self-completion is enabled).
+     *
+     * @param  int $courseid    Course id
+     * @return array            Result and possible warnings
+     * @since Moodle 3.0
+     * @throws moodle_exception
+     */
+    public static function mark_course_self_completed($courseid) {
+        global $USER;
+
+        $warnings = array();
+        $params = self::validate_parameters(self::mark_course_self_completed_parameters(),
+                                            array('courseid' => $courseid));
+
+        $course = get_course($params['courseid']);
+        $context = context_course::instance($course->id);
+        self::validate_context($context);
+
+        // Set up completion object and check it is enabled.
+        $completion = new completion_info($course);
+        if (!$completion->is_enabled()) {
+            throw new moodle_exception('completionnotenabled', 'completion');
+        }
+
+        if (!$completion->is_tracked_user($USER->id)) {
+            throw new moodle_exception('nottracked', 'completion');
+        }
+
+        $completion = $completion->get_completion($USER->id, COMPLETION_CRITERIA_TYPE_SELF);
+
+        // Self completion criteria not enabled.
+        if (!$completion) {
+            throw new moodle_exception('noselfcompletioncriteria', 'completion');
+        }
+
+        // Check if the user has already marked himself as complete.
+        if ($completion->is_complete()) {
+            throw new moodle_exception('useralreadymarkedcomplete', 'completion');
+        }
+
+        // Mark the course complete.
+        $completion->mark_complete();
+
+        $result = array();
+        $result['status'] = true;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    /**
+     * Describes the mark_course_self_completed return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.0
+     */
+    public static function mark_course_self_completed_returns() {
+
+        return new external_single_structure(
+            array(
+                'status'    => new external_value(PARAM_BOOL, 'status, true if success'),
+                'warnings'  => new external_warnings(),
+            )
         );
     }
 

@@ -3,7 +3,7 @@
 /*
  * This file is part of Mustache.php.
  *
- * (c) 2010-2014 Justin Hileman
+ * (c) 2010-2017 Justin Hileman
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -40,9 +40,9 @@ class Mustache_Loader_FilesystemLoader implements Mustache_Loader
      *         'extension' => '.ms',
      *     );
      *
-     * @throws Mustache_Exception_RuntimeException if $baseDir does not exist.
+     * @throws Mustache_Exception_RuntimeException if $baseDir does not exist
      *
-     * @param string $baseDir Base directory containing Mustache template files.
+     * @param string $baseDir Base directory containing Mustache template files
      * @param array  $options Array of Loader options (default: array())
      */
     public function __construct($baseDir, array $options = array())
@@ -53,7 +53,7 @@ class Mustache_Loader_FilesystemLoader implements Mustache_Loader
             $this->baseDir = realpath($this->baseDir);
         }
 
-        if (!is_dir($this->baseDir)) {
+        if ($this->shouldCheckPath() && !is_dir($this->baseDir)) {
             throw new Mustache_Exception_RuntimeException(sprintf('FilesystemLoader baseDir must be a directory: %s', $baseDir));
         }
 
@@ -88,7 +88,7 @@ class Mustache_Loader_FilesystemLoader implements Mustache_Loader
     /**
      * Helper function for loading a Mustache file by name.
      *
-     * @throws Mustache_Exception_UnknownTemplateException If a template file is not found.
+     * @throws Mustache_Exception_UnknownTemplateException If a template file is not found
      *
      * @param string $name
      *
@@ -98,7 +98,7 @@ class Mustache_Loader_FilesystemLoader implements Mustache_Loader
     {
         $fileName = $this->getFileName($name);
 
-        if (!file_exists($fileName)) {
+        if ($this->shouldCheckPath() && !file_exists($fileName)) {
             throw new Mustache_Exception_UnknownTemplateException($name);
         }
 
@@ -120,5 +120,16 @@ class Mustache_Loader_FilesystemLoader implements Mustache_Loader
         }
 
         return $fileName;
+    }
+
+    /**
+     * Only check if baseDir is a directory and requested templates are files if
+     * baseDir is using the filesystem stream wrapper.
+     *
+     * @return bool Whether to check `is_dir` and `file_exists`
+     */
+    protected function shouldCheckPath()
+    {
+        return strpos($this->baseDir, '://') === false || strpos($this->baseDir, 'file://') === 0;
     }
 }

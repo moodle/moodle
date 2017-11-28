@@ -24,14 +24,14 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version  = 2015051100;
-$plugin->requires = 2015050500;
+$plugin->version  = 2017111300;
+$plugin->requires = 2017110800;
 
 $plugin->component = 'qtype_randomsamatch';
 
 $plugin->dependencies = array(
-    'qtype_match' => 2015050500,
-    'qtype_shortanswer' => 2015050500,
+    'qtype_match' => 2017110800,
+    'qtype_shortanswer' => 2017110800,
 );
 
 $plugin->maturity  = MATURITY_STABLE;

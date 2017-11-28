@@ -1,17 +1,24 @@
 <?php
 /**
- * The Horde_Mime_Mdn:: class implements Message Disposition Notifications as
- * described by RFC 3798.
- *
- * Copyright 2004-2014 Horde LLC (http://www.horde.org/)
+ * Copyright 2004-2017 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file COPYING for license information (LGPL). If you
  * did not receive this file, see http://www.horde.org/licenses/lgpl21.
  *
- * @author   Michael Slusarz <slusarz@horde.org>
- * @category Horde
- * @license  http://www.horde.org/licenses/lgpl21 LGPL 2.1
- * @package  Mime
+ * @category  Horde
+ * @copyright 2004-2017 Horde LLC
+ * @license   http://www.horde.org/licenses/lgpl21 LGPL 2.1
+ * @package   Mime
+ */
+
+/**
+ * Message Disposition Notifications (RFC 3798).
+ *
+ * @author    Michael Slusarz <slusarz@horde.org>
+ * @category  Horde
+ * @copyright 2004-2017 Horde LLC
+ * @license   http://www.horde.org/licenses/lgpl21 LGPL 2.1
+ * @package   Mime
  */
 class Horde_Mime_Mdn
 {
@@ -43,16 +50,18 @@ class Horde_Mime_Mdn
     }
 
     /**
-     * Returns the address to return the MDN to.
+     * Returns the address(es) to return the MDN to.
      *
-     * @return string  The address to send the MDN to. Returns null if no
+     * @return string  The address(es) to send the MDN to. Returns null if no
      *                 MDN is requested.
      */
     public function getMdnReturnAddr()
     {
         /* RFC 3798 [2.1] requires the Disposition-Notification-To header
          * for an MDN to be created. */
-        return $this->_headers->getValue(self::MDN_HEADER);
+        return ($hdr = $this->_headers[self::MDN_HEADER])
+            ? strval($hdr)
+            : null;
     }
 
     /**
@@ -64,21 +73,22 @@ class Horde_Mime_Mdn
      */
     public function userConfirmationNeeded()
     {
-        $return_path = $this->_headers->getValue('Return-Path');
+        $return_path = $this->_headers['Return-Path'];
 
         /* RFC 3798 [2.1]: Explicit confirmation is needed if there is no
          * Return-Path in the header. Also, "if the message contains more
          * than one Return-Path header, the implementation may [] treat the
          * situation as a failure of the comparison." */
-        if (empty($return_path) || is_array($return_path)) {
+        if (!$return_path || (count($return_path->value) > 1)) {
             return true;
         }
 
         /* RFC 3798 [2.1]: Explicit confirmation is needed if there is more
          * than one distinct address in the Disposition-Notification-To
          * header. */
-        $rfc822 = new Horde_Mail_Rfc822();
-        $addr_ob = $rfc822->parseAddressList($this->getMdnReturnAddr());
+        $addr_ob = ($hdr = $this->_headers[self::MDN_HEADER])
+            ? $hdr->getAddressList(true)
+            : array();
 
         switch (count($addr_ob)) {
         case 0:
@@ -97,10 +107,8 @@ class Horde_Mime_Mdn
          * from the address in the Return-Path header." This comparison is
          * case-sensitive for the mailbox part and case-insensitive for the
          * host part. */
-        $ret_ob = new Horde_Mail_Rfc822_Address($return_path);
-
-        return ($ret_ob->valid &&
-                ($addr_ob->bare_address == $ret_ob->bare_address));
+        $ret_ob = new Horde_Mail_Rfc822_Address($return_path->value);
+        return (!$ret_ob->valid || !$addr_ob->match($ret_ob));
     }
 
     /**
@@ -130,7 +138,7 @@ class Horde_Mime_Mdn
      *                            - deleted
      *                            - displayed
      * @param string $name      The name of the local server.
-     * @param Mail $mailer      A Mail driver.
+     * @param Horde_Mail_Transport $mailer  Mail transport object.
      * @param array $opts       Additional options:
      *   - charset: (string) Default charset.
      *              DEFAULT: NONE
@@ -143,8 +151,6 @@ class Horde_Mime_Mdn
      * @param array $err        If $mod is 'error', the additional
      *                          information to provide. Key is the type of
      *                          modification, value is the text.
-     *
-     * @throws Horde_Mime_Exception
      */
     public function generate($action, $sending, $type, $name, $mailer,
                              array $opts = array(), array $mod = array(),
@@ -155,36 +161,30 @@ class Horde_Mime_Mdn
             'from_addr' => null
         ), $opts);
 
-        $to = $this->getMdnReturnAddr();
-        $ua = $this->_headers->getUserAgent();
-
-        $orig_recip = $this->_headers->getValue('Original-Recipient');
-        if (!empty($orig_recip) && is_array($orig_recip)) {
-            $orig_recip = $orig_recip[0];
+        if (!($hdr = $this->_headers[self::MDN_HEADER])) {
+            throw new RuntimeException(
+                'Need at least one address to send MDN to.'
+            );
         }
 
-        $msg_id = $this->_headers->getValue('Message-ID');
+        $to = $hdr->getAddressList(true);
+        $ua = Horde_Mime_Headers_UserAgent::create();
 
-        /* Create the Disposition field now (RFC 3798 [3.2.6]). */
-        $dispo = 'Disposition: ' .
-                 (($action) ? 'manual-action' : 'automatic-action') .
-                 '/' .
-                 (($sending) ? 'MDN-sent-manually' : 'MDN-sent-automatically') .
-                 '; ' .
-                 $type;
-        if (!empty($mod)) {
-            $dispo .= '/' . implode(', ', $mod);
+        if ($orig_recip = $this->_headers['Original-Recipient']) {
+            $orig_recip = $orig_recip->value_single;
         }
 
         /* Set up the mail headers. */
         $msg_headers = new Horde_Mime_Headers();
-        $msg_headers->addMessageIdHeader();
-        $msg_headers->addUserAgentHeader($ua);
-        $msg_headers->addHeader('Date', date('r'));
+        $msg_headers->addHeaderOb(Horde_Mime_Headers_MessageId::create());
+        $msg_headers->addHeaderOb($ua);
+        /* RFC 3834 [5.2] */
+        $msg_headers->addHeader('Auto-Submitted', 'auto-replied');
+        $msg_headers->addHeaderOb(Horde_Mime_Headers_Date::create());
         if ($opts['from_addr']) {
             $msg_headers->addHeader('From', $opts['from_addr']);
         }
-        $msg_headers->addHeader('To', $this->getMdnReturnAddr());
+        $msg_headers->addHeader('To', $to);
         $msg_headers->addHeader('Subject', Horde_Mime_Translation::t("Disposition Notification"));
 
         /* MDNs are a subtype of 'multipart/report'. */
@@ -197,7 +197,12 @@ class Horde_Mime_Mdn
         $part_one->setType('text/plain');
         $part_one->setCharset($opts['charset']);
         if ($type == 'displayed') {
-            $contents = sprintf(Horde_Mime_Translation::t("The message sent on %s to %s with subject \"%s\" has been displayed.\n\nThis is no guarantee that the message has been read or understood."), $this->_headers->getValue('Date'), $this->_headers->getValue('To'), $this->_headers->getValue('Subject'));
+            $contents = sprintf(
+                Horde_Mime_Translation::t("The message sent on %s to %s with subject \"%s\" has been displayed.\n\nThis is no guarantee that the message has been read or understood."),
+                $this->_headers['Date'],
+                $this->_headers['To'],
+                $this->_headers['Subject']
+            );
             $flowed = new Horde_Text_Flowed($contents, $opts['charset']);
             $flowed->setDelSp(true);
             $part_one->setContentTypeParameter('format', 'flowed');
@@ -205,48 +210,62 @@ class Horde_Mime_Mdn
             $part_one->setContents($flowed->toFlowed());
         }
         // TODO: Messages for other notification types.
-        $msg->addPart($part_one);
+        $msg[] = $part_one;
 
         /* The second part is a machine-parseable description. */
         $part_two = new Horde_Mime_Part();
         $part_two->setType('message/disposition-notification');
-        $part_two_text = array('Reporting-UA: ' . $name . '; ' . $ua . "\n");
+
+        $part_two_h = new Horde_Mime_Headers();
+        $part_two_h->addHeader('Reporting-UA', $name . '; ' . $ua);
         if (!empty($orig_recip)) {
-            $part_two_text[] = 'Original-Recipient: rfc822;' . $orig_recip . "\n";
+            $part_two_h->addHeader('Original-Recipient', 'rfc822;' . $orig_recip);
         }
         if ($opts['from_addr']) {
-            $part_two_text[] = 'Final-Recipient: rfc822;' . $opts['from_addr'] . "\n";
+            $part_two_h->addHeader('Final-Recipient', 'rfc822;' . $opts['from_addr']);
         }
-        if (!empty($msg_id)) {
-            $part_two_text[] = 'Original-Message-ID: rfc822;' . $msg_id . "\n";
+
+        if ($msg_id = $this->_headers['Message-ID']) {
+            $part_two_h->addHeader('Original-Message-ID', strval($msg_id));
         }
-        $part_two_text[] = $dispo . "\n";
+
+        /* Create the Disposition field now (RFC 3798 [3.2.6]). */
+        $dispo = (($action) ? 'manual-action' : 'automatic-action') .
+            '/' .
+            (($sending) ? 'MDN-sent-manually' : 'MDN-sent-automatically') .
+            '; ' .
+            $type;
+        if (!empty($mod)) {
+            $dispo .= '/' . implode(', ', $mod);
+        }
+        $part_two_h->addHeader('Disposition', $dispo);
+
         if (in_array('error', $mod) && isset($err['error'])) {
-            $part_two_text[] = 'Error: ' . $err['error'] . "\n";
+            $part_two_h->addHeader('Error', $err['error']);
         }
-        $part_two->setContents($part_two_text);
-        $msg->addPart($part_two);
+
+        $part_two->setContents(trim($part_two_h->toString()) . "\n");
+        $msg[] = $part_two;
 
         /* The third part is the text of the original message.  RFC 3798 [3]
          * allows us to return only a portion of the entire message - this
          * is left up to the user. */
         $part_three = new Horde_Mime_Part();
         $part_three->setType('message/rfc822');
-        $part_three_text = array($this->_headers->toString());
+        $part_three_text = array(trim($this->_headers->toString()) . "\n");
         if (!empty($this->_msgtext)) {
-            $part_three_text[] = $part_three->getEOL() . $this->_msgtext;
+            $part_three_text[] = "\n" . $this->_msgtext;
         }
         $part_three->setContents($part_three_text);
-        $msg->addPart($part_three);
+        $msg[] = $part_three;
 
         return $msg->send($to, $msg_headers, $mailer);
     }
 
     /**
-     * Add a MDN (read receipt) request headers to the Horde_Mime_Headers::
-     * object.
+     * Add a MDN (read receipt) request header.
      *
-     * @param string $to  The address the receipt should be mailed to.
+     * @param mixed $to  The address(es) the receipt should be mailed to.
      */
     public function addMdnRequestHeaders($to)
     {

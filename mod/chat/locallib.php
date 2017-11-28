@@ -18,6 +18,8 @@
  * Library of functions for chat outside of the core api
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 require_once($CFG->dirroot . '/mod/chat/lib.php');
 require_once($CFG->libdir . '/portfolio/caller.php');
 
@@ -237,6 +239,7 @@ class user_message implements renderable {
      */
     public function __construct($senderprofile, $sendername, $avatar, $mymessageclass, $time, $message, $theme) {
 
+        $this->senderprofile = $senderprofile;
         $this->sendername = $sendername;
         $this->avatar = $avatar;
         $this->mymessageclass = $mymessageclass;

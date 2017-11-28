@@ -25,11 +25,16 @@
  * @since Moodle 2.3
  */
 
-require_once(dirname(__FILE__).'/../config.php');
+require_once(__DIR__.'/../config.php');
 require_once($CFG->dirroot.'/course/lib.php');
 
 $courseid = required_param('courseid', PARAM_INT);
-$increase = optional_param('increase', true, PARAM_BOOL);
+$increase = optional_param('increase', null, PARAM_BOOL);
+$insertsection = optional_param('insertsection', null, PARAM_INT); // Insert section at position; 0 means at the end.
+$numsections = optional_param('numsections', 1, PARAM_INT);        // Number of sections to insert.
+$returnurl = optional_param('returnurl', null, PARAM_LOCALURL);    // Where to return to after the action.
+$sectionreturn = optional_param('sectionreturn', null, PARAM_INT); // Section to return to, ignored if $returnurl is specified.
+
 $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
 $courseformatoptions = course_get_format($course)->get_format_options();
 
@@ -40,10 +45,11 @@ require_login($course);
 require_capability('moodle/course:update', context_course::instance($course->id));
 require_sesskey();
 
-if (isset($courseformatoptions['numsections'])) {
+if (isset($courseformatoptions['numsections']) && $increase !== null) {
     if ($increase) {
         // Add an additional section.
         $courseformatoptions['numsections']++;
+        course_create_sections_if_missing($course, $courseformatoptions['numsections']);
     } else {
         // Remove a section.
         $courseformatoptions['numsections']--;
@@ -55,9 +61,25 @@ if (isset($courseformatoptions['numsections'])) {
         update_course((object)array('id' => $course->id,
             'numsections' => $courseformatoptions['numsections']));
     }
+    if (!$returnurl) {
+        $returnurl = course_get_url($course);
+        $returnurl->set_anchor('changenumsections');
+    }
+
+} else if (course_get_format($course)->uses_sections() && $insertsection !== null) {
+    if ($insertsection) {
+        // Inserting sections at any position except in the very end requires capability to move sections.
+        require_capability('moodle/course:movesections', context_course::instance($course->id));
+    }
+    $sections = [];
+    for ($i = 0; $i < max($numsections, 1); $i ++) {
+        $sections[] = course_create_section($course, $insertsection);
+    }
+    if (!$returnurl) {
+        $returnurl = course_get_url($course, $sections[0]->section,
+            ($sectionreturn !== null) ? ['sr' => $sectionreturn] : []);
+    }
 }
 
-$url = course_get_url($course);
-$url->set_anchor('changenumsections');
 // Redirect to where we were..
-redirect($url);
+redirect($returnurl);

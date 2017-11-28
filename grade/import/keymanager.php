@@ -23,7 +23,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(dirname(__FILE__).'/../../config.php');
+require_once(__DIR__.'/../../config.php');
 require_once($CFG->dirroot.'/grade/lib.php');
 
 $id = required_param('id', PARAM_INT); // course id
@@ -31,7 +31,7 @@ $id = required_param('id', PARAM_INT); // course id
 $PAGE->set_url('/grade/import/keymanager.php', array('id' => $id));
 
 if (!$course = $DB->get_record('course', array('id'=>$id))) {
-    print_error('nocourseid');
+    print_error('invalidcourseid');
 }
 
 require_login($course);

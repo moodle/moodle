@@ -15,8 +15,7 @@ Feature: Sections can be moved
       | user | course | role |
       | teacher1 | C1 | editingteacher |
     And I log in as "teacher1"
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
 
   Scenario: Move up and down a section with Javascript disabled in a single page course
     Given I add a "Forum" to section "1" and I fill the form with:
@@ -28,7 +27,7 @@ Feature: Sections can be moved
     And I should see "Test forum name" in the "Topic 1" "section"
 
   Scenario: Move up and down a section with Javascript disabled in the course home of a course using paged mode
-    Given I click on "Edit settings" "link" in the "Administration" "block"
+    Given I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
       | Course layout | Show one section per page |
     And I press "Save and display"
@@ -41,7 +40,7 @@ Feature: Sections can be moved
     And I should see "Test forum name" in the "Topic 1" "section"
 
   Scenario: Sections can not be moved with Javascript disabled in a section page of a course using paged mode
-    Given I click on "Edit settings" "link" in the "Administration" "block"
+    Given I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
       | Course layout | Show one section per page |
     And I press "Save and display"

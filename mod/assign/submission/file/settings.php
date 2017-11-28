@@ -32,6 +32,10 @@ $settings->add(new admin_setting_configtext('assignsubmission_file/maxfiles',
                    new lang_string('maxfiles', 'assignsubmission_file'),
                    new lang_string('maxfiles_help', 'assignsubmission_file'), 20, PARAM_INT));
 
+$settings->add(new admin_setting_filetypes('assignsubmission_file/filetypes',
+                   new lang_string('defaultacceptedfiletypes', 'assignsubmission_file'),
+                   new lang_string('acceptedfiletypes_help', 'assignsubmission_file'), ''));
+
 if (isset($CFG->maxbytes)) {
 
     $name = new lang_string('maximumsubmissionsize', 'assignsubmission_file');
@@ -41,7 +45,7 @@ if (isset($CFG->maxbytes)) {
     $element = new admin_setting_configselect('assignsubmission_file/maxbytes',
                                               $name,
                                               $description,
-                                              1048576,
+                                              $CFG->maxbytes,
                                               get_max_upload_sizes($CFG->maxbytes, 0, 0, $maxbytes));
     $settings->add($element);
 }

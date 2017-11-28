@@ -43,4 +43,29 @@ class gradereport_user_renderer extends plugin_renderer_base {
         return $output;
     }
 
+    /**
+     * Creates and renders the single select box for the user view.
+     *
+     * @param int $userid The selected userid
+     * @param int $userview The current view user setting constant
+     * @return string
+     */
+    public function view_user_selector($userid, $userview) {
+        global $PAGE, $USER;
+        $url = $PAGE->url;
+        if ($userid != $USER->id) {
+            $url->param('userid', $userid);
+        }
+
+        $options = array(GRADE_REPORT_USER_VIEW_USER => get_string('otheruser', 'gradereport_user'),
+                GRADE_REPORT_USER_VIEW_SELF => get_string('myself', 'gradereport_user'));
+        $select = new single_select($url, 'userview', $options, $userview, null);
+
+        $select->label = get_string('viewas', 'gradereport_user');
+
+        $output = html_writer::tag('div', $this->output->render($select), array('class' => 'view_users_selector'));
+
+        return $output;
+    }
+
 }

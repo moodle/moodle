@@ -115,6 +115,12 @@ class core_badges_renderer extends plugin_renderer_base {
                     'value' => $this->output->larrow() . ' ' . get_string('award', 'badges'),
                     'class' => 'actionbutton')
                 );
+        $actioncell->text .= html_writer::empty_tag('input', array(
+                    'type' => 'submit',
+                    'name' => 'revoke',
+                    'value' => get_string('revoke', 'badges') . ' ' . $this->output->rarrow(),
+                    'class' => 'actionbutton')
+                );
         $actioncell->text .= html_writer::end_tag('div', array());
         $actioncell->attributes['class'] = 'actions';
         $potentialcell = new html_table_cell();
@@ -352,7 +358,9 @@ class core_badges_renderer extends plugin_renderer_base {
         // Print evidence.
         $agg = $badge->get_aggregation_methods();
         $evidence = $badge->get_criteria_completions($userinfo->id);
-        $eids = array_map(create_function('$o', 'return $o->critid;'), $evidence);
+        $eids = array_map(function($o) {
+            return $o->critid;
+        }, $evidence);
         unset($badge->criteria[BADGE_CRITERIA_TYPE_OVERALL]);
 
         $items = array();

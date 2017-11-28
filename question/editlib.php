@@ -260,11 +260,15 @@ class_alias('core_question\bank\view', 'question_bank_view', true);
  * @param string $baseurl the name of the script calling this funciton. For examle 'qusetion/edit.php'.
  * @param string $edittab code for this edit tab
  * @param bool $requirecmid require cmid? default false
- * @param bool $requirecourseid require courseid, if cmid is not given? default true
+ * @param bool $unused no longer used, do no pass
  * @return array $thispageurl, $contexts, $cmid, $cm, $module, $pagevars
  */
-function question_edit_setup($edittab, $baseurl, $requirecmid = false, $requirecourseid = true) {
-    global $DB, $PAGE;
+function question_edit_setup($edittab, $baseurl, $requirecmid = false, $unused = null) {
+    global $DB, $PAGE, $CFG;
+
+    if ($unused !== null) {
+        debugging('Deprecated argument passed to question_edit_setup()', DEBUG_DEVELOPER);
+    }
 
     $thispageurl = new moodle_url($baseurl);
     $thispageurl->remove_all_params(); // We are going to explicity add back everything important - this avoids unwanted params from being retained.
@@ -283,18 +287,10 @@ function question_edit_setup($edittab, $baseurl, $requirecmid = false, $requirec
     } else {
         $module = null;
         $cm = null;
-        if ($requirecourseid){
-            $courseid  = required_param('courseid', PARAM_INT);
-        } else {
-            $courseid  = optional_param('courseid', 0, PARAM_INT);
-        }
-        if ($courseid){
-            $thispageurl->params(compact('courseid'));
-            require_login($courseid, false);
-            $thiscontext = context_course::instance($courseid);
-        } else {
-            $thiscontext = null;
-        }
+        $courseid  = required_param('courseid', PARAM_INT);
+        $thispageurl->params(compact('courseid'));
+        require_login($courseid, false);
+        $thiscontext = context_course::instance($courseid);
     }
 
     if ($thiscontext){
@@ -454,26 +450,10 @@ function require_login_in_context($contextorid = null){
 function print_choose_qtype_to_add_form($hiddenparams, array $allowedqtypes = null, $enablejs = true) {
     global $CFG, $PAGE, $OUTPUT;
 
-    if ($enablejs) {
-        // Add the chooser.
-        $PAGE->requires->yui_module('moodle-question-chooser', 'M.question.init_chooser', array(array()));
-    }
-
-    $realqtypes = array();
-    $fakeqtypes = array();
-    foreach (question_bank::get_creatable_qtypes() as $qtypename => $qtype) {
-        if ($allowedqtypes && !in_array($qtypename, $allowedqtypes)) {
-            continue;
-        }
-        if ($qtype->is_real_question_type()) {
-            $realqtypes[] = $qtype;
-        } else {
-            $fakeqtypes[] = $qtype;
-        }
-    }
-
+    $chooser = core_question\output\qbank_chooser::get($PAGE->course, $hiddenparams, $allowedqtypes);
     $renderer = $PAGE->get_renderer('question', 'bank');
-    return $renderer->qbank_chooser($realqtypes, $fakeqtypes, $PAGE->course, $hiddenparams);
+
+    return $renderer->render($chooser);
 }
 
 /**

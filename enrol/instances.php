@@ -225,19 +225,17 @@ foreach ($instances as $instance) {
     $edit = array();
 
     if ($canconfig) {
-        // up/down link
-        $updown = '';
         if ($updowncount > 1) {
             $aurl = new moodle_url($url, array('action'=>'up', 'instance'=>$instance->id));
             $updown[] = $OUTPUT->action_icon($aurl, new pix_icon('t/up', $strup, 'core', array('class' => 'iconsmall')));
         } else {
-            $updown[] = html_writer::empty_tag('img', array('src'=>$OUTPUT->pix_url('spacer'), 'alt'=>'', 'class'=>'iconsmall'));
+            $updown[] = $OUTPUT->spacer();
         }
         if ($updowncount < $icount) {
             $aurl = new moodle_url($url, array('action'=>'down', 'instance'=>$instance->id));
             $updown[] = $OUTPUT->action_icon($aurl, new pix_icon('t/down', $strdown, 'core', array('class' => 'iconsmall')));
         } else {
-            $updown[] = html_writer::empty_tag('img', array('src'=>$OUTPUT->pix_url('spacer'), 'alt'=>'', 'class'=>'iconsmall'));
+            $updown[] = $OUTPUT->spacer();
         }
         ++$updowncount;
 
@@ -255,7 +253,7 @@ foreach ($instances as $instance) {
                 $edit[] = $OUTPUT->action_icon($aurl, new pix_icon('t/show', $strenable, 'core', array('class' => 'iconsmall')));
             } else {
                 // plugin specific state - do not mess with it!
-                $edit[] = html_writer::empty_tag('img', array('src'=>$OUTPUT->pix_url('t/show'), 'alt'=>'', 'class'=>'iconsmall'));
+                $edit[] = $OUTPUT->pix_icon('t/show', get_string('show'));
             }
 
         }
@@ -277,10 +275,19 @@ echo html_writer::table($table);
 // access security is in each plugin
 $candidates = array();
 foreach (enrol_get_plugins(true) as $name=>$plugin) {
-    if (!$link = $plugin->get_newinstance_link($course->id)) {
-        continue;
+    if ($plugin->use_standard_editing_ui()) {
+        if ($plugin->can_add_instance($course->id)) {
+            // Standard add/edit UI.
+            $params = array('type' => $name, 'courseid' => $course->id);
+            $url = new moodle_url('/enrol/editinstance.php', $params);
+            $link = $url->out(false);
+            $candidates[$link] = get_string('pluginname', 'enrol_'.$name);
+        }
+    } else if ($url = $plugin->get_newinstance_link($course->id)) {
+        // Old custom UI.
+        $link = $url->out(false);
+        $candidates[$link] = get_string('pluginname', 'enrol_'.$name);
     }
-    $candidates[$link->out(false)] = get_string('pluginname', 'enrol_'.$name);
 }
 
 if ($candidates) {

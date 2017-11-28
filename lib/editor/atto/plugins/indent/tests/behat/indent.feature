@@ -6,7 +6,7 @@ Feature: Indent text in Atto
   Scenario: Indent
     Given I log in as "admin"
     And I follow "Profile" in the user menu
-    When I follow "Edit profile"
+    When I click on "Edit profile" "link" in the "region-main" "region"
     And I set the field "Description" to "<p>I need some space.</p>"
     And I select the text in the "Description" Atto editor
     And I click on "Show more buttons" "button"
@@ -16,14 +16,13 @@ Feature: Indent text in Atto
     And I follow "Editor preferences"
     And I set the field "Text editor" to "Plain text area"
     And I press "Save changes"
-    And I follow "Edit profile"
+    And I click on "Edit profile" "link" in the "region-main" "region"
     Then I should see "class=\"editor-indent\""
 
   @javascript
   Scenario: Indent and outdent
     Given I log in as "admin"
-    And I follow "Profile" in the user menu
-    When I follow "Edit profile"
+    And I open my profile in edit mode
     And I set the field "Description" to "<p>I need some space.</p>"
     And I select the text in the "Description" Atto editor
     And I click on "Show more buttons" "button"
@@ -34,5 +33,5 @@ Feature: Indent text in Atto
     And I follow "Editor preferences"
     And I set the field "Text editor" to "Plain text area"
     And I press "Save changes"
-    And I follow "Edit profile"
+    And I click on "Edit profile" "link" in the "region-main" "region"
     Then I should not see "class=\"editor-indent\""

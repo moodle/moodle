@@ -17,15 +17,14 @@ Feature: In a report, admin can filter log data
       | student1 | C1 | student |
     And I log in as "admin"
 
-  @javascript
   Scenario: Filter log report for standard and legacy log reader
     Given I navigate to "Manage log stores" node in "Site administration > Plugins > Logging"
     And I click on "Enable" "link" in the "Legacy log" "table_row"
     And the following config values are set as admin:
       | loglegacy | 1 | logstore_legacy |
     And I follow "Home"
-    And I follow "Course 1"
-    And I navigate to "Participants" node in "Current course > C1"
+    And I am on "Course 1" course homepage
+    And I navigate to course participants
     And I follow "Student 1"
     And I click on "Log in as" "link"
     And I press "Continue"
@@ -42,10 +41,9 @@ Feature: In a report, admin can filter log data
     And I should see "user login"
     And I should not see "Nothing to display"
 
-  @javascript
   Scenario: Filter log report for standard log reader
-    Given I follow "Course 1"
-    And I navigate to "Participants" node in "Current course > C1"
+    Given I am on "Course 1" course homepage
+    And I navigate to course participants
     And I follow "Student 1"
     And I click on "Log in as" "link"
     And I press "Continue"
@@ -57,7 +55,6 @@ Feature: In a report, admin can filter log data
     And I press "Get these logs"
     Then I should see "User logged in as another user"
 
-  @javascript
   Scenario: Filter log report for legacy log reader
     Given I navigate to "Manage log stores" node in "Site administration > Plugins > Logging"
     And I click on "Enable" "link" in the "Legacy log" "table_row"
@@ -65,11 +62,10 @@ Feature: In a report, admin can filter log data
     And the following config values are set as admin:
       | loglegacy | 1 | logstore_legacy |
     And I follow "Home"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Home"
-    And I follow "Course 1"
-    And I expand "Users" node
-    And I follow "Enrolled users"
+    And I am on "Course 1" course homepage
+    And I navigate to course participants
     And I follow "Student 1"
     And I click on "Log in as" "link"
     And I press "Continue"

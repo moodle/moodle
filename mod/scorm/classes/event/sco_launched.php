@@ -102,4 +102,15 @@ class sco_launched extends \core\event\base {
             throw new \coding_exception('The \'loadedcontent\' value must be set in other.');
         }
     }
+
+    public static function get_objectid_mapping() {
+        return array('db' => 'scorm_scoes', 'restore' => 'scorm_sco');
+    }
+
+    public static function get_other_mapping() {
+        $othermapped = array();
+        $othermapped['instanceid'] = array('db' => 'scorm', 'restore' => 'scorm');
+
+        return $othermapped;
+    }
 }

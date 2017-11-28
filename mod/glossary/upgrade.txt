@@ -1,6 +1,14 @@
 This files describes API changes in /mod/glossary/*,
 information provided here is intended especially for developers.
 
+=== 3.4 ===
+  * External functions returning entries now return an additional field "ratinginfo" containing the entry rating information.
+
+=== 3.2 ===
+* External functions that were returning file information now return the following file fields:
+  filename, filepath, mimetype, filesize, timemodified and fileurl.
+  Those fields are now marked as VALUE_OPTIONAL for backwards compatibility.
+
 === 2.8 ===
 * The glossary_print_entry_attachment function no longer takes an `align`
   or `insidetable` property. Instead the attachments are printed within a

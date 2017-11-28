@@ -81,6 +81,7 @@ class assignfeedback_file_import_zip_form extends moodleform implements renderab
                 if ($importer->is_file_modified($assignment, $user, $plugin, $filename, $unzippedfile)) {
                     // Get a string we can show to identify this user.
                     $userdesc = fullname($user);
+                    $path = pathinfo($filename);
                     if ($assignment->is_blind_marking()) {
                         $userdesc = get_string('hiddenuser', 'assign') .
                                     $assignment->get_uniqueid_for_user($user->id);
@@ -93,8 +94,8 @@ class assignfeedback_file_import_zip_form extends moodleform implements renderab
                                                    'assignfeedback_file',
                                                    ASSIGNFEEDBACK_FILE_FILEAREA,
                                                    $grade->id,
-                                                   '/',
-                                                   $filename);
+                                                   $path['dirname'],
+                                                   $path['basename']);
                     }
 
                     if (!$grade || !$exists) {

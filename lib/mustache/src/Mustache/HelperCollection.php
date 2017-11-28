@@ -3,7 +3,7 @@
 /*
  * This file is part of Mustache.php.
  *
- * (c) 2010-2014 Justin Hileman
+ * (c) 2010-2017 Justin Hileman
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -81,7 +81,7 @@ class Mustache_HelperCollection
     /**
      * Get a helper by name.
      *
-     * @throws Mustache_Exception_UnknownHelperException If helper does not exist.
+     * @throws Mustache_Exception_UnknownHelperException If helper does not exist
      *
      * @param string $name
      *
@@ -103,7 +103,7 @@ class Mustache_HelperCollection
      *
      * @param string $name
      *
-     * @return boolean True if helper is present
+     * @return bool True if helper is present
      */
     public function __isset($name)
     {
@@ -115,7 +115,7 @@ class Mustache_HelperCollection
      *
      * @param string $name
      *
-     * @return boolean True if helper is present
+     * @return bool True if helper is present
      */
     public function has($name)
     {
@@ -137,7 +137,7 @@ class Mustache_HelperCollection
     /**
      * Check whether a given helper is present in the collection.
      *
-     * @throws Mustache_Exception_UnknownHelperException if the requested helper is not present.
+     * @throws Mustache_Exception_UnknownHelperException if the requested helper is not present
      *
      * @param string $name
      */
@@ -163,7 +163,7 @@ class Mustache_HelperCollection
     /**
      * Check whether the helper collection is empty.
      *
-     * @return boolean True if the collection is empty
+     * @return bool True if the collection is empty
      */
     public function isEmpty()
     {

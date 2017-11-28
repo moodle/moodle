@@ -26,9 +26,9 @@
 $string['apierror'] = '{$a}';
 $string['apikey'] = 'API key';
 $string['information'] = 'Get a <a href="https://developers.google.com/youtube/v3/getting-started">Google API key</a> for your Moodle site.';
-$string['pluginname'] = 'Youtube videos';
+$string['pluginname'] = 'YouTube videos';
 $string['search'] = 'Search videos';
-$string['youtube:view'] = 'Use youtube in file picker';
+$string['youtube:view'] = 'Use YouTube in file picker';
 $string['configplugin'] = 'YouTube repository type configuration';
 $string['sortby'] = 'Sort By';
 $string['sortpublished'] = 'Date Published';

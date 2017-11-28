@@ -26,6 +26,7 @@
  */
 
 require_once("HTML/QuickForm/text.php");
+require_once('templatable_form_element.php');
 
 /**
  * url type form element
@@ -36,7 +37,11 @@ require_once("HTML/QuickForm/text.php");
  * @copyright 2009 Dongsheng Cai <dongsheng@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class MoodleQuickForm_url extends HTML_QuickForm_text{
+class MoodleQuickForm_url extends HTML_QuickForm_text implements templatable {
+    use templatable_form_element {
+        export_for_template as export_for_template_base;
+    }
+
     /** @var string html for help button, if empty then no help */
     var $_helpbutton='';
 
@@ -51,7 +56,7 @@ class MoodleQuickForm_url extends HTML_QuickForm_text{
      * @param mixed $attributes Either a typical HTML attribute string or an associative array.
      * @param array $options data which need to be posted.
      */
-    function MoodleQuickForm_url($elementName=null, $elementLabel=null, $attributes=null, $options=null) {
+    public function __construct($elementName=null, $elementLabel=null, $attributes=null, $options=null) {
         global $CFG;
         require_once("$CFG->dirroot/repository/lib.php");
         $options = (array)$options;
@@ -61,7 +66,19 @@ class MoodleQuickForm_url extends HTML_QuickForm_text{
         if (!isset($this->_options['usefilepicker'])) {
             $this->_options['usefilepicker'] = true;
         }
-        parent::HTML_QuickForm_text($elementName, $elementLabel, $attributes);
+
+        parent::__construct($elementName, $elementLabel, $attributes);
+        $this->_type = 'url';
+    }
+
+    /**
+     * Old syntax of class constructor. Deprecated in PHP7.
+     *
+     * @deprecated since Moodle 3.1
+     */
+    public function MoodleQuickForm_url($elementName=null, $elementLabel=null, $attributes=null, $options=null) {
+        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
+        self::__construct($elementName, $elementLabel, $attributes, $options);
     }
 
     /**
@@ -79,10 +96,18 @@ class MoodleQuickForm_url extends HTML_QuickForm_text{
      * @return string
      */
     function toHtml(){
-        global $PAGE, $OUTPUT;
 
         $id     = $this->_attributes['id'];
         $elname = $this->_attributes['name'];
+
+        // Add the class at the last minute.
+        if ($this->get_force_ltr()) {
+            if (!isset($this->_attributes['class'])) {
+                $this->_attributes['class'] = 'text-ltr';
+            } else {
+                $this->_attributes['class'] .= ' text-ltr';
+            }
+        }
 
         if ($this->_hiddenLabel) {
             $this->_generateId();
@@ -95,13 +120,23 @@ class MoodleQuickForm_url extends HTML_QuickForm_text{
             return $str;
         }
 
-        $client_id = uniqid();
+        // Print out file picker.
+        $str .= $this->getFilePickerHTML();
+
+        return $str;
+    }
+
+    public function getFilePickerHTML() {
+        global $PAGE, $OUTPUT;
+
+        $str = '';
+        $clientid = uniqid();
 
         $args = new stdClass();
         $args->accepted_types = '*';
         $args->return_types = FILE_EXTERNAL;
         $args->context = $PAGE->context;
-        $args->client_id = $client_id;
+        $args->client_id = $clientid;
         $args->env = 'url';
         $fp = new file_picker($args);
         $options = $fp->options;
@@ -109,7 +144,7 @@ class MoodleQuickForm_url extends HTML_QuickForm_text{
         if (count($options->repositories) > 0) {
             $straddlink = get_string('choosealink', 'repository');
             $str .= <<<EOD
-<button id="filepicker-button-{$client_id}" class="visibleifjs">
+<button id="filepicker-button-js-{$clientid}" class="visibleifjs btn btn-secondary">
 $straddlink
 </button>
 EOD;
@@ -147,4 +182,20 @@ EOD;
             return 'default';
         }
     }
+
+    public function export_for_template(renderer_base $output) {
+        $context = $this->export_for_template_base($output);
+        $context['filepickerhtml'] = !empty($this->_options['usefilepicker']) ? $this->getFilePickerHTML() : '';
+        return $context;
+    }
+
+    /**
+     * Get force LTR option.
+     *
+     * @return bool
+     */
+    public function get_force_ltr() {
+        return true;
+    }
+
 }

@@ -1,12 +1,12 @@
 <?php
 /**
- * Copyright 2014 Horde LLC (http://www.horde.org/)
+ * Copyright 2014-2017 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file COPYING for license information (LGPL). If you
  * did not receive this file, see http://www.horde.org/licenses/lgpl21.
  *
  * @category  Horde
- * @copyright 2014 Horde LLC
+ * @copyright 2014-2017 Horde LLC
  * @license   http://www.horde.org/licenses/lgpl21 LGPL 2.1
  * @package   Stream
  */
@@ -17,7 +17,7 @@
  *
  * @author    Michael Slusarz <slusarz@horde.org>
  * @category  Horde
- * @copyright 2014 Horde LLC
+ * @copyright 2014-2017 Horde LLC
  * @license   http://www.horde.org/licenses/lgpl21 LGPL 2.1
  * @package   Stream
  * @since     1.6.0
@@ -32,12 +32,12 @@ class Horde_Stream_String extends Horde_Stream
      *   - string: (string) [REQUIRED] The PHP string.
      * </pre>
      *
-     * @throws Horde_Stream_Exception
+     * @throws InvalidArgumentException
      */
     public function __construct(array $opts = array())
     {
         if (!isset($opts['string']) || !is_string($opts['string'])) {
-            throw new Horde_Stream_Exception('Need a PHP string.');
+            throw new InvalidArgumentException('Need a PHP string.');
         }
 
         $this->stream = Horde_Stream_Wrapper_String::getStream($opts['string']);

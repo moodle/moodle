@@ -25,7 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot.'/lib/formslib.php');
-require_once(dirname(__FILE__).'/guideeditor.php');
+require_once(__DIR__.'/guideeditor.php');
 MoodleQuickForm::registerElementType('guideeditor', $CFG->dirroot.'/grade/grading/form/guide/guideeditor.php',
     'moodlequickform_guideeditor');
 
@@ -53,7 +53,7 @@ class gradingform_guide_editguide extends moodleform {
         // Name.
         $form->addElement('text', 'name', get_string('name', 'gradingform_guide'),
             array('size' => 52, 'maxlength' => 255));
-        $form->addRule('name', get_string('required'), 'required');
+        $form->addRule('name', get_string('required'), 'required', null, 'client');
         $form->setType('name', PARAM_TEXT);
         $form->addRule('name', null, 'maxlength', 255, 'client');
 

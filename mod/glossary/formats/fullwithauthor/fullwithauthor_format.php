@@ -42,6 +42,11 @@ function glossary_show_entry_fullwithauthor($course, $cm, $glossary, $entry, $mo
         glossary_print_entry_definition($entry, $glossary, $cm);
         glossary_print_entry_attachment($entry, $cm, 'html');
 
+        if (core_tag_tag::is_enabled('mod_glossary', 'glossary_entries')) {
+            echo $OUTPUT->tag_list(
+                core_tag_tag::get_item_tags('mod_glossary', 'glossary_entries', $entry->id), null, 'glossary-tags');
+        }
+
         echo '</td></tr>';
         echo '<tr valign="top">';
         echo '<td class="left">&nbsp;</td>';

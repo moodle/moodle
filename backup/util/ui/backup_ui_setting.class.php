@@ -307,10 +307,12 @@ abstract class backup_setting_ui extends base_setting_ui {
      * 2. The setting is locked but only by settings that are of the same level (same page)
      *
      * Condition 2 is really why we have this function
-     *
+     * @param int $level Optional, if provided only depedency_settings below or equal to this level are considered,
+     *          when checking if the ui_setting is changeable. Although dependencies might cause a lock on this setting,
+     *          they could be changeable in the same view.
      * @return bool
      */
-    public function is_changeable() {
+    public function is_changeable($level = null) {
         if ($this->setting->get_status() === backup_setting::NOT_LOCKED) {
             // Its not locked so its chanegable.
             return true;
@@ -319,6 +321,9 @@ abstract class backup_setting_ui extends base_setting_ui {
             return false;
         } else if ($this->setting->has_dependencies_on_settings()) {
             foreach ($this->setting->get_settings_depended_on() as $dependency) {
+                if ($level && $dependency->get_setting()->get_level() >= $level) {
+                    continue;
+                }
                 if ($dependency->is_locked() && $dependency->get_setting()->get_level() !== $this->setting->get_level()) {
                     // Its not changeable because one or more dependancies arn't changeable.
                     return false;
@@ -355,7 +360,8 @@ class backup_setting_ui_text extends backup_setting_ui {
      */
     public function get_element_properties(base_task $task = null, renderer_base $output = null) {
         $icon = $this->get_icon();
-        $label = $this->get_label($task);
+        $context = context_course::instance($task->get_courseid());
+        $label = format_string($this->get_label($task), true, array('context' => $context));
         if (!empty($icon)) {
             $label .= $output->render($icon);
         }
@@ -418,7 +424,8 @@ class backup_setting_ui_checkbox extends backup_setting_ui {
     public function get_element_properties(base_task $task = null, renderer_base $output = null) {
         // Name, label, text, attributes.
         $icon = $this->get_icon();
-        $label = $this->get_label($task);
+        $context = context_course::instance($task->get_courseid());
+        $label = format_string($this->get_label($task), true, array('context' => $context));
         if (!empty($icon)) {
             $label .= $output->render($icon);
         }
@@ -456,13 +463,16 @@ class backup_setting_ui_checkbox extends backup_setting_ui {
 
     /**
      * Returns true if the setting is changeable
+     * @param int $level Optional, if provided only depedency_settings below or equal to this level are considered,
+     *          when checking if the ui_setting is changeable. Although dependencies might cause a lock on this setting,
+     *          they could be changeable in the same view.
      * @return bool
      */
-    public function is_changeable() {
+    public function is_changeable($level = null) {
         if ($this->changeable === false) {
             return false;
         } else {
-            return parent::is_changeable();
+            return parent::is_changeable($level);
         }
     }
 
@@ -525,7 +535,8 @@ class backup_setting_ui_radio extends backup_setting_ui {
      */
     public function get_element_properties(base_task $task = null, renderer_base $output = null) {
         $icon = $this->get_icon();
-        $label = $this->get_label($task);
+        $context = context_course::instance($task->get_courseid());
+        $label = format_string($this->get_label($task), true, array('context' => $context));
         if (!empty($icon)) {
             $label .= $output->render($icon);
         }
@@ -602,7 +613,8 @@ class backup_setting_ui_select extends backup_setting_ui {
      */
     public function get_element_properties(base_task $task = null, renderer_base $output = null) {
         $icon = $this->get_icon();
-        $label = $this->get_label($task);
+        $context = context_course::instance($task->get_courseid());
+        $label = format_string($this->get_label($task), true, array('context' => $context));
         if (!empty($icon)) {
             $label .= $output->render($icon);
         }
@@ -635,14 +647,25 @@ class backup_setting_ui_select extends backup_setting_ui {
     /**
      * Returns true if the setting is changeable, false otherwise
      *
+     * @param int $level Optional, if provided only depedency_settings below or equal to this level are considered,
+     *          when checking if the ui_setting is changeable. Although dependencies might cause a lock on this setting,
+     *          they could be changeable in the same view.
      * @return bool
      */
-    public function is_changeable() {
+    public function is_changeable($level = null) {
         if (count($this->values) == 1) {
             return false;
         } else {
-            return parent::is_changeable();
+            return parent::is_changeable($level);
         }
+    }
+
+    /**
+     * Returns the list of available values
+     * @return array
+     */
+    public function get_values() {
+        return $this->values;
     }
 }
 
@@ -680,6 +703,58 @@ class backup_setting_ui_dateselector extends backup_setting_ui_text {
             return userdate($value);
         }
         return parent::get_static_value();
+    }
+}
+
+/**
+ * A wrapper for defaultcustom form element - can have either text or date_selector type
+ *
+ * @package core_backup
+ * @copyright 2017 Marina Glancy
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class backup_setting_ui_defaultcustom extends backup_setting_ui_text {
+
+    /**
+     * Constructor
+     *
+     * @param backup_setting $setting
+     * @param string $label The label to display with the setting ui
+     * @param array $attributes Array of HTML attributes to apply to the element
+     * @param array $options Array of options to apply to the setting ui object
+     */
+    public function __construct(backup_setting $setting, $label = null, array $attributes = null, array $options = null) {
+        if (!is_array($attributes)) {
+            $attributes = [];
+        }
+        $attributes += ['customlabel' => get_string('overwrite', 'backup'),
+            'type' => 'text'];
+        parent::__construct($setting, $label, $attributes, $options);
+    }
+
+    /**
+     * Returns an array of properties suitable for generating a quickforms element
+     * @param base_task $task
+     * @param renderer_base $output
+     * @return array (element, name, label, options, attributes)
+     */
+    public function get_element_properties(base_task $task = null, renderer_base $output = null) {
+        return ['element' => 'defaultcustom'] + parent::get_element_properties($task, $output);
+    }
+
+    /**
+     * Gets the static value for this select element
+     * @return string
+     */
+    public function get_static_value() {
+        $value = $this->get_value();
+        if ($value === false) {
+            $value = $this->attributes['defaultvalue'];
+        }
+        if (!empty($value) && $this->attributes['type'] === 'date_selector') {
+            return userdate($value);
+        }
+        return $value;
     }
 }
 

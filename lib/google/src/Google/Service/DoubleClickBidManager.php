@@ -46,6 +46,7 @@ class Google_Service_DoubleClickBidManager extends Google_Service
   public function __construct(Google_Client $client)
   {
     parent::__construct($client);
+    $this->rootUrl = 'https://www.googleapis.com/';
     $this->servicePath = 'doubleclickbidmanager/v1/';
     $this->version = 'v1';
     $this->serviceName = 'doubleclickbidmanager';
@@ -295,11 +296,20 @@ class Google_Service_DoubleClickBidManager_DownloadLineItemsRequest extends Goog
   protected $collection_key = 'filterIds';
   protected $internal_gapi_mappings = array(
   );
+  public $fileSpec;
   public $filterIds;
   public $filterType;
   public $format;
 
 
+  public function setFileSpec($fileSpec)
+  {
+    $this->fileSpec = $fileSpec;
+  }
+  public function getFileSpec()
+  {
+    return $this->fileSpec;
+  }
   public function setFilterIds($filterIds)
   {
     $this->filterIds = $filterIds;
@@ -573,6 +583,7 @@ class Google_Service_DoubleClickBidManager_QueryMetadata extends Google_Collecti
   public $googleCloudStoragePathForLatestReport;
   public $googleDrivePathForLatestReport;
   public $latestReportRunTimeMs;
+  public $locale;
   public $reportCount;
   public $running;
   public $sendNotification;
@@ -619,6 +630,14 @@ class Google_Service_DoubleClickBidManager_QueryMetadata extends Google_Collecti
   public function getLatestReportRunTimeMs()
   {
     return $this->latestReportRunTimeMs;
+  }
+  public function setLocale($locale)
+  {
+    $this->locale = $locale;
+  }
+  public function getLocale()
+  {
+    return $this->locale;
   }
   public function setReportCount($reportCount)
   {

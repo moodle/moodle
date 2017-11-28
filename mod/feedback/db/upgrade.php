@@ -34,40 +34,145 @@
 // Please do not forget to use upgrade_set_timeout()
 // before any action that may take longer time to finish.
 
+defined('MOODLE_INTERNAL') || die();
+
 function xmldb_feedback_upgrade($oldversion) {
     global $CFG, $DB;
+    require_once($CFG->dirroot . '/mod/feedback/db/upgradelib.php');
 
-    $dbman = $DB->get_manager();
+    $dbman = $DB->get_manager(); // Loads ddl manager and xmldb classes.
 
+    if ($oldversion < 2016031600) {
+        // Remove labels from all 'captcha' and 'label' items.
+        $DB->execute('UPDATE {feedback_item} SET label = ? WHERE typ = ? OR typ = ?',
+                array('', 'captcha', 'label'));
 
-    // Moodle v2.2.0 release upgrade line
-    // Put any upgrade step following this
+        // Data savepoint reached.
+        upgrade_mod_savepoint(true, 2016031600, 'feedback');
+    }
 
-    // Moodle v2.3.0 release upgrade line
-    // Put any upgrade step following this
+    if ($oldversion < 2016040100) {
 
+        // In order to keep the previous "Analysis" results unchanged,
+        // set all multiple-answer multiplechoice questions as "Do not analyse empty submits"="Yes"
+        // because prior to this date this setting did not work.
 
-    // Moodle v2.4.0 release upgrade line
-    // Put any upgrade step following this
+        $sql = "UPDATE {feedback_item} SET options = " . $DB->sql_concat('?', 'options') .
+                " WHERE typ = ? AND presentation LIKE ? AND options NOT LIKE ?";
+        $params = array('i', 'multichoice', 'c%', '%i%');
+        $DB->execute($sql, $params);
 
+        // Feedback savepoint reached.
+        upgrade_mod_savepoint(true, 2016040100, 'feedback');
+    }
 
-    // Moodle v2.5.0 release upgrade line.
+    if ($oldversion < 2016051103) {
+
+        // Define index completed_item (unique) to be added to feedback_value.
+        $table = new xmldb_table('feedback_value');
+        $index = new xmldb_index('completed_item', XMLDB_INDEX_UNIQUE, array('completed', 'item', 'course_id'));
+
+        // Conditionally launch add index completed_item.
+        if (!$dbman->index_exists($table, $index)) {
+            mod_feedback_upgrade_delete_duplicate_values();
+            $dbman->add_index($table, $index);
+        }
+
+        // Feedback savepoint reached.
+        upgrade_mod_savepoint(true, 2016051103, 'feedback');
+    }
+
+    if ($oldversion < 2016051104) {
+
+        // Define index completed_item (unique) to be added to feedback_valuetmp.
+        $table = new xmldb_table('feedback_valuetmp');
+        $index = new xmldb_index('completed_item', XMLDB_INDEX_UNIQUE, array('completed', 'item', 'course_id'));
+
+        // Conditionally launch add index completed_item.
+        if (!$dbman->index_exists($table, $index)) {
+            mod_feedback_upgrade_delete_duplicate_values(true);
+            $dbman->add_index($table, $index);
+        }
+
+        // Feedback savepoint reached.
+        upgrade_mod_savepoint(true, 2016051104, 'feedback');
+    }
+
+    if ($oldversion < 2016051105) {
+
+        // Define field courseid to be added to feedback_completed.
+        $table = new xmldb_table('feedback_completed');
+        $field = new xmldb_field('courseid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'anonymous_response');
+
+        // Conditionally launch add field courseid.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+            // Run upgrade script to fill the new field courseid with the data from feedback_value table.
+            mod_feedback_upgrade_courseid(false);
+        }
+
+        // Define field courseid to be added to feedback_completedtmp.
+        $table = new xmldb_table('feedback_completedtmp');
+        $field = new xmldb_field('courseid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'anonymous_response');
+
+        // Conditionally launch add field courseid.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+            // Run upgrade script to fill the new field courseid with the data from feedback_valuetmp table.
+            mod_feedback_upgrade_courseid(true);
+        }
+
+        // Define table feedback_tracking to be dropped.
+        $table = new xmldb_table('feedback_tracking');
+
+        // Conditionally launch drop table for feedback_tracking.
+        if ($dbman->table_exists($table)) {
+            $dbman->drop_table($table);
+        }
+
+        // Feedback savepoint reached.
+        upgrade_mod_savepoint(true, 2016051105, 'feedback');
+    }
+
+    // Moodle v3.1.0 release upgrade line.
     // Put any upgrade step following this.
 
-
-    // Moodle v2.6.0 release upgrade line.
+    // Automatically generated Moodle v3.2.0 release upgrade line.
     // Put any upgrade step following this.
 
-    // Moodle v2.7.0 release upgrade line.
+    if ($oldversion < 2017032800) {
+
+        // Delete duplicated records in feedback_completed. We just keep the last record of completion.
+        // Related values in feedback_value won't be deleted (they won't be used and can be kept there as a backup).
+        $sql = "SELECT MAX(id) as maxid, userid, feedback, courseid
+                  FROM {feedback_completed}
+                 WHERE userid <> 0 AND anonymous_response = :notanonymous
+              GROUP BY userid, feedback, courseid
+                HAVING COUNT(id) > 1";
+        $params = ['notanonymous' => 2]; // FEEDBACK_ANONYMOUS_NO.
+
+        $duplicatedrows = $DB->get_recordset_sql($sql, $params);
+        foreach ($duplicatedrows as $row) {
+            $DB->delete_records_select('feedback_completed', 'userid = ? AND feedback = ? AND courseid = ? AND id <> ?'.
+                                                           ' AND anonymous_response = ?', array(
+                                           $row->userid,
+                                           $row->feedback,
+                                           $row->courseid,
+                                           $row->maxid,
+                                           2, // FEEDBACK_ANONYMOUS_NO.
+            ));
+        }
+        $duplicatedrows->close();
+
+        // Feedback savepoint reached.
+        upgrade_mod_savepoint(true, 2017032800, 'feedback');
+    }
+
+    // Automatically generated Moodle v3.3.0 release upgrade line.
     // Put any upgrade step following this.
 
-    // Moodle v2.8.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    // Moodle v2.9.0 release upgrade line.
+    // Automatically generated Moodle v3.4.0 release upgrade line.
     // Put any upgrade step following this.
 
     return true;
 }
-
-

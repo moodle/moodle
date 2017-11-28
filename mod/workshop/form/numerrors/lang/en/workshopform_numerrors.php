@@ -26,7 +26,7 @@
 $string['addmoredimensions'] = 'Blanks for {$a} more assertions';
 $string['configgrade0'] = 'The default word describing the negative assessment of an assertion.';
 $string['configgrade1'] = 'The default word describing the positive assessment of an assertion.';
-$string['dimensioncomment'] = 'Comment';
+$string['dimensioncommentfor'] = 'Comment for {$a}';
 $string['dimensiondescription'] = 'Description';
 $string['dimensiongrade'] = 'Grade';
 $string['dimensionnumber'] = 'Assertion {$a}';
@@ -40,3 +40,6 @@ $string['maperror'] = 'Weighted number of errors is less than or equals';
 $string['mapgrade'] = 'Grade for submission';
 $string['percents'] = '{$a} %';
 $string['pluginname'] = 'Number of errors';
+
+// Deprecated since Moodle 3.1.
+$string['dimensioncomment'] = 'Comment';

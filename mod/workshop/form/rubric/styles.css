@@ -72,10 +72,6 @@
     border: none;
 }
 
-.path-mod-workshop .assessmentform.rubric.list .fitem .felement span {
-    display: block;
-}
-
 .path-mod-workshop .assessmentform.rubric.list .fitem .felement span input {
     display: block;
     float: left;

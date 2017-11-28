@@ -151,7 +151,7 @@ class frontend extends \core_availability\frontend {
             // NOTE: The fields need to have these weird names in order that they
             // match the standard Moodle form control, otherwise the date selector
             // won't find them.
-            $html .= \html_writer::start_tag('select', array('name' => 'x[' . $field . ']'));
+            $html .= \html_writer::start_tag('select', array('name' => 'x[' . $field . ']', 'class' => 'custom-select'));
             foreach ($options as $key => $value) {
                 $params = array('value' => $key);
                 if ($current[$field] == $key) {

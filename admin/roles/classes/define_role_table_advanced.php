@@ -413,7 +413,7 @@ class core_role_define_role_table_advanced extends core_role_capability_table_wi
     }
 
     public function save_changes() {
-        global $DB;
+        global $DB, $CFG;
 
         if (!$this->roleid) {
             // Creating role.
@@ -422,6 +422,13 @@ class core_role_define_role_table_advanced extends core_role_capability_table_wi
         } else {
             // Updating role.
             $DB->update_record('role', $this->role);
+
+            // This will ensure the course contacts cache is purged so name changes get updated in
+            // the UI. It would be better to do this only when we know that fields affected are
+            // updated. But thats getting into the weeds of the coursecat cache and role edits
+            // should not be that frequent, so here is the ugly brutal approach.
+            require_once($CFG->libdir . '/coursecatlib.php');
+            coursecat::role_assignment_changed($this->role->id, context_system::instance());
         }
 
         // Assignable contexts.
@@ -464,15 +471,17 @@ class core_role_define_role_table_advanced extends core_role_capability_table_wi
     }
 
     protected function get_name_field($id) {
-        return '<input type="text" id="' . $id . '" name="' . $id . '" maxlength="254" value="' . s($this->role->name) . '" />';
+        return '<input type="text" id="' . $id . '" name="' . $id . '" maxlength="254" value="' . s($this->role->name) . '"' .
+                ' class="form-control"/>';
     }
 
     protected function get_shortname_field($id) {
-        return '<input type="text" id="' . $id . '" name="' . $id . '" maxlength="254" value="' . s($this->role->shortname) . '" />';
+        return '<input type="text" id="' . $id . '" name="' . $id . '" maxlength="254" value="' . s($this->role->shortname) . '"' .
+                ' class="form-control"/>';
     }
 
     protected function get_description_field($id) {
-        return '<textarea class="form-textarea" id="'. s($id) .'" name="description" rows="10" cols="50">' .
+        return '<textarea class="form-textarea form-control" id="'. s($id) .'" name="description" rows="10" cols="50">' .
             htmlspecialchars($this->role->description) .
             '</textarea>';
     }
@@ -483,7 +492,8 @@ class core_role_define_role_table_advanced extends core_role_capability_table_wi
         foreach (get_role_archetypes() as $type) {
             $options[$type] = get_string('archetype'.$type, 'role');
         }
-        return html_writer::select($options, 'archetype', $this->role->archetype, false);
+        return html_writer::select($options, 'archetype', $this->role->archetype, false,
+            array('class' => 'custom-select'));
     }
 
     protected function get_assignable_levels_control() {
@@ -556,7 +566,8 @@ class core_role_define_role_table_advanced extends core_role_capability_table_wi
         if ($this->roleid == 0) {
             $options[-1] = get_string('thisnewrole', 'core_role');
         }
-        return html_writer::select($options, 'allow'.$type.'[]', $selected, false, array('multiple'=>'multiple', 'size'=>10));
+        return html_writer::select($options, 'allow'.$type.'[]', $selected, false, array('multiple' => 'multiple',
+            'size' => 10, 'class' => 'form-control'));
     }
 
     /**
@@ -568,11 +579,19 @@ class core_role_define_role_table_advanced extends core_role_capability_table_wi
         return '';
     }
 
-    protected function print_field($name, $caption, $field) {
+    /**
+     * Print labels, fields and help icon on role administration page.
+     *
+     * @param string $name The field name.
+     * @param string $caption The field caption.
+     * @param string $field The field type.
+     * @param null|string $helpicon The help icon content.
+     */
+    protected function print_field($name, $caption, $field, $helpicon = null) {
         global $OUTPUT;
         // Attempt to generate HTML like formslib.
-        echo '<div class="fitem">';
-        echo '<div class="fitemtitle">';
+        echo '<div class="fitem row form-group">';
+        echo '<div class="fitemtitle col-md-3">';
         if ($name) {
             echo '<label for="' . $name . '">';
         }
@@ -580,13 +599,16 @@ class core_role_define_role_table_advanced extends core_role_capability_table_wi
         if ($name) {
             echo "</label>\n";
         }
+        if ($helpicon) {
+            echo '<span class="pull-xs-right text-nowrap">'.$helpicon.'</span>';
+        }
         echo '</div>';
         if (isset($this->errors[$name])) {
             $extraclass = ' error';
         } else {
             $extraclass = '';
         }
-        echo '<div class="felement' . $extraclass . '">';
+        echo '<div class="felement col-md-9 form-inline' . $extraclass . '">';
         echo $field;
         if (isset($this->errors[$name])) {
             echo $OUTPUT->error_text($this->errors[$name]);
@@ -598,7 +620,8 @@ class core_role_define_role_table_advanced extends core_role_capability_table_wi
     protected function print_show_hide_advanced_button() {
         echo '<p class="definenotice">' . get_string('highlightedcellsshowdefault', 'core_role') . ' </p>';
         echo '<div class="advancedbutton">';
-        echo '<input type="submit" name="toggleadvanced" value="' . get_string('hideadvanced', 'form') . '" />';
+        echo '<input type="submit" class="btn btn-secondary" name="toggleadvanced" value="' .
+            get_string('hideadvanced', 'form') . '" />';
         echo '</div>';
     }
 
@@ -606,11 +629,14 @@ class core_role_define_role_table_advanced extends core_role_capability_table_wi
         global $OUTPUT;
         // Extra fields at the top of the page.
         echo '<div class="topfields clearfix">';
-        $this->print_field('shortname', get_string('roleshortname', 'core_role').'&nbsp;'.$OUTPUT->help_icon('roleshortname', 'core_role'), $this->get_shortname_field('shortname'));
-        $this->print_field('name', get_string('customrolename', 'core_role').'&nbsp;'.$OUTPUT->help_icon('customrolename', 'core_role'), $this->get_name_field('name'));
-        $this->print_field('edit-description', get_string('customroledescription', 'core_role').'&nbsp;'.$OUTPUT->help_icon('customroledescription', 'core_role'),
-            $this->get_description_field('description'));
-        $this->print_field('menuarchetype', get_string('archetype', 'core_role').'&nbsp;'.$OUTPUT->help_icon('archetype', 'core_role'), $this->get_archetype_field('archetype'));
+        $this->print_field('shortname', get_string('roleshortname', 'core_role'),
+            $this->get_shortname_field('shortname'), $OUTPUT->help_icon('roleshortname', 'core_role'));
+        $this->print_field('name', get_string('customrolename', 'core_role'), $this->get_name_field('name'),
+            $OUTPUT->help_icon('customrolename', 'core_role'));
+        $this->print_field('edit-description', get_string('customroledescription', 'core_role'),
+            $this->get_description_field('description'), $OUTPUT->help_icon('customroledescription', 'core_role'));
+        $this->print_field('menuarchetype', get_string('archetype', 'core_role'), $this->get_archetype_field('archetype'),
+            $OUTPUT->help_icon('archetype', 'core_role'));
         $this->print_field('', get_string('maybeassignedin', 'core_role'), $this->get_assignable_levels_control());
         $this->print_field('menuallowassign', get_string('allowassign', 'core_role'), $this->get_allow_role_control('assign'));
         $this->print_field('menuallowoverride', get_string('allowoverride', 'core_role'), $this->get_allow_role_control('override'));
@@ -628,6 +654,7 @@ class core_role_define_role_table_advanced extends core_role_capability_table_wi
 
     protected function add_permission_cells($capability) {
         // One cell for each possible permission.
+        $content = '';
         foreach ($this->displaypermissions as $perm => $permname) {
             $strperm = $this->strperms[$permname];
             $extraclass = '';
@@ -638,11 +665,12 @@ class core_role_define_role_table_advanced extends core_role_capability_table_wi
             if ($this->permissions[$capability->name] == $perm) {
                 $checked = 'checked="checked" ';
             }
-            echo '<td class="' . $permname . $extraclass . '">';
-            echo '<label><input type="radio" name="' . $capability->name .
+            $content .= '<td class="' . $permname . $extraclass . '">';
+            $content .= '<label><input type="radio" name="' . $capability->name .
                 '" value="' . $perm . '" ' . $checked . '/> ';
-            echo '<span class="note">' . $strperm . '</span>';
-            echo '</label></td>';
+            $content .= '<span class="note">' . $strperm . '</span>';
+            $content .= '</label></td>';
         }
+        return $content;
     }
 }

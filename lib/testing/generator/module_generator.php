@@ -187,6 +187,7 @@ abstract class testing_module_generator extends component_generator_base {
         $defaults = array(
             'section' => 0,
             'visible' => 1,
+            'visibleoncoursepage' => 1,
             'cmidnumber' => '',
             'groupmode' => 0,
             'groupingid' => 0,
@@ -246,6 +247,10 @@ abstract class testing_module_generator extends component_generator_base {
         }
         if (empty($record->introeditor) && empty($record->introformat)) {
             $record->introformat = FORMAT_MOODLE;
+        }
+
+        if (isset($record->tags) && !is_array($record->tags)) {
+            $record->tags = preg_split('/\s*,\s*/', trim($record->tags), -1, PREG_SPLIT_NO_EMPTY);
         }
 
         // Before Moodle 2.6 it was possible to create a module with completion tracking when

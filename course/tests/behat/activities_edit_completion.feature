@@ -8,19 +8,15 @@ Feature: Edit completion settings of an activity
     Given the following "courses" exist:
       | fullname | shortname | enablecompletion |
       | Course 1 | C1        | 1                |
-    And the following config values are set as admin:
-      | enablecompletion | 1 |
     And I log in as "admin"
-    And I am on site homepage
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I add a "Page" to section "1" and I fill the form with:
       | Name                | TestPage |
       | Description         | x        |
       | Page content        | x        |
       | Completion tracking | 2        |
       | Require view        | 1        |
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
 
   Scenario: Completion is not locked when the activity has not yet been viewed
     Given I click on "Edit settings" "link" in the "TestPage" activity
@@ -37,24 +33,24 @@ Feature: Edit completion settings of an activity
   @javascript
   Scenario: Pressing the unlock button allows the user to edit completion settings
     Given I follow "TestPage"
-    When I follow "Edit settings"
+    When I navigate to "Edit settings" in current page administration
     And I expand all fieldsets
     And I press "Unlock completion options"
     Then I should see "Completion options unlocked"
     And I set the field "Completion tracking" to "Students can manually mark the activity as completed"
     And I press "Save and display"
-    And I follow "Edit settings"
+    And I navigate to "Edit settings" in current page administration
     And I expand all fieldsets
     Then the field "Completion tracking" matches value "Students can manually mark the activity as completed"
 
   @javascript
   Scenario: Even when completion is locked, the user can still set the date
     Given I follow "TestPage"
-    And I follow "Edit settings"
+    When I navigate to "Edit settings" in current page administration
     And I expand all fieldsets
     When I click on "id_completionexpected_enabled" "checkbox"
     And I set the field "id_completionexpected_year" to "2013"
     And I press "Save and display"
-    And I follow "Edit settings"
+    And I navigate to "Edit settings" in current page administration
     And I expand all fieldsets
     Then the field "id_completionexpected_year" matches value "2013"

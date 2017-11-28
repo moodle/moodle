@@ -26,10 +26,10 @@ require_once('../config.php');
 require_once($CFG->libdir.'/bennu/bennu.inc.php');
 require_once($CFG->dirroot.'/course/lib.php');
 require_once($CFG->dirroot.'/calendar/lib.php');
-require_once($CFG->dirroot.'/calendar/managesubscriptions_form.php');
 
 // Required use.
-$courseid = optional_param('course', SITEID, PARAM_INT);
+$courseid = optional_param('course', null, PARAM_INT);
+$categoryid = optional_param('category', null, PARAM_INT);
 // Used for processing subscription actions.
 $subscriptionid = optional_param('id', 0, PARAM_INT);
 $pollinterval  = optional_param('pollinterval', 0, PARAM_INT);
@@ -39,24 +39,29 @@ $url = new moodle_url('/calendar/managesubscriptions.php');
 if ($courseid != SITEID) {
     $url->param('course', $courseid);
 }
+if ($categoryid) {
+    $url->param('categoryid', $categoryid);
+}
 navigation_node::override_active_url(new moodle_url('/calendar/view.php', array('view' => 'month')));
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('admin');
 $PAGE->navbar->add(get_string('managesubscriptions', 'calendar'));
 
 if ($courseid != SITEID && !empty($courseid)) {
-    $course = $DB->get_record('course', array('id' => $courseid));
+    // Course ID must be valid and existing.
+    $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
     $courses = array($course->id => $course);
 } else {
     $course = get_site();
     $courses = calendar_get_default_courses();
 }
-require_course_login($course);
+require_login($course, false);
+
 if (!calendar_user_can_add_event($course)) {
     print_error('errorcannotimport', 'calendar');
 }
 
-$form = new calendar_addsubscription_form(null);
+$form = new \core_calendar\local\event\forms\managesubscriptions();
 $form->set_data(array(
     'course' => $course->id
 ));
@@ -73,7 +78,7 @@ if (!empty($formdata)) {
         $calendar = $form->get_file_content('importfile');
         $ical = new iCalendar();
         $ical->unserialize($calendar);
-        $importresults = calendar_import_icalendar_events($ical, $courseid, $subscriptionid);
+        $importresults = calendar_import_icalendar_events($ical, null, $subscriptionid);
     } else {
         try {
             $importresults = calendar_update_subscription_events($subscriptionid);
@@ -100,17 +105,59 @@ if (!empty($formdata)) {
     }
 }
 
-$sql = 'SELECT *
-          FROM {event_subscriptions}
-         WHERE courseid = :courseid
-            OR (courseid = 0 AND userid = :userid)';
-$params = array('courseid' => $courseid, 'userid' => $USER->id);
+$types = calendar_get_all_allowed_types();
+
+$searches = [];
+$params = [];
+
+$usedefaultfilters = true;
+if (!empty($courseid) && $courseid == SITEID && isset($types['site'])) {
+    $searches[] = "(eventtype = 'site')";
+    $searches[] = "(eventtype = 'user' AND userid = :userid)";
+    $params['userid'] = $USER->id;
+    $usedefaultfilters = false;
+}
+
+if (!empty($courseid) && isset($types['course']) && array_key_exists($courseid, $types['course'])) {
+    $searches[] = "((eventtype = 'course' OR eventtype = 'group') AND courseid = :courseid)";
+    $params += ['courseid' => $courseid];
+    $usedefaultfilters = false;
+}
+
+if (!empty($categoryid) && isset($types['category']) && array_key_exists($categoryid, $types['category'])) {
+    $searches[] = "(eventtype = 'category' AND categoryid = :categoryid)";
+    $params += ['categoryid' => $categoryid];
+    $usedefaultfilters = false;
+}
+
+if ($usedefaultfilters) {
+    $searches[] = "(eventtype = 'user' AND userid = :userid)";
+    $params['userid'] = $USER->id;
+
+    if (isset($types['site'])) {
+        $searches[] = "(eventtype = 'site' AND courseid  = :siteid)";
+        $params += ['siteid' => SITEID];
+    }
+
+    if (isset($types['course'])) {
+        list($courseinsql, $courseparams) = $DB->get_in_or_equal(array_keys($types['course']), SQL_PARAMS_NAMED, 'course');
+        $searches[] = "((eventtype = 'course' OR eventtype = 'group') AND courseid {$courseinsql})";
+        $params += $courseparams;
+    }
+
+    if (isset($types['category'])) {
+        list($categoryinsql, $categoryparams) = $DB->get_in_or_equal(array_keys($types['category']), SQL_PARAMS_NAMED, 'category');
+        $searches[] = "(eventtype = 'category' AND categoryid {$categoryinsql})";
+        $params += $categoryparams;
+    }
+}
+
+$sql = "SELECT * FROM {event_subscriptions} WHERE " . implode(' OR ', $searches);;
 $subscriptions = $DB->get_records_sql($sql, $params);
 
 // Print title and header.
 $PAGE->set_title("$course->shortname: ".get_string('calendar', 'calendar').": ".get_string('subscriptions', 'calendar'));
 $PAGE->set_heading($course->fullname);
-$PAGE->set_button(calendar_preferences_button($course));
 
 $renderer = $PAGE->get_renderer('core_calendar');
 

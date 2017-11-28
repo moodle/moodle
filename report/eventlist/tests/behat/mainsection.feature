@@ -10,6 +10,7 @@ Feature: Page contains a list of events
     And I navigate to "Events list" node in "Site administration > Reports"
     And I should see "Event name"
     And I set the field "eventname" to "phase"
+    And I press "filterbutton"
     And I should see "Phase switched"
     And I should not see "Comment created"
     And I press "clearbutton"

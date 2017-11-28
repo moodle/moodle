@@ -66,6 +66,11 @@ if ($ADMIN->fulltree) {
             get_string('defaultrole', 'role'), '', $student->id, $options));
     }
 
+    $options = array(2 => get_string('coursestart'), 3 => get_string('today'), 4 => get_string('now', 'enrol_manual'));
+    $settings->add(
+        new admin_setting_configselect('enrol_manual/enrolstart', get_string('defaultstart', 'enrol_manual'), '', 4, $options)
+    );
+
     $settings->add(new admin_setting_configduration('enrol_manual/enrolperiod',
         get_string('defaultperiod', 'enrol_manual'), get_string('defaultperiod_desc', 'enrol_manual'), 0));
 

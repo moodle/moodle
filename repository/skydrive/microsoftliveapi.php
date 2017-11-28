@@ -61,18 +61,6 @@ class microsoft_skydrive extends oauth2_client {
     }
 
     /**
-     * Should HTTP GET be used instead of POST?
-     *
-     * The Microsoft API does not support POST, so we should use
-     * GET instead (with the auth_token passed as a GET param).
-     *
-     * @return bool true if GET should be used
-     */
-    protected function use_http_get() {
-        return true;
-    }
-
-    /**
      * Returns the auth url for OAuth 2.0 request
      * @return string the auth url
      */
@@ -86,6 +74,20 @@ class microsoft_skydrive extends oauth2_client {
      */
     protected function token_url() {
         return 'https://login.live.com/oauth20_token.srf';
+    }
+
+    /**
+     * Post request.
+     *
+     * Overridden to convert the data to a string, else curl will set the wrong headers.
+     *
+     * @param string $url The URL.
+     * @param array|string $params The parameters.
+     * @param array $options The options.
+     * @return bool
+     */
+    public function post($url, $params = '', $options = array()) {
+        return parent::post($url, format_postdata_for_curlcall($params), $options);
     }
 
     /**
@@ -173,7 +175,7 @@ class microsoft_skydrive extends oauth2_client {
                         'path' => $path.'/'.$file->id,
                         'size' => 0,
                         'date' => strtotime($file->updated_time),
-                        'thumbnail' => $OUTPUT->pix_url(file_folder_icon(90))->out(false),
+                        'thumbnail' => $OUTPUT->image_url(file_folder_icon(90))->out(false),
                         'children' => array(),
                     );
                     break;
@@ -182,7 +184,7 @@ class microsoft_skydrive extends oauth2_client {
                         'title' => $file->name,
                         'size' => $file->size,
                         'date' => strtotime($file->updated_time),
-                        'thumbnail' => $OUTPUT->pix_url(file_extension_icon($file->name, 90))->out(false),
+                        'thumbnail' => $OUTPUT->image_url(file_extension_icon($file->name, 90))->out(false),
                         'realthumbnail' => $file->picture,
                         'source' => $file->id,
                         'url' => $file->link,
@@ -196,7 +198,7 @@ class microsoft_skydrive extends oauth2_client {
                         'title' => $file->name,
                         'size' => $file->size,
                         'date' => strtotime($file->updated_time),
-                        'thumbnail' => $OUTPUT->pix_url(file_extension_icon($file->name, 90))->out(false),
+                        'thumbnail' => $OUTPUT->image_url(file_extension_icon($file->name, 90))->out(false),
                         'realthumbnail' => $file->picture,
                         'source' => $file->id,
                         'url' => $file->link,
@@ -208,7 +210,7 @@ class microsoft_skydrive extends oauth2_client {
                         'title' => $file->name,
                         'size' => $file->size,
                         'date' => strtotime($file->updated_time),
-                        'thumbnail' => $OUTPUT->pix_url(file_extension_icon($file->name, 90))->out(false),
+                        'thumbnail' => $OUTPUT->image_url(file_extension_icon($file->name, 90))->out(false),
                         'source' => $file->id,
                         'url' => $file->link,
                         'author' => $file->from->name,
@@ -219,7 +221,7 @@ class microsoft_skydrive extends oauth2_client {
                         'title' => $file->name,
                         'size' => $file->size,
                         'date' => strtotime($file->updated_time),
-                        'thumbnail' => $OUTPUT->pix_url(file_extension_icon($file->name, 90))->out(false),
+                        'thumbnail' => $OUTPUT->image_url(file_extension_icon($file->name, 90))->out(false),
                         'source' => $file->id,
                         'url' => $file->link,
                         'author' => $file->from->name,

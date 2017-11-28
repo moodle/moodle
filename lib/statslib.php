@@ -138,29 +138,12 @@ function stats_cron_daily($maxdays=1) {
         set_config('statslastdaily', $timestart);
     }
 
-    // calculate scheduled time
-    $scheduledtime = stats_get_base_daily() + $CFG->statsruntimestarthour*60*60 + $CFG->statsruntimestartminute*60;
-
-    // Note: This will work fine for sites running cron each 4 hours or less (hopefully, 99.99% of sites). MDL-16709
-    // check to make sure we're due to run, at least 20 hours after last run
-    if (isset($CFG->statslastexecution) && ((time() - 20*60*60) < $CFG->statslastexecution)) {
-        mtrace("...preventing stats to run, last execution was less than 20 hours ago.");
-        return false;
-    // also check that we are a max of 4 hours after scheduled time, stats won't run after that
-    } else if (time() > $scheduledtime + 4*60*60) {
-        mtrace("...preventing stats to run, more than 4 hours since scheduled time.");
-        return false;
-    } else {
-        set_config('statslastexecution', time()); /// Grab this execution as last one
-    }
-
     $nextmidnight = stats_get_next_day_start($timestart);
 
     // are there any days that need to be processed?
     if ($now < $nextmidnight) {
         return true; // everything ok and up-to-date
     }
-
 
     $timeout = empty($CFG->statsmaxruntime) ? 60*60*24 : $CFG->statsmaxruntime;
 
@@ -1041,13 +1024,10 @@ function stats_get_base_monthly($time=0) {
  */
 function stats_get_next_day_start($time) {
     $next = stats_get_base_daily($time);
-    $next = $next + 60*60*26;
-    $next = stats_get_base_daily($next);
-    if ($next <= $time) {
-        //DST trouble - prevent infinite loops
-        $next = $next + 60*60*24;
-    }
-    return $next;
+    $nextdate = new DateTime();
+    $nextdate->setTimestamp($next);
+    $nextdate->add(new DateInterval('P1D'));
+    return $nextdate->getTimestamp();
 }
 
 /**
@@ -1057,13 +1037,10 @@ function stats_get_next_day_start($time) {
  */
 function stats_get_next_week_start($time) {
     $next = stats_get_base_weekly($time);
-    $next = $next + 60*60*24*9;
-    $next = stats_get_base_weekly($next);
-    if ($next <= $time) {
-        //DST trouble - prevent infinite loops
-        $next = $next + 60*60*24*7;
-    }
-    return $next;
+    $nextdate = new DateTime();
+    $nextdate->setTimestamp($next);
+    $nextdate->add(new DateInterval('P1W'));
+    return $nextdate->getTimestamp();
 }
 
 /**
@@ -1073,13 +1050,10 @@ function stats_get_next_week_start($time) {
  */
 function stats_get_next_month_start($time) {
     $next = stats_get_base_monthly($time);
-    $next = $next + 60*60*24*33;
-    $next = stats_get_base_monthly($next);
-    if ($next <= $time) {
-        //DST trouble - prevent infinite loops
-        $next = $next + 60*60*24*31;
-    }
-    return $next;
+    $nextdate = new DateTime();
+    $nextdate->setTimestamp($next);
+    $nextdate->add(new DateInterval('P1M'));
+    return $nextdate->getTimestamp();
 }
 
 /**
@@ -1182,7 +1156,12 @@ function stats_get_parameters($time,$report,$courseid,$mode,$roleid=0) {
     case STATS_REPORT_ACTIVITYBYROLE;
         $param->fields = 'stat1 AS line1, stat2 AS line2';
         $param->stattype = 'activity';
-        $rolename = $DB->get_field('role','name', array('id'=>$roleid));
+        $rolename = '';
+        if ($roleid <> 0) {
+            if ($role = $DB->get_record('role', ['id' => $roleid])) {
+                $rolename = role_get_name($role, context_course::instance($courseid)) . ' ';
+            }
+        }
         $param->line1 = $rolename . get_string('statsreads');
         $param->line2 = $rolename . get_string('statswrites');
         if ($courseid == SITEID) {
@@ -1422,10 +1401,12 @@ function stats_get_report_options($courseid,$mode) {
     case STATS_MODE_GENERAL:
         $reportoptions[STATS_REPORT_ACTIVITY] = get_string('statsreport'.STATS_REPORT_ACTIVITY);
         if ($courseid != SITEID && $context = context_course::instance($courseid)) {
-            $sql = 'SELECT r.id, r.name FROM {role} r JOIN {stats_daily} s ON s.roleid = r.id WHERE s.courseid = :courseid GROUP BY r.id, r.name';
+            $sql = 'SELECT r.id, r.name, r.shortname FROM {role} r JOIN {stats_daily} s ON s.roleid = r.id
+                 WHERE s.courseid = :courseid GROUP BY r.id, r.name, r.shortname';
             if ($roles = $DB->get_records_sql($sql, array('courseid' => $courseid))) {
                 foreach ($roles as $role) {
-                    $reportoptions[STATS_REPORT_ACTIVITYBYROLE.$role->id] = get_string('statsreport'.STATS_REPORT_ACTIVITYBYROLE). ' '.$role->name;
+                    $reportoptions[STATS_REPORT_ACTIVITYBYROLE.$role->id] = get_string('statsreport'.STATS_REPORT_ACTIVITYBYROLE).
+                        ' ' . role_get_name($role, $context);
                 }
             }
         }

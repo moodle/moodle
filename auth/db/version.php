@@ -24,6 +24,11 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+<<<<<<< HEAD
 $plugin->version   = 2015061600;        // The current plugin version (Date: YYYYMMDDXX)
 $plugin->requires  = 2015050500;        // Requires this Moodle version
+=======
+$plugin->version   = 2017111300;        // The current plugin version (Date: YYYYMMDDXX)
+$plugin->requires  = 2017110800;        // Requires this Moodle version
+>>>>>>> 5bde2c2b62a71a6d4f89ac90755db1cced2e6baa
 $plugin->component = 'auth_db';         // Full name of the plugin (used for diagnostics)

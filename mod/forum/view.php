@@ -106,13 +106,15 @@
     $PAGE->add_body_class('forumtype-'.$forum->type);
     $PAGE->set_heading($course->fullname);
 
-/// Some capability checks.
+    // Some capability checks.
+    $courselink = new moodle_url('/course/view.php', ['id' => $cm->course]);
+
     if (empty($cm->visible) and !has_capability('moodle/course:viewhiddenactivities', $context)) {
-        notice(get_string("activityiscurrentlyhidden"));
+        notice(get_string("activityiscurrentlyhidden"), $courselink);
     }
 
     if (!has_capability('mod/forum:viewdiscussion', $context)) {
-        notice(get_string('noviewdiscussionspermission', 'forum'));
+        notice(get_string('noviewdiscussionspermission', 'forum'), $courselink);
     }
 
     // Mark viewed and trigger the course_module_viewed event.
@@ -207,9 +209,10 @@
         case 'blog':
             echo '<br />';
             if (!empty($showall)) {
-                forum_print_latest_discussions($course, $forum, 0, 'plain', '', -1, -1, -1, 0, $cm);
+                forum_print_latest_discussions($course, $forum, 0, 'plain', 'd.pinned DESC, p.created DESC', -1, -1, -1, 0, $cm);
             } else {
-                forum_print_latest_discussions($course, $forum, -1, 'plain', '', -1, -1, $page, $CFG->forum_manydiscussions, $cm);
+                forum_print_latest_discussions($course, $forum, -1, 'plain', 'd.pinned DESC, p.created DESC', -1, -1, $page,
+                    $CFG->forum_manydiscussions, $cm);
             }
             break;
 

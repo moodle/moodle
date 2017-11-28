@@ -20,7 +20,7 @@ Y.extend(MODFORM, Y.Base, {
     qppSelect: null,
     qppInitialValue: 0,
 
-    initializer: function () {
+    initializer: function() {
         this.repaginateCheckbox = Y.one('#id_repaginatenow');
         if (!this.repaginateCheckbox) {
             // The checkbox only appears when editing an existing quiz.

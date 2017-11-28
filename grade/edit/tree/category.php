@@ -40,7 +40,7 @@ navigation_node::override_active_url(new moodle_url('/grade/edit/tree/index.php'
     array('id'=>$courseid)));
 
 if (!$course = $DB->get_record('course', array('id' => $courseid))) {
-    print_error('nocourseid');
+    print_error('invalidcourseid');
 }
 
 require_login($course);
@@ -236,6 +236,11 @@ if ($mform->is_cancelled()) {
     $grade_item->weightoverride = $itemdata->weightoverride;
 
     $grade_item->outcomeid = null;
+
+    if (!empty($data->grade_item_rescalegrades) && $data->grade_item_rescalegrades == 'yes') {
+        $grade_item->rescale_grades_keep_percentage($grade_item_copy->grademin, $grade_item_copy->grademax, $grade_item->grademin,
+                $grade_item->grademax, 'gradebook');
+    }
 
     // update hiding flag
     if ($hiddenuntil) {

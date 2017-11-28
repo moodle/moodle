@@ -116,7 +116,7 @@ class qtype_multianswer_walkthrough_test extends qbehaviour_walkthrough_test_bas
         $this->check_current_mark(null);
         $this->check_current_output(
                 $this->get_contains_marked_out_of_summary(),
-                new question_pattern_expectation('~<input[^>]* class="incorrect" [^>]*/>~'),
+                new question_pattern_expectation('~<input[^>]* class="[^"]*incorrect[^"]*" [^>]*/>~'),
                 $this->get_contains_subq_status(question_state::$gaveup),
                 $this->get_does_not_contain_validation_error_expectation());
     }
@@ -250,7 +250,7 @@ class qtype_multianswer_walkthrough_test extends qbehaviour_walkthrough_test_bas
                         $this->quba->get_field_prefix($this->slot) . 'sub3_answer', ''),
                 $this->get_contains_hidden_expectation(
                         $this->quba->get_field_prefix($this->slot) . 'sub4_answer', ''),
-                $this->get_contains_submit_button_expectation(false),
+                $this->get_does_not_contain_submit_button_expectation(),
                 $this->get_contains_try_again_button_expectation(true),
                 $this->get_does_not_contain_correctness_expectation(),
                 $this->get_contains_hint_expectation('This is the first hint.'));
@@ -300,7 +300,7 @@ class qtype_multianswer_walkthrough_test extends qbehaviour_walkthrough_test_bas
                         $this->quba->get_field_prefix($this->slot) . 'sub3_answer', ''),
                 $this->get_contains_hidden_expectation(
                         $this->quba->get_field_prefix($this->slot) . 'sub4_answer', '1'),
-                $this->get_contains_submit_button_expectation(false),
+                $this->get_does_not_contain_submit_button_expectation(),
                 $this->get_contains_hint_expectation('This is the second hint.'));
 
         // Try again.
@@ -419,7 +419,7 @@ class qtype_multianswer_walkthrough_test extends qbehaviour_walkthrough_test_bas
                 $this->get_contains_select_expectation('sub2_answer', $choices, 1, false),
                 $this->get_contains_select_expectation('sub3_answer', $choices, 1, false),
                 $this->get_contains_select_expectation('sub4_answer', $choices, 1, false),
-                $this->get_contains_submit_button_expectation(false),
+                $this->get_does_not_contain_submit_button_expectation(),
                 $this->get_contains_try_again_button_expectation(true),
                 $this->get_does_not_contain_correctness_expectation(),
                 new question_pattern_expectation('/Tries remaining: 2/'),
@@ -460,9 +460,66 @@ class qtype_multianswer_walkthrough_test extends qbehaviour_walkthrough_test_bas
                 $this->get_contains_select_expectation('sub2_answer', $choices, '1', false),
                 $this->get_contains_select_expectation('sub3_answer', $choices, '0', false),
                 $this->get_contains_select_expectation('sub4_answer', $choices, '1', false),
-                $this->get_contains_submit_button_expectation(false),
+                $this->get_does_not_contain_submit_button_expectation(),
                 $this->get_does_not_contain_try_again_button_expectation(),
                 $this->get_contains_correct_expectation(),
                 new question_no_pattern_expectation('/class="control\b[^"]*\bpartiallycorrect"/'));
+    }
+
+    public function test_deferred_feedback_multiple() {
+
+        // Create a multianswer question.
+        $q = test_question_maker::make_question('multianswer', 'multiple');
+        $this->start_attempt_at_question($q, 'deferredfeedback', 2);
+
+        // Check the initial state.
+        $this->check_current_state(question_state::$todo);
+        $this->check_current_mark(null);
+        $this->check_current_output(
+            $this->get_contains_marked_out_of_summary(),
+            $this->get_does_not_contain_feedback_expectation(),
+            $this->get_does_not_contain_validation_error_expectation());
+
+        // Save in incomplete answer.
+        $this->process_submission(array('sub1_choice0' => '1', 'sub1_choice1' => '1',
+                                        'sub1_choice2' => '', 'sub1_choice3' => '',
+                                        'sub1_choice4' => '', 'sub1_choice5' => '1',
+                                        ));
+
+        // Verify.
+        $this->check_current_state(question_state::$invalid);
+        $this->check_current_mark(null);
+        $this->check_current_output(
+            $this->get_contains_marked_out_of_summary(),
+            $this->get_does_not_contain_feedback_expectation(),
+            $this->get_contains_validation_error_expectation());
+
+        // Save a partially correct answer.
+        $this->process_submission(array('sub1_choice0' => '1', 'sub1_choice1' => '',
+                                        'sub1_choice2' => '', 'sub1_choice3' => '',
+                                        'sub1_choice4' => '1', 'sub1_choice5' => '1',
+                                        'sub2_choice0' => '', 'sub2_choice1' => '',
+                                        'sub2_choice2' => '', 'sub2_choice3' => '',
+                                        'sub2_choice4' => '1',
+                                  ));
+
+        // Verify.
+        $this->check_current_state(question_state::$complete);
+        $this->check_current_mark(null);
+        $this->check_current_output(
+            $this->get_contains_marked_out_of_summary(),
+            $this->get_does_not_contain_feedback_expectation(),
+            $this->get_does_not_contain_validation_error_expectation());
+
+        // Now submit all and finish.
+        $this->finish();
+
+        // Verify.
+        $this->check_current_state(question_state::$gradedpartial);
+        $this->check_current_mark(1.5);
+        $this->check_current_output(
+            $this->get_contains_mark_summary(1.5),
+            $this->get_contains_partcorrect_expectation(),
+            $this->get_does_not_contain_validation_error_expectation());
     }
 }

@@ -107,7 +107,7 @@ class Less_Tree_Mixin_Call extends Less_Tree{
 			} else {
 				$defaultResult = $defTrue;
 				if( ($count[$defTrue] + $count[$defFalse]) > 1 ){
-					throw new Exception( 'Ambiguous use of `default()` found when matching for `'. $this->format($args) + '`' );
+					throw new Exception( 'Ambiguous use of `default()` found when matching for `' . $this->format($args) . '`' );
 				}
 			}
 
@@ -160,12 +160,12 @@ class Less_Tree_Mixin_Call extends Less_Tree{
 			foreach($args as $a){
 				$argValue = '';
 				if( $a['name'] ){
-					$argValue += $a['name']+':';
+					$argValue .= $a['name'] . ':';
 				}
 				if( is_object($a['value']) ){
-					$argValue += $a['value']->toCSS();
+					$argValue .= $a['value']->toCSS();
 				}else{
-					$argValue += '???';
+					$argValue .= '???';
 				}
 				$message[] = $argValue;
 			}

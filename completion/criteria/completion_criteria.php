@@ -233,6 +233,20 @@ abstract class completion_criteria extends data_object {
     abstract public function get_details($completion);
 
     /**
+     * Return pix_icon for display in reports.
+     *
+     * @param string $alt The alt text to use for the icon
+     * @param array $attributes html attributes
+     * @return pix_icon
+     */
+    public function get_icon($alt, array $attributes = null) {
+        global $COMPLETION_CRITERIA_TYPES;
+
+        $criteriatype = $COMPLETION_CRITERIA_TYPES[$this->criteriatype];
+        return new pix_icon('i/'.$criteriatype, $alt, 'moodle', $attributes);
+    }
+
+    /**
      * Return criteria status text for display in reports
      *
      * @param completion_completion $completion The user's completion record

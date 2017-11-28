@@ -1,12 +1,12 @@
 <?php
 /**
- * Copyright 2012-2014 Horde LLC (http://www.horde.org/)
+ * Copyright 2012-2017 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file COPYING for license information (BSD). If you
  * did not receive this file, see http://www.horde.org/licenses/bsd.
  *
  * @category  Horde
- * @copyright 2012-2014 Horde LLC
+ * @copyright 2012-2017 Horde LLC
  * @license   http://www.horde.org/licenses/bsd New BSD License
  * @package   Mail
  */
@@ -16,13 +16,16 @@
  *
  * @author    Michael Slusarz <slusarz@horde.org>
  * @category  Horde
- * @copyright 2012-2014 Horde LLC
+ * @copyright 2012-2017 Horde LLC
  * @license   http://www.horde.org/licenses/bsd New BSD License
  * @package   Mail
  *
  * @property-read string $bare_address  The bare mailbox@host address.
  * @property-read string $bare_address_idn  The bare mailbox@host address (IDN
  *                                          encoded). (@since 2.1.0)
+ * @property-read boolean $eai  Returns true if the local (mailbox) address
+ *                              part requires EAI (UTF-8) support.
+ *                              (@since 2.5.0)
  * @property-read string $encoded  The full MIME/IDN encoded address (UTF-8).
  * @property string $host  Returns the host part (UTF-8).
  * @property-read string $host_idn  Returns the IDN encoded host part.
@@ -43,7 +46,7 @@ class Horde_Mail_Rfc822_Address extends Horde_Mail_Rfc822_Object
     public $comment = array();
 
     /**
-     * Local-part of the address.
+     * Local-part of the address (UTF-8).
      *
      * @var string
      */
@@ -89,10 +92,10 @@ class Horde_Mail_Rfc822_Address extends Horde_Mail_Rfc822_Object
     {
         switch ($name) {
         case 'host':
-            $value = ltrim($value, '@');
-            $this->_host = function_exists('idn_to_utf8')
-                ? strtolower(idn_to_utf8($value))
-                : strtolower($value);
+            try {
+                $value = Horde_Idna::decode($value);
+            } catch (Horde_Idna_Exception $e) {}
+            $this->_host = Horde_String::lower($value);
             break;
 
         case 'personal':
@@ -104,6 +107,7 @@ class Horde_Mail_Rfc822_Address extends Horde_Mail_Rfc822_Object
     }
 
     /**
+     * @throws Horde_Idna_Exception
      */
     public function __get($name)
     {
@@ -120,6 +124,11 @@ class Horde_Mail_Rfc822_Address extends Horde_Mail_Rfc822_Object
             $this->_personal = $personal;
             return $res;
 
+        case 'eai':
+            return is_null($this->mailbox)
+                ? false
+                : Horde_Mime::is8bit($this->mailbox);
+
         case 'encoded':
             return $this->writeAddress(true);
 
@@ -127,9 +136,7 @@ class Horde_Mail_Rfc822_Address extends Horde_Mail_Rfc822_Object
             return $this->_host;
 
         case 'host_idn':
-            return function_exists('idn_to_ascii')
-                ? idn_to_ascii($this->_host)
-                : $this->host;
+            return Horde_Idna::encode($this->_host);
 
         case 'label':
             return is_null($this->personal)
@@ -146,9 +153,6 @@ class Horde_Mail_Rfc822_Address extends Horde_Mail_Rfc822_Object
 
         case 'valid':
             return (bool)strlen($this->mailbox);
-
-        default:
-            return null;
         }
     }
 
@@ -168,11 +172,18 @@ class Horde_Mail_Rfc822_Address extends Horde_Mail_Rfc822_Object
             if (!empty($opts['encode'])) {
                 $personal = Horde_Mime::encode($this->personal, $opts['encode']);
             }
-            $personal = $rfc822->encode($personal, 'personal');
+            if (empty($opts['noquote'])) {
+                $personal = $rfc822->encode($personal, 'personal');
+            }
+        }
+        if (!empty($opts['comment']) && !empty($this->comment)) {
+            foreach ($this->comment as $val) {
+                $personal .= ' (' . $rfc822->encode($val, 'comment') . ')';
+            }
         }
 
         return (strlen($personal) && ($personal != $address))
-            ? $personal . ' <' . $address . '>'
+            ? ltrim($personal) . ' <' . $address . '>'
             : $address;
     }
 

@@ -5,8 +5,7 @@ Feature: Atto charmap button
   @javascript
   Scenario: Insert symbols
     Given I log in as "admin"
-    And I follow "Profile" in the user menu
-    And I follow "Edit profile"
+    And I open my profile in edit mode
     And I set the field "Description" to "<p>1980 Mullet</p>"
     And I select the text in the "Description" Atto editor
     When I click on "Show more buttons" "button"
@@ -17,5 +16,5 @@ Feature: Atto charmap button
     And I follow "Editor preferences"
     And I set the field "Text editor" to "Plain text area"
     And I press "Save changes"
-    And I follow "Edit profile"
+    And I click on "Edit profile" "link" in the "region-main" "region"
     Then I should see "ā"

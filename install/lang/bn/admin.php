@@ -42,3 +42,4 @@ $string['cliunknowoption'] = 'অচেনা অপশন:
 $string['cliyesnoprompt'] = 'y (মানে হ্যাঁ) বা n (মানে না) টাইপ করুন';
 $string['environmentrequireinstall'] = 'অবশ্যই ইনস্টল ও সক্রিয় করতে হবে';
 $string['environmentrequireversion'] = '{$a->needed} সংস্করণ আবশ্যক এবং আপনি {$a->current} চালাচ্ছেন';
+$string['upgradekeyset'] = 'আপগ্রেড কুঞ্জিকা (এটি সেট না করতে খালি রাখুন)';

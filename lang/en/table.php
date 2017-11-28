@@ -22,7 +22,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['downloadas'] = 'Download table data as {$a->formatsmenu} {$a->downloadbutton}';
+$string['downloadas'] = 'Download table data as';
+
+// Deprecated since Moodle 3.1.
 $string['downloadcsv'] = 'Comma separated values text file';
 $string['downloadexcel'] = 'Excel spreadsheet';
 $string['downloadods'] = 'OpenDocument spreadsheet';

@@ -30,7 +30,9 @@
  */
 class Google_Service_Licensing extends Google_Service
 {
-
+  /** View and manage Google Apps licenses for your domain. */
+  const APPS_LICENSING =
+      "https://www.googleapis.com/auth/apps.licensing";
 
   public $licenseAssignments;
   
@@ -43,6 +45,7 @@ class Google_Service_Licensing extends Google_Service
   public function __construct(Google_Client $client)
   {
     parent::__construct($client);
+    $this->rootUrl = 'https://www.googleapis.com/';
     $this->servicePath = 'apps/licensing/v1/product/';
     $this->version = 'v1';
     $this->serviceName = 'licensing';

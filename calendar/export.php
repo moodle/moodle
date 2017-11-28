@@ -77,7 +77,8 @@ if (!empty($day) && !empty($mon) && !empty($year)) {
 }
 
 if ($courseid != SITEID && !empty($courseid)) {
-    $course = $DB->get_record('course', array('id' => $courseid));
+    // Course ID must be valid and existing.
+    $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
     $courses = array($course->id => $course);
     $issite = false;
 } else {
@@ -85,7 +86,7 @@ if ($courseid != SITEID && !empty($courseid)) {
     $courses = calendar_get_default_courses();
     $issite = true;
 }
-require_course_login($course);
+require_login($course, false);
 
 $url = new moodle_url('/calendar/export.php', array('time' => $time));
 
@@ -99,7 +100,7 @@ if ($course !== NULL) {
 $PAGE->set_url($url);
 
 $calendar = new calendar_information(0, 0, 0, $time);
-$calendar->prepare_for_view($course, $courses);
+$calendar->set_sources($course, $courses);
 
 $pagetitle = get_string('export', 'calendar');
 
@@ -114,7 +115,6 @@ $PAGE->navbar->add($pagetitle);
 $PAGE->set_title($course->shortname.': '.get_string('calendar', 'calendar').': '.$pagetitle);
 $PAGE->set_heading($course->fullname);
 $PAGE->set_pagelayout('standard');
-$PAGE->set_button(calendar_preferences_button($course));
 
 $renderer = $PAGE->get_renderer('core_calendar');
 $calendar->add_sidecalendar_blocks($renderer);
@@ -170,4 +170,5 @@ if ($action != 'advanced') {
 echo $calendarurl;
 
 echo $renderer->complete_layout();
+
 echo $OUTPUT->footer();

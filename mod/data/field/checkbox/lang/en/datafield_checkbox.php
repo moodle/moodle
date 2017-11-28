@@ -25,3 +25,4 @@
  */
 
 $string['pluginname'] = 'Checkbox';
+$string['fieldtypelabel'] = 'Checkbox field';

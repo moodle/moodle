@@ -30,7 +30,7 @@
  * @package course
  */
 
-require_once(dirname(__FILE__) . '/../config.php');
+require_once(__DIR__ . '/../config.php');
 require_once($CFG->libdir . '/adminlib.php');
 require_once($CFG->dirroot . '/course/lib.php');
 require_once($CFG->dirroot . '/course/request_form.php');
@@ -51,7 +51,7 @@ if (!empty($approve) and confirm_sesskey()) {
     $courseid = $course->approve();
 
     if ($courseid !== false) {
-        redirect($CFG->wwwroot.'/course/edit.php?id=' . $courseid);
+        redirect(new moodle_url('/course/edit.php', ['id' => $courseid, 'returnto' => 'pending']));
     } else {
         print_error('courseapprovedfailed');
     }

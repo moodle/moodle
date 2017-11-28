@@ -25,7 +25,7 @@
 
 define('CLI_SCRIPT', 1);
 
-require(dirname(dirname(dirname(__FILE__))).'/config.php');
+require(__DIR__.'/../../config.php');
 require_once($CFG->libdir.'/clilib.php');
 require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
 

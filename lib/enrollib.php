@@ -68,6 +68,32 @@ define('ENROL_EXT_REMOVED_SUSPEND', 2);
 define('ENROL_EXT_REMOVED_SUSPENDNOROLES', 3);
 
 /**
+ * Do not send email.
+ */
+define('ENROL_DO_NOT_SEND_EMAIL', 0);
+
+/**
+ * Send email from course contact.
+ */
+define('ENROL_SEND_EMAIL_FROM_COURSE_CONTACT', 1);
+
+/**
+ * Send email from enrolment key holder.
+ */
+define('ENROL_SEND_EMAIL_FROM_KEY_HOLDER', 2);
+
+/**
+ * Send email from no reply address.
+ */
+define('ENROL_SEND_EMAIL_FROM_NOREPLY', 3);
+
+/** Edit enrolment action. */
+define('ENROL_ACTION_EDIT', 'editenrolment');
+
+/** Unenrol action. */
+define('ENROL_ACTION_UNENROL', 'unenrol');
+
+/**
  * Returns instances of enrol plugins
  * @param bool $enabled return enabled only
  * @return array of enrol plugins name=>instance
@@ -125,13 +151,15 @@ function enrol_get_plugin($name) {
 
     $location = "$CFG->dirroot/enrol/$name";
 
-    if (!file_exists("$location/lib.php")) {
-        return null;
-    }
-    include_once("$location/lib.php");
     $class = "enrol_{$name}_plugin";
     if (!class_exists($class)) {
-        return null;
+        if (!file_exists("$location/lib.php")) {
+            return null;
+        }
+        include_once("$location/lib.php");
+        if (!class_exists($class)) {
+            return null;
+        }
     }
 
     return new $class();
@@ -268,8 +296,11 @@ function enrol_get_shared_courses($user1, $user2, $preloadcontexts = false, $che
         return false;
     }
 
-    list($plugins, $params) = $DB->get_in_or_equal($plugins, SQL_PARAMS_NAMED, 'ee');
-    $params['enabled'] = ENROL_INSTANCE_ENABLED;
+    list($plugins1, $params1) = $DB->get_in_or_equal($plugins, SQL_PARAMS_NAMED, 'ee1');
+    list($plugins2, $params2) = $DB->get_in_or_equal($plugins, SQL_PARAMS_NAMED, 'ee2');
+    $params = array_merge($params1, $params2);
+    $params['enabled1'] = ENROL_INSTANCE_ENABLED;
+    $params['enabled2'] = ENROL_INSTANCE_ENABLED;
     $params['active1'] = ENROL_USER_ACTIVE;
     $params['active2'] = ENROL_USER_ACTIVE;
     $params['user1']   = $user1;
@@ -287,11 +318,12 @@ function enrol_get_shared_courses($user1, $user2, $preloadcontexts = false, $che
               FROM {course} c
               JOIN (
                 SELECT DISTINCT c.id
-                  FROM {enrol} e
-                  JOIN {user_enrolments} ue1 ON (ue1.enrolid = e.id AND ue1.status = :active1 AND ue1.userid = :user1)
-                  JOIN {user_enrolments} ue2 ON (ue2.enrolid = e.id AND ue2.status = :active2 AND ue2.userid = :user2)
-                  JOIN {course} c ON (c.id = e.courseid AND c.visible = 1)
-                 WHERE e.status = :enabled AND e.enrol $plugins
+                  FROM {course} c
+                  JOIN {enrol} e1 ON (c.id = e1.courseid AND e1.status = :enabled1 AND e1.enrol $plugins1)
+                  JOIN {user_enrolments} ue1 ON (ue1.enrolid = e1.id AND ue1.status = :active1 AND ue1.userid = :user1)
+                  JOIN {enrol} e2 ON (c.id = e2.courseid AND e2.status = :enabled2 AND e2.enrol $plugins2)
+                  JOIN {user_enrolments} ue2 ON (ue2.enrolid = e2.id AND ue2.status = :active2 AND ue2.userid = :user2)
+                 WHERE c.visible = 1
               ) ec ON ec.id = c.id
               $ctxjoin";
 
@@ -404,7 +436,7 @@ function enrol_add_course_navigation(navigation_node $coursenode, $course) {
     if ($course->id != SITEID) {
         // list all participants - allows assigning roles, groups, etc.
         if (has_capability('moodle/course:enrolreview', $coursecontext)) {
-            $url = new moodle_url('/enrol/users.php', array('id'=>$course->id));
+            $url = new moodle_url('/user/index.php', array('id'=>$course->id));
             $usersnode->add(get_string('enrolledusers', 'enrol'), $url, navigation_node::TYPE_SETTING, null, 'review', new pix_icon('i/enrolusers', ''));
         }
 
@@ -452,7 +484,7 @@ function enrol_add_course_navigation(navigation_node $coursenode, $course) {
             }
         }
         // Check role permissions
-        if (has_any_capability(array('moodle/role:assign', 'moodle/role:safeoverride','moodle/role:override', 'moodle/role:assign'), $coursecontext)) {
+        if (has_any_capability(array('moodle/role:assign', 'moodle/role:safeoverride', 'moodle/role:override'), $coursecontext)) {
             $url = new moodle_url('/admin/roles/check.php', array('contextid'=>$coursecontext->id));
             $permissionsnode->add(get_string('checkpermissions', 'role'), $url, navigation_node::TYPE_SETTING, null, 'permissions', new pix_icon('i/checkpermissions', ''));
         }
@@ -516,17 +548,25 @@ function enrol_add_course_navigation(navigation_node $coursenode, $course) {
  *   so name the fields you really need, which will
  *   be added and uniq'd
  *
+ * If $allaccessible is true, this will additionally return courses that the current user is not
+ * enrolled in, but can access because they are open to the user for other reasons (course view
+ * permission, currently viewing course as a guest, or course allows guest access without
+ * password).
+ *
  * @param string|array $fields
  * @param string $sort
  * @param int $limit max number of courses
+ * @param array $courseids the list of course ids to filter by
+ * @param bool $allaccessible Include courses user is not enrolled in, but can access
  * @return array
  */
-function enrol_get_my_courses($fields = NULL, $sort = 'visible DESC,sortorder ASC', $limit = 0) {
-    global $DB, $USER;
+function enrol_get_my_courses($fields = null, $sort = 'visible DESC,sortorder ASC',
+          $limit = 0, $courseids = [], $allaccessible = false) {
+    global $DB, $USER, $CFG;
 
-    // Guest account does not have any courses
-    if (isguestuser() or !isloggedin()) {
-        return(array());
+    // Guest account does not have any enrolled courses.
+    if (!$allaccessible && (isguestuser() or !isloggedin())) {
+        return array();
     }
 
     $basefields = array('id', 'category', 'sortorder',
@@ -581,22 +621,92 @@ function enrol_get_my_courses($fields = NULL, $sort = 'visible DESC,sortorder AS
     $params['contextlevel'] = CONTEXT_COURSE;
     $wheres = implode(" AND ", $wheres);
 
-    //note: we can not use DISTINCT + text fields due to Oracle and MS limitations, that is why we have the subselect there
+    if (!empty($courseids)) {
+        list($courseidssql, $courseidsparams) = $DB->get_in_or_equal($courseids, SQL_PARAMS_NAMED);
+        $wheres = sprintf("%s AND c.id %s", $wheres, $courseidssql);
+        $params = array_merge($params, $courseidsparams);
+    }
+
+    $courseidsql = "";
+    // Logged-in, non-guest users get their enrolled courses.
+    if (!isguestuser() && isloggedin()) {
+        $courseidsql .= "
+                SELECT DISTINCT e.courseid
+                  FROM {enrol} e
+                  JOIN {user_enrolments} ue ON (ue.enrolid = e.id AND ue.userid = :userid)
+                 WHERE ue.status = :active AND e.status = :enabled AND ue.timestart < :now1
+                       AND (ue.timeend = 0 OR ue.timeend > :now2)";
+        $params['userid'] = $USER->id;
+        $params['active'] = ENROL_USER_ACTIVE;
+        $params['enabled'] = ENROL_INSTANCE_ENABLED;
+        $params['now1'] = round(time(), -2); // Improves db caching.
+        $params['now2'] = $params['now1'];
+    }
+
+    // When including non-enrolled but accessible courses...
+    if ($allaccessible) {
+        if (is_siteadmin()) {
+            // Site admins can access all courses.
+            $courseidsql = "SELECT DISTINCT c2.id AS courseid FROM {course} c2";
+        } else {
+            // If we used the enrolment as well, then this will be UNIONed.
+            if ($courseidsql) {
+                $courseidsql .= " UNION ";
+            }
+
+            // Include courses with guest access and no password.
+            $courseidsql .= "
+                    SELECT DISTINCT e.courseid
+                      FROM {enrol} e
+                     WHERE e.enrol = 'guest' AND e.password = :emptypass AND e.status = :enabled2";
+            $params['emptypass'] = '';
+            $params['enabled2'] = ENROL_INSTANCE_ENABLED;
+
+            // Include courses where the current user is currently using guest access (may include
+            // those which require a password).
+            $courseids = [];
+            $accessdata = get_user_accessdata($USER->id);
+            foreach ($accessdata['ra'] as $contextpath => $roles) {
+                if (array_key_exists($CFG->guestroleid, $roles)) {
+                    // Work out the course id from context path.
+                    $context = context::instance_by_id(preg_replace('~^.*/~', '', $contextpath));
+                    if ($context instanceof context_course) {
+                        $courseids[$context->instanceid] = true;
+                    }
+                }
+            }
+
+            // Include courses where the current user has moodle/course:view capability.
+            $courses = get_user_capability_course('moodle/course:view', null, false);
+            if (!$courses) {
+                $courses = [];
+            }
+            foreach ($courses as $course) {
+                $courseids[$course->id] = true;
+            }
+
+            // If there are any in either category, list them individually.
+            if ($courseids) {
+                list ($allowedsql, $allowedparams) = $DB->get_in_or_equal(
+                        array_keys($courseids), SQL_PARAMS_NAMED);
+                $courseidsql .= "
+                        UNION
+                       SELECT DISTINCT c3.id AS courseid
+                         FROM {course} c3
+                        WHERE c3.id $allowedsql";
+                $params = array_merge($params, $allowedparams);
+            }
+        }
+    }
+
+    // Note: we can not use DISTINCT + text fields due to Oracle and MS limitations, that is why
+    // we have the subselect there.
     $sql = "SELECT $coursefields $ccselect
               FROM {course} c
-              JOIN (SELECT DISTINCT e.courseid
-                      FROM {enrol} e
-                      JOIN {user_enrolments} ue ON (ue.enrolid = e.id AND ue.userid = :userid)
-                     WHERE ue.status = :active AND e.status = :enabled AND ue.timestart < :now1 AND (ue.timeend = 0 OR ue.timeend > :now2)
-                   ) en ON (en.courseid = c.id)
+              JOIN ($courseidsql) en ON (en.courseid = c.id)
            $ccjoin
              WHERE $wheres
           $orderby";
-    $params['userid']  = $USER->id;
-    $params['active']  = ENROL_USER_ACTIVE;
-    $params['enabled'] = ENROL_INSTANCE_ENABLED;
-    $params['now1']    = round(time(), -2); // improves db caching
-    $params['now2']    = $params['now1'];
 
     $courses = $DB->get_records_sql($sql, $params, 0, $limit);
 
@@ -789,6 +899,7 @@ function enrol_get_all_users_courses($userid, $onlyactive = false, $fields = NUL
     $basefields = array('id', 'category', 'sortorder',
             'shortname', 'fullname', 'idnumber',
             'startdate', 'visible',
+            'defaultgroupingid',
             'groupmode', 'groupmodeforce');
 
     if (empty($fields)) {
@@ -1064,10 +1175,463 @@ function enrol_accessing_via_instance(stdClass $instance) {
     return $DB->record_exists('user_enrolments', array('userid'=>$USER->id, 'enrolid'=>$instance->id));
 }
 
+/**
+ * Returns true if user is enrolled (is participating) in course
+ * this is intended for students and teachers.
+ *
+ * Since 2.2 the result for active enrolments and current user are cached.
+ *
+ * @param context $context
+ * @param int|stdClass $user if null $USER is used, otherwise user object or id expected
+ * @param string $withcapability extra capability name
+ * @param bool $onlyactive consider only active enrolments in enabled plugins and time restrictions
+ * @return bool
+ */
+function is_enrolled(context $context, $user = null, $withcapability = '', $onlyactive = false) {
+    global $USER, $DB;
+
+    // First find the course context.
+    $coursecontext = $context->get_course_context();
+
+    // Make sure there is a real user specified.
+    if ($user === null) {
+        $userid = isset($USER->id) ? $USER->id : 0;
+    } else {
+        $userid = is_object($user) ? $user->id : $user;
+    }
+
+    if (empty($userid)) {
+        // Not-logged-in!
+        return false;
+    } else if (isguestuser($userid)) {
+        // Guest account can not be enrolled anywhere.
+        return false;
+    }
+
+    // Note everybody participates on frontpage, so for other contexts...
+    if ($coursecontext->instanceid != SITEID) {
+        // Try cached info first - the enrolled flag is set only when active enrolment present.
+        if ($USER->id == $userid) {
+            $coursecontext->reload_if_dirty();
+            if (isset($USER->enrol['enrolled'][$coursecontext->instanceid])) {
+                if ($USER->enrol['enrolled'][$coursecontext->instanceid] > time()) {
+                    if ($withcapability and !has_capability($withcapability, $context, $userid)) {
+                        return false;
+                    }
+                    return true;
+                }
+            }
+        }
+
+        if ($onlyactive) {
+            // Look for active enrolments only.
+            $until = enrol_get_enrolment_end($coursecontext->instanceid, $userid);
+
+            if ($until === false) {
+                return false;
+            }
+
+            if ($USER->id == $userid) {
+                if ($until == 0) {
+                    $until = ENROL_MAX_TIMESTAMP;
+                }
+                $USER->enrol['enrolled'][$coursecontext->instanceid] = $until;
+                if (isset($USER->enrol['tempguest'][$coursecontext->instanceid])) {
+                    unset($USER->enrol['tempguest'][$coursecontext->instanceid]);
+                    remove_temp_course_roles($coursecontext);
+                }
+            }
+
+        } else {
+            // Any enrolment is good for us here, even outdated, disabled or inactive.
+            $sql = "SELECT 'x'
+                      FROM {user_enrolments} ue
+                      JOIN {enrol} e ON (e.id = ue.enrolid AND e.courseid = :courseid)
+                      JOIN {user} u ON u.id = ue.userid
+                     WHERE ue.userid = :userid AND u.deleted = 0";
+            $params = array('userid' => $userid, 'courseid' => $coursecontext->instanceid);
+            if (!$DB->record_exists_sql($sql, $params)) {
+                return false;
+            }
+        }
+    }
+
+    if ($withcapability and !has_capability($withcapability, $context, $userid)) {
+        return false;
+    }
+
+    return true;
+}
 
 /**
+ * Returns an array of joins, wheres and params that will limit the group of
+ * users to only those enrolled and with given capability (if specified).
+ *
+ * Note this join will return duplicate rows for users who have been enrolled
+ * several times (e.g. as manual enrolment, and as self enrolment). You may
+ * need to use a SELECT DISTINCT in your query (see get_enrolled_sql for example).
+ *
+ * @param context $context
+ * @param string $prefix optional, a prefix to the user id column
+ * @param string|array $capability optional, may include a capability name, or array of names.
+ *      If an array is provided then this is the equivalent of a logical 'OR',
+ *      i.e. the user needs to have one of these capabilities.
+ * @param int $group optional, 0 indicates no current group, otherwise the group id
+ * @param bool $onlyactive consider only active enrolments in enabled plugins and time restrictions
+ * @param bool $onlysuspended inverse of onlyactive, consider only suspended enrolments
+ * @param int $enrolid The enrolment ID. If not 0, only users enrolled using this enrolment method will be returned.
+ * @return \core\dml\sql_join Contains joins, wheres, params
+ */
+function get_enrolled_with_capabilities_join(context $context, $prefix = '', $capability = '', $group = 0,
+        $onlyactive = false, $onlysuspended = false, $enrolid = 0) {
+    $uid = $prefix . 'u.id';
+    $joins = array();
+    $wheres = array();
+
+    $enrolledjoin = get_enrolled_join($context, $uid, $onlyactive, $onlysuspended, $enrolid);
+    $joins[] = $enrolledjoin->joins;
+    $wheres[] = $enrolledjoin->wheres;
+    $params = $enrolledjoin->params;
+
+    if (!empty($capability)) {
+        $capjoin = get_with_capability_join($context, $capability, $uid);
+        $joins[] = $capjoin->joins;
+        $wheres[] = $capjoin->wheres;
+        $params = array_merge($params, $capjoin->params);
+    }
+
+    if ($group) {
+        $groupjoin = groups_get_members_join($group, $uid);
+        $joins[] = $groupjoin->joins;
+        $params = array_merge($params, $groupjoin->params);
+    }
+
+    $joins = implode("\n", $joins);
+    $wheres[] = "{$prefix}u.deleted = 0";
+    $wheres = implode(" AND ", $wheres);
+
+    return new \core\dml\sql_join($joins, $wheres, $params);
+}
+
+/**
+ * Returns array with sql code and parameters returning all ids
+ * of users enrolled into course.
+ *
+ * This function is using 'eu[0-9]+_' prefix for table names and parameters.
+ *
+ * @param context $context
+ * @param string $withcapability
+ * @param int $groupid 0 means ignore groups, any other value limits the result by group id
+ * @param bool $onlyactive consider only active enrolments in enabled plugins and time restrictions
+ * @param bool $onlysuspended inverse of onlyactive, consider only suspended enrolments
+ * @param int $enrolid The enrolment ID. If not 0, only users enrolled using this enrolment method will be returned.
+ * @return array list($sql, $params)
+ */
+function get_enrolled_sql(context $context, $withcapability = '', $groupid = 0, $onlyactive = false, $onlysuspended = false,
+                          $enrolid = 0) {
+
+    // Use unique prefix just in case somebody makes some SQL magic with the result.
+    static $i = 0;
+    $i++;
+    $prefix = 'eu' . $i . '_';
+
+    $capjoin = get_enrolled_with_capabilities_join(
+            $context, $prefix, $withcapability, $groupid, $onlyactive, $onlysuspended, $enrolid);
+
+    $sql = "SELECT DISTINCT {$prefix}u.id
+              FROM {user} {$prefix}u
+            $capjoin->joins
+             WHERE $capjoin->wheres";
+
+    return array($sql, $capjoin->params);
+}
+
+/**
+ * Returns array with sql joins and parameters returning all ids
+ * of users enrolled into course.
+ *
+ * This function is using 'ej[0-9]+_' prefix for table names and parameters.
+ *
+ * @throws coding_exception
+ *
+ * @param context $context
+ * @param string $useridcolumn User id column used the calling query, e.g. u.id
+ * @param bool $onlyactive consider only active enrolments in enabled plugins and time restrictions
+ * @param bool $onlysuspended inverse of onlyactive, consider only suspended enrolments
+ * @param int $enrolid The enrolment ID. If not 0, only users enrolled using this enrolment method will be returned.
+ * @return \core\dml\sql_join Contains joins, wheres, params
+ */
+function get_enrolled_join(context $context, $useridcolumn, $onlyactive = false, $onlysuspended = false, $enrolid = 0) {
+    // Use unique prefix just in case somebody makes some SQL magic with the result.
+    static $i = 0;
+    $i++;
+    $prefix = 'ej' . $i . '_';
+
+    // First find the course context.
+    $coursecontext = $context->get_course_context();
+
+    $isfrontpage = ($coursecontext->instanceid == SITEID);
+
+    if ($onlyactive && $onlysuspended) {
+        throw new coding_exception("Both onlyactive and onlysuspended are set, this is probably not what you want!");
+    }
+    if ($isfrontpage && $onlysuspended) {
+        throw new coding_exception("onlysuspended is not supported on frontpage; please add your own early-exit!");
+    }
+
+    $joins  = array();
+    $wheres = array();
+    $params = array();
+
+    $wheres[] = "1 = 1"; // Prevent broken where clauses later on.
+
+    // Note all users are "enrolled" on the frontpage, but for others...
+    if (!$isfrontpage) {
+        $where1 = "{$prefix}ue.status = :{$prefix}active AND {$prefix}e.status = :{$prefix}enabled";
+        $where2 = "{$prefix}ue.timestart < :{$prefix}now1 AND ({$prefix}ue.timeend = 0 OR {$prefix}ue.timeend > :{$prefix}now2)";
+
+        $enrolconditions = array(
+            "{$prefix}e.id = {$prefix}ue.enrolid",
+            "{$prefix}e.courseid = :{$prefix}courseid",
+        );
+        if ($enrolid) {
+            $enrolconditions[] = "{$prefix}e.id = :{$prefix}enrolid";
+            $params[$prefix . 'enrolid'] = $enrolid;
+        }
+        $enrolconditionssql = implode(" AND ", $enrolconditions);
+        $ejoin = "JOIN {enrol} {$prefix}e ON ($enrolconditionssql)";
+
+        $params[$prefix.'courseid'] = $coursecontext->instanceid;
+
+        if (!$onlysuspended) {
+            $joins[] = "JOIN {user_enrolments} {$prefix}ue ON {$prefix}ue.userid = $useridcolumn";
+            $joins[] = $ejoin;
+            if ($onlyactive) {
+                $wheres[] = "$where1 AND $where2";
+            }
+        } else {
+            // Suspended only where there is enrolment but ALL are suspended.
+            // Consider multiple enrols where one is not suspended or plain role_assign.
+            $enrolselect = "SELECT DISTINCT {$prefix}ue.userid FROM {user_enrolments} {$prefix}ue $ejoin WHERE $where1 AND $where2";
+            $joins[] = "JOIN {user_enrolments} {$prefix}ue1 ON {$prefix}ue1.userid = $useridcolumn";
+            $enrolconditions = array(
+                "{$prefix}e1.id = {$prefix}ue1.enrolid",
+                "{$prefix}e1.courseid = :{$prefix}_e1_courseid",
+            );
+            if ($enrolid) {
+                $enrolconditions[] = "{$prefix}e1.id = :{$prefix}e1_enrolid";
+                $params[$prefix . 'e1_enrolid'] = $enrolid;
+            }
+            $enrolconditionssql = implode(" AND ", $enrolconditions);
+            $joins[] = "JOIN {enrol} {$prefix}e1 ON ($enrolconditionssql)";
+            $params["{$prefix}_e1_courseid"] = $coursecontext->instanceid;
+            $wheres[] = "$useridcolumn NOT IN ($enrolselect)";
+        }
+
+        if ($onlyactive || $onlysuspended) {
+            $now = round(time(), -2); // Rounding helps caching in DB.
+            $params = array_merge($params, array($prefix . 'enabled' => ENROL_INSTANCE_ENABLED,
+                    $prefix . 'active' => ENROL_USER_ACTIVE,
+                    $prefix . 'now1' => $now, $prefix . 'now2' => $now));
+        }
+    }
+
+    $joins = implode("\n", $joins);
+    $wheres = implode(" AND ", $wheres);
+
+    return new \core\dml\sql_join($joins, $wheres, $params);
+}
+
+/**
+ * Returns list of users enrolled into course.
+ *
+ * @param context $context
+ * @param string $withcapability
+ * @param int $groupid 0 means ignore groups, any other value limits the result by group id
+ * @param string $userfields requested user record fields
+ * @param string $orderby
+ * @param int $limitfrom return a subset of records, starting at this point (optional, required if $limitnum is set).
+ * @param int $limitnum return a subset comprising this many records (optional, required if $limitfrom is set).
+ * @param bool $onlyactive consider only active enrolments in enabled plugins and time restrictions
+ * @return array of user records
+ */
+function get_enrolled_users(context $context, $withcapability = '', $groupid = 0, $userfields = 'u.*', $orderby = null,
+        $limitfrom = 0, $limitnum = 0, $onlyactive = false) {
+    global $DB;
+
+    list($esql, $params) = get_enrolled_sql($context, $withcapability, $groupid, $onlyactive);
+    $sql = "SELECT $userfields
+              FROM {user} u
+              JOIN ($esql) je ON je.id = u.id
+             WHERE u.deleted = 0";
+
+    if ($orderby) {
+        $sql = "$sql ORDER BY $orderby";
+    } else {
+        list($sort, $sortparams) = users_order_by_sql('u');
+        $sql = "$sql ORDER BY $sort";
+        $params = array_merge($params, $sortparams);
+    }
+
+    return $DB->get_records_sql($sql, $params, $limitfrom, $limitnum);
+}
+
+/**
+ * Counts list of users enrolled into course (as per above function)
+ *
+ * @param context $context
+ * @param string $withcapability
+ * @param int $groupid 0 means ignore groups, any other value limits the result by group id
+ * @param bool $onlyactive consider only active enrolments in enabled plugins and time restrictions
+ * @return array of user records
+ */
+function count_enrolled_users(context $context, $withcapability = '', $groupid = 0, $onlyactive = false) {
+    global $DB;
+
+    $capjoin = get_enrolled_with_capabilities_join(
+            $context, '', $withcapability, $groupid, $onlyactive);
+
+    $sql = "SELECT count(u.id)
+              FROM {user} u
+            $capjoin->joins
+             WHERE $capjoin->wheres AND u.deleted = 0";
+
+    return $DB->count_records_sql($sql, $capjoin->params);
+}
+
+/**
+ * Send welcome email "from" options.
+ *
+ * @return array list of from options
+ */
+function enrol_send_welcome_email_options() {
+    return [
+        ENROL_DO_NOT_SEND_EMAIL                 => get_string('no'),
+        ENROL_SEND_EMAIL_FROM_COURSE_CONTACT    => get_string('sendfromcoursecontact', 'enrol'),
+        ENROL_SEND_EMAIL_FROM_KEY_HOLDER        => get_string('sendfromkeyholder', 'enrol'),
+        ENROL_SEND_EMAIL_FROM_NOREPLY           => get_string('sendfromnoreply', 'enrol')
+    ];
+}
+
+/**
+ * Serve the user enrolment form as a fragment.
+ *
+ * @param array $args List of named arguments for the fragment loader.
+ * @return string
+ */
+function enrol_output_fragment_user_enrolment_form($args) {
+    global $CFG, $DB;
+
+    $args = (object) $args;
+    $context = $args->context;
+    require_capability('moodle/course:enrolreview', $context);
+
+    $ueid = $args->ueid;
+    $userenrolment = $DB->get_record('user_enrolments', ['id' => $ueid], '*', MUST_EXIST);
+    $instance = $DB->get_record('enrol', ['id' => $userenrolment->enrolid], '*', MUST_EXIST);
+    $plugin = enrol_get_plugin($instance->enrol);
+    $customdata = [
+        'ue' => $userenrolment,
+        'modal' => true,
+        'enrolinstancename' => $plugin->get_instance_name($instance)
+    ];
+
+    // Set the data if applicable.
+    $data = [];
+    if (isset($args->formdata)) {
+        $serialiseddata = json_decode($args->formdata);
+        parse_str($serialiseddata, $data);
+    }
+
+    require_once("$CFG->dirroot/enrol/editenrolment_form.php");
+    $mform = new \enrol_user_enrolment_form(null, $customdata, 'post', '', null, true, $data);
+
+    if (!empty($data)) {
+        $mform->set_data($data);
+        $mform->is_validated();
+    }
+
+    return $mform->render();
+}
+
+/**
+ * Returns the course where a user enrolment belong to.
+ *
+ * @param int $ueid user_enrolments id
+ * @return stdClass
+ */
+function enrol_get_course_by_user_enrolment_id($ueid) {
+    global $DB;
+    $sql = "SELECT c.* FROM {user_enrolments} ue
+              JOIN {enrol} e ON e.id = ue.enrolid
+              JOIN {course} c ON c.id = e.courseid
+             WHERE ue.id = :ueid";
+    return $DB->get_record_sql($sql, array('ueid' => $ueid));
+}
+
+/**
+ * Return all users enrolled in a course.
+ *
+ * @param int $courseid Course id or false if using $uefilter (user enrolment ids may belong to different courses)
+ * @param bool $onlyactive consider only active enrolments in enabled plugins and time restrictions
+ * @param array $usersfilter Limit the results obtained to this list of user ids. $uefilter compatibility not guaranteed.
+ * @param array $uefilter Limit the results obtained to this list of user enrolment ids. $usersfilter compatibility not guaranteed.
+ * @return stdClass[]
+ */
+function enrol_get_course_users($courseid = false, $onlyactive = false, $usersfilter = array(), $uefilter = array()) {
+    global $DB;
+
+    if (!$courseid && !$usersfilter && !$uefilter) {
+        throw new \coding_exception('You should specify at least 1 filter: courseid, users or user enrolments');
+    }
+
+    $sql = "SELECT ue.id AS ueid, ue.status AS uestatus, ue.enrolid AS ueenrolid, ue.timestart AS uetimestart,
+             ue.timeend AS uetimeend, ue.modifierid AS uemodifierid, ue.timecreated AS uetimecreated,
+             ue.timemodified AS uetimemodified,
+             u.* FROM {user_enrolments} ue
+              JOIN {enrol} e ON e.id = ue.enrolid
+              JOIN {user} u ON ue.userid = u.id
+             WHERE ";
+    $params = array();
+
+    if ($courseid) {
+        $conditions[] = "e.courseid = :courseid";
+        $params['courseid'] = $courseid;
+    }
+
+    if ($onlyactive) {
+        $conditions[] = "ue.status = :active AND e.status = :enabled AND ue.timestart < :now1 AND " .
+            "(ue.timeend = 0 OR ue.timeend > :now2)";
+        // Improves db caching.
+        $params['now1']    = round(time(), -2);
+        $params['now2']    = $params['now1'];
+        $params['active']  = ENROL_USER_ACTIVE;
+        $params['enabled'] = ENROL_INSTANCE_ENABLED;
+    }
+
+    if ($usersfilter) {
+        list($usersql, $userparams) = $DB->get_in_or_equal($usersfilter, SQL_PARAMS_NAMED);
+        $conditions[] = "ue.userid $usersql";
+        $params = $params + $userparams;
+    }
+
+    if ($uefilter) {
+        list($uesql, $ueparams) = $DB->get_in_or_equal($uefilter, SQL_PARAMS_NAMED);
+        $conditions[] = "ue.id $uesql";
+        $params = $params + $ueparams;
+    }
+
+    return $DB->get_records_sql($sql . ' ' . implode(' AND ', $conditions), $params);
+}
+
+/**
+ * Enrolment plugins abstract class.
+ *
  * All enrol plugins should be based on this class,
  * this is also the main source of documentation.
+ *
+ * @copyright  2010 Petr Skoda {@link http://skodak.org}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class enrol_plugin {
     protected $config = null;
@@ -1330,6 +1894,10 @@ abstract class enrol_plugin {
                         )
                     );
             $event->trigger();
+            // Check if course contacts cache needs to be cleared.
+            require_once($CFG->libdir . '/coursecatlib.php');
+            coursecat::user_enrolment_changed($courseid, $ue->userid,
+                    $ue->status, $ue->timestart, $ue->timeend);
         }
 
         if ($roleid) {
@@ -1370,7 +1938,7 @@ abstract class enrol_plugin {
      * @return void
      */
     public function update_user_enrol(stdClass $instance, $userid, $status = NULL, $timestart = NULL, $timeend = NULL) {
-        global $DB, $USER;
+        global $DB, $USER, $CFG;
 
         $name = $this->get_name();
 
@@ -1403,6 +1971,7 @@ abstract class enrol_plugin {
         }
 
         $ue->modifierid = $USER->id;
+        $ue->timemodified = time();
         $DB->update_record('user_enrolments', $ue);
         context_course::instance($instance->courseid)->mark_dirty(); // reset enrol caches
 
@@ -1420,6 +1989,10 @@ abstract class enrol_plugin {
                     )
                 );
         $event->trigger();
+
+        require_once($CFG->libdir . '/coursecatlib.php');
+        coursecat::user_enrolment_changed($instance->courseid, $ue->userid,
+                $ue->status, $ue->timestart, $ue->timeend);
     }
 
     /**
@@ -1501,6 +2074,10 @@ abstract class enrol_plugin {
         // reset all enrol caches
         $context->mark_dirty();
 
+        // Check if courrse contacts cache needs to be cleared.
+        require_once($CFG->libdir . '/coursecatlib.php');
+        coursecat::user_enrolment_changed($courseid, $ue->userid, ENROL_USER_SUSPENDED);
+
         // reset current user enrolment caching
         if ($userid == $USER->id) {
             if (isset($USER->enrol['enrolled'][$courseid])) {
@@ -1525,6 +2102,44 @@ abstract class enrol_plugin {
      */
     public function sync_user_enrolments($user) {
         // override if necessary
+    }
+
+    /**
+     * This returns false for backwards compatibility, but it is really recommended.
+     *
+     * @since Moodle 3.1
+     * @return boolean
+     */
+    public function use_standard_editing_ui() {
+        return false;
+    }
+
+    /**
+     * Return whether or not, given the current state, it is possible to add a new instance
+     * of this enrolment plugin to the course.
+     *
+     * Default implementation is just for backwards compatibility.
+     *
+     * @param int $courseid
+     * @return boolean
+     */
+    public function can_add_instance($courseid) {
+        $link = $this->get_newinstance_link($courseid);
+        return !empty($link);
+    }
+
+    /**
+     * Return whether or not, given the current state, it is possible to edit an instance
+     * of this enrolment plugin in the course. Used by the standard editing UI
+     * to generate a link to the edit instance form if editing is allowed.
+     *
+     * @param stdClass $instance
+     * @return boolean
+     */
+    public function can_edit_instance($instance) {
+        $context = context_course::instance($instance->courseid);
+
+        return has_capability('enrol/' . $instance->enrol . ':config', $context);
     }
 
     /**
@@ -1634,6 +2249,36 @@ abstract class enrol_plugin {
     }
 
     /**
+     * Adds form elements to add/edit instance form.
+     *
+     * @since Moodle 3.1
+     * @param object $instance enrol instance or null if does not exist yet
+     * @param MoodleQuickForm $mform
+     * @param context $context
+     * @return void
+     */
+    public function edit_instance_form($instance, MoodleQuickForm $mform, $context) {
+        // Do nothing by default.
+    }
+
+    /**
+     * Perform custom validation of the data used to edit the instance.
+     *
+     * @since Moodle 3.1
+     * @param array $data array of ("fieldname"=>value) of submitted data
+     * @param array $files array of uploaded files "element_name"=>tmp_file_path
+     * @param object $instance The instance data loaded from the DB.
+     * @param context $context The context of the instance we are editing
+     * @return array of "element_name"=>"error_description" if there are errors,
+     *         or an empty array if everything is OK.
+     */
+    public function edit_instance_validation($data, $files, $instance, $context) {
+        // No errors by default.
+        debugging('enrol_plugin::edit_instance_validation() is missing. This plugin has no validation!', DEBUG_DEVELOPER);
+        return array();
+    }
+
+    /**
      * Validates course edit form data
      *
      * @param object $instance enrol instance or null if does not exist yet
@@ -1692,7 +2337,42 @@ abstract class enrol_plugin {
             $instance->$field = $value;
         }
 
-        return $DB->insert_record('enrol', $instance);
+        $instance->id = $DB->insert_record('enrol', $instance);
+
+        \core\event\enrol_instance_created::create_from_record($instance)->trigger();
+
+        return $instance->id;
+    }
+
+    /**
+     * Update instance of enrol plugin.
+     *
+     * @since Moodle 3.1
+     * @param stdClass $instance
+     * @param stdClass $data modified instance fields
+     * @return boolean
+     */
+    public function update_instance($instance, $data) {
+        global $DB;
+        $properties = array('status', 'name', 'password', 'customint1', 'customint2', 'customint3',
+                            'customint4', 'customint5', 'customint6', 'customint7', 'customint8',
+                            'customchar1', 'customchar2', 'customchar3', 'customdec1', 'customdec2',
+                            'customtext1', 'customtext2', 'customtext3', 'customtext4', 'roleid',
+                            'enrolperiod', 'expirynotify', 'notifyall', 'expirythreshold',
+                            'enrolstartdate', 'enrolenddate', 'cost', 'currency');
+
+        foreach ($properties as $key) {
+            if (isset($data->$key)) {
+                $instance->$key = $data->$key;
+            }
+        }
+        $instance->timemodified = time();
+
+        $update = $DB->update_record('enrol', $instance);
+        if ($update) {
+            \core\event\enrol_instance_updated::create_from_record($instance)->trigger();
+        }
+        return $update;
     }
 
     /**
@@ -1723,8 +2403,10 @@ abstract class enrol_plugin {
         $instance->status = $newstatus;
         $DB->update_record('enrol', $instance);
 
-        // invalidate all enrol caches
         $context = context_course::instance($instance->courseid);
+        \core\event\enrol_instance_updated::create_from_record($instance)->trigger();
+
+        // Invalidate all enrol caches.
         $context->mark_dirty();
     }
 
@@ -1756,8 +2438,10 @@ abstract class enrol_plugin {
         // finally drop the enrol row
         $DB->delete_records('enrol', array('id'=>$instance->id));
 
-        // invalidate all enrol caches
         $context = context_course::instance($instance->courseid);
+        \core\event\enrol_instance_deleted::create_from_record($instance)->trigger();
+
+        // Invalidate all enrol caches.
         $context->mark_dirty();
     }
 
@@ -1805,7 +2489,15 @@ abstract class enrol_plugin {
      * @return void
      */
     public function add_course_navigation($instancesnode, stdClass $instance) {
-        // usually adds manage users
+        if ($this->use_standard_editing_ui()) {
+            $context = context_course::instance($instance->courseid);
+            $cap = 'enrol/' . $instance->enrol . ':config';
+            if (has_capability($cap, $context)) {
+                $linkparams = array('courseid' => $instance->courseid, 'id' => $instance->id, 'type' => $instance->enrol);
+                $managelink = new moodle_url('/enrol/editinstance.php', $linkparams);
+                $instancesnode->add($this->get_instance_name($instance), $managelink, navigation_node::TYPE_SETTING);
+            }
+        }
     }
 
     /**
@@ -1814,7 +2506,16 @@ abstract class enrol_plugin {
      * @return array
      */
     public function get_action_icons(stdClass $instance) {
-        return array();
+        global $OUTPUT;
+
+        $icons = array();
+        if ($this->use_standard_editing_ui()) {
+            $linkparams = array('courseid' => $instance->courseid, 'id' => $instance->id, 'type' => $instance->enrol);
+            $editlink = new moodle_url("/enrol/editinstance.php", $linkparams);
+            $icons[] = $OUTPUT->action_icon($editlink, new pix_icon('t/edit', get_string('edit'), 'core',
+                array('class' => 'iconsmall')));
+        }
+        return $icons;
     }
 
     /**
@@ -1890,7 +2591,38 @@ abstract class enrol_plugin {
      * @return array An array of user_enrolment_actions
      */
     public function get_user_enrolment_actions(course_enrolment_manager $manager, $ue) {
-        return array();
+        $actions = [];
+        $context = $manager->get_context();
+        $instance = $ue->enrolmentinstance;
+        $params = $manager->get_moodlepage()->url->params();
+        $params['ue'] = $ue->id;
+
+        // Edit enrolment action.
+        if ($this->allow_manage($instance) && has_capability("enrol/{$instance->enrol}:manage", $context)) {
+            $title = get_string('editenrolment', 'enrol');
+            $icon = new pix_icon('t/edit', $title);
+            $url = new moodle_url('/enrol/editenrolment.php', $params);
+            $actionparams = [
+                'class' => 'editenrollink',
+                'rel' => $ue->id,
+                'data-action' => ENROL_ACTION_EDIT
+            ];
+            $actions[] = new user_enrolment_action($icon, $title, $url, $actionparams);
+        }
+
+        // Unenrol action.
+        if ($this->allow_unenrol_user($instance, $ue) && has_capability("enrol/{$instance->enrol}:unenrol", $context)) {
+            $title = get_string('unenrol', 'enrol');
+            $icon = new pix_icon('t/delete', $title);
+            $url = new moodle_url('/enrol/unenroluser.php', $params);
+            $actionparams = [
+                'class' => 'unenrollink',
+                'rel' => $ue->id,
+                'data-action' => ENROL_ACTION_UNENROL
+            ];
+            $actions[] = new user_enrolment_action($icon, $title, $url, $actionparams);
+        }
+        return $actions;
     }
 
     /**
@@ -2188,7 +2920,8 @@ abstract class enrol_plugin {
         $subject = get_string('expirymessageenrolledsubject', 'enrol_'.$name, $a);
         $body = get_string('expirymessageenrolledbody', 'enrol_'.$name, $a);
 
-        $message = new stdClass();
+        $message = new \core\message\message();
+        $message->courseid          = $ue->courseid;
         $message->notification      = 1;
         $message->component         = 'enrol_'.$name;
         $message->name              = 'expiry_notification';
@@ -2244,12 +2977,13 @@ abstract class enrol_plugin {
         $a->course    = format_string($course->fullname, true, array('context'=>$context));
         $a->threshold = get_string('numdays', '', $instance->expirythreshold / (60*60*24));
         $a->users     = implode("\n", $users);
-        $a->extendurl = (string)new moodle_url('/enrol/users.php', array('id'=>$instance->courseid));
+        $a->extendurl = (string)new moodle_url('/user/index.php', array('id'=>$instance->courseid));
 
         $subject = get_string('expirymessageenrollersubject', 'enrol_'.$name, $a);
         $body = get_string('expirymessageenrollerbody', 'enrol_'.$name, $a);
 
-        $message = new stdClass();
+        $message = new \core\message\message();
+        $message->courseid          = $course->id;
         $message->notification      = 1;
         $message->component         = 'enrol_'.$name;
         $message->name              = 'expiry_notification';
@@ -2338,5 +3072,40 @@ abstract class enrol_plugin {
     public function restore_group_member($instance, $groupid, $userid) {
         // Implement if you want to restore protected group memberships,
         // usually this is not necessary because plugins should be able to recreate the memberships automatically.
+    }
+
+    /**
+     * Returns defaults for new instances.
+     * @since Moodle 3.1
+     * @return array
+     */
+    public function get_instance_defaults() {
+        return array();
+    }
+
+    /**
+     * Validate a list of parameter names and types.
+     * @since Moodle 3.1
+     *
+     * @param array $data array of ("fieldname"=>value) of submitted data
+     * @param array $rules array of ("fieldname"=>PARAM_X types - or "fieldname"=>array( list of valid options )
+     * @return array of "element_name"=>"error_description" if there are errors,
+     *         or an empty array if everything is OK.
+     */
+    public function validate_param_types($data, $rules) {
+        $errors = array();
+        $invalidstr = get_string('invaliddata', 'error');
+        foreach ($rules as $fieldname => $rule) {
+            if (is_array($rule)) {
+                if (!in_array($data[$fieldname], $rule)) {
+                    $errors[$fieldname] = $invalidstr;
+                }
+            } else {
+                if ($data[$fieldname] != clean_param($data[$fieldname], $rule)) {
+                    $errors[$fieldname] = $invalidstr;
+                }
+            }
+        }
+        return $errors;
     }
 }

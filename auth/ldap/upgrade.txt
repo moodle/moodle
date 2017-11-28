@@ -1,4 +1,15 @@
 This files describes API changes in the auth_ldap code.
+
+=== 3.4 ===
+
+* The "auth_ldap/coursecreators" setting was replaced with dynamically generated "auth_ldap/<role>context" settings,
+  migrating any existing value to a new setting in this style.
+
+=== 3.3 ===
+
+* The config.html file was migrated to use the admin settings API.
+  The identifier for configuration data stored in config_plugins table was converted from 'auth/ldap' to 'auth_ldap'.
+
 === 2.9.1 ===
 * auth_plugin_ldap::update_user_record() accepts an additional (optional) param
   to trigger update event.

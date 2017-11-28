@@ -2,7 +2,7 @@
 
     // Allows the admin to configure mnet stuff
 
-    require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
+    require(__DIR__.'/../../config.php');
     require_once($CFG->libdir.'/adminlib.php');
     include_once($CFG->dirroot.'/mnet/lib.php');
 

@@ -22,8 +22,7 @@ Feature: tool_monitor_subscriptions
     And I log in as "admin"
     And I navigate to "Event monitoring rules" node in "Site administration > Reports"
     And I click on "Enable" "link"
-    And I am on site homepage
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "Event monitoring rules" node in "Course administration > Reports"
     And I press "Add a new rule"
     And I set the following fields to these values:
@@ -98,12 +97,13 @@ Feature: tool_monitor_subscriptions
     Then I should see "Subscription successfully removed"
     And "#toolmonitorsubs_r0" "css_element" should not exist
 
+  @_bug_phantomjs
   Scenario: Receiving notification on site level
     Given I log in as "admin"
     And I follow "Preferences" in the user menu
-    And I follow "Messaging"
-    And I click on "input[name^=tool_monitor_notification_loggedin]" "css_element"
-    And I press "Save changes"
+    And I click on "Notification preferences" "link" in the "#page-content" "css_element"
+    And I click on "//td[@data-processor-name='popup']//label[@class='preference-state']" "xpath_element" in the "Notifications of rule subscriptions" "table_row"
+    And I wait until the page is ready
     And I follow "Preferences" in the user menu
     And I follow "Event monitoring"
     And I set the field "Select a course" to "Acceptance test site"
@@ -113,29 +113,31 @@ Feature: tool_monitor_subscriptions
     And I am on site homepage
     And I trigger cron
     And I am on site homepage
-    When I follow "Messages" in the user menu
-    And I follow "Do not reply to this email (1)"
-    Then I should see "The course was viewed."
+    When I click on ".popover-region-notifications" "css_element"
+    And I click on "View full notification" "link" in the ".popover-region-notifications" "css_element"
+    Then I should see "New rule site level"
+    And I should see "The course was viewed"
 
+  @_bug_phantomjs
   Scenario: Receiving notification on course level
     Given I log in as "teacher1"
     And I follow "Preferences" in the user menu
-    And I follow "Messaging"
-    And I click on "input[name^=tool_monitor_notification_loggedin]" "css_element"
-    And I press "Save changes"
+    And I click on "Notification preferences" "link" in the "#page-content" "css_element"
+    And I click on "//td[@data-processor-name='popup']//label[@class='preference-state']" "xpath_element" in the "Notifications of rule subscriptions" "table_row"
+    And I wait until the page is ready
     And I follow "Preferences" in the user menu
     And I follow "Event monitoring"
     And I set the field "Select a course" to "Course 1"
     And I follow "Subscribe to rule \"New rule course level\""
     And I should see "Subscription successfully created"
     And "#toolmonitorsubs_r0" "css_element" should exist
-    And I am on site homepage
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I trigger cron
     And I am on site homepage
-    When I follow "Messages" in the user menu
-    And I follow "Do not reply to this email (1)"
-    Then I should see "The course was viewed."
+    When I click on ".popover-region-notifications" "css_element"
+    And I click on "View full notification" "link" in the ".popover-region-notifications" "css_element"
+    Then I should see "New rule course level"
+    And I should see "The course was viewed"
 
   Scenario: Navigating via quick link to rules
     Given I log in as "admin"
@@ -143,7 +145,7 @@ Feature: tool_monitor_subscriptions
     When I follow "Event monitoring"
     And I set the field "Select a course" to "Course 1"
     Then I should see "You can manage rules from the Event monitoring rules page."
-    And I follow "Event monitoring rules"
+    And I click on "Event monitoring rules" "link" in the "region-main" "region"
     And I should see "You can subscribe to rules from the Event monitoring page."
     And I log out
     And I log in as "teacher1"
@@ -151,7 +153,7 @@ Feature: tool_monitor_subscriptions
     And I follow "Event monitoring"
     And I set the field "Select a course" to "Course 1"
     And I should see "You can manage rules from the Event monitoring rules page."
-    And I follow "Event monitoring rules"
+    And I click on "Event monitoring rules" "link" in the "region-main" "region"
     And I should see "You can subscribe to rules from the Event monitoring page."
     And I click on "//a[text()='Event monitoring']" "xpath_element"
     And the field "courseid" matches value "Course 1"

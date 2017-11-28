@@ -31,7 +31,7 @@ Y.extend(DROPDOWN, M.core.dialogue, {
      * @method initializer
      * @return void
      */
-    initializer : function(config) {
+    initializer: function(config) {
         var button, body, headertext, bb;
         DROPDOWN.superclass.initializer.call(this, config);
 
@@ -59,7 +59,9 @@ Y.extend(DROPDOWN, M.core.dialogue, {
             }
         }, this);
 
-        button.on('click', function(e) {e.preventDefault(); this.show();}, this);
+        button.on('click', function(e) {
+            e.preventDefault(); this.show();
+        }, this);
         button.on('key', this.show, 'enter,space', this);
     },
 
@@ -69,7 +71,7 @@ Y.extend(DROPDOWN, M.core.dialogue, {
      * @method show
      * @return void
      */
-    show : function() {
+    show: function() {
         var button = this.get('buttonNode'),
             result = DROPDOWN.superclass.show.call(this);
         this.align(button, [Y.WidgetPositionAlign.TL, Y.WidgetPositionAlign.BL]);
@@ -77,8 +79,8 @@ Y.extend(DROPDOWN, M.core.dialogue, {
         return result;
     }
 }, {
-    NAME : DROPDOWN_NAME,
-    ATTRS : {
+    NAME: DROPDOWN_NAME,
+    ATTRS: {
         /**
          * The header for the drop down (only accessible to screen readers).
          *
@@ -86,8 +88,8 @@ Y.extend(DROPDOWN, M.core.dialogue, {
          * @type String
          * @default ''
          */
-        headerText : {
-            value : ''
+        headerText: {
+            value: ''
         },
 
         /**
@@ -97,8 +99,8 @@ Y.extend(DROPDOWN, M.core.dialogue, {
          * @type Y.Node
          * @default null
          */
-        buttonNode : {
-            value : null
+        buttonNode: {
+            value: null
         }
     }
 });

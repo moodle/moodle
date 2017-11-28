@@ -26,8 +26,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
-require_once(dirname(__FILE__) . '/../lib.php');
-require_once(dirname(__FILE__) . '/helpers.php');
+require_once(__DIR__ . '/../lib.php');
+require_once(__DIR__ . '/helpers.php');
 
 
 /**
@@ -94,7 +94,7 @@ class question_usage_by_activity_test extends advanced_testcase {
         // Exercise SUT and verify.
         $this->assertSame($tf, $quba->get_question($slot));
 
-        $this->setExpectedException('moodle_exception');
+        $this->expectException('moodle_exception');
         $quba->get_question($slot + 1);
     }
 
@@ -155,7 +155,7 @@ class question_usage_by_activity_test extends advanced_testcase {
         );
 
         // Exercise SUT - now it should fail.
-        $this->setExpectedException('question_out_of_sequence_exception');
+        $this->expectException('question_out_of_sequence_exception');
         $quba->process_all_actions($slot, $postdata);
     }
 }

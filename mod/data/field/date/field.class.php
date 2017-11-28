@@ -44,14 +44,25 @@ class data_field_date extends data_field_base {
             $month   = $formdata->$fieldname;
             $fieldname = 'field_' . $this->field->id . '_year';
             $year   = $formdata->$fieldname;
-            $content = make_timestamp($year, $month, $day, 12, 0, 0, 0, false);
+
+            $calendartype = \core_calendar\type_factory::get_calendar_instance();
+            $gregoriandate = $calendartype->convert_to_gregorian($year, $month, $day);
+            $content = make_timestamp(
+                $gregoriandate['year'],
+                $gregoriandate['month'],
+                $gregoriandate['day'],
+                $gregoriandate['hour'],
+                $gregoriandate['minute'],
+                0,
+                0,
+                false);
         } else if ($recordid) {
             $content = (int)$DB->get_field('data_content', 'content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid));
         } else {
             $content = time();
         }
 
-        $str = '<div title="'.s($this->field->description).'">';
+        $str = '<div title="'.s($this->field->description).'" class="mod-data-input form-inline">';
         $dayselector = html_writer::select_time('days', 'field_'.$this->field->id.'_day', $content);
         $monthselector = html_writer::select_time('months', 'field_'.$this->field->id.'_month', $content);
         $yearselector = html_writer::select_time('years', 'field_'.$this->field->id.'_year', $content);
@@ -67,7 +78,7 @@ class data_field_date extends data_field_base {
            . html_writer::select_time('months', 'f_'.$this->field->id.'_m', $value['timestamp'])
            . html_writer::select_time('years', 'f_'.$this->field->id.'_y', $value['timestamp']);
         $datecheck = html_writer::checkbox('f_'.$this->field->id.'_z', 1, $value['usedate']);
-        $str = $selectors . ' ' . $datecheck . ' ' . get_string('usedate', 'data');
+        $str = '<div class="form-inline">' . $selectors . ' ' . $datecheck . ' ' . get_string('usedate', 'data') . '</div>';
 
         return $str;
     }
@@ -82,14 +93,34 @@ class data_field_date extends data_field_base {
         return array(" ({$tablealias}.fieldid = {$this->field->id} AND $varcharcontent = :$name) ", array($name => $value['timestamp']));
     }
 
-    function parse_search_field() {
-        $day   = optional_param('f_'.$this->field->id.'_d', 0, PARAM_INT);
-        $month = optional_param('f_'.$this->field->id.'_m', 0, PARAM_INT);
-        $year  = optional_param('f_'.$this->field->id.'_y', 0, PARAM_INT);
-        $usedate = optional_param('f_'.$this->field->id.'_z', 0, PARAM_INT);
+    public function parse_search_field($defaults = null) {
+        $paramday = 'f_'.$this->field->id.'_d';
+        $parammonth = 'f_'.$this->field->id.'_m';
+        $paramyear = 'f_'.$this->field->id.'_y';
+        $paramusedate = 'f_'.$this->field->id.'_z';
+        if (empty($defaults[$paramday])) {  // One empty means the other ones are empty too.
+            $defaults = array($paramday => 0, $parammonth => 0, $paramyear => 0, $paramusedate => 0);
+        }
+
+        $day   = optional_param($paramday, $defaults[$paramday], PARAM_INT);
+        $month = optional_param($parammonth, $defaults[$parammonth], PARAM_INT);
+        $year  = optional_param($paramyear, $defaults[$paramyear], PARAM_INT);
+        $usedate = optional_param($paramusedate, $defaults[$paramusedate], PARAM_INT);
+
         $data = array();
         if (!empty($day) && !empty($month) && !empty($year) && $usedate == 1) {
-            $data['timestamp'] = make_timestamp($year, $month, $day, 12, 0, 0, 0, false);
+            $calendartype = \core_calendar\type_factory::get_calendar_instance();
+            $gregoriandate = $calendartype->convert_to_gregorian($year, $month, $day);
+
+            $data['timestamp'] = make_timestamp(
+                $gregoriandate['year'],
+                $gregoriandate['month'],
+                $gregoriandate['day'],
+                $gregoriandate['hour'],
+                $gregoriandate['minute'],
+                0,
+                0,
+                false);
             $data['usedate'] = 1;
             return $data;
         } else {
@@ -110,7 +141,18 @@ class data_field_date extends data_field_base {
             $content = new stdClass();
             $content->fieldid = $this->field->id;
             $content->recordid = $recordid;
-            $content->content = make_timestamp($this->year, $this->month, $this->day, 12, 0, 0, 0, false);
+
+            $calendartype = \core_calendar\type_factory::get_calendar_instance();
+            $gregoriandate = $calendartype->convert_to_gregorian($this->year, $this->month, $this->day);
+            $content->content = make_timestamp(
+                $gregoriandate['year'],
+                $gregoriandate['month'],
+                $gregoriandate['day'],
+                $gregoriandate['hour'],
+                $gregoriandate['minute'],
+                0,
+                0,
+                false);
 
             if ($oldcontent = $DB->get_record('data_content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid))) {
                 $content->id = $oldcontent->id;
@@ -134,5 +176,18 @@ class data_field_date extends data_field_base {
         return $DB->sql_cast_char2int($fieldname, true);
     }
 
-
+    /**
+     * Return the plugin configs for external functions.
+     *
+     * @return array the list of config parameters
+     * @since Moodle 3.3
+     */
+    public function get_config_for_external() {
+        // Return all the config parameters.
+        $configs = [];
+        for ($i = 1; $i <= 10; $i++) {
+            $configs["param$i"] = $this->field->{"param$i"};
+        }
+        return $configs;
+    }
 }

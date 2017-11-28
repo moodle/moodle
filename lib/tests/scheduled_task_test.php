@@ -127,7 +127,7 @@ class core_scheduled_task_testcase extends advanced_testcase {
         // The timezones used in this test are chosen because they do not use DST - that would break the test.
         $this->resetAfterTest();
 
-        $this->setTimezone('America/Caracas');
+        $this->setTimezone('Asia/Kabul');
 
         $testclass = new \core\task\scheduled_test_task();
 
@@ -143,9 +143,9 @@ class core_scheduled_task_testcase extends advanced_testcase {
         $userdate = userdate($nexttime);
 
         // Should be displayed in user timezone.
-        // I used http://www.timeanddate.com/worldclock/fixedtime.html?msg=Moodle+Test&iso=20140314T01&p1=58
-        // to verify this time.
-        $this->assertContains('11:15 AM', core_text::strtoupper($userdate));
+        // I used http://www.timeanddate.com/worldclock/fixedtime.html?msg=Moodle+Test&iso=20160502T01&p1=113
+        // setting my location to Kathmandu to verify this time.
+        $this->assertContains('2:15 AM', core_text::strtoupper($userdate));
     }
 
     public function test_reset_scheduled_tasks_for_component() {
@@ -215,6 +215,47 @@ class core_scheduled_task_testcase extends advanced_testcase {
 
         // Assert we have the same number of tasks.
         $this->assertEquals($initcount, $finalcount);
+    }
+
+    /**
+     * Tests that the reset function deletes old tasks.
+     */
+    public function test_reset_scheduled_tasks_for_component_delete() {
+        global $DB;
+        $this->resetAfterTest(true);
+
+        $count = $DB->count_records('task_scheduled', array('component' => 'moodle'));
+        $allcount = $DB->count_records('task_scheduled');
+
+        $task = new \core\task\scheduled_test_task();
+        $task->set_component('moodle');
+        $record = \core\task\manager::record_from_scheduled_task($task);
+        $DB->insert_record('task_scheduled', $record);
+        $this->assertTrue($DB->record_exists('task_scheduled', array('classname' => '\core\task\scheduled_test_task',
+            'component' => 'moodle')));
+
+        $task = new \core\task\scheduled_test2_task();
+        $task->set_component('moodle');
+        $record = \core\task\manager::record_from_scheduled_task($task);
+        $DB->insert_record('task_scheduled', $record);
+        $this->assertTrue($DB->record_exists('task_scheduled', array('classname' => '\core\task\scheduled_test2_task',
+            'component' => 'moodle')));
+
+        $aftercount = $DB->count_records('task_scheduled', array('component' => 'moodle'));
+        $afterallcount = $DB->count_records('task_scheduled');
+
+        $this->assertEquals($count + 2, $aftercount);
+        $this->assertEquals($allcount + 2, $afterallcount);
+
+        // Now check that the right things were deleted.
+        \core\task\manager::reset_scheduled_tasks_for_component('moodle');
+
+        $this->assertEquals($count, $DB->count_records('task_scheduled', array('component' => 'moodle')));
+        $this->assertEquals($allcount, $DB->count_records('task_scheduled'));
+        $this->assertFalse($DB->record_exists('task_scheduled', array('classname' => '\core\task\scheduled_test2_task',
+            'component' => 'moodle')));
+        $this->assertFalse($DB->record_exists('task_scheduled', array('classname' => '\core\task\scheduled_test_task',
+            'component' => 'moodle')));
     }
 
     public function test_get_next_scheduled_task() {

@@ -54,7 +54,7 @@ class core_files_mbz_packer_testcase extends advanced_testcase {
         $this->assertNotEmpty($packer->archive_to_pathname($files, $filetrue));
         $context = context_system::instance();
         $this->assertNotEmpty($storagetrue = $packer->archive_to_storage(
-                $files, $context->id, 'phpunit', 'data', 0, '/', 'false.mbz'));
+                $files, $context->id, 'phpunit', 'data', 0, '/', 'true.mbz'));
 
         // Check the sizes are different (indicating different formats).
         $this->assertNotEquals(filesize($filefalse), filesize($filetrue));
@@ -86,5 +86,56 @@ class core_files_mbz_packer_testcase extends advanced_testcase {
         $out = $fs->get_file($context->id, 'phpunit', 'data', 2, '/', '1.txt');
         $this->assertNotEmpty($out);
         $this->assertEquals('frog', $out->get_content());
+    }
+
+    public function usezipbackups_provider() {
+        return [
+            'Use zips'  => [true],
+            'Use tgz'   => [false],
+        ];
+    }
+
+    /**
+     * @dataProvider usezipbackups_provider
+     */
+    public function test_extract_to_pathname_returnvalue_successful($usezipbackups) {
+        global $CFG;
+        $this->resetAfterTest();
+
+        $packer = get_file_packer('application/vnd.moodle.backup');
+
+        // Set up basic archive contents.
+        $files = array('1.txt' => array('frog'));
+
+        // Create 2 archives (each with one file in) in zip mode.
+        $CFG->usezipbackups = $usezipbackups;
+
+        $mbzfile = make_request_directory() . '/file.mbz';
+        $packer->archive_to_pathname($files, $mbzfile);
+
+        $target = make_request_directory();
+        $result = $packer->extract_to_pathname($mbzfile, $target, null, null, true);
+        $this->assertTrue($result);
+    }
+
+    /**
+     * @dataProvider usezipbackups_provider
+     */
+    public function test_extract_to_pathname_returnvalue_failure($usezipbackups) {
+        global $CFG;
+        $this->resetAfterTest();
+
+        $packer = get_file_packer('application/vnd.moodle.backup');
+
+        // Create 2 archives (each with one file in) in zip mode.
+        $CFG->usezipbackups = $usezipbackups;
+
+        $mbzfile = make_request_directory() . '/file.mbz';
+        file_put_contents($mbzfile, 'Content');
+
+        $target = make_request_directory();
+        $result = $packer->extract_to_pathname($mbzfile, $target, null, null, true);
+        $this->assertDebuggingCalledCount(1);
+        $this->assertFalse($result);
     }
 }

@@ -25,7 +25,6 @@ YUI.add('moodle-mod_quiz-repaginate', function (Y, NAME) {
  */
 
 var CSS = {
-    REPAGINATECONTAINERCLASS: '.rpcontainerclass',
     REPAGINATECOMMAND: '#repaginatecommand'
 };
 
@@ -43,25 +42,25 @@ Y.extend(POPUP, Y.Base, {
     header: null,
     body: null,
 
-    initializer : function() {
-        var rpcontainerclass = Y.one(CSS.REPAGINATECONTAINERCLASS);
+    initializer: function() {
+        var repaginatebutton = Y.one(CSS.REPAGINATECOMMAND);
 
         // Set popup header and body.
-        this.header = rpcontainerclass.getAttribute(PARAMS.HEADER);
-        this.body = rpcontainerclass.getAttribute(PARAMS.FORM);
-        Y.one(CSS.REPAGINATECOMMAND).on('click', this.display_dialog, this);
+        this.header = repaginatebutton.getData(PARAMS.HEADER);
+        this.body = repaginatebutton.getData(PARAMS.FORM);
+        repaginatebutton.on('click', this.display_dialog, this);
     },
 
-    display_dialog : function (e) {
+    display_dialog: function(e) {
         e.preventDefault();
 
         // Configure the popup.
         var config = {
-            headerContent : this.header,
-            bodyContent : this.body,
-            draggable : true,
-            modal : true,
-            zIndex : 1000,
+            headerContent: this.header,
+            bodyContent: this.body,
+            draggable: true,
+            modal: true,
+            zIndex: 1000,
             context: [CSS.REPAGINATECOMMAND, 'tr', 'br', ['beforeShow']],
             centered: false,
             width: '30em',
@@ -70,7 +69,7 @@ Y.extend(POPUP, Y.Base, {
             footerContent: null
         };
 
-        var popup = { dialog: null };
+        var popup = {dialog: null};
         popup.dialog = new M.core.dialogue(config);
         popup.dialog.show();
     }

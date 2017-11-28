@@ -27,6 +27,7 @@ if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
 }
 
+require_once($CFG->dirroot . '/course/lib.php');
 require_once($CFG->libdir.'/formslib.php');
 
 class recent_form extends moodleform {
@@ -64,9 +65,9 @@ class recent_form extends moodleform {
         }
 
         if ($COURSE->id == SITEID) {
-            $viewparticipants = has_capability('moodle/site:viewparticipants', context_system::instance());
+            $viewparticipants = course_can_view_participants(context_system::instance());
         } else {
-            $viewparticipants = has_capability('moodle/course:viewparticipants', $context);
+            $viewparticipants = course_can_view_participants($context);
         }
 
         if ($viewparticipants) {

@@ -28,7 +28,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once(dirname(__FILE__) . '/../deferredfeedback/behaviour.php');
+require_once(__DIR__ . '/../deferredfeedback/behaviour.php');
 
 
 /**

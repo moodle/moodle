@@ -1,4 +1,4 @@
-@core @core_course @_cross_browser
+@core @core_course @_cross_browser @javascript
 Feature: Topic's course sections highlighting
   In order to highlight parts of the course to students
   As a teacher
@@ -18,27 +18,25 @@ Feature: Topic's course sections highlighting
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
     And I log in as "teacher1"
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     When I turn section "1" highlighting on
     Then section "1" should be highlighted
     And I turn section "2" highlighting on
     And section "2" should be highlighted
     And section "1" should not be highlighted
-    And I am on homepage
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And section "2" should be highlighted
     And section "1" should not be highlighted
     And I turn section "2" highlighting off
+    And I wait until the page is ready
     And section "2" should not be highlighted
     And I reload the page
     And section "2" should not be highlighted
-    And I am on homepage
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And section "2" should not be highlighted
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And section "1" should not be highlighted
     And section "2" should not be highlighted
 

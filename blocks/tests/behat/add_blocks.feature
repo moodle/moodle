@@ -17,9 +17,7 @@ Feature: Add blocks
       | student1 | C1 | student |
       | student2 | C1 | student |
     And I log in as "admin"
-    And I am on site homepage
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     When I add the "Blog menu" block
     Then I should see "View my entries about this course"
 

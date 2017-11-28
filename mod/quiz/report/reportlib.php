@@ -98,6 +98,7 @@ function quiz_report_get_significant_questions($quiz) {
     $qsbyslot = $DB->get_records_sql("
             SELECT slot.slot,
                    q.id,
+                   q.qtype,
                    q.length,
                    slot.maxmark
 
@@ -113,6 +114,7 @@ function quiz_report_get_significant_questions($quiz) {
     foreach ($qsbyslot as $question) {
         $question->number = $number;
         $number += $question->length;
+        $question->type = $question->qtype;
     }
 
     return $qsbyslot;
@@ -191,10 +193,10 @@ function quiz_report_grade_method_sql($grademethod, $quizattemptsalias = 'quiza'
  * @param number $bandwidth the width of each band.
  * @param int $bands the number of bands
  * @param int $quizid the quiz id.
- * @param array $userids list of user ids.
+ * @param \core\dml\sql_join $usersjoins (joins, wheres, params) to get enrolled users
  * @return array band number => number of users with scores in that band.
  */
-function quiz_report_grade_bands($bandwidth, $bands, $quizid, $userids = array()) {
+function quiz_report_grade_bands($bandwidth, $bands, $quizid, \core\dml\sql_join $usersjoins = null) {
     global $DB;
     if (!is_int($bands)) {
         debugging('$bands passed to quiz_report_grade_bands must be an integer. (' .
@@ -202,11 +204,14 @@ function quiz_report_grade_bands($bandwidth, $bands, $quizid, $userids = array()
         $bands = (int) $bands;
     }
 
-    if ($userids) {
-        list($usql, $params) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED, 'u');
-        $usql = "qg.userid $usql AND";
+    if ($usersjoins && !empty($usersjoins->joins)) {
+        $userjoin = "JOIN {user} u ON u.id = qg.userid
+                {$usersjoins->joins}";
+        $usertest = $usersjoins->wheres;
+        $params = $usersjoins->params;
     } else {
-        $usql = '';
+        $userjoin = '';
+        $usertest = '1=1';
         $params = array();
     }
     $sql = "
@@ -215,7 +220,8 @@ SELECT band, COUNT(1)
 FROM (
     SELECT FLOOR(qg.grade / :bandwidth) AS band
       FROM {quiz_grades} qg
-     WHERE $usql qg.quiz = :quizid
+    $userjoin
+    WHERE $usertest AND qg.quiz = :quizid
 ) subquery
 
 GROUP BY

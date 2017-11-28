@@ -23,7 +23,7 @@
  */
 
 require_once('../config.php');
-require_once(dirname(__FILE__) . '/restorefile_form.php');
+require_once(__DIR__ . '/restorefile_form.php');
 require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
 
 // current context
@@ -79,6 +79,9 @@ if (!check_dir_exists($tmpdir, true, true)) {
 
 // choose the backup file from backup files tree
 if ($action == 'choosebackupfile') {
+    if ($filearea == 'automated') {
+        require_capability('moodle/restore:viewautomatedfilearea', $context);
+    }
     if ($fileinfo = $browser->get_file_info($filecontext, $component, $filearea, $itemid, $filepath, $filename)) {
         if (is_a($fileinfo, 'file_info_stored')) {
             // Use the contenthash rather than copying the file where possible,
@@ -93,7 +96,9 @@ if ($action == 'choosebackupfile') {
             // If it's some weird other kind of file then use old code.
             $filename = restore_controller::get_tempdir_name($courseid, $USER->id);
             $pathname = $tmpdir . '/' . $filename;
-            $fileinfo->copy_to_pathname($pathname);
+            if (!$fileinfo->copy_to_pathname($pathname)) {
+                throw new restore_ui_exception('errorcopyingbackupfile', null, $pathname);
+            }
             $restore_url = new moodle_url('/backup/restore.php', array(
                     'contextid' => $contextid, 'filename' => $filename));
         }
@@ -115,7 +120,9 @@ $data = $form->get_data();
 if ($data && has_capability('moodle/restore:uploadfile', $context)) {
     $filename = restore_controller::get_tempdir_name($courseid, $USER->id);
     $pathname = $tmpdir . '/' . $filename;
-    $form->save_file('backupfile', $pathname);
+    if (!$form->save_file('backupfile', $pathname)) {
+        throw new restore_ui_exception('errorcopyingbackupfile', null, $pathname);
+    }
     $restore_url = new moodle_url('/backup/restore.php', array('contextid'=>$contextid, 'filename'=>$filename));
     redirect($restore_url);
     die;

@@ -1,5 +1,6 @@
 @mod @mod_quiz
-Feature: In order to create a quiz that awards marks the way I want
+Feature: Edit quiz marks with no attempts
+  In order to create a quiz that awards marks the way I want
   As a teacher
   I must be able to set the marks I want on the Edit quiz page.
 
@@ -17,7 +18,7 @@ Feature: In order to create a quiz that awards marks the way I want
       | activity   | name   | course | idnumber | grade | decimalpoints | questiondecimalpoints |
       | quiz       | Quiz 1 | C1     | quiz1    | 20    | 2             | -1                    |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I add a "True/False" question to the "Quiz 1" quiz with:
       | Question name | First question |
       | Question text | Answer me      |
@@ -61,12 +62,13 @@ Feature: In order to create a quiz that awards marks the way I want
     And I should not see "2.000"
     And I should not see "3.000"
     And I should not see "Total of marks: 5.000"
-    When I follow "Edit settings"
+    And I follow "Quiz 1"
+    When I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
       | Decimal places in grades | 3 |
       | Decimal places in question grades | 5 |
     And I press "Save and display"
-    And I follow "Edit quiz"
+    And I navigate to "Edit quiz" in current page administration
     # Then the field "maxgrade" matches value "20.000" -- with exact match on decimal places.
     Then "//input[@name = 'maxgrade' and @value = '20.000']" "xpath_element" should exist
     And I should see "2.00000"

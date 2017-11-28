@@ -17,8 +17,7 @@ Feature: In a lesson activity, teacher can edit a cluster page
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
     And I log in as "teacher1"
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I add a "Lesson" to section "1" and I fill the form with:
       | Name | Lesson with cluster |
       | Description | Test lesson description |
@@ -64,14 +63,13 @@ Feature: In a lesson activity, teacher can edit a cluster page
     And I press "Save page"
     And I click on "Add an end of cluster" "link" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' addlinks ')][5]" "xpath_element"
     And I click on "Add a content page" "link" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' addlinks ')][6]" "xpath_element"
-        And I set the following fields to these values:
+    And I set the following fields to these values:
       | Page title | Second page name |
       | Page contents | Content page after cluster |
       | id_answer_editor_0 | Next page |
       | id_jumpto_0 | Next page |
     And I press "Save page"
 
-  @javascript
   Scenario: Edit lesson cluster page
     Given I click on "//th[normalize-space(.)='Cluster']/descendant::a[2]" "xpath_element"
     When I set the following fields to these values:
@@ -91,7 +89,7 @@ Feature: In a lesson activity, teacher can edit a cluster page
     And I should see "Modified end"
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Lesson with cluster"
     And I should see "First page contents"
     And I press "Next page"

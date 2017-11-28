@@ -24,7 +24,7 @@
  * @author     Yuliya Bozhko <yuliya.bozhko@totaralms.com>
  */
 
-require_once(dirname(dirname(__FILE__)) . '/config.php');
+require_once(__DIR__ . '/../config.php');
 require_once($CFG->libdir . '/badgeslib.php');
 require_once($CFG->libdir . '/filelib.php');
 
@@ -89,7 +89,7 @@ $PAGE->set_context($context);
 $title = get_string('badges', 'badges');
 $PAGE->set_title($title);
 $PAGE->set_heading(fullname($USER));
-$PAGE->set_pagelayout('mydashboard');
+$PAGE->set_pagelayout('standard');
 
 // Include JS files for backpack support.
 badges_setup_backpack_js();

@@ -90,9 +90,9 @@ Feature: A privileged user can create cohorts using a CSV file
       | user  | role    | contextlevel | reference |
       | user1 | manager | Category     | CAT1      |
     When I log in as "user1"
-    And I follow "Courses"
+    And I am on course index
     And I follow "Cat 1"
-    And I navigate to "Cohorts" node in "Category: Cat 1"
+    And I navigate to "Cohorts" in current page administration
     And I follow "Upload cohorts"
     And I upload "cohort/tests/fixtures/uploadcohorts1.csv" file to "File" filemanager
     And I click on "Preview" "button"

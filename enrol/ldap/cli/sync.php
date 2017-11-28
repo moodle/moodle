@@ -33,6 +33,8 @@
  *   - For debugging & better logging, you are encouraged to use in the command line:
  *     -d log_errors=1 -d error_reporting=E_ALL -d display_errors=0 -d html_errors=0
  *
+ * @deprecated since Moodle 3.3 MDL-57631 - please do not use this CLI script any more, use scheduled task instead.
+ * @todo       MDL-58268 This will be deleted in Moodle 3.7.
  * @package    enrol_ldap
  * @author     Iñaki Arenaza - based on code by Martin Dougiamas, Martin Langhoff and others
  * @copyright  1999 onwards Martin Dougiamas {@link http://moodle.com}
@@ -47,6 +49,14 @@ require_once("$CFG->libdir/clilib.php");
 
 // Ensure errors are well explained.
 set_debugging(DEBUG_DEVELOPER, true);
+
+cli_problem('[ENROL LDAP] The sync enrolments cron script has been deprecated. Please use the scheduled task instead.');
+
+// Abort execution of the CLI script if the enrol_ldap\task\sync_enrolments is enabled.
+$task = \core\task\manager::get_scheduled_task('enrol_ldap\task\sync_enrolments');
+if (!$task->get_disabled()) {
+    cli_error('[ENROL LDAP] The scheduled task sync_enrolments is enabled, the cron execution has been aborted.');
+}
 
 if (!enrol_is_enabled('ldap')) {
     cli_error(get_string('pluginnotenabled', 'enrol_ldap'), 2);

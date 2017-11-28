@@ -1,0 +1,118 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template report_insights/insights_list
+
+    Template for the insights list.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * none
+
+    Example context (json):
+    {
+        "insightname": "Best insight ever",
+        "nostaticmodelnotification": {
+            "message": "This is just a prediction."
+        },
+        "predictions": [
+            {
+                "predictiondisplayvalue": "This dev will understand it",
+                "style": "success",
+                "outcomeicon": {
+                    "attributes": [
+                        {"name": "src", "value": "https://moodle.org/logo/moodle-logo.svg" }
+                    ]
+                },
+                "insights": [
+                    {
+                        "sampleimage": "<a href=\"#\">Link</a>",
+                        "sampledescription": "Sample description"
+                    }
+                ]
+            }, {
+                "predictiondisplayvalue": "This dev will not understand it",
+                "style": "danger",
+                "outcomeicon": {
+                    "attributes": [
+                        {"name": "src", "value": "https://moodle.org/logo/moodle-logo.svg" }
+                    ]
+                },
+                "insights": [
+                    {
+                        "sampleimage": "<a href=\"#\">Any renderable</a>",
+                        "sampledescription": "Another sample description"
+                    }
+                ]
+            }
+        ],
+        "noinsights": false
+    }
+}}
+
+{{#modelselector}}
+    <div class="m-b-2">
+        {{> core/single_select}}
+    </div>
+{{/modelselector}}
+
+<h2 class="m-b-2">{{{insightname}}}</h2>
+
+{{^noinsights}}
+{{#nostaticmodelnotification}}
+    <div class="m-t-2">
+        {{> core/notification_info}}
+    </div>
+{{/nostaticmodelnotification}}
+
+{{{ pagingbar }}}
+{{#predictions}}
+    <table class="generaltable insights-list">
+        <caption>
+            {{#str}}prediction, report_insights{{/str}}:
+            <span class="{{#style}}table-{{style}}{{/style}}">
+                {{#outcomeicon}}
+                    {{> core/pix_icon}}
+                {{/outcomeicon}}
+                {{predictiondisplayvalue}}
+            </span>
+        </caption>
+        <thead>
+            <tr>
+                <th scope="col" class="col-sm-10">{{#str}}name{{/str}}</th>
+                <th scope="col" class="col-sm-2">{{#str}}actions{{/str}}</th>
+            </tr>
+        </thead>
+    {{#insights}}
+        <tbody>
+            {{> report_insights/insight}}
+        </tbody>
+    {{/insights}}
+    </table>
+{{/predictions}}
+{{{ pagingbar }}}
+{{/noinsights}}
+{{#noinsights}}
+    <div class="m-t-2">
+        {{> core/notification_info}}
+    </div>
+{{/noinsights}}

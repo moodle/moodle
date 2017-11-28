@@ -48,7 +48,7 @@ $PAGE->set_url('/user/files.php');
 $PAGE->set_context($context);
 $PAGE->set_title($title);
 $PAGE->set_heading(fullname($USER));
-$PAGE->set_pagelayout('mydashboard');
+$PAGE->set_pagelayout('standard');
 $PAGE->set_pagetype('user-files');
 
 $maxbytes = $CFG->userquota;
@@ -82,6 +82,20 @@ if ($mform->is_cancelled()) {
 echo $OUTPUT->header();
 echo $OUTPUT->box_start('generalbox');
 
+// Show file area space usage.
+if ($maxareabytes != FILE_AREA_MAX_BYTES_UNLIMITED) {
+    $fileareainfo = file_get_file_area_info($context->id, 'user', 'private');
+    // Display message only if we have files.
+    if ($fileareainfo['filecount']) {
+        $a = (object) [
+            'used' => display_size($fileareainfo['filesize_without_references']),
+            'total' => display_size($maxareabytes)
+        ];
+        $quotamsg = get_string('quotausage', 'moodle', $a);
+        $notification = new \core\output\notification($quotamsg, \core\output\notification::NOTIFY_INFO);
+        echo $OUTPUT->render($notification);
+    }
+}
 
 $mform->display();
 echo $OUTPUT->box_end();

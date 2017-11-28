@@ -21,13 +21,13 @@ Feature: A teacher can delete questions in the question bank
       | questioncategory | qtype | name                        | questiontext                  |
       | Test questions   | essay | Test question to be deleted | Write about whatever you want |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "Questions" node in "Course administration > Question bank"
 
   @javascript
   Scenario: A question not used anywhere can really be deleted
     When I click on "Delete" "link" in the "Test question to be deleted" "table_row"
-    And I press "Continue"
+    And I press "Delete"
     And I click on "Also show old questions" "checkbox"
     Then I should not see "Test question to be deleted"
 
@@ -39,8 +39,7 @@ Feature: A teacher can delete questions in the question bank
 
   @javascript
   Scenario: Delete a question used in a quiz
-    Given I follow "Course 1"
-    And I turn editing mode on
+    Given I am on "Course 1" course homepage with editing mode on
     And I add a "Quiz" to section "1" and I fill the form with:
       | Name | Test quiz |
     And I add a "True/False" question to the "Test quiz" quiz with:
@@ -48,11 +47,11 @@ Feature: A teacher can delete questions in the question bank
       | Question text | Write about whatever you want    |
     And I navigate to "Questions" node in "Course administration > Question bank"
     When I click on "Delete" "link" in the "Test used question to be deleted" "table_row"
-    And I press "Continue"
+    And I press "Delete"
     Then I should not see "Test used question to be deleted"
     And I click on "Also show old questions" "checkbox"
     And I should see "Test used question to be deleted"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test quiz"
     And I click on "Preview quiz now" "button"
     And I should see "Write about whatever you want"

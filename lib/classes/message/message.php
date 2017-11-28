@@ -56,6 +56,12 @@ defined('MOODLE_INTERNAL') || die();
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class message {
+    /** @var int Course id. */
+    private $courseid;
+
+    /** @var string Module name. */
+    private $modulename;
+
     /** @var string Component name. */
     private $component;
 
@@ -104,10 +110,31 @@ class message {
     /** @var  string Name of the attachment. Note:- not all processors support this.*/
     private $attachname;
 
+    /** @var  int The time the message was created.*/
+    private $timecreated;
+
     /** @var array a list of properties that is allowed for each message. */
-    private $properties = array('component', 'name', 'userfrom', 'userto', 'subject', 'fullmessage', 'fullmessageformat',
-                                'fullmessagehtml', 'smallmessage', 'notification', 'contexturl', 'contexturlname', 'savedmessageid',
-                                'replyto', 'attachment', 'attachname');
+    private $properties = array(
+        'courseid',
+        'modulename',
+        'component',
+        'name',
+        'userfrom',
+        'userto',
+        'subject',
+        'fullmessage',
+        'fullmessageformat',
+        'fullmessagehtml',
+        'smallmessage',
+        'notification',
+        'contexturl',
+        'contexturlname',
+        'replyto',
+        'savedmessageid',
+        'attachment',
+        'attachname',
+        'timecreated'
+        );
 
     /** @var array property to store any additional message processor specific content */
     private $additionalcontent = array();

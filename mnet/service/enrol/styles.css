@@ -4,7 +4,7 @@
 .path-admin-mnet-service-enrol table.remotehosts,
 .path-admin-mnet-service-enrol table.otherenrolledusers,
 .path-admin-mnet-service-enrol table.remotecourses {
-    margin: 0px auto 1em auto;
+    margin: 0 auto 1em auto;
 }
 .path-admin-mnet-service-enrol table.remotecourses th.categoryname {
     text-align: left;
@@ -26,7 +26,7 @@
     padding: 1em;
 }
 .path-admin-mnet-service-enrol .collapsibleregion.remotecourse.summary {
-    margin: 0px 10em;
+    margin: 0 10em;
 }
 .path-admin-mnet-service-enrol .roleassigntable {
     margin: 1em auto;

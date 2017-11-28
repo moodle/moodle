@@ -27,6 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->libdir . '/tablelib.php');
+require_once($CFG->libdir . '/tests/fixtures/testable_flexible_table.php');
 
 /**
  * Test some of tablelib.
@@ -497,5 +498,111 @@ class core_tablelib_testcase extends basic_testcase {
         $table6->setup();
 
         $this->assertEquals($table5, $table6);
+    }
+
+    /**
+     * Helper method for preparing tables instances in {@link self::test_can_be_reset()}.
+     *
+     * @param string $tableid
+     * @return testable_flexible_table
+     */
+    protected function prepare_table_for_reset_test($tableid) {
+        global $SESSION;
+
+        unset($SESSION->flextable[$tableid]);
+
+        $data = $this->generate_data(25, 3);
+        $columns = array('column0', 'column1', 'column2');
+        $headers = $this->generate_headers(3);
+
+        $table = new testable_flexible_table($tableid);
+        $table->define_baseurl('/invalid.php');
+        $table->define_columns($columns);
+        $table->define_headers($headers);
+        $table->collapsible(true);
+        $table->is_persistent(false);
+
+        return $table;
+    }
+
+    public function test_can_be_reset() {
+
+        // Table in its default state (as if seen for the first time), nothing to reset.
+        $table = $this->prepare_table_for_reset_test(uniqid('tablelib_test_'));
+        $table->setup();
+        $this->assertFalse($table->can_be_reset());
+
+        // Table in its default state with default sorting defined, nothing to reset.
+        $table = $this->prepare_table_for_reset_test(uniqid('tablelib_test_'));
+        $table->sortable(true, 'column1', SORT_DESC);
+        $table->setup();
+        $this->assertFalse($table->can_be_reset());
+
+        // Table explicitly sorted by the default column (reverses the order), can be reset.
+        $table = $this->prepare_table_for_reset_test(uniqid('tablelib_test_'));
+        $table->sortable(true, 'column1', SORT_DESC);
+        $_GET['tsort'] = 'column1';
+        $table->setup();
+        unset($_GET['tsort']);
+        $this->assertTrue($table->can_be_reset());
+
+        // Table explicitly sorted twice by the default column (puts back to default order), nothing to reset.
+        $table = $this->prepare_table_for_reset_test(uniqid('tablelib_test_'));
+        $table->sortable(true, 'column1', SORT_DESC);
+        $_GET['tsort'] = 'column1';
+        $table->setup();
+        $table->setup(); // Set up again to simulate the second page request.
+        unset($_GET['tsort']);
+        $this->assertFalse($table->can_be_reset());
+
+        // Table sorted by other than default column, can be reset.
+        $table = $this->prepare_table_for_reset_test(uniqid('tablelib_test_'));
+        $table->sortable(true, 'column1', SORT_DESC);
+        $_GET['tsort'] = 'column2';
+        $table->setup();
+        unset($_GET['tsort']);
+        $this->assertTrue($table->can_be_reset());
+
+        // Table sorted by the default column after another sorting previously selected.
+        // This leads to different ORDER BY than just having a single sort defined, can be reset.
+        $table = $this->prepare_table_for_reset_test(uniqid('tablelib_test_'));
+        $table->sortable(true, 'column1', SORT_DESC);
+        $_GET['tsort'] = 'column0';
+        $table->setup();
+        $_GET['tsort'] = 'column1';
+        $table->setup();
+        unset($_GET['tsort']);
+        $this->assertTrue($table->can_be_reset());
+
+        // Table having some column collapsed, can be reset.
+        $table = $this->prepare_table_for_reset_test(uniqid('tablelib_test_'));
+        $_GET['thide'] = 'column2';
+        $table->setup();
+        unset($_GET['thide']);
+        $this->assertTrue($table->can_be_reset());
+
+        // Table having some column explicitly expanded, nothing to reset.
+        $table = $this->prepare_table_for_reset_test(uniqid('tablelib_test_'));
+        $_GET['tshow'] = 'column2';
+        $table->setup();
+        unset($_GET['tshow']);
+        $this->assertFalse($table->can_be_reset());
+
+        // Table after expanding a collapsed column, nothing to reset.
+        $table = $this->prepare_table_for_reset_test(uniqid('tablelib_test_'));
+        $_GET['thide'] = 'column0';
+        $table->setup();
+        $_GET['tshow'] = 'column0';
+        $table->setup();
+        unset($_GET['thide']);
+        unset($_GET['tshow']);
+        $this->assertFalse($table->can_be_reset());
+
+        // Table with some name filtering enabled, can be reset.
+        $table = $this->prepare_table_for_reset_test(uniqid('tablelib_test_'));
+        $_GET['tifirst'] = 'A';
+        $table->setup();
+        unset($_GET['tifirst']);
+        $this->assertTrue($table->can_be_reset());
     }
 }

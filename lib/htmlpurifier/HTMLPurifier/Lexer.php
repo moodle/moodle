@@ -96,7 +96,7 @@ class HTMLPurifier_Lexer
                         break;
                     }
 
-                    if (class_exists('DOMDocument') &&
+                    if (class_exists('DOMDocument', false) &&
                         method_exists('DOMDocument', 'loadHTML') &&
                         !extension_loaded('domxml')
                     ) {
@@ -169,21 +169,24 @@ class HTMLPurifier_Lexer
             '&#x27;' => "'"
         );
 
+    public function parseText($string, $config) {
+        return $this->parseData($string, false, $config);
+    }
+
+    public function parseAttr($string, $config) {
+        return $this->parseData($string, true, $config);
+    }
+
     /**
      * Parses special entities into the proper characters.
      *
      * This string will translate escaped versions of the special characters
      * into the correct ones.
      *
-     * @warning
-     * You should be able to treat the output of this function as
-     * completely parsed, but that's only because all other entities should
-     * have been handled previously in substituteNonSpecialEntities()
-     *
      * @param string $string String character data to be parsed.
      * @return string Parsed character data.
      */
-    public function parseData($string)
+    public function parseData($string, $is_attr, $config)
     {
         // following functions require at least one character
         if ($string === '') {
@@ -209,7 +212,15 @@ class HTMLPurifier_Lexer
         }
 
         // hmm... now we have some uncommon entities. Use the callback.
-        $string = $this->_entity_parser->substituteSpecialEntities($string);
+        if ($config->get('Core.LegacyEntityDecoder')) {
+            $string = $this->_entity_parser->substituteSpecialEntities($string);
+        } else {
+            if ($is_attr) {
+                $string = $this->_entity_parser->substituteAttrEntities($string);
+            } else {
+                $string = $this->_entity_parser->substituteTextEntities($string);
+            }
+        }
         return $string;
     }
 
@@ -323,7 +334,9 @@ class HTMLPurifier_Lexer
         }
 
         // expand entities that aren't the big five
-        $html = $this->_entity_parser->substituteNonSpecialEntities($html);
+        if ($config->get('Core.LegacyEntityDecoder')) {
+            $html = $this->_entity_parser->substituteNonSpecialEntities($html);
+        }
 
         // clean into wellformed UTF-8 string for an SGML context: this has
         // to be done after entity expansion because the entities sometimes
@@ -333,6 +346,13 @@ class HTMLPurifier_Lexer
         // if processing instructions are to removed, remove them now
         if ($config->get('Core.RemoveProcessingInstructions')) {
             $html = preg_replace('#<\?.+?\?>#s', '', $html);
+        }
+
+        $hidden_elements = $config->get('Core.HiddenElements');
+        if ($config->get('Core.AggressivelyRemoveScript') &&
+            !($config->get('HTML.Trusted') || !$config->get('Core.RemoveScriptContents')
+            || empty($hidden_elements["script"]))) {
+            $html = preg_replace('#<script[^>]*>.*?</script>#i', '', $html);
         }
 
         return $html;
@@ -345,12 +365,17 @@ class HTMLPurifier_Lexer
     public function extractBody($html)
     {
         $matches = array();
-        $result = preg_match('!<body[^>]*>(.*)</body>!is', $html, $matches);
+        $result = preg_match('|(.*?)<body[^>]*>(.*)</body>|is', $html, $matches);
         if ($result) {
-            return $matches[1];
-        } else {
-            return $html;
+            // Make sure it's not in a comment
+            $comment_start = strrpos($matches[1], '<!--');
+            $comment_end   = strrpos($matches[1], '-->');
+            if ($comment_start === false ||
+                ($comment_end !== false && $comment_end > $comment_start)) {
+                return $matches[2];
+            }
         }
+        return $html;
     }
 }
 

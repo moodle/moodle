@@ -169,16 +169,27 @@ class restore_plan extends base_plan implements loggable {
 
         // Check if we are restoring a course.
         if ($this->controller->get_type() === backup::TYPE_1COURSE) {
+
+            // Check to see if we are on the same site to pass original course info.
+            $issamesite = $this->controller->is_samesite();
+
+            $otherarray = array('type' => $this->controller->get_type(),
+                                'target' => $this->controller->get_target(),
+                                'mode' => $this->controller->get_mode(),
+                                'operation' => $this->controller->get_operation(),
+                                'samesite' => $issamesite
+            );
+
+            if ($this->controller->is_samesite()) {
+                $otherarray['originalcourseid'] = $this->controller->get_info()->original_course_id;
+            }
+
             // Trigger a course restored event.
             $event = \core\event\course_restored::create(array(
                 'objectid' => $this->get_courseid(),
                 'userid' => $this->get_userid(),
                 'context' => context_course::instance($this->get_courseid()),
-                'other' => array('type' => $this->controller->get_type(),
-                                 'target' => $this->controller->get_target(),
-                                 'mode' => $this->controller->get_mode(),
-                                 'operation' => $this->controller->get_operation(),
-                                 'samesite' => $this->controller->is_samesite())
+                'other' => $otherarray
             ));
             $event->trigger();
         }

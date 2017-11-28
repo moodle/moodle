@@ -72,4 +72,8 @@ class lesson_restarted extends \core\event\base {
         return "The user with id '$this->userid' abandoned their previous incomplete attempt ".
                "and started a new attempt on the lesson with course module id '$this->contextinstanceid'.";
     }
+
+    public static function get_objectid_mapping() {
+        return array('db' => 'lesson', 'restore' => 'lesson');
+    }
 }

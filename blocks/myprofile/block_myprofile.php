@@ -127,13 +127,13 @@ class block_myprofile extends block_base {
 
         if(!empty($this->config->display_phone1) && !empty($USER->phone1)) {
             $this->content->text .= '<div class="myprofileitem phone1">';
-            $this->content->text .= get_string('phone').': ' . s($USER->phone1);
+            $this->content->text .= get_string('phone1').': ' . s($USER->phone1);
             $this->content->text .= '</div>';
         }
 
         if(!empty($this->config->display_phone2) && !empty($USER->phone2)) {
             $this->content->text .= '<div class="myprofileitem phone2">';
-            $this->content->text .= get_string('phone').': ' . s($USER->phone2);
+            $this->content->text .= get_string('phone2').': ' . s($USER->phone2);
             $this->content->text .= '</div>';
         }
 

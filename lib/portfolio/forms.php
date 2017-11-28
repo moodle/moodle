@@ -202,7 +202,8 @@ final class portfolio_admin_form extends moodleform {
         if (portfolio_static_function($this->plugin, 'has_admin_config')) {
             require_once($CFG->libdir . '/portfolio/plugin.php');
             require_once($CFG->dirroot . '/portfolio/' . $this->plugin .  '/lib.php');
-            call_user_func(array('portfolio_plugin_' . $this->plugin, 'admin_config_form'), $mform);
+            $classname = 'portfolio_plugin_' . $this->plugin;
+            $classname::admin_config_form($mform);
         }
 
         // and set the data if we have some.

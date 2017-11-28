@@ -221,6 +221,37 @@ function match_grade_options($gradeoptionsfull, $grade, $matchgrades = 'error') 
 }
 
 /**
+ * Remove stale questions from a category.
+ *
+ * While questions should not be left behind when they are not used any more,
+ * it does happen, maybe via restore, or old logic, or uncovered scenarios. When
+ * this happens, the users are unable to delete the question category unless
+ * they move those stale questions to another one category, but to them the
+ * category is empty as it does not contain anything. The purpose of this function
+ * is to detect the questions that may have gone stale and remove them.
+ *
+ * You will typically use this prior to checking if the category contains questions.
+ *
+ * The stale questions (unused and hidden to the user) handled are:
+ * - hidden questions
+ * - random questions
+ *
+ * @param int $categoryid The category ID.
+ */
+function question_remove_stale_questions_from_category($categoryid) {
+    global $DB;
+
+    $select = 'category = :categoryid AND (qtype = :qtype OR hidden = :hidden)';
+    $params = ['categoryid' => $categoryid, 'qtype' => 'random', 'hidden' => 1];
+    $questions = $DB->get_recordset_select("question", $select, $params, '', 'id');
+    foreach ($questions as $question) {
+        // The function question_delete_question does not delete questions in use.
+        question_delete_question($question->id);
+    }
+    $questions->close();
+}
+
+/**
  * Category is about to be deleted,
  * 1/ All questions are deleted for this question category.
  * 2/ Any questions that can't be deleted are moved to a new category
@@ -334,7 +365,7 @@ function question_delete_question($questionid) {
             $questionid, $question->contextid);
 
     // Delete all tag instances.
-    $DB->delete_records('tag_instance', array('component' => 'core_question', 'itemid' => $question->id));
+    core_tag_tag::remove_all_item_tags('core_question', 'question', $question->id);
 
     // Now recursively delete all child questions
     if ($children = $DB->get_records('question',
@@ -435,8 +466,7 @@ function question_delete_course_category($category, $newcategory, $feedback=true
         }
 
         // Update the contextid for any tag instances for questions in the old context.
-        $DB->set_field('tag_instance', 'contextid', $newcontext->id, array('component' => 'core_question',
-            'contextid' => $context->id));
+        core_tag_tag::move_context('core_question', 'question', $context, $newcontext);
 
         $DB->set_field('question_categories', 'contextid', $newcontext->id, array('contextid' => $context->id));
 
@@ -544,8 +574,7 @@ function question_move_questions_to_category($questionids, $newcategoryid) {
             "parent $questionidcondition", $params);
 
     // Update the contextid for any tag instances that may exist for these questions.
-    $DB->set_field_select('tag_instance', 'contextid', $newcontextid,
-        "component = 'core_question' AND itemid $questionidcondition", $params);
+    core_tag_tag::change_items_context('core_question', 'question', $questionids, $newcontextid);
 
     // TODO Deal with datasets.
 
@@ -577,12 +606,8 @@ function question_move_category_to_context($categoryid, $oldcontextid, $newconte
         question_bank::notify_question_edited($questionid);
     }
 
-    if ($questionids) {
-        // Update the contextid for any tag instances that may exist for these questions.
-        list($questionids, $params) = $DB->get_in_or_equal(array_keys($questionids));
-        $DB->set_field_select('tag_instance', 'contextid', $newcontextid,
-            "component = 'core_question' AND itemid $questionids", $params);
-    }
+    core_tag_tag::change_items_context('core_question', 'question',
+            array_keys($questionids), $newcontextid);
 
     $subcatids = $DB->get_records_menu('question_categories',
             array('parent' => $categoryid), '', 'id,1');
@@ -765,9 +790,8 @@ function _tidy_question($question, $loadtags = false) {
         unset($question->_partiallyloaded);
     }
 
-    if ($loadtags && !empty($CFG->usetags)) {
-        require_once($CFG->dirroot . '/tag/lib.php');
-        $question->tags = tag_get_tags_array('question', $question->id);
+    if ($loadtags && core_tag_tag::is_enabled('core_question', 'question')) {
+        $question->tags = core_tag_tag::get_item_tags_array('core_question', 'question', $question->id);
     }
 }
 
@@ -960,7 +984,8 @@ function question_category_select_menu($contexts, $top = false, $currentcat = 0,
         $options[] = array($group => $opts);
     }
     echo html_writer::label(get_string('questioncategory', 'core_question'), 'id_movetocategory', false, array('class' => 'accesshide'));
-    echo html_writer::select($options, 'category', $selected, $choose, array('id' => 'id_movetocategory'));
+    $attrs = array('id' => 'id_movetocategory', 'class' => 'custom-select');
+    echo html_writer::select($options, 'category', $selected, $choose, $attrs);
 }
 
 /**
@@ -1395,24 +1420,24 @@ function question_extend_settings_navigation(navigation_node $navigationnode, $c
     }
 
     $questionnode = $navigationnode->add(get_string('questionbank', 'question'),
-            new moodle_url('/question/edit.php', $params), navigation_node::TYPE_CONTAINER);
+            new moodle_url('/question/edit.php', $params), navigation_node::TYPE_CONTAINER, null, 'questionbank');
 
     $contexts = new question_edit_contexts($context);
     if ($contexts->have_one_edit_tab_cap('questions')) {
         $questionnode->add(get_string('questions', 'question'), new moodle_url(
-                '/question/edit.php', $params), navigation_node::TYPE_SETTING);
+                '/question/edit.php', $params), navigation_node::TYPE_SETTING, null, 'questions');
     }
     if ($contexts->have_one_edit_tab_cap('categories')) {
         $questionnode->add(get_string('categories', 'question'), new moodle_url(
-                '/question/category.php', $params), navigation_node::TYPE_SETTING);
+                '/question/category.php', $params), navigation_node::TYPE_SETTING, null, 'categories');
     }
     if ($contexts->have_one_edit_tab_cap('import')) {
         $questionnode->add(get_string('import', 'question'), new moodle_url(
-                '/question/import.php', $params), navigation_node::TYPE_SETTING);
+                '/question/import.php', $params), navigation_node::TYPE_SETTING, null, 'import');
     }
     if ($contexts->have_one_edit_tab_cap('export')) {
         $questionnode->add(get_string('export', 'question'), new moodle_url(
-                '/question/export.php', $params), navigation_node::TYPE_SETTING);
+                '/question/export.php', $params), navigation_node::TYPE_SETTING, null, 'export');
     }
 
     return $questionnode;
@@ -1891,7 +1916,7 @@ function core_question_question_preview_pluginfile($previewcontext, $questionid,
 function question_make_export_url($contextid, $categoryid, $format, $withcategories,
         $withcontexts, $filename) {
     global $CFG;
-    $urlbase = "$CFG->httpswwwroot/pluginfile.php";
+    $urlbase = "$CFG->wwwroot/pluginfile.php";
     return moodle_url::make_file_url($urlbase,
             "/$contextid/question/export/{$categoryid}/{$format}/{$withcategories}" .
             "/{$withcontexts}/{$filename}", true);

@@ -22,22 +22,16 @@ Feature: Users can be added to multiple groups at once
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | editingteacher |
 
-  Scenario: Adding a user to one group
+  @javascript
+  Scenario: Adding a user to multiple groups
     Given I log in as "teacher1"
-    And I follow "Course 1"
-    And I navigate to "Enrolled users" node in "Course administration > Users"
-    And I click on "Add user into group" "link" in the "student1" "table_row"
-    When I set the field "Add user into group" to "Group 1"
-    And I press "Save changes"
-    Then I should see "Group 1"
-
-  Scenario: Adding a user to multiple group
-    Given I log in as "teacher1"
-    And I follow "Course 1"
-    And I navigate to "Enrolled users" node in "Course administration > Users"
-    And I click on "Add user into group" "link" in the "student1" "table_row"
-    When I set the field "Add user into group" to "Group 1, Group 2, Group 3"
-    And I press "Save changes"
-    Then I should see "Group 1"
-    And I should see "Group 2"
-    And I should see "Group 3"
+    And I am on "Course 1" course homepage
+    And I follow "Participants"
+    And I click on "Edit groups for \"Student 1\"" "link" in the "student1" "table_row"
+    And I click on ".form-autocomplete-downarrow" "css_element" in the "student1" "table_row"
+    And I click on "Group 1" item in the autocomplete list
+    And I click on ".form-autocomplete-downarrow" "css_element" in the "student1" "table_row"
+    And I click on "Group 2" item in the autocomplete list
+    And I press key "27" in the field "Edit groups for \"Student 1\""
+    And I click on "Save changes" "link" in the "student1" "table_row"
+    Then I should see "Group 1, Group 2"

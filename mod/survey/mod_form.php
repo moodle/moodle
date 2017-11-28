@@ -46,6 +46,45 @@ class mod_survey_mod_form extends moodleform_mod {
         $this->add_action_buttons();
     }
 
+    /**
+     * Allows module to modify the data returned by form get_data().
+     * This method is also called in the bulk activity completion form.
+     *
+     * Only available on moodleform_mod.
+     *
+     * @param stdClass $data the form data to be modified.
+     */
+    public function data_postprocessing($data) {
+        parent::data_postprocessing($data);
+        if (!empty($data->completionunlocked)) {
+            // Turn off completion settings if the checkboxes aren't ticked.
+            $autocompletion = !empty($data->completion) &&
+                $data->completion == COMPLETION_TRACKING_AUTOMATIC;
+            if (!$autocompletion || empty($data->completionsubmit)) {
+                $data->completionsubmit = 0;
+            }
+        }
+    }
 
+    /**
+     * Add completion rules to form.
+     * @return array
+     */
+    public function add_completion_rules() {
+        $mform =& $this->_form;
+        $mform->addElement('checkbox', 'completionsubmit', '', get_string('completionsubmit', 'survey'));
+        // Enable this completion rule by default.
+        $mform->setDefault('completionsubmit', 1);
+        return array('completionsubmit');
+    }
+
+    /**
+     * Enable completion rules
+     * @param stdclass $data
+     * @return array
+     */
+    public function completion_rule_enabled($data) {
+        return !empty($data['completionsubmit']);
+    }
 }
 

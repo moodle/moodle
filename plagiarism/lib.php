@@ -19,8 +19,7 @@
  * lib.php - Contains Plagiarism base class used by plugins.
  *
  * @since Moodle 2.0
- * @package    moodlecore
- * @subpackage plagiarism
+ * @package    core_plagiarism
  * @copyright  2010 Dan Marsden http://danmarsden.com
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -29,8 +28,16 @@ if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
 }
 
-//dummy class - all plugins should be based off this.
-class plagiarism_plugin {
+
+/**
+ * Plagiarism base class used by plugins.
+ *
+ * @since Moodle 2.0
+ * @package    core_plagiarism
+ * @copyright  2010 Dan Marsden http://danmarsden.com
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+abstract class plagiarism_plugin {
 
     /**
      * Return the list of form element names.
@@ -90,10 +97,17 @@ class plagiarism_plugin {
      */
     public function update_status($course, $cm) {
     }
+
     /**
-     * hook for cron
+     * Deprecated cron method.
      *
+     * This method was added by mistake in the previous versions of Moodle, do not override it since it is never called.
+     * To implement cron you need to register a scheduled task, see https://docs.moodle.org/dev/Task_API.
+     * For backward compatibility with the old cron API the method cron() from this class can also be used.
+     *
+     * @deprecated since Moodle 3.1 MDL-52702 - please use scheduled tasks instead.
      */
     public function plagiarism_cron() {
+        debugging('plagiarism_plugin::plagiarism_cron() is deprecated. Please use scheduled tasks instead', DEBUG_DEVELOPER);
     }
 }

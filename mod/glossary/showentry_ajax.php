@@ -73,6 +73,11 @@ if ($entries) {
         $options->context = $context;
         $entries[$key]->definition = format_text($definition, $entry->definitionformat, $options);
 
+        if (core_tag_tag::is_enabled('mod_glossary', 'glossary_entries')) {
+            $entries[$key]->definition .= $OUTPUT->tag_list(
+                core_tag_tag::get_item_tags('mod_glossary', 'glossary_entries', $entry->id), null, 'glossary-tags');
+        }
+
         $entries[$key]->attachments = '';
         if (!empty($entries[$key]->attachment)) {
             $attachments = glossary_print_attachments($entry, $cm, 'html');
@@ -80,12 +85,7 @@ if ($entries) {
         }
 
         $entries[$key]->footer = "<p style=\"text-align:right\">&raquo;&nbsp;<a href=\"$CFG->wwwroot/mod/glossary/view.php?g=$entry->glossaryid\">".format_string($entry->glossaryname,true)."</a></p>";
-        $event = \mod_glossary\event\entry_viewed::create(array(
-            'objectid' => $entry->id,
-            'context' => $modinfo->cms[$entry->cmid]->context
-        ));
-        $event->add_record_snapshot('glossary_entries', $entry);
-        $event->trigger();
+        glossary_entry_view($entry, $modinfo->cms[$entry->cmid]->context);
     }
 }
 

@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->libdir . '/badgeslib.php');
+require_once($CFG->dirroot . '/badges/lib.php');
 
 class core_badges_badgeslib_testcase extends advanced_testcase {
     protected $badgeid;
@@ -287,6 +288,47 @@ class core_badges_badgeslib_testcase extends advanced_testcase {
         // The term Totara doesn't appear anywhere in the badges.
         $result = badges_get_user_badges($user2->id, 0, 0, 0, 'Totara');
         $this->assertCount(0, $result);
+
+        // Issue a user with a course badge and verify its returned based on if
+        // coursebadges are enabled or disabled.
+        $sitebadgeid = key($badges);
+        $badges[$sitebadgeid]->issue($this->user->id, true);
+
+        $badge = new stdClass();
+        $badge->id = null;
+        $badge->name = "Test course badge";
+        $badge->description = "Testing course badge";
+        $badge->timecreated = $now;
+        $badge->timemodified = $now;
+        $badge->usercreated = $user1->id;
+        $badge->usermodified = $user1->id;
+        $badge->issuername = "Test issuer";
+        $badge->issuerurl = "http://issuer-url.domain.co.nz";
+        $badge->issuercontact = "issuer@example.com";
+        $badge->expiredate = null;
+        $badge->expireperiod = null;
+        $badge->type = BADGE_TYPE_COURSE;
+        $badge->courseid = $this->course->id;
+        $badge->messagesubject = "Test message subject for course badge";
+        $badge->message = "Test message body for course badge";
+        $badge->attachment = 1;
+        $badge->notification = 0;
+        $badge->status = BADGE_STATUS_ACTIVE;
+
+        $badgeid = $DB->insert_record('badge', $badge, true);
+        $badges[$badgeid] = new badge($badgeid);
+        $badges[$badgeid]->issue($this->user->id, true);
+
+        // With coursebadges off, we should only get the site badge.
+        set_config('badges_allowcoursebadges', false);
+        $result = badges_get_user_badges($this->user->id);
+        $this->assertCount(1, $result);
+
+        // With it on, we should get both.
+        set_config('badges_allowcoursebadges', true);
+        $result = badges_get_user_badges($this->user->id);
+        $this->assertCount(2, $result);
+
     }
 
     public function data_for_message_from_template() {
@@ -344,6 +386,11 @@ class core_badges_badgeslib_testcase extends advanced_testcase {
         $criteria_overall = award_criteria::build(array('criteriatype' => BADGE_CRITERIA_TYPE_ACTIVITY, 'badgeid' => $badge->id));
         $criteria_overall->save(array('agg' => BADGE_CRITERIA_AGGREGATION_ANY, 'module_'.$this->module->cmid => $this->module->cmid));
 
+        // Assert the badge will not be issued to the user as is.
+        $badge = new badge($this->coursebadge);
+        $badge->review_all_criteria();
+        $this->assertFalse($badge->is_issued($this->user->id));
+
         // Set completion for forum activity.
         $c = new completion_info($this->course);
         $activities = $c->get_activities();
@@ -379,6 +426,11 @@ class core_badges_badgeslib_testcase extends advanced_testcase {
 
         $ccompletion = new completion_completion(array('course' => $this->course->id, 'userid' => $this->user->id));
 
+        // Assert the badge will not be issued to the user as is.
+        $badge = new badge($this->coursebadge);
+        $badge->review_all_criteria();
+        $this->assertFalse($badge->is_issued($this->user->id));
+
         // Mark course as complete.
         $sink = $this->redirectEmails();
         $ccompletion->mark_complete();
@@ -394,18 +446,33 @@ class core_badges_badgeslib_testcase extends advanced_testcase {
      * Test badges observer when user_updated event is fired.
      */
     public function test_badges_observer_profile_criteria_review() {
+        global $CFG, $DB;
+        require_once($CFG->dirroot.'/user/profile/lib.php');
+
+        // Add a custom field of textarea type.
+        $customprofileid = $DB->insert_record('user_info_field', array(
+            'shortname' => 'newfield', 'name' => 'Description of new field', 'categoryid' => 1,
+            'datatype' => 'textarea'));
+
         $this->preventResetByRollback(); // Messaging is not compatible with transactions.
         $badge = new badge($this->coursebadge);
-        $this->assertFalse($badge->is_issued($this->user->id));
 
         $criteria_overall = award_criteria::build(array('criteriatype' => BADGE_CRITERIA_TYPE_OVERALL, 'badgeid' => $badge->id));
         $criteria_overall->save(array('agg' => BADGE_CRITERIA_AGGREGATION_ANY));
         $criteria_overall1 = award_criteria::build(array('criteriatype' => BADGE_CRITERIA_TYPE_PROFILE, 'badgeid' => $badge->id));
-        $criteria_overall1->save(array('agg' => BADGE_CRITERIA_AGGREGATION_ALL, 'field_address' => 'address', 'field_aim' => 'aim'));
+        $criteria_overall1->save(array('agg' => BADGE_CRITERIA_AGGREGATION_ALL, 'field_address' => 'address', 'field_aim' => 'aim',
+            'field_' . $customprofileid => $customprofileid));
 
+        // Assert the badge will not be issued to the user as is.
+        $badge = new badge($this->coursebadge);
+        $badge->review_all_criteria();
+        $this->assertFalse($badge->is_issued($this->user->id));
+
+        // Set the required fields and make sure the badge got issued.
         $this->user->address = 'Test address';
         $this->user->aim = '999999999';
         $sink = $this->redirectEmails();
+        profile_save_data((object)array('id' => $this->user->id, 'profile_field_newfield' => 'X'));
         user_update_user($this->user, false);
         $this->assertCount(1, $sink->get_messages());
         $sink->close();
@@ -446,5 +513,70 @@ class core_badges_badgeslib_testcase extends advanced_testcase {
         $this->assertStringMatchesFormat($testassertion->badge, json_encode($assertion->get_badge_assertion()));
         $this->assertStringMatchesFormat($testassertion->class, json_encode($assertion->get_badge_class()));
         $this->assertStringMatchesFormat($testassertion->issuer, json_encode($assertion->get_issuer()));
+    }
+
+    /**
+     * Tests the core_badges_myprofile_navigation() function.
+     */
+    public function test_core_badges_myprofile_navigation() {
+        // Set up the test.
+        $tree = new \core_user\output\myprofile\tree();
+        $this->setAdminUser();
+        $badge = new badge($this->badgeid);
+        $badge->issue($this->user->id, true);
+        $iscurrentuser = true;
+        $course = null;
+
+        // Enable badges.
+        set_config('enablebadges', true);
+
+        // Check the node tree is correct.
+        core_badges_myprofile_navigation($tree, $this->user, $iscurrentuser, $course);
+        $reflector = new ReflectionObject($tree);
+        $nodes = $reflector->getProperty('nodes');
+        $nodes->setAccessible(true);
+        $this->assertArrayHasKey('localbadges', $nodes->getValue($tree));
+    }
+
+    /**
+     * Tests the core_badges_myprofile_navigation() function with badges disabled..
+     */
+    public function test_core_badges_myprofile_navigation_badges_disabled() {
+        // Set up the test.
+        $tree = new \core_user\output\myprofile\tree();
+        $this->setAdminUser();
+        $badge = new badge($this->badgeid);
+        $badge->issue($this->user->id, true);
+        $iscurrentuser = false;
+        $course = null;
+
+        // Disable badges.
+        set_config('enablebadges', false);
+
+        // Check the node tree is correct.
+        core_badges_myprofile_navigation($tree, $this->user, $iscurrentuser, $course);
+        $reflector = new ReflectionObject($tree);
+        $nodes = $reflector->getProperty('nodes');
+        $nodes->setAccessible(true);
+        $this->assertArrayNotHasKey('localbadges', $nodes->getValue($tree));
+    }
+
+    /**
+     * Tests the core_badges_myprofile_navigation() function with a course badge.
+     */
+    public function test_core_badges_myprofile_navigation_with_course_badge() {
+        // Set up the test.
+        $tree = new \core_user\output\myprofile\tree();
+        $this->setAdminUser();
+        $badge = new badge($this->coursebadge);
+        $badge->issue($this->user->id, true);
+        $iscurrentuser = false;
+
+        // Check the node tree is correct.
+        core_badges_myprofile_navigation($tree, $this->user, $iscurrentuser, $this->course);
+        $reflector = new ReflectionObject($tree);
+        $nodes = $reflector->getProperty('nodes');
+        $nodes->setAccessible(true);
+        $this->assertArrayHasKey('localbadges', $nodes->getValue($tree));
     }
 }

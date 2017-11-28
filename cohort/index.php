@@ -103,14 +103,17 @@ if ($editcontrols = cohort_edit_controls($context, $baseurl)) {
 }
 
 // Add search form.
-$search  = html_writer::start_tag('form', array('id'=>'searchcohortquery', 'method'=>'get'));
-$search .= html_writer::start_tag('div');
-$search .= html_writer::label(get_string('searchcohort', 'cohort'), 'cohort_search_q'); // No : in form labels!
-$search .= html_writer::empty_tag('input', array('id'=>'cohort_search_q', 'type'=>'text', 'name'=>'search', 'value'=>$searchquery));
-$search .= html_writer::empty_tag('input', array('type'=>'submit', 'value'=>get_string('search', 'cohort')));
+$search  = html_writer::start_tag('form', array('id'=>'searchcohortquery', 'method'=>'get', 'class' => 'form-inline search-cohort'));
+$search .= html_writer::start_div('m-b-1');
+$search .= html_writer::label(get_string('searchcohort', 'cohort'), 'cohort_search_q', true,
+        array('class' => 'm-r-1')); // No : in form labels!
+$search .= html_writer::empty_tag('input', array('id' => 'cohort_search_q', 'type' => 'text', 'name' => 'search',
+        'value' => $searchquery, 'class' => 'form-control m-r-1'));
+$search .= html_writer::empty_tag('input', array('type' => 'submit', 'value' => get_string('search', 'cohort'),
+        'class' => 'btn btn-secondary'));
 $search .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'contextid', 'value'=>$contextid));
 $search .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'showall', 'value'=>$showall));
-$search .= html_writer::end_tag('div');
+$search .= html_writer::end_div();
 $search .= html_writer::end_tag('form');
 echo $search;
 
@@ -132,8 +135,10 @@ foreach($cohorts['cohorts'] as $cohort) {
             $line[] = $cohortcontext->get_context_name(false);
         }
     }
-    $line[] = format_string($cohort->name);
-    $line[] = s($cohort->idnumber); // All idnumbers are plain text.
+    $tmpl = new \core_cohort\output\cohortname($cohort);
+    $line[] = $OUTPUT->render_from_template('core/inplace_editable', $tmpl->export_for_template($OUTPUT));
+    $tmpl = new \core_cohort\output\cohortidnumber($cohort);
+    $line[] = $OUTPUT->render_from_template('core/inplace_editable', $tmpl->export_for_template($OUTPUT));
     $line[] = format_text($cohort->description, $cohort->descriptionformat);
 
     $line[] = $DB->count_records('cohort_members', array('cohortid'=>$cohort->id));
@@ -154,24 +159,24 @@ foreach($cohorts['cohorts'] as $cohort) {
         if ($cohortmanager) {
             if ($cohort->visible) {
                 $showhideurl->param('hide', 1);
-                $visibleimg = html_writer::empty_tag('img', array('src' => $OUTPUT->pix_url('t/hide'), 'alt' => get_string('hide'), 'class' => 'iconsmall'));
+                $visibleimg = $OUTPUT->pix_icon('t/hide', get_string('hide'));
                 $buttons[] = html_writer::link($showhideurl, $visibleimg, array('title' => get_string('hide')));
             } else {
                 $showhideurl->param('show', 1);
-                $visibleimg = html_writer::empty_tag('img', array('src' => $OUTPUT->pix_url('t/show'), 'alt' => get_string('show'), 'class' => 'iconsmall'));
+                $visibleimg = $OUTPUT->pix_icon('t/show', get_string('show'));
                 $buttons[] = html_writer::link($showhideurl, $visibleimg, array('title' => get_string('show')));
             }
             $buttons[] = html_writer::link(new moodle_url('/cohort/edit.php', $urlparams + array('delete' => 1)),
-                html_writer::empty_tag('img', array('src' => $OUTPUT->pix_url('t/delete'), 'alt' => get_string('delete'), 'class' => 'iconsmall')),
+                $OUTPUT->pix_icon('t/delete', get_string('delete')),
                 array('title' => get_string('delete')));
             $buttons[] = html_writer::link(new moodle_url('/cohort/edit.php', $urlparams),
-                html_writer::empty_tag('img', array('src' => $OUTPUT->pix_url('t/edit'), 'alt' => get_string('edit'), 'class' => 'iconsmall')),
+                $OUTPUT->pix_icon('t/edit', get_string('edit')),
                 array('title' => get_string('edit')));
             $editcolumnisempty = false;
         }
         if ($cohortcanassign) {
             $buttons[] = html_writer::link(new moodle_url('/cohort/assign.php', $urlparams),
-                html_writer::empty_tag('img', array('src' => $OUTPUT->pix_url('i/users'), 'alt' => get_string('assign', 'core_cohort'), 'class' => 'iconsmall')),
+                $OUTPUT->pix_icon('i/users', get_string('assign', 'core_cohort')),
                 array('title' => get_string('assign', 'core_cohort')));
             $editcolumnisempty = false;
         }

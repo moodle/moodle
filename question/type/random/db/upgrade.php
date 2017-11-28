@@ -22,52 +22,25 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-
 defined('MOODLE_INTERNAL') || die();
-
 
 /**
  * Upgrade code for the random question type.
  * @param int $oldversion the version we are upgrading from.
  */
 function xmldb_qtype_random_upgrade($oldversion) {
-    global $CFG, $DB;
+    global $CFG;
 
-    $dbman = $DB->get_manager();
-
-    // Moodle v2.2.0 release upgrade line
+    // Moodle v3.1.0 release upgrade line.
     // Put any upgrade step following this.
 
-    // Moodle v2.3.0 release upgrade line
+    // Automatically generated Moodle v3.2.0 release upgrade line.
     // Put any upgrade step following this.
 
-    // Moodle v2.4.0 release upgrade line
+    // Automatically generated Moodle v3.3.0 release upgrade line.
     // Put any upgrade step following this.
 
-    // Moodle v2.5.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    // Moodle v2.6.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    // Moodle v2.7.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    if ($oldversion < 2014060200) {
-        $sql = "UPDATE {question}
-                   SET questiontext = '0'
-                 WHERE qtype = 'random'
-                   AND " . $DB->sql_compare_text('questiontext') . " = ?";
-        $DB->execute($sql, array(''));
-
-        // Record that qtype_random savepoint was reached.
-        upgrade_plugin_savepoint(true, 2014060200, 'qtype', 'random');
-    }
-
-    // Moodle v2.8.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    // Moodle v2.9.0 release upgrade line.
+    // Automatically generated Moodle v3.4.0 release upgrade line.
     // Put any upgrade step following this.
 
     return true;

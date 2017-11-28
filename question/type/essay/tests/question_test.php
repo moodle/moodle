@@ -200,7 +200,7 @@ class qtype_essay_question_test extends advanced_testcase {
         $this->assertTrue($essay->is_complete_response(
                 array('answer' => '', 'attachments' => $attachments[2])));
 
-        // Test the case in which both the response and inline text are optional.
+        // Test the case in which both the response and online text are optional.
         $essay->attachmentsrequired = 0;
 
         // Providing no answer and no attachment should result in an incomplete

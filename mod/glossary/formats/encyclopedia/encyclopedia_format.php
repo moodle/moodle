@@ -40,6 +40,10 @@ function glossary_show_entry_encyclopedia($course, $cm, $glossary, $entry, $mode
 
         glossary_print_entry_definition($entry, $glossary, $cm);
         glossary_print_entry_attachment($entry, $cm, null);
+        if (core_tag_tag::is_enabled('mod_glossary', 'glossary_entries')) {
+            echo $OUTPUT->tag_list(
+                core_tag_tag::get_item_tags('mod_glossary', 'glossary_entries', $entry->id), null, 'glossary-tags');
+        }
 
         if ($printicons or $aliases) {
             echo '</td></tr>';

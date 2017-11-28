@@ -18,9 +18,8 @@ Feature: Site settings can be used to hide parts of the gradebook UI
       | activity | course | idnumber | name | intro |
       | assign | C1 | assign1 | Assignment1 | Assignment 1 intro |
     And I log in as "admin"
-    And I am on site homepage
-    And I follow "Course 1"
-    And I navigate to "Grades" node in "Course administration"
+    And I am on "Course 1" course homepage
+    And I navigate to "View > Grader report" in the course gradebook
     And I turn editing mode on
 
   @javascript
@@ -28,11 +27,10 @@ Feature: Site settings can be used to hide parts of the gradebook UI
     When I click on "Edit  assign Assignment1" "link"
     And I should see "Minimum grade"
     Then I navigate to "General settings" node in "Site administration > Grades"
-    And I click on "Show minimum grade" "checkbox"
+    And I set the field "Show minimum grade" to "0"
     And I press "Save changes"
-    And I am on site homepage
-    And I follow "Course 1"
-    And I navigate to "Grades" node in "Course administration"
+    And I am on "Course 1" course homepage
+    And I navigate to "View > Grader report" in the course gradebook
     And I click on "Edit  assign Assignment1" "link"
     And I should not see "Minimum grade"
 
@@ -40,20 +38,18 @@ Feature: Site settings can be used to hide parts of the gradebook UI
   Scenario: Hide calculation icons
     And "Edit calculation for   Course total" "link" should exist
     When I navigate to "Grader report" node in "Site administration > Grades > Report settings"
-    And I click on "Show calculations" "checkbox"
+    And I set the field "Show calculations" to "0"
     And I press "Save changes"
-    And I am on site homepage
-    And I follow "Course 1"
-    And I navigate to "Grades" node in "Course administration"
+    And I am on "Course 1" course homepage
+    And I navigate to "View > Grader report" in the course gradebook
     Then "Edit calculation for   Course total" "link" should not exist
 
   @javascript
   Scenario: Disable category overriding
     And "tr .course input[type='text']" "css_element" should exist
     Then I navigate to "Grade category settings" node in "Site administration > Grades"
-    And I click on "Allow category grades to be manually overridden" "checkbox"
+    And I set the field "Allow category grades to be manually overridden" to "0"
     And I press "Save changes"
-    And I am on site homepage
-    And I follow "Course 1"
-    And I navigate to "Grades" node in "Course administration"
+    And I am on "Course 1" course homepage
+    And I navigate to "View > Grader report" in the course gradebook
     And "tr .course input[type='text']" "css_element" should not exist

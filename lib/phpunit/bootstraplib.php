@@ -50,7 +50,7 @@ function phpunit_bootstrap_error($errorcode, $text = '') {
             $text = 'Error: '.$text;
             break;
         case PHPUNIT_EXITCODE_PHPUNITMISSING:
-            $text = "Can not find PHPUnit library, to install use: php composer.phar install --dev";
+            $text = "Can not find PHPUnit library, to install use: php composer.phar install";
             break;
         case PHPUNIT_EXITCODE_PHPUNITWRONG:
             $text = 'Moodle requires PHPUnit 3.6.x, '.$text.' is not compatible';

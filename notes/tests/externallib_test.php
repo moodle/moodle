@@ -72,7 +72,7 @@ class core_notes_externallib_testcase extends externallib_advanced_testcase {
 
         // Call without required capability.
         $this->unassignUserCapability('moodle/notes:manage', $contextid, $roleid);
-        $this->setExpectedException('required_capability_exception');
+        $this->expectException('required_capability_exception');
         $creatednotes = core_notes_external::create_notes($notes);
     }
 
@@ -123,7 +123,7 @@ class core_notes_externallib_testcase extends externallib_advanced_testcase {
         $dnotes3 = array($creatednotes[0]['noteid']);
 
         $this->unassignUserCapability('moodle/notes:manage', $contextid, $roleid);
-        $this->setExpectedException('required_capability_exception');
+        $this->expectException('required_capability_exception');
         $deletednotes = core_notes_external::delete_notes($dnotes3);
         $deletednotes = external_api::clean_returnvalue(core_notes_external::delete_notes_returns(), $deletednotes);
     }
@@ -178,7 +178,7 @@ class core_notes_externallib_testcase extends externallib_advanced_testcase {
 
         // Call without required capability.
         $this->unassignUserCapability('moodle/notes:view', $contextid, $roleid);
-        $this->setExpectedException('required_capability_exception');
+        $this->expectException('required_capability_exception');
         $creatednotes = core_notes_external::get_notes($gnotes);
     }
 
@@ -234,7 +234,7 @@ class core_notes_externallib_testcase extends externallib_advanced_testcase {
         $creatednotes = core_notes_external::create_notes($notes1);
         $creatednotes = external_api::clean_returnvalue(core_notes_external::create_notes_returns(), $creatednotes);
         $this->unassignUserCapability('moodle/notes:manage', $contextid, $roleid);
-        $this->setExpectedException('required_capability_exception');
+        $this->expectException('required_capability_exception');
         $note2 = array();
         $note2["id"] = $creatednotes[0]['noteid'];
         $note2['publishstate'] = 'personal';

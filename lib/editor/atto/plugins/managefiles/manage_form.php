@@ -47,6 +47,7 @@ class atto_managefiles_manage_form extends moodleform {
         $elementid = $this->_customdata['elementid'];
         $options = $this->_customdata['options'];
         $files = $this->_customdata['files'];
+        $removeorphaneddrafts = $this->_customdata['removeorphaneddrafts'] ?? false;
 
         $mform->addElement('header', 'filemanagerhdr', get_string('filemanager', 'atto_managefiles'));
 
@@ -68,6 +69,12 @@ class atto_managefiles_manage_form extends moodleform {
         $mform->setType('elementid', PARAM_TEXT);
 
         $mform->addElement('filemanager', 'files_filemanager', '', null, $options);
+
+        // Let the user know that any drafts not referenced in the text will be removed automatically.
+        if ($removeorphaneddrafts) {
+            $mform->addElement('static', '', '',
+                html_writer::tag('div', get_string('unusedfilesremovalnotice', 'atto_managefiles')));
+        }
 
         $mform->addElement('header', 'missingfileshdr', get_string('missingfiles', 'atto_managefiles'));
         $mform->addElement('static', '', '',

@@ -71,7 +71,8 @@ class tool_task_renderer extends plugin_renderer_base {
                 $editlink = $this->render(new pix_icon('t/locked', get_string('scheduledtaskchangesdisabled', 'tool_task')));
             }
 
-            $namecell = new html_table_cell($task->get_name() . "\n" . html_writer::tag('span', '\\'.get_class($task), array('class' => 'task-class')));
+            $namecell = new html_table_cell($task->get_name() . "\n" . html_writer::tag('span', '\\'.get_class($task),
+                array('class' => 'task-class text-ltr')));
             $namecell->header = true;
 
             $component = $task->get_component();
@@ -103,11 +104,19 @@ class tool_task_renderer extends plugin_renderer_base {
                 $nextrun = $asap;
             }
 
+            $runnow = '';
+            if (!$disabled && get_config('tool_task', 'enablerunnow')) {
+                $runnow = html_writer::div(html_writer::link(
+                        new moodle_url('/admin/tool/task/schedule_task.php',
+                            array('task' => get_class($task))),
+                        get_string('runnow', 'tool_task')), 'task-runnow');
+            }
+
             $row = new html_table_row(array(
                         $namecell,
                         $componentcell,
                         new html_table_cell($editlink),
-                        new html_table_cell($lastrun),
+                        new html_table_cell($lastrun . $runnow),
                         new html_table_cell($nextrun),
                         new html_table_cell($task->get_minute()),
                         new html_table_cell($task->get_hour()),
@@ -117,6 +126,13 @@ class tool_task_renderer extends plugin_renderer_base {
                         new html_table_cell($task->get_fail_delay()),
                         new html_table_cell($customised)));
 
+            // Cron-style values must always be LTR.
+            $row->cells[5]->attributes['class'] = 'text-ltr';
+            $row->cells[6]->attributes['class'] = 'text-ltr';
+            $row->cells[7]->attributes['class'] = 'text-ltr';
+            $row->cells[8]->attributes['class'] = 'text-ltr';
+            $row->cells[9]->attributes['class'] = 'text-ltr';
+
             if ($disabled) {
                 $row->attributes['class'] = 'disabled';
             }
@@ -124,5 +140,15 @@ class tool_task_renderer extends plugin_renderer_base {
         }
         $table->data = $data;
         return html_writer::table($table);
+    }
+
+    /**
+     * Renders a link back to the scheduled tasks page (used from the 'run now' screen).
+     *
+     * @return string HTML code
+     */
+    public function link_back() {
+        return $this->render_from_template('tool_task/link_back',
+                array('url' => new moodle_url('/admin/tool/task/scheduledtasks.php')));
     }
 }

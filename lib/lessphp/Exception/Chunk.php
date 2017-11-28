@@ -120,7 +120,7 @@ class Less_Exception_Chunk extends Less_Exception_Parser{
 						}
 					}
 					if ($matched) { continue; }
-					return $this->fail("unmatched `" + chr($cc) + "`", $currentChunkStartIndex);
+					return $this->fail("unmatched `" . chr($cc) . "`", $currentChunkStartIndex);
 
 				// /, check for comment
 				case 47:

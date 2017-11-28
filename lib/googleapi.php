@@ -131,7 +131,7 @@ class google_docs {
                 'url' => "{$gdoc->link[0]->attributes()->href}",
                 'source' => $source,
                 'date'   => strtotime($gdoc->updated),
-                'thumbnail' => (string) $OUTPUT->pix_url(file_extension_icon($title, 32))
+                'thumbnail' => (string) $OUTPUT->image_url(file_extension_icon($title, 32))
             );
         }
         core_date::set_default_server_timezone();
@@ -447,5 +447,18 @@ class google_oauth extends oauth2_client {
     public function reset_state() {
         $this->header = array();
         $this->response = array();
+    }
+
+    /**
+     * Make a HTTP request, we override the parents because we do not
+     * want to send accept headers (this was a change in the parent class and we want to keep the old behaviour).
+     *
+     * @param string $url The URL to request
+     * @param array $options
+     * @param mixed $acceptheader Not used.
+     * @return bool
+     */
+    protected function request($url, $options = array(), $acceptheader = 'application/json') {
+        return parent::request($url, $options, false);
     }
 }

@@ -234,20 +234,9 @@ class filter_manager {
 
     /**
      * @deprecated Since Moodle 3.0 MDL-50491. This was used by the old text filtering system, but no more.
-     * @todo MDL-50632 This will be deleted in Moodle 3.2.
-     * @param context $context the context.
-     * @return string the hash.
      */
-    public function text_filtering_hash($context) {
-        debugging('filter_manager::text_filtering_hash() is deprecated. ' .
-                'It was an internal part of the old format_text caching, ' .
-                'and should not have been called from other code.', DEBUG_DEVELOPER);
-        $filters = $this->get_text_filters($context);
-        $hashes = array();
-        foreach ($filters as $filter) {
-            $hashes[] = $filter->hash();
-        }
-        return implode('-', $hashes);
+    public function text_filtering_hash() {
+        throw new coding_exception('filter_manager::text_filtering_hash() can not be used any more');
     }
 
     /**
@@ -272,6 +261,36 @@ class filter_manager {
             $filter->setup($page, $context);
         }
     }
+
+    /**
+     * Setup the page for globally available filters.
+     *
+     * This helps setting up the page for filters which may be applied to
+     * the page, even if they do not belong to the current context, or are
+     * not yet visible because the content is lazily added (ajax). This method
+     * always uses to the system context which determines the globally
+     * available filters.
+     *
+     * This should only ever be called once per request.
+     *
+     * @param moodle_page $page The page.
+     * @since Moodle 3.2
+     */
+    public function setup_page_for_globally_available_filters($page) {
+        $context = context_system::instance();
+        $filterdata = filter_get_globally_enabled_filters_with_config();
+        foreach ($filterdata as $name => $config) {
+            if (isset($this->textfilters[$context->id][$name])) {
+                $filter = $this->textfilters[$context->id][$name];
+            } else {
+                $filter = $this->make_filter_object($name, $context, $config);
+                if (is_null($filter)) {
+                    continue;
+                }
+            }
+            $filter->setup($page, $context);
+        }
+    }
 }
 
 
@@ -293,10 +312,7 @@ class null_filter_manager {
     }
 
     public function text_filtering_hash() {
-        debugging('filter_manager::text_filtering_hash() is deprecated. ' .
-                'It was an internal part of the old format_text caching, ' .
-                'and should not have been called from other code.', DEBUG_DEVELOPER);
-        return '';
+        throw new coding_exception('filter_manager::text_filtering_hash() can not be used any more');
     }
 }
 
@@ -387,14 +403,9 @@ abstract class moodle_text_filter {
 
     /**
      * @deprecated Since Moodle 3.0 MDL-50491. This was used by the old text filtering system, but no more.
-     * @todo MDL-50632 This will be deleted in Moodle 3.2.
-     * @return string The class name of the current class
      */
     public function hash() {
-        debugging('moodle_text_filter::hash() is deprecated. ' .
-                'It was an internal part of the old format_text caching, ' .
-                'and should not have been called from other code.', DEBUG_DEVELOPER);
-        return __CLASS__;
+        throw new coding_exception('moodle_text_filter::hash() can not be used any more');
     }
 
     /**
@@ -463,7 +474,7 @@ class filterobject {
      * @param bool $fullmatch
      * @param mixed $replacementphrase
      */
-    function filterobject($phrase, $hreftagbegin = '<span class="highlight">',
+    public function __construct($phrase, $hreftagbegin = '<span class="highlight">',
                                    $hreftagend = '</span>',
                                    $casesensitive = false,
                                    $fullmatch = false,
@@ -692,6 +703,46 @@ function filter_get_globally_enabled() {
         }
     }
     return $enabledfilters;
+}
+
+/**
+ * Get the globally enabled filters.
+ *
+ * This returns the filters which could be used in any context. Essentially
+ * the filters which are not disabled for the entire site.
+ *
+ * @return array Keys are filter names, and values the config.
+ */
+function filter_get_globally_enabled_filters_with_config() {
+    global $DB;
+
+    $sql = "SELECT f.filter, fc.name, fc.value
+              FROM {filter_active} f
+         LEFT JOIN {filter_config} fc
+                ON fc.filter = f.filter
+               AND fc.contextid = f.contextid
+             WHERE f.contextid = :contextid
+               AND f.active != :disabled
+          ORDER BY f.sortorder";
+
+    $rs = $DB->get_recordset_sql($sql, [
+        'contextid' => context_system::instance()->id,
+        'disabled' => TEXTFILTER_DISABLED
+    ]);
+
+    // Massage the data into the specified format to return.
+    $filters = array();
+    foreach ($rs as $row) {
+        if (!isset($filters[$row->filter])) {
+            $filters[$row->filter] = array();
+        }
+        if ($row->name !== null) {
+            $filters[$row->filter][$row->name] = $row->value;
+        }
+    }
+    $rs->close();
+
+    return $filters;
 }
 
 /**
@@ -957,7 +1008,7 @@ function filter_preload_activities(course_modinfo $modinfo) {
 
     // Get all filter_active rows relating to all these contexts
     list ($sql, $params) = $DB->get_in_or_equal($allcontextids);
-    $filteractives = $DB->get_records_select('filter_active', "contextid $sql", $params);
+    $filteractives = $DB->get_records_select('filter_active', "contextid $sql", $params, 'sortorder');
 
     // Get all filter_config only for the cm contexts
     list ($sql, $params) = $DB->get_in_or_equal($cmcontextids);
@@ -1476,7 +1527,7 @@ function filter_add_javascript($text) {
     <script type=\"text/javascript\">
     <!--
         function openpopup(url,name,options,fullscreen) {
-          fullurl = \"".$CFG->httpswwwroot."\" + url;
+          fullurl = \"".$CFG->wwwroot."\" + url;
           windowobj = window.open(fullurl,name,options);
           if (fullscreen) {
             windowobj.moveTo(0,0);

@@ -17,24 +17,23 @@ Feature: Add activities to courses
       | student1 | C1 | student |
       | student2 | C1 | student |
     And I log in as "admin"
-    And I am on site homepage
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
 
   @javascript
   Scenario: Add an activity to a course
     When I add a "Database" to section "3" and I fill the form with:
       | Name | Test name |
       | Description | Test database description |
-      | Entries required for completion | 9 |
+      | ID number | TESTNAME |
       | Allow comments on entries | Yes |
     And I turn editing mode off
     Then I should not see "Adding a new"
-    And I follow "Test name"
-    And I click on "Edit settings" "link" in the "Administration" "block"
+    And I turn editing mode on
+    And I open "Test name" actions menu
+    And I click on "Edit settings" "link" in the "Test name" activity
     And I expand all fieldsets
     And the field "Name" matches value "Test name"
-    And the field "Entries required for completion" matches value "9"
+    And the field "ID number" matches value "TESTNAME"
     And the field "Allow comments on entries" matches value "Yes"
 
   @javascript
@@ -47,8 +46,7 @@ Feature: Add activities to courses
   Scenario: Set activity description to required then add an activity supplying only the name
     Given I set the following administration settings values:
       | requiremodintro | Yes |
-    When I am on site homepage
-    And I follow "Course 1"
+    When I am on "Course 1" course homepage
     And I add a "Database" to section "3" and I fill the form with:
       | Name | Test name |
     Then I should see "Required"

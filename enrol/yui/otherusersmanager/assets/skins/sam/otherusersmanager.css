@@ -1,3 +1,4 @@
+/* stylelint-disable unit-blacklist */
 /**************************************
 
 Structure of the other user role assignment panel
@@ -29,36 +30,175 @@ Structure of the other user role assignment panel
 
 **************************************/
 
-.other-user-manager-panel {width:400px;background-color:#666;position:absolute;top:10%;left:10%;border:1px solid #666;border-width:0 5px 5px 0;}
-.other-user-manager-panel.hidden {display:none;}
-.other-user-manager-panel .oump-wrap {margin-top:-5px;margin-left:-5px;background-color:#FFF;border:1px solid #999;height:inherit;}
+.other-user-manager-panel {
+    width: 400px;
+    background-color: #666;
+    position: absolute;
+    top: 10%;
+    left: 10%;
+    border: 1px solid #666;
+    border-width: 0 5px 5px 0;
+}
 
-.other-user-manager-panel .oump-header {background-color:#eee;padding:1px;}
-.other-user-manager-panel .oump-header h2 {margin:3px 1em 0.5em 1em;font-size:1em;}
-.other-user-manager-panel .oump-header .oump-panel-close {width:25px;height:15px;position:absolute;top:2px;right:1em;cursor:pointer;background:url("sprite.png") no-repeat scroll 0 0 transparent;}
+.other-user-manager-panel.hidden {
+    display: none;
+}
 
-.other-user-manager-panel .oump-content {text-align:center;position:relative;width:100%;border-top:1px solid #999;border-bottom:1px solid #999;}
-.other-user-manager-panel .oump-ajax-content {height:375px;overflow:auto;}
-.other-user-manager-panel .oump-search-results .oump-total-users {background-color:#eee;padding:5px;border-bottom:1px solid #BBB;font-size:7pt;font-weight: bold;}
+.other-user-manager-panel .oump-wrap {
+    margin-top: -5px;
+    margin-left: -5px;
+    background-color: #fff;
+    border: 1px solid #999;
+    height: inherit;
+}
 
-.other-user-manager-panel .oump-search-results .oump-user {width:100%;text-align:left;font-size:9pt;background-color:#ddd;border-bottom:1px solid #aaa;}
-.other-user-manager-panel .oump-search-results .oump-user .oump-user-details {background-color:#fff;margin-left:25px;border-left:1px solid #bbb;}
-.other-user-manager-panel .oump-search-results .oump-user.odd .oump-user-details {background-color:#f9f9f9;}
-.other-user-manager-panel .oump-search-results .oump-user .count {width:20px;font-size:7pt;line-height:100%;text-align:right;float:left;padding:5px 5px 2px 2px}
-.other-user-manager-panel .oump-search-results .oump-user .oump-user-details .oump-user-picture {display:inline-block;margin:3px;}
-.other-user-manager-panel .oump-search-results .oump-user .oump-user-details .oump-user-specifics {width:250px;display:inline-block;margin:3px;vertical-align:top;}
-.other-user-manager-panel .oump-search-results .oump-user .oump-user-details .oump-role-options {font-size:8pt;margin-top:2px;text-align:right;margin-right:2px;}
-.other-user-manager-panel .oump-search-results .oump-user .oump-user-details .oump-role-options .oump-assignable-role {display:inline-block;margin:0;padding:3px 4px;cursor:pointer;}
-.other-user-manager-panel .oump-search-results .oump-user.assignment-in-progress .oump-assignable-role {color:#666;cursor:default;}
-.other-user-manager-panel .oump-search-results .oump-more-results {background-color:#eee;padding:5px;cursor:pointer;}
-.other-user-manager-panel .oump-search-results .oump-user.oump-has-all-roles {background-color:#CCC;}
-.other-user-manager-panel .oump-search-results .oump-user.oump-has-all-roles .count {width:40px;}
+.other-user-manager-panel .oump-header {
+    background-color: #eee;
+    padding: 1px;
+}
 
-.other-user-manager-panel .oump-loading-lightbox {position:absolute;width:100%;height:100%;top:0;left:0;background-color:#FFF;min-width:50px;min-height:50px;}
-.other-user-manager-panel .oump-loading-lightbox.hidden {display:none;}
-.other-user-manager-panel .oump-loading-lightbox .loading-icon {margin:auto;vertical-align:middle;margin-top:125px;}
+.other-user-manager-panel .oump-header h2 {
+    margin: 3px 1em 0.5em 1em;
+    font-size: 1em;
+}
 
-.other-user-manager-panel .oump-footer {padding:3px;background-color:#ddd;}
-.other-user-manager-panel .oump-search {margin:3px;}
-.other-user-manager-panel .oump-search label {padding-right:8px;}
-.other-user-manager-panel .oump-search input {width:70%;}
+.other-user-manager-panel .oump-header .oump-panel-close {
+    width: 25px;
+    height: 15px;
+    position: absolute;
+    top: 2px;
+    right: 1em;
+    cursor: pointer;
+    background: url("sprite.png") no-repeat scroll 0 0 transparent;
+}
+
+.other-user-manager-panel .oump-content {
+    text-align: center;
+    position: relative;
+    width: 100%;
+    border-top: 1px solid #999;
+    border-bottom: 1px solid #999;
+}
+
+.other-user-manager-panel .oump-ajax-content {
+    height: 375px;
+    overflow: auto;
+}
+
+.other-user-manager-panel .oump-search-results .oump-total-users {
+    background-color: #eee;
+    padding: 5px;
+    border-bottom: 1px solid #bbb;
+    font-size: 7pt;
+    font-weight: bold;
+}
+
+.other-user-manager-panel .oump-search-results .oump-user {
+    width: 100%;
+    text-align: left;
+    font-size: 9pt;
+    background-color: #ddd;
+    border-bottom: 1px solid #aaa;
+}
+
+.other-user-manager-panel .oump-search-results .oump-user .oump-user-details {
+    background-color: #fff;
+    margin-left: 25px;
+    border-left: 1px solid #bbb;
+}
+
+.other-user-manager-panel .oump-search-results .oump-user.odd .oump-user-details {
+    background-color: #f9f9f9;
+}
+
+.other-user-manager-panel .oump-search-results .oump-user .count {
+    width: 20px;
+    font-size: 7pt;
+    line-height: 100%;
+    text-align: right;
+    float: left;
+    padding: 5px 5px 2px 2px;
+}
+
+.other-user-manager-panel .oump-search-results .oump-user .oump-user-details .oump-user-picture {
+    display: inline-block;
+    margin: 3px;
+}
+
+.other-user-manager-panel .oump-search-results .oump-user .oump-user-details .oump-user-specifics {
+    width: 250px;
+    display: inline-block;
+    margin: 3px;
+    vertical-align: top;
+}
+
+.other-user-manager-panel .oump-search-results .oump-user .oump-user-details .oump-role-options {
+    font-size: 8pt;
+    margin-top: 2px;
+    text-align: right;
+    margin-right: 2px;
+}
+
+.other-user-manager-panel .oump-search-results .oump-user .oump-user-details .oump-role-options .oump-assignable-role {
+    display: inline-block;
+    margin: 0;
+    padding: 3px 4px;
+    cursor: pointer;
+}
+
+.other-user-manager-panel .oump-search-results .oump-user.assignment-in-progress .oump-assignable-role {
+    color: #666;
+    cursor: default;
+}
+
+.other-user-manager-panel .oump-search-results .oump-more-results {
+    background-color: #eee;
+    padding: 5px;
+    cursor: pointer;
+}
+
+.other-user-manager-panel .oump-search-results .oump-user.oump-has-all-roles {
+    background-color: #ccc;
+}
+
+.other-user-manager-panel .oump-search-results .oump-user.oump-has-all-roles .count {
+    width: 40px;
+}
+
+.other-user-manager-panel .oump-loading-lightbox {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-color: #fff;
+    min-width: 50px;
+    min-height: 50px;
+}
+
+.other-user-manager-panel .oump-loading-lightbox.hidden {
+    display: none;
+}
+
+.other-user-manager-panel .oump-loading-lightbox .loading-icon {
+    margin: auto;
+    vertical-align: middle;
+    margin-top: 125px;
+}
+
+.other-user-manager-panel .oump-footer {
+    padding: 3px;
+    background-color: #ddd;
+}
+
+.other-user-manager-panel .oump-search {
+    margin: 3px;
+}
+
+.other-user-manager-panel .oump-search label {
+    padding-right: 8px;
+}
+
+.other-user-manager-panel .oump-search input {
+    width: 70%;
+}

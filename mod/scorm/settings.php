@@ -81,7 +81,7 @@ if ($ADMIN->fulltree) {
 
     $settings->add(new admin_setting_configselect_with_advanced('scorm/displayattemptstatus',
         get_string('displayattemptstatus', 'scorm'), get_string('displayattemptstatusdesc', 'scorm'),
-        array('value' => 1, 'adv' => false), $yesno));
+        array('value' => 1, 'adv' => false), scorm_get_attemptstatus_array()));
 
     // Default grade settings.
     $settings->add(new admin_setting_heading('scorm/gradesettings', get_string('defaultgradesettings', 'scorm'), ''));
@@ -113,6 +113,9 @@ if ($ADMIN->fulltree) {
 
     $settings->add(new admin_setting_configselect('scorm/autocommit',
     get_string('autocommit', 'scorm'), get_string('autocommitdesc', 'scorm'), 0, $yesno));
+
+    $settings->add(new admin_setting_configselect('scorm/masteryoverride',
+        get_string('masteryoverride', 'scorm'), get_string('masteryoverridedesc', 'scorm'), 1, $yesno));
 
     $settings->add(new admin_setting_configselect('scorm/lastattemptlock',
         get_string('lastattemptlock', 'scorm'), get_string('lastattemptlockdesc', 'scorm'), 0, $yesno));
@@ -156,5 +159,8 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configcheckbox('scorm/allowapidebug', get_string('allowapidebug', 'scorm'), '', 0));
 
     $settings->add(new admin_setting_configtext('scorm/apidebugmask', get_string('apidebugmask', 'scorm'), '', '.*'));
+
+    $settings->add(new admin_setting_configcheckbox('scorm/protectpackagedownloads', get_string('protectpackagedownloads', 'scorm'),
+                                                    get_string('protectpackagedownloads_desc', 'scorm'), 0));
 
 }

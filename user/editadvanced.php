@@ -29,9 +29,7 @@ require_once($CFG->dirroot.'/user/editadvanced_form.php');
 require_once($CFG->dirroot.'/user/editlib.php');
 require_once($CFG->dirroot.'/user/profile/lib.php');
 require_once($CFG->dirroot.'/user/lib.php');
-
-// HTTPS is required in this page when $CFG->loginhttps enabled.
-$PAGE->https_required();
+require_once($CFG->dirroot.'/webservice/lib.php');
 
 $id     = optional_param('id', $USER->id, PARAM_INT);    // User id; -1 if creating new user.
 $course = optional_param('course', SITEID, PARAM_INT);   // Course id (defaults to Site).
@@ -116,10 +114,7 @@ useredit_load_preferences($user);
 profile_load_data($user);
 
 // User interests.
-if (!empty($CFG->usetags)) {
-    require_once($CFG->dirroot.'/tag/lib.php');
-    $user->interests = tag_get_tags_array('user', $id);
-}
+$user->interests = core_tag_tag::get_item_tags_array('core', 'user', $id);
 
 if ($user->id !== -1) {
     $usercontext = context_user::instance($user->id);
@@ -221,6 +216,9 @@ if ($usernew = $userform->get_data()) {
                     // the problem here is we do not want to logout admin here when changing own password.
                     \core\session\manager::kill_user_sessions($usernew->id, session_id());
                 }
+                if (!empty($usernew->signoutofotherservices)) {
+                    webservice::delete_user_ws_tokens($usernew->id);
+                }
             }
         }
 
@@ -236,13 +234,13 @@ if ($usernew = $userform->get_data()) {
     useredit_update_user_preference($usernew);
 
     // Update tags.
-    if (!empty($CFG->usetags) and empty($USER->newadminuser)) {
+    if (empty($USER->newadminuser) && isset($usernew->interests)) {
         useredit_update_interests($usernew, $usernew->interests);
     }
 
     // Update user picture.
     if (empty($USER->newadminuser)) {
-        useredit_update_picture($usernew, $userform, $filemanageroptions);
+        core_user::update_picture($usernew, $filemanageroptions);
     }
 
     // Update mail bounces.
@@ -311,9 +309,6 @@ if ($usernew = $userform->get_data()) {
     }
     // Never reached..
 }
-
-// Make sure we really are on the https page when https login required.
-$PAGE->verify_https_required();
 
 
 // Display page header.

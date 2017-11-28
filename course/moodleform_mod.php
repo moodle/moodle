@@ -1,6 +1,8 @@
 <?php
 require_once ($CFG->libdir.'/formslib.php');
 require_once($CFG->libdir.'/completionlib.php');
+require_once($CFG->libdir.'/gradelib.php');
+require_once($CFG->libdir.'/plagiarismlib.php');
 
 /**
  * This class adds extra methods to form wrapper specific to be used for module
@@ -21,7 +23,7 @@ abstract class moodleform_mod extends moodleform {
      * Section of course that module instance will be put in or is in.
      * This is always the section number itself (column 'section' from 'course_sections' table).
      *
-     * @var mixed
+     * @var int
      */
     protected $_section;
     /**
@@ -31,6 +33,14 @@ abstract class moodleform_mod extends moodleform {
      * @var mixed
      */
     protected $_cm;
+
+    /**
+     * Current course.
+     *
+     * @var mixed
+     */
+    protected $_course;
+
     /**
      * List of modform features
      */
@@ -58,13 +68,14 @@ abstract class moodleform_mod extends moodleform {
     /** @var object The course format of the current course. */
     protected $courseformat;
 
-    function moodleform_mod($current, $section, $cm, $course) {
+    public function __construct($current, $section, $cm, $course) {
         global $CFG;
 
         $this->current   = $current;
         $this->_instance = $current->instance;
         $this->_section  = $section;
         $this->_cm       = $cm;
+        $this->_course   = $course;
         if ($this->_cm) {
             $this->context = context_module::instance($this->_cm->id);
         } else {
@@ -83,8 +94,75 @@ abstract class moodleform_mod extends moodleform {
         }
         $this->_modname = $matches[1];
         $this->init_features();
-        parent::moodleform('modedit.php');
+        parent::__construct('modedit.php');
     }
+
+    /**
+     * Old syntax of class constructor. Deprecated in PHP7.
+     *
+     * @deprecated since Moodle 3.1
+     */
+    public function moodleform_mod($current, $section, $cm, $course) {
+        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
+        self::__construct($current, $section, $cm, $course);
+    }
+
+    /**
+     * Get the current data for the form.
+     * @return stdClass|null
+     */
+    public function get_current() {
+        return $this->current;
+    }
+
+    /**
+     * Get the DB record for the current instance.
+     * @return stdClass|null
+     */
+    public function get_instance() {
+        return $this->_instance;
+    }
+
+    /**
+     * Get the course section number (relative).
+     * @return int
+     */
+    public function get_section() {
+        return $this->_section;
+    }
+
+    /**
+     * Get the course id.
+     * @return int
+     */
+    public function get_course() {
+        return $this->_course;
+    }
+
+    /**
+     * Get the course module object.
+     * @return stdClass|null
+     */
+    public function get_coursemodule() {
+        return $this->_cm;
+    }
+
+    /**
+     * Return the course context for new modules, or the module context for existing modules.
+     * @return context
+     */
+    public function get_context() {
+        return $this->context;
+    }
+
+    /**
+     * Return the features this module supports.
+     * @return stdClass
+     */
+    public function get_features() {
+        return $this->_features;
+    }
+
 
     protected function init_features() {
         global $CFG;
@@ -99,12 +177,15 @@ abstract class moodleform_mod extends moodleform {
         $this->_features->defaultcompletion = plugin_supports('mod', $this->_modname, FEATURE_MODEDIT_DEFAULT_COMPLETION, true);
         $this->_features->rating            = plugin_supports('mod', $this->_modname, FEATURE_RATE, false);
         $this->_features->showdescription   = plugin_supports('mod', $this->_modname, FEATURE_SHOW_DESCRIPTION, false);
-
         $this->_features->gradecat          = ($this->_features->outcomes or $this->_features->hasgrades);
         $this->_features->advancedgrading   = plugin_supports('mod', $this->_modname, FEATURE_ADVANCED_GRADING, false);
+        $this->_features->canrescale = (component_callback_exists('mod_' . $this->_modname, 'rescale_activity_grades') !== false);
     }
 
     /**
+     * Allows module to modify data returned by get_moduleinfo_data() or prepare_new_moduleinfo_data() before calling set_data()
+     * This method is also called in the bulk activity completion form.
+     *
      * Only available on moodleform_mod.
      *
      * @param array $default_values passed by reference
@@ -142,6 +223,7 @@ abstract class moodleform_mod extends moodleform {
                     }
                 }
 
+                $hasgradeitems = false;
                 $items = grade_item::fetch_all(array('itemtype'=>'mod', 'itemmodule'=>$modulename,'iteminstance'=>$instance, 'courseid'=>$COURSE->id));
                 //will be no items if, for example, this activity supports ratings but rating aggregate type == no ratings
                 if (!empty($items)) {
@@ -151,6 +233,8 @@ abstract class moodleform_mod extends moodleform {
                             if ($mform->elementExists($elname)) {
                                 $mform->hardFreeze($elname); // prevent removing of existing outcomes
                             }
+                        } else {
+                            $hasgradeitems = true;
                         }
                     }
 
@@ -167,12 +251,17 @@ abstract class moodleform_mod extends moodleform {
                     }
                 }
 
+                if (!$hasgradeitems && $mform->elementExists('gradepass')) {
+                    // Remove form element 'Grade to pass' since there are no grade items (when rating not selected).
+                    $mform->removeElement('gradepass');
+                }
+
                 if ($gradecat === false) {
                     // items and outcomes in different categories - remove the option
                     // TODO: add a "Mixed categories" text instead of removing elements with no explanation
                     if ($mform->elementExists('gradecat')) {
                         $mform->removeElement('gradecat');
-                        if ($this->_features->rating) {
+                        if ($this->_features->rating  && !$mform->elementExists('gradepass')) {
                             //if supports ratings then the max grade dropdown wasnt added so the grade box can be removed entirely
                             $mform->removeElement('modstandardgrade');
                         }
@@ -341,6 +430,33 @@ abstract class moodleform_mod extends moodleform {
             \core_availability\frontend::report_validation_errors($data, $errors);
         }
 
+        $pluginerrors = $this->plugin_extend_coursemodule_validation($data);
+        if (!empty($pluginerrors)) {
+            $errors = array_merge($errors, $pluginerrors);
+        }
+
+        return $errors;
+    }
+
+    /**
+     * Extend the validation function from any other plugin.
+     *
+     * @param stdClass $data The form data.
+     * @return array $errors The list of errors keyed by element name.
+     */
+    protected function plugin_extend_coursemodule_validation($data) {
+        $errors = array();
+
+        $callbacks = get_plugins_with_function('coursemodule_validation', 'lib.php');
+        foreach ($callbacks as $type => $plugins) {
+            foreach ($plugins as $plugin => $pluginfunction) {
+                // We have exposed all the important properties with public getters - the errors array should be pass by reference.
+                $pluginerrors = $pluginfunction($this, $data);
+                if (!empty($pluginerrors)) {
+                    $errors = array_merge($errors, $pluginerrors);
+                }
+            }
+        }
         return $errors;
     }
 
@@ -387,7 +503,9 @@ abstract class moodleform_mod extends moodleform {
 
             $permission=CAP_ALLOW;
             $rolenamestring = null;
+            $isupdate = false;
             if (!empty($this->_cm)) {
+                $isupdate = true;
                 $context = context_module::instance($this->_cm->id);
 
                 $rolenames = get_role_names_with_caps_in_context($context, array('moodle/rating:rate', 'mod/'.$this->_cm->modname.':rate'));
@@ -402,7 +520,25 @@ abstract class moodleform_mod extends moodleform {
             $mform->setDefault('assessed', 0);
             $mform->addHelpButton('assessed', 'aggregatetype', 'rating');
 
-            $mform->addElement('modgrade', 'scale', get_string('scale'), false);
+            $gradeoptions = array('isupdate' => $isupdate,
+                                  'currentgrade' => false,
+                                  'hasgrades' => false,
+                                  'canrescale' => $this->_features->canrescale,
+                                  'useratings' => $this->_features->rating);
+            if ($isupdate) {
+                $gradeitem = grade_item::fetch(array('itemtype' => 'mod',
+                                                     'itemmodule' => $this->_cm->modname,
+                                                     'iteminstance' => $this->_cm->instance,
+                                                     'itemnumber' => 0,
+                                                     'courseid' => $COURSE->id));
+                if ($gradeitem) {
+                    $gradeoptions['currentgrade'] = $gradeitem->grademax;
+                    $gradeoptions['currentgradetype'] = $gradeitem->gradetype;
+                    $gradeoptions['currentscaleid'] = $gradeitem->scaleid;
+                    $gradeoptions['hasgrades'] = $gradeitem->has_grades();
+                }
+            }
+            $mform->addElement('modgrade', 'scale', get_string('scale'), $gradeoptions);
             $mform->disabledIf('scale', 'assessed', 'eq', 0);
             $mform->addHelpButton('scale', 'modgrade', 'grades');
             $mform->setDefault('scale', $CFG->gradepointdefault);
@@ -424,7 +560,18 @@ abstract class moodleform_mod extends moodleform {
 
         $mform->addElement('header', 'modstandardelshdr', get_string('modstandardels', 'form'));
 
-        $mform->addElement('modvisible', 'visible', get_string('visible'));
+        $section = get_fast_modinfo($COURSE)->get_section_info($this->_section);
+        $allowstealth = !empty($CFG->allowstealth) && $this->courseformat->allow_stealth_module_visibility($this->_cm, $section);
+        if ($allowstealth && $section->visible) {
+            $modvisiblelabel = 'modvisiblewithstealth';
+        } else if ($section->visible) {
+            $modvisiblelabel = 'modvisible';
+        } else {
+            $modvisiblelabel = 'modvisiblehiddensection';
+        }
+        $mform->addElement('modvisible', 'visible', get_string($modvisiblelabel), null,
+                array('allowstealth' => $allowstealth, 'sectionvisible' => $section->visible, 'cm' => $this->_cm));
+        $mform->addHelpButton('visible', $modvisiblelabel);
         if (!empty($this->_cm)) {
             $context = context_module::instance($this->_cm->id);
             if (!has_capability('moodle/course:activityvisibility', $context)) {
@@ -466,7 +613,7 @@ abstract class moodleform_mod extends moodleform {
             if ($this->_features->groups || $this->_features->groupings) {
                 $mform->addElement('static', 'restrictgroupbutton', '',
                         html_writer::tag('button', get_string('restrictbygroup', 'availability'),
-                        array('id' => 'restrictbygroup', 'disabled' => 'disabled')));
+                        array('id' => 'restrictbygroup', 'disabled' => 'disabled', 'class' => 'btn btn-secondary')));
             }
 
             // Availability field. This is just a textarea; the user interface
@@ -494,7 +641,6 @@ abstract class moodleform_mod extends moodleform {
         }
         if ($completion->is_enabled()) {
             $mform->addElement('header', 'activitycompletionheader', get_string('activitycompletion', 'completion'));
-
             // Unlock button for if people have completed it (will
             // be removed in definition_after_data if they haven't)
             $mform->addElement('submit', 'unlockcompletion', get_string('unlockcompletion', 'completion'));
@@ -505,7 +651,13 @@ abstract class moodleform_mod extends moodleform {
             $trackingdefault = COMPLETION_TRACKING_NONE;
             // If system and activity default is on, set it.
             if ($CFG->completiondefault && $this->_features->defaultcompletion) {
-                $trackingdefault = COMPLETION_TRACKING_MANUAL;
+                $hasrules = plugin_supports('mod', $this->_modname, FEATURE_COMPLETION_HAS_RULES, true);
+                $tracksviews = plugin_supports('mod', $this->_modname, FEATURE_COMPLETION_TRACKS_VIEWS, true);
+                if ($hasrules || $tracksviews) {
+                    $trackingdefault = COMPLETION_TRACKING_AUTOMATIC;
+                } else {
+                    $trackingdefault = COMPLETION_TRACKING_MANUAL;
+                }
             }
 
             $mform->addElement('select', 'completion', get_string('completion', 'completion'),
@@ -520,6 +672,10 @@ abstract class moodleform_mod extends moodleform {
                 $mform->addElement('checkbox', 'completionview', get_string('completionview', 'completion'),
                     get_string('completionview_desc', 'completion'));
                 $mform->disabledIf('completionview', 'completion', 'ne', COMPLETION_TRACKING_AUTOMATIC);
+                // Check by default if automatic completion tracking is set.
+                if ($trackingdefault == COMPLETION_TRACKING_AUTOMATIC) {
+                    $mform->setDefault('completionview', 1);
+                }
                 $gotcompletionoptions = true;
             }
 
@@ -559,7 +715,33 @@ abstract class moodleform_mod extends moodleform {
             $mform->disabledIf('completionexpected', 'completion', 'eq', COMPLETION_TRACKING_NONE);
         }
 
+        // Populate module tags.
+        if (core_tag_tag::is_enabled('core', 'course_modules')) {
+            $mform->addElement('header', 'tagshdr', get_string('tags', 'tag'));
+            $mform->addElement('tags', 'tags', get_string('tags'), array('itemtype' => 'course_modules', 'component' => 'core'));
+            if ($this->_cm) {
+                $tags = core_tag_tag::get_item_tags_array('core', 'course_modules', $this->_cm->id);
+                $mform->setDefault('tags', $tags);
+            }
+        }
+
         $this->standard_hidden_coursemodule_elements();
+
+        $this->plugin_extend_coursemodule_standard_elements();
+    }
+
+    /**
+     * Plugins can extend the coursemodule settings form.
+     */
+    protected function plugin_extend_coursemodule_standard_elements() {
+        $callbacks = get_plugins_with_function('coursemodule_standard_elements', 'lib.php');
+        foreach ($callbacks as $type => $plugins) {
+            foreach ($plugins as $plugin => $pluginfunction) {
+                // We have exposed all the important properties with public getters - and the callback can manipulate the mform
+                // directly.
+                $pluginfunction($this, $this->_form);
+            }
+        }
     }
 
     /**
@@ -623,6 +805,12 @@ abstract class moodleform_mod extends moodleform {
     public function standard_grading_coursemodule_elements() {
         global $COURSE, $CFG;
         $mform =& $this->_form;
+        $isupdate = !empty($this->_cm);
+        $gradeoptions = array('isupdate' => $isupdate,
+                              'currentgrade' => false,
+                              'hasgrades' => false,
+                              'canrescale' => $this->_features->canrescale,
+                              'useratings' => $this->_features->rating);
 
         if ($this->_features->hasgrades) {
 
@@ -632,7 +820,21 @@ abstract class moodleform_mod extends moodleform {
 
             //if supports grades and grades arent being handled via ratings
             if (!$this->_features->rating) {
-                $mform->addElement('modgrade', 'grade', get_string('grade'));
+
+                if ($isupdate) {
+                    $gradeitem = grade_item::fetch(array('itemtype' => 'mod',
+                                                         'itemmodule' => $this->_cm->modname,
+                                                         'iteminstance' => $this->_cm->instance,
+                                                         'itemnumber' => 0,
+                                                         'courseid' => $COURSE->id));
+                    if ($gradeitem) {
+                        $gradeoptions['currentgrade'] = $gradeitem->grademax;
+                        $gradeoptions['currentgradetype'] = $gradeitem->gradetype;
+                        $gradeoptions['currentscaleid'] = $gradeitem->scaleid;
+                        $gradeoptions['hasgrades'] = $gradeitem->has_grades();
+                    }
+                }
+                $mform->addElement('modgrade', 'grade', get_string('grade'), $gradeoptions);
                 $mform->addHelpButton('grade', 'modgrade', 'grades');
                 $mform->setDefault('grade', $CFG->gradepointdefault);
             }
@@ -684,6 +886,8 @@ abstract class moodleform_mod extends moodleform {
             $mform->setType('gradepass', PARAM_RAW);
             if (!$this->_features->rating) {
                 $mform->disabledIf('gradepass', 'grade[modgrade_type]', 'eq', 'none');
+            } else {
+                $mform->disabledIf('gradepass', 'assessed', 'eq', '0');
             }
         }
     }
@@ -727,7 +931,7 @@ abstract class moodleform_mod extends moodleform {
         // If the 'show description' feature is enabled, this checkbox appears below the intro.
         // We want to hide that when using the singleactivity course format because it is confusing.
         if ($this->_features->showdescription  && $this->courseformat->has_view_page()) {
-            $mform->addElement('checkbox', 'showdescription', get_string('showdescription'));
+            $mform->addElement('advcheckbox', 'showdescription', get_string('showdescription'));
             $mform->addHelpButton('showdescription', 'showdescription');
         }
     }
@@ -864,6 +1068,40 @@ abstract class moodleform_mod extends moodleform {
                 }
             }
         }
+    }
+
+    /**
+     * Allows modules to modify the data returned by form get_data().
+     * This method is also called in the bulk activity completion form.
+     *
+     * Only available on moodleform_mod.
+     *
+     * @param stdClass $data passed by reference
+     */
+    public function data_postprocessing($data) {
+    }
+
+    /**
+     * Return submitted data if properly submitted or returns NULL if validation fails or
+     * if there is no submitted data.
+     *
+     * Do not override this method, override data_postprocessing() instead.
+     *
+     * @return object submitted data; NULL if not valid or not submitted or cancelled
+     */
+    public function get_data() {
+        $data = parent::get_data();
+        if ($data) {
+            // Convert the grade pass value - we may be using a language which uses commas,
+            // rather than decimal points, in numbers. These need to be converted so that
+            // they can be added to the DB.
+            if (isset($data->gradepass)) {
+                $data->gradepass = unformat_float($data->gradepass);
+            }
+
+            $this->data_postprocessing($data);
+        }
+        return $data;
     }
 }
 

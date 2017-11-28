@@ -1,6 +1,22 @@
 This files describes API changes for quiz report plugins.
 
 Overview of this plugin type at http://docs.moodle.org/dev/Quiz_reports
+
+=== 3.2 ===
+
+* A code refactoring based on new sql functions in MDL-31243 and removing
+get_users_by_capability from the quiz reports in MDL-27072. The class
+quiz_attempts_report is now initialised to return \core\dml\sql_join (joins,
+wheres, params) rather than arrays of userids. This allows the use of joins
+in quiz report queries and is very important when there
+are larger numbers of enrolled users. The signature of many quiz report
+methods now includes '$studentsjoins', rather than '$students' and similar
+for '$groupstudentsjoins', '$allowedjoins' and '$usersjoins'. For clear
+examples of the use of these changes please see attemptsreport_table.php
+base_sql() or almost any function in overview/report.php. The protected
+function quiz_attempts_report::load_relevant_students is deprecated,
+please use quiz_attempts_report::get_students_joins() instead.
+
 === 2.6 ===
 
 * Improving the display page and heading levels to have a proper nesting.

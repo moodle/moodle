@@ -29,6 +29,15 @@ Feature: View my courses in navigation block
       | student1 | c1     | student |
       | student1 | c31    | student |
       | student1 | c331   | student |
+    And I log in as "admin"
+    And I am on site homepage
+    And I turn editing mode on
+    And I add the "Navigation" block if not present
+    And I configure the "Navigation" block
+    And I set the following fields to these values:
+      | Page contexts | Display throughout the entire site |
+    And I press "Save changes"
+    And I log out
 
   @javascript
   Scenario: The plain list of enrolled courses is shown

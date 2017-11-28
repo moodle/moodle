@@ -77,4 +77,3 @@ if (in_array($q, $functions)) {
 foreach ($functions as $f) {
   echo $f."\n";
 }
-

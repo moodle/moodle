@@ -56,7 +56,7 @@
 #qtypechoicecontainer {
     font-size: 12px;
     color: #333;
-    background: #F2F2F2;
+    background: #f2f2f2;
     .border-radius(10px);
     border: 1px solid #ccc;
     border-top: 0 none;
@@ -74,17 +74,22 @@
     border-bottom: 1px solid #bbb;
     padding: 0.24em 0;
 }
+
+// TODO: MDL-55142 remove browser these brwoser hacks:
+/* stylelint-disable declaration-block-no-duplicate-properties */
 #chooseqtype .alloptions {
     overflow-x: hidden;
     overflow-y: auto;
     max-height: 400px;
     max-height: calc(100vh - 15em);
- /* The next line is a workaround because recess is crap. Delete ththe following line once
-  * https://github.com/twitter/recess/issues/59 / https://github.com/twitter/recess/issues/75
-  * is fixed. The previous line is the right one. */
+    /* The next line is a workaround because recess is crap. Delete ththe following line once
+    * https://github.com/twitter/recess/issues/59 / https://github.com/twitter/recess/issues/75
+    * is fixed. The previous line is the right one. */
     max-height: 60vh;
     width: 60%;
 }
+/* stylelint-enable */
+
 #chooseqtype .qtypeoption {
     margin-bottom: 0;
     padding: 0.3em 0.3em 0.3em 1.6em;
@@ -111,7 +116,6 @@
     overflow-y: auto;
     padding: 1.5em 1.6em;
     background-color: #fff;
-    overflow-y: auto;
 }
 #chooseqtype .instruction,
 #chooseqtype .selected .qtypesummary {
@@ -131,7 +135,7 @@
         padding-left: 5px;
     }
     .checkbox input[type="checkbox"] {
-        margin-left: 0px;
+        margin-left: 0;
         float: none;
     }
     img.iconsmall {
@@ -143,6 +147,9 @@
     label {
         margin: 0;
     }
+    .header {
+        text-align: left;
+    }
 }
 #page-mod-quiz-edit {
     div.questionbankwindow div.header {
@@ -151,9 +158,6 @@
     div.questionbankwindow.block {
         padding: 0;
     }
-}
-.dir-rtl #categoryquestions th {
-    text-align: right;
 }
 .questionbank .singleselect {
     margin: 0;
@@ -176,8 +180,8 @@
     margin-right: 0.3em;
 }
 body.path-question-type .fitem_fgroup .accesshide {
+    /* Hack to display the labels within a form group. */
     font: inherit;
-    left: 0;
     position: static;
     padding-right: .3em;
 }
@@ -185,9 +189,6 @@ body.path-question-type .fitem_fgroup .accesshide {
     clear: left;
     text-align: left;
     margin: 0 auto 1.8em auto;
-}
-.dir-rtl .que {
-    text-align: right;
 }
 .que .info {
     float: left;
@@ -236,11 +237,16 @@ body.path-question-type .fitem_fgroup .accesshide {
     width: auto;
     vertical-align: baseline;
 }
+.que.multianswer .formulation .yui3-widget-positioned .feedbackspan {
+    box-sizing: content-box;
+    padding-bottom: 0;
+    max-width: inherit;
+    width: inherit;
+}
 .path-mod-quiz input[size] {
     width: auto;
 }
-.que .outcome {
-}
+
 .que .comment {
     .alert-success;
 }
@@ -253,9 +259,6 @@ body.path-question-type .fitem_fgroup .accesshide {
 .que .im-controls {
     margin-top: 0.5em;
     text-align: left;
-}
-.dir-rtl .que .im-controls {
-    text-align: right;
 }
 .que .specificfeedback,
 .que .generalfeedback,
@@ -293,9 +296,9 @@ body.path-question-type .fitem_fgroup .accesshide {
     border-color: @borderColor;
     .box-shadow(inset 0 1px 1px rgba(0,0,0,.075)); // Redeclare so transitions work
     &:focus {
-      border-color: darken(@borderColor, 10%);
-      @shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 6px lighten(@borderColor, 20%);
-      .box-shadow(@shadow);
+        border-color: darken(@borderColor, 10%);
+        @shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 6px lighten(@borderColor, 20%);
+        .box-shadow(@shadow);
     }
 }
 
@@ -310,15 +313,15 @@ body.path-question-type .fitem_fgroup .accesshide {
 }
 .formulation select.correct,
 .formulation input.correct {
-  .answerState(@successText, @successBackground);
+    .answerState(@successText, @successBackground);
 }
 .formulation select.partiallycorrect,
 .formulation input.partiallycorrect {
-  .answerState(@warningText, @warningBackground);
+    .answerState(@warningText, @warningBackground);
 }
 .formulation select.incorrect,
 .formulation input.incorrect {
-  .answerState(@errorText, @errorBackground);
+    .answerState(@errorText, @errorBackground);
 }
 
 .que .grading,
@@ -344,10 +347,6 @@ body.path-question-type .fitem_fgroup .accesshide {
 .que input.questionflagimage {
     padding-right: 3px;
 }
-.dir-rtl .que input.questionflagimage {
-    padding-left: 3px;
-    padding-right: 0;
-}
 .importerror {
     margin-top: 10px;
     border-bottom: 1px solid #555;
@@ -357,14 +356,6 @@ body.path-question-type .fitem_fgroup .accesshide {
 }
 #page-question-preview #techinfo {
     margin: 1em 0;
-}
-/** Overide for RTL layout **/
-.dir-rtl #chooseqtype .instruction,
-.dir-rtl #chooseqtype .qtypesummary {
-    right: 60%;
-    left: 0%;
-    border-left: 0;
-    border-right: 1px solid grey;
 }
 
 // imported from quiz.css
@@ -386,17 +377,16 @@ body.path-question-type .fitem_fgroup .accesshide {
 #page-mod-quiz-edit div.questionbank .categoryquestionscontainer {
     background: transparent;
 }
-#page-mod-quiz-edit #categoryquestions>thead {
-    background: #FFF;
+#page-mod-quiz-edit #categoryquestions > thead {
+    background: #fff;
 }
-#page-mod-quiz-edit #categoryquestions>tbody>tr:nth-of-type(even) {
+#page-mod-quiz-edit #categoryquestions > tbody > tr:nth-of-type(even) {
     background: #e4e4e4;
 }
 
 #page-mod-quiz-edit .questionbankwindow div.header {
     color: #444;
     text-shadow: none;
-    padding: 3px;
     .border-top-radius(4px);
     margin: 0 -10px 0 -10px;
     padding: 2px 10px 2px 10px;
@@ -414,7 +404,8 @@ body.path-question-type .fitem_fgroup .accesshide {
 
 #page-mod-quiz-edit .createnewquestion {
     padding: 0.3em 0;
-    div, input {
+    div,
+    input {
         margin: 0;
     }
 }
@@ -457,19 +448,13 @@ body.path-question-type .fitem_fgroup .accesshide {
 }
 #page-mod-quiz-edit div.question div.content div.points {
     margin-top: -0.5em;
-    padding-bottom: 0em;
+    padding-bottom: 0;
     border: none;
     background-color: @bodyBackground;
     position: static;
     width: 12.1em;
     float: right;
     margin-right: 60px;
-}
-#page-mod-quiz-edit.dir-rtl div.question div.content div.points {
-    float: left;
-    margin-left: 60px;
-    margin-right: 0px;
-
 }
 #page-mod-quiz-edit div.question div.content div.points br {
     display: none;
@@ -502,7 +487,8 @@ body.path-question-type .fitem_fgroup .accesshide {
     strong {
         display: block;
     }
-    hr, br {
+    hr,
+    br {
         display: none;
     }
     strong {

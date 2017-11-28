@@ -98,4 +98,8 @@ class role_capabilities_updated extends base {
     protected function get_legacy_logdata() {
         return $this->legacylogdata;
     }
+
+    public static function get_objectid_mapping() {
+        return array('db' => 'role', 'restore' => 'role');
+    }
 }

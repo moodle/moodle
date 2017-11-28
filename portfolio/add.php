@@ -22,7 +22,7 @@
  *            Martin Dougiamas <http://dougiamas.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL
  */
-require_once(dirname(dirname(__FILE__)) . '/config.php');
+require_once(__DIR__ . '/../config.php');
 
 if (empty($CFG->enableportfolios)) {
     print_error('disabled', 'portfolio');

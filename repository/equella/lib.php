@@ -214,9 +214,7 @@ class repository_equella extends repository {
             $path = $this->prepare_file('');
             $result = $c->download_one($url, null, array('filepath' => $path, 'followlocation' => true, 'timeout' => $CFG->repositorysyncimagetimeout));
             if ($result === true) {
-                $fs = get_file_storage();
-                list($contenthash, $filesize, $newfile) = $fs->add_file_to_pool($path);
-                $file->set_synchronized($contenthash, $filesize);
+                $file->set_synchronised_content_from_file($path);
                 return true;
             }
         } else {

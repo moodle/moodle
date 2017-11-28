@@ -38,7 +38,7 @@ class course_enrolment_manager {
 
     /**
      * The course context
-     * @var stdClass
+     * @var context
      */
     protected $context;
     /**
@@ -171,9 +171,12 @@ class course_enrolment_manager {
             $sqltotal = "SELECT COUNT(DISTINCT u.id)
                            FROM {user} u
                            JOIN {user_enrolments} ue ON (ue.userid = u.id  AND ue.enrolid $instancessql)
-                           JOIN {enrol} e ON (e.id = ue.enrolid)
-                      LEFT JOIN {groups_members} gm ON u.id = gm.userid
-                          WHERE $filtersql";
+                           JOIN {enrol} e ON (e.id = ue.enrolid)";
+            if ($this->groupfilter) {
+                $sqltotal .= " LEFT JOIN ({groups_members} gm JOIN {groups} g ON (g.id = gm.groupid))
+                                         ON (u.id = gm.userid AND g.courseid = e.courseid)";
+            }
+            $sqltotal .= "WHERE $filtersql";
             $this->totalusers = (int)$DB->count_records_sql($sqltotal, $params);
         }
         return $this->totalusers;
@@ -237,14 +240,17 @@ class course_enrolment_manager {
             $extrafields = get_extra_user_fields($this->get_context());
             $extrafields[] = 'lastaccess';
             $ufields = user_picture::fields('u', $extrafields);
-            $sql = "SELECT DISTINCT $ufields, ul.timeaccess AS lastseen
+            $sql = "SELECT DISTINCT $ufields, COALESCE(ul.timeaccess, 0) AS lastcourseaccess
                       FROM {user} u
                       JOIN {user_enrolments} ue ON (ue.userid = u.id  AND ue.enrolid $instancessql)
                       JOIN {enrol} e ON (e.id = ue.enrolid)
-                 LEFT JOIN {user_lastaccess} ul ON (ul.courseid = e.courseid AND ul.userid = u.id)
-                 LEFT JOIN {groups_members} gm ON u.id = gm.userid
-                     WHERE $filtersql
-                  ORDER BY u.$sort $direction";
+                 LEFT JOIN {user_lastaccess} ul ON (ul.courseid = e.courseid AND ul.userid = u.id)";
+            if ($this->groupfilter) {
+                $sql .= " LEFT JOIN ({groups_members} gm JOIN {groups} g ON (g.id = gm.groupid))
+                                    ON (u.id = gm.userid AND g.courseid = e.courseid)";
+            }
+            $sql .= "WHERE $filtersql
+                  ORDER BY $sort $direction";
             $this->users[$key] = $DB->get_records_sql($sql, $params, $page*$perpage, $perpage);
         }
         return $this->users[$key];
@@ -334,20 +340,22 @@ class course_enrolment_manager {
             list($ctxcondition, $params) = $DB->get_in_or_equal($this->context->get_parent_context_ids(true), SQL_PARAMS_NAMED, 'ctx');
             $params['courseid'] = $this->course->id;
             $params['cid'] = $this->course->id;
-            $sql = "SELECT ra.id as raid, ra.contextid, ra.component, ctx.contextlevel, ra.roleid, u.*, ue.lastseen
+            $extrafields = get_extra_user_fields($this->get_context());
+            $ufields = user_picture::fields('u', $extrafields);
+            $sql = "SELECT ra.id as raid, ra.contextid, ra.component, ctx.contextlevel, ra.roleid, $ufields,
+                        coalesce(u.lastaccess,0) AS lastaccess
                     FROM {role_assignments} ra
                     JOIN {user} u ON u.id = ra.userid
                     JOIN {context} ctx ON ra.contextid = ctx.id
                LEFT JOIN (
-                       SELECT ue.id, ue.userid, ul.timeaccess AS lastseen
+                       SELECT ue.id, ue.userid
                          FROM {user_enrolments} ue
-                    LEFT JOIN {enrol} e ON e.id=ue.enrolid
-                    LEFT JOIN {user_lastaccess} ul ON (ul.courseid = e.courseid AND ul.userid = ue.userid)
+                         JOIN {enrol} e ON e.id = ue.enrolid
                         WHERE e.courseid = :courseid
                        ) ue ON ue.userid=u.id
                    WHERE ctx.id $ctxcondition AND
                          ue.id IS NULL
-                ORDER BY u.$sort $direction, ctx.depth DESC";
+                ORDER BY $sort $direction, ctx.depth DESC";
             $this->otherusers[$key] = $DB->get_records_sql($sql, $params, $page*$perpage, $perpage);
         }
         return $this->otherusers[$key];
@@ -513,13 +521,12 @@ class course_enrolment_manager {
     /**
      * Returns all of the enrolment instances for this course.
      *
-     * NOTE: since 2.4 it includes instances of disabled plugins too.
-     *
+     * @param bool $onlyenabled Whether to return data from enabled enrolment instance names only.
      * @return array
      */
-    public function get_enrolment_instances() {
+    public function get_enrolment_instances($onlyenabled = false) {
         if ($this->_instances === null) {
-            $this->_instances = enrol_get_instances($this->course->id, false);
+            $this->_instances = enrol_get_instances($this->course->id, $onlyenabled);
         }
         return $this->_instances;
     }
@@ -527,13 +534,12 @@ class course_enrolment_manager {
     /**
      * Returns the names for all of the enrolment instances for this course.
      *
-     * NOTE: since 2.4 it includes instances of disabled plugins too.
-     *
+     * @param bool $onlyenabled Whether to return data from enabled enrolment instance names only.
      * @return array
      */
-    public function get_enrolment_instance_names() {
+    public function get_enrolment_instance_names($onlyenabled = false) {
         if ($this->_inames === null) {
-            $instances = $this->get_enrolment_instances();
+            $instances = $this->get_enrolment_instances($onlyenabled);
             $plugins = $this->get_enrolment_plugins(false);
             foreach ($instances as $key=>$instance) {
                 if (!isset($plugins[$instance->enrol])) {
@@ -548,7 +554,7 @@ class course_enrolment_manager {
     }
 
     /**
-     * Gets all of the enrolment plugins that are active for this course.
+     * Gets all of the enrolment plugins that are available for this course.
      *
      * @param bool $onlyenabled return only enabled enrol plugins
      * @return array
@@ -611,6 +617,22 @@ class course_enrolment_manager {
         } else {
             return $this->_assignableroles;
         }
+    }
+
+    /**
+     * Gets all of the assignable roles for this course, wrapped in an array to ensure
+     * role sort order is not lost during json deserialisation.
+     *
+     * @param boolean $otherusers whether to include the assignable roles for other users
+     * @return array
+     */
+    public function get_assignable_roles_for_json($otherusers = false) {
+        $rolesarray = array();
+        $assignable = $this->get_assignable_roles($otherusers);
+        foreach ($assignable as $id => $role) {
+            $rolesarray[] = array('id' => $id, 'name' => $role);
+        }
+        return $rolesarray;
     }
 
     /**
@@ -781,7 +803,7 @@ class course_enrolment_manager {
      */
     public function edit_enrolment($userenrolment, $data) {
         //Only allow editing if the user has the appropriate capability
-        //Already checked in /enrol/users.php but checking again in case this function is called from elsewhere
+        //Already checked in /user/index.php but checking again in case this function is called from elsewhere
         list($instance, $plugin) = $this->get_user_enrolment_components($userenrolment);
         if ($instance && $plugin && $plugin->allow_manage($instance) && has_capability("enrol/$instance->enrol:manage", $this->context)) {
             if (!isset($data->status)) {
@@ -911,7 +933,7 @@ class course_enrolment_manager {
     /**
      * Returns the course context
      *
-     * @return stdClass
+     * @return context
      */
     public function get_context() {
         return $this->context;
@@ -1091,30 +1113,31 @@ class course_enrolment_manager {
      * @param array $extrafields The list of fields as returned from get_extra_user_fields used to determine which
      * additional fields may be displayed
      * @param int $now The time used for lastaccess calculation
-     * @return array The fields to be displayed including userid, courseid, picture, firstname, lastseen and any
+     * @return array The fields to be displayed including userid, courseid, picture, firstname, lastcourseaccess, lastaccess and any
      * additional fields from $extrafields
      */
     private function prepare_user_for_display($user, $extrafields, $now) {
         $details = array(
-            'userid'           => $user->id,
-            'courseid'         => $this->get_course()->id,
-            'picture'          => new user_picture($user),
-            'firstname'        => fullname($user, has_capability('moodle/site:viewfullnames', $this->get_context())),
-            'lastseen'         => get_string('never'),
-            'lastcourseaccess' => get_string('never'),
+            'userid'              => $user->id,
+            'courseid'            => $this->get_course()->id,
+            'picture'             => new user_picture($user),
+            'userfullnamedisplay' => fullname($user, has_capability('moodle/site:viewfullnames', $this->get_context())),
+            'lastaccess'          => get_string('never'),
+            'lastcourseaccess'    => get_string('never'),
         );
+
         foreach ($extrafields as $field) {
             $details[$field] = $user->{$field};
         }
 
         // Last time user has accessed the site.
-        if ($user->lastaccess) {
-            $details['lastseen'] = format_time($now - $user->lastaccess);
+        if (!empty($user->lastaccess)) {
+            $details['lastaccess'] = format_time($now - $user->lastaccess);
         }
 
         // Last time user has accessed the course.
-        if ($user->lastseen) {
-            $details['lastcourseaccess'] = format_time($now - $user->lastseen);
+        if (!empty($user->lastcourseaccess)) {
+            $details['lastcourseaccess'] = format_time($now - $user->lastcourseaccess);
         }
         return $details;
     }

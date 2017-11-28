@@ -1,7 +1,7 @@
 <?php
 /**
  * Copyright (c) 2001-2010, Richard Heyes
- * Copyright 2011-2014 Horde LLC (http://www.horde.org/)
+ * Copyright 2011-2017 Horde LLC (http://www.horde.org/)
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -37,7 +37,7 @@
  * @category  Horde
  * @copyright 2001-2010 Richard Heyes
  * @copyright 2002-2011 Timo Sirainen
- * @copyright 2011-2014 Horde LLC
+ * @copyright 2011-2017 Horde LLC
  * @license   http://www.horde.org/licenses/bsd New BSD License
  * @package   Mail
  */
@@ -52,7 +52,7 @@
  * @category  Horde
  * @copyright 2001-2010 Richard Heyes
  * @copyright 2002-2011 Timo Sirainen
- * @copyright 2011-2014 Horde LLC
+ * @copyright 2011-2017 Horde LLC
  * @license   http://www.horde.org/licenses/bsd New BSD License
  * @package   Mail
  */
@@ -61,12 +61,13 @@ class Horde_Mail_Rfc822
     /**
      * Valid atext characters.
      *
+     * @deprecated
      * @since 2.0.3
      */
     const ATEXT = '!#$%&\'*+-./0123456789=?ABCDEFGHIJKLMNOPQRSTUVWXYZ^_`abcdefghijklmnopqrstuvwxyz{|}~';
 
     /**
-     * Excluded (in ASCII): 0-8, 10-31, 34, 40-41, 44, 58-60, 62, 64,
+     * Excluded (in ASCII decimal): 0-8, 10-31, 34, 40-41, 44, 58-60, 62, 64,
      * 91-93, 127
      *
      * @since 2.0.3
@@ -128,11 +129,13 @@ class Horde_Mail_Rfc822
      *            DEFAULT: false
      *   - limit: (integer) Stop processing after this many addresses.
      *            DEFAULT: No limit (0)
-     *   - validate: (boolean) Strict validation of personal part data? If
-     *               true, throws an Exception on error. If false, attempts
-     *               to allow non-ASCII characters and non-quoted strings in
-     *               the personal data, and will silently abort if an
-     *               unparseable address is found.
+     *   - validate: (mixed) Strict validation of personal part data? If
+     *               false, attempts to allow non-ASCII characters and
+     *               non-quoted strings in the personal data, and will
+     *               silently abort if an unparseable address is found.
+     *               If true, does strict RFC 5322 (ASCII-only) parsing. If
+     *               'eai' (@since 2.5.0), allows RFC 6532 (EAI/UTF-8)
+     *               addresses.
      *               DEFAULT: false
      *
      * @return Horde_Mail_Rfc822_List  A list object.
@@ -190,22 +193,28 @@ class Horde_Mail_Rfc822
      * in RFC 2822 [3.2.5].
      *
      * @param string $str   The string to be quoted and escaped.
-     * @param string $type  Either 'address', or 'personal'.
+     * @param string $type  Either 'address', 'comment' (@since 2.6.0), or
+     *                      'personal'.
      *
      * @return string  The correctly quoted and escaped string.
      */
     public function encode($str, $type = 'address')
     {
         switch ($type) {
+        case 'comment':
+            // RFC 5322 [3.2.2]: Filter out non-printable US-ASCII and ( ) \
+            $filter = "\0\1\2\3\4\5\6\7\10\12\13\14\15\16\17\20\21\22\23\24\25\26\27\30\31\32\33\34\35\36\37\50\51\134\177";
+            break;
+
         case 'personal':
             // RFC 2822 [3.4]: Period not allowed in display name
-            $filter = '.';
+            $filter = self::ENCODE_FILTER . '.';
             break;
 
         case 'address':
         default:
             // RFC 2822 [3.4.1]: (HTAB, SPACE) not allowed in address
-            $filter = "\11\40";
+            $filter = self::ENCODE_FILTER . "\11\40";
             break;
         }
 
@@ -213,11 +222,11 @@ class Horde_Mail_Rfc822
         // If quoted, we know that the contents are already escaped, so
         // unescape now.
         $str = trim($str);
-        if ($str && ($str[0] == '"') && (substr($str, -1) == '"')) {
+        if ($str && ($str[0] === '"') && (substr($str, -1) === '"')) {
             $str = stripslashes(substr($str, 1, -1));
         }
 
-        return (strcspn($str, self::ENCODE_FILTER . $filter) != strlen($str))
+        return (strcspn($str, $filter) != strlen($str))
             ? '"' . addcslashes($str, '\\"') . '"'
             : $str;
     }
@@ -584,7 +593,8 @@ class Horde_Mail_Rfc822
      *
      * atext           = ; Any character except controls, SP, and specials.
      *
-     * For RFC-822 compatibility allow LWSP around '.'
+     * For RFC-822 compatibility allow LWSP around '.'.
+     *
      *
      * @param string &$str      The atom/dot data.
      * @param string $validate  Use these characters as delimiter.
@@ -593,17 +603,13 @@ class Horde_Mail_Rfc822
      */
     protected function _rfc822ParseDotAtom(&$str, $validate = null)
     {
-        $is_validate = $this->_params['validate'];
         $valid = false;
 
         while ($this->_ptr < $this->_datalen) {
             $chr = $this->_data[$this->_ptr];
 
-            /* $this->_rfc822IsAtext($chr, $validate);
-             * Optimization: Function would be called excessively in this
-             * loop, so eliminate function call overhead. */
-            if (($is_validate && !strcspn($chr, self::ATEXT)) ||
-                (!$is_validate && strcspn($chr, $validate))) {
+            /* TODO: Optimize by duplicating rfc822IsAtext code here */
+            if ($this->_rfc822IsAtext($chr, $validate)) {
                 $str .= $chr;
                 ++$this->_ptr;
             } elseif (!$valid) {
@@ -635,18 +641,13 @@ class Horde_Mail_Rfc822
      */
     protected function _rfc822ParseAtomOrDot(&$str)
     {
-        $validate = $this->_params['validate'];
-
         while ($this->_ptr < $this->_datalen) {
             $chr = $this->_data[$this->_ptr];
             if (($chr != '.') &&
-                /* !$this->_rfc822IsAtext($chr, ',<:');
-                 * Optimization: Function would be called excessively in this
-                 * loop, so eliminate function call overhead. */
-                !(($validate && !strcspn($chr, self::ATEXT)) ||
-                  (!$validate && strcspn($chr, ',<:')))) {
+                /* TODO: Optimize by duplicating rfc822IsAtext code here */
+                !$this->_rfc822IsAtext($chr, ',<:')) {
                 $this->_rfc822SkipLwsp();
-                if (!$validate) {
+                if (!$this->_params['validate']) {
                     $str = trim($str);
                 }
                 return;
@@ -793,13 +794,47 @@ class Horde_Mail_Rfc822
      * @param string $validate  If in non-validate mode, use these characters
      *                          as the non-atom delimiters.
      *
-     * @return boolean  True if an atom.
+     * @return boolean  True if a valid atom.
      */
     protected function _rfc822IsAtext($chr, $validate = null)
     {
-        return (!$this->_params['validate'] && !is_null($validate))
-            ? strcspn($chr, $validate)
-            : !strcspn($chr, self::ATEXT);
+        if (!$this->_params['validate'] && !is_null($validate)) {
+            return strcspn($chr, $validate);
+        }
+
+        $ord = ord($chr);
+
+        /* UTF-8 characters check. */
+        if ($ord > 127) {
+            return ($this->_params['validate'] === 'eai');
+        }
+
+        /* Check for DISALLOWED characters under both RFCs 5322 and 6532. */
+
+        /* Unprintable characters && [SPACE] */
+        if ($ord <= 32) {
+            return false;
+        }
+
+        /* "(),:;<>@[\] [DEL] */
+        switch ($ord) {
+        case 34:
+        case 40:
+        case 41:
+        case 44:
+        case 58:
+        case 59:
+        case 60:
+        case 62:
+        case 64:
+        case 91:
+        case 92:
+        case 93:
+        case 127:
+            return false;
+        }
+
+        return true;
     }
 
     /* Helper methods. */

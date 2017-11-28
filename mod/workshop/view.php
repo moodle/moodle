@@ -26,9 +26,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
-require_once(dirname(__FILE__).'/locallib.php');
-require_once($CFG->libdir.'/completionlib.php');
+require(__DIR__.'/../../config.php');
+require_once(__DIR__.'/locallib.php');
 
 $id         = optional_param('id', 0, PARAM_INT); // course_module ID, or
 $w          = optional_param('w', 0, PARAM_INT);  // workshop instance ID
@@ -54,20 +53,10 @@ require_capability('mod/workshop:view', $PAGE->context);
 
 $workshop = new workshop($workshoprecord, $cm, $course);
 
-// Mark viewed
-$completion = new completion_info($course);
-$completion->set_module_viewed($cm);
-
-$eventdata = array();
-$eventdata['objectid']         = $workshop->id;
-$eventdata['context']          = $workshop->context;
-
 $PAGE->set_url($workshop->view_url());
-$event = \mod_workshop\event\course_module_viewed::create($eventdata);
-$event->add_record_snapshot('course', $course);
-$event->add_record_snapshot('workshop', $workshoprecord);
-$event->add_record_snapshot('course_modules', $cm);
-$event->trigger();
+
+// Mark viewed.
+$workshop->set_module_viewed();
 
 // If the phase is to be switched, do it asap. This just has to happen after triggering
 // the event so that the scheduled allocator had a chance to allocate submissions.
@@ -84,7 +73,15 @@ if (!is_null($editmode) && $PAGE->user_allowed_editing()) {
     $USER->editing = $editmode;
 }
 
-$PAGE->set_title($workshop->name);
+$userplan = new workshop_user_plan($workshop, $USER->id);
+
+foreach ($userplan->phases as $phase) {
+    if ($phase->active) {
+        $currentphasetitle = $phase->title;
+    }
+}
+
+$PAGE->set_title($workshop->name . " (" . $currentphasetitle . ")");
 $PAGE->set_heading($course->fullname);
 
 if ($perpage and $perpage > 0 and $perpage <= 1000) {
@@ -101,12 +98,12 @@ if ($eval) {
 }
 
 $output = $PAGE->get_renderer('mod_workshop');
-$userplan = new workshop_user_plan($workshop, $USER->id);
 
 /// Output starts here
 
 echo $output->header();
 echo $output->heading_with_help(format_string($workshop->name), 'userplan', 'workshop');
+echo $output->heading(format_string($currentphasetitle), 3, null, 'mod_workshop-userplanheading');
 echo $output->render($userplan);
 
 switch ($workshop->phase) {
@@ -140,7 +137,7 @@ case workshop::PHASE_SETUP:
 case workshop::PHASE_SUBMISSION:
     if (trim($workshop->instructauthors)) {
         $instructions = file_rewrite_pluginfile_urls($workshop->instructauthors, 'pluginfile.php', $PAGE->context->id,
-            'mod_workshop', 'instructauthors', 0, workshop::instruction_editors_options($PAGE->context));
+            'mod_workshop', 'instructauthors', null, workshop::instruction_editors_options($PAGE->context));
         print_collapsible_region_start('', 'workshop-viewlet-instructauthors', get_string('instructauthors', 'workshop'));
         echo $output->box(format_text($instructions, $workshop->instructauthorsformat, array('overflowdiv'=>true)), array('generalbox', 'instructions'));
         print_collapsible_region_end();
@@ -224,32 +221,44 @@ case workshop::PHASE_SUBMISSION:
             }
         }
 
-        $countsubmissions = $workshop->count_submissions('all', $groupid);
+        print_collapsible_region_start('', 'workshop-viewlet-allsubmissions', get_string('submissionsreport', 'workshop'));
+
         $perpage = get_user_preferences('workshop_perpage', 10);
-        $pagingbar = new paging_bar($countsubmissions, $page, $perpage, $PAGE->url, 'page');
+        $data = $workshop->prepare_grading_report_data($USER->id, $groupid, $page, $perpage, $sortby, $sorthow);
+        if ($data) {
+            $countparticipants = $workshop->count_participants();
+            $countsubmissions = $workshop->count_submissions(array_keys($data->grades), $groupid);
+            $a = new stdClass();
+            $a->submitted = $countsubmissions;
+            $a->notsubmitted = $data->totalcount - $countsubmissions;
 
-        print_collapsible_region_start('', 'workshop-viewlet-allsubmissions', get_string('allsubmissions', 'workshop', $countsubmissions));
-        echo $output->box_start('generalbox allsubmissions');
-        echo $output->container(groups_print_activity_menu($workshop->cm, $PAGE->url, true), 'groupwidget');
+            echo html_writer::tag('div', get_string('submittednotsubmitted', 'workshop', $a));
 
-        if ($countsubmissions == 0) {
-            echo $output->container(get_string('nosubmissions', 'workshop'), 'nosubmissions');
+            echo $output->container(groups_print_activity_menu($workshop->cm, $PAGE->url, true), 'groupwidget');
 
-        } else {
-            $submissions = $workshop->get_submissions('all', $groupid, $page * $perpage, $perpage);
-            $shownames = has_capability('mod/workshop:viewauthornames', $workshop->context);
+            // Prepare the paging bar.
+            $baseurl = new moodle_url($PAGE->url, array('sortby' => $sortby, 'sorthow' => $sorthow));
+            $pagingbar = new paging_bar($data->totalcount, $page, $perpage, $baseurl, 'page');
+
+            // Populate the display options for the submissions report.
+            $reportopts                     = new stdclass();
+            $reportopts->showauthornames     = has_capability('mod/workshop:viewauthornames', $workshop->context);
+            $reportopts->showreviewernames   = has_capability('mod/workshop:viewreviewernames', $workshop->context);
+            $reportopts->sortby              = $sortby;
+            $reportopts->sorthow             = $sorthow;
+            $reportopts->showsubmissiongrade = false;
+            $reportopts->showgradinggrade    = false;
+            $reportopts->workshopphase       = $workshop->phase;
+
             echo $output->render($pagingbar);
-            foreach ($submissions as $submission) {
-                echo $output->render($workshop->prepare_submission_summary($submission, $shownames));
-            }
+            echo $output->render(new workshop_grading_report($data, $reportopts));
             echo $output->render($pagingbar);
             echo $output->perpage_selector($perpage);
+        } else {
+            echo html_writer::tag('div', get_string('nothingfound', 'workshop'), array('class' => 'nothingfound'));
         }
-
-        echo $output->box_end();
         print_collapsible_region_end();
     }
-
     break;
 
 case workshop::PHASE_ASSESSMENT:
@@ -298,6 +307,7 @@ case workshop::PHASE_ASSESSMENT:
             $reportopts->sorthow                = $sorthow;
             $reportopts->showsubmissiongrade    = false;
             $reportopts->showgradinggrade       = false;
+            $reportopts->workshopphase          = $workshop->phase;
 
             print_collapsible_region_start('', 'workshop-viewlet-gradereport', get_string('gradesreport', 'workshop'));
             echo $output->box_start('generalbox gradesreport');
@@ -312,7 +322,7 @@ case workshop::PHASE_ASSESSMENT:
     }
     if (trim($workshop->instructreviewers)) {
         $instructions = file_rewrite_pluginfile_urls($workshop->instructreviewers, 'pluginfile.php', $PAGE->context->id,
-            'mod_workshop', 'instructreviewers', 0, workshop::instruction_editors_options($PAGE->context));
+            'mod_workshop', 'instructreviewers', null, workshop::instruction_editors_options($PAGE->context));
         print_collapsible_region_start('', 'workshop-viewlet-instructreviewers', get_string('instructreviewers', 'workshop'));
         echo $output->box(format_text($instructions, $workshop->instructreviewersformat, array('overflowdiv'=>true)), array('generalbox', 'instructions'));
         print_collapsible_region_end();
@@ -447,6 +457,7 @@ case workshop::PHASE_EVALUATION:
             $reportopts->sorthow                = $sorthow;
             $reportopts->showsubmissiongrade    = true;
             $reportopts->showgradinggrade       = true;
+            $reportopts->workshopphase          = $workshop->phase;
 
             print_collapsible_region_start('', 'workshop-viewlet-gradereport', get_string('gradesreport', 'workshop'));
             echo $output->box_start('generalbox gradesreport');
@@ -478,10 +489,8 @@ case workshop::PHASE_EVALUATION:
         echo $output->container_start('toolboxaction');
         echo $output->render($btn);
         echo $output->help_icon('clearassessments', 'workshop');
-        echo html_writer::empty_tag('img', array('src' => $output->pix_url('i/risk_dataloss'),
-                                                 'title' => get_string('riskdatalossshort', 'admin'),
-                                                 'alt' => get_string('riskdatalossshort', 'admin'),
-                                                 'class' => 'workshop-risk-dataloss'));
+
+        echo $OUTPUT->pix_icon('i/risk_dataloss', get_string('riskdatalossshort', 'admin'));
         echo $output->container_end();
 
         echo $output->box_end();
@@ -532,7 +541,7 @@ case workshop::PHASE_EVALUATION:
 case workshop::PHASE_CLOSED:
     if (trim($workshop->conclusion)) {
         $conclusion = file_rewrite_pluginfile_urls($workshop->conclusion, 'pluginfile.php', $workshop->context->id,
-            'mod_workshop', 'conclusion', 0, workshop::instruction_editors_options($workshop->context));
+            'mod_workshop', 'conclusion', null, workshop::instruction_editors_options($workshop->context));
         print_collapsible_region_start('', 'workshop-viewlet-conclusion', get_string('conclusion', 'workshop'));
         echo $output->box(format_text($conclusion, $workshop->conclusionformat, array('overflowdiv'=>true)), array('generalbox', 'conclusion'));
         print_collapsible_region_end();
@@ -565,6 +574,7 @@ case workshop::PHASE_CLOSED:
             $reportopts->sorthow                = $sorthow;
             $reportopts->showsubmissiongrade    = true;
             $reportopts->showgradinggrade       = true;
+            $reportopts->workshopphase          = $workshop->phase;
 
             print_collapsible_region_start('', 'workshop-viewlet-gradereport', get_string('gradesreport', 'workshop'));
             echo $output->box_start('generalbox gradesreport');
@@ -642,5 +652,5 @@ case workshop::PHASE_CLOSED:
     break;
 default:
 }
-
+$PAGE->requires->js_call_amd('mod_workshop/workshopview', 'init');
 echo $output->footer();

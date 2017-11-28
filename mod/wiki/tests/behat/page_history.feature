@@ -20,8 +20,7 @@ Feature: A history of each wiki page is available
       | student1 | C1 | student |
       | student2 | C1 | student |
     And I log in as "teacher1"
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I add a "Wiki" to section "1" and I fill the form with:
       | Wiki name | Test wiki name |
       | Description | Test wiki description |
@@ -34,7 +33,7 @@ Feature: A history of each wiki page is available
     And I press "Save"
     And I log out
     When I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test wiki name"
     And I follow "Edit"
     And I set the following fields to these values:
@@ -42,7 +41,7 @@ Feature: A history of each wiki page is available
     And I press "Save"
     And I log out
     And I log in as "student2"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test wiki name"
     And I follow "Edit"
     And I set the following fields to these values:
@@ -61,7 +60,7 @@ Feature: A history of each wiki page is available
     And I follow "History"
     And I click on "3" "link" in the "Student 2" "table_row"
     And I should see "Third edition"
-    And I should see "Student 2" in the "#region-main" "css_element"
+    And I should see "Student 2" in the "region-main" "region"
     And I follow "History"
     And I click on "comparewith" "radio" in the "Student 1" "table_row"
     And I click on "compare" "radio" in the "Teacher 1" "table_row"

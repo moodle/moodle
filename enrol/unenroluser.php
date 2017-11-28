@@ -58,8 +58,7 @@ if (!$plugin->allow_unenrol_user($instance, $ue) or !has_capability("enrol/$inst
 $manager = new course_enrolment_manager($PAGE, $course, $filter);
 $table = new course_enrolment_users_table($manager, $PAGE);
 
-$returnurl = new moodle_url('/enrol/users.php', array('id' => $course->id)+$manager->get_url_params()+$table->get_url_params());
-$usersurl = new moodle_url('/enrol/users.php', array('id' => $course->id));
+$usersurl = new moodle_url('/user/index.php', array('id' => $course->id));
 
 $PAGE->set_pagelayout('admin');
 navigation_node::override_active_url($usersurl);
@@ -67,11 +66,17 @@ navigation_node::override_active_url($usersurl);
 // If the unenrolment has been confirmed and the sesskey is valid unenrol the user.
 if ($confirm && confirm_sesskey()) {
     $plugin->unenrol_user($instance, $ue->userid);
-    redirect($returnurl);
+    redirect($usersurl);
 }
 
 $yesurl = new moodle_url($PAGE->url, array('confirm'=>1, 'sesskey'=>sesskey()));
-$message = get_string('unenrolconfirm', 'core_enrol', array('user'=>fullname($user, true), 'course'=>format_string($course->fullname)));
+$message = get_string('unenrolconfirm', 'core_enrol',
+    [
+        'user' => fullname($user, true),
+        'course' => format_string($course->fullname),
+        'enrolinstancename' => $plugin->get_instance_name($instance)
+    ]
+);
 $fullname = fullname($user);
 $title = get_string('unenrol', 'core_enrol');
 
@@ -82,5 +87,5 @@ $PAGE->navbar->add($fullname);
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading($fullname);
-echo $OUTPUT->confirm($message, $yesurl, $returnurl);
+echo $OUTPUT->confirm($message, $yesurl, $usersurl);
 echo $OUTPUT->footer();

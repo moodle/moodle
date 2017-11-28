@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<methodResponse>
+<params>
+ <param>
+  <value>
+   <array>
+    <data>
+     <value>
+      <int>1</int>
+     </value>
+     <value>
+      <string>Test string</string>
+     </value>
+     <value>
+      <double>3.1416</double>
+     </value>
+    </data>
+   </array>
+  </value>
+ </param>
+</params>
+</methodResponse>

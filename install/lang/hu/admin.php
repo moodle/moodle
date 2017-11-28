@@ -40,3 +40,4 @@ $string['cliunknowoption'] = 'Ismeretlen paraméter: {$a}. Használja a --help p
 $string['cliyesnoprompt'] = 'írjon be i-t (igen) vagy n-t (nem)';
 $string['environmentrequireinstall'] = 'telepíteni kell és be kell kapcsolni';
 $string['environmentrequireversion'] = 'a {$a->needed} változatot kell a mostani {$a->current} helyett használni';
+$string['upgradekeyset'] = 'Frissítési kulcs (beállítás kihagyásához hagyja üresen)';

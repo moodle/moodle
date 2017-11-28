@@ -1,0 +1,50 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core/form_autocomplete_selection
+
+    Moodle template for the currently selected items in an autocomplate form element.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * multiple True if this field allows multiple selections
+    * selectionId The dom id of the current selection list.
+    * items List of items with label and value fields.
+    * noSelectionString String to use when no items are selected
+
+    Example context (json):
+    { "multiple": true, "selectionId": 1, "items": [
+        { "label": "Item label with <strong>tags</strong>", "value": "5" },
+        { "label": "Another item label with <strong>tags</strong>", "value": "4" }
+    ], "noSelectionString": "No selection" }
+}}
+<div class="form-autocomplete-selection {{#multiple}}form-autocomplete-multiple{{/multiple}}" id="{{selectionId}}" role="list" aria-atomic="true" {{#multiple}}tabindex="0" aria-multiselectable="true"{{/multiple}}>
+<span class="accesshide">{{#str}}selecteditems, form{{/str}}</span>
+    {{#items}}
+        <span role="listitem" data-value="{{value}}" aria-selected="true" class="tag tag-info m-b-1 m-r-1" style="font-size: 100%">
+            {{#multiple}}<span aria-hidden="true">× </span>{{/multiple}}{{{label}}}
+        </span>
+    {{/items}}
+    {{^items}}
+        <span class="m-b-1 m-r-1">{{noSelectionString}}</span>
+    {{/items}}
+</div>

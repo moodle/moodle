@@ -25,6 +25,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->libdir.'/filebrowser/file_info_context_coursecat.php');
+
 /**
  * Represents the system context in the tree navigated by {@link file_browser}.
  *
@@ -32,7 +34,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2008 Petr Skoda (http://skodak.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class file_info_context_system extends file_info {
+class file_info_context_system extends file_info_context_coursecat {
 
     /**
      * Constructor
@@ -41,7 +43,7 @@ class file_info_context_system extends file_info {
      * @param stdClass $context context object
      */
     public function __construct($browser, $context) {
-        parent::__construct($browser, $context);
+        parent::__construct($browser, $context, (object)['id' => 0, 'parent' => 0, 'visible' => 1]);
     }
 
     /**
@@ -137,41 +139,6 @@ class file_info_context_system extends file_info {
      */
     public function is_directory() {
         return true;
-    }
-
-    /**
-     * Returns list of children.
-     *
-     * @return array of file_info instances
-     */
-    public function get_children() {
-        global $DB, $USER;
-
-        $children = array();
-
-        $course_cats = $DB->get_records('course_categories', array('parent'=>0), 'sortorder', 'id,visible');
-        foreach ($course_cats as $category) {
-            $context = context_coursecat::instance($category->id);
-            if (!$category->visible and !has_capability('moodle/category:viewhiddencategories', $context)) {
-                continue;
-            }
-            if ($child = $this->browser->get_file_info($context)) {
-                $children[] = $child;
-            }
-        }
-
-        $courses = $DB->get_records('course', array('category'=>0), 'sortorder', 'id,visible');
-        foreach ($courses as $course) {
-            if (!$course->visible and !has_capability('moodle/course:viewhiddencourses', $context)) {
-                continue;
-            }
-            $context = context_course::instance($course->id);
-            if ($child = $this->browser->get_file_info($context)) {
-                $children[] = $child;
-            }
-        }
-
-        return $children;
     }
 
     /**

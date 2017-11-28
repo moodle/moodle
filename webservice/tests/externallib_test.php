@@ -43,10 +43,6 @@ class core_webservice_externallib_testcase extends externallib_advanced_testcase
 
         $this->resetAfterTest(true);
 
-        // This is the info we are going to check
-        set_config('release', '2.4dev (Build: 20120823)');
-        set_config('version', '2012083100.00');
-
         $maxbytes = 10485760;
         $userquota = 5242880;
         set_config('maxbytes', $maxbytes);
@@ -95,10 +91,11 @@ class core_webservice_externallib_testcase extends externallib_advanced_testcase
         $this->assertEquals('Doe', $siteinfo['lastname']);
         $this->assertEquals(current_language(), $siteinfo['lang']);
         $this->assertEquals($USER->id, $siteinfo['userid']);
+        $this->assertEquals(SITEID, $siteinfo['siteid']);
         $this->assertEquals(true, $siteinfo['downloadfiles']);
         $this->assertEquals($CFG->release, $siteinfo['release']);
         $this->assertEquals($CFG->version, $siteinfo['version']);
-        $this->assertEquals($CFG->mobilecssurl, $siteinfo['mobilecssurl']);
+        $this->assertEquals('', $siteinfo['mobilecssurl']);
         $this->assertEquals(count($siteinfo['functions']), 1);
         $function = array_pop($siteinfo['functions']);
         $this->assertEquals($function['name'], 'core_course_get_contents');
@@ -124,6 +121,14 @@ class core_webservice_externallib_testcase extends externallib_advanced_testcase
         $this->assertEquals(get_max_upload_file_size($maxbytes), $siteinfo['usermaxuploadfilesize']);
         $this->assertEquals(true, $siteinfo['usercanmanageownfiles']);
 
+        $this->assertEquals(HOMEPAGE_MY, $siteinfo['userhomepage']);
+        $this->assertEquals($CFG->calendartype, $siteinfo['sitecalendartype']);
+        if (!empty($USER->calendartype)) {
+            $this->assertEquals($USER->calendartype, $siteinfo['usercalendartype']);
+        } else {
+            $this->assertEquals($CFG->calendartype, $siteinfo['usercalendartype']);
+        }
+
         // Now as admin.
         $this->setAdminUser();
 
@@ -138,6 +143,11 @@ class core_webservice_externallib_testcase extends externallib_advanced_testcase
         $externaltoken->creatorid = $USER->id;
         $externaltoken->timecreated = time();
         $DB->insert_record('external_tokens', $externaltoken);
+
+        // Set a home page by user preferences.
+        $CFG->defaulthomepage = HOMEPAGE_USER;
+        set_user_preference('user_home_page_preference', HOMEPAGE_SITE);
+
         $siteinfo = core_webservice_external::get_site_info();
 
         // We need to execute the return values cleaning process to simulate the web service server.
@@ -147,6 +157,25 @@ class core_webservice_externallib_testcase extends externallib_advanced_testcase
         $this->assertEquals(USER_CAN_IGNORE_FILE_SIZE_LIMITS, $siteinfo['usermaxuploadfilesize']);
         $this->assertEquals(true, $siteinfo['usercanmanageownfiles']);
 
+        $this->assertEquals(HOMEPAGE_SITE, $siteinfo['userhomepage']);
+
+    }
+
+    /**
+     * Test get_site_info with values > PHP_INT_MAX. We check only userquota since maxbytes require PHP ini changes.
+     */
+    public function test_get_site_info_max_int() {
+        $this->resetAfterTest(true);
+
+        self::setUser(self::getDataGenerator()->create_user());
+
+        // Check values higher than PHP_INT_MAX. This value may come from settings (as string).
+        $userquota = PHP_INT_MAX . '000';
+        set_config('userquota', $userquota);
+
+        $result = core_webservice_external::get_site_info();
+        $result = external_api::clean_returnvalue(core_webservice_external::get_site_info_returns(), $result);
+        $this->assertEquals(PHP_INT_MAX, $result['userquota']);
     }
 
 }

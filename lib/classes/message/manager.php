@@ -50,7 +50,8 @@ class manager {
      *
      * NOTE: to be used from message_send() only.
      *
-     * @param \stdClass|\core\message\message $eventdata fully prepared event data for processors
+     * @todo MDL-55449 Drop support for stdClass in Moodle 3.6
+     * @param \core\message\message $eventdata fully prepared event data for processors
      * @param \stdClass $savemessage the message saved in 'message' table
      * @param array $processorlist list of processors for target user
      * @return int $messageid the id from 'message' or 'message_read' table (false is not returned)
@@ -58,16 +59,31 @@ class manager {
     public static function send_message($eventdata, \stdClass $savemessage, array $processorlist) {
         global $CFG;
 
+        // TODO MDL-55449 Drop support for stdClass in Moodle 3.6.
         if (!($eventdata instanceof \stdClass) && !($eventdata instanceof message)) {
             // Not a valid object.
             throw new \coding_exception('Message should be of type stdClass or \core\message\message');
+        }
+
+        // TODO MDL-55449 Drop support for stdClass in Moodle 3.6.
+        if ($eventdata instanceof \stdClass) {
+            if (!isset($eventdata->courseid)) {
+                $eventdata->courseid = null;
+            }
+
+            debugging('eventdata as \stdClass is deprecated. Please use \core\message\message instead.', DEBUG_DEVELOPER);
         }
 
         require_once($CFG->dirroot.'/message/lib.php'); // This is most probably already included from messagelib.php file.
 
         if (empty($processorlist)) {
             // Trigger event for sending a message - we need to do this before marking as read!
-            \core\event\message_sent::create_from_ids($eventdata->userfrom->id, $eventdata->userto->id, $savemessage->id)->trigger();
+            \core\event\message_sent::create_from_ids(
+                $eventdata->userfrom->id,
+                $eventdata->userto->id,
+                $savemessage->id,
+                $eventdata->courseid
+                )->trigger();
 
             if ($savemessage->notification or empty($CFG->messaging)) {
                 // If they have deselected all processors and its a notification mark it read. The user doesn't want to be bothered.
@@ -117,13 +133,14 @@ class manager {
             return $savemessage->id;
         }
 
-        $processors = get_message_processors(true);
-
         $failed = false;
         foreach ($processorlist as $procname) {
             // Let new messaging class add custom content based on the processor.
             $proceventdata = ($eventdata instanceof message) ? $eventdata->get_eventobject_for_processor($procname) : $eventdata;
-            if (!$processors[$procname]->object->send_message($proceventdata)) {
+            $stdproc = new \stdClass();
+            $stdproc->name = $procname;
+            $processor = \core_message\api::get_processed_processor_object($stdproc);
+            if (!$processor->object->send_message($proceventdata)) {
                 debugging('Error calling message processor ' . $procname);
                 $failed = true;
                 // Previously the $messageid = false here was overridden
@@ -132,7 +149,12 @@ class manager {
         }
 
         // Trigger event for sending a message - must be done before marking as read.
-        \core\event\message_sent::create_from_ids($eventdata->userfrom->id, $eventdata->userto->id, $savemessage->id)->trigger();
+        \core\event\message_sent::create_from_ids(
+            $eventdata->userfrom->id,
+            $eventdata->userto->id,
+            $savemessage->id,
+            $eventdata->courseid
+            )->trigger();
 
         if (empty($CFG->messaging)) {
             // If messaging is disabled and they previously had forum notifications handled by the popup processor

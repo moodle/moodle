@@ -42,16 +42,26 @@ class mod_assign_grading_options_form extends moodleform {
     public function definition() {
         $mform = $this->_form;
         $instance = $this->_customdata;
-        $dirtyclass = array('class'=>'ignoredirty');
+        $dirtyclass = array('class' => 'ignoredirty');
 
         $mform->addElement('header', 'general', get_string('gradingoptions', 'assign'));
         // Visible elements.
-        $options = array(-1=>get_string('all'), 10=>'10', 20=>'20', 50=>'50', 100=>'100');
+        $options = array(-1 => get_string('all'), 10 => '10', 20 => '20', 50 => '50', 100 => '100');
+        $maxperpage = get_config('assign', 'maxperpage');
+        if (isset($maxperpage) && $maxperpage != -1) {
+            unset($options[-1]);
+            foreach ($options as $val) {
+                if ($val > $maxperpage) {
+                    unset($options[$val]);
+                }
+            }
+        }
         $mform->addElement('select', 'perpage', get_string('assignmentsperpage', 'assign'), $options, $dirtyclass);
         $options = array('' => get_string('filternone', 'assign'),
                          ASSIGN_FILTER_NOT_SUBMITTED => get_string('filternotsubmitted', 'assign'),
                          ASSIGN_FILTER_SUBMITTED => get_string('filtersubmitted', 'assign'),
-                         ASSIGN_FILTER_REQUIRE_GRADING => get_string('filterrequiregrading', 'assign'));
+                         ASSIGN_FILTER_REQUIRE_GRADING => get_string('filterrequiregrading', 'assign'),
+                         ASSIGN_FILTER_GRANTED_EXTENSION => get_string('filtergrantedextension', 'assign'));
         if ($instance['submissionsenabled']) {
             $mform->addElement('select', 'filter', get_string('filter', 'assign'), $options, $dirtyclass);
         }
@@ -75,6 +85,13 @@ class mod_assign_grading_options_form extends moodleform {
             $mform->addElement('checkbox', 'showonlyactiveenrol', get_string('showonlyactiveenrol', 'grades'), '', $dirtyclass);
             $mform->addHelpButton('showonlyactiveenrol', 'showonlyactiveenrol', 'grades');
             $mform->setDefault('showonlyactiveenrol', $instance['showonlyactiveenrol']);
+        }
+
+        // Place student downloads in seperate folders.
+        if ($instance['submissionsenabled']) {
+            $mform->addElement('checkbox', 'downloadasfolders', get_string('downloadasfolders', 'assign'), '', $dirtyclass);
+            $mform->addHelpButton('downloadasfolders', 'downloadasfolders', 'assign');
+            $mform->setDefault('downloadasfolders', $instance['downloadasfolders']);
         }
 
         // Hidden params.

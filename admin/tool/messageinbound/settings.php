@@ -25,10 +25,9 @@
 defined('MOODLE_INTERNAL') || die;
 
 if ($hassiteconfig) {
-    $category = new admin_category('messageinbound', new lang_string('incomingmailconfiguration', 'tool_messageinbound'));
-
     // Create a settings page for all of the mail server settings.
-    $settings = new admin_settingpage('messageinbound_mailsettings', new lang_string('mailsettings', 'tool_messageinbound'));
+    $settings = new admin_settingpage('messageinbound_mailsettings',
+            new lang_string('incomingmailconfiguration', 'tool_messageinbound'));
 
     $settings->add(new admin_setting_heading('messageinbound_generalconfiguration',
             new lang_string('messageinboundgeneralconfiguration', 'tool_messageinbound'),
@@ -75,13 +74,10 @@ if ($hassiteconfig) {
             new lang_string('messageinboundhostpass', 'tool_messageinbound'),
             new lang_string('messageinboundhostpass_desc', 'tool_messageinbound'), ''));
 
-    $category->add('messageinbound', $settings);
-
+    // Add the category to the admin tree.
+    $ADMIN->add('email', $settings);
     // Link to the external page for Inbound Message handler configuration.
-    $category->add('messageinbound', new admin_externalpage('messageinbound_handlers',
+    $ADMIN->add('email', new admin_externalpage('messageinbound_handlers',
             new lang_string('message_handlers', 'tool_messageinbound'),
             "$CFG->wwwroot/$CFG->admin/tool/messageinbound/index.php"));
-
-    // Add the category to the admin tree.
-    $ADMIN->add('server', $category);
 }

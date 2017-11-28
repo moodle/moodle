@@ -17,8 +17,7 @@ Feature: Forum discussions can be split
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
     And I log in as "teacher1"
-    And I follow "Science 101"
-    And I turn editing mode on
+    And I am on "Science 101" course homepage with editing mode on
     And I add a "Forum" to section "1" and I fill the form with:
       | Forum name | Study discussions |
       | Forum type | Standard forum for general use |
@@ -28,14 +27,14 @@ Feature: Forum discussions can be split
       | Message | Lets discuss our learning about Photosynethis this week in this thread. |
     And I log out
     And I log in as "student1"
-    And I follow "Science 101"
+    And I am on "Science 101" course homepage
     And I reply "Photosynethis discussion" post from "Study discussions" forum with:
       | Message | Can anyone tell me which number is the mass number in the periodic table? |
     And I log out
 
   Scenario: Split a forum discussion
     Given I log in as "teacher1"
-    And I follow "Science 101"
+    And I am on "Science 101" course homepage
     And I follow "Study discussions"
     And I follow "Photosynethis discussion"
     When I follow "Split"

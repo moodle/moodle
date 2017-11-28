@@ -40,6 +40,7 @@ class restore_glossary_activity_structure_step extends restore_activity_structur
         $paths[] = new restore_path_element('glossary_category', '/activity/glossary/categories/category');
         if ($userinfo) {
             $paths[] = new restore_path_element('glossary_entry', '/activity/glossary/entries/entry');
+            $paths[] = new restore_path_element('glossary_entry_tag', '/activity/glossary/entriestags/tag');
             $paths[] = new restore_path_element('glossary_alias', '/activity/glossary/entries/entry/aliases/alias');
             $paths[] = new restore_path_element('glossary_rating', '/activity/glossary/entries/entry/ratings/rating');
             $paths[] = new restore_path_element('glossary_category_entry',
@@ -57,6 +58,8 @@ class restore_glossary_activity_structure_step extends restore_activity_structur
         $oldid = $data->id;
         $data->course = $this->get_courseid();
 
+        // Any changes to the list of dates that needs to be rolled should be same during course restore and course reset.
+        // See MDL-9367.
         $data->assesstimestart = $this->apply_date_offset($data->assesstimestart);
         $data->assesstimefinish = $this->apply_date_offset($data->assesstimefinish);
         if ($data->scale < 0) { // scale found, get mapping
@@ -87,9 +90,6 @@ class restore_glossary_activity_structure_step extends restore_activity_structur
         $data->userid = $this->get_mappingid('user', $data->userid);
         $data->sourceglossaryid = $this->get_mappingid('glossary', $data->sourceglossaryid);
 
-        $data->timecreated = $this->apply_date_offset($data->timecreated);
-        $data->timemodified = $this->apply_date_offset($data->timemodified);
-
         // insert the entry record
         $newitemid = $DB->insert_record('glossary_entries', $data);
         $this->set_mapping('glossary_entry', $oldid, $newitemid, true); // childs and files by itemname
@@ -119,8 +119,6 @@ class restore_glossary_activity_structure_step extends restore_activity_structur
         }
         $data->rating = $data->value;
         $data->userid = $this->get_mappingid('user', $data->userid);
-        $data->timecreated = $this->apply_date_offset($data->timecreated);
-        $data->timemodified = $this->apply_date_offset($data->timemodified);
 
         // Make sure that we have both component and ratingarea set. These were added in 2.1.
         // Prior to that all ratings were for entries so we know what to set them too.
@@ -132,6 +130,23 @@ class restore_glossary_activity_structure_step extends restore_activity_structur
         }
 
         $newitemid = $DB->insert_record('rating', $data);
+    }
+
+    protected function process_glossary_entry_tag($data) {
+        $data = (object)$data;
+
+        if (!core_tag_tag::is_enabled('mod_glossary', 'glossary_entries')) { // Tags disabled in server, nothing to process.
+            return;
+        }
+
+        $tag = $data->rawname;
+        if (!$itemid = $this->get_mappingid('glossary_entry', $data->itemid)) {
+            // Some orphaned tag, we could not find the glossary entry for it - ignore.
+            return;
+        }
+
+        $context = context_module::instance($this->task->get_moduleid());
+        core_tag_tag::add_item_tag('mod_glossary', 'glossary_entries', $itemid, $context, $tag);
     }
 
     protected function process_glossary_category($data) {

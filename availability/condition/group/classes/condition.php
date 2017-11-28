@@ -246,7 +246,12 @@ class condition extends \core_availability\condition {
      * @return stdClass Object representing condition
      */
     public static function get_json($groupid = 0) {
-        return (object)array('type' => 'group', 'id' => (int)$groupid);
+        $result = (object)array('type' => 'group');
+        // Id is only included if set.
+        if ($groupid) {
+            $result->id = (int)$groupid;
+        }
+        return $result;
     }
 
     public function get_user_list_sql($not, \core_availability\info $info, $onlyactive) {

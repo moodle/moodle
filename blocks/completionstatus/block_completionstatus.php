@@ -38,7 +38,7 @@ class block_completionstatus extends block_base {
     }
 
     public function applicable_formats() {
-        return array('all' => true, 'mod' => false, 'tag' => false, 'my' => false);
+        return array('course' => true);
     }
 
     public function get_content() {

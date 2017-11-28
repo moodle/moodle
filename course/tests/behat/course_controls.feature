@@ -27,19 +27,11 @@ Feature: Course activity controls works as expected
       | user | course | role |
       | teacher1 | C1 | editingteacher |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     When I follow <targetpage>
-    And I press "Turn editing on"
-    Then I should see "Turn editing off"
-    And I press "Turn editing off"
-    And "Turn editing on" "button" should exist
-    And I follow "Turn editing on"
-    And "Turn editing off" "button" should exist
-    And I follow "Turn editing off"
-    And I should see "Turn editing on"
-    And "Turn editing on" "button" should exist
     And I turn editing mode on
-    And I click on "Actions" "link" in the "Recent activity" "block"
+    And I add the "Recent activity" block
+    And I open the action menu in "Recent activity" "block"
     And I click on "Delete Recent activity block" "link"
     And I press "Yes"
     And <belowpage> "section" <should_see_other_sections> exist
@@ -68,7 +60,7 @@ Feature: Course activity controls works as expected
     And I click on "Hide" "link" in the "Test forum name 1" activity
     And <belowpage> "section" <should_see_other_sections> exist
     And I delete "Test forum name 1" activity
-    And I should not see "Test forum name 1" in the "#region-main" "css_element"
+    And I should not see "Test forum name 1" in the "region-main" "region"
     And I duplicate "Test forum name 2" activity editing the new copy with:
       | Forum name | Edited test forum name 2 |
     And <belowpage> "section" <should_see_other_sections> exist
@@ -107,19 +99,11 @@ Feature: Course activity controls works as expected
       | user | course | role |
       | teacher1 | C1 | editingteacher |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     When I follow <targetpage>
-    And I press "Turn editing on"
-    Then I should see "Turn editing off"
-    And I press "Turn editing off"
-    And "Turn editing on" "button" should exist
-    And I follow "Turn editing on"
-    And "Turn editing off" "button" should exist
-    And I follow "Turn editing off"
-    And I should see "Turn editing on"
-    And "Turn editing on" "button" should exist
     And I turn editing mode on
-    And I click on "Actions" "link" in the "Recent activity" "block"
+    And I add the "Recent activity" block
+    And I open the action menu in "Recent activity" "block"
     And I click on "Delete Recent activity block" "link"
     And I press "Yes"
     And <belowpage> "section" <should_see_other_sections> exist
@@ -143,7 +127,7 @@ Feature: Course activity controls works as expected
     And <belowpage> "section" <should_see_other_sections> exist
     And I delete "Test forum name 1" activity
     And <belowpage> "section" <should_see_other_sections> exist
-    And I should not see "Test forum name 1" in the "#region-main" "css_element"
+    And I should not see "Test forum name 1" in the "region-main" "region"
     And I duplicate "Test forum name 2" activity editing the new copy with:
       | Forum name | Edited test forum name 2 |
     And <belowpage> "section" <should_see_other_sections> exist

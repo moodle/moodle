@@ -168,35 +168,49 @@ function lesson_save_question_options($question, $lesson, $contextid) {
 
         case LESSON_PAGE_TRUEFALSE:
 
-            // the truth
+            // In lesson the correct answer always come first, as it was the case
+            // in question bank exports years ago.
             $answer = clone($defaultanswer);
-            $answer->answer = get_string("true", "lesson");
-            $answer->grade = $question->correctanswer * 100;
-            if ($answer->grade > 50 ) {
-                $answer->jumpto = LESSON_NEXTPAGE;
-                $answer->score = 1;
+            $answer->grade = 100;
+            $answer->jumpto = LESSON_NEXTPAGE;
+            $answer->score = 1;
+            if ($question->correctanswer) {
+                $answer->answer = get_string("true", "lesson");
+                if (isset($question->feedbacktrue)) {
+                    $answer->response = $question->feedbacktrue['text'];
+                    $answer->responseformat = $question->feedbacktrue['format'];
+                    $answer->id = $DB->insert_record("lesson_answers", $answer);
+                    lesson_import_question_files('response', $question->feedbacktrue, $answer, $contextid);
+                }
+            } else {
+                $answer->answer = get_string("false", "lesson");
+                if (isset($question->feedbackfalse)) {
+                    $answer->response = $question->feedbackfalse['text'];
+                    $answer->responseformat = $question->feedbackfalse['format'];
+                    $answer->id = $DB->insert_record("lesson_answers", $answer);
+                    lesson_import_question_files('response', $question->feedbackfalse, $answer, $contextid);
+                }
             }
-            if (isset($question->feedbacktrue)) {
-                $answer->response = $question->feedbacktrue['text'];
-                $answer->responseformat = $question->feedbacktrue['format'];
-            }
-            $answer->id = $DB->insert_record("lesson_answers", $answer);
-            lesson_import_question_files('response', $question->feedbacktrue, $answer, $contextid);
 
-            // the lie
+            // Now the wrong answer.
             $answer = clone($defaultanswer);
-            $answer->answer = get_string("false", "lesson");
-            $answer->grade = (1 - (int)$question->correctanswer) * 100;
-            if ($answer->grade > 50 ) {
-                $answer->jumpto = LESSON_NEXTPAGE;
-                $answer->score = 1;
+            if ($question->correctanswer) {
+                $answer->answer = get_string("false", "lesson");
+                if (isset($question->feedbackfalse)) {
+                    $answer->response = $question->feedbackfalse['text'];
+                    $answer->responseformat = $question->feedbackfalse['format'];
+                    $answer->id = $DB->insert_record("lesson_answers", $answer);
+                    lesson_import_question_files('response', $question->feedbackfalse, $answer, $contextid);
+                }
+            } else {
+                $answer->answer = get_string("true", "lesson");
+                if (isset($question->feedbacktrue)) {
+                    $answer->response = $question->feedbacktrue['text'];
+                    $answer->responseformat = $question->feedbacktrue['format'];
+                    $answer->id = $DB->insert_record("lesson_answers", $answer);
+                    lesson_import_question_files('response', $question->feedbacktrue, $answer, $contextid);
+                }
             }
-            if (isset($question->feedbackfalse)) {
-                $answer->response = $question->feedbackfalse['text'];
-                $answer->responseformat = $question->feedbackfalse['format'];
-            }
-            $answer->id = $DB->insert_record("lesson_answers", $answer);
-            lesson_import_question_files('response', $question->feedbackfalse, $answer, $contextid);
 
           break;
 

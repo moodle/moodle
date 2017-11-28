@@ -1,5 +1,5 @@
 # Latvian translations for Horde_Mime package.
-# Copyright 2011-2014 Horde LLC (http://www.horde.org/)
+# Copyright 2011-2017 Horde LLC (http://www.horde.org/)
 # This file is distributed under the same license as the Horde_Mime package.
 # Automatically generated, 2011.
 #

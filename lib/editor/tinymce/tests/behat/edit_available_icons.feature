@@ -18,9 +18,7 @@ Feature: Add or remove items from the TinyMCE editor toolbar
   Scenario: Remove icons
     When the following config values are set as admin:
       | customtoolbar | fontselect,fontsizeselect,formatselect,\|,undo,redo,\|,search,replace,\|,fullscreen | editor_tinymce |
-    And I am on site homepage
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I add a "Database" to section "1"
     Then "#id_introeditor_tbl .mce_bold" "css_element" should not exist
     And "#id_introeditor_tbl .mce_fullscreen" "css_element" should exist
@@ -29,24 +27,19 @@ Feature: Add or remove items from the TinyMCE editor toolbar
   Scenario: Add icons
     When the following config values are set as admin:
       | customtoolbar | fontselect,fontsizeselect,formatselect,\|,undo,redo,\|,search,replace,\|,fullscreen,anchor | editor_tinymce |
-    And I am on site homepage
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I add a "Database" to section "1"
     Then "#id_introeditor_tbl .mce_bold" "css_element" should not exist
     And "#id_introeditor_tbl .mce_anchor" "css_element" should exist
     And the following config values are set as admin:
       | customtoolbar | fontselect,fontsizeselect,formatselect,\|,undo,redo,\|,search,replace,\|,fullscreen | editor_tinymce |
-    And I am on site homepage
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I add a "Database" to section "1"
     And "#id_introeditor_tbl .mce_anchor" "css_element" should not exist
     And I press "Cancel"
 
   Scenario: Default icons
-    And I am on site homepage
-    Given I follow "Course 1"
-    And I turn editing mode on
+    Given I am on "Course 1" course homepage with editing mode on
     When I add a "Database" to section "1"
     And I wait until "#id_introeditor_tbl" "css_element" exists
     Then "#id_introeditor_tbl .mce_bold" "css_element" should exist

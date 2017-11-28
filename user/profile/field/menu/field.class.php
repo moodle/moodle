@@ -43,10 +43,11 @@ class profile_field_menu extends profile_field_base {
      *
      * @param int $fieldid
      * @param int $userid
+     * @param object $fielddata
      */
-    public function profile_field_menu($fieldid = 0, $userid = 0) {
+    public function __construct($fieldid = 0, $userid = 0, $fielddata = null) {
         // First call parent constructor.
-        $this->profile_field_base($fieldid, $userid);
+        parent::__construct($fieldid, $userid, $fielddata);
 
         // Param 1 for menu type is the options.
         if (isset($this->field->param1)) {
@@ -59,7 +60,8 @@ class profile_field_menu extends profile_field_base {
             $this->options[''] = get_string('choose').'...';
         }
         foreach ($options as $key => $option) {
-            $this->options[$option] = format_string($option); // Multilang formatting with filters.
+            // Multilang formatting with filters.
+            $this->options[$option] = format_string($option, true, ['context' => context_system::instance()]);
         }
 
         // Set the data key.
@@ -154,6 +156,17 @@ class profile_field_menu extends profile_field_base {
             $retval = null;
         }
         return $retval;
+    }
+
+    /**
+     * Return the field type and null properties.
+     * This will be used for validating the data submitted by a user.
+     *
+     * @return array the param type and null property
+     * @since Moodle 3.2
+     */
+    public function get_field_properties() {
+        return array(PARAM_TEXT, NULL_NOT_ALLOWED);
     }
 }
 

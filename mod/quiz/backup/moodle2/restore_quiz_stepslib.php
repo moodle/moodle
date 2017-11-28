@@ -101,10 +101,11 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
         $oldid = $data->id;
         $data->course = $this->get_courseid();
 
+        // Any changes to the list of dates that needs to be rolled should be same during course restore and course reset.
+        // See MDL-9367.
+
         $data->timeopen = $this->apply_date_offset($data->timeopen);
         $data->timeclose = $this->apply_date_offset($data->timeclose);
-        $data->timecreated = $this->apply_date_offset($data->timecreated);
-        $data->timemodified = $this->apply_date_offset($data->timemodified);
 
         if (property_exists($data, 'questions')) {
             // Needed by {@link process_quiz_attempt_legacy}, in which case it will be present.
@@ -239,6 +240,10 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
             $data->overduehandling = get_config('quiz', 'overduehandling');
         }
 
+        // Old shufflequestions setting is now stored in quiz sections,
+        // so save it here if necessary so it is available when we need it.
+        $this->legacyshufflequestionsoption = !empty($data->shufflequestions);
+
         // Insert the quiz record.
         $newitemid = $DB->insert_record('quiz', $data);
         // Immediately after inserting "activity" record, call this.
@@ -355,8 +360,6 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
         $data->userid = $this->get_mappingid('user', $data->userid);
         $data->grade = $data->gradeval;
 
-        $data->timemodified = $this->apply_date_offset($data->timemodified);
-
         $DB->insert_record('quiz_grades', $data);
     }
 
@@ -368,9 +371,6 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
 
         $data->userid = $this->get_mappingid('user', $data->userid);
 
-        $data->timestart = $this->apply_date_offset($data->timestart);
-        $data->timefinish = $this->apply_date_offset($data->timefinish);
-        $data->timemodified = $this->apply_date_offset($data->timemodified);
         if (!empty($data->timecheckstate)) {
             $data->timecheckstate = $this->apply_date_offset($data->timecheckstate);
         } else {

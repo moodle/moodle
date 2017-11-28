@@ -4,6 +4,7 @@
 
     require_once('../config.php');
     require_once($CFG->libdir.'/adminlib.php');
+    require_once($CFG->libdir.'/blocklib.php');
     require_once($CFG->libdir.'/tablelib.php');
 
     admin_externalpage_setup('manageblocks');
@@ -36,6 +37,7 @@
             print_error('blockdoesnotexist', 'error');
         }
         $DB->set_field('block', 'visible', '0', array('id'=>$block->id));      // Hide block
+        add_to_config_log('block_visibility', $block->visible, '0', $block->name);
         core_plugin_manager::reset_caches();
         admin_get_root(true, false);  // settings not required - only pages
     }
@@ -45,39 +47,22 @@
             print_error('blockdoesnotexist', 'error');
         }
         $DB->set_field('block', 'visible', '1', array('id'=>$block->id));      // Show block
+        add_to_config_log('block_visibility', $block->visible, '1', $block->name);
         core_plugin_manager::reset_caches();
         admin_get_root(true, false);  // settings not required - only pages
     }
 
-    if (!isset($CFG->undeletableblocktypes) || (!is_array($CFG->undeletableblocktypes) && !is_string($CFG->undeletableblocktypes))) {
-        $undeletableblocktypes = array('navigation', 'settings');
-    } else if (is_string($CFG->undeletableblocktypes)) {
-        $undeletableblocktypes = explode(',', $CFG->undeletableblocktypes);
-    } else {
-        $undeletableblocktypes = $CFG->undeletableblocktypes;
-    }
-
     if (!empty($protect) && confirm_sesskey()) {
-        if (!$block = $DB->get_record('block', array('id'=>$protect))) {
-            print_error('blockdoesnotexist', 'error');
-        }
-        if (!in_array($block->name, $undeletableblocktypes)) {
-            $undeletableblocktypes[] = $block->name;
-            set_config('undeletableblocktypes', implode(',', $undeletableblocktypes));
-        }
+        block_manager::protect_block((int)$protect);
         admin_get_root(true, false);  // settings not required - only pages
     }
 
     if (!empty($unprotect) && confirm_sesskey()) {
-        if (!$block = $DB->get_record('block', array('id'=>$unprotect))) {
-            print_error('blockdoesnotexist', 'error');
-        }
-        if (in_array($block->name, $undeletableblocktypes)) {
-            $undeletableblocktypes = array_diff($undeletableblocktypes, array($block->name));
-            set_config('undeletableblocktypes', implode(',', $undeletableblocktypes));
-        }
+        block_manager::unprotect_block((int)$unprotect);
         admin_get_root(true, false);  // settings not required - only pages
     }
+
+    $undeletableblocktypes = block_manager::get_undeletable_block_types();
 
     echo $OUTPUT->header();
     echo $OUTPUT->heading($strmanageblocks);
@@ -154,8 +139,12 @@
                 $settings = '<a href="' . $blocksettings->url .  '">' . get_string('settings') . '</a>';
             } else if ($blocksettings instanceof admin_settingpage) {
                 $settings = '<a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/settings.php?section=blocksetting'.$block->name.'">'.$strsettings.'</a>';
-            } else {
-                $settings = '<a href="block.php?block='.$blockid.'">'.$strsettings.'</a>';
+            } else if (!file_exists($CFG->dirroot.'/blocks/'.$block->name.'/settings.php')) {
+                // If the block's settings node was not found, we check that the block really provides the settings.php file.
+                // Note that blocks can inject their settings to other nodes in the admin tree without using the default locations.
+                // This can be done by assigning null to $setting in settings.php and it is a valid case.
+                debugging('Warning: block_'.$block->name.' returns true in has_config() but does not provide a settings.php file',
+                    DEBUG_DEVELOPER);
             }
         }
 
@@ -179,10 +168,10 @@
             $visible = '';
         } else if ($blocks[$blockid]->visible) {
             $visible = '<a href="blocks.php?hide='.$blockid.'&amp;sesskey='.sesskey().'" title="'.$strhide.'">'.
-                       '<img src="'.$OUTPUT->pix_url('t/hide') . '" class="iconsmall" alt="'.$strhide.'" /></a>';
+                       $OUTPUT->pix_icon('t/hide', $strhide) . '</a>';
         } else {
             $visible = '<a href="blocks.php?show='.$blockid.'&amp;sesskey='.sesskey().'" title="'.$strshow.'">'.
-                       '<img src="'.$OUTPUT->pix_url('t/show') . '" class="iconsmall" alt="'.$strshow.'" /></a>';
+                       $OUTPUT->pix_icon('t/show', $strshow) . '</a>';
             $class = 'dimmed_text';
         }
 
@@ -197,10 +186,10 @@
             $undeletable = '';
         } else if (in_array($blockname, $undeletableblocktypes)) {
             $undeletable = '<a href="blocks.php?unprotect='.$blockid.'&amp;sesskey='.sesskey().'" title="'.$strunprotect.'">'.
-                       '<img src="'.$OUTPUT->pix_url('t/unlock') . '" class="iconsmall" alt="'.$strunprotect.'" /></a>';
+                       $OUTPUT->pix_icon('t/unlock', $strunprotect) . '</a>';
         } else {
             $undeletable = '<a href="blocks.php?protect='.$blockid.'&amp;sesskey='.sesskey().'" title="'.$strprotect.'">'.
-                       '<img src="'.$OUTPUT->pix_url('t/lock') . '" class="iconsmall" alt="'.$strprotect.'" /></a>';
+                       $OUTPUT->pix_icon('t/lock', $strprotect) . '</a>';
         }
 
         $row = array(

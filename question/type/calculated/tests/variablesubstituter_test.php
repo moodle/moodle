@@ -48,21 +48,40 @@ class qtype_calculated_variable_substituter_test extends advanced_testcase {
         $this->assertEquals(1, $vs->calculate('{a}-{b}'));
     }
 
+    /**
+     * @expectedException moodle_exception
+     */
     public function test_cannot_use_nonnumbers() {
-        $this->setExpectedException('moodle_exception');
         $vs = new qtype_calculated_variable_substituter(array('a' => 'frog', 'b' => -2), '.');
     }
 
+    /**
+     * @expectedException moodle_exception
+     */
     public function test_invalid_expression() {
-        $this->setExpectedException('moodle_exception');
         $vs = new qtype_calculated_variable_substituter(array('a' => 1, 'b' => 2), '.');
         $vs->calculate('{a} + {b}?');
     }
 
+    /**
+     * @expectedException moodle_exception
+     */
     public function test_tricky_invalid_expression() {
-        $this->setExpectedException('moodle_exception');
         $vs = new qtype_calculated_variable_substituter(array('a' => 1, 'b' => 2), '.');
         $vs->calculate('{a}{b}'); // Have to make sure this does not just evaluate to 12.
+    }
+
+    /**
+     * @expectedException moodle_exception
+     */
+    public function test_division_by_zero_expression() {
+
+        if (intval(PHP_VERSION) < 7) {
+            $this->markTestSkipped('Division by zero triggers a PHP warning before PHP 7.');
+        }
+
+        $vs = new qtype_calculated_variable_substituter(array('a' => 1, 'b' => 0), '.');
+        $vs->calculate('{a} / {b}');
     }
 
     public function test_replace_expressions_in_text_simple_var() {

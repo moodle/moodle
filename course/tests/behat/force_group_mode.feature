@@ -15,12 +15,11 @@ Feature: Force group mode in a course
       | user | course | role |
       | teacher1 | C1 | editingteacher |
     And I log in as "teacher1"
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I add a "Chat" to section "1" and I fill the form with:
       | Name of this chat room | Chat room |
       | Description | Chat description |
-    And I click on "Edit settings" "link" in the "Administration" "block"
+    And I navigate to "Edit settings" in current page administration
 
   @javascript
   Scenario: Forced group mode using separate groups
@@ -48,4 +47,3 @@ Feature: Force group mode in a course
     And I press "Save and display"
     Then "//a/child::img[contains(@alt, 'No groups (forced mode)')]" "xpath_element" should not exist
     And "//img[contains(@alt, 'No groups (forced mode)')]" "xpath_element" should not exist
-

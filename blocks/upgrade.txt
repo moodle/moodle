@@ -1,6 +1,30 @@
 This files describes API changes in /blocks/* - activity modules,
 information provided here is intended especially for developers.
 
+=== 3.4 ===
+
+* The block_instances table now contains fields timecreated and timemodified. If third-party code
+  creates or updates these rows (without using the standard API), it should be modified to set
+  these fields as appropriate.
+* Blocks can now be included in Moodle global search, with some limitations (at present, the search
+  works only for blocks located directly on course pages or site home page). See the HTML block for
+  an example.
+* Block block_messages is no longer a part of core.
+
+=== 3.3 ===
+
+* block_manager::get_required_by_theme_block_types() is no longer static.
+* The plugin block_course_overview has been removed from core and is being replaced by block_myoverview.
+  During the upgrade process the block_course_overview block will be uninstalled and all its settings will be deleted.
+  If you wish to keep the block_course_overview block and its settings, download it from moodle.org and put it back in
+  the blocks/ directory BEFORE UPGRADING.
+
+=== 3.1 ===
+
+* The collapsed class was removed from the navigation block to make it compatible with aria.
+* New aria attributes were added on the navigation block [aria-expanded="false"].
+* The tree JS handling were moved from YUI to AMD module (Jquery).
+
 === 2.9 ===
 
 * The obsolete method preferred_width() was removed (it was not doing anything)

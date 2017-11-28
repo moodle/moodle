@@ -12,6 +12,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+/* global SELECTOR, COMMENTCOLOUR, COMMENTTEXTCOLOUR */
 
 /**
  * Provides an in browser PDF editor.
@@ -139,13 +140,13 @@ var COMMENT = function(editor, gradeid, pageno, x, y, width, colour, rawtext) {
      */
     this.clean = function() {
         return {
-            gradeid : this.gradeid,
-            x : parseInt(this.x, 10),
-            y : parseInt(this.y, 10),
-            width : parseInt(this.width, 10),
-            rawtext : this.rawtext,
-            pageno : this.currentpage,
-            colour : this.colour
+            gradeid: this.gradeid,
+            x: parseInt(this.x, 10),
+            y: parseInt(this.y, 10),
+            width: parseInt(this.width, 10),
+            rawtext: this.rawtext,
+            pageno: parseInt(this.pageno, 10),
+            colour: this.colour
         };
     };
 
@@ -159,8 +160,10 @@ var COMMENT = function(editor, gradeid, pageno, x, y, width, colour, rawtext) {
     this.draw = function(focus) {
         var drawable = new M.assignfeedback_editpdf.drawable(this.editor),
             node,
-            drawingregion = Y.one(SELECTOR.DRAWINGREGION),
+            drawingregion = this.editor.get_dialogue_element(SELECTOR.DRAWINGREGION),
             container,
+            label,
+            marker,
             menu,
             position,
             scrollheight;
@@ -168,10 +171,21 @@ var COMMENT = function(editor, gradeid, pageno, x, y, width, colour, rawtext) {
         // Lets add a contenteditable div.
         node = Y.Node.create('<textarea/>');
         container = Y.Node.create('<div class="commentdrawable"/>');
+        label = Y.Node.create('<label/>');
+        marker = Y.Node.create('<svg xmlns="http://www.w3.org/2000/svg" viewBox="-0.5 -0.5 13 13" ' +
+                'preserveAspectRatio="xMinYMin meet">' +
+                '<path d="M11 0H1C.4 0 0 .4 0 1v6c0 .6.4 1 1 1h1v4l4-4h5c.6 0 1-.4 1-1V1c0-.6-.4-1-1-1z" ' +
+                'fill="currentColor" opacity="0.9" stroke="rgb(153, 153, 153)" stroke-width="0.5"/></svg>');
         menu = Y.Node.create('<a href="#"><img src="' + M.util.image_url('t/contextmenu', 'core') + '"/></a>');
 
         this.menulink = menu;
-        container.append(node);
+        container.append(label);
+        label.append(node);
+        container.append(marker);
+        container.setAttribute('tabindex', '-1');
+        label.setAttribute('tabindex', '0');
+        node.setAttribute('tabindex', '-1');
+        menu.setAttribute('tabindex', '0');
 
         if (!this.editor.get('readonly')) {
             container.append(menu);
@@ -196,16 +210,21 @@ var COMMENT = function(editor, gradeid, pageno, x, y, width, colour, rawtext) {
         drawable.store_position(container, position.x, position.y);
         drawable.nodes.push(container);
         node.set('value', this.rawtext);
-        scrollheight = node.get('scrollHeight'),
+        scrollheight = node.get('scrollHeight');
         node.setStyles({
-            'height' : scrollheight + 'px',
+            'height': scrollheight + 'px',
             'overflow': 'hidden'
         });
-        if (!this.editor.get('readonly')) {
-            this.attach_events(node, menu);
-        }
+        marker.setStyles({
+            'position': 'absolute',
+            'bottom': 0 - scrollheight + 'px',
+            'color': COMMENTCOLOUR[this.colour]
+        });
+        this.attach_events(node, menu);
         if (focus) {
             node.focus();
+        } else if (editor.collapsecomments) {
+            container.addClass('commentcollapsed');
         }
         this.drawable = drawable;
 
@@ -233,81 +252,184 @@ var COMMENT = function(editor, gradeid, pageno, x, y, width, colour, rawtext) {
      * @param menu - The Y.Node representing the menu.
      */
     this.attach_events = function(node, menu) {
-        // Save the text on blur.
-        node.on('blur', function() {
-            // Save the changes back to the comment.
-            this.rawtext = node.get('value');
-            this.width = parseInt(node.getStyle('width'), 10);
+        var container = node.ancestor('div'),
+            label = node.ancestor('label');
 
-            // Trim.
-            if (this.rawtext.replace(/^\s+|\s+$/g, "") === '') {
-                // Delete empty comments.
-                this.deleteme = true;
-                Y.later(400, this, this.delete_comment_later);
+        // Function to collapse a comment to a marker icon.
+        node.collapse = function(delay) {
+            node.collapse.delay = Y.later(delay, node, function() {
+                container.addClass('commentcollapsed');
+            });
+        };
+
+        // Function to expand a comment.
+        node.expand = function() {
+            container.removeClass('commentcollapsed');
+        };
+
+        // Expand comment on mouse over (under certain conditions) or click/tap.
+        container.on('mouseenter', function() {
+            if (editor.currentedit.tool === 'comment' || editor.currentedit.tool === 'select' || this.editor.get('readonly')) {
+                node.expand();
+                if (node.collapse.delay) {
+                    node.collapse.delay.cancel();
+                }
             }
-            this.editor.save_current_page();
-            this.editor.editingcomment = false;
+        }, this);
+        container.on('click', function() {
+            node.expand();
+            node.focus();
+            if (node.collapse.delay) {
+                node.collapse.delay.cancel();
+            }
         }, this);
 
-        // For delegated event handler.
-        menu.setData('comment', this);
-
-        node.on('keyup', function() {
-            var scrollheight = node.get('scrollHeight'),
-                height = parseInt(node.getStyle('height'), 10);
-
-            // Webkit scrollheight fix.
-            if (scrollheight === height + 8) {
-                scrollheight -= 8;
+        // Functions to capture reverse tabbing events.
+        node.on('keyup', function(e) {
+            if (e.keyCode === 9 && e.shiftKey && menu.getAttribute('tabindex') === '0') {
+                // User landed here via Shift+Tab (but not from this comment's menu).
+                menu.focus();
             }
-            node.setStyle('height', scrollheight + 'px');
+            menu.setAttribute('tabindex', '0');
+        }, this);
+        menu.on('keydown', function(e) {
+            if (e.keyCode === 9 && e.shiftKey) {
+                // User is tabbing back to the comment node from its own menu.
+                menu.setAttribute('tabindex', '-1');
+            }
+        }, this);
 
-        });
+        // Comment becomes "active" on label or menu focus.
+        label.on('focus', function() {
+            node.active = true;
+            if (node.collapse.delay) {
+                node.collapse.delay.cancel();
+            }
+            // Give comment a tabindex to prevent focus outline being suppressed.
+            node.setAttribute('tabindex', '0');
+            // Expand comment and pass focus to it.
+            node.expand();
+            node.focus();
+            // Now remove label tabindex so user can reverse tab past it.
+            label.setAttribute('tabindex', '-1');
+        }, this);
+        menu.on('focus', function() {
+            node.active = true;
+            if (node.collapse.delay) {
+                node.collapse.delay.cancel();
+            }
+            this.deleteme = false;
+            // Restore label tabindex so user can tab back to it from menu.
+            label.setAttribute('tabindex', '0');
+        }, this);
 
-        node.on('gesturemovestart', function(e) {
-            node.setData('dragging', true);
-            node.setData('offsetx', e.clientX - node.getX());
-            node.setData('offsety', e.clientY - node.getY());
-        });
-        node.on('gesturemoveend', function() {
-            node.setData('dragging', false);
-            this.editor.save_current_page();
-        }, null, this);
-        node.on('gesturemove', function(e) {
-            var x = e.clientX - node.getData('offsetx'),
-                y = e.clientY - node.getData('offsety'),
-                nodewidth,
-                nodeheight,
-                newlocation,
-                windowlocation,
-                bounds;
+        // Always restore the default tabindex states when moving away.
+        node.on('blur', function() {
+            node.setAttribute('tabindex', '-1');
+        }, this);
+        label.on('blur', function() {
+            label.setAttribute('tabindex', '0');
+        }, this);
 
-            nodewidth = parseInt(node.getStyle('width'), 10);
-            nodeheight = parseInt(node.getStyle('height'), 10);
+        // Collapse comment on mouse out if not currently active.
+        container.on('mouseleave', function() {
+            if (editor.collapsecomments && node.active !== true) {
+                node.collapse(400);
+            }
+        }, this);
 
-            newlocation = this.editor.get_canvas_coordinates(new M.assignfeedback_editpdf.point(x, y));
-            bounds = this.editor.get_canvas_bounds(true);
-            bounds.x = 0;
-            bounds.y = 0;
+        // Collapse comment on blur.
+        container.on('blur', function() {
+            node.active = false;
+            if (editor.collapsecomments) {
+                node.collapse(800);
+            }
+        }, this);
 
-            bounds.width -= nodewidth + 42;
-            bounds.height -= nodeheight + 8;
-            // Clip to the window size - the comment size.
-            newlocation.clip(bounds);
+        if (!this.editor.get('readonly')) {
+            // Save the text on blur.
+            node.on('blur', function() {
+                // Save the changes back to the comment.
+                this.rawtext = node.get('value');
+                this.width = parseInt(node.getStyle('width'), 10);
 
-            this.x = newlocation.x;
-            this.y = newlocation.y;
+                // Trim.
+                if (this.rawtext.replace(/^\s+|\s+$/g, "") === '') {
+                    // Delete empty comments.
+                    this.deleteme = true;
+                    Y.later(400, this, this.delete_comment_later);
+                }
+                this.editor.save_current_page();
+                this.editor.editingcomment = false;
+            }, this);
 
-            windowlocation = this.editor.get_window_coordinates(newlocation);
-            node.ancestor().setX(windowlocation.x);
-            node.ancestor().setY(windowlocation.y);
-            this.drawable.store_position(node.ancestor(), windowlocation.x, windowlocation.y);
-        }, null, this);
+            // For delegated event handler.
+            menu.setData('comment', this);
 
-        this.menu = new M.assignfeedback_editpdf.commentmenu({
-            buttonNode: this.menulink,
-            comment: this
-        });
+            node.on('keyup', function() {
+                node.setStyle('height', 'auto');
+                var scrollheight = node.get('scrollHeight'),
+                    height = parseInt(node.getStyle('height'), 10);
+
+                // Webkit scrollheight fix.
+                if (scrollheight === height + 8) {
+                    scrollheight -= 8;
+                }
+                node.setStyle('height', scrollheight + 'px');
+            });
+
+            node.on('gesturemovestart', function(e) {
+                if (editor.currentedit.tool === 'select') {
+                    e.preventDefault();
+                    node.setData('dragging', true);
+                    node.setData('offsetx', e.clientX - node.getX());
+                    node.setData('offsety', e.clientY - node.getY());
+                }
+            });
+            node.on('gesturemoveend', function() {
+                if (editor.currentedit.tool === 'select') {
+                    node.setData('dragging', false);
+                    this.editor.save_current_page();
+                }
+            }, null, this);
+            node.on('gesturemove', function(e) {
+                if (editor.currentedit.tool === 'select') {
+                    var x = e.clientX - node.getData('offsetx'),
+                        y = e.clientY - node.getData('offsety'),
+                        nodewidth,
+                        nodeheight,
+                        newlocation,
+                        windowlocation,
+                        bounds;
+
+                    nodewidth = parseInt(node.getStyle('width'), 10);
+                    nodeheight = parseInt(node.getStyle('height'), 10);
+
+                    newlocation = this.editor.get_canvas_coordinates(new M.assignfeedback_editpdf.point(x, y));
+                    bounds = this.editor.get_canvas_bounds(true);
+                    bounds.x = 0;
+                    bounds.y = 0;
+
+                    bounds.width -= nodewidth + 42;
+                    bounds.height -= nodeheight + 8;
+                    // Clip to the window size - the comment size.
+                    newlocation.clip(bounds);
+
+                    this.x = newlocation.x;
+                    this.y = newlocation.y;
+
+                    windowlocation = this.editor.get_window_coordinates(newlocation);
+                    container.setX(windowlocation.x);
+                    container.setY(windowlocation.y);
+                    this.drawable.store_position(container, windowlocation.x, windowlocation.y);
+                }
+            }, null, this);
+
+            this.menu = new M.assignfeedback_editpdf.commentmenu({
+                buttonNode: this.menulink,
+                comment: this
+            });
+        }
     };
 
     /**
@@ -315,7 +437,8 @@ var COMMENT = function(editor, gradeid, pageno, x, y, width, colour, rawtext) {
      * @method remove
      */
     this.remove = function() {
-        var i = 0, comments;
+        var i = 0;
+        var comments;
 
         comments = this.editor.pages[this.editor.currentpage].comments;
         for (i = 0; i < comments.length; i++) {
@@ -336,6 +459,7 @@ var COMMENT = function(editor, gradeid, pageno, x, y, width, colour, rawtext) {
      */
     this.remove_from_quicklist = function(e, quickcomment) {
         e.preventDefault();
+        e.stopPropagation();
 
         this.menu.hide();
 
@@ -353,6 +477,7 @@ var COMMENT = function(editor, gradeid, pageno, x, y, width, colour, rawtext) {
         e.preventDefault();
 
         this.menu.hide();
+        this.deleteme = false;
 
         this.rawtext = quickcomment.rawtext;
         this.width = quickcomment.width;
@@ -361,6 +486,10 @@ var COMMENT = function(editor, gradeid, pageno, x, y, width, colour, rawtext) {
         this.editor.save_current_page();
 
         this.editor.redraw();
+
+        this.node = this.drawable.nodes[0].one('textarea');
+        this.node.ancestor('div').removeClass('commentcollapsed');
+        this.node.focus();
     };
 
     /**

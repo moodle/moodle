@@ -34,9 +34,19 @@ class auth_plugin_email extends auth_plugin_base {
     /**
      * Constructor.
      */
-    function auth_plugin_email() {
+    public function __construct() {
         $this->authtype = 'email';
-        $this->config = get_config('auth/email');
+        $this->config = get_config('auth_email');
+    }
+
+    /**
+     * Old syntax of class constructor. Deprecated in PHP7.
+     *
+     * @deprecated since Moodle 3.1
+     */
+    public function auth_plugin_email() {
+        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
+        self::__construct();
     }
 
     /**
@@ -85,6 +95,24 @@ class auth_plugin_email extends auth_plugin_base {
      * @param boolean $notify print notice with link and terminate
      */
     function user_signup($user, $notify=true) {
+        // Standard signup, without custom confirmatinurl.
+        return $this->user_signup_with_confirmation($user, $notify);
+    }
+
+    /**
+     * Sign up a new user ready for confirmation.
+     *
+     * Password is passed in plaintext.
+     * A custom confirmationurl could be used.
+     *
+     * @param object $user new user object
+     * @param boolean $notify print notice with link and terminate
+     * @param string $confirmationurl user confirmation URL
+     * @return boolean true if everything well ok and $notify is set to true
+     * @throws moodle_exception
+     * @since Moodle 3.2
+     */
+    public function user_signup_with_confirmation($user, $notify=true, $confirmationurl = null) {
         global $CFG, $DB;
         require_once($CFG->dirroot.'/user/profile/lib.php');
         require_once($CFG->dirroot.'/user/lib.php');
@@ -105,8 +133,8 @@ class auth_plugin_email extends auth_plugin_base {
         // Trigger event.
         \core\event\user_created::create_from_userid($user->id)->trigger();
 
-        if (! send_confirmation_email($user)) {
-            print_error('auth_emailnoemail','auth_email');
+        if (! send_confirmation_email($user, $confirmationurl)) {
+            print_error('auth_emailnoemail', 'auth_email');
         }
 
         if ($notify) {
@@ -209,38 +237,11 @@ class auth_plugin_email extends auth_plugin_base {
     }
 
     /**
-     * Prints a form for configuring this authentication plugin.
-     *
-     * This function is called from admin/auth.php, and outputs a full page with
-     * a form for configuring this plugin.
-     *
-     * @param array $page An object containing all the data for this page.
-     */
-    function config_form($config, $err, $user_fields) {
-        include "config.html";
-    }
-
-    /**
-     * Processes and stores configuration data for this authentication plugin.
-     */
-    function process_config($config) {
-        // set to defaults if undefined
-        if (!isset($config->recaptcha)) {
-            $config->recaptcha = false;
-        }
-
-        // save settings
-        set_config('recaptcha', $config->recaptcha, 'auth/email');
-        return true;
-    }
-
-    /**
-     * Returns whether or not the captcha element is enabled, and the admin settings fulfil its requirements.
+     * Returns whether or not the captcha element is enabled.
      * @return bool
      */
     function is_captcha_enabled() {
-        global $CFG;
-        return isset($CFG->recaptchapublickey) && isset($CFG->recaptchaprivatekey) && get_config("auth/{$this->authtype}", 'recaptcha');
+        return get_config("auth_{$this->authtype}", 'recaptcha');
     }
 
 }

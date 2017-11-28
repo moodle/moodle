@@ -89,6 +89,8 @@ class backup_plan_testcase extends advanced_testcase {
         // Calculate checksum and check it
         $checksum = $bp->calculate_checksum();
         $this->assertTrue($bp->is_checksum_correct($checksum));
+
+        $bc->destroy();
     }
 
     /**

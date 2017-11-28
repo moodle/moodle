@@ -45,12 +45,12 @@ $string['datarootpermission'] = 'Ovlasti nad mapom s podacima';
 $string['dbprefix'] = 'Prefiks tablice';
 $string['dirroot'] = 'Moodle mapa';
 $string['environmenthead'] = 'Provjera okruženja vašeg poslužitelja ...';
-$string['environmentsub2'] = 'Svaka inačica Moodle-a ima minimalne zahtjeve po pitanju odgovarajuće PHP inačice i nekoliko obveznih PHP ekstenzija.
+$string['environmentsub2'] = 'Svaka inačica Moodle-a ima minimalne zahtjeve po pitanju odgovarajuće PHP inačice i nekoliko obvezatnih PHP ekstenzija.
 Puna provjera okruženja se obavlja prije svake instalacije ili nadogradnje postojeće inačice. Ako ne znate kako instalirati novu inačicu ili omogućiti PHP ekstenzije, kontaktirajte administratora vašeg poslužitelja.';
 $string['errorsinenvironment'] = 'Pogreške u okruženju poslužitelja!';
 $string['installation'] = 'Instalacija';
 $string['langdownloaderror'] = 'Nažalost, jezik "{$a}" nije instaliran. Proces instalacije će biti nastavljen na engleskom jeziku.';
-$string['memorylimithelp'] = '<p>PHP ograničenje memorije na poslužitelju je trenutno podešeno na {$a}.</p>
+$string['memorylimithelp'] = '<p>PHP ograničenje memorije na poslužitelju je trenutačno podešeno na {$a}.</p>
 
 <p>Ova postavka može kasnije rezultirati memorijskim problemima na vašem Moodle sustavu, posebno ako imate veći broj omogućenih modula i/ili veći broj korisnika.</p>
 
@@ -78,7 +78,7 @@ $string['pathsunsecuredataroot'] = 'Podatkovna (dataroot) mapa nije sigurna';
 $string['pathswrongadmindir'] = 'Admin mapa ne postoji';
 $string['phpextension'] = 'PHP ekstenzija {$a}';
 $string['phpversion'] = 'PHP inačica';
-$string['phpversionhelp'] = '<p>Moodle zahtijeva najmanje PHP inačicu 4.3.0 ili 5.1.0 (5.0.x funkcionira uz brojne uočene probleme).</p> <p>Trenutno imate inačicu {$a}</p> <p>Morate nadograditi PHP ili premestiti Moodle instalaciju na web poslužitelj s novijom inačicom PHP-a!</br> (U slučaju inačice 5.0.x bilo bi najbolje da je vratite na inačicu 4.4.x)</p>';
+$string['phpversionhelp'] = '<p>Moodle zahtijeva najmanje PHP inačicu 4.3.0 ili 5.1.0 (5.0.x funkcionira uz brojne uočene probleme).</p> <p>Trenutačno imate inačicu {$a}</p> <p>Morate nadograditi PHP ili premestiti Moodle instalaciju na web poslužitelj s novijom inačicom PHP-a!</br> (U slučaju inačice 5.0.x bilo bi najbolje da je vratite na inačicu 4.4.x)</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Prikazana vam je ova stranica jer ste uspješno instalirali i pokrenuli <strong>{$a->packname} {$a->packversion}</strong> paket na svom poslužitelju. Čestitamo!';
 $string['welcomep30'] = 'Ova inačica <strong>{$a->installername}</strong> uključuje aplikacije za stvaranje okruženja u kojem će sustav <strong>Moodle</strong> uspješno funkcionirati, konkretno:';

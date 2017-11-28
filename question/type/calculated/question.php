@@ -26,8 +26,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->dirroot . '/question/type/questionbase.php');
 require_once($CFG->dirroot . '/question/type/numerical/question.php');
-
 
 /**
  * Represents a calculated question.
@@ -433,11 +433,18 @@ class qtype_calculated_variable_substituter {
      * @return float the computed result.
      */
     protected function calculate_raw($expression) {
-        // This validation trick from http://php.net/manual/en/function.eval.php .
-        if (!@eval('return true; $result = ' . $expression . ';')) {
-            throw new moodle_exception('illegalformulasyntax', 'qtype_calculated', '', $expression);
+        try {
+            // In older PHP versions this this is a way to validate code passed to eval.
+            // The trick came from http://php.net/manual/en/function.eval.php.
+            if (@eval('return true; $result = ' . $expression . ';')) {
+                return eval('return ' . $expression . ';');
+            }
+        } catch (Throwable $e) {
+            // PHP7 and later now throws ParseException and friends from eval(),
+            // which is much better.
         }
-        return eval('return ' . $expression . ';');
+        // In either case of an invalid $expression, we end here.
+        throw new moodle_exception('illegalformulasyntax', 'qtype_calculated', '', $expression);
     }
 
     /**

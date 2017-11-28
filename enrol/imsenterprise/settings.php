@@ -50,6 +50,9 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configcheckbox('enrol_imsenterprise/createnewusers',
         get_string('createnewusers', 'enrol_imsenterprise'), get_string('createnewusers_desc', 'enrol_imsenterprise'), 0));
 
+    $settings->add(new admin_setting_configcheckbox('enrol_imsenterprise/imsupdateusers',
+        get_string('updateusers', 'enrol_imsenterprise'), get_string('updateusers_desc', 'enrol_imsenterprise'), 0));
+
     $settings->add(new admin_setting_configcheckbox('enrol_imsenterprise/imsdeleteusers',
         get_string('deleteusers', 'enrol_imsenterprise'), get_string('deleteusers_desc', 'enrol_imsenterprise'), 0));
 
@@ -88,9 +91,22 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configcheckbox('enrol_imsenterprise/createnewcourses',
         get_string('createnewcourses', 'enrol_imsenterprise'), get_string('createnewcourses_desc', 'enrol_imsenterprise'), 0));
 
+    $settings->add(new admin_setting_configcheckbox('enrol_imsenterprise/updatecourses',
+        get_string('updatecourses', 'enrol_imsenterprise'), get_string('updatecourses_desc', 'enrol_imsenterprise'), 0));
+
     $settings->add(new admin_setting_configcheckbox('enrol_imsenterprise/createnewcategories',
         get_string('createnewcategories', 'enrol_imsenterprise'), get_string('createnewcategories_desc', 'enrol_imsenterprise'),
         0));
+
+    $settings->add(new admin_setting_configcheckbox('enrol_imsenterprise/nestedcategories',
+        get_string('nestedcategories', 'enrol_imsenterprise'), get_string('nestedcategories_desc', 'enrol_imsenterprise'), 0));
+
+    $settings->add(new admin_setting_configcheckbox('enrol_imsenterprise/categoryidnumber',
+        get_string('categoryidnumber', 'enrol_imsenterprise'), get_string('categoryidnumber_desc', 'enrol_imsenterprise'), 0));
+
+    $settings->add(new admin_setting_configtext('enrol_imsenterprise/categoryseparator',
+        get_string('categoryseparator', 'enrol_imsenterprise'), get_string('categoryseparator_desc', 'enrol_imsenterprise'), '',
+        PARAM_TEXT, 3));
 
     $settings->add(new admin_setting_configcheckbox('enrol_imsenterprise/imsunenrol',
         get_string('allowunenrol', 'enrol_imsenterprise'), get_string('allowunenrol_desc', 'enrol_imsenterprise'), 0));

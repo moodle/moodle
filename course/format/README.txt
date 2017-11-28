@@ -139,8 +139,3 @@ Optional file (styles)
 
   If this file exists it will be included in the CSS Moodle generates.
 
-
-Optional delete course hook
----------------------------
-
-* in your yourformat/lib.php add function format_yourformat_delete_course($courseid)

@@ -17,24 +17,26 @@ Feature: Allow choice preview
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
     And I log in as "teacher1"
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
 
-  @javascript
   Scenario: Enable the choice preview option and view the activity as a student before the opening time
     Given I add a "Choice" to section "1" and I fill the form with:
       | Choice name | Choice name |
       | Description | Choice Description |
       | option[0] | Option 1 |
       | option[1] | Option 2 |
-      | Restrict answering to this time period | 1 |
-      | timeopen[day] | 31 |
+      | timeopen[enabled] | 1 |
+      | timeclose[enabled] | 1 |
+      | timeopen[day] | 30 |
       | timeopen[month] | December |
       | timeopen[year] | 2037 |
+      | timeclose[day] | 31 |
+      | timeclose[month] | December |
+      | timeclose[year] | 2037 |
       | Show preview | 1 |
     And I log out
     When I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Choice name"
     Then I should see "This is just a preview of the available options for this activity"
     And the "choice_1" "radio" should be disabled

@@ -97,7 +97,10 @@ class restore_log_rule implements processable {
         return $this->module . '-' . $this->action;
     }
 
-    public function process($log) {
+    public function process($inputlog) {
+
+        // There might be multiple rules that process this log, we can't alter it in the process of checking it.
+        $log = clone($inputlog);
 
         // Reset the allpairs array
         $this->allpairs = array();

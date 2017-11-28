@@ -65,6 +65,7 @@ class Google_Service_Games extends Google_Service
   public function __construct(Google_Client $client)
   {
     parent::__construct($client);
+    $this->rootUrl = 'https://www.googleapis.com/';
     $this->servicePath = 'games/v1/';
     $this->version = 'v1';
     $this->serviceName = 'games';
@@ -4453,6 +4454,8 @@ class Google_Service_Games_Player extends Google_Model
   protected $internal_gapi_mappings = array(
   );
   public $avatarImageUrl;
+  public $bannerUrlLandscape;
+  public $bannerUrlPortrait;
   public $displayName;
   protected $experienceInfoType = 'Google_Service_Games_PlayerExperienceInfo';
   protected $experienceInfoDataType = '';
@@ -4472,6 +4475,22 @@ class Google_Service_Games_Player extends Google_Model
   public function getAvatarImageUrl()
   {
     return $this->avatarImageUrl;
+  }
+  public function setBannerUrlLandscape($bannerUrlLandscape)
+  {
+    $this->bannerUrlLandscape = $bannerUrlLandscape;
+  }
+  public function getBannerUrlLandscape()
+  {
+    return $this->bannerUrlLandscape;
+  }
+  public function setBannerUrlPortrait($bannerUrlPortrait)
+  {
+    $this->bannerUrlPortrait = $bannerUrlPortrait;
+  }
+  public function getBannerUrlPortrait()
+  {
+    return $this->bannerUrlPortrait;
   }
   public function setDisplayName($displayName)
   {

@@ -22,16 +22,21 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require(dirname(__FILE__).'/../../config.php');
-require_once(dirname(__FILE__).'/locallib.php');
+require(__DIR__.'/../../config.php');
+require_once(__DIR__.'/locallib.php');
 
-$id        = required_param('id', PARAM_INT);        // Course Module ID
-$chapterid = required_param('chapterid', PARAM_INT); // Chapter ID
+// Course Module ID.
+$id        = required_param('id', PARAM_INT);
+
+// Chapter ID.
+$chapterid = required_param('chapterid', PARAM_INT);
+
 $confirm   = optional_param('confirm', 0, PARAM_BOOL);
 
 $cm = get_coursemodule_from_id('book', $id, 0, false, MUST_EXIST);
-$course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
-$book = $DB->get_record('book', array('id'=>$cm->instance), '*', MUST_EXIST);
+$course = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
+$book = $DB->get_record('book', ['id' => $cm->instance], '*', MUST_EXIST);
+$chapter = $DB->get_record('book_chapters', ['id' => $chapterid, 'bookid' => $book->id], '*', MUST_EXIST);
 
 require_login($course, false, $cm);
 require_sesskey();
@@ -39,58 +44,66 @@ require_sesskey();
 $context = context_module::instance($cm->id);
 require_capability('mod/book:edit', $context);
 
-$PAGE->set_url('/mod/book/delete.php', array('id'=>$id, 'chapterid'=>$chapterid));
+$PAGE->set_url('/mod/book/delete.php', ['id' => $id, 'chapterid' => $chapterid]);
 
-$chapter = $DB->get_record('book_chapters', array('id'=>$chapterid, 'bookid'=>$book->id), '*', MUST_EXIST);
-
-
-// Header and strings.
-$PAGE->set_title($book->name);
-$PAGE->set_heading($course->fullname);
-
-// Form processing.
-if ($confirm) {  // the operation was confirmed.
+if ($confirm) {
+    // The operation was confirmed.
     $fs = get_file_storage();
-    if (!$chapter->subchapter) { // Delete all its sub-chapters if any
-        $chapters = $DB->get_recordset('book_chapters', array('bookid'=>$book->id), 'pagenum');
-        $found = false;
+
+    $subchaptercount = 0;
+    if (!$chapter->subchapter) {
+        // This is a top-level chapter.
+        // Make sure to remove any sub-chapters if there are any.
+        $chapters = $DB->get_recordset_select('book_chapters', 'bookid = :bookid AND pagenum > :pagenum', [
+                'bookid' => $book->id,
+                'pagenum' => $chapter->pagenum,
+            ], 'pagenum');
+
         foreach ($chapters as $ch) {
-            if ($ch->id == $chapter->id) {
-                $found = true;
-            } else if ($found and $ch->subchapter) {
-                $fs->delete_area_files($context->id, 'mod_book', 'chapter', $ch->id);
-                $DB->delete_records('book_chapters', array('id'=>$ch->id));
-                \mod_book\event\chapter_deleted::create_from_chapter($book, $context, $ch)->trigger();
-            } else if ($found) {
+            if (!$ch->subchapter) {
+                // This is a new chapter. Any subsequent subchapters will be part of a different chapter.
                 break;
+            } else {
+                // This is subchapter of the chapter being removed.
+                core_tag_tag::remove_all_item_tags('mod_book', 'book_chapters', $ch->id);
+                $fs->delete_area_files($context->id, 'mod_book', 'chapter', $ch->id);
+                $DB->delete_records('book_chapters', ['id' => $ch->id]);
+                \mod_book\event\chapter_deleted::create_from_chapter($book, $context, $ch)->trigger();
+
+                $subchaptercount++;
             }
         }
         $chapters->close();
     }
+
+    // Now delete the actual chapter.
+    core_tag_tag::remove_all_item_tags('mod_book', 'book_chapters', $chapter->id);
     $fs->delete_area_files($context->id, 'mod_book', 'chapter', $chapter->id);
-    $DB->delete_records('book_chapters', array('id'=>$chapter->id));
+    $DB->delete_records('book_chapters', ['id' => $chapter->id]);
 
     \mod_book\event\chapter_deleted::create_from_chapter($book, $context, $chapter)->trigger();
 
-    book_preload_chapters($book); // Fix structure.
-    $DB->set_field('book', 'revision', $book->revision+1, array('id'=>$book->id));
+    // Ensure that the book structure is correct.
+    // book_preload_chapters will fix parts including the pagenum.
+    $chapters = book_preload_chapters($book);
 
-    redirect('view.php?id='.$cm->id);
+    book_add_fake_block($chapters, $chapter, $book, $cm);
+
+    // Bump the book revision.
+    $DB->set_field('book', 'revision', $book->revision + 1, ['id' => $book->id]);
+
+    if ($subchaptercount) {
+        $message = get_string('chapterandsubchaptersdeleted', 'mod_book', (object) [
+            'title' => format_string($chapter->title),
+            'subchapters' => $subchaptercount,
+        ]);
+    } else {
+        $message = get_string('chapterdeleted', 'mod_book', (object) [
+            'title' => format_string($chapter->title),
+        ]);
+    }
+
+    redirect(new moodle_url('/mod/book/view.php', ['id' => $cm->id]), $message);
 }
 
-echo $OUTPUT->header();
-echo $OUTPUT->heading($book->name);
-
-// The operation has not been confirmed yet so ask the user to do so.
-if ($chapter->subchapter) {
-    $strconfirm = get_string('confchapterdelete', 'mod_book');
-} else {
-    $strconfirm = get_string('confchapterdeleteall', 'mod_book');
-}
-echo '<br />';
-$continue = new moodle_url('/mod/book/delete.php', array('id'=>$cm->id, 'chapterid'=>$chapter->id, 'confirm'=>1));
-$cancel = new moodle_url('/mod/book/view.php', array('id'=>$cm->id, 'chapterid'=>$chapter->id));
-$title = format_string($chapter->title);
-echo $OUTPUT->confirm("<strong>$title</strong><p>$strconfirm</p>", $continue, $cancel);
-
-echo $OUTPUT->footer();
+redirect(new moodle_url('/mod/book/view.php', ['id' => $cm->id]));

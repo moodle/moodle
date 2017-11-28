@@ -72,4 +72,8 @@ class lesson_resumed extends \core\event\base {
         return "The user with id '$this->userid' resumed their previous incomplete attempt on".
                " the lesson with course module id '$this->contextinstanceid'.";
     }
+
+    public static function get_objectid_mapping() {
+        return array('db' => 'lesson', 'restore' => 'lesson');
+    }
 }

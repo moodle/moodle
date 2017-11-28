@@ -1,0 +1,402 @@
+/**
+ * Moodle forms HTML isn't changeable via renderers (yet?) so this
+ * .less file imports styles from the bootstrap $variables file and
+ * adds them to the existing Moodle form CSS ids and classes.
+ *
+ */
+
+.jsenabled .mform .containsadvancedelements .advanced {
+    display: none;
+}
+
+.mform .containsadvancedelements .advanced.show {
+    display: block;
+}
+
+#adminsettings span.error {
+    display: inline-block;
+    border: 1px solid $state-danger-border;
+    border-radius: 4px;
+    background-color: $state-danger-bg;
+    padding: 4px;
+    margin-bottom: 4px;
+}
+
+.mform .form-inline {
+    .form-control,
+    .custom-select {
+        max-width: 100%;
+    }
+}
+
+.mform fieldset {
+    margin-left: $spacer * 1.5;
+    margin-bottom: $spacer / 2;
+    border-bottom: $border-width solid $table-border-color;
+}
+
+.editor_atto_content.form-control {
+    width: 100%;
+}
+
+#adminsettings .form-control[size] {
+    width: auto;
+}
+
+.mform fieldset.collapsible legend a.fheader {
+    padding: 0 5px 0 ($spacer * 1.5);
+    margin-left: -($spacer * 1.5);
+    background: url([[pix:t/expanded]]) 0 center no-repeat;
+}
+
+.mform fieldset.collapsed legend a.fheader {
+    /*rtl:raw:
+    background-image: url([[pix:t/collapsed_rtl]]);
+    */
+    /*rtl:remove*/
+    background-image: url([[pix:t/collapsed]]);
+}
+
+.jsenabled .mform .collapsed .fcontainer {
+    display: none;
+}
+
+#adminsettings .error {
+    color: $state-danger-text;
+}
+
+.mform ul.file-list {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.mform label .req,
+.mform label .adv {
+    cursor: help;
+}
+/*rtl:ignore*/
+input#id_externalurl {
+    direction: ltr;
+}
+
+#portfolio-add-button {
+    display: inline;
+}
+
+.form-defaultinfo,
+.form-label .form-shortname {
+    @extend .text-muted;
+}
+
+.form-label .form-shortname {
+    font-size: $font-size-xs;
+    display: block;
+}
+
+.form-item .form-inline {
+    display: inline;
+}
+
+.formsettingheading .form-horizontal {
+    @extend .text-muted;
+}
+
+// Moodle doesn't differentiate between what Bootstrap calls
+// .uneditable-inputs and form help text. Styling them both as
+// uneditable looks ugly, styling both as form help is fairly
+// subtle in it's impact. Going for the latter as the best option.
+.no-felement.fstatic {
+    @extend .text-muted;
+    padding-top: 5px;
+}
+
+.no-fitem .fstaticlabel {
+    font-weight: bold;
+}
+
+// Pale grey container for submit buttons.
+.form-buttons,
+.path-admin .buttons,
+#fitem_id_submitbutton,
+.fp-content-center form + div,
+div.backup-section + form,
+#fgroup_id_buttonar {
+    @extend .form-group;
+    padding-left: 0;
+}
+
+.form-item .form-setting .defaultsnext > input {
+    display: inline-block;
+}
+
+.form-item .form-setting .form-checkbox.defaultsnext {
+    // Need to specify .defaultsnext and the .form-checkbox class
+    // is somewhat randomly re-used on various actual checkboxes
+    // throughout the admin forms, instead of on the wrapper div.
+    margin-top: 5px; // Push down checkboxes to align.
+    display: inline-block; // So above style sticks.
+}
+
+#adminsettings h3 {
+    // Copied from bootstrap/forms.less tag legend.
+    display: block;
+    width: 100%;
+    padding: 0;
+    margin-bottom: $line-height-base;
+    font-size: $font-size-lg;
+    line-height: $line-height-base * 2;
+    border: 0;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+// I think this could be avoided (or at least tidied up) ifr
+// we used HTML5 input types like url, phone, email, number etc.
+/* rtl:ignore */
+.mform .fitem .felement input[name=email],
+.mform .fitem .felement input[name=email2],
+.mform .fitem .felement input[name=url],
+.mform .fitem .felement input[name=idnumber],
+.mform .fitem .felement input[name=phone1],
+.mform .fitem .felement input[name=phone2] {
+    text-align: left;
+    direction: ltr;
+}
+
+/* rtl:ignore */
+#page-admin-grade-edit-scale-edit .error input#id_name {
+    margin-right: 170px;
+}
+
+#page-grade-edit-outcome-course .courseoutcomes {
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+}
+
+#page-grade-edit-outcome-course .courseoutcomes td {
+    text-align: center;
+}
+/* Install Process' text fields Forms, should always be justified to the left */
+/* rtl:ignore */
+#installform #id_wwwroot,
+#installform #id_dirroot,
+#installform #id_dataroot,
+#installform #id_dbhost,
+#installform #id_dbname,
+#installform #id_dbuser,
+#installform #id_dbpass,
+#installform #id_prefix {
+    direction: ltr;
+}
+
+.mdl-right > label {
+    // Workaround for repository pop-up because the : are outside the label,
+    // can/should be fixed in filemanager renderers.
+    display: inline-block;
+}
+
+.singleselect {
+    max-width: 100%;
+}
+
+.form-item .form-label label {
+    margin-bottom: 0;
+}
+
+div#dateselector-calendar-panel {
+    z-index: 3100; /* Set higher than the z-index of the filemanager - see MDL-39047. */
+}
+
+fieldset.coursesearchbox label {
+    display: inline;
+}
+
+/**
+ * Show the labels above text editors and file managers except on wide screens.
+ */
+
+
+/* Section and module editing forms contain special JS components for the
+   availability system (if enabled). */
+#id_availabilityconditionsjson[aria-hidden=true],
+.availability-field [aria-hidden=true] {
+    display: none;
+}
+
+.availability-eye {
+    clear: left;
+    float: left;
+}
+.availability-inner,
+.availability-plugincontrols {
+    float: left;
+    @include border-radius($card-border-radius);
+    border: $card-border-width solid $card-border-color;
+    padding: $card-spacer-x / 2;
+    margin-left: $card-spacer-x / 2;
+}
+.availability-field .availability-plugincontrols .availability-group select {
+    max-width: 12rem;
+}
+
+/* Custom styles for autocomplete form element */
+/* These styles reserve a standard amount of space in the DOM to avoid flicker when the original select element is replaced */
+[data-fieldtype=autocomplete] select,
+[data-fieldtype=tags] select,
+.form-autocomplete-original-select {
+    visibility: hidden;
+    overflow: hidden;
+    width: 15rem;
+    height: 44px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    margin-top: $font-size-base * $line-height-base + $tag-padding-y;
+    vertical-align: bottom;
+}
+.form-autocomplete-selection {
+    margin: $tag-padding-y;
+    // Padding top and bottom, plus m-b-1 and the 100% lineheight.
+    min-height: 2 * $tag-padding-y + 2 * $font-size-base;
+}
+
+.form-autocomplete-multiple [role=listitem] {
+    cursor: pointer;
+}
+
+.form-autocomplete-suggestions {
+    position: absolute;
+    background-color: white;
+    border: 2px solid $gray-lighter;
+    border-radius: 3px;
+    min-width: 206px;
+    max-height: 20em;
+    overflow: auto;
+    margin: 0;
+    padding: 0;
+    margin-top: 0.4em;
+    z-index: 1;
+}
+
+.form-autocomplete-suggestions li {
+    list-style-type: none;
+    padding: 0.2em;
+    margin: 0;
+    cursor: pointer;
+    color: $body-color;
+}
+
+.form-autocomplete-suggestions li:hover {
+    background-color: lighten($dropdown-link-active-bg, 15%);
+    color: $dropdown-link-active-color;
+}
+
+.form-autocomplete-suggestions li[aria-selected=true] {
+    background-color: darken($dropdown-bg, 5%);
+    color: $gray;
+}
+
+.form-autocomplete-downarrow {
+    color: $body-color;
+    position: relative;
+    top: 0.2em;
+    left: -1.5em;
+    cursor: pointer;
+}
+
+.form-autocomplete-selection:focus {
+    outline: none;
+}
+/** Undo some bootstrap things */
+.form-autocomplete-selection + input.form-control {
+    width: auto;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.form-autocomplete-selection [data-active-selection=true] {
+    padding: 0.5em;
+    font-size: large;
+}
+
+/* Non-bootstrap selects with a size show their contents outside of the element.
+ * Remove when we update to stable bootstrap 4. (MDL-56511) */
+select[size],
+select[multiple] {
+    overflow: auto;
+}
+select[size=1] {
+    overflow: visible;
+}
+
+textarea[data-auto-rows] {
+    overflow-x: hidden;
+}
+
+/** Display elements under labels in vertical forms regardless of the screen size. */
+.mform.full-width-labels {
+    .fitem.row {
+        margin-left: 0;
+        margin-right: 0;
+        & > .col-md-3,
+        & > .col-md-9 {
+            float: none;
+            width: inherit;
+            padding-right: 0;
+            padding-left: 0;
+        }
+        &.femptylabel > .col-md-3 {
+            display: none;
+        }
+    }
+}
+
+/** Allow wrapping an mform in a div with the form-inline class to have an inline, responsive form. */
+.form-inline {
+    @include media-breakpoint-up(md) {
+        .col-md-9,
+        .col-md-3 {
+            label {
+                margin-left: 1rem;
+            }
+            margin-bottom: 1rem;
+            width: auto;
+        }
+    }
+}
+
+[data-fieldtype="modgrade"] .form-group {
+    padding-bottom: $input-padding-y;
+}
+
+// We dont' use the mixin because it's expensive.
+[data-fieldtype="modgrade"] {
+    background-color: $card-bg;
+    @include border-radius($card-border-radius);
+    border: $card-border-width solid $card-border-color;
+    padding: $card-spacer-x;
+    margin-left: $grid-gutter-width / 2;
+    max-width: 30rem;
+}
+
+/** Atto fields do not have form-control because that would break the layout of the editor.
+    So they need these extra styles to highlight the editor when there is a validation error. */
+.has-danger .editor_atto_content.form-control,
+.has-danger .editor_atto_content.form-control-danger {
+    @include form-control-validation($brand-danger);
+    background-image: $form-icon-danger;
+    padding-right: ($input-padding-x * 3);
+    background-repeat: no-repeat;
+    background-position: center right ($input-height / 4);
+    background-size: ($input-height / 2) ($input-height / 2);
+}
+
+// Styles for the JS file types browser provided by the "filetypes" element.
+[data-filetypesbrowserbody] {
+    [aria-expanded="false"] > [role="group"],
+    [aria-expanded="false"] [data-filetypesbrowserfeature="hideifcollapsed"],
+    [aria-expanded="true"] [data-filetypesbrowserfeature="hideifexpanded"] {
+        display: none;
+    }
+}

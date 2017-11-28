@@ -100,6 +100,11 @@ defined('MOODLE_INTERNAL') || die();
  *     + defaultsharing
  *          [int] The default sharing option to use. It's highly recommended that you don't set this unless there is a very
  *          specific reason not to use the system default.
+ *     + canuselocalstore
+ *          [bool] The cache is able to safely run with multiple copies on different webservers without any need for administrator
+ *                 intervention to ensure that data stays in sync across nodes.  This is usually managed by a revision
+ *                 system as seen in modinfo cache or language cache.  Requiring purge on upgrade is not sufficient as
+ *                 it requires administrator intervention on each node to make it work.
  *
  * For examples take a look at lib/db/caches.php
  *
@@ -242,13 +247,6 @@ class cache_definition {
     protected $datasourcefile = null;
 
     /**
-     * Deprecated - this is completely unused.
-     * @deprecated since 2.9
-     * @var string
-     */
-    protected $datasourceaggregate = null;
-
-    /**
      * Set to true if the cache should hold onto items passing through it to speed up subsequent requests.
      * @var bool
      */
@@ -309,6 +307,12 @@ class cache_definition {
     protected $sharingoptions;
 
     /**
+     * Whether this cache supports local storages.
+     * @var bool
+     */
+    protected $canuselocalstore = false;
+
+    /**
      * The selected sharing option.
      * @var int One of self::SHARING_*
      */
@@ -367,6 +371,7 @@ class cache_definition {
         $sharingoptions = self::SHARING_DEFAULT;
         $selectedsharingoption = self::SHARING_DEFAULT;
         $userinputsharingkey = '';
+        $canuselocalstore = false;
 
         if (array_key_exists('simplekeys', $definition)) {
             $simplekeys = (bool)$definition['simplekeys'];
@@ -453,6 +458,9 @@ class cache_definition {
                 $selectedsharingoption = self::SHARING_ALL;
             }
         }
+        if (array_key_exists('canuselocalstore', $definition)) {
+            $canuselocalstore = (bool)$definition['canuselocalstore'];
+        }
 
         if (array_key_exists('userinputsharingkey', $definition) && !empty($definition['userinputsharingkey'])) {
             $userinputsharingkey = (string)$definition['userinputsharingkey'];
@@ -529,6 +537,7 @@ class cache_definition {
         $cachedefinition->sharingoptions = $sharingoptions;
         $cachedefinition->selectedsharingoption = $selectedsharingoption;
         $cachedefinition->userinputsharingkey = $userinputsharingkey;
+        $cachedefinition->canuselocalstore = $canuselocalstore;
 
         return $cachedefinition;
     }
@@ -733,6 +742,15 @@ class cache_definition {
     }
 
     /**
+     * Returns true if this definition allows local storage to be used for caching.
+     * @since Moodle 3.1.0
+     * @return bool
+     */
+    public function can_use_localstore() {
+        return $this->canuselocalstore;
+    }
+
+    /**
      * Returns true if this definition requires a searchable cache.
      * @since Moodle 2.4.4
      * @return bool
@@ -766,13 +784,16 @@ class cache_definition {
      * Sets the identifiers for this definition, or updates them if they have already been set.
      *
      * @param array $identifiers
+     * @return bool false if no identifiers where changed, true otherwise.
      * @throws coding_exception
      */
     public function set_identifiers(array $identifiers = array()) {
-        // If we are setting the exact same identifiers then just return as nothing really changed.
-        // We don't care about order as cache::make will use the same definition order all the time.
-        if ($identifiers === $this->identifiers) {
-            return;
+        if ($this->identifiers !== null) {
+            throw new coding_exception("You can only set identifiers on initial definition creation." .
+                " Define a new cache to set different identifiers.");
+        }
+        if (!empty($identifiers) && !empty($this->invalidationevents)) {
+            throw new coding_exception("You cannot use event invalidation and identifiers at the same time.");
         }
 
         foreach ($this->requireidentifiers as $identifier) {
@@ -781,16 +802,16 @@ class cache_definition {
             }
         }
 
-        if ($this->identifiers === null) {
-            // Initialize identifiers if they have not been.
-            $this->identifiers = array();
-        }
+        $this->identifiers = array();
+
         foreach ($identifiers as $name => $value) {
             $this->identifiers[$name] = (string)$value;
         }
         // Reset the key prefix's they need updating now.
         $this->keyprefixsingle = null;
         $this->keyprefixmulti = null;
+
+        return true;
     }
 
     /**
@@ -812,17 +833,14 @@ class cache_definition {
     }
 
     /**
-     * Returns true if this definitions cache should be made persistent.
-     *
      * Please call {@link cache_definition::use_static_acceleration()} instead.
      *
      * @see cache_definition::use_static_acceleration()
      * @deprecated since 2.6
-     * @return bool
      */
     public function should_be_persistent() {
-        debugging('Please upgrade your code to use cache_definition::use_static_acceleration', DEBUG_DEVELOPER);
-        return $this->use_static_acceleration();
+        throw new coding_exception('cache_definition::should_be_persistent() can not be used anymore.' .
+            ' Please use cache_definition::use_static_acceleration() instead.');
     }
 
     /**
@@ -842,17 +860,14 @@ class cache_definition {
     }
 
     /**
-     * Returns the max size for the static acceleration array.
-     *
      * Please call {@link cache_definition::get_static_acceleration_size()} instead.
      *
      * @see cache_definition::get_static_acceleration_size()
      * @deprecated since 2.6
-     * @return int
      */
     public function get_persistent_max_size() {
-        debugging('Please upgrade your code to call cache_definition::get_static_acceleration_size', DEBUG_DEVELOPER);
-        return $this->get_static_acceleration_size();
+        throw new coding_exception('cache_definition::get_persistent_max_size() can not be used anymore.' .
+            ' Please use cache_definition::get_static_acceleration_size() instead.');
     }
 
     /**

@@ -27,24 +27,22 @@ Feature: Outcome grading
       | Name | Test Scale |
       | Scale | Disappointing, Excellent, Good, Very good, Excellent |
     And I press "Save changes"
-    And I follow "Outcomes"
+    And I navigate to "Outcomes" node in "Site administration > Grades"
     And I press "Add a new outcome"
     And I set the following fields to these values:
       | Full name | Outcome Test |
       | Short name | OT |
       | Scale | Test Scale |
     And I press "Save changes"
-    And I am on site homepage
-    And I follow "Course 1"
-    And I follow "Outcomes"
+    And I am on "Course 1" course homepage
+    And I navigate to "Outcomes" node in "Course administration"
     And I set the field "Available standard outcomes" to "Outcome Test"
     And I click on "#add" "css_element"
     And I log out
 
   Scenario: Giving an outcome to a student
     Given I log in as "teacher1"
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I add a "Assignment" to section "1" and I fill the form with:
       | Assignment name | Test assignment name |
       | Description | Test assignment description |
@@ -52,7 +50,7 @@ Feature: Outcome grading
       | Outcome Test | 1 |
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test assignment name"
     And I press "Add submission"
     And I set the following fields to these values:
@@ -60,14 +58,17 @@ Feature: Outcome grading
     And I press "Save changes"
     And I log out
     When I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test assignment name"
-    And I follow "View/grade all submissions"
-    And I click on "img[alt='Grade Student 0']" "css_element"
+    And I navigate to "View all submissions" in current page administration
+    And I click on "Grade" "link" in the "Student 0" "table_row"
     And I set the following fields to these values:
       | Outcome Test: | Excellent |
     And I press "Save changes"
-    And I press "Continue"
+    And I press "Ok"
+    And I click on "Edit settings" "link"
+    And I follow "Test assignment name"
+    And I navigate to "View all submissions" in current page administration
     Then I should see "Outcome Test: Excellent" in the "Student 0" "table_row"
     And I should not see "Outcome Test: Excellent" in the "Student 1" "table_row"
 
@@ -82,14 +83,11 @@ Feature: Outcome grading
       | name | course | idnumber |
       | Group 1 | C1 | G1 |
     And I log in as "teacher1"
-    And I follow "Course 1"
-    And I expand "Users" node
-    And I follow "Groups"
+    And I am on "Course 1" course homepage
+    And I navigate to "Users > Groups" in current page administration
     And I add "Student 0 (student0@example.com)" user to "Group 1" group members
     And I add "Student 1 (student1@example.com)" user to "Group 1" group members
-    And I am on site homepage
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I add a "Assignment" to section "1" and I fill the form with:
       | Assignment name | Test assignment name |
       | Description | Test assignment description |
@@ -99,7 +97,7 @@ Feature: Outcome grading
       | Outcome Test | 1 |
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test assignment name"
     And I press "Add submission"
     And I set the following fields to these values:
@@ -107,24 +105,30 @@ Feature: Outcome grading
     And I press "Save changes"
     And I log out
     When I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test assignment name"
-    And I follow "View/grade all submissions"
-    And I click on "img[alt='Grade Student 0']" "css_element"
+    And I navigate to "View all submissions" in current page administration
+    And I click on "Grade" "link" in the "Student 0" "table_row"
     And I set the following fields to these values:
       | Outcome Test: | Excellent |
       | Apply grades and feedback to entire group | Yes |
     And I press "Save changes"
-    And I press "Continue"
+    And I press "Ok"
+    And I click on "Edit settings" "link"
+    And I follow "Test assignment name"
+    And I navigate to "View all submissions" in current page administration
     Then I should see "Outcome Test: Excellent" in the "Student 0" "table_row"
     And I should see "Outcome Test: Excellent" in the "Student 1" "table_row"
     And I should not see "Outcome Test: Excellent" in the "Student 2" "table_row"
-    And I click on "img[alt='Grade Student 1']" "css_element"
+    And I click on "Grade" "link" in the "Student 1" "table_row"
     And I set the following fields to these values:
       | Outcome Test: | Disappointing |
       | Apply grades and feedback to entire group | No |
     And I press "Save changes"
-    And I press "Continue"
+    And I press "Ok"
+    And I click on "Edit settings" "link"
+    And I follow "Test assignment name"
+    And I navigate to "View all submissions" in current page administration
     And I should see "Outcome Test: Excellent" in the "Student 0" "table_row"
     And I should see "Outcome Test: Disappointing" in the "Student 1" "table_row"
     And I should not see "Outcome Test: Disappointing" in the "Student 0" "table_row"

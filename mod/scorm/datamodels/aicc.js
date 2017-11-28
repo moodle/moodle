@@ -155,7 +155,7 @@ function AICCapi(def, cmiobj, scormauto, cfgwwwroot, scormid, scoid, attempt, vi
 
         for (element in datamodel[scoid]) {
             if (element.match(/\.n\./) == null) {
-                if ((typeof eval('datamodel["' + scoid + '"]["' + element + '"].defaultvalue')) != 'undefined') {
+                if (typeof datamodel[scoid][element].defaultvalue != 'undefined') {
                     eval(element + ' = datamodel["' + scoid + '"]["' + element + '"].defaultvalue;');
                 } else {
                     eval(element + ' = "";');
@@ -233,8 +233,8 @@ function AICCapi(def, cmiobj, scormauto, cfgwwwroot, scormid, scoid, attempt, vi
             if (element != "") {
                 expression = new RegExp(CMIIndex,'g');
                 elementmodel = String(element).replace(expression,'.n.');
-                if ((typeof eval('datamodel["' + scoid + '"]["' + elementmodel + '"]')) != "undefined") {
-                    if (eval('datamodel["' + scoid + '"]["' + elementmodel + '"].mod') != 'w') {
+                if (typeof datamodel[scoid][elementmodel] != "undefined") {
+                    if (datamodel[scoid][elementmodel].mod != 'w') {
                             element = String(element).replace(expression, "_$1.");
                             elementIndexes = element.split('.');
                         subelement = 'cmi';
@@ -249,21 +249,21 @@ function AICCapi(def, cmiobj, scormauto, cfgwwwroot, scormid, scoid, attempt, vi
                             errorCode = "0"; // Need to check if it is the right errorCode
                         }
                     } else {
-                        errorCode = eval('datamodel["' + scoid + '"]["' + elementmodel + '"].readerror');
+                        errorCode = datamodel[scoid][elementmodel].readerror;
                     }
                 } else {
                     childrenstr = '._children';
                     countstr = '._count';
                     if (elementmodel.substr(elementmodel.length - childrenstr.length,elementmodel.length) == childrenstr) {
                         parentmodel = elementmodel.substr(0,elementmodel.length - childrenstr.length);
-                        if ((typeof eval('datamodel["' + scoid + '"]["' + parentmodel + '"]')) != "undefined") {
+                        if (typeof datamodel[scoid][parentmodel] != "undefined") {
                             errorCode = "202";
                         } else {
                             errorCode = "201";
                         }
                     } else if (elementmodel.substr(elementmodel.length - countstr.length,elementmodel.length) == countstr) {
                         parentmodel = elementmodel.substr(0,elementmodel.length - countstr.length);
-                        if ((typeof eval('datamodel["' + scoid + '"]["' + parentmodel + '"]')) != "undefined") {
+                        if (typeof datamodel[scoid][parentmodel] != "undefined") {
                             errorCode = "203";
                         } else {
                             errorCode = "201";
@@ -287,9 +287,9 @@ function AICCapi(def, cmiobj, scormauto, cfgwwwroot, scormid, scoid, attempt, vi
             if (element != "") {
                 expression = new RegExp(CMIIndex,'g');
                 elementmodel = String(element).replace(expression,'.n.');
-                if ((typeof eval('datamodel["' + scoid + '"]["' + elementmodel + '"]')) != "undefined") {
-                    if (eval('datamodel["' + scoid + '"]["' + elementmodel + '"].mod') != 'r') {
-                        expression = new RegExp(eval('datamodel["' + scoid + '"]["' + elementmodel + '"].format'));
+                if (typeof datamodel[scoid][elementmodel] != "undefined") {
+                    if (datamodel[scoid][elementmodel].mod != 'r') {
+                        expression = new RegExp(datamodel[scoid][elementmodel].format);
                         value = value + '';
                         matches = value.match(expression);
                         if (matches != null) {
@@ -339,8 +339,8 @@ function AICCapi(def, cmiobj, scormauto, cfgwwwroot, scormid, scoid, attempt, vi
                                 if (autocommit && !(AICCapi.timeout)) {
                                     AICCapi.timeout = Y.later(60000, API, 'LMSCommit', [""], false);
                                 }
-                                if ((typeof eval('datamodel["' + scoid + '"]["' + elementmodel + '"].range')) != "undefined") {
-                                    range = eval('datamodel["' + scoid + '"]["' + elementmodel + '"].range');
+                                if (typeof datamodel[scoid][elementmodel].range != "undefined") {
+                                    range = datamodel[scoid][elementmodel].range;
                                     ranges = range.split('#');
                                     value = value * 1.0;
                                     if ((value >= ranges[0]) && (value <= ranges[1])) {
@@ -348,7 +348,7 @@ function AICCapi(def, cmiobj, scormauto, cfgwwwroot, scormid, scoid, attempt, vi
                                         errorCode = "0";
                                         return "true";
                                     } else {
-                                        errorCode = eval('datamodel["' + scoid + '"]["' + elementmodel + '"].writeerror');
+                                        errorCode = datamodel[scoid][elementmodel].writeerror;
                                     }
                                 } else {
                                     if (element == 'cmi.comments') {
@@ -361,10 +361,10 @@ function AICCapi(def, cmiobj, scormauto, cfgwwwroot, scormid, scoid, attempt, vi
                                 }
                             }
                         } else {
-                            errorCode = eval('datamodel["' + scoid + '"]["' + elementmodel + '"].writeerror');
+                            errorCode = datamodel[scoid][elementmodel].writeerror;
                         }
                     } else {
-                        errorCode = eval('datamodel["' + scoid + '"]["' + elementmodel + '"].writeerror');
+                        errorCode = datamodel[scoid][elementmodel].writeerror;
                     }
                 } else {
                     errorCode = "201"
@@ -490,11 +490,11 @@ function AICCapi(def, cmiobj, scormauto, cfgwwwroot, scormid, scoid, attempt, vi
                 element = parent + '.' + property;
                 expression = new RegExp(CMIIndex,'g');
                 elementmodel = String(element).replace(expression,'.n.');
-                if ((typeof eval('datamodel["' + scoid + '"]["' + elementmodel + '"]')) != "undefined") {
-                    if (eval('datamodel["' + scoid + '"]["' + elementmodel + '"].mod') != 'r') {
+                if (typeof datamodel[scoid][elementmodel] != "undefined") {
+                    if (datamodel[scoid][elementmodel].mod != 'r') {
                         elementstring = '&' + underscore(element) + '=' + escape(data[property]);
-                        if ((typeof eval('datamodel["' + scoid + '"]["' + elementmodel + '"].defaultvalue')) != "undefined") {
-                            if (eval('datamodel["' + scoid + '"]["' + elementmodel + '"].defaultvalue') != data[property]) {
+                        if (typeof datamodel[scoid][elementmodel].defaultvalue != "undefined") {
+                            if (datamodel[scoid][elementmodel].defaultvalue != data[property]) {
                                 datastring += elementstring;
                             }
                         } else {

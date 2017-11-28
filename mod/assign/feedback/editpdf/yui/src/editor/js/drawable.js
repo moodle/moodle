@@ -12,6 +12,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+/* global SELECTOR */
 
 /**
  * Provides an in browser PDF editor.
@@ -100,7 +101,7 @@ var DRAWABLE = function(editor) {
     this.store_position = function(container, x, y) {
         var drawingregion, scrollx, scrolly;
 
-        drawingregion = Y.one(SELECTOR.DRAWINGREGION);
+        drawingregion = this.editor.get_dialogue_element(SELECTOR.DRAWINGREGION);
         scrollx = parseInt(drawingregion.get('scrollLeft'), 10);
         scrolly = parseInt(drawingregion.get('scrollTop'), 10);
         container.setData('x', x + scrollx);

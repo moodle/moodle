@@ -50,7 +50,7 @@ class core_question_generator extends component_generator_base {
             'contextid'  => context_system::instance()->id,
             'info'       => '',
             'infoformat' => FORMAT_HTML,
-            'stamp'      => '',
+            'stamp'      => make_unique_id_code(),
             'parent'     => 0,
             'sortorder'  => 999,
         );

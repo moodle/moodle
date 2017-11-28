@@ -27,7 +27,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot.'/lib/formslib.php');
-require_once(dirname(dirname(__FILE__)) . '/random/settings_form.php'); // parent form
+require_once(__DIR__ . '/../random/settings_form.php'); // parent form
 
 /**
  * Allocator settings form
@@ -63,24 +63,26 @@ class workshop_scheduled_allocator_form extends workshop_random_allocator_form {
 
         if ($current === false) {
             $mform->addElement('static', 'infostatus', get_string('currentstatusexecution', 'workshopallocation_scheduled'),
-                get_string('resultdisabled', 'workshopallocation_scheduled').' '.
-                html_writer::empty_tag('img', array('src' => $OUTPUT->pix_url('i/invalid'))));
+                get_string('resultdisabled', 'workshopallocation_scheduled').' '. $OUTPUT->pix_icon('i/invalid', ''));
 
         } else {
             if (!empty($current->timeallocated)) {
                 $mform->addElement('static', 'infostatus', get_string('currentstatusexecution', 'workshopallocation_scheduled'),
                     get_string('currentstatusexecution1', 'workshopallocation_scheduled', $strtimeexecuted).' '.
-                    html_writer::empty_tag('img', array('src' => $OUTPUT->pix_url('i/valid'))));
+                    $OUTPUT->pix_icon('i/valid', ''));
 
                 if ($current->resultstatus == workshop_allocation_result::STATUS_EXECUTED) {
                     $strstatus = get_string('resultexecuted', 'workshopallocation_scheduled').' '.
-                        html_writer::empty_tag('img', array('src' => $OUTPUT->pix_url('i/valid')));
+                        $OUTPUT->pix_icon('i/valid', '');
+
                 } else if ($current->resultstatus == workshop_allocation_result::STATUS_FAILED) {
                     $strstatus = get_string('resultfailed', 'workshopallocation_scheduled').' '.
-                        html_writer::empty_tag('img', array('src' => $OUTPUT->pix_url('i/invalid')));
+                        $OUTPUT->pix_icon('i/invalid', '');
+
                 } else {
                     $strstatus = get_string('resultvoid', 'workshopallocation_scheduled').' '.
-                        html_writer::empty_tag('img', array('src' => $OUTPUT->pix_url('i/invalid')));
+                        $OUTPUT->pix_icon('i/invalid', '');
+
                 }
 
                 if (!empty($current->resultmessage)) {
@@ -91,7 +93,7 @@ class workshop_scheduled_allocator_form extends workshop_random_allocator_form {
                 if ($current->timeallocated < $workshop->submissionend) {
                     $mform->addElement('static', 'infoexpected', get_string('currentstatusnext', 'workshopallocation_scheduled'),
                         get_string('currentstatusexecution2', 'workshopallocation_scheduled', $strtimeexpected).' '.
-                        html_writer::empty_tag('img', array('src' => $OUTPUT->pix_url('i/caution'))));
+                        $OUTPUT->pix_icon('i/caution', ''));
                     $mform->addHelpButton('infoexpected', 'currentstatusnext', 'workshopallocation_scheduled');
                 } else {
                     $mform->addElement('checkbox', 'reenablescheduled', get_string('currentstatusreset', 'workshopallocation_scheduled'),
@@ -102,19 +104,19 @@ class workshop_scheduled_allocator_form extends workshop_random_allocator_form {
             } else if (empty($current->enabled)) {
                 $mform->addElement('static', 'infostatus', get_string('currentstatusexecution', 'workshopallocation_scheduled'),
                     get_string('resultdisabled', 'workshopallocation_scheduled').' '.
-                    html_writer::empty_tag('img', array('src' => $OUTPUT->pix_url('i/invalid'))));
+                        $OUTPUT->pix_icon('i/invalid', ''));
 
             } else if ($workshop->phase != workshop::PHASE_SUBMISSION) {
                 $mform->addElement('static', 'infostatus', get_string('currentstatusexecution', 'workshopallocation_scheduled'),
                     get_string('resultfailed', 'workshopallocation_scheduled').' '.
-                    html_writer::empty_tag('img', array('src' => $OUTPUT->pix_url('i/invalid'))).
+                    $OUTPUT->pix_icon('i/invalid', '') .
                     html_writer::empty_tag('br').
                     get_string('resultfailedphase', 'workshopallocation_scheduled'));
 
             } else if (empty($workshop->submissionend)) {
                 $mform->addElement('static', 'infostatus', get_string('currentstatusexecution', 'workshopallocation_scheduled'),
                     get_string('resultfailed', 'workshopallocation_scheduled').' '.
-                    html_writer::empty_tag('img', array('src' => $OUTPUT->pix_url('i/invalid'))).
+                    $OUTPUT->pix_icon('i/invalid', '') .
                     html_writer::empty_tag('br').
                     get_string('resultfaileddeadline', 'workshopallocation_scheduled'));
 
@@ -122,12 +124,12 @@ class workshop_scheduled_allocator_form extends workshop_random_allocator_form {
                 // next cron will execute it
                 $mform->addElement('static', 'infostatus', get_string('currentstatusexecution', 'workshopallocation_scheduled'),
                     get_string('currentstatusexecution4', 'workshopallocation_scheduled').' '.
-                    html_writer::empty_tag('img', array('src' => $OUTPUT->pix_url('i/caution'))));
+                    $OUTPUT->pix_icon('i/caution', ''));
 
             } else {
                 $mform->addElement('static', 'infostatus', get_string('currentstatusexecution', 'workshopallocation_scheduled'),
                     get_string('currentstatusexecution3', 'workshopallocation_scheduled', $strtimeexpected).' '.
-                    html_writer::empty_tag('img', array('src' => $OUTPUT->pix_url('i/caution'))));
+                    $OUTPUT->pix_icon('i/caution', ''));
             }
         }
 

@@ -89,7 +89,7 @@ if ($PAGE->user_allowed_editing()) {
 $savebutton = false;
 $outputhtml = '';
 foreach ($settingspage->children as $childpage) {
-    if ($childpage->is_hidden()) {
+    if ($childpage->is_hidden() || !$childpage->check_access()) {
         continue;
     }
     if ($childpage instanceof admin_externalpage) {
@@ -120,7 +120,7 @@ foreach ($settingspage->children as $childpage) {
 }
 if ($savebutton) {
     $outputhtml .= html_writer::start_tag('div', array('class' => 'form-buttons'));
-    $outputhtml .= html_writer::empty_tag('input', array('class' => 'form-submit', 'type' => 'submit', 'value' => get_string('savechanges','admin')));
+    $outputhtml .= html_writer::empty_tag('input', array('class' => 'btn btn-primary form-submit', 'type' => 'submit', 'value' => get_string('savechanges','admin')));
     $outputhtml .= html_writer::end_tag('div');
 }
 

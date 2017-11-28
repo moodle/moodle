@@ -46,7 +46,7 @@ In detail, the libraries added here are:
     - License: LGPL
     - http://pear.php.net/package/HTML_AJAX/
 - PEAR Auth_RADIUS:
-    - Current version: 1.0.6 (2008-04-13)
+    - Current version: 1.1.0 (2015-02-10)
     - by Michael Bretterklieber
     - License: BSD
     - http://pear.php.net/package/Auth_RADIUS

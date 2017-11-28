@@ -368,9 +368,16 @@ class quiz_access_manager {
      * @return mod_quiz_preflight_check_form the form.
      */
     public function get_preflight_check_form(moodle_url $url, $attemptid) {
+        // This form normally wants POST submissins. However, it also needs to
+        // accept GET submissions. Since formslib is strict, we have to detect
+        // which case we are in, and set the form property appropriately.
+        $method = 'post';
+        if (!empty($_GET['_qf__mod_quiz_preflight_check_form'])) {
+            $method = 'get';
+        }
         return new mod_quiz_preflight_check_form($url->out_omit_querystring(),
                 array('rules' => $this->rules, 'quizobj' => $this->quizobj,
-                      'attemptid' => $attemptid, 'hidden' => $url->params()));
+                      'attemptid' => $attemptid, 'hidden' => $url->params()), $method);
     }
 
     /**
@@ -531,5 +538,25 @@ class quiz_access_manager {
             return $output->review_link($this->quizobj->review_url($attempt->id),
                     $this->attempt_must_be_in_popup(), $this->get_popup_options());
         }
+    }
+
+    /**
+     * Run the preflight checks using the given data in all the rules supporting them.
+     *
+     * @param array $data passed data for validation
+     * @param array $files un-used, Moodle seems to not support it anymore
+     * @param int|null $attemptid the id of the current attempt, if there is one,
+     *      otherwise null.
+     * @return array of errors, empty array means no erros
+     * @since  Moodle 3.1
+     */
+    public function validate_preflight_check($data, $files, $attemptid) {
+        $errors = array();
+        foreach ($this->rules as $rule) {
+            if ($rule->is_preflight_check_required($attemptid)) {
+                $errors = $rule->validate_preflight_check($data, $files, $errors, $attemptid);
+            }
+        }
+        return $errors;
     }
 }

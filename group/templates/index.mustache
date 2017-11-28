@@ -1,0 +1,145 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_group/index
+
+    Template for the Groups page.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * courseid int The course ID.
+    * selectedgroup string The initially selected group.
+    * editgroupsettingsdisabled bool Whether to disable the "Edit group settings" button on load.
+    * deletegroupdisabled bool Whether to disable the "Delete selected group" button on load.
+    * addmembersdisabled bool Whether to disable the "Add/remove users" button on load.
+    * groups array The list of groups.
+    * members array The list of members, grouped based on roles.
+    * undeletablegroups string A JSON string containing an array of group IDs that a user cannot delete.
+
+    Example context (json):
+    {
+        "courseid": "1",
+        "selectedgroup": "Group 1 (3)",
+        "editgroupsettingsdisabled": false,
+        "deletegroupdisabled": false,
+        "addmembersdisabled": false,
+        "groups": [
+            {
+                "value": "1",
+                "text": "Group 1 (3)",
+                "selected": true
+            },
+            {
+                "value": "2",
+                "text": "Group 2 (2)"
+            }
+        ],
+        "members": [
+            {
+                "role": "Student",
+                "rolemembers": [
+                    {
+                        "value": "1",
+                        "text": "John Doe"
+                    },
+                    {
+                        "value": "2",
+                        "text": "Jane Doe"
+                    },
+                    {
+                        "value": "3",
+                        "text": "John Smith"
+                    }
+                ]
+            }
+        ],
+        "undeletablegroups": "[1: true, 3: true]"
+    }
+}}
+<form id="groupeditform" action="index.php" method="post">
+    <div class="container-fluid groupmanagementtable">
+        <div class="row row-fluid rtl-compatible">
+            <div class="col-md-6 span6 m-b-1">
+                <input type="hidden" name="id" value="{{courseid}}">
+                <div class="form-group">
+                    <label for="groups">
+                        <span id="groupslabel">{{#str}}groups{{/str}}</span>
+                        <span id="thegrouping">&nbsp;</span>
+                    </label>
+                    <select name="groups[]" multiple="multiple" id="groups" size="15" class="form-control input-block-level">
+                        {{#groups}}
+                            <option value="{{value}}" {{#selected}}selected="selected"{{/selected}} title="{{{text}}}">{{{text}}}</option>
+                        {{/groups}}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <input type="submit" name="act_updatemembers" id="updatemembers" value="{{#str}}showmembersforgroup, group{{/str}}" class="btn btn-default" />
+                </div>
+                <div class="form-group">
+                    <input type="submit" name="act_showgroupsettingsform" id="showeditgroupsettingsform" value="{{#str}}editgroupsettings, group{{/str}}" {{#editgroupsettingsdisabled}}disabled="disabled"{{/editgroupsettingsdisabled}} class="btn btn-default" />
+                </div>
+                <div class="form-group">
+                    <input type="submit" name="act_deletegroup" id="deletegroup" value="{{#str}}deleteselectedgroup, group{{/str}}" {{#deletegroupdisabled}}disabled="disabled"{{/deletegroupdisabled}} class="btn btn-default" />
+                </div>
+                <div class="form-group">
+                    <input type="submit" name="act_showcreateorphangroupform" id="showcreateorphangroupform" value="{{#str}}creategroup, group{{/str}}" class="btn btn-default" />
+                </div>
+                <div class="form-group">
+                    <input type="submit" name="act_showautocreategroupsform" id="showautocreategroupsform" value="{{#str}}autocreategroups, group{{/str}}" class="btn btn-default" />
+                </div>
+                <div class="form-group">
+                    <input type="submit" name="act_showimportgroups" id="showimportgroups" value="{{#str}}importgroups, group{{/str}}" class="btn btn-default" />
+                </div>
+            </div>
+            <div class="col-md-6 span6 m-b-1">
+                <div class="form-group">
+                    <label for="members">
+                        <span id="memberslabel">{{#str}}membersofselectedgroup, group{{/str}}</span>
+                        <span id="thegroup">{{{selectedgroup}}}</span>
+                    </label>
+                    <select size="15" multiple="multiple" class="form-control input-block-level" id="members" name="user">
+                        {{#members}}
+                            <optgroup label="{{role}}">
+                                {{#rolemembers}}
+                                    <option value="{{value}}">{{{text}}}‎</option>
+                                {{/rolemembers}}
+                            </optgroup>
+                        {{/members}}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="{{#str}}adduserstogroup, group{{/str}}" class="btn btn-default" {{#addmembersdisabled}}disabled="disabled"{{/addmembersdisabled}} name="act_showaddmembersform" id="showaddmembersform"/>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+{{#js}}
+    require(['jquery', 'core/yui'], function($) {
+        $("#groups").change(function() {
+            M.core_group.membersCombo.refreshMembers();
+        });
+        M.core_group.init_index(Y, "{{wwwroot}}", {{courseid}});
+        var undeletableGroups = JSON.parse('{{{undeletablegroups}}}');
+        M.core_group.groupslist(Y, undeletableGroups);
+    });
+{{/js}}

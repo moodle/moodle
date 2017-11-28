@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2010-2014 Horde LLC (http://www.horde.org/)
+ * Copyright 2010-2017 Horde LLC (http://www.horde.org/)
  *
  * @author   Chuck Hagenbuch <chuck@horde.org>
  * @author   Jan Schneider <jan@horde.org>
@@ -86,11 +86,11 @@ class Horde_Support_Numerizer_Locale_De extends Horde_Support_Numerizer_Locale_B
         foreach ($this->TEN_PREFIXES as $tp => $tp_replacement) {
             $string = preg_replace_callback(
                 "/(?:$tp)( *\d(?=[^\d]|\$))*/i",
-                create_function(
-                    '$m',
-                    'return ' . $tp_replacement . ' + (isset($m[1]) ? (int)$m[1] : 0);'
-                ),
-                $string);
+                function ($m) use ($tp_replacement) {
+                    return $tp_replacement + (isset($m[1]) ? (int)$m[1] : 0);
+                },
+                $string
+            );
         }
         return $string;
     }
@@ -103,11 +103,17 @@ class Horde_Support_Numerizer_Locale_De extends Horde_Support_Numerizer_Locale_B
         foreach ($this->BIG_PREFIXES as $bp => $bp_replacement) {
             $string = preg_replace_callback(
                 '/(\d*) *' . $bp . '(\d?)/i',
-                create_function(
-                    '$m',
-                    '$factor = (int)$m[1]; if (!$factor) $factor = 1; return (' . $bp_replacement . ' * $factor)' . ($bp_replacement == 100 ? ' . ($m[2] ? "und" : "")' : ' . "und"') . ' . $m[2];'
-                ),
-                $string);
+                function ($m) use ($bp_replacement) {
+                    $factor = (int)$m[1];
+                    if (!$factor) {
+                        $factor = 1;
+                    }
+                    return ($bp_replacement * $factor)
+                        . ($bp_replacement == 100 ? ($m[2] ? 'und' : '') : 'und')
+                        . $m[2];
+                },
+                $string
+            );
             $string = $this->_andition($string);
         }
         return $string;
@@ -116,7 +122,9 @@ class Horde_Support_Numerizer_Locale_De extends Horde_Support_Numerizer_Locale_B
     protected function _andition($string)
     {
         while (preg_match('/(\d+)((?: *und *)+)(\d*)(?=\w|$)/i', $string, $sc, PREG_OFFSET_CAPTURE)) {
-            $string = substr($string, 0, $sc[1][1]) . ((int)$sc[1][0] + (int)$sc[3][0]) . substr($string, $sc[3][1] + strlen($sc[3][0]));
+            $string = substr($string, 0, $sc[1][1])
+                . ((int)$sc[1][0] + (int)$sc[3][0])
+                . substr($string, $sc[3][1] + strlen($sc[3][0]));
         }
         return $string;
     }

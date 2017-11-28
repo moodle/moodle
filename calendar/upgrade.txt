@@ -1,6 +1,22 @@
 This files describes API changes in /calendar/* ,
 information provided here is intended especially for developers.
 
+=== 3.4 ===
+* calendar_get_mini, and calendar_get_upcoming have been deprecated. Please update to use the new exporters and renderers.
+* added core_calendar_get_valid_event_timestart_range and core_calendar_event_timestart_updated callbacks for module events
+  when the update_event_start_day function is used in the local api.
+
+=== 3.3 ===
+* calendar_event_hook() has been removed. Developers should be using the Moodle events system to achieve this behaviour,
+  rather than using a hacky calendar specific implementation.
+* calendar_wday_name() is deprecated and no longer used in core.
+* calendar_get_block_upcoming() is deprecated, please use block_calendar_upcoming::get_upcoming_content() instead.
+* calendar_print_month_selector() is deprecated and no longer used in core.
+* calendar_cron() is deprecated and should not be used. Please use the core\task\calendar_cron_task instead.
+
+=== 3.2 ===
+* calendar_preferences_button() is now deprecated. Calendar preferences have been moved to the user preferences page.
+
 === 2.9 ===
 default values changes in code:
 * core_calendar_external::get_calendar_events_parameters() 'timeend' default option changed; now, by default,

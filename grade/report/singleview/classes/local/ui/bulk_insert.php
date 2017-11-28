@@ -85,62 +85,25 @@ class bulk_insert extends element {
      * @return string HTML
      */
     public function html() {
-        $insertvalue = get_string('bulkinsertvalue', 'gradereport_singleview');
-        $insertappliesto = get_string('bulkappliesto', 'gradereport_singleview');
+        global $OUTPUT;
 
-        $insertoptions = array(
-            'all' => get_string('all_grades', 'gradereport_singleview'),
-            'blanks' => get_string('blanks', 'gradereport_singleview')
-        );
-
-        $selectlabel = html_writer::label(
-            $insertappliesto,
-            'menu' . $this->selectname
-        );
-        $select = html_writer::select(
-            $insertoptions,
-            $this->selectname,
-            'blanks',
-            false,
-            array(
-                'id' => 'menu' . $this->selectname
-            )
-        );
-
-        $textlabel = html_writer::label(
-            $insertvalue,
-            $this->insertname
-        );
         $text = new text_attribute($this->insertname, "0", 'bulk');
+        $context = (object) [
+            'label' => get_string('bulklegend', 'gradereport_singleview'),
+            'applylabel' => get_string('bulkperform', 'gradereport_singleview'),
+            'applyname' => $this->applyname,
+            'menuname' => $this->selectname,
+            'menulabel' => get_string('bulkappliesto', 'gradereport_singleview'),
+            'menuoptions' => [
+                ['value' => 'all', 'name' => get_string('all_grades', 'gradereport_singleview')],
+                ['value' => 'blanks', 'name' => get_string('blanks', 'gradereport_singleview'), 'selected' => true],
+            ],
+            'valuename' => $this->insertname,
+            'valuelabel' => get_string('bulkinsertvalue', 'gradereport_singleview'),
+            'valuefield' => $text->html()
+        ];
 
-        $inner = implode(' ', array(
-            $selectlabel,
-            $select,
-            $textlabel,
-            $text->html()
-        ));
-
-        $fieldset = html_writer::tag(
-            'fieldset',
-            html_writer::tag(
-                'legend',
-                get_string('bulklegend', 'gradereport_singleview'),
-                array(
-                    'class' => 'accesshide'
-                )
-            ) .
-            $inner
-        );
-
-        $apply = html_writer::checkbox(
-            $this->applyname,
-            1,
-            false,
-            get_string('bulkperform', 'gradereport_singleview')
-        );
-        $applydiv = html_writer::div($apply, 'enable');
-
-        return $applydiv . $fieldset;
+        return $OUTPUT->render_from_template('gradereport_singleview/bulk_insert', $context);
     }
 
     /**

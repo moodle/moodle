@@ -21,7 +21,7 @@ Feature: A teacher can duplicate questions in the question bank
       | questioncategory | qtype | name                       | questiontext                  |
       | Test questions   | essay | Test question to be copied | Write about whatever you want |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "Questions" node in "Course administration > Question bank"
 
   @javascript
@@ -47,4 +47,3 @@ Feature: A teacher can duplicate questions in the question bank
     And I press "Cancel"
     Then I should see "Test question to be copied"
     And the field "Select a category" matches value "Test questions (1)"
-

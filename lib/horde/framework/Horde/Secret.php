@@ -3,7 +3,7 @@
  * Provides an API for encrypting and decrypting small pieces of data with the
  * use of a shared key stored in a cookie.
  *
- * Copyright 1999-2014 Horde LLC (http://www.horde.org/)
+ * Copyright 1999-2017 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file COPYING for license information (LGPL). If you
  * did not receive this file, see http://www.horde.org/licenses/lgpl21.
@@ -99,7 +99,7 @@ class Horde_Secret
      * @param string $key  The key to use for [de|en]cryption. Only the first
      *                     56 bytes of this string is used.
      *
-     * @return Crypt_Blowfish  The crypt object.
+     * @return Horde_Crypt_Blowfish  The crypt object.
      * @throws Horde_Secret_Exception
      */
     protected function _getCipherOb($key)
@@ -124,7 +124,7 @@ class Horde_Secret
 
     /**
      * Generate a secret key (for encryption), either using a random
-     * md5 string and storing it in a cookie if the user has cookies
+     * string and storing it in a cookie if the user has cookies
      * enabled, or munging some known values if they don't.
      *
      * @param string $keyname  The name of the key to set.
@@ -215,9 +215,9 @@ class Horde_Secret
         );
 
         if ($key === false) {
-            unset($_COOKIE[$keyname], $this->_keyCache[$keyname]);
+            unset($_COOKIE[$keyname . '_key'], $this->_keyCache[$keyname]);
         } else {
-            $_COOKIE[$keyname] = $this->_keyCache[$keyname] = $key;
+            $_COOKIE[$keyname . '_key'] = $this->_keyCache[$keyname] = $key;
         }
     }
 

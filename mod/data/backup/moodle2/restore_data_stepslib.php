@@ -42,6 +42,7 @@ class restore_data_activity_structure_step extends restore_activity_structure_st
             $paths[] = new restore_path_element('data_record', '/activity/data/records/record');
             $paths[] = new restore_path_element('data_content', '/activity/data/records/record/contents/content');
             $paths[] = new restore_path_element('data_rating', '/activity/data/records/record/ratings/rating');
+            $paths[] = new restore_path_element('data_record_tag', '/activity/data/recordstags/tag');
         }
 
         // Return the paths wrapped into standard activity structure
@@ -55,6 +56,8 @@ class restore_data_activity_structure_step extends restore_activity_structure_st
         $oldid = $data->id;
         $data->course = $this->get_courseid();
 
+        // Any changes to the list of dates that needs to be rolled should be same during course restore and course reset.
+        // See MDL-9367.
         $data->timeavailablefrom = $this->apply_date_offset($data->timeavailablefrom);
         $data->timeavailableto = $this->apply_date_offset($data->timeavailableto);
         $data->timeviewfrom = $this->apply_date_offset($data->timeviewfrom);
@@ -96,9 +99,6 @@ class restore_data_activity_structure_step extends restore_activity_structure_st
         $data = (object)$data;
         $oldid = $data->id;
 
-        $data->timecreated = $this->apply_date_offset($data->timecreated);
-        $data->timemodified = $this->apply_date_offset($data->timemodified);
-
         $data->userid = $this->get_mappingid('user', $data->userid);
         $data->groupid = $this->get_mappingid('group', $data->groupid);
         $data->dataid = $this->get_new_parentid('data');
@@ -122,6 +122,28 @@ class restore_data_activity_structure_step extends restore_activity_structure_st
         $this->set_mapping('data_content', $oldid, $newitemid, true); // files by this itemname
     }
 
+    /**
+     * Add tags to restored records.
+     *
+     * @param stdClass $data Tag
+     */
+    protected function process_data_record_tag($data) {
+        $data = (object)$data;
+
+        if (!core_tag_tag::is_enabled('mod_data', 'data_records')) { // Tags disabled in server, nothing to process.
+            return;
+        }
+
+        if (!$itemid = $this->get_mappingid('data_record', $data->itemid)) {
+            // Some orphaned tag, we could not find the data record for it - ignore.
+            return;
+        }
+
+        $tag = $data->rawname;
+        $context = context_module::instance($this->task->get_moduleid());
+        core_tag_tag::add_item_tag('mod_data', 'data_records', $itemid, $context, $tag);
+    }
+
     protected function process_data_rating($data) {
         global $DB;
 
@@ -135,8 +157,6 @@ class restore_data_activity_structure_step extends restore_activity_structure_st
         }
         $data->rating = $data->value;
         $data->userid = $this->get_mappingid('user', $data->userid);
-        $data->timecreated = $this->apply_date_offset($data->timecreated);
-        $data->timemodified = $this->apply_date_offset($data->timemodified);
 
         // We need to check that component and ratingarea are both set here.
         if (empty($data->component)) {

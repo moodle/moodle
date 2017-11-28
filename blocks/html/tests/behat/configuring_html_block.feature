@@ -8,7 +8,7 @@ Feature: Adding and configuring HTML blocks
   Scenario: Configuring the HTML block with Javascript on
     Given I log in as "admin"
     And I am on site homepage
-    When I click on "Turn editing on" "link" in the "Administration" "block"
+    When I turn editing mode on
     And I add the "HTML" block
     And I configure the "(new HTML block)" block
     And I set the field "Content" to "Static text without a header"
@@ -25,7 +25,7 @@ Feature: Adding and configuring HTML blocks
   Scenario: Configuring the HTML block with Javascript off
     Given I log in as "admin"
     And I am on site homepage
-    When I click on "Turn editing on" "link" in the "Administration" "block"
+    When I turn editing mode on
     And I add the "HTML" block
     And I configure the "(new HTML block)" block
     And I set the field "Content" to "Static text without a header"

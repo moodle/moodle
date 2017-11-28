@@ -33,7 +33,16 @@ $functions = array(
         'methodname'    => 'view_url',
         'description'   => 'Trigger the course module viewed event and update the module completion status.',
         'type'          => 'write',
-        'capabilities'  => 'mod/url:view'
+        'capabilities'  => 'mod/url:view',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     ),
-
+    'mod_url_get_urls_by_courses' => array(
+        'classname'     => 'mod_url_external',
+        'methodname'    => 'get_urls_by_courses',
+        'description'   => 'Returns a list of urls in a provided list of courses, if no list is provided all urls that the user
+                            can view will be returned.',
+        'type'          => 'read',
+        'capabilities'  => 'mod/url:view',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+    ),
 );

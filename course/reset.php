@@ -71,6 +71,7 @@ if ($mform->is_cancelled()) {
         echo $OUTPUT->heading($strresetcourse);
 
         $data->reset_start_date_old = $course->startdate;
+        $data->reset_end_date_old = $course->enddate;
         $status = reset_course_userdata($data);
 
         $data = array();

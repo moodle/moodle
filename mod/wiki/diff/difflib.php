@@ -279,7 +279,7 @@ class ouwiki_line {
      * @param string $data Text data that makes up this 'line'. (May include line breaks etc.)
      * @param int $linepos Position number for first character in text
      */
-    function ouwiki_line($data,$linepos) {
+    public function __construct($data,$linepos) {
         // 1. Turn things we don't want into spaces (so that positioning stays same)
         
         // Whitespace replaced with space
@@ -289,11 +289,12 @@ class ouwiki_line {
         // Note that using a single param for replace only works because all
         // the search strings are 6 characters long
         $data=str_replace(array('&nbsp;','&#xA0;','&#160;'),'      ',$data);
-        
+
         // Tags replaced with equal number of spaces
-        $data=preg_replace_callback('/<.*?'.'>/',create_function(
-            '$matches','return preg_replace("/./"," ",$matches[0]);'),$data);
-            
+        $data = preg_replace_callback('/<.*?'.'>/', function($matches) {
+            return preg_replace("/./", " ", $matches[0]);
+        }, $data);
+
         // 2. Analyse string so that each space-separated thing 
         // is counted as a 'word' (note these may not be real words,
         // for instance words may include punctuation at either end)
@@ -319,7 +320,17 @@ class ouwiki_line {
             }
         }
     }
-    
+
+    /**
+     * Old syntax of class constructor. Deprecated in PHP7.
+     *
+     * @deprecated since Moodle 3.1
+     */
+    public function ouwiki_line($data, $linepos) {
+        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
+        self::__construct($data, $linepos);
+    }
+
     /**
      * @return string Normalised string representation of this line object
      */
@@ -368,9 +379,19 @@ class ouwiki_word {
     /** Start position in original xhtml */
     var $start;
     
-    function ouwiki_word($word,$start) {
+    public function __construct($word,$start) {
         $this->word=$word;
         $this->start=$start;
+    }
+
+    /**
+     * Old syntax of class constructor. Deprecated in PHP7.
+     *
+     * @deprecated since Moodle 3.1
+     */
+    public function ouwiki_word($word, $start) {
+        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
+        self::__construct($word, $start);
     }
 }
 
@@ -389,9 +410,10 @@ function ouwiki_diff_html_to_lines($content) {
     // Get rid of all script, style, object tags (that might contain non-text
     // outside tags)
     $content=preg_replace_callback(
-        '^(<script .*?</script>)|(<object .*?</object>)|(<style .*?</style>)^i',create_function(
-            '$matches','return preg_replace("/./"," ",$matches[0]);'),$content); 
-    
+        '^(<script .*?</script>)|(<object .*?</object>)|(<style .*?</style>)^i', function($matches) {
+        return preg_replace("/./", " ", $matches[0]);
+    }, $content);
+
     // Get rid of all ` symbols as we are going to use these for a marker later.
     $content=preg_replace('/[`]/',' ',$content);
     
@@ -404,8 +426,9 @@ function ouwiki_diff_html_to_lines($content) {
         }
         $taglist.="<$blocktag>|<\\/$blocktag>";
     }
-    $content=preg_replace_callback('/(('.$taglist.')\s*)+/i',create_function(
-        '$matches','return "`".preg_replace("/./"," ",substr($matches[0],1));'),$content);
+    $content = preg_replace_callback('/((' . $taglist . ')\s*)+/i', function($matches) {
+        return "`" . preg_replace("/./", " ", substr($matches[0], 1));
+    }, $content);
         
     // Now go through splitting each line
     $lines=array(); $index=1;
@@ -455,7 +478,7 @@ class ouwiki_changes {
      *   to indices in file2. All indices 1-based.
      * @param int $count2 Number of lines in file2
      */
-    function ouwiki_changes($diff,$count2) {
+    public function __construct($diff,$count2) {
         // Find deleted lines
         $this->deletes=self::internal_find_deletes($diff,$count2);
         
@@ -509,6 +532,16 @@ class ouwiki_changes {
             $this->changes[$lastrange]->file2count=$count2
                 -$this->changes[$lastrange]->file2start+1;
         }
+    }
+
+    /**
+     * Old syntax of class constructor. Deprecated in PHP7.
+     *
+     * @deprecated since Moodle 3.1
+     */
+    public function ouwiki_changes($diff, $count2) {
+        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
+        self::__construct($diff, $count2);
     }
 
     /**
@@ -679,8 +712,10 @@ function ouwiki_diff($file1,$file2) {
  */
 function ouwiki_diff_add_markers($html,$words,$markerclass,$beforetext,$aftertext) {
     // Sort words by start position
-    usort($words, create_function('$a,$b','return $a->start-$b->start;'));
-    
+    usort($words, function($a, $b) {
+        return $a->start - $b->start;
+    });
+
     // Add marker for each word. We use an odd tag name which will
     // be replaced by span later, this for ease of replacing 
     $spanstart="<ouwiki_diff_add_markers>";

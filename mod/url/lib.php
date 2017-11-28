@@ -60,6 +60,10 @@ function url_get_extra_capabilities() {
  * @return array status array
  */
 function url_reset_userdata($data) {
+
+    // Any changes to the list of dates that needs to be rolled should be same during course restore and course reset.
+    // See MDL-9367.
+
     return array();
 }
 
@@ -128,6 +132,9 @@ function url_add_instance($data, $mform) {
     $data->timemodified = time();
     $data->id = $DB->insert_record('url', $data);
 
+    $completiontimeexpected = !empty($data->completionexpected) ? $data->completionexpected : null;
+    \core_completion\api::update_completion_date_event($data->coursemodule, 'url', $data->id, $completiontimeexpected);
+
     return $data->id;
 }
 
@@ -170,6 +177,9 @@ function url_update_instance($data, $mform) {
 
     $DB->update_record('url', $data);
 
+    $completiontimeexpected = !empty($data->completionexpected) ? $data->completionexpected : null;
+    \core_completion\api::update_completion_date_event($data->coursemodule, 'url', $data->id, $completiontimeexpected);
+
     return true;
 }
 
@@ -184,6 +194,9 @@ function url_delete_instance($id) {
     if (!$url = $DB->get_record('url', array('id'=>$id))) {
         return false;
     }
+
+    $cm = get_coursemodule_from_instance('url', $id);
+    \core_completion\api::update_completion_date_event($cm->id, 'url', $id, null);
 
     // note: all context files are deleted automatically
 
@@ -350,4 +363,48 @@ function url_view($url, $course, $cm, $context) {
     // Completion.
     $completion = new completion_info($course);
     $completion->set_module_viewed($cm);
+}
+
+/**
+ * Check if the module has any update that affects the current user since a given time.
+ *
+ * @param  cm_info $cm course module data
+ * @param  int $from the time to check updates from
+ * @param  array $filter  if we need to check only specific updates
+ * @return stdClass an object with the different type of areas indicating if they were updated or not
+ * @since Moodle 3.2
+ */
+function url_check_updates_since(cm_info $cm, $from, $filter = array()) {
+    $updates = course_check_module_updates_since($cm, $from, array('content'), $filter);
+    return $updates;
+}
+
+/**
+ * This function receives a calendar event and returns the action associated with it, or null if there is none.
+ *
+ * This is used by block_myoverview in order to display the event appropriately. If null is returned then the event
+ * is not displayed on the block.
+ *
+ * @param calendar_event $event
+ * @param \core_calendar\action_factory $factory
+ * @return \core_calendar\local\event\entities\action_interface|null
+ */
+function mod_url_core_calendar_provide_event_action(calendar_event $event,
+                                                       \core_calendar\action_factory $factory) {
+    $cm = get_fast_modinfo($event->courseid)->instances['url'][$event->instance];
+
+    $completion = new \completion_info($cm->get_course());
+
+    $completiondata = $completion->get_data($cm, false);
+
+    if ($completiondata->completionstate != COMPLETION_INCOMPLETE) {
+        return null;
+    }
+
+    return $factory->create_instance(
+        get_string('view'),
+        new \moodle_url('/mod/url/view.php', ['id' => $cm->id]),
+        1,
+        true
+    );
 }

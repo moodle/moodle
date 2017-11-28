@@ -3,7 +3,7 @@
 /*
  * This file is part of Mustache.php.
  *
- * (c) 2010-2014 Justin Hileman
+ * (c) 2010-2017 Justin Hileman
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -27,8 +27,8 @@ class Mustache_Cache_FilesystemCache extends Mustache_Cache_AbstractCache
     /**
      * Filesystem cache constructor.
      *
-     * @param string $baseDir  Directory for compiled templates.
-     * @param int    $fileMode Override default permissions for cache files. Defaults to using the system-defined umask.
+     * @param string $baseDir  Directory for compiled templates
+     * @param int    $fileMode Override default permissions for cache files. Defaults to using the system-defined umask
      */
     public function __construct($baseDir, $fileMode = null)
     {
@@ -41,7 +41,7 @@ class Mustache_Cache_FilesystemCache extends Mustache_Cache_AbstractCache
      *
      * @param string $key
      *
-     * @return boolean
+     * @return bool
      */
     public function load($key)
     {
@@ -56,12 +56,10 @@ class Mustache_Cache_FilesystemCache extends Mustache_Cache_AbstractCache
     }
 
     /**
-     * Cache and load the compiled class
+     * Cache and load the compiled class.
      *
      * @param string $key
      * @param string $value
-     *
-     * @return void
      */
     public function cache($key, $value)
     {
@@ -91,7 +89,7 @@ class Mustache_Cache_FilesystemCache extends Mustache_Cache_AbstractCache
     }
 
     /**
-     * Create cache directory
+     * Create cache directory.
      *
      * @throws Mustache_Exception_RuntimeException If unable to create directory
      *
@@ -110,23 +108,23 @@ class Mustache_Cache_FilesystemCache extends Mustache_Cache_AbstractCache
             );
 
             @mkdir($dirName, 0777, true);
+            // @codeCoverageIgnoreStart
             if (!is_dir($dirName)) {
                 throw new Mustache_Exception_RuntimeException(sprintf('Failed to create cache directory "%s".', $dirName));
             }
+            // @codeCoverageIgnoreEnd
         }
 
         return $dirName;
     }
 
     /**
-     * Write cache file
+     * Write cache file.
      *
      * @throws Mustache_Exception_RuntimeException If unable to write file
      *
      * @param string $fileName
      * @param string $value
-     *
-     * @return void
      */
     private function writeFile($fileName, $value)
     {
@@ -147,13 +145,17 @@ class Mustache_Cache_FilesystemCache extends Mustache_Cache_AbstractCache
                 return;
             }
 
+            // @codeCoverageIgnoreStart
             $this->log(
                 Mustache_Logger::ERROR,
                 'Unable to rename Mustache temp cache file: "{tempName}" -> "{fileName}"',
                 array('tempName' => $tempFile, 'fileName' => $fileName)
             );
+            // @codeCoverageIgnoreEnd
         }
 
+        // @codeCoverageIgnoreStart
         throw new Mustache_Exception_RuntimeException(sprintf('Failed to write cache file "%s".', $fileName));
+        // @codeCoverageIgnoreEnd
     }
 }

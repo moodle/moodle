@@ -55,14 +55,14 @@ class lesson_page_type_cluster extends lesson_page {
     public function get_grayout() {
         return 1;
     }
-    public function callback_on_view($canmanage) {
+    public function callback_on_view($canmanage, $redirect = true) {
         global $USER;
         if (!$canmanage) {
             // Get the next page in the lesson cluster jump
-            return $this->lesson->cluster_jump($this->properties->id);
+            return (int) $this->lesson->cluster_jump($this->properties->id);
         } else {
             // get the next page
-            return $this->properties->nextpageid;
+            return (int) $this->properties->nextpageid;
         }
     }
     public function override_next_page() {

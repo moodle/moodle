@@ -113,6 +113,9 @@ function cohort_delete_cohort($cohort) {
     $DB->delete_records('cohort_members', array('cohortid'=>$cohort->id));
     $DB->delete_records('cohort', array('id'=>$cohort->id));
 
+    // Notify the competency subsystem.
+    \core_competency\api::hook_cohort_deleted($cohort);
+
     $event = \core\event\cohort_deleted::create(array(
         'context' => context::instance_by_id($cohort->contextid),
         'objectid' => $cohort->id,
@@ -231,7 +234,9 @@ function cohort_get_available_cohorts($currentcontext, $withmembers = 0, $offset
     // Build context subquery. Find the list of parent context where user is able to see any or visible-only cohorts.
     // Since this method is normally called for the current course all parent contexts are already preloaded.
     $contextsany = array_filter($currentcontext->get_parent_context_ids(),
-        create_function('$a', 'return has_capability("moodle/cohort:view", context::instance_by_id($a));'));
+        function($a) {
+            return has_capability("moodle/cohort:view", context::instance_by_id($a));
+        });
     $contextsvisible = array_diff($currentcontext->get_parent_context_ids(), $contextsany);
     if (empty($contextsany) && empty($contextsvisible)) {
         // User does not have any permissions to view cohorts.
@@ -256,15 +261,17 @@ function cohort_get_available_cohorts($currentcontext, $withmembers = 0, $offset
     $groupbysql = '';
     $havingsql = '';
     if ($withmembers) {
-        $groupbysql = " GROUP BY $fieldssql";
+        $fieldssql .= ', s.memberscnt';
+        $subfields = "c.id, COUNT(DISTINCT cm.userid) AS memberscnt";
+        $groupbysql = " GROUP BY c.id";
         $fromsql = " LEFT JOIN {cohort_members} cm ON cm.cohortid = c.id ";
-        $fieldssql .= ', COUNT(DISTINCT cm.userid) AS memberscnt';
         if (in_array($withmembers,
                 array(COHORT_COUNT_ENROLLED_MEMBERS, COHORT_WITH_ENROLLED_MEMBERS_ONLY, COHORT_WITH_NOTENROLLED_MEMBERS_ONLY))) {
             list($esql, $params2) = get_enrolled_sql($currentcontext);
             $fromsql .= " LEFT JOIN ($esql) u ON u.id = cm.userid ";
             $params = array_merge($params2, $params);
-            $fieldssql .= ', COUNT(DISTINCT u.id) AS enrolledcnt';
+            $fieldssql .= ', s.enrolledcnt';
+            $subfields .= ', COUNT(DISTINCT u.id) AS enrolledcnt';
         }
         if ($withmembers == COHORT_WITH_MEMBERS_ONLY) {
             $havingsql = " HAVING COUNT(DISTINCT cm.userid) > 0";
@@ -280,13 +287,20 @@ function cohort_get_available_cohorts($currentcontext, $withmembers = 0, $offset
         $params = array_merge($params, $searchparams);
     }
 
-    $sql = "SELECT $fieldssql
-              FROM {cohort} c
-              $fromsql
-             WHERE $wheresql
-             $groupbysql
-             $havingsql
-          ORDER BY c.name, c.idnumber";
+    if ($withmembers) {
+        $sql = "SELECT " . str_replace('c.', 'cohort.', $fieldssql) . "
+                  FROM {cohort} cohort
+                  JOIN (SELECT $subfields
+                          FROM {cohort} c $fromsql
+                         WHERE $wheresql $groupbysql $havingsql
+                        ) s ON cohort.id = s.id
+              ORDER BY cohort.name, cohort.idnumber";
+    } else {
+        $sql = "SELECT $fieldssql
+                  FROM {cohort} c $fromsql
+                 WHERE $wheresql
+              ORDER BY c.name, c.idnumber";
+    }
 
     return $DB->get_records_sql($sql, $params, $offset, $limit);
 }
@@ -313,6 +327,33 @@ function cohort_can_view_cohort($cohortorid, $currentcontext) {
         $cohortcontext = context::instance_by_id($cohort->contextid);
         if (has_capability('moodle/cohort:view', $cohortcontext)) {
             return true;
+        }
+    }
+    return false;
+}
+
+/**
+ * Get a cohort by id. Also does a visibility check and returns false if the user cannot see this cohort.
+ *
+ * @param stdClass|int $cohortorid cohort object or id
+ * @param context $currentcontext current context (course) where visibility is checked
+ * @return stdClass|boolean
+ */
+function cohort_get_cohort($cohortorid, $currentcontext) {
+    global $DB;
+    if (is_numeric($cohortorid)) {
+        $cohort = $DB->get_record('cohort', array('id' => $cohortorid), 'id, contextid, visible');
+    } else {
+        $cohort = $cohortorid;
+    }
+
+    if ($cohort && in_array($cohort->contextid, $currentcontext->get_parent_context_ids())) {
+        if ($cohort->visible) {
+            return $cohort;
+        }
+        $cohortcontext = context::instance_by_id($cohort->contextid);
+        if (has_capability('moodle/cohort:view', $cohortcontext)) {
+            return $cohort;
         }
     }
     return false;
@@ -506,4 +547,20 @@ function cohort_edit_controls(context $context, moodle_url $currenturl) {
         return new tabtree($tabs, $currenttab);
     }
     return null;
+}
+
+/**
+ * Implements callback inplace_editable() allowing to edit values in-place
+ *
+ * @param string $itemtype
+ * @param int $itemid
+ * @param mixed $newvalue
+ * @return \core\output\inplace_editable
+ */
+function core_cohort_inplace_editable($itemtype, $itemid, $newvalue) {
+    if ($itemtype === 'cohortname') {
+        return \core_cohort\output\cohortname::update($itemid, $newvalue);
+    } else if ($itemtype === 'cohortidnumber') {
+        return \core_cohort\output\cohortidnumber::update($itemid, $newvalue);
+    }
 }

@@ -1,0 +1,23 @@
+{{< core_form/element-template }}
+    {{$element}}
+        {{^element.frozen}}
+        <select class="custom-select {{#error}}form-control-danger{{/error}}" name="{{element.name}}"
+            id="{{element.id}}"
+            {{#element.multiple}}multiple{{/element.multiple}}
+            {{#error}}
+                autofocus aria-describedby="id_error_{{element.name}}"
+            {{/error}}
+            {{{element.attributes}}} >
+            {{#element.options}}
+            <option value="{{value}}" {{#selected}}selected{{/selected}} {{#disabled}}disabled{{/disabled}} {{{optionattributes}}}>{{{text}}}</option>
+            {{/element.options}}
+        </select>
+        {{/element.frozen}}
+        {{#element.frozen}}
+            {{#element.options}}
+                {{#selected}}{{{text}}}{{/selected}}
+            {{/element.options}}
+        {{/element.frozen}}
+        <a class="m-x-1" href="{{{element.link}}}">{{element.linklabel}}</a>
+    {{/element}}
+{{/ core_form/element-template }}

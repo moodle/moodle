@@ -23,6 +23,12 @@
  */
 
 class block_course_summary extends block_base {
+
+    /**
+     * @var bool Flag to indicate whether the header should be hidden or not.
+     */
+    private $headerhidden = true;
+
     function init() {
         $this->title = get_string('pluginname', 'block_course_summary');
     }
@@ -32,8 +38,10 @@ class block_course_summary extends block_base {
     }
 
     function specialization() {
-        if($this->page->pagetype == PAGE_COURSE_VIEW && $this->page->course->id != SITEID) {
+        // Page type starts with 'course-view' and the page's course ID is not equal to the site ID.
+        if (strpos($this->page->pagetype, PAGE_COURSE_VIEW) === 0 && $this->page->course->id != SITEID) {
             $this->title = get_string('coursesummary', 'block_course_summary');
+            $this->headerhidden = false;
         }
     }
 
@@ -57,21 +65,13 @@ class block_course_summary extends block_base {
         $context = context_course::instance($this->page->course->id);
         $this->page->course->summary = file_rewrite_pluginfile_urls($this->page->course->summary, 'pluginfile.php', $context->id, 'course', 'summary', NULL);
         $this->content->text = format_text($this->page->course->summary, $this->page->course->summaryformat, $options);
-        if ($this->page->user_is_editing()) {
-            if($this->page->course->id == SITEID) {
-                $editpage = $CFG->wwwroot.'/'.$CFG->admin.'/settings.php?section=frontpagesettings';
-            } else {
-                $editpage = $CFG->wwwroot.'/course/edit.php?id='.$this->page->course->id;
-            }
-            $this->content->text .= "<div class=\"editbutton\"><a href=\"$editpage\"><img src=\"" . $OUTPUT->pix_url('t/edit') . "\" alt=\"".get_string('edit')."\" /></a></div>";
-        }
         $this->content->footer = '';
 
         return $this->content;
     }
 
     function hide_header() {
-        return true;
+        return $this->headerhidden;
     }
 
 }

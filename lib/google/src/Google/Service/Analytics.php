@@ -56,7 +56,8 @@ class Google_Service_Analytics extends Google_Service
   public $management_accountUserLinks;
   public $management_accounts;
   public $management_customDataSources;
-  public $management_dailyUploads;
+  public $management_customDimensions;
+  public $management_customMetrics;
   public $management_experiments;
   public $management_filters;
   public $management_goals;
@@ -81,6 +82,7 @@ class Google_Service_Analytics extends Google_Service
   public function __construct(Google_Client $client)
   {
     parent::__construct($client);
+    $this->rootUrl = 'https://www.googleapis.com/';
     $this->servicePath = 'analytics/v3/';
     $this->version = 'v3';
     $this->serviceName = 'analytics';
@@ -399,44 +401,14 @@ class Google_Service_Analytics extends Google_Service
           )
         )
     );
-    $this->management_dailyUploads = new Google_Service_Analytics_ManagementDailyUploads_Resource(
+    $this->management_customDimensions = new Google_Service_Analytics_ManagementCustomDimensions_Resource(
         $this,
         $this->serviceName,
-        'dailyUploads',
+        'customDimensions',
         array(
           'methods' => array(
-            'delete' => array(
-              'path' => 'management/accounts/{accountId}/webproperties/{webPropertyId}/customDataSources/{customDataSourceId}/dailyUploads/{date}',
-              'httpMethod' => 'DELETE',
-              'parameters' => array(
-                'accountId' => array(
-                  'location' => 'path',
-                  'type' => 'string',
-                  'required' => true,
-                ),
-                'webPropertyId' => array(
-                  'location' => 'path',
-                  'type' => 'string',
-                  'required' => true,
-                ),
-                'customDataSourceId' => array(
-                  'location' => 'path',
-                  'type' => 'string',
-                  'required' => true,
-                ),
-                'date' => array(
-                  'location' => 'path',
-                  'type' => 'string',
-                  'required' => true,
-                ),
-                'type' => array(
-                  'location' => 'query',
-                  'type' => 'string',
-                  'required' => true,
-                ),
-              ),
-            ),'list' => array(
-              'path' => 'management/accounts/{accountId}/webproperties/{webPropertyId}/customDataSources/{customDataSourceId}/dailyUploads',
+            'get' => array(
+              'path' => 'management/accounts/{accountId}/webproperties/{webPropertyId}/customDimensions/{customDimensionId}',
               'httpMethod' => 'GET',
               'parameters' => array(
                 'accountId' => array(
@@ -449,32 +421,14 @@ class Google_Service_Analytics extends Google_Service
                   'type' => 'string',
                   'required' => true,
                 ),
-                'customDataSourceId' => array(
+                'customDimensionId' => array(
                   'location' => 'path',
                   'type' => 'string',
                   'required' => true,
                 ),
-                'start-date' => array(
-                  'location' => 'query',
-                  'type' => 'string',
-                  'required' => true,
-                ),
-                'end-date' => array(
-                  'location' => 'query',
-                  'type' => 'string',
-                  'required' => true,
-                ),
-                'max-results' => array(
-                  'location' => 'query',
-                  'type' => 'integer',
-                ),
-                'start-index' => array(
-                  'location' => 'query',
-                  'type' => 'integer',
-                ),
               ),
-            ),'upload' => array(
-              'path' => 'management/accounts/{accountId}/webproperties/{webPropertyId}/customDataSources/{customDataSourceId}/dailyUploads/{date}/uploads',
+            ),'insert' => array(
+              'path' => 'management/accounts/{accountId}/webproperties/{webPropertyId}/customDimensions',
               'httpMethod' => 'POST',
               'parameters' => array(
                 'accountId' => array(
@@ -487,27 +441,190 @@ class Google_Service_Analytics extends Google_Service
                   'type' => 'string',
                   'required' => true,
                 ),
-                'customDataSourceId' => array(
+              ),
+            ),'list' => array(
+              'path' => 'management/accounts/{accountId}/webproperties/{webPropertyId}/customDimensions',
+              'httpMethod' => 'GET',
+              'parameters' => array(
+                'accountId' => array(
                   'location' => 'path',
                   'type' => 'string',
                   'required' => true,
                 ),
-                'date' => array(
+                'webPropertyId' => array(
                   'location' => 'path',
                   'type' => 'string',
                   'required' => true,
                 ),
-                'appendNumber' => array(
+                'max-results' => array(
                   'location' => 'query',
                   'type' => 'integer',
-                  'required' => true,
                 ),
-                'type' => array(
+                'start-index' => array(
                   'location' => 'query',
+                  'type' => 'integer',
+                ),
+              ),
+            ),'patch' => array(
+              'path' => 'management/accounts/{accountId}/webproperties/{webPropertyId}/customDimensions/{customDimensionId}',
+              'httpMethod' => 'PATCH',
+              'parameters' => array(
+                'accountId' => array(
+                  'location' => 'path',
                   'type' => 'string',
                   'required' => true,
                 ),
-                'reset' => array(
+                'webPropertyId' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+                'customDimensionId' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+                'ignoreCustomDataSourceLinks' => array(
+                  'location' => 'query',
+                  'type' => 'boolean',
+                ),
+              ),
+            ),'update' => array(
+              'path' => 'management/accounts/{accountId}/webproperties/{webPropertyId}/customDimensions/{customDimensionId}',
+              'httpMethod' => 'PUT',
+              'parameters' => array(
+                'accountId' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+                'webPropertyId' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+                'customDimensionId' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+                'ignoreCustomDataSourceLinks' => array(
+                  'location' => 'query',
+                  'type' => 'boolean',
+                ),
+              ),
+            ),
+          )
+        )
+    );
+    $this->management_customMetrics = new Google_Service_Analytics_ManagementCustomMetrics_Resource(
+        $this,
+        $this->serviceName,
+        'customMetrics',
+        array(
+          'methods' => array(
+            'get' => array(
+              'path' => 'management/accounts/{accountId}/webproperties/{webPropertyId}/customMetrics/{customMetricId}',
+              'httpMethod' => 'GET',
+              'parameters' => array(
+                'accountId' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+                'webPropertyId' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+                'customMetricId' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+              ),
+            ),'insert' => array(
+              'path' => 'management/accounts/{accountId}/webproperties/{webPropertyId}/customMetrics',
+              'httpMethod' => 'POST',
+              'parameters' => array(
+                'accountId' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+                'webPropertyId' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+              ),
+            ),'list' => array(
+              'path' => 'management/accounts/{accountId}/webproperties/{webPropertyId}/customMetrics',
+              'httpMethod' => 'GET',
+              'parameters' => array(
+                'accountId' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+                'webPropertyId' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+                'max-results' => array(
+                  'location' => 'query',
+                  'type' => 'integer',
+                ),
+                'start-index' => array(
+                  'location' => 'query',
+                  'type' => 'integer',
+                ),
+              ),
+            ),'patch' => array(
+              'path' => 'management/accounts/{accountId}/webproperties/{webPropertyId}/customMetrics/{customMetricId}',
+              'httpMethod' => 'PATCH',
+              'parameters' => array(
+                'accountId' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+                'webPropertyId' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+                'customMetricId' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+                'ignoreCustomDataSourceLinks' => array(
+                  'location' => 'query',
+                  'type' => 'boolean',
+                ),
+              ),
+            ),'update' => array(
+              'path' => 'management/accounts/{accountId}/webproperties/{webPropertyId}/customMetrics/{customMetricId}',
+              'httpMethod' => 'PUT',
+              'parameters' => array(
+                'accountId' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+                'webPropertyId' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+                'customMetricId' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+                'ignoreCustomDataSourceLinks' => array(
                   'location' => 'query',
                   'type' => 'boolean',
                 ),
@@ -1484,26 +1601,6 @@ class Google_Service_Analytics extends Google_Service
                   'type' => 'integer',
                 ),
               ),
-            ),'migrateDataImport' => array(
-              'path' => 'management/accounts/{accountId}/webproperties/{webPropertyId}/customDataSources/{customDataSourceId}/migrateDataImport',
-              'httpMethod' => 'POST',
-              'parameters' => array(
-                'accountId' => array(
-                  'location' => 'path',
-                  'type' => 'string',
-                  'required' => true,
-                ),
-                'webPropertyId' => array(
-                  'location' => 'path',
-                  'type' => 'string',
-                  'required' => true,
-                ),
-                'customDataSourceId' => array(
-                  'location' => 'path',
-                  'type' => 'string',
-                  'required' => true,
-                ),
-              ),
             ),'uploadData' => array(
               'path' => 'management/accounts/{accountId}/webproperties/{webPropertyId}/customDataSources/{customDataSourceId}/uploads',
               'httpMethod' => 'POST',
@@ -2198,85 +2295,229 @@ class Google_Service_Analytics_ManagementCustomDataSources_Resource extends Goog
   }
 }
 /**
- * The "dailyUploads" collection of methods.
+ * The "customDimensions" collection of methods.
  * Typical usage is:
  *  <code>
  *   $analyticsService = new Google_Service_Analytics(...);
- *   $dailyUploads = $analyticsService->dailyUploads;
+ *   $customDimensions = $analyticsService->customDimensions;
  *  </code>
  */
-class Google_Service_Analytics_ManagementDailyUploads_Resource extends Google_Service_Resource
+class Google_Service_Analytics_ManagementCustomDimensions_Resource extends Google_Service_Resource
 {
 
   /**
-   * Delete uploaded data for the given date. (dailyUploads.delete)
+   * Get a custom dimension to which the user has access. (customDimensions.get)
    *
-   * @param string $accountId Account Id associated with daily upload delete.
-   * @param string $webPropertyId Web property Id associated with daily upload
-   * delete.
-   * @param string $customDataSourceId Custom data source Id associated with daily
-   * upload delete.
-   * @param string $date Date for which data is to be deleted. Date should be
-   * formatted as YYYY-MM-DD.
-   * @param string $type Type of data for this delete.
+   * @param string $accountId Account ID for the custom dimension to retrieve.
+   * @param string $webPropertyId Web property ID for the custom dimension to
+   * retrieve.
+   * @param string $customDimensionId The ID of the custom dimension to retrieve.
    * @param array $optParams Optional parameters.
+   * @return Google_Service_Analytics_CustomDimension
    */
-  public function delete($accountId, $webPropertyId, $customDataSourceId, $date, $type, $optParams = array())
+  public function get($accountId, $webPropertyId, $customDimensionId, $optParams = array())
   {
-    $params = array('accountId' => $accountId, 'webPropertyId' => $webPropertyId, 'customDataSourceId' => $customDataSourceId, 'date' => $date, 'type' => $type);
+    $params = array('accountId' => $accountId, 'webPropertyId' => $webPropertyId, 'customDimensionId' => $customDimensionId);
     $params = array_merge($params, $optParams);
-    return $this->call('delete', array($params));
+    return $this->call('get', array($params), "Google_Service_Analytics_CustomDimension");
   }
 
   /**
-   * List daily uploads to which the user has access.
-   * (dailyUploads.listManagementDailyUploads)
+   * Create a new custom dimension. (customDimensions.insert)
    *
-   * @param string $accountId Account Id for the daily uploads to retrieve.
-   * @param string $webPropertyId Web property Id for the daily uploads to
-   * retrieve.
-   * @param string $customDataSourceId Custom data source Id for daily uploads to
-   * retrieve.
-   * @param string $startDate Start date of the form YYYY-MM-DD.
-   * @param string $endDate End date of the form YYYY-MM-DD.
+   * @param string $accountId Account ID for the custom dimension to create.
+   * @param string $webPropertyId Web property ID for the custom dimension to
+   * create.
+   * @param Google_CustomDimension $postBody
    * @param array $optParams Optional parameters.
-   *
-   * @opt_param int max-results The maximum number of custom data sources to
-   * include in this response.
-   * @opt_param int start-index A 1-based index of the first daily upload to
-   * retrieve. Use this parameter as a pagination mechanism along with the max-
-   * results parameter.
-   * @return Google_Service_Analytics_DailyUploads
+   * @return Google_Service_Analytics_CustomDimension
    */
-  public function listManagementDailyUploads($accountId, $webPropertyId, $customDataSourceId, $startDate, $endDate, $optParams = array())
+  public function insert($accountId, $webPropertyId, Google_Service_Analytics_CustomDimension $postBody, $optParams = array())
   {
-    $params = array('accountId' => $accountId, 'webPropertyId' => $webPropertyId, 'customDataSourceId' => $customDataSourceId, 'start-date' => $startDate, 'end-date' => $endDate);
+    $params = array('accountId' => $accountId, 'webPropertyId' => $webPropertyId, 'postBody' => $postBody);
     $params = array_merge($params, $optParams);
-    return $this->call('list', array($params), "Google_Service_Analytics_DailyUploads");
+    return $this->call('insert', array($params), "Google_Service_Analytics_CustomDimension");
   }
 
   /**
-   * Update/Overwrite data for a custom data source. (dailyUploads.upload)
+   * Lists custom dimensions to which the user has access.
+   * (customDimensions.listManagementCustomDimensions)
    *
-   * @param string $accountId Account Id associated with daily upload.
-   * @param string $webPropertyId Web property Id associated with daily upload.
-   * @param string $customDataSourceId Custom data source Id to which the data
-   * being uploaded belongs.
-   * @param string $date Date for which data is uploaded. Date should be formatted
-   * as YYYY-MM-DD.
-   * @param int $appendNumber Append number for this upload indexed from 1.
-   * @param string $type Type of data for this upload.
+   * @param string $accountId Account ID for the custom dimensions to retrieve.
+   * @param string $webPropertyId Web property ID for the custom dimensions to
+   * retrieve.
    * @param array $optParams Optional parameters.
    *
-   * @opt_param bool reset Reset/Overwrite all previous appends for this date and
-   * start over with this file as the first upload.
-   * @return Google_Service_Analytics_DailyUploadAppend
+   * @opt_param int max-results The maximum number of custom dimensions to include
+   * in this response.
+   * @opt_param int start-index An index of the first entity to retrieve. Use this
+   * parameter as a pagination mechanism along with the max-results parameter.
+   * @return Google_Service_Analytics_CustomDimensions
    */
-  public function upload($accountId, $webPropertyId, $customDataSourceId, $date, $appendNumber, $type, $optParams = array())
+  public function listManagementCustomDimensions($accountId, $webPropertyId, $optParams = array())
   {
-    $params = array('accountId' => $accountId, 'webPropertyId' => $webPropertyId, 'customDataSourceId' => $customDataSourceId, 'date' => $date, 'appendNumber' => $appendNumber, 'type' => $type);
+    $params = array('accountId' => $accountId, 'webPropertyId' => $webPropertyId);
     $params = array_merge($params, $optParams);
-    return $this->call('upload', array($params), "Google_Service_Analytics_DailyUploadAppend");
+    return $this->call('list', array($params), "Google_Service_Analytics_CustomDimensions");
+  }
+
+  /**
+   * Updates an existing custom dimension. This method supports patch semantics.
+   * (customDimensions.patch)
+   *
+   * @param string $accountId Account ID for the custom dimension to update.
+   * @param string $webPropertyId Web property ID for the custom dimension to
+   * update.
+   * @param string $customDimensionId Custom dimension ID for the custom dimension
+   * to update.
+   * @param Google_CustomDimension $postBody
+   * @param array $optParams Optional parameters.
+   *
+   * @opt_param bool ignoreCustomDataSourceLinks Force the update and ignore any
+   * warnings related to the custom dimension being linked to a custom data source
+   * / data set.
+   * @return Google_Service_Analytics_CustomDimension
+   */
+  public function patch($accountId, $webPropertyId, $customDimensionId, Google_Service_Analytics_CustomDimension $postBody, $optParams = array())
+  {
+    $params = array('accountId' => $accountId, 'webPropertyId' => $webPropertyId, 'customDimensionId' => $customDimensionId, 'postBody' => $postBody);
+    $params = array_merge($params, $optParams);
+    return $this->call('patch', array($params), "Google_Service_Analytics_CustomDimension");
+  }
+
+  /**
+   * Updates an existing custom dimension. (customDimensions.update)
+   *
+   * @param string $accountId Account ID for the custom dimension to update.
+   * @param string $webPropertyId Web property ID for the custom dimension to
+   * update.
+   * @param string $customDimensionId Custom dimension ID for the custom dimension
+   * to update.
+   * @param Google_CustomDimension $postBody
+   * @param array $optParams Optional parameters.
+   *
+   * @opt_param bool ignoreCustomDataSourceLinks Force the update and ignore any
+   * warnings related to the custom dimension being linked to a custom data source
+   * / data set.
+   * @return Google_Service_Analytics_CustomDimension
+   */
+  public function update($accountId, $webPropertyId, $customDimensionId, Google_Service_Analytics_CustomDimension $postBody, $optParams = array())
+  {
+    $params = array('accountId' => $accountId, 'webPropertyId' => $webPropertyId, 'customDimensionId' => $customDimensionId, 'postBody' => $postBody);
+    $params = array_merge($params, $optParams);
+    return $this->call('update', array($params), "Google_Service_Analytics_CustomDimension");
+  }
+}
+/**
+ * The "customMetrics" collection of methods.
+ * Typical usage is:
+ *  <code>
+ *   $analyticsService = new Google_Service_Analytics(...);
+ *   $customMetrics = $analyticsService->customMetrics;
+ *  </code>
+ */
+class Google_Service_Analytics_ManagementCustomMetrics_Resource extends Google_Service_Resource
+{
+
+  /**
+   * Get a custom metric to which the user has access. (customMetrics.get)
+   *
+   * @param string $accountId Account ID for the custom metric to retrieve.
+   * @param string $webPropertyId Web property ID for the custom metric to
+   * retrieve.
+   * @param string $customMetricId The ID of the custom metric to retrieve.
+   * @param array $optParams Optional parameters.
+   * @return Google_Service_Analytics_CustomMetric
+   */
+  public function get($accountId, $webPropertyId, $customMetricId, $optParams = array())
+  {
+    $params = array('accountId' => $accountId, 'webPropertyId' => $webPropertyId, 'customMetricId' => $customMetricId);
+    $params = array_merge($params, $optParams);
+    return $this->call('get', array($params), "Google_Service_Analytics_CustomMetric");
+  }
+
+  /**
+   * Create a new custom metric. (customMetrics.insert)
+   *
+   * @param string $accountId Account ID for the custom metric to create.
+   * @param string $webPropertyId Web property ID for the custom dimension to
+   * create.
+   * @param Google_CustomMetric $postBody
+   * @param array $optParams Optional parameters.
+   * @return Google_Service_Analytics_CustomMetric
+   */
+  public function insert($accountId, $webPropertyId, Google_Service_Analytics_CustomMetric $postBody, $optParams = array())
+  {
+    $params = array('accountId' => $accountId, 'webPropertyId' => $webPropertyId, 'postBody' => $postBody);
+    $params = array_merge($params, $optParams);
+    return $this->call('insert', array($params), "Google_Service_Analytics_CustomMetric");
+  }
+
+  /**
+   * Lists custom metrics to which the user has access.
+   * (customMetrics.listManagementCustomMetrics)
+   *
+   * @param string $accountId Account ID for the custom metrics to retrieve.
+   * @param string $webPropertyId Web property ID for the custom metrics to
+   * retrieve.
+   * @param array $optParams Optional parameters.
+   *
+   * @opt_param int max-results The maximum number of custom metrics to include in
+   * this response.
+   * @opt_param int start-index An index of the first entity to retrieve. Use this
+   * parameter as a pagination mechanism along with the max-results parameter.
+   * @return Google_Service_Analytics_CustomMetrics
+   */
+  public function listManagementCustomMetrics($accountId, $webPropertyId, $optParams = array())
+  {
+    $params = array('accountId' => $accountId, 'webPropertyId' => $webPropertyId);
+    $params = array_merge($params, $optParams);
+    return $this->call('list', array($params), "Google_Service_Analytics_CustomMetrics");
+  }
+
+  /**
+   * Updates an existing custom metric. This method supports patch semantics.
+   * (customMetrics.patch)
+   *
+   * @param string $accountId Account ID for the custom metric to update.
+   * @param string $webPropertyId Web property ID for the custom metric to update.
+   * @param string $customMetricId Custom metric ID for the custom metric to
+   * update.
+   * @param Google_CustomMetric $postBody
+   * @param array $optParams Optional parameters.
+   *
+   * @opt_param bool ignoreCustomDataSourceLinks Force the update and ignore any
+   * warnings related to the custom metric being linked to a custom data source /
+   * data set.
+   * @return Google_Service_Analytics_CustomMetric
+   */
+  public function patch($accountId, $webPropertyId, $customMetricId, Google_Service_Analytics_CustomMetric $postBody, $optParams = array())
+  {
+    $params = array('accountId' => $accountId, 'webPropertyId' => $webPropertyId, 'customMetricId' => $customMetricId, 'postBody' => $postBody);
+    $params = array_merge($params, $optParams);
+    return $this->call('patch', array($params), "Google_Service_Analytics_CustomMetric");
+  }
+
+  /**
+   * Updates an existing custom metric. (customMetrics.update)
+   *
+   * @param string $accountId Account ID for the custom metric to update.
+   * @param string $webPropertyId Web property ID for the custom metric to update.
+   * @param string $customMetricId Custom metric ID for the custom metric to
+   * update.
+   * @param Google_CustomMetric $postBody
+   * @param array $optParams Optional parameters.
+   *
+   * @opt_param bool ignoreCustomDataSourceLinks Force the update and ignore any
+   * warnings related to the custom metric being linked to a custom data source /
+   * data set.
+   * @return Google_Service_Analytics_CustomMetric
+   */
+  public function update($accountId, $webPropertyId, $customMetricId, Google_Service_Analytics_CustomMetric $postBody, $optParams = array())
+  {
+    $params = array('accountId' => $accountId, 'webPropertyId' => $webPropertyId, 'customMetricId' => $customMetricId, 'postBody' => $postBody);
+    $params = array_merge($params, $optParams);
+    return $this->call('update', array($params), "Google_Service_Analytics_CustomMetric");
   }
 }
 /**
@@ -3131,22 +3372,6 @@ class Google_Service_Analytics_ManagementUploads_Resource extends Google_Service
     $params = array('accountId' => $accountId, 'webPropertyId' => $webPropertyId, 'customDataSourceId' => $customDataSourceId);
     $params = array_merge($params, $optParams);
     return $this->call('list', array($params), "Google_Service_Analytics_Uploads");
-  }
-
-  /**
-   * Migrate custom data source and data imports to latest version.
-   * (uploads.migrateDataImport)
-   *
-   * @param string $accountId Account Id for migration.
-   * @param string $webPropertyId Web property Id for migration.
-   * @param string $customDataSourceId Custom data source Id for migration.
-   * @param array $optParams Optional parameters.
-   */
-  public function migrateDataImport($accountId, $webPropertyId, $customDataSourceId, $optParams = array())
-  {
-    $params = array('accountId' => $accountId, 'webPropertyId' => $webPropertyId, 'customDataSourceId' => $customDataSourceId);
-    $params = array_merge($params, $optParams);
-    return $this->call('migrateDataImport', array($params));
   }
 
   /**
@@ -4418,23 +4643,22 @@ class Google_Service_Analytics_CustomDataSources extends Google_Collection
   }
 }
 
-class Google_Service_Analytics_DailyUpload extends Google_Collection
+class Google_Service_Analytics_CustomDimension extends Google_Model
 {
-  protected $collection_key = 'recentChanges';
   protected $internal_gapi_mappings = array(
   );
   public $accountId;
-  public $appendCount;
-  public $createdTime;
-  public $customDataSourceId;
-  public $date;
+  public $active;
+  public $created;
+  public $id;
+  public $index;
   public $kind;
-  public $modifiedTime;
-  protected $parentLinkType = 'Google_Service_Analytics_DailyUploadParentLink';
+  public $name;
+  protected $parentLinkType = 'Google_Service_Analytics_CustomDimensionParentLink';
   protected $parentLinkDataType = '';
-  protected $recentChangesType = 'Google_Service_Analytics_DailyUploadRecentChanges';
-  protected $recentChangesDataType = 'array';
+  public $scope;
   public $selfLink;
+  public $updated;
   public $webPropertyId;
 
 
@@ -4446,37 +4670,37 @@ class Google_Service_Analytics_DailyUpload extends Google_Collection
   {
     return $this->accountId;
   }
-  public function setAppendCount($appendCount)
+  public function setActive($active)
   {
-    $this->appendCount = $appendCount;
+    $this->active = $active;
   }
-  public function getAppendCount()
+  public function getActive()
   {
-    return $this->appendCount;
+    return $this->active;
   }
-  public function setCreatedTime($createdTime)
+  public function setCreated($created)
   {
-    $this->createdTime = $createdTime;
+    $this->created = $created;
   }
-  public function getCreatedTime()
+  public function getCreated()
   {
-    return $this->createdTime;
+    return $this->created;
   }
-  public function setCustomDataSourceId($customDataSourceId)
+  public function setId($id)
   {
-    $this->customDataSourceId = $customDataSourceId;
+    $this->id = $id;
   }
-  public function getCustomDataSourceId()
+  public function getId()
   {
-    return $this->customDataSourceId;
+    return $this->id;
   }
-  public function setDate($date)
+  public function setIndex($index)
   {
-    $this->date = $date;
+    $this->index = $index;
   }
-  public function getDate()
+  public function getIndex()
   {
-    return $this->date;
+    return $this->index;
   }
   public function setKind($kind)
   {
@@ -4486,15 +4710,15 @@ class Google_Service_Analytics_DailyUpload extends Google_Collection
   {
     return $this->kind;
   }
-  public function setModifiedTime($modifiedTime)
+  public function setName($name)
   {
-    $this->modifiedTime = $modifiedTime;
+    $this->name = $name;
   }
-  public function getModifiedTime()
+  public function getName()
   {
-    return $this->modifiedTime;
+    return $this->name;
   }
-  public function setParentLink(Google_Service_Analytics_DailyUploadParentLink $parentLink)
+  public function setParentLink(Google_Service_Analytics_CustomDimensionParentLink $parentLink)
   {
     $this->parentLink = $parentLink;
   }
@@ -4502,13 +4726,13 @@ class Google_Service_Analytics_DailyUpload extends Google_Collection
   {
     return $this->parentLink;
   }
-  public function setRecentChanges($recentChanges)
+  public function setScope($scope)
   {
-    $this->recentChanges = $recentChanges;
+    $this->scope = $scope;
   }
-  public function getRecentChanges()
+  public function getScope()
   {
-    return $this->recentChanges;
+    return $this->scope;
   }
   public function setSelfLink($selfLink)
   {
@@ -4518,76 +4742,13 @@ class Google_Service_Analytics_DailyUpload extends Google_Collection
   {
     return $this->selfLink;
   }
-  public function setWebPropertyId($webPropertyId)
+  public function setUpdated($updated)
   {
-    $this->webPropertyId = $webPropertyId;
+    $this->updated = $updated;
   }
-  public function getWebPropertyId()
+  public function getUpdated()
   {
-    return $this->webPropertyId;
-  }
-}
-
-class Google_Service_Analytics_DailyUploadAppend extends Google_Model
-{
-  protected $internal_gapi_mappings = array(
-  );
-  public $accountId;
-  public $appendNumber;
-  public $customDataSourceId;
-  public $date;
-  public $kind;
-  public $nextAppendLink;
-  public $webPropertyId;
-
-
-  public function setAccountId($accountId)
-  {
-    $this->accountId = $accountId;
-  }
-  public function getAccountId()
-  {
-    return $this->accountId;
-  }
-  public function setAppendNumber($appendNumber)
-  {
-    $this->appendNumber = $appendNumber;
-  }
-  public function getAppendNumber()
-  {
-    return $this->appendNumber;
-  }
-  public function setCustomDataSourceId($customDataSourceId)
-  {
-    $this->customDataSourceId = $customDataSourceId;
-  }
-  public function getCustomDataSourceId()
-  {
-    return $this->customDataSourceId;
-  }
-  public function setDate($date)
-  {
-    $this->date = $date;
-  }
-  public function getDate()
-  {
-    return $this->date;
-  }
-  public function setKind($kind)
-  {
-    $this->kind = $kind;
-  }
-  public function getKind()
-  {
-    return $this->kind;
-  }
-  public function setNextAppendLink($nextAppendLink)
-  {
-    $this->nextAppendLink = $nextAppendLink;
-  }
-  public function getNextAppendLink()
-  {
-    return $this->nextAppendLink;
+    return $this->updated;
   }
   public function setWebPropertyId($webPropertyId)
   {
@@ -4599,7 +4760,7 @@ class Google_Service_Analytics_DailyUploadAppend extends Google_Model
   }
 }
 
-class Google_Service_Analytics_DailyUploadParentLink extends Google_Model
+class Google_Service_Analytics_CustomDimensionParentLink extends Google_Model
 {
   protected $internal_gapi_mappings = array(
   );
@@ -4625,38 +4786,266 @@ class Google_Service_Analytics_DailyUploadParentLink extends Google_Model
   }
 }
 
-class Google_Service_Analytics_DailyUploadRecentChanges extends Google_Model
-{
-  protected $internal_gapi_mappings = array(
-  );
-  public $change;
-  public $time;
-
-
-  public function setChange($change)
-  {
-    $this->change = $change;
-  }
-  public function getChange()
-  {
-    return $this->change;
-  }
-  public function setTime($time)
-  {
-    $this->time = $time;
-  }
-  public function getTime()
-  {
-    return $this->time;
-  }
-}
-
-class Google_Service_Analytics_DailyUploads extends Google_Collection
+class Google_Service_Analytics_CustomDimensions extends Google_Collection
 {
   protected $collection_key = 'items';
   protected $internal_gapi_mappings = array(
   );
-  protected $itemsType = 'Google_Service_Analytics_DailyUpload';
+  protected $itemsType = 'Google_Service_Analytics_CustomDimension';
+  protected $itemsDataType = 'array';
+  public $itemsPerPage;
+  public $kind;
+  public $nextLink;
+  public $previousLink;
+  public $startIndex;
+  public $totalResults;
+  public $username;
+
+
+  public function setItems($items)
+  {
+    $this->items = $items;
+  }
+  public function getItems()
+  {
+    return $this->items;
+  }
+  public function setItemsPerPage($itemsPerPage)
+  {
+    $this->itemsPerPage = $itemsPerPage;
+  }
+  public function getItemsPerPage()
+  {
+    return $this->itemsPerPage;
+  }
+  public function setKind($kind)
+  {
+    $this->kind = $kind;
+  }
+  public function getKind()
+  {
+    return $this->kind;
+  }
+  public function setNextLink($nextLink)
+  {
+    $this->nextLink = $nextLink;
+  }
+  public function getNextLink()
+  {
+    return $this->nextLink;
+  }
+  public function setPreviousLink($previousLink)
+  {
+    $this->previousLink = $previousLink;
+  }
+  public function getPreviousLink()
+  {
+    return $this->previousLink;
+  }
+  public function setStartIndex($startIndex)
+  {
+    $this->startIndex = $startIndex;
+  }
+  public function getStartIndex()
+  {
+    return $this->startIndex;
+  }
+  public function setTotalResults($totalResults)
+  {
+    $this->totalResults = $totalResults;
+  }
+  public function getTotalResults()
+  {
+    return $this->totalResults;
+  }
+  public function setUsername($username)
+  {
+    $this->username = $username;
+  }
+  public function getUsername()
+  {
+    return $this->username;
+  }
+}
+
+class Google_Service_Analytics_CustomMetric extends Google_Model
+{
+  protected $internal_gapi_mappings = array(
+        "maxValue" => "max_value",
+        "minValue" => "min_value",
+  );
+  public $accountId;
+  public $active;
+  public $created;
+  public $id;
+  public $index;
+  public $kind;
+  public $maxValue;
+  public $minValue;
+  public $name;
+  protected $parentLinkType = 'Google_Service_Analytics_CustomMetricParentLink';
+  protected $parentLinkDataType = '';
+  public $scope;
+  public $selfLink;
+  public $type;
+  public $updated;
+  public $webPropertyId;
+
+
+  public function setAccountId($accountId)
+  {
+    $this->accountId = $accountId;
+  }
+  public function getAccountId()
+  {
+    return $this->accountId;
+  }
+  public function setActive($active)
+  {
+    $this->active = $active;
+  }
+  public function getActive()
+  {
+    return $this->active;
+  }
+  public function setCreated($created)
+  {
+    $this->created = $created;
+  }
+  public function getCreated()
+  {
+    return $this->created;
+  }
+  public function setId($id)
+  {
+    $this->id = $id;
+  }
+  public function getId()
+  {
+    return $this->id;
+  }
+  public function setIndex($index)
+  {
+    $this->index = $index;
+  }
+  public function getIndex()
+  {
+    return $this->index;
+  }
+  public function setKind($kind)
+  {
+    $this->kind = $kind;
+  }
+  public function getKind()
+  {
+    return $this->kind;
+  }
+  public function setMaxValue($maxValue)
+  {
+    $this->maxValue = $maxValue;
+  }
+  public function getMaxValue()
+  {
+    return $this->maxValue;
+  }
+  public function setMinValue($minValue)
+  {
+    $this->minValue = $minValue;
+  }
+  public function getMinValue()
+  {
+    return $this->minValue;
+  }
+  public function setName($name)
+  {
+    $this->name = $name;
+  }
+  public function getName()
+  {
+    return $this->name;
+  }
+  public function setParentLink(Google_Service_Analytics_CustomMetricParentLink $parentLink)
+  {
+    $this->parentLink = $parentLink;
+  }
+  public function getParentLink()
+  {
+    return $this->parentLink;
+  }
+  public function setScope($scope)
+  {
+    $this->scope = $scope;
+  }
+  public function getScope()
+  {
+    return $this->scope;
+  }
+  public function setSelfLink($selfLink)
+  {
+    $this->selfLink = $selfLink;
+  }
+  public function getSelfLink()
+  {
+    return $this->selfLink;
+  }
+  public function setType($type)
+  {
+    $this->type = $type;
+  }
+  public function getType()
+  {
+    return $this->type;
+  }
+  public function setUpdated($updated)
+  {
+    $this->updated = $updated;
+  }
+  public function getUpdated()
+  {
+    return $this->updated;
+  }
+  public function setWebPropertyId($webPropertyId)
+  {
+    $this->webPropertyId = $webPropertyId;
+  }
+  public function getWebPropertyId()
+  {
+    return $this->webPropertyId;
+  }
+}
+
+class Google_Service_Analytics_CustomMetricParentLink extends Google_Model
+{
+  protected $internal_gapi_mappings = array(
+  );
+  public $href;
+  public $type;
+
+
+  public function setHref($href)
+  {
+    $this->href = $href;
+  }
+  public function getHref()
+  {
+    return $this->href;
+  }
+  public function setType($type)
+  {
+    $this->type = $type;
+  }
+  public function getType()
+  {
+    return $this->type;
+  }
+}
+
+class Google_Service_Analytics_CustomMetrics extends Google_Collection
+{
+  protected $collection_key = 'items';
+  protected $internal_gapi_mappings = array(
+  );
+  protected $itemsType = 'Google_Service_Analytics_CustomMetric';
   protected $itemsDataType = 'array';
   public $itemsPerPage;
   public $kind;
@@ -5683,11 +6072,14 @@ class Google_Service_Analytics_FilterAdvancedDetails extends Google_Model
   public $extractA;
   public $extractB;
   public $fieldA;
+  public $fieldAIndex;
   public $fieldARequired;
   public $fieldB;
+  public $fieldBIndex;
   public $fieldBRequired;
   public $outputConstructor;
   public $outputToField;
+  public $outputToFieldIndex;
   public $overrideOutputField;
 
 
@@ -5723,6 +6115,14 @@ class Google_Service_Analytics_FilterAdvancedDetails extends Google_Model
   {
     return $this->fieldA;
   }
+  public function setFieldAIndex($fieldAIndex)
+  {
+    $this->fieldAIndex = $fieldAIndex;
+  }
+  public function getFieldAIndex()
+  {
+    return $this->fieldAIndex;
+  }
   public function setFieldARequired($fieldARequired)
   {
     $this->fieldARequired = $fieldARequired;
@@ -5738,6 +6138,14 @@ class Google_Service_Analytics_FilterAdvancedDetails extends Google_Model
   public function getFieldB()
   {
     return $this->fieldB;
+  }
+  public function setFieldBIndex($fieldBIndex)
+  {
+    $this->fieldBIndex = $fieldBIndex;
+  }
+  public function getFieldBIndex()
+  {
+    return $this->fieldBIndex;
   }
   public function setFieldBRequired($fieldBRequired)
   {
@@ -5763,6 +6171,14 @@ class Google_Service_Analytics_FilterAdvancedDetails extends Google_Model
   {
     return $this->outputToField;
   }
+  public function setOutputToFieldIndex($outputToFieldIndex)
+  {
+    $this->outputToFieldIndex = $outputToFieldIndex;
+  }
+  public function getOutputToFieldIndex()
+  {
+    return $this->outputToFieldIndex;
+  }
   public function setOverrideOutputField($overrideOutputField)
   {
     $this->overrideOutputField = $overrideOutputField;
@@ -5780,6 +6196,7 @@ class Google_Service_Analytics_FilterExpression extends Google_Model
   public $caseSensitive;
   public $expressionValue;
   public $field;
+  public $fieldIndex;
   public $kind;
   public $matchType;
 
@@ -5808,6 +6225,14 @@ class Google_Service_Analytics_FilterExpression extends Google_Model
   {
     return $this->field;
   }
+  public function setFieldIndex($fieldIndex)
+  {
+    $this->fieldIndex = $fieldIndex;
+  }
+  public function getFieldIndex()
+  {
+    return $this->fieldIndex;
+  }
   public function setKind($kind)
   {
     $this->kind = $kind;
@@ -5831,6 +6256,7 @@ class Google_Service_Analytics_FilterLowercaseDetails extends Google_Model
   protected $internal_gapi_mappings = array(
   );
   public $field;
+  public $fieldIndex;
 
 
   public function setField($field)
@@ -5840,6 +6266,14 @@ class Google_Service_Analytics_FilterLowercaseDetails extends Google_Model
   public function getField()
   {
     return $this->field;
+  }
+  public function setFieldIndex($fieldIndex)
+  {
+    $this->fieldIndex = $fieldIndex;
+  }
+  public function getFieldIndex()
+  {
+    return $this->fieldIndex;
   }
 }
 
@@ -5928,6 +6362,7 @@ class Google_Service_Analytics_FilterSearchAndReplaceDetails extends Google_Mode
   );
   public $caseSensitive;
   public $field;
+  public $fieldIndex;
   public $replaceString;
   public $searchString;
 
@@ -5947,6 +6382,14 @@ class Google_Service_Analytics_FilterSearchAndReplaceDetails extends Google_Mode
   public function getField()
   {
     return $this->field;
+  }
+  public function setFieldIndex($fieldIndex)
+  {
+    $this->fieldIndex = $fieldIndex;
+  }
+  public function getFieldIndex()
+  {
+    return $this->fieldIndex;
   }
   public function setReplaceString($replaceString)
   {
@@ -5971,6 +6414,7 @@ class Google_Service_Analytics_FilterUppercaseDetails extends Google_Model
   protected $internal_gapi_mappings = array(
   );
   public $field;
+  public $fieldIndex;
 
 
   public function setField($field)
@@ -5980,6 +6424,14 @@ class Google_Service_Analytics_FilterUppercaseDetails extends Google_Model
   public function getField()
   {
     return $this->field;
+  }
+  public function setFieldIndex($fieldIndex)
+  {
+    $this->fieldIndex = $fieldIndex;
+  }
+  public function getFieldIndex()
+  {
+    return $this->fieldIndex;
   }
 }
 

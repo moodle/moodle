@@ -73,53 +73,6 @@ class core_setuplib_testcase extends advanced_testcase {
                 get_docs_url('%%WWWROOT%%/lib/tests/setuplib_test.php'));
     }
 
-    public function test_is_web_crawler() {
-        $browsers = array(
-            'Mozilla/5.0 (Windows; U; MSIE 9.0; WIndows NT 9.0; en-US))',
-            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.8; rv:18.0) Gecko/18.0 Firefox/18.0',
-            'Mozilla/5.0 (Macintosh; U; PPC Mac OS X; en) AppleWebKit/412 (KHTML, like Gecko) Safari/412',
-            'Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_5; en-US) AppleWebKit/534.10 (KHTML, like Gecko) Chrome/8.0.552.215 Safari/534.10',
-            'Opera/9.0 (Windows NT 5.1; U; en)',
-            'Mozilla/5.0 (Linux; U; Android 2.1; en-us; Nexus One Build/ERD62) AppleWebKit/530.17 (KHTML, like Gecko) Version/4.0 Mobile Safari/530.17 –Nexus',
-            'Mozilla/5.0 (iPad; U; CPU OS 4_2_1 like Mac OS X; en-us) AppleWebKit/533.17.9 (KHTML, like Gecko) Version/5.0.2 Mobile/8C148 Safari/6533.18.5',
-        );
-        $crawlers = array(
-            // Google.
-            'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)',
-            'Googlebot/2.1 (+http://www.googlebot.com/bot.html)',
-            'Googlebot-Image/1.0',
-            // Yahoo.
-            'Mozilla/5.0 (compatible; Yahoo! Slurp; http://help.yahoo.com/help/us/ysearch/slurp)',
-            // Bing.
-            'Mozilla/5.0 (compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm)',
-            'Mozilla/5.0 (compatible; bingbot/2.0 +http://www.bing.com/bingbot.htm)',
-            // MSN.
-            'msnbot/2.1',
-            // Yandex.
-            'Mozilla/5.0 (compatible; YandexBot/3.0; +http://yandex.com/bots)',
-            'Mozilla/5.0 (compatible; YandexImages/3.0; +http://yandex.com/bots)',
-            // AltaVista.
-            'AltaVista V2.0B crawler@evreka.com',
-            // ZoomSpider.
-            'ZoomSpider - wrensoft.com [ZSEBOT]',
-            // Baidu.
-            'Baiduspider+(+http://www.baidu.com/search/spider_jp.html)',
-            'Baiduspider+(+http://www.baidu.com/search/spider.htm)',
-            'BaiDuSpider',
-            // Ask.com.
-            'User-Agent: Mozilla/2.0 (compatible; Ask Jeeves/Teoma)',
-        );
-
-        foreach ($browsers as $agent) {
-            $_SERVER['HTTP_USER_AGENT'] = $agent;
-            $this->assertFalse(is_web_crawler());
-        }
-        foreach ($crawlers as $agent) {
-            $_SERVER['HTTP_USER_AGENT'] = $agent;
-            $this->assertTrue(is_web_crawler(), "$agent should be considered a search engine");
-        }
-    }
-
     /**
      * Test if get_exception_info() removes file system paths.
      */
@@ -221,16 +174,15 @@ class core_setuplib_testcase extends advanced_testcase {
         global $CFG;
 
         // Start with a file instead of a directory.
-        $base = $CFG->tempdir . DIRECTORY_SEPARATOR . md5(microtime() + rand());
+        $base = $CFG->tempdir . DIRECTORY_SEPARATOR . md5(microtime(true) + rand());
         touch($base);
 
         // First the false test.
         $this->assertFalse(make_unique_writable_directory($base, false));
 
         // Now check for exception.
-        $this->setExpectedException('invalid_dataroot_permissions',
-                $base . ' is not writable. Unable to create a unique directory within it.'
-            );
+        $this->expectException('invalid_dataroot_permissions');
+        $this->expectExceptionMessage($base . ' is not writable. Unable to create a unique directory within it.');
         make_unique_writable_directory($base);
 
         unlink($base);
@@ -405,9 +357,7 @@ class core_setuplib_testcase extends advanced_testcase {
     public function test_get_exception_info_link() {
         global $CFG, $SESSION;
 
-        $initialloginhttps = $CFG->loginhttps;
         $httpswwwroot = str_replace('http:', 'https:', $CFG->wwwroot);
-        $CFG->loginhttps = false;
 
         // Simple local URL.
         $url = $CFG->wwwroot . '/something/here?really=yes';
@@ -421,14 +371,15 @@ class core_setuplib_testcase extends advanced_testcase {
         $infos = $this->get_exception_info($exception);
         $this->assertSame($CFG->wwwroot . '/', $infos->link);
 
-        // HTTPS URL when login HTTPS is not enabled.
+        // HTTPS URL when login HTTPS is not enabled (default) and site is HTTP.
+        $CFG->wwwroot = str_replace('https:', 'http:', $CFG->wwwroot);
         $url = $httpswwwroot . '/something/here?really=yes';
         $exception = new moodle_exception('none', 'error', $url);
         $infos = $this->get_exception_info($exception);
         $this->assertSame($CFG->wwwroot . '/', $infos->link);
 
-        // HTTPS URL with login HTTPS.
-        $CFG->loginhttps = true;
+        // HTTPS URL when login HTTPS is not enabled and site is HTTPS.
+        $CFG->wwwroot = str_replace('http:', 'https:', $CFG->wwwroot);
         $url = $httpswwwroot . '/something/here?really=yes';
         $exception = new moodle_exception('none', 'error', $url);
         $infos = $this->get_exception_info($exception);
@@ -464,13 +415,6 @@ class core_setuplib_testcase extends advanced_testcase {
         $infos = $this->get_exception_info($exception);
         $this->assertSame($url, $infos->link);
 
-        // Internal HTTPS link from fromurl without login HTTPS.
-        $CFG->loginhttps = false;
-        $SESSION->fromurl = $httpswwwroot . '/something/here?really=yes';
-        $exception = new moodle_exception('none');
-        $infos = $this->get_exception_info($exception);
-        $this->assertSame($CFG->wwwroot . '/', $infos->link);
-
         // External link from fromurl.
         $SESSION->fromurl = 'http://moodle.org/something/here?really=yes';
         $exception = new moodle_exception('none');
@@ -483,14 +427,6 @@ class core_setuplib_testcase extends advanced_testcase {
         $infos = $this->get_exception_info($exception);
         $this->assertSame($CFG->wwwroot . '/', $infos->link);
 
-        // External HTTPS link from fromurl with login HTTPS.
-        $CFG->loginhttps = true;
-        $SESSION->fromurl = 'https://moodle.org/something/here?really=yes';
-        $exception = new moodle_exception('none');
-        $infos = $this->get_exception_info($exception);
-        $this->assertSame($CFG->wwwroot . '/', $infos->link);
-
-        $CFG->loginhttps = $initialloginhttps;
         $SESSION->fromurl = '';
     }
 
@@ -506,5 +442,38 @@ class core_setuplib_testcase extends advanced_testcase {
         } catch (moodle_exception $e) {
             return get_exception_info($e);
         }
+    }
+
+    /**
+     * Data provider for test_get_real_size().
+     *
+     * @return array An array of arrays contain test data
+     */
+    public function data_for_test_get_real_size() {
+        return array(
+            array('8KB', 8192),
+            array('8Kb', 8192),
+            array('8K', 8192),
+            array('8k', 8192),
+            array('50MB', 52428800),
+            array('50Mb', 52428800),
+            array('50M', 52428800),
+            array('50m', 52428800),
+            array('8Gb', 8589934592),
+            array('8GB', 8589934592),
+            array('8G', 8589934592),
+        );
+    }
+
+    /**
+     * Test the get_real_size() function.
+     *
+     * @dataProvider data_for_test_get_real_size
+     *
+     * @param string $input the input for get_real_size()
+     * @param int $expectedbytes the expected bytes
+     */
+    public function test_get_real_size($input, $expectedbytes) {
+        $this->assertEquals($expectedbytes, get_real_size($input));
     }
 }

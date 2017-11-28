@@ -1,12 +1,12 @@
 <?php
 /**
- * Copyright 2011-2014 Horde LLC (http://www.horde.org/)
+ * Copyright 2011-2017 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file COPYING for license information (LGPL). If you
  * did not receive this file, see http://www.horde.org/licenses/lgpl21.
  *
  * @category  Horde
- * @copyright 2011-2014 Horde LLC
+ * @copyright 2011-2017 Horde LLC
  * @license   http://www.horde.org/licenses/lgpl21 LGPL 2.1
  * @package   Imap_Client
  */
@@ -16,7 +16,7 @@
  *
  * @author    Michael Slusarz <slusarz@horde.org>
  * @category  Horde
- * @copyright 2011-2014 Horde LLC
+ * @copyright 2011-2017 Horde LLC
  * @license   http://www.horde.org/licenses/lgpl21 LGPL 2.1
  * @package   Imap_Client
  *
@@ -180,7 +180,7 @@ class Horde_Imap_Client_Ids implements Countable, Iterator, Serializable
                 }
             }
 
-            $this->_sorted = (count($this->_ids) === 1);
+            $this->_sorted = is_array($this->_ids) && (count($this->_ids) === 1);
         }
     }
 
@@ -221,14 +221,24 @@ class Horde_Imap_Client_Ids implements Countable, Iterator, Serializable
     }
 
     /**
-     * Sorts the IDs numerically.
+     * Sorts the IDs.
      */
     public function sort()
     {
         if (!$this->_sorted && is_array($this->_ids)) {
-            sort($this->_ids, SORT_NUMERIC);
+            $this->_sort($this->_ids);
             $this->_sorted = true;
         }
+    }
+
+    /**
+     * Sorts the IDs numerically.
+     *
+     * @param array $ids  The array list.
+     */
+    protected function _sort(&$ids)
+    {
+        sort($ids, SORT_NUMERIC);
     }
 
     /**
@@ -296,15 +306,14 @@ class Horde_Imap_Client_Ids implements Countable, Iterator, Serializable
         $in = $this->_ids;
 
         if ($sort && !$this->_sorted) {
-            sort($in, SORT_NUMERIC);
+            $this->_sort($in);
         }
 
         $first = $last = array_shift($in);
         $i = count($in) - 1;
         $out = array();
 
-        reset($in);
-        while (list($key, $val) = each($in)) {
+        foreach ($in as $key => $val) {
             if (($last + 1) == $val) {
                 $last = $val;
             }
@@ -350,8 +359,7 @@ class Horde_Imap_Client_Ids implements Countable, Iterator, Serializable
 
         $idarray = explode(',', $str);
 
-        reset($idarray);
-        while (list(,$val) = each($idarray)) {
+        foreach ($idarray as $val) {
             $range = explode(':', $val);
             if (isset($range[1])) {
                 for ($i = min($range), $j = max($range); $i <= $j; ++$i) {

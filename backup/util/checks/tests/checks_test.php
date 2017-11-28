@@ -131,6 +131,7 @@ class backup_check_testcase extends advanced_testcase {
             backup::INTERACTIVE_NO, backup::MODE_GENERAL, $this->userid);
         $this->assertTrue(backup_check::check_security($bc, true));
         $this->assertTrue($bc instanceof backup_controller);
+        $bc->destroy();
 
     }
 }

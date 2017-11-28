@@ -42,6 +42,7 @@ $chooselog   = optional_param('chooselog', false, PARAM_BOOL);
 $logformat   = optional_param('download', '', PARAM_ALPHA);
 $logreader      = optional_param('logreader', '', PARAM_COMPONENT); // Reader which will be used for displaying logs.
 $edulevel    = optional_param('edulevel', -1, PARAM_INT); // Educational level.
+$origin      = optional_param('origin', '', PARAM_TEXT); // Event origin.
 
 $params = array();
 if (!empty($id)) {
@@ -89,7 +90,9 @@ if ($logreader !== '') {
 if (($edulevel != -1)) {
     $params['edulevel'] = $edulevel;
 }
-
+if ($origin !== '') {
+    $params['origin'] = $origin;
+}
 // Legacy store hack, as edulevel is not supported.
 if ($logreader == 'logstore_legacy') {
     $params['edulevel'] = -1;
@@ -146,7 +149,7 @@ if (empty($course) || ($course->id == $SITE->id)) {
 }
 
 $reportlog = new report_log_renderable($logreader, $course, $user, $modid, $modaction, $group, $edulevel, $showcourses, $showusers,
-        $chooselog, true, $url, $date, $logformat, $page, $perpage, 'timecreated DESC');
+        $chooselog, true, $url, $date, $logformat, $page, $perpage, 'timecreated DESC', $origin);
 $readers = $reportlog->get_readers();
 $output = $PAGE->get_renderer('report_log');
 

@@ -41,6 +41,8 @@ function report_security_get_issue_list() {
     return array(
         'report_security_check_unsecuredataroot',
         'report_security_check_displayerrors',
+        'report_security_check_vendordir',
+        'report_security_check_nodemodules',
         'report_security_check_noauth',
         'report_security_check_embed',
         'report_security_check_mediafilterswf',
@@ -57,6 +59,7 @@ function report_security_get_issue_list() {
         'report_security_check_guestrole',
         'report_security_check_frontpagerole',
         'report_security_check_webcron',
+        'report_security_check_preventexecpath',
 
     );
 }
@@ -184,11 +187,13 @@ function report_security_check_mediafilterswf($detailed=false) {
     $result->info    = null;
     $result->details = null;
     $result->status  = null;
-    $result->link    = "<a href=\"$CFG->wwwroot/$CFG->admin/settings.php?section=filtersettingfiltermediaplugin\">".get_string('filtersettings', 'admin').'</a>';
+    $result->link    = "<a href=\"$CFG->wwwroot/$CFG->admin/settings.php?section=managemediaplayers\">" .
+        get_string('managemediaplayers', 'media') . '</a>';
 
     $activefilters = filter_get_globally_enabled();
 
-    if (array_search('mediaplugin', $activefilters) !== false and !empty($CFG->filter_mediaplugin_enable_swf)) {
+    $enabledmediaplayers = \core\plugininfo\media::get_enabled_plugins();
+    if (array_search('mediaplugin', $activefilters) !== false and array_key_exists('swf', $enabledmediaplayers)) {
         $result->status = REPORT_SECURITY_CRITICAL;
         $result->info   = get_string('check_mediafilterswf_error', 'report_security');
     } else {
@@ -394,7 +399,7 @@ function report_security_check_cookiesecure($detailed=false) {
     $result->status  = null;
     $result->link    = "<a href=\"$CFG->wwwroot/$CFG->admin/settings.php?section=httpsecurity\">".get_string('httpsecurity', 'admin').'</a>';
 
-    if (empty($CFG->cookiesecure)) {
+    if (!is_moodle_cookie_secure()) {
         $result->status = REPORT_SECURITY_SERIOUS;
         $result->info   = get_string('check_cookiesecure_error', 'report_security');
     } else {
@@ -861,6 +866,97 @@ function report_security_check_webcron($detailed = false) {
 
     if ($detailed) {
         $result->details = get_string('check_webcron_details', 'report_security');
+    }
+
+    return $result;
+}
+
+/**
+ * Verifies the status of preventexecpath
+ *
+ * @param bool $detailed
+ * @return object result
+ */
+function report_security_check_preventexecpath($detailed = false) {
+    global $CFG;
+
+    $result = new stdClass();
+    $result->issue   = 'report_security_check_preventexecpath';
+    $result->name    = get_string('check_preventexecpath_name', 'report_security');
+    $result->details = null;
+    $result->link    = null;
+
+    if (empty($CFG->preventexecpath)) {
+        $result->status = REPORT_SECURITY_WARNING;
+        $result->info   = get_string('check_preventexecpath_warning', 'report_security');
+        if ($detailed) {
+            $result->details = get_string('check_preventexecpath_details', 'report_security');
+        }
+    } else {
+        $result->status = REPORT_SECURITY_OK;
+        $result->info   = get_string('check_preventexecpath_ok', 'report_security');
+    }
+
+    return $result;
+}
+
+/**
+ * Check the presence of the vendor directory.
+ *
+ * @param bool $detailed Return detailed info.
+ * @return object Result data.
+ */
+function report_security_check_vendordir($detailed = false) {
+    global $CFG;
+
+    $result = (object)[
+        'issue' => 'report_security_check_vendordir',
+        'name' => get_string('check_vendordir_name', 'report_security'),
+        'info' => get_string('check_vendordir_info', 'report_security'),
+        'details' => null,
+        'status' => null,
+        'link' => null,
+    ];
+
+    if (is_dir($CFG->dirroot.'/vendor')) {
+        $result->status = REPORT_SECURITY_WARNING;
+    } else {
+        $result->status = REPORT_SECURITY_OK;
+    }
+
+    if ($detailed) {
+        $result->details = get_string('check_vendordir_details', 'report_security', ['path' => $CFG->dirroot.'/vendor']);
+    }
+
+    return $result;
+}
+
+/**
+ * Check the presence of the node_modules directory.
+ *
+ * @param bool $detailed Return detailed info.
+ * @return object Result data.
+ */
+function report_security_check_nodemodules($detailed = false) {
+    global $CFG;
+
+    $result = (object)[
+        'issue' => 'report_security_check_nodemodules',
+        'name' => get_string('check_nodemodules_name', 'report_security'),
+        'info' => get_string('check_nodemodules_info', 'report_security'),
+        'details' => null,
+        'status' => null,
+        'link' => null,
+    ];
+
+    if (is_dir($CFG->dirroot.'/node_modules')) {
+        $result->status = REPORT_SECURITY_WARNING;
+    } else {
+        $result->status = REPORT_SECURITY_OK;
+    }
+
+    if ($detailed) {
+        $result->details = get_string('check_nodemodules_details', 'report_security', ['path' => $CFG->dirroot.'/node_modules']);
     }
 
     return $result;

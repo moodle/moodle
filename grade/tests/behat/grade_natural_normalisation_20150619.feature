@@ -32,9 +32,8 @@ Feature: Gradebook calculations for natural weights normalisation before the fix
       | assign | C1 | a6 | Test assignment six | Submit something! | Sub category 1 | 10 |
       | assign | C1 | a7 | Test assignment seven | Submit nothing! | Sub category 1 | 15 |
     And I log in as "teacher1"
-    And I follow "Course 1"
-    And I navigate to "Grades" node in "Course administration"
-    And I set the field "Grade report" to "Categories and items"
+    And I am on "Course 1" course homepage
+    And I navigate to "Setup > Gradebook setup" in the course gradebook
 
   @javascript
   Scenario: Grade items weights are normalised when all grade item weights are overridden (sum exactly 100). Extra credit is set to zero (before the fix 20150619).

@@ -4,7 +4,6 @@ Feature: In a lesson activity, students can review the answers they gave to ques
   As a student
   I need to complete a lesson answering all of the questions.
 
-  @javascript
   Scenario: Student answers questions and then reviews them.
     Given the following "users" exist:
       | username | firstname | lastname | email |
@@ -18,8 +17,7 @@ Feature: In a lesson activity, students can review the answers they gave to ques
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
     And I log in as "teacher1"
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I add a "Lesson" to section "1" and I fill the form with:
       | Name | Test lesson name |
       | Description | Test lesson description |
@@ -44,7 +42,7 @@ Feature: In a lesson activity, students can review the answers they gave to ques
       | id_response_editor_1 | Incorrect answer |
       | id_jumpto_1 | This page |
     And I press "Save page"
-    And I set the field "qtype" to "Question"
+    And I select "Question" from the "qtype" singleselect
     And I set the field "Select a question type" to "True/false"
     And I press "Add a question page"
     And I set the following fields to these values:
@@ -59,7 +57,7 @@ Feature: In a lesson activity, students can review the answers they gave to ques
     And I press "Save page"
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test lesson name"
     And I should see "You have answered 0 correctly out of 0 attempts."
     And I set the following fields to these values:

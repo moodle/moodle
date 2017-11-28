@@ -76,10 +76,16 @@ class mustache_template_finder {
 
         // First check the theme.
         $dirs[] = $CFG->dirroot . '/theme/' . $themename . '/templates/' . $component . '/';
+        if (isset($CFG->themedir)) {
+            $dirs[] = $CFG->themedir . '/' . $themename . '/templates/' . $component . '/';
+        }
         // Now check the parent themes.
         // Search each of the parent themes second.
         foreach ($parents as $parent) {
             $dirs[] = $CFG->dirroot . '/theme/' . $parent . '/templates/' . $component . '/';
+            if (isset($CFG->themedir)) {
+                $dirs[] = $CFG->themedir . '/' . $parent . '/templates/' . $component . '/';
+            }
         }
 
         $dirs[] = $compdirectory . '/templates/';
@@ -116,6 +122,6 @@ class mustache_template_finder {
             }
         }
 
-        throw new moodle_exception('filenotfound', 'error');
+        throw new moodle_exception('filenotfound', 'error', '', null, $name);
     }
 }

@@ -16,8 +16,7 @@ Feature: A teacher can choose whether to allow duplicate entries in a glossary
       | user | course | role |
       | teacher1 | C1 | editingteacher |
     And I log in as "teacher1"
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I add a "Glossary" to section "1" and I fill the form with:
       | Name | Test glossary name |
       | Description | Test glossary description |
@@ -33,4 +32,3 @@ Feature: A teacher can choose whether to allow duplicate entries in a glossary
     And I press "Save changes"
     Then I should see "This concept already exists. No duplicates allowed in this glossary."
     And I press "Cancel"
-

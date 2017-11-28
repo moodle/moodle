@@ -153,7 +153,11 @@ class comment {
         } else if (!empty($options->courseid)) {
             $this->courseid = $options->courseid;
         } else {
-            $this->courseid = SITEID;
+            if ($coursecontext = $this->context->get_course_context(false)) {
+                $this->courseid = $coursecontext->instanceid;
+            } else {
+                $this->courseid = SITEID;
+            }
         }
 
         // setup coursemodule
@@ -216,7 +220,7 @@ class comment {
         // load template
         $this->template = html_writer::start_tag('div', array('class' => 'comment-message'));
 
-        $this->template .= html_writer::start_tag('div', array('class' => 'comment-message-meta'));
+        $this->template .= html_writer::start_tag('div', array('class' => 'comment-message-meta m-r-3'));
 
         $this->template .= html_writer::tag('span', '___picture___', array('class' => 'picture'));
         $this->template .= html_writer::tag('span', '___name___', array('class' => 'user')) . ' - ';
@@ -259,7 +263,7 @@ class comment {
                 'comments',
                 'commentscount',
                 'commentsrequirelogin',
-                'deletecomment',
+                'deletecommentbyon'
             ),
             'moodle'
         );
@@ -456,8 +460,14 @@ class comment {
                 } else {
                     $collapsedimage= 't/collapsed';
                 }
-                $html .= html_writer::start_tag('a', array('class' => 'comment-link', 'id' => 'comment-link-'.$this->cid, 'href' => '#'));
-                $html .= html_writer::empty_tag('img', array('id' => 'comment-img-'.$this->cid, 'src' => $OUTPUT->pix_url($collapsedimage), 'alt' => $this->linktext, 'title' => $this->linktext));
+                $html .= html_writer::start_tag('a', array(
+                    'class' => 'comment-link',
+                    'id' => 'comment-link-'.$this->cid,
+                    'href' => '#',
+                    'role' => 'button',
+                    'aria-expanded' => 'false')
+                );
+                $html .= $OUTPUT->pix_icon($collapsedimage, $this->linktext);
                 $html .= html_writer::tag('span', $this->linktext.' '.$countstring, array('id' => 'comment-link-text-'.$this->cid));
                 $html .= html_writer::end_tag('a');
             }
@@ -567,7 +577,7 @@ class comment {
             $c->content     = $u->ccontent;
             $c->format      = $u->cformat;
             $c->timecreated = $u->ctimecreated;
-            $c->strftimeformat = get_string('strftimerecentfull', 'langconfig');
+            $c->strftimeformat = get_string('strftimerecent', 'langconfig');
             $url = new moodle_url('/user/view.php', array('id'=>$u->id, 'course'=>$this->courseid));
             $c->profileurl = $url->out(false); // URL should not be escaped just yet.
             $c->fullname = fullname($u);
@@ -905,8 +915,11 @@ class comment {
         $replacements = array();
 
         if (!empty($cmt->delete) && empty($nonjs)) {
+            $strdelete = get_string('deletecommentbyon', 'moodle', (object)['user' => $cmt->fullname, 'time' => $cmt->time]);
             $deletelink  = html_writer::start_tag('div', array('class'=>'comment-delete'));
-            $deletelink .= html_writer::start_tag('a', array('href' => '#', 'id' => 'comment-delete-'.$this->cid.'-'.$cmt->id));
+            $deletelink .= html_writer::start_tag('a', array('href' => '#', 'id' => 'comment-delete-'.$this->cid.'-'.$cmt->id,
+                                                             'title' => $strdelete));
+
             $deletelink .= $OUTPUT->pix_icon('t/delete', get_string('delete'));
             $deletelink .= html_writer::end_tag('a');
             $deletelink .= html_writer::end_tag('div');
@@ -1039,6 +1052,87 @@ class comment {
     public function set_fullwidth($fullwidth = true) {
         $this->fullwidth = (bool)$fullwidth;
     }
+
+    /**
+     * Return the template.
+     *
+     * @since 3.1
+     * @return string
+     */
+    public function get_template() {
+        return $this->template;
+    }
+
+    /**
+     * Return the cid.
+     *
+     * @since 3.1
+     * @return string
+     */
+    public function get_cid() {
+        return $this->cid;
+    }
+
+    /**
+     * Return the link text.
+     *
+     * @since 3.1
+     * @return string
+     */
+    public function get_linktext() {
+        return $this->linktext;
+    }
+
+    /**
+     * Return no toggle.
+     *
+     * @since 3.1
+     * @return bool
+     */
+    public function get_notoggle() {
+        return $this->notoggle;
+    }
+
+    /**
+     * Return display total count.
+     *
+     * @since 3.1
+     * @return bool
+     */
+    public function get_displaytotalcount() {
+        return $this->displaytotalcount;
+    }
+
+    /**
+     * Return display cancel.
+     *
+     * @since 3.1
+     * @return bool
+     */
+    public function get_displaycancel() {
+        return $this->displaycancel;
+    }
+
+    /**
+     * Return fullwidth.
+     *
+     * @since 3.1
+     * @return bool
+     */
+    public function get_fullwidth() {
+        return $this->fullwidth;
+    }
+
+    /**
+     * Return autostart.
+     *
+     * @since 3.1
+     * @return bool
+     */
+    public function get_autostart() {
+        return $this->autostart;
+    }
+
 }
 
 /**

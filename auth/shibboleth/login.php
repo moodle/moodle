@@ -15,9 +15,6 @@
     }
 
 
-//HTTPS is required in this page when $CFG->loginhttps enabled
-$PAGE->https_required();
-
 /// Define variables used in page
     $site = get_site();
 
@@ -33,7 +30,7 @@ $PAGE->https_required();
     }
 
     // Set SAML domain cookie
-    $config = get_config('auth/shibboleth');
+    $config = get_config('auth_shibboleth');
 
 
     $IdPs = get_idp_list($config->organization_selection);
@@ -44,17 +41,17 @@ $PAGE->https_required();
         // Redirect to SessionInitiator with entityID as argument
         if (isset($IdPs[$selectedIdP][1]) && !empty($IdPs[$selectedIdP][1])) {
             // For Shibbolet 1.x Service Providers
-            header('Location: '.$IdPs[$selectedIdP][1].'?providerId='. urlencode($selectedIdP) .'&target='. urlencode($CFG->httpswwwroot.'/auth/shibboleth/index.php'));
+            header('Location: '.$IdPs[$selectedIdP][1].'?providerId='. urlencode($selectedIdP) .'&target='. urlencode($CFG->wwwroot.'/auth/shibboleth/index.php'));
 
             // For Shibbolet 2.x Service Providers
-            // header('Location: '.$IdPs[$selectedIdP][1].'?entityID='. urlencode($selectedIdP) .'&target='. urlencode($CFG->httpswwwroot.'/auth/shibboleth/index.php'));
+            // header('Location: '.$IdPs[$selectedIdP][1].'?entityID='. urlencode($selectedIdP) .'&target='. urlencode($CFG->wwwroot.'/auth/shibboleth/index.php'));
 
         } else {
             // For Shibbolet 1.x Service Providers
-            header('Location: /Shibboleth.sso?providerId='. urlencode($selectedIdP) .'&target='. urlencode($CFG->httpswwwroot.'/auth/shibboleth/index.php'));
+            header('Location: /Shibboleth.sso?providerId='. urlencode($selectedIdP) .'&target='. urlencode($CFG->wwwroot.'/auth/shibboleth/index.php'));
 
             // For Shibboleth 2.x Service Providers
-            // header('Location: /Shibboleth.sso/DS?entityID='. urlencode($selectedIdP) .'&target='. urlencode($CFG->httpswwwroot.'/auth/shibboleth/index.php'));
+            // header('Location: /Shibboleth.sso/DS?entityID='. urlencode($selectedIdP) .'&target='. urlencode($CFG->wwwroot.'/auth/shibboleth/index.php'));
         }
     } elseif (isset($_POST['idp']) && !isset($IdPs[$_POST['idp']]))  {
         $errormsg = get_string('auth_shibboleth_errormsg', 'auth_shibboleth');

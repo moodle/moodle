@@ -222,7 +222,7 @@ class availability_grouping_condition_testcase extends advanced_testcase {
         $course = $generator->create_course();
         $roleids = $DB->get_records_menu('role', null, '', 'shortname, id');
         $teacher = $generator->create_user();
-        $generator->enrol_user($teacher->id, $course->id, $roleids['teacher']);
+        $generator->enrol_user($teacher->id, $course->id, $roleids['editingteacher']);
         $allusers = array($teacher->id => $teacher);
         $students = array();
         for ($i = 0; $i < 3; $i++) {

@@ -24,7 +24,7 @@
 
 require_once("../config.php");
 require_once($CFG->dirroot.'/user/profile/lib.php');
-require_once($CFG->dirroot.'/tag/lib.php');
+require_once($CFG->dirroot.'/user/lib.php');
 require_once($CFG->libdir . '/filelib.php');
 require_once($CFG->libdir . '/badgeslib.php');
 
@@ -110,12 +110,12 @@ $fullname = fullname($user, has_capability('moodle/site:viewfullnames', $coursec
 if ($currentuser) {
     if (!is_viewing($coursecontext) && !is_enrolled($coursecontext)) {
         // Need to have full access to a course to see the rest of own info.
+        $referer = get_local_referer(false);
+        if (!empty($referer)) {
+            redirect($referer, get_string('notenrolled', '', $fullname));
+        }
         echo $OUTPUT->header();
         echo $OUTPUT->heading(get_string('notenrolled', '', $fullname));
-        $referer = clean_param($_SERVER['HTTP_REFERER'], PARAM_LOCALURL);
-        if (!empty($referer)) {
-            echo $OUTPUT->continue_button($referer);
-        }
         echo $OUTPUT->footer();
         die;
     }
@@ -125,9 +125,8 @@ if ($currentuser) {
     $PAGE->set_title("$strpersonalprofile: ");
     $PAGE->set_heading("$strpersonalprofile: ");
 
-    // Check course level capabilities.
-    if (!has_capability('moodle/user:viewdetails', $coursecontext) && // Normal enrolled user or mnager.
-        ($user->deleted or !has_capability('moodle/user:viewdetails', $usercontext))) {   // Usually parent.
+    // Check to see if the user can see this user's profile.
+    if (!user_can_view_profile($user, $course, $usercontext) && !$isparent) {
         print_error('cannotviewprofile');
     }
 
@@ -137,37 +136,24 @@ if ($currentuser) {
         //       or test for course:inspect capability.
         if (has_capability('moodle/role:assign', $coursecontext)) {
             $PAGE->navbar->add($fullname);
-            echo $OUTPUT->header();
-            echo $OUTPUT->heading(get_string('notenrolled', '', $fullname));
+            $notice = get_string('notenrolled', '', $fullname);
         } else {
-            echo $OUTPUT->header();
             $PAGE->navbar->add($struser);
-            echo $OUTPUT->heading(get_string('notenrolledprofile'));
+            $notice = get_string('notenrolledprofile', '', $fullname);
         }
-        $referer = clean_param($_SERVER['HTTP_REFERER'], PARAM_LOCALURL);
+        $referer = get_local_referer(false);
         if (!empty($referer)) {
-            echo $OUTPUT->continue_button($referer);
+            redirect($referer, $notice);
         }
+        echo $OUTPUT->header();
+        echo $OUTPUT->heading($notice);
         echo $OUTPUT->footer();
         exit;
     }
 
-    // If groups are in use and enforced throughout the course, then make sure we can meet in at least one course level group.
-    // Except when we are a parent, in which case we would not be in any group.
-    if (groups_get_course_groupmode($course) == SEPARATEGROUPS
-            and $course->groupmodeforce
-            and !has_capability('moodle/site:accessallgroups', $coursecontext)
-            and !has_capability('moodle/site:accessallgroups', $coursecontext, $user->id)
-            and !$isparent) {
-        if (!isloggedin() or isguestuser()) {
-            // Do not use require_login() here because we might have already used require_login($course).
-            redirect(get_login_url());
-        }
-        $mygroups = array_keys(groups_get_all_groups($course->id, $USER->id, $course->defaultgroupingid, 'g.id, g.name'));
-        $usergroups = array_keys(groups_get_all_groups($course->id, $user->id, $course->defaultgroupingid, 'g.id, g.name'));
-        if (!array_intersect($mygroups, $usergroups)) {
-            print_error("groupnotamember", '', "../course/view.php?id=$course->id");
-        }
+    if (!isloggedin() or isguestuser()) {
+        // Do not use require_login() here because we might have already used require_login($course).
+        redirect(get_login_url());
     }
 }
 

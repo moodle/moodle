@@ -75,6 +75,26 @@ abstract class base implements \IteratorAggregate {
      */
     const LEVEL_PARTICIPATING = 2;
 
+    /**
+     * The value used when an id can not be mapped during a restore.
+     */
+    const NOT_MAPPED = -31337;
+
+    /**
+     * The value used when an id can not be found during a restore.
+     */
+    const NOT_FOUND = -31338;
+
+    /**
+     * User id to use when the user is not logged in.
+     */
+    const USER_NOTLOGGEDIN = 0;
+
+    /**
+     * User id to use when actor is not an actual user but system, cli or cron.
+     */
+    const USER_OTHER = -1;
+
     /** @var array event data */
     protected $data;
 
@@ -296,6 +316,26 @@ abstract class base implements \IteratorAggregate {
     }
 
     /**
+     * Returns the event name complete with metadata information.
+     *
+     * This includes information about whether the event has been deprecated so should not be used in all situations -
+     * for example within reports themselves.
+     *
+     * If overriding this function, please ensure that you call the parent version too.
+     *
+     * @return string
+     */
+    public static function get_name_with_info() {
+        $return = static::get_name();
+
+        if (static::is_deprecated()) {
+            $return = get_string('deprecatedeventname', 'core', $return);
+        }
+
+        return $return;
+    }
+
+    /**
      * Returns non-localised event description with id's for admin use only.
      *
      * @return string
@@ -476,6 +516,79 @@ abstract class base implements \IteratorAggregate {
         $event->data['other'] = (array)$legacy;
 
         return $event;
+    }
+
+    /**
+     * This is used when restoring course logs where it is required that we
+     * map the objectid to it's new value in the new course.
+     *
+     * Does nothing in the base class except display a debugging message warning
+     * the user that the event does not contain the required functionality to
+     * map this information. For events that do not store an objectid this won't
+     * be called, so no debugging message will be displayed.
+     *
+     * Example of usage:
+     *
+     * return array('db' => 'assign_submissions', 'restore' => 'submission');
+     *
+     * If the objectid can not be mapped during restore set the value to \core\event\base::NOT_MAPPED, example -
+     *
+     * return array('db' => 'some_table', 'restore' => \core\event\base::NOT_MAPPED);
+     *
+     * Note - it isn't necessary to specify the 'db' and 'restore' values in this case, so you can also use -
+     *
+     * return \core\event\base::NOT_MAPPED;
+     *
+     * The 'db' key refers to the database table and the 'restore' key refers to
+     * the name of the restore element the objectid is associated with. In many
+     * cases these will be the same.
+     *
+     * @return string the name of the restore mapping the objectid links to
+     */
+    public static function get_objectid_mapping() {
+        debugging('In order to restore course logs accurately the event "' . get_called_class() . '" must define the
+            function get_objectid_mapping().', DEBUG_DEVELOPER);
+
+        return false;
+    }
+
+    /**
+     * This is used when restoring course logs where it is required that we
+     * map the information in 'other' to it's new value in the new course.
+     *
+     * Does nothing in the base class except display a debugging message warning
+     * the user that the event does not contain the required functionality to
+     * map this information. For events that do not store any other information this
+     * won't be called, so no debugging message will be displayed.
+     *
+     * Example of usage:
+     *
+     * $othermapped = array();
+     * $othermapped['discussionid'] = array('db' => 'forum_discussions', 'restore' => 'forum_discussion');
+     * $othermapped['forumid'] = array('db' => 'forum', 'restore' => 'forum');
+     * return $othermapped;
+     *
+     * If an id can not be mapped during restore we set it to \core\event\base::NOT_MAPPED, example -
+     *
+     * $othermapped = array();
+     * $othermapped['someid'] = array('db' => 'some_table', 'restore' => \core\event\base::NOT_MAPPED);
+     * return $othermapped;
+     *
+     * Note - it isn't necessary to specify the 'db' and 'restore' values in this case, so you can also use -
+     *
+     * $othermapped = array();
+     * $othermapped['someid'] = \core\event\base::NOT_MAPPED;
+     * return $othermapped;
+     *
+     * The 'db' key refers to the database table and the 'restore' key refers to
+     * the name of the restore element the other value is associated with. In many
+     * cases these will be the same.
+     *
+     * @return array an array of other values and their corresponding mapping
+     */
+    public static function get_other_mapping() {
+        debugging('In order to restore course logs accurately the event "' . get_called_class() . '" must define the
+            function get_other_mapping().', DEBUG_DEVELOPER);
     }
 
     /**
@@ -877,5 +990,18 @@ abstract class base implements \IteratorAggregate {
      */
     public function getIterator() {
         return new \ArrayIterator($this->data);
+    }
+
+    /**
+     * Whether this event has been marked as deprecated.
+     *
+     * Events cannot be deprecated in the normal fashion as they must remain to support historical data.
+     * Once they are deprecated, there is no way to trigger the event, so it does not make sense to list it in some
+     * parts of the UI (e.g. Event Monitor).
+     *
+     * @return boolean
+     */
+    public static function is_deprecated() {
+        return false;
     }
 }

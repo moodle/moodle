@@ -22,7 +22,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(dirname(__FILE__).'/../../../config.php');
+require_once(__DIR__.'/../../../config.php');
 require_once($CFG->dirroot.'/lib/formslib.php');
 require_once($CFG->dirroot.'/grade/lib.php');
 require_once($CFG->libdir.'/gradelib.php');
@@ -38,7 +38,7 @@ $PAGE->set_pagelayout('admin');
 /// Make sure they can even access this course
 if ($courseid) {
     if (!$course = $DB->get_record('course', array('id' => $courseid))) {
-        print_error('nocourseid');
+        print_error('invalidcourseid');
     }
     require_login($course);
     $context = context_course::instance($course->id);

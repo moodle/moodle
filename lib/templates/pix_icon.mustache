@@ -28,15 +28,17 @@
     * none
 
     Context variables required for this template:
-    * attributes Array of name / value pairs.
+    * attributes Array of name / value pairs. Includes title, alt, src.
+    * extraclasses List of extra classes to append.
 
     Example context (json):
     {
         "attributes": [
-            { "name": "src", "value": "http://moodle.com/wp-content/themes/moodle/images/logo-hat2.png" },
-            { "name": "class", "value": "iconsmall" }
+            { "name": "src", "value": "https://moodle.org/logo/moodle-logo.svg" },
+            { "name": "extraclasses", "value": "iconsmall" },
+            {"name": "alt", "value": "Alt text for icon"}
         ]
     }
 
 }}
-<img {{#attributes}}{{name}}="{{value}}" {{/attributes}}/>
+<img class="icon {{extraclasses}}" {{#attributes}}{{name}}="{{value}}" {{/attributes}}/>

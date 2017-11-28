@@ -30,11 +30,11 @@ defined('MOODLE_INTERNAL') || die();
  * The mod_lesson page_moved event class.
  *
  * @property-read array $other {
- * Extra information about event.
+ *     Extra information about event.
  *
- * - string pagetype: the name of the pagetype as defined in the individual page class
- * - int prevpageid: the id of the previous lesson page
- * - int nextpageid: the id of the next lesson page
+ *     - string pagetype: the name of the pagetype as defined in the individual page class
+ *     - int prevpageid: the id of the previous lesson page
+ *     - int nextpageid: the id of the next lesson page
  * }
  *
  * @package    mod_lesson
@@ -104,5 +104,17 @@ class page_moved extends \core\event\base {
         if (!isset($this->other['nextpageid'])) {
             throw new \coding_exception('The \'nextpageid\' value must be set in other.');
         }
+    }
+
+    public static function get_objectid_mapping() {
+        return array('db' => 'lesson_pages', 'restore' => 'lesson_page');
+    }
+
+    public static function get_other_mapping() {
+        $othermapped = array();
+        $othermapped['prevpageid'] = array('db' => 'lesson_pages', 'restore' => 'lesson_page');
+        $othermapped['nextpageid'] = array('db' => 'lesson_pages', 'restore' => 'lesson_page');
+
+        return $othermapped;
     }
 }

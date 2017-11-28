@@ -55,11 +55,12 @@ if (!$cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
 $user = $USER;
 
 require_login($course, false, $cm);
+require_sesskey();
 
 if ($returnpage == 'index.php') {
-    $returnto = forum_go_back_to($returnpage.'?id='.$course->id);
+    $returnto = new moodle_url("/mod/forum/$returnpage", array('id' => $course->id));
 } else {
-    $returnto = forum_go_back_to($returnpage.'?f='.$forum->id);
+    $returnto = new moodle_url("/mod/forum/$returnpage", array('f' => $forum->id));
 }
 
 if (isguestuser()) {   // Guests can't change forum
@@ -98,7 +99,7 @@ if ($mark == 'read') {
 //        if (forum_tp_start_tracking($forum->id, $user->id)) {
 //            redirect($returnto, get_string("nowtracking", "forum", $info), 1);
 //        } else {
-//            print_error("Could not start tracking that forum", $_SERVER["HTTP_REFERER"]);
+//            print_error("Could not start tracking that forum", get_local_referer());
 //        }
 }
 

@@ -75,6 +75,9 @@ class restore_lti_activity_structure_step extends restore_activity_structure_ste
         $data->course = $this->get_courseid();
         $data->servicesalt = uniqid('', true);
 
+        // Any changes to the list of dates that needs to be rolled should be same during course restore and course reset.
+        // See MDL-9367.
+
          // Grade used to be a float (whole numbers only), restore as int.
         $data->grade = (int) $data->grade;
 
@@ -83,6 +86,11 @@ class restore_lti_activity_structure_step extends restore_activity_structure_ste
         // an interim solution until the issue below is implemented.
         // TODO: MDL-34161 - Fix restore to support course/site tools & submissions.
         $data->typeid = 0;
+
+        // Try to decrypt resourcekey and password. Null if not possible (DB default).
+        // Note these fields were originally encrypted on backup using {link @encrypted_final_element}.
+        $data->resourcekey = isset($data->resourcekey) ? $this->decrypt($data->resourcekey) : null;
+        $data->password = isset($data->password) ? $this->decrypt($data->password) : null;
 
         $newitemid = $DB->insert_record('lti', $data);
 

@@ -145,6 +145,13 @@ class mod_glossary_generator extends testing_module_generator {
             }
         }
 
+        if (array_key_exists('tags', $record)) {
+            $tags = is_array($record['tags']) ? $record['tags'] : preg_split('/,/', $record['tags']);
+
+            core_tag_tag::set_item_tags('mod_glossary', 'glossary_entries', $id,
+                context_module::instance($glossary->cmid), $tags);
+        }
+
         return $DB->get_record('glossary_entries', array('id' => $id), '*', MUST_EXIST);
     }
 }

@@ -19,10 +19,8 @@ Feature: A teacher can choose whether to publish choice activity results anonymo
       | student1 | C1 | student |
       | student2 | C1 | student |
     And I log in as "teacher1"
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
 
-  @javascript
   Scenario: Publish anonymous results
     Given I add a "Choice" to section "1" and I fill the form with:
       | Choice name | Choice 1 |
@@ -33,17 +31,15 @@ Feature: A teacher can choose whether to publish choice activity results anonymo
       | Privacy of results | Publish anonymous results, do not show student names |
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I choose "Option 1" from "Choice 1" choice activity
     And I log out
     When I log in as "student2"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Choice 1"
     Then I should not see "Student 1"
     And I should not see "Users who chose this option"
-    And I hover ".results .graph img" "css_element"
 
-  @javascript
   Scenario: Publish full results
     Given I add a "Choice" to section "1" and I fill the form with:
       | Choice name | Choice 1 |
@@ -54,11 +50,11 @@ Feature: A teacher can choose whether to publish choice activity results anonymo
       | Privacy of results | Publish full results, showing names and their choices |
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I choose "Option 1" from "Choice 1" choice activity
     And I log out
     When I log in as "student2"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Choice 1"
     Then I should see "Student 1"
     And I should see "Users who chose this option"

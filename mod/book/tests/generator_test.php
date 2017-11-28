@@ -62,10 +62,13 @@ class mod_book_generator_testcase extends advanced_testcase {
         $bookgenerator->create_chapter(array('bookid' => $book->id));
         $this->assertTrue($DB->record_exists('book_chapters', array('bookid' => $book->id)));
 
-        $chapter = $bookgenerator->create_chapter(array('bookid' => $book->id, 'content' => 'Yay!', 'title' => 'Oops'));
+        $chapter = $bookgenerator->create_chapter(
+            array('bookid' => $book->id, 'content' => 'Yay!', 'title' => 'Oops', 'tags' => array('Cats', 'mice')));
         $this->assertEquals(2, $DB->count_records('book_chapters', array('bookid' => $book->id)));
         $this->assertEquals('Oops', $DB->get_field_select('book_chapters', 'title', 'id = :id', array('id' => $chapter->id)));
         $this->assertEquals('Yay!', $DB->get_field_select('book_chapters', 'content', 'id = :id', array('id' => $chapter->id)));
+        $this->assertEquals(array('Cats', 'mice'),
+            array_values(core_tag_tag::get_item_tags_array('mod_book', 'book_chapters', $chapter->id)));
 
         $chapter = $bookgenerator->create_content($book);
         $this->assertEquals(3, $DB->count_records('book_chapters', array('bookid' => $book->id)));

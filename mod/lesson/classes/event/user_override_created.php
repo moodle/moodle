@@ -95,4 +95,15 @@ class user_override_created extends \core\event\base {
             throw new \coding_exception('The \'lessonid\' value must be set in other.');
         }
     }
+
+    public static function get_objectid_mapping() {
+        return array('db' => 'lesson_overrides', 'restore' => 'lesson_override');
+    }
+
+    public static function get_other_mapping() {
+        $othermapped = array();
+        $othermapped['lessonid'] = array('db' => 'lesson', 'restore' => 'lesson');
+
+        return $othermapped;
+    }
 }

@@ -24,7 +24,7 @@
  * @author     Yuliya Bozhko <yuliya.bozhko@totaralms.com>
  */
 
-require_once(dirname(dirname(__FILE__)) . '/config.php');
+require_once(__DIR__ . '/../config.php');
 require_once($CFG->libdir . '/badgeslib.php');
 require_once($CFG->dirroot . '/badges/edit_form.php');
 
@@ -97,6 +97,11 @@ if ($form->is_cancelled()) {
     $fordb->status = BADGE_STATUS_INACTIVE;
 
     $newid = $DB->insert_record('badge', $fordb, true);
+
+    // Trigger event, badge created.
+    $eventparams = array('objectid' => $newid, 'context' => $PAGE->context);
+    $event = \core\event\badge_created::create($eventparams);
+    $event->trigger();
 
     $newbadge = new badge($newid);
     badges_process_badge_image($newbadge, $form->save_temp_file('image'));

@@ -55,8 +55,8 @@ if ($USER->id != $user->id and has_capability('moodle/user:viewuseractivitiesrep
 }
 $PAGE->set_url('/report/outline/user.php', array('id'=>$userid, 'course'=>$courseid, 'mode'=>$mode));
 
-if (!report_outline_can_access_user_report($user, $course, true)) {
-    require_capability('report/outline:view', $coursecontext);
+if (!report_outline_can_access_user_report($user, $course)) {
+    print_error('nocapability', 'report_outline');
 }
 
 $stractivityreport = get_string('activityreport');
@@ -99,7 +99,7 @@ if ($courseid != SITEID) {
         ), 2);
 }
 
-$modinfo = get_fast_modinfo($course);
+$modinfo = get_fast_modinfo($course, $user->id);
 $sections = $modinfo->get_section_info_all();
 $itemsprinted = false;
 

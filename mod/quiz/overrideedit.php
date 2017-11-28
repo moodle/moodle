@@ -23,7 +23,7 @@
  */
 
 
-require_once(dirname(__FILE__) . '/../../config.php');
+require_once(__DIR__ . '/../../config.php');
 require_once($CFG->dirroot.'/mod/quiz/lib.php');
 require_once($CFG->dirroot.'/mod/quiz/locallib.php');
 require_once($CFG->dirroot.'/mod/quiz/override_form.php');
@@ -198,7 +198,13 @@ if ($mform->is_cancelled()) {
     }
 
     quiz_update_open_attempts(array('quizid'=>$quiz->id));
-    quiz_update_events($quiz, $fromform);
+    if ($groupmode) {
+        // Priorities may have shifted, so we need to update all of the calendar events for group overrides.
+        quiz_update_events($quiz);
+    } else {
+        // User override. We only need to update the calendar event for this user override.
+        quiz_update_events($quiz, $fromform);
+    }
 
     if (!empty($fromform->submitbutton)) {
         redirect($overridelisturl);

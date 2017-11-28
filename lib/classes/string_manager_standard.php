@@ -532,6 +532,11 @@ class core_string_manager_standard implements core_string_manager {
         $langdirs = get_list_of_plugins('', 'en', $this->otherroot);
         $langdirs["$CFG->dirroot/lang/en"] = 'en';
 
+        // We use left to right mark to demark the shortcodes contained in LTR brackets, but we need to do
+        // this hacky thing to have the utf8 char until we go php7 minimum and can simply put \u200E in
+        // a double quoted string.
+        $lrm = json_decode('"\u200E"');
+
         // Loop through all langs and get info.
         foreach ($langdirs as $lang) {
             if (strrpos($lang, '_local') !== false) {
@@ -548,7 +553,7 @@ class core_string_manager_standard implements core_string_manager {
             }
             $string = $this->load_component_strings('langconfig', $lang);
             if (!empty($string['thislanguage'])) {
-                $languages[$lang] = $string['thislanguage'].' ('. $lang .')';
+                $languages[$lang] = $string['thislanguage'].' '.$lrm.'('. $lang .')'.$lrm;
             }
         }
 

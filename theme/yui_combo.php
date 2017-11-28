@@ -208,30 +208,6 @@ while (count($parts)) {
             }
         }
 
-        // Handle the mcore rollup.
-        if (strpos($rollupname, 'mcore') !== false) {
-            $yuimodules = array(
-                'core/tooltip/tooltip',
-                'core/popuphelp/popuphelp',
-                'core/widget-focusafterclose/widget-focusafterclose',
-                'core/dock/dock-loader',
-                'core/notification/notification-dialogue',
-            );
-
-            // Determine which version of this rollup should be used.
-            $filesuffix = '.js';
-            preg_match('/(-(debug|min))?\.js/', $rollupname, $matches);
-            if (isset($matches[1])) {
-                $filesuffix = $matches[0];
-            }
-
-            // We need to add these new parts to the beginning of the $parts list, not the end.
-            $newparts = array();
-            foreach ($yuimodules as $module) {
-                $newparts[] = 'm/' . $revision . '/' . $module . $filesuffix;
-            }
-            $parts = array_merge($newparts, $parts);
-        }
         continue;
     }
     if ($version === 'm') {
@@ -401,7 +377,7 @@ function combo_send_cached($content, $mimetype, $etag, $lastmodified) {
     header('Last-Modified: '. gmdate('D, d M Y H:i:s', $lastmodified) .' GMT');
     header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .' GMT');
     header('Pragma: ');
-    header('Cache-Control: public, max-age='.$lifetime);
+    header('Cache-Control: public, max-age='.$lifetime.', immutable');
     header('Accept-Ranges: none');
     header('Content-Type: '.$mimetype);
     header('Etag: "'.$etag.'"');

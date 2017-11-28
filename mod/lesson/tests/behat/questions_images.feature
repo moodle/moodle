@@ -20,9 +20,7 @@ Feature: In a lesson activity, teacher can add embedded images in questions answ
     And I follow "Manage private files"
     And I upload "mod/lesson/tests/fixtures/moodle_logo.jpg" file to "Files" filemanager
     And I click on "Save changes" "button"
-    When I am on homepage
-    And I follow "Course 1"
-    And I turn editing mode on
+    When I am on "Course 1" course homepage with editing mode on
     And I add a "Lesson" to section "1" and I fill the form with:
       | Name | Test lesson name |
       | Description | Test lesson description |
@@ -47,9 +45,9 @@ Feature: In a lesson activity, teacher can add embedded images in questions answ
       | id_score_2 | 0 |
     # Atto needs focus to add image, select empty p tag to do so.
     And I select the text in the "id_answer_editor_2" Atto editor
-    And I click on "Image" "button" in the "#fitem_id_answer_editor_2" "css_element"
+    And I click on "Image" "button" in the "//*[@data-fieldtype='editor']/*[descendant::*[@id='id_answer_editor_2']]" "xpath_element"
     And I click on "Browse repositories..." "button"
-    And I click on "Private files" "link"
+    And I click on "Private files" "link" in the ".fp-repo-area" "css_element"
     And I click on "moodle_logo.jpg" "link"
     And I click on "Select this file" "button"
     And I set the field "Describe this image for someone who cannot see it" to "It's the logo"
@@ -69,9 +67,9 @@ Feature: In a lesson activity, teacher can add embedded images in questions answ
       | id_jumpto_1 | This page |
     # Atto needs focus to add image, select empty p tag to do so.
     And I select the text in the "id_response_editor_0" Atto editor
-    And I click on "Image" "button" in the "#fitem_id_response_editor_0" "css_element"
+    And I click on "Image" "button" in the "//*[@data-fieldtype='editor']/*[descendant::*[@id='id_response_editor_0']]" "xpath_element"
     And I click on "Browse repositories..." "button"
-    And I click on "Private files" "link"
+    And I click on "Private files" "link" in the ".fp-repo-area" "css_element"
     And I click on "moodle_logo.jpg" "link"
     And I click on "Select this file" "button"
     And I set the field "Describe this image for someone who cannot see it" to "It's the logo"
@@ -79,7 +77,7 @@ Feature: In a lesson activity, teacher can add embedded images in questions answ
     And I press "Save page"
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     When I follow "Test lesson name"
     Then I should see "What animal is an amphibian?"
     And "//*[contains(@class, 'answeroption')]//img[contains(@src, 'pluginfile.php')]" "xpath_element" should exist

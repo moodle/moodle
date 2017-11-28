@@ -1,12 +1,12 @@
 <?php
 /**
- * Copyright 2013-2014 Horde LLC (http://www.horde.org/)
+ * Copyright 2013-2017 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file COPYING for license information (LGPL). If you
  * did not receive this file, see http://www.horde.org/licenses/lgpl21.
  *
  * @category  Horde
- * @copyright 2013-2014 Horde LLC
+ * @copyright 2013-2017 Horde LLC
  * @license   http://www.horde.org/licenses/lgpl21 LGPL 2.1
  * @package   Imap_Client
  */
@@ -20,7 +20,7 @@
  *
  * @author    Michael Slusarz <slusarz@horde.org>
  * @category  Horde
- * @copyright 2013-2014 Horde LLC
+ * @copyright 2013-2017 Horde LLC
  * @internal
  * @license   http://www.horde.org/licenses/lgpl21 LGPL 2.1
  * @package   Imap_Client
@@ -28,6 +28,13 @@
 class Horde_Imap_Client_Socket_Connection_Socket
 extends Horde_Imap_Client_Socket_Connection_Base
 {
+    /**
+     * If false, does not outpt the current line of client output to debug.
+     *
+     * @var boolean
+     */
+    public $client_debug = true;
+
     /**
      * Sending buffer.
      *
@@ -47,7 +54,10 @@ extends Horde_Imap_Client_Socket_Connection_Base
     {
         if ($eol) {
             $buffer = $this->_buffer;
+            $debug = $this->client_debug;
             $this->_buffer = '';
+
+            $this->client_debug = true;
 
             if (fwrite($this->_stream, $buffer . $data . ($eol ? "\r\n" : '')) === false) {
                 throw new Horde_Imap_Client_Exception(
@@ -56,7 +66,9 @@ extends Horde_Imap_Client_Socket_Connection_Base
                 );
             }
 
-            $this->_params['debug']->client($buffer . $data);
+            if ($debug) {
+                $this->_params['debug']->client($buffer . $data);
+            }
         } else {
             $this->_buffer .= $data;
         }
@@ -75,29 +87,32 @@ extends Horde_Imap_Client_Socket_Connection_Base
     public function writeLiteral($data, $length, $binary = false)
     {
         $this->_buffer = '';
+        $success = false;
 
         if ($data instanceof Horde_Stream) {
             $data = $data->stream;
         }
 
-        if (!rewind($data)) {
+        if (rewind($data)) {
+            $success = true;
+            while (!feof($data)) {
+                if ((($read_data = fread($data, 8192)) === false) ||
+                    (fwrite($this->_stream, $read_data) === false)) {
+                    $success = false;
+                    break;
+                }
+            }
+        }
+
+        if (!$success) {
+            $this->client_debug = true;
             throw new Horde_Imap_Client_Exception(
                 Horde_Imap_Client_Translation::r("Server write error."),
                 Horde_Imap_Client_Exception::SERVER_WRITEERROR
             );
         }
 
-        while (!feof($data)) {
-            if ((($read_data = fread($data, 8192)) === false) ||
-                (fwrite($this->_stream, $read_data) === false)) {
-                throw new Horde_Imap_Client_Exception(
-                    Horde_Imap_Client_Translation::r("Server write error."),
-                    Horde_Imap_Client_Exception::SERVER_WRITEERROR
-                );
-            }
-        }
-
-        if (!empty($this->_params['debugliteral'])) {
+        if ($this->client_debug && !empty($this->_params['debugliteral'])) {
             rewind($data);
             while (!feof($data)) {
                 $this->_params['debug']->raw(fread($data, 8192));
@@ -110,11 +125,14 @@ extends Horde_Imap_Client_Socket_Connection_Base
     /**
      * Read data from incoming IMAP stream.
      *
+     * @param integer $size  UNUSED: The number of bytes to read from the
+     *                       socket.
+     *
      * @return Horde_Imap_Client_Tokenize  The tokenized data.
      *
      * @throws Horde_Imap_Client_Exception
      */
-    public function read()
+    public function read($size = null)
     {
         $got_data = false;
         $literal_len = null;
@@ -167,7 +185,14 @@ extends Horde_Imap_Client_Socket_Connection_Base
 
             while (($literal_len > 0) && !feof($this->_stream)) {
                 $in = fread($this->_stream, min($literal_len, 8192));
-                $token->add($in);
+                /* Only store in stream if this is something more than a
+                 * nominal number of bytes. */
+                if ($old_len > 256) {
+                    $token->addLiteralStream($in);
+                } else {
+                    $token->add($in);
+                }
+
                 if (!empty($this->_params['debugliteral'])) {
                     $this->_params['debug']->raw($in);
                 }

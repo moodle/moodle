@@ -48,6 +48,7 @@ class core_message_testcase extends advanced_testcase {
         $user = $this->getDataGenerator()->create_user();
 
         $message = new \core\message\message();
+        $message->courseid = SITEID;
         $message->component = 'moodle';
         $message->name = 'instantmessage';
         $message->userfrom = $USER;
@@ -82,6 +83,7 @@ class core_message_testcase extends advanced_testcase {
 
         $stdclass = $message->get_eventobject_for_processor('test');
 
+        $this->assertSame($message->courseid, $stdclass->courseid);
         $this->assertSame($message->component, $stdclass->component);
         $this->assertSame($message->name, $stdclass->name);
         $this->assertSame($message->userfrom, $stdclass->userfrom);
@@ -131,8 +133,9 @@ class core_message_testcase extends advanced_testcase {
         $this->preventResetByRollback();
         $this->resetAfterTest();
 
-        $user1 = $this->getDataGenerator()->create_user();
+        $user1 = $this->getDataGenerator()->create_user(array('maildisplay' => 1));
         $user2 = $this->getDataGenerator()->create_user();
+        set_config('allowedemaildomains', 'example.com');
 
         // Test basic email processor.
         $this->assertFileExists("$CFG->dirroot/message/output/email/version.php");
@@ -143,6 +146,7 @@ class core_message_testcase extends advanced_testcase {
 
         // Extra content for all types of messages.
         $message = new \core\message\message();
+        $message->courseid          = 1;
         $message->component         = 'moodle';
         $message->name              = 'instantmessage';
         $message->userfrom          = $user1;
@@ -161,7 +165,7 @@ class core_message_testcase extends advanced_testcase {
         $emails = $sink->get_messages();
         $this->assertCount(1, $emails);
         $email = reset($emails);
-        $recordexists = $DB->record_exists('message_read', array('id' => $messageid));
+        $recordexists = $DB->record_exists('message', array('id' => $messageid));
         $this->assertSame(true, $recordexists);
         $this->assertSame($user1->email, $email->from);
         $this->assertSame($user2->email, $email->to);
@@ -171,9 +175,19 @@ class core_message_testcase extends advanced_testcase {
         $this->assertRegExp('/test message body test/', $email->body);
         $sink->clear();
 
+        // Test that event fired includes the courseid.
+        $eventsink = $this->redirectEvents();
+        $messageid = message_send($message);
+        $events = $eventsink->get_events();
+        $event = reset($events);
+        $this->assertEquals($message->courseid, $event->other['courseid']);
+        $eventsink->clear();
+        $sink->clear();
+
         // Extra content for small message only. Shouldn't show up in emails as we sent fullmessage and fullmessagehtml only in
         // the emails.
         $message = new \core\message\message();
+        $message->courseid          = 1;
         $message->component         = 'moodle';
         $message->name              = 'instantmessage';
         $message->userfrom          = $user1;
@@ -191,7 +205,7 @@ class core_message_testcase extends advanced_testcase {
         $emails = $sink->get_messages();
         $this->assertCount(1, $emails);
         $email = reset($emails);
-        $recordexists = $DB->record_exists('message_read', array('id' => $messageid));
+        $recordexists = $DB->record_exists('message', array('id' => $messageid));
         $this->assertSame(true, $recordexists);
         $this->assertSame($user1->email, $email->from);
         $this->assertSame($user2->email, $email->to);
@@ -199,6 +213,14 @@ class core_message_testcase extends advanced_testcase {
         $this->assertNotEmpty($email->header);
         $this->assertNotEmpty($email->body);
         $this->assertNotRegExp('/test message body test/', $email->body);
+
+        // Test that event fired includes the courseid.
+        $eventsink = $this->redirectEvents();
+        $messageid = message_send($message);
+        $events = $eventsink->get_events();
+        $event = reset($events);
+        $this->assertEquals($message->courseid, $event->other['courseid']);
+        $eventsink->close();
         $sink->close();
     }
 }

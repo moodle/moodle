@@ -49,7 +49,7 @@ class gradereport_user_externallib_testcase extends externallib_advanced_testcas
     private function load_data($s1grade, $s2grade) {
         global $DB;
 
-        $course = $this->getDataGenerator()->create_course();
+        $course = $this->getDataGenerator()->create_course(array('groupmode' => SEPARATEGROUPS, 'groupmodeforce' => 1));
 
         $studentrole = $DB->get_record('role', array('shortname' => 'student'));
         $student1 = $this->getDataGenerator()->create_user();
@@ -58,9 +58,19 @@ class gradereport_user_externallib_testcase extends externallib_advanced_testcas
         $student2 = $this->getDataGenerator()->create_user();
         $this->getDataGenerator()->enrol_user($student2->id, $course->id, $studentrole->id);
 
-        $teacherrole = $DB->get_record('role', array('shortname' => 'editingteacher'));
+        $teacherrole = $DB->get_record('role', array('shortname' => 'teacher'));
         $teacher = $this->getDataGenerator()->create_user();
         $this->getDataGenerator()->enrol_user($teacher->id, $course->id, $teacherrole->id);
+
+        $context = context_course::instance($course->id);
+        assign_capability('moodle/site:accessallgroups', CAP_PROHIBIT, $teacherrole->id, $context);
+        accesslib_clear_all_caches_for_unit_testing();
+
+        $group1 = $this->getDataGenerator()->create_group(array('courseid' => $course->id));
+        $group2 = $this->getDataGenerator()->create_group(array('courseid' => $course->id));
+        groups_add_member($group1->id, $student1->id);
+        groups_add_member($group1->id, $teacher->id);
+        groups_add_member($group2->id, $student2->id);
 
         $assignment = $this->getDataGenerator()->create_module('assign', array('name' => "Test assign", 'course' => $course->id));
         $modcontext = get_coursemodule_from_instance('assign', $assignment->id, $course->id);
@@ -71,7 +81,7 @@ class gradereport_user_externallib_testcase extends externallib_advanced_testcas
         $studentgrades = array($student1->id => $student1grade, $student2->id => $student2grade);
         assign_grade_item_update($assignment, $studentgrades);
 
-        return array($course, $teacher, $student1, $student2);
+        return array($course, $teacher, $student1, $student2, $assignment);
     }
 
     /**
@@ -84,30 +94,26 @@ class gradereport_user_externallib_testcase extends externallib_advanced_testcas
         $s1grade = 80;
         $s2grade = 60;
 
-        list($course, $teacher, $student1, $student2) = $this->load_data($s1grade, $s2grade);
+        list($course, $teacher, $student1, $student2, $assignment) = $this->load_data($s1grade, $s2grade);
 
-        // A teacher must see all student grades.
+        // A teacher must see all student grades (in their group only).
         $this->setUser($teacher);
 
         $studentgrades = gradereport_user_external::get_grades_table($course->id);
         $studentgrades = external_api::clean_returnvalue(gradereport_user_external::get_grades_table_returns(), $studentgrades);
 
         // No warnings returned.
-        $this->assertTrue(count($studentgrades['warnings']) == 0);
+        $this->assertCount(0, $studentgrades['warnings']);
 
-        // Check that two grades are returned (each for student).
-        $this->assertTrue(count($studentgrades['tables']) == 2);
+        // Check that only grades for the student in the teacher group are returned.
+        $this->assertCount(1, $studentgrades['tables']);
 
         // Read returned grades.
         $studentreturnedgrades = array();
         $studentreturnedgrades[$studentgrades['tables'][0]['userid']] =
             (int) $studentgrades['tables'][0]['tabledata'][1]['grade']['content'];
 
-        $studentreturnedgrades[$studentgrades['tables'][1]['userid']] =
-            (int) $studentgrades['tables'][1]['tabledata'][1]['grade']['content'];
-
         $this->assertEquals($s1grade, $studentreturnedgrades[$student1->id]);
-        $this->assertEquals($s2grade, $studentreturnedgrades[$student2->id]);
     }
 
     /**
@@ -121,7 +127,7 @@ class gradereport_user_externallib_testcase extends externallib_advanced_testcas
         $s1grade = 80;
         $s2grade = 60;
 
-        list($course, $teacher, $student1, $student2) = $this->load_data($s1grade, $s2grade);
+        list($course, $teacher, $student1, $student2, $assignment) = $this->load_data($s1grade, $s2grade);
 
         // A user can see his own grades.
         $this->setUser($student1);
@@ -148,7 +154,7 @@ class gradereport_user_externallib_testcase extends externallib_advanced_testcas
         $s1grade = 80;
         $s2grade = 60;
 
-        list($course, $teacher, $student1, $student2) = $this->load_data($s1grade, $s2grade);
+        list($course, $teacher, $student1, $student2, $assignment) = $this->load_data($s1grade, $s2grade);
 
         $this->setUser($student2);
 
@@ -156,9 +162,8 @@ class gradereport_user_externallib_testcase extends externallib_advanced_testcas
             $studentgrade = gradereport_user_external::get_grades_table($course->id, $student1->id);
             $this->fail('Exception expected due to not perissions to view other user grades.');
         } catch (moodle_exception $e) {
-            $this->assertEquals('nopermissiontoviewgrades', $e->errorcode);
+            $this->assertEquals('notingroup', $e->errorcode);
         }
-
     }
 
     /**
@@ -171,7 +176,7 @@ class gradereport_user_externallib_testcase extends externallib_advanced_testcas
 
         $s1grade = 80;
         $s2grade = 60;
-        list($course, $teacher, $student1, $student2) = $this->load_data($s1grade, $s2grade);
+        list($course, $teacher, $student1, $student2, $assignment) = $this->load_data($s1grade, $s2grade);
 
         // Redirect events to the sink, so we can recover them later.
         $sink = $this->redirectEvents();
@@ -207,7 +212,154 @@ class gradereport_user_externallib_testcase extends externallib_advanced_testcas
         } catch (moodle_exception $e) {
             $this->assertEquals('nopermissiontoviewgrades', $e->errorcode);
         }
+    }
 
+    /**
+     * Test get_grades_items function case teacher
+     */
+    public function test_get_grade_items_teacher() {
+
+        $this->resetAfterTest(true);
+
+        $s1grade = 80;
+        $s2grade = 60;
+
+        list($course, $teacher, $student1, $student2, $assignment) = $this->load_data($s1grade, $s2grade);
+
+        // A teacher must see all student grades (in their group only).
+        $this->setUser($teacher);
+
+        grade_set_setting($course->id, 'report_user_showrank', 1);
+        grade_set_setting($course->id, 'report_user_showpercentage', 1);
+        grade_set_setting($course->id, 'report_user_showhiddenitems', 1);
+        grade_set_setting($course->id, 'report_user_showgrade', 1);
+        grade_set_setting($course->id, 'report_user_showfeedback', 1);
+        grade_set_setting($course->id, 'report_user_showweight', 1);
+        grade_set_setting($course->id, 'report_user_showcontributiontocoursetotal', 1);
+        grade_set_setting($course->id, 'report_user_showlettergrade', 1);
+        grade_set_setting($course->id, 'report_user_showaverage', 1);
+
+        $studentgrades = gradereport_user_external::get_grade_items($course->id);
+        $studentgrades = external_api::clean_returnvalue(gradereport_user_external::get_grade_items_returns(), $studentgrades);
+        // No warnings returned.
+        $this->assertCount(0, $studentgrades['warnings']);
+
+        // Check that only grades for the student in the teacher group are returned.
+        $this->assertCount(1, $studentgrades['usergrades']);
+        $this->assertCount(2, $studentgrades['usergrades'][0]['gradeitems']);
+
+        $this->assertEquals($course->id, $studentgrades['usergrades'][0]['courseid']);
+        $this->assertEquals($student1->id, $studentgrades['usergrades'][0]['userid']);
+        // Module grades.
+        $this->assertEquals($assignment->name, $studentgrades['usergrades'][0]['gradeitems'][0]['itemname']);
+        $this->assertEquals('mod', $studentgrades['usergrades'][0]['gradeitems'][0]['itemtype']);
+        $this->assertEquals('assign', $studentgrades['usergrades'][0]['gradeitems'][0]['itemmodule']);
+        $this->assertEquals($assignment->id, $studentgrades['usergrades'][0]['gradeitems'][0]['iteminstance']);
+        $this->assertEquals($assignment->cmidnumber, $studentgrades['usergrades'][0]['gradeitems'][0]['cmid']);
+        $this->assertEquals(0, $studentgrades['usergrades'][0]['gradeitems'][0]['itemnumber']);
+        $this->assertEmpty($studentgrades['usergrades'][0]['gradeitems'][0]['outcomeid']);
+        $this->assertEmpty($studentgrades['usergrades'][0]['gradeitems'][0]['scaleid']);
+        $this->assertEquals(80, $studentgrades['usergrades'][0]['gradeitems'][0]['graderaw']);
+        $this->assertEquals('80.00', $studentgrades['usergrades'][0]['gradeitems'][0]['gradeformatted']);
+        $this->assertEquals(0, $studentgrades['usergrades'][0]['gradeitems'][0]['grademin']);
+        $this->assertEquals(100, $studentgrades['usergrades'][0]['gradeitems'][0]['grademax']);
+        $this->assertEquals('0&ndash;100', $studentgrades['usergrades'][0]['gradeitems'][0]['rangeformatted']);
+        $this->assertEquals('80.00 %', $studentgrades['usergrades'][0]['gradeitems'][0]['percentageformatted']);
+        $this->assertEmpty($studentgrades['usergrades'][0]['gradeitems'][0]['feedback']);
+        $this->assertFalse($studentgrades['usergrades'][0]['gradeitems'][0]['gradehiddenbydate']);
+        $this->assertFalse($studentgrades['usergrades'][0]['gradeitems'][0]['gradeneedsupdate']);
+        $this->assertFalse($studentgrades['usergrades'][0]['gradeitems'][0]['gradeishidden']);
+        $this->assertEquals('B-', $studentgrades['usergrades'][0]['gradeitems'][0]['lettergradeformatted']);
+        $this->assertEquals(1, $studentgrades['usergrades'][0]['gradeitems'][0]['rank']);
+        $this->assertEquals(2, $studentgrades['usergrades'][0]['gradeitems'][0]['numusers']);
+        $this->assertEquals(70, $studentgrades['usergrades'][0]['gradeitems'][0]['averageformatted']);
+
+        // Course grades.
+        $this->assertEquals('course', $studentgrades['usergrades'][0]['gradeitems'][1]['itemtype']);
+        $this->assertEquals(80, $studentgrades['usergrades'][0]['gradeitems'][1]['graderaw']);
+        $this->assertEquals('80.00', $studentgrades['usergrades'][0]['gradeitems'][1]['gradeformatted']);
+        $this->assertEquals(0, $studentgrades['usergrades'][0]['gradeitems'][1]['grademin']);
+        $this->assertEquals(100, $studentgrades['usergrades'][0]['gradeitems'][1]['grademax']);
+        $this->assertEquals('0&ndash;100', $studentgrades['usergrades'][0]['gradeitems'][1]['rangeformatted']);
+        $this->assertEquals('80.00 %', $studentgrades['usergrades'][0]['gradeitems'][1]['percentageformatted']);
+        $this->assertEmpty($studentgrades['usergrades'][0]['gradeitems'][1]['feedback']);
+        $this->assertFalse($studentgrades['usergrades'][0]['gradeitems'][1]['gradehiddenbydate']);
+        $this->assertFalse($studentgrades['usergrades'][0]['gradeitems'][1]['gradeneedsupdate']);
+        $this->assertFalse($studentgrades['usergrades'][0]['gradeitems'][1]['gradeishidden']);
+        $this->assertEquals('B-', $studentgrades['usergrades'][0]['gradeitems'][1]['lettergradeformatted']);
+        $this->assertEquals(1, $studentgrades['usergrades'][0]['gradeitems'][1]['rank']);
+        $this->assertEquals(2, $studentgrades['usergrades'][0]['gradeitems'][1]['numusers']);
+        $this->assertEquals(70, $studentgrades['usergrades'][0]['gradeitems'][1]['averageformatted']);
+    }
+
+    /**
+     * Test get_grades_items function case student
+     */
+    public function test_get_grade_items_student() {
+
+        $this->resetAfterTest(true);
+
+        $s1grade = 80;
+        $s2grade = 60;
+
+        list($course, $teacher, $student1, $student2, $assignment) = $this->load_data($s1grade, $s2grade);
+
+        grade_set_setting($course->id, 'report_user_showrank', 1);
+        grade_set_setting($course->id, 'report_user_showpercentage', 1);
+        grade_set_setting($course->id, 'report_user_showgrade', 1);
+        grade_set_setting($course->id, 'report_user_showfeedback', 1);
+        grade_set_setting($course->id, 'report_user_showweight', 1);
+        grade_set_setting($course->id, 'report_user_showcontributiontocoursetotal', 1);
+        grade_set_setting($course->id, 'report_user_showlettergrade', 1);
+        grade_set_setting($course->id, 'report_user_showaverage', 1);
+
+        $this->setUser($student1);
+
+        $studentgrades = gradereport_user_external::get_grade_items($course->id, $student1->id);
+        $studentgrades = external_api::clean_returnvalue(gradereport_user_external::get_grade_items_returns(), $studentgrades);
+        // No warnings returned.
+        $this->assertCount(0, $studentgrades['warnings']);
+
+        // Check that only grades for the student in the teacher group are returned.
+        $this->assertCount(1, $studentgrades['usergrades']);
+        $this->assertCount(2, $studentgrades['usergrades'][0]['gradeitems']);
+
+        $this->assertEquals($course->id, $studentgrades['usergrades'][0]['courseid']);
+        $this->assertEquals($student1->id, $studentgrades['usergrades'][0]['userid']);
+        $this->assertEquals($assignment->name, $studentgrades['usergrades'][0]['gradeitems'][0]['itemname']);
+        $this->assertEquals('mod', $studentgrades['usergrades'][0]['gradeitems'][0]['itemtype']);
+        $this->assertEquals('assign', $studentgrades['usergrades'][0]['gradeitems'][0]['itemmodule']);
+        $this->assertEquals($assignment->id, $studentgrades['usergrades'][0]['gradeitems'][0]['iteminstance']);
+        $this->assertEquals($assignment->cmidnumber, $studentgrades['usergrades'][0]['gradeitems'][0]['cmid']);
+        $this->assertEquals(0, $studentgrades['usergrades'][0]['gradeitems'][0]['itemnumber']);
+        $this->assertEmpty($studentgrades['usergrades'][0]['gradeitems'][0]['outcomeid']);
+        $this->assertEmpty($studentgrades['usergrades'][0]['gradeitems'][0]['scaleid']);
+        $this->assertEquals(80, $studentgrades['usergrades'][0]['gradeitems'][0]['graderaw']);
+        $this->assertEquals('80.00', $studentgrades['usergrades'][0]['gradeitems'][0]['gradeformatted']);
+        $this->assertEquals(0, $studentgrades['usergrades'][0]['gradeitems'][0]['grademin']);
+        $this->assertEquals(100, $studentgrades['usergrades'][0]['gradeitems'][0]['grademax']);
+        $this->assertEquals('0&ndash;100', $studentgrades['usergrades'][0]['gradeitems'][0]['rangeformatted']);
+        $this->assertEquals('80.00 %', $studentgrades['usergrades'][0]['gradeitems'][0]['percentageformatted']);
+        $this->assertEmpty($studentgrades['usergrades'][0]['gradeitems'][0]['feedback']);
+        $this->assertFalse($studentgrades['usergrades'][0]['gradeitems'][0]['gradehiddenbydate']);
+        $this->assertFalse($studentgrades['usergrades'][0]['gradeitems'][0]['gradeneedsupdate']);
+        $this->assertFalse($studentgrades['usergrades'][0]['gradeitems'][0]['gradeishidden']);
+        $this->assertEquals('B-', $studentgrades['usergrades'][0]['gradeitems'][0]['lettergradeformatted']);
+        $this->assertEquals(1, $studentgrades['usergrades'][0]['gradeitems'][0]['rank']);
+        $this->assertEquals(2, $studentgrades['usergrades'][0]['gradeitems'][0]['numusers']);
+        $this->assertEquals(70, $studentgrades['usergrades'][0]['gradeitems'][0]['averageformatted']);
+
+        // Hide one grade for the user.
+        $gradegrade = new grade_grade(array('userid' => $student1->id,
+                                        'itemid' => $studentgrades['usergrades'][0]['gradeitems'][0]['id']), true);
+        $gradegrade->set_hidden(1);
+        $studentgrades = gradereport_user_external::get_grade_items($course->id, $student1->id);
+        $studentgrades = external_api::clean_returnvalue(gradereport_user_external::get_grade_items_returns(), $studentgrades);
+
+        // Check we get only the course final grade.
+        $this->assertCount(1, $studentgrades['usergrades']);
+        $this->assertCount(1, $studentgrades['usergrades'][0]['gradeitems']);
+        $this->assertEquals('course', $studentgrades['usergrades'][0]['gradeitems'][0]['itemtype']);
     }
 
 }

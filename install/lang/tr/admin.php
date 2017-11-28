@@ -42,3 +42,4 @@ Lütfen --help seçeneğini kullanın.';
 $string['cliyesnoprompt'] = 'e (evet) veya h (hayır) yazın';
 $string['environmentrequireinstall'] = 'yüklenmiş ve etkinleştirilmiş olmalıdır';
 $string['environmentrequireversion'] = 'sürüm {$a->needed} gerekli ve şu anda {$a->current} çalışıyor';
+$string['upgradekeyset'] = 'Yükseltme tuşu (ayarlanmak istenmiyorsa boş bırakın)';

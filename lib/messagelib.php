@@ -24,7 +24,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once(dirname(dirname(__FILE__)) . '/message/lib.php');
+require_once(__DIR__ . '/../message/lib.php');
 
 /**
  * Called when a message provider wants to send a message.
@@ -50,12 +50,22 @@ require_once(dirname(dirname(__FILE__)) . '/message/lib.php');
  * Note: processor failure is is not reported as false return value,
  *       earlier versions did not do it consistently either.
  *
+ * @todo MDL-55449 Drop support for stdClass in Moodle 3.6
  * @category message
- * @param stdClass|\core\message\message $eventdata information about the message (component, userfrom, userto, ...)
+ * @param \core\message\message $eventdata information about the message (component, userfrom, userto, ...)
  * @return mixed the integer ID of the new message or false if there was a problem with submitted data
  */
 function message_send($eventdata) {
     global $CFG, $DB;
+
+    // TODO MDL-55449 Drop support for stdClass in Moodle 3.6.
+    if ($eventdata instanceof \stdClass) {
+        if (!isset($eventdata->courseid)) {
+            $eventdata->courseid = null;
+        }
+
+        debugging('eventdata as \stdClass is deprecated. Please use core\message\message instead.', DEBUG_DEVELOPER);
+    }
 
     //new message ID to return
     $messageid = false;
@@ -119,6 +129,7 @@ function message_send($eventdata) {
 
     // Create the message object
     $savemessage = new stdClass();
+    $savemessage->courseid          = $eventdata->courseid;
     $savemessage->useridfrom        = $eventdata->userfrom->id;
     $savemessage->useridto          = $eventdata->userto->id;
     $savemessage->subject           = $eventdata->subject;
@@ -127,6 +138,8 @@ function message_send($eventdata) {
     $savemessage->fullmessagehtml   = $eventdata->fullmessagehtml;
     $savemessage->smallmessage      = $eventdata->smallmessage;
     $savemessage->notification      = $eventdata->notification;
+    $savemessage->eventtype         = $eventdata->name;
+    $savemessage->component         = $eventdata->component;
 
     if (!empty($eventdata->contexturl)) {
         $savemessage->contexturl = (string)$eventdata->contexturl;
@@ -168,8 +181,19 @@ function message_send($eventdata) {
         }
     }
 
-    // Fetch enabled processors
-    $processors = get_message_processors(true);
+    // Fetch enabled processors.
+    // If we are dealing with a message some processors may want to handle it regardless of user and site settings.
+    if (empty($savemessage->notification)) {
+        $processors = array_filter(get_message_processors(false), function($processor) {
+            if ($processor->object->force_process_messages()) {
+                return true;
+            }
+
+            return ($processor->enabled && $processor->configured);
+        });
+    } else {
+        $processors = get_message_processors(true);
+    }
 
     // Preset variables
     $processorlist = array();
@@ -202,7 +226,9 @@ function message_send($eventdata) {
         }
 
         // Populate the list of processors we will be using
-        if ($permitted == 'forced' && $userisconfigured) {
+        if (empty($savemessage->notification) && $processor->object->force_process_messages()) {
+            $processorlist[] = $processor->name;
+        } else if ($permitted == 'forced' && $userisconfigured) {
             // An admin is forcing users to use this message processor. Use this processor unconditionally.
             $processorlist[] = $processor->name;
         } else if ($permitted == 'permitted' && $userisconfigured && !$eventdata->userto->emailstop) {
@@ -219,6 +245,15 @@ function message_send($eventdata) {
                 }
             }
         }
+    }
+
+    // Only cache messages, not notifications.
+    if (empty($savemessage->notification)) {
+        // Cache the timecreated value of the last message between these two users.
+        $cache = cache::make('core', 'message_time_last_message_between_users');
+        $key = \core_message\helper::get_last_message_time_created_cache_key($savemessage->useridfrom,
+            $savemessage->useridto);
+        $cache->set($key, $savemessage->timecreated);
     }
 
     // Store unread message just in case we get a fatal error any time later.

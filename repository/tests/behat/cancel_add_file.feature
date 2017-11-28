@@ -13,19 +13,17 @@ Feature: A selected file can be cancelled
     And I follow "Manage private files"
     And I upload "lib/tests/fixtures/empty.txt" file to "Files" filemanager
     And I press "Save changes"
-    And I am on site homepage
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     When I add a "Folder" to section "1"
     And I set the following fields to these values:
       | Name | Folder name |
       | Description | Folder description |
     And I upload "lib/tests/fixtures/upload_users.csv" file to "Files" filemanager
-    And I click on "#fitem_id_files .fp-btn-add a" "css_element"
+    And I click on "//label[contains(., 'Files')]/ancestor::div[contains(concat(' ', @class, ' '), ' fitem ')]//*[contains(@title, 'Add...')]" "xpath_element"
     And I click on "Recent files" "link" in the ".fp-repo-area" "css_element"
     And I click on "//a[contains(concat(' ', normalize-space(@class), ' '), ' fp-file ')][normalize-space(.)='empty.txt']" "xpath_element"
     And I click on ".moodle-dialogue-focused .fp-select .fp-select-cancel" "css_element"
-    And I click on ".moodle-dialogue-focused.filepicker .yui3-button.closebutton" "css_element"
+    And I click on "Close" "button" in the "File picker" "dialogue"
     And I press "Save and display"
     Then I should see "upload_users.csv"
     And I should not see "empty.txt"

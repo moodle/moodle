@@ -23,7 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(dirname(__FILE__).'/../../config.php');
+require_once(__DIR__.'/../../config.php');
 require_once("{$CFG->libdir}/completionlib.php");
 
 // Load data.
@@ -90,7 +90,7 @@ echo html_writer::start_tag('tbody');
 if ($USER->id != $user->id) {
     echo html_writer::start_tag('tr');
     echo html_writer::start_tag('td', array('colspan' => '2'));
-    echo html_writer::tag('b', get_string('showinguser', 'completion'));
+    echo html_writer::tag('b', get_string('showinguser', 'completion') . ' ');
     $url = new moodle_url('/user/view.php', array('id' => $user->id, 'course' => $course->id));
     echo html_writer::link($url, fullname($user));
     echo html_writer::end_tag('td');
@@ -99,7 +99,7 @@ if ($USER->id != $user->id) {
 
 echo html_writer::start_tag('tr');
 echo html_writer::start_tag('td', array('colspan' => '2'));
-echo html_writer::tag('b', get_string('status'));
+echo html_writer::tag('b', get_string('status') . ' ');
 
 // Is course complete?
 $coursecomplete = $info->is_course_complete($user->id);
@@ -141,7 +141,7 @@ if (empty($completions)) {
 } else {
     echo html_writer::start_tag('tr');
     echo html_writer::start_tag('td', array('colspan' => '2'));
-    echo html_writer::tag('b', get_string('required'));
+    echo html_writer::tag('b', get_string('required') . ' ');
 
     // Get overall aggregation method.
     $overall = $info->get_aggregation_method();
@@ -214,7 +214,7 @@ if (empty($completions)) {
                     echo core_text::strtolower(get_string('any', 'completion'));
                 }
 
-                echo html_writer::end_tag('i') .core_text::strtolower(get_string('required')).')';
+                echo ' ' . html_writer::end_tag('i') .core_text::strtolower(get_string('required')).')';
                 $agg_type = false;
             }
         }

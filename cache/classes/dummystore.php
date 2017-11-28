@@ -190,9 +190,9 @@ class cachestore_dummy extends cache_store {
             foreach ($keyvaluearray as $pair) {
                 $this->store[$pair['key']] = $pair['value'];
             }
-            return count($keyvaluearray);
+
         }
-        return 0;
+        return count($keyvaluearray);
     }
 
     /**
@@ -229,8 +229,24 @@ class cachestore_dummy extends cache_store {
 
     /**
      * Performs any necessary clean up when the store instance is being deleted.
+     *
+     * @deprecated since 3.2
+     * @see cachestore_dummy::instance_deleted()
      */
     public function cleanup() {
+        debugging('cachestore_dummy::cleanup() is deprecated. Please use cachestore_dummy::instance_deleted() instead.',
+            DEBUG_DEVELOPER);
+        $this->instance_deleted();
+    }
+
+    /**
+     * Performs any necessary operation when the store instance is being deleted.
+     *
+     * This method may be called before the store has been initialised.
+     *
+     * @since Moodle 3.2
+     */
+    public function instance_deleted() {
         $this->purge();
     }
 
@@ -242,8 +258,19 @@ class cachestore_dummy extends cache_store {
      */
     public static function initialise_test_instance(cache_definition $definition) {
         $cache = new cachestore_dummy('Dummy store test');
-        $cache->initialise($definition);
+        if ($cache->is_ready()) {
+            $cache->initialise($definition);
+        }
         return $cache;
+    }
+
+    /**
+     * Generates the appropriate configuration required for unit testing.
+     *
+     * @return array Array of unit test configuration data to be used by initialise().
+     */
+    public static function unit_test_configuration() {
+        return [];
     }
 
     /**

@@ -66,7 +66,7 @@ class quiz_report_statistics_from_steps_testcase extends mod_quiz_attempt_walkth
     /**
      * Create a quiz add questions to it, walk through quiz attempts and then check results.
      *
-     * @param PHPUnit_Extensions_Database_DataSet_ITable[] of data read from csv file "questionsXX.csv",
+     * @param PHPUnit\DbUnit\DataSet\ITable[] of data read from csv file "questionsXX.csv",
      *                                                                                  "stepsXX.csv" and "resultsXX.csv".
      * @dataProvider get_data_for_walkthrough
      */
@@ -76,9 +76,10 @@ class quiz_report_statistics_from_steps_testcase extends mod_quiz_attempt_walkth
 
         $whichattempts = QUIZ_GRADEAVERAGE; // All attempts.
         $whichtries = question_attempt::ALL_TRIES;
-        $groupstudents = array();
+        $groupstudentsjoins = new \core\dml\sql_join();
         list($questions, $quizstats, $questionstats, $qubaids) =
-                    $this->check_stats_calculations_and_response_analysis($csvdata, $whichattempts, $whichtries, $groupstudents);
+                    $this->check_stats_calculations_and_response_analysis($csvdata,
+                            $whichattempts, $whichtries, $groupstudentsjoins);
         if ($quizsettings['testnumber'] === '00') {
             $this->check_variants_count_for_quiz_00($questions, $questionstats, $whichtries, $qubaids);
             $this->check_quiz_stats_for_quiz_00($quizstats);
@@ -88,7 +89,7 @@ class quiz_report_statistics_from_steps_testcase extends mod_quiz_attempt_walkth
     /**
      * Check actual question stats are the same as that found in csv file.
      *
-     * @param $qstats         PHPUnit_Extensions_Database_DataSet_ITable data from csv file.
+     * @param $qstats         PHPUnit\DbUnit\DataSet\ITable data from csv file.
      * @param $questionstats  \core_question\statistics\questions\all_calculated_for_qubaid_condition Calculated stats.
      */
     protected function check_question_stats($qstats, $questionstats) {
@@ -357,23 +358,24 @@ class quiz_report_statistics_from_steps_testcase extends mod_quiz_attempt_walkth
     /**
      * Check the question stats and the response counts used in the statistics report. If the appropriate files exist in fixtures/.
      *
-     * @param PHPUnit_Extensions_Database_DataSet_ITable[] $csvdata Data loaded from csv files for this test.
+     * @param PHPUnit\DbUnit\DataSet\ITable[] $csvdata Data loaded from csv files for this test.
      * @param string $whichattempts
      * @param string $whichtries
-     * @param int[] $groupstudents
+     * @param \core\dml\sql_join $groupstudentsjoins
      * @return array with contents 0 => $questions, 1 => $quizstats, 2=> $questionstats, 3=> $qubaids Might be needed for further
      *               testing.
      */
-    protected function check_stats_calculations_and_response_analysis($csvdata, $whichattempts, $whichtries, $groupstudents) {
+    protected function check_stats_calculations_and_response_analysis($csvdata, $whichattempts, $whichtries,
+            \core\dml\sql_join $groupstudentsjoins) {
         $this->report = new quiz_statistics_report();
         $questions = $this->report->load_and_initialise_questions_for_calculations($this->quiz);
         list($quizstats, $questionstats) = $this->report->get_all_stats_and_analysis($this->quiz,
                                                                                      $whichattempts,
                                                                                      $whichtries,
-                                                                                     $groupstudents,
+                                                                                     $groupstudentsjoins,
                                                                                      $questions);
 
-        $qubaids = quiz_statistics_qubaids_condition($this->quiz->id, $groupstudents, $whichattempts);
+        $qubaids = quiz_statistics_qubaids_condition($this->quiz->id, $groupstudentsjoins, $whichattempts);
 
         // We will create some quiz and question stat calculator instances and some response analyser instances, just in order
         // to check the last analysed time then returned.

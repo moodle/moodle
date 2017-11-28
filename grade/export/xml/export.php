@@ -23,7 +23,7 @@ $id                = required_param('id', PARAM_INT); // course id
 $PAGE->set_url('/grade/export/xml/export.php', array('id'=>$id));
 
 if (!$course = $DB->get_record('course', array('id'=>$id))) {
-    print_error('nocourseid');
+    print_error('invalidcourseid');
 }
 
 require_login($course);
@@ -56,6 +56,8 @@ if (!empty($CFG->gradepublishing) && !empty($key)) {
     echo $export->get_grade_publishing_url();
     echo $OUTPUT->footer();
 } else {
+    $event = \gradeexport_xml\event\grade_exported::create(array('context' => $context));
+    $event->trigger();
     $export->print_grades();
 }
 

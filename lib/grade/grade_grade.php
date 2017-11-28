@@ -352,9 +352,9 @@ class grade_grade extends grade_object {
 
         // Check to see if the gradebook is frozen. This allows grades to not be altered at all until a user verifies that they
         // wish to update the grades.
-        $gradebookcalculationsfreeze = get_config('core', 'gradebook_calculations_freeze_' . $this->grade_item->courseid);
+        $gradebookcalculationsfreeze = 'gradebook_calculations_freeze_' . $this->grade_item->courseid;
         // Gradebook is frozen, run through old code.
-        if ($gradebookcalculationsfreeze && (int)$gradebookcalculationsfreeze <= 20150627) {
+        if (isset($CFG->$gradebookcalculationsfreeze) && (int)$CFG->$gradebookcalculationsfreeze <= 20150627) {
             // Only aggregate items use separate min grades.
             if ($minmaxtouse == GRADE_MIN_MAX_FROM_GRADE_GRADE || $this->grade_item->is_aggregate_item()) {
                 return array($this->rawgrademin, $this->rawgrademax);
@@ -727,8 +727,9 @@ class grade_grade extends grade_object {
      *
      * @param array $grade_grades all course grades of one user, & used for better internal caching
      * @param array $grade_items array of grade items, & used for better internal caching
-     * @return array This is an array of 3 arrays:
-     *      unknown => list of item ids that may be affected by hiding (with the calculated grade as the value)
+     * @return array This is an array of following arrays:
+     *      unknown => list of item ids that may be affected by hiding (with the ITEM ID as both the key and the value) - for BC with old gradereport plugins
+     *      unknowngrades => list of item ids that may be affected by hiding (with the calculated grade as the value)
      *      altered => list of item ids that are definitely affected by hiding (with the calculated grade as the value)
      *      alteredgrademax => for each item in altered or unknown, the new value of the grademax
      *      alteredgrademin => for each item in altered or unknown, the new value of the grademin
@@ -779,6 +780,7 @@ class grade_grade extends grade_object {
 
         if (!$hiddenfound) {
             return array('unknown' => array(),
+                         'unknowngrades' => array(),
                          'altered' => array(),
                          'alteredgrademax' => array(),
                          'alteredgrademin' => array(),
@@ -795,18 +797,28 @@ class grade_grade extends grade_object {
         for($i=0; $i<$max; $i++) {
             $found = false;
             foreach($todo as $key=>$do) {
-                $hidden_precursors = array_intersect($dependson[$do], $unknown);
+                $hidden_precursors = array_intersect($dependson[$do], array_keys($unknown));
                 if ($hidden_precursors) {
                     // this item depends on hidden grade indirectly
-                    $unknown[$do] = $do;
+                    $unknown[$do] = $grade_grades[$do]->finalgrade;
                     unset($todo[$key]);
                     $found = true;
                     continue;
 
                 } else if (!array_intersect($dependson[$do], $todo)) {
                     $hidden_precursors = array_intersect($dependson[$do], array_keys($altered));
-                    if (!$hidden_precursors) {
-                        // hiding does not affect this grade
+                    // If the dependency is a sum aggregation, we need to process it as if it had hidden items.
+                    // The reason for this, is that the code will recalculate the maxgrade by removing ungraded
+                    // items and accounting for 'drop x grades' and then stored back in our virtual grade_items.
+                    // This recalculation is necessary because there will be a call to:
+                    //              $grade_category->aggregate_values_and_adjust_bounds
+                    // for the top level grade that will depend on knowing what that caclulated grademax is
+                    // and it finds that value by checking the virtual grade_items.
+                    $issumaggregate = false;
+                    if ($grade_items[$do]->itemtype == 'category') {
+                        $issumaggregate = $grade_items[$do]->load_item_category()->aggregation == GRADE_AGGREGATE_SUM;
+                    }
+                    if (!$hidden_precursors && !$issumaggregate) {
                         unset($todo[$key]);
                         $found = true;
                         continue;
@@ -818,7 +830,7 @@ class grade_grade extends grade_object {
                         ) {
                             // This is a grade item that is not a category or course and has been affected by grade hiding.
                             // I guess this means it is a calculation that needs to be recalculated.
-                            $unknown[$do] = $do;
+                            $unknown[$do] = $grade_grades[$do]->finalgrade;
                             unset($todo[$key]);
                             $found = true;
                             continue;
@@ -943,7 +955,8 @@ class grade_grade extends grade_object {
             }
         }
 
-        return array('unknown' => $unknown,
+        return array('unknown' => array_combine(array_keys($unknown), array_keys($unknown)), // Left for BC in case some gradereport plugins expect it.
+                     'unknowngrades' => $unknown,
                      'altered' => $altered,
                      'alteredgrademax' => $alteredgrademax,
                      'alteredgrademin' => $alteredgrademin,

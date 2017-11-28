@@ -28,10 +28,10 @@ class HTMLPurifier_Injector_RemoveEmpty extends HTMLPurifier_Injector
     private $removeNbspExceptions;
 
     /**
+     * Cached contents of %AutoFormat.RemoveEmpty.Predicate
      * @type array
-     * TODO: make me configurable
      */
-    private $_exclude = array('colgroup' => 1, 'th' => 1, 'td' => 1, 'iframe' => 1);
+    private $exclude;
 
     /**
      * @param HTMLPurifier_Config $config
@@ -45,6 +45,13 @@ class HTMLPurifier_Injector_RemoveEmpty extends HTMLPurifier_Injector
         $this->context = $context;
         $this->removeNbsp = $config->get('AutoFormat.RemoveEmpty.RemoveNbsp');
         $this->removeNbspExceptions = $config->get('AutoFormat.RemoveEmpty.RemoveNbsp.Exceptions');
+        $this->exclude = $config->get('AutoFormat.RemoveEmpty.Predicate');
+        foreach ($this->exclude as $key => $attrs) {
+            if (!is_array($attrs)) {
+                // HACK, see HTMLPurifier/Printer/ConfigForm.php
+                $this->exclude[$key] = explode(';', $attrs);
+            }
+        }
         $this->attrValidator = new HTMLPurifier_AttrValidator();
     }
 
@@ -75,11 +82,15 @@ class HTMLPurifier_Injector_RemoveEmpty extends HTMLPurifier_Injector
             break;
         }
         if (!$next || ($next instanceof HTMLPurifier_Token_End && $next->name == $token->name)) {
-            if (isset($this->_exclude[$token->name])) {
-                return;
-            }
             $this->attrValidator->validateToken($token, $this->config, $this->context);
             $token->armor['ValidateAttributes'] = true;
+            if (isset($this->exclude[$token->name])) {
+                $r = true;
+                foreach ($this->exclude[$token->name] as $elem) {
+                    if (!isset($token->attr[$elem])) $r = false;
+                }
+                if ($r) return;
+            }
             if (isset($token->attr['id']) || isset($token->attr['name'])) {
                 return;
             }

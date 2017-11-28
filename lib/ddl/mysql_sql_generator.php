@@ -119,12 +119,9 @@ class mysql_sql_generator extends sql_generator {
      *       errors and changes of column data types.
      *
      * @deprecated since Moodle 2.9 MDL-49723 - please do not use this function any more.
-     * @param xmldb_field[]|database_column_info[] $columns
-     * @return int approximate row size in bytes
      */
     public function guess_antolope_row_size(array $columns) {
-        debugging('guess_antolope_row_size() is deprecated, please use guess_antelope_row_size() instead.', DEBUG_DEVELOPER);
-        return $this->guess_antelope_row_size($columns);
+        throw new coding_exception('guess_antolope_row_size() can not be used any more, please use guess_antelope_row_size() instead.');
     }
 
     /**
@@ -221,6 +218,9 @@ class mysql_sql_generator extends sql_generator {
             }
         }
 
+        $utf8mb4rowformat = $this->mdb->get_row_format_sql($engine, $collation);
+        $rowformat = ($utf8mb4rowformat == '') ? $rowformat : $utf8mb4rowformat;
+
         $sqlarr = parent::getCreateTableSQL($xmldb_table);
 
         // This is a very nasty hack that tries to use just one query per created table
@@ -241,7 +241,7 @@ class mysql_sql_generator extends sql_generator {
                     if (strpos($collation, 'utf8_') === 0) {
                         $sql .= "\n DEFAULT CHARACTER SET utf8";
                     }
-                    $sql .= "\n DEFAULT COLLATE = $collation";
+                    $sql .= "\n DEFAULT COLLATE = $collation ";
                 }
                 if ($rowformat) {
                     $sql .= $rowformat;
@@ -344,7 +344,7 @@ class mysql_sql_generator extends sql_generator {
                     if (strpos($collation, 'utf8_') === 0) {
                         $sqlarr[$i] .= " DEFAULT CHARACTER SET utf8";
                     }
-                    $sqlarr[$i] .= " DEFAULT COLLATE $collation";
+                    $sqlarr[$i] .= " DEFAULT COLLATE $collation ROW_FORMAT=DYNAMIC";
                 }
             }
         }

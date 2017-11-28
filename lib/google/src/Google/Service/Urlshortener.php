@@ -23,7 +23,7 @@
  *
  * <p>
  * For more information about this service, see the API
- * <a href="http://code.google.com/apis/urlshortener/v1/getting_started.html" target="_blank">Documentation</a>
+ * <a href="https://developers.google.com/url-shortener/v1/getting_started" target="_blank">Documentation</a>
  * </p>
  *
  * @author Google, Inc.
@@ -45,6 +45,7 @@ class Google_Service_Urlshortener extends Google_Service
   public function __construct(Google_Client $client)
   {
     parent::__construct($client);
+    $this->rootUrl = 'https://www.googleapis.com/';
     $this->servicePath = 'urlshortener/v1/';
     $this->version = 'v1';
     $this->serviceName = 'urlshortener';

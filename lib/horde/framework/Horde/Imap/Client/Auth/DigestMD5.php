@@ -1,7 +1,7 @@
 <?php
 /**
  * Copyright (c) 2002-2003 Richard Heyes
- * Copyright 2011-2014 Horde LLC (http://www.horde.org/)
+ * Copyright 2011-2017 Horde LLC (http://www.horde.org/)
  *
  * This code is based on the original code contained in the PEAR Auth_SASL
  * package (v0.5.1):
@@ -40,7 +40,7 @@
  *
  * @category  Horde
  * @copyright 2002-2003 Richard Heyes
- * @copyright 2011-2014 Horde LLC
+ * @copyright 2011-2017 Horde LLC
  * @license   http://www.horde.org/licenses/lgpl21 LGPL 2.1
  * @package   Imap_Client
  */
@@ -53,7 +53,7 @@
  * @author    Richard Heyes <richard@php.net>
  * @author    Michael Slusarz <slusarz@horde.org>
  * @copyright 2002-2003 Richard Heyes
- * @copyright 2011-2014 Horde LLC
+ * @copyright 2011-2017 Horde LLC
  * @license   http://www.horde.org/licenses/lgpl21 LGPL 2.1
  * @package   Imap_Client
  */

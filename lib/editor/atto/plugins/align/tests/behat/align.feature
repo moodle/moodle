@@ -5,8 +5,7 @@ Feature: Atto align text
   @javascript
   Scenario: Right align some text
     Given I log in as "admin"
-    And I follow "Profile" in the user menu
-    And I follow "Edit profile"
+    And I open my profile in edit mode
     And I set the field "Description" to "<p>Fascism</p>"
     And I click on "Show more buttons" "button"
     And I select the text in the "Description" Atto editor
@@ -16,14 +15,13 @@ Feature: Atto align text
     And I follow "Editor preferences"
     And I set the field "Text editor" to "Plain text area"
     And I press "Save changes"
-    And I follow "Edit profile"
+    And I click on "Edit profile" "link" in the "region-main" "region"
     Then I should see "style=\"text-align:right;\""
 
   @javascript
   Scenario: Left align some text
     Given I log in as "admin"
-    And I follow "Profile" in the user menu
-    And I follow "Edit profile"
+    And I open my profile in edit mode
     And I set the field "Description" to "<p>Communism</p>"
     And I click on "Show more buttons" "button"
     And I select the text in the "Description" Atto editor
@@ -34,14 +32,13 @@ Feature: Atto align text
     And I follow "Editor preferences"
     And I set the field "Text editor" to "Plain text area"
     And I press "Save changes"
-    And I follow "Edit profile"
+    And I click on "Edit profile" "link" in the "region-main" "region"
     Then I should see "style=\"text-align:left;\""
 
   @javascript
   Scenario: Center align some text
     Given I log in as "admin"
-    And I follow "Profile" in the user menu
-    And I follow "Edit profile"
+    And I open my profile in edit mode
     And I set the field "Description" to "<p>United Future</p>"
     And I click on "Show more buttons" "button"
     And I select the text in the "Description" Atto editor
@@ -51,6 +48,5 @@ Feature: Atto align text
     And I follow "Editor preferences"
     And I set the field "Text editor" to "Plain text area"
     And I press "Save changes"
-    And I follow "Edit profile"
+    And I click on "Edit profile" "link" in the "region-main" "region"
     Then I should see "style=\"text-align:center;\""
-

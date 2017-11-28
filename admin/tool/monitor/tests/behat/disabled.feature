@@ -1,10 +1,9 @@
-@javascript @tool @tool_monitor
+@tool @tool_monitor
 Feature: Enable/disable managment of the event monitor
   In order to manage event monitoring
   As an admin
   I need to enable/disable it
 
-  @javascript
   Scenario: Tool is disabled by default.
     Given I log in as "admin"
     When I navigate to "Event monitoring rules" node in "Site administration > Reports"

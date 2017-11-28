@@ -89,29 +89,29 @@ function report_log_can_access_user_report($user, $course) {
     $coursecontext = context_course::instance($course->id);
     $personalcontext = context_user::instance($user->id);
 
-    $today = false;
-    $all = false;
-
-    if (has_capability('report/log:view', $coursecontext)) {
-        $today = true;
-    }
-    if (has_capability('report/log:viewtoday', $coursecontext)) {
-        $all = true;
-    }
-
-    if ($today and $all) {
-        return array(true, true);
-    }
-
-    if (has_capability('moodle/user:viewuseractivitiesreport', $personalcontext)) {
-        if ($course->showreports and (is_viewing($coursecontext, $user) or is_enrolled($coursecontext, $user))) {
-            return array(true, true);
-        }
-
-    } else if ($user->id == $USER->id) {
+    if ($user->id == $USER->id) {
         if ($course->showreports and (is_viewing($coursecontext, $USER) or is_enrolled($coursecontext, $USER))) {
             return array(true, true);
         }
+    } else if (has_capability('moodle/user:viewuseractivitiesreport', $personalcontext)) {
+        if ($course->showreports and (is_viewing($coursecontext, $user) or is_enrolled($coursecontext, $user))) {
+            return array(true, true);
+        }
+    }
+
+    // Check if $USER shares group with $user (in case separated groups are enabled and 'moodle/site:accessallgroups' is disabled).
+    if (!groups_user_groups_visible($course, $user->id)) {
+        return array(false, false);
+    }
+
+    $today = false;
+    $all = false;
+
+    if (has_capability('report/log:viewtoday', $coursecontext)) {
+        $today = true;
+    }
+    if (has_capability('report/log:view', $coursecontext)) {
+        $all = true;
     }
 
     return array($all, $today);

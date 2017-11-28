@@ -1,14 +1,10 @@
-Description of Minify 2.1.7 import into Moodle
+Description of MatthiasMullie\Minify import into Moodle
 
-Notes:
- * Do not use anything from /lib/minify/ directly, always use core_minify::*() methods.
- * In 2.7dev we will import only the minimal number of files required by new core_minify class
-   and delete deprecated js_minify() and css_minify_css().
+1) Download https://github.com/matthiasmullie/minify/archive/1.3.51.zip and unzip
 
-Changes:
- * Removed index.php - Is an unused entry point program and could potentially
-   pose a security risk in the future.
- * Removed /builder/* - Not needed
- * Removed .htaccess - Not needed
- * Changed config.php - added moodle specific settings
- * Removed lib/JSMin.php which is not GNU GPL compatible.
+mv minify-1.3.51/src /path/to/moodle/lib/minify/matthiasmullie-minify/
+mv minify-1.3.51/data /path/to/moodle/lib/minify/matthiasmullie-minify/
+
+2) Download https://github.com/matthiasmullie/path-converter/archive/1.1.0.zip and unzip
+
+mv path-converter-1.1.0/src/ /path/to/moodle/lib/minify/matthiasmullie-pathconverter/

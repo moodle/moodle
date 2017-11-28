@@ -24,7 +24,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(dirname(__FILE__) . '/../../../config.php');
+require_once(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 
 $action = optional_param('action', '', PARAM_ALPHANUMEXT);
@@ -102,9 +102,9 @@ if (!$problems) {
         $count = $problem->racount;
         $edit = array();
         $aurl = new moodle_url('/admin/roles/define.php', array('roleid'=>$problem->roleid, 'action'=>'edit'));
-        $edit[] = html_writer::link($aurl, html_writer::empty_tag('img', array('src'=>$OUTPUT->pix_url('t/edit'), 'alt'=>get_string('edit'), 'class'=>'smallicon')));
+        $edit[] = html_writer::link($aurl, $OUTPUT->pix_icon('t/edit', 'core', get_string('edit')));
         $aurl = new moodle_url($PAGE->url, array('roleid'=>$problem->roleid, 'contextlevel'=>$problem->contextlevel, 'action'=>'delete'));
-        $edit[] = html_writer::link($aurl, html_writer::empty_tag('img', array('src'=>$OUTPUT->pix_url('t/delete'), 'alt'=>get_string('delete'), 'class'=>'smallicon')));
+        $edit[] = html_writer::link($aurl, $OUTPUT->pix_icon('t/delete', 'core', get_string('delete')));
         $data[] = array($levelname, $rolename, $count, implode('&nbsp;', $edit));
     }
     $table = new html_table();

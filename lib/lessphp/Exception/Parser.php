@@ -54,7 +54,7 @@ class Less_Exception_Parser extends Exception{
 
 	protected function getInput(){
 
-		if( !$this->input && $this->currentFile && $this->currentFile['filename'] ){
+		if( !$this->input && $this->currentFile && $this->currentFile['filename'] && file_exists($this->currentFile['filename']) ){
 			$this->input = file_get_contents( $this->currentFile['filename'] );
 		}
 	}

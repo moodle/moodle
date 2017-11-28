@@ -25,8 +25,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 // The current plugin version (Date: YYYYMMDDXX).
-$plugin->version   = 2015051100;
+$plugin->version   = 2017111300;
 // Required Moodle version.
-$plugin->requires  = 2015050500;
+$plugin->requires  = 2017110800;
 // Full name of the plugin (used for diagnostics).
 $plugin->component = 'tinymce_moodleimage';

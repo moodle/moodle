@@ -20,28 +20,31 @@ Feature: Rename roles within a course
       | teacher2 | C1 | teacher |
       | student1 | C1 | student |
     And I log in as "teacher1"
-    And I follow "Course 1"
-    When I click on "Edit settings" "link" in the "Administration" "block"
+    And I am on "Course 1" course homepage
+    When I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
       | Your word for 'Non-editing teacher' | Tutor |
       | Your word for 'Student' | Learner |
     And I press "Save and display"
-    And I expand "Switch role to..." node
-    Then I should see "Tutor"
-    And I should see "Learner"
-    And I follow "Participants"
-    And the "roleid" select box should contain "Tutor"
-    And the "roleid" select box should contain "Learner"
-    And the "roleid" select box should not contain "Student"
-    And I click on "Edit settings" "link" in the "Administration" "block"
+    And I follow "Switch role to..." in the user menu
+    Then "Tutor" "button" should exist
+    And "Learner" "button" should exist
+    And I navigate to course participants
+    And I open the autocomplete suggestions list
+    And I should see "Role: Tutor" in the ".form-autocomplete-suggestions" "css_element"
+    And I should see "Role: Learner" in the ".form-autocomplete-suggestions" "css_element"
+    And I should not see "Role: Student" in the ".form-autocomplete-suggestions" "css_element"
+    And I am on "Course 1" course homepage
+    And I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
       | Your word for 'Non-editing teacher' | |
       | Your word for 'Student' | |
     And I press "Save and display"
-    And I expand "Switch role to..." node
+    And I follow "Switch role to..." in the user menu
     And I should see "Teacher"
-    And I should see "Student"
-    And I should not see "Learner"
-    And I follow "Participants"
-    And the "roleid" select box should contain "Non-editing teacher"
-    And the "roleid" select box should contain "Student"
+    And "Student" "button" should exist
+    And "Learner" "button" should not exist
+    And I navigate to course participants
+    And I open the autocomplete suggestions list
+    And I should see "Role: Non-editing teacher" in the ".form-autocomplete-suggestions" "css_element"
+    And I should see "Role: Student" in the ".form-autocomplete-suggestions" "css_element"

@@ -24,7 +24,7 @@
  */
 
 require_once('../../config.php');
-require_once('lib.php');
+require_once('locallib.php');
 require_once("$CFG->libdir/rsslib.php");
 require_once("$CFG->libdir/form/filemanager.php");
 
@@ -33,8 +33,7 @@ $d     = optional_param('d', 0, PARAM_INT);    // database id
 $rid   = optional_param('rid', 0, PARAM_INT);    //record id
 $cancel   = optional_param('cancel', '', PARAM_RAW);    // cancel an add
 $mode ='addtemplate';    //define the mode for this page, only 1 mode available
-
-
+$tags = optional_param_array('tags', [], PARAM_TAGLIST);
 
 $url = new moodle_url('/mod/data/edit.php');
 if ($rid !== 0) {
@@ -112,7 +111,7 @@ $groupmode = groups_get_activity_groupmode($cm);
 if (!has_capability('mod/data:manageentries', $context)) {
     if ($rid) {
         // User is editing an existing record
-        if (!data_isowner($rid) || data_in_readonly_period($data)) {
+        if (!data_user_can_manage_entry($record, $data, $context)) {
             print_error('noaccess','data');
         }
     } else if (!data_user_can_add_entry($data, $currentgroup, $groupmode, $context)) {
@@ -181,34 +180,8 @@ if ($datarecord = data_submitted() and confirm_sesskey()) {
 
         if ($processeddata->validated) {
             // Enough data to update the record.
-
-            // Obtain the record to be updated.
-
-            // Reset the approved flag after edit if the user does not have permission to approve their own entries.
-            if (!has_capability('mod/data:approve', $context)) {
-                $record->approved = 0;
-            }
-
-            // Update the parent record.
-            $record->timemodified = time();
-            $DB->update_record('data_records', $record);
-
-            // Update all content.
-            foreach ($processeddata->fields as $fieldname => $field) {
-                $field->update_content($rid, $datarecord->$fieldname, $fieldname);
-            }
-
-            // Trigger an event for updating this record.
-            $event = \mod_data\event\record_updated::create(array(
-                'objectid' => $rid,
-                'context' => $context,
-                'courseid' => $course->id,
-                'other' => array(
-                    'dataid' => $data->id
-                )
-            ));
-            $event->add_record_snapshot('data', $data);
-            $event->trigger();
+            data_update_record_fields_contents($data, $record, $context, $datarecord, $processeddata);
+            core_tag_tag::set_item_tags('mod_data', 'data_records', $rid, $context, $tags);
 
             $viewurl = new moodle_url('/mod/data/view.php', array(
                 'd' => $data->id,
@@ -233,34 +206,10 @@ if ($datarecord = data_submitted() and confirm_sesskey()) {
         // Add instance to data_record.
         if ($processeddata->validated && $recordid = data_add_record($data, $currentgroup)) {
 
-            // Insert a whole lot of empty records to make sure we have them.
-            $records = array();
-            foreach ($fields as $field) {
-                $content = new stdClass();
-                $content->recordid = $recordid;
-                $content->fieldid = $field->id;
-                $records[] = $content;
-            }
+            // Now populate the fields contents of the new record.
+            data_add_fields_contents_to_new_record($data, $context, $recordid, $fields, $datarecord, $processeddata);
 
-            // Bulk insert the records now. Some records may have no data but all must exist.
-            $DB->insert_records('data_content', $records);
-
-            // Add all provided content.
-            foreach ($processeddata->fields as $fieldname => $field) {
-                $field->update_content($recordid, $datarecord->$fieldname, $fieldname);
-            }
-
-            // Trigger an event for updating this record.
-            $event = \mod_data\event\record_created::create(array(
-                'objectid' => $rid,
-                'context' => $context,
-                'courseid' => $course->id,
-                'other' => array(
-                    'dataid' => $data->id
-                )
-            ));
-            $event->add_record_snapshot('data', $data);
-            $event->trigger();
+            core_tag_tag::set_item_tags('mod_data', 'data_records', $recordid, $context, $tags);
 
             if (!empty($datarecord->saveandview)) {
                 $viewurl = new moodle_url('/mod/data/view.php', array(
@@ -268,6 +217,9 @@ if ($datarecord = data_submitted() and confirm_sesskey()) {
                     'rid' => $recordid,
                 ));
                 redirect($viewurl);
+            } else if (!empty($datarecord->saveandadd)) {
+                // User has clicked "Save and add another". Reset all of the fields.
+                $datarecord = null;
             }
         }
     }
@@ -337,6 +289,12 @@ if ($data->addtemplate){
         $patterns[] = "[[".$field->field->name."#id]]";
         $replacements[] = 'field_'.$field->field->id;
     }
+
+    if (core_tag_tag::is_enabled('mod_data', 'data_records')) {
+        $patterns[] = "##tags##";
+        $replacements[] = data_generate_tag_form($rid);
+    }
+
     $newtext = str_ireplace($patterns, $replacements, $data->{$mode});
 
 } else {    //if the add template is not yet defined, print the default form!
@@ -349,12 +307,17 @@ foreach ($generalnotifications as $notification) {
 }
 echo $newtext;
 
-echo '<div class="mdl-align"><input type="submit" name="saveandview" value="'.get_string('saveandview','data').'" />';
+echo '<div class="mdl-align m-t-1"><input type="submit" class="btn btn-primary" name="saveandview" ' .
+     'value="' . get_string('saveandview', 'data') . '" />';
 if ($rid) {
-    echo '&nbsp;<input type="submit" name="cancel" value="'.get_string('cancel').'" onclick="javascript:history.go(-1)" />';
+    echo '&nbsp;<input type="submit" class="btn btn-primary" name="cancel" ' .
+         'value="' . get_string('cancel') . '" onclick="javascript:history.go(-1)" />';
 } else {
-    if ((!$data->maxentries) || has_capability('mod/data:manageentries', $context) || (data_numentries($data) < ($data->maxentries - 1))) {
-        echo '&nbsp;<input type="submit" value="'.get_string('saveandadd','data').'" />';
+    if ((!$data->maxentries) ||
+            has_capability('mod/data:manageentries', $context) ||
+            (data_numentries($data) < ($data->maxentries - 1))) {
+        echo '&nbsp;<input type="submit" class="btn btn-primary" name="saveandadd" ' .
+             'value="' . get_string('saveandadd', 'data') . '" />';
     }
 }
 echo '</div>';

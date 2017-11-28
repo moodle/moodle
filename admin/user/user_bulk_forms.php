@@ -24,10 +24,6 @@ class user_bulk_action_form extends moodleform {
         if (has_capability('moodle/user:update', $syscontext)) {
             $actions[5] = get_string('download', 'admin');
         }
-        if (has_capability('moodle/role:assign', $syscontext)){
-             //TODO: MDL-24064
-            //$actions[6] = get_string('enrolmultipleusers', 'admin');
-        }
         if (has_capability('moodle/user:update', $syscontext)) {
             $actions[7] = get_string('forcepasswordchange');
         }
@@ -105,10 +101,12 @@ class user_bulk_form extends moodleform {
         $objs = array();
         $objs[] =& $mform->createElement('submit', 'addsel', get_string('addsel', 'bulkusers'));
         $objs[] =& $mform->createElement('submit', 'removesel', get_string('removesel', 'bulkusers'));
+        $grp =& $mform->addElement('group', 'buttonsgrp', get_string('selectedlist', 'bulkusers'), $objs, null, false);
+        $mform->addHelpButton('buttonsgrp', 'selectedlist', 'bulkusers');
+        $objs = array();
         $objs[] =& $mform->createElement('submit', 'addall', get_string('addall', 'bulkusers'));
         $objs[] =& $mform->createElement('submit', 'removeall', get_string('removeall', 'bulkusers'));
-        $grp =& $mform->addElement('group', 'buttonsgrp', get_string('selectedlist', 'bulkusers'), $objs, array(' ', '<br />'), false);
-        $mform->addHelpButton('buttonsgrp', 'selectedlist', 'bulkusers');
+        $grp =& $mform->addElement('group', 'buttonsgrp2', '', $objs, null, false);
 
         $renderer =& $mform->defaultRenderer();
         $template = '<label class="qflabel" style="vertical-align:top">{label}</label> {element}';

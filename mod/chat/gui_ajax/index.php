@@ -51,13 +51,8 @@ if ($groupmode = groups_get_activity_groupmode($cm)) {   // Groups are being use
     $groupid = 0;
     $groupname = '';
 }
-$showcoursetheme = in_array('bootstrapbase', $PAGE->theme->parents);
-if (!$showcoursetheme && $theme === 'course_theme') { // Set compact as default for non bootstrapbase based themes.
-    $theme = 'compact';
-}
-
 // If requested theme doesn't exist, use default 'bubble' theme.
-if ($theme != 'course_theme' and !file_exists(dirname(__FILE__) . '/theme/'.$theme.'/chat.css')) {
+if ($theme != 'course_theme' and !file_exists(__DIR__ . '/theme/'.$theme.'/chat.css')) {
     $theme = 'compact';
 }
 
@@ -75,10 +70,9 @@ $module = array(
                          array('modulename', 'chat'), array('beep', 'chat'), array('talk', 'chat'))
 );
 $modulecfg = array(
-    'home' => $CFG->httpswwwroot.'/mod/chat/view.php?id='.$cm->id,
-    'chaturl' => $CFG->httpswwwroot.'/mod/chat/gui_ajax/index.php?id='.$id,
+    'home' => $CFG->wwwroot.'/mod/chat/view.php?id='.$cm->id,
+    'chaturl' => $CFG->wwwroot.'/mod/chat/gui_ajax/index.php?id='.$id,
     'theme' => $theme,
-    'showcoursetheme' => $showcoursetheme ? 1 : 0,
     'userid' => $USER->id,
     'sid' => $chatsid,
     'timer' => 3000,
@@ -97,18 +91,19 @@ if ( $theme != 'course_theme') {
 
 echo $OUTPUT->header();
 echo $OUTPUT->box(html_writer::tag('h2',  get_string('participants'), array('class' => 'accesshide')) .
-        '<ul id="users-list"></ul>', '', 'chat-userlist');
+        '<ul id="users-list" class="list-group"></ul>', '', 'chat-userlist');
 echo $OUTPUT->box('', '', 'chat-options');
 echo $OUTPUT->box(html_writer::tag('h2',  get_string('messages', 'chat'), array('class' => 'accesshide')) .
         '<ul id="messages-list"></ul>', '', 'chat-messages');
 $table = new html_table();
 $table->data = array(
-    array('<label class="accesshide" for="input-message">'.get_string('entermessage', 'chat').' </label>'.
-          '<input type="text" disabled="true" id="input-message" value="Loading..." /> '.
-          '<input type="button" id="button-send" value="'.get_string('send', 'chat').'" /> <a id="choosetheme" href="###">'.
+    array('<div class="form-inline"><label class="accesshide" for="input-message">'.get_string('entermessage', 'chat').' </label>'.
+          '<span class="form-group"><input type="text" disabled="true" class="form-control" ' .
+          'id="input-message" value="Loading..." size="48" /></span>'.
+          '<span class="form-group"><input type="button" id="button-send" class="btn btn-secondary m-x-1" ' .
+          'value="'.get_string('send', 'chat').'" /></span> <span class="form-group"><a id="choosetheme" href="###">'.
           get_string('themes').
-          ' &raquo; </a>')
-);
+          ' &raquo; </a></span></div>'));
 echo $OUTPUT->box(html_writer::tag('h2',  get_string('composemessage', 'chat'), array('class' => 'accesshide')) .
         html_writer::table($table), '', 'chat-input-area');
 echo $OUTPUT->box('', '', 'chat-notify');

@@ -15,8 +15,7 @@ Feature: Reuse my rubrics in other activities
       | user | course | role |
       | teacher1 | C1 | editingteacher |
     And I log in as "teacher1"
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I add a "Assignment" to section "1" and I fill the form with:
       | Assignment name | Test assignment 1 name |
       | Description | Test assignment 1 description |
@@ -28,9 +27,9 @@ Feature: Reuse my rubrics in other activities
     And I define the following rubric:
       | Criterion 1 | Level 11 | 11 | Level 12 | 12 | Level 3 | 13 |
       | Criterion 2 | Level 21 | 21 | Level 22 | 22 | Level 3 | 23 |
-      | Criterion 3 | Level 31 | 31 | Level 32 | 32 |
+      | Criterion 3 | Level 31 | 31 | Level 32 | 32 |         |    |
     And I press "Save rubric and make it ready"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     When I add a "Assignment" to section "1" and I fill the form with:
       | Assignment name | Test assignment 2 name |
       | Description | Test assignment 2 description |
@@ -40,7 +39,7 @@ Feature: Reuse my rubrics in other activities
     And I should see "Criterion 1"
     And I should see "Criterion 2"
     And I should see "Criterion 3"
-    And I follow "C1"
+    And I am on "Course 1" course homepage
     And I go to "Test assignment 1 name" advanced grading definition page
     And I should see "Criterion 1"
     And I should see "Criterion 2"

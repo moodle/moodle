@@ -31,9 +31,9 @@ Feature: Edit quiz page - drag-and-drop
       | Question B | 1    |
       | Question C | 2    |
     And I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Quiz 1"
-    And I follow "Edit quiz"
+    And I navigate to "Edit quiz" in current page administration
 
   @javascript
   Scenario: Re-order questions by clicking on the move icon.
@@ -69,8 +69,8 @@ Feature: Edit quiz page - drag-and-drop
 
     When I click on the "Add" page break icon after question "Question A"
     When I open the "Page 2" add to quiz menu
-    And I follow "a new question" in the open menu
-    And I set the field "qtype_qtype_description" to "1"
+    And I choose "a new question" in the open action menu
+    And I set the field "item_qtype_description" to "1"
     And I press "submitbutton"
     Then I should see "Adding a description"
     And I set the following fields to these values:

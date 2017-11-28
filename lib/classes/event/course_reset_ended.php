@@ -90,4 +90,9 @@ class course_reset_ended extends base {
            throw new \coding_exception('The \'reset_options\' value must be set in other.');
         }
     }
+
+    public static function get_other_mapping() {
+        // Nothing to map.
+        return false;
+    }
 }

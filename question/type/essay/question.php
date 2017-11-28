@@ -26,6 +26,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->dirroot . '/question/type/questionbase.php');
 
 /**
  * Represents an essay question.
@@ -90,7 +91,7 @@ class qtype_essay_question extends question_with_responses {
     }
 
     public function is_complete_response(array $response) {
-        // Determine if the given response has inline text and attachments.
+        // Determine if the given response has online text and attachments.
         $hasinlinetext = array_key_exists('answer', $response) && ($response['answer'] !== '');
         $hasattachments = array_key_exists('attachments', $response)
             && $response['attachments'] instanceof question_response_files;
@@ -139,7 +140,7 @@ class qtype_essay_question extends question_with_responses {
             return $this->responseformat === 'editorfilepicker';
 
         } else if ($component == 'qtype_essay' && $filearea == 'graderinfo') {
-            return $options->manualcomment;
+            return $options->manualcomment && $args[0] == $this->id;
 
         } else {
             return parent::check_file_access($qa, $options, $component,

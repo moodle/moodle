@@ -50,7 +50,7 @@ class contextsettings extends \mod_lti\local\ltiservice\resource_base {
 
         parent::__construct($service);
         $this->id = 'ToolProxyBindingSettings';
-        $this->template = '/{context_type}/{context_id}/bindings/{vendor_code}/{product_code}/custom';
+        $this->template = '/{context_type}/{context_id}/bindings/{vendor_code}/{product_code}';
         $this->variables[] = 'ToolProxyBinding.custom.url';
         $this->formats[] = 'application/vnd.ims.lti.v2.toolsettings+json';
         $this->formats[] = 'application/vnd.ims.lti.v2.toolsettings.simple+json';
@@ -135,6 +135,7 @@ class contextsettings extends \mod_lti\local\ltiservice\resource_base {
                     }
                     if ($ok) {
                         $settings = $json->{"@graph"}[0]->custom;
+                        unset($settings->{'@id'});
                     }
                 } else {  // Simple JSON.
                     $json = json_decode($response->get_request_data(), true);

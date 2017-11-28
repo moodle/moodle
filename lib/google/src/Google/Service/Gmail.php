@@ -32,16 +32,25 @@ class Google_Service_Gmail extends Google_Service
 {
   /** View and manage your mail. */
   const MAIL_GOOGLE_COM =
-      "https://mail.google.com";
+      "https://mail.google.com/";
   /** Manage drafts and send emails. */
   const GMAIL_COMPOSE =
       "https://www.googleapis.com/auth/gmail.compose";
+  /** Insert mail into your mailbox. */
+  const GMAIL_INSERT =
+      "https://www.googleapis.com/auth/gmail.insert";
+  /** Manage mailbox labels. */
+  const GMAIL_LABELS =
+      "https://www.googleapis.com/auth/gmail.labels";
   /** View and modify but not delete your email. */
   const GMAIL_MODIFY =
       "https://www.googleapis.com/auth/gmail.modify";
   /** View your emails messages and settings. */
   const GMAIL_READONLY =
       "https://www.googleapis.com/auth/gmail.readonly";
+  /** Send email on your behalf. */
+  const GMAIL_SEND =
+      "https://www.googleapis.com/auth/gmail.send";
 
   public $users;
   public $users_drafts;
@@ -60,6 +69,7 @@ class Google_Service_Gmail extends Google_Service
   public function __construct(Google_Client $client)
   {
     parent::__construct($client);
+    $this->rootUrl = 'https://www.googleapis.com/';
     $this->servicePath = 'gmail/v1/users/';
     $this->version = 'v1';
     $this->serviceName = 'gmail';
@@ -73,6 +83,26 @@ class Google_Service_Gmail extends Google_Service
             'getProfile' => array(
               'path' => '{userId}/profile',
               'httpMethod' => 'GET',
+              'parameters' => array(
+                'userId' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+              ),
+            ),'stop' => array(
+              'path' => '{userId}/stop',
+              'httpMethod' => 'POST',
+              'parameters' => array(
+                'userId' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+              ),
+            ),'watch' => array(
+              'path' => '{userId}/watch',
+              'httpMethod' => 'POST',
               'parameters' => array(
                 'userId' => array(
                   'location' => 'path',
@@ -361,9 +391,21 @@ class Google_Service_Gmail extends Google_Service
                   'type' => 'string',
                   'required' => true,
                 ),
+                'deleted' => array(
+                  'location' => 'query',
+                  'type' => 'boolean',
+                ),
+                'processForCalendar' => array(
+                  'location' => 'query',
+                  'type' => 'boolean',
+                ),
                 'internalDateSource' => array(
                   'location' => 'query',
                   'type' => 'string',
+                ),
+                'neverMarkSpam' => array(
+                  'location' => 'query',
+                  'type' => 'boolean',
                 ),
               ),
             ),'insert' => array(
@@ -374,6 +416,10 @@ class Google_Service_Gmail extends Google_Service
                   'location' => 'path',
                   'type' => 'string',
                   'required' => true,
+                ),
+                'deleted' => array(
+                  'location' => 'query',
+                  'type' => 'boolean',
                 ),
                 'internalDateSource' => array(
                   'location' => 'query',
@@ -654,6 +700,37 @@ class Google_Service_Gmail_Users_Resource extends Google_Service_Resource
     $params = array_merge($params, $optParams);
     return $this->call('getProfile', array($params), "Google_Service_Gmail_Profile");
   }
+
+  /**
+   * Stop receiving push notifications for the given user mailbox. (users.stop)
+   *
+   * @param string $userId The user's email address. The special value me can be
+   * used to indicate the authenticated user.
+   * @param array $optParams Optional parameters.
+   */
+  public function stop($userId, $optParams = array())
+  {
+    $params = array('userId' => $userId);
+    $params = array_merge($params, $optParams);
+    return $this->call('stop', array($params));
+  }
+
+  /**
+   * Set up or update a push notification watch on the given user mailbox.
+   * (users.watch)
+   *
+   * @param string $userId The user's email address. The special value me can be
+   * used to indicate the authenticated user.
+   * @param Google_WatchRequest $postBody
+   * @param array $optParams Optional parameters.
+   * @return Google_Service_Gmail_WatchResponse
+   */
+  public function watch($userId, Google_Service_Gmail_WatchRequest $postBody, $optParams = array())
+  {
+    $params = array('userId' => $userId, 'postBody' => $postBody);
+    $params = array_merge($params, $optParams);
+    return $this->call('watch', array($params), "Google_Service_Gmail_WatchResponse");
+  }
 }
 
 /**
@@ -800,10 +877,11 @@ class Google_Service_Gmail_UsersHistory_Resource extends Google_Service_Resource
    * increase chronologically but are not contiguous with random gaps in between
    * valid IDs. Supplying an invalid or out of date startHistoryId typically
    * returns an HTTP 404 error code. A historyId is typically valid for at least a
-   * week, but in some circumstances may be valid for only a few hours. If you
-   * receive an HTTP 404 error response, your application should perform a full
-   * sync. If you receive no nextPageToken in the response, there are no updates
-   * to retrieve and you can store the returned historyId for a future request.
+   * week, but in some rare circumstances may be valid for only a few hours. If
+   * you receive an HTTP 404 error response, your application should perform a
+   * full sync. If you receive no nextPageToken in the response, there are no
+   * updates to retrieve and you can store the returned historyId for a future
+   * request.
    * @return Google_Service_Gmail_ListHistoryResponse
    */
   public function listUsersHistory($userId, $optParams = array())
@@ -979,8 +1057,15 @@ class Google_Service_Gmail_UsersMessages_Resource extends Google_Service_Resourc
    * @param Google_Message $postBody
    * @param array $optParams Optional parameters.
    *
+   * @opt_param bool deleted Mark the email as permanently deleted (not TRASH) and
+   * only visible in Google Apps Vault to a Vault administrator. Only used for
+   * Google Apps for Work accounts.
+   * @opt_param bool processForCalendar Process calendar invites in the email and
+   * add any extracted meetings to the Google Calendar for this user.
    * @opt_param string internalDateSource Source for Gmail's internal date of the
    * message.
+   * @opt_param bool neverMarkSpam Ignore the Gmail spam classifier decision and
+   * never mark this email as SPAM in the mailbox.
    * @return Google_Service_Gmail_Message
    */
   public function import($userId, Google_Service_Gmail_Message $postBody, $optParams = array())
@@ -1000,6 +1085,9 @@ class Google_Service_Gmail_UsersMessages_Resource extends Google_Service_Resourc
    * @param Google_Message $postBody
    * @param array $optParams Optional parameters.
    *
+   * @opt_param bool deleted Mark the email as permanently deleted (not TRASH) and
+   * only visible in Google Apps Vault to a Vault administrator. Only used for
+   * Google Apps for Work accounts.
    * @opt_param string internalDateSource Source for Gmail's internal date of the
    * message.
    * @return Google_Service_Gmail_Message
@@ -1288,12 +1376,20 @@ class Google_Service_Gmail_Draft extends Google_Model
 
 class Google_Service_Gmail_History extends Google_Collection
 {
-  protected $collection_key = 'messages';
+  protected $collection_key = 'messagesDeleted';
   protected $internal_gapi_mappings = array(
   );
   public $id;
+  protected $labelsAddedType = 'Google_Service_Gmail_HistoryLabelAdded';
+  protected $labelsAddedDataType = 'array';
+  protected $labelsRemovedType = 'Google_Service_Gmail_HistoryLabelRemoved';
+  protected $labelsRemovedDataType = 'array';
   protected $messagesType = 'Google_Service_Gmail_Message';
   protected $messagesDataType = 'array';
+  protected $messagesAddedType = 'Google_Service_Gmail_HistoryMessageAdded';
+  protected $messagesAddedDataType = 'array';
+  protected $messagesDeletedType = 'Google_Service_Gmail_HistoryMessageDeleted';
+  protected $messagesDeletedDataType = 'array';
 
 
   public function setId($id)
@@ -1304,6 +1400,22 @@ class Google_Service_Gmail_History extends Google_Collection
   {
     return $this->id;
   }
+  public function setLabelsAdded($labelsAdded)
+  {
+    $this->labelsAdded = $labelsAdded;
+  }
+  public function getLabelsAdded()
+  {
+    return $this->labelsAdded;
+  }
+  public function setLabelsRemoved($labelsRemoved)
+  {
+    $this->labelsRemoved = $labelsRemoved;
+  }
+  public function getLabelsRemoved()
+  {
+    return $this->labelsRemoved;
+  }
   public function setMessages($messages)
   {
     $this->messages = $messages;
@@ -1311,6 +1423,114 @@ class Google_Service_Gmail_History extends Google_Collection
   public function getMessages()
   {
     return $this->messages;
+  }
+  public function setMessagesAdded($messagesAdded)
+  {
+    $this->messagesAdded = $messagesAdded;
+  }
+  public function getMessagesAdded()
+  {
+    return $this->messagesAdded;
+  }
+  public function setMessagesDeleted($messagesDeleted)
+  {
+    $this->messagesDeleted = $messagesDeleted;
+  }
+  public function getMessagesDeleted()
+  {
+    return $this->messagesDeleted;
+  }
+}
+
+class Google_Service_Gmail_HistoryLabelAdded extends Google_Collection
+{
+  protected $collection_key = 'labelIds';
+  protected $internal_gapi_mappings = array(
+  );
+  public $labelIds;
+  protected $messageType = 'Google_Service_Gmail_Message';
+  protected $messageDataType = '';
+
+
+  public function setLabelIds($labelIds)
+  {
+    $this->labelIds = $labelIds;
+  }
+  public function getLabelIds()
+  {
+    return $this->labelIds;
+  }
+  public function setMessage(Google_Service_Gmail_Message $message)
+  {
+    $this->message = $message;
+  }
+  public function getMessage()
+  {
+    return $this->message;
+  }
+}
+
+class Google_Service_Gmail_HistoryLabelRemoved extends Google_Collection
+{
+  protected $collection_key = 'labelIds';
+  protected $internal_gapi_mappings = array(
+  );
+  public $labelIds;
+  protected $messageType = 'Google_Service_Gmail_Message';
+  protected $messageDataType = '';
+
+
+  public function setLabelIds($labelIds)
+  {
+    $this->labelIds = $labelIds;
+  }
+  public function getLabelIds()
+  {
+    return $this->labelIds;
+  }
+  public function setMessage(Google_Service_Gmail_Message $message)
+  {
+    $this->message = $message;
+  }
+  public function getMessage()
+  {
+    return $this->message;
+  }
+}
+
+class Google_Service_Gmail_HistoryMessageAdded extends Google_Model
+{
+  protected $internal_gapi_mappings = array(
+  );
+  protected $messageType = 'Google_Service_Gmail_Message';
+  protected $messageDataType = '';
+
+
+  public function setMessage(Google_Service_Gmail_Message $message)
+  {
+    $this->message = $message;
+  }
+  public function getMessage()
+  {
+    return $this->message;
+  }
+}
+
+class Google_Service_Gmail_HistoryMessageDeleted extends Google_Model
+{
+  protected $internal_gapi_mappings = array(
+  );
+  protected $messageType = 'Google_Service_Gmail_Message';
+  protected $messageDataType = '';
+
+
+  public function setMessage(Google_Service_Gmail_Message $message)
+  {
+    $this->message = $message;
+  }
+  public function getMessage()
+  {
+    return $this->message;
   }
 }
 
@@ -1577,6 +1797,7 @@ class Google_Service_Gmail_Message extends Google_Collection
   );
   public $historyId;
   public $id;
+  public $internalDate;
   public $labelIds;
   protected $payloadType = 'Google_Service_Gmail_MessagePart';
   protected $payloadDataType = '';
@@ -1601,6 +1822,14 @@ class Google_Service_Gmail_Message extends Google_Collection
   public function getId()
   {
     return $this->id;
+  }
+  public function setInternalDate($internalDate)
+  {
+    $this->internalDate = $internalDate;
+  }
+  public function getInternalDate()
+  {
+    return $this->internalDate;
   }
   public function setLabelIds($labelIds)
   {
@@ -1920,5 +2149,67 @@ class Google_Service_Gmail_Thread extends Google_Collection
   public function getSnippet()
   {
     return $this->snippet;
+  }
+}
+
+class Google_Service_Gmail_WatchRequest extends Google_Collection
+{
+  protected $collection_key = 'labelIds';
+  protected $internal_gapi_mappings = array(
+  );
+  public $labelFilterAction;
+  public $labelIds;
+  public $topicName;
+
+
+  public function setLabelFilterAction($labelFilterAction)
+  {
+    $this->labelFilterAction = $labelFilterAction;
+  }
+  public function getLabelFilterAction()
+  {
+    return $this->labelFilterAction;
+  }
+  public function setLabelIds($labelIds)
+  {
+    $this->labelIds = $labelIds;
+  }
+  public function getLabelIds()
+  {
+    return $this->labelIds;
+  }
+  public function setTopicName($topicName)
+  {
+    $this->topicName = $topicName;
+  }
+  public function getTopicName()
+  {
+    return $this->topicName;
+  }
+}
+
+class Google_Service_Gmail_WatchResponse extends Google_Model
+{
+  protected $internal_gapi_mappings = array(
+  );
+  public $expiration;
+  public $historyId;
+
+
+  public function setExpiration($expiration)
+  {
+    $this->expiration = $expiration;
+  }
+  public function getExpiration()
+  {
+    return $this->expiration;
+  }
+  public function setHistoryId($historyId)
+  {
+    $this->historyId = $historyId;
+  }
+  public function getHistoryId()
+  {
+    return $this->historyId;
   }
 }

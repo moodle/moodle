@@ -26,7 +26,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(dirname(dirname(__FILE__)) . '/config.php');
+require_once(__DIR__ . '/../config.php');
 require_once($CFG->dirroot . '/repository/lib.php');
 
 $edit    = optional_param('edit', 0, PARAM_INT);
@@ -91,7 +91,6 @@ if ($context->contextlevel == CONTEXT_COURSE) {
         print_error('notyourinstances', 'repository');
     }
     $user = $USER;
-    $PAGE->set_pagelayout('mydashboard');
 } else {
     print_error('invalidcontext');
 }

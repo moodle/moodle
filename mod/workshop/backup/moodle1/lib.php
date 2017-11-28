@@ -362,7 +362,7 @@ abstract class moodle1_workshopform_handler extends moodle1_submod_handler {
  */
 function workshop_upgrade_transform_instance(stdClass $old) {
     global $CFG;
-    require_once(dirname(dirname(dirname(__FILE__))) . '/locallib.php');
+    require_once(__DIR__ . '/../../locallib.php');
 
     $new                = new stdClass();
     $new->course        = $old->course;

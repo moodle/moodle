@@ -51,7 +51,7 @@ if ($USER->id != $user->id and has_capability('moodle/user:viewuseractivitiesrep
     require_login($course);
 }
 
-if (!report_stats_can_access_user_report($user, $course, true)) {
+if (!report_stats_can_access_user_report($user, $course)) {
     // this should never happen
     print_error('nocapability', 'report_stats');
 }
@@ -127,7 +127,7 @@ $params = $param->params;
 
 $param->table = 'user_'.$param->table;
 
-$sql = 'SELECT timeend,'.$param->fields.' FROM {stats_'.$param->table.'} WHERE '
+$sql = 'SELECT id, timeend,'.$param->fields.' FROM {stats_'.$param->table.'} WHERE '
 .(($course->id == SITEID) ? '' : ' courseid = '.$course->id.' AND ')
     .' userid = '.$user->id.' AND timeend >= '.$param->timeafter .$param->extras
     .' ORDER BY timeend DESC';
@@ -137,7 +137,7 @@ if (empty($stats)) {
     print_error('nostatstodisplay', '', $CFG->wwwroot.'/course/user.php?id='.$course->id.'&user='.$user->id.'&mode=outline');
 }
 
-echo '<center><img src="'.$CFG->wwwroot.'/report/stats/graph.php?mode='.STATS_MODE_DETAILED.'&course='.$course->id.'&time='.$time.'&report='.STATS_REPORT_USER_VIEW.'&userid='.$user->id.'" alt="'.get_string('statisticsgraph').'" /></center>';
+report_stats_print_chart($course->id, STATS_REPORT_USER_VIEW, $time, STATS_MODE_DETAILED, $user->id);
 
 // What the heck is this about?   -- MD
 $stats = stats_fix_zeros($stats,$param->timeafter,$param->table,(!empty($param->line2)),(!empty($param->line3)));
@@ -156,7 +156,7 @@ foreach ($stats as $stat) {
     if (!empty($stat->zerofixed)) {  // Don't know why this is necessary, see stats_fix_zeros above - MD
         continue;
     }
-    $a = array(userdate($stat->timeend,get_string('strftimedate'),$CFG->timezone),$stat->line1);
+    $a = array(userdate($stat->timeend - DAYSECS, get_string('strftimedate'), $CFG->timezone), $stat->line1);
     $a[] = $stat->line2;
     $a[] = $stat->line3;
     $table->data[] = $a;

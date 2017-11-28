@@ -112,12 +112,50 @@ class core_admintree_testcase extends advanced_testcase {
     }
 
     /**
+     * Test that changes to config trigger events.
+     */
+    public function test_config_log_created_event() {
+        global $DB;
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $adminroot = new admin_root(true);
+        $adminroot->add('root', $one = new admin_category('one', 'One'));
+        $page = new admin_settingpage('page', 'Page');
+        $page->add(new admin_setting_configtext('text1', 'Text 1', '', ''));
+        $page->add(new admin_setting_configpasswordunmask('pass1', 'Password 1', '', ''));
+        $adminroot->add('one', $page);
+
+        $sink = $this->redirectEvents();
+        $data = array('s__text1' => 'sometext', 's__pass1' => '');
+        $this->save_config_data($adminroot, $data);
+
+        $events = $sink->get_events();
+        $sink->close();
+        $event = array_pop($events);
+        $this->assertInstanceOf('\core\event\config_log_created', $event);
+
+        $sink = $this->redirectEvents();
+        $data = array('s__text1'=>'other', 's__pass1'=>'nice password');
+        $count = $this->save_config_data($adminroot, $data);
+
+        $events = $sink->get_events();
+        $sink->close();
+        $event = array_pop($events);
+        $this->assertInstanceOf('\core\event\config_log_created', $event);
+        // Verify password was nuked.
+        $this->assertNotEquals($event->other['value'], 'nice password');
+
+    }
+
+    /**
      * Testing whether a configexecutable setting is executable.
      */
     public function test_admin_setting_configexecutable() {
         global $CFG;
         $this->resetAfterTest();
 
+        $CFG->theme = 'clean';
         $executable = new admin_setting_configexecutable('test1', 'Text 1', 'Help Path', '');
 
         // Check for an invalid path.
@@ -143,7 +181,8 @@ class core_admintree_testcase extends advanced_testcase {
 
         // Check for no file specified.
         $result = $executable->output_html('');
-        $this->assertRegexp('/name="s__test1" value=""/', $result);
+        $this->assertRegexp('/name="s__test1"/', $result);
+        $this->assertRegexp('/value=""/', $result);
     }
 
     /**
@@ -152,6 +191,7 @@ class core_admintree_testcase extends advanced_testcase {
     public function test_config_logging() {
         global $DB;
         $this->resetAfterTest();
+        $this->setAdminUser();
 
         $DB->delete_records('config_log', array());
 
@@ -319,5 +359,59 @@ class core_admintree_testcase extends advanced_testcase {
         set_config('execpath', null, 'abc_cde');
         $setting->write_setting('/mm/nn');
         $this->assertSame('', get_config('abc_cde', 'execpath'));
+    }
+
+    /**
+     * Test setting for blocked hosts
+     *
+     * For testing the admin settings element only. Test for blocked hosts functionality can be found
+     * in lib/tests/curl_security_helper_test.php
+     */
+    public function test_mixedhostiplist() {
+        $this->resetAfterTest();
+
+        $adminsetting = new admin_setting_configmixedhostiplist('abc_cde/hostiplist', 'some desc', '', '');
+
+        // Test valid settings.
+        $validsimplesettings = [
+            'localhost',
+            "localhost\n127.0.0.1",
+            '192.168.10.1',
+            '0:0:0:0:0:0:0:1',
+            '::1',
+            'fe80::',
+            '231.54.211.0/20',
+            'fe80::/64',
+            '231.3.56.10-20',
+            'fe80::1111-bbbb',
+            '*.example.com',
+            '*.sub.example.com',
+        ];
+
+        foreach ($validsimplesettings as $setting) {
+            $errormessage = $adminsetting->write_setting($setting);
+            $this->assertEmpty($errormessage, $errormessage);
+            $this->assertSame($setting, get_config('abc_cde', 'hostiplist'));
+            $this->assertSame($setting, $adminsetting->get_setting());
+        }
+
+        // Test valid international site names.
+        $valididnsettings = [
+            'правительство.рф' => 'xn--80aealotwbjpid2k.xn--p1ai',
+            'faß.de' => 'xn--fa-hia.de',
+            'ß.ß' => 'xn--zca.xn--zca',
+            '*.tharkûn.com' => '*.xn--tharkn-0ya.com',
+        ];
+
+        foreach ($valididnsettings as $setting => $encodedsetting) {
+            $errormessage = $adminsetting->write_setting($setting);
+            $this->assertEmpty($errormessage, $errormessage);
+            $this->assertSame($encodedsetting, get_config('abc_cde', 'hostiplist'));
+            $this->assertSame($setting, $adminsetting->get_setting());
+        }
+
+        // Invalid settings.
+        $this->assertEquals('These entries are invalid: nonvalid site name', $adminsetting->write_setting('nonvalid site name'));
+        $this->assertEquals('Empty lines are not valid', $adminsetting->write_setting("localhost\n"));
     }
 }

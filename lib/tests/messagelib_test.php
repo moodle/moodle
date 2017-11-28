@@ -37,7 +37,8 @@ class core_messagelib_testcase extends advanced_testcase {
         $preferences = get_message_output_default_preferences();
         $this->assertTrue($preferences->$disableprovidersetting == 1);
 
-        $message = new stdClass();
+        $message = new \core\message\message();
+        $message->courseid          = 1;
         $message->component         = 'moodle';
         $message->name              = 'instantmessage';
         $message->userfrom          = get_admin();
@@ -51,7 +52,6 @@ class core_messagelib_testcase extends advanced_testcase {
 
         // Check message is not sent.
         $sink = $this->redirectEmails();
-        $this->assertTrue(phpunit_util::is_redirecting_phpmailer());
         message_send($message);
         $emails = $sink->get_messages();
         $this->assertEmpty($emails);
@@ -62,7 +62,6 @@ class core_messagelib_testcase extends advanced_testcase {
         $this->assertTrue($preferences->$disableprovidersetting == 0);
 
         $sink = $this->redirectEmails();
-        $this->assertTrue(phpunit_util::is_redirecting_phpmailer());
         message_send($message);
         $emails = $sink->get_messages();
         $email = reset($emails);
@@ -191,7 +190,8 @@ class core_messagelib_testcase extends advanced_testcase {
         $user2 = $this->getDataGenerator()->create_user();
 
         // Test basic message redirection.
-        $message = new stdClass();
+        $message = new \core\message\message();
+        $message->courseid = 1;
         $message->component = 'moodle';
         $message->name = 'instantmessage';
         $message->userfrom = $user1;
@@ -227,7 +227,8 @@ class core_messagelib_testcase extends advanced_testcase {
         $this->assertFalse($DB->record_exists('message', array()));
         $DB->delete_records('message_read', array());
 
-        $message = new stdClass();
+        $message = new \core\message\message();
+        $message->courseid = 1;
         $message->component = 'moodle';
         $message->name = 'instantmessage';
         $message->userfrom = $user1->id;
@@ -265,7 +266,8 @@ class core_messagelib_testcase extends advanced_testcase {
 
         // Test phpunit problem detection.
 
-        $message = new stdClass();
+        $message = new \core\message\message();
+        $message->courseid = 1;
         $message->component = 'xxxxx';
         $message->name = 'instantmessage';
         $message->userfrom = $user1;
@@ -300,7 +302,8 @@ class core_messagelib_testcase extends advanced_testcase {
 
         // Invalid users.
 
-        $message = new stdClass();
+        $message = new \core\message\message();
+        $message->courseid = 1;
         $message->component = 'moodle';
         $message->name = 'instantmessage';
         $message->userfrom = $user1;
@@ -316,7 +319,8 @@ class core_messagelib_testcase extends advanced_testcase {
         $this->assertFalse($messageid);
         $this->assertDebuggingCalled('Attempt to send msg to unknown user');
 
-        $message = new stdClass();
+        $message = new \core\message\message();
+        $message->courseid = 1;
         $message->component = 'moodle';
         $message->name = 'instantmessage';
         $message->userfrom = -1;
@@ -332,7 +336,8 @@ class core_messagelib_testcase extends advanced_testcase {
         $this->assertFalse($messageid);
         $this->assertDebuggingCalled('Attempt to send msg from unknown user');
 
-        $message = new stdClass();
+        $message = new \core\message\message();
+        $message->courseid = 1;
         $message->component = 'moodle';
         $message->name = 'instantmessage';
         $message->userfrom = $user1;
@@ -351,7 +356,8 @@ class core_messagelib_testcase extends advanced_testcase {
         // Some debugging hints for devs.
 
         unset($user2->emailstop);
-        $message = new stdClass();
+        $message = new \core\message\message();
+        $message->courseid = 1;
         $message->component = 'moodle';
         $message->name = 'instantmessage';
         $message->userfrom = $user1;
@@ -381,8 +387,9 @@ class core_messagelib_testcase extends advanced_testcase {
         $this->preventResetByRollback();
         $this->resetAfterTest();
 
-        $user1 = $this->getDataGenerator()->create_user();
+        $user1 = $this->getDataGenerator()->create_user(array('maildisplay' => 1));
         $user2 = $this->getDataGenerator()->create_user();
+        set_config('allowedemaildomains', 'example.com');
 
         // Test basic email redirection.
         $this->assertFileExists("$CFG->dirroot/message/output/email/version.php");
@@ -393,9 +400,11 @@ class core_messagelib_testcase extends advanced_testcase {
 
         $eventsink = $this->redirectEvents();
 
+        // Will always use the pop-up processor.
         set_user_preference('message_provider_moodle_instantmessage_loggedoff', 'none', $user2);
 
-        $message = new stdClass();
+        $message = new \core\message\message();
+        $message->courseid          = 1;
         $message->component         = 'moodle';
         $message->name              = 'instantmessage';
         $message->userfrom          = $user1;
@@ -422,7 +431,8 @@ class core_messagelib_testcase extends advanced_testcase {
 
         $CFG->messaging = 0;
 
-        $message = new stdClass();
+        $message = new \core\message\message();
+        $message->courseid          = 1;
         $message->component         = 'moodle';
         $message->name              = 'instantmessage';
         $message->userfrom          = $user1;
@@ -449,7 +459,8 @@ class core_messagelib_testcase extends advanced_testcase {
 
         $CFG->messaging = 1;
 
-        $message = new stdClass();
+        $message = new \core\message\message();
+        $message->courseid          = 1;
         $message->component         = 'moodle';
         $message->name              = 'instantmessage';
         $message->userfrom          = $user1;
@@ -474,9 +485,11 @@ class core_messagelib_testcase extends advanced_testcase {
         $this->assertInstanceOf('\core\event\message_viewed', $events[1]);
         $eventsink->clear();
 
+        // Will always use the pop-up processor.
         set_user_preference('message_provider_moodle_instantmessage_loggedoff', 'email', $user2);
 
-        $message = new stdClass();
+        $message = new \core\message\message();
+        $message->courseid          = 1;
         $message->component         = 'moodle';
         $message->name              = 'instantmessage';
         $message->userfrom          = $user1;
@@ -504,9 +517,11 @@ class core_messagelib_testcase extends advanced_testcase {
         $eventsink->clear();
         $user2->emailstop = '0';
 
+        // Will always use the pop-up processor.
         set_user_preference('message_provider_moodle_instantmessage_loggedoff', 'email', $user2);
 
-        $message = new stdClass();
+        $message = new \core\message\message();
+        $message->courseid          = 1;
         $message->component         = 'moodle';
         $message->name              = 'instantmessage';
         $message->userfrom          = $user1;
@@ -522,24 +537,24 @@ class core_messagelib_testcase extends advanced_testcase {
         $emails = $sink->get_messages();
         $this->assertCount(1, $emails);
         $email = reset($emails);
-        $savedmessage = $DB->get_record('message_read', array('id' => $messageid), '*', MUST_EXIST);
+        $savedmessage = $DB->get_record('message', array('id' => $messageid), '*', MUST_EXIST);
         $this->assertSame($user1->email, $email->from);
         $this->assertSame($user2->email, $email->to);
         $this->assertSame($message->subject, $email->subject);
         $this->assertNotEmpty($email->header);
         $this->assertNotEmpty($email->body);
         $sink->clear();
-        $this->assertFalse($DB->record_exists('message', array()));
+        $this->assertFalse($DB->record_exists('message_read', array()));
         $DB->delete_records('message_read', array());
         $events = $eventsink->get_events();
-        $this->assertCount(2, $events);
+        $this->assertCount(1, $events);
         $this->assertInstanceOf('\core\event\message_sent', $events[0]);
-        $this->assertInstanceOf('\core\event\message_viewed', $events[1]);
         $eventsink->clear();
 
         set_user_preference('message_provider_moodle_instantmessage_loggedoff', 'email,popup', $user2);
 
-        $message = new stdClass();
+        $message = new \core\message\message();
+        $message->courseid          = 1;
         $message->component         = 'moodle';
         $message->name              = 'instantmessage';
         $message->userfrom          = $user1;
@@ -572,7 +587,8 @@ class core_messagelib_testcase extends advanced_testcase {
 
         set_user_preference('message_provider_moodle_instantmessage_loggedoff', 'popup', $user2);
 
-        $message = new stdClass();
+        $message = new \core\message\message();
+        $message->courseid          = 1;
         $message->component         = 'moodle';
         $message->name              = 'instantmessage';
         $message->userfrom          = $user1;
@@ -604,9 +620,11 @@ class core_messagelib_testcase extends advanced_testcase {
         }
         $transaction->allow_commit();
 
+        // Will always use the pop-up processor.
         set_user_preference('message_provider_moodle_instantmessage_loggedoff', 'none', $user2);
 
-        $message = new stdClass();
+        $message = new \core\message\message();
+        $message->courseid          = 1;
         $message->component         = 'moodle';
         $message->name              = 'instantmessage';
         $message->userfrom          = $user1;
@@ -628,16 +646,18 @@ class core_messagelib_testcase extends advanced_testcase {
         $this->assertFalse($DB->record_exists('message_read', array()));
         $DB->delete_records('message', array());
         $events = $eventsink->get_events();
-        $this->assertCount(1, $events);
-        $this->assertInstanceOf('\core\event\message_sent', $events[0]);
+        $this->assertCount(0, $events);
         $eventsink->clear();
         $transaction->allow_commit();
         $events = $eventsink->get_events();
-        $this->assertCount(0, $events);
+        $this->assertCount(1, $events);
+        $this->assertInstanceOf('\core\event\message_sent', $events[0]);
 
+        // Will always use the pop-up processor.
         set_user_preference('message_provider_moodle_instantmessage_loggedoff', 'email', $user2);
 
-        $message = new stdClass();
+        $message = new \core\message\message();
+        $message->courseid          = 1;
         $message->component         = 'moodle';
         $message->name              = 'instantmessage';
         $message->userfrom          = $user1;
@@ -658,28 +678,26 @@ class core_messagelib_testcase extends advanced_testcase {
         $sink->clear();
         $this->assertFalse($DB->record_exists('message_read', array()));
         $events = $eventsink->get_events();
-        $this->assertCount(0, $events);
+        $this->assertCount(1, $events);
+        $this->assertInstanceOf('\core\event\message_sent', $events[0]);
         $transaction->allow_commit();
         $events = $eventsink->get_events();
         $this->assertCount(2, $events);
-        $this->assertInstanceOf('\core\event\message_sent', $events[0]);
-        $this->assertInstanceOf('\core\event\message_viewed', $events[1]);
+        $this->assertInstanceOf('\core\event\message_sent', $events[1]);
         $eventsink->clear();
 
         $transaction = $DB->start_delegated_transaction();
         message_send($message);
         message_send($message);
-        $this->assertCount(2, $DB->get_records('message'));
-        $this->assertCount(1, $DB->get_records('message_read'));
+        $this->assertCount(3, $DB->get_records('message'));
+        $this->assertFalse($DB->record_exists('message_read', array()));
         $events = $eventsink->get_events();
         $this->assertCount(0, $events);
         $transaction->allow_commit();
         $events = $eventsink->get_events();
-        $this->assertCount(4, $events);
+        $this->assertCount(2, $events);
         $this->assertInstanceOf('\core\event\message_sent', $events[0]);
-        $this->assertInstanceOf('\core\event\message_viewed', $events[1]);
-        $this->assertInstanceOf('\core\event\message_sent', $events[2]);
-        $this->assertInstanceOf('\core\event\message_viewed', $events[3]);
+        $this->assertInstanceOf('\core\event\message_sent', $events[1]);
         $eventsink->clear();
         $DB->delete_records('message', array());
         $DB->delete_records('message_read', array());
@@ -701,10 +719,11 @@ class core_messagelib_testcase extends advanced_testcase {
         $this->assertCount(0, $DB->get_records('message'));
         $this->assertCount(0, $DB->get_records('message_read'));
         message_send($message);
-        $this->assertCount(0, $DB->get_records('message'));
-        $this->assertCount(1, $DB->get_records('message_read'));
+        $this->assertCount(1, $DB->get_records('message'));
+        $this->assertCount(0, $DB->get_records('message_read'));
         $events = $eventsink->get_events();
-        $this->assertCount(2, $events);
+        $this->assertCount(1, $events);
+        $this->assertInstanceOf('\core\event\message_sent', $events[0]);
         $sink->clear();
         $DB->delete_records('message_read', array());
     }
@@ -718,7 +737,8 @@ class core_messagelib_testcase extends advanced_testcase {
         $user1 = $this->getDataGenerator()->create_user();
         $user2 = $this->getDataGenerator()->create_user();
 
-        $message = new stdClass();
+        $message = new \core\message\message();
+        $message->courseid          = 1;
         $message->component         = 'moodle';
         $message->name              = 'instantmessage';
         $message->userfrom          = $user1;
@@ -780,7 +800,8 @@ class core_messagelib_testcase extends advanced_testcase {
         $user1 = $this->getDataGenerator()->create_user();
         $user2 = $this->getDataGenerator()->create_user();
 
-        $message = new stdClass();
+        $message = new \core\message\message();
+        $message->courseid          = 1;
         $message->component         = 'moodle';
         $message->name              = 'instantmessage';
         $message->userfrom          = $user1;
@@ -837,7 +858,8 @@ class core_messagelib_testcase extends advanced_testcase {
         );
         $file = $fs->create_file_from_string($filerecord, 'Test content');
 
-        $message = new stdClass();
+        $message = new \core\message\message();
+        $message->courseid          = 1;
         $message->component         = 'moodle';
         $message->name              = 'instantmessage';
         $message->userfrom          = get_admin();
@@ -853,7 +875,6 @@ class core_messagelib_testcase extends advanced_testcase {
 
         // Make sure we are redirecting emails.
         $sink = $this->redirectEmails();
-        $this->assertTrue(phpunit_util::is_redirecting_phpmailer());
         message_send($message);
 
         // Get the email that we just sent.

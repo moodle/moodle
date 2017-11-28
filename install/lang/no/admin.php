@@ -42,3 +42,4 @@ Vennligst bruk Hjelp.';
 $string['cliyesnoprompt'] = 'Tast j (betyr JA) eller n (betyr NEI)';
 $string['environmentrequireinstall'] = 'er påkrevd at du installerer/tillater';
 $string['environmentrequireversion'] = 'Du må ha versjon {$a->needed}. Du kjører {$a->current}';
+$string['upgradekeyset'] = 'Oppgraderingsnøkkel (la være tom for å kreve noen)';

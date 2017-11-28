@@ -3,7 +3,7 @@
  */
 
 .path-mod-workshop .manual-allocator .allocations {
-    margin: 0px auto;
+    margin: 0 auto;
     width: 100%;
 }
 
@@ -38,7 +38,7 @@
 }
 
 .path-mod-workshop .manual-allocator .allocations tr td ul {
-    margin: 0px;
+    margin: 0;
 }
 
 .path-mod-workshop .manual-allocator .allocations tr td ul li {

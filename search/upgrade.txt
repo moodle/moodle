@@ -1,0 +1,23 @@
+This files describes API changes in /search/*,
+information provided here is intended especially for developers.
+
+=== 3.4 ===
+
+* Search indexing now supports time limits to make the scheduled task run more neatly. In order for
+  this to work, search engine plugins will need to implement the 'stopat' parameter if they
+  override the add_documents() function, and return an extra parameter from this function (see base
+  class in engine.php). Unmodified plugins will still work, but without supporting time limits.
+* Search areas should now implement the get_document_recordset function instead of the old
+  get_recordset_by_timestamp API (implement both if the area should work in older Moodle versions
+  as well). The new function is the same as the old one, but has an additional context parameter.
+  There is a helper function get_context_restriction_sql to make this easy to implement; see code
+  in base_activity.php for an example of how to implement this in your search area. (The
+  change was required to make search work after restoring sites. It also allows more flexible
+  reindexing in other cases.)
+
+=== 3.2 ===
+
+* Base search area classes have been renamed, please update your search areas to use the classes below:
+  - \core_search\area\base has been renamed to \core_search\base
+  - \core_search\area\base_mod has been renamed to \core_search\base_mod
+  - \core_search\area\base_activity has been renamed to \core_search\base_activity

@@ -1,12 +1,12 @@
 <?php
 /**
- * Copyright 2013-2014 Horde LLC (http://www.horde.org/)
+ * Copyright 2013-2017 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file COPYING for license information (BSD). If you
  * did not receive this file, see http://www.horde.org/licenses/bsd.
  *
  * @category  Horde
- * @copyright 2013-2014 Horde LLC
+ * @copyright 2013-2017 Horde LLC
  * @license   http://www.horde.org/licenses/bsd BSD
  * @package   Support
  */
@@ -16,7 +16,7 @@
  *
  * @author    Michael Slusarz <slusarz@horde.org>
  * @category  Horde
- * @copyright 2013-2014 Horde LLC
+ * @copyright 2013-2017 Horde LLC
  * @license   http://www.horde.org/licenses/bsd BSD
  * @package   Support
  */
@@ -46,9 +46,7 @@ class Horde_Support_CaseInsensitiveArray extends ArrayIterator
      */
     public function offsetExists($offset)
     {
-        return (is_null($offset = $this->_getRealOffset($offset)))
-            ? false
-            : parent::offsetExists($offset);
+        return !is_null($offset = $this->_getRealOffset($offset));
     }
 
     /**
@@ -69,6 +67,11 @@ class Horde_Support_CaseInsensitiveArray extends ArrayIterator
      */
     protected function _getRealOffset($offset)
     {
+        /* Optimize: check for base $offset in array first. */
+        if (parent::offsetExists($offset)) {
+            return $offset;
+        }
+
         foreach (array_keys($this->getArrayCopy()) as $key) {
             if (strcasecmp($key, $offset) === 0) {
                 return $key;

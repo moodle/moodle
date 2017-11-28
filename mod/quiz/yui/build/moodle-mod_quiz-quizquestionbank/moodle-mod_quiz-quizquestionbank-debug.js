@@ -26,7 +26,7 @@ YUI.add('moodle-mod_quiz-quizquestionbank', function (Y, NAME) {
 
 var CSS = {
         QBANKLOADING:       'div.questionbankloading',
-        ADDQUESTIONLINKS:   'ul.menu a.questionbank',
+        ADDQUESTIONLINKS:   '.menu [data-action="questionbank"]',
         ADDTOQUIZCONTAINER: 'td.addtoquizaction',
         PREVIEWCONTAINER:   'td.previewaction',
         SEARCHOPTIONS:      '#advancedsearch'
@@ -50,10 +50,10 @@ Y.extend(POPUP, Y.Base, {
     create_dialogue: function() {
         // Create a dialogue on the page and hide it.
         var config = {
-            headerContent : '',
-            bodyContent : Y.one(CSS.QBANKLOADING),
-            draggable : true,
-            modal : true,
+            headerContent: '',
+            bodyContent: Y.one(CSS.QBANKLOADING),
+            draggable: true,
+            modal: true,
             centered: true,
             width: null,
             visible: false,
@@ -67,10 +67,12 @@ Y.extend(POPUP, Y.Base, {
 
         this.loadingDiv = this.dialogue.bodyNode.getHTML();
 
-        Y.later(100, this, function() {this.load_content(window.location.search);});
+        Y.later(100, this, function() {
+            this.load_content(window.location.search);
+        });
     },
 
-    initializer : function() {
+    initializer: function() {
         if (!Y.one(CSS.QBANKLOADING)) {
             return;
         }
@@ -78,7 +80,7 @@ Y.extend(POPUP, Y.Base, {
         Y.one('body').delegate('click', this.display_dialogue, CSS.ADDQUESTIONLINKS, this);
     },
 
-    display_dialogue : function (e) {
+    display_dialogue: function(e) {
         e.preventDefault();
         this.dialogue.set('headerContent', e.currentTarget.getData(PARAMS.HEADER));
 
@@ -96,7 +98,7 @@ Y.extend(POPUP, Y.Base, {
         this.dialogue.show();
     },
 
-    load_content : function(queryString) {
+    load_content: function(queryString) {
         Y.log('Starting load.', 'debug', 'moodle-mod_quiz-quizquestionbank');
         this.dialogue.bodyNode.append(this.loadingDiv);
 
@@ -129,7 +131,9 @@ Y.extend(POPUP, Y.Base, {
         Y.log('Load completed.', 'debug', 'moodle-mod_quiz-quizquestionbank');
 
         this.dialogue.bodyNode.setHTML(result.contents);
-        Y.use('moodle-question-chooser', function() {M.question.init_chooser({});});
+        Y.use('moodle-question-chooser', function() {
+            M.question.init_chooser({});
+        });
         this.dialogue.bodyNode.one('form').delegate('change', this.options_changed, '.searchoptions', this);
 
         if (this.dialogue.visible) {

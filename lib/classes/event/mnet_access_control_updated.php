@@ -113,4 +113,18 @@ class mnet_access_control_updated extends base {
             throw new \coding_exception('The \'accessctrl\' value must be set in other.');
         }
     }
+
+    public static function get_objectid_mapping() {
+        // Mnet info is not backed up, so no need to map on restore.
+        return array('db' => 'mnet_sso_access_control', 'restore' => base::NOT_MAPPED);
+    }
+
+    public static function get_other_mapping() {
+        // Nothing to map.
+        return false;
+    }
+
+    public static function is_deprecated() {
+        return true;
+    }
 }

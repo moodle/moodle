@@ -132,6 +132,8 @@ class cache_definition_mappings_form extends moodleform {
      * The definition of the form
      */
     protected final function definition() {
+        global $OUTPUT;
+
         $definition = $this->_customdata['definition'];
         $form = $this->_form;
 
@@ -139,6 +141,14 @@ class cache_definition_mappings_form extends moodleform {
         list($currentstores, $storeoptions, $defaults) =
                 cache_administration_helper::get_definition_store_options($component, $area);
 
+        $storedata = cache_administration_helper::get_definition_summaries();
+        if ($storedata[$definition]['mode'] != cache_store::MODE_REQUEST) {
+            if (isset($storedata[$definition]['canuselocalstore']) && $storedata[$definition]['canuselocalstore']) {
+                $form->addElement('html', $OUTPUT->notification(get_string('localstorenotification', 'cache'), 'notifymessage'));
+            } else {
+                $form->addElement('html', $OUTPUT->notification(get_string('sharedstorenotification', 'cache'), 'notifymessage'));
+            }
+        }
         $form->addElement('hidden', 'definition', $definition);
         $form->setType('definition', PARAM_SAFEPATH);
         $form->addElement('hidden', 'action', 'editdefinitionmapping');

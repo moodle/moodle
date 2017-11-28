@@ -41,7 +41,17 @@ class cachestore_memcached_addinstance_form extends cachestore_addinstance_form 
      * Adds the desired form elements.
      */
     protected function configuration_definition() {
+        global $OUTPUT;
+
         $form = $this->_form;
+        $version = phpversion('memcached');
+        $hasrequiredversion = ($version || version_compare($version, cachestore_memcached::REQUIRED_VERSION, '>='));
+
+        if (!$hasrequiredversion) {
+            $notify = new \core\output\notification(nl2br(get_string('upgrade200recommended', 'cachestore_memcached')),
+                \core\output\notification::NOTIFY_WARNING);
+            $form->addElement('html', $OUTPUT->render($notify));
+        }
 
         $form->addElement('textarea', 'servers', get_string('servers', 'cachestore_memcached'), array('cols' => 75, 'rows' => 5));
         $form->addHelpButton('servers', 'servers', 'cachestore_memcached');
@@ -63,6 +73,7 @@ class cachestore_memcached_addinstance_form extends cachestore_addinstance_form 
         $form->setType('prefix', PARAM_TEXT); // We set to text but we have a rule to limit to alphanumext.
         $form->addHelpButton('prefix', 'prefix', 'cachestore_memcached');
         $form->addRule('prefix', get_string('prefixinvalid', 'cachestore_memcached'), 'regex', '#^[a-zA-Z0-9\-_]+$#');
+        $form->setForceLtr('prefix');
 
         $hashoptions = cachestore_memcached::config_get_hash_options();
         $form->addElement('select', 'hash', get_string('hash', 'cachestore_memcached'), $hashoptions);
@@ -74,6 +85,15 @@ class cachestore_memcached_addinstance_form extends cachestore_addinstance_form 
         $form->addHelpButton('bufferwrites', 'bufferwrites', 'cachestore_memcached');
         $form->setDefault('bufferwrites', 0);
         $form->setType('bufferwrites', PARAM_BOOL);
+
+        if ($hasrequiredversion) {
+            // Only show this option if we have the required version of memcache extension installed.
+            // If it's not installed then this option does nothing, so there is no point in displaying it.
+            $form->addElement('selectyesno', 'isshared', get_string('isshared', 'cachestore_memcached'));
+            $form->addHelpButton('isshared', 'isshared', 'cachestore_memcached');
+            $form->setDefault('isshared', 0);
+            $form->setType('isshared', PARAM_BOOL);
+        }
 
         $form->addElement('header', 'clusteredheader', get_string('clustered', 'cachestore_memcached'));
 

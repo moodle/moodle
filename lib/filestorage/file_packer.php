@@ -94,10 +94,12 @@ abstract class file_packer {
      * @param string $pathname target directory
      * @param array $onlyfiles only extract files present in the array
      * @param file_progress $progress Progress indicator callback or null if not required
+     * @param bool $returnbool Whether to return a basic true/false indicating error state, or full per-file error
+     * details.
      * @return array|bool list of processed files; false if error
      */
     public abstract function extract_to_pathname($archivefile, $pathname,
-            array $onlyfiles = NULL, file_progress $progress = null);
+            array $onlyfiles = NULL, file_progress $progress = null, $returnbool = false);
 
     /**
      * Extract file to given file path (real OS filesystem), existing files are overwritten.

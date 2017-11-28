@@ -166,17 +166,17 @@ class repository_local extends repository {
             // do not skip files
             return false;
         }
-        if ($fileinfo instanceof file_info_context_coursecat) {
+        if ($fileinfo instanceof file_info_context_course ||
+            $fileinfo instanceof file_info_context_user ||
+            $fileinfo instanceof file_info_area_course_legacy ||
+            $fileinfo instanceof file_info_context_module ||
+            $fileinfo instanceof file_info_context_system) {
+            // These instances can never be filearea inside an activity, they will never be skipped.
+            return false;
+        } else if ($fileinfo instanceof file_info_context_coursecat) {
             // This is a course category. For non-admins we do not display categories
             return empty($CFG->navshowmycoursecategories) &&
                             !has_capability('moodle/course:update', context_system::instance());
-        } else if ($fileinfo instanceof file_info_context_course ||
-                $fileinfo instanceof file_info_context_user ||
-                $fileinfo instanceof file_info_area_course_legacy ||
-                $fileinfo instanceof file_info_context_module ||
-                $fileinfo instanceof file_info_context_system) {
-            // these instances can never be filearea inside an activity, they will never be skipped
-            return false;
         } else {
             $params = $fileinfo->get_params();
             if (strlen($params['filearea']) &&
@@ -213,7 +213,7 @@ class repository_local extends repository {
         );
         if ($fileinfo->is_directory()) {
             $node['path'] = $encodedpath;
-            $node['thumbnail'] = $OUTPUT->pix_url(file_folder_icon(90))->out(false);
+            $node['thumbnail'] = $OUTPUT->image_url(file_folder_icon(90))->out(false);
             $node['children'] = array();
         } else {
             $node['size'] = $fileinfo->get_filesize();
@@ -224,8 +224,8 @@ class repository_local extends repository {
                 $node['originalmissing'] = true;
             }
             $node['source'] = $encodedpath;
-            $node['thumbnail'] = $OUTPUT->pix_url(file_file_icon($fileinfo, 90))->out(false);
-            $node['icon'] = $OUTPUT->pix_url(file_file_icon($fileinfo, 24))->out(false);
+            $node['thumbnail'] = $OUTPUT->image_url(file_file_icon($fileinfo, 90))->out(false);
+            $node['icon'] = $OUTPUT->image_url(file_file_icon($fileinfo, 24))->out(false);
             if ($imageinfo = $fileinfo->get_imageinfo()) {
                 // what a beautiful picture, isn't it
                 $fileurl = new moodle_url($fileinfo->get_url());

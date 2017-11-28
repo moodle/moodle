@@ -31,6 +31,6 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['language'] = 'Език';
-$string['next'] = 'Следваща';
-$string['previous'] = 'Предишна';
+$string['next'] = 'Още';
+$string['previous'] = 'Обратно';
 $string['reload'] = 'Презареждане';
