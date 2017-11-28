@@ -2311,6 +2311,77 @@ class core_course_renderer extends plugin_renderer_base {
 
         return $hubdescription;
     }
+
+    /**
+     * Output frontpage summary text and frontpage modules (stored as section 1 in site course)
+     *
+     * This may be disabled in settings
+     *
+     * @return string
+     */
+    public function frontpage_section1() {
+        global $SITE, $USER;
+
+        $output = '';
+        $editing = $this->page->user_is_editing();
+
+        if ($editing) {
+            // Make sure section with number 1 exists.
+            course_create_sections_if_missing($SITE, 1);
+        }
+
+        $modinfo = get_fast_modinfo($SITE);
+        $section = $modinfo->get_section_info(1);
+        if (($section && (!empty($modinfo->sections[1]) or !empty($section->summary))) or $editing) {
+            $output .= $this->box_start('generalbox sitetopic');
+
+            // If currently moving a file then show the current clipboard.
+            if (ismoving($SITE->id)) {
+                $stractivityclipboard = strip_tags(get_string('activityclipboard', '', $USER->activitycopyname));
+                $output .= '<p><font size="2">';
+                $cancelcopyurl = new moodle_url('/course/mod.php', ['cancelcopy' => 'true', 'sesskey' => sesskey()]);
+                $output .= "$stractivityclipboard&nbsp;&nbsp;(" . html_writer::link($cancelcopyurl, get_string('cancel')) .')';
+                $output .= '</font></p>';
+            }
+
+            $context = context_course::instance(SITEID);
+
+            // If the section name is set we show it.
+            if (trim($section->name) !== '') {
+                $output .= $this->heading(
+                    format_string($section->name, true, array('context' => $context)),
+                    2,
+                    'sectionname'
+                );
+            }
+
+            $summarytext = file_rewrite_pluginfile_urls($section->summary,
+                'pluginfile.php',
+                $context->id,
+                'course',
+                'section',
+                $section->id);
+            $summaryformatoptions = new stdClass();
+            $summaryformatoptions->noclean = true;
+            $summaryformatoptions->overflowdiv = true;
+
+            $output .= format_text($summarytext, $section->summaryformat, $summaryformatoptions);
+
+            if ($editing && has_capability('moodle/course:update', $context)) {
+                $streditsummary = get_string('editsummary');
+                $editsectionurl = new moodle_url('/course/editsection.php', ['id' => $section->id]);
+                $output .= html_writer::link($editsectionurl, $this->pix_icon('t/edit', $streditsummary)) .
+                    "<br /><br />";
+            }
+
+            $output .= $this->course_section_cm_list($SITE, $section);
+
+            $output .= $this->course_section_add_cm_control($SITE, $section->section);
+            $output .= $this->box_end();
+        }
+
+        return $output;
+    }
 }
 
 /**

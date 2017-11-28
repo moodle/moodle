@@ -123,61 +123,7 @@ if (!empty($CFG->customfrontpageinclude)) {
     include($CFG->customfrontpageinclude);
 
 } else if ($siteformatoptions['numsections'] > 0) {
-    if ($editing) {
-        // Make sure section with number 1 exists.
-        course_create_sections_if_missing($SITE, 1);
-        // Re-request modinfo in case section was created.
-        $modinfo = get_fast_modinfo($SITE);
-    }
-    $section = $modinfo->get_section_info(1);
-    if (($section && (!empty($modinfo->sections[1]) or !empty($section->summary))) or $editing) {
-        echo $OUTPUT->box_start('generalbox sitetopic');
-
-        // If currently moving a file then show the current clipboard.
-        if (ismoving($SITE->id)) {
-            $stractivityclipboard = strip_tags(get_string('activityclipboard', '', $USER->activitycopyname));
-            echo '<p><font size="2">';
-            echo "$stractivityclipboard&nbsp;&nbsp;(<a href=\"course/mod.php?cancelcopy=true&amp;sesskey=".sesskey()."\">";
-            echo get_string('cancel') . '</a>)';
-            echo '</font></p>';
-        }
-
-        $context = context_course::instance(SITEID);
-
-        // If the section name is set we show it.
-        if (trim($section->name) !== '') {
-            echo $OUTPUT->heading(
-                format_string($section->name, true, array('context' => $context)),
-                2,
-                'sectionname'
-            );
-        }
-
-        $summarytext = file_rewrite_pluginfile_urls($section->summary,
-            'pluginfile.php',
-            $context->id,
-            'course',
-            'section',
-            $section->id);
-        $summaryformatoptions = new stdClass();
-        $summaryformatoptions->noclean = true;
-        $summaryformatoptions->overflowdiv = true;
-
-        echo format_text($summarytext, $section->summaryformat, $summaryformatoptions);
-
-        if ($editing && has_capability('moodle/course:update', $context)) {
-            $streditsummary = get_string('editsummary');
-            echo "<a title=\"$streditsummary\" " .
-                 " href=\"course/editsection.php?id=$section->id\">" . $OUTPUT->pix_icon('t/edit', $streditsummary) .
-                 "</a><br /><br />";
-        }
-
-        $courserenderer = $PAGE->get_renderer('core', 'course');
-        echo $courserenderer->course_section_cm_list($SITE, $section);
-
-        echo $courserenderer->course_section_add_cm_control($SITE, $section->section);
-        echo $OUTPUT->box_end();
-    }
+    echo $courserenderer->frontpage_section1();
 }
 // Include course AJAX.
 include_course_ajax($SITE, $modnamesused);
