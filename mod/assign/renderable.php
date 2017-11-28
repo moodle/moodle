@@ -748,6 +748,8 @@ class assign_grading_summary implements renderable {
     public $teamsubmission = false;
     /** @var boolean warnofungroupedusers - Do we need to warn people that there are users without groups */
     public $warnofungroupedusers = false;
+    /** @var boolean cangrade - Can the current user grade students? */
+    public $cangrade = false;
 
     /**
      * constructor
@@ -762,6 +764,7 @@ class assign_grading_summary implements renderable {
      * @param int $coursemoduleid
      * @param int $submissionsneedgradingcount
      * @param bool $teamsubmission
+     * @param bool $cangrade
      */
     public function __construct($participantcount,
                                 $submissiondraftsenabled,
@@ -773,7 +776,8 @@ class assign_grading_summary implements renderable {
                                 $coursemoduleid,
                                 $submissionsneedgradingcount,
                                 $teamsubmission,
-                                $warnofungroupedusers) {
+                                $warnofungroupedusers,
+                                $cangrade = true) {
         $this->participantcount = $participantcount;
         $this->submissiondraftsenabled = $submissiondraftsenabled;
         $this->submissiondraftscount = $submissiondraftscount;
@@ -785,6 +789,7 @@ class assign_grading_summary implements renderable {
         $this->submissionsneedgradingcount = $submissionsneedgradingcount;
         $this->teamsubmission = $teamsubmission;
         $this->warnofungroupedusers = $warnofungroupedusers;
+        $this->cangrade = $cangrade;
     }
 }
 
