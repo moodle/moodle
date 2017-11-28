@@ -40,7 +40,6 @@ class company_edit_form extends company_moodleform {
         $this->companyrecord = $companyrecord;
         $this->firstcompany = $firstcompany;
         $this->parentcompanyid = $parentcompanyid;
-echo "parentid = $parentcompanyid</br>";
         if (!empty($companyrecord->templates)) {
             $this->companyrecord->templates = array();
         }
