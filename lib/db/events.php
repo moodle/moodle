@@ -47,6 +47,10 @@ $observers = array(
         'callback'    => 'core_badges_observer::course_module_criteria_review',
     ),
     array(
+        'eventname'   => '\core\event\badge_awarded',
+        'callback'    => 'core_badges_observer::badge_criteria_review',
+    ),
+    array(
         'eventname'   => '\core\event\course_completed',
         'callback'    => 'core_badges_observer::course_criteria_review',
     ),
