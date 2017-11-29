@@ -406,7 +406,7 @@ $PAGE->navbar->add(get_string($title, 'block_iomad_commerce'));
 /* next line copied from /course/edit.php */
 $editoroptions = array('maxfiles' => EDITOR_UNLIMITED_FILES, 'maxbytes' => $CFG->maxbytes, 'trusttext' => false, 'noclean' => true);
 
-$mform = new course_edit_form($PAGE->url, $isadding, $shopsettingsid, $course, $priceblocks, $editoroptions);
+$mform = new course_edit_form(new moodle_url('/blocks/iomad_commerce/edit_course_shopsettings_form.php'), $isadding, $shopsettingsid, $course, $priceblocks, $editoroptions);
 $mform->set_data($shopsettings);
 
 if ($mform->is_cancelled()) {
