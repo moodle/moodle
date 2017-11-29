@@ -383,7 +383,7 @@ class mod_chat_external extends external_api {
             $returnedmessages[] = array(
                 'id' => $message->id,
                 'userid' => $message->userid,
-                'system' => (bool) $message->system,
+                'systemmessage' => (bool) $message->systemmessage,
                 'message' => $messageformatted,
                 'timestamp' => $message->timestamp,
             );
@@ -413,7 +413,7 @@ class mod_chat_external extends external_api {
                         array(
                             'id' => new external_value(PARAM_INT, 'message id'),
                             'userid' => new external_value(PARAM_INT, 'user id'),
-                            'system' => new external_value(PARAM_BOOL, 'true if is a system message (like user joined)'),
+                            'systemmessage' => new external_value(PARAM_BOOL, 'true if is a system message (like user joined)'),
                             'message' => new external_value(PARAM_RAW, 'message text'),
                             'timestamp' => new external_value(PARAM_INT, 'timestamp for the message'),
                         )

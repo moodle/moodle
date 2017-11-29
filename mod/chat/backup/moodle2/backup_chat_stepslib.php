@@ -35,7 +35,7 @@ class backup_chat_activity_structure_step extends backup_activity_structure_step
         $messages = new backup_nested_element('messages');
 
         $message = new backup_nested_element('message', array('id'), array(
-            'userid', 'groupid', 'system', 'message_text', 'timestamp'));
+            'userid', 'groupid', 'systemmessage', 'message_text', 'timestamp'));
 
         // It is not cool to have two tags with same name, so we need to rename message field to message_text.
         $message->set_source_alias('message', 'message_text');

@@ -144,7 +144,7 @@ class mod_chat_external_testcase extends externallib_advanced_testcase {
 
         foreach ($result['messages'] as $message) {
             // Ommit system messages, like user just joined in.
-            if ($message['system']) {
+            if ($message['systemmessage']) {
                 continue;
             }
             $this->assertEquals('hello!', $message['message']);
