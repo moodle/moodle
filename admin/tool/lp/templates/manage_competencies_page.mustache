@@ -64,6 +64,7 @@
                                 <li>
                                     <a href="#">{{#str}}edit{{/str}}</a><b class="caret"></b>
                                     <ul class="dropdown dropdown-menu">
+                                    {{#canmanage}}
                                     <li class="dropdown-item">
                                         <a href="#" data-action="edit">
                                             {{#pix}}t/edit{{/pix}} {{#str}}edit{{/str}}
@@ -89,11 +90,13 @@
                                             {{#pix}}t/down{{/pix}} {{#str}}movedown{{/str}}
                                         </a>
                                     </li>
+                                    {{/canmanage}}
                                     <li class="dropdown-item">
                                         <a href="#" data-action="linkedcourses">
                                             {{#pix}}t/viewdetails{{/pix}} {{#str}}linkedcourses, tool_lp{{/str}}
                                         </a>
                                     </li>
+                                    {{#canmanage}}
                                     <li class="dropdown-item">
                                         <a href="#" data-action="relatedcompetencies">
                                             {{#pix}}t/add{{/pix}} {{#str}}addcrossreferencedcompetency, tool_lp{{/str}}
@@ -104,6 +107,7 @@
                                             {{#pix}}t/edit{{/pix}} {{#str}}competencyrule, tool_lp{{/str}}
                                         </a>
                                     </li>
+                                    {{/canmanage}}
                                 </ul>
                             </li>
                         </ul>
@@ -112,11 +116,11 @@
                 <p data-region="competencyinfo">
                     {{#str}}nocompetencyselected, tool_lp{{/str}}
                 </p>
-                {{#canmanage}}
                 <div data-region="competencyactions">
+                    {{#canmanage}}
                     <button class="btn btn-secondary" data-action="add">{{#pix}}t/add{{/pix}} <span data-region="term"></span></button>
+                    {{/canmanage}}
                 </div>
-                {{/canmanage}}
             </div>
         </div>
     </div>
