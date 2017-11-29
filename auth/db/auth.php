@@ -137,6 +137,31 @@ class auth_plugin_db extends auth_plugin_base {
                 return (strtolower($fromdb) == sha1($extpassword));
             } else if ($this->config->passtype === 'saltedcrypt') {
                 return password_verify($extpassword, $fromdb);
+            } else if ($this->config->passtype === 'pbkdf2django') {
+                $pieces = explode("$", $fromdb);
+                $iterations = $pieces[1];
+                $salt = $pieces[2];
+                $old_hash = $pieces[3];
+                if(version_compare(phpversion(), '5.5', '>=')){
+                   $hash = hash_pbkdf2("SHA256", $extpassword, $salt, $iterations, 0, true);
+                }
+                else{//code from https://gist.github.com/rsky/5104756
+                    $digest = hash_hmac("SHA256", $salt . pack('N', 1), $extpassword, true);
+                    $block = $digest;
+                    for ($j = 1; $j < $iterations; $j++) {
+                        $digest = hash_hmac($algo, $digest, $extpassword, true);
+                        $block ^= $digest;
+                    }
+                    $derivedKey .= $block;
+                    if ($length > 0) {
+                        $hash=substr($derivedKey, 0, $length);
+                    }
+                    else{
+                         $hash= $derivedKey;
+                    }
+                }
+                $hash = base64_encode($hash);
+                return $hash==$old_hash;
             } else {
                 return false;
             }
