@@ -559,7 +559,7 @@ if (empty($charttype)) {
                 }
             }
 
-            echo $startcoulmns . $midcolumns . $endcolumns;
+            echo $startcolumns . $midcolumns . $endcolumns;
             $xlsrow = 1;
         }
         // Set the initial parameters for the table header links.
@@ -862,7 +862,7 @@ if (empty($charttype)) {
                     if (!empty($extrafields)) {
                         foreach($extrafields as $extrafield) {
                             $fieldname = $extrafield->name;
-                            $rowmid .= ',"'.$user->$fieldname .'"';
+                            $rowmid .= '","'.$user->$fieldname;
                         }
                     }
                     if (!$showexpiry) {
