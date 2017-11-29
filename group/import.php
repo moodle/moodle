@@ -134,7 +134,7 @@ if ($mform_post->is_cancelled()) {
                 }
             }
 
-            if (!empty($newgroup->idnumber)) {
+            if (isset($newgroup->idnumber) && strlen($newgroup->idnumber)) {
                 //if idnumber is set, we use that.
                 //unset invalid courseid
                 if (!$mycourse = $DB->get_record('course', array('idnumber'=>$newgroup->idnumber))) {
@@ -144,7 +144,7 @@ if ($mform_post->is_cancelled()) {
                     $newgroup->courseid = $mycourse->id;
                 }
 
-            } else if (!empty($newgroup->coursename)) {
+            } else if (isset($newgroup->coursename) && strlen($newgroup->coursename)) {
                 //else use course short name to look up
                 //unset invalid coursename (if no id)
                 if (!$mycourse = $DB->get_record('course', array('shortname' => $newgroup->coursename))) {
