@@ -100,6 +100,7 @@ $string['configenablerssfeeds'] = 'This switch will enable the possibility of RS
 $string['configenabletimedposts'] = 'Set to \'yes\' if you want to allow setting of display periods when posting a new forum discussion.';
 $string['configlongpost'] = 'Any post over this length (in characters not including HTML) is considered long. Posts displayed on the site front page, social format course pages, or user profiles are shortened to a natural break somewhere between the forum_shortpost and forum_longpost values.';
 $string['configmanydiscussions'] = 'Maximum number of discussions shown in a forum per page';
+$string['configmanyposts'] = 'Maximum number of posts shown in a forum per page';
 $string['configmaxattachments'] = 'Default maximum number of attachments allowed per post.';
 $string['configmaxbytes'] = 'Default maximum size for all forum attachments on the site (subject to course limits and other local settings)';
 $string['configoldpostdays'] = 'Number of days old any post is considered read.';
@@ -294,6 +295,7 @@ Users with the capability to reply to locked discussions can unlock a discussion
 $string['longpost'] = 'Long post';
 $string['mailnow'] = 'Send forum post notifications with no editing-time delay';
 $string['manydiscussions'] = 'Discussions per page';
+$string['manyposts'] = 'Posts per page';
 $string['managesubscriptionsoff'] = 'Finish managing subscriptions';
 $string['managesubscriptionson'] = 'Manage subscribers';
 $string['markalldread'] = 'Mark all posts in this discussion read.';
