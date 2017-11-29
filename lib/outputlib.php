@@ -201,10 +201,13 @@ function theme_build_css_for_themes($themeconfigs = [], $directions = ['rtl', 'l
 
         // First generate all the new css.
         foreach ($directions as $direction) {
+            // Lock it on. Technically we should build all themes for SVG and no SVG - but ie9 is out of support.
+            $themeconfig->force_svg_use(true);
             $themeconfig->set_rtl_mode(($direction === 'rtl'));
 
             $themecss[$direction] = $themeconfig->get_css_content();
             if ($cache) {
+                $themeconfig->set_css_content_cache($themecss[$direction]);
                 $filename = theme_get_css_filename($themeconfig->name, $themerev, $newrevision, $direction);
                 css_store_css($themeconfig, $filename, $themecss[$direction]);
             }
