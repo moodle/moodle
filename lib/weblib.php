@@ -1170,7 +1170,7 @@ function format_text_menu() {
  * <pre>
  * Options:
  *      trusted     :   If true the string won't be cleaned. Default false required noclean=true.
- *      noclean     :   If true the string won't be cleaned. Default false required trusted=true.
+ *      noclean     :   If true the string won't be cleaned, unless $CFG->forceclean is set. Default false required trusted=true.
  *      nocache     :   If true the strign will not be cached and will be formatted every call. Default false.
  *      filter      :   If true the string will be run through applicable filters as well. Default true.
  *      para        :   If true then the returned string will be wrapped in div tags. Default true.
@@ -1212,6 +1212,10 @@ function format_text($text, $format = FORMAT_MOODLE, $options = null, $courseidd
         } else {
             $options['noclean'] = false;
         }
+    }
+    if (!empty($CFG->forceclean)) {
+        // Whatever the caller claims, the admin wants all content cleaned anyway.
+        $options['noclean'] = false;
     }
     if (!isset($options['nocache'])) {
         $options['nocache'] = false;
