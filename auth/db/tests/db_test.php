@@ -320,28 +320,11 @@ class auth_db_testcase extends advanced_testcase {
         set_config('passtype', 'pbkdf2django', 'auth_db');
         $auth->config->passtype = 'pbkdf2django';
         $pieces = explode("$", $fromdb);
-        $iterations = rand(1,5);
+        $iterations = rand(1, 5);
         $salt = uniqid(mt_rand(), true);
         $extpassword = 'heslo';
-        if(version_compare(phpversion(), '5.5', '>=')){
-           $hash = hash_pbkdf2("SHA256", $extpassword, $salt, $iterations, 0, true);
-        }
-        else{//code from https://gist.github.com/rsky/5104756
-            $digest = hash_hmac("SHA256", $salt . pack('N', 1), $extpassword, true);
-            $block = $digest;
-            for ($j = 1; $j < $iterations; $j++) {
-                $digest = hash_hmac($algo, $digest, $extpassword, true);
-                $block ^= $digest;
-            }
-            $derivedKey .= $block;
-            if ($length > 0) {
-                $hash=substr($derivedKey, 0, $length);
-            }
-            else{
-                 $hash= $derivedKey;
-            }
-        }
-        $fromdb = array(0,$iterations,$salt,base64_encode($hash));
+        $hash = hash_pbkdf2("SHA256", $extpassword, $salt, $iterations, 0, true);
+        $fromdb = array(0, $iterations, $salt, base64_encode($hash));
         $user3->pass = implode('$', $fromdb);
         $DB->update_record('auth_db_users', $user3);
         $this->assertTrue($auth->user_login('u3', 'heslo'));
