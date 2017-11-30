@@ -89,7 +89,7 @@ class webservice_xmlrpc_client {
         $response = download_file_content($this->serverurl->out(false), $headers, $request);
 
         // Decode the response.
-        $result = xmlrpc_decode($response);
+        $result = $this->decode_response($response);
         if (is_array($result) && xmlrpc_is_fault($result)) {
             throw new Exception($result['faultString'], $result['faultCode']);
         }
@@ -115,5 +115,24 @@ class webservice_xmlrpc_client {
         $params = array_values($params);
 
         return xmlrpc_encode_request($functionname, $params, $outputoptions);
+    }
+
+    /**
+     * Parses and decodes the response XML
+     *
+     * @param string $response
+     * @return array
+     */
+    protected function decode_response($response) {
+        // XMLRPC server in Moodle encodes response using function xmlrpc_encode_request() with method==null
+        // see {@link webservice_xmlrpc_server::prepare_response()} . We should use xmlrpc_decode_request() for decoding too.
+        $method = null;
+        $encoding = null;
+        if (preg_match('/^<\?xml version="1.0" encoding="([^"]*)"\?>/', $response, $matches)) {
+            // Sometimes xmlrpc_decode_request() fails to recognise encoding, let's help it.
+            $encoding = $matches[1];
+        }
+        $r = xmlrpc_decode_request($response, $method, $encoding);
+        return $r;
     }
 }
