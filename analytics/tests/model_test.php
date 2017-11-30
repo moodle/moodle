@@ -226,7 +226,7 @@ class analytics_model_testcase extends advanced_testcase {
         $this->model->mark_as_trained();
         $this->assertEquals($originaluniqueid, $this->model->get_unique_id());
 
-        $this->model->enable();
+        $this->model->enable('\core\analytics\time_splitting\deciles');
         $this->assertEquals($originaluniqueid, $this->model->get_unique_id());
 
         // Wait 1 sec so the timestamp changes.
