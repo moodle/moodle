@@ -153,4 +153,26 @@ class core_theme_config_testcase extends advanced_testcase {
         $this->assertTrue(core_useragent::set_user_device_type('tablet'));
         $this->assertTrue(core_useragent::set_user_device_type('featurephone'));
     }
+
+    /**
+     * Confirm that the editor_css_url contains the theme revision and the
+     * theme subrevision if not in theme designer mode.
+     */
+    public function test_editor_css_url_has_revision_and_subrevision() {
+        global $CFG;
+
+        $this->resetAfterTest();
+        $theme = theme_config::load(theme_config::DEFAULT_THEME);
+        $themename = $theme->name;
+        $themerevision = 1234;
+        $themesubrevision = 5678;
+
+        $CFG->themedesignermode = false;
+        $CFG->themerev = $themerevision;
+
+        theme_set_sub_revision_for_theme($themename, $themesubrevision);
+        $url = $theme->editor_css_url();
+
+        $this->assertRegExp("/{$themerevision}_{$themesubrevision}/", $url->out(false));
+    }
 }
