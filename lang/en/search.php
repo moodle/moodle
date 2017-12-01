@@ -51,6 +51,7 @@ $string['enginenotinstalled'] = 'Engine {$a} is not installed.';
 $string['enginenotselected'] = 'You have not selected any search engine.';
 $string['engineserverstatus'] = 'The search engine is not available. Please contact your administrator.';
 $string['enteryoursearchquery'] = 'Enter your search query';
+$string['error_indexing'] = 'An error occurred while indexing';
 $string['errors'] = 'Errors';
 $string['errorareanotavailable'] = '{$a} search area is not available.';
 $string['filesinindexdirectory'] = 'Files in index directory';
