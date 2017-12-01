@@ -762,8 +762,9 @@ if (empty($charttype)) {
                 }
 
                 // load the full user profile.
-                profile_load_data($user);
-                $user->fullname = fullname($user);
+                $fulluser = $DB->get_record('user', array('id' => $user->uid));
+                profile_load_data($fulluser);
+                $user->fullname = fullname($fulluser);
 
                 // Deal with the certificate.
                 if ($hascertificate) {
@@ -802,7 +803,7 @@ if (empty($charttype)) {
                     if (!empty($extrafields)) {
                         foreach($extrafields as $extrafield) {
                             $fieldname = $extrafield->name;
-                            $rowmid[$extrafield->name] = $user->$fieldname;
+                            $rowmid[$extrafield->name] = $fulluser->$fieldname;
                         }
                     }
                     if (!$showexpiry) {
@@ -833,7 +834,7 @@ if (empty($charttype)) {
                     if (!empty($extrafields)) {
                         foreach($extrafields as $extrafield) {
                             $fieldname = $extrafield->name;
-                            $rowmid[$extrafield->name] = $user->$fieldname;
+                            $rowmid[$extrafield->name] = $fulluser->$fieldname;
                         }
                     }
                     if (!$showexpiry) {
@@ -862,7 +863,7 @@ if (empty($charttype)) {
                     if (!empty($extrafields)) {
                         foreach($extrafields as $extrafield) {
                             $fieldname = $extrafield->name;
-                            $rowmid .= '","'.$user->$fieldname;
+                            $rowmid .= '","'.$fulluser->$fieldname;
                         }
                     }
                     if (!$showexpiry) {
