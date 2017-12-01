@@ -165,7 +165,7 @@ class api {
         require_capability('moodle/competency:competencymanage', $competency->get_context());
 
         // Reset the sortorder, use reorder instead.
-        $competency->set('sortorder', null);
+        $competency->set('sortorder', 0);
         $competency->create();
 
         \core\event\competency_created::create_from_competency($competency)->trigger();
