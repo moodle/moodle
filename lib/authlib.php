@@ -627,9 +627,10 @@ class auth_plugin_base {
      * @param array $updatekeys fields to update, false updates all fields.
      * @param bool $triggerevent set false if user_updated event should not be triggered.
      *             This will not affect user_password_updated event triggering.
+     * @param bool $suspenduser Should the user be suspended?
      * @return stdClass|bool updated user record or false if there is no new info to update.
      */
-    protected function update_user_record($username, $updatekeys = false, $triggerevent = false) {
+    protected function update_user_record($username, $updatekeys = false, $triggerevent = false, $suspenduser = false) {
         global $CFG, $DB;
 
         require_once($CFG->dirroot.'/user/profile/lib.php');
@@ -663,6 +664,8 @@ class auth_plugin_base {
             if (!empty($updatekeys)) {
                 $newuser = new stdClass();
                 $newuser->id = $userid;
+                // The cast to int is a workaround for MDL-53959.
+                $newuser->suspended = (int) $suspenduser;
                 $newuser->profile = array();
 
                 foreach ($updatekeys as $key) {

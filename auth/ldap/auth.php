@@ -547,7 +547,9 @@ class auth_plugin_ldap extends auth_plugin_base {
         // Save any custom profile field information
         profile_save_data($user);
 
-        $this->update_user_record($user->username);
+        $userinfo = $this->get_userinfo($user->username);
+        $this->update_user_record($user->username, false, false, $this->is_user_suspended((object) $userinfo));
+
         // This will also update the stored hash to the latest algorithm
         // if the existing hash is using an out-of-date algorithm (or the
         // legacy md5 algorithm).
@@ -874,7 +876,9 @@ class auth_plugin_ldap extends auth_plugin_base {
 
                 foreach ($users as $user) {
                     echo "\t"; print_string('auth_dbupdatinguser', 'auth_db', array('name'=>$user->username, 'id'=>$user->id));
-                    if (!$this->update_user_record($user->username, $updatekeys, true)) {
+                    $userinfo = $this->get_userinfo($user->username);
+                    if (!$this->update_user_record($user->username, $updatekeys, true,
+                            $this->is_user_suspended((object) $userinfo))) {
                         echo ' - '.get_string('skipped');
                     }
                     echo "\n";

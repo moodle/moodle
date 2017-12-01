@@ -381,7 +381,7 @@ class auth_plugin_db extends auth_plugin_base {
                     list($in_sql, $params) = $DB->get_in_or_equal($userlistchunk, SQL_PARAMS_NAMED, 'u', true);
                     $params['authtype'] = $this->authtype;
                     $params['mnethostid'] = $CFG->mnet_localhost_id;
-                    $sql = "SELECT u.id, u.username
+                    $sql = "SELECT u.id, u.username, u.suspended
                           FROM {user} u
                          WHERE u.auth = :authtype AND u.deleted = 0 AND u.mnethostid = :mnethostid AND u.username {$in_sql}";
                     $update_users = $update_users + $DB->get_records_sql($sql, $params);
@@ -391,7 +391,7 @@ class auth_plugin_db extends auth_plugin_base {
                     $trace->output("User entries to update: ".count($update_users));
 
                     foreach ($update_users as $user) {
-                        if ($this->update_user_record($user->username, $updatekeys)) {
+                        if ($this->update_user_record($user->username, $updatekeys, false, (bool) $user->suspended)) {
                             $trace->output(get_string('auth_dbupdatinguser', 'auth_db', array('name'=>$user->username, 'id'=>$user->id)), 1);
                         } else {
                             $trace->output(get_string('auth_dbupdatinguser', 'auth_db', array('name'=>$user->username, 'id'=>$user->id))." - ".get_string('skipped'), 1);
