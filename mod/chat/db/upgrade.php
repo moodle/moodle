@@ -25,7 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 function xmldb_chat_upgrade($oldversion) {
-    global $CFG,$DB;
+    global $CFG, $DB;
 
     // Moodle v3.1.0 release upgrade line.
     // Put any upgrade step following this.
@@ -44,7 +44,7 @@ function xmldb_chat_upgrade($oldversion) {
         // Correction to not break my sql MDL-60793.
         $dbman = $DB->get_manager();
         $table = new xmldb_table('chat_messages');
-        $field = new xmldb_field('system', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0','groupid');
+        $field = new xmldb_field('system', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'groupid');
         if ($dbman->field_exists($table, $field)) {
             $dbman->rename_field($table, $field, 'systemmessage');
         }
@@ -56,7 +56,6 @@ function xmldb_chat_upgrade($oldversion) {
 
         upgrade_plugin_savepoint(true, 2017113000, 'mod', 'chat');
     }
-
 
     return true;
 }
