@@ -546,67 +546,6 @@ class auth_plugin_db extends auth_plugin_base {
     }
 
     /**
-     * will update a local user record from an external source.
-     * is a lighter version of the one in moodlelib -- won't do
-     * expensive ops such as enrolment.
-     *
-     * If you don't pass $updatekeys, there is a performance hit and
-     * values removed from DB won't be removed from moodle.
-     *
-     * @param string $username username
-     * @param bool $updatekeys
-     * @return stdClass
-     */
-    function update_user_record($username, $updatekeys=false) {
-        global $CFG, $DB;
-
-        //just in case check text case
-        $username = trim(core_text::strtolower($username));
-
-        // get the current user record
-        $user = $DB->get_record('user', array('username'=>$username, 'mnethostid'=>$CFG->mnet_localhost_id));
-        if (empty($user)) { // trouble
-            error_log("Cannot update non-existent user: $username");
-            print_error('auth_dbusernotexist','auth_db',$username);
-            die;
-        }
-
-        // Ensure userid is not overwritten.
-        $userid = $user->id;
-        $needsupdate = false;
-
-        $updateuser = new stdClass();
-        $updateuser->id = $userid;
-        if ($newinfo = $this->get_userinfo($username)) {
-            $newinfo = truncate_userinfo($newinfo);
-
-            if (empty($updatekeys)) { // All keys? This does not support removing values.
-                $updatekeys = array_keys($newinfo);
-            }
-
-            foreach ($updatekeys as $key) {
-                if (isset($newinfo[$key])) {
-                    $value = $newinfo[$key];
-                } else {
-                    $value = '';
-                }
-
-                if (!empty($this->config->{'field_updatelocal_' . $key})) {
-                    if (isset($user->{$key}) and $user->{$key} != $value) { // Only update if it's changed.
-                        $needsupdate = true;
-                        $updateuser->$key = $value;
-                    }
-                }
-            }
-        }
-        if ($needsupdate) {
-            require_once($CFG->dirroot . '/user/lib.php');
-            user_update_user($updateuser);
-        }
-        return $DB->get_record('user', array('id'=>$userid, 'deleted'=>0));
-    }
-
-    /**
      * Called when the user record is updated.
      * Modifies user in external database. It takes olduser (before changes) and newuser (after changes)
      * compares information saved modified information to external db.
