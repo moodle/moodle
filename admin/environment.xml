@@ -2259,7 +2259,7 @@
       </CUSTOM_CHECK>
     </CUSTOM_CHECKS>
   </MOODLE>
-  <MOODLE version="3.5" requires="3.0">
+  <MOODLE version="3.5" requires="3.1">
     <UNICODE level="required">
       <FEEDBACK>
         <ON_ERROR message="unicoderequired" />
