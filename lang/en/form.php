@@ -41,6 +41,7 @@ $string['err_nopunctuation'] = 'You must enter no punctuation characters here.';
 $string['err_numeric'] = 'You must enter a number here.';
 $string['err_rangelength'] = 'You must enter between {$a->format[0]} and {$a->format[1]} characters here.';
 $string['err_required'] = 'You must supply a value here.';
+$string['err_wrappingwhitespace'] = 'The value must not start or end with whitespace.';
 $string['err_wrongfileextension'] = 'Some files ({$a->wrongfiles}) cannot be uploaded. Only file types {$a->whitelist} are allowed.';
 $string['filesofthesetypes'] = 'Accepted file types:';
 $string['filetypesany'] = 'All file types';
