@@ -38,7 +38,6 @@ defined('MOODLE_INTERNAL') || die();
 
 function xmldb_feedback_upgrade($oldversion) {
     global $CFG, $DB;
-    require_once($CFG->dirroot . '/mod/feedback/db/upgradelib.php');
 
     $dbman = $DB->get_manager(); // Loads ddl manager and xmldb classes.
 
