@@ -43,20 +43,8 @@ $event->trigger();
 
 // Print the header.
 $strquizzes = get_string("modulenameplural", "quiz");
-$streditquestions = '';
-$editqcontexts = new question_edit_contexts($coursecontext);
-if ($editqcontexts->have_one_edit_tab_cap('questions')) {
-    $streditquestions =
-            "<form target=\"_parent\" method=\"get\" action=\"$CFG->wwwroot/question/edit.php\">
-               <div>
-               <input type=\"hidden\" name=\"courseid\" value=\"$course->id\" />
-               <input type=\"submit\" value=\"".get_string("editquestions", "quiz")."\" />
-               </div>
-             </form>";
-}
 $PAGE->navbar->add($strquizzes);
 $PAGE->set_title($strquizzes);
-$PAGE->set_button($streditquestions);
 $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
 echo $OUTPUT->heading($strquizzes, 2);
