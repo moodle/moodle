@@ -76,3 +76,4 @@ $string['issuedate'] = 'Date allocated';
 $string['licensesendreminder'] = 'Do you wish to send a reminder email to this list of users?';
 $string['sendreminderemail'] = 'Send a reminder email';
 $string['licenseemailsent'] = 'Emails have been sent';
+$string['userssummary'] = '{$a->usercount} Users ({$a->totalcreations} Created - {$a->totallogins} Log ins)';

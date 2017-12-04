@@ -808,7 +808,14 @@ class iomad_user_filter_form extends moodleform {
             $mform->addElement('select', 'licensestatus', get_string('licensestatus', 'block_iomad_company_admin'), $licenseusearray);
         }
 
-        $this->add_action_buttons(false, get_string('userfilter', 'local_iomad'));
+        if (empty($this->_customdata['adddodownload'])) {
+            $this->add_action_buttons(false, get_string('userfilter', 'local_iomad'));
+        } else {
+            $buttonarray=array();
+            $buttonarray[] = $mform->createElement('submit', 'submitbutton', get_string('userfilter', 'local_iomad'));
+            $buttonarray[] = $mform->createElement('submit', 'dodownload', get_string("downloadcsv", 'local_report_completion'));
+            $mform->addGroup($buttonarray, 'buttonar', '', ' ', false);
+        }
     }
 }
 
@@ -835,8 +842,8 @@ class iomad_date_filter_form extends moodleform {
             $mform->addElement('hidden', $param, $value);
             $mform->setType($param, PARAM_CLEAN);
         }
-        $mform->addElement('date_selector', 'compfrom', get_string('compfrom', 'local_report_completion'));
-        $mform->addElement('date_selector', 'compto', get_string('compto', 'local_report_completion'));
+        $mform->addElement('date_selector', 'compfrom', get_string('compfrom', 'local_report_completion'), array('optional' => 'yes'));
+        $mform->addElement('date_selector', 'compto', get_string('compto', 'local_report_completion'), array('optional' => 'yes'));
         $mform->setDefault('compfrom', 0);
         $this->add_action_buttons(false, get_string('userfilter', 'local_iomad'));
     }

@@ -23,7 +23,7 @@ require_once($CFG->dirroot."/local/email/lib.php");
 
 // Params.
 $participant  = optional_param('participant', 0, PARAM_INT);
-$dodownload   = optional_param('dodownload', 0, PARAM_INT);
+$dodownload   = optional_param('dodownload', 0, PARAM_CLEAN);
 $firstname    = optional_param('firstname', 0, PARAM_CLEAN);
 $lastname     = optional_param('lastname', '', PARAM_CLEAN);
 $showsuspended = optional_param('showsuspended', 0, PARAM_INT);
@@ -41,6 +41,11 @@ $licenseid    = optional_param('licenseid', 0, PARAM_INTEGER);
 require_login($SITE);
 $systemcontext = context_system::instance();
 iomad::require_capability('local/report_user_licenses:view', $systemcontext);
+
+if (!empty($dodownload)) {
+    $page = 0;
+    $perpage = 0;
+}
 
 if ($firstname) {
     $params['firstname'] = $firstname;
@@ -257,39 +262,45 @@ if (!empty($companyid)) {
     if (empty($dodownload)) {
         // Do we have any licenses?
 
-        if (empty($licenselist)) {
+        if (empty($licenselist) && empty($dodownload)) {
             echo get_string('nolicenses', 'block_iomad_company_admin');
             echo $output->footer();
             die;
         }
 
-        echo $licenseselectoutput;
-        if (empty($licenseid)) {
-            echo $output->footer();
-            die;
+        if (empty($dodownload)) {
+            echo $licenseselectoutput;
+            if (empty($licenseid)) {
+                echo $output->footer();
+                die;
+            }
+    
+            echo html_writer::start_tag('div', array('class' => 'iomadclear'));
+            echo html_writer::start_tag('div', array('class' => 'fitem'));
+            echo $treehtml;
+            echo html_writer::start_tag('div', array('style' => 'display:none'));
+            echo $fwselectoutput;
+            echo html_writer::end_tag('div');
+            echo html_writer::end_tag('div');
+            echo html_writer::end_tag('div');
+    
+            if (empty($licenseid)) {
+                echo $output->footer();
+                die;
+            }
+
+            // Set up the filter form.
+            $params['companyid'] = $companyid;
+            $params['licensestatus'] = true;
+            $params['adddodownload'] = true;
+            $mform = new iomad_user_filter_form(null, $params);
+            $mform->set_data($params);
+            $mform->set_data(array('departmentid' => $departmentid));
+            $mform->set_data(array('licensestatus' => $licensestatus));
+    
+            // Display the user filter form.
+            $mform->display();
         }
-
-        echo html_writer::start_tag('div', array('class' => 'iomadclear'));
-        echo html_writer::start_tag('div', array('class' => 'fitem'));
-        echo $treehtml;
-        echo html_writer::start_tag('div', array('style' => 'display:none'));
-        echo $fwselectoutput;
-        echo html_writer::end_tag('div');
-        echo html_writer::end_tag('div');
-        echo html_writer::end_tag('div');
-
-        if (empty($licenseid)) {
-            echo $output->footer();
-            die;
-        }
-
-        // Set up the filter form.
-        $mform = new iomad_user_filter_form(null, array('companyid' => $companyid, 'licensestatus' => true));
-        $mform->set_data(array('departmentid' => $departmentid));
-        $mform->set_data($params);
-
-        // Display the user filter form.
-        $mform->display();
     }
 }
 
@@ -297,11 +308,10 @@ if (!empty($dodownload)) {
     // Set up the Excel workbook.
 
     header("Content-Type: application/download\n");
-    header("Content-Disposition: attachment; filename=\"license_report.csv\"");
+    header("Content-Disposition: attachment; filename=\"user_license_report.csv\"");
     header("Expires: 0");
     header("Cache-Control: must-revalidate,post-check=0,pre-check=0");
     header("Pragma: public");
-
 }
 
 $license = $DB->get_record('companylicense', array('id' => $licenseid));
@@ -342,7 +352,7 @@ foreach ($columns as $column) {
     }
     $params['sort'] = $column;
     $params['dir'] = $columndir;
-    if ($column == 'course' || $column == "licenseused" || $column == 'licenseinuse') {
+    if ($column == 'course' || $column == "licenseused" || $column == 'licenseinuse' || !empty($dodownload)) {
         $$column = $string[$column];
     } else {
         $$column = "<a href= ". new moodle_url('index.php', $params).">".$string[$column]."</a>$columnicon";
@@ -404,7 +414,6 @@ if (iomad::has_capability('block/iomad_company_admin:editallusers', $systemconte
         $sqlsearch .= " AND email like :email ";
         $searchparams['email'] = '%'.$params['email'].'%';
     }
-
     $userrecords = $DB->get_fieldset_select('user', 'id', $sqlsearch, $searchparams);
 
 } else if (iomad::has_capability('block/iomad_company_admin:editusers', $systemcontext)) {   // Check if has role edit company users.
@@ -450,6 +459,7 @@ if (iomad::has_capability('block/iomad_company_admin:editallusers', $systemconte
 
     $userrecords = $DB->get_fieldset_select('user', 'id', $sqlsearch, $searchparams);
 }
+
 $userlist = "";
 
 if (!empty($userrecords)) {
@@ -457,6 +467,7 @@ if (!empty($userrecords)) {
 } else {
     $userlist = "1=2";
 }
+
 if (!empty($userlist)) {
     $users = iomad_get_users_listing($sort, $dir, $page * $perpage, $perpage, '', '', '', $userlist, array('companyid' => $companyid, 'licenseid' => $licenseid, 'licensestatus' => $licensestatus));
     $totalusers = iomad_get_users_listing($sort, $dir, 0, 0, '', '', '', $userlist, array('companyid' => $companyid, 'licenseid' => $licenseid, 'licensestatus' => $licensestatus));
@@ -466,7 +477,9 @@ if (!empty($userlist)) {
 }
 $usercount = count($totalusers);
 
-echo $output->heading("$usercount ".get_string('users'));
+if (empty($dodownload)) {
+    echo $output->heading("$usercount ".get_string('users'));
+}
 
 $alphabet = explode(',', get_string('alphabet', 'block_iomad_company_admin'));
 $strall = get_string('all');
@@ -484,7 +497,7 @@ $baseurl = new moodle_url('index.php', $params);
 flush();
 
 
-if (!$users) {
+if (!$users && empty($dodownload)) {
     $match = array();
     echo $output->heading(get_string('nousersfound'));
 
@@ -492,7 +505,9 @@ if (!$users) {
 
 } else {
 
-    echo $output->paging_bar($usercount, $page, $perpage, $baseurl);
+    if (empty($dodownload)) {
+        echo $output->paging_bar($usercount, $page, $perpage, $baseurl);
+    }
     $mainadmin = get_admin();
 
     $override = new stdclass();
@@ -507,33 +522,51 @@ if (!$users) {
         $fullnamedisplay = "$lastname / $firstname";
     }
 
-    // set up the table.
-    $table = new html_table();
-    $table->id = 'ReportTable';
-    $headstart = array('fullnamedisplay' => $fullnamedisplay,
-                       'email' => $email,
-                       'department' => $department);
+    if (empty($dodownload)) {
+        // set up the table.
+        $table = new html_table();
+        $table->id = 'ReportTable';
+        $headstart = array('fullnamedisplay' => $fullnamedisplay,
+                           'email' => $email,
+                           'department' => $department);
 
-    $headmid = array();
-    if (!empty($extrafields)) {
-        foreach ($extrafields as $extrafield) {
-            $headmid[$extrafield->name] = $extrafield->title;
+        $headmid = array();
+        if (!empty($extrafields)) {
+            foreach ($extrafields as $extrafield) {
+                $headmid[$extrafield->name] = $extrafield->title;
+            }
         }
-    }
 
-    if (empty($license->program)) {
-        $headend = array('course' => $course,
-                         'licenseallocated' => $licenseallocated,
-                         'licenseinuse' => $licenseinuse,
-                         'licenseused' => $licenseused,
-                         'lastaccess' => $lastaccess);
-        $table->align = array ("left", "center", "center", "center", "center", "center", "center", "center");
+        if (empty($license->program)) {
+            $headend = array('course' => $course,
+                             'licenseallocated' => $licenseallocated,
+                             'licenseinuse' => $licenseinuse,
+                             'licenseused' => $licenseused,
+                             'lastaccess' => $lastaccess);
+            $table->align = array ("left", "center", "center", "center", "center", "center", "center", "center");
+        } else {
+            $headend = array('licenseallocated' => $licenseallocated,
+                             'licenseinuse' => $licenseinuse,
+                             'licenseused' => $licenseused,
+                             'lastaccess' => $lastaccess);
+            $table->align = array ("left", "center", "center", "center", "center", "center", "center");
+        }
     } else {
-        $headend = array('licenseallocated' => $licenseallocated,
-                         'licenseinuse' => $licenseinuse,
-                         'licenseused' => $licenseused,
-                         'lastaccess' => $lastaccess);
-        $table->align = array ("left", "center", "center", "center", "center", "center", "center");
+        $fullnamedisplay = "\"$firstname\",\"$lastname\"";
+        $headstart = $fullnamedisplay .",\"$email\",\"$department\"";
+        $headmid = "";
+        if (!empty($extrafields)) {
+            foreach ($extrafields as $extrafield) {
+                $headmid .= ",\"$extrafield->title\"";
+            }
+        }
+
+        if (empty($license->program)) {
+            $headend = ",\"$course\",\"$licenseallocated\",\"$licenseinuse\",\"$licenseused\",\"$lastaccess\"\n";
+        } else {
+            $headend = ",\"$licenseallocated\",\"$licenseinuse\",\"$licenseused\",\"$lastaccess\"\n";
+        }
+        echo $headstart . $headmid . $headend;
     }
     $table->head = $headstart + $headmid + $headend;
 
@@ -602,31 +635,52 @@ if (!$users) {
 
         $user->department = $user->departmentname;
 
-        $rowstart = array('fullname' => $fullname,
-                          'email' => $user->email,
-                          'department' => $user->departmentname);
-        $rowmid = array();
-        if (!empty($extrafields)) {
-            foreach($extrafields as $extrafield) {
-                $fieldname = $extrafield->name;
-                $rowmid[$extrafield->name] = $user->$fieldname;
+        if (empty($dodownload)) {
+            $rowstart = array('fullname' => $fullname,
+                              'email' => $user->email,
+                              'department' => $user->departmentname);
+            $rowmid = array();
+            if (!empty($extrafields)) {
+                foreach($extrafields as $extrafield) {
+                    $fieldname = $extrafield->name;
+                    $rowmid[$extrafield->name] = $user->$fieldname;
+                }
             }
-        }
 
-        if (empty($license->program)) {
-            $rowend = array('coursename' => $user->coursename,
-                            'strissuedate' => $strissuedate,
-                            'strisusing' => $strisusing,
-                            'struseddate' => $struseddate,
-                            'strlastaccess' => $strlastaccess);
+            if (empty($license->program)) {
+                $rowend = array('coursename' => $user->coursename,
+                                'strissuedate' => $strissuedate,
+                                'strisusing' => $strisusing,
+                                'struseddate' => $struseddate,
+                                'strlastaccess' => $strlastaccess);
+            } else {
+                $rowend = array('strissuedate' => $strissuedate,
+                                'strisusing' => $strisusing,
+                                'struseddate' => $struseddate,
+                                'strlastaccess' => $strlastaccess);
+            }
+            $table->data[] = $rowstart + $rowmid + $rowend;
         } else {
-            $rowend = array('strissuedate' => $strissuedate,
-                            'strisusing' => $strisusing,
-                            'struseddate' => $struseddate,
-                            'strlastaccess' => $strlastaccess);
+            $rowstart =  "\"$user->firstname\",\"$user->lastname\",\"$user->email\",\"$user->department\"";
+            $rowmid = "";
+            if (!empty($extrafields)) {
+                foreach($extrafields as $extrafield) {
+                    $fieldname = $extrafield->name;
+                    $rowmid .= ",\"$user->$fieldname\"";
+                }
+            }
+            if (empty($license->program)) {
+                $rowend =  ",\"$user->coursename\",\"$strissuedate\",\"$strisusing\",\"$struseddate\",\"$strlastaccess\"\n";
+            } else {
+                $rowend =  ",\"$strissuedate\",\"$strisusing\",\"$struseddate\",\"$strlastaccess\"\n";
+            }
+            echo $rowstart . $rowmid . $rowend;
         }
-        $table->data[] = $rowstart + $rowmid + $rowend;
     }
+}
+
+if (!empty($dodownload)) {
+    die;
 }
 
 if (!empty($table)) {
