@@ -668,6 +668,8 @@ class auth_plugin_ldap extends auth_plugin_base {
     function sync_users($do_updates=true) {
         global $CFG, $DB;
 
+        require_once($CFG->dirroot . '/user/profile/lib.php');
+
         print_string('connectingldap', 'auth_ldap');
         $ldapconnection = $this->ldap_connect();
 
