@@ -46,7 +46,7 @@ class qtype_multianswer extends question_type {
 
         // Get relevant data indexed by positionkey from the multianswers table.
         $sequence = $DB->get_field('question_multianswer', 'sequence',
-                array('question' => $question->id), '*', MUST_EXIST);
+                array('question' => $question->id), MUST_EXIST);
 
         $wrappedquestions = $DB->get_records_list('question', 'id',
                 explode(',', $sequence), 'id ASC');
