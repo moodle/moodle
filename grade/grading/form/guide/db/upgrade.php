@@ -37,18 +37,6 @@ defined('MOODLE_INTERNAL') || die();
 function xmldb_gradingform_guide_upgrade($oldversion) {
     global $DB;
 
-    if ($oldversion < 2016051100) {
-        // Clean up empty string or null marking guide comments.
-        $sql = $DB->sql_isempty('gradingform_guide_comments', 'description', true, true);
-        $sql .= " OR description IS NULL ";
-        $DB->delete_records_select('gradingform_guide_comments', $sql);
-        // Main savepoint reached.
-        upgrade_plugin_savepoint(true, 2016051100, 'gradingform', 'guide');
-    }
-
-    // Moodle v3.1.0 release upgrade line.
-    // Put any upgrade step following this.
-
     // Automatically generated Moodle v3.2.0 release upgrade line.
     // Put any upgrade step following this.
 

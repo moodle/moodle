@@ -33,34 +33,6 @@ function xmldb_quiz_upgrade($oldversion) {
 
     $dbman = $DB->get_manager();
 
-    if ($oldversion < 2016032600) {
-        // Update quiz_sections to repair quizzes what were broken by MDL-53507.
-        $problemquizzes = $DB->get_records_sql("
-                SELECT quizid, MIN(firstslot) AS firstsectionfirstslot
-                FROM {quiz_sections}
-                GROUP BY quizid
-                HAVING MIN(firstslot) > 1");
-
-        if ($problemquizzes) {
-            $pbar = new progress_bar('upgradequizfirstsection', 500, true);
-            $total = count($problemquizzes);
-            $done = 0;
-            foreach ($problemquizzes as $problemquiz) {
-                $DB->set_field('quiz_sections', 'firstslot', 1,
-                        array('quizid' => $problemquiz->quizid,
-                        'firstslot' => $problemquiz->firstsectionfirstslot));
-                $done += 1;
-                $pbar->update($done, $total, "Fixing quiz layouts - {$done}/{$total}.");
-            }
-        }
-
-        // Quiz savepoint reached.
-        upgrade_mod_savepoint(true, 2016032600, 'quiz');
-    }
-
-    // Moodle v3.1.0 release upgrade line.
-    // Put any upgrade step following this.
-
     if ($oldversion < 2016092000) {
         // Define new fields to be added to quiz.
         $table = new xmldb_table('quiz');

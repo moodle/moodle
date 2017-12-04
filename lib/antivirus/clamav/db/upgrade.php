@@ -31,8 +31,6 @@ defined('MOODLE_INTERNAL') || die();
  * @return bool
  */
 function xmldb_antivirus_clamav_upgrade($oldversion) {
-    // Moodle v3.1.0 release upgrade line.
-    // Put any upgrade step following this.
 
     if ($oldversion < 2016101700) {
         // Remove setting that has been deprecated long time ago at MDL-44260.

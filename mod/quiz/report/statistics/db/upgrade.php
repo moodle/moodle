@@ -30,9 +30,6 @@ defined('MOODLE_INTERNAL') || die();
 function xmldb_quiz_statistics_upgrade($oldversion) {
     global $DB;
 
-    // Moodle v3.1.0 release upgrade line.
-    // Put any upgrade step following this.
-
     if ($oldversion < 2016100500) {
         // Clear the quiz_statistics table - it is only a cache table anyway.
         // This will force re-calculation.
