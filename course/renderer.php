@@ -1988,13 +1988,7 @@ class core_course_renderer extends plugin_renderer_base {
         }
 
         $output = '';
-        if (!empty($CFG->navsortmycoursessort)) {
-            // sort courses the same as in navigation menu
-            $sortorder = 'visible DESC,'. $CFG->navsortmycoursessort.' ASC';
-        } else {
-            $sortorder = 'visible DESC,sortorder ASC';
-        }
-        $courses  = enrol_get_my_courses('summary, summaryformat', $sortorder);
+        $courses  = enrol_get_my_courses('summary, summaryformat');
         $rhosts   = array();
         $rcourses = array();
         if (!empty($CFG->mnet_dispatcher_mode) && $CFG->mnet_dispatcher_mode==='strict') {

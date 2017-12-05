@@ -382,7 +382,7 @@ class auth_plugin_mnet extends auth_plugin_base {
             // with info so that the IDP can maintain mnetservice_enrol_enrolments
             $mnetrequest->add_param($remoteuser->username);
             $fields = 'id, category, sortorder, fullname, shortname, idnumber, summary, startdate, visible';
-            $courses = enrol_get_users_courses($localuser->id, false, $fields, 'visible DESC,sortorder ASC');
+            $courses = enrol_get_users_courses($localuser->id, false, $fields);
             if (is_array($courses) && !empty($courses)) {
                 // Second request to do the JOINs that we'd have done
                 // inside enrol_get_users_courses() if we had been allowed
