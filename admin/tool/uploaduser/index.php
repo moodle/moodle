@@ -358,7 +358,7 @@ if ($formdata = $mform2->is_cancelled()) {
 
         // add default values for remaining fields
         $formdefaults = array();
-        if ($updatetype != UU_UPDATE_FILEOVERRIDE && $updatetype != UU_UPDATE_NOCHANGES) {
+        if (!$existinguser || ($updatetype != UU_UPDATE_FILEOVERRIDE && $updatetype != UU_UPDATE_NOCHANGES)) {
             foreach ($STD_FIELDS as $field) {
                 if (isset($user->$field)) {
                     continue;
