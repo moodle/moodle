@@ -256,11 +256,17 @@
                 $users[$key]->country = $countries[$user->country];
             }
         }
-        if ($sort == "country") {  // Need to resort by full country name, not code
+        if ($sort == "country") {
+            // Need to resort by full country name, not code.
             foreach ($users as $user) {
                 $susers[$user->id] = $user->country;
             }
-            asort($susers);
+            // Sort by country name, according to $dir.
+            if ($dir === 'DESC') {
+                arsort($susers);
+            } else {
+                asort($susers);
+            }
             foreach ($susers as $key => $value) {
                 $nusers[] = $users[$key];
             }
