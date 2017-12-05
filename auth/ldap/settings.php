@@ -185,12 +185,24 @@ if ($ADMIN->fulltree) {
                 new lang_string('auth_ldap_passwdexpire_settings', 'auth_ldap'), ''));
 
         // Password Expiration.
+
+        // Create the description lang_string object.
+        $strno = get_string('no');
+        $strldapserver = get_string('pluginname', 'auth_ldap');
+        $langobject = new stdClass();
+        $langobject->no = $strno;
+        $langobject->ldapserver = $strldapserver;
+        $description = new lang_string('auth_ldap_expiration_desc', 'auth_ldap', $langobject);
+
+        // Now create the options.
         $expiration = array();
-        $expiration['0'] = 'no';
-        $expiration['1'] = 'LDAP';
+        $expiration['0'] = $strno;
+        $expiration['1'] = $strldapserver;
+
+        // Add the setting.
         $settings->add(new admin_setting_configselect('auth_ldap/expiration',
                 new lang_string('auth_ldap_expiration_key', 'auth_ldap'),
-                new lang_string('auth_ldap_expiration_desc', 'auth_ldap'), 0 , $expiration));
+                $description, 0 , $expiration));
 
         // Password Expiration warning.
         $settings->add(new admin_setting_configtext('auth_ldap/expiration_warning',

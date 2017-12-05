@@ -41,7 +41,7 @@ $string['auth_ldapdescription'] = 'This method provides authentication against a
                                   entry in its database. This module can read user attributes from LDAP and prefill
                                   wanted fields in Moodle.  For following logins only the username and
                                   password are checked.';
-$string['auth_ldap_expiration_desc'] = 'Select No to disable expired password checking or LDAP to read passwordexpiration time directly from LDAP';
+$string['auth_ldap_expiration_desc'] = 'Select \'{$a->no}\' to disable expired password checking or \'{$a->ldapserver}\' to read the password expiration time directly from the LDAP server';
 $string['auth_ldap_expiration_key'] = 'Expiration';
 $string['auth_ldap_expiration_warning_desc'] = 'Number of days before password expiration warning is issued.';
 $string['auth_ldap_expiration_warning_key'] = 'Expiration warning';
