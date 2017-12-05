@@ -78,6 +78,16 @@ class manager {
     const NO_OWNER_ID = 0;
 
     /**
+     * @var float If initial query takes longer than N seconds, this will be shown in cron log.
+     */
+    const DISPLAY_LONG_QUERY_TIME = 5.0;
+
+    /**
+     * @var float Adds indexing progress within one search area to cron log every N seconds.
+     */
+    const DISPLAY_INDEXING_PROGRESS_EVERY = 30.0;
+
+    /**
      * @var \core_search\base[] Enabled search areas.
      */
     protected static $enabledsearchareas = null;
@@ -715,6 +725,11 @@ class manager {
 
             // Getting the recordset from the area.
             $recordset = $searcharea->get_recordset_by_timestamp($referencestarttime);
+            $initialquerytime = self::get_current_time() - $elapsed;
+            if ($initialquerytime > self::DISPLAY_LONG_QUERY_TIME) {
+                $progress->output('Initial query took ' . round($initialquerytime, 1) .
+                        ' seconds.', 1);
+            }
 
             // Pass get_document as callback.
             $fileindexing = $this->engine->file_indexing_enabled() && $searcharea->uses_file_indexing();
@@ -722,6 +737,7 @@ class manager {
             if ($timelimit) {
                 $options['stopat'] = $stopat;
             }
+            $options['progress'] = $progress;
             $iterator = new skip_future_documents_iterator(new \core\dml\recordset_walk(
                     $recordset, array($searcharea, 'get_document'), $options));
             $result = $this->engine->add_documents($iterator, $searcharea, $options);
@@ -737,10 +753,16 @@ class manager {
             }
 
             if ($numdocs > 0) {
-                $elapsed = round((self::get_current_time() - $elapsed), 3);
+                $elapsed = round((self::get_current_time() - $elapsed), 1);
+
+                $partialtext = '';
+                if ($partial) {
+                    $partialtext = ' (not complete; done to ' . userdate($lastindexeddoc,
+                            get_string('strftimedatetimeshort', 'langconfig')) . ')';
+                }
+
                 $progress->output('Processed ' . $numrecords . ' records containing ' . $numdocs .
-                        ' documents, in ' . $elapsed . ' seconds' .
-                        ($partial ? ' (not complete)' : '') . '.', 1);
+                        ' documents, in ' . $elapsed . ' seconds' . $partialtext . '.', 1);
             } else {
                 $progress->output('No new documents to index.', 1);
             }
