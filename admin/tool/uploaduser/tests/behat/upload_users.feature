@@ -39,6 +39,31 @@ Feature: Upload users
     And the "members" select box should contain "Tom Jones"
 
   @javascript
+  Scenario: Upload users enrolling them on courses and groups applying defaults
+    Given the following "courses" exist:
+      | fullname | shortname | category |
+      | Maths | math102 | 0 |
+    And the following "groups" exist:
+      | name | course | idnumber |
+      | Section 1 | math102 | S1 |
+      | Section 3 | math102 | S3 |
+    And I log in as "admin"
+    And I navigate to "Upload users" node in "Site administration > Users > Accounts"
+    When I upload "lib/tests/fixtures/upload_users.csv" file to "File" filemanager
+    And I press "Upload users"
+    And I set the following fields to these values:
+      | City/town  | Brighton   |
+      | Department | Purchasing |
+    And I press "Upload users"
+    And I press "Continue"
+    And I navigate to "Users > Accounts > Browse list of users" in site administration
+    And I should see "Tom Jones"
+    And I follow "Tom Jones"
+    And I follow "Edit profile"
+    And the field "City/town" matches value "Brighton"
+    And the field "Department" matches value "Purchasing"
+
+  @javascript
   Scenario: Upload users with custom profile fields
     # Create user profile field.
     Given I log in as "admin"
