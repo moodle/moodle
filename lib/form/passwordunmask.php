@@ -101,8 +101,7 @@ class MoodleQuickForm_passwordunmask extends MoodleQuickForm_password {
      * @return string|null Validation error message or null.
      */
     public function validateSubmitValue($value) {
-
-        if ($value !== trim($value)) {
+        if ($value !== null && $value !== trim($value)) {
             return get_string('err_wrappingwhitespace', 'core_form');
         }
 
