@@ -590,7 +590,7 @@ function enrol_get_my_courses($fields = null, $sort = null, $limit = 0, $coursei
     } else if (is_array($fields)) {
         $fields = array_unique(array_merge($basefields, $fields));
     } else {
-        throw new coding_exception('Invalid $fileds parameter in enrol_get_my_courses()');
+        throw new coding_exception('Invalid $fields parameter in enrol_get_my_courses()');
     }
     if (in_array('*', $fields)) {
         $fields = array('*');
@@ -926,7 +926,7 @@ function enrol_get_all_users_courses($userid, $onlyactive = false, $fields = nul
     } else if (is_array($fields)) {
         $fields = array_unique(array_merge($basefields, $fields));
     } else {
-        throw new coding_exception('Invalid $fileds parameter in enrol_get_my_courses()');
+        throw new coding_exception('Invalid $fields parameter in enrol_get_all_users_courses()');
     }
     if (in_array('*', $fields)) {
         $fields = array('*');
