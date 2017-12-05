@@ -229,10 +229,19 @@ class models_list implements \renderable, \templatable {
 
             // Export training data.
             if (!$model->is_static() && $model->is_trained()) {
-                $urlparams['action'] = 'export';
+                $urlparams['action'] = 'exportdata';
                 $url = new \moodle_url('model.php', $urlparams);
                 $icon = new \action_menu_link_secondary($url, new \pix_icon('i/export',
                     get_string('exporttrainingdata', 'tool_analytics')), get_string('export', 'tool_analytics'));
+                $actionsmenu->add($icon);
+            }
+
+            // Export model.
+            if (!$model->is_static() && $model->get_indicators() && !empty($modeldata->timesplitting)) {
+                $urlparams['action'] = 'exportmodel';
+                $url = new \moodle_url('model.php', $urlparams);
+                $icon = new \action_menu_link_secondary($url, new \pix_icon('i/export',
+                    get_string('exportmodel', 'tool_analytics')), get_string('exportmodel', 'tool_analytics'));
                 $actionsmenu->add($icon);
             }
 

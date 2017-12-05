@@ -318,6 +318,36 @@ class analytics_model_testcase extends advanced_testcase {
     }
 
     /**
+     * Test export_as_json() API.
+     */
+    public function test_export_as_json() {
+        global $CFG;
+        $this->resetAfterTest(true);
+
+        $this->model->enable('\core\analytics\time_splitting\quarters');
+        $obj = json_decode($this->model->export_as_json());
+        $this->assertSame($CFG->version, $obj->moodleversion);
+        $this->assertSame($this->modelobj->target, $obj->target);
+        $this->assertSame(json_decode($this->modelobj->indicators), $obj->indicators);
+        $this->assertSame($this->modelobj->timesplitting, $obj->timesplitting);
+    }
+
+    /**
+     * Test export_from_json() API.
+     */
+    public function test_create_from_json() {
+        global $CFG;
+        $this->resetAfterTest(true);
+
+        $this->model->enable('\core\analytics\time_splitting\quarters');
+        $json = $this->model->export_as_json();
+        $obj = \core_analytics\model::create_from_json(json_decode($json))->get_model_obj();
+        $this->assertSame($this->modelobj->target, $obj->target);
+        $this->assertSame($this->modelobj->indicators, $obj->indicators);
+        $this->assertSame($this->modelobj->timesplitting, $obj->timesplitting);
+    }
+
+    /**
      * Generates a model log record.
      */
     private function add_fake_log() {

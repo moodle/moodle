@@ -23,6 +23,7 @@
  */
 
 require_once(__DIR__ . '/../../../config.php');
+require_once($CFG->libdir . '/dataformatlib.php');
 
 $id = required_param('id', PARAM_INT);
 $action = required_param('action', PARAM_ALPHANUMEXT);
@@ -57,8 +58,11 @@ switch ($action) {
     case 'disable':
         $title = get_string('disable');
         break;
-    case 'export':
-        $title = get_string('export', 'tool_analytics');
+    case 'exportdata':
+        $title = get_string('exporttrainingdata', 'tool_analytics');
+        break;
+    case 'exportmodel':
+        $title = get_string('exportmodel', 'tool_analytics');
         break;
     case 'clear':
         $title = get_string('clearpredictions', 'tool_analytics');
@@ -203,7 +207,7 @@ switch ($action) {
         echo $renderer->render_table($modellogstable);
         break;
 
-    case 'export':
+    case 'exportdata':
 
         if ($model->is_static() || !$model->is_trained()) {
             throw new moodle_exception('errornoexport', 'tool_analytics');
@@ -217,6 +221,22 @@ switch ($action) {
 
         $filename = 'training-data.' . $model->get_id() . '.' . time() . '.csv';
         send_file($file, $filename, null, 0, false, true);
+        break;
+
+    case 'exportmodel':
+
+        if (!$model->is_static() && $model->get_indicators() && !empty($model->timesplitting)) {
+            throw new moodle_exception('errornoexportconfg', 'tool_analytics');
+        }
+        $downloadfilename = 'model-config.' . $model->get_id() . '.' . time() . '.json';
+        $modelconfig = $model->export_as_json();
+        make_temp_directory('analyticsexport');
+        $tempfilename = $CFG->tempdir .'/analyticsexport/'. md5(sesskey() . microtime() . $downloadfilename);
+        if (!file_put_contents($tempfilename, $modelconfig)) {
+            print_error('cannotcreatetempdir');
+        }
+        @header("Content-type: text/json; charset=UTF-8");
+        send_temp_file($tempfilename, $downloadfilename);
         break;
 
     case 'clear':
