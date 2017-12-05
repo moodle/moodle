@@ -69,6 +69,12 @@ define('BADGE_CRITERIA_TYPE_COURSESET', 5);
 define('BADGE_CRITERIA_TYPE_PROFILE', 6);
 
 /*
+ * Badge completion criteria type
+ * Criteria type constant, primarily for storing criteria type in the database.
+ */
+define('BADGE_CRITERIA_TYPE_BADGE', 7);
+
+/*
  * Criteria type constant to class name mapping
  */
 global $BADGE_CRITERIA_TYPES;
@@ -79,7 +85,8 @@ $BADGE_CRITERIA_TYPES = array(
     BADGE_CRITERIA_TYPE_SOCIAL    => 'social',
     BADGE_CRITERIA_TYPE_COURSE    => 'course',
     BADGE_CRITERIA_TYPE_COURSESET => 'courseset',
-    BADGE_CRITERIA_TYPE_PROFILE   => 'profile'
+    BADGE_CRITERIA_TYPE_PROFILE   => 'profile',
+    BADGE_CRITERIA_TYPE_BADGE     => 'badge',
 );
 
 /**
