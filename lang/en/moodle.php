@@ -799,6 +799,7 @@ $string['feedback'] = 'Feedback';
 $string['file'] = 'File';
 $string['fileexists'] = 'There is already a file called {$a}';
 $string['filemissing'] = '{$a} is missing';
+$string['filereaderror'] = 'Unable to read the file \'{$a}\' - please check this really is a file and not a folder';
 $string['files'] = 'Files';
 $string['filesanduploads'] = 'Files and uploads';
 $string['filesfolders'] = 'Files/folders';
