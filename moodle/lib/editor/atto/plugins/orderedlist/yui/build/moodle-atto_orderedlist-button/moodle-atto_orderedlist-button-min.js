@@ -1,0 +1,1 @@
+YUI.add("moodle-atto_orderedlist-button",function(e,t){e.namespace("M.atto_orderedlist").Button=e.Base.create("button",e.M.editor_atto.EditorPlugin,[],{initializer:function(){this.addBasicButton({exec:"insertOrderedList",icon:"e/numbered_list",tags:"ol"})}})},"@VERSION@",{requires:["moodle-editor_atto-plugin"]});

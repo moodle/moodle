@@ -1,0 +1,19 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+<xs:schema xmlns    ="http://dummy.libxml2.validator"
+    targetNamespace ="http://dummy.libxml2.validator"
+    xmlns:xs        ="http://www.w3.org/2001/XMLSchema"
+    xmlns:xsi       ="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:imscp     ="http://www.imsglobal.org/xsd/imsccv1p1/imscp_v1p1"
+    xmlns:imslom    ="http://ltsc.ieee.org/xsd/imsccv1p1/LOM/manifest"
+    xmlns:lom       ="http://ltsc.ieee.org/xsd/imsccv1p1/LOM/resource"
+    xmlns:cc        ="http://www.imsglobal.org/xsd/imsccv1p1/imsccauth_v1p1"
+    version="1.1"
+    elementFormDefault  ="qualified"
+    attributeFormDefault="unqualified"    
+    >
+    
+    <xs:import namespace="http://www.imsglobal.org/xsd/imsccv1p1/imscp_v1p1"     schemaLocation="ccv1p1_imscp_v1p2_v1p0.xsd" />
+    <xs:import namespace="http://ltsc.ieee.org/xsd/imsccv1p1/LOM/manifest"       schemaLocation="ccv1p1_lommanifest_v1p0.xsd"/>
+    <xs:import namespace="http://ltsc.ieee.org/xsd/imsccv1p1/LOM/resource"       schemaLocation="ccv1p1_lomresource_v1p0.xsd"/>
+    <xs:import namespace="http://www.imsglobal.org/xsd/imsccv1p1/imsccauth_v1p1" schemaLocation="ccv1p1_imsccauth_v1p1.xsd"  />
+</xs:schema>

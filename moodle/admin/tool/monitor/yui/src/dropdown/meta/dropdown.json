@@ -1,0 +1,9 @@
+{
+  "moodle-tool_monitor-dropdown": {
+    "requires": [
+        "base",
+        "event",
+        "node"
+    ]
+  }
+}

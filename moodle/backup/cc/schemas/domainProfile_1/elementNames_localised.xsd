@@ -1,0 +1,787 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--*************************************************************************-->
+<!--** This schema has been modified from the original base schema named - **-->
+<!--** elementNames.xsd                                                    **-->
+<!--** using the IMS SchemaProf tool. This tool is based on software from  **-->
+<!--** the TELCERT Project which was funded in part by the European        **-->
+<!--** Commission under contract IST-507128                                **-->
+<!--*************************************************************************-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://ltsc.ieee.org/xsd/imscc/LOM" targetNamespace="http://ltsc.ieee.org/xsd/imscc/LOM" elementFormDefault="qualified" version="IEEE LTSC LOM XML 1.0 localised_Schema_2008_6_30">
+
+   <xs:annotation>
+      <xs:documentation>
+         This work is licensed under the Creative Commons Attribution-ShareAlike
+         License.  To view a copy of this license, see the file license.txt,
+         visit http://creativecommons.org/licenses/by-sa/2.0 or send a letter to
+         Creative Commons, 559 Nathan Abbott Way, Stanford, California 94305, USA.
+      </xs:documentation>
+
+      <xs:documentation>
+         This component schema defintion defines global element declarations for
+         each of the data elements defined in the LOMv1.0 base schema.  This component
+         schema definition is used to check for the uniqueness of elements declared
+         to be unique within their parent elements by the presence of the
+         "uniqueElementName" attribute.  The XML Schema constraint "unique" is used
+         to enforce uniqueness constraints.
+
+         Duplicate declarations are included as comments for completeness.  These
+         declarations should remain commented out or they can be removed completely.
+      </xs:documentation>
+      <xs:documentation>
+         This file has been modified by the Knowledge Media Institute of the 
+         University Koblenz-Landau (http://iwm.uni-koblenz.de). It contains the
+         following changes:
+         1) Instead of "unique/strict.xsd" the schema "unique/loose.xsd" is imported 
+            because this reflects what is said in 1484.12.3-2005, page 35 (section C.1.3)
+         2) In all component XSDs the schemaLocation attribute was amended to the 
+            xs:import and xs:include statements. This enables the usage of the schemas
+            with tools which don't deal well with missing schemaLocation informations.
+            
+         This file is available at "http://iwm.uni-koblenz.de/xsd/IEEE-LOM/loose"
+      </xs:documentation>
+   </xs:annotation>
+
+   <!-- Element declarations -->
+
+   <!-- Duplicate declarations are included as comments. -->
+
+   <!-- 1 General -->
+   <xs:group name="general">
+      <xs:sequence>
+         <xs:element name="general" type="general">
+            <xs:unique name="generalUnique">
+               <xs:selector xpath="*" />
+               <xs:field xpath="@uniqueElementName" />
+            </xs:unique>
+         </xs:element>
+      </xs:sequence>
+   </xs:group>
+
+   <!-- 1.1 Identifier -->
+   <xs:group name="identifier">
+      <xs:sequence>
+         <xs:element name="identifier" type="identifier">
+            <xs:unique name="identifierUnique">
+               <xs:selector xpath="*" />
+               <xs:field xpath="@uniqueElementName" />
+            </xs:unique>
+         </xs:element>
+      </xs:sequence>
+   </xs:group>
+
+   <!-- 1.1.1 Catalog -->
+   <xs:group name="catalog">
+      <xs:sequence>
+         <xs:element name="catalog" type="catalog" />
+      </xs:sequence>
+   </xs:group>
+
+   <!-- 1.1.2 Entry -->
+   <xs:group name="entry">
+      <xs:sequence>
+         <xs:element name="entry" type="entry" />
+      </xs:sequence>
+   </xs:group>
+
+   <!-- 1.2 Title -->
+   <xs:group name="title">
+      <xs:sequence>
+         <xs:element name="title" type="title" />
+      </xs:sequence>
+   </xs:group>
+
+   <!-- 1.3 Language-->
+   <xs:group name="language">
+      <xs:sequence>
+         <xs:element name="language" type="LanguageId" />
+      </xs:sequence>
+   </xs:group>
+
+   <!-- 1.4 Description -->
+   <xs:group name="descriptionUnbounded">
+      <xs:sequence>
+         <xs:element name="description" type="LanguageString" />
+      </xs:sequence>
+   </xs:group>
+
+   <!-- 1.5 Keyword -->
+   <xs:group name="keyword">
+      <xs:sequence>
+         <xs:element name="keyword" type="keyword" />
+      </xs:sequence>
+   </xs:group>
+
+   <!-- 1.6 Coverage -->
+   <xs:group name="coverage">
+      <xs:sequence>
+         <xs:element name="coverage" type="coverage" />
+      </xs:sequence>
+   </xs:group>
+
+   <!-- 1.7 Structure -->
+   <xs:group name="structure">
+      <xs:sequence>
+         <xs:element name="structure" type="structure">
+            <xs:unique name="structureUnique">
+               <xs:selector xpath="*" />
+               <xs:field xpath="@uniqueElementName" />
+            </xs:unique>
+         </xs:element>
+      </xs:sequence>
+   </xs:group>
+
+   <!-- 1.8 Aggregation Level -->
+   <xs:group name="aggregationLevel">
+      <xs:sequence>
+         <xs:element name="aggregationLevel" type="aggregationLevel">
+            <xs:unique name="aggregationLevelUnique">
+               <xs:selector xpath="*" />
+               <xs:field xpath="@uniqueElementName" />
+            </xs:unique>
+         </xs:element>
+      </xs:sequence>
+   </xs:group>
+
+   <!-- 2 Life Cycle -->
+   <xs:group name="lifeCycle">
+      <xs:sequence>
+         <xs:element name="lifeCycle" type="lifeCycle">
+            <xs:unique name="lifeCycleUnique">
+               <xs:selector xpath="*" />
+               <xs:field xpath="@uniqueElementName" />
+            </xs:unique>
+         </xs:element>
+      </xs:sequence>
+   </xs:group>
+
+   <!-- 2.1 Version -->
+   <xs:group name="version">
+      <xs:sequence>
+         <xs:element name="version" type="version" />
+      </xs:sequence>
+   </xs:group>
+
+   <!-- 2.2 Status -->
+   <xs:group name="status">
+      <xs:sequence>
+         <xs:element name="status" type="status">
+            <xs:unique name="statusUnique">
+               <xs:selector xpath="*" />
+               <xs:field xpath="@uniqueElementName" />
+            </xs:unique>
+         </xs:element>
+      </xs:sequence>
+   </xs:group>
+
+   <!-- 2.3 Contribute -->
+   <xs:group name="contribute">
+      <xs:sequence>
+         <xs:element name="contribute" type="contribute">
+            <xs:unique name="contributeUnique">
+               <xs:selector xpath="*" />
+               <xs:field xpath="@uniqueElementName" />
+            </xs:unique>
+         </xs:element>
+      </xs:sequence>
+   </xs:group>
+
+   <!-- 2.3.1 Role -->
+   <xs:group name="role">
+      <xs:sequence>
+         <xs:element name="role" type="role">
+            <xs:unique name="roleUnique">
+               <xs:selector xpath="*" />
+               <xs:field xpath="@uniqueElementName" />
+            </xs:unique>
+         </xs:element>
+      </xs:sequence>
+   </xs:group>
+
+   <!-- 2.3.2 Entity -->
+   <xs:group name="entityUnbounded">
+      <xs:sequence>
+         <xs:element name="entity" type="VCard" />
+      </xs:sequence>
+   </xs:group>
+
+  <!-- 2.3.3 Date -->
+  <xs:group name="date">
+     <xs:sequence>
+        <xs:element name="date" type="date">
+           <xs:unique name="dateUnique">
+              <xs:selector xpath="*" />
+              <xs:field xpath="@uniqueElementName" />
+           </xs:unique>
+        </xs:element>
+     </xs:sequence>
+   </xs:group>
+
+   <!-- 3 Meta-Metadata -->
+   <xs:group name="metaMetadata">
+      <xs:sequence>
+         <xs:element name="metaMetadata" type="metaMetadata">
+            <xs:unique name="metaMetadataUnique">
+               <xs:selector xpath="*" />
+               <xs:field xpath="@uniqueElementName" />
+            </xs:unique>
+         </xs:element>
+      </xs:sequence>
+   </xs:group>
+
+   <!-- 3.1 Identifier
+   <xs:group name="identifier">
+      <xs:sequence>
+         <xs:element name="identifier" type="identifier">
+            <xs:unique name="identifierUnique">
+               <xs:selector xpath="*"/>
+               <xs:field xpath="@uniqueElementName"/>
+            </xs:unique>
+         </xs:element>
+      </xs:sequence>
+   </xs:group> -->
+
+   <!-- 3.1.1 Catalog
+   <xs:group name="catalog">
+      <xs:sequence>
+         <xs:element name="catalog" type="catalog"/>
+      </xs:sequence>
+   </xs:group> -->
+
+   <!-- 3.1.2 Entry
+   <xs:group name="entry">
+      <xs:sequence>
+         <xs:element name="entry" type="entry"/>
+      </xs:sequence>
+   </xs:group> -->
+
+   <!-- 3.2 Contribute -->
+   <xs:group name="contributeMeta">
+      <xs:sequence>
+         <xs:element name="contribute" type="contributeMeta">
+            <xs:unique name="contributeMetaUnique">
+               <xs:selector xpath="*" />
+               <xs:field xpath="@uniqueElementName" />
+            </xs:unique>
+         </xs:element>
+      </xs:sequence>
+   </xs:group>
+
+   <!-- 3.2.1 Role -->
+   <xs:group name="roleMeta">
+      <xs:sequence>
+         <xs:element name="role" type="roleMeta">
+            <xs:unique name="roleMetaUnique">
+               <xs:selector xpath="*" />
+               <xs:field xpath="@uniqueElementName" />
+            </xs:unique>
+         </xs:element>
+      </xs:sequence>
+   </xs:group>
+
+   <!-- 3.2.2 Entity
+   <xs:group name="entityUnbounded">
+      <xs:sequence>
+         <xs:element name="entity" type="VCard"/>
+      </xs:sequence>
+   </xs:group> -->
+
+   <!-- 3.2.3 Date
+   <xs:group name="date">
+      <xs:sequence>
+         <xs:element name="date" type="date">
+            <xs:unique name="dateUnique">
+               <xs:selector xpath="*"/>
+               <xs:field xpath="@uniqueElementName"/>
+            </xs:unique>
+         </xs:element>
+      </xs:sequence>
+   </xs:group> -->
+
+   <!-- 3.3 Metadata Schema -->
+   <xs:group name="metadataSchema">
+      <xs:sequence>
+         <xs:element name="metadataSchema" type="metadataSchema" />
+      </xs:sequence>
+   </xs:group>
+
+   <!-- 3.4 Language
+   <xs:group name="language">
+      <xs:sequence>
+         <xs:element name="language" type="LanguageId"/>
+      </xs:sequence>
+   </xs:group> -->
+
+   <!-- 4 Technical -->
+   <xs:group name="technical">
+      <xs:sequence>
+         <xs:element name="technical" type="technical">
+            <xs:unique name="technicalUnique">
+               <xs:selector xpath="*" />
+               <xs:field xpath="@uniqueElementName" />
+            </xs:unique>
+         </xs:element>
+      </xs:sequence>
+   </xs:group>
+
+   <!-- 4.1 Format -->
+  <xs:group name="format">
+      <xs:sequence>
+         <xs:element name="format" type="format" />
+      </xs:sequence>
+   </xs:group>
+
+   <!-- 4.2 Size -->
+   <xs:group name="size">
+      <xs:sequence>
+         <xs:element name="size" type="size" />
+      </xs:sequence>
+   </xs:group>
+
+   <!-- 4.3 Location -->
+   <xs:group name="location">
+      <xs:sequence>
+         <xs:element name="location" type="location" />
+      </xs:sequence>
+   </xs:group>
+
+   <!-- 4.4 Requirement -->
+   <xs:group name="requirement">
+      <xs:sequence>
+         <xs:element name="requirement" type="requirement" />
+      </xs:sequence>
+   </xs:group>
+
+   <!-- 4.4.1 OrComposite -->
+   <xs:group name="orComposite">
+      <xs:sequence>
+         <xs:element name="orComposite" type="orComposite">
+            <xs:unique name="orCompositeUnique">
+               <xs:selector xpath="*" />
+               <xs:field xpath="@uniqueElementName" />
+            </xs:unique>
+         </xs:element>
+      </xs:sequence>
+   </xs:group>
+
+   <!-- 4.4.1.1 Type -->
+   <xs:group name="type">
+      <xs:sequence>
+         <xs:element name="type" type="type">
+            <xs:unique name="typeUnique">
+               <xs:selector xpath="*" />
+               <xs:field xpath="@uniqueElementName" />
+            </xs:unique>
+         </xs:element>
+      </xs:sequence>
+   </xs:group>
+
+   <!-- 4.4.1.2 Name -->
+   <xs:group name="name">
+      <xs:sequence>
+         <xs:element name="name" type="name">
+            <xs:unique name="nameUnique">
+               <xs:selector xpath="*" />
+               <xs:field xpath="@uniqueElementName" />
+            </xs:unique>
+         </xs:element>
+      </xs:sequence>
+   </xs:group>
+
+   <!-- 4.4.1.3 Minimum Version -->
+   <xs:group name="minimumVersion">
+      <xs:sequence>
+         <xs:element name="minimumVersion" type="minimumVersion" />
+      </xs:sequence>
+   </xs:group>
+
+   <!-- 4.4.1.4 Maximum Version -->
+   <xs:group name="maximumVersion">
+      <xs:sequence>
+         <xs:element name="maximumVersion" type="maximumVersion" />
+      </xs:sequence>
+    </xs:group>
+
+   <!-- 4.5 Installation Remarks -->
+   <xs:group name="installationRemarks">
+      <xs:sequence>
+         <xs:element name="installationRemarks" type="installationRemarks" />
+      </xs:sequence>
+   </xs:group>
+
+   <!-- 4.6 Other Platform Requirements -->
+   <xs:group name="otherPlatformRequirements">
+      <xs:sequence>
+         <xs:element name="otherPlatformRequirements" type="otherPlatformRequirements" />
+      </xs:sequence>
+   </xs:group>
+
+   <!-- 4.7 Duration -->
+   <xs:group name="duration">
+      <xs:sequence>
+         <xs:element name="duration" type="duration">
+            <xs:unique name="durationUnique">
+               <xs:selector xpath="*" />
+               <xs:field xpath="@uniqueElementName" />
+            </xs:unique>
+         </xs:element>
+      </xs:sequence>
+   </xs:group>
+
+   <!-- 5 Educational -->
+   <xs:group name="educational">
+      <xs:sequence>
+         <xs:element name="educational" type="educational">
+            <xs:unique name="educationalUnique">
+               <xs:selector xpath="*" />
+               <xs:field xpath="@uniqueElementName" />
+            </xs:unique>
+         </xs:element>
+      </xs:sequence>
+   </xs:group>
+
+   <!-- 5.1 Interactivity Type -->
+   <xs:group name="interactivityType">
+      <xs:sequence>
+         <xs:element name="interactivityType" type="interactivityType">
+            <xs:unique name="interactivityTypeUnique">
+               <xs:selector xpath="*" />
+               <xs:field xpath="@uniqueElementName" />
+            </xs:unique>
+         </xs:element>
+      </xs:sequence>
+   </xs:group>
+
+   <!-- 5.2 Learning Resource Type -->
+   <xs:group name="learningResourceType">
+      <xs:sequence>
+         <xs:element name="learningResourceType" type="learningResourceType">
+            <xs:unique name="learningResourceTypeUnique">
+               <xs:selector xpath="*" />
+               <xs:field xpath="@uniqueElementName" />
+            </xs:unique>
+         </xs:element>
+      </xs:sequence>
+   </xs:group>
+
+   <!-- 5.3 Interactivity Level -->
+   <xs:group name="interactivityLevel">
+      <xs:sequence>
+         <xs:element name="interactivityLevel" type="interactivityLevel">
+            <xs:unique name="interactivityLevelUnique">
+               <xs:selector xpath="*" />
+               <xs:field xpath="@uniqueElementName" />
+            </xs:unique>
+         </xs:element>
+      </xs:sequence>
+   </xs:group>
+
+   <!-- 5.4 Semantic Density -->
+   <xs:group name="semanticDensity">
+      <xs:sequence>
+         <xs:element name="semanticDensity" type="semanticDensity">
+            <xs:unique name="semanticDensityUnique">
+               <xs:selector xpath="*" />
+               <xs:field xpath="@uniqueElementName" />
+            </xs:unique>
+         </xs:element>
+      </xs:sequence>
+   </xs:group>
+
+   <!-- 5.5 Intended End User Role -->
+   <xs:group name="intendedEndUserRole">
+      <xs:sequence>
+         <xs:element name="intendedEndUserRole" type="intendedEndUserRole">
+            <xs:unique name="intendedEndUserRoleUnique">
+               <xs:selector xpath="*" />
+               <xs:field xpath="@uniqueElementName" />
+            </xs:unique>
+         </xs:element>
+      </xs:sequence>
+   </xs:group>
+
+   <!-- 5.6 Context -->
+   <xs:group name="context">
+      <xs:sequence>
+         <xs:element name="context" type="context">
+            <xs:unique name="contextUnique">
+               <xs:selector xpath="*" />
+               <xs:field xpath="@uniqueElementName" />
+            </xs:unique>
+         </xs:element>
+      </xs:sequence>
+   </xs:group>
+
+   <!-- 5.7 Typical Age Range -->
+   <xs:group name="typicalAgeRange">
+      <xs:sequence>
+         <xs:element name="typicalAgeRange" type="typicalAgeRange" />
+      </xs:sequence>
+   </xs:group>
+
+   <!-- 5.8 Difficulty -->
+   <xs:group name="difficulty">
+      <xs:sequence>
+         <xs:element name="difficulty" type="difficulty">
+            <xs:unique name="difficultyUnique">
+               <xs:selector xpath="*" />
+               <xs:field xpath="@uniqueElementName" />
+            </xs:unique>
+         </xs:element>
+      </xs:sequence>
+   </xs:group>
+
+   <!-- 5.9 Typical Learning Time -->
+   <xs:group name="typicalLearningTime">
+      <xs:sequence>
+         <xs:element name="typicalLearningTime" type="typicalLearningTime">
+            <xs:unique name="typicalLearningTimeUnique">
+               <xs:selector xpath="*" />
+               <xs:field xpath="@uniqueElementName" />
+            </xs:unique>
+         </xs:element>
+      </xs:sequence>
+   </xs:group>
+
+   <!-- 5.10 Description
+   <xs:group name="descriptionUnbounded">
+      <xs:sequence>
+         <xs:element name="description" type="LanguageString"/>
+      </xs:sequence>
+   </xs:group> -->
+
+   <!-- 5.11 Language
+   <xs:group name="language">
+      <xs:sequence>
+         <xs:element name="language" type="LanguageId"/>
+      </xs:sequence>
+   </xs:group>-->
+
+   <!-- 6 Rights -->
+   <xs:group name="rights">
+      <xs:sequence>
+         <xs:element name="rights" type="rights">
+            <xs:unique name="rightsUnique">
+               <xs:selector xpath="*" />
+               <xs:field xpath="@uniqueElementName" />
+            </xs:unique>
+         </xs:element>
+      </xs:sequence>
+   </xs:group>
+
+   <!-- 6.1 Cost -->
+   <xs:group name="cost">
+      <xs:sequence>
+         <xs:element name="cost" type="cost">
+            <xs:unique name="costUnique">
+               <xs:selector xpath="*" />
+               <xs:field xpath="@uniqueElementName" />
+            </xs:unique>
+         </xs:element>
+      </xs:sequence>
+   </xs:group>
+
+   <!-- 6.2 Copyright and Other Restrictions -->
+   <xs:group name="copyrightAndOtherRestrictions">
+      <xs:sequence>
+         <xs:element name="copyrightAndOtherRestrictions" type="copyrightAndOtherRestrictions">
+            <xs:unique name="copyrightAndOtherRestrictionsUnique">
+               <xs:selector xpath="*" />
+               <xs:field xpath="@uniqueElementName" />
+            </xs:unique>
+         </xs:element>
+      </xs:sequence>
+   </xs:group>
+
+   <!-- 6.3 Description -->
+   <xs:group name="description">
+      <xs:sequence>
+         <xs:element name="description" type="description" />
+      </xs:sequence>
+   </xs:group>
+
+   <!-- 7 Relation -->
+   <xs:group name="relation">
+      <xs:sequence>
+         <xs:element name="relation" type="relation">
+            <xs:unique name="relationUnique">
+               <xs:selector xpath="*" />
+               <xs:field xpath="@uniqueElementName" />
+            </xs:unique>
+         </xs:element>
+      </xs:sequence>
+   </xs:group>
+
+   <!-- 7.1 Kind -->
+   <xs:group name="kind">
+      <xs:sequence>
+         <xs:element name="kind" type="kind">
+            <xs:unique name="kindUnique">
+               <xs:selector xpath="*" />
+               <xs:field xpath="@uniqueElementName" />
+            </xs:unique>
+         </xs:element>
+      </xs:sequence>
+   </xs:group>
+
+   <!-- 7.2 Resource -->
+   <xs:group name="resource">
+      <xs:sequence>
+         <xs:element name="resource" type="resource" />
+      </xs:sequence>
+   </xs:group>
+
+   <!-- 7.2.1 Identifier
+   <xs:group name="identifier">
+      <xs:sequence>
+         <xs:element name="identifier" type="identifier">
+            <xs:unique name="identifierUnique">
+               <xs:selector xpath="*"/>
+               <xs:field xpath="@uniqueElementName"/>
+            </xs:unique>
+         </xs:element>
+      </xs:sequence>
+   </xs:group> -->
+
+   <!-- 7.2.1.1 Catalog
+   <xs:group name="catalog">
+      <xs:sequence>
+         <xs:element name="catalog" type="catalog"/>
+      </xs:sequence>
+   </xs:group> -->
+
+   <!-- 7.2.1.2 Entry
+   <xs:group name="entry">
+      <xs:sequence>
+         <xs:element name="entry" type="entry"/>
+      </xs:sequence>
+   </xs:group> -->
+
+   <!-- 7.2.2 Description
+   <xs:group name="description">
+      <xs:sequence>
+         <xs:element name="description" type="description"/>
+      </xs:sequence>
+   </xs:group> -->
+
+   <!-- 8 Annotation -->
+   <xs:group name="annotation">
+      <xs:sequence>
+         <xs:element name="annotation" type="annotation">
+            <xs:unique name="annotationUnique">
+               <xs:selector xpath="*" />
+               <xs:field xpath="@uniqueElementName" />
+            </xs:unique>
+         </xs:element>
+      </xs:sequence>
+   </xs:group>
+
+   <!-- 8.1 Entity -->
+   <xs:group name="entity">
+      <xs:sequence>
+         <xs:element name="entity" type="entity" />
+      </xs:sequence>
+   </xs:group>
+
+   <!-- 8.2 Date
+   <xs:group name="date">
+      <xs:sequence>
+         <xs:element name="date" type="date">
+            <xs:unique name="dateUnique">
+               <xs:selector xpath="*"/>
+               <xs:field xpath="@uniqueElementName"/>
+            </xs:unique>
+         </xs:element>
+      </xs:sequence>
+   </xs:group> -->
+
+   <!-- 8.3 Description
+   <xs:group name="description">
+      <xs:sequence>
+         <xs:element name="description" type="description"/>
+      </xs:sequence>
+   </xs:group> -->
+
+   <!-- 9 Classification -->
+   <xs:group name="classification">
+      <xs:sequence>
+         <xs:element name="classification" type="classification">
+            <xs:unique name="classificationUnique">
+               <xs:selector xpath="*" />
+               <xs:field xpath="@uniqueElementName" />
+            </xs:unique>
+         </xs:element>
+      </xs:sequence>
+   </xs:group>
+
+   <!-- 9.1 Purpose -->
+   <xs:group name="purpose">
+      <xs:sequence>
+         <xs:element name="purpose" type="purpose">
+            <xs:unique name="purposeUnique">
+               <xs:selector xpath="*" />
+               <xs:field xpath="@uniqueElementName" />
+            </xs:unique>
+         </xs:element>
+      </xs:sequence>
+   </xs:group>
+
+   <!-- 9.2 Taxon Path -->
+   <xs:group name="taxonPath">
+      <xs:sequence>
+         <xs:element name="taxonPath" type="taxonPath">
+            <xs:unique name="taxonPathUnique">
+               <xs:selector xpath="*" />
+               <xs:field xpath="@uniqueElementName" />
+            </xs:unique>
+         </xs:element>
+      </xs:sequence>
+   </xs:group>
+
+   <!-- 9.2.1 Source -->
+   <xs:group name="source">
+      <xs:sequence>
+         <xs:element name="source" type="source" />
+      </xs:sequence>
+   </xs:group>
+
+   <!-- 9.2.2 Taxon -->
+   <xs:group name="taxon">
+      <xs:sequence>
+         <xs:element name="taxon" type="taxon">
+            <xs:unique name="taxonUnique">
+               <xs:selector xpath="*" />
+               <xs:field xpath="@uniqueElementName" />
+            </xs:unique>
+         </xs:element>
+      </xs:sequence>
+   </xs:group>
+
+   <!-- 9.2.2.1 Id -->
+   <xs:group name="id">
+      <xs:sequence>
+         <xs:element name="id" type="id" />
+      </xs:sequence>
+   </xs:group>
+
+   <!-- 9.2.2.2 Entry -->
+   <xs:group name="entryTaxon">
+      <xs:sequence>
+         <xs:element name="entry" type="entryTaxon" />
+      </xs:sequence>
+   </xs:group>
+
+   <!-- 9.3 Description
+   <xs:group name="description">
+      <xs:sequence>
+         <xs:element name="description" type="description"/>
+      </xs:sequence>
+   </xs:group> -->
+
+   <!-- 9.4 Keyword
+   <xs:group name="keyword">
+      <xs:sequence>
+         <xs:element name="keyword" type="keyword"/>
+      </xs:sequence>
+   </xs:group> -->
+
+</xs:schema>

@@ -1,0 +1,112 @@
+This files describes API changes for code that uses the question API.
+
+=== 3.2 ===
+
+1) The following renderers have been deprecated in favour of the renderable
+   core_question\output\qbank_chooser and associated render_* method.
+    * qbank_chooser
+    * qbank_chooser_types
+    * qbank_chooser_qtype
+    * qbank_chooser_title
+
+=== 3.1 ===
+
+1) The argument $requirecourseid was removed from question_edit_setup() and
+   is no longer respected. The behaviour was found to be buggy and now throws
+   debugging notices if passed.
+
+=== 2.9 ===
+
+1) Some functions in questionlib.php which were deprecated in the past have now
+   been deleted:
+
+   Deprecated since 2.1
+    * question_list_instances
+    * get_grade_options
+    * question_category_isused
+    * save_question_options
+    * question_get_real_state
+
+   Deprecated since 2.6
+    * question_rewrite_questiontext_preview_urls
+    * question_send_questiontext_file
+    * question_pluginfile no longer falls back to using the old
+      {$previewcomponent}_questiontext_preview_pluginfile callback if the new
+      {$previewcomponent}_question_preview_pluginfile callback is missing.
+
+
+=== 2.8 ===
+
+1) This is just a warning that some methods of the question_engine_data_mapper
+   class have changed. All these methods are ones that you should not have been
+   calling directly from your code, so this should not cause any problems.
+   The changed methods are:
+    * insert_question_attempt
+    * insert_step_data
+    * update_question_attempt_step
+
+
+=== 2.7 ===
+
+1)  Changes to class question_bank_view:
+
+    Filters, including $recurse and $showhidden, are now implemented as
+    pluggable \core_question\bank\search\condition classes.
+
+    Therefore $recurse and $showhidden are no longer passed to the following functions:
+        protected function display_options [deprecated, use display_options_form()]
+        protected function build_query_sql [deprecated, use build_query()]
+
+    protected function display_category_form() is deprecated. Use \core_question\bank\search\category_condition
+
+    protected function display_category_form_checkbox deprecated use html_writer::checkbox and separate JavaScript
+
+To add filters, local plugins can now implement the function local_[pluginname]_get_question_bank_search_conditions,
+
+2) To make columns available to question_bank_view, plugins can extend core_question\bank\column_base.
+   Users may choose to display additional columns by setting $CFG->questionbankcolumns to a comma-delimited list of columns.
+
+3) The subsort separator has changed from _ to - in order to distinuguish subsorts vs frankenstyle component separators.
+
+4) Because of the move to autoloading, $knowncolumntypes and known_field_types() are no longer used.
+
+5) question_bank_column_base and it's derived classes have been namespaced to core_question\bank\column_base.
+
+
+=== 2.6 ===
+
+1) Modules using the question bank MUST now declare their use of it with the xxx_supports()
+   flag FEATURE_USES_QUESTIONS. question_module_uses_questions() should be used to determine
+   if a module uses questions.
+
+2) It is sometimes necessary to display bits of question content without having
+   and attempt (question_usage) in progress. Two examples of this are the option
+   in the question bank to display the questiontext, and in the quiz statistics
+   report, where it displays the question text above the report.
+
+   Previously, this display was done using a special method that only worked for
+   the question text, but which would not work for other parts of the question.
+   That old mechanism has been deprecated, and there is a new method that you
+   should use.
+
+   To display the question, replace calls to question_rewrite_questiontext_preview_urls
+   with calls to question_rewrite_question_preview_urls. Because the new function
+   is more flexibile, you have to pass more arguments.
+
+   To perform the necessary permission checks when the file is downloaded, you need
+   to implement the callback [component name]_question_preview_pluginfile.
+   (Previously you implemented [component name]_questiontext_preview_pluginfile.)
+   quiz_statistics_question_preview_pluginfile is an example of what to do.
+
+   question_send_questiontext_file has been deprecated. It is no longer necessary.
+
+   To ensure you are no longer using or defining any deprecated functions,
+   search for the regular expression:
+   question_rewrite_questiontext_preview_urls|_questiontext_preview_pluginfile|question_send_questiontext_file
+
+3) The argument list for core_question_renderer::mark_summary has changed.
+   Please update your calls. (The most likely scenario for this is if you have
+   overridden core_question_renderer::info in your own renderer.) You need to
+   make a change like:
+   - $this->mark_summary($qa, $options);
+   + $this->mark_summary($qa, $behaviouroutput, $options);

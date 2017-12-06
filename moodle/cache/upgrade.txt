@@ -1,0 +1,67 @@
+This files describes API changes in /cache/stores/* - cache store plugins.
+Information provided here is intended especially for developers.
+
+=== 3.3 ===
+* Identifiers and invalidation events have been explictly been marked as incompatible and will
+  throw a coding exception. Unexpected results would have occurred if the previous behaviour was attempted.
+* Identifiers are now part of loaded caches, so identifiers can only be set at cache::make()
+  a coding_exception will be thrown if attempts are made at other times.
+  Multiple calls to cache::make with different identifiers will produce 2 caches instead of changing the
+  keyspace of a single cache.
+
+=== 3.2 ===
+* The following methods have been finally deprecated and should no longer be used.
+  - cache_definition::should_be_persistent()
+  - cache_definition::get_persistent_max_size()
+  - cache::is_using_persist_cache()
+  - cache::is_in_persist_cache()
+  - cache::get_from_persist_cache()
+  - cache::set_in_persist_cache()
+  - cache::delete_from_persist_cache()
+  - cache_store::cleanup()
+* cachestore_dummy::cleanup() has been deprecated.
+* cachestore_dummy::instance_deleted() implemented in lieu of cachestore_dummy::cleanup().
+* Added cache_store::unit_test_configuration() to calculate unit testing configuration.
+* Remove cache_store:initialise_unit_test_instance() as it is incompatible with cache_helper purge functions.
+
+=== 3.1 ===
+* Cache stores has a new feature DEREFERENCES_OBJECTS.
+  This allows the cache loader to decide if it needs to handle dereferencing or whether the data
+  coming directly to it has already had references resolved.
+  - see supports_dereferencing_objects in store.php.
+
+=== 2.9 ===
+* Cache data source aggregation functionality has been removed. This functionality was found to be broken and unused.
+  It was decided that rather than fixing it it should be removed.
+  As well as the processing code being removed the following API changes have been made.
+  The following changes have come about because of it:
+   - cache_definition::$datasourceaggregate is deprecated an unused.
+   - cache_definition::load Argument 3 (final arg) is now unused.
+   - cache_factory::create_cache_from_definition Argument 4 (final arg) is now unused.
+   - cache::make Argument 4 (final arg) is now unused.
+* cache_config_phpunittest has been renamed to cache_config_testing
+* New method cache_store::ready_to_be_used_for_testing() that returns true|false if the store is suitable and ready for use as the primary store during unit and acceptance tests.
+* cache_helper::get_stats structure we changed to include the cache mode.
+
+=== 2.7 ===
+* cache_store::is_ready is no longer abstract, calling cache_store::are_requirements_met by default.
+
+=== 2.6 ===
+* All cache instances are recorded and subsequent requests are given a reference to the original instance.
+* The persistent option for the cache definition has been deprecated. Please use the staticacceleration option instead.
+* There is a new static acceleration option. If enabled data passing through the cache is held onto.
+* The persistentmaxsize option has been renamed to staticaccelerationsize. It does the same thing.
+* cache_definition::should_be_persistent has been deprecated. Please call cache_definition::use_static_acceleration instead.
+* cache_definition::get_persistent_max_size has been deprecated. Please call cache_definition::get_static_acceleration_size instead.
+* cache::is_using_persist_cache() has been deprecated. Please call  cache::use_static_acceleration()
+* cache::is_in_persist_cache() has been deprecated. Please call  cache::static_acceleration_has()
+* cache::get_from_persist_cache() has been deprecated. Please call  cache::static_acceleration_get()
+* cache::set_in_persist_cache() has been deprecated. Please call  cache::static_acceleration_set()
+* cache::delete_from_persist_cache() has been deprecated. Please call cache::static_acceleration_delete()
+* If you have any custom cache loaders you will need to rename these methods if you have overriden them and adjust any calls you may have made to them.
+
+=== 2.5 ===
+* cleanup method renamed to instance_deleted.
+  It is now called when the store is deleted as all comments suggested anyway.
+* instance_created method added.
+  It is called when the store is created for the very first time.

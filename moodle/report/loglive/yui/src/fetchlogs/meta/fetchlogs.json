@@ -1,0 +1,11 @@
+{
+  "moodle-report_loglive-fetchlogs": {
+    "requires": [
+        "base",
+        "event",
+        "node",
+        "io",
+        "node-event-delegate"
+    ]
+  }
+}

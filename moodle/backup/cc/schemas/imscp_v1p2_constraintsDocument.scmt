@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.ascc.net/xml/schematron">
+  <ns prefix="xs" uri="http://www.w3.org/2001/XMLSchema" />
+  <ns prefix="xsd" uri="http://www.w3.org/2001/XMLSchema" />
+  <ns prefix="xsi" uri="http://www.w3.org/2001/XMLSchema-instance" />
+  <ns prefix="ac" uri="http://iwm.uni-koblenz.de/xsd/tel_addc_v1p1" />
+  <ns prefix="ims" uri="http://www.imsglobal.org/xsd/imscc/imscp_v1p1" />
+  <!--***********************************************************************************************-->
+  <!--** Constraints document - this document holds Schematron rules that have been generated from **-->
+  <!--** AP condition and assertion elements. IMPORTANT: If this document exists, it MUST be       **-->
+  <!--** used in the validation of instances derived from the resultant schema - failure to do so  **-->
+  <!--** can result in an instance that does not conform to either the base schema or the          **-->
+  <!--** Application Profile.                                                                      **-->
+  <!--***********************************************************************************************-->
+
+
+  <pattern name="pattern_2">
+    <rule context="ims:organizations/ims:organization//ims:item">
+      <assert test="not(@isvisible='false') or count(./ims:item)=count(./ims:item[@isvisible='false'])">Assertion failed for pattern_2. If an item is invisible, its descendants must be invisible too.(#S02)</assert>
+    </rule>
+  </pattern>
+
+  <pattern name="pattern_3">
+    <rule context="ims:manifest/ims:resources/ims:resource/ims:dependency">
+      <assert test="(not(../@type='associatedcontent/imscc_xmlv1p0/learning-application-resource')) or (current()/@identifierref = /ims:manifest/ims:resources/ims:resource[@type='webcontent']/@identifier)">Assertion failed for pattern_3. A Resource object which is a Learning Object associated resource may contain Dependency objects which reference Resource objects with Type 'webcontent'.(#S03)</assert>
+    </rule>
+  </pattern>
+
+  <pattern name="pattern_4">
+    <rule context="ims:manifest/ims:organizations/ims:organization//ims:item">
+      <assert test="count(./@identifierref)=0 or count(./ims:item)=0">Assertion failed for pattern_4. An Item object which represents a folder is indicated by the absence of an IdentifierRef characteristic object. Folder Items support unlimited nesting of other folder Items and learning object link Items. Learning Application Resource Item objects may be nested by folder Item object but may not nest other folder or Learning Application resource Item objects.(#S04)</assert>
+    </rule>
+  </pattern>
+
+  <pattern name="pattern_5">
+  	<rule context="ims:manifest/ims:resources/ims:resource">
+  		<assert test="not((./@type='webcontent' or ./@type='associatedcontent/imscc_xmlv1p0/learning-application-resource') and ./@identifier = //ims:item/@identifierref) or count(./@href)=1">Error: Assertion failed for pattern_5: If a cartridge web content or associated content resource is linked from a Learning Application Object link Item object it must have an Href characteristic object which represents the launchable resource.(#S05)</assert>
+  	</rule>
+  </pattern>
+
+  <pattern name="pattern_6">
+    <rule context="ims:manifest/ims:resources/ims:resource">
+      <assert test="not(./@type='imsdt_xmlv1p0') or (count(./ims:file)= 1 and count(./@href)=0)">Error: Assertion failed for pattern_5: For Discussion Topic Resources the Resource object must contain a single File object which references the Discussion Topic descriptor XML file which conforms to the http://www.imsglobal.org/xsd/imsdt_v1p0 schema. Discussion Topic resources must not contain href (#S06)</assert>
+    </rule>
+  </pattern>
+
+  <pattern name="pattern_7">
+    <rule context="ims:manifest/ims:resources/ims:resource">
+      <assert test="not(./@type='imswl_xmlv1p0') or (count(./ims:file) = 1 and count(./ims:dependency)=0 and count(./@href)=0)">Error: Assertion validation failed for pattern_7: For Web Link Resources the Resource object must contain a single File object which references the Web Link descriptor XML file which conforms to the http://www.imsglobal.org/xsd/imswl_v1p0 schema.It must contain neither Dependency objects nor an href attribute.(#S07)</assert>
+    </rule>
+  </pattern>
+
+<!-- Reference to SCORM removed
+  <pattern name="pattern_8">
+    <rule context="ims:manifest/ims:resources/ims:resource">
+      <assert test="not(./@type='imscc_xmlv1p0/scorm') or (count(./ims:file) = 1 and count(./ims:dependency)=0 and count(./@href)=0)">Error: Assertion validation failed for pattern_8:For SCORM resources the Resource object must contain a single File object which references the SCORM package interchange file.(#S08)</assert>
+    </rule>
+  </pattern>
+  -->
+<!-- TI references removed
+  <pattern name="pattern_9">
+    <rule context="ims:manifest/ims:resources/ims:resource">
+      <assert test="not(./@type='imstiptdc_xmlv1p0') or (count(./ims:file) = 1 and count(./ims:dependency)=1 and count(./@href)=0)">Error: Assertion validation failed for pattern_9: For TI Deployment Context Resources the Resource object must contain a single File object which references the TI deployment context XML file. It must have a single dependency which references a Resource object with Type 'imstiptdd_xmlv1p0'. This represents the Tools Interoperabilty Deployment Descriptor.The TI Deployment Context Resource must not have any href attribute(#S09)</assert>
+    </rule>
+  </pattern>
+
+
+  <pattern name="pattern_10">
+    <rule context="ims:manifest/ims:resources/ims:resource">
+      <assert test="not(./@type='imstiptdd_xmlv1p0') or (count(./ims:file) = 1 and count(./ims:dependency)=0 and count(./@href)=0)">Error: Assertion validation failed for pattern_9: For Deployment Descriptor Resources the Resource object must contain a single File object which references the TI deployment descriptor XML file. This file must conform to the schema http://www.imsglobal.org/services/cc/imsti_ptdd_v1p0. The Deployment Descriptor Resource must have neither a dependency nor an href attribute.(#S10)</assert>
+    </rule>
+  </pattern>
+-->
+
+  <pattern name="pattern_11a">
+    <rule context="ims:manifest/ims:resources/ims:resource">
+      <assert test="not(./@type='imsqti_xmlv1p2/imscc_xmlv1p0/assessment') or (count(./ims:file) = 1 and count(./@href)=0)">Error: Assertion validation failed for pattern_11a: For Assessment resources the Resource object must contain a single File object which references the QTI XML file. This file must conform to the IMS CC profile of QTI 1.2.1. The profile is contained in the package of this profile as imscc_q*.zip. The derived schema of this QTI profile is in the package of this profile with the name ims_qtiasiv1p2_localised.xsd. The resource must not have an href attribute(#S11a)</assert>
+    </rule>
+  </pattern>
+<!--
+	The following pattern has been broken up into pattern 11b1-11b4 for better readability of reports
+  <pattern name="pattern_11b">
+    <rule context="ims:manifest/ims:resources/ims:resource">
+      <assert test="not(./@type='imsqti_xmlv1p2/imscc_xmlv1p0/question-bank') or (count(./ims:file) = 1 and count(./@href)=0 and not(//ims:item[@identifierref]=./@identifier) and count(//ims:resource[@type='imsqti_xmlv1p2/imscc_xmlv1p0/question-bank'])=1)">Error: Assertion validation failed for pattern_11b: For Question Bank resources the Resource object must contain a single File object which references the QTI XML file. This file must conform to the IMS CC profile of QTI 1.2.1. The profile is contained in the package of this profile as imscc_q*.zip. The derived schema of this QTI profile is in the package of this profile with the name ims_qtiasiv1p2_localised.xsd. The resource must not have an href attribute. Moreover a Question Bank Resource must not be referenced from an item. There can be only one Questionbank Resource in a cartridge.(#S11b)</assert>
+    </rule>
+  </pattern>
+-->
+  <pattern name="pattern_11b1">
+    <rule context="ims:manifest/ims:resources/ims:resource">
+      <assert test="not(./@type='imsqti_xmlv1p2/imscc_xmlv1p0/question-bank') or (count(./ims:file) = 1 )">Error: Assertion validation failed for pattern_11b1: For Question Bank resources the Resource object must contain a single File object which references the QTI XML file. (#S11b1)</assert>
+    </rule>
+  </pattern>
+
+  <pattern name="pattern_11b2">
+    <rule context="ims:manifest/ims:resources/ims:resource">
+      <assert test="not(./@type='imsqti_xmlv1p2/imscc_xmlv1p0/question-bank') or (count(./@href)=0 )">Error: Assertion validation failed for pattern_11b2: A Question Bank Resource must not have an href attribute. (#S11b2)</assert>
+    </rule>
+  </pattern>
+
+  <pattern name="pattern_11b3">
+    <rule context="ims:manifest/ims:resources/ims:resource">
+      <assert test="not(./@type='imsqti_xmlv1p2/imscc_xmlv1p0/question-bank') or ( not(//ims:item[@identifierref]=./@identifier) )">Error: Assertion validation failed for pattern_11b3:  A Question Bank Resource must not be referenced from an item. (#S11b3)</assert>
+    </rule>
+  </pattern>
+
+  <pattern name="pattern_11b4">
+    <rule context="ims:manifest/ims:resources/ims:resource">
+      <assert test="not(./@type='imsqti_xmlv1p2/imscc_xmlv1p0/question-bank') or (count(//ims:resource[@type='imsqti_xmlv1p2/imscc_xmlv1p0/question-bank'])=1)">Error: Assertion validation failed for pattern_11b4: There can be only one Questionbank Resource in a cartridge.(#S11b4)</assert>
+    </rule>
+  </pattern>
+
+  <pattern name="pattern_12">
+    <rule context="ims:manifest/ims:resources/ims:resource/ims:dependency">
+      <assert test="(not(../@type='imsdt_xmlv1p0')) or (current()/@identifierref = /ims:manifest/ims:resources/ims:resource[@type='webcontent']/@identifier) or (current()/@identifierref = /ims:manifest/ims:resources/ims:resource[@type='associatedcontent/imscc_xmlv1p0/learning-application-resource']/@identifier)">Assertion failed for pattern_12. A Resource object which is a Discussion Topic associated resource may contain Dependency objects which reference Resource objects with Type 'webcontent' or 'associatedcontent/imscc_xmlv1p0/learning-application-resource'.(#S12)</assert>
+    </rule>
+  </pattern>
+
+<!-- TI reference removed
+  <pattern name="pattern_13">
+    <rule context="ims:manifest/ims:resources/ims:resource/ims:dependency">
+      <assert test="(not(../@type='imstiptdc_xmlv1p0')) or (current()/@identifierref = /ims:manifest/ims:resources/ims:resource[@type='imstiptdd_xmlv1p0']/@identifier)">Assertion failed for pattern_13. A Resource object which is a Deployment Context may contain a single Dependency object which reference Resource objects which describe a Deployment descriptor.(#S13)</assert>
+    </rule>
+  </pattern>
+-->
+
+  <pattern name="pattern_14">
+    <rule context="ims:manifest/ims:resources/ims:resource/ims:dependency">
+      <assert test="(not(../@type='imsqti_xmlv1p2/imscc_xmlv1p0/assessment')) or (current()/@identifierref = /ims:manifest/ims:resources/ims:resource[@type='webcontent']/@identifier) or (current()/@identifierref = /ims:manifest/ims:resources/ims:resource[@type='associatedcontent/imscc_xmlv1p0/learning-application-resource']/@identifier)">Assertion failed for pattern_14. A Resource object which is an assessment may contain Dependency objects which reference Resource objects with Type 'webcontent' or 'associatedcontent/imscc_xmlv1p0/learning-application-resource'.(#S14)</assert>
+    </rule>
+  </pattern>
+
+  <pattern name="pattern_15">
+    <rule context="ims:manifest/ims:resources/ims:resource/ims:dependency">
+      <assert test="(not(../@type='imsqti_xmlv1p2/imscc_xmlv1p0/question-bank')) or (current()/@identifierref = /ims:manifest/ims:resources/ims:resource[@type='webcontent']/@identifier) or (current()/@identifierref = /ims:manifest/ims:resources/ims:resource[@type='associatedcontent/imscc_xmlv1p0/learning-application-resource']/@identifier)">Assertion failed for pattern_15. A Resource object which is a Question Bank may contain Dependency objects which reference Resource objects with Type 'webcontent' or 'associatedcontent/imscc_xmlv1p0/learning-application-resource'.(#S15)</assert>
+    </rule>
+  </pattern>
+
+  </schema>

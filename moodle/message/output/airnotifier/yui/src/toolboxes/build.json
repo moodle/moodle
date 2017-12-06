@@ -1,0 +1,10 @@
+{
+  "name": "moodle-message_airnotifier-toolboxes",
+  "builds": {
+    "moodle-message_airnotifier-toolboxes": {
+      "jsfiles": [
+        "toolboxes.js"
+      ]
+    }
+  }
+}

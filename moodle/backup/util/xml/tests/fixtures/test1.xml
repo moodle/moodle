@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<toptag name="toptag" level="1" path="/toptag">
+  <secondtag name="secondtag" level="2" path="/toptag/secondtag" value="secondvalue">secondvalue</secondtag>
+  <thirdtag name="thirdtag" level="2" path="/toptag/thirdtag">
+    <onevalue name="onevalue" level="3" path="/toptag/thirdtag/onevalue">onevalue</onevalue>
+    <onevalue name="onevalue" level="3" value="anothervalue">anothervalue</onevalue>
+    <onevalue name="onevalue" level="3" value="yetanothervalue">yetanothervalue</onevalue>
+    <twovalue name="twovalue" level="3" path="/toptag/thirdtag/twovalue">twovalue</twovalue>
+    <forthtag name="forthtag" level="3" path="/toptag/thirdtag/forthtag">
+      <innervalue>innervalue</innervalue>
+      <innertag>
+        <superinnertag name="superinnertag" level="5">
+          <superinnervalue name="superinnervalue" level="6">superinnervalue</superinnervalue>
+        </superinnertag>
+      </innertag>
+    </forthtag>
+    <fifthtag level="3">
+      <sixthtag level="4">
+        <seventh level="5">seventh</seventh>
+      </sixthtag>
+    </fifthtag>
+    <finalvalue name="finalvalue" level="3" path="/toptag/thirdtag/finalvalue">finalvalue</finalvalue>
+    <finalvalue />
+  </thirdtag>
+</toptag>

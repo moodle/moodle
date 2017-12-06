@@ -1,0 +1,7 @@
+      <MOD>
+        <ID>[#mod_instance#]</ID>
+        <MODTYPE>label</MODTYPE>
+        <NAME>[#mod_name#]</NAME>
+        <CONTENT>[#mod_content#]</CONTENT>
+        <TIMEMODIFIED>[#date_now#]</TIMEMODIFIED>
+      </MOD>

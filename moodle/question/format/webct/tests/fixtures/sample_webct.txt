@@ -1,0 +1,117 @@
+# Start of question:Question 001
+:TYPE:MC:1:0:A
+:TITLE:USER-1
+:QUESTION:H
+42 is the Absolute Answer to everything.
+:LAYOUT:horizontal
+:ANSWERORDER:randomized
+:INDICES:letters
+:ANSWER1:0:H
+True
+:REASON1:H
+42 is the <b>Ultimate</b> Answer.
+:ANSWER2:100:H
+False
+:REASON2:H
+42 is the <b>Ultimate</b> Answer.
+:CAT:webct
+:ASSESSMENT:Test
+# End of question:Question 001
+
+# Start of question:Question 002
+:TYPE:MC:1:0:A
+:TITLE:USER-2
+:QUESTION:H
+<font size="+1">What's between orange and green in the spectrum?</font>
+:LAYOUT:horizontal
+:ANSWERORDER:randomized
+:INDICES:letters
+:ANSWER1:0:H
+red
+:REASON1:H
+Red is not between orange and green in the spectrum but yellow is.
+:ANSWER2:100:H
+yellow
+:REASON2:H
+You gave the right answer.
+:ANSWER3:0:H
+blue
+:REASON3:H
+Blue is not between orange and green in the spectrum but yellow is.
+:CAT:webct
+:ASSESSMENT:Test
+# End of question:Question 002
+
+# Start of question:Question 003
+:TYPE:MC:N:0:A
+:TITLE:USER-3
+:QUESTION:H
+<i>What's between orange and green in the spectrum?</i>
+:LAYOUT:horizontal
+:ANSWERORDER:randomized
+:INDICES:letters
+:ANSWER1:50:H
+yellow
+:REASON1:H
+True, yellow is between orange and green in the spectrum,
+:ANSWER2:0:H
+red
+:REASON2:H
+False, red is not between orange and green in the spectrum,
+:ANSWER3:50:H
+off-beige
+:REASON3:H
+True, off-beige is between orange and green in the spectrum,
+:ANSWER4:0:H
+blue
+:REASON4:H
+False, red is not between orange and green in the spectrum,
+:CAT:webct
+:ASSESSMENT:Test
+# End of question:Question 003
+
+# Start of question:Question 004
+:TYPE:M:short:short:E:0
+:TITLE:Classify the animals.
+:QUESTION:H
+<i>Classify the animals.</i>
+:IMAGE:
+:L1
+cat
+:R1
+mammal
+:L2
+frog
+:R2
+amphibian
+:L3
+newt
+:R3
+amphibian
+:CAT:Ch 00 Instr Test Items
+:ASSESSMENT:Test
+# End of question:Question 004
+
+# Start of question:Question 005
+:TYPE:S
+:TITLE:USER-5
+:QUESTION:H
+Name an amphibian&#58; __________
+:ANSWERS:1
+:ANSWER1:frog:100:0:20:0
+:FEEDBACK1:H
+A frog is an amphibian
+:CAT:webct
+:ASSESSMENT:Test
+# End of question:Question 005
+
+# Start of question:Question 006
+:TYPE:P
+:TITLE:USER-6
+:QUESTION:H:60:5
+How are you?
+:ANSWER:H
+Blackboard answer for essay questions will be imported as informations for graders.
+:CAT:webct
+:ASSESSMENT:Test
+# End of question:Question 006

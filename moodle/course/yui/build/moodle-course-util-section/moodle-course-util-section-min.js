@@ -1,0 +1,1 @@
+YUI.add("moodle-course-util-section",function(e,t){e.namespace("Moodle.core_course.util.section"),e.Moodle.core_course.util.section={CONSTANTS:{SECTIONIDPREFIX:"section-"},getId:function(e){var t=e.get("id").replace(this.CONSTANTS.SECTIONIDPREFIX,"");return t=parseInt(t,10),typeof t=="number"&&isFinite(t)?t:!1}}},"@VERSION@",{requires:["node","moodle-course-util-base"]});

@@ -1,0 +1,2 @@
+
+* Take a look at all those text values. Control chars shouldn't be allowed.

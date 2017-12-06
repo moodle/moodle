@@ -1,0 +1,15 @@
+{
+    "name": "Moodle",
+    "description": "YUI documentation for Moodle",
+    "url": "https://moodle.org",
+    "options": {
+        "external": {
+            "data": "http://yuilibrary.com/yui/docs/api/data.json"
+        },
+        "linkNatives": true,
+        "attributesEmit": "true",
+        "selleck": "true",
+        "outdir": "../yuidocs",
+        "paths": "**/yui/src/*"
+    }
+}

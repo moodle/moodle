@@ -1,0 +1,9 @@
+This files describes API changes in /grade/grading/form/* - Advanced grading methods
+information provided here is intended especially for developers.
+
+=== 2.5.2 ===
+
+* Grading methods now can return grade with decimals. See API functions
+  gradingform_controller::set_grade_range() and
+  gradingform_controller::get_allow_grade_decimals(), and also examples
+  in gradingform_rubric_instance::get_grade().

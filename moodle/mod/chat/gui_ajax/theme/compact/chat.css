@@ -1,0 +1,97 @@
+.yui-skin-sam .yui-layout .yui-layout-hd {
+    border: 0;
+}
+
+.yui-skin-sam .yui-layout .yui-layout-unit div.yui-layout-bd-nohd {
+    border: 0;
+}
+
+.yui-skin-sam .yui-layout .yui-layout-unit div.yui-layout-bd {
+    border: 0;
+}
+
+.yui-skin-sam .yui-layout .yui-layout-unit div.yui-layout-unit-right {
+    background: white;
+}
+
+.yui-skin-sam .yui-layout-unit-bottom {
+    background: #f2f2f2;
+}
+
+.yui-skin-sam .yui-layout-unit-right {
+    background: #eef2f8;
+}
+
+.yui-skin-sam .yui-layout-unit-center {
+    background: white;
+}
+
+.yui-skin-sam .yui-layout-unit-top {
+    background: #ffe39d;
+}
+
+.yui-skin-sam .yui-layout .yui-layout-unit div.yui-layout-bd {
+    background: transparent;
+}
+
+#input-message {
+    background: #fff url(input.png) repeat-x scroll 0 0;
+    border: 1px solid #999;
+}
+
+.mdl-chat-entry .meta {
+    background: #82b5ee;
+    border-bottom: 1px solid white;
+    -moz-border-radius-topleft: 6px;
+    -moz-border-radius-topright: 6px;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+}
+
+.mdl-chat-entry,
+.mdl-chat-my-entry {
+    margin: 1em auto;
+    border: 1px solid #938f5a;
+    -moz-border-radius-bottomleft: 6px;
+    -moz-border-radius-bottomright: 6px;
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;
+}
+
+.mdl-chat-entry .chat-message .text {
+    color: white;
+    background: #82b5ee;
+}
+
+.chat-message {
+    padding: 3px;
+    border: 1px solid #ccc;
+    -moz-border-radius-bottomleft: 6px;
+    -moz-border-radius-bottomright: 6px;
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;
+}
+
+.mdl-chat-my-entry .chat-message .meta {
+    background: #fffeeb;
+    border-bottom: 1px solid white;
+}
+
+.mdl-chat-my-entry .chat-message .text {
+    background: #f1f3cb;
+}
+
+#chat-input-area,
+#chat-input-area table.generaltable,
+#chat-input-area table.generaltable td.cell {
+    background: #92b3e8;
+    border: 0;
+    margin: 0;
+    padding: 2px;
+    height: 100%;
+}
+
+#chat-userlist {
+    background: #e3e8f0;
+    height: 100%;
+}

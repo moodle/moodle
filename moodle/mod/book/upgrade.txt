@@ -1,0 +1,19 @@
+This files describes API changes in the book code.
+
+=== 3.1 ===
+
+* The following functions, previously used (exclusively) by upgrade steps are not available
+  anymore because of the upgrade cleanup performed for this version. See MDL-51580 for more info:
+    - mod_book_migrate_moddata_dir_to_legacy()
+    - mod_book_migrate_all_areas()
+    - mod_book_migrate_area()
+
+=== 3.0 ===
+
+* External function mod_book_external::get_books_by_courses returned parameter "name" has been changed to PARAM_RAW,
+  this is because the new external_format_string function may return raw data if the global moodlewssettingraw parameter is used.
+
+=== 2.7 ===
+
+* bogus legacy log calls were removed
+* \mod_book\event\chapter_deleted::set_legacy_logdata() was removed

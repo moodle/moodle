@@ -1,0 +1,39 @@
+.report-eventlist-name {
+    color: #888;
+    font-size: 0.75em;
+}
+
+.report-eventlist-datatable-table > div > table {
+    width: 100%;
+}
+
+#page-admin-report-eventlist-index dt {
+    float: left;
+    text-align: right;
+    width: 20em;
+}
+
+#page-admin-report-eventlist-index dd {
+    display: block;
+    text-align: left;
+    margin-left: 21em;
+}
+
+#page-admin-report-eventlist-index dd + dd {
+    clear: left;
+}
+
+@media (max-width: 767px) {
+    #page-admin-report-eventlist-index dt {
+        width: 100%;
+        text-align: left;
+    }
+
+    #page-admin-report-eventlist-index dd {
+        margin-left: 0;
+    }
+
+    #page-admin-report-eventlist-index dd + dd {
+        margin-left: 0;
+    }
+}

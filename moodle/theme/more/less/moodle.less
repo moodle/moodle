@@ -1,0 +1,19 @@
+/**
+ * Import all the rules from the parent.
+ */
+@import "../../bootstrapbase/less/moodle.less";
+
+// Set the secondary background.
+@tableBackgroundAccent: darken(@wellBackground, 5%);
+@tableBackgroundHover: darken(@wellBackground, 10%);
+@tableBorder: @wellBorder;
+@navbarBackground: @wellBackground;
+@formActionsBackground: @wellBackground;
+@paginationActiveBackground: @wellBackground;
+@hrBorder: darken(@wellBackground, 5%);
+
+// Remove unwanted text shadow, this can look odd with random colours.
+.breadcrumb li,
+.nav-header {
+    text-shadow: none;
+}

@@ -1,0 +1,244 @@
+.yui-skin-sam .yui-layout .yui-layout-hd {
+    border: 0;
+}
+
+.yui-skin-sam .yui-layout .yui-layout-unit div.yui-layout-bd-nohd {
+    border: 0;
+}
+
+.yui-skin-sam .yui-layout .yui-layout-unit div.yui-layout-bd {
+    border: 0;
+}
+
+.yui-skin-sam .yui-layout .yui-layout-unit div.yui-layout-unit-right {
+    background: white;
+}
+
+.yui-skin-sam .yui-layout-unit-bottom {
+    background: #f2f2f2;
+}
+
+.yui-skin-sam .yui-layout-unit-right {
+    background: #eef2f8;
+}
+
+.yui-skin-sam .yui-layout-unit-center {
+    background: white;
+}
+
+.yui-skin-sam .yui-layout-unit-top {
+    background: #ffe39d;
+}
+
+.yui-skin-sam .yui-layout .yui-layout-unit div.yui-layout-bd {
+    background: transparent;
+}
+
+#chat-messages {
+    padding-top: 15px;
+}
+
+#input-message {
+    background: #fff url(input.png) repeat-x scroll 0 0;
+    padding: 0 9px;
+    border: 1px solid #999;
+    border-radius: 9px;
+    -moz-border-radius: 9px;
+}
+
+.mdl-chat-entry,
+.mdl-chat-my-entry {
+    clear: both;
+}
+
+.mdl-chat-entry .chat-event {
+    padding-bottom: 15px;
+}
+
+.chat-message .chat-message-meta {
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+
+.chat-message .chat-message-meta .user {
+    white-space: nowrap;
+}
+
+.chat-message .picture {
+    vertical-align: middle;
+}
+
+.chat-message .right {
+    text-align: right;
+}
+
+.chat-message .left {
+    text-align: left;
+}
+/*rtl:ignore*/
+.chat-message .right,
+.chat-message .left {
+    direction: ltr;
+}
+
+#chat-input-area,
+#chat-input-area table.generaltable,
+#chat-input-area table.generaltable td.cell {
+    background: #92b3e8;
+    border: 0;
+    height: 100%;
+}
+
+#chat-userlist {
+    background: #e3e8f0;
+    height: 100%;
+}
+
+/**
+ * The following CSS is a cut down version of PURE CSS SPEECH BUBBLES.
+ * Moodle only uses a small subset of the original.
+ * The original version is available at http://nicolasgallagher.com/pure-css-speech-bubbles/
+ */
+
+/* ------------------------------------------
+PURE CSS SPEECH BUBBLES
+by Nicolas Gallagher
+- http://nicolasgallagher.com/pure-css-speech-bubbles/
+
+http://nicolasgallagher.com
+http://twitter.com/necolas
+
+Created: 02 March 2010
+Version: 1.2 (03 March 2011)
+
+Dual licensed under MIT and GNU GPLv2 © Nicolas Gallagher
+------------------------------------------ */
+
+.triangle-border {
+    position: relative;
+    padding: 10px;
+    margin: 1em 0 3em;
+    border: 2px solid #5a8f00;
+    color: #333;
+    background: #fff;
+    /* css3 */
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+
+    /* moodle specific */
+    margin-top: 0;
+    /* end moodle specific */
+}
+
+/* moodle specific */
+
+@media all and (max-device-width: 320px) {
+    .triangle-border {
+        width: 50%;
+    }
+}
+
+@media all and (min-device-width: 321px) and (max-device-width: 640px) {
+    .triangle-border {
+        width: 60%;
+    }
+}
+
+@media all and (min-device-width: 641px) {
+    .triangle-border {
+        width: 65%;
+    }
+}
+/* end moodle specific */
+
+/* Variant : for left positioned triangle
+------------------------------------------ */
+
+.triangle-border.left {
+    margin-left: 30px;
+    /* moodle specific */
+    float: right;
+    /* end moodle specific */
+}
+
+/* Variant : for right positioned triangle
+------------------------------------------ */
+
+.triangle-border.right {
+    margin-right: 30px;
+    /* moodle specific */
+    float: left;
+    /* end moodle specific */
+}
+
+.triangle-border:before {
+    content: "";
+    position: absolute;
+    bottom: -20px; /* value = - border-top-width - border-bottom-width */
+    left: 40px; /* controls horizontal position */
+    border-width: 20px 20px 0;
+    border-style: solid;
+    border-color: #5a8f00 transparent;
+    /* reduce the damage in FF3.0 */
+    display: block;
+    width: 0;
+}
+
+/* creates the smaller  triangle */
+.triangle-border:after {
+    content: "";
+    position: absolute;
+    bottom: -13px; /* value = - border-top-width - border-bottom-width */
+    left: 47px; /* value = (:before left) + (:before border-left) - (:after border-left) */
+    border-width: 13px 13px 0;
+    border-style: solid;
+    border-color: #fff transparent;
+    /* reduce the damage in FF3.0 */
+    display: block;
+    width: 0;
+}
+
+/* Variant : left
+------------------------------------------ */
+
+/* creates the larger triangle */
+.triangle-border.left:before {
+    top: 7px; /* controls vertical position */
+    bottom: auto;
+    left: -24px; /* value = - border-left-width - border-right-width */
+    border-width: 10px 24px 10px 0;
+    border-color: transparent #5a8f00;
+}
+
+/* creates the smaller  triangle */
+.triangle-border.left:after {
+    top: 8px; /* value = (:before top) + (:before border-top) - (:after border-top) */
+    bottom: auto;
+    left: -21px; /* value = - border-left-width - border-right-width */
+    border-width: 9px 21px 9px 0;
+    border-color: transparent #fff;
+}
+
+/* Variant : right
+------------------------------------------ */
+
+/* creates the larger triangle */
+.triangle-border.right:before {
+    top: 7px; /* controls vertical position */
+    bottom: auto;
+    left: auto;
+    right: -24px; /* value = - border-left-width - border-right-width */
+    border-width: 10px 0 10px 24px;
+    border-color: transparent #5a8f00;
+}
+
+/* creates the smaller  triangle */
+.triangle-border.right:after {
+    top: 8px; /* value = (:before top) + (:before border-top) - (:after border-top) */
+    bottom: auto;
+    left: auto;
+    right: -21px; /* value = - border-left-width - border-right-width */
+    border-width: 9px 0 9px 21px;
+    border-color: transparent #fff;
+}

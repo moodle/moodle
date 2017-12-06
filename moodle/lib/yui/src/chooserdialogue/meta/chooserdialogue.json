@@ -1,0 +1,9 @@
+{
+  "moodle-core-chooserdialogue": {
+    "requires": [
+        "base",
+        "panel",
+        "moodle-core-notification"
+    ]
+  }
+}

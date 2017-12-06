@@ -1,0 +1,19 @@
+Things that are in the inkpot yet:
+==================================
+- Allow grading of entries
+    * Evaluation
+    * Self-evaluation?
+    * Co-evaluation?
+
+********* IN BETA RIGHT NOW *********
+
+- Adding a way to specify default values for display formats:
+    * Default view
+        * Default Order
+        * Show (or do not) the group breaks.
+        * Default view for automatic links, entry view, etc.
+        * What else? Post in http://moodle.org/mod/forum/view.php?id=742
+
+News about plugin-formats TODO (Updated: Jul 30, 2004 - Eloy)
+
+*Include support for a customised print view in each format.

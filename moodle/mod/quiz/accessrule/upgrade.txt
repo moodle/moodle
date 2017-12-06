@@ -1,0 +1,25 @@
+This files describes API changes for quiz access rule plugins.
+
+Overview of this plugin type at http://docs.moodle.org/dev/Quiz_access_rules
+
+=== 2.8, 2.7.1, 2.6.4 and 2.5.7 ===
+
+* New static method delete_settings for access rules, which is called when a
+  quiz is deleted.
+
+
+=== 2.4 and 2.3.4 ===
+
+* Replaced time_left() with new time_left_display() and end_time() functions.
+
+
+=== 2.3 ===
+
+* This plugin type now supports cron in the standard way. If required, Create a
+  lib.php file containing
+function quizaccess_mypluginname_cron() {};
+
+
+=== 2.2 ===
+
+* This plugin type was new in Moodle 2.2!

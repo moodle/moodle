@@ -1,0 +1,55 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template block_myoverview/main
+
+    This template renders the main content area for the myoverview block.
+
+    Example context (json):
+    {}
+}}
+
+<div id="block-myoverview-{{uniqid}}" class="block-myoverview" data-region="myoverview">
+    <ul id="block-myoverview-view-choices-{{uniqid}}" class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link {{#viewingtimeline}}active{{/viewingtimeline}}" href="#myoverview_timeline_view" role="tab" data-toggle="tab" data-tabname="timeline">
+                {{#str}} timeline, block_myoverview {{/str}}
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {{#viewingcourses}}active{{/viewingcourses}}" href="#myoverview_courses_view" role="tab" data-toggle="tab" data-tabname="courses">
+                {{#str}} courses {{/str}}
+            </a>
+        </li>
+    </ul>
+    <div class="tab-content content-centred">
+        <div role="tabpanel" class="tab-pane fade {{#viewingtimeline}}in active{{/viewingtimeline}}" id="myoverview_timeline_view">
+            {{> block_myoverview/timeline-view }}
+        </div>
+        <div role="tabpanel" class="tab-pane fade {{#viewingcourses}}in active{{/viewingcourses}}" id="myoverview_courses_view">
+            {{#coursesview}}
+                {{> block_myoverview/courses-view }}
+            {{/coursesview}}
+        </div>
+    </div>
+</div>
+{{#js}}
+require(['jquery', 'block_myoverview/tab_preferences'], function($, TabPreferences) {
+    var root = $('#block-myoverview-view-choices-{{uniqid}}');
+    TabPreferences.registerEventListeners(root);
+});
+{{/js}}

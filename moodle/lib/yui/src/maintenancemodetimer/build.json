@@ -1,0 +1,10 @@
+{
+  "name": "moodle-core-maintenancemodetimer",
+  "builds": {
+    "moodle-core-maintenancemodetimer": {
+      "jsfiles": [
+        "maintenancemodetimer.js"
+      ]
+    }
+  }
+}

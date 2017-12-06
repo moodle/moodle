@@ -1,0 +1,10 @@
+{
+  "name": "moodle-core-actionmenu",
+  "builds": {
+    "moodle-core-actionmenu": {
+      "jsfiles": [
+        "actionmenu.js"
+      ]
+    }
+  }
+}

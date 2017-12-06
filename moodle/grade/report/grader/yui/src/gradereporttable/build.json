@@ -1,0 +1,11 @@
+{
+    "name": "moodle-gradereport_grader-gradereporttable",
+    "builds": {
+        "moodle-gradereport_grader-gradereporttable": {
+            "jsfiles": [
+                "gradereporttable.js",
+                "floatingheaders.js"
+            ]
+        }
+    }
+}

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="message/output/airnotifier/db" VERSION="20140129" COMMENT="XMLDB file for Moodle message/output/airnotifier"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="message_airnotifier_devices" COMMENT="Store information about the devices registered in Airnotifier for PUSH notifications">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userdeviceid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The user device id in the user_devices table"/>
+        <FIELD NAME="enable" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="The user can enable/disable his devices"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="userdeviceid" TYPE="foreign-unique" FIELDS="userdeviceid" REFTABLE="user_devices" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+  </TABLES>
+</XMLDB>

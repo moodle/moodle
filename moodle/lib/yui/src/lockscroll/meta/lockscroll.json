@@ -1,0 +1,8 @@
+{
+  "moodle-core-lockscroll": {
+    "requires": [
+        "plugin",
+        "base-build"
+    ]
+  }
+}

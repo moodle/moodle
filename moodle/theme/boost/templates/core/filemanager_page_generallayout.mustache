@@ -1,0 +1,58 @@
+<div id="filemanager-{{{client_id}}}" class="filemanager fm-loading">
+    <div class="fp-restrictions">
+        {{{restrictions}}}
+        <span class="dnduploadnotsupported-message"> - {{#str}}dndnotsupported_insentence{{/str}}{{{helpicon}}}</span>
+    </div>
+    <div class="fp-navbar bg-faded card m-b-0">
+        <div class="filemanager-toolbar icon-no-spacing">
+            <div class="fp-toolbar">
+                <div class="fp-btn-add">
+                    <a role="button" title="{{#str}}addfile, repository{{/str}}" class="btn btn-secondary btn-sm" href="#">
+                        {{#pix}}a/add_file{{/pix}}
+                    </a>
+                </div>
+                <div class="fp-btn-mkdir">
+                    <a role="button" title="{{#str}}makeafolder{{/str}}" class="btn btn-secondary btn-sm" href="#">
+                        {{#pix}}a/create_folder{{/pix}}
+                    </a>
+                </div>
+                <div class="fp-btn-download">
+                    <a role="button" title="{{#str}}downloadfolder, repository{{/str}}" class="btn btn-secondary btn-sm" href="#">
+                        {{#pix}}a/download_all{{/pix}}
+                    </a>
+                </div>
+                <span class="fp-img-downloading">
+                    <span class="sr-only">{{#str}}loadinghelp{{/str}}</span>
+                    {{#pix}}i/loading_small{{/pix}}
+                </span>
+            </div>
+            <div class="fp-viewbar btn-group pull-xs-right">
+                <a title="{{#str}}displayicons, repository{{/str}}" class="fp-vb-icons btn btn-secondary btn-sm" href="#">
+                    {{#pix}}fp/view_icon_active, theme{{/pix}}
+                </a>
+                <a title="{{#str}}displaydetails, repository{{/str}}" class="fp-vb-details btn btn-secondary btn-sm" href="#">
+                    {{#pix}}fp/view_list_active, theme{{/pix}}
+                </a>
+                <a title="{{#str}}displaytree, repository{{/str}}" class="fp-vb-tree btn btn-secondary btn-sm" href="#">
+                    {{#pix}}fp/view_tree_active, theme{{/pix}}
+                </a>
+            </div>
+        </div>
+        <div class="fp-pathbar">
+            <span class="fp-path-folder"><a class="fp-path-folder-name" href="#"></a></span>
+        </div>
+    </div>
+    <div class="filemanager-loading mdl-align">{{#pix}}i/loading_small{{/pix}}<span class="sr-only">{{#str}}loadinghelp{{/str}}</span></div>
+    <div class="filemanager-container card" >
+        <div class="fm-content-wrapper">
+            <div class="fp-content"></div>
+            <div class="fm-empty-container">
+                <div class="dndupload-message">{{#str}}dndenabled_inbox{{/str}}<br/><div class="dndupload-arrow"></div></div>
+            </div>
+            <div class="dndupload-target">{{#str}}droptoupload{{/str}}<br/><div class="dndupload-arrow"></div></div>
+            <div class="dndupload-progressbars"></div>
+            <div class="dndupload-uploadinprogress">{{#pix}}i/loading_small{{/pix}}<span class="sr-only">{{#str}}loadinghelp{{/str}}</span></div>
+        </div>
+        <div class="filemanager-updating">{{#pix}}i/loading_small{{/pix}}<span class="sr-only">{{#str}}loadinghelp{{/str}}</span></div>
+    </div>
+</div>

@@ -1,0 +1,9 @@
+      <SECTION>
+        <ID>[#section_id#]</ID>
+        <NUMBER>[#section_number#]</NUMBER>
+        <SUMMARY>[#section_summary#]</SUMMARY>
+        <VISIBLE>1</VISIBLE>
+        <MODS>
+          [#node_course_sections_section_mods_mod#]
+        </MODS>
+      </SECTION>

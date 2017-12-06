@@ -1,0 +1,14 @@
+{
+    "moodle-mod_quiz-quizquestionbank": {
+        "requires": [
+            "base",
+            "event",
+            "node",
+            "io",
+            "io-form",
+            "yui-later",
+            "moodle-question-qbankmanager",
+            "moodle-core-notification-dialogue"
+        ]
+    }
+}

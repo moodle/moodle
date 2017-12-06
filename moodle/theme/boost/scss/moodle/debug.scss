@@ -1,0 +1,59 @@
+// Here we are forcing the navbar to be absolutely positioned for behat, because
+// when driver scrolls something into view in browser it doesn't account
+// for fixed positioned elements that end up obscuring the item thus
+// leading to errors that could be avoided by scrolling an additional amount.
+body.behat-site {
+    .navbar-static-top {
+        position: absolute;
+    }
+
+    // We need more spacing in action menus so behat does not click on the wrong menu item.
+    .dropdown-item {
+        margin-top: 4px !important; /* stylelint-disable declaration-no-important */
+    }
+
+    // Remove following after MDL-57172 is fixed.
+    &.drawer-ease {
+        -webkit-transition: initial;
+        -moz-transition: initial;
+        transition: initial;
+    }
+
+    [data-region="drawer"] {
+        -webkit-transition: initial;
+        -moz-transition: initial;
+        transition: initial;
+        position: absolute;
+    }
+}
+
+.phpinfo table,
+.phpinfo th,
+.phpinfo h2 {
+    margin: auto;
+}
+
+.phpinfo h2 {
+    width: 600px;
+}
+
+.phpinfo .e,
+.phpinfo .v,
+.phpinfo .h {
+    border: 1px solid #000;
+    font-size: 0.8em;
+    vertical-align: baseline;
+    color: #000;
+    background-color: #ccc;
+}
+
+.phpinfo .e {
+    background-color: #ccf;
+    font-weight: bold;
+}
+
+.phpinfo .h {
+    background-color: #99c;
+    font-weight: bold;
+}
+

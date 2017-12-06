@@ -1,0 +1,26 @@
+{
+  "moodle-mod_quiz-util": {
+    "requires": [
+        "node", "moodle-core-actionmenu"
+    ],
+    "use": [
+        "moodle-mod_quiz-util-base"
+    ],
+    "submodules": {
+        "moodle-mod_quiz-util-base": {
+        },
+        "moodle-mod_quiz-util-slot": {
+            "requires": [
+                "node",
+                "moodle-mod_quiz-util-base"
+            ]
+        },
+        "moodle-mod_quiz-util-page": {
+            "requires": [
+                "node",
+                "moodle-mod_quiz-util-base"
+            ]
+        }
+    }
+  }
+}

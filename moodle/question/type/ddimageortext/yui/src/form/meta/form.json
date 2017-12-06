@@ -1,0 +1,8 @@
+{
+  "moodle-qtype_ddimageortext-form": {
+    "requires": [
+        "moodle-qtype_ddimageortext-dd",
+        "form_filepicker"
+    ]
+  }
+}

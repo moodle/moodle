@@ -1,0 +1,165 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template tool_lpmigrate/migrate_frameworks_results
+
+    Migrate frameworks results.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * data-action="competency-dialogue"
+    * data-id
+    * data-region="migration-results"
+
+    Context variables required for this template:
+    * coursesfound
+    * cmsfound
+    * ccmigrationscount
+    * ccremovalscount
+    * mcmigrationscount
+    * mcremovalscount
+    * mappingsmissingcount
+    * warningcount
+    * errorcount
+
+    Example context (json):
+    {
+        "ccmigrationscount": 2,
+        "ccremovalscount": 3,
+        "cmsfound": 4,
+        "coursesfound": 3,
+        "errorcount": 1,
+        "errors": [{
+            "message": "This is a generic error",
+            "course": "The course A",
+            "cm": "The course module B",
+            "competency": "The competency C",
+            "competencyid": "1"
+        }],
+        "frameworkfrom": {
+            "id": 1,
+            "shortname": "Framework X"
+        },
+        "frameworkto": {
+            "id": 2,
+            "shortname": "Framework Y"
+        },
+        "hasunmappedfrom": 1,
+        "hasunmappedto": 1,
+        "mappingsmissingcount": 1,
+        "mcmigrationscount": 4,
+        "mcremovalscount": 5,
+        "unmappedfrom": [{
+            "id": 2,
+            "shortname": "Competency U1",
+            "idnumber": "CU1"
+        }],
+        "unmappedto": [{
+            "id": 3,
+            "shortname": "Competency Z2",
+            "idnumber": "CZ2"
+        }],
+        "warningcount": 1,
+        "warnings": [{
+            "message": "This is a generic warning",
+            "course": "The course D",
+            "cm": "The course module E",
+            "competency": "The competency F",
+            "competencyid": "1"
+        }]
+    }
+
+}}
+
+<div data-region="migration-results">
+    <h3>{{#str}}results, tool_lpmigrate{{/str}}</h3>
+    <dl>
+        <dt>{{#str}}coursesfound, tool_lpmigrate{{/str}}</dt>
+        <dd>{{coursesfound}}</dd>
+        <dt>{{#str}}coursemodulesfound, tool_lpmigrate{{/str}}</dt>
+        <dd>{{cmsfound}}</dd>
+        <dt>{{#str}}coursecompetencymigrations, tool_lpmigrate{{/str}}</dt>
+        <dd>+{{ccmigrationscount}} -{{ccremovalscount}}</dd>
+        <dt>{{#str}}coursemodulecompetencymigrations, tool_lpmigrate{{/str}}</dt>
+        <dd>+{{mcmigrationscount}} -{{mcremovalscount}}</dd>
+        <dt>{{#str}}missingmappings, tool_lpmigrate{{/str}}</dt>
+        <dd>{{mappingsmissingcount}}</dd>
+        <dt>{{#str}}warnings, tool_lpmigrate{{/str}}</dt>
+        <dd>{{warningcount}}</dd>
+        <dt>{{#str}}errors, tool_lpmigrate{{/str}}</dt>
+        <dd>{{errorcount}}</dd>
+    </dl>
+
+    {{#hasunmappedfrom}}
+    <h4>{{#str}}unmappedin, tool_lpmigrate, {{frameworkfrom.shortname}}{{/str}}</h4>
+    <ul>
+        {{#unmappedfrom}}
+            <li><a href="#" data-id="{{id}}" data-action="competency-dialogue" data-includecourses="true">{{{shortname}}}</a> <em>{{idnumber}}</em></li>
+        {{/unmappedfrom}}
+    </ul>
+    {{/hasunmappedfrom}}
+
+    {{#hasunmappedto}}
+    <h4>{{#str}}unmappedin, tool_lpmigrate, {{frameworkto.shortname}}{{/str}}</h4>
+    <ul>
+        {{#unmappedto}}
+            <li><a href="#" data-id="{{id}}" data-action="competency-dialogue" data-includecourses="true">{{{shortname}}}</a> <em>{{idnumber}}</em></li>
+        {{/unmappedto}}
+    </ul>
+    {{/hasunmappedto}}
+
+    {{#warningcount}}
+    <h4>{{#str}}warnings, tool_lpmigrate{{/str}}</h4>
+    <ul>
+        {{#warnings}}
+            <li>
+                <p>
+                    {{message}}<br>
+                    <small>{{course}} {{#cm}} - {{cm}} {{/cm}} - <a href="#" data-id="{{competencyid}}" data-action="competency-dialogue" data-includecourses="true">{{competency}}</a></small>
+                </p>
+            </li>
+        {{/warnings}}
+    </ul>
+    {{/warningcount}}
+
+    {{#errorcount}}
+    <h4>{{#str}}errors, tool_lpmigrate{{/str}}</h4>
+    <ul>
+        {{#errors}}
+            <li>
+                <p>
+                    {{message}}<br>
+                    <small>{{course}} {{#cm}} - {{cm}} {{/cm}} - <a href="#" data-id="{{competencyid}}" data-action="competency-dialogue" data-includecourses="true">{{competency}}</a></small>
+                </p>
+            </li>
+        {{/errors}}
+    </ul>
+    {{/errorcount}}
+</div>
+<div>
+    <p>
+        <a href="{{pluginbaseurl}}/frameworks.php" class="btn btn-primary">{{#str}}migratemore, tool_lpmigrate{{/str}}</a>
+        <a href="{{frameworksurl}}" class="btn">{{#str}}continuetoframeworks, tool_lpmigrate{{/str}}</a>
+    </p>
+</div>
+{{#js}}
+require(['tool_lp/competencydialogue'], function(Compdialogue) {
+    Compdialogue.init();
+});
+{{/js}}

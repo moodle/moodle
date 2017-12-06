@@ -1,0 +1,17 @@
+{{< core_form/element-template-inline }}
+    {{$element}}
+    <input type="text"
+            class="form-control {{#error}}form-control-danger{{/error}}"
+            name="{{element.name}}"
+            id="{{element.id}}"
+    {{#element.frozen}}
+            readonly {{#element.hardfrozen}}disabled{{/element.hardfrozen}}
+    {{/element.frozen}}
+            value="{{element.value}}"
+            size="{{element.size}}"
+            {{#error}}
+                autofocus aria-describedby="id_error_{{element.name}}"
+            {{/error}}
+            {{{element.attributes}}}>
+    {{/element}}
+{{/ core_form/element-template-inline }}

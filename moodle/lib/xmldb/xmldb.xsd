@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:simpleType name="trueFalse" >
+    <xs:restriction base="xs:NMTOKEN" >
+     <xs:enumeration value="true" />
+     <xs:enumeration value="false" />
+    </xs:restriction >
+  </xs:simpleType >
+
+  <xs:simpleType name="tableName" >
+    <xs:restriction base="xs:string" >
+     <xs:pattern value='[0-9a-z_]{1,28}'/>
+    </xs:restriction >
+  </xs:simpleType >
+
+  <xs:simpleType name="fieldName" >
+    <xs:restriction base="xs:string" >
+     <xs:pattern value='[0-9a-z_]{1,30}'/>
+    </xs:restriction >
+  </xs:simpleType >
+
+  <xs:simpleType name="fieldType">
+    <xs:restriction base="xs:NMTOKEN">
+      <xs:enumeration value="int" />
+      <xs:enumeration value="number" />
+      <xs:enumeration value="float" />
+      <xs:enumeration value="char" />
+      <xs:enumeration value="text" />
+      <xs:enumeration value="binary" />
+      <xs:enumeration value="datetime" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="fieldLength" >
+    <xs:restriction base="xs:string" >
+    <!-- TODO: Moodle 2.5 - Drop LOB sizes, keep only numbers -->
+     <xs:pattern value='(\d+)|(small|medium|big)'/>
+    </xs:restriction >
+  </xs:simpleType >
+
+  <xs:simpleType name="fieldsList" >
+    <xs:restriction base="xs:string" >
+     <xs:pattern value='[0-9a-z_, ]+'/>
+    </xs:restriction >
+  </xs:simpleType >
+
+  <xs:simpleType name="keyType">
+    <xs:restriction base="xs:NMTOKEN">
+      <xs:enumeration value="primary" />
+      <xs:enumeration value="unique" />
+      <xs:enumeration value="foreign" />
+      <xs:enumeration value="foreign-unique" />
+    </xs:restriction>
+  </xs:simpleType>
+
+
+  <xs:element name="FIELD">
+    <xs:complexType>
+      <xs:attribute name="NAME"       type="fieldName"   use="required" />
+      <xs:attribute name="SEQUENCE"   type="trueFalse"   use="required" />
+      <xs:attribute name="TYPE"       type="fieldType"   use="required" />
+      <xs:attribute name="LENGTH"     type="fieldLength" use="optional" />
+      <xs:attribute name="NOTNULL"    type="trueFalse"   use="required" />
+      <xs:attribute name="DECIMALS"   type="xs:positiveInteger" use="optional" />
+      <!-- TODO: Moodle 2.4 - Drop ignored UNSIGNED attribute -->
+      <xs:attribute name="UNSIGNED"   type="trueFalse"   use="optional" />
+      <xs:attribute name="DEFAULT"    type="xs:string"   use="optional" />
+      <xs:attribute name="COMMENT"    type="xs:string"   use="optional" />
+      <!-- TODO: Moodle 2.6 - Drop ignored PREVIOUS/NEXT attributes -->
+      <xs:attribute name="PREVIOUS"   type="fieldName"   use="optional" />
+      <xs:attribute name="NEXT"       type="fieldName"   use="optional" />
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="FIELDS">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="FIELD" maxOccurs="unbounded" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="INDEX">
+    <xs:complexType>
+      <xs:attribute name="NAME"     type="xs:NMTOKEN" use="required" />
+      <xs:attribute name="UNIQUE"   type="trueFalse"  use="required" />
+      <xs:attribute name="FIELDS"   type="fieldsList" use="required" />
+      <xs:attribute name="HINTS"    type="xs:string"  use="optional" />
+      <xs:attribute name="COMMENT"  type="xs:string"  use="optional" />
+      <!-- TODO: Moodle 2.6 - Drop ignored PREVIOUS/NEXT attributes -->
+      <xs:attribute name="PREVIOUS" type="xs:NMTOKEN" use="optional" />
+      <xs:attribute name="NEXT"     type="xs:NMTOKEN" use="optional" />
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="INDEXES">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="INDEX" maxOccurs="unbounded" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="KEY">
+    <xs:complexType>
+      <xs:attribute name="NAME"      type="xs:NMTOKEN" use="required" />
+      <xs:attribute name="TYPE"      type="keyType"    use="required" />
+      <xs:attribute name="FIELDS"    type="fieldsList" use="required" />
+      <xs:attribute name="REFTABLE"  type="tableName"  use="optional" />
+      <xs:attribute name="REFFIELDS" type="fieldsList" use="optional" />
+      <xs:attribute name="COMMENT"   type="xs:string"  use="optional" />
+      <!-- TODO: Moodle 2.6 - Drop ignored PREVIOUS/NEXT attributes -->
+      <xs:attribute name="PREVIOUS"  type="xs:NMTOKEN" use="optional" />
+      <xs:attribute name="NEXT"      type="xs:NMTOKEN" use="optional" />
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="KEYS">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="KEY" maxOccurs="unbounded" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="SENTENCE">
+    <xs:complexType>
+      <xs:attribute name="TEXT" type="xs:string" use="required" />
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="SENTENCES">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="SENTENCE" maxOccurs="unbounded" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="TABLE">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="FIELDS" />
+        <xs:element ref="KEYS"    minOccurs="0" />
+        <xs:element ref="INDEXES" minOccurs="0" />
+      </xs:sequence>
+      <xs:attribute name="NAME"     type="tableName" use="required" />
+      <xs:attribute name="COMMENT"  type="xs:string" use="optional" />
+      <!-- TODO: Moodle 2.6 - Drop ignored PREVIOUS/NEXT attributes -->
+      <xs:attribute name="PREVIOUS" type="tableName" use="optional" />
+      <xs:attribute name="NEXT"     type="tableName" use="optional" />
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="TABLES">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="TABLE" maxOccurs="unbounded" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="XMLDB">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="TABLES"     minOccurs="0" />
+      </xs:sequence>
+      <xs:attribute name="PATH"    type="xs:string" use="required" />
+      <xs:attribute name="VERSION" type="xs:string" use="required" />
+      <xs:attribute name="COMMENT" type="xs:string" use="optional" />
+    </xs:complexType>
+  </xs:element>
+
+</xs:schema>

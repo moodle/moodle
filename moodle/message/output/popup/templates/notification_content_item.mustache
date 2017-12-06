@@ -1,0 +1,85 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template message_output_popup/notification_content_item
+
+    This template will render the notification content item for the
+    navigation bar notification menu.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * All data attributes are required
+
+    Context variables required for this template:
+    * contexturl A link to the notification resource
+    * read If the notification is read or not
+    * subject The subject text
+    * id Notification id
+    * iconurl The URL for the notification icon
+    * shortenedsubject A shortened version of subject text
+    * timecreatedpretty Pretty formatted time stamp
+    * viewmoreurl The link to the full notification
+
+    Example context (json):
+    {
+        "contexturl": "http://www.moodle.com",
+        "read": true,
+        "subject": "You have a notification",
+        "id": 1,
+        "iconurl": "http://www.moodle.com",
+        "shortenedsubject": "You have a...",
+        "timecreatedpretty": "5 minutes ago",
+        "viewmoreurl": "http://www.moodle.com"
+    }
+
+}}
+<div class="content-item-container notification {{^read}}unread{{/read}}"
+    data-region="notification-content-item-container"
+    data-id="{{id}}"
+    role="listitem">
+
+    {{#contexturl}}
+    <a class="context-link" href="{{{.}}}" data-action="content-item-link"
+    {{/contexturl}}
+    {{^contexturl}}
+    <div tabindex="0"
+    {{/contexturl}}
+        {{#read}}aria-label="{{subject}}"{{/read}}
+        {{^read}}aria-label="{{#str}} unreadnotification, message, {{subject}} {{/str}}"{{/read}}>
+
+        <div class="content-item-body">
+            <div class="notification-image">
+                <img src="{{{iconurl}}}" alt="{{#str}}notificationimage, message{{/str}}"/>
+            </div>
+            <div class="notification-message">{{shortenedsubject}}</div>
+        </div>
+        <div class="content-item-footer">
+            <div class="timestamp">{{timecreatedpretty}}</div>
+        </div>
+
+        {{#viewmoreurl}}
+            <a href="{{{.}}}" class="view-more" data-action="view-more">{{#str}} viewfullnotification, message {{/str}}</a>
+        {{/viewmoreurl}}
+    {{#contexturl}}
+    </a>
+    {{/contexturl}}
+    {{^contexturl}}
+    </div>
+    {{/contexturl}}
+</div>

@@ -1,0 +1,70 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template tool_lp/competencies_tree
+
+    Recursively build a competencies tree.
+
+    Classes required for JS:
+
+    Data attibutes required for JS:
+    * data-enhance=movetree
+
+    Context variables required for this template:
+    * id, shortname, idnumber, sortorder, parentid, competencyframeworkid, path, children
+
+    Example context (json):
+    {
+        "id": 1,
+        "shortname": "short",
+        "idnumber": "SHORT",
+        "sortorder": 1,
+        "parentid": 0,
+        "competencyframeworkid": 1,
+        "path": "/",
+        "haschildren": true,
+        "children": [{
+            "id": 2,
+            "shortname": "child",
+            "idnumber": "CHILD",
+            "sortorder": 1,
+            "parentid": 1,
+            "competencyframeworkid": 1,
+            "path": "/1/",
+            "children": []
+        }]
+    }
+}}
+<li data-id="{{id}}">
+    {{#canmanage}}
+    <span draggable="true">
+        {{{shortname}}}
+    </span>
+    {{/canmanage}}
+    {{^canmanage}}
+    <span>
+        {{{shortname}}}
+    </span>
+    {{/canmanage}}
+    {{#haschildren}}
+    <ul>
+    {{#children}}
+    {{> tool_lp/competencies_tree }}
+    {{/children}}
+    </ul>
+    {{/haschildren}}
+</li>

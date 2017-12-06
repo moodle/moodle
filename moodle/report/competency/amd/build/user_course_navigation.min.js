@@ -1,0 +1,1 @@
+define(["jquery"],function(a){var b=function(b,c,d,e){this._baseUrl=c,this._userId=d+"",this._courseId=e,a(b).on("change",this._userChanged.bind(this))};return b.prototype._userChanged=function(b){var c=a(b.target).val(),d="?user="+c+"&id="+this._courseId;document.location=this._baseUrl+d},b.prototype._userId=null,b.prototype._courseId=null,b.prototype._baseUrl=null,b});

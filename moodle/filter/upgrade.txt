@@ -1,0 +1,47 @@
+This file describes API changes in core filter API and plugins,
+information provided here is intended especially for developers.
+
+=== 3.0 ===
+
+* New argument $skipfilters to filter_manager::filter_text to allow applying
+  the filters with a given one omitted.
+
+* New admin setting class admin_setting_filter_types which can be used if you
+  want to make the disablefilters value in your code configurable.
+
+* Methods filter_manager::text_filtering_hash and moodle_text_filter::hash have been
+  deprecated. There were use by the old Moodle filtered text caching system
+  that was removed several releases ago.
+
+=== 2.7 ===
+
+* Finally filter may use $PAGE and $OUTPUT, yay!
+* Old global text caching was removed, each filter is now responsible
+  for own caching.
+
+=== 2.6 ===
+
+* filtersettings.php is now deprecated, migrate to standard settings.php
+
+=== 2.5 ===
+
+* legacy_filter emulation was removed
+* support for 'mod/*' filters was removed
+* use short filter name instead of old path, ex.: 'filter/tex' ---> 'tex'
+  in all filter API functions and methods
+
+=== 2.3 ===
+
+* new setup() method added to moodle_text_filter, invoked before
+  filtering happens, used to add all the requirements to the page
+  (js, css...) and/or other init tasks. See filter/glossary for
+  an example using the API (and MDL-32279 for its justification).
+
+=== 2.2 ===
+
+* legacy filters and legacy locations have been deprecated, so any
+  old filter should be updated to use the new moodle_text_filter,
+  and any filter bundled under mod/xxxx directories be moved to
+  /filter/xxxx (MDL-29995). They will stop working completely in
+  Moodle 2.3 (MDL-29996). See the glossary or data filters for
+  examples of legacy module filters and locations already updated.

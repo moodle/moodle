@@ -1,0 +1,6 @@
+groupname, description, groupidnumber,groupingname
+group-id-1, group-id-1, group-id-1,Grouping-1
+group-id-2, group-id-2, group-id-2,Grouping-2
+group-id-1-duplicate, Duplicate of group-id-1, group-id-1,Grouping-3
+group-noid-1, group-noid-1,,Grouping-3
+group-noid-2, group-noid-2,,Grouping-2

@@ -1,0 +1,20 @@
+{
+  "name": "moodle-core-dock",
+  "builds": {
+    "moodle-core-dock": {
+      "jsfiles": [
+        "dock.js",
+        "panel.js",
+        "tabheightmanager.js",
+        "actionkey.js",
+        "block.js",
+        "dockeditem.js"
+      ]
+    },
+    "moodle-core-dock-loader": {
+        "jsfiles": [
+            "loader.js"
+        ]
+    }
+  }
+}

@@ -1,0 +1,10 @@
+<gradebook some_other_value="false" >
+  <attributes>
+    <calculations_freeze>20160511</calculations_freeze>
+  </attributes>
+  <grade_categories>
+    <grade_category id="10">
+      <depth>1</depth>
+    </grade_category>
+  </grade_categories>
+</gradebook>

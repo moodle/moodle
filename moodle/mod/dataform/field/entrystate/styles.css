@@ -1,0 +1,49 @@
+/**
+ * This file is part of the Dataform module for Moodle - http://moodle.org/.
+ *
+ * The Dataform has been developed as an enhanced counterpart
+ * of Moodle's Database activity module (1.9.11+ (20110323)).
+ * To the extent that Dataform code corresponds to Database code,
+ * certain copyrights on the Database module may obtain.
+ *
+ * Moodle is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Moodle is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Moodle. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/**
+ * @package dataformfield
+ * @subpackage entrystate
+ * @copyright 2013 Itamar Tzadok
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+.entrystates-wrapper a{
+    color: inherit;
+}
+
+.entrystates-wrapper a span.entrystate{
+    background-color: #FFDDAA;
+}
+
+.entrystate {
+    padding: 2px;
+    min-width: 60px;
+    border: 1px solid #999;
+    background-color: #CCC;
+    text-align: center;
+    display:inline-block;
+}
+
+.entrystate.currentstate{
+    background-color: #DDFFAA;
+}

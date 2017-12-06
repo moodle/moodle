@@ -1,0 +1,5 @@
+username,password,firstname,lastname,email,cohort1
+tomjones,Pass1234*,Tom,Jones,tomjones@example.com,ASD
+marysmith,Pass1234*,Mary,Smith,marysmith@example.com,DSA
+bobjones,Pass1234*,Bob,Jones,bobjones@example.com,ASD
+alicesmith,Pass1234*,Alice,Smith,alicesmith@example.com,DSA

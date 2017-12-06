@@ -1,0 +1,186 @@
+/**
+ * This file is part of the Dataform module for Moodle - http://moodle.org/.
+ *
+ * The Dataform has been developed as an enhanced counterpart
+ * of Moodle's Database activity module (1.9.11+ (20110323)).
+ * To the extent that Dataform code corresponds to Database code,
+ * certain copyrights on the Database module may obtain.
+ *
+ * Moodle is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Moodle is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Moodle. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/**
+ * @package mod-dataform
+ * @copyright 2015 Itamar Tzadok
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+/** MODULE COURSE APPEARANCE **/
+.section .activity.dataform-inlineview .activityinstance {
+    display: none;
+}
+
+ /** PAGE MOD EMBED **/
+ #page-mod-dataform-embed {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+
+#page-mod-dataform-embed.pagelayout-embedded #content {
+    padding: 0;
+}
+
+/** QUICK MENUS **/
+.path-mod-dataform .quickmenu {
+}
+
+.path-mod-dataform .quickmenus-wrapper .quickmenu,
+.path-mod-dataform .quickfilters-wrapper .quickfilter{
+    float: left;
+    margin-right: 30px;
+}
+
+.path-mod-dataform .quickmenus-wrapper,
+.path-mod-dataform .quickfilters-wrapper {
+    border: 1px solid #DDD;
+    padding: 10px;
+    margin: 10px 0;
+}
+
+/** ADD NEW ENTRY **/
+.path-mod-dataform .addnewentry-wrapper {
+    margin: 20px 0;
+}
+
+.path-mod-dataform .addnewentry{
+    padding: 10px 15px;
+    background: #4479BA;
+    color: #FFF;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    border: solid 1px #20538D;
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.4);
+    -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 1px 1px rgba(0, 0, 0, 0.2);
+    -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 1px 1px rgba(0, 0, 0, 0.2);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 1px 1px rgba(0, 0, 0, 0.2);
+}
+
+.path-mod-dataform .addnewentry:hover, .addnewentry:focus {
+    color: #FFF;
+    background: #356094;
+    border: solid 1px #2A4E77;
+    text-decoration: none;
+}
+
+/** PAGING BAR **/
+#page-mod-dataform-view .paging {
+  margin-top: 1em;
+  margin-bottom: 1em;
+  padding: 0.5em;
+  overflow: hidden;
+}
+
+#page-mod-dataform-view .paging div{
+  margin-left: 1em;
+  margin-right: 1em;
+  float: left;
+  min-width: 30px;
+  text-align: center;
+  border: 1 solid #EFEFEF;
+}
+
+#page-mod-dataform-view .paging div.current{
+  background-color: #EFEFEF;
+}
+
+/** SINGLE SELECT **/
+#page-mod-dataform-view .singleselect {
+  margin: 0.5em 0;
+}
+
+/** ENTRIES VIEW **/
+#page-mod-dataform-embed .entriesview,
+#page-mod-dataform-view .entriesview {
+  overflow: auto;
+  padding: 10px;
+  border: 1px solid #DDD;;
+}
+
+#page-mod-dataform-embed .entriesview .entry,
+#page-mod-dataform-view .entriesview .entry {
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #DDD;;
+}
+
+/** ENTRIES FORM **/
+#page-mod-dataform-view .entriesform {
+    overflow: auto;
+}
+
+#page-mod-dataform-embed.gecko .mform fieldset.hidden,
+#page-mod-dataform-view.gecko .mform fieldset.hidden {
+  display: table-column;
+}
+
+#page-mod-dataform-embed .mform.entriesform fieldset.hidden,
+#page-mod-dataform-embed .mform.entriesform fieldset.hidden div,
+#page-mod-dataform-view .mform.entriesform fieldset.hidden,
+#page-mod-dataform-view .mform.entriesform fieldset.hidden div{
+  margin: 0;
+  padding: 0;
+}
+
+#page-mod-dataform-embed .mform .fitem .fitemtitle,
+#page-mod-dataform-embed .mform.entriesform .fitem .fitemtitle,
+#page-mod-dataform-view .mform.entriesform .fitem .fitemtitle {
+  float: left;
+  text-align: left;
+  width: auto;
+}
+
+#page-mod-dataform-embed .mform .fitem .felement,
+#page-mod-dataform-embed .mform.entriesform .fitem .felement,
+#page-mod-dataform-embed .mform .entriesform .fitem .feditor,
+#page-mod-dataform-view .mform.entriesform .fitem .felement,
+#page-mod-dataform-view .mform.entriesform .fitem .feditor {
+  margin-left: 0;
+  width: 100%;
+}
+
+#page-mod-dataform-embed .mform.entriesform div.fdescription.required,
+#page-mod-dataform-view .mform.entriesform div.fdescription.required {
+    display: none;
+}
+
+/** VIEWS INDEX **/
+#page-mod-dataform-view-index .viewvisibilityselector.viewdisabled select,
+#page-mod-dataform-view-index .viewvisibilityselector select option[value="0"] {
+    background-color: #666;
+    color: #FFF;
+}
+
+#page-mod-dataform-view-index .viewvisibilityselector.viewvisible select,
+#page-mod-dataform-view-index .viewvisibilityselector select option[value="1"] {
+    background-color: #FFF;
+    color: #555;
+}
+
+#page-mod-dataform-view-index .viewvisibilityselector.viewhidden select,
+#page-mod-dataform-view-index .viewvisibilityselector select option[value="2"] {
+    background-color: #DDD;
+    color: #555;
+}

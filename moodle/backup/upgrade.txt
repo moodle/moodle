@@ -1,0 +1,51 @@
+This files describes API changes in /backup/*,
+information provided here is intended especially for developers.
+
+=== 3.1 ===
+
+* New close() method added to loggers so they can close any open resource. Previously
+  any backup and restore operation using the file logger may be leaving unclosed files.
+* New destroy() method added to loggers, normally called from backup and restore controllers
+  own destroy() method to ensure that all references in the chained loggers are deleted
+  and any open resource within them is closed properly.
+
+=== 3.0 ===
+
+* The backup_auto_keep setting, in automated backups configuration, is now
+  renamed to backup_auto_max_kept as part of a rationalise of naming (see MDL-50602)
+
+=== 2.6 ===
+
+* The backup_controller_dbops::create_temptable_from_real_table()
+  method is not available anymore. Temp tables must be created
+  inline always.
+
+* Using the info field from backup_ids_temp or backup_files_temp
+  must now go via backup_controller_dbops::decode_backup_temp_info() and
+  backup_controller_dbops::encode_backup_temp_info(). The implementation
+  of the encoding has changed.  These new functions encapsulate any future
+  changes to the encoding.
+
+=== 2.5 ===
+
+* New optional param $sortby in backup set_source_table() allows to
+    specify the ORDER BY clause to be used. Previously it was required
+    to use the set_source_sql() more complex alternative in places
+    requiring ordering.
+* The old 1.9 files backuplib.php, lib.php and restorelib.php and the bb directory,
+    (all under /backup) have been deleted and no code should rely on them anymore.
+
+=== 2.4 ===
+
+* Since 2.3.1+ the backup file name schema has changed. The ID of the course will always be part of
+    the filename regardless of the setting 'backup_shortname'. See MDL-33812.
+
+=== 2.3 ===
+
+* Since 2.3.1+ the backup file name schema has changed. The ID of the course will always be part of
+    the filename regardless of the setting 'backup_shortname'. See MDL-33812.
+
+=== 2.2 ===
+
+* Since 2.2.4+ the backup file name schema has changed. The ID of the course will always be part of
+    the filename regardless of the setting 'backup_shortname'. See MDL-33812.

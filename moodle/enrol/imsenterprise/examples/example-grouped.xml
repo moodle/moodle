@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<enterprise>
+  <properties lang="EN"><!-- ccc -->
+    <datasource>sits:vision</datasource>
+    <datetime>28/Oct/2005</datetime>
+    <target>moodle</target>
+  </properties>
+  <person>
+    <sourcedid>
+      <source>sits:vision</source>
+      <id>91046433</id>
+    </sourcedid>
+    <userid/>
+    <name>
+      <fn>Simon Shikalislami </fn>
+      <n>
+        <family> SHIKALISLAMI</family>
+        <given> SIMON</given>
+      </n>
+    </name>
+    <extension>
+      <webcredential/>
+    </extension>
+  </person>
+  <person recstatus = "1">
+    <sourcedid>
+      <source>sits:vision</source>
+      <id>90078058</id>
+    </sourcedid>
+    <userid>IMGBY26</userid>
+    <name>
+      <fn>Chloe Eva Piotrowska </fn>
+      <n>
+        <family> PIOTROWSKA</family>
+        <given> CHLOE</given>
+      </n>
+    </name>
+    <extension>
+      <webcredential/>
+    </extension>
+  </person>
+  <person>
+    <sourcedid>
+      <source>sits:vision</source>
+      <id>90182274</id>
+    </sourcedid>
+    <userid>IMCAY21</userid>
+    <name>
+      <fn>Aliza Quist Yeboah </fn>
+      <n>
+        <family> YEBOAH</family>
+        <given> ALIZA</given>
+      </n>
+    </name>
+    <extension>
+      <webcredential/>
+    </extension>
+  </person>
+  <person>
+    <sourcedid>
+      <source>sits:vision</source>
+      <id>90528553</id>
+    </sourcedid>
+    <userid>IMGBX76</userid>
+    <name>
+      <fn>Miriam Rajakumar </fn>
+      <n>
+        <family> RAJAKUMAR</family>
+        <given> MIRIAM</given>
+      </n>
+    </name>
+    <extension>
+      <webcredential/>
+    </extension>
+  </person>
+  <person>
+    <sourcedid>
+      <source>sits:vision</source>
+      <id>DSTOW61</id>
+    </sourcedid>
+    <userid>CCAADAS</userid>
+    <name>
+      <fn>Dan Stowell</fn>
+      <n>
+        <family> STOWELL</family>
+        <given> DAN</given>
+      </n>
+    </name>
+    <extension>
+      <webcredential/>
+    </extension>
+  </person>
+  <group recstatus="3">
+    <sourcedid>
+      <source>sits:vision</source>
+      <id>PHRE1001A2005/06T1/2</id>
+    </sourcedid>
+    <description>
+      <short>Phrenology</short>
+    </description>
+    <extension>
+      <template>Blank</template>
+    </extension>
+    <org><orgunit>Inconsequential studies</orgunit></org>
+  </group>
+  <membership>
+    <sourcedid>
+      <source>sits:vision</source>
+      <id>PHRE1001A2005/06T1/2</id>
+    </sourcedid>
+    <member>
+      <sourcedid>
+        <source>sits:vision</source>
+        <id> 91046433  </id>
+      </sourcedid>
+      <idtype idtype="1"/>
+      <role roletype="01">
+        <userid/>
+        <status>1</status>
+        <extension><cohort>yellow team</cohort></extension>
+      </role>
+    </member>
+    <member>
+      <sourcedid>
+        <source>sits:vision</source>
+        <id> 90078058  </id>
+      </sourcedid>
+      <idtype idtype="1"/>
+      <role roletype="01" recstatus="3">
+        <userid>IMGBY26</userid>
+        <status>1</status>
+        <extension><cohort>green team</cohort></extension>
+      </role>
+    </member>
+    <member>
+      <sourcedid>
+        <source>sits:vision</source>
+        <id> 90182274  </id>
+      </sourcedid>
+      <idtype idtype="1"/>
+      <role roletype="01">
+        <userid>IMCAY21</userid>
+        <status>1</status>
+        <extension><cohort>green team</cohort></extension>
+      </role>
+    </member>
+    <member>
+      <sourcedid>
+        <source>sits:vision</source>
+        <id> 90528553  </id>
+      </sourcedid>
+      <idtype idtype="1"/>
+      <role roletype="01">
+        <userid>IMGBX76</userid>
+        <status>1</status><timeframe><begin restrict="1">2005-12-25</begin><end restrict="1">2005-12-31</end></timeframe>
+        <extension><cohort>yellow team</cohort></extension>
+      </role>
+    </member>
+    <member>
+      <sourcedid>
+        <source>sits:vision</source>
+        <id>DSTOW61 </id>
+      </sourcedid>
+      <idtype idtype="1"/>
+      <role roletype="02" recstatus="2">
+        <userid>CCAADAS</userid>
+        <status>1</status>
+      </role>
+    </member>
+  </membership>
+</enterprise>
