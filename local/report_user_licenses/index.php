@@ -291,7 +291,7 @@ if (!empty($companyid)) {
 
             // Set up the filter form.
             $params['companyid'] = $companyid;
-            $params['licensestatus'] = true;
+            $params['addlicensestatus'] = true;
             $params['adddodownload'] = true;
             $mform = new iomad_user_filter_form(null, $params);
             $mform->set_data($params);

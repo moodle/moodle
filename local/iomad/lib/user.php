@@ -695,7 +695,7 @@ class iomad_user_filter_form extends moodleform {
     protected $showhistoric;
     protected $addfrom;
     protected $addto;
-    protected $licensestatus;
+    protected $addlicensestatus;
 
     public function definition() {
         global $CFG, $DB, $USER, $SESSION;
@@ -726,10 +726,10 @@ class iomad_user_filter_form extends moodleform {
             $addto = false;
         }
 
-        if (!empty($this->_customdata['licensestatus'])) {
-            $licensestatus = true;
+        if (!empty($this->_customdata['addlicensestatus'])) {
+            $addlicensestatus = true;
         } else {
-            $licensestatus = false;
+            $addlicensestatus = false;
         }
 
         $mform =& $this->_form;
@@ -801,7 +801,7 @@ class iomad_user_filter_form extends moodleform {
             $mform->addElement('date_selector', $toname, get_string($toname, 'block_iomad_company_admin'), array('optional' => 'yes'));
         }
 
-        if ($licensestatus) {
+        if ($addlicensestatus) {
             $licenseusearray = array ('0' => get_string('any'),
                                       '1' => get_string('notinuse', 'block_iomad_company_admin'),
                                       '2' => get_string('inuse', 'block_iomad_company_admin'));
