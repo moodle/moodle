@@ -1902,5 +1902,38 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2017121900.00);
     }
 
+    if ($oldversion < 2017122200.01) {
+
+        // Define field indexpriority to be added to search_index_requests. Allow null initially.
+        $table = new xmldb_table('search_index_requests');
+        $field = new xmldb_field('indexpriority', XMLDB_TYPE_INTEGER, '10',
+                null, null, null, null, 'partialtime');
+
+        // Conditionally add field.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+
+            // Set existing values to 'normal' value (100).
+            $DB->set_field('search_index_requests', 'indexpriority', 100);
+
+            // Now make the field 'NOT NULL'.
+            $field = new xmldb_field('indexpriority', XMLDB_TYPE_INTEGER, '10',
+                    null, XMLDB_NOTNULL, null, null, 'partialtime');
+            $dbman->change_field_notnull($table, $field);
+        }
+
+        // Define index indexprioritytimerequested (not unique) to be added to search_index_requests.
+        $index = new xmldb_index('indexprioritytimerequested', XMLDB_INDEX_NOTUNIQUE,
+                array('indexpriority', 'timerequested'));
+
+        // Conditionally launch add index indexprioritytimerequested.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2017122200.01);
+    }
+
     return true;
 }

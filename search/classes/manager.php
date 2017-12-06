@@ -88,6 +88,16 @@ class manager {
     const DISPLAY_INDEXING_PROGRESS_EVERY = 30.0;
 
     /**
+     * @var int Context indexing: normal priority.
+     */
+    const INDEX_PRIORITY_NORMAL = 100;
+
+    /**
+     * @var int Context indexing: low priority for reindexing.
+     */
+    const INDEX_PRIORITY_REINDEXING = 50;
+
+    /**
      * @var \core_search\base[] Enabled search areas.
      */
     protected static $enabledsearchareas = null;
@@ -1147,32 +1157,50 @@ class manager {
      *
      * @param \context $context Context to index within
      * @param string $areaid Area to index, '' = all areas
+     * @param int $priority Priority (INDEX_PRIORITY_xx constant)
      */
-    public static function request_index(\context $context, $areaid = '') {
+    public static function request_index(\context $context, $areaid = '',
+            $priority = self::INDEX_PRIORITY_NORMAL) {
         global $DB;
 
         // Check through existing requests for this context or any parent context.
         list ($contextsql, $contextparams) = $DB->get_in_or_equal(
                 $context->get_parent_context_ids(true));
         $existing = $DB->get_records_select('search_index_requests',
-                'contextid ' . $contextsql, $contextparams, '', 'id, searcharea, partialarea');
+                'contextid ' . $contextsql, $contextparams, '',
+                'id, searcharea, partialarea, indexpriority');
         foreach ($existing as $rec) {
             // If we haven't started processing the existing request yet, and it covers the same
             // area (or all areas) then that will be sufficient so don't add anything else.
             if ($rec->partialarea === '' && ($rec->searcharea === $areaid || $rec->searcharea === '')) {
-                return;
+                // If the existing request has the same (or higher) priority, no need to add anything.
+                if ($rec->indexpriority >= $priority) {
+                    return;
+                }
+                // The existing request has lower priority. If it is exactly the same, then just
+                // adjust the priority of the existing request.
+                if ($rec->searcharea === $areaid) {
+                    $DB->set_field('search_index_requests', 'indexpriority', $priority,
+                            ['id' => $rec->id]);
+                    return;
+                }
+                // The existing request would cover this area but is a lower priority. We need to
+                // add the new request even though that means we will index part of it twice.
             }
         }
 
         // No suitable existing request, so add a new one.
         $newrecord = [ 'contextid' => $context->id, 'searcharea' => $areaid,
-                'timerequested' => time(), 'partialarea' => '', 'partialtime' => 0 ];
+                'timerequested' => (int)self::get_current_time(),
+                'partialarea' => '', 'partialtime' => 0,
+                'indexpriority' => $priority ];
         $DB->insert_record('search_index_requests', $newrecord);
     }
 
     /**
-     * Processes outstanding index requests. This will take the first item from the queue and
-     * process it, continuing until an optional time limit is reached.
+     * Processes outstanding index requests. This will take the first item from the queue (taking
+     * account the indexing priority) and process it, continuing until an optional time limit is
+     * reached.
      *
      * If there are no index requests, the function will do nothing.
      *
@@ -1186,7 +1214,6 @@ class manager {
             $progress = new \null_progress_trace();
         }
 
-        $complete = false;
         $before = self::get_current_time();
         if ($timelimit) {
             $stopat = $before + $timelimit;
@@ -1194,11 +1221,10 @@ class manager {
         while (true) {
             // Retrieve first request, using fully defined ordering.
             $requests = $DB->get_records('search_index_requests', null,
-                    'timerequested, contextid, searcharea',
+                    'indexpriority DESC, timerequested, contextid, searcharea',
                     'id, contextid, searcharea, partialarea, partialtime', 0, 1);
             if (!$requests) {
                 // If there are no more requests, stop.
-                $complete = true;
                 break;
             }
             $request = reset($requests);
@@ -1208,6 +1234,12 @@ class manager {
             $beforeindex = self::get_current_time();
             if ($timelimit) {
                 $remainingtime = $stopat - $beforeindex;
+
+                // If the time limit expired already, stop now. (Otherwise we might accidentally
+                // index with no time limit or a negative time limit.)
+                if ($remainingtime <= 0) {
+                    break;
+                }
             }
 
             // Show a message before each request, indicating what will be indexed.

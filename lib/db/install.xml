@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20171205" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20171222" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -3770,11 +3770,15 @@
         <FIELD NAME="timerequested" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Time at which this index update was requested."/>
         <FIELD NAME="partialarea" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="If processing of this context partially completed, set to the area that needs processing next. Blank indicates not processed yet."/>
         <FIELD NAME="partialtime" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="If processing partially completed, set to the timestamp within the next area where processing should start. 0 indicates not processed yet."/>
+        <FIELD NAME="indexpriority" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Priority value so that important requests can be dealt with first; higher numbers are processed first"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
         <KEY NAME="contextid" TYPE="foreign" FIELDS="contextid" REFTABLE="context" REFFIELDS="id"/>
       </KEYS>
+      <INDEXES>
+        <INDEX NAME="indexprioritytimerequested" UNIQUE="false" FIELDS="indexpriority, timerequested"/>
+      </INDEXES>
     </TABLE>
   </TABLES>
 </XMLDB>
