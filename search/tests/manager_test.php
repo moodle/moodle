@@ -526,6 +526,7 @@ class search_manager_testcase extends advanced_testcase {
         $this->resetAfterTest();
 
         $frontpage = $DB->get_record('course', array('id' => SITEID));
+        $frontpagectx = context_course::instance($frontpage->id);
         $course1 = $this->getDataGenerator()->create_course();
         $course1ctx = context_course::instance($course1->id);
         $course2 = $this->getDataGenerator()->create_course();
@@ -557,14 +558,13 @@ class search_manager_testcase extends advanced_testcase {
         $this->assertTrue($search->get_areas_user_accesses());
 
         $sitectx = \context_course::instance(SITEID);
-        $systemctxid = \context_system::instance()->id;
 
         // Can access the frontpage ones.
         $this->setUser($noaccess);
         $contexts = $search->get_areas_user_accesses();
         $this->assertEquals(array($frontpageforumcontext->id => $frontpageforumcontext->id), $contexts[$this->forumpostareaid]);
         $this->assertEquals(array($sitectx->id => $sitectx->id), $contexts[$this->mycoursesareaid]);
-        $mockctxs = array($noaccessctx->id => $noaccessctx->id, $systemctxid => $systemctxid);
+        $mockctxs = array($noaccessctx->id => $noaccessctx->id, $frontpagectx->id => $frontpagectx->id);
         $this->assertEquals($mockctxs, $contexts[$mockareaid]);
 
         $this->setUser($teacher);
@@ -574,7 +574,8 @@ class search_manager_testcase extends advanced_testcase {
         $this->assertEquals($frontpageandcourse1, $contexts[$this->forumpostareaid]);
         $this->assertEquals(array($sitectx->id => $sitectx->id, $course1ctx->id => $course1ctx->id),
             $contexts[$this->mycoursesareaid]);
-        $mockctxs = array($teacherctx->id => $teacherctx->id, $systemctxid => $systemctxid);
+        $mockctxs = array($teacherctx->id => $teacherctx->id,
+                $frontpagectx->id => $frontpagectx->id, $course1ctx->id => $course1ctx->id);
         $this->assertEquals($mockctxs, $contexts[$mockareaid]);
 
         $this->setUser($student);
@@ -582,7 +583,8 @@ class search_manager_testcase extends advanced_testcase {
         $this->assertEquals($frontpageandcourse1, $contexts[$this->forumpostareaid]);
         $this->assertEquals(array($sitectx->id => $sitectx->id, $course1ctx->id => $course1ctx->id),
             $contexts[$this->mycoursesareaid]);
-        $mockctxs = array($studentctx->id => $studentctx->id, $systemctxid => $systemctxid);
+        $mockctxs = array($studentctx->id => $studentctx->id,
+                $frontpagectx->id => $frontpagectx->id, $course1ctx->id => $course1ctx->id);
         $this->assertEquals($mockctxs, $contexts[$mockareaid]);
 
         // Hide the activity.
@@ -616,6 +618,32 @@ class search_manager_testcase extends advanced_testcase {
         $allcontexts = array($context1->id => $context1->id, $context2->id => $context2->id);
         $this->assertEquals($allcontexts, $contexts[$this->forumpostareaid]);
         $this->assertEquals(array($course1ctx->id => $course1ctx->id), $contexts[$this->mycoursesareaid]);
+
+        // Test context limited search with no course limit.
+        $contexts = $search->get_areas_user_accesses(false,
+                [$frontpageforumcontext->id, $course2ctx->id]);
+        $this->assertEquals([$frontpageforumcontext->id => $frontpageforumcontext->id],
+                $contexts[$this->forumpostareaid]);
+        $this->assertEquals([$course2ctx->id => $course2ctx->id],
+                $contexts[$this->mycoursesareaid]);
+
+        // Test context limited search with course limit.
+        $contexts = $search->get_areas_user_accesses([$course1->id, $course2->id],
+                [$frontpageforumcontext->id, $course2ctx->id]);
+        $this->assertArrayNotHasKey($this->forumpostareaid, $contexts);
+        $this->assertEquals([$course2ctx->id => $course2ctx->id],
+                $contexts[$this->mycoursesareaid]);
+
+        // Single context and course.
+        $contexts = $search->get_areas_user_accesses([$course1->id], [$context1->id]);
+        $this->assertEquals([$context1->id => $context1->id], $contexts[$this->forumpostareaid]);
+        $this->assertArrayNotHasKey($this->mycoursesareaid, $contexts);
+
+        // For admins, this is still limited only if we specify the things, so it should be same.
+        $this->setAdminUser();
+        $contexts = $search->get_areas_user_accesses([$course1->id], [$context1->id]);
+        $this->assertEquals([$context1->id => $context1->id], $contexts[$this->forumpostareaid]);
+        $this->assertArrayNotHasKey($this->mycoursesareaid, $contexts);
     }
 
     /**
@@ -624,6 +652,8 @@ class search_manager_testcase extends advanced_testcase {
      * @return void
      */
     public function test_search_user_accesses_blocks() {
+        global $DB;
+
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -715,6 +745,26 @@ class search_manager_testcase extends advanced_testcase {
         $this->setUser($student1);
         $limitedcontexts = $search->get_areas_user_accesses([$course3->id]);
         $this->assertEquals($contexts['block_html-content'], $limitedcontexts['block_html-content']);
+
+        // Get block context ids for the blocks that appear.
+        global $DB;
+        $blockcontextids = $DB->get_fieldset_sql('
+            SELECT x.id
+              FROM {block_instances} bi
+              JOIN {context} x ON x.instanceid = bi.id AND x.contextlevel = ?
+             WHERE (parentcontextid = ? OR parentcontextid = ?)
+                   AND blockname = ?
+          ORDER BY bi.id', [CONTEXT_BLOCK, $context1->id, $context3->id, 'html']);
+
+        // Context limited search (no course).
+        $contexts = $search->get_areas_user_accesses(false,
+                [$blockcontextids[0], $blockcontextids[2]]);
+        $this->assertCount(2, $contexts['block_html-content']);
+
+        // Context limited search (with course 3).
+        $contexts = $search->get_areas_user_accesses([$course2->id, $course3->id],
+                [$blockcontextids[0], $blockcontextids[2]]);
+        $this->assertCount(1, $contexts['block_html-content']);
     }
 
     /**

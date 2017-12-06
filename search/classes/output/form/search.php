@@ -48,6 +48,13 @@ class search extends \moodleform {
         $mform->setType('q', PARAM_TEXT);
         $mform->addRule('q', get_string('required'), 'required', null, 'client');
 
+        // Show the 'search within' option if the user came from a particular context.
+        if (!empty($this->_customdata['searchwithin'])) {
+            $mform->addElement('select', 'searchwithin', get_string('searchwithin', 'search'),
+                    $this->_customdata['searchwithin']);
+            $mform->setDefault('searchwithin', '');
+        }
+
         $mform->addElement('header', 'filtersection', get_string('filterheader', 'search'));
         $mform->setExpanded('filtersection', false);
 
@@ -79,11 +86,20 @@ class search extends \moodleform {
         $mform->addElement('course', 'courseids', get_string('courses', 'core'), $options);
         $mform->setType('courseids', PARAM_INT);
 
+        // Course options should be hidden if we choose to search within a specific location.
+        if (!empty($this->_customdata['searchwithin'])) {
+            $mform->hideIf('courseids', 'searchwithin', 'ne', '');
+        }
+
         $mform->addElement('date_time_selector', 'timestart', get_string('fromtime', 'search'), array('optional' => true));
         $mform->setDefault('timestart', 0);
 
         $mform->addElement('date_time_selector', 'timeend', get_string('totime', 'search'), array('optional' => true));
         $mform->setDefault('timeend', 0);
+
+        // Source context i.e. the page they came from when they clicked search.
+        $mform->addElement('hidden', 'context');
+        $mform->setType('context', PARAM_INT);
 
         $this->add_action_buttons(false, get_string('search', 'search'));
     }

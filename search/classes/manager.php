@@ -360,14 +360,22 @@ class manager {
      * information and there will be a performance benefit on passing only some contexts
      * instead of the whole context array set.
      *
+     * The areas can be limited by course id and context id. If specifying context ids, results
+     * are limited to the exact context ids specified and not their children (for example, giving
+     * the course context id would result in including search items with the course context id, and
+     * not anything from a context inside the course). For performance, you should also specify
+     * course id(s) when using context ids.
+     *
      * @param array|false $limitcourseids An array of course ids to limit the search to. False for no limiting.
+     * @param array|false $limitcontextids An array of context ids to limit the search to. False for no limiting.
      * @return bool|array Indexed by area identifier (component + area name). Returns true if the user can see everything.
      */
-    protected function get_areas_user_accesses($limitcourseids = false) {
+    protected function get_areas_user_accesses($limitcourseids = false, $limitcontextids = false) {
         global $DB, $USER;
 
-        // All results for admins. Eventually we could add a new capability for managers.
-        if (is_siteadmin()) {
+        // All results for admins (unless they have chosen to limit results). Eventually we could
+        // add a new capability for managers.
+        if (is_siteadmin() && !$limitcourseids && !$limitcontextids) {
             return true;
         }
 
@@ -392,23 +400,42 @@ class manager {
             // want to allow guests to retrieve data from them.
 
             $systemcontextid = \context_system::instance()->id;
-            foreach ($areasbylevel[CONTEXT_SYSTEM] as $areaid => $searchclass) {
-                $areascontexts[$areaid][$systemcontextid] = $systemcontextid;
+            if (!$limitcontextids || in_array($systemcontextid, $limitcontextids)) {
+                foreach ($areasbylevel[CONTEXT_SYSTEM] as $areaid => $searchclass) {
+                    $areascontexts[$areaid][$systemcontextid] = $systemcontextid;
+                }
             }
         }
 
         if (!empty($areasbylevel[CONTEXT_USER])) {
             if ($usercontext = \context_user::instance($USER->id, IGNORE_MISSING)) {
-                // Extra checking although only logged users should reach this point, guest users have a valid context id.
-                foreach ($areasbylevel[CONTEXT_USER] as $areaid => $searchclass) {
-                    $areascontexts[$areaid][$usercontext->id] = $usercontext->id;
+                if (!$limitcontextids || in_array($usercontext->id, $limitcontextids)) {
+                    // Extra checking although only logged users should reach this point, guest users have a valid context id.
+                    foreach ($areasbylevel[CONTEXT_USER] as $areaid => $searchclass) {
+                        $areascontexts[$areaid][$usercontext->id] = $usercontext->id;
+                    }
                 }
             }
         }
 
-        // Get the courses where the current user has access.
-        $courses = enrol_get_my_courses(array('id', 'cacherev'), 'id', 0, [],
-                (bool)get_config('core', 'searchallavailablecourses'));
+        if (is_siteadmin()) {
+            // Admins have access to all courses regardless of enrolment.
+            if ($limitcourseids) {
+                list ($coursesql, $courseparams) = $DB->get_in_or_equal($limitcourseids);
+                $coursesql = 'id ' . $coursesql;
+            } else {
+                $coursesql = '';
+                $courseparams = [];
+            }
+            // Get courses using the same list of fields from enrol_get_my_courses.
+            $courses = $DB->get_records_select('course', $coursesql, $courseparams, '',
+                    'id, category, sortorder, shortname, fullname, idnumber, startdate, visible, ' .
+                    'groupmode, groupmodeforce, cacherev');
+        } else {
+            // Get the courses where the current user has access.
+            $courses = enrol_get_my_courses(array('id', 'cacherev'), 'id', 0, [],
+                    (bool)get_config('core', 'searchallavailablecourses'));
+        }
 
         if (empty($limitcourseids) || in_array(SITEID, $limitcourseids)) {
             $courses[SITEID] = get_course(SITEID);
@@ -429,7 +456,8 @@ class manager {
             // Info about the course modules.
             $modinfo = get_fast_modinfo($course);
 
-            if (!empty($areasbylevel[CONTEXT_COURSE])) {
+            if (!empty($areasbylevel[CONTEXT_COURSE]) &&
+                    (!$limitcontextids || in_array($coursecontext->id, $limitcontextids))) {
                 // Add the course contexts the user can view.
                 foreach ($areasbylevel[CONTEXT_COURSE] as $areaid => $searchclass) {
                     if ($course->visible || has_capability('moodle/course:viewhiddencourses', $coursecontext)) {
@@ -448,6 +476,10 @@ class manager {
 
                     $modinstances = $modinfo->get_instances_of($modulename);
                     foreach ($modinstances as $modinstance) {
+                        // Skip module context if not included in list of context ids.
+                        if ($limitcontextids && !in_array($modinstance->context->id, $limitcontextids)) {
+                            continue;
+                        }
                         if ($modinstance->uservisible) {
                             $areascontexts[$areaid][$modinstance->context->id] = $modinstance->context->id;
                         }
@@ -468,6 +500,14 @@ class manager {
             // Get list of course contexts.
             list ($contextsql, $contextparams) = $DB->get_in_or_equal($coursecontextids);
 
+            // Get list of block context (if limited).
+            $blockcontextwhere = '';
+            $blockcontextparams = [];
+            if ($limitcontextids) {
+                list ($blockcontextsql, $blockcontextparams) = $DB->get_in_or_equal($limitcontextids);
+                $blockcontextwhere = 'AND x.id ' . $blockcontextsql;
+            }
+
             // Query all blocks that are within an included course, and are set to be visible, and
             // in a supported page type (basically just course view). This query could be
             // extended (or a second query added) to support blocks that are within a module
@@ -482,6 +522,7 @@ class manager {
                                AND bp.subpage = ''
                                AND bp.visible = 0
                          WHERE bi.parentcontextid $contextsql
+                               $blockcontextwhere
                                AND bi.blockname $blocknamesql
                                AND bi.subpagepattern IS NULL
                                AND (bi.pagetypepattern = 'site-index'
@@ -489,7 +530,7 @@ class manager {
                                    OR bi.pagetypepattern = 'course-*'
                                    OR bi.pagetypepattern = '*')
                                AND bp.id IS NULL",
-                    array_merge([CONTEXT_BLOCK], $contextparams, $blocknameparams));
+                    array_merge([CONTEXT_BLOCK], $contextparams, $blockcontextparams, $blocknameparams));
             $blockcontextsbyname = [];
             foreach ($blockrecs as $blockrec) {
                 if (empty($blockcontextsbyname[$blockrec->blockname])) {
@@ -579,8 +620,13 @@ class manager {
      *
      * It might return the results from the cache instead.
      *
-     * @param stdClass $formdata
-     * @param int      $limit The maximum number of documents to return
+     * Valid formdata options include:
+     * - q (query text)
+     * - courseids (optional list of course ids to restrict)
+     * - contextids (optional list of context ids to restrict)
+     *
+     * @param \stdClass $formdata Query input data (usually from search form)
+     * @param int $limit The maximum number of documents to return
      * @return \core_search\document[]
      */
     public function search(\stdClass $formdata, $limit = 0) {
@@ -623,10 +669,15 @@ class manager {
             $limitcourseids = $formdata->courseids;
         }
 
+        $limitcontextids = false;
+        if (!empty($formdata->contextids)) {
+            $limitcontextids = $formdata->contextids;
+        }
+
         // Clears previous query errors.
         $this->engine->clear_query_error();
 
-        $areascontexts = $this->get_areas_user_accesses($limitcourseids);
+        $areascontexts = $this->get_areas_user_accesses($limitcourseids, $limitcontextids);
         if (!$areascontexts) {
             // User can not access any context.
             $docs = array();

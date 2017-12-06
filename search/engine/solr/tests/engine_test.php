@@ -209,7 +209,7 @@ class search_solr_engine_testcase extends advanced_testcase {
 
         // Based on core_mocksearch\search\indexer.
         $this->assertEquals($USER->id, $results[0]->get('userid'));
-        $this->assertEquals(\context_system::instance()->id, $results[0]->get('contextid'));
+        $this->assertEquals(\context_course::instance(SITEID)->id, $results[0]->get('contextid'));
 
         // Do a test to make sure we aren't searching non-query fields, like areaid.
         $querydata->q = \core_search\manager::generate_areaid('core_mocksearch', 'mock_search_area');
@@ -757,5 +757,92 @@ class search_solr_engine_testcase extends advanced_testcase {
         $this->assertEquals(20, $results->totalcount);
         $this->assertCount(10, $results->results);
         $this->assertEquals(1, $results->actualpage);
+    }
+
+    /**
+     * Tests searching for results restricted to context id.
+     */
+    public function test_context_restriction() {
+        // Use real search areas.
+        $this->search->clear_static();
+        $this->search->add_core_search_areas();
+
+        // Create 2 courses and some forums.
+        $generator = $this->getDataGenerator();
+        $course1 = $generator->create_course(['fullname' => 'Course 1', 'summary' => 'xyzzy']);
+        $contextc1 = \context_course::instance($course1->id);
+        $course1forum1 = $generator->create_module('forum', ['course' => $course1,
+                'name' => 'C1F1', 'intro' => 'xyzzy']);
+        $contextc1f1 = \context_module::instance($course1forum1->cmid);
+        $course1forum2 = $generator->create_module('forum', ['course' => $course1,
+                'name' => 'C1F2', 'intro' => 'xyzzy']);
+        $contextc1f2 = \context_module::instance($course1forum2->cmid);
+        $course2 = $generator->create_course(['fullname' => 'Course 2', 'summary' => 'xyzzy']);
+        $contextc2 = \context_course::instance($course1->id);
+        $course2forum = $generator->create_module('forum', ['course' => $course2,
+                'name' => 'C2F', 'intro' => 'xyzzy']);
+        $contextc2f = \context_module::instance($course2forum->cmid);
+
+        // Index the courses and forums.
+        $this->search->index();
+
+        // Search as admin user should find everything.
+        $querydata = new stdClass();
+        $querydata->q = 'xyzzy';
+        $results = $this->search->search($querydata);
+        $this->assert_result_titles(
+                ['Course 1', 'Course 2', 'C1F1', 'C1F2', 'C2F'], $results);
+
+        // Admin user manually restricts results by context id to include one course and one forum.
+        $querydata->contextids = [$contextc2f->id, $contextc1->id];
+        $results = $this->search->search($querydata);
+        $this->assert_result_titles(['Course 1', 'C2F'], $results);
+
+        // Student enrolled in only one course, same restriction, only has the available results.
+        $student2 = $generator->create_user();
+        $generator->enrol_user($student2->id, $course2->id, 'student');
+        $this->setUser($student2);
+        $results = $this->search->search($querydata);
+        $this->assert_result_titles(['C2F'], $results);
+
+        // Student enrolled in both courses, same restriction, same results as admin.
+        $student1 = $generator->create_user();
+        $generator->enrol_user($student1->id, $course1->id, 'student');
+        $generator->enrol_user($student1->id, $course2->id, 'student');
+        $this->setUser($student1);
+        $results = $this->search->search($querydata);
+        $this->assert_result_titles(['Course 1', 'C2F'], $results);
+
+        // Restrict both course and context.
+        $querydata->courseids = [$course2->id];
+        $results = $this->search->search($querydata);
+        $this->assert_result_titles(['C2F'], $results);
+        unset($querydata->courseids);
+
+        // Restrict both area and context.
+        $querydata->areaids = ['core_course-mycourse'];
+        $results = $this->search->search($querydata);
+        $this->assert_result_titles(['Course 1'], $results);
+
+        // Restrict area and context, incompatibly - this has no results (and doesn't do a query).
+        $querydata->contextids = [$contextc2f->id];
+        $results = $this->search->search($querydata);
+        $this->assert_result_titles([], $results);
+    }
+
+    /**
+     * Asserts that the returned documents have the expected titles (regardless of order).
+     *
+     * @param string[] $expected List of expected document titles
+     * @param \core_search\document[] $results List of returned documents
+     */
+    protected function assert_result_titles(array $expected, array $results) {
+        $titles = [];
+        foreach ($results as $result) {
+            $titles[] = $result->get('title');
+        }
+        sort($titles);
+        sort($expected);
+        $this->assertEquals($expected, $titles);
     }
 }

@@ -3259,6 +3259,10 @@ EOD;
 
         $contents = html_writer::tag('label', get_string('enteryoursearchquery', 'search'),
             array('for' => 'id_q_' . $id, 'class' => 'accesshide')) . html_writer::tag('input', '', $inputattrs);
+        if ($this->page->context && $this->page->context->contextlevel !== CONTEXT_SYSTEM) {
+            $contents .= html_writer::empty_tag('input', ['type' => 'hidden',
+                    'name' => 'context', 'value' => $this->page->context->id]);
+        }
         $searchinput = html_writer::tag('form', $contents, $formattrs);
 
         return html_writer::tag('div', $searchicon . $searchinput, array('class' => 'search-input-wrapper nav-link', 'id' => $id));

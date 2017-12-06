@@ -137,6 +137,11 @@ class engine extends \core_search\engine {
         // Create the query object.
         $query = $this->create_user_query($filters, $usercontexts);
 
+        // If the query cannot have results, return none.
+        if (!$query) {
+            return [];
+        }
+
         // We expect good match rates, so for our first get, we will get a small number of records.
         // This significantly speeds solr response time for first few pages.
         $query->setRows(min($limit * 3, static::QUERY_SIZE));
@@ -242,7 +247,7 @@ class engine extends \core_search\engine {
      *
      * @param stdClass  $filters Containing query and filters.
      * @param array     $usercontexts Contexts where the user has access. True if the user can access all contexts.
-     * @return SolrDisMaxQuery
+     * @return \SolrDisMaxQuery|null Query object or null if they can't get any results
      */
     protected function create_user_query($filters, $usercontexts) {
         global $USER;
@@ -305,7 +310,7 @@ class engine extends \core_search\engine {
             }
             if (empty($allcontexts)) {
                 // This means there are no valid contexts for them, so they get no results.
-                return array();
+                return null;
             }
             $query->addFilterQuery('contextid:(' . implode(' OR ', $allcontexts) . ')');
         }

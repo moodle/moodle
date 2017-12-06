@@ -72,8 +72,8 @@ class testable_core_search extends \core_search\manager {
      *
      * @return array
      */
-    public function get_areas_user_accesses($limitcourseids = false) {
-        return parent::get_areas_user_accesses($limitcourseids);
+    public function get_areas_user_accesses($limitcourseids = false, $limitcontextids = false) {
+        return parent::get_areas_user_accesses($limitcourseids, $limitcontextids);
     }
 
     /**
