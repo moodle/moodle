@@ -39,11 +39,15 @@ $statusmsg = '';
 $errormsg  = '';
 
 if ($data = data_submitted() and confirm_sesskey()) {
-    if (admin_write_settings($data)) {
-        redirect($PAGE->url, get_string('changessaved'), null, \core\output\notification::NOTIFY_SUCCESS);
-    }
 
+    $count = admin_write_settings($data);
+    // Regardless of whether any setting change was written (a positive count), check validation errors for those that didn't.
     if (empty($adminroot->errors)) {
+        // No errors. Did we change any setting? If so, then redirect with success.
+        if ($count) {
+            redirect($PAGE->url, get_string('changessaved'), null, \core\output\notification::NOTIFY_SUCCESS);
+        }
+        // We didn't change a setting.
         switch ($return) {
             case 'site': redirect("$CFG->wwwroot/");
             case 'admin': redirect("$CFG->wwwroot/$CFG->admin/");
