@@ -54,64 +54,6 @@ function xmldb_lesson_upgrade($oldversion) {
 
     $dbman = $DB->get_manager();
 
-    if ($oldversion < 2016012800) {
-        // Convert lesson settings to use config_plugins instead of $CFG.
-        // Lesson_maxanswers => mod_lesson/maxanswers.
-        if (isset($CFG->lesson_maxanswers)) {
-            set_config('maxanswers', $CFG->lesson_maxanswers, 'mod_lesson');
-            set_config('maxanswers_adv', '1', 'mod_lesson');
-            unset_config('lesson_maxanswers');
-        }
-
-        // Lesson_slideshowwidth => mod_lesson/slideshowwidth.
-        if (isset($CFG->lesson_slideshowwidth)) {
-            set_config('slideshowwidth', $CFG->lesson_slideshowwidth, 'mod_lesson');
-            unset_config('lesson_slideshowwidth');
-        }
-
-        // Lesson_slideshowheight => mod_lesson/slideshowheight.
-        if (isset($CFG->lesson_slideshowheight)) {
-            set_config('slideshowheight', $CFG->lesson_slideshowheight, 'mod_lesson');
-            unset_config('lesson_slideshowheight');
-        }
-
-        // Lesson_slideshowbgcolor => mod_lesson/slideshowbgcolor.
-        if (isset($CFG->lesson_slideshowbgcolor)) {
-            set_config('slideshowbgcolor', $CFG->lesson_slideshowbgcolor, 'mod_lesson');
-            unset_config('lesson_slideshowbgcolor');
-        }
-
-        // Lesson_defaultnextpage => mod_lesson/defaultnextpage.
-        if (isset($CFG->lesson_defaultnextpage)) {
-            set_config('defaultnextpage', $CFG->lesson_defaultnextpage, 'mod_lesson');
-            set_config('defaultnextpage_adv', '1', 'mod_lesson');
-            unset_config('lesson_defaultnextpage');
-        }
-
-        // Lesson_mediawidth => mod_lesson/mediawidth.
-        if (isset($CFG->lesson_mediawidth)) {
-            set_config('mediawidth', $CFG->lesson_mediawidth, 'mod_lesson');
-            unset_config('lesson_mediawidth');
-        }
-
-        // Lesson_mediaheight => mod_lesson/mediaheight.
-        if (isset($CFG->lesson_mediaheight)) {
-            set_config('mediaheight', $CFG->lesson_mediaheight, 'mod_lesson');
-            unset_config('lesson_mediaheight');
-        }
-
-        // Lesson_mediaclose => mod_lesson/mediaclose.
-        if (isset($CFG->lesson_mediaclose)) {
-            set_config('mediaclose', $CFG->lesson_mediaclose, 'mod_lesson');
-            unset_config('lesson_mediaclose');
-        }
-
-        // Lesson savepoint reached.
-        upgrade_mod_savepoint(true, 2016012800, 'lesson');
-    }
-    // Moodle v3.1.0 release upgrade line.
-    // Put any upgrade step following this.
-
     // Automatically generated Moodle v3.2.0 release upgrade line.
     // Put any upgrade step following this.
 

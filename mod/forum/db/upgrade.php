@@ -47,22 +47,6 @@ function xmldb_forum_upgrade($oldversion) {
 
     $dbman = $DB->get_manager(); // Loads ddl manager and xmldb classes.
 
-    if ($oldversion < 2015120800) {
-
-        // Add support for pinned discussions.
-        $table = new xmldb_table('forum_discussions');
-        $field = new xmldb_field('pinned', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'timeend');
-
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        // Forum savepoint reached.
-        upgrade_mod_savepoint(true, 2015120800, 'forum');
-    }
-    // Moodle v3.1.0 release upgrade line.
-    // Put any upgrade step following this.
-
     if ($oldversion < 2016091200) {
 
         // Define field lockdiscussionafter to be added to forum.

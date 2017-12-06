@@ -45,9 +45,6 @@
 function xmldb_block_calendar_upcoming_upgrade($oldversion, $block) {
     global $CFG;
 
-    // Moodle v3.1.0 release upgrade line.
-    // Put any upgrade step following this.
-
     // Automatically generated Moodle v3.2.0 release upgrade line.
     // Put any upgrade step following this.
 

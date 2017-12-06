@@ -27,9 +27,6 @@ defined('MOODLE_INTERNAL') || die();
 function xmldb_enrol_self_upgrade($oldversion) {
     global $CFG, $DB;
 
-    // Moodle v3.1.0 release upgrade line.
-    // Put any upgrade step following this.
-
     if ($oldversion < 2016052301) {
         // Get roles with manager archetype.
         $managerroles = get_archetype_roles('manager');

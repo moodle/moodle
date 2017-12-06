@@ -32,9 +32,6 @@ defined('MOODLE_INTERNAL') || die();
 function xmldb_message_popup_upgrade($oldversion) {
     global $CFG, $DB;
 
-    // Moodle v3.1.0 release upgrade line.
-    // Put any upgrade step following this.
-
     $dbman = $DB->get_manager();
 
     if ($oldversion < 2016052309) {
