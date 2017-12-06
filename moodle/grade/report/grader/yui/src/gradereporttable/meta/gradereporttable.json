@@ -1,0 +1,12 @@
+{
+    "moodle-gradereport_grader-gradereporttable": {
+        "requires": [
+            "base",
+            "node",
+            "event",
+            "handlebars",
+            "overlay",
+            "event-hover"
+        ]
+    }
+}

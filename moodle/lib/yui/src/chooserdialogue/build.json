@@ -1,0 +1,10 @@
+{
+  "name": "moodle-core-chooserdialogue",
+  "builds": {
+    "moodle-core-chooserdialogue": {
+      "jsfiles": [
+        "chooserdialogue.js"
+      ]
+    }
+  }
+}

@@ -1,0 +1,85 @@
+<h4><a name="toc-1"></a>Testing some tables</h4>
+<p>Phasellus urna erat; venenatis ac, iaculis sed, pretium ut, pede. Suspendisse mauris tellus, rhoncus a, tempor id, mattis non, nibh. Aliquam magna odio; hendrerit at, eleifend sed, dignissim quis, orci. Donec mollis, ante sit amet convallis porta, augue nibh viverra magna, ac scelerisque dui ligula eu felis. Sed eget magna. Proin eget ligula. Vestibulum ornare; sem molestie congue sollicitudin, mi velit porta est, pellentesque dignissim libero est at velit. Donec congue adipiscing massa? Nunc eget nisi eget elit facilisis ornare. Vestibulum et felis id leo feugiat sagittis. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Sed tellus velit, luctus et, tempor non, tempor vitae, magna. Aliquam viverra tortor sit amet tellus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque nibh risus, dictum eu, tempor sit amet, posuere et, nulla.</p>
+<p>Well formed table...</p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Surname</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>George</td>
+<td>Washington</td>
+</tr>
+<tr>
+<td>Abraham</td>
+<td>Lincoln</td>
+</tr>
+</tbody>
+</table>
+<p>Not so well formed table</p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Surname</th>
+<th>Erroneous stuff</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>George</td>
+<td>Washington</td>
+<td></td>
+</tr>
+<tr>
+<td>Abraham</td>
+<td>Lincoln</td>
+<td>Error error</td>
+</tr>
+</tbody>
+</table>
+<p>Bad headers:</p>
+<table>
+<thead>
+<tr>
+<td>Name</td>
+<th>Surname</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>George</th>
+<td>Washington</td>
+</tr>
+<tr>
+<td>Abraham</td>
+<th>Lincoln</th>
+</tr>
+</tbody>
+</table>
+<p>Two tables (treated as such) with some format:</p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Surname</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>George</strong></td>
+<td><em>Washington</em></td>
+</tr>
+</tbody>
+</table>
+<table>
+<tbody>
+<tr>
+<td>Abraham</td>
+<td>Lincoln</td>
+</tr>
+</tbody>
+</table>

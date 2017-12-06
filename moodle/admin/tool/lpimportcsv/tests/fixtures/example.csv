@@ -1,0 +1,209 @@
+"Parent id number","Id number",Shortname,Description,"Description format","Scale values","Scale configuration","Rule type (optional)","Rule outcome (optional)","Rule config (optional)","Cross referenced competency id numbers","Exported id (optional)","Is framework",Taxonomy
+,OECD-CORE,OECD,"<p>The Core Competencies summarise the capabilities that are important across all jobs and that we believe
+collectively contribute to the OECD’s overall success. At the same time, the importance of Core
+Competencies may vary according to the specific job duties and requirements.
+The OECD Competency Framework displays fifteen Core Competencies grouped into three clusters.</p><p>• The delivery-related competencies <br>• The interpersonal competencies
+<br>• The strategic competencies</p>",1,"Not yet competent,Competent","[{""scaleid"":""2""},{""id"":2,""scaledefault"":1,""proficient"":1}]",,,,,,1,"competency,competency,competency,competency"
+,levels,Levels,"<p>Each level of the Core Competencies has behavioural indicators that highlight how an individual can
+demonstrate that competency. Behavioural indicators are designed to show the requirements for successful
+performance.<br></p>",1,,,,0,null,,1,,
+levels,level-1,"Level 1","<p>Level 1 is typically associated with jobs such as Assistants, Secretaries and Operators.<br></p>",1,,,,0,null,"S-DT-1,S-DT-2,S-OA-1,S-OA-2,S-SN-1,S-SN-2,S-SN-3,S-ST-1,DR-AT1,DR-AT-2,DR-AF-1,DR-AF-2,DR-AF-3,DR-DS-1,DR-DS-2,DR-FT-1,DR-FT-2,DR-FT-3,DR-MR-1,DR-MR-2,DR-TW-1,DR-TW-2,DR-TW-3,I-CF-1,I-CF-2,I-CF-3,I-DS-1,I-DS-2,I-DS-3,I-DS-4,I-I-1,I-I-2,I-I-3,I-I-4,I-N-1,I-N-3,I-OK-1,I-OK-2,I-OK-3",2,,
+levels,level-2,"Level 2","<p>Level 2 is typically associated with jobs such as Statisticians, Corporate Management and Administration
+Assistants/Officers, Logistics Officers and Documentalists.<br></p>",1,,,,0,null,,3,,
+levels,level-3,"Level 3","<p>Level 3 is typically associated with jobs such as Economists/Policy Analysts, IT Analysts and HR Advisers.<br></p>",1,,,,0,null,,4,,
+levels,level-4,"Level 4","<p>Level 4 is typically associated with jobs such as Senior Economists/Policy Analysts or Managers<br></p>",1,,,,0,null,,5,,
+levels,level-5,"Level 5","<p>Level 5 is typically associated with jobs such as Heads of Division, Counsellors, Deputy Directors and
+Directors.<br></p>",1,,,,0,null,,6,,
+,competencies,Competencies,,1,,,,0,null,,7,,
+competencies,delivery,Delivery-related,"<p>Achieving Results<br></p>",1,,,,0,null,,8,,
+competencies,interpersonal,Interpersonal,"<p>Building relationships</p>",1,,,,0,null,,9,,
+competencies,strategic,Strategic,"<p>Planning for the future</p>",1,,,,0,null,,10,,
+delivery,analytical-thinking,"Analytical Thinking","<p>Analytical Thinking is the ability to identify
+patterns across situations that are not obviously
+related, and to identify key or underlying issues in
+complex situations.<br></p>",1,,,,0,null,,11,,
+delivery,acheivement-focus,"Achievement Focus","<p>Achievement Focus is generating results by
+assuming responsibility for one's performance
+and the correctness of one's interventions, and
+recognising opportunities and acting efficiently at
+the appropriate moment and within the given
+deadlines.<br></p>",1,,,,0,null,,12,,
+delivery,drafting-skills,"Drafting Skills","<p>Drafting Skills are based on the ability to
+respectfully communicate ideas and information
+(often technical) in writing to ensure that
+information and messages are understood and
+have the desired impact.<br></p>",1,,,,0,null,,13,,
+delivery,flexible-thinking,"Flexible Thinking","<p>Flexible Thinking involves the ability to
+effectively adapt to a variety of situations,
+individuals or groups. It is based on the ability to
+understand and appreciate different and opposing perspectives on an issue, to adapt an approach
+as the requirements of a situation change, and to
+change or easily accept changes in one’s own
+organisational or job requirements.<br></p>",1,,,,0,null,,14,,
+delivery,managing-resources,"Managing Resources","<p>Managing Resources is about understanding
+human, financial, and operational resource issues
+to make decisions aimed at building and planning
+efficient project workflows, and at improving
+overall organisational performance.<br></p>",1,,,,0,null,,15,,
+delivery,teamwork,"Teamwork and Team Leadership","<p>Teamwork and Team Leadership implies
+working co-operatively with others, being a part of
+a team, and assuming the role of leader of a
+team. In the OECD, people work not only with
+their own teams but also with teams and groups
+across and outside the Organisation. Therefore
+they need to work together effectively with
+interdependent goals and common values and
+norms to foster a collaborative environment and
+drive teams in the same direction.<br></p>",1,,,,0,null,,16,,
+interpersonal,client-focus,"Client Focus","<p>Client Focus is based on the ability to
+understand internal/external clients’ (e.g.
+Committees, working groups, country
+representatives, etc.,) needs and concerns in the
+short to long-term and to provide sound
+recommendations and/or solutions.<br></p>",1,,,,0,null,,17,,
+interpersonal,diplomatic-sensitivity,"Diplomatic Sensitivity","<p>Diplomatic Sensitivity implies understanding
+other people. It includes the ability to hear
+accurately and understand unspoken, partly
+expressed thoughts, feelings and concerns of
+others. Included in this competency is an
+emphasis on cross-cultural sensitivity.
+Proficiency in Diplomatic Sensitivity requires the
+ability to keep one’s emotions under control and
+restrain negative actions when faced with
+opposition or hostility from others or when
+working under stress.<br></p>",1,,,,0,null,,18,,
+interpersonal,influencing,Influencing,"<p>Influencing implies an intention to convince
+others in an honest, respectful and sensitive
+manner in order to get them to go along with
+one’s objectives. It can also be the desire to have
+a specific impact or effect on others.<br></p>",1,,,,0,null,,19,,
+interpersonal,negotiating,Negotiating,"<p>Negotiating involves the ability to work towards
+win-win outcomes. At lower levels, this
+competency assumes an understanding of one’s
+counterparts and how to respond to them during
+negotiations. At the higher levels, the competency
+reflects a focus to achieve value-added results.<br></p>",1,,,,0,null,,20,,
+interpersonal,organisational-knowledge,"Organisational Knowledge","<p>Organisational Knowledge is the ability to
+understand the power relationships within the
+Organisation and with other organisations. It
+includes the ability to understand the formal rules
+and structures including the ability to identify who
+the real decision-makers are as well as the
+individuals who can influence them.<br></p>",1,,,,0,null,,21,,
+strategic,developing-talent,"Developing Talent","<p>Developing Talent means fostering an
+environment that will encourage professional and
+personal growth and the transfer of knowledge to
+future talent.<br></p>",1,,,,0,null,,22,,
+strategic,organisational-alignment,"Organisational Alignment","<p>Organisational Alignment is the ability and
+willingness to align one’s own behaviour with the
+needs, priorities, and goals of the Organisation,
+and to act in ways that promote the
+Organisation’s goals or meet organisational
+needs. Organisational Alignment means focusing
+on the Organisation's mission before one's own
+preferences or professional priorities.<br></p>",1,,,,0,null,,23,,
+strategic,strategic-networking,"Strategic Networking","<p>Strategic Networking involves working to build
+and maintain friendly, trustworthy and open
+internal and external relationships and networks
+with people who are, or might become, important
+actors in achieving strategic-related goals.<br></p>",1,,,,0,null,,24,,
+strategic,strategic-thinking,"Strategic Thinking","<p>Strategic Thinking is the ability to develop a
+broad, big-picture view of the Organisation and its
+mission. Competitive advantage and threats,
+industry trends, emerging technology, market
+opportunities, stakeholder focus – Strategic
+Thinking is where these all come together.
+Strategic Thinking keeps individuals and groups
+focused and helps decide where to invest critical
+resources. It includes the ability to link long-range
+visions and concepts to daily work.<br></p>",1,,,,0,null,,25,,
+analytical-thinking,DR-AT1,"Distinguishes between critical and irrelevant pieces of information","<p>Distinguishes between critical and irrelevant
+pieces of information<br></p>",1,,,,0,null,level-1,26,,
+analytical-thinking,DR-AT-2,"Gathers information from a variety of sources to reach a conclusion.","<p>Gathers information from a variety of sources
+to reach a conclusion.<br></p>",1,,,,0,null,level-1,27,,
+acheivement-focus,DR-AF-1,"Defines ambitious, but realistic, personal goals.","<p>Defines ambitious, but realistic, personal
+goals.<br></p>",1,,,,0,null,level-1,28,,
+acheivement-focus,DR-AF-2,"Works while meeting quality and performance standards","<p>Works while meeting quality and performance
+standards<br></p>",1,,,,0,null,level-1,29,,
+acheivement-focus,DR-AF-3,"Promptly and efficiently completes work assignments.","<p>Promptly and efficiently completes work
+assignments.<br></p>",1,,,,0,null,level-1,30,,
+drafting-skills,DR-DS-1,"Tailors communication (e.g. content, style and medium) to diverse audiences. ","<p>Tailors communication (e.g. content, style and
+medium) to diverse audiences.<br></p>",1,,,,0,null,level-1,31,,
+drafting-skills,DR-DS-2,"Writes and presents factual material in a concise manner. ","<p>Writes and presents factual material in a
+concise manner.<br></p>",1,,,,0,null,level-1,32,,
+flexible-thinking,DR-FT-1,"Proposes ways to do things differently.","<p>Proposes ways to do things differently.<br></p>",1,,,,0,null,level-1,33,,
+flexible-thinking,DR-FT-2,"Understands and recognises the value of other points of view and ways of doing things","<p>Understands and recognises the value of
+other points of view and ways of doing things<br></p>",1,,,,0,null,level-1,34,,
+flexible-thinking,DR-FT-3,"Displays a positive attitude in the face of ambiguity and change.","<p>Displays a positive attitude in the face of
+ambiguity and change.<br></p>",1,,,,0,null,level-1,35,,
+managing-resources,DR-MR-1,"Organises the use of resources to meet expectations and identifies difficulties. ","<p>Organises the use of resources to meet
+expectations and identifies difficulties.<br></p>",1,,,,0,null,level-1,36,,
+managing-resources,DR-MR-2,"Plans, coordinates and manages internal and external resources to accomplish assignments within the ","<p>Plans, coordinates and manages internal and
+external resources to accomplish
+assignments within the given deadlines.<br></p>",1,,,,0,null,level-1,37,,
+teamwork,DR-TW-1,"Initiates collaboration with others and spontaneously assists others in the delivery of their work","<p>Initiates collaboration with others and
+spontaneously assists others in the delivery of
+their work<br></p>",1,,,,0,null,level-1,38,,
+teamwork,DR-TW-2,"Shares all relevant information with others and seeks others' input. ","<p>Shares all relevant information with others
+and seeks others' input.<br></p>",1,,,,0,null,level-1,39,,
+teamwork,DR-TW-3,"Expresses own opinion while remaining factual and respectful.","<p>Expresses own opinion while remaining
+factual and respectful.<br></p>",1,,,,0,null,level-1,40,,
+client-focus,I-CF-1,"Responds to and anticipates client needs in a timely, professional, helpful and courteous manner, re","<p>Responds to and anticipates client needs in a
+timely, professional, helpful and courteous
+manner, regardless of client attitude.<br></p>",1,,,,0,null,level-1,41,,
+client-focus,I-CF-2,"Clearly shows clients that their perspectives are valued","<p>Clearly shows clients that their perspectives
+are valued<br></p>",1,,,,0,null,level-1,42,,
+client-focus,I-CF-3,"Strives to consistently meet service standards.","<p>Strives to consistently meet service
+standards.<br></p>",1,,,,0,null,level-1,43,,
+diplomatic-sensitivity,I-DS-1,"Listens actively, considers people’s concerns and adjusts own behaviour in a helpful manner.","<p>Listens actively, considers people’s concerns
+and adjusts own behaviour in a helpful
+manner.<br></p>",1,,,,0,null,level-1,44,,
+diplomatic-sensitivity,I-DS-2,"Understands the reason behind, or motivation for someone’s actions.","<p>Understands the reason behind, or motivation
+for someone’s actions.<br></p>",1,,,,0,null,level-1,45,,
+diplomatic-sensitivity,I-DS-3,"Is attentive when doing projects and assignments, or when interacting with people from different cou","<p>Is attentive when doing projects and
+assignments, or when interacting with people
+from different countries and backgrounds.<br></p>",1,,,,0,null,level-1,46,,
+diplomatic-sensitivity,I-DS-4,"Expresses negative feelings constructively.","<p>Expresses negative feelings constructively.<br></p>",1,,,,0,null,level-1,47,,
+influencing,I-I-1,"Checks own understanding of others' communication (e.g. paraphrases, asks questions).","<p>Checks own understanding of others'
+communication (e.g. paraphrases, asks
+questions).<br></p>",1,,,,0,null,level-1,48,,
+influencing,I-I-2,"Maintains continuous, open and consistent communication with others.","<p>Maintains continuous, open and consistent
+communication with others.<br></p>",1,,,,0,null,level-1,49,,
+influencing,I-I-3,"Builds on successful initiatives to gain support for ideas.","<p>Builds on successful initiatives to gain support
+for ideas.<br></p>",1,,,,0,null,level-1,50,,
+influencing,I-I-4,"Adapts arguments to others' needs/interests. ","<p>Adapts arguments to others' needs/interests.<br></p>",1,,,,0,null,level-1,51,,
+negotiating,I-N-1,"Identifies main negotiating points of a given issue and engages in negotiation.","<p>Identifies main negotiating points of a given
+issue and engages in negotiation.<br></p>",1,,,,0,null,level-1,52,,
+negotiating,I-N-3,"Listens to differing points of view and promotes mutual understanding.","<p>Listens to differing points of view and
+promotes mutual understanding.<br></p>",1,,,,0,null,level-1,53,,
+organisational-knowledge,I-OK-1,"Demonstrates understanding of the general environment in which the Organisation operates.","<p>Demonstrates understanding of the general
+environment in which the Organisation
+operates.<br></p>",1,,,,0,null,level-1,54,,
+organisational-knowledge,I-OK-2,"Understands and uses the Organisation's structures, rules and networks.","<p>Understands and uses the Organisation's
+structures, rules and networks.<br></p>",1,,,,0,null,level-1,55,,
+organisational-knowledge,I-OK-3,"Knows and respects the Organisation’s Code of Conduct and values.","<p>Knows and respects the Organisation’s Code
+of Conduct and values.<br></p>",1,,,,0,null,level-1,56,,
+developing-talent,S-DT-1,"Takes advantage of learning opportunities provided (e.g. courses, feedback from supervisor or peers)","<p>Takes advantage of learning opportunities
+provided (e.g. courses, feedback from
+supervisor or peers) to meet requirements of
+current job.<br></p>",1,,,,0,null,level-1,57,,
+developing-talent,S-DT-2,"Sets clear self-development expectations.","<p>Sets clear self-development expectations.<br></p>",1,,,,0,null,level-1,58,,
+organisational-alignment,S-OA-1,"Explains the role and goals of the Organisation and how they relate to own area of work.","<p>Explains the role and goals of the
+Organisation and how they relate to own area
+of work.<br></p>",1,,,,0,null,level-1,59,,
+organisational-alignment,S-OA-2,"Is able to explain how own work relates to the work of the Organisation.","<p>Is able to explain how own work relates to the
+work of the Organisation.<br></p>",1,,,,0,null,level-1,60,,
+strategic-networking,S-SN-1,"Actively nurtures both formal and informal contacts to facilitate the progress of work by proactivel","<p>Actively nurtures both formal and informal
+contacts to facilitate the progress of work by
+proactively sharing information, best
+practices, respective interests and areas of
+expertise.<br></p>",1,,,,0,null,level-1,61,,
+strategic-networking,S-SN-2,"Identifies current or past contacts that can provide work-related information or assistance","<p>Identifies current or past contacts that can
+provide work-related information or
+assistance<br></p>",1,,,,0,null,level-1,62,,
+strategic-networking,S-SN-3,"Fosters two-way trust in dealing with contacts (e.g. maintains confidentiality regarding sensitive i","<p>Fosters two-way trust in dealing with contacts
+(e.g. maintains confidentiality regarding
+sensitive information).<br></p>",1,,,,0,null,level-1,63,,
+strategic-thinking,S-ST-1,"Identifies new information or data to key decision-makers or stakeholders to support their understan","<p>Identifies new information or data to key
+decision-makers or stakeholders to support
+their understanding and decisions.<br></p>",1,,,,0,null,level-1,64,,

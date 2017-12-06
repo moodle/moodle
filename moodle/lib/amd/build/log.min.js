@@ -1,0 +1,1 @@
+define(["core/loglevel"],function(a){var b=a.methodFactory;return a.methodFactory=function(a,c){var d=b(a,c);return function(a,b){d(b?b+": "+a:a)}},a.setConfig=function(b){"undefined"!=typeof b.level&&a.setLevel(b.level)},a});

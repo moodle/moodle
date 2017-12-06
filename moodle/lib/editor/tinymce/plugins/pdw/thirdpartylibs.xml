@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<libraries>
+  <library>
+    <location>tinymce</location>
+    <name>PDW Toolbar Toggle</name>
+    <license>MIT</license>
+    <version>1.2</version>
+    <licenseversion></licenseversion>
+  </library>
+</libraries>

@@ -1,0 +1,47 @@
+.enrolpanel {
+    display: none;
+    position: absolute;
+    background-color: #666;
+    padding: 0 5px;
+    min-width: 200px;
+}
+
+.enrolpanel.visible {
+    display: block;
+}
+
+.enrolpanel .container {
+    position: relative;
+    background-color: #fff;
+    border: 1px solid #999;
+    top: -5px;
+}
+
+.enrolpanel .container .header {
+    border-bottom: 1px solid #999;
+}
+
+.enrolpanel .container .header h2 {
+    font-size: 90%;
+    text-align: center;
+    margin: 5px;
+}
+
+.enrolpanel .container .header .close {
+    width: 25px;
+    height: 15px;
+    position: absolute;
+    top: 5px;
+    right: 1em;
+    cursor: pointer;
+    background: url("sprite.png") no-repeat scroll 0 0 transparent;
+}
+
+.enrolpanel .container .content input {
+    margin: 5px;
+    font-size: 10px;
+}
+
+.enrolpanel.roleassign.visible .container {
+    width: auto;
+}

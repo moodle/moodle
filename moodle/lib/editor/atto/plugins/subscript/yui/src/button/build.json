@@ -1,0 +1,10 @@
+{
+    "name": "moodle-atto_subscript-button",
+    "builds": {
+        "moodle-atto_subscript-button": {
+            "jsfiles": [
+                "button.js"
+            ]
+        }
+    }
+}

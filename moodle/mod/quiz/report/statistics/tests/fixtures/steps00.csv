@@ -1,0 +1,26 @@
+quizattempt,firstname,lastname,randqs.1,responses.1.answer,variants.2,responses.2.answer,responses.3.cat,responses.3.frog,responses.3.newt,responses.4.answer,responses.5.Four,responses.5.One,responses.5.Three,responses.5.Two,responses.6.answer,responses.7.1.answer,responses.7.2.answer
+1,John,Jones,numerical,3.14,1,9.9,mammal,amphibian,amphibian,1,,1,1,,Two,Owl,Pussy-cat
+2,John,Smith,shortanswer,frog,1,9.9,mammal,amphibian,amphibian,1,,,1,1,One,Dog,Bow-wow
+3,John,Vicars,numerical,3.14,6,9.4,mammal,amphibian,amphibian,1,1,,1,,Two,Owl,Pussy-cat
+4,John,Pacino,shortanswer,butterfly,6,-0.1,mammal,amphibian,amphibian,1,,1,1,,Four,Dog,Bow-wow
+5,John,Deniro,numerical,3.14,4,0,mammal,amphibian,amphibian,0,1,,,1,One,Dog,Pussy-cat
+6,John,Banks,numerical,3.14,1,9.9,mammal,amphibian,amphibian,1,1,1,,,Two,Owl,"Wiggly worm"
+7,John,Asimov,numerical,3.142,7,9.1,mammal,amphibian,amphibian,1,1,,1,,One,Owl,"Wiggly worm"
+8,John,Chomsky,numerical,3.14,4,19.4,mammal,amphibian,amphibian,0,1,,1,,One,Owl,"Wiggly worm"
+9,John,Yamaguchi,shortanswer,frog,1,-0.7,mammal,amphibian,amphibian,1,,1,1,,One,Owl,Pussy-cat
+10,John,Robbins,numerical,3.1,5,14.2,mammal,amphibian,amphibian,0,,,1,1,One,Owl,Bow-wow
+11,Joe,Jones,shortanswer,toad,6,-0.2,mammal,amphibian,amphibian,1,,1,,1,One,Owl,Bow-wow
+12,Joe,Smith,shortanswer,frog,8,5.7,mammal,amphibian,amphibian,0,1,,1,,One,Owl,Pussy-cat
+13,Joe,Vicars,numerical,3.14,8,-0.2,mammal,amphibian,amphibian,1,1,1,,,One,wfz9p,Pussy-cat
+14,Joe,Pacino,shortanswer,frog,1,-0.2,mammal,amphibian,amphibian,1,,1,1,,Two,Owl,Bow-wow
+15,Joe,Deniro,numerical,3.1,7,-0.9,mammal,amphibian,amphibian,1,1,,,1,One,Owl,Pussy-cat
+16,Joe,Banks,shortanswer,frog,10,-0.7,mammal,amphibian,amphibian,0,1,1,,,One,Owl,Pussy-cat
+17,Joe,Asimov,shortanswer,toad,4,-0.4,mammal,amphibian,amphibian,1,,,1,1,Three,Owl,Pussy-cat
+18,Joe,Chomsky,shortanswer,frog,6,-1,mammal,amphibian,amphibian,1,1,,,1,One,Pussy-cat,Pussy-cat
+19,Joe,Yamaguchi,numerical,3.14,8,-0.5,mammal,amphibian,amphibian,1,,1,,1,Two,Owl,Bow-wow
+20,Joe,Robbins,shortanswer,butterfly,4,19.4,mammal,amphibian,amphibian,0,,,1,1,One,"Wiggly worm",Bow-wow
+21,Roberto,Jones,shortanswer,frog,8,5.7,amphibian,amphibian,mammal,1,,,1,1,Three,RjUpn,Pussy-cat
+22,Roberto,Smith,shortanswer,frog,5,14.2,mammal,amphibian,amphibian,0,1,1,,,Two,Dog,Pussy-cat
+23,Roberto,Vicars,shortanswer,frog,5,14.2,mammal,amphibian,amphibian,1,1,,,1,One,"Wiggly worm",Pussy-cat
+24,Roberto,Pacino,numerical,3.1,1,-1,mammal,amphibian,amphibian,0,,1,,1,One,Owl,Pussy-cat
+25,Roberto,Deniro,numerical,3.1,8,-0.1,mammal,amphibian,amphibian,1,,1,1,,One,Owl,Pussy-cat

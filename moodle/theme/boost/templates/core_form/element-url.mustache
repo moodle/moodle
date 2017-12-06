@@ -1,0 +1,20 @@
+{{< core_form/element-template }}
+    {{$element}}
+        <input type="url"
+                class="form-control {{#error}}form-control-danger{{/error}}"
+                name="{{element.name}}"
+                id="{{element.id}}"
+                value="{{element.value}}"
+                size="{{element.size}}"
+                {{#error}}
+                    autofocus aria-describedby="id_error_{{element.name}}"
+                {{/error}}
+                {{#element.frozen}}
+                    readonly {{#element.hardfrozen}}disabled{{/element.hardfrozen}}
+                {{/element.frozen}}
+                {{{element.attributes}}} >
+        {{^element.frozen}}
+            {{{element.filepickerhtml}}}
+        {{/element.frozen}}
+    {{/element}}
+{{/ core_form/element-template }}

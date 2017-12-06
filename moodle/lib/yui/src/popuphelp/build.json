@@ -1,0 +1,10 @@
+{
+  "name": "moodle-core-popuphelp",
+  "builds": {
+    "moodle-core-popuphelp": {
+      "jsfiles": [
+        "popuphelp.js"
+      ]
+    }
+  }
+}

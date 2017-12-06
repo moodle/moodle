@@ -1,0 +1,41 @@
+{
+  "name": "moodle-core-notification",
+  "builds": {
+    "moodle-core-notification": {
+      "jsfiles": [
+        "notification.js"
+      ]
+    },
+    "moodle-core-notification-dialogue": {
+      "jsfiles": [
+        "shared.js",
+        "dialogue.js",
+        "info.js"
+      ]
+    },
+    "moodle-core-notification-alert": {
+      "jsfiles": [
+        "shared.js",
+        "alert.js"
+      ]
+    },
+    "moodle-core-notification-confirm": {
+      "jsfiles": [
+        "shared.js",
+        "confirm.js"
+      ]
+    },
+    "moodle-core-notification-exception": {
+      "jsfiles": [
+        "shared.js",
+        "exception.js"
+      ]
+    },
+    "moodle-core-notification-ajaxexception": {
+      "jsfiles": [
+        "shared.js",
+        "ajaxexception.js"
+      ]
+    }
+  }
+}

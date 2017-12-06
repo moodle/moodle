@@ -1,0 +1,7 @@
+This files describes API changes in /auth/pop3/*,
+information provided here is intended especially for developers.
+
+=== 3.3 ===
+
+* The config.html file was migrated to use the admin settings API.
+  The identifier for configuration data stored in config_plugins table was converted from 'auth/pop3' to 'auth_pop3'.

@@ -1,0 +1,15 @@
+          <MOD>
+            <ID>[#mod_id#]</ID>
+            <TYPE>[#mod_type#]</TYPE>
+            <INSTANCE>[#mod_instance_id#]</INSTANCE>
+            <ADDED>[#date_now#]</ADDED>
+            <SCORE>0</SCORE>
+            <INDENT>[#mod_indent#]</INDENT>
+            <VISIBLE>[#mod_visible#]</VISIBLE>
+            <GROUPMODE>0</GROUPMODE>
+            <GROUPINGID>0</GROUPINGID>
+            <GROUPMEMBERSONLY>0</GROUPMEMBERSONLY>
+            <IDNUMBER></IDNUMBER>
+            <ROLES_OVERRIDES></ROLES_OVERRIDES>
+            <ROLES_ASSIGNMENTS></ROLES_ASSIGNMENTS>
+          </MOD>

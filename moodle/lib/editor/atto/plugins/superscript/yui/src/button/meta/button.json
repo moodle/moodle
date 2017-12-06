@@ -1,0 +1,7 @@
+{
+    "moodle-atto_superscript-button": {
+        "requires": [
+            "moodle-editor_atto-plugin"
+        ]
+    }
+}

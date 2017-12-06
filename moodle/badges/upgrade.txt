@@ -1,0 +1,17 @@
+This files describes API changes in /badges/*,
+information provided here is intended especially for developers.
+
+=== 2.7 ===
+
+* get_completed_criteria_sql() - This method was added to award_criteria class and must be overriden
+  in all criteria classes. This method returns an array consisting of SQL JOIN statement, WHERE conditions,
+  and any parameters that might be required. The results are used in lib/badgeslib.php in review_all_criteria()
+  to reduce to the minimum the number of users to review and award badges.
+* New optional parameter $filtered in review() allows to indicate that some expensive checks can be skipped
+  if the list of users has been initially filtered based on met criteria.
+* New optional parameter $archive in delete() in badge class in badgeslib.php
+  allows to indicate that a badge should be archived instead of fully deleted.
+  If this parameter is set to FALSE, a badge will all its information, criteria,
+  and awards will be removed from the database.
+* BADGE_BACKPACKURL constant has been moved from badges/lib/backpacklib.php to lib/badgeslib.php, and URI scheme
+  name ('http://') has been removed.

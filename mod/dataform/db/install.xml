@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="mod/dataform/db" VERSION="20120920" COMMENT="XMLDB file for Moodle mod/dataform"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="dataform" COMMENT="The Dataform activity settings.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="The name of the activity."/>
+        <FIELD NAME="intro" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="The description of the activity. Used by feature MOD_INTRO."/>
+        <FIELD NAME="introformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The format of the description of the activity. Used by feature MOD_INTRO."/>
+        <FIELD NAME="inlineview" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Id of a dataformview of the activity. If set, the content of the view will be displayed on the course page instead of the activity link."/>
+        <FIELD NAME="embedded" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="If true and inline view is set, the inline view display on the course page will be embedded in an iframe."/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The time when the settings of the activity were last modified."/>
+        <FIELD NAME="timeavailable" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The time when the activity should start. If set, the event will appear in the calendar and early activity actions will be consrained by permissions."/>
+        <FIELD NAME="timedue" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The time when the activity should end. If set, the event will appear in the calendar and late activity actions will be consrained by permissions."/>
+        <FIELD NAME="timeinterval" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Time duration in seconds as activity interval. Requires timeavailable."/>
+        <FIELD NAME="intervalcount" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="Number of intervals for the activity. If there are multiple intervals, activity start time and end time are calculated for each interval."/>
+        <FIELD NAME="grade" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The maximum grade for the activity. A negative grade indicates the use of a scale."/>
+        <FIELD NAME="gradeitems" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="A list of grade calculation formulae for direct grading. Allows grade calculation for each user based on entries' content."/>
+        <FIELD NAME="maxentries" TYPE="int" LENGTH="8" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="entriesrequired" TYPE="int" LENGTH="8" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="individualized" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="grouped" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="anonymous" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timelimit" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="-1" SEQUENCE="false"/>
+        <FIELD NAME="css" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="cssincludes" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="js" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="jsincludes" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="defaultview" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="defaultfilter" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="completionentries" TYPE="int" LENGTH="9" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Nonzero if a certain number of entries are required to mark this activity complete for a user."/>
+        <FIELD NAME="completionspecificgrade" TYPE="int" LENGTH="9" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Nonzero if a certain grade is required to mark this activity complete for a user."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="course" UNIQUE="false" FIELDS="course"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="dataform_fields" COMMENT="the available activity fields">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="dataid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="type" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="description" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="visible" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="2" SEQUENCE="false"/>
+        <FIELD NAME="editable" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
+        <FIELD NAME="label" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="defaultcontentmode" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="defaultcontent" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="param1" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="param2" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="param3" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="param4" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="param5" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="param6" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="param7" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="param8" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="param9" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="param10" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="dataid" TYPE="foreign" FIELDS="dataid" REFTABLE="dataform" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="type-dataid" UNIQUE="false" FIELDS="type, dataid" COMMENT="used by dataform linking filter"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="dataform_views" COMMENT="the available activity views">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="dataid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="type" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="description" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="visible" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="perpage" TYPE="int" LENGTH="8" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="groupby" TYPE="char" LENGTH="64" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="filterid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="patterns" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="submission" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="section" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="param1" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="param2" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="param3" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="param4" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="param5" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="param6" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="param7" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="param8" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="param9" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="param10" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="dataid" TYPE="foreign" FIELDS="dataid" REFTABLE="dataform" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="type-dataid" UNIQUE="false" FIELDS="type, dataid" COMMENT="used by dataform linking filter"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="dataform_filters" COMMENT="the available activity filters">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="dataid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="description" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="visible" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
+        <FIELD NAME="perpage" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="10" SEQUENCE="false"/>
+        <FIELD NAME="selection" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="groupby" TYPE="char" LENGTH="64" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="search" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="customsort" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="customsearch" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="dataid" TYPE="foreign" FIELDS="dataid" REFTABLE="dataform" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="dataform_entries" COMMENT="the activity entries">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="dataid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="groupid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="state" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="dataid" TYPE="foreign" FIELDS="dataid" REFTABLE="dataform" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="dataform_contents" COMMENT="the content of each entry">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="fieldid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="entryid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="content" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="content1" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="content2" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="content3" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="content4" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="entryid" TYPE="foreign" FIELDS="entryid" REFTABLE="dataform_entries" REFFIELDS="id"/>
+        <KEY NAME="fieldid" TYPE="foreign" FIELDS="fieldid" REFTABLE="dataform_fields" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+  </TABLES>
+</XMLDB>

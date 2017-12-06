@@ -1,0 +1,905 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--*************************************************************************-->
+<!--** This schema has been modified from the original base schema named - **-->
+<!--** elementTypes.xsd                                                    **-->
+<!--** using the IMS SchemaProf tool. This tool is based on software from  **-->
+<!--** the TELCERT Project which was funded in part by the European        **-->
+<!--** Commission under contract IST-507128                                **-->
+<!--*************************************************************************-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ag="http://ltsc.ieee.org/xsd/imscc/LOM/unique" xmlns:ex="http://ltsc.ieee.org/xsd/imscc/LOM/extend" xmlns="http://ltsc.ieee.org/xsd/imscc/LOM" targetNamespace="http://ltsc.ieee.org/xsd/imscc/LOM" elementFormDefault="qualified" version="IEEE LTSC LOM XML 1.0 localised_Schema_2008_6_30">
+	<xsd:include xmlns:xsd="http://www.w3.org/2001/XMLSchema" schemaLocation="imscc_m_definition.xsd" />
+	<xs:annotation>
+		<xs:documentation>
+       This work is licensed under the Creative Commons Attribution-ShareAlike
+       License.  To view a copy of this license, see the file license.txt,
+       visit http://creativecommons.org/licenses/by-sa/2.0 or send a letter to
+       Creative Commons, 559 Nathan Abbott Way, Stanford, California 94305, USA.
+    </xs:documentation>
+		<xs:documentation>
+       This component schema defintion defines global schema data type declarations
+       for data elements defined in the LOMv1.0 base schema.  This component XSD
+       defines the aggregation relationship among the LOM data elements.  These aggregation
+       relationships enforce the LOMv1.0 base schema requirement that elements can only
+       be present in a LOM XML instance as elements of the aggregate element to which they
+       belong.
+
+       Duplicate declarations are included as comments for completeness.  These declarations
+       should remain commented out or they can be removed completely.
+    </xs:documentation>
+      <xs:documentation>
+         This file has been modified by the Knowledge Media Institute of the 
+         University Koblenz-Landau (http://iwm.uni-koblenz.de). It contains the
+         following changes:
+         1) Instead of "unique/strict.xsd" the schema "unique/loose.xsd" is imported 
+            because this reflects what is said in 1484.12.3-2005, page 35 (section C.1.3)
+         2) In all component XSDs the schemaLocation attribute was amended to the 
+            xs:import and xs:include statements. This enables the usage of the schemas
+            with tools which don't deal well with missing schemaLocation informations.
+            
+         This file is available at "http://iwm.uni-koblenz.de/xsd/IEEE-LOM/loose"
+      </xs:documentation>
+	</xs:annotation>
+	<xs:import namespace="http://ltsc.ieee.org/xsd/imscc/LOM/unique" schemaLocation="./unique/loose.xsd" />
+	<xs:import namespace="http://ltsc.ieee.org/xsd/imscc/LOM/extend" schemaLocation="./extend/custom.xsd" />
+	<!-- Element type declarations -->
+	<!-- Learning Object Metadata -->
+	<xs:complexType name="lom">
+		<xs:choice minOccurs="0" maxOccurs="unbounded">
+			<xs:group ref="general" />
+			<xs:group ref="lifeCycle" />
+			<xs:group ref="metaMetadata" minOccurs="0" maxOccurs="0"><xs:annotation>
+                    <xs:documentation xml:lang="en">explanation: metaMetadata is unused.</xs:documentation>
+                </xs:annotation>
+	</xs:group>
+			<xs:group ref="technical" />
+			<xs:group ref="educational" />
+			<xs:group ref="rights" />
+			<xs:group ref="relation" />
+			<xs:group ref="annotation" minOccurs="0" maxOccurs="0"><xs:annotation>
+                    <xs:documentation xml:lang="en">explanation: lom.annotation is unused.</xs:documentation>
+                </xs:annotation>
+	</xs:group>
+			<xs:group ref="classification" />
+			<xs:group ref="ex:customElements" minOccurs="0" maxOccurs="0"><xs:annotation>
+                    <xs:documentation xml:lang="en">explanation: No custom elements are allowed.</xs:documentation>
+                </xs:annotation>
+	</xs:group>
+		</xs:choice>
+		<xs:attributeGroup ref="ag:lom" />
+		<xs:attributeGroup ref="ex:customAttributes" />
+	</xs:complexType>
+	<!-- 1 General -->
+	<xs:complexType name="general">
+		<xs:choice minOccurs="0" maxOccurs="unbounded">
+			<xs:group ref="identifier" />
+			<xs:group ref="title" />
+			<xs:group ref="language" />
+			<xs:group ref="descriptionUnbounded" />
+			<xs:group ref="keyword" />
+			<xs:group ref="coverage" />
+			<xs:group ref="structure" minOccurs="0" maxOccurs="0"><xs:annotation>
+                    <xs:documentation xml:lang="en">explanation: General.structure is unused.</xs:documentation>
+                </xs:annotation>
+	</xs:group>
+			<xs:group ref="aggregationLevel" minOccurs="0" maxOccurs="0"><xs:annotation>
+                    <xs:documentation xml:lang="en">explanation: General.aggregationLevel is unused.</xs:documentation>
+                </xs:annotation>
+	</xs:group>
+			<xs:group ref="ex:customElements" minOccurs="0" maxOccurs="0"><xs:annotation>
+                    <xs:documentation xml:lang="en">explanation: No custom elements are allowed.</xs:documentation>
+                </xs:annotation>
+	</xs:group>
+		</xs:choice>
+		<xs:attributeGroup ref="ag:general" />
+		<xs:attributeGroup ref="ex:customAttributes" />
+	</xs:complexType>
+	<!-- 1.1 Identifier -->
+	<xs:complexType name="identifier">
+		<xs:choice minOccurs="0" maxOccurs="unbounded">
+			<xs:group ref="catalog" />
+			<xs:group ref="entry" />
+			<xs:group ref="ex:customElements" minOccurs="0" maxOccurs="0"><xs:annotation>
+                    <xs:documentation xml:lang="en">explanation: No custom elements are allowed.</xs:documentation>
+                </xs:annotation>
+	</xs:group>
+		</xs:choice>
+		<xs:attributeGroup ref="ag:identifier" />
+		<xs:attributeGroup ref="ex:customAttributes" />
+	</xs:complexType>
+	<!-- 1.1.1 Catalog -->
+	<xs:complexType name="catalog">
+		<xs:simpleContent>
+			<xs:extension base="CharacterString">
+				<xs:attributeGroup ref="ag:catalog" />
+				<xs:attributeGroup ref="ex:customAttributes" />
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<!-- 1.1.2 Entry -->
+	<xs:complexType name="entry">
+		<xs:simpleContent>
+			<xs:extension base="CharacterString">
+				<xs:attributeGroup ref="ag:entry" />
+				<xs:attributeGroup ref="ex:customAttributes" />
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<!-- 1.2 Title -->
+	<xs:complexType name="title">
+		<xs:complexContent>
+			<xs:extension base="LanguageString">
+				<xs:attributeGroup ref="ag:title" />
+				<xs:attributeGroup ref="ex:customAttributes" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<!-- 1.3 Language -->
+	<xs:complexType name="language">
+		<xs:complexContent>
+			<xs:extension base="LanguageId">
+				<xs:attributeGroup ref="ag:language" />
+				<xs:attributeGroup ref="ex:customAttributes" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<!-- 1.4 Description
+  <xs:complexType name="description">
+    <xs:complexContent>
+      <xs:extension base="LanguageString">
+        <xs:attributeGroup ref="ag:description"/>
+        <xs:attributeGroup ref="ex:customAttributes"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType> -->
+	<!-- 1.5 Keyword -->
+	<xs:complexType name="keyword">
+		<xs:complexContent>
+			<xs:extension base="LanguageString">
+				<xs:attributeGroup ref="ag:keyword" />
+				<xs:attributeGroup ref="ex:customAttributes" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<!-- 1.6 Coverage -->
+	<xs:complexType name="coverage">
+		<xs:complexContent>
+			<xs:extension base="LanguageString">
+				<xs:attributeGroup ref="ag:coverage" />
+				<xs:attributeGroup ref="ex:customAttributes" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<!-- 1.7 Structure -->
+	<xs:complexType name="structure">
+		<xs:complexContent>
+			<xs:extension base="structureVocab">
+				<xs:attributeGroup ref="ag:structure" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<!-- 1.8 Aggregation Level -->
+	<xs:complexType name="aggregationLevel">
+		<xs:complexContent>
+			<xs:extension base="aggregationLevelVocab">
+				<xs:attributeGroup ref="ag:aggregationLevel" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<!-- 2 Life Cycle -->
+	<xs:complexType name="lifeCycle">
+		<xs:choice minOccurs="0" maxOccurs="unbounded">
+			<xs:group ref="version" minOccurs="0" maxOccurs="0"><xs:annotation>
+                    <xs:documentation xml:lang="en">explanation: liveCycle.version is unused.</xs:documentation>
+                </xs:annotation>
+	</xs:group>
+			<xs:group ref="status" minOccurs="0" maxOccurs="0"><xs:annotation>
+                    <xs:documentation xml:lang="en">explanation: lifeCycle.status is unused.</xs:documentation>
+                </xs:annotation>
+	</xs:group>
+			<xs:group ref="contribute" />
+			<xs:group ref="ex:customElements" minOccurs="0" maxOccurs="0"><xs:annotation>
+                    <xs:documentation xml:lang="en">explanation: No custom elements are allowed.</xs:documentation>
+                </xs:annotation>
+	</xs:group>
+		</xs:choice>
+		<xs:attributeGroup ref="ag:lifeCycle" />
+		<xs:attributeGroup ref="ex:customAttributes" />
+	</xs:complexType>
+	<!-- 2.1 Version -->
+	<xs:complexType name="version">
+		<xs:complexContent>
+			<xs:extension base="LanguageString">
+				<xs:attributeGroup ref="ag:version" />
+				<xs:attributeGroup ref="ex:customAttributes" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<!-- 2.2 Status -->
+	<xs:complexType name="status">
+		<xs:complexContent>
+			<xs:extension base="statusVocab">
+				<xs:attributeGroup ref="ag:status" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<!-- 2.3 Contribute -->
+	<xs:complexType name="contribute">
+		<xs:choice minOccurs="0" maxOccurs="unbounded">
+			<xs:group ref="role" />
+			<xs:group ref="entityUnbounded" />
+			<xs:group ref="date" />
+			<xs:group ref="ex:customElements" minOccurs="0" maxOccurs="0"><xs:annotation>
+                    <xs:documentation xml:lang="en">explanation: No custom elements are allowed.</xs:documentation>
+                </xs:annotation>
+	</xs:group>
+		</xs:choice>
+		<xs:attributeGroup ref="ag:contribute" />
+		<xs:attributeGroup ref="ex:customAttributes" />
+	</xs:complexType>
+	<!-- 2.3.1 Role -->
+	<xs:complexType name="role">
+		<xs:complexContent>
+			<xs:extension base="roleVocab">
+				<xs:attributeGroup ref="ag:role" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<!-- 2.3.2 Entity
+  <xs:complexType name="entity">
+    <xs:simpleContent>
+      <xs:extension base="VCard">
+        <xs:attributeGroup ref="ag:entity"/>
+        <xs:attributeGroup ref="ex:customAttributes"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType> -->
+	<!-- 2.3.3 Date -->
+	<xs:complexType name="date">
+		<xs:complexContent>
+			<xs:extension base="DateTime">
+				<xs:attributeGroup ref="ag:date" />
+				<xs:attributeGroup ref="ex:customAttributes" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<!-- 3 Meta-Metadata -->
+	<xs:complexType name="metaMetadata">
+		<xs:choice minOccurs="0" maxOccurs="unbounded">
+			<xs:group ref="identifier" />
+			<xs:group ref="contributeMeta" />
+			<xs:group ref="metadataSchema" />
+			<xs:group ref="language" />
+			<xs:group ref="ex:customElements" />
+		</xs:choice>
+		<xs:attributeGroup ref="ag:metaMetadata" />
+		<xs:attributeGroup ref="ex:customAttributes" />
+	</xs:complexType>
+	<!-- 3.1 Identifier
+  <xs:complexType name="identifier">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:group ref="catalog"/>
+      <xs:group ref="entry"/>
+      <xs:group ref="ex:customElements"/>
+    </xs:choice>
+    <xs:attributeGroup ref="ag:identifier"/>
+    <xs:attributeGroup ref="ex:customAttributes"/>
+  </xs:complexType> -->
+	<!-- 3.1.1 Catalog
+  <xs:complexType name="catalog">
+    <xs:simpleContent>
+      <xs:extension base="CharacterString">
+        <xs:attributeGroup ref="ag:catalog"/>
+        <xs:attributeGroup ref="ex:customAttributes"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType> -->
+	<!-- 3.1.2 Entry
+  <xs:complexType name="entry">
+    <xs:simpleContent>
+      <xs:extension base="CharacterString">
+        <xs:attributeGroup ref="ag:entry"/>
+        <xs:attributeGroup ref="ex:customAttributes"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType> -->
+	<!-- 3.2 Contribute -->
+	<xs:complexType name="contributeMeta">
+		<xs:choice minOccurs="0" maxOccurs="unbounded">
+			<xs:group ref="roleMeta" />
+			<xs:group ref="entityUnbounded" />
+			<xs:group ref="date" />
+			<xs:group ref="ex:customElements" />
+		</xs:choice>
+		<xs:attributeGroup ref="ag:contribute" />
+		<xs:attributeGroup ref="ex:customAttributes" />
+	</xs:complexType>
+	<!-- 3.2.1 Role -->
+	<xs:complexType name="roleMeta">
+		<xs:complexContent>
+			<xs:extension base="roleMetaVocab">
+				<xs:attributeGroup ref="ag:role" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<!-- 3.2.2 Entity
+  <xs:complexType name="entity">
+    <xs:simpleContent>
+      <xs:extension base="VCard">
+        <xs:attributeGroup ref="ag:entity"/>
+        <xs:attributeGroup ref="ex:customAttributes"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType> -->
+	<!-- 3.2.3 Date
+  <xs:complexType name="date">
+    <xs:complexContent>
+      <xs:extension base="DateTime">
+        <xs:attributeGroup ref="ag:date"/>
+        <xs:attributeGroup ref="ex:customAttributes"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType> -->
+	<!-- 3.3 Metadata Schema -->
+	<xs:complexType name="metadataSchema">
+		<xs:simpleContent>
+			<xs:extension base="CharacterString">
+				<xs:attributeGroup ref="ag:metadataSchema" />
+				<xs:attributeGroup ref="ex:customAttributes" />
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<!-- 3.4 Language
+  <xs:complexType name="language">
+    <xs:simpleContent>
+      <xs:extension base="LanguageId">
+        <xs:attributeGroup ref="ag:language"/>
+        <xs:attributeGroup ref="ex:customAttributes"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>-->
+	<!-- 4 Technical -->
+	<xs:complexType name="technical">
+		<xs:choice minOccurs="0" maxOccurs="unbounded">
+			<xs:group ref="format" />
+			<xs:group ref="size" minOccurs="0" maxOccurs="0"><xs:annotation>
+                    <xs:documentation xml:lang="en">explanation: technical.size is unused.</xs:documentation>
+                </xs:annotation>
+	</xs:group>
+			<xs:group ref="location" minOccurs="0" maxOccurs="0"><xs:annotation>
+                    <xs:documentation xml:lang="en">explanation: technical.location is unused.</xs:documentation>
+                </xs:annotation>
+	</xs:group>
+			<xs:group ref="requirement" minOccurs="0" maxOccurs="0"><xs:annotation>
+                    <xs:documentation xml:lang="en">explanation: technical.requirement is unused.</xs:documentation>
+                </xs:annotation>
+	</xs:group>
+			<xs:group ref="installationRemarks" minOccurs="0" maxOccurs="0"><xs:annotation>
+                    <xs:documentation xml:lang="en">explanation: technical.installationRemarks is unused.</xs:documentation>
+                </xs:annotation>
+	</xs:group>
+			<xs:group ref="otherPlatformRequirements" minOccurs="0" maxOccurs="0"><xs:annotation>
+                    <xs:documentation xml:lang="en">explanation: technical.otherPlatformRequirements is unused.</xs:documentation>
+                </xs:annotation>
+	</xs:group>
+			<xs:group ref="duration" minOccurs="0" maxOccurs="0"><xs:annotation>
+                    <xs:documentation xml:lang="en">explanation: technical.duration is unused.</xs:documentation>
+                </xs:annotation>
+	</xs:group>
+			<xs:group ref="ex:customElements" minOccurs="0" maxOccurs="0"><xs:annotation>
+                    <xs:documentation xml:lang="en">explanation: No custom elements are allowed.</xs:documentation>
+                </xs:annotation>
+	</xs:group>
+		</xs:choice>
+		<xs:attributeGroup ref="ag:technical" />
+		<xs:attributeGroup ref="ex:customAttributes" />
+	</xs:complexType>
+	<!-- 4.1 Format -->
+	<xs:complexType name="format">
+		<xs:simpleContent>
+			<xs:extension base="MimeType">
+				<xs:attributeGroup ref="ag:format" />
+				<xs:attributeGroup ref="ex:customAttributes" />
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<!-- 4.2 Size -->
+	<xs:complexType name="size">
+		<xs:simpleContent>
+			<xs:extension base="Size">
+				<xs:attributeGroup ref="ag:size" />
+				<xs:attributeGroup ref="ex:customAttributes" />
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<!-- 4.3 Location -->
+	<xs:complexType name="location">
+		<xs:simpleContent>
+			<xs:extension base="CharacterString">
+				<xs:attributeGroup ref="ag:location" />
+				<xs:attributeGroup ref="ex:customAttributes" />
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<!-- 4.4 Requirement -->
+	<xs:complexType name="requirement">
+		<xs:choice minOccurs="0" maxOccurs="unbounded">
+			<xs:group ref="orComposite" />
+			<xs:group ref="ex:customElements" />
+		</xs:choice>
+		<xs:attributeGroup ref="ag:requirement" />
+		<xs:attributeGroup ref="ex:customAttributes" />
+	</xs:complexType>
+	<!-- 4.4.1 OrComposite -->
+	<xs:complexType name="orComposite">
+		<xs:choice minOccurs="0" maxOccurs="unbounded">
+			<xs:group ref="type" />
+			<xs:group ref="name" />
+			<xs:group ref="minimumVersion" />
+			<xs:group ref="maximumVersion" />
+			<xs:group ref="ex:customElements" />
+		</xs:choice>
+		<xs:attributeGroup ref="ag:orComposite" />
+		<xs:attributeGroup ref="ex:customAttributes" />
+	</xs:complexType>
+	<!-- 4.4.1.1 Type -->
+	<xs:complexType name="type">
+		<xs:complexContent>
+			<xs:extension base="typeVocab">
+				<xs:attributeGroup ref="ag:type" />
+				<xs:attributeGroup ref="ex:customAttributes" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<!-- 4.4.1.2 Name -->
+	<xs:complexType name="name">
+		<xs:complexContent>
+			<xs:extension base="nameVocab">
+				<xs:attributeGroup ref="ag:name" />
+				<xs:attributeGroup ref="ex:customAttributes" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<!-- 4.4.1.3 Minimum Version -->
+	<xs:complexType name="minimumVersion">
+		<xs:simpleContent>
+			<xs:extension base="CharacterString">
+				<xs:attributeGroup ref="ag:minimumVersion" />
+				<xs:attributeGroup ref="ex:customAttributes" />
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<!-- 4.4.1.4 Maximum Version -->
+	<xs:complexType name="maximumVersion">
+		<xs:simpleContent>
+			<xs:extension base="CharacterString">
+				<xs:attributeGroup ref="ag:maximumVersion" />
+				<xs:attributeGroup ref="ex:customAttributes" />
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<!-- 4.5 Installation Remarks -->
+	<xs:complexType name="installationRemarks">
+		<xs:complexContent>
+			<xs:extension base="LanguageString">
+				<xs:attributeGroup ref="ag:installationRemarks" />
+				<xs:attributeGroup ref="ex:customAttributes" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<!-- 4.6 Other Platform Requirements -->
+	<xs:complexType name="otherPlatformRequirements">
+		<xs:complexContent>
+			<xs:extension base="LanguageString">
+				<xs:attributeGroup ref="ag:otherPlatformRequirements" />
+				<xs:attributeGroup ref="ex:customAttributes" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<!-- 4.7 Duration -->
+	<xs:complexType name="duration">
+		<xs:complexContent>
+			<xs:extension base="Duration">
+				<xs:attributeGroup ref="ag:duration" />
+				<xs:attributeGroup ref="ex:customAttributes" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<!-- 5 Educational -->
+	<xs:complexType name="educational">
+		<xs:choice minOccurs="0" maxOccurs="unbounded">
+			<xs:group ref="interactivityType" minOccurs="0" maxOccurs="0"><xs:annotation>
+                    <xs:documentation xml:lang="en">explanation: interactivityType is unused.</xs:documentation>
+                </xs:annotation>
+	</xs:group>
+			<xs:group ref="learningResourceType" />
+			<xs:group ref="interactivityLevel" minOccurs="0" maxOccurs="0"><xs:annotation>
+                    <xs:documentation xml:lang="en">explanation: interactivityLevel is unused.</xs:documentation>
+                </xs:annotation>
+	</xs:group>
+			<xs:group ref="semanticDensity" minOccurs="0" maxOccurs="0"><xs:annotation>
+                    <xs:documentation xml:lang="en">explanation: semanticDensity is unused.</xs:documentation>
+                </xs:annotation>
+	</xs:group>
+			<xs:group ref="intendedEndUserRole" minOccurs="0" maxOccurs="0"><xs:annotation>
+                    <xs:documentation xml:lang="en">explanation: intendedEndUserRole is unused.</xs:documentation>
+                </xs:annotation>
+	</xs:group>
+			<xs:group ref="context" minOccurs="0" maxOccurs="0"><xs:annotation>
+                    <xs:documentation xml:lang="en">explanation: Context is unused.</xs:documentation>
+                </xs:annotation>
+	</xs:group>
+			<xs:group ref="typicalAgeRange" minOccurs="0" maxOccurs="0"><xs:annotation>
+                    <xs:documentation xml:lang="en">explanation: typicalAgeRange is unused.</xs:documentation>
+                </xs:annotation>
+	</xs:group>
+			<xs:group ref="difficulty" minOccurs="0" maxOccurs="0"><xs:annotation>
+                    <xs:documentation xml:lang="en">explanation: difficulty is unused.</xs:documentation>
+                </xs:annotation>
+	</xs:group>
+			<xs:group ref="typicalLearningTime" minOccurs="0" maxOccurs="0"><xs:annotation>
+                    <xs:documentation xml:lang="en">explanation: typicalLearningTime is unused.</xs:documentation>
+                </xs:annotation>
+	</xs:group>
+			<xs:group ref="descriptionUnbounded" minOccurs="0" maxOccurs="0"><xs:annotation>
+                    <xs:documentation xml:lang="en">explanation: description is unused in educational context.</xs:documentation>
+                </xs:annotation>
+	</xs:group>
+			<xs:group ref="language" minOccurs="0" maxOccurs="0"><xs:annotation>
+                    <xs:documentation xml:lang="en">explanation: language unused in technical context, only in general context.</xs:documentation>
+                </xs:annotation>
+	</xs:group>
+			<xs:group ref="ex:customElements" minOccurs="0" maxOccurs="0"><xs:annotation>
+                    <xs:documentation xml:lang="en">explanation: No custom elements are allowed.</xs:documentation>
+                </xs:annotation>
+	</xs:group>
+		</xs:choice>
+		<xs:attributeGroup ref="ag:educational" />
+		<xs:attributeGroup ref="ex:customAttributes" />
+	</xs:complexType>
+	<!-- 5.1 Interactivity Type -->
+	<xs:complexType name="interactivityType">
+		<xs:complexContent>
+			<xs:extension base="interactivityTypeVocab">
+				<xs:attributeGroup ref="ag:interactivityType" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<!-- 5.2 Learning Resource Type -->
+	<xs:complexType name="learningResourceTypeVocab_copy">
+		<xs:choice minOccurs="0" maxOccurs="unbounded">
+			<xs:element name="source" type="sourceValue" />
+			<xs:element name="value" type="learningResourceTypeValue" fixed="IMS Common Cartridge" />
+			<xs:group ref="ex:customElements" minOccurs="0" maxOccurs="0"><xs:annotation>
+                        <xs:documentation xml:lang="en">explanation: No custom elements are allowed.</xs:documentation>
+                    </xs:annotation>
+	</xs:group>
+		</xs:choice>
+		<xs:attributeGroup ref="ex:customAttributes" />
+	</xs:complexType>
+
+<xs:complexType name="learningResourceType">
+		<xs:complexContent>
+			<xs:extension base="learningResourceTypeVocab_copy">
+				<xs:attributeGroup ref="ag:learningResourceType" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<!-- 5.3 Interactivity Level -->
+	<xs:complexType name="interactivityLevel">
+		<xs:complexContent>
+			<xs:extension base="interactivityLevelVocab">
+				<xs:attributeGroup ref="ag:interactivityLevel" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<!-- 5.4 Semantic Density -->
+	<xs:complexType name="semanticDensity">
+		<xs:complexContent>
+			<xs:extension base="semanticDensityVocab">
+				<xs:attributeGroup ref="ag:semanticDensity" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<!-- 5.5 Intended End User Role -->
+	<xs:complexType name="intendedEndUserRole">
+		<xs:complexContent>
+			<xs:extension base="intendedEndUserRoleVocab">
+				<xs:attributeGroup ref="ag:intendedEndUserRole" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<!-- 5.6 Context -->
+	<xs:complexType name="context">
+		<xs:complexContent>
+			<xs:extension base="contextVocab">
+				<xs:attributeGroup ref="ag:context" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<!-- 5.7 Typical Age Range -->
+	<xs:complexType name="typicalAgeRange">
+		<xs:complexContent>
+			<xs:extension base="LanguageString">
+				<xs:attributeGroup ref="ag:typicalAgeRange" />
+				<xs:attributeGroup ref="ex:customAttributes" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<!-- 5.8 Difficulty -->
+	<xs:complexType name="difficulty">
+		<xs:complexContent>
+			<xs:extension base="difficultyVocab">
+				<xs:attributeGroup ref="ag:difficulty" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<!-- 5.9 Typical Learning Time -->
+	<xs:complexType name="typicalLearningTime">
+		<xs:complexContent>
+			<xs:extension base="Duration">
+				<xs:attributeGroup ref="ag:typicalLearningTime" />
+				<xs:attributeGroup ref="ex:customAttributes" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<!-- 5.10 Description
+  <xs:complexType name="description">
+    <xs:complexContent>
+      <xs:extension base="LanguageString">
+        <xs:attributeGroup ref="ag:description"/>
+        <xs:attributeGroup ref="ex:customAttributes"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType> -->
+	<!-- 5.11 Language
+  <xs:complexType name="language">
+    <xs:simpleContent>
+      <xs:extension base="LanguageId">
+        <xs:attributeGroup ref="ag:language"/>
+        <xs:attributeGroup ref="ex:customAttributes"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType> -->
+	<!-- 6 Rights -->
+	<xs:complexType name="rights">
+		<xs:choice minOccurs="0" maxOccurs="unbounded">
+			<xs:group ref="cost" />
+			<xs:group ref="copyrightAndOtherRestrictions" />
+			<xs:group ref="description" />
+			<xs:group ref="ex:customElements" minOccurs="0" maxOccurs="0"><xs:annotation>
+                    <xs:documentation xml:lang="en">explanation: No custom elements are allowed.</xs:documentation>
+                </xs:annotation>
+	</xs:group>
+		</xs:choice>
+		<xs:attributeGroup ref="ag:rights" />
+		<xs:attributeGroup ref="ex:customAttributes" />
+	</xs:complexType>
+	<!-- 6.1 Cost -->
+	<xs:complexType name="cost">
+		<xs:complexContent>
+			<xs:extension base="costVocab">
+				<xs:attributeGroup ref="ag:cost" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<!-- 6.2 Copyright and Other Restrictions -->
+	<xs:complexType name="copyrightAndOtherRestrictions">
+		<xs:complexContent>
+			<xs:extension base="copyrightAndOtherRestrictionsVocab">
+				<xs:attributeGroup ref="ag:copyrightAndOtherRestrictions" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<!-- 6.3 Description -->
+	<xs:complexType name="description">
+		<xs:complexContent>
+			<xs:extension base="LanguageString">
+				<xs:attributeGroup ref="ag:description" />
+				<xs:attributeGroup ref="ex:customAttributes" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<!-- 7 Relation -->
+	<xs:complexType name="relation">
+		<xs:choice minOccurs="0" maxOccurs="unbounded">
+			<xs:group ref="kind" />
+			<xs:group ref="resource" />
+			<xs:group ref="ex:customElements" minOccurs="0" maxOccurs="0"><xs:annotation>
+                    <xs:documentation xml:lang="en">explanation: No custom elements are allowed.</xs:documentation>
+                </xs:annotation>
+	</xs:group>
+		</xs:choice>
+		<xs:attributeGroup ref="ag:relation" />
+		<xs:attributeGroup ref="ex:customAttributes" />
+	</xs:complexType>
+	<!-- 7.1 Kind -->
+	<xs:complexType name="kind">
+		<xs:complexContent>
+			<xs:extension base="kindVocab">
+				<xs:attributeGroup ref="ag:kind" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<!-- 7.2 Resource -->
+	<xs:complexType name="resource">
+		<xs:choice minOccurs="0" maxOccurs="unbounded">
+			<xs:group ref="identifier" />
+			<xs:group ref="description" />
+			<xs:group ref="ex:customElements" minOccurs="0" maxOccurs="0"><xs:annotation>
+                    <xs:documentation xml:lang="en">explanation: No custom elements are allowed.</xs:documentation>
+                </xs:annotation>
+	</xs:group>
+		</xs:choice>
+		<xs:attributeGroup ref="ag:resource" />
+		<xs:attributeGroup ref="ex:customAttributes" />
+	</xs:complexType>
+	<!-- 7.2.1 Identifier
+  <xs:complexType name="identifier">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:group ref="catalog"/>
+      <xs:group ref="entry"/>
+      <xs:group ref="ex:customElements"/>
+    </xs:choice>
+    <xs:attributeGroup ref="ag:identifier"/>
+    <xs:attributeGroup ref="ex:customAttributes"/>
+  </xs:complexType> -->
+	<!-- 7.2.1.1 Catalog
+  <xs:complexType name="catalog">
+    <xs:simpleContent>
+      <xs:extension base="CharacterString">
+        <xs:attributeGroup ref="ag:catalog"/>
+        <xs:attributeGroup ref="ex:customAttributes"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType> -->
+	<!-- 7.2.1.2 Entry
+  <xs:complexType name="entry">
+    <xs:simpleContent>
+      <xs:extension base="CharacterString">
+        <xs:attributeGroup ref="ag:entry"/>
+        <xs:attributeGroup ref="ex:customAttributes"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType> -->
+	<!-- 7.2.2 Description
+  <xs:complexType name="description">
+    <xs:complexContent>
+      <xs:extension base="LanguageString">
+        <xs:attributeGroup ref="ag:description"/>
+        <xs:attributeGroup ref="ex:customAttributes"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType> -->
+	<!-- 8 Annotation -->
+	<xs:complexType name="annotation">
+		<xs:choice minOccurs="0" maxOccurs="unbounded">
+			<xs:group ref="entity" />
+			<xs:group ref="date" />
+			<xs:group ref="description" />
+			<xs:group ref="ex:customElements" />
+		</xs:choice>
+		<xs:attributeGroup ref="ag:annotation" />
+		<xs:attributeGroup ref="ex:customAttributes" />
+	</xs:complexType>
+	<!-- 8.1 Entity -->
+	<xs:complexType name="entity">
+		<xs:complexContent>
+			<xs:extension base="VCard">
+				<xs:attributeGroup ref="ag:entity" />
+				<xs:attributeGroup ref="ex:customAttributes" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<!-- 8.2 Date
+  <xs:complexType name="date">
+    <xs:complexContent>
+      <xs:extension base="DateTime">
+        <xs:attributeGroup ref="ag:date"/>
+        <xs:attributeGroup ref="ex:customAttributes"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType> -->
+	<!-- 8.3 Description
+  <xs:complexType name="description">
+    <xs:complexContent>
+      <xs:extension base="LanguageString">
+        <xs:attributeGroup ref="ag:description"/>
+        <xs:attributeGroup ref="ex:customAttributes"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType> -->
+	<!-- 9 Classification -->
+	<xs:complexType name="classification">
+		<xs:choice minOccurs="0" maxOccurs="unbounded">
+			<xs:group ref="purpose" />
+			<xs:group ref="taxonPath" />
+			<xs:group ref="description" />
+			<xs:group ref="keyword" />
+			<xs:group ref="ex:customElements" minOccurs="0" maxOccurs="0"><xs:annotation>
+                    <xs:documentation xml:lang="en">explanation: No custom elements are allowed.</xs:documentation>
+                </xs:annotation>
+	</xs:group>
+		</xs:choice>
+		<xs:attributeGroup ref="ag:classification" />
+		<xs:attributeGroup ref="ex:customAttributes" />
+	</xs:complexType>
+	<!-- 9.1 Purpose -->
+	<xs:complexType name="purpose">
+		<xs:complexContent>
+			<xs:extension base="purposeVocab">
+				<xs:attributeGroup ref="ag:purpose" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<!-- 9.2 Taxon Path -->
+	<xs:complexType name="taxonPath">
+		<xs:choice minOccurs="0" maxOccurs="unbounded">
+			<xs:group ref="source" />
+			<xs:group ref="taxon" />
+			<xs:group ref="ex:customElements" minOccurs="0" maxOccurs="0"><xs:annotation>
+                    <xs:documentation xml:lang="en">explanation: No custom elements are allowed.</xs:documentation>
+                </xs:annotation>
+	</xs:group>
+		</xs:choice>
+		<xs:attributeGroup ref="ag:taxonPath" />
+		<xs:attributeGroup ref="ex:customAttributes" />
+	</xs:complexType>
+	<!-- 9.2.1 Source -->
+	<xs:complexType name="source">
+		<xs:complexContent>
+			<xs:extension base="LanguageString">
+				<xs:attributeGroup ref="ag:source" />
+				<xs:attributeGroup ref="ex:customAttributes" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<!-- 9.2.2 Taxon -->
+	<xs:complexType name="taxon">
+		<xs:choice minOccurs="0" maxOccurs="unbounded">
+			<xs:group ref="id" />
+			<xs:group ref="entryTaxon" />
+			<xs:group ref="ex:customElements" minOccurs="0" maxOccurs="0"><xs:annotation>
+                    <xs:documentation xml:lang="en">explanation: No custom elements are allowed.</xs:documentation>
+                </xs:annotation>
+	</xs:group>
+		</xs:choice>
+		<xs:attributeGroup ref="ag:taxon" />
+		<xs:attributeGroup ref="ex:customAttributes" />
+	</xs:complexType>
+	<!-- 9.2.2.1 Id -->
+	<xs:complexType name="id">
+		<xs:simpleContent>
+			<xs:extension base="CharacterString">
+				<xs:attributeGroup ref="ag:id" />
+				<xs:attributeGroup ref="ex:customAttributes" />
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<!-- 9.2.2.2 Entry -->
+	<xs:complexType name="entryTaxon">
+		<xs:complexContent>
+			<xs:extension base="LanguageString">
+				<xs:attributeGroup ref="ag:entry" />
+				<xs:attributeGroup ref="ex:customAttributes" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<!-- 9.3 Description
+  <xs:complexType name="description">
+    <xs:complexContent>
+      <xs:extension base="LanguageString">
+        <xs:attributeGroup ref="ag:description"/>
+        <xs:attributeGroup ref="ex:customAttributes"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType> -->
+	<!-- 9.4 Keyword
+  <xs:complexType name="keyword">
+    <xs:complexContent>
+      <xs:extension base="LanguageString">
+        <xs:attributeGroup ref="ag:keyword"/>
+        <xs:attributeGroup ref="ex:customAttributes"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType> -->
+</xs:schema>

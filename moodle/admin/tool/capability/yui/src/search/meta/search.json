@@ -1,0 +1,8 @@
+{
+    "moodle-tool_capability-search": {
+        "requires": [
+            "base",
+            "node"
+        ]
+    }
+}

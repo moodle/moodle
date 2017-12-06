@@ -1,0 +1,13 @@
+This files describes API changes in /mod/chat/*,
+information provided here is intended especially for developers.
+
+=== 3.3.2 ===
+
+* chat_refresh_events() Now takes two additional parameters to refine the update to a specific instance. This function
+  now optionally takes the module instance object or ID, and the course module object or ID. Please try to send the full
+  objects instead of the ids to save DB calls.
+
+=== 2.4 ===
+
+optional - no changes needed:
+* previous references to icons c/user and c/group have been renamed to i/user and i/group.

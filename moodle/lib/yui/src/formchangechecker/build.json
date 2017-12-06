@@ -1,0 +1,10 @@
+{
+  "name": "moodle-core-formchangechecker",
+  "builds": {
+    "moodle-core-formchangechecker": {
+      "jsfiles": [
+        "formchangechecker.js"
+      ]
+    }
+  }
+}

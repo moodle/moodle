@@ -2744,7 +2744,6 @@ var COMMENT = function(editor, gradeid, pageno, x, y, width, colour, rawtext) {
             menu.setData('comment', this);
 
             node.on('keyup', function() {
-                node.setStyle('height', 'auto');
                 var scrollheight = node.get('scrollHeight'),
                     height = parseInt(node.getStyle('height'), 10);
 
@@ -3372,14 +3371,6 @@ EDITOR.prototype = {
      * @protected
      */
     currentannotation: null,
-
-    /**
-     * Track the previous annotation so we can remove selection highlights.
-     * @property lastannotation
-     * @type M.assignfeedback_editpdf.annotation
-     * @protected
-     */
-    lastannotation: null,
 
     /**
      * Last selected annotation tool
@@ -4153,7 +4144,8 @@ EDITOR.prototype = {
             scrollleft = canvas.get('docScrollX'),
             point = {x: e.clientX - offset[0] + scrollleft,
                      y: e.clientY - offset[1] + scrolltop},
-            selected = false;
+            selected = false,
+            lastannotation;
 
         // Ignore right mouse click.
         if (e.button === 3) {
@@ -4185,13 +4177,13 @@ EDITOR.prototype = {
             });
 
             if (selected) {
-                this.lastannotation = this.currentannotation;
+                lastannotation = this.currentannotation;
                 this.currentannotation = selected;
-                if (this.lastannotation && this.lastannotation !== selected) {
+                if (lastannotation && lastannotation !== selected) {
                     // Redraw the last selected annotation to remove the highlight.
-                    if (this.lastannotation.drawable) {
-                        this.lastannotation.drawable.erase();
-                        this.drawables.push(this.lastannotation.draw());
+                    if (lastannotation.drawable) {
+                        lastannotation.drawable.erase();
+                        this.drawables.push(lastannotation.draw());
                     }
                 }
                 // Redraw the newly selected annotation to show the highlight.
@@ -4199,15 +4191,6 @@ EDITOR.prototype = {
                     this.currentannotation.drawable.erase();
                 }
                 this.drawables.push(this.currentannotation.draw());
-            } else {
-                this.lastannotation = this.currentannotation;
-                this.currentannotation = null;
-
-                // Redraw the last selected annotation to remove the highlight.
-                if (this.lastannotation && this.lastannotation.drawable) {
-                    this.lastannotation.drawable.erase();
-                    this.drawables.push(this.lastannotation.draw());
-                }
             }
         }
         if (this.currentannotation) {

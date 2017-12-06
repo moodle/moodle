@@ -1,0 +1,19 @@
+This file describes API changes in /theme/bootstrapbase
+information provided here is intended especially for theme designers.
+
+=== 3.0 ===
+* html5shiv updated to 3.7.3
+
+=== 2.6 ===
+Notes:
+* File theme/bootstrapbase/less/moodle/grade.less is removed. Corrections are
+  made to the grade report to make it work with Bootstrapbase.
+  Theme developers need to alter config.php and update $THEME->plugins_exclude_sheets
+  to not to list stylesheet from gradereport_grade any more. See MDL-40347
+
+=== 2.5.3 ===
+Notes:
+* A new maintenance layout file was introduced.
+  If you have a theme based upon bootstrapbase that implements its own layouts but
+  does not define the maintenance layout in its config.php then you may want to
+  create your own maintenance layout file and apply your customisations to that.

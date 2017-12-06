@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<libraries>
+  <library>
+    <location>amd/src/tour.js</location>
+    <name>Flexitour</name>
+    <license>GPLv3</license>
+    <version>0.10.0</version>
+    <licenseversion>3</licenseversion>
+  </library>
+  <library>
+    <location>amd/src/popper.js</location>
+    <name>Popper.js</name>
+    <license>MIT</license>
+    <version>v1.0.8</version>
+    <licenseversion></licenseversion>
+  </library>
+</libraries>

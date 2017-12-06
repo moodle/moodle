@@ -1,0 +1,10 @@
+{
+  "name": "moodle-question-searchform",
+  "builds": {
+    "moodle-question-searchform": {
+      "jsfiles": [
+        "searchform.js"
+      ]
+    }
+  }
+}

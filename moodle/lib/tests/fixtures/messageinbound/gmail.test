@@ -1,0 +1,148 @@
+----CLIENT----
+Gmail
+----EXPECTEDPLAIN----
+This is a test response
+----EXPECTEDHTML----
+This is a test response
+----FULLSOURCE----
+Delivered-To: nxtmorg+aaaaaaaaaaiaaaaaaaaaagaaaaaaaaahbfpyofgjbkpkwpeh@gmail.com
+Received: by 10.202.174.212 with SMTP id x203csp2773063oie;
+        Wed, 8 Jul 2015 03:45:49 -0700 (PDT)
+X-Received: by 10.194.2.161 with SMTP id 1mr17755340wjv.143.1436352348859;
+        Wed, 08 Jul 2015 03:45:48 -0700 (PDT)
+Return-Path: <dan@moodle.com>
+Received: from mail-wg0-x22d.google.com (mail-wg0-x22d.google.com. [2a00:1450:400c:c00::22d])
+        by mx.google.com with ESMTPS id hf10si1873428wib.2.2015.07.08.03.45.48
+        for <nxtmorg+AAAAAAAAAAIAAAAAAAAAAgAAAAAAAAAhBfpyofgjbKpKWPeH@gmail.com>
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 08 Jul 2015 03:45:48 -0700 (PDT)
+Received-SPF: pass (google.com: domain of dan@moodle.com designates 2a00:1450:400c:c00::22d as permitted sender) client-ip=2a00:1450:400c:c00::22d;
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of dan@moodle.com designates 2a00:1450:400c:c00::22d as permitted sender) smtp.mail=dan@moodle.com;
+       dkim=pass header.i=@moodle.com;
+       dmarc=pass (p=QUARANTINE dis=NONE) header.from=moodle.com
+Received: by mail-wg0-x22d.google.com with SMTP id x7so186242655wgj.2
+        for <nxtmorg+AAAAAAAAAAIAAAAAAAAAAgAAAAAAAAAhBfpyofgjbKpKWPeH@gmail.com>; Wed, 08 Jul 2015 03:45:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=moodle.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :content-type;
+        bh=jBsUlzIsNVo/9X0XRyhQfQKdI8jqA6v/XM5yi08CpW4=;
+        b=oyncjzbEuLnDDSZ4v7AbfMV8rlNClygbSabhxlhdgiUsZEORCGL83ZmjMencwF/MLm
+         a20Eh1Tho/5gGU3ZsacTgV8phNAp0yBl59mzZUVF4wabIQBMbQQlyBJsqn7RbIRky+DA
+         FpneKKLreS29B0BMr+95VGSJ/XRohQZSjw7nY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20130820;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:content-type;
+        bh=jBsUlzIsNVo/9X0XRyhQfQKdI8jqA6v/XM5yi08CpW4=;
+        b=GXbTXInSb7VhTCe7uIdixAgUNh0tusJkfgc606jk8ZD5xy89IjLcCDaKBY4wPT/xgH
+         KqELVFnwUsAJRBv0ZiflgzvUQ7SC2znVbkfQK8idswgc7p3iaWxXLT/m3HwVrnn0Aord
+         uRlEW1eBraBdOD/as24aCbzBGFPjFDkynfK0dIyCVmXN05p8QE09bYqkOVSh3lDxeZfX
+         AIDjlfC8DmvKZQN68Con86SyzQ6epzs2A3yrQ3oMYxG5yAHFqoXbmQPZLyjWMqx0uJ4L
+         lRnq7wSSLsSA8a9q8RBO8JltmZHa1AShqMkHghh/RISISXyriFezN71F7lt303fDJLvw
+         5Z9g==
+X-Gm-Message-State: ALoCoQk4VlKEKkaqy6MLYzq2ZN82v3a64TLQZJo0b26DUbmmS8UDpT8tstQh2kodndsV2GgB/bpT
+X-Received: by 10.180.102.74 with SMTP id fm10mr112402988wib.25.1436352348167;
+ Wed, 08 Jul 2015 03:45:48 -0700 (PDT)
+MIME-Version: 1.0
+References: <665442d32a4d85d3ac239d88a146ffdf9becf154c78bf8394bf3bfdbb4c312f6@dan.moodle.local>
+ <b287e7e4769857e7e31675e9b6141ca71b147210ce28f8a4eadd77aef458ddea@dan.moodle.local>
+In-Reply-To: <b287e7e4769857e7e31675e9b6141ca71b147210ce28f8a4eadd77aef458ddea@dan.moodle.local>
+From: Dan Poltawski <dan@moodle.com>
+Date: Wed, 08 Jul 2015 10:45:38 +0000
+Message-ID: <CAOieoNi=VqpcPjhQNwGsw4m-3ATr03CgkriQ4ivgeKQpQtjKqA@mail.gmail.com>
+Subject: Re: Using Moodle Test: Re: A test
+To: nxtmorg+AAAAAAAAAAIAAAAAAAAAAgAAAAAAAAAhBfpyofgjbKpKWPeH@gmail.com
+Content-Type: multipart/alternative; boundary=f46d0444812b7c332b051a5ad7d1
+
+--f46d0444812b7c332b051a5ad7d1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+This is a test response
+
+On Wed, Jul 8, 2015 at 11:45 AM Admin User <nxtmorg@gmail.com> wrote:
+
+>  Using Moodle Test <http://dan.moodle.local/sites/course/view.php?id=3D3>=
+ =C2=BB
+> Forums <http://dan.moodle.local/sites/mod/forum/index.php?id=3D3> =C2=BB =
+Discussion
+> forum <http://dan.moodle.local/sites/mod/forum/view.php?f=3D5> =C2=BB A t=
+est
+> <http://dan.moodle.local/sites/mod/forum/discuss.php?d=3D24>
+> [image: Picture of Admin User]
+> <http://dan.moodle.local/sites/user/view.php?id=3D2&course=3D3>
+> Re: A test
+> by Admin User <http://dan.moodle.local/sites/user/view.php?id=3D2&course=
+=3D3>
+> - Wednesday, 8 July 2015, 11:45 am
+>
+>
+> test 123
+> Show parent
+> <http://dan.moodle.local/sites/mod/forum/discuss.php?d=3D24&parent=3D27> =
+|
+> Reply <http://dan.moodle.local/sites/mod/forum/post.php?reply=3D33>
+> See this post in context
+> <http://dan.moodle.local/sites/mod/forum/discuss.php?d=3D24#p33>
+> ------------------------------
+> Unsubscribe from this forum
+> <http://dan.moodle.local/sites/mod/forum/subscribe.php?id=3D5> Unsubscrib=
+e
+> from this discussion
+> <http://dan.moodle.local/sites/mod/forum/subscribe.php?id=3D5&d=3D24> Uns=
+ubscribe
+> from all forums
+> <http://dan.moodle.local/sites/mod/forum/unsubscribeall.php> Change your
+> forum digest preferences
+> <http://dan.moodle.local/sites/mod/forum/index.php?id=3D3>
+>
+> You can reply to this via email.
+>
+
+--f46d0444812b7c332b051a5ad7d1
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr">This is a test response</div><br><div class=3D"gmail_quote=
+"><div dir=3D"ltr">On Wed, Jul 8, 2015 at 11:45 AM Admin User &lt;<a href=
+=3D"mailto:nxtmorg@gmail.com">nxtmorg@gmail.com</a>&gt; wrote:<br></div><bl=
+ockquote class=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;border-left:1px #=
+ccc solid;padding-left:1ex">
+<div>
+
+<div><a href=3D"http://dan.moodle.local/sites/course/view.php?id=3D3" targe=
+t=3D"_blank">Using Moodle Test</a> =C2=BB <a href=3D"http://dan.moodle.loca=
+l/sites/mod/forum/index.php?id=3D3" target=3D"_blank">Forums</a> =C2=BB <a =
+href=3D"http://dan.moodle.local/sites/mod/forum/view.php?f=3D5" target=3D"_=
+blank">Discussion forum</a> =C2=BB <a href=3D"http://dan.moodle.local/sites=
+/mod/forum/discuss.php?d=3D24" target=3D"_blank">A test</a></div><table bor=
+der=3D"0" cellpadding=3D"3" cellspacing=3D"0"><tr><td width=3D"35" valign=
+=3D"top"><a href=3D"http://dan.moodle.local/sites/user/view.php?id=3D2&amp;=
+course=3D3" target=3D"_blank"><img src=3D"http://dan.moodle.local/sites/the=
+me/image.php?theme=3Dmoodleorgcleaned_moodleorg&amp;component=3Dcore&amp;im=
+age=3Du%2Ff2&amp;svg=3D0" alt=3D"Picture of Admin User" title=3D"Picture of=
+ Admin User" width=3D"35" height=3D"35"></a></td><td><div>Re: A test</div><=
+div>by <a href=3D"http://dan.moodle.local/sites/user/view.php?id=3D2&amp;co=
+urse=3D3" target=3D"_blank">Admin User</a> - Wednesday, 8 July 2015, 11:45 =
+am</div></td></tr><tr><td valign=3D"top">=C2=A0</td><td><p>test 123</p><div=
+><a href=3D"http://dan.moodle.local/sites/mod/forum/discuss.php?d=3D24&amp;=
+parent=3D27" target=3D"_blank">Show parent</a> | <a href=3D"http://dan.mood=
+le.local/sites/mod/forum/post.php?reply=3D33" target=3D"_blank">Reply</a></=
+div><div><a href=3D"http://dan.moodle.local/sites/mod/forum/discuss.php?d=
+=3D24#p33" target=3D"_blank">See this post in context</a></div></td></tr></=
+table>
+
+<hr><div><a href=3D"http://dan.moodle.local/sites/mod/forum/subscribe.php?i=
+d=3D5" target=3D"_blank">Unsubscribe from this forum</a>=C2=A0<a href=3D"ht=
+tp://dan.moodle.local/sites/mod/forum/subscribe.php?id=3D5&amp;d=3D24" targ=
+et=3D"_blank">Unsubscribe from this discussion</a>=C2=A0<a href=3D"http://d=
+an.moodle.local/sites/mod/forum/unsubscribeall.php" target=3D"_blank">Unsub=
+scribe from all forums</a>=C2=A0<a href=3D"http://dan.moodle.local/sites/mo=
+d/forum/index.php?id=3D3" target=3D"_blank">Change your forum digest prefer=
+ences</a></div></div><p>You can reply to this via email.</p>
+
+</blockquote></div>
+
+--f46d0444812b7c332b051a5ad7d1--

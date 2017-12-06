@@ -1,0 +1,29 @@
+This files describes API changes in /availability/*.
+
+The information here is intended only for developers.
+
+=== 3.2 ===
+
+* Condition plugins must replace the CSS selector "#fitem_id_availabilityconditionsjson" with ".availability-field".
+  This selector is often used in your plugin's yui/src/form/js/form.js file.
+
+=== 2.9 ===
+
+* Condition plugins can now implement a new include_after_restore function to
+  indicate that they should be removed during the restore process. (This is
+  implemented so that group and grouping conditions are removed if groups are
+  not restored.)
+
+=== 2.8 ===
+
+* There is a new API function in the info_module/info_section objects (and
+  related functions in internal API): get_user_list_sql. This returns SQL code
+  that does roughly the same as filter_user_list to return a list of users who
+  should be shown as having access to the module or section.
+
+* Any third-party availability plugins which return true to
+  is_applied_to_user_lists (and therefore previously implemented
+  filter_user_list) should now also implement get_user_list_sql. If not
+  implemented, a debugging warning will occur when anybody calls
+  get_user_list_sql if the affected plugin is in use, and that user list will
+  not be filtered by the plugin.

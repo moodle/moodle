@@ -1,0 +1,409 @@
+.path-mod-lti .ltiframe {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+/** General Styles **/
+.path-mod-lti .userpicture,
+.path-mod-lti .picture.user,
+.path-mod-lti .picture.teacher {
+    width: 35px;
+    height: 35px;
+    vertical-align: top;
+}
+
+.path-mod-lti .feedback .files,
+.path-mod-lti .feedback .grade,
+.path-mod-lti .feedback .outcome,
+.path-mod-lti .feedback .finalgrade {
+    float: right;
+}
+
+.path-mod-lti .feedback .disabledfeedback {
+    width: 500px;
+    height: 250px;
+}
+
+.path-mod-lti .feedback .from {
+    float: left;
+}
+
+.path-mod-lti .files img {
+    margin-right: 4px;
+}
+
+.path-mod-lti .files a {
+    white-space: nowrap;
+}
+
+.path-mod-lti .late {
+    color: red;
+}
+
+.path-mod-lti .message {
+    text-align: center;
+}
+
+/* Styles for admin */
+.path-admin-mod-lti .mform .fitem .fitemtitle {
+    min-width: 18em;
+    padding-right: 1em;
+} /* Prevent setting titles from wrapping */
+
+/* Styles for instructor editing an external tool */
+
+.path-mod-lti .mform .fitem .fitemtitle {
+    min-width: 14em;
+    padding-right: 1em;
+} /* Prevent setting titles from wrapping */
+
+/* Styles for instructor_edit_tool_type.php */
+#page-mod-lti-instructor_edit_tool_type .mform .fitem .fitemtitle {
+    min-width: 18em;
+    padding-right: 1em;
+} /* Prevent setting titles from wrapping */
+
+/* Styling for tool_configure page */
+#registration-choice-container .buffer-text {
+    margin: 20px;
+}
+
+#choice-list {
+    list-style: none;
+    border-bottom: 1px solid #e3e3e3;
+    padding-bottom: 1em;
+    margin-left: 0;
+}
+
+#choice-list > li {
+    display: inline-block;
+}
+
+#external-registration-container iframe {
+    border: 1px solid #e5e5e5;
+    border-radius: 10px;
+    width: 100%;
+    min-height: 800px;
+}
+
+.loading-screen {
+    text-align: center;
+    padding: 3em;
+}
+
+.loading-screen .loading-text {
+    font-size: 2em;
+}
+
+.loading-screen .loader {
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 1em;
+    height: 2em;
+    width: 2em;
+    font-size: 2em;
+}
+
+#registration-submit {
+    min-width: 140px;
+}
+
+#registration-form-container {
+    min-height: 260px;
+}
+
+#registration-form-container .well {
+    margin-bottom: 0;
+}
+
+#registration-form-container .control-group:last-child {
+    margin-bottom: 0;
+}
+
+#registration-choice-container .well {
+    text-align: center;
+}
+
+#registration-choice-container .btn-toolbar {
+    margin-bottom: 0;
+}
+
+#registration-choice-container p:last-child {
+    margin-top: 20px;
+}
+
+#tool-type-capabilities-container .registration-loading-container {
+    display: none;
+}
+
+#tool-type-capabilities-container.loading .registration-loading-container {
+    display: block;
+}
+
+#tool-type-capabilities-container.loading #tool-type-capabilities-template-container {
+    display: none;
+}
+
+.centered-menu {
+    max-width: 70%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.btn-text {
+    display: block;
+}
+
+.btn-loader {
+    display: none;
+}
+
+.loading .btn-text {
+    display: none;
+}
+
+.loading .btn-loader {
+    display: block;
+}
+
+.btn .loader {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.btn .loader img {
+    height: 1.5em;
+}
+
+#tool-list-container h3 {
+    display: inline-block;
+}
+
+#tool-list-loader-container {
+    display: inline-block;
+}
+
+#tool-list-loader-container .loader {
+    display: none;
+}
+
+#tool-list-loader-container .loader img {
+    height: 2em;
+}
+
+.loading #tool-list-loader-container .loader {
+    display: block;
+}
+
+.loading #tool-notools-text {
+    display: none;
+}
+
+.tool-card {
+    display: inline-block;
+    width: 250px;
+    height: 300px;
+    border: 1px solid #e5e5e5;
+    border-radius: 10px;
+    margin: 5px;
+    position: relative;
+    box-sizing: border-box;
+    vertical-align: top;
+}
+
+.tool-card:hover,
+.tool-card:focus {
+    border-color: #08c;
+    box-shadow: 0 1px 4px rgba(0, 105, 214, 0.25);
+    -webkit-transition: border linear 0.2s, box-shadow linear 0.2s;
+    -moz-transition: border linear 0.2s, box-shadow linear 0.2s;
+    -o-transition: border linear 0.2s, box-shadow linear 0.2s;
+    transition: border linear 0.2s, box-shadow linear 0.2s;
+}
+
+.tool-card .overlay-container {
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 10px;
+    display: none;
+    height: 100%;
+    left: 0;
+    position: absolute;
+    text-align: center;
+    top: 0;
+    width: 100%;
+    z-index: 100;
+    box-sizing: border-box;
+    padding: 10px;
+}
+
+.tool-card .overlay-container .img-container {
+    position: absolute;
+    top: 115px;
+    left: 90px;
+    display: block;
+    width: 70px;
+    height: 70px;
+}
+
+.tool-card .overlay-container .img-container img {
+    height: 100%;
+    width: 100%;
+}
+
+.tool-card.announcement > .overlay-container {
+    display: block;
+}
+
+.tool-card.announcement .overlay-container .loader {
+    display: none;
+}
+
+.tool-card.announcement.loading .overlay-container .loader {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.tool-card.announcement .overlay-container .success-icon-container {
+    display: none;
+}
+
+.tool-card.announcement.success .overlay-container .success-icon-container {
+    display: block;
+}
+
+.tool-card.announcement .overlay-container .fail-icon-container {
+    display: none;
+}
+
+.tool-card.announcement.fail .overlay-container .fail-icon-container {
+    display: block;
+}
+
+.tool-card.announcement .overlay-container .capabilities-container {
+    display: none;
+}
+
+.tool-card.announcement.capabilities .overlay-container .capabilities-container {
+    display: block;
+}
+
+.tool-card.announcement.capabilities .overlay-container {
+    background-color: rgb(255, 255, 255);
+}
+
+.tool-card.announcement.capabilities .overlay-container .img-container {
+    display: none;
+}
+
+.tool-card-content {
+    z-index: 1;
+}
+
+.tool-card-header {
+    text-align: center;
+    background-color: #f5f5f5;
+    padding: 10px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    box-sizing: border-box;
+    height: 125px;
+}
+
+.tool-card-subheader {
+    margin-bottom: 10px;
+    text-align: left;
+}
+
+.tool-card-header .tool-card-icon {
+    width: 35px;
+    height: 35px;
+}
+
+.tool-card-header .name {
+    margin-bottom: 0;
+    white-space: nowrap;
+}
+
+.tool-card-header .tool-card-actions {
+    float: right;
+}
+
+.tool-card-header .tool-card-actions img {
+    width: 15px;
+    height: 15px;
+    margin-left: 7px;
+}
+
+.tool-card-body {
+    border-top: 1px solid #e5e5e5;
+    box-sizing: border-box;
+    padding: 5px;
+    height: 125px;
+}
+
+.tool-card-body .description {
+    max-height: 100px;
+    word-wrap: break-word;
+}
+
+.tool-card-footer {
+    height: 50px;
+    text-align: center;
+    padding-top: 10px;
+    box-sizing: border-box;
+}
+
+.tool-card .contenteditable-container {
+    position: relative;
+}
+
+.tool-card [contenteditable=true] {
+    border: 1px solid transparent;
+    padding: 0.25em;
+    position: relative;
+    z-index: 1;
+    overflow: auto;
+}
+
+.tool-card [contenteditable=true]:hover {
+    border-radius: 4px;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    background-color: #fff;
+    border: 1px solid #e3e3e3;
+    -webkit-transition: border linear 0.2s, box-shadow linear 0.2s;
+    -moz-transition: border linear 0.2s, box-shadow linear 0.2s;
+    -o-transition: border linear 0.2s, box-shadow linear 0.2s;
+    transition: border linear 0.2s, box-shadow linear 0.2s;
+    cursor: text;
+}
+
+.tool-card [contenteditable=true]:focus {
+    outline: 0;
+    border-radius: 4px;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
+    background-color: #fff;
+    border: 1px solid rgba(82, 168, 236, 0.8);
+    -webkit-transition: border linear 0.2s, box-shadow linear 0.2s;
+    -moz-transition: border linear 0.2s, box-shadow linear 0.2s;
+    -o-transition: border linear 0.2s, box-shadow linear 0.2s;
+    transition: border linear 0.2s, box-shadow linear 0.2s;
+    cursor: text;
+}
+
+.tool-card [contenteditable=true].loading + .overlay-container {
+    border-radius: 4px;
+    display: block;
+}
+
+.tool-card [contenteditable=true] + .overlay-container .loader {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+/* Styling for LTI view */
+#contentframe {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}

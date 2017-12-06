@@ -1,0 +1,10 @@
+{
+    "name": "moodle-question-chooser",
+    "builds": {
+        "moodle-question-chooser": {
+            "jsfiles": [
+                "chooser.js"
+            ]
+        }
+    }
+}

@@ -1,0 +1,71 @@
+This files describes API changes in /auth/* - plugins,
+information provided here is intended especially for developers.
+
+=== 3.3 ===
+
+* Authentication plugins have been migrated to use the admin settings API.  Plugins should use a settings.php file to
+  manage configurations rather than using the old config.html files. See how the helper function
+  upgrade_fix_config_auth_plugin_names() can be used to convert the legacy settings to the new ones. Another helper
+  function upgrade_fix_config_auth_plugin_defaults() can be used to populate the settings with default values so that
+  they are not falsely reported as newly added ones.
+* The function 'print_auth_lock_options' has been replaced by 'display_auth_lock_options' which uses the admin settings API.
+  See auth_manual as an exmple of how it can be used.  More information can be found in MDL-12689.
+* The list of supported identity providers (SSO IdP) returned by the 'loginpage_idp_list' method (used to render the
+  login page and login block links) now supports a new key 'iconurl' which should be used instead of the legacy 'icon'.
+
+=== 3.2 ===
+
+* New auth hook - pre_user_login_hook() - available, triggered right after the user object is created.
+  This can be used to modify the user object before any authentication errors are raised.
+* The block_login now displays the loginpage_idp_list() links as well as main login page.
+* The authentication plugin auth_radius has been moved to https://github.com/moodlehq/moodle-auth_radius
+* New auth_email::user_signup_with_confirmation() method has a new optional parameter $confirmationurl to provide a different
+  confirmation URL.
+* New signup_is_enabled() function available in lib/authlib.php to safely check if sign-up is enabled in the site.
+
+=== 3.0 ===
+
+* login_signup_form::signup_captcha_enabled() now calls is_captcha_enabled() from the current auth plugin instead of from auth_email
+
+=== 2.9 ===
+
+* Do not update user->firstaccess from any auth plugin, the complete_user_login() does it automatically.
+
+* Add user_add_password_history() to user_signup() method.
+
+* New auth hook - pre_loginpage_hook() - available, triggered before redirecting to the login page.
+
+=== 2.8 ===
+
+* \core\session\manager::session_exists() now verifies the session is active
+  instead of only checking the session data is present in low level session handler
+
+* MNet is no longer sending logs between the client and parent sites. auth_plugin_mnet::refresh_log() is now deprecated. There is
+  no alternative. Please don't use this function.
+
+=== 2.7 ===
+
+* If you are returning a url in method change_password_url() from config, please make sure it is set before trying to use it.
+
+=== 2.6 ===
+
+* can_be_manually_set() - This function was introduced in the base class and returns false by default. If overriden by
+  an authentication plugin to return true, the authentication plugin will be able to be manually set for users. For example,
+  when bulk uploading users you will be able to select it as the authentication method they use.
+
+=== 2.4 ===
+
+required changes in code:
+* use role_get_name() or role_fix_names() if you need any role names, using role.name
+  directly from database is not correct any more
+
+optional - no changes needed:
+* add support for custom user signup form - see auth_plugin_base::signup_form() function
+
+=== 2.2 ===
+
+required changes in code:
+* the correct sequence to set up global $USER is:
+    $user = get_complete_user_data('username', $username); // or $user = authenticate_user_login()
+    enrol_check_plugins($user);
+    session_set_user($user);

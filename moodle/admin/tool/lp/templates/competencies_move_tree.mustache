@@ -1,0 +1,60 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template tool_lp/competencies_move_tree
+
+    Manage competencies template.
+
+    Classes required for JS:
+
+    Data attibutes required for JS:
+    * data-enhance=movetree
+
+    Context variables required for this template:
+    * framework -
+    * competencies - array of objects containing id, shortname, idnumber, sortorder, parentid, competencyframeworkid, path
+
+    Example context (json):
+    {
+        "framework": {
+            "shortname":"framework"
+        },
+        "competencies": [
+            { "name": "Competency", "id": 1 }
+        ]
+    }
+}}
+<div data-region="competencymovetree" >
+<label>{{#str}}selectcompetencymovetarget, tool_lp{{/str}}</label>
+
+<ul data-enhance="movetree" style="display: none;">
+    <li>
+        <span>{{{framework.shortname}}}</span>
+        <ul>
+            {{#competencies}}
+                {{> tool_lp/competencies_tree }}
+            {{/competencies}}
+        </ul>
+    </li>
+</ul>
+</div>
+
+<div data-region="move-buttons" class="pull-xs-right">
+    <input type="button" data-action="move" class="btn btn-primary" value="{{#str}}move{{/str}}"/>
+    <input type="button" data-action="cancel" class="btn btn-secondary" value="{{#str}}cancel{{/str}}"/>
+</div>
+<div class="clearfix"></div>

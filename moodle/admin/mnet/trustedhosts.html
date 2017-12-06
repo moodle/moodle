@@ -1,0 +1,68 @@
+<?php
+echo $OUTPUT->header();
+?>
+<div id="trustedhosts"><!-- See theme/standard/styles_layout.css #trustedhosts .generaltable for rules -->
+<table cellspacing="0" cellpadding="5"  class="generaltable generalbox" >
+    <tr>
+        <th class="header c0" colspan="2"><?php print_string('trustedhosts', 'mnet'); ?></th>
+    </tr>
+    <tr>
+        <td class="cell c1" colspan="2"><?php print_string('trustedhostsexplain', 'mnet'); ?></td>
+    </tr>
+    <tr>
+        <td class="cell c1" colspan="2">
+            <form  method="post" action="trustedhosts.php">
+            <div>
+                <input type="hidden" name="sesskey" value="<?php echo sesskey() ?>" />
+                <textarea name="hostlist" cols="40" rows="20"><?php echo $trusted_hosts; ?></textarea><br />
+                <input type="submit" value="<?php print_string('savechanges'); ?>" />
+            </div>
+            </form>
+        </td>
+    </tr>
+</table>
+<table cellspacing="0" cellpadding="5" class="generaltable generalbox" >
+    <tr>
+        <th class="header c0" colspan="2"><?php print_string('testtrustedhosts', 'mnet'); ?></th>
+    </tr>
+<?php
+    if (!empty($test_ip_address)){
+?>
+    <tr>
+        <td class="cell c1" colspan="2">
+            <?php
+                if ($in_range) {
+                    print_string('is_in_range',  'mnet', $test_ip_address);
+                    echo '<br />';
+                    print_string('validated_by', 'mnet', $validated_by);
+                } else {
+                    print_string('not_in_range',  'mnet', $test_ip_address);
+                }
+            ?>
+        </td>
+    </tr>
+<?php
+   } else {
+?>
+    <tr>
+        <td class="cell c1" colspan="2"><?php print_string('testtrustedhostsexplain', 'mnet'); ?></td>
+    </tr>
+<?php
+   }
+?>
+    <tr>
+        <td class="cell c1" colspan="2">
+            <form  method="get" action="trustedhosts.php">
+            <div>
+                <input type="hidden" name="sesskey" value="<?php echo sesskey() ?>" />
+                <input type="text" name="testipaddress" value="<?php echo $test_ip_address; ?>" />
+                <input type="submit" value="<?php print_string('go'); ?>" />
+            </div>
+            </form>
+        </td>
+    </tr>
+</table>
+</div>
+<?php
+echo $OUTPUT->footer();
+?>

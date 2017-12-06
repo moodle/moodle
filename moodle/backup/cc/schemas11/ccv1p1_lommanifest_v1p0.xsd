@@ -1,0 +1,822 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+<xs:schema xmlns="http://ltsc.ieee.org/xsd/imsccv1p1/LOM/manifest"
+    targetNamespace="http://ltsc.ieee.org/xsd/imsccv1p1/LOM/manifest"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+    version="IMS CC MD 1.3 MAN 1.1"
+    elementFormDefault="qualified"
+    attributeFormDefault="unqualified">
+    <xs:annotation>
+        <xs:documentation>
+            XSD Data File Information
+            -------------------------
+            Author:         Colin Smythe
+            Date:           31st  January, 2011
+            Version:        1.1
+            Status:         Final
+            Description:    This is the IMS GLC Meta-data v1.3 binding of the IEEE LOMv1.0 for the
+                            Common Cartridge v1.1 Manifest Metadata.  This is based on the LOM Strict bindings. 
+                            The core changes are:
+                            a) MetaMetadata complexType is removed;
+                            b) Annotation complexType is removed;
+                            c) In the Technical complexType only the format element is permitted;
+                            d) In the Educational complexType only the 'learningResourceType' element and 
+                            'intendedEndUserRole' are permitted;
+                            e) In the General complexType the 'structure' and 'aggregationLevel' elements are prohibited;
+                            f) Only the 'contribute' element in the 'LifeCycle' complexType are permitted;
+
+            History:        Version 1.1: The first usage of this XSD for the CC Manifest Profile.
+
+            License:        IPR, License and Distribution Notices
+
+                            This machine readable file is derived from IMS Global Learning Consortium (GLC) specification IMS Common Cartridge Version 1.1
+                            found at http://www.imsglobal.org/cc and the original IMS GLC schema binding or code base
+                            http://www.imsglobal.org/cc.
+
+                            Recipients of this document are requested to submit, with their comments, notification of any
+                            relevant patent claims or other intellectual property rights of which they may be aware that might be
+                            infringed by the schema binding contained in this document.
+
+                            IMS GLC takes no position regarding the validity or scope of any intellectual property or other
+                            rights that might be claimed to pertain to the implementation or use of the technology described in this
+                            document or the extent to which any license under such rights might or might not be available; neither
+                            does it represent that it has made any effort to identify any such rights. Information on IMS GLCs
+                            procedures with respect to rights in IMS GLC specifications can be found at the IMS GLC Intellectual Property
+                            Rights web page: http://www.imsglobal.org/ipr/imsipr_policyFinal.pdf.
+
+                            Copyright (c) IMS Global Learning Consortium 1999-2011. All Rights Reserved.
+
+                            License Notice for Users
+
+                            Users of products or services that include this document are hereby granted a worldwide, royalty-free, 
+                            non-exclusive license to use this document. 
+
+                            Distribution Notice for Developers
+
+                            Developers of products or services that are not original incorporators of this document and 
+                            have not changed this document, that is, are distributing a software product that incorporates this 
+                            document as is from a third-party source other than IMS, are hereby granted permission to copy,
+                            display and distribute the contents of this document in any medium for any purpose without fee or 
+                            royalty provided that you include this IPR, License and Distribution notice in its entirety on ALL
+                            copies, or portions thereof.
+
+                            Developers of products or services that are original incorporators of this document and wish 
+                            to provide distribution of this document as is or with modifications and developers of products and 
+                            services that are not original incorporators of this document and have changed this document, are
+                            required to register with the IMS GLC community on the IMS GLC website as described in the following two
+                            paragraphs:-
+
+                            *  If you wish to distribute this document as is, with no modifications, you are hereby granted 
+                               permission to copy, display and distribute the contents of this document in any medium for any 
+                               purpose without fee or royalty provided that you include this IPR, License and Distribution notice in
+                               its entirety on ALL copies, or portions thereof, that you make and you complete a valid license 
+                               registration with IMS and receive an email from IMS granting the license. To register, follow the 
+                               instructions on the IMS website: http://www.imsglobal.org/specificationdownload.cfm. Once 
+                               registered you are granted permission to transfer unlimited distribution rights of this document for the 
+                               purposes of third-party or other distribution of your product or service that incorporates this 
+                               document as long as this IPR, License and Distribution notice remains in place in its entirety; 
+
+                            *  If you wish to create and distribute a derived work from this document, you are hereby 
+                               granted permission to copy, display and distribute the contents of the derived work in any medium for 
+                               any purpose without fee or royalty provided that you include this IPR, License and Distribution 
+                               notice in its entirety on ALL copies, or portions thereof, that you make and you complete a valid 
+                               profile registration with IMS GLC and receive an email from IMS GLC granting the license. To register, follow
+                               the instructions on the IMS GLC website: http://www.imsglobal.org/profile/. Once registered you are 
+                               granted permission to transfer unlimited distribution rights of the derived work for the purposes of 
+                               third-party or other distribution of your product or service that incorporates the derived work as long 
+                               as this IPR, License and Distribution notice remains in place in its entirety. 
+
+                            The limited permissions granted above are perpetual and will not be revoked by IMS GLC or its 
+                            successors or assigns.
+
+                            THIS SPECIFICATION IS BEING OFFERED WITHOUT ANY WARRANTY WHATSOEVER, AND IN PARTICULAR, ANY WARRANTY OF NONINFRINGEMENT IS
+                            EXPRESSLY DISCLAIMED. ANY USE OF THIS SPECIFICATION SHALL BE MADE ENTIRELY AT THE IMPLEMENTERS OWN RISK, AND NEITHER THE CONSORTIUM
+                            NOR ANY OF ITS MEMBERS OR SUBMITTERS, SHALL HAVE ANY LIABILITY WHATSOEVER TO ANY IMPLEMENTER OR THIRD PARTY FOR ANY DAMAGES OF
+                            ANY NATURE WHATSOEVER, DIRECTLY OR INDIRECTLY, ARISING FROM THE USE OF THIS SPECIFICATION.
+
+            Source UML File Information
+            ---------------------------
+            The source file information must be supplied as an XMI file (without diagram layout information).
+            The supported UML authoring tools are:
+            (a) Poseidon – v6 (and later)
+
+            Source XSLT File Information
+            ----------------------------
+            XSL Generator:    UMLtoXSDTransformv0p9.xsl
+            XSLT Processor:   Xalan
+            Release:          1.0 Beta 3
+            Date:             31st May, 2009
+
+            IMS GLC Auto-generation Binding Tool-kit (I-BAT)
+            ------------------------------------------------
+            This file was auto-generated using the IMS GLC Binding Auto-generation Tool-kit (I-BAT).  While every
+            attempt has been made to ensure that this tool auto-generates the files correctly, users should be aware
+            that this is an experimental tool.  Permission is given to make use of this tool.  IMS GLC makes no
+            claim on the materials created by third party users of this tool.  Details on how to use this tool
+            are contained in the IMS GLC "I-BAT" Documentation available at the IMS GLC web-site.
+
+            Tool Copyright:  2005-2011 (c) IMS Global Learning Consortium Inc.  All Rights Reserved.
+        </xs:documentation>
+    </xs:annotation>
+
+    <xs:annotation>
+        <xs:documentation>
+            Schematron Strict Selection Validation Rules
+            --------------------------------------------
+            This is the set of Schematron rules that have been created to enforce the use of the "Unordered" stereotype.
+            These rules ensure that the number of entries in an unordered complexType of an element obey the multiplicity constraints.
+            This is required so that any-order/any-multiplicity complexTypes can be constructed and validated.
+        </xs:documentation>
+        <xs:appinfo>
+            <sch:ns uri="http://ltsc.ieee.org/xsd/imsccv1p1/LOM/manifest" prefix="lom"/>
+            <sch:title>Schematron validation rules for the enforcement of the Unordered stereotype.</sch:title>
+
+            <!-- RULESET ******************************************************************* -->
+            <sch:pattern abstract="false" id="LOM.Type">
+                <sch:title>[RULESET] For the LOM.Type complexType.</sch:title>
+
+                <sch:rule abstract="false" context="lom:lom">
+
+                    <sch:assert test="count(lom:general) = 0 or count(lom:general) = 1">
+                        [RULE for Root Class Attribute 1] Invalid number of "general" elements: <sch:value-of select="count(lom:general)"/>.
+                    </sch:assert>
+
+                    <sch:assert test="count(lom:lifeCycle) = 0 or count(lom:lifeCycle) = 1">
+                        [RULE for Root Class Attribute 2] Invalid number of "lifeCycle" elements: <sch:value-of select="count(lom:lifeCycle)"/>.
+                    </sch:assert>
+
+                    <sch:assert test="count(lom:technical) = 0 or count(lom:technical) = 1">
+                        [RULE for Root Class Attribute 3] Invalid number of "technical" elements: <sch:value-of select="count(lom:technical)"/>.
+                    </sch:assert>
+
+                    <sch:assert test="count(lom:rights) = 0 or count(lom:rights) = 1">
+                        [RULE for Root Class Attribute 5] Invalid number of "rights" elements: <sch:value-of select="count(lom:rights)"/>.
+                    </sch:assert>
+
+                </sch:rule>
+
+            </sch:pattern>
+            <!-- *************************************************************************** -->
+
+            <!-- RULESET ******************************************************************* -->
+            <sch:pattern abstract="false" id="Rights.Type">
+                <sch:title>[RULESET] For the Rights.Type complexType.</sch:title>
+
+                <sch:rule abstract="false" context="lom:lom/lom:rights">
+
+                    <sch:assert test="count(lom:cost) = 0 or count(lom:cost) = 1">
+                        [RULE for Local Attribute 1] Invalid number of "cost" elements: <sch:value-of select="count(lom:cost)"/>.
+                    </sch:assert>
+
+                    <sch:assert test="count(lom:copyrightAndOtherRestrictions) = 0 or count(lom:copyrightAndOtherRestrictions) = 1">
+                        [RULE for Local Attribute 2] Invalid number of "copyrightAndOtherRestrictions" elements: <sch:value-of select="count(lom:copyrightAndOtherRestrictions)"/>.
+                    </sch:assert>
+
+                    <sch:assert test="count(lom:description) = 0 or count(lom:description) = 1">
+                        [RULE for Local Attribute 3] Invalid number of "description" elements: <sch:value-of select="count(lom:description)"/>.
+                    </sch:assert>
+
+                </sch:rule>
+
+            </sch:pattern>
+            <!-- *************************************************************************** -->
+
+            <!-- RULESET ******************************************************************* -->
+            <sch:pattern abstract="false" id="General.Type">
+                <sch:title>[RULESET] For the General.Type complexType.</sch:title>
+
+                <sch:rule abstract="false" context="lom:lom/lom:general">
+
+                    <sch:assert test="count(lom:title) = 0 or count(lom:title) = 1">
+                        [RULE for Local Attribute 2] Invalid number of "title" elements: <sch:value-of select="count(lom:title)"/>.
+                    </sch:assert>
+
+                </sch:rule>
+
+            </sch:pattern>
+            <!-- *************************************************************************** -->
+
+            <!-- RULESET ******************************************************************* -->
+            <sch:pattern abstract="false" id="ContributeLifeCycle.Type">
+                <sch:title>[RULESET] For the ContributeLifeCycle.Type complexType.</sch:title>
+
+                <sch:rule abstract="false" context="lom:lom/lom:lifeCycle/lom:contribute">
+
+                    <sch:assert test="count(lom:role) = 0 or count(lom:role) = 1">
+                        [RULE for Local Attribute 1] Invalid number of "role" elements: <sch:value-of select="count(lom:role)"/>.
+                    </sch:assert>
+
+                    <sch:assert test="count(lom:date) = 0 or count(lom:date) = 1">
+                        [RULE for Local Attribute 3] Invalid number of "date" elements: <sch:value-of select="count(lom:date)"/>.
+                    </sch:assert>
+
+                </sch:rule>
+
+            </sch:pattern>
+            <!-- *************************************************************************** -->
+
+            <!-- RULESET ******************************************************************* -->
+            <sch:pattern abstract="false" id="Relation.Type">
+                <sch:title>[RULESET] For the Relation.Type complexType.</sch:title>
+
+                <sch:rule abstract="false" context="lom:lom/lom:relation">
+
+                    <sch:assert test="count(lom:kind) = 0 or count(lom:kind) = 1">
+                        [RULE for Local Attribute 1] Invalid number of "kind" elements: <sch:value-of select="count(lom:kind)"/>.
+                    </sch:assert>
+
+                    <sch:assert test="count(lom:resource) = 0 or count(lom:resource) = 1">
+                        [RULE for Local Attribute 2] Invalid number of "resource" elements: <sch:value-of select="count(lom:resource)"/>.
+                    </sch:assert>
+
+                </sch:rule>
+
+            </sch:pattern>
+            <!-- *************************************************************************** -->
+
+            <!-- RULESET ******************************************************************* -->
+            <sch:pattern abstract="false" id="Resource.Type">
+                <sch:title>[RULESET] For the Resource.Type complexType.</sch:title>
+
+                <sch:rule abstract="false" context="lom:lom/lom:relation/lom:resource">
+
+                </sch:rule>
+
+            </sch:pattern>
+            <!-- *************************************************************************** -->
+
+            <!-- RULESET ******************************************************************* -->
+            <sch:pattern abstract="false" id="Classification.Type">
+                <sch:title>[RULESET] For the Classification.Type complexType.</sch:title>
+
+                <sch:rule abstract="false" context="lom:lom/lom:classification">
+
+                    <sch:assert test="count(lom:purpose) = 0 or count(lom:purpose) = 1">
+                        [RULE for Local Attribute 1] Invalid number of "purpose" elements: <sch:value-of select="count(lom:purpose)"/>.
+                    </sch:assert>
+
+                    <sch:assert test="count(lom:description) = 0 or count(lom:description) = 1">
+                        [RULE for Local Attribute 3] Invalid number of "description" elements: <sch:value-of select="count(lom:description)"/>.
+                    </sch:assert>
+
+                </sch:rule>
+
+            </sch:pattern>
+            <!-- *************************************************************************** -->
+
+            <!-- RULESET ******************************************************************* -->
+            <sch:pattern abstract="false" id="Taxon.Type">
+                <sch:title>[RULESET] For the Taxon.Type complexType.</sch:title>
+
+                <sch:rule abstract="false" context="lom:lom/lom:classification/lom:taxonPath/lom:taxon">
+
+                    <sch:assert test="count(lom:id) = 0 or count(lom:id) = 1">
+                        [RULE for Local Attribute 1] Invalid number of "id" elements: <sch:value-of select="count(lom:id)"/>.
+                    </sch:assert>
+
+                    <sch:assert test="count(lom:entry) = 0 or count(lom:entry) = 1">
+                        [RULE for Local Attribute 2] Invalid number of "entry" elements: <sch:value-of select="count(lom:entry)"/>.
+                    </sch:assert>
+
+                </sch:rule>
+
+            </sch:pattern>
+            <!-- *************************************************************************** -->
+
+            <!-- RULESET ******************************************************************* -->
+            <sch:pattern abstract="false" id="DateTime.Type">
+                <sch:title>[RULESET] For the DateTime.Type complexType.</sch:title>
+
+                <sch:rule abstract="false" context="lom:lom/lom:lifeCycle/lom:contribute/lom:date">
+
+                    <sch:assert test="count(lom:dateTime) = 0 or count(lom:dateTime) = 1">
+                        [RULE for Local Attribute 1] Invalid number of "dateTime" elements: <sch:value-of select="count(lom:dateTime)"/>.
+                    </sch:assert>
+
+                    <sch:assert test="count(lom:description) = 0 or count(lom:description) = 1">
+                        [RULE for Local Attribute 2] Invalid number of "description" elements: <sch:value-of select="count(lom:description)"/>.
+                    </sch:assert>
+
+                </sch:rule>
+
+            </sch:pattern>
+            <!-- *************************************************************************** -->
+
+            <!-- RULESET ******************************************************************* -->
+            <sch:pattern abstract="false" id="Identifier.Type">
+                <sch:title>[RULESET] For the Identifier.Type complexType.</sch:title>
+
+                <sch:rule abstract="false" context="lom:lom/lom:general/lom:identifier">
+
+                    <sch:assert test="count(lom:catalog) = 0 or count(lom:catalog) = 1">
+                        [RULE for Local Attribute 1] Invalid number of "catalog" elements: <sch:value-of select="count(lom:catalog)"/>.
+                    </sch:assert>
+
+                    <sch:assert test="count(lom:entry) = 0 or count(lom:entry) = 1">
+                        [RULE for Local Attribute 2] Invalid number of "entry" elements: <sch:value-of select="count(lom:entry)"/>.
+                    </sch:assert>
+
+                </sch:rule>
+
+                <sch:rule abstract="false" context="lom:lom/lom:relation/lom:resource/lom:identifier">
+
+                    <sch:assert test="count(lom:catalog) = 0 or count(lom:catalog) = 1">
+                        [RULE for Local Attribute 1] Invalid number of "catalog" elements: <sch:value-of select="count(lom:catalog)"/>.
+                    </sch:assert>
+
+                    <sch:assert test="count(lom:entry) = 0 or count(lom:entry) = 1">
+                        [RULE for Local Attribute 2] Invalid number of "entry" elements: <sch:value-of select="count(lom:entry)"/>.
+                    </sch:assert>
+
+                </sch:rule>
+
+            </sch:pattern>
+            <!-- *************************************************************************** -->
+
+        </xs:appinfo>
+    </xs:annotation>
+
+    <!-- Generate Global Attributes *********************************************************************** -->
+
+    <!-- ================================================================================================== -->
+
+    <!-- Generate Global List Types *********************************************************************** -->
+
+    <!-- ================================================================================================== -->
+
+    <!-- Generate Namespaced extension Group  ************************************************************* -->
+
+    <!-- ================================================================================================== -->
+
+    <!-- Generate Special DataTypes  ********************************************************************** -->
+
+    <!-- ================================================================================================== -->
+
+    <!-- Generate the enumerated simpleType declarations ************************************************** -->
+
+    <!-- ================================================================================================== -->
+
+    <!-- Generate the simpleType elements based IMS data-types  ******************************************* -->
+
+    <!-- ================================================================================================== -->
+
+    <!-- Generate the derived data-type elements based upon simpleType ************************************ -->
+
+    <xs:simpleType name="CharacterString.Type">
+        <xs:restriction base="xs:string"/>
+    </xs:simpleType>
+
+    <!-- ================================================================================================== -->
+
+    <!-- Generate the derived data-type elements based upon derived simpleType **************************** -->
+
+    <!-- ================================================================================================== -->
+
+    <!-- Generate the data-type ComplexTypes ************************************************************** -->
+
+    <xs:complexType name="Classification.Type" mixed="false">
+        <xs:annotation>
+            <xs:documentation source="umldocumentation">
+                The Classification complexType is the container for information which describes where this learning 
+object falls within a particular classification system.  To define multiple classifications, there may be 
+multiple instances of this category.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:choice minOccurs = "0" maxOccurs = "unbounded">
+            <xs:element name="purpose" type="Purpose.Type" minOccurs = "0" maxOccurs = "1"/>
+            <xs:element name="taxonPath" type="TaxonPath.Type" minOccurs = "0" maxOccurs = "unbounded"/>
+            <xs:element name="description" type="LangString.Type" minOccurs = "0" maxOccurs = "1"/>
+            <xs:element name="keyword" type="LangString.Type" minOccurs = "0" maxOccurs = "unbounded"/>
+        </xs:choice>
+    </xs:complexType>
+
+    <xs:complexType name="Context.Type" mixed="false">
+        <xs:annotation>
+            <xs:documentation source="umldocumentation">
+                The Context complexType is the container for the information about the principal environment within which the learning and use of this learning object is intended to take place. Suggested good practice is to use one of the values of the value space and to use an additional instance of this data element for further refinement.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="source" minOccurs = "1" maxOccurs = "1">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:enumeration value="LOMv1.0"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="value" minOccurs = "1" maxOccurs = "1">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:enumeration value="higher education"/>
+                        <xs:enumeration value="school"/>
+                        <xs:enumeration value="training"/>
+                        <xs:enumeration value="other"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="ContributeLifeCycle.Type" mixed="false">
+        <xs:annotation>
+            <xs:documentation source="umldocumentation">
+                The Contribute complexType is the container for the entities (i.e. people, organizations) that have
+contributed to the state of the learning object.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:choice minOccurs = "0" maxOccurs = "unbounded">
+            <xs:element name="role" type="RoleLifeCycle.Type" minOccurs = "0" maxOccurs = "1"/>
+            <xs:element name="entity" type="CharacterString.Type" minOccurs = "0" maxOccurs = "unbounded"/>
+            <xs:element name="date" type="DateTime.Type" minOccurs = "0" maxOccurs = "1"/>
+        </xs:choice>
+    </xs:complexType>
+
+    <xs:complexType name="CopyrightAndOtherRestrictions.Type" mixed="false">
+        <xs:annotation>
+            <xs:documentation source="umldocumentation">
+                The CopyrightAndOtherRestrictions complexType defines whether copyright or other restrictions apply 
+to the use of this learning object.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="value" minOccurs = "1" maxOccurs = "1">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:enumeration value="yes"/>
+                        <xs:enumeration value="no"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="Cost.Type" mixed="false">
+        <xs:annotation>
+            <xs:documentation source="umldocumentation">
+                The Cost complexType is the container for whether use of this learning object requires payment.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="value" minOccurs = "1" maxOccurs = "1">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:enumeration value="yes"/>
+                        <xs:enumeration value="no"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="DateTime.Type" mixed="false">
+        <xs:annotation>
+            <xs:documentation source="umldocumentation">
+                The DateTime abstract complexType is the container for the annotated date/time.  An accuracy 
+of at least one second is supported.  The ISO 8601 format is used.  An associated description is also provided.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:choice minOccurs = "0" maxOccurs = "unbounded">
+            <xs:element name="dateTime" type="CharacterString.Type" minOccurs = "0" maxOccurs = "1"/>
+            <xs:element name="description" type="LangString.Type" minOccurs = "0" maxOccurs = "1"/>
+        </xs:choice>
+    </xs:complexType>
+
+    <xs:complexType name="Educational.Type" mixed="false">
+        <xs:annotation>
+            <xs:documentation source="umldocumentation">
+                The Educational complexType is the container for the information that describes the key educational or pedagogic characteristics of this learning object. This is pedagogical informtion essential to those involved in achieving a quality learning experience. The audience for this metadata includes teachers, managers, authors and learners. CC MANIFEST PROFILE Only a single instance of the 'learningResourceType' and multple instances of the 'ntendedEnduserRole' are permitted.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="learningResourceType" type="LearningResourceType.Type" minOccurs = "1" maxOccurs = "1"/>
+            <xs:element name="context" type="Context.Type" minOccurs = "0" maxOccurs = "1"/>
+            <xs:element name="intendedEndUserRole" type="IntendedEndUserRole.Type" minOccurs = "0" maxOccurs = "unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="General.Type" mixed="false">
+        <xs:annotation>
+            <xs:documentation source="umldocumentation">
+                CC AMANIFEST PROFILE
+
+The 'structure' and aggregationLevel' elements are prohibited.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:choice minOccurs = "0" maxOccurs = "unbounded">
+            <xs:element name="identifier" type="Identifier.Type" minOccurs = "0" maxOccurs = "unbounded"/>
+            <xs:element name="title" type="LangString.Type" minOccurs = "0" maxOccurs = "1"/>
+            <xs:element name="language" type="CharacterString.Type" minOccurs = "0" maxOccurs = "unbounded"/>
+            <xs:element name="description" type="LangString.Type" minOccurs = "0" maxOccurs = "unbounded"/>
+            <xs:element name="keyword" type="LangString.Type" minOccurs = "0" maxOccurs = "unbounded"/>
+            <xs:element name="coverage" type="LangString.Type" minOccurs = "0" maxOccurs = "unbounded"/>
+        </xs:choice>
+    </xs:complexType>
+
+    <xs:complexType name="Identifier.Type" mixed="false">
+        <xs:annotation>
+            <xs:documentation source="umldocumentation">
+                The Identifier complexType is the container for the globally unique idenitifer that identifies 
+the associated parent object.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:choice minOccurs = "0" maxOccurs = "unbounded">
+            <xs:element name="catalog" type="CharacterString.Type" minOccurs = "0" maxOccurs = "1"/>
+            <xs:element name="entry" type="CharacterString.Type" minOccurs = "0" maxOccurs = "1"/>
+        </xs:choice>
+    </xs:complexType>
+
+    <xs:complexType name="IntendedEndUserRole.Type" mixed="false">
+        <xs:annotation>
+            <xs:documentation source="umldocumentation">
+                The IntendedEndUserRole complexType is the container for the information about the principal user(s) for which this learning object was designed, most dominant first. For Strict LOM binding this has an enumerated vocabulary. The Classification element can be used to describe the role through the skills the user is intended to master, or the tasks he or she is intended to be able to accomplish. CC Manifest Profile: Only the Iinstructor' 'Mentor' and 'Teacher' vocab values are permitted.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="source" minOccurs = "1" maxOccurs = "1">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:enumeration value="IMSGLC_CC_Rolesv1p1"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="value" minOccurs = "1" maxOccurs = "1">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:enumeration value="Instructor"/>
+                        <xs:enumeration value="Learner"/>
+                        <xs:enumeration value="Mentor"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="Kind.Type" mixed="false">
+        <xs:annotation>
+            <xs:documentation source="umldocumentation">
+                The Kind complexType is the container for the nature of the relationship between this learning object and the
+target learning object, identified by information in the associated Resource complexType.  In LOMv1.0 (Strict) this is an
+enumerated vocabulary.
+
+CC MANIFEST PROFILE
+
+Only the 'value' element is permitted.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="value" minOccurs = "1" maxOccurs = "1">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:enumeration value="ispartof"/>
+                        <xs:enumeration value="haspart"/>
+                        <xs:enumeration value="isversionof"/>
+                        <xs:enumeration value="hasversion"/>
+                        <xs:enumeration value="isformatof"/>
+                        <xs:enumeration value="hasformat"/>
+                        <xs:enumeration value="references"/>
+                        <xs:enumeration value="isreferencedby"/>
+                        <xs:enumeration value="isbasedon"/>
+                        <xs:enumeration value="isbasisfor"/>
+                        <xs:enumeration value="requires"/>
+                        <xs:enumeration value="isrequiredby"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="LangString.Type" mixed="false">
+        <xs:annotation>
+            <xs:documentation source="umldocumentation">
+                The LangString complexType is the container for a group of language specific characterstrings.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="string" type="LanguageString.Type" minOccurs = "0" maxOccurs = "unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="LearningResourceType.Type" mixed="false">
+        <xs:annotation>
+            <xs:documentation source="umldocumentation">
+                The LearningResourceType complexType is the container for the information about the specific kind of learning object. The most dominant kind shall be first. The vocabulary terms are defined as in OED:1989 and as used by any educational communties of practice. CC MANIFEST PROFILE Only 'value' is permited and this is fixed as 'IMS Common Cartridge'.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="value" minOccurs = "1" maxOccurs = "1">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:enumeration value="IMS Common Cartridge"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="LifeCycle.Type" mixed="false">
+        <xs:annotation>
+            <xs:documentation source="umldocumentation">
+                The LifeCycle complexType is the container for the history and current state of this
+learning object and those entities that have affected this learning object during its evolution.
+
+CC MANIFEST PROFILE
+
+Only the 'contribite' element is permitted.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="contribute" type="ContributeLifeCycle.Type" minOccurs = "1" maxOccurs = "unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="LOM.Type" mixed="false">
+        <xs:annotation>
+            <xs:documentation source="umldocumentation">
+                The LOM complexType is the container for the metadata instance.
+
+CC MANIFEST PROFILE
+
+The MetaMetadata and Annotation complexTypes are prohibited.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:choice minOccurs = "0" maxOccurs = "unbounded">
+            <xs:element name="general" type="General.Type" minOccurs = "0" maxOccurs = "1"/>
+            <xs:element name="lifeCycle" type="LifeCycle.Type" minOccurs = "0" maxOccurs = "1"/>
+            <xs:element name="technical" type="Technical.Type" minOccurs = "0" maxOccurs = "1"/>
+            <xs:element name="educational" type="Educational.Type" minOccurs = "0" maxOccurs = "unbounded"/>
+            <xs:element name="rights" type="Rights.Type" minOccurs = "0" maxOccurs = "1"/>
+            <xs:element name="relation" type="Relation.Type" minOccurs = "0" maxOccurs = "unbounded"/>
+            <xs:element name="classification" type="Classification.Type" minOccurs = "0" maxOccurs = "unbounded"/>
+        </xs:choice>
+    </xs:complexType>
+
+    <xs:complexType name="Purpose.Type" mixed="false">
+        <xs:annotation>
+            <xs:documentation source="umldocumentation">
+                The Purpose complexType is the container for the information on the purpose of
+classifying this learning obect.  For the Strict LOM binding this is an enumerated vocabulary.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="value" minOccurs = "1" maxOccurs = "1">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:enumeration value="discipline"/>
+                        <xs:enumeration value="idea"/>
+                        <xs:enumeration value="prerequisite"/>
+                        <xs:enumeration value="educational objective"/>
+                        <xs:enumeration value="accessibility restrictions"/>
+                        <xs:enumeration value="educational level"/>
+                        <xs:enumeration value="skill level"/>
+                        <xs:enumeration value="security level"/>
+                        <xs:enumeration value="competency"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="Relation.Type" mixed="false">
+        <xs:annotation>
+            <xs:documentation source="umldocumentation">
+                The Relation complexType is the container for the information that defines the relationship between this 
+learning object and other learning objects, if any.  To define multiple relationships, there may be multiple 
+instances of this category.  If there is more than one target learning object the each object shall have a new 
+relationship instance.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:choice minOccurs = "0" maxOccurs = "unbounded">
+            <xs:element name="kind" type="Kind.Type" minOccurs = "0" maxOccurs = "1"/>
+            <xs:element name="resource" type="Resource.Type" minOccurs = "0" maxOccurs = "1"/>
+        </xs:choice>
+    </xs:complexType>
+
+    <xs:complexType name="Resource.Type" mixed="false">
+        <xs:annotation>
+            <xs:documentation source="umldocumentation">
+                The Resource complexType is the container for the information about the target learning object that this relationship references.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:choice minOccurs = "0" maxOccurs = "unbounded">
+            <xs:element name="identifier" type="Identifier.Type" minOccurs = "0" maxOccurs = "unbounded"/>
+            <xs:element name="description" type="LangString.Type" minOccurs = "0" maxOccurs = "unbounded"/>
+        </xs:choice>
+    </xs:complexType>
+
+    <xs:complexType name="Rights.Type" mixed="false">
+        <xs:annotation>
+            <xs:documentation source="umldocumentation">
+                The Rights complexType describes the intellectual property rights and conditions of use for this learning object.
+NOTE: The intent is to reuse results of ongoing work in the Intellectual Property Rights and e-commerce
+communities.  This category currently provides the absolute minimum level of detail only.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:choice minOccurs = "0" maxOccurs = "unbounded">
+            <xs:element name="cost" type="Cost.Type" minOccurs = "0" maxOccurs = "1"/>
+            <xs:element name="copyrightAndOtherRestrictions" type="CopyrightAndOtherRestrictions.Type" minOccurs = "0" maxOccurs = "1"/>
+            <xs:element name="description" type="LangString.Type" minOccurs = "0" maxOccurs = "1"/>
+        </xs:choice>
+    </xs:complexType>
+
+    <xs:complexType name="RoleLifeCycle.Type" mixed="false">
+        <xs:annotation>
+            <xs:documentation source="umldocumentation">
+                The Role complexType is the container for the kind of contribution.
+
+CC MANIFEST PROFILE
+
+Only the 'value' elemet is permitted.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="value" minOccurs = "1" maxOccurs = "1">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:enumeration value="author"/>
+                        <xs:enumeration value="publisher"/>
+                        <xs:enumeration value="unknown"/>
+                        <xs:enumeration value="initiator"/>
+                        <xs:enumeration value="terminator"/>
+                        <xs:enumeration value="validator"/>
+                        <xs:enumeration value="editor"/>
+                        <xs:enumeration value="graphical designer"/>
+                        <xs:enumeration value="technical implementor"/>
+                        <xs:enumeration value="content provider"/>
+                        <xs:enumeration value="technical validator"/>
+                        <xs:enumeration value="educational validator"/>
+                        <xs:enumeration value="script writer"/>
+                        <xs:enumeration value="instructional designer"/>
+                        <xs:enumeration value="subject matter expert"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="Taxon.Type" mixed="false">
+        <xs:annotation>
+            <xs:documentation source="umldocumentation">
+                The Taxon complexType is the container for the information about a particular term within a
+taxonomy.  A taxon is a node that has a defined label or term.  A taxon may also have an alphanumeric 
+designation or identifier for standardized reference.  Either or both the label and the entry may be used 
+to designate a particular taxon.  An ordered list of taxons creates a taxonomic path i.e. 'taxononomic 
+stairway': this is a path from a more general to more specific entry in a classification.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:choice minOccurs = "0" maxOccurs = "unbounded">
+            <xs:element name="id" type="CharacterString.Type" minOccurs = "0" maxOccurs = "1"/>
+            <xs:element name="entry" type="LangString.Type" minOccurs = "0" maxOccurs = "1"/>
+        </xs:choice>
+    </xs:complexType>
+
+    <xs:complexType name="TaxonPath.Type" mixed="false">
+        <xs:annotation>
+            <xs:documentation source="umldocumentation">
+                The TaxonPath complexType is the container for the information about the taxonomic path in a 
+specific classification system.  Each succeeding level is a refinement in the definition of the 
+preceding level.  There may be different paths in the same or different classifications, which 
+describe the same characteristic.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="taxon" type="Taxon.Type" minOccurs = "1" maxOccurs = "1"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="Technical.Type" mixed="false">
+        <xs:annotation>
+            <xs:documentation source="umldocumentation">
+                The Technical complexType is the container for the information that describes the technical requirements and
+characteristics of this learning object.
+
+CC MANIFEST PROFILE
+
+Only the 'format' element is permitted.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="format" type="CharacterString.Type" minOccurs = "1" maxOccurs = "unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="LanguageString.Type">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute name="language" use="optional" type="CharacterString.Type"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <!-- ================================================================================================== -->
+
+    <!-- Declaration of the elements ********************************************************************** -->
+
+    <!-- ================================================================================================== -->
+
+    <!-- Declaration of the root element(s) *************************************************************** -->
+
+    <xs:element name="lom" type="LOM.Type"/>
+
+    <!-- ================================================================================================== -->
+
+</xs:schema>

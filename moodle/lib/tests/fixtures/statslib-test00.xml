@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- Tests no logs - Only query 3 should be processed -->
+<dataset>
+    <table name="log">
+        <column>time</column>
+        <column>userid</column>
+        <column>course</column>
+        <column>action</column>
+    </table>
+    <table name="stats_daily">
+        <column>courseid</column>
+        <column>timeend</column>
+        <column>roleid</column>
+        <column>stattype</column>
+        <column>stat1</column>
+        <column>stat2</column>
+        <row>
+            <value>[course1_id]</value>
+            <value>[end_no_logs]</value>
+            <value>5</value>
+            <value>enrolments</value>
+            <value>1</value>
+            <value>0</value>
+        </row>
+    </table>
+    <table name="stats_user_daily">
+        <column>courseid</column>
+        <column>userid</column>
+        <column>roleid</column>
+        <column>timeend</column>
+        <column>statsreads</column>
+        <column>statswrites</column>
+        <column>stattype</column>
+    </table>
+</dataset>

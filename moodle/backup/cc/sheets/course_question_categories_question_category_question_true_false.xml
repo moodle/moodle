@@ -1,0 +1,7 @@
+            <TRUEFALSE>
+              <TRUEANSWER>[#true_answer_id#]</TRUEANSWER>
+              <FALSEANSWER>[#false_answer_id#]</FALSEANSWER>
+            </TRUEFALSE>
+            <ANSWERS>
+              [#node_course_question_categories_question_category_question_answer#]
+            </ANSWERS>

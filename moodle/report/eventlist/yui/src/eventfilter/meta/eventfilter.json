@@ -1,0 +1,13 @@
+{
+    "moodle-report_eventlist-eventfilter": {
+        "requires": [
+            "base",
+            "event",
+            "node",
+            "node-event-delegate",
+            "datatable",
+            "autocomplete",
+            "autocomplete-filters"
+        ]
+    }
+}

@@ -1,0 +1,14 @@
+{
+  "moodle-core-blocks": {
+    "requires": [
+        "base",
+        "node",
+        "io",
+        "dom",
+        "dd",
+        "dd-scroll",
+        "moodle-core-dragdrop",
+        "moodle-core-notification"
+    ]
+  }
+}

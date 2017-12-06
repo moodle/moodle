@@ -1,0 +1,7 @@
+{
+  "moodle-core-popuphelp": {
+    "requires": [
+        "moodle-core-tooltip"
+    ]
+  }
+}

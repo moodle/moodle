@@ -1,0 +1,1 @@
+YUI.add("moodle-core-notification",function(e,t){},"@VERSION@",{requires:["moodle-core-notification-dialogue","moodle-core-notification-alert","moodle-core-notification-confirm","moodle-core-notification-exception","moodle-core-notification-ajaxexception"]});

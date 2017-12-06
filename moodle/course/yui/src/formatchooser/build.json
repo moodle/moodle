@@ -1,0 +1,10 @@
+{
+    "name": "moodle-course-formatchooser",
+    "builds": {
+        "moodle-course-formatchooser": {
+            "jsfiles": [
+                "formatchooser.js"
+            ]
+        }
+    }
+}

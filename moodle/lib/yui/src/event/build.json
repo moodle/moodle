@@ -1,0 +1,10 @@
+{
+    "name": "moodle-core-event",
+    "builds": {
+        "moodle-core-event": {
+            "jsfiles": [
+                "event.js"
+            ]
+        }
+    }
+}

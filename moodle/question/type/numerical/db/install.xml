@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="question/type/numerical/db" VERSION="20120122" COMMENT="XMLDB file for Moodle question/type/numerical"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="question_numerical" COMMENT="Options for numerical questions.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="question" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Redundant, because of the answer field. Foreign key references question.id."/>
+        <FIELD NAME="answer" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Foreign key references question_answers.id."/>
+        <FIELD NAME="tolerance" TYPE="char" LENGTH="255" NOTNULL="true" DEFAULT="0.0" SEQUENCE="false" COMMENT="Allowed error when matching a response to this answer. I don't know why this is stored as a string."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="question" TYPE="foreign" FIELDS="question" REFTABLE="question" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="answer" UNIQUE="false" FIELDS="answer"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="question_numerical_options" COMMENT="Options for questions of type numerical This table is also used by the calculated question type">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="question" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="showunits" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="How units are handled: 3) Not used at all, 0) Optional, or 1) must be right or penalty applied."/>
+        <FIELD NAME="unitsleft" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="display the unit at left as in $1.00"/>
+        <FIELD NAME="unitgradingtype" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="0 no penalty, 1 fraction response grade, 2 fraction total grade"/>
+        <FIELD NAME="unitpenalty" TYPE="number" LENGTH="12" NOTNULL="true" DEFAULT="0.1" SEQUENCE="false" DECIMALS="7" COMMENT="Penalty for getting the unit wrong, when they are being graded."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="question" TYPE="foreign" FIELDS="question" REFTABLE="question" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="question_numerical_units" COMMENT="Optional unit options for numerical questions. This table is also used by the calculated question type.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="question" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Foreign key references question.id"/>
+        <FIELD NAME="multiplier" TYPE="number" LENGTH="40" NOTNULL="true" DEFAULT="1.00000000000000000000" SEQUENCE="false" DECIMALS="20" COMMENT="The multiplier for this unit. For example, if the first unit is (1.0, 'cm'), another unit might be (0.1, 'mm') or (100.0, 'm')."/>
+        <FIELD NAME="unit" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" COMMENT="The unit. For example 'm' or 'kg'."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="question" TYPE="foreign" FIELDS="question" REFTABLE="question" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="question-unit" UNIQUE="true" FIELDS="question, unit" COMMENT="Unique index to ensure that only one unit with a particular name is created for each question."/>
+      </INDEXES>
+    </TABLE>
+  </TABLES>
+</XMLDB>

@@ -1,0 +1,10 @@
+{
+    "name": "moodle-core-dragdrop",
+    "builds": {
+        "moodle-core-dragdrop": {
+            "jsfiles": [
+                "dragdrop.js"
+            ]
+        }
+    }
+}

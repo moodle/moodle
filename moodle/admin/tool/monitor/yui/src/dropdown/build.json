@@ -1,0 +1,10 @@
+{
+    "name": "moodle-tool_monitor-dropdown",
+    "builds": {
+        "moodle-tool_monitor-dropdown": {
+            "jsfiles": [
+                "dropdown.js"
+            ]
+        }
+    }
+}

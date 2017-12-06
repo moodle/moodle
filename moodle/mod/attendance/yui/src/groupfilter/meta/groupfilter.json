@@ -1,0 +1,8 @@
+{
+    "moodle-mod_attendance-groupfilter": {
+        "requires": [
+            "base",
+            "node"
+        ]
+    }
+}

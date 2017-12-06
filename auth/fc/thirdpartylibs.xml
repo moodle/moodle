@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<libraries>
+  <library>
+    <location>fcFPP.php</location>
+    <name>fcFPP</name>
+    <license>GPL</license>
+    <version></version>
+    <licenseversion>2.0+</licenseversion>
+  </library>
+</libraries>

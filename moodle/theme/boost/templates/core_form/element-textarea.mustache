@@ -1,0 +1,17 @@
+{{< core_form/element-template }}
+    {{$element}}
+        {{^element.frozen}}
+        <textarea
+            name="{{element.name}}"
+            id="{{element.id}}"
+            class="form-control {{#error}}form-control-danger{{/error}}"
+            {{#error}}
+                autofocus aria-describedby="id_error_{{element.name}}"
+            {{/error}}
+            {{{element.attributes}}} >{{element.value}}</textarea>
+        {{/element.frozen}}
+        {{#element.frozen}}
+            {{element.value}}
+        {{/element.frozen}}
+    {{/element}}
+{{/ core_form/element-template }}

@@ -1,0 +1,24 @@
+<MOODLE_BACKUP>
+  <COURSE ID="100">
+    <SECTIONS>
+      <SECTION>
+        <ID>200</ID>
+        <MODS>
+          <MOD>
+            <ID>300</ID>
+            <ROLES_OVERRIDES>
+            </ROLES_OVERRIDES>
+          </MOD>
+          <MOD />
+          <MOD />
+          <MOD ID="400" />
+          <MOD>
+            <ID>500</ID>
+          </MOD>
+          <MOD />
+          <MOD />
+        </MODS>
+      </SECTION>
+    </SECTIONS>
+  </COURSE>
+</MOODLE_BACKUP>

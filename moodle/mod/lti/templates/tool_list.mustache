@@ -1,0 +1,50 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_lti/tool_list
+
+    This template provides a list of LTI tools.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    *
+
+    Example context (json):
+    {
+    }
+
+}}
+<h3>{{#str}} tooltypes, mod_lti {{/str}}</h3>
+<div id="tool-list-loader-container">
+    {{> mod_lti/loader }}
+</div>
+{{^proxies}}{{^tools}}
+<div id="tool-notools-text">{{#str}} no_lti_tools, mod_lti {{/str}}</div>
+{{/tools}}{{/proxies}}
+<div id="tool-card-container">
+    {{#proxies}}
+        {{> mod_lti/tool_proxy_card }}
+    {{/proxies}}
+    {{#tools}}
+        {{> mod_lti/tool_card }}
+    {{/tools}}
+</div>

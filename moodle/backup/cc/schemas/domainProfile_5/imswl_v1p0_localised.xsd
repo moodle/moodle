@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--*************************************************************************-->
+<!--** This schema has been modified from the original base schema named - **-->
+<!--** imswl_v1p0.xsd                                                      **-->
+<!--** using the IMS SchemaProf tool. This tool is based on software from  **-->
+<!--** the TELCERT Project which was funded in part by the European        **-->
+<!--** Commission under contract IST-507128                                **-->
+<!--*************************************************************************-->
+<!--
+  IPR, License and Distribution Notices
+  This machine readable file is derived from IMS specification IMS Common Cartridge Version 1.0 found at http://www.imsglobal.org/cc/index.html and the original IMS schema binding or code base 	http://www.imsglobal.org/cc/.
+  
+  Recipients of this document are requested to submit, with their comments, notification of any relevant patent claims or other intellectual property rights of which they may be aware that might be infringed by the schema binding contained in this document.
+  
+  IMS takes no position regarding the validity or scope of any intellectual property or other rights that might be claimed to pertain to the implementation or use of the technology described in this document or the extent to which any license under such rights might or might not be available; neither does it represent that it has made any effort to identify any such rights. Information on IMS�s procedures with respect to rights in IMS specifications can be found at the IMS Intellectual Property Rights web page: http://www.imsglobal.org/ipr/imsipr_policyFinal.pdf.
+  
+  Copyright © IMS Global Learning Consortium 1999-2008. All Rights Reserved.
+  
+  License Notice for Users
+  Users of products or services that include this document are hereby granted a worldwide, royalty-free, non-exclusive license to use this document.
+  
+  Distribution Notice for Developers
+  Developers of products or services that are not original incorporators of this document and have not changed this document, that is, are distributing a software product that incorporates this document as is from a third-party source other than IMS, are hereby granted permission to copy, display and distribute the contents of this document in any medium for any purpose without fee or royalty provided that you include this IPR, License and Distribution notice in its entirety on ALL copies, or portions thereof.
+  
+  Developers of products or services that are original incorporators of this document and wish to provide distribution of this document as is or with modifications and developers of products and services that are not original incorporators of this document and have changed this document, are required to register with the IMS community on the IMS website as described in the following two paragraphs:
+  
+  - If you wish to distribute this document as is, with no modifications, you are hereby granted permission to copy, display and distribute the contents of this document in any medium for any purpose without fee or royalty provided that you include this IPR, License and Distribution notice in its entirety on ALL copies, or portions thereof, that you make and you complete a valid license registration with IMS and receive an email from IMS granting the license. To register, follow the instructions on the IMS website: http://www.imsglobal.org/specificationdownload.cfm. Once registered you are granted permission to transfer unlimited distribution rights of this document for the purposes of third-party or other distribution of your product or service that incorporates this document as long as this IPR, License and Distribution notice remains in place in its entirety.
+  
+  - If you wish to create and distribute a derived work from this document, you are hereby granted permission to copy, display and distribute the contents of the derived work in any medium for any purpose without fee or royalty provided that you include this IPR, License and Distribution notice in its entirety on ALL copies, or portions thereof, that you make and you complete a valid profile registration with IMS and receive an email from IMS granting the license. To register, follow the instructions on the IMS website: http://www.imsglobal.org/profile/. Once registered you are granted permission to transfer unlimited distribution rights of the derived work for the purposes of third-party or other distribution of your product or service that incorporates the derived work as long as this IPR, License and Distribution notice remains in place in its entirety.
+  
+  The limited permissions granted above are perpetual and will not be revoked by IMS or its successors or assigns.
+  
+  THIS SPECIFICATION IS BEING OFFERED WITHOUT ANY WARRANTY WHATSOEVER, AND IN PARTICULAR, 
+  ANY WARRANTY OF NONINFRINGEMENT IS EXPRESSLY DISCLAIMED. ANY USE OF THIS SPECIFICATION 
+  SHALL BE MADE ENTIRELY AT THE IMPLEMENTER�S OWN RISK, AND NEITHER THE CONSORTIUM, NOR 
+  ANY OF ITS MEMBERS OR SUBMITTERS, SHALL HAVE ANY LIABILITY WHATSOEVER TO ANY IMPLEMENTER 
+  OR THIRD PARTY FOR ANY DAMAGES OF ANY NATURE WHATSOEVER, DIRECTLY OR INDIRECTLY, ARISING 
+  FROM THE USE OF THIS SPECIFICATION.
+-->
+<!--*************************************************************************-->
+<!--** This schema has been modified from the original base schema named - **-->
+<!--** imswl_v1p0.xsd                                                      **-->
+<!--** using the IMS SchemaProf tool. This tool is based on software from  **-->
+<!--** the TELCERT Project which was funded in part by the European        **-->
+<!--** Commission under contract IST-507128                                **-->
+<!--*************************************************************************-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.imsglobal.org/xsd/imswl_v1p0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" targetNamespace="http://www.imsglobal.org/xsd/imswl_v1p0" elementFormDefault="unqualified">
+  <xs:element name="webLink" type="webLinkType" />
+  <xs:complexType name="webLinkType">
+    <xs:sequence>
+      <xs:element name="title" type="xs:string" />
+      <xs:element name="url">
+        <xs:complexType>
+          <xs:attribute name="href" type="xs:string" use="required" />
+          <xs:attribute name="target" type="xs:string" />
+          <xs:attribute name="windowFeatures" type="xs:string" />
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>

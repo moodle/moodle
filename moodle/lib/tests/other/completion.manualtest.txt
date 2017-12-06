@@ -1,0 +1,167 @@
+Completion system manual test
+=============================
+
+This text file describes a manual process which can be used to check that the
+completion system is working correctly. This does not exercise every possible
+element of the completion system but it covers most of the basic parts.
+
+Site setup
+----------
+
+1) Make a fresh install of the Moodle version you are testing.
+
+CHECK A: There is no error when installing the completion database tables.
+
+2) Create users 'admin' (as part of install) and 'u1'
+3) Set the server debug to 'Developer' so that you spot any warnings etc.
+4) Create course 'CF101' (leave default except pick separate groups) and
+   assign 'u1' as student
+
+
+Course setup
+------------
+
+1) Create a web page resource 'w'
+2) Create a forum 'f1'
+3) Create a forum 'f2'
+4) Create a quiz 'q1' with one question (e.g. true/false question)
+5) Create a quiz 'q2' with one question (can use same question)
+6) In gradebook/reports/gradebook setup, edit q2's grade (show advanced)
+   to assign a 'grade to pass' of 5.0.
+   [Note: Due to a bug in gradebook at time of writing, you may have to go into
+   admin screens and make sure that 'Student' is included on the list of graded
+   roles, or there will be an error at this step.]
+7) Create 2 groups on the course. Assign u1 to one group.
+
+Completion settings
+-------------------
+
+1) Visit the course setting screen.
+
+CHECK B: The completion controls appear. Completion is enabled.
+
+2) Turn off the setting (disable completion) and save.
+3) Visit the admin page. Find the enablecompletion setting.
+
+CHECK C: The enablecompletion setting appears. Completion is enabled.
+
+4) Turn off this setting and save.
+
+4b) Note: At present I have not found a satisfactory way to set a default
+  for the config option, so if necessary, please manually tick the 'Student'
+  checkbox while on this screen.
+
+5) Visit the course setting screen again.
+
+CHECK D: The completion controls do not appear.
+
+6) Visit the setting screen for 'w'
+
+CHECK E: Completion controls do not appear
+
+7) Go to admin screen and turn completion on again, then return to the 'w' settings
+
+CHECK F: Completion controls still do not appear
+
+8) Go to course settings and turn completion on, then return to 'w' settings
+
+CHECK G: Completion controls appear. Completion is set to manual.
+
+9) Go to 'f1' settings. Set completion to automatic and to 2 discussions/replies.
+10) Go to 'f2' settings. Set completion to automatic and to 'view'
+11) Go to 'q1' and 'q2' settings; set both to automatic and 'grade'. Set them
+  to grade based on the most recent attempt rather than 'highest'.
+
+Completion actions
+------------------
+
+Note: Icons are subject to change, so references to a 'tick' etc might not be
+correct.
+
+1) Log in as u1 and go to CF101.
+
+CHECK H: A completion tick (unticked) is visible next to 'w'.
+
+2) Click the completion mark a few times.
+
+CHECK I: Completion toggles successfully.
+
+  2b) Go to u1's profile settings and turn on/off AJAX then repeat toggling the
+      mark. Leave it ticked.
+  CHECK I2: Completion still toggles successfully.
+
+3) Visit 'f1' and post 1 message. Return to course home.
+
+CHECK J: There is no tickmark next to f1. (If examined carefully, the 'not
+  complete' icon should be present.)
+
+4) Visit 'f1' and post a reply to the message. Return to course home.
+
+CHECK K: There is now a tick next to f1.
+
+5) Visit 'f2' and return to the home page.
+
+CHECK L: There is now a tick next to f2.
+
+6) Visit 'q1' and attempt the quiz, getting it wrong and submitting answer.
+  Return to the home page.
+
+CHECK M: There is a black 'completed' tick next to q1.
+
+7) Visit 'q1' again and this time get it right. Return to home page.
+
+CHECK N: There is still a black 'completed' tick next to q1.
+
+8) Visit 'q2' and get it right. Return to home.
+
+CHECK O: There is a green 'completed-passed' tick next to q2.
+
+9) Visit 'q2' and get it wrong. Return to home.
+
+CHECK P: There is a red 'completed-failed' X next to q2.
+
+Completion progress
+-------------------
+
+1) Log in as admin again.
+
+2) From the course admin block, click on the reports link.
+
+CHECK Q: A 'completion progress' link appears.
+
+3) Click on the completion progress link.
+
+CHECK R:
+  A groups dropdown should show the two groups (and 'all').
+  The progress table should include all activities for which completion
+    was set, across the top.
+  The progress table should show u1 down the side.
+  Tick and X icons should match those shown when logged in as u1.
+
+4) Choose a group that does not include u1
+
+CHECK S:
+  An informational ('no users') message should display instead of the progress
+  table.
+
+5) Choose the group that does include u1
+
+CHECK T:
+  The progress table should show u1 again.
+
+Backup/restore
+--------------
+
+1) Backup the course. Choose 'course users', user data for everything except
+  q1 ('no user data'), and default options.
+
+2) Restore to a new course, accepting all defaults.
+
+3) Log in as u1 again and visit the new course.
+
+CHECK U:
+  Completion should appear as it did in the previous version of the course
+  ('w','f1','f2' complete, 'q2' complete-fail) except that q1 should show as
+  incomplete.
+
+
