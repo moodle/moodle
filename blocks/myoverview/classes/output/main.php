@@ -61,9 +61,15 @@ class main implements renderable, templatable {
      * @return stdClass
      */
     public function export_for_template(renderer_base $output) {
-        global $USER;
+        global $CFG, $USER;
 
-        $courses = enrol_get_my_courses('*', 'fullname ASC');
+        if (empty($CFG->navsortmycoursessort)) {
+            $sort = 'visible DESC, sortorder ASC';
+        } else {
+            $sort = 'visible DESC, '.$CFG->navsortmycoursessort.' ASC';
+        }
+
+        $courses = enrol_get_my_courses('*', $sort);
         $coursesprogress = [];
 
         foreach ($courses as $course) {
