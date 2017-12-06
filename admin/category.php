@@ -54,14 +54,16 @@ $statusmsg = '';
 $errormsg  = '';
 
 if ($data = data_submitted() and confirm_sesskey()) {
-    if (admin_write_settings($data)) {
-        $statusmsg = get_string('changessaved');
-    }
-
+    $count = admin_write_settings($data);
     if (empty($adminroot->errors)) {
-        switch ($return) {
-            case 'site': redirect("$CFG->wwwroot/");
-            case 'admin': redirect("$CFG->wwwroot/$CFG->admin/");
+        // No errors. Did we change any setting?  If so, then indicate success.
+        if ($count) {
+            $statusmsg = get_string('changessaved');
+        } else {
+            switch ($return) {
+                case 'site': redirect("$CFG->wwwroot/");
+                case 'admin': redirect("$CFG->wwwroot/$CFG->admin/");
+            }
         }
     } else {
         $errormsg = get_string('errorwithsettings', 'admin');
