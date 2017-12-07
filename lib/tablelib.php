@@ -913,12 +913,8 @@ class flexible_table {
     /**
      * This function is not part of the public api.
      * @return string initial of first name we are currently filtering by
-     *
-     * @deprecated since Moodle 3.3
      */
     function get_initial_first() {
-        debugging('Method get_initial_first() is no longer used and has been deprecated, ' .
-            'to print initials bar call print_initials_bar()', DEBUG_DEVELOPER);
         if (!$this->use_initials) {
             return NULL;
         }
@@ -929,12 +925,8 @@ class flexible_table {
     /**
      * This function is not part of the public api.
      * @return string initial of last name we are currently filtering by
-     *
-     * @deprecated since Moodle 3.3
      */
     function get_initial_last() {
-        debugging('Method get_initial_last() is no longer used and has been deprecated, ' .
-            'to print initials bar call print_initials_bar()', DEBUG_DEVELOPER);
         if (!$this->use_initials) {
             return NULL;
         }
@@ -982,21 +974,17 @@ class flexible_table {
     function print_initials_bar() {
         global $OUTPUT;
 
-        if ((!empty($this->prefs['i_last']) || !empty($this->prefs['i_first']) ||$this->use_initials)
-            && isset($this->columns['fullname'])) {
+        $ifirst = $this->get_initial_first();
+        $ilast = $this->get_initial_last();
+        if (is_null($ifirst)) {
+            $ifirst = '';
+        }
+        if (is_null($ilast)) {
+            $ilast = '';
+        }
 
-            if (!empty($this->prefs['i_first'])) {
-                $ifirst = $this->prefs['i_first'];
-            } else {
-                $ifirst = '';
-            }
-
-            if (!empty($this->prefs['i_last'])) {
-                $ilast = $this->prefs['i_last'];
-            } else {
-                $ilast = '';
-            }
-
+        if ((!empty($ifirst) || !empty($ilast) ||$this->use_initials)
+                && isset($this->columns['fullname'])) {
             $prefixfirst = $this->request[TABLE_VAR_IFIRST];
             $prefixlast = $this->request[TABLE_VAR_ILAST];
             echo $OUTPUT->initials_bar($ifirst, 'firstinitial', get_string('firstname'), $prefixfirst, $this->baseurl);
