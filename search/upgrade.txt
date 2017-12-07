@@ -6,7 +6,9 @@ information provided here is intended especially for developers.
 * Search areas may now optionally implement the get_contexts_to_reindex function (for modules and
   blocks, see also get_contexts_to_reindex_extra_sql). This allows a search area to customise the
   order in which it is reindexed when doing a gradual reindex, so as to reindex the most important
-  contexts first.
+  contexts first. If not implemented, the default behaviour for modules and blocks is to reindex
+  the newest items first; for other types of search area it will just index the whole system
+  context, oldest data first.
 
 === 3.4 ===
 

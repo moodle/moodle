@@ -1153,7 +1153,8 @@ class manager {
      * added to a queue which is processed by the task.
      *
      * This is used after a restore to ensure that restored items are indexed, even though their
-     * modified time will be older than the latest indexed.
+     * modified time will be older than the latest indexed. It is also used by the 'Gradual reindex'
+     * admin feature from the search areas screen.
      *
      * @param \context $context Context to index within
      * @param string $areaid Area to index, '' = all areas
@@ -1273,6 +1274,52 @@ class manager {
                 break;
             }
         }
+    }
+
+    /**
+     * Gets information about the request queue, in the form of a plain object suitable for passing
+     * to a template for rendering.
+     *
+     * @return \stdClass Information about queued index requests
+     */
+    public function get_index_requests_info() {
+        global $DB;
+
+        $result = new \stdClass();
+
+        $result->total = $DB->count_records('search_index_requests');
+        $result->topten = $DB->get_records('search_index_requests', null,
+                'indexpriority DESC, timerequested, contextid, searcharea',
+                'id, contextid, timerequested, searcharea, partialarea, partialtime, indexpriority',
+                0, 10);
+        foreach ($result->topten as $item) {
+            $context = \context::instance_by_id($item->contextid);
+            $item->contextlink = \html_writer::link($context->get_url(),
+                    s($context->get_context_name()));
+            if ($item->searcharea) {
+                $item->areaname = $this->get_search_area($item->searcharea)->get_visible_name();
+            }
+            if ($item->partialarea) {
+                $item->partialareaname = $this->get_search_area($item->partialarea)->get_visible_name();
+            }
+            switch ($item->indexpriority) {
+                case self::INDEX_PRIORITY_REINDEXING :
+                    $item->priorityname = get_string('priority_reindexing', 'search');
+                    break;
+                case self::INDEX_PRIORITY_NORMAL :
+                    $item->priorityname = get_string('priority_normal', 'search');
+                    break;
+            }
+        }
+
+        // Normalise array indices.
+        $result->topten = array_values($result->topten);
+
+        if ($result->total > 10) {
+            $result->ellipsis = true;
+        }
+
+        return $result;
     }
 
     /**

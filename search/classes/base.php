@@ -303,6 +303,19 @@ abstract class base {
     }
 
     /**
+     * Checks if get_document_recordset is supported for this search area.
+     *
+     * For many uses you can simply call get_document_recordset and see if it returns false, but
+     * this function is useful when you don't want to actually call the function right away.
+     */
+    public function supports_get_document_recordset() {
+        // Easiest way to check this is simply to see if the class has overridden the default
+        // function.
+        $method = new \ReflectionMethod($this, 'get_document_recordset');
+        return $method->getDeclaringClass()->getName() !== self::class;
+    }
+
+    /**
      * Returns the document related with the provided record.
      *
      * This method receives a record with the document id and other info returned by get_recordset_by_timestamp

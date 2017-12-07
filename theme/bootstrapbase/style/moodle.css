@@ -10046,6 +10046,13 @@ body.path-question-type .mform fieldset.hidden {
 .search-areas-actions > div {
   display: inline-block;
 }
+#core-search-areas .lastcol li {
+  margin-left: 24px;
+  text-indent: -24px;
+}
+#core-search-areas .lastcol li > i {
+  text-indent: 0;
+}
 .popover-region {
   float: right;
   position: relative;
