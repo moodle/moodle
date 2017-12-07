@@ -1317,6 +1317,84 @@ class admin_externalpage implements part_of_admin_tree {
     }
 }
 
+/**
+ * Used to store details of the dependency between two settings elements.
+ *
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright 2017 Davo Smith, Synergy Learning
+ */
+class admin_settingdependency {
+    /** @var string the name of the setting to be shown/hidden */
+    public $settingname;
+    /** @var string the setting this is dependent on */
+    public $dependenton;
+    /** @var string the condition to show/hide the element */
+    public $condition;
+    /** @var string the value to compare against */
+    public $value;
+
+    /** @var string[] list of valid conditions */
+    private static $validconditions = ['checked', 'notchecked', 'noitemselected', 'eq', 'neq', 'in'];
+
+    /**
+     * admin_settingdependency constructor.
+     * @param string $settingname
+     * @param string $dependenton
+     * @param string $condition
+     * @param string $value
+     * @throws \coding_exception
+     */
+    public function __construct($settingname, $dependenton, $condition, $value) {
+        $this->settingname = $this->parse_name($settingname);
+        $this->dependenton = $this->parse_name($dependenton);
+        $this->condition = $condition;
+        $this->value = $value;
+
+        if (!in_array($this->condition, self::$validconditions)) {
+            throw new coding_exception("Invalid condition '$condition'");
+        }
+    }
+
+    /**
+     * Convert the setting name into the form field name.
+     * @param string $name
+     * @return string
+     */
+    private function parse_name($name) {
+        $bits = explode('/', $name);
+        $name = array_pop($bits);
+        $plugin = '';
+        if ($bits) {
+            $plugin = array_pop($bits);
+            if ($plugin === 'moodle') {
+                $plugin = '';
+            }
+        }
+        return 's_'.$plugin.'_'.$name;
+    }
+
+    /**
+     * Gather together all the dependencies in a format suitable for initialising javascript
+     * @param admin_settingdependency[] $dependencies
+     * @return array
+     */
+    public static function prepare_for_javascript($dependencies) {
+        $result = [];
+        foreach ($dependencies as $d) {
+            if (!isset($result[$d->dependenton])) {
+                $result[$d->dependenton] = [];
+            }
+            if (!isset($result[$d->dependenton][$d->condition])) {
+                $result[$d->dependenton][$d->condition] = [];
+            }
+            if (!isset($result[$d->dependenton][$d->condition][$d->value])) {
+                $result[$d->dependenton][$d->condition][$d->value] = [];
+            }
+            $result[$d->dependenton][$d->condition][$d->value][] = $d->settingname;
+        }
+        return $result;
+    }
+}
 
 /**
  * Used to group a number of admin_setting objects into a page and add them to the admin tree.
@@ -1333,6 +1411,9 @@ class admin_settingpage implements part_of_admin_tree {
 
     /** @var mixed An array of admin_setting objects that are part of this setting page. */
     public $settings;
+
+    /** @var admin_settingdependency[] list of settings to hide when certain conditions are met */
+    protected $dependencies = [];
 
     /** @var string The role capability/permission a user must have to access this external page. */
     public $req_capability;
@@ -1464,6 +1545,18 @@ class admin_settingpage implements part_of_admin_tree {
     }
 
     /**
+     * Hide the named setting if the specified condition is matched.
+     *
+     * @param string $settingname
+     * @param string $dependenton
+     * @param string $condition
+     * @param string $value
+     */
+    public function hide_if($settingname, $dependenton, $condition = 'notchecked', $value = '1') {
+        $this->dependencies[] = new admin_settingdependency($settingname, $dependenton, $condition, $value);
+    }
+
+    /**
      * see admin_externalpage
      *
      * @return bool Returns true for yes false for no
@@ -1520,6 +1613,25 @@ class admin_settingpage implements part_of_admin_tree {
             }
         }
         return false;
+    }
+
+    /**
+     * Should any of the settings on this page be shown / hidden based on conditions?
+     * @return bool
+     */
+    public function has_dependencies() {
+        return (bool)$this->dependencies;
+    }
+
+    /**
+     * Format the setting show/hide conditions ready to initialise the page javascript
+     * @return array
+     */
+    public function get_dependencies_for_javascript() {
+        if (!$this->has_dependencies()) {
+            return [];
+        }
+        return admin_settingdependency::prepare_for_javascript($this->dependencies);
     }
 }
 
