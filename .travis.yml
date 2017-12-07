@@ -23,8 +23,9 @@ addons:
     - mysql-client-core-5.6
     - mysql-client-5.6
 
-services:
-    - redis-server
+# Redis tests are currently failing on php 7.2 due to https://bugs.php.net/bug.php?id=75628
+# services:
+#     - redis-server
 
 env:
     # Although we want to run these jobs and see failures as quickly as possible, we also want to get the slowest job to
@@ -99,8 +100,9 @@ install:
             fi
 
             # Enable Redis.
-            echo 'extension="redis.so"' > /tmp/redis.ini
-            phpenv config-add /tmp/redis.ini
+            # Redis tests are currently failing on php 7.2 due to https://bugs.php.net/bug.php?id=75628
+            # echo 'extension="redis.so"' > /tmp/redis.ini
+            # phpenv config-add /tmp/redis.ini
 
             # Install composer dependencies.
             # We need --no-interaction in case we hit API limits for composer. This causes it to fall back to a standard clone.
@@ -171,10 +173,11 @@ before_script:
         mkdir -p "$HOME"/roots/phpunit
 
         # The phpunit dataroot and prefix..
+        # Redis tests are currently failing on php 7.2 due to https://bugs.php.net/bug.php?id=75628
+        # -e "/require_once/i \\define('TEST_SESSION_REDIS_HOST', '127.0.0.1');" \
         sed -i \
           -e "/require_once/i \\\$CFG->phpunit_dataroot = '\/home\/travis\/roots\/phpunit';" \
           -e "/require_once/i \\\$CFG->phpunit_prefix = 'p_';" \
-          -e "/require_once/i \\define('TEST_SESSION_REDIS_HOST', '127.0.0.1');" \
           config.php ;
 
         # Initialise PHPUnit for Moodle.
