@@ -59,7 +59,7 @@ Feature: Use global search interface
     When I search for "frogs" using the header global search box
     And I expand all fieldsets
     Then I should not see "Search within"
-    And I should see "Courses"
+    And I should see "Courses" in the "region-main" "region"
 
   @javascript
   Scenario: Search starting from course context (within option lists course)
@@ -71,9 +71,9 @@ Feature: Use global search interface
     And I expand all fieldsets
     Then I should see "Search within"
     And I select "Everywhere you can access" from the "Search within" singleselect
-    And I should see "Courses"
+    And I should see "Courses" in the "region-main" "region"
     And I select "Course: Amphibians" from the "Search within" singleselect
-    And I should not see "Courses"
+    And I should not see "Courses" in the "region-main" "region"
 
   @javascript
   Scenario: Search starting from forum context (within option lists course and forum)
@@ -86,8 +86,8 @@ Feature: Use global search interface
     And I expand all fieldsets
     And I should see "Search within"
     And I select "Everywhere you can access" from the "Search within" singleselect
-    And I should see "Courses"
+    And I should see "Courses" in the "region-main" "region"
     And I select "Course: Amphibians" from the "Search within" singleselect
-    And I should not see "Courses"
+    And I should not see "Courses" in the "region-main" "region"
     And I select "Forum: ForumName1" from the "Search within" singleselect
-    And I should not see "Courses"
+    And I should not see "Courses" in the "region-main" "region"
