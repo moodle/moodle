@@ -859,7 +859,7 @@ class mod_quiz_external extends external_api {
     /**
      * Describes a single question structure.
      *
-     * @return external_single_structure the question structure
+     * @return external_single_structure the question data. Some fields may not be returned depending on the quiz display settings.
      * @since  Moodle 3.1
      */
     private static function question_structure() {
@@ -871,11 +871,16 @@ class mod_quiz_external extends external_api {
                 'html' => new external_value(PARAM_RAW, 'the question rendered'),
                 'flagged' => new external_value(PARAM_BOOL, 'whether the question is flagged or not'),
                 'number' => new external_value(PARAM_INT, 'question ordering number in the quiz', VALUE_OPTIONAL),
-                'state' => new external_value(PARAM_ALPHA, 'the state where the question is in', VALUE_OPTIONAL),
+                'state' => new external_value(PARAM_ALPHA, 'the state where the question is in.
+                    It will not be returned if the user cannot see it due to the quiz display correctness settings.',
+                    VALUE_OPTIONAL),
                 'status' => new external_value(PARAM_RAW, 'current formatted state of the question', VALUE_OPTIONAL),
-                'mark' => new external_value(PARAM_RAW, 'the mark awarded', VALUE_OPTIONAL),
-                'maxmark' => new external_value(PARAM_FLOAT, 'the maximum mark possible for this question attempt', VALUE_OPTIONAL),
-            )
+                'mark' => new external_value(PARAM_RAW, 'the mark awarded.
+                    It will be returned only if the user is allowed to see it.', VALUE_OPTIONAL),
+                'maxmark' => new external_value(PARAM_FLOAT, 'the maximum mark possible for this question attempt.
+                    It will be returned only if the user is allowed to see it.', VALUE_OPTIONAL),
+            ),
+            'The question data. Some fields may not be returned depending on the quiz display settings.'
         );
     }
 
@@ -907,7 +912,10 @@ class mod_quiz_external extends external_api {
 
             if ($attemptobj->is_real_question($slot)) {
                 $question['number'] = $attemptobj->get_question_number($slot);
-                $question['state'] = (string) $attemptobj->get_question_state($slot);
+                $showcorrectness = $displayoptions->correctness && $attemptobj->get_question_attempt($slot)->has_marks();
+                if ($showcorrectness) {
+                    $question['state'] = (string) $attemptobj->get_question_state($slot);
+                }
                 $question['status'] = $attemptobj->get_question_status($slot, $displayoptions->correctness);
             }
             if ($displayoptions->marks >= question_display_options::MAX_ONLY) {
