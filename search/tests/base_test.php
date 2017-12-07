@@ -130,4 +130,13 @@ class search_base_testcase extends advanced_testcase {
         $this->assertEquals(1, count($files));
         $this->assertEquals($content, $file->get_content());
     }
+
+    /**
+     * Tests the base version (stub) of get_contexts_to_reindex.
+     */
+    public function test_get_contexts_to_reindex() {
+        $area = new core_mocksearch\search\mock_search_area();
+        $this->assertEquals([\context_system::instance()],
+                iterator_to_array($area->get_contexts_to_reindex(), false));
+    }
 }

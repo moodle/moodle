@@ -1,6 +1,13 @@
 This files describes API changes in /search/*,
 information provided here is intended especially for developers.
 
+=== 3.5 ===
+
+* Search areas may now optionally implement the get_contexts_to_reindex function (for modules and
+  blocks, see also get_contexts_to_reindex_extra_sql). This allows a search area to customise the
+  order in which it is reindexed when doing a gradual reindex, so as to reindex the most important
+  contexts first.
+
 === 3.4 ===
 
 * Search indexing now supports time limits to make the scheduled task run more neatly. In order for

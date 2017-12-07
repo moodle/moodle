@@ -285,6 +285,14 @@ abstract class base {
      * The default implementation returns false, indicating that this facility is not supported and
      * the older get_recordset_by_timestamp function should be used.
      *
+     * This function must accept all possible values for the $context parameter. For example, if
+     * you are implementing this function for the forum module, it should still operate correctly
+     * if called with the context for a glossary module, or for the HTML block. (In these cases
+     * where it will not return any data, it may return null.)
+     *
+     * The $context parameter can also be null or the system context; both of these indicate that
+     * all data, without context restriction, should be returned.
+     *
      * @param int $modifiedfrom Return only records modified after this date
      * @param \context|null $context Context (null means no context restriction)
      * @return \moodle_recordset|null|false Recordset / null if no results / false if not supported
@@ -473,5 +481,19 @@ abstract class base {
         }
 
         return [$sql, $params];
+    }
+
+    /**
+     * Gets a list of all contexts to reindex when reindexing this search area. The list should be
+     * returned in an order that is likely to be suitable when reindexing, for example with newer
+     * contexts first.
+     *
+     * The default implementation simply returns the system context, which will result in
+     * reindexing everything in normal date order (oldest first).
+     *
+     * @return \Iterator Iterator of contexts to reindex
+     */
+    public function get_contexts_to_reindex() {
+        return new \ArrayIterator([\context_system::instance()]);
     }
 }

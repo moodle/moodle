@@ -292,4 +292,17 @@ class post extends \core_search\base_mod {
         }
         return $this->discussionsdata[$discussionid];
     }
+
+    /**
+     * Changes the context ordering so that the forums with most recent discussions are indexed
+     * first.
+     *
+     * @return string[] SQL join and ORDER BY
+     */
+    protected function get_contexts_to_reindex_extra_sql() {
+        return [
+            'JOIN {forum_discussions} fd ON fd.course = cm.course AND fd.forum = cm.instance',
+            'MAX(fd.timemodified) DESC'
+        ];
+    }
 }
