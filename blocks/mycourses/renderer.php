@@ -32,218 +32,250 @@ class block_mycourses_renderer extends plugin_renderer_base {
      * @param array $templates list of template objects
      * @param sting $baseurl base URL for links
      */
-    public function display_courses($mycompletion) {
+    public function display_courses($mycompletion, $tab = 'inprogress') {
         global $OUTPUT, $CFG, $DB; 
 
         //  Block info header.
         $returntext = '';
 
-        // Not started courses header block.
-        $returntext .= '<div class="header" id="mycourses_notstarted"><h2>'.
-              get_string('notstartedheader', 'block_mycourses').
-              '</h2>';
-
-        // Not started courses listings.
-        $returntext .= '<div class="mycourseslisting">';
-        if (!empty($mycompletion->mynotstartedenrolled)) {
-            foreach ($mycompletion->mynotstartedenrolled as $mid => $notstarted) {
-                // Display the course info.
-                $coursecontext = context_course::instance($notstarted->courseid);
-                $summaryinfo = file_rewrite_pluginfile_urls($notstarted->coursesummary, 'pluginfile.php',$coursecontext->id,'course','summary',null);
-
-                $courserec = $DB->get_record("course", array("id"=>$notstarted->courseid));
-                $course = new course_in_list($courserec);
-
-                // display course overview files
-                $contentimages = $contentfiles = '';
-                $returntext .= '<div class="mycourselisting">';
-                foreach ($course->get_course_overviewfiles() as $file) {
-                    $isimage = $file->is_valid_image();
-                    $url = file_encode_url("$CFG->wwwroot/pluginfile.php",
-                            '/'. $file->get_contextid(). '/'. $file->get_component(). '/'.
-                            $file->get_filearea(). $file->get_filepath(). $file->get_filename(), !$isimage);
-                    if ($isimage) {
-                        $contentimages .= html_writer::tag('div',
-                                html_writer::empty_tag('img', array('src' => $url)),
-                                array('class' => 'courseimage'));
-                    } else {
-                        $image = $this->output->pix_icon(file_file_icon($file, 24), $file->get_filename(), 'moodle');
-                        $filename = html_writer::tag('span', $image, array('class' => 'fp-icon')).
-                                html_writer::tag('span', $file->get_filename(), array('class' => 'fp-filename'));
-                        $contentfiles .= html_writer::tag('span',
-                                html_writer::link($url, $filename),
-                                array('class' => 'coursefile fp-filename-icon'));
-                    }
-                }
-                $returntext .= $contentimages. $contentfiles;
-
-                $returntext .= '<div class="mycourseheading">';
-                $returntext .= '<h4 class="title"><a href="' . new moodle_url('/course/view.php', array('id' => $notstarted->courseid)) . '">' . $notstarted->coursefullname . '</a></h4></div>';
-                if ($CFG->mycourses_showsummary) {
-                    $returntext .= '<div class="mycoursesummary">' . $summaryinfo . '</div>';
-                }
-                $returntext .= '</div>';
-            }
+        // Output the tabbed headers
+        $returntext .= "<ul id='block-courses-view-choices' class='nav nav-tabs' role='tablist'>
+                            <li class='nav-item'>";
+        $active = "";
+        if ($tab == 'available') {
+            $active = "active";
         }
-        if (!empty($mycompletion->mynotstartedlicense)) {
-            foreach ($mycompletion->mynotstartedlicense as $mid => $notstarted) {
-                // Display the course info.
-                $coursecontext = context_course::instance($notstarted->courseid);
-                $summaryinfo = file_rewrite_pluginfile_urls($notstarted->coursesummary, 'pluginfile.php',$coursecontext->id,'course','summary',null);
-                $courserec = $DB->get_record("course", array("id"=>$notstarted->courseid));
-                $course = new course_in_list($courserec);
-
-                // display course overview files
-                $contentimages = $contentfiles = '';
-                $returntext .= '<div class="mycourselisting">';
-                foreach ($course->get_course_overviewfiles() as $file) {
-                    $isimage = $file->is_valid_image();
-                    $url = file_encode_url("$CFG->wwwroot/pluginfile.php",
-                            '/'. $file->get_contextid(). '/'. $file->get_component(). '/'.
-                            $file->get_filearea(). $file->get_filepath(). $file->get_filename(), !$isimage);
-                    if ($isimage) {
-                        $contentimages .= html_writer::tag('div',
-                                html_writer::empty_tag('img', array('src' => $url)),
-                                array('class' => 'courseimage'));
-                    } else {
-                        $image = $this->output->pix_icon(file_file_icon($file, 24), $file->get_filename(), 'moodle');
-                        $filename = html_writer::tag('span', $image, array('class' => 'fp-icon')).
-                                html_writer::tag('span', $file->get_filename(), array('class' => 'fp-filename'));
-                        $contentfiles .= html_writer::tag('span',
-                                html_writer::link($url, $filename),
-                                array('class' => 'coursefile fp-filename-icon'));
-                    }
-                }
-                $returntext .= $contentimages. $contentfiles;
-                $returntext .= '<div class="mycourseheading">';
-                $returntext .= '<h4 class="title"><a href="' . new moodle_url('/course/view.php', array('id' => $notstarted->courseid)) . '">' . $notstarted->coursefullname . '</a></h4></div>';
-                if ($CFG->mycourses_showsummary) {
-                    $returntext .= '<div class="mycoursesummary">' . $summaryinfo . '</div>';
-                }
-                $returntext .= '</div>';
-            }
-        } else {
-            $returntext .= '<div>' . get_string('nocourses', 'block_mycourses') . '</div>';
+        $returntext .= "<a class='nav-link $active' href='/my/index.php?mycoursestab=available' role='tab' data-toggle='tab' data-tabname='available'>" .
+                        get_string('notstartedheader', 'block_mycourses') . "</a>
+                            </li>";
+        $returntext .= "<ul id='block-courses-view-choices' class='nav nav-tabs' role='tablist'>
+                            <li class='nav-item'>";
+        $active = "";
+        if ($tab == 'inprogress') {
+            $active = "active";
         }
+        $returntext .= "<a class='nav-link $active' href='/my/index.php?mycoursestab=inprogress' role='tab' data-toggle='tab' data-tabname='inprogress'>" .
+                        get_string('inprogressheader', 'block_mycourses') . "</a>
+                            </li>";
+        $returntext .= "<ul id='block-courses-view-choices' class='nav nav-tabs' role='tablist'>
+                            <li class='nav-item'>";
+        $active = "";
+        if ($tab == 'completed') {
+            $active = "active";
+        }
+        $returntext .= "<a class='nav-link $active' href='/my/index.php?mycoursestab=archive' role='tab' data-toggle='tab' data-tabname='archive'>" .
+                        get_string('completedheader', 'block_mycourses') . "</a>
+                            </li>";
 
-        $returntext .= '</div></div><hr />';
+        $retruntext .= "</ul>";
 
-        // In progress courses header block.
-        $returntext .= '<div class="header" id="mycourses_inprogress"><h2>'.
-              get_string('inprogressheader', 'block_mycourses').
-              '</h2>';
+        $returntext .= "<div class='tab-content content-centred'>";
 
-        // In progress courses listings.
-        $returntext .= '<div class="mycourseslisting">';
-        if (!empty($mycompletion->myinprogress)) {
-            foreach ($mycompletion->myinprogress as $inprogress) {
-                // Display the course info.
-                $coursecontext = context_course::instance($inprogress->courseid);
-                $summaryinfo = file_rewrite_pluginfile_urls($inprogress->coursesummary, 'pluginfile.php',$coursecontext->id,'course','summary',null);
-
-                $courserec = $DB->get_record("course", array("id"=>$inprogress->courseid));
-                $course = new course_in_list($courserec);
-
-                // display course overview files
-                $contentimages = $contentfiles = '';
-                $returntext .= '<div class="mycourselisting">';
-                foreach ($course->get_course_overviewfiles() as $file) {
-                    $isimage = $file->is_valid_image();
-                    $url = file_encode_url("$CFG->wwwroot/pluginfile.php",
-                            '/'. $file->get_contextid(). '/'. $file->get_component(). '/'.
-                            $file->get_filearea(). $file->get_filepath(). $file->get_filename(), !$isimage);
-                    if ($isimage) {
-                        $contentimages .= html_writer::tag('div',
-                                html_writer::empty_tag('img', array('src' => $url)),
-                                array('class' => 'courseimage'));
-                    } else {
-                        $image = $this->output->pix_icon(file_file_icon($file, 24), $file->get_filename(), 'moodle');
-                        $filename = html_writer::tag('span', $image, array('class' => 'fp-icon')).
-                                html_writer::tag('span', $file->get_filename(), array('class' => 'fp-filename'));
-                        $contentfiles .= html_writer::tag('span',
-                                html_writer::link($url, $filename),
-                                array('class' => 'coursefile fp-filename-icon'));
+        if ($tab == 'notstarted') {
+            $returntext .= '<div role="tabpanel" class="tab-pane fade in active" id="myoverview_notstarted_view">';
+            // Not started courses listings.
+            $returntext .= '<div class="mycourseslisting">';
+            if (!empty($mycompletion->mynotstartedenrolled)) {
+                foreach ($mycompletion->mynotstartedenrolled as $mid => $notstarted) {
+                    // Display the course info.
+                    $coursecontext = context_course::instance($notstarted->courseid);
+                    $summaryinfo = file_rewrite_pluginfile_urls($notstarted->coursesummary, 'pluginfile.php',$coursecontext->id,'course','summary',null);
+    
+                    $courserec = $DB->get_record("course", array("id"=>$notstarted->courseid));
+                    $course = new course_in_list($courserec);
+    
+                    // display course overview files
+                    $contentimages = $contentfiles = '';
+                    $returntext .= '<div class="mycourselisting">';
+                    foreach ($course->get_course_overviewfiles() as $file) {
+                        $isimage = $file->is_valid_image();
+                        $url = file_encode_url("$CFG->wwwroot/pluginfile.php",
+                                '/'. $file->get_contextid(). '/'. $file->get_component(). '/'.
+                                $file->get_filearea(). $file->get_filepath(). $file->get_filename(), !$isimage);
+                        if ($isimage) {
+                            $contentimages .= html_writer::tag('div',
+                                    html_writer::empty_tag('img', array('src' => $url)),
+                                    array('class' => 'courseimage'));
+                        } else {
+                            $image = $this->output->pix_icon(file_file_icon($file, 24), $file->get_filename(), 'moodle');
+                            $filename = html_writer::tag('span', $image, array('class' => 'fp-icon')).
+                                    html_writer::tag('span', $file->get_filename(), array('class' => 'fp-filename'));
+                            $contentfiles .= html_writer::tag('span',
+                                    html_writer::link($url, $filename),
+                                    array('class' => 'coursefile fp-filename-icon'));
+                        }
                     }
+                    $returntext .= $contentimages. $contentfiles;
+    
+                    $returntext .= '<div class="mycourseheading">';
+                    $returntext .= '<h4 class="title"><a href="' . new moodle_url('/course/view.php', array('id' => $notstarted->courseid)) . '">' . $notstarted->coursefullname . '</a></h4></div>';
+                    if ($CFG->mycourses_showsummary) {
+                        $returntext .= '<div class="mycoursesummary">' . $summaryinfo . '</div>';
+                    }
+                    $returntext .= '</div>';
                 }
-                $returntext .= $contentimages. $contentfiles;
-                $returntext .= '<div class="mycourseheading">';
-                $returntext .= '<h4 class="title"><a href="' . new moodle_url('/course/view.php', array('id' => $inprogress->courseid)) . '">' . $inprogress->coursefullname . '</a></h4></div>';
-                if ($CFG->mycourses_showsummary) {
-                    $returntext .= '<div class="mycoursesummary">' . $summaryinfo . '</div>';
-                }
-                $returntext .= '</div>';
             }
-        } else {
-            $returntext .= '<div>' . get_string('nocourses', 'block_mycourses') . '</div>';
+            if (!empty($mycompletion->mynotstartedlicense)) {
+                foreach ($mycompletion->mynotstartedlicense as $mid => $notstarted) {
+                    // Display the course info.
+                    $coursecontext = context_course::instance($notstarted->courseid);
+                    $summaryinfo = file_rewrite_pluginfile_urls($notstarted->coursesummary, 'pluginfile.php',$coursecontext->id,'course','summary',null);
+                    $courserec = $DB->get_record("course", array("id"=>$notstarted->courseid));
+                    $course = new course_in_list($courserec);
+    
+                    // display course overview files
+                    $contentimages = $contentfiles = '';
+                    $returntext .= '<div class="mycourselisting">';
+                    foreach ($course->get_course_overviewfiles() as $file) {
+                        $isimage = $file->is_valid_image();
+                        $url = file_encode_url("$CFG->wwwroot/pluginfile.php",
+                                '/'. $file->get_contextid(). '/'. $file->get_component(). '/'.
+                                $file->get_filearea(). $file->get_filepath(). $file->get_filename(), !$isimage);
+                        if ($isimage) {
+                            $contentimages .= html_writer::tag('div',
+                                    html_writer::empty_tag('img', array('src' => $url)),
+                                    array('class' => 'courseimage'));
+                        } else {
+                            $image = $this->output->pix_icon(file_file_icon($file, 24), $file->get_filename(), 'moodle');
+                            $filename = html_writer::tag('span', $image, array('class' => 'fp-icon')).
+                                    html_writer::tag('span', $file->get_filename(), array('class' => 'fp-filename'));
+                            $contentfiles .= html_writer::tag('span',
+                                    html_writer::link($url, $filename),
+                                    array('class' => 'coursefile fp-filename-icon'));
+                        }
+                    }
+                    $returntext .= $contentimages. $contentfiles;
+                    $returntext .= '<div class="mycourseheading">';
+                    $returntext .= '<h4 class="title"><a href="' . new moodle_url('/course/view.php', array('id' => $notstarted->courseid)) . '">' . $notstarted->coursefullname . '</a></h4></div>';
+                    if ($CFG->mycourses_showsummary) {
+                        $returntext .= '<div class="mycoursesummary">' . $summaryinfo . '</div>';
+                    }
+                    $returntext .= '</div>';
+                }
+            } else {
+                $returntext .= '<div>' . get_string('nocourses', 'block_mycourses') . '</div>';
+            }
+    
+            $returntext .= '</div></div></div>';
         }
 
-        $returntext .= '</div></div><hr />';
+        if ($tab == 'inprogress') {
+            // In progress courses header block.
+            $returntext .= '<div role="tabpanel" class="tab-pane fade in active" id="myoverview_inprogress_view">';
 
-        // Completed courses header block.
-        $returntext .= '<div class="header" id="mycourses_completed"><h2>'.
-              get_string('completedheader', 'block_mycourses').
-              '</h2>';
-
-        $returntext .= '<div class="mycourseslisting">';
-        // Completed courses listings.
-        if (!empty($mycompletion->mycompleted)) {
-            foreach ($mycompletion->mycompleted as $completed) {
-                // Display the course info.
-                $coursecontext = context_course::instance($completed->courseid);
-                $summaryinfo = file_rewrite_pluginfile_urls($completed->coursesummary, 'pluginfile.php',$coursecontext->id,'course','summary',null);
-
-                $courserec = $DB->get_record("course", array("id"=>$completed->courseid));
-                $course = new course_in_list($courserec);
-
-                // display course overview files
-                $contentimages = $contentfiles = '';
-                $returntext .= '<div class="mycourselisting">';
-                foreach ($course->get_course_overviewfiles() as $file) {
-                    $isimage = $file->is_valid_image();
-                    $url = file_encode_url("$CFG->wwwroot/pluginfile.php",
-                            '/'. $file->get_contextid(). '/'. $file->get_component(). '/'.
-                            $file->get_filearea(). $file->get_filepath(). $file->get_filename(), !$isimage);
-                    if ($isimage) {
-                        $contentimages .= html_writer::tag('div',
-                                html_writer::empty_tag('img', array('src' => $url)),
-                                array('class' => 'courseimage'));
-                    } else {
-                        $image = $this->output->pix_icon(file_file_icon($file, 24), $file->get_filename(), 'moodle');
-                        $filename = html_writer::tag('span', $image, array('class' => 'fp-icon')).
-                                html_writer::tag('span', $file->get_filename(), array('class' => 'fp-filename'));
-                        $contentfiles .= html_writer::tag('span',
-                                html_writer::link($url, $filename),
-                                array('class' => 'coursefile fp-filename-icon'));
+            // In progress courses listings.
+            $returntext .= '<div class="mycourseslisting">';
+            if (!empty($mycompletion->myinprogress)) {
+                foreach ($mycompletion->myinprogress as $inprogress) {
+                    // Display the course info.
+                    $coursecontext = context_course::instance($inprogress->courseid);
+                    $summaryinfo = file_rewrite_pluginfile_urls($inprogress->coursesummary, 'pluginfile.php',$coursecontext->id,'course','summary',null);
+    
+                    $courserec = $DB->get_record("course", array("id"=>$inprogress->courseid));
+                    $course = new course_in_list($courserec);
+    
+                    // display course overview files
+                    $contentimages = $contentfiles = '';
+                    $returntext .= '<div class="mycourselisting">';
+                    foreach ($course->get_course_overviewfiles() as $file) {
+                        $isimage = $file->is_valid_image();
+                        $url = file_encode_url("$CFG->wwwroot/pluginfile.php",
+                                '/'. $file->get_contextid(). '/'. $file->get_component(). '/'.
+                                $file->get_filearea(). $file->get_filepath(). $file->get_filename(), !$isimage);
+                        if ($isimage) {
+                            $contentimages .= html_writer::tag('div',
+                                    html_writer::empty_tag('img', array('src' => $url)),
+                                    array('class' => 'courseimage'));
+                        } else {
+                            $image = $this->output->pix_icon(file_file_icon($file, 24), $file->get_filename(), 'moodle');
+                            $filename = html_writer::tag('span', $image, array('class' => 'fp-icon')).
+                                    html_writer::tag('span', $file->get_filename(), array('class' => 'fp-filename'));
+                            $contentfiles .= html_writer::tag('span',
+                                    html_writer::link($url, $filename),
+                                    array('class' => 'coursefile fp-filename-icon'));
+                        }
                     }
-                }
-                $returntext .= $contentimages. $contentfiles;
-
-                $returntext .= '<div class="course_title">';
-                $returntext .= '<h4 class="title"><a href="' . new moodle_url('/course/view.php', array('id' => $completed->courseid)) . '">' . $completed->coursefullname . '</a></h4></div>';
-                if ($CFG->mycourses_showsummary) {
-                    $returntext .= '<div class="mycoursesummary">' . $summaryinfo . '</div>';
-                }
-
-                if (!empty($completed->finalgrade)) {
-                    $returntext .= "<div>"  . get_string('finalscore', 'block_mycourses') . ' ' . intval($completed->finalgrade) . "% ";
-                    if (!empty($completed->certificate)) {
-                        $returntext .= $completed->certificate;
+                    $returntext .= $contentimages. $contentfiles;
+                    $returntext .= '<div class="mycourseheading">';
+                    $returntext .= '<h4 class="title"><a href="' . new moodle_url('/course/view.php', array('id' => $inprogress->courseid)) . '">' . $inprogress->coursefullname . '</a></h4></div>';
+                    if ($CFG->mycourses_showsummary) {
+                        $returntext .= '<div class="mycoursesummary">' . $summaryinfo . '</div>';
                     }
-                    $returntext .=  "</div>";
-                } else {
-                    $returntext .= "<div>" . get_string('finalscore', 'block_mycourses') . " 0%</div>";
+                    $returntext .= '</div>';
                 }
-
-                $returntext .= '</div>';
+            } else {
+                $returntext .= '<div>' . get_string('nocourses', 'block_mycourses') . '</div>';
             }
-        } else {
-            $returntext .= '<div>' . get_string('nocourses', 'block_mycourses') . '</div>';
+    
+            $returntext .= '</div></div></div>';
         }
 
-        $returntext .= '</div></div>';
-
-        $returntext .= '<div class="coursearchivebutton"><a class="btn" href="' . new moodle_url('/blocks/mycourses/archive.php') . '">'
-                       . get_string('archive', 'block_mycourses') . '</a></div>';
+        if ($tab == 'completed') {
+            // Completed courses header block.
+            $returntext .= '<div role="tabpanel" class="tab-pane fade in active" id="myoverview_completed_view">';
+        
+            $returntext .= '<div class="mycourseslisting">';
+            // Completed courses listings.
+            if (!empty($mycompletion->mycompleted)) {
+                foreach ($mycompletion->mycompleted as $completed) {
+                    // Display the course info.
+                    $coursecontext = context_course::instance($completed->courseid);
+                    $summaryinfo = file_rewrite_pluginfile_urls($completed->coursesummary, 'pluginfile.php',$coursecontext->id,'course','summary',null);
+        
+                    $courserec = $DB->get_record("course", array("id"=>$completed->courseid));
+                    $course = new course_in_list($courserec);
+        
+                    // display course overview files
+                    $contentimages = $contentfiles = '';
+                    $returntext .= '<div class="mycourselisting">';
+                    foreach ($course->get_course_overviewfiles() as $file) {
+                        $isimage = $file->is_valid_image();
+                        $url = file_encode_url("$CFG->wwwroot/pluginfile.php",
+                                '/'. $file->get_contextid(). '/'. $file->get_component(). '/'.
+                                $file->get_filearea(). $file->get_filepath(). $file->get_filename(), !$isimage);
+                        if ($isimage) {
+                            $contentimages .= html_writer::tag('div',
+                                    html_writer::empty_tag('img', array('src' => $url)),
+                                    array('class' => 'courseimage'));
+                        } else {
+                            $image = $this->output->pix_icon(file_file_icon($file, 24), $file->get_filename(), 'moodle');
+                            $filename = html_writer::tag('span', $image, array('class' => 'fp-icon')).
+                                    html_writer::tag('span', $file->get_filename(), array('class' => 'fp-filename'));
+                            $contentfiles .= html_writer::tag('span',
+                                    html_writer::link($url, $filename),
+                                    array('class' => 'coursefile fp-filename-icon'));
+                        }
+                    }
+                    $returntext .= $contentimages. $contentfiles;
+        
+                    $returntext .= '<div class="course_title">';
+                    $returntext .= '<h4 class="title"><a href="' . new moodle_url('/course/view.php', array('id' => $completed->courseid)) . '">' . $completed->coursefullname . '</a></h4></div>';
+                    if (!empty($completed->finalgrade)) {
+                    if ($CFG->mycourses_showsummary) {
+                        $returntext .= '<div class="mycoursesummary">' . $summaryinfo . '</div>';
+                    }
+        
+                        $returntext .= "<div>"  . get_string('finalscore', 'block_mycourses') . ' ' . intval($completed->finalgrade) . "% ";
+                        if (!empty($completed->certificate)) {
+                            $returntext .= $completed->certificate;
+                        }
+                        $returntext .=  "</div>";
+                    } else {
+                        $returntext .= "<div>" . get_string('finalscore', 'block_mycourses') . " 0%</div>";
+                    }
+        
+                    $returntext .= '</div>';
+                }
+            } else {
+                $returntext .= '<div>' . get_string('nocourses', 'block_mycourses') . '</div>';
+            }
+        
+            $returntext .= '</div></div>';
+        
+            $returntext .= '<div class="coursearchivebutton"><a class="btn" href="' . new moodle_url('/blocks/mycourses/archive.php') . '">'
+                           . get_string('archive', 'block_mycourses') . '</a></div></div>';
+        }
+        $returntext .= "</div>";
         return $returntext;
     }
 
