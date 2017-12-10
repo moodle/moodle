@@ -30,7 +30,21 @@ defined('MOODLE_INTERNAL') || die();
  * @param int $oldversion the version we are upgrading from.
  */
 function xmldb_qtype_numerical_upgrade($oldversion) {
-    global $CFG;
+    global $CFG, $DB;
+    $dbman = $DB->get_manager();
+
+    if ($oldversion < 2017121000) {
+
+        // Changing length of field multiplier on table question_numerical_units to 38.
+        $table = new xmldb_table('question_numerical_units');
+        $field = new xmldb_field('multiplier', XMLDB_TYPE_NUMBER, '38, 19', null, XMLDB_NOTNULL, null, null, 'question');
+
+        // Launch change of length for field multiplier.
+        $dbman->change_field_type($table, $field);
+
+        // Data savepoint reached.
+        upgrade_plugin_savepoint(true, 2017121000, 'qtype', 'numerical');
+    }
 
     // Automatically generated Moodle v3.2.0 release upgrade line.
     // Put any upgrade step following this.
