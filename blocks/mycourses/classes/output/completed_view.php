@@ -61,28 +61,21 @@ class completed_view implements renderable, templatable {
         require_once($CFG->dirroot.'/course/lib.php');
 
         // Build courses view data structure.
-        if (!empty($this->mycompletion->mycompleted)) {
-            $hascourses = true;
-        } else {
-            $hascourses = false;
-        }
-        $completedview = [
-            'hascourses' => $hascourses
-        ];
+        $completedview = [];
 
-        foreach ($this->mycompletion->mycompleted as $mid => $notstarted) {
-            // Display the course info.
-            $coursecontext = context_course::instance($notstarted->courseid);
-            $summaryinfo = file_rewrite_pluginfile_urls($notstarted->coursesummary, 'pluginfile.php',$coursecontext->id,'course','summary',null);
-
-            $context = \context_course::instance($notstarted->courseid);
-            $course = $DB->get_record("course", array("id"=>$notstarted->courseid));
+        foreach ($this->mycompletion->mycompleted as $mid => $completed) {
+            $context = \context_course::instance($completed->courseid);
+            $course = $DB->get_record("course", array("id"=>$completed->courseid));
             $courseobj = new \course_in_list($course);
 
             $exporter = new course_summary_exporter($course, ['context' => $context]);
             $exportedcourse = $exporter->export($output);
-            // Convert summary to plain text.
-            $coursesummary = content_to_text($exportedcourse->summary, $exportedcourse->summaryformat);
+            if ($CFG->mycourses_showsummary) {
+                // Convert summary to plain text.
+                $coursesummary = content_to_text($exportedcourse->summary, $exportedcourse->summaryformat);
+            } else {
+                $coursesummary = '';
+            }
             // display course overview files
             $imageurl = '';
             foreach ($courseobj->get_course_overviewfiles() as $file) {
@@ -95,12 +88,21 @@ class completed_view implements renderable, templatable {
                                 $file->get_filearea(). $file->get_filepath(). $file->get_filename(), !$isimage);
                 }
             }
+            if (empty($completed->finalgrade)) {
+                $completed->finalgrade = 0;
+            }
+
+            if (empty($imageurl)) {
+                $imageurl = $output->image_url('i/course');
+            }
             $exportedcourse = $exporter->export($output);
-            $exportedcourse->url = new \moodle_url('/course/view.php', array('id' => $notstarted->courseid));
-            $exportedcourse->fullname = $notstated->coursefullname;
+            $exportedcourse->url = new \moodle_url('/course/view.php', array('id' => $completed->courseid));
+            $exportedcourse->fullname = $completed->coursefullname;
             $exportedcourse->image = $imageurl;
             $exportedcourse->summary = $coursesummary;
-            $availableview['completed'][] = $exportedcourse;
+            $exportedcourse->finalscore = intval($completed->finalgrade);
+            $exportedcourse->certificate = $completed->certificate;
+            $completedview['courses'][] = $exportedcourse;
         }
         return $completedview;
     }

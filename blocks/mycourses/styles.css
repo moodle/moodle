@@ -6,16 +6,39 @@ html.yui3-js-enabled body#page-my-index.format-site.path-my.gecko.dir-ltr.lang-e
     display: none;
 }
 
-.mycourselisting .courseimage {
+.block_mycourses .mycourselisting .courseimage {
+    width: 10%;
     float:left;
     padding-right: 10px;
 }
 
-hr {
-    clear: both;
+.block_mycourses .mycourselisting .mycoursedetails {
+    float: right;
+    width: 90%;
+}
+
+.block_mycourses .imgresponsive {
+    max-width: 100%;
+    height: auto;
+    width: auto;
+}
+
+.block_mycourses hr, .block_mycourses .mycourselisting, .block_mycourses .tab-content .tab-content{
+    padding-bottom: 5px;
+    padding-top: 5px;
+}
+
+.block_mycourses .tab-content {
+    display: inline-block;
+    width: 100%;
 }
 
 .coursearchivebutton {
     clear: both;
+    padding-top: 10px;
+}
+
+.block_mycourses .finalresults {
+    font-weight: bold;
     padding-top: 10px;
 }

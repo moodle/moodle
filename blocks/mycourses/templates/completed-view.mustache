@@ -23,34 +23,45 @@
     {}
 }}
 <div id="completed-view-{{uniqid}}" data-region="completed-view">
-    {{#hascompleted}}
-    <div class="tab-content">
-        <div class="tab-pane active fade in" id="mycompleted_completed_view_in_progress">
-            {{#completed}}
-                <div class="mycourselisting">
-                    <div class="courseimage">
-                        <img src="{{completed.image}}" class="courseimage">
-                    <div class="mycourseheading">
-                        <h4 class="title">
-                            <a href="{{completed.url"}}>{{completed.fullname}}</a>
-                        </h4>
+   {{#completedview.courses}}
+        <div class="tab-content">
+            <div class="tab-pane active fade in" id="mycourses_completed_view">
+                    <div class="mycourselisting">
+                        <div class="courseimage">
+                            <a href="{{ url }}"><img class="imgresponsive" src="{{ image }}" class="courseimage"></a>
+                        </div>
+                        <div class="mycoursedetails">
+                            <div class="mycourseheading">
+                                <h4 class="title">
+                                    <a href="{{ url }}">{{ fullname }}</a>
+                                </h4>
+                            </div>
+                            <div class="mycoursesummary">
+                                {{ summary}}
+                            </div>
+                            <div class="finalresults">
+                                <p>{{#str}} finalscore, block_mycourses,  {{ finalscore }} {{/str}}
+                                {{#certificate}}
+                                    <a class="btn btn-info" href="{{ certificate }}">{{#str}} downloadcert, block_mycourses {{/str}}</a></p>
+                                {{/certificate}}
+                                {{^certificate}}
+                                    {{#str}} nocerttodownload, block_mycourses {{/str}}</p>
+                                {{/certificate}}
+                            </div>
+                        </div>
                     </div>
-                </div>
-            {{/completed}}
-            {{^completed}}
-            {{/completed}}
+            </div>
         </div>
-    </div>
-    {{/hascompleted}}
-    {{^hascompleted}}
-    <div class="text-xs-center text-center m-t-3">
-        <img class="empty-placeholder-image-lg"
-             src="{{urls.nocompleted}}"
-             alt="{{#str}} nocompleted, block_mycourses {{/str}}"
-             role="presentation">
-        <p class="text-muted m-t-1">{{#str}} nocompleted, block_mycourses {{/str}}</p>
-    </div>
-    {{/hascompleted}}
+    {{/completedview.courses}}
+    {{^completedview.courses}}
+        <div class="text-xs-center text-center m-t-3">
+            <img class="empty-placeholder-image-lg"
+                src="{{urls.nocompleted}}"
+                alt="{{#str}} nocompleted, block_mycourses {{/str}}"
+                role="presentation">
+            <p class="text-muted m-t-1">{{#str}} nocompleted, block_mycourses {{/str}}</p>
+        </div>
+    {{/completedview.courses}}
 </div>
 {{#js}}
 require(['jquery', 'core/custom_interaction_events'], function($, customEvents) {

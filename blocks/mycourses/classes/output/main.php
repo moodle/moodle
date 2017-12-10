@@ -28,9 +28,12 @@ use renderable;
 use renderer_base;
 use templatable;
 use core_completion\progress;
+use  core_course_renderer;
 
 require_once($CFG->dirroot . '/blocks/mycourses/locallib.php');
 require_once($CFG->libdir . '/completionlib.php');
+require_once($CFG->libdir . '/coursecatlib.php');
+
 
 /**
  * Class containing data for my overview block.
@@ -67,7 +70,7 @@ class main implements renderable, templatable {
         $cutoffdate = time() - ($CFG->mycourses_archivecutoff * 24 * 60 * 60);
 
         // Get the completion info.
-        $mycompletion = mycourses_get_my_completion($cutoffdate);
+        $mycompletion = mycourses_get_my_completion();
 
         $availableview = new available_view($mycompletion, $cutoffdate);
         $inprogressview = new inprogress_view($mycompletion, $cutoffdate);

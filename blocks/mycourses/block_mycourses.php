@@ -55,17 +55,10 @@ class block_mycourses extends block_base {
         $this->content->icons = array();
         $this->content->footer = '';
 
-/*        // Get the cut off date.
-        $cutoffdate = time() - ($CFG->mycourses_archivecutoff * 24 * 60 * 60);
-
-        // Get the completion info.
-        $mycompletion = mycourses_get_my_completion($cutoffdate);
-*///        $this->content->text = $renderer->display_courses($mycompletion, $tab);
         $this->content = new stdClass();
         $this->content->text = $renderer->render($renderable);
         $this->content->footer = '';
 
-        
         return $this->content;
     }
 

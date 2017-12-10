@@ -23,37 +23,36 @@
     {}
 }}
 <div id="available-view-{{uniqid}}" data-region="available-view">
-    {{#hasavailable}}
-<h1>AVAILABLE</h1>
-    <div class="tab-content">
-        <div class="tab-pane active fade in" id="myavailable_available_view_in_progress">
-            {{#available}}
-                <div class="mycourselisting">
-                    <div class="courseimage">
-                        <img src="{{ image }}" class="courseimage">
-                    <div class="mycourseheading">
-                        <h4 class="title">
-                            <a href="{{ url "}}>{{ fullname }}</a>
-                        </h4>
+   {{#availableview.courses}}
+        <div class="tab-content">
+            <div class="tab-pane active fade in" id="mycourses_available_view">
+                    <div class="mycourselisting">
+                        <div class="courseimage">
+                            <a href="{{ url }}"><img class="imgresponsive" src="{{ image }}" class="courseimage"></a>
+                        </div>
+                        <div class="mycoursedetails">
+                            <div class="mycourseheading">
+                                <h4 class="title">
+                                    <a href="{{ url }}">{{ fullname }}</a>
+                                </h4>
+                            </div>
+                            <div class="mycoursesummary">
+                                {{ summary}}
+                            </div>
+                        </div>
                     </div>
-                    <div class="mycoursesummary">{{ summary }}
-                    </div>
-                </div>
-            {{/available}}
-            {{^available}}
-            {{/available}}
+            </div>
         </div>
-    </div>
-    {{/hasavailable}}
-    {{^hasavailable}}
-    <div class="text-xs-center text-center m-t-3">
-        <img class="empty-placeholder-image-lg"
-             src="{{urls.noavailable}}"
-             alt="{{#str}} noavailable, block_mycourses {{/str}}"
-             role="presentation">
-        <p class="text-muted m-t-1">{{#str}} noavailable, block_mycourses {{/str}}</p>
-    </div>
-    {{/hasavailable}}
+    {{/availableview.courses}}
+    {{^availableview.courses}}
+        <div class="text-xs-center text-center m-t-3">
+            <img class="empty-placeholder-image-lg"
+                src="{{urls.noavailable}}"
+                alt="{{#str}} noavailable, block_mycourses {{/str}}"
+                role="presentation">
+            <p class="text-muted m-t-1">{{#str}} noavailable, block_mycourses {{/str}}</p>
+        </div>
+    {{/availableview.courses}}
 </div>
 {{#js}}
 require(['jquery', 'core/custom_interaction_events'], function($, customEvents) {

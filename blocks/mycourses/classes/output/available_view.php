@@ -61,14 +61,7 @@ class available_view implements renderable, templatable {
         require_once($CFG->dirroot.'/course/lib.php');
 
         // Build courses view data structure.
-        if (!empty($this->mycompletion->mynotstartedenrolled) || !empty($this->mycompletion->mynotstartedlicense)) {
-            $hascourses = true;
-        } else {
-            $hascourses = false;
-        }
-        $availableview = [
-            'hasavailable' => $hascourses
-        ];
+        $availableview = [];
 
         foreach ($this->mycompletion->mynotstartedenrolled as $mid => $notstarted) {
             // get the course display info.
@@ -97,7 +90,7 @@ class available_view implements renderable, templatable {
             $exportedcourse->fullname = $notstated->coursefullname;
             $exportedcourse->image = $imageurl;
             $exportedcourse->summary = $coursesummary;
-            $availableview['available'][] = $exportedcourse;
+            $availableview['courses'][] = $exportedcourse;
         }
 
         foreach ($this->mycompletion->mynotstartedlicense as $mid => $notstarted) {
@@ -108,28 +101,34 @@ class available_view implements renderable, templatable {
 
             $exporter = new course_summary_exporter($course, ['context' => $context]);
             $exportedcourse = $exporter->export($output);
-            // Convert summary to plain text.
-            $coursesummary = content_to_text($exportedcourse->summary, $exportedcourse->summaryformat);
+            if ($CFG->mycourses_showsummary) {
+                // Convert summary to plain text.
+                $coursesummary = content_to_text($exportedcourse->summary, $exportedcourse->summaryformat);
+            } else {
+                $coursesummary = '';
+            }
             // display course overview files
             $imageurl = '';
-                foreach ($courseobj->get_course_overviewfiles() as $file) {
+            foreach ($courseobj->get_course_overviewfiles() as $file) {
                 $isimage = $file->is_valid_image();
                 if (!$isimage) {
-                    $imageurl = $this->output->pix_icon(file_file_icon($file, 24), $file->get_filename(), 'moodle');
+                    $imageurl = $output->pix_icon(file_file_icon($file, 24), $file->get_filename(), 'moodle');
                 } else {
                     $imageurl = file_encode_url("$CFG->wwwroot/pluginfile.php",
                                 '/'. $file->get_contextid(). '/'. $file->get_component(). '/'.
                                 $file->get_filearea(). $file->get_filepath(). $file->get_filename(), !$isimage);
                 }
             }
+            if (empty($imageurl)) {
+                $imageurl = $output->image_url('i/course');
+            }
             $exportedcourse = $exporter->export($output);
             $exportedcourse->url = new \moodle_url('/course/view.php', array('id' => $notstarted->courseid));
             $exportedcourse->fullname = $notstarted->coursefullname;
             $exportedcourse->image = $imageurl;
             $exportedcourse->summary = $coursesummary;
-            $availableview['available'][] = $exportedcourse;
+            $availableview['courses'][] = $exportedcourse;
         }
-echo "<pre>";print_r($availableview);echo "</pre>";
         return $availableview;
     }
 }

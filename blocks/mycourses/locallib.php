@@ -35,12 +35,11 @@ function mycourses_get_my_completion($datefrom = 0) {
 
     $mycompletions = new stdclass();
     $mycompleted = $DB->get_records_sql("SELECT cc.id, cc.userid, cc.courseid as courseid, cc.finalscore as finalgrade, c.fullname as coursefullname, c.summary as coursesummary
-                                         FROM {local_iomad_track} cc
-                                         JOIN {course} c ON (c.id = cc.courseid)
-                                         WHERE cc.userid = :userid
-                                         AND c.visible = 1
-                                         AND cc.timecompleted > :datefrom",
-                                         array('userid' => $USER->id, 'datefrom' => $datefrom));
+                                       FROM {local_iomad_track} cc
+                                       JOIN {course} c ON (c.id = cc.courseid)
+                                       WHERE cc.userid = :userid
+                                       AND c.visible = 1",
+                                       array('userid' => $USER->id));
     $myinprogress = $DB->get_records_sql("SELECT cc.id, cc.userid, cc.course as courseid, c.fullname as coursefullname, c.summary as coursesummary
                                           FROM {course_completions} cc
                                           JOIN {course} c ON (c.id = cc.course)
@@ -69,19 +68,28 @@ function mycourses_get_my_completion($datefrom = 0) {
         if ($hasiomadcertificate) {
             if ($iomadcertificateinfo = $DB->get_record('iomadcertificate',
                                                          array('course' => $completed->courseid))) {
-                $certcminfo = $DB->get_record('course_modules',
-                                               array('course' => $completed->courseid,
-                                                     'instance' => $iomadcertificateinfo->id,
-                                                     'module' => $certmodule->id));
-                $certstring = "<a href='".$CFG->wwwroot."/mod/iomadcertificate/view.php?id=".
-                              $certcminfo->id."&action=get&userid=".$USER->id."&sesskey=".
-                              sesskey()."'>".get_string('downloadcert', 'block_mycourses').
-                              "</a>";
+                // Get the certificate from the download files thing.
+                if ($traccertrec = $DB->get_record('local_iomad_track_certs', array('trackid' => $id))) {
+                    // create the file download link.
+                    $coursecontext = context_course::instance($archive->courseid);
+
+                    $certstring = moodle_url::make_file_url('/pluginfile.php', '/'.$coursecontext->id.'/local_iomad_track/issue/'.$traccertrec->trackid.'/'.$traccertrec->filename);
+                } else {
+                    $certcminfo = $DB->get_record('course_modules',
+                                                   array('course' => $completed->courseid,
+                                                         'instance' => $iomadcertificateinfo->id,
+                                                         'module' => $certmodule->id));
+                    $certstring = new moodle_url('/mod/iomadcertificate/view.php',
+                                                 array('id' => $certcminfo->id,
+                                                 'action' => 'get',
+                                                 'userid' => $USER->id,
+                                                 'sesskey' => sesskey()));
+                }
             } else {
-                $certstring = get_string('nocerttodownload', 'block_mycourses');
+                $certstring = '';
             }
         } else {
-            $certstring = get_string('nocerttodownload', 'block_mycourses');
+            $certstring = '';
         }
         $mycompleted[$id]->certificate = $certstring;
 
@@ -126,16 +134,18 @@ function mycourses_get_my_archive($dateto = 0) {
                 if ($traccertrec = $DB->get_record('local_iomad_track_certs', array('trackid' => $id))) {
                     // create the file download link.
                     $coursecontext = context_course::instance($archive->courseid);
-                    $certstring = "<a class=\"btn btn-info\" href='".
+/*                    $certstring = "<a class=\"btn btn-info\" href='".
                                    moodle_url::make_file_url('/pluginfile.php', '/'.$coursecontext->id.'/local_iomad_track/issue/'.$traccertrec->trackid.'/'.$traccertrec->filename) .
                                   "'>" . get_string('downloadcert', 'block_mycourses').
                                   "</a>";
+*/
+                    $certstring = moodle_url::make_file_url('/pluginfile.php', '/'.$coursecontext->id.'/local_iomad_track/issue/'.$traccertrec->trackid.'/'.$traccertrec->filename);
                 }
             } else {
-                $certstring = get_string('nocerttodownload', 'block_mycourses');
+                $certstring = '';
             }
         } else {
-            $certstring = get_string('nocerttodownload', 'block_mycourses');
+            $certstring = '';
         }
 
         $myarchive[$id]->certificate = $certstring;

@@ -23,34 +23,36 @@
     {}
 }}
 <div id="inprogress-view-{{uniqid}}" data-region="inprogress-view">
-    {{#hasinprogress}}
-    <div class="tab-content">
-        <div class="tab-pane active fade in" id="myinprogress_inprogress_view_in_progress">
-            {{#inprogress}}
-                <div class="mycourselisting">
-                    <div class="courseimage">
-                        <img src="{{inprogress.image}}" class="courseimage">
-                    <div class="mycourseheading">
-                        <h4 class="title">
-                            <a href="{{inprogress.url"}}>{{inprogress.fullname}}</a>
-                        </h4>
+   {{#inprogressview.courses}}
+        <div class="tab-content">
+            <div class="tab-pane active fade in" id="mycourses_inprogress_view">
+                    <div class="mycourselisting">
+                        <div class="courseimage">
+                            <a href="{{ url }}"><img class="imgresponsive" src="{{ image }}" class="courseimage"></a>
+                        </div>
+                        <div class="mycoursedetails">
+                            <div class="mycourseheading">
+                                <h4 class="title">
+                                    <a href="{{ url }}">{{ fullname }}</a>
+                                </h4>
+                            </div>
+                            <div class="mycoursesummary">
+                                {{ summary}}
+                            </div>
+                        </div>
                     </div>
-                </div>
-            {{/inprogress}}
-            {{^inprogress}}
-            {{/inprogress}}
+            </div>
         </div>
-    </div>
-    {{/hasinprogress}}
-    {{^hasinprogress}}
-    <div class="text-xs-center text-center m-t-3">
-        <img class="empty-placeholder-image-lg"
-             src="{{urls.noinprogress}}"
-             alt="{{#str}} noinprogress, block_mycourses {{/str}}"
-             role="presentation">
-        <p class="text-muted m-t-1">{{#str}} noinprogress, block_mycourses {{/str}}</p>
-    </div>
-    {{/hasinprogress}}
+    {{/inprogressview.courses}}
+    {{^inprogressview.courses}}
+        <div class="text-xs-center text-center m-t-3">
+            <img class="empty-placeholder-image-lg"
+                src="{{urls.noinprogress}}"
+                alt="{{#str}} noinprogress, block_mycourses {{/str}}"
+                role="presentation">
+            <p class="text-muted m-t-1">{{#str}} noinprogress, block_mycourses {{/str}}</p>
+        </div>
+    {{/inprogressview.courses}}
 </div>
 {{#js}}
 require(['jquery', 'core/custom_interaction_events'], function($, customEvents) {
