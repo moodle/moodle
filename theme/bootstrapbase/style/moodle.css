@@ -17571,6 +17571,10 @@ div#dock {
 .path-mod-lesson .answeroptiongroup .felement label p:last-child {
   margin-bottom: 0;
 }
+.path-mod-lesson .answeroption .fradio label p,
+.path-mod-lesson .answeroption .fcheckbox label p {
+  display: inline;
+}
 /**
  * Style for view.php
  **/
