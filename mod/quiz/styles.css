@@ -797,12 +797,6 @@ table.quizreviewsummary td.cell {
     display: inline;
 }
 
-#page-mod-quiz-edit ul.slots li.section li.activity .instancemaxmarkcontainer form input {
-    margin: 0;
-    padding: 0.2em;
-    height: 1em;
-}
-
 #page-mod-quiz-edit ul.slots li.section li.activity .instancemaxmark {
     display: inline-block;
     text-align: right;
