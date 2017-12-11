@@ -47,12 +47,12 @@ class httpsreplace_test extends \advanced_testcase {
             "Test image from another site should be replaced" => [
                 "content" => '<img src="' . $this->getExternalTestFileUrl('/test.jpg', false) . '">',
                 "outputregex" => '/UPDATE/',
-                "expectedcontent" => '<img src="' . $this->getExternalTestFileUrl('/test.jpg', true) . '">',
+                "expectedcontent" => '<img src="' . $this->get_converted_http_link('/test.jpg') . '">',
             ],
             "Test object from another site should be replaced" => [
                 "content" => '<object data="' . $this->getExternalTestFileUrl('/test.swf', false) . '">',
                 "outputregex" => '/UPDATE/',
-                "expectedcontent" => '<object data="' . $this->getExternalTestFileUrl('/test.swf', true) . '">',
+                "expectedcontent" => '<object data="' . $this->get_converted_http_link('/test.swf') . '">',
             ],
             "Test image from a site with international name should be replaced" => [
                 "content" => '<img src="http://中国互联网络信息中心.中国/logosy/201706/W01.png">',
@@ -82,7 +82,7 @@ class httpsreplace_test extends \advanced_testcase {
             "Search for params should be case insensitive" => [
                 "content" => '<object DATA="' . $this->getExternalTestFileUrl('/test.swf', false) . '">',
                 "outputregex" => '/UPDATE/',
-                "expectedcontent" => '<object DATA="' . $this->getExternalTestFileUrl('/test.swf', true) . '">',
+                "expectedcontent" => '<object DATA="' . $this->get_converted_http_link('/test.swf') . '">',
             ],
             "URL should be case insensitive" => [
                 "content" => '<object data="HTTP://some.site/path?query">',
@@ -93,7 +93,7 @@ class httpsreplace_test extends \advanced_testcase {
                 "content" => '<img alt="A picture" src="' . $this->getExternalTestFileUrl('/test.png', false) .
                     '" width="1”><p style="font-size: \'20px\'"></p>',
                 "outputregex" => '/UPDATE/',
-                "expectedcontent" => '<img alt="A picture" src="' . $this->getExternalTestFileUrl('/test.png', true) .
+                "expectedcontent" => '<img alt="A picture" src="' . $this->get_converted_http_link('/test.png') .
                     '" width="1”><p style="font-size: \'20px\'"></p>',
             ],
             "Broken URL should not be changed" => [
@@ -113,9 +113,23 @@ class httpsreplace_test extends \advanced_testcase {
                     $this->getExternalTestFileUrl('/test.jpg', false) . '"></a>',
                 "outputregex" => '/UPDATE/',
                 "expectedcontent" => '<a href="' . $this->getExternalTestFileUrl('/test.png', false) . '"><img src="' .
-                    $this->getExternalTestFileUrl('/test.jpg', true) . '"></a>',
+                    $this->get_converted_http_link('/test.jpg') . '"></a>',
             ],
         ];
+    }
+
+    /**
+     * Convert the HTTP external test file URL to use HTTPS.
+     *
+     * Note: We *must not* use getExternalTestFileUrl with the True option
+     * here, becase it is reasonable to have only one of these set due to
+     * issues with SSL certificates.
+     *
+     * @param   string  $path Path to be rewritten
+     * @return  string
+     */
+    protected function get_converted_http_link($path) {
+        return preg_replace('/^http:/', 'https:', $this->getExternalTestFileUrl($path, false));
     }
 
     /**
@@ -152,7 +166,7 @@ class httpsreplace_test extends \advanced_testcase {
         // Get the http url, since the default test wwwroot is https.
         $wwwrootdomain = 'www.example.com';
         $wwwroothttp = preg_replace('/^https:/', 'http:', $CFG->wwwroot);
-        $testdomain = 'download.moodle.org';
+        $testdomain = $this->get_converted_http_link('');
         return [
             "Test image from an available site so shouldn't be reported" => [
                 "content" => '<img src="' . $this->getExternalTestFileUrl('/test.jpg', false) . '">',
