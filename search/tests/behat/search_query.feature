@@ -91,3 +91,38 @@ Feature: Use global search interface
     And I should not see "Courses" in the "region-main" "region"
     And I select "Forum: ForumName1" from the "Search within" singleselect
     And I should not see "Courses" in the "region-main" "region"
+
+  @javascript
+  Scenario: Check that groups option in search form appears when intended
+    Given the following "groups" exist:
+      | name    | course | idnumber |
+      | A Group | F1     | G1       |
+      | B Group | F1     | G2       |
+    And the following "activities" exist:
+      | activity | name    | intro      | course | idnumber | groupmode |
+      | forum    | ForumSG | ForumDesc1 | F1     | FORUM2   | 1         |
+    When I am on "Amphibians" course homepage
+    And I follow "ForumSG"
+    And global search expects the query "frogs" and will return:
+      | type     | idnumber |
+      | activity | PAGE1    |
+    And I search for "frogs" using the header global search box
+    And I expand all fieldsets
+    Then I should not see "Groups" in the "region-main" "region"
+    And I select "Course: Amphibians" from the "Search within" singleselect
+    And I should see "Groups" in the "region-main" "region"
+    And I set the field "Groups" to "A Group"
+    And I select "Forum: ForumSG" from the "Search within" singleselect
+    And I should see "Groups" in the "region-main" "region"
+    And I am on "Amphibians" course homepage
+    And I follow "ForumName1"
+    And global search expects the query "frogs" and will return:
+      | type     | idnumber |
+      | activity | PAGE1    |
+    And I search for "frogs" using the header global search box
+    And I expand all fieldsets
+    Then I should not see "Groups" in the "region-main" "region"
+    And I select "Course: Amphibians" from the "Search within" singleselect
+    And I should see "Groups" in the "region-main" "region"
+    And I select "Forum: ForumName1" from the "Search within" singleselect
+    And I should not see "Groups" in the "region-main" "region"

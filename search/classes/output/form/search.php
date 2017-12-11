@@ -36,7 +36,7 @@ class search extends \moodleform {
      * @return void
      */
     function definition() {
-        global $CFG;
+        global $USER;
 
         $mform =& $this->_form;
         $mform->disable_form_change_checker();
@@ -95,9 +95,42 @@ class search extends \moodleform {
         $mform->addElement('course', 'courseids', get_string('courses', 'core'), $options);
         $mform->setType('courseids', PARAM_INT);
 
-        // Course options should be hidden if we choose to search within a specific location.
         if (!empty($this->_customdata['searchwithin'])) {
+            // Course options should be hidden if we choose to search within a specific location.
             $mform->hideIf('courseids', 'searchwithin', 'ne', '');
+
+            // Get groups on course (we don't show group selector if there aren't any).
+            $courseid = $this->_customdata['withincourseid'];
+            $allgroups = groups_get_all_groups($courseid);
+            if ($allgroups && $search->get_engine()->supports_groups()) {
+                $groupnames = [];
+                foreach ($allgroups as $group) {
+                    $groupnames[$group->id] = $group->name;
+                }
+
+                // Create group autocomplete option.
+                $options = array(
+                        'multiple' => true,
+                        'noselectionstring' => get_string('allgroups'),
+                );
+                $mform->addElement('autocomplete', 'groupids', get_string('groups'), $groupnames, $options);
+
+                // Is the second 'search within' option a cm?
+                if (!empty($this->_customdata['withincmid'])) {
+                    // Find out if the cm supports groups.
+                    $modinfo = get_fast_modinfo($courseid);
+                    $cm = $modinfo->get_cm($this->_customdata['withincmid']);
+                    if ($cm->effectivegroupmode != NOGROUPS) {
+                        // If it does, group ids are available when you have course or module selected.
+                        $mform->hideIf('groupids', 'searchwithin', 'eq', '');
+                    } else {
+                        // Group ids are only available if you have course selected.
+                        $mform->hideIf('groupids', 'searchwithin', 'ne', 'course');
+                    }
+                } else {
+                    $mform->hideIf('groupids', 'searchwithin', 'eq', '');
+                }
+            }
         }
 
         $mform->addElement('date_time_selector', 'timestart', get_string('fromtime', 'search'), array('optional' => true));

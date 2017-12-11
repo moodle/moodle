@@ -66,10 +66,14 @@ if ($contextid) {
         $searchwithin = [];
         $searchwithin[''] = get_string('everywhere', 'search');
         $searchwithin['course'] = $coursecontext->get_context_name();
-        if ($context->contextlevel !== CONTEXT_COURSE) {
+        if ($context->contextlevel != CONTEXT_COURSE) {
             $searchwithin['context'] = $context->get_context_name();
+            if ($context->contextlevel == CONTEXT_MODULE) {
+                $customdata['withincmid'] = $context->instanceid;
+            }
         }
         $customdata['searchwithin'] = $searchwithin;
+        $customdata['withincourseid'] = $coursecontext->instanceid;
     }
 
     // Get available ordering options from search engine.
