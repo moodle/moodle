@@ -441,4 +441,286 @@ class mod_lesson_lib_testcase extends advanced_testcase {
         $this->assertEquals(mod_lesson_get_completion_active_rule_descriptions($moddefaults), $activeruledescriptions);
         $this->assertEquals(mod_lesson_get_completion_active_rule_descriptions(new stdClass()), []);
     }
+
+    /**
+     * An unknown event type should not change the lesson instance.
+     */
+    public function test_mod_lesson_core_calendar_event_timestart_updated_unknown_event() {
+        global $CFG, $DB;
+        require_once($CFG->dirroot . "/calendar/lib.php");
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $lessongenerator = $generator->get_plugin_generator('mod_lesson');
+        $timeopen = time();
+        $timeclose = $timeopen + DAYSECS;
+        $lesson = $lessongenerator->create_instance(['course' => $course->id]);
+        $lesson->available = $timeopen;
+        $lesson->deadline = $timeclose;
+        $DB->update_record('lesson', $lesson);
+
+        // Create a valid event.
+        $event = new \calendar_event([
+            'name' => 'Test event',
+            'description' => '',
+            'format' => 1,
+            'courseid' => $course->id,
+            'groupid' => 0,
+            'userid' => 2,
+            'modulename' => 'lesson',
+            'instance' => $lesson->id,
+            'eventtype' => LESSON_EVENT_TYPE_OPEN . "SOMETHING ELSE",
+            'timestart' => 1,
+            'timeduration' => 86400,
+            'visible' => 1
+        ]);
+
+        mod_lesson_core_calendar_event_timestart_updated($event, $lesson);
+        $lesson = $DB->get_record('lesson', ['id' => $lesson->id]);
+        $this->assertEquals($timeopen, $lesson->available);
+        $this->assertEquals($timeclose, $lesson->deadline);
+    }
+
+    /**
+     * A LESSON_EVENT_TYPE_OPEN event should update the available property of the lesson activity.
+     */
+    public function test_mod_lesson_core_calendar_event_timestart_updated_open_event() {
+        global $CFG, $DB;
+        require_once($CFG->dirroot . "/calendar/lib.php");
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $lessongenerator = $generator->get_plugin_generator('mod_lesson');
+        $timeopen = time();
+        $timeclose = $timeopen + DAYSECS;
+        $timemodified = 1;
+        $newtimeopen = $timeopen - DAYSECS;
+        $lesson = $lessongenerator->create_instance(['course' => $course->id]);
+        $lesson->available = $timeopen;
+        $lesson->deadline = $timeclose;
+        $lesson->timemodified = $timemodified;
+        $DB->update_record('lesson', $lesson);
+
+        // Create a valid event.
+        $event = new \calendar_event([
+            'name' => 'Test event',
+            'description' => '',
+            'format' => 1,
+            'courseid' => $course->id,
+            'groupid' => 0,
+            'userid' => 2,
+            'modulename' => 'lesson',
+            'instance' => $lesson->id,
+            'eventtype' => LESSON_EVENT_TYPE_OPEN,
+            'timestart' => $newtimeopen,
+            'timeduration' => 86400,
+            'visible' => 1
+        ]);
+
+        // Trigger and capture the event when adding a contact.
+        $sink = $this->redirectEvents();
+        mod_lesson_core_calendar_event_timestart_updated($event, $lesson);
+        $triggeredevents = $sink->get_events();
+        $moduleupdatedevents = array_filter($triggeredevents, function($e) {
+            return is_a($e, 'core\event\course_module_updated');
+        });
+        $lesson = $DB->get_record('lesson', ['id' => $lesson->id]);
+
+        // Ensure the available property matches the event timestart.
+        $this->assertEquals($newtimeopen, $lesson->available);
+
+        // Ensure the deadline isn't changed.
+        $this->assertEquals($timeclose, $lesson->deadline);
+
+        // Ensure the timemodified property has been changed.
+        $this->assertNotEquals($timemodified, $lesson->timemodified);
+
+        // Confirm that a module updated event is fired when the module is changed.
+        $this->assertNotEmpty($moduleupdatedevents);
+    }
+
+    /**
+     * A LESSON_EVENT_TYPE_CLOSE event should update the deadline property of the lesson activity.
+     */
+    public function test_mod_lesson_core_calendar_event_timestart_updated_close_event() {
+        global $CFG, $DB;
+        require_once($CFG->dirroot . "/calendar/lib.php");
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $lessongenerator = $generator->get_plugin_generator('mod_lesson');
+        $timeopen = time();
+        $timeclose = $timeopen + DAYSECS;
+        $timemodified = 1;
+        $newtimeclose = $timeclose + DAYSECS;
+        $lesson = $lessongenerator->create_instance(['course' => $course->id]);
+        $lesson->available = $timeopen;
+        $lesson->deadline = $timeclose;
+        $lesson->timemodified = $timemodified;
+        $DB->update_record('lesson', $lesson);
+        // Create a valid event.
+        $event = new \calendar_event([
+            'name' => 'Test event',
+            'description' => '',
+            'format' => 1,
+            'courseid' => $course->id,
+            'groupid' => 0,
+            'userid' => 2,
+            'modulename' => 'lesson',
+            'instance' => $lesson->id,
+            'eventtype' => LESSON_EVENT_TYPE_CLOSE,
+            'timestart' => $newtimeclose,
+            'timeduration' => 86400,
+            'visible' => 1
+        ]);
+        // Trigger and capture the event when adding a contact.
+        $sink = $this->redirectEvents();
+        mod_lesson_core_calendar_event_timestart_updated($event, $lesson);
+        $triggeredevents = $sink->get_events();
+        $moduleupdatedevents = array_filter($triggeredevents, function($e) {
+            return is_a($e, 'core\event\course_module_updated');
+        });
+        $lesson = $DB->get_record('lesson', ['id' => $lesson->id]);
+        // Ensure the deadline property matches the event timestart.
+        $this->assertEquals($newtimeclose, $lesson->deadline);
+        // Ensure the available isn't changed.
+        $this->assertEquals($timeopen, $lesson->available);
+        // Ensure the timemodified property has been changed.
+        $this->assertNotEquals($timemodified, $lesson->timemodified);
+        // Confirm that a module updated event is fired when the module is changed.
+        $this->assertNotEmpty($moduleupdatedevents);
+    }
+
+    /**
+     * An unknown event type should not have any limits.
+     */
+    public function test_mod_lesson_core_calendar_get_valid_event_timestart_range_unknown_event() {
+        global $CFG;
+        require_once($CFG->dirroot . "/calendar/lib.php");
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $timeopen = time();
+        $timeclose = $timeopen + DAYSECS;
+        $lesson = new \stdClass();
+        $lesson->available = $timeopen;
+        $lesson->deadline = $timeclose;
+
+        // Create a valid event.
+        $event = new \calendar_event([
+            'name' => 'Test event',
+            'description' => '',
+            'format' => 1,
+            'courseid' => $course->id,
+            'groupid' => 0,
+            'userid' => 2,
+            'modulename' => 'lesson',
+            'instance' => 1,
+            'eventtype' => LESSON_EVENT_TYPE_OPEN . "SOMETHING ELSE",
+            'timestart' => 1,
+            'timeduration' => 86400,
+            'visible' => 1
+        ]);
+
+        list ($min, $max) = mod_lesson_core_calendar_get_valid_event_timestart_range($event, $lesson);
+        $this->assertNull($min);
+        $this->assertNull($max);
+    }
+
+    /**
+     * The open event should be limited by the lesson's deadline property, if it's set.
+     */
+    public function test_mod_lesson_core_calendar_get_valid_event_timestart_range_open_event() {
+        global $CFG;
+        require_once($CFG->dirroot . "/calendar/lib.php");
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $timeopen = time();
+        $timeclose = $timeopen + DAYSECS;
+        $lesson = new \stdClass();
+        $lesson->available = $timeopen;
+        $lesson->deadline = $timeclose;
+
+        // Create a valid event.
+        $event = new \calendar_event([
+            'name' => 'Test event',
+            'description' => '',
+            'format' => 1,
+            'courseid' => $course->id,
+            'groupid' => 0,
+            'userid' => 2,
+            'modulename' => 'lesson',
+            'instance' => 1,
+            'eventtype' => LESSON_EVENT_TYPE_OPEN,
+            'timestart' => 1,
+            'timeduration' => 86400,
+            'visible' => 1
+        ]);
+
+        // The max limit should be bounded by the timeclose value.
+        list ($min, $max) = mod_lesson_core_calendar_get_valid_event_timestart_range($event, $lesson);
+        $this->assertNull($min);
+        $this->assertEquals($timeclose, $max[0]);
+
+        // No timeclose value should result in no upper limit.
+        $lesson->deadline = 0;
+        list ($min, $max) = mod_lesson_core_calendar_get_valid_event_timestart_range($event, $lesson);
+        $this->assertNull($min);
+        $this->assertNull($max);
+    }
+
+    /**
+     * The close event should be limited by the lesson's available property, if it's set.
+     */
+    public function test_mod_lesson_core_calendar_get_valid_event_timestart_range_close_event() {
+        global $CFG;
+        require_once($CFG->dirroot . "/calendar/lib.php");
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $timeopen = time();
+        $timeclose = $timeopen + DAYSECS;
+        $lesson = new \stdClass();
+        $lesson->available = $timeopen;
+        $lesson->deadline = $timeclose;
+
+        // Create a valid event.
+        $event = new \calendar_event([
+            'name' => 'Test event',
+            'description' => '',
+            'format' => 1,
+            'courseid' => $course->id,
+            'groupid' => 0,
+            'userid' => 2,
+            'modulename' => 'lesson',
+            'instance' => 1,
+            'eventtype' => LESSON_EVENT_TYPE_CLOSE,
+            'timestart' => 1,
+            'timeduration' => 86400,
+            'visible' => 1
+        ]);
+
+        // The max limit should be bounded by the timeclose value.
+        list ($min, $max) = mod_lesson_core_calendar_get_valid_event_timestart_range($event, $lesson);
+        $this->assertEquals($timeopen, $min[0]);
+        $this->assertNull($max);
+
+        // No deadline value should result in no upper limit.
+        $lesson->available = 0;
+        list ($min, $max) = mod_lesson_core_calendar_get_valid_event_timestart_range($event, $lesson);
+        $this->assertNull($min);
+        $this->assertNull($max);
+    }
 }

@@ -61,10 +61,6 @@ define("LESSON_MAX_EVENT_LENGTH", "432000");
 /** Answer format is HTML */
 define("LESSON_ANSWER_HTML", "HTML");
 
-// Event types.
-define('LESSON_EVENT_TYPE_OPEN', 'open');
-define('LESSON_EVENT_TYPE_CLOSE', 'close');
-
 //////////////////////////////////////////////////////////////////////////////////////
 /// Any other lesson functions go here.  Each of them must have a name that
 /// starts with lesson_
