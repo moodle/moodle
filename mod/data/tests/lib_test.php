@@ -1431,9 +1431,10 @@ class mod_data_lib_testcase extends advanced_testcase {
      * @param int $courseid
      * @param int $instanceid The data id.
      * @param string $eventtype The event type. eg. DATA_EVENT_TYPE_OPEN.
+     * @param int|null $timestart The start timestamp for the event
      * @return bool|calendar_event
      */
-    private function create_action_event($courseid, $instanceid, $eventtype) {
+    private function create_action_event($courseid, $instanceid, $eventtype, $timestart = null) {
         $event = new stdClass();
         $event->name = 'Calendar event';
         $event->modulename  = 'data';
@@ -1441,7 +1442,11 @@ class mod_data_lib_testcase extends advanced_testcase {
         $event->instance = $instanceid;
         $event->type = CALENDAR_EVENT_TYPE_ACTION;
         $event->eventtype = $eventtype;
-        $event->timestart = time();
+        if ($timestart) {
+            $event->timestart = $timestart;
+        } else {
+            $event->timestart = time();
+        }
 
         return calendar_event::create($event);
     }
@@ -1482,5 +1487,289 @@ class mod_data_lib_testcase extends advanced_testcase {
         $this->assertEquals(mod_data_get_completion_active_rule_descriptions($cm2), []);
         $this->assertEquals(mod_data_get_completion_active_rule_descriptions($moddefaults), $activeruledescriptions);
         $this->assertEquals(mod_data_get_completion_active_rule_descriptions(new stdClass()), []);
+    }
+
+    /**
+     * An unknown event type should not change the data instance.
+     */
+    public function test_mod_data_core_calendar_event_timestart_updated_unknown_event() {
+        global $CFG, $DB;
+        require_once($CFG->dirroot . "/calendar/lib.php");
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $datagenerator = $generator->get_plugin_generator('mod_data');
+        $timeopen = time();
+        $timeclose = $timeopen + DAYSECS;
+        $data = $datagenerator->create_instance(['course' => $course->id]);
+        $data->timeavailablefrom = $timeopen;
+        $data->timeavailableto = $timeclose;
+        $DB->update_record('data', $data);
+
+        // Create a valid event.
+        $event = new \calendar_event([
+            'name' => 'Test event',
+            'description' => '',
+            'format' => 1,
+            'courseid' => $course->id,
+            'groupid' => 0,
+            'userid' => 2,
+            'modulename' => 'data',
+            'instance' => $data->id,
+            'eventtype' => DATA_EVENT_TYPE_OPEN . "SOMETHING ELSE",
+            'timestart' => 1,
+            'timeduration' => 86400,
+            'visible' => 1
+        ]);
+
+        mod_data_core_calendar_event_timestart_updated($event, $data);
+        $data = $DB->get_record('data', ['id' => $data->id]);
+        $this->assertEquals($timeopen, $data->timeavailablefrom);
+        $this->assertEquals($timeclose, $data->timeavailableto);
+    }
+
+    /**
+     * A DATA_EVENT_TYPE_OPEN event should update the timeavailablefrom property of the data activity.
+     */
+    public function test_mod_data_core_calendar_event_timestart_updated_open_event() {
+        global $CFG, $DB;
+        require_once($CFG->dirroot . "/calendar/lib.php");
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $datagenerator = $generator->get_plugin_generator('mod_data');
+        $timeopen = time();
+        $timeclose = $timeopen + DAYSECS;
+        $timemodified = 1;
+        $newtimeopen = $timeopen - DAYSECS;
+        $data = $datagenerator->create_instance(['course' => $course->id]);
+        $data->timeavailablefrom = $timeopen;
+        $data->timeavailableto = $timeclose;
+        $data->timemodified = $timemodified;
+        $DB->update_record('data', $data);
+
+        // Create a valid event.
+        $event = new \calendar_event([
+            'name' => 'Test event',
+            'description' => '',
+            'format' => 1,
+            'courseid' => $course->id,
+            'groupid' => 0,
+            'userid' => 2,
+            'modulename' => 'data',
+            'instance' => $data->id,
+            'eventtype' => DATA_EVENT_TYPE_OPEN,
+            'timestart' => $newtimeopen,
+            'timeduration' => 86400,
+            'visible' => 1
+        ]);
+
+        // Trigger and capture the event when adding a contact.
+        $sink = $this->redirectEvents();
+        mod_data_core_calendar_event_timestart_updated($event, $data);
+        $triggeredevents = $sink->get_events();
+        $moduleupdatedevents = array_filter($triggeredevents, function($e) {
+            return is_a($e, 'core\event\course_module_updated');
+        });
+        $data = $DB->get_record('data', ['id' => $data->id]);
+
+        // Ensure the timeavailablefrom property matches the event timestart.
+        $this->assertEquals($newtimeopen, $data->timeavailablefrom);
+        // Ensure the timeavailableto isn't changed.
+        $this->assertEquals($timeclose, $data->timeavailableto);
+        // Ensure the timemodified property has been changed.
+        $this->assertNotEquals($timemodified, $data->timemodified);
+        // Confirm that a module updated event is fired when the module is changed.
+        $this->assertNotEmpty($moduleupdatedevents);
+    }
+
+    /**
+     * A DATA_EVENT_TYPE_CLOSE event should update the timeavailableto property of the data activity.
+     */
+    public function test_mod_data_core_calendar_event_timestart_updated_close_event() {
+        global $CFG, $DB;
+        require_once($CFG->dirroot . "/calendar/lib.php");
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $datagenerator = $generator->get_plugin_generator('mod_data');
+        $timeopen = time();
+        $timeclose = $timeopen + DAYSECS;
+        $timemodified = 1;
+        $newtimeclose = $timeclose + DAYSECS;
+        $data = $datagenerator->create_instance(['course' => $course->id]);
+        $data->timeavailablefrom = $timeopen;
+        $data->timeavailableto = $timeclose;
+        $data->timemodified = $timemodified;
+        $DB->update_record('data', $data);
+
+        // Create a valid event.
+        $event = new \calendar_event([
+            'name' => 'Test event',
+            'description' => '',
+            'format' => 1,
+            'courseid' => $course->id,
+            'groupid' => 0,
+            'userid' => 2,
+            'modulename' => 'data',
+            'instance' => $data->id,
+            'eventtype' => DATA_EVENT_TYPE_CLOSE,
+            'timestart' => $newtimeclose,
+            'timeduration' => 86400,
+            'visible' => 1
+        ]);
+
+        // Trigger and capture the event when adding a contact.
+        $sink = $this->redirectEvents();
+        mod_data_core_calendar_event_timestart_updated($event, $data);
+        $triggeredevents = $sink->get_events();
+        $moduleupdatedevents = array_filter($triggeredevents, function($e) {
+            return is_a($e, 'core\event\course_module_updated');
+        });
+        $data = $DB->get_record('data', ['id' => $data->id]);
+
+        // Ensure the timeavailableto property matches the event timestart.
+        $this->assertEquals($newtimeclose, $data->timeavailableto);
+        // Ensure the timeavailablefrom isn't changed.
+        $this->assertEquals($timeopen, $data->timeavailablefrom);
+        // Ensure the timemodified property has been changed.
+        $this->assertNotEquals($timemodified, $data->timemodified);
+        // Confirm that a module updated event is fired when the module is changed.
+        $this->assertNotEmpty($moduleupdatedevents);
+    }
+
+    /**
+     * An unknown event type should not have any limits.
+     */
+    public function test_mod_data_core_calendar_get_valid_event_timestart_range_unknown_event() {
+        global $CFG;
+        require_once($CFG->dirroot . "/calendar/lib.php");
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $timeopen = time();
+        $timeclose = $timeopen + DAYSECS;
+        $data = new \stdClass();
+        $data->timeavailablefrom = $timeopen;
+        $data->timeavailableto = $timeclose;
+
+        // Create a valid event.
+        $event = new \calendar_event([
+            'name' => 'Test event',
+            'description' => '',
+            'format' => 1,
+            'courseid' => $course->id,
+            'groupid' => 0,
+            'userid' => 2,
+            'modulename' => 'data',
+            'instance' => 1,
+            'eventtype' => DATA_EVENT_TYPE_OPEN . "SOMETHING ELSE",
+            'timestart' => 1,
+            'timeduration' => 86400,
+            'visible' => 1
+        ]);
+
+        list ($min, $max) = mod_data_core_calendar_get_valid_event_timestart_range($event, $data);
+        $this->assertNull($min);
+        $this->assertNull($max);
+    }
+
+    /**
+     * The open event should be limited by the data's timeclose property, if it's set.
+     */
+    public function test_mod_data_core_calendar_get_valid_event_timestart_range_open_event() {
+        global $CFG;
+        require_once($CFG->dirroot . "/calendar/lib.php");
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $timeopen = time();
+        $timeclose = $timeopen + DAYSECS;
+        $data = new \stdClass();
+        $data->timeavailablefrom = $timeopen;
+        $data->timeavailableto = $timeclose;
+
+        // Create a valid event.
+        $event = new \calendar_event([
+            'name' => 'Test event',
+            'description' => '',
+            'format' => 1,
+            'courseid' => $course->id,
+            'groupid' => 0,
+            'userid' => 2,
+            'modulename' => 'data',
+            'instance' => 1,
+            'eventtype' => DATA_EVENT_TYPE_OPEN,
+            'timestart' => 1,
+            'timeduration' => 86400,
+            'visible' => 1
+        ]);
+
+        // The max limit should be bounded by the timeclose value.
+        list ($min, $max) = mod_data_core_calendar_get_valid_event_timestart_range($event, $data);
+        $this->assertNull($min);
+        $this->assertEquals($timeclose, $max[0]);
+
+        // No timeclose value should result in no upper limit.
+        $data->timeavailableto = 0;
+        list ($min, $max) = mod_data_core_calendar_get_valid_event_timestart_range($event, $data);
+        $this->assertNull($min);
+        $this->assertNull($max);
+    }
+
+    /**
+     * The close event should be limited by the data's timeavailablefrom property, if it's set.
+     */
+    public function test_mod_data_core_calendar_get_valid_event_timestart_range_close_event() {
+        global $CFG;
+
+        require_once($CFG->dirroot . "/calendar/lib.php");
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $timeopen = time();
+        $timeclose = $timeopen + DAYSECS;
+        $data = new \stdClass();
+        $data->timeavailablefrom = $timeopen;
+        $data->timeavailableto = $timeclose;
+
+        // Create a valid event.
+        $event = new \calendar_event([
+            'name' => 'Test event',
+            'description' => '',
+            'format' => 1,
+            'courseid' => $course->id,
+            'groupid' => 0,
+            'userid' => 2,
+            'modulename' => 'data',
+            'instance' => 1,
+            'eventtype' => DATA_EVENT_TYPE_CLOSE,
+            'timestart' => 1,
+            'timeduration' => 86400,
+            'visible' => 1
+        ]);
+
+        // The max limit should be bounded by the timeclose value.
+        list ($min, $max) = mod_data_core_calendar_get_valid_event_timestart_range($event, $data);
+        $this->assertEquals($timeopen, $min[0]);
+        $this->assertNull($max);
+
+        // No timeavailableto value should result in no upper limit.
+        $data->timeavailablefrom = 0;
+        list ($min, $max) = mod_data_core_calendar_get_valid_event_timestart_range($event, $data);
+        $this->assertNull($min);
+        $this->assertNull($max);
     }
 }
