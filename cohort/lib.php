@@ -471,6 +471,9 @@ function cohort_get_invisible_contexts() {
     $excludedcontexts = array();
     foreach ($records as $ctx) {
         context_helper::preload_from_record($ctx);
+        if (context::instance_by_id($ctx->id) == context_system::instance()) {
+            continue; // System context cohorts should be available and permissions already checked.
+        }
         if (!has_any_capability(array('moodle/cohort:manage', 'moodle/cohort:view'), context::instance_by_id($ctx->id))) {
             $excludedcontexts[] = $ctx->id;
         }
