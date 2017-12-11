@@ -31,14 +31,14 @@ defined('MOODLE_INTERNAL') || die();
  */
 class core_iplookup_geoip_testcase extends advanced_testcase {
 
-    public function test_geoip() {
+    public function setUp() {
         global $CFG;
         require_once("$CFG->libdir/filelib.php");
         require_once("$CFG->dirroot/iplookup/lib.php");
 
         if (!PHPUNIT_LONGTEST) {
             // this may take a long time
-            return;
+            $this->markTestSkipped('PHPUNIT_LONGTEST is not defined');
         }
 
         $this->resetAfterTest();
@@ -70,17 +70,19 @@ class core_iplookup_geoip_testcase extends advanced_testcase {
         $this->assertTrue(file_exists($geoipfile));
 
         $CFG->geoipfile = $geoipfile;
+    }
 
-        $result = iplookup_find_location('147.230.16.1');
+    public function test_ipv4() {
+
+        $result = iplookup_find_location('131.111.150.25');
 
         $this->assertEquals('array', gettype($result));
-        $this->assertEquals('Liberec', $result['city']);
-        $this->assertEquals(15.0653, $result['longitude'], '', 0.001);
-        $this->assertEquals(50.7639, $result['latitude'], '', 0.001);
+        $this->assertEquals('Cambridge', $result['city']);
+        $this->assertEquals(0.1167, $result['longitude'], 'Coordinates are out of accepted tolerance', 0.01);
+        $this->assertEquals(52.2, $result['latitude'], 'Coordinates are out of accepted tolerance', 0.01);
         $this->assertNull($result['error']);
         $this->assertEquals('array', gettype($result['title']));
-        $this->assertEquals('Liberec', $result['title'][0]);
-        $this->assertEquals('Czech Republic', $result['title'][1]);
+        $this->assertEquals('Cambridge', $result['title'][0]);
+        $this->assertEquals('United Kingdom', $result['title'][1]);
     }
 }
-
