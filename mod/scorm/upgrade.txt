@@ -1,5 +1,11 @@
 This files describes API changes in the mod_scorm code.
 
+=== 3.3.2 ===
+
+* scorm_refresh_events() Now takes two additional parameters to refine the update to a specific instance. This function
+  now optionally takes the module instance object or ID, and the course module object or ID. Please try to send the full
+  objects instead of the ids to save DB calls.
+
 === 3.1 ===
 * Group and groupings support has now been enabled.
 

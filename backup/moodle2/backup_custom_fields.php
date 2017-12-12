@@ -98,6 +98,138 @@ class base64_encode_final_element extends backup_final_element {
 }
 
 /**
+ * Implementation of {@link backup_final_element} that provides symmetric-key AES-256 encryption of contents.
+ *
+ * This final element transparently encrypts, for secure storage and transport, any content
+ * that shouldn't be shown normally in plain text. Usually, passwords or keys that cannot use
+ * hashing algorithms, although potentially can encrypt any content. All information is encoded
+ * using base64.
+ *
+ * Features:
+ *   - requires openssl extension to work. Without it contents are completely omitted.
+ *   - automatically creates an appropriate default key for the site and stores it into backup_encryptkey config (bas64 encoded).
+ *   - uses a different appropriate init vector for every operation, which is transmited with the encrypted contents.
+ *   - all generated data is base64 encoded for safe transmission.
+ *   - automatically adds "encrypted" attribute for easier detection.
+ *   - implements HMAC for providing integrity.
+ *
+ * @copyright 2017 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class encrypted_final_element extends backup_final_element {
+
+    /** @var string cypher appropiate raw key for backups in the site. Defaults to backup_encryptkey config. */
+    protected $key = null;
+
+    /**
+     * Constructor - instantiates a encrypted_final_element, specifying its basic info.
+     *
+     * Overridden to automatically add the 'encrypted' attribute if missing.
+     *
+     * @param string $name name of the element
+     * @param array  $attributes attributes this element will handle (optional, defaults to null)
+     */
+    public function __construct($name, $attributes = null) {
+        parent::__construct($name, $attributes);
+        if (! $this->get_attribute('encrypted')) {
+            $this->add_attributes('encrypted');
+        }
+    }
+
+    /**
+     * Set the encryption key manually, overriding default backup_encryptkey config.
+     *
+     * @param string $key key to be used for encrypting. Required to be 256-bit key.
+     *               Use a safe generation technique. See self::generate_encryption_random_key() below.
+     */
+    protected function set_key($key) {
+        $bytes = strlen($key); // Get key length in bytes.
+
+        // Only accept keys with the expected (backup::CIPHERKEYLEN) key length. There are a number of hashing,
+        // random generators to achieve this esasily, like the one shown below to create the default
+        // site encryption key and ivs.
+        if ($bytes !== backup::CIPHERKEYLEN) {
+            $info = (object)array('expected' => backup::CIPHERKEYLEN, 'found' => $bytes);
+            throw new base_element_struct_exception('encrypted_final_element incorrect key length', $info);
+        }
+        // Everything went ok, store the key.
+        $this->key = $key;
+    }
+
+    /**
+     * Set the value of the field.
+     *
+     * This method sets the value of the element, encrypted using the specified key for it,
+     * defaulting to (and generating) backup_encryptkey config. HMAC is used for integrity.
+     *
+     * @param string $value plain-text content the will be stored encrypted and encoded.
+     */
+    public function set_value($value) {
+
+        // No openssl available, skip this field completely.
+        if (!function_exists('openssl_encrypt')) {
+            return;
+        }
+
+        // No hmac available, skip this field completely.
+        if (!function_exists('hash_hmac')) {
+            return;
+        }
+
+        // Cypher not available, skip this field completely.
+        if (!in_array(backup::CIPHER, openssl_get_cipher_methods())) {
+            return;
+        }
+
+        // Ensure we have a good key, manual or default.
+        if (empty($this->key)) {
+            // The key has not been set manually, look for it at config (base64 encoded there).
+            $enckey = get_config('backup', 'backup_encryptkey');
+            if ($enckey === false) {
+                // Has not been set, calculate and save an appropiate random key automatically.
+                $enckey = base64_encode(self::generate_encryption_random_key(backup::CIPHERKEYLEN));
+                set_config('backup_encryptkey', $enckey, 'backup');
+            }
+            $this->set_key(base64_decode($enckey));
+        }
+
+        // Now we need an iv for this operation.
+        $iv = self::generate_encryption_random_key(openssl_cipher_iv_length(backup::CIPHER));
+
+        // Everything is ready, let's encrypt and prepend the 1-shot iv.
+        $value = $iv . openssl_encrypt($value, backup::CIPHER, $this->key, OPENSSL_RAW_DATA, $iv);
+
+        // Calculate the hmac of the value (iv + encrypted) and prepend it.
+        $hmac = hash_hmac('sha256', $value, $this->key, true);
+        $value = $hmac . $value;
+
+        // Ready, set the encoded value.
+        parent::set_value(base64_encode($value));
+
+        // Finally, if the field has an "encrypted" attribute, set it to true.
+        if ($att = $this->get_attribute('encrypted')) {
+            $att->set_value('true');
+        }
+    }
+
+    /**
+     * Generate an appropiate random key to be used for encrypting backup information.
+     *
+     * Normally used as site default encryption key (backup_encryptkey config) and also
+     * for calculating the init vectors.
+     *
+     * Note that until PHP 5.6.12 openssl_random_pseudo_bytes() did NOT
+     * use a "cryptographically strong algorithm" {@link https://bugs.php.net/bug.php?id=70014}
+     * But it's beyond my crypto-knowledge when it's worth finding a *real* better alternative.
+     *
+     * @param int $bytes Number of bytes to determine the key length expected.
+     */
+    protected static function generate_encryption_random_key($bytes) {
+        return openssl_random_pseudo_bytes($bytes);
+    }
+}
+
+/**
  * Implementation of backup_nested_element that provides special handling of files
  *
  * This class overwrites the standard fill_values() method, so it gets intercepted

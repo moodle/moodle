@@ -56,7 +56,7 @@ class core_completion_api_testcase extends advanced_testcase {
 
         // Create the completion event.
         $CFG->enablecompletion = true;
-        \core_completion\api::update_completion_date_event($assign->cmid, 'assign', $assign->id, $time);
+        \core_completion\api::update_completion_date_event($assign->cmid, 'assign', $assign, $time);
 
         // Check that there is now an event in the database.
         $events = $DB->get_records('event');
@@ -72,6 +72,13 @@ class core_completion_api_testcase extends advanced_testcase {
         $this->assertEquals(\core_completion\api::COMPLETION_EVENT_TYPE_DATE_COMPLETION_EXPECTED, $event->eventtype);
         $this->assertEquals($time, $event->timestart);
         $this->assertEquals($time, $event->timesort);
+
+        require_once($CFG->dirroot . '/course/lib.php');
+        // Delete the module.
+        course_delete_module($assign->cmid);
+
+        // Check we don't get a failure when called on a deleted module.
+        \core_completion\api::update_completion_date_event($assign->cmid, 'assign', null, $time);
     }
 
     public function test_update_completion_date_event_update() {
@@ -88,10 +95,10 @@ class core_completion_api_testcase extends advanced_testcase {
 
         // Create the event.
         $CFG->enablecompletion = true;
-        \core_completion\api::update_completion_date_event($assign->cmid, 'assign', $assign->id, $time);
+        \core_completion\api::update_completion_date_event($assign->cmid, 'assign', $assign, $time);
 
         // Call it again, but this time with a different time.
-        \core_completion\api::update_completion_date_event($assign->cmid, 'assign', $assign->id, $time + DAYSECS);
+        \core_completion\api::update_completion_date_event($assign->cmid, 'assign', $assign, $time + DAYSECS);
 
         // Check that there is still only one event in the database.
         $events = $DB->get_records('event');
@@ -123,10 +130,10 @@ class core_completion_api_testcase extends advanced_testcase {
 
         // Create the event.
         $CFG->enablecompletion = true;
-        \core_completion\api::update_completion_date_event($assign->cmid, 'assign', $assign->id, $time);
+        \core_completion\api::update_completion_date_event($assign->cmid, 'assign', $assign, $time);
 
         // Call it again, but the time specified as null.
-        \core_completion\api::update_completion_date_event($assign->cmid, 'assign', $assign->id, null);
+        \core_completion\api::update_completion_date_event($assign->cmid, 'assign', $assign, null);
 
         // Check that there is no event in the database.
         $this->assertEquals(0, $DB->count_records('event'));
@@ -146,7 +153,7 @@ class core_completion_api_testcase extends advanced_testcase {
 
         // Try and create the completion event with completion disabled.
         $CFG->enablecompletion = false;
-        \core_completion\api::update_completion_date_event($assign->cmid, 'assign', $assign->id, $time);
+        \core_completion\api::update_completion_date_event($assign->cmid, 'assign', $assign, $time);
 
         // Check that there is no event in the database.
         $this->assertEquals(0, $DB->count_records('event'));
@@ -166,13 +173,13 @@ class core_completion_api_testcase extends advanced_testcase {
 
         // Create the completion event.
         $CFG->enablecompletion = true;
-        \core_completion\api::update_completion_date_event($assign->cmid, 'assign', $assign->id, $time);
+        \core_completion\api::update_completion_date_event($assign->cmid, 'assign', $assign, $time);
 
         // Disable completion.
         $CFG->enablecompletion = false;
 
         // Try and update the completion date.
-        \core_completion\api::update_completion_date_event($assign->cmid, 'assign', $assign->id, $time + DAYSECS);
+        \core_completion\api::update_completion_date_event($assign->cmid, 'assign', $assign, $time + DAYSECS);
 
         // Check that there is an event in the database.
         $events = $DB->get_records('event');
@@ -204,13 +211,13 @@ class core_completion_api_testcase extends advanced_testcase {
 
         // Create the completion event.
         $CFG->enablecompletion = true;
-        \core_completion\api::update_completion_date_event($assign->cmid, 'assign', $assign->id, $time);
+        \core_completion\api::update_completion_date_event($assign->cmid, 'assign', $assign, $time);
 
         // Disable completion.
         $CFG->enablecompletion = false;
 
         // Should still be able to delete completion events even when completion is disabled.
-        \core_completion\api::update_completion_date_event($assign->cmid, 'assign', $assign->id, null);
+        \core_completion\api::update_completion_date_event($assign->cmid, 'assign', $assign, null);
 
         // Check that there is now no event in the database.
         $this->assertEquals(0, $DB->count_records('event'));

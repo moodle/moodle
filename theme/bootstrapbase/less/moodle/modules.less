@@ -164,11 +164,14 @@ body.path-mod-feedback #region-main .mform.feedback_form .feedback-item-pagebrea
             .topic,
             .discussionsubscription,
             .topic.starter,
-            .picture,
             .author,
             .replies,
             .lastpost {
                 vertical-align: top;
+            }
+            .picture {
+                margin: 0 20px;
+                float: left;
             }
             .unread {
                 img {
@@ -310,6 +313,10 @@ div#dock {
     .media-left {
         float: left;
         padding-right: 1em;
+    }
+
+    .horizontal .choices .option {
+        display: inline-block;
     }
 }
 
@@ -941,3 +948,6 @@ div#dock {
     display: block;
 }
 
+.path-mod-scorm #region-main #intro {
+    width: auto;
+}

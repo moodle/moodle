@@ -196,6 +196,9 @@ $string['expandreviewpanel'] = 'Expand review panel';
 $string['extensionduedate'] = 'Extension due date';
 $string['extensionnotafterduedate'] = 'Extension date must be after the due date';
 $string['extensionnotafterfromdate'] = 'Extension date must be after the allow submissions from date';
+$string['fixrescalednullgrades'] = 'This assignment contains some erroneous grades. You can <a href="{$a->link}">automatically fix these grades</a>. This may affect course totals.';
+$string['fixrescalednullgradesconfirm'] = 'Are you sure you want to fix erroneous grades? All affected grades will be removed. This may affect course totals.';
+$string['fixrescalednullgradesdone'] = 'Grades fixed.';
 $string['gradecanbechanged'] = 'Grade can be changed';
 $string['gradersubmissionupdatedtext'] = '{$a->username} has updated their assignment submission
 for \'{$a->assignment}\' at {$a->timeupdated}
@@ -252,6 +255,8 @@ $string['grading'] = 'Grading';
 $string['gradingchangessaved'] = 'The grade changes were saved';
 $string['gradingduedate'] = 'Remind me to grade by';
 $string['gradingduedate_help'] = 'The expected date that marking of the submissions should be completed by. This date is used to prioritise dashboard notifications for teachers.';
+$string['gradingdueduedatevalidation'] = 'Remind me to grade by date cannot be earlier than the due date.';
+$string['gradingduefromdatevalidation'] = 'Remind me to grade by date cannot be earlier than the allow submissions from date.';
 $string['gradechangessaveddetail'] = 'The changes to the grade and feedback were saved';
 $string['gradingmethodpreview'] = 'Grading criteria';
 $string['gradingoptions'] = 'Options';

@@ -1021,6 +1021,27 @@ class file_storage {
     }
 
     /**
+     * Add new file record to database and handle callbacks.
+     *
+     * @param stdClass $newrecord
+     */
+    protected function create_file($newrecord) {
+        global $DB;
+        $newrecord->id = $DB->insert_record('files', $newrecord);
+
+        if ($newrecord->filename !== '.') {
+            // Callback for file created.
+            if ($pluginsfunction = get_plugins_with_function('after_file_created')) {
+                foreach ($pluginsfunction as $plugintype => $plugins) {
+                    foreach ($plugins as $pluginfunction) {
+                        $pluginfunction($newrecord);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
      * Add new local file based on existing local file.
      *
      * @param stdClass|array $filerecord object or array describing changes
@@ -1134,7 +1155,7 @@ class file_storage {
         }
 
         try {
-            $newrecord->id = $DB->insert_record('files', $newrecord);
+            $this->create_file($newrecord);
         } catch (dml_exception $e) {
             throw new stored_file_creation_exception($newrecord->contextid, $newrecord->component, $newrecord->filearea, $newrecord->itemid,
                                                      $newrecord->filepath, $newrecord->filename, $e->debuginfo);
@@ -1302,10 +1323,10 @@ class file_storage {
         $newrecord->pathnamehash = $this->get_pathname_hash($newrecord->contextid, $newrecord->component, $newrecord->filearea, $newrecord->itemid, $newrecord->filepath, $newrecord->filename);
 
         try {
-            $newrecord->id = $DB->insert_record('files', $newrecord);
+            $this->create_file($newrecord);
         } catch (dml_exception $e) {
             if ($newfile) {
-                $this->move_to_trash($newrecord->contenthash);
+                $this->filesystem->remove_file($newrecord->contenthash);
             }
             throw new stored_file_creation_exception($newrecord->contextid, $newrecord->component, $newrecord->filearea, $newrecord->itemid,
                                                     $newrecord->filepath, $newrecord->filename, $e->debuginfo);
@@ -1421,10 +1442,10 @@ class file_storage {
         $newrecord->pathnamehash = $this->get_pathname_hash($newrecord->contextid, $newrecord->component, $newrecord->filearea, $newrecord->itemid, $newrecord->filepath, $newrecord->filename);
 
         try {
-            $newrecord->id = $DB->insert_record('files', $newrecord);
+            $this->create_file($newrecord);
         } catch (dml_exception $e) {
             if ($newfile) {
-                $this->move_to_trash($newrecord->contenthash);
+                $this->filesystem->remove_file($newrecord->contenthash);
             }
             throw new stored_file_creation_exception($newrecord->contextid, $newrecord->component, $newrecord->filearea, $newrecord->itemid,
                                                     $newrecord->filepath, $newrecord->filename, $e->debuginfo);
@@ -1559,7 +1580,7 @@ class file_storage {
             $filerecord->id = $DB->insert_record('files', $filerecord);
         } catch (dml_exception $e) {
             if (!empty($newfile)) {
-                $this->move_to_trash($filerecord->contenthash);
+                $this->filesystem->remove_file($filerecord->contenthash);
             }
             throw new stored_file_creation_exception($filerecord->contextid, $filerecord->component, $filerecord->filearea, $filerecord->itemid,
                                                     $filerecord->filepath, $filerecord->filename, $e->debuginfo);

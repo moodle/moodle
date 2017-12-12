@@ -2006,6 +2006,8 @@ abstract class repository implements cacheable_object {
         global $DB;
         if ($downloadcontents) {
             $this->convert_references_to_local();
+        } else {
+            $this->remove_files();
         }
         cache::make('core', 'repositories')->purge();
         try {
@@ -2667,6 +2669,17 @@ abstract class repository implements cacheable_object {
         $files = $fs->get_external_files($this->id);
         foreach ($files as $storedfile) {
             $fs->import_external_file($storedfile);
+        }
+    }
+
+    /**
+     * Find all external files linked to this repository and delete them.
+     */
+    public function remove_files() {
+        $fs = get_file_storage();
+        $files = $fs->get_external_files($this->id);
+        foreach ($files as $storedfile) {
+            $storedfile->delete();
         }
     }
 

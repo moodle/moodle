@@ -253,7 +253,7 @@ class core_enrol_external extends external_api {
                     'preferences' => new external_multiple_structure(
                         new external_single_structure(
                             array(
-                                'name'  => new external_value(PARAM_ALPHANUMEXT, 'The name of the preferences'),
+                                'name'  => new external_value(PARAM_RAW, 'The name of the preferences'),
                                 'value' => new external_value(PARAM_RAW, 'The value of the custom field'),
                             )
                     ), 'User preferences', VALUE_OPTIONAL),
@@ -342,7 +342,7 @@ class core_enrol_external extends external_api {
                 'summaryformat' => $course->summaryformat,
                 'format' => $course->format,
                 'showgrades' => $course->showgrades,
-                'lang' => $course->lang,
+                'lang' => clean_param($course->lang, PARAM_LANG),
                 'enablecompletion' => $course->enablecompletion,
                 'category' => $course->category,
                 'progress' => $progress,
@@ -634,7 +634,7 @@ class core_enrol_external extends external_api {
                     'preferences' => new external_multiple_structure(
                         new external_single_structure(
                             array(
-                                'name'  => new external_value(PARAM_ALPHANUMEXT, 'The name of the preferences'),
+                                'name'  => new external_value(PARAM_RAW, 'The name of the preferences'),
                                 'value' => new external_value(PARAM_RAW, 'The value of the custom field'),
                             )
                     ), 'User preferences', VALUE_OPTIONAL),

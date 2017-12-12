@@ -662,7 +662,7 @@ class core_renderer extends \core_renderer {
      * @param boolean $onlytopleafnodes
      * @return boolean nodesskipped - True if nodes were skipped in building the menu
      */
-    private function build_action_menu_from_navigation(action_menu $menu,
+    protected function build_action_menu_from_navigation(action_menu $menu,
                                                        navigation_node $node,
                                                        $indent = false,
                                                        $onlytopleafnodes = false) {

@@ -651,10 +651,10 @@ class auth_plugin_base {
         $data = [];
         foreach ($identityproviders as $idp) {
             if (!empty($idp['icon'])) {
-                // Pre-3.3 auth plugins provide icon as a pix_icon instance.
+                // Pre-3.3 auth plugins provide icon as a pix_icon instance. New auth plugins (since 3.3) provide iconurl.
                 $idp['iconurl'] = $output->image_url($idp['icon']->pix, $idp['icon']->component);
-            } else if ($idp['iconurl'] instanceof moodle_url) {
-                // New auth plugins (since 3.3) provide iconurl.
+            }
+            if ($idp['iconurl'] instanceof moodle_url) {
                 $idp['iconurl'] = $idp['iconurl']->out(false);
             }
             unset($idp['icon']);
@@ -887,7 +887,9 @@ function signup_validate_data($data, $files) {
         $errors['email'] = get_string('invalidemail');
 
     } else if ($DB->record_exists('user', array('email' => $data['email']))) {
-        $errors['email'] = get_string('emailexists').' <a href="forgot_password.php">'.get_string('newpassword').'?</a>';
+        $errors['email'] = get_string('emailexists') . ' ' .
+                get_string('emailexistssignuphint', 'moodle',
+                        html_writer::link(new moodle_url('/login/forgot_password.php'), get_string('emailexistshintlink')));
     }
     if (empty($data['email2'])) {
         $errors['email2'] = get_string('missingemail');
@@ -1014,16 +1016,22 @@ function display_auth_lock_options($settings, $auth, $userfields, $helptext, $ma
     }
 
     foreach ($userfields as $field) {
-
         // Define the fieldname we display to the  user.
         // this includes special handling for some profile fields.
         $fieldname = $field;
+        $fieldnametoolong = false;
         if ($fieldname === 'lang') {
             $fieldname = get_string('language');
         } else if (!empty($customfields) && in_array($field, $customfields)) {
             // If custom field then pick name from database.
             $fieldshortname = str_replace('profile_field_', '', $fieldname);
             $fieldname = $customfieldname[$fieldshortname]->name;
+            if (core_text::strlen($fieldshortname) > 67) {
+                // If custom profile field name is longer than 67 characters we will not be able to store the setting
+                // such as 'field_updateremote_profile_field_NOTSOSHORTSHORTNAME' in the database because the character
+                // limit for the setting name is 100.
+                $fieldnametoolong = true;
+            }
         } else if ($fieldname == 'url') {
             $fieldname = get_string('webpage');
         } else {
@@ -1031,7 +1039,13 @@ function display_auth_lock_options($settings, $auth, $userfields, $helptext, $ma
         }
 
         // Generate the list of fields / mappings.
-        if ($mapremotefields) {
+        if ($fieldnametoolong) {
+            // Display a message that the field can not be mapped because it's too long.
+            $url = new moodle_url('/user/profile/index.php');
+            $a = (object)['fieldname' => s($fieldname), 'shortname' => s($field), 'charlimit' => 67, 'link' => $url->out()];
+            $settings->add(new admin_setting_heading($auth.'/field_not_mapped_'.sha1($field), '',
+                get_string('cannotmapfield', 'auth', $a)));
+        } else if ($mapremotefields) {
             // We are mapping to a remote field here.
             // Mapping.
             $settings->add(new admin_setting_configtext("auth_{$auth}/field_map_{$field}",

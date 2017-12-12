@@ -89,7 +89,7 @@ $string['completionicons_help'] = 'A tick next to an activity name may be used t
 
 If a box with a dotted border is shown, a tick will appear automatically when you have completed the activity according to conditions set by the teacher.
 
-If a box with a solid border is shown, you can click it to tick the box when you think you have completed the activity. (Clicking it again removes the tick if you change your mind.) The tick is optional and is simply a way of tracking your progress through the course.';
+If a box with a solid border is shown, you can click it to tick the box when you think you have completed the activity. (Clicking it again removes the tick if you change your mind.)';
 $string['completionmenuitem'] = 'Completion';
 $string['completionnotenabled'] = 'Completion is not enabled';
 $string['completionnotenabledforcourse'] = 'Completion is not enabled for this course';

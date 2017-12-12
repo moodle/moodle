@@ -488,13 +488,14 @@ define('HOMEPAGE_USER', 2);
 /**
  * Hub directory url (should be moodle.org)
  */
-define('HUB_HUBDIRECTORYURL', "http://hubdirectory.moodle.org");
+define('HUB_HUBDIRECTORYURL', "https://hubdirectory.moodle.org");
 
 
 /**
- * Moodle.org url (should be moodle.org)
+ * Moodle.net url (should be moodle.net)
  */
-define('HUB_MOODLEORGHUBURL', "http://hub.moodle.org");
+define('HUB_MOODLEORGHUBURL', "https://moodle.net");
+define('HUB_OLDMOODLEORGHUBURL', "http://hub.moodle.org");
 
 /**
  * Moodle mobile app service name
@@ -2116,7 +2117,7 @@ function make_timestamp($year, $month=1, $day=1, $hour=0, $minute=0, $second=0, 
  * Format a date/time (seconds) as weeks, days, hours etc as needed
  *
  * Given an amount of time in seconds, returns string
- * formatted nicely as weeks, days, hours etc as needed
+ * formatted nicely as years, days, hours etc as needed
  *
  * @package core
  * @category time
@@ -2898,13 +2899,11 @@ function require_login($courseorid = null, $autologinguest = true, $cm = null, $
         if ($preventredirect) {
             throw new require_login_exception('Activity is hidden');
         }
-        if ($course->id != SITEID) {
-            $url = new moodle_url('/course/view.php', array('id' => $course->id));
-        } else {
-            $url = new moodle_url('/');
-        }
-        redirect($url, get_string('activityiscurrentlyhidden'), null,
-                \core\output\notification::NOTIFY_ERROR);
+        // Get the error message that activity is not available and why (if explanation can be shown to the user).
+        $PAGE->set_course($course);
+        $renderer = $PAGE->get_renderer('course');
+        $message = $renderer->course_section_cm_unavailable_error_message($cm);
+        redirect(course_get_url($course), $message, null, \core\output\notification::NOTIFY_ERROR);
     }
 
     // Set the global $COURSE.
@@ -3933,11 +3932,11 @@ function update_user_record_by_id($id) {
                 // Unknown or must not be changed.
                 continue;
             }
-            $confval = $userauth->config->{'field_updatelocal_' . $key};
-            $lockval = $userauth->config->{'field_lock_' . $key};
-            if (empty($confval) || empty($lockval)) {
+            if (empty($userauth->config->{'field_updatelocal_' . $key}) || empty($userauth->config->{'field_lock_' . $key})) {
                 continue;
             }
+            $confval = $userauth->config->{'field_updatelocal_' . $key};
+            $lockval = $userauth->config->{'field_lock_' . $key};
             if ($confval === 'onlogin') {
                 // MDL-4207 Don't overwrite modified user profile values with
                 // empty LDAP values when 'unlocked if empty' is set. The purpose
@@ -5175,11 +5174,6 @@ function shift_course_mod_dates($modname, $fields, $timeshift, $courseid, $modid
         $return = $DB->execute($updatesql, $params) && $return;
     }
 
-    $refreshfunction = $modname.'_refresh_events';
-    if (function_exists($refreshfunction)) {
-        $refreshfunction($courseid);
-    }
-
     return $return;
 }
 
@@ -5435,6 +5429,8 @@ function reset_course_userdata($data) {
             } else {
                 debugging('Missing lib.php in '.$modname.' module!');
             }
+            // Update calendar events for all modules.
+            course_module_bulk_update_calendar_events($modname, $data->courseid);
         }
     }
 

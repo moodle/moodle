@@ -222,8 +222,10 @@ class core_user_externallib_testcase extends externallib_advanced_testcase {
             'descriptionformat' => FORMAT_MOODLE,
             'city' => 'Perth',
             'url' => 'http://moodle.org',
-            'country' => 'AU'
-            );
+            'country' => 'AU',
+            'lang' => 'kkl',
+            'theme' => 'kkt',
+        );
         $user1 = self::getDataGenerator()->create_user($user1);
         if (!empty($CFG->usetags)) {
             require_once($CFG->dirroot . '/user/editlib.php');
@@ -327,6 +329,11 @@ class core_user_externallib_testcase extends externallib_advanced_testcase {
                 }
                 if (!empty($CFG->usetags) and !empty($generateduser->interests)) {
                     $this->assertEquals(implode(', ', $generateduser->interests), $returneduser['interests']);
+                }
+                // Check empty since incorrect values were used when creating the user.
+                if ($returneduser['id'] == $user1->id) {
+                    $this->assertEmpty($returneduser['lang']);
+                    $this->assertEmpty($returneduser['theme']);
                 }
             }
         }
@@ -674,6 +681,31 @@ class core_user_externallib_testcase extends externallib_advanced_testcase {
         $this->unassignUserCapability('moodle/user:update', $context->id, $roleid);
         $this->expectException('required_capability_exception');
         core_user_external::update_users(array($user1));
+    }
+
+    /**
+     * Test update_users using duplicated email.
+     */
+    public function test_update_users_duplicated_email() {
+        global $DB, $CFG;
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user2toupdate = array(
+            'id' => $user2->id,
+            'email' => $user1->email,
+        );
+        // E-mail duplicated not allowed.
+        $CFG->allowaccountssameemail = 0;
+        core_user_external::update_users(array($user2toupdate));
+        $this->assertNotEquals($user1->email, $DB->get_field('user', 'email', array('id' => $user2->id)));
+        // E-mail duplicated allowed.
+        $CFG->allowaccountssameemail = 1;
+        core_user_external::update_users(array($user2toupdate));
+        $this->assertEquals($user1->email, $DB->get_field('user', 'email', array('id' => $user2->id)));
     }
 
     /**

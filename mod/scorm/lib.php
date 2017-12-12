@@ -166,6 +166,9 @@ function scorm_add_instance($scorm, $mform=null) {
 
     scorm_grade_item_update($record);
     scorm_update_calendar($record, $cmid);
+    if (!empty($scorm->completionexpected)) {
+        \core_completion\api::update_completion_date_event($cmid, 'scorm', $record, $scorm->completionexpected);
+    }
 
     return $record->id;
 }
@@ -244,6 +247,8 @@ function scorm_update_instance($scorm, $mform=null) {
     }
 
     $DB->update_record('scorm', $scorm);
+    // We need to find this out before we blow away the form data.
+    $completionexpected = (!empty($scorm->completionexpected)) ? $scorm->completionexpected : null;
 
     $scorm = $DB->get_record('scorm', array('id' => $scorm->id));
 
@@ -257,6 +262,7 @@ function scorm_update_instance($scorm, $mform=null) {
     scorm_grade_item_update($scorm);
     scorm_update_grades($scorm);
     scorm_update_calendar($scorm, $cmid);
+    \core_completion\api::update_completion_date_event($cmid, 'scorm', $scorm, $completionexpected);
 
     return true;
 }
@@ -1440,12 +1446,30 @@ function scorm_check_mode($scorm, &$newattempt, &$attempt, $userid, &$mode) {
     }
     // Check if the scorm module is incomplete (used to validate user request to start a new attempt).
     $incomplete = true;
+
+    // Note - in SCORM_13 the cmi-core.lesson_status field was split into
+    // 'cmi.completion_status' and 'cmi.success_status'.
+    // 'cmi.completion_status' can only contain values 'completed', 'incomplete', 'not attempted' or 'unknown'.
+    // This means the values 'passed' or 'failed' will never be reported for a track in SCORM_13 and
+    // the only status that will be treated as complete is 'completed'.
+
+    $completionelements = array(
+        SCORM_12 => 'cmi.core.lesson_status',
+        SCORM_13 => 'cmi.completion_status',
+        SCORM_AICC => 'cmi.core.lesson_status'
+    );
+    $scormversion = scorm_version_check($scorm->version);
+    if($scormversion===false) {
+        $scormversion = SCORM_12;
+    }
+    $completionelement = $completionelements[$scormversion];
+
     $sql = "SELECT sc.id, t.value
               FROM {scorm_scoes} sc
          LEFT JOIN {scorm_scoes_track} t ON sc.scorm = t.scormid AND sc.id = t.scoid
-                   AND t.element = 'cmi.core.lesson_status' AND t.userid = ? AND t.attempt = ?
+                   AND t.element = ? AND t.userid = ? AND t.attempt = ?
              WHERE sc.scormtype = 'sco' AND sc.scorm = ?";
-    $tracks = $DB->get_recordset_sql($sql, array($userid, $attempt, $scorm->id));
+    $tracks = $DB->get_recordset_sql($sql, array($completionelement, $userid, $attempt, $scorm->id));
 
     foreach ($tracks as $track) {
         if (($track->value == 'completed') || ($track->value == 'passed') || ($track->value == 'failed')) {
@@ -1586,12 +1610,30 @@ function mod_scorm_get_fontawesome_icon_map() {
  * only scorm events belonging to the course specified are checked.
  *
  * @param int $courseid
+ * @param int|stdClass $instance scorm module instance or ID.
+ * @param int|stdClass $cm Course module object or ID.
  * @return bool
  */
-function scorm_refresh_events($courseid = 0) {
+function scorm_refresh_events($courseid = 0, $instance = null, $cm = null) {
     global $CFG, $DB;
 
     require_once($CFG->dirroot . '/mod/scorm/locallib.php');
+
+    // If we have instance information then we can just update the one event instead of updating all events.
+    if (isset($instance)) {
+        if (!is_object($instance)) {
+            $instance = $DB->get_record('scorm', array('id' => $instance), '*', MUST_EXIST);
+        }
+        if (isset($cm)) {
+            if (!is_object($cm)) {
+                $cm = (object)array('id' => $cm);
+            }
+        } else {
+            $cm = get_coursemodule_from_instance('scorm', $instance->id);
+        }
+        scorm_update_calendar($instance, $cm->id);
+        return true;
+    }
 
     if ($courseid) {
         // Make sure that the course id is numeric.

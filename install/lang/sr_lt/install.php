@@ -33,7 +33,7 @@ defined('MOODLE_INTERNAL') || die();
 $string['admindirname'] = 'Administratorski direktorijum';
 $string['availablelangs'] = 'Dostupni jezički paketi';
 $string['chooselanguagehead'] = 'Izaberite jezik';
-$string['chooselanguagesub'] = 'Molimo izaberite jezik koji će se koristiti tokom instalacije. Ovaj jezik će, takođe, biti korišćen na nivou sajta kao podrazumevani, mada to naknadno može biti promenjeno.';
+$string['chooselanguagesub'] = 'Izaberite jezik koji će se koristiti tokom instalacije. Ovaj jezik će, takođe, biti korišćen na nivou sajta kao podrazumevani, iako to naknadno može da se promeni.';
 $string['clialreadyconfigured'] = 'Datoteka config.php već postoji. Molimo, koristite admin/cli/install_database.php ako želite da instalirate Moodle na ovom serveru.';
 $string['clialreadyinstalled'] = 'Datoteka config.php već postoji. Molimo koristite admin/cli/upgrade.php ako želite da nadogradite Moodle na ovom serveru.';
 $string['cliinstallheader'] = 'Moodle {$a} program za instalaciju iz komandne linije';
@@ -72,15 +72,12 @@ $string['pathssubdataroot'] = '<p>Direktorijum gde će Moodle čuvati datoteke i
 <p>Direktorijum ne sme biti dostupan direktno preko veba. </p>
 <p>Ukoliko ovaj direktorijum ne postoji proces instalacije će pokušati da ga kreira.</p>';
 $string['pathssubdirroot'] = '<p>Puna putanja do direktorijuma koji sadrži kôd Moodlea.</p>';
-$string['pathssubwwwroot'] = '<p>Puna adresa putem koje će se pristupati Moodleu, tj. adresa koju će korisnici uneti u adresnu traku svojih veb čitača kako bi pristupili Moodleu.</p>
-<p>Nije moguće pristupati Moodleu korišćenjem više adresa Ako se vašem sajtu može pristupiti sa više adresa, onda izaberite najlakšu, a za sve ostale adrese podesite permanentnu redirekciju.</p>
-<p>Ako se vašem sajtu može pristupiti sa interneta ali i sa unutrašnje mreže (koja se ponekad naziv intranet), onda ovde upotrebite javnu adresu.</p>
-<p>Ako je tekuća adresa netačna, molimo vas, promenite URL adresu u adresnoj traci svog veb čitača i ponovo pokrenite instalaciju.</p>';
+$string['pathssubwwwroot'] = '<p>Puna adresa putem koje će se pristupati Moodleu, tj. adresa koju će korisnici uneti u adresnu traku svojih veb čitača kako bi pristupili Moodleu.</p> <p>Nije moguće pristupati Moodleu korišćenjem više adresa. Ako se vašem sajtu može pristupiti sa više adresa, onda izaberite najlakšu, a za sve ostale adrese podesite permanentnu redirekciju.</p> <p>Ako se vašem sajtu može pristupiti kako sa interneta, tako i iz interne mreže (koja se ponekad naziv intranet), onda ovde upotrebite javnu adresu.</p> <p>Ako je tekuća adresa netačna, molimo vas, promenite URL adresu u adresnoj traci svog veb čitača i ponovo pokrenite instalaciju.</p>';
 $string['pathsunsecuredataroot'] = 'Dataroot lokacija nije bezbedna';
 $string['pathswrongadmindir'] = 'Admin direktorijum ne postoji';
 $string['phpextension'] = '{$a} PHP ekstenѕija';
 $string['phpversion'] = 'PHP verzija';
-$string['phpversionhelp'] = '<p>Moodle zahteva najmanje PHP verziju 5.6.7 ili 7.1 (7.0.x ima neka ograničenja).</p>
+$string['phpversionhelp'] = '<p>Moodle zahteva najmanje PHP verziju 5.6.5 ili 7.1 (7.0.x ima neka ograničenja).</p>
 <p>Trenutno koristite verziju {$a}</p>
 <p>Morate da nadogradite PHP ili da premestiti Moodle na veb server sa novijom verzijom PHP-a.</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';

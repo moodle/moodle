@@ -25,6 +25,7 @@ namespace core\oauth2;
 
 use curl;
 use coding_exception;
+use stdClass;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -64,7 +65,8 @@ abstract class rest {
      * @param string $functionname
      * @param array $functionargs
      * @param string $rawpost Optional param to include in the body of a post.
-     * @return string|object
+     * @param string $contenttype The MIME type for the request's Content-Type header.
+     * @return string|stdClass
      */
     public function call($functionname, $functionargs, $rawpost = false, $contenttype = false) {
         $functions = $this->get_api_functions();

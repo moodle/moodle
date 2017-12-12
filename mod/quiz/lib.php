@@ -225,9 +225,16 @@ function quiz_delete_override($quiz, $overrideid) {
     $override = $DB->get_record('quiz_overrides', array('id' => $overrideid), '*', MUST_EXIST);
 
     // Delete the events.
-    $events = $DB->get_records('event', array('modulename' => 'quiz',
-            'instance' => $quiz->id, 'groupid' => (int)$override->groupid,
-            'userid' => (int)$override->userid));
+    if (isset($override->groupid)) {
+        // Create the search array for a group override.
+        $eventsearcharray = array('modulename' => 'quiz',
+            'instance' => $quiz->id, 'groupid' => (int)$override->groupid);
+    } else {
+        // Create the search array for a user override.
+        $eventsearcharray = array('modulename' => 'quiz',
+            'instance' => $quiz->id, 'userid' => (int)$override->userid);
+    }
+    $events = $DB->get_records('event', $eventsearcharray);
     foreach ($events as $event) {
         $eventold = calendar_event::load($event);
         $eventold->delete();
@@ -858,10 +865,21 @@ function quiz_grade_item_delete($quiz) {
  * This function is used, in its new format, by restore_refresh_events()
  *
  * @param int $courseid
+ * @param int|stdClass $instance Quiz module instance or ID.
+ * @param int|stdClass $cm Course module object or ID (not used in this module).
  * @return bool
  */
-function quiz_refresh_events($courseid = 0) {
+function quiz_refresh_events($courseid = 0, $instance = null, $cm = null) {
     global $DB;
+
+    // If we have instance information then we can just update the one event instead of updating all events.
+    if (isset($instance)) {
+        if (!is_object($instance)) {
+            $instance = $DB->get_record('quiz', array('id' => $instance), '*', MUST_EXIST);
+        }
+        quiz_update_events($instance);
+        return true;
+    }
 
     if ($courseid == 0) {
         if (!$quizzes = $DB->get_records('quiz')) {
@@ -1177,6 +1195,8 @@ function quiz_after_add_or_update($quiz) {
 
     // Update the events relating to this quiz.
     quiz_update_events($quiz);
+    $completionexpected = (!empty($quiz->completionexpected)) ? $quiz->completionexpected : null;
+    \core_completion\api::update_completion_date_event($quiz->coursemodule, 'quiz', $quiz->id, $completionexpected);
 
     // Update related grade item.
     quiz_grade_item_update($quiz);

@@ -78,6 +78,11 @@ class restore_final_task extends restore_task {
         // during backup/restore.
         $this->add_step(new restore_update_availability('update_availability'));
 
+        // Refresh action events conditionally.
+        if ($this->get_setting_value('activities')) {
+            $this->add_step(new restore_calendar_action_events('restoring_action_events'));
+        }
+
         // Decode all the interlinks
         $this->add_step(new restore_decode_interlinks('decode_interlinks'));
 

@@ -217,6 +217,7 @@ class phpunit_util extends testing_util {
         core_filetypes::reset_caches();
         \core_search\manager::clear_static();
         core_user::reset_caches();
+        \core\output\icon_system::reset_caches();
         if (class_exists('core_media_manager', false)) {
             core_media_manager::reset_caches();
         }
@@ -276,6 +277,9 @@ class phpunit_util extends testing_util {
 
         // Reset the log manager cache.
         get_log_manager(true);
+
+        // Reset user agent.
+        core_useragent::instance(true, null);
 
         // verify db writes just in case something goes wrong in reset
         if (self::$lastdbwrites != $DB->perf_get_writes()) {

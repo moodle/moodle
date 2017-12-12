@@ -35,6 +35,7 @@ use core_competency\url;
 use renderable;
 use renderer_base;
 use templatable;
+use required_capability_exception;
 
 /**
  * Summary renderable class.
@@ -68,7 +69,11 @@ class summary implements renderable, templatable {
         $this->user = $user;
 
         // Get the plans.
-        $this->plans = api::list_user_plans($this->user->id);
+        try {
+            $this->plans = api::list_user_plans($this->user->id);
+        } catch (required_capability_exception $e) {
+            $this->plans = [];
+        }
 
         // Get the competencies to review.
         $this->compstoreview = api::list_user_competencies_to_review(0, 3);

@@ -177,6 +177,10 @@
     label {
         margin: 0;
     }
+
+    .header {
+        text-align: left;
+    }
 }
 
 #page-mod-quiz-edit {
@@ -298,6 +302,14 @@ body.path-question-type {
 .formulation select {
     width: auto;
     vertical-align: baseline;
+}
+
+.que.multianswer .formulation .yui3-widget-positioned {
+    box-sizing: content-box;
+    .feedbackspan {
+        width: inherit;
+        max-width: inherit;
+    }
 }
 
 .path-mod-quiz input[size] {

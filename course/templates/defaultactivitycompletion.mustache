@@ -63,9 +63,9 @@
                 <div class="row m-b-1 row-fluid">
                     <div class="col-xs-6 span6">
                         <label class="accesshide" for="modtype_{{id}}">{{#str}}select, core_completion{{/str}} {{formattedname}}</label>
-                        <input id="modtype_{{id}}" type="checkbox" class="m-r-1" name="modids[]" value="{{id}}" aria-label="{{#str}}checkactivity, completion, {{formattedname}}{{/str}}">
-                        <img src="{{icon}}" alt=" " role="presentation" />
-                        <span>{{formattedname}}</span>
+                        <input id="modtype_{{id}}" type="checkbox" class="m-r-1" name="modids[]" value="{{id}}" aria-label="{{#str}}checkactivity, completion, {{{formattedname}}}{{/str}}">
+                        <img class="iconlarge activityicon" src="{{icon}}" alt=" " role="presentation" />
+                        <span>{{{formattedname}}}</span>
                     </div>
                     <div class="activity-completionstatus col-xs-6 span6">
                         <div class="col-sm-1 span1 p-l-0">

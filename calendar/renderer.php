@@ -286,7 +286,7 @@ class core_calendar_renderer extends plugin_renderer_base {
             $output .= html_writer::tag('div', $source, array('class' => 'subscription'));
         }
         if (!empty($event->courselink)) {
-            $output .= html_writer::tag('div', $event->courselink, array('class' => 'course'));
+            $output .= html_writer::tag('div', $event->courselink);
         }
         if (!empty($event->time)) {
             $output .= html_writer::tag('span', $event->time, array('class' => 'date pull-xs-right m-r-1'));
@@ -296,7 +296,8 @@ class core_calendar_renderer extends plugin_renderer_base {
         }
 
         if (!empty($event->actionurl)) {
-            $output .= html_writer::tag('div', html_writer::link(new moodle_url($event->actionurl), $event->actionname));
+            $actionlink = html_writer::link(new moodle_url($event->actionurl), $event->actionname);
+            $output .= html_writer::tag('div', $actionlink, ['class' => 'action']);
         }
 
         $output .= $this->output->box_end();
@@ -606,7 +607,7 @@ class core_calendar_renderer extends plugin_renderer_base {
         $courseurl = new moodle_url($returnurl);
         $courseurl->remove_params('course');
         $select = new single_select($courseurl, 'course', $courseoptions, $selected, null);
-        $select->class = 'cal_courses_flt m-r-1';
+        $select->class = 'm-r-1';
         if ($label !== null) {
             $select->set_label($label);
         } else {

@@ -40,7 +40,7 @@ $string['dropzones_help'] = 'The drop zones are defined by typing coordinates. A
 
 * Circle: centre_x, centre_y; radius<br>for example: <code>80, 100; 50</code>
 * Polygon: x1, y1; x2, y2; ...; xn, yn<br>for example: <code>20, 60; 100, 60; 20, 100</code>
-* Rectangle: left, top, width, height<br>for example: <code>20, 60; 80, 40</code>';
+* Rectangle: top_left_x, top_left_y; width, height<br>for example: <code>20, 60; 80, 40</code>';
 $string['followingarewrong'] = 'The following markers have been placed in the wrong area : {$a}.';
 $string['followingarewrongandhighlighted'] = 'The following markers were incorrectly placed :  {$a}. Highlighted marker(s) are now shown with the correct placement(s).<br /> Click on the marker to highlight the allowed area.';
 $string['formerror_nobgimage'] = 'You need to select an image to use as the background for the drag and drop area.';

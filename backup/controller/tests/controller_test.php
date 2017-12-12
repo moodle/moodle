@@ -149,6 +149,32 @@ class core_backup_controller_testcase extends advanced_testcase {
         }
         $this->assertTrue($alltrue);
     }
+
+    /**
+     * Test restore of deadlock causing backup.
+     */
+    public function test_restore_of_deadlock_causing_backup() {
+        global $USER, $CFG;
+        $this->preventResetByRollback();
+
+        $foldername = 'deadlock';
+        $fp = get_file_packer('application/vnd.moodle.backup');
+        $tempdir = $CFG->dataroot . '/temp/backup/' . $foldername;
+        $files = $fp->extract_to_pathname($CFG->dirroot . '/backup/controller/tests/fixtures/deadlock.mbz', $tempdir);
+
+        $this->setAdminUser();
+        $controller = new restore_controller(
+            'deadlock',
+            $this->courseid,
+            backup::INTERACTIVE_NO,
+            backup::MODE_GENERAL,
+            $USER->id,
+            backup::TARGET_NEW_COURSE
+        );
+        $this->assertTrue($controller->execute_precheck());
+        $controller->execute_plan();
+        $controller->destroy();
+    }
 }
 
 

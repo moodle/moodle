@@ -823,7 +823,20 @@ class database_manager {
             throw new ddl_exception('ddlunknownerror', null, 'add_index sql not generated');
         }
 
-        $this->execute_sql_arr($sqlarr, array($xmldb_table->getName()));
+        try {
+            $this->execute_sql_arr($sqlarr, array($xmldb_table->getName()));
+        } catch (ddl_change_structure_exception $e) {
+            // There could be a problem with the index length related to the row format of the table.
+            // If we are using utf8mb4 and the row format is 'compact' or 'redundant' then we need to change it over to
+            // 'compressed' or 'dynamic'.
+            if (method_exists($this->mdb, 'convert_table_row_format')) {
+                $this->mdb->convert_table_row_format($xmldb_table->getName());
+                $this->execute_sql_arr($sqlarr, array($xmldb_table->getName()));
+            } else {
+                // It's some other problem that we are currently not handling.
+                throw $e;
+            }
+        }
     }
 
     /**

@@ -2401,7 +2401,7 @@ class global_navigation extends navigation_node {
                 $reports = core_component::get_plugin_list('gradereport');
                 arsort($reports); // User is last, we want to test it first.
 
-                $userscourses = enrol_get_users_courses($user->id);
+                $userscourses = enrol_get_users_courses($user->id, false, '*');
                 $userscoursesnode = $usernode->add(get_string('courses'));
 
                 $count = 0;
@@ -2448,8 +2448,8 @@ class global_navigation extends navigation_node {
 
                     $reporttab = $usercoursenode->add(get_string('activityreports'));
 
-                    $reports = get_plugin_list_with_function('report', 'extend_navigation_user', 'lib.php');
-                    foreach ($reports as $reportfunction) {
+                    $reportfunctions = get_plugin_list_with_function('report', 'extend_navigation_user', 'lib.php');
+                    foreach ($reportfunctions as $reportfunction) {
                         $reportfunction($reporttab, $user, $usercourse);
                     }
 
@@ -2715,7 +2715,8 @@ class global_navigation extends navigation_node {
             // Just a link to course competency.
             $title = get_string('competencies', 'core_competency');
             $path = new moodle_url("/admin/tool/lp/coursecompetencies.php", array('courseid' => $course->id));
-            $coursenode->add($title, $path, navigation_node::TYPE_SETTING, null, null, new pix_icon('i/competencies', ''));
+            $coursenode->add($title, $path, navigation_node::TYPE_SETTING, null, 'competencies',
+                    new pix_icon('i/competencies', ''));
         }
         if ($navoptions->grades) {
             $url = new moodle_url('/grade/report/index.php', array('id'=>$course->id));

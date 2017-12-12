@@ -268,8 +268,9 @@ class core_course_external extends external_api {
 
                         if (!empty($cm->showdescription) or $cm->modname == 'label') {
                             // We want to use the external format. However from reading get_formatted_content(), $cm->content format is always FORMAT_HTML.
+                            $options = array('noclean' => true);
                             list($module['description'], $descriptionformat) = external_format_text($cm->content,
-                                FORMAT_HTML, $modcontext->id, $cm->modname, 'intro', $cm->id);
+                                FORMAT_HTML, $modcontext->id, $cm->modname, 'intro', $cm->id, $options);
                         }
 
                         //url of the module
@@ -503,10 +504,10 @@ class core_course_external extends external_api {
                 $courseinfo['groupmode'] = $course->groupmode;
                 $courseinfo['groupmodeforce'] = $course->groupmodeforce;
                 $courseinfo['defaultgroupingid'] = $course->defaultgroupingid;
-                $courseinfo['lang'] = $course->lang;
+                $courseinfo['lang'] = clean_param($course->lang, PARAM_LANG);
                 $courseinfo['timecreated'] = $course->timecreated;
                 $courseinfo['timemodified'] = $course->timemodified;
-                $courseinfo['forcetheme'] = $course->theme;
+                $courseinfo['forcetheme'] = clean_param($course->theme, PARAM_THEME);
                 $courseinfo['enablecompletion'] = $course->enablecompletion;
                 $courseinfo['completionnotify'] = $course->completionnotify;
                 $courseinfo['courseformatoptions'] = array();
@@ -1725,7 +1726,7 @@ class core_course_external extends external_api {
                         $categoryinfo['visible'] = $category->visible;
                         $categoryinfo['visibleold'] = $category->visibleold;
                         $categoryinfo['timemodified'] = $category->timemodified;
-                        $categoryinfo['theme'] = $category->theme;
+                        $categoryinfo['theme'] = clean_param($category->theme, PARAM_THEME);
                     }
 
                     $categoriesinfo[] = $categoryinfo;
@@ -3067,6 +3068,14 @@ class core_course_external extends external_api {
             foreach ($coursefields as $field) {
                 $coursesdata[$course->id][$field] = $course->{$field};
             }
+
+            // Clean lang and auth fields for external functions (it may content uninstalled themes or language packs).
+            if (isset($coursesdata[$course->id]['theme'])) {
+                $coursesdata[$course->id]['theme'] = clean_param($coursesdata[$course->id]['theme'], PARAM_THEME);
+            }
+            if (isset($coursesdata[$course->id]['lang'])) {
+                $coursesdata[$course->id]['lang'] = clean_param($coursesdata[$course->id]['lang'], PARAM_LANG);
+            }
         }
 
         return array(
@@ -3135,6 +3144,7 @@ class core_course_external extends external_api {
      */
     public static function check_updates($courseid, $tocheck, $filter = array()) {
         global $CFG, $DB;
+        require_once($CFG->dirroot . "/course/lib.php");
 
         $params = self::validate_parameters(
             self::check_updates_parameters(),

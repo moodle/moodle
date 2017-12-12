@@ -2875,5 +2875,106 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2017051500.06);
     }
 
+    if ($oldversion < 2017051501.04) {
+        // Changing nullability of field email on table oauth2_system_account to null.
+        $table = new xmldb_table('oauth2_system_account');
+        $field = new xmldb_field('email', XMLDB_TYPE_TEXT, null, null, null, null, null, 'grantedscopes');
+
+        // Launch change of nullability for field email.
+        $dbman->change_field_notnull($table, $field);
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2017051501.04);
+    }
+
+    if ($oldversion < 2017051501.05) {
+
+        // If the site was previously registered with http://hub.moodle.org change the registration to
+        // point to https://moodle.net - this is the correct hub address using https protocol.
+        $oldhuburl = "http://hub.moodle.org";
+        $newhuburl = "https://moodle.net";
+        $cleanoldhuburl = preg_replace('/[^A-Za-z0-9_-]/i', '', $oldhuburl);
+        $cleannewhuburl = preg_replace('/[^A-Za-z0-9_-]/i', '', $newhuburl);
+
+        // Update existing registration.
+        $DB->execute("UPDATE {registration_hubs} SET hubname = ?, huburl = ? WHERE huburl = ?",
+            ['Moodle.net', $newhuburl, $oldhuburl]);
+
+        // Update settings of existing registration.
+        $sqlnamelike = $DB->sql_like('name', '?');
+        $entries = $DB->get_records_sql("SELECT * FROM {config_plugins} where plugin=? and " . $sqlnamelike,
+            ['hub', '%' . $DB->sql_like_escape('_' . $cleanoldhuburl)]);
+        foreach ($entries as $entry) {
+            $newname = substr($entry->name, 0, -strlen($cleanoldhuburl)) . $cleannewhuburl;
+            try {
+                $DB->update_record('config_plugins', ['id' => $entry->id, 'name' => $newname]);
+            } catch (dml_exception $e) {
+                // Entry with new name already exists, remove the one with an old name.
+                $DB->delete_records('config_plugins', ['id' => $entry->id]);
+            }
+        }
+
+        // Update published courses.
+        $DB->execute('UPDATE {course_published} SET huburl = ? WHERE huburl = ?', [$newhuburl, $oldhuburl]);
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2017051501.05);
+    }
+
+    if ($oldversion < 2017051501.09) {
+
+        // This script in included in each major version upgrade process so make sure we don't run it twice.
+        if (empty($CFG->linkcoursesectionsupgradescriptwasrun)) {
+            // Check if the site is using a boost-based theme.
+            // If value of 'linkcoursesections' is set to the old default value, change it to the new default.
+            if (upgrade_theme_is_from_family('boost', $CFG->theme)) {
+                set_config('linkcoursesections', 1);
+            }
+            set_config('linkcoursesectionsupgradescriptwasrun', 1);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2017051501.09);
+    }
+
+    if ($oldversion < 2017051502.01) {
+
+        // Force all messages to be reindexed.
+        set_config('core_message_message_sent_lastindexrun', '0', 'core_search');
+        set_config('core_message_message_received_lastindexrun', '0', 'core_search');
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2017051502.01);
+    }
+
+    if ($oldversion < 2017051502.04) {
+
+        // Remove duplicate registrations.
+        $newhuburl = "https://moodle.net";
+        $registrations = $DB->get_records('registration_hubs', ['huburl' => $newhuburl], 'confirmed DESC, id ASC');
+        if (count($registrations) > 1) {
+            $reg = array_shift($registrations);
+            $DB->delete_records_select('registration_hubs', 'huburl = ? AND id <> ?', [$newhuburl, $reg->id]);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2017051502.04);
+    }
+
+    if ($oldversion < 2017051503.02) {
+
+        // Define field basicauth to be added to oauth2_issuer.
+        $table = new xmldb_table('oauth2_issuer');
+        $field = new xmldb_field('basicauth', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, '0', 'showonloginpage');
+
+        // Conditionally launch add field basicauth.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2017051503.02);
+    }
+
     return true;
 }

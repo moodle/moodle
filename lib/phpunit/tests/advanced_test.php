@@ -662,4 +662,23 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
             $this->assertSame('en_AU.UTF-8', setlocale(LC_TIME, 0));
         }
     }
+
+    /**
+     * This test sets a user agent and makes sure that it is cleared when the test is reset.
+     */
+    public function test_it_resets_useragent_after_test() {
+        $this->resetAfterTest();
+        $fakeagent = 'New user agent set.';
+
+        // Sanity check: it should not be set when test begins.
+        self::assertFalse(core_useragent::get_user_agent_string(), 'It should not be set at first.');
+
+        // Set a fake useragent and check it was set properly.
+        core_useragent::instance(true, $fakeagent);
+        self::assertSame($fakeagent, core_useragent::get_user_agent_string(), 'It should be the forced agent.');
+
+        // Reset test data and ansure the useragent was cleaned.
+        self::resetAllData(false);
+        self::assertFalse(core_useragent::get_user_agent_string(), 'It should not be set again, data was reset.');
+    }
 }

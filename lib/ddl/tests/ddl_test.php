@@ -2115,6 +2115,55 @@ class core_ddl_testcase extends database_driver_testcase {
         }
     }
 
+    /**
+     * Data provider for test_get_enc_quoted().
+     *
+     * @return array The type-value pair fixture.
+     */
+    public function test_get_enc_quoted_provider() {
+        return array(
+            // Reserved: some examples from SQL-92.
+            [true, 'from'],
+            [true, 'table'],
+            [true, 'where'],
+            // Not reserved.
+            [false, 'my_awesome_column_name']
+        );
+    }
+
+    /**
+     * This is a test for sql_generator::getEncQuoted().
+     *
+     * @dataProvider test_get_enc_quoted_provider
+     * @param string $reserved Whether the column name is reserved or not.
+     * @param string $columnname The column name to be quoted, according to the value of $reserved.
+     **/
+    public function test_get_enc_quoted($reserved, $columnname) {
+        $DB = $this->tdb;
+        $gen = $DB->get_manager()->generator;
+
+        if (!$reserved) {
+            // No need to quote the column name.
+            $this->assertSame($columnname, $gen->getEncQuoted($columnname));
+        } else {
+            // Column name should be quoted.
+            $dbfamily = $DB->get_dbfamily();
+
+            switch ($dbfamily) {
+                case 'mysql':
+                    $this->assertSame("`$columnname`", $gen->getEncQuoted($columnname));
+                    break;
+                case 'mssql': // The Moodle connection runs under 'QUOTED_IDENTIFIER ON'.
+                case 'oracle':
+                case 'postgres':
+                case 'sqlite':
+                default:
+                    $this->assertSame('"' . $columnname . '"', $gen->getEncQuoted($columnname));
+                    break;
+            }
+        }
+    }
+
     // Following methods are not supported == Do not test.
     /*
         public function testRenameIndex() {

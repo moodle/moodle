@@ -39,10 +39,26 @@ require_once($CFG->dirroot . '/mod/quiz/report/overview/report.php');
  */
 class quiz_overview_report_testcase extends advanced_testcase {
 
-    public function test_report_sql() {
+    /**
+     * Data provider for test_report_sql.
+     *
+     * @return array the data for the test sub-cases.
+     */
+    public function report_sql_cases() {
+        return [[null], ['csv']]; // Only need to test on or off, not all download types.
+    }
+
+    /**
+     * Test how the report queries the database.
+     *
+     * @param bool $isdownloading a download type, or null.
+     * @dataProvider report_sql_cases
+     */
+    public function test_report_sql($isdownloading) {
         global $DB;
         $this->resetAfterTest(true);
 
+        // Create a course and a quiz.
         $generator = $this->getDataGenerator();
         $course = $generator->create_course();
         $quizgenerator = $generator->get_plugin_generator('mod_quiz');
@@ -50,46 +66,19 @@ class quiz_overview_report_testcase extends advanced_testcase {
                 'grademethod' => QUIZ_GRADEHIGHEST, 'grade' => 100.0, 'sumgrades' => 10.0,
                 'attempts' => 10));
 
+        // Add one question.
+        $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $cat = $questiongenerator->create_question_category();
+        $q = $questiongenerator->create_question('essay', 'plain', ['category' => $cat->id]);
+        quiz_add_quiz_question($q->id, $quiz, 0 , 10);
+
+        // Create some students and enrol them in the course.
         $student1 = $generator->create_user();
         $student2 = $generator->create_user();
         $student3 = $generator->create_user();
         $generator->enrol_user($student1->id, $course->id);
         $generator->enrol_user($student2->id, $course->id);
         $generator->enrol_user($student3->id, $course->id);
-
-        $timestamp = 1234567890;
-
-        // The test data.
-        $fields = array('quiz', 'userid', 'attempt', 'sumgrades', 'state');
-        $attempts = array(
-            array($quiz->id, $student1->id, 1, 0.0,  quiz_attempt::FINISHED),
-            array($quiz->id, $student1->id, 2, 5.0,  quiz_attempt::FINISHED),
-            array($quiz->id, $student1->id, 3, 8.0,  quiz_attempt::FINISHED),
-            array($quiz->id, $student1->id, 4, null, quiz_attempt::ABANDONED),
-            array($quiz->id, $student1->id, 5, null, quiz_attempt::IN_PROGRESS),
-            array($quiz->id, $student2->id, 1, null, quiz_attempt::ABANDONED),
-            array($quiz->id, $student2->id, 2, null, quiz_attempt::ABANDONED),
-            array($quiz->id, $student2->id, 3, 7.0,  quiz_attempt::FINISHED),
-            array($quiz->id, $student2->id, 4, null, quiz_attempt::ABANDONED),
-            array($quiz->id, $student2->id, 5, null, quiz_attempt::ABANDONED),
-        );
-
-        // Load it in to quiz attempts table.
-        $uniqueid = 1;
-        foreach ($attempts as $attempt) {
-            $data = array_combine($fields, $attempt);
-            $data['timestart'] = $timestamp + 3600 * $data['attempt'];
-            $data['timemodifed'] = $data['timestart'];
-            if ($data['state'] == quiz_attempt::FINISHED) {
-                $data['timefinish'] = $data['timestart'] + 600;
-                $data['timemodifed'] = $data['timefinish'];
-            }
-            $data['layout'] = ''; // Not used, but cannot be null.
-            $data['uniqueid'] = $uniqueid++;
-            $data['preview'] = 0;
-            $DB->insert_record('quiz_attempts', $data);
-        }
-
         // This line is not really necessary for the test asserts below,
         // but what it does is add an extra user row returned by
         // get_enrolled_with_capabilities_join because of a second enrolment.
@@ -97,6 +86,69 @@ class quiz_overview_report_testcase extends advanced_testcase {
         // about duplicate records. So this is really a test that an extra
         // student enrolment does not cause duplicate records in this query.
         $generator->enrol_user($student2->id, $course->id, null, 'self');
+
+        // The test data.
+        $timestamp = 1234567890;
+        $fields = array('quiz', 'userid', 'attempt', 'sumgrades', 'state');
+        $attempts = array(
+            array($quiz, $student1, 1, 0.0,  quiz_attempt::FINISHED),
+            array($quiz, $student1, 2, 5.0,  quiz_attempt::FINISHED),
+            array($quiz, $student1, 3, 8.0,  quiz_attempt::FINISHED),
+            array($quiz, $student1, 4, null, quiz_attempt::ABANDONED),
+            array($quiz, $student1, 5, null, quiz_attempt::IN_PROGRESS),
+            array($quiz, $student2, 1, null, quiz_attempt::ABANDONED),
+            array($quiz, $student2, 2, null, quiz_attempt::ABANDONED),
+            array($quiz, $student2, 3, 7.0,  quiz_attempt::FINISHED),
+            array($quiz, $student2, 4, null, quiz_attempt::ABANDONED),
+            array($quiz, $student2, 5, null, quiz_attempt::ABANDONED),
+        );
+
+        // Load it in to quiz attempts table.
+        foreach ($attempts as $attemptdata) {
+            list($quiz, $student, $attemptnumber, $sumgrades, $state) = $attemptdata;
+            $timestart = $timestamp + $attemptnumber * 3600;
+
+            $quizobj = quiz::create($quiz->id, $student->id);
+            $quba = question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
+            $quba->set_preferred_behaviour($quizobj->get_quiz()->preferredbehaviour);
+
+            // Create the new attempt and initialize the question sessions.
+            $attempt = quiz_create_attempt($quizobj, $attemptnumber, null, $timestart, false, $student->id);
+
+            $attempt = quiz_start_new_attempt($quizobj, $quba, $attempt, $attemptnumber, $timestamp);
+            $attempt = quiz_attempt_save_started($quizobj, $quba, $attempt);
+
+            // Process some responses from the student.
+            $attemptobj = quiz_attempt::create($attempt->id);
+            switch ($state) {
+                case quiz_attempt::ABANDONED:
+                    $attemptobj->process_abandon($timestart + 300, false);
+                    break;
+
+                case quiz_attempt::IN_PROGRESS:
+                    // Do nothing.
+                    break;
+
+                case quiz_attempt::FINISHED:
+                    // Save answer and finish attempt.
+                    $attemptobj->process_submitted_actions($timestart + 300, false, [
+                            1 => ['answer' => 'My essay by ' . $student->firstname, 'answerformat' => FORMAT_PLAIN]]);
+                    $attemptobj->process_finish($timestart + 600, false);
+
+                    // Manually grade it.
+                    $quba = $attemptobj->get_question_usage();
+                    $quba->get_question_attempt(1)->manual_grade(
+                            'Comment', $sumgrades, FORMAT_HTML, $timestart + 1200);
+                    question_engine::save_questions_usage_by_activity($quba);
+                    $update = new stdClass();
+                    $update->id = $attemptobj->get_attemptid();
+                    $update->timemodified = $timestart + 1200;
+                    $update->sumgrades = $quba->get_total_mark();
+                    $DB->update_record('quiz_attempts', $update);
+                    quiz_save_best_grade($attemptobj->get_quiz(), $student->id);
+                    break;
+            }
+        }
 
         // Actually getting the SQL to run is quite hard. Do a minimal set up of
         // some objects.
@@ -114,16 +166,22 @@ class quiz_overview_report_testcase extends advanced_testcase {
 
         // Now do a minimal set-up of the table class.
         $table = new quiz_overview_table($quiz, $context, $qmsubselect, $reportoptions,
-                $empty, $studentsjoins, array(1), null);
-        $table->define_columns(array('attempt'));
+                $empty, $studentsjoins, array(1 => $q), null);
+        $table->download = $isdownloading; // Cannot call the is_downloading API, because it gives errors.
+        $table->define_columns(array('fullname'));
         $table->sortable(true, 'uniqueid');
         $table->define_baseurl(new moodle_url('/mod/quiz/report.php'));
         $table->setup();
 
         // Run the query.
-        list($fields, $from, $where, $params) = $table->base_sql($studentsjoins);
-        $table->set_sql($fields, $from, $where, $params);
+        $table->setup_sql_queries($studentsjoins);
         $table->query_db(30, false);
+
+        // Should be 4 rows, matching count($table->rawdata) tested below.
+        // The count is only done if not downloading.
+        if (!$isdownloading) {
+            $this->assertEquals(4, $table->totalrows);
+        }
 
         // Verify what was returned: Student 1's best and in progress attempts.
         // Student 2's finshed attempt, and Student 3 with no attempt.
@@ -137,6 +195,25 @@ class quiz_overview_report_testcase extends advanced_testcase {
         $this->assertEquals(1, $table->rawdata[$student2->id . '#3']->gradedattempt);
         $this->assertArrayHasKey($student3->id . '#0', $table->rawdata);
         $this->assertEquals(0, $table->rawdata[$student3->id . '#0']->gradedattempt);
+
+        // Ensure that filtering by inital does not break it.
+        // This involves setting a private properly of the base class, which is
+        // only really possible using reflection :-(.
+        $reflectionobject = new ReflectionObject($table);
+        while ($parent = $reflectionobject->getParentClass()) {
+            $reflectionobject = $parent;
+        }
+        $prefsproperty = $reflectionobject->getProperty('prefs');
+        $prefsproperty->setAccessible(true);
+        $prefs = $prefsproperty->getValue($table);
+        $prefs['i_first'] = 'A';
+        $prefsproperty->setValue($table, $prefs);
+
+        list($fields, $from, $where, $params) = $table->base_sql($studentsjoins);
+        $table->set_count_sql("SELECT COUNT(1) FROM (SELECT $fields FROM $from WHERE $where) temp WHERE 1 = 1", $params);
+        $table->set_sql($fields, $from, $where, $params);
+        $table->query_db(30, false);
+        // Just verify that this does not cause a fatal error.
     }
 
     /**

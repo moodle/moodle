@@ -30,7 +30,6 @@ require_once($CFG->libdir . '/filelib.php');
 
 use moodle_url;
 use moodle_exception;
-use curl;
 use stdClass;
 
 /**
@@ -71,6 +70,7 @@ class client extends \oauth2_client {
         if (empty($returnurl)) {
             $returnurl = new moodle_url('/');
         }
+        $this->basicauth = $issuer->get('basicauth');
         parent::__construct($issuer->get('clientid'), $issuer->get('clientsecret'), $returnurl, $scopes);
     }
 
@@ -172,15 +172,22 @@ class client extends \oauth2_client {
      *
      * @param \core\oauth2\system_account $systemaccount
      * @return boolean true if token is upgraded succesfully
+     * @throws moodle_exception Request for token upgrade failed for technical reasons
      */
     public function upgrade_refresh_token(system_account $systemaccount) {
         $refreshtoken = $systemaccount->get('refreshtoken');
 
         $params = array('refresh_token' => $refreshtoken,
-            'client_id' => $this->issuer->get('clientid'),
-            'client_secret' => $this->issuer->get('clientsecret'),
             'grant_type' => 'refresh_token'
         );
+
+        if ($this->basicauth) {
+            $idsecret = urlencode($this->issuer->get('clientid')) . ':' . urlencode($this->issuer->get('clientsecret'));
+            $this->setHeader('Authorization: Basic ' . base64_encode($idsecret));
+        } else {
+            $params['client_id'] = $this->issuer->get('clientid');
+            $params['client_secret'] = $this->issuer->get('clientsecret');
+        }
 
         // Requests can either use http GET or POST.
         if ($this->use_http_get()) {
@@ -215,15 +222,9 @@ class client extends \oauth2_client {
         $this->store_token($accesstoken);
 
         if (isset($r->refresh_token)) {
-            $userinfo = $this->get_userinfo();
-
-            if ($userinfo['email'] == $systemaccount->get('email')) {
-                $systemaccount->set('refreshtoken', $r->refresh_token);
-                $systemaccount->update();
-                $this->refreshtoken = $r->refresh_token;
-            } else {
-                throw new moodle_exception('Attempt to store refresh token for non-system user.');
-            }
+            $systemaccount->set('refreshtoken', $r->refresh_token);
+            $systemaccount->update();
+            $this->refreshtoken = $r->refresh_token;
         }
 
         return true;
@@ -233,7 +234,7 @@ class client extends \oauth2_client {
      * Fetch the user info from the user info endpoint and map all
      * the fields back into moodle fields.
      *
-     * @return array (Moodle user fields for the logged in user).
+     * @return array|false Moodle user fields for the logged in user (or false if request failed)
      */
     public function get_userinfo() {
         $url = $this->get_issuer()->get_endpoint_url('userinfo');
@@ -244,7 +245,7 @@ class client extends \oauth2_client {
         $userinfo = new stdClass();
         try {
             $userinfo = json_decode($response);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return false;
         }
 

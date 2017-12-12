@@ -29,7 +29,7 @@
 <div class="course-info-container" id="course-info-container-{{id}}">
     <div class="visible-desktop">
         {{> block_myoverview/progress-chart}}
-        <h4><a href="{{viewurl}}">{{fullnamedisplay}}</a></h4>
+        <h4><a href="{{viewurl}}" class="{{^visible}}dimmed{{/visible}}">{{{fullnamedisplay}}}</a></h4>
     </div>
     <div class="hidden-desktop">
         <div class="media">
@@ -39,7 +39,9 @@
                 </div>
             </div>
             <div class="media-body">
-                <h4 class="media-heading"><a href="{{viewurl}}">{{fullnamedisplay}}</a></h4>
+                <h4 class="media-heading">
+                    <a href="{{viewurl}}" class="{{^visible}}dimmed{{/visible}}">{{{fullnamedisplay}}}</a>
+                </h4>
             </div>
         </div>
     </div>

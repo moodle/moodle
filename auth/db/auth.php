@@ -171,7 +171,7 @@ class auth_plugin_db extends auth_plugin_base {
     }
 
     /**
-     * Returns user attribute mappings between moodle and ldap.
+     * Returns user attribute mappings between moodle and the external database.
      *
      * @return array
      */
@@ -215,8 +215,12 @@ class auth_plugin_db extends auth_plugin_base {
         // If at least one field is mapped from external db, get that mapped data.
         if ($selectfields) {
             $select = array();
+            $fieldcount = 0;
             foreach ($selectfields as $localname=>$externalname) {
-                $select[] = "$externalname";
+                // Without aliasing, multiple occurrences of the same external
+                // name can coalesce in only occurrence in the result.
+                $select[] = "$externalname AS F".$fieldcount;
+                $fieldcount++;
             }
             $select = implode(', ', $select);
             $sql = "SELECT $select

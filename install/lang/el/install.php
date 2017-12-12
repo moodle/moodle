@@ -31,7 +31,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['admindirname'] = 'Φάκελος Admin';
-$string['availablelangs'] = 'Λίστα διαθέσιμων γλωσσών';
+$string['availablelangs'] = 'Λίστα διαθέσιμων πακέτων γλωσσών';
 $string['chooselanguagehead'] = 'Επιλογή γλώσσας';
 $string['chooselanguagesub'] = 'Παρακαλώ, επιλέξτε γλώσσα για την εγκατάσταση ΜΟΝΟ. Θα μπορείτε να επιλέξετε γλώσσα ιστοσελίδας και χρηστών σε μια μετέπειτα οθόνη.';
 $string['databasehost'] = 'Κεντρικός Υπολογιστής Βάσης Δεδομένων';

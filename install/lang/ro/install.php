@@ -72,5 +72,11 @@ $string['welcomep20'] = 'Vedeți această pagină deoarece ați instalat și lan
 $string['welcomep30'] = 'Lansarea <strong>{$a->installername}</strong> include aplicațiile
     pentru a crea un mediu în care <strong>Moodle</strong> va funcționa, și anume:';
 $string['welcomep40'] = 'Pachetul include și <strong>Moodle {$a->moodlerelease} ({$a->moodleversion})</strong>.';
+$string['welcomep50'] = 'Utilizarea tuturor aplicațiilor din acest pachet este determinată de respectivele lor
+   licențe. Pachetul complet <strong>{$a->installername}</strong> este
+     <a href="http://www.opensource.org/docs/definition_plain.html">open source</a> și este distribuit sub licența <a href="http://www.gnu.org/copyleft/gpl.html">GPL</a>.';
+$string['welcomep60'] = 'Următoarele pagini vă oferă pași ușor de urmat pentru a
+   configura și seta <strong>Moodle</strong> în computerul       dumneavoastră. Puteți accepta setările implicite
+    sau, opțional, să le modificați pentru a corespunde nevoilor dumneavoastră.';
 $string['welcomep70'] = 'Click pe butonul "Next" de mai jos pentru a continua setarea <strong>Moodle</strong>.';
 $string['wwwroot'] = 'Adresă Web';

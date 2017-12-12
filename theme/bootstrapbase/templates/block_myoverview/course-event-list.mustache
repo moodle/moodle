@@ -22,6 +22,9 @@
 
     Example context (json):
     {
+         "urls": {
+            "noevents": "#"
+        }
     }
 }}
 <div data-region="event-list-container"
@@ -93,8 +96,8 @@
              alt="{{#str}} noevents, block_myoverview {{/str}}"
              role="presentation">
         <p class="text-muted m-t-1">{{#str}} noevents, block_myoverview {{/str}}</p>
-        <a href="{{viewurl}}" class="btn btn-secondary text-primary"
-           aria-label="{{#str}} viewcoursename, block_myoverview, {{fullnamedisplay}} {{/str}}">
+        <a href="{{viewurl}}" class="btn"
+           aria-label="{{#str}} viewcoursename, block_myoverview, {{{fullnamedisplay}}} {{/str}}">
             {{#str}} viewcourse, block_myoverview {{/str}}
         </a>
     </div>

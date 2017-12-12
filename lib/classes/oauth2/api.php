@@ -44,7 +44,7 @@ class api {
 
     /**
      * Create a google ready OAuth 2 service.
-     * @return core\oauth2\issuer
+     * @return \core\oauth2\issuer
      */
     private static function create_google() {
         $record = (object) [
@@ -70,7 +70,7 @@ class api {
 
     /**
      * Create a facebook ready OAuth 2 service.
-     * @return core\oauth2\issuer
+     * @return \core\oauth2\issuer
      */
     private static function create_facebook() {
         // Facebook is a custom setup.
@@ -125,7 +125,7 @@ class api {
 
     /**
      * Create a microsoft ready OAuth 2 service.
-     * @return core\oauth2\issuer
+     * @return \core\oauth2\issuer
      */
     private static function create_microsoft() {
         // Microsoft is a custom setup.
@@ -200,7 +200,7 @@ class api {
 
     /**
      * List all the issuers, ordered by the sortorder field
-     * @return core\oauth2\issuer[]
+     * @return \core\oauth2\issuer[]
      */
     public static function get_all_issuers() {
         return issuer::get_records([], 'sortorder');
@@ -210,7 +210,7 @@ class api {
      * Get a single issuer by id.
      *
      * @param int $id
-     * @return core\oauth2\issuer
+     * @return \core\oauth2\issuer
      */
     public static function get_issuer($id) {
         return new issuer($id);
@@ -220,7 +220,7 @@ class api {
      * Get a single endpoint by id.
      *
      * @param int $id
-     * @return core\oauth2\endpoint
+     * @return \core\oauth2\endpoint
      */
     public static function get_endpoint($id) {
         return new endpoint($id);
@@ -230,7 +230,7 @@ class api {
      * Get a single user field mapping by id.
      *
      * @param int $id
-     * @return core\oauth2\user_field_mapping
+     * @return \core\oauth2\user_field_mapping
      */
     public static function get_user_field_mapping($id) {
         return new user_field_mapping($id);
@@ -241,7 +241,7 @@ class api {
      * Never ever ever expose this to a webservice because it contains the refresh token which grants API access.
      *
      * @param \core\oauth2\issuer $issuer
-     * @return \core\oauth2\client
+     * @return system_account|false
      */
     public static function get_system_account(issuer $issuer) {
         return system_account::get_record(['issuerid' => $issuer->get('id')]);
@@ -286,8 +286,9 @@ class api {
      * Get an authenticated oauth2 client using the system account.
      * This call uses the refresh token to get an access token.
      *
-     * @param core\oauth2\issuer $issuer
-     * @return core\oauth2\client
+     * @param \core\oauth2\issuer $issuer
+     * @return \core\oauth2\client|false An authenticated client (or false if the token could not be upgraded)
+     * @throws moodle_exception Request for token upgrade failed for technical reasons
      */
     public static function get_system_oauth_client(issuer $issuer) {
         $systemaccount = self::get_system_account($issuer);
@@ -311,10 +312,10 @@ class api {
      * Get an authenticated oauth2 client using the current user account.
      * This call does the redirect dance back to the current page after authentication.
      *
-     * @param core\oauth2\issuer $issuer The desired OAuth issuer
+     * @param \core\oauth2\issuer $issuer The desired OAuth issuer
      * @param moodle_url $currenturl The url to the current page.
      * @param string $additionalscopes The additional scopes required for authorization.
-     * @return core\oauth2\client
+     * @return \core\oauth2\client
      */
     public static function get_user_oauth_client(issuer $issuer, moodle_url $currenturl, $additionalscopes = '') {
         $client = new \core\oauth2\client($issuer, $currenturl, $additionalscopes);
@@ -325,8 +326,8 @@ class api {
     /**
      * Get the list of defined endpoints for this OAuth issuer
      *
-     * @param core\oauth2\issuer $issuer The desired OAuth issuer
-     * @return core\oauth2\endpoint[]
+     * @param \core\oauth2\issuer $issuer The desired OAuth issuer
+     * @return \core\oauth2\endpoint[]
      */
     public static function get_endpoints(issuer $issuer) {
         return endpoint::get_records(['issuerid' => $issuer->get('id')]);
@@ -335,8 +336,8 @@ class api {
     /**
      * Get the list of defined mapping from OAuth user fields to moodle user fields.
      *
-     * @param core\oauth2\issuer $issuer The desired OAuth issuer
-     * @return core\oauth2\user_field_mapping[]
+     * @param \core\oauth2\issuer $issuer The desired OAuth issuer
+     * @return \core\oauth2\user_field_mapping[]
      */
     public static function get_user_field_mappings(issuer $issuer) {
         return user_field_mapping::get_records(['issuerid' => $issuer->get('id')]);
@@ -345,11 +346,11 @@ class api {
     /**
      * Guess an image from the discovery URL.
      *
-     * @param core\oauth2\issuer $issuer The desired OAuth issuer
+     * @param \core\oauth2\issuer $issuer The desired OAuth issuer
      */
     protected static function guess_image($issuer) {
         if (empty($issuer->get('image'))) {
-            $baseurl = parse_url($issuer->get('discoveryurl'));
+            $baseurl = parse_url($issuer->get('baseurl'));
             $imageurl = $baseurl['scheme'] . '://' . $baseurl['host'] . '/favicon.ico';
             $issuer->set('image', $imageurl);
             $issuer->update();
@@ -447,7 +448,7 @@ class api {
      * Take the data from the mform and update the issuer.
      *
      * @param stdClass $data
-     * @return core\oauth2\issuer
+     * @return \core\oauth2\issuer
      */
     public static function update_issuer($data) {
         require_capability('moodle/site:config', context_system::instance());
@@ -466,7 +467,7 @@ class api {
      * Take the data from the mform and create the issuer.
      *
      * @param stdClass $data
-     * @return core\oauth2\issuer
+     * @return \core\oauth2\issuer
      */
     public static function create_issuer($data) {
         require_capability('moodle/site:config', context_system::instance());
@@ -485,7 +486,7 @@ class api {
      * Take the data from the mform and update the endpoint.
      *
      * @param stdClass $data
-     * @return core\oauth2\endpoint
+     * @return \core\oauth2\endpoint
      */
     public static function update_endpoint($data) {
         require_capability('moodle/site:config', context_system::instance());
@@ -501,7 +502,7 @@ class api {
      * Take the data from the mform and create the endpoint.
      *
      * @param stdClass $data
-     * @return core\oauth2\endpoint
+     * @return \core\oauth2\endpoint
      */
     public static function create_endpoint($data) {
         require_capability('moodle/site:config', context_system::instance());
@@ -516,7 +517,7 @@ class api {
      * Take the data from the mform and update the user field mapping.
      *
      * @param stdClass $data
-     * @return core\oauth2\user_field_mapping
+     * @return \core\oauth2\user_field_mapping
      */
     public static function update_user_field_mapping($data) {
         require_capability('moodle/site:config', context_system::instance());
@@ -532,7 +533,7 @@ class api {
      * Take the data from the mform and create the user field mapping.
      *
      * @param stdClass $data
-     * @return core\oauth2\user_field_mapping
+     * @return \core\oauth2\user_field_mapping
      */
     public static function create_user_field_mapping($data) {
         require_capability('moodle/site:config', context_system::instance());
@@ -710,7 +711,7 @@ class api {
      *
      * Requires moodle/site:config capability at the system context.
      *
-     * @param core\oauth2\issuer $issuer
+     * @param \core\oauth2\issuer $issuer
      * @param moodle_url $returnurl The url to the current page (we will be redirected back here after authentication).
      * @return boolean
      */
@@ -752,7 +753,7 @@ class api {
         $record->issuerid = $issuer->get('id');
         $record->refreshtoken = $refreshtoken;
         $record->grantedscopes = $scopes;
-        $record->email = $userinfo['email'];
+        $record->email = isset($userinfo['email']) ? $userinfo['email'] : '';
         $record->username = $userinfo['username'];
 
         $systemaccount = new system_account(0, $record);

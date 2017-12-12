@@ -53,33 +53,21 @@
     {{$headertext}}{{#str}} messages, message {{/str}}{{/headertext}}
     {{$headeractions}}
         <div class="newmessage-link">
-            {{$anchor}}
-                <a href="{{{urls.writeamessage}}}">{{#str}} newmessage, message {{/str}}
-                </a>
-            {{/anchor}}
+            <a href="{{{urls.writeamessage}}}">{{#str}} newmessage, message {{/str}}
+            </a>
         </div>
-        {{< core/hover_tooltip }}
-            {{$anchor}}
-                <a class="mark-all-read-button"
-                    href="#"
-                    role="button"
-                    title="{{#str}} markallread {{/str}}"
-                    data-action="mark-all-read">
-                    <span class="normal-icon">{{#pix}} t/markasread, core, {{#str}} markallread {{/str}} {{/pix}}</span>
-                    {{> core/loading }}
-                </a>
-            {{/anchor}}
-            {{$tooltip}}{{#str}} markallread {{/str}}{{/tooltip}}
-        {{/ core/hover_tooltip }}
-        {{< core/hover_tooltip }}
-            {{$anchor}}
-                <a href="{{{urls.preferences}}}"
-                    title="{{#str}} messagepreferences, message {{/str}}">
-                    {{#pix}} i/settings, core, {{#str}} messagepreferences, message {{/str}} {{/pix}}
-                </a>
-            {{/anchor}}
-            {{$tooltip}}{{#str}} messagepreferences, message {{/str}}{{/tooltip}}
-        {{/ core/hover_tooltip }}
+        <a class="mark-all-read-button"
+           href="#"
+           role="button"
+           title="{{#str}} markallread {{/str}}"
+           data-action="mark-all-read">
+            <span class="normal-icon">{{#pix}} t/markasread, core, {{#str}} markallread {{/str}} {{/pix}}</span>
+            {{> core/loading }}
+        </a>
+        <a href="{{{urls.preferences}}}"
+           title="{{#str}} messagepreferences, message {{/str}}">
+            {{#pix}} i/settings, core, {{#str}} messagepreferences, message {{/str}} {{/pix}}
+        </a>
     {{/headeractions}}
 
     {{$content}}

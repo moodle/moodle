@@ -27,6 +27,7 @@ Feature: Assign user override
       | assignsubmission_onlinetext_wordlimit_enabled | 1 |
       | assignsubmission_onlinetext_wordlimit | 10 |
       | assignsubmission_file_enabled | 0 |
+      | gradingduedate[enabled]       | 0 |
 
   Scenario: Add, modify then delete a user override
     When I follow "Test assignment name"

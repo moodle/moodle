@@ -108,7 +108,7 @@ class mod_assign_lib_testcase extends mod_assign_base_testcase {
         $this->setAdminUser();
         $courses = $DB->get_records('course', array('id' => $this->course->id));
         // Past assignments should not show up.
-        $pastassign = $this->create_instance(array('duedate' => time(),
+        $pastassign = $this->create_instance(array('duedate' => time() - 370001,
                                                    'cutoffdate' => time() - 370000,
                                                    'nosubmissions' => 0,
                                                    'assignsubmission_onlinetext_enabled' => 1));
@@ -413,8 +413,8 @@ class mod_assign_lib_testcase extends mod_assign_base_testcase {
         // Set the user to a teacher.
         $this->setUser($this->editingteachers[0]);
 
-        // The teacher should not care about the due date event.
-        $this->assertFalse(mod_assign_core_calendar_is_event_visible($event));
+        // The teacher should see the due date event.
+        $this->assertTrue(mod_assign_core_calendar_is_event_visible($event));
     }
 
     public function test_assign_core_calendar_is_event_visible_duedate_event_as_student() {
@@ -483,12 +483,8 @@ class mod_assign_lib_testcase extends mod_assign_base_testcase {
         // Decorate action event.
         $actionevent = mod_assign_core_calendar_provide_event_action($event, $factory);
 
-        // Confirm the event was decorated.
-        $this->assertInstanceOf('\core_calendar\local\event\value_objects\action', $actionevent);
-        $this->assertEquals(get_string('addsubmission', 'assign'), $actionevent->get_name());
-        $this->assertInstanceOf('moodle_url', $actionevent->get_url());
-        $this->assertEquals(1, $actionevent->get_item_count());
-        $this->assertFalse($actionevent->is_actionable());
+        // The teacher should not have an action for a due date event.
+        $this->assertNull($actionevent);
     }
 
     public function test_assign_core_calendar_provide_event_action_duedate_as_student() {
@@ -654,5 +650,34 @@ class mod_assign_lib_testcase extends mod_assign_base_testcase {
         $this->assertEquals(mod_assign_get_completion_active_rule_descriptions($cm2), []);
         $this->assertEquals(mod_assign_get_completion_active_rule_descriptions($moddefaults), $activeruledescriptions);
         $this->assertEquals(mod_assign_get_completion_active_rule_descriptions(new stdClass()), []);
+    }
+
+    /**
+     * Test that if some grades are not set, they are left alone and not rescaled
+     */
+    public function test_assign_rescale_activity_grades_some_unset() {
+        $this->resetAfterTest();
+
+        // As a teacher...
+        $this->setUser($this->editingteachers[0]);
+        $assign = $this->create_instance();
+
+        // Grade the student.
+        $data = ['grade' => 50];
+        $assign->testable_apply_grade_to_user((object)$data, $this->students[0]->id, 0);
+
+        // Try getting another students grade. This will give a grade of -1.
+        $assign->get_user_grade($this->students[1]->id, true);
+
+        // Rescale.
+        assign_rescale_activity_grades($this->course, $assign->get_course_module(), 0, 100, 0, 10);
+
+        // Get the grades for both students.
+        $student0grade = $assign->get_user_grade($this->students[0]->id, true);
+        $student1grade = $assign->get_user_grade($this->students[1]->id, true);
+
+        // Make sure the real grade is scaled, but the -1 stays the same.
+        $this->assertEquals($student0grade->grade, 5);
+        $this->assertEquals($student1grade->grade, -1);
     }
 }

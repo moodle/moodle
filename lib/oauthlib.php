@@ -184,9 +184,6 @@ class oauth_helper {
         $oauth_params['oauth_nonce']	    = $this->get_nonce();
         $oauth_params['oauth_timestamp']    = $this->get_timestamp();
         $oauth_params['oauth_consumer_key'] = $this->consumer_key;
-        if (!empty($this->oauth_callback)) {
-            $oauth_params['oauth_callback'] = $this->oauth_callback->out(false);
-        }
         $oauth_params['oauth_signature_method']	= 'HMAC-SHA1';
         $oauth_params['oauth_signature']	= $this->sign($http_method, $url, $oauth_params, $this->sign_secret);
         return $oauth_params;
@@ -221,23 +218,25 @@ class oauth_helper {
      */
     public function request_token() {
         $this->sign_secret = $this->consumer_secret.'&';
-        $params = $this->prepare_oauth_parameters($this->request_token_api, array(), 'GET');
+
+        if (empty($this->oauth_callback)) {
+            $params = [];
+        } else {
+            $params = ['oauth_callback' => $this->oauth_callback->out(false)];
+        }
+
+        $params = $this->prepare_oauth_parameters($this->request_token_api, $params, 'GET');
         $content = $this->http->get($this->request_token_api, $params, $this->http_options);
         // Including:
         //     oauth_token
         //     oauth_token_secret
         $result = $this->parse_result($content);
         if (empty($result['oauth_token'])) {
-            throw new moodle_exception('Error while requesting an oauth token');
+            throw new moodle_exception('oauth1requesttoken', 'core_error', '', null, $content);
         }
-        // build oauth authrize url
-        if (!empty($this->oauth_callback)) {
-            // url must be rawurlencode
-            $result['authorize_url'] = $this->authorize_url . '?oauth_token='.$result['oauth_token'].'&oauth_callback='.rawurlencode($this->oauth_callback->out(false));
-        } else {
-            // no callback
-            $result['authorize_url'] = $this->authorize_url . '?oauth_token='.$result['oauth_token'];
-        }
+        // Build oauth authorize url.
+        $result['authorize_url'] = $this->authorize_url . '?oauth_token='.$result['oauth_token'];
+
         return $result;
     }
 
@@ -266,6 +265,11 @@ class oauth_helper {
         unset($params['oauth_callback']);
         $content = $this->http->post($this->access_token_api, $params, $this->http_options);
         $keys = $this->parse_result($content);
+
+        if (empty($keys['oauth_token']) || empty($keys['oauth_token_secret'])) {
+            throw new moodle_exception('oauth1accesstoken', 'core_error', '', null, $content);
+        }
+
         $this->set_access_token($keys['oauth_token'], $keys['oauth_token_secret']);
         return $keys;
     }
@@ -399,6 +403,8 @@ abstract class oauth2_client extends curl {
     private $mocknextresponse = '';
     /** @var array $upgradedcodes list of upgraded codes in this request */
     private static $upgradedcodes = [];
+    /** @var bool basicauth */
+    protected $basicauth = false;
 
     /**
      * Returns the auth url for OAuth 2.0 request
@@ -524,7 +530,7 @@ abstract class oauth2_client extends curl {
     public function build_post_data($params) {
         $result = [];
         foreach ($params as $name => $value) {
-            $result[] = str_replace('&', '%26', $name) . '=' . str_replace('&', '%26', $value);
+            $result[] = urlencode($name) . '=' . urlencode($value);
         }
         return implode('&', $result);
     }
@@ -538,11 +544,17 @@ abstract class oauth2_client extends curl {
     public function upgrade_token($code) {
         $callbackurl = self::callback_url();
         $params = array('code' => $code,
-            'client_id' => $this->clientid,
-            'client_secret' => $this->clientsecret,
             'grant_type' => 'authorization_code',
             'redirect_uri' => $callbackurl->out(false),
         );
+
+        if ($this->basicauth) {
+            $idsecret = urlencode($this->clientid) . ':' . urlencode($this->clientsecret);
+            $this->setHeader('Authorization: Basic ' . base64_encode($idsecret));
+        } else {
+            $params['client_id'] = $this->clientid;
+            $params['client_secret'] = $this->clientsecret;
+        }
 
         // Requests can either use http GET or POST.
         if ($this->use_http_get()) {
@@ -556,6 +568,10 @@ abstract class oauth2_client extends curl {
         }
 
         $r = json_decode($response);
+
+        if (is_null($r)) {
+            throw new moodle_exception("Could not decode JSON token response");
+        }
 
         if (!empty($r->error)) {
             throw new moodle_exception($r->error . ' ' . $r->error_description);
@@ -596,9 +612,10 @@ abstract class oauth2_client extends curl {
      *
      * @param string $url The URL to request
      * @param array $options
+     * @param mixed $acceptheader mimetype (as string) or false to skip sending an accept header.
      * @return bool
      */
-    protected function request($url, $options = array()) {
+    protected function request($url, $options = array(), $acceptheader = 'application/json') {
         $murl = new moodle_url($url);
 
         if ($this->accesstoken) {
@@ -608,6 +625,10 @@ abstract class oauth2_client extends curl {
             } else {
                 $this->setHeader('Authorization: Bearer '.$this->accesstoken->token);
             }
+        }
+
+        if ($acceptheader) {
+            $this->setHeader('Accept: ' . $acceptheader);
         }
 
         $response = parent::request($murl->out(false), $options);

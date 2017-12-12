@@ -44,10 +44,21 @@ class refresh_mod_calendar_events_task extends adhoc_task {
      * Run the task to refresh calendar events.
      */
     public function execute() {
+        global $CFG;
+
+        require_once($CFG->dirroot . '/course/lib.php');
+
         // Specific list of plugins that need to be refreshed. If not set, then all mod plugins will be refreshed.
         $pluginstorefresh = null;
         if (isset($this->get_custom_data()->plugins)) {
             $pluginstorefresh = $this->get_custom_data()->plugins;
+        }
+
+        // Is course id set?
+        if (isset($this->get_custom_data()->courseid)) {
+            $courseid = $this->get_custom_data()->courseid;
+        } else {
+            $courseid = 0;
         }
 
         $pluginmanager = core_plugin_manager::instance();
@@ -58,11 +69,9 @@ class refresh_mod_calendar_events_task extends adhoc_task {
                 // This plugin is not in the list, move on to the next one.
                 continue;
             }
-            // Check if the plugin implements *_refresh_events() and call it when it does.
-            if (component_callback_exists('mod_' . $plugin->name, 'refresh_events')) {
-                mtrace('Refreshing events for ' . $plugin->name);
-                component_callback('mod_' . $plugin->name, 'refresh_events');
-            }
+            // Refresh events.
+            mtrace('Refreshing events for ' . $plugin->name);
+            course_module_bulk_update_calendar_events($plugin->name, $courseid);
         }
     }
 }

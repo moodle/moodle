@@ -1161,6 +1161,7 @@ function badges_download($userid) {
         // Need to make image name user-readable and unique using filename safe characters.
         $name =  $badge->name . ' ' . userdate($issued->dateissued, '%d %b %Y') . ' ' . hash('crc32', $badge->id);
         $name = str_replace(' ', '_', $name);
+        $name = clean_param($name, PARAM_FILE);
         if ($file = $fs->get_file($context->id, 'badges', 'userbadge', $issued->badgeid, '/', $issued->uniquehash . '.png')) {
             $filelist[$name . '.png'] = $file;
         }

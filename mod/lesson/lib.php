@@ -304,10 +304,21 @@ function lesson_get_group_override_priorities($lessonid) {
  * This function is used, in its new format, by restore_refresh_events()
  *
  * @param int $courseid
+ * @param int|stdClass $instance Lesson module instance or ID.
+ * @param int|stdClass $cm Course module object or ID (not used in this module).
  * @return bool
  */
-function lesson_refresh_events($courseid = 0) {
+function lesson_refresh_events($courseid = 0, $instance = null, $cm = null) {
     global $DB;
+
+    // If we have instance information then we can just update the one event instead of updating all events.
+    if (isset($instance)) {
+        if (!is_object($instance)) {
+            $instance = $DB->get_record('lesson', array('id' => $instance), '*', MUST_EXIST);
+        }
+        lesson_update_events($instance);
+        return true;
+    }
 
     if ($courseid == 0) {
         if (!$lessons = $DB->get_records('lesson')) {
@@ -979,6 +990,8 @@ function lesson_process_pre_save(&$lesson) {
 function lesson_process_post_save(&$lesson) {
     // Update the events relating to this lesson.
     lesson_update_events($lesson);
+    $completionexpected = (!empty($lesson->completionexpected)) ? $lesson->completionexpected : null;
+    \core_completion\api::update_completion_date_event($lesson->coursemodule, 'lesson', $lesson, $completionexpected);
 }
 
 
@@ -1601,16 +1614,22 @@ function lesson_check_updates_since(cm_info $cm, $from, $filter = array()) {
             $updates->userpagesviewed->itemids = array_keys($pagesviewed);
         }
 
-        $select = 'lessonid = ? AND completed > ? ' . $insql;
+        $select = 'lessonid = ? AND completed > ?';
+        if (!empty($insql)) {
+            $select .= ' AND userid ' . $insql;
+        }
         $grades = $DB->get_records_select('lesson_grades', $select, $params, '', 'id');
         if (!empty($grades)) {
             $updates->usergrades->updated = true;
             $updates->usergrades->itemids = array_keys($grades);
         }
 
-        $select = 'lessonid = ? AND (starttime > ? OR lessontime > ? OR timemodifiedoffline > ?) ' . $insql;
+        $select = 'lessonid = ? AND (starttime > ? OR lessontime > ? OR timemodifiedoffline > ?)';
         $params = array($cm->instance, $from, $from, $from);
-        $params = array_merge($params, $inparams);
+        if (!empty($insql)) {
+            $select .= ' AND userid ' . $insql;
+            $params = array_merge($params, $inparams);
+        }
         $timers = $DB->get_records_select('lesson_timer', $select, $params, '', 'id');
         if (!empty($timers)) {
             $updates->usertimers->updated = true;

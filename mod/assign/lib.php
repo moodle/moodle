@@ -94,11 +94,30 @@ function assign_reset_userdata($data) {
  * only assignment events belonging to the course specified are checked.
  *
  * @param int $courseid
+ * @param int|stdClass $instance Assign module instance or ID.
+ * @param int|stdClass $cm Course module object or ID (not used in this module).
  * @return bool
  */
-function assign_refresh_events($courseid = 0) {
+function assign_refresh_events($courseid = 0, $instance = null, $cm = null) {
     global $CFG, $DB;
     require_once($CFG->dirroot . '/mod/assign/locallib.php');
+
+    // If we have instance information then we can just update the one event instead of updating all events.
+    if (isset($instance)) {
+        if (!is_object($instance)) {
+            $instance = $DB->get_record('assign', array('id' => $instance), '*', MUST_EXIST);
+        }
+        if (isset($cm)) {
+            if (!is_object($cm)) {
+                assign_prepare_update_events($instance);
+                return true;
+            } else {
+                $course = get_course($instance->course);
+                assign_prepare_update_events($instance, $course, $cm);
+                return true;
+            }
+        }
+    }
 
     if ($courseid) {
         // Make sure that the course id is numeric.
@@ -118,29 +137,41 @@ function assign_refresh_events($courseid = 0) {
         }
     }
     foreach ($assigns as $assign) {
-        // Get course and course module for the assignment.
-        list($course, $cm) = get_course_and_cm_from_instance($assign->id, 'assign', $assign->course);
-
-        // Refresh the assignment's calendar events.
-        $context = context_module::instance($cm->id);
-        $assignment = new assign($context, $cm, $course);
-        $assignment->update_calendar($cm->id);
-
-        // Refresh the calendar events also for the assignment overrides.
-        $overrides = $DB->get_records('assign_overrides', ['assignid' => $assign->id], '',
-                                      'id, groupid, userid, duedate, sortorder');
-        foreach ($overrides as $override) {
-            if (empty($override->userid)) {
-                unset($override->userid);
-            }
-            if (empty($override->groupid)) {
-                unset($override->groupid);
-            }
-            assign_update_events($assignment, $override);
-        }
+        assign_prepare_update_events($assign);
     }
 
     return true;
+}
+
+/**
+ * This actually updates the normal and completion calendar events.
+ *
+ * @param  stdClass $assign Assignment object (from DB).
+ * @param  stdClass $course Course object.
+ * @param  stdClass $cm Course module object.
+ */
+function assign_prepare_update_events($assign, $course = null, $cm = null) {
+    global $DB;
+    if (!isset($course)) {
+        // Get course and course module for the assignment.
+        list($course, $cm) = get_course_and_cm_from_instance($assign->id, 'assign', $assign->course);
+    }
+    // Refresh the assignment's calendar events.
+    $context = context_module::instance($cm->id);
+    $assignment = new assign($context, $cm, $course);
+    $assignment->update_calendar($cm->id);
+    // Refresh the calendar events also for the assignment overrides.
+    $overrides = $DB->get_records('assign_overrides', ['assignid' => $assign->id], '',
+                                  'id, groupid, userid, duedate, sortorder');
+    foreach ($overrides as $override) {
+        if (empty($override->userid)) {
+            unset($override->userid);
+        }
+        if (empty($override->groupid)) {
+            unset($override->groupid);
+        }
+        assign_update_events($assignment, $override);
+    }
 }
 
 /**
@@ -1554,7 +1585,8 @@ function assign_rescale_activity_grades($course, $cm, $oldmin, $oldmax, $newmin,
         'a' => $cm->instance
     );
 
-    $sql = 'UPDATE {assign_grades} set grade = (((grade - :p1) * :p2) + :p3) where assignment = :a';
+    // Only rescale grades that are greater than or equal to 0. Anything else is a special value.
+    $sql = 'UPDATE {assign_grades} set grade = (((grade - :p1) * :p2) + :p3) where assignment = :a and grade >= 0';
     $dbupdate = $DB->execute($sql, $params);
     if (!$dbupdate) {
         return false;
@@ -1791,8 +1823,7 @@ function assign_check_updates_since(cm_info $cm, $from, $filter = array()) {
  * Is the event visible?
  *
  * This is used to determine global visibility of an event in all places throughout Moodle. For example,
- * the ASSIGN_EVENT_TYPE_GRADINGDUE event will not be shown to students on their calendar, and
- * ASSIGN_EVENT_TYPE_DUE events will not be shown to teachers.
+ * the ASSIGN_EVENT_TYPE_GRADINGDUE event will not be shown to students on their calendar.
  *
  * @param calendar_event $event
  * @return bool Returns true if the event is visible to the current user, false otherwise.
@@ -1810,7 +1841,7 @@ function mod_assign_core_calendar_is_event_visible(calendar_event $event) {
     if ($event->eventtype == ASSIGN_EVENT_TYPE_GRADINGDUE) {
         return $assign->can_grade();
     } else {
-        return !$assign->can_grade() && $assign->can_view_submission($USER->id);
+        return true;
     }
 }
 
@@ -1852,6 +1883,14 @@ function mod_assign_core_calendar_provide_event_action(calendar_event $event,
         if ($usersubmission && $usersubmission->status === ASSIGN_SUBMISSION_STATUS_SUBMITTED) {
             // The user has already submitted.
             // We do not want to change the text to edit the submission, we want to remove the event from the Dashboard entirely.
+            return null;
+        }
+
+        $participant = $assign->get_participant($USER->id);
+
+        if (!$participant) {
+            // If the user is not a participant in the assignment then they have
+            // no action to take. This will filter out the events for teachers.
             return null;
         }
 

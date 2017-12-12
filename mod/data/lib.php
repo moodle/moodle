@@ -982,6 +982,9 @@ function data_add_instance($data, $mform = null) {
 
     // Add calendar events if necessary.
     data_set_events($data);
+    if (!empty($data->completionexpected)) {
+        \core_completion\api::update_completion_date_event($data->coursemodule, 'data', $data->id, $data->completionexpected);
+    }
 
     data_grade_item_update($data);
 
@@ -1019,6 +1022,8 @@ function data_update_instance($data) {
 
     // Add calendar events if necessary.
     data_set_events($data);
+    $completionexpected = (!empty($data->completionexpected)) ? $data->completionexpected : null;
+    \core_completion\api::update_completion_date_event($data->coursemodule, 'data', $data->id, $completionexpected);
 
     data_grade_item_update($data);
 
@@ -4071,11 +4076,22 @@ function data_process_submission(stdClass $mod, $fields, stdClass $datarecord) {
  * This function is used, in its new format, by restore_refresh_events()
  *
  * @param int $courseid
+ * @param int|stdClass $instance Data module instance or ID.
+ * @param int|stdClass $cm Course module object or ID (not used in this module).
  * @return bool
  */
-function data_refresh_events($courseid = 0) {
+function data_refresh_events($courseid = 0, $instance = null, $cm = null) {
     global $DB, $CFG;
     require_once($CFG->dirroot.'/mod/data/locallib.php');
+
+    // If we have instance information then we can just update the one event instead of updating all events.
+    if (isset($instance)) {
+        if (!is_object($instance)) {
+            $instance = $DB->get_record('data', array('id' => $instance), '*', MUST_EXIST);
+        }
+        data_set_events($instance);
+        return true;
+    }
 
     if ($courseid) {
         if (! $data = $DB->get_records("data", array("course" => $courseid))) {

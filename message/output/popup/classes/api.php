@@ -73,29 +73,37 @@ class api {
             return array();
         }
 
-        $sql = "SELECT * FROM (
-                    SELECT concat('r', r.id) as uniqueid, r.id, r.useridfrom, r.useridto,
-                        r.subject, r.fullmessage, r.fullmessageformat,
-                        r.fullmessagehtml, r.smallmessage, r.notification, r.contexturl,
-                        r.contexturlname, r.timecreated, r.timeuserfromdeleted, r.timeusertodeleted,
-                        r.component, r.eventtype, r.timeread
-                    FROM {message_read} r
-                    WHERE r.notification = 1
-                    AND r.id IN (SELECT messageid FROM {message_popup} WHERE isread = 1)
-                    AND r.useridto = :useridto1
-                UNION ALL
-                    SELECT concat('u', u.id) as uniqueid, u.id, u.useridfrom, u.useridto,
-                        u.subject, u.fullmessage, u.fullmessageformat,
-                        u.fullmessagehtml, u.smallmessage, u.notification, u.contexturl,
-                        u.contexturlname, u.timecreated, u.timeuserfromdeleted, u.timeusertodeleted,
-                        u.component, u.eventtype, 0 as timeread
-                    FROM {message} u
-                    WHERE u.notification = 1
-                    AND u.id IN (SELECT messageid FROM {message_popup} WHERE isread = 0)
-                    AND u.useridto = :useridto2
-                ) f ORDER BY timecreated $sort, timeread $sort, id $sort";
+        $sql = "SELECT r.id, r.useridfrom, r.useridto,
+                       r.subject, r.fullmessage, r.fullmessageformat,
+                       r.fullmessagehtml, r.smallmessage, r.notification, r.contexturl,
+                       r.contexturlname, r.timecreated, r.timeuserfromdeleted, r.timeusertodeleted,
+                       r.component, r.eventtype, r.timeread
+                  FROM {message_read} r
+                 WHERE r.notification = 1
+                       AND r.id IN (SELECT messageid FROM {message_popup} WHERE isread = 1)
+                       AND r.useridto = :useridto1
+             UNION ALL
+                SELECT u.id, u.useridfrom, u.useridto,
+                       u.subject, u.fullmessage, u.fullmessageformat,
+                       u.fullmessagehtml, u.smallmessage, u.notification, u.contexturl,
+                       u.contexturlname, u.timecreated, u.timeuserfromdeleted, u.timeusertodeleted,
+                       u.component, u.eventtype, 0 as timeread
+                  FROM {message} u
+                 WHERE u.notification = 1
+                       AND u.id IN (SELECT messageid FROM {message_popup} WHERE isread = 0)
+                       AND u.useridto = :useridto2
+              ORDER BY timecreated $sort, timeread $sort, id $sort";
 
-        return array_values($DB->get_records_sql($sql, $params, $offset, $limit));
+        $notifications = [];
+        // Use recordset here to ensure records with the same id aren't ignored because
+        // we can have id clashes between the message and message_read tables.
+        $records = $DB->get_recordset_sql($sql, $params, $offset, $limit);
+        foreach ($records as $record) {
+            $notifications[] = (object) $record;
+        }
+        $records->close();
+
+        return $notifications;
     }
 
     /**

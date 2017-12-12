@@ -1,10 +1,15 @@
 This files describes API changes in the lesson code.
 
+=== 3.3.2 ===
+
+* lesson_refresh_events() Now takes two additional parameters to refine the update to a specific instance. This function
+  now optionally takes the module instance object or ID, and the course module object or ID. Please try to send the full
+  objects instead of the ids to save DB calls.
+
 === 3.3 ===
 
 * lesson::callback_on_view() has an additional optional parameter $redirect default to true.
   It can be set to false to avoid redirection and return the page to redirect.
-
 === 3.1 ===
 * Removed the unused file reformat.php
 * removedoublecr() and importmodifiedaikenstyle() have now been removed.

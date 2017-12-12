@@ -3150,7 +3150,7 @@ EOD;
             array('role' => 'button', 'tabindex' => 0));
         $formattrs = array('class' => 'search-input-form', 'action' => $CFG->wwwroot . '/search/index.php');
         $inputattrs = array('type' => 'text', 'name' => 'q', 'placeholder' => get_string('search', 'search'),
-            'size' => 13, 'tabindex' => -1, 'id' => 'id_q_' . $id);
+            'size' => 13, 'tabindex' => -1, 'id' => 'id_q_' . $id, 'class' => 'form-control');
 
         $contents = html_writer::tag('label', get_string('enteryoursearchquery', 'search'),
             array('for' => 'id_q_' . $id, 'class' => 'accesshide')) . html_writer::tag('input', '', $inputattrs);
@@ -4080,12 +4080,12 @@ EOD;
             }
 
             // Only provide user information if the user is the current user, or a user which the current user can view.
-            $canviewdetails = false;
-            if ($user->id == $USER->id || user_can_view_profile($user)) {
-                $canviewdetails = true;
-            }
+            // When checking user_can_view_profile(), either:
+            // If the page context is course, check the course context (from the page object) or;
+            // If page context is NOT course, then check across all courses.
+            $course = ($this->page->context->contextlevel == CONTEXT_COURSE) ? $this->page->course : null;
 
-            if ($canviewdetails) {
+            if (user_can_view_profile($user, $course)) {
                 // Use the user's full name if the heading isn't set.
                 if (!isset($heading)) {
                     $heading = fullname($user);

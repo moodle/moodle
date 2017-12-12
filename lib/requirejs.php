@@ -97,7 +97,14 @@ if ($rev > 0 and $rev < (time() + 60 * 60)) {
 
         $content = '';
         foreach ($jsfiles as $modulename => $jsfile) {
-            $js = file_get_contents($jsfile) . "\n";
+            $js = file_get_contents($jsfile);
+            if ($js === false) {
+                error_log('Failed to load JavaScript file ' . $jsfile);
+                $js = "/* Failed to load JavaScript file {$jsfile}. */\n";
+                $content = $js . $content;
+                continue;
+            }
+            $js .= "\n";
             // Inject the module name into the define.
             $replace = 'define(\'' . $modulename . '\', ';
             $search = 'define(';
@@ -134,7 +141,7 @@ foreach ($jsfiles as $modulename => $jsfile) {
     if (strpos($js, $search) === false) {
         // We can't call debugging because we only have minimal config loaded.
         header('HTTP/1.0 500 error');
-        die('JS file: ' . $shortfilename . ' does not contain a javascript module in AMD format. "define()" not found.');
+        die('JS file: ' . $shortfilename . ' cannot be loaded, or does not contain a javascript module in AMD format. "define()" not found.');
     }
 
     // Replace only the first occurrence.

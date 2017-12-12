@@ -114,9 +114,14 @@ if (!$formdata = $form->get_data()) {
         $rawfields = $DB->get_records('data_fields', array('dataid' => $data->id), '', 'name, id, type');
         $fields = array();
         $errorfield = '';
+        $safetoskipfields = array(get_string('user'), get_string('username'), get_string('email'),
+            get_string('timeadded', 'data'), get_string('timemodified', 'data'),
+            get_string('approved', 'data'));
         foreach ($fieldnames as $name => $id) {
             if (!isset($rawfields[$name])) {
-                $errorfield .= "'$name' ";
+                if (!in_array($name, $safetoskipfields)) {
+                    $errorfield .= "'$name' ";
+                }
             } else {
                 $field = $rawfields[$name];
                 require_once("$CFG->dirroot/mod/data/field/$field->type/field.class.php");

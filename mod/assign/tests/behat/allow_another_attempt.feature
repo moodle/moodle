@@ -126,42 +126,43 @@ Feature: In an assignment, students start a new attempt based on their previous 
       | operation | Allow another attempt |
     And I click on "Go" "button" confirming the dialogue
     And I should not see "The grades were not saved because someone has modified one or more records more recently than when you loaded the page."
-# Behat tests for the group submission, should be uncommented once the MDL-48216 is fixed.
-#    And I log out
-#    And I log in as "student3"
-#    And I am on "Course 1" course homepage
-#    And I follow "Test assignment name"
-#    #And I should see "This is attempt 1 ( 3 attempts allowed )."
-#    And I press "Add submission"
-#    And I set the following fields to these values:
-#      | Online text | I'm the student's 3 group 2 first attempt |
-#    And I press "Save changes"
-#    And I log out
-#    And I log in as "teacher1"
-#    And I am on "Course 1" course homepage
-#    And I follow "Test assignment name"
-#    And I navigate to "View all submissions" in current page administration
-#    And "Student 1" row "Status" column of "generaltable" table should contain "Reopened"
-#    And "Student 2" row "Status" column of "generaltable" table should contain "Reopened"
-#    And "Student 3" row "Status" column of "generaltable" table should contain "Submitted for grading"
-#    And "Student 4" row "Status" column of "generaltable" table should contain "Submitted for grading"
-#    And I click on "Grade " "link" in the "Student 3" "table_row"
-#    And I set the following fields to these values:
-#      | Allow another attempt | 1 |
-#    And I press "Save changes"
-#    And I log out
-#    And I log in as "student4"
-#    And I am on "Course 1" course homepage
-#    And I follow "Test assignment name"
-#    #And I should see "This is attempt 2 ( 3 attempts allowed )."
-#    And I press "Add submission"
-#    And I set the following fields to these values:
-#      | Online text | I'm the student's 4 group 2 second attempt |
-#    And I press "Save changes"
-#    And I log out
-#    And I log in as "teacher1"
-#    And I am on "Course 1" course homepage
-#    And I follow "Test assignment name"
-#    I navigate to "View all submissions" in current page administration
-#    And I click on "Grade" "link" in the "Student 1" "table_row"
-    #And I should see "This is attempt 2 (3 attempts allowed)"
+    And I log out
+    And I log in as "student3"
+    And I am on "Course 1" course homepage
+    And I follow "Test assignment name"
+    And I should see "This is attempt 1 ( 3 attempts allowed )."
+    And I press "Add submission"
+    And I set the following fields to these values:
+      | Online text | I'm the student's 3 group 2 first attempt |
+    And I press "Save changes"
+    And I log out
+    And I log in as "teacher1"
+    And I am on "Course 1" course homepage
+    And I follow "Test assignment name"
+    And I navigate to "View all submissions" in current page administration
+    And "Student 1" row "Status" column of "generaltable" table should contain "Reopened"
+    And "Student 2" row "Status" column of "generaltable" table should contain "Reopened"
+    And "Student 3" row "Status" column of "generaltable" table should contain "Submitted for grading"
+    And "Student 4" row "Status" column of "generaltable" table should contain "Submitted for grading"
+    And I click on "Grade" "link" in the "Student 3" "table_row"
+    And I set the following fields to these values:
+      | Allow another attempt | 1 |
+    And I press "Save changes"
+    And I press "Ok"
+    And I follow "Assignment: Test assignment name"
+    And I log out
+    And I log in as "student4"
+    And I am on "Course 1" course homepage
+    And I follow "Test assignment name"
+    And I should see "This is attempt 2 ( 3 attempts allowed )."
+    And I press "Add a new attempt"
+    And I set the following fields to these values:
+      | Online text | I'm the student's 4 group 2 second attempt |
+    And I press "Save changes"
+    And I log out
+    And I log in as "teacher1"
+    And I am on "Course 1" course homepage
+    And I follow "Test assignment name"
+    And I select "Group 2" from the "group" singleselect
+    And I click on "Grade" "link" in the ".submissionlinks" "css_element"
+    And I should see "2" in the "#id_attemptsettings" "css_element"

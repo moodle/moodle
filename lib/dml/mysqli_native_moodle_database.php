@@ -176,6 +176,8 @@ class mysqli_native_moodle_database extends moodle_database {
         $result = $this->mysqli->query($sql);
         $this->query_end($result);
         if ($rec = $result->fetch_assoc()) {
+            // MySQL 8 BC: information_schema.* returns the fields in upper case.
+            $rec = array_change_key_case($rec, CASE_LOWER);
             $engine = $rec['engine'];
         }
         $result->close();
@@ -248,6 +250,8 @@ class mysqli_native_moodle_database extends moodle_database {
         $result = $this->mysqli->query($sql);
         $this->query_end($result);
         if ($rec = $result->fetch_assoc()) {
+            // MySQL 8 BC: information_schema.* returns the fields in upper case.
+            $rec = array_change_key_case($rec, CASE_LOWER);
             $collation = $rec['collation_name'];
         }
         $result->close();
@@ -303,16 +307,30 @@ class mysqli_native_moodle_database extends moodle_database {
                       FROM INFORMATION_SCHEMA.TABLES
                      WHERE table_schema = DATABASE() AND table_name = '{$this->prefix}$table'";
         } else {
+            if (($this->get_dbtype() == 'mysqli') &&
+                // Breaking change in MySQL 8.0.0+: antelope file format support has been removed.
+                version_compare($this->get_server_info()['version'], '8.0.0', '>=')) {
+                $dbengine = $this->get_dbengine();
+                $supporteddbengines = array('InnoDB', 'XtraDB');
+                if (in_array($dbengine, $supporteddbengines)) {
+                    $rowformat = 'Barracuda';
+                }
+
+                return $rowformat;
+            }
+
             $sql = "SHOW VARIABLES LIKE 'innodb_file_format'";
         }
         $this->query_start($sql, NULL, SQL_QUERY_AUX);
         $result = $this->mysqli->query($sql);
         $this->query_end($result);
         if ($rec = $result->fetch_assoc()) {
+            // MySQL 8 BC: information_schema.* returns the fields in upper case.
+            $rec = array_change_key_case($rec, CASE_LOWER);
             if (isset($table)) {
                 $rowformat = $rec['row_format'];
             } else {
-                $rowformat = $rec['Value'];
+                $rowformat = $rec['value'];
             }
         }
         $result->close();
@@ -378,6 +396,12 @@ class mysqli_native_moodle_database extends moodle_database {
      * @return bool True if on otherwise false.
      */
     public function is_large_prefix_enabled() {
+        if (($this->get_dbtype() == 'mysqli') &&
+            // Breaking change since 8.0.0: there is only one file format and 'innodb_large_prefix' has been removed.
+            version_compare($this->get_server_info()['version'], '8.0.0', '>=')) {
+            return true;
+        }
+
         if ($largeprefix = $this->get_record_sql("SHOW VARIABLES LIKE 'innodb_large_prefix'")) {
             if ($largeprefix->value == 'ON') {
                 return true;
@@ -691,6 +715,8 @@ class mysqli_native_moodle_database extends moodle_database {
         if ($result->num_rows > 0) {
             // standard table exists
             while ($rawcolumn = $result->fetch_assoc()) {
+                // MySQL 8 BC: information_schema.* returns the fields in upper case.
+                $rawcolumn = array_change_key_case($rawcolumn, CASE_LOWER);
                 $info = (object)$this->get_column_info((object)$rawcolumn);
                 $structure[$info->name] = new database_column_info($info);
             }
@@ -715,7 +741,7 @@ class mysqli_native_moodle_database extends moodle_database {
                 $rawcolumn->numeric_scale            = null;
                 $rawcolumn->is_nullable              = $rawcolumn->null; unset($rawcolumn->null);
                 $rawcolumn->column_default           = $rawcolumn->default; unset($rawcolumn->default);
-                $rawcolumn->column_key               = $rawcolumn->key; unset($rawcolumn->default);
+                $rawcolumn->column_key               = $rawcolumn->key; unset($rawcolumn->key);
 
                 if (preg_match('/(enum|varchar)\((\d+)\)/i', $rawcolumn->column_type, $matches)) {
                     $rawcolumn->data_type = $matches[1];
@@ -784,6 +810,14 @@ class mysqli_native_moodle_database extends moodle_database {
     }
 
     /**
+     * Indicates whether column information retrieved from `information_schema.columns` has default values quoted or not.
+     * @return boolean True when default values are quoted (breaking change); otherwise, false.
+     */
+    protected function has_breaking_change_quoted_defaults() {
+        return false;
+    }
+
+    /**
      * Returns moodle column info for raw column from information schema.
      * @param stdClass $rawcolumn
      * @return stdClass standardised colum info
@@ -794,8 +828,15 @@ class mysqli_native_moodle_database extends moodle_database {
         $info->name           = $rawcolumn->column_name;
         $info->type           = $rawcolumn->data_type;
         $info->meta_type      = $this->mysqltype2moodletype($rawcolumn->data_type);
-        $info->default_value  = $rawcolumn->column_default;
-        $info->has_default    = !is_null($rawcolumn->column_default);
+        if ($this->has_breaking_change_quoted_defaults()) {
+            $info->default_value = trim($rawcolumn->column_default, "'");
+            if ($info->default_value === 'NULL') {
+                $info->default_value = null;
+            }
+        } else {
+            $info->default_value = $rawcolumn->column_default;
+        }
+        $info->has_default    = !is_null($info->default_value);
         $info->not_null       = ($rawcolumn->is_nullable === 'NO');
         $info->primary_key    = ($rawcolumn->column_key === 'PRI');
         $info->binary         = false;
@@ -1916,5 +1957,19 @@ class mysqli_native_moodle_database extends moodle_database {
         $this->query_end($result);
 
         return true;
+    }
+
+    /**
+     * Converts a table to either 'Compressed' or 'Dynamic' row format.
+     *
+     * @param string $tablename Name of the table to convert to the new row format.
+     */
+    public function convert_table_row_format($tablename) {
+        $currentrowformat = $this->get_row_format($tablename);
+        if ($currentrowformat == 'Compact' || $currentrowformat == 'Redundant') {
+            $rowformat = ($this->is_compressed_row_format_supported(false)) ? "ROW_FORMAT=Compressed" : "ROW_FORMAT=Dynamic";
+            $prefix = $this->get_prefix();
+            $this->change_database_structure("ALTER TABLE {$prefix}$tablename $rowformat");
+        }
     }
 }

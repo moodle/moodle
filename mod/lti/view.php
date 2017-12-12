@@ -86,11 +86,11 @@ $PAGE->set_url($url);
 $launchcontainer = lti_get_launch_container($lti, $toolconfig);
 
 if ($launchcontainer == LTI_LAUNCH_CONTAINER_EMBED_NO_BLOCKS) {
-    $PAGE->set_pagelayout('frametop'); // Most frametops don't include footer, and pre-post blocks.
+    $PAGE->set_pagelayout('incourse');
     $PAGE->blocks->show_only_fake_blocks(); // Disable blocks for layouts which do include pre-post blocks.
 } else if ($launchcontainer == LTI_LAUNCH_CONTAINER_REPLACE_MOODLE_WINDOW) {
     redirect('launch.php?id=' . $cm->id);
-} else {
+} else { // Handles LTI_LAUNCH_CONTAINER_DEFAULT, LTI_LAUNCH_CONTAINER_EMBED, LTI_LAUNCH_CONTAINER_WINDOW.
     $PAGE->set_pagelayout('incourse');
 }
 
@@ -122,7 +122,7 @@ if ( $launchcontainer == LTI_LAUNCH_CONTAINER_WINDOW ) {
     echo html_writer::end_tag('p');
 } else {
     // Request the launch content with an iframe tag.
-    echo '<iframe id="contentframe" height="600px" width="100%" src="launch.php?id='.$cm->id.'"></iframe>';
+    echo '<iframe id="contentframe" height="600px" width="100%" src="launch.php?id='.$cm->id.'" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>';
 
     // Output script to make the iframe tag be as large as possible.
     $resize = '

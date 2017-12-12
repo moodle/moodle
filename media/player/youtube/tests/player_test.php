@@ -70,6 +70,9 @@ class media_youtube_testcase extends advanced_testcase {
         $url = new moodle_url('http://www.youtube.com/v/vyrwMmsufJc');
         $t = $manager->embed_url($url);
         $this->assertContains('</iframe>', $t);
+        $url = new moodle_url('http://m.youtube.com/watch?v=vyrwMmsufJc');
+        $t = $manager->embed_url($url);
+        $this->assertContains('</iframe>', $t);
 
         // Format: youtube video within playlist.
         $url = new moodle_url('https://www.youtube.com/watch?v=dv2f_xfmbD8&index=4&list=PLxcO_MFWQBDcyn9xpbmx601YSDlDcTcr0');

@@ -514,6 +514,11 @@ class mod_quiz_mod_form extends moodleform_mod {
                 $toform[$name] = $value;
             }
         }
+
+        // Completion settings check.
+        if (empty($toform['completionusegrade'])) {
+            $toform['completionpass'] = 0; // Forced unchecked.
+        }
     }
 
     public function validation($data, $files) {
@@ -618,7 +623,7 @@ class mod_quiz_mod_form extends moodleform_mod {
         $group = array();
         $group[] = $mform->createElement('advcheckbox', 'completionpass', null, get_string('completionpass', 'quiz'),
                 array('group' => 'cpass'));
-
+        $mform->disabledIf('completionpass', 'completionusegrade', 'notchecked');
         $group[] = $mform->createElement('advcheckbox', 'completionattemptsexhausted', null,
                 get_string('completionattemptsexhausted', 'quiz'),
                 array('group' => 'cattempts'));

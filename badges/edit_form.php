@@ -48,8 +48,8 @@ class edit_details_form extends moodleform {
 
         $mform->addElement('header', 'badgedetails', get_string('badgedetails', 'badges'));
         $mform->addElement('text', 'name', get_string('name'), array('size' => '70'));
-        // Using PARAM_FILE to avoid problems later when downloading badge files.
-        $mform->setType('name', PARAM_FILE);
+        // When downloading badge, it will be necessary to clean the name as PARAM_FILE.
+        $mform->setType('name', PARAM_TEXT);
         $mform->addRule('name', null, 'required');
         $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
 

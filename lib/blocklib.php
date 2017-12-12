@@ -707,7 +707,7 @@ class block_manager {
         if ($includeinvisible) {
             $visiblecheck = '';
         } else {
-            $visiblecheck = 'AND (bp.visible = 1 OR bp.visible IS NULL)';
+            $visiblecheck = 'AND (bp.visible = 1 OR bp.visible IS NULL) AND (bs.visible = 1 OR bs.visible IS NULL)';
         }
 
         $context = $this->page->context;
@@ -732,18 +732,22 @@ class block_manager {
             'contextlevel' => CONTEXT_BLOCK,
             'subpage1' => $this->page->subpage,
             'subpage2' => $this->page->subpage,
+            'subpage3' => $this->page->subpage,
             'contextid1' => $context->id,
             'contextid2' => $context->id,
             'contextid3' => $systemcontext->id,
+            'contextid4' => $systemcontext->id,
             'pagetype' => $this->page->pagetype,
+            'pagetype2' => $this->page->pagetype,
         );
         if ($this->page->subpage === '') {
             $params['subpage1'] = '';
             $params['subpage2'] = '';
+            $params['subpage3'] = '';
         }
         $sql = "SELECT
                     bi.id,
-                    bp.id AS blockpositionid,
+                    COALESCE(bp.id, bs.id) AS blockpositionid,
                     bi.blockname,
                     bi.parentcontextid,
                     bi.showinsubcontexts,
@@ -752,9 +756,9 @@ class block_manager {
                     bi.subpagepattern,
                     bi.defaultregion,
                     bi.defaultweight,
-                    COALESCE(bp.visible, 1) AS visible,
-                    COALESCE(bp.region, bi.defaultregion) AS region,
-                    COALESCE(bp.weight, bi.defaultweight) AS weight,
+                    COALESCE(bp.visible, bs.visible, 1) AS visible,
+                    COALESCE(bp.region, bs.region, bi.defaultregion) AS region,
+                    COALESCE(bp.weight, bs.weight, bi.defaultweight) AS weight,
                     bi.configdata
                     $ccselect
 
@@ -764,6 +768,10 @@ class block_manager {
                                                   AND bp.contextid = :contextid1
                                                   AND bp.pagetype = :pagetype
                                                   AND bp.subpage = :subpage1
+                LEFT JOIN {block_positions} bs ON bs.blockinstanceid = bi.id
+                                                  AND bs.contextid = :contextid4
+                                                  AND bs.pagetype = :pagetype2
+                                                  AND bs.subpage = :subpage3
                 $ccjoin
 
                 WHERE
@@ -775,8 +783,8 @@ class block_manager {
                 $requiredbythemecheck
 
                 ORDER BY
-                    COALESCE(bp.region, bi.defaultregion),
-                    COALESCE(bp.weight, bi.defaultweight),
+                    COALESCE(bp.region, bs.region, bi.defaultregion),
+                    COALESCE(bp.weight, bs.weight, bi.defaultweight),
                     bi.id";
 
         $allparams = $params + $parentcontextparams + $pagetypepatternparams + $requiredbythemeparams + $requiredbythemenotparams;

@@ -18,8 +18,7 @@
  * This file contains tests that walks a question through the manual graded
  * behaviour.
  *
- * @package    qbehaviour
- * @subpackage manualgraded
+ * @package    qbehaviour_manualgraded
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -582,5 +581,80 @@ class qbehaviour_manualgraded_walkthrough_testcase extends qbehaviour_walkthroug
         // Try to process a an invalid grade.
         $this->expectException('coding_exception');
         $this->manual_grade('Comment', '10.1', FORMAT_HTML);
+    }
+
+    public function test_manual_graded_displays_proper_comment_format () {
+
+        global $PAGE;
+
+        // The current text editor depends on the users profile setting - so it needs a valid user.
+        $this->setAdminUser();
+        // Required to init a text editor.
+        $PAGE->set_url('/');
+
+        // Create an essay question.
+        $essay = test_question_maker::make_an_essay_question();
+        $this->start_attempt_at_question($essay, 'deferredfeedback', 10);
+
+        // Check the right model is being used.
+        $this->assertEquals('manualgraded', $this->quba->get_question_attempt(
+                $this->slot)->get_behaviour_name());
+
+        // Simulate some data submitted by the student.
+        $this->process_submission(
+                array(
+                    'answer' => "A submission!",
+                    'answerformat' => FORMAT_PLAIN
+                )
+        );
+
+        // Finish the attempt.
+        $this->quba->finish_all_questions();
+
+        // Write a manual comment in markdown.
+        $this->manual_grade("*one\n*two\n*three\n", 10, FORMAT_MARKDOWN);
+
+        // Check that feedback contains the original markdown format.
+        $preg = '/<textarea [^>]+name="[^"]+-comment"[^>]+>\*one\n\*two\n\*three\n/';
+        $this->displayoptions->manualcomment = question_display_options::EDITABLE;
+        $this->check_current_output(
+            new question_pattern_expectation($preg)
+        );
+    }
+
+    public function test_manual_grading_reshows_exactly_the_mark_input() {
+        global $PAGE;
+
+        // The current text editor depends on the users profile setting - so it needs a valid user.
+        $this->setAdminUser();
+        // Required to init a text editor.
+        $PAGE->set_url('/');
+
+        // Create an essay question graded out of 15 and attempt it.
+        $essay = test_question_maker::make_an_essay_question();
+        $this->start_attempt_at_question($essay, 'deferredfeedback', 15);
+        $this->process_submission(array('answer' => 'This is my wonderful essay!', 'answerformat' => FORMAT_HTML));
+        $this->quba->finish_all_questions();
+
+        // Verify.
+        $this->check_current_state(question_state::$needsgrading);
+        $this->check_current_mark(null);
+        $this->assertEquals('This is my wonderful essay!',
+                $this->quba->get_response_summary($this->slot));
+
+        // Try to process a grade where the score will be stored rounded.
+        $this->manual_grade('Comment', '5.0', FORMAT_HTML);
+
+        // Verify.
+        $this->check_current_state(question_state::$mangrpartial);
+        $this->check_current_mark(5);
+        $this->displayoptions->manualcomment = question_display_options::EDITABLE;
+        $this->render();
+        $this->check_output_contains_text_input('-mark', '5.0');
+
+        // Rescale what the question is worth, and verify the display.
+        $this->get_question_attempt()->set_max_mark(1);
+        $this->render();
+        $this->check_output_contains_text_input('-mark', '0.3333333');
     }
 }

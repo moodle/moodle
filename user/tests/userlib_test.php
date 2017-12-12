@@ -531,6 +531,11 @@ class core_userliblib_testcase extends advanced_testcase {
         $this->getDataGenerator()->enrol_user($user4->id, $course3->id);
         $this->getDataGenerator()->enrol_user($user5->id, $course3->id);
 
+        // User 3 should not be able to see user 1, either by passing their own course (course 2) or user 1's course (course 1).
+        $this->setUser($user3);
+        $this->assertFalse(user_can_view_profile($user1, $course2));
+        $this->assertFalse(user_can_view_profile($user1, $course1));
+
         // Remove capability moodle/user:viewdetails in course 2.
         assign_capability('moodle/user:viewdetails', CAP_PROHIBIT, $studentrole->id, $coursecontext);
         $coursecontext->mark_dirty();
@@ -576,6 +581,15 @@ class core_userliblib_testcase extends advanced_testcase {
         $this->setUser($user5);
         $this->assertTrue(user_can_view_profile($user4));
 
+        // Test the user:viewalldetails cap check using the course creator role which, by default, can't see student profiles.
+        $this->setUser($user7);
+        $this->assertFalse(user_can_view_profile($user4));
+        assign_capability('moodle/user:viewalldetails', CAP_ALLOW, $coursecreatorrole->id, context_system::instance()->id, true);
+        reload_all_capabilities();
+        $this->assertTrue(user_can_view_profile($user4));
+        unassign_capability('moodle/user:viewalldetails', $coursecreatorrole->id, $coursecontext->id);
+        reload_all_capabilities();
+
         $CFG->coursecontact = null;
 
         // Visitor (Not a guest user, userid=0).
@@ -615,6 +629,40 @@ class core_userliblib_testcase extends advanced_testcase {
         foreach ($users as $user) {
             $this->assertTrue(user_can_view_profile($user));
         }
+
+        // Testing non-shared courses where capabilities are met, using system role overrides.
+        $CFG->forceloginforprofiles = $tempcfg;
+        $course4 = $this->getDataGenerator()->create_course();
+        $this->getDataGenerator()->enrol_user($user1->id, $course4->id);
+
+        // Assign a manager role at the system context.
+        $managerrole = $DB->get_record('role', array('shortname' => 'manager'));
+        $user9 = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->role_assign($managerrole->id, $user9->id);
+
+        // Make sure viewalldetails and viewdetails are overridden to 'prevent' (i.e. can be overridden at a lower context).
+        $systemcontext = context_system::instance();
+        assign_capability('moodle/user:viewdetails', CAP_PREVENT, $managerrole->id, $systemcontext, true);
+        assign_capability('moodle/user:viewalldetails', CAP_PREVENT, $managerrole->id, $systemcontext, true);
+        $systemcontext->mark_dirty();
+
+        // And override these to 'Allow' in a specific course.
+        $course4context = context_course::instance($course4->id);
+        assign_capability('moodle/user:viewalldetails', CAP_ALLOW, $managerrole->id, $course4context, true);
+        assign_capability('moodle/user:viewdetails', CAP_ALLOW, $managerrole->id, $course4context, true);
+        $course4context->mark_dirty();
+
+        // The manager now shouldn't have viewdetails in the system or user context.
+        $this->setUser($user9);
+        $user1context = context_user::instance($user1->id);
+        $this->assertFalse(has_capability('moodle/user:viewdetails', $systemcontext));
+        $this->assertFalse(has_capability('moodle/user:viewdetails', $user1context));
+
+        // Confirm that user_can_view_profile() returns true for $user1 when called without $course param. It should find $course1.
+        $this->assertTrue(user_can_view_profile($user1));
+
+        // Confirm this also works when restricting scope to just that course.
+        $this->assertTrue(user_can_view_profile($user1, $course4));
     }
 
     /**
@@ -672,14 +720,16 @@ class core_userliblib_testcase extends advanced_testcase {
      * calling user_get_user_details() function.
      */
     public function test_user_get_user_details_missing_fields() {
+        global $CFG;
+
         $this->resetAfterTest(true);
         $this->setAdminUser(); // We need capabilities to view the data.
         $user = self::getDataGenerator()->create_user([
                                                           'auth'       => 'auth_something',
                                                           'confirmed'  => '0',
                                                           'idnumber'   => 'someidnumber',
-                                                          'lang'       => 'en_ar',
-                                                          'theme'      => 'mytheme',
+                                                          'lang'       => 'en',
+                                                          'theme'      => $CFG->theme,
                                                           'timezone'   => '50',
                                                           'mailformat' => '0',
                                                       ]);
@@ -689,8 +739,8 @@ class core_userliblib_testcase extends advanced_testcase {
         self::assertSame('auth_something', $got['auth']);
         self::assertSame('0', $got['confirmed']);
         self::assertSame('someidnumber', $got['idnumber']);
-        self::assertSame('en_ar', $got['lang']);
-        self::assertSame('mytheme', $got['theme']);
+        self::assertSame('en', $got['lang']);
+        self::assertSame($CFG->theme, $got['theme']);
         self::assertSame('50', $got['timezone']);
         self::assertSame('0', $got['mailformat']);
     }

@@ -166,6 +166,7 @@ $defaults['groupmode'] = $courseconfig->groupmode;
 $defaults['groupmodeforce'] = $courseconfig->groupmodeforce;
 $defaults['visible'] = $courseconfig->visible;
 $defaults['lang'] =  $courseconfig->lang;
+$defaults['enablecompletion'] = $courseconfig->enablecompletion;
 
 // Course template.
 if (isset($options['templatecourse'])) {

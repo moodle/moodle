@@ -51,3 +51,10 @@ in the compiled CSS (MDL-53152):
 * @gridRowWidth
 * @gridRowWidth1200
 * @gridRowWidth768
+
+popovers.less
+-------------
+MDL-60250 - The '/*rtl:ignore*/' directive has been added to the 'left' attribute of the 'popover' class so that
+the rtlcss-php tool (https://github.com/moodlehq/rtlcss-php) does not flip this to a 'right' attribute and cause
+the popover to be misplaced on the page when the JavaScript calculates the postion of the popover and adds an
+overriding inline CSS 'left' attribute which is fine in LTR languages but confuses it in RTL languages.

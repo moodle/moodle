@@ -5586,12 +5586,6 @@ img.iconsmall {
   border-spacing: 2px;
   width: 100%;
 }
-.path-calendar .cal_courses_flt {
-  float: left;
-}
-.path-calendar .cal_courses_flt label {
-  margin-right: .45em;
-}
 .path-calendar .maincalendar {
   vertical-align: top;
   padding: 0;
@@ -5692,14 +5686,14 @@ img.iconsmall {
   margin-right: 0.5rem;
 }
 .path-calendar .maincalendar .eventlist .event .name,
-.path-calendar .maincalendar .eventlist .event .course {
+.path-calendar .maincalendar .eventlist .event .action {
   margin-bottom: 5px;
 }
 .path-calendar .maincalendar .eventlist .event .date {
   float: right;
 }
-.path-calendar .maincalendar .eventlist .event .course,
-.path-calendar .maincalendar .eventlist .event .subscription {
+.path-calendar .maincalendar .eventlist .event .subscription,
+.path-calendar .maincalendar .eventlist .event .action {
   float: left;
   clear: left;
 }
@@ -5960,6 +5954,7 @@ img.iconsmall {
 .editing_hide + .editing_assign {
   margin-left: 20px;
 }
+.section_action_menu,
 .section .activity .commands {
   white-space: nowrap;
   display: inline;
@@ -9138,6 +9133,9 @@ a.ygtvspacer:hover {
 #categoryquestions label {
   margin: 0;
 }
+#categoryquestions .header {
+  text-align: left;
+}
 #page-mod-quiz-edit div.questionbankwindow div.header {
   margin: 0;
 }
@@ -9233,6 +9231,12 @@ body.path-question-type .fitem_fgroup .accesshide {
 .formulation select {
   width: auto;
   vertical-align: baseline;
+}
+.que.multianswer .formulation .yui3-widget-positioned .feedbackspan {
+  box-sizing: content-box;
+  padding-bottom: 0;
+  max-width: inherit;
+  width: inherit;
 }
 .path-mod-quiz input[size] {
   width: auto;
@@ -9735,9 +9739,12 @@ body.path-question-type .mform fieldset.hidden {
 .userlist table#participants {
   text-align: center;
 }
-.userlist table#participants td,
-.userlist table#participants th {
+.userlist table#participants td {
+  text-align: left;
+  padding: 4px;
   vertical-align: middle;
+}
+.userlist table#participants th {
   text-align: left;
   padding: 4px;
 }
@@ -14905,6 +14912,7 @@ input[type="submit"].btn.btn-mini {
 .popover {
   position: absolute;
   top: 0;
+  /*rtl:ignore*/
   left: 0;
   z-index: 1010;
   display: none;
@@ -16539,6 +16547,12 @@ form {
 .singleselect label {
   margin-right: .3em;
 }
+.custom-select {
+  max-width: 100%;
+}
+.custom-select + input[type="submit"] {
+  margin: 0 0 0 5px;
+}
 #portfolio-add-button {
   display: inline;
 }
@@ -16992,6 +17006,9 @@ body.modal-open {
   border-radius: 10px;
   border: none;
 }
+.modal-container .modal.modal-lg {
+  max-width: 900px;
+}
 .modal-container .modal .modal-header {
   min-height: 13px;
   padding: 5px;
@@ -17043,6 +17060,19 @@ body.modal-open {
 .modal-container .modal .modal-body {
   max-height: none;
 }
+.modal-container .modal .modal-body > .loading-icon {
+  display: block;
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+.modal-container .modal .modal-body > .loading-icon .icon {
+  position: absolute;
+  top: 50%;
+  /*rtl:ignore*/
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
 .modal-container .modal .modal-footer {
   border-top: 1px solid #bbb;
   text-align: center;
@@ -17050,9 +17080,6 @@ body.modal-open {
   background-color: #f2f2f2;
   box-shadow: none;
   border-radius: 0 0 10px 10px;
-}
-.modal-container.large .modal {
-  max-width: 900px;
 }
 .modal-backdrop {
   z-index: 4049;
@@ -17184,11 +17211,14 @@ body.path-mod-feedback #region-main .mform.feedback_form .feedback-item-pagebrea
 .path-mod-forum .forumheaderlist .discussion .topic,
 .path-mod-forum .forumheaderlist .discussion .discussionsubscription,
 .path-mod-forum .forumheaderlist .discussion .topic.starter,
-.path-mod-forum .forumheaderlist .discussion .picture,
 .path-mod-forum .forumheaderlist .discussion .author,
 .path-mod-forum .forumheaderlist .discussion .replies,
 .path-mod-forum .forumheaderlist .discussion .lastpost {
   vertical-align: top;
+}
+.path-mod-forum .forumheaderlist .discussion .picture {
+  margin: 0 20px;
+  float: left;
 }
 .path-mod-forum .forumheaderlist .discussion .unread img {
   margin: 0;
@@ -17312,6 +17342,9 @@ div#dock {
 .path-mod-choice .media-left {
   float: left;
   padding-right: 1em;
+}
+.path-mod-choice .horizontal .choices .option {
+  display: inline-block;
 }
 .path-mod-lesson .firstpageoptions {
   margin: auto;
@@ -17816,6 +17849,9 @@ div#dock {
 }
 .path-mod-scorm.jsenabled .scorm-center {
   display: block;
+}
+.path-mod-scorm #region-main #intro {
+  width: auto;
 }
 .yui-skin-sam .yui-layout.path-mod-chat-gui_ajax {
   background-color: #fff;

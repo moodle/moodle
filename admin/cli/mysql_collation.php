@@ -203,7 +203,7 @@ if (!empty($options['collation'])) {
                 $DB->change_database_structure($sql);
             } else {
                 echo "ERROR (unknown column type: $column->type)\n";
-                $error++;
+                $errors++;
                 continue;
             }
             echo "CONVERTED\n";

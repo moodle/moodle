@@ -191,7 +191,7 @@ class graded_users_iterator {
                             LEFT JOIN (SELECT * FROM {user_info_data}
                                 WHERE fieldid = :cf$customfieldscount) cf$customfieldscount
                             ON u.id = cf$customfieldscount.userid";
-                    $userfields .= ", cf$customfieldscount.data AS customfield_{$field->shortname}";
+                    $userfields .= ", cf$customfieldscount.data AS customfield_{$field->customid}";
                     $params['cf'.$customfieldscount] = $field->customid;
                     $customfieldscount++;
                 }
@@ -3191,7 +3191,7 @@ abstract class grade_helper {
      */
     public static function get_user_field_value($user, $field) {
         if (!empty($field->customid)) {
-            $fieldname = 'customfield_' . $field->shortname;
+            $fieldname = 'customfield_' . $field->customid;
             if (!empty($user->{$fieldname}) || is_numeric($user->{$fieldname})) {
                 $fieldvalue = $user->{$fieldname};
             } else {

@@ -109,4 +109,42 @@ class core_adhoc_task_testcase extends advanced_testcase {
         $task->execute();
         \core\task\manager::adhoc_task_complete($task);
     }
+
+    /**
+     * Test queue_adhoc_task "if not scheduled".
+     */
+    public function test_queue_adhoc_task_if_not_scheduled() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        // Schedule adhoc task.
+        $task1 = new \core\task\adhoc_test_task();
+        $task1->set_custom_data(array('courseid' => 10));
+        $this->assertNotEmpty(\core\task\manager::queue_adhoc_task($task1, true));
+        $this->assertEquals(1, $DB->count_records('task_adhoc', array('classname' => '\core\task\adhoc_test_task')));
+
+        // Schedule same adhoc task with different custom data.
+        $task2 = new \core\task\adhoc_test_task();
+        $task2->set_custom_data(array('courseid' => 1));
+        $this->assertNotEmpty(\core\task\manager::queue_adhoc_task($task2, true));
+        $this->assertEquals(2, $DB->count_records('task_adhoc', array('classname' => '\core\task\adhoc_test_task')));
+
+        // Schedule same adhoc task with same custom data.
+        $task3 = new \core\task\adhoc_test_task();
+        $task3->set_custom_data(array('courseid' => 1));
+        $this->assertEmpty(\core\task\manager::queue_adhoc_task($task3, true));
+        $this->assertEquals(2, $DB->count_records('task_adhoc', array('classname' => '\core\task\adhoc_test_task')));
+
+        // Schedule same adhoc task without custom data.
+        $task4 = new \core\task\adhoc_test_task();
+        $this->assertNotEmpty(\core\task\manager::queue_adhoc_task($task4, true));
+        $this->assertEquals(3, $DB->count_records('task_adhoc', array('classname' => '\core\task\adhoc_test_task')));
+
+        // Schedule same adhoc task without custom data (again).
+        $task5 = new \core\task\adhoc_test_task();
+        $this->assertEmpty(\core\task\manager::queue_adhoc_task($task5, true));
+        $this->assertEquals(3, $DB->count_records('task_adhoc', array('classname' => '\core\task\adhoc_test_task')));
+
+    }
 }

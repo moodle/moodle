@@ -353,7 +353,13 @@ class core_calendar_container_testcase extends advanced_testcase {
         $group = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
 
         foreach (core_component::get_plugin_list('mod') as $modname => $unused) {
-            $module = $this->getDataGenerator()->create_module($modname, ['course' => $course->id]);
+            try {
+                $generator = $this->getDataGenerator()->get_plugin_generator('mod_'.$modname);
+            } catch (coding_exception $e) {
+                // Module generator is not implemented.
+                continue;
+            }
+            $module = $generator->create_instance(['course' => $course->id]);
 
             // Create bunch of events of different type (user override, group override, module event).
             $this->create_event(['userid' => $user->id, 'modulename' => $modname, 'instance' => $module->id]);

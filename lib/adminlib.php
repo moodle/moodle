@@ -3702,16 +3702,11 @@ class admin_setting_configmixedhostiplist extends admin_setting_configtextarea {
         $entries = explode("\n", $data);
         foreach ($entries as $key => $entry) {
             $entry = trim($entry);
-            // This regex matches any string which:
-            // a) contains at least one non-ascii unicode character AND
-            // b) starts with a-zA-Z0-9 or any non-ascii unicode character AND
-            // c) ends with a-zA-Z0-9 or any non-ascii unicode character
-            // d) contains a-zA-Z0-9, hyphen, dot or any non-ascii unicode characters in the middle.
-            if (preg_match('/^(?=[^\x00-\x7f])([^\x00-\x7f]|[a-zA-Z0-9])([^\x00-\x7f]|[a-zA-Z0-9-.])*([^\x00-\x7f]|[a-zA-Z0-9])$/',
-                $entry)) {
+            // This regex matches any string that has non-ascii character.
+            if (preg_match('/[^\x00-\x7f]/', $entry)) {
                 // If we can convert the unicode string to an idn, do so.
                 // Otherwise, leave the original unicode string alone and let the validation function handle it (it will fail).
-                $val = idn_to_ascii($entry);
+                $val = idn_to_ascii($entry, IDNA_NONTRANSITIONAL_TO_ASCII, INTL_IDNA_VARIANT_UTS46);
                 $entries[$key] = $val ? $val : $entry;
             }
         }
@@ -3729,7 +3724,7 @@ class admin_setting_configmixedhostiplist extends admin_setting_configtextarea {
         foreach ($entries as $key => $entry) {
             $entry = trim($entry);
             if (strpos($entry, 'xn--') !== false) {
-                $entries[$key] = idn_to_utf8($entry);
+                $entries[$key] = idn_to_utf8($entry, IDNA_NONTRANSITIONAL_TO_ASCII, INTL_IDNA_VARIANT_UTS46);
             }
         }
         return implode("\n", $entries);
@@ -8746,16 +8741,11 @@ class admin_setting_enablemobileservice extends admin_setting_configcheckbox {
      * @return string XHTML
      */
     public function output_html($data, $query='') {
-        global $CFG, $OUTPUT;
+        global $OUTPUT;
         $html = parent::output_html($data, $query);
 
         if ((string)$data === $this->yes) {
-            require_once($CFG->dirroot . "/lib/filelib.php");
-            $curl = new curl();
-            $httpswwwroot = str_replace('http:', 'https:', $CFG->wwwroot); //force https url
-            $curl->head($httpswwwroot . "/login/index.php");
-            $info = $curl->get_info();
-            if (empty($info['http_code']) or ($info['http_code'] >= 400)) {
+            if (!is_https()) {
                $html .= $OUTPUT->notification(get_string('nohttpsformobilewarning', 'admin'));
             }
         }

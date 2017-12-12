@@ -24,9 +24,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-global $CFG;
-require_once($CFG->libdir . '/behat/classes/behat_selectors.php');
-
 /**
  * Renderer for behat tool web features
  *
@@ -44,6 +41,8 @@ class tool_behat_renderer extends plugin_renderer_base {
      * @return string HTML code
      */
     public function render_stepsdefinitions($stepsdefinitions, $form) {
+        global $CFG;
+        require_once($CFG->libdir . '/behat/classes/behat_selectors.php');
 
         $html = $this->generic_info();
 
