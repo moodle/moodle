@@ -1837,5 +1837,27 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2017111300.02);
     }
 
+    if ($oldversion < 2017121200.00) {
+
+        // Define key subscriptionid (foreign) to be added to event.
+        $table = new xmldb_table('event');
+        $key = new xmldb_key('subscriptionid', XMLDB_KEY_FOREIGN, array('subscriptionid'), 'event_subscriptions', array('id'));
+
+        // Launch add key subscriptionid.
+        $dbman->add_key($table, $key);
+
+        // Define index uuid (not unique) to be added to event.
+        $table = new xmldb_table('event');
+        $index = new xmldb_index('uuid', XMLDB_INDEX_NOTUNIQUE, array('uuid'));
+
+        // Conditionally launch add index uuid.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2017121200.00);
+    }
+
     return true;
 }
