@@ -1049,7 +1049,7 @@ function display_auth_lock_options($settings, $auth, $userfields, $helptext, $ma
             // We are mapping to a remote field here.
             // Mapping.
             $settings->add(new admin_setting_configtext("auth_{$auth}/field_map_{$field}",
-                    get_string('auth_fieldmapping', 'auth', $fieldname), '', '', PARAM_ALPHANUMEXT, 30));
+                    get_string('auth_fieldmapping', 'auth', $fieldname), '', '', PARAM_RAW, 30));
 
             // Update local.
             $settings->add(new admin_setting_configselect("auth_{$auth}/field_updatelocal_{$field}",
