@@ -30,6 +30,8 @@
  *  - bit ops: To provide cross-db bitwise operations to be used by the
  *             sql_bitXXX() helper functions
  *  - one space hacks: One space empty string substitute hacks.
+ *
+ * Moodle will not parse this file correctly if it uses Windows line endings.
  */
 
 CREATE OR REPLACE PACKAGE MOODLELIB AS
