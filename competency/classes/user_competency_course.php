@@ -282,7 +282,6 @@ class user_competency_course extends persistent {
               ORDER BY p.timesproficient ASC, c.id DESC';
 
         $results = $DB->get_records_sql($sql, $params, $skip, $limit);
-        $a = $DB->get_records_sql('SELECT * from {' . self::TABLE . '}');
 
         $comps = array();
         foreach ($results as $r) {
