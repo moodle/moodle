@@ -3318,7 +3318,7 @@ function calendar_get_legacy_events($tstart, $tend, $users, $groups, $courses, $
         null,
         null,
         null,
-        40,
+        1000,
         null,
         $userparam,
         $groupparam,
