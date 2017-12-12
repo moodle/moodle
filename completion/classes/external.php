@@ -249,7 +249,7 @@ class core_completion_external extends external_api {
 
         $completion = new completion_info($course);
         $activities = $completion->get_activities();
-        $progresses = $completion->get_progress_all();
+        $progresses = $completion->get_progress_all('u.id = :uid', ['uid' => $params['userid']]);
         $userprogress = $progresses[$user->id];
 
         $results = array();
