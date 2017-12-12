@@ -411,7 +411,7 @@ function calendar_get_mini($courses, $groups, $users, $calmonth = false, $calyea
                         $name = format_string($event->name, true);
                     }
                 }
-                $popupcontent .= html_writer::link($dayhref, $name);
+                $popupcontent .= html_writer::link($dayhref, clean_text($name));
                 $popupcontent .= html_writer::end_tag('div');
             }
 
