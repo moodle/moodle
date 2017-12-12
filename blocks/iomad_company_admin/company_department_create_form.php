@@ -117,13 +117,11 @@ class department_edit_form extends company_moodleform {
 
         $errors = array();
 
-$DB->set_debug(true);
         if ($departmentbyname = $DB->get_record('department', array('company' => $this->selectedcompany, 'shortname' => $data['shortname']))) {
             if ($departmentbyname->id != $this->departmentid) {
                 $errors['shortname'] = get_string('departmentnameinuse', 'block_iomad_company_admin');
             }
         }
-$DB->set_debug(false);
         return $errors;
     }
 }

@@ -892,6 +892,7 @@ if (empty($charttype)) {
 
             $mform->set_data(array('departmentid' => $departmentid));
             $mform->set_data($params);
+            $mform->get_data();
     
             // Display the user filter form.
             echo html_writer::start_tag('div', array('class' => 'iomadclear'));

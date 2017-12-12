@@ -696,6 +696,8 @@ class iomad_user_filter_form extends moodleform {
     protected $addfrom;
     protected $addto;
     protected $addlicensestatus;
+    protected $fromname;
+    protected $toname;
 
     public function definition() {
         global $CFG, $DB, $USER, $SESSION;
@@ -713,17 +715,17 @@ class iomad_user_filter_form extends moodleform {
         }
 
         if (!empty($this->_customdata['addfrom'])) {
-            $addfrom = true;
-            $fromname = $this->_customdata['addfrom'];
+            $this->addfrom = true;
+            $this->fromname = $this->_customdata['addfrom'];
         } else {
-            $addfrom = false;
+            $this->addfrom = false;
         }
 
         if (!empty($this->_customdata['addto'])) {
-            $addto = true;
-            $toname = $this->_customdata['addto'];
+            $this->addto = true;
+            $this->toname = $this->_customdata['addto'];
         } else {
-            $addto = false;
+            $this->addto = false;
         }
 
         if (!empty($this->_customdata['addlicensestatus'])) {
@@ -793,12 +795,12 @@ class iomad_user_filter_form extends moodleform {
             $mform->addElement('checkbox', 'showhistoric', get_string('showhistoricusers', 'block_iomad_company_admin'));
         }
 
-        if ($addfrom) {
-            $mform->addElement('date_selector', $fromname, get_string($fromname, 'block_iomad_company_admin'), array('optional' => 'yes'));
+        if ($this->addfrom) {
+            $mform->addElement('date_selector', $this->fromname, get_string($this->fromname, 'block_iomad_company_admin'), array('optional' => 'yes'));
         }
 
-        if ($addto) {
-            $mform->addElement('date_selector', $toname, get_string($toname, 'block_iomad_company_admin'), array('optional' => 'yes'));
+        if ($this->addto) {
+            $mform->addElement('date_selector', $this->toname, get_string($this->toname, 'block_iomad_company_admin'), array('optional' => 'yes'));
         }
 
         if ($addlicensestatus) {
@@ -816,6 +818,19 @@ class iomad_user_filter_form extends moodleform {
             $buttonarray[] = $mform->createElement('submit', 'dodownload', get_string("downloadcsv", 'local_report_completion'));
             $mform->addGroup($buttonarray, 'buttonar', '', ' ', false);
         }
+    }
+
+    public function validation($data, $files) {
+        
+        $errors = array();
+        if (!empty($this->fromname) && !empty($this->toname)) {
+            if (!empty($data[$this->fromname]) && !empty($data[$this->toname])) {
+                if ($data[$this->fromname] > $data[$this->toname]) {
+                    $errors[$this->fromname] = get_string('errorinvaliddate', 'calendar');
+                }
+            }
+        }
+        return $errors;
     }
 }
 

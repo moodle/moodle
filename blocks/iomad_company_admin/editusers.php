@@ -167,6 +167,7 @@ if (iomad::has_capability('block/iomad_company_admin:company_add', $systemcontex
 }
 $mform->set_data(array('departmentid' => $departmentid));
 $mform->set_data($params);
+$mform->get_data();
 
 // Get the company additional optional user parameter names.
 $fieldnames = array();
@@ -300,6 +301,15 @@ if ($confirmuser and confirm_sesskey()) {
     } else {
         // Actually delete the user.
         company_user::delete($user->id);
+
+        // Create an event for this.
+        $eventother = array('userid' => $user->id);
+        $event = \block_iomad_company_admin\event\company_user_deleted::create(array('context' => context_system::instance(),
+                                                                                     'objectid' => $user->id,
+                                                                                     'userid' => $USER->id,
+                                                                                     'other' => $eventother));
+        $event->trigger();
+
     }
 
 } else if ($suspend and confirm_sesskey()) {              // Delete a selected user, after confirmation.
@@ -330,6 +340,15 @@ if ($confirmuser and confirm_sesskey()) {
     } else {
         // Actually suspend the user.
         company_user::suspend($user->id);
+
+        // Create an event for this.
+        $eventother = array('userid' => $user->id);
+        $event = \block_iomad_company_admin\event\company_user_suspended::create(array('context' => context_system::instance(),
+                                                                                       'objectid' => $user->id,
+                                                                                       'userid' => $USER->id,
+                                                                                       'other' => $eventother));
+        $event->trigger();
+
         $params['suspend'] = 0;
     }
 
@@ -363,6 +382,15 @@ if ($confirmuser and confirm_sesskey()) {
     } else {
         // Actually unsuspend the user.
         company_user::unsuspend($user->id);
+
+        // Create an event for this.
+        $eventother = array('userid' => $user->id);
+        $event = \block_iomad_company_admin\event\company_user_unsuspended::create(array('context' => context_system::instance(),
+                                                                                         'objectid' => $user->id,
+                                                                                         'userid' => $USER->id,
+                                                                                         'other' => $eventother));
+        $event->trigger();
+
         $params['suspend'] = 0;
     }
 

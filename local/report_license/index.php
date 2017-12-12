@@ -691,10 +691,11 @@ if (empty($charttype)) {
             $mform = new iomad_user_filter_form(null, array('companyid' => $companyid));
             $mform->set_data(array('departmentid' => $departmentid));
             $mform->set_data($params);
-    
+            $mform->get_data();
+
             // Display the user filter form.
             $mform->display();
-    
+
             // Display the paging bar.
             if (empty($idlist['0'])) {
                 echo $OUTPUT->paging_bar($totalcount, $page, $perpage, new moodle_url('/local/report_license/index.php', $params));

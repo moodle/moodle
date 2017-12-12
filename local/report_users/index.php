@@ -204,6 +204,7 @@ $treehtml = $output->department_tree($departmenttree, optional_param('department
 $mform = new iomad_user_filter_form(null, array('companyid' => $companyid));
 $mform->set_data(array('departmentid' => $departmentid));
 $mform->set_data($params);
+$mform->get_data();
 
 // Display the tree selector thing.
 echo html_writer::start_tag('div', array('class' => 'iomadclear'));

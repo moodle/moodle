@@ -190,6 +190,7 @@ $treehtml = $output->department_tree($departmenttree, optional_param('department
 $mform = new iomad_date_filter_form($params);
 $mform->set_data(array('departmentid' => $departmentid));
 $mform->set_data($params);
+$mform->get_data();
 
 if (empty($licenselist)) {
     echo get_string('nolicenses', 'block_iomad_company_admin');

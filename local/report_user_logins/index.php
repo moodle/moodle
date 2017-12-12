@@ -279,6 +279,7 @@ if (!empty($companyid)) {
         $mform = new iomad_user_filter_form(null, $params);
         $mform->set_data(array('departmentid' => $departmentid));
         $mform->set_data($params);
+        $mform->get_data();
 
         // Display the user filter form.
         $mform->display();

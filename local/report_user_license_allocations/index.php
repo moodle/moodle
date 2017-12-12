@@ -245,6 +245,7 @@ $params['companyid'] = $companyid;
 $mform = new iomad_user_filter_form(null, $params);
 $mform->set_data(array('departmentid' => $departmentid));
 $mform->set_data($params);
+$mform->get_data();
 
 if (empty($licenselist) && empty($dodownload)) {
     echo get_string('nolicenses', 'block_iomad_company_admin');

@@ -297,6 +297,7 @@ if (!empty($companyid)) {
             $mform->set_data($params);
             $mform->set_data(array('departmentid' => $departmentid));
             $mform->set_data(array('licensestatus' => $licensestatus));
+            $mform->get_data();
     
             // Display the user filter form.
             $mform->display();
