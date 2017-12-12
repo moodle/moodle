@@ -3096,4 +3096,51 @@ Anchor link 2:<a title=\"bananas\" href=\"../logo-240x60.gif\">Link text</a>
         // Check that the grade was updated in the gradebook by fix_null_grades.
         $this->assertEquals($gradebookvalue, $gradegrade->finalgrade);
     }
+
+    /**
+     * Test grade override displays 'Graded' for students
+     */
+    public function test_grade_submission_override() {
+        global $DB, $PAGE, $OUTPUT;
+
+        $this->setUser($this->editingteachers[0]);
+        $assign = $this->create_instance(array('assignsubmission_onlinetext_enabled' => 1));
+
+        $studentid = $this->students[0]->id;
+
+        // Simulate adding a grade.
+        $this->setUser($this->teachers[0]);
+        $data = new stdClass();
+        $data->grade = '50.0';
+        $assign->testable_apply_grade_to_user($data, $studentid, 0);
+
+        // Set grade override.
+        $gradegrade = grade_grade::fetch(array('userid' => $studentid, 'itemid' => $assign->get_grade_item()->id));
+
+        // Check that grade submission is not overridden yet.
+        $this->assertEquals(false, $gradegrade->is_overridden());
+
+        // Simulate a submission.
+        $this->setUser($this->students[0]);
+        $submission = $assign->get_user_submission($studentid, true);
+
+        $PAGE->set_url(new moodle_url('/mod/assign/view.php', array('id' => $assign->get_course_module()->id)));
+
+        // Set override grade grade, and check that grade submission has been overridden.
+        $gradegrade->set_overridden(true);
+        $this->assertEquals(true, $gradegrade->is_overridden());
+
+        // Check that submissionslocked message 'This assignment is not accepting submissions' does not appear for student.
+        $gradingtable = new assign_grading_table($assign, 1, '', 0, true);
+        $output = $assign->get_renderer()->render($gradingtable);
+        $this->assertContains(get_string('submissionstatus_', 'assign'), $output);
+
+        $assignsubmissionstatus = $assign->get_assign_submission_status_renderable($this->students[0], true);
+        $output2 = $assign->get_renderer()->render($assignsubmissionstatus);
+
+        // Check that submissionslocked 'This assignment is not accepting submissions' message does not appear for student.
+        $this->assertNotContains(get_string('submissionslocked', 'assign'), $output2);
+        // Check that submissionstatus_marked 'Graded' message does appear for student.
+        $this->assertContains(get_string('submissionstatus_marked', 'assign'), $output2);
+    }
 }
