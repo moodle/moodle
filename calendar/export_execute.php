@@ -22,6 +22,11 @@ if (!$checkuserid && !$checkusername) {
     //No such user
     die('Invalid authentication');
 }
+// HOTFIX Start
+// Set the global user to export user and group events via URL
+global $USER;
+$USER = $user;
+// HOTFIX End
 
 //Check authentication token
 $authuserid = !empty($userid) && $authtoken == sha1($userid . $user->password . $CFG->calendar_exportsalt);
