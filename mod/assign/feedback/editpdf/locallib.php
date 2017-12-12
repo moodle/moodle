@@ -332,12 +332,11 @@ class assign_feedback_editpdf extends assign_feedback_plugin {
     }
 
     /**
-     * Automatically enable or disable editpdf feedback plugin based on
-     * whether the ghostscript path is set correctly.
+     * Determine if ghostscript is available and working.
      *
      * @return bool
      */
-    public function is_enabled() {
+    public function is_available() {
         if ($this->enabledcache === null) {
             $testpath = assignfeedback_editpdf\pdf::test_gs_path(false);
             $this->enabledcache = ($testpath->status == assignfeedback_editpdf\pdf::GSPATH_OK);
@@ -345,12 +344,12 @@ class assign_feedback_editpdf extends assign_feedback_plugin {
         return $this->enabledcache;
     }
     /**
-     * Automatically hide the setting for the editpdf feedback plugin.
+     * Prevent enabling this plugin if ghostscript is not available.
      *
      * @return bool false
      */
     public function is_configurable() {
-        return false;
+        return $this->is_available();
     }
 
     /**
