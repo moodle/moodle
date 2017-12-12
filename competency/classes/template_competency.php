@@ -53,7 +53,7 @@ class template_competency extends persistent {
             ),
             'sortorder' => array(
                 'type' => PARAM_INT,
-                'default' => null,
+                'default' => 0,
             ),
         );
     }
