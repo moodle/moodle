@@ -501,6 +501,21 @@ class core_filelib_testcase extends advanced_testcase {
         $CFG->proxybypass = $oldproxybypass;
     }
 
+    /**
+     * Test that duplicate lines in the curl header are removed.
+     */
+    public function test_duplicate_curl_header() {
+        $testurl = $this->getExternalTestFileUrl('/test_post.php');
+
+        $curl = new curl();
+        $headerdata = 'Accept: application/json';
+        $header = [$headerdata, $headerdata];
+        $this->assertCount(2, $header);
+        $curl->setHeader($header);
+        $this->assertCount(1, $curl->header);
+        $this->assertEquals($headerdata, $curl->header[0]);
+    }
+
     public function test_curl_post() {
         $testurl = $this->getExternalTestFileUrl('/test_post.php');
 
