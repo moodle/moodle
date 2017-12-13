@@ -611,7 +611,6 @@ if (!$users && empty($dodownload)) {
             if ($userlicenseinfo = $DB->get_records_sql("SELECT * FROM {companylicense_users}
                                                          WHERE userid = :userid
                                                          AND licenseid = :licenseid
-                                                         AND isusing = 1
                                                          ORDER BY issuedate",
                                                          array('userid' => $user->id, 'licenseid' => $licenseid), 0,1)) {
                 $strisusing = $stringyesno[1];
