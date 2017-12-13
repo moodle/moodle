@@ -158,8 +158,8 @@ class registration {
         $cleanhuburl = clean_param(HUB_MOODLEORGHUBURL, PARAM_ALPHANUMEXT);
         foreach (self::FORM_FIELDS as $field) {
             $siteinfo[$field] = get_config('hub', 'site_'.$field.'_' . $cleanhuburl);
-            if ($siteinfo[$field] === false && array_key_exists($field, $defaults)) {
-                $siteinfo[$field] = $defaults[$field];
+            if ($siteinfo[$field] === false) {
+                $siteinfo[$field] = array_key_exists($field, $defaults) ? $defaults[$field] : null;
             }
         }
 
