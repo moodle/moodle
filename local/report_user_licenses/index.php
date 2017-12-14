@@ -622,14 +622,17 @@ if (!$users && empty($dodownload)) {
                 $strisusing = $stringyesno[1];
                 $userlicense = array_pop($userlicenseinfo);
                 $strissuedate = date($CFG->iomad_date_format, $userlicense->issuedate);
-                $enrolinfo = $DB->get_record_sql("SELECT ue.* FROM {user_enrolments} ue
+                if ($enrolinfo = $DB->get_record_sql("SELECT ue.* FROM {user_enrolments} ue
                                                   JOIN {enrol} e ON (ue.enrolid = e.id AND e.enrol = :license)
                                                   WHERE ue.userid = :userid
                                                   AND e.courseid = :courseid",
                                                   array('userid' => $user->id,
                                                         'courseid' => $userlicense->licensecourseid,
-                                                        'license' => 'license'));
-                $struseddate = date($CFG->iomad_date_format, $enrolinfo->timestart);
+                                                        'license' => 'license'))) {
+                    $struseddate = date($CFG->iomad_date_format, $enrolinfo->timestart);
+                } else {
+                    $struseddate =  $stringnever;
+                }
             } else {
                 $strisusing = $stringyesno[0];
                 $strissuedate = $stringnever;
