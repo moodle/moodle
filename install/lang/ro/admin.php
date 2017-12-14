@@ -39,7 +39,7 @@ $string['clitypevaluedefault'] = 'introduceţi valoarea, apăsaţi Enter pentru 
 $string['cliunknowoption'] = 'Opţiuni necunoscute:
  {$a}
 Vă rugăm folosiţi --opţiunea Ajutor.';
-$string['cliyesnoprompt'] = 'introduceţi d (pentru \'da\') sau \'n\' (pentru \'nu\')';
+$string['cliyesnoprompt'] = 'tastați d (pentru \'da\') sau \'n\' (pentru \'nu\')';
 $string['environmentrequireinstall'] = 'trebuie instalat şi activat';
 $string['environmentrequireversion'] = 'versiuna necesară este {$a->needed} în timp ce dumneavoastră rulaţi versiunea {$a->current}';
 $string['upgradekeyset'] = 'Actualizează cheie  (lăsați gol pentru a nu fi setat)';
