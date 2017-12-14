@@ -591,54 +591,59 @@ if (!$users && empty($dodownload)) {
             $strlastaccess = $stringnever;
         }
 
-        if (empty($license->program)) {
-            if ($user->issuedate) {
-                $strissuedate = date($CFG->iomad_date_format, $user->issuedate);
-            } else {
-                $strissuedate = $stringnever;
-            }
-    
-            $strisusing = $stringyesno[$user->isusing];
 
-            // Get the date the user accessed the course.
-            if ($user->isusing) {
-                $enrolinfo = $DB->get_record_sql("SELECT ue.* FROM {user_enrolments} ue
+        if (empty($license->program)) {
+        	if ($user->issuedate) {
+        		$strissuedate = date($CFG->iomad_date_format, $user->issuedate);
+        	} else {
+        		$strissuedate = $stringnever;
+        	}
+        
+        	$strisusing = $stringyesno[$user->isusing];
+        
+        	// Get the date the user accessed the course.
+        	if ($user->isusing) {
+        		$enrolinfo = $DB->get_record_sql("SELECT ue.* FROM {user_enrolments} ue
                                                   JOIN {enrol} e ON (ue.enrolid = e.id AND e.enrol = :license)
                                                   WHERE ue.userid = :userid
                                                   AND e.courseid = :courseid",
-                                                  array('userid' => $user->id,
-                                                        'courseid' => $user->licensecourseid,
-                                                        'license' => 'license'));
-                $struseddate = date($CFG->iomad_date_format, $enrolinfo->timestart);
-            } else {
-                $struseddate =  $stringnever;
-            }
+        				array('userid' => $user->id,
+        						'courseid' => $user->licensecourseid,
+        						'license' => 'license'));
+        				$struseddate = date($CFG->iomad_date_format, $enrolinfo->timestart);
+        	} else {
+        		$struseddate =  $stringnever;
+        	}
         } else {
-            if ($userlicenseinfo = $DB->get_records_sql("SELECT * FROM {companylicense_users}
+        	if ($userlicenseinfo = $DB->get_records_sql("SELECT * FROM {companylicense_users}
                                                          WHERE userid = :userid
                                                          AND licenseid = :licenseid
                                                          ORDER BY issuedate",
-                                                         array('userid' => $user->id, 'licenseid' => $licenseid), 0,1)) {
-                $strisusing = $stringyesno[1];
-                $userlicense = array_pop($userlicenseinfo);
-                $strissuedate = date($CFG->iomad_date_format, $userlicense->issuedate);
-                if ($enrolinfo = $DB->get_record_sql("SELECT ue.* FROM {user_enrolments} ue
+        			array('userid' => $user->id, 'licenseid' => $licenseid), 0,1)) {
+        				$strisusing = $stringyesno[1];
+        				$userlicense = array_pop($userlicenseinfo);
+        				$strissuedate = date($CFG->iomad_date_format, $userlicense->issuedate);
+        				if ($enrolinfo = $DB->get_record_sql("SELECT ue.* FROM {user_enrolments} ue
                                                   JOIN {enrol} e ON (ue.enrolid = e.id AND e.enrol = :license)
                                                   WHERE ue.userid = :userid
                                                   AND e.courseid = :courseid",
-                                                  array('userid' => $user->id,
-                                                        'courseid' => $userlicense->licensecourseid,
-                                                        'license' => 'license'))) {
-                    $struseddate = date($CFG->iomad_date_format, $enrolinfo->timestart);
-                } else {
-                    $struseddate =  $stringnever;
-                }
-            } else {
-                $strisusing = $stringyesno[0];
-                $strissuedate = $stringnever;
-                $struseddate =  $stringnever;
-            }
+        						array('userid' => $user->id,
+        								'courseid' => $userlicense->licensecourseid,
+        								'license' => 'license'))) {
+        						$struseddate = date($CFG->iomad_date_format, $enrolinfo->timestart);
+        			} else {
+        				$struseddate =  $stringnever;
+        			}
+        } else {
+        	$strisusing = $stringyesno[0];
+        	$strissuedate = $stringnever;
+        	$struseddate =  $stringnever;
         }
+        }
+        
+        
+        
+        
         $fullname = fullname($user, true);
 
         // Is this a suspended user?
@@ -808,7 +813,7 @@ function iomad_get_users_listing($sort='lastaccess', $dir='ASC', $page=0, $recor
         } else {
             $statussql = "";
         }
-        return $DB->get_records_sql("SELECT DISTINCT concat(c.id, '-', u.id), u.*, d.name AS departmentname, c.name AS companyname
+        return $DB->get_records_sql("SELECT DISTINCT concat(c.id, '-', u.id), u.*, d.name AS departmentname, c.name AS companyname, clu.issuedate
                                      FROM {user} u, {department} d, {company_users} cu, {company} c, {companylicense_users} clu
                                      WHERE $select and cu.userid = u.id AND d.id = cu.departmentid AND c.id = cu.companyid
                                      AND clu.userid = u.id AND clu.licenseid = :licenseid
