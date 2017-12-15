@@ -1014,7 +1014,7 @@ function choice_print_overview($courses, &$htmlarray) {
  */
 function choice_get_my_response($choice) {
     global $DB, $USER;
-    return $DB->get_records('choice_answers', array('choiceid' => $choice->id, 'userid' => $USER->id));
+    return $DB->get_records('choice_answers', array('choiceid' => $choice->id, 'userid' => $USER->id), 'optionid');
 }
 
 
