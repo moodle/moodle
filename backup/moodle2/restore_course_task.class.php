@@ -200,7 +200,7 @@ class restore_course_task extends restore_task {
         $startdatedefaultvalue = $this->get_info()->original_course_startdate;
         $startdate = new restore_course_defaultcustom_setting('course_startdate', base_setting::IS_INTEGER, $startdatedefaultvalue);
         $startdate->set_ui(new backup_setting_ui_defaultcustom($startdate, get_string('setting_course_startdate', 'backup'),
-            ['customvalue' => $startdatedefaultvalue, 'defaultvalue' => $course->startdate, 'type' => 'date_selector']));
+            ['customvalue' => $startdatedefaultvalue, 'defaultvalue' => $course->startdate, 'type' => 'date_time_selector']));
         $this->add_setting($startdate);
 
         $keep_enrols = new restore_course_generic_setting('keep_roles_and_enrolments', base_setting::IS_BOOLEAN, false);
