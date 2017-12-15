@@ -686,6 +686,7 @@ class manager {
      * - contextids (optional list of context ids to restrict)
      * - context (Moodle context object for location user searched from)
      * - order (optional ordering, one of the types supported by the search engine e.g. 'relevance')
+     * - userids (optional list of user ids to restrict)
      *
      * @param \stdClass $formdata Query input data (usually from search form)
      * @param int $limit The maximum number of documents to return

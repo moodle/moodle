@@ -936,6 +936,80 @@ class search_solr_engine_testcase extends advanced_testcase {
     }
 
     /**
+     * Tests searching for results restricted to specific user id(s).
+     */
+    public function test_user_restriction() {
+        // Use real search areas.
+        $this->search->clear_static();
+        $this->search->add_core_search_areas();
+
+        // Create a course, a forum, and a glossary.
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $forum = $generator->create_module('forum', ['course' => $course->id]);
+        $glossary = $generator->create_module('glossary', ['course' => $course->id]);
+
+        // Create 3 user accounts, all enrolled as students on the course.
+        $user1 = $generator->create_user();
+        $user2 = $generator->create_user();
+        $user3 = $generator->create_user();
+        $generator->enrol_user($user1->id, $course->id, 'student');
+        $generator->enrol_user($user2->id, $course->id, 'student');
+        $generator->enrol_user($user3->id, $course->id, 'student');
+
+        // All users create a forum discussion.
+        $forumgen = $generator->get_plugin_generator('mod_forum');
+        $forumgen->create_discussion(['course' => $course->id, 'forum' => $forum->id,
+            'userid' => $user1->id, 'name' => 'Post1', 'message' => 'plugh']);
+        $forumgen->create_discussion(['course' => $course->id, 'forum' => $forum->id,
+                'userid' => $user2->id, 'name' => 'Post2', 'message' => 'plugh']);
+        $forumgen->create_discussion(['course' => $course->id, 'forum' => $forum->id,
+                'userid' => $user3->id, 'name' => 'Post3', 'message' => 'plugh']);
+
+        // Two of the users create entries in the glossary.
+        $glossarygen = $generator->get_plugin_generator('mod_glossary');
+        $glossarygen->create_content($glossary, ['concept' => 'Entry1', 'definition' => 'plugh',
+                'userid' => $user1->id]);
+        $glossarygen->create_content($glossary, ['concept' => 'Entry3', 'definition' => 'plugh',
+                'userid' => $user3->id]);
+
+        // Index the data.
+        $this->search->index();
+
+        // Search without user restriction should find everything.
+        $querydata = new stdClass();
+        $querydata->q = 'plugh';
+        $results = $this->search->search($querydata);
+        $this->assert_result_titles(
+                ['Entry1', 'Entry3', 'Post1', 'Post2', 'Post3'], $results);
+
+        // Restriction to user 3 only.
+        $querydata->userids = [$user3->id];
+        $results = $this->search->search($querydata);
+        $this->assert_result_titles(
+                ['Entry3', 'Post3'], $results);
+
+        // Restriction to users 1 and 2.
+        $querydata->userids = [$user1->id, $user2->id];
+        $results = $this->search->search($querydata);
+        $this->assert_result_titles(
+                ['Entry1', 'Post1', 'Post2'], $results);
+
+        // Restriction to users 1 and 2 combined with context restriction.
+        $querydata->contextids = [context_module::instance($glossary->cmid)->id];
+        $results = $this->search->search($querydata);
+        $this->assert_result_titles(
+                ['Entry1'], $results);
+
+        // Restriction to users 1 and 2 combined with area restriction.
+        unset($querydata->contextids);
+        $querydata->areaids = [\core_search\manager::generate_areaid('mod_forum', 'post')];
+        $results = $this->search->search($querydata);
+        $this->assert_result_titles(
+                ['Post1', 'Post2'], $results);
+    }
+
+    /**
      * Asserts that the returned documents have the expected titles (regardless of order).
      *
      * @param string[] $expected List of expected document titles
