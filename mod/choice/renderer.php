@@ -93,7 +93,7 @@ class mod_choice_renderer extends plugin_renderer_base {
                 if (!empty($options['allowupdate']) && ($options['allowupdate'])) {
                     $url = new moodle_url('view.php',
                             array('id' => $coursemoduleid, 'action' => 'delchoice', 'sesskey' => sesskey()));
-                    $html .= html_writer::link($url, get_string('removemychoice', 'choice'));
+                    $html .= html_writer::link($url, get_string('removemychoice', 'choice'), array('class' => 'm-l-1'));
                 }
             } else {
                 $html .= html_writer::tag('label', get_string('havetologin', 'choice'));
