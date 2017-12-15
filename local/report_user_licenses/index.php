@@ -247,14 +247,14 @@ if (empty($dodownload)) {
     // Check the department is valid.
     if (!empty($departmentid) && !company::check_valid_department($companyid, $departmentid)) {
         print_error('invaliddepartment', 'block_iomad_company_admin');
-    }   
+    }
 
 } else {
     // Check the department is valid.
     if (!empty($departmentid) && !company::check_valid_department($companyid, $departmentid)) {
         print_error('invaliddepartment', 'block_iomad_company_admin');
         die;
-    }   
+    }
 }
 
 // Get the data.
@@ -274,7 +274,7 @@ if (!empty($companyid)) {
                 echo $output->footer();
                 die;
             }
-    
+
             echo html_writer::start_tag('div', array('class' => 'iomadclear'));
             echo html_writer::start_tag('div', array('class' => 'fitem'));
             echo $treehtml;
@@ -283,7 +283,7 @@ if (!empty($companyid)) {
             echo html_writer::end_tag('div');
             echo html_writer::end_tag('div');
             echo html_writer::end_tag('div');
-    
+
             if (empty($licenseid)) {
                 echo $output->footer();
                 die;
@@ -298,7 +298,7 @@ if (!empty($companyid)) {
             $mform->set_data(array('departmentid' => $departmentid));
             $mform->set_data(array('licensestatus' => $licensestatus));
             $mform->get_data();
-    
+
             // Display the user filter form.
             $mform->display();
         }
@@ -591,59 +591,55 @@ if (!$users && empty($dodownload)) {
             $strlastaccess = $stringnever;
         }
 
-
         if (empty($license->program)) {
-        	if ($user->issuedate) {
-        		$strissuedate = date($CFG->iomad_date_format, $user->issuedate);
-        	} else {
-        		$strissuedate = $stringnever;
-        	}
-        
-        	$strisusing = $stringyesno[$user->isusing];
-        
-        	// Get the date the user accessed the course.
-        	if ($user->isusing) {
-        		$enrolinfo = $DB->get_record_sql("SELECT ue.* FROM {user_enrolments} ue
+            if ($user->issuedate) {
+                $strissuedate = date($CFG->iomad_date_format, $user->issuedate);
+            } else {
+                $strissuedate = $stringnever;
+            }
+
+            $strisusing = $stringyesno[$user->isusing];
+
+            // Get the date the user accessed the course.
+            if ($user->isusing) {
+                $enrolinfo = $DB->get_record_sql("SELECT ue.* FROM {user_enrolments} ue
                                                   JOIN {enrol} e ON (ue.enrolid = e.id AND e.enrol = :license)
                                                   WHERE ue.userid = :userid
                                                   AND e.courseid = :courseid",
-        				array('userid' => $user->id,
-        						'courseid' => $user->licensecourseid,
-        						'license' => 'license'));
-        				$struseddate = date($CFG->iomad_date_format, $enrolinfo->timestart);
-        	} else {
-        		$struseddate =  $stringnever;
-        	}
+                                                  array('userid' => $user->id,
+                                                        'courseid' => $user->licensecourseid,
+                                                        'license' => 'license'));
+                $struseddate = date($CFG->iomad_date_format, $enrolinfo->timestart);
+            } else {
+                $struseddate =  $stringnever;
+            }
         } else {
-        	if ($userlicenseinfo = $DB->get_records_sql("SELECT * FROM {companylicense_users}
+            if ($userlicenseinfo = $DB->get_records_sql("SELECT * FROM {companylicense_users}
                                                          WHERE userid = :userid
                                                          AND licenseid = :licenseid
                                                          ORDER BY issuedate",
-        			array('userid' => $user->id, 'licenseid' => $licenseid), 0,1)) {
-        				$strisusing = $stringyesno[1];
-        				$userlicense = array_pop($userlicenseinfo);
-        				$strissuedate = date($CFG->iomad_date_format, $userlicense->issuedate);
-        				if ($enrolinfo = $DB->get_record_sql("SELECT ue.* FROM {user_enrolments} ue
-                                                  JOIN {enrol} e ON (ue.enrolid = e.id AND e.enrol = :license)
-                                                  WHERE ue.userid = :userid
-                                                  AND e.courseid = :courseid",
-        						array('userid' => $user->id,
-        								'courseid' => $userlicense->licensecourseid,
-        								'license' => 'license'))) {
-        						$struseddate = date($CFG->iomad_date_format, $enrolinfo->timestart);
-        			} else {
-        				$struseddate =  $stringnever;
-        			}
-        } else {
-        	$strisusing = $stringyesno[0];
-        	$strissuedate = $stringnever;
-        	$struseddate =  $stringnever;
+                                                         array('userid' => $user->id, 'licenseid' => $licenseid), 0,1)) {
+                $strisusing = $stringyesno[1];
+                $userlicense = array_pop($userlicenseinfo);
+                $strissuedate = date($CFG->iomad_date_format, $userlicense->issuedate);
+                if ($enrolinfo = $DB->get_record_sql("SELECT ue.* FROM {user_enrolments} ue
+                                                      JOIN {enrol} e ON (ue.enrolid = e.id AND e.enrol = :license)
+                                                      WHERE ue.userid = :userid
+                                                      AND e.courseid = :courseid",
+                                                      array('userid' => $user->id,
+                                                            'courseid' => $userlicense->licensecourseid,
+                                                            'license' => 'license'))) {
+                    $struseddate = date($CFG->iomad_date_format, $enrolinfo->timestart);
+                } else {
+                    $struseddate =  $stringnever;
+                }
+            } else {
+                $strisusing = $stringyesno[0];
+                $strissuedate = $stringnever;
+                $struseddate =  $stringnever;
+            }
         }
-        }
-        
-        
-        
-        
+
         $fullname = fullname($user, true);
 
         // Is this a suspended user?
