@@ -2975,7 +2975,6 @@ class curl {
      * Set HTTP Request Header
      *
      * @param array $header
-     * @param bool $replace If true, will remove any existing headers before appending the new one.
      */
     public function setHeader($header) {
         if (is_array($header)) {
@@ -2984,7 +2983,10 @@ class curl {
             }
         } else {
             // Remove newlines, they are not allowed in headers.
-            $this->header[] = preg_replace('/[\r\n]/', '', $header);
+            $newvalue = preg_replace('/[\r\n]/', '', $header);
+            if (!in_array($newvalue, $this->header)) {
+                $this->header[] = $newvalue;
+            }
         }
     }
 
