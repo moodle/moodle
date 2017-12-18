@@ -1059,6 +1059,7 @@ function lesson_get_user_detailed_report_data(lesson $lesson, $userid, $attempt)
         $lesson->update_effective_access($userid);
     }
 
+    $pageid = 0;
     $lessonpages = $lesson->load_all_pages();
     foreach ($lessonpages as $lessonpage) {
         if ($lessonpage->prevpageid == 0) {
