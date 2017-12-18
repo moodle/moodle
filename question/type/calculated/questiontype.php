@@ -1054,11 +1054,15 @@ class qtype_calculated extends question_type {
         $comment->outsidelimit = false;
         $comment->answers = array();
         // Find a default unit.
-        if (!empty($questionid) && $unit = $DB->get_record('question_numerical_units',
-                array('question' => $questionid, 'multiplier' => 1.0))) {
-            $unit = $unit->unit;
-        } else {
-            $unit = '';
+        $unit = '';
+        if (!empty($questionid)) {
+            $units = $DB->get_records('question_numerical_units',
+                array('question' => $questionid, 'multiplier' => 1.0),
+                'id ASC', '*', 0, 1);
+            if ($units) {
+                $unit = reset($units);
+                $unit = $unit->unit;
+            }
         }
 
         $answers = fullclone($answers);
