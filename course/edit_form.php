@@ -88,7 +88,7 @@ class course_edit_form extends moodleform {
             }
         } else {
             if (has_capability('moodle/course:changecategory', $coursecontext)) {
-                $displaylist = coursecat::make_categories_list('moodle/course:create');
+                $displaylist = coursecat::make_categories_list('moodle/course:changecategory');
                 if (!isset($displaylist[$course->category])) {
                     //always keep current
                     $displaylist[$course->category] = coursecat::get($course->category, MUST_EXIST, true)->get_formatted_name();
