@@ -103,11 +103,46 @@ class webservice_xmlrpc_test extends advanced_testcase {
         // to fail if the markup escaping was not set.
         $this->assertEquals(['<bar>ŠČŘŽÝÁÍÉ</bar>'], xmlrpc_decode($xml, 'UTF-8'));
 
+        // Decoding also works with our wrapper method.
+        $this->assertEquals(['<bar>ŠČŘŽÝÁÍÉ</bar>'], $client->decode_response($xml));
+
         // Our experiments show that even with default/implicit encoding,
         // requests encoded with markup escaping set are also decoded
         // correctly. This is known to be used in some servers so we test it
         // here, too.
+        // However, this does not work for all strings, see next test.
         $this->assertEquals(['<bar>ŠČŘŽÝÁÍÉ</bar>'], xmlrpc_decode($xml));
+    }
+
+    /**
+     * Test the XML-RPC response decoding
+     */
+    public function test_decode_response() {
+        $client = new webservice_xmlrpc_client_mock('/webservice/xmlrpc/server.php', 'anytoken');
+
+        $teststring = '<bar>Recherche thématique:Villes & Développement durable</bar>';
+
+        // Encode the string with the proper encoding and escaping options. Assert that decoding will work.
+        $xml = $client->encode_request('do_it', [$teststring]);
+        $this->assertEquals([$teststring], $client->decode_response($xml));
+        // For this particular string bare decoding function does not work.
+        // It can't really be explained why it works for the string 'ŠČŘŽÝÁÍÉ' in the previous test but not this one.
+        // Symbol é comes as chr(233) . It looks like '<bar>Recherche th�matique:Villes & D�veloppement durable</bar>'.
+        $this->assertEquals([preg_replace('/é/', chr(233), $teststring)], xmlrpc_decode($xml));
+
+        // Encode the string without any options (default encoding "iso-8859-1" is used). Assert that decoding will work.
+        $xml = xmlrpc_encode_request('do_it', [$teststring]);
+        $this->assertEquals([$teststring], $client->decode_response($xml));
+        $this->assertEquals([$teststring], xmlrpc_decode($xml));
+
+        // Another example of the string where bare xmlrpc_decode() does not work but our wrapper does.
+        $teststring = 'Formación Docente';
+
+        $xml = $client->encode_request('do_it', [$teststring]);
+        $this->assertEquals([$teststring], $client->decode_response($xml));
+        // Bare decoding function xmlrpc_decode() does not work.
+        // Symbol ó comes as chr(243), it looks like 'Formaci�n Docente'.
+        $this->assertEquals([preg_replace('/ó/', chr(243), $teststring)], xmlrpc_decode($xml));
     }
 }
 
@@ -168,5 +203,15 @@ class webservice_xmlrpc_client_mock extends webservice_xmlrpc_client {
      */
     public function encode_request($functionname, $params) {
         return parent::encode_request($functionname, $params);
+    }
+
+    /**
+     * Allows to test the response decoding.
+     *
+     * @param string $response
+     * @return array
+     */
+    public function decode_response($response) {
+        return parent::decode_response($response);
     }
 }
