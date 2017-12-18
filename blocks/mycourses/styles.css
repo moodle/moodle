@@ -29,6 +29,7 @@ html.yui3-js-enabled body#page-my-index.format-site.path-my.gecko.dir-ltr.lang-e
 }
 
 .block_mycourses .tab-content {
+    overflow: visible;
     display: inline-block;
     width: 100%;
 }

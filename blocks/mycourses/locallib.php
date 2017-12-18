@@ -25,6 +25,8 @@
 function mycourses_get_my_completion($datefrom = 0) {
     global $DB, $USER, $CFG;
 
+    $companyid = iomad::get_my_companyid(context_system::instance());
+
     // Check if there is a iomadcertificate module.
     if ($certmodule = $DB->get_record('modules', array('name' => 'iomadcertificate'))) {
         $hasiomadcertificate = true;
@@ -48,7 +50,7 @@ function mycourses_get_my_completion($datefrom = 0) {
                                           WHERE cc.userid = :userid
                                           AND c.visible = 1
                                           AND cc.timecompleted IS NULL
-                                          AND ue.timestart != 0",
+                              AND ue.timestart != 0",
                                           array('userid' => $USER->id));
 
     // We dont care about these.  If you have enrolled then you are started.
@@ -61,6 +63,53 @@ function mycourses_get_my_completion($datefrom = 0) {
                                           AND c.visible = 1
                                           AND clu.isusing = 0",
                                           array('userid' => $USER->id));
+
+    // Get courses which are available as self sign up and assigned to the company.
+    // First we discount everything else we have in progress.
+    $myusedcourses = array();
+    foreach ($myinprogress as $inprogress) {
+        $myusedcourses[$inprogress->courseid] = $inprogress->courseid;
+    }
+    if (!empty($myusedcourses)) {
+        $inprogresssql = "AND c.id NOT IN (" . join(',', array_keys($myusedcourses)) . ")";
+    } else {
+        $inprogresssql = "";
+    }
+    $myselfenrolcourses = array();
+    $myavailablecourses = array();
+    if (!empty($companyid)) {
+        $companyselfenrolcourses = $DB->get_records_sql("SELECT e.id,e.courseid,c.fullname as coursefullname, c.summary as coursesummary
+                                                         FROM {enrol} e
+                                                         JOIN {course} c ON (e.courseid = c.id)
+                                                         WHERE e.enrol = :enrol
+                                                         AND c.id IN (
+                                                           SELECT courseid FROM {company_course}
+                                                           WHERE companyid = :companyid)
+                                                         $inprogresssql",
+                                                         array('companyid' => $companyid,
+                                                               'enrol' => 'self'));
+        $sharedselfenrolcourses = $DB->get_records_sql("SELECT e.id,e.courseid,c.fullname as coursefullname, c.summary as coursesummary
+                                                        FROM {enrol} e
+                                                        JOIN {course} c ON (e.courseid = c.id)
+                                                        WHERE e.enrol = :enrol
+                                                         AND c.id IN (
+                                                           SELECT courseid FROM {iomad_courses}
+                                                           WHERE shared = 1)
+                                                        $inprogresssql",
+                                                        array('enrol' => 'self'));
+        foreach ($companyselfenrolcourses as $companyselfenrolcourse) {
+            $myselfenrolcourses[$companyselfenrolcourse->id] = $companyselfenrolcourse;
+        }
+        foreach ($sharedselfenrolcourses as $sharedselfenrolcourse) {
+            $myselfenrolcourses[$sharedselfenrolcourse->id] = $sharedselfenrolcourse;
+        }
+    }
+    foreach($mynotstartedlicense as $licensedcourse) {
+        $myavailablecourses[] = $licensedcourse;
+    }
+    foreach($myselfenrolcourses as $myselfenrolcourse) {
+        $myavailablecourses[] = $myselfenrolcourse;
+    }
 
     // Deal with completed course scores and links for certificates.
     foreach ($mycompleted as $id => $completed) {
@@ -98,7 +147,7 @@ function mycourses_get_my_completion($datefrom = 0) {
     $mycompletions->mycompleted = $mycompleted;
     $mycompletions->myinprogress = $myinprogress;
     $mycompletions->mynotstartedenrolled = array();
-    $mycompletions->mynotstartedlicense = $mynotstartedlicense;
+    $mycompletions->mynotstartedlicense = $myavailablecourses;
 
     return $mycompletions;
 
