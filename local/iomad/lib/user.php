@@ -316,8 +316,9 @@ class company_user {
                 } else {
                     $timeend = 0;
                 }
-                $manual->enrol_user($manualcache[$courseid], $user->id, $rid, $today,
-                                    $timeend, ENROL_USER_ACTIVE);
+                if (!$DB->get_record('user_enrolments', array('userid' => $user->id, 'enrolid' => $manualcache[$courseid]->id))) {
+                    $manual->enrol_user($manualcache[$courseid], $user->id, $rid, $today, $timeend, ENROL_USER_ACTIVE);
+                }
                 if ($shared || $grouped) {
                     if (!empty($companyid)) {
                         company::add_user_to_shared_course($courseid, $user->id, $companyid, $groupid);
