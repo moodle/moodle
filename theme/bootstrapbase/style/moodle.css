@@ -17775,6 +17775,11 @@ div#dock {
   width: inherit;
   height: inherit;
 }
+#page-mod-quiz-edit ul.slots li.section li.activity .instancemaxmarkcontainer form input {
+  margin: 0;
+  padding: 0.2em;
+  height: 1em;
+}
 .path-mod-quiz #mod_quiz_navblock .qnbutton {
   text-decoration: none;
   font-size: 14px;
