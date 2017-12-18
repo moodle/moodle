@@ -124,7 +124,7 @@ $PAGE->set_heading($SITE->fullname);
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading($company->name . ' - ' . $newaccount);
-if (!empty($CFG->auth_instructions)) {
+if (!empty($CFG->auth_instructions) && !empty($CFG->local_iomad_signup_showinstructions)) {
     echo format_text($CFG->auth_instructions);
 } else {
     print_string("logininfo", "local_iomad_signup");
