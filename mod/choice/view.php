@@ -203,7 +203,8 @@ if (!$choiceformshown) {
 if (choice_can_view_results($choice, $current, $choiceopen)) {
     $results = prepare_choice_show_results($choice, $course, $cm, $allresponses);
     $renderer = $PAGE->get_renderer('mod_choice');
-    echo $renderer->display_result($results);
+    $resultstable = $renderer->display_result($results);
+    echo $OUTPUT->box($resultstable);
 
 } else if (!$choiceformshown) {
     echo $OUTPUT->box(get_string('noresultsviewable', 'choice'));
