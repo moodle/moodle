@@ -44,7 +44,7 @@ class mod_chat_format_message_testcase extends advanced_testcase {
         return [
             'Beep everyone' => [
                 'message'       => 'beep all',
-                'system'        => false,
+                'issystem'      => false,
                 'willreturn'    => true,
                 'expecttext'    => "/^{$dateregexp}: " . get_string('messagebeepseveryone', 'chat', '__CURRENTUSER__') . ': /',
                 'refreshusers'  => false,
@@ -52,7 +52,7 @@ class mod_chat_format_message_testcase extends advanced_testcase {
             ],
             'Beep the current user' => [
                 'message'       => 'beep __CURRENTUSER__',
-                'system'        => false,
+                'issystem'      => false,
                 'willreturn'    => true,
                 'expecttext'    => "/^{$dateregexp}: " . get_string('messagebeepsyou', 'chat', '__CURRENTUSER__') . ': /',
                 'refreshusers'  => false,
@@ -60,7 +60,7 @@ class mod_chat_format_message_testcase extends advanced_testcase {
             ],
             'Beep another user' => [
                 'message'       => 'beep __OTHERUSER__',
-                'system'        => false,
+                'issystem'      => false,
                 'willreturn'    => false,
                 'expecttext'    => null,
                 'refreshusers'  => null,
@@ -68,7 +68,7 @@ class mod_chat_format_message_testcase extends advanced_testcase {
             ],
             'Malformed beep' => [
                 'message'       => 'beep',
-                'system'        => false,
+                'issystem'      => false,
                 'willreturn'    => true,
                 'expecttext'    => "/^{$dateregexp} __CURRENTUSER_FIRST__: beep$/",
                 'refreshusers'  => false,
@@ -76,7 +76,7 @@ class mod_chat_format_message_testcase extends advanced_testcase {
             ],
             '/me says' => [
                 'message'       => '/me writes a test',
-                'system'        => false,
+                'issystem'      => false,
                 'willreturn'    => true,
                 'expecttext'    => "/^{$dateregexp}: \*\*\* __CURRENTUSER_FIRST__ writes a test$/",
                 'refreshusers'  => false,
@@ -84,7 +84,7 @@ class mod_chat_format_message_testcase extends advanced_testcase {
             ],
             'Invalid command' => [
                 'message'       => '/help',
-                'system'        => false,
+                'issystem'      => false,
                 'willreturn'    => true,
                 'expecttext'    => "/^{$dateregexp} __CURRENTUSER_FIRST__: \/help$/",
                 'refreshusers'  => false,
@@ -92,7 +92,7 @@ class mod_chat_format_message_testcase extends advanced_testcase {
             ],
             'To user' => [
                 'message'       => 'To Bernard:I love tests',
-                'system'        => false,
+                'issystem'      => false,
                 'willreturn'    => true,
                 'expecttext'    => "/^{$dateregexp}: __CURRENTUSER_FIRST__ " . get_string('saidto', 'chat') . " Bernard: I love tests$/",
                 'refreshusers'  => false,
@@ -100,7 +100,7 @@ class mod_chat_format_message_testcase extends advanced_testcase {
             ],
             'To user trimmed' => [
                 'message'       => 'To Bernard: I love tests',
-                'system'        => false,
+                'issystem'      => false,
                 'willreturn'    => true,
                 'expecttext'    => "/^{$dateregexp}: __CURRENTUSER_FIRST__ " . get_string('saidto', 'chat') . " Bernard: I love tests$/",
                 'refreshusers'  => false,
@@ -108,7 +108,7 @@ class mod_chat_format_message_testcase extends advanced_testcase {
             ],
             'System: enter' => [
                 'message'       => 'enter',
-                'system'        => true,
+                'issystem'      => true,
                 'willreturn'    => true,
                 'expecttext'    => "/^{$dateregexp}: " . get_string('messageenter', 'chat', '__CURRENTUSER__') . "$/",
                 'refreshusers'  => true,
@@ -116,7 +116,7 @@ class mod_chat_format_message_testcase extends advanced_testcase {
             ],
             'System: exit' => [
                 'message'       => 'exit',
-                'system'        => true,
+                'issystem'      => true,
                 'willreturn'    => true,
                 'expecttext'    => "/^{$dateregexp}: " . get_string('messageexit', 'chat', '__CURRENTUSER__') . "$/",
                 'refreshusers'  => true,
@@ -128,7 +128,7 @@ class mod_chat_format_message_testcase extends advanced_testcase {
     /**
      * @dataProvider chat_format_message_manually_provider
      */
-    public function test_chat_format_message_manually($messagetext, $system, $willreturn,
+    public function test_chat_format_message_manually($messagetext, $issystem, $willreturn,
             $expecttext, $refreshusers, $expectbeep) {
 
         $this->resetAfterTest();
@@ -147,7 +147,7 @@ class mod_chat_format_message_testcase extends advanced_testcase {
         $message = (object) [
             'message'   => $messagetext,
             'timestamp' => time(),
-            'system'    => $system,
+            'issystem'  => $issystem,
         ];
 
         $result = chat_format_message_manually($message, $course->id, $currentuser, $currentuser);
