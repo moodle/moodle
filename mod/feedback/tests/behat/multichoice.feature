@@ -59,7 +59,7 @@ Feature: Testing multichoice questions in feedback
     And I log in as "student1"
     And I am on "Course 1" course homepage
     And I follow "Learning experience"
-    And I follow "Answer the questions..."
+    And I follow "Answer the questions"
     # Examine the first page, select nothing, go to the next page
     Then the following fields match these values:
       | Not selected | 1 |
@@ -126,7 +126,7 @@ Feature: Testing multichoice questions in feedback
     And I log in as "student2"
     And I am on "Course 1" course homepage
     And I follow "Learning experience"
-    And I follow "Answer the questions..."
+    And I follow "Answer the questions"
     And I set the field "option a" to "1"
     And I press "Next page"
     And I set the field "option d" to "1"
@@ -203,7 +203,7 @@ Feature: Testing multichoice questions in feedback
     And I log in as "student1"
     And I am on "Course 1" course homepage
     And I follow "Learning experience"
-    And I follow "Answer the questions..."
+    And I follow "Answer the questions"
     # Examine the first page, select nothing, go to the next page
     And I should not see "Not selected"
     And the following fields match these values:
@@ -268,7 +268,7 @@ Feature: Testing multichoice questions in feedback
     And I log in as "student2"
     And I am on "Course 1" course homepage
     And I follow "Learning experience"
-    And I follow "Answer the questions..."
+    And I follow "Answer the questions"
     And I set the field "option a" to "1"
     And I set the field "option b" to "1"
     And I press "Next page"
@@ -345,7 +345,7 @@ Feature: Testing multichoice questions in feedback
     And I log in as "student1"
     And I am on "Course 1" course homepage
     And I follow "Learning experience"
-    And I follow "Answer the questions..."
+    And I follow "Answer the questions"
     # Examine the first page, select nothing, go to the next page
     Then the following fields match these values:
       | this is a multiple choice 1 | 0 |
@@ -393,7 +393,7 @@ Feature: Testing multichoice questions in feedback
     And I log in as "student2"
     And I am on "Course 1" course homepage
     And I follow "Learning experience"
-    And I follow "Answer the questions..."
+    And I follow "Answer the questions"
     And I set the field "this is a multiple choice 1" to "option a"
     And I press "Next page"
     And I set the field "this is a multiple choice 2" to "option d"

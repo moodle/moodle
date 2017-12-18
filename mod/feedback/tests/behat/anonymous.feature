@@ -40,7 +40,7 @@ Feature: Anonymous feedback
 
   Scenario: Guests can see anonymous feedback on front page but can not complete
     When I follow "Site feedback"
-    Then I should not see "Answer the questions..."
+    Then I should not see "Answer the questions"
     And I follow "Preview"
     And I should see "Do you like our site?"
     And I press "Continue"
@@ -52,7 +52,7 @@ Feature: Anonymous feedback
     And I follow "Preview"
     And I should see "Do you like our site?"
     And I press "Continue"
-    And I follow "Answer the questions..."
+    And I follow "Answer the questions"
     And I should see "Do you like our site?"
     And I set the following fields to these values:
       | Yes | 1 |
@@ -73,7 +73,7 @@ Feature: Anonymous feedback
     And I follow "Preview"
     And I should see "Do you like our site?"
     And I press "Continue"
-    And I follow "Answer the questions..."
+    And I follow "Answer the questions"
     And I should see "Do you like our site?"
     And I set the following fields to these values:
       | Yes | 1 |
@@ -85,7 +85,7 @@ Feature: Anonymous feedback
     And I follow "Preview"
     And I should see "Do you like our site?"
     And I press "Continue"
-    And I follow "Answer the questions..."
+    And I follow "Answer the questions"
     And I set the following fields to these values:
       | No | 1 |
     And I press "Submit your answers"
@@ -118,7 +118,7 @@ Feature: Anonymous feedback
     And I follow "Preview"
     And I should see "Do you like our site?"
     And I press "Continue"
-    And I follow "Answer the questions..."
+    And I follow "Answer the questions"
     And I should see "Do you like our site?"
     And I set the following fields to these values:
       | Yes | 1 |
@@ -139,7 +139,7 @@ Feature: Anonymous feedback
     And I follow "Preview"
     And I should see "Do you like our site?"
     And I press "Continue"
-    And I follow "Answer the questions..."
+    And I follow "Answer the questions"
     And I should see "Do you like our site?"
     And I set the following fields to these values:
       | Yes | 1 |
@@ -150,7 +150,7 @@ Feature: Anonymous feedback
     And I follow "Preview"
     And I should see "Do you like our site?"
     And I press "Continue"
-    And I follow "Answer the questions..."
+    And I follow "Answer the questions"
     And I should see "Do you like our site?"
     And I set the following fields to these values:
       | No | 1 |
@@ -192,7 +192,7 @@ Feature: Anonymous feedback
     And I follow "Preview"
     Then I should see "Do you like this course?"
     And I press "Continue"
-    And I follow "Answer the questions..."
+    And I follow "Answer the questions"
     And I should see "Do you like this course?"
     And I set the following fields to these values:
       | Yes | 1 |
@@ -204,7 +204,7 @@ Feature: Anonymous feedback
     And I follow "Preview"
     And I should see "Do you like this course?"
     And I press "Continue"
-    And I follow "Answer the questions..."
+    And I follow "Answer the questions"
     And I should see "Do you like this course?"
     And I set the following fields to these values:
       | No | 1 |
@@ -224,7 +224,7 @@ Feature: Anonymous feedback
     And I follow "Preview"
     And I should see "Do you like this course?"
     And I press "Continue"
-    And I should not see "Answer the questions..."
+    And I should not see "Answer the questions"
     And I navigate to "Show responses" in current page administration
     And I should not see "Username"
     And I should see "Anonymous entries (2)"
@@ -262,7 +262,7 @@ Feature: Anonymous feedback
     When I log in as "user1"
     And I am on "Course 1" course homepage
     And I follow "Course feedback"
-    And I follow "Answer the questions..."
+    And I follow "Answer the questions"
     And I set the following fields to these values:
       | this is a short text answer  | anontext |
     And I press "Submit your answers"
@@ -280,7 +280,7 @@ Feature: Anonymous feedback
     When I log in as "user1"
     And I am on "Course 1" course homepage
     And I follow "Course feedback"
-    And I follow "Answer the questions..."
+    And I follow "Answer the questions"
     And I set the following fields to these values:
       | this is a short text answer  | usertext |
     And I press "Submit your answers"
