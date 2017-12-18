@@ -2920,14 +2920,7 @@ class global_navigation extends navigation_node {
 
         $limit = (int) $CFG->navcourselimit;
 
-        $sortorder = 'visible DESC';
-        // Prevent undefined $CFG->navsortmycoursessort errors.
-        if (empty($CFG->navsortmycoursessort)) {
-            $CFG->navsortmycoursessort = 'sortorder';
-        }
-        // Append the chosen sortorder.
-        $sortorder = $sortorder . ',' . $CFG->navsortmycoursessort . ' ASC';
-        $courses = enrol_get_my_courses('*', $sortorder);
+        $courses = enrol_get_my_courses('*');
         $flatnavcourses = [];
 
         // Go through the courses and see which ones we want to display in the flatnav.

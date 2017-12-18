@@ -225,7 +225,7 @@ function core_myprofile_navigation(core_user\output\myprofile\tree $tree, $user,
 
     if (!isset($hiddenfields['mycourses'])) {
         $showallcourses = optional_param('showallcourses', 0, PARAM_INT);
-        if ($mycourses = enrol_get_all_users_courses($user->id, true, null, 'visible DESC, sortorder ASC')) {
+        if ($mycourses = enrol_get_all_users_courses($user->id, true, null)) {
             $shown = 0;
             $courselisting = html_writer::start_tag('ul');
             foreach ($mycourses as $mycourse) {
