@@ -378,11 +378,6 @@ table.quizattemptsummary .noreviewmessage {
     display: none;
 }
 
-#mod_quiz_preflight_form .femptylabel .felement {
-    margin: 0;
-    padding: 0;
-}
-
 .moodle-dialogue-base .moodle-dialogue.mod_quiz_preflight_popup {
     width: 600px;
 }
