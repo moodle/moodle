@@ -122,7 +122,7 @@ switch ($action) {
             foreach ($messages as $n => &$message) {
                 $tmp = new stdClass();
                 // When somebody enter room, user list will be updated.
-                if (!empty($message->system)) {
+                if (!empty($message->issystem)) {
                     $senduserlist = true;
                 }
                 if ($html = chat_format_message_theme($message, $chatuser, $USER, $cm->groupingid, $theme)) {
