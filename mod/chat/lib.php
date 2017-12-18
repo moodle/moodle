@@ -723,12 +723,12 @@ function chat_update_chat_times($chatid=0) {
  *
  * @param object $chatuser The chat user record.
  * @param string $messagetext The message to be sent.
- * @param bool $system False for non-system messages, true for system messages.
+ * @param bool $issystem False for non-system messages, true for system messages.
  * @param object $cm The course module object, pass it to save a database query when we trigger the event.
  * @return int The message ID.
  * @since Moodle 2.6
  */
-function chat_send_chatmessage($chatuser, $messagetext, $system = false, $cm = null) {
+function chat_send_chatmessage($chatuser, $messagetext, $issystem = false, $cm = null) {
     global $DB;
 
     $message = new stdClass();
@@ -736,14 +736,14 @@ function chat_send_chatmessage($chatuser, $messagetext, $system = false, $cm = n
     $message->userid    = $chatuser->userid;
     $message->groupid   = $chatuser->groupid;
     $message->message   = $messagetext;
-    $message->system    = $system ? 1 : 0;
+    $message->issystem  = $issystem ? 1 : 0;
     $message->timestamp = time();
 
     $messageid = $DB->insert_record('chat_messages', $message);
     $DB->insert_record('chat_messages_current', $message);
     $message->id = $messageid;
 
-    if (!$system) {
+    if (!$issystem) {
 
         if (empty($cm)) {
             $cm = get_coursemodule_from_instance('chat', $chatuser->chatid, $chatuser->course);
@@ -801,7 +801,7 @@ function chat_format_message_manually($message, $courseid, $sender, $currentuser
 
     // Start processing the message.
 
-    if (!empty($message->system)) {
+    if (!empty($message->issystem)) {
         // System event.
         $output->text = $message->strtime.': '.get_string('message'.$message->message, 'chat', fullname($sender));
         $output->html  = '<table class="chat-event"><tr'.$rowclass.'><td class="picture">'.$message->picture.'</td>';
@@ -984,7 +984,7 @@ function chat_format_message_theme ($message, $chatuser, $currentuser, $grouping
                         " href=\"$CFG->wwwroot/user/view.php?id=$sender->id&amp;course=$courseid\">$message->picture</a>";
 
     // Start processing the message.
-    if (!empty($message->system)) {
+    if (!empty($message->issystem)) {
         $result->type = 'system';
 
         $senderprofile = $CFG->wwwroot.'/user/view.php?id='.$sender->id.'&amp;course='.$courseid;
