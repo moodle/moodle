@@ -24,6 +24,7 @@
 
 $string['activityoverview'] = 'You have assignments that need attention';
 $string['addsubmission'] = 'Add submission';
+$string['addsubmission_help'] = 'You have not made a submission yet';
 $string['addattempt'] = 'Allow another attempt';
 $string['addnewattempt'] = 'Add a new attempt';
 $string['addnewattempt_help'] = 'This will create a new blank submission for you to work on.';
@@ -162,7 +163,7 @@ $string['editingpreviousfeedbackwarning'] = 'You are editing the feedback for a 
 $string['editoverride'] = 'Edit override';
 $string['editsubmission'] = 'Edit submission';
 $string['editsubmissionother'] = 'Edit submission for {$a}';
-$string['editsubmission_help'] = 'Make changes to your submission';
+$string['editsubmission_help'] = 'You can still make changes to your submission';
 $string['editingstatus'] = 'Editing status';
 $string['editaction'] = 'Actions...';
 $string['enabled'] = 'Enabled';
