@@ -1046,7 +1046,6 @@ EOF;
     public static function create_draft_file($filedata = array()) {
         global $USER;
 
-        self::setAdminUser();
         $fs = get_file_storage();
 
         $filerecord = array(
@@ -1208,7 +1207,9 @@ EOF;
         global $USER;
 
         $this->resetAfterTest(true);
-        $this->setAdminUser();
+        // The admin has no restriction for max file uploads, so use a normal user.
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
         $fs = get_file_storage();
 
         $file = self::create_draft_file();
