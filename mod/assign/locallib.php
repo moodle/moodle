@@ -3045,7 +3045,7 @@ class assign {
             } else {
                 $button->set_formats(PORTFOLIO_FORMAT_PLAINHTML);
             }
-            $result .= $button->to_html();
+            $result .= $button->to_html(PORTFOLIO_ADD_TEXT_LINK);
         }
         return $result;
     }
