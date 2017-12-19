@@ -42,6 +42,7 @@ class auth_plugin_db extends auth_plugin_base {
 
         $this->authtype = 'db';
         $this->config = get_config('auth_db');
+        $this->errorlogtag = '[AUTH DB] ';
         if (empty($this->config->extencoding)) {
             $this->config->extencoding = 'utf-8';
         }

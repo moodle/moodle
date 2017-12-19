@@ -111,6 +111,13 @@ class auth_plugin_base {
     var $customfields = null;
 
     /**
+     * The tag we want to prepend to any error log messages.
+     *
+     * @var string
+     */
+    protected $errorlogtag = '';
+
+    /**
      * This is the primary method that is used by the authenticate_user_login()
      * function in moodlelib.php.
      *
@@ -641,8 +648,8 @@ class auth_plugin_base {
         // Get the current user record.
         $user = $DB->get_record('user', array('username' => $username, 'mnethostid' => $CFG->mnet_localhost_id));
         if (empty($user)) { // Trouble.
-            error_log($this->errorlogtag.get_string('auth_dbusernotexist', 'auth_db', '', $username));
-            print_error('auth_dbusernotexist', 'auth_db', '', $username);
+            error_log($this->errorlogtag . get_string('auth_usernotexist', 'auth', $username));
+            print_error('auth_usernotexist', 'auth', '', $username);
             die;
         }
 

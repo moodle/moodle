@@ -64,6 +64,7 @@ $string['auth_updateremote_ldap'] = '<p><b>Note:</b> Updating external LDAP data
 $string['auth_user_create'] = 'Enable user creation';
 $string['auth_user_creation'] = 'New (anonymous) users can create user accounts on the external authentication source and confirmed via email. If you enable this , remember to also configure module-specific options for user creation.';
 $string['auth_usernameexists'] = 'Selected username already exists. Please choose a new one.';
+$string['auth_usernotexist'] = 'Cannot update non-existent user: {$a}';
 $string['auto_add_remote_users'] = 'Auto add remote users';
 $string['cannotmapfield'] = 'Field "{$a->fieldname}" can not be mapped because its short name "{$a->shortname}" is too long. To enable mapping reduce the profile field short name down to {$a->charlimit} characters. <a href="{$a->link}">Edit user profile fields</a>';
 $string['createpassword'] = 'Generate password and notify user';

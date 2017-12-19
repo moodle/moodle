@@ -66,7 +66,6 @@ $string['auth_dbupdateusers_description'] = 'As well as inserting new users, upd
 $string['auth_dbupdatinguser'] = 'Updating user {$a->name} id {$a->id}';
 $string['auth_dbuser'] = 'Username with read access to the database';
 $string['auth_dbuser_key'] = 'DB user';
-$string['auth_dbusernotexist'] = 'Cannot update non-existent user: {$a}';
 $string['auth_dbuserstoadd'] = 'User entries to add: {$a}';
 $string['auth_dbuserstoremove'] = 'User entries to remove: {$a}';
 $string['pluginname'] = 'External database';
