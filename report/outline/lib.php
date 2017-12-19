@@ -86,7 +86,7 @@ function report_outline_can_access_user_report($user, $course) {
         return false;
     }
 
-    if (has_capability('report/outline:view', $coursecontext)) {
+    if (has_capability('report/outline:viewuserreport', $coursecontext)) {
         return true;
     }
 
