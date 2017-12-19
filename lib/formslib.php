@@ -2492,9 +2492,13 @@ require(["core/event", "jquery"], function(Event, $) {
             }
         }
         foreach ($this->_hideifs as $dependenton => $conditions) {
-            $result[$dependenton] = array();
+            if (!isset($result[$dependenton])) {
+                $result[$dependenton] = array();
+            }
             foreach ($conditions as $condition => $values) {
-                $result[$dependenton][$condition] = array();
+                if (!isset($result[$dependenton][$condition])) {
+                    $result[$dependenton][$condition] = array();
+                }
                 foreach ($values as $value => $dependents) {
                     $result[$dependenton][$condition][$value][self::DEP_HIDE] = array();
                     foreach ($dependents as $dependent) {
