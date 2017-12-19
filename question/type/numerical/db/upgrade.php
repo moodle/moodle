@@ -37,7 +37,7 @@ function xmldb_qtype_numerical_upgrade($oldversion) {
 
         // Changing length of field multiplier on table question_numerical_units to 38.
         $table = new xmldb_table('question_numerical_units');
-        $field = new xmldb_field('multiplier', XMLDB_TYPE_NUMBER, '38, 19', null, XMLDB_NOTNULL, null, null, 'question');
+        $field = new xmldb_field('multiplier', XMLDB_TYPE_NUMBER, '38, 19', null, XMLDB_NOTNULL, null, '1.00000000000000000000');
 
         // Launch change of length for field multiplier.
         $dbman->change_field_type($table, $field);
