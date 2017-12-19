@@ -82,6 +82,7 @@ function mycourses_get_my_completion($datefrom = 0) {
                                                          FROM {enrol} e
                                                          JOIN {course} c ON (e.courseid = c.id)
                                                          WHERE e.enrol = :enrol
+                                                         AND e.status = 0
                                                          AND c.id IN (
                                                            SELECT courseid FROM {company_course}
                                                            WHERE companyid = :companyid)
@@ -92,6 +93,7 @@ function mycourses_get_my_completion($datefrom = 0) {
                                                         FROM {enrol} e
                                                         JOIN {course} c ON (e.courseid = c.id)
                                                         WHERE e.enrol = :enrol
+                                                         AND e.status = 0
                                                          AND c.id IN (
                                                            SELECT courseid FROM {iomad_courses}
                                                            WHERE shared = 1)
@@ -120,7 +122,7 @@ function mycourses_get_my_completion($datefrom = 0) {
                 // Get the certificate from the download files thing.
                 if ($traccertrec = $DB->get_record('local_iomad_track_certs', array('trackid' => $id))) {
                     // create the file download link.
-                    $coursecontext = context_course::instance($archive->courseid);
+                    $coursecontext = context_course::instance($completed->courseid);
 
                     $certstring = moodle_url::make_file_url('/pluginfile.php', '/'.$coursecontext->id.'/local_iomad_track/issue/'.$traccertrec->trackid.'/'.$traccertrec->filename);
                 } else {
