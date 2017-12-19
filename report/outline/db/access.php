@@ -48,6 +48,8 @@ $capabilities = array(
             'editingteacher' => CAP_ALLOW,
             'manager' => CAP_ALLOW
         ),
+
+        'clonepermissionsfrom' => 'report/outline:view',
     )
 );
 
