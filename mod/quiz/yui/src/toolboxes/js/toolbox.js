@@ -50,7 +50,7 @@ var CSS = {
         EDITSECTION: 'a.editing_section',
         EDITSECTIONICON: 'a.editing_section .icon',
         EDITSHUFFLEQUESTIONSACTION: 'input.cm-edit-action[data-action]',
-        EDITSHUFFLEAREA: '.instanceshufflequestions .shuffle-progress .shuffle-help-tip',
+        EDITSHUFFLEAREA: '.instanceshufflequestions .shuffle-progress',
         HIDE: 'a.editing_hide',
         HIGHLIGHT: 'a.editing_highlight',
         INSTANCENAME: 'span.instancename',
