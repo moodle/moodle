@@ -1404,6 +1404,7 @@ function stats_get_report_options($courseid,$mode) {
             $sql = 'SELECT r.id, r.name, r.shortname FROM {role} r JOIN {stats_daily} s ON s.roleid = r.id
                  WHERE s.courseid = :courseid GROUP BY r.id, r.name, r.shortname';
             if ($roles = $DB->get_records_sql($sql, array('courseid' => $courseid))) {
+                $roles = array_intersect_key($roles, get_viewable_roles($context));
                 foreach ($roles as $role) {
                     $reportoptions[STATS_REPORT_ACTIVITYBYROLE.$role->id] = get_string('statsreport'.STATS_REPORT_ACTIVITYBYROLE).
                         ' ' . role_get_name($role, $context);
