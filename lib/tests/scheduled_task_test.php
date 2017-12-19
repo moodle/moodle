@@ -467,4 +467,38 @@ class core_scheduled_task_testcase extends advanced_testcase {
         // There should only be two items in the array, '.' and '..'.
         $this->assertEquals(2, count($filesarray));
     }
+
+    /**
+     * Test that the function to clear the fail delay from a task works correctly.
+     */
+    public function test_clear_fail_delay() {
+
+        $this->resetAfterTest();
+
+        // Get an example task to use for testing. Task is set to run every minute by default.
+        $taskname = '\core\task\send_new_user_passwords_task';
+
+        // Pretend task started running and then failed 3 times.
+        $before = time();
+        $cronlockfactory = \core\lock\lock_config::get_lock_factory('cron');
+        for ($i = 0; $i < 3; $i ++) {
+            $task = \core\task\manager::get_scheduled_task($taskname);
+            $lock = $cronlockfactory->get_lock('\\' . get_class($task), 10);
+            $task->set_lock($lock);
+            \core\task\manager::scheduled_task_failed($task);
+        }
+
+        // Confirm task is now delayed by several minutes.
+        $task = \core\task\manager::get_scheduled_task($taskname);
+        $this->assertEquals(240, $task->get_fail_delay());
+        $this->assertGreaterThan($before + 230, $task->get_next_run_time());
+
+        // Clear the fail delay and re-get the task.
+        \core\task\manager::clear_fail_delay($task);
+        $task = \core\task\manager::get_scheduled_task($taskname);
+
+        // There should be no delay and it should run within the next minute.
+        $this->assertEquals(0, $task->get_fail_delay());
+        $this->assertLessThan($before + 70, $task->get_next_run_time());
+    }
 }
