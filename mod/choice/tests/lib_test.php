@@ -175,31 +175,32 @@ class mod_choice_lib_testcase extends externallib_advanced_testcase {
         // Setup test data.
         $course = $this->getDataGenerator()->create_course();
         $choice = $this->getDataGenerator()->create_module('choice', array('course' => $course->id));
-        $context = context_module::instance($choice->cmid);
         $cm = get_coursemodule_from_instance('choice', $choice->id);
 
         $choicewithoptions = choice_get_choice($choice->id);
         $optionids = array_keys($choicewithoptions->option);
 
         choice_user_submit_response($optionids[0], $choice, $USER->id, $course, $cm);
-        $responses = choice_get_my_response($choice, $course, $cm, $context);
+        $responses = choice_get_my_response($choice);
         $this->assertCount(1, $responses);
         $response = array_shift($responses);
         $this->assertEquals($optionids[0], $response->optionid);
 
         // Multiple responses.
         $choice = $this->getDataGenerator()->create_module('choice', array('course' => $course->id, 'allowmultiple' => 1));
-        $context = context_module::instance($choice->cmid);
         $cm = get_coursemodule_from_instance('choice', $choice->id);
 
         $choicewithoptions = choice_get_choice($choice->id);
         $optionids = array_keys($choicewithoptions->option);
 
-        choice_user_submit_response($optionids, $choice, $USER->id, $course, $cm);
-        $responses = choice_get_my_response($choice, $course, $cm, $context);
+        // Submit a response with the options reversed.
+        $selections = $optionids;
+        rsort($selections);
+        choice_user_submit_response($selections, $choice, $USER->id, $course, $cm);
+        $responses = choice_get_my_response($choice);
         $this->assertCount(count($optionids), $responses);
         foreach ($responses as $resp) {
-            $this->assertContains($resp->optionid, $optionids);
+            $this->assertEquals(array_shift($optionids), $resp->optionid);
         }
     }
 
