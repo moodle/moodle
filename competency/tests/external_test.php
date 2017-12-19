@@ -2801,4 +2801,43 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
         $result = external::update_course_competency_settings($course->id, array('pushratingstouserplans' => true));
     }
 
+    /**
+     * Test that we can list competencies with a filter.
+     *
+     * @return void
+     */
+    public function test_list_competencies_with_filter() {
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $dg = $this->getDataGenerator();
+        $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
+
+        $framework = $lpg->create_framework();
+        $c1 = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id')));
+        $c2 = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id')));
+        $c3 = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id')));
+        $c4 = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id')));
+        $c5 = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id')));
+
+        // Test if removing competency from plan don't create sortorder holes.
+        $filters = [];
+        $sort = 'id';
+        $order = 'ASC';
+        $skip = 0;
+        $limit = 0;
+        $result = external::list_competencies($filters, $sort, $order, $skip, $limit);
+        $this->assertCount(5, $result);
+
+        $result = external::list_competencies($filters, $sort, $order, 2, $limit);
+        $this->assertCount(3, $result);
+        $result = external::list_competencies($filters, $sort, $order, 2, 2);
+        $this->assertCount(2, $result);
+
+        $filter = $result[0]->shortname;
+        $filters[0] = ['column' => 'shortname', 'value' => $filter];
+        $result = external::list_competencies($filters, $sort, $order, $skip, $limit);
+        $this->assertCount(1, $result);
+        $this->assertEquals($filter, $result[0]->shortname);
+    }
+
 }
