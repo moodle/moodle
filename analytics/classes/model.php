@@ -111,6 +111,11 @@ class model {
     protected $target = null;
 
     /**
+     * @var \core_analytics\predictor
+     */
+    protected $predictionsprocessor = null;
+
+    /**
      * @var \core_analytics\local\indicator\base[]
      */
     protected $indicators = null;
@@ -336,7 +341,8 @@ class model {
      * @param string $timesplittingid The time splitting method id (its fully qualified class name)
      * @return \core_analytics\model
      */
-    public static function create(\core_analytics\local\target\base $target, array $indicators, $timesplittingid = false) {
+    public static function create(\core_analytics\local\target\base $target, array $indicators,
+                                  $timesplittingid = false, $processor = false) {
         global $USER, $DB;
 
         \core_analytics\manager::check_can_manage_models();
@@ -352,6 +358,14 @@ class model {
         $modelobj->timecreated = $now;
         $modelobj->timemodified = $now;
         $modelobj->usermodified = $USER->id;
+
+        if ($processor &&
+                !self::is_valid($processor, '\core_analytics\classifier') &&
+                !self::is_valid($processor, '\core_analytics\regressor')) {
+            throw new \coding_exception('The provided predictions processor \\' . $processor . '\processor is not valid');
+        } else {
+            $modelobj->predictionsprocessor = $processor;
+        }
 
         $id = $DB->insert_record('analytics_models', $modelobj);
 
@@ -411,9 +425,10 @@ class model {
      * @param int|bool $enabled
      * @param \core_analytics\local\indicator\base[]|false $indicators False to respect current indicators
      * @param string|false $timesplittingid False to respect current time splitting method
+     * @param string|false $predictionsprocessor False to respect current predictors processor value
      * @return void
      */
-    public function update($enabled, $indicators = false, $timesplittingid = '') {
+    public function update($enabled, $indicators = false, $timesplittingid = '', $predictionsprocessor = false) {
         global $USER, $DB;
 
         \core_analytics\manager::check_can_manage_models();
@@ -433,8 +448,14 @@ class model {
             $timesplittingid = $this->model->timesplitting;
         }
 
+        if ($predictionsprocessor === false) {
+            // Respect current value.
+            $predictionsprocessor = $this->model->predictionsprocessor;
+        }
+
         if ($this->model->timesplitting !== $timesplittingid ||
-                $this->model->indicators !== $indicatorsstr) {
+                $this->model->indicators !== $indicatorsstr ||
+                $this->model->predictionsprocessor !== $predictionsprocessor) {
 
             // Delete generated predictions before changing the model version.
             $this->clear();
@@ -458,6 +479,7 @@ class model {
         $this->model->enabled = intval($enabled);
         $this->model->indicators = $indicatorsstr;
         $this->model->timesplitting = $timesplittingid;
+        $this->model->predictionsprocessor = $predictionsprocessor;
         $this->model->timemodified = $now;
         $this->model->usermodified = $USER->id;
 
@@ -477,7 +499,7 @@ class model {
         $this->clear();
 
         // Method self::clear is already clearing the current model version.
-        $predictor = \core_analytics\manager::get_predictions_processor();
+        $predictor = $this->get_predictions_processor();
         $predictor->delete_output_dir($this->get_output_dir(array(), true));
 
         $DB->delete_records('analytics_models', array('id' => $this->model->id));
@@ -516,7 +538,7 @@ class model {
         $this->heavy_duty_mode();
 
         // Before get_labelled_data call so we get an early exception if it is not ready.
-        $predictor = \core_analytics\manager::get_predictions_processor();
+        $predictor = $this->get_predictions_processor();
 
         $datasets = $this->get_analyser()->get_labelled_data();
 
@@ -608,7 +630,7 @@ class model {
         $outputdir = $this->get_output_dir(array('execution'));
 
         // Before get_labelled_data call so we get an early exception if it is not ready.
-        $predictor = \core_analytics\manager::get_predictions_processor();
+        $predictor = $this->get_predictions_processor();
 
         $datasets = $this->get_analyser()->get_labelled_data();
 
@@ -677,7 +699,7 @@ class model {
 
         // Before get_unlabelled_data call so we get an early exception if it is not ready.
         if (!$this->is_static()) {
-            $predictor = \core_analytics\manager::get_predictions_processor();
+            $predictor = $this->get_predictions_processor();
         }
 
         $samplesdata = $this->get_analyser()->get_unlabelled_data();
@@ -736,6 +758,15 @@ class model {
         $this->flag_file_as_used($samplesfile, 'predicted');
 
         return $result;
+    }
+
+    /**
+     * Returns the model predictions processor.
+     *
+     * @return \core_analytics\predictor
+     */
+    public function get_predictions_processor() {
+        return manager::get_predictions_processor($this->model->predictionsprocessor);
     }
 
     /**
@@ -1457,7 +1488,7 @@ class model {
         \core_analytics\manager::check_can_manage_models();
 
         // Delete current model version stored stuff.
-        $predictor = \core_analytics\manager::get_predictions_processor();
+        $predictor = $this->get_predictions_processor();
         $predictor->clear_model($this->get_unique_id(), $this->get_output_dir());
 
         $predictionids = $DB->get_fieldset_select('analytics_predictions', 'id', 'modelid = :modelid',
