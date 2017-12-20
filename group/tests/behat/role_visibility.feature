@@ -1,5 +1,5 @@
-@core @core_group @role_visibility
-Feature: Test role visibility
+@core @core_group
+Feature: Test role visibility for the groups management page
   In order to control access
   As an admin
   I need to control which roles can see each other

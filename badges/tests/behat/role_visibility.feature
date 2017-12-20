@@ -1,5 +1,5 @@
-@core @core_badges @role_visibility
-Feature: Test role visibility
+@core @core_badges
+Feature: Test role visibility for the badge administration page
   In order to control access
   As an admin
   I need to control which roles can see each other

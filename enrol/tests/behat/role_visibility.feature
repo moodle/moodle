@@ -1,5 +1,5 @@
-@core @core_enrol @role_visibility
-Feature: Test role visibility
+@core @core_enrol
+Feature: Test role visibility for the participants page
   In order to control access
   As an admin
   I need to control which roles can see each other
