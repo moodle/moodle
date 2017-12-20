@@ -48,6 +48,11 @@ namespace core_question\statistics\responses;
 class analysis_for_subpart {
 
     /**
+     * @var analysis_for_class[]
+     */
+    protected $responseclasses;
+
+    /**
      * Takes an array of possible_responses as returned from {@link \question_type::get_possible_responses()}.
      *
      * @param \question_possible_response[] $responseclasses as returned from {@link \question_type::get_possible_responses()}.
@@ -57,13 +62,10 @@ class analysis_for_subpart {
             foreach ($responseclasses as $responseclassid => $responseclass) {
                 $this->responseclasses[$responseclassid] = new analysis_for_class($responseclass, $responseclassid);
             }
+        } else {
+            $this->responseclasses = [];
         }
     }
-
-    /**
-     * @var analysis_for_class[]
-     */
-    protected $responseclasses;
 
     /**
      * Unique ids for response classes.
@@ -81,7 +83,12 @@ class analysis_for_subpart {
      * @return analysis_for_class
      */
     public function get_response_class($classid) {
+        if (!isset($this->responseclasses[$classid])) {
+            debugging('Unexpected class id ' . $classid . ' encountered.');
+            $this->responseclasses[$classid] = new analysis_for_class('[Unknown]', $classid);
+        }
         return $this->responseclasses[$classid];
+
     }
 
     /**

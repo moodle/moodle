@@ -201,7 +201,7 @@ class quiz_statistics_report extends quiz_default_report {
 
         } else if ($qid) {
             // Report on an individual sub-question indexed questionid.
-            if (is_null($questionstats->for_subq($qid, $variantno))) {
+            if (!$questionstats->has_subq($qid, $variantno)) {
                 print_error('questiondoesnotexist', 'question');
             }
 
