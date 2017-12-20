@@ -647,7 +647,7 @@ class core_course_renderer extends plugin_renderer_base {
             }
         } else {
             $linkclasses .= ' dimmed';
-            $textclasses .= ' dimmed_text';
+            $textclasses .= ' dimmed dimmed_text';
         }
         return array($linkclasses, $textclasses);
     }
