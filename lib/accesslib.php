@@ -3093,12 +3093,12 @@ function get_viewable_roles(context $context, $userid = null) {
     }
 
     $query = "
-        SELECT r.id, r.name, r.shortname, rn.name AS coursealias
+        SELECT r.id, r.name, r.shortname, rn.name AS coursealias, r.sortorder
           FROM {role} r
           $extrajoins
      LEFT JOIN {role_names} rn ON (rn.contextid = :coursecontext AND rn.roleid = r.id)
           $extrawhere
-      GROUP BY r.id, r.name, r.shortname, rn.name
+      GROUP BY r.id, r.name, r.shortname, rn.name, r.sortorder
       ORDER BY r.sortorder";
     $roles = $DB->get_records_sql($query, $params);
 

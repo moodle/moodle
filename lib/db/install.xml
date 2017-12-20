@@ -1086,6 +1086,7 @@
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
         <KEY NAME="roleid" TYPE="foreign" FIELDS="roleid" REFTABLE="role" REFFIELDS="id"/>
+        <KEY NAME="allowview" TYPE="foreign" FIELDS="allowview" REFTABLE="role" REFFIELDS="id"/>
       </KEYS>
       <INDEXES>
         <INDEX NAME="roleid-allowview" UNIQUE="true" FIELDS="roleid, allowview" COMMENT="Each pair (roleid, allowview) must appear at most once."/>
