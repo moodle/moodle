@@ -64,9 +64,9 @@ class xmldb_field extends xmldb_object {
     const INTEGER_MAX_LENGTH = 20;
 
     /**
-     * @const max length of decimals
+     * @const max length (precision, the total number of digits) of decimals
      */
-    const NUMBER_MAX_LENGTH = 20;
+    const NUMBER_MAX_LENGTH = 38;
 
     /**
      * @const max length of floats
@@ -794,6 +794,10 @@ class xmldb_field extends xmldb_object {
                 $decimals = empty($decimals) ? 0 : $decimals; // fix missing decimals
                 if (!is_number($decimals) or $decimals < 0 or $decimals > $length) {
                     return 'Invalid field definition in table {'.$xmldb_table->getName().'}: XMLDB_TYPE_NUMBER field "'.$this->getName().'" has invalid decimals';
+                }
+                if ($length - $decimals > self::INTEGER_MAX_LENGTH) {
+                    return 'Invalid field definition in table {'.$xmldb_table->getName().'}: XMLDB_TYPE_NUMBER field "'.
+                        $this->getName().'" has too big whole number part';
                 }
                 $default = $this->getDefault();
                 if (!empty($default) and !is_numeric($default)) {
