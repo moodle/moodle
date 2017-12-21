@@ -139,6 +139,7 @@ $string['downloadresponseas'] = 'Download all responses as:';
 $string['importfromthisfile'] = 'Import from this file';
 $string['import_questions'] = 'Import questions';
 $string['import_successfully'] = 'Import successfully';
+$string['includeuserinrecipientslist'] = 'Include {$a} in the list of recipients';
 $string['indicator:cognitivedepth'] = 'Feedback cognitive';
 $string['indicator:cognitivedepth_help'] = 'This indicator is based on the cognitive depth reached by the student in a Feedback activity.';
 $string['indicator:socialbreadth'] = 'Feedback social';
