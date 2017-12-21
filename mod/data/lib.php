@@ -1448,7 +1448,13 @@ function data_print_template($template, $records, $data, $search='', $page=0, $r
 
         $patterns[]='##delcheck##';
         if ($canmanageentries) {
-            $replacement[] = html_writer::checkbox('delcheck[]', $record->id, false, '', array('class' => 'recordcheckbox'));
+            $checkbox = new \core\output\checkbox_toggleall('listview-entries', false, [
+                'id' => "entry_{$record->id}",
+                'name' => 'delcheck[]',
+                'class' => 'recordcheckbox',
+                'value' => $record->id,
+            ]);
+            $replacement[] = $OUTPUT->render($checkbox);
         } else {
             $replacement[] = '';
         }
