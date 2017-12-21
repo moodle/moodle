@@ -53,6 +53,8 @@ function xmldb_local_iomad_dashboard_install() {
         $bi->subpagepattern = $subpagepattern;
         $bi->defaultregion = 'side_pre';
         $bi->defaultweight = 0;
+        $bi->timecreated = time();
+        $bi->timemodified = $bi->timecreated;
         $blockid = $DB->insert_record('block_instances', $bi);
         context_block::instance($blockid);
 
