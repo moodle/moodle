@@ -75,6 +75,11 @@ abstract class engine {
     protected $pluginname = null;
 
     /**
+     * @var bool If true, should skip schema validity check when checking the search engine is ready
+     */
+    protected $skipschemacheck = false;
+
+    /**
      * Initialises the search engine configuration.
      *
      * Search engine availability should be checked separately.
@@ -417,9 +422,37 @@ abstract class engine {
      *
      * This should also check that the search engine configuration is ok.
      *
+     * If the function $this->should_skip_schema_check() returns true, then this function may leave
+     * out time-consuming checks that the schema is valid. (This allows for improved performance on
+     * critical pages such as the main search form.)
+     *
      * @return true|string Returns true if all good or an error string.
      */
     abstract function is_server_ready();
+
+    /**
+     * Tells the search engine to skip any time-consuming checks that it might do as part of the
+     * is_server_ready function, and only carry out a basic check that it can contact the server.
+     *
+     * This setting is not remembered and applies only to the current request.
+     *
+     * @since Moodle 3.5
+     * @param bool $skip True to skip the checks, false to start checking again
+     */
+    public function skip_schema_check($skip = true) {
+        $this->skipschemacheck = $skip;
+    }
+
+    /**
+     * For use by subclasses. The engine can call this inside is_server_ready to check whether it
+     * should skip time-consuming schema checks.
+     *
+     * @since Moodle 3.5
+     * @return bool True if schema checks should be skipped
+     */
+    protected function should_skip_schema_check() {
+        return $this->skipschemacheck;
+    }
 
     /**
      * Adds a document to the search engine.

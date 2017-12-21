@@ -1137,6 +1137,12 @@ class engine extends \core_search\engine {
             return $configured;
         }
 
+        // As part of the above we have already checked that we can contact the server. For pages
+        // where performance is important, we skip doing a full schema check as well.
+        if ($this->should_skip_schema_check()) {
+            return true;
+        }
+
         // Update schema if required/possible.
         $schemalatest = $this->check_latest_schema();
         if ($schemalatest !== true) {
