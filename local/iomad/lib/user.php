@@ -436,7 +436,7 @@ class company_user {
      * @param text $temppassword
      */
     public static function store_temporary_password($user, $sendemail, $temppassword, $reset = false, $due = 0) {
-        global $CFG, $USER;
+        global $CFG, $DB, $USER;
         if (empty($due)) {
             $due = time();
         }
@@ -446,7 +446,7 @@ class company_user {
             if ($reset) {
                 // Get the company details.
                 $company = company::get_company_byuserid($user->id);
-                $companyrec = $DB->get_record('company', array('id' => $companyid));
+                $companyrec = $DB->get_record('company', array('id' => $company->id));
                 if ($companyrec->managernotify == 0) {
                     $headers = null;
                 } else {
