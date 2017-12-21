@@ -1,7 +1,14 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 3.5 ===
+
+* The maximum supported precision (the total number of digits) for XMLDB_TYPE_NUMBER ("number") fields raised from 20 to
+  38 digits. Additionally, the whole number part (precision minus scale) must not be longer than the maximum length of
+  integer fields (20 digits). Note that PHP floats commonly support precision of roughly 15 digits only (MDL-32113).
+
 === 3.4 ===
+
 * oauth2_client::request method has an extra parameter to specify the accept header for the response (MDL-60733)
 * The following functions, previously used (exclusively) by upgrade steps are not available
   anymore because of the upgrade cleanup performed for this version. See MDL-57432 for more info:

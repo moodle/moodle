@@ -10,6 +10,7 @@
         <FIELD NAME="intro" TYPE="text" LENGTH="medium" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="avatar" TYPE="binary" LENGTH="medium" NOTNULL="false" UNSIGNED="false" SEQUENCE="false"/>
         <FIELD NAME="grade" TYPE="number" LENGTH="20" DECIMALS="10" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="bignum" TYPE="number" LENGTH="38" DECIMALS="18" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="path" TYPE="char" LENGTH="255" NOTNULL="true"/>
       </FIELDS>
       <KEYS>
