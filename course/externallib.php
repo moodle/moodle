@@ -713,8 +713,13 @@ class core_course_external extends external_api {
             require_capability('moodle/course:create', $context);
 
             // Make sure lang is valid
-            if (array_key_exists('lang', $course) and empty($availablelangs[$course['lang']])) {
-                throw new moodle_exception('errorinvalidparam', 'webservice', '', 'lang');
+            if (array_key_exists('lang', $course)) {
+                if (empty($availablelangs[$course['lang']])) {
+                    throw new moodle_exception('errorinvalidparam', 'webservice', '', 'lang');
+                }
+                if (!has_capability('moodle/course:setforcedlanguage', $context)) {
+                    unset($course['lang']);
+                }
             }
 
             // Make sure theme is valid
@@ -911,8 +916,11 @@ class core_course_external extends external_api {
                 }
 
                 // Make sure lang is valid.
-                if (array_key_exists('lang', $course) && empty($availablelangs[$course['lang']])) {
-                    throw new moodle_exception('errorinvalidparam', 'webservice', '', 'lang');
+                if (array_key_exists('lang', $course) && ($oldcourse->lang != $course['lang'])) {
+                    require_capability('moodle/course:setforcedlanguage', $context);
+                    if (empty($availablelangs[$course['lang']])) {
+                        throw new moodle_exception('errorinvalidparam', 'webservice', '', 'lang');
+                    }
                 }
 
                 // Make sure theme is valid.
