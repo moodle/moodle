@@ -40,6 +40,9 @@ if ($ADMIN->fulltree) {
     // Number of discussions on a page
     $settings->add(new admin_setting_configtext('forum_manydiscussions', get_string('manydiscussions', 'forum'),
                        get_string('configmanydiscussions', 'forum'), 100, PARAM_INT));
+    // Number of posts on a page
+    $settings->add(new admin_setting_configtext('forum_manyposts', get_string('manyposts', 'forum'),
+                       get_string('configmanyposts', 'forum'), 10, PARAM_INT));
 
     if (isset($CFG->maxbytes)) {
         $maxbytes = 0;

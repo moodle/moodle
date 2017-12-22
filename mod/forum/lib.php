@@ -5661,7 +5661,7 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions = -1, $
  * @param bool $canrate
  */
 function forum_print_discussion($course, $cm, $forum, $discussion, $post, $mode, $canreply=NULL, $canrate=false) {
-    global $USER, $CFG;
+    global $USER, $CFG,$OUTPUT;
 
     require_once($CFG->dirroot.'/rating/lib.php');
 
@@ -5740,6 +5740,27 @@ function forum_print_discussion($course, $cm, $forum, $discussion, $post, $mode,
     forum_print_post($post, $discussion, $forum, $cm, $course, $ownpost, $reply, false,
                          '', '', $postread, true, $forumtracked);
 
+    //paginating
+    $pagePosts = $CFG->forum_manyposts-1;
+    $paginate = false;
+    $page   = optional_param('page', 0, PARAM_INT);
+    if($mode<2){
+        $postNumbers = count($posts)-1;
+        if($postNumbers>$pagePosts){
+            $inicio = $page*$pagePosts;
+            $posts = array_slice($posts,$inicio,$pagePosts,true);
+            $paginate = true;
+        }
+    }
+    else{
+        $postNumbers = count($post->children);
+        if($postNumbers>$pagePosts){
+            $inicio = $page*$pagePosts;
+            $posts[$post->id]->children = array_slice($posts[$post->id]->children,$inicio,$pagePosts,true);
+            $paginate = true;
+        }
+    }
+
     switch ($mode) {
         case FORUM_MODE_FLATOLDEST :
         case FORUM_MODE_FLATNEWEST :
@@ -5754,6 +5775,12 @@ function forum_print_discussion($course, $cm, $forum, $discussion, $post, $mode,
         case FORUM_MODE_NESTED :
             forum_print_posts_nested($course, $cm, $forum, $discussion, $post, $reply, $forumtracked, $posts);
             break;
+    }
+
+    //paging bar
+    if($paginate){
+        $url = new moodle_url('/mod/forum/discuss.php', array('d'=>$discussion->id));
+        echo $OUTPUT->paging_bar($postNumbers,$page,$pagePosts,$url);
     }
 }
 
@@ -5804,7 +5831,6 @@ function forum_print_posts_threaded($course, &$cm, $forum, $discussion, $parent,
     global $USER, $CFG;
 
     $link  = false;
-
     if (!empty($posts[$parent->id]->children)) {
         $posts = $posts[$parent->id]->children;
 
