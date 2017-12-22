@@ -137,6 +137,16 @@ class auth_plugin_db extends auth_plugin_base {
                 return (strtolower($fromdb) == sha1($extpassword));
             } else if ($this->config->passtype === 'saltedcrypt') {
                 return password_verify($extpassword, $fromdb);
+            } else if ($this->config->passtype === 'pbkdf2django') {
+                // Log in django autentication report to https://docs.djangoproject.com/en/1.11/topics/auth/passwords/ in case of questions.
+                $pieces = explode("$", $fromdb);
+                $algorithm = explode('_', $pieces[0]);
+                $iterations = $pieces[1];
+                $salt = $pieces[2];
+                $old_hash = $pieces[3];
+                $hash = hash_pbkdf2($algorithm[1], $extpassword, $salt, $iterations, 0, true);
+                $hash = base64_encode($hash);
+                return $hash==$old_hash;
             } else {
                 return false;
             }
