@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration xmlns="http://logging.apache.org/log4php/">
+	<renderer renderedClass="email_log_info" renderingClass="email_log_renderer" />
+    <appender name="emailRollingFile" class="LoggerAppenderRollingFile">
+        <layout class="LoggerLayoutSimple" />
+        <param name="file" value="/var/www/moodle/log/email/emaillog.log" />
+        <param name="append" value="true" />
+        <param name="maxFileSize" value="100MB" />
+    </appender>
+    <logger name="emaillogger">
+        <level value="info" />
+        <appender_ref ref="emailRollingFile" />
+    </logger>
+</configuration>
