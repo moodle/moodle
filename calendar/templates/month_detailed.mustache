@@ -60,11 +60,12 @@
                     <td class="dayblank">&nbsp;</td>
                 {{/prepadding}}
                 {{#days}}
-                    <td class="clickable day text-sm-center text-md-left{{!
+                    <td class="day text-sm-center text-md-left{{!
                             }}{{#istoday}} today{{/istoday}}{{!
                             }}{{#isweekend}} weekend{{/isweekend}}{{!
                             }}{{#durationevents.0}} duration{{/durationevents.0}}{{!
                             }}{{#durationevents}} duration_{{.}}{{/durationevents}}{{!
+                            }}{{#defaulteventcontext}} clickable{{/defaulteventcontext}}{{!
                         }}"
                         data-day-timestamp="{{timestamp}}"
                         data-drop-zone="month-view-day"
