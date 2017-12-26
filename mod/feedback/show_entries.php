@@ -119,10 +119,24 @@ if ($userid || $showcompleted) {
             $anonresponsestable->get_reponse_navigation_links($completedrecord);
 
     echo html_writer::start_div('response_navigation');
-    echo $prevresponseurl ? html_writer::link($prevresponseurl, get_string('prev'), ['class' => 'prev_response']) : '';
-    echo html_writer::link($returnurl, get_string('back'), ['class' => 'back_to_list']);
-    echo $nextresponseurl ? html_writer::link($nextresponseurl, get_string('next'), ['class' => 'next_response']) : '';
+
+    $responsenavigation = [
+        'col1content' => '',
+        'col2content' => html_writer::link($returnurl, get_string('back'), ['class' => 'back_to_list']),
+        'col3content' => '',
+    ];
+
+    if ($prevresponseurl) {
+        $responsenavigation['col1content'] = html_writer::link($prevresponseurl, get_string('prev'), ['class' => 'prev_response']);
+    }
+
+    if ($nextresponseurl) {
+        $responsenavigation['col3content'] = html_writer::link($nextresponseurl, get_string('next'), ['class' => 'next_response']);
+    }
+
+    echo $OUTPUT->render_from_template('core/columns-1to1to1', $responsenavigation);
     echo html_writer::end_div();
+
 } else {
     // Print the list of responses.
     $courseselectform->display();
