@@ -41,5 +41,3 @@ $string['mapgrade'] = 'Grade for submission';
 $string['percents'] = '{$a} %';
 $string['pluginname'] = 'Number of errors';
 
-// Deprecated since Moodle 3.1.
-$string['dimensioncomment'] = 'Comment';

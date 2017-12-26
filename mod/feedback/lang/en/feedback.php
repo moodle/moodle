@@ -275,35 +275,6 @@ $string['use_one_line_for_each_value'] = 'Use one line for each answer!';
 $string['use_this_template'] = 'Use this template';
 $string['using_templates'] = 'Use a template';
 $string['vertical'] = 'vertical';
-// Deprecated since Moodle 3.1.
-$string['cannotmapfeedback'] = 'Database problem, unable to map feedback to course';
-$string['line_values'] = 'Rating';
-$string['mapcourses_help'] = 'Once you have selected the relevant course(s) from your search,
-you can associate them with this feedback using map course(s). Multiple courses may be selected by holding down the Apple or Ctrl key whilst clicking on the course names. A course may be disassociated from a feedback at any time.';
-$string['max_args_exceeded'] = 'Max 6 arguments can be handled, too many arguments for';
-$string['cancel_moving'] = 'Cancel moving';
-$string['movedown_item'] = 'Move this question down';
-$string['move_here'] = 'Move here';
-$string['moveup_item'] = 'Move this question up';
-$string['notavailable'] = 'this feedback is not available';
-$string['saving_failed_because_missing_or_false_values'] = 'Saving failed because missing or false values';
-$string['cannotunmap'] = 'Database problem, unable to unmap';
-$string['viewcompleted'] = 'completed feedbacks';
-$string['viewcompleted_help'] = 'You may view completed feedback forms, searchable by course and/or by question.
-Feedback responses may be exported to Excel.';
-$string['parameters_missing'] = 'Parameters missing from';
-$string['picture'] = 'Picture';
-$string['picture_file_list'] = 'List of pictures';
-$string['picture_values'] = 'Choose one or more<br />picture files from the list:';
-$string['preview'] = 'Preview';
-$string['preview_help'] = 'In the preview you can change the order of questions.';
-$string['switch_group'] = 'Switch group';
-$string['separator_decimal'] = '.';
-$string['separator_thousand'] = ',';
-$string['relateditemsdeleted'] = 'All responses for this question will also be deleted.';
-$string['radiorated'] = 'Radiobutton (rated)';
-$string['radiobutton'] = 'Multiple choice - single answer allowed (radio buttons)';
-$string['radiobutton_rated'] = 'Radiobutton (rated)';
 // Deprecated since Moodle 3.2.
 $string['start'] = 'Start';
 $string['stop'] = 'End';

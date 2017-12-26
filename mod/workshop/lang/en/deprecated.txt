@@ -1,3 +1,2 @@
 err_unknownfileextension,mod_workshop
 err_wrongfileextension,mod_workshop
-yourassessment,mod_workshop
