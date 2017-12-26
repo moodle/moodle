@@ -632,17 +632,6 @@ class edit_renderer extends \plugin_renderer_base {
         // Get section, page, slotnumber and maxmark.
         $actions = array();
 
-        // Add a new section to the add_menu if possible. This is always added to the HTML
-        // then hidden with CSS when no needed, so that as things are re-ordered, etc. with
-        // Ajax it can be relevaled again when necessary.
-        $params = array('cmid' => $structure->get_cmid(), 'addsectionatpage' => $page);
-
-        $actions['addasection'] = new \action_menu_link_secondary(
-                new \moodle_url($pageurl, $params),
-                new \pix_icon('t/add', $str->addasection, 'moodle', array('class' => 'iconsmall', 'title' => '')),
-                $str->addasection, array('class' => 'cm-edit-action addasection', 'data-action' => 'addasection')
-        );
-
         // Add a new question to the quiz.
         $returnurl = new \moodle_url($pageurl, array('addonpage' => $page));
         $params = array('returnurl' => $returnurl->out_as_local_url(false),
@@ -679,6 +668,17 @@ class edit_renderer extends \plugin_renderer_base {
         }
         $attributes = array_merge(array('data-header' => $title, 'data-addonpage' => $page), $attributes);
         $actions['addarandomquestion'] = new \action_menu_link_secondary($url, $icon, $str->addarandomquestion, $attributes);
+
+        // Add a new section to the add_menu if possible. This is always added to the HTML
+        // then hidden with CSS when no needed, so that as things are re-ordered, etc. with
+        // Ajax it can be relevaled again when necessary.
+        $params = array('cmid' => $structure->get_cmid(), 'addsectionatpage' => $page);
+
+        $actions['addasection'] = new \action_menu_link_secondary(
+            new \moodle_url($pageurl, $params),
+            new \pix_icon('t/add', $str->addasection, 'moodle', array('class' => 'iconsmall', 'title' => '')),
+            $str->addasection, array('class' => 'cm-edit-action addasection', 'data-action' => 'addasection')
+        );
 
         return $actions;
     }
