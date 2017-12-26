@@ -157,7 +157,7 @@ abstract class exporter {
                 $formatparams = $this->get_format_parameters($property);
                 $format = $record->$propertyformat;
 
-                list($text, $format) = external_format_text($data->$property, $format, $formatparams['context']->id,
+                list($text, $format) = external_format_text($data->$property, $format, $formatparams['context'],
                     $formatparams['component'], $formatparams['filearea'], $formatparams['itemid'], $formatparams['options']);
 
                 $data->$property = $text;
@@ -168,11 +168,11 @@ abstract class exporter {
 
                 if (!empty($definition['multiple'])) {
                     foreach ($data->$property as $key => $value) {
-                        $data->{$property}[$key] = external_format_string($value, $formatparams['context']->id,
+                        $data->{$property}[$key] = external_format_string($value, $formatparams['context'],
                             $formatparams['striplinks'], $formatparams['options']);
                     }
                 } else {
-                    $data->$property = external_format_string($data->$property, $formatparams['context']->id,
+                    $data->$property = external_format_string($data->$property, $formatparams['context'],
                             $formatparams['striplinks'], $formatparams['options']);
                 }
             }
