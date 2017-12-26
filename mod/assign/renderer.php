@@ -339,9 +339,11 @@ class mod_assign_renderer extends plugin_renderer_base {
         $urlparams = array('id' => $summary->coursemoduleid, 'action' => 'grading');
         $url = new moodle_url('/mod/assign/view.php', $urlparams);
         $o .= '<a href="' . $url . '" class="btn btn-secondary">' . get_string('viewgrading', 'mod_assign') . '</a> ';
-        $urlparams = array('id' => $summary->coursemoduleid, 'action' => 'grader');
-        $url = new moodle_url('/mod/assign/view.php', $urlparams);
-        $o .= '<a href="' . $url . '" class="btn btn-primary">' . get_string('grade') . '</a>';
+        if ($summary->cangrade) {
+            $urlparams = array('id' => $summary->coursemoduleid, 'action' => 'grader');
+            $url = new moodle_url('/mod/assign/view.php', $urlparams);
+            $o .= '<a href="' . $url . '" class="btn btn-primary">' . get_string('grade') . '</a>';
+        }
         $o .= $this->output->container_end();
 
         // Close the container and insert a spacer.
