@@ -132,7 +132,17 @@ foreach ($searchareas as $area) {
                 $laststatus = '';
             }
             $columns[] = $laststatus;
-            $columns[] = html_writer::link(admin_searcharea_action_url('delete', $areaid), 'Delete index');
+            $accesshide = html_writer::span($area->get_visible_name(), 'accesshide');
+            $actions = [];
+            $actions[] = $OUTPUT->pix_icon('t/delete', '') .
+                    html_writer::link(admin_searcharea_action_url('delete', $areaid),
+                    get_string('deleteindex', 'search', $accesshide));
+            if ($area->supports_get_document_recordset()) {
+                $actions[] = $OUTPUT->pix_icon('i/reload', '') . html_writer::link(
+                        new moodle_url('searchreindex.php', ['areaid' => $areaid]),
+                        get_string('gradualreindex', 'search', $accesshide));
+            }
+            $columns[] = html_writer::alist($actions, ['class' => 'unstyled list-unstyled']);
 
         } else {
             $blankrow = new html_table_cell(get_string('searchnotavailable', 'admin'));
@@ -165,6 +175,13 @@ echo $OUTPUT->single_button(admin_searcharea_action_url('deleteall'), get_string
 echo $OUTPUT->box_end();
 
 echo html_writer::table($table);
+
+if (empty($searchmanagererror)) {
+    // Show information about queued index requests for specific contexts.
+    $searchrenderer = $PAGE->get_renderer('core_search');
+    echo $searchrenderer->render_index_requests_info($searchmanager->get_index_requests_info());
+}
+
 echo $OUTPUT->footer();
 
 /**

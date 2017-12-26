@@ -941,6 +941,39 @@ class search_manager_testcase extends advanced_testcase {
         // if we had already begun processing the previous entry.)
         \core_search\manager::request_index($forum2ctx);
         $this->assertEquals(4, $DB->count_records('search_index_requests'));
+
+        // Clear queue and do tests relating to priority.
+        $DB->delete_records('search_index_requests');
+
+        // Request forum 1, specific area, priority 100.
+        \core_search\manager::request_index($forum1ctx, 'forum-post', 100);
+        $results = array_values($DB->get_records('search_index_requests', null, 'id'));
+        $this->assertCount(1, $results);
+        $this->assertEquals(100, $results[0]->indexpriority);
+
+        // Request forum 1, same area, lower priority; no change.
+        \core_search\manager::request_index($forum1ctx, 'forum-post', 99);
+        $results = array_values($DB->get_records('search_index_requests', null, 'id'));
+        $this->assertCount(1, $results);
+        $this->assertEquals(100, $results[0]->indexpriority);
+
+        // Request forum 1, same area, higher priority; priority stored changes.
+        \core_search\manager::request_index($forum1ctx, 'forum-post', 101);
+        $results = array_values($DB->get_records('search_index_requests', null, 'id'));
+        $this->assertCount(1, $results);
+        $this->assertEquals(101, $results[0]->indexpriority);
+
+        // Request forum 1, all areas, lower priority; adds second entry.
+        \core_search\manager::request_index($forum1ctx, '', 100);
+        $results = array_values($DB->get_records('search_index_requests', null, 'id'));
+        $this->assertCount(2, $results);
+        $this->assertEquals(100, $results[1]->indexpriority);
+
+        // Request course 1, all areas, lower priority; adds third entry.
+        \core_search\manager::request_index($course1ctx, '', 99);
+        $results = array_values($DB->get_records('search_index_requests', null, 'id'));
+        $this->assertCount(3, $results);
+        $this->assertEquals(99, $results[2]->indexpriority);
     }
 
     /**
@@ -969,14 +1002,15 @@ class search_manager_testcase extends advanced_testcase {
 
         // Hack the forums so they have different creation times.
         $now = time();
-        $DB->set_field('forum', 'timemodified', $now - 3, ['id' => $forum1->id]);
-        $DB->set_field('forum', 'timemodified', $now - 2, ['id' => $forum2->id]);
-        $DB->set_field('forum', 'timemodified', $now - 1, ['id' => $forum3->id]);
-        $forum2time = $now - 2;
+        $DB->set_field('forum', 'timemodified', $now - 30, ['id' => $forum1->id]);
+        $DB->set_field('forum', 'timemodified', $now - 20, ['id' => $forum2->id]);
+        $DB->set_field('forum', 'timemodified', $now - 10, ['id' => $forum3->id]);
+        $forum2time = $now - 20;
 
         // Make 2 index requests.
+        testable_core_search::fake_current_time($now - 3);
         $search::request_index(context_course::instance($course->id), 'mod_label-activity');
-        $this->waitForSecond();
+        testable_core_search::fake_current_time($now - 2);
         $search::request_index(context_module::instance($forum1->cmid));
 
         // Run with no time limit.
@@ -998,12 +1032,13 @@ class search_manager_testcase extends advanced_testcase {
         $this->assertEquals(0, $DB->count_records('search_index_requests'));
 
         // Request indexing the course a couple of times.
+        testable_core_search::fake_current_time($now - 3);
         $search::request_index(context_course::instance($course->id), 'mod_forum-activity');
+        testable_core_search::fake_current_time($now - 2);
         $search::request_index(context_course::instance($course->id), 'mod_forum-post');
 
         // Do the processing again with a time limit and indexing delay. The time limit is too
         // small; because of the way the logic works, this means it will index 2 activities.
-        testable_core_search::fake_current_time(time());
         $search->get_engine()->set_add_delay(0.2);
         $search->process_index_requests(0.1, $progress);
         $out = $progress->get_buffer();
@@ -1024,7 +1059,7 @@ class search_manager_testcase extends advanced_testcase {
         $this->assertEquals($forum2time, $records[0]->partialtime);
 
         // Run again and confirm it now finishes.
-        $search->process_index_requests(0.1, $progress);
+        $search->process_index_requests(2.0, $progress);
         $out = $progress->get_buffer();
         $progress->reset_buffer();
         $this->assertContains(
@@ -1036,5 +1071,26 @@ class search_manager_testcase extends advanced_testcase {
 
         // Confirm table is now empty.
         $this->assertEquals(0, $DB->count_records('search_index_requests'));
+
+        // Make 2 requests - first one is low priority.
+        testable_core_search::fake_current_time($now - 3);
+        $search::request_index(context_module::instance($forum1->cmid), 'mod_forum-activity',
+                \core_search\manager::INDEX_PRIORITY_REINDEXING);
+        testable_core_search::fake_current_time($now - 2);
+        $search::request_index(context_module::instance($forum2->cmid), 'mod_forum-activity');
+
+        // Process with short time limit and confirm it does the second one first.
+        $search->process_index_requests(0.1, $progress);
+        $out = $progress->get_buffer();
+        $progress->reset_buffer();
+        $this->assertContains(
+                'Completed requested context: Forum: TForum2 (search area: mod_forum-activity)',
+                $out);
+        $search->process_index_requests(0.1, $progress);
+        $out = $progress->get_buffer();
+        $progress->reset_buffer();
+        $this->assertContains(
+                'Completed requested context: Forum: TForum1 (search area: mod_forum-activity)',
+                $out);
     }
 }

@@ -390,4 +390,62 @@ class mod_forum_search_testcase extends advanced_testcase {
         $recordset->close();
         $this->assertEquals(3, $nrecords);
     }
+
+    /**
+     * Tests that reindexing works in order starting from the forum with most recent discussion.
+     */
+    public function test_posts_get_contexts_to_reindex() {
+        global $DB;
+
+        $generator = $this->getDataGenerator();
+        $adminuser = get_admin();
+
+        $course1 = $generator->create_course();
+        $course2 = $generator->create_course();
+
+        $time = time() - 1000;
+
+        // Create 3 forums (two in course 1, one in course 2 - doesn't make a difference).
+        $forum1 = $generator->create_module('forum', ['course' => $course1->id]);
+        $forum2 = $generator->create_module('forum', ['course' => $course1->id]);
+        $forum3 = $generator->create_module('forum', ['course' => $course2->id]);
+        $forum4 = $generator->create_module('forum', ['course' => $course2->id]);
+
+        // Hack added time for the course_modules entries. These should not be used (they would
+        // be used by the base class implementation). We are setting this so that the order would
+        // be 4, 3, 2, 1 if this ordering were used (newest first).
+        $DB->set_field('course_modules', 'added', $time + 100, ['id' => $forum1->cmid]);
+        $DB->set_field('course_modules', 'added', $time + 110, ['id' => $forum2->cmid]);
+        $DB->set_field('course_modules', 'added', $time + 120, ['id' => $forum3->cmid]);
+        $DB->set_field('course_modules', 'added', $time + 130, ['id' => $forum4->cmid]);
+
+        $forumgenerator = $generator->get_plugin_generator('mod_forum');
+
+        // Create one discussion in forums 1 and 3, three in forum 2, and none in forum 4.
+        $forumgenerator->create_discussion(['course' => $course1->id,
+                'forum' => $forum1->id, 'userid' => $adminuser->id, 'timemodified' => $time + 20]);
+
+        $forumgenerator->create_discussion(['course' => $course1->id,
+                'forum' => $forum2->id, 'userid' => $adminuser->id, 'timemodified' => $time + 10]);
+        $forumgenerator->create_discussion(['course' => $course1->id,
+                'forum' => $forum2->id, 'userid' => $adminuser->id, 'timemodified' => $time + 30]);
+        $forumgenerator->create_discussion(['course' => $course1->id,
+                'forum' => $forum2->id, 'userid' => $adminuser->id, 'timemodified' => $time + 11]);
+
+        $forumgenerator->create_discussion(['course' => $course2->id,
+                'forum' => $forum3->id, 'userid' => $adminuser->id, 'timemodified' => $time + 25]);
+
+        // Get the contexts in reindex order.
+        $area = \core_search\manager::get_search_area($this->forumpostareaid);
+        $contexts = iterator_to_array($area->get_contexts_to_reindex(), false);
+
+        // We expect them in order of newest discussion. Forum 4 is not included at all (which is
+        // correct because it has no content).
+        $expected = [
+            \context_module::instance($forum2->cmid),
+            \context_module::instance($forum3->cmid),
+            \context_module::instance($forum1->cmid)
+        ];
+        $this->assertEquals($expected, $contexts);
+    }
 }
