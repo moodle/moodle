@@ -78,15 +78,18 @@ var manager = {
         });
 
         this._header.on('click', this._headerClick, this);
-        this._header.on('click', this._questionClick, this);
 
         this._addbutton = Y.one('.modulespecificbuttonscontainer input[name="add"]');
+        // input[name="add"] is not always available.
+        if (this._addbutton) {
+            this._addbutton.setAttrs({
+                disabled: true
+            });
 
-        this._addbutton.setAttrs({
-            disabled: true
-        });
-
-        Y.one('.categoryquestionscontainer').delegate('change', this._questionClick, 'td.checkbox input[type="checkbox"]', this);
+            this._header.on('click', this._questionClick, this);
+            Y.one('.categoryquestionscontainer').delegate('change', this._questionClick,
+                'td.checkbox input[type="checkbox"]', this);
+        }
 
         // Store the first checkbox details.
         var table = this._header.ancestor('table');
