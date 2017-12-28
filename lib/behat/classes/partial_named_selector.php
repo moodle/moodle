@@ -132,7 +132,11 @@ XPATH
 .//div[contains(concat(' ', normalize-space(@class), ' '), ' yui-dialog ') and
     normalize-space(descendant::div[@class='hd']) = %locator%]
         |
-.//div[@data-region='modal' and descendant::*[@data-region='title'] = %locator%]
+.//div[@data-region='modal' and descendant::*[@data-region='title'] = %locator%] |
+.//div[contains(concat(' ', normalize-space(@class), ' '), ' modal-content ') and
+    normalize-space(descendant::h4[
+        contains(concat(' ', normalize-space(@class), ' '), ' modal-title ')
+        ]) = %locator%]
 XPATH
         , 'icon' => <<<XPATH
 .//*[contains(concat(' ', normalize-space(@class), ' '), ' icon ') and ( contains(normalize-space(@title), %locator%))]
