@@ -805,6 +805,7 @@ class enrol_database_plugin extends enrol_plugin {
                 $template->visible        = $courseconfig->visible;
                 $template->lang           = $courseconfig->lang;
                 $template->groupmodeforce = $courseconfig->groupmodeforce;
+                $template->startdate      = usergetmidnight(time());
             }
 
             foreach ($createcourses as $fields) {
