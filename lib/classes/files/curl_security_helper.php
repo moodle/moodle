@@ -144,9 +144,18 @@ class curl_security_helper extends curl_security_helper_base {
 
             // Only perform a forward lookup if there are IP rules to check against.
             if ($blacklistedhosts['ipv4'] || $blacklistedhosts['ipv6']) {
-                $hostip = gethostbyname($host); // DNS forward lookup - only returns IPv4 addresses!
-                if ($hostip !== $host && $this->address_explicitly_blocked($hostip)) {
+                $hostips = gethostbynamel($host); // DNS forward lookup - returns a list of only IPv4 addresses!
+
+                // If we don't get a valid record, bail (so curl is never called).
+                if (!$hostips) {
                     return true;
+                }
+
+                // If any of the returned IPs are in the blacklist, block the request.
+                foreach ($hostips as $hostip) {
+                    if ($this->address_explicitly_blocked($hostip)) {
+                        return true;
+                    }
                 }
             }
         }
