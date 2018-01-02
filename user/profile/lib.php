@@ -769,14 +769,36 @@ function profile_get_custom_fields($onlyinuserobject = false) {
 /**
  * Load custom profile fields into user object
  *
- * Please note originally in 1.9 we were using the custom field names directly,
- * but it was causing unexpected collisions when adding new fields to user table,
- * so instead we now use 'profile_' prefix.
+ * @param stdClass $user user object
+ * @param bool $onlyinuserobject True if you only want the ones in $USER
+ */
+function profile_load_custom_fields($user, $onlyinuserobject = true) {
+    $user->profile = (array)profile_user_record($user->id, $onlyinuserobject);
+}
+
+/**
+ * Save custom profile fields in user object
  *
  * @param stdClass $user user object
  */
-function profile_load_custom_fields($user) {
-    $user->profile = (array)profile_user_record($user->id);
+function profile_save_custom_fields($user) {
+    global $DB;
+
+    if ($fields = $DB->get_records('user_info_field')) {
+        foreach ($fields as $field) {
+            if (isset($user->profile[$field->shortname])) {
+                $conditions = array('fieldid' => $field->id, 'userid' => $user->id);
+                $id = $DB->get_field('user_info_data', 'id', $conditions);
+                $data = $user->profile[$field->shortname];
+                if ($id) {
+                    $DB->set_field('user_info_data', 'data', $data, array('id' => $id));
+                } else {
+                    $record = array('fieldid' => $field->id, 'userid' => $user->id, 'data' => $data);
+                    $DB->insert_record('user_info_data', $record);
+                }
+            }
+        }
+    }
 }
 
 /**
