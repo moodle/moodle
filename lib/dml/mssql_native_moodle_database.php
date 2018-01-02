@@ -481,8 +481,8 @@ class mssql_native_moodle_database extends moodle_database {
                                quotename(table_name)), column_name, 'IsIdentity') AS auto_increment,
                            column_default AS default_value
                       FROM tempdb.INFORMATION_SCHEMA.COLUMNS
-                      JOIN tempdb..sysobjects ON name = table_name
-                     WHERE id = object_id('tempdb..{" . $table . "}')
+                      JOIN tempdb.sys.objects ON name = table_name
+                     WHERE object_id = object_id('tempdb..{" . $table . "}')
                   ORDER BY ordinal_position";
         }
 
