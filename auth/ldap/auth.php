@@ -961,21 +961,21 @@ class auth_plugin_ldap extends auth_plugin_base {
                 }
 
                 // Save custom profile fields.
-                $euser->profile = array();
+                $profilefields = array();
                 foreach ($user as $key => $value) {
                     if (preg_match('/^profile_field_(.*)$/', $key, $match)) {
                         $field = $match[1];
-                        $euser->profile[$field] = $user->$key;
+                        $profilefields[$field] = $user->$key;
                     }
                 }
 
                 // Now, save the profile fields if the user has any.
                 if ($fields = $DB->get_records('user_info_field')) {
                     foreach ($fields as $field) {
-                        if (isset($euser->profile[$field->shortname])) {
+                        if (isset($profilefields[$field->shortname])) {
                             $conditions = array('fieldid' => $field->id, 'userid' => $euser->id);
                             $id = $DB->get_field('user_info_data', 'id', $conditions);
-                            $data = $euser->profile[$field->shortname];
+                            $data = $profilefields[$field->shortname];
                             if ($id) {
                                 $DB->set_field('user_info_data', 'data', $data, array('id' => $id));
                             } else {
@@ -1028,9 +1028,6 @@ class auth_plugin_ldap extends auth_plugin_base {
             die;
         }
 
-        // Load all custom fields into $user->profile.
-        profile_load_custom_fields($user, false);
-
         // Protect the userid from being overwritten
         $userid = $user->id;
 
@@ -1048,7 +1045,9 @@ class auth_plugin_ldap extends auth_plugin_base {
                 $newuser->id = $userid;
                 // The cast to int is a workaround for MDL-53959.
                 $newuser->suspended = (int)$this->is_user_suspended((object) $newinfo);
-                $newuser->profile = array();
+                // Get all custom fields.
+                $profilefields = (array) profile_user_record($user->id, false);
+                $newprofilefields = [];
 
                 foreach ($updatekeys as $key) {
                     if (isset($newinfo[$key])) {
@@ -1061,8 +1060,8 @@ class auth_plugin_ldap extends auth_plugin_base {
                         if (preg_match('/^profile_field_(.*)$/', $key, $match)) {
                             // Custom field.
                             $field = $match[1];
-                            $currentvalue = isset($user->profile[$field]) ? $user->profile[$field] : null;
-                            $newuser->profile[$field] = $value;
+                            $currentvalue = isset($profilefields[$field]) ? $profilefields[$field] : null;
+                            $newprofilefields[$field] = $value;
                         } else {
                             // Standard field.
                             $currentvalue = isset($user->$key) ? $user->$key : null;
@@ -1083,10 +1082,10 @@ class auth_plugin_ldap extends auth_plugin_base {
                 // Now, save the profile fields if the user has any.
                 if ($fields = $DB->get_records('user_info_field')) {
                     foreach ($fields as $field) {
-                        if (isset($newuser->profile[$field->shortname])) {
+                        if (isset($newprofilefields[$field->shortname])) {
                             $conditions = array('fieldid' => $field->id, 'userid' => $newuser->id);
                             $id = $DB->get_field('user_info_data', 'id', $conditions);
-                            $data = $newuser->profile[$field->shortname];
+                            $data = $newprofilefields[$field->shortname];
                             if ($id) {
                                 $DB->set_field('user_info_data', 'data', $data, array('id' => $id));
                             } else {
@@ -1252,7 +1251,7 @@ class auth_plugin_ldap extends auth_plugin_base {
         }
 
         // Load old custom fields.
-        $olduser->profile = (array)profile_user_record($olduser->id, false);
+        $olduserprofilefields = (array) profile_user_record($olduser->id, false);
 
         $fields = array();
         foreach (profile_get_custom_fields(false) as $field) {
@@ -1283,7 +1282,7 @@ class auth_plugin_ldap extends auth_plugin_base {
                     if (isset($fields[$fieldname])) {
                         $class = 'profile_field_' . $fields[$fieldname]->datatype;
                         $formfield = new $class($fields[$fieldname]->id, $olduser->id);
-                        $oldvalue = isset($olduser->profile[$fieldname]) ? $olduser->profile[$fieldname] : null;
+                        $oldvalue = isset($olduserprofilefields[$fieldname]) ? $olduserprofilefields[$fieldname] : null;
                     } else {
                         $oldvalue = null;
                     }
