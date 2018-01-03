@@ -113,6 +113,9 @@ class curl_security_helper extends curl_security_helper_base {
      * 2. Check the host component against the list of domain names and wildcard domain names.
      *  - This will perform a DNS reverse lookup if required.
      *
+     * The behaviour of this function can be classified as strict, as it returns true for hosts which are invalid or
+     * could not be parsed, as well as those valid URLs which were found in the blacklist.
+     *
      * @param string $host the host component of the URL to check against the blacklist.
      * @return bool true if the host is both valid and blocked, false otherwise.
      */
@@ -132,7 +135,12 @@ class curl_security_helper extends curl_security_helper_base {
 
             // Only perform a reverse lookup if there is a point to it (i.e. we have rules to check against).
             if ($blacklistedhosts['domain'] || $blacklistedhosts['domainwildcard']) {
-                $hostname = gethostbyaddr($host); // DNS reverse lookup - supports both IPv4 and IPv6 address formats.
+                // DNS reverse lookup - supports both IPv4 and IPv6 address formats.
+                $hostname = gethostbyaddr(
+                    // The nature of DNS resolution means that if the hostname could not be found, the current search path
+                    // is then appended - so foo may become foo.example.com if your search path contains example.com.
+                    $host . substr($host, -1) !== '.' ? '.' : ''
+                );
                 if ($hostname !== $host && $this->host_explicitly_blocked($hostname)) {
                     return true;
                 }
@@ -144,9 +152,14 @@ class curl_security_helper extends curl_security_helper_base {
 
             // Only perform a forward lookup if there are IP rules to check against.
             if ($blacklistedhosts['ipv4'] || $blacklistedhosts['ipv6']) {
-                $hostips = gethostbynamel($host); // DNS forward lookup - returns a list of only IPv4 addresses!
+                // DNS forward lookup - returns a list of only IPv4 addresses!
+                $hostips = $this->get_host_list_by_name(
+                    // The nature of DNS resolution means that if the hostname could not be found, the current search path
+                    // is then appended - so foo may become foo.example.com if your search path contains example.com.
+                    $host . substr($host, -1) !== '.' ? '.' : ''
+                );
 
-                // If we don't get a valid record, bail (so curl is never called).
+                // If we don't get a valid record, bail (so cURL is never called).
                 if (!$hostips) {
                     return true;
                 }
@@ -158,8 +171,22 @@ class curl_security_helper extends curl_security_helper_base {
                     }
                 }
             }
+        } else {
+            // Was not something we consider to be a valid IP or domain name, block it.
+            return true;
         }
+
         return false;
+    }
+
+    /**
+     * Retrieve all hosts for a domain name.
+     *
+     * @param string $param
+     * @return array An array of IPs associated with the host name.
+     */
+    protected function get_host_list_by_name($host) {
+        return ($hostips = gethostbynamel($host)) ? $hostips : [];
     }
 
     /**
