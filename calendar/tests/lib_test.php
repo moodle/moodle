@@ -728,4 +728,33 @@ class core_calendar_lib_testcase extends advanced_testcase {
         $this->assertCount(1, $courses);
 
     }
+
+    /**
+     * Confirm that the skip events flag causes the calendar_get_view function
+     * to avoid querying for the calendar events.
+     */
+    public function test_calendar_get_view_skip_events() {
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        $generator = $this->getDataGenerator();
+        $user = $generator->create_user();
+        $skipnavigation = true;
+        $skipevents = true;
+        $event = create_event([
+            'eventtype' => 'user',
+            'userid' => $user->id
+        ]);
+
+        $this->setUser($user);
+        $calendar = \calendar_information::create(time() - 10, SITEID, null);
+
+        list($data, $template) = calendar_get_view($calendar, 'day', $skipnavigation, $skipevents);
+        $this->assertEmpty($data->events);
+
+        $skipevents = false;
+        list($data, $template) = calendar_get_view($calendar, 'day', $skipnavigation, $skipevents);
+
+        $this->assertEquals($event->id, $data->events[0]->id);
+    }
 }
