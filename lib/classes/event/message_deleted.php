@@ -32,7 +32,6 @@ defined('MOODLE_INTERNAL') || die();
  * @property-read array $other {
  *      Extra information about event.
  *
- *      - string $messagetable: the table we marked the message as deleted from (message/message_read).
  *      - int messageid: the id of the message.
  *      - int useridfrom: the id of the user who received the message.
  *      - int useridto: the id of the user who sent the message.
@@ -51,11 +50,11 @@ class message_deleted extends base {
      * @param int $userfromid the user who the message was from.
      * @param int $usertoid the user who the message was sent to.
      * @param int $userdeleted the user who deleted it.
-     * @param string $messagetable the table we are marking the message as deleted in.
      * @param int $messageid the id of the message that was deleted.
+     * @param int $muaid The id in the message_user_actions table
      * @return message_deleted
      */
-    public static function create_from_ids($userfromid, $usertoid, $userdeleted, $messagetable, $messageid) {
+    public static function create_from_ids($userfromid, $usertoid, $userdeleted, $messageid, $muaid) {
         // Check who was deleting the message.
         if ($userdeleted == $userfromid) {
             $relateduserid = $usertoid;
@@ -66,11 +65,11 @@ class message_deleted extends base {
         // We set the userid to the user who deleted the message, nothing to do
         // with whether or not they sent or received the message.
         $event = self::create(array(
+            'objectid' => $muaid,
             'userid' => $userdeleted,
             'context' => \context_system::instance(),
             'relateduserid' => $relateduserid,
             'other' => array(
-                'messagetable' => $messagetable,
                 'messageid' => $messageid,
                 'useridfrom' => $userfromid,
                 'useridto' => $usertoid
@@ -84,7 +83,8 @@ class message_deleted extends base {
      * Init method.
      */
     protected function init() {
-        $this->data['crud'] = 'u';
+        $this->data['objecttable'] = 'message_user_actions';
+        $this->data['crud'] = 'c';
         $this->data['edulevel'] = self::LEVEL_OTHER;
     }
 
@@ -126,10 +126,6 @@ class message_deleted extends base {
             throw new \coding_exception('The \'relateduserid\' must be set.');
         }
 
-        if (!isset($this->other['messagetable'])) {
-            throw new \coding_exception('The \'messagetable\' value must be set in other.');
-        }
-
         if (!isset($this->other['messageid'])) {
             throw new \coding_exception('The \'messageid\' value must be set in other.');
         }
@@ -143,11 +139,13 @@ class message_deleted extends base {
         }
     }
 
+    public static function get_objectid_mapping() {
+        return array('db' => 'message_user_actions', 'restore' => base::NOT_MAPPED);
+    }
+
     public static function get_other_mapping() {
         // Messages are not backed up, so no need to map them on restore.
         $othermapped = array();
-        // The messageid table varies so it cannot be mapped.
-        $othermapped['messageid'] = array('db' => base::NOT_MAPPED, 'restore' => base::NOT_MAPPED);
         $othermapped['useridfrom'] = array('db' => 'user', 'restore' => base::NOT_MAPPED);
         $othermapped['useridto'] = array('db' => 'user', 'restore' => base::NOT_MAPPED);
         return $othermapped;
