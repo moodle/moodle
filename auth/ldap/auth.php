@@ -836,23 +836,7 @@ class auth_plugin_ldap extends auth_plugin_base {
 /// User Updates - time-consuming (optional)
         if ($do_updates) {
             // Narrow down what fields we need to update
-            $all_keys = array_keys(get_object_vars($this->config));
-            $updatekeys = array();
-            foreach ($all_keys as $key) {
-                if (preg_match('/^field_updatelocal_(.+)$/', $key, $match)) {
-                    // If we have a field to update it from
-                    // and it must be updated 'onlogin' we
-                    // update it on cron
-                    if (!empty($this->config->{'field_map_'.$match[1]})
-                         and $this->config->{$match[0]} === 'onlogin') {
-                        array_push($updatekeys, $match[1]); // the actual key name
-                    }
-                }
-            }
-            if ($this->config->suspended_attribute && $this->config->sync_suspended) {
-                $updatekeys[] = 'suspended';
-            }
-            unset($all_keys); unset($key);
+            $updatekeys = $this->get_profile_keys();
 
         } else {
             print_string('noupdatestobedone', 'auth_ldap');
@@ -961,30 +945,8 @@ class auth_plugin_ldap extends auth_plugin_base {
                 }
 
                 // Save custom profile fields.
-                $profilefields = array();
-                foreach ($user as $key => $value) {
-                    if (preg_match('/^profile_field_(.*)$/', $key, $match)) {
-                        $field = $match[1];
-                        $profilefields[$field] = $user->$key;
-                    }
-                }
-
-                // Now, save the profile fields if the user has any.
-                if ($fields = $DB->get_records('user_info_field')) {
-                    foreach ($fields as $field) {
-                        if (isset($profilefields[$field->shortname])) {
-                            $conditions = array('fieldid' => $field->id, 'userid' => $euser->id);
-                            $id = $DB->get_field('user_info_data', 'id', $conditions);
-                            $data = $profilefields[$field->shortname];
-                            if ($id) {
-                                $DB->set_field('user_info_data', 'data', $data, array('id' => $id));
-                            } else {
-                                $record = array('fieldid' => $field->id, 'userid' => $euser->id, 'data' => $data);
-                                $DB->insert_record('user_info_data', $record);
-                            }
-                        }
-                    }
-                }
+                $updatekeys = $this->get_profile_keys(true);
+                $this->update_user_record($user->username, $updatekeys, false);
             }
             $transaction->allow_commit();
             unset($add_users); // free mem
@@ -2227,5 +2189,31 @@ class auth_plugin_ldap extends auth_plugin_base {
             // LDAP is not even configured.
             echo $OUTPUT->notification(get_string('ldapnotconfigured', 'auth_ldap'), \core\output\notification::NOTIFY_INFO);
         }
+    }
+
+    /**
+     * Get the list of profile fields.
+     *
+     * @param   bool    $fetchall   Fetch all, not just those for update.
+     * @return  array
+     */
+    protected function get_profile_keys($fetchall = false) {
+        $keys = array_keys(get_object_vars($this->config));
+        $updatekeys = [];
+        foreach ($keys as $key) {
+            if (preg_match('/^field_updatelocal_(.+)$/', $key, $match)) {
+                // If we have a field to update it from and it must be updated 'onlogin' we update it on cron.
+                if (!empty($this->config->{'field_map_'.$match[1]})) {
+                    if ($fetchall || $this->config->{$match[0]} === 'onlogin') {
+                        array_push($updatekeys, $match[1]); // the actual key name
+                    }
+                }
+            }
+        }
+        if ($this->config->suspended_attribute && $this->config->sync_suspended) {
+            $updatekeys[] = 'suspended';
+        }
+
+        return $updatekeys;
     }
 } // End of the class
