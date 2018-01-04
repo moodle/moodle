@@ -770,30 +770,30 @@ function profile_get_custom_fields($onlyinuserobject = false) {
  * Load custom profile fields into user object
  *
  * @param stdClass $user user object
- * @param bool $onlyinuserobject True if you only want the ones in $USER
  */
-function profile_load_custom_fields($user, $onlyinuserobject = true) {
-    $user->profile = (array)profile_user_record($user->id, $onlyinuserobject);
+function profile_load_custom_fields($user) {
+    $user->profile = (array)profile_user_record($user->id);
 }
 
 /**
- * Save custom profile fields in user object
+ * Save custom profile fields for a user.
  *
- * @param stdClass $user user object
+ * @param int $userid The user id
+ * @param array $profilefields The fields to save
  */
-function profile_save_custom_fields($user) {
+function profile_save_custom_fields($userid, $profilefields) {
     global $DB;
 
     if ($fields = $DB->get_records('user_info_field')) {
         foreach ($fields as $field) {
-            if (isset($user->profile[$field->shortname])) {
-                $conditions = array('fieldid' => $field->id, 'userid' => $user->id);
+            if (isset($profilefields[$field->shortname])) {
+                $conditions = array('fieldid' => $field->id, 'userid' => $userid);
                 $id = $DB->get_field('user_info_data', 'id', $conditions);
-                $data = $user->profile[$field->shortname];
+                $data = $profilefields[$field->shortname];
                 if ($id) {
                     $DB->set_field('user_info_data', 'data', $data, array('id' => $id));
                 } else {
-                    $record = array('fieldid' => $field->id, 'userid' => $user->id, 'data' => $data);
+                    $record = array('fieldid' => $field->id, 'userid' => $userid, 'data' => $data);
                     $DB->insert_record('user_info_data', $record);
                 }
             }

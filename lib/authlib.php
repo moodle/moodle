@@ -653,9 +653,6 @@ class auth_plugin_base {
             die;
         }
 
-        // Load all custom fields into $user->profile.
-        profile_load_custom_fields($user, false);
-
         // Protect the userid from being overwritten.
         $userid = $user->id;
 
@@ -673,7 +670,9 @@ class auth_plugin_base {
                 $newuser->id = $userid;
                 // The cast to int is a workaround for MDL-53959.
                 $newuser->suspended = (int) $suspenduser;
-                $newuser->profile = array();
+                // Load all custom fields.
+                $profilefields = (array) profile_user_record($user->id, false);
+                $newprofilefields = [];
 
                 foreach ($updatekeys as $key) {
                     if (isset($newinfo[$key])) {
@@ -686,8 +685,8 @@ class auth_plugin_base {
                         if (preg_match('/^profile_field_(.*)$/', $key, $match)) {
                             // Custom field.
                             $field = $match[1];
-                            $currentvalue = isset($user->profile[$field]) ? $user->profile[$field] : null;
-                            $newuser->profile[$field] = $value;
+                            $currentvalue = isset($profilefields[$field]) ? $profilefields[$field] : null;
+                            $newprofilefields[$field] = $value;
                         } else {
                             // Standard field.
                             $currentvalue = isset($user->$key) ? $user->$key : null;
@@ -704,7 +703,7 @@ class auth_plugin_base {
 
             if ($needsupdate) {
                 user_update_user($newuser, false, $triggerevent);
-                profile_save_custom_fields($newuser);
+                profile_save_custom_fields($newuser->id, $newprofilefields);
                 return $DB->get_record('user', array('id' => $userid, 'deleted' => 0));
             }
         }
