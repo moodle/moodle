@@ -6577,3 +6577,192 @@ function question_is_only_toplevel_category_in_context($categoryid) {
 
     return question_is_only_child_of_top_category_in_context($categoryid);
 }
+
+/**
+ * Moves messages from a particular user from the message table (unread messages) to message_read
+ * This is typically only used when a user is deleted
+ *
+ * @param object $userid User id
+ * @return boolean success
+ * @deprecated since Moodle 3.5
+ */
+function message_move_userfrom_unread2read($userid) {
+    debugging('message_move_userfrom_unread2read() is deprecated and is no longer used.', DEBUG_DEVELOPER);
+
+    global $DB;
+
+    // Move all unread messages from message table to message_read.
+    if ($messages = $DB->get_records_select('message', 'useridfrom = ?', array($userid), 'timecreated')) {
+        foreach ($messages as $message) {
+            message_mark_message_read($message, 0); // Set timeread to 0 as the message was never read.
+        }
+    }
+    return true;
+}
+
+/**
+ * Retrieve users blocked by $user1
+ *
+ * @param object $user1 the user whose messages are being viewed
+ * @param object $user2 the user $user1 is talking to. If they are being blocked
+ *                      they will have a variable called 'isblocked' added to their user object
+ * @return array the users blocked by $user1
+ * @deprecated since Moodle 3.5
+ */
+function message_get_blocked_users($user1=null, $user2=null) {
+    debugging('message_get_blocked_users() is deprecated, please use \core_message\api::get_blocked_users() instead.',
+        DEBUG_DEVELOPER);
+
+    global $USER;
+
+    if (empty($user1)) {
+        $user1 = new stdClass();
+        $user1->id = $USER->id;
+    }
+
+    return \core_message\api::get_blocked_users($user1->id);
+}
+
+/**
+ * Retrieve $user1's contacts (online, offline and strangers)
+ *
+ * @param object $user1 the user whose messages are being viewed
+ * @param object $user2 the user $user1 is talking to. If they are a contact
+ *                      they will have a variable called 'iscontact' added to their user object
+ * @return array containing 3 arrays. array($onlinecontacts, $offlinecontacts, $strangers)
+ * @deprecated since Moodle 3.5
+ */
+function message_get_contacts($user1=null, $user2=null) {
+    debugging('message_get_contacts() is deprecated and is no longer used.', DEBUG_DEVELOPER);
+
+    global $DB, $CFG, $USER;
+
+    if (empty($user1)) {
+        $user1 = $USER;
+    }
+
+    if (!empty($user2)) {
+        $user2->iscontact = false;
+    }
+
+    $timetoshowusers = 300; // Seconds default.
+    if (isset($CFG->block_online_users_timetosee)) {
+        $timetoshowusers = $CFG->block_online_users_timetosee * 60;
+    }
+
+    // Rime which a user is counting as being active since.
+    $timefrom = time() - $timetoshowusers;
+
+    // People in our contactlist who are online.
+    $onlinecontacts  = array();
+    // People in our contactlist who are offline.
+    $offlinecontacts = array();
+    // People who are not in our contactlist but have sent us a message.
+    $strangers       = array();
+
+    // Get all in our contact list who are not blocked in our and count messages we have waiting from each of them.
+    $rs = \core_message\api::get_contacts_with_unread_message_count($user1->id);
+    foreach ($rs as $rd) {
+        if ($rd->lastaccess >= $timefrom) {
+            // They have been active recently, so are counted online.
+            $onlinecontacts[] = $rd;
+
+        } else {
+            $offlinecontacts[] = $rd;
+        }
+
+        if (!empty($user2) && $user2->id == $rd->id) {
+            $user2->iscontact = true;
+        }
+    }
+
+    // Get messages from anyone who isn't in our contact list and count the number of messages we have from each of them.
+    $rs = \core_message\api::get_non_contacts_with_unread_message_count($user1->id);
+    // Add user id as array index, so supportuser and noreply user don't get duplicated (if they are real users).
+    foreach ($rs as $rd) {
+        $strangers[$rd->id] = $rd;
+    }
+
+    // Add noreply user and support user to the list, if they don't exist.
+    $supportuser = core_user::get_support_user();
+    if (!isset($strangers[$supportuser->id]) && !$supportuser->deleted) {
+        $supportuser->messagecount = message_count_unread_messages($USER, $supportuser);
+        if ($supportuser->messagecount > 0) {
+            $strangers[$supportuser->id] = $supportuser;
+        }
+    }
+
+    $noreplyuser = core_user::get_noreply_user();
+    if (!isset($strangers[$noreplyuser->id]) && !$noreplyuser->deleted) {
+        $noreplyuser->messagecount = message_count_unread_messages($USER, $noreplyuser);
+        if ($noreplyuser->messagecount > 0) {
+            $strangers[$noreplyuser->id] = $noreplyuser;
+        }
+    }
+
+    return array($onlinecontacts, $offlinecontacts, $strangers);
+}
+
+/**
+ * Mark a single message as read
+ *
+ * @param stdClass $message An object with an object property ie $message->id which is an id in the message table
+ * @param int $timeread the timestamp for when the message should be marked read. Usually time().
+ * @param bool $messageworkingempty Is the message_working table already confirmed empty for this message?
+ * @return int the ID of the message in the messags table
+ * @deprecated since Moodle 3.5
+ */
+function message_mark_message_read($message, $timeread, $messageworkingempty=false) {
+    debugging('message_mark_message_read() is deprecated, please use \core_message\api::mark_message_as_read()
+        or \core_message\api::mark_notification_as_read().', DEBUG_DEVELOPER);
+
+    global $DB;
+
+    if (!empty($message->notification)) {
+        \core_message\api::mark_notification_as_read($message->useridto, $message->id, $timeread);
+    } else {
+        \core_message\api::mark_message_as_read($message->useridto, $message->id, $timeread);
+    }
+
+    // If any processors have pending actions abort them.
+    if (!$messageworkingempty) {
+        $DB->delete_records('message_working', array('unreadmessageid' => $message->id));
+    }
+
+    return $message->id;
+}
+
+
+/**
+ * Checks if a user can delete a message.
+ *
+ * @param stdClass $message the message to delete
+ * @param string $userid the user id of who we want to delete the message for (this may be done by the admin
+ *  but will still seem as if it was by the user)
+ * @return bool Returns true if a user can delete the message, false otherwise.
+ * @deprecated since Moodle 3.5
+ */
+function message_can_delete_message($message, $userid) {
+    debugging('message_can_delete_message() is deprecated, please use \core_message\api::can_delete_message() instead.',
+        DEBUG_DEVELOPER);
+
+    return \core_message\api::can_delete_message($userid, $message->id);
+}
+
+/**
+ * Deletes a message.
+ *
+ * This function does not verify any permissions.
+ *
+ * @param stdClass $message the message to delete
+ * @param string $userid the user id of who we want to delete the message for (this may be done by the admin
+ *  but will still seem as if it was by the user)
+ * @return bool
+ * @deprecated since Moodle 3.5
+ */
+function message_delete_message($message, $userid) {
+    debugging('message_delete_message() is deprecated, please use \core_message\api::delete_message() instead.',
+        DEBUG_DEVELOPER);
+
+    return \core_message\api::delete_message($userid, $message->id);
+}

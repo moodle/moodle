@@ -4071,9 +4071,6 @@ function delete_user(stdClass $user) {
     // Delete all grades - backup is kept in grade_grades_history table.
     grade_user_delete($user->id);
 
-    // Move unread messages from this user to read.
-    message_move_userfrom_unread2read($user->id);
-
     // TODO: remove from cohorts using standard API here.
 
     // Remove user tags.

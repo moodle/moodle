@@ -1161,7 +1161,7 @@ class core_message_external extends external_api {
      * @since Moodle 2.5
      */
     public static function get_contacts() {
-        global $CFG, $PAGE;
+        global $CFG, $PAGE, $USER;
 
         // Check if messaging is enabled.
         if (empty($CFG->messaging)) {
@@ -1170,25 +1170,68 @@ class core_message_external extends external_api {
 
         require_once($CFG->dirroot . '/user/lib.php');
 
-        list($online, $offline, $strangers) = message_get_contacts();
-        $allcontacts = array('online' => $online, 'offline' => $offline, 'strangers' => $strangers);
-        foreach ($allcontacts as $mode => $contacts) {
-            foreach ($contacts as $key => $contact) {
-                $newcontact = array(
-                    'id' => $contact->id,
-                    'fullname' => fullname($contact),
-                    'unread' => $contact->messagecount
-                );
+        $allcontacts = array('online' => [], 'offline' => [], 'strangers' => []);
+        $contacts = \core_message\api::get_contacts_with_unread_message_count($USER->id);
+        foreach ($contacts as $contact) {
+            // Set the mode.
+            $mode = 'offline';
+            if (\core_message\helper::is_online($contact->lastaccess)) {
+                $mode = 'online';
+            }
 
-                $userpicture = new user_picture($contact);
-                $userpicture->size = 1; // Size f1.
-                $newcontact['profileimageurl'] = $userpicture->get_url($PAGE)->out(false);
-                $userpicture->size = 0; // Size f2.
-                $newcontact['profileimageurlsmall'] = $userpicture->get_url($PAGE)->out(false);
+            $newcontact = array(
+                'id' => $contact->id,
+                'fullname' => fullname($contact),
+                'unread' => $contact->messagecount
+            );
 
-                $allcontacts[$mode][$key] = $newcontact;
+            $userpicture = new user_picture($contact);
+            $userpicture->size = 1; // Size f1.
+            $newcontact['profileimageurl'] = $userpicture->get_url($PAGE)->out(false);
+            $userpicture->size = 0; // Size f2.
+            $newcontact['profileimageurlsmall'] = $userpicture->get_url($PAGE)->out(false);
+
+            $allcontacts[$mode][$contact->id] = $newcontact;
+        }
+
+        $strangers = \core_message\api::get_non_contacts_with_unread_message_count($USER->id);
+        foreach ($strangers as $contact) {
+            $newcontact = array(
+                'id' => $contact->id,
+                'fullname' => fullname($contact),
+                'unread' => $contact->messagecount
+            );
+
+            $userpicture = new user_picture($contact);
+            $userpicture->size = 1; // Size f1.
+            $newcontact['profileimageurl'] = $userpicture->get_url($PAGE)->out(false);
+            $userpicture->size = 0; // Size f2.
+            $newcontact['profileimageurlsmall'] = $userpicture->get_url($PAGE)->out(false);
+
+            $allcontacts['strangers'][$contact->id] = $newcontact;
+        }
+
+        // Add noreply user and support user to the list, if they don't exist.
+        $supportuser = core_user::get_support_user();
+        if (!isset($strangers[$supportuser->id]) && !$supportuser->deleted) {
+            $supportuser->messagecount = message_count_unread_messages($USER, $supportuser);
+            if ($supportuser->messagecount > 0) {
+                $supportuser->fullname = fullname($supportuser);
+                $supportuser->unread = $supportuser->messagecount;
+                $allcontacts['strangers'][$supportuser->id] = $supportuser;
             }
         }
+
+        $noreplyuser = core_user::get_noreply_user();
+        if (!isset($strangers[$noreplyuser->id]) && !$noreplyuser->deleted) {
+            $noreplyuser->messagecount = message_count_unread_messages($USER, $noreplyuser);
+            if ($noreplyuser->messagecount > 0) {
+                $noreplyuser->fullname = fullname($noreplyuser);
+                $noreplyuser->unread = $noreplyuser->messagecount;
+                $allcontacts['strangers'][$noreplyuser->id] = $noreplyuser;
+            }
+        }
+
         return $allcontacts;
     }
 
@@ -1486,12 +1529,15 @@ class core_message_external extends external_api {
             foreach ($messages as $mid => $message) {
 
                 // Do not return deleted messages.
-                if (($useridto == $USER->id and $message->timeusertodeleted) or
+                if (!$message->notification) {
+                    if (($useridto == $USER->id and $message->timeusertodeleted) or
                         ($useridfrom == $USER->id and $message->timeuserfromdeleted)) {
-
-                    unset($messages[$mid]);
-                    continue;
+                        unset($messages[$mid]);
+                        continue;
+                    }
                 }
+
+                $message->useridto = $useridto;
 
                 // We need to get the user from the query.
                 if (empty($userfromfullname)) {
@@ -1515,11 +1561,6 @@ class core_message_external extends external_api {
                     $message->usertofullname = fullname($user, $canviewfullname);
                 } else {
                     $message->usertofullname = $usertofullname;
-                }
-
-                // This field is only available in the message_read table.
-                if (!isset($message->timeread)) {
-                    $message->timeread = 0;
                 }
 
                 $message->text = message_format_message_text($message);
@@ -1774,7 +1815,7 @@ class core_message_external extends external_api {
         }
 
         // Now, we can get safely all the blocked users.
-        $users = message_get_blocked_users($user);
+        $users = \core_message\api::get_blocked_users($user->id);
 
         $blockedusers = array();
         foreach ($users as $user) {
@@ -1875,16 +1916,24 @@ class core_message_external extends external_api {
         $context = context_system::instance();
         self::validate_context($context);
 
-        $message = $DB->get_record('message', array('id' => $params['messageid']), '*', MUST_EXIST);
+        $sql = "SELECT m.*, mcm.userid as useridto
+                  FROM {messages} m
+            INNER JOIN {message_conversations} mc
+                    ON m.conversationid = mc.id
+            INNER JOIN {message_conversation_members} mcm
+                    ON mcm.conversationid = mc.id
+                 WHERE mcm.userid != m.useridfrom
+                   AND m.id = ?";
+        $message = $DB->get_record_sql($sql, [$params['messageid']], MUST_EXIST);
 
         if ($message->useridto != $USER->id) {
             throw new invalid_parameter_exception('Invalid messageid, you don\'t have permissions to mark this message as read');
         }
 
-        $messageid = message_mark_message_read($message, $timeread);
+        \core_message\api::mark_message_as_read($USER->id, $message->id, $timeread);
 
         $results = array(
-            'messageid' => $messageid,
+            'messageid' => $message->id,
             'warnings' => $warnings
         );
         return $results;
@@ -2094,7 +2143,7 @@ class core_message_external extends external_api {
      * @since 3.1
      */
     public static function delete_message($messageid, $userid, $read = true) {
-        global $CFG, $DB;
+        global $CFG;
 
         // Check if private messaging between users is allowed.
         if (empty($CFG->messaging)) {
@@ -2116,15 +2165,11 @@ class core_message_external extends external_api {
         $context = context_system::instance();
         self::validate_context($context);
 
-        $messagestable = $params['read'] ? 'message_read' : 'message';
-        $message = $DB->get_record($messagestable, array('id' => $params['messageid']), '*', MUST_EXIST);
-
         $user = core_user::get_user($params['userid'], '*', MUST_EXIST);
         core_user::require_active_user($user);
 
-        $status = false;
-        if (message_can_delete_message($message, $user->id)) {
-            $status = message_delete_message($message, $user->id);;
+        if (\core_message\api::can_delete_message($user->id, $messageid)) {
+            $status = \core_message\api::delete_message($user->id, $messageid);
         } else {
             throw new moodle_exception('You do not have permission to delete this message');
         }

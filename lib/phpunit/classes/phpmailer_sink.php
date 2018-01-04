@@ -50,7 +50,7 @@ class phpunit_phpmailer_sink {
     /**
      * To be called from phpunit_util only!
      *
-     * @param stdClass $message record from message_read table
+     * @param stdClass $message record from messages table
      */
     public function add_message($message) {
         /* Number messages from 0. */
@@ -60,7 +60,7 @@ class phpunit_phpmailer_sink {
     /**
      * Returns all redirected messages.
      *
-     * The instances are records form the message_read table.
+     * The instances are records from the messages table.
      * The array indexes are numbered from 0 and the order is matching
      * the creation of events.
      *

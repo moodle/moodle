@@ -55,6 +55,7 @@ class message_output_popup extends message_output {
             $procmessage = new stdClass();
             $procmessage->unreadmessageid = $eventdata->savedmessageid;
             $procmessage->processorid     = $processorid;
+            $procmessage->notification    = $eventdata->notification;
 
             //save this message for later delivery
             $DB->insert_record('message_working', $procmessage);
@@ -122,7 +123,6 @@ class message_output_popup extends message_output {
         global $DB;
 
         if ($record = $DB->get_record('message_popup', ['messageid' => $event->other['messageid']])) {
-            // The id can change when the moving to the message_read table.
             $record->messageid = $event->objectid;
             $record->isread = 1;
             $DB->update_record('message_popup', $record);

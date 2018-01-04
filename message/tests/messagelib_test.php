@@ -73,16 +73,33 @@ class core_message_messagelib_testcase extends advanced_testcase {
             $time = time();
         }
 
+        if ($notification) {
+            $record = new stdClass();
+            $record->useridfrom = $userfrom->id;
+            $record->useridto = $userto->id;
+            $record->subject = 'No subject';
+            $record->fullmessage = $message;
+            $record->smallmessage = $message;
+            $record->timecreated = $time;
+
+            return $DB->insert_record('notifications', $record);
+        }
+
+        if (!$conversationid = \core_message\api::get_conversation_between_users($userfrom->id, $userto->id)) {
+            $conversationid = \core_message\api::create_conversation_between_users($userfrom->id,
+                $userto->id);
+        }
+
+        // Ok, send the message.
         $record = new stdClass();
         $record->useridfrom = $userfrom->id;
-        $record->useridto = $userto->id;
+        $record->conversationid = $conversationid;
         $record->subject = 'No subject';
         $record->fullmessage = $message;
         $record->smallmessage = $message;
         $record->timecreated = $time;
-        $record->notification = $notification;
 
-        return $DB->insert_record('message', $record);
+        return $DB->insert_record('messages', $record);
     }
 
     /**
@@ -101,14 +118,17 @@ class core_message_messagelib_testcase extends advanced_testcase {
         message_add_contact($user2->id, 1);
 
         $this->assertCount(1, message_get_blocked_users());
+        $this->assertDebuggingCalled();
 
         // Block other user.
         message_block_contact($user1->id);
         $this->assertCount(2, message_get_blocked_users());
+        $this->assertDebuggingCalled();
 
         // Test deleting users.
         delete_user($user1);
         $this->assertCount(1, message_get_blocked_users());
+        $this->assertDebuggingCalled();
     }
 
     /**
@@ -138,6 +158,7 @@ class core_message_messagelib_testcase extends advanced_testcase {
         $this->send_fake_message($user3, $USER);
 
         list($onlinecontacts, $offlinecontacts, $strangers) = message_get_contacts();
+        $this->assertDebuggingCalled();
         $this->assertCount(0, $onlinecontacts);
         $this->assertCount(2, $offlinecontacts);
         $this->assertCount(1, $strangers);
@@ -146,6 +167,7 @@ class core_message_messagelib_testcase extends advanced_testcase {
         $this->send_fake_message($noreplyuser, $USER);
         $this->send_fake_message($supportuser, $USER);
         list($onlinecontacts, $offlinecontacts, $strangers) = message_get_contacts();
+        $this->assertDebuggingCalled();
         $this->assertCount(0, $onlinecontacts);
         $this->assertCount(2, $offlinecontacts);
         $this->assertCount(3, $strangers);
@@ -153,6 +175,7 @@ class core_message_messagelib_testcase extends advanced_testcase {
         // Block 1 user.
         message_block_contact($user2->id);
         list($onlinecontacts, $offlinecontacts, $strangers) = message_get_contacts();
+        $this->assertDebuggingCalled();
         $this->assertCount(0, $onlinecontacts);
         $this->assertCount(1, $offlinecontacts);
         $this->assertCount(3, $strangers);
@@ -161,6 +184,7 @@ class core_message_messagelib_testcase extends advanced_testcase {
         core_user::reset_internal_users();
         $CFG->noreplyuserid = $user3->id;
         list($onlinecontacts, $offlinecontacts, $strangers) = message_get_contacts();
+        $this->assertDebuggingCalled();
         $this->assertCount(0, $onlinecontacts);
         $this->assertCount(1, $offlinecontacts);
         $this->assertCount(2, $strangers);
@@ -168,8 +192,9 @@ class core_message_messagelib_testcase extends advanced_testcase {
         // Test deleting users.
         delete_user($user1);
         delete_user($user3);
-
+        core_user::reset_internal_users();
         list($onlinecontacts, $offlinecontacts, $strangers) = message_get_contacts();
+        $this->assertDebuggingCalled();
         $this->assertCount(0, $onlinecontacts);
         $this->assertCount(0, $offlinecontacts);
         $this->assertCount(1, $strangers);
@@ -195,9 +220,9 @@ class core_message_messagelib_testcase extends advanced_testcase {
     }
 
     /**
-     * Test message_count_unread_messages with notifications.
+     * Test message_count_unread_messages with read messages.
      */
-    public function test_message_count_unread_messages_with_notifications() {
+    public function test_message_count_unread_messages_with_read_messages() {
         // Create users to send and receive messages.
         $userfrom1 = $this->getDataGenerator()->create_user();
         $userfrom2 = $this->getDataGenerator()->create_user();
@@ -206,16 +231,15 @@ class core_message_messagelib_testcase extends advanced_testcase {
         $this->assertEquals(0, message_count_unread_messages($userto));
 
         // Send fake messages.
-        $this->send_fake_message($userfrom1, $userto);
+        $messageid = $this->send_fake_message($userfrom1, $userto);
         $this->send_fake_message($userfrom2, $userto);
 
-        // Send fake notifications.
-        $this->send_fake_message($userfrom1, $userto, 'Notification', 1);
-        $this->send_fake_message($userfrom2, $userto, 'Notification', 1);
+        // Mark message as read.
+        \core_message\api::mark_message_as_read($userto->id, $messageid);
 
-        // Should only count the messages.
-        $this->assertEquals(2, message_count_unread_messages($userto));
-        $this->assertEquals(1, message_count_unread_messages($userto, $userfrom1));
+        // Should only count the messages that weren't read by the current user.
+        $this->assertEquals(1, message_count_unread_messages($userto));
+        $this->assertEquals(0, message_count_unread_messages($userto, $userfrom1));
     }
 
     /**
@@ -235,13 +259,8 @@ class core_message_messagelib_testcase extends advanced_testcase {
         $messageid = $this->send_fake_message($userfrom1, $userto);
         $this->send_fake_message($userfrom2, $userto);
 
-        // Send fake notifications.
-        $this->send_fake_message($userfrom1, $userto, 'Notification', 1);
-        $this->send_fake_message($userfrom2, $userto, 'Notification', 1);
-
         // Delete a message.
-        $message = $DB->get_record('message', array('id' => $messageid));
-        message_delete_message($message, $userto->id);
+        \core_message\api::delete_message($userto->id, $messageid);
 
         // Should only count the messages that weren't deleted by the current user.
         $this->assertEquals(1, message_count_unread_messages($userto));

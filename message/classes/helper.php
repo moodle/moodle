@@ -51,46 +51,46 @@ class helper {
                                         $sort = 'timecreated ASC', $timefrom = 0, $timeto = 0) {
         global $DB;
 
-        $messageid = $DB->sql_concat("'message_'", 'id');
-        $messagereadid = $DB->sql_concat("'messageread_'", 'id');
+        $sql = "SELECT m.id, m.useridfrom, mdm.userid as useridto, m.subject, m.fullmessage, m.fullmessagehtml,
+                       m.fullmessageformat, m.smallmessage, m.timecreated, 0 as timeread
+                  FROM {messages} m
+            INNER JOIN {message_conversations} md
+                    ON md.id = m.conversationid
+            INNER JOIN {message_conversation_members} mdm
+                    ON mdm.conversationid = md.id";
+        $params = [];
 
-        $sql = "SELECT {$messageid} AS fakeid, id, useridfrom, useridto, subject, fullmessage, fullmessagehtml, fullmessageformat,
-                       smallmessage, notification, timecreated, 0 as timeread
-                  FROM {message} m
-                 WHERE ((useridto = ? AND useridfrom = ? AND timeusertodeleted = ?)
-                    OR (useridto = ? AND useridfrom = ? AND timeuserfromdeleted = ?))
-                   AND notification = 0
-                   %where%
-             UNION ALL
-                SELECT {$messagereadid} AS fakeid, id, useridfrom, useridto, subject, fullmessage, fullmessagehtml, fullmessageformat,
-                       smallmessage, notification, timecreated, timeread
-                  FROM {message_read} mr
-                 WHERE ((useridto = ? AND useridfrom = ? AND timeusertodeleted = ?)
-                    OR (useridto = ? AND useridfrom = ? AND timeuserfromdeleted = ?))
-                   AND notification = 0
-                   %where%
-              ORDER BY $sort";
-        $params1 = array($userid, $otheruserid, $timedeleted,
-                         $otheruserid, $userid, $timedeleted);
+        if (empty($timedeleted)) {
+            $sql .= " LEFT JOIN {message_user_actions} mua
+                             ON (mua.messageid = m.id AND mua.userid = ? AND mua.action = ? AND mua.timecreated is NOT NULL)";
+            $params[] = $userid;
+            $params[] = api::MESSAGE_ACTION_DELETED;
+        } else {
+            $sql .= " INNER JOIN {message_user_actions} mua
+                              ON (mua.messageid = m.id AND mua.userid = ? AND mua.action = ? AND mua.timecreated = ?)";
+            $params[] = $userid;
+            $params[] = api::MESSAGE_ACTION_DELETED;
+            $params[] = $timedeleted;
+        }
 
-        $params2 = array($userid, $otheruserid, $timedeleted,
-                         $otheruserid, $userid, $timedeleted);
-        $where = array();
+        $sql .= " WHERE (m.useridfrom = ? AND mdm.userid = ? OR m.useridfrom = ? AND mdm.userid = ?)";
+        $params = array_merge($params, [$userid, $otheruserid, $otheruserid, $userid]);
 
         if (!empty($timefrom)) {
-            $where[] = 'AND timecreated >= ?';
-            $params1[] = $timefrom;
-            $params2[] = $timefrom;
+            $sql .= " AND m.timecreated >= ?";
+            $params[] = $timefrom;
         }
 
         if (!empty($timeto)) {
-            $where[] = 'AND timecreated <= ?';
-            $params1[] = $timeto;
-            $params2[] = $timeto;
+            $sql .= " AND m.timecreated <= ?";
+            $params[] = $timeto;
         }
 
-        $sql = str_replace('%where%', implode(' ', $where), $sql);
-        $params = array_merge($params1, $params2);
+        if (empty($timedeleted)) {
+            $sql .= " AND mua.id is NULL";
+        }
+
+        $sql .= " ORDER BY m.$sort";
 
         return $DB->get_records_sql($sql, $params, $limitfrom, $limitnum);
     }

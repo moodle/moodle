@@ -714,7 +714,7 @@ class phpunit_util extends testing_util {
     /**
      * To be called from messagelib.php only!
      *
-     * @param stdClass $message record from message_read table
+     * @param stdClass $message record from messages table
      * @return bool true means send message, false means message "sent" to sink.
      */
     public static function message_sent($message) {
@@ -765,7 +765,7 @@ class phpunit_util extends testing_util {
     /**
      * To be called from messagelib.php only!
      *
-     * @param stdClass $message record from message_read table
+     * @param stdClass $message record from messages table
      * @return bool true means send message, false means message "sent" to sink.
      */
     public static function phpmailer_sent($message) {
