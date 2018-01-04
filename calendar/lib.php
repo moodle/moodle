@@ -794,9 +794,6 @@ class calendar_event {
                     \coursecat::get($properties->categoryid, MUST_EXIST, true);
                     // Course context.
                     $this->editorcontext = $this->properties->context;
-                    // We have a course and are within the course context so we had
-                    // better use the courses max bytes value.
-                    $this->editoroptions['maxbytes'] = $course->maxbytes;
                 } else {
                     // If we get here we have a custom event type as used by some
                     // modules. In this case the event will have been added by
