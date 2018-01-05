@@ -169,13 +169,12 @@ class lesson_page_type_multichoice extends lesson_page {
             foreach ($answers as $answer) {
                 foreach ($studentanswers as $answerid) {
                     if ($answerid == $answer->id) {
-                        $result->studentanswer .= '<br />'.format_text($answer->answer, $answer->answerformat, $formattextdefoptions);
-                        if (trim(strip_tags($answer->response))) {
-                            $responses[$answerid] = format_text($answer->response, $answer->responseformat, $formattextdefoptions);
-                        }
+                        $studentanswerarray[] = format_text($answer->answer, $answer->answerformat, $formattextdefoptions);
+                        $responses[$answerid] = format_text($answer->response, $answer->responseformat, $formattextdefoptions);
                     }
                 }
             }
+            $result->studentanswer = implode('<br />', $studentanswerarray);
             $correctpageid = null;
             $wrongpageid = null;
 
