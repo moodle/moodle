@@ -85,6 +85,14 @@ class media_videojs_plugin extends core_media_player_native {
                 // Fix for VideoJS/Chrome bug https://github.com/videojs/video.js/issues/423 .
                 $mimetype = 'video/mp4';
             }
+            // If this is RTMP stream, adjust mimetype to those VideoJS suggests to use (either flash or mp4).
+            if ($url->get_scheme() === 'rtmp') {
+                if ($mimetype === 'video/x-flv') {
+                    $mimetype = 'rtmp/flv';
+                } else {
+                    $mimetype = 'rtmp/mp4';
+                }
+            }
             $source = html_writer::empty_tag('source', array('src' => $url, 'type' => $mimetype));
             $sources[] = $source;
             if ($isaudio === null) {
@@ -93,7 +101,8 @@ class media_videojs_plugin extends core_media_player_native {
             if ($responsive === null) {
                 $responsive = core_useragent::supports_html5($extension);
             }
-            if (!core_useragent::supports_html5($extension) && get_config('media_videojs', 'useflash')) {
+            if (($url->get_scheme() === 'rtmp' || !core_useragent::supports_html5($extension))
+                    && get_config('media_videojs', 'useflash')) {
                 $flashtech = true;
             }
         }
@@ -240,15 +249,28 @@ class media_videojs_plugin extends core_media_player_native {
             }
         }
 
-        if (!get_config('media_videojs', 'useflash')) {
-            return parent::list_supported_urls($urls, $options);
-        }
         // If Flash fallback is enabled we can not check if/when browser supports flash.
         $extensions = $this->get_supported_extensions();
+        $rtmpallowed = get_config('media_videojs', 'rtmp') && get_config('media_videojs', 'useflash');
         foreach ($urls as $url) {
-            $ext = core_media_manager::instance()->get_extension($url);
-            if (in_array('.' . $ext, $extensions)) {
+            // If RTMP support is disabled, skip the URL that is using RTMP (which
+            // might have been picked to the list by its valid extension).
+            if (!$rtmpallowed && ($url->get_scheme() === 'rtmp')) {
+                continue;
+            }
+            // If RTMP support is allowed, URL with RTMP scheme is supported irrespective to extension.
+            if ($rtmpallowed && ($url->get_scheme() === 'rtmp')) {
                 $result[] = $url;
+                continue;
+            }
+
+            if (!get_config('media_videojs', 'useflash')) {
+                return parent::list_supported_urls($urls, $options);
+            } else {
+                $ext = core_media_manager::instance()->get_extension($url);
+                if (in_array('.' . $ext, $extensions)) {
+                    $result[] = $url;
+                }
             }
         }
         return $result;
@@ -310,14 +332,23 @@ class media_videojs_plugin extends core_media_player_native {
         if (get_config('media_videojs', 'youtube')) {
             $supports .= ($supports ? '<br>' : '') . get_string('youtube', 'media_videojs');
         }
+        if (get_config('media_videojs', 'rtmp') && get_config('media_videojs', 'useflash')) {
+            $supports .= ($supports ? '<br>' : '') . get_string('rtmp', 'media_videojs');
+        }
         return $supports;
     }
 
     public function get_embeddable_markers() {
         $markers = parent::get_embeddable_markers();
+        // Add YouTube support if enabled.
         if (get_config('media_videojs', 'youtube')) {
             $markers = array_merge($markers, array('youtube.com', 'youtube-nocookie.com', 'youtu.be', 'y2u.be'));
         }
+        // Add RTMP support if enabled.
+        if (get_config('media_videojs', 'rtmp') && get_config('media_videojs', 'useflash')) {
+            $markers[] = 'rtmp://';
+        }
+
         return $markers;
     }
 
