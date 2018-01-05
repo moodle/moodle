@@ -1107,8 +1107,10 @@ class question_attempt {
             return null;
         }
 
-        return new question_file_saver($draftitemid, 'question', 'response_' .
-                str_replace($this->get_field_prefix(), '', $name), $text);
+        $filearea = str_replace($this->get_field_prefix(), '', $name);
+        $filearea = str_replace('-', 'bf_', $filearea);
+        $filearea = 'response_' . $filearea;
+        return new question_file_saver($draftitemid, 'question', $filearea, $text);
     }
 
     /**
@@ -1164,12 +1166,31 @@ class question_attempt {
                 $this->behaviour->get_expected_data(), $postdata, '-');
 
         $expected = $this->behaviour->get_expected_qt_data();
+        $this->check_qt_var_name_restrictions($expected);
+
         if ($expected === self::USE_RAW_DATA) {
             $submitteddata += $this->get_all_submitted_qt_vars($postdata);
         } else {
             $submitteddata += $this->get_expected_data($expected, $postdata, '');
         }
         return $submitteddata;
+    }
+
+    /**
+     * Ensure that no reserved prefixes are being used by installed
+     * question types.
+     * @param array $expected An array of question type variables
+     */
+    protected function check_qt_var_name_restrictions($expected) {
+        global $CFG;
+
+        if ($CFG->debugdeveloper) {
+            foreach ($expected as $key => $value) {
+                if (strpos($key, 'bf_') !== false) {
+                    debugging('The bf_ prefix is reserved and cannot be used by question types', DEBUG_DEVELOPER);
+                }
+            }
+        }
     }
 
     /**
