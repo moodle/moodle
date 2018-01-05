@@ -1391,16 +1391,17 @@ class question_attempt {
 
     /**
      * @return array(string, int) the most recent manual comment that was added
-     * to this question, and the FORMAT_... it is.
+     * to this question, the FORMAT_... it is and the step itself.
      */
     public function get_manual_comment() {
         foreach ($this->get_reverse_step_iterator() as $step) {
             if ($step->has_behaviour_var('comment')) {
                 return array($step->get_behaviour_var('comment'),
-                        $step->get_behaviour_var('commentformat'));
+                        $step->get_behaviour_var('commentformat'),
+                        $step);
             }
         }
-        return array(null, null);
+        return array(null, null, null);
     }
 
     /**
@@ -1420,7 +1421,7 @@ class question_attempt {
             if ($commentformat === null) {
                 $commentformat = FORMAT_HTML;
             }
-            return array($comment, $commentformat);
+            return array($comment, $commentformat, null);
         }
     }
 
