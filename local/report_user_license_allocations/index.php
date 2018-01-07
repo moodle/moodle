@@ -703,6 +703,14 @@ if (!$users && empty($dodownload)) {
         }
 
         // Get the license information.
+        // Is the license currently allocated?
+        if ($DB->get_records('companylicense_users', array('licenseid' => $licenseid, 'userid' => $user->id))) {
+            $licenseallocated = get_string('yes');
+        } else {
+            $licenseallocated = get_string('no');
+        }
+
+        // Get allocation info.
         if ($allocations = $DB->get_records('logstore_standard_log', array('eventname' => '\block_iomad_company_admin\event\user_license_assigned',
                                                                            'userid' => $user->id,
                                                                            'objectid' => $licenseid))) {
@@ -719,15 +727,15 @@ if (!$users && empty($dodownload)) {
                 $allocationtip .= date($CFG->iomad_date_format, $allocation->timecreated) . "\n"; 
             }
             $totalallocated = count($allocations);
-            $licenseallocated = get_string('yes');
             $latest = array_pop($allocations);
             $dateallocated = date($CFG->iomad_date_format, $latest->timecreated);
         } else {
             $totalallocated = 0;
             $dateallocated = get_string('never');
-            $licenseallocated = get_string('no');
             $allocationtip = "";
         }
+
+        // Get unallocation info.
         if ($unallocations = $DB->get_records('logstore_standard_log', array('eventname' => '\block_iomad_company_admin\event\user_license_unassigned',
                                                                             'userid' => $user->id,
                                                                             'objectid' => $licenseid))) {
