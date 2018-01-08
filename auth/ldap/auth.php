@@ -1724,7 +1724,7 @@ class auth_plugin_ldap extends auth_plugin_base {
                     $sesskey = sesskey();
                     redirect($CFG->wwwroot.'/auth/ldap/ntlmsso_magic.php?sesskey='.$sesskey);
                 } else if ($this->config->ntlmsso_ie_fastpath == AUTH_NTLM_FASTPATH_YESFORM) {
-                    redirect($CFG-wwwroot.'/login/index.php?authldap_skipntlmsso=1');
+                    redirect($CFG->wwwroot.'/login/index.php?authldap_skipntlmsso=1');
                 }
             }
             redirect($CFG->wwwroot.'/auth/ldap/ntlmsso_attempt.php');
