@@ -1137,6 +1137,7 @@ M.core_filepicker.init = function(Y, options) {
             selectnode.one('.fp-setauthor input').set('value', args.author ? args.author : this.options.author);
             this.set_selected_license(selectnode.one('.fp-setlicense'), args.license);
             selectnode.one('form #filesource-'+client_id).set('value', args.source);
+            selectnode.one('form #filesourcekey-'+client_id).set('value', args.sourcekey);
 
             // display static information about a file (when known)
             var attrs = ['datemodified','datecreated','size','license','author','dimensions'];
@@ -1181,7 +1182,8 @@ M.core_filepicker.init = function(Y, options) {
                 var repository_id = this.active_repo.id;
                 var title = selectnode.one('.fp-saveas input').get('value');
                 var filesource = selectnode.one('form #filesource-'+client_id).get('value');
-                var params = {'title':title, 'source':filesource, 'savepath': this.options.savepath};
+                var filesourcekey = selectnode.one('form #filesourcekey-'+client_id).get('value');
+                var params = {'title':title, 'source':filesource, 'savepath': this.options.savepath, sourcekey: filesourcekey};
                 var license = selectnode.one('.fp-setlicense select');
                 if (license) {
                     params['license'] = license.get('value');
@@ -1243,6 +1245,8 @@ M.core_filepicker.init = function(Y, options) {
             var elform = selectnode.one('form');
             elform.appendChild(Y.Node.create('<input/>').
                 setAttrs({type:'hidden',id:'filesource-'+client_id}));
+            elform.appendChild(Y.Node.create('<input/>').
+                setAttrs({type:'hidden',id:'filesourcekey-'+client_id}));
             elform.on('keydown', function(e) {
                 if (e.keyCode == 13) {
                     getfile.simulate('click');
