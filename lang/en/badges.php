@@ -27,7 +27,7 @@
 $string['actions'] = 'Actions';
 $string['activate'] = 'Enable access';
 $string['activatesuccess'] = 'Access to the badges was successfully enabled.';
-$string['addbadge'] = 'Add a badge as criteria';
+$string['addbadge'] = 'Add badges';
 $string['addbadge_help'] = 'Select all badges that should be added to this badge requirement. Hold CTRL key to select multiple items.';
 $string['addbadgecriteria'] = 'Add badge criteria';
 $string['addcriteria'] = 'Add criteria';
@@ -260,7 +260,7 @@ $string['error:invalidexpiredate'] = 'Expiry date has to be in the future.';
 $string['error:invalidexpireperiod'] = 'Expiry period cannot be negative or equal 0.';
 $string['error:invalidparambadge'] = 'Badge does not exist. ';
 $string['error:noactivities'] = 'There are no activities with completion criteria enabled in this course.';
-$string['error:nobadges'] = 'There are no course or site badges available to be added as criteria.  Make sure that your other badges are enabled ';
+$string['error:nobadges'] = 'There are no course or site badges with access enabled to be added as criteria.';
 $string['error:nocourses'] = 'Course completion is not enabled for any of the courses in this site, so none can be displayed. Course completion may be enabled in the course settings.';
 $string['error:nogroups'] = '<p>There are no public collections of badges available in your backpack. </p>
 <p>Only public collections are shown, <a href="http://backpack.openbadges.org">visit your backpack</a> to create some public collections.</p>';
