@@ -81,17 +81,16 @@ class core_iplookup_geoip_testcase extends advanced_testcase {
     }
 
     public function test_ipv4() {
-
-        $result = iplookup_find_location('131.111.150.25');
+        $result = iplookup_find_location('192.30.255.112');
 
         $this->assertEquals('array', gettype($result));
-        $this->assertEquals('Cambridge', $result['city']);
-        $this->assertEquals(0.1167, $result['longitude'], 'Coordinates are out of accepted tolerance', 0.01);
-        $this->assertEquals(52.2, $result['latitude'], 'Coordinates are out of accepted tolerance', 0.01);
+        $this->assertEquals('San Francisco', $result['city']);
+        $this->assertEquals(-122.3933, $result['longitude'], 'Coordinates are out of accepted tolerance', 0.01);
+        $this->assertEquals(37.7697, $result['latitude'], 'Coordinates are out of accepted tolerance', 0.01);
         $this->assertNull($result['error']);
         $this->assertEquals('array', gettype($result['title']));
-        $this->assertEquals('Cambridge', $result['title'][0]);
-        $this->assertEquals('United Kingdom', $result['title'][1]);
+        $this->assertEquals('San Francisco', $result['title'][0]);
+        $this->assertEquals('United States', $result['title'][1]);
     }
 
     public function test_ipv6() {
@@ -110,4 +109,3 @@ class core_iplookup_geoip_testcase extends advanced_testcase {
         $this->assertEquals('United States', $result['title'][1]);
     }
 }
-
