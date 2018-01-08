@@ -353,6 +353,7 @@ class assign_submission_onlinetext extends assign_submission_plugin {
                                                              'onlinetext',
                                                              'assignsubmission_onlinetext');
 
+            $onlinetext = trim($onlinetextsubmission->onlinetext);
             $shorttext = shorten_text($text, 140);
             $plagiarismlinks = '';
 
@@ -360,13 +361,13 @@ class assign_submission_onlinetext extends assign_submission_plugin {
                 require_once($CFG->libdir . '/plagiarismlib.php');
 
                 $plagiarismlinks .= plagiarism_get_links(array('userid' => $submission->userid,
-                    'content' => trim($onlinetextsubmission->onlinetext),
+                    'content' => $onlinetext,
                     'cmid' => $this->assignment->get_course_module()->id,
                     'course' => $this->assignment->get_course()->id,
                     'assignment' => $submission->assignment));
             }
             if ($text != $shorttext) {
-                $wordcount = get_string('numwords', 'assignsubmission_onlinetext', count_words($text));
+                $wordcount = get_string('numwords', 'assignsubmission_onlinetext', count_words($onlinetext));
 
                 return $plagiarismlinks . $wordcount . $shorttext;
             } else {
