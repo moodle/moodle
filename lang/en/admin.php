@@ -192,7 +192,7 @@ $string['configdefaultrequestcategory'] = 'Courses requested by users will be au
 $string['configdefaultrequestedcategory'] = 'Default category to put courses that were requested into, if they\'re approved.';
 $string['configdefaultuserroleid'] = 'All logged in users will be given the capabilities of the role you specify here, at the site level, in ADDITION to any other roles they may have been given.  The default is the Authenticated user role.  Note that this will not conflict with other roles they have unless you prohibit capabilities, it just ensures that all users have capabilities that are not assignable at the course level (eg post blog entries, manage own calendar, etc).';
 $string['configdeleteincompleteusers'] = 'After this period, old not fully setup accounts are deleted.';
-$string['configdeleteunconfirmed'] = 'If you are using email authentication, this is the period within which a response will be accepted from users.  After this period, old unconfirmed accounts are deleted.';
+$string['configdeleteunconfirmed'] = 'For certain authentication methods, such as email-based self-registration, users must confirm their account within a certain time. After this period, any old unconfirmed accounts are deleted.';
 $string['configdenyemailaddresses'] = 'To deny email addresses from particular domains list them here in the same way.  All other domains will be accepted. To deny subdomains add the domain with a preceding \'.\'. eg <strong>hotmail.com yahoo.co.uk .live.com</strong>';
 $string['configenableblogs'] = 'This switch provides all site users with their own blog.';
 $string['configenabledevicedetection'] = 'Enables detection of mobiles, smartphones, tablets or default devices (desktop PCs, laptops, etc) for the application of themes and other features.';
@@ -1140,7 +1140,7 @@ $string['uninstallplugin'] = 'Uninstall';
 $string['unlockaccount'] = 'Unlock account';
 $string['unsettheme'] = 'Unset theme';
 $string['unsupported'] = 'Unsupported';
-$string['unsupporteddbfileformat'] = 'Your database has tables using Antelope as the file format. Full UTF-8 support in MySQL and MariaDB requires the Barracuda file format. Please convert the tables to the Barracuda file format. See the documentation <a href="https://docs.moodle.org/en/cli">Administration via command line</a> for details of a tool for converting InnoDB tables to Barracuda.';
+$string['unsupporteddbfileformat'] = 'Your database uses Antelope as the file format. Full UTF-8 support in MySQL and MariaDB requires the Barracuda file format. Please switch to the Barracuda file format. See the documentation <a href="https://docs.moodle.org/en/admin/environment/custom check/mysql full unicode support">MySQL full unicode support</a> for details.';
 $string['unsupporteddbfilepertable'] = 'For full support of UTF-8 both MySQL and MariaDB require you to change your MySQL setting \'innodb_file_per_table\' to \'ON\'. See the documentation for further details.';
 $string['unsupporteddblargeprefix'] = 'For full support of UTF-8 both MySQL and MariaDB require you to change your MySQL setting \'innodb_large_prefix\' to \'ON\'. See the documentation for further details.';
 $string['unsupporteddbstorageengine'] = 'The database storage engine being used is no longer supported.';
@@ -1235,7 +1235,7 @@ $string['warningcurrentsetting'] = 'Invalid current value: {$a}';
 $string['warningiconvbuggy'] = 'Your version of the iconv library does not support the //IGNORE modifier. You should install the mbstring extension which can be used instead for cleaning strings containing invalid UTF-8 characters.';
 $string['webproxy'] = 'Web proxy';
 $string['webproxyinfo'] = 'Fill in following options if your Moodle server can not access internet directly. Internet access is required for download of environment data, language packs, RSS feeds, timezones, etc.<br /><em>PHP cURL extension is highly recommended.</em>';
-$string['xmlrpcrecommended'] = 'The xmlrpc extension is needed for hub communication, and useful for web services and Moodle networking';
+$string['xmlrpcrecommended'] = 'The XMLRPC extension is needed for hub communication, and is useful for web services and Moodle networking.';
 $string['yuicomboloading'] = 'YUI combo loading';
 $string['ziprequired'] = 'The Zip PHP extension is now required by Moodle, info-ZIP binaries or PclZip library are not used anymore.';
 
