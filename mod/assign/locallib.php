@@ -3134,13 +3134,14 @@ class assign {
      * Render the content in editor that is often used by plugin.
      *
      * @param string $filearea
-     * @param int  $submissionid
+     * @param int $submissionid
      * @param string $plugintype
      * @param string $editor
      * @param string $component
+     * @param bool $shortentext Whether to shorten the text content.
      * @return string
      */
-    public function render_editor_content($filearea, $submissionid, $plugintype, $editor, $component) {
+    public function render_editor_content($filearea, $submissionid, $plugintype, $editor, $component, $shortentext = false) {
         global $CFG;
 
         $result = '';
@@ -3148,6 +3149,9 @@ class assign {
         $plugin = $this->get_submission_plugin_by_type($plugintype);
 
         $text = $plugin->get_editor_text($editor, $submissionid);
+        if ($shortentext) {
+            $text = shorten_text($text, 140);
+        }
         $format = $plugin->get_editor_format($editor, $submissionid);
 
         $finaltext = file_rewrite_pluginfile_urls($text,
