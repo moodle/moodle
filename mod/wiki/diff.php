@@ -66,7 +66,7 @@ if ($compare >= $comparewith) {
     print_error('cannotcomparenewerversion', 'wiki');
 }
 
-require_login($course, true, $cm);
+require_course_login($course, true, $cm);
 
 if (!wiki_user_can_view($subwiki, $wiki)) {
     print_error('cannotviewpage', 'wiki');
