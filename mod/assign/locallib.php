@@ -7492,7 +7492,7 @@ class assign {
             return false;
         }
         $submission->status = ASSIGN_SUBMISSION_STATUS_DRAFT;
-        $this->update_submission($submission, $userid, true, $this->get_instance()->teamsubmission);
+        $this->update_submission($submission, $userid, false, $this->get_instance()->teamsubmission);
 
         // Give each submission plugin a chance to process the reverting to draft.
         $plugins = $this->get_submission_plugins();
