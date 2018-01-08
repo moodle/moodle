@@ -2231,6 +2231,11 @@ abstract class repository implements cacheable_object {
                 $file =& $list[$i];
                 $converttoobject = false;
             }
+
+            if (isset($file['source'])) {
+                $file['sourcekey'] = sha1($file['source'] . self::get_secret_key() . sesskey());
+            }
+
             if (isset($file['size'])) {
                 $file['size'] = (int)$file['size'];
                 $file['size_f'] = display_size($file['size']);
@@ -2836,6 +2841,20 @@ abstract class repository implements cacheable_object {
     public function uses_post_requests() {
         debugging('The method repository::uses_post_requests() is deprecated and must not be used anymore.', DEBUG_DEVELOPER);
         return false;
+    }
+
+    /**
+     * Generate a secret key to be used for passing sensitive information around.
+     *
+     * @return string repository secret key.
+     */
+    final static public function get_secret_key() {
+        global $CFG;
+
+        if (!isset($CFG->reposecretkey)) {
+            set_config('reposecretkey', time() . random_string(32));
+        }
+        return $CFG->reposecretkey;
     }
 }
 
