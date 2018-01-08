@@ -40,7 +40,7 @@ Feature: Students can edit or delete their forum posts within a set time limit
     And I press "Continue"
     Then I should not see "Forum post subject"
 
-  @javascript
+  @javascript @block_recent_activity
   Scenario: Time limit expires
     Given I log out
     And I log in as "admin"
@@ -52,6 +52,8 @@ Feature: Students can edit or delete their forum posts within a set time limit
     And I log out
     And I log in as "student1"
     And I am on "Course 1" course homepage
+    And I should see "New forum posts:" in the "Recent activity" "block"
+    And I should see "Forum post subject" in the "Recent activity" "block"
     When I wait "61" seconds
     And I follow "Forum post subject"
     Then I should not see "Edit" in the "region-main" "region"
