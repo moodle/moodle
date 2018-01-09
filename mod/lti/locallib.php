@@ -1131,6 +1131,9 @@ EOD;
  * @return Array of enabled capabilities
  */
 function lti_get_enabled_capabilities($tool) {
+    if (!isset($tool)) {
+        return array();
+    }
     if (!empty($tool->enabledcapability)) {
         $enabledcapabilities = explode("\n", $tool->enabledcapability);
     } else {
