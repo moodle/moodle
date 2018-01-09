@@ -1643,10 +1643,15 @@ M.core_filepicker.init = function(Y, options) {
                     .removeClass('active')
                     .setAttribute('aria-selected', 'false')
                     .setAttribute('tabindex', '-1');
-            scope.fpnode.all('#fp-repo-'+scope.options.client_id+'-'+obj.repo_id)
-                    .addClass('active')
+            scope.fpnode.all('.nav-link')
+                    .removeClass('active')
+                    .setAttribute('aria-selected', 'false')
+                    .setAttribute('tabindex', '-1');
+            var activenode = scope.fpnode.one('#fp-repo-' + scope.options.client_id + '-' + obj.repo_id);
+            activenode.addClass('active')
                     .setAttribute('aria-selected', 'true')
                     .setAttribute('tabindex', '0');
+            activenode.all('.nav-link').addClass('active');
             // add class repository_REPTYPE to the filepicker (for repository-specific styles)
             for (var i in scope.options.repositories) {
                 scope.fpnode.removeClass('repository_'+scope.options.repositories[i].type)
