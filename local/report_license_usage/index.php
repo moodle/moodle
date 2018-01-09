@@ -84,7 +84,7 @@ if ($toraw) {
 
 $systemcontext = context_system::instance();
 require_login(); // Adds to $PAGE, creates $output.
-iomad::require_capability('local/report_completion:view', $systemcontext);
+iomad::require_capability('local/report_license_usage:view', $systemcontext);
 
 // Set the companyid
 $companyid = iomad::get_my_companyid($systemcontext);

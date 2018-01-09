@@ -80,7 +80,7 @@ if ($licenseid) {
 
 $systemcontext = context_system::instance();
 require_login(); // Adds to $PAGE, creates $output.
-iomad::require_capability('local/report_completion:view', $systemcontext);
+iomad::require_capability('local/report_user_license_allocations:view', $systemcontext);
 
 // Set the companyid
 $companyid = iomad::get_my_companyid($systemcontext);
