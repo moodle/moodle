@@ -116,6 +116,8 @@ class restore_assign_activity_structure_step extends restore_activity_structure_
         }
         if (!isset($data->gradingduedate)) {
             $data->gradingduedate = 0;
+        } else {
+            $data->gradingduedate = $this->apply_date_offset($data->gradingduedate);
         }
         if (!isset($data->markingworkflow)) {
             $data->markingworkflow = 0;
