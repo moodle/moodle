@@ -121,7 +121,8 @@ define([
 
             M.util.js_pending([root.get('id'), year, month, courseid].join('-'));
             var includenavigation = root.data('includenavigation');
-            return CalendarRepository.getCalendarMonthData(year, month, courseid, categoryid, includenavigation)
+            var mini = root.data('mini');
+            return CalendarRepository.getCalendarMonthData(year, month, courseid, categoryid, includenavigation, mini)
                 .then(function(context) {
                     return Templates.render(root.attr('data-template'), context);
                 })

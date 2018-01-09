@@ -945,9 +945,10 @@ class core_calendar_external extends external_api {
      * @param   int     $courseid The course to be included
      * @param   int     $categoryid The category to be included
      * @param   bool    $includenavigation Whether to include navigation
+     * @param   bool    $mini Whether to return the mini month view or not
      * @return  array
      */
-    public static function get_calendar_monthly_view($year, $month, $courseid, $categoryid, $includenavigation) {
+    public static function get_calendar_monthly_view($year, $month, $courseid, $categoryid, $includenavigation, $mini) {
         global $CFG, $DB, $USER, $PAGE;
         require_once($CFG->dirroot."/calendar/lib.php");
 
@@ -958,6 +959,7 @@ class core_calendar_external extends external_api {
             'courseid' => $courseid,
             'categoryid' => $categoryid,
             'includenavigation' => $includenavigation,
+            'mini' => $mini,
         ]);
 
         $context = \context_user::instance($USER->id);
@@ -970,7 +972,8 @@ class core_calendar_external extends external_api {
         $calendar = \calendar_information::create($time, $params['courseid'], $params['categoryid']);
         self::validate_context($calendar->context);
 
-        list($data, $template) = calendar_get_view($calendar, 'month', $params['includenavigation']);
+        $view = $params['mini'] ? 'mini' : 'month';
+        list($data, $template) = calendar_get_view($calendar, $view, $params['includenavigation']);
 
         return $data;
     }
@@ -992,6 +995,13 @@ class core_calendar_external extends external_api {
                     'Whether to show course navigation',
                     VALUE_DEFAULT,
                     true,
+                    NULL_ALLOWED
+                ),
+                'mini' => new external_value(
+                    PARAM_BOOL,
+                    'Whether to return the mini month view or not',
+                    VALUE_DEFAULT,
+                    false,
                     NULL_ALLOWED
                 ),
             ]

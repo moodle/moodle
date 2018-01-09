@@ -71,6 +71,7 @@ function(
             var placeHolder = $('<span>');
             placeHolder.attr('data-template', 'core_calendar/threemonth_month');
             placeHolder.attr('data-includenavigation', false);
+            placeHolder.attr('data-mini', true);
             var placeHolderContainer = $('<div>');
             placeHolderContainer.hide();
             placeHolderContainer.append(placeHolder);
