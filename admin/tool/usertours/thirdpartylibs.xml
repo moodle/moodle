@@ -4,7 +4,7 @@
     <location>amd/src/tour.js</location>
     <name>Flexitour</name>
     <license>GPLv3</license>
-    <version>0.10.0</version>
+    <version>0.12.0</version>
     <licenseversion>3</licenseversion>
   </library>
   <library>
