@@ -1805,6 +1805,13 @@ function calendar_time_representation($time) {
         $timeformat = get_config(null, 'calendar_site_timeformat');
     }
 
+    // Allow language customization of selected time format.
+    if ($timeformat === CALENDAR_TF_12) {
+        $timeformat = get_string('strftimetime12', 'langconfig');
+    } else if ($timeformat === CALENDAR_TF_24) {
+        $timeformat = get_string('strftimetime24', 'langconfig');
+    }
+
     return userdate($time, empty($timeformat) ? $langtimeformat : $timeformat);
 }
 
