@@ -729,10 +729,30 @@ class iomad_user_filter_form extends moodleform {
             $this->addto = false;
         }
 
+        if (!empty($this->_customdata['addfromb'])) {
+            $this->addfromb = true;
+            $this->fromnameb = $this->_customdata['addfromb'];
+        } else {
+            $this->addfromb = false;
+        }
+
+        if (!empty($this->_customdata['addtob'])) {
+            $this->addtob = true;
+            $this->tonameb = $this->_customdata['addtob'];
+        } else {
+            $this->addtob = false;
+        }
+
         if (!empty($this->_customdata['addlicensestatus'])) {
             $addlicensestatus = true;
         } else {
             $addlicensestatus = false;
+        }
+
+        if (!empty($this->_customdata['addlicenseusage'])) {
+            $addlicenseusage = true;
+        } else {
+            $addlicenseusage = false;
         }
 
         $mform =& $this->_form;
@@ -804,11 +824,26 @@ class iomad_user_filter_form extends moodleform {
             $mform->addElement('date_selector', $this->toname, get_string($this->toname, 'block_iomad_company_admin'), array('optional' => 'yes'));
         }
 
+        if ($this->addfromb) {
+            $mform->addElement('date_selector', $this->fromnameb, get_string($this->fromnameb, 'block_iomad_company_admin'), array('optional' => 'yes'));
+        }
+
+        if ($this->addtob) {
+            $mform->addElement('date_selector', $this->tonameb, get_string($this->tonameb, 'block_iomad_company_admin'), array('optional' => 'yes'));
+        }
+
         if ($addlicensestatus) {
-            $licenseusearray = array ('0' => get_string('any'),
+            $licensestatusarray = array ('0' => get_string('any'),
                                       '1' => get_string('notinuse', 'block_iomad_company_admin'),
                                       '2' => get_string('inuse', 'block_iomad_company_admin'));
-            $mform->addElement('select', 'licensestatus', get_string('licensestatus', 'block_iomad_company_admin'), $licenseusearray);
+            $mform->addElement('select', 'licensestatus', get_string('licensestatus', 'block_iomad_company_admin'), $licensestatusarray);
+        }
+
+        if ($addlicenseusage) {
+            $licenseusagearray = array ('0' => get_string('any'),
+                                        '1' => get_string('notallocated', 'block_iomad_company_admin'),
+                                        '2' => get_string('allocated', 'block_iomad_company_admin'));
+            $mform->addElement('select', 'licenseusage', get_string('licenseuseage', 'block_iomad_company_admin'), $licenseusagearray);
         }
 
         if (empty($this->_customdata['adddodownload'])) {
@@ -828,6 +863,13 @@ class iomad_user_filter_form extends moodleform {
             if (!empty($data[$this->fromname]) && !empty($data[$this->toname])) {
                 if ($data[$this->fromname] > $data[$this->toname]) {
                     $errors[$this->fromname] = get_string('errorinvaliddate', 'calendar');
+                }
+            }
+        }
+        if (!empty($this->fromnameb) && !empty($this->tonameb)) {
+            if (!empty($data[$this->fromnameb]) && !empty($data[$this->tonameb])) {
+                if ($data[$this->fromnameb] > $data[$this->tonameb]) {
+                    $errors[$this->fromnameb] = get_string('errorinvaliddate', 'calendar');
                 }
             }
         }

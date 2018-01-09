@@ -36,6 +36,11 @@ $search      = optional_param('search', '', PARAM_CLEAN);// Search string.
 $departmentid = optional_param('departmentid', 0, PARAM_INTEGER);
 $licenseid    = optional_param('licenseid', 0, PARAM_INTEGER);
 $dodownload  = optional_param('dodownload', '', PARAM_CLEAN);
+$licenseallocatedfromraw = optional_param_array('licenseallocatedfrom', null, PARAM_INT);
+$licenseallocatedtoraw = optional_param_array('licenseallocatedto', null, PARAM_INT);
+$licenseunallocatedfromraw = optional_param_array('licenseunallocatedfrom', null, PARAM_INT);
+$licenseunallocatedtoraw = optional_param_array('licenseunallocatedto', null, PARAM_INT);
+$licenseusage = optional_param('licenseusage', 0, PARAM_INTEGER);
 
 $params = array();
 
@@ -76,6 +81,53 @@ if ($showsuspended) {
 }
 if ($licenseid) {
     $params['licenseid'] = $licenseid;
+}
+if ($licenseusage) {
+    $params['licenseusage'] = $licenseusage;
+}
+
+if ($licenseallocatedfromraw) {
+    if (is_array($licenseallocatedfromraw)) {
+        $licenseallocatedfrom = mktime(0, 0, 0, $licenseallocatedfromraw['month'], $licenseallocatedfromraw['day'], $licenseallocatedfromraw['year']);
+    } else {
+        $licenseallocatedfrom = $licenseallocatedfromraw;
+    }
+    $params['licenseallocatedfrom'] = $licenseallocatedfrom;
+} else {
+    $licenseallocatedfrom = null;
+}
+
+if ($licenseallocatedtoraw) {
+    if (is_array($licenseallocatedtoraw)) {
+        $licenseallocatedto = mktime(0, 0, 0, $licenseallocatedtoraw['month'], $licenseallocatedtoraw['day'], $licenseallocatedtoraw['year']);
+    } else {
+        $licenseallocatedto = $licenseallocatedtoraw;
+    }
+    $params['licenseallocatedto'] = $licenseallocatedto;
+} else {
+    $licenseallocatedto = null;
+}
+
+if ($licenseunallocatedfromraw) {
+    if (is_array($licenseunallocatedfromraw)) {
+        $licenseunallocatedfrom = mktime(0, 0, 0, $licenseunallocatedfromraw['month'], $licenseunallocatedfromraw['day'], $licenseunallocatedfromraw['year']);
+    } else {
+        $licenseunallocatedfrom = $licenseunallocatedfromraw;
+    }
+    $params['licenseunallocatedfrom'] = $licenseunallocatedfrom;
+} else {
+    $licenseunallocatedfrom = null;
+}
+
+if ($licenseunallocatedtoraw) {
+    if (is_array($licenseunallocatedtoraw)) {
+        $licenseunallocatedto = mktime(0, 0, 0, $licenseunallocatedtoraw['month'], $licenseunallocatedtoraw['day'], $licenseunallocatedtoraw['year']);
+    } else {
+        $licenseunallocatedto = $licenseunallocatedtoraw;
+    }
+    $params['licenseunallocatedto'] = $licenseunallocatedto;
+} else {
+    $licenseunallocatedto = null;
 }
 
 $systemcontext = context_system::instance();
@@ -242,6 +294,11 @@ $treehtml = $output->department_tree($departmenttree, optional_param('department
 // Set up the filter form.
 $params['adddodownload'] = true;
 $params['companyid'] = $companyid;
+$params['addlicenseusage'] = true;
+$params['addfrom'] = 'licenseallocatedfrom';
+$params['addto'] = 'licenseallocatedto';
+$params['addfromb'] = 'licenseunallocatedfrom';
+$params['addtob'] = 'licenseunallocatedto';
 $mform = new iomad_user_filter_form(null, $params);
 $mform->set_data(array('departmentid' => $departmentid));
 $mform->set_data($params);
@@ -505,6 +562,73 @@ if (!empty($userrecords)) {
 }
 
 if (!empty($userlist)) {
+
+    // set up the sql parameter array.
+    $sqlparams = array('companyid' => $company->id);
+
+    // Check if we have anything for license user allocations.
+    if ($licenseusage == 1) {
+        $usagesql = " AND u.id NOT IN (
+                      SELECT userid FROM {companylicense_users}
+                      WHERE licenseid = :licenseid) ";
+        $sqlparams['licenseid'] = $licenseid;
+    } else if ($licenseusage == 2) {
+        $usagesql = " AND u.id IN (
+                      SELECT userid FROM {companylicense_users}
+                      WHERE licenseid = :licenseid) ";
+        $sqlparams['licenseid'] = $licenseid;
+    } else {
+        $usagesql = "";
+    }
+
+    // Check if we have anything for license allocation from date.
+    $userallocationsql = "";
+    if ($licenseallocatedfrom) {
+echo "Licenseallocatedfrom = $licenseallocatedfrom </br>";
+echo "Licenseallocatedfrom = $licenseallocatedfrom </br>";
+        $userallocationsql .= " AND u.id IN (
+                                SELECT userid FROM {logstore_standard_log}
+                                WHERE eventname = :afeventname
+                                AND objectid = :aflicenseid
+                                AND timecreated > :afdate) ";
+        $sqlparams['afeventname'] = '\block_iomad_company_admin\event\user_license_assigned';
+        $sqlparams['aflicenseid'] = $licenseid;
+        $sqlparams['afdate'] = $licenseallocatedfrom;
+    }
+
+    if ($licenseallocatedto) {
+        $userallocationsql .= " AND u.id IN (
+                                SELECT userid FROM {logstore_standard_log}
+                                WHERE eventname = :ateventname
+                                AND objectid = :atlicenseid
+                                AND timecreated < :atdate) ";
+        $sqlparams['ateventname'] = '\block_iomad_company_admin\event\user_license_assigned';
+        $sqlparams['atlicenseid'] = $licenseid;
+        $sqlparams['atdate'] = $licenseallocatedto;
+    }
+
+    if ($licenseunallocatedfrom) {
+        $userallocationsql .= " AND u.id IN (
+                                SELECT userid FROM {logstore_standard_log}
+                                WHERE eventname = :ufeventname
+                                AND objectid = :uflicenseid
+                                AND timecreated > :ufdate) ";
+        $sqlparams['ufeventname'] = '\block_iomad_company_admin\event\user_license_unassigned';
+        $sqlparams['uflicenseid'] = $licenseid;
+        $sqlparams['ufdate'] = $licenseunallocatedfrom;
+    }
+
+    if ($licenseunallocatedto) {
+        $userallocationsql .= " AND u.id IN (
+                                SELECT userid FROM {logstore_standard_log}
+                                WHERE eventname = :uteventname
+                                AND objectid = :utlicenseid
+                                AND timecreated < :utdate) ";
+        $sqlparams['uteventname'] = '\block_iomad_company_admin\event\user_license_unassigned';
+        $sqlparams['utlicenseid'] = $licenseid;
+        $sqlparams['utdate'] = $licenseunallocatedto;
+    }
+
     $users = $DB->get_records_sql("SELECT u.id as id,
                                           u.username as username,
                                           u.email as email,
@@ -520,15 +644,27 @@ if (!empty($userlist)) {
                                           d.name as departmentname
                                    FROM {user} u, {department} d, {company_users} cu
                                    WHERE u.deleted <> 1 AND $userlist
+                                   $usagesql
+                                   $userallocationsql
                                    AND cu.userid = u.id AND cu.departmentid = d.id
                                    AND cu.companyid = :companyid
                                    $userfilterwithu
-                                   GROUP BY u.id, d.name $dbsort ", array('companyid' => $company->id), $page * $perpage, $perpage);
+                                   GROUP BY u.id, d.name $dbsort ", $sqlparams, $page * $perpage, $perpage);
+    $allusers = $DB->get_records_sql("SELECT u.id as id
+                                   FROM {user} u, {department} d, {company_users} cu
+                                   WHERE u.deleted <> 1 AND $userlist
+                                   $usagesql
+                                   $userallocationsql
+                                   AND cu.userid = u.id AND cu.departmentid = d.id
+                                   AND cu.companyid = :companyid
+                                   $userfilterwithu
+                                   GROUP BY u.id, d.name $dbsort ", $sqlparams);
 } else {
     $users = array();
+    $allusers = array();
 }
 
-$usercount = count($userrecords);
+$usercount = count($allusers);
 
 if (empty($dodownload)) {
     echo $output->heading("$usercount ".get_string('users'));
