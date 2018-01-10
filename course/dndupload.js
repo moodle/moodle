@@ -818,7 +818,16 @@ M.course_dndupload = {
             resel.parent.removeChild(resel.li);
             new M.core.alert({message: M.util.get_string('filereaderror', 'moodle', file.name)});
         };
-        reader.readAsText(file.slice(0, 5)); // Try reading the first few bytes of the file.
+        if (file.size > 0) {
+            // If this is a non-empty file, try reading the first few bytes.
+            // This will trigger reader.onerror() for folders and reader.onload() for ordinary, readable files.
+            reader.readAsText(file.slice(0, 5));
+        } else {
+            // If you call slice() on a 0-byte folder, before calling readAsText, then Firefox triggers reader.onload(),
+            // instead of reader.onerror().
+            // So, for 0-byte files, just call readAsText on the whole file (and it will trigger load/error functions as expected).
+            reader.readAsText(file);
+        }
     },
 
     /**
