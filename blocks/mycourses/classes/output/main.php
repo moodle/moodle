@@ -87,9 +87,11 @@ class main implements renderable, templatable {
         } else {
             $viewinginprogress = true;
         }
+        $nocoursesurl = $output->image_url('courses', 'block_myoverview')->out();
 
         return [
             'midnight' => usergetmidnight(time()),
+            'nocourses' => $nocoursesurl,
             'availableview' => $availableview->export_for_template($output),
             'inprogressview' => $inprogressview->export_for_template($output),
             'completedview' => $completedview->export_for_template($output),

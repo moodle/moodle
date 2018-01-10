@@ -43,3 +43,8 @@ html.yui3-js-enabled body#page-my-index.format-site.path-my.gecko.dir-ltr.lang-e
     font-weight: bold;
     padding-top: 10px;
 }
+
+.block_mycourses .empty-placeholder-image-lg {
+    width: 100px;
+    height: 100px;
+}
