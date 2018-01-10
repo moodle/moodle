@@ -470,6 +470,7 @@ if ($coursesform->is_cancelled() || optional_param('cancel', false, PARAM_BOOL))
 } else {
     if ($companyid > 0) {
         $coursesform->process();
+        $coursesform = new company_users_course_form($PAGE->url, $context, $companyid, $departmentid, $userid, $licenseid);
         // Display the license selector.
         $availablewarning = "";
         $licenselist = array();
