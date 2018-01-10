@@ -454,6 +454,25 @@ if (!empty($userlist)) {
     $total = 0;
 }
 
+// Display the current license overview.
+$table = new html_table();
+$table->id = 'LicenseOverviewTable';
+$table->head = array (get_string('licensename', 'block_iomad_company_admin'),
+                      get_string('licenseallocated', 'block_iomad_company_admin'),
+                      get_string('allocated', 'block_iomad_company_admin'),
+                      get_string('userlicenseused', 'block_iomad_company_admin'));
+$table->align = array ("left", "center", "center", "center");
+$licenseused = $DB->count_records('companylicense_users', array('licenseid' => $license->id, 'isusing' => 1));
+if (!empty($license->program)) {
+    $weighting = $DB->count_records('companylicense_courses', array('licenseid' => $licenseid));
+} else {
+    $weighting = 1;
+}
+
+$table->data[] = array('name' => $license->name, 'allocated' => $license->allocation / $weighting, 'remaining' => ($license->allocation - $license->used) / $weighting, 'used' => $licenseused / $weighting);
+
+echo html_writer::table($table);
+
 // Display the chart.
 $startseries = new core\chart_series(get_string('numstart', 'local_report_license_usage'), [$numstart]);
 $allocatedseries = new core\chart_series(get_string('totalallocate', 'local_report_license_usage'), [$numallocations]);
