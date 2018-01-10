@@ -105,8 +105,8 @@ class MoodleQuickForm_defaultcustom extends MoodleQuickForm_group {
         $calendartype = \core_calendar\type_factory::get_calendar_instance();
         $currentdate = $calendartype->timestamp_to_date_array($value, $this->_options['timezone']);
         return array(
-            'minutes' => $currentdate['minutes'],
-            'hours' => $currentdate['hours'],
+            'minute' => $currentdate['minutes'],
+            'hour' => $currentdate['hours'],
             'day' => $currentdate['mday'],
             'month' => $currentdate['mon'],
             'year' => $currentdate['year']);
@@ -198,8 +198,8 @@ class MoodleQuickForm_defaultcustom extends MoodleQuickForm_group {
                         $caller->disabledIf($arg[0] . '[value][day]', $arg[0] . '[customize]', 'notchecked');
                         $caller->disabledIf($arg[0] . '[value][month]', $arg[0] . '[customize]', 'notchecked');
                         $caller->disabledIf($arg[0] . '[value][year]', $arg[0] . '[customize]', 'notchecked');
-                        $caller->disabledIf($arg[0] . '[value][hours]', $arg[0] . '[customize]', 'notchecked');
-                        $caller->disabledIf($arg[0] . '[value][minutes]', $arg[0] . '[customize]', 'notchecked');
+                        $caller->disabledIf($arg[0] . '[value][hour]', $arg[0] . '[customize]', 'notchecked');
+                        $caller->disabledIf($arg[0] . '[value][minute]', $arg[0] . '[customize]', 'notchecked');
                     }
                 }
                 return $rv;
@@ -242,7 +242,7 @@ class MoodleQuickForm_defaultcustom extends MoodleQuickForm_group {
             $firstelement = reset($this->_elements);
             $defaultvalue = $this->_options['defaultvalue'];
             $customvalue = $this->_options['customvalue'];
-            if ($this->_options['type'] === 'date_selector') {
+            if ($this->_options['type'] === 'date_selector' || $this->_options['type'] === 'date_time_selector') {
                 $defaultvalue = $this->timestamp_to_date_array($defaultvalue);
                 $customvalue = $this->timestamp_to_date_array($customvalue);
             }
