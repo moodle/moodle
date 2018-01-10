@@ -136,11 +136,7 @@ class curl_security_helper extends curl_security_helper_base {
             // Only perform a reverse lookup if there is a point to it (i.e. we have rules to check against).
             if ($blacklistedhosts['domain'] || $blacklistedhosts['domainwildcard']) {
                 // DNS reverse lookup - supports both IPv4 and IPv6 address formats.
-                $hostname = gethostbyaddr(
-                    // The nature of DNS resolution means that if the hostname could not be found, the current search path
-                    // is then appended - so foo may become foo.example.com if your search path contains example.com.
-                    $host . substr($host, -1) !== '.' ? '.' : ''
-                );
+                $hostname = gethostbyaddr($host);
                 if ($hostname !== $host && $this->host_explicitly_blocked($hostname)) {
                     return true;
                 }
@@ -153,11 +149,7 @@ class curl_security_helper extends curl_security_helper_base {
             // Only perform a forward lookup if there are IP rules to check against.
             if ($blacklistedhosts['ipv4'] || $blacklistedhosts['ipv6']) {
                 // DNS forward lookup - returns a list of only IPv4 addresses!
-                $hostips = $this->get_host_list_by_name(
-                    // The nature of DNS resolution means that if the hostname could not be found, the current search path
-                    // is then appended - so foo may become foo.example.com if your search path contains example.com.
-                    $host . substr($host, -1) !== '.' ? '.' : ''
-                );
+                $hostips = $this->get_host_list_by_name($host);
 
                 // If we don't get a valid record, bail (so cURL is never called).
                 if (!$hostips) {
