@@ -342,7 +342,7 @@ if ($confirmuser and confirm_sesskey()) {
         company_user::suspend($user->id);
 
         // Create an event for this.
-        $eventother = array('userid' => $user->id);
+        $eventother = array('userid' => $user->id, 'companyname' => $company->get_name(), 'companyid' => $companyid);
         $event = \block_iomad_company_admin\event\company_user_suspended::create(array('context' => context_system::instance(),
                                                                                        'objectid' => $user->id,
                                                                                        'userid' => $USER->id,
@@ -384,7 +384,7 @@ if ($confirmuser and confirm_sesskey()) {
         company_user::unsuspend($user->id);
 
         // Create an event for this.
-        $eventother = array('userid' => $user->id);
+        $eventother = array('userid' => $user->id, 'companyname' => $company->get_name(), 'companyid' => $companyid);
         $event = \block_iomad_company_admin\event\company_user_unsuspended::create(array('context' => context_system::instance(),
                                                                                          'objectid' => $user->id,
                                                                                          'userid' => $USER->id,

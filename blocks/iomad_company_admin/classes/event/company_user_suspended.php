@@ -34,9 +34,7 @@ defined('MOODLE_INTERNAL') || die();
  *      Extra information about event.
  *
  *      - int companyid: the id of the company.
- *      - int usertype: 1 = companyuser 2 = department user
  *      - string companyname: the name of the company.
- *      - string usertypename: the name of the usertype.
  * }
  *
  * @package    block_iomad_company_admin
@@ -91,8 +89,8 @@ class company_user_suspended extends \core\event\base {
      * @return array
      */
     protected function get_legacy_logdata() {
-        return array($this->courseid, 'iomad', 'assign company user', '/blocks/ioamd_company_admin/company_users_form.php',
-            $this->other['usertypename'] . ' ' . $this->other['companyname'], $this->contextinstanceid);
+        return array($this->courseid, 'iomad', 'suspend company user', '/blocks/ioamd_company_admin/company_users_form.php',
+            $this->other['companyname'], $this->contextinstanceid);
     }
 
     /**
@@ -110,14 +108,6 @@ class company_user_suspended extends \core\event\base {
 
         if (!isset($this->other['companyid'])) {
             throw new \coding_exception('The \'companyid\' value must be set in other.');
-        }
-
-        if (!isset($this->other['usertype'])) {
-            throw new \coding_exception('The \'usertype\' value must be set in other.');
-        }
-
-        if (!isset($this->other['usertypename'])) {
-            throw new \coding_exception('The \'usertypename\' value must be set in other.');
         }
     }
 
