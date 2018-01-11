@@ -78,7 +78,7 @@ define('BADGE_CRITERIA_TYPE_BADGE', 7);
  * Cohort criteria type
  * Criteria type constant, primarily for storing criteria type in the database.
  */
-define('BADGE_CRITERIA_TYPE_COHORT', 98);
+define('BADGE_CRITERIA_TYPE_COHORT', 8);
 
 /*
  * Criteria type constant to class name mapping
