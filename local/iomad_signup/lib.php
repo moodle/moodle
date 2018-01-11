@@ -64,6 +64,14 @@ function local_iomad_signup_user_created($user) {
 
         // assign the user to the company.
         $company->assign_user_to_company($user->id);
+
+        // Deal with company defaults
+        $defaults = $company->get_user_defaults();
+        foreach ($defaults as $index => $value) {
+            $user->$index = $value;
+        }
+	$DB->update_record('user', $user);
+        profile_save_data($user);
     } else if (!empty($CFG->local_iomad_signup_company)) {
         // Do we have a company to assign?
         // Get company.
@@ -71,6 +79,15 @@ function local_iomad_signup_user_created($user) {
 
         // assign the user to the company.
         $company->assign_user_to_company($user->id);
+
+        // Deal with company defaults
+        $defaults = $company->get_user_defaults();
+        foreach ($defaults as $index => $value) {
+            $user->$index = $value;
+        }
+	$DB->update_record('user', $user);
+        profile_save_data($user);
+    } else if (!empty($CFG->local_iomad_signup_company)) {
     }
     
     // Do we have a role to assign?
@@ -85,6 +102,7 @@ function local_iomad_signup_user_created($user) {
 
     // Deal with auto enrolments.
     if ($CFG->local_iomad_signup_autoenrol) {
+        $user->companyid = $company->id;
         $company->autoenrol($user);
     }
 
