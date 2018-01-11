@@ -227,6 +227,10 @@ preferences,moodle|/user/preferences.php|preferences',
             new lang_string('configcourseoverviewfileslimit', 'admin'), 1, PARAM_INT));
     $temp->add(new admin_setting_configtext('courseoverviewfilesext', new lang_string('courseoverviewfilesext'),
             new lang_string('configcourseoverviewfilesext', 'admin'), '.jpg,.gif,.png'));
+    $temp->add(new admin_setting_configtext('coursegraceperiodbefore', new lang_string('coursegraceperiodbefore', 'admin'),
+        new lang_string('configcoursegraceperiodbefore', 'admin'), 0, PARAM_INT));
+    $temp->add(new admin_setting_configtext('coursegraceperiodafter', new lang_string('coursegraceperiodafter', 'admin'),
+        new lang_string('configcoursegraceperiodafter', 'admin'), 0, PARAM_INT));
     $ADMIN->add('appearance', $temp);
 
     $temp = new admin_settingpage('ajax', new lang_string('ajaxuse'));
@@ -252,4 +256,3 @@ preferences,moodle|/user/preferences.php|preferences',
     $ADMIN->add('appearance', $temp);
 
 } // end of speedup
-
