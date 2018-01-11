@@ -37,7 +37,6 @@ defined('MOODLE_INTERNAL') || die();
  *      - string companyname: the name of the company.
  *      - int usertype: 1 = companyuser 2 = department user
  *      - string companyname: the name of the company.
- *      - string usertypename: the name of the usertype.
  * }
  *
  * @package    block_iomad_company_admin
@@ -111,14 +110,6 @@ class company_user_unsuspended extends \core\event\base {
 
         if (!isset($this->other['companyid'])) {
             throw new \coding_exception('The \'companyid\' value must be set in other.');
-        }
-
-        if (!isset($this->other['usertype'])) {
-            throw new \coding_exception('The \'usertype\' value must be set in other.');
-        }
-
-        if (!isset($this->other['usertypename'])) {
-            throw new \coding_exception('The \'usertypename\' value must be set in other.');
         }
     }
 
