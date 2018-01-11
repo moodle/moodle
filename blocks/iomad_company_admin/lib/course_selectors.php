@@ -874,11 +874,16 @@ class current_user_license_course_selector extends course_selector_base {
     protected function process_license_allocations(&$licensecourses, $userid) {
         global $DB;
         foreach ($licensecourses as $id => $course) {
-            if ($DB->get_record('companylicense_users', array('userid' => $userid,
-                                                              'licensecourseid' => $course->id,
-                                                              'timecompleted' => null,
-                                                              'isusing' => 1))) {
-                $licensecourses[$id]->fullname = $course->fullname;
+            if ($DB->get_record_sql("SELECT clu.id FROM {companylicense_users} clu
+                                     JOIN {companylicense} cl
+                                     ON (clu.licenseid = cl.id)
+                                     WHERE clu.userid = :userid
+                                     AND clu.licensecourseid = :licensecourseid
+                                     AND clu.timecompleted IS NULL
+                                     AND clu.isusing = 1
+                                     AND cl.type = 0", array('userid' => $userid,
+                                                              'licensecourseid' => $course->id))) {
+                $licensecourses[$id]->fullname = $course->fullname . '*';
             }
         }
     }
