@@ -356,6 +356,8 @@ class core_calendar_external extends external_api {
                             'description' => new external_value(PARAM_RAW, 'Description', VALUE_OPTIONAL, null, NULL_ALLOWED),
                             'format' => new external_format_value('description'),
                             'courseid' => new external_value(PARAM_INT, 'course id'),
+                            'categoryid' => new external_value(PARAM_INT, 'Category id (only for category events).',
+                                VALUE_OPTIONAL),
                             'groupid' => new external_value(PARAM_INT, 'group id'),
                             'userid' => new external_value(PARAM_INT, 'user id'),
                             'repeatid' => new external_value(PARAM_INT, 'repeat id'),

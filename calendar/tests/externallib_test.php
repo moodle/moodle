@@ -506,6 +506,7 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         // Should be just one, since there's just one category event of the course I am enrolled (course3 - cat2b).
         $this->assertEquals(1, count($events['events']));
         $this->assertEquals($catevent2->id, $events['events'][0]['id']);
+        $this->assertEquals($category2->id, $events['events'][0]['categoryid']);
         $this->assertEquals(0, count($events['warnings']));
 
         // Now get category events but by course (there aren't course events in the course).
@@ -536,7 +537,9 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         $this->assertEquals(2, count($events['events']));
         $this->assertEquals(0, count($events['warnings']));
         $this->assertEquals($catevent1->id, $events['events'][0]['id']);
+        $this->assertEquals($category->id, $events['events'][0]['categoryid']);
         $this->assertEquals($catevent2->id, $events['events'][1]['id']);
+        $this->assertEquals($category2->id, $events['events'][1]['categoryid']);
     }
 
     /**

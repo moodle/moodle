@@ -1,6 +1,9 @@
 This files describes API changes in /calendar/* ,
 information provided here is intended especially for developers.
 
+=== 3.5 ===
+* core_calendar_external::get_calendar_events now returns the categoryid for category events.
+
 === 3.4 ===
 * calendar_get_mini, and calendar_get_upcoming have been deprecated. Please update to use the new exporters and renderers.
 * added core_calendar_get_valid_event_timestart_range and core_calendar_event_timestart_updated callbacks for module events
