@@ -281,7 +281,7 @@ class block_iomad_company_admin extends block_base {
 
         // Only display if you have the correct capability, or you are not in more than one company.
         // Just display name of current company if no choice. 
-        if (!iomad::has_capability('block/iomad_company_admin:company_add', context_system::instance())) {
+        if (!iomad::has_capability('block/iomad_company_admin:company_view_all', context_system::instance())) {
             if ($DB->count_records('company_users', array('userid' => $USER->id)) <= 1 ) {
                 $companyuser = $DB->get_record('company_users', array('userid' => $USER->id), '*', MUST_EXIST);
                 $company = $DB->get_record('company', array('id' => $companyuser->companyid), '*', MUST_EXIST);
