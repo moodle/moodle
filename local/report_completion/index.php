@@ -33,7 +33,7 @@ define('PCHART_SIZEY', 500);
 // Params.
 $courseid = optional_param('courseid', 0, PARAM_INT);
 $participant = optional_param('participant', 0, PARAM_INT);
-$dodownload = optional_param('dodownload', 0, PARAM_INT);
+$dodownload = optional_param('dodownload', 0, PARAM_CLEAN);
 $firstname       = optional_param('firstname', 0, PARAM_CLEAN);
 $lastname      = optional_param('lastname', '', PARAM_CLEAN);
 $showsuspended = optional_param('showsuspended', 0, PARAM_INT);
@@ -120,7 +120,7 @@ if ($comptoraw) {
     }
     $params['compto'] = $compto;
 } else {
-    if (!empty($comptfrom)) {
+    if (!empty($compfrom)) {
         $compto = time();
         $params['compto'] = $compto;
     } else {
@@ -257,12 +257,6 @@ if (empty($dodownload) && empty($showchart)) {
         echo html_writer::start_tag('div', array('style' => 'float:left;'));
         echo $completiontypeselectoutput;
         echo html_writer::end_tag('div');
-        // Navigation and header.
-		if (empty($params['charttype'])) {
-            echo html_writer::start_tag('div', array('style' => 'float:right;'));
-            echo $output->single_button(new moodle_url('index.php', $options), get_string("downloadcsv", 'local_report_completion'));
-            echo html_writer::end_tag('div');
-        }
         echo html_writer::end_tag('div');
     }
     if (!empty($courseid)) {
@@ -888,7 +882,7 @@ if (empty($charttype)) {
         }
         if (empty($dodownload)) {
             // Set up the filter form.
-            $mform = new iomad_user_filter_form(null, array('companyid' => $companyid, 'showhistoric' => true, 'addfrom' => 'compfrom', 'addto' => 'compto'));
+            $mform = new iomad_user_filter_form(null, array('companyid' => $companyid, 'showhistoric' => true, 'addfrom' => 'compfrom', 'addto' => 'compto', 'adddodownload' => true));
 
             $mform->set_data(array('departmentid' => $departmentid));
             $mform->set_data($params);

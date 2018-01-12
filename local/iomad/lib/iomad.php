@@ -693,11 +693,15 @@ class iomad {
             $sqlsearch .= " AND u.email LIKE :email ";
             $searchparams['email'] = '%'.$params['email'].'%';
         }
-
         if (!empty($params['compfrom'])) {
+            $params['courseid2'] = $params['courseid'];
             if ($compfromids = $DB->get_records_sql("SELECT userid FROM {course_completions}
-                                                     WHERE course = :courseid AND timecompleted < :compfrom
-                                                     AND timecompleted IS NOT NULL", $params)) {
+                                                     WHERE (course = :courseid
+                                                     AND timecompleted < :compfrom
+                                                     AND timecompleted IS NOT NULL)
+                                                     OR (
+                                                     course = :courseid2
+                                                     AND timecompleted IS NULL)", $params)) {
                 $sqlsearch .= " AND u.id NOT IN (".implode(',', array_keys($compfromids)).") ";
             }
         }
