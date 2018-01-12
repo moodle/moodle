@@ -5,6 +5,7 @@ information provided here is intended especially for developers.
 
   * External function core_course_external::get_course_public_information now returns the roles and the primary role of course
    contacts.
+  * External function core_group_external::get_course_user_groups now can return all user courses group information.
 
 === 3.5 ===
 
