@@ -274,6 +274,15 @@ class report_completion {
         $companytree = $topcompany->get_child_companies_recursive();
         $parentcompanies = $company->get_parent_companies_recursive();
 
+        // Strip out people from companies above here.
+        if (!empty($parentcompanies)) {
+            $companyusql = " AND u.id NOT IN (
+                            SELECT userid FROM {company_users}
+                            WHERE companyid IN (" . implode(',', array_keys($parentcompanies)) ."))";
+        } else {
+            $companyusql = "";
+        }
+
         $completiondata = new stdclass();
 
         $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
@@ -342,10 +351,13 @@ class report_completion {
                     AND ue.userid = cc.userid
                     AND du.userid = u.id
                     AND d.id = du.departmentid
+                    AND du.companyid = :companyid
                     AND cc.courseid = $courseid
+                    $companyusql
                     $completionsql $userfilter";
 
         $searchinfo->searchparams['courseid'] = $courseid;
+        $searchinfo->searchparams['companyid'] = $companyid;
         $users = $DB->get_records_sql($selectsql.$fromsql.$searchinfo->sqlsort, $searchinfo->searchparams, $page * $perpage, $perpage);
         $countusers = $DB->get_records_sql($countsql.$fromsql.$searchinfo->sqlsort, $searchinfo->searchparams);
         $numusers = count($countusers);
@@ -380,6 +392,15 @@ class report_completion {
         $topcompany = new company($topcompanyid);
         $companytree = $topcompany->get_child_companies_recursive();
         $parentcompanies = $company->get_parent_companies_recursive();
+
+        // Strip out people from companies above here.
+        if ($parentcompanies) {
+            $companyusql = " AND u.id NOT IN (
+                            SELECT userid FROM {company_users}
+                            WHERE companyid IN (" . implode(',', array_keys($parentslist)) ."))";
+        } else {
+            $companyusql = "";
+        }
 
         $completiondata = new stdclass();
 
@@ -440,9 +461,11 @@ class report_completion {
                 AND ue.userid = cc.userid
                 AND du.userid = u.id
                 AND d.id = du.departmentid
+                AND du.companyid = :companyid
+                $companyusql
                 $completionsql $userfilter
                 $searchinfo->sqlsort";
-
+        $searchinfo->searchparams['companyid'] = $companyid;
         $users = $DB->get_records_sql($selectsql.$fromsql, $searchinfo->searchparams, $page * $perpage, $perpage);
         $countusers = $DB->get_records_sql($countsql.$fromsql, $searchinfo->searchparams);
         $numusers = count($countusers);
