@@ -1711,5 +1711,29 @@ function xmldb_local_iomad_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2017090307, 'local', 'iomad');
     }
 
+    if ($oldversion < 2017090308) {
+
+        // Define field previousroletemplateid to be added to company.
+        $table = new xmldb_table('company');
+        $field = new xmldb_field('previousroletemplateid', XMLDB_TYPE_INTEGER, '20', null, XMLDB_NOTNULL, null, '0', 'managerdigestday');
+
+        // Conditionally launch add field previousroletemplateid.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field reference to be added to companylicense.
+        $table = new xmldb_table('companylicense');
+        $field = new xmldb_field('reference', XMLDB_TYPE_CHAR, '100', null, null, null, null, 'program');
+
+        // Conditionally launch add field reference.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Iomad savepoint reached.
+        upgrade_plugin_savepoint(true, 2017090308, 'local', 'iomad');
+    }
+
     return $result;
 }

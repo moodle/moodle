@@ -127,6 +127,7 @@ $strdelete = get_string('delete');
 $strsplit = get_string('split', 'block_iomad_company_admin');
 $straddlicense = get_string('licenseaddnew', 'block_iomad_company_admin');
 $strlicensename = get_string('licensename', 'block_iomad_company_admin');
+$strlicensereference = get_string('licensereference', 'block_iomad_company_admin');
 $strlicenseprogram = get_string('licenseprogram', 'block_iomad_company_admin');
 $strcoursesname = get_string('allocatedcourses', 'block_iomad_company_admin');
 $strlicenseshelflife = get_string('licenseexpires', 'block_iomad_company_admin');
@@ -136,6 +137,7 @@ $strlicenseremaining = get_string('licenseremaining', 'block_iomad_company_admin
 
 $table = new html_table();
 $table->head = array ($strlicensename,
+                      $strlicensereference,
                       $strlicenseprogram,
                       $strcoursesname,
                       $strlicenseshelflife,
@@ -258,6 +260,7 @@ if ($departmentid == $companydepartment->id) {
 
         // Create the table data.
         $dataarray = array ($license->name,
+                           $license->reference,
                            $programstring,
                            $coursestring,
                            date($CFG->iomad_date_format, $license->expirydate),

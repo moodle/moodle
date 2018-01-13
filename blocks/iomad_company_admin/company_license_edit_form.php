@@ -152,6 +152,11 @@ class company_license_form extends company_moodleform {
         $mform->addRule('name', get_string('missinglicensename', 'block_iomad_company_admin'), 'required', null, 'client');
         $mform->setType('name', PARAM_ALPHANUMEXT);
 
+        $mform->addElement('text',  'reference', get_string('licensereference', 'block_iomad_company_admin'),
+                           'maxlength="100" size="50"');
+        $mform->addHelpButton('reference', 'licensereference', 'block_iomad_company_admin');
+        $mform->setType('reference', PARAM_ALPHANUMEXT);
+
         if (empty($this->parentid)) {
             $licensetypes = array(get_string('standard', 'block_iomad_company_admin'),
                                   get_string('reusable', 'block_iomad_company_admin'));
@@ -405,6 +410,7 @@ if ( $mform->is_cancelled() || optional_param('cancel', false, PARAM_BOOL) ) {
         $new = false;
         $licensedata = array();
         $licensedata['name'] = $data->name;
+        $licensedata['reference'] = $data->reference;
         if (empty($data->program)) {
             $licensedata['program'] = 0;
             $licensedata['allocation'] = $data->allocation;
