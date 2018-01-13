@@ -178,3 +178,16 @@ border-radius: 10px;
 .licensewarning {
     color: red;
 }
+
+#page-blocks-iomad_company_admin-editusers .generaltable {
+    overflow-x: unset;
+}
+
+#page-blocks-iomad_company_admin-editusers .moodle-actionmenu[data-enhanced].show .menu.align-tl-bl {
+    left: 50px;
+    min-width: 150px;
+}
+
+#page-blocks-iomad_company_admin-uploaduser #fitem_id_userdepartment, #page-blocks-iomad_company_admin-uploaduser #id_category_1 > div > div.dep_tree {
+    display: none;
+} 

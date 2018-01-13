@@ -202,7 +202,7 @@ class admin_uploaduser_form2 extends company_moodleform {
      * Form tweaks that depend on current data.
      */
     public function definition_after_data() {
-        global $USER, $SESSION, $DB;
+        global $USER, $SESSION, $DB, $output;
 
         $mform   =& $this->_form;
         $columns =& $this->_customdata;
@@ -233,9 +233,14 @@ class admin_uploaduser_form2 extends company_moodleform {
         $this->departmentid = $userhierarchylevel;
         $subhierarchieslist = company::get_all_subdepartments($userhierarchylevel);
 
+        $departmentslist = company::get_all_subdepartments($this->departmentid);
+        $departmenttree = company::get_all_subdepartments_raw($this->departmentid);
+        $treehtml = $output->department_tree($departmenttree, optional_param('userdepartment', 0, PARAM_INT));
+
         //  Department drop down.
+        $mform->insertElementBefore($mform->addElement('html', $treehtml), 'uutypelabel');
         $mform->insertElementBefore($mform->createElement('select', 'userdepartment',
-                                                           get_string('department', 'block_iomad_company_admin'),
+                                                          '',
                                                            $subhierarchieslist,
                                                            $userhierarchylevel),
                                                            'uutypelabel');

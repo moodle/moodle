@@ -28,6 +28,7 @@ $previewrows = optional_param('previewrows', 10, PARAM_INT);
 $readcount   = optional_param('readcount', 0, PARAM_INT);
 $uploadtype  = optional_param('uutype', 0, PARAM_INT);
 $licenseid = optional_param('licenseid', 0, PARAM_INT);
+$userdepartment = optional_param('userdepartment', 0, PARAM_INT);
 
 if (!empty($licenseid)) {
     $SESSION->chosenlicenseid = $licenseid;
@@ -81,6 +82,13 @@ $PAGE->set_heading(get_string('name', 'local_iomad_dashboard') . " - $linktext")
 
 $PAGE->requires->jquery();
 
+// Javascript for fancy select.
+// Parameter is name of proper select form element.
+$PAGE->requires->js_call_amd('block_iomad_company_admin/department_select', 'init', array('userdepartment', '', $userdepartment));
+
+// get output renderer
+$output = $PAGE->get_renderer('block_iomad_company_admin');
+
 // Build the nav bar.
 company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
 
@@ -92,7 +100,7 @@ if ($companyid ) {
     $company = new company($companyid);
     $companyshortname = $company->get_shortname();
 }
-require_login(null, false); // Adds to $PAGE, creates $OUTPUT.
+require_login(null, false); // Adds to $PAGE, creates $output.
 
 $systemcontext = context_system::instance();
 
@@ -174,12 +182,12 @@ if (empty($iid)) {
         // Continue to form2.
 
     } else {
-        echo $OUTPUT->header();
+        echo $output->header();
 
-        echo $OUTPUT->heading_with_help(get_string('uploadusers', 'tool_uploaduser'), 'uploadusers', 'tool_uploaduser');
+        echo $output->heading_with_help(get_string('uploadusers', 'tool_uploaduser'), 'uploadusers', 'tool_uploaduser');
 
         $mform->display();
-        echo $OUTPUT->footer();
+        echo $output->footer();
         die;
     }
 } else {
@@ -211,8 +219,8 @@ if ($mform->is_cancelled()) {
             redirect($returnurl);
         }
         // Print the header.
-        echo $OUTPUT->header();
-        echo $OUTPUT->heading(get_string('uploadusersresult', 'tool_uploaduser'));
+        echo $output->header();
+        echo $output->heading(get_string('uploadusersresult', 'tool_uploaduser'));
     
         $optype = $formdata->uutype;
     
@@ -925,7 +933,7 @@ if ($mform->is_cancelled()) {
         $cir->close();
         $cir->cleanup(true);
     
-        echo $OUTPUT->box_start('boxwidthnarrow boxaligncenter generalbox', 'uploadresults');
+        echo $output->box_start('boxwidthnarrow boxaligncenter generalbox', 'uploadresults');
         echo '<p>';
         if ($optype != UU_UPDATE) {
             echo get_string('userscreated', 'tool_uploaduser').': '.$usersnew.'<br />';
@@ -948,25 +956,25 @@ if ($mform->is_cancelled()) {
         echo get_string('errors', 'tool_uploaduser').': '.$userserrors.'</p>';
         echo get_string('licensecount', 'block_iomad_company_admin').': '.$numlicenses.'<br />';
         echo get_string('licenseerrors', 'block_iomad_company_admin').': '.$numlicenseerrors.'</p>';
-        echo $OUTPUT->box_end();
+        echo $output->box_end();
     
         if ($bulk) {
-            echo $OUTPUT->continue_button($bulknurl);
+            echo $output->continue_button($bulknurl);
         } else {
-            echo $OUTPUT->continue_button($returnurl);
+            echo $output->continue_button($returnurl);
         }
-        echo $OUTPUT->footer();
+        echo $output->footer();
         unset($SESSION->chosenlicenseid);
         die;
     }
 }
 
 // Print the header.
-echo $OUTPUT->header();
+echo $output->header();
 
 // Print the form.
 
-echo $OUTPUT->heading(get_string('uploaduserspreview', 'tool_uploaduser'));
+echo $output->heading(get_string('uploaduserspreview', 'tool_uploaduser'));
 
 $cir->init();
 $availableauths = get_plugin_list('auth');
@@ -1184,16 +1192,16 @@ if (in_array('error', $headings)) {
 echo html_writer::tag('div', html_writer::table($table), array('class' => 'flexible-wrap'));
 
 if ($haserror) {
-    echo $OUTPUT->container(get_string('useruploadtype', 'moodle', $choices[$uploadtype]), 'block_iomad_company_admin');
-    echo $OUTPUT->container(get_string('uploadinvalidpreprocessedcount', 'moodle', $countcontent), 'block_iomad_company_admin');
-    echo $OUTPUT->container(get_string('invalidusername', 'moodle'), 'block_iomad_company_admin');
-    echo $OUTPUT->container(get_string('uploadfilecontainerror', 'block_iomad_company_admin'), 'block_iomad_company_admin');
+    echo $output->container(get_string('useruploadtype', 'moodle', $choices[$uploadtype]), 'block_iomad_company_admin');
+    echo $output->container(get_string('uploadinvalidpreprocessedcount', 'moodle', $countcontent), 'block_iomad_company_admin');
+    echo $output->container(get_string('invalidusername', 'moodle'), 'block_iomad_company_admin');
+    echo $output->container(get_string('uploadfilecontainerror', 'block_iomad_company_admin'), 'block_iomad_company_admin');
 } else if (empty($contents)) {
-    echo $OUTPUT->container(get_string('uupreprocessedcount', 'block_iomad_company_admin', $countcontent),
+    echo $output->container(get_string('uupreprocessedcount', 'block_iomad_company_admin', $countcontent),
                             'block_iomad_company_admin');
-    echo $OUTPUT->container(get_string('uploadfilecontentsnovaliddata', 'block_iomad_company_admin'));
+    echo $output->container(get_string('uploadfilecontentsnovaliddata', 'block_iomad_company_admin'));
 } else {
-    echo $OUTPUT->container(get_string('uupreprocessedcount', 'block_iomad_company_admin', $countcontent),
+    echo $output->container(get_string('uupreprocessedcount', 'block_iomad_company_admin', $countcontent),
                             'block_iomad_company_admin');
 }
 ?>
@@ -1231,7 +1239,7 @@ Y.on('change', submit_form, '#licenseidselector');
 
 
 $mform->display();
-echo $OUTPUT->footer();
+echo $output->footer();
 die;
 
 /*

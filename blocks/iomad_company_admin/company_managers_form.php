@@ -486,7 +486,7 @@ $treehtml = $output->department_tree($departmenttree, optional_param('deptid', 0
 
 $departmentselect = new single_select(new moodle_url($linkurl, $urlparams), 'deptid', $subhierarchieslist, $departmentid);
 $departmentselect->label = get_string('department', 'block_iomad_company_admin') .
-                           $OUTPUT->help_icon('department', 'block_iomad_company_admin') . '&nbsp';
+                           $output->help_icon('department', 'block_iomad_company_admin') . '&nbsp';
 
 $managertypes = $company->get_managertypes();
 if ($departmentid != $parentlevel->id) {
@@ -499,12 +499,12 @@ if ($departmentid != $parentlevel->id) {
 }
 $managerselect = new single_select(new moodle_url($linkurl, $urlparams), 'managertype', $managertypes, $roleid);
 $managerselect->label = get_string('managertype', 'block_iomad_company_admin') .
-                        $OUTPUT->help_icon('managertype', 'block_iomad_company_admin') . '&nbsp';
+                        $output->help_icon('managertype', 'block_iomad_company_admin') . '&nbsp';
 
 $othersselect = new single_select(new moodle_url($linkurl, $urlparams), 'showothermanagers',
                 array(get_string('no'), get_string('yes')), $showothermanagers);
 $othersselect->label = get_string('showothermanagers', 'block_iomad_company_admin') .
-                       $OUTPUT->help_icon('showothermanagers', 'block_iomad_company_admin') . '&nbsp';
+                       $output->help_icon('showothermanagers', 'block_iomad_company_admin') . '&nbsp';
 
 // Set up the allocation form.
 $managersform = new company_managers_form($PAGE->url, $context, $companyid, $departmentid, $roleid, $showothermanagers);
@@ -528,7 +528,7 @@ if ($managersform->is_cancelled()) {
 } else {
     $managersform->process($departmentid, $roleid);
 
-    echo $OUTPUT->header();
+    echo $output->header();
 
     // Check the department is valid.
     if (!empty($departmentid) && !company::check_valid_department($companyid, $departmentid)) {
@@ -540,14 +540,14 @@ if ($managersform->is_cancelled()) {
     echo html_writer::start_tag('div', array('class' => 'fitem'));
     echo $treehtml;
     echo html_writer::start_tag('div', array('style' => 'display:none'));
-    echo $OUTPUT->render($departmentselect);
+    echo $output->render($departmentselect);
     echo html_writer::end_tag('div');
     echo html_writer::end_tag('div');
     echo html_writer::end_tag('div');
 
     echo html_writer::start_tag('div', array('class' => 'iomadclear'));
     echo html_writer::start_tag('div', array('class' => 'fitem'));
-    echo $OUTPUT->render($managerselect);
+    echo $output->render($managerselect);
     echo html_writer::end_tag('div');
     echo html_writer::end_tag('div');
 
@@ -555,12 +555,12 @@ if ($managersform->is_cancelled()) {
         $roleid == 1) {
         echo html_writer::start_tag('div', array('class' => 'iomadclear'));
         echo html_writer::start_tag('div', array('class' => 'fitem'));
-        echo $OUTPUT->render($othersselect);
+        echo $output->render($othersselect);
         echo html_writer::end_tag('div');
         echo html_writer::end_tag('div');
     }
 
     echo $managersform->display();
 
-    echo $OUTPUT->footer();
+    echo $output->footer();
 }

@@ -136,6 +136,16 @@ $PAGE->set_title($strcompletion);
 $PAGE->requires->css("/local/report_license/styles.css");
 $PAGE->requires->jquery();
 
+// get output renderer                                                                                                                                                                                         
+$output = $PAGE->get_renderer('block_iomad_company_admin');
+
+// Javascript for fancy select.
+// Parameter is name of proper select form element followed by 1=submit its form
+$PAGE->requires->js_call_amd('block_iomad_company_admin/department_select', 'init', array('departmentid', 1, optional_param('departmentid', 0, PARAM_INT)));
+
+// Set the page heading.
+$PAGE->set_heading(get_string('pluginname', 'block_iomad_reports') . " - $strcompletion");
+
 // Set the page heading.
 $PAGE->set_heading(get_string('pluginname', 'block_iomad_reports') . " - $strcompletion");
 
@@ -169,14 +179,16 @@ company_admin_fix_breadcrumb($PAGE, $strcompletion, $url);
 $url = new moodle_url('/local/report_license/index.php', $params);
 
 // Get the appropriate list of departments.
+$userdepartment = $company->get_userlevel($USER);
+$departmenttree = company::get_all_subdepartments_raw($userdepartment->id);
+$treehtml = $output->department_tree($departmenttree, optional_param('departmentid', 0, PARAM_INT));
 $selectparams = $params;
-$selectparams['courseid'] = 0;
 $selecturl = new moodle_url('/local/report_license/index.php', $selectparams);
 $subhierarchieslist = company::get_all_subdepartments($userhierarchylevel);
 $select = new single_select($selecturl, 'departmentid', $subhierarchieslist, $departmentid);
 $select->label = get_string('department', 'block_iomad_company_admin');
 $select->formid = 'choosedepartment';
-$fwselectoutput = html_writer::tag('div', $OUTPUT->render($select), array('id' => 'iomad_company_selector'));
+$fwselectoutput = html_writer::tag('div', $output->render($select), array('id' => 'iomad_company_selector', 'style' => 'display: none;'));
 
 if (!(iomad::has_capability('block/iomad_company_admin:editusers', $context) or
       iomad::has_capability('block/iomad_company_admin:editallusers', $context))) {
@@ -192,7 +204,7 @@ $options['dodownload'] = 1;
 
 // Only print the header if we are not downloading.
 if (empty($dodownload) && empty($showchart) && !$sendemail) {
-    echo $OUTPUT->header();
+    echo $output->header();
     // Check the department is valid.
     if (!empty($departmentid) && !company::check_valid_department($companyid, $departmentid)) {
         print_error('invaliddepartment', 'block_iomad_company_admin');
@@ -214,6 +226,7 @@ if (empty($dodownload) && empty($showchart) && !$sendemail) {
 // Get the data.
 if (!empty($companyid)) {
     if (empty($dodownload) && empty($showchart) && !$sendemail) {
+        echo $treehtml;
         echo $fwselectoutput;
     }
 }
@@ -222,24 +235,24 @@ if (empty($dodownload) && empty($showchart) && !$sendemail) {
     echo "<h3>".get_string('coursesummary', 'local_report_license')."</h3>";
     if (!empty($courseid)) {
         // Navigation and header.
-        echo $OUTPUT->single_button(new moodle_url('index.php', $options), get_string("downloadcsv", 'local_report_license'));
+        echo $output->single_button(new moodle_url('index.php', $options), get_string("downloadcsv", 'local_report_license'));
         $options['charttype'] = 'summary';
         $options['dodownload'] = false;
-        echo $OUTPUT->single_button(new moodle_url('index.php', $options), get_string("summarychart", 'local_report_license'));
+        echo $output->single_button(new moodle_url('index.php', $options), get_string("summarychart", 'local_report_license'));
         $options['charttype'] = '';
         $options['sendemail'] = true;
-        echo $OUTPUT->single_button(new moodle_url('index.php', $options), get_string("sendreminderemail", 'local_report_license'));
+        echo $output->single_button(new moodle_url('index.php', $options), get_string("sendreminderemail", 'local_report_license'));
     } else {
         $options['charttype'] = 'summary';
         $options['dodownload'] = false;
-        echo $OUTPUT->single_button(new moodle_url('index.php', $options), get_string("summarychart", 'local_report_license'));
+        echo $output->single_button(new moodle_url('index.php', $options), get_string("summarychart", 'local_report_license'));
         $alluserslink = new moodle_url($url, array(
             'courseid' => 1,
             'departmentid' => $departmentid,
             'showchart' => 0,
             'charttype' => '',
         ));
-        echo $OUTPUT->single_button($alluserslink, get_string("allusers", 'local_report_license'));
+        echo $output->single_button($alluserslink, get_string("allusers", 'local_report_license'));
     }
 
 }
@@ -363,24 +376,24 @@ if (empty($charttype)) {
                 $params['emailsent'] = true;
                 redirect(new moodle_url('/local/report_license/index.php', $params));
             } else {
-                echo $OUTPUT->header();
+                echo $output->header();
                 $params['confirm'] = true;
                 $params['sesskey'] = sesskey();
-                $buttons = $OUTPUT->single_button(
+                $buttons = $output->single_button(
                     new moodle_url('/local/report_license/index.php', $params),
                     get_string('send_button', 'local_email')
                 );
                 $params['confirm'] = false;
                 $params['sendemail'] = false;
-                $buttons .= $OUTPUT->single_button(
+                $buttons .= $output->single_button(
                     new moodle_url('/local/report_license/index.php', $params),
                     get_string('cancel')
                 );
-                echo $OUTPUT->box_start('generalbox', 'notice');
-                echo $OUTPUT->box(get_string('licensesendreminder', 'local_report_license'));
-                echo $OUTPUT->box($buttons, 'buttons');
-                echo $OUTPUT->box_end();
-                echo $OUTPUT->footer();
+                echo $output->box_start('generalbox', 'notice');
+                echo $output->box(get_string('licensesendreminder', 'local_report_license'));
+                echo $output->box($buttons, 'buttons');
+                echo $output->box_end();
+                echo $output->footer();
             }
             die;
         } else {
@@ -597,25 +610,25 @@ if (empty($charttype)) {
                 }
             }
         }
-        $fullnamedisplay = $OUTPUT->action_link($firstnameurl, $firstname) ." / ". $OUTPUT->action_link($lastnameurl, $lastname);
+        $fullnamedisplay = $output->action_link($firstnameurl, $firstname) ." / ". $output->action_link($lastnameurl, $lastname);
         if ($showused) {
             $compusertable->head = array ($fullnamedisplay,
-                                          $OUTPUT->action_link($emailurl, $email),
+                                          $output->action_link($emailurl, $email),
                                           get_string('course'),
-                                          $OUTPUT->action_link($departmenturl, $department),
-                                          $OUTPUT->action_link($lastaccessurl, $lastaccess),
-                                          $OUTPUT->action_link($licensenameurl, $licensename),
-                                          $OUTPUT->action_link($issuedateurl, $issuedate),
-                                          $OUTPUT->action_link($isusingurl, $isusing));
+                                          $output->action_link($departmenturl, $department),
+                                          $output->action_link($lastaccessurl, $lastaccess),
+                                          $output->action_link($licensenameurl, $licensename),
+                                          $output->action_link($issuedateurl, $issuedate),
+                                          $output->action_link($isusingurl, $isusing));
             $compusertable->align = array('center', 'center', 'center', 'center', 'center', 'center', 'center', 'center');
         } else {
             $compusertable->head = array ($fullnamedisplay,
-                                          $OUTPUT->action_link($emailurl, $email),
+                                          $output->action_link($emailurl, $email),
                                           get_string('course'),
-                                          $OUTPUT->action_link($departmenturl, $department),
-                                          $OUTPUT->action_link($lastaccessurl, $lastaccess),
-                                          $OUTPUT->action_link($licensenameurl, $licensename),
-                                          $OUTPUT->action_link($issuedateurl, $issuedate));
+                                          $output->action_link($departmenturl, $department),
+                                          $output->action_link($lastaccessurl, $lastaccess),
+                                          $output->action_link($licensenameurl, $licensename),
+                                          $output->action_link($issuedateurl, $issuedate));
             $compusertable->align = array('center', 'center', 'center', 'center', 'center', 'center', 'center');
         }
         $compusertable->width = '95%';
@@ -698,7 +711,7 @@ if (empty($charttype)) {
 
             // Display the paging bar.
             if (empty($idlist['0'])) {
-                echo $OUTPUT->paging_bar($totalcount, $page, $perpage, new moodle_url('/local/report_license/index.php', $params));
+                echo $output->paging_bar($totalcount, $page, $perpage, new moodle_url('/local/report_license/index.php', $params));
                 echo "<br />";
             }
     
@@ -767,4 +780,4 @@ if (empty($dodownload) && !empty($charttype)) {
 if (!empty($dodownload)) {
     exit;
 }
-echo $OUTPUT->footer();
+echo $output->footer();

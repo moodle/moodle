@@ -108,6 +108,13 @@ $PAGE->set_url($linkurl);
 $PAGE->set_pagelayout('admin');
 $PAGE->set_title($linktext);
 
+// Get output renderer.                                                                                                                                                                                         
+$output = $PAGE->get_renderer('block_iomad_company_admin');
+
+// Javascript for fancy select.
+// Parameter is name of proper select form element followed by 1=submit its form
+$PAGE->requires->js_call_amd('block_iomad_company_admin/department_select', 'init', array('departmentid', 1, optional_param('departmentid', 0, PARAM_INT)));
+
 // Set the page heading.
 $PAGE->set_heading(get_string('name', 'local_iomad_dashboard') . " - $linktext");
 
@@ -117,12 +124,12 @@ company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
 // Set the companyid
 $companyid = iomad::get_my_companyid($systemcontext);
 
-require_login(null, false); // Adds to $PAGE, creates $OUTPUT.
+require_login(null, false); // Adds to $PAGE, creates $output.
 
 $baseurl = new moodle_url(basename(__FILE__), $params);
 $returnurl = $baseurl;
 
-echo $OUTPUT->header();
+echo $output->header();
 
 // Check the department is valid.
 if (!empty($departmentid) && !company::check_valid_department($companyid, $departmentid)) {
@@ -152,11 +159,16 @@ if (!(iomad::has_capability('block/iomad_company_admin:editusers', $systemcontex
 // If we are showing all users we can't use the departments.
 if (!$showall) {
 // Get the appropriate list of departments.
+    $userdepartment = $company->get_userlevel($USER);
+    $departmenttree = company::get_all_subdepartments_raw($userdepartment->id);
+    $treehtml = $output->department_tree($departmenttree, optional_param('departmentid', 0, PARAM_INT));
+    echo $treehtml;
+
     $subhierarchieslist = company::get_all_subdepartments($userhierarchylevel);
     $select = new single_select($baseurl, 'departmentid', $subhierarchieslist, $departmentid);
     $select->label = get_string('department', 'block_iomad_company_admin');
     $select->formid = 'choosedepartment';
-    $departmentselect = html_writer::tag('div', $OUTPUT->render($select), array('id' => 'iomad_department_selector'));
+    $departmentselect = html_writer::tag('div', $output->render($select), array('id' => 'iomad_department_selector', 'style' => 'display: none;'));
 }
 
 // Set up the filter form.
@@ -262,11 +274,11 @@ if ($confirmuser and confirm_sesskey()) {
 
     if ($confirm != md5($password)) {
         $fullname = fullname($user, true);
-        echo $OUTPUT->heading(get_string('resetpassword', 'block_iomad_company_admin'). " " . $fullname);
+        echo $output->heading(get_string('resetpassword', 'block_iomad_company_admin'). " " . $fullname);
         $optionsyes = array('password' => $password, 'confirm' => md5($password), 'sesskey' => sesskey());
-        echo $OUTPUT->confirm(get_string('resetpasswordcheckfull', 'block_iomad_company_admin', "'$fullname'"),
+        echo $output->confirm(get_string('resetpasswordcheckfull', 'block_iomad_company_admin', "'$fullname'"),
                               new moodle_url('editusers.php', $optionsyes), 'editusers.php');
-        echo $OUTPUT->footer();
+        echo $output->footer();
         die;
     } else {
         // Actually delete the user.
@@ -292,11 +304,11 @@ if ($confirmuser and confirm_sesskey()) {
 
     if ($confirm != md5($delete)) {
         $fullname = fullname($user, true);
-        echo $OUTPUT->heading(get_string('deleteuser', 'block_iomad_company_admin'). " " . $fullname);
+        echo $output->heading(get_string('deleteuser', 'block_iomad_company_admin'). " " . $fullname);
         $optionsyes = array('delete' => $delete, 'confirm' => md5($delete), 'sesskey' => sesskey());
-        echo $OUTPUT->confirm(get_string('deletecheckfull', 'block_iomad_company_admin', "'$fullname'"),
+        echo $output->confirm(get_string('deletecheckfull', 'block_iomad_company_admin', "'$fullname'"),
                               new moodle_url('editusers.php', $optionsyes), 'editusers.php');
-        echo $OUTPUT->footer();
+        echo $output->footer();
         die;
     } else {
         // Actually delete the user.
@@ -331,11 +343,11 @@ if ($confirmuser and confirm_sesskey()) {
 
     if ($confirm != md5($suspend)) {
         $fullname = fullname($user, true);
-        echo $OUTPUT->heading(get_string('suspenduser', 'block_iomad_company_admin'). " " . $fullname);
+        echo $output->heading(get_string('suspenduser', 'block_iomad_company_admin'). " " . $fullname);
         $optionsyes = array('suspend' => $suspend, 'confirm' => md5($suspend), 'sesskey' => sesskey());
-        echo $OUTPUT->confirm(get_string('suspendcheckfull', 'block_iomad_company_admin', "'$fullname'"),
+        echo $output->confirm(get_string('suspendcheckfull', 'block_iomad_company_admin', "'$fullname'"),
                               new moodle_url('editusers.php', $optionsyes), 'editusers.php');
-        echo $OUTPUT->footer();
+        echo $output->footer();
         die;
     } else {
         // Actually suspend the user.
@@ -373,11 +385,11 @@ if ($confirmuser and confirm_sesskey()) {
 
     if ($confirm != md5($unsuspend)) {
         $fullname = fullname($user, true);
-        echo $OUTPUT->heading(get_string('unsuspenduser', 'block_iomad_company_admin'). " " . $fullname);
+        echo $output->heading(get_string('unsuspenduser', 'block_iomad_company_admin'). " " . $fullname);
         $optionsyes = array('unsuspend' => $unsuspend, 'confirm' => md5($unsuspend), 'sesskey' => sesskey());
-        echo $OUTPUT->confirm(get_string('unsuspendcheckfull', 'block_iomad_company_admin', "'$fullname'"),
+        echo $output->confirm(get_string('unsuspendcheckfull', 'block_iomad_company_admin', "'$fullname'"),
                               new moodle_url('editusers.php', $optionsyes), 'editusers.php');
-        echo $OUTPUT->footer();
+        echo $output->footer();
         die;
     } else {
         // Actually unsuspend the user.
@@ -456,7 +468,7 @@ foreach ($columns as $column) {
         } else {
             $columnicon = $dir == "ASC" ? "down":"up";
         }
-        $columnicon = " <img src=\"" . $OUTPUT->image_url('t/' . $columnicon) . "\" alt=\"\" />";
+        $columnicon = " <img src=\"" . $output->image_url('t/' . $columnicon) . "\" alt=\"\" />";
 
     }
     $params['sort'] = $column;
@@ -583,7 +595,7 @@ if (!empty($userlist)) {
 }
 $usercount = count($totalusers);
 
-echo $OUTPUT->heading("$usercount ".get_string('users'));
+echo $output->heading("$usercount ".get_string('users'));
 
 $alphabet = explode(',', get_string('alphabet', 'block_iomad_company_admin'));
 $strall = get_string('all');
@@ -598,14 +610,14 @@ $params['confirm'] = '';
 
 $baseurl = new moodle_url('editusers.php', $params);
 //echo "usercount = $usercount - page = $page - perpage = $perpage</br>";
-echo $OUTPUT->paging_bar($usercount, $page, $perpage, $baseurl);
+echo $output->paging_bar($usercount, $page, $perpage, $baseurl);
 
 flush();
 
 
 if (!$users) {
     $match = array();
-    echo $OUTPUT->heading(get_string('nousersfound'));
+    echo $output->heading(get_string('nousersfound'));
 
     $table = null;
 
@@ -760,7 +772,7 @@ if (!$users) {
                                 "$user->email",
                                 "$user->department",
                                 $strlastaccess,
-                                $OUTPUT->render($menu),
+                                $output->render($menu),
                                 );
         } else {
             $user->company = $user->companyname;
@@ -770,7 +782,7 @@ if (!$users) {
                                     $user->email,
                                     $user->department,
                                     $strlastaccess,
-                                    $OUTPUT->render($menu),
+                                    $output->render($menu),
                                     );
         }
     }
@@ -778,10 +790,10 @@ if (!$users) {
 
 if (!empty($table)) {
     echo html_writer::table($table);
-    echo $OUTPUT->paging_bar($usercount, $page, $perpage, $baseurl);
+    echo $output->paging_bar($usercount, $page, $perpage, $baseurl);
 }
 
-echo $OUTPUT->footer();
+echo $output->footer();
 
 function iomad_get_users_listing($sort='lastaccess', $dir='ASC', $page=0, $recordsperpage=0,
                        $search='', $firstinitial='', $lastinitial='', $extraselect='', array $extraparams = null) {

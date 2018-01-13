@@ -140,6 +140,13 @@ $PAGE->set_title($strcompletion);
 $PAGE->requires->css("/local/report_completion/styles.css");
 $PAGE->requires->jquery();
 
+// get output renderer                                                                                                                                                                                         
+$output = $PAGE->get_renderer('block_iomad_company_admin');
+
+// Javascript for fancy select.
+// Parameter is name of proper select form element followed by 1=submit its form
+$PAGE->requires->js_call_amd('block_iomad_company_admin/department_select', 'init', array('departmentid', 1, optional_param('departmentid', 0, PARAM_INT)));
+
 // Set the page heading.
 $PAGE->set_heading(get_string('pluginname', 'block_iomad_reports') . " - $strcompletion");
 
@@ -180,16 +187,19 @@ company_admin_fix_breadcrumb($PAGE, $strcompletion, $url);
 $url = new moodle_url('/local/report_completion/index.php', $params);
 
 // Get the appropriate list of departments.
+$userdepartment = $company->get_userlevel($USER);
+$departmenttree = company::get_all_subdepartments_raw($userdepartment->id);
+$treehtml = $output->department_tree($departmenttree, optional_param('departmentid', 0, PARAM_INT));
 $selectparams = $params;
 $selecturl = new moodle_url('/local/report_completion/index.php', $selectparams);
 $subhierarchieslist = company::get_all_subdepartments($userhierarchylevel);
 $select = new single_select($selecturl, 'departmentid', $subhierarchieslist, $departmentid);
 $select->label = get_string('department', 'block_iomad_company_admin') . "&nbsp";
 $select->formid = 'choosedepartment';
-$fwselectoutput = html_writer::tag('div', $output->render($select), array('id' => 'iomad_department_selector'));
 
 $departmenttree = company::get_all_subdepartments_raw($userhierarchylevel);
 $treehtml = $output->department_tree($departmenttree, optional_param('departmentid', 0, PARAM_INT));
+$fwselectoutput = html_writer::tag('div', $output->render($select), array('id' => 'iomad_department_selector', 'style' => 'display: none;'));
 
 // Get the appropriate list of departments.
 $selectparams = $params;
@@ -260,7 +270,7 @@ if (empty($dodownload) && empty($showchart)) {
         echo html_writer::end_tag('div');
     }
     if (!empty($courseid)) {
-		$options['charttype'] = 'summary';
+        $options['charttype'] = 'summary';
         $options['dodownload'] = false;
     } else {
         $options['charttype'] = 'summary';
@@ -687,7 +697,6 @@ if (empty($charttype)) {
             }
         }
         if (!$showexpiry) {
-            
             $headend = array ($timeenrolled => $output->action_link($timeenrolledurl, $timeenrolled),
                               $status => $output->action_link($statusurl, $status),
                               $timestarted => $output->action_link($timestartedurl, $timestarted),
