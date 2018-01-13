@@ -15,15 +15,25 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'enrol_category', language 'en'.
- *
- * @package    enrol_category
- * @copyright  2010 Petr Skoda  {@link http://skodak.org}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * Task definition for enrol_meta.
+ * @author    Farhan Karmali <farhan6318@gmail.com>
+ * @copyright Farhan Karmali
+ * @package   enrol_meta
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['category:config'] = 'Configure category enrol instances';
-$string['category:synchronised'] = 'Role assignments synchronised to course enrolment';
-$string['enrolcategorysynctask'] = 'Category enrolment sync task';
-$string['pluginname'] = 'Category enrolments';
-$string['pluginname_desc'] = 'The category enrolments plugin synchronises any role assignments in the category context for roles with the capability enrol/category:synchronised allowed.';
+defined('MOODLE_INTERNAL') || die();
+
+$tasks = array(
+    array(
+        'classname' => '\enrol_meta\task\enrol_meta_sync',
+        'blocking' => 0,
+        'minute' => 'R',
+        'hour' => '*',
+        'day' => '*',
+        'month' => '*',
+        'dayofweek' => '*',
+        'disabled' => 0
+    )
+);
+

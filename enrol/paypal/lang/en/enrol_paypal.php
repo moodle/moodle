@@ -56,6 +56,7 @@ $string['paypal:unenrolself'] = 'Unenrol self from the course';
 $string['paypalaccepted'] = 'PayPal payments accepted';
 $string['pluginname'] = 'PayPal';
 $string['pluginname_desc'] = 'The PayPal module allows you to set up paid courses.  If the cost for any course is zero, then students are not asked to pay for entry.  There is a site-wide cost that you set here as a default for the whole site and then a course setting that you can set for each course individually. The course cost overrides the site cost.';
+$string['processexpirationstask'] = 'Process expirations task';
 $string['sendpaymentbutton'] = 'Send payment via PayPal';
 $string['status'] = 'Allow PayPal enrolments';
 $string['status_desc'] = 'Allow users to use PayPal to enrol into a course by default.';
