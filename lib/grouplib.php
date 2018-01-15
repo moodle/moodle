@@ -165,7 +165,8 @@ function groups_get_grouping_by_idnumber($courseid, $idnumber) {
  * @param int $groupid ID of the group.
  * @param string $fields (default is all fields)
  * @param int $strictness (IGNORE_MISSING - default)
- * @return stdGlass group object
+ * @return bool|stdClass group object or false if not found
+ * @throws dml_exception
  */
 function groups_get_group($groupid, $fields='*', $strictness=IGNORE_MISSING) {
     global $DB;
