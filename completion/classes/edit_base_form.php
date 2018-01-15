@@ -220,7 +220,7 @@ abstract class core_completion_edit_base_form extends moodleform {
         }
 
         // Completion expected at particular date? (For progress tracking).
-        $mform->addElement('date_selector', 'completionexpected',
+        $mform->addElement('date_time_selector', 'completionexpected',
             get_string('completionexpected', 'completion'), ['optional' => true]);
         $mform->addHelpButton('completionexpected', 'completionexpected', 'completion');
         $mform->disabledIf('completionexpected', 'completion', 'eq', COMPLETION_TRACKING_NONE);
