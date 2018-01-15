@@ -89,10 +89,7 @@ class manager {
         $validtasks = array();
 
         foreach ($tasks as $taskid => $task) {
-            $classname = get_class($task);
-            if (strpos($classname, '\\') !== 0) {
-                $classname = '\\' . $classname;
-            }
+            $classname = self::get_canonical_class_name($task);
 
             $validtasks[] = $classname;
 
@@ -188,10 +185,7 @@ class manager {
     public static function configure_scheduled_task(scheduled_task $task) {
         global $DB;
 
-        $classname = get_class($task);
-        if (strpos($classname, '\\') !== 0) {
-            $classname = '\\' . $classname;
-        }
+        $classname = self::get_canonical_class_name($task);
 
         $original = $DB->get_record('task_scheduled', array('classname'=>$classname), 'id', MUST_EXIST);
 
@@ -211,10 +205,7 @@ class manager {
      */
     public static function record_from_scheduled_task($task) {
         $record = new \stdClass();
-        $record->classname = get_class($task);
-        if (strpos($record->classname, '\\') !== 0) {
-            $record->classname = '\\' . $record->classname;
-        }
+        $record->classname = self::get_canonical_class_name($task);
         $record->component = $task->get_component();
         $record->blocking = $task->is_blocking();
         $record->customised = $task->is_customised();
@@ -239,10 +230,7 @@ class manager {
      */
     public static function record_from_adhoc_task($task) {
         $record = new \stdClass();
-        $record->classname = get_class($task);
-        if (strpos($record->classname, '\\') !== 0) {
-            $record->classname = '\\' . $record->classname;
-        }
+        $record->classname = self::get_canonical_class_name($task);
         $record->id = $task->get_id();
         $record->component = $task->get_component();
         $record->blocking = $task->is_blocking();
@@ -261,10 +249,7 @@ class manager {
      * @return \core\task\adhoc_task
      */
     public static function adhoc_task_from_record($record) {
-        $classname = $record->classname;
-        if (strpos($classname, '\\') !== 0) {
-            $classname = '\\' . $classname;
-        }
+        $classname = self::get_canonical_class_name($record->classname);
         if (!class_exists($classname)) {
             debugging("Failed to load task: " . $classname, DEBUG_DEVELOPER);
             return false;
@@ -301,10 +286,7 @@ class manager {
      * @return \core\task\scheduled_task
      */
     public static function scheduled_task_from_record($record) {
-        $classname = $record->classname;
-        if (strpos($classname, '\\') !== 0) {
-            $classname = '\\' . $classname;
-        }
+        $classname = self::get_canonical_class_name($record->classname);
         if (!class_exists($classname)) {
             debugging("Failed to load task: " . $classname, DEBUG_DEVELOPER);
             return false;
@@ -381,9 +363,7 @@ class manager {
     public static function get_scheduled_task($classname) {
         global $DB;
 
-        if (strpos($classname, '\\') !== 0) {
-            $classname = '\\' . $classname;
-        }
+        $classname = self::get_canonical_class_name($classname);
         // We are just reading - so no locks required.
         $record = $DB->get_record('task_scheduled', array('classname'=>$classname), '*', IGNORE_MISSING);
         if (!$record) {
@@ -401,9 +381,7 @@ class manager {
     public static function get_adhoc_tasks($classname) {
         global $DB;
 
-        if (strpos($classname, '\\') !== 0) {
-            $classname = '\\' . $classname;
-        }
+        $classname = self::get_canonical_class_name($classname);
         // We are just reading - so no locks required.
         $records = $DB->get_records('task_adhoc', array('classname' => $classname));
 
@@ -601,10 +579,7 @@ class manager {
             $delay = 86400;
         }
 
-        $classname = get_class($task);
-        if (strpos($classname, '\\') !== 0) {
-            $classname = '\\' . $classname;
-        }
+        $classname = self::get_canonical_class_name($task);
 
         $task->set_next_run_time(time() + $delay);
         $task->set_fail_delay($delay);
@@ -657,10 +632,7 @@ class manager {
             $delay = 86400;
         }
 
-        $classname = get_class($task);
-        if (strpos($classname, '\\') !== 0) {
-            $classname = '\\' . $classname;
-        }
+        $classname = self::get_canonical_class_name($task);
 
         $record = $DB->get_record('task_scheduled', array('classname' => $classname));
         $record->nextruntime = time() + $delay;
@@ -674,6 +646,23 @@ class manager {
     }
 
     /**
+     * Clears the fail delay for the given task and updates its next run time based on the schedule.
+     *
+     * @param scheduled_task $task Task to reset
+     * @throws \dml_exception If there is a database error
+     */
+    public static function clear_fail_delay(scheduled_task $task) {
+        global $DB;
+
+        $record = new \stdClass();
+        $record->id = $DB->get_field('task_scheduled', 'id',
+                ['classname' => self::get_canonical_class_name($task)]);
+        $record->nextruntime = $task->get_next_scheduled_time();
+        $record->faildelay = 0;
+        $DB->update_record('task_scheduled', $record);
+    }
+
+    /**
      * This function indicates that a scheduled task was completed successfully and should be rescheduled.
      *
      * @param \core\task\scheduled_task $task
@@ -681,10 +670,7 @@ class manager {
     public static function scheduled_task_complete(scheduled_task $task) {
         global $DB;
 
-        $classname = get_class($task);
-        if (strpos($classname, '\\') !== 0) {
-            $classname = '\\' . $classname;
-        }
+        $classname = self::get_canonical_class_name($task);
         $record = $DB->get_record('task_scheduled', array('classname' => $classname));
         if ($record) {
             $record->lastruntime = time();
@@ -730,5 +716,22 @@ class manager {
         global $DB;
         $record = $DB->get_record('config', array('name'=>'scheduledtaskreset'));
         return $record && (intval($record->value) > $starttime);
+    }
+
+    /**
+     * Gets class name for use in database table. Always begins with a \.
+     *
+     * @param string|task_base $taskorstring Task object or a string
+     */
+    protected static function get_canonical_class_name($taskorstring) {
+        if (is_string($taskorstring)) {
+            $classname = $taskorstring;
+        } else {
+            $classname = get_class($taskorstring);
+        }
+        if (strpos($classname, '\\') !== 0) {
+            $classname = '\\' . $classname;
+        }
+        return $classname;
     }
 }
