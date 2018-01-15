@@ -1175,6 +1175,9 @@ class external_settings {
     /** @var string In which file should the urls be rewritten */
     private $file = 'webservice/pluginfile.php';
 
+    /** @var string The session lang */
+    private $lang = '';
+
     /**
      * Constructor - protected - can not be instanciated
      */
@@ -1276,6 +1279,24 @@ class external_settings {
      */
     public function get_file() {
         return $this->file;
+    }
+
+    /**
+     * Set lang
+     *
+     * @param string $lang
+     */
+    public function set_lang($lang) {
+        $this->lang = $lang;
+    }
+
+    /**
+     * Get lang
+     *
+     * @return string
+     */
+    public function get_lang() {
+        return $this->lang;
     }
 }
 
