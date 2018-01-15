@@ -88,6 +88,11 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
             'launchurl' => "$CFG->wwwroot/$CFG->admin/tool/mobile/launch.php",
             'country' => $CFG->country,
             'agedigitalconsentverification' => \core_auth\digital_consent::is_age_digital_consent_verification_enabled(),
+            'autolang' => $CFG->autolang,
+            'lang' => $CFG->lang,
+            'langmenu' => $CFG->langmenu,
+            'langlist' => $CFG->langlist,
+            'locale' => $CFG->locale,
             'warnings' => array()
         );
         $this->assertEquals($expected, $result);
@@ -101,6 +106,8 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
         set_config('logocompact', 'mock.png', 'core_admin');
         set_config('forgottenpasswordurl', 'mailto:fake@email.zy'); // Test old hack.
         set_config('agedigitalconsentverification', 1);
+        set_config('autolang', 1);
+        set_config('lang', 'a_b');  // Set invalid lang.
 
         list($authinstructions, $notusedformat) = external_format_text($authinstructions, FORMAT_MOODLE, $context->id);
         $expected['registerauth'] = 'email';
@@ -110,6 +117,8 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
         $expected['agedigitalconsentverification'] = true;
         $expected['supportname'] = $CFG->supportname;
         $expected['supportemail'] = $CFG->supportemail;
+        $expected['autolang'] = '1';
+        $expected['lang'] = ''; // Expect empty because it was set to an invalid lang.
 
         if ($logourl = $OUTPUT->get_logo_url()) {
             $expected['logourl'] = $logourl->out(false);

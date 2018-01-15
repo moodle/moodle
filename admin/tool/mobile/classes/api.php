@@ -151,6 +151,11 @@ class api {
             'tool_mobile_disabledfeatures' => get_config('tool_mobile', 'disabledfeatures'),
             'country' => clean_param($CFG->country, PARAM_NOTAGS),
             'agedigitalconsentverification' => \core_auth\digital_consent::is_age_digital_consent_verification_enabled(),
+            'autolang' => $CFG->autolang,
+            'lang' => clean_param($CFG->lang, PARAM_LANG),  // Avoid breaking WS because of incorrect package langs.
+            'langmenu' => $CFG->langmenu,
+            'langlist' => $CFG->langlist,
+            'locale' => $CFG->locale,
         );
 
         $typeoflogin = get_config('tool_mobile', 'typeoflogin');
