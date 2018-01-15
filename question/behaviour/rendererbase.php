@@ -69,9 +69,14 @@ abstract class qbehaviour_renderer extends plugin_renderer_base {
     }
 
     public function manual_comment_fields(question_attempt $qa, question_display_options $options) {
+        global $CFG;
+
+        require_once($CFG->dirroot.'/lib/filelib.php');
+        require_once($CFG->dirroot.'/repository/lib.php');
+
         $inputname = $qa->get_behaviour_field_name('comment');
         $id = $inputname . '_id';
-        list($commenttext, $commentformat) = $qa->get_current_manual_comment();
+        list($commenttext, $commentformat, $commentstep) = $qa->get_current_manual_comment();
 
         $editor = editors_get_preferred_editor($commentformat);
         $strformats = format_text_menu();
@@ -80,11 +85,26 @@ abstract class qbehaviour_renderer extends plugin_renderer_base {
             $formats[$fid] = $strformats[$fid];
         }
 
+        $draftitemareainputname = $qa->get_behaviour_field_name('comment:itemid');
+        $draftitemid = optional_param($draftitemareainputname, false, PARAM_INT);
+
+        if (!$draftitemid && $commentstep === null) {
+            $commenttext = '';
+            $draftitemid = file_get_unused_draft_itemid();
+        } else if (!$draftitemid) {
+            list($draftitemid, $commenttext) = $commentstep->prepare_response_files_draft_itemid_with_text(
+                    'bf_comment', $options->context->id, $commenttext);
+        }
+
         $editor->set_text($commenttext);
-        $editor->use_editor($id, array('context' => $options->context));
+        $editor->use_editor($id, question_utils::get_editor_options($options->context),
+                question_utils::get_filepicker_options($options->context, $draftitemid));
 
         $commenteditor = html_writer::tag('div', html_writer::tag('textarea', s($commenttext),
                 array('id' => $id, 'name' => $inputname, 'rows' => 10, 'cols' => 60)));
+
+        $attributes = ['type'  => 'hidden', 'name'  => $draftitemareainputname, 'value' => $draftitemid];
+        $commenteditor .= html_writer::empty_tag('input', $attributes);
 
         $editorformat = '';
         if (count($formats) == 1) {
@@ -105,7 +125,7 @@ abstract class qbehaviour_renderer extends plugin_renderer_base {
         $comment = html_writer::tag('div', html_writer::tag('div',
                 html_writer::tag('label', get_string('comment', 'question'),
                 array('for' => $id)), array('class' => 'fitemtitle')) .
-                html_writer::tag('div', $commenteditor, array('class' => 'felement fhtmleditor')),
+                html_writer::tag('div', $commenteditor, array('class' => 'felement fhtmleditor', 'data-fieldtype' => "editor")),
                 array('class' => 'fitem'));
         $comment .= $editorformat;
 
@@ -168,7 +188,7 @@ abstract class qbehaviour_renderer extends plugin_renderer_base {
     public function manual_comment_view(question_attempt $qa, question_display_options $options) {
         $output = '';
         if ($qa->has_manual_comment()) {
-            $output .= get_string('commentx', 'question', $qa->get_behaviour()->format_comment());
+            $output .= get_string('commentx', 'question', $qa->get_behaviour()->format_comment(null, null, $options->context));
         }
         if ($options->manualcommentlink) {
             $url = new moodle_url($options->manualcommentlink, array('slot' => $qa->get_slot()));
