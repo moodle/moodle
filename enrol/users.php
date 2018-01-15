@@ -194,11 +194,10 @@ if ($fullusernames == 'language' || empty($fullusernames)) {
     $a->firstname = 'firstname';
     $a->lastname = 'lastname';
     // Getting the fullname display will ensure that the order in the language file is maintained.
-    $usernameheader = explode(' ', get_string('fullnamedisplay', null, $a));
-} else {
-    // If everything is as expected then put them in the order specified by the alternative full name format setting.
-    $usernameheader = order_in_string($allusernames, $fullusernames);
+    $fullusernames = get_string('fullnamedisplay', null, $a);
 }
+// If everything is as expected then put them in the order specified by the alternative full name format setting.
+$usernameheader = order_in_string($allusernames, $fullusernames);
 
 // Loop through each name and return the language string.
 foreach ($usernameheader as $key => $username) {
