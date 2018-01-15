@@ -148,12 +148,3 @@ $string['page-tag-index'] = 'Single tag page';
 $string['page-tag-search'] = 'Tag search page';
 $string['page-tag-manage'] = 'Manage tags page';
 
-// Deprecated since 3.1 .
-
-$string['manageofficialtags'] = 'Manage official tags';
-$string['officialtag'] = 'Official';
-$string['otags'] = 'Official tags';
-$string['othertags'] = 'Other tags';
-$string['settypeofficial'] = 'Make official';
-$string['taggedwith'] = 'tagged with "{$a}"';
-$string['tagtype'] = 'Tag type';
