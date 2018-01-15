@@ -125,7 +125,13 @@ class core_backup_renderer extends plugin_renderer_base {
         $html .= html_writer::end_tag('div');
 
         $html .= html_writer::start_tag('div', array('class' => 'backup-section settings-section'));
-        $html .= $this->output->heading(get_string('backupsettings', 'backup'), 2, array('class' => 'header'));
+        if ($this instanceof import_ui_stage_inital) {
+            $html .= $this->output->heading(get_string('importrootsettings', 'backup'), 2, array('class' => 'header'));
+        } else if ($this instanceof restore_ui_stage_settings) {
+            $html .= $this->output->heading(get_string('restorerootsettings', 'backup'), 2, array('class' => 'header'));
+        } else {
+            $html .= $this->output->heading(get_string('backupsettings', 'backup'), 2, array('class' => 'header'));
+        }
         foreach ($details->root_settings as $label => $value) {
             if ($label == 'filename' or $label == 'user_files') {
                 continue;
