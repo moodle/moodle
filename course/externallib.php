@@ -2458,6 +2458,15 @@ class core_course_external extends external_api {
                     ),
                     'Course filters', VALUE_OPTIONAL
                 ),
+                'courseformatoptions' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'Course format option name.'),
+                            'value' => new external_value(PARAM_RAW, 'Course format option value.'),
+                        )
+                    ),
+                    'Additional options for particular course format.', VALUE_OPTIONAL
+                ),
             );
             $coursestructure = array_merge($coursestructure, $extra);
         }
@@ -3083,6 +3092,14 @@ class core_course_external extends external_api {
             }
             if (isset($coursesdata[$course->id]['lang'])) {
                 $coursesdata[$course->id]['lang'] = clean_param($coursesdata[$course->id]['lang'], PARAM_LANG);
+            }
+
+            $courseformatoptions = course_get_format($course)->get_config_for_external();
+            foreach ($courseformatoptions as $key => $value) {
+                $coursesdata[$course->id]['courseformatoptions'][] = array(
+                    'name' => $key,
+                    'value' => $value
+                );
             }
         }
 
