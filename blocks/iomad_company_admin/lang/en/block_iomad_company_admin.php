@@ -573,6 +573,7 @@ $string['usermanagement'] = 'User management';
 $string['userprofiles'] = 'Optional profiles';
 $string['users_bulk'] = 'Bulk user actions';
 $string['users_download'] = 'User Bulk Download';
+$string['usertype'] = 'User type';
 $string['user_upload_title'] = 'Upload Users';
 $string['user'] = 'User';
 $string['usercontrols'] = 'User controls';

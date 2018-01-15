@@ -37,6 +37,7 @@ $firstname       = optional_param('firstname', 0, PARAM_CLEAN);
 $lastname      = optional_param('lastname', '', PARAM_CLEAN);   // Md5 confirmation hash.
 $email  = optional_param('email', 0, PARAM_CLEAN);
 $showall = optional_param('showall', false, PARAM_BOOL);
+$usertype = optional_param('usertype', 'a', PARAM_ALPHANUM);
 
 $params = array();
 
@@ -85,6 +86,7 @@ if ($email) {
 if ($departmentid) {
     $params['departmentid'] = $departmentid;
 }
+$params['usertype'] = $usertype;
 
 $systemcontext = context_system::instance();
 
@@ -173,11 +175,11 @@ if (!$showall) {
 
 // Set up the filter form.
 if (iomad::has_capability('block/iomad_company_admin:company_add', $systemcontext)) {
-    $mform = new iomad_user_filter_form(null, array('companyid' => $companyid, 'useshowall' => true));
+    $mform = new iomad_user_filter_form(null, array('companyid' => $companyid, 'useshowall' => true, 'addusertype' => true));
 } else {
-    $mform = new iomad_user_filter_form(null, array('companyid' => $companyid));
+    $mform = new iomad_user_filter_form(null, array('companyid' => $companyid, 'addusertype' => true));
 }
-$mform->set_data(array('departmentid' => $departmentid));
+$mform->set_data(array('departmentid' => $departmentid, 'usertype' => $usertype));
 $mform->set_data($params);
 $mform->get_data();
 
@@ -534,6 +536,12 @@ if (iomad::has_capability('block/iomad_company_admin:editallusers', $systemconte
         $searchparams['email'] = '%'.$params['email'].'%';
     }
 
+    if ($usertype != 'a' ) {
+        $sqlsearch .= " AND id IN (SELECT userid FROM {company_users}
+                         WHERE managertype = :managertype) ";
+        $searchparams['managertype'] = $usertype;
+    }
+
     $userrecords = $DB->get_fieldset_select('user', 'id', $sqlsearch, $searchparams);
 
 } else if (iomad::has_capability('block/iomad_company_admin:editusers', $systemcontext)) {   // Check if has role edit company users.
@@ -577,6 +585,12 @@ if (iomad::has_capability('block/iomad_company_admin:editallusers', $systemconte
         $searchparams['email'] = '%'.$params['email'].'%';
     }
 
+    if ($usertype != 'a' ) {
+        $sqlsearch .= " AND id IN (SELECT userid FROM {company_users}
+                         WHERE managertype = :managertype) ";
+        $searchparams['managertype'] = $usertype;
+    }
+
     $userrecords = $DB->get_fieldset_select('user', 'id', $sqlsearch, $searchparams);
 }
 $userlist = "";
@@ -587,8 +601,8 @@ if (!empty($userrecords)) {
     $userlist = "1=2";
 }
 if (!empty($userlist)) {
-    $users = iomad_get_users_listing($sort, $dir, $page * $perpage, $perpage, '', '', '', $userlist, array('companyid' => $companyid, 'showall' => $showall));
-    $totalusers = iomad_get_users_listing($sort, $dir, 0, 0, '', '', '', $userlist, array('companyid' => $companyid, 'showall' => $showall));
+    $users = iomad_get_users_listing($sort, $dir, $page * $perpage, $perpage, '', '', '', $userlist, array('companyid' => $companyid, 'showall' => $showall, 'usertype' => $usertype));
+    $totalusers = iomad_get_users_listing($sort, $dir, 0, 0, '', '', '', $userlist, array('companyid' => $companyid, 'showall' => $showall, 'usertype' => $usertype));
 
 } else {
     $users = array();
@@ -838,10 +852,10 @@ function iomad_get_users_listing($sort='lastaccess', $dir='ASC', $page=0, $recor
         }
     }
 
-    // Warning: will return UNCONFIRMED USERS!
-    if (!is_siteadmin($USER->id)) {
-        // only show normal users.
-        $managertypesql = " AND cu.managertype = 0";
+    // return the right type of user.
+    if ($extraparams['usertype'] != 'a' ) {
+        $managertypesql = " AND cu.managertype = :managertype ";
+        $params['managertype'] = $extraparams['usertype'];
     } else {
         $managertypesql = "";
     }
