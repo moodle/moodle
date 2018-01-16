@@ -74,6 +74,15 @@ $functions = array(
         'capabilities'  => 'moodle/badges:viewotherbadges',
         'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
+    'core_blog_get_entries' => array(
+        'classname'   => 'core_blog\external',
+        'methodname'  => 'get_entries',
+        'description' => 'Returns blog entries.',
+        'type'        => 'read',
+        'services'    => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+        'ajax'          => true,
+        'loginrequired' => false,
+    ),
     'core_calendar_get_calendar_monthly_view' => array(
         'classname' => 'core_calendar_external',
         'methodname' => 'get_calendar_monthly_view',
