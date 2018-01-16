@@ -6,57 +6,57 @@ Feature: View course participants
 
   Background:
     Given the following "users" exist:
-      | username  | firstname | lastname | email                 |
-      | teacher1  | Teacher   | 1        | teacher1@example.com  |
-      | student0  | Student   | 0        | student0@example.com  |
-      | student1  | Student   | 1        | student1@example.com  |
-      | student2  | Student   | 2        | student2@example.com  |
-      | student3  | Student   | 3        | student3@example.com  |
-      | student4  | Student   | 4        | student4@example.com  |
-      | student5  | Student   | 5        | student5@example.com  |
-      | student6  | Student   | 6        | student6@example.com  |
-      | student7  | Student   | 7        | student7@example.com  |
-      | student8  | Student   | 8        | student8@example.com  |
-      | student9  | Student   | 9        | student9@example.com  |
-      | student10 | Student   | 10       | student10@example.com |
-      | student11 | Student   | 11       | student11@example.com |
-      | student12 | Student   | 12       | student12@example.com |
-      | student13 | Student   | 13       | student13@example.com |
-      | student14 | Student   | 14       | student14@example.com |
-      | student15 | Student   | 15       | student15@example.com |
-      | student16 | Student   | 16       | student16@example.com |
-      | student17 | Student   | 17       | student17@example.com |
-      | student18 | Student   | 18       | student18@example.com |
-      | student19 | Student   | 19       | student19@example.com |
+      | username   | firstname | lastname | email                 |
+      | teacher1x  | Teacher   | 1x       | teacher1x@example.com  |
+      | student0x  | Student   | 0x       | student0x@example.com  |
+      | student1x  | Student   | 1x       | student1x@example.com  |
+      | student2x  | Student   | 2x       | student2x@example.com  |
+      | student3x  | Student   | 3x       | student3x@example.com  |
+      | student4x  | Student   | 4x       | student4x@example.com  |
+      | student5x  | Student   | 5x       | student5x@example.com  |
+      | student6x  | Student   | 6x       | student6x@example.com  |
+      | student7x  | Student   | 7x       | student7x@example.com  |
+      | student8x  | Student   | 8x       | student8x@example.com  |
+      | student9x  | Student   | 9x       | student9x@example.com  |
+      | student10x | Student   | 10x      | student10x@example.com |
+      | student11x | Student   | 11x      | student11x@example.com |
+      | student12x | Student   | 12x      | student12x@example.com |
+      | student13x | Student   | 13x      | student13x@example.com |
+      | student14x | Student   | 14x      | student14x@example.com |
+      | student15x | Student   | 15x      | student15x@example.com |
+      | student16x | Student   | 16x      | student16x@example.com |
+      | student17x | Student   | 17x      | student17x@example.com |
+      | student18x | Student   | 18x      | student18x@example.com |
+      | student19x | Student   | 19x      | student19x@example.com |
     And the following "courses" exist:
       | fullname | shortname | format |
       | Course 1 | C1        | topics |
     And the following "course enrolments" exist:
       | user      | course | role           | status | timeend |
-      | teacher1  | C1     | editingteacher |    0   |    0    |
-      | student0  | C1     | student        |    0   |    0    |
-      | student1  | C1     | student        |    0   |    0    |
-      | student2  | C1     | student        |    0   |    0    |
-      | student3  | C1     | student        |    0   |    0    |
-      | student4  | C1     | student        |    0   |    0    |
-      | student5  | C1     | student        |    0   |    0    |
-      | student6  | C1     | student        |    0   |    0    |
-      | student7  | C1     | student        |    0   |    0    |
-      | student8  | C1     | student        |    0   |    0    |
-      | student9  | C1     | student        |    0   |    0    |
-      | student10 | C1     | student        |    1   |    0    |
-      | student11 | C1     | student        |    0   |  100    |
-      | student12 | C1     | student        |    0   |    0    |
-      | student13 | C1     | student        |    0   |    0    |
-      | student14 | C1     | student        |    0   |    0    |
-      | student15 | C1     | student        |    0   |    0    |
-      | student16 | C1     | student        |    0   |    0    |
-      | student17 | C1     | student        |    0   |    0    |
-      | student18 | C1     | student        |    0   |    0    |
+      | teacher1x  | C1     | editingteacher |    0   |    0    |
+      | student0x  | C1     | student        |    0   |    0    |
+      | student1x  | C1     | student        |    0   |    0    |
+      | student2x  | C1     | student        |    0   |    0    |
+      | student3x  | C1     | student        |    0   |    0    |
+      | student4x  | C1     | student        |    0   |    0    |
+      | student5x  | C1     | student        |    0   |    0    |
+      | student6x  | C1     | student        |    0   |    0    |
+      | student7x  | C1     | student        |    0   |    0    |
+      | student8x  | C1     | student        |    0   |    0    |
+      | student9x  | C1     | student        |    0   |    0    |
+      | student10x | C1     | student        |    1   |    0    |
+      | student11x | C1     | student        |    0   |  100    |
+      | student12x | C1     | student        |    0   |    0    |
+      | student13x | C1     | student        |    0   |    0    |
+      | student14x | C1     | student        |    0   |    0    |
+      | student15x | C1     | student        |    0   |    0    |
+      | student16x | C1     | student        |    0   |    0    |
+      | student17x | C1     | student        |    0   |    0    |
+      | student18x | C1     | student        |    0   |    0    |
 
   @javascript
   Scenario: Use select and deselect all buttons
-    Given I log in as "teacher1"
+    Given I log in as "teacher1x"
     And I am on "Course 1" course homepage
     And I navigate to course participants
     When I press "Select all"
@@ -104,35 +104,35 @@ Feature: View course participants
     And the field with xpath "//tbody//tr[20]//input[@class='usercheckbox']" matches value "0"
 
   Scenario: Sort and paginate the list of users
-    Given I log in as "teacher1"
+    Given I log in as "teacher1x"
     And the following "course enrolments" exist:
       | user      | course | role           |
-      | student19 | C1     | student |
+      | student19x | C1     | student |
     And I am on "Course 1" course homepage
     And I navigate to course participants
     And I follow "Email address"
     When I follow "2"
-    Then I should not see "student0@example.com"
-    And I should not see "student19@example.com"
-    And I should see "teacher1@example.com"
+    Then I should not see "student0x@example.com"
+    And I should not see "student19x@example.com"
+    And I should see "teacher1x@example.com"
     And I follow "Email address"
     And I follow "2"
-    And I should not see "teacher1@example.com"
-    And I should not see "student19@example.com"
-    And I should not see "student1@example.com"
-    And I should see "student0@example.com"
+    And I should not see "teacher1x@example.com"
+    And I should not see "student19x@example.com"
+    And I should not see "student1x@example.com"
+    And I should see "student0x@example.com"
 
   @javascript
   Scenario: Use select all users on this page, select all n users and deselect all
     Given the following "course enrolments" exist:
       | user      | course | role    |
-      | student19 | C1     | student |
-    When I log in as "teacher1"
+      | student19x | C1     | student |
+    When I log in as "teacher1x"
     And I am on "Course 1" course homepage
     And I navigate to course participants
     And I follow "Surname"
     And I press "Select all users on this page"
-    Then I should not see "Student 9"
+    Then I should not see "Student 9x"
     And the field with xpath "//tbody//tr[1]//input[@class='usercheckbox']" matches value "1"
     And the field with xpath "//tbody//tr[2]//input[@class='usercheckbox']" matches value "1"
     And the field with xpath "//tbody//tr[3]//input[@class='usercheckbox']" matches value "1"
@@ -177,7 +177,7 @@ Feature: View course participants
     And the field with xpath "//tbody//tr[20]//input[@class='usercheckbox']" matches value "0"
 
     And I press "Select all 21 users"
-    And I should see "Student 9"
+    And I should see "Student 9x"
     And the field with xpath "//tbody//tr[1]//input[@class='usercheckbox']" matches value "1"
     And the field with xpath "//tbody//tr[2]//input[@class='usercheckbox']" matches value "1"
     And the field with xpath "//tbody//tr[3]//input[@class='usercheckbox']" matches value "1"
@@ -224,44 +224,44 @@ Feature: View course participants
     And the field with xpath "//tbody//tr[21]//input[@class='usercheckbox']" matches value "0"
 
   Scenario: View the participants page as a teacher
-    Given I log in as "teacher1"
+    Given I log in as "teacher1x"
     And I am on "Course 1" course homepage
     When I navigate to course participants
-    Then I should see "Active" in the "student0" "table_row"
-    And I should see "Active" in the "student1" "table_row"
-    And I should see "Active" in the "student2" "table_row"
-    And I should see "Active" in the "student3" "table_row"
-    And I should see "Active" in the "student4" "table_row"
-    And I should see "Active" in the "student5" "table_row"
-    And I should see "Active" in the "student6" "table_row"
-    And I should see "Active" in the "student7" "table_row"
-    And I should see "Active" in the "student8" "table_row"
-    And I should see "Active" in the "student9" "table_row"
-    And I should see "Suspended" in the "student10" "table_row"
-    And I should see "Not current" in the "student11" "table_row"
-    And I should see "Active" in the "student12" "table_row"
-    And I should see "Active" in the "student13" "table_row"
-    And I should see "Active" in the "student14" "table_row"
-    And I should see "Active" in the "student15" "table_row"
-    And I should see "Active" in the "student16" "table_row"
-    And I should see "Active" in the "student17" "table_row"
-    And I should see "Active" in the "student18" "table_row"
+    Then I should see "Active" in the "student0x" "table_row"
+    Then I should see "Active" in the "student1x" "table_row"
+    And I should see "Active" in the "student2x" "table_row"
+    And I should see "Active" in the "student3x" "table_row"
+    And I should see "Active" in the "student4x" "table_row"
+    And I should see "Active" in the "student5x" "table_row"
+    And I should see "Active" in the "student6x" "table_row"
+    And I should see "Active" in the "student7x" "table_row"
+    And I should see "Active" in the "student8x" "table_row"
+    And I should see "Active" in the "student9x" "table_row"
+    And I should see "Suspended" in the "student10x" "table_row"
+    And I should see "Not current" in the "student11x" "table_row"
+    And I should see "Active" in the "student12x" "table_row"
+    And I should see "Active" in the "student13x" "table_row"
+    And I should see "Active" in the "student14x" "table_row"
+    And I should see "Active" in the "student15x" "table_row"
+    And I should see "Active" in the "student16x" "table_row"
+    And I should see "Active" in the "student17x" "table_row"
+    And I should see "Active" in the "student18x" "table_row"
 
   Scenario: View the participants page as a student
-    Given I log in as "student1"
+    Given I log in as "student1x"
     And I am on "Course 1" course homepage
     When I navigate to course participants
     # Student should not see the status column.
     Then I should not see "Status" in the "participants" "table"
     # Student should be able to see the other actively-enrolled students.
-    And I should see "Student 1" in the "participants" "table"
-    And I should see "Student 2" in the "participants" "table"
-    And I should see "Student 3" in the "participants" "table"
-    And I should see "Student 4" in the "participants" "table"
-    And I should see "Student 5" in the "participants" "table"
-    And I should see "Student 6" in the "participants" "table"
-    And I should see "Student 7" in the "participants" "table"
-    And I should see "Student 8" in the "participants" "table"
+    And I should see "Student 1x" in the "participants" "table"
+    And I should see "Student 2x" in the "participants" "table"
+    And I should see "Student 3x" in the "participants" "table"
+    And I should see "Student 4x" in the "participants" "table"
+    And I should see "Student 5x" in the "participants" "table"
+    And I should see "Student 6x" in the "participants" "table"
+    And I should see "Student 7x" in the "participants" "table"
+    And I should see "Student 8x" in the "participants" "table"
     # Suspended and non-current students should not be rendered.
-    And I should not see "Student 10" in the "participants" "table"
-    And I should not see "Student 11" in the "participants" "table"
+    And I should not see "Student 10x" in the "participants" "table"
+    And I should not see "Student 11x" in the "participants" "table"
