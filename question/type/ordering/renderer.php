@@ -56,7 +56,7 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
      * @return string HTML fragment.
      */
     public function formulation_and_controls(question_attempt $qa, question_display_options $options) {
-        global $CFG, $DB;
+        global $CFG, $DB, $PAGE;
 
         $question = $qa->get_question();
         $response = $qa->get_last_qt_data();
@@ -90,7 +90,12 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
 
         if ($options->readonly) {
             // Items cannot be dragged in readonly mode.
+        } else if (method_exists($PAGE->requires, 'js_call_amd')) {
+            // Moodle >= 2.9
+            $params = array($sortableid, $responseid, $ablockid, $axis);
+            $PAGE->requires->js_call_amd('qtype_ordering/ordering', 'init', $params);
         } else {
+            // Moodle <= 2.8
             $script = "\n";
             $script .= "//<![CDATA[\n";
             $script .= "if (window.$) {\n";
@@ -100,15 +105,7 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
             $script .= "            containment: '#$ablockid',\n";
             $script .= "            opacity: 0.6,\n";
             $script .= "            update: function(event, ui){\n";
-            $script .= "                if (typeof($(this).sortable)=='function') {\n";
-            $script .= "                    var ItemsOrder = $(this).sortable('toArray');\n";
-            $script .= "                } else {\n";
-            $script .= "                    // fix for Moodle 3.4, in which 'sortable' method disappears !!\n";
-            $script .= "                    var ItemsOrder = [];\n";
-            $script .= "                    $(this).children('li.sortableitem').each(function(){\n";
-            $script .= "                        ItemsOrder.push($(this).prop('id'));\n";
-            $script .= "                    });\n";
-            $script .= "                }\n";
+            $script .= "                var ItemsOrder = $(this).sortable('toArray');\n";
             $script .= "                $('#$responseid').val(ItemsOrder.toString());\n";
             $script .= "            }\n";
             $script .= "        });\n";
@@ -127,6 +124,10 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
 
         $printeditems = false;
         if (count($currentresponse)) {
+
+            // initialize cache of answer md5keys
+            // this represents the initial position of the items
+            $md5keys = array();
 
             // Set layout class.
             $layoutclass = $question->get_ordering_layoutclass();
@@ -179,6 +180,9 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
                 // Therefore we use the $answer's md5key for the "id".
                 $params = array('class' => $class, 'id' => $answer->md5key);
                 $result .= html_writer::tag('li', $img.$answertext, $params);
+
+                // cache this answer key
+                $md5keys[] =  $question->answers[$answerid]->md5key;
             }
         }
 

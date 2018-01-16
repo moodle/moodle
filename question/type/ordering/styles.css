@@ -30,6 +30,8 @@
 .que.ordering ul.sortablelist li.sortableitem {
     position         : relative;
     cursor           : move;
+    touch-action     : none;
+    -ms-touch-action : none;
 }
 .que.ordering ul.sortablelist li.horizontal {
     float            : left;

@@ -51,6 +51,10 @@ class qtype_ordering extends question_type {
         // Include "script.js" and/or "script.php" in the normal way.
         parent::find_standard_scripts();
 
+		if (method_exists($PAGE->requires, 'js_call_amd')) {
+			return true; // Moodle >= 2.9
+		}
+
         $version = '';
         $minversion = '1.11.0'; // Moodle 2.7.
         $search = '/jquery-([0-9.]+)(\.min)?\.js$/';
