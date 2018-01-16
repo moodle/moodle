@@ -69,11 +69,7 @@ $values = explode('_', $rev);
 $rev = min_clean_param(array_shift($values), 'INT');
 $themesubrev = array_shift($values);
 
-if (is_null($themesubrev)) {
-    // Default to the current theme subrevision if one isn't
-    // provided in the URL.
-    $themesubrev = theme_get_sub_revision_for_theme($themename);
-} else {
+if (!is_null($themesubrev)) {
     $themesubrev = min_clean_param($themesubrev, 'INT');
 }
 
@@ -144,12 +140,12 @@ make_localcache_directory('theme', false);
 
 if ($type === 'editor') {
     $csscontent = $theme->get_css_content_editor();
-    css_store_css($theme, $candidatesheet, $csscontent, false);
 
     if ($cache) {
+        css_store_css($theme, $candidatesheet, $csscontent, false);
         css_send_cached_css($candidatesheet, $etag);
     } else {
-        css_send_uncached_css(file_get_contents($candidatesheet));
+        css_send_uncached_css($csscontent);
     }
 
 }
