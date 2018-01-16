@@ -91,7 +91,9 @@ class external extends external_api {
                             'fileurl' => new external_value(PARAM_URL, 'The addon package url for download
                                                             or empty if it doesn\'t exist.'),
                             'filehash' => new external_value(PARAM_RAW, 'The addon package hash or empty if it doesn\'t exist.'),
-                            'filesize' => new external_value(PARAM_INT, 'The addon package size or empty if it doesn\'t exist.')
+                            'filesize' => new external_value(PARAM_INT, 'The addon package size or empty if it doesn\'t exist.'),
+                            'handlers' => new external_value(PARAM_RAW, 'Handlers definition (JSON)', VALUE_OPTIONAL),
+                            'lang' => new external_value(PARAM_RAW, 'Language strings used by the handlers (JSON)', VALUE_OPTIONAL),
                         )
                     )
                 ),
