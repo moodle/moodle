@@ -1184,6 +1184,12 @@ function badges_download($userid) {
  * @return string Code of backpack accessibility status.
  */
 function badges_check_backpack_accessibility() {
+    if (defined('BEHAT_SITE_RUNNING') && BEHAT_SITE_RUNNING) {
+        // For behat sites, do not poll the remote badge site.
+        // Behat sites should not be available, but we should pretend as though they are.
+        return 'available';
+    }
+
     global $CFG;
     include_once $CFG->libdir . '/filelib.php';
 
