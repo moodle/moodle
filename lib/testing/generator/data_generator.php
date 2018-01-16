@@ -415,6 +415,10 @@ EOD;
             $record['category'] = $DB->get_field_select('course_categories', "MIN(id)", "parent=0");
         }
 
+        if (!isset($record['startdate'])) {
+            $record['startdate'] = usergetmidnight(time());
+        }
+
         if (isset($record['tags']) && !is_array($record['tags'])) {
             $record['tags'] = preg_split('/\s*,\s*/', trim($record['tags']), -1, PREG_SPLIT_NO_EMPTY);
         }
