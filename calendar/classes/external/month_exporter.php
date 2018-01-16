@@ -65,6 +65,11 @@ class month_exporter extends exporter {
     protected $initialeventsloaded = true;
 
     /**
+     * @var bool $showcoursefilter Whether to render the course filter selector as well.
+     */
+    protected $showcoursefilter = false;
+
+    /**
      * Constructor for month_exporter.
      *
      * @param \calendar_information $calendar The calendar being represented
@@ -120,6 +125,7 @@ class month_exporter extends exporter {
             ],
             'filter_selector' => [
                 'type' => PARAM_RAW,
+                'optional' => true,
             ],
             'weeks' => [
                 'type' => week_exporter::read_properties_definition(),
@@ -206,7 +212,6 @@ class month_exporter extends exporter {
 
         $return = [
             'courseid' => $this->calendar->courseid,
-            'filter_selector' => $this->get_course_filter_selector($output),
             'weeks' => $this->get_weeks($output),
             'daynames' => $this->get_day_names($output),
             'view' => 'month',
@@ -223,6 +228,10 @@ class month_exporter extends exporter {
             'includenavigation' => $this->includenavigation,
             'initialeventsloaded' => $this->initialeventsloaded,
         ];
+
+        if ($this->showcoursefilter) {
+            $return['filter_selector'] = $this->get_course_filter_selector($output);
+        }
 
         if ($context = $this->get_default_add_context()) {
             $return['defaulteventcontext'] = $context->id;
@@ -401,6 +410,18 @@ class month_exporter extends exporter {
      */
     public function set_initialeventsloaded(bool $loaded) {
         $this->initialeventsloaded = $loaded;
+
+        return $this;
+    }
+
+    /**
+     * Set whether the course filter selector should be shown.
+     *
+     * @param   bool    $show
+     * @return  $this
+     */
+    public function set_showcoursefilter(bool $show) {
+        $this->showcoursefilter = $show;
 
         return $this;
     }
