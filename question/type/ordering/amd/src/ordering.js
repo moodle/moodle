@@ -7,8 +7,8 @@ define(['jquery', 'jqueryui', 'qtype_ordering/jquery.ui.touch-punch-improved'], 
                 containment: $('#'+sortableid),
                 opacity    : 0.6,
                 update     : function () {
-                    var ItemsOrder = $(this).sortable('toArray').toString();
-                    $('#' + responseid).attr('value', ItemsOrder);
+                    var items = $(this).sortable('toArray').toString();
+                    $('#' + responseid).attr('value', items);
                 }
             });
         }

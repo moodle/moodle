@@ -125,7 +125,7 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
         $printeditems = false;
         if (count($currentresponse)) {
 
-            // initialize cache of answer md5keys
+            // initialize the cache for the  answers' md5keys
             // this represents the initial position of the items
             $md5keys = array();
 
@@ -194,7 +194,7 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
             $result .= html_writer::empty_tag('input', array('type'  => 'hidden',
                                                              'name'  => $responsename,
                                                              'id'    => $responseid,
-                                                             'value' => ''));
+                                                             'value' => implode(',', $md5keys)));
         }
 
         return $result;
