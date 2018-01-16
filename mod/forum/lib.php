@@ -3516,10 +3516,11 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
         }
         if (!empty($discussion->unread) && $discussion->unread !== '-') {
             $replystring .= ' <span class="sep">/</span> <span class="unread">';
+            $unreadlink = new moodle_url($discussionlink, null, 'unread');
             if ($discussion->unread == 1) {
-                $replystring .= get_string('unreadpostsone', 'forum');
+                $replystring .= html_writer::link($unreadlink, get_string('unreadpostsone', 'forum'));
             } else {
-                $replystring .= get_string('unreadpostsnumber', 'forum', $discussion->unread);
+                $replystring .= html_writer::link($unreadlink, get_string('unreadpostsnumber', 'forum', $discussion->unread));
             }
             $replystring .= '</span>';
         }
