@@ -235,10 +235,10 @@ class company_users_course_form extends moodleform {
         }
 
         // Is the due date valid
-        if ($data['due'] > $this->license->expirydate && !$removing) {
+        if (!empty($data['due']) && $data['due'] > $this->license->expirydate && !$removing) {
             $errors['due'] = get_string('licensedueafterexpirywarning', 'block_iomad_company_admin');
         }
-        if ($data['due'] < $this->license->startdate && !$removing) {
+        if (!empty($data['due']) && $data['due'] < $this->license->startdate && !$removing) {
             $errors['due'] = get_string('licenseduebeforestartwarning', 'block_iomad_company_admin');
         }
 
