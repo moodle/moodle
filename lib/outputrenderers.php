@@ -2889,21 +2889,33 @@ EOD;
         return $this->render_from_template($notification->get_template_name(), $notification->export_for_template($this));
     }
 
+    /**
+     * @deprecated since Moodle 3.1 MDL-30811 - please do not use this function any more.
+     */
     public function notify_problem() {
         throw new coding_exception('core_renderer::notify_problem() can not be used any more, '.
             'please use \core\notification::add(), or \core\output\notification as required.');
     }
 
+    /**
+     * @deprecated since Moodle 3.1 MDL-30811 - please do not use this function any more.
+     */
     public function notify_success() {
         throw new coding_exception('core_renderer::notify_success() can not be used any more, '.
             'please use \core\notification::add(), or \core\output\notification as required.');
     }
 
+    /**
+     * @deprecated since Moodle 3.1 MDL-30811 - please do not use this function any more.
+     */
     public function notify_message() {
         throw new coding_exception('core_renderer::notify_message() can not be used any more, '.
             'please use \core\notification::add(), or \core\output\notification as required.');
     }
 
+    /**
+     * @deprecated since Moodle 3.1 MDL-30811 - please do not use this function any more.
+     */
     public function notify_redirect() {
         throw new coding_exception('core_renderer::notify_redirect() can not be used any more, '.
             'please use \core\notification::add(), or \core\output\notification as required.');
