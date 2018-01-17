@@ -2021,8 +2021,9 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals(1, $result['gradingsummary']['participantcount']);
         $this->assertEquals(0, $result['gradingsummary']['submissiondraftscount']);
         $this->assertEquals(1, $result['gradingsummary']['submissionsenabled']);
-        $this->assertEquals(1, $result['gradingsummary']['submissionssubmittedcount']);
-        $this->assertEquals(1, $result['gradingsummary']['submissionsneedgradingcount']);
+        $this->assertEquals(0, $result['gradingsummary']['submissiondraftscount']);
+        $this->assertEquals(1, $result['gradingsummary']['submissionssubmittedcount']);  // One student from G1 submitted.
+        $this->assertEquals(1, $result['gradingsummary']['submissionsneedgradingcount']);    // One student from G1 submitted.
         $this->assertFalse($result['gradingsummary']['warnofungroupedusers']);
 
         // Second group.
@@ -2030,12 +2031,28 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         $result = external_api::clean_returnvalue(mod_assign_external::get_submission_status_returns(), $result);
         $this->assertCount(0, $result['warnings']);
         $this->assertEquals(1, $result['gradingsummary']['participantcount']);
+        $this->assertEquals(0, $result['gradingsummary']['submissionssubmittedcount']); // G2 students didn't submit yet.
+        $this->assertEquals(0, $result['gradingsummary']['submissionsneedgradingcount']);   // G2 students didn't submit yet.
 
         // Should return also 1 participant if we allow the function to auto-select the group.
         $result = mod_assign_external::get_submission_status($assign->get_instance()->id);
         $result = external_api::clean_returnvalue(mod_assign_external::get_submission_status_returns(), $result);
         $this->assertCount(0, $result['warnings']);
         $this->assertEquals(1, $result['gradingsummary']['participantcount']);
+        $this->assertEquals(0, $result['gradingsummary']['submissiondraftscount']);
+        $this->assertEquals(1, $result['gradingsummary']['submissionssubmittedcount']); // One student from G1 submitted.
+        $this->assertEquals(1, $result['gradingsummary']['submissionsneedgradingcount']); // One student from G1 submitted.
+
+        // Now check draft submissions.
+        list($assign, $instance, $student1, $student2, $teacher, $g1, $g2) = $this->create_submission_for_testing_status(false);
+        $this->setUser($teacher);
+        $result = mod_assign_external::get_submission_status($assign->get_instance()->id, 0, $g1->id);
+        $result = external_api::clean_returnvalue(mod_assign_external::get_submission_status_returns(), $result);
+        $this->assertCount(0, $result['warnings']);
+        $this->assertEquals(1, $result['gradingsummary']['participantcount']);
+        $this->assertEquals(1, $result['gradingsummary']['submissiondraftscount']); // We have a draft submission.
+        $this->assertEquals(0, $result['gradingsummary']['submissionssubmittedcount']); // We have only draft submissions.
+        $this->assertEquals(0, $result['gradingsummary']['submissionsneedgradingcount']); // We have only draft submissions.
     }
 
     /**
