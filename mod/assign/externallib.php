@@ -2285,6 +2285,8 @@ class mod_assign_external extends external_api {
             array(
                 'assignid' => new external_value(PARAM_INT, 'assignment instance id'),
                 'userid' => new external_value(PARAM_INT, 'user id (empty for current user)', VALUE_DEFAULT, 0),
+                'groupid' => new external_value(PARAM_INT, 'filter by users in group (used for generating the grading summary).
+                    Empty or 0 for all groups information.', VALUE_DEFAULT, 0),
             )
         );
     }
@@ -2294,11 +2296,12 @@ class mod_assign_external extends external_api {
      *
      * @param int $assignid assignment instance id
      * @param int $userid user id (empty for current user)
+     * @param int $groupid filter by users in group id (used for generating the grading summary). Use 0 for all groups information.
      * @return array of warnings and grading, status, feedback and previous attempts information
      * @since Moodle 3.1
      * @throws required_capability_exception
      */
-    public static function get_submission_status($assignid, $userid = 0) {
+    public static function get_submission_status($assignid, $userid = 0, $groupid = 0) {
         global $USER;
 
         $warnings = array();
@@ -2306,6 +2309,7 @@ class mod_assign_external extends external_api {
         $params = array(
             'assignid' => $assignid,
             'userid' => $userid,
+            'groupid' => $groupid,
         );
         $params = self::validate_parameters(self::get_submission_status_parameters(), $params);
 
@@ -2325,8 +2329,18 @@ class mod_assign_external extends external_api {
         $gradingsummary = $lastattempt = $feedback = $previousattempts = null;
 
         // Get the renderable since it contais all the info we need.
-        if ($assign->can_view_grades()) {
-            $gradingsummary = $assign->get_assign_grading_summary_renderable();
+        if (!empty($params['groupid'])) {
+            $groupid = $params['groupid'];
+            // Determine is the group is visible to user.
+            if (!groups_group_visible($groupid, $course, $cm)) {
+                throw new moodle_exception('notingroup');
+            }
+        } else {
+            // A null gorups means that following functions will calculate the current group.
+            $groupid = null;
+        }
+        if ($assign->can_view_grades($groupid)) {
+            $gradingsummary = $assign->get_assign_grading_summary_renderable($groupid);
         }
 
         // Retrieve the rest of the renderable objects.
