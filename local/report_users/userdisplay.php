@@ -32,7 +32,7 @@ $showhistoric = optional_param('showhistoric', 1, PARAM_BOOL);
 // Check permissions.
 require_login();
 $context = context_system::instance();
-iomad::require_capability('local/report_completion:view', $context);
+iomad::require_capability('local/report_users:view', $context);
 
 // Set the companyid
 $companyid = iomad::get_my_companyid($context);
