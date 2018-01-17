@@ -356,7 +356,7 @@ if (!empty($userlist)) {
             } else {
                 $tempalloc = array();
                 foreach ($allocations as $allocation) {
-                    $tempalloc[$allocation->other] = $allocation;
+                    $tempalloc[$allocation->userid. '-' . $allocation->other] = $allocation;
                 }
                 $numallocations = count($tempalloc);
             }
@@ -374,7 +374,7 @@ if (!empty($userlist)) {
             } else {
                 $tempalloc = array();
                 foreach ($unallocations as $unallocation) {
-                    $tempalloc[$unallocation->other] = $unallocation;
+                    $tempalloc[$unallocation->userid. '-' . $unallocation->other] = $unallocation;
                 }
                 $numunallocations = count($tempalloc);
             }
