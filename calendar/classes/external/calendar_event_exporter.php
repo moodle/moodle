@@ -191,6 +191,7 @@ class calendar_event_exporter extends event_exporter_base {
         $related['daylink'] = \moodle_url::class;
         $related['type'] = '\core_calendar\type_base';
         $related['today'] = 'int';
+        $related['moduleinstance'] = 'stdClass?';
 
         return $related;
     }
@@ -217,14 +218,11 @@ class calendar_event_exporter extends event_exporter_base {
      * @return array
      */
     protected function get_module_timestamp_limits($event) {
-        global $DB;
-
         $values = [];
         $mapper = container::get_event_mapper();
         $starttime = $event->get_times()->get_start_time();
         $modname = $event->get_course_module()->get('modname');
-        $modid = $event->get_course_module()->get('instance');
-        $moduleinstance = $DB->get_record($modname, ['id' => $modid]);
+        $moduleinstance = $this->related['moduleinstance'];
 
         list($min, $max) = component_callback(
             'mod_' . $modname,
