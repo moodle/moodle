@@ -194,18 +194,18 @@ foreach ($usercourses as $usercourse) {
         foreach ($usercompletion[$usercourse->id]->data[$usercourseid]->completion as $usercompcourse) {
 
             // Get the completion summary.
-            $coursestring = '<b>'.$usercompletion[$usercourse->id]->data[$usercourseid]->coursename.'</b>'.
-                            "</br><a href='".
+            $coursestring = '<div class="usercompcoursename"><b>'.$usercompletion[$usercourse->id]->data[$usercourseid]->coursename.'</b></div>'.
+                            "</br><div class='usercompcourselink'><a href='".
                             new moodle_url("/local/report_users/userdisplay.php",
                                             array('userid' => $userid,
                                                   'courseid' => $usercourseid,
                                                   'showhistoric' => $showhistoric)).
                              "'>(".get_string('usercoursedetails', 'local_report_users').
-                             ")</a> <a href='".
+                             ")</a></div><div class='usercompdetailslink'><a href='".
                              new moodle_url("/local/report_completion/index.php",
                                               array('courseid' => $usercourseid, 'showhistoric' => $showhistoric)).
                              "'>(".get_string('coursedetails', 'local_report_users').
-                             ")</a>";
+                             ")</a></div>";
             if (!empty($usercompcourse->status)) {
                 $userstat = $usercompcourse->status;
                 $statusstring = get_string($userstat, 'local_report_users');
