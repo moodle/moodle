@@ -674,57 +674,67 @@ if (!$users) {
         if ((iomad::has_capability('block/iomad_company_admin:editusers', $systemcontext)
              or iomad::has_capability('block/iomad_company_admin:editallusers', $systemcontext))
              and ($user->id == $USER->id or $user->id != $mainadmin->id) and !is_mnet_remote_user($user)) {
-            $url = new moodle_url('/blocks/iomad_company_admin/editadvanced.php', array(
-                'id' => $user->id,   
-            ));
-            $actions['edit'] = new action_menu_link_secondary(
-                $url,
-                null,
-                $stredit
-            );
-            $url = new moodle_url('/blocks/iomad_company_admin/editusers.php', array(
-                'password' => $user->id,
-                'sesskey' => sesskey(),   
-            ));
-            $actions['password'] = new action_menu_link_secondary(
-                $url,
-                null,
-                $strpassword
-            );
+            if ($user->id != $USER->id && $DB->get_record_select('company_users', 'companyid =:company AND managertype != 0 AND userid = :userid', array('company' => $companyid, 'userid' => $user->id))
+                && !iomad::has_capability('block/iomad_company_admin:editmanagers', $systemcontext)) {
+               // This manager can't edit manager users.
+            } else {
+                $url = new moodle_url('/blocks/iomad_company_admin/editadvanced.php', array(
+                    'id' => $user->id,   
+                ));
+                $actions['edit'] = new action_menu_link_secondary(
+                    $url,
+                    null,
+                    $stredit
+                );
+                $url = new moodle_url('/blocks/iomad_company_admin/editusers.php', array(
+                    'password' => $user->id,
+                    'sesskey' => sesskey(),   
+                ));
+                $actions['password'] = new action_menu_link_secondary(
+                    $url,
+                    null,
+                    $strpassword
+                );
+            }
         }
 
         if ($user->id != $USER->id) {
             if ((iomad::has_capability('block/iomad_company_admin:editusers', $systemcontext)
                  or iomad::has_capability('block/iomad_company_admin:editallusers', $systemcontext))) {
-                $url = new moodle_url('/blocks/iomad_company_admin/editusers.php', array(
-                    'delete' => $user->id,
-                    'sesskey' => sesskey(),
-                ));
-                $actions['delete'] = new action_menu_link_secondary(
-                    $url,
-                    null,
-                    $strdelete
-                );
-                if (!empty($user->suspended)) {
-                    $url = new moodle_url('/blocks/iomad_company_admin/editusers.php', array(
-                        'unsuspend' => $user->id,
-                        'sesskey' => sesskey(),
-                    ));
-                    $actions['unsuspend'] = new action_menu_link_secondary(
-                        $url,
-                        null,
-                        $strunsuspend
-                    );
+                if ($DB->get_record_select('company_users', 'companyid =:company AND managertype != 0 AND userid = :userid', array('company' => $companyid, 'userid' => $user->id))
+                && !iomad::has_capability('block/iomad_company_admin:editmanagers', $systemcontext)) {
+                    // Do nothing.
                 } else {
                     $url = new moodle_url('/blocks/iomad_company_admin/editusers.php', array(
-                        'suspend' => $user->id,
+                        'delete' => $user->id,
                         'sesskey' => sesskey(),
                     ));
-                    $actions['suspend'] = new action_menu_link_secondary(
+                    $actions['delete'] = new action_menu_link_secondary(
                         $url,
                         null,
-                        $strsuspend
+                        $strdelete
                     );
+                    if (!empty($user->suspended)) {
+                        $url = new moodle_url('/blocks/iomad_company_admin/editusers.php', array(
+                            'unsuspend' => $user->id,
+                            'sesskey' => sesskey(),
+                        ));
+                        $actions['unsuspend'] = new action_menu_link_secondary(
+                            $url,
+                            null,
+                            $strunsuspend
+                        );
+                    } else {
+                        $url = new moodle_url('/blocks/iomad_company_admin/editusers.php', array(
+                            'suspend' => $user->id,
+                            'sesskey' => sesskey(),
+                        ));
+                        $actions['suspend'] = new action_menu_link_secondary(
+                            $url,
+                            null,
+                            $strsuspend
+                        );
+                    }
                 }
             }
         }

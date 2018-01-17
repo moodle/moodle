@@ -279,6 +279,7 @@ $string['iomad_company_admin:edit_departments'] = 'Edit own company departments'
 $string['iomad_company_admin:edit_groups'] = 'Edit company course groups';
 $string['iomad_company_admin:edit_licenses'] = 'Edit company licenses';
 $string['iomad_company_admin:edit_my_licenses'] = 'Edit my company licenses';
+$string['iomad_company_admin:editmanagers'] = 'Edit company managers in own company';
 $string['iomad_company_admin:editusers'] = 'Edit users in own company';
 $string['iomad_company_admin:company_license_users'] = 'Modify user license allocations';
 $string['iomad_company_admin:licensemanagement_view'] = 'View the license management tab';
