@@ -805,16 +805,6 @@ if ($mform->is_cancelled()) {
                     $headers = serialize(array("Cc:".$USER->email));
                 }
 
-                if (!empty($CFG->iomad_email_senderisreal)) {
-                    EmailTemplate::send('user_create', array('user' => $user, 'sender' => $USER));
-                } else if (is_siteadmin($USER->id)) {
-                    EmailTemplate::send('user_create', array('user' => $user));
-                } else {
-                    EmailTemplate::send('user_create',
-                                         array('user' => $user,
-                                               'headers' => $headers));
-                }
-
                 if ($bulk == 1 or $bulk == 3) {
                     if (!in_array($user->id, $SESSION->bulk_users)) {
                         $SESSION->bulk_users[] = $user->id;
