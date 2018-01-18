@@ -443,7 +443,7 @@ class sqlsrv_native_moodle_database extends moodle_database {
      * @return array of table names in lowercase and without prefix
      */
     public function get_tables($usecache = true) {
-        if ($usecache and count($this->tables) > 0) {
+        if ($usecache and $this->tables !== null) {
             return $this->tables;
         }
         $this->tables = array ();
