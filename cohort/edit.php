@@ -23,9 +23,9 @@
  */
 
 require('../config.php');
-require($CFG->dirroot.'/course/lib.php');
-require($CFG->dirroot.'/cohort/lib.php');
-require($CFG->dirroot.'/cohort/edit_form.php');
+require_once($CFG->dirroot.'/course/lib.php');
+require_once($CFG->dirroot.'/cohort/lib.php');
+require_once($CFG->dirroot.'/cohort/edit_form.php');
 
 $id        = optional_param('id', 0, PARAM_INT);
 $contextid = optional_param('contextid', 0, PARAM_INT);
