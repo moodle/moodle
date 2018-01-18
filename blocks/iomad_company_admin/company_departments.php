@@ -53,6 +53,7 @@ class department_display_form extends company_moodleform {
         $this->action = $action;
         $this->parentlevel = $parentlevel->id;
         $this->notice = $notice;
+        $this->syscontext = $syscontext;
 
         parent::__construct($actionurl);
     }
@@ -131,6 +132,15 @@ class department_display_form extends company_moodleform {
                                 get_string('editdepartments', 'block_iomad_company_admin'));
             $buttonarray[] = $mform->createElement('submit', 'delete',
                                 get_string('deletedepartment', 'block_iomad_company_admin'));
+            if (iomad::has_capability('block/iomad_company_admin:export_departments', $this->syscontext)) {
+                $buttonarray[] = $mform->createElement('submit', 'export',
+                                        get_string('exportdepartment', 'block_iomad_company_admin'));
+            }
+        } else {
+            if (iomad::has_capability('block/iomad_company_admin:import_departments', $this->syscontext)) {
+                $buttonarray[] = $mform->createElement('submit', 'import',
+                                        get_string('importdepartment', 'block_iomad_company_admin'));
+            }
         }
         $mform->addGroup($buttonarray, 'buttonarray', '', array(' '), false);
         }
@@ -198,7 +208,6 @@ if ($deleteid && confirm_sesskey() && $confirm == md5($deleteid)) {
         }
     }
 }
-
 $noticestring = '';
 if ($mform->is_cancelled()) {
     redirect($companylist);
@@ -207,6 +216,24 @@ if ($mform->is_cancelled()) {
     if (!empty($data->create) ) {
         redirect(new moodle_url($CFG->wwwroot . '/blocks/iomad_company_admin/company_department_create_form.php',
                                 array('deptid' => $departmentid)));
+        die;
+    } else if (!empty($data->import)) {
+        redirect(new moodle_url('/blocks/iomad_company_admin/company_department_import_form.php'));
+    } else if (!empty($data->export)) {
+        $company = new company($companyid);
+        $parentlevel = company::get_company_parentnode($companyid);
+        $departmenttree = company::get_all_subdepartments_raw($parentlevel->id);
+        // create filename
+        $filename = clean_filename( $company->get_shortname() . '-departments.json' );
+
+        // headers
+        header("Content-Type: application/json\n");
+        header("Content-Disposition: attachment; filename=$filename");
+        header("Expires: 0");
+        header("Cache-Control: must-revalidate,post-check=0,pre-check=0");
+        header("Pragma: public");
+
+        echo json_encode($departmenttree);
         die;
     } else if (isset($data->delete)) {
         // Check the department is valid.

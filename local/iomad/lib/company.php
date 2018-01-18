@@ -803,6 +803,42 @@ class company {
     }
 
     /**
+     * Set up default company department.
+     *
+     * Parameters -
+     *              $companyid = INT;
+     *              $currentdepartment = department obtject;
+     *              $importtree = json decoded department tree;
+     *              $toplevel = boolean - true if this is the first time the tree is being accessed so initial value will be the same as the parent department. 
+     *
+     **/
+    public static function import_departments($companyid, $currentdepartment, $importtree, $toplevel = false) {
+        global $DB;
+
+        if (!$toplevel) {
+            // Creating a new department.
+            $newdepartment = new stdclass();
+            $newdepartment->name = $importtree->name;
+            $newdepartment->shortname = $importtree->shortname;
+            $newdepartment->company = $companyid;
+            $newdepartment->parent = $currentdepartment->id;
+            $newdepartment->id = $DB->insert_record('department', $newdepartment);
+        } else {
+            // Already created so pass it.
+            $newdepartment = $currentdepartment;
+        }
+        // Are there any children?
+        if (empty($importtree->children)) {
+            return;
+        } else {
+            // Create them.
+            foreach ($importtree->children as $child) {
+                self::import_departments($companyid, $newdepartment, $child, false);
+            }
+        }
+    }
+
+    /**
      * Get the department a user is associated to.
      *
      * Parameters -

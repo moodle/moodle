@@ -229,6 +229,18 @@ $capabilities = array(
         'contextlevel' => CONTEXT_BLOCK,
     ),
 
+    'block/iomad_company_admin:export_departments' => array(
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_BLOCK,
+    ),
+
+    'block/iomad_company_admin:import_departments' => array(
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_BLOCK,
+    ),
+
     'block/iomad_company_admin:edit_all_departments' => array(
 
         'captype' => 'write',
