@@ -113,14 +113,24 @@ if ($display) {
     $table->data = array();
 
     foreach ($instances as $i) {
+        // Contents of the actions (Show / hide) column.
+        $actions = '';
+
+        // Configure icon.
+        if ($i->has_user_config()) {
+            $configurl = new moodle_url($baseurl);
+            $configurl->param('config', $i->get('id'));
+            $actions .= html_writer::link($configurl, $OUTPUT->pix_icon('t/edit', get_string('configure', 'portfolio')));
+        }
+
+        // Hide/show icon.
         $visible = $i->get_user_config('visible', $USER->id);
-        $table->data[] = array($i->get('name'), $i->get('plugin'),
-            ($i->has_user_config()
-                ? '<a href="' . $baseurl . '?config=' . $i->get('id') . '">' .
-                    $OUTPUT->pix_icon('t/edit', get_string('configure')) . '</a>' : '') .
-                   ' <a href="' . $baseurl . '?hide=' . $i->get('id') . '">' .
-                    $OUTPUT->pix_icon('t/' . (($visible) ? 'hide' : 'show')), get_string($visible ? 'hide' : 'show') . '</a><br />'
-        );
+        $visibilityaction = $visible ? 'hide' : 'show';
+        $showhideurl = new moodle_url($baseurl);
+        $showhideurl->param('hide', $i->get('id'));
+        $actions .= html_writer::link($showhideurl, $OUTPUT->pix_icon('t/' . $visibilityaction, get_string($visibilityaction)));
+
+        $table->data[] = array($i->get('name'), $i->get('plugin'), $actions);
     }
 
     echo html_writer::table($table);
