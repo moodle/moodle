@@ -561,5 +561,64 @@ class core_blog_external_testcase extends advanced_testcase {
         $this->expectException('moodle_exception');
         $result = core_blog\external::get_entries(array(array('name' => 'zzZZzz', 'value' => 'wwWWww')));
     }
+
+    /**
+     * Test view_blog_entries without filter.
+     */
+    public function test_view_blog_entries_without_filtering() {
+        // Test user with full capabilities.
+        $this->setUser($this->userid);
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $result = core_blog\external::view_entries();
+        $result = external_api::clean_returnvalue(core_blog\external::view_entries_returns(), $result);
+
+        $events = $sink->get_events();
+        $this->assertCount(1, $events);
+        $event = array_shift($events);
+        // Checking that the event contains the expected values (empty, no filtering done).
+        $this->assertInstanceOf('\core\event\blog_entries_viewed', $event);
+        $this->assertEmpty($event->get_data()['relateduserid']);
+        $this->assertEmpty($event->get_data()['other']['entryid']);
+        $this->assertEmpty($event->get_data()['other']['tagid']);
+        $this->assertEmpty($event->get_data()['other']['userid']);
+        $this->assertEmpty($event->get_data()['other']['modid']);
+        $this->assertEmpty($event->get_data()['other']['groupid']);
+        $this->assertEmpty($event->get_data()['other']['search']);
+        $this->assertEmpty($event->get_data()['other']['courseid']);
+        $this->assertEventContextNotUsed($event);
+        $this->assertNotEmpty($event->get_name());
+    }
+
+    /**
+     * Test view_blog_entries doing filtering.
+     */
+    public function test_view_blog_entries_with_filtering() {
+        // Test user with full capabilities.
+        $this->setUser($this->userid);
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $result = core_blog\external::view_entries(array(
+            array('name' => 'tagid', 'value' => $this->tagid),
+            array('name' => 'userid', 'value' => $this->userid),
+        ));
+        $result = external_api::clean_returnvalue(core_blog\external::view_entries_returns(), $result);
+
+        $events = $sink->get_events();
+        $this->assertCount(1, $events);
+        $event = array_shift($events);
+        // Checking that the event contains the expected values (filter by user and tag).
+        $this->assertInstanceOf('\core\event\blog_entries_viewed', $event);
+        $this->assertEquals($this->userid, $event->get_data()['relateduserid']);
+        $this->assertEmpty($event->get_data()['other']['entryid']);
+        $this->assertEquals($this->tagid, $event->get_data()['other']['tagid']);
+        $this->assertEquals($this->userid, $event->get_data()['other']['userid']);
+        $this->assertEmpty($event->get_data()['other']['modid']);
+        $this->assertEmpty($event->get_data()['other']['groupid']);
+        $this->assertEmpty($event->get_data()['other']['search']);
+        $this->assertEmpty($event->get_data()['other']['courseid']);
+        $this->assertEventContextNotUsed($event);
+        $this->assertNotEmpty($event->get_name());
+    }
 }
 
