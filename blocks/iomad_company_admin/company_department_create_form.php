@@ -212,6 +212,7 @@ if ($editform->is_cancelled()) {
                                        $createdata->shortname,
                                        $createdata->deptid);
         } else {
+            $parentdept = $DB->get_record('department', array('id' => $createdata->deptid));
             echo $output->header();
             echo $output->heading(get_string('movedepartment', 'block_iomad_company_admin'));
             $optionsyes = array('moveid' => $departmentid,
@@ -221,7 +222,8 @@ if ($editform->is_cancelled()) {
                                 'moveshortname' => $createdata->shortname,
                                 'moveparent' => $createdata->deptid,
                                 'sesskey' => sesskey());
-            echo $output->confirm(get_string('movedepartmentcheckfull', 'block_iomad_company_admin', "'$current->name'"),
+            $deptstring = (object) array('current' => $createdata->fullname, 'newparent' => $parentdept->name);
+            echo $output->confirm(get_string('movedepartmentcheckfull', 'block_iomad_company_admin', $deptstring),
                                   new moodle_url('company_department_create_form.php', $optionsyes), 'company_departments.php');
             die;
         }
