@@ -1323,6 +1323,10 @@ function user_get_participants_sql($courseid, $groupid = 0, $accesssince = 0, $r
             $searchkey1 = 'search' . $index . '1';
             $searchkey2 = 'search' . $index . '2';
             $searchkey3 = 'search' . $index . '3';
+            $searchkey4 = 'search' . $index . '4';
+            $searchkey5 = 'search' . $index . '5';
+            $searchkey6 = 'search' . $index . '6';
+            $searchkey7 = 'search' . $index . '7';
 
             $conditions = array();
             // Search by fullname.
@@ -1356,10 +1360,30 @@ function user_get_participants_sql($courseid, $groupid = 0, $accesssince = 0, $r
             }
             $conditions[] = $idnumber;
 
+            // Search by middlename.
+            $middlename = $DB->sql_like('middlename', ':' . $searchkey4, false, false);
+            $conditions[] = $middlename;
+
+            // Search by alternatename.
+            $alternatename = $DB->sql_like('alternatename', ':' . $searchkey5, false, false);
+            $conditions[] = $alternatename;
+
+            // Search by firstnamephonetic.
+            $firstnamephonetic = $DB->sql_like('firstnamephonetic', ':' . $searchkey6, false, false);
+            $conditions[] = $firstnamephonetic;
+
+            // Search by lastnamephonetic.
+            $lastnamephonetic = $DB->sql_like('lastnamephonetic', ':' . $searchkey7, false, false);
+            $conditions[] = $lastnamephonetic;
+
             $wheres[] = "(". implode(" OR ", $conditions) .") ";
             $params[$searchkey1] = "%$keyword%";
             $params[$searchkey2] = "%$keyword%";
             $params[$searchkey3] = "%$keyword%";
+            $params[$searchkey4] = "%$keyword%";
+            $params[$searchkey5] = "%$keyword%";
+            $params[$searchkey6] = "%$keyword%";
+            $params[$searchkey7] = "%$keyword%";
         }
     }
 
