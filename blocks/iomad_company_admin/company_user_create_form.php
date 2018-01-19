@@ -74,7 +74,7 @@ class user_edit_form extends company_moodleform {
     }
 
     public function definition() {
-        global $CFG, $DB;
+        global $CFG, $DB, $output;
 
         // Get the system context.
         $systemcontext = context_system::instance();
@@ -141,11 +141,22 @@ class user_edit_form extends company_moodleform {
         $mform->disabledIf('due', 'sendnewpasswordemails', 'eq', '0');
         $mform->addHelpButton('due', 'senddate', 'block_iomad_company_admin');
 
+
         // Deal with company optional fields.
         $mform->addElement('header', 'category_id', get_string('advanced'));
+        $mform->addElement('header', 'category_id', format_string(get_string('companyprofilefields', 'block_iomad_company_admin')));
+
+        $departmentslist = company::get_all_subdepartments($this->userdepartment);
+        $departmenttree = company::get_all_subdepartments_raw($this->userdepartment);
+        $treehtml = $output->department_tree($departmenttree, optional_param('userdepartment', 0, PARAM_INT));
+
+        $mform->addElement('html', $treehtml);
+        $mform->addElement('html', "<div style='display: none;'>");
         // Department drop down.
         $mform->addElement('select', 'userdepartment', get_string('department', 'block_iomad_company_admin'),
                             $this->subhierarchieslist, $this->userdepartment);
+
+        $mform->addElement('html', "</div>");
 
         // Add in company/department manager checkboxes.
         $managerarray = array();
@@ -385,6 +396,13 @@ $PAGE->set_heading(get_string('name', 'local_iomad_dashboard') . " - $linktext")
 
 $PAGE->requires->jquery();
 
+$output = $PAGE->get_renderer('block_iomad_company_admin');
+
+// Javascript for fancy select.
+// Parameter is name of proper select form element. 
+$PAGE->requires->js_call_amd('block_iomad_company_admin/department_select', 'init', array('userdepartment', '', $departmentid));
+
+
 // Build the nav bar.
 company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
 
@@ -545,7 +563,7 @@ if ($mform->is_cancelled()) {
         redirect($linkurl."?createdok=1");
     }
 }
-echo $OUTPUT->header();
+echo $output->header();
 
 // Check the department is valid.
 if (!empty($departmentid) && !company::check_valid_department($companyid, $departmentid)) {
@@ -599,5 +617,5 @@ if ($createdok) {
 // Display the form.
 $mform->display();
 
-echo $OUTPUT->footer();
+echo $output->footer();
 
