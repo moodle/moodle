@@ -100,6 +100,7 @@ $string['search'] = 'Search';
 $string['search:message_received'] = 'Messages - received';
 $string['search:message_sent'] = 'Messages - sent';
 $string['search:mycourse'] = 'My courses';
+$string['search:section'] = 'Course sections';
 $string['search:user'] = 'Users';
 $string['searcharea'] = 'Search area';
 $string['searching'] = 'Searching in ...';
