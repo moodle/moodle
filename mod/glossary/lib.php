@@ -1325,7 +1325,6 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode='',$h
         $return .= '<div>'.$comment->output(true).'</div>';
         $output = true;
     }
-    $return .= '<hr>';
 
     //If we haven't calculated any REAL thing, delete result ($return)
     if (!$output) {
@@ -1369,11 +1368,12 @@ function  glossary_print_entry_lower_section($course, $cm, $glossary, $entry, $m
             echo '<tr valign="top"><td class="icons">'.$icons.'</td></tr>';
         }
         if (!empty($entry->rating)) {
-            echo '<tr valign="top"><td class="ratings">';
+            echo '<tr valign="top"><td class="ratings p-t-1">';
             glossary_print_entry_ratings($course, $entry);
             echo '</td></tr>';
         }
         echo '</table>';
+        echo "<hr>\n";
     }
 }
 
