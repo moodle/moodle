@@ -204,7 +204,7 @@ if ($editform->is_cancelled()) {
         // We are editing a current department.
         // Check if we are moving this department.
         $current = $DB->get_record('department', array('id' => $createdata->departmentid));
-        if ($current->parent == $createdata->deptid) {
+        if (empty($current) || $current->parent == $createdata->deptid) {
             // Not moving.  Save it.
             company::create_department($createdata->departmentid,
                                        $companyid,
