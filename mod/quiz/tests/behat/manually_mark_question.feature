@@ -85,7 +85,7 @@ Feature: Teachers can override the grade for any question
     And I set the field "Comment" to "<img src=\"@@PLUGINFILE@@/moodle_logo.jpg\" alt=\"It's the logo\" width=\"48\" height=\"48\" class=\"img-responsive atto_image_button_text-bottom\"><!-- File hash: a8e3ffba4ab315b3fb9187ebbf122fe9 -->"
     And I press "Save" and switch to main window
     And I switch to the main window
-    And I should see "It's the logo" in the "3" "table_row"
-    And "//*[contains(@class, 'comment')]//img[contains(@src, 'moodle_logo.jpg')]" "xpath_element" should exist
+    And I should see "Commented: [It's the logo]" in the ".history table" "css_element"
+    And "img[contains(@src, 'moodle_logo.jpg')]" "xpath_element" should exist in the ".comment" "css_element"
     # This time is same as time the window is open. So wait for it to close before proceeding.
     And I wait "2" seconds
