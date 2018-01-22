@@ -11,6 +11,8 @@ information provided here is intended especially for developers.
 * Event triggering and event handlers:
     - The following events, deprecated since moodle 2.6, have been finally removed: groups_members_removed,
       groups_groupings_groups_removed, groups_groups_deleted, groups_groupings_deleted.
+* The following functions have been finally deprecated and can not be used any more:
+  - notify()
 
 === 3.4 ===
 
