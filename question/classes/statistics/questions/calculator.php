@@ -106,7 +106,7 @@ class calculator {
                 $israndomquestion = ($step->questionid != $this->stats->for_slot($step->slot)->questionid);
                 $breakdownvariants = !$israndomquestion && $this->stats->for_slot($step->slot)->break_down_by_variant();
                 // If this is a variant we have not seen before create a place to store stats calculations for this variant.
-                if ($breakdownvariants && is_null($this->stats->for_slot($step->slot , $step->variant))) {
+                if ($breakdownvariants && !$this->stats->has_slot($step->slot, $step->variant)) {
                     $question = $this->stats->for_slot($step->slot)->question;
                     $this->stats->initialise_for_slot($step->slot, $question, $step->variant);
                     $this->stats->for_slot($step->slot, $step->variant)->randomguessscore =
@@ -118,14 +118,14 @@ class calculator {
 
                 // If this is a random question do the calculations for sub question stats.
                 if ($israndomquestion) {
-                    if (is_null($this->stats->for_subq($step->questionid))) {
+                    if (!$this->stats->has_subq($step->questionid)) {
                         $this->stats->initialise_for_subq($step);
                     } else if ($this->stats->for_subq($step->questionid)->maxmark != $step->maxmark) {
                         $this->stats->for_subq($step->questionid)->differentweights = true;
                     }
 
                     // If this is a variant of this subq we have not seen before create a place to store stats calculations for it.
-                    if (is_null($this->stats->for_subq($step->questionid, $step->variant))) {
+                    if (!$this->stats->has_subq($step->questionid, $step->variant)) {
                         $this->stats->initialise_for_subq($step, $step->variant);
                     }
 
