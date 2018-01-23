@@ -245,9 +245,27 @@ if ($ADMIN->fulltree) {
         // Create system role mapping field for each assignable system role.
         $roles = get_ldap_assignable_role_names();
         foreach ($roles as $role) {
-            $settings->add(new admin_setting_configtext('auth_ldap/' . $role['settingname'],
+            // Before we can add this setting we need to check a few things.
+            // A) It does not exceed 100 characters otherwise it will break the DB as the 'name' field
+            //    in the 'config_plugins' table is a varchar(100).
+            // B) The setting name does not contain hyphens. If it does then it will fail the check
+            //    in parse_setting_name() and everything will explode. Role short names are validated
+            //    against PARAM_ALPHANUMEXT which is similar to the regex used in parse_setting_name()
+            //    except it also allows hyphens.
+            // Instead of shortening the name and removing/replacing the hyphens we are showing a warning.
+            // If we were to manipulate the setting name by removing the hyphens we may get conflicts, eg
+            // 'thisisashortname' and 'this-is-a-short-name'. The same applies for shortening the setting name.
+            if (core_text::strlen($role['settingname']) > 100 || !preg_match('/^[a-zA-Z0-9_]+$/', $role['settingname'])) {
+                $url = new moodle_url('/admin/roles/define.php', array('action' => 'edit', 'roleid' => $role['id']));
+                $a = (object)['rolename' => $role['localname'], 'shortname' => $role['shortname'], 'charlimit' => 93,
+                    'link' => $url->out()];
+                $settings->add(new admin_setting_heading('auth_ldap/role_not_mapped_' . sha1($role['settingname']), '',
+                    get_string('cannotmaprole', 'auth_ldap', $a)));
+            } else {
+                $settings->add(new admin_setting_configtext('auth_ldap/' . $role['settingname'],
                     get_string('auth_ldap_rolecontext', 'auth_ldap', $role),
                     get_string('auth_ldap_rolecontext_help', 'auth_ldap', $role), '', PARAM_RAW_TRIMMED));
+            }
         }
 
         // User Account Sync.
