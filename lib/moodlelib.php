@@ -3667,6 +3667,9 @@ function get_user_field_name($field) {
         case 'msn' : {
             return get_string('msnid');
         }
+        case 'picture' : {
+            return get_string('pictureofuser');
+        }
     }
     // Otherwise just use the same lang string.
     return get_string($field);
