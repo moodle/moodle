@@ -54,6 +54,10 @@ class core_cohort_external extends external_api {
                             'description' => new external_value(PARAM_RAW, 'cohort description', VALUE_OPTIONAL),
                             'descriptionformat' => new external_format_value('description', VALUE_DEFAULT),
                             'visible' => new external_value(PARAM_BOOL, 'cohort visible', VALUE_OPTIONAL, true),
+                            'theme' => new external_value(PARAM_THEME,
+                                'the cohort theme. The allowcohortthemes setting must be enabled on Moodle',
+                                VALUE_OPTIONAL
+                            ),
                         )
                     )
                 )
@@ -73,6 +77,8 @@ class core_cohort_external extends external_api {
         require_once("$CFG->dirroot/cohort/lib.php");
 
         $params = self::validate_parameters(self::create_cohorts_parameters(), array('cohorts' => $cohorts));
+
+        $availablethemes = cohort_get_list_of_themes();
 
         $transaction = $DB->start_delegated_transaction();
 
@@ -107,6 +113,15 @@ class core_cohort_external extends external_api {
             self::validate_context($context);
             require_capability('moodle/cohort:manage', $context);
 
+            // Make sure theme is valid.
+            if (isset($cohort->theme)) {
+                if (!empty($CFG->allowcohortthemes)) {
+                    if (empty($availablethemes[$cohort->theme])) {
+                        throw new moodle_exception('errorinvalidparam', 'webservice', '', 'theme');
+                    }
+                }
+            }
+
             // Validate format.
             $cohort->descriptionformat = external_validate_format($cohort->descriptionformat);
             $cohort->id = cohort_add_cohort($cohort);
@@ -137,6 +152,7 @@ class core_cohort_external extends external_api {
                     'description' => new external_value(PARAM_RAW, 'cohort description'),
                     'descriptionformat' => new external_format_value('description'),
                     'visible' => new external_value(PARAM_BOOL, 'cohort visible'),
+                    'theme' => new external_value(PARAM_THEME, 'cohort theme', VALUE_OPTIONAL),
                 )
             )
         );
@@ -223,7 +239,7 @@ class core_cohort_external extends external_api {
      * @since Moodle 2.5
      */
     public static function get_cohorts($cohortids = array()) {
-        global $DB;
+        global $DB, $CFG;
 
         $params = self::validate_parameters(self::get_cohorts_parameters(), array('cohortids' => $cohortids));
 
@@ -243,6 +259,11 @@ class core_cohort_external extends external_api {
             self::validate_context($context);
             if (!has_any_capability(array('moodle/cohort:manage', 'moodle/cohort:view'), $context)) {
                 throw new required_capability_exception($context, 'moodle/cohort:view', 'nopermissions', '');
+            }
+
+            // Only return theme when $CFG->allowcohortthemes is enabled.
+            if (!empty($cohort->theme) && empty($CFG->allowcohortthemes)) {
+                $cohort->theme = null;
             }
 
             list($cohort->description, $cohort->descriptionformat) =
@@ -271,6 +292,7 @@ class core_cohort_external extends external_api {
                     'description' => new external_value(PARAM_RAW, 'cohort description'),
                     'descriptionformat' => new external_format_value('description'),
                     'visible' => new external_value(PARAM_BOOL, 'cohort visible'),
+                    'theme' => new external_value(PARAM_THEME, 'cohort theme', VALUE_OPTIONAL),
                 )
             )
         );
@@ -367,6 +389,12 @@ class core_cohort_external extends external_api {
         $cohorts = array();
         foreach ($results as $key => $cohort) {
             $cohortcontext = context::instance_by_id($cohort->contextid);
+
+            // Only return theme when $CFG->allowcohortthemes is enabled.
+            if (!empty($cohort->theme) && empty($CFG->allowcohortthemes)) {
+                $cohort->theme = null;
+            }
+
             if (!isset($cohort->description)) {
                 $cohort->description = '';
             }
@@ -399,6 +427,7 @@ class core_cohort_external extends external_api {
                     'description' => new external_value(PARAM_RAW, 'cohort description'),
                     'descriptionformat' => new external_format_value('description'),
                     'visible' => new external_value(PARAM_BOOL, 'cohort visible'),
+                    'theme' => new external_value(PARAM_THEME, 'cohort theme', VALUE_OPTIONAL),
                 ))
             )
         ));
@@ -432,6 +461,10 @@ class core_cohort_external extends external_api {
                             'description' => new external_value(PARAM_RAW, 'cohort description', VALUE_OPTIONAL),
                             'descriptionformat' => new external_format_value('description', VALUE_DEFAULT),
                             'visible' => new external_value(PARAM_BOOL, 'cohort visible', VALUE_OPTIONAL),
+                            'theme' => new external_value(PARAM_THEME,
+                                'the cohort theme. The allowcohortthemes setting must be enabled on Moodle',
+                                VALUE_OPTIONAL
+                            ),
                         )
                     )
                 )
@@ -451,6 +484,8 @@ class core_cohort_external extends external_api {
         require_once("$CFG->dirroot/cohort/lib.php");
 
         $params = self::validate_parameters(self::update_cohorts_parameters(), array('cohorts' => $cohorts));
+
+        $availablethemes = cohort_get_list_of_themes();
 
         $transaction = $DB->start_delegated_transaction();
         $syscontext = context_system::instance();
@@ -488,6 +523,14 @@ class core_cohort_external extends external_api {
 
                 self::validate_context($context);
                 require_capability('moodle/cohort:manage', $context);
+            }
+
+            // Make sure theme is valid.
+            if (!empty($cohort->theme) && !empty($CFG->allowcohortthemes)) {
+                if (empty($availablethemes[$cohort->theme])) {
+                    $debuginfo = 'The following cohort theme is not installed on this site: '.$cohort->theme;
+                    throw new moodle_exception('errorinvalidparam', 'webservice', '', 'theme', $debuginfo);
+                }
             }
 
             if (!empty($cohort->description)) {

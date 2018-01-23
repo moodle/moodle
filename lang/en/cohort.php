@@ -58,6 +58,7 @@ $string['eventcohortmemberadded'] = 'User added to a cohort';
 $string['eventcohortmemberremoved'] = 'User removed from a cohort';
 $string['eventcohortupdated'] = 'Cohort updated';
 $string['external'] = 'External cohort';
+$string['invalidtheme'] = 'Cohort theme does not exist';
 $string['idnumber'] = 'Cohort ID';
 $string['memberscount'] = 'Cohort size';
 $string['name'] = 'Name';

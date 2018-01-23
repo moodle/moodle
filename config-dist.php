@@ -418,8 +418,10 @@ $CFG->admin = 'admin';
 // example) in sites where the user theme should override all other theme
 // settings for accessibility reasons. You can also disable types of themes
 // (other than site)  by removing them from the array. The default setting is:
-//      $CFG->themeorder = array('course', 'category', 'session', 'user', 'site');
-// NOTE: course, category, session, user themes still require the
+//
+//     $CFG->themeorder = array('course', 'category', 'session', 'user', 'cohort', 'site');
+//
+// NOTE: course, category, session, user, cohort themes still require the
 // respective settings to be enabled
 //
 // It is possible to add extra themes directory stored outside of $CFG->dirroot.

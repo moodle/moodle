@@ -359,7 +359,7 @@ class cohort_upload_form extends moodleform {
         $columns = $cir->get_columns();
 
         // Check that columns include 'name' and warn about extra columns.
-        $allowedcolumns = array('contextid', 'name', 'idnumber', 'description', 'descriptionformat', 'visible');
+        $allowedcolumns = array('contextid', 'name', 'idnumber', 'description', 'descriptionformat', 'visible', 'theme');
         $additionalcolumns = array('context', 'category', 'category_id', 'category_idnumber', 'category_path');
         $displaycolumns = array();
         $extracolumns = array();
@@ -424,6 +424,13 @@ class cohort_upload_form extends moodleform {
                 $cohorts[$rownum]['errors'][] = new lang_string('namefieldempty', 'cohort');
             }
 
+            if (!empty($hash['theme']) && !empty($CFG->allowcohortthemes)) {
+                $availablethemes = cohort_get_list_of_themes();
+                if (empty($availablethemes[$hash['theme']])) {
+                    $cohorts[$rownum]['errors'][] = new lang_string('invalidtheme', 'cohort');
+                }
+            }
+
             $cohorts[$rownum]['data'] = array_intersect_key($hash, $cohorts[0]['data']);
             $haserrors = $haserrors || !empty($cohorts[$rownum]['errors']);
             $haswarnings = $haswarnings || !empty($cohorts[$rownum]['warnings']);
@@ -465,6 +472,9 @@ class cohort_upload_form extends moodleform {
                         }
                         $hash[$key] = clean_param($value, PARAM_BOOL) ? 1 : 0;
                     }
+                    break;
+                case 'theme':
+                    $hash[$key] = core_text::substr(clean_param($value, PARAM_TEXT), 0, 50);
                     break;
             }
         }
