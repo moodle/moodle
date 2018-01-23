@@ -322,7 +322,7 @@ class report_completion {
         // Get the user details.
         $shortname = addslashes($course->shortname);
         $countsql = "SELECT cc.id,
-                     ue.timestart AS timeenrolled,
+                     cc.timeenrolled AS timeenrolled,
                      cc.timestarted,
                      cc.timecompleted,
                      cc.finalscore ";
@@ -332,7 +332,7 @@ class report_completion {
                       u.email AS email,
                       '{$shortname}' AS coursename,
                       '$courseid' AS courseid,
-                      ue.timestart AS timeenrolled,
+                      cc.timeenrolled AS timeenrolled,
                       cc.timestarted AS timestarted,
                       cc.timecompleted AS timecompleted,
                       cc.certsource as certsource,
@@ -342,13 +342,9 @@ class report_completion {
                      JOIN {".$tempcomptablename."} cc ON (u.id = cc.userid)
                      JOIN {company_users} du ON (u.id = du.userid)
                      JOIN {department} d ON (du.departmentid = d.id)
-                     JOIN {user_enrolments} ue ON (u.id = ue.userid)
-                     JOIN {enrol} e ON (ue.enrolid = e.id and cc.courseid = e.courseid)
                     WHERE $searchinfo->sqlsearch
                     AND cc.userid = u.id
                     AND u.id = cc.userid
-                    AND e.courseid = cc.courseid
-                    AND ue.userid = cc.userid
                     AND du.userid = u.id
                     AND d.id = du.departmentid
                     AND du.companyid = :companyid
@@ -447,7 +443,7 @@ class report_completion {
                 u.email AS email,
                 co.shortname AS coursename,
                 co.id AS courseid,
-                ue.timestart AS timeenrolled,
+                cc.timeenrolled AS timeenrolled,
                 cc.timestarted AS timestarted,
                 cc.timecompleted AS timecompleted,
                 cc.finalscore AS result,
@@ -457,8 +453,6 @@ class report_completion {
                 WHERE $searchinfo->sqlsearch
                 AND co.id = cc.courseid
                 AND u.id = cc.userid
-                AND e.courseid = cc.courseid
-                AND ue.userid = cc.userid
                 AND du.userid = u.id
                 AND d.id = du.departmentid
                 AND du.companyid = :companyid
