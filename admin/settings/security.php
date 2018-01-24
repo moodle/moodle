@@ -49,8 +49,21 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
                        3600 => new lang_string('numminutes', '', 60))));
 
     $temp->add(new admin_setting_configcheckbox('extendedusernamechars', new lang_string('extendedusernamechars', 'admin'), new lang_string('configextendedusernamechars', 'admin'), 0));
-    $temp->add(new admin_setting_configtext('sitepolicy', new lang_string('sitepolicy', 'admin'), new lang_string('sitepolicy_help', 'admin'), '', PARAM_RAW));
-    $temp->add(new admin_setting_configtext('sitepolicyguest', new lang_string('sitepolicyguest', 'admin'), new lang_string('sitepolicyguest_help', 'admin'), (isset($CFG->sitepolicy) ? $CFG->sitepolicy : ''), PARAM_RAW));
+
+    $sitepolicyhandlers = ['' => new lang_string('sitepolicyhandlercore', 'core_admin')];
+    foreach (get_plugins_with_function('site_policy_handler') as $ptype => $pnames) {
+        foreach ($pnames as $pname => $fname) {
+            $sitepolicyhandlers[$ptype.'_'.$pname] = new lang_string('sitepolicyhandlerplugin', 'core_admin',
+                ['name' => new lang_string('pluginname', $ptype.'_'.$pname), 'component' => $ptype.'_'.$pname]);
+        }
+    }
+    $temp->add(new admin_setting_configselect('sitepolicyhandler', new lang_string('sitepolicyhandler', 'core_admin'),
+        new lang_string('sitepolicyhandler_desc', 'core_admin'), '', $sitepolicyhandlers));
+    $temp->add(new admin_setting_configtext('sitepolicy', new lang_string('sitepolicy', 'core_admin'),
+        new lang_string('sitepolicy_help', 'core_admin'), '', PARAM_RAW));
+    $temp->add(new admin_setting_configtext('sitepolicyguest', new lang_string('sitepolicyguest', 'core_admin'),
+        new lang_string('sitepolicyguest_help', 'core_admin'), (isset($CFG->sitepolicy) ? $CFG->sitepolicy : ''), PARAM_RAW));
+
     $temp->add(new admin_setting_configcheckbox('extendedusernamechars', new lang_string('extendedusernamechars', 'admin'), new lang_string('configextendedusernamechars', 'admin'), 0));
     $temp->add(new admin_setting_configcheckbox('keeptagnamecase', new lang_string('keeptagnamecase','admin'),new lang_string('configkeeptagnamecase', 'admin'),'1'));
 

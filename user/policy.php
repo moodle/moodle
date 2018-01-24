@@ -22,6 +22,9 @@
  * @package core_user
  */
 
+// Do not check for the site policies in require_login() to avoid the redirect loop.
+define('NO_SITEPOLICY_CHECK', true);
+
 require_once('../config.php');
 require_once($CFG->libdir.'/filelib.php');
 require_once($CFG->libdir.'/resourcelib.php');
