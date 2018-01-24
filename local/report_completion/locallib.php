@@ -448,18 +448,19 @@ class report_completion {
                 cc.timecompleted AS timecompleted,
                 cc.finalscore AS result,
                 d.name AS department";
-        $fromsql = " FROM {user} u, {".$tempcomptablename."} cc, {department} d, {company_users} du, {course} co, {user_enrolments} ue, {enrol} e
+        $fromsql = " FROM {user} u
+                    JOIN {".$tempcomptablename."} cc ON (u.id = cc.userid)
+                    JOIN {company_users} du ON (u.id = du.userid)
+                    JOIN {department} d ON (du.departmentid = d.id)
+                    JOIN {course} co ON (cc.courseid = co.id)
 
                 WHERE $searchinfo->sqlsearch
-                AND co.id = cc.courseid
-                AND u.id = cc.userid
-                AND du.userid = u.id
-                AND d.id = du.departmentid
                 AND du.companyid = :companyid
                 $companyusql
                 $completionsql $userfilter
                 $searchinfo->sqlsort";
         $searchinfo->searchparams['companyid'] = $companyid;
+
         $users = $DB->get_records_sql($selectsql.$fromsql, $searchinfo->searchparams, $page * $perpage, $perpage);
         $countusers = $DB->get_records_sql($countsql.$fromsql, $searchinfo->searchparams);
         $numusers = count($countusers);
