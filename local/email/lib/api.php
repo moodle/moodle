@@ -169,11 +169,11 @@ class EmailTemplate {
         }
         // Check if we are an admin with a company set.
         if (!empty($SESSION->currenteditingcompany)) {
-            $this->company = new company($SESSION->currenteditingcompany);
+            $this->company = $DB->get_record('company', array('id' => $SESSION->currenteditingcompany));
             // Otherwise use the creating users company.
         } else if (empty($this->company)) {
             $companyid = iomad::get_my_companyid(context_system::instance());
-            $this->company = new company($companyid);
+            $this->company = $DB->get_record('company', array('id' => $companyid));
         }
 
         $this->course = $this->get_course($course);
