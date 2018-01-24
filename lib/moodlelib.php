@@ -2715,9 +2715,33 @@ function require_login($courseorid = null, $autologinguest = true, $cm = null, $
         return;
     }
 
+    // Scripts have a chance to declare that $USER->policyagreed should not be checked.
+    // This is mostly for places where users are actually accepting the policies, to avoid the redirect loop.
+    if (!defined('NO_SITEPOLICY_CHECK')) {
+        define('NO_SITEPOLICY_CHECK', false);
+    }
+
     // Check that the user has agreed to a site policy if there is one - do not test in case of admins.
-    if (!$USER->policyagreed and !is_siteadmin()) {
-        if (!empty($CFG->sitepolicy) and !isguestuser()) {
+    // Do not test if the script explicitly asked for skipping the site policies check.
+    // Also do not check during AJAX requests as they may be actually performed on pages where policies are accepted.
+    if (!$USER->policyagreed && !is_siteadmin() && !NO_SITEPOLICY_CHECK && !AJAX_SCRIPT) {
+        if (!empty($CFG->sitepolicyhandler)) {
+            try {
+                $handler = component_callback($CFG->sitepolicyhandler, 'site_policy_handler');
+            } catch (Exception $e) {
+                debugging('Error while trying to execute the site_policy_handler callback!');
+                $handler = false;
+            }
+            if (!empty($handler) && (empty($PAGE->url) || !$PAGE->url->compare(new moodle_url($handler), URL_MATCH_BASE))) {
+                if ($preventredirect) {
+                    throw new moodle_exception('sitepolicynotagreed', 'error', '', $handler);
+                }
+                if ($setwantsurltome) {
+                    $SESSION->wantsurl = qualified_me();
+                }
+                redirect($handler);
+            }
+        } else if (!empty($CFG->sitepolicy) and !isguestuser()) {
             if ($preventredirect) {
                 throw new moodle_exception('sitepolicynotagreed', 'error', '', $CFG->sitepolicy);
             }
