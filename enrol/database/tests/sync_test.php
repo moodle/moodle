@@ -730,6 +730,13 @@ class enrol_database_testcase extends advanced_testcase {
         $this->assertEquals(1, $DB->count_records('course', array('idnumber' => 'yy')));
         $this->assertEquals(1, $DB->count_records('course', array('shortname' => 'xx')));
 
+        // Check default number of sections matches with the created course sections.
+
+        $recordcourse1 = $DB->get_record('course', $course1);
+        $courseconfig = get_config('moodlecourse');
+        $numsections = $DB->count_records('course_sections', array('course' => $recordcourse1->id));
+        // To compare numsections we have to add topic 0 to default numsections.
+        $this->assertEquals(($courseconfig->numsections + 1), $numsections);
 
         // Test category mapping via idnumber.
 
