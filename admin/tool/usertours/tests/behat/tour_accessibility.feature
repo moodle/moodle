@@ -85,3 +85,34 @@ Feature: Apply accessibility to a tour
     Then the focused element is "Side panel" "button"
     When I press shift tab
     And the focused element is "End tour" "button" in the "Navigation" "dialogue"
+
+  @javascript
+  Scenario: Aria tags should not exist
+    Given I log in as "admin"
+    And I add a new user tour with:
+      | Name                | First tour |
+      | Description         | My first tour |
+      | Apply to URL match  | FRONTPAGE |
+      | Tour is enabled     | 1 |
+    And I add steps to the "First tour" tour:
+      | targettype                  | Title             | Content |
+      | Display in middle of page   | Welcome           | Welcome to your course tour. |
+    And I add steps to the tour:
+      | targettype | targetvalue_selector | Title   | Content   |
+      | Selector   | input,button         | Page 2  | Next page |
+    And I add steps to the tour:
+      | targettype                  | Title   | Content     |
+      | Display in middle of page   | Page 3  | Final page. |
+    And I am on site homepage
+    When I click on "Next" "button"
+    Then "input[aria-describedby^='tour-step-tool_usertours'],button[aria-describedby^='tour-step-tool_usertours']" "css_element" should exist
+    And "input[tabindex],button[tabindex]" "css_element" should exist
+    When I click on "Next" "button"
+    Then "input[aria-describedby^='tour-step-tool_usertours'],button[aria-describedby^='tour-step-tool_usertours']" "css_element" should not exist
+    And "input[tabindex],button[tabindex]" "css_element" should not exist
+    When I click on "Previous" "button"
+    Then "input[aria-describedby^='tour-step-tool_usertours'],button[aria-describedby^='tour-step-tool_usertours']" "css_element" should exist
+    And "input[tabindex],button[tabindex]" "css_element" should exist
+    When I click on "End tour" "button"
+    Then "input[aria-describedby^='tour-step-tool_usertours'],button[aria-describedby^='tour-step-tool_usertours']" "css_element" should not exist
+    And "input[tabindex],button[tabindex]" "css_element" should not exist
