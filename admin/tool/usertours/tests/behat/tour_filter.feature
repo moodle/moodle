@@ -57,23 +57,3 @@ Feature: Apply tour filters to a tour
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I should see "Welcome to your course tour."
-
-  @javascript
-  Scenario: Aria tags should not exist
-    Given I log in as "admin"
-    And I open the User tour settings page
-    # Turn on default tour for boost theme.
-    And I click on "Enable" "link" in the "Boost - administrator" "table_row"
-    And I am on site homepage
-    When I click on "Next" "button"
-    Then "button[aria-describedby^='tour-step-tool_usertours']" "css_element" should exist
-    And "button[tabindex]" "css_element" should exist
-    When I click on "Next" "button"
-    Then "button[aria-describedby^='tour-step-tool_usertours']" "css_element" should not exist
-    And "button[tabindex]" "css_element" should not exist
-    When I click on "Previous" "button"
-    Then "button[aria-describedby^='tour-step-tool_usertours']" "css_element" should exist
-    And "button[tabindex]" "css_element" should exist
-    When I click on "End tour" "button"
-    Then "button[aria-describedby^='tour-step-tool_usertours']" "css_element" should not exist
-    And "button[tabindex]" "css_element" should not exist
