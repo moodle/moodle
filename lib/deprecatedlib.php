@@ -4709,29 +4709,10 @@ function message_contact_link($userid, $linktype='add', $return=false, $script=n
 }
 
 /**
- * Get the users recent event notifications
- *
  * @deprecated since Moodle 3.2
- * @param object $user the current user
- * @param int $limitfrom can be used for paging
- * @param int $limitto can be used for paging
- * @return array
  */
 function message_get_recent_notifications($user, $limitfrom=0, $limitto=100) {
-    debugging('message_get_recent_notifications() is deprecated and is no longer used.', DEBUG_DEVELOPER);
-
-    global $DB;
-
-    $userfields = user_picture::fields('u', array('lastaccess'));
-    $sql = "SELECT mr.id AS message_read_id, $userfields, mr.notification, mr.smallmessage, mr.fullmessage, mr.fullmessagehtml, mr.fullmessageformat, mr.timecreated as timecreated, mr.contexturl, mr.contexturlname
-              FROM {message_read} mr
-                   JOIN {user} u ON u.id=mr.useridfrom
-             WHERE mr.useridto = :userid1 AND u.deleted = '0' AND mr.notification = :notification
-             ORDER BY mr.timecreated DESC";
-    $params = array('userid1' => $user->id, 'notification' => 1);
-
-    $notifications =  $DB->get_records_sql($sql, $params, $limitfrom, $limitto);
-    return $notifications;
+    throw new coding_exception('message_get_recent_notifications() can not be used any more.', DEBUG_DEVELOPER);
 }
 
 /**
@@ -4801,162 +4782,10 @@ function message_history_link($userid1, $userid2, $return=false, $keywords='', $
 }
 
 /**
- * Search a user's messages
- *
- * Returns a list of posts found using an array of search terms
- * eg   word  +word -word
- *
  * @deprecated since Moodle 3.2
- * @param array $searchterms an array of search terms (strings)
- * @param bool $fromme include messages from the user?
- * @param bool $tome include messages to the user?
- * @param mixed $courseid SITEID for admins searching all messages. Other behaviour not yet implemented
- * @param int $userid the user ID of the current user
- * @return mixed An array of messages or false if no matching messages were found
  */
 function message_search($searchterms, $fromme=true, $tome=true, $courseid='none', $userid=0) {
-    debugging('message_search() is deprecated and is no longer used.', DEBUG_DEVELOPER);
-
-    global $CFG, $USER, $DB;
-
-    // If user is searching all messages check they are allowed to before doing anything else.
-    if ($courseid == SITEID && !has_capability('moodle/site:readallmessages', context_system::instance())) {
-        print_error('accessdenied','admin');
-    }
-
-    // If no userid sent then assume current user.
-    if ($userid == 0) $userid = $USER->id;
-
-    // Some differences in SQL syntax.
-    if ($DB->sql_regex_supported()) {
-        $REGEXP    = $DB->sql_regex(true);
-        $NOTREGEXP = $DB->sql_regex(false);
-    }
-
-    $searchcond = array();
-    $params = array();
-    $i = 0;
-
-    // Preprocess search terms to check whether we have at least 1 eligible search term.
-    // If we do we can drop words around it like 'a'.
-    $dropshortwords = false;
-    foreach ($searchterms as $searchterm) {
-        if (strlen($searchterm) >= 2) {
-            $dropshortwords = true;
-        }
-    }
-
-    foreach ($searchterms as $searchterm) {
-        $i++;
-
-        $NOT = false; // Initially we aren't going to perform NOT LIKE searches, only MSSQL and Oracle.
-
-        if ($dropshortwords && strlen($searchterm) < 2) {
-            continue;
-        }
-        // Under Oracle and MSSQL, trim the + and - operators and perform simpler LIKE search.
-        if (!$DB->sql_regex_supported()) {
-            if (substr($searchterm, 0, 1) == '-') {
-                $NOT = true;
-            }
-            $searchterm = trim($searchterm, '+-');
-        }
-
-        if (substr($searchterm,0,1) == "+") {
-            $searchterm = substr($searchterm,1);
-            $searchterm = preg_quote($searchterm, '|');
-            $searchcond[] = "m.fullmessage $REGEXP :ss$i";
-            $params['ss'.$i] = "(^|[^a-zA-Z0-9])$searchterm([^a-zA-Z0-9]|$)";
-
-        } else if (substr($searchterm,0,1) == "-") {
-            $searchterm = substr($searchterm,1);
-            $searchterm = preg_quote($searchterm, '|');
-            $searchcond[] = "m.fullmessage $NOTREGEXP :ss$i";
-            $params['ss'.$i] = "(^|[^a-zA-Z0-9])$searchterm([^a-zA-Z0-9]|$)";
-
-        } else {
-            $searchcond[] = $DB->sql_like("m.fullmessage", ":ss$i", false, true, $NOT);
-            $params['ss'.$i] = "%$searchterm%";
-        }
-    }
-
-    if (empty($searchcond)) {
-        $searchcond = " ".$DB->sql_like('m.fullmessage', ':ss1', false);
-        $params['ss1'] = "%";
-    } else {
-        $searchcond = implode(" AND ", $searchcond);
-    }
-
-    // There are several possibilities
-    // 1. courseid = SITEID : The admin is searching messages by all users
-    // 2. courseid = ??     : A teacher is searching messages by users in
-    //                        one of their courses - currently disabled
-    // 3. courseid = none   : User is searching their own messages;
-    //    a.  Messages from user
-    //    b.  Messages to user
-    //    c.  Messages to and from user
-
-    if ($fromme && $tome) {
-        $searchcond .= " AND ((useridto = :useridto AND timeusertodeleted = 0) OR
-            (useridfrom = :useridfrom AND timeuserfromdeleted = 0))";
-        $params['useridto'] = $userid;
-        $params['useridfrom'] = $userid;
-    } else if ($fromme) {
-        $searchcond .= " AND (useridfrom = :useridfrom AND timeuserfromdeleted = 0)";
-        $params['useridfrom'] = $userid;
-    } else if ($tome) {
-        $searchcond .= " AND (useridto = :useridto AND timeusertodeleted = 0)";
-        $params['useridto'] = $userid;
-    }
-    if ($courseid == SITEID) { // Admin is searching all messages.
-        $m_read   = $DB->get_records_sql("SELECT m.id, m.useridto, m.useridfrom, m.smallmessage, m.fullmessage, m.timecreated
-                                            FROM {message_read} m
-                                           WHERE $searchcond", $params, 0, MESSAGE_SEARCH_MAX_RESULTS);
-        $m_unread = $DB->get_records_sql("SELECT m.id, m.useridto, m.useridfrom, m.smallmessage, m.fullmessage, m.timecreated
-                                            FROM {message} m
-                                           WHERE $searchcond", $params, 0, MESSAGE_SEARCH_MAX_RESULTS);
-
-    } else if ($courseid !== 'none') {
-        // This has not been implemented due to security concerns.
-        $m_read   = array();
-        $m_unread = array();
-
-    } else {
-
-        if ($fromme and $tome) {
-            $searchcond .= " AND (m.useridfrom=:userid1 OR m.useridto=:userid2)";
-            $params['userid1'] = $userid;
-            $params['userid2'] = $userid;
-
-        } else if ($fromme) {
-            $searchcond .= " AND m.useridfrom=:userid";
-            $params['userid'] = $userid;
-
-        } else if ($tome) {
-            $searchcond .= " AND m.useridto=:userid";
-            $params['userid'] = $userid;
-        }
-
-        $m_read   = $DB->get_records_sql("SELECT m.id, m.useridto, m.useridfrom, m.smallmessage, m.fullmessage, m.timecreated
-                                            FROM {message_read} m
-                                           WHERE $searchcond", $params, 0, MESSAGE_SEARCH_MAX_RESULTS);
-        $m_unread = $DB->get_records_sql("SELECT m.id, m.useridto, m.useridfrom, m.smallmessage, m.fullmessage, m.timecreated
-                                            FROM {message} m
-                                           WHERE $searchcond", $params, 0, MESSAGE_SEARCH_MAX_RESULTS);
-
-    }
-
-    /// The keys may be duplicated in $m_read and $m_unread so we can't
-    /// do a simple concatenation
-    $messages = array();
-    foreach ($m_read as $m) {
-        $messages[] = $m;
-    }
-    foreach ($m_unread as $m) {
-        $messages[] = $m;
-    }
-
-    return (empty($messages)) ? false : $messages;
+    throw new coding_exception('message_search() can not be used any more.', DEBUG_DEVELOPER);
 }
 
 /**
@@ -5070,63 +4899,10 @@ function message_get_fragment($message, $keywords) {
 }
 
 /**
- * Retrieve the messages between two users
- *
  * @deprecated since Moodle 3.2
- * @param object $user1 the current user
- * @param object $user2 the other user
- * @param int $limitnum the maximum number of messages to retrieve
- * @param bool $viewingnewmessages are we currently viewing new messages?
  */
 function message_get_history($user1, $user2, $limitnum=0, $viewingnewmessages=false) {
-    debugging('message_get_history() is deprecated and is no longer used.', DEBUG_DEVELOPER);
-
-    global $DB, $CFG;
-
-    $messages = array();
-
-    //we want messages sorted oldest to newest but if getting a subset of messages we need to sort
-    //desc to get the last $limitnum messages then flip the order in php
-    $sort = 'asc';
-    if ($limitnum>0) {
-        $sort = 'desc';
-    }
-
-    $notificationswhere = null;
-    //we have just moved new messages to read. If theyre here to see new messages dont hide notifications
-    if (!$viewingnewmessages && $CFG->messaginghidereadnotifications) {
-        $notificationswhere = 'AND notification=0';
-    }
-
-    //prevent notifications of your own actions appearing in your own message history
-    $ownnotificationwhere = ' AND NOT (useridfrom=? AND notification=1)';
-
-    $sql = "((useridto = ? AND useridfrom = ? AND timeusertodeleted = 0) OR
-        (useridto = ? AND useridfrom = ? AND timeuserfromdeleted = 0))";
-    if ($messages_read = $DB->get_records_select('message_read', $sql . $notificationswhere . $ownnotificationwhere,
-        array($user1->id, $user2->id, $user2->id, $user1->id, $user1->id),
-        "timecreated $sort", '*', 0, $limitnum)) {
-        foreach ($messages_read as $message) {
-            $messages[] = $message;
-        }
-    }
-    if ($messages_new = $DB->get_records_select('message', $sql . $ownnotificationwhere,
-        array($user1->id, $user2->id, $user2->id, $user1->id, $user1->id),
-        "timecreated $sort", '*', 0, $limitnum)) {
-        foreach ($messages_new as $message) {
-            $messages[] = $message;
-        }
-    }
-
-    $result = core_collator::asort_objects_by_property($messages, 'timecreated', core_collator::SORT_NUMERIC);
-
-    //if we only want the last $limitnum messages
-    $messagecount = count($messages);
-    if ($limitnum > 0 && $messagecount > $limitnum) {
-        $messages = array_slice($messages, $messagecount - $limitnum, $limitnum, true);
-    }
-
-    return $messages;
+    throw new coding_exception('message_get_history() can not be used any more.', DEBUG_DEVELOPER);
 }
 
 /**
@@ -6035,144 +5811,11 @@ function prevent_form_autofill_password() {
 }
 
 /**
- * Get the users recent conversations meaning all the people they've recently
- * sent or received a message from plus the most recent message sent to or received from each other user
- *
  * @deprecated since Moodle 3.3 MDL-57370
- * @param object|int $userorid the current user or user id
- * @param int $limitfrom can be used for paging
- * @param int $limitto can be used for paging
- * @return array
  */
 function message_get_recent_conversations($userorid, $limitfrom = 0, $limitto = 100) {
-    global $DB;
-
-    debugging('message_get_recent_conversations() is deprecated. Please use \core_message\api::get_conversations() instead.', DEBUG_DEVELOPER);
-
-    if (is_object($userorid)) {
-        $user = $userorid;
-    } else {
-        $userid = $userorid;
-        $user = new stdClass();
-        $user->id = $userid;
-    }
-
-    $userfields = user_picture::fields('otheruser', array('lastaccess'));
-
-    // This query retrieves the most recent message received from or sent to
-    // seach other user.
-    //
-    // If two messages have the same timecreated, we take the one with the
-    // larger id.
-    //
-    // There is a separate query for read and unread messages as they are stored
-    // in different tables. They were originally retrieved in one query but it
-    // was so large that it was difficult to be confident in its correctness.
-    $uniquefield = $DB->sql_concat('message.useridfrom', "'-'", 'message.useridto');
-    $sql = "SELECT $uniquefield, $userfields,
-                   message.id as mid, message.notification, message.useridfrom, message.useridto,
-                   message.smallmessage, message.fullmessage, message.fullmessagehtml,
-                   message.fullmessageformat, message.timecreated,
-                   contact.id as contactlistid, contact.blocked
-              FROM {message_read} message
-              JOIN (
-                        SELECT MAX(id) AS messageid,
-                               matchedmessage.useridto,
-                               matchedmessage.useridfrom
-                         FROM {message_read} matchedmessage
-                   INNER JOIN (
-                               SELECT MAX(recentmessages.timecreated) timecreated,
-                                      recentmessages.useridfrom,
-                                      recentmessages.useridto
-                                 FROM {message_read} recentmessages
-                                WHERE (
-                                      (recentmessages.useridfrom = :userid1 AND recentmessages.timeuserfromdeleted = 0) OR
-                                      (recentmessages.useridto = :userid2   AND recentmessages.timeusertodeleted = 0)
-                                      )
-                             GROUP BY recentmessages.useridfrom, recentmessages.useridto
-                              ) recent ON matchedmessage.useridto     = recent.useridto
-                           AND matchedmessage.useridfrom   = recent.useridfrom
-                           AND matchedmessage.timecreated  = recent.timecreated
-                           WHERE (
-                                 (matchedmessage.useridfrom = :userid6 AND matchedmessage.timeuserfromdeleted = 0) OR
-                                 (matchedmessage.useridto = :userid7   AND matchedmessage.timeusertodeleted = 0)
-                                 )
-                      GROUP BY matchedmessage.useridto, matchedmessage.useridfrom
-                   ) messagesubset ON messagesubset.messageid = message.id
-              JOIN {user} otheruser ON (message.useridfrom = :userid4 AND message.useridto = otheruser.id)
-                OR (message.useridto   = :userid5 AND message.useridfrom   = otheruser.id)
-         LEFT JOIN {message_contacts} contact ON contact.userid  = :userid3 AND contact.contactid = otheruser.id
-             WHERE otheruser.deleted = 0 AND message.notification = 0
-          ORDER BY message.timecreated DESC";
-    $params = array(
-        'userid1' => $user->id,
-        'userid2' => $user->id,
-        'userid3' => $user->id,
-        'userid4' => $user->id,
-        'userid5' => $user->id,
-        'userid6' => $user->id,
-        'userid7' => $user->id
-    );
-    $read = $DB->get_records_sql($sql, $params, $limitfrom, $limitto);
-
-    // We want to get the messages that have not been read. These are stored in the 'message' table. It is the
-    // exact same query as the one above, except for the table we are querying. So, simply replace references to
-    // the 'message_read' table with the 'message' table.
-    $sql = str_replace('{message_read}', '{message}', $sql);
-    $unread = $DB->get_records_sql($sql, $params, $limitfrom, $limitto);
-
-    $unreadcountssql = 'SELECT useridfrom, count(*) as count
-                          FROM {message}
-                         WHERE useridto = :userid
-                           AND timeusertodeleted = 0
-                           AND notification = 0
-                      GROUP BY useridfrom';
-    $unreadcounts = $DB->get_records_sql($unreadcountssql, array('userid' => $user->id));
-
-    // Union the 2 result sets together looking for the message with the most
-    // recent timecreated for each other user.
-    // $conversation->id (the array key) is the other user's ID.
-    $conversations = array();
-    $conversation_arrays = array($unread, $read);
-    foreach ($conversation_arrays as $conversation_array) {
-        foreach ($conversation_array as $conversation) {
-            // Only consider it unread if $user has unread messages.
-            if (isset($unreadcounts[$conversation->useridfrom])) {
-                $conversation->isread = 0;
-                $conversation->unreadcount = $unreadcounts[$conversation->useridfrom]->count;
-            } else {
-                $conversation->isread = 1;
-            }
-
-            if (!isset($conversations[$conversation->id])) {
-                $conversations[$conversation->id] = $conversation;
-            } else {
-                $current = $conversations[$conversation->id];
-                // We need to maintain the isread and unreadcount values from existing
-                // parts of the conversation if we're replacing it.
-                $conversation->isread = ($conversation->isread && $current->isread);
-                if (isset($current->unreadcount) && !isset($conversation->unreadcount)) {
-                    $conversation->unreadcount = $current->unreadcount;
-                }
-
-                if ($current->timecreated < $conversation->timecreated) {
-                    $conversations[$conversation->id] = $conversation;
-                } else if ($current->timecreated == $conversation->timecreated) {
-                    if ($current->mid < $conversation->mid) {
-                        $conversations[$conversation->id] = $conversation;
-                    }
-                }
-            }
-        }
-    }
-
-    // Sort the conversations by $conversation->timecreated, newest to oldest
-    // There may be multiple conversations with the same timecreated
-    // The conversations array contains both read and unread messages (different tables) so sorting by ID won't work
-    $result = core_collator::asort_objects_by_property($conversations, 'timecreated', core_collator::SORT_NUMERIC);
-    $conversations = array_reverse($conversations);
-
-    return $conversations;
+    throw new coding_exception('message_get_recent_conversations() can not be used any more. ' .
+        'Please use \core_message\api::get_conversations() instead.', DEBUG_DEVELOPER);
 }
 
 /**
