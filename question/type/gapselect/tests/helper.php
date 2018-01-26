@@ -105,4 +105,45 @@ class qtype_gapselect_test_helper {
 
         return $gapselect;
     }
+
+    /**
+     * Get an example gapselect question with multilang entries to use for testing.
+     * @return qtype_gapselect_question
+     */
+    public static function make_a_multilang_gapselect_question() {
+        question_bank::load_question_definition_classes('gapselect');
+        $gapselect = new qtype_gapselect_question();
+
+        test_question_maker::initialise_a_question($gapselect);
+
+        $gapselect->name = 'Multilang select missing words question';
+        $gapselect->questiontext = '<span lang="en" class="multilang">The </span><span lang="ru" class="multilang"></span>[[1]] ' .
+            '<span lang="en" class="multilang">sat on the</span><span lang="ru" class="multilang">сидела на</span> [[2]].';
+        $gapselect->generalfeedback = 'This sentence uses each letter of the alphabet.';
+        $gapselect->qtype = question_bank::get_qtype('gapselect');
+
+        $gapselect->shufflechoices = true;
+
+        test_question_maker::set_standard_combined_feedback_fields($gapselect);
+
+        $gapselect->choices = array(
+                1 => array(
+                    1 => new qtype_gapselect_choice('<span lang="en" class="multilang">cat</span><span lang="ru" ' .
+                        'class="multilang">кошка</span>', 1, true),
+                    2 => new qtype_gapselect_choice('<span lang="en" class="multilang">dog</span><span lang="ru" ' .
+                        'class="multilang">пес</span>', 1, true)),
+                2 => array(
+                    1 => new qtype_gapselect_choice('<span lang="en" class="multilang">mat</span><span lang="ru" ' .
+                        'class="multilang">коврике</span>', 2, true),
+                    2 => new qtype_gapselect_choice('<span lang="en" class="multilang">bat</span><span lang="ru" ' .
+                        'class="multilang">бита</span>', 2, true))
+                );
+
+        $gapselect->places = array(1 => 1, 2 => 2);
+        $gapselect->rightchoices = array(1 => 1, 2 => 1);
+        $gapselect->textfragments = array('<span lang="en" class="multilang">The </span><span lang="ru" class="multilang"></span>',
+            ' <span lang="en" class="multilang">sat on the</span><span lang="ru" class="multilang">сидела на</span> ', '.');
+
+        return $gapselect;
+    }
 }
