@@ -720,14 +720,6 @@ function iomad_get_users_listing($sort='lastaccess', $dir='ASC', $page=0, $recor
         $params['loginevent2'] = '\core\event\user_loggedin'; 
     }
 
-    // Warning: will return UNCONFIRMED USERS!
-    if (!is_siteadmin($USER->id)) {
-        // only show normal users.
-        $managertypesql = " AND cu.managertype = 0";
-    } else {
-        $managertypesql = "";
-    }
-
     // all companies?
     $company = new company($extraparams['companyid']);
 
