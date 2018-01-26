@@ -143,4 +143,27 @@ class qtype_gapselect_walkthrough_test extends qbehaviour_walkthrough_test_base 
         $this->check_current_state(question_state::$gradedright);
         $this->check_current_mark(2);
     }
+
+    public function test_multilang_behaviour() {
+
+        // Enable multilang filter to on content and heading.
+        filter_set_global_state('multilang', TEXTFILTER_ON);
+        filter_set_applies_to_strings('multilang', 1);
+        $filtermanager = filter_manager::instance();
+        $filtermanager->reset_caches();
+
+        // Create a multilang gapselect question.
+        $q = qtype_gapselect_test_helper::make_a_multilang_gapselect_question();
+        $q->shufflechoices = false;
+        $this->start_attempt_at_question($q, 'interactive', 3);
+
+        // Check the initial state.
+        $this->check_current_state(question_state::$todo);
+        $this->check_current_mark(null);
+        $this->check_current_output(
+                $this->get_contains_select_expectation('p1',
+                        array('' => get_string('choosedots'), '1' => 'cat', '2' => 'dog'), null, true),
+                $this->get_contains_select_expectation('p2',
+                        array('' => get_string('choosedots'), '1' => 'mat', '2' => 'bat'), null, true));
+    }
 }
