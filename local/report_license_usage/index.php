@@ -459,7 +459,7 @@ $table = new html_table();
 $table->id = 'LicenseOverviewTable';
 $table->head = array (get_string('licensename', 'block_iomad_company_admin'),
                       get_string('licenseallocated', 'block_iomad_company_admin'),
-                      get_string('allocated', 'block_iomad_company_admin'),
+                      get_string('licenses', 'block_iomad_company_admin'),
                       get_string('userlicenseused', 'block_iomad_company_admin'));
 $table->align = array ("left", "center", "center", "center");
 $licenseused = $DB->count_records('companylicense_users', array('licenseid' => $license->id, 'isusing' => 1));
