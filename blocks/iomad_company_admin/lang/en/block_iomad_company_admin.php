@@ -304,6 +304,7 @@ $string['iomad_company_admin:view'] = 'View a company';
 $string['isdefaultgroupdelete'] = 'This is the default company course group.  You can edit it but not delete it.';
 $string['isdefaultgroupusers'] = 'This is the default course group.  You cannot remove members from it.</br>If you want to move users out of it, please select another group and add users to that group instead.';
 $string['enrol'] = 'Enrol';
+$string['enrolall'] = 'Enrol all';
 $string['enrolunenrollusers'] = 'Enrol/unenrol users';
 $string['enroluser'] = 'Course enrolments';
 $string['enroluser'] = 'User enrolments';
@@ -550,6 +551,7 @@ $string['triedtoallocatetoomanylicenses'] = 'You have tried to allocate licenses
 $string['unenrollincapable'] = '<span id="unenrollwarning">NOTE: If "(existing enrolments)" is shown, you do not have the necessary rights to add/remove this courses. Remove existing user enrolments first.</span>';
 $string['unenrollwarning'] = '<span id="unenrollwarning">WARNING: If "(existing enrolments)" is shown you must tick the box beneath to allow add or remove. If you do this, all users will be unenrolled and ALL THEIR DATA (for that course) IS LOST. This cannot be undone</span>';
 $string['unenrol'] = 'Unenrol';
+$string['unenrolall'] = 'Unenrol all';
 $string['unsuspend'] = 'Unsuspend';
 $string['unsuspendcheck'] = 'Do you really want to unsuspend this user';
 $string['unsuspendcheckfull'] = 'Do you really want to unsuspend this user';

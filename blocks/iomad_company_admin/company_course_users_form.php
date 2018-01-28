@@ -185,7 +185,7 @@ class company_course_users_form extends moodleform {
     }
 
     public function definition_after_data() {
-        global $DB;
+        global $DB, $output;
 
         $mform =& $this->_form;
 
@@ -235,15 +235,21 @@ class company_course_users_form extends moodleform {
               <td id="buttonscell">
                   <div id="addcontrols">
                       <input name="add" id="add" type="submit" value="&nbsp;' .
-                       get_string('enrol', 'block_iomad_company_admin') .
-                       '" title="Enrol" /><br />
+                      $output->larrow().'&nbsp;'. get_string('enrol', 'block_iomad_company_admin') .
+                       '" title="Enrol" />
+                      <input name="addall" id="addall" type="submit" value="&nbsp;' .
+                      $output->larrow().'&nbsp;'. get_string('enrolall', 'block_iomad_company_admin') .
+                      '" title="Enrolall" />
 
                   </div>
 
                   <div id="removecontrols">
                       <input name="remove" id="remove" type="submit" value="' .
-                       get_string('unenrol', 'block_iomad_company_admin') .
+                       $output->rarrow().'&nbsp;'. get_string('unenrol', 'block_iomad_company_admin') .
                        '&nbsp;" title="Unenrol" />
+                      <input name="removeall" id="removeall" type="submit" value="&nbsp;' .
+                      $output->rarrow().'&nbsp;'. get_string('unenrolall', 'block_iomad_company_admin') .
+                      '" title="Enrolall" />
                   </div>
               </td>
               <td id="potentialcell">');
@@ -262,15 +268,26 @@ class company_course_users_form extends moodleform {
 
     public function process() {
         global $DB, $CFG;
-
         $this->create_user_selectors();
         $data = $this->get_data();
 
-        // Process incoming enrolments.
+        $addall = false;
+        $add = false;
+        if (optional_param('addall', false, PARAM_BOOL) && confirm_sesskey()) {
+            $search = optional_param('potentialcourseusers_searchtext', '', PARAM_RAW);
+            // Process incoming allocations.
+            $potentialusers = $this->potentialusers->find_users($search, true);
+            $userstoassign = array_pop($potentialusers);
+            $addall = true;
+        }
         if (optional_param('add', false, PARAM_BOOL) && confirm_sesskey()) {
             $userstoassign = $this->potentialusers->get_selected_users();
-            if (!empty($userstoassign)) {
+            $add = true;
+        }
 
+        if ($add || $addall) {
+            // Process incoming enrolments.
+            if (!empty($userstoassign)) {
                 foreach ($userstoassign as $adduser) {
                     $allow = true;
 
@@ -302,10 +319,23 @@ class company_course_users_form extends moodleform {
                 $this->currentusers->invalidate_selected_users();
             }
         }
-
-        // Process incoming unenrolments.
+        $removeall = false;;
+        $remove = false;
+        $userstounassign = array();
+    
+        if (optional_param('removeall', false, PARAM_BOOL) && confirm_sesskey()) {
+            $search = optional_param('currentlyenrolledusers_searchtext', '', PARAM_RAW);
+            // Process incoming allocations.
+            $potentialusers = $this->currentusers->find_users($search, true);
+            $userstounassign = array_pop($potentialusers);
+            $removeall = true;
+        }
         if (optional_param('remove', false, PARAM_BOOL) && confirm_sesskey()) {
             $userstounassign = $this->currentusers->get_selected_users();
+            $remove = true;
+        }
+        // Process incoming unallocations.
+        if ($remove || $removeall) {
             if (!empty($userstounassign)) {
 
                 foreach ($userstounassign as $removeuser) {
@@ -432,12 +462,18 @@ if ($coursesform->is_cancelled() || $usersform->is_cancelled() ||
         $coursesform->set_data($params);
         echo $coursesform->display();
         if ($data = $coursesform->get_data() || !empty($selectedcourse)) {
-            if (!empty($selectedcourse)) {
+             if ($courseid > 0) {
+                $course = $DB->get_record('course', array('id' => $courseid));
+                $usersform->set_course(array($course));
+                $usersform->process();
+                $usersform = new company_course_users_form($PAGE->url, $context, $companyid, $departmentid, $selectedcourse);
+                $usersform->set_course(array($course));
+                $usersform->set_data(array('groupid' => $groupid));
+            } else if (!empty($selectedcourse)) {
                 $usersform->set_course($selectedcourse);
             }
             echo $usersform->display();
         } else if ($courseid > 0) {
-            global $DB;
             $course = $DB->get_record('course', array('id' => $courseid));
             $usersform->set_course(array($course));
             $usersform->process();
