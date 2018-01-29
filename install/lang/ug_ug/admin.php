@@ -30,8 +30,5 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['language'] = 'Забон';
-$string['moodlelogo'] = 'Логотипи Moodle';
-$string['next'] = 'Давомаш';
-$string['previous'] = 'Ба ақиб';
-$string['reload'] = 'Навсозӣ карда шавад';
+$string['clianswerno'] = 'ن';
+$string['cliansweryes'] = 'ي';
