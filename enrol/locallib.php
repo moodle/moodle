@@ -379,8 +379,9 @@ class course_enrolment_manager {
         $params = array('guestid' => $CFG->siteguest);
         if (!empty($search)) {
             $conditions = get_extra_user_fields($this->get_context());
-            $conditions[] = 'u.firstname';
-            $conditions[] = 'u.lastname';
+            foreach (get_all_user_name_fields() as $field) {
+                $conditions[] = 'u.'.$field;
+            }
             $conditions[] = $DB->sql_fullname('u.firstname', 'u.lastname');
             if ($searchanywhere) {
                 $searchparam = '%' . $search . '%';
