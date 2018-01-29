@@ -60,6 +60,7 @@ if (isset($info->license)) {
 }
 
 $source = base64_encode(json_encode(array('url'=>$url,'filename'=>$filename)));
+$sourcekey = sha1($source . repository::get_secret_key() . sesskey());
 
 $js =<<<EOD
 <html>
@@ -70,6 +71,7 @@ $js =<<<EOD
         var resource = {};
         resource.title = "$filename";
         resource.source = "$source";
+        resource.sourcekey = "$sourcekey";
         resource.thumbnail = '$thumbnail';
         resource.author = "$author";
         resource.license = "$license";
