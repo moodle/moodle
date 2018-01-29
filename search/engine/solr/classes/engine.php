@@ -231,7 +231,9 @@ class engine extends \core_search\engine {
         } else if (isset($response->response->numFound)) {
             // Get the number of results for standard queries.
             $found = $response->response->numFound;
-            $included = count($response->response->docs);
+            if ($found > 0 && is_array($response->response->docs)) {
+                $included = count($response->response->docs);
+            }
         }
 
         return array($included, $found);
