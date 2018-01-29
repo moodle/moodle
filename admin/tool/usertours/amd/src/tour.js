@@ -619,43 +619,44 @@ Tour.prototype.addEventHandler = function (eventName, handler) {
  */
 Tour.prototype.processStepListeners = function (stepConfig) {
     this.listeners.push(
-        // Next/Previous buttons.
-        {
-            node: this.currentStepNode,
-            args: ['click', '[data-role="next"]', $.proxy(this.next, this)]
-        }, {
-            node: this.currentStepNode,
-            args: ['click', '[data-role="previous"]', $.proxy(this.previous, this)]
-        },
+    // Next/Previous buttons.
+    {
+        node: this.currentStepNode,
+        args: ['click', '[data-role="next"]', $.proxy(this.next, this)]
+    }, {
+        node: this.currentStepNode,
+        args: ['click', '[data-role="previous"]', $.proxy(this.previous, this)]
+    },
 
-        // Close and end tour buttons.
-        {
-            node: this.currentStepNode,
-            args: ['click', '[data-role="end"]', $.proxy(this.endTour, this)]
-        },
+    // Close and end tour buttons.
+    {
+        node: this.currentStepNode,
+        args: ['click', '[data-role="end"]', $.proxy(this.endTour, this)]
+    },
 
-        // Click backdrop and hide tour.
-        {
-            node: $('[data-flexitour="backdrop"]'),
-            args: ['click', $.proxy(this.hide, this)]
-        },
+    // Click backdrop and hide tour.
+    {
+        node: $('[data-flexitour="backdrop"]'),
+        args: ['click', $.proxy(this.hide, this)]
+    },
 
-        // Click out and hide tour without backdrop.
-        {
-            node: $('body'),
-            args: ['click', $.proxy(function (e) {
-                // Handle click in or click out tour content,
-                // if click out, hide tour.
-                if (!this.currentStepNode.is(e.target) && $(e.target).closest('[data-role="flexitour-step"]').length === 0) {
-                    this.hide();
-                }}, this)]
-        },
+    // Click out and hide tour without backdrop.
+    {
+        node: $('body'),
+        args: ['click', $.proxy(function (e) {
+            // Handle click in or click out tour content,
+            // if click out, hide tour.
+            if (!this.currentStepNode.is(e.target) && $(e.target).closest('[data-role="flexitour-step"]').length === 0) {
+                this.hide();
+            }
+        }, this)]
+    },
 
-        // Keypresses.
-        {
-            node: $('body'),
-            args: ['keydown', $.proxy(this.handleKeyDown, this)]
-        });
+    // Keypresses.
+    {
+        node: $('body'),
+        args: ['keydown', $.proxy(this.handleKeyDown, this)]
+    });
 
     if (stepConfig.moveOnClick) {
         var targetNode = this.getStepTarget(stepConfig);
@@ -1259,6 +1260,57 @@ Tour.prototype.positionStep = function (stepConfig) {
             },
             arrow: {
                 element: '[data-role="arrow"]'
+            }
+        },
+        onCreate: function onCreate(data) {
+            recalculateArrowPosition(data);
+        },
+        onUpdate: function onUpdate(data) {
+            recalculateArrowPosition(data);
+        }
+    };
+
+    var recalculateArrowPosition = function recalculateArrowPosition(data) {
+        var placement = data.placement.split('-')[0];
+        var isVertical = ['left', 'right'].indexOf(placement) !== -1;
+        var arrowElement = data.instance.popper.querySelector('[data-role="arrow"]');
+        if (isVertical) {
+            var arrowHeight = parseFloat(window.getComputedStyle(arrowElement).height);
+            var arrowOffset = parseFloat(window.getComputedStyle(arrowElement).top);
+            var popperHeight = parseFloat(window.getComputedStyle(data.instance.popper).height);
+            var popperOffset = parseFloat(window.getComputedStyle(data.instance.popper).top);
+            var popperBorderWidth = parseFloat($('.modal-content').css('borderTopWidth'));
+            var popperBorderRadiusWidth = parseFloat($('.modal-content').css('borderTopLeftRadius'));
+            var arrowPos = arrowOffset + arrowHeight / 2;
+            var maxPos = popperHeight + popperOffset - popperBorderWidth - popperBorderRadiusWidth;
+            var minPos = popperOffset + popperBorderWidth + popperBorderRadiusWidth;
+            if (arrowPos >= maxPos || arrowPos <= minPos) {
+                var newArrowPos = 0;
+                if (arrowPos > popperHeight / 2) {
+                    newArrowPos = maxPos - arrowHeight;
+                } else {
+                    newArrowPos = minPos + arrowHeight;
+                }
+                $(arrowElement).css('top', newArrowPos);
+            }
+        } else {
+            var arrowWidth = parseFloat(window.getComputedStyle(arrowElement).width);
+            var _arrowOffset = parseFloat(window.getComputedStyle(arrowElement).left);
+            var popperWidth = parseFloat(window.getComputedStyle(data.instance.popper).width);
+            var _popperOffset = parseFloat(window.getComputedStyle(data.instance.popper).left);
+            var _popperBorderWidth = parseFloat($('.modal-content').css('borderTopWidth'));
+            var _popperBorderRadiusWidth = parseFloat($('.modal-content').css('borderTopLeftRadius'));
+            var _arrowPos = _arrowOffset + arrowWidth / 2;
+            var _maxPos = popperWidth + _popperOffset - _popperBorderWidth - _popperBorderRadiusWidth;
+            var _minPos = _popperOffset + _popperBorderWidth + _popperBorderRadiusWidth;
+            if (_arrowPos >= _maxPos || _arrowPos <= _minPos) {
+                var _newArrowPos = 0;
+                if (_arrowPos > popperWidth / 2) {
+                    _newArrowPos = _maxPos - arrowWidth;
+                } else {
+                    _newArrowPos = _minPos + arrowWidth;
+                }
+                $(arrowElement).css('left', _newArrowPos);
             }
         }
     };
