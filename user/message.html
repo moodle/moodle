@@ -42,7 +42,7 @@
                 echo '<td>'.$user->email.'</td><td>';
             }
             if (empty($user->email)) {
-                $error = get_string('emailempty');
+                $error = get_string('emailuserhasnone');
             }
             if (!empty($error)) {
                 echo $OUTPUT->pix_icon('t/emailno', $error);
