@@ -499,6 +499,12 @@ class qformat_default {
             $contextid = false;
         }
 
+        // Before 3.5, question categories could be created at top level.
+        // From 3.5 onwards, all question categories should be a child of a special category called the "top" category.
+        if (isset($catnames[0]) && (($catnames[0] != 'top') || (count($catnames) < 3))) {
+            array_unshift($catnames, 'top');
+        }
+
         if ($this->contextfromfile && $contextid !== false) {
             $context = context::instance_by_id($contextid);
             require_capability('moodle/question:add', $context);
@@ -509,8 +515,14 @@ class qformat_default {
 
         // Now create any categories that need to be created.
         foreach ($catnames as $catname) {
-            if ($category = $DB->get_record('question_categories',
+            if ($parent == 0) {
+                $category = question_get_top_category($context->id, true);
+                $parent = $category->id;
+            } else if ($category = $DB->get_record('question_categories',
                     array('name' => $catname, 'contextid' => $context->id, 'parent' => $parent))) {
+                $parent = $category->id;
+            } else if ($parent == 0) {
+                $category = question_get_top_category($context->id, true);
                 $parent = $category->id;
             } else {
                 require_capability('moodle/question:managecategory', $context);
