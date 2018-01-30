@@ -558,9 +558,16 @@ abstract class restore_dbops {
      *
      * The function returns 2 arrays, one containing errors and another containing
      * warnings. Both empty if no errors/warnings are found.
+     *
+     * @param int $restoreid The restore ID
+     * @param int $courseid The ID of the course
+     * @param int $userid The id of the user doing the restore
+     * @param bool $samesite True if restore is to same site
+     * @param int $contextlevel (CONTEXT_SYSTEM, etc.)
+     * @return array A separate list of all error and warnings detected
      */
     public static function prechek_precheck_qbanks_by_level($restoreid, $courseid, $userid, $samesite, $contextlevel) {
-        global $CFG, $DB;
+        global $DB;
 
         // To return any errors and warnings found
         $errors   = array();
@@ -570,6 +577,17 @@ abstract class restore_dbops {
         $fallbacks = array(
             CONTEXT_SYSTEM => CONTEXT_COURSE,
             CONTEXT_COURSECAT => CONTEXT_COURSE);
+
+        $rc = restore_controller_dbops::load_controller($restoreid);
+        $restoreinfo = $rc->get_info();
+        $rc->destroy(); // Always need to destroy.
+        $backuprelease = floatval($restoreinfo->backup_release);
+        preg_match('/(\d{8})/', $restoreinfo->moodle_release, $matches);
+        $backupbuild = (int)$matches[1];
+        $after35 = false;
+        if ($backuprelease >= 3.5 && $backupbuild > 20180205) {
+            $after35 = true;
+        }
 
         // For any contextlevel, follow this process logic:
         //
@@ -587,6 +605,7 @@ abstract class restore_dbops {
         //                 7a) There is fallback, move ALL the qcats to fallback, warn. End qcat loop
         //                 7b) No fallback, error. End qcat loop
         //         5b) Match, mark q to be mapped
+        // 8) Check if backup is from Moodle >= 3.5 and error if more than one top-level category in the context.
 
         // Get all the contexts (question banks) in restore for the given contextlevel
         $contexts = self::restore_get_question_banks($restoreid, $contextlevel);
@@ -596,6 +615,8 @@ abstract class restore_dbops {
             // Init some perms
             $canmanagecategory = false;
             $canadd            = false;
+            // Top-level category counter.
+            $topcats = 0;
             // get categories in context (bank)
             $categories = self::restore_get_question_categories($restoreid, $contextid);
             // cache permissions if $targetcontext is found
@@ -605,6 +626,10 @@ abstract class restore_dbops {
             }
             // 1) Iterate over each qcat in the context, matching by stamp for the found target context
             foreach ($categories as $category) {
+                if ($category->parent == 0) {
+                    $topcats++;
+                }
+
                 $matchcat = false;
                 if ($targetcontext) {
                     $matchcat = $DB->get_record('question_categories', array(
@@ -690,6 +715,12 @@ abstract class restore_dbops {
                     }
                 }
             }
+
+            // 8) Check if backup is made on Moodle >= 3.5 and there are more than one top-level category in the context.
+            if ($after35 && $topcats > 1) {
+                $errors[] = get_string('restoremultipletopcats', 'questions', $contextid);
+            }
+
         }
 
         return array($errors, $warnings);

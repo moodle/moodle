@@ -399,6 +399,7 @@ $string['requiresgrading'] = 'Requires grading';
 $string['responsehistory'] = 'Response history';
 $string['restart'] = 'Start again';
 $string['restartwiththeseoptions'] = 'Start again with these options';
+$string['restoremultipletopcats'] = 'The backup file contains more than one top-level question categories for context {$a}.';
 $string['rightanswer'] = 'Right answer';
 $string['rightanswer_help'] = 'an automatically generated summary of the correct response. This can be limited, so you may wish to consider explaining the correct solution in the general feedback for the question, and turning this option off.';
 $string['saved'] = 'Saved: {$a}';
