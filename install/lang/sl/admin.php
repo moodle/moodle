@@ -38,7 +38,7 @@ $string['clitypevalue'] = 'tip vrednosti';
 $string['clitypevaluedefault'] = 'tip vrednosti, kliknite Enter za uporabo privzete vrednosti ({$a})';
 $string['cliunknowoption'] = 'Neprepoznane možnosti:
 {$a}
-Uporabite --help opcijo.';
+Uporabite -- help opcijo.';
 $string['cliyesnoprompt'] = 'pritisnite d (pomeni da) ali n (pomeni ne)';
 $string['environmentrequireinstall'] = 'namestitev oz. omogočanje je zahtevano.';
 $string['environmentrequireversion'] = 'različica {$a->needed} je zahtevana, vi uporabljate {$a->current}';
