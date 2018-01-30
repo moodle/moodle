@@ -249,8 +249,6 @@ class core_completion_external extends external_api {
 
         $completion = new completion_info($course);
         $activities = $completion->get_activities();
-        $progresses = $completion->get_progress_all('u.id = :uid', ['uid' => $params['userid']]);
-        $userprogress = $progresses[$user->id];
 
         $results = array();
         foreach ($activities as $activity) {
@@ -260,26 +258,17 @@ class core_completion_external extends external_api {
                 continue;
             }
 
-            // Get progress information and state.
-            if (array_key_exists($activity->id, $userprogress->progress)) {
-                $thisprogress  = $userprogress->progress[$activity->id];
-                $state         = $thisprogress->completionstate;
-                $timecompleted = $thisprogress->timemodified;
-                $overrideby    = $thisprogress->overrideby;
-            } else {
-                $state = COMPLETION_INCOMPLETE;
-                $timecompleted = 0;
-                $overrideby = null;
-            }
+            // Get progress information and state (we must use get_data because it works for all user roles in course).
+            $activitycompletiondata = $completion->get_data($activity, true, $user->id);
 
             $results[] = array(
                        'cmid'          => $activity->id,
                        'modname'       => $activity->modname,
                        'instance'      => $activity->instance,
-                       'state'         => $state,
-                       'timecompleted' => $timecompleted,
+                       'state'         => $activitycompletiondata->completionstate,
+                       'timecompleted' => $activitycompletiondata->timemodified,
                        'tracking'      => $activity->completion,
-                       'overrideby'    => $overrideby
+                       'overrideby'    => $activitycompletiondata->overrideby
             );
         }
 
