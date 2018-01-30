@@ -35,7 +35,6 @@ $string['autotags'] = 'Add these tags';
 $string['autotags_help'] = 'Enter one or more local tags (separated by commas) that you want to automatically add to each blog entry copied from the external blog into your local blog.';
 $string['backupblogshelp'] = 'If enabled then blogs will be included in SITE automated backups';
 $string['blockexternalstitle'] = 'External blogs';
-$string['blocktitle'] = 'Blog tags block title';
 $string['blog'] = 'Blog';
 $string['blogaboutthis'] = 'Blog about this {$a->type}';
 $string['blogaboutthiscourse'] = 'Add an entry about this course';
