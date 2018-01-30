@@ -6534,3 +6534,30 @@ function allow_switch($fromroleid, $targetroleid) {
 
     core_role_set_switch_allowed($fromroleid, $targetroleid);
 }
+
+/**
+ * Organise categories into a single parent category (called the 'Top' category) per context.
+ *
+ * @param array $categories List of question categories in the format of ["$categoryid,$contextid" => $category].
+ * @param array $pcontexts List of context ids.
+ * @return array
+ * @deprecated since Moodle 3.5. MDL-61132
+ */
+function question_add_tops($categories, $pcontexts) {
+    debugging('question_add_tops() has been deprecated. You may want to pass $top = true to get_categories_for_contexts().',
+            DEBUG_DEVELOPER);
+
+    $topcats = array();
+    foreach ($pcontexts as $context) {
+        $topcat = question_get_top_category($context, true);
+
+        $newcat = new stdClass();
+        $newcat->id = "{$topcat->id},$context";
+        $newcat->name = get_string('top');
+        $newcat->parent = 0;
+        $newcat->contextid = $context;
+        $topcats["{$topcat->id},$context"] = $newcat;
+    }
+    // Put topcats in at beginning of array - they'll be sorted into different contexts later.
+    return array_merge($topcats, $categories);
+}
