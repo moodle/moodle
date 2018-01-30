@@ -6561,3 +6561,18 @@ function question_add_tops($categories, $pcontexts) {
     // Put topcats in at beginning of array - they'll be sorted into different contexts later.
     return array_merge($topcats, $categories);
 }
+
+/**
+ * Checks if the question category is the highest-level category in the context that can be edited, and has no siblings.
+ *
+ * @param int $categoryid a category id.
+ * @return bool
+ * @deprecated since Moodle 3.5. MDL-61132
+ */
+function question_is_only_toplevel_category_in_context($categoryid) {
+    debugging('question_is_only_toplevel_category_in_context() has been deprecated. '
+            . 'Please update your code to use question_is_only_child_of_top_category_in_context() instead.',
+            DEBUG_DEVELOPER);
+
+    return question_is_only_child_of_top_category_in_context($categoryid);
+}
