@@ -37,7 +37,6 @@ require_once($CFG->libdir.'/formslib.php');
 class quiz_add_random_form extends moodleform {
 
     protected function definition() {
-        global $CFG, $DB;
         $mform =& $this->_form;
         $mform->setDisableShortforms();
 
@@ -49,10 +48,13 @@ class quiz_add_random_form extends moodleform {
                 get_string('randomfromexistingcategory', 'quiz'));
 
         $mform->addElement('questioncategory', 'category', get_string('category'),
-                array('contexts' => $usablecontexts, 'top' => false));
+                array('contexts' => $usablecontexts, 'top' => true));
         $mform->setDefault('category', $this->_customdata['cat']);
 
         $mform->addElement('checkbox', 'includesubcategories', '', get_string('recurse', 'quiz'));
+
+        $tops = question_get_top_categories_for_contexts(array_column($contexts->all(), 'id'));
+        $mform->hideIf('includesubcategories', 'category', 'in', $tops);
 
         $mform->addElement('select', 'numbertoadd', get_string('randomnumber', 'quiz'),
                 $this->get_number_of_questions_to_add_choices());

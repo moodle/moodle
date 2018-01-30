@@ -1031,6 +1031,23 @@ function question_get_top_category($contextid, $create = false) {
 }
 
 /**
+ * Gets the list of top categories in the given contexts in the array("categoryid,categorycontextid") format.
+ *
+ * @param array $contextids List of context ids
+ * @return array
+ */
+function question_get_top_categories_for_contexts($contextids) {
+    global $DB;
+
+    $concatsql = $DB->sql_concat_join("','", ['id', 'contextid']);
+    list($insql, $params) = $DB->get_in_or_equal($contextids);
+    $sql = "SELECT $concatsql FROM {question_categories} WHERE contextid $insql AND parent = 0";
+    $topcategories = $DB->get_fieldset_sql($sql, $params);
+
+    return $topcategories;
+}
+
+/**
  * Gets the default category in the most specific context.
  * If no categories exist yet then default ones are created in all contexts.
  *

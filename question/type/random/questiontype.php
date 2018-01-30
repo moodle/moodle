@@ -127,12 +127,36 @@ class qtype_random extends question_type {
      * @return string the name this question should have.
      */
     public function question_name($category, $includesubcategories) {
-        if ($includesubcategories) {
-            $string = 'randomqplusname';
+        if ($category->parent && $includesubcategories) {
+            $name = get_string('randomqplusname', 'qtype_random', shorten_text($category->name, 100));
+        } else if ($category->parent) {
+            $name = get_string('randomqname', 'qtype_random', shorten_text($category->name, 100));
+        } else if ($includesubcategories) {
+            $context = context::instance_by_id($category->contextid);
+
+            switch ($context->contextlevel) {
+                case CONTEXT_MODULE:
+                    $name = get_string('randomqplusnamemodule', 'qtype_random');
+                    break;
+                case CONTEXT_COURSE:
+                    $name = get_string('randomqplusnamecourse', 'qtype_random');
+                    break;
+                case CONTEXT_COURSECAT:
+                    $name = get_string('randomqplusnamecoursecat', 'qtype_random',
+                            shorten_text($context->get_context_name(false), 100));
+                    break;
+                case CONTEXT_SYSTEM:
+                    $name = get_string('randomqplusnamesystem', 'qtype_random');
+                    break;
+                default: // Impossible.
+                    $name = '';
+            }
         } else {
-            $string = 'randomqname';
+            // No question will ever be selected. So, let's warn the teacher.
+            $name = get_string('randomqnamefromtop', 'qtype_random');
         }
-        return get_string($string, 'qtype_random', shorten_text($category->name, 100));
+
+        return $name;
     }
 
     protected function set_selected_question_name($question, $randomname) {
@@ -143,10 +167,16 @@ class qtype_random extends question_type {
     }
 
     public function save_question($question, $form) {
+        global $DB;
+
         $form->name = '';
+        list($category) = explode(',', $form->category);
 
         // In case someone set the question text to true/false in the old style, set it properly.
         if ($form->questiontext['text']) {
+            $form->questiontext['text'] = '1';
+        } else if ($DB->record_exists('question_categories', ['id' => $category, 'parent' => 0])) {
+            // The chosen category is a top category.
             $form->questiontext['text'] = '1';
         } else {
             $form->questiontext['text'] = '0';

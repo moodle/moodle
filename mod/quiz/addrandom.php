@@ -85,6 +85,10 @@ if ($data = $mform->get_data()) {
     if (!empty($data->existingcategory)) {
         list($categoryid) = explode(',', $data->category);
         $includesubcategories = !empty($data->includesubcategories);
+        if (!$includesubcategories) {
+            // If the chosen category is a top category.
+            $includesubcategories = $DB->record_exists('question_categories', ['id' => $categoryid, 'parent' => 0]);
+        }
         $returnurl->param('cat', $data->category);
 
     } else if (!empty($data->newcategory)) {
