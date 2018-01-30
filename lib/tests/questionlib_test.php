@@ -249,8 +249,8 @@ class core_questionlib_testcase extends advanced_testcase {
         $rc->execute_plan();
 
         // Get the created question category.
-        $restoredcategory = $DB->get_record('question_categories', array('contextid' => context_course::instance($course2->id)->id),
-            '*', MUST_EXIST);
+        $restoredcategory = $DB->get_record_select('question_categories', 'contextid = ? AND parent <> 0',
+                array(context_course::instance($course2->id)->id), '*', MUST_EXIST);
 
         // Check that there are two questions in the restored to course's context.
         $this->assertEquals(2, $DB->count_records('question', array('category' => $restoredcategory->id)));
@@ -334,6 +334,7 @@ class core_questionlib_testcase extends advanced_testcase {
         $this->assertEquals(0, $DB->count_records('question', $criteria));
 
         // Test that the feedback works.
+        $expected[] = array('top', get_string('unusedcategorydeleted', 'question'));
         $expected[] = array($qcat->name, get_string('unusedcategorydeleted', 'question'));
         $this->assertEquals($expected, $result);
     }
