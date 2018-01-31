@@ -269,6 +269,7 @@ $string['questionsinuse'] = '(* Questions marked by an asterisk are already in u
 $string['questionsmovedto'] = 'Questions still in use moved to "{$a}" in the parent course category.';
 $string['questionsrescuedfrom'] = 'Questions saved from context {$a}.';
 $string['questionsrescuedfrominfo'] = 'These questions (some of which may be hidden) were saved when context {$a} was deleted because they are still used by some quizzes or other activities.';
+$string['questiontags'] = 'Question tags';
 $string['questiontype'] = 'Question type';
 $string['questionuse'] = 'Use question in this activity';
 $string['questionvariant'] = 'Question variant';
