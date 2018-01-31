@@ -311,3 +311,15 @@ function core_login_get_return_url() {
     }
     return $urltogo;
 }
+
+/**
+ * Plugins can create pre sign up requests.
+ */
+function core_login_pre_signup_requests() {
+    $callbacks = get_plugins_with_function('pre_signup_requests');
+    foreach ($callbacks as $type => $plugins) {
+        foreach ($plugins as $plugin => $pluginfunction) {
+            $pluginfunction();
+        }
+    }
+}
