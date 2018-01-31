@@ -736,8 +736,8 @@ function get_module_metadata($course, $modnames, $sectionreturn = null) {
 
                     if (!empty($type->help)) {
                         $subtype->help = $type->help;
-                    } else if (get_string_manager()->string_exists('help' . $subtype->name, $modname)) {
-                        $subtype->help = get_string('help' . $subtype->name, $modname);
+                    } else if (get_string_manager()->string_exists('help' . $typename, $modname)) {
+                        $subtype->help = get_string('help' . $typename, $modname);
                     }
                     $subtype->link = new moodle_url($urlbase, array('add' => $modname, 'type' => $typename));
                     $subtype->name = $modname . ':' . $subtype->link;
