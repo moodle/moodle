@@ -38,6 +38,7 @@ $string['importgrades'] = 'Confirm changes in grading worksheet';
 $string['invalidgradeimport'] = 'Moodle could not read the uploaded worksheet. Make sure it is saved in comma separated value format (.csv) and try again.';
 $string['gradesfile'] = 'Grading worksheet (csv format)';
 $string['gradesfile_help'] = 'Grading worksheet with modified grades. This file must be a csv file that has been downloaded from this assignment and must contain columns for the student grade, and identifier. The encoding for the file must be &quot;UTF-8&quot;';
+$string['privacy:nullproviderreason'] = 'This plugin has no database to store user information. It only uses APIs in mod_assign to help with displaying the grading interface.';
 $string['nochanges'] = 'No modified grades found in uploaded worksheet';
 $string['offlinegradingworksheet'] = 'Grades';
 $string['pluginname'] = 'Offline grading worksheet';
