@@ -24,6 +24,7 @@
 
 $string['blindmarkingname'] = 'Participant {$a}';
 $string['blindmarkingviewfullname'] = 'Participant {$a->participantnumber} ({$a->participantfullname})';
+$string['privacy:metadata:commentpurpose'] = 'Comments between the student and teacher about a submission.';
 $string['default'] = 'Enabled by default';
 $string['default_help'] = 'If set, this submission method will be enabled by default for all new assignments.';
 $string['enabled'] = 'Submission comments';
