@@ -31,14 +31,15 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['clianswerno'] = 'n';
-$string['cliansweryes'] = 'd';
-$string['cliincorrectvalueerror'] = 'Napaka, nepravilna vrednost "{$a->value}" za "{$a->option}"';
-$string['cliincorrectvalueretry'] = 'Nepravilna vrednost, prosimo poskusite znova.';
-$string['clitypevalue'] = 'tip vrednosti';
-$string['clitypevaluedefault'] = 'tip vrednosti, kliknite Enter za uporabo privzete vrednosti ({$a})';
-$string['cliunknowoption'] = 'Neprepoznane možnosti:
+$string['cliansweryes'] = 's';
+$string['cliincorrectvalueerror'] = 'Error, valor incorrecta  "{$a->value}" pa "{$a->option}"';
+$string['cliincorrectvalueretry'] = 'Valor incorrecta, per favor, intente de nuevo';
+$string['clitypevalue'] = 'valor d\'o tipo';
+$string['clitypevaluedefault'] = 'valor d\'o tipo, prete Enter pa utilizar la valor per defecto ({$a})';
+$string['cliunknowoption'] = 'Opcions no reconoixidas:
 {$a}
-Uporabite -- help opcijo.';
-$string['cliyesnoprompt'] = 'pritisnite d (pomeni da) ali n (pomeni ne)';
-$string['environmentrequireinstall'] = 'namestitev oz. omogočanje je zahtevano.';
-$string['environmentrequireversion'] = 'različica {$a->needed} je zahtevana, vi uporabljate {$a->current}';
+Per favor, utilice la opción Aduya.';
+$string['cliyesnoprompt'] = 'escriba s (pa sí) u n (pa no)';
+$string['environmentrequireinstall'] = 'ha d\'estar instalau/activau';
+$string['environmentrequireversion'] = 'versión {$a->needed} ye obligatoria y ye executando {$a->current}';
+$string['upgradekeyset'] = 'Clau d\'actualización (deixar en blanco pa no establir-la)';
