@@ -143,8 +143,8 @@ class user_edit_form extends company_moodleform {
 
 
         // Deal with company optional fields.
-        $mform->addElement('header', 'category_id', format_string(get_string('companyprofilefields', 'block_iomad_company_admin')));
-
+        $mform->addElement('header', 'category_id', get_string('advanced'));
+        
         $departmentslist = company::get_all_subdepartments($this->userdepartment);
         $departmenttree = company::get_all_subdepartments_raw($this->userdepartment);
         $treehtml = $output->department_tree($departmenttree, optional_param('userdepartment', 0, PARAM_INT));
