@@ -1895,7 +1895,7 @@ class restore_course_structure_step extends restore_structure_step {
             $data->completionnotify = 0;
         }
         $languages = get_string_manager()->get_list_of_translations(); // Get languages for quick search
-        if (!array_key_exists($data->lang, $languages)) {
+        if (isset($data->lang) && !array_key_exists($data->lang, $languages)) {
             $data->lang = '';
         }
 

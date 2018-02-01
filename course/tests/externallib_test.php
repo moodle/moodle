@@ -412,6 +412,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         $contextid = context_system::instance()->id;
         $roleid = $this->assignUserCapability('moodle/course:create', $contextid);
         $this->assignUserCapability('moodle/course:visibility', $contextid, $roleid);
+        $this->assignUserCapability('moodle/course:setforcedlanguage', $contextid, $roleid);
 
         $category  = self::getDataGenerator()->create_category();
 
@@ -1129,6 +1130,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         $this->assignUserCapability('moodle/course:changesummary', $contextid, $roleid);
         $this->assignUserCapability('moodle/course:visibility', $contextid, $roleid);
         $this->assignUserCapability('moodle/course:viewhiddencourses', $contextid, $roleid);
+        $this->assignUserCapability('moodle/course:setforcedlanguage', $contextid, $roleid);
 
         // Create category and course.
         $category1  = self::getDataGenerator()->create_category();
