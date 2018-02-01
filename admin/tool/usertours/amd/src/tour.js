@@ -1274,13 +1274,14 @@ Tour.prototype.positionStep = function (stepConfig) {
         var placement = data.placement.split('-')[0];
         var isVertical = ['left', 'right'].indexOf(placement) !== -1;
         var arrowElement = data.instance.popper.querySelector('[data-role="arrow"]');
+        var stepElement = $(data.instance.popper.querySelector('[data-role="flexitour-step"]'));
         if (isVertical) {
             var arrowHeight = parseFloat(window.getComputedStyle(arrowElement).height);
             var arrowOffset = parseFloat(window.getComputedStyle(arrowElement).top);
             var popperHeight = parseFloat(window.getComputedStyle(data.instance.popper).height);
             var popperOffset = parseFloat(window.getComputedStyle(data.instance.popper).top);
-            var popperBorderWidth = parseFloat($('.modal-content').css('borderTopWidth'));
-            var popperBorderRadiusWidth = parseFloat($('.modal-content').css('borderTopLeftRadius'));
+            var popperBorderWidth = parseFloat(stepElement.css('borderTopWidth'));
+            var popperBorderRadiusWidth = parseFloat(stepElement.css('borderTopLeftRadius')) * 2;
             var arrowPos = arrowOffset + arrowHeight / 2;
             var maxPos = popperHeight + popperOffset - popperBorderWidth - popperBorderRadiusWidth;
             var minPos = popperOffset + popperBorderWidth + popperBorderRadiusWidth;
@@ -1298,8 +1299,8 @@ Tour.prototype.positionStep = function (stepConfig) {
             var _arrowOffset = parseFloat(window.getComputedStyle(arrowElement).left);
             var popperWidth = parseFloat(window.getComputedStyle(data.instance.popper).width);
             var _popperOffset = parseFloat(window.getComputedStyle(data.instance.popper).left);
-            var _popperBorderWidth = parseFloat($('.modal-content').css('borderTopWidth'));
-            var _popperBorderRadiusWidth = parseFloat($('.modal-content').css('borderTopLeftRadius'));
+            var _popperBorderWidth = parseFloat(stepElement.css('borderTopWidth'));
+            var _popperBorderRadiusWidth = parseFloat(stepElement.css('borderTopLeftRadius')) * 2;
             var _arrowPos = _arrowOffset + arrowWidth / 2;
             var _maxPos = popperWidth + _popperOffset - _popperBorderWidth - _popperBorderRadiusWidth;
             var _minPos = _popperOffset + _popperBorderWidth + _popperBorderRadiusWidth;
