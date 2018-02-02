@@ -252,13 +252,13 @@ fieldset.coursesearchbox label {
     margin: 0;
     padding: 0;
     border: 0;
-    margin-top: $font-size-base * $line-height-base + $tag-padding-y;
+    margin-top: $font-size-base * $line-height-base + $input-padding-y-sm;
     vertical-align: bottom;
 }
 .form-autocomplete-selection {
-    margin: $tag-padding-y;
+    margin: $input-padding-y-sm;
     // Padding top and bottom, plus m-b-1 and the 100% lineheight.
-    min-height: 2 * $tag-padding-y + 2 * $font-size-base;
+    min-height: 2 * $input-padding-y-sm + 2 * $font-size-base;
 }
 
 .form-autocomplete-multiple [role=listitem] {
