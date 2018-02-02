@@ -470,14 +470,14 @@ class view {
         }
         $editcontexts = $this->contexts->having_one_edit_tab_cap($tabname);
         // Category selection form.
-        echo $OUTPUT->heading(get_string('questionbank', 'question'), 2);
+        $this->display_question_bank_header();
         array_unshift($this->searchconditions, new \core_question\bank\search\hidden_condition(!$showhidden));
         array_unshift($this->searchconditions, new \core_question\bank\search\category_condition(
                 $cat, $recurse, $editcontexts, $this->baseurl, $this->course));
         $this->display_options_form($showquestiontext);
 
         // Continues with list of questions.
-        $this->display_question_list($this->contexts->having_one_edit_tab_cap($tabname),
+        $this->display_question_list($editcontexts,
                 $this->baseurl, $cat, $this->cm,
                 null, $page, $perpage, $showhidden, $showquestiontext,
                 $this->contexts->having_cap('moodle/question:add'));
@@ -632,6 +632,14 @@ class view {
         echo \html_writer::checkbox('qbshowtext', '1', $showquestiontext, get_string('showquestiontext', 'question'),
                                        array('id' => 'qbshowtext_on', 'class' => 'searchoptions'));
         echo "</div>\n";
+    }
+
+    /**
+     * Display the header element for the question bank.
+     */
+    protected function display_question_bank_header() {
+        global $OUTPUT;
+        echo $OUTPUT->heading(get_string('questionbank', 'question'), 2);
     }
 
     protected function create_new_question_form($category, $canadd) {
