@@ -462,15 +462,18 @@ class view {
      * displayoptions Sets display options
      */
     public function display($tabname, $page, $perpage, $cat,
-            $recurse, $showhidden, $showquestiontext) {
-        global $PAGE, $OUTPUT;
+            $recurse, $showhidden, $showquestiontext, $tagids = []) {
+        global $PAGE;
 
         if ($this->process_actions_needing_ui()) {
             return;
         }
         $editcontexts = $this->contexts->having_one_edit_tab_cap($tabname);
+        list($categoryid, $contextid) = explode(',', $cat);
+        $catcontext = \context::instance_by_id($contextid);
         // Category selection form.
         $this->display_question_bank_header();
+        array_unshift($this->searchconditions, new \core_question\bank\search\tag_condition([$catcontext], $tagids));
         array_unshift($this->searchconditions, new \core_question\bank\search\hidden_condition(!$showhidden));
         array_unshift($this->searchconditions, new \core_question\bank\search\category_condition(
                 $cat, $recurse, $editcontexts, $this->baseurl, $this->course));
@@ -593,7 +596,19 @@ class view {
         echo \html_writer::start_tag('form', array('method' => 'get',
                 'action' => new \moodle_url($scriptpath), 'id' => 'displayoptions'));
         echo \html_writer::start_div();
-        echo \html_writer::input_hidden_params($this->baseurl, array('recurse', 'showhidden', 'qbshowtext'));
+
+        $excludes = array('recurse', 'showhidden', 'qbshowtext');
+        // If the URL contains any tags then we need to prevent them
+        // being added to the form as hidden elements because the tags
+        // are managed separately.
+        if ($this->baseurl->param('qtagids[0]')) {
+            $index = 0;
+            while ($this->baseurl->param("qtagids[{$index}]")) {
+                $excludes[] = "qtagids[{$index}]";
+                $index++;
+            }
+        }
+        echo \html_writer::input_hidden_params($this->baseurl, $excludes);
 
         foreach ($this->searchconditions as $searchcondition) {
             echo $searchcondition->display_options($this);
