@@ -449,4 +449,68 @@ class core_message_events_testcase extends core_message_messagelib_testcase {
             $i++;
         }
     }
+
+    /**
+     * Test the notification sent event.
+     */
+    public function test_notification_sent() {
+        // Create a course.
+        $course = $this->getDataGenerator()->create_course();
+
+        // Create users to send notification between.
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+
+        // Send a notification.
+        $notificationid = $this->send_fake_message($user1, $user2, 'Hello world!', 1);
+
+        // Containing courseid.
+        $event = \core\event\notification_sent::create_from_ids($user1->id, $user2->id, $notificationid, $course->id);
+
+        // Trigger and capturing the event.
+        $sink = $this->redirectEvents();
+        $event->trigger();
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\core\event\notification_sent', $event);
+        $this->assertEquals($notificationid, $event->objectid);
+        $this->assertEquals($user1->id, $event->userid);
+        $this->assertEquals($user2->id, $event->relateduserid);
+        $this->assertEquals(context_system::instance(), $event->get_context());
+        $this->assertEquals($course->id, $event->other['courseid']);
+        $url = new moodle_url('/message/output/popup/notifications.php', array('notificationid' => $event->objectid));
+        $this->assertEquals($url, $event->get_url());
+    }
+
+    /**
+     * Test the notification viewed event.
+     */
+    public function test_notification_viewed() {
+        global $DB;
+
+        // Create users to send notifications between.
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+
+        // Send a notification.
+        $notificationid = $this->send_fake_message($user1, $user2, 'Hello world!', 1);
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $notification = $DB->get_record('notifications', ['id' => $notificationid]);
+        \core_message\api::mark_notification_as_read($notification);
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\core\event\notification_viewed', $event);
+        $this->assertEquals($notificationid, $event->objectid);
+        $this->assertEquals($user2->id, $event->userid);
+        $this->assertEquals($user1->id, $event->relateduserid);
+        $this->assertEquals(context_user::instance($user2->id), $event->get_context());
+        $url = new moodle_url('/message/output/popup/notifications.php', array('notificationid' => $event->objectid));
+        $this->assertEquals($url, $event->get_url());
+    }
 }

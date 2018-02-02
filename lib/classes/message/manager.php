@@ -77,8 +77,15 @@ class manager {
         require_once($CFG->dirroot.'/message/lib.php'); // This is most probably already included from messagelib.php file.
 
         if (empty($processorlist)) {
-            // Trigger event for sending a message - we need to do this before marking as read!
-            if (!$eventdata->notification) {
+            // Trigger event for sending a message or notification - we need to do this before marking as read!
+            if ($eventdata->notification) {
+                \core\event\notification_sent::create_from_ids(
+                    $eventdata->userfrom->id,
+                    $eventdata->userto->id,
+                    $savemessage->id,
+                    $eventdata->courseid
+                )->trigger();
+            } else { // Must be a message.
                 \core\event\message_sent::create_from_ids(
                     $eventdata->userfrom->id,
                     $eventdata->userto->id,
@@ -145,8 +152,15 @@ class manager {
             }
         }
 
-        // Trigger event for sending a message - must be done before marking as read.
-        if (!$eventdata->notification) {
+        // Trigger event for sending a message or notification - we need to do this before marking as read!
+        if ($eventdata->notification) {
+            \core\event\notification_sent::create_from_ids(
+                $eventdata->userfrom->id,
+                $eventdata->userto->id,
+                $savemessage->id,
+                $eventdata->courseid
+            )->trigger();
+        } else { // Must be a message.
             \core\event\message_sent::create_from_ids(
                 $eventdata->userfrom->id,
                 $eventdata->userto->id,

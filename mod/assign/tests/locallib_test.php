@@ -1288,14 +1288,14 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         assign::cron();
 
         $events = $sink->get_events();
-        // Two messages are sent, one to student and one to teacher. This generates
+        // Two notifications are sent, one to student and one to teacher. This generates
         // four events:
-        // core\event\message_sent
-        // core\event\message_viewed
-        // core\event\message_sent
-        // core\event\message_viewed.
+        // core\event\notification_sent
+        // core\event\notification_viewed
+        // core\event\notification_sent
+        // core\event\notification_viewed.
         $event = reset($events);
-        $this->assertInstanceOf('\core\event\message_sent', $event);
+        $this->assertInstanceOf('\core\event\notification_sent', $event);
         $this->assertEquals($assign->get_course()->id, $event->other['courseid']);
         $sink->close();
     }

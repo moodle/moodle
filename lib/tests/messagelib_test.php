@@ -483,7 +483,9 @@ class core_messagelib_testcase extends advanced_testcase {
         $this->assertFalse($DB->record_exists('messages', array()));
         $DB->delete_records('notifications', array());
         $events = $eventsink->get_events();
-        $this->assertCount(0, $events);
+        $this->assertCount(2, $events);
+        $this->assertInstanceOf('\core\event\notification_sent', $events[0]);
+        $this->assertInstanceOf('\core\event\notification_viewed', $events[1]);
         $eventsink->clear();
 
         // Will always use the pop-up processor.

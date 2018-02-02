@@ -1105,6 +1105,13 @@ class api {
             $updatenotification->timeread = $timeread;
 
             $DB->update_record('notifications', $updatenotification);
+
+            // Trigger event for reading a notification.
+            \core\event\notification_viewed::create_from_ids(
+                $notification->useridfrom,
+                $notification->useridto,
+                $notification->id
+            )->trigger();
         }
     }
 
