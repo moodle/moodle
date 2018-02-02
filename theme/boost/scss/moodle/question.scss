@@ -622,6 +622,10 @@ body.path-question-type .mform fieldset.hidden {
     box-sizing: content-box;
 }
 
+.tag-condition-container {
+    position: relative;
+}
+
 @include media-breakpoint-down(sm) {
     .que .info {
         float: none;
