@@ -1054,6 +1054,125 @@ class core_tag_taglib_testcase extends advanced_testcase {
     }
 
     /**
+     * get_tags_by_area_in_contexts should return an empty array if there
+     * are no tag instances for the area in the given context.
+     */
+    public function test_get_tags_by_area_in_contexts_empty() {
+        $tagnames = ['foo'];
+        $collid = core_tag_collection::get_default();
+        $tags = core_tag_tag::create_if_missing($collid, $tagnames);
+        $user = $this->getDataGenerator()->create_user();
+        $context = context_user::instance($user->id);
+        $component = 'core';
+        $itemtype = 'user';
+
+        $result = core_tag_tag::get_tags_by_area_in_contexts($component, $itemtype, [$context]);
+        $this->assertEmpty($result);
+    }
+
+    /**
+     * get_tags_by_area_in_contexts should return an array of tags that
+     * have instances in the given context even when there is only a single
+     * instance.
+     */
+    public function test_get_tags_by_area_in_contexts_single_tag_one_context() {
+        $tagnames = ['foo'];
+        $collid = core_tag_collection::get_default();
+        $tags = core_tag_tag::create_if_missing($collid, $tagnames);
+        $user = $this->getDataGenerator()->create_user();
+        $context = context_user::instance($user->id);
+        $component = 'core';
+        $itemtype = 'user';
+        core_tag_tag::set_item_tags($component, $itemtype, $user->id, $context, $tagnames);
+
+        $result = core_tag_tag::get_tags_by_area_in_contexts($component, $itemtype, [$context]);
+        $expected = array_map(function($t) {
+            return $t->id;
+        }, $tags);
+        $actual = array_map(function($t) {
+            return $t->id;
+        }, $result);
+
+        sort($expected);
+        sort($actual);
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * get_tags_by_area_in_contexts should return all tags in an array
+     * that have tag instances in for the area in the given context and
+     * should ignore all tags that don't have an instance.
+     */
+    public function test_get_tags_by_area_in_contexts_multiple_tags_one_context() {
+        $tagnames = ['foo', 'bar', 'baz'];
+        $collid = core_tag_collection::get_default();
+        $tags = core_tag_tag::create_if_missing($collid, $tagnames);
+        $user = $this->getDataGenerator()->create_user();
+        $context = context_user::instance($user->id);
+        $component = 'core';
+        $itemtype = 'user';
+        core_tag_tag::set_item_tags($component, $itemtype, $user->id, $context, array_slice($tagnames, 0, 2));
+
+        $result = core_tag_tag::get_tags_by_area_in_contexts($component, $itemtype, [$context]);
+        $expected = ['foo', 'bar'];
+        $actual = array_map(function($t) {
+            return $t->name;
+        }, $result);
+
+        sort($expected);
+        sort($actual);
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * get_tags_by_area_in_contexts should return the unique set of
+     * tags for a area in the given contexts. Multiple tag instances of
+     * the same tag don't result in duplicates in the result set.
+     *
+     * Tags with tag instances in the same area with in difference contexts
+     * should be ignored.
+     */
+    public function test_get_tags_by_area_in_contexts_multiple_tags_multiple_contexts() {
+        $tagnames = ['foo', 'bar', 'baz', 'bop', 'bam', 'bip'];
+        $collid = core_tag_collection::get_default();
+        $tags = core_tag_tag::create_if_missing($collid, $tagnames);
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $user3 = $this->getDataGenerator()->create_user();
+        $context1 = context_user::instance($user1->id);
+        $context2 = context_user::instance($user2->id);
+        $context3 = context_user::instance($user3->id);
+        $component = 'core';
+        $itemtype = 'user';
+
+        // User 1 tags: 'foo', 'bar'.
+        core_tag_tag::set_item_tags($component, $itemtype, $user1->id, $context1, array_slice($tagnames, 0, 2));
+        // User 2 tags: 'bar', 'baz'.
+        core_tag_tag::set_item_tags($component, $itemtype, $user2->id, $context2, array_slice($tagnames, 1, 2));
+        // User 3 tags: 'bop', 'bam'.
+        core_tag_tag::set_item_tags($component, $itemtype, $user3->id, $context3, array_slice($tagnames, 3, 2));
+
+        $result = core_tag_tag::get_tags_by_area_in_contexts($component, $itemtype, [$context1, $context2]);
+        // Both User 1 and 2 have tagged using 'bar' but we don't
+        // expect duplicate tags in the result since they are the same
+        // tag.
+        //
+        // User 3 has tagged 'bop' and 'bam' but we aren't searching in
+        // that context so they shouldn't be in the results.
+        $expected = ['foo', 'bar', 'baz'];
+        $actual = array_map(function($t) {
+            return $t->name;
+        }, $result);
+
+        sort($expected);
+        sort($actual);
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
      * Help method to return sorted array of names of correlated tags to use for assertions
      * @param core_tag $tag
      * @return string
