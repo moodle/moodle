@@ -1,5 +1,8 @@
 This files describes API changes in the quiz code.
 
+=== 3.5 ===
+* Removed questionbank.ajax.php. Please use the quiz_question_bank fragment instead.
+
 === 3.3.2 ===
 
 * quiz_refresh_events() Now takes two additional parameters to refine the update to a specific instance. This function
