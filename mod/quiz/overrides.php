@@ -177,17 +177,15 @@ foreach ($overrides as $override) {
     // Icons.
     $iconstr = '';
 
-    if ($active) {
-        // Edit.
-        $editurlstr = $overrideediturl->out(true, array('id' => $override->id));
-        $iconstr = '<a title="' . get_string('edit') . '" href="'. $editurlstr . '">' .
-                $OUTPUT->pix_icon('t/edit', get_string('edit')) . '</a> ';
-        // Duplicate.
-        $copyurlstr = $overrideediturl->out(true,
-                array('id' => $override->id, 'action' => 'duplicate'));
-        $iconstr .= '<a title="' . get_string('copy') . '" href="' . $copyurlstr . '">' .
-                $OUTPUT->pix_icon('t/copy', get_string('copy')) . '</a> ';
-    }
+    // Edit.
+    $editurlstr = $overrideediturl->out(true, array('id' => $override->id));
+    $iconstr = '<a title="' . get_string('edit') . '" href="'. $editurlstr . '">' .
+            $OUTPUT->pix_icon('t/edit', get_string('edit')) . '</a> ';
+    // Duplicate.
+    $copyurlstr = $overrideediturl->out(true,
+            array('id' => $override->id, 'action' => 'duplicate'));
+    $iconstr .= '<a title="' . get_string('copy') . '" href="' . $copyurlstr . '">' .
+            $OUTPUT->pix_icon('t/copy', get_string('copy')) . '</a> ';
     // Delete.
     $deleteurlstr = $overridedeleteurl->out(true,
             array('id' => $override->id, 'sesskey' => sesskey()));
