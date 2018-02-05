@@ -1871,7 +1871,7 @@ class core_message_external extends external_api {
     public static function mark_message_read_parameters() {
         return new external_function_parameters(
             array(
-                'messageid' => new external_value(PARAM_INT, 'id of the message (in the message table)'),
+                'messageid' => new external_value(PARAM_INT, 'id of the message in the messages table'),
                 'timeread' => new external_value(PARAM_INT, 'timestamp for when the message should be marked read',
                     VALUE_DEFAULT, 0)
             )
@@ -1948,7 +1948,92 @@ class core_message_external extends external_api {
     public static function mark_message_read_returns() {
         return new external_single_structure(
             array(
-                'messageid' => new external_value(PARAM_INT, 'the id of the message in the message_read table'),
+                'messageid' => new external_value(PARAM_INT, 'the id of the message in the messages table'),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     */
+    public static function mark_notification_read_parameters() {
+        return new external_function_parameters(
+            array(
+                'notificationid' => new external_value(PARAM_INT, 'id of the notification'),
+                'timeread' => new external_value(PARAM_INT, 'timestamp for when the notification should be marked read',
+                    VALUE_DEFAULT, 0)
+            )
+        );
+    }
+
+    /**
+     * Mark a single notification as read.
+     *
+     * This will trigger a 'notification_viewed' event.
+     *
+     * @param int $notificationid id of the notification
+     * @param int $timeread timestamp for when the notification should be marked read
+     * @return external_description
+     * @throws invalid_parameter_exception
+     * @throws moodle_exception
+     */
+    public static function mark_notification_read($notificationid, $timeread) {
+        global $CFG, $DB, $USER;
+
+        // Check if private messaging between users is allowed.
+        if (empty($CFG->messaging)) {
+            throw new moodle_exception('disabled', 'message');
+        }
+
+        // Warnings array, it can be empty at the end but is mandatory.
+        $warnings = array();
+
+        // Validate params.
+        $params = array(
+            'notificationid' => $notificationid,
+            'timeread' => $timeread
+        );
+        $params = self::validate_parameters(self::mark_notification_read_parameters(), $params);
+
+        if (empty($params['timeread'])) {
+            $timeread = time();
+        } else {
+            $timeread = $params['timeread'];
+        }
+
+        // Validate context.
+        $context = context_system::instance();
+        self::validate_context($context);
+
+        $notification = $DB->get_record('notifications', ['id' => $params['notificationid']], '*', MUST_EXIST);
+
+        if ($notification->useridto != $USER->id) {
+            throw new invalid_parameter_exception('Invalid notificationid, you don\'t have permissions to mark this ' .
+                'notification as read');
+        }
+
+        \core_message\api::mark_notification_as_read($notification, $timeread);
+
+        $results = array(
+            'notificationid' => $notification->id,
+            'warnings' => $warnings
+        );
+
+        return $results;
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     */
+    public static function mark_notification_read_returns() {
+        return new external_single_structure(
+            array(
+                'notificationid' => new external_value(PARAM_INT, 'id of the notification'),
                 'warnings' => new external_warnings()
             )
         );
