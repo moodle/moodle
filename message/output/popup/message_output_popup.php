@@ -115,15 +115,14 @@ class message_output_popup extends message_output {
     }
 
     /**
-     * Handles the message_viewed event to keep data in sync.
+     * Handles the notification_viewed event to keep data in sync.
      *
      * @param \core\event\base $event The event data
      */
-    public static function message_viewed(\core\event\base $event) {
+    public static function notification_viewed(\core\event\base $event) {
         global $DB;
 
-        if ($record = $DB->get_record('message_popup', ['messageid' => $event->other['messageid']])) {
-            $record->messageid = $event->objectid;
+        if ($record = $DB->get_record('message_popup', ['messageid' => $event->objectid])) {
             $record->isread = 1;
             $DB->update_record('message_popup', $record);
         }

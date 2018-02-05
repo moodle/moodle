@@ -27,10 +27,10 @@ defined('MOODLE_INTERNAL') || die();
 
 $observers = array(
 
-    // Message viewed.
+    // Notification viewed.
     array(
-        'eventname' => '\core\event\message_viewed',
-        'callback' => 'message_output_popup::message_viewed',
+        'eventname' => '\core\event\notification_viewed',
+        'callback' => 'message_output_popup::notification_viewed',
         'includefile' => '/message/output/popup/message_output_popup.php'
     )
 );
