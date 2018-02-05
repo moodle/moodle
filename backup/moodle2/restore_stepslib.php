@@ -1827,7 +1827,7 @@ class restore_course_structure_step extends restore_structure_step {
         // When restoring to a new course we can set all the things except for the ID number.
         $canchangeidnumber = $isnewcourse || has_capability('moodle/course:changeidnumber', $context, $userid);
         $canchangesummary = $isnewcourse || has_capability('moodle/course:changesummary', $context, $userid);
-        $canforcelanguage = has_capability('moodle/course:setforcedlanguage', $context);
+        $canforcelanguage = has_capability('moodle/course:setforcedlanguage', $context, $userid);
 
         $data = (object)$data;
         $data->id = $this->get_courseid();

@@ -266,7 +266,7 @@ class tool_uploadcourse_course_testcase extends advanced_testcase {
         global $DB;
         $this->resetAfterTest(true);
 
-        cron_setup_user(); // To avoid warnings related to 'moodle/course:setforcedlanguage' capability check.
+        $this->setAdminUser(); // To avoid warnings related to 'moodle/course:setforcedlanguage' capability check.
 
         // Create.
         $mode = tool_uploadcourse_processor::MODE_CREATE_NEW;
