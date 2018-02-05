@@ -346,14 +346,18 @@ class assign_submission_onlinetext extends assign_submission_plugin {
         $showviewlink = true;
 
         if ($onlinetextsubmission) {
+            // This contains the shortened version of the text plus an optional 'Export to portfolio' button.
             $text = $this->assignment->render_editor_content(ASSIGNSUBMISSION_ONLINETEXT_FILEAREA,
                                                              $onlinetextsubmission->submission,
                                                              $this->get_type(),
                                                              'onlinetext',
-                                                             'assignsubmission_onlinetext');
+                                                             'assignsubmission_onlinetext', true);
 
+            // The actual submission text.
             $onlinetext = trim($onlinetextsubmission->onlinetext);
-            $shorttext = shorten_text($text, 140);
+            // The shortened version of the submission text.
+            $shorttext = shorten_text($onlinetext, 140);
+
             $plagiarismlinks = '';
 
             if (!empty($CFG->enableplagiarism)) {
@@ -365,12 +369,13 @@ class assign_submission_onlinetext extends assign_submission_plugin {
                     'course' => $this->assignment->get_course()->id,
                     'assignment' => $submission->assignment));
             }
-            if ($text != $shorttext) {
+            // We compare the actual text submission and the shortened version. If they are not equal, we show the word count.
+            if ($onlinetext != $shorttext) {
                 $wordcount = get_string('numwords', 'assignsubmission_onlinetext', count_words($onlinetext));
 
-                return $plagiarismlinks . $wordcount . $shorttext;
+                return $plagiarismlinks . $wordcount . $text;
             } else {
-                return $plagiarismlinks . $shorttext;
+                return $plagiarismlinks . $text;
             }
         }
         return '';
