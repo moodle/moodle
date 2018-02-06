@@ -294,6 +294,18 @@ class helper {
     }
 
     /**
+     * Returns the conversation hash between users for easy look-ups in the DB.
+     *
+     * @param array $userids
+     * @return string
+     */
+    public static function get_conversation_hash(array $userids) {
+        sort($userids);
+
+        return sha1(implode('-', $userids));
+    }
+
+    /**
      * Returns the cache key for the time created value of the last message between two users.
      *
      * @param int $userid

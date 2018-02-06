@@ -1921,7 +1921,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
 
-        $this->assertFalse(\core_message\api::get_conversation_between_users($user1->id, $user2->id));
+        $this->assertFalse(\core_message\api::get_conversation_between_users([$user1->id, $user2->id]));
     }
 
     /**
@@ -1931,9 +1931,9 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
 
-        $conversationid = \core_message\api::create_conversation_between_users($user1->id, $user2->id);
+        $conversationid = \core_message\api::create_conversation_between_users([$user1->id, $user2->id]);
 
         $this->assertEquals($conversationid,
-            \core_message\api::get_conversation_between_users($user1->id, $user2->id));
+            \core_message\api::get_conversation_between_users([$user1->id, $user2->id]));
     }
 }

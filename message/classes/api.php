@@ -637,7 +637,7 @@ class api {
     public static function delete_conversation($userid, $otheruserid) {
         global $DB, $USER;
 
-        $conversationid = self::get_conversation_between_users($userid, $otheruserid);
+        $conversationid = self::get_conversation_between_users([$userid, $otheruserid]);
 
         // If there is no conversation, there is nothing to do.
         if (!$conversationid) {
@@ -1202,24 +1202,15 @@ class api {
     /**
      * Returns the conversation between two users.
      *
-     * @param int $userid1 The userid of the first user
-     * @param int $userid2 The userid of the second user
+     * @param array $userids
      * @return int|bool The id of the conversation, false if not found
      */
-    public static function get_conversation_between_users($userid1, $userid2) {
+    public static function get_conversation_between_users(array $userids) {
         global $DB;
 
-        $sql = "SELECT DISTINCT mc.id
-                  FROM {message_conversations} mc
-            INNER JOIN {message_conversation_members} mcm
-                    ON mcm.conversationid = mc.id
-            INNER JOIN {message_conversation_members} mcm2
-                    ON mcm2.conversationid = mc.id
-                 WHERE mcm.userid = :userid1
-                   AND mcm2.userid = :userid2
-                   AND mcm.id != mcm2.id";
+        $hash = helper::get_conversation_hash($userids);
 
-        if ($conversation = $DB->get_record_sql($sql, ['userid1' => $userid1, 'userid2' => $userid2])) {
+        if ($conversation = $DB->get_record('message_conversations', ['convhash' => $hash])) {
             return $conversation->id;
         }
 
@@ -1229,29 +1220,25 @@ class api {
     /**
      * Creates a conversation between two users.
      *
-     * @param int $userid1 The userid of the first user
-     * @param int $userid2 The userid of the second user
+     * @param array $userids
      * @return int The id of the conversation
      */
-    public static function create_conversation_between_users($userid1, $userid2) {
+    public static function create_conversation_between_users(array $userids) {
         global $DB;
 
         $conversation = new \stdClass();
+        $conversation->convhash = helper::get_conversation_hash($userids);
         $conversation->timecreated = time();
         $conversation->id = $DB->insert_record('message_conversations', $conversation);
 
         // Add members to this conversation.
-        $member = new \stdClass();
-        $member->conversationid = $conversation->id;
-        $member->userid = $userid1;
-        $member->timecreated = time();
-        $DB->insert_record('message_conversation_members', $member);
-
-        $member = new \stdClass();
-        $member->conversationid = $conversation->id;
-        $member->userid = $userid2;
-        $member->timecreated = time();
-        $DB->insert_record('message_conversation_members', $member);
+        foreach ($userids as $userid) {
+            $member = new \stdClass();
+            $member->conversationid = $conversation->id;
+            $member->userid = $userid;
+            $member->timecreated = time();
+            $DB->insert_record('message_conversation_members', $member);
+        }
 
         return $conversation->id;
     }

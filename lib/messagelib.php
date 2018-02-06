@@ -156,10 +156,10 @@ function message_send($eventdata) {
     } else {
         $table = 'messages';
 
-        if (!$conversationid = \core_message\api::get_conversation_between_users($eventdata->userfrom->id,
-                $eventdata->userto->id)) {
-            $conversationid = \core_message\api::create_conversation_between_users($eventdata->userfrom->id,
-                $eventdata->userto->id);
+        if (!$conversationid = \core_message\api::get_conversation_between_users([$eventdata->userfrom->id,
+                $eventdata->userto->id])) {
+            $conversationid = \core_message\api::create_conversation_between_users([$eventdata->userfrom->id,
+                $eventdata->userto->id]);
         }
 
         $tabledata = new stdClass();

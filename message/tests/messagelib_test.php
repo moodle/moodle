@@ -85,9 +85,9 @@ class core_message_messagelib_testcase extends advanced_testcase {
             return $DB->insert_record('notifications', $record);
         }
 
-        if (!$conversationid = \core_message\api::get_conversation_between_users($userfrom->id, $userto->id)) {
-            $conversationid = \core_message\api::create_conversation_between_users($userfrom->id,
-                $userto->id);
+        if (!$conversationid = \core_message\api::get_conversation_between_users([$userfrom->id, $userto->id])) {
+            $conversationid = \core_message\api::create_conversation_between_users([$userfrom->id,
+                $userto->id]);
         }
 
         // Ok, send the message.

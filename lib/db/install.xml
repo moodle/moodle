@@ -612,11 +612,15 @@
     <TABLE NAME="message_conversations" COMMENT="Stores all message conversations">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="convhash" TYPE="char" LENGTH="40" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
+      <INDEXES>
+        <INDEX NAME="convhash" UNIQUE="true" FIELDS="convhash"/>
+      </INDEXES>
     </TABLE>
     <TABLE NAME="message_conversation_members" COMMENT="Stores all members in a conversations">
       <FIELDS>
