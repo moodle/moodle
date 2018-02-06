@@ -29,6 +29,7 @@ define([
             'core/notification',
             'core/custom_interaction_events',
             'core_question/repository',
+            'core_question/selectors',
         ],
         function(
             $,
@@ -38,14 +39,9 @@ define([
             ModalFactory,
             Notification,
             CustomEvents,
-            Repository
+            Repository,
+            QuestionSelectors
         ) {
-
-    var SELECTORS = {
-        TAGS_LINK: '[data-action="edittags"]',
-        SAVE_BUTTON: '[data-action="save"]',
-        LOADING_ICON: '[data-region="overlay-icon-container"]',
-    };
 
     /**
      * Enable the save button in the footer.
@@ -54,7 +50,7 @@ define([
      * @method enableSaveButton
      */
     var enableSaveButton = function(root) {
-        root.find(SELECTORS.SAVE_BUTTON).prop('disabled', false);
+        root.find(QuestionSelectors.actions.save).prop('disabled', false);
     };
 
     /**
@@ -64,7 +60,7 @@ define([
      * @method disableSaveButton
      */
     var disableSaveButton = function(root) {
-        root.find(SELECTORS.SAVE_BUTTON).prop('disabled', true);
+        root.find(QuestionSelectors.actions.save).prop('disabled', true);
     };
 
     /**
@@ -85,7 +81,7 @@ define([
      * @method startLoading
      */
     var startLoading = function(root) {
-        var loadingIconContainer = root.find(SELECTORS.LOADING_ICON);
+        var loadingIconContainer = root.find(QuestionSelectors.containers.loadingIcon);
 
         loadingIconContainer.removeClass('hidden');
     };
@@ -97,7 +93,7 @@ define([
      * @method stopLoading
      */
     var stopLoading = function(root) {
-        var loadingIconContainer = root.find(SELECTORS.LOADING_ICON);
+        var loadingIconContainer = root.find(QuestionSelectors.containers.loadingIcon);
 
         loadingIconContainer.addClass('hidden');
     };
@@ -113,7 +109,7 @@ define([
                 type: ModalFactory.types.SAVE_CANCEL,
                 large: false
             },
-            [root, SELECTORS.TAGS_LINK]
+            [root, QuestionSelectors.actions.edittags]
         ).then(function(modal) {
             // All of this code only executes once, when the modal is
             // first created. This allows us to add any code that should
@@ -149,7 +145,7 @@ define([
         // We need to add an event handler to the tags link because there are
         // multiple links on the page and without adding a listener we don't know
         // which one the user clicked on the show the modal.
-        root.on(CustomEvents.events.activate, SELECTORS.TAGS_LINK, function(e) {
+        root.on(CustomEvents.events.activate, QuestionSelectors.actions.edittags, function(e) {
             var currentTarget = $(e.currentTarget);
 
             var questionId = currentTarget.data('questionid'),
@@ -185,9 +181,9 @@ define([
                 // Show or hide the save button depending on whether the user
                 // has the capability to edit the tags.
                 if (canEdit) {
-                    modal.getRoot().find(SELECTORS.SAVE_BUTTON).show();
+                    modal.getRoot().find(QuestionSelectors.actions.save).show();
                 } else {
-                    modal.getRoot().find(SELECTORS.SAVE_BUTTON).hide();
+                    modal.getRoot().find(QuestionSelectors.actions.save).hide();
                 }
 
                 return modal;
