@@ -1222,8 +1222,7 @@ function quiz_get_user_timeclose($courseid) {
     if (has_capability('moodle/course:update', context_course::instance($courseid))) {
         $sql = "SELECT quiz.id, quiz.timeclose AS usertimeclose, COALESCE(quiz.timelimit, 0) AS usertimelimit
                   FROM {quiz} quiz
-                 WHERE quiz.course = :courseid
-              GROUP BY quiz.id";
+                 WHERE quiz.course = :courseid";
 
         $results = $DB->get_records_sql($sql, array('courseid' => $courseid));
         return $results;
@@ -1232,9 +1231,13 @@ function quiz_get_user_timeclose($courseid) {
     // The multiple qgo JOINS are necessary because we want timeclose/timelimit = 0 (unlimited) to supercede
     // any other group override.
 
-    $sql = "SELECT quiz.id,
-  COALESCE(MAX(quo.timeclose), MAX(qgo1.timeclose), MAX(qgo2.timeclose), quiz.timeclose, 0) AS usertimeclose,
-  COALESCE(MAX(quo.timelimit), MAX(qgo3.timelimit), MAX(qgo4.timelimit), quiz.timelimit, 0) AS usertimelimit
+    $sql = "SELECT q.id,
+  COALESCE(v.oneclose, v.twoclose, v.threeclose, q.timeclose, 0) AS usertimeclose,
+  COALESCE(v.onelimit, v.twolimit, v.threelimit, q.timelimit, 0) AS usertimelimit
+  FROM (
+      SELECT quiz.id AS quizid,
+             MAX(quo.timeclose) AS oneclose, MAX(qgo1.timeclose) AS twoclose, MAX(qgo2.timeclose) AS threeclose,
+             MAX(quo.timelimit) AS onelimit, MAX(qgo3.timelimit) AS twolimit, MAX(qgo4.timelimit) AS threelimit
        FROM {quiz} quiz
   LEFT JOIN {quiz_overrides} quo ON quo.quiz = quiz.id
   LEFT JOIN {groups_members} gm ON gm.userid = quo.userid
@@ -1248,7 +1251,8 @@ function quiz_get_user_timeclose($courseid) {
                                   AND qgo4.groupid = gm.groupid
       WHERE quiz.course = :courseid
             AND ((quo.userid = :userid) OR ((gm.userid IS NULL) AND (quo.userid IS NULL)))
-   GROUP BY quiz.id";
+   GROUP BY quiz.id) v
+  JOIN {quiz} q ON q.id = v.quizid";
 
     $results = $DB->get_records_sql($sql, array('courseid' => $courseid, 'userid' => $USER->id));
     return $results;
