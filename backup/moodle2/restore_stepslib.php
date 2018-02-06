@@ -4394,6 +4394,21 @@ class restore_create_categories_and_questions extends restore_structure_step {
         }
         $data->contextid = $mapping->parentitemid;
 
+        // Before 3.5, question categories could be created at top level.
+        // From 3.5 onwards, all question categories should be a child of a special category called the "top" category.
+        $backuprelease = floatval($this->get_task()->get_info()->backup_release);
+        preg_match('/(\d{8})/', $this->get_task()->get_info()->moodle_release, $matches);
+        $backupbuild = (int)$matches[1];
+        $before35 = false;
+        if ($backuprelease < 3.5 || $backupbuild < 20180205) {
+            $before35 = true;
+        }
+        if (empty($mapping->info->parent) &&
+                ($before35 || $mapping->info->contextlevel == CONTEXT_MODULE)) {
+            $top = question_get_top_category($data->contextid, true);
+            $data->parent = $top->id;
+        }
+
         // Before 3.1, the 'stamp' field could be erroneously duplicated.
         // From 3.1 onwards, there's a unique index of (contextid, stamp).
         // If we encounter a duplicate in an old restore file, just generate a new stamp.
@@ -4554,7 +4569,6 @@ class restore_create_categories_and_questions extends restore_structure_step {
                      'backupid' => $this->get_restoreid(),
                      'itemname' => 'question_category_created'));
         foreach ($qcats as $qcat) {
-            $newparent = 0;
             $dbcat = $DB->get_record('question_categories', array('id' => $qcat->newitemid));
             // Get new parent (mapped or created, so we look in quesiton_category mappings)
             if ($newparent = $DB->get_field('backup_ids_temp', 'newitemid', array(
@@ -4570,8 +4584,11 @@ class restore_create_categories_and_questions extends restore_structure_step {
                 }
             }
             // Here with $newparent empty, problem with contexts or remapping, set it to top cat
-            if (!$newparent) {
-                $DB->set_field('question_categories', 'parent', 0, array('id' => $dbcat->id));
+            if (!$newparent && $dbcat->parent) {
+                $topcat = question_get_top_category($dbcat->contextid, true);
+                if ($dbcat->parent != $topcat->id) {
+                    $DB->set_field('question_categories', 'parent', $topcat->id, array('id' => $dbcat->id));
+                }
             }
         }
 
@@ -4580,7 +4597,6 @@ class restore_create_categories_and_questions extends restore_structure_step {
                   'backupid' => $this->get_restoreid(),
                   'itemname' => 'question_created'));
         foreach ($qs as $q) {
-            $newparent = 0;
             $dbq = $DB->get_record('question', array('id' => $q->newitemid));
             // Get new parent (mapped or created, so we look in question mappings)
             if ($newparent = $DB->get_field('backup_ids_temp', 'newitemid', array(
@@ -4609,18 +4625,38 @@ class restore_move_module_questions_categories extends restore_execution_step {
     protected function define_execution() {
         global $DB;
 
+        $backuprelease = floatval($this->task->get_info()->backup_release);
+        preg_match('/(\d{8})/', $this->task->get_info()->moodle_release, $matches);
+        $backupbuild = (int)$matches[1];
+        $before35 = false;
+        if ($backuprelease < 3.5 || $backupbuild < 20180205) {
+            $before35 = true;
+        }
+
         $contexts = restore_dbops::restore_get_question_banks($this->get_restoreid(), CONTEXT_MODULE);
         foreach ($contexts as $contextid => $contextlevel) {
             // Only if context mapping exists (i.e. the module has been restored)
             if ($newcontext = restore_dbops::get_backup_ids_record($this->get_restoreid(), 'context', $contextid)) {
                 // Update all the qcats having their parentitemid set to the original contextid
-                $modulecats = $DB->get_records_sql("SELECT itemid, newitemid
+                $modulecats = $DB->get_records_sql("SELECT itemid, newitemid, info
                                                       FROM {backup_ids_temp}
                                                      WHERE backupid = ?
                                                        AND itemname = 'question_category'
                                                        AND parentitemid = ?", array($this->get_restoreid(), $contextid));
                 foreach ($modulecats as $modulecat) {
-                    $DB->set_field('question_categories', 'contextid', $newcontext->newitemid, array('id' => $modulecat->newitemid));
+                    $cat = new stdClass();
+                    $cat->id = $modulecat->newitemid;
+                    $cat->contextid = $newcontext->newitemid;
+
+                    // Before 3.5, question categories could be created at top level.
+                    // From 3.5 onwards, all question categories should be a child of a special category called the "top" category.
+                    $info = backup_controller_dbops::decode_backup_temp_info($modulecat->info);
+                    if ($before35 && empty($info->parent)) {
+                        $top = question_get_top_category($newcontext->newitemid, true);
+                        $cat->parent = $top->id;
+                    }
+                    $DB->update_record('question_categories', $cat);
+
                     // And set new contextid also in question_category mapping (will be
                     // used by {@link restore_create_question_files} later
                     restore_dbops::set_backup_ids_record($this->get_restoreid(), 'question_category', $modulecat->itemid, $modulecat->newitemid, $newcontext->newitemid);

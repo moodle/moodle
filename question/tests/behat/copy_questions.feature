@@ -46,4 +46,4 @@ Feature: A teacher can duplicate questions in the question bank
     When I click on "Duplicate" "link" in the "Test question to be copied" "table_row"
     And I press "Cancel"
     Then I should see "Test question to be copied"
-    And the field "Select a category" matches value "Test questions (1)"
+    And the field "Select a category" matches value "&nbsp;&nbsp;&nbsp;Test questions (1)"

@@ -971,7 +971,6 @@ function add_indented_names($categories, $nochildrenof = -1) {
  */
 function question_category_select_menu($contexts, $top = false, $currentcat = 0,
         $selected = "", $nochildrenof = -1) {
-    global $OUTPUT;
     $categoriesarray = question_category_options($contexts, $top, $currentcat,
             false, $nochildrenof);
     if ($selected) {
@@ -994,13 +993,58 @@ function question_category_select_menu($contexts, $top = false, $currentcat = 0,
  */
 function question_get_default_category($contextid) {
     global $DB;
-    $category = $DB->get_records('question_categories',
-            array('contextid' => $contextid), 'id', '*', 0, 1);
+    $category = $DB->get_records_select('question_categories', 'contextid = ? AND parent <> 0',
+            array($contextid), 'id', '*', 0, 1);
     if (!empty($category)) {
         return reset($category);
     } else {
         return false;
     }
+}
+
+/**
+ * Gets the top category in the given context.
+ * This function can optionally create the top category if it doesn't exist.
+ *
+ * @param int $contextid A context id.
+ * @param bool $create Whether create a top category if it doesn't exist.
+ * @return bool|stdClass The top question category for that context, or false if none.
+ */
+function question_get_top_category($contextid, $create = false) {
+    global $DB;
+    $category = $DB->get_record('question_categories',
+            array('contextid' => $contextid, 'parent' => 0));
+
+    if (!$category && $create) {
+        // We need to make one.
+        $category = new stdClass();
+        $category->name = 'top'; // A non-real name for the top category. It will be localised at the display time.
+        $category->info = '';
+        $category->contextid = $contextid;
+        $category->parent = 0;
+        $category->sortorder = 0;
+        $category->stamp = make_unique_id_code();
+        $category->id = $DB->insert_record('question_categories', $category);
+    }
+
+    return $category;
+}
+
+/**
+ * Gets the list of top categories in the given contexts in the array("categoryid,categorycontextid") format.
+ *
+ * @param array $contextids List of context ids
+ * @return array
+ */
+function question_get_top_categories_for_contexts($contextids) {
+    global $DB;
+
+    $concatsql = $DB->sql_concat_join("','", ['id', 'contextid']);
+    list($insql, $params) = $DB->get_in_or_equal($contextids);
+    $sql = "SELECT $concatsql FROM {question_categories} WHERE contextid $insql AND parent = 0";
+    $topcategories = $DB->get_fieldset_sql($sql, $params);
+
+    return $topcategories;
 }
 
 /**
@@ -1023,15 +1067,16 @@ function question_make_default_categories($contexts) {
     $preferredness = 0;
     // If it already exists, just return it.
     foreach ($contexts as $key => $context) {
+        $topcategory = question_get_top_category($context->id, true);
         if (!$exists = $DB->record_exists("question_categories",
-                array('contextid' => $context->id))) {
+                array('contextid' => $context->id, 'parent' => $topcategory->id))) {
             // Otherwise, we need to make one
             $category = new stdClass();
             $contextname = $context->get_context_name(false, true);
             $category->name = get_string('defaultfor', 'question', $contextname);
             $category->info = get_string('defaultinfofor', 'question', $contextname);
             $category->contextid = $context->id;
-            $category->parent = 0;
+            $category->parent = $topcategory->id;
             // By default, all categories get this number, and are sorted alphabetically.
             $category->sortorder = 999;
             $category->stamp = make_unique_id_code();
@@ -1061,20 +1106,29 @@ function question_make_default_categories($contexts) {
  *
  * @param mixed $contexts either a single contextid, or a comma-separated list of context ids.
  * @param string $sortorder used as the ORDER BY clause in the select statement.
+ * @param bool $top Whether to return the top categories or not.
  * @return array of category objects.
  */
-function get_categories_for_contexts($contexts, $sortorder = 'parent, sortorder, name ASC') {
+function get_categories_for_contexts($contexts, $sortorder = 'parent, sortorder, name ASC', $top = false) {
     global $DB;
+    $topwhere = $top ? '' : 'AND c.parent <> 0';
     return $DB->get_records_sql("
             SELECT c.*, (SELECT count(1) FROM {question} q
                         WHERE c.id = q.category AND q.hidden='0' AND q.parent='0') AS questioncount
               FROM {question_categories} c
-             WHERE c.contextid IN ($contexts)
+             WHERE c.contextid IN ($contexts) $topwhere
           ORDER BY $sortorder");
 }
 
 /**
  * Output an array of question categories.
+ *
+ * @param array $contexts The list of contexts.
+ * @param bool $top Whether to return the top categories or not.
+ * @param int $currentcat
+ * @param bool $popupform
+ * @param int $nochildrenof
+ * @return array
  */
 function question_category_options($contexts, $top = false, $currentcat = 0,
         $popupform = false, $nochildrenof = -1) {
@@ -1085,13 +1139,13 @@ function question_category_options($contexts, $top = false, $currentcat = 0,
     }
     $contextslist = join($pcontexts, ', ');
 
-    $categories = get_categories_for_contexts($contextslist);
-
-    $categories = question_add_context_in_key($categories);
+    $categories = get_categories_for_contexts($contextslist, 'parent, sortorder, name ASC', $top);
 
     if ($top) {
-        $categories = question_add_tops($categories, $pcontexts);
+        $categories = question_fix_top_names($categories);
     }
+
+    $categories = question_add_context_in_key($categories);
     $categories = add_indented_names($categories, $nochildrenof);
 
     // sort cats out into different contexts
@@ -1138,18 +1192,21 @@ function question_add_context_in_key($categories) {
     return $newcatarray;
 }
 
-function question_add_tops($categories, $pcontexts) {
-    $topcats = array();
-    foreach ($pcontexts as $context) {
-        $newcat = new stdClass();
-        $newcat->id = "0,$context";
-        $newcat->name = get_string('top');
-        $newcat->parent = -1;
-        $newcat->contextid = $context;
-        $topcats["0,$context"] = $newcat;
+/**
+ * Finds top categories in the given categories hierarchy and replace their name with a proper localised string.
+ *
+ * @param array $categories An array of question categories.
+ * @return array The same question category list given to the function, with the top category names being translated.
+ */
+function question_fix_top_names($categories) {
+
+    foreach ($categories as $id => $category) {
+        if ($category->parent == 0) {
+            $categories[$id]->name = get_string('top');
+        }
     }
-    //put topcats in at beginning of array - they'll be sorted into different contexts later.
-    return array_merge($topcats, $categories);
+
+    return $categories;
 }
 
 /**

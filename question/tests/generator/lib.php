@@ -47,15 +47,20 @@ class core_question_generator extends component_generator_base {
 
         $defaults = array(
             'name'       => 'Test question category ' . $this->categorycount,
-            'contextid'  => context_system::instance()->id,
             'info'       => '',
             'infoformat' => FORMAT_HTML,
             'stamp'      => make_unique_id_code(),
-            'parent'     => 0,
             'sortorder'  => 999,
         );
 
         $record = $this->datagenerator->combine_defaults_and_record($defaults, $record);
+
+        if (!isset($record['contextid'])) {
+            $record['contextid'] = context_system::instance()->id;
+        }
+        if (!isset($record['parent'])) {
+            $record['parent'] = question_get_top_category($record['contextid'], true)->id;
+        }
         $record['id'] = $DB->insert_record('question_categories', $record);
         return (object) $record;
     }
