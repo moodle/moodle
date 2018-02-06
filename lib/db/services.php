@@ -1114,6 +1114,13 @@ $functions = array(
         'capabilities'  => 'moodle/question:flag',
         'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
+    'core_question_submit_tags_form' => array(
+        'classname'     => 'core_question_external',
+        'methodname'    => 'submit_tags_form',
+        'description'   => 'Update the question tags.',
+        'type'          => 'write',
+        'ajax' => true,
+    ),
     'core_rating_get_item_ratings' => array(
         'classname' => 'core_rating_external',
         'methodname' => 'get_item_ratings',

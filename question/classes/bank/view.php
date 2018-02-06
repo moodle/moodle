@@ -124,10 +124,9 @@ class view {
 
         if (empty($CFG->questionbankcolumns)) {
             $questionbankcolumns = array('checkbox_column', 'question_type_column',
-                                     'question_name_column', 'edit_action_column', 'copy_action_column',
-                                     'preview_action_column', 'delete_action_column',
-                                     'creator_name_column',
-                                     'modifier_name_column');
+                                     'question_name_column', 'tags_action_column', 'edit_action_column',
+                                     'copy_action_column', 'preview_action_column', 'delete_action_column',
+                                     'creator_name_column', 'modifier_name_column');
         } else {
              $questionbankcolumns = explode(',', $CFG->questionbankcolumns);
         }
@@ -481,6 +480,8 @@ class view {
                 $this->baseurl, $cat, $this->cm,
                 null, $page, $perpage, $showhidden, $showquestiontext,
                 $this->contexts->having_cap('moodle/question:add'));
+
+        $PAGE->requires->js_call_amd('core_question/edit_tags', 'init', ['#questionscontainer']);
     }
 
     protected function print_choose_category_message($categoryandcontext) {
@@ -702,7 +703,7 @@ class view {
         echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
         echo \html_writer::input_hidden_params($this->baseurl);
 
-        echo '<div class="categoryquestionscontainer">';
+        echo '<div class="categoryquestionscontainer" id="questionscontainer">';
         $this->start_table();
         $rowcount = 0;
         foreach ($questions as $question) {
