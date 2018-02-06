@@ -592,6 +592,23 @@ class tool_uploadcourse_course {
             $coursedata['enddate'] = strtotime($coursedata['enddate']);
         }
 
+        // If lang is specified, check the user is allowed to set that field.
+        if (!empty($coursedata['lang'])) {
+            if ($exists) {
+                $courseid = $DB->get_field('course', 'id', ['shortname' => $this->shortname]);
+                if (!has_capability('moodle/course:setforcedlanguage', context_course::instance($courseid))) {
+                    $this->error('cannotforcelang', new lang_string('cannotforcelang', 'tool_uploadcourse'));
+                    return false;
+                }
+            } else {
+                $catcontext = context_coursecat::instance($coursedata['category']);
+                if (!guess_if_creator_will_have_course_capability('moodle/course:setforcedlanguage', $catcontext)) {
+                    $this->error('cannotforcelang', new lang_string('cannotforcelang', 'tool_uploadcourse'));
+                    return false;
+                }
+            }
+        }
+
         // Ultimate check mode vs. existence.
         switch ($mode) {
             case tool_uploadcourse_processor::MODE_CREATE_NEW:

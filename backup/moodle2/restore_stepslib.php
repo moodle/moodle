@@ -1827,6 +1827,7 @@ class restore_course_structure_step extends restore_structure_step {
         // When restoring to a new course we can set all the things except for the ID number.
         $canchangeidnumber = $isnewcourse || has_capability('moodle/course:changeidnumber', $context, $userid);
         $canchangesummary = $isnewcourse || has_capability('moodle/course:changesummary', $context, $userid);
+        $canforcelanguage = has_capability('moodle/course:setforcedlanguage', $context, $userid);
 
         $data = (object)$data;
         $data->id = $this->get_courseid();
@@ -1849,6 +1850,11 @@ class restore_course_structure_step extends restore_structure_step {
         if (!$canchangesummary) {
             unset($data->summary);
             unset($data->summaryformat);
+        }
+
+        // Unset lang if user can't change it.
+        if (!$canforcelanguage) {
+            unset($data->lang);
         }
 
         // Only allow the idnumber to be set if the user has permission and the idnumber is not already in use by
@@ -1889,7 +1895,7 @@ class restore_course_structure_step extends restore_structure_step {
             $data->completionnotify = 0;
         }
         $languages = get_string_manager()->get_list_of_translations(); // Get languages for quick search
-        if (!array_key_exists($data->lang, $languages)) {
+        if (isset($data->lang) && !array_key_exists($data->lang, $languages)) {
             $data->lang = '';
         }
 
