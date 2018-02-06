@@ -273,9 +273,9 @@
     function format_title($title,$max=64) {
 
         if (core_text::strlen($title) <= $max) {
-            return s($title);
+            return $title;
         } else {
-            return s(core_text::substr($title,0,$max-3).'...');
+            return core_text::substr($title, 0, $max - 3) . '...';
         }
     }
 
