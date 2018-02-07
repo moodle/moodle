@@ -23,6 +23,7 @@
  */
 namespace core_user\output;
 
+use moodle_url;
 use renderable;
 use renderer_base;
 use stdClass;
@@ -44,15 +45,22 @@ class unified_filter implements renderable, templatable {
     /** @var array $selectedoptions The list of selected filter option values. */
     protected $selectedoptions;
 
+    /** @var moodle_url|string $baseurl The url with params needed to call up this page. */
+    protected $baseurl;
+
     /**
      * unified_filter constructor.
      *
      * @param array $filteroptions The filter options.
      * @param array $selectedoptions The list of selected filter option values.
+     * @param string|moodle_url $baseurl The url with params needed to call up this page.
      */
-    public function __construct($filteroptions, $selectedoptions) {
+    public function __construct($filteroptions, $selectedoptions, $baseurl = null) {
         $this->filteroptions = $filteroptions;
         $this->selectedoptions = $selectedoptions;
+        if (!empty($baseurl)) {
+            $this->baseurl = new moodle_url($baseurl);
+        }
     }
 
     /**
@@ -64,7 +72,10 @@ class unified_filter implements renderable, templatable {
     public function export_for_template(renderer_base $output) {
         global $PAGE;
         $data = new stdClass();
-        $data->action = $PAGE->url->out(false);
+        if (empty($this->baseurl)) {
+            $this->baseurl = $PAGE->url;
+        }
+        $data->action = $this->baseurl->out(false);
 
         foreach ($this->selectedoptions as $option) {
             if (!isset($this->filteroptions[$option])) {
