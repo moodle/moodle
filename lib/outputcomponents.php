@@ -4767,8 +4767,8 @@ class progress_bar implements renderable, templatable {
      * @param bool $autostart Whether to start the progress bar right away.
      */
     public function __construct($htmlid = '', $width = 500, $autostart = false) {
-        if (!defined('NO_OUTPUT_BUFFERING') || !NO_OUTPUT_BUFFERING) {
-            debugging('progress_bar used without setting NO_OUTPUT_BUFFERING.', DEBUG_DEVELOPER);
+        if (!CLI_SCRIPT && !NO_OUTPUT_BUFFERING) {
+            debugging('progress_bar used in a non-CLI script without setting NO_OUTPUT_BUFFERING.', DEBUG_DEVELOPER);
         }
 
         if (!empty($htmlid)) {
