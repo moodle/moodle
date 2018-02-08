@@ -75,10 +75,7 @@ trait privacy_helper {
         $this->assertCount(count($dbtags), $exportedtags);
 
         foreach ($dbtags as $tag) {
-            $this->assertTrue(isset($exportedtags[$tag->id]));
-            $this->assertEquals($exportedtags[$tag->id]->name, $tag->name);
-            $this->assertEquals($exportedtags[$tag->id]->rawname, $tag->rawname);
-            $this->assertEquals($exportedtags[$tag->id]->flag, $tag->flag);
+            $this->assertContains($tag->rawname, $exportedtags);
         }
     }
 }
