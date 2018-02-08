@@ -153,12 +153,12 @@ div.backup-section + form,
 // I think this could be avoided (or at least tidied up) ifr
 // we used HTML5 input types like url, phone, email, number etc.
 /* rtl:ignore */
-.mform .fitem .felement input[name=email],
-.mform .fitem .felement input[name=email2],
-.mform .fitem .felement input[name=url],
-.mform .fitem .felement input[name=idnumber],
-.mform .fitem .felement input[name=phone1],
-.mform .fitem .felement input[name=phone2] {
+.mform .fitem .felement input[name="email"],
+.mform .fitem .felement input[name="email2"],
+.mform .fitem .felement input[name="url"],
+.mform .fitem .felement input[name="idnumber"],
+.mform .fitem .felement input[name="phone1"],
+.mform .fitem .felement input[name="phone2"] {
     text-align: left;
     direction: ltr;
 }
@@ -326,7 +326,7 @@ select[size],
 select[multiple] {
     overflow: auto;
 }
-select[size=1] {
+select[size="1"] {
     overflow: visible;
 }
 
