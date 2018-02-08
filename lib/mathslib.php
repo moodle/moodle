@@ -56,10 +56,7 @@ class calc_formula {
             return;
         }
         $formula = substr($formula, 1);
-        if (strpos($formula, '=') !== false) {
-            $this->_error = "too many '='";
-            return;
-        }
+
         $this->_nfx = $this->_em->nfx($formula);
         if ($this->_nfx == false) {
             $this->_error = $this->_em->last_error;

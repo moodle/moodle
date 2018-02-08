@@ -81,6 +81,47 @@ class core_mathslib_testcase extends basic_testcase {
         $this->assertSame(8, $formula->evaluate());
     }
 
+    public function test_conditional_functions() {
+        $formula = new calc_formula('=ifthenelse(1,2,3)');
+        $this->assertSame(2, (int)$formula->evaluate());
+
+        $formula = new calc_formula('=ifthenelse(0,2,3)');
+        $this->assertSame(3, (int) $formula->evaluate());
+
+        $formula = new calc_formula('=ifthenelse(2<3,2,3)');
+        $this->assertSame(2, (int) $formula->evaluate());
+
+        // Test synonim if.
+        $formula = new calc_formula('=if(1,2,3)');
+        $this->assertSame(2, (int)$formula->evaluate());
+
+        $formula = new calc_formula('=if(0,2,3)');
+        $this->assertSame(3, (int) $formula->evaluate());
+
+        $formula = new calc_formula('=if(2<3,2,3)');
+        $this->assertSame(2, (int) $formula->evaluate());
+    }
+
+    public function test_conditional_operators() {
+        $formula = new calc_formula('=2==2');
+        $this->assertSame(1, $formula->evaluate());
+
+        $formula = new calc_formula('=2>3');
+        $this->assertSame(0, $formula->evaluate());
+        $formula = new calc_formula('=2<3');
+        $this->assertSame(1, $formula->evaluate());
+
+        $formula = new calc_formula('=(2<=3)');
+        $this->assertSame(1, $formula->evaluate());
+
+        $formula = new calc_formula('=(2<=3)*10');
+        $this->assertSame(10, $formula->evaluate());
+
+        $formula = new calc_formula('=(2>=3)*10');
+        $this->assertSame(0, $formula->evaluate());
+        $formula = new calc_formula('=2<3*10');
+        $this->assertSame(10, $formula->evaluate());
+    }
     /**
      * Tests the min and max functions.
      */

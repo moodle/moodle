@@ -18,3 +18,7 @@ To see all changes diff against version 1.1, available from:
 http://www.phpclasses.org/browse/package/2695.html
 
 skodak, Tim Hunt
+
+Changes by Juan Pablo de Castro (MDL-14274):
+* operators >,<,>=,<=,== added.
+* function if[thenelse](condition, true_value, false_value)
