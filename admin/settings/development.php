@@ -14,6 +14,8 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
 
     $temp->add(new admin_setting_configcheckbox('dndallowtextandlinks', new lang_string('dndallowtextandlinks', 'admin'), new lang_string('configdndallowtextandlinks', 'admin'), 0));
 
+    $temp->add(new admin_setting_configexecutable('pathtosassc', new lang_string('pathtosassc', 'admin'), new lang_string('pathtosassc_help', 'admin'), null));
+
     $ADMIN->add('experimental', $temp);
 
     // "debugging" settingpage
