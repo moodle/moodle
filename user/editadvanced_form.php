@@ -154,7 +154,7 @@ class user_editadvanced_form extends moodleform {
             $btnstring = get_string('updatemyprofile');
         }
 
-        $this->add_action_buttons(false, $btnstring);
+        $this->add_action_buttons(true, $btnstring);
 
         $this->set_data($user);
     }
