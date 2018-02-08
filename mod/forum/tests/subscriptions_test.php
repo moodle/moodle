@@ -26,8 +26,13 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->dirroot . '/mod/forum/lib.php');
+require_once(__DIR__ . '/helper.php');
 
 class mod_forum_subscriptions_testcase extends advanced_testcase {
+    // Include the mod_forum test helpers.
+    // This includes functions to create forums, users, discussions, and posts.
+    use helper;
+
     /**
      * Test setUp.
      */
@@ -48,52 +53,6 @@ class mod_forum_subscriptions_testcase extends advanced_testcase {
         // tests using these functions.
         \mod_forum\subscriptions::reset_forum_cache();
         \mod_forum\subscriptions::reset_discussion_cache();
-    }
-
-    /**
-     * Helper to create the required number of users in the specified
-     * course.
-     * Users are enrolled as students.
-     *
-     * @param stdClass $course The course object
-     * @param integer $count The number of users to create
-     * @return array The users created
-     */
-    protected function helper_create_users($course, $count) {
-        $users = array();
-
-        for ($i = 0; $i < $count; $i++) {
-            $user = $this->getDataGenerator()->create_user();
-            $this->getDataGenerator()->enrol_user($user->id, $course->id);
-            $users[] = $user;
-        }
-
-        return $users;
-    }
-
-    /**
-     * Create a new discussion and post within the specified forum, as the
-     * specified author.
-     *
-     * @param stdClass $forum The forum to post in
-     * @param stdClass $author The author to post as
-     * @param array An array containing the discussion object, and the post object
-     */
-    protected function helper_post_to_forum($forum, $author) {
-        global $DB;
-        $generator = $this->getDataGenerator()->get_plugin_generator('mod_forum');
-
-        // Create a discussion in the forum, and then add a post to that discussion.
-        $record = new stdClass();
-        $record->course = $forum->course;
-        $record->userid = $author->id;
-        $record->forum = $forum->id;
-        $discussion = $generator->create_discussion($record);
-
-        // Retrieve the post which was created by create_discussion.
-        $post = $DB->get_record('forum_posts', array('discussion' => $discussion->id));
-
-        return array($discussion, $post);
     }
 
     public function test_subscription_modes() {

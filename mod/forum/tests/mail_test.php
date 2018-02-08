@@ -29,6 +29,7 @@ global $CFG;
 
 class mod_forum_mail_testcase extends advanced_testcase {
 
+
     protected $helper;
 
     public function setUp() {
