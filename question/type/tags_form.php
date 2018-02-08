@@ -41,6 +41,7 @@ class tags extends \moodleform {
      */
     public function definition() {
         $mform = $this->_form;
+        $mform->disable_form_change_checker();
 
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
