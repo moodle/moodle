@@ -65,13 +65,14 @@ class scale_deleted extends base {
         if ($this->courseid) {
             return "The user with id '$this->userid' deleted the custom scale with id '$this->objectid'".
                     " from the course with the id '".$this->courseid."'.";
-        } else {
-            return "The user with id '$this->userid' deleted the standard scale with id '$this->objectid'.";
         }
+
+        return "The user with id '$this->userid' deleted the standard scale with id '$this->objectid'.";
     }
 
     /**
      * Used for mapping events on restore
+     *
      * @return array
      */
     public static function get_objectid_mapping() {

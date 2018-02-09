@@ -29,7 +29,7 @@ global $CFG;
 require_once($CFG->dirroot . '/grade/lib.php');
 
 /**
- * Unit tests for grade/lib.php.
+ * Unit tests for grade events.
  *
  * @package   core_grades
  * @category  test
@@ -54,14 +54,13 @@ class core_grade_events_test extends advanced_testcase {
     }
 
     /**
-     * Test the grade_letter added event.
+     * Test the grade letter created event.
      *
      * There is no external API for triggering this event, so the unit test will simply
      * create and trigger the event and ensure the data is returned as expected.
      */
     public function test_grade_letter_created() {
-
-        // Create a scale aded event.
+        // Create a grade letter created event.
         $event = \core\event\grade_letter_created::create(array(
             'objectid' => 10,
             'context' => context_course::instance($this->course->id)
@@ -79,14 +78,13 @@ class core_grade_events_test extends advanced_testcase {
     }
 
     /**
-     * Test the grade_letter deleted event.
+     * Test the grade letter deleted event.
      *
      * There is no external API for triggering this event, so the unit test will simply
      * create and trigger the event and ensure the data is returned as expected.
      */
     public function test_grade_letter_deleted() {
-
-        // Create a grade_letter deleted event.
+        // Create a grade letter deleted event.
         $event = \core\event\grade_letter_deleted::create(array(
             'objectid' => 10,
             'context' => context_course::instance($this->course->id)
@@ -104,14 +102,13 @@ class core_grade_events_test extends advanced_testcase {
     }
 
     /**
-     * Test the grade_letter updated event.
+     * Test the grade letter updated event.
      *
      * There is no external API for triggering this event, so the unit test will simply
      * create and trigger the event and ensure the data is returned as expected.
      */
     public function test_grade_letter_updated() {
-
-        // Create a scale updated event.
+        // Create a grade letter updated event.
         $event = \core\event\grade_letter_updated::create(array(
             'objectid' => 10,
             'context' => context_course::instance($this->course->id)
@@ -128,17 +125,11 @@ class core_grade_events_test extends advanced_testcase {
         $this->assertEquals(context_course::instance($this->course->id), $event->get_context());
     }
 
-
     /**
-     * Test the scale added event.
-     *
-     * There is no external API for triggering this event, so the unit test will simply
-     * create and trigger the event and ensure the data is returned as expected.
+     * Test the scale created event.
      */
     public function test_scale_created() {
-
         $gradescale = new grade_scale();
-
         $gradescale->name        = 'unittestscale3';
         $gradescale->courseid    = $this->course->id;
         $gradescale->userid      = 317;
@@ -162,14 +153,9 @@ class core_grade_events_test extends advanced_testcase {
 
     /**
      * Test the scale deleted event.
-     *
-     * There is no external API for triggering this event, so the unit test will simply
-     * create and trigger the event and ensure the data is returned as expected.
      */
     public function test_scale_deleted() {
-
         $gradescale = new grade_scale();
-
         $gradescale->name        = 'unittestscale3';
         $gradescale->courseid    = $this->course->id;
         $gradescale->userid      = 317;
@@ -190,12 +176,8 @@ class core_grade_events_test extends advanced_testcase {
 
     /**
      * Test the scale updated event.
-     *
-     * There is no external API for triggering this event, so the unit test will simply
-     * create and trigger the event and ensure the data is returned as expected.
      */
     public function test_scale_updated() {
-
         $gradescale = new grade_scale();
         $gradescale->name        = 'unittestscale3';
         $gradescale->courseid    = $this->course->id;

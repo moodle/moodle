@@ -27,7 +27,7 @@ namespace core\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Scale added event class.
+ * Scale updated event class.
  *
  * @package    core
  * @since      Moodle 3.5
@@ -65,13 +65,14 @@ class scale_updated extends base {
         if ($this->courseid) {
             return "The user with id '$this->userid' updated the custom scale with id '$this->objectid'".
                     " from the course in the id '".$this->courseid."'.";
-        } else {
-            return "The user with id '$this->userid' updated the standard scale with id '$this->objectid'.";
         }
+
+        return "The user with id '$this->userid' updated the standard scale with id '$this->objectid'.";
     }
 
     /**
      * Returns relevant URL.
+     *
      * @return \moodle_url
      */
     public function get_url() {
@@ -84,6 +85,7 @@ class scale_updated extends base {
 
     /**
      * Used for mapping events on restore
+     *
      * @return array
      */
     public static function get_objectid_mapping() {

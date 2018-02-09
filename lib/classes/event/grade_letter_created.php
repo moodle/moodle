@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Grade letter added created.
+ * Grade letter created event.
  *
  * @package    core
  * @copyright  2017 Stephen Bourget
@@ -27,7 +27,7 @@ namespace core\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Grade letter added event class.
+ * Grade letter created event class.
  *
  * @package    core
  * @since      Moodle 3.5

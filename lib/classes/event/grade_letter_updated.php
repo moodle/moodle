@@ -27,7 +27,7 @@ namespace core\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Grade letter added event class.
+ * Grade letter updated event class.
  *
  * @package    core
  * @since      Moodle 3.5
@@ -72,6 +72,7 @@ class grade_letter_updated extends base {
 
     /**
      * Returns relevant URL.
+     *
      * @return \moodle_url
      */
     public function get_url() {
@@ -84,6 +85,7 @@ class grade_letter_updated extends base {
 
     /**
      * Used for mapping events on restore
+     *
      * @return array
      */
     public static function get_objectid_mapping() {
