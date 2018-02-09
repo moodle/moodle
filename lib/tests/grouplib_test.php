@@ -1711,4 +1711,62 @@ class core_grouplib_testcase extends advanced_testcase {
         $this->assertEquals($user1->id, $group2member1->userid);
         $this->assertEquals($user2->id, $group2member2->userid);
     }
+
+    /**
+     * Test groups_get_basic_user_groups_for_courses() method.
+     */
+    public function test_groups_get_basic_user_groups_for_courses() {
+        $this->resetAfterTest(true);
+        $generator = $this->getDataGenerator();
+
+        // Create courses.
+        $course1 = $generator->create_course();
+        $course2 = $generator->create_course();
+        $course3 = $generator->create_course();
+
+        // Create users.
+        $user1 = $generator->create_user();
+        $user2 = $generator->create_user();
+        $user3 = $generator->create_user();
+
+        // Enrol users.
+        $generator->enrol_user($user1->id, $course1->id);
+        $generator->enrol_user($user1->id, $course2->id);
+        $generator->enrol_user($user2->id, $course2->id);
+        $generator->enrol_user($user3->id, $course2->id);
+
+        // Create groups.
+        $group1 = $generator->create_group(array('courseid' => $course1->id, 'name' => 'The First Group'));
+        $group2 = $generator->create_group(array('courseid' => $course2->id));
+        $group3 = $generator->create_group(array('courseid' => $course2->id));
+        $group4 = $generator->create_group(array('courseid' => $course3->id));
+
+        // Assign users to groups.
+        $this->assertTrue($generator->create_group_member(array('groupid' => $group1->id, 'userid' => $user1->id)));
+        $this->assertTrue($generator->create_group_member(array('groupid' => $group2->id, 'userid' => $user1->id)));
+        $this->assertTrue($generator->create_group_member(array('groupid' => $group2->id, 'userid' => $user2->id)));
+        
+        // Test with empty courses (get info for all courses)
+        $result = groups_get_basic_user_groups_for_courses([], $user1->id);
+
+        // Info returned in array indexed by courseid
+        $this->assertCount(3, $result);
+
+        // Test with course id and course object
+        $result = groups_get_basic_user_groups_for_courses([$course1->id, $course2], $user1->id);
+        $this->assertCount(2, $result);
+
+        // Per-course, info returned in array indexed by groupid
+        $this->assertCount(2, $result[$course2->id]);
+
+        // Check group details
+        $this->assertEquals($result[$course1->id][$group1->id]->id, $group1->id);
+        $this->assertEquals($result[$course1->id][$group1->id]->courseid, $course1->id);
+        $this->assertEquals($result[$course1->id][$group1->id]->name, 'The First Group');
+
+        // Check membership
+        $this->assertTrue((bool)$result[$course1->id][$group1->id]->member);
+        $this->assertTrue((bool)$result[$course2->id][$group2->id]->member);
+        $this->assertFalse((bool)$result[$course2->id][$group3->id]->member);
+    }
 }
