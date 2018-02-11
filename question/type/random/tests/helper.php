@@ -46,7 +46,7 @@ class qtype_random_test_helper extends question_test_helper {
     public function get_random_question_form_data_basic() {
         $form = new stdClass();
         $form->questiontext = array('text' => '');
-        $form->includingsubcategories = '0';
+        $form->includesubcategories = '0';
         return $form;
     }
 }

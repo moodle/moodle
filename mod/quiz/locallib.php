@@ -2072,6 +2072,15 @@ function quiz_has_question_use($quiz, $slot) {
  */
 function quiz_add_quiz_question($questionid, $quiz, $page = 0, $maxmark = null) {
     global $DB;
+
+    // Make sue the question is not of the "random" type.
+    $questiontype = $DB->get_field('question', 'qtype', array('id' => $questionid));
+    if ($questiontype == 'random') {
+        throw new coding_exception(
+                'Adding "random" questions via quiz_add_quiz_question() is deprecated. Please use quiz_add_random_questions().'
+        );
+    }
+
     $slots = $DB->get_records('quiz_slots', array('quizid' => $quiz->id),
             'slot', 'questionid, slot, page, id');
     if (array_key_exists($questionid, $slots)) {
@@ -2159,7 +2168,7 @@ function quiz_update_section_firstslots($quizid, $direction, $afterslot, $before
 
 /**
  * Add a random question to the quiz at a given point.
- * @param object $quiz the quiz settings.
+ * @param stdClass $quiz the quiz settings.
  * @param int $addonpage the page on which to add the question.
  * @param int $categoryid the question category to add the question from.
  * @param int $number the number of random questions to add.
@@ -2177,44 +2186,49 @@ function quiz_add_random_questions($quiz, $addonpage, $categoryid, $number,
     $catcontext = context::instance_by_id($category->contextid);
     require_capability('moodle/question:useall', $catcontext);
 
+    $tags = [];
+
     // Find existing random questions in this category that are
     // not used by any quiz.
-    if ($existingquestions = $DB->get_records_sql(
-            "SELECT q.id, q.qtype FROM {question} q
-            WHERE qtype = 'random'
-                AND category = ?
-                AND " . $DB->sql_compare_text('questiontext') . " = ?
-                AND NOT EXISTS (
-                        SELECT *
-                          FROM {quiz_slots}
-                         WHERE questionid = q.id)
-            ORDER BY id", array($category->id, ($includesubcategories ? '1' : '0')))) {
-            // Take as many of these as needed.
-        while (($existingquestion = array_shift($existingquestions)) && $number > 0) {
-            quiz_add_quiz_question($existingquestion->id, $quiz, $addonpage);
-            $number -= 1;
-        }
-    }
+    $existingquestions = $DB->get_records_sql(
+        "SELECT q.id, q.qtype FROM {question} q
+        WHERE qtype = 'random'
+            AND category = ?
+            AND " . $DB->sql_compare_text('questiontext') . " = ?
+            AND NOT EXISTS (
+                    SELECT *
+                      FROM {quiz_slots}
+                     WHERE questionid = q.id)
+        ORDER BY id", array($category->id, ($includesubcategories ? '1' : '0')));
 
-    if ($number <= 0) {
-        return;
-    }
-
-    // More random questions are needed, create them.
-    for ($i = 0; $i < $number; $i += 1) {
-        $form = new stdClass();
-        $form->questiontext = array('text' => ($includesubcategories ? '1' : '0'), 'format' => 0);
-        $form->category = $category->id . ',' . $category->contextid;
-        $form->defaultmark = 1;
-        $form->hidden = 1;
-        $form->stamp = make_unique_id_code(); // Set the unique code (not to be changed).
-        $question = new stdClass();
-        $question->qtype = 'random';
-        $question = question_bank::get_qtype('random')->save_question($question, $form);
-        if (!isset($question->id)) {
-            print_error('cannotinsertrandomquestion', 'quiz');
+    for ($i = 0; $i < $number; $i++) {
+        // Take as many of orphaned "random" questions as needed.
+        if (!$question = array_shift($existingquestions)) {
+            $form = new stdClass();
+            $form->questiontext = array('text' => ($includesubcategories ? '1' : '0'), 'format' => 0);
+            $form->category = $category->id . ',' . $category->contextid;
+            $form->defaultmark = 1;
+            $form->hidden = 1;
+            $form->stamp = make_unique_id_code(); // Set the unique code (not to be changed).
+            $question = new stdClass();
+            $question->qtype = 'random';
+            $question = question_bank::get_qtype('random')->save_question($question, $form);
+            if (!isset($question->id)) {
+                print_error('cannotinsertrandomquestion', 'quiz');
+            }
         }
-        quiz_add_quiz_question($question->id, $quiz, $addonpage);
+
+        $randomslotdata = new stdClass();
+        $randomslotdata->quizid = $quiz->id;
+        $randomslotdata->questionid = $question->id;
+        $randomslotdata->questioncategoryid = $categoryid;
+        $randomslotdata->includingsubcategories = $includesubcategories ? 1 : 0;
+        $randomslotdata->tags = json_encode($tags);
+        $randomslotdata->maxmark = 1;
+
+        $randomslot = new \mod_quiz\local\structure\slot_random($randomslotdata);
+        $randomslot->set_quiz($quiz);
+        $randomslot->insert($addonpage);
     }
 }
 
