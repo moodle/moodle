@@ -94,5 +94,39 @@ function xmldb_quiz_upgrade($oldversion) {
     // Automatically generated Moodle v3.4.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2018020700) {
+
+        $table = new xmldb_table('quiz_slots');
+
+        // Define field questioncategoryid to be added to quiz_slots.
+        $field = new xmldb_field('questioncategoryid', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'questionid');
+        // Conditionally launch add field questioncategoryid.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define key questioncategoryid (foreign) to be added to quiz_slots.
+        $key = new xmldb_key('questioncategoryid', XMLDB_KEY_FOREIGN, array('questioncategoryid'), 'questioncategory', array('id'));
+        // Launch add key questioncategoryid.
+        $dbman->add_key($table, $key);
+
+        // Define field includingsubcategories to be added to quiz_slots.
+        $field = new xmldb_field('includingsubcategories', XMLDB_TYPE_INTEGER, '4', null, null, null, null, 'questioncategoryid');
+        // Conditionally launch add field includingsubcategories.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field tags to be added to quiz_slots.
+        $field = new xmldb_field('tags', XMLDB_TYPE_TEXT, null, null, null, null, null, 'includingsubcategories');
+        // Conditionally launch add field tags.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Quiz savepoint reached.
+        upgrade_mod_savepoint(true, 2018020700, 'quiz');
+    }
+
     return true;
 }
