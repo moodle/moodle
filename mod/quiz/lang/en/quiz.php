@@ -917,6 +917,7 @@ $string['ungraded'] = 'Ungraded';
 $string['unit'] = 'Unit';
 $string['unknowntype'] = 'Question type not supported at line {$a}. The question will be ignored';
 $string['updatesettings'] = 'Update quiz settings';
+$string['updatequizslotswithrandomxofy'] = 'Updating quiz slots with "random" question data ({$a->done}/{$a->total})';
 $string['updatingatttemptgrades'] = 'Updating attempt grades.';
 $string['updatingfinalgrades'] = 'Updating final grades.';
 $string['updatingthegradebook'] = 'Updating the gradebook.';

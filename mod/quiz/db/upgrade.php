@@ -128,5 +128,40 @@ function xmldb_quiz_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2018020700, 'quiz');
     }
 
+    if ($oldversion < 2018020701) {
+        // This SQL fetches all "random" questions from the question bank.
+        $fromclause = "FROM {quiz_slots} qs
+                       JOIN {question} q ON q.id = qs.questionid
+                      WHERE q.qtype = ?";
+
+        // Get the total record count - used for the progress bar.
+        $total = $DB->count_records_sql("SELECT count(qs.id) $fromclause", array('random'));
+
+        // Get the records themselves.
+        $rs = $DB->get_recordset_sql("SELECT qs.id, q.category, q.questiontext $fromclause", array('random'));
+
+        $a = new stdClass();
+        $a->total = $total;
+        $a->done = 0;
+
+        // For each question, move the configuration data to the quiz_slots table.
+        $pbar = new progress_bar('updatequizslotswithrandom', 500, true);
+        foreach ($rs as $record) {
+            $data = new stdClass();
+            $data->id = $record->id;
+            $data->questioncategoryid = $record->category;
+            $data->includingsubcategories = empty($record->questiontext) ? 0 : 1;
+            $DB->update_record('quiz_slots', $data);
+
+            // Update progress.
+            $a->done++;
+            $pbar->update($a->done, $a->total, get_string('updatequizslotswithrandomxofy', 'quiz', $a));
+        }
+        $rs->close();
+
+        // Quiz savepoint reached.
+        upgrade_mod_savepoint(true, 2018020701, 'quiz');
+    }
+
     return true;
 }
