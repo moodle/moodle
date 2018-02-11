@@ -60,6 +60,10 @@ information provided here is intended especially for developers.
   The confirmation dialogue no longer has a configurable "No" button as per similar changes in MDL-59759.
   This set of confirmation modals was unintentionally missed from that deprecation process.
 * The download_as_dataformat() method has been deprecated. Please use \core\dataformat::download_data() instead
+* Legacy cron has been deprecated and will be removed in Moodle 4.3. This includes the functions:
+  - cron_execute_plugin_type()
+  - cron_bc_hack_plugin_functions()
+  Please, use the Task API instead: https://docs.moodle.org/dev/Task_API
 
 === 3.8 ===
 * Add CLI option to notify all cron tasks to stop: admin/cli/cron.php --stop
