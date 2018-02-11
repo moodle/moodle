@@ -214,7 +214,7 @@ abstract class qbehaviour_renderer extends plugin_renderer_base {
             'id' => $qa->get_behaviour_field_name('submit'),
             'name' => $qa->get_behaviour_field_name('submit'),
             'value' => get_string('check', 'question'),
-            'class' => 'submit btn',
+            'class' => 'submit btn btn-default',
         );
         if ($options->readonly) {
             $attributes['disabled'] = 'disabled';
