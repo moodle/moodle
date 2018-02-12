@@ -160,7 +160,8 @@ function chat_update_instance($chat) {
 
     $event = new stdClass();
 
-    if ($event->id = $DB->get_field('event', 'id', array('modulename' => 'chat', 'instance' => $chat->id))) {
+    if ($event->id = $DB->get_field('event', 'id', array('modulename' => 'chat',
+        'instance' => $chat->id, 'eventtype' => CHAT_EVENT_TYPE_CHATTIME))) {
 
         if ($chat->schedule > 0) {
             $event->type        = CALENDAR_EVENT_TYPE_ACTION;
@@ -494,7 +495,8 @@ function chat_prepare_update_events($chat, $cm = null) {
     $event->description = format_module_intro('chat', $chat, $cm->id);
     $event->timestart   = $chat->chattime;
     $event->timesort    = $chat->chattime;
-    if ($event->id = $DB->get_field('event', 'id', array('modulename' => 'chat', 'instance' => $chat->id))) {
+    if ($event->id = $DB->get_field('event', 'id', array('modulename' => 'chat', 'instance' => $chat->id,
+            'eventtype' => CHAT_EVENT_TYPE_CHATTIME))) {
         $calendarevent = calendar_event::load($event->id);
         $calendarevent->update($event);
     } else if ($chat->schedule > 0) {
