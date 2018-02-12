@@ -176,7 +176,8 @@ class restore_lti_activity_structure_step extends restore_activity_structure_ste
         // LTI2 is not possible in the course so we add "lt.toolproxyid IS NULL" to the query.
         $sql = 'SELECT id
             FROM {lti_types}
-            WHERE baseurl = :baseurl AND course = :course AND name = :name AND toolproxyid IS NULL';
+           WHERE ' . $DB->sql_compare_text('baseurl', 255) . ' = ' . $DB->sql_compare_text(':baseurl', 255) . ' AND
+                 course = :course AND name = :name AND toolproxyid IS NULL';
         if ($ltitype = $DB->get_record_sql($sql, $params, IGNORE_MULTIPLE)) {
             $this->set_mapping('ltitype', $data->id, $ltitype->id);
             return $ltitype->id;
