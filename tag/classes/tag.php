@@ -1604,4 +1604,38 @@ class core_tag_tag {
         // Finally delete all tags that we combined into the current one.
         self::delete_tags($ids);
     }
+
+    /**
+     * Retrieve a list of tags that have been used to tag the given $component
+     * and $itemtype in the provided $contexts.
+     *
+     * @param string $component The tag instance component
+     * @param string $itemtype The tag instance item type
+     * @param context[] $contexts The list of contexts to look for tag instances in
+     * @return core_tag_tag[]
+     */
+    public static function get_tags_by_area_in_contexts($component, $itemtype, array $contexts) {
+        global $DB;
+
+        $params = [$component, $itemtype];
+        $contextids = array_map(function($context) {
+            return $context->id;
+        }, $contexts);
+        list($contextsql, $contextsqlparams) = $DB->get_in_or_equal($contextids);
+        $params = array_merge($params, $contextsqlparams);
+
+        $subsql = "SELECT tagid
+                   FROM {tag_instance}
+                   WHERE component = ?
+                   AND itemtype = ?
+                   AND contextid {$contextsql}
+                   GROUP BY tagid";
+        $sql = "SELECT *
+                FROM {tag}
+                WHERE id IN ({$subsql})";
+
+        return array_map(function($record) {
+            return new core_tag_tag($record);
+        }, $DB->get_records_sql($sql, $params));
+    }
 }

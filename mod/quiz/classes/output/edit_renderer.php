@@ -100,10 +100,9 @@ class edit_renderer extends \plugin_renderer_base {
         if ($structure->can_be_edited()) {
             $popups = '';
 
-            $popups .= $this->question_bank_loading();
-            $this->page->requires->yui_module('moodle-mod_quiz-quizquestionbank',
-                    'M.mod_quiz.quizquestionbank.init',
-                    array('class' => 'questionbank', 'cmid' => $structure->get_cmid()));
+            $this->page->requires->js_call_amd('mod_quiz/quizquestionbank', 'init', [
+                $contexts->lowest()->id
+            ]);
 
             $popups .= $this->random_question_form($pageurl, $contexts, $pagevars);
             $this->page->requires->yui_module('moodle-mod_quiz-randomquestion',
@@ -1250,7 +1249,8 @@ class edit_renderer extends \plugin_renderer_base {
     public function question_bank_contents(\mod_quiz\question\bank\custom_view $questionbank, array $pagevars) {
 
         $qbank = $questionbank->render('editq', $pagevars['qpage'], $pagevars['qperpage'],
-                $pagevars['cat'], $pagevars['recurse'], $pagevars['showhidden'], $pagevars['qbshowtext']);
+                $pagevars['cat'], $pagevars['recurse'], $pagevars['showhidden'], $pagevars['qbshowtext'],
+                $pagevars['qtagids']);
         return html_writer::div(html_writer::div($qbank, 'bd'), 'questionbankformforpopup');
     }
 }

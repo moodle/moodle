@@ -2402,3 +2402,44 @@ function mod_quiz_core_calendar_event_timestart_updated(\calendar_event $event, 
         $event->trigger();
     }
 }
+
+/**
+ * Generates the question bank in a fargment output. This allows
+ * the question bank to be displayed in a modal.
+ *
+ * The only expected argument provided in the $args array is
+ * 'querystring'. The value should be the list of parameters
+ * URL encoded and used to build the question bank page.
+ *
+ * The individual list of parameters expected can be found in
+ * question_build_edit_resources.
+ *
+ * @param array $args The fragment arguments.
+ * @return string The rendered mform fragment.
+ */
+function mod_quiz_output_fragment_quiz_question_bank($args) {
+    global $CFG, $DB, $PAGE;
+    require_once($CFG->dirroot . '/mod/quiz/locallib.php');
+    require_once($CFG->dirroot . '/question/editlib.php');
+
+    $querystring = preg_replace('/^\?/', '', $args['querystring']);
+    $params = [];
+    parse_str($querystring, $params);
+
+    // Build the required resources. The $params are all cleaned as
+    // part of this process.
+    list($thispageurl, $contexts, $cmid, $cm, $quiz, $pagevars) =
+            question_build_edit_resources('editq', '/mod/quiz/edit.php', $params);
+
+    // Get the course object and related bits.
+    $course = $DB->get_record('course', array('id' => $quiz->course), '*', MUST_EXIST);
+    require_capability('mod/quiz:manage', $contexts->lowest());
+
+    // Create quiz question bank view.
+    $questionbank = new mod_quiz\question\bank\fragment_view($contexts, $thispageurl, $course, $cm, $quiz);
+    $questionbank->set_quiz_has_attempts(quiz_has_attempts($quiz->id));
+
+    // Output.
+    $renderer = $PAGE->get_renderer('mod_quiz', 'edit');
+    return $renderer->question_bank_contents($questionbank, $pagevars);
+}

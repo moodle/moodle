@@ -138,9 +138,10 @@ class custom_view extends \core_question\bank\view {
      *
      * @return string HTML code for the form
      */
-    public function render($tabname, $page, $perpage, $cat, $recurse, $showhidden, $showquestiontext) {
+    public function render($tabname, $page, $perpage, $cat, $recurse, $showhidden,
+            $showquestiontext, $tagids = []) {
         ob_start();
-        $this->display($tabname, $page, $perpage, $cat, $recurse, $showhidden, $showquestiontext);
+        $this->display($tabname, $page, $perpage, $cat, $recurse, $showhidden, $showquestiontext, $tagids);
         $out = ob_get_contents();
         ob_end_clean();
         return $out;
