@@ -126,7 +126,7 @@ class action_event_test_factory implements event_factory_interface {
                 $user->id = $id;
                 return $user;
             }),
-            new repeat_event_collection($record->id, null, $this),
+            !empty($record->repeatid) ? new repeat_event_collection($record, $this) : null,
             $module,
             $record->eventtype,
             new event_times(
