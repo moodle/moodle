@@ -366,7 +366,7 @@ function default_exception_handler($ex) {
             if (AJAX_SCRIPT) {
                 // If we are in an AJAX script we don't want to use PREFERRED_RENDERER_TARGET.
                 // Because we know we will want to use ajax format.
-                $renderer = $PAGE->get_renderer('core', null, 'ajax');
+                $renderer = new core_renderer_ajax($PAGE, 'ajax');
             } else {
                 $renderer = $OUTPUT;
             }
