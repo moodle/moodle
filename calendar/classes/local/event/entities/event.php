@@ -127,7 +127,7 @@ class event implements event_interface {
         proxy_interface $course = null,
         proxy_interface $group = null,
         proxy_interface $user = null,
-        event_collection_interface $repeats,
+        event_collection_interface $repeats = null,
         proxy_interface $coursemodule = null,
         $type,
         times_interface $times,
