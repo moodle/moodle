@@ -64,7 +64,7 @@ class scale_created extends base {
     public function get_description() {
         if ($this->courseid) {
             return "The user with id '$this->userid' created the custom scale with id '$this->objectid'".
-                    " from the course in the id '".$this->courseid."'.";
+                    " from the course with the id '".$this->courseid."'.";
         }
 
         return "The user with id '$this->userid' created the standard scale with id '$this->objectid'.";

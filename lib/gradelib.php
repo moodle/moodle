@@ -1399,7 +1399,16 @@ function remove_grade_letters($context, $showfeedback) {
 
     $strdeleted = get_string('deleted');
 
-    $DB->delete_records('grade_letters', array('contextid'=>$context->id));
+    $records = $DB->get_records('grade_letters', array('contextid' => $context->id));
+    foreach ($records as $record) {
+        $DB->delete_record('grade_letters', array('id' => $record->id));
+        // Trigger the letter grade deleted event.
+        $event = \core\event\grade_letter_deleted::create(array(
+            'objectid' => $record->id,
+            'context' => $context,
+        ));
+        $event->trigger();
+    }
     if ($showfeedback) {
         echo $OUTPUT->notification($strdeleted.' - '.get_string('letters', 'grades'), 'notifysuccess');
     }
@@ -1462,7 +1471,16 @@ function grade_course_category_delete($categoryid, $newparentid, $showfeedback) 
     global $DB;
 
     $context = context_coursecat::instance($categoryid);
-    $DB->delete_records('grade_letters', array('contextid'=>$context->id));
+    $records = $DB->get_records('grade_letters', array('contextid' => $context->id));
+    foreach ($records as $record) {
+        $DB->delete_record('grade_letters', array('id' => $record->id));
+        // Trigger the letter grade deleted event.
+        $event = \core\event\grade_letter_deleted::create(array(
+            'objectid' => $record->id,
+            'context' => $context,
+        ));
+        $event->trigger();
+    }
 }
 
 /**

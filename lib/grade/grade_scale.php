@@ -126,7 +126,7 @@ class grade_scale extends grade_object {
             if (!empty($this->standard)) {
                 $eventcontext = context_system::instance();
             } else {
-                if ((!empty($this->courseid)) && ($this->courseid != SITEID)) {
+                if (!empty($this->courseid)) {
                     $eventcontext = context_course::instance($this->courseid);
                 } else {
                     $eventcontext = context_system::instance();
@@ -156,7 +156,7 @@ class grade_scale extends grade_object {
             if (!empty($this->standard)) {
                 $eventcontext = context_system::instance();
             } else {
-                if ((!empty($this->courseid)) && ($this->courseid != SITEID)) {
+                if (!empty($this->courseid)) {
                     $eventcontext = context_course::instance($this->courseid);
                 } else {
                     $eventcontext = context_system::instance();
@@ -184,7 +184,7 @@ class grade_scale extends grade_object {
         if (!empty($this->standard)) {
             $eventcontext = context_system::instance();
         } else {
-            if ((!empty($this->courseid)) && ($this->courseid != SITEID)) {
+            if (!empty($this->courseid)) {
                 $eventcontext = context_course::instance($this->courseid);
             } else {
                 $eventcontext = context_system::instance();

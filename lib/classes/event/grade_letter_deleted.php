@@ -64,7 +64,7 @@ class grade_letter_deleted extends base {
     public function get_description() {
         if ($this->courseid) {
             return "The user with id '$this->userid' deleted the letter grade with id '$this->objectid'".
-                    " from the course in the id '".$this->courseid."'.";
+                    " from the course with the id '".$this->courseid."'.";
         }
 
         return "The user with id '$this->userid' deleted the letter grade with id '$this->objectid'.";

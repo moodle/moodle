@@ -64,7 +64,7 @@ class grade_letter_created extends base {
     public function get_description() {
         if ($this->courseid) {
             return "The user with id '$this->userid' created the letter grade with id '$this->objectid'".
-                    " in the course in the id '".$this->courseid."'.";
+                    " in the course with the id '".$this->courseid."'.";
         } else {
             return "The user with id '$this->userid' created the letter grade with id '$this->objectid'.";
         }

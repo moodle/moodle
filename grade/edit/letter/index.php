@@ -139,7 +139,16 @@ if (!$edit) {
 
     } else if ($data = $mform->get_data()) {
         if (!$admin and empty($data->override)) {
-            $DB->delete_records('grade_letters', array('contextid' => $context->id));
+            $records = $DB->get_records('grade_letters', array('contextid' => $context->id));
+            foreach ($records as $record) {
+                $DB->delete_record('grade_letters', array('id' => $record->id));
+                // Trigger the letter grade deleted event.
+                $event = \core\event\grade_letter_deleted::create(array(
+                    'objectid' => $record->id,
+                    'context' => $context,
+                ));
+                $event->trigger();
+            }
             redirect($returnurl);
         }
 
