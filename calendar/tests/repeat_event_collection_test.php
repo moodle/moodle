@@ -44,15 +44,35 @@ use core_calendar\local\event\factories\event_factory_interface;
  */
 class core_calendar_repeat_event_collection_testcase extends advanced_testcase {
     /**
-     * Test that creating a repeat collection for a parent that doesn't
-     * exist throws an exception.
+     * Test that the collection id is set to the parent id if the repeat id
+     * is falsey.
      */
-    public function test_no_parent_collection() {
+    public function test_parent_id_no_repeat_id() {
         $this->resetAfterTest(true);
-        $parentid = 123122131;
+        $dbrow = (object) [
+            'id' => 123122131,
+            'repeatid' => null
+        ];
         $factory = new core_calendar_repeat_event_collection_event_test_factory();
-        $this->expectException('\core_calendar\local\event\exceptions\no_repeat_parent_exception');
-        $collection = new repeat_event_collection($parentid, null, $factory);
+        $collection = new repeat_event_collection($dbrow, $factory);
+
+        $this->assertEquals($dbrow->id, $collection->get_id());
+    }
+
+    /**
+     * Test that the repeat id is set to the parent id if the repeat id
+     * is not falsey (even if the parent id is provided).
+     */
+    public function test_parent_id_and_repeat_id() {
+        $this->resetAfterTest(true);
+        $dbrow = (object) [
+            'id' => 123122131,
+            'repeatid' => 5647839
+        ];
+        $factory = new core_calendar_repeat_event_collection_event_test_factory();
+        $collection = new repeat_event_collection($dbrow, $factory);
+
+        $this->assertEquals($dbrow->repeatid, $collection->get_id());
     }
 
     /**
@@ -68,13 +88,16 @@ class core_calendar_repeat_event_collection_testcase extends advanced_testcase {
             'repeat' => 1,
             'repeats' => 0
         ]);
-        $parentid = $event->id;
+        $dbrow = (object) [
+            'id' => $event->id,
+            'repeatid' => null
+        ];
         $factory = new core_calendar_repeat_event_collection_event_test_factory();
 
         // Event collection with no repeats.
-        $collection = new repeat_event_collection($parentid, null, $factory);
+        $collection = new repeat_event_collection($dbrow, $factory);
 
-        $this->assertEquals($parentid, $collection->get_id());
+        $this->assertEquals($event->id, $collection->get_id());
         $this->assertEquals(0, $collection->get_num());
         $this->assertNull($collection->getIterator()->next());
     }
@@ -94,6 +117,10 @@ class core_calendar_repeat_event_collection_testcase extends advanced_testcase {
             'repeats' => 0
         ]);
         $parentid = $event->id;
+        $dbrow = (object) [
+            'id' => $parentid,
+            'repeatid' => null
+        ];
         $repeats = [];
 
         for ($i = 1; $i < 4; $i++) {
@@ -108,7 +135,7 @@ class core_calendar_repeat_event_collection_testcase extends advanced_testcase {
         }
 
         // Event collection with no repeats.
-        $collection = new repeat_event_collection($parentid, null, $factory);
+        $collection = new repeat_event_collection($dbrow, $factory);
 
         $this->assertEquals($parentid, $collection->get_id());
         $this->assertEquals(count($repeats), $collection->get_num());
@@ -167,7 +194,7 @@ class core_calendar_repeat_event_collection_event_test_factory implements event_
             new std_proxy($dbrow->courseid, $identity),
             new std_proxy($dbrow->groupid, $identity),
             new std_proxy($dbrow->userid, $identity),
-            new repeat_event_collection($dbrow->id, null, $this),
+            $dbrow->repeatid ? new repeat_event_collection($dbrow, $this) : null,
             new std_proxy($dbrow->instance, $identity),
             $dbrow->type,
             new event_times(

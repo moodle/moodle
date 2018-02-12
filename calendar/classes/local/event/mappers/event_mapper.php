@@ -98,6 +98,7 @@ class event_mapper implements event_mapper_interface {
         $properties->userid = empty($properties->userid) ? 0 : $properties->userid;
         $properties->modulename = empty($properties->modulename) ? 0 : $properties->modulename;
         $properties->instance = empty($properties->instance) ? 0 : $properties->instance;
+        $properties->repeatid = empty($properties->repeatid) ? 0 : $properties->repeatid;
 
         return new \calendar_event($properties);
     }
@@ -122,7 +123,7 @@ class event_mapper implements event_mapper_interface {
             'categoryid'       => $event->get_category() ? $event->get_category()->get('id') : null,
             'groupid'          => $event->get_group() ? $event->get_group()->get('id') : null,
             'userid'           => $event->get_user() ? $event->get_user()->get('id') : null,
-            'repeatid'         => $event->get_repeats()->get_id(),
+            'repeatid'         => $event->get_repeats() ? $event->get_repeats()->get_id() : null,
             'modulename'       => $event->get_course_module() ? $event->get_course_module()->get('modname') : null,
             'instance'         => $event->get_course_module() ? $event->get_course_module()->get('instance') : null,
             'eventtype'        => $event->get_type(),
