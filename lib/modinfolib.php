@@ -653,7 +653,8 @@ class course_modinfo {
      * @return stdClass Course object that has been stored in MUC
      */
     protected static function inner_build_course_cache($course, \core\lock\lock $lock) {
-        global $DB;
+        global $DB, $CFG;
+        require_once("{$CFG->dirroot}/course/lib.php");
 
         // Ensure object has all necessary fields.
         foreach (self::$cachedfields as $key) {
