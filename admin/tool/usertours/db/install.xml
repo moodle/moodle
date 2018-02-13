@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="tool/usertours/db" VERSION="20160830" COMMENT="XMLDB file for Moodle tool/usertours"
+<XMLDB PATH="admin/tool/usertours/db" VERSION="20160830" COMMENT="XMLDB file for Moodle tool/usertours"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+    xsi:noNamespaceSchemaLocation="../../../../lib/xmldb/xmldb.xsd"
 >
   <TABLES>
     <TABLE NAME="tool_usertours_tours" COMMENT="List of tours">
