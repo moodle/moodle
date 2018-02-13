@@ -481,7 +481,7 @@ function question_build_edit_resources($edittab, $baseurl, $params) {
         $pagevars['qpage'] = 0;
     }
 
-    $pagevars['qperpage'] = question_build_display_preference(
+    $pagevars['qperpage'] = question_set_or_get_user_preference(
             'qperpage', $qperpage, DEFAULT_QUESTIONS_PER_PAGE, $thispageurl);
 
     $defaultcategory = question_make_default_categories($contexts->all());
@@ -503,9 +503,9 @@ function question_build_edit_resources($edittab, $baseurl, $params) {
     }
 
     // Display options.
-    $pagevars['recurse']    = question_build_display_preference('recurse', $recurse, 1, $thispageurl);
-    $pagevars['showhidden'] = question_build_display_preference('showhidden', $showhidden, 0, $thispageurl);
-    $pagevars['qbshowtext'] = question_build_display_preference('qbshowtext', $qbshowtext, 0, $thispageurl);
+    $pagevars['recurse']    = question_set_or_get_user_preference('recurse', $recurse, 1, $thispageurl);
+    $pagevars['showhidden'] = question_set_or_get_user_preference('showhidden', $showhidden, 0, $thispageurl);
+    $pagevars['qbshowtext'] = question_set_or_get_user_preference('qbshowtext', $qbshowtext, 0, $thispageurl);
 
     // Category list page.
     $pagevars['cpage'] = $cpage;
@@ -548,7 +548,7 @@ function question_get_category_id_from_pagevars(array $pagevars) {
  */
 function question_get_display_preference($param, $default, $type, $thispageurl) {
     $submittedvalue = optional_param($param, null, $type);
-    return question_build_display_preference($param, $submittedvalue, $default, $thispageurl);
+    return question_set_or_get_user_preference($param, $submittedvalue, $default, $thispageurl);
 }
 
 /**
@@ -570,7 +570,7 @@ function question_get_display_preference($param, $default, $type, $thispageurl) 
  *      it to this URL.
  * @return mixed the parameter value to use.
  */
-function question_build_display_preference($name, $value, $default, $thispageurl) {
+function question_set_or_get_user_preference($name, $value, $default, $thispageurl) {
     if (is_null($value)) {
         return get_user_preferences('question_bank_' . $name, $default);
     }
