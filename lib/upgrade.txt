@@ -13,6 +13,8 @@ information provided here is intended especially for developers.
       groups_groupings_groups_removed, groups_groups_deleted, groups_groupings_deleted.
 * The following functions have been finally deprecated and can not be used any more:
   - notify()
+* XMLDB now validates the PATH attribute on every install.xml file. Both the XMLDB editor and installation will fail
+  when a problem is detected with it. Please ensure your plugins contain correct directory relative paths.
 
 === 3.4 ===
 
