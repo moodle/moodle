@@ -2436,7 +2436,7 @@ function mod_quiz_output_fragment_quiz_question_bank($args) {
     require_capability('mod/quiz:manage', $contexts->lowest());
 
     // Create quiz question bank view.
-    $questionbank = new mod_quiz\question\bank\fragment_view($contexts, $thispageurl, $course, $cm, $quiz);
+    $questionbank = new mod_quiz\question\bank\custom_view($contexts, $thispageurl, $course, $cm, $quiz);
     $questionbank->set_quiz_has_attempts(quiz_has_attempts($quiz->id));
 
     // Output.
