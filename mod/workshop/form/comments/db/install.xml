@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/workshop/db" VERSION="20120122" COMMENT="XMLDB file for Moodle Comments grading strategy"
+<XMLDB PATH="mod/workshop/form/comments/db" VERSION="20120122" COMMENT="XMLDB file for Moodle Comments grading strategy"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+    xsi:noNamespaceSchemaLocation="../../../../../lib/xmldb/xmldb.xsd"
 >
   <TABLES>
     <TABLE NAME="workshopform_comments" COMMENT="The assessment dimensions definitions of Comments strategy forms">
