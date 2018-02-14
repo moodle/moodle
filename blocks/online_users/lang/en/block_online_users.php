@@ -30,3 +30,4 @@ $string['online_users:viewlist'] = 'View list of online users';
 $string['periodnminutes'] = 'last {$a} minutes';
 $string['pluginname'] = 'Online users';
 $string['timetosee'] = 'Remove after inactivity (minutes)';
+$string['privacy:metadata'] = 'The Online users block only shows data stored in other locations.';
