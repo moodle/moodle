@@ -37,3 +37,4 @@ $string['pluginname'] = 'Flickr';
 $string['relevance'] = 'Relevance';
 $string['sortby'] = 'Sort by';
 $string['tag_flickr:addinstance'] = 'Add a new flickr block';
+$string['privacy:metadata'] = 'The Flickr block only shows data stored in other locations.';

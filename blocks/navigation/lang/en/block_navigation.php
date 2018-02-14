@@ -39,3 +39,4 @@ $string['trimmoderight'] = 'Trim characters from the right';
 $string['trimmodeleft'] = 'Trim characters from the left';
 $string['trimmodecenter'] = 'Trim characters from the center';
 $string['trimlength'] = 'How many characters to trim to';
+$string['privacy:metadata'] = 'The Navigation block only shows data stored in other locations.';
