@@ -27,3 +27,4 @@ $string['completecourse'] = 'Complete course';
 $string['pluginname'] = 'Self completion';
 $string['selfcompletionnotenabled'] = 'The self completion criteria has not been enabled for this course';
 $string['selfcompletion:addinstance'] = 'Add a new self completion block';
+$string['privacy:metadata'] = 'The Self completion block only shows data stored in other locations.';
