@@ -534,9 +534,10 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         // Now, create some notifications...
         // We are creating fake notifications but based on real ones.
 
-        // This one omits notification = 1.
+        // This one comes from a disabled plugin's provider and therefore is not sent.
         $eventdata = new \core\message\message();
         $eventdata->courseid          = $course->id;
+        $eventdata->notification      = 1;
         $eventdata->modulename        = 'moodle';
         $eventdata->component         = 'enrol_paypal';
         $eventdata->name              = 'paypal_enrolment';
@@ -548,6 +549,24 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         $eventdata->fullmessagehtml   = '';
         $eventdata->smallmessage      = '';
         message_send($eventdata);
+        $this->assertDebuggingCalled('Attempt to send msg from a provider enrol_paypal/paypal_enrolment '.
+            'that is inactive or not allowed for the user id='.$user1->id);
+
+        // This one omits notification = 1.
+        $message = new \core\message\message();
+        $message->courseid          = $course->id;
+        $message->component         = 'enrol_manual';
+        $message->name              = 'expiry_notification';
+        $message->userfrom          = $user2;
+        $message->userto            = $user1;
+        $message->subject           = 'Test: This is not a notification but otherwise is valid';
+        $message->fullmessage       = 'Test: Full message';
+        $message->fullmessageformat = FORMAT_MARKDOWN;
+        $message->fullmessagehtml   = markdown_to_html($message->fullmessage);
+        $message->smallmessage      = $message->subject;
+        $message->contexturlname    = $course->fullname;
+        $message->contexturl        = (string)new moodle_url('/course/view.php', array('id' => $course->id));
+        message_send($message);
 
         $message = new \core\message\message();
         $message->courseid          = $course->id;

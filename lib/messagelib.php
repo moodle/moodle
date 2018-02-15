@@ -63,7 +63,8 @@ function message_send(\core\message\message $eventdata) {
     // Fetch default (site) preferences
     $defaultpreferences = get_message_output_default_preferences();
     $preferencebase = $eventdata->component.'_'.$eventdata->name;
-    // If message provider is disabled then don't do any processing.
+
+    // If the message provider is disabled via preferences, then don't send the message.
     if (!empty($defaultpreferences->{$preferencebase.'_disable'})) {
         return $messageid;
     }
@@ -85,6 +86,20 @@ function message_send(\core\message\message $eventdata) {
     }
     if (!$eventdata->userfrom) {
         debugging('Attempt to send msg from unknown user', DEBUG_NORMAL);
+        return false;
+    }
+
+    // If the provider's component is disabled or the user can't receive messages from it, don't send the message.
+    $isproviderallowed = false;
+    foreach (message_get_providers_for_user($eventdata->userto->id) as $provider) {
+        if ($provider->component === $eventdata->component && $provider->name === $eventdata->name) {
+            $isproviderallowed = true;
+            break;
+        }
+    }
+    if (!$isproviderallowed) {
+        debugging('Attempt to send msg from a provider '.$eventdata->component.'/'.$eventdata->name.
+            ' that is inactive or not allowed for the user id='.$eventdata->userto->id, DEBUG_NORMAL);
         return false;
     }
 
