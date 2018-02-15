@@ -65,11 +65,27 @@ $req = 'cmd=_notify-validate';
 $data = new stdClass();
 
 foreach ($_POST as $key => $value) {
+    if ($key !== clean_param($key, PARAM_ALPHANUMEXT)) {
+        throw new moodle_exception('invalidrequest', 'core_error', '', null, $key);
+    }
+    if (is_array($value)) {
+        throw new moodle_exception('invalidrequest', 'core_error', '', null, 'Unexpected array param: '.$key);
+    }
     $req .= "&$key=".urlencode($value);
     $data->$key = fix_utf8($value);
 }
 
+if (empty($data->custom)) {
+    throw new moodle_exception('invalidrequest', 'core_error', '', null, 'Missing request param: custom');
+}
+
 $custom = explode('-', $data->custom);
+unset($data->custom);
+
+if (empty($custom) || count($custom) < 3) {
+    throw new moodle_exception('invalidrequest', 'core_error', '', null, 'Invalid value of the request param: custom');
+}
+
 $data->userid           = (int)$custom[0];
 $data->courseid         = (int)$custom[1];
 $data->instanceid       = (int)$custom[2];
