@@ -4405,7 +4405,7 @@ function authenticate_user_login($username, $password, $ignorelockout=false, &$f
  * @return stdClass A {@link $USER} object - BC only, do not use
  */
 function complete_user_login($user) {
-    global $CFG, $USER, $SESSION;
+    global $CFG, $DB, $USER, $SESSION;
 
     \core\session\manager::login_user($user);
 
@@ -4428,6 +4428,28 @@ function complete_user_login($user) {
         )
     );
     $event->trigger();
+
+    // Queue migrating the messaging data, if we need to.
+    if (!get_user_preferences('core_message_migrate_data', false, $USER->id)) {
+        // Check if there are any legacy messages to migrate.
+        $sql = "SELECT id
+                  FROM {message} m
+                 WHERE useridfrom = ?
+                    OR useridto = ?";
+        $messageexists = $DB->record_exists_sql($sql, [$USER->id, $USER->id]);
+
+        $sql = "SELECT id
+                  FROM {message_read} m
+                 WHERE useridfrom = ?
+                    OR useridto = ?";
+        $messagereadexists = $DB->record_exists_sql($sql, [$USER->id, $USER->id]);
+
+        if ($messageexists || $messagereadexists) {
+            \core_message\task\migrate_message_data::queue_task($USER->id);
+        } else {
+            set_user_preference('core_message_migrate_data', true, $USER->id);
+        }
+    }
 
     if (isguestuser()) {
         // No need to continue when user is THE guest.
