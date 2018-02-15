@@ -176,6 +176,9 @@ class block_iomad_company_admin_renderer extends plugin_renderer_base {
     private function department_leaf($leaf, $depth, $selected) {
         $haschildren = !empty($leaf->children);
         $expand = self::id_in_tree($leaf, $selected);
+        if ($depth == 1 && $leaf->id == $selected) {
+            $expand = false;
+        }
         $style = 'style="margin-left: ' . $depth * 5 . 'px;"';
         $class = 'tree_item';
         $aria = '';
@@ -189,7 +192,7 @@ class block_iomad_company_admin_renderer extends plugin_renderer_base {
         } else {
             $class .= ' nochildren';
         }
-        if ($leaf->id == $selected || $depth != 1) {
+        if ($leaf->id == $selected) {
             $aria_selected = 'aria-selected="true"';
             $name = '<b>' . $leaf->name . ' ' . $leaf->id . ' ' . $selected . '</b>';
         } else {
