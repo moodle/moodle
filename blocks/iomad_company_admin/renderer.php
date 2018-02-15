@@ -189,7 +189,7 @@ class block_iomad_company_admin_renderer extends plugin_renderer_base {
         } else {
             $class .= ' nochildren';
         }
-        if ($leaf->id == $selected) {
+        if ($leaf->id == $selected || $depth != 1) {
             $aria_selected = 'aria-selected="true"';
             $name = '<b>' . $leaf->name . ' ' . $leaf->id . ' ' . $selected . '</b>';
         } else {
