@@ -135,7 +135,9 @@ class quiz {
      */
     public function preload_questions() {
         $this->questions = question_preload_questions(null,
-                'slot.maxmark, slot.id AS slotid, slot.slot, slot.page',
+                'slot.maxmark, slot.id AS slotid, slot.slot, slot.page,
+                 slot.questioncategoryid AS randomfromcategory, slot.tags AS randomfromtags,
+                 slot.includingsubcategories AS randomincludingsubcategories',
                 '{quiz_slots} slot ON slot.quizid = :quizid AND q.id = slot.questionid',
                 array('quizid' => $this->quiz->id), 'slot.slot');
     }

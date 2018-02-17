@@ -208,10 +208,12 @@ function quiz_start_new_attempt($quizobj, $quba, $attempt, $attemptnumber, $time
                 continue;
             }
 
+            $tagids = quiz_extract_random_question_tag_ids($questiondata->randomfromtags);
+
             // Deal with fixed random choices for testing.
             if (isset($questionids[$quba->next_slot_number()])) {
                 if ($randomloader->is_question_available($questiondata->category,
-                        (bool) $questiondata->questiontext, $questionids[$quba->next_slot_number()])) {
+                        (bool) $questiondata->questiontext, $questionids[$quba->next_slot_number()], $tagids)) {
                     $questions[$slot] = question_bank::load_question(
                             $questionids[$quba->next_slot_number()], $quizobj->get_quiz()->shuffleanswers);
                     continue;
@@ -221,8 +223,8 @@ function quiz_start_new_attempt($quizobj, $quba, $attempt, $attemptnumber, $time
             }
 
             // Normal case, pick one at random.
-            $questionid = $randomloader->get_next_question_id($questiondata->category,
-                        (bool) $questiondata->questiontext);
+            $questionid = $randomloader->get_next_question_id($questiondata->randomfromcategory,
+                    $questiondata->randomincludingsubcategories, $tagids);
             if ($questionid === null) {
                 throw new moodle_exception('notenoughrandomquestions', 'quiz',
                                            $quizobj->view_url(), $questiondata);
@@ -2492,4 +2494,17 @@ function quiz_extract_random_question_tags($tagsjson) {
     }
 
     return $tagrecords;
+}
+
+/**
+ * Providing tags data in the JSON format, this function returns tagids.
+ *
+ * @param string $tagsjson The JSON string representing an array of tags in the [{"id":tagid,"name":"tagname"}] format.
+ *      E.g. [{"id":1,"name":"tag1"},{"id":2,"name":"tag2"}]
+ *      Usually equal to the value of the tags field retrieved from the {quiz_slots} table.
+ * @return int[] List of tag ids.
+ */
+function quiz_extract_random_question_tag_ids($tagsjson) {
+    $tags = quiz_extract_random_question_tags($tagsjson);
+    return array_keys($tags);
 }
