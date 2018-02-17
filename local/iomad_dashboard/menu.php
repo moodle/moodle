@@ -283,7 +283,19 @@ class iomad_admin_menu {
                 'style' => 'company',
                 'icon' => 'fa-map-marker',
                 'iconsmall' => 'fa-gear',
-            ));
+            ),
+            'learningpath' => array(
+                'category' => 'CourseAdmin',
+                'tab' => 3,
+                'name' => get_string('learningpaths', 'local_iomad_learningpath'),
+                'url' => 'local/iomad_learningpath/admin.php',
+                'cap' => 'local/iomad_learningpath:manage',
+                'icondefault' => 'learningpath',
+                'style' => 'company',
+                'icon' => 'fa-map-signs',
+                'iconsmall' => 'fa-gear',
+            ),
+        );
         $returnarray['manageiomadlicenses'] = array(
                 'category' => 'LicenseAdmin',
                 'tab' => 4,
