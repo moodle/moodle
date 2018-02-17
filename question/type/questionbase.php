@@ -469,6 +469,17 @@ class question_information_item extends question_definition {
  */
 interface question_manually_gradable {
     /**
+     * Use by many of the behaviours to determine whether the student
+     * has provided enough of an answer for the question to be graded automatically,
+     * or whether it must be considered aborted.
+     *
+     * @param array $response responses, as returned by
+     *      {@link question_attempt_step::get_qt_data()}.
+     * @return bool whether this response can be graded.
+     */
+    public function is_gradable_response(array $response);
+
+    /**
      * Used by many of the behaviours, to work out whether the student's
      * response to the question is complete. That is, whether the question attempt
      * should move to the COMPLETE or INCOMPLETE state.
@@ -555,17 +566,6 @@ class question_classified_response {
  */
 interface question_automatically_gradable extends question_manually_gradable {
     /**
-     * Use by many of the behaviours to determine whether the student
-     * has provided enough of an answer for the question to be graded automatically,
-     * or whether it must be considered aborted.
-     *
-     * @param array $response responses, as returned by
-     *      {@link question_attempt_step::get_qt_data()}.
-     * @return bool whether this response can be graded.
-     */
-    public function is_gradable_response(array $response);
-
-    /**
      * In situations where is_gradable_response() returns false, this method
      * should generate a description of what the problem is.
      * @return string the message.
@@ -637,6 +637,10 @@ abstract class question_with_responses extends question_definition
     public function classify_response(array $response) {
         return array();
     }
+
+    public function is_gradable_response(array $response) {
+        return $this->is_complete_response($response);
+    }
 }
 
 
@@ -650,10 +654,6 @@ abstract class question_graded_automatically extends question_with_responses
         implements question_automatically_gradable {
     /** @var Some question types have the option to show the number of sub-parts correct. */
     public $shownumcorrect = false;
-
-    public function is_gradable_response(array $response) {
-        return $this->is_complete_response($response);
-    }
 
     public function get_right_answer_summary() {
         $correctresponse = $this->get_correct_response();
