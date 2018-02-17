@@ -1876,7 +1876,7 @@ class quiz_attempt {
                     (bool) $questiondata->questiontext);
             if ($newqusetionid === null) {
                 throw new moodle_exception('notenoughrandomquestions', 'quiz',
-                        $quizobj->view_url(), $questiondata);
+                        $this->quizobj->view_url(), $questiondata);
             }
         }
 
