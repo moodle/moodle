@@ -288,7 +288,7 @@ class iomad_admin_menu {
                 'category' => 'CourseAdmin',
                 'tab' => 3,
                 'name' => get_string('learningpaths', 'local_iomad_learningpath'),
-                'url' => 'local/iomad_learningpath/admin.php',
+                'url' => '/local/iomad_learningpath/manage.php',
                 'cap' => 'local/iomad_learningpath:manage',
                 'icondefault' => 'learningpath',
                 'style' => 'company',
