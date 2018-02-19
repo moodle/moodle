@@ -151,15 +151,15 @@ class core_question_external extends external_api {
             $question = $DB->get_record('question', array('id' => $questionid));
 
             require_once($CFG->libdir . '/questionlib.php');
-            $canedit = question_has_capability_on($question, 'edit');
+            $cantag = question_has_capability_on($question, 'tag');
 
             require_once($CFG->dirroot . '/question/type/tags_form.php');
-            $mform = new \core_question\form\tags(null, null, 'post', '', null, $canedit, $data);
+            $mform = new \core_question\form\tags(null, null, 'post', '', null, $cantag, $data);
 
             if ($validateddata = $mform->get_data()) {
                 // Due to a mform bug, if there's no tags set on the tag element, it submits the name as the value.
                 // The only way to discover is checking if the tag element is an array.
-                if ($canedit) {
+                if ($cantag) {
                     if (is_array($validateddata->tags)) {
                         $categorycontext = context::instance_by_id($validateddata->contextid);
 

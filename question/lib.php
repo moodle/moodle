@@ -58,8 +58,8 @@ function core_question_output_fragment_tags_form($args) {
             $toform->tags = core_tag_tag::get_item_tags_array('core_question', 'question', $question->id);
         }
 
-        $canedit = question_has_capability_on($question, 'edit');
-        $mform = new \core_question\form\tags(null, null, 'post', '', null, $canedit, $toform);
+        $cantag = question_has_capability_on($question, 'tag');
+        $mform = new \core_question\form\tags(null, null, 'post', '', null, $cantag, $toform);
         $mform->set_data($toform);
 
         return $mform->render();

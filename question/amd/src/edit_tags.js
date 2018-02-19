@@ -149,7 +149,7 @@ define([
             var currentTarget = $(e.currentTarget);
 
             var questionId = currentTarget.data('questionid'),
-                canEdit = !!currentTarget.data('canedit'),
+                canTag = !!currentTarget.data('cantag'),
                 contextId = currentTarget.data('contextid');
 
             // This code gets called each time the user clicks the tag link
@@ -180,7 +180,7 @@ define([
 
                 // Show or hide the save button depending on whether the user
                 // has the capability to edit the tags.
-                if (canEdit) {
+                if (canTag) {
                     modal.getRoot().find(QuestionSelectors.actions.save).show();
                 } else {
                     modal.getRoot().find(QuestionSelectors.actions.save).hide();

@@ -55,11 +55,11 @@ class tags_action_column extends action_column_base {
         if (\core_tag_tag::is_enabled('core_question', 'question') &&
                 question_has_capability_on($question, 'view')) {
 
-            $canedit = question_has_capability_on($question, 'edit');
+            $cantag = question_has_capability_on($question, 'tag');
             $category = $DB->get_record('question_categories', ['id' => $question->category], 'contextid');
             $url = $this->qbank->edit_question_url($question->id);
 
-            $this->print_tag_icon($question->id, $url, $canedit, $category->contextid);
+            $this->print_tag_icon($question->id, $url, $cantag, $category->contextid);
         }
     }
 
@@ -68,15 +68,15 @@ class tags_action_column extends action_column_base {
      *
      * @param int $id The question ID.
      * @param string $url Editing question url.
-     * @param bool $canedit Whether the user can edit questions or not.
+     * @param bool $cantag Whether the user can tag questions or not.
      * @param int $contextid Question category context ID.
      */
-    protected function print_tag_icon($id, $url, $canedit, $contextid) {
+    protected function print_tag_icon($id, $url, $cantag, $contextid) {
         global $OUTPUT;
 
         $params = [
             'data-action' => 'edittags',
-            'data-canedit' => $canedit,
+            'data-cantag' => $cantag,
             'data-contextid' => $contextid,
             'data-questionid' => $id
         ];
