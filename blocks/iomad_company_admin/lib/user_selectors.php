@@ -252,7 +252,7 @@ class current_company_course_user_selector extends company_user_selector_base {
      * @param <type> $search
      * @return array
      */
-    public function find_users($search) {
+    public function find_users($search, $all = false) {
         global $DB;
         // By default wherecondition retrieves all users except the deleted, not confirmed and guest.
         list($wherecondition, $params) = $this->search_sql($search, 'u');
@@ -284,7 +284,7 @@ class current_company_course_user_selector extends company_user_selector_base {
 
         $order = ' ORDER BY u.lastname ASC, u.firstname ASC';
 
-        if (!$this->is_validating()) {
+        if (!$this->is_validating() && !$all) {
             $potentialmemberscount = $DB->count_records_sql($countfields . $sql, $params);
             if ($potentialmemberscount > company_user_selector_base::MAX_USERS_PER_PAGE) {
                 return $this->too_many_results($search, $potentialmemberscount);
@@ -313,7 +313,7 @@ class potential_company_course_user_selector extends company_user_selector_base 
      * @param <type> $search
      * @return array
      */
-    public function find_users($search) {
+    public function find_users($search, $all = false) {
         global $DB;
         $companyrec = $DB->get_record('company', array('id' => $this->companyid));
         $company = new company($this->companyid);
@@ -366,7 +366,7 @@ class potential_company_course_user_selector extends company_user_selector_base 
 
         $order = ' ORDER BY u.lastname ASC, u.firstname ASC';
 
-        if (!$this->is_validating()) {
+        if (!$this->is_validating() && !$all) {
             $potentialmemberscount = $DB->count_records_sql($countfields . $sql, $params);
             if ($potentialmemberscount > company_user_selector_base::MAX_USERS_PER_PAGE) {
                 return $this->too_many_results($search, $potentialmemberscount);
