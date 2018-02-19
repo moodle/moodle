@@ -465,10 +465,13 @@ class core_cohort_externallib_testcase extends externallib_advanced_testcase {
         $user = $this->getDataGenerator()->create_user();
         $catuser = $this->getDataGenerator()->create_user();
         $catcreator = $this->getDataGenerator()->create_user();
+        $courseuser = $this->getDataGenerator()->create_user();
         $category = $this->getDataGenerator()->create_category();
         $othercategory = $this->getDataGenerator()->create_category();
+        $course = $this->getDataGenerator()->create_course();
         $syscontext = context_system::instance();
         $catcontext = context_coursecat::instance($category->id);
+        $coursecontext = context_course::instance($course->id);
 
         // Fetching default authenticated user role.
         $userroles = get_archetype_roles('user');
@@ -481,8 +484,10 @@ class core_cohort_externallib_testcase extends externallib_advanced_testcase {
         // Creating specific roles.
         $creatorrole = create_role('Creator role', 'creatorrole', 'creator role description');
         $userrole = create_role('User role', 'userrole', 'user role description');
+        $courserole = create_role('Course user role', 'courserole', 'course user role description');
 
         assign_capability('moodle/cohort:manage', CAP_ALLOW, $creatorrole, $syscontext->id);
+        assign_capability('moodle/cohort:view', CAP_ALLOW, $courserole, $syscontext->id);
 
         // Check for parameter $includes = 'parents'.
         role_assign($creatorrole, $creator->id, $syscontext->id);
@@ -490,9 +495,13 @@ class core_cohort_externallib_testcase extends externallib_advanced_testcase {
         role_assign($userrole, $user->id, $syscontext->id);
         role_assign($userrole, $catuser->id, $catcontext->id);
 
+        // Enrol user in the course.
+        $this->getDataGenerator()->enrol_user($courseuser->id, $course->id, 'courserole');
+
         $syscontext = array('contextid' => context_system::instance()->id);
         $catcontext = array('contextid' => context_coursecat::instance($category->id)->id);
         $othercatcontext = array('contextid' => context_coursecat::instance($othercategory->id)->id);
+        $coursecontext = array('contextid' => context_course::instance($course->id)->id);
 
         $cohort1 = $this->getDataGenerator()->create_cohort(array_merge($syscontext, array('name' => 'Cohortsearch 1')));
         $cohort2 = $this->getDataGenerator()->create_cohort(array_merge($catcontext, array('name' => 'Cohortsearch 2')));
@@ -542,6 +551,12 @@ class core_cohort_externallib_testcase extends externallib_advanced_testcase {
         $this->setUser($creator);
         $result = core_cohort_external::search_cohorts("Cohortsearch", $syscontext, 'all');
         $this->assertEquals(3, count($result['cohorts']));
+
+        // A user in the course context with the system cohort:view capability. Check that all the system cohorts are returned.
+        $this->setUser($courseuser);
+        $result = core_cohort_external::search_cohorts("Cohortsearch", $coursecontext, 'all');
+        $this->assertEquals(1, count($result['cohorts']));
+        $this->assertEquals('Cohortsearch 1', $result['cohorts'][$cohort1->id]->name);
 
         // Detect invalid parameter $includes.
         $this->setUser($creator);
