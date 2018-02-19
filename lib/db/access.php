@@ -1483,6 +1483,28 @@ $capabilities = array(
         )
     ),
 
+    // Controls whether the user can tag his own questions.
+    'moodle/question:tagmine' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => array(
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        ),
+        'clonepermissionsfrom' => 'moodle/question:editmine'
+    ),
+
+    // Controls whether the user can tag all questions.
+    'moodle/question:tagall' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => array(
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        ),
+        'clonepermissionsfrom' => 'moodle/question:editall'
+    ),
+
     'moodle/site:doclinks' => array(
         'captype' => 'read',
         'contextlevel' => CONTEXT_SYSTEM,
