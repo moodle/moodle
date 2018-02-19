@@ -789,8 +789,9 @@ function choice_get_response_data($choice, $cm, $groupmode, $onlyactive) {
 
 /// First get all the users who have access here
 /// To start with we assume they are all "unanswered" then move them later
+    $extrafields = get_extra_user_fields($context);
     $allresponses[0] = get_enrolled_users($context, 'mod/choice:choose', $currentgroup,
-            user_picture::fields('u', array('idnumber')), null, 0, 0, $onlyactive);
+            user_picture::fields('u', $extrafields), null, 0, 0, $onlyactive);
 
 /// Get all the recorded responses for this choice
     $rawresponses = $DB->get_records('choice_answers', array('choiceid' => $choice->id));
