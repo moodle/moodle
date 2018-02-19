@@ -201,7 +201,8 @@ abstract class question_edit_form extends question_wizard_form {
         // Any questiontype specific fields.
         $this->definition_inner($mform);
 
-        if (core_tag_tag::is_enabled('core_question', 'question')) {
+        if (core_tag_tag::is_enabled('core_question', 'question')
+                && question_has_capability_on($this->question, 'tag')) {
             $mform->addElement('header', 'tagsheader', get_string('tags'));
         }
         $mform->addElement('tags', 'tags', get_string('tags'),
