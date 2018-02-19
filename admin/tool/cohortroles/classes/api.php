@@ -167,7 +167,7 @@ class api {
                 $params['roleid'] = $roleid;
                 $params['userid'] = $userid;
 
-                $sql = 'SELECT u.id AS userid, ra.id, ctx.id AS contextid
+                $sql = 'SELECT DISTINCT u.id AS userid, ra.id, ctx.id AS contextid
                           FROM {user} u
                           JOIN {cohort_members} cm ON u.id = cm.userid
                           JOIN {context} ctx ON u.id = ctx.instanceid AND ctx.contextlevel = :usercontext
