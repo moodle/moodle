@@ -79,8 +79,7 @@ class api {
                        n.contexturlname, n.timecreated, n.component,
                        n.eventtype, n.timeread
                   FROM {notifications} n
-                 WHERE n.id IN (SELECT messageid FROM {message_popup})
-                   AND n.useridto = :useridto1
+                 WHERE n.useridto = :useridto1
               ORDER BY timecreated $sort, timeread $sort, id $sort";
 
         $notifications = [];
@@ -110,8 +109,8 @@ class api {
         return $DB->count_records_sql(
             "SELECT count(id)
                FROM {notifications}
-              WHERE id IN (SELECT messageid FROM {message_popup} WHERE isread = 0)
-                AND useridto = ?",
+              WHERE useridto = ?
+                AND timeread is NULL",
             [$useridto]
         );
     }

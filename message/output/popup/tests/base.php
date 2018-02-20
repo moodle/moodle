@@ -50,15 +50,7 @@ trait message_popup_test_helper {
         $record->smallmessage = $message;
         $record->timecreated = $timecreated ? $timecreated : time();
 
-        $id = $DB->insert_record('notifications', $record);
-
-        $popup = new stdClass();
-        $popup->messageid = $id;
-        $popup->isread = 0;
-
-        $DB->insert_record('message_popup', $popup);
-
-        return $id;
+        return $DB->insert_record('notifications', $record);
     }
 
     /**
@@ -93,12 +85,6 @@ trait message_popup_test_helper {
 
         // Mark it as read.
         \core_message\api::mark_notification_as_read($record);
-
-        $popup = new stdClass();
-        $popup->messageid = $record->id;
-        $popup->isread = 1;
-
-        $DB->insert_record('message_popup', $popup);
 
         return $record->id;
     }
