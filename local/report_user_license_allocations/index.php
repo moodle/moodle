@@ -427,11 +427,7 @@ $dbsort = "";
 if ((empty($idlist) && !$foundfields) || (!empty($idlist) && $foundfields)) {
     // Make sure we dont display site admins.
     // Set default search to something which cant happen.
-    $sqlsearch = "id!='-1' $userfilter";
-    $siteadmins = explode(" ", $CFG->siteadmins);
-    foreach ($siteadmins as $siteadmin) {
-        $sqlsearch .= " AND id!='$siteadmin'";
-    }
+    $sqlsearch = "id!='-1' AND id NOT IN (" . $CFG->siteadmins . ") $userfilter";
 
     // Get department users.
     $departmentusers = company::get_recursive_department_users($departmentid);
