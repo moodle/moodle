@@ -116,7 +116,12 @@ class schema {
 
         $this->check_index();
 
-        return $this->add_fields($fields, $checkexisting);
+        $return = $this->add_fields($fields, $checkexisting);
+
+        // Tell the engine we are now using the latest schema version.
+        $this->engine->record_applied_schema_version(document::SCHEMA_VERSION);
+
+        return $return;
     }
 
     /**

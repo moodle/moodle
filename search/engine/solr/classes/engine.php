@@ -126,12 +126,12 @@ class engine extends \core_search\engine {
      * Prepares a Solr query, applies filters and executes it returning its results.
      *
      * @throws \core_search\engine_exception
-     * @param  stdClass  $filters Containing query and filters.
-     * @param  array     $usercontexts Contexts where the user has access. True if the user can access all contexts.
+     * @param  \stdClass $filters Containing query and filters.
+     * @param  \stdClass $accessinfo Information about areas user can access.
      * @param  int       $limit The maximum number of results to return.
      * @return \core_search\document[] Results or false if no results
      */
-    public function execute_query($filters, $usercontexts, $limit = 0) {
+    public function execute_query($filters, $accessinfo, $limit = 0) {
         global $USER;
 
         if (empty($limit)) {
@@ -142,7 +142,7 @@ class engine extends \core_search\engine {
         $client = $this->get_search_client();
 
         // Create the query object.
-        $query = $this->create_user_query($filters, $usercontexts);
+        $query = $this->create_user_query($filters, $accessinfo);
 
         // If the query cannot have results, return none.
         if (!$query) {
@@ -254,11 +254,11 @@ class engine extends \core_search\engine {
     /**
      * Prepares a new query object with needed limits, filters, etc.
      *
-     * @param stdClass  $filters Containing query and filters.
-     * @param array     $usercontexts Contexts where the user has access. True if the user can access all contexts.
+     * @param \stdClass $filters Containing query and filters.
+     * @param \stdClass $accessinfo Information about contexts the user can access
      * @return \SolrDisMaxQuery|null Query object or null if they can't get any results
      */
-    protected function create_user_query($filters, $usercontexts) {
+    protected function create_user_query($filters, $accessinfo) {
         global $USER;
 
         // Let's keep these changes internal.
@@ -280,6 +280,9 @@ class engine extends \core_search\engine {
         }
         if (!empty($data->courseids)) {
             $query->addFilterQuery('{!cache=false}courseid:(' . implode(' OR ', $data->courseids) . ')');
+        }
+        if (!empty($data->groupids)) {
+            $query->addFilterQuery('{!cache=false}groupid:(' . implode(' OR ', $data->groupids) . ')');
         }
 
         if (!empty($data->timestart) or !empty($data->timeend)) {
@@ -304,10 +307,10 @@ class engine extends \core_search\engine {
         // And finally restrict it to the context where the user can access, we want this one cached.
         // If the user can access all contexts $usercontexts value is just true, we don't need to filter
         // in that case.
-        if ($usercontexts && is_array($usercontexts)) {
+        if (!$accessinfo->everything && is_array($accessinfo->usercontexts)) {
             // Join all area contexts into a single array and implode.
             $allcontexts = array();
-            foreach ($usercontexts as $areaid => $areacontexts) {
+            foreach ($accessinfo->usercontexts as $areaid => $areacontexts) {
                 if (!empty($data->areaids) && !in_array($areaid, $data->areaids)) {
                     // Skip unused areas.
                     continue;
@@ -322,6 +325,38 @@ class engine extends \core_search\engine {
                 return null;
             }
             $query->addFilterQuery('contextid:(' . implode(' OR ', $allcontexts) . ')');
+        }
+
+        if (!$accessinfo->everything && $accessinfo->separategroupscontexts) {
+            // Add another restriction to handle group ids. If there are any contexts using separate
+            // groups, then results in that context will not show unless you belong to the group.
+            // (Note: Access all groups is taken care of earlier, when computing these arrays.)
+
+            // This special exceptions list allows for particularly pig-headed developers to create
+            // multiple search areas within the same module, where one of them uses separate
+            // groups and the other uses visible groups. It is a little inefficient, but this should
+            // be rare.
+            $exceptions = '';
+            if ($accessinfo->visiblegroupscontextsareas) {
+                foreach ($accessinfo->visiblegroupscontextsareas as $contextid => $areaids) {
+                    $exceptions .= ' OR (contextid:' . $contextid . ' AND areaid:(' .
+                            implode(' OR ', $areaids) . '))';
+                }
+            }
+
+            if ($accessinfo->usergroups) {
+                // Either the document has no groupid, or the groupid is one that the user
+                // belongs to, or the context is not one of the separate groups contexts.
+                $query->addFilterQuery('(*:* -groupid:[* TO *]) OR ' .
+                        'groupid:(' . implode(' OR ', $accessinfo->usergroups) . ') OR ' .
+                        '(*:* -contextid:(' . implode(' OR ', $accessinfo->separategroupscontexts) . '))' .
+                        $exceptions);
+            } else {
+                // Either the document has no groupid, or the context is not a restricted one.
+                $query->addFilterQuery('(*:* -groupid:[* TO *]) OR ' .
+                        '(*:* -contextid:(' . implode(' OR ', $accessinfo->separategroupscontexts) . '))' .
+                        $exceptions);
+            }
         }
 
         if ($this->file_indexing_enabled()) {
@@ -1086,6 +1121,12 @@ class engine extends \core_search\engine {
             return $configured;
         }
 
+        // Update schema if required/possible.
+        $schemalatest = $this->check_latest_schema();
+        if ($schemalatest !== true) {
+            return $schemalatest;
+        }
+
         // Check that the schema is already set up.
         try {
             $schema = new \search_solr\schema();
@@ -1279,5 +1320,41 @@ class engine extends \core_search\engine {
         $url .= '/solr/' . $this->config->indexname . '/' . ltrim($path, '/');
 
         return new \moodle_url($url);
+    }
+
+    /**
+     * Solr includes group support in the execute_query function.
+     *
+     * @return bool True
+     */
+    public function supports_group_filtering() {
+        return true;
+    }
+
+    protected function update_schema($oldversion, $newversion) {
+        // Construct schema.
+        $schema = new schema();
+        $cansetup = $schema->can_setup_server();
+        if ($cansetup !== true) {
+            return $cansetup;
+        }
+
+        switch ($newversion) {
+            // This version just requires a setup call to add new fields.
+            case 2017091700:
+                $setup = true;
+                break;
+
+            // If we don't know about the schema version we might not have implemented the
+            // change correctly, so return.
+            default:
+                return get_string('schemaversionunknown', 'search');
+        }
+
+        if ($setup) {
+            $schema->setup();
+        }
+
+        return true;
     }
 }

@@ -10,6 +10,26 @@ information provided here is intended especially for developers.
   the newest items first; for other types of search area it will just index the whole system
   context, oldest data first.
 
+* Module search areas that wish to support group filtering should set the new optional search
+  document field groupid (note: to remain compatible with earlier versions, do this inside an if
+  statement so that it only happens on 3.4+) and return true to the supports_group_restriction
+  function. See documentation in \core_search\base_mod class and example in \mod_forum\search\post.
+
+* When a search engine supports group filtering, the \core_search\manager::search function now
+  accepts the optional 'groupids' parameter in its $data input. This parameter is an array of one
+  or more group IDs. If supplied, only results from those groups will be returned.
+
+* Search engine plugins will need to be be modified if they wish to support group filtering.
+  (Search engines should continue to work unmodified, but will not then support group filtering.)
+  The modification steps are:
+  - Implement the new update_schema function to make the schema change (add groupid field).
+  - Ensure that the groupid field is stored correctly when provided in a document while indexing.
+  - Return true to new supports_group_filtering() function.
+  - execute_query should support the new $data->groupids parameter (to allow users to restrict
+    search results to specific groups) and the modified meaning of the second parameter,
+    $accessinfo (to automatically restrict search results users cannot access due to groups).
+    See implementation in Solr search engine.
+
 === 3.4 ===
 
 * Search indexing now supports time limits to make the scheduled task run more neatly. In order for
