@@ -393,7 +393,7 @@ class report_completion {
         if ($parentcompanies) {
             $companyusql = " AND u.id NOT IN (
                             SELECT userid FROM {company_users}
-                            WHERE companyid IN (" . implode(',', array_keys($parentslist)) ."))";
+                            WHERE companyid IN (" . implode(',', array_keys($parentcompanies)) ."))";
         } else {
             $companyusql = "";
         }
