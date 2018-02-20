@@ -71,6 +71,7 @@ $string['messagepreferences'] = 'Message preferences';
 $string['message'] = 'Message';
 $string['messagepreferences'] = 'Message preferences';
 $string['messages'] = 'Messages';
+$string['messagingdatahasnotbeenmigrated'] = 'Your messages are temporarily unavailable due to upgrades in the messaging infrastructure. Please wait for them to be migrated.';
 $string['messagingdisabled'] = 'Messaging is disabled on this site, emails will be sent instead';
 $string['newonlymsg'] = 'Show only new';
 $string['newmessage'] = 'New message';
