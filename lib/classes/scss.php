@@ -111,7 +111,7 @@ class core_scss extends \Leafo\ScssPhp\Compiler {
     public function compile($code, $path = null) {
         global $CFG;
 
-        $pathtosassc = trim($CFG->pathtosassc);
+        $pathtosassc = trim($CFG->pathtosassc ?? '');
 
         if (!empty($pathtosassc) && is_executable($pathtosassc) && !is_dir($pathtosassc)) {
             $process = proc_open(
