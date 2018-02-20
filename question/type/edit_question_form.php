@@ -202,13 +202,7 @@ abstract class question_edit_form extends question_wizard_form {
         $this->definition_inner($mform);
 
         if (core_tag_tag::is_enabled('core_question', 'question')) {
-            $mform->addElement('header', 'tagsheader', get_string('tags'));
-            $mform->addElement('tags', 'tags', get_string('tags'),
-                array('itemtype' => 'question', 'component' => 'core_question'));
-
-            if (!question_has_capability_on($this->question, 'tag')) {
-                $mform->hardFreeze('tags');
-            }
+            $this->add_tag_fields($mform);
         }
 
         if (!empty($this->question->id)) {
@@ -307,6 +301,53 @@ abstract class question_edit_form extends question_wizard_form {
         $repeatedoptions['fraction']['default'] = 0;
         $answersoption = 'answers';
         return $repeated;
+    }
+
+    /**
+     * Add the tag and course tag fields to the mform.
+     *
+     * If the form is being built in a course context then add the field
+     * for course tags.
+     *
+     * If the question category doesn't belong to a course context or we
+     * aren't editing in a course context then add the tags element to allow
+     * tags to be added to the question category context.
+     *
+     * @param object $mform The form being built
+     */
+    protected function add_tag_fields($mform) {
+        $hastagcapability = question_has_capability_on($this->question, 'tag');
+        // Is the question category in a course context?
+        $qcontext = $this->categorycontext;
+        $qcoursecontext = $qcontext->get_course_context(false);
+        $iscourseoractivityquestion = !empty($qcoursecontext);
+        // Is the current context we're editing in a course context?
+        $editingcontext = $this->contexts->lowest();
+        $editingcoursecontext = $editingcontext->get_course_context(false);
+        $iseditingcontextcourseoractivity = !empty($editingcoursecontext);
+
+        $mform->addElement('header', 'tagsheader', get_string('tags'));
+        $mform->addElement('tags', 'tags', get_string('tags'),
+                array('itemtype' => 'question', 'component' => 'core_question'));
+
+        if (!$hastagcapability) {
+            $mform->hardFreeze('tags');
+        }
+
+        if ($iseditingcontextcourseoractivity && !$iscourseoractivityquestion) {
+            // If the question is being edited in a course or activity context
+            // and the question isn't a course or activity level question then
+            // allow course tags to be added to the course.
+            $coursetagheader = get_string('questionformtagheader', 'core_question',
+                $editingcoursecontext->get_context_name(true));
+            $mform->addElement('header', 'coursetagsheader', $coursetagheader);
+            $mform->addElement('tags', 'coursetags', get_string('tags'),
+                    array('itemtype' => 'question', 'component' => 'core_question'));
+
+            if (!$hastagcapability) {
+                $mform->hardFreeze('coursetags');
+            }
+        }
     }
 
     /**

@@ -770,9 +770,11 @@ function question_load_questions($questionids, $extrafields = '', $join = '') {
  * Private function to factor common code out of get_question_options().
  *
  * @param object $question the question to tidy.
- * @param boolean $loadtags load the question tags from the tags table. Optional, default false.
+ * @param stdClass $category The question_categories record for the given $question.
+ * @param stdClass[]|null $tagobjects The tags for the given $question.
+ * @param stdClass[]|null $filtercourses The courses to filter the course tags by.
  */
-function _tidy_question($question, $loadtags = false) {
+function _tidy_question($question, $category, array $tagobjects = null, array $filtercourses = null) {
     global $CFG;
 
     // Load question-type specific fields.
@@ -790,8 +792,76 @@ function _tidy_question($question, $loadtags = false) {
         unset($question->_partiallyloaded);
     }
 
-    if ($loadtags && core_tag_tag::is_enabled('core_question', 'question')) {
-        $question->tags = core_tag_tag::get_item_tags_array('core_question', 'question', $question->id);
+    $question->categoryobject = $category;
+
+    if (!is_null($tagobjects)) {
+        $categorycontext = context::instance_by_id($category->contextid);
+
+        // Questions can have two sets of tag instances. One set at the
+        // course context level and another at the context the question
+        // belongs to (e.g. course category, system etc).
+        $question->coursetagobjects = [];
+        $question->coursetags = [];
+        $question->tagobjects = [];
+        $question->tags = [];
+        $taginstanceidstonormalise = [];
+        $filtercoursecontextids = [];
+        $hasfiltercourses = !empty($filtercourses);
+
+        if ($hasfiltercourses) {
+            // If we're being asked to filter the course tags by a set of courses
+            // then get the context ids to filter below.
+            $filtercoursecontextids = array_map(function($course) {
+                $coursecontext = context_course::instance($course->id);
+                return $coursecontext->id;
+            }, $filtercourses);
+        }
+
+        foreach ($tagobjects as $tagobject) {
+            $tagcontextid = $tagobject->taginstancecontextid;
+            $tagcontext = context::instance_by_id($tagcontextid);
+            $tagcoursecontext = $tagcontext->get_course_context(false);
+            // This is a course tag if the tag context is a course context which
+            // doesn't match the question's context. Any tag in the question context
+            // is not considered a course tag, it belongs to the question.
+            $iscoursetag = $tagcoursecontext
+                && $tagcontext->id == $tagcoursecontext->id
+                && $tagcontext->id != $categorycontext->id;
+
+            if ($iscoursetag) {
+                // Any tag instance in a course context level is considered a course tag.
+                if (!$hasfiltercourses || in_array($tagcontextid, $filtercoursecontextids)) {
+                    // Add the tag to the list of course tags if we aren't being
+                    // asked to filter or if this tag is in the list of courses
+                    // we're being asked to filter by.
+                    $question->coursetagobjects[] = $tagobject;
+                    $question->coursetags[$tagobject->id] = $tagobject->get_display_name();
+                }
+            } else {
+                // All non course context level tag instances or tags in the question
+                // context belong to the context that the question was created in.
+                $question->tagobjects[] = $tagobject;
+                $question->tags[$tagobject->id] = $tagobject->get_display_name();
+
+                // Due to legacy tag implementations that don't force the recording
+                // of a context id, some tag instances may have context ids that don't
+                // match either a course context or the question context. In this case
+                // we should take the opportunity to fix up the data and set the correct
+                // context id.
+                if ($tagcontext->id != $categorycontext->id) {
+                    $taginstanceidstonormalise[] = $tagobject->taginstanceid;
+                    // Update the object properties to reflect the DB update that will
+                    // happen below.
+                    $tagobject->taginstancecontextid = $categorycontext->id;
+                }
+            }
+        }
+
+        if (!empty($taginstanceidstonormalise)) {
+            // If we found any tag instances with incorrect context id data then we can
+            // correct those values now by setting them to the question context id.
+            core_tag_tag::change_instances_context($taginstanceidstonormalise, $categorycontext);
+        }
     }
 }
 
@@ -804,17 +874,47 @@ function _tidy_question($question, $loadtags = false) {
  *
  * @param mixed $questions Either an array of question objects to be updated
  *         or just a single question object
- * @param boolean $loadtags load the question tags from the tags table. Optional, default false.
+ * @param bool $loadtags load the question tags from the tags table. Optional, default false.
+ * @param stdClass[] $filtercourses The courses to filter the course tags by.
  * @return bool Indicates success or failure.
  */
-function get_question_options(&$questions, $loadtags = false) {
-    if (is_array($questions)) { // deal with an array of questions
-        foreach ($questions as $i => $notused) {
-            _tidy_question($questions[$i], $loadtags);
-        }
-    } else { // deal with single question
-        _tidy_question($questions, $loadtags);
+function get_question_options(&$questions, $loadtags = false, $filtercourses = null) {
+    global $DB;
+
+    $questionlist = is_array($questions) ? $questions : [$questions];
+    $categoryids = [];
+    $questionids = [];
+
+    if (empty($questionlist)) {
+        return true;
     }
+
+    foreach ($questionlist as $question) {
+        $questionids[] = $question->id;
+
+        if (!in_array($question->category, $categoryids)) {
+            $categoryids[] = $question->category;
+        }
+    }
+
+    $categories = $DB->get_records_list('question_categories', 'id', $categoryids);
+
+    if ($loadtags && core_tag_tag::is_enabled('core_question', 'question')) {
+        $tagobjectsbyquestion = core_tag_tag::get_items_tags('core_question', 'question', $questionids);
+    } else {
+        $tagobjectsbyquestion = null;
+    }
+
+    foreach ($questionlist as $question) {
+        if (is_null($tagobjectsbyquestion)) {
+            $tagobjects = null;
+        } else {
+            $tagobjects = $tagobjectsbyquestion[$question->id];
+        }
+
+        _tidy_question($question, $categories[$question->category], $tagobjects, $filtercourses);
+    }
+
     return true;
 }
 
