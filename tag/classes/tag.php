@@ -958,8 +958,26 @@ class core_tag_tag {
         if ($newcontext instanceof context) {
             $newcontext = $newcontext->id;
         }
+
         $DB->set_field_select('tag_instance', 'contextid', $newcontext,
             'component = :component AND itemtype = :itemtype AND itemid ' . $sql, $params);
+    }
+
+    /**
+     * Moves all of the specified tag instances into a new context.
+     *
+     * @param array $taginstanceids The list of tag instance ids that should be moved
+     * @param context $newcontext The context to move the tag instances into
+     */
+    public static function change_instances_context(array $taginstanceids, context $newcontext) {
+        global $DB;
+
+        if (empty($taginstanceids)) {
+            return;
+        }
+
+        list($sql, $params) = $DB->get_in_or_equal($taginstanceids);
+        $DB->set_field_select('tag_instance', 'contextid', $newcontext->id, "id {$sql}", $params);
     }
 
     /**
