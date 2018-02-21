@@ -212,9 +212,10 @@ function quiz_delete_instance($id) {
  *
  * @param object $quiz The quiz object.
  * @param int $overrideid The id of the override being deleted
+ * @param bool $log Whether to trigger logs.
  * @return bool true on success
  */
-function quiz_delete_override($quiz, $overrideid) {
+function quiz_delete_override($quiz, $overrideid, $log = true) {
     global $DB;
 
     if (!isset($quiz->cmid)) {
@@ -242,26 +243,28 @@ function quiz_delete_override($quiz, $overrideid) {
 
     $DB->delete_records('quiz_overrides', array('id' => $overrideid));
 
-    // Set the common parameters for one of the events we will be triggering.
-    $params = array(
-        'objectid' => $override->id,
-        'context' => context_module::instance($quiz->cmid),
-        'other' => array(
-            'quizid' => $override->quiz
-        )
-    );
-    // Determine which override deleted event to fire.
-    if (!empty($override->userid)) {
-        $params['relateduserid'] = $override->userid;
-        $event = \mod_quiz\event\user_override_deleted::create($params);
-    } else {
-        $params['other']['groupid'] = $override->groupid;
-        $event = \mod_quiz\event\group_override_deleted::create($params);
-    }
+    if ($log) {
+        // Set the common parameters for one of the events we will be triggering.
+        $params = array(
+            'objectid' => $override->id,
+            'context' => context_module::instance($quiz->cmid),
+            'other' => array(
+                'quizid' => $override->quiz
+            )
+        );
+        // Determine which override deleted event to fire.
+        if (!empty($override->userid)) {
+            $params['relateduserid'] = $override->userid;
+            $event = \mod_quiz\event\user_override_deleted::create($params);
+        } else {
+            $params['other']['groupid'] = $override->groupid;
+            $event = \mod_quiz\event\group_override_deleted::create($params);
+        }
 
-    // Trigger the override deleted event.
-    $event->add_record_snapshot('quiz_overrides', $override);
-    $event->trigger();
+        // Trigger the override deleted event.
+        $event->add_record_snapshot('quiz_overrides', $override);
+        $event->trigger();
+    }
 
     return true;
 }
@@ -270,13 +273,14 @@ function quiz_delete_override($quiz, $overrideid) {
  * Deletes all quiz overrides from the database and clears any corresponding calendar events
  *
  * @param object $quiz The quiz object.
+ * @param bool $log Whether to trigger logs.
  */
-function quiz_delete_all_overrides($quiz) {
+function quiz_delete_all_overrides($quiz, $log = true) {
     global $DB;
 
     $overrides = $DB->get_records('quiz_overrides', array('quiz' => $quiz->id), 'id');
     foreach ($overrides as $override) {
-        quiz_delete_override($quiz, $override->id);
+        quiz_delete_override($quiz, $override->id, $log);
     }
 }
 
@@ -401,6 +405,24 @@ function quiz_delete_all_attempts($quiz) {
     question_engine::delete_questions_usage_by_activities(new qubaids_for_quiz($quiz->id));
     $DB->delete_records('quiz_attempts', array('quiz' => $quiz->id));
     $DB->delete_records('quiz_grades', array('quiz' => $quiz->id));
+}
+
+/**
+ * Delete all the attempts belonging to a user in a particular quiz.
+ *
+ * @param object $quiz The quiz object.
+ * @param object $user The user object.
+ */
+function quiz_delete_user_attempts($quiz, $user) {
+    global $CFG, $DB;
+    require_once($CFG->dirroot . '/mod/quiz/locallib.php');
+    question_engine::delete_questions_usage_by_activities(new qubaids_for_quiz_user($quiz->get_quizid(), $user->id));
+    $params = [
+        'quiz' => $quiz->get_quizid(),
+        'userid' => $user->id,
+    ];
+    $DB->delete_records('quiz_attempts', $params);
+    $DB->delete_records('quiz_grades', $params);
 }
 
 /**
