@@ -205,11 +205,7 @@ $subhierarchieslist = company::get_all_subdepartments($userhierarchylevel);
 $select = new single_select($baseurl, 'departmentid', $subhierarchieslist, $departmentid);
 $select->label = get_string('department', 'block_iomad_company_admin');
 $select->formid = 'choosedepartment';
-echo html_writer::tag('div', $output->render($select), array('id' => 'iomad_department_selector', 'style' => 'display: none'));
-
-$departmenttree = company::get_all_subdepartments_raw($userhierarchylevel);
-$treehtml = $output->department_tree($departmenttree, optional_param('departmentid', 0, PARAM_INT));
-echo $treehtml;
+$fwselectoutput = html_writer::tag('div', $output->render($select), array('id' => 'iomad_department_selector', 'style' => 'display: none'));
 
 // Set up the filter form.
 $mform = new iomad_user_filter_form(null, array('companyid' => $companyid));
