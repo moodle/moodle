@@ -82,6 +82,69 @@ class core_question_generator extends component_generator_base {
         $question->category  = $fromform->category;
         $question->qtype     = $qtype;
         $question->createdby = 0;
+
+        return $this->update_question($question, $which, $overrides);
+    }
+
+    /**
+     * Update an existing question.
+     *
+     * @param stdClass $question the question data to update.
+     * @param string $which as for the corresponding argument of
+     *      {@link question_test_helper::get_question_form_data}. null for the default one.
+     * @param array|stdClass $overrides any fields that should be different from the base example.
+     */
+    public function update_question($question, $which = null, $overrides = null) {
+        global $CFG;
+        require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
+
+        $qtype = $question->qtype;
+
+        $fromform = test_question_maker::get_question_form_data($qtype, $which);
+        $fromform = (object) $this->datagenerator->combine_defaults_and_record(
+                (array) $question, $fromform);
+        $fromform = (object) $this->datagenerator->combine_defaults_and_record(
+                (array) $fromform, $overrides);
+
         return question_bank::get_qtype($qtype)->save_question($question, $fromform);
+    }
+
+    /**
+     * Setup a course category, course, a question category, and 2 questions
+     * for testing.
+     *
+     * @param string $type The type of question category to create.
+     * @return array The created data objects
+     */
+    public function setup_course_and_questions($type = 'course') {
+        $datagenerator = $this->datagenerator;
+        $category = $datagenerator->create_category();
+        $course = $datagenerator->create_course([
+            'numsections' => 5,
+            'category' => $category->id
+        ]);
+
+        switch ($type) {
+            case 'category':
+                $context = context_coursecat::instance($category->id);
+                break;
+
+            case 'system':
+                $context = context_system::instance();
+                break;
+
+            default:
+                $context = context_course::instance($course->id);
+                break;
+        }
+
+        $qcat = $this->create_question_category(['contextid' => $context->id]);
+
+        $questions = array(
+                $this->create_question('shortanswer', null, ['category' => $qcat->id]),
+                $this->create_question('shortanswer', null, ['category' => $qcat->id]),
+        );
+
+        return array($category, $course, $qcat, $questions);
     }
 }
