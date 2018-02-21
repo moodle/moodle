@@ -500,6 +500,64 @@ class core_tag_tag {
     }
 
     /**
+     * Bulk delete all tag instances.
+     *
+     * @param stdClass[] $taginstances A list of tag_instance records to delete. Each
+     *                                 record must also contain the name and rawname
+     *                                 columns from the related tag record.
+     */
+    public static function delete_instances_as_record(array $taginstances) {
+        global $DB;
+
+        if (empty($taginstances)) {
+            return;
+        }
+
+        $taginstanceids = array_map(function($taginstance) {
+            return $taginstance->id;
+        }, $taginstances);
+        // Now remove all the tag instances.
+        $DB->delete_records_list('tag_instance', 'id', $taginstanceids);
+        // Save the system context in case the 'contextid' column in the 'tag_instance' table is null.
+        $syscontextid = context_system::instance()->id;
+        // Loop through the tag instances and fire an 'tag_removed' event.
+        foreach ($taginstances as $taginstance) {
+            // We can not fire an event with 'null' as the contextid.
+            if (is_null($taginstance->contextid)) {
+                $taginstance->contextid = $syscontextid;
+            }
+
+            // Trigger tag removed event.
+            \core\event\tag_removed::create_from_tag_instance($taginstance, $taginstance->name,
+                    $taginstance->rawname, true)->trigger();
+        }
+    }
+
+    /**
+     * Bulk delete all tag instances by tag id.
+     *
+     * @param int[] $taginstanceids List of tag instance ids to be deleted.
+     */
+    public static function delete_instances_by_id(array $taginstanceids) {
+        global $DB;
+
+        if (empty($taginstanceids)) {
+            return;
+        }
+
+        list($idsql, $params) = $DB->get_in_or_equal($taginstanceids);
+        $sql = "SELECT ti.*, t.name, t.rawname, t.isstandard
+                  FROM {tag_instance} ti
+                  JOIN {tag} t
+                    ON ti.tagid = t.id
+                 WHERE ti.id {$idsql}";
+
+        if ($taginstances = $DB->get_records_sql($sql, $params)) {
+            static::delete_instances_as_record($taginstances);
+        }
+    }
+
+    /**
      * Bulk delete all tag instances for a component or tag area
      *
      * @param string $component
@@ -523,22 +581,9 @@ class core_tag_tag {
             $sql .= " AND ti.itemtype = :itemtype";
             $params['itemtype'] = $itemtype;
         }
-        if ($taginstances = $DB->get_records_sql($sql, $params)) {
-            // Now remove all the tag instances.
-            $DB->delete_records('tag_instance', $params);
-            // Save the system context in case the 'contextid' column in the 'tag_instance' table is null.
-            $syscontextid = context_system::instance()->id;
-            // Loop through the tag instances and fire an 'tag_removed' event.
-            foreach ($taginstances as $taginstance) {
-                // We can not fire an event with 'null' as the contextid.
-                if (is_null($taginstance->contextid)) {
-                    $taginstance->contextid = $syscontextid;
-                }
 
-                // Trigger tag removed event.
-                \core\event\tag_removed::create_from_tag_instance($taginstance, $taginstance->name,
-                        $taginstance->rawname, true)->trigger();
-            }
+        if ($taginstances = $DB->get_records_sql($sql, $params)) {
+            static::delete_instances_as_record($taginstances);
         }
     }
 
