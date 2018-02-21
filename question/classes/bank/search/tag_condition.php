@@ -61,12 +61,16 @@ class tag_condition extends condition {
             // tags will be omitted.
             list($tagsql, $tagparams) = $DB->get_in_or_equal($selectedtagids, SQL_PARAMS_NAMED);
             $tagparams['tagcount'] = count($selectedtagids);
+            $tagparams['questionitemtype'] = 'question';
+            $tagparams['questioncomponent'] = 'core_question';
             $this->selectedtagids = $selectedtagids;
             $this->params = $tagparams;
             $this->where = "q.id IN (SELECT ti.itemid
-                                     FROM {tag_instance} ti
-                                     WHERE ti.tagid {$tagsql}
-                                     GROUP BY ti.itemid
+                                       FROM {tag_instance} ti
+                                      WHERE ti.itemtype = :questionitemtype
+                                            AND ti.component = :questioncomponent
+                                            AND ti.tagid {$tagsql}
+                                   GROUP BY ti.itemid
                                      HAVING COUNT(itemid) = :tagcount)";
 
         } else {
