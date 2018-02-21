@@ -321,7 +321,7 @@ if (!empty($userlist)) {
     if (!empty($from)) {
         // We need to get the total allocated up to that date.
         if (empty($license->program)) {
-            $numallocations = $DB->count_records_sql("SELECT COUNT (id) FROM {logstore_standard_log}
+            $numallocations = $DB->count_records_sql("SELECT COUNT(id) FROM {logstore_standard_log}
                                                       WHERE eventname = :eventname
                                                       AND objectid = :licenseid
                                                       AND timecreated < :fromtime
@@ -329,7 +329,7 @@ if (!empty($userlist)) {
                                                       array('eventname' => '\block_iomad_company_admin\event\user_license_assigned',
                                                             'licenseid' => $licenseid,
                                                             'fromtime' => $from));
-            $numunallocations = $DB->count_records_sql("SELECT COUNT (id) FROM {logstore_standard_log}
+            $numunallocations = $DB->count_records_sql("SELECT COUNT(id) FROM {logstore_standard_log}
                                                         WHERE eventname = :eventname
                                                         AND objectid = :licenseid
                                                         AND timecreated < :fromtime
@@ -393,14 +393,14 @@ if (!empty($userlist)) {
     // Get the number of allocations.
     if (empty($license->program)) {
         $sqlparams['eventname'] = '\block_iomad_company_admin\event\user_license_assigned';
-        $numallocations = $DB->count_records_sql("SELECT COUNT (id) FROM {logstore_standard_log}
+        $numallocations = $DB->count_records_sql("SELECT COUNT(id) FROM {logstore_standard_log}
                                                   WHERE eventname = :eventname
                                                   AND objectid = :licenseid
                                                   $timesql
                                                   AND userid IN (" . $departmentids . ")",
                                                   $sqlparams);
         $sqlparams['eventname'] = '\block_iomad_company_admin\event\user_license_unassigned';
-        $numunallocations = $DB->count_records_sql("SELECT COUNT (id) FROM {logstore_standard_log}
+        $numunallocations = $DB->count_records_sql("SELECT COUNT(id) FROM {logstore_standard_log}
                                                     WHERE eventname = :eventname
                                                     AND objectid = :licenseid
                                                     $timesql
