@@ -180,6 +180,7 @@ $string['modulename_link'] = 'mod/feedback/view';
 $string['modulenameplural'] = 'Feedback';
 $string['move_item'] = 'Move this question';
 $string['multichoice'] = 'Multiple choice';
+$string['multichoiceoption'] = '<span class="weight">({$a->weight}) </span>{$a->name}';
 $string['multichoicerated'] = 'Multiple choice (rated)';
 $string['multichoicetype'] = 'Multiple choice type';
 $string['multichoice_values'] = 'Multiple choice values';
