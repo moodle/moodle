@@ -207,7 +207,7 @@ abstract class question_edit_form extends question_wizard_form {
                 array('itemtype' => 'question', 'component' => 'core_question'));
 
             if (!question_has_capability_on($this->question, 'tag')) {
-                $mform->freeze('tags');
+                $mform->hardFreeze('tags');
             }
         }
 
