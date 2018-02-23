@@ -60,8 +60,8 @@ require_login($course);
 $context = context_course::instance($course->id);
 require_capability('moodle/course:managegroups', $context);
 
-$PAGE->requires->js('/group/clientlib.js');
-$PAGE->requires->js('/group/module.js');
+$PAGE->requires->js('/group/clientlib.js', true);
+$PAGE->requires->js('/group/module.js', true);
 
 // Check for multiple/no group errors
 if (!$singlegroup) {
