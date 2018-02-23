@@ -1562,6 +1562,335 @@ class core_tag_taglib_testcase extends advanced_testcase {
     }
 
     /**
+     * delete_instances_as_record with an empty set of instances should do nothing.
+     */
+    public function test_delete_instances_as_record_empty_set() {
+        $user = $this->getDataGenerator()->create_user();
+        $context = context_user::instance($user->id);
+        $component = 'core';
+        $itemtype = 'user';
+        $itemid = 1;
+
+        core_tag_tag::set_item_tags($component, $itemtype, $itemid, $context, ['foo']);
+        // This shouldn't error.
+        core_tag_tag::delete_instances_as_record([]);
+
+        $tags = core_tag_tag::get_item_tags($component, $itemtype, $itemid);
+        // We should still have one tag.
+        $this->assertCount(1, $tags);
+    }
+
+    /**
+     * delete_instances_as_record with an instance that doesn't exist should do
+     * nothing.
+     */
+    public function test_delete_instances_as_record_missing_set() {
+        $tagnames = ['foo'];
+        $collid = core_tag_collection::get_default();
+        $tags = core_tag_tag::create_if_missing($collid, $tagnames);
+        $user = $this->getDataGenerator()->create_user();
+        $context = context_user::instance($user->id);
+        $component = 'core';
+        $itemtype = 'user';
+        $itemid = 1;
+
+        $taginstance = $this->add_tag_instance($tags['foo'], $component, $itemtype, $itemid, $context);
+        $taginstance->id++;
+
+        // Delete an instance that doesn't exist should do nothing.
+        core_tag_tag::delete_instances_as_record([$taginstance]);
+
+        $tags = core_tag_tag::get_item_tags($component, $itemtype, $itemid);
+        // We should still have one tag.
+        $this->assertCount(1, $tags);
+    }
+
+    /**
+     * delete_instances_as_record with a list of all tag instances should
+     * leave no tags left.
+     */
+    public function test_delete_instances_as_record_whole_set() {
+        $tagnames = ['foo'];
+        $collid = core_tag_collection::get_default();
+        $tags = core_tag_tag::create_if_missing($collid, $tagnames);
+        $user = $this->getDataGenerator()->create_user();
+        $context = context_user::instance($user->id);
+        $component = 'core';
+        $itemtype = 'user';
+        $itemid = 1;
+
+        $taginstance = $this->add_tag_instance($tags['foo'], $component, $itemtype, $itemid, $context);
+
+        core_tag_tag::delete_instances_as_record([$taginstance]);
+
+        $tags = core_tag_tag::get_item_tags($component, $itemtype, $itemid);
+        // There should be no tags left.
+        $this->assertEmpty($tags);
+    }
+
+    /**
+     * delete_instances_as_record with a list of only some tag instances should
+     * delete only the given tag instances and leave other tag instances.
+     */
+    public function test_delete_instances_as_record_partial_set() {
+        $tagnames = ['foo', 'bar'];
+        $collid = core_tag_collection::get_default();
+        $tags = core_tag_tag::create_if_missing($collid, $tagnames);
+        $user = $this->getDataGenerator()->create_user();
+        $context = context_user::instance($user->id);
+        $component = 'core';
+        $itemtype = 'user';
+        $itemid = 1;
+
+        $taginstance = $this->add_tag_instance($tags['foo'], $component, $itemtype, $itemid, $context);
+        $this->add_tag_instance($tags['bar'], $component, $itemtype, $itemid, $context);
+
+        core_tag_tag::delete_instances_as_record([$taginstance]);
+
+        $tags = core_tag_tag::get_item_tags($component, $itemtype, $itemid);
+        // We should be left with a single tag, 'bar'.
+        $this->assertCount(1, $tags);
+        $tag = array_shift($tags);
+        $this->assertEquals('bar', $tag->name);
+    }
+
+    /**
+     * delete_instances_by_id with an empty set of ids should do nothing.
+     */
+    public function test_delete_instances_by_id_empty_set() {
+        $user = $this->getDataGenerator()->create_user();
+        $context = context_user::instance($user->id);
+        $component = 'core';
+        $itemtype = 'user';
+        $itemid = 1;
+
+        core_tag_tag::set_item_tags($component, $itemtype, $itemid, $context, ['foo']);
+        // This shouldn't error.
+        core_tag_tag::delete_instances_by_id([]);
+
+        $tags = core_tag_tag::get_item_tags($component, $itemtype, $itemid);
+        // We should still have one tag.
+        $this->assertCount(1, $tags);
+    }
+
+    /**
+     * delete_instances_by_id with an id that doesn't exist should do
+     * nothing.
+     */
+    public function test_delete_instances_by_id_missing_set() {
+        $tagnames = ['foo'];
+        $collid = core_tag_collection::get_default();
+        $tags = core_tag_tag::create_if_missing($collid, $tagnames);
+        $user = $this->getDataGenerator()->create_user();
+        $context = context_user::instance($user->id);
+        $component = 'core';
+        $itemtype = 'user';
+        $itemid = 1;
+
+        $taginstance = $this->add_tag_instance($tags['foo'], $component, $itemtype, $itemid, $context);
+
+        // Delete an instance that doesn't exist should do nothing.
+        core_tag_tag::delete_instances_by_id([$taginstance->id + 1]);
+
+        $tags = core_tag_tag::get_item_tags($component, $itemtype, $itemid);
+        // We should still have one tag.
+        $this->assertCount(1, $tags);
+    }
+
+    /**
+     * delete_instances_by_id with a list of all tag instance ids should
+     * leave no tags left.
+     */
+    public function test_delete_instances_by_id_whole_set() {
+        $tagnames = ['foo'];
+        $collid = core_tag_collection::get_default();
+        $tags = core_tag_tag::create_if_missing($collid, $tagnames);
+        $user = $this->getDataGenerator()->create_user();
+        $context = context_user::instance($user->id);
+        $component = 'core';
+        $itemtype = 'user';
+        $itemid = 1;
+
+        $taginstance = $this->add_tag_instance($tags['foo'], $component, $itemtype, $itemid, $context);
+
+        core_tag_tag::delete_instances_by_id([$taginstance->id]);
+
+        $tags = core_tag_tag::get_item_tags($component, $itemtype, $itemid);
+        // There should be no tags left.
+        $this->assertEmpty($tags);
+    }
+
+    /**
+     * delete_instances_by_id with a list of only some tag instance ids should
+     * delete only the given tag instance ids and leave other tag instances.
+     */
+    public function test_delete_instances_by_id_partial_set() {
+        $tagnames = ['foo', 'bar'];
+        $collid = core_tag_collection::get_default();
+        $tags = core_tag_tag::create_if_missing($collid, $tagnames);
+        $user = $this->getDataGenerator()->create_user();
+        $context = context_user::instance($user->id);
+        $component = 'core';
+        $itemtype = 'user';
+        $itemid = 1;
+
+        $taginstance = $this->add_tag_instance($tags['foo'], $component, $itemtype, $itemid, $context);
+        $this->add_tag_instance($tags['bar'], $component, $itemtype, $itemid, $context);
+
+        core_tag_tag::delete_instances_by_id([$taginstance->id]);
+
+        $tags = core_tag_tag::get_item_tags($component, $itemtype, $itemid);
+        // We should be left with a single tag, 'bar'.
+        $this->assertCount(1, $tags);
+        $tag = array_shift($tags);
+        $this->assertEquals('bar', $tag->name);
+    }
+
+    /**
+     * delete_instances should delete all tag instances for a component if given
+     * only the component as a parameter.
+     */
+    public function test_delete_instances_with_component() {
+        global $DB;
+
+        $tagnames = ['foo', 'bar'];
+        $collid = core_tag_collection::get_default();
+        $tags = core_tag_tag::create_if_missing($collid, $tagnames);
+        $user = $this->getDataGenerator()->create_user();
+        $context = context_user::instance($user->id);
+        $component = 'core';
+        $itemtype1 = 'user';
+        $itemtype2 = 'course';
+        $itemid = 1;
+
+        // Add 2 tag instances in the same $component but with different item types.
+        $this->add_tag_instance($tags['foo'], $component, $itemtype1, $itemid, $context);
+        $this->add_tag_instance($tags['bar'], $component, $itemtype2, $itemid, $context);
+
+        // Delete all tag instances for the component.
+        core_tag_tag::delete_instances($component);
+
+        $taginstances = $DB->get_records_sql('SELECT * FROM {tag_instance} WHERE component = ?', [$component]);
+        // Both tag instances from the $component should have been deleted even though
+        // they are in different item types.
+        $this->assertEmpty($taginstances);
+    }
+
+    /**
+     * delete_instances should delete all tag instances for a component if given
+     * only the component as a parameter.
+     */
+    public function test_delete_instances_with_component_and_itemtype() {
+        global $DB;
+
+        $tagnames = ['foo', 'bar'];
+        $collid = core_tag_collection::get_default();
+        $tags = core_tag_tag::create_if_missing($collid, $tagnames);
+        $user = $this->getDataGenerator()->create_user();
+        $context = context_user::instance($user->id);
+        $component = 'core';
+        $itemtype1 = 'user';
+        $itemtype2 = 'course';
+        $itemid = 1;
+
+        // Add 2 tag instances in the same $component but with different item types.
+        $this->add_tag_instance($tags['foo'], $component, $itemtype1, $itemid, $context);
+        $this->add_tag_instance($tags['bar'], $component, $itemtype2, $itemid, $context);
+
+        // Delete all tag instances for the component and itemtype.
+        core_tag_tag::delete_instances($component, $itemtype1);
+
+        $taginstances = $DB->get_records_sql('SELECT * FROM {tag_instance} WHERE component = ?', [$component]);
+        // Only the tag instances for $itemtype1 should have been deleted. We
+        // should still be left with the instance for 'bar'.
+        $this->assertCount(1, $taginstances);
+        $taginstance = array_shift($taginstances);
+        $this->assertEquals($itemtype2, $taginstance->itemtype);
+        $this->assertEquals($tags['bar']->id, $taginstance->tagid);
+    }
+
+    /**
+     * delete_instances should delete all tag instances for a component in a context
+     * if given both the component and context id as parameters.
+     */
+    public function test_delete_instances_with_component_and_context() {
+        global $DB;
+
+        $tagnames = ['foo', 'bar', 'baz'];
+        $collid = core_tag_collection::get_default();
+        $tags = core_tag_tag::create_if_missing($collid, $tagnames);
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $context1 = context_user::instance($user1->id);
+        $context2 = context_user::instance($user2->id);
+        $component = 'core';
+        $itemtype1 = 'user';
+        $itemtype2 = 'course';
+        $itemid = 1;
+
+        // Add 3 tag instances in the same $component but with different contexts.
+        $this->add_tag_instance($tags['foo'], $component, $itemtype1, $itemid, $context1);
+        $this->add_tag_instance($tags['bar'], $component, $itemtype2, $itemid, $context1);
+        $this->add_tag_instance($tags['baz'], $component, $itemtype2, $itemid, $context2);
+
+        // Delete all tag instances for the component and context.
+        core_tag_tag::delete_instances($component, null, $context1->id);
+
+        $taginstances = $DB->get_records_sql('SELECT * FROM {tag_instance} WHERE component = ?', [$component]);
+        // Only the tag instances for $context1 should have been deleted. We
+        // should still be left with the instance for 'baz'.
+        $this->assertCount(1, $taginstances);
+        $taginstance = array_shift($taginstances);
+        $this->assertEquals($context2->id, $taginstance->contextid);
+        $this->assertEquals($tags['baz']->id, $taginstance->tagid);
+    }
+
+    /**
+     * delete_instances should delete all tag instances for a component, item type
+     * and context if given the component, itemtype, and context id as parameters.
+     */
+    public function test_delete_instances_with_component_and_itemtype_and_context() {
+        global $DB;
+
+        $tagnames = ['foo', 'bar', 'baz'];
+        $collid = core_tag_collection::get_default();
+        $tags = core_tag_tag::create_if_missing($collid, $tagnames);
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $context1 = context_user::instance($user1->id);
+        $context2 = context_user::instance($user2->id);
+        $component = 'core';
+        $itemtype1 = 'user';
+        $itemtype2 = 'course';
+        $itemid = 1;
+
+        // Add 3 tag instances in the same $component but with different contexts.
+        $this->add_tag_instance($tags['foo'], $component, $itemtype1, $itemid, $context1);
+        $this->add_tag_instance($tags['bar'], $component, $itemtype2, $itemid, $context1);
+        $this->add_tag_instance($tags['baz'], $component, $itemtype2, $itemid, $context2);
+
+        // Delete all tag instances for the component and context.
+        core_tag_tag::delete_instances($component, $itemtype2, $context1->id);
+
+        $taginstances = $DB->get_records_sql('SELECT * FROM {tag_instance} WHERE component = ?', [$component]);
+        // Only the tag instances for $itemtype2 in $context1 should have been
+        // deleted. We should still be left with the instance for 'foo' and 'baz'.
+        $this->assertCount(2, $taginstances);
+        $fooinstances = array_filter($taginstances, function($instance) use ($tags) {
+            return $instance->tagid == $tags['foo']->id;
+        });
+        $fooinstance = array_shift($fooinstances);
+        $bazinstances = array_filter($taginstances, function($instance) use ($tags) {
+            return $instance->tagid == $tags['baz']->id;
+        });
+        $bazinstance = array_shift($bazinstances);
+        $this->assertNotEmpty($fooinstance);
+        $this->assertNotEmpty($bazinstance);
+        $this->assertEquals($context1->id, $fooinstance->contextid);
+        $this->assertEquals($context2->id, $bazinstance->contextid);
+    }
+
+    /**
      * Help method to return sorted array of names of correlated tags to use for assertions
      * @param core_tag $tag
      * @return string
@@ -1592,7 +1921,10 @@ class core_tag_taglib_testcase extends advanced_testcase {
         $record['itemtype'] = $itemtype;
         $record['itemid'] = $itemid;
         $record['contextid'] = $context->id;
+        $record['tiuserid'] = 0;
+        $record['ordering'] = 0;
+        $record['timecreated'] = time();
         $record['id'] = $DB->insert_record('tag_instance', $record);
-        return $record;
+        return (object) $record;
     }
 }
