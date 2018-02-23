@@ -602,7 +602,7 @@ class core_tag_tag {
         global $DB;
         $this->ensure_fields_exist(array('name', 'rawname'), 'add_instance');
 
-        $taginstance = new StdClass;
+        $taginstance = new stdClass;
         $taginstance->tagid        = $this->id;
         $taginstance->component    = $component ? $component : '';
         $taginstance->itemid       = $itemid;
@@ -773,12 +773,35 @@ class core_tag_tag {
             $tagobjects = array();
         }
 
+        $allowmultiplecontexts = core_tag_area::allows_tagging_in_multiple_contexts($component, $itemtype);
         $currenttags = static::get_item_tags($component, $itemtype, $itemid, self::BOTH_STANDARD_AND_NOT, $tiuserid);
+        $taginstanceidstomovecontext = [];
 
         // For data coherence reasons, it's better to remove deleted tags
         // before adding new data: ordering could be duplicated.
         foreach ($currenttags as $currenttag) {
-            if (!array_key_exists($currenttag->name, $tagobjects)) {
+            $hasbeenrequested = array_key_exists($currenttag->name, $tagobjects);
+            $issamecontext = $currenttag->taginstancecontextid == $context->id;
+
+            if ($allowmultiplecontexts) {
+                // If the tag area allows multiple contexts then we should only be
+                // managing tags in the given $context. All other tags can be ignored.
+                $shoulddelete = $issamecontext && !$hasbeenrequested;
+            } else {
+                // If the tag area only allows tag instances in a single context then
+                // all tags that aren't in the requested tags should be deleted, regardless
+                // of their context, if they are not part of the new set of tags.
+                $shoulddelete = !$hasbeenrequested;
+                // If the tag instance isn't in the correct context (legacy data)
+                // then we should take this opportunity to update it with the correct
+                // context id.
+                if (!$shoulddelete && !$issamecontext) {
+                    $currenttag->taginstancecontextid = $context->id;
+                    $taginstanceidstomovecontext[] = $currenttag->taginstanceid;
+                }
+            }
+
+            if ($shoulddelete) {
                 $taginstance = (object)array('id' => $currenttag->taginstanceid,
                     'itemtype' => $itemtype, 'itemid' => $itemid,
                     'contextid' => $currenttag->taginstancecontextid, 'tiuserid' => $tiuserid);
@@ -786,11 +809,30 @@ class core_tag_tag {
             }
         }
 
+        if (!empty($taginstanceidstomovecontext)) {
+            static::change_instances_context($taginstanceidstomovecontext, $context);
+        }
+
         $ordering = -1;
         foreach ($tagobjects as $name => $tag) {
             $ordering++;
             foreach ($currenttags as $currenttag) {
-                if (strval($currenttag->name) === strval($name)) {
+                $namesmatch = strval($currenttag->name) === strval($name);
+
+                if ($allowmultiplecontexts) {
+                    // If the tag area allows multiple contexts then we should only
+                    // skip adding a new instance if the existing one is in the correct
+                    // context.
+                    $contextsmatch = $currenttag->taginstancecontextid == $context->id;
+                    $shouldskipinstance = $namesmatch && $contextsmatch;
+                } else {
+                    // The existing behaviour for single context tag areas is to
+                    // skip adding a new instance regardless of whether the existing
+                    // instance is in the same context as the provided $context.
+                    $shouldskipinstance = $namesmatch;
+                }
+
+                if ($shouldskipinstance) {
                     if ($currenttag->ordering != $ordering) {
                         $currenttag->update_instance_ordering($currenttag->taginstanceid, $ordering);
                     }
