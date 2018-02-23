@@ -1173,6 +1173,123 @@ class core_tag_taglib_testcase extends advanced_testcase {
     }
 
     /**
+     * get_items_tags should return an empty array if the tag area is disabled.
+     */
+    public function test_get_items_tags_disabled_component() {
+        global $CFG;
+
+        $user1 = $this->getDataGenerator()->create_user();
+        $context1 = context_user::instance($user1->id);
+        $component = 'core';
+        $itemtype = 'user';
+        $itemids = [$user1->id];
+
+        // User 1 tags: 'foo', 'bar'.
+        core_tag_tag::set_item_tags($component, $itemtype, $user1->id, $context1, ['foo']);
+        // This mimics disabling tags for a component.
+        $CFG->usetags = false;
+        $result = core_tag_tag::get_items_tags($component, $itemtype, $itemids);
+        $this->assertEmpty($result);
+    }
+
+    /**
+     * get_items_tags should return an empty array if the tag item ids list
+     * is empty.
+     */
+    public function test_get_items_tags_empty_itemids() {
+        $user1 = $this->getDataGenerator()->create_user();
+        $context1 = context_user::instance($user1->id);
+        $component = 'core';
+        $itemtype = 'user';
+
+        // User 1 tags: 'foo', 'bar'.
+        core_tag_tag::set_item_tags($component, $itemtype, $user1->id, $context1, ['foo']);
+        $result = core_tag_tag::get_items_tags($component, $itemtype, []);
+        $this->assertEmpty($result);
+    }
+
+    /**
+     * get_items_tags should return an array indexed by the item ids with empty
+     * arrays as the values when the component or itemtype is unknown.
+     */
+    public function test_get_items_tags_unknown_component_itemtype() {
+        $itemids = [1, 2, 3];
+        $result = core_tag_tag::get_items_tags('someunknowncomponent', 'user', $itemids);
+        foreach ($itemids as $itemid) {
+            // Unknown component should return an array indexed by the item ids
+            // with empty arrays as the values.
+            $this->assertEmpty($result[$itemid]);
+        }
+
+        $result = core_tag_tag::get_items_tags('core', 'someunknownitemtype', $itemids);
+        foreach ($itemids as $itemid) {
+            // Unknown item type should return an array indexed by the item ids
+            // with empty arrays as the values.
+            $this->assertEmpty($result[$itemid]);
+        }
+    }
+
+    /**
+     * get_items_tags should return an array indexed by the item ids with empty
+     * arrays as the values for any item ids that don't have tag instances.
+     *
+     * Data setup:
+     * Users: 1, 2, 3
+     * Tags: user 1 = ['foo', 'bar']
+     *       user 2 = ['baz', 'bop']
+     *       user 3 = []
+     *
+     * Expected result:
+     * [
+     *      1 => [
+     *          1 => 'foo',
+     *          2 => 'bar'
+     *      ],
+     *      2 => [
+     *          3 => 'baz',
+     *          4 => 'bop'
+     *      ],
+     *      3 => []
+     * ]
+     */
+    public function test_get_items_tags_missing_itemids() {
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $user3 = $this->getDataGenerator()->create_user();
+        $context1 = context_user::instance($user1->id);
+        $context2 = context_user::instance($user2->id);
+        $component = 'core';
+        $itemtype = 'user';
+        $itemids = [$user1->id, $user2->id, $user3->id];
+        $expecteduser1tagnames = ['foo', 'bar'];
+        $expecteduser2tagnames = ['baz', 'bop'];
+        $expecteduser3tagnames = [];
+
+        // User 1 tags: 'foo', 'bar'.
+        core_tag_tag::set_item_tags($component, $itemtype, $user1->id, $context1, $expecteduser1tagnames);
+        // User 2 tags: 'bar', 'baz'.
+        core_tag_tag::set_item_tags($component, $itemtype, $user2->id, $context2, $expecteduser2tagnames);
+
+        $result = core_tag_tag::get_items_tags($component, $itemtype, $itemids);
+        $actualuser1tagnames = array_map(function($taginstance) {
+            return $taginstance->name;
+        }, $result[$user1->id]);
+        $actualuser2tagnames = array_map(function($taginstance) {
+            return $taginstance->name;
+        }, $result[$user2->id]);
+        $actualuser3tagnames = $result[$user3->id];
+
+        sort($expecteduser1tagnames);
+        sort($expecteduser2tagnames);
+        sort($actualuser1tagnames);
+        sort($actualuser2tagnames);
+
+        $this->assertEquals($expecteduser1tagnames, $actualuser1tagnames);
+        $this->assertEquals($expecteduser2tagnames, $actualuser2tagnames);
+        $this->assertEquals($expecteduser3tagnames, $actualuser3tagnames);
+    }
+
+    /**
      * Help method to return sorted array of names of correlated tags to use for assertions
      * @param core_tag $tag
      * @return string
