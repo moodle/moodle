@@ -638,6 +638,62 @@ class core_tag_tag {
     }
 
     /**
+     * Get the array of core_tag_tag objects associated with a list of items.
+     *
+     * Use {@link core_tag_tag::get_item_tags_array()} if you wish to get the same data as simple array.
+     *
+     * @param string $component component responsible for tagging. For BC it can be empty but in this case the
+     *               query will be slow because DB index will not be used.
+     * @param string $itemtype type of the tagged item
+     * @param int[] $itemids
+     * @param int $standardonly wether to return only standard tags or any
+     * @param int $tiuserid tag instance user id, only needed for tag areas with user tagging
+     * @return core_tag_tag[] each object contains additional fields taginstanceid, taginstancecontextid and ordering
+     */
+    public static function get_items_tags($component, $itemtype, $itemids, $standardonly = self::BOTH_STANDARD_AND_NOT,
+            $tiuserid = 0) {
+        global $DB;
+
+        if (static::is_enabled($component, $itemtype) === false) {
+            // Tagging area is properly defined but not enabled - return empty array.
+            return array();
+        }
+
+        if (empty($itemids)) {
+            return array();
+        }
+
+        $standardonly = (int)$standardonly; // In case somebody passed bool.
+
+        list($idsql, $params) = $DB->get_in_or_equal($itemids, SQL_PARAMS_NAMED);
+        // Note: if the fields in this query are changed, you need to do the same changes in core_tag_tag::get_correlated_tags().
+        $sql = "SELECT ti.id AS taginstanceid, tg.id, tg.isstandard, tg.name, tg.rawname, tg.flag,
+                    tg.tagcollid, ti.ordering, ti.contextid AS taginstancecontextid, ti.itemid
+                  FROM {tag_instance} ti
+                  JOIN {tag} tg ON tg.id = ti.tagid
+                  WHERE ti.itemtype = :itemtype AND ti.itemid $idsql ".
+                ($component ? "AND ti.component = :component " : "").
+                ($tiuserid ? "AND ti.tiuserid = :tiuserid " : "").
+                (($standardonly == self::STANDARD_ONLY) ? "AND tg.isstandard = 1 " : "").
+                (($standardonly == self::NOT_STANDARD_ONLY) ? "AND tg.isstandard = 0 " : "").
+               "ORDER BY ti.ordering ASC, ti.id";
+
+        $params['itemtype'] = $itemtype;
+        $params['component'] = $component;
+        $params['tiuserid'] = $tiuserid;
+
+        $records = $DB->get_records_sql($sql, $params);
+        $result = array();
+        foreach ($itemids as $itemid) {
+            $result[$itemid] = [];
+        }
+        foreach ($records as $id => $record) {
+            $result[$record->itemid][$id] = new static($record);
+        }
+        return $result;
+    }
+
+    /**
      * Get the array of core_tag_tag objects associated with an item (instances).
      *
      * Use {@link core_tag_tag::get_item_tags_array()} if you wish to get the same data as simple array.
@@ -652,39 +708,8 @@ class core_tag_tag {
      */
     public static function get_item_tags($component, $itemtype, $itemid, $standardonly = self::BOTH_STANDARD_AND_NOT,
             $tiuserid = 0) {
-        global $DB;
-
-        if (static::is_enabled($component, $itemtype) === false) {
-            // Tagging area is properly defined but not enabled - return empty array.
-            return array();
-        }
-
-        $standardonly = (int)$standardonly; // In case somebody passed bool.
-
-        // Note: if the fields in this query are changed, you need to do the same changes in core_tag_tag::get_correlated_tags().
-        $sql = "SELECT ti.id AS taginstanceid, tg.id, tg.isstandard, tg.name, tg.rawname, tg.flag,
-                    tg.tagcollid, ti.ordering, ti.contextid AS taginstancecontextid
-                  FROM {tag_instance} ti
-                  JOIN {tag} tg ON tg.id = ti.tagid
-                  WHERE ti.itemtype = :itemtype AND ti.itemid = :itemid ".
-                ($component ? "AND ti.component = :component " : "").
-                ($tiuserid ? "AND ti.tiuserid = :tiuserid " : "").
-                (($standardonly == self::STANDARD_ONLY) ? "AND tg.isstandard = 1 " : "").
-                (($standardonly == self::NOT_STANDARD_ONLY) ? "AND tg.isstandard = 0 " : "").
-               "ORDER BY ti.ordering ASC, ti.id";
-
-        $params = array();
-        $params['itemtype'] = $itemtype;
-        $params['itemid'] = $itemid;
-        $params['component'] = $component;
-        $params['tiuserid'] = $tiuserid;
-
-        $records = $DB->get_records_sql($sql, $params);
-        $result = array();
-        foreach ($records as $id => $record) {
-            $result[$id] = new static($record);
-        }
-        return $result;
+        $tagobjects = static::get_items_tags($component, $itemtype, [$itemid], $standardonly, $tiuserid);
+        return empty($tagobjects) ? [] : $tagobjects[$itemid];
     }
 
     /**
@@ -1158,7 +1183,7 @@ class core_tag_tag {
 
         // This is (and has to) return the same fields as the query in core_tag_tag::get_item_tags().
         $sql = "SELECT ti.id AS taginstanceid, tg.id, tg.isstandard, tg.name, tg.rawname, tg.flag,
-                tg.tagcollid, ti.ordering, ti.contextid AS taginstancecontextid
+                tg.tagcollid, ti.ordering, ti.contextid AS taginstancecontextid, ti.itemid
               FROM {tag} tg
         INNER JOIN {tag_instance} ti ON tg.id = ti.tagid
              WHERE tg.id $query AND tg.id <> ? AND tg.tagcollid = ?
