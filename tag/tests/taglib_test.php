@@ -1290,6 +1290,278 @@ class core_tag_taglib_testcase extends advanced_testcase {
     }
 
     /**
+     * set_item_tags should remove any tags that aren't in the given list and should
+     * add any instances that are missing.
+     */
+    public function test_set_item_tags_no_multiple_context_add_remove_instances() {
+        $tagnames = ['foo', 'bar', 'baz', 'bop'];
+        $collid = core_tag_collection::get_default();
+        $tags = core_tag_tag::create_if_missing($collid, $tagnames);
+        $user1 = $this->getDataGenerator()->create_user();
+        $context = context_user::instance($user1->id);
+        $component = 'core';
+        $itemtype = 'user';
+        $itemid = 1;
+        $tagareas = core_tag_area::get_areas();
+        $tagarea = $tagareas[$itemtype][$component];
+        $newtagnames = ['bar', 'baz', 'bop'];
+
+        // Make sure the tag area doesn't allow multiple contexts.
+        core_tag_area::update($tagarea, ['multiplecontexts' => false]);
+
+        // Create tag instances in separate contexts.
+        $this->add_tag_instance($tags['foo'], $component, $itemtype, $itemid, $context);
+        $this->add_tag_instance($tags['bar'], $component, $itemtype, $itemid, $context);
+
+        core_tag_tag::set_item_tags($component, $itemtype, $itemid, $context, $newtagnames);
+
+        $result = core_tag_tag::get_item_tags($component, $itemtype, $itemid);
+        $actualtagnames = array_map(function($record) {
+            return $record->name;
+        }, $result);
+
+        sort($newtagnames);
+        sort($actualtagnames);
+
+        // The list of tags should match the $newtagnames which means 'foo'
+        // should have been removed while 'baz' and 'bop' were added. 'bar'
+        // should remain as it was in the new list of tags.
+        $this->assertEquals($newtagnames, $actualtagnames);
+    }
+
+    /**
+     * set_item_tags should set all of the tag instance context ids to the given
+     * context if the tag area for the items doesn't allow multiple contexts for
+     * the tag instances.
+     */
+    public function test_set_item_tags_no_multiple_context_updates_context_of_instances() {
+        $tagnames = ['foo', 'bar'];
+        $collid = core_tag_collection::get_default();
+        $tags = core_tag_tag::create_if_missing($collid, $tagnames);
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $context1 = context_user::instance($user1->id);
+        $context2 = context_user::instance($user2->id);
+        $component = 'core';
+        $itemtype = 'user';
+        $itemid = 1;
+        $tagareas = core_tag_area::get_areas();
+        $tagarea = $tagareas[$itemtype][$component];
+
+        // Make sure the tag area doesn't allow multiple contexts.
+        core_tag_area::update($tagarea, ['multiplecontexts' => false]);
+
+        // Create tag instances in separate contexts.
+        $this->add_tag_instance($tags['foo'], $component, $itemtype, $itemid, $context1);
+        $this->add_tag_instance($tags['bar'], $component, $itemtype, $itemid, $context2);
+
+        core_tag_tag::set_item_tags($component, $itemtype, $itemid, $context1, $tagnames);
+
+        $result = core_tag_tag::get_item_tags($component, $itemtype, $itemid);
+        $this->assertCount(count($tagnames), $result);
+
+        foreach ($result as $tag) {
+            // The core user tag area doesn't allow multiple contexts for tag instances
+            // so set_item_tags should have set all of the tag instance context ids
+            // to match $context1.
+            $this->assertEquals($context1->id, $tag->taginstancecontextid);
+        }
+    }
+
+    /**
+     * set_item_tags should delete all of the tag instances that don't match
+     * the new set of tags, regardless of the context that the tag instance
+     * is in.
+     */
+    public function test_set_item_tags_no_multiple_contex_deletes_old_instancest() {
+        $tagnames = ['foo', 'bar', 'baz', 'bop'];
+        $collid = core_tag_collection::get_default();
+        $tags = core_tag_tag::create_if_missing($collid, $tagnames);
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $context1 = context_user::instance($user1->id);
+        $context2 = context_user::instance($user2->id);
+        $component = 'core';
+        $itemtype = 'user';
+        $itemid = 1;
+        $expectedtagnames = ['foo', 'baz'];
+        $tagareas = core_tag_area::get_areas();
+        $tagarea = $tagareas[$itemtype][$component];
+
+        // Make sure the tag area doesn't allow multiple contexts.
+        core_tag_area::update($tagarea, ['multiplecontexts' => false]);
+
+        // Create tag instances in separate contexts.
+        $this->add_tag_instance($tags['foo'], $component, $itemtype, $itemid, $context1);
+        $this->add_tag_instance($tags['bar'], $component, $itemtype, $itemid, $context1);
+        $this->add_tag_instance($tags['baz'], $component, $itemtype, $itemid, $context2);
+        $this->add_tag_instance($tags['bop'], $component, $itemtype, $itemid, $context2);
+
+        core_tag_tag::set_item_tags($component, $itemtype, $itemid, $context1, $expectedtagnames);
+
+        $result = core_tag_tag::get_item_tags($component, $itemtype, $itemid);
+        $actualtagnames = array_map(function($record) {
+            return $record->name;
+        }, $result);
+
+        sort($expectedtagnames);
+        sort($actualtagnames);
+
+        // The list of tags should match the $expectedtagnames.
+        $this->assertEquals($expectedtagnames, $actualtagnames);
+
+        foreach ($result as $tag) {
+            // The core user tag area doesn't allow multiple contexts for tag instances
+            // so set_item_tags should have set all of the tag instance context ids
+            // to match $context1.
+            $this->assertEquals($context1->id, $tag->taginstancecontextid);
+        }
+    }
+
+    /**
+     * set_item_tags should not change tag instances in a different context to the one
+     * it's opertating on if the tag area allows instances from multiple contexts.
+     */
+    public function test_set_item_tags_allow_multiple_context_doesnt_update_context() {
+        global $DB;
+        $tagnames = ['foo', 'bar', 'bop'];
+        $collid = core_tag_collection::get_default();
+        $tags = core_tag_tag::create_if_missing($collid, $tagnames);
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $context1 = context_user::instance($user1->id);
+        $context2 = context_user::instance($user2->id);
+        $component = 'core';
+        $itemtype = 'user';
+        $itemid = 1;
+        $tagareas = core_tag_area::get_areas();
+        $tagarea = $tagareas[$itemtype][$component];
+
+        // Make sure the tag area allows multiple contexts.
+        core_tag_area::update($tagarea, ['multiplecontexts' => true]);
+
+        // Create tag instances in separate contexts.
+        $this->add_tag_instance($tags['foo'], $component, $itemtype, $itemid, $context1);
+        $this->add_tag_instance($tags['bar'], $component, $itemtype, $itemid, $context2);
+
+        // Set the list of tags for $context1. This includes a tag that already exists
+        // in that context and a new tag. There is another tag, 'bar', that exists in a
+        // different context ($context2) that should be ignored.
+        core_tag_tag::set_item_tags($component, $itemtype, $itemid, $context1, ['foo', 'bop']);
+
+        $result = core_tag_tag::get_item_tags($component, $itemtype, $itemid);
+        $actualtagnames = array_map(function($record) {
+            return $record->name;
+        }, $result);
+
+        sort($tagnames);
+        sort($actualtagnames);
+        // The list of tags should match the $tagnames.
+        $this->assertEquals($tagnames, $actualtagnames);
+
+        foreach ($result as $tag) {
+            if ($tag->name == 'bar') {
+                // The tag instance for 'bar' should have been left untouched
+                // because it was in a different context.
+                $this->assertEquals($context2->id, $tag->taginstancecontextid);
+            } else {
+                $this->assertEquals($context1->id, $tag->taginstancecontextid);
+            }
+        }
+    }
+
+    /**
+     * set_item_tags should delete all of the tag instances that don't match
+     * the new set of tags only in the same context if the tag area allows
+     * multiple contexts.
+     */
+    public function test_set_item_tags_allow_multiple_context_deletes_instances_in_same_context() {
+        $tagnames = ['foo', 'bar', 'baz', 'bop'];
+        $collid = core_tag_collection::get_default();
+        $tags = core_tag_tag::create_if_missing($collid, $tagnames);
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $context1 = context_user::instance($user1->id);
+        $context2 = context_user::instance($user2->id);
+        $component = 'core';
+        $itemtype = 'user';
+        $itemid = 1;
+        $expectedtagnames = ['foo', 'bar', 'bop'];
+        $tagareas = core_tag_area::get_areas();
+        $tagarea = $tagareas[$itemtype][$component];
+
+        // Make sure the tag area allows multiple contexts.
+        core_tag_area::update($tagarea, ['multiplecontexts' => true]);
+
+        // Create tag instances in separate contexts.
+        $this->add_tag_instance($tags['foo'], $component, $itemtype, $itemid, $context1);
+        $this->add_tag_instance($tags['bar'], $component, $itemtype, $itemid, $context1);
+        $this->add_tag_instance($tags['baz'], $component, $itemtype, $itemid, $context1);
+        $this->add_tag_instance($tags['bop'], $component, $itemtype, $itemid, $context2);
+
+        core_tag_tag::set_item_tags($component, $itemtype, $itemid, $context1, ['foo', 'bar']);
+
+        $result = core_tag_tag::get_item_tags($component, $itemtype, $itemid);
+        $actualtagnames = array_map(function($record) {
+            return $record->name;
+        }, $result);
+
+        sort($expectedtagnames);
+        sort($actualtagnames);
+
+        // The list of tags should match the $expectedtagnames, which includes the
+        // tag 'bop' because it was in a different context to the one being set
+        // even though it wasn't in the new set of tags.
+        $this->assertEquals($expectedtagnames, $actualtagnames);
+    }
+
+    /**
+     * set_item_tags should allow multiple instances of the same tag in different
+     * contexts if the tag area allows multiple contexts.
+     */
+    public function test_set_item_tags_allow_multiple_context_same_tag_multiple_contexts() {
+        $tagnames = ['foo'];
+        $collid = core_tag_collection::get_default();
+        $tags = core_tag_tag::create_if_missing($collid, $tagnames);
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $context1 = context_user::instance($user1->id);
+        $context2 = context_user::instance($user2->id);
+        $component = 'core';
+        $itemtype = 'user';
+        $itemid = 1;
+        $expectedtagnames = ['foo', 'bar', 'bop'];
+        $tagareas = core_tag_area::get_areas();
+        $tagarea = $tagareas[$itemtype][$component];
+
+        // Make sure the tag area allows multiple contexts.
+        core_tag_area::update($tagarea, ['multiplecontexts' => true]);
+
+        // Create first instance of 'foo' in $context1.
+        $this->add_tag_instance($tags['foo'], $component, $itemtype, $itemid, $context1);
+
+        core_tag_tag::set_item_tags($component, $itemtype, $itemid, $context2, ['foo']);
+
+        $result = core_tag_tag::get_item_tags($component, $itemtype, $itemid);
+        $tagsbycontext = array_reduce($result, function($carry, $tag) {
+            $contextid = $tag->taginstancecontextid;
+            if (isset($carry[$contextid])) {
+                $carry[$contextid][] = $tag;
+            } else {
+                $carry[$contextid] = [$tag];
+            }
+            return $carry;
+        }, []);
+
+        // The result should be two tag instances of 'foo' in each of the
+        // two contexts, $context1 and $context2.
+        $this->assertCount(1, $tagsbycontext[$context1->id]);
+        $this->assertCount(1, $tagsbycontext[$context2->id]);
+        $this->assertEquals('foo', $tagsbycontext[$context1->id][0]->name);
+        $this->assertEquals('foo', $tagsbycontext[$context2->id][0]->name);
+    }
+
+    /**
      * Help method to return sorted array of names of correlated tags to use for assertions
      * @param core_tag $tag
      * @return string
@@ -1300,5 +1572,27 @@ class core_tag_taglib_testcase extends advanced_testcase {
         }, $tag->get_correlated_tags());
         sort($rv);
         return array_values($rv);
+    }
+
+    /**
+     * Add a tag instance.
+     *
+     * @param core_tag_tag $tag
+     * @param string $component
+     * @param string $itemtype
+     * @param int $itemid
+     * @param context $context
+     * @return stdClass
+     */
+    protected function add_tag_instance(core_tag_tag $tag, $component, $itemtype, $itemid, $context) {
+        global $DB;
+        $record = (array) $tag->to_object();
+        $record['tagid'] = $record['id'];
+        $record['component'] = $component;
+        $record['itemtype'] = $itemtype;
+        $record['itemid'] = $itemid;
+        $record['contextid'] = $context->id;
+        $record['id'] = $DB->insert_record('tag_instance', $record);
+        return $record;
     }
 }
