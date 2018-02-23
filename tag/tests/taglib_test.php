@@ -1891,6 +1891,134 @@ class core_tag_taglib_testcase extends advanced_testcase {
     }
 
     /**
+     * change_instances_context should not change any existing instance contexts
+     * if not given any instance ids.
+     */
+    public function test_change_instances_context_empty_set() {
+        global $DB;
+
+        $tagnames = ['foo'];
+        $collid = core_tag_collection::get_default();
+        $tags = core_tag_tag::create_if_missing($collid, $tagnames);
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $context1 = context_user::instance($user1->id);
+        $context2 = context_user::instance($user2->id);
+        $component = 'core';
+        $itemtype = 'user';
+        $itemid = 1;
+
+        $this->add_tag_instance($tags['foo'], $component, $itemtype, $itemid, $context1);
+
+        core_tag_tag::change_instances_context([], $context2);
+
+        $taginstances = $DB->get_records_sql('SELECT * FROM {tag_instance}');
+        // The existing tag instance should not have changed.
+        $this->assertCount(1, $taginstances);
+        $taginstance = array_shift($taginstances);
+        $this->assertEquals($context1->id, $taginstance->contextid);
+    }
+
+    /**
+     * change_instances_context should only change the context of the given ids.
+     */
+    public function test_change_instances_context_partial_set() {
+        global $DB;
+
+        $tagnames = ['foo', 'bar'];
+        $collid = core_tag_collection::get_default();
+        $tags = core_tag_tag::create_if_missing($collid, $tagnames);
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $context1 = context_user::instance($user1->id);
+        $context2 = context_user::instance($user2->id);
+        $component = 'core';
+        $itemtype = 'user';
+        $itemid = 1;
+
+        $fooinstance = $this->add_tag_instance($tags['foo'], $component, $itemtype, $itemid, $context1);
+        $barinstance = $this->add_tag_instance($tags['bar'], $component, $itemtype, $itemid, $context1);
+
+        core_tag_tag::change_instances_context([$fooinstance->id], $context2);
+
+        // Reload the record.
+        $fooinstance = $DB->get_record('tag_instance', ['id' => $fooinstance->id]);
+        $barinstance = $DB->get_record('tag_instance', ['id' => $barinstance->id]);
+        // Tag 'foo' context should be updated.
+        $this->assertEquals($context2->id, $fooinstance->contextid);
+        // Tag 'bar' context should not be changed.
+        $this->assertEquals($context1->id, $barinstance->contextid);
+    }
+
+    /**
+     * change_instances_context should change multiple items from multiple contexts.
+     */
+    public function test_change_instances_context_multiple_contexts() {
+        global $DB;
+
+        $tagnames = ['foo', 'bar'];
+        $collid = core_tag_collection::get_default();
+        $tags = core_tag_tag::create_if_missing($collid, $tagnames);
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $user3 = $this->getDataGenerator()->create_user();
+        $context1 = context_user::instance($user1->id);
+        $context2 = context_user::instance($user2->id);
+        $context3 = context_user::instance($user3->id);
+        $component = 'core';
+        $itemtype = 'user';
+        $itemid = 1;
+
+        // Two instances in different contexts.
+        $fooinstance = $this->add_tag_instance($tags['foo'], $component, $itemtype, $itemid, $context1);
+        $barinstance = $this->add_tag_instance($tags['bar'], $component, $itemtype, $itemid, $context2);
+
+        core_tag_tag::change_instances_context([$fooinstance->id, $barinstance->id], $context3);
+
+        // Reload the record.
+        $fooinstance = $DB->get_record('tag_instance', ['id' => $fooinstance->id]);
+        $barinstance = $DB->get_record('tag_instance', ['id' => $barinstance->id]);
+        // Tag 'foo' context should be updated.
+        $this->assertEquals($context3->id, $fooinstance->contextid);
+        // Tag 'bar' context should be updated.
+        $this->assertEquals($context3->id, $barinstance->contextid);
+        // There shouldn't be any tag instances left in $context1.
+        $context1records = $DB->get_records('tag_instance', ['contextid' => $context1->id]);
+        $this->assertEmpty($context1records);
+        // There shouldn't be any tag instances left in $context2.
+        $context2records = $DB->get_records('tag_instance', ['contextid' => $context2->id]);
+        $this->assertEmpty($context2records);
+    }
+
+    /**
+     * change_instances_context moving an instance from one context into a context
+     * that already has an instance of that tag should throw an exception.
+     */
+    public function test_change_instances_context_conflicting_instances() {
+        global $DB;
+
+        $tagnames = ['foo'];
+        $collid = core_tag_collection::get_default();
+        $tags = core_tag_tag::create_if_missing($collid, $tagnames);
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $context1 = context_user::instance($user1->id);
+        $context2 = context_user::instance($user2->id);
+        $component = 'core';
+        $itemtype = 'user';
+        $itemid = 1;
+
+        // Two instances of 'foo' in different contexts.
+        $fooinstance1 = $this->add_tag_instance($tags['foo'], $component, $itemtype, $itemid, $context1);
+        $fooinstance2 = $this->add_tag_instance($tags['foo'], $component, $itemtype, $itemid, $context2);
+
+        // There is already an instance of 'foo' in $context2 so the code
+        // should throw an exception when we try to move another instance there.
+        $this->expectException('Exception');
+        core_tag_tag::change_instances_context([$fooinstance1->id], $context2);
+    }
+
+    /**
      * Help method to return sorted array of names of correlated tags to use for assertions
      * @param core_tag $tag
      * @return string
