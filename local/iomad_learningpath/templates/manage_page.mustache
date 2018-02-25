@@ -1,2 +1,18 @@
+{{!
+    @template local_iomad_learningpath/manage_page
 
-<p>Hello world</p>
+    Display learning path management page
+
+    Howard Miller 2018
+}}
+
+{{^ paths }}
+    <div class="alert alert-warning">{{# str }}nopaths, local_iomad_learningpath{{/ str }}</div>
+{{/ paths }}
+{{# paths }}
+
+{{/ paths }}
+
+<p>
+    <a href="{{{ linknew }}}" class="btn btn-success"><i class="fa fa-plus"></i> {{# str }}addpath, local_iomad_learningpath{{/ str }}</a>
+</p>

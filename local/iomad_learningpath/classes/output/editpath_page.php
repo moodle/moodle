@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Manage page for Iomad Learning Paths
+ * Edit path definition for Iomad Learning Paths
  *
  * @package    local_iomad_learninpath
  * @copyright  2018 Howard Miller (howardsmiller@gmail.com)
@@ -32,7 +32,7 @@ use renderer_base;
 use templatable;
 use stdClass;
 
-class manage_page implements renderable, templatable {
+class editpath_page implements renderable, templatable {
 
     protected $paths;
 

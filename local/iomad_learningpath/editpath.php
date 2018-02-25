@@ -31,13 +31,16 @@ $context = context_system::instance();
 require_login();
 iomad::require_capability('local/iomad_learningpath:manage', $context);
 
+// Parameters
+$id = optional_param('id', 0, PARAM_INT);
+
 // Page boilerplate stuff.
-$url = new moodle_url('/local/iomad_learningpath/manage.php');
+$url = new moodle_url('/local/iomad_learningpath/editpath.php', array('id' => $id));
 $PAGE->set_context($context);
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('admin');
 $PAGE->set_title(get_string('managetitle', 'local_iomad_learningpath'));
-$PAGE->set_heading(get_string('learningpathmanage', 'local_iomad_learningpath'));
+$PAGE->set_heading(get_string('learningpathedit', 'local_iomad_learningpath'));
 $output = $PAGE->get_renderer('local_iomad_learningpath');
 
 // IOMAD stuff
@@ -46,7 +49,7 @@ $companypaths = new local_iomad_learningpath\companypaths($companyid, $context);
 $paths = $companypaths->get_paths();
 
 // Get renderer for page (and pass data).
-$manage_page = new local_iomad_learningpath\output\manage_page($paths);
+$editpath_page = new local_iomad_learningpath\output\editpath_page($paths);
 
 echo $OUTPUT->header();
 

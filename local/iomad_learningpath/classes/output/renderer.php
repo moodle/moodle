@@ -42,5 +42,15 @@ class renderer extends plugin_renderer_base {
         return parent::render_from_template('local_iomad_learningpath/manage_page', $data);
     }
 
+    /**
+     * Render the learning path edit path page
+     * @param editpath_page $page
+     * @return string html for page
+     */
+    public function render_editpath_page($page) {
+        $data = $page->export_for_template($this);
+        
+        return parent::render_from_template('local_iomad_learningpath/editpath_page', $data);
+    }
 }
 

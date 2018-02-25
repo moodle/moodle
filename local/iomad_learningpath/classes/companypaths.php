@@ -15,43 +15,37 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Manage page for Iomad Learning Paths
+ * "Business" class for Iomad Learning Paths
  *
- * @package    local_iomad_learninpath
+ * @package    local_iomadlearninpath
  * @copyright  2018 Howard Miller (howardsmiller@gmail.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
-namespace local_iomad_learningpath\output;
+namespace local_iomad_learningpath;
 
-defined('MOODLE_INTERNAL') || die();
+class companypaths {
 
-use renderable;
-use renderer_base;
-use templatable;
-use stdClass;
+    protected $context;
 
-class manage_page implements renderable, templatable {
+    protected $companyid;
 
-    protected $paths;
-
-    public function __construct($paths) {
-        $this->paths = $paths;
+    public function __construct($companyid, $context) {
+        $this->context = $context;
+        $this->companyid = $companyid;
     }
 
     /**
-     * Export page contents for template
-     * @param renderer_base $output
-     * @return stdClass
+     * Get learning paths for company.
+     * @return array
      */
-    public function export_for_template(renderer_base $output) {
-        $data = new stdClass();
-        $data->paths = array_values($this->paths);
-        $data->linknew = new \moodle_url('/local/iomad_learningpath/editpath.php');
+    public function get_paths() {
+        global $DB;
 
-        return $data;
+        $paths = $DB->get_records('local_iomad_learningpath', array('company' => $this->companyid));
+        
+        return $paths;
     }
 
 }
-
