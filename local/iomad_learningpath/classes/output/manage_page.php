@@ -15,18 +15,39 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Management page for Iomad Learning Paths
+ * Manage page for Iomad Learning Paths
  *
- * @package    local_iomadlearninpath
+ * @package    local_iomad_learninpath
  * @copyright  2018 Howard Miller (howardsmiller@gmail.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
-require_once(dirname(__FILE__) . '/../../config.php');
-require_once(dirname(__FILE__) . '/lib.php');
+namespace local_iomad_learningpath\output;
 
-// Security
-$context = context_system::instance();
-require_login();
-iomad::require_capability('local/iomad_learningpath_manage', $context);
+defined('MOODLE_INTERNAL') || die();
+
+use renderable;
+use renderer_base;
+use templatable;
+use stdClass;
+
+class manage_page implements renderable, templatable {
+
+
+    public function __construct() {
+
+    }
+
+    /**
+     * Export page contents for template
+     * @param renderer_base $output
+     * @return stdClass
+     */
+    public function export_for_template(renderer_base $output) {
+    
+        return;
+    }
+
+}
+

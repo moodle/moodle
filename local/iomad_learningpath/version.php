@@ -14,6 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Version file for Iomad Learning Paths
+ *
+ * @package    local_iomadlearninpath
+ * @copyright  2018 Howard Miller (howardsmiller@gmail.com)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->version  = 2018021700;   // The (date) version of this plugin.

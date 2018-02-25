@@ -14,6 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Management page for Iomad Learning Paths
+ *
+ * @package    local_iomadlearninpath
+ * @copyright  2018 Howard Miller (howardsmiller@gmail.com)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+
 require_once(dirname(__FILE__) . '/../../config.php');
 require_once(dirname(__FILE__) . '/lib.php');
 
@@ -29,7 +38,10 @@ $PAGE->set_url($url);
 $PAGE->set_pagelayout('admin');
 $PAGE->set_title(get_string('managetitle', 'local_iomad_learningpath'));
 $PAGE->set_heading(get_string('learningpathmanage', 'local_iomad_learningpath'));
-echo $OUTPUT->header();
+$output = $PAGE->get_renderer('local_iomad_learningpath');
 
+echo $OUTPUT->header();
+$manage_page = new local_iomad_learningpath\output\manage_page();
+echo $output->render($manage_page);
 
 echo $OUTPUT->footer();

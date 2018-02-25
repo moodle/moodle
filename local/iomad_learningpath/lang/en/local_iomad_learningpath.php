@@ -20,6 +20,7 @@ $string['iomad_learningpath:manage'] = 'Manage learning paths';
 $string['iomad_learningpath:view'] = 'View learning path';
 $string['learningpathmanage'] = 'Learning path management';
 $string['learningpaths'] = 'Learning paths';
+$string['managetitle'] = 'Manage learning paths';
 $string['pluginname'] = 'Iomad learning paths';
 $string['showcoursedescription'] = 'Show course description';
 $string['showcoursedescription_desc'] = 'Show full course description in learning plans';
