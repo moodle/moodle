@@ -138,3 +138,12 @@ ol {
     max-height: calc(100vh - #{$navbar-height});
     overflow-y: auto;
 }
+
+// Dont allow z-index creep anywhere.
+.page-item {
+    &.active .page-link {
+        @include plain-hover-focus {
+            z-index: inherit;
+        }
+    }
+}
