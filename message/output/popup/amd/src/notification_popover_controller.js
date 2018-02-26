@@ -357,9 +357,10 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/str', 'core/url',
         ]);
 
         // Mark all notifications read if the user activates the mark all as read button.
-        this.root.on(CustomEvents.events.activate, SELECTORS.MARK_ALL_READ_BUTTON, function(e) {
+        this.root.on(CustomEvents.events.activate, SELECTORS.MARK_ALL_READ_BUTTON, function(e, data) {
             this.markAllAsRead();
             e.stopPropagation();
+            data.originalEvent.preventDefault();
         }.bind(this));
 
         // Mark individual notification read if the user activates it.
