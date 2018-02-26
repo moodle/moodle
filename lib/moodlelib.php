@@ -439,6 +439,11 @@ define('FEATURE_SHOW_DESCRIPTION', 'showdescription');
 /** True if module uses the question bank */
 define('FEATURE_USES_QUESTIONS', 'usesquestions');
 
+/**
+ * Maximum filename char size
+ */
+define('MAX_FILENAME_SIZE', 90);
+
 /** Unspecified module archetype */
 define('MOD_ARCHETYPE_OTHER', 0);
 /** Resource-like type module */
@@ -985,6 +990,21 @@ function clean_param($param, $type) {
             $param = preg_replace('~[[:cntrl:]]|[&<>"`\|\':\\\\/]~u', '', $param);
             if ($param === '.' || $param === '..') {
                 $param = '';
+            }
+            // Extract a part of the filename if it's char size exceeds MAX_FILENAME_SIZE.
+            // If the filename is too long, the file cannot be created on the filesystem due to exceeding max byte size.
+            // Limiting the filename to a certain size (considering multibyte characters) will prevent this.
+            if (core_text::strlen($param) > MAX_FILENAME_SIZE) {
+                // Exclude extension if present in filename.
+                $mimetypes = get_mimetypes_array();
+                $extension = pathinfo($param, PATHINFO_EXTENSION);
+                if ($extension && !empty($mimetypes[$extension])) {
+                    $basename = pathinfo($param, PATHINFO_FILENAME);
+                    $param = core_text::substr($basename, 0, MAX_FILENAME_SIZE);
+                    $param .= '.' . $extension;
+                } else {
+                    $param = core_text::substr($param, 0, MAX_FILENAME_SIZE);
+                }
             }
             return $param;
 
