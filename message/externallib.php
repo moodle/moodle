@@ -1676,7 +1676,7 @@ class core_message_external extends external_api {
             throw new moodle_exception('accessdenied', 'admin');
         }
 
-        \core_message\api::mark_all_read_for_user($useridto, $useridfrom, MESSAGE_TYPE_NOTIFICATION);
+        \core_message\api::mark_all_notifications_as_read($useridto, $useridfrom);
 
         return true;
     }
@@ -2108,7 +2108,13 @@ class core_message_external extends external_api {
             throw new moodle_exception('accessdenied', 'admin');
         }
 
-        \core_message\api::mark_all_read_for_user($useridto, $useridfrom, MESSAGE_TYPE_MESSAGE);
+        if ($useridfrom) {
+            if ($conversationid = \core_message\api::get_conversation_between_users([$useridto, $useridfrom])) {
+                \core_message\api::mark_all_messages_as_read($useridto, $conversationid);
+            }
+        } else {
+            \core_message\api::mark_all_messages_as_read($useridto);
+        }
 
         return true;
     }

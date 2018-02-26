@@ -4973,9 +4973,9 @@ function message_get_contact_block_link($incontactlist, $isblocked, $contact, $s
  */
 function message_mark_messages_read($touserid, $fromuserid) {
     debugging('message_mark_messages_read() is deprecated and is no longer used, please use
-        \core_message\api::mark_all_read_for_user() instead.', DEBUG_DEVELOPER);
+        \core_message\api::mark_all_messages_as_read() instead.', DEBUG_DEVELOPER);
 
-    \core_message\api::mark_all_read_for_user($touserid, $fromuserid);
+    \core_message\api::mark_all_messages_as_read($touserid, $fromuserid);
 }
 
 /**

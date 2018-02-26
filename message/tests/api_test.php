@@ -51,6 +51,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->send_fake_message($sender, $recipient);
 
         \core_message\api::mark_all_read_for_user($recipient->id);
+        $this->assertDebuggingCalled();
         $this->assertEquals(message_count_unread_messages($recipient), 0);
     }
 
@@ -73,6 +74,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->send_fake_message($sender2, $recipient);
 
         \core_message\api::mark_all_read_for_user($recipient->id, $sender1->id);
+        $this->assertDebuggingCalled();
         $this->assertEquals(message_count_unread_messages($recipient), 3);
     }
 
@@ -88,9 +90,11 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->send_fake_message($sender, $recipient);
 
         \core_message\api::mark_all_read_for_user($recipient->id, 0, MESSAGE_TYPE_NOTIFICATION);
+        $this->assertDebuggingCalled();
         $this->assertEquals(message_count_unread_messages($recipient), 3);
 
         \core_message\api::mark_all_read_for_user($recipient->id, 0, MESSAGE_TYPE_MESSAGE);
+        $this->assertDebuggingCalled();
         $this->assertEquals(message_count_unread_messages($recipient), 0);
     }
 

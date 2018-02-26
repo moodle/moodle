@@ -707,62 +707,107 @@ class api {
     }
 
     /**
-     * Marks ALL messages being sent from $fromuserid to $touserid as read.
+     * Marks all messages being sent to a user in a particular conversation.
      *
-     * Can be filtered by type.
+     * If $conversationdid is null then it marks all messages as read sent to $userid.
      *
-     * @param int $touserid the id of the message recipient
-     * @param int $fromuserid the id of the message sender
-     * @param string $type filter the messages by type, either MESSAGE_TYPE_NOTIFICATION, MESSAGE_TYPE_MESSAGE or '' for all.
-     * @return void
+     * @param int $userid
+     * @param int|null $conversationid The conversation the messages belong to mark as read, if null mark all
      */
-    public static function mark_all_read_for_user($touserid, $fromuserid = 0, $type = '') {
+    public static function mark_all_messages_as_read($userid, $conversationid = null) {
         global $DB;
 
-        $type = strtolower($type);
-
-        // Create the SQL we will be using.
         $messagesql = "SELECT m.*
                          FROM {messages} m
                    INNER JOIN {message_conversations} mc
                            ON mc.id = m.conversationid
                    INNER JOIN {message_conversation_members} mcm
                            ON mcm.conversationid = mc.id
-                        WHERE mcm.userid = ?";
-        $messageparams = [$touserid];
-        if (!empty($fromuserid)) {
-            $messagesql .= " AND m.useridfrom = ?";
-            $messageparams[] = $fromuserid;
+                        WHERE mcm.userid = ?
+                          AND m.useridfrom != ?";
+        $messageparams[] = $userid;
+        $messageparams[] = $userid;
+        if (!is_null($conversationid)) {
+            $messagesql .= " AND mc.id = ?";
+            $messageparams[] = $conversationid;
         }
+
+        $messages = $DB->get_recordset_sql($messagesql, $messageparams);
+        foreach ($messages as $message) {
+            self::mark_message_as_read($userid, $message);
+        }
+        $messages->close();
+    }
+
+    /**
+     * Marks all notifications being sent from one user to another user as read.
+     *
+     * If the from user is null then it marks all notifications as read sent to the to user.
+     *
+     * @param int $touserid the id of the message recipient
+     * @param int|null $fromuserid the id of the message sender, null if all messages
+     * @return void
+     */
+    public static function mark_all_notifications_as_read($touserid, $fromuserid = null) {
+        global $DB;
 
         $notificationsql = "SELECT n.*
                               FROM {notifications} n
-                             WHERE useridto = ?";
+                             WHERE useridto = ?
+                               AND timeread is NULL";
         $notificationsparams = [$touserid];
         if (!empty($fromuserid)) {
             $notificationsql .= " AND useridfrom = ?";
             $notificationsparams[] = $fromuserid;
         }
 
-        $messages = [];
-        $notifications = [];
-        if (!empty($type)) {
-            if (strtolower($type) == MESSAGE_TYPE_NOTIFICATION) {
-                $notifications = $DB->get_recordset_sql($notificationsql, $notificationsparams);
-            } else if (strtolower($type) == MESSAGE_TYPE_MESSAGE) {
-                $messages = $DB->get_recordset_sql($messagesql, $messageparams);
-            }
-        } else { // We want both.
-            $messages = $DB->get_recordset_sql($messagesql, $messageparams);
-            $notifications = $DB->get_recordset_sql($notificationsql, $notificationsparams);
-        }
-
-        foreach ($messages as $message) {
-            self::mark_message_as_read($touserid, $message);
-        }
-
+        $notifications = $DB->get_recordset_sql($notificationsql, $notificationsparams);
         foreach ($notifications as $notification) {
             self::mark_notification_as_read($notification);
+        }
+        $notifications->close();
+    }
+
+    /**
+     * Marks ALL messages being sent from $fromuserid to $touserid as read.
+     *
+     * Can be filtered by type.
+     *
+     * @deprecated since 3.5
+     * @param int $touserid the id of the message recipient
+     * @param int $fromuserid the id of the message sender
+     * @param string $type filter the messages by type, either MESSAGE_TYPE_NOTIFICATION, MESSAGE_TYPE_MESSAGE or '' for all.
+     * @return void
+     */
+    public static function mark_all_read_for_user($touserid, $fromuserid = 0, $type = '') {
+        debugging('\core_message\api::mark_all_read_for_user is deprecated. Please either use ' .
+            '\core_message\api::mark_all_notifications_read_for_user or \core_message\api::mark_all_messages_read_for_user',
+            DEBUG_DEVELOPER);
+
+        $type = strtolower($type);
+
+        $conversationid = null;
+        $ignoremessages = false;
+        if (!empty($fromuserid)) {
+            $conversationid = \core_message\api::get_conversation_between_users([$touserid, $fromuserid]);
+            if (!$conversationid) { // If there is no conversation between the users then there are no messages to mark.
+                $ignoremessages = true;
+            }
+        }
+
+        if (!empty($type)) {
+            if ($type == MESSAGE_TYPE_NOTIFICATION) {
+                \core_message\api::mark_all_notifications_as_read($touserid, $fromuserid);
+            } else if ($type == MESSAGE_TYPE_MESSAGE) {
+                if (!$ignoremessages) {
+                    \core_message\api::mark_all_messages_as_read($touserid, $conversationid);
+                }
+            }
+        } else { // We want both.
+            \core_message\api::mark_all_notifications_as_read($touserid, $fromuserid);
+            if (!$ignoremessages) {
+                \core_message\api::mark_all_messages_as_read($touserid, $conversationid);
+            }
         }
     }
 
