@@ -682,6 +682,13 @@ class core_moodlelib_testcase extends advanced_testcase {
         $this->assertSame(' . .dontltrim.me', clean_param(' . .dontltrim.me', PARAM_FILE));
         $this->assertSame('here is a tab.txt', clean_param("here is a tab\t.txt", PARAM_FILE));
         $this->assertSame('here is a linebreak.txt', clean_param("here is a line\r\nbreak.txt", PARAM_FILE));
+        // Test filename that contains more than 90 characters.
+        $filename = 'sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium totam rem';
+        $this->assertSame('sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laud',
+            clean_param($filename, PARAM_FILE));
+        // Filename contains extension.
+        $this->assertSame('sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laud.zip',
+            clean_param($filename . '.zip', PARAM_FILE));
 
         // The following behaviours have been maintained although they seem a little odd.
         $this->assertSame('funnything', clean_param('funny:thing', PARAM_FILE));
