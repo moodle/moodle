@@ -2151,5 +2151,16 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2018032200.04);
     }
 
+    if ($oldversion < 2018032200.05) {
+        // Drop table that is no longer needed.
+        $table = new xmldb_table('message_working');
+        if ($dbman->table_exists($table)) {
+            $dbman->drop_table($table);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2018032200.05);
+    }
+
     return true;
 }

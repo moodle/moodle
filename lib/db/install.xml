@@ -2434,19 +2434,6 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key of the table, please edit me"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="message_working" COMMENT="Lists all the messages and processors that need to be processed">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" COMMENT="id of the table, please edit me"/>
-        <FIELD NAME="unreadmessageid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="message that still needs some processing (on message table)"/>
-        <FIELD NAME="processorid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The processor with processes the message"/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key of the table, please edit me"/>
-      </KEYS>
-      <INDEXES>
-        <INDEX NAME="unreadmessageid_idx" UNIQUE="false" FIELDS="unreadmessageid" COMMENT="Index on unreadmessage id"/>
-      </INDEXES>
-    </TABLE>
     <TABLE NAME="files" COMMENT="description of files, content is stored in sha1 file pool">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>

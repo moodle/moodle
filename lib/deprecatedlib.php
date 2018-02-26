@@ -6359,17 +6359,10 @@ function message_mark_message_read($message, $timeread, $messageworkingempty=fal
     debugging('message_mark_message_read() is deprecated, please use \core_message\api::mark_message_as_read()
         or \core_message\api::mark_notification_as_read().', DEBUG_DEVELOPER);
 
-    global $DB;
-
     if (!empty($message->notification)) {
         \core_message\api::mark_notification_as_read($message, $timeread);
     } else {
         \core_message\api::mark_message_as_read($message->useridto, $message, $timeread);
-    }
-
-    // If any processors have pending actions abort them.
-    if (!$messageworkingempty) {
-        $DB->delete_records('message_working', array('unreadmessageid' => $message->id));
     }
 
     return $message->id;

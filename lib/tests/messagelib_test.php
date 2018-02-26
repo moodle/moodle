@@ -575,7 +575,6 @@ class core_messagelib_testcase extends advanced_testcase {
         $this->assertCount(1, $emails);
         $email = reset($emails);
         $savedmessage = $DB->get_record('messages', array('id' => $messageid), '*', MUST_EXIST);
-        $working = $DB->get_record('message_working', array('unreadmessageid' => $messageid), '*', MUST_EXIST);
         $this->assertSame($user1->email, $email->from);
         $this->assertSame($user2->email, $email->to);
         $this->assertSame($message->subject, $email->subject);
@@ -609,7 +608,6 @@ class core_messagelib_testcase extends advanced_testcase {
         $emails = $sink->get_messages();
         $this->assertCount(0, $emails);
         $savedmessage = $DB->get_record('messages', array('id' => $messageid), '*', MUST_EXIST);
-        $working = $DB->get_record('message_working', array('unreadmessageid' => $messageid), '*', MUST_EXIST);
         $sink->clear();
         $this->assertFalse($DB->record_exists('message_user_actions', array()));
         $DB->delete_records('messages', array());
