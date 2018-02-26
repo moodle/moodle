@@ -191,3 +191,45 @@ border-radius: 10px;
 #page-blocks-iomad_company_admin-uploaduser #fitem_id_userdepartment, #page-blocks-iomad_company_admin-uploaduser #id_category_1 > div > div.dep_tree {
     display: none;
 } 
+.iomadlink_container {
+  background-color: #F7F7F7;
+  border: 1px solid #DDD;
+  margin-bottom: 15px;
+}
+@media (min-width: 992px) {
+  .iomadlink_container {
+    border-top-color: #F7F7F7;
+  }
+}
+.iomadlink_container > a {
+  display: block;
+  float: left;
+  margin: 10px;
+  min-height: 155px;
+}
+.iomadlink_container .iomadlink, .iomadlink_container .iomadlinkreports {
+  text-align: center;
+}
+.iomadlink_container .iomadlink .iomadicon, .iomadlink_container .iomadlink .iomadiconreports {
+  display: block;
+  position: relative;
+  margin: 10px 0;
+}
+.iomadlink_container .iomadlink .iomadicon .fa-topic, .iomadlink_container .iomadlinkreports .iomadicon .fa-topic {
+  font-size: 54px;
+  margin-bottom: 10px;
+  color: #17859b;
+}
+.iomadlink_container .iomadlink .iomadicon .fa-action, .iomadlink_container .iomadlinkreports .iomadicon .fa-action {
+  border-radius: 15px;
+  color: #FFFFFF;
+  background-color: #83d411;
+  font-size: 20px;
+  height: 30px;
+  line-height: 30px;
+  margin-left: -10px;
+  width: 30px;
+  position: absolute;
+  bottom: 0;
+}
+
