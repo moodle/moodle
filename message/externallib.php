@@ -1930,7 +1930,7 @@ class core_message_external extends external_api {
             throw new invalid_parameter_exception('Invalid messageid, you don\'t have permissions to mark this message as read');
         }
 
-        \core_message\api::mark_message_as_read($USER->id, $message->id, $timeread);
+        \core_message\api::mark_message_as_read($USER->id, $message, $timeread);
 
         $results = array(
             'messageid' => $message->id,

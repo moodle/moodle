@@ -223,6 +223,8 @@ class core_message_messagelib_testcase extends advanced_testcase {
      * Test message_count_unread_messages with read messages.
      */
     public function test_message_count_unread_messages_with_read_messages() {
+        global $DB;
+
         // Create users to send and receive messages.
         $userfrom1 = $this->getDataGenerator()->create_user();
         $userfrom2 = $this->getDataGenerator()->create_user();
@@ -235,7 +237,8 @@ class core_message_messagelib_testcase extends advanced_testcase {
         $this->send_fake_message($userfrom2, $userto);
 
         // Mark message as read.
-        \core_message\api::mark_message_as_read($userto->id, $messageid);
+        $message = $DB->get_record('messages', ['id' => $messageid]);
+        \core_message\api::mark_message_as_read($userto->id, $message);
 
         // Should only count the messages that weren't read by the current user.
         $this->assertEquals(1, message_count_unread_messages($userto));

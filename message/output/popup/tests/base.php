@@ -89,17 +89,17 @@ trait message_popup_test_helper {
         $record->timecreated = $timecreated ? $timecreated : time();
         $record->timeread = $timeread ? $timeread : time();
 
-        $id = $DB->insert_record('notifications', $record);
+        $record->id = $DB->insert_record('notifications', $record);
 
         // Mark it as read.
-        \core_message\api::mark_notification_as_read($userto->id, $id);
+        \core_message\api::mark_notification_as_read($record);
 
         $popup = new stdClass();
-        $popup->messageid = $id;
+        $popup->messageid = $record->id;
         $popup->isread = 1;
 
         $DB->insert_record('message_popup', $popup);
 
-        return $id;
+        return $record->id;
     }
 }

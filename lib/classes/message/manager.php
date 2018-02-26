@@ -91,9 +91,10 @@ class manager {
                 // If they have deselected all processors and its a notification mark it read. The user doesn't want to be bothered.
                 // The same goes if the messaging is completely disabled.
                 if ($eventdata->notification) {
-                    \core_message\api::mark_notification_as_read($eventdata->userto->id, $savemessage->id);
+                    $savemessage->timeread = null;
+                    \core_message\api::mark_notification_as_read($savemessage);
                 } else {
-                    \core_message\api::mark_message_as_read($eventdata->userto->id, $savemessage->id);
+                    \core_message\api::mark_message_as_read($eventdata->userto->id, $savemessage);
                 }
             }
 
@@ -158,15 +159,16 @@ class manager {
         // or any processor that puts a row in message_working then the notification will remain forever
         // unread. To prevent this mark the message read if messaging is disabled.
         if (empty($CFG->messaging) && $eventdata->notification) {
-            \core_message\api::mark_notification_as_read($eventdata->userto->id, $savemessage->id);
+            \core_message\api::mark_notification_as_read($savemessage);
         }
 
         // If there is no more processors that want to process this we can mark the message as read.
         if ($DB->count_records('message_working', array('unreadmessageid' => $savemessage->id)) == 0) {
             if ($eventdata->notification) {
-                \core_message\api::mark_notification_as_read($eventdata->userto->id, $savemessage->id);
+                $savemessage->timeread = null;
+                \core_message\api::mark_notification_as_read($savemessage);
             } else {
-                \core_message\api::mark_message_as_read($eventdata->userto->id, $savemessage->id);
+                \core_message\api::mark_message_as_read($eventdata->userto->id, $savemessage);
             }
         }
 

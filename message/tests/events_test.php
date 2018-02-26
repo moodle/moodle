@@ -302,7 +302,8 @@ class core_message_events_testcase extends core_message_messagelib_testcase {
 
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
-        \core_message\api::mark_message_as_read($user1->id, $messageid);
+        $message = $DB->get_record('messages', ['id' => $messageid]);
+        \core_message\api::mark_message_as_read($user1->id, $message);
         $events = $sink->get_events();
         $event = reset($events);
 
@@ -352,7 +353,8 @@ class core_message_events_testcase extends core_message_messagelib_testcase {
 
         // Create a read message.
         $messageid = $this->send_fake_message($user1, $user2);
-        \core_message\api::mark_message_as_read($user2->id, $messageid);
+        $m = $DB->get_record('messages', ['id' => $messageid]);
+        \core_message\api::mark_message_as_read($user2->id, $m);
 
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
@@ -400,10 +402,14 @@ class core_message_events_testcase extends core_message_messagelib_testcase {
         $messages[] = $this->send_fake_message($user2, $user1, 'Ouch.', 0, $time + 8);
 
         // Mark the last 4 messages as read.
-        \core_message\api::mark_message_as_read($user2->id, $messages[4]);
-        \core_message\api::mark_message_as_read($user1->id, $messages[5]);
-        \core_message\api::mark_message_as_read($user2->id, $messages[6]);
-        \core_message\api::mark_message_as_read($user1->id, $messages[7]);
+        $m5 = $DB->get_record('messages', ['id' => $messages[4]]);
+        $m6 = $DB->get_record('messages', ['id' => $messages[5]]);
+        $m7 = $DB->get_record('messages', ['id' => $messages[6]]);
+        $m8 = $DB->get_record('messages', ['id' => $messages[7]]);
+        \core_message\api::mark_message_as_read($user2->id, $m5);
+        \core_message\api::mark_message_as_read($user1->id, $m6);
+        \core_message\api::mark_message_as_read($user2->id, $m7);
+        \core_message\api::mark_message_as_read($user1->id, $m8);
 
         // Trigger and capture the event.
         $sink = $this->redirectEvents();

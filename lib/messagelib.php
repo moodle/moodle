@@ -201,9 +201,9 @@ function message_send($eventdata) {
 
             // Mark the message/notification as read.
             if ($eventdata->notification) {
-                \core_message\api::mark_notification_as_read($eventdata->userto->id, $message->id);
+                \core_message\api::mark_notification_as_read($message);
             } else {
-                \core_message\api::mark_message_as_read($eventdata->userto->id, $message->id);
+                \core_message\api::mark_message_as_read($eventdata->userto->id, $message);
             }
 
             // Unit tests need this detail.

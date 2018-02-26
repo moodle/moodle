@@ -1638,6 +1638,8 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
      * Test returning contacts with unread message count.
      */
     public function test_get_contacts_with_unread_message_count() {
+        global $DB;
+
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
         $user3 = self::getDataGenerator()->create_user();
@@ -1677,8 +1679,10 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->assertEquals(5, $messageinfo2->messagecount);
 
         // Mark some of the messages as read.
-        \core_message\api::mark_message_as_read($user2->id, $message4id);
-        \core_message\api::mark_message_as_read($user2->id, $message6id);
+        $m4 = $DB->get_record('messages', ['id' => $message4id]);
+        $m6 = $DB->get_record('messages', ['id' => $message6id]);
+        \core_message\api::mark_message_as_read($user2->id, $m4);
+        \core_message\api::mark_message_as_read($user2->id, $m6);
 
         // Get the contacts and the unread message count.
         $messages = \core_message\api::get_contacts_with_unread_message_count($user2->id);
@@ -1713,7 +1717,8 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->assertEquals(3, $messageinfo1->messagecount);
 
         // Mark the last message as read.
-        \core_message\api::mark_message_as_read($user1->id, $messageid);
+        $m = $DB->get_record('messages', ['id' => $messageid]);
+        \core_message\api::mark_message_as_read($user1->id, $m);
 
         $messages = \core_message\api::get_contacts_with_unread_message_count($user1->id);
 
@@ -1752,6 +1757,8 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
      * Test returning non-contacts with unread message count.
      */
     public function test_get_non_contacts_with_unread_message_count() {
+        global $DB;
+
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
         $user3 = self::getDataGenerator()->create_user();
@@ -1789,8 +1796,10 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->assertEquals(5, $messageinfo2->messagecount);
 
         // Mark some of the messages as read.
-        \core_message\api::mark_message_as_read($user2->id, $message4id);
-        \core_message\api::mark_message_as_read($user2->id, $message6id);
+        $m4 = $DB->get_record('messages', ['id' => $message4id]);
+        $m6 = $DB->get_record('messages', ['id' => $message6id]);
+        \core_message\api::mark_message_as_read($user2->id, $m4);
+        \core_message\api::mark_message_as_read($user2->id, $m6);
 
         // Get the non-contacts and the unread message count.
         $messages = \core_message\api::get_non_contacts_with_unread_message_count($user2->id);
@@ -1823,7 +1832,8 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->assertEquals(3, $messageinfo1->messagecount);
 
         // Mark the last message as read.
-        \core_message\api::mark_message_as_read($user1->id, $messageid);
+        $m = $DB->get_record('messages', ['id' => $messageid]);
+        \core_message\api::mark_message_as_read($user1->id, $m);
 
         // Get the non-contacts and the unread message count.
         $messages = \core_message\api::get_non_contacts_with_unread_message_count($user1->id);
@@ -1849,8 +1859,10 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->send_fake_message($user2, $user1);
         $m4id = $this->send_fake_message($user2, $user1);
 
-        \core_message\api::mark_message_as_read($user2->id, $m2id, 11);
-        \core_message\api::mark_message_as_read($user1->id, $m4id, 12);
+        $m2 = $DB->get_record('messages', ['id' => $m2id]);
+        $m4 = $DB->get_record('messages', ['id' => $m4id]);
+        \core_message\api::mark_message_as_read($user2->id, $m2, 11);
+        \core_message\api::mark_message_as_read($user1->id, $m4, 12);
 
         // Confirm there are two user actions.
         $muas = $DB->get_records('message_user_actions', [], 'timecreated ASC');
@@ -1887,8 +1899,11 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->send_fake_message($user2, $user1, 'Notification 3', 1);
         $n4id = $this->send_fake_message($user2, $user1, 'Notification 4', 1);
 
-        \core_message\api::mark_notification_as_read($user2->id, $n2id, 11);
-        \core_message\api::mark_notification_as_read($user1->id, $n4id, 12);
+        $n2 = $DB->get_record('notifications', ['id' => $n2id]);
+        $n4 = $DB->get_record('notifications', ['id' => $n4id]);
+
+        \core_message\api::mark_notification_as_read($n2, 11);
+        \core_message\api::mark_notification_as_read($n4, 12);
 
         // Retrieve the notifications.
         $n2 = $DB->get_record('notifications', ['id' => $n2id]);

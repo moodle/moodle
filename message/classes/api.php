@@ -758,11 +758,11 @@ class api {
         }
 
         foreach ($messages as $message) {
-            self::mark_message_as_read($touserid, $message->id);
+            self::mark_message_as_read($touserid, $message);
         }
 
         foreach ($notifications as $notification) {
-            self::mark_notification_as_read($touserid, $notification->id);
+            self::mark_notification_as_read($notification);
         }
     }
 
@@ -1045,24 +1045,22 @@ class api {
      * Mark a single message as read.
      *
      * @param int $userid The user id who marked the message as read
-     * @param int $messageid The message id
+     * @param \stdClass $message The message
      * @param int|null $timeread The time the message was marked as read, if null will default to time()
      */
-    public static function mark_message_as_read($userid, $messageid, $timeread = null) {
+    public static function mark_message_as_read($userid, $message, $timeread = null) {
         global $DB;
 
         if (is_null($timeread)) {
             $timeread = time();
         }
 
-        $message = $DB->get_record('messages', array('id' => $messageid), '*', MUST_EXIST);
-
         // Check if the user has already read this message.
         if (!$DB->record_exists('message_user_actions', ['userid' => $userid,
-                'messageid' => $messageid, 'action' => self::MESSAGE_ACTION_READ])) {
+                'messageid' => $message->id, 'action' => self::MESSAGE_ACTION_READ])) {
             $mua = new \stdClass();
             $mua->userid = $userid;
-            $mua->messageid = $messageid;
+            $mua->messageid = $message->id;
             $mua->action = self::MESSAGE_ACTION_READ;
             $mua->timecreated = $timeread;
             $mua->id = $DB->insert_record('message_user_actions', $mua);
@@ -1081,7 +1079,7 @@ class api {
                 'context' => $context,
                 'relateduserid' => $message->useridfrom,
                 'other' => array(
-                    'messageid' => $messageid
+                    'messageid' => $message->id
                 )
             ));
             $event->trigger();
@@ -1091,19 +1089,15 @@ class api {
     /**
      * Mark a single notification as read.
      *
-     * @param int $userid The user id who marked the notification as read
-     * @param int $notificationid The notification id
+     * @param \stdClass $notification The notification
      * @param int|null $timeread The time the message was marked as read, if null will default to time()
      */
-    public static function mark_notification_as_read($userid, $notificationid, $timeread = null) {
+    public static function mark_notification_as_read($notification, $timeread = null) {
         global $DB;
 
         if (is_null($timeread)) {
             $timeread = time();
         }
-
-        // Make sure the notification is for the user.
-        $notification = $DB->get_record('notifications', ['id' => $notificationid, 'useridto' => $userid], '*', MUST_EXIST);
 
         if (is_null($notification->timeread)) {
             $updatenotification = new \stdClass();

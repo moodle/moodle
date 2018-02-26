@@ -832,7 +832,8 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
             'action' => \core_message\api::MESSAGE_ACTION_DELETED)));
 
         // Delete a message read.
-        \core_message\api::mark_message_as_read($user3->id, $m3to2, time());
+        $message = $DB->get_record('messages', ['id' => $m3to2]);
+        \core_message\api::mark_message_as_read($user3->id, $message, time());
         $result = core_message_external::delete_message($m3to2, $user3->id);
         $result = external_api::clean_returnvalue(core_message_external::delete_message_returns(), $result);
         $this->assertTrue($result['status']);

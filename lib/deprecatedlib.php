@@ -6719,9 +6719,9 @@ function message_mark_message_read($message, $timeread, $messageworkingempty=fal
     global $DB;
 
     if (!empty($message->notification)) {
-        \core_message\api::mark_notification_as_read($message->useridto, $message->id, $timeread);
+        \core_message\api::mark_notification_as_read($message, $timeread);
     } else {
-        \core_message\api::mark_message_as_read($message->useridto, $message->id, $timeread);
+        \core_message\api::mark_message_as_read($message->useridto, $message, $timeread);
     }
 
     // If any processors have pending actions abort them.
