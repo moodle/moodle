@@ -51,39 +51,47 @@ class helper {
                                         $sort = 'timecreated ASC', $timefrom = 0, $timeto = 0) {
         global $DB;
 
-        $sql = "SELECT m.id, m.useridfrom, mdm.userid as useridto, m.subject, m.fullmessage, m.fullmessagehtml,
-                       m.fullmessageformat, m.smallmessage, m.timecreated, 0 as timeread
-                  FROM {messages} m
-            INNER JOIN {message_conversations} md
-                    ON md.id = m.conversationid
-            INNER JOIN {message_conversation_members} mdm
-                    ON mdm.conversationid = md.id";
-        $params = [];
+        $hash = self::get_conversation_hash([$userid, $otheruserid]);
+
+        $sql = "SELECT m.id, m.useridfrom, m.subject, m.fullmessage, m.fullmessagehtml,
+                       m.fullmessageformat, m.smallmessage, m.timecreated, muaread.timecreated AS timeread
+                  FROM {message_conversations} mc
+            INNER JOIN {messages} m
+                    ON m.conversationid = mc.id
+             LEFT JOIN {message_user_actions} muaread
+                    ON (muaread.messageid = m.id
+                   AND muaread.userid = :userid1
+                   AND muaread.action = :readaction)";
+        $params = ['userid1' => $userid, 'readaction' => api::MESSAGE_ACTION_READ, 'convhash' => $hash];
 
         if (empty($timedeleted)) {
             $sql .= " LEFT JOIN {message_user_actions} mua
-                             ON (mua.messageid = m.id AND mua.userid = ? AND mua.action = ? AND mua.timecreated is NOT NULL)";
-            $params[] = $userid;
-            $params[] = api::MESSAGE_ACTION_DELETED;
+                             ON (mua.messageid = m.id
+                            AND mua.userid = :userid2
+                            AND mua.action = :deleteaction
+                            AND mua.timecreated is NOT NULL)";
         } else {
             $sql .= " INNER JOIN {message_user_actions} mua
-                              ON (mua.messageid = m.id AND mua.userid = ? AND mua.action = ? AND mua.timecreated = ?)";
-            $params[] = $userid;
-            $params[] = api::MESSAGE_ACTION_DELETED;
-            $params[] = $timedeleted;
+                              ON (mua.messageid = m.id
+                             AND mua.userid = :userid2
+                             AND mua.action = :deleteaction
+                             AND mua.timecreated = :timedeleted)";
+            $params['timedeleted'] = $timedeleted;
         }
 
-        $sql .= " WHERE (m.useridfrom = ? AND mdm.userid = ? OR m.useridfrom = ? AND mdm.userid = ?)";
-        $params = array_merge($params, [$userid, $otheruserid, $otheruserid, $userid]);
+        $params['userid2'] = $userid;
+        $params['deleteaction'] = api::MESSAGE_ACTION_DELETED;
+
+        $sql .= " WHERE mc.convhash = :convhash";
 
         if (!empty($timefrom)) {
-            $sql .= " AND m.timecreated >= ?";
-            $params[] = $timefrom;
+            $sql .= " AND m.timecreated >= :timefrom";
+            $params['timefrom'] = $timefrom;
         }
 
         if (!empty($timeto)) {
-            $sql .= " AND m.timecreated <= ?";
-            $params[] = $timeto;
+            $sql .= " AND m.timecreated <= :timeto";
+            $params['timeto'] = $timeto;
         }
 
         if (empty($timedeleted)) {
@@ -92,7 +100,12 @@ class helper {
 
         $sql .= " ORDER BY m.$sort";
 
-        return $DB->get_records_sql($sql, $params, $limitfrom, $limitnum);
+        $messages = $DB->get_records_sql($sql, $params, $limitfrom, $limitnum);
+        foreach ($messages as &$message) {
+            $message->useridto = ($message->useridfrom == $userid) ? $otheruserid : $userid;
+        }
+
+        return $messages;
     }
 
     /**

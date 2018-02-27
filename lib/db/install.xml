@@ -608,6 +608,9 @@
         <KEY NAME="useridfrom" TYPE="foreign" FIELDS="useridfrom" REFTABLE="user" REFFIELDS="id"/>
         <KEY NAME="conversationid" TYPE="foreign" FIELDS="conversationid" REFTABLE="message_conversations" REFFIELDS="id"/>
       </KEYS>
+      <INDEXES>
+        <INDEX NAME="conversationid_timecreated" UNIQUE="false" FIELDS="conversationid, timecreated"/>
+      </INDEXES>
     </TABLE>
     <TABLE NAME="message_conversations" COMMENT="Stores all message conversations">
       <FIELDS>

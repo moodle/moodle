@@ -2176,5 +2176,19 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2018032200.06);
     }
 
+    if ($oldversion < 2018032200.07) {
+        // Define table 'messages' to add an index to.
+        $table = new xmldb_table('messages');
+
+        // Conditionally launch add index.
+        $index = new xmldb_index('conversationid_timecreated', XMLDB_INDEX_NOTUNIQUE, array('conversationid, timecreated'));
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2018032200.07);
+    }
+
     return true;
 }
