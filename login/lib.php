@@ -382,3 +382,15 @@ function core_login_validate_forgot_password_data($data) {
 
     return $errors;
 }
+
+/**
+ * Plugins can create pre sign up requests.
+ */
+function core_login_pre_signup_requests() {
+    $callbacks = get_plugins_with_function('pre_signup_requests');
+    foreach ($callbacks as $type => $plugins) {
+        foreach ($plugins as $plugin => $pluginfunction) {
+            $pluginfunction();
+        }
+    }
+}
