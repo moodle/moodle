@@ -7485,13 +7485,22 @@ function get_plugins_with_function($function, $file = 'lib.php', $include = true
     $key = $function . '_' . clean_param($file, PARAM_ALPHA);
     $pluginfunctions = $cache->get($key);
 
+    // Use the plugin manager to check that plugins are currently installed.
+    $pluginmanager = \core_plugin_manager::instance();
+
     if ($pluginfunctions !== false) {
 
         // Checking that the files are still available.
         foreach ($pluginfunctions as $plugintype => $plugins) {
 
             $allplugins = \core_component::get_plugin_list($plugintype);
-            foreach ($plugins as $plugin => $fullpath) {
+            $installedplugins = $pluginmanager->get_installed_plugins($plugintype);
+            foreach ($plugins as $plugin => $function) {
+                if (!isset($installedplugins[$plugin])) {
+                    // Plugin code is still present on disk but it is not installed.
+                    unset($pluginfunctions[$plugintype][$plugin]);
+                    continue;
+                }
 
                 // Cache might be out of sync with the codebase, skip the plugin if it is not available.
                 if (empty($allplugins[$plugin])) {
@@ -7520,7 +7529,12 @@ function get_plugins_with_function($function, $file = 'lib.php', $include = true
 
         // We need to include files here.
         $pluginswithfile = \core_component::get_plugin_list_with_file($plugintype, $file, true);
+        $installedplugins = $pluginmanager->get_installed_plugins($plugintype);
         foreach ($pluginswithfile as $plugin => $notused) {
+
+            if (!isset($installedplugins[$plugin])) {
+                continue;
+            }
 
             $fullfunction = $plugintype . '_' . $plugin . '_' . $function;
 
