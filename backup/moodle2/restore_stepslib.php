@@ -4409,8 +4409,7 @@ class restore_create_categories_and_questions extends restore_structure_step {
         if ($backuprelease < 3.5 || $backupbuild < 20180205) {
             $before35 = true;
         }
-        if (empty($mapping->info->parent) &&
-                ($before35 || $mapping->info->contextlevel == CONTEXT_MODULE)) {
+        if (empty($mapping->info->parent) && $before35) {
             $top = question_get_top_category($data->contextid, true);
             $data->parent = $top->id;
         }
