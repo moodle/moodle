@@ -648,6 +648,9 @@
         <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
         <KEY NAME="messageid" TYPE="foreign" FIELDS="messageid" REFTABLE="messages" REFFIELDS="id"/>
       </KEYS>
+      <INDEXES>
+        <INDEX NAME="userid_messageid_action" UNIQUE="true" FIELDS="userid, messageid, action"/>
+      </INDEXES>
     </TABLE>
     <TABLE NAME="notifications" COMMENT="Stores all notifications">
       <FIELDS>
