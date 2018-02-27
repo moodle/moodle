@@ -27,6 +27,7 @@
 require('../config.php');
 require_once($CFG->dirroot . '/user/editlib.php');
 require_once($CFG->libdir . '/authlib.php');
+require_once('lib.php');
 
 // Try to prevent searching for sites that allow sign-up.
 if (!isset($CFG->additionalhtmlhead)) {
@@ -67,6 +68,10 @@ if (isloggedin() and !isguestuser()) {
     echo $OUTPUT->footer();
     exit;
 }
+
+// Plugins can create pre sign up requests.
+// Can be used to force additional actions before sign up such as acceptance of policies, validations, etc.
+core_login_pre_signup_requests();
 
 $mform_signup = $authplugin->signup_form();
 
