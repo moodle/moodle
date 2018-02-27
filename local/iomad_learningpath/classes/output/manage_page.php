@@ -38,6 +38,16 @@ class manage_page implements renderable, templatable {
 
     public function __construct($paths) {
         $this->paths = $paths;
+        $this->munge_paths();
+    }
+
+    /**
+     * Add various links to paths
+     */
+    protected function munge_paths() {
+        foreach ($this->paths as $path) {
+            $path->linkedit = new \moodle_url('/local/iomad_learningpath/editpath.php', ['id' => $path->id]);
+        }
     }
 
     /**
@@ -48,6 +58,7 @@ class manage_page implements renderable, templatable {
     public function export_for_template(renderer_base $output) {
         $data = new stdClass();
         $data->paths = array_values($this->paths);
+        $data->ispaths = !empty($this->paths);
         $data->linknew = new \moodle_url('/local/iomad_learningpath/editpath.php');
 
         return $data;

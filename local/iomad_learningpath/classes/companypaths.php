@@ -25,6 +25,8 @@
 
 namespace local_iomad_learningpath;
 
+defined('MOODLE_INTERNAL') || die();
+
 class companypaths {
 
     protected $context;
@@ -46,6 +48,33 @@ class companypaths {
         $paths = $DB->get_records('local_iomad_learningpath', array('company' => $this->companyid));
         
         return $paths;
+    }
+
+    /**
+     * Get/check path
+     * @param in $id (0 = new/empty)
+     * @return object $path
+     */
+    public function get_path($id) {
+        global $DB;
+
+        if ($path = $DB->get_record('local_iomad_learningpath', array('id' => $id))) {
+            if ($path->company != $this->companyid) {
+                throw new \Exception("Company id does not match expected");
+            }
+
+            return $path;
+        } else {
+            $path = new \stdClass;
+            $path->company = $this->companyid;
+            $path->timecreated = time();
+            $path->timeupdated = time();
+            $path->name = '';
+            $path->description = '';
+            $path->active = 0;
+
+            return $path;
+        }
     }
 
 }

@@ -6,12 +6,25 @@
     Howard Miller 2018
 }}
 
-{{^ paths }}
+{{^ ispaths }}
     <div class="alert alert-warning">{{# str }}nopaths, local_iomad_learningpath{{/ str }}</div>
-{{/ paths }}
-{{# paths }}
-
-{{/ paths }}
+{{/ ispaths }}
+{{# ispaths }}
+    <table class="table">
+        <tbody>
+            {{# paths }}
+                <tr>
+                    <td>{{ name }}</td>
+                    <td>{{{ description }}}</td>
+                    <td>{{ active }}</td>
+                    <td>
+                        <a href="{{{ linkedit }}}" title="{{# str }}editpath, local_iomad_learningpath{{/ str }}"><i class="fa fa-cog"></i></a>
+                    </td>
+                </tr>
+            {{/ paths }}
+        </tbody>
+    </table>
+{{/ ispaths }}
 
 <p>
     <a href="{{{ linknew }}}" class="btn btn-success"><i class="fa fa-plus"></i> {{# str }}addpath, local_iomad_learningpath{{/ str }}</a>

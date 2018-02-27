@@ -48,11 +48,49 @@ $companyid = iomad::get_my_companyid($context);
 $companypaths = new local_iomad_learningpath\companypaths($companyid, $context);
 $paths = $companypaths->get_paths();
 
+// Attempt to locate path
+$path = $companypaths->get_path($id);
+
+// Set up picture draft area
+$picturedraftid = file_get_submitted_draft_itemid('picture');
+file_prepare_draft_area($picturedraftid, $context->id, 'local_iomad_learningpath', 'picture', $id,
+    ['maxfiles' => 1]);
+
+// Form
+$form = new local_iomad_learningpath\forms\editpath_form();
+
+// Handle form activity.
+$exiturl = new moodle_url('/local/iomad_learningpath/manage.php');
+if ($form->is_cancelled()) {
+
+    redirect($exiturl);
+
+} else if ($data = $form->get_data()) {
+    $path->name = $data->name;
+    $path->description = $data->description['text'];
+    $path->timeupdated = time();
+    if ($id == 0) {
+        $path->timecreated = time();
+        $path->active = 0;
+        $id = $DB->insert_record('local_iomad_learningpath', $path);
+    } else {
+        $DB->update_record('local_iomad_learningpath', $path);
+    }
+    file_save_draft_area_files($data->picture, $context->id, 'local_iomad_learningpath', 'picture', $id,
+        ['maxfiles' => 1]);
+
+    redirect($exiturl);
+}
+
+$path->description = ['text' => $path->description];
+$path->picture = $picturedraftid;
+$form->set_data($path);
+
 // Get renderer for page (and pass data).
-$editpath_page = new local_iomad_learningpath\output\editpath_page($paths);
+$editpath_page = new local_iomad_learningpath\output\editpath_page($form);
 
 echo $OUTPUT->header();
 
-echo $output->render($manage_page);
+echo $output->render($editpath_page);
 
 echo $OUTPUT->footer();

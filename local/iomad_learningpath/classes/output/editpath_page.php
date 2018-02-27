@@ -34,10 +34,10 @@ use stdClass;
 
 class editpath_page implements renderable, templatable {
 
-    protected $paths;
+    protected $form;
 
-    public function __construct($paths) {
-        $this->paths = $paths;
+    public function __construct($form) {
+        $this->form = $form;
     }
 
     /**
@@ -47,8 +47,7 @@ class editpath_page implements renderable, templatable {
      */
     public function export_for_template(renderer_base $output) {
         $data = new stdClass();
-        $data->paths = array_values($this->paths);
-        $data->linknew = new \moodle_url('/local/iomad_learningpath/editpath.php');
+        $data->form = $this->form->render();
 
         return $data;
     }
