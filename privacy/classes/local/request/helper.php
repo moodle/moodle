@@ -77,7 +77,7 @@ class helper {
             $data = static::get_context_data($context, $user);
             static::export_context_files($context, $user);
 
-            writer::with_context($context)->write_data([], $data);
+            writer::with_context($context)->export_data([], $data);
         }
     }
 
