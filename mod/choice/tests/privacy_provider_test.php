@@ -22,8 +22,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use core_privacy\metadata\item_collection;
-use core_privacy\request\deletion_criteria;
+use core_privacy\local\metadata\collection;
+use core_privacy\local\request\deletion_criteria;
 use mod_choice\privacy\provider;
 
 defined('MOODLE_INTERNAL') || die();
@@ -35,7 +35,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2018 Jun Pataleta
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_choice_privacy_provider_testcase extends advanced_testcase {
+class mod_choice_privacy_provider_testcase extends \core_privacy\tests\provider_testcase {
     /** @var stdClass The student object. */
     protected $student;
 
@@ -46,7 +46,7 @@ class mod_choice_privacy_provider_testcase extends advanced_testcase {
     protected $course;
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function setUp() {
         $this->resetAfterTest();
@@ -87,9 +87,9 @@ class mod_choice_privacy_provider_testcase extends advanced_testcase {
      * Test for provider::get_metadata().
      */
     public function test_get_metadata() {
-        $collection = new item_collection('mod_choice');
+        $collection = new collection('mod_choice');
         $newcollection = provider::get_metadata($collection);
-        $itemcollection = $newcollection->get_item_collection();
+        $itemcollection = $newcollection->get_collection();
         $this->assertCount(1, $itemcollection);
 
         $table = reset($itemcollection);
@@ -118,9 +118,22 @@ class mod_choice_privacy_provider_testcase extends advanced_testcase {
     }
 
     /**
-     * Test for provider::delete_for_context().
+     * Test for provider::export_user_data().
      */
-    public function test_delete_for_context() {
+    public function test_export_for_context() {
+        $cm = get_coursemodule_from_instance('choice', $this->choice->id);
+        $cmcontext = context_module::instance($cm->id);
+
+        // Export all of the data for the context.
+        $this->export_context_data_for_user($this->student->id, $cmcontext, 'mod_choice');
+        $writer = \core_privacy\local\request\writer::with_context($cmcontext);
+        $this->assertTrue($writer->has_any_data());
+    }
+
+    /**
+     * Test for provider::delete_data_for_all_users_in_context().
+     */
+    public function test_delete_data_for_all_users_in_context() {
         global $DB;
 
         $choice = $this->choice;
@@ -143,8 +156,7 @@ class mod_choice_privacy_provider_testcase extends advanced_testcase {
 
         // Delete data based on context.
         $cmcontext = context_module::instance($cm->id);
-        $criteria = new deletion_criteria($cmcontext);
-        provider::delete_for_context($criteria);
+        provider::delete_data_for_all_users_in_context($cmcontext);
 
         // After deletion, the choice answers for that choice activity should have been deleted.
         $count = $DB->count_records('choice_answers', ['choiceid' => $choice->id]);
@@ -152,9 +164,9 @@ class mod_choice_privacy_provider_testcase extends advanced_testcase {
     }
 
     /**
-     * Test for provider::delete_user_data().
+     * Test for provider::delete_data_for_user().
      */
-    public function test_delete_user_data() {
+    public function test_delete_data_for_user_() {
         global $DB;
 
         $choice = $this->choice;
@@ -195,8 +207,9 @@ class mod_choice_privacy_provider_testcase extends advanced_testcase {
 
         $context1 = context_module::instance($cm1->id);
         $context2 = context_module::instance($cm2->id);
-        $contextlist = new \core_privacy\request\approved_contextlist($this->student, [$context1->id, $context2->id]);
-        provider::delete_user_data($contextlist);
+        $contextlist = new \core_privacy\local\request\approved_contextlist($this->student, 'choice',
+                                                                            [$context1->id, $context2->id]);
+        provider::delete_data_for_user($contextlist);
 
         // After deletion, the choice answers for the first student should have been deleted.
         $count = $DB->count_records('choice_answers', ['choiceid' => $choice->id, 'userid' => $this->student->id]);
