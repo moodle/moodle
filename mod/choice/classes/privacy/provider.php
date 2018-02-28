@@ -24,14 +24,12 @@
 
 namespace mod_choice\privacy;
 
-use context_module;
-use core_privacy\metadata\item_collection;
-use core_privacy\metadata\provider as core_provider;
-use core_privacy\request\approved_contextlist;
-use core_privacy\request\contextlist;
-use core_privacy\request\deletion_criteria;
-use core_privacy\request\plugin\provider as plugin_provider;
-use core_privacy\request\writer;
+use core_privacy\local\metadata\collection;
+use core_privacy\local\request\approved_contextlist;
+use core_privacy\local\request\contextlist;
+use core_privacy\local\request\deletion_criteria;
+use core_privacy\local\request\helper;
+use core_privacy\local\request\writer;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -41,11 +39,19 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2018 Jun Pataleta
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider implements core_provider, plugin_provider {
+class provider implements
+        // This plugin stores personal data.
+        \core_privacy\local\metadata\provider,
+
+        // This plugin is a core_user_data_provider.
+        \core_privacy\local\request\plugin\provider {
     /**
-     * @inheritdoc
+     * Return the fields which contain personal data.
+     *
+     * @param collection $items a reference to the collection to use to store the metadata.
+     * @return collection the updated collection of metadata items.
      */
-    public static function get_metadata(item_collection $items) : item_collection {
+    public static function get_metadata(collection $items) : collection {
         $items->add_database_table(
             'choice_answers',
             [
@@ -61,7 +67,10 @@ class provider implements core_provider, plugin_provider {
     }
 
     /**
-     * @inheritdoc
+     * Get the list of contexts that contain user information for the specified user.
+     *
+     * @param int $userid the userid.
+     * @return contextlist the list of contexts containing user info for the user.
      */
     public static function get_contexts_for_userid(int $userid) : contextlist {
         // Fetch all choice answers.
@@ -70,8 +79,8 @@ class provider implements core_provider, plugin_provider {
             INNER JOIN {course_modules} cm ON cm.id = c.instanceid AND c.contextlevel = :contextlevel
             INNER JOIN {modules} m ON m.id = cm.module AND m.name = :modname
             INNER JOIN {choice} ch ON ch.id = cm.instance
-             LEFT JOIN {choice_options} co ON co.choiceid = ch.id
-             LEFT JOIN {choice_answers} ca ON ca.optionid = co.id AND ca.choiceid = ch.id
+            INNER JOIN {choice_options} co ON co.choiceid = ch.id
+            INNER JOIN {choice_answers} ca ON ca.optionid = co.id AND ca.choiceid = ch.id
                  WHERE ca.userid = :userid";
 
         $params = [
@@ -86,7 +95,9 @@ class provider implements core_provider, plugin_provider {
     }
 
     /**
-     * @inheritdoc
+     * Export personal data for the given approved_contextlist. User and context information is contained within the contextlist.
+     *
+     * @param approved_contextlist $contextlist a list of contexts approved for export.
      */
     public static function export_user_data(approved_contextlist $contextlist) {
         global $DB;
@@ -95,75 +106,65 @@ class provider implements core_provider, plugin_provider {
             return;
         }
 
-        $userid = $contextlist->get_user()->id;
+        $user = $contextlist->get_user();
 
         list($contextsql, $contextparams) = $DB->get_in_or_equal($contextlist->get_contextids(), SQL_PARAMS_NAMED);
 
-        $sql = "SELECT ca.id,
-                       cm.id AS cmid,
-                       ch.id  as choiceid,
-                       ch.name as choicename,
-                       ch.intro,
-                       ch.introformat,
-                       co.text as answer,                      
+        $sql = "SELECT cm.id AS cmid,
+                       co.text as answer,
                        ca.timemodified
                   FROM {context} c
             INNER JOIN {course_modules} cm ON cm.id = c.instanceid
             INNER JOIN {choice} ch ON ch.id = cm.instance
-             LEFT JOIN {choice_options} co ON co.choiceid = ch.id
-             LEFT JOIN {choice_answers} ca ON ca.optionid = co.id AND ca.choiceid = ch.id
+            INNER JOIN {choice_options} co ON co.choiceid = ch.id
+            INNER JOIN {choice_answers} ca ON ca.optionid = co.id AND ca.choiceid = ch.id
                  WHERE c.id {$contextsql}
                        AND ca.userid = :userid";
 
-        $params = [
-            'userid'  => $userid
-        ];
-        $params += $contextparams;
+        $params = ['userid' => $user->id] + $contextparams;
 
+        // Create an array of the user's choice instances, supporting multiple answers per choice instance.
+        $choiceinstances = [];
         $choiceanswers = $DB->get_recordset_sql($sql, $params);
-        // Group choice answers per activity. (We might fetch multiple choice answers that belong to a single choice activity).
-        $answergroups = [];
         foreach ($choiceanswers as $choiceanswer) {
-            $cmid = $choiceanswer->cmid;
-            if (empty($answergroups[$cmid])) {
-                $context = context_module::instance($cmid);
-                $data = (object)[
-                    'id' => $choiceanswer->id,
-                    'choiceid' => $choiceanswer->choiceid,
-                    'choicename' => $choiceanswer->choicename,
-                    'answer' => $choiceanswer->answer,
-                    'timemodified' => $choiceanswer->timemodified,
+            if (empty($choiceinstances[$choiceanswer->cmid])) {
+                $data = (object) [
+                    'answer' => [],
+                    'timemodified' => \core_privacy\local\request\transform::datetime($choiceanswer->timemodified),
                 ];
-
-                $data->intro = writer::with_context($context)
-                    ->rewrite_pluginfile_urls([], 'mod_choice', 'intro', $choiceanswer->choiceid, $choiceanswer->intro);
-                $data->answer = [$choiceanswer->answer];
-                $answergroups[$choiceanswer->cmid] = $data;
-            } else {
-                $answergroups[$choiceanswer->cmid]->answer[] = $choiceanswer->answer;
+                $choiceinstances[$choiceanswer->cmid] = $data;
             }
+
+            // Instance exists, just add the additional answer.
+            $choiceinstances[$choiceanswer->cmid]->answer[] = $choiceanswer->answer;
         }
         $choiceanswers->close();
 
-        // Export the data.
-        foreach ($answergroups as $cmid => $answergroup) {
-            $context = context_module::instance($cmid);
-            writer::with_context($context)
-                // Export the choice answer.
-                ->export_data([], $answergroup)
+        // Now export the data.
+        foreach ($choiceinstances as $cmid => $choicedata) {
+            $context = \context_module::instance($cmid);
 
-                // Export the associated files.
-                ->export_area_files([], 'mod_choice', 'intro', $answergroup->choiceid);
+            // Fetch the generic module data for the choice.
+            $contextdata = helper::get_context_data($context, $user);
+
+            // Merge with choice data and write it.
+            $contextdata = (object) array_merge((array) $contextdata, (array) $choicedata);
+            writer::with_context($context)
+                ->export_data([], $contextdata);
+
+            // Write generic module intro files.
+            helper::export_context_files($context, $user);
         }
     }
 
     /**
-     * @inheritdoc
+     * Delete all data for all users in the specified context.
+     *
+     * @param \context $context the context to delete in.
      */
-    public static function delete_for_context(deletion_criteria $criteria) {
+    public static function delete_data_for_all_users_in_context(\context $context) {
         global $DB;
 
-        $context = $criteria->get_context();
         if (empty($context)) {
             return;
         }
@@ -172,9 +173,11 @@ class provider implements core_provider, plugin_provider {
     }
 
     /**
-     * @inheritdoc
+     * Delete all user data for the specified user, in the specified contexts.
+     *
+     * @param approved_contextlist $contextlist a list of contexts approved for deletion.
      */
-    public static function delete_user_data(approved_contextlist $contextlist) {
+    public static function delete_data_for_user(approved_contextlist $contextlist) {
         global $DB;
 
         if (empty($contextlist->count())) {
