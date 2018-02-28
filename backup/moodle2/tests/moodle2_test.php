@@ -127,8 +127,7 @@ class core_backup_moodle2_testcase extends advanced_testcase {
 
         // Extract backup file.
         $backupid = 'abc';
-        $backuppath = $CFG->tempdir . '/backup/' . $backupid;
-        check_dir_exists($backuppath);
+        $backuppath = make_backup_temp_directory($backupid);
         get_file_packer('application/vnd.moodle.backup')->extract_to_pathname(
                 __DIR__ . '/fixtures/availability_26_format.mbz', $backuppath);
 
@@ -972,8 +971,7 @@ class core_backup_moodle2_testcase extends advanced_testcase {
         foreach ($backupfiles as $backupfile) {
             // Extract backup file.
             $backupid = $backupfile;
-            $backuppath = $CFG->tempdir . '/backup/' . $backupid;
-            check_dir_exists($backuppath);
+            $backuppath = make_backup_temp_directory($backupid);
             get_file_packer('application/vnd.moodle.backup')->extract_to_pathname(
                     __DIR__ . "/fixtures/$backupfile.mbz", $backuppath);
 

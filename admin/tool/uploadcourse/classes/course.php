@@ -347,7 +347,7 @@ class tool_uploadcourse_course {
     /**
      * Get the directory of the object to restore.
      *
-     * @return string|false|null subdirectory in $CFG->tempdir/backup/..., false when an error occured
+     * @return string|false|null subdirectory in $CFG->backuptempdir/..., false when an error occured
      *                           and null when there is simply nothing.
      */
     protected function get_restore_content_dir() {

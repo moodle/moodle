@@ -1662,6 +1662,42 @@ function make_request_directory($exceptiononerror = true) {
 }
 
 /**
+ * Get the full path of a directory under $CFG->backuptempdir.
+ *
+ * @param string $directory  the relative path of the directory under $CFG->backuptempdir
+ * @return string|false Returns full path to directory given a valid string; otherwise, false.
+ */
+function get_backup_temp_directory($directory) {
+    global $CFG;
+    if (($directory === null) || ($directory === false)) {
+        return false;
+    }
+    return "$CFG->backuptempdir/$directory";
+}
+
+/**
+ * Create a directory under $CFG->backuptempdir and make sure it is writable.
+ *
+ * Do not use for storing generic temp files - see make_temp_directory() instead for this purpose.
+ *
+ * Backup temporary files must be on a shared storage.
+ *
+ * @param string $directory  the relative path of the directory to be created under $CFG->backuptempdir
+ * @param bool $exceptiononerror throw exception if error encountered
+ * @return string|false Returns full path to directory if successful, false if not; may throw exception
+ */
+function make_backup_temp_directory($directory, $exceptiononerror = true) {
+    global $CFG;
+    if ($CFG->backuptempdir !== "$CFG->tempdir/backup") {
+        check_dir_exists($CFG->backuptempdir, true, true);
+        protect_directory($CFG->backuptempdir);
+    } else {
+        protect_directory($CFG->tempdir);
+    }
+    return make_writable_directory("$CFG->backuptempdir/$directory", $exceptiononerror);
+}
+
+/**
  * Create a directory under tempdir and make sure it is writable.
  *
  * Where possible, please use make_request_directory() and limit the scope

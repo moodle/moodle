@@ -121,7 +121,8 @@ abstract class backup_general_helper extends backup_helper {
 
         $info = new stdclass(); // Final information goes here
 
-        $moodlefile = $CFG->tempdir . '/backup/' . $tempdir . '/moodle_backup.xml';
+        $backuptempdir = make_backup_temp_directory('', false);
+        $moodlefile = $backuptempdir . '/' . $tempdir . '/moodle_backup.xml';
         if (!file_exists($moodlefile)) { // Shouldn't happen ever, but...
             throw new backup_helper_exception('missing_moodle_backup_xml_file', $moodlefile);
         }
@@ -267,7 +268,7 @@ abstract class backup_general_helper extends backup_helper {
 
         // Extract moodle_backup.xml.
         $tmpname = 'info_from_mbz_' . time() . '_' . random_string(4);
-        $tmpdir = $CFG->tempdir . '/backup/' . $tmpname;
+        $tmpdir = make_backup_temp_directory($tmpname);
         $fp = get_file_packer('application/vnd.moodle.backup');
 
         $extracted = $fp->extract_to_pathname($filepath, $tmpdir, array('moodle_backup.xml'), $progress);

@@ -43,7 +43,8 @@ class backup_file_manager {
     public static function get_backup_storage_base_dir($backupid) {
         global $CFG;
 
-        return $CFG->tempdir . '/backup/' . $backupid . '/files';
+        $backupiddir = make_backup_temp_directory($backupid);
+        return $backupiddir . '/files';
     }
 
     /**

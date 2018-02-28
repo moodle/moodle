@@ -1,6 +1,11 @@
 This files describes API changes in /mod/* - activity modules,
 information provided here is intended especially for developers.
 
+=== 3.5 ===
+
+Required changes in code:
+* use new make_backup_temp_directory()
+
 === 3.4 ===
 
 * Navigation between activities via a previous and next link was added to Boost, Clean and Bootstrapbase. This
