@@ -1735,5 +1735,20 @@ function xmldb_local_iomad_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2017090308, 'local', 'iomad');
     }
 
+    if ($oldversion < 2017090309) {
+
+        // Define field hostname to be added to company.
+        $table = new xmldb_table('company');
+        $field = new xmldb_field('hostname', XMLDB_TYPE_CHAR, '200', null, null, null, null, 'previousroletemplateid');
+
+        // Conditionally launch add field hostname.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Iomad savepoint reached.
+        upgrade_plugin_savepoint(true, 2017090309, 'local', 'iomad');
+    }
+
     return $result;
 }

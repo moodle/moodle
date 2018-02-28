@@ -1529,6 +1529,23 @@ class iomad {
     public static function documentation_link() {
         return 'http://docs.iomad.org/wiki/';
     }
+
+    /**
+     * Redirect on company URL matching
+     *
+     */
+    public static function check_redirect($wwwroot, $rurl) {
+        global $CFG, $DB;
+
+        if ($rurl['host'] !=  $wwwroot['host']) {
+            if ($companyrec = $DB->get_record('company', array('hostname' => $rurl['host']))) {
+                $redirecturl = new moodle_url($CFG->wwwroot . '/local/iomad_signup/login.php',
+                                              array('id' => $companyrec->id,
+                                                    'code' => $companyrec->shortname));
+                redirect($redirecturl);
+            }
+        }
+    }
 }
 
 /**

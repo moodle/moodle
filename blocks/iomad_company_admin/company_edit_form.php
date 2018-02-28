@@ -233,6 +233,10 @@ class company_edit_form extends company_moodleform {
         $mform->setType('companydomains', PARAM_NOTAGS);
         $mform->addHelpButton('companydomains', 'companydomains', 'block_iomad_company_admin');
 
+        $mform->addElement('text', 'hostname', get_string('companyhostname', 'block_iomad_company_admin'));
+        $mform->setType('hostname', PARAM_NOTAGS);
+        $mform->addHelpButton('hostname', 'companyhostname', 'block_iomad_company_admin');
+
         // Add the ecommerce selector.
         if (empty($CFG->commerce_admin_enableall) && iomad::has_capability('block/iomad_company_admin:company_add', $context)) {
             $mform->addElement('selectyesno', 'ecommerce', get_string('enableecommerce', 'block_iomad_company_admin'));
@@ -604,6 +608,21 @@ class company_edit_form extends company_moodleform {
                 }
                 $foundcompanynamestring = implode(',', $foundcompanyshortnames);
                 $errors['shortname'] = get_string('companyshortnametaken',
+                                                 'block_iomad_company_admin',
+                                                  $foundcompanynamestring);
+            }
+        }
+
+        if (!empty($data['hostname']) && $foundcompanies = $DB->get_records('company', array('hostname' => $data['hostname']))) {
+            if (!empty($this->companyid)) {
+                unset($foundcompanies[$this->companyid]);
+            }
+            if (!empty($foundcompanies)) {
+                foreach ($foundcompanies as $foundcompany) {
+                    $foundcompanyhostnames[] = $foundcompany->hostname;
+                }
+                $foundcompanynamestring = implode(',', $foundcompanyhostnames);
+                $errors['hostname'] = get_string('companyhostnametaken',
                                                  'block_iomad_company_admin',
                                                   $foundcompanynamestring);
             }
