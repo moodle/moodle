@@ -174,7 +174,7 @@ class lesson_page_type_multichoice extends lesson_page {
                     }
                 }
             }
-            $result->studentanswer = implode('<br />', $studentanswerarray);
+            $result->studentanswer = implode(self::MULTIANSWER_DELIMITER, $studentanswerarray);
             $correctpageid = null;
             $wrongpageid = null;
 
@@ -222,11 +222,11 @@ class lesson_page_type_multichoice extends lesson_page {
 
             if ((count($studentanswers) == $ncorrect) and ($nhits == $ncorrect)) {
                 $result->correctanswer = true;
-                $result->response  = implode('<br />', $responses);
+                $result->response  = implode(self::MULTIANSWER_DELIMITER, $responses);
                 $result->newpageid = $correctpageid;
                 $result->answerid  = $correctanswerid;
             } else {
-                $result->response  = implode('<br />', $responses);
+                $result->response  = implode(self::MULTIANSWER_DELIMITER, $responses);
                 $result->newpageid = $wrongpageid;
                 $result->answerid  = $wronganswerid;
             }
