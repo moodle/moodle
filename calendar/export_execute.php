@@ -31,6 +31,8 @@ if (!$authuserid && !$authusername) {
     die('Invalid authentication');
 }
 
+$PAGE->set_context(context_system::instance());
+
 // Get the calendar type we are using.
 $calendartype = \core_calendar\type_factory::get_calendar_instance();
 
