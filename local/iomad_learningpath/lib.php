@@ -28,3 +28,42 @@ defined('MOODLE_INTERNAL') || die();
 define('LOCAL_IOMAD_LEARNINGPATH_COURSEFULLNAME', 'fullname');
 define('LOCAL_IOMAD_LEARNINGPATH_COURSESHORTNAME', 'shortname');
 define('LOCAL_IOMAD_LEARNINGPATH_COURSEBOTH', 'both');
+
+/**
+ * Serves learning path files
+ *
+ * @param mixed $course course or id of the course
+ * @param mixed $cm course module or id of the course module
+ * @param context $context
+ * @param string $filearea
+ * @param array $args
+ * @param bool $forcedownload
+ * @return bool false if file not found, does not return if found - just send the file
+ */
+function local_iomad_learningpath_pluginfile($course,
+                                           $cm,
+                                           context $context,
+                                           $filearea,
+                                           $args,
+                                           $forcedownload) {
+    global $USER, $DB, $CFG;
+
+    if ($context->contextlevel == CONTEXT_SYSTEM) {
+
+        require_login();
+        $itemid = (int)array_shift($args);
+
+        $relativepath = implode('/', $args);
+
+        $fullpath = "/{$context->id}/local_iomad_learningpath/$filearea/$itemid/$relativepath";
+
+        $fs = get_file_storage();
+        if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+            return false;
+        }
+        // Download MUST be forced - security!
+        send_stored_file($file, 0, 0, true);// Check if we want to retrieve the stamps.
+    }
+
+}
+

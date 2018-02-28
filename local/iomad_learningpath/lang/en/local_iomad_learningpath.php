@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+$string['actions'] = 'Actions';
+$string['active'] = 'Active';
 $string['addpath'] = 'Add new path';
 $string['both'] = 'Both';
 $string['description'] = 'Description';
@@ -29,6 +31,7 @@ $string['managetitle'] = 'Manage learning paths';
 $string['name'] = 'Name';
 $string['name_help'] = 'Learning Path name';
 $string['nopaths'] = 'No learning paths have been created';
+$string['notactive'] = 'Not active';
 $string['picture'] = 'Picture';
 $string['picture_help'] = 'Picture associated with Learning Path';
 $string['pluginname'] = 'Iomad learning paths';

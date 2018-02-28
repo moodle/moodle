@@ -10,20 +10,33 @@
     <div class="alert alert-warning">{{# str }}nopaths, local_iomad_learningpath{{/ str }}</div>
 {{/ ispaths }}
 {{# ispaths }}
-    <table class="table">
-        <tbody>
-            {{# paths }}
-                <tr>
-                    <td>{{ name }}</td>
-                    <td>{{{ description }}}</td>
-                    <td>{{ active }}</td>
-                    <td>
-                        <a href="{{{ linkedit }}}" title="{{# str }}editpath, local_iomad_learningpath{{/ str }}"><i class="fa fa-cog"></i></a>
-                    </td>
-                </tr>
-            {{/ paths }}
-        </tbody>
-    </table>
+    <div id="manage_learningpaths">
+        <div class="row">
+            <div class="col-sm-1"></div>
+            <div class="col-sm-4"><b>{{# str }}name, local_iomad_learningpath{{/ str }}</b></div>
+            <div class="col-sm-4"><b>{{# str }}description, local_iomad_learningpath{{/ str }}</b></div>
+            <div class="col-sm-3"><b>{{# str }}actions, local_iomad_learningpath{{/ str }}</b></div>
+        </div>
+        {{# paths }}
+            <div class="row">
+                <div class="col-sm-1"><img src="{{{ linkthumbnail }}}"></div>
+                <div class="col-sm-4">{{ name }}</div>
+                <div class="col-sm-4"><small>{{{ description }}}</small></div>
+                <div class="col-sm-3">
+                    {{# active }}
+                        <a href="{{{ activelink }}}" title="{{# str }}editpath, local_iomad_learningpath{{/ str }}"><i class="fa fa-eye fa-lg"></i></a>
+                    {{/ active }}
+                    {{^ active }}
+                        <a href="{{{ activelink }}}" title="{{# str }}editpath, local_iomad_learningpath{{/ str }}"><i class="fa fa-eye-slash fa-lg"></i></a>
+                    {{/ active }}
+                    &nbsp;<a href="{{{ linkedit }}}" title="{{# str }}editpath, local_iomad_learningpath{{/ str }}"><i class="fa fa-cog fa-lg"></i></a>
+                    &nbsp;<a href="{{{ linkcopy }}}" title="{{# str }}editpath, local_iomad_learningpath{{/ str }}"><i class="fa fa-copy fa-lg"></i></a>
+                    &nbsp;<a href="{{{ linkcourses }}}" title="{{# str }}editpath, local_iomad_learningpath{{/ str }}"><i class="fa fa-list fa-lg"></i></a>
+                    &nbsp;<a href="{{{ linkdelete }}}" title="{{# str }}editpath, local_iomad_learningpath{{/ str }}"><i class="fa fa-trash fa-lg"></i></a>
+                </div>
+            </div>
+        {{/ paths }}
+    </div>
 {{/ ispaths }}
 
 <p>

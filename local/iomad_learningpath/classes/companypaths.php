@@ -77,4 +77,59 @@ class companypaths {
         }
     }
 
+    /**
+     * Take image uploaded on learning path form and 
+     * process for size and thumbnail
+     * @param object $context
+     * @param int $id learning path id
+     */
+    public function process_image($context, $id) {
+        global $CFG;
+
+        // Get file storage
+        $fs = get_file_storage();
+
+        // find the files
+        $files = $fs->get_area_files($context->id, 'local_iomad_learningpath', 'picture', $id);
+        foreach ($files as $file) {
+            if ($file->is_directory()) {
+                continue;
+            }
+
+            // Process main picture
+            $picture = $file->resize_image(null, 150);
+
+            // store mainpicture
+            if ($oldfile = $fs->get_file($context->id, 'local_iomad_learningpath', 'mainpicture', $id, '/', 'picture.png')) {
+                $oldfile->delete();
+            }
+            $fileinfo = [
+                'contextid' => $context->id,
+                'component' => 'local_iomad_learningpath',
+                'filearea' => 'mainpicture',
+                'itemid' => $id,
+                'filepath' => '/',
+                'filename' => 'picture.png',
+            ];
+            $fs->create_file_from_string($fileinfo, $picture);
+
+            // Process thumbnail
+            $thumb = $file->resize_image(null, 50);
+
+            // store thumbnail
+            if ($oldfile = $fs->get_file($context->id, 'local_iomad_learningpath', 'thumbnail', $id, '/', 'thumbnail.png')) {
+                $oldfile->delete();
+            }
+            $fileinfo = [
+                'contextid' => $context->id,
+                'component' => 'local_iomad_learningpath',
+                'filearea' => 'thumbnail',
+                'itemid' => $id,
+                'filepath' => '/',
+                'filename' => 'thumbnail.png',
+            ];
+            $fs->create_file_from_string($fileinfo, $thumb);
+        }
+    }
+
 }

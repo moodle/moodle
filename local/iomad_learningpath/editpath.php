@@ -79,6 +79,9 @@ if ($form->is_cancelled()) {
     file_save_draft_area_files($data->picture, $context->id, 'local_iomad_learningpath', 'picture', $id,
         ['maxfiles' => 1]);
 
+    // Resize image and create thumbnail
+    $companypaths->process_image($context, $id);
+
     redirect($exiturl);
 }
 

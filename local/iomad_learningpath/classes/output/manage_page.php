@@ -34,9 +34,12 @@ use stdClass;
 
 class manage_page implements renderable, templatable {
 
+    protected $context;
+
     protected $paths;
 
-    public function __construct($paths) {
+    public function __construct($context, $paths) {
+        $this->context = $context;
         $this->paths = $paths;
         $this->munge_paths();
     }
@@ -45,8 +48,12 @@ class manage_page implements renderable, templatable {
      * Add various links to paths
      */
     protected function munge_paths() {
+        $fs = get_file_storage();
         foreach ($this->paths as $path) {
+            $thumb = $fs->get_file($this->context->id, 'local_iomad_learningpath', 'thumbnail', $path->id, '/', 'thumbnail.png');
             $path->linkedit = new \moodle_url('/local/iomad_learningpath/editpath.php', ['id' => $path->id]);
+            $path->linkthumbnail = \moodle_url::make_pluginfile_url($thumb->get_contextid(), $thumb->get_component(), $thumb->get_filearea(), 
+                $thumb->get_itemid(), $thumb->get_filepath(), $thumb->get_filename());
         }
     }
 
