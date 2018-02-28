@@ -56,6 +56,18 @@ class quiz_add_random_form extends moodleform {
         $tops = question_get_top_categories_for_contexts(array_column($contexts->all(), 'id'));
         $mform->hideIf('includesubcategories', 'category', 'in', $tops);
 
+        $tags = core_tag_tag::get_tags_by_area_in_contexts('core_question', 'question', $usablecontexts);
+        $tagstrings = array();
+        foreach ($tags as $tag) {
+            $tagstrings["{$tag->id},{$tag->name}"] = $tag->name;
+        }
+        $options = array(
+            'multiple' => true,
+            'noselectionstring' => get_string('anytags', 'quiz'),
+        );
+        $mform->addElement('autocomplete', 'fromtags', get_string('randomquestiontags', 'mod_quiz'), $tagstrings, $options);
+        $mform->addHelpButton('fromtags', 'randomquestiontags', 'mod_quiz');
+
         $mform->addElement('select', 'numbertoadd', get_string('randomnumber', 'quiz'),
                 $this->get_number_of_questions_to_add_choices());
 

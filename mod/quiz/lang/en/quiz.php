@@ -80,6 +80,7 @@ $string['answers'] = 'Answers';
 $string['answersingleno'] = 'Multiple answers allowed';
 $string['answersingleyes'] = 'One answer only';
 $string['answertoolong'] = 'Answer too long after line {$a} (255 char. max)';
+$string['anytags'] = 'Any tags';
 $string['aon'] = 'AON format';
 $string['areyousureremoveselected'] = 'Are you sure you want to remove all the selected questions?';
 $string['asshownoneditscreen'] = 'As shown on the edit screen';
@@ -699,6 +700,10 @@ $string['randomfromcategory'] = 'Random question from category:';
 $string['randomfromexistingcategory'] = 'Random question from an existing category';
 $string['randomnumber'] = 'Number of random questions';
 $string['randomnosubcat'] = 'Questions from this category only, not its subcategories.';
+$string['randomquestiontags'] = 'Tags';
+$string['randomquestiontags_help'] = 'You can restrict the selection criteria further by specifying some question tags here.
+
+The "random" questions will be selected from the questions that have all these tags.';
 $string['randomquestionusinganewcategory'] = 'Random question using a new category';
 $string['randomwithsubcat'] = 'Questions from this category and its subcategories.';
 $string['readytosend'] = 'You are about to send your whole quiz to be graded.  Are you sure you want to continue?';

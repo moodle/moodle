@@ -2173,9 +2173,10 @@ function quiz_update_section_firstslots($quizid, $direction, $afterslot, $before
  * @param int $categoryid the question category to add the question from.
  * @param int $number the number of random questions to add.
  * @param bool $includesubcategories whether to include questoins from subcategories.
+ * @param int[] $tagids Array of tagids. The question that will be picked randomly should be tagged with all these tags.
  */
 function quiz_add_random_questions($quiz, $addonpage, $categoryid, $number,
-        $includesubcategories) {
+        $includesubcategories, $tagids = []) {
     global $DB;
 
     $category = $DB->get_record('question_categories', array('id' => $categoryid));
@@ -2187,6 +2188,18 @@ function quiz_add_random_questions($quiz, $addonpage, $categoryid, $number,
     require_capability('moodle/question:useall', $catcontext);
 
     $tags = [];
+    $tagstrings = [];
+    foreach ($tagids as $tagid) {
+        if ($tag = core_tag_tag::get($tagid, 'id,name')) {
+            $tags[] = [
+                    'id' => $tagid,
+                    'name' => $tag->name
+            ];
+            $tagstrings[] = "{$tagid},{$tag->name}";
+        } else if (!empty($tagid)) {
+            print_error('invalidtagid', 'mod_quiz');
+        }
+    }
 
     // Find existing random questions in this category that are
     // not used by any quiz.
@@ -2199,14 +2212,15 @@ function quiz_add_random_questions($quiz, $addonpage, $categoryid, $number,
                     SELECT *
                       FROM {quiz_slots}
                      WHERE questionid = q.id)
-        ORDER BY id", array($category->id, ($includesubcategories ? '1' : '0')));
+        ORDER BY id", array($category->id, $includesubcategories ? '1' : '0'));
 
     for ($i = 0; $i < $number; $i++) {
         // Take as many of orphaned "random" questions as needed.
         if (!$question = array_shift($existingquestions)) {
             $form = new stdClass();
-            $form->questiontext = array('text' => ($includesubcategories ? '1' : '0'), 'format' => 0);
             $form->category = $category->id . ',' . $category->contextid;
+            $form->includesubcategories = $includesubcategories;
+            $form->fromtags = $tagstrings;
             $form->defaultmark = 1;
             $form->hidden = 1;
             $form->stamp = make_unique_id_code(); // Set the unique code (not to be changed).
