@@ -752,14 +752,6 @@ function iomad_get_users_listing($sort='lastaccess', $dir='ASC', $page=0, $recor
         }
     }
 
-    // Warning: will return UNCONFIRMED USERS!
-    if (!is_siteadmin($USER->id)) {
-        // only show normal users.
-        $managertypesql = " AND cu.managertype = 0";
-    } else {
-        $managertypesql = "";
-    }
-
     // all companies?
     $company = new company($extraparams['companyid']);
 
@@ -792,7 +784,6 @@ function iomad_get_users_listing($sort='lastaccess', $dir='ASC', $page=0, $recor
                                      AND clu.userid = u.id AND clu.licenseid = :licenseid
                                      AND clu.licensecourseid = co.id
                                      $companysql
-                                     $managertypesql
                                      $statussql
                                      $sort", $params, $page, $recordsperpage);
     } else {
@@ -812,7 +803,6 @@ function iomad_get_users_listing($sort='lastaccess', $dir='ASC', $page=0, $recor
                                      AND clu.userid = u.id AND clu.licenseid = :licenseid
                                      $statussql
                                      $companysql
-                                     $managertypesql
                                      $sort", $params, $page, $recordsperpage);
     }
 }
