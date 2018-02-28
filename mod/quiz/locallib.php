@@ -2436,3 +2436,60 @@ function quiz_is_overriden_calendar_event(\calendar_event $event) {
 
     return $DB->record_exists('quiz_overrides', $overrideparams);
 }
+
+/**
+ * Providing a list of tag records, this function validates each pair and builds a json string
+ * that can be stored in the quiz_slots.tags field.
+ *
+ * @param stdClass[] $tagrecords List of tag objects with id and name properties.
+ * @return string
+ */
+function quiz_build_random_question_tag_json($tagrecords) {
+    $tags = [];
+    foreach ($tagrecords as $tagrecord) {
+        if ($tag = core_tag_tag::get($tagrecord->id, 'id, name')) {
+            $tags[] = [
+                'id' => (int)$tagrecord->id,
+                'name' => $tag->name
+            ];
+        } else if ($tag = core_tag_tag::get_by_name(0, $tagrecord->name, 'id, name')) {
+            $tags[] = [
+                'id' => $tag->id,
+                'name' => $tagrecord->name
+            ];
+        } else {
+            $tags[] = [
+                'id' => null,
+                'name' => $tagrecord->name
+            ];
+        }
+    }
+    return json_encode($tags);
+}
+
+/**
+ * Providing tags data in the JSON format, this function returns tag records containing the id and name properties.
+ *
+ * @param string $tagsjson The JSON string representing an array of tags in the [{"id":tagid,"name":"tagname"}] format.
+ *      E.g. [{"id":1,"name":"tag1"},{"id":2,"name":"tag2"}]
+ *      Usually equal to the value of the tags field retrieved from the quiz_slots table.
+ * @return array An array of tags containing the id and name properties, indexed by tag ids.
+ */
+function quiz_extract_random_question_tags($tagsjson) {
+    $tagrecords = [];
+    if (!empty($tagsjson)) {
+        $tags = json_decode($tagsjson);
+        // Only work with tags that exist.
+        foreach ($tags as $tagdata) {
+            if (!array_key_exists($tagdata->id, $tagrecords)) {
+                if ($tag = core_tag_tag::get($tagdata->id, 'id, name')) {
+                    $tagrecords[$tag->id] = $tag->to_object();
+                } else if ($tag = core_tag_tag::get_by_name(0, $tagdata->name, 'id, name')) {
+                    $tagrecords[$tag->id] = $tag->to_object();
+                }
+            }
+        }
+    }
+
+    return $tagrecords;
+}
