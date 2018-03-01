@@ -292,6 +292,15 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
         $data->quizid = $this->get_new_parentid('quiz');
         $data->questionid = $this->get_mappingid('question', $data->questionid);
 
+        if (isset($data->questioncategoryid)) {
+            $data->questioncategoryid = $this->get_mappingid('question_category', $data->questioncategoryid);
+        }
+
+        if (isset($data->tags)) {
+            $tags = quiz_extract_random_question_tags($data->tags, $this->task->is_samesite());
+            $data->tags = quiz_build_random_question_tag_json($tags);
+        }
+
         $DB->insert_record('quiz_slots', $data);
     }
 
