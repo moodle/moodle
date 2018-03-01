@@ -10,7 +10,6 @@
     position: relative;
     min-width: 817px;
     min-height: 400px;
-    cursor: crosshair;
     background-repeat: no-repeat;
     background-color: #ccc;
     margin-left: auto;
@@ -20,14 +19,6 @@
 
 .assignfeedback_editpdf_widget .moodle-dialogue-bd .drawingregion {
     position: inherit;
-}
-
-.assignfeedback_editpdf_widget .drawingregion[data-currenttool=drag] .drawingcanvas {
-    cursor: move;
-}
-
-.assignfeedback_editpdf_widget .drawingregion[data-currenttool=select] .drawingcanvas {
-    cursor: default;
 }
 
 .assignfeedback_editpdf_widget .drawingregion[data-currenttool=select] .commentdrawable textarea,
