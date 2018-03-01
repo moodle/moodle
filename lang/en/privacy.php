@@ -21,3 +21,5 @@
  * @copyright  2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+$string['privacy:metadata'] = 'The privacy subsystem does not store any data of it\'s own and is designed to act as a conduit between components and the interface used to describe, export, and remove their data.';
