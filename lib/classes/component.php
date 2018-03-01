@@ -470,6 +470,7 @@ $cache = '.var_export($cache, true).';
             'plagiarism'  => $CFG->dirroot.'/plagiarism',
             'plugin'      => null,
             'portfolio'   => $CFG->dirroot.'/portfolio',
+            'privacy'     => $CFG->dirroot . '/privacy',
             'publish'     => $CFG->dirroot.'/course/publish',
             'question'    => $CFG->dirroot.'/question',
             'rating'      => $CFG->dirroot.'/rating',

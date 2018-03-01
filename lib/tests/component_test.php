@@ -36,7 +36,7 @@ class core_component_testcase extends advanced_testcase {
      * this is defined here to annoy devs that try to add more without any thinking,
      * always verify that it does not collide with any existing add-on modules and subplugins!!!
      */
-    const SUBSYSTEMCOUNT = 67;
+    const SUBSYSTEMCOUNT = 68;
 
     public function setUp() {
         $psr0namespaces = new ReflectionProperty('core_component', 'psr0namespaces');
