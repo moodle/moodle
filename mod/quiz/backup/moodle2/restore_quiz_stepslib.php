@@ -290,10 +290,15 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
         }
 
         $data->quizid = $this->get_new_parentid('quiz');
-        $data->questionid = $this->get_mappingid('question', $data->questionid);
+        $questionmapping = $this->get_mapping('question', $data->questionid);
+        $data->questionid = $questionmapping ? $questionmapping->newitemid : false;
 
         if (isset($data->questioncategoryid)) {
             $data->questioncategoryid = $this->get_mappingid('question_category', $data->questioncategoryid);
+        } else if ($questionmapping && $questionmapping->info->qtype == 'random') {
+            // Backward compatibility for backups created using Moodle 3.4 or earlier.
+            $data->questioncategoryid = $this->get_mappingid('question_category', $questionmapping->parentitemid);
+            $data->includingsubcategories = $questionmapping->info->questiontext ? 1 : 0;
         }
 
         if (isset($data->tags)) {
