@@ -470,9 +470,10 @@ class view {
         $editcontexts = $this->contexts->having_one_edit_tab_cap($tabname);
         list($categoryid, $contextid) = explode(',', $cat);
         $catcontext = \context::instance_by_id($contextid);
+        $thiscontext = $this->get_most_specific_context();
         // Category selection form.
         $this->display_question_bank_header();
-        array_unshift($this->searchconditions, new \core_question\bank\search\tag_condition([$catcontext], $tagids));
+        array_unshift($this->searchconditions, new \core_question\bank\search\tag_condition([$catcontext, $thiscontext], $tagids));
         array_unshift($this->searchconditions, new \core_question\bank\search\hidden_condition(!$showhidden));
         array_unshift($this->searchconditions, new \core_question\bank\search\category_condition(
                 $cat, $recurse, $editcontexts, $this->baseurl, $this->course));
