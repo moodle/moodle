@@ -1973,5 +1973,14 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2018020500.00);
     }
 
+    if ($oldversion < 2018022800.01) {
+
+        // Fix old block configurations that use the deprecated (and now removed) object class.
+        upgrade_fix_block_instance_configuration();
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2018022800.01);
+    }
+
     return true;
 }
