@@ -1467,34 +1467,30 @@ class qformat_xml extends qformat_default {
         $expout .= $this->write_hints($question);
 
         // Write the question tags.
-        // If the question has course tags then we need to filter them to only
-        // include the tags for this course.
-        get_question_options($question, true);
-        if (isset($question->coursetagobjects)) {
-            // Get the tag objects for the course being viewed.
-            $courseid = $this->course->id;
-            $coursecontext = context_course::instance($courseid);
+        if (core_tag_tag::is_enabled('core_question', 'question')) {
+            $tagobjects = core_tag_tag::get_items_tags('core_question', 'question', $question->id);
 
-            $coursetagobjects = array_filter(
-                $question->coursetagobjects,
-                function($tagobject) use ($coursecontext) {
-                    return $coursecontext->id == $tagobject->taginstancecontextid;
+            if (!is_null($tagobjects)) {
+                $tagobjects = $tagobjects[$question->id];
+                $sortedtagobjects = question_sort_tags($tagobjects, $this->category);
+
+                if (!empty($sortedtagobjects->coursetags)) {
+                    // Set them on the form to be rendered as existing tags.
+                    $expout .= "    <coursetags>\n";
+                    foreach ($sortedtagobjects->coursetags as $coursetag) {
+                        $expout .= "      <tag>" . $this->writetext($coursetag, 0, true) . "</tag>\n";
+                    }
+                    $expout .= "    </coursetags>\n";
                 }
-            );
 
-            // Set them on the form to be rendered as existing tags.
-            $expout .= "    <coursetags>\n";
-            foreach ($coursetagobjects as $tagobject) {
-                $expout .= "      <tag>" . $this->writetext($tagobject->get_display_name(), 0, true) . "</tag>\n";
+                if (!empty($sortedtagobjects->tags)) {
+                    $expout .= "    <tags>\n";
+                    foreach ($sortedtagobjects->tags as $tag) {
+                        $expout .= "      <tag>" . $this->writetext($tag, 0, true) . "</tag>\n";
+                    }
+                    $expout .= "    </tags>\n";
+                }
             }
-            $expout .= "    </coursetags>\n";
-        }
-        if (!empty($question->tags)) {
-            $expout .= "    <tags>\n";
-            foreach ($question->tags as $tag) {
-                $expout .= "      <tag>" . $this->writetext($tag, 0, true) . "</tag>\n";
-            }
-            $expout .= "    </tags>\n";
         }
 
         // Close the question tag.
