@@ -27,6 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->libdir.'/upgradelib.php');
+require_once($CFG->libdir.'/db/upgradelib.php');
 
 /**
  * Tests various classes and functions in upgradelib.php library.
