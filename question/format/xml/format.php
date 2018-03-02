@@ -383,12 +383,20 @@ class qformat_xml extends qformat_default {
     public function import_question_tags($qo, $questionxml) {
         global $CFG;
 
-        if (core_tag_tag::is_enabled('core_question', 'question')
-                && array_key_exists('tags', $questionxml['#'])
-                && !empty($questionxml['#']['tags'][0]['#']['tag'])) {
-            $qo->tags = array();
-            foreach ($questionxml['#']['tags'][0]['#']['tag'] as $tagdata) {
-                $qo->tags[] = $this->getpath($tagdata, array('#', 'text', 0, '#'), '', true);
+        if (core_tag_tag::is_enabled('core_question', 'question')) {
+
+            $qo->tags = [];
+            if (!empty($questionxml['#']['tags'][0]['#']['tag'])) {
+                foreach ($questionxml['#']['tags'][0]['#']['tag'] as $tagdata) {
+                    $qo->tags[] = $this->getpath($tagdata, array('#', 'text', 0, '#'), '', true);
+                }
+            }
+
+            $qo->coursetags = [];
+            if (!empty($questionxml['#']['coursetags'][0]['#']['tag'])) {
+                foreach ($questionxml['#']['coursetags'][0]['#']['tag'] as $tagdata) {
+                    $qo->coursetags[] = $this->getpath($tagdata, array('#', 'text', 0, '#'), '', true);
+                }
             }
         }
     }
@@ -1472,7 +1480,8 @@ class qformat_xml extends qformat_default {
 
             if (!is_null($tagobjects)) {
                 $tagobjects = $tagobjects[$question->id];
-                $sortedtagobjects = question_sort_tags($tagobjects, $this->category);
+                $categorycontext = context::instance_by_id($this->category->contextid);
+                $sortedtagobjects = question_sort_tags($tagobjects, $categorycontext);
 
                 if (!empty($sortedtagobjects->coursetags)) {
                     // Set them on the form to be rendered as existing tags.
