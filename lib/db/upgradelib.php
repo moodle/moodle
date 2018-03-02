@@ -511,7 +511,7 @@ function upgrade_fix_block_instance_configuration() {
 
     $sql = "SELECT *
               FROM {block_instances}
-             WHERE configdata <> ''";
+             WHERE " . $DB->sql_isnotempty('block_instances', 'configdata', true, true);
     $blockinstances = $DB->get_recordset_sql($sql);
     foreach ($blockinstances as $blockinstance) {
         $configdata = base64_decode($blockinstance->configdata);
