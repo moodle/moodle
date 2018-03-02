@@ -113,7 +113,7 @@ $string['auth_ntlmsso_subnet'] = 'If set, it will only attempt SSO with clients 
 $string['auth_ntlmsso_subnet_key'] = 'Subnet';
 $string['auth_ntlmsso_type_key'] = 'Authentication type';
 $string['auth_ntlmsso_type'] = 'The authentication method configured in the web server to authenticate the users (if in doubt, choose NTLM)';
-$string['cannotmaprole'] = 'The role "{$a->rolename}" can\'t be mapped because its short name "{$a->shortname}" is too long or contains hyphens. To allow it to be mapped, you need to reduce the short name to {$a->charlimit} characters or remove the hyphens. <a href="{$a->link}">Edit the role here</a>';
+$string['cannotmaprole'] = 'The role "{$a->rolename}" cannot be mapped because its short name "{$a->shortname}" is too long and/or contains hyphens. To allow it to be mapped, the short name needs to be reduced to a maximum of {$a->charlimit} characters and any hyphens removed. <a href="{$a->link}">Edit the role</a>';
 $string['connectingldap'] = "Connecting to LDAP server...\n";
 $string['connectingldapsuccess'] = "Connecting to your LDAP server was successful";
 $string['creatingtemptable'] = "Creating temporary table {\$a}\n";
