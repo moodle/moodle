@@ -38,6 +38,7 @@ $PAGE->set_url($url);
 $PAGE->set_pagelayout('admin');
 $PAGE->set_title(get_string('managetitle', 'local_iomad_learningpath'));
 $PAGE->set_heading(get_string('learningpathmanage', 'local_iomad_learningpath'));
+$PAGE->requires->js_call_amd('local_iomad_learningpath/manage', 'init');
 $output = $PAGE->get_renderer('local_iomad_learningpath');
 
 // IOMAD stuff

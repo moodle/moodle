@@ -24,10 +24,14 @@
                 <div class="col-sm-4"><small>{{{ description }}}</small></div>
                 <div class="col-sm-3">
                     {{# active }}
-                        <a href="{{{ activelink }}}" title="{{# str }}editpath, local_iomad_learningpath{{/ str }}"><i class="fa fa-eye fa-lg"></i></a>
+                        <a class="lp_active" href="" data-id="{{ id }}" data-state="1" title="{{# str }}editpath, local_iomad_learningpath{{/ str }}">
+                            <i class="fa fa-eye fa-lg"></i>
+                        </a>
                     {{/ active }}
                     {{^ active }}
-                        <a href="{{{ activelink }}}" title="{{# str }}editpath, local_iomad_learningpath{{/ str }}"><i class="fa fa-eye-slash fa-lg"></i></a>
+                        <a class="lp_active" href="" data-id="{{ id }}" data-state="0" title="{{# str }}editpath, local_iomad_learningpath{{/ str }}">
+                            <i class="fa fa-eye-slash fa-lg"></i>
+                        </a>
                     {{/ active }}
                     &nbsp;<a href="{{{ linkedit }}}" title="{{# str }}editpath, local_iomad_learningpath{{/ str }}"><i class="fa fa-cog fa-lg"></i></a>
                     &nbsp;<a href="{{{ linkcopy }}}" title="{{# str }}editpath, local_iomad_learningpath{{/ str }}"><i class="fa fa-copy fa-lg"></i></a>

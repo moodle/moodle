@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version file for Iomad Learning Paths
+ * Declare web services
  *
  * @package    local_iomadlearninpath
  * @copyright  2018 Howard Miller (howardsmiller@gmail.com)
@@ -25,6 +25,15 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version  = 2018030301;   // The (date) version of this plugin.
-$plugin->requires = 2017051500;   // Requires this Moodle version. (3.3)
-$plugin->component = 'local_iomad_learningpath';
+$functions = array(
+
+    'local_iomad_learningpath_activate' => array(
+        'classname' => 'local_iomad_learningpath_external',
+        'methodname' => 'activate',
+        'classpath' => 'local/iomad_learningpath/externallib.php',
+        'description' => 'Activates / deactivates learning path',
+        'type' => 'write',
+        'ajax' => true,
+    ),
+
+);
