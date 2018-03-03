@@ -164,17 +164,15 @@ class auth_plugin_ldap extends auth_plugin_base {
         //
         $key = sesskey();
         if (!empty($this->config->ntlmsso_enabled) && $key === $password) {
-            $cf = get_cache_flags($this->pluginconfig.'/ntlmsess');
+            $sessusername = get_cache_flag($this->pluginconfig.'/ntlmsess', $key);
             // We only get the cache flag if we retrieve it before
             // it expires (AUTH_NTLMTIMEOUT seconds).
-            if (!isset($cf[$key]) || $cf[$key] === '') {
+            if (empty($sessusername)) {
                 return false;
             }
 
-            $sessusername = $cf[$key];
             if ($username === $sessusername) {
                 unset($sessusername);
-                unset($cf);
 
                 // Check that the user is inside one of the configured LDAP contexts
                 $validuser = false;
@@ -1711,11 +1709,10 @@ class auth_plugin_ldap extends auth_plugin_base {
         global $CFG, $USER, $SESSION;
 
         $key = sesskey();
-        $cf = get_cache_flags($this->pluginconfig.'/ntlmsess');
-        if (!isset($cf[$key]) || $cf[$key] === '') {
+        $username = get_cache_flag($this->pluginconfig.'/ntlmsess', $key);
+        if (empty($username)) {
             return false;
         }
-        $username   = $cf[$key];
 
         // Here we want to trigger the whole authentication machinery
         // to make sure no step is bypassed...
