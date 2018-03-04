@@ -1450,6 +1450,14 @@ function scorm_check_mode($scorm, &$newattempt, &$attempt, $userid, &$mode) {
             return;
         }
     }
+
+    if ($scorm->forcenewattempt == SCORM_FORCEATTEMPT_ALWAYS) {
+        // This SCORM is configured to force a new attempt on every re-entry.
+        $attempt++;
+        $newattempt = 'on';
+        $mode = 'normal';
+        return;
+    }
     // Check if the scorm module is incomplete (used to validate user request to start a new attempt).
     $incomplete = true;
 

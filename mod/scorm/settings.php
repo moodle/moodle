@@ -108,8 +108,9 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configselect('scorm/forcecompleted',
         get_string('forcecompleted', 'scorm'), get_string('forcecompleteddesc', 'scorm'), 0, $yesno));
 
+    $forceattempts = scorm_get_forceattempt_array();
     $settings->add(new admin_setting_configselect('scorm/forcenewattempt',
-        get_string('forcenewattempt', 'scorm'), get_string('forcenewattemptdesc', 'scorm'), 0, $yesno));
+        get_string('forcenewattempts', 'scorm'), get_string('forcenewattempts_help', 'scorm'), 0, $forceattempts));
 
     $settings->add(new admin_setting_configselect('scorm/autocommit',
     get_string('autocommit', 'scorm'), get_string('autocommitdesc', 'scorm'), 0, $yesno));
