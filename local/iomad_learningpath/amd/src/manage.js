@@ -7,6 +7,12 @@ define(['jquery', 'core/config', 'core/ajax', 'core/notification'], function($, 
 
         init: function() {
 
+            // Enable Bootstrap tooltips
+            require(['theme_boost/loader']);
+            require(['theme_boost/tooltip'], function() {
+                $('[data-toggle="tooltip"]').tooltip();
+            });
+
             // Update the eye icon
             function _redraw(icon, state) {
                 icon.removeClass('fa-eye fa-eye-slash');
@@ -29,6 +35,7 @@ define(['jquery', 'core/config', 'core/ajax', 'core/notification'], function($, 
                 } else {
                     state = 0;
                 }
+                $(this).data('state', state);
 
                 // call the web service
                 ajax.call([{

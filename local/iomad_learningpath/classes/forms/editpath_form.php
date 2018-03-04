@@ -57,6 +57,11 @@ class editpath_form extends moodleform {
         $mform->addHelpButton('description', 'description', 'local_iomad_learningpath');
         $mform->addRule('description', get_string('required'), 'required');
 
+        // Active
+        $mform->addElement('selectyesno', 'active', get_string('active', 'local_iomad_learningpath'));
+        $mform->setType('active', PARAM_INT);
+        $mform->addHelpButton('active', 'active', 'local_iomad_learningpath');
+
         // Picture
         $mform->addElement('filemanager', 'picture', get_string('picture', 'local_iomad_learningpath'), null, [
             'subdirs' => 0,

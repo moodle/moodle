@@ -28,25 +28,25 @@
                 <div class="col-sm-4"><small>{{{ description }}}</small></div>
                 <div class="col-sm-3">
                     {{# active }}
-                        <a class="lp_active" href="" data-id="{{ id }}" data-state="1" title="{{# str }}editpath, local_iomad_learningpath{{/ str }}">
+                        <a class="lp_active" href="" data-id="{{ id }}" data-toggle="tooltip" data-state="1" title="{{# str }}closeeye, local_iomad_learningpath{{/ str }}">
                             <i class="fa fa-eye fa-lg"></i>
                         </a>
                     {{/ active }}
                     {{^ active }}
-                        <a class="lp_active" href="" data-id="{{ id }}" data-state="0" title="{{# str }}editpath, local_iomad_learningpath{{/ str }}">
+                        <a class="lp_active" href="" data-id="{{ id }}" data-toggle="tooltip" data-state="0" title="{{# str }}openeye, local_iomad_learningpath{{/ str }}">
                             <i class="fa fa-eye-slash fa-lg"></i>
                         </a>
                     {{/ active }}
-                    &nbsp;<a href="{{{ linkedit }}}" title="{{# str }}editpath, local_iomad_learningpath{{/ str }}"><i class="fa fa-cog fa-lg"></i></a>
-                    &nbsp;<a href="{{{ linkcopy }}}" title="{{# str }}editpath, local_iomad_learningpath{{/ str }}"><i class="fa fa-copy fa-lg"></i></a>
-                    &nbsp;<a href="{{{ linkcourses }}}" title="{{# str }}editpath, local_iomad_learningpath{{/ str }}"><i class="fa fa-list fa-lg"></i></a>
-                    &nbsp;<a href="{{{ linkdelete }}}" title="{{# str }}editpath, local_iomad_learningpath{{/ str }}"><i class="fa fa-trash fa-lg"></i></a>
+                    &nbsp;<a href="{{{ linkedit }}}" data-toggle="tooltip" title="{{# str }}editpath, local_iomad_learningpath{{/ str }}"><i class="fa fa-cog fa-lg"></i></a>
+                    &nbsp;<a href="{{{ linkcopy }}}" data-toggle="tooltip" title="{{# str }}copypath, local_iomad_learningpath{{/ str }}"><i class="fa fa-copy fa-lg"></i></a>
+                    &nbsp;<a href="{{{ linkcourses }}}" data-toggle="tooltip" title="{{# str }}editcourselist, local_iomad_learningpath{{/ str }}"><i class="fa fa-list fa-lg"></i></a>
+                    &nbsp;<a href="{{{ linkdelete }}}" data-toggle="tooltip" title="{{# str }}deletepath, local_iomad_learningpath{{/ str }}"><i class="fa fa-trash fa-lg"></i></a>
                 </div>
             </div>
         {{/ paths }}
     </div>
 {{/ ispaths }}
 
-<p>
+<div class="row top-space">
     <a href="{{{ linknew }}}" class="btn btn-success"><i class="fa fa-plus"></i> {{# str }}addpath, local_iomad_learningpath{{/ str }}</a>
-</p>
+</div>

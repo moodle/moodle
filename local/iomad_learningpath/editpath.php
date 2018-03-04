@@ -68,6 +68,7 @@ if ($form->is_cancelled()) {
 } else if ($data = $form->get_data()) {
     $path->name = $data->name;
     $path->description = $data->description['text'];
+    $path->active = $data->active;
     $path->timeupdated = time();
     if ($id == 0) {
         $path->timecreated = time();

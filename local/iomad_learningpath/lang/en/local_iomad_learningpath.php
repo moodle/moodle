@@ -16,10 +16,15 @@
 
 $string['actions'] = 'Actions';
 $string['active'] = 'Active';
+$string['active_help'] = 'Is Learning path available to students';
 $string['addpath'] = 'Add new path';
 $string['both'] = 'Both';
+$string['closeeye'] = 'Make unavailable';
+$string['copypath'] = 'Duplicate path';
+$string['deletepath'] = 'Delete path';
 $string['description'] = 'Description';
 $string['description_help'] = 'Full description of Learning Path';
+$string['editcourselist'] = 'Edit course list';
 $string['editpath'] = 'Edit path';
 $string['fullname'] = 'Full name';
 $string['iomad_learningpath:manage'] = 'Manage learning paths';
@@ -32,6 +37,7 @@ $string['name'] = 'Name';
 $string['name_help'] = 'Learning Path name';
 $string['nopaths'] = 'No learning paths have been created';
 $string['notactive'] = 'Not active';
+$string['openeye'] = 'Make available';
 $string['picture'] = 'Picture';
 $string['picture_help'] = 'Picture associated with Learning Path';
 $string['pluginname'] = 'Iomad learning paths';
