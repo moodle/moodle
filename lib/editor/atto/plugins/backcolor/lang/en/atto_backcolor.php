@@ -23,3 +23,4 @@
  */
 
 $string['pluginname'] = 'Background colour';
+$string['privacy:metadata'] = 'The atto_backcolor plugin does not store any personal data.';
