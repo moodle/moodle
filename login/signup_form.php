@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -119,7 +118,15 @@ class login_signup_form extends moodleform {
         }
     }
 
-    function validation($data, $files) {
+    /**
+     * Validate user supplied data on the signup form.
+     *
+     * @param array $data array of ("fieldname"=>value) of submitted data
+     * @param array $files array of uploaded files "element_name"=>tmp_file_path
+     * @return array of "element_name"=>"error_description" if there are errors,
+     *         or an empty array if everything is OK (true allowed for backwards compatibility too).
+     */
+    public function validation($data, $files) {
         global $CFG, $DB;
         $errors = parent::validation($data, $files);
 
@@ -128,7 +135,7 @@ class login_signup_form extends moodleform {
         if ($DB->record_exists('user', array('username'=>$data['username'], 'mnethostid'=>$CFG->mnet_localhost_id))) {
             $errors['username'] = get_string('usernameexists');
         } else {
-            //check allowed characters
+            // Check allowed characters.
             if ($data['username'] !== core_text::strtolower($data['username'])) {
                 $errors['username'] = get_string('usernamelowercase');
             } else {
@@ -139,8 +146,8 @@ class login_signup_form extends moodleform {
             }
         }
 
-        //check if user exists in external db
-        //TODO: maybe we should check all enabled plugins instead
+        // Check if user exists in external db.
+        // TODO: maybe we should check all enabled plugins instead.
         if ($authplugin->user_exists($data['username'])) {
             $errors['username'] = get_string('usernameexists');
         }
@@ -171,15 +178,14 @@ class login_signup_form extends moodleform {
         }
 
         if ($this->signup_captcha_enabled()) {
-            $recaptcha_element = $this->_form->getElement('recaptcha_element');
-            if (!empty($this->_form->_submitValues['recaptcha_challenge_field'])) {
-                $challenge_field = $this->_form->_submitValues['recaptcha_challenge_field'];
-                $response_field = $this->_form->_submitValues['recaptcha_response_field'];
-                if (true !== ($result = $recaptcha_element->verify($challenge_field, $response_field))) {
-                    $errors['recaptcha'] = $result;
+            $recaptchaelement = $this->_form->getElement('recaptcha_element');
+            if (!empty($this->_form->_submitValues['g-recaptcha-response'])) {
+                $response = $this->_form->_submitValues['g-recaptcha-response'];
+                if (!$recaptchaelement->verify($response)) {
+                    $errors['recaptcha_element'] = get_string('incorrectpleasetryagain', 'auth');
                 }
             } else {
-                $errors['recaptcha'] = get_string('missingrecaptchachallengefield');
+                $errors['recaptcha_element'] = get_string('missingrecaptchachallengefield');
             }
         }
         // Validate customisable profile fields. (profile_validation expects an object as the parameter with userid set)
@@ -188,7 +194,6 @@ class login_signup_form extends moodleform {
         $errors += profile_validation($dataobject, $files);
 
         return $errors;
-
     }
 
     /**
