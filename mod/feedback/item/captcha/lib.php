@@ -25,13 +25,13 @@ class feedback_item_captcha extends feedback_item_base {
 
         $editurl = new moodle_url('/mod/feedback/edit.php', array('id'=>$cm->id));
 
-        //ther are no settings for recaptcha
+        // There are no settings for recaptcha.
         if (isset($item->id) AND $item->id > 0) {
             notice(get_string('there_are_no_settings_for_recaptcha', 'feedback'), $editurl->out());
             exit;
         }
 
-        //only one recaptcha can be in a feedback
+        // Only one recaptcha can be in a feedback.
         $params = array('feedback' => $feedback->id, 'typ' => $this->type);
         if ($DB->record_exists('feedback_item', $params)) {
             notice(get_string('only_one_captcha_allowed', 'feedback'), $editurl->out());
@@ -39,7 +39,7 @@ class feedback_item_captcha extends feedback_item_base {
         }
 
         $this->item = $item;
-        $this->item_form = true; //dummy
+        $this->item_form = true; // Dummy.
 
         $lastposition = $DB->count_records('feedback_item', array('feedback'=>$feedback->id));
 
@@ -140,16 +140,13 @@ class feedback_item_captcha extends feedback_item_base {
         $form->add_validation_rule(function($values, $files) use ($item, $form) {
             $elementname = $item->typ . '_' . $item->id . 'recaptcha';
             $recaptchaelement = $form->get_form_element($elementname);
-            if (empty($values['recaptcha_response_field'])) {
+            if (empty($values['g-recaptcha-response'])) {
                 return array($elementname => get_string('required'));
-            } else if (!empty($values['recaptcha_challenge_field'])) {
-                $challengefield = $values['recaptcha_challenge_field'];
-                $responsefield = $values['recaptcha_response_field'];
-                if (true !== ($result = $recaptchaelement->verify($challengefield, $responsefield))) {
+            } else {
+                $response = $values['g-recaptcha-response'];
+                if (true !== ($result = $recaptchaelement->verify($response))) {
                     return array($elementname => $result);
                 }
-            } else {
-                return array($elementname => get_string('missingrecaptchachallengefield'));
             }
             return true;
         });
@@ -164,7 +161,7 @@ class feedback_item_captcha extends feedback_item_base {
     public function get_hasvalue() {
         global $CFG;
 
-        //is recaptcha configured in moodle?
+        // Is recaptcha configured in moodle?
         if (empty($CFG->recaptchaprivatekey) OR empty($CFG->recaptchapublickey)) {
             return 0;
         }
