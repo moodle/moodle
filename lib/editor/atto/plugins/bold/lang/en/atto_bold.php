@@ -23,3 +23,4 @@
  */
 
 $string['pluginname'] = 'Bold';
+$string['privacy:metadata'] = 'The atto_bold plugin does not store any personal data.';

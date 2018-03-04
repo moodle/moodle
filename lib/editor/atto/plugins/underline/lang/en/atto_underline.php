@@ -23,3 +23,4 @@
  */
 
 $string['pluginname'] = 'Underline';
+$string['privacy:metadata'] = 'The atto_underline plugin does not store any personal data.';
