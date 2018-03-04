@@ -59,6 +59,7 @@ class manage_page implements renderable, templatable {
                 $path->linkthumbnail = $output->image_url('learningpath', 'local_iomad_learningpath');
             }
             $path->linkcopy = new \moodle_url('/local/iomad_learningpath/manage.php', ['id' => $path->id, 'copy' => $path->id]);
+            $path->linkcourses = new \moodle_url('/local/iomad_learningpath/courselist.php', ['id' => $path->id]);
         }
     }
 

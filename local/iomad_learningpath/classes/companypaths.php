@@ -52,19 +52,23 @@ class companypaths {
 
     /**
      * Get/check path
-     * @param in $id (0 = new/empty)
+     * @param int $id (0 = new/empty)
+     * @param bool $create new if does not exist
      * @return object $path
      */
-    public function get_path($id) {
+    public function get_path($id, $create = true) {
         global $DB;
 
         if ($path = $DB->get_record('local_iomad_learningpath', array('id' => $id))) {
             if ($path->company != $this->companyid) {
-                throw new \Exception("Company id does not match expected");
+                print_error('companymismatch', 'local_iomad_learningpath');
             }
 
             return $path;
         } else {
+            if (!$create) {
+                print_error('nopath', 'local_iomad_learningpath');
+            }
             $path = new \stdClass;
             $path->company = $this->companyid;
             $path->timecreated = time();
