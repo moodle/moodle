@@ -57,7 +57,6 @@ class local_iomad_learningpath_external extends external_api {
      */
     public static function activate($pathid, $state) {
         global $DB;
-error_log('got here at least id = ' . $pathid . ' state = ' . $state);
 
         // Validate params
         $params = self::validate_parameters(self::activate_parameters(), ['pathid' => $pathid, 'state' => $state]);

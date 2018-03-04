@@ -19,7 +19,11 @@
         </div>
         {{# paths }}
             <div class="row">
-                <div class="col-sm-1"><img src="{{{ linkthumbnail }}}"></div>
+                <div class="col-sm-1">
+                    {{# linkthumbnail }}
+                        <img width="50" src="{{{ linkthumbnail }}}">
+                    {{/ linkthumbnail }}
+                </div>
                 <div class="col-sm-4">{{ name }}</div>
                 <div class="col-sm-4"><small>{{{ description }}}</small></div>
                 <div class="col-sm-3">

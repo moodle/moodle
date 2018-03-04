@@ -41,19 +41,23 @@ class manage_page implements renderable, templatable {
     public function __construct($context, $paths) {
         $this->context = $context;
         $this->paths = $paths;
-        $this->munge_paths();
     }
 
     /**
      * Add various links to paths
+     * @param renderer_base $output
      */
-    protected function munge_paths() {
+    protected function munge_paths(renderer_base $output) {
         $fs = get_file_storage();
         foreach ($this->paths as $path) {
             $thumb = $fs->get_file($this->context->id, 'local_iomad_learningpath', 'thumbnail', $path->id, '/', 'thumbnail.png');
             $path->linkedit = new \moodle_url('/local/iomad_learningpath/editpath.php', ['id' => $path->id]);
-            $path->linkthumbnail = \moodle_url::make_pluginfile_url($thumb->get_contextid(), $thumb->get_component(), $thumb->get_filearea(), 
-                $thumb->get_itemid(), $thumb->get_filepath(), $thumb->get_filename());
+            if ($thumb) {
+                $path->linkthumbnail = \moodle_url::make_pluginfile_url($thumb->get_contextid(), $thumb->get_component(), $thumb->get_filearea(), 
+                    $thumb->get_itemid(), $thumb->get_filepath(), $thumb->get_filename());
+            } else {
+                $path->linkthumbnail = $output->image_url('learningpath', 'local_iomad_learningpath');
+            }
         }
     }
 
@@ -63,6 +67,7 @@ class manage_page implements renderable, templatable {
      * @return stdClass
      */
     public function export_for_template(renderer_base $output) {
+        $this->munge_paths($output);
         $data = new stdClass();
         $data->paths = array_values($this->paths);
         $data->ispaths = !empty($this->paths);
