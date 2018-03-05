@@ -1172,6 +1172,32 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
     }
 
     /**
+     * Returns an array of ids of categories that are (direct and indirect) children
+     * of this category.
+     *
+     * @return int[]
+     */
+    public function get_all_children_ids() {
+        $coursecattreecache = cache::make('core', 'coursecattree');
+        $children = $coursecattreecache->get($this->id . 'allchildren');
+        if ($children === false) {
+            $children = [];
+            $walk = [$this->id];
+            while (count($walk) > 0) {
+                $catid = array_pop($walk);
+                $directchildren = self::get_tree($catid);
+                if ($directchildren !== false && count($directchildren) > 0) {
+                    $walk = array_merge($walk, $directchildren);
+                    $children = array_merge($children, $directchildren);
+                }
+            }
+            $coursecattreecache->set($this->id . 'allchildren', $children);
+        }
+
+        return $children;
+    }
+
+    /**
      * Returns true if the user has the manage capability on any category.
      *
      * This method uses the coursecat cache and an entry `has_manage_capability` to speed up
