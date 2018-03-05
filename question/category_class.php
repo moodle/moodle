@@ -63,6 +63,19 @@ class question_category_list extends moodle_list {
     public function get_records() {
         $this->records = get_categories_for_contexts($this->context->id, $this->sortby);
     }
+
+    /**
+     * Returns the highest category id that the $item can have as its parent.
+     * Note: question categories cannot go higher than the TOP category.
+     *
+     * @param list_item $item The item which its top level parent is going to be returned.
+     * @return int
+     */
+    public function get_top_level_parent_id($item) {
+        // Put the item at the highest level it can go.
+        $topcategory = question_get_top_category($item->item->contextid, true);
+        return $topcategory->id;
+    }
 }
 
 
