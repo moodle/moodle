@@ -1278,7 +1278,7 @@ function user_get_participants_sql($courseid, $groupid = 0, $accesssince = 0, $r
     $joins = array('FROM {user} u');
     $wheres = array();
 
-    $userfields = get_extra_user_fields($context, array('username', 'lang', 'timezone', 'maildisplay'));
+    $userfields = get_extra_user_fields($context);
     $userfieldssql = user_picture::fields('u', $userfields);
 
     if ($isfrontpage) {
