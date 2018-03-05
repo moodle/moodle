@@ -37,6 +37,7 @@ $string['caching'] = 'Caching';
 $string['cacheadmin'] = 'Cache administration';
 $string['cacheconfig'] = 'Configuration';
 $string['cachedef_calendar_subscriptions'] = 'Calendar subscriptions';
+$string['cachedef_calendar_categories'] = 'Calendar course categories that a user can access';
 $string['cachedef_capabilities'] = 'System capabilities list';
 $string['cachedef_config'] = 'Config settings';
 $string['cachedef_coursecat'] = 'Course categories lists for particular user';

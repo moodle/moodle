@@ -382,6 +382,37 @@ class core_coursecatlib_testcase extends advanced_testcase {
     }
 
     /**
+     * Test the get_all_children_ids function.
+     */
+    public function test_get_all_children_ids() {
+        $category1 = coursecat::create(array('name' => 'Cat1'));
+        $category2 = coursecat::create(array('name' => 'Cat2'));
+        $category11 = coursecat::create(array('name' => 'Cat11', 'parent' => $category1->id));
+        $category12 = coursecat::create(array('name' => 'Cat12', 'parent' => $category1->id));
+        $category13 = coursecat::create(array('name' => 'Cat13', 'parent' => $category1->id));
+        $category111 = coursecat::create(array('name' => 'Cat111', 'parent' => $category11->id));
+        $category112 = coursecat::create(array('name' => 'Cat112', 'parent' => $category11->id));
+        $category1121 = coursecat::create(array('name' => 'Cat1121', 'parent' => $category112->id));
+
+        $this->assertCount(0, $category2->get_all_children_ids());
+        $this->assertCount(6, $category1->get_all_children_ids());
+
+        $cmpchildrencat1 = array($category11->id, $category12->id, $category13->id, $category111->id, $category112->id,
+                $category1121->id);
+        $childrencat1 = $category1->get_all_children_ids();
+        // Order of values does not matter. Compare sorted arrays.
+        sort($cmpchildrencat1);
+        sort($childrencat1);
+        $this->assertEquals($cmpchildrencat1, $childrencat1);
+
+        $this->assertCount(3, $category11->get_all_children_ids());
+        $this->assertCount(0, $category111->get_all_children_ids());
+        $this->assertCount(1, $category112->get_all_children_ids());
+
+        $this->assertEquals(array($category1121->id), $category112->get_all_children_ids());
+    }
+
+    /**
      * Test the countall function
      */
     public function test_count_all() {
