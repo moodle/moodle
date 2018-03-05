@@ -455,7 +455,7 @@ class company_edit_form extends company_moodleform {
             $mform->addElement('textarea', 'custommenuitems',
                                 get_string('custommenuitems', 'admin'),
                                 'wrap="virtual" rows="20" cols="75"');
-            $mform->setType('customcss', PARAM_CLEAN);
+            $mform->setType('customcss', PARAM_RAW);
             $mform->addElement('HTML', get_string('configcustommenuitems', 'admin'));
         } else {
                 $mform->addElement('hidden', 'theme', $this->companyrecord->theme);
@@ -463,7 +463,7 @@ class company_edit_form extends company_moodleform {
                 $mform->addElement('hidden', 'companylogo', $this->companyrecord->companylogo);
                 $mform->setType('companylogo', PARAM_CLEAN);
                 $mform->addElement('hidden', 'customcss');
-                $mform->setType('customcss', PARAM_CLEAN);
+                $mform->setType('customcss', PARAM_RAW);
         }
 
         // Only show the certificate section if you have capability.
