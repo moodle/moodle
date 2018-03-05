@@ -1322,6 +1322,7 @@ EDITOR.prototype = {
         drawingcanvas.setStyle('backgroundImage', 'url("' + page.url + '")');
         drawingcanvas.setStyle('width', page.width + 'px');
         drawingcanvas.setStyle('height', page.height + 'px');
+        drawingcanvas.scrollIntoView();
 
         // Update page select.
         this.get_dialogue_element(SELECTOR.PAGESELECT).set('selectedIndex', this.currentpage);
