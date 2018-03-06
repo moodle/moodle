@@ -182,6 +182,34 @@ class core_completion_externallib_testcase extends externallib_advanced_testcase
             }
         }
 
+        // Teacher should see his own completion status.
+
+        // Forum complete for teacher.
+        $completion = new completion_info($course);
+        $completion->update_state($cmforum, COMPLETION_COMPLETE);
+
+        $result = core_completion_external::get_activities_completion_status($course->id, $teacher->id);
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $result = external_api::clean_returnvalue(
+            core_completion_external::get_activities_completion_status_returns(), $result);
+
+        // We added 4 activities, but only 3 with completion enabled (one of those is hidden but the teacher can see it).
+        $this->assertCount(3, $result['statuses']);
+
+        $activitiesfound = 0;
+        foreach ($result['statuses'] as $status) {
+            if ($status['cmid'] == $forum->cmid and $status['modname'] == 'forum' and $status['instance'] == $forum->id) {
+                $activitiesfound++;
+                $this->assertEquals(COMPLETION_COMPLETE, $status['state']);
+                $this->assertEquals(COMPLETION_TRACKING_MANUAL, $status['tracking']);
+            } else {
+                $activitiesfound++;
+                $this->assertEquals(COMPLETION_INCOMPLETE, $status['state']);
+                $this->assertEquals(COMPLETION_TRACKING_MANUAL, $status['tracking']);
+            }
+        }
+        $this->assertEquals(3, $activitiesfound);
+
         // Change teacher role capabilities (disable access all groups).
         $context = context_course::instance($course->id);
         assign_capability('moodle/site:accessallgroups', CAP_PROHIBIT, $teacherrole->id, $context);
