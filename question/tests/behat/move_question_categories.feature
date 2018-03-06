@@ -30,3 +30,15 @@ Feature: A teacher can move question categories in the question bank
     And I press "submitbutton"
     And I click on "Share in context for Course: Course 1" "link" in the "Test category" "list_item"
     Then I should see "Test category" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' questioncategories ') and contains(concat(' ', normalize-space(@class), ' '), ' contextlevel50 ')]" "xpath_element"
+
+  Scenario: A question category can be moved to top level
+    When I follow "Test quiz"
+    And I navigate to "Categories" in current page administration
+    And I set the following fields to these values:
+      | Name            | Test category         |
+      | Parent category | Default for Test quiz |
+      | Category info   | Created as a test     |
+    And I press "submitbutton"
+    And I click on "Move to top level" "link" in the "Test category" "list_item"
+    Then I should see "Test category" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' questioncategories ') and contains(concat(' ', normalize-space(@class), ' '), ' contextlevel70 ')]" "xpath_element"
+    And "//div[contains(concat(' ', normalize-space(@class), ' '), ' questioncategories ') and contains(concat(' ', normalize-space(@class), ' '), ' contextlevel70 ')]//li//ul" "xpath_element" should not exist
