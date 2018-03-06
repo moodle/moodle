@@ -472,6 +472,26 @@ class core_calendar_lib_testcase extends advanced_testcase {
         // Enrolled course only (ignore current).
         $this->assertCount(1, $courses);
 
+        // Now, log out and test again.
+        $this->setUser();
+
+        $CFG->calendar_adminseesall = false;
+
+        $courses = calendar_get_default_courses(null, '*', false, $teacher->id);
+        // Only enrolled in one course.
+        $this->assertCount(1, $courses);
+        $courses = calendar_get_default_courses($course2->id, '*', false, $teacher->id);
+        // Enrolled course only (ignore current).
+        $this->assertCount(1, $courses);
+        // This setting should not affect teachers.
+        $CFG->calendar_adminseesall = true;
+        $courses = calendar_get_default_courses(null, '*', false, $teacher->id);
+        // Only enrolled in one course.
+        $this->assertCount(1, $courses);
+        $courses = calendar_get_default_courses($course2->id, '*', false, $teacher->id);
+        // Enrolled course only (ignore current).
+        $this->assertCount(1, $courses);
+
     }
 
     /**
