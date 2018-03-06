@@ -35,6 +35,8 @@ class checkout_form extends moodleform {
 
         $mform->addElement('header', 'header', get_string('purchaser_details', 'block_iomad_commerce'));
 
+        $mform->addElement('html', get_string('checkoutpreamble', 'block_iomad_commerce'));
+
         $strrequired = get_string('required');
 
         $mform->addElement('text', 'firstname', get_string('firstname'), 'maxlength="100" size="50"');

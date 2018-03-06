@@ -39,6 +39,7 @@ $string['buycourses'] = 'Buy courses';
 $string['buynow'] = 'Buy now';
 $string['categorization'] = 'Categorisation';
 $string['checkout'] = 'Checkout';
+$string['checkoutpreamble'] = '<p></p>';
 $string['commerce_admin_email'] = 'Commerce Admin email address';
 $string['commerce_admin_email_help'] = 'Email address of the person looking after the shop.';
 $string['commerce_enabled'] = '{$a} enabled';
