@@ -33,7 +33,7 @@ Feature: A teacher can move question categories in the question bank
 
   Scenario: A question category can be moved to top level
     When I follow "Test quiz"
-    And I navigate to "Categories" in current page administration
+    And I navigate to "Categories" node in "Quiz administration > Question bank"
     And I set the following fields to these values:
       | Name            | Test category         |
       | Parent category | Default for Test quiz |
