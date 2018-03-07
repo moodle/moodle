@@ -116,7 +116,7 @@ class report_loglive_table_log extends table_sql {
      * @return string HTML for the time column
      */
     public function col_time($event) {
-        $recenttimestr = get_string('strftimerecent', 'core_langconfig');
+        $recenttimestr = get_string('strftimedatetime', 'core_langconfig');
         return userdate($event->timecreated, $recenttimestr);
     }
 
