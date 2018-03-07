@@ -460,7 +460,7 @@ class company {
      *
      **/
     public function add_course($course, $departmentid=0, $own=false, $licensed=false) {
-        global $DB;
+        global $DB, $CFG;
 
         if ($departmentid != 0 ) {
             // Adding to a specified department.
@@ -484,7 +484,7 @@ class company {
                                                          'shared' => 0));
         }
         // Set up manager roles.
-        if (!$licensed) {
+        if (!$licensed && $CFG->iomad_autoenrol_managers) {
             if ($companymanagers = $DB->get_records_sql("SELECT * FROM {company_users}
                                                          WHERE companyid = :companyid
                                                          AND managertype != 0", array('companyid' => $this->id))) {

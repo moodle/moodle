@@ -435,7 +435,7 @@ if ($mform->is_cancelled()) {
     $systemcontext = context_system::instance();
 
     // Check if we are assigning a different role to the user.
-    if (!empty($data->managertype)) {
+    if (!empty($data->managertype) && $CFG->iomad_autoenrol_managers) {
         $companycourseeditorrole = $DB->get_record('role', array('shortname' => 'companycourseeditor'));
         $companycoursenoneditorrole = $DB->get_record('role', array('shortname' => 'companycoursenoneditor'));
         if ($data->managertype == 2) {
