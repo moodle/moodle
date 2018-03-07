@@ -861,14 +861,13 @@ class iomad_user_filter_form extends moodleform {
             $mform->addElement('select', 'licenseusage', get_string('licenseuseage', 'block_iomad_company_admin'), $licenseusagearray);
         }
 
-        if (empty($this->_customdata['adddodownload'])) {
-            $this->add_action_buttons(false, get_string('userfilter', 'local_iomad'));
-        } else {
-            $buttonarray=array();
-            $buttonarray[] = $mform->createElement('submit', 'submitbutton', get_string('userfilter', 'local_iomad'));
+        $buttonarray=array();
+        $buttonarray[] = $mform->createElement('submit', 'submitbutton', get_string('userfilter', 'local_iomad'));
+        if (!empty($this->_customdata['adddodownload'])) {
             $buttonarray[] = $mform->createElement('submit', 'dodownload', get_string("downloadcsv", 'local_report_completion'));
-            $mform->addGroup($buttonarray, 'buttonar', '', ' ', false);
         }
+        $mform->addGroup($buttonarray, 'buttonar', '', ' ', false);
+        $mform->closeHeaderBefore('buttonar');
     }
 
     public function validation($data, $files) {
