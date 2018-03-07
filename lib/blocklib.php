@@ -1961,6 +1961,20 @@ function block_method_result($blockname, $method, $param = NULL) {
 }
 
 /**
+ * Returns a new instance of the specified block instance id.
+ *
+ * @param int $blockinstanceid
+ * @return block_base the requested block instance.
+ */
+function block_instance_by_id($blockinstanceid) {
+    global $DB;
+
+    $blockinstance = $DB->get_record('block_instances', ['id' => $blockinstanceid]);
+    $instance = block_instance($blockinstance->blockname, $blockinstance);
+    return $instance;
+}
+
+/**
  * Creates a new instance of the specified block class.
  *
  * @param string $blockname the name of the block.
