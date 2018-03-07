@@ -22,6 +22,8 @@
  * @copyright  2006 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+use core_tag\output\tag;
+
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -74,7 +76,10 @@ class core_questionlib_testcase extends advanced_testcase {
         $category = $this->getDataGenerator()->create_category();
 
         // Create course.
-        $course = $this->getDataGenerator()->create_course(array('numsections' => 5));
+        $course = $this->getDataGenerator()->create_course(array(
+            'numsections' => 5,
+            'category' => $category->id
+        ));
 
         $options = array(
             'course' => $course->id,
@@ -86,12 +91,22 @@ class core_questionlib_testcase extends advanced_testcase {
 
         $qgen = $this->getDataGenerator()->get_plugin_generator('core_question');
 
-        if ('course' == $type) {
-            $context = context_course::instance($course->id);
-        } else if ('category' == $type) {
-            $context = context_coursecat::instance($category->id);
-        } else {
-            $context = context_module::instance($quiz->cmid);
+        switch ($type) {
+            case 'course':
+                $context = context_course::instance($course->id);
+                break;
+
+            case 'category':
+                $context = context_coursecat::instance($category->id);
+                break;
+
+            case 'system':
+                $context = context_system::instance();
+                break;
+
+            default:
+                $context = context_module::instance($quiz->cmid);
+                break;
         }
 
         $qcat = $qgen->create_question_category(array('contextid' => $context->id));
@@ -455,5 +470,838 @@ class core_questionlib_testcase extends advanced_testcase {
         $this->assertTrue($DB->record_exists('question', ['id' => $q2b->id]));
         $this->assertFalse($DB->record_exists('question', ['id' => $q2c->id]));
         $this->assertTrue($DB->record_exists('question', ['id' => $q2d->id]));
+    }
+
+    /**
+     * get_question_options should add the category object to the given question.
+     */
+    public function test_get_question_options_includes_category_object_single_question() {
+        list($category, $course, $quiz, $qcat, $questions) = $this->setup_quiz_and_questions('category');
+        $question = array_shift($questions);
+
+        get_question_options($question);
+
+        $this->assertEquals($qcat, $question->categoryobject);
+    }
+
+    /**
+     * get_question_options should add the category object to all of the questions in
+     * the given list.
+     */
+    public function test_get_question_options_includes_category_object_multiple_questions() {
+        list($category, $course, $quiz, $qcat, $questions) = $this->setup_quiz_and_questions('category');
+
+        get_question_options($questions);
+
+        foreach ($questions as $question) {
+            $this->assertEquals($qcat, $question->categoryobject);
+        }
+    }
+
+    /**
+     * get_question_options includes the tags for all questions in the list.
+     */
+    public function test_get_question_options_includes_question_tags() {
+        list($category, $course, $quiz, $qcat, $questions) = $this->setup_quiz_and_questions('category');
+        $question1 = $questions[0];
+        $question2 = $questions[1];
+        $qcontext = context::instance_by_id($qcat->contextid);
+
+        core_tag_tag::set_item_tags('core_question', 'question', $question1->id, $qcontext, ['foo', 'bar']);
+        core_tag_tag::set_item_tags('core_question', 'question', $question2->id, $qcontext, ['baz', 'bop']);
+
+        get_question_options($questions, true);
+
+        foreach ($questions as $question) {
+            $tags = core_tag_tag::get_item_tags('core_question', 'question', $question->id);
+            $expectedtags = [];
+            $actualtags = $question->tags;
+            foreach ($tags as $tag) {
+                $expectedtags[$tag->id] = $tag->get_display_name();
+            }
+
+            // The question should have a tags property populated with each tag id
+            // and display name as a key vale pair.
+            $this->assertEquals($expectedtags, $actualtags);
+
+            $actualtagobjects = $question->tagobjects;
+            sort($tags);
+            sort($actualtagobjects);
+
+            // The question should have a full set of each tag object.
+            $this->assertEquals($tags, $actualtagobjects);
+            // The question should not have any course tags.
+            $this->assertEmpty($question->coursetagobjects);
+        }
+    }
+
+    /**
+     * get_question_options includes the course tags for all questions in the list.
+     */
+    public function test_get_question_options_includes_course_tags() {
+        list($category, $course, $quiz, $qcat, $questions) = $this->setup_quiz_and_questions('category');
+        $question1 = $questions[0];
+        $question2 = $questions[1];
+        $coursecontext = context_course::instance($course->id);
+
+        core_tag_tag::set_item_tags('core_question', 'question', $question1->id, $coursecontext, ['foo', 'bar']);
+        core_tag_tag::set_item_tags('core_question', 'question', $question2->id, $coursecontext, ['baz', 'bop']);
+
+        get_question_options($questions, true);
+
+        foreach ($questions as $question) {
+            $tags = core_tag_tag::get_item_tags('core_question', 'question', $question->id);
+            $expectedcoursetags = [];
+            $actualcoursetags = $question->coursetags;
+            foreach ($tags as $tag) {
+                $expectedcoursetags[$tag->id] = $tag->get_display_name();
+            }
+
+            // The question should have a coursetags property populated with each tag id
+            // and display name as a key vale pair.
+            $this->assertEquals($expectedcoursetags, $actualcoursetags);
+
+            $actualcoursetagobjects = $question->coursetagobjects;
+            sort($tags);
+            sort($actualcoursetagobjects);
+
+            // The question should have a full set of the course tag objects.
+            $this->assertEquals($tags, $actualcoursetagobjects);
+            // The question should not have any other tags.
+            $this->assertEmpty($question->tagobjects);
+            $this->assertEmpty($question->tags);
+        }
+    }
+
+    /**
+     * get_question_options only categorises a tag as a course tag if it is in a
+     * course context that is different from the question context.
+     */
+    public function test_get_question_options_course_tags_in_course_question_context() {
+        list($category, $course, $quiz, $qcat, $questions) = $this->setup_quiz_and_questions('course');
+        $question1 = $questions[0];
+        $question2 = $questions[1];
+        $coursecontext = context_course::instance($course->id);
+
+        // Create course level tags in the course context that matches the question
+        // course context.
+        core_tag_tag::set_item_tags('core_question', 'question', $question1->id, $coursecontext, ['foo', 'bar']);
+        core_tag_tag::set_item_tags('core_question', 'question', $question2->id, $coursecontext, ['baz', 'bop']);
+
+        get_question_options($questions, true);
+
+        foreach ($questions as $question) {
+            $tags = core_tag_tag::get_item_tags('core_question', 'question', $question->id);
+
+            $actualtagobjects = $question->tagobjects;
+            sort($tags);
+            sort($actualtagobjects);
+
+            // The tags should not be considered course tags because they are in
+            // the same context as the question. That makes them question tags.
+            $this->assertEmpty($question->coursetagobjects);
+            // The course context tags should be returned in the regular tag object
+            // list.
+            $this->assertEquals($tags, $actualtagobjects);
+        }
+    }
+
+    /**
+     * get_question_options includes the tags and course tags for all questions in the list
+     * if each question has course and question level tags.
+     */
+    public function test_get_question_options_includes_question_and_course_tags() {
+        list($category, $course, $quiz, $qcat, $questions) = $this->setup_quiz_and_questions('category');
+        $question1 = $questions[0];
+        $question2 = $questions[1];
+        $qcontext = context::instance_by_id($qcat->contextid);
+        $coursecontext = context_course::instance($course->id);
+
+        core_tag_tag::set_item_tags('core_question', 'question', $question1->id, $qcontext, ['foo', 'bar']);
+        core_tag_tag::set_item_tags('core_question', 'question', $question1->id, $coursecontext, ['cfoo', 'cbar']);
+        core_tag_tag::set_item_tags('core_question', 'question', $question2->id, $qcontext, ['baz', 'bop']);
+        core_tag_tag::set_item_tags('core_question', 'question', $question2->id, $coursecontext, ['cbaz', 'cbop']);
+
+        get_question_options($questions, true);
+
+        foreach ($questions as $question) {
+            $alltags = core_tag_tag::get_item_tags('core_question', 'question', $question->id);
+            $tags = array_filter($alltags, function($tag) use ($qcontext) {
+                return $tag->taginstancecontextid == $qcontext->id;
+            });
+            $coursetags = array_filter($alltags, function($tag) use ($coursecontext) {
+                return $tag->taginstancecontextid == $coursecontext->id;
+            });
+
+            $expectedtags = [];
+            $actualtags = $question->tags;
+            foreach ($tags as $tag) {
+                $expectedtags[$tag->id] = $tag->get_display_name();
+            }
+
+            // The question should have a tags property populated with each tag id
+            // and display name as a key vale pair.
+            $this->assertEquals($expectedtags, $actualtags);
+
+            $actualtagobjects = $question->tagobjects;
+            sort($tags);
+            sort($actualtagobjects);
+            // The question should have a full set of each tag object.
+            $this->assertEquals($tags, $actualtagobjects);
+
+            $actualcoursetagobjects = $question->coursetagobjects;
+            sort($coursetags);
+            sort($actualcoursetagobjects);
+            // The question should have a full set of course tag objects.
+            $this->assertEquals($coursetags, $actualcoursetagobjects);
+        }
+    }
+
+    /**
+     * get_question_options should update the context id to the question category
+     * context id for any non-course context tag that isn't in the question category
+     * context.
+     */
+    public function test_get_question_options_normalises_question_tags() {
+        list($category, $course, $quiz, $qcat, $questions) = $this->setup_quiz_and_questions('category');
+        $question1 = $questions[0];
+        $question2 = $questions[1];
+        $qcontext = context::instance_by_id($qcat->contextid);
+        $systemcontext = context_system::instance();
+
+        core_tag_tag::set_item_tags('core_question', 'question', $question1->id, $qcontext, ['foo', 'bar']);
+        core_tag_tag::set_item_tags('core_question', 'question', $question2->id, $qcontext, ['baz', 'bop']);
+
+        $q1tags = core_tag_tag::get_item_tags('core_question', 'question', $question1->id);
+        $q2tags = core_tag_tag::get_item_tags('core_question', 'question', $question2->id);
+        $q1tag = array_shift($q1tags);
+        $q2tag = array_shift($q2tags);
+
+        // Change two of the tag instances to be a different (non-course) context to the
+        // question tag context. These tags should then be normalised back to the question
+        // tag context.
+        core_tag_tag::change_instances_context([$q1tag->taginstanceid, $q2tag->taginstanceid], $systemcontext);
+
+        get_question_options($questions, true);
+
+        foreach ($questions as $question) {
+            $tags = core_tag_tag::get_item_tags('core_question', 'question', $question->id);
+
+            // The database should have been updated with the correct context id.
+            foreach ($tags as $tag) {
+                $this->assertEquals($qcontext->id, $tag->taginstancecontextid);
+            }
+
+            // The tag objects on the question should have been updated with the
+            // correct context id.
+            foreach ($question->tagobjects as $tag) {
+                $this->assertEquals($qcontext->id, $tag->taginstancecontextid);
+            }
+        }
+    }
+
+    /**
+     * get_question_options if the question is a course level question then tags
+     * in that context should not be consdered course tags, they are question tags.
+     */
+    public function test_get_question_options_includes_course_context_question_tags() {
+        list($category, $course, $quiz, $qcat, $questions) = $this->setup_quiz_and_questions('course');
+        $question1 = $questions[0];
+        $question2 = $questions[1];
+        $coursecontext = context_course::instance($course->id);
+
+        core_tag_tag::set_item_tags('core_question', 'question', $question1->id, $coursecontext, ['foo', 'bar']);
+        core_tag_tag::set_item_tags('core_question', 'question', $question2->id, $coursecontext, ['baz', 'bop']);
+
+        get_question_options($questions, true);
+
+        foreach ($questions as $question) {
+            $tags = core_tag_tag::get_item_tags('core_question', 'question', $question->id);
+            // Tags in a course context that matches the question context should
+            // not be considered course tags.
+            $this->assertEmpty($question->coursetagobjects);
+            $this->assertEmpty($question->coursetags);
+
+            $actualtagobjects = $question->tagobjects;
+            sort($tags);
+            sort($actualtagobjects);
+            // The tags should be considered question tags not course tags.
+            $this->assertEquals($tags, $actualtagobjects);
+        }
+    }
+
+    /**
+     * get_question_options should return tags from all course contexts by default.
+     */
+    public function test_get_question_options_includes_multiple_courses_tags() {
+        list($category, $course, $quiz, $qcat, $questions) = $this->setup_quiz_and_questions('category');
+        $question1 = $questions[0];
+        $question2 = $questions[1];
+        $coursecontext = context_course::instance($course->id);
+        // Create a sibling course.
+        $siblingcourse = $this->getDataGenerator()->create_course(['category' => $course->category]);
+        $siblingcoursecontext = context_course::instance($siblingcourse->id);
+
+        // Create course tags.
+        core_tag_tag::set_item_tags('core_question', 'question', $question1->id, $coursecontext, ['c1']);
+        core_tag_tag::set_item_tags('core_question', 'question', $question2->id, $coursecontext, ['c1']);
+        core_tag_tag::set_item_tags('core_question', 'question', $question1->id, $siblingcoursecontext, ['c2']);
+        core_tag_tag::set_item_tags('core_question', 'question', $question2->id, $siblingcoursecontext, ['c2']);
+
+        get_question_options($questions, true);
+
+        foreach ($questions as $question) {
+            $this->assertCount(2, $question->coursetagobjects);
+
+            foreach ($question->coursetagobjects as $tag) {
+                if ($tag->name == 'c1') {
+                    $this->assertEquals($coursecontext->id, $tag->taginstancecontextid);
+                } else {
+                    $this->assertEquals($siblingcoursecontext->id, $tag->taginstancecontextid);
+                }
+            }
+        }
+    }
+
+    /**
+     * get_question_options should filter the course tags by the given list of courses.
+     */
+    public function test_get_question_options_includes_filter_course_tags() {
+        list($category, $course, $quiz, $qcat, $questions) = $this->setup_quiz_and_questions('category');
+        $question1 = $questions[0];
+        $question2 = $questions[1];
+        $coursecontext = context_course::instance($course->id);
+        // Create a sibling course.
+        $siblingcourse = $this->getDataGenerator()->create_course(['category' => $course->category]);
+        $siblingcoursecontext = context_course::instance($siblingcourse->id);
+
+        // Create course tags.
+        core_tag_tag::set_item_tags('core_question', 'question', $question1->id, $coursecontext, ['foo']);
+        core_tag_tag::set_item_tags('core_question', 'question', $question2->id, $coursecontext, ['bar']);
+        // Create sibling course tags. These should be filtered out.
+        core_tag_tag::set_item_tags('core_question', 'question', $question1->id, $siblingcoursecontext, ['filtered1']);
+        core_tag_tag::set_item_tags('core_question', 'question', $question2->id, $siblingcoursecontext, ['filtered2']);
+
+        // Ask to only receive course tags from $course (ignoring $siblingcourse tags).
+        get_question_options($questions, true, [$course]);
+
+        foreach ($questions as $question) {
+            foreach ($question->coursetagobjects as $tag) {
+                // We should only be seeing course tags from $course. The tags from
+                // $siblingcourse should have been filtered out.
+                $this->assertEquals($coursecontext->id, $tag->taginstancecontextid);
+            }
+        }
+    }
+
+    /**
+     * question_move_question_tags_to_new_context should update all of the
+     * question tags contexts when they are moving down (from system to course
+     * category context).
+     */
+    public function test_question_move_question_tags_to_new_context_system_to_course_cat_qtags() {
+        list($category, $course, $quiz, $qcat, $questions) = $this->setup_quiz_and_questions('system');
+        $question1 = $questions[0];
+        $question2 = $questions[1];
+        $qcontext = context::instance_by_id($qcat->contextid);
+        $newcontext = context_coursecat::instance($category->id);
+
+        foreach ($questions as $question) {
+            $question->contextid = $qcat->contextid;
+        }
+
+        // Create tags in the system context.
+        core_tag_tag::set_item_tags('core_question', 'question', $question1->id, $qcontext, ['foo', 'bar']);
+        core_tag_tag::set_item_tags('core_question', 'question', $question2->id, $qcontext, ['foo', 'bar']);
+
+        question_move_question_tags_to_new_context($questions, $newcontext);
+
+        foreach ($questions as $question) {
+            $tags = core_tag_tag::get_item_tags('core_question', 'question', $question->id);
+
+            // All of the tags should have their context id set to the new context.
+            foreach ($tags as $tag) {
+                $this->assertEquals($newcontext->id, $tag->taginstancecontextid);
+            }
+        }
+    }
+
+    /**
+     * question_move_question_tags_to_new_context should update all of the question tags
+     * contexts when they are moving down (from system to course category context)
+     * but leave any tags in the course context where they are.
+     */
+    public function test_question_move_question_tags_to_new_context_system_to_course_cat_qtags_and_course_tags() {
+        list($category, $course, $quiz, $qcat, $questions) = $this->setup_quiz_and_questions('system');
+        $question1 = $questions[0];
+        $question2 = $questions[1];
+        $qcontext = context::instance_by_id($qcat->contextid);
+        $coursecontext = context_course::instance($course->id);
+        $newcontext = context_coursecat::instance($category->id);
+
+        foreach ($questions as $question) {
+            $question->contextid = $qcat->contextid;
+        }
+
+        // Create tags in the system context.
+        core_tag_tag::set_item_tags('core_question', 'question', $question1->id, $qcontext, ['foo']);
+        core_tag_tag::set_item_tags('core_question', 'question', $question2->id, $qcontext, ['foo']);
+        // Create tags in the course context.
+        core_tag_tag::set_item_tags('core_question', 'question', $question1->id, $coursecontext, ['ctag']);
+        core_tag_tag::set_item_tags('core_question', 'question', $question2->id, $coursecontext, ['ctag']);
+
+        question_move_question_tags_to_new_context($questions, $newcontext);
+
+        foreach ($questions as $question) {
+            $tags = core_tag_tag::get_item_tags('core_question', 'question', $question->id);
+
+            foreach ($tags as $tag) {
+                if ($tag->name == 'ctag') {
+                    // Course tags should remain in the course context.
+                    $this->assertEquals($coursecontext->id, $tag->taginstancecontextid);
+                } else {
+                    // Other tags should be updated.
+                    $this->assertEquals($newcontext->id, $tag->taginstancecontextid);
+                }
+            }
+        }
+    }
+
+    /**
+     * question_move_question_tags_to_new_context should update all of the question
+     * contexts tags when they are moving up (from course category to system context).
+     */
+    public function test_question_move_question_tags_to_new_context_course_cat_to_system_qtags() {
+        list($category, $course, $quiz, $qcat, $questions) = $this->setup_quiz_and_questions('category');
+        $question1 = $questions[0];
+        $question2 = $questions[1];
+        $qcontext = context::instance_by_id($qcat->contextid);
+        $newcontext = context_system::instance();
+
+        foreach ($questions as $question) {
+            $question->contextid = $qcat->contextid;
+        }
+
+        // Create tags in the course category context.
+        core_tag_tag::set_item_tags('core_question', 'question', $question1->id, $qcontext, ['foo', 'bar']);
+        core_tag_tag::set_item_tags('core_question', 'question', $question2->id, $qcontext, ['foo', 'bar']);
+
+        question_move_question_tags_to_new_context($questions, $newcontext);
+
+        foreach ($questions as $question) {
+            $tags = core_tag_tag::get_item_tags('core_question', 'question', $question->id);
+
+            // All of the tags should have their context id set to the new context.
+            foreach ($tags as $tag) {
+                $this->assertEquals($newcontext->id, $tag->taginstancecontextid);
+            }
+        }
+    }
+
+    /**
+     * question_move_question_tags_to_new_context should update all of the question
+     * tags contexts when they are moving up (from course category context to system
+     * context) but leave any tags in the course context where they are.
+     */
+    public function test_question_move_question_tags_to_new_context_course_cat_to_system_qtags_and_course_tags() {
+        list($category, $course, $quiz, $qcat, $questions) = $this->setup_quiz_and_questions('category');
+        $question1 = $questions[0];
+        $question2 = $questions[1];
+        $qcontext = context::instance_by_id($qcat->contextid);
+        $coursecontext = context_course::instance($course->id);
+        $newcontext = context_system::instance();
+
+        foreach ($questions as $question) {
+            $question->contextid = $qcat->contextid;
+        }
+
+        // Create tags in the system context.
+        core_tag_tag::set_item_tags('core_question', 'question', $question1->id, $qcontext, ['foo']);
+        core_tag_tag::set_item_tags('core_question', 'question', $question2->id, $qcontext, ['foo']);
+        // Create tags in the course context.
+        core_tag_tag::set_item_tags('core_question', 'question', $question1->id, $coursecontext, ['ctag']);
+        core_tag_tag::set_item_tags('core_question', 'question', $question2->id, $coursecontext, ['ctag']);
+
+        question_move_question_tags_to_new_context($questions, $newcontext);
+
+        foreach ($questions as $question) {
+            $tags = core_tag_tag::get_item_tags('core_question', 'question', $question->id);
+
+            foreach ($tags as $tag) {
+                if ($tag->name == 'ctag') {
+                    // Course tags should remain in the course context.
+                    $this->assertEquals($coursecontext->id, $tag->taginstancecontextid);
+                } else {
+                    // Other tags should be updated.
+                    $this->assertEquals($newcontext->id, $tag->taginstancecontextid);
+                }
+            }
+        }
+    }
+
+    /**
+     * question_move_question_tags_to_new_context should merge all tags into the course
+     * context when moving down from course category context into course context.
+     */
+    public function test_question_move_question_tags_to_new_context_course_cat_to_coures_qtags_and_course_tags() {
+        list($category, $course, $quiz, $qcat, $questions) = $this->setup_quiz_and_questions('category');
+        $question1 = $questions[0];
+        $question2 = $questions[1];
+        $qcontext = context::instance_by_id($qcat->contextid);
+        $coursecontext = context_course::instance($course->id);
+        $newcontext = $coursecontext;
+
+        foreach ($questions as $question) {
+            $question->contextid = $qcat->contextid;
+        }
+
+        // Create tags in the system context.
+        core_tag_tag::set_item_tags('core_question', 'question', $question1->id, $qcontext, ['foo']);
+        core_tag_tag::set_item_tags('core_question', 'question', $question2->id, $qcontext, ['foo']);
+        // Create tags in the course context.
+        core_tag_tag::set_item_tags('core_question', 'question', $question1->id, $coursecontext, ['ctag']);
+        core_tag_tag::set_item_tags('core_question', 'question', $question2->id, $coursecontext, ['ctag']);
+
+        question_move_question_tags_to_new_context($questions, $newcontext);
+
+        foreach ($questions as $question) {
+            $tags = core_tag_tag::get_item_tags('core_question', 'question', $question->id);
+            // Each question should have 2 tags.
+            $this->assertCount(2, $tags);
+
+            foreach ($tags as $tag) {
+                // All tags should be updated to the course context and merged in.
+                $this->assertEquals($newcontext->id, $tag->taginstancecontextid);
+            }
+        }
+    }
+
+    /**
+     * question_move_question_tags_to_new_context should delete all of the tag
+     * instances from sibling courses when moving the context of a question down
+     * from a course category into a course context because the other courses will
+     * no longer have access to the question.
+     */
+    public function test_question_move_question_tags_to_new_context_remove_other_course_tags() {
+        list($category, $course, $quiz, $qcat, $questions) = $this->setup_quiz_and_questions('category');
+        // Create a sibling course.
+        $siblingcourse = $this->getDataGenerator()->create_course(['category' => $course->category]);
+        $question1 = $questions[0];
+        $question2 = $questions[1];
+        $qcontext = context::instance_by_id($qcat->contextid);
+        $coursecontext = context_course::instance($course->id);
+        $siblingcoursecontext = context_course::instance($siblingcourse->id);
+        $newcontext = $coursecontext;
+
+        foreach ($questions as $question) {
+            $question->contextid = $qcat->contextid;
+        }
+
+        // Create tags in the system context.
+        core_tag_tag::set_item_tags('core_question', 'question', $question1->id, $qcontext, ['foo']);
+        core_tag_tag::set_item_tags('core_question', 'question', $question2->id, $qcontext, ['foo']);
+        // Create tags in the target course context.
+        core_tag_tag::set_item_tags('core_question', 'question', $question1->id, $coursecontext, ['ctag']);
+        core_tag_tag::set_item_tags('core_question', 'question', $question2->id, $coursecontext, ['ctag']);
+        // Create tags in the sibling course context. These should be deleted as
+        // part of the move.
+        core_tag_tag::set_item_tags('core_question', 'question', $question1->id, $siblingcoursecontext, ['stag']);
+        core_tag_tag::set_item_tags('core_question', 'question', $question2->id, $siblingcoursecontext, ['stag']);
+
+        question_move_question_tags_to_new_context($questions, $newcontext);
+
+        foreach ($questions as $question) {
+            $tags = core_tag_tag::get_item_tags('core_question', 'question', $question->id);
+            // Each question should have 2 tags, 'foo' and 'ctag'.
+            $this->assertCount(2, $tags);
+
+            foreach ($tags as $tag) {
+                $tagname = $tag->name;
+                // The 'stag' should have been deleted because it's in a sibling
+                // course context.
+                $this->assertContains($tagname, ['foo', 'ctag']);
+                // All tags should be in the course context now.
+                $this->assertEquals($coursecontext->id, $tag->taginstancecontextid);
+            }
+        }
+    }
+
+    /**
+     * question_move_question_tags_to_new_context should update all of the question
+     * tags to be the course category context when moving the tags from a course
+     * context to a course category context.
+     */
+    public function test_question_move_question_tags_to_new_context_course_to_course_cat() {
+        list($category, $course, $quiz, $qcat, $questions) = $this->setup_quiz_and_questions('course');
+        $question1 = $questions[0];
+        $question2 = $questions[1];
+        $qcontext = context::instance_by_id($qcat->contextid);
+        // Moving up into the course category context.
+        $newcontext = context_coursecat::instance($category->id);
+
+        foreach ($questions as $question) {
+            $question->contextid = $qcat->contextid;
+        }
+
+        // Create tags in the course context.
+        core_tag_tag::set_item_tags('core_question', 'question', $question1->id, $qcontext, ['foo']);
+        core_tag_tag::set_item_tags('core_question', 'question', $question2->id, $qcontext, ['foo']);
+
+        question_move_question_tags_to_new_context($questions, $newcontext);
+
+        foreach ($questions as $question) {
+            $tags = core_tag_tag::get_item_tags('core_question', 'question', $question->id);
+
+            // All of the tags should have their context id set to the new context.
+            foreach ($tags as $tag) {
+                $this->assertEquals($newcontext->id, $tag->taginstancecontextid);
+            }
+        }
+    }
+
+    /**
+     * question_move_question_tags_to_new_context should update all of the
+     * question tags contexts when they are moving down (from system to course
+     * category context).
+     */
+    public function test_question_move_question_tags_to_new_context_orphaned_tag_contexts() {
+        list($category, $course, $quiz, $qcat, $questions) = $this->setup_quiz_and_questions('system');
+        $question1 = $questions[0];
+        $question2 = $questions[1];
+        $othercategory = $this->getDataGenerator()->create_category();
+        $qcontext = context::instance_by_id($qcat->contextid);
+        $newcontext = context_coursecat::instance($category->id);
+        $othercategorycontext = context_coursecat::instance($othercategory->id);
+
+        foreach ($questions as $question) {
+            $question->contextid = $qcat->contextid;
+        }
+
+        // Create tags in the system context.
+        core_tag_tag::set_item_tags('core_question', 'question', $question1->id, $qcontext, ['foo']);
+        core_tag_tag::set_item_tags('core_question', 'question', $question2->id, $qcontext, ['foo']);
+        // Create tags in the other course category context. These should be
+        // update to the next context id because they represent erroneous data
+        // from a time before context id was mandatory in the tag API.
+        core_tag_tag::set_item_tags('core_question', 'question', $question1->id, $othercategorycontext, ['bar']);
+        core_tag_tag::set_item_tags('core_question', 'question', $question2->id, $othercategorycontext, ['bar']);
+
+        question_move_question_tags_to_new_context($questions, $newcontext);
+
+        foreach ($questions as $question) {
+            $tags = core_tag_tag::get_item_tags('core_question', 'question', $question->id);
+            // Each question should have two tags, 'foo' and 'bar'.
+            $this->assertCount(2, $tags);
+
+            // All of the tags should have their context id set to the new context
+            // (course category context).
+            foreach ($tags as $tag) {
+                $this->assertEquals($newcontext->id, $tag->taginstancecontextid);
+            }
+        }
+    }
+
+    /**
+     * When moving from a course category context down into an activity context
+     * all question context tags and course tags (where the course is a parent of
+     * the activity) should move into the new context.
+     */
+    public function test_question_move_question_tags_to_new_context_course_cat_to_activity_qtags_and_course_tags() {
+        list($category, $course, $quiz, $qcat, $questions) = $this->setup_quiz_and_questions('category');
+        $question1 = $questions[0];
+        $question2 = $questions[1];
+        $qcontext = context::instance_by_id($qcat->contextid);
+        $coursecontext = context_course::instance($course->id);
+        $newcontext = context_module::instance($quiz->cmid);
+
+        foreach ($questions as $question) {
+            $question->contextid = $qcat->contextid;
+        }
+
+        // Create tags in the course category context.
+        core_tag_tag::set_item_tags('core_question', 'question', $question1->id, $qcontext, ['foo']);
+        core_tag_tag::set_item_tags('core_question', 'question', $question2->id, $qcontext, ['foo']);
+        // Move the questions to the activity context which is a child context of
+        // $coursecontext.
+        core_tag_tag::set_item_tags('core_question', 'question', $question1->id, $coursecontext, ['ctag']);
+        core_tag_tag::set_item_tags('core_question', 'question', $question2->id, $coursecontext, ['ctag']);
+
+        question_move_question_tags_to_new_context($questions, $newcontext);
+
+        foreach ($questions as $question) {
+            $tags = core_tag_tag::get_item_tags('core_question', 'question', $question->id);
+            // Each question should have 2 tags.
+            $this->assertCount(2, $tags);
+
+            foreach ($tags as $tag) {
+                $this->assertEquals($newcontext->id, $tag->taginstancecontextid);
+            }
+        }
+    }
+
+    /**
+     * When moving from a course category context down into an activity context
+     * all question context tags and course tags (where the course is a parent of
+     * the activity) should move into the new context. Tags in course contexts
+     * that are not a parent of the activity context should be deleted.
+     */
+    public function test_question_move_question_tags_to_new_context_course_cat_to_activity_orphaned_tags() {
+        list($category, $course, $quiz, $qcat, $questions) = $this->setup_quiz_and_questions('category');
+        $question1 = $questions[0];
+        $question2 = $questions[1];
+        $qcontext = context::instance_by_id($qcat->contextid);
+        $coursecontext = context_course::instance($course->id);
+        $newcontext = context_module::instance($quiz->cmid);
+        $othercourse = $this->getDataGenerator()->create_course();
+        $othercoursecontext = context_course::instance($othercourse->id);
+
+        foreach ($questions as $question) {
+            $question->contextid = $qcat->contextid;
+        }
+
+        // Create tags in the course category context.
+        core_tag_tag::set_item_tags('core_question', 'question', $question1->id, $qcontext, ['foo']);
+        core_tag_tag::set_item_tags('core_question', 'question', $question2->id, $qcontext, ['foo']);
+        // Create tags in the course context.
+        core_tag_tag::set_item_tags('core_question', 'question', $question1->id, $coursecontext, ['ctag']);
+        core_tag_tag::set_item_tags('core_question', 'question', $question2->id, $coursecontext, ['ctag']);
+        // Create tags in the other course context. These should be deleted.
+        core_tag_tag::set_item_tags('core_question', 'question', $question1->id, $othercoursecontext, ['delete']);
+        core_tag_tag::set_item_tags('core_question', 'question', $question2->id, $othercoursecontext, ['delete']);
+
+        // Move the questions to the activity context which is a child context of
+        // $coursecontext.
+        question_move_question_tags_to_new_context($questions, $newcontext);
+
+        foreach ($questions as $question) {
+            $tags = core_tag_tag::get_item_tags('core_question', 'question', $question->id);
+            // Each question should have 2 tags.
+            $this->assertCount(2, $tags);
+
+            foreach ($tags as $tag) {
+                // Make sure we don't have any 'delete' tags.
+                $this->assertContains($tag->name, ['foo', 'ctag']);
+                $this->assertEquals($newcontext->id, $tag->taginstancecontextid);
+            }
+        }
+    }
+
+    /**
+     * When moving from a course context down into an activity context all of the
+     * course tags should move into the activity context.
+     */
+    public function test_question_move_question_tags_to_new_context_course_to_activity_qtags() {
+        list($category, $course, $quiz, $qcat, $questions) = $this->setup_quiz_and_questions('course');
+        $question1 = $questions[0];
+        $question2 = $questions[1];
+        $qcontext = context::instance_by_id($qcat->contextid);
+        $newcontext = context_module::instance($quiz->cmid);
+
+        foreach ($questions as $question) {
+            $question->contextid = $qcat->contextid;
+        }
+
+        // Create tags in the course context.
+        core_tag_tag::set_item_tags('core_question', 'question', $question1->id, $qcontext, ['foo']);
+        core_tag_tag::set_item_tags('core_question', 'question', $question2->id, $qcontext, ['foo']);
+
+        question_move_question_tags_to_new_context($questions, $newcontext);
+
+        foreach ($questions as $question) {
+            $tags = core_tag_tag::get_item_tags('core_question', 'question', $question->id);
+
+            foreach ($tags as $tag) {
+                $this->assertEquals($newcontext->id, $tag->taginstancecontextid);
+            }
+        }
+    }
+
+    /**
+     * When moving from a course context down into an activity context all of the
+     * course tags should move into the activity context.
+     */
+    public function test_question_move_question_tags_to_new_context_activity_to_course_qtags() {
+        list($category, $course, $quiz, $qcat, $questions) = $this->setup_quiz_and_questions();
+        $question1 = $questions[0];
+        $question2 = $questions[1];
+        $qcontext = context::instance_by_id($qcat->contextid);
+        $newcontext = context_course::instance($course->id);
+
+        foreach ($questions as $question) {
+            $question->contextid = $qcat->contextid;
+        }
+
+        // Create tags in the activity context.
+        core_tag_tag::set_item_tags('core_question', 'question', $question1->id, $qcontext, ['foo']);
+        core_tag_tag::set_item_tags('core_question', 'question', $question2->id, $qcontext, ['foo']);
+
+        question_move_question_tags_to_new_context($questions, $newcontext);
+
+        foreach ($questions as $question) {
+            $tags = core_tag_tag::get_item_tags('core_question', 'question', $question->id);
+
+            foreach ($tags as $tag) {
+                $this->assertEquals($newcontext->id, $tag->taginstancecontextid);
+            }
+        }
+    }
+
+    /**
+     * question_move_question_tags_to_new_context should update all of the
+     * question tags contexts when they are moving down (from system to course
+     * category context).
+     *
+     * Course tags within the new category context should remain while any course
+     * tags in course contexts that can no longer access the question should be
+     * deleted.
+     */
+    public function test_question_move_question_tags_to_new_context_system_to_course_cat_with_orphaned_tags() {
+        list($category, $course, $quiz, $qcat, $questions) = $this->setup_quiz_and_questions('system');
+        $question1 = $questions[0];
+        $question2 = $questions[1];
+        $othercategory = $this->getDataGenerator()->create_category();
+        $othercourse = $this->getDataGenerator()->create_course(['category' => $othercategory->id]);
+        $qcontext = context::instance_by_id($qcat->contextid);
+        $newcontext = context_coursecat::instance($category->id);
+        $othercategorycontext = context_coursecat::instance($othercategory->id);
+        $coursecontext = context_course::instance($course->id);
+        $othercoursecontext = context_course::instance($othercourse->id);
+
+        foreach ($questions as $question) {
+            $question->contextid = $qcat->contextid;
+        }
+
+        // Create tags in the system context.
+        core_tag_tag::set_item_tags('core_question', 'question', $question1->id, $qcontext, ['foo']);
+        core_tag_tag::set_item_tags('core_question', 'question', $question2->id, $qcontext, ['foo']);
+        // Create tags in the child course context of the new context.
+        core_tag_tag::set_item_tags('core_question', 'question', $question1->id, $coursecontext, ['bar']);
+        core_tag_tag::set_item_tags('core_question', 'question', $question2->id, $coursecontext, ['bar']);
+        // Create tags in the other course context. These should be deleted when
+        // the question moves to the new course category context because this
+        // course belongs to a different category, which means it will no longer
+        // have access to the question.
+        core_tag_tag::set_item_tags('core_question', 'question', $question1->id, $othercoursecontext, ['delete']);
+        core_tag_tag::set_item_tags('core_question', 'question', $question2->id, $othercoursecontext, ['delete']);
+
+        question_move_question_tags_to_new_context($questions, $newcontext);
+
+        foreach ($questions as $question) {
+            $tags = core_tag_tag::get_item_tags('core_question', 'question', $question->id);
+            // Each question should have two tags, 'foo' and 'bar'.
+            $this->assertCount(2, $tags);
+
+            // All of the tags should have their context id set to the new context
+            // (course category context).
+            foreach ($tags as $tag) {
+                $this->assertContains($tag->name, ['foo', 'bar']);
+
+                if ($tag->name == 'foo') {
+                    $this->assertEquals($newcontext->id, $tag->taginstancecontextid);
+                } else {
+                    $this->assertEquals($coursecontext->id, $tag->taginstancecontextid);
+                }
+            }
+        }
     }
 }

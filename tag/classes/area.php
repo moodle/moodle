@@ -123,6 +123,32 @@ class core_tag_area {
     }
 
     /**
+     * Checks if the tag area allows items to be tagged in multiple different contexts.
+     *
+     * If true then it indicates that not all tag instance contexts must match the
+     * context of the item they are tagging. If false then all tag instance should
+     * match the context of the item they are tagging.
+     *
+     * Example use case for multi-context tagging:
+     * A question that exists in a course category context may be used by multiple
+     * child courses. The question tag area can allow tag instances to be created in
+     * multiple contexts which allows the tag API to tag the question at the course
+     * category context and then seperately in each of the child course contexts.
+     *
+     * @param string $component component responsible for tagging
+     * @param string $itemtype what is being tagged, for example, 'post', 'course', 'user', etc.
+     * @return bool
+     */
+    public static function allows_tagging_in_multiple_contexts($component, $itemtype) {
+        $itemtypes = self::get_areas();
+        if (isset($itemtypes[$itemtype][$component])) {
+            $config = $itemtypes[$itemtype][$component];
+            return isset($config->multiplecontexts) ? $config->multiplecontexts : false;
+        }
+        return false;
+    }
+
+    /**
      * Returns the id of the tag collection that should be used for storing tags of this itemtype
      *
      * @param string $component component responsible for tagging
@@ -217,7 +243,8 @@ class core_tag_area {
             'tagcollid' => $record->tagcollid,
             'callback' => $record->callback,
             'callbackfile' => $record->callbackfile,
-            'showstandard' => isset($record->showstandard) ? $record->showstandard : core_tag_tag::BOTH_STANDARD_AND_NOT));
+            'showstandard' => isset($record->showstandard) ? $record->showstandard : core_tag_tag::BOTH_STANDARD_AND_NOT,
+            'multiplecontexts' => isset($record->multiplecontexts) ? $record->multiplecontexts : 0));
 
         // Reset cache.
         cache::make('core', 'tags')->delete('tag_area');
@@ -233,7 +260,8 @@ class core_tag_area {
         global $DB;
         $data = array_intersect_key((array)$data,
                 array('enabled' => 1, 'tagcollid' => 1,
-                    'callback' => 1, 'callbackfile' => 1, 'showstandard' => 1));
+                    'callback' => 1, 'callbackfile' => 1, 'showstandard' => 1,
+                    'multiplecontexts' => 1));
         foreach ($data as $key => $value) {
             if ($existing->$key == $value) {
                 unset($data[$key]);
@@ -309,6 +337,9 @@ class core_tag_area {
                 }
                 if (!isset($record->callbackfile)) {
                     $record->callbackfile = null;
+                }
+                if (!isset($record->multiplecontexts)) {
+                    $record->multiplecontexts = false;
                 }
                 $itemtypes[$record->itemtype . ':' . $record->component] = $record;
             }

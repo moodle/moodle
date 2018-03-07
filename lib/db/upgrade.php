@@ -1974,12 +1974,50 @@ function xmldb_main_upgrade($oldversion) {
     }
 
     if ($oldversion < 2018022800.01) {
-
         // Fix old block configurations that use the deprecated (and now removed) object class.
         upgrade_fix_block_instance_configuration();
 
         // Main savepoint reached.
         upgrade_main_savepoint(true, 2018022800.01);
+    }
+
+    if ($oldversion < 2018022800.02) {
+        // Define index taggeditem (unique) to be dropped form tag_instance.
+        $table = new xmldb_table('tag_instance');
+        $index = new xmldb_index('taggeditem', XMLDB_INDEX_UNIQUE, array('component',
+            'itemtype', 'itemid', 'tiuserid', 'tagid'));
+
+        // Conditionally launch drop index taggeditem.
+        if ($dbman->index_exists($table, $index)) {
+            $dbman->drop_index($table, $index);
+        }
+
+        $index = new xmldb_index('taggeditem', XMLDB_INDEX_UNIQUE, array('component',
+            'itemtype', 'itemid', 'contextid', 'tiuserid', 'tagid'));
+
+        // Conditionally launch add index taggeditem.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2018022800.02);
+    }
+
+    if ($oldversion < 2018022800.03) {
+
+        // Define field multiplecontexts to be added to tag_area.
+        $table = new xmldb_table('tag_area');
+        $field = new xmldb_field('multiplecontexts', XMLDB_TYPE_INTEGER, '1', null,
+            XMLDB_NOTNULL, null, '0', 'showstandard');
+
+        // Conditionally launch add field multiplecontexts.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2018022800.03);
     }
 
     return true;

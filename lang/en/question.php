@@ -391,6 +391,7 @@ $string['questionbehavioursdisabledexplained'] = 'Enter a comma separated list o
 $string['questionbehavioursorder'] = 'Question behaviours order';
 $string['questionbehavioursorderexplained'] = 'Enter a comma separated list of behaviours in the order you want them to appear in dropdown menu';
 $string['questionidmismatch'] = 'Question ids mismatch';
+$string['questionformtagheader'] = '{$a} tags';
 $string['questionname'] = 'Question name';
 $string['questionnamecopy'] = '{$a} (copy)';
 $string['questionpreviewdefaults'] = 'Question preview defaults';
