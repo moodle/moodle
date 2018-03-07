@@ -408,7 +408,7 @@ abstract class moodleform_mod extends moodleform {
             } else {
                 $grade = $scale;
             }
-            if ($data['gradepass'] > $grade) {
+            if (unformat_float($data['gradepass']) > $grade) {
                 $errors['gradepass'] = get_string('gradepassgreaterthangrade', 'grades', $grade);
             }
         }
