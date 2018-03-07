@@ -398,6 +398,8 @@ class core_questionlib_testcase extends advanced_testcase {
     public function test_question_remove_stale_questions_from_category() {
         global $DB;
         $this->resetAfterTest(true);
+        $this->setAdminUser();
+
         $dg = $this->getDataGenerator();
         $course = $dg->create_course();
         $quiz = $dg->create_module('quiz', ['course' => $course->id]);
@@ -407,18 +409,28 @@ class core_questionlib_testcase extends advanced_testcase {
 
         $qcat1 = $qgen->create_question_category(['contextid' => $context->id]);
         $q1a = $qgen->create_question('shortanswer', null, ['category' => $qcat1->id]);     // Will be hidden.
-        $q1b = $qgen->create_question('random', null, ['category' => $qcat1->id]);          // Will not be used.
         $DB->set_field('question', 'hidden', 1, ['id' => $q1a->id]);
 
         $qcat2 = $qgen->create_question_category(['contextid' => $context->id]);
         $q2a = $qgen->create_question('shortanswer', null, ['category' => $qcat2->id]);     // Will be hidden.
         $q2b = $qgen->create_question('shortanswer', null, ['category' => $qcat2->id]);     // Will be hidden but used.
-        $q2c = $qgen->create_question('random', null, ['category' => $qcat2->id]);          // Will not be used.
-        $q2d = $qgen->create_question('random', null, ['category' => $qcat2->id]);          // Will be used.
         $DB->set_field('question', 'hidden', 1, ['id' => $q2a->id]);
         $DB->set_field('question', 'hidden', 1, ['id' => $q2b->id]);
         quiz_add_quiz_question($q2b->id, $quiz);
-        quiz_add_quiz_question($q2d->id, $quiz);
+        quiz_add_random_questions($quiz, 0, $qcat2->id, 1, false);
+
+        // We added one random question to the quiz and we expect the quiz to have only one random question.
+        $q2d = $DB->get_record_sql("SELECT q.*
+                                      FROM {question} q
+                                      JOIN {quiz_slots} s ON s.questionid = q.id
+                                     WHERE q.qtype = :qtype
+                                           AND s.quizid = :quizid",
+                array('qtype' => 'random', 'quizid' => $quiz->id), MUST_EXIST);
+
+        // The following 2 lines have to be after the quiz_add_random_questions() call above.
+        // Otherwise, quiz_add_random_questions() will to be "smart" and use them instead of creating a new "random" question.
+        $q1b = $qgen->create_question('random', null, ['category' => $qcat1->id]);          // Will not be used.
+        $q2c = $qgen->create_question('random', null, ['category' => $qcat2->id]);          // Will not be used.
 
         $this->assertEquals(2, $DB->count_records('question', ['category' => $qcat1->id]));
         $this->assertEquals(4, $DB->count_records('question', ['category' => $qcat2->id]));

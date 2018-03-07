@@ -94,5 +94,74 @@ function xmldb_quiz_upgrade($oldversion) {
     // Automatically generated Moodle v3.4.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2018020700) {
+
+        $table = new xmldb_table('quiz_slots');
+
+        // Define field questioncategoryid to be added to quiz_slots.
+        $field = new xmldb_field('questioncategoryid', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'questionid');
+        // Conditionally launch add field questioncategoryid.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define key questioncategoryid (foreign) to be added to quiz_slots.
+        $key = new xmldb_key('questioncategoryid', XMLDB_KEY_FOREIGN, array('questioncategoryid'), 'questioncategory', array('id'));
+        // Launch add key questioncategoryid.
+        $dbman->add_key($table, $key);
+
+        // Define field includingsubcategories to be added to quiz_slots.
+        $field = new xmldb_field('includingsubcategories', XMLDB_TYPE_INTEGER, '4', null, null, null, null, 'questioncategoryid');
+        // Conditionally launch add field includingsubcategories.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field tags to be added to quiz_slots.
+        $field = new xmldb_field('tags', XMLDB_TYPE_TEXT, null, null, null, null, null, 'includingsubcategories');
+        // Conditionally launch add field tags.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Quiz savepoint reached.
+        upgrade_mod_savepoint(true, 2018020700, 'quiz');
+    }
+
+    if ($oldversion < 2018020701) {
+        // This SQL fetches all "random" questions from the question bank.
+        $fromclause = "FROM {quiz_slots} qs
+                       JOIN {question} q ON q.id = qs.questionid
+                      WHERE q.qtype = ?";
+
+        // Get the total record count - used for the progress bar.
+        $total = $DB->count_records_sql("SELECT count(qs.id) $fromclause", array('random'));
+
+        // Get the records themselves.
+        $rs = $DB->get_recordset_sql("SELECT qs.id, q.category, q.questiontext $fromclause", array('random'));
+
+        $a = new stdClass();
+        $a->total = $total;
+        $a->done = 0;
+
+        // For each question, move the configuration data to the quiz_slots table.
+        $pbar = new progress_bar('updatequizslotswithrandom', 500, true);
+        foreach ($rs as $record) {
+            $data = new stdClass();
+            $data->id = $record->id;
+            $data->questioncategoryid = $record->category;
+            $data->includingsubcategories = empty($record->questiontext) ? 0 : 1;
+            $DB->update_record('quiz_slots', $data);
+
+            // Update progress.
+            $a->done++;
+            $pbar->update($a->done, $a->total, get_string('updatequizslotswithrandomxofy', 'quiz', $a));
+        }
+        $rs->close();
+
+        // Quiz savepoint reached.
+        upgrade_mod_savepoint(true, 2018020701, 'quiz');
+    }
+
     return true;
 }

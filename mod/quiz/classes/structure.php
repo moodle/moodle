@@ -410,6 +410,23 @@ class structure {
     }
 
     /**
+     * Get a slot by it's slot number. Throws an exception if it is missing.
+     *
+     * @param int $slotnumber The slot number
+     * @return \stdClass
+     * @throws \coding_exception
+     */
+    public function get_slot_by_number($slotnumber) {
+        foreach ($this->slots as $slot) {
+            if ($slot->slot == $slotnumber) {
+                return $slot;
+            }
+        }
+
+        throw new \coding_exception('The \'slotnumber\' could not be found.');
+    }
+
+    /**
      * Check whether adding a section heading is possible
      * @param int $pagenumber the number of the page.
      * @return boolean

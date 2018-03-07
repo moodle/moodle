@@ -122,41 +122,59 @@ class qtype_random extends question_type {
     /**
      * Random questions always get a question name that is Random (cateogryname).
      * This function is a centralised place to calculate that, given the category.
-     * @param object $category the category this question picks from. (Only ->name is used.)
+     * @param stdClass $category the category this question picks from. (Only ->name is used.)
      * @param bool $includesubcategories whether this question also picks from subcategories.
+     * @param string[] $tagnames Name of tags this question picks from.
      * @return string the name this question should have.
      */
-    public function question_name($category, $includesubcategories) {
+    public function question_name($category, $includesubcategories, $tagnames = []) {
+        $categoryname = '';
         if ($category->parent && $includesubcategories) {
-            $name = get_string('randomqplusname', 'qtype_random', shorten_text($category->name, 100));
+            $stringid = 'randomqplusname';
+            $categoryname = shorten_text($category->name, 100);
         } else if ($category->parent) {
-            $name = get_string('randomqname', 'qtype_random', shorten_text($category->name, 100));
+            $stringid = 'randomqname';
+            $categoryname = shorten_text($category->name, 100);
         } else if ($includesubcategories) {
             $context = context::instance_by_id($category->contextid);
 
             switch ($context->contextlevel) {
                 case CONTEXT_MODULE:
-                    $name = get_string('randomqplusnamemodule', 'qtype_random');
+                    $stringid = 'randomqplusnamemodule';
                     break;
                 case CONTEXT_COURSE:
-                    $name = get_string('randomqplusnamecourse', 'qtype_random');
+                    $stringid = 'randomqplusnamecourse';
                     break;
                 case CONTEXT_COURSECAT:
-                    $name = get_string('randomqplusnamecoursecat', 'qtype_random',
-                            shorten_text($context->get_context_name(false), 100));
+                    $stringid = 'randomqplusnamecoursecat';
+                    $categoryname = shorten_text($context->get_context_name(false), 100);
                     break;
                 case CONTEXT_SYSTEM:
-                    $name = get_string('randomqplusnamesystem', 'qtype_random');
+                    $stringid = 'randomqplusnamesystem';
                     break;
                 default: // Impossible.
-                    $name = '';
             }
         } else {
             // No question will ever be selected. So, let's warn the teacher.
-            $name = get_string('randomqnamefromtop', 'qtype_random');
+            $stringid = 'randomqnamefromtop';
         }
 
-        return $name;
+        if ($tagnames) {
+            $stringid .= 'tags';
+            $a = new stdClass();
+            if ($categoryname) {
+                $a->category = $categoryname;
+            }
+            $a->tags = implode(',', array_map(function($tagname) {
+                return explode(',', $tagname)[1];
+            }, $tagnames));
+        } else {
+            $a = $categoryname ? : null;
+        }
+
+        $name = get_string($stringid, 'qtype_random', $a);
+
+        return shorten_text($name, 255);
     }
 
     protected function set_selected_question_name($question, $randomname) {
@@ -172,16 +190,23 @@ class qtype_random extends question_type {
         $form->name = '';
         list($category) = explode(',', $form->category);
 
-        // In case someone set the question text to true/false in the old style, set it properly.
-        if ($form->questiontext['text']) {
-            $form->questiontext['text'] = '1';
-        } else if ($DB->record_exists('question_categories', ['id' => $category, 'parent' => 0])) {
-            // The chosen category is a top category.
-            $form->questiontext['text'] = '1';
-        } else {
-            $form->questiontext['text'] = '0';
+        if (!$form->includesubcategories) {
+            if ($DB->record_exists('question_categories', ['id' => $category, 'parent' => 0])) {
+                // The chosen category is a top category.
+                $form->includesubcategories = true;
+            }
         }
+
         $form->tags = array();
+
+        if (empty($form->fromtags)) {
+            $form->fromtags = array();
+        }
+
+        $form->questiontext = array(
+            'text'   => $form->includesubcategories ? '1' : '0',
+            'format' => 0
+        );
 
         // Name is not a required field for random questions, but
         // parent::save_question Assumes that it is.
@@ -201,7 +226,7 @@ class qtype_random extends question_type {
         // We also force the question name to be 'Random (categoryname)'.
         $category = $DB->get_record('question_categories',
                 array('id' => $question->category), '*', MUST_EXIST);
-        $updateobject->name = $this->question_name($category, !empty($question->questiontext));
+        $updateobject->name = $this->question_name($category, $question->includesubcategories, $question->fromtags);
         return $DB->update_record('question', $updateobject);
     }
 

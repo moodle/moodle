@@ -110,6 +110,7 @@ class behat_partial_named_selector extends \Behat\Mink\Selector\PartialNamedSele
         'xpath_element' => 'xpath_element',
         'form_row' => 'form_row',
         'autocomplete_selection' => 'autocomplete_selection',
+        'autocomplete_suggestions' => 'autocomplete_suggestions',
     );
 
     /**
@@ -194,6 +195,9 @@ XPATH
 XPATH
         , 'autocomplete_selection' => <<<XPATH
 .//div[contains(concat(' ', normalize-space(@class), ' '), concat(' ', 'form-autocomplete-selection', ' '))]/span[@role='listitem'][contains(normalize-space(.), %locator%)]
+XPATH
+        , 'autocomplete_suggestions' => <<<XPATH
+.//ul[contains(concat(' ', normalize-space(@class), ' '), concat(' ', 'form-autocomplete-suggestions', ' '))]/li[@role='option'][contains(normalize-space(.), %locator%)]
 XPATH
     );
 

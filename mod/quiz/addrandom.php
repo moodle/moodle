@@ -102,7 +102,15 @@ if ($data = $mform->get_data()) {
                 'It seems a form was submitted without any button being pressed???');
     }
 
-    quiz_add_random_questions($quiz, $addonpage, $categoryid, $data->numbertoadd, $includesubcategories);
+    if (empty($data->fromtags)) {
+        $data->fromtags = [];
+    }
+
+    $tagids = array_map(function($tagstrings) {
+        return (int)explode(',', $tagstrings)[0];
+    }, $data->fromtags);
+
+    quiz_add_random_questions($quiz, $addonpage, $categoryid, $data->numbertoadd, $includesubcategories, $tagids);
     quiz_delete_previews($quiz);
     quiz_update_sumgrades($quiz);
     redirect($returnurl);
