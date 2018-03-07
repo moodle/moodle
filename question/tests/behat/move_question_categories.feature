@@ -23,7 +23,7 @@ Feature: A teacher can move question categories in the question bank
   @javascript
   Scenario: A question category can be moved to another context
     When I follow "Test quiz"
-    And I navigate to "Categories" in current page administration
+    And I navigate to "Categories" node in "Quiz administration > Question bank"
     And I click on "Parent category" "field"
     And I click on "//optgroup[@label='Quiz: Test quiz']//option[normalize-space(text())='Top']" "xpath_element"
     And I set the field "Name" to "Test category"
