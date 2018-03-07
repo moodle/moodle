@@ -324,6 +324,31 @@ class core_blocklib_testcase extends advanced_testcase {
         $this->assertEquals('4', $blocks[1]->instance->weight);
     }
 
+    /**
+     * Test block instances.
+     *
+     * @return null
+     */
+    public function test_block_instances() {
+        $this->purge_blocks();
+
+        // Set up fixture.
+        $regionname = 'a-region';
+        $blockname = $this->get_a_known_block_type();
+        $context = context_system::instance();
+
+        list($page, $blockmanager) = $this->get_a_page_and_block_manager(array($regionname),
+            $context, 'page-type');
+
+        $blockmanager->add_blocks(array($regionname => array($blockname, $blockname)), null, null, false, 3);
+        $blockmanager->load_blocks();
+
+        $blocks = $blockmanager->get_blocks_for_region($regionname);
+
+        $this->assertInstanceOf('\block_base', block_instance($blockname, $blocks[0]->instance));
+        $this->assertInstanceOf('\block_base', block_instance_by_id($blocks[0]->instance->id));
+    }
+
     public function test_block_not_included_in_different_context() {
         $this->purge_blocks();
 
