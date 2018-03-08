@@ -344,4 +344,14 @@ $definitions = array(
         'simpledata' => true,
         'staticacceleration' => true,
     ),
+
+    // This is the user's pre sign-up session cache.
+    // This cache is used to record the user's pre sign-up data such as
+    // age of digital consent (minor) status, accepted policies, etc.
+    'presignup' => array(
+        'mode' => cache_store::MODE_SESSION,
+        'simplekeys' => true,
+        'simpledata' => true,
+        'ttl' => 1800,
+    ),
 );
