@@ -10579,3 +10579,50 @@ class admin_setting_filetypes extends admin_setting_configtext {
         return true;
     }
 }
+
+/**
+ * Used to validate the content and format of the age of digital consent map and ensuring it is parsable.
+ *
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright 2018 Mihail Geshoski <mihail@moodle.com>
+ */
+class admin_setting_agedigitalconsentmap extends admin_setting_configtextarea {
+
+    /**
+     * Constructor.
+     *
+     * @param string $name
+     * @param string $visiblename
+     * @param string $description
+     * @param mixed $defaultsetting string or array
+     * @param mixed $paramtype
+     * @param string $cols
+     * @param string $rows
+     */
+    public function __construct($name, $visiblename, $description, $defaultsetting, $paramtype = PARAM_RAW,
+                                $cols = '60', $rows = '8') {
+        parent::__construct($name, $visiblename, $description, $defaultsetting, $paramtype, $cols, $rows);
+        // Pre-set force LTR to false.
+        $this->set_force_ltr(false);
+    }
+
+    /**
+     * Validate the content and format of the age of digital consent map to ensure it is parsable.
+     *
+     * @param string $data The age of digital consent map from text field.
+     * @return mixed bool true for success or string:error on failure.
+     */
+    public function validate($data) {
+        if (empty($data)) {
+            return true;
+        }
+
+        try {
+            \core_auth\digital_consent::parse_age_digital_consent_map($data);
+        } catch (\moodle_exception $e) {
+            return get_string('invalidagedigitalconsent', 'admin', $e->getMessage());
+        }
+
+        return true;
+    }
+}
