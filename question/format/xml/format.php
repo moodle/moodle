@@ -1478,7 +1478,7 @@ class qformat_xml extends qformat_default {
         if (core_tag_tag::is_enabled('core_question', 'question')) {
             $tagobjects = core_tag_tag::get_item_tags('core_question', 'question', $question->id);
 
-            if (!is_null($tagobjects)) {
+            if (!empty($tagobjects)) {
                 $context = context::instance_by_id($contextid);
                 $sortedtagobjects = question_sort_tags($tagobjects, $context, [$this->course]);
 
