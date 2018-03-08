@@ -4379,6 +4379,30 @@ EOD;
     }
 
     /**
+     * Render the verify age and location page into a nice template for the theme.
+     *
+     * @param \core_auth\output\verify_age_location_page $page The renderable
+     * @return string
+     */
+    protected function render_verify_age_location_page($page) {
+        $context = $page->export_for_template($this);
+
+        return $this->render_from_template('core/auth_verify_age_location_page', $context);
+    }
+
+    /**
+     * Render the digital minor contact information page into a nice template for the theme.
+     *
+     * @param \core_auth\output\digital_minor_page $page The renderable
+     * @return string
+     */
+    protected function render_digital_minor_page($page) {
+        $context = $page->export_for_template($this);
+
+        return $this->render_from_template('core/auth_digital_minor_page', $context);
+    }
+
+    /**
      * Renders a progress bar.
      *
      * Do not use $OUTPUT->render($bar), instead use progress_bar::create().
