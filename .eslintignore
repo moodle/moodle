@@ -41,7 +41,6 @@ lib/html2text/
 lib/markdown/
 lib/recaptchalib.php
 lib/xhprof/
-lib/xmlize.php
 lib/horde/
 lib/requirejs/
 lib/amd/src/loglevel.js
