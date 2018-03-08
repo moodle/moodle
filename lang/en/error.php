@@ -23,6 +23,11 @@
  */
 
 $string['activityisscheduledfordeletion'] = 'Activity deletion in progress...';
+$string['agedigitalconsentmapinvalidage'] = '"{$a}" is not a valid value for age.';
+$string['agedigitalconsentmapinvalidcomma'] = '"{$a}" has more or less than one comma separator.';
+$string['agedigitalconsentmapinvalidcountry'] = '"{$a}" is not a valid value for country.';
+$string['agedigitalconsentmapinvaliddefault'] = 'Default (*) value is missing.';
+$string['agelocationverificationdisabled'] = 'Age and location verification disabled';
 $string['authnotexisting'] = 'The autorization plugin doesn\'t exist';
 $string['backupcontainexternal'] = 'This backup file contains external Moodle Network Hosts that are not configured locally';
 $string['backuptablefail'] = 'Backup tables could NOT be set up successfully!';
@@ -177,6 +182,7 @@ $string['confirmationnotenabled'] = 'User confirmation is not enabled on this si
 $string['confirmsesskeybad'] = 'Sorry, but your session key could not be confirmed to carry out this action.  This security feature prevents against accidental or malicious execution of important functions in your name.  Please make sure you really wanted to execute this function.';
 $string['couldnotassignrole'] = 'A serious but unspecified error occurred while trying to assign a role to you';
 $string['couldnotupdatenoexistinguser'] = 'Cannot update the user - user doesn\'t exist';
+$string['couldnotverifyagedigitalconsent'] = 'An error occurred while trying to verify the age of digital consent.<br />Please contact administrator.';
 $string['countriesphpempty'] = 'Error: The file countries.php in language pack {$a} is empty or missing.';
 $string['coursedoesnotbelongtocategory'] = 'The course doesn\'t belong to this category';
 $string['courseformatnotfound'] = 'The course format \'{$a}\' doesn\'t exist or is not recognized';
@@ -578,6 +584,7 @@ $string['usernotupdatederror'] = 'User not updated - error';
 $string['usernotupdatednotexists'] = 'User not updated - does not exist';
 $string['userquotalimit'] = 'You have reached your file quota limit.';
 $string['userselectortoomany'] = 'user_selector got more than one selected user, even though multiselect is false.';
+$string['verifyagedigitalconsentnotpossible'] = 'Sorry, digital age consent verification is not possible at this time.';
 $string['wrongcall'] = 'This script is called wrongly';
 $string['wrongcontextid'] = 'Context ID was incorrect (cannot find it)';
 $string['wrongdestpath'] = 'Wrong destination path';
