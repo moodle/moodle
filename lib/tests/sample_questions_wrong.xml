@@ -4,7 +4,6 @@
   <question type="category">
     <category>
         <text>$course$/Default for Scratch/input_samples</text>
-
     </category>
   </question>
 
@@ -15,7 +14,6 @@
     </name>
     <questiontext format="html">
       <text><![CDATA[<p>Type in {@ta@}.<br></p><p>[[input:ans1]]</p><div>[[validation:ans1]]</div>]]></text>
- 
       <text></text>
     </generalfeedback>
     <defaultgrade>1.0000000</defaultgrade>

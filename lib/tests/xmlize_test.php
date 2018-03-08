@@ -53,7 +53,7 @@ class core_xmlize_testcase extends basic_testcase {
     public function test_xmlimport_of_wrong_file() {
         $xml = file_get_contents(__DIR__ . '/sample_questions_wrong.xml');
         $this->expectException('xml_format_exception');
-        $this->expectExceptionMessage('Error parsing XML: Mismatched tag at line 20, char 23');
+        $this->expectExceptionMessage('Error parsing XML: Mismatched tag at line 18, char 23');
         $xmlnew = xmlize($xml, 1, "UTF-8", true);
     }
 }
