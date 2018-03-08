@@ -56,9 +56,13 @@ class company_user {
         $defaults = $company->get_user_defaults();
         $user = (object) array_merge( (array) $defaults, (array) $data);
 
-        $user->username = self::generate_username( $user->email, $data->use_email_as_username );
-        $user->username = clean_param($user->username, PARAM_USERNAME);
-        
+        if (!empty($data->username)) {
+            $user->username = $data->username;
+        } else {
+            $user->username = self::generate_username( $user->email, $data->use_email_as_username );
+            $user->username = clean_param($user->username, PARAM_USERNAME);
+        }
+
         // Deal with the company theme.
         $user->theme = $company->get_theme();
 
