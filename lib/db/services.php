@@ -55,6 +55,15 @@ $functions = array(
         'methodname'  => 'is_minor',
         'description' => 'Requests a check if a user is a digital minor.',
         'type'        => 'read',
+        'ajax'          => true,
+        'loginrequired' => false,
+    ),
+    'core_auth_is_age_digital_consent_verification_enabled' => array(
+        'classname'   => 'core_auth_external',
+        'methodname'  => 'is_age_digital_consent_verification_enabled',
+        'description' => 'Checks if age digital consent verification is enabled.',
+        'type'        => 'read',
+        'ajax'          => true,
         'loginrequired' => false,
     ),
     'core_badges_get_user_badges' => array(
