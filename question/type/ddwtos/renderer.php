@@ -51,16 +51,12 @@ class qtype_ddwtos_renderer extends qtype_elements_embedded_in_question_text_ren
         foreach ($question->places as $placeno => $place) {
             $inputids[$placeno] = $this->box_id($qa, $question->field($placeno));
         }
-
         $params = array(
             'inputids' => $inputids,
             'topnode' => 'div.que.ddwtos#q' . $qa->get_slot(),
             'readonly' => $options->readonly
         );
-
-        $PAGE->requires->yui_module('moodle-qtype_ddwtos-dd',
-                'M.qtype_ddwtos.init_question', array($params));
-
+        $PAGE->requires->js_call_amd('qtype_ddwtos/ddwtos', 'init', array($params));
         return $result;
     }
 
