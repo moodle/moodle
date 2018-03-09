@@ -7714,6 +7714,37 @@ function component_callback_exists($component, $function) {
 }
 
 /**
+ * Call the specified callback method on the provided class.
+ *
+ * If the callback returns null, then the default value is returned instead.
+ * If the class does not exist, then the default value is returned.
+ *
+ * @param   string      $classname The name of the class to call upon.
+ * @param   string      $methodname The name of the staticically defined method on the class.
+ * @param   array       $params The arguments to pass into the method.
+ * @param   mixed       $default The default value.
+ * @return  mixed       The return value.
+ */
+function component_class_callback($classname, $methodname, array $params, $default = null) {
+    if (!class_exists($classname)) {
+        return $default;
+    }
+
+    if (!method_exists($classname, $methodname)) {
+        return $default;
+    }
+
+    $fullfunction = $classname . '::' . $methodname;
+    $result = call_user_func_array($fullfunction, $params);
+
+    if (null === $result) {
+        return $default;
+    } else {
+        return $result;
+    }
+}
+
+/**
  * Checks whether a plugin supports a specified feature.
  *
  * @param string $type Plugin type e.g. 'mod'

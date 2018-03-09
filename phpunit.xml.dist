@@ -93,6 +93,9 @@
         <testsuite name="core_course_testsuite">
             <directory suffix="_test.php">course/tests</directory>
         </testsuite>
+        <testsuite name="core_privacy_testsuite">
+            <directory suffix="_test.php">privacy/tests</directory>
+        </testsuite>
         <testsuite name="core_question_testsuite">
             <directory suffix="_test.php">question/engine/tests</directory>
             <directory suffix="_test.php">question/tests</directory>

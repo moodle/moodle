@@ -2072,6 +2072,7 @@ $string['userselectorpreserveselected'] = 'Keep selected users, even if they no 
 $string['userselectorsearchanywhere'] = 'Match the search text anywhere in the displayed fields';
 $string['usersnew'] = 'New users';
 $string['usersnoaccesssince'] = 'Inactive for more than';
+$string['userpreferences'] = 'User preferences';
 $string['userswithfiles'] = 'Users with files';
 $string['useruploadtype'] = 'User upload type: {$a}';
 $string['userzones'] = 'User zones';
