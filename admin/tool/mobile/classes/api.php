@@ -149,6 +149,8 @@ class api {
             'maintenancemessage' => $maintenancemessage,
             'mobilecssurl' => !empty($CFG->mobilecssurl) ? $CFG->mobilecssurl : '',
             'tool_mobile_disabledfeatures' => get_config('tool_mobile', 'disabledfeatures'),
+            'country' => clean_param($CFG->country, PARAM_NOTAGS),
+            'agedigitalconsentverification' => \core_auth\digital_consent::is_age_digital_consent_verification_enabled(),
         );
 
         $typeoflogin = get_config('tool_mobile', 'typeoflogin');
@@ -178,6 +180,12 @@ class api {
         $identityprovidersdata = \auth_plugin_base::prepare_identity_providers_for_output($identityproviders, $OUTPUT);
         if (!empty($identityprovidersdata)) {
             $settings['identityproviders'] = $identityprovidersdata;
+        }
+
+        // If age is verified, return also the admin contact details.
+        if ($settings['agedigitalconsentverification']) {
+            $settings['supportname'] = clean_param($CFG->supportname, PARAM_NOTAGS);
+            $settings['supportemail'] = clean_param($CFG->supportemail, PARAM_EMAIL);
         }
 
         return $settings;
