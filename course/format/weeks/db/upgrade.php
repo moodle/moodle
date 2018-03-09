@@ -82,5 +82,15 @@ function xmldb_format_weeks_upgrade($oldversion) {
     // Automatically generated Moodle v3.3.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2017051501) {
+
+        // During upgrade to Moodle 3.3 it could happen that general section (section 0) became 'invisible'.
+        // It should always be visible.
+        $DB->execute("UPDATE {course_sections} SET visible=1 WHERE visible=0 AND section=0 AND course IN
+        (SELECT id FROM {course} WHERE format=?)", ['weeks']);
+
+        upgrade_plugin_savepoint(true, 2017051501, 'format', 'weeks');
+    }
+
     return true;
 }
