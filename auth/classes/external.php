@@ -287,4 +287,53 @@ class core_auth_external extends external_api {
             )
         );
     }
+
+    /**
+     * Describes the parameters for is_age_digital_consent_verification_enabled.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.3
+     */
+    public static function is_age_digital_consent_verification_enabled_parameters() {
+        return new external_function_parameters(array());
+    }
+
+    /**
+     * Checks if age digital consent verification is enabled.
+     *
+     * @return array status (true if digital consent verification is enabled, false otherwise.)
+     * @since Moodle 3.3
+     * @throws moodle_exception
+     */
+    public static function is_age_digital_consent_verification_enabled() {
+        global $PAGE;
+
+        $context = context_system::instance();
+        $PAGE->set_context($context);
+
+        $status = false;
+        // Check if verification is enabled.
+        if (\core_auth\digital_consent::is_age_digital_consent_verification_enabled()) {
+            $status = true;
+        }
+
+        return array(
+            'status' => $status
+        );
+    }
+
+    /**
+     * Describes the is_age_digital_consent_verification_enabled return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.3
+     */
+    public static function is_age_digital_consent_verification_enabled_returns() {
+        return new external_single_structure(
+            array(
+                'status' => new external_value(PARAM_BOOL, 'True if digital consent verification is enabled,
+                    false otherwise.')
+            )
+        );
+    }
 }
