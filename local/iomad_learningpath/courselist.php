@@ -40,7 +40,7 @@ $PAGE->set_context($context);
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('admin');
 $PAGE->set_title(get_string('managetitle', 'local_iomad_learningpath'));
-$PAGE->set_heading(get_string('learningpathmanage', 'local_iomad_learningpath'));
+$PAGE->set_heading(get_string('managecourses', 'local_iomad_learningpath'));
 //$PAGE->requires->js_call_amd('local_iomad_learningpath/manage', 'init');
 $output = $PAGE->get_renderer('local_iomad_learningpath');
 
@@ -48,9 +48,12 @@ $output = $PAGE->get_renderer('local_iomad_learningpath');
 $companyid = iomad::get_my_companyid($context);
 $companypaths = new local_iomad_learningpath\companypaths($companyid, $context);
 $path = $companypaths->get_path($id);
+$companypaths->breadcrumb(get_string('managecourses', 'local_iomad_learningpath'), $url);
+$courses = $companypaths->get_courselist($id);
+$prospectivecourses = $companypaths->get_prospective_courses($courses);
 
 // Get renderer for page (and pass data).
-$courselist_page = new local_iomad_learningpath\output\courselist_page($context, $path);
+$courselist_page = new local_iomad_learningpath\output\courselist_page($context, $path, $courses, $prospectivecourses);
 
 echo $OUTPUT->header();
 

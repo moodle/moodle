@@ -38,9 +38,15 @@ class courselist_page implements renderable, templatable {
 
     protected $path;
 
-    public function __construct($context, $path) {
+    protected $courses;
+
+    protected $prospectivecourses;
+
+    public function __construct($context, $path, $courses, $prospectivecourses) {
         $this->context = $context;
         $this->path = $path;
+        $this->courses = $courses;
+        $this->prospectivecourses = $prospectivecourses;
     }
 
     /**
@@ -51,6 +57,10 @@ class courselist_page implements renderable, templatable {
     public function export_for_template(renderer_base $output) {
         $data = new stdClass();
         $data->path = $this->path;
+        $data->courses = array_values($this->courses);
+        $data->iscourses = !empty($this->courses);
+        $data->prospectivecourses = array_values($this->prospectivecourses);
+        $data->isprospectivecourses = !empty($this->prospectivecourses);
 
         return $data;
     }

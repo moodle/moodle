@@ -34,9 +34,12 @@ use stdClass;
 
 class editpath_page implements renderable, templatable {
 
+    protected $companypaths;
+
     protected $form;
 
-    public function __construct($form) {
+    public function __construct($companypaths, $form) {
+        $this->companypaths = $companypaths;
         $this->form = $form;
     }
 
@@ -47,6 +50,7 @@ class editpath_page implements renderable, templatable {
      */
     public function export_for_template(renderer_base $output) {
         $data = new stdClass();
+        $data->company = $this->companypaths->get_company();
         $data->form = $this->form->render();
 
         return $data;

@@ -45,6 +45,7 @@ $output = $PAGE->get_renderer('local_iomad_learningpath');
 $companyid = iomad::get_my_companyid($context);
 $companypaths = new local_iomad_learningpath\companypaths($companyid, $context);
 $paths = $companypaths->get_paths();
+$companypaths->breadcrumb();
 
 // Get renderer for page (and pass data).
 $manage_page = new local_iomad_learningpath\output\manage_page($context, $paths);
