@@ -2456,7 +2456,7 @@ function quiz_build_random_question_tag_json($tagrecords) {
             ];
         } else if ($tag = core_tag_tag::get_by_name(0, $tagrecord->name, 'id, name')) {
             $tags[] = [
-                'id' => $tag->id,
+                'id' => (int)$tag->id,
                 'name' => $tagrecord->name
             ];
         } else {
