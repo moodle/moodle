@@ -10,6 +10,10 @@
 
 <div class="row">
     <div class="col-sm-6">
+        <div class="form-group">
+            <label for="selectedfilter">{{# str }}filter, local_iomad_learningpath{{/ str }}</label>
+            <input class="form-control" type="text" name="selectedfilter">
+        </div>
         <div class="card bg-light">
             <div class="card-header">
                 {{# str }}coursesinpath, local_iomad_learningpath{{/ str }}
@@ -29,9 +33,14 @@
 
     </div>
     <div class="col-sm-6">
+        <div class="form-group">
+            <label for="coursefilter">{{# str }}filter, local_iomad_learningpath{{/ str }}</label>
+            <input id="coursefilter" class="form-control" type="text" name="coursefilter">
+        </div>
         <div class="card bg-light">
             <div class="card-header">
-                {{# str }}prospectivecourses, local_iomad_learningpath{{/ str }}
+                {{# str }}prospectivecourses, local_iomad_learningpath{{/ str }}<br />
+                <small>{{# str }}clicktoadd, local_iomad_learningpath{{/ str }}</small>
             </div>
             <div class="card-body card-block">
                 <p class="card-text">
@@ -41,11 +50,11 @@
                         </div>
                     {{/ isprospectivecourses }}
                     {{# isprospectivecourses }}
+                        <ul id="prospectivelist">
                         {{# prospectivecourses }}
-                            <ul>
-                                <li class="text-truncate" data-courseid="{{ id }}"><i class="fa fa-globe"></i> {{ fullname }}</li>
-                            </ul>
+                            <li class="text-truncate" data-courseid="{{ id }}"><i class="fa fa-globe"></i> {{ fullname }}</li>
                         {{/ prospectivecourses }}
+                        </ul>
                     {{/ isprospectivecourses }}
                 </p>
             </div>

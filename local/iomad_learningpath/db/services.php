@@ -36,4 +36,12 @@ $functions = array(
         'ajax' => true,
     ),
 
+    'local_iomad_learningpath_getprospectivecourses' => array(
+        'classname' => 'local_iomad_learningpath_external',
+        'methodname' => 'getprospectivecourses',
+        'classpath' => 'local/iomad_learningpath/externallib.php',
+        'description' => 'Read set of filtered courses for given company',
+        'type' => 'read',
+        'ajax' => true,
+    ),
 );

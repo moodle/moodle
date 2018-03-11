@@ -77,4 +77,73 @@ class local_iomad_learningpath_external extends external_api {
 
         return true;
     }
+
+    /**
+     * Returns description of method parameters
+     * @return external_function_parameters
+     */
+    public static function getprospectivecourses_parameters() {
+        return new external_function_parameters(
+            array(
+                'companyid' => new external_value(PARAM_INT, 'ID of Iomad Company'),
+                'filter' => new external_value(PARAM_TEXT, 'Filter course list returned', VALUE_DEFAULT, ''),
+                'excludeids' => new external_multiple_structure(new external_value(PARAM_INT, 'Course ID'), 'List of course IDs to exclude', VALUE_DEFAULT, array()),
+            )
+        );
+    }
+
+    /** 
+     * Returns description of method result
+     * @return external_description
+     */
+    public static function getprospectivecourses_returns() {
+        return new external_multiple_structure(
+            new external_single_structure(
+                array(
+                    'id' => new external_value(PARAM_INT, 'Course ID'),
+                    'fullname' => new external_value(PARAM_TEXT, 'Course fullname'),
+                    'shortname' => new external_value(PARAM_TEXT, 'Course shortname'),
+                )
+            )
+        );
+    }
+
+    /**
+     * Activate / Deactivate learning path
+     * @param int $companyid 
+     * @param int $filter
+     * @param array $excludeids
+     * @throws invalid_parameter_exception
+     */
+    public static function getprospectivecourses($companyid, $filter = '', $excludeids = array() ) {
+        global $DB;
+
+        // Validate params
+        error_log('excludeids = ' . print_r($excludeids, true));
+        $params = self::validate_parameters(self::getprospectivecourses_parameters(), ['companyid' => $companyid, 'filter' => $filter, 'excludeids' => $excludeids]);
+
+        // Find/validate company
+        if (!$company = $DB->get_record('company', ['id' => $params['companyid']])) {
+            throw new invalid_parameter_exception("Company with id = {$params['companyid']} does not exist");
+        }
+
+        // Get full list of prospective courses
+        $companypaths = new local_iomad_learningpath\companypaths($companyid, context_system::instance());
+        $allcourses = $companypaths->get_prospective_courses();
+
+        // If filter, check there is a match
+        $courses = [];
+        foreach ($allcourses as $allcourse) {
+            if ($params['filter'] && (stripos($allcourse->fullname, $params['filter']) === false)) {
+                continue;
+            }
+            $courses[] = [
+                'id' => $allcourse->id,
+                'fullname' => $allcourse->fullname,
+                'shortname' => $allcourse->shortname,
+            ]; 
+        }
+
+        return $courses;
+    }
 }

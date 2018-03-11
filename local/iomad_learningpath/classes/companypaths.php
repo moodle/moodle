@@ -188,7 +188,7 @@ class companypaths {
      * @param array $courses already selected courses
      * @return array of courses
      */
-    public function get_prospective_courses($courses) {
+    public function get_prospective_courses($selectedcourses = []) {
         global $DB;
 
         $topdepartment = company::get_company_parentnode($this->companyid);
@@ -198,7 +198,7 @@ class companypaths {
         foreach ($depcourses as $depcourse) {
             
             // Do not include courses already selected
-            if (array_key_exists($depcourse->courseid, $courses)) {
+            if (array_key_exists($depcourse->courseid, $selectedcourses)) {
                 continue;
             }
             $course = $DB->get_record('course', ['id' => $depcourse->courseid]);
