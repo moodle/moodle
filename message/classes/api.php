@@ -789,7 +789,7 @@ class api {
         $conversationid = null;
         $ignoremessages = false;
         if (!empty($fromuserid)) {
-            $conversationid = \core_message\api::get_conversation_between_users([$touserid, $fromuserid]);
+            $conversationid = self::get_conversation_between_users([$touserid, $fromuserid]);
             if (!$conversationid) { // If there is no conversation between the users then there are no messages to mark.
                 $ignoremessages = true;
             }
@@ -797,16 +797,16 @@ class api {
 
         if (!empty($type)) {
             if ($type == MESSAGE_TYPE_NOTIFICATION) {
-                \core_message\api::mark_all_notifications_as_read($touserid, $fromuserid);
+                self::mark_all_notifications_as_read($touserid, $fromuserid);
             } else if ($type == MESSAGE_TYPE_MESSAGE) {
                 if (!$ignoremessages) {
-                    \core_message\api::mark_all_messages_as_read($touserid, $conversationid);
+                    self::mark_all_messages_as_read($touserid, $conversationid);
                 }
             }
         } else { // We want both.
-            \core_message\api::mark_all_notifications_as_read($touserid, $fromuserid);
+            self::mark_all_notifications_as_read($touserid, $fromuserid);
             if (!$ignoremessages) {
-                \core_message\api::mark_all_messages_as_read($touserid, $conversationid);
+                self::mark_all_messages_as_read($touserid, $conversationid);
             }
         }
     }
