@@ -102,11 +102,11 @@ class provider implements \core_privacy\local\metadata\provider, \core_privacy\l
     /**
      * Deletes all comments for a specified context.
      *
-     * @param  \core_privacy\local\request\deletion_criteria $criteria Details about which context to delete comments for.
+     * @param  \context $context Details about which context to delete comments for.
      */
-    public static function delete_comments_for_context(\core_privacy\local\request\deletion_criteria $criteria) {
+    public static function delete_comments_for_context(\context $context) {
         global $DB;
-        $DB->delete_records('comments', ['contextid' => $criteria->get_context()->id]);
+        $DB->delete_records('comments', ['contextid' => $context->id]);
     }
 
     /**
