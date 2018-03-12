@@ -123,43 +123,6 @@ if ($hassiteconfig) {
     $temp->add($setting);
     $ADMIN->add('authsettings', $temp);
 
-    $options = array(
-        0 => get_string('no'),
-        1 => get_string('yes')
-    );
-    $url = new moodle_url('/admin/settings.php?section=supportcontact');
-    $url = $url->out();
-    $setting = new admin_setting_configselect('agedigitalconsentverification',
-        new lang_string('agedigitalconsentverification', 'admin'),
-        new lang_string('agedigitalconsentverification_desc', 'admin', $url), 0, $options);
-    $setting->set_force_ltr(true);
-    $temp->add($setting);
-
-    $setting = new admin_setting_agedigitalconsentmap('agedigitalconsentmap',
-        new lang_string('ageofdigitalconsentmap', 'admin'),
-        new lang_string('ageofdigitalconsentmap_desc', 'admin'),
-        // See {@link https://gdpr-info.eu/art-8-gdpr/}.
-        implode(PHP_EOL, [
-            '*, 16',
-            'AT, 14',
-            'CZ, 13',
-            'DE, 14',
-            'DK, 13',
-            'ES, 13',
-            'FI, 15',
-            'GB, 13',
-            'HU, 14',
-            'IE, 13',
-            'LT, 16',
-            'LU, 16',
-            'NL, 16',
-            'PL, 13',
-            'SE, 13',
-        ]),
-        PARAM_RAW
-    );
-    $temp->add($setting);
-
     $temp = new admin_externalpage('authtestsettings', get_string('testsettings', 'core_auth'), new moodle_url("/auth/test_settings.php"), 'moodle/site:config', true);
     $ADMIN->add('authsettings', $temp);
 
