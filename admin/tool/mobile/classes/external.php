@@ -161,6 +161,13 @@ class external extends external_api {
                     ),
                     'Identity providers', VALUE_OPTIONAL
                 ),
+                'country' => new external_value(PARAM_NOTAGS, 'Default site country', VALUE_OPTIONAL),
+                'agedigitalconsentverification' => new external_value(PARAM_BOOL, 'Whether age digital consent verification
+                    is enabled.', VALUE_OPTIONAL),
+                'supportname' => new external_value(PARAM_NOTAGS, 'Site support contact name
+                    (only if age verification is enabled).', VALUE_OPTIONAL),
+                'supportemail' => new external_value(PARAM_EMAIL, 'Site support contact email
+                    (only if age verification is enabled).', VALUE_OPTIONAL),
                 'warnings' => new external_warnings(),
             )
         );
