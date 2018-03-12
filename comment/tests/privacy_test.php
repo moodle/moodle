@@ -115,8 +115,7 @@ class core_comment_privacy_testcase extends provider_testcase {
         $comment2->add('First comment for user 2 on comment 2');
 
         // Delete only for the first context. All records in the comments table for this context should be removed.
-        $deletioncriteria = new \core_privacy\local\request\deletion_criteria($coursecontext1);
-        \core_comment\privacy\provider::delete_comments_for_context($deletioncriteria);
+        \core_comment\privacy\provider::delete_comments_for_context($coursecontext1);
         // No records left here.
         $this->assertCount(0, $comment1->get_comments());
         // All of the records are left intact here.
