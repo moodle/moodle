@@ -81,4 +81,20 @@ class randomquestion_form extends \moodleform {
         $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
         $mform->closeHeaderBefore('buttonar');
     }
+
+    public function set_data($defaultvalues) {
+        $mform = $this->_form;
+
+        if ($defaultvalues->fromtags) {
+            $fromtagselement = $mform->getElement('fromtags');
+            foreach ($defaultvalues->fromtags as $fromtag) {
+                if (!$fromtagselement->optionExists($fromtag)) {
+                    $optionname = get_string('randomfromunavailabletag', 'mod_quiz', explode(',', $fromtag)[1]);
+                    $fromtagselement->addOption($optionname, $fromtag);
+                }
+            }
+        }
+
+        parent::set_data($defaultvalues);
+    }
 }

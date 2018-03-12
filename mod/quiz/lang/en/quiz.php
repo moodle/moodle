@@ -700,6 +700,7 @@ $string['randomcreate'] = 'Create random questions';
 $string['randomediting'] = 'Editing a random question';
 $string['randomfromcategory'] = 'Random question from category:';
 $string['randomfromexistingcategory'] = 'Random question from an existing category';
+$string['randomfromunavailabletag'] = '{$a} (unavailable)';
 $string['randomnumber'] = 'Number of random questions';
 $string['randomnosubcat'] = 'Questions from this category only, not its subcategories.';
 $string['randomquestion'] = 'Random question';
