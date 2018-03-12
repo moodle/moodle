@@ -92,6 +92,9 @@ class auth_email_external extends external_api {
         if ($sitepolicy = $manager->get_embed_url()) {
             $result['sitepolicy'] = $sitepolicy->out(false);
         }
+        if (!empty($CFG->sitepolicyhandler)) {
+            $result['sitepolicyhandler'] = $CFG->sitepolicyhandler;
+        }
         if (!empty($CFG->defaultcity)) {
             $result['defaultcity'] = $CFG->defaultcity;
         }
@@ -139,6 +142,7 @@ class auth_email_external extends external_api {
                 ),
                 'passwordpolicy' => new external_value(PARAM_RAW, 'Password policy', VALUE_OPTIONAL),
                 'sitepolicy' => new external_value(PARAM_RAW, 'Site policy', VALUE_OPTIONAL),
+                'sitepolicyhandler' => new external_value(PARAM_PLUGIN, 'Site policy handler', VALUE_OPTIONAL),
                 'defaultcity' => new external_value(PARAM_NOTAGS, 'Default city', VALUE_OPTIONAL),
                 'country' => new external_value(PARAM_ALPHA, 'Default country', VALUE_OPTIONAL),
                 'profilefields' => new external_multiple_structure(
