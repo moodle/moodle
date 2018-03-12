@@ -857,6 +857,9 @@ $string['pluginscheckfailed'] = 'Dependencies check failed for {$a->pluginslist}
 $string['pluginschecktodo'] = 'You must solve all the plugin requirements before proceeding to install this Moodle version!';
 $string['pluginsoverview'] = 'Plugins overview';
 $string['pluginsoverviewsee'] = 'See <a href="{$a->url}">plugins overview</a> page for more details.';
+$string['policysettings'] = 'Policy settings';
+$string['privacyandpolicies'] = 'Privacy and policies';
+$string['privacysettings'] = 'Privacy settings';
 $string['profilecategory'] = 'Category';
 $string['profilecategoryname'] = 'Category name (must be unique)';
 $string['profilecategorynamenotunique'] = 'This category name is already in use';
