@@ -137,7 +137,7 @@ class core_xml_parser {
         $level = &$this->level;
         if (!empty($name)) {
             if (empty($current[$level])) {
-                $current[$level] = null;
+                $current[$level] = '';
             } else if (array_key_exists(0, $current[$level])) {
                 if (count($current[$level]) == 1) {
                     $current[$level] = $current[$level][0]; // We remove array index if we only have a single entry.
