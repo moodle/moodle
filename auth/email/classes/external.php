@@ -112,11 +112,11 @@ class auth_email_external extends external_api {
         }
 
         if (signup_captcha_enabled()) {
-            require_once($CFG->libdir . '/recaptchalib.php');
-            // We return the public key, maybe we want to use the javascript api to get the image.
+            // With reCAPTCHA v2 the captcha will be rendered by the mobile client using just the publickey.
+            // For now include placeholders for the v1 paramaters to support older mobile app versions.
             $result['recaptchapublickey'] = $CFG->recaptchapublickey;
             list($result['recaptchachallengehash'], $result['recaptchachallengeimage'], $result['recaptchachallengejs']) =
-                recaptcha_get_challenge_hash_and_urls(RECAPTCHA_API_SECURE_SERVER, $CFG->recaptchapublickey);
+                array('', '', '');
         }
 
         $result['warnings'] = array();
@@ -307,11 +307,11 @@ class auth_email_external extends external_api {
 
         // Validate recaptcha.
         if (signup_captcha_enabled()) {
-            require_once($CFG->libdir . '/recaptchalib.php');
-            $response = recaptcha_check_answer($CFG->recaptchaprivatekey, getremoteaddr(), $params['recaptchachallengehash'],
-                                               $params['recaptcharesponse'], true);
-            if (!$response->is_valid) {
-                $errors['recaptcharesponse'] = $response->error;
+            require_once($CFG->libdir . '/recaptchalib_v2.php');
+            $response = recaptcha_check_response(RECAPTCHA_VERIFY_URL, $CFG->recaptchaprivatekey,
+                                                 getremoteaddr(), $params['recaptcharesponse']);
+            if (!$response['isvalid']) {
+                $errors['recaptcharesponse'] = $response['error'];
             }
         }
 
