@@ -30,3 +30,4 @@ $string['mentees:addinstance'] = 'Add a new mentees block';
 $string['mentees:myaddinstance'] = 'Add a new mentees block to Dashboard';
 $string['newmenteesblock'] = '(new Mentees block)';
 $string['pluginname'] = 'Mentees';
+$string['privacy:metadata'] = 'The Mentees block only shows data stored in other locations.';
