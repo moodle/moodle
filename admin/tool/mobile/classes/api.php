@@ -211,7 +211,9 @@ class api {
         }
 
         if (empty($section) or $section == 'sitepolicies') {
-            $settings->sitepolicy = $CFG->sitepolicy;
+            $manager = new \core_privacy\local\sitepolicy\manager();
+            $settings->sitepolicy = ($sitepolicy = $manager->get_embed_url()) ? $sitepolicy->out(false) : '';
+            $settings->sitepolicyhandler = $CFG->sitepolicyhandler;
             $settings->disableuserimages = $CFG->disableuserimages;
         }
 

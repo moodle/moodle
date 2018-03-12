@@ -1,6 +1,11 @@
 This files describes API changes in /auth/* - plugins,
 information provided here is intended especially for developers.
 
+=== 3.3.5 ===
+
+* Self registration plugins should use core_privacy\local\sitepolicy\manager instead of directly checking
+  $CFG->sitepolicy , especially in custom signup forms. See https://docs.moodle.org/dev/Site_policy_handler
+
 === 3.3 ===
 
 * Authentication plugins have been migrated to use the admin settings API.  Plugins should use a settings.php file to

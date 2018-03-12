@@ -2738,40 +2738,16 @@ function require_login($courseorid = null, $autologinguest = true, $cm = null, $
 
     // Check that the user has agreed to a site policy if there is one - do not test in case of admins.
     // Do not test if the script explicitly asked for skipping the site policies check.
-    // Also do not check during AJAX requests as they may be actually performed on pages where policies are accepted.
-    if (!$USER->policyagreed && !is_siteadmin() && !NO_SITEPOLICY_CHECK && !AJAX_SCRIPT) {
-        if (!empty($CFG->sitepolicyhandler)) {
-            try {
-                $handler = component_callback($CFG->sitepolicyhandler, 'site_policy_handler');
-            } catch (Exception $e) {
-                debugging('Error while trying to execute the site_policy_handler callback!');
-                $handler = false;
-            }
-            if (!empty($handler) && (empty($PAGE->url) || !$PAGE->url->compare(new moodle_url($handler), URL_MATCH_BASE))) {
-                if ($preventredirect) {
-                    throw new moodle_exception('sitepolicynotagreed', 'error', '', $handler);
-                }
-                if ($setwantsurltome) {
-                    $SESSION->wantsurl = qualified_me();
-                }
-                redirect($handler);
-            }
-        } else if (!empty($CFG->sitepolicy) and !isguestuser()) {
+    if (!$USER->policyagreed && !is_siteadmin() && !NO_SITEPOLICY_CHECK) {
+        $manager = new \core_privacy\local\sitepolicy\manager();
+        if ($policyurl = $manager->get_redirect_url(isguestuser())) {
             if ($preventredirect) {
-                throw new moodle_exception('sitepolicynotagreed', 'error', '', $CFG->sitepolicy);
+                throw new moodle_exception('sitepolicynotagreed', 'error', '', $policyurl->out());
             }
             if ($setwantsurltome) {
                 $SESSION->wantsurl = qualified_me();
             }
-            redirect($CFG->wwwroot .'/user/policy.php');
-        } else if (!empty($CFG->sitepolicyguest) and isguestuser()) {
-            if ($preventredirect) {
-                throw new moodle_exception('sitepolicynotagreed', 'error', '', $CFG->sitepolicyguest);
-            }
-            if ($setwantsurltome) {
-                $SESSION->wantsurl = qualified_me();
-            }
-            redirect($CFG->wwwroot .'/user/policy.php');
+            redirect($policyurl);
         }
     }
 

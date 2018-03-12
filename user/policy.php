@@ -38,28 +38,30 @@ if (!isloggedin()) {
     require_login();
 }
 
-if (isguestuser()) {
-    $sitepolicy = $CFG->sitepolicyguest;
-} else {
-    $sitepolicy = $CFG->sitepolicy;
-}
-
 if (!empty($SESSION->wantsurl)) {
     $return = $SESSION->wantsurl;
 } else {
     $return = $CFG->wwwroot.'/';
 }
 
+$sitepolicymanager = new \core_privacy\local\sitepolicy\manager();
+if (!empty($CFG->sitepolicyhandler)) {
+    // We are on the wrong page, site policies are managed by somebody else.
+    if ($sitepolicyurl = $sitepolicymanager->get_redirect_url(isguestuser())) {
+        redirect($sitepolicyurl);
+    } else {
+        redirect($return);
+    }
+}
+
+$sitepolicy = $sitepolicymanager->get_embed_url(isguestuser());
 if (empty($sitepolicy)) {
     // Nothing to agree to, sorry, hopefully we will not get to infinite loop.
     redirect($return);
 }
 
 if ($agree and confirm_sesskey()) {    // User has agreed.
-    if (!isguestuser()) {              // Don't remember guests.
-        $DB->set_field('user', 'policyagreed', 1, array('id' => $USER->id));
-    }
-    $USER->policyagreed = 1;
+    $sitepolicymanager->accept();
     unset($SESSION->wantsurl);
     redirect($return);
 }
