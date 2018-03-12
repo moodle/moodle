@@ -2193,7 +2193,7 @@ class lesson extends lesson_base {
 
     /**
      * Returns the link for the related activity
-     * @return array|false
+     * @return string
      */
     public function link_for_activitylink() {
         global $DB;
@@ -2203,9 +2203,9 @@ class lesson extends lesson_base {
             if ($modname) {
                 $instancename = $DB->get_field($modname, 'name', array('id' => $module->instance));
                 if ($instancename) {
-                    return html_writer::link(new moodle_url('/mod/'.$modname.'/view.php', array('id'=>$this->properties->activitylink)),
-                        get_string('activitylinkname', 'lesson', $instancename),
-                        array('class'=>'centerpadded lessonbutton standardbutton'));
+                    return html_writer::link(new moodle_url('/mod/'.$modname.'/view.php',
+                        array('id' => $this->properties->activitylink)), get_string('activitylinkname',
+                        'lesson', $instancename), array('class' => 'centerpadded lessonbutton standardbutton p-r-1'));
                 }
             }
         }
