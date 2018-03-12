@@ -24,7 +24,6 @@
 namespace core_privacy;
 use core_privacy\local\metadata\collection;
 use core_privacy\local\request\contextlist_collection;
-use core_privacy\local\request\deletion_criteria;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -252,20 +251,20 @@ class manager {
     }
 
     /**
-     * Delete user data for all users using the specified deletion_criteria.
+     * Delete all use data which matches the specified deletion criteria.
      *
-     * @param deletion_criteria $criteria the criteria object dictating what contexts will be deleted.
+     * @param   context         $context   The specific context to delete data for.
      */
-    public function delete_for_context(deletion_criteria $criteria) {
+    public function delete_for_context(\context $context) {
         foreach ($this->get_component_list() as $component) {
             if ($this->component_implements($component, \core_privacy\local\request\core_user_data_provider::class)) {
                 // This component knows about specific data that it owns.
                 // Have it delete all of that user data for the context.
-                $this->get_provider_classname($component)::delete_for_context($criteria);
+                $this->get_provider_classname($component)::delete_for_context($context);
             }
 
             // Delete any shared user data it doesn't know about.
-            local\request\helper::delete_for_context($component, $criteria);
+            local\request\helper::delete_for_context($component, $context);
         }
     }
 

@@ -29,7 +29,6 @@ global $CFG;
 
 use \core_privacy\local\metadata\collection;
 use \core_privacy\local\request\contextlist;
-use \core_privacy\local\request\deletion_criteria;
 use \core_privacy\local\request\approved_contextlist;
 
 /**
@@ -114,15 +113,13 @@ class core_privacy_legacy_polyfill_test extends advanced_testcase {
      * _delete_for_context can be successfully called.
      */
     public function test_delete_for_context() {
-        $criteria = new deletion_criteria(\context_system::instance());
-
         $mock = $this->createMock(test_legacy_polyfill_mock_wrapper::class);
         $mock->expects($this->once())
             ->method('get_return_value')
-            ->with('_delete_for_context', [$criteria]);
+            ->with('_delete_for_context', [\context_system::instance()]);
 
         test_legacy_polyfill_request_provider::$mock = $mock;
-        test_legacy_polyfill_request_provider::delete_for_context($criteria);
+        test_legacy_polyfill_request_provider::delete_for_context(\context_system::instance());
     }
 
     /**
@@ -242,11 +239,11 @@ class test_legacy_polyfill_request_provider implements \core_privacy\local\reque
 
 
     /**
-     * Delete all use data which matches the specified deletion_criteria.
+     * Delete all use data which matches the specified deletion criteria.
      *
-     * @param   deletion_criteria       $criteria   An object containing specific deletion criteria to delete for.
+     * @param   context         $context   The specific context to delete data for.
      */
-    public static function _delete_for_context(deletion_criteria $criteria) {
+    public static function _delete_for_context(\context $context) {
         return static::$mock->get_return_value(__FUNCTION__, func_get_args());
     }
 

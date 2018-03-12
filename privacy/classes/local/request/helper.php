@@ -86,13 +86,13 @@ class helper {
      *
      * This will handle deletion for things such as activity completion.
      *
-     * @param   string              $component The component being deleted for.
-     * @param   deletion_criteria   $criteria   An object containing specific deletion criteria to delete for.
+     * @param   string          $component The component being deleted for.
+     * @param   context         $context   The specific context to delete data for.
      */
-    public static function delete_for_context(string $component, deletion_criteria $criteria) {
+    public static function delete_for_context(string $component, \context $context) {
         if (strpos($component, 'mod_') === 0) {
             // Activity modules support data stored by core about them - for example, activity completion.
-            static::delete_for_context_course_module($component, $criteria->get_context());
+            static::delete_for_context_course_module($component, $context);
         }
     }
 
