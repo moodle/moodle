@@ -178,9 +178,8 @@ foreach ($filtersapplied as $filter) {
             break;
     }
 }
-
 // If course supports groups we may need to set a default.
-if ($groupid !== false) {
+if (!empty($groupid)) {
     if ($canaccessallgroups) {
         // User can access all groups, let them filter by whatever was selected.
         $filtersapplied[] = USER_FILTER_GROUP . ':' . $groupid;
