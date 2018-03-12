@@ -38,6 +38,7 @@ $string['taggeditemscontext'] = 'Tagged items context';
 $string['taggeditemscontext_help'] = 'You can limit the tag cloud to the tags that are present in the current course category, course or module';
 $string['tags:addinstance'] = 'Add a new tags block';
 $string['tags:myaddinstance'] = 'Add a new tags block to Dashboard';
+$string['privacy:metadata'] = 'The Tags block only shows data stored in other locations.';
 
 // Deprecated since 3.0.
 

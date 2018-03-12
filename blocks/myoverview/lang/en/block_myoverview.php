@@ -44,3 +44,4 @@ $string['sortbydates'] = 'Sort by dates';
 $string['timeline'] = 'Timeline';
 $string['viewcourse'] = 'View course';
 $string['viewcoursename'] = 'View course {$a}';
+$string['privacy:metadata'] = 'The Course overview block only shows data stored in other locations.';

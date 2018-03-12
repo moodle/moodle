@@ -25,3 +25,4 @@
 $string['calendar_month:addinstance'] = 'Add a new calendar block';
 $string['calendar_month:myaddinstance'] = 'Add a new calendar block to Dashboard';
 $string['pluginname'] = 'Calendar';
+$string['privacy:metadata'] = 'The Calendar block only displays existing calendar data.';
