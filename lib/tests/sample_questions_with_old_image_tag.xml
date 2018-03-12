@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<quiz>
+
+
+<!-- question: 0  -->
+  <question type="category">
+    <category>
+        <text>$course$/Default for Test images in backup</text>
+
+    </category>
+  </question>
+
+
+
+<!-- question: 5  -->
+  <question type="cloze">
+    <name><text>cloze question with image</text>
+</name>
+    <questiontext>
+<text><![CDATA[This is a multianswer question with an image in the old &quot;image&quot; field that was used in moodle 1.9.<br />Match the following cities with the correct state:<br />* San Francisco: {1:MULTICHOICE:=California#OK~Arizona#Wrong}<br />* Tucson: {1:MULTICHOICE:California#Wrong~%100%Arizona#OK}<br />* Los Angeles: {1:MULTICHOICE:=California#OK~Arizona#Wrong}<br />* Phoenix: {1:MULTICHOICE:%0%California#Wrong~=Arizona#OK}<br />The capital of France is {1:SHORTANSWER:%100%Paris#Congratulations!<br />~%50%Marseille#No, that is the second largest city in France (after<br />Paris).~*#Wrong answer. The capital of France is Paris, of course.}.<br />]]></text>
+    </questiontext>
+<image>moodle.png</image>
+    <image_base64>
+iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAHzSURBVDhPxZFbSJNhGIDXERsVGbKawWJaoyAYGeqNYgdl6zenrhhUlB0I6iJEbUl0WF1UUK2DYhDkGghu7Z+HraisPLAsu+0ygi66kCioqwg2t6f///YhzAVBXfTc/HzP9/J8L/wG/pG8QDw+TE+Xn/O+dva07MW5vZayys3yNp/ZwPPRBPuOHqGisordDc00Ki42bqhAjQ3Jid8jAvoL9vIt4qs463G73VRtrcFiseDvuSYG+TwB7y/zfdzHpzeDWachAjeuXyWkPqZ21zZ2Nrioa/JQarOjlK8jes7Eh/s18GwHRMxkgka+3lvEi1ubcgM63Zea6W5v5ESLB4fDwRVvNam+eRBey3TAxqObNl76rXwLFvAlsIyhC2W5gZ+JJmYixQS9q8RZZzpghwEr/R2LpYGPIYWZqJnYSWNugCkPPDDx1JddTyeZqCetasMdS6WB9OQB7Xet5kmbITeQntoP/YWEfSZxFoy5SA2YCXeukAJ+vD5MMl7Cw9YF2UAkGhIXmYSbZLgI9WKxOOukx52kVAvq6eXS6HOHyAyuRz0lN5hlwg19hcTOWqXQ0FxaXZPnGC4V7s+BsToRUM8YpdA2eHswG/DO2eDV7WpGWg30dpZIA5Nddkba5nP3+Epp4F2vwqh3CXeOLZyzwV/wvwPwC58bSNEdAkhaAAAAAElFTkSuQmCC
+
+    </image_base64>
+    <generalfeedback>
+<text></text>
+    </generalfeedback>
+    <shuffleanswers>0</shuffleanswers>
+</question>
+
+
+
+<!-- question: 4  -->
+  <question type="multichoice">
+    <name><text>mcq with image</text>
+</name>
+    <questiontext format="html">
+<text><![CDATA[This is a multichoice question with an image in the old &quot;image&quot; field that was used in Moodle 1.9]]></text>
+    </questiontext>
+    <image>moodle.png</image>
+    <image_base64>
+iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAHzSURBVDhPxZFbSJNhGIDXERsVGbKawWJaoyAYGeqNYgdl6zenrhhUlB0I6iJEbUl0WF1UUK2DYhDkGghu7Z+HraisPLAsu+0ygi66kCioqwg2t6f///YhzAVBXfTc/HzP9/J8L/wG/pG8QDw+TE+Xn/O+dva07MW5vZayys3yNp/ZwPPRBPuOHqGisordDc00Ki42bqhAjQ3Jid8jAvoL9vIt4qs463G73VRtrcFiseDvuSYG+TwB7y/zfdzHpzeDWachAjeuXyWkPqZ21zZ2Nrioa/JQarOjlK8jes7Eh/s18GwHRMxkgka+3lvEi1ubcgM63Zea6W5v5ESLB4fDwRVvNam+eRBey3TAxqObNl76rXwLFvAlsIyhC2W5gZ+JJmYixQS9q8RZZzpghwEr/R2LpYGPIYWZqJnYSWNugCkPPDDx1JddTyeZqCetasMdS6WB9OQB7Xet5kmbITeQntoP/YWEfSZxFoy5SA2YCXeukAJ+vD5MMl7Cw9YF2UAkGhIXmYSbZLgI9WKxOOukx52kVAvq6eXS6HOHyAyuRz0lN5hlwg19hcTOWqXQ0FxaXZPnGC4V7s+BsToRUM8YpdA2eHswG/DO2eDV7WpGWg30dpZIA5Nddkba5nP3+Epp4F2vwqh3CXeOLZyzwV/wvwPwC58bSNEdAkhaAAAAAElFTkSuQmCC
+
+    </image_base64>
+    <generalfeedback>
+<text></text>
+    </generalfeedback>
+    <defaultgrade>1</defaultgrade>
+    <penalty>0.1</penalty>
+    <hidden>0</hidden>
+    <shuffleanswers>1</shuffleanswers>
+    <single>true</single>
+    <shuffleanswers>true</shuffleanswers>
+    <correctfeedback>      <text></text>
+</correctfeedback>
+    <partiallycorrectfeedback>      <text></text>
+</partiallycorrectfeedback>
+    <incorrectfeedback>      <text></text>
+</incorrectfeedback>
+    <answernumbering>abc</answernumbering>
+      <answer fraction="0">
+        <text>
+wrong answer
+        </text>
+      <feedback>
+          <text>
+
+          </text>
+      </feedback>
+    </answer>
+      <answer fraction="0">
+        <text>
+another wrong answer
+        </text>
+      <feedback>
+          <text>
+
+          </text>
+      </feedback>
+    </answer>
+      <answer fraction="100">
+        <text>
+right answer
+        </text>
+      <feedback>
+          <text>
+
+          </text>
+      </feedback>
+    </answer>
+</question>
+
+
+</quiz>

@@ -56,4 +56,16 @@ class core_xmlize_testcase extends basic_testcase {
         $this->expectExceptionMessage('Error parsing XML: Mismatched tag at line 18, char 23');
         $xmlnew = xmlize($xml, 1, "UTF-8", true);
     }
+
+    /**
+     * Test an XML import using legacy question data with old image tag.
+     */
+    public function test_xmlimport_of_sample_question_with_old_image_tag() {
+        $xml = file_get_contents(__DIR__ . '/sample_questions_with_old_image_tag.xml');
+        $serialised = file_get_contents(__DIR__ . '/sample_questions_with_old_image_tag.ser');
+
+        // Compare the legacy representation in its serialized state and after unserialization.
+        $this->assertEquals($serialised, serialize(xmlize($xml)));
+        $this->assertEquals(unserialize($serialised), xmlize($xml));
+    }
 }
