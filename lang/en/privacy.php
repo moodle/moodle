@@ -22,4 +22,4 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['privacy:metadata'] = 'The privacy subsystem does not store any data of it\'s own and is designed to act as a conduit between components and the interface used to describe, export, and remove their data.';
+$string['privacy:metadata'] = 'The privacy subsystem does not store any data of its own and is designed to act as a channel between components and the interface used to describe, export, and remove their data.';
