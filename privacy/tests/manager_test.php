@@ -190,4 +190,15 @@ class privacy_manager_testcase extends advanced_testcase {
         $this->expectException(moodle_exception::class);
         $mockman->delete_data_for_user($contextlistcollection);
     }
+
+    /**
+     * Ensure that all installed plugins can provide metadata.
+     *
+     * This really just checks that all providers can be safely autoloaded.
+     */
+    public function test_installed_plugins() {
+        $manager = new \core_privacy\manager();
+        $metadata = $manager->get_metadata_for_components();
+        $this->assertNotEmpty($metadata);
+    }
 }
