@@ -26,7 +26,6 @@ namespace core_privacy\local;
 use \core_privacy\local\metadata\collection;
 use \core_privacy\local\request\contextlist;
 use \core_privacy\local\request\approved_contextlist;
-use \core_privacy\local\request\deletion_criteria;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -87,12 +86,12 @@ trait legacy_polyfill {
     }
 
     /**
-     * Delete all use data which matches the specified deletion_criteria.
+     * Delete all data for all users in the specified context.
      *
-     * @param   deletion_criteria       $criteria   An object containing specific deletion criteria to delete for.
+     * @param   context         $context   The specific context to delete data for.
      */
-    public static function delete_for_context(deletion_criteria $criteria) {
-        return static::_delete_for_context($criteria);
+    public static function delete_data_for_all_users_in_context(\context $context) {
+        return static::_delete_data_for_all_users_in_context($context);
     }
 
     /**
@@ -100,7 +99,7 @@ trait legacy_polyfill {
      *
      * @param   approved_contextlist    $contextlist    The approved contexts and user information to delete information for.
      */
-    public static function delete_user_data(approved_contextlist $contextlist) {
-        return static::_delete_user_data($contextlist);
+    public static function delete_data_for_user(approved_contextlist $contextlist) {
+        return static::_delete_data_for_user($contextlist);
     }
 }
