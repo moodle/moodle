@@ -27,7 +27,6 @@ namespace mod_testcomponent\privacy;
 use core_privacy\local\metadata\collection;
 use core_privacy\local\request\approved_contextlist;
 use core_privacy\local\request\contextlist;
-use core_privacy\local\request\deletion_criteria;
 
 /**
  * Mock core_user_data_provider for unit tests.
@@ -67,11 +66,11 @@ class provider implements \core_privacy\local\metadata\provider, \core_privacy\l
     }
 
     /**
-     * Delete all use data which matches the specified deletion_criteria.
+     * Delete all use data which matches the specified deletion criteria.
      *
-     * @param   deletion_criteria $criteria An object containing specific deletion criteria to delete for.
+     * @param   context         $context   The specific context to delete data for.
      */
-    public static function delete_for_context(deletion_criteria $criteria) {
+    public static function delete_data_for_all_users_in_context(\context $context) {
         // This does nothing. We only want to confirm this can be called via the \core_privacy\manager.
     }
 
@@ -80,7 +79,7 @@ class provider implements \core_privacy\local\metadata\provider, \core_privacy\l
      *
      * @param   approved_contextlist $contextlist The approved contexts and user information to delete information for.
      */
-    public static function delete_user_data(approved_contextlist $contextlist) {
+    public static function delete_data_for_user(approved_contextlist $contextlist) {
         // This does nothing. We only want to confirm this can be called via the \core_privacy\manager.
     }
 }

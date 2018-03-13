@@ -163,9 +163,9 @@ class privacy_manager_testcase extends advanced_testcase {
     }
 
     /**
-     *  Test verifying only approved contextlists can be used with the delete_user_data method.
+     *  Test verifying only approved contextlists can be used with the delete_data_for_user method.
      */
-    public function test_delete_user_data() {
+    public function test_delete_data_for_user() {
         $this->resetAfterTest();
         // Get a mock manager, in which the core components list is mocked to include all mock plugins.
         // testcomponent is a core provider, testcomponent2 is a null provider, testcomponent3 is subplugin provider (non core).
@@ -184,10 +184,10 @@ class privacy_manager_testcase extends advanced_testcase {
         }
 
         // Verify null, as the method has no return type and exits normally. Mainly checking we don't see any exception.
-        $this->assertNull($mockman->delete_user_data($approvedcontextlistcollection));
+        $this->assertNull($mockman->delete_data_for_user($approvedcontextlistcollection));
 
         // Verify an exception is thrown if trying to pass in a collection of non-approved_contextlist items.
         $this->expectException(moodle_exception::class);
-        $mockman->delete_user_data($contextlistcollection);
+        $mockman->delete_data_for_user($contextlistcollection);
     }
 }
