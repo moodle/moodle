@@ -15,19 +15,19 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Privacy Subsystem implementation for block_activity_modules.
+ * Privacy Subsystem implementation for block_messages.
  *
- * @package    block_activity_modules
+ * @package    block_messages
  * @copyright  2018 Zig Tan <zig@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace block_activity_modules\privacy;
+namespace block_messages\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Privacy Subsystem for block_activity_modules implementing null_provider.
+ * Privacy Subsystem for block_messages implementing null_provider.
  *
  * @copyright  2018 Zig Tan <zig@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
