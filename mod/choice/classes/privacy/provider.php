@@ -119,42 +119,58 @@ class provider implements
             INNER JOIN {choice_options} co ON co.choiceid = ch.id
             INNER JOIN {choice_answers} ca ON ca.optionid = co.id AND ca.choiceid = ch.id
                  WHERE c.id {$contextsql}
-                       AND ca.userid = :userid";
+                       AND ca.userid = :userid
+              ORDER BY cm.id";
 
         $params = ['userid' => $user->id] + $contextparams;
 
-        // Create an array of the user's choice instances, supporting multiple answers per choice instance.
-        $choiceinstances = [];
+        // Reference to the choice activity seen in the last iteration of the loop. By comparing this with the current record, and
+        // because we know the results are ordered, we know when we've moved to the answers for a new choice activity and therefore
+        // when we can export the complete data for the last activity.
+        $lastcmid = null;
+
         $choiceanswers = $DB->get_recordset_sql($sql, $params);
         foreach ($choiceanswers as $choiceanswer) {
-            if (empty($choiceinstances[$choiceanswer->cmid])) {
-                $data = (object) [
+            // If we've moved to a new choice, then write the last choice data and reinit the choice data array.
+            if ($lastcmid != $choiceanswer->cmid) {
+                if (!empty($choicedata)) {
+                    $context = \context_module::instance($lastcmid);
+                    self::export_choice_data_for_user($choicedata, $context, $user);
+                }
+                $choicedata = [
                     'answer' => [],
                     'timemodified' => \core_privacy\local\request\transform::datetime($choiceanswer->timemodified),
                 ];
-                $choiceinstances[$choiceanswer->cmid] = $data;
             }
-
-            // Instance exists, just add the additional answer.
-            $choiceinstances[$choiceanswer->cmid]->answer[] = $choiceanswer->answer;
+            $choicedata['answer'][] = $choiceanswer->answer;
+            $lastcmid = $choiceanswer->cmid;
         }
         $choiceanswers->close();
 
-        // Now export the data.
-        foreach ($choiceinstances as $cmid => $choicedata) {
-            $context = \context_module::instance($cmid);
-
-            // Fetch the generic module data for the choice.
-            $contextdata = helper::get_context_data($context, $user);
-
-            // Merge with choice data and write it.
-            $contextdata = (object) array_merge((array) $contextdata, (array) $choicedata);
-            writer::with_context($context)
-                ->export_data([], $contextdata);
-
-            // Write generic module intro files.
-            helper::export_context_files($context, $user);
+        // The data for the last activity won't have been written yet, so make sure to write it now!
+        if (!empty($choicedata)) {
+            $context = \context_module::instance($lastcmid);
+            self::export_choice_data_for_user($choicedata, $context, $user);
         }
+    }
+
+    /**
+     * Export the supplied personal data for a single choice activity, along with any generic data or area files.
+     *
+     * @param array $choicedata the personal data to export for the choice.
+     * @param \context_module $context the context of the choice.
+     * @param \stdClass $user the user record
+     */
+    protected static function export_choice_data_for_user(array $choicedata, \context_module $context, \stdClass $user) {
+        // Fetch the generic module data for the choice.
+        $contextdata = helper::get_context_data($context, $user);
+
+        // Merge with choice data and write it.
+        $contextdata = (object)array_merge((array)$contextdata, $choicedata);
+        writer::with_context($context)->export_data([], $contextdata);
+
+        // Write generic module intro files.
+        helper::export_context_files($context, $user);
     }
 
     /**
