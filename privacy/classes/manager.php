@@ -234,7 +234,7 @@ class manager {
      * @throws \moodle_exception if the contextlist_collection doesn't contain all approved_contextlist items, or if the component
      * for an approved_contextlist isn't a core provider.
      */
-    public function delete_user_data(contextlist_collection $contextlistcollection) {
+    public function delete_data_for_user(contextlist_collection $contextlistcollection) {
         // Delete the data.
         foreach ($contextlistcollection as $approvedcontextlist) {
             if (!$approvedcontextlist instanceof \core_privacy\local\request\approved_contextlist) {
@@ -246,12 +246,12 @@ class manager {
                     // The component knows about data that it has.
                     // Have it delete its own data.
                     $classname = $this->get_provider_classname($approvedcontextlist->get_component());
-                    $classname::delete_user_data($approvedcontextlist);
+                    $classname::delete_data_for_user($approvedcontextlist);
                 }
             }
 
             // Delete any shared user data it doesn't know about.
-            local\request\helper::delete_user_data($approvedcontextlist);
+            local\request\helper::delete_data_for_user($approvedcontextlist);
         }
     }
 
@@ -260,17 +260,17 @@ class manager {
      *
      * @param   context         $context   The specific context to delete data for.
      */
-    public function delete_for_context(\context $context) {
+    public function delete_data_for_all_users_in_context(\context $context) {
         foreach ($this->get_component_list() as $component) {
             if ($this->component_implements($component, \core_privacy\local\request\core_user_data_provider::class)) {
                 // This component knows about specific data that it owns.
                 // Have it delete all of that user data for the context.
                 $classname = $this->get_provider_classname($component);
-                $classname::delete_for_context($context);
+                $classname::delete_data_for_all_users_in_context($context);
             }
 
             // Delete any shared user data it doesn't know about.
-            local\request\helper::delete_for_context($component, $context);
+            local\request\helper::delete_data_for_all_users_in_context($component, $context);
         }
     }
 

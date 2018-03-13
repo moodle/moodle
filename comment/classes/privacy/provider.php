@@ -104,7 +104,7 @@ class provider implements \core_privacy\local\metadata\provider, \core_privacy\l
      *
      * @param  \context $context Details about which context to delete comments for.
      */
-    public static function delete_comments_for_context(\context $context) {
+    public static function delete_comments_for_all_users_in_context(\context $context) {
         global $DB;
         $DB->delete_records('comments', ['contextid' => $context->id]);
     }
@@ -115,7 +115,7 @@ class provider implements \core_privacy\local\metadata\provider, \core_privacy\l
      * @param  \core_privacy\local\request\approved_contextlist $contextlist Contains the user ID and a list of contexts to be
      * deleted from.
      */
-    public static function delete_comments_for_user_in_context(\core_privacy\local\request\approved_contextlist $contextlist) {
+    public static function delete_comments_for_user(\core_privacy\local\request\approved_contextlist $contextlist) {
         global $DB;
 
         $userid = $contextlist->get_user()->id;
