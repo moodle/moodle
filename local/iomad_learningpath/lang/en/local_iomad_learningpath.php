@@ -20,6 +20,7 @@ $string['active_help'] = 'Is Learning path available to students';
 $string['addpath'] = 'Add new path';
 $string['both'] = 'Both';
 $string['clicktoadd'] = 'Click to add';
+$string['clicktoremove'] = 'Click to remove';
 $string['closeeye'] = 'Make unavailable';
 $string['companymismatch'] = 'Path company does not match your selected company';
 $string['copypath'] = 'Duplicate path';

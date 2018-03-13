@@ -1,3 +1,7 @@
 .top-space {
     margin-top: 20px;
 }
+
+#prospectivelist .ui-selected {
+    background-color: #f5f5f5;
+}

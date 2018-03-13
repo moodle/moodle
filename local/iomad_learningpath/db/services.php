@@ -44,4 +44,31 @@ $functions = array(
         'type' => 'read',
         'ajax' => true,
     ),
+
+    'local_iomad_learningpath_addcourses' => array(
+        'classname' => 'local_iomad_learningpath_external',
+        'methodname' => 'addcourses',
+        'classpath' => 'local/iomad_learningpath/externallib.php',
+        'description' => 'Add courses to learning path',
+        'type' => 'write',
+        'ajax' => true,
+    ),
+
+    'local_iomad_learningpath_removecourses' => array(
+        'classname' => 'local_iomad_learningpath_external',
+        'methodname' => 'removecourses',
+        'classpath' => 'local/iomad_learningpath/externallib.php',
+        'description' => 'Remove courses from learning path',
+        'type' => 'write',
+        'ajax' => true,
+    ),
+
+    'local_iomad_learningpath_getcourses' => array(
+        'classname' => 'local_iomad_learningpath_external',
+        'methodname' => 'getcourses',
+        'classpath' => 'local/iomad_learningpath/externallib.php',
+        'description' => 'Read list of courses for given learning',
+        'type' => 'read',
+        'ajax' => true,
+    ),
 );

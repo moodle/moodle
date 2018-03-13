@@ -202,10 +202,27 @@ class companypaths {
                 continue;
             }
             $course = $DB->get_record('course', ['id' => $depcourse->courseid]);
-            $courses[] = $course;
+            $courses[$course->id] = $course;
         }
 
         return $courses;
+    }
+
+    /**
+     * Fixup the sequence values in path
+     * Used if one (or more) has been deleted
+     * @param int $pathid
+     */
+    public function fix_sequence($pathid) {
+        global $DB;
+
+        $courses = $DB->get_records('iomad_learningpathcourse', ['path' => $pathid], 'sequence ASC');
+        $count = 1;
+        foreach ($courses as $course) {
+            $course->sequence = $count;
+            $DB->update_record('iomad_learningpathcourse', $course);
+            $count++;
+        }
     }
 
 }
