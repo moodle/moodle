@@ -44,6 +44,7 @@ Labels may be used
 * To add a short description to a course section';
 $string['modulename_link'] = 'mod/label/view';
 $string['modulenameplural'] = 'Labels';
+$string['privacy:metadata'] = 'The mod_label plugin does not store any personal data.';
 $string['pluginadministration'] = 'Label administration';
 $string['pluginname'] = 'Label';
 $string['search:activity'] = 'Label';

@@ -45,6 +45,7 @@ $string['modulenameplural'] = 'Folders';
 $string['newfoldercontent'] = 'New folder content';
 $string['page-mod-folder-x'] = 'Any folder module page';
 $string['page-mod-folder-view'] = 'Folder module main page';
+$string['privacy:metadata'] = 'The mod_folder plugin does not store any personal data.';
 $string['pluginadministration'] = 'Folder administration';
 $string['pluginname'] = 'Folder';
 $string['display'] = 'Display folder contents';

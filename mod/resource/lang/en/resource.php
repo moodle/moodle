@@ -89,6 +89,7 @@ $string['popupwidth'] = 'Pop-up width (in pixels)';
 $string['popupwidthexplain'] = 'Specifies default width of popup windows.';
 $string['printintro'] = 'Display resource description';
 $string['printintroexplain'] = 'Display resource description below content? Some display types may not display description even if enabled.';
+$string['privacy:metadata'] = 'The mod_resource plugin does not store any personal data.';
 $string['resource:addinstance'] = 'Add a new resource';
 $string['resourcecontent'] = 'Files and subfolders';
 $string['resourcedetails_sizetype'] = '{$a->size} {$a->type}';
