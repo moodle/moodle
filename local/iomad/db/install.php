@@ -400,23 +400,6 @@ function xmldb_local_iomad_install() {
                           $systemcontext->id);
     }
 
-    // Create custom user field for company (if not already existing).
-    if (!$DB->get_record('user_info_field', array('shortname' => 'company'))) {
-        $field = new stdClass;
-        $field->shortname = 'company';
-        $field->name = 'Company';
-        $field->datatype = 'text';
-        $field->description = 'User Company';
-        $field->descriptionformat = 1;
-        $field->categoryid = 0;
-        $field->required = 0;
-        $field->locked = 1;
-        $field->visible = 0;
-        $field->param1 = 30;
-        $field->param2 = 2048;
-        $DB->insert_record('user_info_field', $field);
-    }
-
     // Even worse - change the theme.
     $theme = theme_config::load('iomadboost');
     set_config('theme', $theme->name);
