@@ -110,32 +110,32 @@ class core_privacy_legacy_polyfill_test extends advanced_testcase {
 
     /**
      * Test that the local\request\core_user_preference_provider polyfill works and that the static
-     * _delete_for_context can be successfully called.
+     * _delete_data_for_all_users_in_context can be successfully called.
      */
-    public function test_delete_for_context() {
+    public function test_delete_data_for_all_users_in_context() {
         $mock = $this->createMock(test_legacy_polyfill_mock_wrapper::class);
         $mock->expects($this->once())
             ->method('get_return_value')
-            ->with('_delete_for_context', [\context_system::instance()]);
+            ->with('_delete_data_for_all_users_in_context', [\context_system::instance()]);
 
         test_legacy_polyfill_request_provider::$mock = $mock;
-        test_legacy_polyfill_request_provider::delete_for_context(\context_system::instance());
+        test_legacy_polyfill_request_provider::delete_data_for_all_users_in_context(\context_system::instance());
     }
 
     /**
      * Test that the local\request\core_user_preference_provider polyfill works and that the static
-     * _delete_user_data can be successfully called.
+     * _delete_data_for_user can be successfully called.
      */
-    public function test_delete_user_data() {
+    public function test_delete_data_for_user() {
         $contextlist = new approved_contextlist(\core_user::get_user_by_username('admin'), 'core_privacy', [98]);
 
         $mock = $this->createMock(test_legacy_polyfill_mock_wrapper::class);
         $mock->expects($this->once())
             ->method('get_return_value')
-            ->with('_delete_user_data', [$contextlist]);
+            ->with('_delete_data_for_user', [$contextlist]);
 
         test_legacy_polyfill_request_provider::$mock = $mock;
-        test_legacy_polyfill_request_provider::delete_user_data($contextlist);
+        test_legacy_polyfill_request_provider::delete_data_for_user($contextlist);
     }
 }
 
@@ -243,7 +243,7 @@ class test_legacy_polyfill_request_provider implements \core_privacy\local\reque
      *
      * @param   context         $context   The specific context to delete data for.
      */
-    public static function _delete_for_context(\context $context) {
+    public static function _delete_data_for_all_users_in_context(\context $context) {
         return static::$mock->get_return_value(__FUNCTION__, func_get_args());
     }
 
@@ -252,7 +252,7 @@ class test_legacy_polyfill_request_provider implements \core_privacy\local\reque
      *
      * @param   approved_contextlist    $contextlist    The approved contexts and user information to delete information for.
      */
-    public static function _delete_user_data(approved_contextlist $contextlist) {
+    public static function _delete_data_for_user(approved_contextlist $contextlist) {
         return static::$mock->get_return_value(__FUNCTION__, func_get_args());
     }
 }
