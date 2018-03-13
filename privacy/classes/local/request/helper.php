@@ -89,10 +89,10 @@ class helper {
      * @param   string          $component The component being deleted for.
      * @param   context         $context   The specific context to delete data for.
      */
-    public static function delete_for_context(string $component, \context $context) {
+    public static function delete_data_for_all_users_in_context(string $component, \context $context) {
         if (strpos($component, 'mod_') === 0) {
             // Activity modules support data stored by core about them - for example, activity completion.
-            static::delete_for_context_course_module($component, $context);
+            static::delete_data_for_all_users_in_context_course_module($component, $context);
         }
     }
 
@@ -103,12 +103,12 @@ class helper {
      *
      * @param   approved_contextlist    $contextlist    The approved contexts and user information to delete information for.
      */
-    public static function delete_user_data(approved_contextlist $contextlist) {
+    public static function delete_data_for_user(approved_contextlist $contextlist) {
         $component = $contextlist->get_component();
 
         if (strpos($component, 'mod_') === 0) {
             // Activity modules support data stored by core about them - for example, activity completion.
-            static::delete_user_data_for_course_module($contextlist);
+            static::delete_data_for_user_in_course_module($contextlist);
         }
     }
 
@@ -272,7 +272,7 @@ class helper {
      * @param   string              $component The component being deleted for.
      * @param   \context_module     $context The context to delete all data for.
      */
-    public static function delete_for_context_course_module(string $component, \context_module $context) {
+    public static function delete_data_for_all_users_in_context_course_module(string $component, \context_module $context) {
         global $DB;
 
         // Delete course completion data for this context.
@@ -286,7 +286,7 @@ class helper {
      *
      * @param   approved_contextlist    $contextlist    The approved contexts and user information to delete information for.
      */
-    protected static function delete_user_data_for_course_module(approved_contextlist $contextlist) {
+    protected static function delete_data_for_user_in_course_module(approved_contextlist $contextlist) {
         global $DB;
 
         foreach ($contextlist as $context) {

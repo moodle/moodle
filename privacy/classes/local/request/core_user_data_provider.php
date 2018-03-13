@@ -54,16 +54,16 @@ interface core_user_data_provider extends core_data_provider {
     public static function export_user_data(approved_contextlist $contextlist);
 
     /**
-     * Delete all use data which matches the specified deletion criteria.
+     * Delete all data for all users in the specified context.
      *
-     * @param   context         $context   The specific context to delete data for.
+     * @param   context                 $context   The specific context to delete data for.
      */
-    public static function delete_for_context(\context $context);
+    public static function delete_data_for_all_users_in_context(\context $context);
 
     /**
      * Delete all user data for the specified user, in the specified contexts.
      *
      * @param   approved_contextlist    $contextlist    The approved contexts and user information to delete information for.
      */
-    public static function delete_user_data(approved_contextlist $contextlist);
+    public static function delete_data_for_user(approved_contextlist $contextlist);
 }

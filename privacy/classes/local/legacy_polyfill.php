@@ -86,12 +86,12 @@ trait legacy_polyfill {
     }
 
     /**
-     * Delete all use data which matches the specified deletion criteria.
+     * Delete all data for all users in the specified context.
      *
      * @param   context         $context   The specific context to delete data for.
      */
-    public static function delete_for_context(\context $context) {
-        return static::_delete_for_context($context);
+    public static function delete_data_for_all_users_in_context(\context $context) {
+        return static::_delete_data_for_all_users_in_context($context);
     }
 
     /**
@@ -99,7 +99,7 @@ trait legacy_polyfill {
      *
      * @param   approved_contextlist    $contextlist    The approved contexts and user information to delete information for.
      */
-    public static function delete_user_data(approved_contextlist $contextlist) {
-        return static::_delete_user_data($contextlist);
+    public static function delete_data_for_user(approved_contextlist $contextlist) {
+        return static::_delete_data_for_user($contextlist);
     }
 }

@@ -92,7 +92,7 @@ class core_comment_privacy_testcase extends provider_testcase {
     /**
      * Tests the deletion of all comments in a context.
      */
-    public function test_delete_comments_for_context() {
+    public function test_delete_comments_for_all_users_in_context() {
         $this->resetAfterTest();
 
         $course1 = $this->getDataGenerator()->create_course();
@@ -115,7 +115,7 @@ class core_comment_privacy_testcase extends provider_testcase {
         $comment2->add('First comment for user 2 on comment 2');
 
         // Delete only for the first context. All records in the comments table for this context should be removed.
-        \core_comment\privacy\provider::delete_comments_for_context($coursecontext1);
+        \core_comment\privacy\provider::delete_comments_for_all_users_in_context($coursecontext1);
         // No records left here.
         $this->assertCount(0, $comment1->get_comments());
         // All of the records are left intact here.
@@ -126,7 +126,7 @@ class core_comment_privacy_testcase extends provider_testcase {
     /**
      * Tests deletion of comments for a specified user and contexts.
      */
-    public function test_delete_comments_for_user_in_context() {
+    public function test_delete_comments_for_user() {
         $this->resetAfterTest();
 
         $course1 = $this->getDataGenerator()->create_course();
@@ -155,7 +155,7 @@ class core_comment_privacy_testcase extends provider_testcase {
         // Delete the comments for user 1.
         $approvedcontextlist = new core_privacy\tests\request\approved_contextlist($user1, 'block_comments',
                 [$coursecontext1->id, $coursecontext2->id]);
-        \core_comment\privacy\provider::delete_comments_for_user_in_context($approvedcontextlist);
+        \core_comment\privacy\provider::delete_comments_for_user($approvedcontextlist);
 
         // No comments left in comments 1 as only user 1 commented there.
         $this->assertCount(0, $comment1->get_comments());
