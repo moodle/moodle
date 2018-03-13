@@ -212,17 +212,17 @@ foreach ($enrolbuttons as $enrolbutton) {
 }
 echo html_writer::div($enrolbuttonsout, 'pull-right');
 
-// Render the unified filter.
-$renderer = $PAGE->get_renderer('core_user');
-echo $renderer->unified_filter($course, $context, $filtersapplied);
-
-echo '<div class="userlist">';
-
 // Should use this variable so that we don't break stuff every time a variable is added or changed.
 $baseurl = new moodle_url('/user/index.php', array(
         'contextid' => $context->id,
         'id' => $course->id,
         'perpage' => $perpage));
+
+// Render the unified filter.
+$renderer = $PAGE->get_renderer('core_user');
+echo $renderer->unified_filter($course, $context, $filtersapplied, $baseurl);
+
+echo '<div class="userlist">';
 
 $participanttable = new \core_user\participants_table($course->id, $groupid, $lastaccess, $roleid, $enrolid, $status,
     $searchkeywords, $bulkoperations, $selectall);
