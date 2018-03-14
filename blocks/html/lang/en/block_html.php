@@ -34,3 +34,4 @@ $string['leaveblanktohide'] = 'leave blank to hide the title';
 $string['newhtmlblock'] = '(new HTML block)';
 $string['pluginname'] = 'HTML';
 $string['search:content'] = 'HTML block content';
+$string['privacy:metadata:block'] = 'The HTML block stores all of its data within the block subsystem.';
