@@ -17,7 +17,10 @@
         <div class="card bg-light">
             <div class="card-header">
                 {{# str }}coursesinpath, local_iomad_learningpath{{/ str }}<br />
-                <small>{{# str }}clicktoremove, local_iomad_learningpath{{/ str }}</small>
+                <small>
+                    {{# str }}clicktoremove, local_iomad_learningpath{{/ str }}.
+                    {{# str }}dragtoorder, local_iomad_learningpath{{/ str }}
+                </small>
             </div>
             <div class="card-body card-block">
                 <p class="card-text">
@@ -29,7 +32,7 @@
                     {{# iscourses }}
                         <ul id="pathcourselist">
                         {{# courses }}
-                            <li class="text-truncate" data-courseid="{{ id }}"><i class="fa fa-globe"></i> {{ fullname }}</li>
+                            <li class="text-truncate" data-courseid="{{ courseid }}"><i class="fa fa-globe"></i> {{ fullname }}</li>
                         {{/ courses }}
                         </ul>
                     {{/ iscourses }}
@@ -71,3 +74,5 @@
 
     </div>
 </div>
+
+{{{ done }}}

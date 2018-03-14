@@ -174,7 +174,7 @@ class companypaths {
     public function get_courselist($pathid) {
         global $DB;
 
-        $sql = 'SELECT lpc.*, c.id courseid, c.shortname shortname, c.fullname fullname
+        $sql = 'SELECT c.id courseid, c.shortname shortname, c.fullname fullname, lpc.*
             FROM {iomad_learningpathcourse} lpc JOIN {course} c ON lpc.course = c.id
             WHERE lpc.path = :pathid
             ORDER BY lpc.sequence';
@@ -224,5 +224,31 @@ class companypaths {
             $count++;
         }
     }
+
+    /**
+     * Delete a path
+     * $param int $pathid
+     */
+    public function deletepath($pathid) {
+        global $DB;
+
+        // TODO: delete users from path
+
+        // Delete courses from path
+        $DB->delete_records('iomad_learningpathcourse', ['path' => $pathid]);
+
+        // Delete image from path (if any)
+        $fs = get_file_storage();
+        if ($oldfile = $fs->get_file($this->context->id, 'local_iomad_learningpath', 'mainpicture', $pathid, '/', 'picture.png')) {
+            $oldfile->delete();
+        }
+        if ($oldfile = $fs->get_file($this->context->id, 'local_iomad_learningpath', 'thumbnail', $pathid, '/', 'thumbnail.png')) {
+            $oldfile->delete();
+        }
+
+        // Delete path itself
+        $DB->delete_records('iomad_learningpath', ['id' => $pathid]);
+    }
+
 
 }

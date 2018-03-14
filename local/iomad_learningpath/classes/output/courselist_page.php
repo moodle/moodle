@@ -61,6 +61,10 @@ class courselist_page implements renderable, templatable {
         $data->iscourses = !empty($this->courses);
         $data->prospectivecourses = array_values($this->prospectivecourses);
         $data->isprospectivecourses = !empty($this->prospectivecourses);
+        $data->done = $output->single_button(
+            new \moodle_url('/local/iomad_learningpath/manage.php'),
+            get_string('done', 'local_iomad_learningpath')
+        );
 
         return $data;
     }

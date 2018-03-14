@@ -63,12 +63,30 @@ $functions = array(
         'ajax' => true,
     ),
 
+    'local_iomad_learningpath_ordercourses' => array(
+        'classname' => 'local_iomad_learningpath_external',
+        'methodname' => 'ordercourses',
+        'classpath' => 'local/iomad_learningpath/externallib.php',
+        'description' => 'Set sequence of courses in learning path',
+        'type' => 'write',
+        'ajax' => true,
+    ),
+
     'local_iomad_learningpath_getcourses' => array(
         'classname' => 'local_iomad_learningpath_external',
         'methodname' => 'getcourses',
         'classpath' => 'local/iomad_learningpath/externallib.php',
         'description' => 'Read list of courses for given learning',
         'type' => 'read',
+        'ajax' => true,
+    ),
+
+    'local_iomad_learningpath_deletepath' => array(
+        'classname' => 'local_iomad_learningpath_external',
+        'methodname' => 'deletepath',
+        'classpath' => 'local/iomad_learningpath/externallib.php',
+        'description' => 'Completely delete a learning path',
+        'type' => 'write',
         'ajax' => true,
     ),
 );

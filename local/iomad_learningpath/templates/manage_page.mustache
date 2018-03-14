@@ -39,8 +39,10 @@
                     {{/ active }}
                     &nbsp;<a href="{{{ linkcourses }}}" data-toggle="tooltip" title="{{# str }}editcourselist, local_iomad_learningpath{{/ str }}"><i class="fa fa-list fa-lg"></i></a>
                     &nbsp;<a href="{{{ linkedit }}}" data-toggle="tooltip" title="{{# str }}editpath, local_iomad_learningpath{{/ str }}"><i class="fa fa-cog fa-lg"></i></a>
-                    &nbsp;<a href="{{{ linkcopy }}}" class="text-warning" data-toggle="tooltip" title="{{# str }}copypath, local_iomad_learningpath{{/ str }}"><i class="fa fa-copy fa-lg"></i></a>
-                    &nbsp;<a href="{{{ linkdelete }}}" class="text-danger" data-toggle="tooltip" title="{{# str }}deletepath, local_iomad_learningpath{{/ str }}"><i class="fa fa-trash fa-lg"></i></a>
+                    &nbsp;<a href="" class="lp_copy text-warning" data-id="{{ id }}" data-toggle="tooltip" title="{{# str }}copypath, local_iomad_learningpath{{/ str }}">
+                        <i class="fa fa-copy fa-lg"></i></a>
+                    &nbsp;<a href="" class="lp_delete text-danger" data-id="{{ id }}" data-toggle="tooltip" title="{{# str }}deletepath, local_iomad_learningpath{{/ str }}">
+                        <i class="fa fa-trash fa-lg"></i></a>
                 </div>
             </div>
         {{/ paths }}

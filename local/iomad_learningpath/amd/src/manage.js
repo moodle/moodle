@@ -1,17 +1,19 @@
 // Javascript module for manage page
 // Copyright 2018 Howard Miller (howardsmiller@gmail.com)
 
-define(['jquery', 'core/config', 'core/ajax', 'core/notification'], function($, mdlcfg, ajax, notification) {
+define(['jquery', 'core/config', 'core/ajax', 'core/notification', 'core/str'], function($, mdlcfg, ajax, notification, str) {
 
     return {
 
         init: function() {
+
 
             // Enable Bootstrap tooltips
             require(['theme_boost/loader']);
             require(['theme_boost/tooltip'], function() {
                 $('[data-toggle="tooltip"]').tooltip();
             });
+
 
             // Update the eye icon
             function _redraw(icon, state) {
@@ -22,6 +24,7 @@ define(['jquery', 'core/config', 'core/ajax', 'core/notification'], function($, 
                     icon.addClass('fa-eye-slash');
                 }
             }
+
 
             // Handle active/hidden
             $('.lp_active').click(function() {
@@ -49,6 +52,31 @@ define(['jquery', 'core/config', 'core/ajax', 'core/notification'], function($, 
                 return false;
             });
 
+        
+            // Handle delete button
+            $('.lp_delete').click(function() {
+                var id = $(this).data('id');
+                str.get_strings([
+                    {key: 'confirm', component: 'local_iomad_learningpath'},
+                    {key: 'confirmdelete', component: 'local_iomad_learningpath'},
+                    {key: 'yes'},
+                    {key: 'no'}
+                ]).done(function(s) {
+                    notification.confirm(s[0], s[1], s[2], s[3], function() {
+                        ajax.call([{
+                            methodname: 'local_iomad_learningpath_deletepath',
+                            args: { pathid: id },
+                            done: function(result) {
+                                location.reload();
+                            },
+                            fail: notification.exception,
+                        }]);
+                    });
+                });
+
+                // False stops normal link behaviour!!
+                return false;
+            });
         }
     };
 

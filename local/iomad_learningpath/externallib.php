@@ -332,4 +332,142 @@ class local_iomad_learningpath_external extends external_api {
 
         return $courses;
     }
+
+    /**
+     * Returns description of method parameters
+     * @return external_function_parameters
+     */
+    public static function ordercourses_parameters() {
+        return new external_function_parameters(
+            array(
+                'pathid' => new external_value(PARAM_INT, 'ID of Iomad Learning Path'),
+                'courseids' => new external_multiple_structure(new external_value(PARAM_INT, 'Course ID'), 'List of course IDs in order'),
+            )
+        );
+    }
+
+    /** 
+     * Returns description of method result
+     * @return external_description
+     */
+    public static function ordercourses_returns() {
+        return new external_value(PARAM_BOOL, 'True if courses ordered correctly');
+    }
+
+    /**
+     * Find course in list of (path) courses
+     * @param array $courses
+     * @param int $courseid
+     * @return object or bool
+     */
+    protected static function find_course($courses, $courseid) {
+        foreach ($courses as $course) {
+            if ($course->course == $courseid) {
+                return $course;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Order courses in learning path
+     * @param int $pathid
+     * @param array $courseids
+     * @throws invalid_parameter_exception
+     */
+    public static function ordercourses($pathid, $courseids) {
+        global $DB;
+
+        // Validate params
+        $params = self::validate_parameters(self::ordercourses_parameters(), ['pathid' => $pathid, 'courseids' => $courseids]);
+
+        // get path
+        if (!$path = $DB->get_record('iomad_learningpath', ['id' => $params['pathid']])) {
+            throw new invalid_parameter_exception("Path with id = $pathid does not exist");
+        }
+
+        // Find/validate company
+        $companyid = $path->company;
+        if (!$company = $DB->get_record('company', ['id' => $companyid])) {
+            throw new invalid_parameter_exception("Company with id = $companyid does not exist");
+        }
+
+        // Get existing list
+        $courses = $DB->get_records('iomad_learningpathcourse', ['path' => $params['pathid']]);
+
+        // Sanity checks
+        $coursecount = count($courses);
+        $idscount = count($params['courseids']);
+        if ($coursecount != $idscount) {
+            throw new coding_exception('countmismatch', "Count of learning path courses ($coursecount) does not match count in params ($idscount)");
+        }
+
+        // Work through courses.
+        $sequence = 1;
+        foreach ($params['courseids'] as $courseid) {
+            if (!$course = self::find_course($courses, $courseid)) {
+                throw new coding_exception('missingcourse', "Course with id=$courseid is not one of path courses");
+            }
+
+            // Update sequence.
+            $course->sequence = $sequence;
+            $sequence++;
+            $DB->update_record('iomad_learningpathcourse', $course);
+        }
+
+        return true;
+    }
+
+    /**
+     * Returns description of method parameters
+     * @return external_function_parameters
+     */
+    public static function deletepath_parameters() {
+        return new external_function_parameters(
+            array(
+                'pathid' => new external_value(PARAM_INT, 'ID of Iomad Learning Path'),
+            )
+        );
+    }
+
+    /** 
+     * Returns description of method result
+     * @return external_description
+     */
+    public static function deletepath_returns() {
+        return new external_value(PARAM_BOOL, 'True if courses added correctly');
+    }
+
+    /**
+     * Delete learning path
+     * @param int $pathid
+     * @param array $courseids
+     * @throws invalid_parameter_exception
+     */
+    public static function deletepath($pathid) {
+        global $DB;
+
+        // Validate params
+        $params = self::validate_parameters(self::deletepath_parameters(), ['pathid' => $pathid]);
+
+        // get path
+        if (!$path = $DB->get_record('iomad_learningpath', ['id' => $params['pathid']])) {
+            throw new invalid_parameter_exception("Path with id = $pathid does not exist");
+        }
+
+        // Find/validate company
+        $companyid = $path->company;
+        if (!$company = $DB->get_record('company', ['id' => $companyid])) {
+            throw new invalid_parameter_exception("Company with id = $companyid does not exist");
+        }
+
+        // Get full list of prospective courses
+        $companypaths = new local_iomad_learningpath\companypaths($companyid, context_system::instance());
+
+        // Delete path
+        $companypaths->deletepath($params['pathid']);
+
+        return true;
+    }
 }
