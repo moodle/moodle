@@ -62,7 +62,7 @@ class local_iomad_learningpath_external extends external_api {
         $params = self::validate_parameters(self::activate_parameters(), ['pathid' => $pathid, 'state' => $state]);
 
         // Find the learning path.
-        if (!$path = $DB->get_record('local_iomad_learningpath', array('id' => $params['pathid']))) {
+        if (!$path = $DB->get_record('iomad_learningpath', array('id' => $params['pathid']))) {
             throw new invalid_parameter_exception("Learning Path with id = $pathid does not exist");
         }
 
@@ -73,7 +73,7 @@ class local_iomad_learningpath_external extends external_api {
       
         // Set the new state.
         $path->active = $params['state'];
-        $DB->update_record('local_iomad_learningpath', $path);
+        $DB->update_record('iomad_learningpath', $path);
 
         return true;
     }
@@ -442,7 +442,6 @@ class local_iomad_learningpath_external extends external_api {
     /**
      * Delete learning path
      * @param int $pathid
-     * @param array $courseids
      * @throws invalid_parameter_exception
      */
     public static function deletepath($pathid) {
@@ -467,6 +466,57 @@ class local_iomad_learningpath_external extends external_api {
 
         // Delete path
         $companypaths->deletepath($params['pathid']);
+
+        return true;
+    }
+
+    /**
+     * Returns description of method parameters
+     * @return external_function_parameters
+     */
+    public static function copypath_parameters() {
+        return new external_function_parameters(
+            array(
+                'pathid' => new external_value(PARAM_INT, 'ID of Iomad Learning Path'),
+            )
+        );
+    }
+
+    /** 
+     * Returns description of method result
+     * @return external_description
+     */
+    public static function copypath_returns() {
+        return new external_value(PARAM_BOOL, 'True if path copied correctly');
+    }
+
+    /**
+     * Copy learning path
+     * @param int $pathid
+     * @throws invalid_parameter_exception
+     */
+    public static function copypath($pathid) {
+        global $DB;
+
+        // Validate params
+        $params = self::validate_parameters(self::copypath_parameters(), ['pathid' => $pathid]);
+
+        // get path
+        if (!$path = $DB->get_record('iomad_learningpath', ['id' => $params['pathid']])) {
+            throw new invalid_parameter_exception("Path with id = $pathid does not exist");
+        }
+
+        // Find/validate company
+        $companyid = $path->company;
+        if (!$company = $DB->get_record('company', ['id' => $companyid])) {
+            throw new invalid_parameter_exception("Company with id = $companyid does not exist");
+        }
+
+        // Get full list of prospective courses
+        $companypaths = new local_iomad_learningpath\companypaths($companyid, context_system::instance());
+
+        // Copy path
+        $companypaths->copypath($params['pathid']);
 
         return true;
     }

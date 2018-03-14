@@ -227,7 +227,7 @@ class companypaths {
 
     /**
      * Delete a path
-     * $param int $pathid
+     * @param int $pathid
      */
     public function deletepath($pathid) {
         global $DB;
@@ -250,5 +250,69 @@ class companypaths {
         $DB->delete_records('iomad_learningpath', ['id' => $pathid]);
     }
 
+    /**
+     * Copy a path
+     * @param int $pathid
+     */
+    public function copypath($pathid) {
+        global $DB;
+
+        // Get original path
+        $path = $DB->get_record('iomad_learningpath', ['id' => $pathid], '*', MUST_EXIST);
+
+        // work out what new name will be
+        $count = 1;
+        while ($DB->get_record('iomad_learningpath', ['name' => $path->name . " Copy $count"])) {
+            $count++;
+            if ($count >= 9999) {
+                throw new \coding_exception('countlimit', 'Failed to find new name for path');
+            }
+        }
+        $newname = $path->name . " Copy $count";
+
+        // Create new path
+        $newpath = new \stdClass;
+        $newpath->company = $path->company;
+        $newpath->name = $newname;
+        $newpath->description = $path->description;
+        $newpath->active = false;
+        $newpath->timecreated = time();
+        $newpath->timeupdated = time();
+        $newpathid = $DB->insert_record('iomad_learningpath', $newpath);
+
+        // Copy images
+        $fs = get_file_storage();
+        if ($picture = $fs->get_file($this->context->id, 'local_iomad_learningpath', 'mainpicture', $pathid, '/', 'picture.png')) {
+            $fileinfo = [
+                'contextid' => $this->context->id,
+                'component' => 'local_iomad_learningpath',
+                'filearea' => 'mainpicture',
+                'itemid' => $newpathid,
+                'filepath' => '/',
+                'filename' => 'picture.png',
+            ];
+            $fs->create_file_from_storedfile($fileinfo, $picture);
+        }
+        if ($thumbnail = $fs->get_file($this->context->id, 'local_iomad_learningpath', 'thumbnail', $pathid, '/', 'thumbnail.png')) {
+            $fileinfo = [
+                'contextid' => $this->context->id,
+                'component' => 'local_iomad_learningpath',
+                'filearea' => 'thumbnail',
+                'itemid' => $newpathid,
+                'filepath' => '/',
+                'filename' => 'thumbnail.png',
+            ];
+            $fs->create_file_from_storedfile($fileinfo, $thumbnail);
+        }
+
+        // Copy courses
+        $courses = $DB->get_records('iomad_learningpathcourse', ['path' => $pathid]);
+        foreach ($courses as $course) {
+            $course->path = $newpathid;
+            $DB->insert_record('iomad_learningpathcourse', $course);
+        }
+
+        // TODO: Copy students over
+    }
 
 }

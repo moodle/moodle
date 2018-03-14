@@ -89,4 +89,13 @@ $functions = array(
         'type' => 'write',
         'ajax' => true,
     ),
+
+    'local_iomad_learningpath_copypath' => array(
+        'classname' => 'local_iomad_learningpath_external',
+        'methodname' => 'copypath',
+        'classpath' => 'local/iomad_learningpath/externallib.php',
+        'description' => 'Copy a learning path',
+        'type' => 'write',
+        'ajax' => true,
+    ),
 );

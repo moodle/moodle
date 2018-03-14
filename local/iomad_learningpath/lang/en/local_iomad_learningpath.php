@@ -24,6 +24,7 @@ $string['clicktoremove'] = 'Click to remove';
 $string['closeeye'] = 'Make unavailable';
 $string['companymismatch'] = 'Path company does not match your selected company';
 $string['confirm'] = 'Confirm';
+$string['confirmcopy'] = 'Do you want to completely duplicate this path?';
 $string['confirmdelete'] = 'Do you really want to delete this path? Action cannot be reversed.';
 $string['copypath'] = 'Duplicate path';
 $string['coursesinpath'] = 'Courses in path';

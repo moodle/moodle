@@ -77,6 +77,34 @@ define(['jquery', 'core/config', 'core/ajax', 'core/notification', 'core/str'], 
                 // False stops normal link behaviour!!
                 return false;
             });
+
+
+
+            // Handle copy button
+            $('.lp_copy').click(function() {
+                var id = $(this).data('id');
+                str.get_strings([
+                    {key: 'confirm', component: 'local_iomad_learningpath'},
+                    {key: 'confirmcopy', component: 'local_iomad_learningpath'},
+                    {key: 'yes'},
+                    {key: 'no'}
+                ]).done(function(s) {
+                    notification.confirm(s[0], s[1], s[2], s[3], function() {
+                        ajax.call([{
+                            methodname: 'local_iomad_learningpath_copypath',
+                            args: { pathid: id },
+                            done: function(result) {
+                                location.reload();
+                            },
+                            fail: notification.exception,
+                        }]);
+                    });
+                });
+
+                // False stops normal link behaviour!!
+                return false;
+            });
+
         }
     };
 
