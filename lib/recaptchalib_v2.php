@@ -56,13 +56,16 @@ define('RECAPTCHA_VERIFY_URL', 'https://www.google.com/recaptcha/api/siteverify'
  * Google reCAPTCHA uses different language codes than Moodle so we must convert.
  * https://developers.google.com/recaptcha/docs/language
  *
+ * @param string $lang Language to use. If not provided, get current language.
  * @return string A language code
  */
-function recaptcha_lang() {
+function recaptcha_lang($lang = null) {
 
-    $mlang = current_language();
+    if (empty($lang)) {
+        $lang = current_language();
+    }
 
-    $glang = $mlang;
+    $glang = $lang;
     switch ($glang) {
         case 'en':
             $glang = 'en-GB';
@@ -87,8 +90,8 @@ function recaptcha_lang() {
             break;
     }
     // For any language code that didn't change reduce down to the base language.
-    if (($mlang === $glang) and (strpos($mlang, '_') !== false)) {
-        list($glang, $trash) = explode('_', $mlang, 2);
+    if (($lang === $glang) and (strpos($lang, '_') !== false)) {
+        list($glang, $trash) = explode('_', $lang, 2);
     }
     return $glang;
 }
@@ -100,9 +103,10 @@ function recaptcha_lang() {
  *
  * @param string $apiurl URL for reCAPTCHA API
  * @param string $pubkey The public key for reCAPTCHA
+ * @param string $lang Language to use. If not provided, get current language.
  * @return string - The HTML to be embedded in the user's form.
  */
-function recaptcha_get_challenge_html($apiurl, $pubkey) {
+function recaptcha_get_challenge_html($apiurl, $pubkey, $lang = null) {
     global $CFG, $PAGE;
 
     // To use reCAPTCHA you must have an API key.
@@ -117,7 +121,7 @@ function recaptcha_get_challenge_html($apiurl, $pubkey) {
             });
         }";
 
-    $lang = recaptcha_lang();
+    $lang = recaptcha_lang($lang);
     $apicode = "\n<script type=\"text/javascript\" ";
     $apicode .= "src=\"$apiurl?onload=recaptchacallback&render=explicit&hl=$lang\" async defer>";
     $apicode .= "</script>\n";
