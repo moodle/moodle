@@ -54,6 +54,8 @@ class response {
     private $body;
     /** @var array HTTP response codes. */
     private $responsecodes;
+    /** @var array HTTP additional headers. */
+    private $additionalheaders;
 
     /**
      * Class constructor.
@@ -83,6 +85,7 @@ class response {
             500 => 'Internal Server Error',
             501 => 'Not Implemented'
         );
+        $this->additionalheaders = array();
 
     }
 
@@ -203,10 +206,22 @@ class response {
     }
 
     /**
+     * Add an additional header.
+     *
+     * @param string $header The new header
+     */
+    public function add_additional_header($header) {
+        array_push($this->additionalheaders, $header);
+    }
+
+    /**
      * Send the response.
      */
     public function send() {
         header("HTTP/1.0 {$this->code} {$this->get_reason()}");
+        foreach ($this->additionalheaders as $header) {
+            header($header);
+        }
         if (($this->code >= 200) && ($this->code < 300)) {
             if (!empty($this->contenttype)) {
                 header("Content-Type: {$this->contenttype};charset=UTF-8");

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="mod/lti/service/gradebookservices/db" VERSION="20150915" COMMENT="XMLDB file for Moodle mod/lti/service/gradebookservices"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="ltiservice_gradebookservices" COMMENT="This file records the grade items created by the LTI Gradebook Services service">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="gradeitemid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="ID of the gradeItem related."/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="ID of the course related."/>
+        <FIELD NAME="toolproxyid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="ID of the Tool Proxy instance."/>
+        <FIELD NAME="typeid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="ID of the LTI Type if not Proxy."/>
+        <FIELD NAME="baseurl" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Lineitem URL that will be returned to the Tool provider"/>
+        <FIELD NAME="ltilinkid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="ID of the LTI element related with this lineitem."/>
+        <FIELD NAME="tag" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="Tag type specified for the line item"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="ltilinkid" TYPE="foreign" FIELDS="ltilinkid" REFTABLE="lti" REFFIELDS="id" COMMENT="The ID of the LTI element related with this lineitem."/>
+        <KEY NAME="itemnumbercourse" TYPE="foreign" FIELDS="gradeitemid,courseid" REFTABLE="grade_items" REFFIELDS="id,courseid" COMMENT="The row in gradeitems"/>
+      </KEYS>
+    </TABLE>
+  </TABLES>
+</XMLDB>

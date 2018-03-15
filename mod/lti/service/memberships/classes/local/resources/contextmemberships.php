@@ -26,8 +26,9 @@
 
 namespace ltiservice_memberships\local\resources;
 
-use \mod_lti\local\ltiservice\service_base;
+use mod_lti\local\ltiservice\resource_base;
 use ltiservice_memberships\local\service\memberships;
+use core_availability\info_module;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -39,18 +40,18 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2015 Vital Source Technologies http://vitalsource.com
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class contextmemberships extends \mod_lti\local\ltiservice\resource_base {
+class contextmemberships extends resource_base {
 
     /**
      * Class constructor.
      *
-     * @param ltiservice_memberships\local\service\memberships $service Service instance
+     * @param \ltiservice_memberships\local\service\memberships $service Service instance
      */
     public function __construct($service) {
 
         parent::__construct($service);
         $this->id = 'ToolProxyBindingMemberships';
-        $this->template = '/{context_type}/{context_id}/bindings/{vendor_code}/{product_code}/{tool_code}/memberships';
+        $this->template = '/{context_type}/{context_id}/bindings/{tool_code}/memberships';
         $this->variables[] = 'ToolProxyBinding.memberships.url';
         $this->formats[] = 'application/vnd.ims.lis.v2.membershipcontainer+json';
         $this->methods[] = 'GET';
@@ -60,23 +61,24 @@ class contextmemberships extends \mod_lti\local\ltiservice\resource_base {
     /**
      * Execute the request for this resource.
      *
-     * @param mod_lti\local\ltiservice\response $response  Response object for this request.
+     * @param \mod_lti\local\ltiservice\response $response  Response object for this request.
      */
     public function execute($response) {
-        global $CFG, $DB;
+        global $DB;
 
         $params = $this->parse_template();
         $role = optional_param('role', '', PARAM_TEXT);
         $limitnum = optional_param('limit', 0, PARAM_INT);
         $limitfrom = optional_param('from', 0, PARAM_INT);
+        $linkid = optional_param('rlid', '', PARAM_TEXT);
+        $lti = null;
+        $modinfo = null;
+
         if ($limitnum <= 0) {
             $limitfrom = 0;
         }
 
         try {
-            if (!$this->get_service()->check_tool_proxy($params['product_code'])) {
-                throw new \Exception(null, 401);
-            }
             if (!($course = $DB->get_record('course', array('id' => $params['context_id']), 'id', IGNORE_MISSING))) {
                 throw new \Exception(null, 404);
             }
@@ -84,20 +86,54 @@ class contextmemberships extends \mod_lti\local\ltiservice\resource_base {
                 throw new \Exception(null, 404);
             }
             if (!($tool = $DB->get_record('lti_types', array('id' => $params['tool_code']),
-                                    'toolproxyid,enabledcapability,parameter', IGNORE_MISSING))) {
+                                    'id,toolproxyid,enabledcapability,parameter', IGNORE_MISSING))) {
                 throw new \Exception(null, 404);
             }
-            $toolproxy = $DB->get_record('lti_tool_proxies', array('id' => $tool->toolproxyid), 'guid', IGNORE_MISSING);
-            if (!$toolproxy || ($toolproxy->guid !== $this->get_service()->get_tool_proxy()->guid)) {
-                throw new \Exception(null, 400);
+            if (!empty($linkid)) {
+                if (!($lti = $DB->get_record('lti', array('id' => $linkid), 'id,course,typeid,servicesalt', IGNORE_MISSING))) {
+                    throw new \Exception(null, 404);
+                }
+                $modinfo = get_fast_modinfo($course);
+                $cm = get_coursemodule_from_instance('lti', $linkid, $lti->course, false, MUST_EXIST);
+                $cm = $modinfo->get_cm($cm->id);
+                $modinfo = new info_module($cm);
+                if ($modinfo->is_available_for_all()) {
+                    $modinfo = null;
+                }
             }
-            $json = memberships::get_users_json($this, $context, $course->id, $tool, $role, $limitfrom, $limitnum, null, null);
+            if ($tool->toolproxyid == 0) {
+                if (!$this->check_type($params['tool_code'], $params['context_id'],
+                        'ToolProxyBinding.memberships.url:get', null)) {
+                    throw new \Exception(null, 403);
+                }
+            } else {
+                $toolproxy = $DB->get_record('lti_tool_proxies', array('id' => $tool->toolproxyid), 'guid', IGNORE_MISSING);
+                if (!$this->check_tool_proxy($toolproxy->guid, $response->get_request_data())) {
+                    throw new \Exception(null, 403);
+                }
+            }
+            $json = memberships::get_users_json($this, $context, $course->id, $tool, $role, $limitfrom, $limitnum, $lti, $modinfo);
 
             $response->set_content_type($this->formats[0]);
             $response->set_body($json);
 
         } catch (\Exception $e) {
             $response->set_code($e->getCode());
+        }
+    }
+
+    /**
+     * get permissions from the config of the tool for that resource
+     *
+     * @param int $typeid
+     * @return array with the permissions related to this resource by the $lti_type or null if none.
+     */
+    public function get_permissions($typeid) {
+        $tool = lti_get_type_type_config($typeid);
+        if ($tool->ltiservice_memberships == '1') {
+            return array('ToolProxyBinding.memberships.url:get');
+        } else {
+            return array();
         }
     }
 
@@ -111,25 +147,24 @@ class contextmemberships extends \mod_lti\local\ltiservice\resource_base {
     public function parse_value($value) {
         global $COURSE, $DB;
 
-        if ($COURSE->id === SITEID) {
-            $this->params['context_type'] = 'Group';
-        } else {
-            $this->params['context_type'] = 'CourseSection';
-        }
-        $this->params['context_id'] = $COURSE->id;
-        $this->params['vendor_code'] = $this->get_service()->get_tool_proxy()->vendorcode;
-        $this->params['product_code'] = $this->get_service()->get_tool_proxy()->guid;
-
-        $id = optional_param('id', 0, PARAM_INT); // Course Module ID.
-        if (!empty($id)) {
-            $cm = get_coursemodule_from_id('lti', $id, 0, false, IGNORE_MISSING);
-            $lti = $DB->get_record('lti', array('id' => $cm->instance), 'typeid', IGNORE_MISSING);
-            if ($lti && !empty($lti->typeid)) {
-                $this->params['tool_code'] = $lti->typeid;
+        if (strpos($value, '$ToolProxyBinding.memberships.url') !== false) {
+            if ($COURSE->id === SITEID) {
+                $this->params['context_type'] = 'Group';
+            } else {
+                $this->params['context_type'] = 'CourseSection';
             }
-        }
-        $value = str_replace('$ToolProxyBinding.memberships.url', parent::get_endpoint(), $value);
+            $this->params['context_id'] = $COURSE->id;
 
+            $id = optional_param('id', 0, PARAM_INT); // Course Module ID.
+            if (!empty($id)) {
+                $cm = get_coursemodule_from_id('lti', $id, 0, false, IGNORE_MISSING);
+                $lti = $DB->get_record('lti', array('id' => $cm->instance), 'typeid', IGNORE_MISSING);
+                if ($lti && !empty($lti->typeid)) {
+                    $this->params['tool_code'] = $lti->typeid;
+                }
+            }
+            $value = str_replace('$ToolProxyBinding.memberships.url', parent::get_endpoint(), $value);
+        }
         return $value;
 
     }
