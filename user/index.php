@@ -112,7 +112,7 @@ user_list_view($course, $context);
 
 $bulkoperations = has_capability('moodle/course:bulkmessaging', $context);
 
-$countries = get_string_manager()->get_list_of_countries();
+$countries = get_string_manager()->get_list_of_countries(true);
 
 $strnever = get_string('never');
 
@@ -614,8 +614,6 @@ if ($mode === MODE_USERDETAILS) {    // Print simple listing.
 
                 $context = context_course::instance($course->id);
                 $usercontext = context_user::instance($user->id);
-
-                $countries = get_string_manager()->get_list_of_countries();
 
                 // Get the hidden field list.
                 if (has_capability('moodle/course:viewhiddenuserfields', $context)) {
