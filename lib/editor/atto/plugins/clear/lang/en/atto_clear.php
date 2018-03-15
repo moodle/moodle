@@ -23,3 +23,4 @@
  */
 
 $string['pluginname'] = 'Clear formatting';
+$string['privacy:metadata'] = 'The atto_clear plugin does not store any personal data.';

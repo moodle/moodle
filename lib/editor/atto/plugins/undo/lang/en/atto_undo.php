@@ -23,5 +23,6 @@
  */
 
 $string['pluginname'] = 'Undo/Redo';
+$string['privacy:metadata'] = 'The atto_undo plugin does not store any personal data.';
 $string['redo'] = 'Redo';
 $string['undo'] = 'Undo';
