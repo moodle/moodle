@@ -23,6 +23,7 @@
  */
 
 $string['pluginname'] = 'Bootstrap Base';
+$string['privacy:metadata'] = 'The bootstrapbase theme does not store any personal data about any user.';
 $string['region-side-post'] = 'Right';
 $string['region-side-pre'] = 'Left';
 
