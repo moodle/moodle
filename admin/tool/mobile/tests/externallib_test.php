@@ -150,6 +150,7 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
             array('name' => 'newsitems', 'value' => $SITE->newsitems),
             array('name' => 'commentsperpage', 'value' => $CFG->commentsperpage),
             array('name' => 'sitepolicy', 'value' => $mysitepolicy),
+            array('name' => 'sitepolicyhandler', 'value' => ''),
             array('name' => 'disableuserimages', 'value' => $CFG->disableuserimages),
             array('name' => 'mygradesurl', 'value' => user_mygrades_url()->out(false)),
             array('name' => 'tool_mobile_forcelogout', 'value' => 0),

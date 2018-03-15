@@ -97,13 +97,10 @@ class login_signup_form extends moodleform implements renderable, templatable {
             $mform->closeHeaderBefore('recaptcha_element');
         }
 
-        if (!empty($CFG->sitepolicy)) {
-            $mform->addElement('header', 'policyagreement', get_string('policyagreement'), '');
-            $mform->setExpanded('policyagreement');
-            $mform->addElement('static', 'policylink', '', '<a href="'.$CFG->sitepolicy.'" onclick="this.target=\'_blank\'">'.get_String('policyagreementclick').'</a>');
-            $mform->addElement('checkbox', 'policyagreed', get_string('policyaccept'));
-            $mform->addRule('policyagreed', get_string('policyagree'), 'required', null, 'client');
-        }
+        // Add "Agree to sitepolicy" controls. By default it is a link to the policy text and a checkbox but
+        // it can be implemented differently in custom sitepolicy handlers.
+        $manager = new \core_privacy\local\sitepolicy\manager();
+        $manager->signup_form($mform);
 
         // buttons
         $this->add_action_buttons(true, get_string('createaccount'));
