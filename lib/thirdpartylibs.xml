@@ -298,6 +298,13 @@
     <licenseversion>1.1</licenseversion>
   </library>
   <library>
+    <location>amd/src/adapter.js</location>
+    <name>WebRTC adapter</name>
+    <license>BSD</license>
+    <version>6.1.5</version>
+    <licenseversion>3-Clause</licenseversion>
+  </library>
+  <library>
     <location>validateurlsyntax.php</location>
     <name>Url Syntax Validation using PHP and Regular Expressions</name>
     <license>GPL</license>
