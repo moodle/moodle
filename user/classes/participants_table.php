@@ -229,7 +229,7 @@ class participants_table extends \table_sql {
         $this->enrolid = $enrolid;
         $this->status = $status;
         $this->selectall = $selectall;
-        $this->countries = get_string_manager()->get_list_of_countries();
+        $this->countries = get_string_manager()->get_list_of_countries(true);
         $this->extrafields = $extrafields;
         $this->context = $context;
         if ($canseegroups) {
