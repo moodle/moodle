@@ -41,5 +41,30 @@ function xmldb_editor_atto_upgrade($oldversion) {
     // Automatically generated Moodle v3.4.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2018041100) {
+        $toolbar = get_config('editor_atto', 'toolbar');
+
+        if (strpos($toolbar, 'recordrtc') === false) {
+            $glue = "\r\n";
+            if (strpos($toolbar, $glue) === false) {
+                $glue = "\n";
+            }
+            $groups = explode($glue, $toolbar);
+            // Try to put recordrtc in files group.
+            foreach ($groups as $i => $group) {
+                $parts = explode('=', $group);
+                if (trim($parts[0]) == 'files') {
+                    $groups[$i] = 'files = ' . trim($parts[1]) . ', recordrtc';
+                    // Update config variable.
+                    $toolbar = implode($glue, $groups);
+                    set_config('toolbar', $toolbar, 'editor_atto');
+                }
+            }
+        }
+
+        // Atto editor savepoint reached.
+        upgrade_plugin_savepoint(true, 2018041100, 'editor', 'atto');
+    }
+
     return true;
 }
