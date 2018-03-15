@@ -62,5 +62,18 @@ function xmldb_scorm_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2018032300, 'scorm');
     }
 
+    if ($oldversion < 2018041100) {
+
+        // Changing precision of field completionscorerequired on table scorm to (10).
+        $table = new xmldb_table('scorm');
+        $field = new xmldb_field('completionscorerequired', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'completionstatusrequired');
+
+        // Launch change of precision for field completionscorerequired.
+        $dbman->change_field_precision($table, $field);
+
+        // Scorm savepoint reached.
+        upgrade_mod_savepoint(true, 2018041100, 'scorm');
+    }
+
     return true;
 }
