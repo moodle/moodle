@@ -6548,15 +6548,16 @@ function question_add_tops($categories, $pcontexts) {
             DEBUG_DEVELOPER);
 
     $topcats = array();
-    foreach ($pcontexts as $context) {
-        $topcat = question_get_top_category($context, true);
+    foreach ($pcontexts as $contextid) {
+        $topcat = question_get_top_category($contextid, true);
+        $context = context::instance_by_id($contextid);
 
         $newcat = new stdClass();
-        $newcat->id = "{$topcat->id},$context";
-        $newcat->name = get_string('top');
+        $newcat->id = "{$topcat->id},$contextid";
+        $newcat->name = get_string('topfor', 'question', $context->get_context_name(false));
         $newcat->parent = 0;
-        $newcat->contextid = $context;
-        $topcats["{$topcat->id},$context"] = $newcat;
+        $newcat->contextid = $contextid;
+        $topcats["{$topcat->id},$contextid"] = $newcat;
     }
     // Put topcats in at beginning of array - they'll be sorted into different contexts later.
     return array_merge($topcats, $categories);

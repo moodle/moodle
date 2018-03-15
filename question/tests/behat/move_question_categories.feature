@@ -20,13 +20,12 @@ Feature: A teacher can move question categories in the question bank
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
 
-  @javascript
   Scenario: A question category can be moved to another context
     When I follow "Test quiz"
     And I navigate to "Categories" node in "Quiz administration > Question bank"
-    And I click on "Parent category" "field"
-    And I click on "//optgroup[@label='Quiz: Test quiz']//option[normalize-space(text())='Top']" "xpath_element"
-    And I set the field "Name" to "Test category"
+    And I set the following fields to these values:
+      | Name            | Test category         |
+      | Parent category | Top for Test quiz     |
     And I press "submitbutton"
     And I click on "Share in context for Course: Course 1" "link" in the "Test category" "list_item"
     Then I should see "Test category" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' questioncategories ') and contains(concat(' ', normalize-space(@class), ' '), ' contextlevel50 ')]" "xpath_element"
