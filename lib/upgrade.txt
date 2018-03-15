@@ -1,6 +1,15 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 3.4.2 ===
+
+* Plugins can define class 'PLUGINNAME\privacy\local\sitepolicy\handler' if they implement an alternative mechanisms for
+  site policies managements and agreements. Administrators can define which component is to be used for handling site
+  policies and agreements. See https://docs.moodle.org/dev/Site_policy_handler
+* Scripts can define a constant NO_SITEPOLICY_CHECK and set it to true before requiring the main config.php file. It
+  will make the require_login() skipping the test for the user's policyagreed status. This is useful for plugins that
+  act as a site policy handler.
+
 === 3.4 ===
 * oauth2_client::request method has an extra parameter to specify the accept header for the response (MDL-60733)
 * The following functions, previously used (exclusively) by upgrade steps are not available

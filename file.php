@@ -68,7 +68,7 @@ if ($course->id != SITEID) {
     require_login($course, true, null, false);
 
 } else if ($CFG->forcelogin) {
-    if (!empty($CFG->sitepolicy)
+    if (empty($CFG->sitepolicyhandler) and !empty($CFG->sitepolicy)
         and ($CFG->sitepolicy == $CFG->wwwroot.'/file.php/'.$relativepath
              or $CFG->sitepolicy == $CFG->wwwroot.'/file.php?file=/'.$relativepath)) {
         //do not require login for policy file
