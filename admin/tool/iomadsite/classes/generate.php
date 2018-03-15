@@ -27,6 +27,7 @@ namespace tool_iomadsite;
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/local/iomad/lib/company.php');
+require_once($CFG->dirroot . '/local/iomad/lib/user.php');
 require_once($CFG->dirroot . '/course/lib.php');
 
 class generate {
@@ -132,6 +133,19 @@ class generate {
         'An Introduction To',
         'Studies in',
     ];
+
+    protected $firstnames;
+
+    protected $lastnames;
+
+    public function __construct() {
+        global $CFG;
+
+        require_once($CFG->dirroot . '/admin/tool/iomadsite/firstnames.php');
+        require_once($CFG->dirroot . '/admin/tool/iomadsite/lastnames.php');
+        $this->firstnames = $firstnames;
+        $this->lastnames = $lastnames;
+    }
 
     /**
      * Make course name
@@ -255,6 +269,48 @@ class generate {
             $comp->add_course($course, 0, true);
            
             echo "<p>Created course '$fullname'</p>\n";
+
+            // Add some users
+            $this->users($company, $shortname);
+        }
+    }
+
+    /**
+     * Create random user
+     * @param int $companyid
+     * @param int $courseid;
+     */
+    protected function create_user($companyid, $courseid) {
+        $firstname = $this->firstnames[array_rand($this->firstnames, 1)];
+        $lastname = $this->lastnames[array_rand($this->lastnames, 1)];
+        $email = $firstname . '.' . $lastname . '.' . rand(1000,9999) . '@example.com';
+        
+        // data object for user details
+        $data = new \stdClass;
+        $data->firstname = $firstname;
+        $data->lastname = $lastname;
+        $data->email = $email;
+        $data->use_email_as_username = 0;
+        $data->sendnewpasswordemails = 0;
+        $data->preference_auth_forcepasswordchange = 0;
+        $data->newpassword = 'Aa*12345678';
+        $data->companyid = $companyid;
+        $data->selectedcourses = [];
+        \company_user::create($data);
+    }
+
+    /**
+     * Create users for course
+     * @param object $company
+     * @param string $shortname (of course)
+     */
+    public function users($company, $shortname) {
+        global $DB;
+
+        $course = $DB->get_record('course', ['shortname' => $shortname], '*', MUST_EXIST);
+        $howmany = rand(10, 40);
+        for ($i=1; $i < $howmany; $i++) {
+            $this->create_user($company->id, $course->id);
         }
     }
 

@@ -51,6 +51,7 @@ if (!debugging('', DEBUG_DEVELOPER)) {
 // Do stuffs
 if ($action == 'generate') {
 
+    core_php_time_limit::raise(3600);
     $generate = new tool_iomadsite\generate();
     $generate->companies();
 
