@@ -2,7 +2,7 @@
 /**
  * SCSSPHP
  *
- * @copyright 2012-2017 Leaf Corcoran
+ * @copyright 2012-2018 Leaf Corcoran
  *
  * @license http://opensource.org/licenses/MIT MIT
  *
@@ -27,6 +27,11 @@ class Block
      * @var \Leafo\ScssPhp\Block
      */
     public $parent;
+
+    /**
+     * @var string
+     */
+    public $sourceName;
 
     /**
      * @var integer
