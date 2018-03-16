@@ -169,3 +169,7 @@ $string['tour2_title_addingblocks'] = 'Adding blocks';
 $string['tour2_content_addingblocks'] = 'You can add blocks to this page using this button. However, think carefully about including any blocks on your pages. Blocks are not shown on the Moodle Mobile app, so for the best user experience it is better to make sure your course works well without any blocks.';
 $string['tour2_title_end'] = 'End of tour';
 $string['tour2_content_end'] = 'This is the end of your user tour. It won\'t show again unless you reset it using the link in the footer. The site admin can also create further tours for this site if required.';
+$string['privacy:metadata:preference:requested'] = 'The time that a user last manually requested a user tour.';
+$string['privacy:metadata:preference:completed'] = 'The time that a user last completed a user tour.';
+$string['privacy:request:preference:requested'] = 'You last requested the "{$a->name}" user tour on {$a->time}';
+$string['privacy:request:preference:completed'] = 'You last marked the "{$a->name}" user tour as completed on {$a->time}';
