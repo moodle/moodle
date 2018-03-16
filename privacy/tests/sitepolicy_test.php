@@ -259,6 +259,32 @@ class sitepolicy_test extends advanced_testcase {
         $this->assertEquals(2, $USER->policyagreed);
         $this->assertEquals(0, $DB->get_field('user', 'policyagreed', ['id' => $USER->id]));
     }
+
+    /**
+     * Test behaviour of \core_privacy\local\sitepolicy\manager with a handler not implementing all required methods.
+     */
+    public function test_incomplete_handler() {
+        global $CFG;
+        require_once($CFG->dirroot.'/privacy/tests/fixtures/mock_incomplete_sitepolicy_handler.php');
+        $this->resetAfterTest(true);
+
+        $CFG->sitepolicyhandler = 'testtool_incompletehandler';
+
+        $manager = $this->getMockBuilder(\core_privacy\local\sitepolicy\manager::class)
+            ->setMethods(['get_all_handlers'])
+            ->getMock();
+        $manager->expects($this->any())
+            ->method('get_all_handlers')
+            ->will($this->returnValue(['testtool_incompletehandler' => 'mock_incomplete_sitepolicy_handler']));
+
+        // This works because the handler implements get_redirect_url().
+        $this->assertEquals('http://example.com/policy.php', $manager->get_redirect_url()->out());
+
+        // This must inform them developer that the handler does not implement a method.
+        $this->expectException('coding_exception');
+        $this->expectExceptionMessage('Method get_embed_url() not implemented by the handler');
+        $manager->get_embed_url();
+    }
 }
 
 /**
