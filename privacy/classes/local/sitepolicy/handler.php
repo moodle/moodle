@@ -24,6 +24,8 @@
 
 namespace core_privacy\local\sitepolicy;
 
+use coding_exception;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -54,10 +56,14 @@ abstract class handler {
      * This is a regular interactive page for web users. It should have normal Moodle header/footers, it should
      * allow user to view policies and accept them.
      *
+     * This would normally be an abstract static method but PHP 5.6 raises strict standards warning for such ones.
+     *
      * @param bool $forguests
      * @return moodle_url|null (returns null if site policy is not defined)
      */
-    abstract public static function get_redirect_url($forguests = false);
+    public static function get_redirect_url($forguests = false) {
+        throw new coding_exception('Method get_redirect_url() not implemented by the handler');
+    }
 
     /**
      * Returns URL of the site policy that needs to be displayed to the user (inside iframe or to use in WS such as mobile app)
@@ -65,10 +71,14 @@ abstract class handler {
      * This page should not have any header/footer, it does not also have any buttons/checkboxes. The caller needs to implement
      * the "Accept" button and call {@link self::accept()} on completion.
      *
+     * This would normally be an abstract static method but PHP 5.6 raises strict standards warning for such ones.
+     *
      * @param bool $forguests
      * @return moodle_url|null
      */
-    abstract public static function get_embed_url($forguests = false);
+    public static function get_embed_url($forguests = false) {
+        throw new coding_exception('Method get_embed_url() not implemented by the handler');
+    }
 
     /**
      * Accept site policy for the current user
