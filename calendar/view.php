@@ -132,4 +132,5 @@ echo html_writer::end_tag('div');
 list($data, $template) = calendar_get_footer_options($calendar);
 echo $renderer->render_from_template($template, $data);
 
+echo $renderer->complete_layout();
 echo $OUTPUT->footer();
