@@ -98,4 +98,13 @@ $functions = array(
         'type' => 'write',
         'ajax' => true,
     ),
+   
+    'local_iomad_learningpath_getprospectiveusers' => array(
+        'classname' => 'local_iomad_learningpath_external',
+        'methodname' => 'getprospectiveusers',
+        'classpath' => 'local/iomad_learningpath/externallib.php',
+        'description' => 'Get set of filtered users for given company',
+        'type' => 'read',
+        'ajax' => true,
+    ),
 );

@@ -315,4 +315,67 @@ class companypaths {
         // TODO: Copy students over
     }
 
+    /**
+     * Get students assigned to a path
+     * @param int $pathid
+     * @param bool idonly just give us the ids
+     * @return array
+     */
+    public function get_users($pathid, $idonly = false) {
+        global $DB;
+
+        $sql = "SELECT u.*
+            FROM {user} u JOIN {iomad_learningpathuser} lpu ON lpu.user = u.id
+            WHERE u.deleted = 0
+            AND u.suspended = 0
+            AND lpu.path = :pathid
+            ORDER BY u.lastname, u.firstname ASC";
+        $users = $DB->get_records_sql($sql, ['pathid' => $pathid]);
+        if ($idonly) {
+            return array_keys($users);
+        }
+
+        // Adjust for fullname
+        foreach ($users as $user) {
+            $user->fullname = fullname($user);
+        }
+
+        return $users;
+    }
+
+    /**
+     * Get prospective users
+     * @param int $companyid
+     * @param string $filter
+     * @param array $excludeids
+     * @return array of objects
+     */
+    public function get_prospective_users($companyid, $pathid, $filter) {
+        global $DB;
+
+        $sql = "SELECT u.*
+            FROM {user} u JOIN {company_users} cu ON cu.userid = u.id
+            WHERE u.deleted = 0
+            AND u.suspended = 0
+            AND cu.companyid = :companyid
+            ORDER BY u.lastname, u.firstname ASC";
+        $allusers = $DB->get_records_sql($sql, ['companyid' => $companyid]);
+        $excludeids = $this->get_users($pathid, true);
+
+        // Exclude ids and filter
+        $users = [];
+        foreach ($allusers as $user) {
+            if (array_key_exists($user->id, $excludeids)) {
+                continue;
+            }
+            $user->fullname = fullname($user);
+            if ($filter && (stripos($user->fullname, $filter) === false)) {
+                continue;
+            }
+            $users[] = $user;
+        }
+
+        return $users;
+    }
+
 }

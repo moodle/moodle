@@ -127,7 +127,7 @@ class local_iomad_learningpath_external extends external_api {
         }
 
         // Get full list of prospective courses
-        $companypaths = new local_iomad_learningpath\companypaths($companyid, context_system::instance());
+        $companypaths = new local_iomad_learningpath\companypaths($params['companyid'], context_system::instance());
         $allcourses = $companypaths->get_prospective_courses();
 
         // If filter, check there is a match
@@ -519,5 +519,60 @@ class local_iomad_learningpath_external extends external_api {
         $companypaths->copypath($params['pathid']);
 
         return true;
+    }
+
+    /**
+     * Returns description of method parameters
+     * @return external_function_parameters
+     */
+    public static function getprospectiveusers_parameters() {
+        return new external_function_parameters(
+            array(
+                'companyid' => new external_value(PARAM_INT, 'ID of Iomad Company'),
+                'pathid' => new external_value(PARAM_INT, 'ID learning path'),
+                'filter' => new external_value(PARAM_TEXT, 'Filter user list returned', VALUE_DEFAULT, ''),
+            )
+        );
+    }
+
+    /** 
+     * Returns description of method result
+     * @return external_description
+     */
+    public static function getprospectiveusers_returns() {
+        return new external_multiple_structure(
+            new external_single_structure(
+                array(
+                    'id' => new external_value(PARAM_INT, 'User ID'),
+                    'fullname' => new external_value(PARAM_TEXT, 'User fullname'),
+                    'email' => new external_value(PARAM_TEXT, 'User email'),
+                )
+            )
+        );
+    }
+
+    /**
+     * Get list of possible users
+     * @param int $companyid 
+     * @param int $pathid
+     * @param int $filter
+     * @throws invalid_parameter_exception
+     */
+    public static function getprospectiveusers($companyid, $pathid, $filter) {
+        global $DB;
+
+        // Validate params
+        $params = self::validate_parameters(self::getprospectiveusers_parameters(), ['companyid' => $companyid, 'pathid' => $pathid, 'filter' => $filter]);
+
+        // Find/validate company
+        if (!$company = $DB->get_record('company', ['id' => $params['companyid']])) {
+            throw new invalid_parameter_exception("Company with id = {$params['companyid']} does not exist");
+        }
+
+        // Get lists of users
+        $companypaths = new local_iomad_learningpath\companypaths($params['companyid'], context_system::instance());
+        $users = $companypaths->get_prospective_users($params['companyid'], $params['pathid'], $params['filter']);
+
+        return $users;
     }
 }

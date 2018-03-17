@@ -63,5 +63,16 @@ class renderer extends plugin_renderer_base {
         
         return parent::render_from_template('local_iomad_learningpath/courselist_page', $data);
     }
+
+    /**
+     * Render the students assignment
+     * @param students_page $page
+     * @return string html for page
+     */
+    public function render_students_page($page) {
+        $data = $page->export_for_template($this);
+        
+        return parent::render_from_template('local_iomad_learningpath/students_page', $data);
+    }
 }
 

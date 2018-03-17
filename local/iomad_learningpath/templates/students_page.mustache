@@ -1,0 +1,54 @@
+{{!
+    @template local_iomad_learningpath/manage_page
+
+    Display students assignments
+
+    Howard Miller 2018
+}}
+
+<h2>{{ path.name }}</h2>
+
+<div class="row">
+    <div class="col-sm-6">
+        <div class="card bg-light">
+            <div class="card-header">
+                {{# str }}selectedstudents, local_iomad_learningpath{{/ str }}<br />
+                <small>
+                    {{# str }}clicktoremove, local_iomad_learningpath{{/ str }}.
+                </small>
+            </div>
+            <div class="card-body card-block">
+                <p class="card-text">
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-2">
+
+    </div>
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label for="userfilter">{{# str }}filter, local_iomad_learningpath{{/ str }}</label>
+            <input id="userfilter" class="form-control" type="text" name="userfilter">
+        </div>
+        <div class="card bg-light">
+            <div class="card-header">
+                {{# str }}prospectivestudents, local_iomad_learningpath{{/ str }}<br />
+                <small>{{# str }}clicktoadd, local_iomad_learningpath{{/ str }}</small>
+            </div>
+            <div class="card-body card-block">
+                <p class="card-text">
+                    <div id="noprospective" class="alert alert-warning">
+                        {{# str }}noprospectiveusers, local_iomad_learningpath{{/ str }}
+                    </div>
+                    <ul id="prospectivelist">
+                    </ul>
+                <p>
+            </div>
+        </div>
+    </div>
+
+    </div>
+</div>
+
+{{{ done }}}
