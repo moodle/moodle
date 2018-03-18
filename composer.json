@@ -5,7 +5,7 @@
     "type": "project",
     "homepage": "https://moodle.org",
     "require-dev": {
-        "phpunit/phpunit": "6.4.*",
+        "phpunit/phpunit": "6.5.*",
         "phpunit/dbUnit": "3.0.*",
         "moodlehq/behat-extension": "3.34.2",
         "mikey179/vfsStream": "^1.6"
