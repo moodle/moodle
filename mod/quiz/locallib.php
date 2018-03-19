@@ -2449,14 +2449,14 @@ function quiz_is_overriden_calendar_event(\calendar_event $event) {
 function quiz_build_random_question_tag_json($tagrecords) {
     $tags = [];
     foreach ($tagrecords as $tagrecord) {
-        if ($tag = core_tag_tag::get($tagrecord->id, 'id, name')) {
+        if ($tagrecord->id && $tag = core_tag_tag::get($tagrecord->id, 'id, name')) {
             $tags[] = [
                 'id' => (int)$tagrecord->id,
                 'name' => $tag->name
             ];
         } else if ($tag = core_tag_tag::get_by_name(0, $tagrecord->name, 'id, name')) {
             $tags[] = [
-                'id' => $tag->id,
+                'id' => (int)$tag->id,
                 'name' => $tagrecord->name
             ];
         } else {
@@ -2475,20 +2475,25 @@ function quiz_build_random_question_tag_json($tagrecords) {
  * @param string $tagsjson The JSON string representing an array of tags in the [{"id":tagid,"name":"tagname"}] format.
  *      E.g. [{"id":1,"name":"tag1"},{"id":2,"name":"tag2"}]
  *      Usually equal to the value of the tags field retrieved from the quiz_slots table.
+ * @param bool $matchbyid If set to true, then the function tries to find tags by their id.
+ *      If no tag is found by the tag id or if $matchbyid is set to false, then the function tries to find the tag by its name.
  * @return array An array of tags containing the id and name properties, indexed by tag ids.
  */
-function quiz_extract_random_question_tags($tagsjson) {
+function quiz_extract_random_question_tags($tagsjson, $matchbyid = true) {
     $tagrecords = [];
     if (!empty($tagsjson)) {
         $tags = json_decode($tagsjson);
-        // Only work with tags that exist.
+
         foreach ($tags as $tagdata) {
-            if (!array_key_exists($tagdata->id, $tagrecords)) {
-                if ($tag = core_tag_tag::get($tagdata->id, 'id, name')) {
-                    $tagrecords[$tag->id] = $tag->to_object();
-                } else if ($tag = core_tag_tag::get_by_name(0, $tagdata->name, 'id, name')) {
-                    $tagrecords[$tag->id] = $tag->to_object();
-                }
+            if ($matchbyid && $tag = core_tag_tag::get($tagdata->id, 'id, name')) {
+                $tagrecords[] = $tag->to_object();
+            } else if ($tag = core_tag_tag::get_by_name(0, $tagdata->name, 'id, name')) {
+                $tagrecords[] = $tag->to_object();
+            } else {
+                $tagrecords[] = (object)[
+                    'id' => null,
+                    'name' => $tagdata->name
+                ];
             }
         }
     }
@@ -2502,9 +2507,13 @@ function quiz_extract_random_question_tags($tagsjson) {
  * @param string $tagsjson The JSON string representing an array of tags in the [{"id":tagid,"name":"tagname"}] format.
  *      E.g. [{"id":1,"name":"tag1"},{"id":2,"name":"tag2"}]
  *      Usually equal to the value of the tags field retrieved from the {quiz_slots} table.
+ * @param bool $matchbyid If set to true, then this function relies on the tag ids that are stored in $tagsjson to find tags.
+ *      If no tag is found by the tag id or if $matchbyid is set to false, then this function tries to find the tag by its name.
  * @return int[] List of tag ids.
  */
-function quiz_extract_random_question_tag_ids($tagsjson) {
-    $tags = quiz_extract_random_question_tags($tagsjson);
-    return array_keys($tags);
+function quiz_extract_random_question_tag_ids($tagsjson, $matchbyid = true) {
+    $tags = quiz_extract_random_question_tags($tagsjson, $matchbyid);
+
+    // Only work with tags that exist.
+    return array_filter(array_column($tags, 'id'));
 }

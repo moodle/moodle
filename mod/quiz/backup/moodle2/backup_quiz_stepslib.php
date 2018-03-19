@@ -58,7 +58,7 @@ class backup_quiz_activity_structure_step extends backup_questions_activity_stru
         $qinstances = new backup_nested_element('question_instances');
 
         $qinstance = new backup_nested_element('question_instance', array('id'), array(
-            'slot', 'page', 'requireprevious', 'questionid', 'maxmark'));
+            'slot', 'page', 'requireprevious', 'questionid', 'questioncategoryid', 'includingsubcategories', 'tags', 'maxmark'));
 
         $sections = new backup_nested_element('sections');
 

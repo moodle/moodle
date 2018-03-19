@@ -420,4 +420,224 @@ class mod_quiz_locallib_testcase extends advanced_testcase {
 
         $this->assertEquals($comparearray, quiz_get_user_timeclose($course->id));
     }
+
+    public function test_quiz_build_random_question_tag_json() {
+        $this->resetAfterTest();
+
+        // Setup test data.
+        $footagrecord = array(
+            'isstandard' => 1,
+            'flag' => 0,
+            'rawname' => 'foo',
+            'description' => 'foo desc'
+        );
+        $footag = $this->getDataGenerator()->create_tag($footagrecord);
+        $bartagrecord = array(
+            'isstandard' => 1,
+            'flag' => 0,
+            'rawname' => 'bar',
+            'description' => 'bar desc'
+        );
+        $bartag = $this->getDataGenerator()->create_tag($bartagrecord);
+        $baztagrecord = array(
+            'isstandard' => 1,
+            'flag' => 0,
+            'rawname' => 'baz',
+            'description' => 'baz desc'
+        );
+        $baztag = $this->getDataGenerator()->create_tag($baztagrecord);
+        $quxtagrecord = array(
+            'isstandard' => 1,
+            'flag' => 0,
+            'rawname' => 'qux',
+            'description' => 'qux desc'
+        );
+        $quxtag = $this->getDataGenerator()->create_tag($quxtagrecord);
+        $quuxtagrecord = array(
+            'isstandard' => 1,
+            'flag' => 0,
+            'rawname' => 'quux',
+            'description' => 'quux desc'
+        );
+        $quuxtag = $this->getDataGenerator()->create_tag($quuxtagrecord);
+
+        $tagrecords = array(
+            (object)[
+                'id' => $footag->id,
+                'name' => 'foo'
+            ],
+            (object)[
+                'id' => 999, // An invalid tag id.
+                'name' => 'bar'
+            ],
+            (object)[
+                'id' => null,
+                'name' => 'baz'
+            ],
+            (object)[
+                'id' => $quxtag->id,
+                'name' => 'invalidqux'  // An invalid tag name.
+            ],
+            (object)[
+                'id' => 999, // An invalid tag id.
+                'name' => 'invalidquux'  // An invalid tag name.
+            ],
+        );
+
+        $expectedjson = json_encode(array(
+            ['id' => (int)$footag->id, 'name' => $footag->name],
+            ['id' => (int)$bartag->id, 'name' => $bartag->name],
+            ['id' => (int)$baztag->id, 'name' => $baztag->name],
+            ['id' => (int)$quxtag->id, 'name' => $quxtag->name],
+            ['id' => null, 'name' => 'invalidquux'],
+        ));
+        $this->assertEquals($expectedjson, quiz_build_random_question_tag_json($tagrecords));
+    }
+
+    public function test_quiz_extract_random_question_tags() {
+        $this->resetAfterTest();
+
+        // Setup test data.
+        $footagrecord = array(
+                'isstandard' => 1,
+                'flag' => 0,
+                'rawname' => 'foo',
+                'description' => 'foo desc'
+        );
+        $footag = $this->getDataGenerator()->create_tag($footagrecord);
+        $bartagrecord = array(
+                'isstandard' => 1,
+                'flag' => 0,
+                'rawname' => 'bar',
+                'description' => 'bar desc'
+        );
+        $bartag = $this->getDataGenerator()->create_tag($bartagrecord);
+        $baztagrecord = array(
+                'isstandard' => 1,
+                'flag' => 0,
+                'rawname' => 'baz',
+                'description' => 'baz desc'
+        );
+        $baztag = $this->getDataGenerator()->create_tag($baztagrecord);
+        $quxtagrecord = array(
+                'isstandard' => 1,
+                'flag' => 0,
+                'rawname' => 'qux',
+                'description' => 'qux desc'
+        );
+        $quxtag = $this->getDataGenerator()->create_tag($quxtagrecord);
+        $quuxtagrecord = array(
+                'isstandard' => 1,
+                'flag' => 0,
+                'rawname' => 'quux',
+                'description' => 'quux desc'
+        );
+        $quuxtag = $this->getDataGenerator()->create_tag($quuxtagrecord);
+
+        $tagjson = json_encode(array(
+            [
+                'id' => $footag->id,
+                'name' => 'foo'
+            ],
+            [
+                'id' => 999, // An invalid tag id.
+                'name' => 'bar'
+            ],
+            [
+                'id' => null,
+                'name' => 'baz'
+            ],
+            [
+                'id' => $quxtag->id,
+                'name' => 'invalidqux' // An invalid tag name.
+            ],
+            [
+                'id' => 999, // An invalid tag id.
+                'name' => 'invalidquux'  // An invalid tag name.
+            ],
+        ));
+
+        $expectedrecords = array(
+            (object)['id' => $footag->id, 'name' => $footag->name],
+            (object)['id' => $bartag->id, 'name' => $bartag->name],
+            (object)['id' => $baztag->id, 'name' => $baztag->name],
+            (object)['id' => $quxtag->id, 'name' => $quxtag->name],
+            (object)['id' => null, 'name' => 'invalidquux'],
+        );
+
+        $this->assertEquals($expectedrecords, quiz_extract_random_question_tags($tagjson));
+    }
+
+    public function test_quiz_extract_random_question_tag_ids() {
+        $this->resetAfterTest();
+
+        // Setup test data.
+        $footagrecord = array(
+                'isstandard' => 1,
+                'flag' => 0,
+                'rawname' => 'foo',
+                'description' => 'foo desc'
+        );
+        $footag = $this->getDataGenerator()->create_tag($footagrecord);
+        $bartagrecord = array(
+                'isstandard' => 1,
+                'flag' => 0,
+                'rawname' => 'bar',
+                'description' => 'bar desc'
+        );
+        $bartag = $this->getDataGenerator()->create_tag($bartagrecord);
+        $baztagrecord = array(
+                'isstandard' => 1,
+                'flag' => 0,
+                'rawname' => 'baz',
+                'description' => 'baz desc'
+        );
+        $baztag = $this->getDataGenerator()->create_tag($baztagrecord);
+        $quxtagrecord = array(
+                'isstandard' => 1,
+                'flag' => 0,
+                'rawname' => 'qux',
+                'description' => 'qux desc'
+        );
+        $quxtag = $this->getDataGenerator()->create_tag($quxtagrecord);
+        $quuxtagrecord = array(
+                'isstandard' => 1,
+                'flag' => 0,
+                'rawname' => 'quux',
+                'description' => 'quux desc'
+        );
+        $quuxtag = $this->getDataGenerator()->create_tag($quuxtagrecord);
+
+        $tagjson = json_encode(array(
+            [
+                'id' => $footag->id,
+                'name' => 'foo'
+            ],
+            [
+                'id' => 999, // An invalid tag id.
+                'name' => 'bar'
+            ],
+            [
+                'id' => null,
+                'name' => 'baz'
+            ],
+            [
+                'id' => $quxtag->id,
+                'name' => 'invalidqux' // An invalid tag name.
+            ],
+            [
+                'id' => 999, // An invalid tag id.
+                'name' => 'invalidquux'  // An invalid tag name.
+            ],
+        ));
+
+        $expectedrecords = array(
+            $footag->id,
+            $bartag->id,
+            $baztag->id,
+            $quxtag->id,
+        );
+
+        $this->assertEquals($expectedrecords, quiz_extract_random_question_tag_ids($tagjson));
+    }
 }
