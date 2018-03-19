@@ -4388,6 +4388,9 @@ class restore_create_categories_and_questions extends restore_structure_step {
 
         // Check we have to create the category (newitemid = 0)
         if ($mapping->newitemid) {
+            // By performing this set_mapping() we make get_old/new_parentid() to work for all the
+            // children elements of the 'question_category' one.
+            $this->set_mapping('question_category', $oldid, $mapping->newitemid);
             return; // newitemid != 0, this category is going to be mapped. Nothing to do
         }
 
@@ -4551,7 +4554,7 @@ class restore_create_categories_and_questions extends restore_structure_step {
     }
 
     protected function process_tag($data) {
-        global $CFG, $DB;
+        global $DB;
 
         $data = (object)$data;
         $newquestion = $this->get_new_parentid('question');
@@ -4563,14 +4566,19 @@ class restore_create_categories_and_questions extends restore_structure_step {
 
         if (core_tag_tag::is_enabled('core_question', 'question')) {
             $tagname = $data->rawname;
-            // Get the category, so we can then later get the context.
-            $categoryid = $this->get_new_parentid('question_category');
-            if (empty($this->cachedcategory) || $this->cachedcategory->id != $categoryid) {
-                $this->cachedcategory = $DB->get_record('question_categories', array('id' => $categoryid));
+            if (!empty($data->contextid) && $newcontextid = $this->get_mappingid('context', $data->contextid)) {
+                    $tagcontextid = $newcontextid;
+            } else {
+                // Get the category, so we can then later get the context.
+                $categoryid = $this->get_new_parentid('question_category');
+                if (empty($this->cachedcategory) || $this->cachedcategory->id != $categoryid) {
+                    $this->cachedcategory = $DB->get_record('question_categories', array('id' => $categoryid));
+                }
+                $tagcontextid = $this->cachedcategory->contextid;
             }
             // Add the tag to the question.
             core_tag_tag::add_item_tag('core_question', 'question', $newquestion,
-                    context::instance_by_id($this->cachedcategory->contextid),
+                    context::instance_by_id($tagcontextid),
                     $tagname);
         }
     }
