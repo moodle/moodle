@@ -876,7 +876,9 @@ class company {
     public function get_userlevel($user) {
 
         global $DB;
-        if (is_siteadmin()) {
+        if (is_siteadmin() || 
+            iomad::has_capability('block/iomad_company_admin:company_add', context_system::instance()) ||
+            iomad::has_capability('block/iomad_company_admin:company_add_child', context_system::instance())) {
             return self::get_company_parentnode($this->id);
         }
         if ($userdepartment = $DB->get_record('company_users', array('userid' => $user->id, 'companyid' => $this->id))) {
