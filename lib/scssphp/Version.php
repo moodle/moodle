@@ -2,7 +2,7 @@
 /**
  * SCSSPHP
  *
- * @copyright 2012-2017 Leaf Corcoran
+ * @copyright 2012-2018 Leaf Corcoran
  *
  * @license http://opensource.org/licenses/MIT MIT
  *
@@ -18,5 +18,5 @@ namespace Leafo\ScssPhp;
  */
 class Version
 {
-    const VERSION = 'v0.6.7';
+    const VERSION = 'v0.7.5';
 }

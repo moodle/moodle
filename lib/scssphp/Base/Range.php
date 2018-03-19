@@ -2,7 +2,7 @@
 /**
  * SCSSPHP
  *
- * @copyright 2017 Leaf Corcoran
+ * @copyright 2015-2018 Leaf Corcoran
  *
  * @license http://opensource.org/licenses/MIT MIT
  *
