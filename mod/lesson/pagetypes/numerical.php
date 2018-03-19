@@ -144,7 +144,7 @@ class lesson_page_type_numerical extends lesson_page {
                 $cells[] = '<label>' . get_string('answer', 'lesson') . ' ' . $i . ':</label>';
             } else if ($this->lesson->jumpto_is_correct($this->properties->id, $answer->jumpto)) {
                 // underline correct answers
-                $cells[] = '<span class="correct">' . get_string('answer', 'lesson') . ' ' . $i . '</span>: \n';
+                $cells[] = '<span class="correct">' . get_string('answer', 'lesson') . ' ' . $i . '</span>:' . "\n";
             } else {
                 $cells[] = '<label class="correct">' . get_string('answer', 'lesson') . ' ' . $i . '</label>';
             }
