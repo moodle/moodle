@@ -410,6 +410,54 @@ class core_questionlib_testcase extends advanced_testcase {
         $this->assertEquals(0, $DB->count_records('question', $criteria));
     }
 
+    /**
+     * This function tests the question_delete_course_category function when it is supposed to move question categories.
+     *
+     * @param bool $feedback Whether to return feedback
+     * @dataProvider provider_feedback
+     */
+    public function test_question_delete_course_category_move_qcats($feedback) {
+        global $DB;
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        list($category1, $course1, $quiz1, $qcat1, $questions1) = $this->setup_quiz_and_questions('category');
+        list($category2, $course2, $quiz2, $qcat2, $questions2) = $this->setup_quiz_and_questions('category');
+
+        $questionsinqcat1 = count($questions1);
+        $questionsinqcat2 = count($questions2);
+
+        // Test that the feedback works.
+        if ($feedback) {
+            $a = new stdClass();
+            $a->oldplace = context::instance_by_id($qcat1->contextid)->get_context_name();
+            $a->newplace = context::instance_by_id($qcat2->contextid)->get_context_name();
+            $this->expectOutputRegex('|'.get_string('movedquestionsandcategories', 'question', $a).'|');
+        }
+        question_delete_course_category($category1, $category2, $feedback);
+
+        // Verify category not deleted.
+        $criteria = array('id' => $qcat1->id);
+        $this->assertEquals(1, $DB->count_records('question_categories', $criteria));
+
+        // Verify questions are moved.
+        $criteria = array('category' => $qcat1->id);
+        $params = array($qcat2->contextid);
+        $actualquestionscount = $DB->count_records_sql("SELECT COUNT(*)
+                                                          FROM {question} q
+                                                          JOIN {question_categories} qc ON q.category = qc.id
+                                                         WHERE qc.contextid = ?", $params, $criteria);
+        $this->assertEquals($questionsinqcat1 + $questionsinqcat2, $actualquestionscount);
+
+        // Verify there is just a single top-level category.
+        $criteria = array('contextid' => $qcat2->contextid, 'parent' => 0);
+        $this->assertEquals(1, $DB->count_records('question_categories', $criteria));
+
+        // Verify there is no question category in previous context.
+        $criteria = array('contextid' => $qcat1->contextid);
+        $this->assertEquals(0, $DB->count_records('question_categories', $criteria));
+    }
+
     public function test_question_remove_stale_questions_from_category() {
         global $DB;
         $this->resetAfterTest(true);

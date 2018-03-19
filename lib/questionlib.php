@@ -464,11 +464,13 @@ function question_delete_course_category($category, $newcategory, $feedback=true
         if (!$newcontext = context_coursecat::instance($newcategory->id)) {
             return false;
         }
+        $topcategory = question_get_top_category($context->id, true);
+        $newtopcategory = question_get_top_category($newcontext->id, true);
 
-        // Update the contextid for any tag instances for questions in the old context.
-        core_tag_tag::move_context('core_question', 'question', $context, $newcontext);
-
-        $DB->set_field('question_categories', 'contextid', $newcontext->id, array('contextid' => $context->id));
+        question_move_category_to_context($topcategory->id, $context->id, $newcontext->id);
+        $DB->set_field('question_categories', 'parent', $newtopcategory->id, array('parent' => $topcategory->id));
+        // Now delete the top category.
+        $DB->delete_records('question_categories', array('id' => $topcategory->id));
 
         if ($feedback) {
             $a = new stdClass();
