@@ -30,8 +30,16 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['language'] = 'שפת ממשק';
-$string['moodlelogo'] = 'לוגו של Moodle';
-$string['next'] = 'הבא';
-$string['previous'] = 'קודם';
-$string['reload'] = 'טעינה מחדש';
+$string['clianswerno'] = 'n';
+$string['cliansweryes'] = 's';
+$string['cliincorrectvalueerror'] = 'Error, valor incorrecta  "{$a->value}" pa "{$a->option}"';
+$string['cliincorrectvalueretry'] = 'Valor incorrecta, per favor, intente de nuevo';
+$string['clitypevalue'] = 'valor d\'o tipo';
+$string['clitypevaluedefault'] = 'valor d\'o tipo, prete Enter pa utilizar la valor per defecto ({$a})';
+$string['cliunknowoption'] = 'Opcions no reconoixidas:
+{$a}
+Per favor, utilice la opción Aduya.';
+$string['cliyesnoprompt'] = 'escriba s (pa sí) u n (pa no)';
+$string['environmentrequireinstall'] = 'ha d\'estar instalau/activau';
+$string['environmentrequireversion'] = 'versión {$a->needed} ye obligatoria y ye executando {$a->current}';
+$string['upgradekeyset'] = 'Clau d\'actualización (deixar en blanco pa no establir-la)';

@@ -30,8 +30,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['language'] = 'שפת ממשק';
-$string['moodlelogo'] = 'לוגו של Moodle';
-$string['next'] = 'הבא';
-$string['previous'] = 'קודם';
-$string['reload'] = 'טעינה מחדש';
+$string['language'] = 'Idioma';
+$string['moodlelogo'] = 'Logo de Moodle';
+$string['next'] = 'Siguient';
+$string['previous'] = 'Anterior';
+$string['reload'] = 'Recargar';
