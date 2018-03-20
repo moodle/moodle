@@ -39,6 +39,11 @@ class subsystem_link implements type {
     protected $name;
 
     /**
+     * @var array The list of data names and descriptions.
+     */
+    protected $privacyfields;
+
+    /**
      * @var string A description of what this subsystem is used to store.
      */
     protected $summary;
@@ -47,9 +52,10 @@ class subsystem_link implements type {
      * Constructor for the subsystem_link.
      *
      * @param   string  $name The name of the subsystem to link.
+     * @param   array   $privacyfields An optional array of fields and their descriptions.
      * @param   string  $summary A description of what is stored within this subsystem.
      */
-    public function __construct($name, $summary = '') {
+    public function __construct($name, array $privacyfields = [], $summary = '') {
         if (debugging('', DEBUG_DEVELOPER)) {
             $teststring = clean_param($summary, PARAM_STRINGID);
             if ($teststring !== $summary) {
@@ -60,6 +66,7 @@ class subsystem_link implements type {
         }
 
         $this->name = $name;
+        $this->privacyfields = $privacyfields;
         $this->summary = $summary;
     }
 
@@ -78,7 +85,7 @@ class subsystem_link implements type {
      * @return  array
      */
     public function get_privacy_fields() {
-        return null;
+        return $this->privacyfields;
     }
 
     /**

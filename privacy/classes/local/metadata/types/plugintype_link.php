@@ -39,6 +39,11 @@ class plugintype_link implements type {
     protected $name;
 
     /**
+     * @var array The list of data names and descriptions.
+     */
+    protected $privacyfields;
+
+    /**
      * @var string A description of what this plugintype is used to store.
      */
     protected $summary;
@@ -49,7 +54,7 @@ class plugintype_link implements type {
      * @param   string  $name The name of the plugintype to link.
      * @param   string  $summary A description of what is stored within this plugintype.
      */
-    public function __construct($name, $summary = '') {
+    public function __construct($name, $privacyfields = [], $summary = '') {
         if (debugging('', DEBUG_DEVELOPER)) {
             $teststring = clean_param($summary, PARAM_STRINGID);
             if ($teststring !== $summary) {
@@ -60,6 +65,7 @@ class plugintype_link implements type {
         }
 
         $this->name = $name;
+        $this->privacyfields = $privacyfields;
         $this->summary = $summary;
     }
 
@@ -78,7 +84,7 @@ class plugintype_link implements type {
      * @return  array
      */
     public function get_privacy_fields() {
-        return null;
+        return $this->privacyfields;
     }
 
     /**
