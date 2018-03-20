@@ -562,7 +562,8 @@ class local_iomad_learningpath_external extends external_api {
         global $DB;
 
         // Validate params
-        $params = self::validate_parameters(self::getprospectiveusers_parameters(), ['companyid' => $companyid, 'pathid' => $pathid, 'filter' => $filter]);
+        $params = self::validate_parameters(self::getprospectiveusers_parameters(),
+            ['companyid' => $companyid, 'pathid' => $pathid, 'filter' => $filter]);
 
         // Find/validate company
         if (!$company = $DB->get_record('company', ['id' => $params['companyid']])) {
@@ -571,8 +572,123 @@ class local_iomad_learningpath_external extends external_api {
 
         // Get lists of users
         $companypaths = new local_iomad_learningpath\companypaths($params['companyid'], context_system::instance());
-        $users = $companypaths->get_prospective_users($params['companyid'], $params['pathid'], $params['filter']);
+        $users = $companypaths->get_prospective_users($params['pathid'], $params['filter']);
 
         return $users;
     }
+
+    /**
+     * Returns description of method parameters
+     * @return external_function_parameters
+     */
+    public static function addusers_parameters() {
+        return new external_function_parameters(
+            array(
+                'pathid' => new external_value(PARAM_INT, 'ID of Iomad Learning Path'),
+                'userids' => new external_multiple_structure(new external_value(PARAM_INT, 'User ID'), 'List of user IDs to add'),
+            )
+        );
+    }
+
+    /** 
+     * Returns description of method result
+     * @return external_description
+     */
+    public static function addusers_returns() {
+        return new external_value(PARAM_BOOL, 'True if users added correctly');
+    }
+
+    /**
+     * Add users to learning path
+     * @param int $pathid
+     * @param array $userids
+     * @throws invalid_parameter_exception
+     */
+    public static function addusers($pathid, $userids) {
+        global $DB;
+
+        // Validate params
+        $params = self::validate_parameters(self::addusers_parameters(), ['pathid' => $pathid, 'userids' => $userids]);
+
+        // get path
+        if (!$path = $DB->get_record('iomad_learningpath', ['id' => $params['pathid']])) {
+            throw new invalid_parameter_exception("Path with id = $pathid does not exist");
+        }
+
+        // Find/validate company
+        $companyid = $path->company;
+        if (!$company = $DB->get_record('company', ['id' => $companyid])) {
+            throw new invalid_parameter_exception("Company with id = $companyid does not exist");
+        }
+
+        // Add users
+        $companypaths = new local_iomad_learningpath\companypaths($companyid, context_system::instance());
+        $companypaths->add_users($params['pathid'], $params['userids']);
+
+        return true;
+    }
+
+    /**
+     * Returns description of method parameters
+     * @return external_function_parameters
+     */
+    public static function getusers_parameters() {
+        return new external_function_parameters(
+            array(
+                'companyid' => new external_value(PARAM_INT, 'ID of Iomad Company'),
+                'pathid' => new external_value(PARAM_INT, 'ID learning path'),
+            )
+        );
+    }
+
+    /** 
+     * Returns description of method result
+     * @return external_description
+     */
+    public static function getusers_returns() {
+        return new external_multiple_structure(
+            new external_single_structure(
+                array(
+                    'id' => new external_value(PARAM_INT, 'User ID'),
+                    'fullname' => new external_value(PARAM_TEXT, 'User fullname'),
+                    'email' => new external_value(PARAM_TEXT, 'User email'),
+                )
+            )
+        );
+    }
+
+    /**
+     * Get list of path users
+     * @param int $companyid 
+     * @param int $pathid
+     * @throws invalid_parameter_exception
+     */
+    public static function getusers($companyid, $pathid) {
+        global $DB;
+
+        // Validate params
+        $params = self::validate_parameters(self::getprospectiveusers_parameters(), ['companyid' => $companyid, 'pathid' => $pathid]);
+
+        // Find/validate company
+        if (!$company = $DB->get_record('company', ['id' => $params['companyid']])) {
+            throw new invalid_parameter_exception("Company with id = {$params['companyid']} does not exist");
+        }
+
+        // Get lists of users
+        $companypaths = new local_iomad_learningpath\companypaths($params['companyid'], context_system::instance());
+        $allusers = $companypaths->get_users($params['pathid']);
+
+        // massage list
+        $users = [];
+        foreach ($allusers as $alluser) {
+            $user = new stdClass;
+            $user->id = $alluser->id;
+            $user->fullname = $alluser->fullname;
+            $user->email = $alluser->email;
+            $users[] = $user;
+        }
+
+        return $users;
+    }
+
 }

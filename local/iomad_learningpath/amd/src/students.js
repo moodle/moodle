@@ -8,8 +8,13 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification'], 
         init: function(companyid, pathid) {
 
 
-            // Handle response from filter ajax
+            /**
+             * Handle response from filter ajax
+             * @param array users
+             */
             function apply_filter(users) {
+
+                // Check if there are any students
                 $('#prospectivelist li').remove();
                 if (users.length) {
                     $('#noprospective').hide();
@@ -17,6 +22,16 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification'], 
                     $('#noprospective').show();
                     return;
                 }
+
+                // Check if there are too many students
+                if (users.length > 30) {
+                    $('#toomanyprospective').show();
+                    return;
+                } else {
+                    $('#toomanyprospective').hide();
+                }
+
+                // Display updated list.
                 var items = [];
                 $.each(users, function(id, user) {
                     items.push('<li class="text-truncate" data-userid="' + user.id + '"><i class="fa fa-user"></i> ' + user.fullname + '</li>');
@@ -25,7 +40,10 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification'], 
             }
 
 
-            // Function to populate user list
+            /*
+             * Populate/filter user list
+             * @param string filter
+             */
             function user_list(filter) {
 
                 // Ajax stuff to get list
@@ -40,7 +58,9 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification'], 
                 }]);
             }
 
-            // Filter events
+            /**
+             * Bind events for user_list function
+             */
             $(window).on('load', user_list(''));
             $('#userfilter').on('input', function() {
                 var filter = $(this).val();
@@ -48,8 +68,10 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification'], 
             });
 
 
-            // Add hover effect.
-            // Bind on ul as li entries are dynamic!
+            /**
+             * Add hover effect.
+             * Bind on ul as li entries are dynamic!
+             */
             $('#prospectivelist, #pathcourselist').on('mouseenter', 'li', function() {
                 $(this).addClass("text-primary");
             });
@@ -58,31 +80,81 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification'], 
             });
 
 
-            // Add click handler for adding course
+            /**
+             * Handle response from add/display path users
+             * @param array users
+             */
+            function apply_pathusers(users) {
+
+                // Check if there are any users
+                $('#pathuserlist li').remove();
+                if (users.length) {
+                    $('#nopathusers').hide();
+                } else {
+                    $('#nopathusers').show();
+                    return;
+                }
+
+                // Display updated list.
+                var items = [];
+                $.each(users, function(id, user) {
+                    items.push('<li class="text-truncate" data-userid="' + user.id + '"><i class="fa fa-user"></i> ' + user.fullname + '</li>');
+                });
+                $('#pathuserlist').append(items.join(''));
+            }
+
+
+            /*
+             * Populate pathuser list
+             * @param string filter
+             */
+            function pathuser_list() {
+
+                // Ajax stuff to get list
+                // call the web service
+                ajax.call([{
+                    methodname: 'local_iomad_learningpath_getusers',
+                    args: {companyid: companyid, pathid: pathid},
+                    done: function(users) {
+                        apply_pathusers(users);
+                    },
+                    fail: notification.exception,
+                }]);
+            }
+
+
+            /**
+             * Bind events for user_list function
+             */
+            $(window).on('load', pathuser_list());
+
+
+            /**
+             * Add click handler for adding user
+             * (bind on list as li's are dynamic)
+             */
             $('#prospectivelist').on('click', 'li', function() {
-                courseid = $(this).data('courseid');
+                userid = $(this).data('userid');
                 
                 // Save the HTML for later
                 html = $(this).html();
 
                 // Add the course to the path
                 ajax.call([{
-                    methodname: 'local_iomad_learningpath_addcourses',
-                    args: {pathid: pathid, courseids: [courseid]},
+                    methodname: 'local_iomad_learningpath_addusers',
+                    args: {pathid: pathid, userids: [userid]},
                     done: function(result) {
                     },
                     fail: notification.exception,
                 }]);
 
-                // Remove the clicked li
-                $(this).remove();
-
-                // Add the new one
-                $('#pathcourselist').append('<li class="text-truncate" data-courseid="' + courseid + '">' + html + '</li>');
+                pathuser_list();
             });
 
 
-            // Add click handler for removing course
+            /**
+             * Add click handler for removing user
+             */
             $('#pathcourselist').on('click', 'li', function() {
                 courseid = $(this).data('courseid');
                 
@@ -106,25 +178,6 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification'], 
             });
 
              
-            // Make list sortable somehow
-            $("#pathcourselist").sortable({
-                update: function(ev, ui) {
-
-                    // Get already selected courseids
-                    var courses = [];
-                    $("#pathcourselist li").each(function() {
-                        courses.push($(this).data('courseid'));
-                    });
-
-                    // Reorder
-                    ajax.call([{
-                        methodname: 'local_iomad_learningpath_ordercourses',
-                        args: {pathid: pathid, courseids: courses},
-                        done: function(result) {},
-                        fail: notification.exception
-                    }]);
-                }
-            });
 
         }
     };

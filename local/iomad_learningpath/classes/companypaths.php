@@ -345,12 +345,11 @@ class companypaths {
 
     /**
      * Get prospective users
-     * @param int $companyid
      * @param string $filter
      * @param array $excludeids
      * @return array of objects
      */
-    public function get_prospective_users($companyid, $pathid, $filter) {
+    public function get_prospective_users($pathid, $filter) {
         global $DB;
 
         $sql = "SELECT u.*
@@ -359,13 +358,13 @@ class companypaths {
             AND u.suspended = 0
             AND cu.companyid = :companyid
             ORDER BY u.lastname, u.firstname ASC";
-        $allusers = $DB->get_records_sql($sql, ['companyid' => $companyid]);
+        $allusers = $DB->get_records_sql($sql, ['companyid' => $this->companyid]);
         $excludeids = $this->get_users($pathid, true);
 
         // Exclude ids and filter
         $users = [];
         foreach ($allusers as $user) {
-            if (array_key_exists($user->id, $excludeids)) {
+            if (in_array($user->id, $excludeids)) {
                 continue;
             }
             $user->fullname = fullname($user);
@@ -376,6 +375,36 @@ class companypaths {
         }
 
         return $users;
+    }
+
+    /**
+     * Add users to path
+     * @param int $pathid
+     * @param array $userids
+     */
+    public function add_users($pathid, $userids) {
+        global $DB;
+
+        foreach ($userids as $userid) {
+
+            // Check userid is really in this company
+            if (!$companyuser = $DB->get_record('company_users', ['companyid' => $this->companyid, 'userid' => $userid])) {
+                throw new \coding_exception('invaliduserid', 'User is not a member of current company - id = ' . $userid);
+            }
+
+            // Is the userid already in the path
+            if ($user = $DB->get_record('iomad_learningpathuser', ['path' => $pathid, 'user' => $userid])) {
+                continue;
+            }
+
+            // Add a new record
+            $user = new \stdClass;
+            $user->path = $pathid;
+            $user->user = $userid;
+            $DB->insert_record('iomad_learningpathuser', $user);
+        }
+
+        return true;
     }
 
 }

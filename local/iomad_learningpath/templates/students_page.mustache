@@ -19,6 +19,11 @@
             </div>
             <div class="card-body card-block">
                 <p class="card-text">
+                    <div id="nopathusers" class="alert alert-warning" style="display: none">
+                        {{# str }}nopathusers, local_iomad_learningpath{{/ str }}
+                    </div>
+                    <ul id="pathuserlist">
+                    </ul>
                 </p>
             </div>
         </div>
@@ -38,8 +43,11 @@
             </div>
             <div class="card-body card-block">
                 <p class="card-text">
-                    <div id="noprospective" class="alert alert-warning">
+                    <div id="noprospective" class="alert alert-warning" style="display: none">
                         {{# str }}noprospectiveusers, local_iomad_learningpath{{/ str }}
+                    </div>
+                    <div id="toomanyprospective" class="alert alert-warning" style="display: none">
+                        {{# str }}toomanyprospectiveusers, local_iomad_learningpath{{/ str }}
                     </div>
                     <ul id="prospectivelist">
                     </ul>

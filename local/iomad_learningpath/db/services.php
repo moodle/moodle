@@ -98,6 +98,15 @@ $functions = array(
         'type' => 'write',
         'ajax' => true,
     ),
+
+    'local_iomad_learningpath_getusers' => array(
+        'classname' => 'local_iomad_learningpath_external',
+        'methodname' => 'getusers',
+        'classpath' => 'local/iomad_learningpath/externallib.php',
+        'description' => 'Get users assigned to path',
+        'type' => 'read',
+        'ajax' => true,
+    ),
    
     'local_iomad_learningpath_getprospectiveusers' => array(
         'classname' => 'local_iomad_learningpath_external',
@@ -107,4 +116,14 @@ $functions = array(
         'type' => 'read',
         'ajax' => true,
     ),
+
+    'local_iomad_learningpath_addusers' => array(
+        'classname' => 'local_iomad_learningpath_external',
+        'methodname' => 'addusers',
+        'classpath' => 'local/iomad_learningpath/externallib.php',
+        'description' => 'Add users to learning path',
+        'type' => 'write',
+        'ajax' => true,
+    ),
+
 );
