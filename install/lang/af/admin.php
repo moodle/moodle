@@ -40,3 +40,6 @@ $string['cliunknowoption'] = 'Nie-erkende opsies:
   {$a}
 Gebruik die --help opsie.';
 $string['cliyesnoprompt'] = 'Tik y (beteken ja) of n (beteken nee)';
+$string['environmentrequireinstall'] = 'moet geïnstalleer en geaktiveer wees';
+$string['environmentrequireversion'] = 'weergawe {$a->needed} word benodig en jy het tans {$a->current}';
+$string['upgradekeyset'] = 'Opgradering sleutel (los skoon om nie te stel nie)';
