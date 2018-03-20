@@ -126,4 +126,13 @@ $functions = array(
         'ajax' => true,
     ),
 
+    'local_iomad_learningpath_removeusers' => array(
+        'classname' => 'local_iomad_learningpath_external',
+        'methodname' => 'removeusers',
+        'classpath' => 'local/iomad_learningpath/externallib.php',
+        'description' => 'Remove users from learning path',
+        'type' => 'write',
+        'ajax' => true,
+    ),
+
 );

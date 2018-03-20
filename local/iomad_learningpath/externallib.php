@@ -691,4 +691,54 @@ class local_iomad_learningpath_external extends external_api {
         return $users;
     }
 
+    /**
+     * Returns description of method parameters
+     * @return external_function_parameters
+     */
+    public static function removeusers_parameters() {
+        return new external_function_parameters(
+            array(
+                'pathid' => new external_value(PARAM_INT, 'ID of Iomad Learning Path'),
+                'userids' => new external_multiple_structure(new external_value(PARAM_INT, 'User IDs'), 'List of course IDs to remove'),
+            )
+        );
+    }
+
+    /** 
+     * Returns description of method result
+     * @return external_description
+     */
+    public static function removeusers_returns() {
+        return new external_value(PARAM_BOOL, 'True if users removed correctly');
+    }
+
+    /**
+     * Remove users from learning path
+     * @param int $pathid
+     * @param array $userids
+     * @throws invalid_parameter_exception
+     */
+    public static function removeusers($pathid, $userids) {
+        global $DB;
+
+        // Validate params
+        $params = self::validate_parameters(self::removeusers_parameters(), ['pathid' => $pathid, 'userids' => $userids]);
+
+        // get path
+        if (!$path = $DB->get_record('iomad_learningpath', ['id' => $params['pathid']])) {
+            throw new invalid_parameter_exception("Path with id = $pathid does not exist");
+        }
+
+        // Find/validate company
+        $companyid = $path->company;
+        if (!$company = $DB->get_record('company', ['id' => $companyid])) {
+            throw new invalid_parameter_exception("Company with id = $companyid does not exist");
+        }
+
+        $companypaths = new local_iomad_learningpath\companypaths($companyid, context_system::instance());
+        $companypaths->delete_users($params['pathid'], $params['userids']);
+
+        return true;
+    }
+
 }

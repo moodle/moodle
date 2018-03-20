@@ -25,6 +25,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version  = 2018032002;   // The (date) version of this plugin.
+$plugin->version  = 2018032003;   // The (date) version of this plugin.
 $plugin->requires = 2017051500;   // Requires this Moodle version. (3.3)
 $plugin->component = 'local_iomad_learningpath';

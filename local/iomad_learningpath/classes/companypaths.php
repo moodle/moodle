@@ -407,4 +407,25 @@ class companypaths {
         return true;
     }
 
+    /**
+     * Delete users from path
+     * @param int $pathid
+     * @param array $userids
+     */
+    public function delete_users($pathid, $userids) {
+        global $DB;
+
+        foreach ($userids as $userid) {
+
+            // Check userid is really in this company
+            if (!$companyuser = $DB->get_record('company_users', ['companyid' => $this->companyid, 'userid' => $userid])) {
+                throw new \coding_exception('invaliduserid', 'User is not a member of current company - id = ' . $userid);
+            }
+
+            $DB->delete_records('iomad_learningpathuser', ['path' => $pathid, 'user' => $userid]);
+        }
+
+        return true;
+    }
+
 }

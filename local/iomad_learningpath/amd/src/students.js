@@ -72,10 +72,10 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification'], 
              * Add hover effect.
              * Bind on ul as li entries are dynamic!
              */
-            $('#prospectivelist, #pathcourselist').on('mouseenter', 'li', function() {
+            $('#prospectivelist, #pathuserlist').on('mouseenter', 'li', function() {
                 $(this).addClass("text-primary");
             });
-            $('#prospectivelist, #pathcourselist').on('mouseleave', 'li', function() {
+            $('#prospectivelist, #pathuserlist').on('mouseleave', 'li', function() {
                 $(this).removeClass("text-primary");
             });
 
@@ -155,26 +155,25 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification'], 
             /**
              * Add click handler for removing user
              */
-            $('#pathcourselist').on('click', 'li', function() {
-                courseid = $(this).data('courseid');
+            $('#pathuserlist').on('click', 'li', function() {
+                userid = $(this).data('userid');
                 
                 // Save the HTML for later
                 html = $(this).html();
 
                 // Remove the course from the path
                 ajax.call([{
-                    methodname: 'local_iomad_learningpath_removecourses',
-                    args: {pathid: pathid, courseids: [courseid]},
+                    methodname: 'local_iomad_learningpath_removeusers',
+                    args: {pathid: pathid, userids: [userid]},
                     done: function(result) {
                     },
                     fail: notification.exception
                 }]);
 
-                // Remove the clicked li
-                $(this).remove();
-
-                // Add the new one
-                $('#prospectivelist').append('<li class="text-truncate" data-courseid="' + courseid + '">' + html + '</li>');
+                // Update list
+                pathuser_list();
+                var filter = $('#userfilter').val();
+                user_list(filter);
             });
 
              
