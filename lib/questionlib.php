@@ -1449,7 +1449,8 @@ function question_fix_top_names($categories) {
 
     foreach ($categories as $id => $category) {
         if ($category->parent == 0) {
-            $categories[$id]->name = get_string('top');
+            $context = context::instance_by_id($category->contextid);
+            $categories[$id]->name = get_string('topfor', 'question', $context->get_context_name(false));
         }
     }
 
