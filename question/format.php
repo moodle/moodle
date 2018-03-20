@@ -51,7 +51,6 @@ class qformat_default {
     public $stoponerror = true;
     public $translator = null;
     public $canaccessbackupdata = true;
-
     protected $importcontext = null;
 
     // functions to indicate import/export functionality
@@ -425,8 +424,31 @@ class qformat_default {
 
             $result = question_bank::get_qtype($question->qtype)->save_question_options($question);
 
-            if (isset($question->tags)) {
-                core_tag_tag::set_item_tags('core_question', 'question', $question->id, $question->context, $question->tags);
+            if (core_tag_tag::is_enabled('core_question', 'question')) {
+                // Is the current context we're importing in a course context?
+                $importingcontext = $this->importcontext;
+                $importingcoursecontext = $importingcontext->get_course_context(false);
+                $isimportingcontextcourseoractivity = !empty($importingcoursecontext);
+
+                if (!empty($question->coursetags)) {
+                    if ($isimportingcontextcourseoractivity) {
+                        $mergedtags = array_merge($question->coursetags, $question->tags);
+
+                        core_tag_tag::set_item_tags('core_question', 'question', $question->id,
+                            $question->context, $mergedtags);
+                    } else {
+                        core_tag_tag::set_item_tags('core_question', 'question', $question->id,
+                            context_course::instance($this->course->id), $question->coursetags);
+
+                        if (!empty($question->tags)) {
+                            core_tag_tag::set_item_tags('core_question', 'question', $question->id,
+                                $importingcontext, $question->tags);
+                        }
+                    }
+                } else {
+                    core_tag_tag::set_item_tags('core_question', 'question', $question->id,
+                        $question->context, $question->tags);
+                }
             }
 
             if (!empty($result->error)) {

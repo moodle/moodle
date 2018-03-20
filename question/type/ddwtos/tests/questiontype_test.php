@@ -439,7 +439,7 @@ class qtype_ddwtos_test extends question_testcase {
     public function test_xml_export() {
         $qdata = new stdClass();
         $qdata->id = 123;
-        $qdata->contextid = 0;
+        $qdata->contextid = \context_system::instance()->id;
         $qdata->qtype = 'ddwtos';
         $qdata->name = 'A drag-and-drop question';
         $qdata->questiontext = 'Put these in order: [[1]], [[2]], [[3]].';
