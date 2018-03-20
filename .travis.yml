@@ -249,7 +249,7 @@ script:
     - >
       if [ "$TASK" = 'PHPUNIT' ];
       then
-        vendor/bin/phpunit;
+        vendor/bin/phpunit --fail-on-risky --disallow-test-output --verbose;
       fi
 
     - >
