@@ -44,8 +44,8 @@ class core_privacy_metadata_types_subsystem_link extends advanced_testcase {
      * @param   string  $name Name
      * @param   string  $summary Summary
      */
-    public function test_invalid_configs($name, $summary) {
-        $record = new subsystem_link($name, $summary);
+    public function test_invalid_configs($name, $privacyfields, $summary) {
+        $record = new subsystem_link($name, $privacyfields, $summary);
         $this->assertDebuggingCalled();
     }
 
@@ -56,12 +56,12 @@ class core_privacy_metadata_types_subsystem_link extends advanced_testcase {
      * @param   string  $name Name
      * @param   string  $summary Summary
      */
-    public function test_invalid_configs_debug_normal($name, $summary) {
+    public function test_invalid_configs_debug_normal($name, $privacyfields, $summary) {
         global $CFG;
         $this->resetAfterTest();
 
         $CFG->debug = DEBUG_NORMAL;
-        $record = new subsystem_link($name, $summary);
+        $record = new subsystem_link($name, $privacyfields, $summary);
         $this->assertDebuggingNotCalled();
     }
 
@@ -72,8 +72,8 @@ class core_privacy_metadata_types_subsystem_link extends advanced_testcase {
      * @param   string  $name Name
      * @param   string  $summary Summary
      */
-    public function test_valid_configs($name, $summary) {
-        $record = new subsystem_link($name, $summary);
+    public function test_valid_configs($name, $privacyfields, $summary) {
+        $record = new subsystem_link($name, $privacyfields, $summary);
         $this->assertDebuggingNotCalled();
     }
 
@@ -86,10 +86,12 @@ class core_privacy_metadata_types_subsystem_link extends advanced_testcase {
         return [
             'Space in summary' => [
                 'example',
+                [],
                 'This table is used for purposes.',
             ],
             'Comma in summary' => [
                 'example',
+                [],
                 'privacy,foo',
             ],
         ];
@@ -104,6 +106,7 @@ class core_privacy_metadata_types_subsystem_link extends advanced_testcase {
         return [
             'Valid combination' => [
                 'example',
+                [],
                 'privacy:example:valid',
             ],
         ];
