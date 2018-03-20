@@ -14,6 +14,7 @@
         stopOnIncomplete="false"
         stopOnSkipped="false"
         beStrictAboutTestsThatDoNotTestAnything="false"
+        beStrictAboutOutputDuringTests="true"
         printerClass="Hint_ResultPrinter"
         testSuiteLoaderClass="phpunit_autoloader"
         >
