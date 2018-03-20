@@ -127,6 +127,17 @@ $definitions = array(
         'staticacceleration' => true,
     ),
 
+    // Cache the course categories where the user has any enrolment and all categories that this user can manage.
+    'calendar_categories' => array(
+        'mode' => cache_store::MODE_SESSION,
+        'simplekeys' => true,
+        'simpledata' => true,
+        'invalidationevents' => array(
+            'changesincoursecat',
+        ),
+        'ttl' => 900,
+    ),
+
     // Cache the capabilities list DB table. See get_all_capabilities in accesslib.
     'capabilities' => array(
         'mode' => cache_store::MODE_APPLICATION,

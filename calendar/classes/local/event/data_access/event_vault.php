@@ -201,10 +201,6 @@ class event_vault implements event_vault_interface {
         event_interface $afterevent = null,
         $limitnum = 20
     ) {
-        $categoryids = array_map(function($category) {
-            return $category->id;
-        }, \coursecat::get_all());
-
         $courseids = array_map(function($course) {
             return $course->id;
         }, enrol_get_all_users_courses($user->id));
@@ -227,7 +223,7 @@ class event_vault implements event_vault_interface {
             [$user->id],
             $groupids ? $groupids : null,
             $courseids ? $courseids : null,
-            $categoryids ? $categoryids : null,
+            null, // All categories.
             true,
             true,
             function ($event) {
