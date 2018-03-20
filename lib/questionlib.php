@@ -464,13 +464,16 @@ function question_delete_course_category($category, $newcategory, $feedback=true
         if (!$newcontext = context_coursecat::instance($newcategory->id)) {
             return false;
         }
-        $topcategory = question_get_top_category($context->id, true);
-        $newtopcategory = question_get_top_category($newcontext->id, true);
 
-        question_move_category_to_context($topcategory->id, $context->id, $newcontext->id);
-        $DB->set_field('question_categories', 'parent', $newtopcategory->id, array('parent' => $topcategory->id));
-        // Now delete the top category.
-        $DB->delete_records('question_categories', array('id' => $topcategory->id));
+        // Only move question categories if there is any question category at all!
+        if ($topcategory = question_get_top_category($context->id)) {
+            $newtopcategory = question_get_top_category($newcontext->id, true);
+
+            question_move_category_to_context($topcategory->id, $context->id, $newcontext->id);
+            $DB->set_field('question_categories', 'parent', $newtopcategory->id, array('parent' => $topcategory->id));
+            // Now delete the top category.
+            $DB->delete_records('question_categories', array('id' => $topcategory->id));
+        }
 
         if ($feedback) {
             $a = new stdClass();
