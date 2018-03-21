@@ -134,6 +134,7 @@ $definitions = array(
         'simpledata' => true,
         'invalidationevents' => array(
             'changesincoursecat',
+            'changesincategoryenrolment',
         ),
         'ttl' => 900,
     ),
