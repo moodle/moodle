@@ -119,4 +119,14 @@ class search_engine_testcase extends advanced_testcase {
         $updates = $engine->get_and_clear_schema_updates();
         $this->assertCount(0, $updates);
     }
+
+    /**
+     * Tests the get_supported_orders stub function.
+     */
+    public function test_get_supported_orders() {
+        $engine = new \mock_search\engine();
+        $orders = $engine->get_supported_orders(\context_system::instance());
+        $this->assertCount(1, $orders);
+        $this->assertArrayHasKey('relevance', $orders);
+    }
 }

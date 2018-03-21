@@ -55,6 +55,15 @@ class search extends \moodleform {
             $mform->setDefault('searchwithin', '');
         }
 
+        // If the search engine provides multiple ways to order results, show options.
+        if (!empty($this->_customdata['orderoptions']) &&
+                count($this->_customdata['orderoptions']) > 1) {
+
+            $mform->addElement('select', 'order', get_string('order', 'search'),
+                    $this->_customdata['orderoptions']);
+            $mform->setDefault('order', 'relevance');
+        }
+
         $mform->addElement('header', 'filtersection', get_string('filterheader', 'search'));
         $mform->setExpanded('filtersection', false);
 

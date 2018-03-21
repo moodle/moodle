@@ -9,6 +9,10 @@ information provided here is intended especially for developers.
   contexts first. If not implemented, the default behaviour for modules and blocks is to reindex
   the newest items first; for other types of search area it will just index the whole system
   context, oldest data first.
+* Search engines may now implement get_supported_orders function to provide multiple ordering
+  options (other than 'relevance' which is default). If there is more than one order then a choice
+  will be shown to users. (This is an optional feature, existing search engine plugins do not need
+  to be modified in order to continue working.)
 
 * Module search areas that wish to support group filtering should set the new optional search
   document field groupid (note: to remain compatible with earlier versions, do this inside an if

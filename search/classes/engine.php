@@ -543,4 +543,17 @@ abstract class engine {
     public function supports_group_filtering() {
         return false;
     }
+
+    /**
+     * Obtain a list of results orders (and names for them) that are supported by this
+     * search engine in the given context.
+     *
+     * By default, engines sort by relevance only.
+     *
+     * @param \context $context Context that the user requested search from
+     * @return array Array from order name => display text
+     */
+    public function get_supported_orders(\context $context) {
+        return ['relevance' => get_string('order_relevance', 'search')];
+    }
 }

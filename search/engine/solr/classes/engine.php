@@ -65,6 +65,12 @@ class engine extends \core_search\engine {
      */
     const HIGHLIGHT_END = '@@HI_E@@';
 
+    /** @var float Boost value for matching course in location-ordered searches */
+    const COURSE_BOOST = 1;
+
+    /** @var float Boost value for matching context (in addition to course boost) */
+    const CONTEXT_BOOST = 0.5;
+
     /**
      * @var \SolrClient
      */
@@ -368,6 +374,16 @@ class engine extends \core_search\engine {
         } else {
             // Make sure we only get text files, in case the index has pre-existing files.
             $query->addFilterQuery('type:'.\core_search\manager::TYPE_TEXT);
+        }
+
+        // If ordering by location, add in boost for the relevant course or context ids.
+        if (!empty($filters->order) && $filters->order === 'location') {
+            $coursecontext = $filters->context->get_course_context();
+            $query->addBoostQuery('courseid', $coursecontext->instanceid, self::COURSE_BOOST);
+            if ($filters->context->contextlevel !== CONTEXT_COURSE) {
+                // If it's a block or activity, also add a boost for the specific context id.
+                $query->addBoostQuery('contextid', $filters->context->id, self::CONTEXT_BOOST);
+            }
         }
 
         return $query;
@@ -1356,5 +1372,25 @@ class engine extends \core_search\engine {
         }
 
         return true;
+    }
+
+    /**
+     * Solr supports sort by location within course contexts or below.
+     *
+     * @param \context $context Context that the user requested search from
+     * @return array Array from order name => display text
+     */
+    public function get_supported_orders(\context $context) {
+        $orders = parent::get_supported_orders($context);
+
+        // If not within a course, no other kind of sorting supported.
+        $coursecontext = $context->get_course_context(false);
+        if ($coursecontext) {
+            // Within a course or activity/block, support sort by location.
+            $orders['location'] = get_string('order_location', 'search',
+                    $context->get_context_name());
+        }
+
+        return $orders;
     }
 }

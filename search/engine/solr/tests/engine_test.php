@@ -950,4 +950,130 @@ class search_solr_engine_testcase extends advanced_testcase {
         sort($expected);
         $this->assertEquals($expected, $titles);
     }
+
+    /**
+     * Tests the get_supported_orders function for contexts where we can only use relevance
+     * (system, category).
+     */
+    public function test_get_supported_orders_relevance_only() {
+        global $DB;
+
+        // System or category context: relevance only.
+        $orders = $this->engine->get_supported_orders(\context_system::instance());
+        $this->assertCount(1, $orders);
+        $this->assertArrayHasKey('relevance', $orders);
+
+        $categoryid = $DB->get_field_sql('SELECT MIN(id) FROM {course_categories}');
+        $orders = $this->engine->get_supported_orders(\context_coursecat::instance($categoryid));
+        $this->assertCount(1, $orders);
+        $this->assertArrayHasKey('relevance', $orders);
+    }
+
+    /**
+     * Tests the get_supported_orders function for contexts where we support location as well
+     * (course, activity, block).
+     */
+    public function test_get_supported_orders_relevance_and_location() {
+        global $DB;
+
+        // Test with course context.
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course(['fullname' => 'Frogs']);
+        $coursecontext = \context_course::instance($course->id);
+
+        $orders = $this->engine->get_supported_orders($coursecontext);
+        $this->assertCount(2, $orders);
+        $this->assertArrayHasKey('relevance', $orders);
+        $this->assertArrayHasKey('location', $orders);
+        $this->assertContains('Course: Frogs', $orders['location']);
+
+        // Test with activity context.
+        $page = $generator->create_module('page', ['course' => $course->id, 'name' => 'Toads']);
+
+        $orders = $this->engine->get_supported_orders(\context_module::instance($page->cmid));
+        $this->assertCount(2, $orders);
+        $this->assertArrayHasKey('relevance', $orders);
+        $this->assertArrayHasKey('location', $orders);
+        $this->assertContains('Page: Toads', $orders['location']);
+
+        // Test with block context.
+        $instance = (object)['blockname' => 'html', 'parentcontextid' => $coursecontext->id,
+                'showinsubcontexts' => 0, 'pagetypepattern' => 'course-view-*',
+                'defaultweight' => 0, 'timecreated' => 1, 'timemodified' => 1,
+                'configdata' => ''];
+        $blockid = $DB->insert_record('block_instances', $instance);
+        $blockcontext = \context_block::instance($blockid);
+
+        $orders = $this->engine->get_supported_orders($blockcontext);
+        $this->assertCount(2, $orders);
+        $this->assertArrayHasKey('relevance', $orders);
+        $this->assertArrayHasKey('location', $orders);
+        $this->assertContains('Block: HTML', $orders['location']);
+    }
+
+    /**
+     * Tests ordering by relevance vs location.
+     */
+    public function test_ordering() {
+        // Create 2 courses and 2 activities.
+        $generator = $this->getDataGenerator();
+        $course1 = $generator->create_course(['fullname' => 'Course 1']);
+        $course1context = \context_course::instance($course1->id);
+        $course1page = $generator->create_module('page', ['course' => $course1]);
+        $course1pagecontext = \context_module::instance($course1page->cmid);
+        $course2 = $generator->create_course(['fullname' => 'Course 2']);
+        $course2context = \context_course::instance($course2->id);
+        $course2page = $generator->create_module('page', ['course' => $course2]);
+        $course2pagecontext = \context_module::instance($course2page->cmid);
+
+        // Create one search record in each activity and course.
+        $this->create_search_record($course1->id, $course1context->id, 'C1', 'Xyzzy');
+        $this->create_search_record($course1->id, $course1pagecontext->id, 'C1P', 'Xyzzy');
+        $this->create_search_record($course2->id, $course2context->id, 'C2', 'Xyzzy');
+        $this->create_search_record($course2->id, $course2pagecontext->id, 'C2P', 'Xyzzy plugh');
+        $this->search->index();
+
+        // Default search works by relevance so the one with both words should be top.
+        $querydata = new stdClass();
+        $querydata->q = 'xyzzy plugh';
+        $results = $this->search->search($querydata);
+        $this->assertCount(4, $results);
+        $this->assertEquals('C2P', $results[0]->get('title'));
+
+        // Same if you explicitly specify relevance.
+        $querydata->order = 'relevance';
+        $results = $this->search->search($querydata);
+        $this->assertEquals('C2P', $results[0]->get('title'));
+
+        // If you specify order by location and you are in C2 or C2P then results are the same.
+        $querydata->order = 'location';
+        $querydata->context = $course2context;
+        $results = $this->search->search($querydata);
+        $this->assertEquals('C2P', $results[0]->get('title'));
+        $querydata->context = $course2pagecontext;
+        $results = $this->search->search($querydata);
+        $this->assertEquals('C2P', $results[0]->get('title'));
+
+        // But if you are in C1P then you get different results (C1P first).
+        $querydata->context = $course1pagecontext;
+        $results = $this->search->search($querydata);
+        $this->assertEquals('C1P', $results[0]->get('title'));
+    }
+
+    /**
+     * Adds a record to the mock search area, so that the search engine can find it later.
+     *
+     * @param int $courseid Course id
+     * @param int $contextid Context id
+     * @param string $title Title for search index
+     * @param string $content Content for search index
+     */
+    protected function create_search_record($courseid, $contextid, $title, $content) {
+        $record = new \stdClass();
+        $record->content = $content;
+        $record->title = $title;
+        $record->courseid = $courseid;
+        $record->contextid = $contextid;
+        $this->generator->create_record($record);
+    }
 }
