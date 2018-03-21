@@ -1178,20 +1178,15 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
      * @return int[]
      */
     public function get_all_children_ids() {
-        $coursecattreecache = cache::make('core', 'coursecattree');
-        $children = $coursecattreecache->get($this->id . 'allchildren');
-        if ($children === false) {
-            $children = [];
-            $walk = [$this->id];
-            while (count($walk) > 0) {
-                $catid = array_pop($walk);
-                $directchildren = self::get_tree($catid);
-                if ($directchildren !== false && count($directchildren) > 0) {
-                    $walk = array_merge($walk, $directchildren);
-                    $children = array_merge($children, $directchildren);
-                }
+        $children = [];
+        $walk = [$this->id];
+        while (count($walk) > 0) {
+            $catid = array_pop($walk);
+            $directchildren = self::get_tree($catid);
+            if ($directchildren !== false && count($directchildren) > 0) {
+                $walk = array_merge($walk, $directchildren);
+                $children = array_merge($children, $directchildren);
             }
-            $coursecattreecache->set($this->id . 'allchildren', $children);
         }
 
         return $children;
