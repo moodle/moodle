@@ -67,8 +67,8 @@ class memberships extends \mod_lti\local\ltiservice\service_base {
 
         if (empty($this->resources)) {
             $this->resources = array();
-            $this->resources[] = new \ltiservice_memberships\local\resource\contextmemberships($this);
-            $this->resources[] = new \ltiservice_memberships\local\resource\linkmemberships($this);
+            $this->resources[] = new \ltiservice_memberships\local\resources\contextmemberships($this);
+            $this->resources[] = new \ltiservice_memberships\local\resources\linkmemberships($this);
         }
 
         return $this->resources;
