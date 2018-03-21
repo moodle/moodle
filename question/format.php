@@ -445,7 +445,7 @@ class qformat_default {
                                 $importingcontext, $question->tags);
                         }
                     }
-                } else {
+                } else if (!empty($question->tags)) {
                     core_tag_tag::set_item_tags('core_question', 'question', $question->id,
                         $question->context, $question->tags);
                 }
