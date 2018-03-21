@@ -1146,6 +1146,13 @@ $functions = array(
         'type'          => 'write',
         'ajax' => true,
     ),
+    'core_question_get_random_question_summaries' => array(
+        'classname' => 'core_question_external',
+        'methodname' => 'get_random_question_summaries',
+        'description' => 'Get the random question set for a criteria',
+        'type' => 'read',
+        'ajax' => true,
+    ),
     'core_rating_get_item_ratings' => array(
         'classname' => 'core_rating_external',
         'methodname' => 'get_item_ratings',

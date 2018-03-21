@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once("$CFG->libdir/externallib.php");
 require_once($CFG->dirroot . '/question/engine/lib.php');
+require_once($CFG->dirroot . '/question/engine/datalib.php');
 require_once($CFG->libdir . '/questionlib.php');
 
 /**
@@ -209,6 +210,108 @@ class core_question_external extends external_api {
     public static function  submit_tags_form_returns() {
         return new external_single_structure([
                 'status' => new external_value(PARAM_BOOL, 'status: true if success')
+        ]);
+    }
+
+    /**
+     * Returns description of method parameters.
+     *
+     * @return external_function_parameters.
+     */
+    public static function get_random_question_summaries_parameters() {
+        return new external_function_parameters([
+                'categoryid' => new external_value(PARAM_INT, 'Category id to find random questions'),
+                'includesubcategories' => new external_value(PARAM_BOOL, 'Include the subcategories in the search'),
+                'tagids' => new external_multiple_structure(
+                    new external_value(PARAM_INT, 'Tag id')
+                ),
+                'contextid' => new external_value(PARAM_INT,
+                    'Context id that the questions will be rendered in (used for exporting)'),
+                'limit' => new external_value(PARAM_INT, 'Maximum number of results to return',
+                    VALUE_DEFAULT, 0),
+                'offset' => new external_value(PARAM_INT, 'Number of items to skip from the begging of the result set',
+                    VALUE_DEFAULT, 0)
+        ]);
+    }
+
+    /**
+     * Gets the list of random questions for the given criteria. The questions
+     * will be exported in a summaries format and won't include all of the
+     * question data.
+     *
+     * @param int $categoryid Category id to find random questions
+     * @param bool $includesubcategories Include the subcategories in the search
+     * @param int[] $tagids Only include questions with these tags
+     * @param int $contextid The context id where the questions will be rendered
+     * @param int $limit Maximum number of results to return
+     * @param int $offset Number of items to skip from the beginning of the result set.
+     * @return array The list of questions and total question count.
+     */
+    public static function get_random_question_summaries(
+        $categoryid,
+        $includesubcategories,
+        $tagids,
+        $contextid,
+        $limit = 0,
+        $offset = 0
+    ) {
+        global $DB, $PAGE;
+
+        // Parameter validation.
+        $params = self::validate_parameters(
+            self::get_random_question_summaries_parameters(),
+            [
+                'categoryid' => $categoryid,
+                'includesubcategories' => $includesubcategories,
+                'tagids' => $tagids,
+                'contextid' => $contextid,
+                'limit' => $limit,
+                'offset' => $offset
+            ]
+        );
+        $categoryid = $params['categoryid'];
+        $includesubcategories = $params['includesubcategories'];
+        $tagids = $params['tagids'];
+        $contextid = $params['contextid'];
+        $limit = $params['limit'];
+        $offset = $params['offset'];
+
+        $context = \context::instance_by_id($contextid);
+        self::validate_context($context);
+
+        $categorycontextid = $DB->get_field('question_categories', 'contextid', ['id' => $categoryid], MUST_EXIST);
+        $categorycontext = \context::instance_by_id($categorycontextid);
+        $editcontexts = new \question_edit_contexts($categorycontext);
+        // The user must be able to view all questions in the category that they are requesting.
+        $editcontexts->require_cap('moodle/question:viewall');
+
+        $loader = new \core_question\bank\random_question_loader(new qubaid_list([]));
+        // Only load the properties we require from the DB.
+        $properties = \core_question\external\question_summary_exporter::get_mandatory_properties();
+        $questions = $loader->get_questions($categoryid, $includesubcategories, $tagids, $limit, $offset, $properties);
+        $totalcount = $loader->count_questions($categoryid, $includesubcategories, $tagids);
+        $renderer = $PAGE->get_renderer('core');
+
+        $formattedquestions = array_map(function($question) use ($context, $renderer) {
+            $exporter = new \core_question\external\question_summary_exporter($question, ['context' => $context]);
+            return $exporter->export($renderer);
+        }, $questions);
+
+        return [
+            'totalcount' => $totalcount,
+            'questions' => $formattedquestions
+        ];
+    }
+
+    /**
+     * Returns description of method result value.
+     */
+    public static function  get_random_question_summaries_returns() {
+        return new external_single_structure([
+            'totalcount' => new external_value(PARAM_INT, 'total number of questions in result set'),
+            'questions' => new external_multiple_structure(
+                \core_question\external\question_summary_exporter::get_read_structure()
+            )
         ]);
     }
 }
