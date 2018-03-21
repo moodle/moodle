@@ -71,7 +71,7 @@ class digital_consent {
     public static function parse_age_digital_consent_map($ageconsentmap) {
 
         $ageconsentmapparsed = array();
-        $countries = get_string_manager()->get_list_of_countries();
+        $countries = get_string_manager()->get_list_of_countries(true);
         $isdefaultvaluepresent = false;
         $lines = preg_split('/\r|\n/', $ageconsentmap, -1, PREG_SPLIT_NO_EMPTY);
         foreach ($lines as $line) {
