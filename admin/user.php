@@ -252,7 +252,7 @@
 
     } else {
 
-        $countries = get_string_manager()->get_list_of_countries(false);
+        $countries = get_string_manager()->get_list_of_countries(true);
         if (empty($mnethosts)) {
             $mnethosts = $DB->get_records('mnet_host', null, 'id', 'id,wwwroot,name');
         }
