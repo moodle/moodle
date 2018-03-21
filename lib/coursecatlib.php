@@ -722,6 +722,9 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
             return;
         }
 
+        // Trigger a purge for all caches listening for changes to category enrolment.
+        cache_helper::purge_by_event('changesincategoryenrolment');
+
         if (!$CFG->coursecontact || !in_array($roleid, explode(',', $CFG->coursecontact))) {
             // The role is not one of course contact roles.
             return;
