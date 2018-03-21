@@ -32,7 +32,7 @@ require_once($CFG->libdir . '/formslib.php');
 // Read URL parameters telling us which question to edit.
 $id = optional_param('id', 0, PARAM_INT); // question id
 $makecopy = optional_param('makecopy', 0, PARAM_BOOL);
-$qtype = optional_param('qtype', '', PARAM_FILE);
+$qtype = optional_param('qtype', '', PARAM_COMPONENT);
 $categoryid = optional_param('category', 0, PARAM_INT);
 $cmid = optional_param('cmid', 0, PARAM_INT);
 $courseid = optional_param('courseid', 0, PARAM_INT);
