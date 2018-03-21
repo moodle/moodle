@@ -98,17 +98,17 @@ class edit_renderer extends \plugin_renderer_base {
 
         // Include the contents of any other popups required.
         if ($structure->can_be_edited()) {
-            $popups = '';
-
+            $thiscontext = $contexts->lowest();
             $this->page->requires->js_call_amd('mod_quiz/quizquestionbank', 'init', [
-                $contexts->lowest()->id
+                $thiscontext->id
             ]);
 
-            $popups .= $this->random_question_form($pageurl, $contexts, $pagevars);
-            $this->page->requires->yui_module('moodle-mod_quiz-randomquestion',
-                    'M.mod_quiz.randomquestion.init');
-
-            $output .= html_writer::div($popups, 'mod_quiz_edit_forms');
+            $this->page->requires->js_call_amd('mod_quiz/add_random_question', 'init', [
+                $thiscontext->id,
+                $pagevars['cat'],
+                $pageurl->out_as_local_url(true),
+                $pageurl->param('cmid')
+            ]);
 
             // Include the question chooser.
             $output .= $this->question_chooser();
@@ -1057,29 +1057,6 @@ class edit_renderer extends \plugin_renderer_base {
      */
     public function question_bank_loading() {
         return html_writer::div($this->pix_icon('i/loading', get_string('loading')), 'questionbankloading');
-    }
-
-    /**
-     * Return random question form.
-     * @param \moodle_url $thispageurl the canonical URL of this page.
-     * @param \question_edit_contexts $contexts the relevant question bank contexts.
-     * @param array $pagevars the variables from {@link \question_edit_setup()}.
-     * @return string HTML to output.
-     */
-    protected function random_question_form(\moodle_url $thispageurl, \question_edit_contexts $contexts, array $pagevars) {
-
-        if (!$contexts->have_cap('moodle/question:useall')) {
-            return '';
-        }
-        $randomform = new \quiz_add_random_form(new \moodle_url('/mod/quiz/addrandom.php'),
-                                 array('contexts' => $contexts, 'cat' => $pagevars['cat']));
-        $randomform->set_data(array(
-                'category' => $pagevars['cat'],
-                'returnurl' => $thispageurl->out_as_local_url(true),
-                'randomnumber' => 1,
-                'cmid' => $thispageurl->param('cmid'),
-        ));
-        return html_writer::div($randomform->render(), 'randomquestionformforpopup');
     }
 
     /**
