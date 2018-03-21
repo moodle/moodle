@@ -31,4 +31,5 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['parentlanguage'] = 'de';
-$string['thislanguage'] = 'Schweizer Standarddeutsch';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Schweizer Hochdeutsch';
