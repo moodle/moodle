@@ -1922,9 +1922,16 @@ class core_message_external extends external_api {
                     ON m.conversationid = mc.id
             INNER JOIN {message_conversation_members} mcm
                     ON mcm.conversationid = mc.id
-                 WHERE mcm.userid != m.useridfrom
+             LEFT JOIN {message_user_actions} mua
+                    ON (mua.messageid = m.id AND mua.userid = ? AND mua.action = ?)
+                 WHERE mua.id is NULL
+                   AND mcm.userid != m.useridfrom
                    AND m.id = ?";
-        $message = $DB->get_record_sql($sql, [$params['messageid']], MUST_EXIST);
+        $messageparams = [];
+        $messageparams[] = $USER->id;
+        $messageparams[] = \core_message\api::MESSAGE_ACTION_READ;
+        $messageparams[] = $params['messageid'];
+        $message = $DB->get_record_sql($sql, $messageparams, MUST_EXIST);
 
         if ($message->useridto != $USER->id) {
             throw new invalid_parameter_exception('Invalid messageid, you don\'t have permissions to mark this message as read');

@@ -723,8 +723,14 @@ class api {
                            ON mc.id = m.conversationid
                    INNER JOIN {message_conversation_members} mcm
                            ON mcm.conversationid = mc.id
-                        WHERE mcm.userid = ?
+                    LEFT JOIN {message_user_actions} mua
+                           ON (mua.messageid = m.id AND mua.userid = ? AND mua.action = ?)
+                        WHERE mua.id is NULL
+                          AND mcm.userid = ?
                           AND m.useridfrom != ?";
+        $messageparams = [];
+        $messageparams[] = $userid;
+        $messageparams[] = self::MESSAGE_ACTION_READ;
         $messageparams[] = $userid;
         $messageparams[] = $userid;
         if (!is_null($conversationid)) {
@@ -1100,35 +1106,31 @@ class api {
             $timeread = time();
         }
 
-        // Check if the user has already read this message.
-        if (!$DB->record_exists('message_user_actions', ['userid' => $userid,
-                'messageid' => $message->id, 'action' => self::MESSAGE_ACTION_READ])) {
-            $mua = new \stdClass();
-            $mua->userid = $userid;
-            $mua->messageid = $message->id;
-            $mua->action = self::MESSAGE_ACTION_READ;
-            $mua->timecreated = $timeread;
-            $mua->id = $DB->insert_record('message_user_actions', $mua);
+        $mua = new \stdClass();
+        $mua->userid = $userid;
+        $mua->messageid = $message->id;
+        $mua->action = self::MESSAGE_ACTION_READ;
+        $mua->timecreated = $timeread;
+        $mua->id = $DB->insert_record('message_user_actions', $mua);
 
-            // Get the context for the user who received the message.
-            $context = \context_user::instance($userid, IGNORE_MISSING);
-            // If the user no longer exists the context value will be false, in this case use the system context.
-            if ($context === false) {
-                $context = \context_system::instance();
-            }
-
-            // Trigger event for reading a message.
-            $event = \core\event\message_viewed::create(array(
-                'objectid' => $mua->id,
-                'userid' => $userid, // Using the user who read the message as they are the ones performing the action.
-                'context' => $context,
-                'relateduserid' => $message->useridfrom,
-                'other' => array(
-                    'messageid' => $message->id
-                )
-            ));
-            $event->trigger();
+        // Get the context for the user who received the message.
+        $context = \context_user::instance($userid, IGNORE_MISSING);
+        // If the user no longer exists the context value will be false, in this case use the system context.
+        if ($context === false) {
+            $context = \context_system::instance();
         }
+
+        // Trigger event for reading a message.
+        $event = \core\event\message_viewed::create(array(
+            'objectid' => $mua->id,
+            'userid' => $userid, // Using the user who read the message as they are the ones performing the action.
+            'context' => $context,
+            'relateduserid' => $message->useridfrom,
+            'other' => array(
+                'messageid' => $message->id
+            )
+        ));
+        $event->trigger();
     }
 
     /**
