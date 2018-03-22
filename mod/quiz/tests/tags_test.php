@@ -23,8 +23,6 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-global $CFG;
-require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 
 /**
  * Class mod_quiz_tags_testcase

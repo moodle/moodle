@@ -251,7 +251,7 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
     }
 
     protected function process_quiz_question_instance($data) {
-        global $DB;
+        global $CFG, $DB;
 
         $data = (object)$data;
 
@@ -302,6 +302,8 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
         }
 
         if (isset($data->tags)) {
+            require_once($CFG->dirroot . '/mod/quiz/locallib.php');
+
             $tags = quiz_extract_random_question_tags($data->tags, $this->task->is_samesite());
             $data->tags = quiz_build_random_question_tag_json($tags);
         }
