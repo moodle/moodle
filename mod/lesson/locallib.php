@@ -2515,6 +2515,11 @@ class lesson extends lesson_base {
                     if (!array_key_exists($exitjump, $lessonpages)) {
                         return LESSON_EOL;
                     }
+                    // Check to see that the return type is not a cluster.
+                    if ($lessonpages[$exitjump]->qtype == LESSON_PAGE_CLUSTER) {
+                        // If the exitjump is a cluster then go through this function again and try to find an unseen question.
+                        $exitjump = $this->cluster_jump($exitjump, $userid);
+                    }
                     return $exitjump;
                 }
             }
