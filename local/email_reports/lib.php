@@ -535,7 +535,8 @@ function email_reports_cron() {
                 $departmentmanager = false;
             }
             // If this is a manager of a parent company - skip them.
-            if ($DB->get_records_sql("SELECT id FROM {company_users}
+            if (!empty($parentslist) &&
+                $DB->get_records_sql("SELECT id FROM {company_users}
                                       WHERE userid = :userid
                                       AND userid IN (
                                       SELECT userid FROM {company_users}
