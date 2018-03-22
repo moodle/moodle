@@ -268,22 +268,22 @@ class lesson_page_type_matching extends lesson_page {
 
                 if ($n == 0) {
                     $cells = array();
-                    $cells[] = '<label>' . get_string('correctanswerscore', 'lesson') . '</label>';
+                    $cells[] = '<label>' . get_string('correctanswerscore', 'lesson') . '</label>: ';
                     $cells[] = $answer->score;
                     $table->data[] = new html_table_row($cells);
 
                     $cells = array();
-                    $cells[] = '<label>' . get_string('correctanswerjump', 'lesson') . '</label>';
+                    $cells[] = '<label>' . get_string('correctanswerjump', 'lesson') . '</label>: ';
                     $cells[] = $this->get_jump_name($answer->jumpto);
                     $table->data[] = new html_table_row($cells);
                 } elseif ($n == 1) {
                     $cells = array();
-                    $cells[] = '<label>' . get_string('wronganswerscore', 'lesson') . '</label>';
+                    $cells[] = '<label>' . get_string('wronganswerscore', 'lesson') . '</label>: ';
                     $cells[] = $answer->score;
                     $table->data[] = new html_table_row($cells);
 
                     $cells = array();
-                    $cells[] = '<label>' . get_string('wronganswerjump', 'lesson') . '</label>';
+                    $cells[] = '<label>' . get_string('wronganswerjump', 'lesson') . '</label>: ';
                     $cells[] = $this->get_jump_name($answer->jumpto);
                     $table->data[] = new html_table_row($cells);
                 }
@@ -297,19 +297,19 @@ class lesson_page_type_matching extends lesson_page {
                 $cells = array();
                 if ($this->lesson->custom && $answer->score > 0) {
                     // if the score is > 0, then it is correct
-                    $cells[] = '<label class="correct">' . get_string('answer', 'lesson') . ' ' . $i . '</label>';
+                    $cells[] = '<label class="correct">' . get_string('answer', 'lesson') . " {$i}</label>: \n";
                 } else if ($this->lesson->custom) {
-                    $cells[] = '<label>' . get_string('answer', 'lesson') . ' ' . $i . '</label>';
+                    $cells[] = '<label>' . get_string('answer', 'lesson') . " {$i}</label>: \n";
                 } else if ($this->lesson->jumpto_is_correct($this->properties->id, $answer->jumpto)) {
-                    $cells[] = '<label class="correct">' . get_string('answer', 'lesson') . ' ' . $i . '</label>';
+                    $cells[] = '<label class="correct">' . get_string('answer', 'lesson') . " {$i}</label>: \n";
                 } else {
-                    $cells[] = '<label>' . get_string('answer', 'lesson') . ' ' . $i . '</label>';
+                    $cells[] = '<label>' . get_string('answer', 'lesson') . " {$i}</label>: \n";
                 }
                 $cells[] = format_text($answer->answer, $answer->answerformat, $options);
                 $table->data[] = new html_table_row($cells);
 
                 $cells = array();
-                $cells[] = '<label>' . get_string('matchesanswer', 'lesson') . ' ' . $i . '</label>';
+                $cells[] = '<label>' . get_string('matchesanswer', 'lesson') . " {$i}</label>: \n";
                 $cells[] = format_text($answer->response, $answer->responseformat, $options);
                 $table->data[] = new html_table_row($cells);
             }
