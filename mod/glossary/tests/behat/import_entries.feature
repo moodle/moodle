@@ -1,4 +1,4 @@
-@mod @mod_glossary
+@mod @mod_glossary @_file_upload
 Feature: Importing glossary entries
   In order to add glossary entries by bulk
   As a teacher
