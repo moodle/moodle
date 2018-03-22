@@ -144,11 +144,10 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification'], 
                     methodname: 'local_iomad_learningpath_addusers',
                     args: {pathid: pathid, userids: [userid]},
                     done: function(result) {
+                        pathuser_list();
                     },
                     fail: notification.exception,
                 }]);
-
-                pathuser_list();
             });
 
 
@@ -166,14 +165,14 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification'], 
                     methodname: 'local_iomad_learningpath_removeusers',
                     args: {pathid: pathid, userids: [userid]},
                     done: function(result) {
+
+                        // Update list
+                        pathuser_list();
+                        var filter = $('#userfilter').val();
+                        user_list(filter);
                     },
                     fail: notification.exception
                 }]);
-
-                // Update list
-                pathuser_list();
-                var filter = $('#userfilter').val();
-                user_list(filter);
             });
 
              

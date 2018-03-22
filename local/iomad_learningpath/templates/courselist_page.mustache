@@ -10,10 +10,17 @@
 
 <div class="row">
     <div class="col-sm-6">
+    </div>
+    <div class="col-sm-6">
         <div class="form-group">
-            <label for="selectedfilter">{{# str }}filter, local_iomad_learningpath{{/ str }}</label>
-            <input class="form-control" type="text" name="selectedfilter">
+            <label for="coursefilter">{{# str }}filter, local_iomad_learningpath{{/ str }}</label>
+            <input id="coursefilter" class="form-control" type="text" name="coursefilter">
         </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-6">
         <div class="card bg-light">
             <div class="card-header">
                 {{# str }}coursesinpath, local_iomad_learningpath{{/ str }}<br />
@@ -44,10 +51,6 @@
 
     </div>
     <div class="col-sm-6">
-        <div class="form-group">
-            <label for="coursefilter">{{# str }}filter, local_iomad_learningpath{{/ str }}</label>
-            <input id="coursefilter" class="form-control" type="text" name="coursefilter">
-        </div>
         <div class="card bg-light">
             <div class="card-header">
                 {{# str }}prospectivecourses, local_iomad_learningpath{{/ str }}<br />
