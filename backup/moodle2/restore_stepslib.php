@@ -4414,20 +4414,29 @@ class restore_create_categories_and_questions extends restore_structure_step {
             $data->parent = $top->id;
         }
 
-        // Before 3.1, the 'stamp' field could be erroneously duplicated.
-        // From 3.1 onwards, there's a unique index of (contextid, stamp).
-        // If we encounter a duplicate in an old restore file, just generate a new stamp.
-        // This is the same as what happens during an upgrade to 3.1+ anyway.
-        if ($DB->record_exists('question_categories', ['stamp' => $data->stamp, 'contextid' => $data->contextid])) {
-            $data->stamp = make_unique_id_code();
-        }
+        if (empty($data->parent)) {
+            if (!$top = question_get_top_category($data->contextid)) {
+                $top = question_get_top_category($data->contextid, true);
+                $this->set_mapping('question_category_created', $oldid, $top->id, false, null, $data->contextid);
+            }
+            $this->set_mapping('question_category', $oldid, $top->id);
+        } else {
 
-        // Let's create the question_category and save mapping
-        $newitemid = $DB->insert_record('question_categories', $data);
-        $this->set_mapping('question_category', $oldid, $newitemid);
-        // Also annotate them as question_category_created, we need
-        // that later when remapping parents
-        $this->set_mapping('question_category_created', $oldid, $newitemid, false, null, $data->contextid);
+            // Before 3.1, the 'stamp' field could be erroneously duplicated.
+            // From 3.1 onwards, there's a unique index of (contextid, stamp).
+            // If we encounter a duplicate in an old restore file, just generate a new stamp.
+            // This is the same as what happens during an upgrade to 3.1+ anyway.
+            if ($DB->record_exists('question_categories', ['stamp' => $data->stamp, 'contextid' => $data->contextid])) {
+                $data->stamp = make_unique_id_code();
+            }
+
+            // Let's create the question_category and save mapping.
+            $newitemid = $DB->insert_record('question_categories', $data);
+            $this->set_mapping('question_category', $oldid, $newitemid);
+            // Also annotate them as question_category_created, we need
+            // that later when remapping parents.
+            $this->set_mapping('question_category_created', $oldid, $newitemid, false, null, $data->contextid);
+        }
     }
 
     protected function process_question($data) {
@@ -4633,9 +4642,9 @@ class restore_move_module_questions_categories extends restore_execution_step {
         $backuprelease = floatval($this->task->get_info()->backup_release);
         preg_match('/(\d{8})/', $this->task->get_info()->moodle_release, $matches);
         $backupbuild = (int)$matches[1];
-        $before35 = false;
-        if ($backuprelease < 3.5 || $backupbuild < 20180205) {
-            $before35 = true;
+        $after35 = false;
+        if ($backuprelease >= 3.5 && $backupbuild > 20180205) {
+            $after35 = true;
         }
 
         $contexts = restore_dbops::restore_get_question_banks($this->get_restoreid(), CONTEXT_MODULE);
@@ -4648,23 +4657,36 @@ class restore_move_module_questions_categories extends restore_execution_step {
                                                      WHERE backupid = ?
                                                        AND itemname = 'question_category'
                                                        AND parentitemid = ?", array($this->get_restoreid(), $contextid));
+                $top = question_get_top_category($newcontext->newitemid, true);
+                $oldtopid = 0;
                 foreach ($modulecats as $modulecat) {
-                    $cat = new stdClass();
-                    $cat->id = $modulecat->newitemid;
-                    $cat->contextid = $newcontext->newitemid;
-
                     // Before 3.5, question categories could be created at top level.
                     // From 3.5 onwards, all question categories should be a child of a special category called the "top" category.
                     $info = backup_controller_dbops::decode_backup_temp_info($modulecat->info);
-                    if ($before35 && empty($info->parent)) {
-                        $top = question_get_top_category($newcontext->newitemid, true);
-                        $cat->parent = $top->id;
+                    if ($after35 && empty($info->parent)) {
+                        $oldtopid = $modulecat->newitemid;
+                        $modulecat->newitemid = $top->id;
+                    } else {
+                        $cat = new stdClass();
+                        $cat->id = $modulecat->newitemid;
+                        $cat->contextid = $newcontext->newitemid;
+                        if (empty($info->parent)) {
+                            $cat->parent = $top->id;
+                        }
+                        $DB->update_record('question_categories', $cat);
                     }
-                    $DB->update_record('question_categories', $cat);
 
-                    // And set new contextid also in question_category mapping (will be
-                    // used by {@link restore_create_question_files} later
-                    restore_dbops::set_backup_ids_record($this->get_restoreid(), 'question_category', $modulecat->itemid, $modulecat->newitemid, $newcontext->newitemid);
+                    // And set new contextid (and maybe update newitemid) also in question_category mapping (will be
+                    // used by {@link restore_create_question_files} later.
+                    restore_dbops::set_backup_ids_record($this->get_restoreid(), 'question_category', $modulecat->itemid,
+                            $modulecat->newitemid, $newcontext->newitemid);
+                }
+
+                // Now set the parent id for the question categories that were in the top category in the course context
+                // and have been moved now.
+                if ($oldtopid) {
+                    $DB->set_field('question_categories', 'parent', $top->id,
+                            array('contextid' => $newcontext->newitemid, 'parent' => $oldtopid));
                 }
             }
         }
