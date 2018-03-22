@@ -30,16 +30,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['clianswerno'] = 'n';
-$string['cliansweryes'] = 'y';
-$string['cliincorrectvalueerror'] = 'Fout, verkeerde waarde "{$a->value}" vir "{$a->option}"';
-$string['cliincorrectvalueretry'] = 'Verkeerde waarde, probeer weer';
-$string['clitypevalue'] = 'tipe waarde';
-$string['clitypevaluedefault'] = 'tipe waarde, druk Enter om die standaard waarde te gebruik ({$a})';
-$string['cliunknowoption'] = 'Nie-erkende opsies:
-  {$a}
-Gebruik die --help opsie.';
-$string['cliyesnoprompt'] = 'Tik y (beteken ja) of n (beteken nee)';
-$string['environmentrequireinstall'] = 'moet geïnstalleer en geaktiveer wees';
-$string['environmentrequireversion'] = 'weergawe {$a->needed} word benodig en jy het tans {$a->current}';
-$string['upgradekeyset'] = 'Opgradering sleutel (los skoon om nie te stel nie)';
+$string['parentlanguage'] = 'de';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Schweizer Hochdeutsch';
