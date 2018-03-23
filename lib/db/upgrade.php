@@ -2134,7 +2134,7 @@ function xmldb_main_upgrade($oldversion) {
     if ($oldversion < 2018032200.04) {
         // Define table 'message_conversations' to be updated.
         $table = new xmldb_table('message_conversations');
-        $field = new xmldb_field('convhash', XMLDB_TYPE_CHAR, '40', null, XMLDB_NOTNULL, null, 0, 'id');
+        $field = new xmldb_field('convhash', XMLDB_TYPE_CHAR, '40', null, XMLDB_NOTNULL, null, null, 'id');
 
         // Conditionally launch add field 'convhash'.
         if (!$dbman->field_exists($table, $field)) {
