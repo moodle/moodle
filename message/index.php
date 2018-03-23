@@ -127,7 +127,10 @@ if (!$user2realuser) {
 if (!empty($user2->id)) {
     if ($currentuser && isset($conversations[$user2->id])) {
         // Mark the conversation we are loading as read.
-        \core_message\api::mark_all_read_for_user($user1->id, $user2->id);
+        if ($conversationid = \core_message\api::get_conversation_between_users([$user1->id, $user2->id])) {
+            \core_message\api::mark_all_messages_as_read($user1->id, $conversationid);
+        }
+
         // Ensure the UI knows it's read as well.
         $conversations[$user2->id]->isread = 1;
     }

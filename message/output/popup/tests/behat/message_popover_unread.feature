@@ -13,7 +13,7 @@ Feature: Message popover unread messages
     And I send "Test message" message to "Student 1" user
     And I log out
 
-  Scenario: Notification popover shows correct unread count
+  Scenario: Message popover shows correct unread count
     When I log in as "student2"
     And I send "Test message 2" message to "Student 1" user
     And I log out
@@ -38,7 +38,7 @@ Feature: Message popover unread messages
     # Confirm the message was loaded in the messaging page.
     And I should see "Test message" in the "[data-region='message-text']" "css_element"
 
-  Scenario: Mark all notifications as read
+  Scenario: Mark all messages as read
     When I log in as "student1"
     # Open the popover.
     And I open the message popover

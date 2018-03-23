@@ -41,35 +41,6 @@ class message_output_popup extends message_output {
      * @return true if ok, false if error
      */
     public function send_message($eventdata) {
-        global $DB;
-
-        //hold onto the popup processor id because /admin/cron.php sends a lot of messages at once
-        static $processorid = null;
-
-        //prevent users from getting popup notifications of messages to themselves (happens with forum notifications)
-        if ($eventdata->userfrom->id != $eventdata->userto->id) {
-            if (empty($processorid)) {
-                $processor = $DB->get_record('message_processors', array('name'=>'popup'));
-                $processorid = $processor->id;
-            }
-            $procmessage = new stdClass();
-            $procmessage->unreadmessageid = $eventdata->savedmessageid;
-            $procmessage->processorid     = $processorid;
-
-            //save this message for later delivery
-            $DB->insert_record('message_working', $procmessage);
-
-            if ($eventdata->notification) {
-                if (!$DB->record_exists('message_popup', ['messageid' => $eventdata->savedmessageid, 'isread' => 0])) {
-                    $record = new StdClass();
-                    $record->messageid = $eventdata->savedmessageid;
-                    $record->isread = 0;
-
-                    $DB->insert_record('message_popup', $record);
-                }
-            }
-        }
-
         return true;
     }
 
@@ -111,22 +82,6 @@ class message_output_popup extends message_output {
      */
     public function has_message_preferences() {
         return false;
-    }
-
-    /**
-     * Handles the message_viewed event to keep data in sync.
-     *
-     * @param \core\event\base $event The event data
-     */
-    public static function message_viewed(\core\event\base $event) {
-        global $DB;
-
-        if ($record = $DB->get_record('message_popup', ['messageid' => $event->other['messageid']])) {
-            // The id can change when the moving to the message_read table.
-            $record->messageid = $event->objectid;
-            $record->isread = 1;
-            $DB->update_record('message_popup', $record);
-        }
     }
 
     /**

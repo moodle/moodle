@@ -25,7 +25,19 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-class core_message_events_testcase extends advanced_testcase {
+global $CFG;
+
+require_once($CFG->dirroot . '/message/tests/messagelib_test.php');
+
+/**
+ * Class containing the tests for message related events.
+ *
+ * @package core_message
+ * @category test
+ * @copyright 2014 Mark Nelson <markn@moodle.com>
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class core_message_events_testcase extends core_message_messagelib_testcase {
 
     /**
      * Test set up.
@@ -197,11 +209,11 @@ class core_message_events_testcase extends advanced_testcase {
      */
     public function test_message_sent() {
         $event = \core\event\message_sent::create(array(
+            'objectid' => 3,
             'userid' => 1,
             'context'  => context_system::instance(),
             'relateduserid' => 2,
             'other' => array(
-                'messageid' => 3,
                 'courseid' => 4
             )
         ));
@@ -219,7 +231,7 @@ class core_message_events_testcase extends advanced_testcase {
         $this->assertEventLegacyLogData($expected, $event);
         $url = new moodle_url('/message/index.php', array('user1' => $event->userid, 'user2' => $event->relateduserid));
         $this->assertEquals($url, $event->get_url());
-        $this->assertEquals(3, $event->other['messageid']);
+        $this->assertEquals(3, $event->objectid);
         $this->assertEquals(4, $event->other['courseid']);
     }
 
@@ -256,7 +268,7 @@ class core_message_events_testcase extends advanced_testcase {
         $this->assertEventLegacyLogData($expected, $event);
         $url = new moodle_url('/message/index.php', array('user1' => $event->userid, 'user2' => $event->relateduserid));
         $this->assertEquals($url, $event->get_url());
-        $this->assertEquals(3, $event->other['messageid']);
+        $this->assertEquals(3, $event->objectid);
         $this->assertEquals(4, $event->other['courseid']);
     }
 
@@ -276,32 +288,34 @@ class core_message_events_testcase extends advanced_testcase {
         $this->assertEquals(SITEID, $event->other['courseid']);
     }
 
-
-
-
     /**
      * Test the message viewed event.
      */
     public function test_message_viewed() {
         global $DB;
 
-        // Create a message to mark as read.
-        $message = new stdClass();
-        $message->useridfrom = '1';
-        $message->useridto = '2';
-        $message->subject = 'Subject';
-        $message->message = 'Message';
-        $message->id = $DB->insert_record('message', $message);
+        // Create users to send messages between.
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+
+        $messageid = $this->send_fake_message($user1, $user2);
 
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
-        message_mark_message_read($message, time());
+        $message = $DB->get_record('messages', ['id' => $messageid]);
+        \core_message\api::mark_message_as_read($user1->id, $message);
         $events = $sink->get_events();
         $event = reset($events);
 
+        // Get the usage action.
+        $mua = $DB->get_record('message_user_actions', ['userid' => $user1->id, 'messageid' => $messageid,
+            'action' => \core_message\api::MESSAGE_ACTION_READ]);
+
         // Check that the event data is valid.
         $this->assertInstanceOf('\core\event\message_viewed', $event);
-        $this->assertEquals(context_user::instance(2), $event->get_context());
+        $this->assertEquals(context_user::instance($user1->id), $event->get_context());
+        $this->assertEquals($mua->id, $event->objectid);
+        $this->assertEquals($messageid, $event->other['messageid']);
         $url = new moodle_url('/message/index.php', array('user1' => $event->userid, 'user2' => $event->relateduserid));
         $this->assertEquals($url, $event->get_url());
     }
@@ -312,56 +326,54 @@ class core_message_events_testcase extends advanced_testcase {
     public function test_message_deleted() {
         global $DB;
 
-        // Create a message.
-        $message = new stdClass();
-        $message->useridfrom = '1';
-        $message->useridto = '2';
-        $message->subject = 'Subject';
-        $message->message = 'Message';
-        $message->timeuserfromdeleted = 0;
-        $message->timeusertodeleted = 0;
-        $message->id = $DB->insert_record('message', $message);
+        // Create users to send messages between.
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+
+        $messageid = $this->send_fake_message($user1, $user2);
 
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
-        message_delete_message($message, $message->useridfrom);
+        \core_message\api::delete_message($user1->id, $messageid);
         $events = $sink->get_events();
         $event = reset($events);
 
+        // Get the usage action.
+        $mua = $DB->get_record('message_user_actions', ['userid' => $user1->id, 'messageid' => $messageid,
+            'action' => \core_message\api::MESSAGE_ACTION_DELETED]);
+
         // Check that the event data is valid.
         $this->assertInstanceOf('\core\event\message_deleted', $event);
-        $this->assertEquals($message->useridfrom, $event->userid); // The user who deleted it.
-        $this->assertEquals($message->useridto, $event->relateduserid);
-        $this->assertEquals('message', $event->other['messagetable']);
-        $this->assertEquals($message->id, $event->other['messageid']);
-        $this->assertEquals($message->useridfrom, $event->other['useridfrom']);
-        $this->assertEquals($message->useridto, $event->other['useridto']);
+        $this->assertEquals($user1->id, $event->userid); // The user who deleted it.
+        $this->assertEquals($user2->id, $event->relateduserid);
+        $this->assertEquals($mua->id, $event->objectid);
+        $this->assertEquals($messageid, $event->other['messageid']);
+        $this->assertEquals($user1->id, $event->other['useridfrom']);
+        $this->assertEquals($user2->id, $event->other['useridto']);
 
         // Create a read message.
-        $message = new stdClass();
-        $message->useridfrom = '2';
-        $message->useridto = '1';
-        $message->subject = 'Subject';
-        $message->message = 'Message';
-        $message->timeuserfromdeleted = 0;
-        $message->timeusertodeleted = 0;
-        $message->timeread = time();
-        $message->id = $DB->insert_record('message_read', $message);
+        $messageid = $this->send_fake_message($user1, $user2);
+        $m = $DB->get_record('messages', ['id' => $messageid]);
+        \core_message\api::mark_message_as_read($user2->id, $m);
 
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
-        message_delete_message($message, $message->useridto);
+        \core_message\api::delete_message($user2->id, $messageid);
         $events = $sink->get_events();
         $event = reset($events);
 
+        // Get the usage action.
+        $mua = $DB->get_record('message_user_actions', ['userid' => $user2->id, 'messageid' => $messageid,
+            'action' => \core_message\api::MESSAGE_ACTION_DELETED]);
+
         // Check that the event data is valid.
         $this->assertInstanceOf('\core\event\message_deleted', $event);
-        $this->assertEquals($message->useridto, $event->userid);
-        $this->assertEquals($message->useridfrom, $event->relateduserid);
-        $this->assertEquals('message_read', $event->other['messagetable']);
-        $this->assertEquals($message->id, $event->other['messageid']);
-        $this->assertEquals($message->useridfrom, $event->other['useridfrom']);
-        $this->assertEquals($message->useridto, $event->other['useridto']);
+        $this->assertEquals($user2->id, $event->userid);
+        $this->assertEquals($user1->id, $event->relateduserid);
+        $this->assertEquals($mua->id, $event->objectid);
+        $this->assertEquals($messageid, $event->other['messageid']);
+        $this->assertEquals($user1->id, $event->other['useridfrom']);
+        $this->assertEquals($user2->id, $event->other['useridto']);
     }
 
     /**
@@ -370,67 +382,135 @@ class core_message_events_testcase extends advanced_testcase {
     public function test_message_deleted_whole_conversation() {
         global $DB;
 
-        // Create a message.
-        $message = new stdClass();
-        $message->useridfrom = '1';
-        $message->useridto = '2';
-        $message->subject = 'Subject';
-        $message->message = 'Message';
-        $message->timeuserfromdeleted = 0;
-        $message->timeusertodeleted = 0;
-        $message->timecreated = 1;
+        // Create some users.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
 
+        // The person doing the search.
+        $this->setUser($user1);
+
+        // Send some messages back and forth.
+        $time = 1;
         $messages = [];
-        // Send this a few times.
-        $messages[] = $DB->insert_record('message', $message);
+        $messages[] = $this->send_fake_message($user1, $user2, 'Yo!', 0, $time + 1);
+        $messages[] = $this->send_fake_message($user2, $user1, 'Sup mang?', 0, $time + 2);
+        $messages[] = $this->send_fake_message($user1, $user2, 'Writing PHPUnit tests!', 0, $time + 3);
+        $messages[] = $this->send_fake_message($user2, $user1, 'Word.', 0, $time + 4);
+        $messages[] = $this->send_fake_message($user1, $user2, 'You doing much?', 0, $time + 5);
+        $messages[] = $this->send_fake_message($user2, $user1, 'Nah', 0, $time + 6);
+        $messages[] = $this->send_fake_message($user1, $user2, 'You nubz0r!', 0, $time + 7);
+        $messages[] = $this->send_fake_message($user2, $user1, 'Ouch.', 0, $time + 8);
 
-        $message->timecreated++;
-        $messages[] = $DB->insert_record('message', $message);
-
-        $message->timecreated++;
-        $messages[] = $DB->insert_record('message', $message);
-
-        $message->timecreated++;
-        $messages[] = $DB->insert_record('message', $message);
-
-        // Create a read message.
-        $message->timeread = time();
-
-        // Send this a few times.
-        $message->timecreated++;
-        $messages[] = $DB->insert_record('message_read', $message);
-
-        $message->timecreated++;
-        $messages[] = $DB->insert_record('message_read', $message);
-
-        $message->timecreated++;
-        $messages[] = $DB->insert_record('message_read', $message);
-
-        $message->timecreated++;
-        $messages[] = $DB->insert_record('message_read', $message);
+        // Mark the last 4 messages as read.
+        $m5 = $DB->get_record('messages', ['id' => $messages[4]]);
+        $m6 = $DB->get_record('messages', ['id' => $messages[5]]);
+        $m7 = $DB->get_record('messages', ['id' => $messages[6]]);
+        $m8 = $DB->get_record('messages', ['id' => $messages[7]]);
+        \core_message\api::mark_message_as_read($user2->id, $m5);
+        \core_message\api::mark_message_as_read($user1->id, $m6);
+        \core_message\api::mark_message_as_read($user2->id, $m7);
+        \core_message\api::mark_message_as_read($user1->id, $m8);
 
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
-        \core_message\api::delete_conversation(1, 2);
+        \core_message\api::delete_conversation($user1->id, $user2->id);
         $events = $sink->get_events();
+
+        // Get the user actions for the messages deleted by that user.
+        $muas = $DB->get_records('message_user_actions', ['userid' => $user1->id,
+            'action' => \core_message\api::MESSAGE_ACTION_DELETED], 'timecreated ASC');
+        $this->assertCount(8, $muas);
+
+        // Create a list we can use for testing.
+        $muatest = [];
+        foreach ($muas as $mua) {
+            $muatest[$mua->messageid] = $mua;
+        }
 
         // Check that there were the correct number of events triggered.
         $this->assertEquals(8, count($events));
 
         // Check that the event data is valid.
-        $i = 0;
+        $i = 1;
         foreach ($events as $event) {
-            $table = ($i > 3) ? 'message_read' : 'message';
+            $useridfromid = ($i % 2 == 0) ? $user2->id : $user1->id;
+            $useridtoid = ($i % 2 == 0) ? $user1->id : $user2->id;
+            $messageid = $messages[$i - 1];
 
             $this->assertInstanceOf('\core\event\message_deleted', $event);
-            $this->assertEquals($message->useridfrom, $event->userid);
-            $this->assertEquals($message->useridto, $event->relateduserid);
-            $this->assertEquals($table, $event->other['messagetable']);
-            $this->assertEquals($messages[$i], $event->other['messageid']);
-            $this->assertEquals($message->useridfrom, $event->other['useridfrom']);
-            $this->assertEquals($message->useridto, $event->other['useridto']);
+
+            $this->assertEquals($muatest[$messageid]->id, $event->objectid);
+            $this->assertEquals($user1->id, $event->userid);
+            $this->assertEquals($user2->id, $event->relateduserid);
+            $this->assertEquals($messageid, $event->other['messageid']);
+            $this->assertEquals($useridfromid, $event->other['useridfrom']);
+            $this->assertEquals($useridtoid, $event->other['useridto']);
 
             $i++;
         }
+    }
+
+    /**
+     * Test the notification sent event.
+     */
+    public function test_notification_sent() {
+        // Create a course.
+        $course = $this->getDataGenerator()->create_course();
+
+        // Create users to send notification between.
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+
+        // Send a notification.
+        $notificationid = $this->send_fake_message($user1, $user2, 'Hello world!', 1);
+
+        // Containing courseid.
+        $event = \core\event\notification_sent::create_from_ids($user1->id, $user2->id, $notificationid, $course->id);
+
+        // Trigger and capturing the event.
+        $sink = $this->redirectEvents();
+        $event->trigger();
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\core\event\notification_sent', $event);
+        $this->assertEquals($notificationid, $event->objectid);
+        $this->assertEquals($user1->id, $event->userid);
+        $this->assertEquals($user2->id, $event->relateduserid);
+        $this->assertEquals(context_system::instance(), $event->get_context());
+        $this->assertEquals($course->id, $event->other['courseid']);
+        $url = new moodle_url('/message/output/popup/notifications.php', array('notificationid' => $event->objectid));
+        $this->assertEquals($url, $event->get_url());
+    }
+
+    /**
+     * Test the notification viewed event.
+     */
+    public function test_notification_viewed() {
+        global $DB;
+
+        // Create users to send notifications between.
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+
+        // Send a notification.
+        $notificationid = $this->send_fake_message($user1, $user2, 'Hello world!', 1);
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $notification = $DB->get_record('notifications', ['id' => $notificationid]);
+        \core_message\api::mark_notification_as_read($notification);
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\core\event\notification_viewed', $event);
+        $this->assertEquals($notificationid, $event->objectid);
+        $this->assertEquals($user2->id, $event->userid);
+        $this->assertEquals($user1->id, $event->relateduserid);
+        $this->assertEquals(context_user::instance($user2->id), $event->get_context());
+        $url = new moodle_url('/message/output/popup/notifications.php', array('notificationid' => $event->objectid));
+        $this->assertEquals($url, $event->get_url());
     }
 }

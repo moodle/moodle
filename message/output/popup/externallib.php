@@ -117,6 +117,9 @@ class message_popup_external extends external_api {
                 $notificationoutput = new \message_popup\output\popup_notification($notification);
 
                 $notificationcontext = $notificationoutput->export_for_template($renderer);
+
+                // Keep this for BC.
+                $notificationcontext->deleted = false;
                 $notificationcontexts[] = $notificationcontext;
             }
         }

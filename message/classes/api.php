@@ -37,6 +37,16 @@ require_once($CFG->dirroot . '/lib/messagelib.php');
 class api {
 
     /**
+     * The action for reading a message.
+     */
+    const MESSAGE_ACTION_READ = 1;
+
+    /**
+     * The action for deleting a message.
+     */
+    const MESSAGE_ACTION_DELETED = 2;
+
+    /**
      * Handles searching for messages in the message area.
      *
      * @param int $userid The user id doing the searching
@@ -52,47 +62,33 @@ class api {
         $ufields = \user_picture::fields('u', array('lastaccess'), 'userfrom_id', 'userfrom_');
         $ufields2 = \user_picture::fields('u2', array('lastaccess'), 'userto_id', 'userto_');
 
-        // Get all the messages for the user.
-        $sql = "SELECT m.id, m.useridfrom, m.useridto, m.subject, m.fullmessage, m.fullmessagehtml, m.fullmessageformat,
-                       m.smallmessage, m.notification, m.timecreated, 0 as isread, $ufields, mc.blocked as userfrom_blocked,
-                       $ufields2, mc2.blocked as userto_blocked
-                  FROM {message} m
-                  JOIN {user} u
-                    ON m.useridfrom = u.id
-             LEFT JOIN {message_contacts} mc
-                    ON (mc.contactid = u.id AND mc.userid = ?)
-                  JOIN {user} u2
-                    ON m.useridto = u2.id
-             LEFT JOIN {message_contacts} mc2
-                    ON (mc2.contactid = u2.id AND mc2.userid = ?)
-                 WHERE ((useridto = ? AND timeusertodeleted = 0)
-                    OR (useridfrom = ? AND timeuserfromdeleted = 0))
-                   AND notification = 0
+        $sql = "SELECT m.id, m.useridfrom, mcm.userid as useridto, m.subject, m.fullmessage, m.fullmessagehtml, m.fullmessageformat,
+                       m.smallmessage, m.timecreated, 0 as isread, $ufields, mcont.blocked as userfrom_blocked, $ufields2,
+                       mcont2.blocked as userto_blocked
+                  FROM {messages} m
+            INNER JOIN {user} u
+                    ON u.id = m.useridfrom
+            INNER JOIN {message_conversations} mc
+                    ON mc.id = m.conversationid
+            INNER JOIN {message_conversation_members} mcm
+                    ON mcm.conversationid = m.conversationid
+            INNER JOIN {user} u2
+                    ON u2.id = mcm.userid
+             LEFT JOIN {message_contacts} mcont
+                    ON (mcont.contactid = u.id AND mcont.userid = ?)
+             LEFT JOIN {message_contacts} mcont2
+                    ON (mcont2.contactid = u2.id AND mcont2.userid = ?)
+             LEFT JOIN {message_user_actions} mua
+                    ON (mua.messageid = m.id AND mua.userid = ? AND mua.action = ?)
+                 WHERE (m.useridfrom = ? OR mcm.userid = ?)
+                   AND m.useridfrom != mcm.userid
                    AND u.deleted = 0
                    AND u2.deleted = 0
-                   AND " . $DB->sql_like('smallmessage', '?', false) . "
-             UNION ALL
-                SELECT mr.id, mr.useridfrom, mr.useridto, mr.subject, mr.fullmessage, mr.fullmessagehtml, mr.fullmessageformat,
-                       mr.smallmessage, mr.notification, mr.timecreated, 1 as isread, $ufields, mc.blocked as userfrom_blocked,
-                       $ufields2, mc2.blocked as userto_blocked
-                  FROM {message_read} mr
-                  JOIN {user} u
-                    ON mr.useridfrom = u.id
-             LEFT JOIN {message_contacts} mc
-                    ON (mc.contactid = u.id AND mc.userid = ?)
-                  JOIN {user} u2
-                    ON mr.useridto = u2.id
-             LEFT JOIN {message_contacts} mc2
-                    ON (mc2.contactid = u2.id AND mc2.userid = ?)
-                 WHERE ((useridto = ? AND timeusertodeleted = 0)
-                    OR (useridfrom = ? AND timeuserfromdeleted = 0))
-                   AND notification = 0
-                   AND u.deleted = 0
-                   AND u2.deleted = 0
+                   AND mua.id is NULL
                    AND " . $DB->sql_like('smallmessage', '?', false) . "
               ORDER BY timecreated DESC";
-        $params = array($userid, $userid, $userid, $userid, '%' . $search . '%',
-                        $userid, $userid, $userid, $userid, '%' . $search . '%');
+
+        $params = array($userid, $userid, $userid, self::MESSAGE_ACTION_DELETED, $userid, $userid, '%' . $search . '%');
 
         // Convert the messages into searchable contacts with their last message being the message that was searched.
         $conversations = array();
@@ -266,172 +262,47 @@ class api {
     public static function get_conversations($userid, $limitfrom = 0, $limitnum = 20) {
         global $DB;
 
-        // The case statement is used to make sure the same key is generated
-        // whether a user sent or received a message (it's the same conversation).
-        // E.g. If there is a message from user 1 to user 2 and then from user 2 to user 1 the result set
-        // will group those into a single record, since 1 -> 2 and 2 -> 1 is the same conversation.
-        $case1 = $DB->sql_concat('useridfrom', "'-'", 'useridto');
-        $case2 = $DB->sql_concat('useridto', "'-'", 'useridfrom');
-        $convocase = "CASE WHEN useridfrom > useridto
-                        THEN $case1
-                        ELSE $case2 END";
-        $convosig = "$convocase AS convo_signature";
+        // Get the last message from each conversation that the user belongs to.
+        $sql = "SELECT m.id, m.conversationid, m.useridfrom, mcm2.userid as useridto, m.smallmessage, m.timecreated
+                  FROM {messages} m
+            INNER JOIN (
+                          SELECT MAX(m.id) AS messageid
+                            FROM {messages} m
+                      INNER JOIN (
+                                      SELECT m.conversationid, MAX(m.timecreated) as maxtime
+                                        FROM {messages} m
+                                  INNER JOIN {message_conversation_members} mcm
+                                          ON mcm.conversationid = m.conversationid
+                                   LEFT JOIN {message_user_actions} mua
+                                          ON (mua.messageid = m.id AND mua.userid = :userid AND mua.action = :action)
+                                       WHERE mua.id is NULL
+                                         AND mcm.userid = :userid2
+                                    GROUP BY m.conversationid
+                                 ) maxmessage
+                               ON maxmessage.maxtime = m.timecreated AND maxmessage.conversationid = m.conversationid
+                         GROUP BY m.conversationid
+                       ) lastmessage
+                    ON lastmessage.messageid = m.id
+            INNER JOIN {message_conversation_members} mcm
+                    ON mcm.conversationid = m.conversationid
+            INNER JOIN {message_conversation_members} mcm2
+                    ON mcm2.conversationid = m.conversationid
+                 WHERE mcm.userid = m.useridfrom
+                   AND mcm.id != mcm2.id
+              ORDER BY m.timecreated DESC";
+        $messageset = $DB->get_recordset_sql($sql, ['userid' => $userid, 'action' => self::MESSAGE_ACTION_DELETED,
+            'userid2' => $userid], $limitfrom, $limitnum);
 
-        // This is a snippet to join the message tables and filter out any messages the user has deleted
-        // and ignore notifications. The fields are specified by name so that the union works on MySQL.
-        $allmessages = "SELECT
-                            id, useridfrom, useridto, subject, fullmessage, fullmessageformat,
-                            fullmessagehtml, smallmessage, notification, contexturl,
-                            contexturlname, timecreated, timeuserfromdeleted, timeusertodeleted,
-                            component, eventtype, 0 as timeread
-                        FROM {message}
-                        WHERE
-                            (useridto = ? AND timeusertodeleted = 0 AND notification = 0)
-                        UNION ALL
-                        SELECT
-                            id, useridfrom, useridto, subject, fullmessage, fullmessageformat,
-                            fullmessagehtml, smallmessage, notification, contexturl,
-                            contexturlname, timecreated, timeuserfromdeleted, timeusertodeleted,
-                            component, eventtype, 0 as timeread
-                        FROM {message}
-                        WHERE
-                            (useridfrom = ? AND timeuserfromdeleted = 0 AND notification = 0)
-                        UNION ALL
-                        SELECT
-                            id, useridfrom, useridto, subject, fullmessage, fullmessageformat,
-                            fullmessagehtml, smallmessage, notification, contexturl,
-                            contexturlname, timecreated, timeuserfromdeleted, timeusertodeleted,
-                            component, eventtype, timeread
-                        FROM {message_read}
-                        WHERE
-                            (useridto = ? AND timeusertodeleted = 0 AND notification = 0)
-                        UNION ALL
-                        SELECT
-                            id, useridfrom, useridto, subject, fullmessage, fullmessageformat,
-                            fullmessagehtml, smallmessage, notification, contexturl,
-                            contexturlname, timecreated, timeuserfromdeleted, timeusertodeleted,
-                            component, eventtype, timeread
-                        FROM {message_read}
-                        WHERE
-                            (useridfrom = ? AND timeuserfromdeleted = 0 AND notification = 0)";
-        $allmessagesparams = [$userid, $userid, $userid, $userid];
-
-        // Create a transaction to protect against concurrency issues.
-        $transaction = $DB->start_delegated_transaction();
-
-        // First we need to get the list of conversations from the database ordered by the conversation
-        // with the most recent message first.
-        //
-        // This query will join the two message tables and then group the results by the combination
-        // of useridfrom and useridto (the 'convo_signature').
-        $conversationssql = "SELECT $convosig, max(timecreated) as timecreated
-                             FROM ($allmessages) x
-                             GROUP BY $convocase
-                             ORDER BY timecreated DESC, max(id) DESC";
-        $conversationrecords = $DB->get_records_sql($conversationssql, $allmessagesparams, $limitfrom, $limitnum);
-
-        // This user has no conversations so we can return early here.
-        if (empty($conversationrecords)) {
-            $transaction->allow_commit();
-            return [];
-        }
-
-        // Next we need to get the max id of the messages sent at the latest time for each conversation.
-        // This needs to be a separate query to above because there is no guarantee that the message with
-        // the highest id will also have the highest timecreated value (in fact that is fairly likely due
-        // to the split between the message tables).
-        //
-        // E.g. if we just added max(id) to the conversation query above and ran it on data like:
-        // id, userfrom, userto, timecreated
-        //  1,        1,      2,           2
-        //  2,        2,      1,           1
-        //
-        // Then the result of the query would be:
-        // convo_signature, timecreated, id
-        //             2-1,           2,  2
-        //
-        // That would be incorrect since the message with id 2 actually has a lower timecreated. Hence why
-        // the two queries need to be split.
-        //
-        // The same result could also be achieved with an inner join in a single query however we're specifically
-        // avoiding multiple joins in the messaging queries because of the size of the messaging tables.
-        $whereclauses = [];
-        $createdtimes = [];
-        foreach ($conversationrecords as $convoid => $record) {
-            $whereclauses[] = "($convocase = '$convoid' AND timecreated = {$record->timecreated})";
-            $createdtimes[] = $record->timecreated;
-        }
-        $messageidwhere = implode(' OR ', $whereclauses);
-        list($timecreatedsql, $timecreatedparams) = $DB->get_in_or_equal($createdtimes);
-
-        $allmessagestimecreated = "SELECT id, useridfrom, useridto, timecreated
-                        FROM {message}
-                        WHERE
-                            (useridto = ? AND timeusertodeleted = 0 AND notification = 0)
-                            AND timecreated $timecreatedsql
-                        UNION ALL
-                        SELECT id, useridfrom, useridto, timecreated
-                        FROM {message}
-                        WHERE
-                            (useridfrom = ? AND timeuserfromdeleted = 0 AND notification = 0)
-                            AND timecreated $timecreatedsql
-                        UNION ALL
-                        SELECT id, useridfrom, useridto, timecreated
-                        FROM {message_read}
-                        WHERE
-                            (useridto = ? AND timeusertodeleted = 0 AND notification = 0)
-                            AND timecreated $timecreatedsql
-                        UNION ALL
-                        SELECT id, useridfrom, useridto, timecreated
-                        FROM {message_read}
-                        WHERE
-                            (useridfrom = ? AND timeuserfromdeleted = 0 AND notification = 0)
-                            AND timecreated $timecreatedsql";
-        $messageidsql = "SELECT $convosig, max(id) as id, timecreated
-                         FROM ($allmessagestimecreated) x
-                         WHERE $messageidwhere
-                         GROUP BY $convocase, timecreated";
-        $messageidparams = array_merge([$userid], $timecreatedparams, [$userid], $timecreatedparams,
-                [$userid], $timecreatedparams, [$userid], $timecreatedparams);
-        $messageidrecords = $DB->get_records_sql($messageidsql, $messageidparams);
-
-        // Ok, let's recap. We've pulled a descending ordered list of conversations by latest time created
-        // for the given user. For each of those conversations we've grabbed the max id for messages
-        // created at that time.
-        //
-        // So at this point we have the list of ids for the most recent message in each of the user's most
-        // recent conversations. Now we need to pull all of the message and user data for each message id.
-        $whereclauses = [];
-        foreach ($messageidrecords as $record) {
-            $whereclauses[] = "(id = {$record->id} AND timecreated = {$record->timecreated})";
-        }
-        $messagewhere = implode(' OR ', $whereclauses);
-        $messagesunionsql = "SELECT
-                                id, useridfrom, useridto, smallmessage, 0 as timeread
-                            FROM {message}
-                            WHERE
-                                {$messagewhere}
-                            UNION ALL
-                            SELECT
-                                id, useridfrom, useridto, smallmessage, timeread
-                            FROM {message_read}
-                            WHERE
-                                {$messagewhere}";
-        $messagesql = "SELECT $convosig, m.smallmessage, m.id, m.useridto, m.useridfrom, m.timeread
-                       FROM ($messagesunionsql) m";
-
-        // We need to handle the case where the $messageids contains two ids from the same conversation
-        // (which can happen because there can be id clashes between the read and unread tables). In
-        // this case we will prioritise the unread message.
-        $messageset = $DB->get_recordset_sql($messagesql, $allmessagesparams);
         $messages = [];
         foreach ($messageset as $message) {
-            $id = $message->convo_signature;
-            if (!isset($messages[$id]) || empty($message->timeread)) {
-                $messages[$id] = $message;
-            }
+            $messages[$message->id] = $message;
         }
         $messageset->close();
+
+        // If there are no messages return early.
+        if (empty($messages)) {
+            return [];
+        }
 
         // We need to pull out the list of other users that are part of each of these conversations. This
         // needs to be done in a separate query to avoid doing a join on the messages tables and the user
@@ -441,75 +312,62 @@ class api {
             return ($message->useridfrom == $userid) ? $message->useridto : $message->useridfrom;
         }, array_values($messages));
 
+        // Ok, let's get the other members in the conversations.
         list($useridsql, $usersparams) = $DB->get_in_or_equal($otheruserids);
-        $userfields = \user_picture::fields('', array('lastaccess'));
+        $userfields = \user_picture::fields('u', array('lastaccess'));
         $userssql = "SELECT $userfields
-                     FROM {user}
-                     WHERE id $useridsql
-                       AND deleted = 0";
+                       FROM {user} u
+                      WHERE id $useridsql
+                        AND deleted = 0";
         $otherusers = $DB->get_records_sql($userssql, $usersparams);
 
-        // Similar to the above use case, we need to pull the contact information and again this has
-        // specifically been separated into another query to avoid having to do joins on the message
-        // tables.
-        $contactssql = "SELECT contactid, blocked
-                        FROM {message_contacts}
-                        WHERE userid = ? AND contactid $useridsql";
-        $contacts = $DB->get_records_sql($contactssql, array_merge([$userid], $otheruserids));
-
-        // Finally, let's get the unread messages count for this user so that we can add them
-        // to the conversation.
-        $unreadcountssql = 'SELECT useridfrom, count(*) as count
-                            FROM {message}
-                            WHERE useridto = ?
-                                AND timeusertodeleted = 0
-                                AND notification = 0
-                            GROUP BY useridfrom';
-        $unreadcounts = $DB->get_records_sql($unreadcountssql, [$userid]);
-
-        // We can close off the transaction now.
-        $transaction->allow_commit();
-
-        // Now we need to order the messages back into the same order of the conversations.
-        $orderedconvosigs = array_keys($conversationrecords);
-        usort($messages, function($a, $b) use ($orderedconvosigs) {
-            $aindex = array_search($a->convo_signature, $orderedconvosigs);
-            $bindex = array_search($b->convo_signature, $orderedconvosigs);
-
-            return ($aindex < $bindex) ? -1 : 1;
-        });
-
-        // Preload the contexts before we construct the conversation to prevent the
-        // create_contact helper from needing to query the DB so often.
-        $ctxselect = \context_helper::get_preload_record_columns_sql('ctx');
-        $sql = "SELECT {$ctxselect}
-                FROM {context} ctx
-                WHERE ctx.contextlevel = ? AND
-                ctx.instanceid {$useridsql}";
-        $contexts = [];
-        $contexts = $DB->get_records_sql($sql, array_merge([CONTEXT_USER], $usersparams));
-        foreach ($contexts as $context) {
-            \context_helper::preload_from_record($context);
+        // If there are no other users (user may have been deleted), then do not continue.
+        if (empty($otherusers)) {
+            return [];
         }
 
+        $contactssql = "SELECT contactid, blocked
+                          FROM {message_contacts}
+                         WHERE userid = ?
+                           AND contactid $useridsql";
+        $contacts = $DB->get_records_sql($contactssql, array_merge([$userid], $usersparams));
+
+        // Finally, let's get the unread messages count for this user so that we can add them
+        // to the conversation. Remember we need to ignore the messages the user sent.
+        $unreadcountssql = 'SELECT m.useridfrom, count(m.id) as count
+                              FROM {messages} m
+                        INNER JOIN {message_conversations} mc
+                                ON mc.id = m.conversationid
+                        INNER JOIN {message_conversation_members} mcm
+                                ON m.conversationid = mcm.conversationid
+                         LEFT JOIN {message_user_actions} mua
+                                ON (mua.messageid = m.id AND mua.userid = ? AND
+                                   (mua.action = ? OR mua.action = ?))
+                             WHERE mcm.userid = ?
+                               AND m.useridfrom != ?
+                               AND mua.id is NULL
+                          GROUP BY useridfrom';
+        $unreadcounts = $DB->get_records_sql($unreadcountssql, [$userid, self::MESSAGE_ACTION_READ, self::MESSAGE_ACTION_DELETED,
+            $userid, $userid]);
+
+        // Get rid of the table prefix.
+        $userfields = str_replace('u.', '', $userfields);
         $userproperties = explode(',', $userfields);
         $arrconversations = array();
-        // The last step now is to bring all of the data we've gathered together to create
-        // a conversation (or contact, as the API is named...).
         foreach ($messages as $message) {
             $conversation = new \stdClass();
             $otheruserid = ($message->useridfrom == $userid) ? $message->useridto : $message->useridfrom;
             $otheruser = isset($otherusers[$otheruserid]) ? $otherusers[$otheruserid] : null;
             $contact = isset($contacts[$otheruserid]) ? $contacts[$otheruserid] : null;
 
+            // It's possible the other user was deleted, so, skip.
+            if (is_null($otheruser)) {
+                continue;
+            }
+
             // Add the other user's information to the conversation, if we have one.
             foreach ($userproperties as $prop) {
                 $conversation->$prop = ($otheruser) ? $otheruser->$prop : null;
-            }
-
-            // Do not process a conversation with a deleted user.
-            if (empty($conversation->id)) {
-                continue;
             }
 
             // Add the contact's information, if we have one.
@@ -560,6 +418,73 @@ class api {
         }
 
         return $arrcontacts;
+    }
+
+    /**
+     * Returns the an array of the users the given user is in a conversation
+     * with who are a contact and the number of unread messages.
+     *
+     * @param int $userid The user id
+     * @param int $limitfrom
+     * @param int $limitnum
+     * @return array
+     */
+    public static function get_contacts_with_unread_message_count($userid, $limitfrom = 0, $limitnum = 0) {
+        global $DB;
+
+        $userfields = \user_picture::fields('u', array('lastaccess'));
+        $unreadcountssql = "SELECT $userfields, count(m.id) as messagecount
+                              FROM {message_contacts} mc
+                        INNER JOIN {user} u
+                                ON u.id = mc.contactid
+                         LEFT JOIN {messages} m
+                                ON m.useridfrom = mc.contactid
+                         LEFT JOIN {message_conversation_members} mcm
+                                ON mcm.conversationid = m.conversationid AND mcm.userid = ? AND mcm.userid != m.useridfrom
+                         LEFT JOIN {message_user_actions} mua
+                                ON (mua.messageid = m.id AND mua.userid = ? AND mua.action = ?)
+                             WHERE mua.id is NULL
+                               AND mc.userid = ?
+                               AND mc.blocked = 0
+                               AND u.deleted = 0
+                          GROUP BY $userfields";
+
+        return $DB->get_records_sql($unreadcountssql, [$userid, $userid, self::MESSAGE_ACTION_READ,
+            $userid, $userid], $limitfrom, $limitnum);
+    }
+
+    /**
+     * Returns the an array of the users the given user is in a conversation
+     * with who are not a contact and the number of unread messages.
+     *
+     * @param int $userid The user id
+     * @param int $limitfrom
+     * @param int $limitnum
+     * @return array
+     */
+    public static function get_non_contacts_with_unread_message_count($userid, $limitfrom = 0, $limitnum = 0) {
+        global $DB;
+
+        $userfields = \user_picture::fields('u', array('lastaccess'));
+        $unreadcountssql = "SELECT $userfields, count(m.id) as messagecount
+                              FROM {user} u
+                        INNER JOIN {messages} m
+                                ON m.useridfrom = u.id
+                        INNER JOIN {message_conversation_members} mcm
+                                ON mcm.conversationid = m.conversationid
+                         LEFT JOIN {message_user_actions} mua
+                                ON (mua.messageid = m.id AND mua.userid = ? AND mua.action = ?)
+                         LEFT JOIN {message_contacts} mc
+                                ON (mc.userid = ? AND mc.contactid = u.id)
+                             WHERE mcm.userid = ?
+                               AND mcm.userid != m.useridfrom
+                               AND mua.id is NULL
+                               AND mc.id is NULL
+                               AND u.deleted = 0
+                          GROUP BY $userfields";
+
+        return $DB->get_records_sql($unreadcountssql, [$userid, self::MESSAGE_ACTION_READ, $userid, $userid],
+            $limitfrom, $limitnum);
     }
 
     /**
@@ -710,54 +635,43 @@ class api {
      * @return bool
      */
     public static function delete_conversation($userid, $otheruserid) {
-        global $DB;
+        global $DB, $USER;
 
-        // We need to update the tables to mark all messages as deleted from and to the other user. This seems worse than it
-        // is, that's because our DB structure splits messages into two tables (great idea, huh?) which causes code like this.
-        // This won't be a particularly heavily used function (at least I hope not), so let's hope MDL-36941 gets worked on
-        // soon for the sake of any developers' sanity when dealing with the messaging system.
-        $now = time();
-        $sql = "UPDATE {message}
-                   SET timeuserfromdeleted = :time
-                 WHERE useridfrom = :userid
-                   AND useridto = :otheruserid
-                   AND notification = 0";
-        $DB->execute($sql, array('time' => $now, 'userid' => $userid, 'otheruserid' => $otheruserid));
+        $conversationid = self::get_conversation_between_users([$userid, $otheruserid]);
 
-        $sql = "UPDATE {message}
-                   SET timeusertodeleted = :time
-                 WHERE useridto = :userid
-                   AND useridfrom = :otheruserid
-                   AND notification = 0";
-        $DB->execute($sql, array('time' => $now, 'userid' => $userid, 'otheruserid' => $otheruserid));
+        // If there is no conversation, there is nothing to do.
+        if (!$conversationid) {
+            return true;
+        }
 
-        $sql = "UPDATE {message_read}
-                   SET timeuserfromdeleted = :time
-                 WHERE useridfrom = :userid
-                   AND useridto = :otheruserid
-                   AND notification = 0";
-        $DB->execute($sql, array('time' => $now, 'userid' => $userid, 'otheruserid' => $otheruserid));
+        // Get all messages belonging to this conversation that have not already been deleted by this user.
+        $sql = "SELECT m.*
+                 FROM {messages} m
+           INNER JOIN {message_conversations} mc
+                   ON m.conversationid = mc.id
+            LEFT JOIN {message_user_actions} mua
+                   ON (mua.messageid = m.id AND mua.userid = ? AND mua.action = ?)
+                WHERE mua.id is NULL
+                  AND mc.id = ?
+             ORDER BY m.timecreated ASC";
+        $messages = $DB->get_records_sql($sql, [$userid, self::MESSAGE_ACTION_DELETED, $conversationid]);
 
-        $sql = "UPDATE {message_read}
-                   SET timeusertodeleted = :time
-                 WHERE useridto = :userid
-                   AND useridfrom = :otheruserid
-                   AND notification = 0";
-        $DB->execute($sql, array('time' => $now, 'userid' => $userid, 'otheruserid' => $otheruserid));
+        // Ok, mark these as deleted.
+        foreach ($messages as $message) {
+            $mua = new \stdClass();
+            $mua->userid = $userid;
+            $mua->messageid = $message->id;
+            $mua->action = self::MESSAGE_ACTION_DELETED;
+            $mua->timecreated = time();
+            $mua->id = $DB->insert_record('message_user_actions', $mua);
 
-        // Now we need to trigger events for these.
-        if ($messages = helper::get_messages($userid, $otheruserid, $now)) {
-            // Loop through and trigger a deleted event.
-            foreach ($messages as $message) {
-                $messagetable = 'message';
-                if (!empty($message->timeread)) {
-                    $messagetable = 'message_read';
-                }
-
-                // Trigger event for deleting the message.
-                \core\event\message_deleted::create_from_ids($message->useridfrom, $message->useridto,
-                    $userid, $messagetable, $message->id)->trigger();
+            if ($message->useridfrom == $userid) {
+                $useridto = $otheruserid;
+            } else {
+                $useridto = $userid;
             }
+            \core\event\message_deleted::create_from_ids($message->useridfrom, $useridto,
+                $USER->id, $message->id, $mua->id)->trigger();
         }
 
         return true;
@@ -777,11 +691,87 @@ class api {
             $user = $USER;
         }
 
-        return $DB->count_records_select(
-            'message',
-            'useridto = ? AND timeusertodeleted = 0 AND notification = 0',
-            [$user->id],
-            "COUNT(DISTINCT(useridfrom))");
+        $sql = "SELECT COUNT(DISTINCT(m.conversationid))
+                  FROM {messages} m
+            INNER JOIN {message_conversations} mc
+                    ON m.conversationid = mc.id
+            INNER JOIN {message_conversation_members} mcm
+                    ON mc.id = mcm.conversationid
+             LEFT JOIN {message_user_actions} mua
+                    ON (mua.messageid = m.id AND mua.userid = ? AND mua.action = ?)
+                 WHERE mcm.userid = ?
+                   AND mcm.userid != m.useridfrom
+                   AND mua.id is NULL";
+
+        return $DB->count_records_sql($sql, [$user->id, self::MESSAGE_ACTION_READ, $user->id]);
+    }
+
+    /**
+     * Marks all messages being sent to a user in a particular conversation.
+     *
+     * If $conversationdid is null then it marks all messages as read sent to $userid.
+     *
+     * @param int $userid
+     * @param int|null $conversationid The conversation the messages belong to mark as read, if null mark all
+     */
+    public static function mark_all_messages_as_read($userid, $conversationid = null) {
+        global $DB;
+
+        $messagesql = "SELECT m.*
+                         FROM {messages} m
+                   INNER JOIN {message_conversations} mc
+                           ON mc.id = m.conversationid
+                   INNER JOIN {message_conversation_members} mcm
+                           ON mcm.conversationid = mc.id
+                    LEFT JOIN {message_user_actions} mua
+                           ON (mua.messageid = m.id AND mua.userid = ? AND mua.action = ?)
+                        WHERE mua.id is NULL
+                          AND mcm.userid = ?
+                          AND m.useridfrom != ?";
+        $messageparams = [];
+        $messageparams[] = $userid;
+        $messageparams[] = self::MESSAGE_ACTION_READ;
+        $messageparams[] = $userid;
+        $messageparams[] = $userid;
+        if (!is_null($conversationid)) {
+            $messagesql .= " AND mc.id = ?";
+            $messageparams[] = $conversationid;
+        }
+
+        $messages = $DB->get_recordset_sql($messagesql, $messageparams);
+        foreach ($messages as $message) {
+            self::mark_message_as_read($userid, $message);
+        }
+        $messages->close();
+    }
+
+    /**
+     * Marks all notifications being sent from one user to another user as read.
+     *
+     * If the from user is null then it marks all notifications as read sent to the to user.
+     *
+     * @param int $touserid the id of the message recipient
+     * @param int|null $fromuserid the id of the message sender, null if all messages
+     * @return void
+     */
+    public static function mark_all_notifications_as_read($touserid, $fromuserid = null) {
+        global $DB;
+
+        $notificationsql = "SELECT n.*
+                              FROM {notifications} n
+                             WHERE useridto = ?
+                               AND timeread is NULL";
+        $notificationsparams = [$touserid];
+        if (!empty($fromuserid)) {
+            $notificationsql .= " AND useridfrom = ?";
+            $notificationsparams[] = $fromuserid;
+        }
+
+        $notifications = $DB->get_recordset_sql($notificationsql, $notificationsparams);
+        foreach ($notifications as $notification) {
+            self::mark_notification_as_read($notification);
+        }
+        $notifications->close();
     }
 
     /**
@@ -789,39 +779,42 @@ class api {
      *
      * Can be filtered by type.
      *
+     * @deprecated since 3.5
      * @param int $touserid the id of the message recipient
      * @param int $fromuserid the id of the message sender
      * @param string $type filter the messages by type, either MESSAGE_TYPE_NOTIFICATION, MESSAGE_TYPE_MESSAGE or '' for all.
      * @return void
      */
     public static function mark_all_read_for_user($touserid, $fromuserid = 0, $type = '') {
-        global $DB;
+        debugging('\core_message\api::mark_all_read_for_user is deprecated. Please either use ' .
+            '\core_message\api::mark_all_notifications_read_for_user or \core_message\api::mark_all_messages_read_for_user',
+            DEBUG_DEVELOPER);
 
-        $params = array();
+        $type = strtolower($type);
 
-        if (!empty($touserid)) {
-            $params['useridto'] = $touserid;
-        }
-
+        $conversationid = null;
+        $ignoremessages = false;
         if (!empty($fromuserid)) {
-            $params['useridfrom'] = $fromuserid;
-        }
-
-        if (!empty($type)) {
-            if (strtolower($type) == MESSAGE_TYPE_NOTIFICATION) {
-                $params['notification'] = 1;
-            } else if (strtolower($type) == MESSAGE_TYPE_MESSAGE) {
-                $params['notification'] = 0;
+            $conversationid = self::get_conversation_between_users([$touserid, $fromuserid]);
+            if (!$conversationid) { // If there is no conversation between the users then there are no messages to mark.
+                $ignoremessages = true;
             }
         }
 
-        $messages = $DB->get_recordset('message', $params);
-
-        foreach ($messages as $message) {
-            message_mark_message_read($message, time());
+        if (!empty($type)) {
+            if ($type == MESSAGE_TYPE_NOTIFICATION) {
+                self::mark_all_notifications_as_read($touserid, $fromuserid);
+            } else if ($type == MESSAGE_TYPE_MESSAGE) {
+                if (!$ignoremessages) {
+                    self::mark_all_messages_as_read($touserid, $conversationid);
+                }
+            }
+        } else { // We want both.
+            self::mark_all_notifications_as_read($touserid, $fromuserid);
+            if (!$ignoremessages) {
+                self::mark_all_messages_as_read($touserid, $conversationid);
+            }
         }
-
-        $messages->close();
     }
 
     /**
@@ -1075,5 +1068,225 @@ class api {
             $processor->available = 0;
         }
         return $processor;
+    }
+
+    /**
+     * Retrieve users blocked by $user1
+     *
+     * @param int $userid The user id of the user whos blocked users we are returning
+     * @return array the users blocked
+     */
+    public static function get_blocked_users($userid) {
+        global $DB;
+
+        $userfields = \user_picture::fields('u', array('lastaccess'));
+        $blockeduserssql = "SELECT $userfields
+                              FROM {message_contacts} mc
+                        INNER JOIN {user} u
+                                ON u.id = mc.contactid
+                             WHERE u.deleted = 0
+                               AND mc.userid = ?
+                               AND mc.blocked = 1
+                          GROUP BY $userfields
+                          ORDER BY u.firstname ASC";
+        return $DB->get_records_sql($blockeduserssql, [$userid]);
+    }
+
+    /**
+     * Mark a single message as read.
+     *
+     * @param int $userid The user id who marked the message as read
+     * @param \stdClass $message The message
+     * @param int|null $timeread The time the message was marked as read, if null will default to time()
+     */
+    public static function mark_message_as_read($userid, $message, $timeread = null) {
+        global $DB;
+
+        if (is_null($timeread)) {
+            $timeread = time();
+        }
+
+        $mua = new \stdClass();
+        $mua->userid = $userid;
+        $mua->messageid = $message->id;
+        $mua->action = self::MESSAGE_ACTION_READ;
+        $mua->timecreated = $timeread;
+        $mua->id = $DB->insert_record('message_user_actions', $mua);
+
+        // Get the context for the user who received the message.
+        $context = \context_user::instance($userid, IGNORE_MISSING);
+        // If the user no longer exists the context value will be false, in this case use the system context.
+        if ($context === false) {
+            $context = \context_system::instance();
+        }
+
+        // Trigger event for reading a message.
+        $event = \core\event\message_viewed::create(array(
+            'objectid' => $mua->id,
+            'userid' => $userid, // Using the user who read the message as they are the ones performing the action.
+            'context' => $context,
+            'relateduserid' => $message->useridfrom,
+            'other' => array(
+                'messageid' => $message->id
+            )
+        ));
+        $event->trigger();
+    }
+
+    /**
+     * Mark a single notification as read.
+     *
+     * @param \stdClass $notification The notification
+     * @param int|null $timeread The time the message was marked as read, if null will default to time()
+     */
+    public static function mark_notification_as_read($notification, $timeread = null) {
+        global $DB;
+
+        if (is_null($timeread)) {
+            $timeread = time();
+        }
+
+        if (is_null($notification->timeread)) {
+            $updatenotification = new \stdClass();
+            $updatenotification->id = $notification->id;
+            $updatenotification->timeread = $timeread;
+
+            $DB->update_record('notifications', $updatenotification);
+
+            // Trigger event for reading a notification.
+            \core\event\notification_viewed::create_from_ids(
+                $notification->useridfrom,
+                $notification->useridto,
+                $notification->id
+            )->trigger();
+        }
+    }
+
+    /**
+     * Checks if a user can delete a message.
+     *
+     * @param int $userid the user id of who we want to delete the message for (this may be done by the admin
+     *  but will still seem as if it was by the user)
+     * @param int $messageid The message id
+     * @return bool Returns true if a user can delete the message, false otherwise.
+     */
+    public static function can_delete_message($userid, $messageid) {
+        global $DB, $USER;
+
+        $sql = "SELECT m.id, m.useridfrom, mcm.userid as useridto
+                  FROM {messages} m
+            INNER JOIN {message_conversations} mc
+                    ON m.conversationid = mc.id
+            INNER JOIN {message_conversation_members} mcm
+                    ON mcm.conversationid = mc.id
+                 WHERE mcm.userid != m.useridfrom
+                   AND m.id = ?";
+        $message = $DB->get_record_sql($sql, [$messageid], MUST_EXIST);
+
+        if ($message->useridfrom == $userid) {
+            $userdeleting = 'useridfrom';
+        } else if ($message->useridto == $userid) {
+            $userdeleting = 'useridto';
+        } else {
+            return false;
+        }
+
+        $systemcontext = \context_system::instance();
+
+        // Let's check if the user is allowed to delete this message.
+        if (has_capability('moodle/site:deleteanymessage', $systemcontext) ||
+            ((has_capability('moodle/site:deleteownmessage', $systemcontext) &&
+                $USER->id == $message->$userdeleting))) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Deletes a message.
+     *
+     * This function does not verify any permissions.
+     *
+     * @param int $userid the user id of who we want to delete the message for (this may be done by the admin
+     *  but will still seem as if it was by the user)
+     * @param int $messageid The message id
+     * @return bool
+     */
+    public static function delete_message($userid, $messageid) {
+        global $DB;
+
+        $sql = "SELECT m.id, m.useridfrom, mcm.userid as useridto
+                  FROM {messages} m
+            INNER JOIN {message_conversations} mc
+                    ON m.conversationid = mc.id
+            INNER JOIN {message_conversation_members} mcm
+                    ON mcm.conversationid = mc.id
+                 WHERE mcm.userid != m.useridfrom
+                   AND m.id = ?";
+        $message = $DB->get_record_sql($sql, [$messageid], MUST_EXIST);
+
+        // Check if the user has already deleted this message.
+        if (!$DB->record_exists('message_user_actions', ['userid' => $userid,
+                'messageid' => $messageid, 'action' => self::MESSAGE_ACTION_DELETED])) {
+            $mua = new \stdClass();
+            $mua->userid = $userid;
+            $mua->messageid = $messageid;
+            $mua->action = self::MESSAGE_ACTION_DELETED;
+            $mua->timecreated = time();
+            $mua->id = $DB->insert_record('message_user_actions', $mua);
+
+            // Trigger event for deleting a message.
+            \core\event\message_deleted::create_from_ids($message->useridfrom, $message->useridto,
+                $userid, $message->id, $mua->id)->trigger();
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Returns the conversation between two users.
+     *
+     * @param array $userids
+     * @return int|bool The id of the conversation, false if not found
+     */
+    public static function get_conversation_between_users(array $userids) {
+        global $DB;
+
+        $hash = helper::get_conversation_hash($userids);
+
+        if ($conversation = $DB->get_record('message_conversations', ['convhash' => $hash])) {
+            return $conversation->id;
+        }
+
+        return false;
+    }
+
+    /**
+     * Creates a conversation between two users.
+     *
+     * @param array $userids
+     * @return int The id of the conversation
+     */
+    public static function create_conversation_between_users(array $userids) {
+        global $DB;
+
+        $conversation = new \stdClass();
+        $conversation->convhash = helper::get_conversation_hash($userids);
+        $conversation->timecreated = time();
+        $conversation->id = $DB->insert_record('message_conversations', $conversation);
+
+        // Add members to this conversation.
+        foreach ($userids as $userid) {
+            $member = new \stdClass();
+            $member->conversationid = $conversation->id;
+            $member->userid = $userid;
+            $member->timecreated = time();
+            $DB->insert_record('message_conversation_members', $member);
+        }
+
+        return $conversation->id;
     }
 }

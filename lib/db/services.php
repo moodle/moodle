@@ -990,6 +990,15 @@ $functions = array(
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
         'ajax' => true,
     ),
+    'core_message_mark_notification_read' => array(
+        'classname' => 'core_message_external',
+        'methodname' => 'mark_notification_read',
+        'classpath' => 'message/externallib.php',
+        'description' => 'Mark a single notification as read, trigger notification_viewed event.',
+        'type' => 'write',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+        'ajax' => true,
+    ),
     'core_message_message_processor_config_form' => array(
         'classname' => 'core_message_external',
         'methodname' => 'message_processor_config_form',
