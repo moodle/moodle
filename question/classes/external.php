@@ -122,6 +122,8 @@ class core_question_external extends external_api {
      */
     public static function submit_tags_form_parameters() {
         return new external_function_parameters([
+                'questionid' => new external_value(PARAM_INT, 'The question id'),
+                'contextid' => new external_value(PARAM_INT, 'The editing context id'),
                 'formdata' => new external_value(PARAM_RAW, 'The data from the tag form'),
         ]);
     }
@@ -129,51 +131,67 @@ class core_question_external extends external_api {
     /**
      * Handles the tags form submission.
      *
+     * @param int $questionid The question id.
+     * @param int $contextid The editing context id.
      * @param string $formdata The question tag form data in a URI encoded param string
      * @return array The created or modified question tag
-     * @throws moodle_exception
      */
-    public static function submit_tags_form($formdata) {
-        global $USER, $DB, $CFG;
+    public static function submit_tags_form($questionid, $contextid, $formdata) {
+        global $DB, $CFG;
 
         $data = [];
         $result = ['status' => false];
 
         // Parameter validation.
-        $params = self::validate_parameters(self::submit_tags_form_parameters(), ['formdata' => $formdata]);
-        $context = \context_user::instance($USER->id);
+        $params = self::validate_parameters(self::submit_tags_form_parameters(), [
+            'questionid' => $questionid,
+            'contextid' => $contextid,
+            'formdata' => $formdata
+        ]);
 
-        self::validate_context($context);
+        $editingcontext = \context::instance_by_id($contextid);
+        self::validate_context($editingcontext);
         parse_str($params['formdata'], $data);
 
-        if (!empty($data['id'])) {
-            $questionid = clean_param($data['id'], PARAM_INT);
-            $question = $DB->get_record('question', array('id' => $questionid));
+        if (!$question = $DB->get_record_sql('
+                SELECT q.*, qc.contextid
+                FROM {question} q
+                JOIN {question_categories} qc ON qc.id = q.category
+                WHERE q.id = ?', [$questionid])) {
+            print_error('questiondoesnotexist', 'question');
+        }
 
-            require_once($CFG->libdir . '/questionlib.php');
-            $cantag = question_has_capability_on($question, 'tag');
+        require_once($CFG->libdir . '/questionlib.php');
+        require_once($CFG->dirroot . '/question/type/tags_form.php');
 
-            require_once($CFG->dirroot . '/question/type/tags_form.php');
-            $mform = new \core_question\form\tags(null, null, 'post', '', null, $cantag, $data);
+        $cantag = question_has_capability_on($question, 'tag');
+        $questioncontext = \context::instance_by_id($question->contextid);
+        $formoptions = [
+            'editingcontext' => $editingcontext,
+            'questioncontext' => $questioncontext
+        ];
 
-            if ($validateddata = $mform->get_data()) {
-                // Due to a mform bug, if there's no tags set on the tag element, it submits the name as the value.
-                // The only way to discover is checking if the tag element is an array.
-                if ($cantag) {
-                    if (is_array($validateddata->tags)) {
-                        $categorycontext = context::instance_by_id($validateddata->contextid);
+        $mform = new \core_question\form\tags(null, $formoptions, 'post', '', null, $cantag, $data);
 
-                        core_tag_tag::set_item_tags('core_question', 'question', $validateddata->id,
-                            $categorycontext, $validateddata->tags);
+        if ($validateddata = $mform->get_data()) {
+            if ($cantag) {
+                if (isset($validateddata->tags)) {
+                    // Due to a mform bug, if there's no tags set on the tag element, it submits the name as the value.
+                    // The only way to discover is checking if the tag element is an array.
+                    $tags = is_array($validateddata->tags) ? $validateddata->tags : [];
 
-                        $result['status'] = true;
-                    } else {
-                        // If the tags element is not array, this means we don't have any tags to be set.
-                        // This is the only way to assume the user removed all tags from the question.
-                        core_tag_tag::remove_all_item_tags('core_question', 'question', $validateddata->id);
+                    core_tag_tag::set_item_tags('core_question', 'question', $validateddata->id,
+                        $questioncontext, $tags);
 
-                        $result['status'] = true;
-                    }
+                    $result['status'] = true;
+                }
+
+                if (isset($validateddata->coursetags)) {
+                    $coursetags = is_array($validateddata->coursetags) ? $validateddata->coursetags : [];
+                    core_tag_tag::set_item_tags('core_question', 'question', $validateddata->id,
+                        $editingcontext->get_course_context(false), $coursetags);
+
+                    $result['status'] = true;
                 }
             }
         }

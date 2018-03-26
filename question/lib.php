@@ -41,26 +41,42 @@ function core_question_output_fragment_tags_form($args) {
         require_once($CFG->dirroot . '/question/type/tags_form.php');
         require_once($CFG->libdir . '/questionlib.php');
         $id = clean_param($args['id'], PARAM_INT);
+        $editingcontext = $args['context'];
 
         $question = $DB->get_record('question', ['id' => $id]);
-        $category = $DB->get_record('question_categories', array('id' => $question->category));
-        $context = \context::instance_by_id($category->contextid);
 
-        $toform = new stdClass();
-        $toform->id = $question->id;
-        $toform->questioncategory = $category->name;
-        $toform->questionname = $question->name;
-        $toform->categoryid = $category->id;
-        $toform->contextid = $category->contextid;
-        $toform->context = $context->get_context_name();
-
-        if (core_tag_tag::is_enabled('core_question', 'question')) {
-            $toform->tags = core_tag_tag::get_item_tags_array('core_question', 'question', $question->id);
+        if ($coursecontext = $editingcontext->get_course_context(false)) {
+            $course = $DB->get_record('course', ['id' => $coursecontext->instanceid]);
+            $filtercourses = [$course];
+        } else {
+            $filtercourses = null;
         }
 
+        // Load the question tags and filter the course tags by the current
+        // course.
+        get_question_options($question, true, $filtercourses);
+
+        $category = $question->categoryobject;
+        $questioncontext = \context::instance_by_id($category->contextid);
+
+        $formoptions = [
+            'editingcontext' => $editingcontext,
+            'questioncontext' => $questioncontext
+        ];
+        $data = [
+            'id' => $question->id,
+            'questioncategory' => $category->name,
+            'questionname' => $question->name,
+            'categoryid' => $category->id,
+            'contextid' => $category->contextid,
+            'context' => $questioncontext->get_context_name(),
+            'tags' => isset($question->tags) ? $question->tags : [],
+            'coursetags' => isset($question->coursetags) ? $question->coursetags : [],
+        ];
+
         $cantag = question_has_capability_on($question, 'tag');
-        $mform = new \core_question\form\tags(null, null, 'post', '', null, $cantag, $toform);
-        $mform->set_data($toform);
+        $mform = new \core_question\form\tags(null, $formoptions, 'post', '', null, $cantag, $data);
+        $mform->set_data($data);
 
         return $mform->render();
     }

@@ -56,10 +56,11 @@ class tags_action_column extends action_column_base {
                 question_has_capability_on($question, 'view')) {
 
             $cantag = question_has_capability_on($question, 'tag');
-            $category = $DB->get_record('question_categories', ['id' => $question->category], 'contextid');
-            $url = $this->qbank->edit_question_url($question->id);
+            $qbank = $this->qbank;
+            $url = $qbank->edit_question_url($question->id);
+            $editingcontext = $qbank->get_most_specific_context();
 
-            $this->print_tag_icon($question->id, $url, $cantag, $category->contextid);
+            $this->print_tag_icon($question->id, $url, $cantag, $editingcontext->id);
         }
     }
 
