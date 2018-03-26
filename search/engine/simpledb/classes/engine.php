@@ -54,9 +54,6 @@ class engine extends \core_search\engine {
     public function execute_query($filters, $usercontexts, $limit = 0) {
         global $DB, $USER;
 
-        // Let's keep these changes internal.
-        $data = clone $filters;
-
         $serverstatus = $this->is_server_ready();
         if ($serverstatus !== true) {
             throw new \core_search\engine_exception('engineserverstatus', 'search');
@@ -82,7 +79,7 @@ class engine extends \core_search\engine {
             // Join all area contexts into a single array and implode.
             $allcontexts = array();
             foreach ($usercontexts as $areaid => $areacontexts) {
-                if (!empty($data->areaids) && !in_array($areaid, $data->areaids)) {
+                if (!empty($filters->areaids) && !in_array($areaid, $filters->areaids)) {
                     // Skip unused areas.
                     continue;
                 }
@@ -102,35 +99,35 @@ class engine extends \core_search\engine {
         }
 
         // Course id filter.
-        if (!empty($data->courseids)) {
-            list($conditionsql, $conditionparams) = $DB->get_in_or_equal($data->courseids);
+        if (!empty($filters->courseids)) {
+            list($conditionsql, $conditionparams) = $DB->get_in_or_equal($filters->courseids);
             $ands[] = 'courseid ' . $conditionsql;
             $params = array_merge($params, $conditionparams);
         }
 
         // Area id filter.
-        if (!empty($data->areaids)) {
-            list($conditionsql, $conditionparams) = $DB->get_in_or_equal($data->areaids);
+        if (!empty($filters->areaids)) {
+            list($conditionsql, $conditionparams) = $DB->get_in_or_equal($filters->areaids);
             $ands[] = 'areaid ' . $conditionsql;
             $params = array_merge($params, $conditionparams);
         }
 
-        if (!empty($data->title)) {
+        if (!empty($filters->title)) {
             $ands[] = $DB->sql_like('title', '?', false, false);
-            $params[] = $data->title;
+            $params[] = $filters->title;
         }
 
-        if (!empty($data->timestart)) {
+        if (!empty($filters->timestart)) {
             $ands[] = 'modified >= ?';
-            $params[] = $data->timestart;
+            $params[] = $filters->timestart;
         }
-        if (!empty($data->timeend)) {
+        if (!empty($filters->timeend)) {
             $ands[] = 'modified <= ?';
-            $params[] = $data->timeend;
+            $params[] = $filters->timeend;
         }
 
         // And finally the main query after applying all AND filters.
-        if (!empty($data->q)) {
+        if (!empty($filters->q)) {
             switch ($DB->get_dbfamily()) {
                 case 'postgres':
                     $ands[] = "(" .
@@ -139,24 +136,24 @@ class engine extends \core_search\engine {
                         "to_tsvector('simple', description1) @@ plainto_tsquery('simple', ?) OR ".
                         "to_tsvector('simple', description2) @@ plainto_tsquery('simple', ?)".
                         ")";
-                    $params[] = $data->q;
-                    $params[] = $data->q;
-                    $params[] = $data->q;
-                    $params[] = $data->q;
+                    $params[] = $filters->q;
+                    $params[] = $filters->q;
+                    $params[] = $filters->q;
+                    $params[] = $filters->q;
                     break;
                 case 'mysql':
                     if ($DB->is_fulltext_search_supported()) {
                         $ands[] = "MATCH (title, content, description1, description2) AGAINST (?)";
-                        $params[] = $data->q;
+                        $params[] = $filters->q;
 
                         // Sorry for the hack, but it does not seem that we will have a solution for
                         // this soon (https://bugs.mysql.com/bug.php?id=78485).
-                        if ($data->q === '*') {
+                        if ($filters->q === '*') {
                             return array();
                         }
                     } else {
                         // Clumsy version for mysql versions with no fulltext support.
-                        list($queryand, $queryparams) = $this->get_simple_query($data->q);
+                        list($queryand, $queryparams) = $this->get_simple_query($filters->q);
                         $ands[] = $queryand;
                         $params = array_merge($params, $queryparams);
                     }
@@ -167,16 +164,16 @@ class engine extends \core_search\engine {
                         // Special treatment for double quotes:
                         // - Puntuation is ignored so we can get rid of them.
                         // - Phrases should be enclosed in double quotation marks.
-                        $params[] = '"' . str_replace('"', '', $data->q) . '"';
+                        $params[] = '"' . str_replace('"', '', $filters->q) . '"';
                     } else {
                         // Clumsy version for mysql versions with no fulltext support.
-                        list($queryand, $queryparams) = $this->get_simple_query($data->q);
+                        list($queryand, $queryparams) = $this->get_simple_query($filters->q);
                         $ands[] = $queryand;
                         $params = array_merge($params, $queryparams);
                     }
                     break;
                 default:
-                    list($queryand, $queryparams) = $this->get_simple_query($data->q);
+                    list($queryand, $queryparams) = $this->get_simple_query($filters->q);
                     $ands[] = $queryand;
                     $params = array_merge($params, $queryparams);
                     break;
