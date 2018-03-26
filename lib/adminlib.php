@@ -2960,6 +2960,7 @@ class admin_setting_configselect extends admin_setting {
     public function __construct($name, $visiblename, $description, $defaultsetting, $choices) {
         // Look for optgroup and single options.
         if (is_array($choices)) {
+            $this->choices = [];
             foreach ($choices as $key => $val) {
                 if (is_array($val)) {
                     $this->optgroups[$key] = $val;
