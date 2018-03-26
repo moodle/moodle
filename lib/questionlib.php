@@ -1606,61 +1606,40 @@ class context_to_string_translator{
 /**
  * Check capability on category
  *
- * @param mixed $question object or id
- * @param string $cap 'add', 'edit', 'view', 'use', 'move'
- * @param integer $cachecat useful to cache all question records in a category
+ * @param mixed $questionorid object or id. If an object is passed, it should include ->contextid and ->createdby.
+ * @param string $cap 'add', 'edit', 'view', 'use', 'move' or 'tag'.
+ * @param integer $notused no longer used.
  * @return boolean this user has the capability $cap for this question $question?
  */
-function question_has_capability_on($question, $cap, $cachecat = -1) {
-    global $USER, $DB;
+function question_has_capability_on($questionorid, $cap, $notused = -1) {
+    global $USER;
+
+    if (is_numeric($questionorid)) {
+        $question = question_bank::load_question_data((int)$questionorid);
+    } else if (is_object($questionorid)) {
+        if (isset($questionorid->contextid) && isset($questionorid->createdby)) {
+            $question = $questionorid;
+        }
+
+        if (!isset($question) && isset($questionorid->id) && $questionorid->id != 0) {
+            $question = question_bank::load_question_data($questionorid->id);
+        }
+    } else {
+        throw new coding_exception('$questionorid parameter needs to be an integer or an object.');
+    }
+
+    $context = context::instance_by_id($question->contextid);
 
     // these are capabilities on existing questions capabilties are
     //set per category. Each of these has a mine and all version. Append 'mine' and 'all'
-    $question_questioncaps = array('edit', 'view', 'use', 'move', 'tag');
-    static $questions = array();
-    static $categories = array();
-    static $cachedcat = array();
-    if ($cachecat != -1 && array_search($cachecat, $cachedcat) === false) {
-        $questions += $DB->get_records('question', array('category' => $cachecat), '', 'id,category,createdby');
-        $cachedcat[] = $cachecat;
-    }
-    if (!is_object($question)) {
-        if (!isset($questions[$question])) {
-            if (!$questions[$question] = $DB->get_record('question',
-                    array('id' => $question), 'id,category,createdby')) {
-                print_error('questiondoesnotexist', 'question');
-            }
-        }
-        $question = $questions[$question];
-    }
-    if (empty($question->category)) {
-        // This can happen when we have created a fake 'missingtype' question to
-        // take the place of a deleted question.
-        return false;
-    }
-    if (!isset($categories[$question->category])) {
-        if (!$categories[$question->category] = $DB->get_record('question_categories',
-                array('id'=>$question->category))) {
-            print_error('invalidcategory', 'question');
-        }
-    }
-    $category = $categories[$question->category];
-    $context = context::instance_by_id($category->contextid);
+    $capabilitieswithallandmine = ['edit' => 1, 'view' => 1, 'use' => 1, 'move' => 1, 'tag' => 1];
 
-    if (array_search($cap, $question_questioncaps)!== false) {
-        if (!has_capability('moodle/question:' . $cap . 'all', $context)) {
-            if ($question->createdby == $USER->id) {
-                return has_capability('moodle/question:' . $cap . 'mine', $context);
-            } else {
-                return false;
-            }
-        } else {
-            return true;
-        }
-    } else {
+    if (!isset($capabilitieswithallandmine[$cap])) {
         return has_capability('moodle/question:' . $cap, $context);
+    } else {
+        return has_capability('moodle/question:' . $cap . 'all', $context) ||
+            ($question->createdby == $USER->id && has_capability('moodle/question:' . $cap . 'mine', $context));
     }
-
 }
 
 /**
