@@ -148,13 +148,12 @@ class memberships extends \mod_lti\local\ltiservice\service_base {
     private static function users_to_json($resource, $users, $contextid, $tool, $exclude, $limitfrom, $limitnum,
             $lti, $info) {
         global $DB;
-        $json = <<< EOD
-{
-  "@context" : "http://purl.imsglobal.org/ctx/lis/v2/MembershipContainer",
-  "@type" : "Page",
-  "@id" : "{$resource->get_endpoint()}",
 
-EOD;
+        $arrusers = [
+            '@context' => 'http://purl.imsglobal.org/ctx/lis/v2/MembershipContainer',
+            '@type' => 'Page',
+            '@id' => $resource->get_endpoint(),
+        ];
 
         if ($limitnum > 0) {
             $limitfrom += $limitnum;
@@ -162,23 +161,20 @@ EOD;
             if (!is_null($lti)) {
                 $nextpage .= "&rlid={$lti->id}";
             }
-            $json .= <<< EOD
-  "nextPage" : "{$nextpage}",
-
-EOD;
+            $arrusers['nextPage'] = $nextpage;
         }
 
-        $json .= <<< EOD
-  "pageOf" : {
-    "@type" : "LISMembershipContainer",
-    "membershipSubject" : {
-      "@type" : "Context",
-      "contextId" : "{$contextid}",
-      "membership" : [
-EOD;
+        $arrusers['pageOf'] = [
+            '@type' => 'LISMembershipContainer',
+            'membershipSubject' => [
+                '@type' => 'Context',
+                'contextId' => $contextid,
+                'membership' => []
+            ]
+        ];
+
         $enabledcapabilities = lti_get_enabled_capabilities($tool);
         $islti2 = $tool->toolproxyid > 0;
-        $sep = '        ';
         foreach ($users as $user) {
             if (in_array($user->id, $exclude)) {
                 continue;
@@ -252,20 +248,11 @@ EOD;
             }
 
             $membership->member = $member;
-            $json .= $sep . json_encode($membership);
-            $sep = ",\n        ";
+
+            $arrusers['pageOf']['membershipSubject']['membership'][] = $membership;
         }
 
-        $json .= <<< EOD
-
-      ]
-    }
-  }
-}
-EOD;
-
-        return $json;
-
+        return json_encode($arrusers);
     }
 
     /**
