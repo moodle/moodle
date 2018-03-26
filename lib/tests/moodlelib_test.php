@@ -682,13 +682,6 @@ class core_moodlelib_testcase extends advanced_testcase {
         $this->assertSame(' . .dontltrim.me', clean_param(' . .dontltrim.me', PARAM_FILE));
         $this->assertSame('here is a tab.txt', clean_param("here is a tab\t.txt", PARAM_FILE));
         $this->assertSame('here is a linebreak.txt', clean_param("here is a line\r\nbreak.txt", PARAM_FILE));
-        // Test filename that contains more than 90 characters.
-        $filename = 'sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium totam rem';
-        $this->assertSame('sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laud',
-            clean_param($filename, PARAM_FILE));
-        // Filename contains extension.
-        $this->assertSame('sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laud.zip',
-            clean_param($filename . '.zip', PARAM_FILE));
 
         // The following behaviours have been maintained although they seem a little odd.
         $this->assertSame('funnything', clean_param('funny:thing', PARAM_FILE));
@@ -1012,6 +1005,29 @@ class core_moodlelib_testcase extends advanced_testcase {
                 '<span lang="fr" class="multilang">B</span>';
         $this->assertSame('<span lang="en" class="multilang">...</span>',
                 shorten_text($text, 1));
+    }
+
+    public function test_shorten_filename() {
+        // Test filename that contains more than 100 characters.
+        $filename = 'sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium totam rem';
+        $this->assertSame('sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium tot',
+            shorten_filename($filename));
+        // Filename contains extension.
+        $this->assertSame('sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium tot.zip',
+            shorten_filename($filename . '.zip'));
+        // Limit filename to 50 chars.
+        $this->assertSame('sed ut perspiciatis unde omnis iste natus error si',
+            shorten_filename($filename, 50));
+        $this->assertSame('sed ut perspiciatis unde omnis iste natus error si.zip',
+            shorten_filename($filename . '.zip', 50));
+
+        // Test filename that contains less than 100 characters.
+        $filename = 'sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque';
+        $this->assertSame('sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque',
+            shorten_filename($filename));
+        // Filename contains extension.
+        $this->assertSame('sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque.zip',
+            shorten_filename($filename . '.zip'));
     }
 
     public function test_usergetdate() {
