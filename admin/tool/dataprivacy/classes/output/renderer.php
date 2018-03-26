@@ -92,6 +92,18 @@ class renderer extends plugin_renderer_base {
     }
 
     /**
+     * Render the data compliance registry.
+     *
+     * @param data_registry_page $page
+     * @return string html for the page
+     * @throws moodle_exception
+     */
+    public function render_data_registry_compliance_page(data_registry_compliance_page $page) {
+        $data = $page->export_for_template($this);
+        return parent::render_from_template('tool_dataprivacy/data_registry_compliance', $data);
+    }
+
+    /**
      * Render the purposes management page.
      *
      * @param purposes $page

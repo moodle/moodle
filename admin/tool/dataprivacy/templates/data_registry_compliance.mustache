@@ -1,0 +1,110 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more comments.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template tool_dataprivacy/data_registry_compliance
+
+    Data registry main page.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * none
+
+    Example context (json):
+    {
+        "types" : {
+            "plugin_type_raw" : "mod",
+            "plugin_type" : "Activities and Modules"
+        }
+    }
+}}
+<div>
+    <h2>{{#str}}pluginregistrytitle, tool_dataprivacy{{/str}}</h2>
+    <hr />
+    <p><strong>{{#str}}explanationtitle, tool_dataprivacy{{/str}}</strong></p>
+    <dl>
+        <dt>{{#pix}}i/risk_xss, moodle, {{#str}}requiresattention, tool_dataprivacy{{/str}}{{/pix}}</dt>
+        <dd>{{#str}}requiresattentionexplanation, tool_dataprivacy{{/str}}</dd>
+        <dt><span class="badge badge-pill badge-notice">{{#str}}external, tool_dataprivacy{{/str}}</span></dt>
+        <dd>{{#str}}externalexplanation, tool_dataprivacy{{/str}}</dd>
+    </dl>
+    <hr />
+    <div><a class="tool_dataprivacy-expand-all pull-right" href="#" data-visibility-state='visible'>{{#str}}visible, tool_dataprivacy{{/str}}</a></div>
+    {{#types}}
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col">
+                    <a class="other-expand" href='#' data-plugin="{{plugin_type_raw}}">
+                    <h3 id="{{plugin_type_raw}}">{{#pix}}t/collapsed, moodle, {{#str}}expandplugintype, tool_dataprivacy{{/str}}{{/pix}}{{plugin_type}}</h3>
+                    </a>
+                </div>
+            </div>
+            <div class="hide" data-plugintarget="{{plugin_type_raw}}" aria-expanded="false">
+                {{#plugins}}
+                    {{> tool_dataprivacy/component_status}}
+                {{/plugins}}
+            </div>
+        </div>
+    {{/types}}
+</div>
+{{#js}}
+require(['jquery', 'core/url', 'core/str'], function($, url, str) {
+
+    var expandedImage = $('<img alt="" src="' + url.imageUrl('t/expanded') + '"/>');
+    var collapsedImage = $('<img alt="" src="' + url.imageUrl('t/collapsed') + '"/>');
+
+    $('.other-expand').click(function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+        window.console.log(this);
+        var plugin = $(this).data('plugin');
+        var metadata = $('[data-plugintarget=\'' + plugin + '\']');
+        if (metadata.attr('class') === 'hide') {
+            metadata.attr('class', 'visible');
+            $(this).children('img').attr('src', expandedImage.attr('src'));
+            metadata.attr('aria-expanded', true);
+        } else {
+            metadata.attr('class', 'hide');
+            $(this).children('img').attr('src', collapsedImage.attr('src'));
+            metadata.attr('aria-expanded', false);
+        }
+    });
+
+    $('.tool_dataprivacy-expand-all').click(function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var nextstate = $(this).data('visibilityState');
+        var currentstate = (nextstate == 'visible') ? 'hide' : 'visible';
+        var ariaexpandedstate = (nextstate == 'visible') ? true : false;
+        $('.' + currentstate).each(function() {
+            $(this).attr('class', nextstate);
+            $(this).attr('aria-expanded', ariaexpandedstate);
+        });
+        $(this).data('visibilityState', currentstate);
+
+        str.get_string(currentstate, 'tool_dataprivacy').then(function(langString) {
+            var visibilitynode = $('.tool_dataprivacy-expand-all');
+            visibilitynode.html(langString);
+        }).catch(Notification.exception);
+    });
+});
+{{/js}}
