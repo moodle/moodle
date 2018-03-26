@@ -409,7 +409,7 @@ class content_writer implements \core_privacy\local\request\content_writer {
                 ];
             }
 
-            $this->customfiles[$this->context->id] = array_replace_recursive($this->customfiles[$this->context->id], $finalcontent);
+            $this->files[$this->context->id] = array_replace_recursive($this->files[$this->context->id], $finalcontent);
         }
 
         return $this;
