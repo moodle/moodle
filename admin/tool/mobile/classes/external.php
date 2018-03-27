@@ -168,6 +168,11 @@ class external extends external_api {
                     (only if age verification is enabled).', VALUE_OPTIONAL),
                 'supportemail' => new external_value(PARAM_EMAIL, 'Site support contact email
                     (only if age verification is enabled).', VALUE_OPTIONAL),
+                'autolang' => new external_value(PARAM_INT, 'Whether to detect default language from browser setting.'),
+                'lang' => new external_value(PARAM_LANG, 'Default language for the site.'),
+                'langmenu' => new external_value(PARAM_INT, 'Whether the language menu should be displayed.'),
+                'langlist' => new external_value(PARAM_RAW, 'Languages on language menu.'),
+                'locale' => new external_value(PARAM_RAW, 'Sitewide locale.'),
                 'warnings' => new external_warnings(),
             )
         );
