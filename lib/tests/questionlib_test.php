@@ -1890,7 +1890,7 @@ class core_questionlib_testcase extends advanced_testcase {
      * @dataProvider question_capability_on_question_provider
      * @param   array   $capabilities The capability assignments to set.
      * @param   string  $capability The capability to test
-     * @param   bool    $expectall The expectation when passing false to checkmine.
+     * @param   bool    $isowner The expectation when passing false to checkmine.
      * @param   bool    $expectmine The expectation when passing true to checkmine.
      */
     public function test_question_has_capability_on_using_question($capabilities, $capability, $isowner, $expect) {
@@ -1929,5 +1929,38 @@ class core_questionlib_testcase extends advanced_testcase {
         $this->setUser($user);
         $result = question_has_capability_on($question, $capability);
         $this->assertEquals($expect, $result);
+    }
+
+    /**
+     * Tests that question_has_capability_on throws an exception for wrong parameter types.
+     */
+    public function test_question_has_capability_on_wrong_param_type() {
+        // Create the test data.
+        $generator = $this->getDataGenerator();
+        $questiongenerator = $generator->get_plugin_generator('core_question');
+        $user = $generator->create_user();
+
+        $category = $generator->create_category();
+        $context = context_coursecat::instance($category->id);
+        $questioncat = $questiongenerator->create_question_category([
+            'contextid' => $context->id,
+        ]);
+
+        // Create the question.
+        $question = $questiongenerator->create_question('truefalse', null, [
+            'category' => $questioncat->id,
+        ]);
+        $question = question_bank::load_question_data($question->id);
+
+        // The question generator does not support setting of the createdby for some reason.
+        $question->createdby = $user->id;
+
+        $this->setUser($user);
+        $result = question_has_capability_on((string)$question->id, 'tag');
+        $this->assertFalse($result);
+
+        $this->expectException('coding_exception');
+        $this->expectExceptionMessage('$questionorid parameter needs to be an integer or an object.');
+        question_has_capability_on('one', 'tag');
     }
 }
