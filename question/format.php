@@ -857,7 +857,7 @@ class qformat_default {
             // export the question displaying message
             $count++;
 
-            if (question_has_capability_on($question, 'view', $question->category)) {
+            if (question_has_capability_on($question, 'view')) {
                 $expout .= $this->writequestion($question, $contextid) . "\n";
             }
         }

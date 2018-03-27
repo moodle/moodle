@@ -1333,12 +1333,12 @@ function quiz_question_edit_button($cmid, $question, $returnurl, $contentafteric
     // What sort of icon should we show?
     $action = '';
     if (!empty($question->id) &&
-            (question_has_capability_on($question, 'edit', $question->category) ||
-                    question_has_capability_on($question, 'move', $question->category))) {
+            (question_has_capability_on($question, 'edit') ||
+                    question_has_capability_on($question, 'move'))) {
         $action = $stredit;
         $icon = 't/edit';
     } else if (!empty($question->id) &&
-            question_has_capability_on($question, 'view', $question->category)) {
+            question_has_capability_on($question, 'view')) {
         $action = $strview;
         $icon = 'i/info';
     }
@@ -1390,7 +1390,7 @@ function quiz_question_preview_url($quiz, $question, $variant = null) {
  */
 function quiz_question_preview_button($quiz, $question, $label = false, $variant = null) {
     global $PAGE;
-    if (!question_has_capability_on($question, 'use', $question->category)) {
+    if (!question_has_capability_on($question, 'use')) {
         return '';
     }
 
