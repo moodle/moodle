@@ -153,6 +153,11 @@ class provider implements
      * @param   context                 $context   The specific context to delete data for.
      */
     public static function delete_data_for_all_users_in_context(\context $context) {
+
+        if (!$context instanceof \context_block) {
+            return;
+        }
+
         // The only way to delete data for the html block is to delete the block instance itself.
         blocks_delete_instance(static::get_instance_from_context($context));
     }
@@ -165,6 +170,10 @@ class provider implements
     public static function delete_data_for_user(approved_contextlist $contextlist) {
         // The only way to delete data for the html block is to delete the block instance itself.
         foreach ($contextlist as $context) {
+
+            if (!$context instanceof \context_block) {
+                continue;
+            }
             blocks_delete_instance(static::get_instance_from_context($context));
         }
     }
