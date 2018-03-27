@@ -90,10 +90,8 @@ class helper {
      * @param   context         $context   The specific context to delete data for.
      */
     public static function delete_data_for_all_users_in_context(string $component, \context $context) {
-        if (strpos($component, 'mod_') === 0) {
-            // Activity modules support data stored by core about them - for example, activity completion.
-            static::delete_data_for_all_users_in_context_course_module($component, $context);
-        }
+        // Activity modules support data stored by core about them - for example, activity completion.
+        static::delete_data_for_all_users_in_context_course_module($component, $context);
     }
 
     /**
@@ -106,10 +104,8 @@ class helper {
     public static function delete_data_for_user(approved_contextlist $contextlist) {
         $component = $contextlist->get_component();
 
-        if (strpos($component, 'mod_') === 0) {
-            // Activity modules support data stored by core about them - for example, activity completion.
-            static::delete_data_for_user_in_course_module($contextlist);
-        }
+        // Activity modules support data stored by core about them - for example, activity completion.
+        static::delete_data_for_user_in_course_module($contextlist);
     }
 
     /**
@@ -270,13 +266,15 @@ class helper {
      * This will handle deletion for things such as activity completion.
      *
      * @param   string              $component The component being deleted for.
-     * @param   \context_module     $context The context to delete all data for.
+     * @param   \context            $context The context to delete all data for.
      */
-    public static function delete_data_for_all_users_in_context_course_module(string $component, \context_module $context) {
+    public static function delete_data_for_all_users_in_context_course_module(string $component, \context $context) {
         global $DB;
 
-        // Delete course completion data for this context.
-        $DB->delete_records('course_modules_completion', ['coursemoduleid' => $context->instanceid]);
+        if ($context instanceof \context_module) {
+            // Delete course completion data for this context.
+            $DB->delete_records('course_modules_completion', ['coursemoduleid' => $context->instanceid]);
+        }
     }
 
     /**
@@ -290,11 +288,13 @@ class helper {
         global $DB;
 
         foreach ($contextlist as $context) {
-            // Delete course completion data for this context.
-            $DB->delete_records('course_modules_completion', [
-                'coursemoduleid' => $context->instanceid,
-                'userid' => $contextlist->get_user()->id,
-            ]);
+            if ($context instanceof \context_module) {
+                // Delete course completion data for this context.
+                $DB->delete_records('course_modules_completion', [
+                    'coursemoduleid' => $context->instanceid,
+                    'userid' => $contextlist->get_user()->id,
+                ]);
+            }
         }
 
     }
