@@ -209,7 +209,7 @@ abstract class base_task implements checksumable, executable, loggable {
         }
         // Everything has been destroyed recursively, now we can reset safely
         $this->steps = array();
-        $this->setting = array();
+        $this->settings = array();
         $this->plan = null;
     }
 
