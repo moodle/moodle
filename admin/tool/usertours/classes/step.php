@@ -483,9 +483,8 @@ class step {
             $record = $this->to_record();
             unset($record->id);
             $this->id = $DB->insert_record('tool_usertours_steps', $record);
+            $this->get_tour()->reset_step_sortorder();
         }
-
-        $this->get_tour()->reset_step_sortorder();
 
         $this->reload();
 
