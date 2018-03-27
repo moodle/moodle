@@ -267,7 +267,7 @@ class mod_feedback_responses_table extends table_sql {
         $tableheaders = $this->headers;
 
         $items = $this->feedbackstructure->get_items(true);
-        if (!$this->is_downloading()) {
+        if (!$this->is_downloading() && !$this->buildforexternal) {
             // In preview mode do not show all columns or the page becomes unreadable.
             // The information message will be displayed to the teacher that the rest of the data can be viewed when downloading.
             $items = array_slice($items, 0, self::PREVIEWCOLUMNSLIMIT, true);
@@ -617,8 +617,8 @@ class mod_feedback_responses_table extends table_sql {
      */
     public function export_external_structure($page = 0, $perpage = 0) {
 
-        $this->add_all_values_to_output();
         $this->buildforexternal = true;
+        $this->add_all_values_to_output();
         // Set-up.
         $this->setup();
         // Override values, if needed.
