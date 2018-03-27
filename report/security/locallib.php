@@ -657,7 +657,7 @@ function report_security_check_frontpagerole($detailed=false) {
 
     if ($riskycount or !$legacyok) {
         $result->status  = REPORT_SECURITY_CRITICAL;
-        $result->info    = get_string('check_frontpagerole_error', 'report_security', format_string($frontpage_role->name));
+        $result->info    = get_string('check_frontpagerole_error', 'report_security', role_get_name($frontpage_role));
 
     } else {
         $result->status  = REPORT_SECURITY_OK;
