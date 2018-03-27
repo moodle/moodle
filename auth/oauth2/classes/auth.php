@@ -35,6 +35,7 @@ use core\oauth2\issuer;
 use core\oauth2\client;
 
 require_once($CFG->libdir.'/authlib.php');
+require_once($CFG->dirroot.'/user/lib.php');
 
 /**
  * Plugin for oauth2 authentication.
@@ -110,7 +111,7 @@ class auth extends \auth_plugin_base {
      * @return bool true means automatically copy data from ext to user table
      */
     public function is_synchronised_with_external() {
-        return false;
+        return true;
     }
 
     /**
@@ -301,6 +302,23 @@ class auth extends \auth_plugin_base {
     }
 
     /**
+     * Update user data according to data sent by authorization server
+     * @param array $externaldata data from authorization server
+     * @param stdClass $user user to update
+     * @return stdClass $userinfo updated user
+     */
+    private function update_user(array $externaldata, stdClass $user) {
+        foreach ($externaldata as $fieldname => $value) {
+            // Should be safe to assign fieldnames directly because these are obtained from select field.
+            $user->$fieldname = $value;
+        }
+        user_update_user($user, false, true);
+        // Refresh user for $USER variable.
+        $userinfo = get_complete_user_data('id', $user->id);
+        return $userinfo;
+    }
+
+    /**
      * Confirm the new user as registered.
      *
      * @param string $username
@@ -417,7 +435,8 @@ class auth extends \auth_plugin_base {
                 $client->log_out();
                 redirect(new moodle_url('/login/index.php'));
             } else if ($mappeduser && $mappeduser->confirmed) {
-                $userinfo = (array) $mappeduser;
+                // Update user fields.
+                $userinfo = $this->update_user($userinfo, $mappeduser);
                 $userwasmapped = true;
             } else {
                 // Trigger login failed event.
@@ -475,7 +494,7 @@ class auth extends \auth_plugin_base {
                     exit();
                 } else {
                     \auth_oauth2\api::link_login($userinfo, $issuer, $moodleuser->id, true);
-                    $userinfo = get_complete_user_data('id', $moodleuser->id);
+                    $userinfo = $this->update_user($userinfo, $moodleuser);
                     // No redirect, we will complete this login.
                 }
 
@@ -540,8 +559,8 @@ class auth extends \auth_plugin_base {
                 } else {
                     // Create a new confirmed account.
                     $newuser = \auth_oauth2\api::create_new_confirmed_account($userinfo, $issuer);
-                    $userinfo = get_complete_user_data('id', $newuser->id);
-
+                    // Update new user's fields.
+                    $userinfo = $this->update_user($userinfo, $newuser);
                     // No redirect, we will complete this login.
                 }
             }
