@@ -2191,11 +2191,12 @@ function xmldb_main_upgrade($oldversion) {
     }
 
     if ($oldversion < 2018032700.00) {
-
         // Update default search engine to search_simpledb if global search is disabled and there is no solr index defined.
         if (empty($CFG->enableglobalsearch) && empty(get_config('search_solr', 'indexname'))) {
             set_config('searchengine', 'simpledb');
         }
+
+        // Main savepoint reached.
         upgrade_main_savepoint(true, 2018032700.00);
     }
 

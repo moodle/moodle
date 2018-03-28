@@ -83,16 +83,5 @@ function xmldb_message_popup_upgrade($oldversion) {
     // Automatically generated Moodle v3.4.0 release upgrade line.
     // Put any upgrade step following this.
 
-    if ($oldversion < 2018022000) {
-        // Drop table that is no longer needed.
-        $table = new xmldb_table('message_popup');
-        if ($dbman->table_exists($table)) {
-            $dbman->drop_table($table);
-        }
-
-        // Popup savepoint reached.
-        upgrade_plugin_savepoint(true, 2018022000, 'message', 'popup');
-    }
-
     return true;
 }

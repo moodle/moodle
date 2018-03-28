@@ -122,7 +122,7 @@ class core_iplookup_geoip_testcase extends advanced_testcase {
     public function ip_provider() {
         return [
             'IPv4: Sample suggested by maxmind themselves' => ['24.24.24.24'],
-            'IPv4: github.com' =>  ['192.30.255.112'],
+            'IPv4: github.com' => ['192.30.255.112'],
             'IPv6: UCLA' => ['2607:f010:3fe:fff1::ff:fe00:25'],
         ];
     }
