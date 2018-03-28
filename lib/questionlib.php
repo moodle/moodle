@@ -1630,8 +1630,8 @@ function question_has_capability_on($questionorid, $cap, $notused = -1) {
 
     $context = context::instance_by_id($question->contextid);
 
-    // these are capabilities on existing questions capabilties are
-    //set per category. Each of these has a mine and all version. Append 'mine' and 'all'
+    // These are existing questions capabilities that are set per category.
+    // Each of these has a 'mine' and 'all' version that is appended to the capability name.
     $capabilitieswithallandmine = ['edit' => 1, 'view' => 1, 'use' => 1, 'move' => 1, 'tag' => 1];
 
     if (!isset($capabilitieswithallandmine[$cap])) {
