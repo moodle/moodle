@@ -2687,4 +2687,14 @@ abstract class moodle_database {
     public function perf_get_queries_time() {
         return $this->queriestime;
     }
+
+    /**
+     * Whether the database is able to support full-text search or not.
+     *
+     * @return bool
+     */
+    public function is_fulltext_search_supported() {
+        // No support unless specified.
+        return false;
+    }
 }

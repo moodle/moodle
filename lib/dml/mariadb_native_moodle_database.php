@@ -107,4 +107,18 @@ class mariadb_native_moodle_database extends mysqli_native_moodle_database {
         }
         return true;
     }
+
+    /**
+     * Does this mariadb instance support fulltext indexes?
+     *
+     * @return bool
+     */
+    public function is_fulltext_search_supported() {
+        $info = $this->get_server_info();
+
+        if (version_compare($info['version'], '10.0.5', '>=')) {
+            return true;
+        }
+        return false;
+    }
 }
