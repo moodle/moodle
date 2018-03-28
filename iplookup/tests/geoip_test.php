@@ -25,29 +25,37 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+global $CFG;
+
+require_once("{$CFG->libdir}/filelib.php");
+require_once("{$CFG->dirroot}/iplookup/lib.php");
+
 
 /**
  * GeoIp data file parsing test.
  */
 class core_iplookup_geoip_testcase extends advanced_testcase {
-
     public function setUp() {
-        global $CFG;
-        require_once("$CFG->libdir/filelib.php");
-        require_once("$CFG->dirroot/iplookup/lib.php");
-
         if (!PHPUNIT_LONGTEST) {
-            // this may take a long time
+            // These tests are intensive and required downloads.
             $this->markTestSkipped('PHPUNIT_LONGTEST is not defined');
         }
 
         $this->resetAfterTest();
+    }
 
-        // let's store the file somewhere
+
+    /**
+     * Setup the GeoIP2File system.
+     */
+    public function setup_geoip2file() {
+        global $CFG;
+
+        // Store the file somewhere where it won't be wiped out..
         $gzfile = "$CFG->dataroot/phpunit/geoip/GeoLite2-City.mmdb.gz";
         check_dir_exists(dirname($gzfile));
         if (file_exists($gzfile) and (filemtime($gzfile) < time() - 60*60*24*30)) {
-            // delete file if older than 1 month
+            // Delete file if older than 1 month.
             unlink($gzfile);
         }
 
@@ -80,32 +88,42 @@ class core_iplookup_geoip_testcase extends advanced_testcase {
         $CFG->geoip2file = $geoipfile;
     }
 
-    public function test_ipv4() {
-        $result = iplookup_find_location('192.30.255.112');
+    /**
+     * Test the format of data returned in the iplookup_find_location function.
+     *
+     * @dataProvider ip_provider
+     * @param   string  $ip The IP to test
+     */
+    public function test_ip($ip) {
+        $this->setup_geoip2file();
 
-        $this->assertEquals('array', gettype($result));
-        $this->assertEquals('San Francisco', $result['city']);
-        $this->assertEquals(-122.3933, $result['longitude'], 'Coordinates are out of accepted tolerance', 0.01);
-        $this->assertEquals(37.7697, $result['latitude'], 'Coordinates are out of accepted tolerance', 0.01);
+        // Note: The results we get from the iplookup tests are beyond our control.
+        // We used to check a specific IP to a known location, but these have become less reliable and change too
+        // frequently to be used for testing.
+
+        $result = iplookup_find_location($ip);
+
+        $this->assertInternalType('array', $result);
+        $this->assertInternalType('float', $result['latitude']);
+        $this->assertInternalType('float', $result['longitude']);
+        $this->assertInternalType('string', $result['city']);
+        $this->assertInternalType('string', $result['country']);
+        $this->assertInternalType('array', $result['title']);
+        $this->assertInternalType('string', $result['title'][0]);
+        $this->assertInternalType('string', $result['title'][1]);
         $this->assertNull($result['error']);
-        $this->assertEquals('array', gettype($result['title']));
-        $this->assertEquals('San Francisco', $result['title'][0]);
-        $this->assertEquals('United States', $result['title'][1]);
     }
 
-    public function test_ipv6() {
-        // NOTE: these tests can be altered by the geoip dataset, there has been an attempt to get
-        // a 'reliable' result.
-
-        $result = iplookup_find_location('2607:f010:3fe:fff1::ff:fe00:25');
-
-        $this->assertEquals('array', gettype($result));
-        $this->assertEquals('Los Angeles', $result['city']);
-        $this->assertEquals(-118.2987, $result['longitude'], 'Coordinates are out of accepted tolerance', 0.01);
-        $this->assertEquals(33.7866, $result['latitude'], 'Coordinates are out of accepted tolerance', 0.01);
-        $this->assertNull($result['error']);
-        $this->assertEquals('array', gettype($result['title']));
-        $this->assertEquals('Los Angeles', $result['title'][0]);
-        $this->assertEquals('United States', $result['title'][1]);
+    /**
+     * Data provider for IP lookup test.
+     *
+     * @return array
+     */
+    public function ip_provider() {
+        return [
+            'IPv4: Sample suggested by maxmind themselves' => ['24.24.24.24'],
+            'IPv4: github.com' => ['192.30.255.112'],
+            'IPv6: UCLA' => ['2607:f010:3fe:fff1::ff:fe00:25'],
+        ];
     }
 }
