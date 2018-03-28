@@ -162,6 +162,7 @@ if (isset($question->categoryobject)) {
 $question->formoptions = new stdClass();
 
 $categorycontext = context::instance_by_id($category->contextid);
+$question->contextid = $category->contextid;
 $addpermission = has_capability('moodle/question:add', $categorycontext);
 
 if ($id) {

@@ -41,6 +41,8 @@ class tags extends \moodleform {
      */
     public function definition() {
         $mform = $this->_form;
+        $customdata = $this->_customdata;
+
         $mform->disable_form_change_checker();
 
         $mform->addElement('hidden', 'id');
@@ -56,7 +58,29 @@ class tags extends \moodleform {
         $mform->addElement('static', 'questioncategory', get_string('categorycurrent', 'question'));
         $mform->addElement('static', 'context', '');
 
-        $mform->addElement('tags', 'tags', get_string('tags'),
-                ['itemtype' => 'question', 'component' => 'core_question']);
+        if (\core_tag_tag::is_enabled('core_question', 'question')) {
+            $mform->addElement('tags', 'tags', get_string('tags'),
+                    ['itemtype' => 'question', 'component' => 'core_question']);
+
+            // Is the question category in a course context?
+            $qcontext = $customdata['questioncontext'];
+            $qcoursecontext = $qcontext->get_course_context(false);
+            $iscourseoractivityquestion = !empty($qcoursecontext);
+            // Is the current context we're editing in a course context?
+            $editingcontext = $customdata['editingcontext'];
+            $editingcoursecontext = $editingcontext->get_course_context(false);
+            $iseditingcontextcourseoractivity = !empty($editingcoursecontext);
+
+            if ($iseditingcontextcourseoractivity && !$iscourseoractivityquestion) {
+                // If the question is being edited in a course or activity context
+                // and the question isn't a course or activity level question then
+                // allow course tags to be added to the course.
+                $coursetagheader = get_string('questionformtagheader', 'core_question',
+                    $editingcoursecontext->get_context_name(true));
+                $mform->addElement('tags', 'coursetags', $coursetagheader,
+                        array('itemtype' => 'question', 'component' => 'core_question'));
+
+            }
+        }
     }
 }

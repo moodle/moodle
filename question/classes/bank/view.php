@@ -929,7 +929,7 @@ class view {
                 if (preg_match('!^q([0-9]+)$!', $key, $matches)) {
                     $key = $matches[1];
                     $questionlist .= $key.',';
-                    question_require_capability_on($key, 'edit');
+                    question_require_capability_on((int)$key, 'edit');
                     if (questions_in_use(array($key))) {
                         $questionnames .= '* ';
                         $inuse = true;

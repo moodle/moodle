@@ -31,10 +31,12 @@ define(['jquery', 'core/ajax'], function($, Ajax) {
      * @param {string} formdata The URL encoded values from the form
      * @return {promise}
      */
-    var submitTagCreateUpdateForm = function(formdata) {
+    var submitTagCreateUpdateForm = function(questionId, contextId, formdata) {
         var request = {
             methodname: 'core_question_submit_tags_form',
             args: {
+                questionid: questionId,
+                contextid: contextId,
                 formdata: formdata
             }
         };

@@ -99,6 +99,46 @@ define([
     };
 
     /**
+     * Set the context Id data attribute on the modal.
+     *
+     * @param {Promise} modal The modal promise.
+     * @param {int} contextId The context id.
+     */
+    var setContextId = function(modal, contextId) {
+        modal.getBody().attr('data-contextid', contextId);
+    };
+
+    /**
+     * Get the context Id data attribute value from the modal body.
+     *
+     * @param {Promise} modal The modal promise.
+     * @return {int} The context id.
+     */
+    var getContextId = function(modal) {
+        return modal.getBody().data('contextid');
+    };
+
+    /**
+     * Set the question Id data attribute on the modal.
+     *
+     * @param {Promise} modal The modal promise.
+     * @param {int} questionId The question Id.
+     */
+    var setQuestionId = function(modal, questionId) {
+        modal.getBody().attr('data-questionid', questionId);
+    };
+
+    /**
+     * Get the question Id data attribute value from the modal body.
+     *
+     * @param {Promise} modal The modal promise.
+     * @return {int} The question Id.
+     */
+    var getQuestionId = function(modal) {
+        return modal.getBody().data('questionid');
+    };
+
+    /**
      * Register event listeners for the module.
      *
      * @param {object} root The calendar root element
@@ -186,6 +226,9 @@ define([
                     modal.getRoot().find(QuestionSelectors.actions.save).hide();
                 }
 
+                setQuestionId(modal, questionId);
+                setContextId(modal, contextId);
+
                 return modal;
             }).fail(Notification.exception);
 
@@ -207,9 +250,11 @@ define([
         startLoading(root);
 
         var formData = getFormData(modal);
+        var questionId = getQuestionId(modal);
+        var contextId = getContextId(modal);
 
         // Send the form data to the server for processing.
-        return Repository.submitTagCreateUpdateForm(formData)
+        return Repository.submitTagCreateUpdateForm(questionId, contextId, formData)
             .always(function() {
                 // Regardless of success or error we should always stop
                 // the loading icon and re-enable the buttons.
