@@ -1621,15 +1621,15 @@ class core_questionlib_testcase extends advanced_testcase {
     }
 
     /**
-     * Tests for the deprecated question_has_capability_on function when passing a stdClass.
+     * Tests for the deprecated question_has_capability_on function when passing a stdClass as parameter.
      *
      * @dataProvider question_capability_on_question_provider
      * @param   array   $capabilities The capability assignments to set.
      * @param   string  $capability The capability to test
-     * @param   bool    $expectall The expectation when passing false to checkmine.
-     * @param   bool    $expectmine The expectation when passing true to checkmine.
+     * @param   bool    $isowner Whether the user to create the question should be the owner or not.
+     * @param   bool    $expect The expected result.
      */
-    public function test_question_has_capability_on_using_stdClass($capabilities, $capability, $isowner, $expect) {
+    public function test_question_has_capability_on_using_stdclass($capabilities, $capability, $isowner, $expect) {
         $this->resetAfterTest();
 
         // Create the test data.
@@ -1666,13 +1666,13 @@ class core_questionlib_testcase extends advanced_testcase {
     }
 
     /**
-     * Tests for the deprecated question_has_capability_on function when using a real question.
+     * Tests for the deprecated question_has_capability_on function when using question definition.
      *
      * @dataProvider question_capability_on_question_provider
      * @param   array   $capabilities The capability assignments to set.
      * @param   string  $capability The capability to test
-     * @param   bool    $expectall The expectation when passing false to checkmine.
-     * @param   bool    $expectmine The expectation when passing true to checkmine.
+     * @param   bool    $isowner Whether the user to create the question should be the owner or not.
+     * @param   bool    $expect The expected result.
      */
     public function test_question_has_capability_on_using_question_definition($capabilities, $capability, $isowner, $expect) {
         $this->resetAfterTest();
@@ -1718,13 +1718,13 @@ class core_questionlib_testcase extends advanced_testcase {
     }
 
     /**
-     * Tests for the deprecated question_has_capability_on function when using a real question.
+     * Tests for the deprecated question_has_capability_on function when using a real question id.
      *
      * @dataProvider question_capability_on_question_provider
      * @param   array   $capabilities The capability assignments to set.
      * @param   string  $capability The capability to test
-     * @param   bool    $expectall The expectation when passing false to checkmine.
-     * @param   bool    $expectmine The expectation when passing true to checkmine.
+     * @param   bool    $isowner Whether the user to create the question should be the owner or not.
+     * @param   bool    $expect The expected result.
      */
     public function test_question_has_capability_on_using_question_id($capabilities, $capability, $isowner, $expect) {
         $this->resetAfterTest();
@@ -1770,13 +1770,13 @@ class core_questionlib_testcase extends advanced_testcase {
     }
 
     /**
-     * Tests for the deprecated question_has_capability_on function when using a real question.
+     * Tests for the deprecated question_has_capability_on function when using a string as question id.
      *
      * @dataProvider question_capability_on_question_provider
      * @param   array   $capabilities The capability assignments to set.
      * @param   string  $capability The capability to test
-     * @param   bool    $expectall The expectation when passing false to checkmine.
-     * @param   bool    $expectmine The expectation when passing true to checkmine.
+     * @param   bool    $isowner Whether the user to create the question should be the owner or not.
+     * @param   bool    $expect The expected result.
      */
     public function test_question_has_capability_on_using_question_string_id($capabilities, $capability, $isowner, $expect) {
         $this->resetAfterTest();
@@ -1822,13 +1822,13 @@ class core_questionlib_testcase extends advanced_testcase {
     }
 
     /**
-     * Tests for the deprecated question_has_capability_on function when using a real question.
+     * Tests for the question_has_capability_on function when using a moved question.
      *
      * @dataProvider question_capability_on_question_provider
      * @param   array   $capabilities The capability assignments to set.
      * @param   string  $capability The capability to test
-     * @param   bool    $expectall The expectation when passing false to checkmine.
-     * @param   bool    $expectmine The expectation when passing true to checkmine.
+     * @param   bool    $isowner Whether the user to create the question should be the owner or not.
+     * @param   bool    $expect The expected result.
      */
     public function test_question_has_capability_on_using_moved_question($capabilities, $capability, $isowner, $expect) {
         $this->resetAfterTest();
@@ -1885,13 +1885,13 @@ class core_questionlib_testcase extends advanced_testcase {
     }
 
     /**
-     * Tests for the deprecated question_has_capability_on function when using a real question.
+     * Tests for the question_has_capability_on function when using a real question.
      *
      * @dataProvider question_capability_on_question_provider
      * @param   array   $capabilities The capability assignments to set.
      * @param   string  $capability The capability to test
-     * @param   bool    $isowner The expectation when passing false to checkmine.
-     * @param   bool    $expectmine The expectation when passing true to checkmine.
+     * @param   bool    $isowner Whether the user to create the question should be the owner or not.
+     * @param   bool    $expect The expected result.
      */
     public function test_question_has_capability_on_using_question($capabilities, $capability, $isowner, $expect) {
         $this->resetAfterTest();
