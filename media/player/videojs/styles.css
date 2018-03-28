@@ -1334,3 +1334,32 @@ video::-webkit-media-text-track-display {
 .mediaplugin_videojs video {
   min-height: 32px;
 }
+
+/* MDL-61020: VideoJS timeline progress bar should not be flipped in RTL mode. */
+
+/* Prevent the progress bar from being flipped in RTL. */
+/*rtl:ignore*/
+.video-js .vjs-progress-holder .vjs-play-progress,
+.video-js .vjs-progress-holder .vjs-load-progress,
+.video-js .vjs-progress-holder .vjs-load-progress div {
+  left: 0;
+  right: auto;
+}
+/* Keep the video scrubber button at the end of the progress bar in RTL. */
+/*rtl:ignore*/
+.video-js .vjs-play-progress:before {
+  left: auto;
+  right: -0.5em;
+}
+/* Prevent the volume slider from being flipped in RTL. */
+/*rtl:ignore*/
+.video-js .vjs-volume-level {
+  left: 0;
+  right: auto;
+}
+/* Keep the volume slider handle at the end of the volume slider in RTL. */
+/*rtl:ignore*/
+.vjs-slider-horizontal .vjs-volume-level:before {
+  left: auto;
+  right: -0.5em;
+}
