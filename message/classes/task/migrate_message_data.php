@@ -132,7 +132,7 @@ class migrate_message_data extends \core\task\adhoc_task {
         $messages = $DB->get_recordset_select('message', $select, $params, 'id ASC');
         foreach ($messages as $message) {
             if ($message->notification) {
-                $this->migrate_notification($message);
+                $this->migrate_notification($message, false);
             } else {
                 $this->migrate_message($conversationid, $message);
             }
@@ -146,7 +146,7 @@ class migrate_message_data extends \core\task\adhoc_task {
         $messages = $DB->get_recordset_select('message_read', $select, $params, 'id ASC');
         foreach ($messages as $message) {
             if ($message->notification) {
-                $this->migrate_notification($message);
+                $this->migrate_notification($message, true);
             } else {
                 $this->migrate_message($conversationid, $message);
             }
@@ -161,9 +161,10 @@ class migrate_message_data extends \core\task\adhoc_task {
      * Helper function to deal with migrating an individual notification.
      *
      * @param \stdClass $notification
+     * @param bool $isread Was the notification read?
      * @throws \dml_exception
      */
-    private function migrate_notification($notification) {
+    private function migrate_notification($notification, $isread) {
         global $DB;
 
         $tabledata = new \stdClass();
@@ -181,7 +182,16 @@ class migrate_message_data extends \core\task\adhoc_task {
         $tabledata->timeread = $notification->timeread ?? null;
         $tabledata->timecreated = $notification->timecreated;
 
-        $DB->insert_record('notifications', $tabledata);
+        $newid = $DB->insert_record('notifications', $tabledata);
+
+        // Check if there is a record to move to the new 'message_popup_notifications' table.
+        if ($mp = $DB->get_record('message_popup', ['messageid' => $notification->id, 'isread' => (int) $isread])) {
+            $mpn = new \stdClass();
+            $mpn->notificationid = $newid;
+            $DB->insert_record('message_popup_notifications', $mpn);
+
+            $DB->delete_records('message_popup', ['id' => $mp->id]);
+        }
     }
 
     /**

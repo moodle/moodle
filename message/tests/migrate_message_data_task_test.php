@@ -107,6 +107,8 @@ class core_message_migrate_message_data_task_testcase extends advanced_testcase 
         $this->assertEquals(2, $DB->count_records('message'));
         $this->assertEquals(1, $DB->count_records('message_read'));
         $this->assertEquals(6, $DB->count_records('messages'));
+        $this->assertEquals(0, $DB->count_records('notifications'));
+        $this->assertEquals(0, $DB->count_records('message_popup_notifications'));
 
         // Get the conversations.
         $conversation1 = \core_message\api::get_conversation_between_users([$user1->id, $user2->id]);
@@ -224,12 +226,18 @@ class core_message_migrate_message_data_task_testcase extends advanced_testcase 
         // Remember - we are only converting the notifications related to user 1.
         $this->assertEquals(2, $DB->count_records('message'));
         $this->assertEquals(1, $DB->count_records('message_read'));
+        $this->assertEquals(3, $DB->count_records('message_popup'));
         $this->assertEquals(6, $DB->count_records('notifications'));
+        $this->assertEquals(6, $DB->count_records('message_popup_notifications'));
 
         // Confirm what we have in the notifications table is correct.
         $notifications = $DB->get_records('notifications', [], 'timecreated ASC');
+        $popupnotifications = $DB->get_records('message_popup_notifications', [], 'notificationid ASC', 'notificationid');
         $i = 1;
         foreach ($notifications as $notification) {
+            // Assert the correct id is stored in the 'message_popup_notifications' table.
+            $this->assertArrayHasKey($notification->id, $popupnotifications);
+
             $useridfrom = $user1->id;
             $useridto = $user2->id;
             if ($i > 3) {
@@ -309,6 +317,17 @@ class core_message_migrate_message_data_task_testcase extends advanced_testcase 
         $tabledata->smallmessage = 'Small message ' . $timecreated;
         $tabledata->timecreated = $timecreated;
 
-        return $DB->insert_record($table, $tabledata);
+        $id = $DB->insert_record($table, $tabledata);
+
+        // Insert into the legacy 'message_popup' table if it is a notification.
+        if ($notification) {
+            $mp = new stdClass();
+            $mp->messageid = $id;
+            $mp->isread = (!is_null($timeread)) ? 1 : 0;
+
+            $DB->insert_record('message_popup', $mp);
+        }
+
+        return $id;
     }
 }
