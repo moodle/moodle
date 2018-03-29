@@ -210,9 +210,6 @@ class moodle_content_writer implements content_writer {
      * @return  content_writer
      */
     public function export_user_preference(string $component, string $key, string $value, string $description) : content_writer {
-        if ($this->context !== \context_system::instance()) {
-            throw new \coding_exception('export_user_preference must be called against the system context');
-        }
         $subcontext = [
             get_string('userpreferences'),
         ];
