@@ -132,6 +132,20 @@ class manager {
     }
 
     /**
+     * Retrieve the reason for implementing the null provider interface.
+     *
+     * @param  string $component Frankenstyle component name.
+     * @return string The key to retrieve the language string for the null provider reason.
+     */
+    public function get_null_provider_reason(string $component) : string {
+        if ($this->component_implements($component, \core_privacy\local\metadata\null_provider::class)) {
+            return $this->get_provider_classname($component)::get_reason();
+        } else {
+            throw new \coding_exception('Call to undefined method', 'Please only call this method on a null provider.');
+        }
+    }
+
+    /**
      * Get the privacy metadata for all components.
      *
      * @return collection[] The array of collection objects, indexed by frankenstyle component name.
