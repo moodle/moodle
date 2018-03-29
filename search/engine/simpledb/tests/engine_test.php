@@ -346,7 +346,7 @@ class search_simpledb_engine_testcase extends advanced_testcase {
             return;
         }
 
-        $DB->execute("ALTER FULLTEXT INDEX ON t_search_simpledb_index START UPDATE POPULATION");
+        $DB->execute("ALTER FULLTEXT INDEX ON {search_simpledb_index} START UPDATE POPULATION");
 
         $catalogname = $DB->get_prefix() . 'search_simpledb_catalog';
         $retries = 0;
