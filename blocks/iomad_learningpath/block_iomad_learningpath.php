@@ -22,6 +22,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 class block_iomad_learningpath extends block_base {
 
     function init() {
@@ -46,6 +48,7 @@ class block_iomad_learningpath extends block_base {
     }
 
     function get_content () {
+        global $USER;
 
         if ($this->content !== null) {
             return $this->content;
@@ -56,7 +59,14 @@ class block_iomad_learningpath extends block_base {
             return $this->content;
         }
 
-        $renderable = new \block_iomad_learningpath\output\main();
+        // IOMAD stuff.
+        $sitecontext = context_system::instance();
+        $companyid = iomad::get_my_companyid($sitecontext);
+        $path = new \block_iomad_learningpath\path($companyid, $sitecontext);
+        $userpaths = $path->get_user_paths($USER->id);
+
+        // Render block. 
+        $renderable = new \block_iomad_learningpath\output\main($userpaths);
         $renderer = $this->page->get_renderer('block_iomad_learningpath');
         $this->content = new stdClass();
         $this->content->items = array();

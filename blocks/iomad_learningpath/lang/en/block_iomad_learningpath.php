@@ -24,4 +24,5 @@
 
 $string['iomad_learningpath:addinstance'] = 'Add learning path block';
 $string['iomad_learningpath:myaddinstance'] = 'Add learning path block to Moodle Dashboard';
+$string['nopaths'] = 'You have no learning paths';
 $string['pluginname'] = 'Learning path block';

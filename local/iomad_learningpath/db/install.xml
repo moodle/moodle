@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="local/iomad_learningpath/db" VERSION="20180319" COMMENT="XMLDB file for Moodle local/iomad_learningpath"
+<XMLDB PATH="local/iomad_learningpath/db" VERSION="20180327" COMMENT="XMLDB file for Moodle local/iomad_learningpath"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -50,14 +50,14 @@
     <TABLE NAME="iomad_learningpathuser" COMMENT="User's assigned to learning path">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-        <FIELD NAME="path" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false" COMMENT="Path ID"/>
-        <FIELD NAME="user" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false" COMMENT="user ID"/>
+        <FIELD NAME="pathid" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false" COMMENT="Path ID"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false" COMMENT="user ID"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
       <INDEXES>
-        <INDEX NAME="ix_pa" UNIQUE="false" FIELDS="path"/>
+        <INDEX NAME="ix_pa" UNIQUE="false" FIELDS="pathid"/>
       </INDEXES>
     </TABLE>
   </TABLES>

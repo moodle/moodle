@@ -325,10 +325,10 @@ class companypaths {
         global $DB;
 
         $sql = "SELECT u.*
-            FROM {user} u JOIN {iomad_learningpathuser} lpu ON lpu.user = u.id
+            FROM {user} u JOIN {iomad_learningpathuser} lpu ON lpu.userid = u.id
             WHERE u.deleted = 0
             AND u.suspended = 0
-            AND lpu.path = :pathid
+            AND lpu.pathid = :pathid
             ORDER BY u.lastname, u.firstname ASC";
         $users = $DB->get_records_sql($sql, ['pathid' => $pathid]);
         if ($idonly) {
@@ -393,14 +393,14 @@ class companypaths {
             }
 
             // Is the userid already in the path
-            if ($user = $DB->get_record('iomad_learningpathuser', ['path' => $pathid, 'user' => $userid])) {
+            if ($user = $DB->get_record('iomad_learningpathuser', ['pathid' => $pathid, 'userid' => $userid])) {
                 continue;
             }
 
             // Add a new record
             $user = new \stdClass;
-            $user->path = $pathid;
-            $user->user = $userid;
+            $user->pathid = $pathid;
+            $user->userid = $userid;
             $DB->insert_record('iomad_learningpathuser', $user);
         }
 
@@ -422,7 +422,7 @@ class companypaths {
                 throw new \coding_exception('invaliduserid', 'User is not a member of current company - id = ' . $userid);
             }
 
-            $DB->delete_records('iomad_learningpathuser', ['path' => $pathid, 'user' => $userid]);
+            $DB->delete_records('iomad_learningpathuser', ['pathid' => $pathid, 'userid' => $userid]);
         }
 
         return true;

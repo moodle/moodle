@@ -22,9 +22,11 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 $plugin->version  = 2018032600;
 $plugin->requires = 2017051500;
 $plugin->component  = 'block_iomad_learningpath';
-$plugin->dependencies = [
-    'local_iomad_learningpath' => ANY_VERSION,
-];
+//$plugin->dependencies = [
+//    'local_iomad_learningpath' => ANY_VERSION,
+//];

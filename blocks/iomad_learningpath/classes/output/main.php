@@ -36,8 +36,10 @@ use templatable;
  */
 class main implements renderable, templatable {
 
-    public function __construct() {
+    protected $userpaths;
 
+    public function __construct($userpaths) {
+        $this->userpaths = $userpaths;
     }
 
     /**
@@ -49,7 +51,8 @@ class main implements renderable, templatable {
     public function export_for_template(renderer_base $output) {
 
         return [
-
+            'ispaths' => !empty($this->userpaths),
+            'paths' => array_values($this->userpaths),
         ];
     }
 }
