@@ -495,53 +495,114 @@ class moodle_content_writer_test extends advanced_testcase {
     }
 
     /**
-     * User preferences can not be exported against the user context.
+     * User preferences can be exported against a user.
+     *
+     * @dataProvider    export_user_preference_provider
+     * @param   string      $component  Component
+     * @param   string      $key Key
+     * @param   string      $value Value
+     * @param   string      $desc Description
      */
-    public function test_export_user_preference_context_user() {
+    public function test_export_user_preference_context_user($component, $key, $value, $desc) {
         $admin = \core_user::get_user_by_username('admin');
 
         $writer = $this->get_writer_instance();
 
-        $this->expectException('coding_exception');
-        $writer->set_context(\context_user::instance($admin->id))
-            ->export_user_preference('core_privacy', 'validkey', 'value', 'description');
+        $context = \context_user::instance($admin->id);
+        $writer = $this->get_writer_instance()
+            ->set_context($context)
+            ->export_user_preference($component, $key, $value, $desc);
+
+        $fileroot = $this->fetch_exported_content($writer);
+
+        $contextpath = $this->get_context_path($context, [get_string('userpreferences')], "{$component}.json");
+        $this->assertTrue($fileroot->hasChild($contextpath));
+
+        $json = $fileroot->getChild($contextpath)->getContent();
+        $expanded = json_decode($json);
+        $this->assertTrue(isset($expanded->$key));
+        $data = $expanded->$key;
+        $this->assertEquals($value, $data->value);
+        $this->assertEquals($desc, $data->description);
     }
 
     /**
-     * User preferences can not be exported against the coursecat context.
+     * User preferences can be exported against a course category.
+     *
+     * @dataProvider    export_user_preference_provider
+     * @param   string      $component  Component
+     * @param   string      $key Key
+     * @param   string      $value Value
+     * @param   string      $desc Description
      */
-    public function test_export_user_preference_context_coursecat() {
+    public function test_export_user_preference_context_coursecat($component, $key, $value, $desc) {
         global $DB;
 
         $categories = $DB->get_records('course_categories');
         $firstcategory = reset($categories);
 
-        $this->expectException('coding_exception');
-        $this->get_writer_instance()
-            ->set_context(\context_coursecat::instance($firstcategory->id))
-            ->export_user_preference('core_privacy', 'validkey', 'value', 'description');
+        $context = \context_coursecat::instance($firstcategory->id);
+        $writer = $this->get_writer_instance()
+            ->set_context($context)
+            ->export_user_preference($component, $key, $value, $desc);
+
+        $fileroot = $this->fetch_exported_content($writer);
+
+        $contextpath = $this->get_context_path($context, [get_string('userpreferences')], "{$component}.json");
+        $this->assertTrue($fileroot->hasChild($contextpath));
+
+        $json = $fileroot->getChild($contextpath)->getContent();
+        $expanded = json_decode($json);
+        $this->assertTrue(isset($expanded->$key));
+        $data = $expanded->$key;
+        $this->assertEquals($value, $data->value);
+        $this->assertEquals($desc, $data->description);
     }
 
     /**
-     * User preferences can not be exported against the course context.
+     * User preferences can be exported against a course.
+     *
+     * @dataProvider    export_user_preference_provider
+     * @param   string      $component  Component
+     * @param   string      $key Key
+     * @param   string      $value Value
+     * @param   string      $desc Description
      */
-    public function test_export_user_preference_context_course() {
+    public function test_export_user_preference_context_course($component, $key, $value, $desc) {
         global $DB;
 
         $this->resetAfterTest();
 
         $course = $this->getDataGenerator()->create_course();
 
-        $this->expectException('coding_exception');
-        $this->get_writer_instance()
-            ->set_context(\context_course::instance($course->id))
-            ->export_user_preference('core_privacy', 'validkey', 'value', 'description');
+        $context = \context_course::instance($course->id);
+        $writer = $this->get_writer_instance()
+            ->set_context($context)
+            ->export_user_preference($component, $key, $value, $desc);
+
+        $fileroot = $this->fetch_exported_content($writer);
+
+        $contextpath = $this->get_context_path($context, [get_string('userpreferences')], "{$component}.json");
+        $this->assertTrue($fileroot->hasChild($contextpath));
+
+        $json = $fileroot->getChild($contextpath)->getContent();
+        $expanded = json_decode($json);
+        $this->assertTrue(isset($expanded->$key));
+        $data = $expanded->$key;
+        $this->assertEquals($value, $data->value);
+        $this->assertEquals($desc, $data->description);
     }
 
     /**
-     * User preferences can not be exported against a module context.
+     * User preferences can be exported against a module context.
+     *
+     * @dataProvider    export_user_preference_provider
+     * @param   string      $component  Component
+     * @param   string      $key Key
+     * @param   string      $value Value
+     * @param   string      $desc Description
      */
-    public function test_export_user_preference_context_module() {
+    public function test_export_user_preference_context_module($component, $key, $value, $desc) {
         global $DB;
 
         $this->resetAfterTest();
@@ -549,25 +610,55 @@ class moodle_content_writer_test extends advanced_testcase {
         $course = $this->getDataGenerator()->create_course();
         $forum = $this->getDataGenerator()->create_module('forum', ['course' => $course->id]);
 
-        $this->expectException('coding_exception');
-        $this->get_writer_instance()
-            ->set_context(\context_module::instance($forum->cmid))
-            ->export_user_preference('core_privacy', 'validkey', 'value', 'description');
+        $context = \context_module::instance($forum->cmid);
+        $writer = $this->get_writer_instance()
+            ->set_context($context)
+            ->export_user_preference($component, $key, $value, $desc);
+
+        $fileroot = $this->fetch_exported_content($writer);
+
+        $contextpath = $this->get_context_path($context, [get_string('userpreferences')], "{$component}.json");
+        $this->assertTrue($fileroot->hasChild($contextpath));
+
+        $json = $fileroot->getChild($contextpath)->getContent();
+        $expanded = json_decode($json);
+        $this->assertTrue(isset($expanded->$key));
+        $data = $expanded->$key;
+        $this->assertEquals($value, $data->value);
+        $this->assertEquals($desc, $data->description);
     }
 
     /**
      * User preferences can not be exported against a block context.
+     *
+     * @dataProvider    export_user_preference_provider
+     * @param   string      $component  Component
+     * @param   string      $key Key
+     * @param   string      $value Value
+     * @param   string      $desc Description
      */
-    public function test_export_user_preference_context_block() {
+    public function test_export_user_preference_context_block($component, $key, $value, $desc) {
         global $DB;
 
         $blocks = $DB->get_records('block_instances');
         $block = reset($blocks);
 
-        $this->expectException('coding_exception');
-        $this->get_writer_instance()
-            ->set_context(\context_block::instance($block->id))
-            ->export_user_preference('core_privacy', 'validkey', 'value', 'description');
+        $context = \context_block::instance($block->id);
+        $writer = $this->get_writer_instance()
+            ->set_context($context)
+            ->export_user_preference($component, $key, $value, $desc);
+
+        $fileroot = $this->fetch_exported_content($writer);
+
+        $contextpath = $this->get_context_path($context, [get_string('userpreferences')], "{$component}.json");
+        $this->assertTrue($fileroot->hasChild($contextpath));
+
+        $json = $fileroot->getChild($contextpath)->getContent();
+        $expanded = json_decode($json);
+        $this->assertTrue(isset($expanded->$key));
+        $data = $expanded->$key;
+        $this->assertEquals($value, $data->value);
+        $this->assertEquals($desc, $data->description);
     }
 
     /**
