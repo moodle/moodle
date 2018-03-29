@@ -78,7 +78,7 @@ class subsystem_link implements type {
      * @return  array
      */
     public function get_privacy_fields() : array {
-        return null;
+        return [];
     }
 
     /**
