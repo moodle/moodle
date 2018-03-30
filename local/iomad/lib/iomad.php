@@ -1477,8 +1477,10 @@ class iomad {
      * IOMAD version 
      * @param unknown $capability
      * @param context $context
+     * @param int $companyid (optional) check for different company (and right to access same).
+     * @return bool
      */
-    public static function has_capability($capability, context $context) {
+    public static function has_capability($capability, context $context, $companyid = 0) {
         global $USER;
         
         // If original version says no then it's no.
@@ -1491,15 +1493,18 @@ class iomad {
         if (is_siteadmin()) {
             return true;
         }
+
+        // If companyid supplied then check the user is a member
+        if ($companyid) {
+            if (!$DB->record_exists('company_users', ['companyid' => $companyid, 'userid' => $USER->id]) {
+                return false;
+            }
+        } else {
         
-        // Check user's company. If no company then it must be true.
-        $companyid = self::companyid();
-        
-        //echo "<pre>$companyid"; die;
-        //return true;
-        
-        if (!$companyid) {
-            return true;
+            // Get user's current company. If no company then it must be true.
+            if (!$companyid = self::companyid()) {
+                return true;
+            }
         }
         
         // Probably need to get accessdata (again), so...
@@ -1515,10 +1520,11 @@ class iomad {
      * Iomad version of require_capability
      * @param unknown $capability
      * @param context $context
+     * @param int $companyid (optional) check for different company (and right to access same).
      * @throws required_capability_exception
      */
-    public static function require_capability($capability, context $context) {
-        if (!self::has_capability($capability, $context)) {
+    public static function require_capability($capability, context $context, $companyid = 0) {
+        if (!self::has_capability($capability, $context, $companyid)) {
             throw new required_capability_exception($context, $capability, 'nopermissions', 'local_iomad');
         }
     }
