@@ -51,14 +51,15 @@ class rule {
     }
 
     /**
-     * Can the current user manage this rule?
+     * Can the user manage this rule? Defaults to $USER.
      *
+     * @param int $userid Check against this userid.
      * @return bool true if the current user can manage this rule, else false.
      */
-    public function can_manage_rule() {
+    public function can_manage_rule($userid = null) {
         $courseid = $this->courseid;
         $context = empty($courseid) ? \context_system::instance() : \context_course::instance($this->courseid);
-        return has_capability('tool/monitor:managerules', $context);
+        return has_capability('tool/monitor:managerules', $context, $userid);
     }
 
     /**
