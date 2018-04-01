@@ -40,13 +40,10 @@ class courselist_page implements renderable, templatable {
 
     protected $courses;
 
-    protected $prospectivecourses;
-
-    public function __construct($context, $path, $courses, $prospectivecourses) {
+    public function __construct($context, $path, $courses) {
         $this->context = $context;
         $this->path = $path;
         $this->courses = $courses;
-        $this->prospectivecourses = $prospectivecourses;
     }
 
     /**
@@ -59,8 +56,6 @@ class courselist_page implements renderable, templatable {
         $data->path = $this->path;
         $data->courses = array_values($this->courses);
         $data->iscourses = !empty($this->courses);
-        $data->prospectivecourses = array_values($this->prospectivecourses);
-        $data->isprospectivecourses = !empty($this->prospectivecourses);
         $data->done = $output->single_button(
             new \moodle_url('/local/iomad_learningpath/manage.php'),
             get_string('done', 'local_iomad_learningpath')

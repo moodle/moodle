@@ -44,7 +44,9 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification'], 
              * Populate/filter user list
              * @param string filter
              */
-            function user_list(filter) {
+            function user_list() {
+
+                var filter = $('#userfilter').val();
 
                 // Ajax stuff to get list
                 // call the web service
@@ -63,8 +65,7 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification'], 
              */
             $(window).on('load', user_list(''));
             $('#userfilter').on('input', function() {
-                var filter = $(this).val();
-                user_list(filter);
+                user_list();
             });
 
 
@@ -95,8 +96,7 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification'], 
                     return;
                 }
 
-                // Display updated list.
-                var items = [];
+
                 $.each(users, function(id, user) {
                     items.push('<li class="text-truncate" data-userid="' + user.id + '"><i class="fa fa-user"></i> ' + user.fullname + '</li>');
                 });
@@ -136,15 +136,13 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification'], 
             $('#prospectivelist').on('click', 'li', function() {
                 userid = $(this).data('userid');
                 
-                // Save the HTML for later
-                html = $(this).html();
-
-                // Add the course to the path
+                // Add the user to the path
                 ajax.call([{
                     methodname: 'local_iomad_learningpath_addusers',
                     args: {pathid: pathid, userids: [userid]},
                     done: function(result) {
                         pathuser_list();
+                        user_list();
                     },
                     fail: notification.exception,
                 }]);
@@ -168,8 +166,7 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification'], 
 
                         // Update list
                         pathuser_list();
-                        var filter = $('#userfilter').val();
-                        user_list(filter);
+                        user_list();
                     },
                     fail: notification.exception
                 }]);

@@ -31,18 +31,11 @@
             </div>
             <div class="card-body card-block">
                 <p class="card-text">
-                    {{^ iscourses }}
-                        <div class="alert alert-warning">
-                            {{# str }}nocoursesinpath, local_iomad_learningpath{{/ str }}
-                        </div>
-                    {{/ iscourses }}
-                    {{# iscourses }}
-                        <ul id="pathcourselist">
-                        {{# courses }}
-                            <li class="text-truncate" data-courseid="{{ courseid }}"><i class="fa fa-globe"></i> {{ fullname }}</li>
-                        {{/ courses }}
-                        </ul>
-                    {{/ iscourses }}
+                    <div id="nopathcourses" class="alert alert-warning" style="display: none">
+                        {{# str }}nocoursesinpath, local_iomad_learningpath{{/ str }}
+                    </div>
+                    <ul id="pathcourselist">
+                    </ul>
                 </p>
             </div>
         </div>
@@ -58,18 +51,11 @@
             </div>
             <div class="card-body card-block">
                 <p class="card-text">
-                    {{^ isprospectivecourses }}
-                        <div class="alert alert-warning">
-                            {{# str }}noprospectivecourses, local_iomad_learningpath{{/ str }}
-                        </div>
-                    {{/ isprospectivecourses }}
-                    {{# isprospectivecourses }}
-                        <ul id="prospectivelist">
-                        {{# prospectivecourses }}
-                            <li class="text-truncate" data-courseid="{{ id }}"><i class="fa fa-globe"></i> {{ fullname }}</li>
-                        {{/ prospectivecourses }}
-                        </ul>
-                    {{/ isprospectivecourses }}
+                    <div id="noprospective" class="alert alert-warning" style="display: none">
+                        {{# str }}noprospectivecourses, local_iomad_learningpath{{/ str }}
+                    </div>
+                    <ul id="prospectivelist">
+                    </ul>
                 </p>
             </div>
         </div>

@@ -169,9 +169,10 @@ class companypaths {
     /**
      * Get course list for given path
      * @param int $pathid
+     * @param bool $idonly just return course ids if set
      * @return array
      */
-    public function get_courselist($pathid) {
+    public function get_courselist($pathid, $idonly = false) {
         global $DB;
 
         $sql = 'SELECT c.id courseid, c.shortname shortname, c.fullname fullname, lpc.*
@@ -180,16 +181,25 @@ class companypaths {
             ORDER BY lpc.sequence';
         $courses = $DB->get_records_sql($sql, ['pathid' => $pathid]);
 
+        // ID only?
+        if ($idonly) {
+            return array_keys($courses);
+        }
+
         return $courses;
     }
 
     /**
      * Get prospective course list for company
-     * @param array $courses already selected courses
+     * @param int $pathid
+     * @param string $filter
      * @return array of courses
      */
-    public function get_prospective_courses($selectedcourses = []) {
+    public function get_prospective_courses($pathid, $filter = '') {
         global $DB;
+
+        // Get currently selected courses
+        $selectedcourses = $this->get_courselist($pathid, true);
 
         $topdepartment = company::get_company_parentnode($this->companyid);
         $depcourses = company::get_recursive_department_courses($topdepartment->id);
@@ -198,14 +208,75 @@ class companypaths {
         foreach ($depcourses as $depcourse) {
             
             // Do not include courses already selected
-            if (array_key_exists($depcourse->courseid, $selectedcourses)) {
+            if (in_array($depcourse->courseid, $selectedcourses)) {
                 continue;
             }
-            $course = $DB->get_record('course', ['id' => $depcourse->courseid]);
+
+            // Get full course object
+            if (!$course = $DB->get_record('course', ['id' => $depcourse->courseid])) {
+                throw new \coding_exception('No course record found for courseid = ' . $depcourse->courseid);
+            }
+
+            // Apply filter (if specified).
+            if ($filter && (stripos($course->fullname, $filter) === false)) {
+                continue;
+            }
             $courses[$course->id] = $course;
         }
 
         return $courses;
+    }
+
+    /**
+     * Add courses to path
+     * @param int pathid
+     * @param array $courseids
+     */
+    public function add_courses($pathid, $courseids) {
+        global $DB;
+
+        // Make sure we only add courses in the prospective list.
+        $allcourses = $this->get_prospective_courses($pathid);
+
+        // Get existing list
+        $count = $DB->count_records('iomad_learningpathcourse', ['path' => $pathid]);
+
+        // Work through courses.
+        foreach ($courseids as $courseid) {
+            if (!array_key_exists($courseid, $allcourses)) {
+                throw new \coding_exception("Course with id=$courseid is not one of company courses");
+            }
+
+            // If course already in the list then just skip it
+            if ($course = $DB->get_record('iomad_learningpathcourse', ['path' => $pathid, 'course' => $courseid])) {
+                continue;
+            }
+
+            // Add at the end
+            $count++;
+            $course = new \stdClass;
+            $course->path = $pathid;
+            $course->course = $courseid;
+            $course->sequence = $count;
+            $DB->insert_record('iomad_learningpathcourse', $course);
+        }
+    }
+
+    /**
+     * Remove courses from path
+     * @param int $pathid
+     * @param array $courseids
+     */
+    public function remove_courses($pathid, $courseids) {
+        global $DB;
+
+        // Work through courses.
+        foreach ($courseids as $courseid) {
+            $DB->delete_records('iomad_learningpathcourse', ['id' => $courseid]);
+        }
+
+        // Fix the sequence
+        $this->fix_sequence($pathid);
     }
 
     /**

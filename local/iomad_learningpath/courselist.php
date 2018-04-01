@@ -49,13 +49,12 @@ $companypaths = new local_iomad_learningpath\companypaths($companyid, $context);
 $path = $companypaths->get_path($id);
 $companypaths->breadcrumb(get_string('managecourses', 'local_iomad_learningpath'), $url);
 $courses = $companypaths->get_courselist($id);
-$prospectivecourses = $companypaths->get_prospective_courses($courses);
 
 // Javascript initialise
 $PAGE->requires->js_call_amd('local_iomad_learningpath/courselist', 'init', [$companyid, $id]);
 
 // Get renderer for page (and pass data).
-$courselist_page = new local_iomad_learningpath\output\courselist_page($context, $path, $courses, $prospectivecourses);
+$courselist_page = new local_iomad_learningpath\output\courselist_page($context, $path, $courses);
 
 echo $OUTPUT->header();
 

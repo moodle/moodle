@@ -25,6 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/externallib.php');
+require_once($CFG->dirroot . '/local/iomad/lib/iomad.php');
 
 class local_iomad_learningpath_external extends external_api {
 
@@ -66,6 +67,17 @@ class local_iomad_learningpath_external extends external_api {
             throw new invalid_parameter_exception("Learning Path with id = $pathid does not exist");
         }
 
+        // Find/validate company
+        $companyid = $path->company;
+        if (!$company = $DB->get_record('company', ['id' => $companyid])) {
+            throw new invalid_parameter_exception("Company with id = $companyid does not exist");
+        }
+
+        // Security
+        $context = context_system::instance();
+        self::validate_context($context);
+        iomad::require_capability('local/iomad_learningpath:manage', $context, $companyid);
+
         // Check state
         if (($params['state'] != 0) && ($params['state'] != 1)) {
             throw new invalid_parameter_exception("State can only be 0 or 1. Value was $state");
@@ -85,9 +97,8 @@ class local_iomad_learningpath_external extends external_api {
     public static function getprospectivecourses_parameters() {
         return new external_function_parameters(
             array(
-                'companyid' => new external_value(PARAM_INT, 'ID of Iomad Company'),
+                'pathid' => new external_value(PARAM_INT, 'ID of (target) learning path'),
                 'filter' => new external_value(PARAM_TEXT, 'Filter course list returned', VALUE_DEFAULT, ''),
-                'excludeids' => new external_multiple_structure(new external_value(PARAM_INT, 'Course ID'), 'List of course IDs to exclude', VALUE_DEFAULT, array()),
             )
         );
     }
@@ -110,38 +121,31 @@ class local_iomad_learningpath_external extends external_api {
 
     /**
      * Get list of possible courses
-     * @param int $companyid 
+     * @param int $pathid 
      * @param int $filter
      * @param array $excludeids
      * @throws invalid_parameter_exception
      */
-    public static function getprospectivecourses($companyid, $filter = '', $excludeids = array() ) {
+    public static function getprospectivecourses($pathid, $filter = '') {
         global $DB;
 
         // Validate params
-        $params = self::validate_parameters(self::getprospectivecourses_parameters(), ['companyid' => $companyid, 'filter' => $filter, 'excludeids' => $excludeids]);
+        $params = self::validate_parameters(self::getprospectivecourses_parameters(),
+            ['pathid' => $pathid, 'filter' => $filter]);
 
-        // Find/validate company
-        if (!$company = $DB->get_record('company', ['id' => $params['companyid']])) {
-            throw new invalid_parameter_exception("Company with id = {$params['companyid']} does not exist");
-        }
+        // Find learning path and company
+        $path = $DB->get_record('iomad_learningpath', ['id' => $params['pathid']], '*', MUST_EXIST);
+        $company = $DB->get_record('company', ['id' => $path->company]);
+        $companyid = $company->id;
+
+        // Security
+        $context = context_system::instance();
+        self::validate_context($context);
+        iomad::require_capability('local/iomad_learningpath:manage', $context, $companyid);
 
         // Get full list of prospective courses
-        $companypaths = new local_iomad_learningpath\companypaths($params['companyid'], context_system::instance());
-        $allcourses = $companypaths->get_prospective_courses();
-
-        // If filter, check there is a match
-        $courses = [];
-        foreach ($allcourses as $allcourse) {
-            if ($params['filter'] && (stripos($allcourse->fullname, $params['filter']) === false)) {
-                continue;
-            }
-            $courses[] = [
-                'id' => $allcourse->id,
-                'fullname' => $allcourse->fullname,
-                'shortname' => $allcourse->shortname,
-            ]; 
-        }
+        $companypaths = new local_iomad_learningpath\companypaths($companyid, $context);
+        $courses = $companypaths->get_prospective_courses($params['pathid'], $params['filter']);
 
         return $courses;
     }
@@ -190,32 +194,14 @@ class local_iomad_learningpath_external extends external_api {
             throw new invalid_parameter_exception("Company with id = $companyid does not exist");
         }
 
-        // Get full list of prospective courses
-        $companypaths = new local_iomad_learningpath\companypaths($companyid, context_system::instance());
-        $allcourses = $companypaths->get_prospective_courses();
+        // Security
+        $context = context_system::instance();
+        self::validate_context($context);
+        iomad::require_capability('local/iomad_learningpath:manage', $context, $companyid);
 
-        // Get existing list
-        $count = $DB->count_records('iomad_learningpathcourse', ['path' => $params['pathid']]);
-
-        // Work through courses.
-        foreach ($params['courseids'] as $courseid) {
-            if (!array_key_exists($courseid, $allcourses)) {
-                throw new invalid_parameter_exception("Course with id=$courseid is not one of company courses");
-            }
-
-            // If course already in the list then just skip it
-            if ($course = $DB->get_record('iomad_learningpathcourse', ['path' => $params['pathid'], 'course' => $courseid])) {
-                continue;
-            }
-
-            // Add at the end
-            $count++;
-            $course = new stdClass;
-            $course->path = $params['pathid'];
-            $course->course = $courseid;
-            $course->sequence = $count;
-            $DB->insert_record('iomad_learningpathcourse', $course);
-        }
+        // Add courses
+        $companypaths = new local_iomad_learningpath\companypaths($companyid, $context);
+        $companypaths->add_courses($params['pathid'], $params['courseids']);
 
         return true;
     }
@@ -264,14 +250,14 @@ class local_iomad_learningpath_external extends external_api {
             throw new invalid_parameter_exception("Company with id = $companyid does not exist");
         }
 
-        // Work through courses.
-        foreach ($params['courseids'] as $courseid) {
-            $DB->delete_records('iomad_learningpathcourse', ['path' => $params['pathid'], 'course' => $courseid]);
-        }
+        // Security
+        $context = context_system::instance();
+        self::validate_context($context);
+        iomad::require_capability('local/iomad_learningpath:manage', $context, $companyid);
 
-        // Fix the sequence
-        $companypaths = new local_iomad_learningpath\companypaths($companyid, context_system::instance());
-        $companypaths->fix_sequence($params['pathid']);
+        // Remove courses
+        $companypaths = new local_iomad_learningpath\companypaths($companyid, $context);
+        $companypaths->remove_courses($params['pathid'], $params['courseids']);
 
         return true;
     }
@@ -313,7 +299,7 @@ class local_iomad_learningpath_external extends external_api {
         global $DB;
 
         // Validate params
-        $params = self::validate_parameters(self::getcourses_parameters(), ['pathid' => $pathidid]);
+        $params = self::validate_parameters(self::getcourses_parameters(), ['pathid' => $pathid]);
 
         // get path
         if (!$path = $DB->get_record('iomad_learningpath', ['id' => $params['pathid']])) {
@@ -326,8 +312,13 @@ class local_iomad_learningpath_external extends external_api {
             throw new invalid_parameter_exception("Company with id = $companyid does not exist");
         }
 
+        // Security
+        $context = context_system::instance();
+        self::validate_context($context);
+        iomad::require_capability('local/iomad_learningpath:manage', $context, $companyid);
+
         // Get full list of courses
-        $companypaths = new local_iomad_learningpath\companypaths($companyid, context_system::instance());
+        $companypaths = new local_iomad_learningpath\companypaths($companyid, $context);
         $courses = $companypaths->get_courselist($params['pathid']);
 
         return $courses;
@@ -393,6 +384,11 @@ class local_iomad_learningpath_external extends external_api {
             throw new invalid_parameter_exception("Company with id = $companyid does not exist");
         }
 
+        // Security
+        $context = context_system::instance();
+        self::validate_context($context);
+        iomad::require_capability('local/iomad_learningpath:manage', $context, $companyid);
+
         // Get existing list
         $courses = $DB->get_records('iomad_learningpathcourse', ['path' => $params['pathid']]);
 
@@ -406,9 +402,7 @@ class local_iomad_learningpath_external extends external_api {
         // Work through courses.
         $sequence = 1;
         foreach ($params['courseids'] as $courseid) {
-            if (!$course = self::find_course($courses, $courseid)) {
-                throw new coding_exception('missingcourse', "Course with id=$courseid is not one of path courses");
-            }
+            $course = $courses[$courseid];
 
             // Update sequence.
             $course->sequence = $sequence;
@@ -461,8 +455,13 @@ class local_iomad_learningpath_external extends external_api {
             throw new invalid_parameter_exception("Company with id = $companyid does not exist");
         }
 
+        // Security
+        $context = context_system::instance();
+        self::validate_context($context);
+        iomad::require_capability('local/iomad_learningpath:manage', $context, $companyid);
+
         // Get full list of prospective courses
-        $companypaths = new local_iomad_learningpath\companypaths($companyid, context_system::instance());
+        $companypaths = new local_iomad_learningpath\companypaths($companyid, $context);
 
         // Delete path
         $companypaths->deletepath($params['pathid']);
@@ -512,8 +511,13 @@ class local_iomad_learningpath_external extends external_api {
             throw new invalid_parameter_exception("Company with id = $companyid does not exist");
         }
 
+        // Security
+        $context = context_system::instance();
+        self::validate_context($context);
+        iomad::require_capability('local/iomad_learningpath:manage', $context, $companyid);
+
         // Get full list of prospective courses
-        $companypaths = new local_iomad_learningpath\companypaths($companyid, context_system::instance());
+        $companypaths = new local_iomad_learningpath\companypaths($companyid, $context);
 
         // Copy path
         $companypaths->copypath($params['pathid']);
@@ -570,8 +574,13 @@ class local_iomad_learningpath_external extends external_api {
             throw new invalid_parameter_exception("Company with id = {$params['companyid']} does not exist");
         }
 
+        // Security
+        $context = context_system::instance();
+        self::validate_context($context);
+        iomad::require_capability('local/iomad_learningpath:manage', $context, $companyid);
+
         // Get lists of users
-        $companypaths = new local_iomad_learningpath\companypaths($params['companyid'], context_system::instance());
+        $companypaths = new local_iomad_learningpath\companypaths($params['companyid'], $context);
         $users = $companypaths->get_prospective_users($params['pathid'], $params['filter']);
 
         return $users;
@@ -621,8 +630,13 @@ class local_iomad_learningpath_external extends external_api {
             throw new invalid_parameter_exception("Company with id = $companyid does not exist");
         }
 
+        // Security
+        $context = context_system::instance();
+        self::validate_context($context);
+        iomad::require_capability('local/iomad_learningpath:manage', $context, $companyid);
+
         // Add users
-        $companypaths = new local_iomad_learningpath\companypaths($companyid, context_system::instance());
+        $companypaths = new local_iomad_learningpath\companypaths($companyid, $context);
         $companypaths->add_users($params['pathid'], $params['userids']);
 
         return true;
@@ -674,8 +688,13 @@ class local_iomad_learningpath_external extends external_api {
             throw new invalid_parameter_exception("Company with id = {$params['companyid']} does not exist");
         }
 
+        // Security
+        $context = context_system::instance();
+        self::validate_context($context);
+        iomad::require_capability('local/iomad_learningpath:manage', $context, $companyid);
+
         // Get lists of users
-        $companypaths = new local_iomad_learningpath\companypaths($params['companyid'], context_system::instance());
+        $companypaths = new local_iomad_learningpath\companypaths($params['companyid'], $context);
         $allusers = $companypaths->get_users($params['pathid']);
 
         // massage list
@@ -735,7 +754,12 @@ class local_iomad_learningpath_external extends external_api {
             throw new invalid_parameter_exception("Company with id = $companyid does not exist");
         }
 
-        $companypaths = new local_iomad_learningpath\companypaths($companyid, context_system::instance());
+        // Security
+        $context = context_system::instance();
+        self::validate_context($context);
+        iomad::require_capability('local/iomad_learningpath:manage', $context, $companyid);
+
+        $companypaths = new local_iomad_learningpath\companypaths($companyid, $context);
         $companypaths->delete_users($params['pathid'], $params['userids']);
 
         return true;
