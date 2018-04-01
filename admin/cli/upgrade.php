@@ -131,10 +131,11 @@ if (!core_plugin_manager::instance()->all_plugins_ok($version, $failed)) {
     cli_error(get_string('pluginschecktodo', 'admin'));
 }
 
+$a = new stdClass();
+$a->oldversion = $oldversion;
+$a->newversion = $newversion;
+
 if ($interactive) {
-    $a = new stdClass();
-    $a->oldversion = $oldversion;
-    $a->newversion = $newversion;
     echo cli_heading(get_string('databasechecking', '', $a)) . PHP_EOL;
 }
 
@@ -193,5 +194,5 @@ admin_apply_default_settings(NULL, false);
 // to immediately start browsing the site.
 upgrade_themes();
 
-echo get_string('cliupgradefinished', 'admin')."\n";
+echo get_string('cliupgradefinished', 'admin', $a)."\n";
 exit(0); // 0 means success
