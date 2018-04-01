@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file contains a class definition for the Context Settings resource
+ * This file contains a class definition for the System Settings resource
  *
  * @package    ltiservice_toolsettings
  * @copyright  2014 Vital Source Technologies http://vitalsource.com
@@ -24,34 +24,33 @@
  */
 
 
-namespace ltiservice_toolsettings\local\resource;
+namespace ltiservice_toolsettings\local\resources;
 
-use ltiservice_toolsettings\local\resource\systemsettings;
 use ltiservice_toolsettings\local\service\toolsettings;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * A resource implementing the Context-level (ToolProxyBinding) Settings.
+ * A resource implementing the System-level (ToolProxy) Settings.
  *
  * @package    ltiservice_toolsettings
  * @since      Moodle 2.8
  * @copyright  2014 Vital Source Technologies http://vitalsource.com
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class contextsettings extends \mod_lti\local\ltiservice\resource_base {
+class systemsettings extends \mod_lti\local\ltiservice\resource_base {
 
     /**
      * Class constructor.
      *
-     * @param ltiservice_toolsettings\local\resource\contextsettings $service Service instance
+     * @param ltiservice_toolsettings\local\service\toolsettings $service Service instance
      */
     public function __construct($service) {
 
         parent::__construct($service);
-        $this->id = 'ToolProxyBindingSettings';
-        $this->template = '/{context_type}/{context_id}/bindings/{vendor_code}/{product_code}';
-        $this->variables[] = 'ToolProxyBinding.custom.url';
+        $this->id = 'ToolProxySettings';
+        $this->template = '/toolproxy/{tool_proxy_id}';
+        $this->variables[] = 'ToolProxy.custom.url';
         $this->formats[] = 'application/vnd.ims.lti.v2.toolsettings+json';
         $this->formats[] = 'application/vnd.ims.lti.v2.toolsettings.simple+json';
         $this->methods[] = 'GET';
@@ -67,14 +66,9 @@ class contextsettings extends \mod_lti\local\ltiservice\resource_base {
     public function execute($response) {
 
         $params = $this->parse_template();
-        $contexttype = $params['context_type'];
-        $contextid = $params['context_id'];
-        $vendorcode = $params['vendor_code'];
-        $productcode = $params['product_code'];
+        $tpid = $params['tool_proxy_id'];
         $bubble = optional_param('bubble', '', PARAM_ALPHA);
-        $ok = !empty($contexttype) && !empty($contextid) &&
-              !empty($vendorcode) && !empty($productcode) &&
-              $this->check_tool_proxy($productcode, $response->get_request_data());
+        $ok = !empty($tpid) && $this->check_tool_proxy($tpid, $response->get_request_data());
         if (!$ok) {
             $response->set_code(401);
         }
@@ -82,25 +76,15 @@ class contextsettings extends \mod_lti\local\ltiservice\resource_base {
         $simpleformat = !empty($contenttype) && ($contenttype == $this->formats[1]);
         if ($ok) {
             $ok = (empty($bubble) || ((($bubble == 'distinct') || ($bubble == 'all')))) &&
-                 (!$simpleformat || empty($bubble) || ($bubble != 'all')) &&
-                 (empty($bubble) || ($response->get_request_method() == 'GET'));
+               (!$simpleformat || empty($bubble) || ($bubble != 'all')) &&
+               (empty($bubble) || ($response->get_request_method() == 'GET'));
+            if (!$ok) {
+                $response->set_code(406);
+            }
         }
 
-        if (!$ok) {
-            $response->set_code(404);
-        } else {
-            $systemsetting = null;
-            $contextsettings = lti_get_tool_settings($this->get_service()->get_tool_proxy()->id, $contextid);
-            if (!empty($bubble)) {
-                $systemsetting = new systemsettings($this->get_service());
-                $systemsetting->params['tool_proxy_id'] = $productcode;
-                $systemsettings = lti_get_tool_settings($this->get_service()->get_tool_proxy()->id);
-                if ($bubble == 'distinct') {
-                    toolsettings::distinct_settings($systemsettings, $contextsettings, null);
-                }
-            } else {
-                $systemsettings = null;
-            }
+        if ($ok) {
+            $systemsettings = lti_get_tool_settings($this->get_service()->get_tool_proxy()->id);
             if ($response->get_request_method() == 'GET') {
                 $json = '';
                 if ($simpleformat) {
@@ -110,14 +94,8 @@ class contextsettings extends \mod_lti\local\ltiservice\resource_base {
                     $response->set_content_type($this->formats[0]);
                     $json .= "{\n  \"@context\":\"http://purl.imsglobal.org/ctx/lti/v2/ToolSettings\",\n  \"@graph\":[\n";
                 }
-                $settings = toolsettings::settings_to_json($systemsettings, $simpleformat, 'ToolProxy', $systemsetting);
-                $json .= $settings;
-                $isfirst = strlen($settings) <= 0;
-                $settings = toolsettings::settings_to_json($contextsettings, $simpleformat, 'ToolProxyBinding', $this);
-                if ((strlen($settings) > 0) && !$isfirst) {
-                    $json .= ",";
-                }
-                $json .= $settings;
+                $json .= toolsettings::settings_to_json($systemsettings, $simpleformat,
+                    'ToolProxy', $this);
                 if ($simpleformat) {
                     $json .= "\n}";
                 } else {
@@ -131,7 +109,7 @@ class contextsettings extends \mod_lti\local\ltiservice\resource_base {
                     $ok = !empty($json);
                     if ($ok) {
                         $ok = isset($json->{"@graph"}) && is_array($json->{"@graph"}) && (count($json->{"@graph"}) == 1) &&
-                              ($json->{"@graph"}[0]->{"@type"} == 'ToolProxyBinding');
+                              ($json->{"@graph"}[0]->{"@type"} == 'ToolProxy');
                     }
                     if ($ok) {
                         $settings = $json->{"@graph"}[0]->custom;
@@ -148,12 +126,13 @@ class contextsettings extends \mod_lti\local\ltiservice\resource_base {
                     }
                 }
                 if ($ok) {
-                    lti_set_tool_settings($settings, $this->get_service()->get_tool_proxy()->id, $contextid);
+                    lti_set_tool_settings($settings, $this->get_service()->get_tool_proxy()->id);
                 } else {
                     $response->set_code(406);
                 }
             }
         }
+
     }
 
     /**
@@ -164,17 +143,8 @@ class contextsettings extends \mod_lti\local\ltiservice\resource_base {
      * @return string
      */
     public function parse_value($value) {
-        global $COURSE;
 
-        if ($COURSE->format == 'site') {
-            $this->params['context_type'] = 'Group';
-        } else {
-            $this->params['context_type'] = 'CourseSection';
-        }
-        $this->params['context_id'] = $COURSE->id;
-        $this->params['vendor_code'] = $this->get_service()->get_tool_proxy()->vendorcode;
-        $this->params['product_code'] = $this->get_service()->get_tool_proxy()->guid;
-        $value = str_replace('$ToolProxyBinding.custom.url', parent::get_endpoint(), $value);
+        $value = str_replace('$ToolProxy.custom.url', parent::get_endpoint(), $value);
 
         return $value;
 

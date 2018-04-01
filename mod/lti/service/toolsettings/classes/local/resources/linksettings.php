@@ -24,10 +24,10 @@
  */
 
 
-namespace ltiservice_toolsettings\local\resource;
+namespace ltiservice_toolsettings\local\resources;
 
-use ltiservice_toolsettings\local\resource\systemsettings;
-use ltiservice_toolsettings\local\resource\contextsettings;
+use ltiservice_toolsettings\local\resources\systemsettings;
+use ltiservice_toolsettings\local\resources\contextsettings;
 use ltiservice_toolsettings\local\service\toolsettings;
 
 defined('MOODLE_INTERNAL') || die();
@@ -45,7 +45,7 @@ class linksettings extends \mod_lti\local\ltiservice\resource_base {
     /**
      * Class constructor.
      *
-     * @param ltiservice_toolsettings\local\resource\linksettings $service Service instance
+     * @param ltiservice_toolsettings\local\resources\linksettings $service Service instance
      */
     public function __construct($service) {
 

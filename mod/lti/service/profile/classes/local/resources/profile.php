@@ -24,7 +24,7 @@
  */
 
 
-namespace ltiservice_profile\local\resource;
+namespace ltiservice_profile\local\resources;
 
 use \mod_lti\local\ltiservice\service_base;
 
@@ -43,7 +43,7 @@ class profile extends \mod_lti\local\ltiservice\resource_base {
     /**
      * Class constructor.
      *
-     * @param ltiservice_profile\local\resource\profile $service Service instance
+     * @param ltiservice_profile\local\resources\profile $service Service instance
      */
     public function __construct($service) {
 

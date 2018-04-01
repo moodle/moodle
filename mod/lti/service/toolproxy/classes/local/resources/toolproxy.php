@@ -24,7 +24,7 @@
  */
 
 
-namespace ltiservice_toolproxy\local\resource;
+namespace ltiservice_toolproxy\local\resources;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -47,7 +47,7 @@ class toolproxy extends \mod_lti\local\ltiservice\resource_base {
     /**
      * Class constructor.
      *
-     * @param ltiservice_toolproxy\local\resource\toolproxy $service Service instance
+     * @param ltiservice_toolproxy\local\resources\toolproxy $service Service instance
      */
     public function __construct($service) {
 
