@@ -96,7 +96,7 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification'], 
                     return;
                 }
 
-
+                var items = [];
                 $.each(users, function(id, user) {
                     items.push('<li class="text-truncate" data-userid="' + user.id + '"><i class="fa fa-user"></i> ' + user.fullname + '</li>');
                 });
