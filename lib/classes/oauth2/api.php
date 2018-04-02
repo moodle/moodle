@@ -87,9 +87,9 @@ class api {
         $issuer->create();
 
         $endpoints = [
-            'authorization_endpoint' => 'https://www.facebook.com/v2.8/dialog/oauth',
-            'token_endpoint' => 'https://graph.facebook.com/v2.8/oauth/access_token',
-            'userinfo_endpoint' => 'https://graph.facebook.com/v2.8/me?fields=id,first_name,last_name,link,picture,name,email'
+            'authorization_endpoint' => 'https://www.facebook.com/v2.12/dialog/oauth',
+            'token_endpoint' => 'https://graph.facebook.com/v2.12/oauth/access_token',
+            'userinfo_endpoint' => 'https://graph.facebook.com/v2.12/me?fields=id,first_name,last_name,link,picture,name,email'
         ];
 
         foreach ($endpoints as $name => $url) {
