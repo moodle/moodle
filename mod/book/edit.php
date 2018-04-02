@@ -61,6 +61,12 @@ $mform = new book_chapter_edit_form(null, array('chapter'=>$chapter, 'options'=>
 
 // If data submitted, then process and store.
 if ($mform->is_cancelled()) {
+    // Make sure at least one chapter exists.
+    $chapters = book_preload_chapters($book);
+    if (!$chapters) {
+        redirect(new moodle_url('/course/view.php', array('id' => $course->id))); // Back to course view.
+    }
+
     if (empty($chapter->id)) {
         redirect("view.php?id=$cm->id");
     } else {
