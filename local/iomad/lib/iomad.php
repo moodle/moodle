@@ -1496,7 +1496,7 @@ class iomad {
 
         // If companyid supplied then check the user is a member
         if ($companyid) {
-            if (!$DB->record_exists('company_users', ['companyid' => $companyid, 'userid' => $USER->id]) {
+            if (!$DB->record_exists('company_users', ['companyid' => $companyid, 'userid' => $USER->id])) {
                 return false;
             }
         } else {
