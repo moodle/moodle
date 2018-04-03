@@ -1754,15 +1754,16 @@ class core_tag_tag {
         list($contextsql, $contextsqlparams) = $DB->get_in_or_equal($contextids);
         $params = array_merge($params, $contextsqlparams);
 
-        $subsql = "SELECT tagid
-                   FROM {tag_instance}
+        $subsql = "SELECT DISTINCT t.id
+                    FROM {tag} t
+                    JOIN {tag_instance} ti ON t.id = ti.tagid
                    WHERE component = ?
                    AND itemtype = ?
-                   AND contextid {$contextsql}
-                   GROUP BY tagid";
-        $sql = "SELECT *
-                FROM {tag}
-                WHERE id IN ({$subsql})";
+                   AND contextid {$contextsql}";
+
+        $sql = "SELECT tt.*
+                FROM ($subsql) tv
+                JOIN {tag} tt ON tt.id = tv.id";
 
         return array_map(function($record) {
             return new core_tag_tag($record);
