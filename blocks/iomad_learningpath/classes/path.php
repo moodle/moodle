@@ -38,7 +38,26 @@ class path {
     }
 
     /**
+     * Get list of courses in path
+     * @param int $pathid
+     * @return array
+     */
+    public function get_courselist($pathid) {
+        global $DB;
+
+        $sql = 'SELECT c.id courseid, c.shortname shortname, c.fullname fullname, lpc.*
+            FROM {iomad_learningpathcourse} lpc JOIN {course} c ON lpc.course = c.id
+            WHERE lpc.path = :pathid
+            ORDER BY lpc.sequence';
+        $courses = $DB->get_records_sql($sql, ['pathid' => $pathid]);
+
+        return $courses;
+    }
+
+
+    /**
      * Get available learning paths for user
+     * and details of courses attached to them
      * @param int $userid
      * @return array
      */
@@ -52,9 +71,10 @@ class path {
             ORDER BY lp.name ASC';
         $paths = $DB->get_records_sql($sql, ['userid' => $userid, 'companyid' => $this->companyid]);
 
-        // Add url for image
+        // Add url for image and courses array
         foreach ($paths as $path) {
             $path->imageurl = $this->get_path_image_url($path->id);
+            $path->courses = array_values($this->get_courselist($path->id));
         }
 
         return $paths; 
