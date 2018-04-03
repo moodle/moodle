@@ -78,7 +78,7 @@ class plugintype_link implements type {
      * @return  array
      */
     public function get_privacy_fields() {
-        return null;
+        return [];
     }
 
     /**
