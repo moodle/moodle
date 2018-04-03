@@ -54,8 +54,7 @@ class section extends \core_search\base {
     public function get_document_recordset($modifiedfrom = 0, \context $context = null) {
         global $DB;
 
-        list ($contextjoin, $contextparams) = $this->get_course_level_context_restriction_sql(
-                $context, 'c');
+        list ($contextjoin, $contextparams) = $this->get_course_level_context_restriction_sql($context, 'c');
         if ($contextjoin === null) {
             return null;
         }
@@ -63,13 +62,18 @@ class section extends \core_search\base {
         $comparetext = $DB->sql_compare_text('cs.summary', 1);
 
         return $DB->get_recordset_sql("
-                SELECT cs.id, cs.course, cs.section, cs.name, cs.summary, cs.summaryformat,
+                SELECT cs.id,
+                       cs.course,
+                       cs.section,
+                       cs.name,
+                       cs.summary,
+                       cs.summaryformat,
                        cs.timemodified
                   FROM {course_sections} cs
                   JOIN {course} c ON c.id = cs.course
           $contextjoin
                  WHERE cs.timemodified >= ?
-                       AND (cs.name != ? OR $comparetext != ?)
+                   AND (cs.name != ? OR $comparetext != ?)
               ORDER BY cs.timemodified ASC", array_merge($contextparams, [$modifiedfrom, '', '']));
     }
 
@@ -147,8 +151,7 @@ class section extends \core_search\base {
      */
     public function get_doc_url(\core_search\document $doc) {
         global $DB;
-        $section = $DB->get_field('course_sections', 'section',
-                ['id' => $doc->get('itemid')], MUST_EXIST);
+        $section = $DB->get_field('course_sections', 'section', ['id' => $doc->get('itemid')], MUST_EXIST);
         $format = course_get_format($doc->get('courseid'));
         return $format->get_view_url($section);
     }
