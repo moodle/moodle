@@ -119,12 +119,22 @@ class qtype_essay_renderer extends qtype_renderer {
 
         $pickeroptions->itemid = $qa->prepare_response_files_draft_itemid(
                 'attachments', $options->context->id);
+        $pickeroptions->accepted_types = $qa->get_question()->filetypeslist;
 
         $fm = new form_filemanager($pickeroptions);
         $filesrenderer = $this->page->get_renderer('core', 'files');
+
+        $text = '';
+        if (!empty($qa->get_question()->filetypeslist)) {
+            $text = html_writer::tag('p', get_string('acceptedfiletypes', 'qtype_essay'));
+            $filetypesutil = new \core_form\filetypes_util();
+            $filetypes = $qa->get_question()->filetypeslist;
+            $filetypedescriptions = $filetypesutil->describe_file_types($filetypes);
+            $text .= $this->render_from_template('core_form/filetypes-descriptions', $filetypedescriptions);
+        }
         return $filesrenderer->render($fm). html_writer::empty_tag(
                 'input', array('type' => 'hidden', 'name' => $qa->get_qt_field_name('attachments'),
-                'value' => $pickeroptions->itemid));
+                'value' => $pickeroptions->itemid)) . $text;
     }
 
     public function manual_comment(question_attempt $qa, question_display_options $options) {
