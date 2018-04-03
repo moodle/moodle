@@ -173,6 +173,7 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
             array('name' => 'tool_mobile_customlangstrings', 'value' => ''),
             array('name' => 'tool_mobile_disabledfeatures', 'value' => ''),
             array('name' => 'tool_mobile_custommenuitems', 'value' => ''),
+            array('name' => 'tool_mobile_apppolicy', 'value' => ''),
         );
         $this->assertCount(0, $result['warnings']);
         $this->assertEquals($expected, $result['settings']);
