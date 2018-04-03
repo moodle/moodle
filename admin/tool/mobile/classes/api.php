@@ -337,6 +337,7 @@ class api {
         }
 
         $features = array(
+            'NoDelegate_CoreOffline' => new lang_string('offlineuse', 'tool_mobile'),
             '$mmLoginEmailSignup' => new lang_string('startsignup'),
             "$mainmenu" => array(
                 '$mmSideMenuDelegate_mmCourses' => new lang_string('mycourses'),
@@ -357,6 +358,8 @@ class api {
                 '$mmCoursesDelegate_mmaGrades' => new lang_string('grades', 'grades'),
                 '$mmCoursesDelegate_mmaCourseCompletion' => new lang_string('coursecompletion', 'completion'),
                 '$mmCoursesDelegate_mmaNotes' => new lang_string('notes', 'notes'),
+                'NoDelegate_CoreCourseDownload' => new lang_string('downloadcourse', 'tool_mobile'),
+                'NoDelegate_CoreCoursesDownload' => new lang_string('downloadcourses', 'tool_mobile'),
             ),
             "$user" => array(
                 '$mmUserDelegate_mmaBadges' => new lang_string('badges', 'badges'),
