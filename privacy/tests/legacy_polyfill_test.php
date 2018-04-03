@@ -66,8 +66,7 @@ class core_privacy_legacy_polyfill_test extends advanced_testcase {
         $mock = $this->createMock(test_legacy_polyfill_mock_wrapper::class);
         $mock->expects($this->once())
             ->method('get_return_value')
-            ->with('_export_user_preferences', [$userid])
-            ->willReturn(null);
+            ->with('_export_user_preferences', [$userid]);
 
         test_legacy_polyfill_user_preference_provider::$mock = $mock;
         test_legacy_polyfill_user_preference_provider::export_user_preferences($userid);
