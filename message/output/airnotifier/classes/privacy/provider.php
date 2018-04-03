@@ -155,7 +155,7 @@ class provider implements \core_privacy\local\metadata\provider, \core_privacy\l
     protected static function get_records($userid) {
         global $DB;
         $sql = "SELECT mad.id, mad.enable, ud.appid, ud.name, ud.model, ud.platform, ud.version, ud.timecreated,
-			ud.timemodified, ud.pushid
+                       ud.timemodified, ud.pushid
                 FROM {message_airnotifier_devices} mad
                 JOIN {user_devices} ud ON mad.userdeviceid = ud.id
                 WHERE ud.userid = :userid";
