@@ -2246,7 +2246,10 @@ class company {
     public static function check_valid_user($companyid, $userid, $deparmentid=0) {
         global $DB, $USER;
 
-        if (is_siteadmin($userid)) {
+        $context = context_system::instance();
+        // If current user is a site admin or they have appropriate capabilities then they can.
+        if (is_siteadmin($USER->id) ||
+            iomad::has_capability('block/iomad_company_admin:company_add', $context)) {
             return true;
         }
 
@@ -2283,6 +2286,13 @@ class company {
         }
 
         $context = context_system::instance();
+        $context = context_system::instance();
+        // If current user is a site admin or they have appropriate capabilities then they can.
+        if (is_siteadmin($USER->id) ||
+            iomad::has_capability('block/iomad_company_admin:company_add', $context)) {
+            return true;
+        }
+    
         // Get my companyid.
         $mycompanyid = iomad::get_my_companyid($context);
 
@@ -2294,16 +2304,6 @@ class company {
         // Check if the user is in the company.
         if ($userrec = $DB->get_record('company_users', array('companyid' => $companyid,
                                                               'userid' => $userid))) {
-
-            // If current user is a site admin then they can.
-            if (is_siteadmin($USER->id)) {
-                return true;
-            }
-
-            // Can't edit an admin user here.
-            if (is_siteadmin($userid)) {
-                return false;
-            }
 
             // Check the current user is a manager or not and what levels they can edit.
             if ($manrec = $DB->get_record('company_users', array('companyid' => $companyid,
