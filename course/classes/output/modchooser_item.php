@@ -38,6 +38,9 @@ use pix_icon;
  */
 class modchooser_item extends \core\output\chooser_item {
 
+    /** @var string */
+    protected $customiconurl;
+
     /**
      * Constructor.
      *
@@ -50,10 +53,33 @@ class modchooser_item extends \core\output\chooser_item {
         if ($colon = strpos($modulename, ':')) {
             $modulename = substr($modulename, 0, $colon);
         }
+        if (preg_match('/src="([^"]*)"/i', $module->icon, $matches)) {
+            // Use the custom icon.
+            $this->customiconurl = str_replace('&amp;', '&', $matches[1]);
+        }
+
         $icon = new pix_icon('icon', '', $modulename, ['class' => 'icon']);
         $help = isset($module->help) ? $module->help : new lang_string('nohelpforactivityorresource', 'moodle');
 
         parent::__construct($module->name, $module->title, $module->link->out(false), $icon, $help, $context);
     }
 
+    /**
+     * Export for template.
+     *
+     * @param \renderer_base $output The renderer
+     * @return \stdClass $data
+     */
+    public function export_for_template(\renderer_base $output) {
+        $data = parent::export_for_template($output);
+        if ($this->customiconurl && !empty($data->icon['attributes'])) {
+            // Replace icon source with a module-provided icon.
+            foreach ($data->icon['attributes'] as &$attribute) {
+                if ($attribute['name'] === 'src') {
+                    $attribute['value'] = $this->customiconurl;
+                }
+            }
+        }
+        return $data;
+    }
 }
