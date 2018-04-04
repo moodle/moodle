@@ -54,6 +54,7 @@ class path {
         // Spot of processing
         foreach ($courses as $course) {
             $course->link = new \moodle_url('/course/view.php', ['id' => $course->courseid]);
+            $course->imageurl = $this->get_course_image_url($course->courseid);
         }
 
         return $courses;
@@ -105,6 +106,29 @@ class path {
 
         return \moodle_url::make_pluginfile_url($pic->get_contextid(), $pic->get_component(), $pic->get_filearea(),
                     $pic->get_itemid(), $pic->get_filepath(), $pic->get_filename());
+    }
+
+    /**
+     * Get course image url
+     * @param int $courseid
+     * @return mixed url or false if no image
+     */
+    public function get_course_image_url($courseid) {
+        global $OUTPUT;
+
+        $fs = get_file_storage();
+
+        $context = \context_course::instance($courseid);
+        $files = $fs->get_area_files($context->id, 'course', 'overviewfiles', 0);
+        foreach ($files as $file) {
+            if ($file->is_valid_image()) {
+                return \moodle_url::make_pluginfile_url($file->get_contextid(), $file->get_component(), $file->get_filearea(),
+                    null, $file->get_filepath(), $file->get_filename());
+            }
+        }
+
+        // No image defined, so...
+        return $OUTPUT->image_url('learningpath', 'local_iomad_learningpath');
     }
 
 }
