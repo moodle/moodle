@@ -94,9 +94,12 @@ class core_plagiarism_privacy_legacy_polyfill_test extends advanced_testcase {
  * @copyright   2018 Jake Dallimore <jrhdallimore@gmail.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class test_legacy_polyfill_plagiarism_provider implements \core_plagiarism\privacy\plagiarism_provider {
+class test_legacy_polyfill_plagiarism_provider implements
+        \core_privacy\local\metadata\provider,
+        \core_plagiarism\privacy\plagiarism_provider {
 
     use \core_plagiarism\privacy\legacy_polyfill;
+    use \core_privacy\local\legacy_polyfill;
 
     /**
      * @var test_legacy_polyfill_plagiarism_provider $mock.
