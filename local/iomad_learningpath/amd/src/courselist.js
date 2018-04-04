@@ -16,7 +16,7 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification'], 
                 $('[data-toggle="tooltip"]').tooltip();
             });
 
-          
+
             /**
              * Handle response from filter ajax
              * @param array courses - full course objects
@@ -34,7 +34,8 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification'], 
 
                 var items = [];
                 $.each(courses, function(id, course) {
-                    items.push('<li class="text-truncate" data-courseid="' + course.id + '"><i class="fa fa-globe"></i> ' + course.fullname + '</li>');
+                    items.push('<li class="text-truncate" data-courseid="' + course.id +
+                        '"><i class="fa fa-globe"></i> ' + course.fullname + '</li>');
                 });
                 $('#prospectivelist').append(items.join(''));
             }
@@ -101,7 +102,8 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification'], 
 
                 var items = [];
                 $.each(courses, function(id, course) {
-                    items.push('<li class="text-truncate" data-courseid="' + course.id + '"><i class="fa fa-globe"></i> ' + course.fullname + '</li>');
+                    items.push('<li class="text-truncate" data-courseid="' + course.id +
+                        '"><i class="fa fa-globe"></i> ' + course.fullname + '</li>');
                 });
                 $('#pathcourselist').append(items.join(''));
             }
@@ -136,13 +138,13 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification'], 
              * Add click handler for adding course
              */
             $('#prospectivelist').on('click', 'li', function() {
-                courseid = $(this).data('courseid');
-                
+                var courseid = $(this).data('courseid');
+
                 // Add the course to the path
                 ajax.call([{
                     methodname: 'local_iomad_learningpath_addcourses',
                     args: {pathid: pathid, courseids: [courseid]},
-                    done: function(result) {
+                    done: function() {
                         pathcourse_list();
                         course_list();
                     },
@@ -155,13 +157,13 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification'], 
              * Add click handler for removing course
              */
             $('#pathcourselist').on('click', 'li', function() {
-                courseid = $(this).data('courseid');
-                
+                var courseid = $(this).data('courseid');
+
                 // Remove the course from the path
                 ajax.call([{
                     methodname: 'local_iomad_learningpath_removecourses',
                     args: {pathid: pathid, courseids: [courseid]},
-                    done: function(result) {
+                    done: function() {
                         pathcourse_list();
                         course_list();
                     },
@@ -169,7 +171,7 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification'], 
                 }]);
             });
 
-             
+
             // Make list sortable somehow
             $("#pathcourselist").sortable({
                 update: function(ev, ui) {
@@ -179,7 +181,6 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification'], 
                     $("#pathcourselist li").each(function() {
                         courses.push($(this).data('courseid'));
                     });
-console.log('COURSES ' + courses);
 
                     // Reorder
                     ajax.call([{

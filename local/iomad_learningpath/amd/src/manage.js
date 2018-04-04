@@ -52,7 +52,7 @@ define(['jquery', 'core/config', 'core/ajax', 'core/notification', 'core/str'], 
                 return false;
             });
 
-        
+
             // Handle delete button
             $('.lp_delete').click(function() {
                 var id = $(this).data('id');
@@ -66,7 +66,7 @@ define(['jquery', 'core/config', 'core/ajax', 'core/notification', 'core/str'], 
                         ajax.call([{
                             methodname: 'local_iomad_learningpath_deletepath',
                             args: { pathid: id },
-                            done: function(result) {
+                            done: function() {
                                 location.reload();
                             },
                             fail: notification.exception,
@@ -93,7 +93,7 @@ define(['jquery', 'core/config', 'core/ajax', 'core/notification', 'core/str'], 
                         ajax.call([{
                             methodname: 'local_iomad_learningpath_copypath',
                             args: { pathid: id },
-                            done: function(result) {
+                            done: function() {
                                 location.reload();
                             },
                             fail: notification.exception,

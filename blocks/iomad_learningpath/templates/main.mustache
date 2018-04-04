@@ -30,9 +30,11 @@
                 </div>
             </div>
 
-            {{# courses }}
-                {{> block_iomad_learningpath/coursecard }}
-            {{/ courses }}
+            <div class="path_courses" data-pathid="{{ pathid }}">
+                {{# courses }}
+                    {{> block_iomad_learningpath/coursecard }}
+                {{/ courses }}
+            </div>
 
         {{/ paths }}
     {{/ ispaths }}

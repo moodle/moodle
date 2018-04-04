@@ -383,7 +383,12 @@ class companypaths {
             $DB->insert_record('iomad_learningpathcourse', $course);
         }
 
-        // TODO: Copy students over
+        // Copy students over
+        $pathusers = $DB->get_records('iomad_learningpathuser', ['pathid' => $pathid]);
+        foreach ($pathusers as $pathuser) {
+            $pathuser->pathid = $newpathid;
+            $DB->insert_record('iomad_learningpathuser', $pathuser);
+        }
     }
 
     /**

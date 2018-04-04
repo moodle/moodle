@@ -1,4 +1,24 @@
-<div>
-    {{ fullname }}
-</div>
 
+            <div class="card">
+                <div class="row">
+                    <div class="col-md-4"></div>
+                    <div class="col-md-8">
+                        <div class="card-block p-b-0">
+                            <p class="m-b-0"><strong>{{ fullname }}</strong></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4 my-auto">
+                        <div class="card-block">
+                            <img class="img-responsive my-auto" src="{{{ imageurl }}}" />
+                        </div>
+                    </div>
+                    <div class="col-md-8 px-3">
+                        <div class="card-block">
+                            {{{ summary }}}
+                            <p class="card-text"><a href="{{ link }}" class="btn btn-primary" data-id="{{ id }}">{{# str }}open, block_iomad_learningpath{{/ str }}</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>

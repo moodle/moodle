@@ -45,11 +45,16 @@ class path {
     public function get_courselist($pathid) {
         global $DB;
 
-        $sql = 'SELECT c.id courseid, c.shortname shortname, c.fullname fullname, lpc.*
+        $sql = 'SELECT c.id courseid, c.shortname shortname, c.fullname fullname, c.summary summary, lpc.*
             FROM {iomad_learningpathcourse} lpc JOIN {course} c ON lpc.course = c.id
             WHERE lpc.path = :pathid
             ORDER BY lpc.sequence';
         $courses = $DB->get_records_sql($sql, ['pathid' => $pathid]);
+
+        // Spot of processing
+        foreach ($courses as $course) {
+            $course->link = new \moodle_url('/course/view.php', ['id' => $course->courseid]);
+        }
 
         return $courses;
     }
@@ -68,6 +73,7 @@ class path {
             JOIN {iomad_learningpathuser} lpu ON lpu.pathid = lp.id
             WHERE lp.company = :companyid
             AND lpu.userid = :userid
+            AND lp.active = 1
             ORDER BY lp.name ASC';
         $paths = $DB->get_records_sql($sql, ['userid' => $userid, 'companyid' => $this->companyid]);
 
