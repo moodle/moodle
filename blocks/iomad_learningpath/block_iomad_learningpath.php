@@ -65,6 +65,9 @@ class block_iomad_learningpath extends block_base {
         $path = new \block_iomad_learningpath\path($companyid, $sitecontext);
         $userpaths = $path->get_user_paths($USER->id);
 
+        // Javascript 
+        $this->page->requires->js_call_amd('local_block_learningpath/path', 'init');
+
         // Render block. 
         $renderable = new \block_iomad_learningpath\output\main($userpaths);
         $renderer = $this->page->get_renderer('block_iomad_learningpath');

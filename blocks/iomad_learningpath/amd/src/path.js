@@ -5,7 +5,7 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification'], 
 
     return {
 
-        init: function(companyid, pathid) {
+        init: function() {
 
         }
     }
