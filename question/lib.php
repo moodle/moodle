@@ -58,10 +58,12 @@ function core_question_output_fragment_tags_form($args) {
 
         $category = $question->categoryobject;
         $questioncontext = \context::instance_by_id($category->contextid);
+        $contexts = new \question_edit_contexts($editingcontext);
 
         $formoptions = [
             'editingcontext' => $editingcontext,
-            'questioncontext' => $questioncontext
+            'questioncontext' => $questioncontext,
+            'contexts' => $contexts->all()
         ];
         $data = [
             'id' => $question->id,

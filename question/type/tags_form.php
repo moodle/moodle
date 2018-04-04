@@ -27,7 +27,7 @@ namespace core_question\form;
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/lib/formslib.php');
-
+require_once($CFG->dirroot . '/lib/questionlib.php');
 /**
  * The mform class for  manage question tags.
  *
@@ -59,8 +59,18 @@ class tags extends \moodleform {
         $mform->addElement('static', 'context', '');
 
         if (\core_tag_tag::is_enabled('core_question', 'question')) {
-            $mform->addElement('tags', 'tags', get_string('tags'),
-                    ['itemtype' => 'question', 'component' => 'core_question']);
+            $tags = \core_tag_tag::get_tags_by_area_in_contexts('core_question', 'question', $customdata['contexts']);
+            $tagstrings = [];
+            foreach ($tags as $tag) {
+                $tagstrings[$tag->name] = $tag->name;
+            }
+
+            $options = [
+                'tags' => true,
+                'multiple' => true,
+                'noselectionstring' => get_string('anytags', 'quiz'),
+            ];
+            $mform->addElement('autocomplete', 'tags',  get_string('tags'), $tagstrings, $options);
 
             // Is the question category in a course context?
             $qcontext = $customdata['questioncontext'];
@@ -77,8 +87,7 @@ class tags extends \moodleform {
                 // allow course tags to be added to the course.
                 $coursetagheader = get_string('questionformtagheader', 'core_question',
                     $editingcoursecontext->get_context_name(true));
-                $mform->addElement('tags', 'coursetags', $coursetagheader,
-                        array('itemtype' => 'question', 'component' => 'core_question'));
+                $mform->addElement('autocomplete', 'coursetags',  $coursetagheader, $tagstrings, $options);
 
             }
         }
