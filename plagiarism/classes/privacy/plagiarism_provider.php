@@ -34,10 +34,7 @@ defined('MOODLE_INTERNAL') || die();
  */
 interface plagiarism_provider extends
         // The plagiarism_provider should be implemented by plugins which only provide information to a subsystem.
-        \core_privacy\local\request\plugin\subsystem_provider,
-
-        // All plagiarism plugins should also implement the metadata provider.
-        \core_privacy\local\metadata\provider {
+        \core_privacy\local\request\plugin\subsystem_provider {
 
     /**
      * Export all plagiarism data from each plagiarism plugin for the specified userid and context.
