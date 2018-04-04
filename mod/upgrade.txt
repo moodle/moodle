@@ -1,6 +1,11 @@
 This files describes API changes in /mod/* - activity modules,
 information provided here is intended especially for developers.
 
+=== 3.5.2 ===
+
+* Now, when mod_<modname>_core_calendar_is_event_visible or mod_<modname>_core_calendar_provide_event_action callback functions
+  are called, the userid of the requesting user is also passed to them.
+
 === 3.5 ===
 
 * There is a new privacy API that every subsystem and plugin has to implement so that the site can become GDPR
