@@ -3258,6 +3258,11 @@ function calendar_get_legacy_events($tstart, $tend, $users, $groups, $courses,
         return $param;
     }, [$users, $groups, $courses, $categories]);
 
+    // If a single user is provided, we can use that for capability checks.
+    // Otherwise current logged in user is used - See MDL-58768.
+    if (is_array($userparam) && count($userparam) == 1) {
+        \core_calendar\local\event\container::set_requesting_user($userparam[0]);
+    }
     $mapper = \core_calendar\local\event\container::get_event_mapper();
     $events = \core_calendar\local\api::get_events(
         $tstart,
