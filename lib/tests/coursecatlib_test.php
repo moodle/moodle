@@ -797,6 +797,83 @@ class core_coursecatlib_testcase extends advanced_testcase {
         $this->assertEquals("{$cat1name} / {$cat2name} / {$cat4name}", $category4->get_nested_name(false));
     }
 
+    public function test_coursecat_is_uservisible() {
+        global $USER;
+
+        // Create category 1 as visible.
+        $category1 = coursecat::create(array('name' => 'Cat1', 'visible' => 1));
+        // Create category 2 as hidden.
+        $category2 = coursecat::create(array('name' => 'Cat2', 'visible' => 0));
+
+        $this->assertTrue($category1->is_uservisible());
+        $this->assertFalse($category2->is_uservisible());
+
+        $this->assign_capability('moodle/category:viewhiddencategories');
+
+        $this->assertTrue($category1->is_uservisible());
+        $this->assertTrue($category2->is_uservisible());
+
+        // First, store current user's id, then login as another user.
+        $userid = $USER->id;
+        $this->setUser($this->getDataGenerator()->create_user());
+
+        // User $user should still have the moodle/category:viewhiddencategories capability.
+        $this->assertTrue($category1->is_uservisible($userid));
+        $this->assertTrue($category2->is_uservisible($userid));
+
+        $this->assign_capability('moodle/category:viewhiddencategories', CAP_INHERIT);
+
+        $this->assertTrue($category1->is_uservisible());
+        $this->assertFalse($category2->is_uservisible());
+    }
+
+    public function test_current_user_coursecat_get() {
+        $this->assign_capability('moodle/category:viewhiddencategories');
+
+        // Create category 1 as visible.
+        $category1 = coursecat::create(array('name' => 'Cat1', 'visible' => 1));
+        // Create category 2 as hidden.
+        $category2 = coursecat::create(array('name' => 'Cat2', 'visible' => 0));
+
+        $this->assertEquals($category1->id, coursecat::get($category1->id)->id);
+        $this->assertEquals($category2->id, coursecat::get($category2->id)->id);
+
+        // Login as another user to test coursecat::get.
+        $this->setUser($this->getDataGenerator()->create_user());
+        $this->assertEquals($category1->id, coursecat::get($category1->id)->id);
+
+        // Expecting to get an exception as this new user does not have the moodle/category:viewhiddencategories capability.
+        $this->expectException('moodle_exception');
+        $this->expectExceptionMessage('unknowncategory');
+        coursecat::get($category2->id);
+    }
+
+    public function test_another_user_coursecat_get() {
+        global $USER;
+
+        $this->assign_capability('moodle/category:viewhiddencategories');
+
+        // Create category 1 as visible.
+        $category1 = coursecat::create(array('name' => 'Cat1', 'visible' => 1));
+        // Create category 2 as hidden.
+        $category2 = coursecat::create(array('name' => 'Cat2', 'visible' => 0));
+
+        // First, store current user's object, then login as another user.
+        $user1 = $USER;
+        $user2 = $this->getDataGenerator()->create_user();
+        $this->setUser($user2);
+
+        $this->assertEquals($category1->id, coursecat::get($category1->id, MUST_EXIST, false, $user1)->id);
+        $this->assertEquals($category2->id, coursecat::get($category2->id, MUST_EXIST, false, $user1)->id);
+
+        $this->setUser($user1);
+
+        $this->assertEquals($category1->id, coursecat::get($category1->id, MUST_EXIST, false, $user2)->id);
+        $this->expectException('moodle_exception');
+        $this->expectExceptionMessage('unknowncategory');
+        coursecat::get($category2->id, MUST_EXIST, false, $user2);
+    }
+
     /**
      * Creates a draft area for current user and fills it with fake files
      *
