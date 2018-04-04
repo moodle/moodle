@@ -43,7 +43,7 @@ information provided here is intended especially for developers.
   MDL-55611 can be found at https://docs.moodle.org/dev/Calendar_API. The 3 new callbacks are:
   - mod_<modname>_core_calendar_is_event_visible
   - mod_<modname>_core_calendar_provide_event_action
-  - mod_<modname>_core_calendar_event_action_show_items_acount
+  - mod_<modname>_core_calendar_event_action_shows_item_count
 * Changes to the moodleform_mod class and its usage (MDL-58138):
   - the get_data() method has been overriden. The implementation calls parent::get_data() and a new data_postprocessing() method
   - new data_postprocessing() method added. Mods can override this in their mod_form subclass to modify the submit data. Previously
