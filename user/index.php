@@ -234,6 +234,8 @@ $participanttable->out($perpage, true);
 $participanttablehtml = ob_get_contents();
 ob_end_clean();
 
+echo html_writer::tag('p', get_string('participantscount', 'moodle', $participanttable->totalrows));
+
 if ($bulkoperations) {
     echo '<form action="action_redir.php" method="post" id="participantsform">';
     echo '<div>';
