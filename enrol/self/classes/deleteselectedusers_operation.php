@@ -61,13 +61,13 @@ class enrol_self_deleteselectedusers_operation extends enrol_bulk_enrolment_oper
      * @return enrol_manual_editselectedusers_form
      */
     public function get_form($defaultaction = null, $defaultcustomdata = null) {
-        global $CFG;
         if (!array($defaultcustomdata)) {
             $defaultcustomdata = array();
         }
         $defaultcustomdata['title'] = $this->get_title();
         $defaultcustomdata['message'] = get_string('confirmbulkdeleteenrolment', 'enrol_self');
         $defaultcustomdata['button'] = get_string('unenrolusers', 'enrol_self');
+
         return new enrol_self_deleteselectedusers_form($defaultaction, $defaultcustomdata);
     }
 
@@ -79,11 +79,10 @@ class enrol_self_deleteselectedusers_operation extends enrol_bulk_enrolment_oper
      * @param stdClass $properties The data returned by the form.
      */
     public function process(course_enrolment_manager $manager, array $users, stdClass $properties) {
-        global $DB;
-
         if (!has_capability("enrol/self:unenrol", $manager->get_context())) {
             return false;
         }
+
         foreach ($users as $user) {
             foreach ($user->enrolments as $enrolment) {
                 $plugin = $enrolment->enrolmentplugin;
@@ -93,7 +92,7 @@ class enrol_self_deleteselectedusers_operation extends enrol_bulk_enrolment_oper
                 }
             }
         }
+
         return true;
     }
 }
-

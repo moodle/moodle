@@ -156,8 +156,6 @@ class enrol_self_editselectedusers_operation extends enrol_bulk_enrolment_operat
      * @return enrol_self_editselectedusers_form
      */
     public function get_form($defaultaction = null, $defaultcustomdata = null) {
-        global $CFG;
         return new enrol_self_editselectedusers_form($defaultaction, $defaultcustomdata);
     }
 }
-
