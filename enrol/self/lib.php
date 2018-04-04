@@ -695,6 +695,25 @@ class enrol_self_plugin extends enrol_plugin {
     }
 
     /**
+     * The self enrollment plugin has several bulk operations that can be performed.
+     * @param course_enrolment_manager $manager
+     * @return array
+     */
+    public function get_bulk_operations(course_enrolment_manager $manager) {
+        global $CFG;
+        require_once($CFG->dirroot.'/enrol/self/locallib.php');
+        $context = $manager->get_context();
+        $bulkoperations = array();
+        if (has_capability("enrol/self:manage", $context)) {
+            $bulkoperations['editselectedusers'] = new enrol_self_editselectedusers_operation($manager, $this);
+        }
+        if (has_capability("enrol/self:unenrol", $context)) {
+            $bulkoperations['deleteselectedusers'] = new enrol_self_deleteselectedusers_operation($manager, $this);
+        }
+        return $bulkoperations;
+    }
+
+    /**
      * Add elements to the edit instance form.
      *
      * @param stdClass $instance
