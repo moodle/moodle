@@ -4911,7 +4911,11 @@ class assign {
                                                                         $data));
         }
         $o = '';
-        $o .= $this->get_renderer()->header();
+        $o .= $this->get_renderer()->render(new assign_header($this->get_instance(),
+                                                              $this->get_context(),
+                                                              $this->show_intro(),
+                                                              $this->get_course_module()->id,
+                                                              get_string('confirmsubmissionheading', 'assign')));
         $submitforgradingpage = new assign_submit_for_grading_page($notifications,
                                                                    $this->get_course_module()->id,
                                                                    $mform);
