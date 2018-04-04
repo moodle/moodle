@@ -23,6 +23,9 @@ information provided here is intended especially for developers.
     - I follow "<link_string>"" in the open menu
 * Removed the lib/password_compat/lib/password.php file.
 
+* coursecat::get() now has optional $user parameter.
+* coursecat::is_uservisible() now has optional $user parameter.
+
 === 3.5 ===
 
 * There is a new privacy API that every subsystem and plugin has to implement so that the site can become GDPR
