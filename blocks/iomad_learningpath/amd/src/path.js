@@ -7,6 +7,15 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification'], 
 
         init: function() {
 
+            /**
+             * Click learning path open button
+             */
+            $('.lpbutton').on('click', function() {
+                var id = $(this).data('id');
+
+                $('[data-pathid="' + id + '"]').show(400);
+                $('.pathdescription').hide(400);
+            })
         }
     }
 });

@@ -6,7 +6,7 @@
     {{/ ispaths }}
     {{# ispaths }}
         {{# paths }}
-            <div class="card">
+            <div class="pathdescription card">
                 <div class="row">
                     <div class="col-md-4"></div>
                     <div class="col-md-8">
@@ -24,13 +24,13 @@
                     <div class="col-md-8 px-3">
                         <div class="card-block">
                             {{{ description }}}
-                            <p class="card-text"><button class="btn btn-primary" data-id="{{ id }}">{{# str }}open, block_iomad_learningpath{{/ str }}</button></p>
+                            <p class="card-text"><button class="lpbutton btn btn-primary" data-id="{{ id }}">{{# str }}open, block_iomad_learningpath{{/ str }}</button></p>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="path_courses" data-pathid="{{ pathid }}" style="display:none">
+            <div class="path_courses" data-pathid="{{ id }}" style="display:none">
                 {{# courses }}
                     {{> block_iomad_learningpath/coursecard }}
                 {{/ courses }}
