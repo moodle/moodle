@@ -23,5 +23,6 @@
  */
 
 $string['dataformat'] = 'Microsoft Excel (.xlsx)';
+$string['privacy:metadata'] = 'The Excel Data format plugin does not store any personal data.';
 $string['shortname'] = 'Excel';
 
