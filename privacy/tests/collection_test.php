@@ -60,7 +60,7 @@ class core_privacy_metadata_collection extends advanced_testcase {
     public function test_add_type_known_type() {
         $collection = new collection('core_privacy');
 
-        $linked = new types\subsystem_link('example', 'langstring');
+        $linked = new types\subsystem_link('example', [], 'langstring');
         $collection->add_type($linked);
 
         $items = $collection->get_collection();
@@ -74,10 +74,10 @@ class core_privacy_metadata_collection extends advanced_testcase {
     public function test_add_type_multiple() {
         $collection = new collection('core_privacy');
 
-        $a = new types\subsystem_link('example', 'langstring');
+        $a = new types\subsystem_link('example', [], 'langstring');
         $collection->add_type($a);
 
-        $b = new types\subsystem_link('example', 'langstring');
+        $b = new types\subsystem_link('example', [], 'langstring');
         $collection->add_type($b);
 
         $items = $collection->get_collection();

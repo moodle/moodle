@@ -86,12 +86,28 @@ class collection {
     /**
      * Function to link a subsystem to the component.
      *
-     * @param   string  $name the name of the subsystem to link.
-     * @param   string  $summary A description of what is stored within this subsystem.
+     * @param   string $name the name of the subsystem to link.
+     * @param   array $privacyfields An optional associative array of fieldname to description.
+     * @param   string $summary A description of what is stored within this subsystem.
+     * @return  $this
+     */
+    public function add_subsystem_link($name, array $privacyfields = [], $summary = '') {
+        $this->add_type(new types\subsystem_link($name, $privacyfields, $summary));
+
+        return $this;
+    }
+
+    /**
+     * Old function to link a subsystem to the component.
+     *
+     * This function is legacy and is not recommended. Please use add_subsystem_link() instead.
+     *
+     * @param   string $name the name of the subsystem to link.
+     * @param   string $summary A description of what is stored within this subsystem.
      * @return  $this
      */
     public function link_subsystem($name, $summary = '') {
-        $this->add_type(new types\subsystem_link($name, $summary));
+        $this->add_type(new types\subsystem_link($name, [], $summary));
 
         return $this;
     }
@@ -100,17 +116,50 @@ class collection {
      * Function to link a plugin to the component.
      *
      * @param   string  $name the name of the plugin to link.
-     * @param   string  $summary A description of what tis stored within this plugin.
+     * @param   array $privacyfields An optional associative array of fieldname to description.
+     * @param   string  $summary A description of what is stored within this plugin.
+     * @return  $this
+     */
+    public function add_plugintype_link($name, array $privacyfields = [], $summary = '') {
+        $this->add_type(new types\plugintype_link($name, $privacyfields, $summary));
+
+        return $this;
+    }
+
+    /**
+     * Old function to link a plugin to the component.
+     *
+     * This function is legacy and is not recommended. Please use add_plugintype_link() instead.
+     *
+     * @param   string  $name the name of the plugin to link.
+     * @param   string  $summary A description of what is stored within this plugin.
      * @return  $this
      */
     public function link_plugintype($name, $summary = '') {
-        $this->add_type(new types\plugintype_link($name, $summary));
+        $this->add_type(new types\plugintype_link($name, [], $summary));
 
         return $this;
     }
 
     /**
      * Function to indicate that data may be exported to an external location.
+     *
+     * @param   string  $name A name for the type of data exported.
+     * @param   array   $privacyfields A list of fields with their description.
+     * @param   string  $summary A description of what the table is used for. This is a language string identifier
+     *                           within the component.
+     * @return  $this
+     */
+    public function add_external_location_link($name, array $privacyfields, $summary = '') {
+        $this->add_type(new types\external_location($name, $privacyfields, $summary));
+
+        return $this;
+    }
+
+    /**
+     * Old function to indicate that data may be exported to an external location.
+     *
+     * This function is legacy and is not recommended. Please use add_external_location_link() instead.
      *
      * @param   string  $name A name for the type of data exported.
      * @param   array   $privacyfields A list of fields with their description.
