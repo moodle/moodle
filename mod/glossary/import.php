@@ -280,6 +280,19 @@ if ($xml = glossary_read_imported_file($result)) {
                 $DB->update_record("glossary_entries", array('id' => $newentry->id, 'attachment' => '1'));
             }
 
+            // Import tags associated with the entry.
+            if (core_tag_tag::is_enabled('mod_glossary', 'glossary_entries')) {
+                $xmltags = @$xmlentry['#']['TAGS'][0]['#']['TAG']; // Ignore missing TAGS.
+                $sizeofxmltags = count($xmltags);
+                for ($k = 0; $k < $sizeofxmltags; $k++) {
+                    // Importing tags.
+                    $tag = $xmltags[$k]['#'];
+                    if (!empty($tag)) {
+                        core_tag_tag::add_item_tag('mod_glossary', 'glossary_entries', $newentry->id, $glossarycontext, $tag);
+                    }
+                }
+            }
+
         } else {
             $entriesrejected++;
             if ( $newentry->concept and $newentry->definition ) {
