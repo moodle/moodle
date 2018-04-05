@@ -32,3 +32,16 @@ Feature: Importing glossary entries
     And I am on "Course 1" course homepage
     And I should see "Added Glossary" in the "Recent activity" "block"
     And I should see "New glossary entries:" in the "Recent activity" "block"
+
+  @javascript @block_tags
+  Scenario: Importing glossary entries and checking Tags block
+    Given I log in as "teacher1"
+    And I am on "Course 1" course homepage with editing mode on
+    And I add the "Tags" block
+    And I follow "Glossary 1"
+    And I navigate to "Import entries" in current page administration
+    And I upload "mod/glossary/tests/fixtures/musicians.xml" file to "File to import" filemanager
+    When I press "Submit"
+    And I am on "Course 1" course homepage
+    And I click on "Beatles" "link" in the "Tags" "block"
+    Then I should see "Paul McCartney"
