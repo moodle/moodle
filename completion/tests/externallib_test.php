@@ -244,13 +244,12 @@ class core_completion_externallib_testcase extends externallib_advanced_testcase
         $course  = $this->getDataGenerator()->create_course(['enablecompletion' => 1]);
         $student = $this->getDataGenerator()->create_user();
         $teacher = $this->getDataGenerator()->create_user();
-        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $studentrole = $DB->get_record('role', ['shortname' => 'student']);
         $this->getDataGenerator()->enrol_user($student->id, $course->id, $studentrole->id);
-        $teacherrole = $DB->get_record('role', array('shortname' => 'teacher'));
+        $teacherrole = $DB->get_record('role', ['shortname' => 'teacher']);
         $this->getDataGenerator()->enrol_user($teacher->id, $course->id, $teacherrole->id);
-        $coursecontext = context_course::instance($course->id);
 
-        // Create 2 activities, one with manual completion (data), one with automatic completion triggered by viewiung it (forum).
+        // Create 2 activities, one with manual completion (data), one with automatic completion triggered by viewing it (forum).
         $data    = $this->getDataGenerator()->create_module('data', ['course' => $course->id], ['completion' => 1]);
         $forum   = $this->getDataGenerator()->create_module('forum',  ['course' => $course->id],
                                                             ['completion' => 2, 'completionview' => 1]);
@@ -291,22 +290,38 @@ class core_completion_externallib_testcase extends externallib_advanced_testcase
         $completionforum = $completion->get_data($cmforum, false, $student->id);
         $this->assertEquals(COMPLETION_INCOMPLETE, $completionforum->completionstate);
 
-        // Test overriding the status of the auto-completion-activity to an invalid state. It should remain incomplete.
+        // Test overriding the status of the auto-completion-activity to an invalid state.
         $this->expectException('moodle_exception');
-        $result = core_completion_external::override_activity_completion_status($student->id, $forum->cmid, 3);
-        $result = external_api::clean_returnvalue(core_completion_external::override_activity_completion_status_returns(), $result);
-        $this->assertEquals($result['state'], COMPLETION_INCOMPLETE);
-        $completionforum = $completion->get_data($cmforum, false, $student->id);
-        $this->assertEquals(COMPLETION_INCOMPLETE, $completionforum->completionstate);
+        core_completion_external::override_activity_completion_status($student->id, $forum->cmid, 3);
+    }
 
-        // Test overriding the status of the auto-completion-activity for a user without capabilities. It should remain incomplete.
-        $this->expectException('moodle_exception');
-        unassign_capability('moodle/course:overridecompletion', $teacherrole->id, $coursecontext);
-        $result = core_completion_external::override_activity_completion_status($student->id, $forum->cmid, 1);
-        $result = external_api::clean_returnvalue(core_completion_external::override_activity_completion_status_returns(), $result);
-        $this->assertEquals($result['state'], COMPLETION_INCOMPLETE);
-        $completionforum = $completion->get_data($cmforum, false, $student->id);
-        $this->assertEquals(COMPLETION_INCOMPLETE, $completionforum->completionstate);
+    /**
+     * Test overriding the activity completion status as a user without the capability to do so.
+     */
+    public function test_override_status_user_without_capability() {
+        global $DB, $CFG;
+        $this->resetAfterTest(true);
+
+        // Create course with teacher and student enrolled.
+        $CFG->enablecompletion = true;
+        $course  = $this->getDataGenerator()->create_course(['enablecompletion' => 1]);
+        $student = $this->getDataGenerator()->create_user();
+        $teacher = $this->getDataGenerator()->create_user();
+        $studentrole = $DB->get_record('role', ['shortname' => 'student']);
+        $this->getDataGenerator()->enrol_user($student->id, $course->id, $studentrole->id);
+        $teacherrole = $DB->get_record('role', ['shortname' => 'teacher']);
+        $this->getDataGenerator()->enrol_user($teacher->id, $course->id, $teacherrole->id);
+        $coursecontext = context_course::instance($course->id);
+
+        // Create an activity with automatic completion (a forum).
+        $forum   = $this->getDataGenerator()->create_module('forum',  ['course' => $course->id],
+            ['completion' => 2, 'completionview' => 1]);
+
+        // Test overriding the status of the activity for a user without the capability.
+        $this->setUser($teacher);
+        assign_capability('moodle/course:overridecompletion', CAP_PREVENT, $teacherrole->id, $coursecontext);
+        $this->expectException('required_capability_exception');
+        core_completion_external::override_activity_completion_status($student->id, $forum->cmid, COMPLETION_COMPLETE);
     }
 
     /**
