@@ -97,7 +97,7 @@ define(['jquery', 'core/str', 'core/modal_factory', 'core/modal_events', 'core/n
                     var formData = $(e.currentTarget).serialize();
                     this.showFormModal(formData, triggers);
                 } else {
-                    Str.get_strings(this.stringKeys).done(function (strings) {
+                    Str.get_strings(this.stringKeys).done(function(strings) {
                         Notification.alert('', strings[2], strings[3]);
                     });
                 }
@@ -233,12 +233,11 @@ define(['jquery', 'core/str', 'core/modal_factory', 'core/modal_events', 'core/n
              * Attach event listeners to initialise this module.
              *
              * @method init
-             * @param {string} selector The CSS selector used to find nodes that will trigger this module.
              * @param {int} contextid The contextid for the course.
-             * @return {Promise}
+             * @return {AcceptOnBehalf}
              */
             getInstance: function(contextid) {
-                new AcceptOnBehalf(contextid);
+                return new AcceptOnBehalf(contextid);
             }
         };
     });

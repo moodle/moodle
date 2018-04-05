@@ -27,7 +27,7 @@ define([
     'core/config',
     'core/str',
     'core/modal_factory',
-    'core/modal_events',
+    'core/modal_events'
 ], function($, Log, Config, Str, ModalFactory, ModalEvents) {
 
     "use strict";
@@ -42,7 +42,7 @@ define([
         LINKS: '[data-action]',
         MAKE_CURRENT: '[data-action="makecurrent"]',
         INACTIVATE: '[data-action="inactivate"]',
-        DELETE: '[data-action="delete"]',
+        DELETE: '[data-action="delete"]'
     };
 
     /**
@@ -75,7 +75,7 @@ define([
                         name: link.closest('[data-policy-name]').attr('data-policy-name'),
                         revision: link.closest('[data-policy-revision]').attr('data-policy-revision')
                     }},
-                    {key: 'activateconfirmyes', component: 'tool_policy'},
+                    {key: 'activateconfirmyes', component: 'tool_policy'}
                 ]);
 
             } else if (link.is(ACTION.INACTIVATE)) {
@@ -85,7 +85,7 @@ define([
                         name: link.closest('[data-policy-name]').attr('data-policy-name'),
                         revision: link.closest('[data-policy-revision]').attr('data-policy-revision')
                     }},
-                    {key: 'inactivatingconfirmyes', component: 'tool_policy'},
+                    {key: 'inactivatingconfirmyes', component: 'tool_policy'}
                 ]);
 
             } else if (link.is(ACTION.DELETE)) {
@@ -95,7 +95,7 @@ define([
                         name: link.closest('[data-policy-name]').attr('data-policy-name'),
                         revision: link.closest('[data-policy-revision]').attr('data-policy-revision')
                     }},
-                    {key: 'delete', component: 'core'},
+                    {key: 'delete', component: 'core'}
                 ]);
 
             } else {
@@ -105,7 +105,7 @@ define([
 
             e.preventDefault();
 
-            return promise.then(function(strs) {
+            promise.then(function(strs) {
                 strings = strs;
                 return ModalFactory.create({
                     title: strings[0],
@@ -116,19 +116,19 @@ define([
             }).then(function(modal) {
                 modal.setSaveButtonText(strings[2]);
                 modal.getRoot().on(ModalEvents.save, function() {
-                    window.location.href =  link.attr('href') + '&sesskey=' + Config.sesskey + '&confirm=1';
+                    window.location.href = link.attr('href') + '&sesskey=' + Config.sesskey + '&confirm=1';
                 });
 
                 modal.getRoot().on(ModalEvents.hidden, function() {
                     modal.destroy();
                 });
 
-                return modal;
-
-            }).then(function(modal) {
                 modal.show();
                 return true;
 
+            }).catch(function(e) {
+                Log.error(e);
+                return false;
             });
         });
     };
@@ -137,8 +137,8 @@ define([
         /**
          * Factory method returning instance of the ManageDocsActions
          *
-         * @param {string} baseid - ID of the management area wrapping element
-         * @return ManageDocsActions
+         * @param {String} baseid - ID of the management area wrapping element
+         * @return {ManageDocsActions}
          */
         init: function(baseid) {
             var base = $(document.getElementById(baseid));

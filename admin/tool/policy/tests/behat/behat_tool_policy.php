@@ -42,6 +42,16 @@ class behat_tool_policy extends behat_base {
      *
      * @Given /^the following policies exist:$/
      *
+     * Supported table fields:
+     *
+     * - Name: Policy name (required).
+     * - Revision: Revision name (policy version).
+     * - Status: Policy version status - 'draft', 'active' or 'archived'. Defaults to 'active'.
+     * - Audience: Target users - 'guest', 'all' or 'loggedin'. Default to 'all'.
+     * - Type: 0 - site policy, 1 - privacy policy, 2 - third party policy, 99 - other.
+     * - Summary: Policy summary text.
+     * - Content: Policy full text.
+     *
      * @param TableNode $data
      */
     public function the_following_policies_exist(TableNode $data) {
@@ -51,12 +61,12 @@ class behat_tool_policy extends behat_base {
         }
 
         $fields = [
-            'name', // Policy name (required).
-            'revision', // Revision name.
-            'policy', // Any policy identifier, can be used to generate multiple versions of the same policy.
-            'status', // Version status: 'draft', 'active', 'archived'. By default 'active'.
-            'audience', // Audience: 'guest', 'all', 'loggedin' (by default 'all').
-            'type', // 0 (default) - Site policy, 1 - Privacy policy, 2 - Third party policy, 99 - Other .
+            'name',
+            'revision',
+            'policy',
+            'status',
+            'audience',
+            'type',
             'content',
             'summary',
         ];

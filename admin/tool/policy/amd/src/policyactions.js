@@ -97,6 +97,7 @@ function($, Ajax, Notification, ModalFactory, ModalEvents) {
                         return modal;
                     });
                 }
+                return false;
             }).done(function(modal) {
                 // Show the modal.
                 modal.show();

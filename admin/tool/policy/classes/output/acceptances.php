@@ -54,6 +54,7 @@ class acceptances implements renderable, templatable {
      * Contructor.
      *
      * @param int $userid
+     * @param string|moodle_url $returnurl
      */
     public function __construct($userid, $returnurl = null) {
         $this->userid = $userid;
