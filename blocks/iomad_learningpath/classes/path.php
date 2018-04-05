@@ -55,7 +55,9 @@ class path {
         foreach ($courses as $course) {
             $course->link = new \moodle_url('/course/view.php', ['id' => $course->courseid]);
             $course->imageurl = $this->get_course_image_url($course->courseid);
+            $course->progresspercent = \core_completion\progress::get_course_progress_percentage($course);
         }
+//echo "<pre>"; var_dump($courses); die;
 
         return $courses;
     }

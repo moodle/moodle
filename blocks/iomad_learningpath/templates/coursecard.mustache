@@ -18,6 +18,12 @@
             <div class="col-md-8 px-3">
                 <div class="card-block">
                     {{{ summary }}}
+                    {{# progresspercent }}
+                        <p>{{ progresspercent }}%</p>
+                    {{/ progresspercent }}
+                    {{^ progresspercent }}
+                        <p>{{# str }}nocompletion, block_iomad_learningpath{{/ str }}</p>
+                    {{/ progresspercent }} 
                 </div>
             </div>
         </div>
