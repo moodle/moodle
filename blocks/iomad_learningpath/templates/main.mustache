@@ -5,6 +5,11 @@
         </div>
     {{/ ispaths }}
     {{# ispaths }}
+       
+        <div class="p-b-2">
+            <button class="lpreturn btn btn-primary" style="display: none">{{# str }}returntopath, block_iomad_learningpath{{/ str }}</button>
+        </div>
+
         {{# paths }}
             <div class="pathdescription card">
                 <div class="row">
@@ -37,5 +42,10 @@
             </div>
 
         {{/ paths }}
+
+        <div class="p-b-2">
+            <button class="lpreturn btn btn-primary" style="display: none">{{# str }}returntopath, block_iomad_learningpath{{/ str }}</button>
+        </div>
+
     {{/ ispaths }}
 </div>
