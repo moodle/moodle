@@ -159,10 +159,10 @@ class lineitems extends resource_base {
     private function get_json_for_get_request($items, $resourceid, $ltilinkid,
             $tag, $limitfrom, $limitnum, $totalcount, $typeid, $response) {
 
-        $firstpage = '';
-        $nextpage = '';
-        $prevpage = '';
-        $lastpage = '';
+        $firstpage = null;
+        $nextpage = null;
+        $prevpage = null;
+        $lastpage = null;
         if (isset($limitnum) && $limitnum > 0) {
             if ($limitfrom >= $totalcount || $limitfrom < 0) {
                 $outofrange = true;
@@ -173,58 +173,39 @@ class lineitems extends resource_base {
             $limitcurrent = $limitfrom;
             $limitlast = $totalcount - $limitnum + 1 >= 0 ? $totalcount - $limitnum + 1 : 0;
             $limitfrom += $limitnum;
-            if (is_null($typeid)) {
-                if (($limitfrom <= $totalcount - 1) && (!$outofrange)) {
-                    $nextpage = $this->get_endpoint() . "?limit=" . $limitnum . "&from=" . $limitfrom;
-                }
-                $firstpage = $this->get_endpoint() . "?limit=" . $limitnum . "&from=0";
-                $canonicalpage = $this->get_endpoint() . "?limit=" . $limitnum . "&from=" . $limitcurrent;
-                $lastpage = $this->get_endpoint() . "?limit=" . $limitnum . "&from=" . $limitlast;
-                if (($limitcurrent > 0) && (!$outofrange)) {
-                    $prevpage = $this->get_endpoint() . "?limit=" . $limitnum . "&from=" . $limitprev;
-                }
-            } else {
-                if (($limitfrom <= $totalcount - 1) && (!$outofrange)) {
-                    $nextpage = $this->get_endpoint() . "?type_id=" . $typeid . "&limit=" . $limitnum . "&from=" . $limitfrom;
-                }
-                $firstpage = $this->get_endpoint() . "?type_id=" . $typeid . "&limit=" . $limitnum . "&from=0";
-                $canonicalpage = $this->get_endpoint() . "?type_id=" . $typeid . "&limit=" . $limitnum . "&from=" . $limitcurrent;
-                $lastpage = $this->get_endpoint() . "?type_id=" . $typeid . "&limit=" . $limitnum . "&from=" . $limitlast;
-                if (($limitcurrent > 0) && (!$outofrange)) {
-                    $prevpage = $this->get_endpoint() . "?type_id=" . $typeid . "&limit=" . $limitnum . "&from=" . $limitprev;
-                }
-            }
+
+            $baseurl = new \moodle_url($this->get_endpoint());
             if (isset($resourceid)) {
-                if (($limitfrom <= $totalcount - 1) && (!$outofrange)) {
-                    $nextpage .= "&resource_id={$resourceid}";
-                }
-                $firstpage .= "&resource_id={$resourceid}";
-                $canonicalpage .= "&resource_id={$resourceid}";
-                $lastpage .= "&resource_id={$resourceid}";
-                if (($limitcurrent > 0) && (!$outofrange)) {
-                    $prevpage .= "&resource_id={$resourceid}";
-                }
+                $baseurl->param('resource_id', $resourceid);
             }
             if (isset($ltilinkid)) {
-                if (($limitfrom <= $totalcount - 1) && (!$outofrange)) {
-                    $nextpage .= "&lti_link_id={$ltilinkid}";
-                }
-                $firstpage .= "&lti_link_id={$ltilinkid}";
-                $canonicalpage .= "&lti_link_id={$ltilinkid}";
-                $lastpage .= "&lti_link_id={$ltilinkid}";
-                if (($limitcurrent > 0) && (!$outofrange)) {
-                    $prevpage .= "&lti_link_id={$ltilinkid}";
-                }
+                $baseurl->param('lti_link_id', $ltilinkid);
             }
             if (isset($tag)) {
+                $baseurl->param('tag', $tag);
+            }
+
+            if (is_null($typeid)) {
+                $baseurl->param('limit', $limitnum);
                 if (($limitfrom <= $totalcount - 1) && (!$outofrange)) {
-                    $nextpage .= "&tag={$tag}";
+                    $nextpage = new \moodle_url($baseurl, ['from' => $limitfrom]);
                 }
-                $firstpage .= "&tag={$tag}";
-                $canonicalpage .= "&tag={$tag}";
-                $lastpage .= "&tag={v}";
+                $firstpage = new \moodle_url($baseurl, ['from' => 0]);
+                $canonicalpage = new \moodle_url($baseurl, ['from' => $limitcurrent]);
+                $lastpage = new \moodle_url($baseurl, ['from' > $limitlast]);
                 if (($limitcurrent > 0) && (!$outofrange)) {
-                    $prevpage .= "&tag={$tag}";
+                    $prevpage = new \moodle_url($baseurl, ['from' => $limitprev]);
+                }
+            } else {
+                $baseurl->params(['type_id' => $typeid, 'limit' => $limitnum]);
+                if (($limitfrom <= $totalcount - 1) && (!$outofrange)) {
+                    $nextpage = new \moodle_url($baseurl, ['from' => $limitfrom]);
+                }
+                $firstpage = new \moodle_url($baseurl, ['from' => 0]);
+                $canonicalpage = new \moodle_url($baseurl, ['from' => $limitcurrent]);
+                $lastpage = new \moodle_url($baseurl, ['from' => $limitlast]);
+                if (($limitcurrent > 0) && (!$outofrange)) {
+                    $prevpage = new \moodle_url($baseurl, ['from' => $limitprev]);
                 }
             }
         }
@@ -236,15 +217,15 @@ class lineitems extends resource_base {
         }
 
         if (isset($canonicalpage) && ($canonicalpage)) {
-            $links = 'Link: <' . $firstpage . '>; rel=“first”';
-            if (!(is_null($prevpage))) {
-                $links .= ', <' . $prevpage . '>; rel=“prev”';
+            $links = 'Link: <' . $firstpage->out() . '>; rel=“first”';
+            if (!is_null($prevpage)) {
+                $links .= ', <' . $prevpage->out() . '>; rel=“prev”';
             }
-            $links .= ', <' . $canonicalpage. '>; rel=“canonical”';
-            if (!(is_null($nextpage))) {
-                $links .= ', <' . $nextpage . '>; rel=“next”';
+            $links .= ', <' . $canonicalpage->out(). '>; rel=“canonical”';
+            if (!is_null($nextpage)) {
+                $links .= ', <' . $nextpage->out() . '>; rel=“next”';
             }
-            $links .= ', <' . $lastpage . '>; rel=“last”';
+            $links .= ', <' . $lastpage->out() . '>; rel=“last”';
             $response->add_additional_header($links);
         }
         return json_encode($jsonitems);

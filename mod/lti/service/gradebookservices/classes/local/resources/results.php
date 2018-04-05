@@ -163,10 +163,10 @@ class results extends resource_base {
             $grades = \grade_grade::fetch_all(array('itemid' => $itemid));
         }
 
-        $firstpage = '';
-        $nextpage = '';
-        $prevpage = '';
-        $lastpage = '';
+        $firstpage = null;
+        $nextpage = null;
+        $prevpage = null;
+        $lastpage = null;
         if ($grades && isset($limitnum) && $limitnum > 0) {
             // Since we only display grades that have been modified, we need to filter first in order to support
             // paging.
@@ -192,24 +192,30 @@ class results extends resource_base {
             $limitcurrent = $limitfrom;
             $limitlast = $totalcount - $limitnum + 1 >= 0 ? $totalcount - $limitnum + 1 : 0;
             $limitfrom += $limitnum;
+
+            $baseurl = new \moodle_url($this->get_endpoint());
             if (is_null($typeid)) {
+                $baseurl->param('limit', $limitnum);
+
                 if (($limitfrom <= $totalcount - 1) && (!$outofrange)) {
-                    $nextpage = $this->get_endpoint() . "?limit=" . $limitnum . "&from=" . $limitfrom;
+                    $nextpage = new \moodle_url($baseurl, ['from' => $limitfrom]);
                 }
-                $firstpage = $this->get_endpoint() . "?limit=" . $limitnum . "&from=0";
-                $canonicalpage = $this->get_endpoint() . "?limit=" . $limitnum . "&from=" . $limitcurrent;
-                $lastpage = $this->get_endpoint() . "?limit=" . $limitnum . "&from=" . $limitlast;
+                $firstpage = new \moodle_url($baseurl, ['from' => 0]);
+                $canonicalpage = new \moodle_url($baseurl, ['from' => $limitcurrent]);
+                $lastpage = new \moodle_url($baseurl, ['from' => $limitlast]);
                 if (($limitcurrent > 0) && (!$outofrange)) {
-                    $prevpage = $this->get_endpoint() . "?limit=" . $limitnum . "&from=" . $limitprev;
+                    $prevpage = new \moodle_url($baseurl, ['from' => $limitprev]);
                 }
             } else {
+                $baseurl->params(['type_id' => $typeid, 'limit' => $limitnum]);
+
                 if (($limitfrom <= $totalcount - 1) && (!$outofrange)) {
-                    $nextpage = $this->get_endpoint() . "?type_id=" . $typeid . "&limit=" . $limitnum . "&from=" . $limitfrom;
+                    $nextpage = new \moodle_url($baseurl, ['from' => $limitfrom]);
                 }
-                $firstpage = $this->get_endpoint() . "?type_id=" . $typeid . "&limit=" . $limitnum . "&from=0";
-                $canonicalpage = $this->get_endpoint() . "?type_id=" . $typeid . "&limit=" . $limitnum . "&from=" . $limitcurrent;
+                $firstpage = new \moodle_url($baseurl, ['from' => 0]);
+                $canonicalpage = new \moodle_url($baseurl, ['from' => $limitcurrent]);
                 if (($limitcurrent > 0) && (!$outofrange)) {
-                    $prevpage = $this->get_endpoint() . "?type_id=" . $typeid . "&limit=" . $limitnum . "&from=" . $limitprev;
+                    $prevpage = new \moodle_url($baseurl, ['from' => $limitprev]);
                 }
             }
         }
@@ -226,15 +232,15 @@ class results extends resource_base {
         }
 
         if (isset($canonicalpage) && ($canonicalpage)) {
-            $links = 'Link: <' . $firstpage . '>; rel=“first”';
-            if (!(is_null($prevpage))) {
-                $links .= ', <' . $prevpage . '>; rel=“prev”';
+            $links = 'Link: <' . $firstpage->out() . '>; rel=“first”';
+            if (!is_null($prevpage)) {
+                $links .= ', <' . $prevpage->out() . '>; rel=“prev”';
             }
-            $links .= ', <' . $canonicalpage. '>; rel=“canonical”';
-            if (!(is_null($nextpage))) {
-                $links .= ', <' . $nextpage . '>; rel=“next”';
+            $links .= ', <' . $canonicalpage->out() . '>; rel=“canonical”';
+            if (!is_null($nextpage)) {
+                $links .= ', <' . $nextpage->out() . '>; rel=“next”';
             }
-            $links .= ', <' . $lastpage . '>; rel=“last”';
+            $links .= ', <' . $lastpage->out() . '>; rel=“last”';
             $response->add_additional_header($links);
         }
         return json_encode($jsonresults);
