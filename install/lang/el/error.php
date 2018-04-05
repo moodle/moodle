@@ -32,7 +32,7 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['cannotcreatelangdir'] = 'Δε δημιουργήθηκε φάκελος γλώσσας.';
 $string['cannotcreatetempdir'] = 'Δε δημιουργήθηκε φάκελος temp.';
-$string['cannotdownloadcomponents'] = 'Δεν μπορεί να γίνει λήψη των στοιχείων λογισμικού.';
+$string['cannotdownloadcomponents'] = 'Δεν μπορεί να γίνει λήψη των στοιχείων λογισμικού';
 $string['cannotdownloadzipfile'] = 'Δεν μπορεί να γίνει λήψη του αρχείου ZIP.';
 $string['cannotfindcomponent'] = 'Δεν βρέθηκε το στοιχείο λογισμικού.';
 $string['cannotsavemd5file'] = 'Δεν αποθηκεύτηκε το αρχείο md5.';
