@@ -19,7 +19,10 @@
                 <div class="card-block">
                     {{{ summary }}}
                     {{# progresspercent }}
-                        <p>{{ progresspercent }}%</p>
+                        <div class="progress">
+                            <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: {{ progresspercent}}%;" 
+                                aria-valuenow="{{ progresspercent }}" aria-valuemin="0" aria-valuemax="100">{{ progresspercent }}%</div>
+                        </div>
                     {{/ progresspercent }}
                     {{^ progresspercent }}
                         <p>{{# str }}nocompletion, block_iomad_learningpath{{/ str }}</p>
