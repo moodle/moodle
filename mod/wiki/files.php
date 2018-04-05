@@ -77,7 +77,7 @@ $context = context_module::instance($cm->id);
 
 
 $PAGE->set_url('/mod/wiki/files.php', array('pageid'=>$pageid));
-require_login($course, true, $cm);
+require_course_login($course, true, $cm);
 
 if (!wiki_user_can_view($subwiki, $wiki)) {
     print_error('cannotviewfiles', 'wiki');
