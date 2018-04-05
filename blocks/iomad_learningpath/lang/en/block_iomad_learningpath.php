@@ -22,6 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['entercourse'] = 'Enter course';
 $string['iomad_learningpath:addinstance'] = 'Add learning path block';
 $string['iomad_learningpath:myaddinstance'] = 'Add learning path block to Moodle Dashboard';
 $string['nopaths'] = 'You have no learning paths';
