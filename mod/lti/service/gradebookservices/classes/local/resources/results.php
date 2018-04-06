@@ -77,29 +77,35 @@ class results extends resource_base {
         if (is_null($typeid)) {
             if (!$this->check_tool_proxy(null, $response->get_request_data())) {
                 $response->set_code(403);
+                $response->set_reason("Invalid tool proxy specified.");
                 return;
             }
         } else {
             if (!$this->check_type($typeid, $contextid, 'Result.collection:get', $response->get_request_data())) {
                 $response->set_code(403);
+                $response->set_reason("This resource does not support GET requests.");
                 return;
             }
         }
         if (empty($contextid) || (!empty($contenttype) && !in_array($contenttype, $this->formats))) {
             $response->set_code(400);
+            $response->set_reason("Invalid request made.");
             return;
         }
         if (!$DB->record_exists('course', array('id' => $contextid))) {
             $response->set_code(404);
+            $response->set_reason("Not Found: Course $contextid doesn't exist.");
             return;
         }
         if (!$DB->record_exists('grade_items', array('id' => $itemid))) {
             $response->set_code(404);
+            $response->set_reason("Not Found: Grade item $itemid doesn't exist.");
             return;
         }
         $item = $this->get_service()->get_lineitem($contextid, $itemid, $typeid);
         if ($item === false) {
             $response->set_code(403);
+            $response->set_reason("Line item does not exist.");
             return;
         }
         $gbs = gradebookservices::find_ltiservice_gradebookservice_for_lineitem($itemid);
@@ -114,12 +120,14 @@ class results extends resource_base {
                 if (isset($item->iteminstance) && (!gradebookservices::check_lti_id($ltilinkid, $item->courseid,
                         $this->get_service()->get_tool_proxy()->id))) {
                     $response->set_code(403);
+                    $response->set_reason("Invalid LTI id supplied.");
                     return;
                 }
             } else {
                 if (isset($item->iteminstance) && (!gradebookservices::check_lti_1x_id($ltilinkid, $item->courseid,
                         $typeid))) {
                     $response->set_code(403);
+                    $response->set_reason("Invalid LTI id supplied.");
                     return;
                 }
             }
@@ -138,6 +146,7 @@ class results extends resource_base {
                 break;
             default:  // Should not be possible.
                 $response->set_code(405);
+                $response->set_reason("Invalid request method specified.");
                 return;
         }
         $response->set_body($json);

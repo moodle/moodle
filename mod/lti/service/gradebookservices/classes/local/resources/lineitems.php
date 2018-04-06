@@ -79,6 +79,7 @@ class lineitems extends resource_base {
         if (is_null($typeid)) {
             if (!$this->check_tool_proxy(null, $response->get_request_data())) {
                 $response->set_code(403);
+                $response->set_reason("Invalid tool proxy specified.");
                 return;
             }
         } else {
@@ -86,27 +87,32 @@ class lineitems extends resource_base {
                 case self::HTTP_GET:
                     if (!$this->check_type($typeid, $contextid, 'LineItem.collection:get', $response->get_request_data())) {
                         $response->set_code(403);
+                        $response->set_reason("This resource does not support GET requests.");
                         return;
                     }
                     break;
                 case self::HTTP_POST:
                     if (!$this->check_type($typeid, $contextid, 'LineItem.collection:post', $response->get_request_data())) {
                         $response->set_code(403);
+                        $response->set_reason("This resource does not support POST requests.");
                         return;
                     }
                     break;
                 default:  // Should not be possible.
                     $response->set_code(405);
+                    $response->set_reason("Invalid request method specified.");
                     return;
             }
         }
         if (empty($contextid) || !($container ^ ($response->get_request_method() === self::HTTP_POST)) ||
                 (!empty($contenttype) && !in_array($contenttype, $this->formats))) {
             $response->set_code(400);
+            $response->set_reason("Invalid request made.");
             return;
         }
         if (!$DB->record_exists('course', array('id' => $contextid))) {
             $response->set_code(404);
+            $response->set_reason("Not Found: Course $contextid doesn't exist.");
             return;
         }
         switch ($response->get_request_method()) {
@@ -136,6 +142,7 @@ class lineitems extends resource_base {
                 break;
             default:  // Should not be possible.
                 $response->set_code(405);
+                $response->set_reason("Invalid request method specified.");
                 return;
         }
         $response->set_body($json);

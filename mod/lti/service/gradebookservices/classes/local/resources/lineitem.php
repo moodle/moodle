@@ -78,6 +78,7 @@ class lineitem extends resource_base {
         if (is_null($typeid)) {
             if (!$this->check_tool_proxy(null, $response->get_request_data())) {
                 $response->set_code(403);
+                $response->set_reason("Invalid tool proxy specified.");
                 return;
             }
         } else {
@@ -85,18 +86,21 @@ class lineitem extends resource_base {
                 case self::HTTP_GET:
                     if (!$this->check_type($typeid, $contextid, 'LineItem.item:get', $response->get_request_data())) {
                         $response->set_code(403);
+                        $response->set_reason("This resource does not support GET requests.");
                         return;
                     }
                     break;
                 case self::HTTP_PUT:
                     if (!$this->check_type($typeid, $contextid, 'LineItem.item:put', $response->get_request_data())) {
                         $response->set_code(403);
+                        $response->set_reason("This resource does not support PUT requests.");
                         return;
                     }
                     break;
                 case self::HTTP_DELETE:
                     if (!$this->check_type($typeid, $contextid, 'LineItem.item:delete', $response->get_request_data())) {
                         $response->set_code(403);
+                        $response->set_reason("This resource does not support DELETE requests.");
                         return;
                     }
                     break;
@@ -107,19 +111,23 @@ class lineitem extends resource_base {
         }
         if (empty($contextid) || (!empty($contenttype) && !in_array($contenttype, $this->formats))) {
             $response->set_code(400);
+            $response->set_reason("Invalid request made.");
             return;
         }
         if (!$DB->record_exists('course', array('id' => $contextid))) {
             $response->set_code(404);
+            $response->set_reason("Not Found: Course $contextid doesn't exist.");
             return;
         }
         if (!$DB->record_exists('grade_items', array('id' => $itemid))) {
             $response->set_code(404);
+            $response->set_reason("Not Found: Grade item $itemid doesn't exist.");
             return;
         }
         $item = $this->get_service()->get_lineitem($contextid, $itemid, $typeid);
         if ($item === false) {
             $response->set_code(403);
+            $response->set_reason("Line item does not exist.");
             return;
         }
         require_once($CFG->libdir.'/gradelib.php');
@@ -138,6 +146,7 @@ class lineitem extends resource_base {
                 break;
             default:  // Should not be possible.
                 $response->set_code(405);
+                $response->set_reason("Invalid request method specified.");
                 return;
         }
     }

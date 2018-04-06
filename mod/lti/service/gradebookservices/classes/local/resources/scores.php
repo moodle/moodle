@@ -89,10 +89,12 @@ class scores extends resource_base {
             switch ($response->get_request_method()) {
                 case 'GET':
                     $response->set_code(405);
+                    $response->set_reason("GET requests are not allowed.");
                     return;
                 case 'POST':
                     if (!$this->check_type($typeid, $contextid, 'Score.collection:post', $response->get_request_data())) {
                         $response->set_code(401);
+                        $response->set_reason("This resource does not support POST requests.");
                         return;
                     }
                     break;
@@ -108,15 +110,18 @@ class scores extends resource_base {
         }
         if (!$DB->record_exists('course', array('id' => $contextid))) {
             $response->set_code(404);
+            $response->set_reason("Not Found: Course $contextid doesn't exist.");
             return;
         }
         if (!$DB->record_exists('grade_items', array('id' => $itemid))) {
             $response->set_code(404);
+            $response->set_reason("Not Found: Grade item $itemid doesn't exist.");
             return;
         }
         $item = $this->get_service()->get_lineitem($contextid, $itemid, $typeid);
         if ($item === false) {
             $response->set_code(403);
+            $response->set_reason("Line item does not exist.");
             return;
         }
         $gbs = gradebookservices::find_ltiservice_gradebookservice_for_lineitem($itemid);
@@ -131,12 +136,14 @@ class scores extends resource_base {
                 if (isset($item->iteminstance) && (!gradebookservices::check_lti_id($ltilinkid, $item->courseid,
                         $this->get_service()->get_tool_proxy()->id))) {
                     $response->set_code(403);
+                    $response->set_reason("Invalid LTI id supplied.");
                     return;
                 }
             } else {
                 if (isset($item->iteminstance) && (!gradebookservices::check_lti_1x_id($ltilinkid, $item->courseid,
                         $typeid))) {
                     $response->set_code(403);
+                    $response->set_reason("Invalid LTI id supplied.");
                     return;
                 }
             }
@@ -146,6 +153,7 @@ class scores extends resource_base {
         switch ($response->get_request_method()) {
             case 'GET':
                 $response->set_code(405);
+                $response->set_reason("GET requests are not allowed.");
                 break;
             case 'POST':
                 try {
@@ -158,6 +166,7 @@ class scores extends resource_base {
                 break;
             default:  // Should not be possible.
                 $response->set_code(405);
+                $response->set_reason("Invalid request method specified.");
                 return;
         }
         $response->set_body($json);
