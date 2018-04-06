@@ -55,5 +55,12 @@ function xmldb_scorm_upgrade($oldversion) {
     // Automatically generated Moodle v3.4.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2018032300) {
+        set_config('scormstandard', get_config('scorm', 'scorm12standard'), 'scorm');
+        unset_config('scorm12standard', 'scorm');
+
+        upgrade_mod_savepoint(true, 2018032300, 'scorm');
+    }
+
     return true;
 }

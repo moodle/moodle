@@ -343,9 +343,8 @@ $string['results'] = 'Results';
 $string['review'] = 'Review';
 $string['reviewmode'] = 'Review mode';
 $string['rightanswer'] = 'Right answer';
-$string['scorm12standard'] = 'Enable SCORM 1.2 standard mode';
-$string['scorm12standarddesc'] = 'Disabling this setting allows Moodle to store more data than the SCORM 1.2 specification allows.
-If your SCORM packages allow users to enter large amounts of text or if your package tries to store large amounts of data in the suspend_data field disable this.';
+$string['scormstandard'] = 'SCORM standards mode';
+$string['scormstandarddesc'] = 'When disabled, Moodle allows SCORM 1.2 packages to store more than the specification allows, and uses Moodle full name format settings when passing the users name to the SCORM package.';
 $string['scoes'] = 'Learning objects';
 $string['score'] = 'Score';
 $string['scorm:addinstance'] = 'Add a new SCORM package';
