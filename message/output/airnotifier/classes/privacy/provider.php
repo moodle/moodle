@@ -118,9 +118,14 @@ class provider implements \core_privacy\local\metadata\provider, \core_privacy\l
     /**
      * Delete all use data which matches the specified deletion_criteria.
      *
-     * @param context $context A user context.
+     * @param context $context A context.
      */
     public static function delete_data_for_all_users_in_context(\context $context) {
+
+        if (!$context instanceof \context_user) {
+            return;
+        }
+
         static::delete_data($context->instanceid);
     }
 
