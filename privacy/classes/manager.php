@@ -346,4 +346,37 @@ class manager {
         }
         return false;
     }
+
+    /**
+     * Call the named method with the specified params on any plugintype implementing the relevant interface.
+     *
+     * @param   string  $plugintype The plugingtype to check
+     * @param   string  $interface The interface to implement
+     * @param   string  $methodname The method to call
+     * @param   array   $params The params to call
+     */
+    public static function plugintype_class_callback(string $plugintype, string $interface, string $methodname, array $params) {
+        $components = \core_component::get_plugin_list($plugintype);
+        foreach (array_keys($components) as $component) {
+            static::component_class_callback("{$plugintype}_{$component}", $interface, $methodname, $params);
+        }
+    }
+
+    /**
+     * Call the named method with the specified params on the supplied component if it implements the relevant interface on its provider.
+     *
+     * @param   string  $component The component to call
+     * @param   string  $interface The interface to implement
+     * @param   string  $methodname The method to call
+     * @param   array   $params The params to call
+     * @return  mixed
+     */
+    public static function component_class_callback(string $component, string $interface, string $methodname, array $params) {
+        $classname = static::get_provider_classname_for_component($component);
+        if (class_exists($classname) && is_subclass_of($classname, $interface)) {
+            return component_class_callback($classname, $methodname, $params);
+        }
+
+        return null;
+    }
 }
