@@ -104,6 +104,7 @@ class media_swf_testcase extends advanced_testcase {
      */
     public function test_embed_link() {
         global $CFG;
+        $CFG->forceclean = 0;
         $url = new moodle_url('http://example.org/some_filename.swf');
         $text = html_writer::link($url, 'Watch this one');
         $content = format_text($text, FORMAT_HTML, ['trusted' => true]);
@@ -113,8 +114,12 @@ class media_swf_testcase extends advanced_testcase {
         $this->assertRegExp('~width="' . $CFG->media_default_width . '" height="' .
             $CFG->media_default_height . '"~', $content);
 
-        // Not working without trust!
+        // Not working without trust or with $CFG->forceclean!
         $content = format_text($text, FORMAT_HTML);
+        $this->assertNotRegExp('~mediaplugin_swf~', $content);
+
+        $CFG->forceclean = 1;
+        $content = format_text($text, FORMAT_HTML, ['trusted' => true]);
         $this->assertNotRegExp('~mediaplugin_swf~', $content);
     }
 
@@ -125,6 +130,8 @@ class media_swf_testcase extends advanced_testcase {
      */
     public function test_embed_media() {
         global $CFG;
+        $CFG->forceclean = 0;
+
         $url = new moodle_url('http://example.org/some_filename.swf');
         $trackurl = new moodle_url('http://example.org/some_filename.vtt');
         $text = '<video controls="true"><source src="'.$url.'"/>' .
