@@ -34,7 +34,8 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification'], 
                 // Display updated list.
                 var items = [];
                 $.each(users, function(id, user) {
-                    items.push('<li class="text-truncate" data-userid="' + user.id + '"><i class="fa fa-user"></i> ' + user.fullname + '</li>');
+                    items.push('<li class="text-truncate" data-userid="' + user.id +
+                        '"><i class="fa fa-user"></i> ' + user.fullname + '</li>');
                 });
                 $('#prospectivelist').append(items.join(''));
             }
@@ -98,7 +99,8 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification'], 
 
                 var items = [];
                 $.each(users, function(id, user) {
-                    items.push('<li class="text-truncate" data-userid="' + user.id + '"><i class="fa fa-user"></i> ' + user.fullname + '</li>');
+                    items.push('<li class="text-truncate" data-userid="' + user.id +
+                        '"><i class="fa fa-user"></i> ' + user.fullname + '</li>');
                 });
                 $('#pathuserlist').append(items.join(''));
             }
@@ -134,13 +136,13 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification'], 
              * (bind on list as li's are dynamic)
              */
             $('#prospectivelist').on('click', 'li', function() {
-                userid = $(this).data('userid');
-                
+                var userid = $(this).data('userid');
+
                 // Add the user to the path
                 ajax.call([{
                     methodname: 'local_iomad_learningpath_addusers',
                     args: {pathid: pathid, userids: [userid]},
-                    done: function(result) {
+                    done: function() {
                         pathuser_list();
                         user_list();
                     },
@@ -153,16 +155,13 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification'], 
              * Add click handler for removing user
              */
             $('#pathuserlist').on('click', 'li', function() {
-                userid = $(this).data('userid');
-                
-                // Save the HTML for later
-                html = $(this).html();
+                var userid = $(this).data('userid');
 
                 // Remove the course from the path
                 ajax.call([{
                     methodname: 'local_iomad_learningpath_removeusers',
                     args: {pathid: pathid, userids: [userid]},
-                    done: function(result) {
+                    done: function() {
 
                         // Update list
                         pathuser_list();
@@ -172,7 +171,7 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification'], 
                 }]);
             });
 
-             
+
 
         }
     };

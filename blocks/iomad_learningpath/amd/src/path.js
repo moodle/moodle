@@ -1,7 +1,7 @@
 // Javascript module for courselist page
 // Copyright 2018 Howard Miller (howardsmiller@gmail.com)
 
-define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification'], function($, jqui, mdlcfg, ajax, notification) {
+define(['jquery'], function($) {
 
     return {
 
@@ -30,5 +30,5 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification'], 
                 $('.lpreturn').hide(speed);
             });
         }
-    }
+    };
 });

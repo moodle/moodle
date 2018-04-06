@@ -174,7 +174,7 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification'], 
 
             // Make list sortable somehow
             $("#pathcourselist").sortable({
-                update: function(ev, ui) {
+                update: function() {
 
                     // Get already selected courseids
                     var courses = [];
@@ -186,7 +186,7 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification'], 
                     ajax.call([{
                         methodname: 'local_iomad_learningpath_ordercourses',
                         args: {pathid: pathid, courseids: courses},
-                        done: function(result) {},
+                        done: function() {},
                         fail: notification.exception
                     }]);
                 }
