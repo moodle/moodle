@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<libraries>
+    <library>
+        <location>amd/src</location>
+        <name>Bowser</name>
+        <version>1.6.0</version>
+        <license>MIT</license>
+        <licenseversion></licenseversion>
+    </library>
+    <library>
+        <location>amd/src</location>
+        <name>WebRTC adapter</name>
+        <version>4.1.0</version>
+        <license>BSD</license>
+        <licenseversion>3-Clause</licenseversion>
+    </library>
+</libraries>

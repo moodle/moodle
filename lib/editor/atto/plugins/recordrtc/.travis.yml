@@ -1,0 +1,101 @@
+language: php
+
+# Workaround for fixing that Selenium server is not running and therefore Behat tests not working
+sudo: required
+
+addons:
+  firefox: "47.0.1"
+  postgresql: "9.3"
+  apt:
+    packages:
+      - oracle-java9-installer
+      - oracle-java9-set-default
+
+cache:
+  directories:
+    - $HOME/.composer/cache
+    - $HOME/.npm
+
+php:
+ - 7.0
+ - 7.1
+
+env:
+  global:
+    - COVERAGE=false
+  matrix:
+    - MOODLE_BRANCH=MOODLE_32_STABLE DB=mysqli MOODLE_PLUGIN_CI=2
+    - MOODLE_BRANCH=MOODLE_32_STABLE DB=pgsql MOODLE_PLUGIN_CI=2
+    - MOODLE_BRANCH=MOODLE_33_STABLE DB=mysqli MOODLE_PLUGIN_CI=2
+    - MOODLE_BRANCH=MOODLE_33_STABLE DB=pgsql MOODLE_PLUGIN_CI=2
+    - MOODLE_BRANCH=MOODLE_34_STABLE DB=mysqli MOODLE_PLUGIN_CI=2
+    - MOODLE_BRANCH=MOODLE_34_STABLE DB=pgsql MOODLE_PLUGIN_CI=2
+    - MOODLE_BRANCH=master DB=mysqli MOODLE_PLUGIN_CI=2
+    - MOODLE_BRANCH=master DB=pgsql MOODLE_PLUGIN_CI=2
+
+matrix:
+  include:
+    - php: 5.4
+      env: MOODLE_BRANCH=MOODLE_29_STABLE DB=mysqli MOODLE_PLUGIN_CI=1
+    - php: 5.4
+      env: MOODLE_BRANCH=MOODLE_29_STABLE DB=pgsql MOODLE_PLUGIN_CI=1
+    - php: 5.5
+      env: MOODLE_BRANCH=MOODLE_29_STABLE DB=mysqli MOODLE_PLUGIN_CI=1
+    - php: 5.5
+      env: MOODLE_BRANCH=MOODLE_29_STABLE DB=pgsql MOODLE_PLUGIN_CI=1
+    - php: 5.4
+      env: MOODLE_BRANCH=MOODLE_30_STABLE DB=mysqli MOODLE_PLUGIN_CI=1
+    - php: 5.4
+      env: MOODLE_BRANCH=MOODLE_30_STABLE DB=pgsql MOODLE_PLUGIN_CI=1
+    - php: 5.5
+      env: MOODLE_BRANCH=MOODLE_30_STABLE DB=mysqli MOODLE_PLUGIN_CI=1
+    - php: 5.5
+      env: MOODLE_BRANCH=MOODLE_30_STABLE DB=pgsql MOODLE_PLUGIN_CI=1
+    - php: 5.6
+      env: MOODLE_BRANCH=MOODLE_30_STABLE DB=mysqli MOODLE_PLUGIN_CI=1
+    - php: 5.6
+      env: MOODLE_BRANCH=MOODLE_30_STABLE DB=pgsql MOODLE_PLUGIN_CI=1
+    - php: 5.4
+      env: MOODLE_BRANCH=MOODLE_31_STABLE DB=mysqli MOODLE_PLUGIN_CI=1
+    - php: 5.4
+      env: MOODLE_BRANCH=MOODLE_31_STABLE DB=pgsql MOODLE_PLUGIN_CI=1
+    - php: 5.5
+      env: MOODLE_BRANCH=MOODLE_31_STABLE DB=mysqli MOODLE_PLUGIN_CI=1
+    - php: 5.5
+      env: MOODLE_BRANCH=MOODLE_31_STABLE DB=pgsql MOODLE_PLUGIN_CI=1
+    - php: 5.6
+      env: MOODLE_BRANCH=MOODLE_31_STABLE DB=mysqli MOODLE_PLUGIN_CI=1
+    - php: 5.6
+      env: MOODLE_BRANCH=MOODLE_31_STABLE DB=pgsql MOODLE_PLUGIN_CI=1
+
+before_install:
+  - phpenv config-rm xdebug.ini
+  - nvm install 8.9.0
+  - nvm use default
+  - cd ../..
+  - composer create-project -n --no-dev --prefer-dist moodlerooms/moodle-plugin-ci ci ^${MOODLE_PLUGIN_CI}
+  # Specific for version 1
+  - if [ ${MOODLE_PLUGIN_CI} = "1" ]; then
+        sudo sed -i "s/ignoreNewlines = false/ignoreNewlines = true/g" "$(find ./ci/vendor -name 'OperatorSpacingSniff.php' )";
+    fi
+  - export PATH="$(cd ci/bin; pwd):$(cd ci/vendor/bin; pwd):$PATH"
+
+install:
+  - moodle-plugin-ci install
+
+script:
+  - moodle-plugin-ci phplint
+  - moodle-plugin-ci phpcpd
+  - moodle-plugin-ci phpmd
+  - moodle-plugin-ci codechecker
+  - moodle-plugin-ci validate
+  - moodle-plugin-ci phpunit
+  # Specific for version 1
+  - if [ ${MOODLE_PLUGIN_CI} = "1" ]; then moodle-plugin-ci csslint; fi
+  - if [ ${MOODLE_PLUGIN_CI} = "1" ]; then moodle-plugin-ci shifter; fi
+  - if [ ${MOODLE_PLUGIN_CI} = "1" ]; then moodle-plugin-ci jshint; fi
+  # Specific for version 2
+  - if [ ${MOODLE_PLUGIN_CI} = "2" ]; then moodle-plugin-ci savepoints; fi
+  - if [ ${MOODLE_PLUGIN_CI} = "2" ]; then moodle-plugin-ci mustache; fi
+  - if [ ${MOODLE_PLUGIN_CI} = "2" ]; then moodle-plugin-ci grunt; fi
+  - if [ ${MOODLE_PLUGIN_CI} = "2" ]; then moodle-plugin-ci behat --dump; fi

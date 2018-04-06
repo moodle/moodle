@@ -1,0 +1,14 @@
+{
+    "name": "moodle-atto_recordrtc-recording",
+    "builds": {
+        "moodle-atto_recordrtc-recording": {
+            "jsfiles": [
+                "commonmodule.js",
+                "compatcheckmodule.js",
+                "abstractmodule.js",
+                "audiomodule.js",
+                "videomodule.js"
+            ]
+        }
+    }
+}
