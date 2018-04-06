@@ -37,7 +37,7 @@ if ($ADMIN->fulltree) {
     );
     $name = get_string('allowedtypes', 'atto_recordrtc');
     $desc = get_string('allowedtypes_desc', 'atto_recordrtc');
-    $default = '';
+    $default = 'both';
     $setting = new admin_setting_configselect('atto_recordrtc/allowedtypes', $name, $desc, $default, $options);
     $settings->add($setting);
 
