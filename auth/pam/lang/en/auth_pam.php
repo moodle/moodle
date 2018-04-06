@@ -26,3 +26,5 @@ $string['auth_pamdescription'] = 'This method uses PAM to access the native user
 $string['auth_passwordisexpired'] = 'Your password has expired. Do you want to change your password now?';
 $string['auth_passwordwillexpire'] = 'Your password will expire in {$a} days. Do you want to change your password now?';
 $string['pluginname'] = 'PAM (Pluggable Authentication Modules)';
+$string['privacy:metadata'] = 'The PAM (Pluggable Authentication Modules) authentication plugin does not store any personal data.';
+

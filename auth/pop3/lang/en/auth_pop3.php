@@ -34,3 +34,5 @@ $string['auth_pop3port_key'] = 'Port';
 $string['auth_pop3type'] = 'Server type. If your server uses certificate security, choose pop3cert.';
 $string['auth_pop3type_key'] = 'Type';
 $string['pluginname'] = 'POP3 server';
+$string['privacy:metadata'] = 'The POP3 server authentication plugin does not store any personal data.';
+

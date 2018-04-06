@@ -32,3 +32,5 @@ $string['auth_imapport_key'] = 'Port';
 $string['auth_imaptype'] = 'The IMAP server type.  IMAP servers can have different types of authentication and negotiation.';
 $string['auth_imaptype_key'] = 'Type';
 $string['pluginname'] = 'IMAP server';
+$string['privacy:metadata'] = 'The IMAP server authentication plugin does not store any personal data.';
+

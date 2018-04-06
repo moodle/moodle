@@ -30,3 +30,4 @@ $string['auth_nntpnotinstalled'] = 'Cannot use NNTP authentication. The PHP IMAP
 $string['auth_nntpport'] = 'Server port (119 is the most common)';
 $string['auth_nntpport_key'] = 'Port';
 $string['pluginname'] = 'NNTP server';
+$string['privacy:metadata'] = 'The NNTP server authentication plugin does not store any personal data.';
