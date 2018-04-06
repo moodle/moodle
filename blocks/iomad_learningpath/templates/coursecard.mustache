@@ -18,15 +18,15 @@
             <div class="col-md-8 px-3">
                 <div class="card-block">
                     {{{ summary }}}
-                    {{# progresspercent }}
-                        <div class="progress">
+                    {{# hasprogress }}
+                        <div class="progress m-t-1">
                             <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: {{ progresspercent}}%;" 
                                 aria-valuenow="{{ progresspercent }}" aria-valuemin="0" aria-valuemax="100">{{ progresspercent }}%</div>
                         </div>
-                    {{/ progresspercent }}
-                    {{^ progresspercent }}
-                        <p>{{# str }}nocompletion, block_iomad_learningpath{{/ str }}</p>
-                    {{/ progresspercent }} 
+                    {{/ hasprogress }}
+                    {{^ hasprogress }}
+                        <div class="alert alert-warning">{{# str }}nocompletion, block_iomad_learningpath{{/ str }}</div>
+                    {{/ hasprogress }} 
                 </div>
             </div>
         </div>

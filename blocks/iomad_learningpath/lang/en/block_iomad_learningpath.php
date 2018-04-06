@@ -25,7 +25,8 @@
 $string['entercourse'] = 'Enter course';
 $string['iomad_learningpath:addinstance'] = 'Add learning path block';
 $string['iomad_learningpath:myaddinstance'] = 'Add learning path block to Moodle Dashboard';
-$string['nocompletion'] = 'Progress not configured';
+$string['nocompletion'] = 'No progress data yet';
+$string['nopathprogress'] = 'No progress data yet';
 $string['nopaths'] = 'You have no learning paths';
 $string['open'] = 'Open';
 $string['pluginname'] = 'Learning paths';

@@ -40,10 +40,14 @@ class path {
     /**
      * Get list of courses in path
      * @param int $pathid
-     * @return array
+     * @return [array, int/null]
      */
     public function get_courselist($pathid) {
         global $DB;
+
+        // Calculate overall progress for path
+        $cumulativeprogress = 0;
+        $completioncoursecount = 0;
 
         $sql = 'SELECT c.id courseid, c.shortname shortname, c.fullname fullname, c.summary summary, lpc.*
             FROM {iomad_learningpathcourse} lpc JOIN {course} c ON lpc.course = c.id
@@ -56,10 +60,26 @@ class path {
             $course->link = new \moodle_url('/course/view.php', ['id' => $course->courseid]);
             $course->imageurl = $this->get_course_image_url($course->courseid);
             $fullcourse = $DB->get_record('course', ['id' => $course->courseid], '*', MUST_EXIST);
-            $course->progresspercent = \core_completion\progress::get_course_progress_percentage($fullcourse);
+            $progress = \core_completion\progress::get_course_progress_percentage($fullcourse);
+            $course->hasprogress = $progress !== null;
+            $course->progresspercent = $course->hasprogress ? $progress : 0;
+
+            // Count progress for any courses that actually have some. 
+            // Ones that don't will be ignored. 
+            if ($course->hasprogress) {
+                $cumulativeprogress += $course->progresspercent;
+                $completioncoursecount++;
+            }
         }
 
-        return $courses;
+        // Calculate overall progress for path
+        if ($completioncoursecount) {
+            $pathprogress = round($cumulativeprogress / $completioncoursecount);
+        } else {
+            $pathprogress = null;
+        }
+
+        return [$courses, $pathprogress];
     }
 
 
@@ -83,7 +103,9 @@ class path {
         // Add url for image and courses array
         foreach ($paths as $path) {
             $path->imageurl = $this->get_path_image_url($path->id);
-            $path->courses = array_values($this->get_courselist($path->id));
+            list($courses, $pathprogress) = $this->get_courselist($path->id);
+            $path->courses = array_values($courses);
+            $path->progress = $pathprogress;
         }
 
         return $paths; 
