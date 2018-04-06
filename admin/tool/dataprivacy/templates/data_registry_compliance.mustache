@@ -47,22 +47,20 @@
         <dd>{{#str}}externalexplanation, tool_dataprivacy{{/str}}</dd>
     </dl>
     <hr />
-    <div><a class="tool_dataprivacy-expand-all pull-right" href="#" data-visibility-state='visible'>{{#str}}visible, tool_dataprivacy{{/str}}</a></div>
+    <div class="clearfix"><a class="tool_dataprivacy-expand-all pull-right" href="#" data-visibility-state='visible'>{{#str}}visible, tool_dataprivacy{{/str}}</a></div>
     {{#types}}
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col">
-                    <a class="other-expand" href='#' data-plugin="{{plugin_type_raw}}">
-                    <h3 id="{{plugin_type_raw}}">{{#pix}}t/collapsed, moodle, {{#str}}expandplugintype, tool_dataprivacy{{/str}}{{/pix}}{{plugin_type}}</h3>
-                    </a>
-                </div>
-            </div>
-            <div class="hide" data-plugintarget="{{plugin_type_raw}}" aria-expanded="false">
-                {{#plugins}}
-                    {{> tool_dataprivacy/component_status}}
-                {{/plugins}}
-            </div>
+    <div>
+        <div>
+            <a class="other-expand" href='#' data-plugin="{{plugin_type_raw}}">
+            <h3 id="{{plugin_type_raw}}">{{#pix}}t/collapsed, moodle, {{#str}}expandplugintype, tool_dataprivacy{{/str}}{{/pix}}{{plugin_type}}</h3>
+            </a>
         </div>
+        <div class="hide" data-plugintarget="{{plugin_type_raw}}" aria-expanded="false">
+            {{#plugins}}
+                {{> tool_dataprivacy/component_status}}
+            {{/plugins}}
+        </div>
+    </div>
     {{/types}}
 </div>
 {{#js}}
@@ -79,7 +77,7 @@ require(['jquery', 'core/url', 'core/str'], function($, url, str) {
         var plugin = $(this).data('plugin');
         var metadata = $('[data-plugintarget=\'' + plugin + '\']');
         if (metadata.attr('class') === 'hide') {
-            metadata.attr('class', 'visible');
+            metadata.attr('class', 'visible p-b-2');
             $(this).children('img').attr('src', expandedImage.attr('src'));
             metadata.attr('aria-expanded', true);
         } else {
