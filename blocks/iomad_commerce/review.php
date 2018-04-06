@@ -63,7 +63,7 @@ require_login();
 // Set the name for the page.
 $linktext = get_string('course_shop_title', 'block_iomad_commerce');
 // Set the url.
-$linkurl = new moodle_url('/blocks/iomad_commerce/shop.php');
+$linkurl = new moodle_url('/blocks/iomad_commerce/review.php');
 
 // Print the page header.
 $PAGE->set_context($context);
