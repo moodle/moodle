@@ -385,8 +385,10 @@ class participants_table extends \table_sql {
                     case ENROL_USER_ACTIVE:
                         $currentdate = new DateTime();
                         $now = $currentdate->getTimestamp();
-                        // If user enrolment status has not yet started/already ended.
-                        if ($timestart > $now || ($timeend > 0 && $timeend < $now)) {
+                        $isexpired = $timestart > $now || ($timeend > 0 && $timeend < $now);
+                        $enrolmentdisabled = $ue->enrolmentinstance->status == ENROL_INSTANCE_DISABLED;
+                        // If user enrolment status has not yet started/already ended or the enrolment instance is disabled.
+                        if ($isexpired || $enrolmentdisabled) {
                             $status = get_string('participationnotcurrent', 'enrol');
                             $statusval = status_field::STATUS_NOT_CURRENT;
                         }
