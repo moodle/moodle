@@ -15,14 +15,32 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'qformat_aiken', language 'en', branch 'MOODLE_20_STABLE'
+ * Privacy Subsystem implementation for qformat_aiken.
  *
  * @package    qformat_aiken
- * @copyright  2010 Helen Foster
+ * @copyright  2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Aiken format';
-$string['pluginname_help'] = 'This is a simple format for importing multiple choice questions from a text file.';
-$string['pluginname_link'] = 'qformat/aiken';
-$string['privacy:metadata'] = 'The Aiken question format plugin does not store any personal data.';
+namespace qformat_aiken\privacy;
+
+defined('MOODLE_INTERNAL') || die();
+
+/**
+ * Privacy Subsystem for qformat_aiken implementing null_provider.
+ *
+ * @copyright  2018 Andrew Nicols <andrew@nicols.co.uk>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class provider implements \core_privacy\local\metadata\null_provider {
+
+    /**
+     * Get the language string identifier with the component's language
+     * file to explain why this plugin stores no data.
+     *
+     * @return  string
+     */
+    public static function get_reason() : string {
+        return 'privacy:metadata';
+    }
+}

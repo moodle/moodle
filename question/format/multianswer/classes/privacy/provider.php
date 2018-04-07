@@ -15,14 +15,32 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'qformat_multianswer', language 'en', branch 'MOODLE_20_STABLE'
+ * Privacy Subsystem implementation for qformat_multianswer.
  *
  * @package    qformat_multianswer
- * @copyright  2010 Helen Foster
+ * @copyright  2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Embedded answers (Cloze)';
-$string['pluginname_help'] = 'Embedded answers (Cloze) format enables the import of a passage of text with questions such as multiple-choice and short answer embedded within it.';
-$string['pluginname_link'] = 'question/type/multianswer';
-$string['privacy:metadata'] = 'The Embedded answers question plugin does not store any personal data.';
+namespace qformat_multianswer\privacy;
+
+defined('MOODLE_INTERNAL') || die();
+
+/**
+ * Privacy Subsystem for qformat_multianswer implementing null_provider.
+ *
+ * @copyright  2018 Andrew Nicols <andrew@nicols.co.uk>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class provider implements \core_privacy\local\metadata\null_provider {
+
+    /**
+     * Get the language string identifier with the component's language
+     * file to explain why this plugin stores no data.
+     *
+     * @return  string
+     */
+    public static function get_reason() : string {
+        return 'privacy:metadata';
+    }
+}
