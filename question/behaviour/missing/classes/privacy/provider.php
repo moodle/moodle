@@ -15,13 +15,32 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'qbehaviour_deferredfeedback', language 'en'.
+ * Privacy Subsystem implementation for qbehaviour_missing.
  *
- * @package    qbehaviour
- * @subpackage deferredfeedback
- * @copyright  2009 The Open University
+ * @package    qbehaviour_missing
+ * @copyright  2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Deferred feedback';
-$string['privacy:metadata'] = 'The Deferred feedback behaviour plugin does not store any personal data.';
+namespace qbehaviour_missing\privacy;
+
+defined('MOODLE_INTERNAL') || die();
+
+/**
+ * Privacy Subsystem for qbehaviour_missing implementing null_provider.
+ *
+ * @copyright  2018 Andrew Nicols <andrew@nicols.co.uk>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class provider implements \core_privacy\local\metadata\null_provider {
+
+    /**
+     * Get the language string identifier with the component's language
+     * file to explain why this plugin stores no data.
+     *
+     * @return  string
+     */
+    public static function get_reason() {
+        return 'privacy:metadata';
+    }
+}
