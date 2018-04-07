@@ -62,6 +62,7 @@ $string['pluginname_link'] = 'question/type/multichoice';
 $string['pluginnameadding'] = 'Adding a Multiple choice question';
 $string['pluginnameediting'] = 'Editing a Multiple choice question';
 $string['pluginnamesummary'] = 'Allows the selection of a single or multiple responses from a pre-defined list.';
+$string['privacy:metadata'] = 'The Multiple choice question type does not store any personal data.';
 $string['selectmulti'] = 'Select one or more:';
 $string['selectone'] = 'Select one:';
 $string['shuffleanswers'] = 'Shuffle the choices?';
