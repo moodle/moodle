@@ -38,3 +38,4 @@ $string['pluginname_link'] = 'question/type/truefalse';
 $string['pluginnameadding'] = 'Adding a True/False question';
 $string['pluginnameediting'] = 'Editing a True/False question';
 $string['pluginnamesummary'] = 'A simple form of multiple choice question with just the two choices \'True\' and \'False\'.';
+$string['privacy:metadata'] = 'The True/False question type plugin does not store any personal data.';
