@@ -15,17 +15,32 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'qformat_missingword', language 'en', branch 'MOODLE_20_STABLE'
+ * Privacy Subsystem implementation for qformat_missingword.
  *
  * @package    qformat_missingword
- * @copyright  2010 Helen Foster
+ * @copyright  2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Missing word format';
-$string['pluginname_help'] = 'Missing word format enables questions to be imported via text file.';
-$string['pluginname_link'] = 'Missing word format';
-$string['beginanswernotfound'] = 'Could not find a required "{" character in imported file content.';
-$string['endanswernotfound'] = 'Could not find a required "}" character in imported file content.';
-$string['noanswerfound'] = 'No answers found in question';
-$string['privacy:metadata'] = 'The Missing word question format plugin does not store any personal data.';
+namespace qformat_missingword\privacy;
+
+defined('MOODLE_INTERNAL') || die();
+
+/**
+ * Privacy Subsystem for qformat_missingword implementing null_provider.
+ *
+ * @copyright  2018 Andrew Nicols <andrew@nicols.co.uk>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class provider implements \core_privacy\local\metadata\null_provider {
+
+    /**
+     * Get the language string identifier with the component's language
+     * file to explain why this plugin stores no data.
+     *
+     * @return  string
+     */
+    public static function get_reason() : string {
+        return 'privacy:metadata';
+    }
+}
