@@ -25,3 +25,4 @@
 
 $string['filtername'] = 'Algebra notation';
 $string['algebraicexpression'] = 'Algebraic expression';
+$string['privacy:metadata'] = 'The Algebra notation plugin does not store any personal data.';

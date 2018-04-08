@@ -15,15 +15,32 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for filter_glossary
+ * Privacy Subsystem implementation for filter_multilang.
  *
- * @package    filter
- * @subpackage glossary
- * @copyright  2011 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @package    filter_multilang
+ * @copyright  2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace filter_multilang\privacy;
+
 defined('MOODLE_INTERNAL') || die();
 
-$string['filtername'] = 'Glossary auto-linking';
-$string['privacy:metadata'] = 'The Glossary auto-linking plugin does not store any personal data.';
+/**
+ * Privacy Subsystem for filter_multilang implementing null_provider.
+ *
+ * @copyright  2018 Andrew Nicols <andrew@nicols.co.uk>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class provider implements \core_privacy\local\metadata\null_provider {
+
+    /**
+     * Get the language string identifier with the component's language
+     * file to explain why this plugin stores no data.
+     *
+     * @return  string
+     */
+    public static function get_reason() {
+        return 'privacy:metadata';
+    }
+}

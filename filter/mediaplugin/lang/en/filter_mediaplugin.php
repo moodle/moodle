@@ -30,3 +30,4 @@ $string['filtername'] = 'Multimedia plugins';
 $string['linktomedia'] = 'The multimedia plugins filter finds a link in text that points to a multimedia resource and replaces the link with an appropriate multimedia player code which can play the resource. It also replaces &lt;video&gt; and &lt;audio&gt; tags with selected video and audio players.
 
 <a href="{$a}">Manage media players</a>';
+$string['privacy:metadata'] = 'The Multimedia plugins plugin does not store any personal data.';
