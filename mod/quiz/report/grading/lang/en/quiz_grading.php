@@ -68,6 +68,7 @@ $string['nothingfound'] = 'Nothing to display';
 $string['options'] = 'Options';
 $string['orderattempts'] = 'Order attempts';
 $string['pluginname'] = 'Manual grading';
+$string['privacy:metadata'] = 'The Quiz Manual grading plugin does not store any personal data. It provides an interface for users to store data without storing any data itself.';
 $string['qno'] = 'Q #';
 $string['questionname'] = 'Question name';
 $string['questionsperpage'] = 'Questions per page';
