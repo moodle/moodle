@@ -208,7 +208,7 @@ function quiz_start_new_attempt($quizobj, $quba, $attempt, $attemptnumber, $time
                 continue;
             }
 
-            $tagids = quiz_extract_random_question_tag_ids($questiondata->randomfromtags);
+            $tagids = quiz_retrieve_slot_tag_ids($questiondata->slotid);
 
             // Deal with fixed random choices for testing.
             if (isset($questionids[$quba->next_slot_number()])) {
@@ -2494,20 +2494,58 @@ function quiz_extract_random_question_tags($tagsjson, $matchbyid = true) {
 }
 
 /**
- * Providing tags data in the JSON format, this function returns tagids.
+ * Retrieves tag information for the given quiz slot.
+ * A quiz slot have some tags if and only if it is representing a random question by tags.
  *
- * @param string $tagsjson The JSON string representing an array of tags in the [{"id":tagid,"name":"tagname"}] format.
- *      E.g. [{"id":1,"name":"tag1"},{"id":2,"name":"tag2"}]
- *      Usually equal to the value of the tags field retrieved from the {quiz_slots} table.
- * @param bool $matchbyid If set to true, then this function relies on the tag ids that are stored in $tagsjson to find tags.
- *      If no tag is found by the tag id or if $matchbyid is set to false, then this function tries to find the tag by its name.
- * @return int[] List of tag ids.
+ * @param int $slotid The id of the quiz slot.
+ * @return stdClass[] List of quiz_slot_tags records.
  */
-function quiz_extract_random_question_tag_ids($tagsjson, $matchbyid = true) {
-    $tags = quiz_extract_random_question_tags($tagsjson, $matchbyid);
+function quiz_retrieve_slot_tags($slotid) {
+    global $DB;
+
+    $slottags = $DB->get_records('quiz_slot_tags', ['slotid' => $slotid]);
+
+    $tagsbyid = core_tag_tag::get_bulk(array_filter(array_column($slottags, 'tagid')), 'id, name');
+
+    $tagcollid = core_tag_area::get_collection('core', 'question');
+    $tagsbyname = false; // It will be loaded later if required.
+
+    foreach ($slottags as $slottag) {
+        if (isset($tagsbyid[$slottag->tagid])) {
+            $slottag->tagname = $tagsbyid[$slottag->tagid]->name;   // Make sure that we're returning the most updated tag name.
+        } else {
+            if ($tagsbyname === false) {
+                // We were hoping that this query could be avoided, but life showed its other side to us!
+                $tagsbyname = core_tag_tag::get_by_name_bulk($tagcollid, array_column($slottags, 'tagname'), 'id, name');
+            }
+            if (isset($tagsbyname[$slottag->tagname])) {
+                $slottag->tagid = $tagsbyname[$slottag->tagname]->id;   // Make sure that we're returning the current tag id
+                                                                        // that matches the given tag name.
+            } else {
+                $slottag->tagid = null; // The tag does not exist anymore (neither the tag id nor the tag name
+                                        // matches an existing tag).
+                                        // We still need to include this row in the result as some callers might
+                                        // be interested in these rows. An example is the editing forms that still
+                                        // need to display tag names even if they don't exist anymore.
+            }
+        }
+    }
+
+    return $slottags;
+}
+
+/**
+ * Retrieves tag ids for the given quiz slot.
+ * A quiz slot have some tags if and only if it is representing a random question by tags.
+ *
+ * @param int $slotid The id of the quiz slot.
+ * @return int[]
+ */
+function quiz_retrieve_slot_tag_ids($slotid) {
+    $tags = quiz_retrieve_slot_tags($slotid);
 
     // Only work with tags that exist.
-    return array_filter(array_column($tags, 'id'));
+    return array_filter(array_column($tags, 'tagid'));
 }
 
 /**
