@@ -44,6 +44,11 @@ class slot_random {
     protected $quiz = null;
 
     /**
+     * @var \core_tag_tag[] List of tags for this slot.
+     */
+    protected $tags = [];
+
+    /**
      * slot_random constructor.
      *
      * @param \stdClass $slotrecord Represents a record in the quiz_slots table.
@@ -52,9 +57,8 @@ class slot_random {
         $this->record = new \stdClass();
 
         $properties = array(
-                'id', 'slot', 'quizid', 'page', 'requireprevious',
-                'questionid', 'questioncategoryid', 'includingsubcategories',
-                'tags', 'maxmark');
+            'id', 'slot', 'quizid', 'page', 'requireprevious', 'questionid',
+            'questioncategoryid', 'includingsubcategories', 'maxmark');
 
         foreach ($properties as $property) {
             if (isset($slotrecord->$property)) {
@@ -93,6 +97,29 @@ class slot_random {
     public function set_quiz($quiz) {
         $this->quiz = $quiz;
         $this->record->quizid = $quiz->id;
+    }
+
+    /**
+     * Set some tags for this quiz slot.
+     *
+     * @param \core_tag_tag[] $tags
+     */
+    public function set_tags($tags) {
+        $this->tags = [];
+        foreach ($tags as $tag) {
+            // We use $tag->id as the key for the array so not only it handles duplicates of the same tag being given,
+            // but also it is consistent with the behaviour of set_tags_by_id() below.
+            $this->tags[$tag->id] = $tag;
+        }
+    }
+
+    /**
+     * Set some tags for this quiz slot. This function uses tag ids to find tags.
+     *
+     * @param int[] $tagids
+     */
+    public function set_tags_by_id($tagids) {
+        $this->tags = \core_tag_tag::get_bulk($tagids, 'id, name');
     }
 
     /**
@@ -151,6 +178,19 @@ class slot_random {
         }
 
         $this->record->id = $DB->insert_record('quiz_slots', $this->record);
+
+        if (!empty($this->tags)) {
+            $recordstoinsert = [];
+            foreach ($this->tags as $tag) {
+                $recordstoinsert[] = (object)[
+                    'slotid' => $this->record->id,
+                    'tagid' => $tag->id,
+                    'tagname' => $tag->name
+                ];
+            }
+            $DB->insert_records('quiz_slot_tags', $recordstoinsert);
+        }
+
         $trans->allow_commit();
     }
 }

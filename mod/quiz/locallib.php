@@ -2189,18 +2189,10 @@ function quiz_add_random_questions($quiz, $addonpage, $categoryid, $number,
     $catcontext = context::instance_by_id($category->contextid);
     require_capability('moodle/question:useall', $catcontext);
 
-    $tags = [];
+    $tags = \core_tag_tag::get_bulk($tagids, 'id, name');
     $tagstrings = [];
-    foreach ($tagids as $tagid) {
-        if ($tag = core_tag_tag::get($tagid, 'id,name')) {
-            $tags[] = [
-                    'id' => $tagid,
-                    'name' => $tag->name
-            ];
-            $tagstrings[] = "{$tagid},{$tag->name}";
-        } else if (!empty($tagid)) {
-            print_error('invalidtagid', 'mod_quiz');
-        }
+    foreach ($tags as $tag) {
+        $tagstrings[] = "{$tag->id},{$tag->name}";
     }
 
     // Find existing random questions in this category that are
@@ -2239,11 +2231,11 @@ function quiz_add_random_questions($quiz, $addonpage, $categoryid, $number,
         $randomslotdata->questionid = $question->id;
         $randomslotdata->questioncategoryid = $categoryid;
         $randomslotdata->includingsubcategories = $includesubcategories ? 1 : 0;
-        $randomslotdata->tags = json_encode($tags);
         $randomslotdata->maxmark = 1;
 
         $randomslot = new \mod_quiz\local\structure\slot_random($randomslotdata);
         $randomslot->set_quiz($quiz);
+        $randomslot->set_tags($tags);
         $randomslot->insert($addonpage);
     }
 }
