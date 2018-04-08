@@ -38,3 +38,4 @@ $string['short_from_date'] = 'Available from <strong>{$a}</strong>';
 $string['short_until'] = 'Available until <strong>{$a}</strong>';
 $string['short_until_date'] = 'Available until end of <strong>{$a}</strong>';
 $string['title'] = 'Date';
+$string['privacy:metadata'] = 'The Restriction by date plugin does not store any personal data.';
