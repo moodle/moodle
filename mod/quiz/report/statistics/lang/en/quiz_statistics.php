@@ -86,6 +86,7 @@ $string['nostudentsingroup'] = 'There are no students in this group yet';
 $string['optiongrade'] = 'Partial credit';
 $string['partofquestion'] = 'Part of question';
 $string['pluginname'] = 'Statistics';
+$string['privacy:metadata'] = 'Although the Quiz Statistics plugin has database tables, the data is aggregate data and does not describe a unique indidividual.';
 $string['position'] = 'Position';
 $string['positions'] = 'Position(s)';
 $string['questioninformation'] = 'Question information';
@@ -115,4 +116,3 @@ $string['statistics:view'] = 'View statistics report';
 $string['statsfor'] = 'Quiz statistics (for {$a})';
 $string['variant'] = 'Variant';
 $string['whichtries'] = 'Analyze responses for';
-
