@@ -122,7 +122,7 @@ class purpose extends \core\persistent {
     /**
      * Updates the cache record.
      *
-     * @param  $result
+     * @param bool $result
      * @return null
      */
     protected function after_update($result) {

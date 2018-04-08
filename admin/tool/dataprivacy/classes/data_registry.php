@@ -204,7 +204,9 @@ class data_registry {
                 return self::get_effective_contextlevel_value($context->contextlevel, $element);
             } else {
                 // Use the default context level value.
-                list($purposeid, $categoryid) = self::get_effective_default_contextlevel_purpose_and_category($context->contextlevel);
+                list($purposeid, $categoryid) = self::get_effective_default_contextlevel_purpose_and_category(
+                    $context->contextlevel
+                );
                 return self::get_element_instance($element, $$fieldname);
             }
         }
@@ -251,7 +253,8 @@ class data_registry {
         if ($forcedvalue === false) {
             $instance = contextlevel::get_record_by_contextlevel($contextlevel, false);
             if (!$instance) {
-                // If the context level does not have a value defaults to not set, so we grab the context level default as its value.
+                // If the context level does not have a value defaults to not set, so we grab the context level default as
+                // its value.
                 $instancevalue = context_instance::NOTSET;
             } else {
                 $instancevalue = $instance->get($fieldname);

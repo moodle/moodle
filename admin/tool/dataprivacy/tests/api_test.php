@@ -745,10 +745,12 @@ class tool_dataprivacy_api_testcase extends advanced_testcase {
         $coursecontext1 = \context_course::instance($courses[0]->id);
         $coursecontext2 = \context_course::instance($courses[1]->id);
 
-        $record1 = (object)['contextid' => $coursecontext1->id, 'purposeid' => $purposes[0]->get('id'), 'categoryid' => $categories[0]->get('id')];
+        $record1 = (object)['contextid' => $coursecontext1->id, 'purposeid' => $purposes[0]->get('id'),
+            'categoryid' => $categories[0]->get('id')];
         $contextinstance1 = api::set_context_instance($record1);
 
-        $record2 = (object)['contextid' => $coursecontext2->id, 'purposeid' => $purposes[1]->get('id'), 'categoryid' => $categories[1]->get('id')];
+        $record2 = (object)['contextid' => $coursecontext2->id, 'purposeid' => $purposes[1]->get('id'),
+            'categoryid' => $categories[1]->get('id')];
         $contextinstance2 = api::set_context_instance($record2);
 
         $this->assertCount(2, $DB->get_records('tool_dataprivacy_ctxinstance'));
@@ -868,7 +870,7 @@ class tool_dataprivacy_api_testcase extends advanced_testcase {
         $purpose = api::get_effective_contextlevel_purpose(CONTEXT_SYSTEM);
         $this->assertEquals($purposes[1]->get('id'), $purpose->get('id'));
 
-        // 'not set' will get the default value for the context level. For context level defaults
+        // Value 'not set' will get the default value for the context level. For context level defaults
         // both 'not set' and 'inherit' result in inherit, so the parent context (system) default
         // will be retrieved.
         $purpose = api::get_effective_contextlevel_purpose(CONTEXT_USER);

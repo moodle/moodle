@@ -34,6 +34,7 @@ use single_select;
 use stdClass;
 use templatable;
 use tool_dataprivacy\data_request;
+use tool_dataprivacy\output\expired_contexts_table;
 
 /**
  * Class containing data for a user's data requests.
@@ -55,9 +56,10 @@ class data_deletion_page implements renderable, templatable {
     /**
      * Construct this renderable.
      *
-     * @param expired_contexts_table $expiredcontextstable
+     * @param \tool_dataprivacy\data_request[] $filter
+     * @param \tool_dataprivacy\expired_contexts_table $expiredcontextstable
      */
-    public function __construct($filter, $expiredcontextstable) {
+    public function __construct($filter, expired_contexts_table $expiredcontextstable) {
         $this->filter = $filter;
         $this->expiredcontextstable = $expiredcontextstable;
     }

@@ -159,7 +159,8 @@ class context_instance extends \core\form\persistent {
         $effectivepurpose = api::get_effective_context_purpose($context);
         if ($effectivepurpose) {
 
-            $customdata['currentretentionperiod'] = self::get_retention_display_text($effectivepurpose, $context->contextlevel, $context);
+            $customdata['currentretentionperiod'] = self::get_retention_display_text($effectivepurpose, $context->contextlevel,
+                $context);
 
             $customdata['purposeretentionperiods'] = [];
             foreach ($purposeoptions as $optionvalue => $unused) {

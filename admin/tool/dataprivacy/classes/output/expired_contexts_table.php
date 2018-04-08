@@ -63,7 +63,7 @@ class expired_contexts_table extends table_sql {
     /**
      * expired_contexts_table constructor.
      *
-     * @param int $filter The filter type.
+     * @param int|null $contextlevel
      * @throws coding_exception
      */
     public function __construct($contextlevel = null) {

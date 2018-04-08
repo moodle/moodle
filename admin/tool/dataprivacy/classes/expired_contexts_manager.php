@@ -39,6 +39,9 @@ defined('MOODLE_INTERNAL') || die();
  */
 abstract class expired_contexts_manager {
 
+    /**
+     * Number of deleted contexts for each scheduled task run.
+     */
     const DELETE_LIMIT = 200;
 
     /**
@@ -95,7 +98,7 @@ abstract class expired_contexts_manager {
                     continue;
                 }
 
-                if (!PHPUNIT_TEST && !BEHAT_TEST) {
+                if (!PHPUNIT_TEST) {
                     mtrace('Deleting context ' . $context->id . ' - ' .
                         shorten_text($context->get_context_name(true, true)));
                 }

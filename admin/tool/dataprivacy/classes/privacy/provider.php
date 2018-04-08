@@ -23,12 +23,20 @@
  */
 
 namespace tool_dataprivacy\privacy;
+defined('MOODLE_INTERNAL') || die();
 
 use core_privacy\local\metadata\collection;
 use core_privacy\local\request\approved_contextlist;
 use core_privacy\local\request\context;
 use core_privacy\local\request\contextlist;
 
+/**
+ * Privacy class for requesting user data.
+ *
+ * @package    tool_dataprivacy
+ * @copyright  2018 Jake Dallimore <jrhdallimore@gmail.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class provider implements
         // This tool stores user data.
         \core_privacy\local\metadata\provider,
@@ -41,7 +49,7 @@ class provider implements
      * @param   collection $collection The initialised collection to add items to.
      * @return  collection     A listing of user data stored through this system.
      */
-    public static function get_metadata(collection $collection): collection {
+    public static function get_metadata(collection $collection) : collection {
         $collection->add_database_table(
             'tool_dataprivacy_request',
             [
@@ -62,7 +70,7 @@ class provider implements
      * @param   int $userid The user to search.
      * @return  contextlist   $contextlist  The contextlist containing the list of contexts used in this plugin.
      */
-    public static function get_contexts_for_userid(int $userid): contextlist {
+    public static function get_contexts_for_userid(int $userid) : contextlist {
         return new contextlist();
     }
 

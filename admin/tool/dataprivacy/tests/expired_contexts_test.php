@@ -134,7 +134,7 @@ class tool_dataprivacy_expired_contexts_testcase extends advanced_testcase {
         );
         set_config($purposevar, $purpose1->get('id'), 'tool_dataprivacy');
 
-        // A lot more time for modules
+        // A lot more time for modules.
         list($purposevar, $categoryvar) = data_registry::var_names_from_context(
             \context_helper::get_class_for_level(CONTEXT_MODULE)
         );

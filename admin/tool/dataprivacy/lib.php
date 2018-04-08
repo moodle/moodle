@@ -144,7 +144,8 @@ function tool_dataprivacy_output_fragment_context_form($args) {
     $customdata = \tool_dataprivacy\form\context_instance::get_context_instance_customdata($context);
 
     if (!empty($customdata['purposeretentionperiods'])) {
-        $PAGE->requires->js_call_amd('tool_dataprivacy/effective_retention_period', 'init', [$customdata['purposeretentionperiods']]);
+        $PAGE->requires->js_call_amd('tool_dataprivacy/effective_retention_period', 'init',
+            [$customdata['purposeretentionperiods']]);
     }
     $mform = new \tool_dataprivacy\form\context_instance(null, $customdata);
     return $mform->render();
@@ -163,7 +164,8 @@ function tool_dataprivacy_output_fragment_contextlevel_form($args) {
     $customdata = \tool_dataprivacy\form\contextlevel::get_contextlevel_customdata($contextlevel);
 
     if (!empty($customdata['purposeretentionperiods'])) {
-        $PAGE->requires->js_call_amd('tool_dataprivacy/effective_retention_period', 'init', [$customdata['purposeretentionperiods']]);
+        $PAGE->requires->js_call_amd('tool_dataprivacy/effective_retention_period', 'init',
+            [$customdata['purposeretentionperiods']]);
     }
 
     $mform = new \tool_dataprivacy\form\contextlevel(null, $customdata);

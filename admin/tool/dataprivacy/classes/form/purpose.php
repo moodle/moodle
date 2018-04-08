@@ -62,7 +62,8 @@ class purpose extends persistent {
             'D' => strtolower(get_string('days'))
         ];
         $unit = $mform->createElement('select', 'retentionperiodunit', '', $unitoptions);
-        $mform->addGroup(['number' => $number, 'unit' => $unit], 'retentionperiod', get_string('retentionperiod', 'tool_dataprivacy'), null, false);
+        $mform->addGroup(['number' => $number, 'unit' => $unit], 'retentionperiod',
+            get_string('retentionperiod', 'tool_dataprivacy'), null, false);
         $mform->setType('retentionperiodnumber', PARAM_INT);
 
         $this->_form->addElement('advcheckbox', 'protected', get_string('protected', 'tool_dataprivacy'),

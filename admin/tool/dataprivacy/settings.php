@@ -40,7 +40,8 @@ if ($hassiteconfig) {
         // Fetch roles that have the capability to manage data requests.
         $capableroles = get_roles_with_capability('tool/dataprivacy:managedatarequests');
 
-        // Role(s) that map to the Data Protection Officer role. These are assignable roles with the capability to manage data requests.
+        // Role(s) that map to the Data Protection Officer role. These are assignable roles with the capability to
+        // manage data requests.
         $roles = [];
         foreach ($capableroles as $key => $role) {
             if (array_key_exists($key, $assignableroles)) {
