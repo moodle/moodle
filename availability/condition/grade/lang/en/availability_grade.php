@@ -41,3 +41,4 @@ $string['requires_notgeneral'] = 'You do not get certain scores in <strong>{$a}<
 $string['requires_range'] = 'You get a particular score in <strong>{$a}</strong>';
 $string['missing'] = '(missing activity)';
 $string['title'] = 'Grade';
+$string['privacy:metadata'] = 'The Restriction by grades plugin does not store any personal data.';
