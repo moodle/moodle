@@ -36,9 +36,6 @@ defined('MOODLE_INTERNAL') || die();
 function atto_recordrtc_params_for_js($elementid, $options, $fpoptions) {
     global $CFG;
 
-    $moodleversion = intval($CFG->version, 10);
-    $moodle32 = 2016120500;
-
     $context = $options['context'];
     if (!$context) {
         $context = context_system::instance();
@@ -59,7 +56,6 @@ function atto_recordrtc_params_for_js($elementid, $options, $fpoptions) {
                     'timelimit' => $timelimit,
                     'audiortcicon' => $audiortcicon,
                     'videortcicon' => $videortcicon,
-                    'oldermoodle' => $moodleversion < $moodle32,
                     'maxrecsize' => $maxrecsize
               );
 
