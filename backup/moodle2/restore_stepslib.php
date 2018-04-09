@@ -5591,8 +5591,12 @@ class restore_block_search_index extends restore_execution_step {
      * When this step is executed, we add the block context to the queue for reindexing.
      */
     protected function define_execution() {
-        $context = \context_block::instance($this->task->get_blockid());
-        \core_search\manager::request_index($context);
+        // A block in the restore list may be skipped because a duplicate is detected.
+        // In this case, there is no new blockid (or context) to get.
+        if (!empty($this->task->get_blockid())) {
+            $context = \context_block::instance($this->task->get_blockid());
+            \core_search\manager::request_index($context);
+        }
     }
 }
 
