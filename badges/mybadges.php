@@ -24,7 +24,7 @@
  * @author     Yuliya Bozhko <yuliya.bozhko@totaralms.com>
  */
 
-require_once(dirname(dirname(__FILE__)) . '/config.php');
+require_once(__DIR__ . '/../config.php');
 require_once($CFG->libdir . '/badgeslib.php');
 require_once($CFG->libdir . '/filelib.php');
 
@@ -72,6 +72,7 @@ if ($hide) {
     require_sesskey();
     $badge = new badge($download);
     $name = str_replace(' ', '_', $badge->name) . '.png';
+    $name = clean_param($name, PARAM_FILE);
     $filehash = badges_bake($hash, $download, $USER->id, true);
     $fs = get_file_storage();
     $file = $fs->get_file_by_hash($filehash);
@@ -86,10 +87,10 @@ require_capability('moodle/badges:manageownbadges', $context);
 
 $PAGE->set_context($context);
 
-$title = get_string('mybadges', 'badges');
+$title = get_string('badges', 'badges');
 $PAGE->set_title($title);
-$PAGE->set_heading($title);
-$PAGE->set_pagelayout('mydashboard');
+$PAGE->set_heading(fullname($USER));
+$PAGE->set_pagelayout('standard');
 
 // Include JS files for backpack support.
 badges_setup_backpack_js();

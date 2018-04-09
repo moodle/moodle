@@ -1,6 +1,6 @@
 <?php
 
-require_once(dirname(dirname(__FILE__)) . '/config.php');
+require_once(__DIR__ . '/../config.php');
 require_once($CFG->libdir . '/portfoliolib.php');
 require_once($CFG->libdir . '/portfolio/forms.php');
 require_once($CFG->libdir . '/adminlib.php');

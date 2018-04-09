@@ -271,6 +271,14 @@ class HTMLPurifier_HTMLModuleManager
         if ($config->get('HTML.TargetBlank')) {
             $modules[] = 'TargetBlank';
         }
+        // NB: HTML.TargetNoreferrer and HTML.TargetNoopener must be AFTER HTML.TargetBlank
+        // so that its post-attr-transform gets run afterwards.
+        if ($config->get('HTML.TargetNoreferrer')) {
+            $modules[] = 'TargetNoreferrer';
+        }
+        if ($config->get('HTML.TargetNoopener')) {
+            $modules[] = 'TargetNoopener';
+        }
 
         // merge in custom modules
         $modules = array_merge($modules, $this->userModules);

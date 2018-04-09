@@ -83,6 +83,7 @@ function scorm_get_aicc_columns($row, $mastername='system_id') {
     $tok = strtok(strtolower($row), "\",\n\r");
     $result = new stdClass();
     $result->columns = array();
+    $result->mastercol = 0;
     $i = 0;
     while ($tok) {
         if ($tok != '') {
@@ -250,7 +251,13 @@ function scorm_parse_aicc(&$scorm) {
             $regexp = scorm_forge_cols_regexp($columns->columns, '(.+),');
             for ($i = 1; $i < count($rows); $i++) {
                 if (preg_match($regexp, $rows[$i], $matches)) {
-                    $courses[$courseid]->elements[$columns->mastercol + 1]->prerequisites = substr(trim($matches[2 - $columns->mastercol]), 1, -1);
+                    $elementid = trim($matches[$columns->mastercol + 1]);
+                    $elementid = trim(trim($elementid, '"'), "'"); // Remove any quotes.
+
+                    $prereq = trim($matches[2 - $columns->mastercol]);
+                    $prereq = trim(trim($prereq, '"'), "'"); // Remove any quotes.
+
+                    $courses[$courseid]->elements[$elementid]->prerequisites = $prereq;
                 }
             }
         }
@@ -491,8 +498,12 @@ function scorm_aicc_generate_simple_sco($scorm) {
  */
 function get_scorm_default (&$userdata, $scorm, $scoid, $attempt, $mode) {
     global $USER;
-
-    $userdata->student_id = $USER->username;
+    $aiccuserid = get_config('scorm', 'aiccuserid');
+    if (!empty($aiccuserid)) {
+        $userdata->student_id = $USER->id;
+    } else {
+        $userdata->student_id = $USER->username;
+    }
     $userdata->student_name = $USER->lastname .', '. $USER->firstname;
 
     if ($usertrack = scorm_get_tracks($scoid, $USER->id, $attempt)) {

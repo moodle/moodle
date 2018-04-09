@@ -51,6 +51,7 @@ class grade_import_form extends moodleform {
         $mform->addRule('userfile', null, 'required');
         $encodings = core_text::get_encodings();
         $mform->addElement('select', 'encoding', get_string('encoding', 'grades'), $encodings);
+        $mform->addHelpButton('encoding', 'encoding', 'grades');
 
         if (!empty($features['includeseparator'])) {
             $radio = array();
@@ -59,16 +60,19 @@ class grade_import_form extends moodleform {
             $radio[] = $mform->createElement('radio', 'separator', null, get_string('sepcolon', 'grades'), 'colon');
             $radio[] = $mform->createElement('radio', 'separator', null, get_string('sepsemicolon', 'grades'), 'semicolon');
             $mform->addGroup($radio, 'separator', get_string('separator', 'grades'), ' ', false);
+            $mform->addHelpButton('separator', 'separator', 'grades');
             $mform->setDefault('separator', 'comma');
         }
 
         if (!empty($features['verbosescales'])) {
             $options = array(1=>get_string('yes'), 0=>get_string('no'));
             $mform->addElement('select', 'verbosescales', get_string('verbosescales', 'grades'), $options);
+            $mform->addHelpButton('verbosescales', 'verbosescales', 'grades');
         }
 
         $options = array('10'=>10, '20'=>20, '100'=>100, '1000'=>1000, '100000'=>100000);
         $mform->addElement('select', 'previewrows', get_string('rowpreviewnum', 'grades'), $options); // TODO: localize
+        $mform->addHelpButton('previewrows', 'rowpreviewnum', 'grades');
         $mform->setType('previewrows', PARAM_INT);
         $mform->addElement('checkbox', 'forceimport', get_string('forceimport', 'grades'));
         $mform->addHelpButton('forceimport', 'forceimport', 'grades');
@@ -99,6 +103,7 @@ class grade_import_mapping_form extends moodleform {
             }
         }
         $mform->addElement('select', 'mapfrom', get_string('mapfrom', 'grades'), $mapfromoptions);
+        $mform->addHelpButton('mapfrom', 'mapfrom', 'grades');
 
         $maptooptions = array(
             'userid'       => get_string('userid', 'grades'),
@@ -109,7 +114,9 @@ class grade_import_mapping_form extends moodleform {
         );
         $mform->addElement('select', 'mapto', get_string('mapto', 'grades'), $maptooptions);
 
-        $mform->addElement('header', 'general', get_string('mappings', 'grades'));
+        $mform->addHelpButton('mapto', 'mapto', 'grades');
+        $mform->addElement('header', 'general_map', get_string('mappings', 'grades'));
+        $mform->addHelpButton('general_map', 'mappings', 'grades');
 
         // Add a feedback option.
         $feedbacks = array();

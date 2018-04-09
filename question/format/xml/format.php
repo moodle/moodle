@@ -198,7 +198,7 @@ class qformat_xml extends qformat_default {
      * @return object question object
      */
     public function import_headers($question) {
-        global $CFG, $USER;
+        global $USER;
 
         // This routine initialises the question object.
         $qo = $this->defaultquestion();
@@ -255,14 +255,7 @@ class qformat_xml extends qformat_default {
         }
 
         // Read the question tags.
-        if (!empty($CFG->usetags) && array_key_exists('tags', $question['#'])
-                && !empty($question['#']['tags'][0]['#']['tag'])) {
-            require_once($CFG->dirroot.'/tag/lib.php');
-            $qo->tags = array();
-            foreach ($question['#']['tags'][0]['#']['tag'] as $tagdata) {
-                $qo->tags[] = $this->getpath($tagdata, array('#', 'text', 0, '#'), '', true);
-            }
-        }
+        $this->import_question_tags($qo, $question);
 
         return $qo;
     }
@@ -381,6 +374,34 @@ class qformat_xml extends qformat_default {
     }
 
     /**
+     * Import all the question tags
+     *
+     * @param object $qo the question data that is being constructed.
+     * @param array $questionxml The xml representing the question.
+     * @return array of objects representing the tags in the file.
+     */
+    public function import_question_tags($qo, $questionxml) {
+        global $CFG;
+
+        if (core_tag_tag::is_enabled('core_question', 'question')) {
+
+            $qo->tags = [];
+            if (!empty($questionxml['#']['tags'][0]['#']['tag'])) {
+                foreach ($questionxml['#']['tags'][0]['#']['tag'] as $tagdata) {
+                    $qo->tags[] = $this->getpath($tagdata, array('#', 'text', 0, '#'), '', true);
+                }
+            }
+
+            $qo->coursetags = [];
+            if (!empty($questionxml['#']['coursetags'][0]['#']['tag'])) {
+                foreach ($questionxml['#']['coursetags'][0]['#']['tag'] as $tagdata) {
+                    $qo->coursetags[] = $this->getpath($tagdata, array('#', 'text', 0, '#'), '', true);
+                }
+            }
+        }
+    }
+
+    /**
      * Import files from a node in the XML.
      * @param array $xml an array of <file> nodes from the the parsed XML.
      * @return array of things representing files - in the form that save_question expects.
@@ -454,7 +475,11 @@ class qformat_xml extends qformat_default {
 
         // Header parts particular to multianswer.
         $qo->qtype = 'multianswer';
-        $qo->course = $this->course;
+
+        // Only set the course if the data is available.
+        if (isset($this->course)) {
+            $qo->course = $this->course;
+        }
 
         $qo->name = $this->clean_question_name($this->import_text($question['#']['name'][0]['#']['text']));
         $qo->questiontextformat = $questiontext['format'];
@@ -501,6 +526,7 @@ class qformat_xml extends qformat_default {
         }
 
         $this->import_hints($qo, $question, true, false, $this->get_format($qo->questiontextformat));
+        $this->import_question_tags($qo, $question);
 
         return $qo;
     }
@@ -1449,15 +1475,29 @@ class qformat_xml extends qformat_default {
         $expout .= $this->write_hints($question);
 
         // Write the question tags.
-        if (!empty($CFG->usetags)) {
-            require_once($CFG->dirroot.'/tag/lib.php');
-            $tags = tag_get_tags_array('question', $question->id);
-            if (!empty($tags)) {
-                $expout .= "    <tags>\n";
-                foreach ($tags as $tag) {
-                    $expout .= "      <tag>" . $this->writetext($tag, 0, true) . "</tag>\n";
+        if (core_tag_tag::is_enabled('core_question', 'question')) {
+            $tagobjects = core_tag_tag::get_item_tags('core_question', 'question', $question->id);
+
+            if (!empty($tagobjects)) {
+                $context = context::instance_by_id($contextid);
+                $sortedtagobjects = question_sort_tags($tagobjects, $context, [$this->course]);
+
+                if (!empty($sortedtagobjects->coursetags)) {
+                    // Set them on the form to be rendered as existing tags.
+                    $expout .= "    <coursetags>\n";
+                    foreach ($sortedtagobjects->coursetags as $coursetag) {
+                        $expout .= "      <tag>" . $this->writetext($coursetag, 0, true) . "</tag>\n";
+                    }
+                    $expout .= "    </coursetags>\n";
                 }
-                $expout .= "    </tags>\n";
+
+                if (!empty($sortedtagobjects->tags)) {
+                    $expout .= "    <tags>\n";
+                    foreach ($sortedtagobjects->tags as $tag) {
+                        $expout .= "      <tag>" . $this->writetext($tag, 0, true) . "</tag>\n";
+                    }
+                    $expout .= "    </tags>\n";
+                }
             }
         }
 

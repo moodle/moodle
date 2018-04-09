@@ -7,7 +7,7 @@
  * $id = (string)new Horde_Support_Randomid();
  * </code>
  *
- * Copyright 2010-2014 Horde LLC (http://www.horde.org/)
+ * Copyright 2010-2017 Horde LLC (http://www.horde.org/)
  *
  * @author   Michael Slusarz <slusarz@horde.org>
  * @category Horde
@@ -36,19 +36,22 @@ class Horde_Support_Randomid
      */
     public function generate()
     {
-        $r = mt_rand();
-
         $elts = array(
-            $r,
             uniqid(),
-            getmypid()
+            mt_rand(),
+            getmypid(),
+            spl_object_hash($this)
         );
         if (function_exists('zend_thread_id')) {
             $elts[] = zend_thread_id();
         }
         if (function_exists('sys_getloadavg') &&
-            $loadavg = sys_getloadavg()) {
+            ($loadavg = sys_getloadavg())) {
             $elts = array_merge($elts, $loadavg);
+        }
+        if (function_exists('memory_get_usage')) {
+            $elts[] = memory_get_usage();
+            $elts[] = memory_get_peak_usage();
         }
 
         shuffle($elts);
@@ -58,8 +61,8 @@ class Horde_Support_Randomid
         return substr(str_replace(
             array('/', '+', '='),
             array('-', '_', ''),
-            base64_encode(pack('H*', hash('md5', implode('', $elts))))
-        ) . $r, 0, 23);
+            base64_encode(hash('sha1', serialize($elts), true))
+        ), 0, 23);
     }
 
     /**

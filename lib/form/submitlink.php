@@ -20,6 +20,7 @@
  *
  * Contains HTML class for a submitting to link
  *
+ * @deprecated since 3.2
  * @package   core_form
  * @copyright 2006 Jamie Pratt <me@jamiep.org>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -51,8 +52,19 @@ class MoodleQuickForm_submitlink extends MoodleQuickForm_submit {
      * @param string $value (optional) field label
      * @param string $attributes (optional) Either a typical HTML attribute string or an associative array
      */
-    function MoodleQuickForm_submitlink($elementName=null, $value=null, $attributes=null) {
-        parent::MoodleQuickForm_submit($elementName, $value, $attributes);
+    public function __construct($elementName=null, $value=null, $attributes=null) {
+        debugging('Element type submitlink is deprecated.', DEBUG_DEVELOPER);
+        parent::__construct($elementName, $value, $attributes);
+    }
+
+    /**
+     * Old syntax of class constructor. Deprecated in PHP7.
+     *
+     * @deprecated since Moodle 3.1
+     */
+    public function MoodleQuickForm_submitlink($elementName=null, $value=null, $attributes=null) {
+        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
+        self::__construct($elementName, $value, $attributes);
     }
 
     /**
@@ -62,11 +74,9 @@ class MoodleQuickForm_submitlink extends MoodleQuickForm_submit {
      */
     function toHtml() {
         $text = $this->_attributes['value'];
-        $onmouseover = "window.status=\'" . $text . "\';";
-        $onmouseout = "window.status=\'\';";
 
         return "<noscript><div>" . parent::toHtml() . '</div></noscript><script type="text/javascript">' . $this->_js . "\n"
-             . 'document.write(\'<a href="#" onclick="' . $this->_onclick . '" onmouseover="' . $onmouseover . '" onmouseout="' . $onmouseout . '">'
+             . 'document.write(\'<a href="#" onclick="' . $this->_onclick . '">'
              . $text . "</a>');\n</script>";
     }
 }

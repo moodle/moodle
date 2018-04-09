@@ -33,7 +33,7 @@ abstract class filter_local_settings_form extends moodleform {
     public function __construct($submiturl, $filter, $context) {
         $this->filter = $filter;
         $this->context = $context;
-        parent::moodleform($submiturl);
+        parent::__construct($submiturl);
     }
 
     /**

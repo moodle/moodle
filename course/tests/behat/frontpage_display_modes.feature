@@ -29,7 +29,7 @@ Feature: Front page displays items in different modes
     When I set the following administration settings values:
       | Front page items when logged in | List of categories |
       | Maximum category depth | 2 |
-    And I am on homepage
+    And I am on site homepage
     Then I should see "Category 1" in the "region-main" "region"
     And I should see "Category 1 child" in the "region-main" "region"
     And I should not see "Category 1 child child" in the "region-main" "region"
@@ -45,7 +45,7 @@ Feature: Front page displays items in different modes
     When I set the following administration settings values:
       | Front page items when logged in | Combo list |
       | Maximum category depth | 2 |
-    And I am on homepage
+    And I am on site homepage
     Then I should see "Category 1" in the "region-main" "region"
     And I should see "Category 1 child" in the "region-main" "region"
     And I should not see "Category 1 child child" in the "region-main" "region"

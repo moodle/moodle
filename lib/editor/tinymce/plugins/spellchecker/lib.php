@@ -55,7 +55,7 @@ class tinymce_spellchecker extends editor_tinymce_plugin {
 
             // Add JS file, which uses default name.
             $this->add_js_plugin($params);
-            $params['spellchecker_rpc_url'] = $CFG->httpswwwroot .
+            $params['spellchecker_rpc_url'] = $CFG->wwwroot .
                     '/lib/editor/tinymce/plugins/spellchecker/rpc.php';
             $params['spellchecker_languages'] = $spelllanguagelist;
         }

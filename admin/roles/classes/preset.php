@@ -71,8 +71,9 @@ class core_role_preset {
         $dom->appendChild($top);
 
         $top->appendChild($dom->createElement('shortname', $role->shortname));
-        $top->appendChild($dom->createElement('name', $role->name));
-        $top->appendChild($dom->createElement('description', $role->description));
+        $top->appendChild($dom->createElement('name', htmlspecialchars($role->name, ENT_COMPAT | ENT_HTML401, 'UTF-8')));
+        $top->appendChild($dom->createElement('description', htmlspecialchars($role->description, ENT_COMPAT | ENT_HTML401,
+                'UTF-8')));
         $top->appendChild($dom->createElement('archetype', $role->archetype));
 
         $contextlevels = $dom->createElement('contextlevels');
@@ -83,7 +84,7 @@ class core_role_preset {
             $contextlevels->appendChild($dom->createElement('level', $name));
         }
 
-        foreach (array('assign', 'override', 'switch') as $type) {
+        foreach (array('assign', 'override', 'switch', 'view') as $type) {
             $allows = $dom->createElement('allow'.$type);
             $top->appendChild($allows);
             $records = $DB->get_records('role_allow_'.$type, array('roleid'=>$roleid), "allow$type ASC");
@@ -204,7 +205,7 @@ class core_role_preset {
             }
         }
 
-        foreach (array('assign', 'override', 'switch') as $type) {
+        foreach (array('assign', 'override', 'switch', 'view') as $type) {
             $values = self::get_node_children_values($dom, '/role/allow'.$type, 'shortname');
             if (!isset($values)) {
                 $info['allow'.$type] = null;

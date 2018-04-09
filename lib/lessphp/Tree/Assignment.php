@@ -12,12 +12,12 @@ class Less_Tree_Assignment extends Less_Tree{
 	public $value;
 	public $type = 'Assignment';
 
-	function __construct($key, $val) {
+    public function __construct($key, $val) {
 		$this->key = $key;
 		$this->value = $val;
 	}
 
-	function accept( $visitor ){
+    public function accept( $visitor ){
 		$this->value = $visitor->visitObj( $this->value );
 	}
 

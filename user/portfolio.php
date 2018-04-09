@@ -22,7 +22,7 @@
  * @package core_user
  */
 
-require_once(dirname(dirname(__FILE__)) . '/config.php');
+require_once(__DIR__ . '/../config.php');
 
 if (empty($CFG->enableportfolios)) {
     print_error('disabled', 'portfolio');
@@ -51,6 +51,8 @@ $configstr = get_string('manageyourportfolios', 'portfolio');
 $namestr = get_string('name');
 $pluginstr = get_string('plugin', 'portfolio');
 $baseurl = $CFG->wwwroot . '/user/portfolio.php';
+$introstr = get_string('intro', 'portfolio');
+$showhide = get_string('showhide', 'portfolio');
 
 $display = true; // Set this to false in the conditions to stop processing.
 
@@ -58,8 +60,8 @@ require_login($course, false);
 
 $PAGE->set_url($url);
 $PAGE->set_context(context_user::instance($user->id));
-$PAGE->set_title("$course->fullname: $fullname: $strportfolios");
-$PAGE->set_heading($course->fullname);
+$PAGE->set_title($configstr);
+$PAGE->set_heading($fullname);
 $PAGE->set_pagelayout('admin');
 
 echo $OUTPUT->header();
@@ -100,21 +102,35 @@ if ($display) {
     echo $OUTPUT->heading($configstr);
     echo $OUTPUT->box_start();
 
+    echo html_writer::tag('p', $introstr);
+
     if (!$instances = portfolio_instances(true, false)) {
         print_error('noinstances', 'portfolio', $CFG->wwwroot . '/user/view.php');
     }
 
     $table = new html_table();
-    $table->head = array($namestr, $pluginstr, '');
+    $table->head = array($namestr, $pluginstr, $showhide);
     $table->data = array();
 
     foreach ($instances as $i) {
+        // Contents of the actions (Show / hide) column.
+        $actions = '';
+
+        // Configure icon.
+        if ($i->has_user_config()) {
+            $configurl = new moodle_url($baseurl);
+            $configurl->param('config', $i->get('id'));
+            $actions .= html_writer::link($configurl, $OUTPUT->pix_icon('t/edit', get_string('configure', 'portfolio')));
+        }
+
+        // Hide/show icon.
         $visible = $i->get_user_config('visible', $USER->id);
-        $table->data[] = array($i->get('name'), $i->get('plugin'),
-            ($i->has_user_config()
-                ? '<a href="' . $baseurl . '?config=' . $i->get('id') . '"><img src="' . $OUTPUT->pix_url('t/edit') . '" alt="' . get_string('configure') . '" /></a>' : '') .
-                   ' <a href="' . $baseurl . '?hide=' . $i->get('id') . '"><img src="' . $OUTPUT->pix_url('t/' . (($visible) ? 'hide' : 'show')) . '" alt="' . get_string($visible ? 'hide' : 'show') . '" /></a><br />'
-        );
+        $visibilityaction = $visible ? 'hide' : 'show';
+        $showhideurl = new moodle_url($baseurl);
+        $showhideurl->param('hide', $i->get('id'));
+        $actions .= html_writer::link($showhideurl, $OUTPUT->pix_icon('t/' . $visibilityaction, get_string($visibilityaction)));
+
+        $table->data[] = array($i->get('name'), $i->get('plugin'), $actions);
     }
 
     echo html_writer::table($table);

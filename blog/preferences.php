@@ -27,6 +27,7 @@
 require_once('../config.php');
 require_once($CFG->dirroot.'/blog/lib.php');
 require_once('preferences_form.php');
+require_once($CFG->dirroot.'/user/editlib.php');
 
 $courseid = optional_param('courseid', SITEID, PARAM_INT);
 $modid    = optional_param('modid', null, PARAM_INT);
@@ -55,11 +56,16 @@ $PAGE->set_url($url);
 $PAGE->set_pagelayout('admin');
 
 $sitecontext = context_system::instance();
-$PAGE->set_context($sitecontext);
+$usercontext = context_user::instance($USER->id);
+$PAGE->set_context($usercontext);
 require_login($courseid);
 
 if (empty($CFG->enableblogs)) {
     print_error('blogdisable', 'blog');
+}
+
+if (isguestuser()) {
+    print_error('noguest');
 }
 
 // The preference is site wide not blog specific. Hence user should have permissions in site level.
@@ -76,11 +82,12 @@ if (!$mform->is_cancelled() && $data = $mform->get_data()) {
     if ($pagesize < 1) {
         print_error('invalidpagesize');
     }
-    set_user_preference('blogpagesize', $pagesize);
+    useredit_update_user_preference(['id' => $USER->id,
+        'preference_blogpagesize' => $pagesize]);
 }
 
 if ($mform->is_cancelled()) {
-    redirect($CFG->wwwroot . '/blog/index.php');
+    redirect($CFG->wwwroot . '/user/preferences.php');
 }
 
 $site = get_site();
@@ -90,7 +97,7 @@ $strblogs       = get_string('blogs', 'blog');
 
 $title = "$site->shortname: $strblogs : $strpreferences";
 $PAGE->set_title($title);
-$PAGE->set_heading($title);
+$PAGE->set_heading(fullname($USER));
 
 echo $OUTPUT->header();
 

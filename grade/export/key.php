@@ -25,6 +25,7 @@
 
 require_once('../../config.php');
 require_once('key_form.php');
+require_once($CFG->dirroot.'/grade/lib.php');
 
 /// get url variables
 $courseid = optional_param('courseid', 0, PARAM_INT);
@@ -61,6 +62,12 @@ $key->courseid = $course->id;
 require_login($course);
 $context = context_course::instance($course->id);
 require_capability('moodle/grade:export', $context);
+
+// Check if the user has at least one grade publishing capability.
+$plugins = grade_helper::get_plugins_export($course->id);
+if (!isset($plugins['keymanager'])) {
+    print_error('nopermissions');
+}
 
 // extra security check
 if (!empty($key->userid) and $USER->id != $key->userid) {

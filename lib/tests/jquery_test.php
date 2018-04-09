@@ -46,7 +46,7 @@ class core_jquery_testcase extends basic_testcase {
         $plugins = null;
         require($CFG->libdir . '/jquery/plugins.php');
         $this->assertInternalType('array', $plugins);
-        $this->assertEquals(array('jquery', 'migrate', 'ui', 'ui-css'), array_keys($plugins));
+        $this->assertEquals(array('jquery', 'ui', 'ui-css'), array_keys($plugins));
 
         foreach ($plugins as $type => $files) {
             foreach ($files['files'] as $file) {

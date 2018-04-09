@@ -19,22 +19,6 @@ require_once($CFG->dirroot.'/mod/feedback/item/feedback_item_class.php');
 
 class feedback_item_numeric extends feedback_item_base {
     protected $type = "numeric";
-    public $sep_dec, $sep_thous;
-    private $commonparams;
-    private $item_form;
-    private $item;
-
-    public function init() {
-        $this->sep_dec = get_string('separator_decimal', 'feedback');
-        if (substr($this->sep_dec, 0, 2) == '[[') {
-            $this->sep_dec = FEEDBACK_DECIMAL;
-        }
-
-        $this->sep_thous = get_string('separator_thousand', 'feedback');
-        if (substr($this->sep_thous, 0, 2) == '[[') {
-            $this->sep_thous = FEEDBACK_THOUSAND;
-        }
-    }
 
     public function build_editform($item, $feedback, $cm) {
         global $DB, $CFG;
@@ -58,17 +42,13 @@ class feedback_item_numeric extends feedback_item_base {
 
         $range_from_to = explode('|', $item->presentation);
         if (isset($range_from_to[0]) AND is_numeric($range_from_to[0])) {
-            $range_from = str_replace(FEEDBACK_DECIMAL,
-                                $this->sep_dec,
-                                floatval($range_from_to[0]));
+            $range_from = $this->format_float($range_from_to[0]);
         } else {
             $range_from = '-';
         }
 
         if (isset($range_from_to[1]) AND is_numeric($range_from_to[1])) {
-            $range_to = str_replace(FEEDBACK_DECIMAL,
-                                $this->sep_dec,
-                                floatval($range_from_to[1]));
+            $range_to = $this->format_float($range_from_to[1]);
         } else {
             $range_to = '-';
         }
@@ -93,28 +73,13 @@ class feedback_item_numeric extends feedback_item_base {
         $this->item_form = new feedback_numeric_form('edit_item.php', $customdata);
     }
 
-    //this function only can used after the call of build_editform()
-    public function show_editform() {
-        $this->item_form->display();
-    }
-
-    public function is_cancelled() {
-        return $this->item_form->is_cancelled();
-    }
-
-    public function get_data() {
-        if ($this->item = $this->item_form->get_data()) {
-            return true;
-        }
-        return false;
-    }
-
     public function save_item() {
         global $DB;
 
-        if (!$item = $this->item_form->get_data()) {
+        if (!$this->get_data()) {
             return false;
         }
+        $item = $this->item;
 
         if (isset($item->clone_item) AND $item->clone_item) {
             $item->id = ''; //to clone this item
@@ -131,9 +96,15 @@ class feedback_item_numeric extends feedback_item_base {
         return $DB->get_record('feedback_item', array('id'=>$item->id));
     }
 
-
-    //liefert eine Struktur ->name, ->data = array(mit Antworten)
-    public function get_analysed($item, $groupid = false, $courseid = false) {
+    /**
+     * Helper function for collected data, both for analysis page and export to excel
+     *
+     * @param stdClass $item the db-object from feedback_item
+     * @param int $groupid
+     * @param int $courseid
+     * @return stdClass
+     */
+    protected function get_analysed($item, $groupid = false, $courseid = false) {
         global $DB;
 
         $analysed = new stdClass();
@@ -152,7 +123,7 @@ class feedback_item_numeric extends feedback_item_base {
                     $counter++;
                 }
             }
-            $avg = $counter > 0 ? $avg / $counter : 0;
+            $avg = $counter > 0 ? $avg / $counter : null;
             $analysed->data = $data;
             $analysed->avg = $avg;
         }
@@ -172,24 +143,30 @@ class feedback_item_numeric extends feedback_item_base {
         $values = $this->get_analysed($item, $groupid, $courseid);
 
         if (isset($values->data) AND is_array($values->data)) {
+            echo "<table class=\"analysis itemtype_{$item->typ}\">";
             echo '<tr><th colspan="2" align="left">';
-            echo $itemnr.'&nbsp;('.$item->label.') '.$item->name;
+            echo $itemnr . ' ';
+            if (strval($item->label) !== '') {
+                echo '('. format_string($item->label).') ';
+            }
+            echo format_text($item->name, FORMAT_HTML, array('noclean' => true, 'para' => false));
             echo '</th></tr>';
 
             foreach ($values->data as $value) {
-                echo '<tr><td colspan="2" valign="top" align="left">';
-                echo '-&nbsp;&nbsp;'.number_format($value, 2, $this->sep_dec, $this->sep_thous);
+                echo '<tr><td colspan="2" class="singlevalue">';
+                echo $this->format_float($value);
                 echo '</td></tr>';
             }
 
             if (isset($values->avg)) {
-                $avg = number_format($values->avg, 2, $this->sep_dec, $this->sep_thous);
+                $avg = format_float($values->avg, 2);
             } else {
-                $avg = number_format(0, 2, $this->sep_dec, $this->sep_thous);
+                $avg = '-';
             }
-            echo '<tr><td align="left" colspan="2"><b>';
+            echo '<tr><td colspan="2"><b>';
             echo get_string('average', 'feedback').': '.$avg;
             echo '</b></td></tr>';
+            echo '</table>';
         }
     }
 
@@ -204,16 +181,23 @@ class feedback_item_numeric extends feedback_item_base {
         $data = $analysed_item->data;
         if (is_array($data)) {
 
-            //mittelwert anzeigen
+            // Export average.
             $worksheet->write_string($row_offset,
                                      2,
                                      get_string('average', 'feedback'),
                                      $xls_formats->value_bold);
 
-            $worksheet->write_number($row_offset + 1,
-                                     2,
-                                     $analysed_item->avg,
-                                     $xls_formats->value_bold);
+            if (isset($analysed_item->avg)) {
+                $worksheet->write_number($row_offset + 1,
+                                         2,
+                                         $analysed_item->avg,
+                                         $xls_formats->value_bold);
+            } else {
+                $worksheet->write_string($row_offset + 1,
+                                         2,
+                                         '',
+                                         $xls_formats->value_bold);
+            }
             $row_offset++;
         }
         $row_offset++;
@@ -221,277 +205,99 @@ class feedback_item_numeric extends feedback_item_base {
     }
 
     /**
-     * print the item at the edit-page of feedback
+     * Prints the float nicely in the localized format
      *
-     * @global object
-     * @param object $item
-     * @return void
-     */
-    public function print_item_preview($item) {
-        global $OUTPUT, $DB;
-
-        $align = right_to_left() ? 'right' : 'left';
-        $strrequiredmark = '<img class="req" title="'.get_string('requiredelement', 'form').'" alt="'.
-            get_string('requiredelement', 'form').'" src="'.$OUTPUT->pix_url('req') .'" />';
-
-        //get the range
-        $range_from_to = explode('|', $item->presentation);
-
-        //get the min-value
-        if (isset($range_from_to[0]) AND is_numeric($range_from_to[0])) {
-            $range_from = floatval($range_from_to[0]);
-        } else {
-            $range_from = 0;
-        }
-
-        //get the max-value
-        if (isset($range_from_to[1]) AND is_numeric($range_from_to[1])) {
-            $range_to = floatval($range_from_to[1]);
-        } else {
-            $range_to = 0;
-        }
-
-        $requiredmark = ($item->required == 1) ? $strrequiredmark : '';
-        //print the question and label
-        $inputname = $item->typ . '_' . $item->id;
-        echo '<div class="feedback_item_label_'.$align.'">';
-        echo '<label for="'. $inputname .'">';
-        echo '('.$item->label.') ';
-        echo format_text($item->name . $requiredmark, true, false, false);
-        if ($item->dependitem) {
-            $params = array('id'=>$item->dependitem);
-            if ($dependitem = $DB->get_record('feedback_item', $params)) {
-                echo ' <span class="feedback_depend">';
-                echo '('.$dependitem->label.'-&gt;'.$item->dependvalue.')';
-                echo '</span>';
-            }
-        }
-        echo '<span class="feedback_item_numinfo">';
-        switch(true) {
-            case ($range_from === '-' AND is_numeric($range_to)):
-                echo ' ('.get_string('maximal', 'feedback').
-                        ': '.str_replace(FEEDBACK_DECIMAL, $this->sep_dec, $range_to).')';
-                break;
-            case (is_numeric($range_from) AND $range_to === '-'):
-                echo ' ('.get_string('minimal', 'feedback').
-                        ': '.str_replace(FEEDBACK_DECIMAL, $this->sep_dec, $range_from).')';
-                break;
-            case ($range_from === '-' AND $range_to === '-'):
-                break;
-            default:
-                echo ' ('.str_replace(FEEDBACK_DECIMAL, $this->sep_dec, $range_from).
-                        ' - '.str_replace(FEEDBACK_DECIMAL, $this->sep_dec, $range_to).')';
-                break;
-        }
-        echo '</span>';
-        echo '</label>';
-        echo '</div>';
-
-        //print the presentation
-        echo '<div class="feedback_item_presentation_'.$align.'">';
-        echo '<span class="feedback_item_textfield">';
-        echo '<input type="text" '.
-                    'id="'.$inputname.'" '.
-                    'name="'.$inputname.'" '.
-                    'size="10" '.
-                    'maxlength="10" '.
-                    'value="" />';
-
-        echo '</span>';
-        echo '</div>';
-    }
-
-    /**
-     * print the item at the complete-page of feedback
+     * Similar to format_float() but automatically calculates the number of decimal places
      *
-     * @global object
-     * @param object $item
-     * @param string $value
-     * @param bool $highlightrequire
-     * @return void
+     * @param float $value The float to print
+     * @return string
      */
-    public function print_item_complete($item, $value = '', $highlightrequire = false) {
-        global $OUTPUT;
-        $align = right_to_left() ? 'right' : 'left';
-        $strrequiredmark = '<img class="req" title="'.get_string('requiredelement', 'form').'" alt="'.
-            get_string('requiredelement', 'form').'" src="'.$OUTPUT->pix_url('req') .'" />';
-
-        //get the range
-        $range_from_to = explode('|', $item->presentation);
-
-        //get the min-value
-        if (isset($range_from_to[0]) AND is_numeric($range_from_to[0])) {
-            $range_from = floatval($range_from_to[0]);
-        } else {
-            $range_from = 0;
-        }
-
-        //get the max-value
-        if (isset($range_from_to[1]) AND is_numeric($range_from_to[1])) {
-            $range_to = floatval($range_from_to[1]);
-        } else {
-            $range_to = 0;
-        }
-
-        $requiredmark = ($item->required == 1) ? $strrequiredmark : '';
-
-        //print the question and label
-        $inputname = $item->typ . '_' . $item->id;
-        echo '<div class="feedback_item_label_'.$align.'">';
-        echo '<label for="'. $inputname .'">';
-        echo format_text($item->name . $requiredmark, true, false, false);
-        echo '<span class="feedback_item_numinfo">';
-        switch(true) {
-            case ($range_from === '-' AND is_numeric($range_to)):
-                echo ' ('.get_string('maximal', 'feedback').
-                        ': '.str_replace(FEEDBACK_DECIMAL, $this->sep_dec, $range_to).')';
-                break;
-            case (is_numeric($range_from) AND $range_to === '-'):
-                echo ' ('.get_string('minimal', 'feedback').
-                        ': '.str_replace(FEEDBACK_DECIMAL, $this->sep_dec, $range_from).')';
-                break;
-            case ($range_from === '-' AND $range_to === '-'):
-                break;
-            default:
-                echo ' ('.str_replace(FEEDBACK_DECIMAL, $this->sep_dec, $range_from).
-                        ' - '.str_replace(FEEDBACK_DECIMAL, $this->sep_dec, $range_to).')';
-                break;
-        }
-        echo '</span>';
-        if ($highlightrequire AND (!$this->check_value($value, $item))) {
-            echo '<br class="error"><span id="id_error_'.$inputname.'" class="error"> '.get_string('err_required', 'form').
-                '</span><br id="id_error_break_'.$inputname.'" class="error" >';
-        }
-        echo '</label>';
-        echo '</div>';
-
-        //print the presentation
-        echo '<div class="feedback_item_presentation_'.$align.'">';
-        echo '<span class="feedback_item_textfield">';
-        echo '<input type="text" '.
-                     'id="'.$inputname.'" '.
-                     'name="'.$item->typ.'_'.$item->id.'" '.
-                     'size="10" '.
-                     'maxlength="10" '.
-                     'value="'.$value.'" />';
-
-        echo '</span>';
-        echo '</div>';
-    }
-
-    /**
-     * print the item at the complete-page of feedback
-     *
-     * @global object
-     * @param object $item
-     * @param string $value
-     * @return void
-     */
-    public function print_item_show_value($item, $value = '') {
-        global $OUTPUT;
-        $align = right_to_left() ? 'right' : 'left';
-        $strrequiredmark = '<img class="req" title="'.get_string('requiredelement', 'form').'" alt="'.
-            get_string('requiredelement', 'form').'" src="'.$OUTPUT->pix_url('req') .'" />';
-
-        //get the range
-        $range_from_to = explode('|', $item->presentation);
-        //get the min-value
-        if (isset($range_from_to[0]) AND is_numeric($range_from_to[0])) {
-            $range_from = floatval($range_from_to[0]);
-        } else {
-            $range_from = 0;
-        }
-        //get the max-value
-        if (isset($range_from_to[1]) AND is_numeric($range_from_to[1])) {
-            $range_to = floatval($range_from_to[1]);
-        } else {
-            $range_to = 0;
-        }
-        $requiredmark = ($item->required == 1) ? $strrequiredmark : '';
-
-        //print the question and label
-        echo '<div class="feedback_item_label_'.$align.'">';
-        echo '('.$item->label.') ';
-        echo format_text($item->name . $requiredmark, true, false, false);
-        switch(true) {
-            case ($range_from === '-' AND is_numeric($range_to)):
-                echo ' ('.get_string('maximal', 'feedback').
-                    ': '.str_replace(FEEDBACK_DECIMAL, $this->sep_dec, $range_to).')';
-                break;
-            case (is_numeric($range_from) AND $range_to === '-'):
-                echo ' ('.get_string('minimal', 'feedback').
-                    ': '.str_replace(FEEDBACK_DECIMAL, $this->sep_dec, $range_from).')';
-                break;
-            case ($range_from === '-' AND $range_to === '-'):
-                break;
-            default:
-                echo ' ('.str_replace(FEEDBACK_DECIMAL, $this->sep_dec, $range_from).
-                    ' - '.str_replace(FEEDBACK_DECIMAL, $this->sep_dec, $range_to).')';
-                break;
-        }
-        echo '</div>';
-
-        //print the presentation
-        echo '<div class="feedback_item_presentation_'.$align.'">';
-        echo $OUTPUT->box_start('generalbox boxalign'.$align);
-        if (is_numeric($value)) {
-            $str_num_value = number_format($value, 2, $this->sep_dec, $this->sep_thous);
-        } else {
-            $str_num_value = '&nbsp;';
-        }
-        echo $str_num_value;
-        echo $OUTPUT->box_end();
-        echo '</div>';
-    }
-
-    public function check_value($value, $item) {
-        $value = str_replace($this->sep_dec, FEEDBACK_DECIMAL, $value);
-        //if the item is not required, so the check is true if no value is given
-        if ((!isset($value) OR $value == '') AND $item->required != 1) {
-            return true;
-        }
+    protected function format_float($value) {
         if (!is_numeric($value)) {
-            return false;
+            return null;
+        }
+        $decimal = is_int($value) ? 0 : strlen(substr(strrchr($value, '.'), 1));
+        return format_float($value, $decimal);
+    }
+
+    /**
+     * Returns human-readable boundaries (min - max)
+     * @param stdClass $item
+     * @return string
+     */
+    protected function get_boundaries_for_display($item) {
+        list($rangefrom, $rangeto) = explode('|', $item->presentation);
+        if (!isset($rangefrom) || !is_numeric($rangefrom)) {
+            $rangefrom = null;
+        }
+        if (!isset($rangeto) || !is_numeric($rangeto)) {
+            $rangeto = null;
         }
 
-        $range_from_to = explode('|', $item->presentation);
-        if (isset($range_from_to[0]) AND is_numeric($range_from_to[0])) {
-            $range_from = floatval($range_from_to[0]);
-        } else {
-            $range_from = '-';
+        if (is_null($rangefrom) && is_numeric($rangeto)) {
+            return ' (' . get_string('maximal', 'feedback') .
+                        ': ' . $this->format_float($rangeto) . ')';
         }
-        if (isset($range_from_to[1]) AND is_numeric($range_from_to[1])) {
-            $range_to = floatval($range_from_to[1]);
-        } else {
-            $range_to = '-';
+        if (is_numeric($rangefrom) && is_null($rangeto)) {
+            return ' (' . get_string('minimal', 'feedback') .
+                        ': ' . $this->format_float($rangefrom) . ')';
         }
+        if (is_null($rangefrom) && is_null($rangeto)) {
+            return '';
+        }
+        return ' (' . $this->format_float($rangefrom) .
+                ' - ' . $this->format_float($rangeto) . ')';
+    }
 
-        switch(true) {
-            case ($range_from === '-' AND is_numeric($range_to)):
-                if (floatval($value) <= $range_to) {
-                    return true;
-                }
-                break;
-            case (is_numeric($range_from) AND $range_to === '-'):
-                if (floatval($value) >= $range_from) {
-                    return true;
-                }
-                break;
-            case ($range_from === '-' AND $range_to === '-'):
-                return true;
-                break;
-            default:
-                if (floatval($value) >= $range_from AND floatval($value) <= $range_to) {
-                    return true;
-                }
-                break;
-        }
+    /**
+     * Returns the postfix to be appended to the display name that is based on other settings
+     *
+     * @param stdClass $item
+     * @return string
+     */
+    public function get_display_name_postfix($item) {
+        return html_writer::span($this->get_boundaries_for_display($item), 'boundaries');
+    }
 
-        return false;
+    /**
+     * Adds an input element to the complete form
+     *
+     * @param stdClass $item
+     * @param mod_feedback_complete_form $form
+     */
+    public function complete_form_element($item, $form) {
+        $name = $this->get_display_name($item);
+        $inputname = $item->typ . '_' . $item->id;
+        $form->add_form_element($item,
+                ['text', $inputname, $name],
+                true,
+                false
+                );
+        $form->set_element_type($inputname, PARAM_NOTAGS);
+        $tmpvalue = $this->format_float($form->get_item_value($item));
+        $form->set_element_default($inputname, $tmpvalue);
+
+        // Add form validation rule to check for boundaries.
+        $form->add_validation_rule(function($values, $files) use ($item) {
+            $inputname = $item->typ . '_' . $item->id;
+            list($rangefrom, $rangeto) = explode('|', $item->presentation);
+            if (!isset($values[$inputname]) || trim($values[$inputname]) === '') {
+                return $item->required ? array($inputname => get_string('required')) : true;
+            }
+            $value = unformat_float($values[$inputname], true);
+            if ($value === false) {
+                return array($inputname => get_string('invalidnum', 'error'));
+            }
+            if ((is_numeric($rangefrom) && $value < floatval($rangefrom)) ||
+                    (is_numeric($rangeto) && $value > floatval($rangeto))) {
+                return array($inputname => get_string('numberoutofrange', 'feedback'));
+            }
+            return true;
+        });
     }
 
     public function create_value($data) {
-        $data = str_replace($this->sep_dec, FEEDBACK_DECIMAL, $data);
+        $data = unformat_float($data, true);
 
         if (is_numeric($data)) {
             $data = floatval($data);
@@ -501,63 +307,23 @@ class feedback_item_numeric extends feedback_item_base {
         return $data;
     }
 
-    //compares the dbvalue with the dependvalue
-    //dbvalue is the number put in by the user
-    //dependvalue is the value that is compared
-    public function compare_value($item, $dbvalue, $dependvalue) {
-        if ($dbvalue == $dependvalue) {
-            return true;
+    /**
+     * Return the analysis data ready for external functions.
+     *
+     * @param stdClass $item     the item (question) information
+     * @param int      $groupid  the group id to filter data (optional)
+     * @param int      $courseid the course id (optional)
+     * @return array an array of data with non scalar types json encoded
+     * @since  Moodle 3.3
+     */
+    public function get_analysed_for_external($item, $groupid = false, $courseid = false) {
+
+        $externaldata = array();
+        $data = $this->get_analysed($item, $groupid, $courseid);
+
+        if (is_array($data->data)) {
+            return $data->data; // No need to json, scalar type.
         }
-        return false;
-    }
-
-    public function get_presentation($data) {
-        $num1 = str_replace($this->sep_dec, FEEDBACK_DECIMAL, $data->numericrangefrom);
-        if (is_numeric($num1)) {
-            $num1 = floatval($num1);
-        } else {
-            $num1 = '-';
-        }
-
-        $num2 = str_replace($this->sep_dec, FEEDBACK_DECIMAL, $data->numericrangeto);
-        if (is_numeric($num2)) {
-            $num2 = floatval($num2);
-        } else {
-            $num2 = '-';
-        }
-
-        if ($num1 === '-' OR $num2 === '-') {
-            return $num1 . '|'. $num2;
-        }
-
-        if ($num1 > $num2) {
-            return $num2 . '|'. $num1;
-        } else {
-            return $num1 . '|'. $num2;
-        }
-    }
-
-    public function get_hasvalue() {
-        return 1;
-    }
-
-    public function can_switch_require() {
-        return true;
-    }
-
-    public function value_type() {
-        return PARAM_FLOAT;
-    }
-
-    public function clean_input_value($value) {
-        $value = str_replace($this->sep_dec, FEEDBACK_DECIMAL, $value);
-        if (!is_numeric($value)) {
-            if ($value == '') {
-                return null; //an empty string should be null
-            } else {
-                return clean_param($value, PARAM_TEXT); //we have to know the value if it is wrong
-            }
-        }
-        return clean_param($value, $this->value_type());
+        return $externaldata;
     }
 }

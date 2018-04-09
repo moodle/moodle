@@ -23,3 +23,4 @@
  */
 
 $string['pluginname'] = 'Italic';
+$string['privacy:metadata'] = 'The atto_italic plugin does not store any personal data.';

@@ -20,10 +20,6 @@
  * This script is meant to be called from a cronjob to sync moodle with the CAS
  * backend in those setups where the CAS backend acts as 'master'.
  *
- * Sample cron entry:
- * # 5 minutes past 4am
- * 5 4 * * * $sudo -u www-data /usr/bin/php /var/www/moodle/auth/cas/cli/sync_users.php
- *
  * Notes:
  *   - it is required to use the web server account when executing PHP CLI scripts
  *   - you need to change the "www-data" to match the apache user account
@@ -40,12 +36,15 @@
  * @package    auth_cas
  * @copyright  2007 Jerome Gutierrez - based on code by Martin Langhoff
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @deprecated since Moodle 3.0 MDL-51824 - please do not use this CLI script any more, use scheduled task instead.
+ * @todo MDL-50264 This will be deleted in Moodle 3.2.
  */
 
 define('CLI_SCRIPT', true);
 
-require(dirname(dirname(dirname(dirname(__FILE__)))).'/config.php');
+require(__DIR__.'/../../../config.php');
 require_once($CFG->dirroot.'/course/lib.php');
+require_once($CFG->libdir.'/clilib.php');
 
 // Ensure errors are well explained
 set_debugging(DEBUG_DEVELOPER, true);
@@ -53,6 +52,14 @@ set_debugging(DEBUG_DEVELOPER, true);
 if (!is_enabled_auth('cas')) {
     error_log('[AUTH CAS] '.get_string('pluginnotenabled', 'auth_ldap'));
     die;
+}
+
+cli_problem('[AUTH CAS] The sync users cron has been deprecated. Please use the scheduled task instead.');
+
+// Abort execution of the CLI script if the auth_cas\task\sync_task is enabled.
+$task = \core\task\manager::get_scheduled_task('auth_cas\task\sync_task');
+if (!$task->get_disabled()) {
+    cli_error('[AUTH CAS] The scheduled task sync_task is enabled, the cron execution has been aborted.');
 }
 
 $casauth = get_auth_plugin('cas');

@@ -8,8 +8,8 @@ Feature: Indent items on the course page
   Scenario: Indent course items with Javascript enabled
     Given the following "users" exist:
       | username | firstname | lastname | email |
-      | teacher1 | Teacher | 1 | teacher1@asd.com |
-      | student1 | Student | 1 | student1@asd.com |
+      | teacher1 | Teacher | 1 | teacher1@example.com |
+      | student1 | Student | 1 | student1@example.com |
     And the following "courses" exist:
       | fullname | shortname | format |
       | Course 1 | C1 | weeks |
@@ -18,8 +18,7 @@ Feature: Indent items on the course page
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
     And I log in as "teacher1"
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I add a "Glossary" to section "1" and I fill the form with:
       | Name | Test glossary name |
       | Description | Test glossary description |

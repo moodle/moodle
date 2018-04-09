@@ -31,70 +31,6 @@
 class core_enrol_renderer extends plugin_renderer_base {
 
     /**
-     * Renders a course enrolment table
-     *
-     * @param course_enrolment_table $table
-     * @param moodleform $mform Form that contains filter controls
-     * @return string
-     */
-    public function render_course_enrolment_users_table(course_enrolment_users_table $table,
-            moodleform $mform) {
-
-        $table->initialise_javascript();
-
-        $buttons = $table->get_manual_enrol_buttons();
-        $buttonhtml = '';
-        if (count($buttons) > 0) {
-            $buttonhtml .= html_writer::start_tag('div', array('class' => 'enrol_user_buttons enrol-users-page-action'));
-            foreach ($buttons as $button) {
-                $buttonhtml .= $this->render($button);
-            }
-            $buttonhtml .= html_writer::end_tag('div');
-        }
-
-        $content = '';
-        if (!empty($buttonhtml)) {
-            $content .= $buttonhtml;
-        }
-        $content .= $mform->render();
-
-        $content .= $this->output->render($table->get_paging_bar());
-
-        // Check if the table has any bulk operations. If it does we want to wrap the table in a
-        // form so that we can capture and perform any required bulk operations.
-        if ($table->has_bulk_user_enrolment_operations()) {
-            $content .= html_writer::start_tag('form', array('action' => new moodle_url('/enrol/bulkchange.php'), 'method' => 'post'));
-            foreach ($table->get_combined_url_params() as $key => $value) {
-                if ($key == 'action') {
-                    continue;
-                }
-                $content .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => $key, 'value' => $value));
-            }
-            $content .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'action', 'value' => 'bulkchange'));
-            $content .= html_writer::table($table);
-            $content .= html_writer::start_tag('div', array('class' => 'singleselect bulkuserop'));
-            $content .= html_writer::start_tag('select', array('name' => 'bulkuserop'));
-            $content .= html_writer::tag('option', get_string('withselectedusers', 'enrol'), array('value' => ''));
-            $options = array('' => get_string('withselectedusers', 'enrol'));
-            foreach ($table->get_bulk_user_enrolment_operations() as $operation) {
-                $content .= html_writer::tag('option', $operation->get_title(), array('value' => $operation->get_identifier()));
-            }
-            $content .= html_writer::end_tag('select');
-            $content .= html_writer::empty_tag('input', array('type' => 'submit', 'value' => get_string('go')));
-            $content .= html_writer::end_tag('div');
-
-            $content .= html_writer::end_tag('form');
-        } else {
-            $content .= html_writer::table($table);
-        }
-        $content .= $this->output->render($table->get_paging_bar());
-        if (!empty($buttonhtml)) {
-            $content .= $buttonhtml;
-        }
-        return $content;
-    }
-
-    /**
      * Renderers the enrol_user_button.
      *
      * @param enrol_user_button $button
@@ -104,7 +40,8 @@ class core_enrol_renderer extends plugin_renderer_base {
         $attributes = array('type'     => 'submit',
                             'value'    => $button->label,
                             'disabled' => $button->disabled ? 'disabled' : null,
-                            'title'    => $button->tooltip);
+                            'title'    => $button->tooltip,
+                            'class'    => 'btn btn-secondary m-y-1');
 
         if ($button->actions) {
             $id = html_writer::random_id('single_button');
@@ -184,16 +121,13 @@ class core_enrol_renderer extends plugin_renderer_base {
      * @return string
      */
     public function user_roles_and_actions($userid, $roles, $assignableroles, $canassign, $pageurl) {
-        $iconenrolremove = $this->output->pix_url('t/delete');
-
-
 
         // Get list of roles.
         $rolesoutput = '';
         foreach ($roles as $roleid=>$role) {
             if ($canassign and (is_siteadmin() or isset($assignableroles[$roleid])) and !$role['unchangeable']) {
                 $strunassign = get_string('unassignarole', 'role', $role['text']);
-                $icon = html_writer::empty_tag('img', array('alt'=>$strunassign, 'src'=>$iconenrolremove));
+                $icon = $this->output->pix_icon('t/delete', $strunassign);
                 $url = new moodle_url($pageurl, array('action'=>'unassign', 'roleid'=>$roleid, 'user'=>$userid));
                 $rolesoutput .= html_writer::tag('div', $role['text'] . html_writer::link($url, $icon, array('class'=>'unassignrolelink', 'rel'=>$roleid, 'title'=>$strunassign)), array('class'=>'role role_'.$roleid));
             } else {
@@ -232,14 +166,12 @@ class core_enrol_renderer extends plugin_renderer_base {
      * @return string
      */
     public function user_groups_and_actions($userid, $groups, $allgroups, $canmanagegroups, $pageurl) {
-        $iconenrolremove = $this->output->pix_url('t/delete');
-
         $groupicon = $this->output->pix_icon('i/group', get_string('addgroup', 'group'));
 
         $groupoutput = '';
         foreach($groups as $groupid=>$name) {
             if ($canmanagegroups and groups_remove_member_allowed($groupid, $userid)) {
-                $icon = html_writer::empty_tag('img', array('alt'=>get_string('removefromgroup', 'group', $name), 'src'=>$iconenrolremove));
+                $icon = $this->output->pix_icon('t/delete', get_string('removefromgroup', 'group', $name));
                 $url = new moodle_url($pageurl, array('action'=>'removemember', 'group'=>$groupid, 'user'=>$userid));
                 $groupoutput .= html_writer::tag('div', $name . html_writer::link($url, $icon), array('class'=>'group', 'rel'=>$groupid));
             } else {
@@ -421,7 +353,7 @@ class course_enrolment_table extends html_table implements renderable {
      * @var array
      */
     protected static $sortablefields = array('firstname', 'lastname', 'firstnamephonetic', 'lastnamephonetic', 'middlename',
-            'alternatename', 'idnumber', 'email', 'phone1', 'phone2', 'institution', 'department' );
+            'alternatename', 'idnumber', 'email', 'phone1', 'phone2', 'institution', 'department', 'lastaccess', 'lastcourseaccess' );
 
     /**
      * Constructs the table
@@ -513,9 +445,10 @@ class course_enrolment_table extends html_table implements renderable {
                     if (!in_array($n, self::$sortablefields)) {
                         $bits[] = $l;
                     } else {
-                        $link = html_writer::link(new moodle_url($url, array(self::SORTVAR=>$n)), $fields[$name][$n]);
+                        $sorturl = new moodle_url($url, array(self::SORTVAR => $n, self::SORTDIRECTIONVAR => $this->get_field_sort_direction($n)));
+                        $link = html_writer::link($sorturl, $fields[$name][$n]);
                         if ($this->sort == $n) {
-                            $link .= html_writer::link(new moodle_url($url, array(self::SORTVAR=>$n, self::SORTDIRECTIONVAR=>$this->get_field_sort_direction($n))), $this->get_direction_icon($output, $n));
+                            $link .= $this->get_direction_icon($output, $n);
                         }
                         $bits[] = html_writer::tag('span', $link, array('class'=>'subheading_'.$n));
 
@@ -526,9 +459,10 @@ class course_enrolment_table extends html_table implements renderable {
                 if (!in_array($name, self::$sortablefields)) {
                     $newlabel = $label;
                 } else {
-                    $newlabel  = html_writer::link(new moodle_url($url, array(self::SORTVAR=>$name)), $fields[$name]);
+                    $sorturl = new moodle_url($url, array(self::SORTVAR => $name, self::SORTDIRECTIONVAR => $this->get_field_sort_direction($name)));
+                    $newlabel  = html_writer::link($sorturl, $fields[$name]);
                     if ($this->sort == $name) {
-                        $newlabel .= html_writer::link(new moodle_url($url, array(self::SORTVAR=>$name, self::SORTDIRECTIONVAR=>$this->get_field_sort_direction($name))), $this->get_direction_icon($output, $name));
+                        $newlabel .= $this->get_direction_icon($output, $name);
                     }
                 }
             }
@@ -636,11 +570,9 @@ class course_enrolment_table extends html_table implements renderable {
             $direction = $this->sortdirection;
         }
         if ($direction === 'ASC') {
-            return html_writer::empty_tag('img', array('alt' => '', 'class' => 'iconsort',
-                'src' => $output->pix_url('t/sort_asc')));
+            return $output->pix_icon('t/sort_asc', get_string('sort'));
         } else {
-            return html_writer::empty_tag('img', array('alt' => '', 'class' => 'iconsort',
-                'src' => $output->pix_url('t/sort_desc')));
+            return $output->pix_icon('t/sort_desc', get_string('sort'));
         }
     }
 
@@ -704,13 +636,6 @@ class course_enrolment_table extends html_table implements renderable {
  */
 class course_enrolment_users_table extends course_enrolment_table {
 
-    /**
-     * An array of sortable fields
-     * @static
-     * @var array
-     */
-    protected static $sortablefields = array('firstname', 'lastname', 'firstnamephonetic', 'lastnamephonetic', 'middlename',
-            'alternatename', 'email', 'lastaccess');
 }
 
 /**

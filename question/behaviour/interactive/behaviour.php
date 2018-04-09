@@ -54,6 +54,10 @@ class qbehaviour_interactive extends question_behaviour_with_multiple_tries {
         return $question instanceof question_automatically_gradable;
     }
 
+    public function can_finish_during_attempt() {
+        return true;
+    }
+
     public function get_right_answer_summary() {
         return $this->question->get_right_answer_summary();
     }
@@ -132,12 +136,8 @@ class qbehaviour_interactive extends question_behaviour_with_multiple_tries {
             return parent::get_state_string($showcorrectness);
         }
 
-        if ($this->is_try_again_state()) {
-            return get_string('notcomplete', 'qbehaviour_interactive');
-        } else {
-            return get_string('triesremaining', 'qbehaviour_interactive',
-                    $this->qa->get_last_behaviour_var('_triesleft'));
-        }
+        return get_string('triesremaining', 'qbehaviour_interactive',
+                $this->qa->get_last_behaviour_var('_triesleft'));
     }
 
     public function init_first_step(question_attempt_step $step, $variant) {

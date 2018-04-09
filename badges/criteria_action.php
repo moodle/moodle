@@ -24,7 +24,7 @@
  * @author     Yuliya Bozhko <yuliya.bozhko@totaralms.com>
  */
 
-require_once(dirname(dirname(__FILE__)) . '/config.php');
+require_once(__DIR__ . '/../config.php');
 require_once($CFG->libdir . '/badgeslib.php');
 
 $badgeid = optional_param('badgeid', 0, PARAM_INT); // Badge ID.
@@ -61,6 +61,9 @@ $PAGE->set_heading($badge->name);
 $PAGE->set_title($badge->name);
 
 if ($delete && has_capability('moodle/badges:configurecriteria', $context)) {
+    if ($type == BADGE_CRITERIA_TYPE_OVERALL) {
+        redirect($return, get_string('error:cannotdeletecriterion', 'badges'));
+    }
     if (!$confirm) {
         $optionsyes = array('confirm' => 1, 'sesskey' => sesskey(), 'badgeid' => $badgeid, 'delete' => true, 'type' => $type);
 

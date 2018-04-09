@@ -15,7 +15,7 @@ class Less_Tree_Mixin_Definition extends Less_Tree_Ruleset{
 
 
 	// less.js : /lib/less/tree/mixin.js : tree.mixin.Definition
-	public function __construct($name, $params, $rules, $condition, $variadic = false, $frames = null ){
+	public function __construct($name, $params, $rules, $condition, $variadic = false, $frames = array() ){
 		$this->name = $name;
 		$this->selectors = array(new Less_Tree_Selector(array( new Less_Tree_Element(null, $name))));
 
@@ -190,6 +190,11 @@ class Less_Tree_Mixin_Definition extends Less_Tree_Ruleset{
 			return true;
 		}
 
+		// set array to prevent error on array_merge
+		if(!is_array($this->frames)) {
+             $this->frames = array();
+        }
+
 		$frame = $this->compileParams($env, array_merge($this->frames,$env->frames), $args );
 
 		$compile_env = new Less_Environment();
@@ -198,6 +203,8 @@ class Less_Tree_Mixin_Definition extends Less_Tree_Ruleset{
 				, $this->frames		// the parent namespace/mixin frames
 				, $env->frames		// the current environment frames
 			);
+
+		$compile_env->functions = $env->functions;
 
 		return (bool)$this->condition->compile($compile_env);
 	}

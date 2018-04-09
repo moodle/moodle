@@ -146,7 +146,7 @@ M.course_dndupload = {
         styletopunit = styletop.replace(/^\d+/, '');
         styletop = parseInt(styletop.replace(/\D*$/, ''), 10);
 
-        var fadeanim = new Y.Anim({
+        var fadein = new Y.Anim({
             node: '#dndupload-status',
             from: {
                 opacity: 0.0,
@@ -159,11 +159,31 @@ M.course_dndupload = {
             },
             duration: 0.5
         });
-        fadeanim.once('end', function(e) {
-            this.set('reverse', 1);
-            Y.later(3000, this, 'run', null, false);
+
+        var fadeout = new Y.Anim({
+            node: '#dndupload-status',
+            from: {
+                opacity: 1.0,
+                top: styletop.toString() + styletopunit
+            },
+
+            to: {
+                opacity: 0.0,
+                top: (styletop - 30).toString() + styletopunit
+            },
+            duration: 0.5
         });
-        fadeanim.run();
+
+        fadein.run();
+        fadein.on('end', function(e) {
+            Y.later(3000, this, function() {
+                fadeout.run();
+            });
+        });
+
+        fadeout.on('end', function(e) {
+            Y.one('#dndupload-status').remove(true);
+        });
     },
 
     /**
@@ -390,11 +410,11 @@ M.course_dndupload = {
      * @return false to prevent the event from continuing to be processed
      */
     drop: function(e) {
+        this.hide_preview_element();
+
         if (!(type = this.check_drag(e))) {
             return false;
         }
-
-        this.hide_preview_element();
 
         // Work out the number of the section we are on (from its id)
         var section = this.get_section(e.currentTarget);
@@ -723,7 +743,7 @@ M.course_dndupload = {
         var self = this;
 
         if (file.size > this.maxbytes) {
-            alert("'"+file.name+"' "+M.util.get_string('filetoolarge', 'moodle'));
+            new M.core.alert({message: M.util.get_string('namedfiletoolarge', 'moodle', {filename: file.name})});
             return;
         }
 
@@ -754,30 +774,60 @@ M.course_dndupload = {
                                 resel.li.outerHTML = unescape(resel.li.outerHTML);
                             }
                             self.add_editing(result.elementid);
+                            // Fire the content updated event.
+                            require(['core/event', 'jquery'], function(event, $) {
+                                event.notifyFilterContentUpdated($(result.fullcontent));
+                            });
                         } else {
                             // Error - remove the dummy element
                             resel.parent.removeChild(resel.li);
-                            alert(result.error);
+                            new M.core.alert({message: result.error});
                         }
                     }
                 } else {
-                    alert(M.util.get_string('servererror', 'moodle'));
+                    new M.core.alert({message: M.util.get_string('servererror', 'moodle')});
                 }
             }
         };
 
         // Prepare the data to send
         var formData = new FormData();
-        formData.append('repo_upload_file', file);
+        try {
+            formData.append('repo_upload_file', file);
+        } catch (e) {
+            // Edge throws an error at this point if we try to upload a folder.
+            resel.parent.removeChild(resel.li);
+            new M.core.alert({message: M.util.get_string('filereaderror', 'moodle', file.name)});
+            return;
+        }
         formData.append('sesskey', M.cfg.sesskey);
         formData.append('course', this.courseid);
         formData.append('section', sectionnumber);
         formData.append('module', module);
         formData.append('type', 'Files');
 
-        // Send the AJAX call
-        xhr.open("POST", this.url, true);
-        xhr.send(formData);
+        // Try reading the file to check it is not a folder, before sending it to the server.
+        var reader = new FileReader();
+        reader.onload = function() {
+            // File was read OK - send it to the server.
+            xhr.open("POST", self.url, true);
+            xhr.send(formData);
+        };
+        reader.onerror = function() {
+            // Unable to read the file (it is probably a folder) - display an error message.
+            resel.parent.removeChild(resel.li);
+            new M.core.alert({message: M.util.get_string('filereaderror', 'moodle', file.name)});
+        };
+        if (file.size > 0) {
+            // If this is a non-empty file, try reading the first few bytes.
+            // This will trigger reader.onerror() for folders and reader.onload() for ordinary, readable files.
+            reader.readAsText(file.slice(0, 5));
+        } else {
+            // If you call slice() on a 0-byte folder, before calling readAsText, then Firefox triggers reader.onload(),
+            // instead of reader.onerror().
+            // So, for 0-byte files, just call readAsText on the whole file (and it will trigger load/error functions as expected).
+            reader.readAsText(file);
+        }
     },
 
     /**
@@ -982,11 +1032,11 @@ M.course_dndupload = {
                         } else {
                             // Error - remove the dummy element
                             resel.parent.removeChild(resel.li);
-                            alert(result.error);
+                            new M.core.alert({message: result.error});
                         }
                     }
                 } else {
-                    alert(M.util.get_string('servererror', 'moodle'));
+                    new M.core.alert({message: M.util.get_string('servererror', 'moodle')});
                 }
             }
         };

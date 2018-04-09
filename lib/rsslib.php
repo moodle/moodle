@@ -64,9 +64,8 @@ function rss_get_link($contextid, $userid, $componentname, $id, $tooltiptext='')
     static $rsspath = '';
 
     $rsspath = rss_get_url($contextid, $userid, $componentname, $id);
-    $rsspix = $OUTPUT->pix_url('i/rss');
 
-    return '<a href="'. $rsspath .'"><img src="'. $rsspix .'" title="'. strip_tags($tooltiptext) .'" alt="'.get_string('rss').'" /></a>';
+    return '<a href="'. $rsspath .'">' . $OUTPUT->pix_icon('i/rss', $tooltiptext) . '</a>';
 }
 
 /**
@@ -80,9 +79,12 @@ function rss_get_link($contextid, $userid, $componentname, $id, $tooltiptext='')
  */
 function rss_get_url($contextid, $userid, $componentname, $additionalargs) {
     global $CFG;
-    require_once($CFG->libdir.'/filelib.php');
+    if (empty($userid)) {
+        $userid = guest_user()->id;
+    }
     $usertoken = rss_get_token($userid);
-    return get_file_url($contextid.'/'.$usertoken.'/'.$componentname.'/'.$additionalargs.'/rss.xml', null, 'rssfile');
+    $url = '/rss/file.php';
+    return moodle_url::make_file_url($url, '/'.$contextid.'/'.$usertoken.'/'.$componentname.'/'.$additionalargs.'/rss.xml');
 }
 
 /**
@@ -278,7 +280,7 @@ function rss_standard_header($title = NULL, $link = NULL, $description = NULL) {
        */
 
         //write image info
-        $rsspix = $OUTPUT->pix_url('i/rsssitelogo');
+        $rsspix = $OUTPUT->image_url('i/rsssitelogo');
 
         //write the info
         $result .= rss_start_tag('image', 2, true);

@@ -64,12 +64,12 @@ class orphaned extends base {
      * @param string $type the name of the plugintype, eg. mod, auth or workshopform
      * @param string $typerootdir full path to the location of the plugin dir
      * @param string $typeclass the name of the actually called class
+     * @param core_plugin_manager $pluginman the plugin manager calling this method
      * @return array of plugintype classes, indexed by the plugin name
      */
-    public static function get_plugins($type, $typerootdir, $typeclass) {
+    public static function get_plugins($type, $typerootdir, $typeclass, $pluginman) {
         $return = array();
-        $manager = \core_plugin_manager::instance();
-        $plugins = $manager->get_installed_plugins($type);
+        $plugins = $pluginman->get_installed_plugins($type);
 
         foreach ($plugins as $name => $version) {
             $plugin              = new $typeclass();
@@ -79,6 +79,7 @@ class orphaned extends base {
             $plugin->rootdir     = null;
             $plugin->displayname = $name;
             $plugin->versiondb   = $version;
+            $plugin->pluginman   = $pluginman;
             $plugin->init_is_standard();
 
             $return[$name] = $plugin;

@@ -27,7 +27,7 @@
 
 define('AJAX_SCRIPT', true);
 
-require_once(dirname(__dir__) . '/config.php');
+require_once(__DIR__ . '/../config.php');
 
 if ($CFG->forcelogin) {
     require_login();

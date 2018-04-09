@@ -11,8 +11,8 @@ Feature: tool_monitor_subscriptions
       | Course 2 | C2        |
     And the following "users" exist:
       | username | firstname | lastname | email |
-      | teacher1 | Teacher | 1 | teacher1@asd.com |
-      | teacher2 | Teacher | 2 | teacher2@asd.com |
+      | teacher1 | Teacher | 1 | teacher1@example.com |
+      | teacher2 | Teacher | 2 | teacher2@example.com |
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
@@ -22,8 +22,7 @@ Feature: tool_monitor_subscriptions
     And I log in as "admin"
     And I navigate to "Event monitoring rules" node in "Site administration > Reports"
     And I click on "Enable" "link"
-    And I am on homepage
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I navigate to "Event monitoring rules" node in "Course administration > Reports"
     And I press "Add a new rule"
     And I set the following fields to these values:
@@ -55,8 +54,8 @@ Feature: tool_monitor_subscriptions
 
   Scenario: Subscribe to a rule on course level
     Given I log in as "teacher1"
-    And I follow "Course 1"
-    And I navigate to "Event monitoring" node in "My profile settings"
+    And I follow "Preferences" in the user menu
+    And I follow "Event monitoring"
     And I set the field "Select a course" to "Course 1"
     When I follow "Subscribe to rule \"New rule course level\""
     Then I should see "Subscription successfully created"
@@ -64,8 +63,8 @@ Feature: tool_monitor_subscriptions
 
   Scenario: Delete a subscription on course level
     Given I log in as "teacher1"
-    And I follow "Course 1"
-    And I navigate to "Event monitoring" node in "My profile settings"
+    And I follow "Preferences" in the user menu
+    And I follow "Event monitoring"
     And I set the field "Select a course" to "Course 1"
     And I follow "Subscribe to rule \"New rule course level\""
     And I should see "Subscription successfully created"
@@ -77,16 +76,18 @@ Feature: tool_monitor_subscriptions
 
   Scenario: Subscribe to a rule on site level
     Given I log in as "admin"
-    And I navigate to "Event monitoring" node in "My profile settings"
-    And I set the field "Select a course" to "Site"
+    And I follow "Preferences" in the user menu
+    And I follow "Event monitoring"
+    And I set the field "Select a course" to "Acceptance test site"
     When I follow "Subscribe to rule \"New rule site level\""
     Then I should see "Subscription successfully created"
     And "#toolmonitorsubs_r0" "css_element" should exist
 
   Scenario: Delete a subscription on site level
     Given I log in as "admin"
-    And I navigate to "Event monitoring" node in "My profile settings"
-    And I set the field "Select a course" to "Site"
+    And I follow "Preferences" in the user menu
+    And I follow "Event monitoring"
+    And I set the field "Select a course" to "Acceptance test site"
     And I follow "Subscribe to rule \"New rule site level\""
     And I should see "Subscription successfully created"
     And "#toolmonitorsubs_r0" "css_element" should exist
@@ -96,84 +97,93 @@ Feature: tool_monitor_subscriptions
     Then I should see "Subscription successfully removed"
     And "#toolmonitorsubs_r0" "css_element" should not exist
 
+  @_bug_phantomjs
   Scenario: Receiving notification on site level
     Given I log in as "admin"
-    And I navigate to "Messaging" node in "My profile settings"
-    And I click on "input[name^=tool_monitor_notification_loggedin]" "css_element"
-    And I press "Update profile"
-    And I am on homepage
-    And I follow "Course 1"
-    And I navigate to "Event monitoring" node in "My profile settings"
-    And I set the field "Select a course" to "Site"
+    And I follow "Preferences" in the user menu
+    And I click on "Notification preferences" "link" in the "#page-content" "css_element"
+    And I click on "//td[@data-processor-name='popup']//label[@class='preference-state']" "xpath_element" in the "Notifications of rule subscriptions" "table_row"
+    And I wait until the page is ready
+    And I follow "Preferences" in the user menu
+    And I follow "Event monitoring"
+    And I set the field "Select a course" to "Acceptance test site"
     And I follow "Subscribe to rule \"New rule site level\""
     And I should see "Subscription successfully created"
     And "#toolmonitorsubs_r0" "css_element" should exist
-    And I am on homepage
+    And I am on site homepage
     And I trigger cron
-    And I am on homepage
-    When I navigate to "Messages" node in "My profile"
-    And I follow "Do not reply to this email (1)"
-    Then I should see "The course was viewed."
+    And I am on site homepage
+    When I click on ".popover-region-notifications" "css_element"
+    And I click on "View full notification" "link" in the ".popover-region-notifications" "css_element"
+    Then I should see "New rule site level"
+    And I should see "The course was viewed"
 
+  @_bug_phantomjs
   Scenario: Receiving notification on course level
     Given I log in as "teacher1"
-    And I navigate to "Messaging" node in "My profile settings"
-    And I click on "input[name^=tool_monitor_notification_loggedin]" "css_element"
-    And I press "Update profile"
-    And I am on homepage
-    And I follow "Course 1"
-    And I navigate to "Event monitoring" node in "My profile settings"
+    And I follow "Preferences" in the user menu
+    And I click on "Notification preferences" "link" in the "#page-content" "css_element"
+    And I click on "//td[@data-processor-name='popup']//label[@class='preference-state']" "xpath_element" in the "Notifications of rule subscriptions" "table_row"
+    And I wait until the page is ready
+    And I follow "Preferences" in the user menu
+    And I follow "Event monitoring"
     And I set the field "Select a course" to "Course 1"
     And I follow "Subscribe to rule \"New rule course level\""
     And I should see "Subscription successfully created"
     And "#toolmonitorsubs_r0" "css_element" should exist
-    And I am on homepage
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I trigger cron
-    And I am on homepage
-    When I navigate to "Messages" node in "My profile"
-    And I follow "Do not reply to this email (1)"
-    Then I should see "The course was viewed."
+    And I am on site homepage
+    When I click on ".popover-region-notifications" "css_element"
+    And I click on "View full notification" "link" in the ".popover-region-notifications" "css_element"
+    Then I should see "New rule course level"
+    And I should see "The course was viewed"
 
   Scenario: Navigating via quick link to rules
     Given I log in as "admin"
-    When I navigate to "Event monitoring" node in "My profile settings"
+    And I follow "Preferences" in the user menu
+    When I follow "Event monitoring"
+    And I set the field "Select a course" to "Course 1"
     Then I should see "You can manage rules from the Event monitoring rules page."
-    And I follow "Event monitoring rules"
+    And I click on "Event monitoring rules" "link" in the "region-main" "region"
     And I should see "You can subscribe to rules from the Event monitoring page."
     And I log out
     And I log in as "teacher1"
-    And I follow "Course 1"
-    And I navigate to "Event monitoring" node in "My profile settings"
+    And I follow "Preferences" in the user menu
+    And I follow "Event monitoring"
+    And I set the field "Select a course" to "Course 1"
     And I should see "You can manage rules from the Event monitoring rules page."
-    And I follow "Event monitoring rules"
+    And I click on "Event monitoring rules" "link" in the "region-main" "region"
     And I should see "You can subscribe to rules from the Event monitoring page."
     And I click on "//a[text()='Event monitoring']" "xpath_element"
     And the field "courseid" matches value "Course 1"
-    And I set the field "courseid" to "Site"
+    And I follow "Preferences" in the user menu
+    And I follow "Event monitoring"
     And I should not see "You can manage rules from the Event monitoring rules page."
     And I log out
     And I log in as "teacher2"
-    And I follow "Course 1"
-    And I navigate to "Event monitoring" node in "My profile settings"
+    And I follow "Preferences" in the user menu
+    And I follow "Event monitoring"
+    And I set the field "Select a course" to "Course 1"
     And I should not see "You can manage rules the from the Event monitoring rules page."
 
   Scenario: No manage rules link when user does not have permission
-    Given I log in as "teacher1"
-    When I follow "Course 1"
-    And I navigate to "Event monitoring" node in "My profile settings"
-    Then I should see "You can manage rules from the Event monitoring rules page."
-    And I log out
-    And I log in as "teacher2"
-    And I follow "Course 1"
-    And I navigate to "Event monitoring" node in "My profile settings"
-    And I should not see "You can manage rules from the Event monitoring rules page."
-    And I follow "Home"
-    And I follow "Course 2"
-    And I navigate to "Event monitoring" node in "My profile settings"
-    And I should see "You can manage rules from the Event monitoring rules page."
+    Given I log in as "admin"
+    And I set the following system permissions of "Non-editing teacher" role:
+      | tool/monitor:managerules | Prohibit |
     And I log out
     And I log in as "teacher1"
-    And I follow "Course 2"
-    And I navigate to "Event monitoring" node in "My profile settings"
+    And I follow "Preferences" in the user menu
+    And I follow "Event monitoring"
+    When I set the field "Select a course" to "Course 1"
+    Then I should see "You can manage rules from the Event monitoring rules page."
+    And I set the field "Select a course" to "Course 2"
     And I should not see "You can manage rules from the Event monitoring rules page."
+    And I log out
+    And I log in as "teacher2"
+    And I follow "Preferences" in the user menu
+    And I follow "Event monitoring"
+    And I set the field "Select a course" to "Course 1"
+    And I should not see "You can manage rules from the Event monitoring rules page."
+    And I set the field "Select a course" to "Course 2"
+    And I should see "You can manage rules from the Event monitoring rules page."

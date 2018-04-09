@@ -128,6 +128,21 @@ class core_coursecatlib_testcase extends advanced_testcase {
         } catch (moodle_exception $e) {
             $this->assertInstanceOf('moodle_exception', $e);
         }
+        // Test that duplicates with an idnumber of 0 cannot be created.
+        coursecat::create(array('name' => 'Cat3', 'idnumber' => '0'));
+        try {
+            coursecat::create(array('name' => 'Cat4', 'idnumber' => '0'));
+            $this->fail('Duplicate idnumber "0" exception expected in coursecat::create');
+        } catch (moodle_exception $e) {
+            $this->assertInstanceOf('moodle_exception', $e);
+        }
+        // Test an update cannot make a duplicate idnumber of 0.
+        try {
+            $cat2->update(array('idnumber' => '0'));
+            $this->fail('Duplicate idnumber "0" exception expected in coursecat::update');
+        } catch (Exception $e) {
+            $this->assertInstanceOf('moodle_exception', $e);
+        }
     }
 
     public function test_visibility() {
@@ -236,7 +251,7 @@ class core_coursecatlib_testcase extends advanced_testcase {
         $timecreated = $category1->timemodified;
         $this->assertSame('Cat1', $category1->name);
         $this->assertTrue(empty($category1->description));
-        sleep(2);
+        $this->waitForSecond();
         $testdescription = 'This is cat 1 а также русский текст';
         $category1->update(array('description' => $testdescription));
         $this->assertSame($testdescription, $category1->description);
@@ -367,6 +382,37 @@ class core_coursecatlib_testcase extends advanced_testcase {
     }
 
     /**
+     * Test the get_all_children_ids function.
+     */
+    public function test_get_all_children_ids() {
+        $category1 = coursecat::create(array('name' => 'Cat1'));
+        $category2 = coursecat::create(array('name' => 'Cat2'));
+        $category11 = coursecat::create(array('name' => 'Cat11', 'parent' => $category1->id));
+        $category12 = coursecat::create(array('name' => 'Cat12', 'parent' => $category1->id));
+        $category13 = coursecat::create(array('name' => 'Cat13', 'parent' => $category1->id));
+        $category111 = coursecat::create(array('name' => 'Cat111', 'parent' => $category11->id));
+        $category112 = coursecat::create(array('name' => 'Cat112', 'parent' => $category11->id));
+        $category1121 = coursecat::create(array('name' => 'Cat1121', 'parent' => $category112->id));
+
+        $this->assertCount(0, $category2->get_all_children_ids());
+        $this->assertCount(6, $category1->get_all_children_ids());
+
+        $cmpchildrencat1 = array($category11->id, $category12->id, $category13->id, $category111->id, $category112->id,
+                $category1121->id);
+        $childrencat1 = $category1->get_all_children_ids();
+        // Order of values does not matter. Compare sorted arrays.
+        sort($cmpchildrencat1);
+        sort($childrencat1);
+        $this->assertEquals($cmpchildrencat1, $childrencat1);
+
+        $this->assertCount(3, $category11->get_all_children_ids());
+        $this->assertCount(0, $category111->get_all_children_ids());
+        $this->assertCount(1, $category112->get_all_children_ids());
+
+        $this->assertEquals(array($category1121->id), $category112->get_all_children_ids());
+    }
+
+    /**
      * Test the countall function
      */
     public function test_count_all() {
@@ -436,6 +482,7 @@ class core_coursecatlib_testcase extends advanced_testcase {
 
         try {
             // Enable the multilang filter and set it to apply to headings and content.
+            filter_manager::reset_caches();
             filter_set_global_state('multilang', TEXTFILTER_ON);
             filter_set_applies_to_strings('multilang', true);
             $expected = array($c3, $c4, $c1, $c2);
@@ -511,6 +558,16 @@ class core_coursecatlib_testcase extends advanced_testcase {
         $res = coursecat::search_courses(array('search' => 'Математика'));
         $this->assertEquals(array($c3->id, $c6->id), array_keys($res));
         $this->assertEquals(2, coursecat::search_courses_count(array('search' => 'Математика'), array()));
+
+        $this->setUser($this->getDataGenerator()->create_user());
+
+        // Add necessary capabilities.
+        $this->assign_capability('moodle/course:create', CAP_ALLOW, context_coursecat::instance($cat2->id));
+        // Do another search with restricted capabilities.
+        $reqcaps = array('moodle/course:create');
+        $res = coursecat::search_courses(array('search' => 'test'), array(), $reqcaps);
+        $this->assertEquals(array($c8->id, $c5->id), array_keys($res));
+        $this->assertEquals(2, coursecat::search_courses_count(array('search' => 'test'), array(), $reqcaps));
     }
 
     public function test_course_contacts() {
@@ -560,6 +617,12 @@ class core_coursecatlib_testcase extends advanced_testcase {
         }
 
         $manual = enrol_get_plugin('manual');
+
+        // Nobody is enrolled now and course contacts are empty.
+        $allcourses = coursecat::get(0)->get_courses(array('recursive' => true, 'coursecontacts' => true, 'sort' => array('idnumber' => 1)));
+        foreach ($allcourses as $onecourse) {
+            $this->assertEmpty($onecourse->get_course_contacts());
+        }
 
         // Cat1 (user2 has teacher role)
         role_assign($teacherrole->id, $user[2], context_coursecat::instance($category[1]));
@@ -615,6 +678,14 @@ class core_coursecatlib_testcase extends advanced_testcase {
         $this->assertSame('Teacher: F1 L1', $contacts[1][1]);
         //   -- course12 (user1 has teacher role)         |
         $this->assertSame('', $contacts[1][2]);
+
+        // Suspend user 4 and make sure he is no longer in contacts of course 1 in category 4.
+        $manual->enrol_user($enrol[4][1], $user[4], $teacherrole->id, 0, 0, ENROL_USER_SUSPENDED);
+        $allcourses = coursecat::get(0)->get_courses(array('recursive' => true, 'coursecontacts' => true, 'sort' => array('idnumber' => 1)));
+        $contacts = $allcourses[$course[4][1]]->get_course_contacts();
+        $this->assertCount(1, $contacts);
+        $contact = reset($contacts);
+        $this->assertEquals('F5 L5', $contact['username']);
 
         $CFG->coursecontact = $oldcoursecontact;
     }
@@ -708,6 +779,22 @@ class core_coursecatlib_testcase extends advanced_testcase {
         $this->assertEquals(0, count($courses[$c3->id]->get_course_overviewfiles()));
         $this->assertEquals(2, count($courses[$c4->id]->get_course_overviewfiles()));
         $this->assertEquals(1, count($courses[$c5->id]->get_course_overviewfiles()));
+    }
+
+    public function test_get_nested_name() {
+        $cat1name = 'Cat1';
+        $cat2name = 'Cat2';
+        $cat3name = 'Cat3';
+        $cat4name = 'Cat4';
+        $category1 = coursecat::create(array('name' => $cat1name));
+        $category2 = coursecat::create(array('name' => $cat2name, 'parent' => $category1->id));
+        $category3 = coursecat::create(array('name' => $cat3name, 'parent' => $category2->id));
+        $category4 = coursecat::create(array('name' => $cat4name, 'parent' => $category2->id));
+
+        $this->assertEquals($cat1name, $category1->get_nested_name(false));
+        $this->assertEquals("{$cat1name} / {$cat2name}", $category2->get_nested_name(false));
+        $this->assertEquals("{$cat1name} / {$cat2name} / {$cat3name}", $category3->get_nested_name(false));
+        $this->assertEquals("{$cat1name} / {$cat2name} / {$cat4name}", $category4->get_nested_name(false));
     }
 
     /**

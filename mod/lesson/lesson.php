@@ -23,6 +23,7 @@
  *    delete
  *    move
  *    moveit
+ *    duplicate
  * @package mod_lesson
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -126,46 +127,12 @@ switch ($action) {
     case 'moveit':
         $after = (int)required_param('after', PARAM_INT); // target page
 
-        $pages = $lesson->load_all_pages();
-
-        if (!array_key_exists($pageid, $pages) || ($after!=0 && !array_key_exists($after, $pages))) {
-            print_error('cannotfindpages', 'lesson', "$CFG->wwwroot/mod/lesson/edit.php?id=$cm->id");
-        }
-        $pagetomove = clone($pages[$pageid]);
-        unset($pages[$pageid]);
-
-        $pageids = array();
-        if ($after === 0) {
-            $pageids['p0'] = $pageid;
-        }
-        foreach ($pages as $page) {
-            $pageids[] = $page->id;
-            if ($page->id == $after) {
-                $pageids[] = $pageid;
-            }
-        }
-
-        $pageidsref = $pageids;
-        reset($pageidsref);
-        $prev = 0;
-        $next = next($pageidsref);
-        foreach ($pageids as $pid) {
-            if ($pid === $pageid) {
-                $page = $pagetomove;
-            } else {
-                $page = $pages[$pid];
-            }
-            if ($page->prevpageid != $prev || $page->nextpageid != $next) {
-                $page->move($next, $prev);
-            }
-            $prev = $page->id;
-            $next = next($pageidsref);
-            if (!$next) {
-                $next = 0;
-            }
-        }
-
+        $lesson->resort_pages($pageid, $after);
         redirect("$CFG->wwwroot/mod/lesson/edit.php?id=$cm->id");
+        break;
+    case 'duplicate':
+            $lesson->duplicate_page($pageid);
+            redirect(new moodle_url('/mod/lesson/edit.php', array('id' => $cm->id)));
         break;
     default:
         print_error('unknowaction');

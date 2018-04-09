@@ -19,7 +19,7 @@
  * you should get an idea about why you might be cautious about the values you
  * get from this memory tracker.
  *
- * Copyright 2011-2014 Horde LLC (http://www.horde.org/)
+ * Copyright 2011-2017 Horde LLC (http://www.horde.org/)
  *
  * @category   Horde
  * @package    Support

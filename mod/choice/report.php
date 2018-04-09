@@ -4,15 +4,12 @@
     require_once("lib.php");
 
     $id         = required_param('id', PARAM_INT);   //moduleid
-    $format     = optional_param('format', CHOICE_PUBLISH_NAMES, PARAM_INT);
     $download   = optional_param('download', '', PARAM_ALPHA);
-    $action     = optional_param('action', '', PARAM_ALPHA);
-    $attemptids = optional_param_array('attemptid', array(), PARAM_INT); //get array of responses to delete.
+    $action     = optional_param('action', '', PARAM_ALPHANUMEXT);
+    $attemptids = optional_param_array('attemptid', array(), PARAM_INT); // Get array of responses to delete or modify.
+    $userids    = optional_param_array('userid', array(), PARAM_INT); // Get array of users whose choices need to be modified.
 
     $url = new moodle_url('/mod/choice/report.php', array('id'=>$id));
-    if ($format !== CHOICE_PUBLISH_NAMES) {
-        $url->param('format', $format);
-    }
     if ($download !== '') {
         $url->param('download', $download);
     }
@@ -52,9 +49,18 @@
     $event = \mod_choice\event\report_viewed::create($eventdata);
     $event->trigger();
 
-    if (data_submitted() && $action == 'delete' && has_capability('mod/choice:deleteresponses',$context) && confirm_sesskey()) {
-        choice_delete_responses($attemptids, $choice, $cm, $course); //delete responses.
-        redirect("report.php?id=$cm->id");
+    if (data_submitted() && has_capability('mod/choice:deleteresponses', $context) && confirm_sesskey()) {
+        if ($action === 'delete') {
+            // Delete responses of other users.
+            choice_delete_responses($attemptids, $choice, $cm, $course);
+            redirect("report.php?id=$cm->id");
+        }
+        if (preg_match('/^choose_(\d+)$/', $action, $actionmatch)) {
+            // Modify responses of other users.
+            $newoptionid = (int)$actionmatch[1];
+            choice_modify_responses($userids, $attemptids, $newoptionid, $choice, $cm, $course);
+            redirect("report.php?id=$cm->id");
+        }
     }
 
     if (!$download) {
@@ -71,8 +77,25 @@
         }
     } else {
         $groupmode = groups_get_activity_groupmode($cm);
+
+        // Trigger the report downloaded event.
+        $eventdata = array();
+        $eventdata['context'] = $context;
+        $eventdata['courseid'] = $course->id;
+        $eventdata['other']['content'] = 'choicereportcontentviewed';
+        $eventdata['other']['format'] = $download;
+        $eventdata['other']['choiceid'] = $choice->id;
+        $event = \mod_choice\event\report_downloaded::create($eventdata);
+        $event->trigger();
+
     }
-    $users = choice_get_response_data($choice, $cm, $groupmode);
+
+    // Check if we want to include responses from inactive users.
+    $onlyactive = $choice->includeinactive ? false : true;
+
+    $users = choice_get_response_data($choice, $cm, $groupmode, $onlyactive);
+
+    $extrafields = get_extra_user_fields($context);
 
     if ($download == "ods" && has_capability('mod/choice:downloadresponses', $context)) {
         require_once("$CFG->libdir/odslib.class.php");
@@ -87,36 +110,42 @@
         $myxls = $workbook->add_worksheet($strresponses);
 
     /// Print names of all the fields
-        $myxls->write_string(0,0,get_string("lastname"));
-        $myxls->write_string(0,1,get_string("firstname"));
-        $myxls->write_string(0,2,get_string("idnumber"));
-        $myxls->write_string(0,3,get_string("group"));
-        $myxls->write_string(0,4,get_string("choice","choice"));
+        $i = 0;
+        $myxls->write_string(0, $i++, get_string("lastname"));
+        $myxls->write_string(0, $i++, get_string("firstname"));
 
-    /// generate the data for the body of the spreadsheet
-        $i=0;
-        $row=1;
+        // Add headers for extra user fields.
+        foreach ($extrafields as $field) {
+            $myxls->write_string(0, $i++, get_user_field_name($field));
+        }
+
+        $myxls->write_string(0, $i++, get_string("group"));
+        $myxls->write_string(0, $i++, get_string("choice", "choice"));
+
+        // Generate the data for the body of the spreadsheet.
+        $row = 1;
         if ($users) {
             foreach ($users as $option => $userid) {
                 $option_text = choice_get_option_text($choice, $option);
-                foreach($userid as $user) {
-                    $myxls->write_string($row,0,$user->lastname);
-                    $myxls->write_string($row,1,$user->firstname);
-                    $studentid=(!empty($user->idnumber) ? $user->idnumber : " ");
-                    $myxls->write_string($row,2,$studentid);
+                foreach ($userid as $user) {
+                    $i = 0;
+                    $myxls->write_string($row, $i++, $user->lastname);
+                    $myxls->write_string($row, $i++, $user->firstname);
+                    foreach ($extrafields as $field) {
+                        $myxls->write_string($row, $i++, $user->$field);
+                    }
                     $ug2 = '';
                     if ($usergrps = groups_get_all_groups($course->id, $user->id)) {
                         foreach ($usergrps as $ug) {
-                            $ug2 = $ug2. $ug->name;
+                            $ug2 = $ug2 . $ug->name;
                         }
                     }
-                    $myxls->write_string($row,3,$ug2);
+                    $myxls->write_string($row, $i++, $ug2);
 
                     if (isset($option_text)) {
-                        $myxls->write_string($row,4,format_string($option_text,true));
+                        $myxls->write_string($row, $i++, format_string($option_text, true));
                     }
                     $row++;
-                    $pos=4;
                 }
             }
         }
@@ -140,38 +169,44 @@
         $myxls = $workbook->add_worksheet($strresponses);
 
     /// Print names of all the fields
-        $myxls->write_string(0,0,get_string("lastname"));
-        $myxls->write_string(0,1,get_string("firstname"));
-        $myxls->write_string(0,2,get_string("idnumber"));
-        $myxls->write_string(0,3,get_string("group"));
-        $myxls->write_string(0,4,get_string("choice","choice"));
+        $i = 0;
+        $myxls->write_string(0, $i++, get_string("lastname"));
+        $myxls->write_string(0, $i++, get_string("firstname"));
 
+        // Add headers for extra user fields.
+        foreach ($extrafields as $field) {
+            $myxls->write_string(0, $i++, get_user_field_name($field));
+        }
 
-    /// generate the data for the body of the spreadsheet
-        $i=0;
-        $row=1;
+        $myxls->write_string(0, $i++, get_string("group"));
+        $myxls->write_string(0, $i++, get_string("choice", "choice"));
+
+        // Generate the data for the body of the spreadsheet.
+        $row = 1;
         if ($users) {
             foreach ($users as $option => $userid) {
+                $i = 0;
                 $option_text = choice_get_option_text($choice, $option);
                 foreach($userid as $user) {
-                    $myxls->write_string($row,0,$user->lastname);
-                    $myxls->write_string($row,1,$user->firstname);
-                    $studentid=(!empty($user->idnumber) ? $user->idnumber : " ");
-                    $myxls->write_string($row,2,$studentid);
+                    $i = 0;
+                    $myxls->write_string($row, $i++, $user->lastname);
+                    $myxls->write_string($row, $i++, $user->firstname);
+                    foreach ($extrafields as $field) {
+                        $myxls->write_string($row, $i++, $user->$field);
+                    }
                     $ug2 = '';
                     if ($usergrps = groups_get_all_groups($course->id, $user->id)) {
                         foreach ($usergrps as $ug) {
-                            $ug2 = $ug2. $ug->name;
+                            $ug2 = $ug2 . $ug->name;
                         }
                     }
-                    $myxls->write_string($row,3,$ug2);
+                    $myxls->write_string($row, $i++, $ug2);
                     if (isset($option_text)) {
-                        $myxls->write_string($row,4,format_string($option_text,true));
+                        $myxls->write_string($row, $i++, format_string($option_text, true));
                     }
                     $row++;
                 }
             }
-            $pos=4;
         }
         /// Close the workbook
         $workbook->close();
@@ -190,7 +225,13 @@
 
         /// Print names of all the fields
 
-        echo get_string("lastname")."\t".get_string("firstname") . "\t". get_string("idnumber") . "\t";
+        echo get_string("lastname") . "\t" . get_string("firstname") . "\t";
+
+        // Add headers for extra user fields.
+        foreach ($extrafields as $field) {
+            echo get_user_field_name($field) . "\t";
+        }
+
         echo get_string("group"). "\t";
         echo get_string("choice","choice"). "\n";
 
@@ -200,13 +241,11 @@
             foreach ($users as $option => $userid) {
                 $option_text = choice_get_option_text($choice, $option);
                 foreach($userid as $user) {
-                    echo $user->lastname;
-                    echo "\t".$user->firstname;
-                    $studentid = " ";
-                    if (!empty($user->idnumber)) {
-                        $studentid = $user->idnumber;
+                    echo $user->lastname . "\t";
+                    echo $user->firstname . "\t";
+                    foreach ($extrafields as $field) {
+                        echo $user->$field . "\t";
                     }
-                    echo "\t". $studentid."\t";
                     $ug2 = '';
                     if ($usergrps = groups_get_all_groups($course->id, $user->id)) {
                         foreach ($usergrps as $ug) {
@@ -223,15 +262,9 @@
         }
         exit;
     }
-    // Show those who haven't answered the question.
-    if (!empty($choice->showunanswered)) {
-        $choice->option[0] = get_string('notanswered', 'choice');
-        $choice->maxanswers[0] = 0;
-    }
-
     $results = prepare_choice_show_results($choice, $course, $cm, $users);
     $renderer = $PAGE->get_renderer('mod_choice');
-    echo $renderer->display_result($results, has_capability('mod/choice:readresponses', $context));
+    echo $renderer->display_result($results, true);
 
    //now give links for downloading spreadsheets.
     if (!empty($users) && has_capability('mod/choice:downloadresponses',$context)) {
@@ -240,19 +273,19 @@
         $options["id"] = "$cm->id";
         $options["download"] = "ods";
         $button =  $OUTPUT->single_button(new moodle_url("report.php", $options), get_string("downloadods"));
-        $downloadoptions[] = html_writer::tag('li', $button, array('class'=>'reportoption'));
+        $downloadoptions[] = html_writer::tag('li', $button, array('class' => 'reportoption list-inline-item'));
 
         $options["download"] = "xls";
         $button = $OUTPUT->single_button(new moodle_url("report.php", $options), get_string("downloadexcel"));
-        $downloadoptions[] = html_writer::tag('li', $button, array('class'=>'reportoption'));
+        $downloadoptions[] = html_writer::tag('li', $button, array('class' => 'reportoption list-inline-item'));
 
         $options["download"] = "txt";
         $button = $OUTPUT->single_button(new moodle_url("report.php", $options), get_string("downloadtext"));
-        $downloadoptions[] = html_writer::tag('li', $button, array('class'=>'reportoption'));
+        $downloadoptions[] = html_writer::tag('li', $button, array('class' => 'reportoption list-inline-item'));
 
-        $downloadlist = html_writer::tag('ul', implode('', $downloadoptions));
-        $downloadlist .= html_writer::tag('div', '', array('class'=>'clearfloat'));
-        echo html_writer::tag('div',$downloadlist, array('class'=>'downloadreport'));
+        $downloadlist = html_writer::tag('ul', implode('', $downloadoptions), array('class' => 'list-inline inline'));
+        $downloadlist .= html_writer::tag('div', '', array('class' => 'clearfloat'));
+        echo html_writer::tag('div',$downloadlist, array('class' => 'downloadreport m-t-1'));
     }
     echo $OUTPUT->footer();
 

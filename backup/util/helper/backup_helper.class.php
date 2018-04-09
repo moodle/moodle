@@ -302,6 +302,7 @@ abstract class backup_helper {
                     $bc = backup_controller::load_controller($backupid);
                     $bc->log('Attempt to copy backup file to the specified directory using filesystem failed - ',
                             backup::LOG_WARNING, $dir);
+                    $bc->destroy();
                 }
                 // bad luck, try to deal with the file the old way - keep backup in file area if we can not copy to ext system
             }

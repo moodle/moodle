@@ -20,7 +20,7 @@ require_once '../../../config.php';
 
 $id = required_param('id', PARAM_INT); // course id
 if (!$course = $DB->get_record('course', array('id'=>$id))) {
-    print_error('nocourseid');
+    print_error('invalidcourseid');
 }
 
 require_user_key_login('grade/import', $id); // we want different keys for each course

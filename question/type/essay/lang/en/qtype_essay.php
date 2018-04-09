@@ -23,6 +23,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['acceptedfiletypes'] = 'Accepted file types';
+$string['acceptedfiletypes_help'] = 'Accepted file types can be restricted by entering a list of file extensions. If the field is left empty, then all file types are allowed.';
 $string['allowattachments'] = 'Allow attachments';
 $string['attachmentsoptional'] = 'Attachments are optional';
 $string['attachmentsrequired'] = 'Require attachments';
@@ -30,20 +32,21 @@ $string['attachmentsrequired_help'] = 'This option specifies the minimum number 
 $string['formateditor'] = 'HTML editor';
 $string['formateditorfilepicker'] = 'HTML editor with file picker';
 $string['formatmonospaced'] = 'Plain text, monospaced font';
-$string['formatnoinline'] = 'No inline text';
+$string['formatnoinline'] = 'No online text';
 $string['formatplain'] = 'Plain text';
 $string['graderinfo'] = 'Information for graders';
 $string['graderinfoheader'] = 'Grader Information';
-$string['mustattach'] = 'When "no inline text" is selected, or responses are optional, you must allow at least one attachment.';
-$string['mustrequire'] = 'When "no inline text" is selected, or responses are optional, you must require at least one attachment.';
+$string['mustattach'] = 'When "No online text" is selected, or responses are optional, you must allow at least one attachment.';
+$string['mustrequire'] = 'When "No online text" is selected, or responses are optional, you must require at least one attachment.';
 $string['mustrequirefewer'] = 'You cannot require more attachments than you allow.';
 $string['nlines'] = '{$a} lines';
+$string['nonexistentfiletypes'] = 'The following file types were not recognised: {$a}';
 $string['pluginname'] = 'Essay';
-$string['pluginname_help'] = 'In response to a question (that may include an image) the respondent writes an answer of a paragraph or two. The essay question will not be assigned a grade until it has been reviewed by a teacher and manually graded.';
+$string['pluginname_help'] = 'In response to a question, the respondent may upload one or more files and/or enter text online. A response template may be provided. Responses must be graded manually.';
 $string['pluginname_link'] = 'question/type/essay';
 $string['pluginnameadding'] = 'Adding an Essay question';
 $string['pluginnameediting'] = 'Editing an Essay question';
-$string['pluginnamesummary'] = 'Allows a response of a few sentences or paragraphs. This must then be graded manually.';
+$string['pluginnamesummary'] = 'Allows a response of a file upload and/or online text. This must then be graded manually.';
 $string['responsefieldlines'] = 'Input box size';
 $string['responseformat'] = 'Response format';
 $string['responseoptions'] = 'Response Options';

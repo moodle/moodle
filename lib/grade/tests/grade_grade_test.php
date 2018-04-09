@@ -230,4 +230,203 @@ class core_grade_grade_testcase extends grade_base_testcase {
         test_grade_grade_flatten_dependencies_array::test_flatten_dependencies_array($a, $b);
         $this->assertSame($expecteda, $a);
     }
+
+    public function test_grade_grade_min_max() {
+        global $CFG;
+        $initialminmaxtouse = $CFG->grade_minmaxtouse;
+
+        $this->setAdminUser();
+        $course = $this->getDataGenerator()->create_course();
+        $user = $this->getDataGenerator()->create_user();
+        $assignrecord = $this->getDataGenerator()->create_module('assign', array('course' => $course, 'grade' => 100));
+        $cm = get_coursemodule_from_instance('assign', $assignrecord->id);
+        $assigncontext = context_module::instance($cm->id);
+        $assign = new assign($assigncontext, $cm, $course);
+
+        // Fetch the assignment item.
+        $giparams = array('itemtype' => 'mod', 'itemmodule' => 'assign', 'iteminstance' => $assignrecord->id,
+                'courseid' => $course->id, 'itemnumber' => 0);
+        $gi = grade_item::fetch($giparams);
+        $this->assertEquals(0, $gi->grademin);
+        $this->assertEquals(100, $gi->grademax);
+
+        // Give a grade to the student.
+        $usergrade = $assign->get_user_grade($user->id, true);
+        $usergrade->grade = 10;
+        $assign->update_grade($usergrade);
+
+        // Check the grade stored in gradebook.
+        $gg = grade_grade::fetch(array('userid' => $user->id, 'itemid' => $gi->id));
+        $this->assertEquals(10, $gg->rawgrade);
+        $this->assertEquals(0, $gg->get_grade_min());
+        $this->assertEquals(100, $gg->get_grade_max());
+
+        // Change the min/max grade of the item.
+        $gi->grademax = 50;
+        $gi->grademin = 2;
+        $gi->update();
+
+        // Fetch the updated item.
+        $gi = grade_item::fetch($giparams);
+
+        // Now check the grade grade min/max with system setting.
+        $CFG->grade_minmaxtouse = GRADE_MIN_MAX_FROM_GRADE_ITEM;
+        grade_set_setting($course->id, 'minmaxtouse', null); // Ensure no course setting.
+
+        $gg = grade_grade::fetch(array('userid' => $user->id, 'itemid' => $gi->id));
+        $this->assertEquals(2, $gg->get_grade_min());
+        $this->assertEquals(50, $gg->get_grade_max());
+
+        // Now with other system setting.
+        $CFG->grade_minmaxtouse = GRADE_MIN_MAX_FROM_GRADE_GRADE;
+        grade_set_setting($course->id, 'minmaxtouse', null); // Ensure no course setting, and reset static cache.
+        $gg = grade_grade::fetch(array('userid' => $user->id, 'itemid' => $gi->id));
+        $this->assertEquals(0, $gg->get_grade_min());
+        $this->assertEquals(100, $gg->get_grade_max());
+
+        // Now with overriden setting in course.
+        $CFG->grade_minmaxtouse = GRADE_MIN_MAX_FROM_GRADE_ITEM;
+        grade_set_setting($course->id, 'minmaxtouse', GRADE_MIN_MAX_FROM_GRADE_GRADE);
+        $gg = grade_grade::fetch(array('userid' => $user->id, 'itemid' => $gi->id));
+        $this->assertEquals(0, $gg->get_grade_min());
+        $this->assertEquals(100, $gg->get_grade_max());
+
+        $CFG->grade_minmaxtouse = GRADE_MIN_MAX_FROM_GRADE_GRADE;
+        grade_set_setting($course->id, 'minmaxtouse', GRADE_MIN_MAX_FROM_GRADE_ITEM);
+        $gg = grade_grade::fetch(array('userid' => $user->id, 'itemid' => $gi->id));
+        $this->assertEquals(2, $gg->get_grade_min());
+        $this->assertEquals(50, $gg->get_grade_max());
+
+        $CFG->grade_minmaxtouse = $initialminmaxtouse;
+    }
+
+    public function test_grade_grade_min_max_with_course_item() {
+        global $CFG, $DB;
+        $initialminmaxtouse = $CFG->grade_minmaxtouse;
+
+        $this->setAdminUser();
+        $course = $this->getDataGenerator()->create_course();
+        $user = $this->getDataGenerator()->create_user();
+        $gi = grade_item::fetch_course_item($course->id);
+
+        // Fetch the category item.
+        $this->assertEquals(0, $gi->grademin);
+        $this->assertEquals(100, $gi->grademax);
+
+        // Give a grade to the student.
+        $gi->update_final_grade($user->id, 10);
+
+        // Check the grade min/max stored in gradebook.
+        $gg = grade_grade::fetch(array('userid' => $user->id, 'itemid' => $gi->id));
+        $this->assertEquals(0, $gg->get_grade_min());
+        $this->assertEquals(100, $gg->get_grade_max());
+
+        // Change the min/max grade of the item.
+        $gi->grademin = 2;
+        $gi->grademax = 50;
+        $gi->update();
+
+        // Fetch the updated item.
+        $gi = grade_item::fetch_course_item($course->id);
+
+        // Now check the grade grade min/max with system setting.
+        $CFG->grade_minmaxtouse = GRADE_MIN_MAX_FROM_GRADE_ITEM;
+        grade_set_setting($course->id, 'minmaxtouse', null); // Ensure no course setting.
+
+        $gg = grade_grade::fetch(array('userid' => $user->id, 'itemid' => $gi->id));
+        $this->assertEquals(0, $gg->get_grade_min());
+        $this->assertEquals(100, $gg->get_grade_max());
+
+        // Now with other system setting.
+        $CFG->grade_minmaxtouse = GRADE_MIN_MAX_FROM_GRADE_GRADE;
+        grade_set_setting($course->id, 'minmaxtouse', null); // Ensure no course setting, and reset static cache.
+        $gg = grade_grade::fetch(array('userid' => $user->id, 'itemid' => $gi->id));
+        $this->assertEquals(0, $gg->get_grade_min());
+        $this->assertEquals(100, $gg->get_grade_max());
+
+        // Now with overriden setting in course.
+        $CFG->grade_minmaxtouse = GRADE_MIN_MAX_FROM_GRADE_ITEM;
+        grade_set_setting($course->id, 'minmaxtouse', GRADE_MIN_MAX_FROM_GRADE_GRADE);
+        $gg = grade_grade::fetch(array('userid' => $user->id, 'itemid' => $gi->id));
+        $this->assertEquals(0, $gg->get_grade_min());
+        $this->assertEquals(100, $gg->get_grade_max());
+
+        $CFG->grade_minmaxtouse = GRADE_MIN_MAX_FROM_GRADE_GRADE;
+        grade_set_setting($course->id, 'minmaxtouse', GRADE_MIN_MAX_FROM_GRADE_ITEM);
+        $gg = grade_grade::fetch(array('userid' => $user->id, 'itemid' => $gi->id));
+        $this->assertEquals(0, $gg->get_grade_min());
+        $this->assertEquals(100, $gg->get_grade_max());
+
+        $CFG->grade_minmaxtouse = $initialminmaxtouse;
+    }
+
+    public function test_grade_grade_min_max_with_category_item() {
+        global $CFG, $DB;
+        $initialminmaxtouse = $CFG->grade_minmaxtouse;
+
+        $this->setAdminUser();
+        $course = $this->getDataGenerator()->create_course();
+        $user = $this->getDataGenerator()->create_user();
+        $coursegi = grade_item::fetch_course_item($course->id);
+
+        // Create a category item.
+        $gc = new grade_category(array('courseid' => $course->id, 'fullname' => 'test'), false);
+        $gc->insert();
+        $gi = $gc->get_grade_item();
+        $gi->grademax = 100;
+        $gi->grademin = 0;
+        $gi->update();
+
+        // Fetch the category item.
+        $giparams = array('itemtype' => 'category', 'iteminstance' => $gc->id);
+        $gi = grade_item::fetch($giparams);
+        $this->assertEquals(0, $gi->grademin);
+        $this->assertEquals(100, $gi->grademax);
+
+        // Give a grade to the student.
+        $gi->update_final_grade($user->id, 10);
+
+        // Check the grade min/max stored in gradebook.
+        $gg = grade_grade::fetch(array('userid' => $user->id, 'itemid' => $gi->id));
+        $this->assertEquals(0, $gg->get_grade_min());
+        $this->assertEquals(100, $gg->get_grade_max());
+
+        // Change the min/max grade of the item.
+        $gi->grademin = 2;
+        $gi->grademax = 50;
+        $gi->update();
+
+        // Fetch the updated item.
+        $gi = grade_item::fetch($giparams);
+
+        // Now check the grade grade min/max with system setting.
+        $CFG->grade_minmaxtouse = GRADE_MIN_MAX_FROM_GRADE_ITEM;
+        grade_set_setting($course->id, 'minmaxtouse', null); // Ensure no course setting.
+
+        $gg = grade_grade::fetch(array('userid' => $user->id, 'itemid' => $gi->id));
+        $this->assertEquals(0, $gg->get_grade_min());
+        $this->assertEquals(100, $gg->get_grade_max());
+
+        // Now with other system setting.
+        $CFG->grade_minmaxtouse = GRADE_MIN_MAX_FROM_GRADE_GRADE;
+        grade_set_setting($course->id, 'minmaxtouse', null); // Ensure no course setting, and reset static cache.
+        $gg = grade_grade::fetch(array('userid' => $user->id, 'itemid' => $gi->id));
+        $this->assertEquals(0, $gg->get_grade_min());
+        $this->assertEquals(100, $gg->get_grade_max());
+
+        // Now with overriden setting in course.
+        $CFG->grade_minmaxtouse = GRADE_MIN_MAX_FROM_GRADE_ITEM;
+        grade_set_setting($course->id, 'minmaxtouse', GRADE_MIN_MAX_FROM_GRADE_GRADE);
+        $gg = grade_grade::fetch(array('userid' => $user->id, 'itemid' => $gi->id));
+        $this->assertEquals(0, $gg->get_grade_min());
+        $this->assertEquals(100, $gg->get_grade_max());
+
+        $CFG->grade_minmaxtouse = GRADE_MIN_MAX_FROM_GRADE_GRADE;
+        grade_set_setting($course->id, 'minmaxtouse', GRADE_MIN_MAX_FROM_GRADE_ITEM);
+        $gg = grade_grade::fetch(array('userid' => $user->id, 'itemid' => $gi->id));
+        $this->assertEquals(0, $gg->get_grade_min());
+        $this->assertEquals(100, $gg->get_grade_max());
+
+        $CFG->grade_minmaxtouse = $initialminmaxtouse;
+    }
 }

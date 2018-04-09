@@ -18,117 +18,156 @@ AUTOLINKER = function() {
     AUTOLINKER.superclass.constructor.apply(this, arguments);
 };
 Y.extend(AUTOLINKER, Y.Base, {
-    overlay : null,
-    initializer : function() {
+    overlay: null,
+    alertpanels: {},
+    initializer: function() {
         var self = this;
-        Y.delegate('click', function(e){
-            e.preventDefault();
+        require(['core/event'], function(event) {
+            Y.delegate('click', function(e) {
+                e.preventDefault();
 
-            //display a progress indicator
-            var title = '',
-                content = Y.Node.create('<div id="glossaryfilteroverlayprogress">' +
-                                        '<img src="' + M.cfg.loadingicon + '" class="spinner" />' +
-                                        '</div>'),
-                o = new Y.Overlay({
-                    headerContent :  title,
-                    bodyContent : content
-                }),
-                fullurl,
-                cfg;
-            self.overlay = o;
-            o.render(Y.one(document.body));
+                // display a progress indicator
+                var title = '',
+                    content = Y.Node.create('<div id="glossaryfilteroverlayprogress">' +
+                                            '</div>'),
+                    o = new Y.Overlay({
+                        headerContent:  title,
+                        bodyContent: content
+                    }),
+                    fullurl,
+                    cfg;
 
-            //Switch over to the ajax url and fetch the glossary item
-            fullurl = this.getAttribute('href').replace('showentry.php','showentry_ajax.php');
-            cfg = {
-                method: 'get',
-                context : self,
-                on: {
-                    success: function(id, o) {
-                        this.display_callback(o.responseText);
-                    },
-                    failure: function(id, o) {
-                        var debuginfo = o.statusText;
-                        if (M.cfg.developerdebug) {
-                            o.statusText += ' (' + fullurl + ')';
+                window.require(['core/templates'], function(Templates) {
+                    Templates.renderPix('i/loading', 'core').then(function(html) {
+                        content.append(html);
+                    });
+                });
+
+                self.overlay = o;
+                o.render(Y.one(document.body));
+
+                // Switch over to the ajax url and fetch the glossary item
+                fullurl = this.getAttribute('href').replace('showentry.php', 'showentry_ajax.php');
+                cfg = {
+                    method: 'get',
+                    context: self,
+                    on: {
+                        success: function(id, o) {
+                            this.display_callback(o.responseText, event);
+                        },
+                        failure: function(id, o) {
+                            var debuginfo = o.statusText;
+                            if (M.cfg.developerdebug) {
+                                o.statusText += ' (' + fullurl + ')';
+                            }
+                            new M.core.exception({message: debuginfo});
                         }
-                        this.display_callback('bodyContent',debuginfo);
                     }
-                }
-            };
-            Y.io(fullurl, cfg);
+                };
+                Y.io(fullurl, cfg);
 
-        }, Y.one(document.body), 'a.glossary.autolink.concept');
+            }, Y.one(document.body), 'a.glossary.autolink.concept');
+        });
     },
-    display_callback : function(content) {
+    /**
+     * @method display_callback
+     * @param {String} content - Content to display
+     * @param {Object} event The amd event module used to fire events for jquery and yui.
+     */
+    display_callback: function(content, event) {
         var data,
             key,
             alertpanel,
-            definition;
+            alertpanelid,
+            definition,
+            position;
         try {
             data = Y.JSON.parse(content);
-            if (data.success){
-                this.overlay.hide(); //hide progress indicator
+            if (data.success) {
+                this.overlay.hide(); // hide progress indicator
 
                 for (key in data.entries) {
                     definition = data.entries[key].definition + data.entries[key].attachments;
-                    alertpanel = new M.core.alert({title:data.entries[key].concept,
-                        message:definition, modal:false, yesLabel: M.util.get_string('ok', 'moodle')});
-                    alertpanel.show();
-                    Y.fire(M.core.event.FILTER_CONTENT_UPDATED, {nodes: (new Y.NodeList(alertpanel.get('boundingBox')))});
-
+                    alertpanel = new M.core.alert({title: data.entries[key].concept, draggable: true,
+                        message: definition, modal: false, yesLabel: M.util.get_string('ok', 'moodle')});
+                    // Notify the filters about the modified nodes.
+                    event.notifyFilterContentUpdated(alertpanel.get('boundingBox').getDOMNode());
                     Y.Node.one('#id_yuialertconfirm-' + alertpanel.get('COUNT')).focus();
+
+                    // Register alertpanel for stacking.
+                    alertpanelid = '#moodle-dialogue-' + alertpanel.get('COUNT');
+                    alertpanel.on('complete', this._deletealertpanel, this, alertpanelid);
+
+                    // We already have some windows opened, so set the right position...
+                    if (!Y.Object.isEmpty(this.alertpanels)) {
+                        position = this._getLatestWindowPosition();
+                        Y.Node.one(alertpanelid).setXY([position[0] + 10, position[1] + 10]);
+                    }
+
+                    this.alertpanels[alertpanelid] = Y.Node.one(alertpanelid).getXY();
                 }
 
                 return true;
             } else if (data.error) {
                 new M.core.ajaxException(data);
             }
-        } catch(e) {
+        } catch (e) {
             new M.core.exception(e);
         }
         return false;
+    },
+    _getLatestWindowPosition: function() {
+        var lastPosition = [0, 0];
+        Y.Object.each(this.alertpanels, function(position) {
+            if (position[0] > lastPosition[0]) {
+                lastPosition = position;
+            }
+        });
+        return lastPosition;
+    },
+    _deletealertpanel: function(ev, alertpanelid) {
+        delete this.alertpanels[alertpanelid];
     }
 }, {
-    NAME : AUTOLINKERNAME,
-    ATTRS : {
-        url : {
-            validator : Y.Lang.isString,
-            value : M.cfg.wwwroot+'/mod/glossary/showentry.php'
+    NAME: AUTOLINKERNAME,
+    ATTRS: {
+        url: {
+            validator: Y.Lang.isString,
+            value: M.cfg.wwwroot + '/mod/glossary/showentry.php'
         },
-        name : {
-            validator : Y.Lang.isString,
-            value : 'glossaryconcept'
+        name: {
+            validator: Y.Lang.isString,
+            value: 'glossaryconcept'
         },
-        options : {
-            getter : function() {
+        options: {
+            getter: function() {
                 return {
-                    width : this.get(WIDTH),
-                    height : this.get(HEIGHT),
-                    menubar : this.get(MENUBAR),
-                    location : this.get(LOCATION),
-                    scrollbars : this.get(SCROLLBARS),
-                    resizable : this.get(RESIZEABLE),
-                    toolbar : this.get(TOOLBAR),
-                    status : this.get(STATUS),
-                    directories : this.get(DIRECTORIES),
-                    fullscreen : this.get(FULLSCREEN),
-                    dependent : this.get(DEPENDENT)
+                    width: this.get(WIDTH),
+                    height: this.get(HEIGHT),
+                    menubar: this.get(MENUBAR),
+                    location: this.get(LOCATION),
+                    scrollbars: this.get(SCROLLBARS),
+                    resizable: this.get(RESIZEABLE),
+                    toolbar: this.get(TOOLBAR),
+                    status: this.get(STATUS),
+                    directories: this.get(DIRECTORIES),
+                    fullscreen: this.get(FULLSCREEN),
+                    dependent: this.get(DEPENDENT)
                 };
             },
-            readOnly : true
+            readOnly: true
         },
-        width : {value : 600},
-        height : {value : 450},
-        menubar : {value : false},
-        location : {value : false},
-        scrollbars : {value : true},
-        resizable : {value : true},
-        toolbar : {value : true},
-        status : {value : true},
-        directories : {value : false},
-        fullscreen : {value : false},
-        dependent : {value : true}
+        width: {value: 600},
+        height: {value: 450},
+        menubar: {value: false},
+        location: {value: false},
+        scrollbars: {value: true},
+        resizable: {value: true},
+        toolbar: {value: true},
+        status: {value: true},
+        directories: {value: false},
+        fullscreen: {value: false},
+        dependent: {value: true}
     }
 });
 
@@ -147,6 +186,8 @@ M.filter_glossary.init_filter_autolinking = function(config) {
         "event-delegate",
         "overlay",
         "moodle-core-event",
-        "moodle-core-notification-alert"
+        "moodle-core-notification-alert",
+        "moodle-core-notification-exception",
+        "moodle-core-notification-ajaxexception"
     ]
 });

@@ -248,6 +248,42 @@ class core_files_tgz_packer_testcase extends advanced_testcase implements file_p
     }
 
     /**
+     * Tests extracting files returning only a boolean state with success.
+     */
+    public function test_extract_to_pathname_returnvalue_successful() {
+        $packer = get_file_packer('application/x-gzip');
+
+        // Prepare files.
+        $files = $this->prepare_file_list();
+        $archivefile = make_request_directory() . '/test.tgz';
+        $packer->archive_to_pathname($files, $archivefile);
+
+        // Extract same files.
+        $outdir = make_request_directory();
+        $result = $packer->extract_to_pathname($archivefile, $outdir, null, null, true);
+
+        $this->assertTrue($result);
+    }
+
+    /**
+     * Tests extracting files returning only a boolean state with failure.
+     */
+    public function test_extract_to_pathname_returnvalue_failure() {
+        $packer = get_file_packer('application/x-gzip');
+
+        // Create sample files.
+        $archivefile = make_request_directory() . '/test.tgz';
+        file_put_contents($archivefile, '');
+
+        // Extract same files.
+        $outdir = make_request_directory();
+
+        $result = $packer->extract_to_pathname($archivefile, $outdir, null, null, true);
+
+        $this->assertFalse($result);
+    }
+
+    /**
      * Tests the progress reporting.
      */
     public function test_file_progress() {
@@ -319,7 +355,7 @@ class core_files_tgz_packer_testcase extends advanced_testcase implements file_p
         $packer = get_file_packer('application/x-gzip');
         $result = $packer->archive_to_pathname($filelist, $archive, true, $this);
         $this->assertTrue($result);
-        $hashwith = sha1_file($archive);
+        $hashwith = file_storage::hash_from_path($archive);
 
         // List files.
         $files = $packer->list_files($archive);
@@ -346,7 +382,7 @@ class core_files_tgz_packer_testcase extends advanced_testcase implements file_p
         $packer->set_include_index(false);
         $result = $packer->archive_to_pathname($filelist, $archive, true, $this);
         $this->assertTrue($result);
-        $hashwithout = sha1_file($archive);
+        $hashwithout = file_storage::hash_from_path($archive);
         $files = $packer->list_files($archive);
         $this->assertEquals($expectedinfo, self::convert_info_for_assert($files));
 

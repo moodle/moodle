@@ -1,0 +1,101 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template calendar/upcoming_mini
+
+    Calendar upcoming view for blocks.
+
+    The purpose of this template is to render the upcoming view for blocks.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Example context (json):
+    {
+    }
+}}
+<div class="card-text content calendarwrapper"{{!
+    }} id="month-upcoming-mini-{{uniqid}}"{{!
+    }} data-context-id="{{defaulteventcontext}}"{{!
+    }} data-courseid="{{courseid}}"{{!
+    }} data-categoryid="{{categoryid}}"{{!
+}}>
+    {{> core/overlay_loading}}
+    {{#events}}
+        <div{{!
+            }} class="event"{{!
+            }} data-eventtype-{{calendareventtype}}="1"{{!
+            }} data-region="event-item"{{!
+        }}>
+            <span>{{#icon}}{{#pix}} {{key}}, {{component}}, {{alttext}} {{/pix}}{{/icon}}</span>
+            <a{{!
+                }} data-type="event"{{!
+                }} data-action="view-event"{{!
+                }} data-event-id="{{id}}"{{!
+                }} href="{{viewurl}}"{{!
+            }}>{{{name}}}</a>
+            <div class="date">{{{formattedtime}}}</div>
+            <hr>
+        </div>
+    {{/events}}
+    {{^events}}
+        {{#str}}noupcomingevents, calendar{{/str}}
+    {{/events}}
+</div>
+{{#js}}
+require([
+    'jquery',
+    'core_calendar/selectors',
+    'core_calendar/events',
+], function(
+    $,
+    CalendarSelectors,
+    CalendarEvents
+) {
+    var root = $('#month-upcoming-mini-{{uniqid}}');
+
+    $('body').on(CalendarEvents.filterChanged, function(e, data) {
+        M.util.js_pending("month-upcoming-mini-{{uniqid}}-filterChanged");
+
+        // A filter value has been changed.
+        // Find all matching cells in the popover data, and hide them.
+        var target = $("#month-upcoming-mini-{{uniqid}}").find(CalendarSelectors.eventType[data.type]);
+
+        var transitionPromise = $.Deferred();
+        if (data.hidden) {
+            transitionPromise.then(function() {
+                return target.slideUp('fast').promise();
+            });
+        } else {
+            transitionPromise.then(function() {
+                return target.slideDown('fast').promise();
+            });
+        }
+
+        transitionPromise.then(function() {
+            M.util.js_complete("month-upcoming-mini-{{uniqid}}-filterChanged");
+
+            return;
+        });
+
+        transitionPromise.resolve();
+    });
+});
+{{/js}}

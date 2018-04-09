@@ -58,7 +58,25 @@ class mod_quiz_attempt_testable extends quiz_attempt {
 
         $attemptobj = new self($attempt, $quiz, $cm, $course, false);
 
+        $attemptobj->slots = array();
+        foreach (explode(',', $layout) as $slot) {
+            if ($slot == 0) {
+                continue;
+            }
+            $attemptobj->slots[$slot] = new stdClass();
+            $attemptobj->slots[$slot]->slot = $slot;
+            $attemptobj->slots[$slot]->requireprevious = 0;
+            $attemptobj->slots[$slot]->questionid = 0;
+        }
+
+        $attemptobj->sections = array();
+        $attemptobj->sections[0] = new stdClass();
+        $attemptobj->sections[0]->heading = '';
+        $attemptobj->sections[0]->firstslot = 1;
+        $attemptobj->sections[0]->shufflequestions = 0;
+
         $attemptobj->infos = $infos;
+        $attemptobj->link_sections_and_slots();
         $attemptobj->determine_layout();
         $attemptobj->number_questions();
 

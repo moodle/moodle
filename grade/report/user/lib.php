@@ -30,6 +30,9 @@ define("GRADE_REPORT_USER_HIDE_HIDDEN", 0);
 define("GRADE_REPORT_USER_HIDE_UNTIL", 1);
 define("GRADE_REPORT_USER_SHOW_HIDDEN", 2);
 
+define("GRADE_REPORT_USER_VIEW_SELF", 1);
+define("GRADE_REPORT_USER_VIEW_USER", 2);
+
 /**
  * Class providing an API for the user report building and displaying.
  * @uses grade_report
@@ -66,6 +69,12 @@ class grade_report_user extends grade_report {
      * @var type
      */
     public $tabledata = array();
+
+    /**
+     * An array containing the grade items data for external usage (web services, ajax, etc...)
+     * @var array
+     */
+    public $gradeitemsdata = array();
 
     /**
      * The grade tree structure
@@ -387,6 +396,7 @@ class grade_report_user extends grade_report {
         $element['userid'] = $this->user->id;
         $fullname = $this->gtree->get_element_header($element, true, true, true, true, true);
         $data = array();
+        $gradeitemdata = array();
         $hidden = '';
         $excluded = '';
         $itemlevel = ($type == 'categoryitem' || $type == 'category' || $type == 'courseitem') ? $depth : ($depth + 1);
@@ -436,6 +446,7 @@ class grade_report_user extends grade_report {
                 $instances = $this->modinfo->get_instances_of($grade_object->itemmodule);
                 if (!empty($instances[$grade_object->iteminstance])) {
                     $cm = $instances[$grade_object->iteminstance];
+                    $gradeitemdata['cmid'] = $cm->id;
                     if (!$cm->uservisible) {
                         // If there is 'availableinfo' text then it is only greyed
                         // out and not entirely hidden.
@@ -466,8 +477,8 @@ class grade_report_user extends grade_report {
             } else {
                 // The max and min for an aggregation may be different to the grade_item.
                 if (!is_null($gradeval)) {
-                    $grade_grade->grade_item->grademax = $grade_grade->rawgrademax;
-                    $grade_grade->grade_item->grademin = $grade_grade->rawgrademin;
+                    $grade_grade->grade_item->grademax = $grade_grade->get_grade_max();
+                    $grade_grade->grade_item->grademin = $grade_grade->get_grade_min();
                 }
             }
 
@@ -499,6 +510,17 @@ class grade_report_user extends grade_report {
                 $data['itemname']['celltype'] = 'th';
                 $data['itemname']['id'] = $header_row;
 
+                // Basic grade item information.
+                $gradeitemdata['id'] = $grade_object->id;
+                $gradeitemdata['itemname'] = $grade_object->itemname;
+                $gradeitemdata['itemtype'] = $grade_object->itemtype;
+                $gradeitemdata['itemmodule'] = $grade_object->itemmodule;
+                $gradeitemdata['iteminstance'] = $grade_object->iteminstance;
+                $gradeitemdata['itemnumber'] = $grade_object->itemnumber;
+                $gradeitemdata['categoryid'] = $grade_object->categoryid;
+                $gradeitemdata['outcomeid'] = $grade_object->outcomeid;
+                $gradeitemdata['scaleid'] = $grade_object->outcomeid;
+
                 if ($this->showfeedback) {
                     // Copy $class before appending itemcenter as feedback should not be centered
                     $classfeedback = $class;
@@ -513,13 +535,23 @@ class grade_report_user extends grade_report {
                     // This obliterates the weight because it provides a more informative description.
                     if (is_numeric($hint['weight'])) {
                         $data['weight']['content'] = format_float($hint['weight'] * 100.0, 2) . ' %';
+                        $gradeitemdata['weightraw'] = $hint['weight'];
+                        $gradeitemdata['weightformatted'] = $data['weight']['content'];
                     }
                     if ($hint['status'] != 'used' && $hint['status'] != 'unknown') {
                         $data['weight']['content'] .= '<br>' . get_string('aggregationhint' . $hint['status'], 'grades');
+                        $gradeitemdata['status'] = $hint['status'];
                     }
                 }
 
                 if ($this->showgrade) {
+                    $gradeitemdata['graderaw'] = null;
+                    $gradeitemdata['gradehiddenbydate'] = false;
+                    $gradeitemdata['gradeneedsupdate'] = $grade_grade->grade_item->needsupdate;
+                    $gradeitemdata['gradeishidden'] = $grade_grade->is_hidden();
+                    $gradeitemdata['gradedatesubmitted'] = $grade_grade->get_datesubmitted();
+                    $gradeitemdata['gradedategraded'] = $grade_grade->get_dategraded();
+
                     if ($grade_grade->grade_item->needsupdate) {
                         $data['grade']['class'] = $class.' gradingerror';
                         $data['grade']['content'] = get_string('error');
@@ -529,11 +561,13 @@ class grade_report_user extends grade_report {
                         $class .= ' datesubmitted';
                         $data['grade']['class'] = $class;
                         $data['grade']['content'] = get_string('submittedon', 'grades', userdate($grade_grade->get_datesubmitted(), get_string('strftimedatetimeshort')));
-
+                        $gradeitemdata['gradehiddenbydate'] = true;
                     } else if ($grade_grade->is_hidden()) {
                         $data['grade']['class'] = $class.' dimmed_text';
                         $data['grade']['content'] = '-';
+
                         if ($this->canviewhidden) {
+                            $gradeitemdata['graderaw'] = $gradeval;
                             $data['grade']['content'] = grade_format_gradevalue($gradeval,
                                                                                 $grade_grade->grade_item,
                                                                                 true);
@@ -543,8 +577,10 @@ class grade_report_user extends grade_report {
                         $data['grade']['content'] = grade_format_gradevalue($gradeval,
                                                                             $grade_grade->grade_item,
                                                                             true);
+                        $gradeitemdata['graderaw'] = $gradeval;
                     }
                     $data['grade']['headers'] = "$header_cat $header_row grade";
+                    $gradeitemdata['gradeformatted'] = $data['grade']['content'];
                 }
 
                 // Range
@@ -552,6 +588,10 @@ class grade_report_user extends grade_report {
                     $data['range']['class'] = $class;
                     $data['range']['content'] = $grade_grade->grade_item->get_formatted_range(GRADE_DISPLAY_TYPE_REAL, $this->rangedecimals);
                     $data['range']['headers'] = "$header_cat $header_row range";
+
+                    $gradeitemdata['rangeformatted'] = $data['range']['content'];
+                    $gradeitemdata['grademin'] = $grade_grade->grade_item->grademin;
+                    $gradeitemdata['grademax'] = $grade_grade->grade_item->grademax;
                 }
 
                 // Percentage
@@ -570,6 +610,7 @@ class grade_report_user extends grade_report {
                         $data['percentage']['content'] = grade_format_gradevalue($gradeval, $grade_grade->grade_item, true, GRADE_DISPLAY_TYPE_PERCENTAGE);
                     }
                     $data['percentage']['headers'] = "$header_cat $header_row percentage";
+                    $gradeitemdata['percentageformatted'] = $data['percentage']['content'];
                 }
 
                 // Lettergrade
@@ -589,10 +630,12 @@ class grade_report_user extends grade_report {
                         $data['lettergrade']['content'] = grade_format_gradevalue($gradeval, $grade_grade->grade_item, true, GRADE_DISPLAY_TYPE_LETTER);
                     }
                     $data['lettergrade']['headers'] = "$header_cat $header_row lettergrade";
+                    $gradeitemdata['lettergradeformatted'] = $data['lettergrade']['content'];
                 }
 
                 // Rank
                 if ($this->showrank) {
+                    $gradeitemdata['rank'] = 0;
                     if ($grade_grade->grade_item->needsupdate) {
                         $data['rank']['class'] = $class.' gradingerror';
                         $data['rank']['content'] = get_string('error');
@@ -614,16 +657,23 @@ class grade_report_user extends grade_report {
                         $rank = $DB->count_records_sql($sql, array($grade_grade->finalgrade, $grade_grade->grade_item->id)) + 1;
 
                         $data['rank']['class'] = $class;
-                        $data['rank']['content'] = "$rank/".$this->get_numusers(false); // total course users
+                        $numusers = $this->get_numusers(false);
+                        $data['rank']['content'] = "$rank/$numusers"; // Total course users.
+
+                        $gradeitemdata['rank'] = $rank;
+                        $gradeitemdata['numusers'] = $numusers;
                     }
                     $data['rank']['headers'] = "$header_cat $header_row rank";
                 }
 
                 // Average
                 if ($this->showaverage) {
+                    $gradeitemdata['averageformatted'] = '';
+
                     $data['average']['class'] = $class;
                     if (!empty($this->gtree->items[$eid]->avg)) {
                         $data['average']['content'] = $this->gtree->items[$eid]->avg;
+                        $gradeitemdata['averageformatted'] = $this->gtree->items[$eid]->avg;
                     } else {
                         $data['average']['content'] = '-';
                     }
@@ -632,15 +682,20 @@ class grade_report_user extends grade_report {
 
                 // Feedback
                 if ($this->showfeedback) {
+                    $gradeitemdata['feedback'] = '';
+                    $gradeitemdata['feedbackformat'] = $grade_grade->feedbackformat;
+
                     if ($grade_grade->overridden > 0 AND ($type == 'categoryitem' OR $type == 'courseitem')) {
                     $data['feedback']['class'] = $classfeedback.' feedbacktext';
                         $data['feedback']['content'] = get_string('overridden', 'grades').': ' . format_text($grade_grade->feedback, $grade_grade->feedbackformat);
+                        $gradeitemdata['feedback'] = $grade_grade->feedback;
                     } else if (empty($grade_grade->feedback) or (!$this->canviewhidden and $grade_grade->is_hidden())) {
                         $data['feedback']['class'] = $classfeedback.' feedbacktext';
                         $data['feedback']['content'] = '&nbsp;';
                     } else {
                         $data['feedback']['class'] = $classfeedback.' feedbacktext';
                         $data['feedback']['content'] = format_text($grade_grade->feedback, $grade_grade->feedbackformat);
+                        $gradeitemdata['feedback'] = $grade_grade->feedback;
                     }
                     $data['feedback']['headers'] = "$header_cat $header_row feedback";
                 }
@@ -651,6 +706,7 @@ class grade_report_user extends grade_report {
                     $data['contributiontocoursetotal']['headers'] = "$header_cat $header_row contributiontocoursetotal";
 
                 }
+                $this->gradeitemsdata[] = $gradeitemdata;
             }
             // We collect the aggregation hints whether they are hidden or not.
             if ($this->showcontributiontocoursetotal) {
@@ -731,7 +787,12 @@ class grade_report_user extends grade_report {
                 if ($gradecat->aggregation == GRADE_AGGREGATE_SUM) {
                     // Natural aggregation/Sum of grades does not consider the mingrade, cannot traditionnally normalise it.
                     $graderange = $this->aggregationhints[$itemid]['grademax'];
-                    $gradeval = $this->aggregationhints[$itemid]['grade'] / $graderange;
+
+                    if ($graderange != 0) {
+                        $gradeval = $this->aggregationhints[$itemid]['grade'] / $graderange;
+                    } else {
+                        $gradeval = 0;
+                    }
                 } else {
                     $gradeval = grade_grade::standardise_score($this->aggregationhints[$itemid]['grade'],
                         $this->aggregationhints[$itemid]['grademin'], $this->aggregationhints[$itemid]['grademax'], 0, 1);
@@ -859,7 +920,7 @@ class grade_report_user extends grade_report {
      * Builds the grade item averages.
      */
     function calculate_averages() {
-        global $USER, $DB;
+        global $USER, $DB, $CFG;
 
         if ($this->showaverage) {
             // This settings are actually grader report settings (not user report)
@@ -882,7 +943,11 @@ class grade_report_user extends grade_report {
             list($gradebookrolessql, $gradebookrolesparams) = $DB->get_in_or_equal(explode(',', $this->gradebookroles), SQL_PARAMS_NAMED, 'grbr0');
 
             // Limit to users with an active enrolment.
-            list($enrolledsql, $enrolledparams) = get_enrolled_sql($this->context);
+            $coursecontext = $this->context->get_course_context(true);
+            $defaultgradeshowactiveenrol = !empty($CFG->grade_report_showonlyactiveenrol);
+            $showonlyactiveenrol = get_user_preferences('grade_report_showonlyactiveenrol', $defaultgradeshowactiveenrol);
+            $showonlyactiveenrol = $showonlyactiveenrol || !has_capability('moodle/course:viewsuspendedusers', $coursecontext);
+            list($enrolledsql, $enrolledparams) = get_enrolled_sql($this->context, '', 0, $showonlyactiveenrol);
 
             $params = array_merge($this->groupwheresql_params, $gradebookrolesparams, $enrolledparams, $relatedctxparams);
             $params['courseid'] = $this->courseid;
@@ -1003,6 +1068,22 @@ class grade_report_user extends grade_report {
                 }
             }
         }
+    }
+
+    /**
+     * Trigger the grade_report_viewed event
+     *
+     * @since Moodle 2.9
+     */
+    public function viewed() {
+        $event = \gradereport_user\event\grade_report_viewed::create(
+            array(
+                'context' => $this->context,
+                'courseid' => $this->courseid,
+                'relateduserid' => $this->user->id,
+            )
+        );
+        $event->trigger();
     }
 }
 
@@ -1138,9 +1219,6 @@ function grade_report_user_profilereport($course, $user, $viewasuser = false) {
 
         $context = context_course::instance($course->id);
 
-        //first make sure we have proper final grades - this must be done before constructing of the grade tree
-        grade_regrade_final_grades($course->id);
-
         /// return tracking object
         $gpr = new grade_plugin_return(array('type'=>'report', 'plugin'=>'user', 'courseid'=>$course->id, 'userid'=>$user->id));
         // Create a report instance
@@ -1148,8 +1226,6 @@ function grade_report_user_profilereport($course, $user, $viewasuser = false) {
 
         // print the page
         echo '<div class="grade-report-user">'; // css fix to share styles with real report page
-        echo $OUTPUT->heading(get_string('pluginname', 'gradereport_user'). ' - '.fullname($report->user));
-
         if ($report->fill_table()) {
             echo $report->print_table(true);
         }
@@ -1157,4 +1233,47 @@ function grade_report_user_profilereport($course, $user, $viewasuser = false) {
     }
 }
 
+/**
+ * Add nodes to myprofile page.
+ *
+ * @param \core_user\output\myprofile\tree $tree Tree object
+ * @param stdClass $user user object
+ * @param bool $iscurrentuser
+ * @param stdClass $course Course object
+ */
+function gradereport_user_myprofile_navigation(core_user\output\myprofile\tree $tree, $user, $iscurrentuser, $course) {
+    global $CFG, $USER;
+    if (empty($course)) {
+        // We want to display these reports under the site context.
+        $course = get_fast_modinfo(SITEID)->get_course();
+    }
+    $usercontext = context_user::instance($user->id);
+    $anyreport = has_capability('moodle/user:viewuseractivitiesreport', $usercontext);
 
+    // Start capability checks.
+    if ($anyreport || $iscurrentuser) {
+        // Add grade hardcoded grade report if necessary.
+        $gradeaccess = false;
+        $coursecontext = context_course::instance($course->id);
+        if (has_capability('moodle/grade:viewall', $coursecontext)) {
+            // Can view all course grades.
+            $gradeaccess = true;
+        } else if ($course->showgrades) {
+            if ($iscurrentuser && has_capability('moodle/grade:view', $coursecontext)) {
+                // Can view own grades.
+                $gradeaccess = true;
+            } else if (has_capability('moodle/grade:viewall', $usercontext)) {
+                // Can view grades of this user - parent most probably.
+                $gradeaccess = true;
+            } else if ($anyreport) {
+                // Can view grades of this user - parent most probably.
+                $gradeaccess = true;
+            }
+        }
+        if ($gradeaccess) {
+            $url = new moodle_url('/course/user.php', array('mode' => 'grade', 'id' => $course->id, 'user' => $user->id));
+            $node = new core_user\output\myprofile\node('reports', 'grade', get_string('grade'), null, $url);
+            $tree->add_node($node);
+        }
+    }
+}

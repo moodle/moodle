@@ -25,7 +25,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once(dirname(dirname(__FILE__)).'/edit_form.php');    // parent class definition
+require_once(__DIR__ . '/../edit_form.php');    // parent class definition
 
 /**
  * Class for editing rubric grading strategy forms.
@@ -102,5 +102,54 @@ class workshop_edit_rubric_strategy_form extends workshop_edit_strategy_form {
         $mform->addGroup($layoutgrp, 'layoutgrp', get_string('layout', 'workshopform_rubric'), array('<br />'), false);
         $mform->setDefault('config_layout', 'list');
         $this->set_data($current);
+    }
+
+    /**
+     * Provide validation rules for the rubric editor form.
+     *
+     * @param array $data
+     * @param array $files
+     * @return array
+     */
+    protected function validation_inner($data, $files) {
+
+        $errors = array();
+
+        // Iterate over all submitted dimensions (criteria).
+        for ($i = 0; isset($data['dimensionid__idx_'.$i]); $i++) {
+
+            $dimgrades = array();
+
+            if (0 == strlen(trim($data['description__idx_'.$i.'_editor']['text']))) {
+                // The description text is empty and this criterion will be deleted.
+                continue;
+            }
+
+            // Make sure the levels grades are unique within the criterion.
+            $atleastonelevel = false;
+            for ($j = 0; isset($data['levelid__idx_'.$i.'__idy_'.$j]); $j++) {
+                if (0 == strlen(trim($data['definition__idx_'.$i.'__idy_'.$j]))) {
+                    // The level definition is empty and will not be saved.
+                    continue;
+                }
+                $atleastonelevel = true;
+
+                $levelgrade = $data['grade__idx_'.$i.'__idy_'.$j];
+
+                if (isset($dimgrades[$levelgrade])) {
+                    // This grade has already been set for another level.
+                    $k = $dimgrades[$levelgrade];
+                    $errors['level__idx_'.$i.'__idy_'.$j] = $errors['level__idx_'.$i.'__idy_'.$k] = get_string('mustbeunique',
+                        'workshopform_rubric');
+                } else {
+                    $dimgrades[$levelgrade] = $j;
+                }
+            }
+            if (!$atleastonelevel) {
+                $errors['level__idx_'.$i.'__idy_0'] = get_string('mustdefinelevel', 'workshopform_rubric');
+            }
+        }
+
+        return $errors;
     }
 }

@@ -45,19 +45,14 @@ class user_editadvanced_form extends moodleform {
         $mform = $this->_form;
         $editoroptions = null;
         $filemanageroptions = null;
-        $userid = $USER->id;
 
-        if (is_array($this->_customdata)) {
-            if (array_key_exists('editoroptions', $this->_customdata)) {
-                $editoroptions = $this->_customdata['editoroptions'];
-            }
-            if (array_key_exists('filemanageroptions', $this->_customdata)) {
-                $filemanageroptions = $this->_customdata['filemanageroptions'];
-            }
-            if (array_key_exists('userid', $this->_customdata)) {
-                $userid = $this->_customdata['userid'];
-            }
+        if (!is_array($this->_customdata)) {
+            throw new coding_exception('invalid custom data for user_edit_form');
         }
+        $editoroptions = $this->_customdata['editoroptions'];
+        $filemanageroptions = $this->_customdata['filemanageroptions'];
+        $user = $this->_customdata['user'];
+        $userid = $user->id;
 
         // Accessibility: "Required" is bad legend text.
         $strgeneral  = get_string('general');
@@ -65,27 +60,29 @@ class user_editadvanced_form extends moodleform {
 
         // Add some extra hidden fields.
         $mform->addElement('hidden', 'id');
-        $mform->setType('id', PARAM_INT);
+        $mform->setType('id', core_user::get_property_type('id'));
         $mform->addElement('hidden', 'course', $COURSE->id);
         $mform->setType('course', PARAM_INT);
 
         // Print the required moodle fields first.
         $mform->addElement('header', 'moodle', $strgeneral);
 
-        $mform->addElement('text', 'username', get_string('username'), 'size="20"');
-        $mform->addRule('username', $strrequired, 'required', null, 'client');
-        $mform->setType('username', PARAM_RAW);
-
         $auths = core_component::get_plugin_list('auth');
         $enabled = get_string('pluginenabled', 'core_plugin');
         $disabled = get_string('plugindisabled', 'core_plugin');
         $authoptions = array($enabled => array(), $disabled => array());
         $cannotchangepass = array();
+        $cannotchangeusername = array();
         foreach ($auths as $auth => $unused) {
             $authinst = get_auth_plugin($auth);
+
+            if (!$authinst->is_internal()) {
+                $cannotchangeusername[] = $auth;
+            }
+
             $passwordurl = $authinst->change_password_url();
             if (!($authinst->can_change_password() && empty($passwordurl))) {
-                if (!$userid and $authinst->is_internal()) {
+                if ($userid < 1 and $authinst->is_internal()) {
                     // This is unlikely but we can not create account without password
                     // when plugin uses passwords, we need to set it initially at least.
                 } else {
@@ -98,6 +95,15 @@ class user_editadvanced_form extends moodleform {
                 $authoptions[$disabled][$auth] = get_string('pluginname', "auth_{$auth}");
             }
         }
+
+        $mform->addElement('text', 'username', get_string('username'), 'size="20"');
+        $mform->addHelpButton('username', 'username', 'auth');
+        $mform->setType('username', PARAM_RAW);
+
+        if ($userid !== -1) {
+            $mform->disabledIf('username', 'auth', 'in', $cannotchangeusername);
+        }
+
         $mform->addElement('selectgroups', 'auth', get_string('chooseauthmethod', 'auth'), $authoptions);
         $mform->addHelpButton('auth', 'chooseauthmethod', 'auth');
 
@@ -112,17 +118,32 @@ class user_editadvanced_form extends moodleform {
         }
         $mform->addElement('passwordunmask', 'newpassword', get_string('newpassword'), 'size="20"');
         $mform->addHelpButton('newpassword', 'newpassword');
-        $mform->setType('newpassword', PARAM_RAW);
+        $mform->setType('newpassword', core_user::get_property_type('password'));
         $mform->disabledIf('newpassword', 'createpassword', 'checked');
 
         $mform->disabledIf('newpassword', 'auth', 'in', $cannotchangepass);
+
+        // Check if the user has active external tokens.
+        if ($userid and empty($CFG->passwordchangetokendeletion)) {
+            if ($tokens = webservice::get_active_tokens($userid)) {
+                $services = '';
+                foreach ($tokens as $token) {
+                    $services .= format_string($token->servicename) . ',';
+                }
+                $services = get_string('userservices', 'webservice', rtrim($services, ','));
+                $mform->addElement('advcheckbox', 'signoutofotherservices', get_string('signoutofotherservices'), $services);
+                $mform->addHelpButton('signoutofotherservices', 'signoutofotherservices');
+                $mform->disabledIf('signoutofotherservices', 'newpassword', 'eq', '');
+                $mform->setDefault('signoutofotherservices', 1);
+            }
+        }
 
         $mform->addElement('advcheckbox', 'preference_auth_forcepasswordchange', get_string('forcepasswordchange'));
         $mform->addHelpButton('preference_auth_forcepasswordchange', 'forcepasswordchange');
         $mform->disabledIf('preference_auth_forcepasswordchange', 'createpassword', 'checked');
 
         // Shared fields.
-        useredit_shared_definition($mform, $editoroptions, $filemanageroptions);
+        useredit_shared_definition($mform, $editoroptions, $filemanageroptions, $user);
 
         // Next the customisable profile fields.
         profile_definition($mform, $userid);
@@ -133,7 +154,9 @@ class user_editadvanced_form extends moodleform {
             $btnstring = get_string('updatemyprofile');
         }
 
-        $this->add_action_buttons(false, $btnstring);
+        $this->add_action_buttons(true, $btnstring);
+
+        $this->set_data($user);
     }
 
     /**
@@ -143,20 +166,16 @@ class user_editadvanced_form extends moodleform {
         global $USER, $CFG, $DB, $OUTPUT;
 
         $mform = $this->_form;
+
+        // Trim required name fields.
+        foreach (useredit_get_required_name_fields() as $field) {
+            $mform->applyFilter($field, 'trim');
+        }
+
         if ($userid = $mform->getElementValue('id')) {
             $user = $DB->get_record('user', array('id' => $userid));
         } else {
             $user = false;
-        }
-
-        // If language does not exist, use site default lang.
-        if ($langsel = $mform->getElementValue('lang')) {
-            $lang = reset($langsel);
-            // Check lang exists.
-            if (!get_string_manager()->translation_exists($lang, false)) {
-                $langel =& $mform->getElement('lang');
-                $langel->setValue($CFG->lang);
-            }
         }
 
         // User can not change own auth method.
@@ -266,16 +285,17 @@ class user_editadvanced_form extends moodleform {
             if ($usernew->username !== core_text::strtolower($usernew->username)) {
                 $err['username'] = get_string('usernamelowercase');
             } else {
-                if ($usernew->username !== clean_param($usernew->username, PARAM_USERNAME)) {
+                if ($usernew->username !== core_user::clean_field($usernew->username, 'username')) {
                     $err['username'] = get_string('invalidusername');
                 }
             }
         }
 
-        if (!$user or $user->email !== $usernew->email) {
+        if (!$user or (isset($usernew->email) && $user->email !== $usernew->email)) {
             if (!validate_email($usernew->email)) {
                 $err['email'] = get_string('invalidemail');
-            } else if ($DB->record_exists('user', array('email' => $usernew->email, 'mnethostid' => $CFG->mnet_localhost_id))) {
+            } else if (empty($CFG->allowaccountssameemail)
+                    and $DB->record_exists('user', array('email' => $usernew->email, 'mnethostid' => $CFG->mnet_localhost_id))) {
                 $err['email'] = get_string('emailexists');
             }
         }

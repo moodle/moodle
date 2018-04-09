@@ -7,8 +7,8 @@ Feature: In a lesson activity, teacher can import blackboard fill in the blank q
   Scenario: Import fill in the blank question in a lesson
     Given the following "users" exist:
       | username | firstname | lastname | email |
-      | teacher1 | Teacher | 1 | teacher1@asd.com |
-      | student1 | Student | 1 | student1@asd.com |
+      | teacher1 | Teacher | 1 | teacher1@example.com |
+      | student1 | Student | 1 | student1@example.com |
     And the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |
@@ -17,9 +17,7 @@ Feature: In a lesson activity, teacher can import blackboard fill in the blank q
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
     And I log in as "teacher1"
-    When I am on homepage
-    And I follow "Course 1"
-    And I turn editing mode on
+    When I am on "Course 1" course homepage with editing mode on
     And I add a "Lesson" to section "1" and I fill the form with:
       | Name | Test lesson name |
       | Description | Test lesson description |

@@ -158,8 +158,8 @@ class external_service_form extends moodleform {
         $errors = parent::validation($data, $files);
 
         // Add field validation check for duplicate name.
-        if (!empty($data['name'])) {
-            if ($DB->record_exists('external_services', array('name' => $data['name']))) {
+        if ($webservice = $DB->get_record('external_services', array('name' => $data['name']))) {
+            if (empty($data['id']) || $webservice->id != $data['id']) {
                 $errors['name'] = get_string('nameexists', 'webservice');
             }
         }
@@ -196,7 +196,7 @@ class external_service_functions_form extends moodleform {
         //we add the descriptions to the functions
         foreach ($functions as $functionid => $functionname) {
             //retrieve full function information (including the description)
-            $function = external_function_info($functionname);
+            $function = external_api::external_function_info($functionname);
             if (empty($function->deprecated)) {
                 $functions[$functionid] = $function->name . ':' . $function->description;
             } else {

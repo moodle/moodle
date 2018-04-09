@@ -203,7 +203,7 @@ class HTMLPurifier_ChildDef_Table extends HTMLPurifier_ChildDef
                     $current_tr_tbody->children[] = $node;
                     break;
                 case '#PCDATA':
-                    assert($node->is_whitespace);
+                    //assert($node->is_whitespace);
                     if ($current_tr_tbody === null) {
                         $ret[] = $node;
                     } else {

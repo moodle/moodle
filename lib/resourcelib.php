@@ -216,7 +216,7 @@ function resourcelib_get_extension($fullurl) {
 function resourcelib_embed_image($fullurl, $title) {
     $code = '';
     $code .= '<div class="resourcecontent resourceimg">';
-    $code .= "<img title=\"".strip_tags(format_string($title))."\" class=\"resourceimage\" src=\"$fullurl\" alt=\"\" />";
+    $code .= "<img title=\"".s(strip_tags(format_string($title)))."\" class=\"resourceimage\" src=\"$fullurl\" alt=\"\" />";
     $code .= '</div>';
 
     return $code;

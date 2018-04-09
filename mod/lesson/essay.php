@@ -62,6 +62,8 @@ if ($attemptid > 0) {
     $attempt = $DB->get_record('lesson_attempts', array('id' => $attemptid));
     $answer = $DB->get_record('lesson_answers', array('lessonid' => $lesson->id, 'pageid' => $attempt->pageid));
     $user = $DB->get_record('user', array('id' => $attempt->userid));
+    // Apply overrides.
+    $lesson->update_effective_access($user->id);
     $scoreoptions = array();
     if ($lesson->custom) {
         $i = $answer->score;
@@ -252,15 +254,20 @@ switch ($mode) {
                 $a->comment = file_rewrite_pluginfile_urls($a->comment, 'pluginfile.php', $context->id,
                             'mod_lesson', 'essay_responses', $attempt->id);
                 $a->comment  = format_text($a->comment, $essayinfo->responseformat, $formattextdefoptions);
+                $a->lesson = format_string($lesson->name, true);
 
                 // Fetch message HTML and plain text formats
                 $message  = get_string('essayemailmessage2', 'lesson', $a);
                 $plaintext = format_text_email($message, FORMAT_HTML);
 
                 // Subject
-                $subject = get_string('essayemailsubject', 'lesson', format_string($pages[$attempt->pageid]->title,true));
+                $subject = get_string('essayemailsubject', 'lesson');
 
-                $eventdata = new stdClass();
+                // Context url.
+                $contexturl = new moodle_url('/grade/report/user/index.php', array('id' => $course->id));
+
+                $eventdata = new \core\message\message();
+                $eventdata->courseid         = $course->id;
                 $eventdata->modulename       = 'lesson';
                 $eventdata->userfrom         = $USER;
                 $eventdata->userto           = $users[$attempt->userid];
@@ -269,6 +276,7 @@ switch ($mode) {
                 $eventdata->fullmessageformat = FORMAT_PLAIN;
                 $eventdata->fullmessagehtml  = $message;
                 $eventdata->smallmessage     = '';
+                $eventdata->contexturl       = $contexturl;
 
                 // Required for messaging framework
                 $eventdata->component = 'mod_lesson';
@@ -359,7 +367,8 @@ switch ($mode) {
 
         // Setup table
         $table = new html_table();
-        $table->head = array(get_string('name'), get_string('essays', 'lesson'), get_string('email', 'lesson'));
+        $table->head = array(get_string('name'), get_string('essays', 'lesson'), get_string('status'),
+            get_string('email', 'lesson'));
         $table->attributes['class'] = 'standardtable generaltable';
         $table->align = array('left', 'left', 'left');
         $table->wrap = array('nowrap', 'nowrap', '');
@@ -368,9 +377,10 @@ switch ($mode) {
         foreach (array_keys($studentessays) as $userid) {
             $studentname = fullname($users[$userid], true);
             $essaylinks = array();
+            $essaystatuses = array();
 
             // Number of attempts on the lesson
-            $attempts = $DB->count_records('lesson_grades', array('userid'=>$userid, 'lessonid'=>$lesson->id));
+            $attempts = $lesson->count_user_retries($userid);
 
             // Go through each essay page
             foreach ($studentessays[$userid] as $page => $tries) {
@@ -395,30 +405,39 @@ switch ($mode) {
 
                     // link for each essay
                     $url = new moodle_url('/mod/lesson/essay.php', array('id'=>$cm->id,'mode'=>'grade','attemptid'=>$essay->id,'sesskey'=>sesskey()));
-                    $attributes = array();
+                    $linktitle = userdate($essay->timeseen, get_string('strftimedatetime')).' '.
+                            format_string($pages[$essay->pageid]->title, true);
+
                     // Different colors for all the states of an essay (graded, if sent, not graded)
                     if (!$essayinfo->graded) {
-                        $attributes['class'] = "essayungraded";
+                        $class = "label label-warning";
+                        $status = get_string('notgraded', 'lesson');
                     } elseif (!$essayinfo->sent) {
-                        $attributes['class'] = "essaygraded";
+                        $class = "label label-success";
+                        $status = get_string('graded', 'lesson');
                     } else {
-                        $attributes['class'] = "essaysent";
+                        $class = "label label-success";
+                        $status = get_string('sent', 'lesson');
                     }
-                    $essaylinks[] = html_writer::link($url, userdate($essay->timeseen, get_string('strftimedatetime')).' '.format_string($pages[$essay->pageid]->title,true), $attributes);
+                    $attributes = array('tabindex' => 0);
+
+                    $essaylinks[] = html_writer::link($url, $linktitle);
+                    $essaystatuses[] = html_writer::span($status, $class, $attributes);
                 }
             }
             // email link for this user
             $url = new moodle_url('/mod/lesson/essay.php', array('id'=>$cm->id,'mode'=>'email','userid'=>$userid,'sesskey'=>sesskey()));
             $emaillink = html_writer::link($url, get_string('emailgradedessays', 'lesson'));
 
-            $table->data[] = array($OUTPUT->user_picture($users[$userid], array('courseid'=>$course->id)).$studentname, implode("<br />", $essaylinks), $emaillink);
+            $table->data[] = array($OUTPUT->user_picture($users[$userid], array('courseid' => $course->id)) . $studentname,
+                implode("<br />", $essaylinks), implode("<br />", $essaystatuses), $emaillink);
         }
 
         // email link for all users
         $url = new moodle_url('/mod/lesson/essay.php', array('id'=>$cm->id,'mode'=>'email','sesskey'=>sesskey()));
         $emailalllink = html_writer::link($url, get_string('emailallgradedessays', 'lesson'));
 
-        $table->data[] = array(' ', ' ', $emailalllink);
+        $table->data[] = array(' ', ' ', ' ', $emailalllink);
 
         echo html_writer::table($table);
         break;

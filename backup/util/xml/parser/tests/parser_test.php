@@ -787,7 +787,7 @@ class progressive_parser_test extends advanced_testcase {
  *        - equal to "value" attribute of the tag (if present)
  *        - else, equal to tag name
  *
- * We pass the whole UnitTestCase object to the processor in order to be
+ * We pass the whole advanced_testcase object to the processor in order to be
  * able to perform the tests in the straight in the process
  */
 class mock_auto_parser_processor extends progressive_parser_processor {

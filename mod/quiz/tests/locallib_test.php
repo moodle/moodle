@@ -36,7 +36,7 @@ require_once($CFG->dirroot . '/mod/quiz/locallib.php');
  * @copyright  2008 Tim Hunt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_quiz_locallib_testcase extends basic_testcase {
+class mod_quiz_locallib_testcase extends advanced_testcase {
 
     public function test_quiz_rescale_grade() {
         $quiz = new stdClass();
@@ -55,92 +55,49 @@ class mod_quiz_locallib_testcase extends basic_testcase {
             format_float(0.247, 3));
     }
 
-    public function test_quiz_attempt_state_in_progress() {
-        $attempt = new stdClass();
-        $attempt->state = quiz_attempt::IN_PROGRESS;
-        $attempt->timefinish = 0;
-
-        $quiz = new stdClass();
-        $quiz->timeclose = 0;
-
-        $this->assertEquals(mod_quiz_display_options::DURING, quiz_attempt_state($quiz, $attempt));
+    public function quiz_attempt_state_data_provider() {
+        return [
+            [quiz_attempt::IN_PROGRESS, null, null, mod_quiz_display_options::DURING],
+            [quiz_attempt::FINISHED, -90, null, mod_quiz_display_options::IMMEDIATELY_AFTER],
+            [quiz_attempt::FINISHED, -7200, null, mod_quiz_display_options::LATER_WHILE_OPEN],
+            [quiz_attempt::FINISHED, -7200, 3600, mod_quiz_display_options::LATER_WHILE_OPEN],
+            [quiz_attempt::FINISHED, -30, 30, mod_quiz_display_options::IMMEDIATELY_AFTER],
+            [quiz_attempt::FINISHED, -90, -30, mod_quiz_display_options::AFTER_CLOSE],
+            [quiz_attempt::FINISHED, -7200, -3600, mod_quiz_display_options::AFTER_CLOSE],
+            [quiz_attempt::FINISHED, -90, -3600, mod_quiz_display_options::AFTER_CLOSE],
+            [quiz_attempt::ABANDONED, -10000000, null, mod_quiz_display_options::LATER_WHILE_OPEN],
+            [quiz_attempt::ABANDONED, -7200, 3600, mod_quiz_display_options::LATER_WHILE_OPEN],
+            [quiz_attempt::ABANDONED, -7200, -3600, mod_quiz_display_options::AFTER_CLOSE],
+        ];
     }
 
-    public function test_quiz_attempt_state_recently_submitted() {
+    /**
+     * @dataProvider quiz_attempt_state_data_provider
+     *
+     * @param unknown $attemptstate as in the quiz_attempts.state DB column.
+     * @param unknown $relativetimefinish time relative to now when the attempt finished, or null for 0.
+     * @param unknown $relativetimeclose time relative to now when the quiz closes, or null for 0.
+     * @param unknown $expectedstate expected result. One of the mod_quiz_display_options constants/
+     */
+    public function test_quiz_attempt_state($attemptstate,
+            $relativetimefinish, $relativetimeclose, $expectedstate) {
+
         $attempt = new stdClass();
-        $attempt->state = quiz_attempt::FINISHED;
-        $attempt->timefinish = time() - 10;
+        $attempt->state = $attemptstate;
+        if ($relativetimefinish === null) {
+            $attempt->timefinish = 0;
+        } else {
+            $attempt->timefinish = time() + $relativetimefinish;
+        }
 
         $quiz = new stdClass();
-        $quiz->timeclose = 0;
+        if ($relativetimeclose === null) {
+            $quiz->timeclose = 0;
+        } else {
+            $quiz->timeclose = time() + $relativetimeclose;
+        }
 
-        $this->assertEquals(mod_quiz_display_options::IMMEDIATELY_AFTER, quiz_attempt_state($quiz, $attempt));
-    }
-
-    public function test_quiz_attempt_state_sumitted_quiz_never_closes() {
-        $attempt = new stdClass();
-        $attempt->state = quiz_attempt::FINISHED;
-        $attempt->timefinish = time() - 7200;
-
-        $quiz = new stdClass();
-        $quiz->timeclose = 0;
-
-        $this->assertEquals(mod_quiz_display_options::LATER_WHILE_OPEN, quiz_attempt_state($quiz, $attempt));
-    }
-
-    public function test_quiz_attempt_state_sumitted_quiz_closes_later() {
-        $attempt = new stdClass();
-        $attempt->state = quiz_attempt::FINISHED;
-        $attempt->timefinish = time() - 7200;
-
-        $quiz = new stdClass();
-        $quiz->timeclose = time() + 3600;
-
-        $this->assertEquals(mod_quiz_display_options::LATER_WHILE_OPEN, quiz_attempt_state($quiz, $attempt));
-    }
-
-    public function test_quiz_attempt_state_sumitted_quiz_closed() {
-        $attempt = new stdClass();
-        $attempt->state = quiz_attempt::FINISHED;
-        $attempt->timefinish = time() - 7200;
-
-        $quiz = new stdClass();
-        $quiz->timeclose = time() - 3600;
-
-        $this->assertEquals(mod_quiz_display_options::AFTER_CLOSE, quiz_attempt_state($quiz, $attempt));
-    }
-
-    public function test_quiz_attempt_state_never_sumitted_quiz_never_closes() {
-        $attempt = new stdClass();
-        $attempt->state = quiz_attempt::ABANDONED;
-        $attempt->timefinish = 1000; // A very long time ago!
-
-        $quiz = new stdClass();
-        $quiz->timeclose = 0;
-
-        $this->assertEquals(mod_quiz_display_options::LATER_WHILE_OPEN, quiz_attempt_state($quiz, $attempt));
-    }
-
-    public function test_quiz_attempt_state_never_sumitted_quiz_closes_later() {
-        $attempt = new stdClass();
-        $attempt->state = quiz_attempt::ABANDONED;
-        $attempt->timefinish = time() - 7200;
-
-        $quiz = new stdClass();
-        $quiz->timeclose = time() + 3600;
-
-        $this->assertEquals(mod_quiz_display_options::LATER_WHILE_OPEN, quiz_attempt_state($quiz, $attempt));
-    }
-
-    public function test_quiz_attempt_state_never_sumitted_quiz_closed() {
-        $attempt = new stdClass();
-        $attempt->state = quiz_attempt::ABANDONED;
-        $attempt->timefinish = time() - 7200;
-
-        $quiz = new stdClass();
-        $quiz->timeclose = time() - 3600;
-
-        $this->assertEquals(mod_quiz_display_options::AFTER_CLOSE, quiz_attempt_state($quiz, $attempt));
+        $this->assertEquals($expectedstate, quiz_attempt_state($quiz, $attempt));
     }
 
     public function test_quiz_question_tostring() {
@@ -152,6 +109,535 @@ class mod_quiz_locallib_testcase extends basic_testcase {
 
         $summary = quiz_question_tostring($question);
         $this->assertEquals('<span class="questionname">The question name</span> ' .
-                '<span class="questiontext">What sort of INEQUALITY is x &lt; y[?]</span>', $summary);
+                '<span class="questiontext">What sort of INEQUALITY is x &lt; y[?]' . "\n" . '</span>', $summary);
+    }
+
+    /**
+     * Test quiz_view
+     * @return void
+     */
+    public function test_quiz_view() {
+        global $CFG;
+
+        $CFG->enablecompletion = 1;
+        $this->resetAfterTest();
+
+        $this->setAdminUser();
+        // Setup test data.
+        $course = $this->getDataGenerator()->create_course(array('enablecompletion' => 1));
+        $quiz = $this->getDataGenerator()->create_module('quiz', array('course' => $course->id),
+                                                            array('completion' => 2, 'completionview' => 1));
+        $context = context_module::instance($quiz->cmid);
+        $cm = get_coursemodule_from_instance('quiz', $quiz->id);
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+
+        quiz_view($quiz, $course, $cm, $context);
+
+        $events = $sink->get_events();
+        // 2 additional events thanks to completion.
+        $this->assertCount(3, $events);
+        $event = array_shift($events);
+
+        // Checking that the event contains the expected values.
+        $this->assertInstanceOf('\mod_quiz\event\course_module_viewed', $event);
+        $this->assertEquals($context, $event->get_context());
+        $moodleurl = new \moodle_url('/mod/quiz/view.php', array('id' => $cm->id));
+        $this->assertEquals($moodleurl, $event->get_url());
+        $this->assertEventContextNotUsed($event);
+        $this->assertNotEmpty($event->get_name());
+        // Check completion status.
+        $completion = new completion_info($course);
+        $completiondata = $completion->get_data($cm);
+        $this->assertEquals(1, $completiondata->completionstate);
+    }
+
+    /**
+     * Return false when there are not overrides for this quiz instance.
+     */
+    public function test_quiz_is_overriden_calendar_event_no_override() {
+        global $CFG, $DB;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $generator = $this->getDataGenerator();
+        $user = $generator->create_user();
+        $course = $generator->create_course();
+        $quizgenerator = $generator->get_plugin_generator('mod_quiz');
+        $quiz = $quizgenerator->create_instance(['course' => $course->id]);
+
+        $event = new \calendar_event((object)[
+            'modulename' => 'quiz',
+            'instance' => $quiz->id,
+            'userid' => $user->id
+        ]);
+
+        $this->assertFalse(quiz_is_overriden_calendar_event($event));
+    }
+
+    /**
+     * Return false if the given event isn't an quiz module event.
+     */
+    public function test_quiz_is_overriden_calendar_event_no_module_event() {
+        global $CFG, $DB;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $generator = $this->getDataGenerator();
+        $user = $generator->create_user();
+        $course = $generator->create_course();
+        $quizgenerator = $generator->get_plugin_generator('mod_quiz');
+        $quiz = $quizgenerator->create_instance(['course' => $course->id]);
+
+        $event = new \calendar_event((object)[
+            'userid' => $user->id
+        ]);
+
+        $this->assertFalse(quiz_is_overriden_calendar_event($event));
+    }
+
+    /**
+     * Return false if there is overrides for this use but they belong to another quiz
+     * instance.
+     */
+    public function test_quiz_is_overriden_calendar_event_different_quiz_instance() {
+        global $CFG, $DB;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $generator = $this->getDataGenerator();
+        $user = $generator->create_user();
+        $course = $generator->create_course();
+        $quizgenerator = $generator->get_plugin_generator('mod_quiz');
+        $quiz = $quizgenerator->create_instance(['course' => $course->id]);
+        $quiz2 = $quizgenerator->create_instance(['course' => $course->id]);
+
+        $event = new \calendar_event((object) [
+            'modulename' => 'quiz',
+            'instance' => $quiz->id,
+            'userid' => $user->id
+        ]);
+
+        $record = (object) [
+            'quiz' => $quiz2->id,
+            'userid' => $user->id
+        ];
+
+        $DB->insert_record('quiz_overrides', $record);
+
+        $this->assertFalse(quiz_is_overriden_calendar_event($event));
+    }
+
+    /**
+     * Return true if there is a user override for this event and quiz instance.
+     */
+    public function test_quiz_is_overriden_calendar_event_user_override() {
+        global $CFG, $DB;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $generator = $this->getDataGenerator();
+        $user = $generator->create_user();
+        $course = $generator->create_course();
+        $quizgenerator = $generator->get_plugin_generator('mod_quiz');
+        $quiz = $quizgenerator->create_instance(['course' => $course->id]);
+
+        $event = new \calendar_event((object) [
+            'modulename' => 'quiz',
+            'instance' => $quiz->id,
+            'userid' => $user->id
+        ]);
+
+        $record = (object) [
+            'quiz' => $quiz->id,
+            'userid' => $user->id
+        ];
+
+        $DB->insert_record('quiz_overrides', $record);
+
+        $this->assertTrue(quiz_is_overriden_calendar_event($event));
+    }
+
+    /**
+     * Return true if there is a group override for the event and quiz instance.
+     */
+    public function test_quiz_is_overriden_calendar_event_group_override() {
+        global $CFG, $DB;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $generator = $this->getDataGenerator();
+        $user = $generator->create_user();
+        $course = $generator->create_course();
+        $quizgenerator = $generator->get_plugin_generator('mod_quiz');
+        $quiz = $quizgenerator->create_instance(['course' => $course->id]);
+        $group = $this->getDataGenerator()->create_group(array('courseid' => $quiz->course));
+        $groupid = $group->id;
+        $userid = $user->id;
+
+        $event = new \calendar_event((object) [
+            'modulename' => 'quiz',
+            'instance' => $quiz->id,
+            'groupid' => $groupid
+        ]);
+
+        $record = (object) [
+            'quiz' => $quiz->id,
+            'groupid' => $groupid
+        ];
+
+        $DB->insert_record('quiz_overrides', $record);
+
+        $this->assertTrue(quiz_is_overriden_calendar_event($event));
+    }
+
+    /**
+     * Test test_quiz_get_user_timeclose().
+     */
+    public function test_quiz_get_user_timeclose() {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $basetimestamp = time(); // The timestamp we will base the enddates on.
+
+        // Create generator, course and quizzes.
+        $student1 = $this->getDataGenerator()->create_user();
+        $student2 = $this->getDataGenerator()->create_user();
+        $teacher = $this->getDataGenerator()->create_user();
+        $course = $this->getDataGenerator()->create_course();
+        $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
+
+        // Both quizzes close in two hours.
+        $quiz1 = $quizgenerator->create_instance(array('course' => $course->id, 'timeclose' => $basetimestamp + 7200));
+        $quiz2 = $quizgenerator->create_instance(array('course' => $course->id, 'timeclose' => $basetimestamp + 7200));
+        $group1 = $this->getDataGenerator()->create_group(array('courseid' => $course->id));
+        $group2 = $this->getDataGenerator()->create_group(array('courseid' => $course->id));
+
+        $student1id = $student1->id;
+        $student2id = $student2->id;
+        $teacherid = $teacher->id;
+
+        // Users enrolments.
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $teacherrole = $DB->get_record('role', array('shortname' => 'editingteacher'));
+        $this->getDataGenerator()->enrol_user($student1id, $course->id, $studentrole->id, 'manual');
+        $this->getDataGenerator()->enrol_user($student2id, $course->id, $studentrole->id, 'manual');
+        $this->getDataGenerator()->enrol_user($teacherid, $course->id, $teacherrole->id, 'manual');
+
+        // Create groups.
+        $group1 = $this->getDataGenerator()->create_group(array('courseid' => $course->id));
+        $group2 = $this->getDataGenerator()->create_group(array('courseid' => $course->id));
+        $group1id = $group1->id;
+        $group2id = $group2->id;
+        $this->getDataGenerator()->create_group_member(array('userid' => $student1id, 'groupid' => $group1id));
+        $this->getDataGenerator()->create_group_member(array('userid' => $student2id, 'groupid' => $group2id));
+
+        // Group 1 gets an group override for quiz 1 to close in three hours.
+        $record1 = (object) [
+            'quiz' => $quiz1->id,
+            'groupid' => $group1id,
+            'timeclose' => $basetimestamp + 10800 // In three hours.
+        ];
+        $DB->insert_record('quiz_overrides', $record1);
+
+        // Let's test quiz 1 closes in three hours for user student 1 since member of group 1.
+        // Quiz 2 closes in two hours.
+        $this->setUser($student1id);
+        $params = new stdClass();
+
+        $comparearray = array();
+        $object = new stdClass();
+        $object->id = $quiz1->id;
+        $object->usertimeclose = $basetimestamp + 10800; // The overriden timeclose for quiz 1.
+        $object->usertimelimit = 0;
+
+        $comparearray[$quiz1->id] = $object;
+
+        $object = new stdClass();
+        $object->id = $quiz2->id;
+        $object->usertimeclose = $basetimestamp + 7200; // The unchanged timeclose for quiz 2.
+        $object->usertimelimit = 0;
+
+        $comparearray[$quiz2->id] = $object;
+
+        $this->assertEquals($comparearray, quiz_get_user_timeclose($course->id));
+
+        // User 2 gets an user override for quiz 1 to close in four hours.
+        $record2 = (object) [
+            'quiz' => $quiz1->id,
+            'userid' => $student2id,
+            'timeclose' => $basetimestamp + 14400 // In four hours.
+        ];
+        $DB->insert_record('quiz_overrides', $record2);
+
+        // Let's test quiz 1 closes in four hours for user student 2 since personally overriden.
+        // Quiz 2 closes in two hours.
+        $this->setUser($student2id);
+
+        $comparearray = array();
+        $object = new stdClass();
+        $object->id = $quiz1->id;
+        $object->usertimeclose = $basetimestamp + 14400; // The overriden timeclose for quiz 1.
+        $object->usertimelimit = 0;
+
+        $comparearray[$quiz1->id] = $object;
+
+        $object = new stdClass();
+        $object->id = $quiz2->id;
+        $object->usertimeclose = $basetimestamp + 7200; // The unchanged timeclose for quiz 2.
+        $object->usertimelimit = 0;
+
+        $comparearray[$quiz2->id] = $object;
+
+        $this->assertEquals($comparearray, quiz_get_user_timeclose($course->id));
+
+        // Let's test a teacher sees the original times.
+        // Quiz 1 and quiz 2 close in two hours.
+        $this->setUser($teacherid);
+
+        $comparearray = array();
+        $object = new stdClass();
+        $object->id = $quiz1->id;
+        $object->usertimeclose = $basetimestamp + 7200; // The unchanged timeclose for quiz 1.
+        $object->usertimelimit = 0;
+
+        $comparearray[$quiz1->id] = $object;
+
+        $object = new stdClass();
+        $object->id = $quiz2->id;
+        $object->usertimeclose = $basetimestamp + 7200; // The unchanged timeclose for quiz 2.
+        $object->usertimelimit = 0;
+
+        $comparearray[$quiz2->id] = $object;
+
+        $this->assertEquals($comparearray, quiz_get_user_timeclose($course->id));
+    }
+
+    public function test_quiz_build_random_question_tag_json() {
+        $this->resetAfterTest();
+
+        // Setup test data.
+        $footagrecord = array(
+            'isstandard' => 1,
+            'flag' => 0,
+            'rawname' => 'foo',
+            'description' => 'foo desc'
+        );
+        $footag = $this->getDataGenerator()->create_tag($footagrecord);
+        $bartagrecord = array(
+            'isstandard' => 1,
+            'flag' => 0,
+            'rawname' => 'bar',
+            'description' => 'bar desc'
+        );
+        $bartag = $this->getDataGenerator()->create_tag($bartagrecord);
+        $baztagrecord = array(
+            'isstandard' => 1,
+            'flag' => 0,
+            'rawname' => 'baz',
+            'description' => 'baz desc'
+        );
+        $baztag = $this->getDataGenerator()->create_tag($baztagrecord);
+        $quxtagrecord = array(
+            'isstandard' => 1,
+            'flag' => 0,
+            'rawname' => 'qux',
+            'description' => 'qux desc'
+        );
+        $quxtag = $this->getDataGenerator()->create_tag($quxtagrecord);
+        $quuxtagrecord = array(
+            'isstandard' => 1,
+            'flag' => 0,
+            'rawname' => 'quux',
+            'description' => 'quux desc'
+        );
+        $quuxtag = $this->getDataGenerator()->create_tag($quuxtagrecord);
+
+        $tagrecords = array(
+            (object)[
+                'id' => $footag->id,
+                'name' => 'foo'
+            ],
+            (object)[
+                'id' => 999, // An invalid tag id.
+                'name' => 'bar'
+            ],
+            (object)[
+                'id' => null,
+                'name' => 'baz'
+            ],
+            (object)[
+                'id' => $quxtag->id,
+                'name' => 'invalidqux'  // An invalid tag name.
+            ],
+            (object)[
+                'id' => 999, // An invalid tag id.
+                'name' => 'invalidquux'  // An invalid tag name.
+            ],
+        );
+
+        $expectedjson = json_encode(array(
+            ['id' => (int)$footag->id, 'name' => $footag->name],
+            ['id' => (int)$bartag->id, 'name' => $bartag->name],
+            ['id' => (int)$baztag->id, 'name' => $baztag->name],
+            ['id' => (int)$quxtag->id, 'name' => $quxtag->name],
+            ['id' => null, 'name' => 'invalidquux'],
+        ));
+        $this->assertEquals($expectedjson, quiz_build_random_question_tag_json($tagrecords));
+    }
+
+    public function test_quiz_extract_random_question_tags() {
+        $this->resetAfterTest();
+
+        // Setup test data.
+        $footagrecord = array(
+                'isstandard' => 1,
+                'flag' => 0,
+                'rawname' => 'foo',
+                'description' => 'foo desc'
+        );
+        $footag = $this->getDataGenerator()->create_tag($footagrecord);
+        $bartagrecord = array(
+                'isstandard' => 1,
+                'flag' => 0,
+                'rawname' => 'bar',
+                'description' => 'bar desc'
+        );
+        $bartag = $this->getDataGenerator()->create_tag($bartagrecord);
+        $baztagrecord = array(
+                'isstandard' => 1,
+                'flag' => 0,
+                'rawname' => 'baz',
+                'description' => 'baz desc'
+        );
+        $baztag = $this->getDataGenerator()->create_tag($baztagrecord);
+        $quxtagrecord = array(
+                'isstandard' => 1,
+                'flag' => 0,
+                'rawname' => 'qux',
+                'description' => 'qux desc'
+        );
+        $quxtag = $this->getDataGenerator()->create_tag($quxtagrecord);
+        $quuxtagrecord = array(
+                'isstandard' => 1,
+                'flag' => 0,
+                'rawname' => 'quux',
+                'description' => 'quux desc'
+        );
+        $quuxtag = $this->getDataGenerator()->create_tag($quuxtagrecord);
+
+        $tagjson = json_encode(array(
+            [
+                'id' => $footag->id,
+                'name' => 'foo'
+            ],
+            [
+                'id' => 999, // An invalid tag id.
+                'name' => 'bar'
+            ],
+            [
+                'id' => null,
+                'name' => 'baz'
+            ],
+            [
+                'id' => $quxtag->id,
+                'name' => 'invalidqux' // An invalid tag name.
+            ],
+            [
+                'id' => 999, // An invalid tag id.
+                'name' => 'invalidquux'  // An invalid tag name.
+            ],
+        ));
+
+        $expectedrecords = array(
+            (object)['id' => $footag->id, 'name' => $footag->name],
+            (object)['id' => $bartag->id, 'name' => $bartag->name],
+            (object)['id' => $baztag->id, 'name' => $baztag->name],
+            (object)['id' => $quxtag->id, 'name' => $quxtag->name],
+            (object)['id' => null, 'name' => 'invalidquux'],
+        );
+
+        $this->assertEquals($expectedrecords, quiz_extract_random_question_tags($tagjson));
+    }
+
+    public function test_quiz_extract_random_question_tag_ids() {
+        $this->resetAfterTest();
+
+        // Setup test data.
+        $footagrecord = array(
+                'isstandard' => 1,
+                'flag' => 0,
+                'rawname' => 'foo',
+                'description' => 'foo desc'
+        );
+        $footag = $this->getDataGenerator()->create_tag($footagrecord);
+        $bartagrecord = array(
+                'isstandard' => 1,
+                'flag' => 0,
+                'rawname' => 'bar',
+                'description' => 'bar desc'
+        );
+        $bartag = $this->getDataGenerator()->create_tag($bartagrecord);
+        $baztagrecord = array(
+                'isstandard' => 1,
+                'flag' => 0,
+                'rawname' => 'baz',
+                'description' => 'baz desc'
+        );
+        $baztag = $this->getDataGenerator()->create_tag($baztagrecord);
+        $quxtagrecord = array(
+                'isstandard' => 1,
+                'flag' => 0,
+                'rawname' => 'qux',
+                'description' => 'qux desc'
+        );
+        $quxtag = $this->getDataGenerator()->create_tag($quxtagrecord);
+        $quuxtagrecord = array(
+                'isstandard' => 1,
+                'flag' => 0,
+                'rawname' => 'quux',
+                'description' => 'quux desc'
+        );
+        $quuxtag = $this->getDataGenerator()->create_tag($quuxtagrecord);
+
+        $tagjson = json_encode(array(
+            [
+                'id' => $footag->id,
+                'name' => 'foo'
+            ],
+            [
+                'id' => 999, // An invalid tag id.
+                'name' => 'bar'
+            ],
+            [
+                'id' => null,
+                'name' => 'baz'
+            ],
+            [
+                'id' => $quxtag->id,
+                'name' => 'invalidqux' // An invalid tag name.
+            ],
+            [
+                'id' => 999, // An invalid tag id.
+                'name' => 'invalidquux'  // An invalid tag name.
+            ],
+        ));
+
+        $expectedrecords = array(
+            $footag->id,
+            $bartag->id,
+            $baztag->id,
+            $quxtag->id,
+        );
+
+        $this->assertEquals($expectedrecords, quiz_extract_random_question_tag_ids($tagjson));
     }
 }

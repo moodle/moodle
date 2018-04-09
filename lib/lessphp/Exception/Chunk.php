@@ -46,7 +46,7 @@ class Less_Exception_Chunk extends Less_Exception_Parser{
 	 * We don't actually need the chunks
 	 *
 	 */
-	function Chunks(){
+	protected function Chunks(){
 		$level = 0;
 		$parenLevel = 0;
 		$lastMultiCommentEndBrace = null;
@@ -120,7 +120,7 @@ class Less_Exception_Chunk extends Less_Exception_Parser{
 						}
 					}
 					if ($matched) { continue; }
-					return $this->fail("unmatched `" + chr($cc) + "`", $currentChunkStartIndex);
+					return $this->fail("unmatched `" . chr($cc) . "`", $currentChunkStartIndex);
 
 				// /, check for comment
 				case 47:
@@ -173,12 +173,12 @@ class Less_Exception_Chunk extends Less_Exception_Parser{
 		//$this->emitChunk(true);
 	}
 
-	function CharCode($pos){
+	public function CharCode($pos){
 		return ord($this->input[$pos]);
 	}
 
 
-	function fail( $msg, $index = null ){
+	public function fail( $msg, $index = null ){
 
 		if( !$index ){
 			$this->index = $this->parserCurrentIndex;

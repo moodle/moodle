@@ -330,7 +330,11 @@ class cache_config {
         if (!file_exists($cachefile)) {
             throw new cache_exception('Default cache config could not be found. It should have already been created by now.');
         }
-        include($cachefile);
+
+        if (!include($cachefile)) {
+            throw new cache_exception('Unable to load the cache configuration file');
+        }
+
         if (!is_array($configuration)) {
             throw new cache_exception('Invalid cache configuration file');
         }

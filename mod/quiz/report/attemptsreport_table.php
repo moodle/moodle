@@ -61,11 +61,13 @@ abstract class quiz_attempts_report_table extends table_sql {
     /** @var object mod_quiz_attempts_report_options the options affecting this report. */
     protected $options;
 
-    /** @var object the ids of the students in the currently selected group, if applicable. */
-    protected $groupstudents;
+    /** @var \core\dml\sql_join Contains joins, wheres, params to find students
+     * in the currently selected group, if applicable.
+     */
+    protected $groupstudentsjoins;
 
-    /** @var object the ids of the students in the course. */
-    protected $students;
+    /** @var \core\dml\sql_join Contains joins, wheres, params to find the students in the course. */
+    protected $studentsjoins;
 
     /** @var object the questions that comprise this quiz.. */
     protected $questions;
@@ -80,20 +82,20 @@ abstract class quiz_attempts_report_table extends table_sql {
      * @param context $context
      * @param string $qmsubselect
      * @param mod_quiz_attempts_report_options $options
-     * @param array $groupstudents
-     * @param array $students
+     * @param \core\dml\sql_join $groupstudentsjoins Contains joins, wheres, params
+     * @param \core\dml\sql_join $studentsjoins Contains joins, wheres, params
      * @param array $questions
      * @param moodle_url $reporturl
      */
     public function __construct($uniqueid, $quiz, $context, $qmsubselect,
-            mod_quiz_attempts_report_options $options, $groupstudents, $students,
+            mod_quiz_attempts_report_options $options, \core\dml\sql_join $groupstudentsjoins, \core\dml\sql_join $studentsjoins,
             $questions, $reporturl) {
         parent::__construct($uniqueid);
         $this->quiz = $quiz;
         $this->context = $context;
         $this->qmsubselect = $qmsubselect;
-        $this->groupstudents = $groupstudents;
-        $this->students = $students;
+        $this->groupstudentsjoins = $groupstudentsjoins;
+        $this->studentsjoins = $studentsjoins;
         $this->questions = $questions;
         $this->includecheckboxes = $options->checkboxcolumn;
         $this->reporturl = $reporturl;
@@ -380,14 +382,15 @@ abstract class quiz_attempts_report_table extends table_sql {
 
     /**
      * Contruct all the parts of the main database query.
-     * @param array $reportstudents list if userids of users to include in the report.
+     * @param \core\dml\sql_join $allowedstudentsjoins (joins, wheres, params) defines allowed users for the report.
      * @return array with 4 elements ($fields, $from, $where, $params) that can be used to
-     *      build the actual database query.
+     *     build the actual database query.
      */
-    public function base_sql($reportstudents) {
+    public function base_sql(\core\dml\sql_join $allowedstudentsjoins) {
         global $DB;
 
-        $fields = $DB->sql_concat('u.id', "'#'", 'COALESCE(quiza.attempt, 0)') . ' AS uniqueid,';
+        // Please note this uniqueid column is not the same as quiza.uniqueid.
+        $fields = 'DISTINCT ' . $DB->sql_concat('u.id', "'#'", 'COALESCE(quiza.attempt, 0)') . ' AS uniqueid,';
 
         if ($this->qmsubselect) {
             $fields .= "\n(CASE WHEN $this->qmsubselect THEN 1 ELSE 0 END) AS gradedattempt,";
@@ -419,7 +422,7 @@ abstract class quiz_attempts_report_table extends table_sql {
             // badly synchronised clocks, and a student does a really quick attempt.
 
         // This part is the same for all cases. Join the users and quiz_attempts tables.
-        $from = "\n{user} u";
+        $from = " {user} u";
         $from .= "\nLEFT JOIN {quiz_attempts} quiza ON
                                     quiza.userid = u.id AND quiza.quiz = :quizid";
         $params = array('quizid' => $this->quiz->id);
@@ -436,24 +439,21 @@ abstract class quiz_attempts_report_table extends table_sql {
                 break;
             case quiz_attempts_report::ENROLLED_WITH:
                 // Show only students with attempts.
-                list($usql, $uparams) = $DB->get_in_or_equal(
-                        $reportstudents, SQL_PARAMS_NAMED, 'u');
-                $params += $uparams;
-                $where = "u.id $usql AND quiza.preview = 0 AND quiza.id IS NOT NULL";
+                $from .= "\n" . $allowedstudentsjoins->joins;
+                $where = "quiza.preview = 0 AND quiza.id IS NOT NULL AND " . $allowedstudentsjoins->wheres;
+                $params = array_merge($params, $allowedstudentsjoins->params);
                 break;
             case quiz_attempts_report::ENROLLED_WITHOUT:
                 // Show only students without attempts.
-                list($usql, $uparams) = $DB->get_in_or_equal(
-                        $reportstudents, SQL_PARAMS_NAMED, 'u');
-                $params += $uparams;
-                $where = "u.id $usql AND quiza.id IS NULL";
+                $from .= "\n" . $allowedstudentsjoins->joins;
+                $where = "quiza.id IS NULL AND " . $allowedstudentsjoins->wheres;
+                $params = array_merge($params, $allowedstudentsjoins->params);
                 break;
             case quiz_attempts_report::ENROLLED_ALL:
                 // Show all students with or without attempts.
-                list($usql, $uparams) = $DB->get_in_or_equal(
-                        $reportstudents, SQL_PARAMS_NAMED, 'u');
-                $params += $uparams;
-                $where = "u.id $usql AND (quiza.preview = 0 OR quiza.preview IS NULL)";
+                $from .= "\n" . $allowedstudentsjoins->joins;
+                $where = "(quiza.preview = 0 OR quiza.preview IS NULL) AND " . $allowedstudentsjoins->wheres;
+                $params = array_merge($params, $allowedstudentsjoins->params);
                 break;
         }
 
@@ -465,6 +465,35 @@ abstract class quiz_attempts_report_table extends table_sql {
         }
 
         return array($fields, $from, $where, $params);
+    }
+
+    /**
+     * A chance for subclasses to modify the SQL after the count query has been generated,
+     * and before the full query is constructed.
+     * @param string $fields SELECT list.
+     * @param string $from JOINs part of the SQL.
+     * @param string $where WHERE clauses.
+     * @param array $params Query params.
+     * @return array with 4 elements ($fields, $from, $where, $params) as from base_sql.
+     */
+    protected function update_sql_after_count($fields, $from, $where, $params) {
+        return [$fields, $from, $where, $params];
+    }
+
+    /**
+     * Set up the SQL queries (count rows, and get data).
+     *
+     * @param \core\dml\sql_join $allowedjoins (joins, wheres, params) defines allowed users for the report.
+     */
+    public function setup_sql_queries($allowedjoins) {
+        list($fields, $from, $where, $params) = $this->base_sql($allowedjoins);
+
+        // The WHERE clause is vital here, because some parts of tablelib.php will expect to
+        // add bits like ' AND x = 1' on the end, and that needs to leave to valid SQL.
+        $this->set_count_sql("SELECT COUNT(1) FROM (SELECT $fields FROM $from WHERE $where) temp WHERE 1 = 1", $params);
+
+        list($fields, $from, $where, $params) = $this->update_sql_after_count($fields, $from, $where, $params);
+        $this->set_sql($fields, $from, $where, $params);
     }
 
     /**
@@ -515,8 +544,12 @@ abstract class quiz_attempts_report_table extends table_sql {
 
         if ($this->is_downloading()) {
             // We want usages for all attempts.
-            return new qubaid_join($this->sql->from, 'quiza.uniqueid',
-                    $this->sql->where, $this->sql->params);
+            return new qubaid_join("(
+                SELECT DISTINCT quiza.uniqueid
+                  FROM " . $this->sql->from . "
+                 WHERE " . $this->sql->where . "
+                    ) quizasubquery", 'quizasubquery.uniqueid',
+                    "1 = 1", $this->sql->params);
         }
 
         $qubaids = array();
@@ -570,15 +603,27 @@ abstract class quiz_attempts_report_table extends table_sql {
     }
 
     public function wrap_html_finish() {
+        global $PAGE;
         if ($this->is_downloading() || !$this->includecheckboxes) {
             return;
         }
 
         echo '<div id="commands">';
-        echo '<a href="javascript:select_all_in(\'DIV\', null, \'tablecontainer\');">' .
+        echo '<a id="checkattempts" href="#">' .
                 get_string('selectall', 'quiz') . '</a> / ';
-        echo '<a href="javascript:deselect_all_in(\'DIV\', null, \'tablecontainer\');">' .
+        echo '<a id="uncheckattempts" href="#">' .
                 get_string('selectnone', 'quiz') . '</a> ';
+        $PAGE->requires->js_amd_inline("
+        require(['jquery'], function($) {
+            $('#checkattempts').click(function(e) {
+                $('#attemptsform').find('input:checkbox').prop('checked', true);
+                e.preventDefault();
+            });
+            $('#uncheckattempts').click(function(e) {
+                $('#attemptsform').find('input:checkbox').prop('checked', false);
+                e.preventDefault();
+            });
+        });");
         echo '&nbsp;&nbsp;';
         $this->submit_buttons();
         echo '</div>';
@@ -594,7 +639,7 @@ abstract class quiz_attempts_report_table extends table_sql {
     protected function submit_buttons() {
         global $PAGE;
         if (has_capability('mod/quiz:deleteattempts', $this->context)) {
-            echo '<input type="submit" id="deleteattemptsbutton" name="delete" value="' .
+            echo '<input type="submit" class="btn btn-secondary m-r-1" id="deleteattemptsbutton" name="delete" value="' .
                     get_string('deleteselected', 'quiz_overview') . '"/>';
             $PAGE->requires->event_handler('#deleteattemptsbutton', 'click', 'M.util.show_confirm_dialog',
                     array('message' => get_string('deleteattemptcheck', 'quiz')));

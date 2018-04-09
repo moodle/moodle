@@ -1,12 +1,13 @@
 @block @block_html
-Feature: Adding and configuring HTML blocks
+Feature: Adding and configuring multiple HTML blocks
   In order to have one or multiple HTML blocks on a page
   As admin
   I need to be able to create, configure and change HTML blocks
 
   Background:
     Given I log in as "admin"
-    When I click on "Turn editing on" "link" in the "Administration" "block"
+    And I am on site homepage
+    When I turn editing mode on
     And I add the "HTML" block
 
   Scenario: Other users can not see HTML block that has not been configured
@@ -28,12 +29,12 @@ Feature: Adding and configuring HTML blocks
 
   Scenario: Adding multiple instances of HTML block on a page
     And I configure the "block_html" block
-    And I set the field "Block title" to "The HTML block header"
+    And I set the field "HTML block title" to "The HTML block header"
     And I set the field "Content" to "Static text with a header"
     And I press "Save changes"
     And I add the "HTML" block
     And I configure the "(new HTML block)" block
-    And I set the field "Block title" to "The second HTML block header"
+    And I set the field "HTML block title" to "The second HTML block header"
     And I set the field "Content" to "Second block contents"
     And I press "Save changes"
     And I log out

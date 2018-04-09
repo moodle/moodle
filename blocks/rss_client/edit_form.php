@@ -47,19 +47,31 @@ class block_rss_client_edit_form extends block_edit_form {
             $mform->setDefault('config_shownumentries', 5);
         }
 
-        $rssfeeds = $DB->get_records_sql_menu('
-                SELECT id,
-                       CASE WHEN preferredtitle = ? THEN ' . $DB->sql_compare_text('title', 64) .' ELSE preferredtitle END
-                FROM {block_rss_client}
-                WHERE userid = ? OR shared = 1
-                ORDER BY CASE WHEN preferredtitle = ? THEN ' . $DB->sql_compare_text('title', 64) . ' ELSE preferredtitle END ',
-                array('', $USER->id, ''));
+        $insql = '';
+        $params = array('userid' => $USER->id);
+        $rssconfig = unserialize(base64_decode($this->block->instance->configdata));
+        if ($rssconfig && !empty($rssconfig->rssid)) {
+            list($insql, $inparams) = $DB->get_in_or_equal($rssconfig->rssid, SQL_PARAMS_NAMED);
+            $insql = "OR id $insql ";
+            $params += $inparams;
+        }
+
+        $titlesql = "CASE WHEN {$DB->sql_isempty('block_rss_client','preferredtitle', false, false)}
+                      THEN {$DB->sql_compare_text('title', 64)} ELSE preferredtitle END";
+
+        $rssfeeds = $DB->get_records_sql_menu("
+                SELECT id, $titlesql
+                  FROM {block_rss_client}
+                 WHERE userid = :userid OR shared = 1 $insql
+                 ORDER BY $titlesql",
+                $params);
+
         if ($rssfeeds) {
             $select = $mform->addElement('select', 'config_rssid', get_string('choosefeedlabel', 'block_rss_client'), $rssfeeds);
             $select->setMultiple(true);
 
         } else {
-            $mform->addElement('static', 'config_rssid', get_string('choosefeedlabel', 'block_rss_client'),
+            $mform->addElement('static', 'config_rssid_no_feeds', get_string('choosefeedlabel', 'block_rss_client'),
                     get_string('nofeeds', 'block_rss_client'));
         }
 

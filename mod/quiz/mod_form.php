@@ -37,7 +37,7 @@ require_once($CFG->dirroot . '/mod/quiz/locallib.php');
  */
 class mod_quiz_mod_form extends moodleform_mod {
     /** @var array options to be used with date_time_selector fields in the quiz. */
-    public static $datefieldoptions = array('optional' => true, 'step' => 1);
+    public static $datefieldoptions = array('optional' => true);
 
     protected $_feedbacks;
     protected static $reviewfields = array(); // Initialised in the constructor.
@@ -77,7 +77,7 @@ class mod_quiz_mod_form extends moodleform_mod {
         $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
 
         // Introduction.
-        $this->add_intro_editor(false, get_string('introduction', 'quiz'));
+        $this->standard_intro_elements(get_string('introduction', 'quiz'));
 
         // -------------------------------------------------------------------------------
         $mform->addElement('header', 'timing', get_string('timing', 'quiz'));
@@ -151,16 +151,6 @@ class mod_quiz_mod_form extends moodleform_mod {
         // -------------------------------------------------------------------------------
         $mform->addElement('header', 'layouthdr', get_string('layout', 'quiz'));
 
-        // Shuffle questions.
-        $shuffleoptions = array(
-            0 => get_string('asshownoneditscreen', 'quiz'),
-            1 => get_string('shuffledrandomly', 'quiz')
-        );
-        $mform->addElement('select', 'shufflequestions', get_string('questionorder', 'quiz'),
-                $shuffleoptions, array('id' => 'id_shufflequestions'));
-        $mform->setAdvanced('shufflequestions', $quizconfig->shufflequestions_adv);
-        $mform->setDefault('shufflequestions', $quizconfig->shufflequestions);
-
         $pagegroup = array();
         $pagegroup[] = $mform->createElement('select', 'questionsperpage',
                 get_string('newpage', 'quiz'), quiz_questions_per_page_options(), array('id' => 'id_questionsperpage'));
@@ -169,7 +159,6 @@ class mod_quiz_mod_form extends moodleform_mod {
         if (!empty($this->_cm)) {
             $pagegroup[] = $mform->createElement('checkbox', 'repaginatenow', '',
                     get_string('repaginatenow', 'quiz'), array('id' => 'id_repaginatenow'));
-            $mform->disabledIf('repaginatenow', 'shufflequestions', 'eq', 1);
         }
 
         $mform->addGroup($pagegroup, 'questionsperpagegrp',
@@ -204,6 +193,18 @@ class mod_quiz_mod_form extends moodleform_mod {
                 get_string('howquestionsbehave', 'question'), $behaviours);
         $mform->addHelpButton('preferredbehaviour', 'howquestionsbehave', 'question');
         $mform->setDefault('preferredbehaviour', $quizconfig->preferredbehaviour);
+
+        // Can redo completed questions.
+        $redochoices = array(0 => get_string('no'), 1 => get_string('canredoquestionsyes', 'quiz'));
+        $mform->addElement('select', 'canredoquestions', get_string('canredoquestions', 'quiz'), $redochoices);
+        $mform->addHelpButton('canredoquestions', 'canredoquestions', 'quiz');
+        $mform->setAdvanced('canredoquestions', $quizconfig->canredoquestions_adv);
+        $mform->setDefault('canredoquestions', $quizconfig->canredoquestions);
+        foreach ($behaviours as $behaviour => $notused) {
+            if (!question_engine::can_questions_finish_during_the_attempt($behaviour)) {
+                $mform->disabledIf('canredoquestions', 'preferredbehaviour', 'eq', $behaviour);
+            }
+        }
 
         // Each attempt builds on last.
         $mform->addElement('selectyesno', 'attemptonlast',
@@ -241,6 +242,9 @@ class mod_quiz_mod_form extends moodleform_mod {
                 'neq', 'wontmatch');
         $mform->disabledIf('overallfeedbackduring', 'preferredbehaviour',
                 'neq', 'wontmatch');
+        foreach (self::$reviewfields as $field => $notused) {
+            $mform->disabledIf($field . 'closed', 'timeclose[enabled]');
+        }
 
         // -------------------------------------------------------------------------------
         $mform->addElement('header', 'display', get_string('appearance'));
@@ -357,10 +361,12 @@ class mod_quiz_mod_form extends moodleform_mod {
         if (!empty($this->_instance)) {
             $this->_feedbacks = $DB->get_records('quiz_feedback',
                     array('quizid' => $this->_instance), 'mingrade DESC');
+            $numfeedbacks = count($this->_feedbacks);
         } else {
             $this->_feedbacks = array();
+            $numfeedbacks = $quizconfig->initialnumfeedbacks;
         }
-        $numfeedbacks = max(count($this->_feedbacks) * 1.5, 5);
+        $numfeedbacks = max($numfeedbacks, 1);
 
         $nextel = $this->repeat_elements($repeatarray, $numfeedbacks - 1,
                 $repeatedoptions, 'boundary_repeats', 'boundary_add_fields', 3,
@@ -511,6 +517,11 @@ class mod_quiz_mod_form extends moodleform_mod {
                 $toform[$name] = $value;
             }
         }
+
+        // Completion settings check.
+        if (empty($toform['completionusegrade'])) {
+            $toform['completionpass'] = 0; // Forced unchecked.
+        }
     }
 
     public function validation($data, $files) {
@@ -527,6 +538,19 @@ class mod_quiz_mod_form extends moodleform_mod {
             $graceperiodmin = get_config('quiz', 'graceperiodmin');
             if ($data['graceperiod'] <= $graceperiodmin) {
                 $errors['graceperiod'] = get_string('graceperiodtoosmall', 'quiz', format_time($graceperiodmin));
+            }
+        }
+
+        if (array_key_exists('completion', $data) && $data['completion'] == COMPLETION_TRACKING_AUTOMATIC) {
+            $completionpass = isset($data['completionpass']) ? $data['completionpass'] : $this->current->completionpass;
+
+            // Show an error if require passing grade was selected and the grade to pass was set to 0.
+            if ($completionpass && (empty($data['gradepass']) || grade_floatval($data['gradepass']) == 0)) {
+                if (isset($data['completionpass'])) {
+                    $errors['completionpassgroup'] = get_string('gradetopassnotset', 'quiz');
+                } else {
+                    $errors['gradepass'] = get_string('gradetopassmustbeset', 'quiz');
+                }
             }
         }
 
@@ -580,6 +604,10 @@ class mod_quiz_mod_form extends moodleform_mod {
             }
         }
 
+        // If CBM is involved, don't show the warning for grade to pass being larger than the maximum grade.
+        if (($data['preferredbehaviour'] == 'deferredcbm') OR ($data['preferredbehaviour'] == 'immediatecbm')) {
+            unset($errors['gradepass']);
+        }
         // Any other rule plugins.
         $errors = quiz_access_manager::validate_settings_form_fields($errors, $data, $files, $this);
 
@@ -598,7 +626,7 @@ class mod_quiz_mod_form extends moodleform_mod {
         $group = array();
         $group[] = $mform->createElement('advcheckbox', 'completionpass', null, get_string('completionpass', 'quiz'),
                 array('group' => 'cpass'));
-
+        $mform->disabledIf('completionpass', 'completionusegrade', 'notchecked');
         $group[] = $mform->createElement('advcheckbox', 'completionattemptsexhausted', null,
                 get_string('completionattemptsexhausted', 'quiz'),
                 array('group' => 'cattempts'));

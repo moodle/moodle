@@ -58,7 +58,7 @@ M.course.format.process_sections = function(Y, sectionlist, response, sectionfro
         SECTIONNAME : 'sectionname'
     },
     SELECTORS = {
-        SECTIONLEFTSIDE : '.left .section-handle img'
+        SECTIONLEFTSIDE : '.left .section-handle .icon'
     };
 
     if (response.action == 'move') {
@@ -74,7 +74,8 @@ M.course.format.process_sections = function(Y, sectionlist, response, sectionfro
 
         for (var i = sectionfrom; i <= sectionto; i++) {
             // Update section title.
-            sectionlist.item(i).one('.'+CSS.SECTIONNAME).setContent(response.sectiontitles[i]);
+            var content = Y.Node.create('<span>' + response.sectiontitles[i] + '</span>');
+            sectionlist.item(i).all('.'+CSS.SECTIONNAME).setHTML(content);
 
             // Update move icon.
             ele = sectionlist.item(i).one(SELECTORS.SECTIONLEFTSIDE);

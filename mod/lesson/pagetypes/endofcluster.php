@@ -51,18 +51,21 @@ class lesson_page_type_endofcluster extends lesson_page {
     public function get_idstring() {
         return $this->typeidstring;
     }
-    public function callback_on_view($canmanage) {
-        $this->redirect_to_next_page($canmanage);
-        exit;
+    public function callback_on_view($canmanage, $redirect = true) {
+        return (int) $this->redirect_to_next_page($canmanage, $redirect);
     }
-    public function redirect_to_next_page() {
+    public function redirect_to_next_page($canmanage, $redirect) {
         global $PAGE;
         if ($this->properties->nextpageid == 0) {
             $nextpageid = LESSON_EOL;
         } else {
             $nextpageid = $this->properties->nextpageid;
         }
-        redirect(new moodle_url('/mod/lesson/view.php', array('id'=>$PAGE->cm->id,'pageid'=>$nextpageid)));
+        if ($redirect) {
+            redirect(new moodle_url('/mod/lesson/view.php', array('id' => $PAGE->cm->id, 'pageid' => $nextpageid)));
+            die;
+        }
+        return $nextpageid;
     }
     public function get_grayout() {
         return 1;

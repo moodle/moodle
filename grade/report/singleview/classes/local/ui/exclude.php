@@ -35,10 +35,13 @@ use grade_grade;
  * @copyright 2014 Moodle Pty Ltd (http://moodle.com)
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class exclude extends grade_attribute_format implements be_checked {
+class exclude extends grade_attribute_format implements be_checked, be_disabled {
 
     /** @var string $name The name of the input */
     public $name = 'exclude';
+
+    /** @var bool $disabled Is the checkbox disabled? */
+    public $disabled = false;
 
     /**
      * Is it checked?
@@ -50,6 +53,15 @@ class exclude extends grade_attribute_format implements be_checked {
     }
 
     /**
+     * Is it disabled?
+     *
+     * @return bool
+     */
+    public function is_disabled() {
+        return $this->disabled;
+    }
+
+    /**
      * Generate the element used to render the UI
      *
      * @return element
@@ -58,7 +70,8 @@ class exclude extends grade_attribute_format implements be_checked {
         return new checkbox_attribute(
             $this->get_name(),
             $this->get_label(),
-            $this->is_checked()
+            $this->is_checked(),
+            $this->is_disabled()
         );
     }
 

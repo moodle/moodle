@@ -1,0 +1,49 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template report_insights/insight
+
+    Template for a insight.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * none
+
+    Example context (json):
+    {
+        "sampleimage": "<a href=\"#\">Link</a>",
+        "sampledescription": "Sample description"
+    }
+}}
+<tr>
+    <td class="col-sm-10">
+        {{#sampleimage}}
+            {{{sampleimage}}}
+        {{/sampleimage}}
+        {{{sampledescription}}}
+    </td>
+    <td class="col-sm-2">
+    {{#actions}}
+        {{> core/action_menu}}
+    {{/actions}}
+    </td>
+</tr>

@@ -146,7 +146,7 @@ class PEAR
      * @access public
      * @return void
      */
-    function PEAR($error_class = null)
+    function __construct($error_class = null)
     {
         $classname = strtolower(get_class($this));
         if ($this->_debug) {
@@ -171,6 +171,18 @@ class PEAR
                 $classname = get_parent_class($classname);
             }
         }
+    }
+
+    /**
+     * Only here for backwards compatibility.
+     * E.g. Archive_Tar calls $this->PEAR() in its constructor.
+     *
+     * @param string $error_class Which class to use for error objects,
+     *                            defaults to PEAR_Error.
+     */
+    public function PEAR($error_class = null)
+    {
+        $this->__construct($error_class);
     }
 
     /**
@@ -747,7 +759,7 @@ function _PEAR_call_destructors()
             $_PEAR_destructor_object_list = array_reverse($_PEAR_destructor_object_list);
         }
 
-        while (list($k, $objref) = each($_PEAR_destructor_object_list)) {
+        foreach ($_PEAR_destructor_object_list as $k => $objref) {
             $classname = get_class($objref);
             while ($classname) {
                 $destructor = "_$classname";
@@ -823,7 +835,7 @@ class PEAR_Error
      * @access public
      *
      */
-    function PEAR_Error($message = 'unknown error', $code = null,
+    function __construct($message = 'unknown error', $code = null,
                         $mode = null, $options = null, $userinfo = null)
     {
         if ($mode === null) {
@@ -894,6 +906,14 @@ class PEAR_Error
             trigger_error("PEAR_ERROR_EXCEPTION is obsolete, use class PEAR_Exception for exceptions", E_USER_WARNING);
             eval('$e = new Exception($this->message, $this->code);throw($e);');
         }
+    }
+
+    /**
+     * Old syntax of class constructor for backward compatibility.
+     */
+    public function PEAR_Error($message = 'unknown error', $code = null,
+                        $mode = null, $options = null, $userinfo = null) {
+        self::__construct($message, $code, $mode, $options, $userinfo);
     }
 
     /**

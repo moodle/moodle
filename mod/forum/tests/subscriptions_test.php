@@ -28,11 +28,12 @@ global $CFG;
 require_once($CFG->dirroot . '/mod/forum/lib.php');
 
 class mod_forum_subscriptions_testcase extends advanced_testcase {
-
     /**
      * Test setUp.
      */
     public function setUp() {
+        global $DB;
+
         // We must clear the subscription caches. This has to be done both before each test, and after in case of other
         // tests using these functions.
         \mod_forum\subscriptions::reset_forum_cache();
@@ -105,6 +106,12 @@ class mod_forum_subscriptions_testcase extends advanced_testcase {
 
         $options = array('course' => $course->id);
         $forum = $this->getDataGenerator()->create_module('forum', $options);
+
+        // Create a user enrolled in the course as a student.
+        list($user) = $this->helper_create_users($course, 1);
+
+        // Must be logged in as the current user.
+        $this->setUser($user);
 
         \mod_forum\subscriptions::set_subscription_mode($forum->id, FORUM_FORCESUBSCRIBE);
         $forum = $DB->get_record('forum', array('id' => $forum->id));
@@ -220,11 +227,6 @@ class mod_forum_subscriptions_testcase extends advanced_testcase {
         // Check that the user is currently not subscribed to the forum.
         $this->assertFalse(\mod_forum\subscriptions::is_subscribed($author->id, $forum));
 
-        // Check the deprecated function too.
-        $this->assertFalse(forum_is_subscribed($author->id, $forum));
-        $this->assertEquals(1, count(phpunit_util::get_debugging_messages()));
-        phpunit_util::reset_debugging();
-
         // Check that the user is unsubscribed from the discussion too.
         $this->assertFalse(\mod_forum\subscriptions::is_subscribed($author->id, $forum, $discussion->id));
 
@@ -253,36 +255,6 @@ class mod_forum_subscriptions_testcase extends advanced_testcase {
         // Unsubscribing should remove the record from the forum subscriptions table, and not modify the forum
         // discussion subscriptions table.
         \mod_forum\subscriptions::unsubscribe_user($author->id, $forum);
-        $this->assertEquals(0, $DB->count_records('forum_subscriptions', array(
-            'userid'        => $author->id,
-            'forum'         => $forum->id,
-        )));
-        $this->assertEquals(0, $DB->count_records('forum_discussion_subs', array(
-            'userid'        => $author->id,
-            'discussion'    => $discussion->id,
-        )));
-
-        // The same thing should happen calling the deprecated versions of
-        // these functions.
-        // Subscribing to the forum should create a record in the subscriptions table, but not the forum discussion
-        // subscriptions table.
-        forum_subscribe($author->id, $forum->id);
-        $this->assertEquals(1, count(phpunit_util::get_debugging_messages()));
-        phpunit_util::reset_debugging();
-        $this->assertEquals(1, $DB->count_records('forum_subscriptions', array(
-            'userid'        => $author->id,
-            'forum'         => $forum->id,
-        )));
-        $this->assertEquals(0, $DB->count_records('forum_discussion_subs', array(
-            'userid'        => $author->id,
-            'discussion'    => $discussion->id,
-        )));
-
-        // Unsubscribing should remove the record from the forum subscriptions table, and not modify the forum
-        // discussion subscriptions table.
-        forum_unsubscribe($author->id, $forum->id);
-        $this->assertEquals(1, count(phpunit_util::get_debugging_messages()));
-        phpunit_util::reset_debugging();
         $this->assertEquals(0, $DB->count_records('forum_subscriptions', array(
             'userid'        => $author->id,
             'forum'         => $forum->id,
@@ -439,11 +411,6 @@ class mod_forum_subscriptions_testcase extends advanced_testcase {
         // Check that the user is currently not subscribed to the forum.
         $this->assertFalse(\mod_forum\subscriptions::is_subscribed($author->id, $forum));
 
-        // Check the deprecated function too.
-        $this->assertFalse(forum_is_subscribed($author->id, $forum));
-        $this->assertEquals(1, count(phpunit_util::get_debugging_messages()));
-        phpunit_util::reset_debugging();
-
         // Post a discussion to the forum.
         list($discussion, $post) = $this->helper_post_to_forum($forum, $author);
 
@@ -476,11 +443,6 @@ class mod_forum_subscriptions_testcase extends advanced_testcase {
         // Check that the user is currently subscribed to the forum.
         $this->assertTrue(\mod_forum\subscriptions::is_subscribed($author->id, $forum));
 
-        // Check the deprecated function too.
-        $this->assertTrue(forum_is_subscribed($author->id, $forum));
-        $this->assertEquals(1, count(phpunit_util::get_debugging_messages()));
-        phpunit_util::reset_debugging();
-
         // Post a discussion to the forum.
         list($discussion, $post) = $this->helper_post_to_forum($forum, $author);
 
@@ -506,11 +468,6 @@ class mod_forum_subscriptions_testcase extends advanced_testcase {
         // Check that the user is currently not subscribed to the forum.
         $this->assertFalse(\mod_forum\subscriptions::is_subscribed($author->id, $forum));
 
-        // Check the deprecated function too.
-        $this->assertFalse(forum_is_subscribed($author->id, $forum));
-        $this->assertEquals(1, count(phpunit_util::get_debugging_messages()));
-        phpunit_util::reset_debugging();
-
         // Post a discussion to the forum.
         list($discussion, $post) = $this->helper_post_to_forum($forum, $author);
 
@@ -522,11 +479,6 @@ class mod_forum_subscriptions_testcase extends advanced_testcase {
 
         // Check that the user is still unsubscribed from the forum.
         $this->assertFalse(\mod_forum\subscriptions::is_subscribed($author->id, $forum));
-
-        // Check the deprecated function too.
-        $this->assertFalse(forum_is_subscribed($author->id, $forum));
-        $this->assertEquals(1, count(phpunit_util::get_debugging_messages()));
-        phpunit_util::reset_debugging();
 
         // But subscribed to the discussion.
         $this->assertTrue(\mod_forum\subscriptions::is_subscribed($author->id, $forum, $discussion->id));
@@ -553,11 +505,6 @@ class mod_forum_subscriptions_testcase extends advanced_testcase {
         // Check that the user is currently subscribed to the forum.
         $this->assertTrue(\mod_forum\subscriptions::is_subscribed($author->id, $forum));
 
-        // Check the deprecated function too.
-        $this->assertTrue(forum_is_subscribed($author->id, $forum));
-        $this->assertEquals(1, count(phpunit_util::get_debugging_messages()));
-        phpunit_util::reset_debugging();
-
         // Post a discussion to the forum.
         list($discussion, $post) = $this->helper_post_to_forum($forum, $author);
 
@@ -566,11 +513,6 @@ class mod_forum_subscriptions_testcase extends advanced_testcase {
 
         // Check that the user is still subscribed to the forum.
         $this->assertTrue(\mod_forum\subscriptions::is_subscribed($author->id, $forum));
-
-        // Check the deprecated function too.
-        $this->assertTrue(forum_is_subscribed($author->id, $forum));
-        $this->assertEquals(1, count(phpunit_util::get_debugging_messages()));
-        phpunit_util::reset_debugging();
 
         // But unsubscribed from the discussion.
         $this->assertFalse(\mod_forum\subscriptions::is_subscribed($author->id, $forum, $discussion->id));
@@ -599,11 +541,6 @@ class mod_forum_subscriptions_testcase extends advanced_testcase {
         // Check that the user is currently subscribed to the forum.
         $this->assertTrue(\mod_forum\subscriptions::is_subscribed($author->id, $forum));
 
-        // Check the deprecated function too.
-        $this->assertTrue(forum_is_subscribed($author->id, $forum));
-        $this->assertEquals(1, count(phpunit_util::get_debugging_messages()));
-        phpunit_util::reset_debugging();
-
         // Post a discussion to the forum.
         list($discussion, $post) = $this->helper_post_to_forum($forum, $author);
 
@@ -628,11 +565,6 @@ class mod_forum_subscriptions_testcase extends advanced_testcase {
 
         // Check that the user is still subscribed to the forum.
         $this->assertTrue(\mod_forum\subscriptions::is_subscribed($author->id, $forum));
-
-        // Check the deprecated function too.
-        $this->assertTrue(forum_is_subscribed($author->id, $forum));
-        $this->assertEquals(1, count(phpunit_util::get_debugging_messages()));
-        phpunit_util::reset_debugging();
 
         // An attempt to unsubscribe again should result in a falsey return to indicate that no change was made.
         $this->assertFalse(\mod_forum\subscriptions::unsubscribe_user_from_discussion($author->id, $discussion));
@@ -668,16 +600,6 @@ class mod_forum_subscriptions_testcase extends advanced_testcase {
         // Check that the user is still subscribed to the forum.
         $this->assertTrue(\mod_forum\subscriptions::is_subscribed($author->id, $forum));
 
-        // Check the deprecated function too.
-        $this->assertTrue(forum_is_subscribed($author->id, $forum));
-        $this->assertEquals(1, count(phpunit_util::get_debugging_messages()));
-        phpunit_util::reset_debugging();
-
-        // Check the deprecated function too.
-        $this->assertTrue(forum_is_subscribed($author->id, $forum));
-        $this->assertEquals(1, count(phpunit_util::get_debugging_messages()));
-        phpunit_util::reset_debugging();
-
         // And is subscribed to the discussion again.
         $this->assertTrue(\mod_forum\subscriptions::is_subscribed($author->id, $forum, $discussion->id));
 
@@ -698,11 +620,6 @@ class mod_forum_subscriptions_testcase extends advanced_testcase {
 
         // Check that the user is still subscribed to the forum.
         $this->assertTrue(\mod_forum\subscriptions::is_subscribed($author->id, $forum));
-
-        // Check the deprecated function too.
-        $this->assertTrue(forum_is_subscribed($author->id, $forum));
-        $this->assertEquals(1, count(phpunit_util::get_debugging_messages()));
-        phpunit_util::reset_debugging();
 
         // But unsubscribed from the discussion.
         $this->assertFalse(\mod_forum\subscriptions::is_subscribed($author->id, $forum, $discussion->id));
@@ -746,11 +663,6 @@ class mod_forum_subscriptions_testcase extends advanced_testcase {
 
         // Check that the user is still subscribed to the forum.
         $this->assertTrue(\mod_forum\subscriptions::is_subscribed($author->id, $forum));
-
-        // Check the deprecated function too.
-        $this->assertTrue(forum_is_subscribed($author->id, $forum));
-        $this->assertEquals(1, count(phpunit_util::get_debugging_messages()));
-        phpunit_util::reset_debugging();
 
         // But unsubscribed from the discussion.
         $this->assertFalse(\mod_forum\subscriptions::is_subscribed($author->id, $forum, $discussion->id));
@@ -806,11 +718,6 @@ class mod_forum_subscriptions_testcase extends advanced_testcase {
         // Check that the user is currently unsubscribed to the forum.
         $this->assertFalse(\mod_forum\subscriptions::is_subscribed($author->id, $forum));
 
-        // Check the deprecated function too.
-        $this->assertFalse(forum_is_subscribed($author->id, $forum));
-        $this->assertEquals(1, count(phpunit_util::get_debugging_messages()));
-        phpunit_util::reset_debugging();
-
         // Post a discussion to the forum.
         list($discussion, $post) = $this->helper_post_to_forum($forum, $author);
 
@@ -825,11 +732,6 @@ class mod_forum_subscriptions_testcase extends advanced_testcase {
 
         // Check that the user is still unsubscribed from the forum.
         $this->assertFalse(\mod_forum\subscriptions::is_subscribed($author->id, $forum));
-
-        // Check the deprecated function too.
-        $this->assertFalse(forum_is_subscribed($author->id, $forum));
-        $this->assertEquals(1, count(phpunit_util::get_debugging_messages()));
-        phpunit_util::reset_debugging();
 
         // But subscribed to the discussion.
         $this->assertTrue(\mod_forum\subscriptions::is_subscribed($author->id, $forum, $discussion->id));
@@ -846,11 +748,6 @@ class mod_forum_subscriptions_testcase extends advanced_testcase {
         // Check that the user is still unsubscribed from the forum.
         $this->assertFalse(\mod_forum\subscriptions::is_subscribed($author->id, $forum));
 
-        // Check the deprecated function too.
-        $this->assertFalse(forum_is_subscribed($author->id, $forum));
-        $this->assertEquals(1, count(phpunit_util::get_debugging_messages()));
-        phpunit_util::reset_debugging();
-
         // And is unsubscribed from the discussion again.
         $this->assertFalse(\mod_forum\subscriptions::is_subscribed($author->id, $forum, $discussion->id));
 
@@ -865,11 +762,6 @@ class mod_forum_subscriptions_testcase extends advanced_testcase {
 
         // Check that the user is still unsubscribed from the forum.
         $this->assertFalse(\mod_forum\subscriptions::is_subscribed($author->id, $forum));
-
-        // Check the deprecated function too.
-        $this->assertFalse(forum_is_subscribed($author->id, $forum));
-        $this->assertEquals(1, count(phpunit_util::get_debugging_messages()));
-        phpunit_util::reset_debugging();
 
         // And is subscribed to the discussion again.
         $this->assertTrue(\mod_forum\subscriptions::is_subscribed($author->id, $forum, $discussion->id));
@@ -886,11 +778,6 @@ class mod_forum_subscriptions_testcase extends advanced_testcase {
         // Check that the user is still unsubscribed from the forum.
         $this->assertFalse(\mod_forum\subscriptions::is_subscribed($author->id, $forum));
 
-        // Check the deprecated function too.
-        $this->assertFalse(forum_is_subscribed($author->id, $forum));
-        $this->assertEquals(1, count(phpunit_util::get_debugging_messages()));
-        phpunit_util::reset_debugging();
-
         // But unsubscribed from the discussion.
         $this->assertFalse(\mod_forum\subscriptions::is_subscribed($author->id, $forum, $discussion->id));
 
@@ -899,46 +786,6 @@ class mod_forum_subscriptions_testcase extends advanced_testcase {
             'userid'        => $author->id,
             'discussion'    => $discussion->id,
         )));
-    }
-
-    /**
-     * Test that the deprecated forum_is_subscribed accepts numeric forum IDs.
-     */
-    public function test_forum_is_subscribed_numeric() {
-        global $DB;
-
-        $this->resetAfterTest(true);
-
-        // Create a course, with a forum.
-        $course = $this->getDataGenerator()->create_course();
-
-        $options = array('course' => $course->id, 'forcesubscribe' => FORUM_CHOOSESUBSCRIBE);
-        $forum = $this->getDataGenerator()->create_module('forum', $options);
-
-        // Create a user enrolled in the course as a students.
-        list($author) = $this->helper_create_users($course, 1);
-
-        // Check that the user is currently unsubscribed to the forum.
-        $this->assertFalse(forum_is_subscribed($author->id, $forum->id));
-        $this->assertEquals(1, count(phpunit_util::get_debugging_messages()));
-        phpunit_util::reset_debugging();
-
-        // It should match the result of when it's called with the forum object.
-        $this->assertFalse(forum_is_subscribed($author->id, $forum));
-        $this->assertEquals(1, count(phpunit_util::get_debugging_messages()));
-        phpunit_util::reset_debugging();
-
-        // And when the user is subscribed, we should also get the correct result.
-        \mod_forum\subscriptions::subscribe_user($author->id, $forum);
-
-        $this->assertTrue(forum_is_subscribed($author->id, $forum->id));
-        $this->assertEquals(1, count(phpunit_util::get_debugging_messages()));
-        phpunit_util::reset_debugging();
-
-        // It should match the result of when it's called with the forum object.
-        $this->assertTrue(forum_is_subscribed($author->id, $forum));
-        $this->assertEquals(1, count(phpunit_util::get_debugging_messages()));
-        phpunit_util::reset_debugging();
     }
 
     /**
@@ -1127,11 +974,11 @@ class mod_forum_subscriptions_testcase extends advanced_testcase {
         // Reset the subscription cache.
         \mod_forum\subscriptions::reset_forum_cache();
 
-        // Filling the subscription cache should only use a single query.
+        // Filling the subscription cache should use a query.
         $startcount = $DB->perf_get_reads();
         $this->assertNull(\mod_forum\subscriptions::fill_subscription_cache($forum->id));
         $postfillcount = $DB->perf_get_reads();
-        $this->assertEquals(1, $postfillcount - $startcount);
+        $this->assertNotEquals($postfillcount, $startcount);
 
         // Now fetch some subscriptions from that forum - these should use
         // the cache and not perform additional queries.
@@ -1203,7 +1050,7 @@ class mod_forum_subscriptions_testcase extends advanced_testcase {
         $result = \mod_forum\subscriptions::fill_subscription_cache_for_course($course->id, $user->id);
         $this->assertNull($result);
         $postfillcount = $DB->perf_get_reads();
-        $this->assertEquals(1, $postfillcount - $startcount);
+        $this->assertNotEquals($postfillcount, $startcount);
         $this->assertFalse(\mod_forum\subscriptions::fetch_subscription_cache($disallowforum->id, $user->id));
         $this->assertFalse(\mod_forum\subscriptions::fetch_subscription_cache($chooseforum->id, $user->id));
         $this->assertTrue(\mod_forum\subscriptions::fetch_subscription_cache($initialforum->id, $user->id));
@@ -1218,7 +1065,7 @@ class mod_forum_subscriptions_testcase extends advanced_testcase {
             $this->assertTrue(\mod_forum\subscriptions::fetch_subscription_cache($initialforum->id, $user->id));
         }
         $finalcount = $DB->perf_get_reads();
-        $this->assertEquals(count($users), $finalcount - $postfillcount);
+        $this->assertNotEquals($finalcount, $postfillcount);
     }
 
     /**
@@ -1271,7 +1118,7 @@ class mod_forum_subscriptions_testcase extends advanced_testcase {
         $startcount = $DB->perf_get_reads();
         $this->assertNull(\mod_forum\subscriptions::fill_discussion_subscription_cache($forum->id));
         $postfillcount = $DB->perf_get_reads();
-        $this->assertEquals(1, $postfillcount - $startcount);
+        $this->assertNotEquals($postfillcount, $startcount);
 
         // Now fetch some subscriptions from that forum - these should use
         // the cache and not perform additional queries.
@@ -1338,7 +1185,7 @@ class mod_forum_subscriptions_testcase extends advanced_testcase {
             $this->assertInternalType('array', $result);
         }
         $finalcount = $DB->perf_get_reads();
-        $this->assertEquals(20, $finalcount - $startcount);
+        $this->assertNotEquals($finalcount, $startcount);
     }
 
     /**
@@ -1478,4 +1325,100 @@ class mod_forum_subscriptions_testcase extends advanced_testcase {
         $this->assertGreaterThan($suppliedcmcount, $calculatedcmcount);
     }
 
+    public function is_subscribable_forums() {
+        return [
+            [
+                'forcesubscribe' => FORUM_DISALLOWSUBSCRIBE,
+            ],
+            [
+                'forcesubscribe' => FORUM_CHOOSESUBSCRIBE,
+            ],
+            [
+                'forcesubscribe' => FORUM_INITIALSUBSCRIBE,
+            ],
+            [
+                'forcesubscribe' => FORUM_FORCESUBSCRIBE,
+            ],
+        ];
+    }
+
+    public function is_subscribable_provider() {
+        $data = [];
+        foreach ($this->is_subscribable_forums() as $forum) {
+            $data[] = [$forum];
+        }
+
+        return $data;
+    }
+
+    /**
+     * @dataProvider is_subscribable_provider
+     */
+    public function test_is_subscribable_logged_out($options) {
+        $this->resetAfterTest(true);
+
+        // Create a course, with a forum.
+        $course = $this->getDataGenerator()->create_course();
+        $options['course'] = $course->id;
+        $forum = $this->getDataGenerator()->create_module('forum', $options);
+
+        $this->assertFalse(\mod_forum\subscriptions::is_subscribable($forum));
+    }
+
+    /**
+     * @dataProvider is_subscribable_provider
+     */
+    public function test_is_subscribable_is_guest($options) {
+        global $DB;
+        $this->resetAfterTest(true);
+
+        $guest = $DB->get_record('user', array('username'=>'guest'));
+        $this->setUser($guest);
+
+        // Create a course, with a forum.
+        $course = $this->getDataGenerator()->create_course();
+        $options['course'] = $course->id;
+        $forum = $this->getDataGenerator()->create_module('forum', $options);
+
+        $this->assertFalse(\mod_forum\subscriptions::is_subscribable($forum));
+    }
+
+    public function is_subscribable_loggedin_provider() {
+        return [
+            [
+                ['forcesubscribe' => FORUM_DISALLOWSUBSCRIBE],
+                false,
+            ],
+            [
+                ['forcesubscribe' => FORUM_CHOOSESUBSCRIBE],
+                true,
+            ],
+            [
+                ['forcesubscribe' => FORUM_INITIALSUBSCRIBE],
+                true,
+            ],
+            [
+                ['forcesubscribe' => FORUM_FORCESUBSCRIBE],
+                false,
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider is_subscribable_loggedin_provider
+     */
+    public function test_is_subscribable_loggedin($options, $expect) {
+        $this->resetAfterTest(true);
+
+        // Create a course, with a forum.
+        $course = $this->getDataGenerator()->create_course();
+        $options['course'] = $course->id;
+        $forum = $this->getDataGenerator()->create_module('forum', $options);
+
+        $user = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($user->id, $course->id);
+        $this->setUser($user);
+
+        $this->assertEquals($expect, \mod_forum\subscriptions::is_subscribable($forum));
+    }
 }

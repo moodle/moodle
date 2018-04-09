@@ -120,7 +120,9 @@ class lesson_page_type_essay extends lesson_page {
         require_sesskey();
 
         if (!$data) {
-            redirect(new moodle_url('/mod/lesson/view.php', array('id'=>$PAGE->cm->id, 'pageid'=>$this->properties->id)));
+            $result->inmediatejump = true;
+            $result->newpageid = $this->properties->id;
+            return $result;
         }
 
         if (is_array($data->answer)) {
@@ -317,6 +319,9 @@ class lesson_display_answer_form_essay extends moodleform {
                 $useranswerraw = $useranswertemp->answer;
             }
         }
+
+        // Disable shortforms.
+        $mform->setDisableShortforms();
 
         $mform->addElement('header', 'pageheader');
 

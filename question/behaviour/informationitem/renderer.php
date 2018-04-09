@@ -17,12 +17,10 @@
 /**
  * Defines the renderer the information item behaviour.
  *
- * @package    qbehaviour
- * @subpackage informationitem
- * @copyright  2009 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   qbehaviour_informationitem
+ * @copyright 2009 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -31,12 +29,12 @@ defined('MOODLE_INTERNAL') || die();
  * Renderer for outputting parts of a question belonging to the information
  * item behaviour.
  *
- * @copyright  2009 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright 2009 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qbehaviour_informationitem_renderer extends qbehaviour_renderer {
     public function controls(question_attempt $qa, question_display_options $options) {
-        if ($qa->get_state() != question_state::$todo) {
+        if ($options->readonly || $qa->get_state() != question_state::$todo) {
             return '';
         }
 

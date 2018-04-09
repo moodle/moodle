@@ -7,8 +7,8 @@ Feature: HTML blocks in a course
   Scenario: Adding HTML block in a course
     Given the following "users" exist:
       | username | firstname | lastname | email            |
-      | teacher1 | Terry1    | Teacher1 | teacher@asd.com  |
-      | student1 | Sam1      | Student1 | student1@asd.com |
+      | teacher1 | Terry1    | Teacher1 | teacher@example.com  |
+      | student1 | Sam1      | Student1 | student1@example.com |
     And the following "courses" exist:
       | fullname | shortname |
       | Course 1 | C1        |
@@ -17,20 +17,19 @@ Feature: HTML blocks in a course
       | teacher1 | C1     | editingteacher |
       | student1 | C1     | student        |
     When I log in as "teacher1"
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I add the "HTML" block
     And I configure the "(new HTML block)" block
     And I set the field "Content" to "First block content"
-    And I set the field "Block title" to "First block header"
+    And I set the field "HTML block title" to "First block header"
     And I press "Save changes"
     And I add the "HTML" block
     And I configure the "(new HTML block)" block
     And I set the field "Content" to "Second block content"
-    And I set the field "Block title" to "Second block header"
+    And I set the field "HTML block title" to "Second block header"
     And I press "Save changes"
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I should see "First block content" in the "First block header" "block"
     And I should see "Second block content" in the "Second block header" "block"

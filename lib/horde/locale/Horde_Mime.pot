@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Horde_Mime\n"
 "Report-Msgid-Bugs-To: dev@lists.horde.org\n"
-"POT-Creation-Date: 2014-06-04 11:28+0200\n"
+"POT-Creation-Date: 2015-01-08 11:22+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,43 +21,15 @@ msgstr ""
 msgid "Disposition Notification"
 msgstr ""
 
-#: lib/Horde/Mime/Mail.php:421
+#: lib/Horde/Mime/Mail.php:439
 msgid "HTML Version of Message"
 msgstr ""
 
-#: lib/Horde/Mime/Headers.php:547
-msgid "List-Archive"
-msgstr ""
-
-#: lib/Horde/Mime/Headers.php:542
-msgid "List-Help"
-msgstr ""
-
-#: lib/Horde/Mime/Headers.php:549
-msgid "List-Id"
-msgstr ""
-
-#: lib/Horde/Mime/Headers.php:545
-msgid "List-Owner"
-msgstr ""
-
-#: lib/Horde/Mime/Headers.php:546
-msgid "List-Post"
-msgstr ""
-
-#: lib/Horde/Mime/Headers.php:544
-msgid "List-Subscribe"
-msgstr ""
-
-#: lib/Horde/Mime/Headers.php:543
-msgid "List-Unsubscribe"
-msgstr ""
-
-#: lib/Horde/Mime/Mail.php:419
+#: lib/Horde/Mime/Mail.php:437
 msgid "Plaintext Version of Message"
 msgstr ""
 
-#: lib/Horde/Mime/Mdn.php:200
+#: lib/Horde/Mime/Mdn.php:201
 #, php-format
 msgid ""
 "The message sent on %s to %s with subject \"%s\" has been displayed.\n"

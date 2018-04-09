@@ -65,7 +65,7 @@ var EDIT = function() {
      * @type String
      * @public
      */
-    this.tool = "comment";
+    this.tool = "drag";
 
     /**
      * The currently comment colour

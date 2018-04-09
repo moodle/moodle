@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Horde_Exception \n"
+"Project-Id-Version: Horde_Exception\n"
 "Report-Msgid-Bugs-To: dev@lists.horde.org\n"
-"POT-Creation-Date: 2012-01-17 12:38+0100\n"
+"POT-Creation-Date: 2017-07-26 12:13+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,10 +17,10 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: lib/Horde/Exception/NotFound.php:27
+#: lib/Horde/Exception/NotFound.php:37
 msgid "Not Found"
 msgstr ""
 
-#: lib/Horde/Exception/PermissionDenied.php:27
+#: lib/Horde/Exception/PermissionDenied.php:37
 msgid "Permission Denied"
 msgstr ""

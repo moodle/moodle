@@ -30,9 +30,9 @@ defined('MOODLE_INTERNAL') || die();
  * The mod_lesson question answered event class.
  *
  * @property-read array $other {
- * Extra information about event.
+ *     Extra information about event.
  *
- * - string pagetype: the name of the pagetype as defined in the individual page class
+ *     - string pagetype: the name of the pagetype as defined in the individual page class
  * }
  *
  * @package    mod_lesson
@@ -94,5 +94,14 @@ class question_answered extends \core\event\base {
         if (!isset($this->other['pagetype'])) {
             throw new \coding_exception('The \'pagetype\' value must be set in other.');
         }
+    }
+
+    public static function get_objectid_mapping() {
+        return array('db' => 'lesson_pages', 'restore' => 'lesson_page');
+    }
+
+    public static function get_other_mapping() {
+        // Nothing to map.
+        return false;
     }
 }

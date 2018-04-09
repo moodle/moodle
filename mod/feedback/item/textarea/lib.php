@@ -19,13 +19,6 @@ require_once($CFG->dirroot.'/mod/feedback/item/feedback_item_class.php');
 
 class feedback_item_textarea extends feedback_item_base {
     protected $type = "textarea";
-    private $commonparams;
-    private $item_form;
-    private $item;
-
-    public function init() {
-
-    }
 
     public function build_editform($item, $feedback, $cm) {
         global $DB, $CFG;
@@ -80,28 +73,13 @@ class feedback_item_textarea extends feedback_item_base {
         $this->item_form = new feedback_textarea_form('edit_item.php', $customdata);
     }
 
-    //this function only can used after the call of build_editform()
-    public function show_editform() {
-        $this->item_form->display();
-    }
-
-    public function is_cancelled() {
-        return $this->item_form->is_cancelled();
-    }
-
-    public function get_data() {
-        if ($this->item = $this->item_form->get_data()) {
-            return true;
-        }
-        return false;
-    }
-
     public function save_item() {
         global $DB;
 
-        if (!$item = $this->item_form->get_data()) {
+        if (!$this->get_data()) {
             return false;
         }
+        $item = $this->item;
 
         if (isset($item->clone_item) AND $item->clone_item) {
             $item->id = ''; //to clone this item
@@ -118,9 +96,15 @@ class feedback_item_textarea extends feedback_item_base {
         return $DB->get_record('feedback_item', array('id'=>$item->id));
     }
 
-
-    //liefert eine Struktur ->name, ->data = array(mit Antworten)
-    public function get_analysed($item, $groupid = false, $courseid = false) {
+    /**
+     * Helper function for collected data for exporting to excel
+     *
+     * @param stdClass $item the db-object from feedback_item
+     * @param int $groupid
+     * @param int $courseid
+     * @return stdClass
+     */
+    protected function get_analysed($item, $groupid = false, $courseid = false) {
         global $DB;
 
         $analysed_val = new stdClass();
@@ -150,19 +134,23 @@ class feedback_item_textarea extends feedback_item_base {
     public function print_analysed($item, $itemnr = '', $groupid = false, $courseid = false) {
         $values = feedback_get_group_values($item, $groupid, $courseid);
         if ($values) {
+            echo "<table class=\"analysis itemtype_{$item->typ}\">";
             echo '<tr><th colspan="2" align="left">';
-            echo $itemnr.'&nbsp;('.$item->label.') '.$item->name;
+            echo $itemnr . ' ';
+            if (strval($item->label) !== '') {
+                echo '('. format_string($item->label).') ';
+            }
+            echo format_text($item->name, FORMAT_HTML, array('noclean' => true, 'para' => false));
             echo '</th></tr>';
             foreach ($values as $value) {
-                echo '<tr>';
-                echo '<td valign="top" align="left">';
-                echo '-&nbsp;&nbsp;';
-                echo '</td>';
-                echo '<td align="left" valign="top">';
+                $class = strlen(trim($value->value)) ? '' : ' class="isempty"';
+                echo '<tr'.$class.'>';
+                echo '<td colspan="2" class="singlevalue">';
                 echo str_replace("\n", '<br />', $value->value);
                 echo '</td>';
                 echo '</tr>';
             }
+            echo '</table>';
         }
     }
 
@@ -191,164 +179,41 @@ class feedback_item_textarea extends feedback_item_base {
     }
 
     /**
-     * print the item at the edit-page of feedback
+     * Adds an input element to the complete form
      *
-     * @global object
-     * @param object $item
-     * @return void
+     * @param stdClass $item
+     * @param mod_feedback_complete_form $form
      */
-    public function print_item_preview($item) {
-        global $OUTPUT, $DB;
-
-        $align = right_to_left() ? 'right' : 'left';
-        $strrequiredmark = '<img class="req" title="'.get_string('requiredelement', 'form').'" alt="'.
-            get_string('requiredelement', 'form').'" src="'.$OUTPUT->pix_url('req') .'" />';
-
-        $presentation = explode ("|", $item->presentation);
-        $requiredmark = ($item->required == 1) ? $strrequiredmark : '';
-        //print the question and label
+    public function complete_form_element($item, $form) {
+        $name = $this->get_display_name($item);
         $inputname = $item->typ . '_' . $item->id;
-        echo '<div class="feedback_item_label_'.$align.'">';
-        echo '<label for="'. $inputname .'">';
-        echo '('.$item->label.') ';
-        echo format_text($item->name.$requiredmark, true, false, false);
-        if ($item->dependitem) {
-            if ($dependitem = $DB->get_record('feedback_item', array('id'=>$item->dependitem))) {
-                echo ' <span class="feedback_depend">';
-                echo '('.$dependitem->label.'-&gt;'.$item->dependvalue.')';
-                echo '</span>';
-            }
-        }
-        echo '</label>';
-        echo '</div>';
-
-        //print the presentation
-        echo '<div class="feedback_item_presentation_'.$align.'">';
-        echo '<span class="feedback_item_textarea">';
-        echo '<textarea id="'.$inputname.'" '.
-                       'name="'.$inputname.'" '.
-                       'cols="'.$presentation[0].'" '.
-                       'rows="'.$presentation[1].'">';
-        echo '</textarea>';
-        echo '</span>';
-        echo '</div>';
-    }
-
-    /**
-     * print the item at the complete-page of feedback
-     *
-     * @global object
-     * @param object $item
-     * @param string $value
-     * @param bool $highlightrequire
-     * @return void
-     */
-    public function print_item_complete($item, $value = '', $highlightrequire = false) {
-        global $OUTPUT;
-        $align = right_to_left() ? 'right' : 'left';
-        $strrequiredmark = '<img class="req" title="'.get_string('requiredelement', 'form').'" alt="'.
-            get_string('requiredelement', 'form').'" src="'.$OUTPUT->pix_url('req') .'" />';
-
-        $presentation = explode ("|", $item->presentation);
-        $requiredmark = ($item->required == 1) ? $strrequiredmark :'';
-
-        //print the question and label
-        $inputname = $item->typ . '_' . $item->id;
-        echo '<div class="feedback_item_label_'.$align.'">';
-        echo '<label for="'. $inputname .'">';
-            echo format_text($item->name . $requiredmark, true, false, false);
-        if ($highlightrequire AND $item->required AND strval($value) == '') {
-            echo '<br class="error"><span id="id_error_'.$inputname.'" class="error"> '.get_string('err_required', 'form').
-                '</span><br id="id_error_break_'.$inputname.'" class="error" >';
-        }
-        echo '</label>';
-        echo '</div>';
-
-        //print the presentation
-        echo '<div class="feedback_item_presentation_'.$align.'">';
-        echo '<span class="feedback_item_textarea">';
-        echo '<textarea id="'.$inputname.'" '.
-                       'name="'.$inputname.'" '.
-                       'cols="'.$presentation[0].'" '.
-                       'rows="'.$presentation[1].'">';
-        echo $value;
-        echo '</textarea>';
-        echo '</span>';
-        echo '</div>';
-    }
-
-    /**
-     * print the item at the complete-page of feedback
-     *
-     * @global object
-     * @param object $item
-     * @param string $value
-     * @return void
-     */
-    public function print_item_show_value($item, $value = '') {
-        global $OUTPUT;
-        $align = right_to_left() ? 'right' : 'left';
-        $strrequiredmark = '<img class="req" title="'.get_string('requiredelement', 'form').'" alt="'.
-            get_string('requiredelement', 'form').'" src="'.$OUTPUT->pix_url('req') .'" />';
-
-        $presentation = explode ("|", $item->presentation);
-        $requiredmark = ($item->required == 1) ? $strrequiredmark : '';
-
-        //print the question and label
-        echo '<div class="feedback_item_label_'.$align.'">';
-            echo '('.$item->label.') ';
-            echo format_text($item->name . $requiredmark, true, false, false);
-        echo '</div>';
-
-        //print the presentation
-        echo $OUTPUT->box_start('generalbox boxalign'.$align);
-        echo $value ? str_replace("\n", '<br />', $value) : '&nbsp;';
-        echo $OUTPUT->box_end();
-    }
-
-    public function check_value($value, $item) {
-        //if the item is not required, so the check is true if no value is given
-        if ((!isset($value) OR $value == '') AND $item->required != 1) {
-            return true;
-        }
-        if ($value == "") {
-            return false;
-        }
-        return true;
+        list($cols, $rows) = explode ("|", $item->presentation);
+        $form->add_form_element($item,
+            ['textarea', $inputname, $name, array('rows' => $rows, 'cols' => $cols)]);
+        $form->set_element_type($inputname, PARAM_NOTAGS);
     }
 
     public function create_value($data) {
-        $data = s($data);
-        return $data;
+        return s($data);
     }
 
-    //compares the dbvalue with the dependvalue
-    //dbvalue is the value put in by the user
-    //dependvalue is the value that is compared
-    public function compare_value($item, $dbvalue, $dependvalue) {
-        if ($dbvalue == $dependvalue) {
-            return true;
+    /**
+     * Return the analysis data ready for external functions.
+     *
+     * @param stdClass $item     the item (question) information
+     * @param int      $groupid  the group id to filter data (optional)
+     * @param int      $courseid the course id (optional)
+     * @return array an array of data with non scalar types json encoded
+     * @since  Moodle 3.3
+     */
+    public function get_analysed_for_external($item, $groupid = false, $courseid = false) {
+
+        $externaldata = array();
+        $data = $this->get_analysed($item, $groupid, $courseid);
+
+        if (is_array($data->data)) {
+            return $data->data; // No need to json, scalar type.
         }
-        return false;
-    }
-
-    public function get_presentation($data) {
-        return $data->itemwidth.'|'.$data->itemheight;
-    }
-
-    public function get_hasvalue() {
-        return 1;
-    }
-
-    public function can_switch_require() {
-        return true;
-    }
-
-    public function value_type() {
-        return PARAM_RAW;
-    }
-
-    public function clean_input_value($value) {
-        return s($value);
+        return $externaldata;
     }
 }

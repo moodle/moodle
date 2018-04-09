@@ -23,6 +23,7 @@
  */
 
 use \assignfeedback_editpdf\document_services;
+use \assignfeedback_editpdf\combined_document;
 use \assignfeedback_editpdf\page_editor;
 use \assignfeedback_editpdf\comments_quick_list;
 
@@ -50,57 +51,80 @@ if (!$assignment->can_view_submission($userid)) {
     print_error('nopermission');
 }
 
-if ($action == 'loadallpages') {
+if ($action === 'pollconversions') {
     $draft = true;
     if (!has_capability('mod/assign:grade', $context)) {
+        // A student always sees the readonly version.
+        $readonly = true;
         $draft = false;
-        $readonly = true; // A student always sees the readonly version.
         require_capability('mod/assign:submit', $context);
     }
 
-    // Whoever is viewing the readonly version should not use the drafts, but the actual annotations.
     if ($readonly) {
+        // Whoever is viewing the readonly version should not use the drafts, but the actual annotations.
         $draft = false;
     }
 
-    $pages = document_services::get_page_images_for_attempt($assignment,
-                                                            $userid,
-                                                            $attemptnumber,
-                                                            $readonly);
+    $response = (object) [
+            'status' => -1,
+            'filecount' => 0,
+            'pagecount' => 0,
+            'pageready' => 0,
+            'pages' => [],
+        ];
 
-    $response = new stdClass();
-    $response->pagecount = count($pages);
-    $response->pages = array();
+    $combineddocument = document_services::get_combined_document_for_attempt($assignment, $userid, $attemptnumber);
+    $response->status = $combineddocument->get_status();
+    $response->filecount = $combineddocument->get_document_count();
 
-    $grade = $assignment->get_user_grade($userid, true);
+    if ($response->status === combined_document::STATUS_READY) {
+        $combineddocument = document_services::get_combined_pdf_for_attempt($assignment, $userid, $attemptnumber);
+        $response->pagecount = $combineddocument->get_page_count();
+    } else if ($response->status === combined_document::STATUS_COMPLETE || $response->status === combined_document::STATUS_FAILED) {
+        $pages = document_services::get_page_images_for_attempt($assignment,
+                                                                $userid,
+                                                                $attemptnumber,
+                                                                $readonly);
 
-    // The readonly files are stored in a different file area.
-    $filearea = document_services::PAGE_IMAGE_FILEAREA;
-    if ($readonly) {
-        $filearea = document_services::PAGE_IMAGE_READONLY_FILEAREA;
-    }
+        $response->pagecount = $combineddocument->get_page_count();
 
-    foreach ($pages as $id => $pagefile) {
-        $index = count($response->pages);
-        $page = new stdClass();
-        $comments = page_editor::get_comments($grade->id, $index, $draft);
-        $page->url = moodle_url::make_pluginfile_url($context->id,
-                                                     'assignfeedback_editpdf',
-                                                     $filearea,
-                                                     $grade->id,
-                                                     '/',
-                                                     $pagefile->get_filename())->out();
-        $page->comments = $comments;
-        if ($imageinfo = $pagefile->get_imageinfo()) {
-            $page->width = $imageinfo['width'];
-            $page->height = $imageinfo['height'];
-        } else {
-            $page->width = 0;
-            $page->height = 0;
+        $grade = $assignment->get_user_grade($userid, true, $attemptnumber);
+
+        // The readonly files are stored in a different file area.
+        $filearea = document_services::PAGE_IMAGE_FILEAREA;
+        if ($readonly) {
+            $filearea = document_services::PAGE_IMAGE_READONLY_FILEAREA;
         }
-        $annotations = page_editor::get_annotations($grade->id, $index, $draft);
-        $page->annotations = $annotations;
-        array_push($response->pages, $page);
+
+        foreach ($pages as $id => $pagefile) {
+            $index = count($response->pages);
+            $page = new stdClass();
+            $comments = page_editor::get_comments($grade->id, $index, $draft);
+            $page->url = moodle_url::make_pluginfile_url($context->id,
+                                                        'assignfeedback_editpdf',
+                                                        $filearea,
+                                                        $grade->id,
+                                                        '/',
+                                                        $pagefile->get_filename())->out();
+            $page->comments = $comments;
+            if ($imageinfo = $pagefile->get_imageinfo()) {
+                $page->width = $imageinfo['width'];
+                $page->height = $imageinfo['height'];
+            } else {
+                $page->width = 0;
+                $page->height = 0;
+            }
+            $annotations = page_editor::get_annotations($grade->id, $index, $draft);
+            $page->annotations = $annotations;
+            $response->pages[] = $page;
+
+            $component = 'assignfeedback_editpdf';
+            $filearea = document_services::PAGE_IMAGE_FILEAREA;
+            $filepath = '/';
+            $fs = get_file_storage();
+            $files = $fs->get_directory_files($context->id, $component, $filearea, $grade->id, $filepath);
+            $response->pageready = count($files);
+        }
     }
 
     echo json_encode($response);
@@ -111,7 +135,7 @@ if ($action == 'loadallpages') {
     $response = new stdClass();
     $response->errors = array();
 
-    $grade = $assignment->get_user_grade($userid, true);
+    $grade = $assignment->get_user_grade($userid, true, $attemptnumber);
 
     $pagejson = required_param('page', PARAM_RAW);
     $page = json_decode($pagejson);
@@ -132,7 +156,7 @@ if ($action == 'loadallpages') {
 
     require_capability('mod/assign:grade', $context);
     $response = new stdClass();
-    $grade = $assignment->get_user_grade($userid, true);
+    $grade = $assignment->get_user_grade($userid, true, $attemptnumber);
     $file = document_services::generate_feedback_document($assignment, $userid, $attemptnumber);
 
     $response->url = '';
@@ -172,7 +196,7 @@ if ($action == 'loadallpages') {
 } else if ($action == 'revertchanges') {
     require_capability('mod/assign:grade', $context);
 
-    $grade = $assignment->get_user_grade($userid, true);
+    $grade = $assignment->get_user_grade($userid, true, $attemptnumber);
 
     $result = page_editor::revert_drafts($gradeid);
 
@@ -190,7 +214,7 @@ if ($action == 'loadallpages') {
 } else if ($action == 'deletefeedbackdocument') {
     require_capability('mod/assign:grade', $context);
 
-    $grade = $assignment->get_user_grade($userid, true);
+    $grade = $assignment->get_user_grade($userid, true, $attemptnumber);
     $result = document_services::delete_feedback_document($assignment, $userid, $attemptnumber);
 
     $result = $result && page_editor::unrelease_drafts($grade->id);

@@ -27,15 +27,44 @@ require('../../config.php');
 require_once($CFG->dirroot.'/report/outline/locallib.php');
 
 $id = required_param('id',PARAM_INT);       // course id
+$startdate = optional_param('startdate', null, PARAM_INT);
+$enddate = optional_param('enddate', null, PARAM_INT);
 
 $course = $DB->get_record('course', array('id'=>$id), '*', MUST_EXIST);
 
-$PAGE->set_url('/report/outline/index.php', array('id'=>$id));
+$pageparams = array('id' => $id);
+if ($startdate) {
+    $pageparams['startdate'] = $startdate;
+}
+if ($enddate) {
+    $pageparams['enddate'] = $enddate;
+}
+
+$PAGE->set_url('/report/outline/index.php', $pageparams);
 $PAGE->set_pagelayout('report');
 
 require_login($course);
 $context = context_course::instance($course->id);
 require_capability('report/outline:view', $context);
+
+// Handle form to filter access logs by date.
+$filterform = new \report_outline\filter_form();
+$filterform->set_data(['id' => $course->id, 'filterstartdate' => $startdate, 'filterenddate' => $enddate]);
+if ($filterform->is_cancelled()) {
+    $redir = $PAGE->url;
+    $redir->remove_params(['startdate', 'enddate']);
+    redirect($redir);
+}
+if ($filter = $filterform->get_data()) {
+    $redir = $PAGE->url;
+    if ($filter->filterstartdate) {
+        $redir->param('startdate', $filter->filterstartdate);
+    }
+    if ($filter->filterenddate) {
+        $redir->param('enddate', $filter->filterenddate);
+    }
+    redirect($redir);
+}
 
 // Trigger an activity report viewed event.
 $event = \report_outline\event\activity_report_viewed::create(array('context' => $context));
@@ -85,6 +114,8 @@ if ($useinternalreader) {
     }
 }
 
+$filterform->display();
+
 echo $OUTPUT->container(get_string('computedfromlogs', 'admin', userdate($minlog)), 'loginfo');
 
 $outlinetable = new html_table();
@@ -93,7 +124,7 @@ $outlinetable->cellpadding = 5;
 $outlinetable->id = 'outlinetable';
 $outlinetable->head = array($stractivity, $strviews);
 
-if ($CFG->useblogassociations) {
+if (!empty($CFG->enableblogs) && $CFG->useblogassociations) {
     $outlinetable->head[] = $strrelatedblogentries;
 }
 
@@ -107,9 +138,19 @@ $modinfo = get_fast_modinfo($course);
 if ($uselegacyreader) {
     // If we are going to use the internal (not legacy) log table, we should only get records
     // from the legacy table that exist before we started adding logs to the new table.
+    $params = array('courseid' => $course->id, 'action' => 'view%', 'visible' => 1);
     $limittime = '';
     if (!empty($minloginternalreader)) {
         $limittime = ' AND time < :timeto ';
+        $params['timeto'] = $minloginternalreader;
+    }
+    if ($startdate) {
+        $limittime .= ' AND time >= :startdate ';
+        $params['startdate'] = $startdate;
+    }
+    if ($enddate) {
+        $limittime .= ' AND time < :enddate ';
+        $params['enddate'] = $enddate;
     }
     // Check if we need to show the last access.
     $sqllasttime = '';
@@ -117,7 +158,7 @@ if ($uselegacyreader) {
         $sqllasttime = ", MAX(time) AS lasttime";
     }
     $logactionlike = $DB->sql_like('l.action', ':action');
-    $sql = "SELECT cm.id, COUNT('x') AS numviews $sqllasttime
+    $sql = "SELECT cm.id, COUNT('x') AS numviews, COUNT(DISTINCT userid) AS distinctusers $sqllasttime
               FROM {course_modules} cm
               JOIN {modules} m
                 ON m.id = cm.module
@@ -127,28 +168,34 @@ if ($uselegacyreader) {
                AND $logactionlike
                AND m.visible = :visible $limittime
           GROUP BY cm.id";
-    $params = array('courseid' => $course->id, 'action' => 'view%', 'visible' => 1);
-    if (!empty($minloginternalreader)) {
-        $params['timeto'] = $minloginternalreader;
-    }
     $views = $DB->get_records_sql($sql, $params);
 }
 
-// Get record from sql_internal_reader and merge with records obtained from legacy log (if needed).
+// Get record from sql_internal_table_reader and merge with records obtained from legacy log (if needed).
 if ($useinternalreader) {
     // Check if we need to show the last access.
     $sqllasttime = '';
     if ($showlastaccess) {
         $sqllasttime = ", MAX(timecreated) AS lasttime";
     }
-    $sql = "SELECT contextinstanceid as cmid, COUNT('x') AS numviews $sqllasttime
+    $params = array('courseid' => $course->id, 'contextmodule' => CONTEXT_MODULE);
+    $limittime = '';
+    if ($startdate) {
+        $limittime .= ' AND timecreated >= :startdate ';
+        $params['startdate'] = $startdate;
+    }
+    if ($enddate) {
+        $limittime .= ' AND timecreated < :enddate ';
+        $params['enddate'] = $enddate;
+    }
+    $sql = "SELECT contextinstanceid as cmid, COUNT('x') AS numviews, COUNT(DISTINCT userid) AS distinctusers $sqllasttime
               FROM {" . $logtable . "} l
              WHERE courseid = :courseid
                AND anonymous = 0
                AND crud = 'r'
                AND contextlevel = :contextmodule
+               $limittime
           GROUP BY contextinstanceid";
-    $params = array('courseid' => $course->id, 'contextmodule' => CONTEXT_MODULE);
     $v = $DB->get_records_sql($sql, $params);
 
     if (empty($views)) {
@@ -215,14 +262,14 @@ foreach ($modinfo->sections as $sectionnum=>$section) {
         $numviewscell->attributes['class'] = 'numviews';
 
         if (!empty($views[$cm->id]->numviews)) {
-            $numviewscell->text = $views[$cm->id]->numviews;
+            $numviewscell->text = get_string('numviews', 'report_outline', $views[$cm->id]);
         } else {
             $numviewscell->text = '-';
         }
 
         $reportrow->cells[] = $numviewscell;
 
-        if ($CFG->useblogassociations) {
+        if (!empty($CFG->enableblogs) && $CFG->useblogassociations) {
             require_once($CFG->dirroot.'/blog/lib.php');
             $blogcell = new html_table_cell();
             $blogcell->attributes['class'] = 'blog';

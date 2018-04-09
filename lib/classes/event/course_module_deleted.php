@@ -119,5 +119,16 @@ class course_module_deleted extends base {
             throw new \coding_exception('The \'instanceid\' value must be set in other.');
         }
     }
+
+    public static function get_objectid_mapping() {
+        return array('db' => 'course_modules', 'restore' => 'course_module');
+    }
+
+    public static function get_other_mapping() {
+        $othermapped = array();
+        $othermapped['instanceid'] = base::NOT_MAPPED;
+
+        return $othermapped;
+    }
 }
 

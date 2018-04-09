@@ -53,11 +53,11 @@ class backup_workshop_activity_structure_step extends backup_activity_structure_
             'instructauthorsformat', 'instructreviewers',
             'instructreviewersformat', 'timemodified', 'phase', 'useexamples',
             'usepeerassessment', 'useselfassessment', 'grade', 'gradinggrade',
-            'strategy', 'evaluation', 'gradedecimals', 'nattachments',
+            'strategy', 'evaluation', 'gradedecimals', 'nattachments', 'submissionfiletypes',
             'latesubmissions', 'maxbytes', 'examplesmode', 'submissionstart',
             'submissionend', 'assessmentstart', 'assessmentend',
             'conclusion', 'conclusionformat', 'overallfeedbackmode',
-            'overallfeedbackfiles', 'overallfeedbackmaxbytes'));
+            'overallfeedbackfiles', 'overallfeedbackfiletypes', 'overallfeedbackmaxbytes'));
 
         // assessment forms definition
         $this->add_subplugin_structure('workshopform', $workshop, true);

@@ -6,9 +6,9 @@ Feature: Add a quiz
 
   Background:
     Given the following "users" exist:
-      | username | firstname | lastname | email               |
-      | teacher1 | Terry1    | Teacher1 | teacher1@moodle.com |
-      | student1 | Sam1      | Student1 | student1@moodle.com |
+      | username | firstname | lastname | email                |
+      | teacher1 | Terry1    | Teacher1 | teacher1@example.com |
+      | student1 | Sam1      | Student1 | student1@example.com |
     And the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |
@@ -17,8 +17,7 @@ Feature: Add a quiz
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
     When I log in as "teacher1"
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I add a "Quiz" to section "1" and I fill the form with:
       | Name        | Test quiz name        |
       | Description | Test quiz description |
@@ -31,13 +30,13 @@ Feature: Add a quiz
       | Feedback for the response 'False'. | So you think it is false                |
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test quiz name"
     And I press "Attempt quiz now"
     Then I should see "Question 1"
     And I should see "Answer the first question"
     And I set the field "True" to "1"
-    And I press "Next"
+    And I press "Finish attempt ..."
     And I should see "Answer saved"
     And I press "Submit all and finish"
 

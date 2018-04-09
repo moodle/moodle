@@ -7,8 +7,8 @@ Feature: Edited wiki pages may be previewed before saving
   Background:
     Given the following "users" exist:
       | username | firstname | lastname | email |
-      | teacher1 | Teacher | 1 | teacher1@asd.com |
-      | student1 | Student | 1 | student1@asd.com |
+      | teacher1 | Teacher | 1 | teacher1@example.com |
+      | student1 | Student | 1 | student1@example.com |
     And the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |
@@ -17,8 +17,7 @@ Feature: Edited wiki pages may be previewed before saving
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
     And I log in as "teacher1"
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I add a "Wiki" to section "1" and I fill the form with:
       | Wiki name | Test wiki name |
       | Description | Test wiki description |
@@ -26,7 +25,7 @@ Feature: Edited wiki pages may be previewed before saving
       | Wiki mode | Collaborative wiki |
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test wiki name"
     When I press "Create page"
     And I set the following fields to these values:

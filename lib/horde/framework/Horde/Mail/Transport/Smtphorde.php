@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2013-2014 Horde LLC (http://www.horde.org/)
+ * Copyright 2013-2017 Horde LLC (http://www.horde.org/)
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,7 +29,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  * @category  Horde
- * @copyright 2013-2014 Horde LLC
+ * @copyright 2013-2017 Horde LLC
  * @license   http://www.horde.org/licenses/bsd New BSD License
  * @package   Mail
  */
@@ -39,16 +39,14 @@
  *
  * @author    Michael Slusarz <slusarz@horde.org>
  * @category  Horde
- * @copyright 2013-2014 Horde LLC
+ * @copyright 2013-2017 Horde LLC
  * @license   http://www.horde.org/licenses/bsd New BSD License
  * @package   Mail
  */
 class Horde_Mail_Transport_Smtphorde extends Horde_Mail_Transport
 {
     /**
-     * Send the message as 8bit?
-     *
-     * @var boolean
+     * @deprecated
      */
     public $send8bit = false;
 
@@ -63,45 +61,45 @@ class Horde_Mail_Transport_Smtphorde extends Horde_Mail_Transport
      * Constructor.
      *
      * @param array $params  Additional parameters:
-     * <ul>
-     *  <li>
-     *   debug: (string) If set, will output debug information to the stream
-     *          provided. The value can be any PHP supported wrapper that
-     *          can be opened via fopen().
-     *          DEFAULT: No debug output
-     *  </li>
-     *  <li>
-     *   host: (string) The SMTP server.
-     *         DEFAULT: localhost
-     *  </li>
-     *  <li>
-     *   password: (string) The SMTP password.
-     *             DEFAULT: NONE
-     *  </li>
-     *  <li>
-     *   port: (string) The SMTP port.
-     *         DEFAULT: 587
-     *  </li>
-     *  <li>
-     *   secure: (string) Use SSL or TLS to connect.
-     *           DEFAULT: No encryption
-     *   <ul>
-     *    <li>false (No encryption)</li>
-     *    <li>'ssl' (Auto-detect SSL version)</li>
-     *    <li>'sslv2' (Force SSL version 3)</li>
-     *    <li>'sslv3' (Force SSL version 2)</li>
-     *    <li>'tls' (TLS)</li>
-     *   </ul>
-     *  </li>
-     *  <li>
-     *   timeout: (integer) Connection timeout, in seconds.
-     *            DEFAULT: 30 seconds
-     *  </li>
-     *  <li>
-     *   username: (string) The SMTP username.
-     *             DEFAULT: NONE
-     *  </li>
-     * </ul>
+     *   - chunk_size: (integer) If CHUNKING is supported on the server, the
+     *                 chunk size (in octets) to send. 0 will disable chunking.
+     *                 @since Horde_Smtp 1.7.0
+     *   - context: (array) Any context parameters passed to
+     *              stream_create_context(). @since Horde_Smtp 1.9.0
+     *   - debug: (string) If set, will output debug information to the stream
+     *            provided. The value can be any PHP supported wrapper that
+     *            can be opened via fopen().
+     *            DEFAULT: No debug output
+     *   - host: (string) The SMTP server.
+     *           DEFAULT: localhost
+     *   - localhost: (string) The hostname of the localhost. (since Horde_Smtp
+                      1.9.0)
+     *                DEFAULT: Auto-determined.
+     *   - password: (string) The SMTP password.
+     *               DEFAULT: NONE
+     *   - port: (string) The SMTP port.
+     *           DEFAULT: 587
+     *   - secure: (string) Use SSL or TLS to connect.
+     *             DEFAULT: true (use 'tls' option, if available)
+     *     - false (No encryption)
+     *     - 'ssl' (Auto-detect SSL version)
+     *     - 'sslv2' (Force SSL version 2)
+     *     - 'sslv3' (Force SSL version 3)
+     *     - 'tls' (TLS; started via protocol-level negotation over
+     *       unencrypted channel; RECOMMENDED way of initiating secure
+     *       connection)
+     *     - 'tlsv1' (TLS direct version 1.x connection to server) [@since
+     *       Horde_Smtp .3.0]
+     *     - true (Use TLS, if available) [@since Horde_Smtp 1.2.0]
+     *             DEFAULT: No encryption
+     *   - timeout: (integer) Connection timeout, in seconds.
+     *              DEFAULT: 30 seconds
+     *   - username: (string) The SMTP username.
+     *               DEFAULT: NONE
+     *   - xoauth2_token: (string) If set, will authenticate via the XOAUTH2
+     *                    mechanism (if available) with this token. Either a
+     *                    string or a Horde_Smtp_Password object (since
+     *                    Horde_Smtp 1.1.0).
      */
     public function __construct(array $params = array())
     {
@@ -109,6 +107,19 @@ class Horde_Mail_Transport_Smtphorde extends Horde_Mail_Transport
 
         /* SMTP requires CRLF line endings. */
         $this->sep = "\r\n";
+    }
+
+    /**
+     */
+    public function __get($name)
+    {
+        switch ($name) {
+        case 'eai':
+            $this->getSMTPObject();
+            return $this->_smtp->data_intl;
+        }
+
+        return parent::__get($name);
     }
 
     /**
@@ -129,9 +140,7 @@ class Horde_Mail_Transport_Smtphorde extends Horde_Mail_Transport
         ));
 
         try {
-            $this->_smtp->send($from, $recipients, $combine, array(
-                '8bit' => $this->send8bit
-            ));
+            $this->_smtp->send($from, $recipients, $combine);
         } catch (Horde_Smtp_Exception $e) {
             throw new Horde_Mail_Exception($e);
         }

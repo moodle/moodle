@@ -36,6 +36,9 @@ class file_info_context_course extends file_info {
     /** @var stdClass course object */
     protected $course;
 
+    /** @var file_info_context_module[] cached child modules. See {@link get_child_module()} */
+    protected $childrenmodules = [];
+
     /**
      * Constructor
      *
@@ -68,7 +71,7 @@ class file_info_context_course extends file_info {
             return null;
         }
 
-        if (!is_viewing($this->context) and !is_enrolled($this->context)) {
+        if (!is_viewing($this->context) and !$this->browser->is_enrolled($this->course->id)) {
             // no peaking here if not enrolled or inspector
             return null;
         }
@@ -84,6 +87,41 @@ class file_info_context_course extends file_info {
         }
 
         return null;
+    }
+
+    /**
+     * Returns list of areas inside this course
+     *
+     * @param string $extensions Only return areas that have files with these extensions
+     * @param bool $returnemptyfolders return all areas always, if true it will ignore the previous argument
+     * @return array
+     */
+    protected function get_course_areas($extensions = '*', $returnemptyfolders = false) {
+        global $DB;
+
+        $allareas = [
+            'course_summary',
+            'course_overviewfiles',
+            'course_section',
+            'backup_section',
+            'backup_course',
+            'backup_automated',
+            'course_legacy'
+        ];
+
+        if ($returnemptyfolders) {
+            return $allareas;
+        }
+
+        $params1 = ['contextid' => $this->context->id, 'emptyfilename' => '.'];
+        $sql1 = "SELECT " . $DB->sql_concat('f.component', "'_'", 'f.filearea') . "
+            FROM {files} f
+            WHERE f.filename <> :emptyfilename AND f.contextid = :contextid ";
+        $sql3 = ' GROUP BY f.component, f.filearea';
+        list($sql2, $params2) = $this->build_search_files_sql($extensions);
+        $areaswithfiles = $DB->get_fieldset_sql($sql1 . $sql2 . $sql3, array_merge($params1, $params2));
+
+        return array_intersect($allareas, $areaswithfiles);
     }
 
     /**
@@ -300,7 +338,9 @@ class file_info_context_course extends file_info {
             }
         }
 
-        $downloadable = has_capability('moodle/site:config', $this->context);
+        // Automated backup files are only downloadable if the user has both 'backup:downloadfile and 'restore:userinfo'.
+        $downloadable = has_capability('moodle/backup:downloadfile', $this->context) &&
+                        has_capability('moodle/restore:userinfo', $this->context);
         $uploadable   = false;
 
         $urlbase = $CFG->wwwroot.'/pluginfile.php';
@@ -388,6 +428,28 @@ class file_info_context_course extends file_info {
     }
 
     /**
+     * Returns the child module if it is accessible by the current user
+     *
+     * @param cm_info|int $cm
+     * @return file_info_context_module|null
+     */
+    protected function get_child_module($cm) {
+        $cmid = is_object($cm) ? $cm->id : $cm;
+        if (!array_key_exists($cmid, $this->childrenmodules)) {
+            $this->childrenmodules[$cmid] = null;
+            if (!($cm instanceof cm_info)) {
+                $cms = get_fast_modinfo($this->course)->cms;
+                $cm = array_key_exists($cmid, $cms) ? $cms[$cmid] : null;
+            }
+            if ($cm && $cm->uservisible) {
+                $this->childrenmodules[$cmid] = new file_info_context_module($this->browser,
+                    $cm->context, $this->course, $cm, $cm->modname);
+            }
+        }
+        return $this->childrenmodules[$cmid];
+    }
+
+    /**
      * Help function to return files matching extensions or their count
      *
      * @param string|array $extensions, either '*' or array of lowercase extensions, i.e. array('.gif','.jpg')
@@ -397,46 +459,52 @@ class file_info_context_course extends file_info {
      * @return array|int array of file_info instances or the count
      */
     private function get_filtered_children($extensions = '*', $countonly = false, $returnemptyfolders = false) {
-        $areas = array(
-            array('course', 'summary'),
-            array('course', 'overviewfiles'),
-            array('course', 'section'),
-            array('backup', 'section'),
-            array('backup', 'course'),
-            array('backup', 'automated'),
-            array('course', 'legacy')
-        );
         $children = array();
-        foreach ($areas as $area) {
+
+        $courseareas = $this->get_course_areas($extensions, $returnemptyfolders);
+        foreach ($courseareas as $areaname) {
+            $area = explode('_', $areaname, 2);
             if ($child = $this->get_file_info($area[0], $area[1], 0, '/', '.')) {
-                if ($returnemptyfolders || $child->count_non_empty_children($extensions)) {
-                    $children[] = $child;
-                    if (($countonly !== false) && count($children) >= $countonly) {
-                        return $countonly;
-                    }
+                $children[] = $child;
+                if (($countonly !== false) && count($children) >= $countonly) {
+                    return $countonly;
                 }
             }
         }
 
+        $cnt = count($children);
         if (!has_capability('moodle/course:managefiles', $this->context)) {
             // 'managefiles' capability is checked in every activity module callback.
             // Don't even waste time on retrieving the modules if we can't browse the files anyway
         } else {
-            // now list all modules
-            $modinfo = get_fast_modinfo($this->course);
-            foreach ($modinfo->cms as $cminfo) {
-                if (empty($cminfo->uservisible)) {
-                    continue;
-                }
-                $modcontext = context_module::instance($cminfo->id, IGNORE_MISSING);
-                if ($child = $this->browser->get_file_info($modcontext)) {
-                    if ($returnemptyfolders || $child->count_non_empty_children($extensions)) {
+            if ($returnemptyfolders) {
+                $modinfo = get_fast_modinfo($this->course);
+                foreach ($modinfo->cms as $cminfo) {
+                    if ($child = $this->get_child_module($cminfo)) {
                         $children[] = $child;
-                        if (($countonly !== false) && count($children) >= $countonly) {
-                            return $countonly;
+                        $cnt++;
+                    }
+                }
+            } else if ($moduleareas = $this->get_module_areas_with_files($extensions)) {
+                // We found files in some of the modules.
+                // Create array of children modules ordered with the same way as cms in modinfo.
+                $modulechildren = array_fill_keys(array_keys(get_fast_modinfo($this->course)->get_cms()), null);
+                foreach ($moduleareas as $area) {
+                    if ($modulechildren[$area->cmid]) {
+                        // We already found non-empty area within the same module, do not analyse other areas.
+                        continue;
+                    }
+                    if ($child = $this->get_child_module($area->cmid)) {
+                        if ($child->get_file_info($area->component, $area->filearea, $area->itemid, null, null)) {
+                            $modulechildren[$area->cmid] = $child;
+                            $cnt++;
+                            if (($countonly !== false) && $cnt >= $countonly) {
+                                return $cnt;
+                            }
                         }
                     }
                 }
+                $children = array_merge($children, array_values(array_filter($modulechildren)));
             }
         }
 
@@ -444,6 +512,52 @@ class file_info_context_course extends file_info {
             return count($children);
         }
         return $children;
+    }
+
+    /**
+     * Returns list of areas inside the course modules that have files with the given extension
+     *
+     * @param string $extensions
+     * @return array
+     */
+    protected function get_module_areas_with_files($extensions = '*') {
+        global $DB;
+
+        $params1 = ['contextid' => $this->context->id,
+            'emptyfilename' => '.',
+            'contextlevel' => CONTEXT_MODULE,
+            'depth' => $this->context->depth + 1,
+            'pathmask' => $this->context->path . '/%'];
+        $sql1 = "SELECT ctx.id AS contextid, f.component, f.filearea, f.itemid, ctx.instanceid AS cmid, " .
+                context_helper::get_preload_record_columns_sql('ctx') . "
+            FROM {files} f
+            INNER JOIN {context} ctx ON ctx.id = f.contextid
+            WHERE f.filename <> :emptyfilename
+              AND ctx.contextlevel = :contextlevel
+              AND ctx.depth = :depth
+              AND " . $DB->sql_like('ctx.path', ':pathmask') . " ";
+        $sql3 = ' GROUP BY ctx.id, f.component, f.filearea, f.itemid, ctx.instanceid,
+              ctx.path, ctx.depth, ctx.contextlevel
+            ORDER BY ctx.id, f.component, f.filearea, f.itemid';
+        list($sql2, $params2) = $this->build_search_files_sql($extensions);
+        $areas = [];
+        if ($rs = $DB->get_recordset_sql($sql1. $sql2 . $sql3, array_merge($params1, $params2))) {
+            foreach ($rs as $record) {
+                context_helper::preload_from_record($record);
+                $areas[] = $record;
+            }
+            $rs->close();
+        }
+
+        // Sort areas so 'backup' and 'intro' are in the beginning of the list, they are the easiest to check access to.
+        usort($areas, function($a, $b) {
+            $aeasy = ($a->filearea === 'intro' && substr($a->component, 0, 4) === 'mod_') ||
+                ($a->filearea === 'activity' && $a->component === 'backup');
+            $beasy = ($b->filearea === 'intro' && substr($b->component, 0, 4) === 'mod_') ||
+                ($b->filearea === 'activity' && $b->component === 'backup');
+            return $aeasy == $beasy ? 0 : ($aeasy ? -1 : 1);
+        });
+        return $areas;
     }
 
     /**

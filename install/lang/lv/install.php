@@ -34,11 +34,13 @@ $string['admindirname'] = 'Administratora direktorijs';
 $string['availablelangs'] = 'Pieejamās valodu pakotnes';
 $string['chooselanguagehead'] = 'Valodas izvēle';
 $string['chooselanguagesub'] = 'Lūdzu izvēlieties šīs instalācijas valodu. Izvēlētā valoda tiks izmantota arī kā noklusētā šīs vietnes valoda, lai gan tā var tikt nomainīta vēlāk.';
+$string['databasename'] = 'Datubāzes nosaukums';
 $string['databasetypehead'] = 'Izvēlēties datubāzes draiveru';
 $string['dataroot'] = 'Datu direktorijs';
 $string['dbprefix'] = 'Tabulu prefikss';
 $string['dirroot'] = 'Moodle direktorijs';
 $string['environmenthead'] = 'Vides pārbaude...';
+$string['errorsinenvironment'] = 'Vides pārbaude neizdevās!';
 $string['installation'] = 'Instalēšana';
 $string['langdownloaderror'] = '“{$a}” valodas pakotne diemžēl netika instalēta. Instalēšana tiks turpināta angļu valodā.';
 $string['memorylimithelp'] = '<p>Pašlaik iestatītais PHP atmiņas apjoma ierobežojums jūsu serverī ir {$a}.</p>
@@ -55,6 +57,8 @@ $string['memorylimithelp'] = '<p>Pašlaik iestatītais PHP atmiņas apjoma ierob
     <p>Tomēr dažos serveros tas neļaus darboties <b>nevienai</b> PHP lapai
 (atverot šīs lapas, tiks parādīti kļūdas ziņojumi), un fails .htaccess būs jānoņem.</p></li>
 </ol>';
+$string['paths'] = 'Ceļi';
+$string['pathshead'] = 'Apstiprināt ceļus';
 $string['phpversion'] = 'PHP versija';
 $string['phpversionhelp'] = '<p>Sistēmā Moodle jāizmanto PHP, kuras versija ir vismaz 4.3.0 vai 5.1.0 (versijai 5.0.x piemīt vairākas zināmas problēmas).</p>
 <p>Jūs pašlaik lietojat versiju {$a}</p>

@@ -23,7 +23,10 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+require_once(__DIR__ . '/exact_named_selector.php');
+require_once(__DIR__ . '/partial_named_selector.php');
+
+use Behat\Mink\Exception\ExpectationException as ExpectationException;
 
 /**
  * Moodle selectors manager.
@@ -34,106 +37,6 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class behat_selectors {
-
-    /**
-     * @var Allowed types when using text selectors arguments.
-     */
-    protected static $allowedtextselectors = array(
-        'dialogue' => 'dialogue',
-        'block' => 'block',
-        'section' => 'section',
-        'activity' => 'activity',
-        'region' => 'region',
-        'table_row' => 'table_row',
-        'list_item' => 'list_item',
-        'table' => 'table',
-        'fieldset' => 'fieldset',
-        'css_element' => 'css_element',
-        'xpath_element' => 'xpath_element'
-    );
-
-    /**
-     * @var Allowed types when using selector arguments.
-     */
-    protected static $allowedselectors = array(
-        'dialogue' => 'dialogue',
-        'block' => 'block',
-        'section' => 'section',
-        'activity' => 'activity',
-        'region' => 'region',
-        'table_row' => 'table_row',
-        'list_item' => 'list_item',
-        'link' => 'link',
-        'button' => 'button',
-        'link_or_button' => 'link_or_button',
-        'select' => 'select',
-        'checkbox' => 'checkbox',
-        'radio' => 'radio',
-        'file' => 'file',
-        'filemanager' => 'filemanager',
-        'optgroup' => 'optgroup',
-        'option' => 'option',
-        'table' => 'table',
-        'field' => 'field',
-        'fieldset' => 'fieldset',
-        'text' => 'text',
-        'css_element' => 'css_element',
-        'xpath_element' => 'xpath_element'
-    );
-
-    /**
-     * Behat by default comes with XPath, CSS and named selectors,
-     * named selectors are a mapping between names (like button) and
-     * xpaths that represents that names and includes a placeholder that
-     * will be replaced by the locator. These are Moodle's own xpaths.
-     *
-     * @var XPaths for moodle elements.
-     */
-    protected static $moodleselectors = array(
-        'text' => <<<XPATH
-//*[contains(., %locator%)][count(./descendant::*[contains(., %locator%)]) = 0]
-XPATH
-        , 'dialogue' => <<<XPATH
-//div[contains(concat(' ', normalize-space(@class), ' '), ' moodle-dialogue ') and
-    normalize-space(descendant::div[
-        contains(concat(' ', normalize-space(@class), ' '), ' moodle-dialogue-hd ')
-        ]) = %locator%] |
-//div[contains(concat(' ', normalize-space(@class), ' '), ' yui-dialog ') and
-    normalize-space(descendant::div[@class='hd']) = %locator%]
-XPATH
-        , 'block' => <<<XPATH
-//div[contains(concat(' ', normalize-space(@class), ' '), ' block ') and
-    (contains(concat(' ', normalize-space(@class), ' '), concat(' ', %locator%, ' ')) or
-     descendant::h2[normalize-space(.) = %locator%] or
-     @aria-label = %locator%)]
-XPATH
-        , 'section' => <<<XPATH
-//li[contains(concat(' ', normalize-space(@class), ' '), ' section ')][./descendant::*[self::h3]
-    [normalize-space(.) = %locator%][contains(concat(' ', normalize-space(@class), ' '), ' sectionname ') or
-    contains(concat(' ', normalize-space(@class), ' '), ' section-title ')]] |
-//div[contains(concat(' ', normalize-space(@class), ' '), ' sitetopic ')]
-    [./descendant::*[self::h2][normalize-space(.) = %locator%] or %locator% = 'frontpage']
-XPATH
-        , 'activity' => <<<XPATH
-//li[contains(concat(' ', normalize-space(@class), ' '), ' activity ')][normalize-space(.) = %locator% ]
-XPATH
-        , 'region' => <<<XPATH
-//*[self::div | self::section | self::aside | self::header | self::footer][./@id = %locator%]
-XPATH
-        , 'table_row' => <<<XPATH
-.//tr[contains(normalize-space(.), %locator%)]
-XPATH
-        , 'list_item' => <<<XPATH
-.//li[contains(normalize-space(.), %locator%)]
-XPATH
-        , 'filemanager' => <<<XPATH
-//div[contains(concat(' ', normalize-space(@class), ' '), ' ffilemanager ')]
-    /descendant::input[@id = //label[contains(normalize-space(string(.)), %locator%)]/@for]
-XPATH
-        , 'table' => <<<XPATH
-.//table[(./@id = %locator% or contains(.//caption, %locator%) or contains(concat(' ', normalize-space(@class), ' '), %locator% ))]
-XPATH
-    );
 
     /**
      * Returns the behat selector and locator for a given moodle selector and locator
@@ -151,24 +54,25 @@ XPATH
             $locator = $element;
         } else {
             // Named selectors uses arrays as locators including the type of named selector.
-            $locator = array($selectortype, $session->getSelectorsHandler()->xpathLiteral($element));
-            $selector = 'named';
+            $allowedselectors = self::get_allowed_selectors();
+            if (!isset($allowedselectors[$selectortype])) {
+                throw new ExpectationException('The "' . $selectortype . '" selector not registered.', $session);
+            }
+            $locator = array($allowedselectors[$selectortype], behat_context_helper::escape($element));
+
+            // Get the selector which should be used.
+            $allowedpartialselectors = behat_partial_named_selector::get_allowed_selectors();
+            $allowedexactselectors = behat_exact_named_selector::get_allowed_selectors();
+            if (isset($allowedpartialselectors[$selectortype])) {
+                $selector = 'named_partial';
+            } else if (isset($allowedexactselectors[$selectortype])) {
+                $selector = 'named_exact';
+            } else {
+                throw new ExpectationException('The "' . $selectortype . '" selector not registered.', $session);
+            }
         }
 
         return array($selector, $locator);
-    }
-
-    /**
-     * Adds moodle selectors as behat named selectors.
-     *
-     * @param Session $session The mink session
-     * @return void
-     */
-    public static function register_moodle_selectors(Behat\Mink\Session $session) {
-
-        foreach (self::get_moodle_selectors() as $name => $xpath) {
-            $session->getSelectorsHandler()->getSelector('named')->registerNamedXpath($name, $xpath);
-        }
     }
 
     /**
@@ -177,7 +81,10 @@ XPATH
      * @return array
      */
     public static function get_allowed_selectors() {
-        return self::$allowedselectors;
+        return array_merge(
+            behat_partial_named_selector::get_allowed_selectors(),
+            behat_exact_named_selector::get_allowed_selectors()
+        );
     }
 
     /**
@@ -186,15 +93,9 @@ XPATH
      * @return array
      */
     public static function get_allowed_text_selectors() {
-        return self::$allowedtextselectors;
-    }
-
-    /**
-     * Moodle selectors attribute accessor.
-     *
-     * @return array
-     */
-    protected static function get_moodle_selectors() {
-        return self::$moodleselectors;
+        return array_merge(
+            behat_partial_named_selector::get_allowed_text_selectors(),
+            behat_exact_named_selector::get_allowed_text_selectors()
+        );
     }
 }

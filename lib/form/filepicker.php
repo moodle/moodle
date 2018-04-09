@@ -29,6 +29,7 @@ global $CFG;
 
 require_once("HTML/QuickForm/button.php");
 require_once($CFG->dirroot.'/repository/lib.php');
+require_once('templatable_form_element.php');
 
 /**
  * Filepicker form element
@@ -40,7 +41,10 @@ require_once($CFG->dirroot.'/repository/lib.php');
  * @copyright 2009 Dongsheng Cai <dongsheng@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class MoodleQuickForm_filepicker extends HTML_QuickForm_input {
+class MoodleQuickForm_filepicker extends HTML_QuickForm_input implements templatable {
+    use templatable_form_element {
+        export_for_template as export_for_template_base;
+    }
     /** @var string html for help button, if empty then no help will icon will be dispalyed. */
     public $_helpbutton = '';
 
@@ -59,7 +63,7 @@ class MoodleQuickForm_filepicker extends HTML_QuickForm_input {
      *              or an associative array
      * @param array $options set of options to initalize filepicker
      */
-    function MoodleQuickForm_filepicker($elementName=null, $elementLabel=null, $attributes=null, $options=null) {
+    public function __construct($elementName=null, $elementLabel=null, $attributes=null, $options=null) {
         global $CFG, $PAGE;
 
         $options = (array)$options;
@@ -81,7 +85,17 @@ class MoodleQuickForm_filepicker extends HTML_QuickForm_input {
         }
         $this->_options['maxbytes'] = get_user_max_upload_file_size($PAGE->context, $CFG->maxbytes, $coursemaxbytes, $fpmaxbytes);
         $this->_type = 'filepicker';
-        parent::HTML_QuickForm_input($elementName, $elementLabel, $attributes);
+        parent::__construct($elementName, $elementLabel, $attributes);
+    }
+
+    /**
+     * Old syntax of class constructor. Deprecated in PHP7.
+     *
+     * @deprecated since Moodle 3.1
+     */
+    public function MoodleQuickForm_filepicker($elementName=null, $elementLabel=null, $attributes=null, $options=null) {
+        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
+        self::__construct($elementName, $elementLabel, $attributes, $options);
     }
 
     /**
@@ -170,6 +184,14 @@ class MoodleQuickForm_filepicker extends HTML_QuickForm_input {
         $html .= "<div><object type='text/html' data='$nonjsfilepicker' height='160' width='600' style='border:1px solid #000'></object></div>";
         $html .= '</noscript>';
 
+        if (!empty($options->accepted_types) && $options->accepted_types != '*') {
+            $html .= html_writer::tag('p', get_string('filesofthesetypes', 'form'));
+            $util = new \core_form\filetypes_util();
+            $filetypes = $options->accepted_types;
+            $filetypedescriptions = $util->describe_file_types($filetypes);
+            $html .= $OUTPUT->render_from_template('core_form/filetypes-descriptions', $filetypedescriptions);
+        }
+
         return $html;
     }
 
@@ -209,5 +231,52 @@ class MoodleQuickForm_filepicker extends HTML_QuickForm_input {
         }
 
         return $this->_prepareValue($draftitemid, true);
+    }
+
+    public function export_for_template(renderer_base $output) {
+        $context = $this->export_for_template_base($output);
+        $context['html'] = $this->toHtml();
+        return $context;
+    }
+
+    /**
+     * Check that the file has the allowed type.
+     *
+     * @param array $value Draft item id with the uploaded files.
+     * @return string|null Validation error message or null.
+     */
+    public function validateSubmitValue($value) {
+
+        $filetypesutil = new \core_form\filetypes_util();
+        $whitelist = $filetypesutil->normalize_file_types($this->_options['accepted_types']);
+
+        if (empty($whitelist) || $whitelist === ['*']) {
+            // Any file type is allowed, nothing to check here.
+            return;
+        }
+
+        $draftfiles = file_get_drafarea_files($value);
+        $wrongfiles = array();
+
+        if (empty($draftfiles)) {
+            // No file uploaded, nothing to check here.
+            return;
+        }
+
+        foreach ($draftfiles->list as $file) {
+            if (!$filetypesutil->is_allowed_file_type($file->filename, $whitelist)) {
+                $wrongfiles[] = $file->filename;
+            }
+        }
+
+        if ($wrongfiles) {
+            $a = array(
+                'whitelist' => implode(', ', $whitelist),
+                'wrongfiles' => implode(', ', $wrongfiles),
+            );
+            return get_string('err_wrongfileextension', 'core_form', $a);
+        }
+
+        return;
     }
 }

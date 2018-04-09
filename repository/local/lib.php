@@ -45,7 +45,7 @@ class repository_local extends repository {
         global $CFG, $USER, $OUTPUT;
         $ret = array();
         $ret['dynload'] = true;
-        $ret['nosearch'] = true;
+        $ret['nosearch'] = false;
         $ret['nologin'] = true;
         $ret['list'] = array();
 
@@ -166,17 +166,17 @@ class repository_local extends repository {
             // do not skip files
             return false;
         }
-        if ($fileinfo instanceof file_info_context_coursecat) {
+        if ($fileinfo instanceof file_info_context_course ||
+            $fileinfo instanceof file_info_context_user ||
+            $fileinfo instanceof file_info_area_course_legacy ||
+            $fileinfo instanceof file_info_context_module ||
+            $fileinfo instanceof file_info_context_system) {
+            // These instances can never be filearea inside an activity, they will never be skipped.
+            return false;
+        } else if ($fileinfo instanceof file_info_context_coursecat) {
             // This is a course category. For non-admins we do not display categories
             return empty($CFG->navshowmycoursecategories) &&
                             !has_capability('moodle/course:update', context_system::instance());
-        } else if ($fileinfo instanceof file_info_context_course ||
-                $fileinfo instanceof file_info_context_user ||
-                $fileinfo instanceof file_info_area_course_legacy ||
-                $fileinfo instanceof file_info_context_module ||
-                $fileinfo instanceof file_info_context_system) {
-            // these instances can never be filearea inside an activity, they will never be skipped
-            return false;
         } else {
             $params = $fileinfo->get_params();
             if (strlen($params['filearea']) &&
@@ -213,7 +213,7 @@ class repository_local extends repository {
         );
         if ($fileinfo->is_directory()) {
             $node['path'] = $encodedpath;
-            $node['thumbnail'] = $OUTPUT->pix_url(file_folder_icon(90))->out(false);
+            $node['thumbnail'] = $OUTPUT->image_url(file_folder_icon(90))->out(false);
             $node['children'] = array();
         } else {
             $node['size'] = $fileinfo->get_filesize();
@@ -224,8 +224,8 @@ class repository_local extends repository {
                 $node['originalmissing'] = true;
             }
             $node['source'] = $encodedpath;
-            $node['thumbnail'] = $OUTPUT->pix_url(file_file_icon($fileinfo, 90))->out(false);
-            $node['icon'] = $OUTPUT->pix_url(file_file_icon($fileinfo, 24))->out(false);
+            $node['thumbnail'] = $OUTPUT->image_url(file_file_icon($fileinfo, 90))->out(false);
+            $node['icon'] = $OUTPUT->image_url(file_file_icon($fileinfo, 24))->out(false);
             if ($imageinfo = $fileinfo->get_imageinfo()) {
                 // what a beautiful picture, isn't it
                 $fileurl = new moodle_url($fileinfo->get_url());
@@ -250,6 +250,104 @@ class repository_local extends repository {
             'path' => $encodedpath,
             'name' => $fileinfo->get_visible_name()
         );
+    }
+
+    /**
+     * Search through all the files.
+     *
+     * This method will do a raw search through the database, then will try
+     * to match with files that a user can access. A maximum of 50 files will be
+     * returned at a time, excluding possible duplicates found along the way.
+     *
+     * Queries are done in chunk of 100 files to prevent too many records to be fetched
+     * at once. When too many files are not included, or a maximum of 10 queries are
+     * performed we consider that this was the last page.
+     *
+     * @param  String  $q    The query string.
+     * @param  integer $page The page number.
+     * @return array of results.
+     */
+    public function search($q, $page = 1) {
+        global $DB, $SESSION;
+
+        // Because the repository API is weird, the first page is 0, but it should be 1.
+        if (!$page) {
+            $page = 1;
+        }
+
+        if (!isset($SESSION->repository_local_search)) {
+            $SESSION->repository_local_search = array();
+        }
+
+        $fs = get_file_storage();
+        $fb = get_file_browser();
+
+        $max = 50;
+        $limit = 100;
+        if ($page <= 1) {
+            $SESSION->repository_local_search['query'] = $q;
+            $SESSION->repository_local_search['from'] = 0;
+            $from = 0;
+        } else {
+            // Yes, the repository does not send the query again...
+            $q = $SESSION->repository_local_search['query'];
+            $from = (int) $SESSION->repository_local_search['from'];
+        }
+
+        $count = $fs->search_server_files('%' . $DB->sql_like_escape($q) . '%', null, null, true);
+        $remaining = $count - $from;
+        $maxloops = 3000;
+        $loops = 0;
+
+        $results = array();
+        while (count($results) < $max && $maxloops > 0 && $remaining > 0) {
+            if (empty($files)) {
+                $files = $fs->search_server_files('%' . $DB->sql_like_escape($q) . '%', $from, $limit);
+                $from += $limit;
+            };
+
+            $remaining--;
+            $maxloops--;
+            $loops++;
+
+            $file = array_shift($files);
+            if (!$file) {
+                // This should not happen.
+                throw new coding_exception('Unexpected end of files list.');
+            }
+
+            $key = $file->get_contenthash() . ':' . $file->get_filename();
+            if (isset($results[$key])) {
+                // We found the file with same content and same name, let's skip it.
+                continue;
+            }
+
+            $ctx = context::instance_by_id($file->get_contextid());
+            $fileinfo = $fb->get_file_info($ctx, $file->get_component(), $file->get_filearea(), $file->get_itemid(),
+                $file->get_filepath(), $file->get_filename());
+            if ($fileinfo) {
+                $results[$key] = $this->get_node($fileinfo);
+            }
+
+        }
+
+        // Save the position for the paging to work.
+        if ($maxloops > 0 && $remaining > 0) {
+            $SESSION->repository_local_search['from'] += $loops;
+            $pages = -1;
+        } else {
+            $SESSION->repository_local_search['from'] = 0;
+            $pages = 0;
+        }
+
+        $return = array(
+            'list' => array_values($results),
+            'dynload' => true,
+            'pages' => $pages,
+            'page' => $page
+        );
+
+        return $return;
     }
 
     /**

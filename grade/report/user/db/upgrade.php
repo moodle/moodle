@@ -27,16 +27,15 @@
  * @return bool result
  */
 function xmldb_gradereport_user_upgrade($oldversion) {
+    global $CFG;
 
-    if ($oldversion < 2014101500) {
-        // Need to always show weight and contribution to course total.
-        set_config('grade_report_user_showweight', 1);
+    // Automatically generated Moodle v3.2.0 release upgrade line.
+    // Put any upgrade step following this.
 
-        // User savepoint reached.
-        upgrade_plugin_savepoint(true, 2014101500, 'gradereport', 'user');
-    }
+    // Automatically generated Moodle v3.3.0 release upgrade line.
+    // Put any upgrade step following this.
 
-    // Moodle v2.8.0 release upgrade line.
+    // Automatically generated Moodle v3.4.0 release upgrade line.
     // Put any upgrade step following this.
 
     return true;

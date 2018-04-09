@@ -41,15 +41,16 @@ class backup_quiz_activity_structure_step extends backup_questions_activity_stru
         // Define each element separated.
         $quiz = new backup_nested_element('quiz', array('id'), array(
             'name', 'intro', 'introformat', 'timeopen', 'timeclose', 'timelimit',
-            'overduehandling', 'graceperiod', 'preferredbehaviour', 'attempts_number',
+            'overduehandling', 'graceperiod', 'preferredbehaviour', 'canredoquestions', 'attempts_number',
             'attemptonlast', 'grademethod', 'decimalpoints', 'questiondecimalpoints',
             'reviewattempt', 'reviewcorrectness', 'reviewmarks',
             'reviewspecificfeedback', 'reviewgeneralfeedback',
             'reviewrightanswer', 'reviewoverallfeedback',
-            'questionsperpage', 'navmethod', 'shufflequestions', 'shuffleanswers',
+            'questionsperpage', 'navmethod', 'shuffleanswers',
             'sumgrades', 'grade', 'timecreated',
             'timemodified', 'password', 'subnet', 'browsersecurity',
-            'delay1', 'delay2', 'showuserpicture', 'showblocks', 'completionattemptsexhausted', 'completionpass'));
+            'delay1', 'delay2', 'showuserpicture', 'showblocks', 'completionattemptsexhausted', 'completionpass',
+            'allowofflineattempts'));
 
         // Define elements for access rule subplugin settings.
         $this->add_subplugin_structure('quizaccess', $quiz, true);
@@ -57,7 +58,12 @@ class backup_quiz_activity_structure_step extends backup_questions_activity_stru
         $qinstances = new backup_nested_element('question_instances');
 
         $qinstance = new backup_nested_element('question_instance', array('id'), array(
-            'slot', 'page', 'questionid', 'maxmark'));
+            'slot', 'page', 'requireprevious', 'questionid', 'questioncategoryid', 'includingsubcategories', 'tags', 'maxmark'));
+
+        $sections = new backup_nested_element('sections');
+
+        $section = new backup_nested_element('section', array('id'), array(
+            'firstslot', 'heading', 'shufflequestions'));
 
         $feedbacks = new backup_nested_element('feedbacks');
 
@@ -79,7 +85,7 @@ class backup_quiz_activity_structure_step extends backup_questions_activity_stru
 
         $attempt = new backup_nested_element('attempt', array('id'), array(
             'userid', 'attemptnum', 'uniqueid', 'layout', 'currentpage', 'preview',
-            'state', 'timestart', 'timefinish', 'timemodified', 'timecheckstate', 'sumgrades'));
+            'state', 'timestart', 'timefinish', 'timemodified', 'timemodifiedoffline', 'timecheckstate', 'sumgrades'));
 
         // This module is using questions, so produce the related question states and sessions
         // attaching them to the $attempt element based in 'uniqueid' matching.
@@ -91,6 +97,9 @@ class backup_quiz_activity_structure_step extends backup_questions_activity_stru
         // Build the tree.
         $quiz->add_child($qinstances);
         $qinstances->add_child($qinstance);
+
+        $quiz->add_child($sections);
+        $sections->add_child($section);
 
         $quiz->add_child($feedbacks);
         $feedbacks->add_child($feedback);
@@ -108,6 +117,9 @@ class backup_quiz_activity_structure_step extends backup_questions_activity_stru
         $quiz->set_source_table('quiz', array('id' => backup::VAR_ACTIVITYID));
 
         $qinstance->set_source_table('quiz_slots',
+                array('quizid' => backup::VAR_PARENTID));
+
+        $section->set_source_table('quiz_sections',
                 array('quizid' => backup::VAR_PARENTID));
 
         $feedback->set_source_table('quiz_feedback',

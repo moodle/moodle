@@ -1,9 +1,6 @@
 <?php
 
-require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
-
-//HTTPS is required in this page when $CFG->loginhttps enabled
-$PAGE->https_required();
+require(__DIR__.'/../../config.php');
 
 $PAGE->set_url('/auth/ldap/ntlmsso_attempt.php');
 $PAGE->set_context(context_system::instance());
@@ -33,9 +30,8 @@ $PAGE->set_title("$site->fullname: $loginsite");
 $PAGE->set_heading($site->fullname);
 echo $OUTPUT->header();
 
-// $PAGE->https_required() up above takes care of what $CFG->httpswwwroot should be.
 $msg = '<p>'.get_string('ntlmsso_attempting', 'auth_ldap').'</p>'
     . '<img width="1", height="1" '
-    . ' src="' . $CFG->httpswwwroot . '/auth/ldap/ntlmsso_magic.php?sesskey='
+    . ' src="' . $CFG->wwwroot . '/auth/ldap/ntlmsso_magic.php?sesskey='
     . $sesskey . '" />';
-redirect($CFG->httpswwwroot . '/auth/ldap/ntlmsso_finish.php', $msg, 3);
+redirect($CFG->wwwroot . '/auth/ldap/ntlmsso_finish.php', $msg, 3);

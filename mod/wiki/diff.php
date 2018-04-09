@@ -63,10 +63,10 @@ if (!$cm = get_coursemodule_from_instance('wiki', $wiki->id)) {
 $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
 
 if ($compare >= $comparewith) {
-    print_error("A page version can only be compared with an older version.");
+    print_error('cannotcomparenewerversion', 'wiki');
 }
 
-require_login($course, true, $cm);
+require_course_login($course, true, $cm);
 
 if (!wiki_user_can_view($subwiki, $wiki)) {
     print_error('cannotviewpage', 'wiki');

@@ -218,7 +218,7 @@ class mod_feedback_events_testcase extends advanced_testcase {
 
         // Save the feedback.
         $sink = $this->redirectEvents();
-        $id = feedback_save_tmp_values($completed, false, $USER->id);
+        $id = feedback_save_tmp_values($completed, false);
         $events = $sink->get_events();
         $event = array_pop($events); // Response submitted feedback event.
         $sink->close();
@@ -257,14 +257,14 @@ class mod_feedback_events_testcase extends advanced_testcase {
 
         // Save the feedback.
         $sink = $this->redirectEvents();
-        feedback_save_tmp_values($completed, false, $USER->id);
+        feedback_save_tmp_values($completed, false);
         $events = $sink->get_events();
         $event = array_pop($events); // Response submitted feedback event.
         $sink->close();
 
         // Test legacy data.
         $arr = array($this->eventcourse->id, 'feedback', 'submit', 'view.php?id=' . $this->eventcm->id, $this->eventfeedback->id,
-                     $this->eventcm->id, $USER->id);
+                     $this->eventcm->id, $this->eventuser->id);
         $this->assertEventLegacyLogData($arr, $event);
 
         // Test can_view().
@@ -328,6 +328,19 @@ class mod_feedback_events_testcase extends advanced_testcase {
         } catch (coding_exception $e) {
             $this->assertContains("The 'anonymous' value must be set in other.", $e->getMessage());
         }
+    }
+
+    /**
+     * Test that event observer is executed on course deletion and the templates are removed.
+     */
+    public function test_delete_course() {
+        global $DB;
+        $this->resetAfterTest();
+        feedback_save_as_template($this->eventfeedback, 'my template', 0);
+        $courseid = $this->eventcourse->id;
+        $this->assertNotEmpty($DB->get_records('feedback_template', array('course' => $courseid)));
+        delete_course($this->eventcourse, false);
+        $this->assertEmpty($DB->get_records('feedback_template', array('course' => $courseid)));
     }
 }
 

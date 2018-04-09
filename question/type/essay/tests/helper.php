@@ -53,6 +53,7 @@ class qtype_essay_test_helper extends question_test_helper {
         $q->responsefieldlines = 10;
         $q->attachments = 0;
         $q->attachmentsrequired = 0;
+        $q->filetypeslist = '';
         $q->graderinfo = '';
         $q->graderinfoformat = FORMAT_HTML;
         $q->qtype = question_bank::get_qtype('essay');
@@ -87,6 +88,7 @@ class qtype_essay_test_helper extends question_test_helper {
         $fromform->responsefieldlines = 10;
         $fromform->attachments = 0;
         $fromform->attachmentsrequired = 0;
+        $fromform->filetypeslist = '';
         $fromform->graderinfo = array('text' => '', 'format' => FORMAT_HTML);
         $fromform->responsetemplate = array('text' => '', 'format' => FORMAT_HTML);
 
@@ -102,6 +104,19 @@ class qtype_essay_test_helper extends question_test_helper {
         $q = $this->initialise_essay_question();
         $q->responseformat = 'editorfilepicker';
         $q->attachments = 3;
+        return $q;
+    }
+
+    /**
+     * Makes an essay question using the HTML editor allowing embedded files as
+     * input, and up to two attachments, two needed.
+     * @return qtype_essay_question
+     */
+    public function make_essay_question_editorfilepickertworequired() {
+        $q = $this->initialise_essay_question();
+        $q->responseformat = 'editorfilepicker';
+        $q->attachments = 2;
+        $q->attachmentsrequired = 2;
         return $q;
     }
 
@@ -124,6 +139,7 @@ class qtype_essay_test_helper extends question_test_helper {
         $fromform->responsefieldlines = 10;
         $fromform->attachments = 3;
         $fromform->attachmentsrequired = 0;
+        $fromform->filetypeslist = '';
         $fromform->graderinfo = array('text' => '', 'format' => FORMAT_HTML);
         $fromform->responsetemplate = array('text' => '', 'format' => FORMAT_HTML);
 
@@ -159,6 +175,7 @@ class qtype_essay_test_helper extends question_test_helper {
         $fromform->responsefieldlines = 10;
         $fromform->attachments = 0;
         $fromform->attachmentsrequired = 0;
+        $fromform->filetypeslist = '';
         $fromform->graderinfo = array('text' => '', 'format' => FORMAT_HTML);
         $fromform->responsetemplate = array('text' => '', 'format' => FORMAT_HTML);
 
@@ -183,7 +200,7 @@ class qtype_essay_test_helper extends question_test_helper {
     }
 
     /**
-     * Makes an essay question without an inline text editor.
+     * Makes an essay question without an online text editor.
      * @return qtype_essay_question
      */
     public function make_essay_question_noinline() {
@@ -191,6 +208,7 @@ class qtype_essay_test_helper extends question_test_helper {
         $q->responseformat = 'noinline';
         $q->attachments = 3;
         $q->attachmentsrequired = 1;
+        $q->filetypeslist = '';
         return $q;
     }
 

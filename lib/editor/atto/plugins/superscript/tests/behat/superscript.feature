@@ -5,13 +5,31 @@ Feature: Atto superscript button
   @javascript
   Scenario: Subscript some text
     Given I log in as "admin"
-    And I navigate to "Edit profile" node in "My profile settings"
+    And I open my profile in edit mode
     And I set the field "Description" to "Helicopter"
-    And I set the field "Text editor" to "Plain text area"
     And I select the text in the "Description" Atto editor
     And I click on "Show more buttons" "button"
     When I click on "Superscript" "button"
     And I press "Update profile"
-    And I follow "Edit profile"
+    And I follow "Preferences" in the user menu
+    And I follow "Editor preferences"
+    And I set the field "Text editor" to "Plain text area"
+    And I press "Save changes"
+    And I click on "Edit profile" "link" in the "region-main" "region"
     Then I should see "<sup>Helicopter</sup>"
 
+  @javascript
+  Scenario: Superscript some text that is enclosed in subscript
+    Given I log in as "admin"
+    And I open my profile in edit mode
+    And I set the field "Description" to "<sub>Helicopter</sub>"
+    And I select the text in the "Description" Atto editor
+    And I click on "Show more buttons" "button"
+    When I click on "Superscript" "button"
+    And I press "Update profile"
+    And I follow "Preferences" in the user menu
+    And I follow "Editor preferences"
+    And I set the field "Text editor" to "Plain text area"
+    And I press "Save changes"
+    And I click on "Edit profile" "link" in the "region-main" "region"
+    Then I should see "<sup>Helicopter</sup>"

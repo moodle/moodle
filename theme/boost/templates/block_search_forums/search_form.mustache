@@ -1,0 +1,16 @@
+<div class="searchform">
+    <form action="{{actionurl}}" class="form-inline">
+        <input type="hidden" name="id" value="{{courseid}}">
+        <div class="form-group">
+            <label class="sr-only" for="searchform_search">{{#str}}search{{/str}}</label>
+            <input id="searchform_search" name="search" type="text" class="form-control" size="10">
+        </div>
+        <button class="btn btn-secondary" id="searchform_button" type="submit">{{#str}}go{{/str}}</button>
+    </form>
+    <div class="m-t-1">
+        <a href="{{advancedsearchurl}}">{{#str}}advancedsearch, block_search_forums{{/str}}</a>
+        {{#helpicon}}
+            {{>core/help_icon}}
+        {{/helpicon}}
+    </div>
+</div>

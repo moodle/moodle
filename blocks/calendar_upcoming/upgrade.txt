@@ -1,0 +1,5 @@
+=== 3.4 ===
+
+* block_calendar_upcoming::get_upcoming_content has been deprecated. Please
+  update your code to use the new APIs. You can see an example of how these
+  may be used in block_calendar_upcoming::get_content().

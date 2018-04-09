@@ -88,6 +88,12 @@ class mariadb_native_moodle_database extends mysqli_native_moodle_database {
         return array('description'=>$this->mysqli->server_info, 'version'=>$version);
     }
 
+    protected function has_breaking_change_quoted_defaults() {
+        $version = $this->get_server_info()['version'];
+        // Breaking change since 10.2.7: MDEV-13132.
+        return version_compare($version, '10.2.7', '>=');
+    }
+
     /**
      * It is time to require transactions everywhere.
      *
@@ -103,22 +109,16 @@ class mariadb_native_moodle_database extends mysqli_native_moodle_database {
     }
 
     /**
-     * Returns the current db engine.
+     * Does this mariadb instance support fulltext indexes?
      *
-     * MyISAM is NOT supported!
-     *
-     * @return string or null MySQL engine name
+     * @return bool
      */
-    public function get_dbengine() {
-        if ($this->external) {
-            return null;
-        }
+    public function is_fulltext_search_supported() {
+        $info = $this->get_server_info();
 
-        $engine = parent::get_dbengine();
-        if ($engine === 'MyISAM') {
-            debugging('MyISAM tables are not supported in MariaDB driver!');
-            $engine = 'XtraDB';
+        if (version_compare($info['version'], '10.0.5', '>=')) {
+            return true;
         }
-        return $engine;
+        return false;
     }
 }

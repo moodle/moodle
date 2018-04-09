@@ -53,6 +53,7 @@ require_once($CFG->dirroot.'/mod/lti/locallib.php');
 
 $id = optional_param('id', 0, PARAM_INT); // Course Module ID, or
 $l  = optional_param('l', 0, PARAM_INT);  // lti ID.
+$forceview = optional_param('forceview', 0, PARAM_BOOL);
 
 if ($l) {  // Two ways to specify the module.
     $lti = $DB->get_record('lti', array('id' => $l), '*', MUST_EXIST);
@@ -65,8 +66,9 @@ if ($l) {  // Two ways to specify the module.
 
 $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
 
-$tool = lti_get_tool_by_url_match($lti->toolurl);
-if ($tool) {
+if (!empty($lti->typeid)) {
+    $toolconfig = lti_get_type_config($lti->typeid);
+} else if ($tool = lti_get_tool_by_url_match($lti->toolurl)) {
     $toolconfig = lti_get_type_config($tool->id);
 } else {
     $toolconfig = array();
@@ -85,27 +87,18 @@ $PAGE->set_url($url);
 $launchcontainer = lti_get_launch_container($lti, $toolconfig);
 
 if ($launchcontainer == LTI_LAUNCH_CONTAINER_EMBED_NO_BLOCKS) {
-    $PAGE->set_pagelayout('frametop'); // Most frametops don't include footer, and pre-post blocks.
+    $PAGE->set_pagelayout('incourse');
     $PAGE->blocks->show_only_fake_blocks(); // Disable blocks for layouts which do include pre-post blocks.
 } else if ($launchcontainer == LTI_LAUNCH_CONTAINER_REPLACE_MOODLE_WINDOW) {
-    redirect('launch.php?id=' . $cm->id);
-} else {
+    if (!$forceview) {
+        $url = new moodle_url('/mod/lti/launch.php', array('id' => $cm->id));
+        redirect($url);
+    }
+} else { // Handles LTI_LAUNCH_CONTAINER_DEFAULT, LTI_LAUNCH_CONTAINER_EMBED, LTI_LAUNCH_CONTAINER_WINDOW.
     $PAGE->set_pagelayout('incourse');
 }
 
-// Mark viewed by user (if required).
-$completion = new completion_info($course);
-$completion->set_module_viewed($cm);
-
-$params = array(
-    'context' => $context,
-    'objectid' => $lti->id
-);
-$event = \mod_lti\event\course_module_viewed::create($params);
-$event->add_record_snapshot('course_modules', $cm);
-$event->add_record_snapshot('course', $course);
-$event->add_record_snapshot('lti', $lti);
-$event->trigger();
+lti_view($lti, $course, $cm, $context);
 
 $pagetitle = strip_tags($course->shortname.': '.format_string($lti->name));
 $PAGE->set_title($pagetitle);
@@ -124,24 +117,27 @@ if ($lti->showdescriptionlaunch && $lti->intro) {
 }
 
 if ( $launchcontainer == LTI_LAUNCH_CONTAINER_WINDOW ) {
-    echo "<script language=\"javascript\">//<![CDATA[\n";
-    echo "window.open('launch.php?id=".$cm->id."','lti');";
-    echo "//]]\n";
-    echo "</script>\n";
-    echo "<p>".get_string("basiclti_in_new_window", "lti")."</p>\n";
+    if (!$forceview) {
+        echo "<script language=\"javascript\">//<![CDATA[\n";
+        echo "window.open('launch.php?id=" . $cm->id . "&triggerview=0','lti-" . $cm->id . "');";
+        echo "//]]\n";
+        echo "</script>\n";
+        echo "<p>".get_string("basiclti_in_new_window", "lti")."</p>\n";
+    }
+    $url = new moodle_url('/mod/lti/launch.php', array('id' => $cm->id));
+    echo html_writer::start_tag('p');
+    echo html_writer::link($url, get_string("basiclti_in_new_window_open", "lti"), array('target' => '_blank'));
+    echo html_writer::end_tag('p');
 } else {
     // Request the launch content with an iframe tag.
-    echo '<iframe id="contentframe" height="600px" width="100%" src="launch.php?id='.$cm->id.'"></iframe>';
+    echo '<iframe id="contentframe" height="600px" width="100%" src="launch.php?id='.$cm->id.'&triggerview=0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>';
 
     // Output script to make the iframe tag be as large as possible.
     $resize = '
         <script type="text/javascript">
         //<![CDATA[
             YUI().use("node", "event", function(Y) {
-                //Take scrollbars off the outer document to prevent double scroll bar effect
                 var doc = Y.one("body");
-                doc.setStyle("overflow", "hidden");
-
                 var frame = Y.one("#contentframe");
                 var padding = 15; //The bottom of the iframe wasn\'t visible on some themes. Probably because of border widths, etc.
                 var lastHeight;

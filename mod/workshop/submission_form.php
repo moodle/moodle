@@ -42,6 +42,7 @@ class workshop_submission_form extends moodleform {
         $mform->addElement('text', 'title', get_string('submissiontitle', 'workshop'));
         $mform->setType('title', PARAM_TEXT);
         $mform->addRule('title', null, 'required', null, 'client');
+        $mform->addRule('title', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
 
         $mform->addElement('editor', 'content_editor', get_string('submissioncontent', 'workshop'), null, $contentopts);
         $mform->setType('content', PARAM_RAW);
@@ -74,19 +75,7 @@ class workshop_submission_form extends moodleform {
 
         $errors = parent::validation($data, $files);
 
-        if (empty($data['id']) and empty($data['example'])) {
-            // make sure there is no submission saved meanwhile from another browser window
-            $sql = "SELECT COUNT(s.id)
-                      FROM {workshop_submissions} s
-                      JOIN {workshop} w ON (s.workshopid = w.id)
-                      JOIN {course_modules} cm ON (w.id = cm.instance)
-                      JOIN {modules} m ON (m.name = 'workshop' AND m.id = cm.module)
-                     WHERE cm.id = ? AND s.authorid = ? AND s.example = 0";
-
-            if ($DB->count_records_sql($sql, array($data['cmid'], $USER->id))) {
-                $errors['title'] = get_string('err_multiplesubmissions', 'mod_workshop');
-            }
-        }
+        $errors += $this->_customdata['workshop']->validate_submission_data($data);
 
         return $errors;
     }

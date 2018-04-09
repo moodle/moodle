@@ -24,7 +24,7 @@
 
 define('CLI_SCRIPT', true);
 
-require(dirname(dirname(dirname(__FILE__))).'/config.php');
+require(__DIR__.'/../../config.php');
 require_once($CFG->dirroot . '/mod/chat/lib.php');
 
 // Browser quirks.
@@ -104,7 +104,7 @@ class ChatDaemon {
         $this->_trace_level         = E_ALL ^ E_USER_NOTICE;
         $this->_pcntl_exists        = function_exists('pcntl_fork');
         $this->_time_rest_socket    = 20;
-        $this->_beepsoundsrc        = $GLOBALS['CFG']->wwwroot.'/mod/chat/beep.wav';
+        $this->_beepsoundsrc        = $GLOBALS['CFG']->wwwroot.'/mod/chat/beep.mp3';
         $this->_freq_update_records = 20;
         $this->_freq_poll_idle_chat = $GLOBALS['CFG']->chat_old_ping;
         $this->_stdout = fopen('php://stdout', 'w');
@@ -342,7 +342,7 @@ EOD;
                 $msg->chatid    = $this->sets_info[$sessionid]['chatid'];
                 $msg->userid    = $this->sets_info[$sessionid]['userid'];
                 $msg->groupid   = $this->sets_info[$sessionid]['groupid'];
-                $msg->system    = 0;
+                $msg->issystem  = 0;
                 $msg->message   = 'beep '.$customdata['beep'];
                 $msg->timestamp = time();
 
@@ -428,7 +428,7 @@ EOD;
                 $msg->chatid    = $this->sets_info[$sessionid]['chatid'];
                 $msg->userid    = $this->sets_info[$sessionid]['userid'];
                 $msg->groupid   = $this->sets_info[$sessionid]['groupid'];
-                $msg->system    = 0;
+                $msg->issystem  = 0;
                 $msg->message   = urldecode($customdata['message']); // Have to undo the browser's encoding.
                 $msg->timestamp = time();
 
@@ -570,7 +570,7 @@ EOD;
         $msg->chatid = $chatuser->chatid;
         $msg->userid = $chatuser->userid;
         $msg->groupid = $chatuser->groupid;
-        $msg->system = 1;
+        $msg->issystem = 1;
         $msg->message = 'enter';
         $msg->timestamp = time();
 
@@ -754,8 +754,11 @@ EOD;
                         $this->conn_sets[$sessionid][CHAT_CONNECTION_CHANNEL]);
 
                     if ($output->beep) {
+                        $playscript = '(function() { var audioElement = document.createElement("audio");' . "\n";
+                        $playscript .= 'audioElement.setAttribute("src", "'.$this->_beepsoundsrc.'");' . "\n";
+                        $playscript .= 'audioElement.play(); })();' . "\n";
                         $this->write_data($this->conn_sets[$sessionid][CHAT_CONNECTION_CHANNEL],
-                                          '<embed src="'.$this->_beepsoundsrc.'" autostart="true" hidden="true" />');
+                                          '<script>' . $playscript . '</script>');
                     }
 
                     if ($info['quirks'] & QUIRK_CHUNK_UPDATE) {
@@ -782,7 +785,7 @@ EOD;
         $msg->chatid = $info['chatid'];
         $msg->userid = $info['userid'];
         $msg->groupid = $info['groupid'];
-        $msg->system = 1;
+        $msg->issystem = 1;
         $msg->message = 'exit';
         $msg->timestamp = time();
 
@@ -892,7 +895,9 @@ if (strpos($commandline, '-') === false) {
     $numswitches = count($switches);
 
     // Fancy way to give a "hyphen" boolean flag to each "switch".
-    $switches = array_map(create_function('$x', 'return array("str" => $x, "hyphen" => (substr($x, 0, 1) == "-"));'), $switches);
+    $switches = array_map(function($x) {
+        return array("str" => $x, "hyphen" => (substr($x, 0, 1) == "-"));
+    }, $switches);
 
     for ($i = 0; $i < $numswitches; ++$i) {
 

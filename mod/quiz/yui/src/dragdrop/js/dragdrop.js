@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /**
  * Drag and Drop for Quiz sections and slots.
  *
@@ -17,10 +18,10 @@ var CSS = {
     LIGHTBOX: 'lightbox',
     MOVEDOWN: 'movedown',
     MOVEUP: 'moveup',
-    PAGE : 'page',
+    PAGE: 'page',
     PAGECONTENT: 'page-content',
     RIGHT: 'right',
-    SECTION: 'section',
+    SECTION: 'slots',
     SECTIONADDMENUS: 'section_add_menus',
     SECTIONHANDLE: 'section-handle',
     SLOTS: 'slots',

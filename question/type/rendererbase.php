@@ -228,13 +228,7 @@ abstract class qtype_renderer extends plugin_renderer_base {
     protected function feedback_image($fraction, $selected = true) {
         $feedbackclass = question_state::graded_state_for_fraction($fraction)->get_feedback_class();
 
-        $attributes = array(
-            'src' => $this->output->pix_url('i/grade_' . $feedbackclass),
-            'alt' => get_string($feedbackclass, 'question'),
-            'class' => 'questioncorrectnessicon',
-        );
-
-        return html_writer::empty_tag('img', $attributes);
+        return $this->output->pix_icon('i/grade_' . $feedbackclass, get_string($feedbackclass, 'question'));
     }
 }
 

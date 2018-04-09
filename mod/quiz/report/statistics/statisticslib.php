@@ -23,11 +23,13 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die;
+
 /**
  * SQL to fetch relevant 'quiz_attempts' records.
  *
  * @param int    $quizid        quiz id to get attempts for
- * @param array  $groupstudents empty array if not using groups or array of students in current group.
+ * @param \core\dml\sql_join $groupstudentsjoins Contains joins, wheres, params, empty if not using groups
  * @param string $whichattempts which attempts to use, represented internally as one of the constants as used in
  *                                   $quiz->grademethod ie.
  *                                   QUIZ_GRADEAVERAGE, QUIZ_GRADEHIGHEST, QUIZ_ATTEMPTLAST or QUIZ_ATTEMPTFIRST
@@ -35,27 +37,22 @@
  * @param bool   $includeungraded whether to fetch ungraded attempts too
  * @return array FROM and WHERE sql fragments and sql params
  */
-function quiz_statistics_attempts_sql($quizid, $groupstudents, $whichattempts = QUIZ_GRADEAVERAGE, $includeungraded = false) {
-    global $DB;
-
-    $fromqa = '{quiz_attempts} quiza ';
-
+function quiz_statistics_attempts_sql($quizid, \core\dml\sql_join $groupstudentsjoins,
+        $whichattempts = QUIZ_GRADEAVERAGE, $includeungraded = false) {
+    $fromqa = "{quiz_attempts} quiza ";
     $whereqa = 'quiza.quiz = :quizid AND quiza.preview = 0 AND quiza.state = :quizstatefinished';
     $qaparams = array('quizid' => (int)$quizid, 'quizstatefinished' => quiz_attempt::FINISHED);
 
-    if ($groupstudents) {
-        ksort($groupstudents);
-        list($grpsql, $grpparams) = $DB->get_in_or_equal(array_keys($groupstudents),
-                SQL_PARAMS_NAMED, 'statsuser');
-        list($grpsql, $grpparams) = quiz_statistics_renumber_placeholders(
-                $grpsql, $grpparams, 'statsuser');
-        $whereqa .= " AND quiza.userid $grpsql";
-        $qaparams += $grpparams;
+    if (!empty($groupstudentsjoins->joins)) {
+        $fromqa .= "\nJOIN {user} u ON u.id = quiza.userid
+            {$groupstudentsjoins->joins} ";
+        $whereqa .= " AND {$groupstudentsjoins->wheres}";
+        $qaparams += $groupstudentsjoins->params;
     }
 
     $whichattemptsql = quiz_report_grade_method_sql($whichattempts);
     if ($whichattemptsql) {
-        $whereqa .= ' AND '.$whichattemptsql;
+        $whereqa .= ' AND ' . $whichattemptsql;
     }
 
     if (!$includeungraded) {
@@ -66,35 +63,10 @@ function quiz_statistics_attempts_sql($quizid, $groupstudents, $whichattempts = 
 }
 
 /**
- * Re-number all the params beginning with $paramprefix in a fragment of SQL.
- *
- * @param string $sql the SQL.
- * @param array $params the params.
- * @param string $paramprefix the parameter prefix.
- * @return array with two elements, the modified SQL, and the modified params.
- */
-function quiz_statistics_renumber_placeholders($sql, $params, $paramprefix) {
-    $basenumber = null;
-    $newparams = array();
-    $newsql = preg_replace_callback('~:' . preg_quote($paramprefix, '~') . '(\d+)\b~',
-            function($match) use ($paramprefix, $params, &$newparams, &$basenumber) {
-                if ($basenumber === null) {
-                    $basenumber = $match[1] - 1;
-                }
-                $oldname = $paramprefix . $match[1];
-                $newname = $paramprefix . ($match[1] - $basenumber);
-                $newparams[$newname] = $params[$oldname];
-                return ':' . $newname;
-            }, $sql);
-
-    return array($newsql, $newparams);
-}
-
-/**
  * Return a {@link qubaid_condition} from the values returned by {@link quiz_statistics_attempts_sql}.
  *
  * @param int     $quizid
- * @param array   $groupstudents
+ * @param \core\dml\sql_join $groupstudentsjoins Contains joins, wheres, params
  * @param string $whichattempts which attempts to use, represented internally as one of the constants as used in
  *                                   $quiz->grademethod ie.
  *                                   QUIZ_GRADEAVERAGE, QUIZ_GRADEHIGHEST, QUIZ_ATTEMPTLAST or QUIZ_ATTEMPTFIRST
@@ -102,8 +74,10 @@ function quiz_statistics_renumber_placeholders($sql, $params, $paramprefix) {
  * @param bool    $includeungraded
  * @return        \qubaid_join
  */
-function quiz_statistics_qubaids_condition($quizid, $groupstudents, $whichattempts = QUIZ_GRADEAVERAGE, $includeungraded = false) {
-    list($fromqa, $whereqa, $qaparams) = quiz_statistics_attempts_sql($quizid, $groupstudents, $whichattempts, $includeungraded);
+function quiz_statistics_qubaids_condition($quizid, \core\dml\sql_join $groupstudentsjoins,
+        $whichattempts = QUIZ_GRADEAVERAGE, $includeungraded = false) {
+    list($fromqa, $whereqa, $qaparams) = quiz_statistics_attempts_sql(
+            $quizid, $groupstudentsjoins, $whichattempts, $includeungraded);
     return new qubaid_join($fromqa, 'quiza.uniqueid', $whereqa, $qaparams);
 }
 
@@ -111,8 +85,12 @@ function quiz_statistics_qubaids_condition($quizid, $groupstudents, $whichattemp
  * This helper function returns a sequence of colours each time it is called.
  * Used for choosing colours for graph data series.
  * @return string colour name.
+ * @deprecated since Moodle 3.2
  */
 function quiz_statistics_graph_get_new_colour() {
+    debugging('The function quiz_statistics_graph_get_new_colour() is deprecated, please do not use it any more. '
+        . 'Colours will be handled by the charting library directly.', DEBUG_DEVELOPER);
+
     static $colourindex = -1;
     $colours = array('red', 'green', 'yellow', 'orange', 'purple', 'black',
         'maroon', 'blue', 'ltgreen', 'navy', 'ltred', 'ltltgreen', 'ltltorange',

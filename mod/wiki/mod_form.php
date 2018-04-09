@@ -35,7 +35,7 @@ if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
 }
 
-require_once('moodleform_mod.php');
+require_once($CFG->dirroot . '/course/moodleform_mod.php');
 require_once($CFG->dirroot . '/mod/wiki/locallib.php');
 require_once($CFG->dirroot . '/lib/datalib.php');
 
@@ -55,7 +55,7 @@ class mod_wiki_mod_form extends moodleform_mod {
         $mform->addRule('name', $required, 'required', null, 'client');
         $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
         // Adding the optional "intro" and "introformat" pair of fields
-        $this->add_intro_editor(true, get_string('wikiintro', 'wiki'));
+        $this->standard_intro_elements(get_string('wikiintro', 'wiki'));
 
         $wikimodeoptions = array ('collaborative' => get_string('wikimodecollaborative', 'wiki'), 'individual' => get_string('wikimodeindividual', 'wiki'));
         // Don't allow changes to the wiki type once it is set.

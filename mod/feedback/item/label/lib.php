@@ -21,13 +21,12 @@ require_once($CFG->libdir.'/formslib.php');
 class feedback_item_label extends feedback_item_base {
     protected $type = "label";
     private $presentationoptions = null;
-    private $commonparams;
-    private $item_form;
     private $context;
-    private $item;
 
-    public function init() {
-        global $CFG;
+    /**
+     * Constructor
+     */
+    public function __construct() {
         $this->presentationoptions = array('maxfiles' => EDITOR_UNLIMITED_FILES,
                                            'trusttext'=>true);
 
@@ -87,28 +86,13 @@ class feedback_item_label extends feedback_item_base {
         $this->item_form = new feedback_label_form('edit_item.php', $customdata);
     }
 
-    //this function only can used after the call of build_editform()
-    public function show_editform() {
-        $this->item_form->display();
-    }
-
-    public function is_cancelled() {
-        return $this->item_form->is_cancelled();
-    }
-
-    public function get_data() {
-        if ($this->item = $this->item_form->get_data()) {
-            return true;
-        }
-        return false;
-    }
-
     public function save_item() {
         global $DB;
 
-        if (!$item = $this->item_form->get_data()) {
+        if (!$this->get_data()) {
             return false;
         }
+        $item = $this->item;
 
         if (isset($item->clone_item) AND $item->clone_item) {
             $item->id = ''; //to clone this item
@@ -137,7 +121,12 @@ class feedback_item_label extends feedback_item_base {
         return $DB->get_record('feedback_item', array('id'=>$item->id));
     }
 
-    public function print_item($item) {
+    /**
+     * prepares the item for output or export to file
+     * @param stdClass $item
+     * @return string
+     */
+    private function print_item($item) {
         global $DB, $CFG;
 
         require_once($CFG->libdir . '/filelib.php');
@@ -172,61 +161,50 @@ class feedback_item_label extends feedback_item_base {
     }
 
     /**
-     * print the item at the edit-page of feedback
-     *
-     * @global object
-     * @param object $item
-     * @return void
+     * @param stdClass $item
+     * @param bool|true $withpostfix
+     * @return string
      */
-    public function print_item_preview($item) {
-        global $OUTPUT, $DB;
+    public function get_display_name($item, $withpostfix = true) {
+        return '';
+    }
 
-        if ($item->dependitem) {
-            if ($dependitem = $DB->get_record('feedback_item', array('id'=>$item->dependitem))) {
-                echo ' <span class="feedback_depend">';
-                echo '('.$dependitem->label.'-&gt;'.$item->dependvalue.')';
-                echo '</span>';
+    /**
+     * Adds an input element to the complete form
+     *
+     * @param stdClass $item
+     * @param mod_feedback_complete_form $form
+     */
+    public function complete_form_element($item, $form) {
+        global $DB;
+        if (!$item->feedback AND $item->template) {
+            // This is a template.
+            $template = $DB->get_record('feedback_template', array('id' => $item->template));
+            if ($template->ispublic) {
+                $context = context_system::instance();
+            } else {
+                $context = context_course::instance($template->course);
             }
+            $filearea = 'template';
+        } else {
+            // This is a question in the current feedback.
+            $context = $form->get_cm()->context;
+            $filearea = 'item';
         }
-        $this->print_item($item);
-    }
+        $output = file_rewrite_pluginfile_urls($item->presentation, 'pluginfile.php',
+                $context->id, 'mod_feedback', $filearea, $item->id);
+        $formatoptions = array('overflowdiv' => true, 'noclean' => true);
+        $output = format_text($output, FORMAT_HTML, $formatoptions);
+        $output = html_writer::div($output, '', ['id' => 'feedback_item_' . $item->id]);
 
-    /**
-     * print the item at the complete-page of feedback
-     *
-     * @global object
-     * @param object $item
-     * @param string $value
-     * @param bool $highlightrequire
-     * @return void
-     */
-    public function print_item_complete($item, $value = '', $highlightrequire = false) {
-        $this->print_item($item);
-    }
+        $inputname = $item->typ . '_' . $item->id;
 
-    /**
-     * print the item at the complete-page of feedback
-     *
-     * @global object
-     * @param object $item
-     * @param string $value
-     * @return void
-     */
-    public function print_item_show_value($item, $value = '') {
-        $this->print_item($item);
-    }
-
-    public function create_value($data) {
-        return false;
+        $name = $this->get_display_name($item);
+        $form->add_form_element($item, ['static', $inputname, $name, $output], false, false);
     }
 
     public function compare_value($item, $dbvalue, $dependvalue) {
         return false;
-    }
-
-    //used by create_item and update_item functions,
-    //when provided $data submitted from feedback_show_edit
-    public function get_presentation($data) {
     }
 
     public function postupdate($item) {
@@ -253,9 +231,6 @@ class feedback_item_label extends feedback_item_base {
         return false;
     }
 
-    public function check_value($value, $item) {
-    }
-
     public function excelprint_item(&$worksheet,
                              $row_offset,
                              $xls_formats,
@@ -268,12 +243,17 @@ class feedback_item_label extends feedback_item_base {
     }
     public function get_printval($item, $value) {
     }
-    public function get_analysed($item, $groupid = false, $courseid = false) {
-    }
-    public function value_type() {
-        return PARAM_BOOL;
-    }
-    public function clean_input_value($value) {
-        return '';
+
+    /**
+     * Return the analysis data ready for external functions.
+     *
+     * @param stdClass $item     the item (question) information
+     * @param int      $groupid  the group id to filter data (optional)
+     * @param int      $courseid the course id (optional)
+     * @return array an array of data with non scalar types json encoded
+     * @since  Moodle 3.3
+     */
+    public function get_analysed_for_external($item, $groupid = false, $courseid = false) {
+        return [];
     }
 }

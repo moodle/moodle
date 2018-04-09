@@ -1,7 +1,7 @@
 <?php
 
 function glossary_show_entry_faq($course, $cm, $glossary, $entry, $mode="", $hook="", $printicons=1, $aliases=true) {
-    global $USER;
+    global $USER, $OUTPUT;
     if ( $entry ) {
 
         echo '<table class="glossarypost faq" cellspacing="0">';
@@ -30,6 +30,11 @@ function glossary_show_entry_faq($course, $cm, $glossary, $entry, $mode="", $hoo
 
         glossary_print_entry_definition($entry, $glossary, $cm);
         glossary_print_entry_attachment($entry, $cm, 'html');
+
+        if (core_tag_tag::is_enabled('mod_glossary', 'glossary_entries')) {
+            echo $OUTPUT->tag_list(
+                core_tag_tag::get_item_tags('mod_glossary', 'glossary_entries', $entry->id), null, 'glossary-tags');
+        }
 
         echo '</td></tr>';
         echo '<tr valign="top"><td colspan="3" class="entrylowersection">';

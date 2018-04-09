@@ -1,0 +1,186 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template tool_analytics/models_list
+
+    Template for models list.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * none
+
+    Example context (json):
+    {
+        "models": [
+            {
+                "target": "Prevent devs at risk",
+                "targethelp": [
+                    {
+                        "title": "Help with something",
+                        "url": "http://example.org/help",
+                        "linktext": "",
+                        "icon":{
+                            "extraclasses": "iconhelp",
+                            "attributes": [
+                                {"name": "src", "value": "../../../pix/help.svg"},
+                                {"name": "alt", "value": "Help icon"}
+                            ]
+                        }
+                    }
+                ],
+                "enabled": 1,
+                "indicators": [{
+                    "name": "Indicator 1",
+                    "help": [{
+                            "title": "Help with something",
+                            "url": "http://example.org/help",
+                            "linktext": "",
+                            "icon":{
+                                "extraclasses": "iconhelp",
+                                "attributes": [
+                                    {"name": "src", "value": "../../../pix/help.svg"},
+                                    {"name": "alt", "value": "Help icon"}
+                                ]
+                            }
+                        }]
+                    },
+                    {
+                    "name": "Indicator 2",
+                    "help": [{
+                            "title": "Help with something",
+                            "url": "http://example.org/help",
+                            "linktext": "",
+                            "icon":{
+                                "extraclasses": "iconhelp",
+                                "attributes": [
+                                    {"name": "src", "value": "../../../pix/help.svg"},
+                                    {"name": "alt", "value": "Help icon"}
+                                ]
+                            }
+                        }]
+                    }],
+                "timesplitting": "Quarters",
+                "timesplittinghelp": [
+                    {
+                        "title": "Help with something",
+                        "url": "http://example.org/help",
+                        "linktext": "",
+                        "icon":{
+                            "extraclasses": "iconhelp",
+                            "attributes": [
+                                {"name": "src", "value": "../../../pix/help.svg"},
+                                {"name": "alt", "value": "Help icon"}
+                            ]
+                        }
+                    }
+                ],
+                "noinsights": "No insights available yet"
+            }
+        ],
+        "warnings": {
+            "message": "Hey, this is a warning"
+        }
+    }
+}}
+
+{{#warnings}}
+    {{> core/notification_warning}}
+{{/warnings}}
+{{#infos}}
+    {{> core/notification_info}}
+{{/infos}}
+
+<div class="box">
+    <table class="generaltable fullwidth">
+        <caption>{{#str}}analyticmodels, tool_analytics{{/str}}</caption>
+        <thead>
+            <tr>
+                <th scope="col">{{#str}}target, tool_analytics{{/str}}</th>
+                <th scope="col">{{#str}}enabled, tool_analytics{{/str}}</th>
+                <th scope="col">{{#str}}indicators, tool_analytics{{/str}}</th>
+                <th scope="col">{{#str}}modeltimesplitting, tool_analytics{{/str}}</th>
+                <th scope="col">{{#str}}insights, tool_analytics{{/str}}</th>
+                <th scope="col">{{#str}}actions{{/str}}</th>
+            </tr>
+        </thead>
+        <tbody>
+        {{#models}}
+            <tr>
+                <td>
+                    <span class="target-name">{{target}}</span>
+                    {{#targethelp}}
+                        {{>core/help_icon}}
+                    {{/targethelp}}
+                </td>
+                <td>
+                    {{#enabled}}
+                        {{#pix}}i/checked, core, {{#str}}yes{{/str}}{{/pix}}
+                    {{/enabled}}
+                    {{^enabled}}
+                        {{#str}}no{{/str}}
+                    {{/enabled}}
+                </td>
+                <td>
+                    <ul>
+                    {{#indicators}}
+                        <li>
+                            {{name}}
+                            {{#help}}
+                                {{>core/help_icon}}
+                            {{/help}}
+                        </li>
+                    {{/indicators}}
+                    </ul>
+                </td>
+                <td>
+                    {{#timesplitting}}
+                        {{timesplitting}}
+                        {{#timesplittinghelp}}
+                            {{>core/help_icon}}
+                        {{/timesplittinghelp}}
+                    {{/timesplitting}}
+                    {{^timesplitting}}
+                        {{#str}}notdefined, tool_analytics{{/str}}
+                        {{#timesplittinghelp}}
+                            {{>core/help_icon}}
+                        {{/timesplittinghelp}}
+                    {{/timesplitting}}
+                </td>
+                <td>
+                    {{! models_list renderer is responsible of sending one or the other}}
+                    {{#insights}}
+                        {{> core/single_select }}
+                    {{/insights}}
+                    {{#noinsights}}
+                        {{.}}
+                    {{/noinsights}}
+                </td>
+                <td>
+                    {{#actions}}
+                        {{> core/action_menu}}
+                    {{/actions}}
+                </td>
+            </tr>
+        {{/models}}
+        </tbody>
+    </table>
+</div>

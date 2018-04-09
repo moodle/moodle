@@ -713,11 +713,21 @@ abstract class info {
      * that we can guarantee does not happen from within building the modinfo
      * object.
      *
-     * @param string $info Info string
+     * @param \renderable|string $inforenderable Info string or renderable
      * @param int|\stdClass $courseorid
      * @return string Correctly formatted info string
      */
-    public static function format_info($info, $courseorid) {
+    public static function format_info($inforenderable, $courseorid) {
+        global $PAGE;
+
+        // Use renderer if required.
+        if (is_string($inforenderable)) {
+            $info = $inforenderable;
+        } else {
+            $renderer = $PAGE->get_renderer('core', 'availability');
+            $info = $renderer->render($inforenderable);
+        }
+
         // Don't waste time if there are no special tags.
         if (strpos($info, '<AVAILABILITY_') === false) {
             return $info;

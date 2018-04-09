@@ -63,7 +63,7 @@ class Less_Tree_Quoted extends Less_Tree{
 		return new Less_Tree_Quoted($this->quote . $value . $this->quote, $value, $this->escaped, $this->index, $this->currentFileInfo);
 	}
 
-	function compare($x) {
+    public function compare($x) {
 
 		if( !Less_Parser::is_method($x, 'toCSS') ){
 			return -1;

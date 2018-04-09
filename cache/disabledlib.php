@@ -125,9 +125,10 @@ class cache_disabled extends cache {
      * Checks if the cache has the requested key.
      *
      * @param int|string $key Unused.
+     * @param bool $tryloadifpossible Unused.
      * @return bool
      */
-    public function has($key) {
+    public function has($key, $tryloadifpossible = false) {
         return false;
     }
 
@@ -212,8 +213,12 @@ class cache_factory_disabled extends cache_factory {
      * @return cache_application|cache_session|cache_request
      */
     public function create_cache_from_definition($component, $area, array $identifiers = array(), $unused = null) {
+        // Regular cache definitions are cached inside create_definition().  This is not the case for disabledlib.php
+        // definitions as they use load_adhoc().  They are built as a new object on each call.
+        // We do not need to clone the definition because we know it's new.
         $definition = $this->create_definition($component, $area);
-        $cache = $this->create_cache($definition, $identifiers);
+        $definition->set_identifiers($identifiers);
+        $cache = $this->create_cache($definition);
         return $cache;
     }
 
@@ -232,8 +237,12 @@ class cache_factory_disabled extends cache_factory {
      * @return cache_application|cache_session|cache_request
      */
     public function create_cache_from_params($mode, $component, $area, array $identifiers = array(), array $options = array()) {
-        $definition = cache_definition::load_adhoc($mode, $component, $area);
-        $cache = $this->create_cache($definition, $identifiers);
+        // Regular cache definitions are cached inside create_definition().  This is not the case for disabledlib.php
+        // definitions as they use load_adhoc().  They are built as a new object on each call.
+        // We do not need to clone the definition because we know it's new.
+        $definition = cache_definition::load_adhoc($mode, $component, $area, $options);
+        $definition->set_identifiers($identifiers);
+        $cache = $this->create_cache($definition);
         return $cache;
     }
 

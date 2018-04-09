@@ -24,6 +24,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 require_once("$CFG->libdir/externallib.php");
 require_once("$CFG->libdir/filelib.php");
 
@@ -307,9 +309,9 @@ class core_files_external extends external_api {
             $filepath = '/';
         }
 
-        // Only allow uploads to draft or private areas (private is deprecated but still supported)
-        if (!($fileinfo['component'] == 'user' and in_array($fileinfo['filearea'], array('private', 'draft')))) {
-            throw new coding_exception('File can be uploaded to user private or draft areas only');
+        // Only allow uploads to draft area
+        if (!($fileinfo['component'] == 'user' and $fileinfo['filearea'] == 'draft')) {
+            throw new coding_exception('File can be uploaded to user draft area only');
         } else {
             $component = 'user';
             $filearea = $fileinfo['filearea'];
@@ -336,7 +338,7 @@ class core_files_external extends external_api {
         $context = self::get_context_from_params($fileinfo);
         self::validate_context($context);
         if (($fileinfo['component'] == 'user' and $fileinfo['filearea'] == 'private')) {
-            debugging('Uploading directly to user private files area is deprecated. Upload to a draft area and then move the files with core_user::add_user_private_files');
+            throw new moodle_exception('privatefilesupload');
         }
 
         $browser = get_file_browser();
@@ -384,129 +386,4 @@ class core_files_external extends external_api {
              )
         );
     }
-}
-
-/**
- * Deprecated files external functions
- *
- * @package    core_files
- * @copyright  2010 Dongsheng Cai
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since Moodle 2.0
- * @deprecated Moodle 2.2 MDL-29106 - Please do not use this class any more.
- * @see core_files_external
- */
-class moodle_file_external extends external_api {
-
-    /**
-     * Returns description of get_files parameters
-     *
-     * @return external_function_parameters
-     * @since Moodle 2.0
-     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @see core_files_external::get_files_parameters()
-     */
-    public static function get_files_parameters() {
-        return core_files_external::get_files_parameters();
-    }
-
-    /**
-     * Return moodle files listing
-     *
-     * @param int $contextid
-     * @param int $component
-     * @param int $filearea
-     * @param int $itemid
-     * @param string $filepath
-     * @param string $filename
-     * @param int $modified timestamp to return files changed after this time.
-     * @param string $contextlevel The context level for the file location.
-     * @param int $instanceid The instance id for where the file is located.
-     * @return array
-     * @since Moodle 2.0
-     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @see core_files_external::get_files()
-     */
-    public static function get_files($contextid, $component, $filearea, $itemid, $filepath, $filename, $modified = null,
-                                     $contextlevel = null, $instanceid = null) {
-        return core_files_external::get_files($contextid, $component, $filearea, $itemid, $filepath, $filename,
-            $modified, $contextlevel, $instanceid);
-    }
-
-    /**
-     * Returns description of get_files returns
-     *
-     * @return external_single_structure
-     * @since Moodle 2.0
-     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @see core_files_external::get_files_returns()
-     */
-    public static function get_files_returns() {
-        return core_files_external::get_files_returns();
-    }
-
-    /**
-     * Marking the method as deprecated.
-     *
-     * @return bool
-     */
-    public static function get_files_is_deprecated() {
-        return true;
-    }
-
-    /**
-     * Returns description of upload parameters
-     *
-     * @return external_function_parameters
-     * @since Moodle 2.0
-     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @see core_files_external::upload_parameters()
-     */
-    public static function upload_parameters() {
-        return core_files_external::upload_parameters();
-    }
-
-    /**
-     * Uploading a file to moodle
-     *
-     * @param int $contextid
-     * @param string $component
-     * @param string $filearea
-     * @param int $itemid
-     * @param string $filepath
-     * @param string $filename
-     * @param string $filecontent
-     * @param string $contextlevel Context level (block, course, coursecat, system, user or module)
-     * @param int    $instanceid   Instance id of the item associated with the context level
-     * @return array
-     * @since Moodle 2.0
-     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @see core_files_external::upload()
-     */
-    public static function upload($contextid, $component, $filearea, $itemid, $filepath, $filename, $filecontent, $contextlevel, $instanceid) {
-        return core_files_external::upload($contextid, $component, $filearea, $itemid, $filepath, $filename,
-            $filecontent, $contextlevel, $instanceid);
-    }
-
-    /**
-     * Returns description of upload returns
-     *
-     * @return external_single_structure
-     * @since Moodle 2.0
-     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @see core_files_external::upload_returns()
-     */
-    public static function upload_returns() {
-        return core_files_external::upload_returns();
-    }
-
-    /**
-     * Marking the method as deprecated.
-     *
-     * @return bool
-     */
-    public static function upload_is_deprecated() {
-        return true;
-    }
-
 }

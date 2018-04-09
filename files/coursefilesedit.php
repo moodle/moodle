@@ -16,7 +16,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 require_once('../config.php');
-require_once(dirname(__FILE__) . '/coursefilesedit_form.php');
+require_once(__DIR__ . '/coursefilesedit_form.php');
 require_once($CFG->dirroot . '/repository/lib.php');
 
 // current context

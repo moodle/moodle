@@ -50,7 +50,8 @@ abstract class core_filetypes {
             '3gp' => array('type' => 'video/quicktime', 'icon' => 'quicktime', 'groups' => array('video'), 'string' => 'video'),
             '7z' => array('type' => 'application/x-7z-compressed', 'icon' => 'archive',
                     'groups' => array('archive'), 'string' => 'archive'),
-            'aac' => array('type' => 'audio/aac', 'icon' => 'audio', 'groups' => array('audio'), 'string' => 'audio'),
+            'aac' => array('type' => 'audio/aac', 'icon' => 'audio', 'groups' => array('audio', 'html_audio', 'web_audio'),
+                    'string' => 'audio'),
             'accdb' => array('type' => 'application/msaccess', 'icon' => 'base'),
             'ai' => array('type' => 'application/postscript', 'icon' => 'eps', 'groups' => array('image'), 'string' => 'image'),
             'aif' => array('type' => 'audio/x-aiff', 'icon' => 'audio', 'groups' => array('audio'), 'string' => 'audio'),
@@ -89,7 +90,9 @@ abstract class core_filetypes {
             'dxr' => array('type' => 'application/x-director', 'icon' => 'flash'),
             'eps' => array('type' => 'application/postscript', 'icon' => 'eps'),
             'epub' => array('type' => 'application/epub+zip', 'icon' => 'epub', 'groups' => array('document')),
-            'fdf' => array('type' => 'application/pdf', 'icon' => 'pdf'),
+            'fdf' => array('type' => 'application/vnd.fdf', 'icon' => 'pdf'),
+            'flac' => array('type' => 'audio/flac', 'icon' => 'audio', 'groups' => array('audio', 'html_audio', 'web_audio'),
+                    'string' => 'audio'),
             'flv' => array('type' => 'video/x-flv', 'icon' => 'flash',
                     'groups' => array('video', 'web_video'), 'string' => 'video'),
             'f4v' => array('type' => 'video/mp4', 'icon' => 'flash', 'groups' => array('video', 'web_video'), 'string' => 'video'),
@@ -97,6 +100,12 @@ abstract class core_filetypes {
             'gallery' => array('type' => 'application/x-smarttech-notebook', 'icon' => 'archive'),
             'galleryitem' => array('type' => 'application/x-smarttech-notebook', 'icon' => 'archive'),
             'gallerycollection' => array('type' => 'application/x-smarttech-notebook', 'icon' => 'archive'),
+            'gdraw' => array('type' => 'application/vnd.google-apps.drawing', 'icon' => 'image', 'groups' => array('image')),
+            'gdoc' => array('type' => 'application/vnd.google-apps.document', 'icon' => 'document', 'groups' => array('document')),
+            'gsheet' => array('type' => 'application/vnd.google-apps.spreadsheet', 'icon' => 'spreadsheet',
+                    'groups' => array('spreadsheet')),
+            'gslides' => array('type' => 'application/vnd.google-apps.presentation', 'icon' => 'powerpoint',
+                    'groups' => array('presentation')),
             'gif' => array('type' => 'image/gif', 'icon' => 'gif', 'groups' => array('image', 'web_image'), 'string' => 'image'),
             'gtar' => array('type' => 'application/x-gtar', 'icon' => 'archive',
                     'groups' => array('archive'), 'string' => 'archive'),
@@ -137,18 +146,25 @@ abstract class core_filetypes {
             'mht' => array('type' => 'message/rfc822', 'icon' => 'archive'),
             'mhtml' => array('type' => 'message/rfc822', 'icon' => 'archive'),
             'mov' => array('type' => 'video/quicktime', 'icon' => 'quicktime',
-                    'groups' => array('video', 'web_video'), 'string' => 'video'),
+                    'groups' => array('video', 'web_video', 'html_video'), 'string' => 'video'),
             'movie' => array('type' => 'video/x-sgi-movie', 'icon' => 'quicktime', 'groups' => array('video'), 'string' => 'video'),
             'mw' => array('type' => 'application/maple', 'icon' => 'math'),
             'mws' => array('type' => 'application/maple', 'icon' => 'math'),
             'm3u' => array('type' => 'audio/x-mpegurl', 'icon' => 'mp3', 'groups' => array('audio'), 'string' => 'audio'),
-            'mp3' => array('type' => 'audio/mp3', 'icon' => 'mp3', 'groups' => array('audio', 'web_audio'), 'string' => 'audio'),
-            'mp4' => array('type' => 'video/mp4', 'icon' => 'mpeg', 'groups' => array('video', 'web_video'), 'string' => 'video'),
-            'm4v' => array('type' => 'video/mp4', 'icon' => 'mpeg', 'groups' => array('video', 'web_video'), 'string' => 'video'),
-            'm4a' => array('type' => 'audio/mp4', 'icon' => 'mp3', 'groups' => array('audio'), 'string' => 'audio'),
-            'mpeg' => array('type' => 'video/mpeg', 'icon' => 'mpeg', 'groups' => array('video', 'web_video'), 'string' => 'video'),
-            'mpe' => array('type' => 'video/mpeg', 'icon' => 'mpeg', 'groups' => array('video', 'web_video'), 'string' => 'video'),
-            'mpg' => array('type' => 'video/mpeg', 'icon' => 'mpeg', 'groups' => array('video', 'web_video'), 'string' => 'video'),
+            'mp3' => array('type' => 'audio/mp3', 'icon' => 'mp3', 'groups' => array('audio', 'html_audio', 'web_audio'),
+                    'string' => 'audio'),
+            'mp4' => array('type' => 'video/mp4', 'icon' => 'mpeg', 'groups' => array('html_video', 'video', 'web_video'),
+                    'string' => 'video'),
+            'm4v' => array('type' => 'video/mp4', 'icon' => 'mpeg', 'groups' => array('html_video', 'video', 'web_video'),
+                    'string' => 'video'),
+            'm4a' => array('type' => 'audio/mp4', 'icon' => 'mp3', 'groups' => array('audio', 'html_audio', 'web_audio'),
+                    'string' => 'audio'),
+            'mpeg' => array('type' => 'video/mpeg', 'icon' => 'mpeg', 'groups' => array('video', 'web_video'),
+                    'string' => 'video'),
+            'mpe' => array('type' => 'video/mpeg', 'icon' => 'mpeg', 'groups' => array('video', 'web_video'),
+                    'string' => 'video'),
+            'mpg' => array('type' => 'video/mpeg', 'icon' => 'mpeg', 'groups' => array('video', 'web_video'),
+                    'string' => 'video'),
             'mpr' => array('type' => 'application/vnd.moodle.profiling', 'icon' => 'moodle'),
 
             'nbk' => array('type' => 'application/x-smarttech-notebook', 'icon' => 'archive'),
@@ -161,8 +177,10 @@ abstract class core_filetypes {
             'odm' => array('type' => 'application/vnd.oasis.opendocument.text-master', 'icon' => 'writer'),
             'odg' => array('type' => 'application/vnd.oasis.opendocument.graphics', 'icon' => 'draw'),
             'otg' => array('type' => 'application/vnd.oasis.opendocument.graphics-template', 'icon' => 'draw'),
-            'odp' => array('type' => 'application/vnd.oasis.opendocument.presentation', 'icon' => 'impress'),
-            'otp' => array('type' => 'application/vnd.oasis.opendocument.presentation-template', 'icon' => 'impress'),
+            'odp' => array('type' => 'application/vnd.oasis.opendocument.presentation', 'icon' => 'impress',
+                    'groups' => array('presentation')),
+            'otp' => array('type' => 'application/vnd.oasis.opendocument.presentation-template', 'icon' => 'impress',
+                    'groups' => array('presentation')),
             'ods' => array('type' => 'application/vnd.oasis.opendocument.spreadsheet',
                     'icon' => 'calc', 'groups' => array('spreadsheet')),
             'ots' => array('type' => 'application/vnd.oasis.opendocument.spreadsheet-template',
@@ -171,12 +189,15 @@ abstract class core_filetypes {
             'odf' => array('type' => 'application/vnd.oasis.opendocument.formula', 'icon' => 'math'),
             'odb' => array('type' => 'application/vnd.oasis.opendocument.database', 'icon' => 'base'),
             'odi' => array('type' => 'application/vnd.oasis.opendocument.image', 'icon' => 'draw'),
-            'oga' => array('type' => 'audio/ogg', 'icon' => 'audio', 'groups' => array('audio'), 'string' => 'audio'),
-            'ogg' => array('type' => 'audio/ogg', 'icon' => 'audio', 'groups' => array('audio'), 'string' => 'audio'),
-            'ogv' => array('type' => 'video/ogg', 'icon' => 'video', 'groups' => array('video'), 'string' => 'video'),
+            'oga' => array('type' => 'audio/ogg', 'icon' => 'audio', 'groups' => array('audio', 'html_audio', 'web_audio'),
+                    'string' => 'audio'),
+            'ogg' => array('type' => 'audio/ogg', 'icon' => 'audio', 'groups' => array('audio', 'html_audio', 'web_audio'),
+                    'string' => 'audio'),
+            'ogv' => array('type' => 'video/ogg', 'icon' => 'video', 'groups' => array('html_video', 'video', 'web_video'),
+                    'string' => 'video'),
 
             'pct' => array('type' => 'image/pict', 'icon' => 'image', 'groups' => array('image'), 'string' => 'image'),
-            'pdf' => array('type' => 'application/pdf', 'icon' => 'pdf'),
+            'pdf' => array('type' => 'application/pdf', 'icon' => 'pdf', 'groups' => array('document')),
             'php' => array('type' => 'text/plain', 'icon' => 'sourcecode'),
             'pic' => array('type' => 'image/pict', 'icon' => 'image', 'groups' => array('image'), 'string' => 'image'),
             'pict' => array('type' => 'image/pict', 'icon' => 'image', 'groups' => array('image'), 'string' => 'image'),
@@ -184,15 +205,19 @@ abstract class core_filetypes {
             'pps' => array('type' => 'application/vnd.ms-powerpoint', 'icon' => 'powerpoint', 'groups' => array('presentation')),
             'ppt' => array('type' => 'application/vnd.ms-powerpoint', 'icon' => 'powerpoint', 'groups' => array('presentation')),
             'pptx' => array('type' => 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-                    'icon' => 'powerpoint'),
-            'pptm' => array('type' => 'application/vnd.ms-powerpoint.presentation.macroEnabled.12', 'icon' => 'powerpoint'),
+                    'icon' => 'powerpoint', 'groups' => array('presentation')),
+            'pptm' => array('type' => 'application/vnd.ms-powerpoint.presentation.macroEnabled.12', 'icon' => 'powerpoint',
+                    'groups' => array('presentation')),
             'potx' => array('type' => 'application/vnd.openxmlformats-officedocument.presentationml.template',
-                    'icon' => 'powerpoint'),
-            'potm' => array('type' => 'application/vnd.ms-powerpoint.template.macroEnabled.12', 'icon' => 'powerpoint'),
-            'ppam' => array('type' => 'application/vnd.ms-powerpoint.addin.macroEnabled.12', 'icon' => 'powerpoint'),
+                    'icon' => 'powerpoint', 'groups' => array('presentation')),
+            'potm' => array('type' => 'application/vnd.ms-powerpoint.template.macroEnabled.12', 'icon' => 'powerpoint',
+                    'groups' => array('presentation')),
+            'ppam' => array('type' => 'application/vnd.ms-powerpoint.addin.macroEnabled.12', 'icon' => 'powerpoint',
+                    'groups' => array('presentation')),
             'ppsx' => array('type' => 'application/vnd.openxmlformats-officedocument.presentationml.slideshow',
-                    'icon' => 'powerpoint'),
-            'ppsm' => array('type' => 'application/vnd.ms-powerpoint.slideshow.macroEnabled.12', 'icon' => 'powerpoint'),
+                    'icon' => 'powerpoint', 'groups' => array('presentation')),
+            'ppsm' => array('type' => 'application/vnd.ms-powerpoint.slideshow.macroEnabled.12', 'icon' => 'powerpoint',
+                    'groups' => array('presentation')),
             'ps' => array('type' => 'application/postscript', 'icon' => 'pdf'),
             'pub' => array('type' => 'application/x-mspublisher', 'icon' => 'publisher', 'groups' => array('presentation')),
 
@@ -213,6 +238,7 @@ abstract class core_filetypes {
             'rtx' => array('type' => 'text/richtext', 'icon' => 'text'),
             'rv' => array('type' => 'audio/x-pn-realaudio-plugin', 'icon' => 'audio',
                     'groups' => array('video'), 'string' => 'video'),
+            'scss' => array('type' => 'text/x-scss', 'icon' => 'text', 'groups' => array('web_file')),
             'sh' => array('type' => 'application/x-sh', 'icon' => 'sourcecode'),
             'sit' => array('type' => 'application/x-stuffit', 'icon' => 'archive',
                     'groups' => array('archive'), 'string' => 'archive'),
@@ -233,8 +259,9 @@ abstract class core_filetypes {
             'stc' => array('type' => 'application/vnd.sun.xml.calc.template', 'icon' => 'calc'),
             'sxd' => array('type' => 'application/vnd.sun.xml.draw', 'icon' => 'draw'),
             'std' => array('type' => 'application/vnd.sun.xml.draw.template', 'icon' => 'draw'),
-            'sxi' => array('type' => 'application/vnd.sun.xml.impress', 'icon' => 'impress'),
-            'sti' => array('type' => 'application/vnd.sun.xml.impress.template', 'icon' => 'impress'),
+            'sxi' => array('type' => 'application/vnd.sun.xml.impress', 'icon' => 'impress', 'groups' => array('presentation')),
+            'sti' => array('type' => 'application/vnd.sun.xml.impress.template', 'icon' => 'impress',
+                    'groups' => array('presentation')),
             'sxg' => array('type' => 'application/vnd.sun.xml.writer.global', 'icon' => 'writer'),
             'sxm' => array('type' => 'application/vnd.sun.xml.math', 'icon' => 'math'),
 
@@ -246,19 +273,23 @@ abstract class core_filetypes {
             'texinfo' => array('type' => 'application/x-texinfo', 'icon' => 'text'),
             'tsv' => array('type' => 'text/tab-separated-values', 'icon' => 'text'),
             'txt' => array('type' => 'text/plain', 'icon' => 'text', 'defaulticon' => true),
-            'wav' => array('type' => 'audio/wav', 'icon' => 'wav', 'groups' => array('audio'), 'string' => 'audio'),
-            'webm' => array('type' => 'video/webm', 'icon' => 'video', 'groups' => array('video'), 'string' => 'video'),
+            'vtt' => array('type' => 'text/vtt', 'icon' => 'text', 'groups' => array('html_track')),
+            'wav' => array('type' => 'audio/wav', 'icon' => 'wav', 'groups' => array('audio', 'html_audio', 'web_audio'),
+                    'string' => 'audio'),
+            'webm' => array('type' => 'video/webm', 'icon' => 'video', 'groups' => array('html_video', 'video', 'web_video'),
+                    'string' => 'video'),
             'wmv' => array('type' => 'video/x-ms-wmv', 'icon' => 'wmv', 'groups' => array('video'), 'string' => 'video'),
             'asf' => array('type' => 'video/x-ms-asf', 'icon' => 'wmv', 'groups' => array('video'), 'string' => 'video'),
             'wma' => array('type' => 'audio/x-ms-wma', 'icon' => 'audio', 'groups' => array('audio'), 'string' => 'audio'),
 
             'xbk' => array('type' => 'application/x-smarttech-notebook', 'icon' => 'archive'),
-            'xdp' => array('type' => 'application/pdf', 'icon' => 'pdf'),
-            'xfd' => array('type' => 'application/pdf', 'icon' => 'pdf'),
-            'xfdf' => array('type' => 'application/pdf', 'icon' => 'pdf'),
+            'xdp' => array('type' => 'application/vnd.adobe.xdp+xml', 'icon' => 'pdf'),
+            'xfd' => array('type' => 'application/vnd.xfdl', 'icon' => 'pdf'),
+            'xfdf' => array('type' => 'application/vnd.adobe.xfdf', 'icon' => 'pdf'),
 
             'xls' => array('type' => 'application/vnd.ms-excel', 'icon' => 'spreadsheet', 'groups' => array('spreadsheet')),
-            'xlsx' => array('type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'icon' => 'spreadsheet'),
+            'xlsx' => array('type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'icon' => 'spreadsheet',
+                'groups' => array('spreadsheet')),
             'xlsm' => array('type' => 'application/vnd.ms-excel.sheet.macroEnabled.12',
                     'icon' => 'spreadsheet', 'groups' => array('spreadsheet')),
             'xltx' => array('type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.template',
@@ -272,6 +303,23 @@ abstract class core_filetypes {
 
             'zip' => array('type' => 'application/zip', 'icon' => 'archive', 'groups' => array('archive'), 'string' => 'archive')
         );
+    }
+
+    /**
+     * Given a mimetype - return a valid file extension for it.
+     *
+     * @param $mimetype string
+     * @return string|bool False if the mimetype was not known, a string indicating a valid file extension otherwise. It may not
+     *                     be the only valid file extension - just the first one found.
+     */
+    public static function get_file_extension($mimetype) {
+        $types = self::get_types();
+        foreach ($types as $extension => $info) {
+            if ($info['type'] == $mimetype) {
+                return $extension;
+            }
+        }
+        return false;
     }
 
     /**

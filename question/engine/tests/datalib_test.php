@@ -27,8 +27,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
-require_once(dirname(__FILE__) . '/../lib.php');
-require_once(dirname(__FILE__) . '/helpers.php');
+require_once(__DIR__ . '/../lib.php');
+require_once(__DIR__ . '/helpers.php');
 
 
 /**
@@ -125,5 +125,33 @@ class question_engine_data_mapper_testcase extends qbehaviour_walkthrough_test_b
         $this->assertEquals(10, $quba1->get_question_max_mark(2));
         $this->assertEquals( 5, $quba2->get_question_max_mark(1));
         $this->assertEquals( 2, $quba2->get_question_max_mark(2));
+    }
+
+    public function test_load_used_variants() {
+        $this->resetAfterTest();
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
+
+        $cat = $generator->create_question_category();
+        $questiondata1 = $generator->create_question('shortanswer', null, array('category' => $cat->id));
+        $questiondata2 = $generator->create_question('shortanswer', null, array('category' => $cat->id));
+        $questiondata3 = $generator->create_question('shortanswer', null, array('category' => $cat->id));
+
+        $quba = question_engine::make_questions_usage_by_activity('test', context_system::instance());
+        $quba->set_preferred_behaviour('deferredfeedback');
+        $question1 = question_bank::load_question($questiondata1->id);
+        $question3 = question_bank::load_question($questiondata3->id);
+        $quba->add_question($question1);
+        $quba->add_question($question1);
+        $quba->add_question($question3);
+        $quba->start_all_questions();
+        question_engine::save_questions_usage_by_activity($quba);
+
+        $this->assertEquals(array(
+                    $questiondata1->id => array(1 => 2),
+                    $questiondata2->id => array(),
+                    $questiondata3->id => array(1 => 1),
+                ), question_engine::load_used_variants(
+                    array($questiondata1->id, $questiondata2->id, $questiondata3->id),
+                    new qubaid_list(array($quba->get_id()))));
     }
 }

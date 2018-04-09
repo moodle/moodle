@@ -1,0 +1,48 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template block_myoverview/course-paging-content
+
+    This template renders the each course block containing a summary and calendar events.
+
+    Example context (json):
+    {
+        "pages": [
+            {
+                "page": 1,
+                "active": true,
+                "courses": [
+                    {
+                        "fullnamedisplay": "course 1",
+                        "viewurl": "https://www.google.com",
+                        "summary": "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout."
+                    },
+                    {
+                        "fullnamedisplay": "course 2",
+                        "viewurl": "https://www.google.com",
+                        "summary": "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout."
+                    }
+                ]
+            }
+        ]
+    }
+}}
+{{< block_myoverview/paging-content }}
+    {{$paging-content-item}}
+        {{> block_myoverview/course-paging-content-item }}
+    {{/paging-content-item}}
+{{/ block_myoverview/paging-content }}

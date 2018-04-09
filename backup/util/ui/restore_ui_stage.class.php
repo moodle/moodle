@@ -144,11 +144,11 @@ abstract class restore_ui_independent_stage {
      * in use. There is a similar function in restore_ui. but that class is not
      * used on some stages.
      *
-     * @return \core\progress\null
+     * @return \core\progress\none
      */
     public function get_progress_reporter() {
         if (!$this->progressreporter) {
-            $this->progressreporter = new \core\progress\null();
+            $this->progressreporter = new \core\progress\none();
         }
         return $this->progressreporter;
     }

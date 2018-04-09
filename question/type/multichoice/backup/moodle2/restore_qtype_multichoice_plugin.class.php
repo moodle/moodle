@@ -70,12 +70,14 @@ class restore_qtype_multichoice_plugin extends restore_qtype_plugin {
         // If the question has been created by restore, we need to create its
         // qtype_multichoice_options too.
         if ($questioncreated) {
-            // Adjust some columns.
             $data->questionid = $newquestionid;
-            // Insert record.
-            $newitemid = $DB->insert_record('qtype_multichoice_options', $data);
-            // Create mapping (needed for decoding links).
-            $this->set_mapping('qtype_multichoice_options', $oldid, $newitemid);
+
+            // It is possible for old backup files to contain unique key violations.
+            // We need to check to avoid that.
+            if (!$DB->record_exists('qtype_multichoice_options', array('questionid' => $data->questionid))) {
+                $newitemid = $DB->insert_record('qtype_multichoice_options', $data);
+                $this->set_mapping('qtype_multichoice_options', $oldid, $newitemid);
+            }
         }
     }
 

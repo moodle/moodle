@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Cron job for reviewing and aggregating course completion criteria
+ * Code used by scheduled tasks for reviewing and aggregating course completion criteria.
  *
  * @package core_completion
  * @category completion
@@ -26,21 +26,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir.'/completionlib.php');
-
-/**
- * Update user's course completion statuses
- *
- * First update all criteria completions, then aggregate all criteria completions
- * and update overall course completions
- */
-function completion_cron() {
-
-    completion_cron_mark_started();
-
-    completion_cron_criteria();
-
-    completion_cron_completions();
-}
 
 /**
  * Mark users as started if the config option is set

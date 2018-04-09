@@ -43,20 +43,52 @@ class mod_assign_extension_form extends moodleform {
      * Define the form - called by parent constructor
      */
     public function definition() {
-        $mform = $this->_form;
+        global $DB;
 
-        list($coursemoduleid, $userid, $batchusers, $instance, $data) = $this->_customdata;
+        $mform = $this->_form;
+        $params = $this->_customdata;
+
         // Instance variable is used by the form validation function.
+        $instance = $params['instance'];
         $this->instance = $instance;
 
-        if ($batchusers) {
-            $listusersmessage = get_string('grantextensionforusers', 'assign', count(explode(',', $batchusers)));
-            $mform->addElement('static', 'applytoselectedusers', '', $listusersmessage);
+        // Get the assignment class.
+        $assign = $params['assign'];
+        $userlist = $params['userlist'];
+        $usercount = 0;
+        $usershtml = '';
+
+        $extrauserfields = get_extra_user_fields($assign->get_context());
+        foreach ($userlist as $userid) {
+            if ($usercount >= 5) {
+                $usershtml .= get_string('moreusers', 'assign', count($userlist) - 5);
+                break;
+            }
+            $user = $DB->get_record('user', array('id' => $userid), '*', MUST_EXIST);
+
+            $usershtml .= $assign->get_renderer()->render(new assign_user_summary($user,
+                                                                    $assign->get_course()->id,
+                                                                    has_capability('moodle/site:viewfullnames',
+                                                                    $assign->get_course_context()),
+                                                                    $assign->is_blind_marking(),
+                                                                    $assign->get_uniqueid_for_user($user->id),
+                                                                    $extrauserfields,
+                                                                    !$assign->is_active_user($userid)));
+                $usercount += 1;
         }
+
+        $userscount = count($userlist);
+
+        $listusersmessage = get_string('grantextensionforusers', 'assign', $userscount);
+        $mform->addElement('header', 'general', $listusersmessage);
+        $mform->addElement('static', 'userslist', get_string('selectedusers', 'assign'), $usershtml);
+
         if ($instance->allowsubmissionsfromdate) {
             $mform->addElement('static', 'allowsubmissionsfromdate', get_string('allowsubmissionsfromdate', 'assign'),
                                userdate($instance->allowsubmissionsfromdate));
         }
+
+        $finaldate = 0;
         if ($instance->duedate) {
             $mform->addElement('static', 'duedate', get_string('duedate', 'assign'), userdate($instance->duedate));
             $finaldate = $instance->duedate;
@@ -68,19 +100,17 @@ class mod_assign_extension_form extends moodleform {
         $mform->addElement('date_time_selector', 'extensionduedate',
                            get_string('extensionduedate', 'assign'), array('optional'=>true));
         $mform->setDefault('extensionduedate', $finaldate);
-        $mform->addElement('hidden', 'id', $coursemoduleid);
+
+        $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
-        $mform->addElement('hidden', 'userid', $userid);
+        $mform->addElement('hidden', 'userid');
         $mform->setType('userid', PARAM_INT);
-        $mform->addElement('hidden', 'selectedusers', $batchusers);
+        $mform->addElement('hidden', 'selectedusers');
         $mform->setType('selectedusers', PARAM_SEQUENCE);
         $mform->addElement('hidden', 'action', 'saveextension');
         $mform->setType('action', PARAM_ALPHA);
-        $this->add_action_buttons(true, get_string('savechanges', 'assign'));
 
-        if ($data) {
-            $this->set_data($data);
-        }
+        $this->add_action_buttons(true, get_string('savechanges', 'assign'));
     }
 
     /**

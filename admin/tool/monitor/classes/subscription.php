@@ -55,15 +55,24 @@ class subscription {
      * Magic get method.
      *
      * @param string $prop property to get.
-     *
      * @return mixed
      * @throws \coding_exception
      */
     public function __get($prop) {
-        if (property_exists($this->subscription, $prop)) {
+        if (isset($this->subscription->$prop)) {
             return $this->subscription->$prop;
         }
         throw new \coding_exception('Property "' . $prop . '" doesn\'t exist');
+    }
+
+    /**
+     * Magic isset method.
+     *
+     * @param string $prop the property to get.
+     * @return bool true if the property is set, false otherwise.
+     */
+    public function __isset($prop) {
+        return property_exists($this->subscription, $prop);
     }
 
     /**
@@ -102,7 +111,7 @@ class subscription {
     public function get_event_name() {
         $eventclass = $this->eventname;
         if (class_exists($eventclass)) {
-            return $eventclass::get_name();
+            return $eventclass::get_name_with_info();
         }
         return get_string('eventnotfound', 'tool_monitor');
     }
@@ -167,8 +176,12 @@ class subscription {
         if (empty($courseid)) {
             return get_string('site');
         } else {
-            $course = get_course($courseid);
-            return format_string($course->fullname, true, array('context' => $context));
+            try {
+                $course = get_course($courseid);
+                return format_string($course->fullname, true, array('context' => $context));
+            } catch (\dml_exception $e) {
+                return '-';
+            }
         }
     }
 

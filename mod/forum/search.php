@@ -38,6 +38,7 @@ $phrase  = trim(optional_param('phrase', '', PARAM_NOTAGS));  // Phrase
 $words   = trim(optional_param('words', '', PARAM_NOTAGS));   // Words
 $fullwords = trim(optional_param('fullwords', '', PARAM_NOTAGS)); // Whole words
 $notwords = trim(optional_param('notwords', '', PARAM_NOTAGS));   // Words we don't want
+$tags = optional_param_array('tags', [], PARAM_TEXT);
 
 $timefromrestrict = optional_param('timefromrestrict', 0, PARAM_INT); // Use starting date
 $fromday = optional_param('fromday', 0, PARAM_INT);      // Starting date
@@ -46,7 +47,9 @@ $fromyear = optional_param('fromyear', 0, PARAM_INT);      // Starting date
 $fromhour = optional_param('fromhour', 0, PARAM_INT);      // Starting date
 $fromminute = optional_param('fromminute', 0, PARAM_INT);      // Starting date
 if ($timefromrestrict) {
-    $datefrom = make_timestamp($fromyear, $frommonth, $fromday, $fromhour, $fromminute);
+    $calendartype = \core_calendar\type_factory::get_calendar_instance();
+    $gregorianfrom = $calendartype->convert_to_gregorian($fromyear, $frommonth, $fromday);
+    $datefrom = make_timestamp($gregorianfrom['year'], $gregorianfrom['month'], $gregorianfrom['day'], $fromhour, $fromminute);
 } else {
     $datefrom = optional_param('datefrom', 0, PARAM_INT);      // Starting date
 }
@@ -58,7 +61,9 @@ $toyear = optional_param('toyear', 0, PARAM_INT);      // Ending date
 $tohour = optional_param('tohour', 0, PARAM_INT);      // Ending date
 $tominute = optional_param('tominute', 0, PARAM_INT);      // Ending date
 if ($timetorestrict) {
-    $dateto = make_timestamp($toyear, $tomonth, $today, $tohour, $tominute);
+    $calendartype = \core_calendar\type_factory::get_calendar_instance();
+    $gregorianto = $calendartype->convert_to_gregorian($toyear, $tomonth, $today);
+    $dateto = make_timestamp($gregorianto['year'], $gregorianto['month'], $gregorianto['day'], $tohour, $tominute);
 } else {
     $dateto = optional_param('dateto', 0, PARAM_INT);      // Ending date
 }
@@ -96,6 +101,9 @@ if (empty($search)) {   // Check the other parameters instead
     }
     if (!empty($dateto)) {
         $search .= ' dateto:'.$dateto;
+    }
+    if (!empty($tags)) {
+        $search .= ' tags:' . implode(',', $tags);
     }
     $individualparams = true;
 } else {
@@ -182,19 +190,27 @@ $PAGE->set_heading($course->fullname);
 $PAGE->set_button($searchform);
 echo $OUTPUT->header();
 echo '<div class="reportlink">';
-echo '<a href="search.php?id='.$course->id.
-                         '&amp;user='.urlencode($user).
-                         '&amp;userid='.$userid.
-                         '&amp;forumid='.$forumid.
-                         '&amp;subject='.urlencode($subject).
-                         '&amp;phrase='.urlencode($phrase).
-                         '&amp;words='.urlencode($words).
-                         '&amp;fullwords='.urlencode($fullwords).
-                         '&amp;notwords='.urlencode($notwords).
-                         '&amp;dateto='.$dateto.
-                         '&amp;datefrom='.$datefrom.
-                         '&amp;showform=1'.
-                         '">'.get_string('advancedsearch','forum').'...</a>';
+
+$params = [
+    'id'        => $course->id,
+    'user'      => $user,
+    'userid'    => $userid,
+    'forumid'   => $forumid,
+    'subject'   => $subject,
+    'phrase'    => $phrase,
+    'words'     => $words,
+    'fullwords' => $fullwords,
+    'notwords'  => $notwords,
+    'dateto'    => $dateto,
+    'datefrom'  => $datefrom,
+    'showform'  => 1
+];
+$url    = new moodle_url("/mod/forum/search.php", $params);
+foreach ($tags as $tag) {
+    $url .= "&tags[]=$tag";
+}
+echo html_writer::link($url, get_string('advancedsearch', 'forum').'...');
+
 echo '</div>';
 
 echo $OUTPUT->heading($strforums, 2);
@@ -292,6 +308,11 @@ foreach ($posts as $post) {
     // Prepare a link to the post in context, to be displayed after the forum post.
     $fulllink = "<a href=\"discuss.php?d=$post->discussion#p$post->id\">".get_string("postincontext", "forum")."</a>";
 
+    // Message is now html format.
+    if ($post->messageformat != FORMAT_HTML) {
+        $post->messageformat = FORMAT_HTML;
+    }
+
     // Now pring the post.
     forum_print_post($post, $discussion, $forum, $cm, $course, false, false, false,
             $fulllink, '', -99, false);
@@ -309,122 +330,22 @@ echo $OUTPUT->footer();
   * @return void The function prints the form.
   */
 function forum_print_big_search_form($course) {
-    global $CFG, $DB, $words, $subject, $phrase, $user, $userid, $fullwords, $notwords, $datefrom, $dateto, $PAGE, $OUTPUT;
+    global $PAGE, $words, $subject, $phrase, $user, $fullwords, $notwords, $datefrom, $dateto, $forumid, $tags;
 
-    echo $OUTPUT->box(get_string('searchforumintro', 'forum'), 'searchbox boxaligncenter', 'intro');
+    $renderable = new \mod_forum\output\big_search_form($course, $user);
+    $renderable->set_words($words);
+    $renderable->set_phrase($phrase);
+    $renderable->set_notwords($notwords);
+    $renderable->set_fullwords($fullwords);
+    $renderable->set_datefrom($datefrom);
+    $renderable->set_dateto($dateto);
+    $renderable->set_subject($subject);
+    $renderable->set_user($user);
+    $renderable->set_forumid($forumid);
+    $renderable->set_tags($tags);
 
-    echo $OUTPUT->box_start('generalbox boxaligncenter');
-
-    echo html_writer::script('', $CFG->wwwroot.'/mod/forum/forum.js');
-
-    echo '<form id="searchform" action="search.php" method="get">';
-    echo '<table cellpadding="10" class="searchbox" id="form">';
-
-    echo '<tr>';
-    echo '<td class="c0"><label for="words">'.get_string('searchwords', 'forum').'</label>';
-    echo '<input type="hidden" value="'.$course->id.'" name="id" alt="" /></td>';
-    echo '<td class="c1"><input type="text" size="35" name="words" id="words"value="'.s($words, true).'" alt="" /></td>';
-    echo '</tr>';
-
-    echo '<tr>';
-    echo '<td class="c0"><label for="phrase">'.get_string('searchphrase', 'forum').'</label></td>';
-    echo '<td class="c1"><input type="text" size="35" name="phrase" id="phrase" value="'.s($phrase, true).'" alt="" /></td>';
-    echo '</tr>';
-
-    echo '<tr>';
-    echo '<td class="c0"><label for="notwords">'.get_string('searchnotwords', 'forum').'</label></td>';
-    echo '<td class="c1"><input type="text" size="35" name="notwords" id="notwords" value="'.s($notwords, true).'" alt="" /></td>';
-    echo '</tr>';
-
-    if ($DB->get_dbfamily() == 'mysql' || $DB->get_dbfamily() == 'postgres') {
-        echo '<tr>';
-        echo '<td class="c0"><label for="fullwords">'.get_string('searchfullwords', 'forum').'</label></td>';
-        echo '<td class="c1"><input type="text" size="35" name="fullwords" id="fullwords" value="'.s($fullwords, true).'" alt="" /></td>';
-        echo '</tr>';
-    }
-
-    echo '<tr>';
-    echo '<td class="c0">'.get_string('searchdatefrom', 'forum').'</td>';
-    echo '<td class="c1">';
-    if (empty($datefrom)) {
-        $datefromchecked = '';
-        $datefrom = make_timestamp(2000, 1, 1, 0, 0, 0);
-    }else{
-        $datefromchecked = 'checked="checked"';
-    }
-
-    echo '<input name="timefromrestrict" type="checkbox" value="1" alt="'.get_string('searchdatefrom', 'forum').'" onclick="return lockoptions(\'searchform\', \'timefromrestrict\', timefromitems)" '.  $datefromchecked . ' /> ';
-    $selectors = html_writer::select_time('days', 'fromday', $datefrom)
-               . html_writer::select_time('months', 'frommonth', $datefrom)
-               . html_writer::select_time('years', 'fromyear', $datefrom)
-               . html_writer::select_time('hours', 'fromhour', $datefrom)
-               . html_writer::select_time('minutes', 'fromminute', $datefrom);
-    echo $selectors;
-    echo '<input type="hidden" name="hfromday" value="0" />';
-    echo '<input type="hidden" name="hfrommonth" value="0" />';
-    echo '<input type="hidden" name="hfromyear" value="0" />';
-    echo '<input type="hidden" name="hfromhour" value="0" />';
-    echo '<input type="hidden" name="hfromminute" value="0" />';
-
-    echo '</td>';
-    echo '</tr>';
-
-    echo '<tr>';
-    echo '<td class="c0">'.get_string('searchdateto', 'forum').'</td>';
-    echo '<td class="c1">';
-    if (empty($dateto)) {
-        $datetochecked = '';
-        $dateto = time()+3600;
-    }else{
-        $datetochecked = 'checked="checked"';
-    }
-
-    echo '<input name="timetorestrict" type="checkbox" value="1" alt="'.get_string('searchdateto', 'forum').'" onclick="return lockoptions(\'searchform\', \'timetorestrict\', timetoitems)" ' .$datetochecked. ' /> ';
-    $selectors = html_writer::select_time('days', 'today', $dateto)
-               . html_writer::select_time('months', 'tomonth', $dateto)
-               . html_writer::select_time('years', 'toyear', $dateto)
-               . html_writer::select_time('hours', 'tohour', $dateto)
-               . html_writer::select_time('minutes', 'tominute', $dateto);
-    echo $selectors;
-
-    echo '<input type="hidden" name="htoday" value="0" />';
-    echo '<input type="hidden" name="htomonth" value="0" />';
-    echo '<input type="hidden" name="htoyear" value="0" />';
-    echo '<input type="hidden" name="htohour" value="0" />';
-    echo '<input type="hidden" name="htominute" value="0" />';
-
-    echo '</td>';
-    echo '</tr>';
-
-    echo '<tr>';
-    echo '<td class="c0"><label for="menuforumid">'.get_string('searchwhichforums', 'forum').'</label></td>';
-    echo '<td class="c1">';
-    echo html_writer::select(forum_menu_list($course), 'forumid', '', array(''=>get_string('allforums', 'forum')));
-    echo '</td>';
-    echo '</tr>';
-
-    echo '<tr>';
-    echo '<td class="c0"><label for="subject">'.get_string('searchsubject', 'forum').'</label></td>';
-    echo '<td class="c1"><input type="text" size="35" name="subject" id="subject" value="'.s($subject, true).'" alt="" /></td>';
-    echo '</tr>';
-
-    echo '<tr>';
-    echo '<td class="c0"><label for="user">'.get_string('searchuser', 'forum').'</label></td>';
-    echo '<td class="c1"><input type="text" size="35" name="user" id="user" value="'.s($user, true).'" alt="" /></td>';
-    echo '</tr>';
-
-    echo '<tr>';
-    echo '<td class="submit" colspan="2" align="center">';
-    echo '<input type="submit" value="'.get_string('searchforums', 'forum').'" alt="" /></td>';
-    echo '</tr>';
-
-    echo '</table>';
-    echo '</form>';
-
-    echo html_writer::script(js_writer::function_call('lockoptions_timetoitems'));
-    echo html_writer::script(js_writer::function_call('lockoptions_timefromitems'));
-
-    echo $OUTPUT->box_end();
+    $output = $PAGE->get_renderer('mod_forum');
+    echo $output->render($renderable);
 }
 
 /**

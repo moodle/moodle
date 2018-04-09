@@ -28,7 +28,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require(dirname(dirname(dirname(dirname(__FILE__)))).'/config.php');
+require(__DIR__.'/../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->dirroot.'/mnet/service/enrol/locallib.php');
 
@@ -83,7 +83,7 @@ $table->head = array(
     get_string('action')
 );
 $table->attributes['class'] = 'generaltable remotecourses';
-$icon = html_writer::empty_tag('img', array('src' => $OUTPUT->pix_url('i/course'), 'alt' => get_string('category')));
+$icon = $OUTPUT->pix_icon('i/course', get_string('category'));
 $prevcat = null;
 foreach ($courses as $course) {
     $course = (object)$course;

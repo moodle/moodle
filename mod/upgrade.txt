@@ -1,6 +1,73 @@
 This files describes API changes in /mod/* - activity modules,
 information provided here is intended especially for developers.
 
+=== 3.4 ===
+
+* Navigation between activities via a previous and next link was added to Boost, Clean and Bootstrapbase. This
+  was made possible by a new function core_renderer->activity_navigation(). However, there was an issue when linking
+  to the mod_resource and mod_url view.php pages where it would automatically download the file, or redirect to
+  the URL. It was noticed that this was not the case when editing the module and clicking 'Save and display' which would
+  take you to the pages without downloading the file or redirecting to a link. The reason this worked was because of the
+  hard-coded check 'if (strpos(get_local_referer(false), 'modedit.php') === false) {' in the view.php files. This check
+  has been removed in favour of an optional_param('forceview'). If you are using the above hard-coded check in your
+  plugin it is recommended to remove it and use the optional param as it will prevent the navigation from working as
+  expected.
+
+=== 3.3 ===
+
+* External functions that were returning file information now return the following additional file fields:
+  - mimetype (the file mime type)
+  - isexternalfile (if is a file reference to a external repository)
+  - repositorytype (the repository name in case is a external file)
+  Those fields are VALUE_OPTIONAL for backwards compatibility.
+* The block_course_overview has been removed and the related core module *_print_overview functions have been deprecated.
+* The block_myoverview has replaced block_course_overview to provide better information to students. To support this,
+  actions can now be attached to calendar events. Documentation for the following new API callbacks introduced in
+  MDL-55611 can be found at https://docs.moodle.org/dev/Calendar_API. The 3 new callbacks are:
+  - mod_<modname>_core_calendar_is_event_visible
+  - mod_<modname>_core_calendar_provide_event_action
+  - mod_<modname>_core_calendar_event_action_show_items_acount
+* Changes to the moodleform_mod class and its usage (MDL-58138):
+  - the get_data() method has been overriden. The implementation calls parent::get_data() and a new data_postprocessing() method
+  - new data_postprocessing() method added. Mods can override this in their mod_form subclass to modify the submit data. Previously
+    mods could only modify submitted data by overriding get_data() in the mod_form subclass. data_postprocessing() is now the way to
+    do this correctly.
+  - completion: \core_completion\manager calls the overriden mod_x_mod_form->data_postprocessing() to allow mods to modify their
+    completion data before saving the bulk completion form. If you've overriden get_data() to modify submit data for completion in
+    the past, you should now override the data_postprocessing() method in your mod_form and move your code there, so bulk completion
+    editing will be properly supported for your plugin.
+=== 3.2 ===
+
+* Callback delete_course is deprecated and should be replaced with observer for event \core\event\course_content_deleted
+* update_module_button() and core_renderer::update_module_button() have been deprecated and should not be used anymore.
+  Activity modules should not add the edit module button, the link is already available in the Administration block.
+  Themes can choose to display the link in the buttons row consistently for all module types.
+* New callback check_updates_since available. Check if the module has any update that affects the current user since the given time.
+  Please refer to mod/assign/lib.php, mod/forum/lib.php or mod/quiz/lib.php for sample code.
+
+=== 3.1 ===
+
+* Old /mod/MODULENAME/pix/icon.gif and enrol/paypal/pix/icon.gif GIF icons have been removed. Please use pix_icon
+  renderable instead.
+* Callback get_types() is deprecated, instead activity modules can define callback get_shortcuts().
+  See source code for get_module_metadata().
+
+=== 3.0 ===
+
+* Dropped support for the $module in mod/xxx/version.php files (deprecated
+  since 2.7). All activity modules must use the $plugin syntax now. See
+  https://docs.moodle.org/dev/version.php for details (MDL-43896).
+* Modules using rating component must implement a callback mod_x_rating_can_see_item_ratings(). Refer
+  to mod_forum_rating_can_see_item_ratings() for example.
+
+=== 2.9 ===
+
+* Added Grade to pass field to mod_form for activities that support grading.
+* The method moodleform_mod::add_intro_editor() used in mod_form.php form
+  definitions has been deprecated. Replace it with the new
+  moodleform_mod::standard_intro_elements() method that takes the new site
+  configuration requiremodintro into account (MDL-49101).
+
 === 2.8 ===
 
 * Constant FEATURE_GROUPMEMBERSONLY is deprecated. Modules should remove this

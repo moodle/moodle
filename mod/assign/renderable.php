@@ -287,6 +287,8 @@ class assign_feedback_status implements renderable {
     public $returnaction = '';
     /** @var array returnparams */
     public $returnparams = array();
+    /** @var bool canviewfullnames */
+    public $canviewfullnames = false;
 
     /**
      * Constructor
@@ -298,6 +300,7 @@ class assign_feedback_status implements renderable {
      * @param int $coursemoduleid
      * @param string $returnaction The action required to return to this page
      * @param array $returnparams The list of params required to return to this page
+     * @param bool $canviewfullnames
      */
     public function __construct($gradefordisplay,
                                 $gradeddate,
@@ -306,7 +309,8 @@ class assign_feedback_status implements renderable {
                                 $grade,
                                 $coursemoduleid,
                                 $returnaction,
-                                $returnparams) {
+                                $returnparams,
+                                $canviewfullnames) {
         $this->gradefordisplay = $gradefordisplay;
         $this->gradeddate = $gradeddate;
         $this->grader = $grader;
@@ -315,6 +319,7 @@ class assign_feedback_status implements renderable {
         $this->coursemoduleid = $coursemoduleid;
         $this->returnaction = $returnaction;
         $this->returnparams = $returnparams;
+        $this->canviewfullnames = $canviewfullnames;
     }
 }
 
@@ -386,6 +391,10 @@ class assign_submission_status implements renderable {
     public $maxattempts = -1;
     /** @var string gradingstatus */
     public $gradingstatus = '';
+    /** @var bool preventsubmissionnotingroup */
+    public $preventsubmissionnotingroup = 0;
+    /** @var array usergroups */
+    public $usergroups = array();
 
 
     /**
@@ -419,6 +428,8 @@ class assign_submission_status implements renderable {
      * @param string $attemptreopenmethod - The method of reopening student attempts.
      * @param int $maxattempts - How many attempts can a student make?
      * @param string $gradingstatus - The submission status (ie. Graded, Not Released etc).
+     * @param bool $preventsubmissionnotingroup - Prevent submission if user is not in a group
+     * @param array $usergroups - Array containing all groups the user is assigned to
      */
     public function __construct($allowsubmissionsfromdate,
                                 $alwaysshowdescription,
@@ -447,7 +458,9 @@ class assign_submission_status implements renderable {
                                 $gradingcontrollerpreview,
                                 $attemptreopenmethod,
                                 $maxattempts,
-                                $gradingstatus) {
+                                $gradingstatus,
+                                $preventsubmissionnotingroup,
+                                $usergroups) {
         $this->allowsubmissionsfromdate = $allowsubmissionsfromdate;
         $this->alwaysshowdescription = $alwaysshowdescription;
         $this->submission = $submission;
@@ -476,7 +489,18 @@ class assign_submission_status implements renderable {
         $this->attemptreopenmethod = $attemptreopenmethod;
         $this->maxattempts = $maxattempts;
         $this->gradingstatus = $gradingstatus;
+        $this->preventsubmissionnotingroup = $preventsubmissionnotingroup;
+        $this->usergroups = $usergroups;
     }
+}
+/**
+ * Renderable submission status
+ * @package   mod_assign
+ * @copyright 2016 Damyon Wiese
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class assign_submission_status_compact extends assign_submission_status implements renderable {
+    // Compact view of the submission status. Not in a table etc.
 }
 
 /**
@@ -543,6 +567,86 @@ class assign_attempt_history implements renderable {
         $this->cangrade = $cangrade;
         $this->useridlistid = $useridlistid;
         $this->rownum = $rownum;
+    }
+}
+
+/**
+ * Used to output the attempt history chooser for a particular assignment.
+ *
+ * @package mod_assign
+ * @copyright 2016 Damyon Wiese
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class assign_attempt_history_chooser implements renderable, templatable {
+
+    /** @var array submissions - The list of previous attempts */
+    public $submissions = array();
+    /** @var array grades - The grades for the previous attempts */
+    public $grades = array();
+    /** @var int coursemoduleid - The cmid for the assignment */
+    public $coursemoduleid = 0;
+    /** @var int userid - The current userid */
+    public $userid = 0;
+
+    /**
+     * Constructor
+     *
+     * @param array $submissions
+     * @param array $grades
+     * @param int $coursemoduleid
+     * @param int $userid
+     */
+    public function __construct($submissions,
+                                $grades,
+                                $coursemoduleid,
+                                $userid) {
+        $this->submissions = $submissions;
+        $this->grades = $grades;
+        $this->coursemoduleid = $coursemoduleid;
+        $this->userid = $userid;
+    }
+
+    /**
+     * Function to export the renderer data in a format that is suitable for a
+     * mustache template.
+     *
+     * @param renderer_base $output Used to do a final render of any components that need to be rendered for export.
+     * @return stdClass|array
+     */
+    public function export_for_template(renderer_base $output) {
+        // Show newest to oldest.
+        $export = (object) $this;
+        $export->submissions = array_reverse($export->submissions);
+        $export->submissioncount = count($export->submissions);
+
+        foreach ($export->submissions as $i => $submission) {
+            $grade = null;
+            foreach ($export->grades as $onegrade) {
+                if ($onegrade->attemptnumber == $submission->attemptnumber) {
+                    $submission->grade = $onegrade;
+                    break;
+                }
+            }
+            if (!$submission) {
+                $submission = new stdClass();
+            }
+
+            $editbtn = '';
+
+            if ($submission->timemodified) {
+                $submissionsummary = userdate($submission->timemodified);
+            } else {
+                $submissionsummary = get_string('nosubmission', 'assign');
+            }
+
+            $attemptsummaryparams = array('attemptnumber' => $submission->attemptnumber + 1,
+                                          'submissionsummary' => $submissionsummary);
+            $submission->attemptsummary = get_string('attemptheading', 'assign', $attemptsummaryparams);
+            $submission->statussummary = get_string('submissionstatus_' . $submission->status, 'assign');
+
+        }
+
+        return $export;
     }
 }
 
@@ -642,6 +746,10 @@ class assign_grading_summary implements renderable {
     public $coursemoduleid = 0;
     /** @var boolean teamsubmission - Are team submissions enabled for this assignment */
     public $teamsubmission = false;
+    /** @var boolean warnofungroupedusers - Do we need to warn people that there are users without groups */
+    public $warnofungroupedusers = false;
+    /** @var boolean cangrade - Can the current user grade students? */
+    public $cangrade = false;
 
     /**
      * constructor
@@ -656,6 +764,7 @@ class assign_grading_summary implements renderable {
      * @param int $coursemoduleid
      * @param int $submissionsneedgradingcount
      * @param bool $teamsubmission
+     * @param bool $cangrade
      */
     public function __construct($participantcount,
                                 $submissiondraftsenabled,
@@ -666,7 +775,9 @@ class assign_grading_summary implements renderable {
                                 $duedate,
                                 $coursemoduleid,
                                 $submissionsneedgradingcount,
-                                $teamsubmission) {
+                                $teamsubmission,
+                                $warnofungroupedusers,
+                                $cangrade = true) {
         $this->participantcount = $participantcount;
         $this->submissiondraftsenabled = $submissiondraftsenabled;
         $this->submissiondraftscount = $submissiondraftscount;
@@ -677,6 +788,8 @@ class assign_grading_summary implements renderable {
         $this->coursemoduleid = $coursemoduleid;
         $this->submissionsneedgradingcount = $submissionsneedgradingcount;
         $this->teamsubmission = $teamsubmission;
+        $this->warnofungroupedusers = $warnofungroupedusers;
+        $this->cangrade = $cangrade;
     }
 }
 
@@ -774,7 +887,7 @@ class assign_files implements renderable {
 
         if (!empty($CFG->enableportfolios)) {
             require_once($CFG->libdir . '/portfoliolib.php');
-            if (count($files) >= 1 &&
+            if (count($files) >= 1 && !empty($sid) &&
                     has_capability('mod/assign:exportownsubmission', $this->context)) {
                 $button = new portfolio_add_button();
                 $callbackparams = array('cmid' => $this->cm->id,
@@ -803,12 +916,14 @@ class assign_files implements renderable {
      */
     public function preprocess($dir, $filearea, $component) {
         global $CFG;
+
         foreach ($dir['subdirs'] as $subdir) {
             $this->preprocess($subdir, $filearea, $component);
         }
         foreach ($dir['files'] as $file) {
             $file->portfoliobutton = '';
             if (!empty($CFG->enableportfolios)) {
+                require_once($CFG->libdir . '/portfoliolib.php');
                 $button = new portfolio_add_button();
                 if (has_capability('mod/assign:exportownsubmission', $this->context)) {
                     $portfolioparams = array('cmid' => $this->cm->id, 'fileid' => $file->get_id());
@@ -831,7 +946,9 @@ class assign_files implements renderable {
                     $file->get_filename();
             $url = file_encode_url("$CFG->wwwroot/pluginfile.php", $path, true);
             $filename = $file->get_filename();
-            $file->fileurl = html_writer::link($url, $filename);
+            $file->fileurl = html_writer::link($url, $filename, [
+                    'target' => '_blank',
+                ]);
         }
     }
 }

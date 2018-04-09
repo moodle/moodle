@@ -24,7 +24,7 @@
  * @author     Yuliya Bozhko <yuliya.bozhko@totaralms.com>
  */
 
-require_once(dirname(dirname(__FILE__)) . '/config.php');
+require_once(__DIR__ . '/../config.php');
 require_once($CFG->libdir . '/badgeslib.php');
 
 $type       = required_param('type', PARAM_INT);
@@ -160,7 +160,7 @@ if ($type == BADGE_TYPE_SITE) {
 }
 echo $OUTPUT->box('', 'notifyproblem hide', 'check_connection');
 
-$totalcount = count(badges_get_badges($type, $courseid, '', '' , '', ''));
+$totalcount = count(badges_get_badges($type, $courseid, '', '' , 0, 0));
 $records = badges_get_badges($type, $courseid, $sortby, $sorthow, $page, BADGE_PERPAGE);
 
 if ($totalcount) {

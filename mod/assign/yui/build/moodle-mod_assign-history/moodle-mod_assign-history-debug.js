@@ -31,7 +31,7 @@ var CSS = {
 
         // Loop through all the children of this container and turn
         // every odd node to a link to open/close the following panel.
-        this.get('children').each(function () {
+        this.get('children').each(function() {
             if (link) {
                 COUNT++;
                 // First convert the link to an anchor.
@@ -50,9 +50,17 @@ var CSS = {
                 panel.set('aria-live', 'polite');
 
                 wrapper.addClass(CSS.LINK);
-                wrapper.addClass(CSS.CLOSED);
+                if (COUNT == 1) {
+                    wrapper.addClass(CSS.OPEN);
+                } else {
+                    wrapper.addClass(CSS.CLOSED);
+                }
                 panel.addClass(CSS.PANEL);
-                panel.hide();
+                if (COUNT == 1) {
+                    panel.show();
+                } else {
+                    panel.hide();
+                }
                 link = null;
             } else {
                 link = this;

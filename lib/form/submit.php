@@ -26,6 +26,7 @@
  */
 
 require_once("HTML/QuickForm/submit.php");
+require_once('templatable_form_element.php');
 
 /**
  * submit type form element
@@ -37,16 +38,43 @@ require_once("HTML/QuickForm/submit.php");
  * @copyright 2006 Jamie Pratt <me@jamiep.org>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class MoodleQuickForm_submit extends HTML_QuickForm_submit {
+class MoodleQuickForm_submit extends HTML_QuickForm_submit implements templatable {
+    use templatable_form_element {
+        export_for_template as export_for_template_base;
+    }
+
+    /**
+     * @var bool $primary Is this button a primary button?
+     */
+    protected $primary;
+
     /**
      * constructor
      *
      * @param string $elementName (optional) name of the field
      * @param string $value (optional) field label
      * @param string $attributes (optional) Either a typical HTML attribute string or an associative array
+     * @param bool|null $primary Is this button a primary button?
      */
-    function MoodleQuickForm_submit($elementName=null, $value=null, $attributes=null) {
-        parent::HTML_QuickForm_submit($elementName, $value, $attributes);
+    public function __construct($elementName=null, $value=null, $attributes=null, $primary = null) {
+        parent::__construct($elementName, $value, $attributes);
+
+        // Fallback to legacy behaviour if no value specified.
+        if (is_null($primary)) {
+            $this->primary = $this->getName() != 'cancel';
+        } else {
+            $this->primary = $primary;
+        }
+    }
+
+    /**
+     * Old syntax of class constructor. Deprecated in PHP7.
+     *
+     * @deprecated since Moodle 3.1
+     */
+    public function MoodleQuickForm_submit($elementName=null, $value=null, $attributes=null, $primary = null) {
+        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
+        self::__construct($elementName, $value, $attributes, $primary);
     }
 
     /**
@@ -98,4 +126,11 @@ class MoodleQuickForm_submit extends HTML_QuickForm_submit {
         $this->_flagFrozen = true;
     }
 
+    public function export_for_template(renderer_base $output) {
+        $context = $this->export_for_template_base($output);
+        if (!$this->primary) {
+            $context['secondary'] = true;
+        }
+        return $context;
+    }
 }

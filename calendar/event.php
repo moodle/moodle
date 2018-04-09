@@ -108,13 +108,13 @@ if ($action === 'delete' && $eventid > 0) {
 }
 
 $calendar = new calendar_information(0, 0, 0, $time);
-$calendar->prepare_for_view($course, $courses);
+$calendar->set_sources($course, $courses);
 
 $formoptions = new stdClass;
 if ($eventid !== 0) {
     $title = get_string('editevent', 'calendar');
     $event = calendar_event::load($eventid);
-    if (!calendar_edit_event_allowed($event)) {
+    if (!calendar_edit_event_allowed($event, true)) {
         print_error('nopermissions');
     }
     $event->action = $action;
@@ -125,6 +125,13 @@ if ($eventid !== 0) {
     if (!calendar_add_event_allowed($event)) {
         print_error('nopermissions');
     }
+
+    // Check to see if this event is part of a subscription or import.
+    // If so display a warning on edit.
+    if (isset($event->subscriptionid) && ($event->subscriptionid != null)) {
+        \core\notification::add(get_string('eventsubscriptioneditwarning', 'calendar'), \core\output\notification::NOTIFY_INFO);
+    }
+
 } else {
     $title = get_string('newevent', 'calendar');
     calendar_get_allowed_types($formoptions->eventtypes, $course);

@@ -157,9 +157,13 @@ class repository_skydrive extends repository {
      * @param string $classname repository class name
      */
     public static function type_config_form($mform, $classname = 'repository') {
+        global $OUTPUT;
+
         $a = new stdClass;
         $a->callbackurl = microsoft_skydrive::callback_url()->out(false);
         $mform->addElement('static', null, '', get_string('oauthinfo', 'repository_skydrive', $a));
+
+        $mform->addElement('static', null, '', $OUTPUT->notification(get_string('deprecatedwarning', 'repository_skydrive', $a)));
 
         parent::type_config_form($mform);
         $strrequired = get_string('required');

@@ -1,6 +1,60 @@
 This files describes API changes in the assign code.
+
+=== 3.5 ===
+* Functions assign:get_assign_grading_summary_renderable, assign:can_view_submission, assign:count_submissions_with_status,
+  assign:count_submissions_need_grading and mod_assign_external::get_submission_status now admit an additional group parameter.
+  This parameter can be used to force those functions to retrieve data only for the given group.
+
+=== 3.4 ===
+* assign::add_attempt requires that set_most_recent_team_submission() be called if attempting to use this function with a team
+  submission.
+
+=== 3.3.2 ===
+* assign_refresh_events() Now takes two additional parameters to refine the update to a specific instance. This function
+  now optionally takes the module instance object or ID, and the course module object or ID. Please try to send the full
+  objects instead of the ids to save DB calls.
+
+=== 3.3 ===
+* All pluginfile file serving functions now pass through the options to send_stored_file() (all assignment plugins should do
+  the same).
+* Fixed calendar event types for overridden due dates from 'close' to 'due'.
+* Removed calendar event type of 'open', since mod_assign only has the 'due' event type. No point in creating an override event
+for an event type that does not exist.
+
+=== 3.2 ===
+* External function mod_assign_external::get_assignments now returns additional optional fields:
+   - preventsubmissionnotingroup: Prevent submission not in group.
+   - submissionstatement and submissionstatementformat: When there is a submission statement defined.
+* Proper checking for empty submissions
+* Submission modification time checking - this will help students working in groups not clobber each others'
+  submissions
+* External functions that were returning file information now return the following file fields:
+  filename, filepath, mimetype, filesize, timemodified and fileurl.
+  Those fields are now marked as VALUE_OPTIONAL for backwards compatibility.
+  Please, note that previously the filename was part of the filepath field, now they are separated.
+* Submission and feedback plugins can now specify file areas related to their configuration data,
+  which will then be included in backup and restore; see assign_plugin::get_config_file_areas().
+* Submission and feedback plugins must now return the specific list of configs available for external functions,
+  this can be done implementing the new assign plugin method get_config_for_external()
+* Webservice function mod_assign_get_submissions returns a new field 'gradingstatus' from each submission.
+
+=== 3.1 ===
+* The feedback plugins now need to implement the is_feedback_modified() method. The default is to return true
+  for backwards compatibiltiy.
+* When downloading all submissions as a zip each students' files are in a separate folder, are no longer renamed
+  and the folder structure is kept intact.
+
+=== 3.0 ===
+* assign_submission_status renderable now requires $usergroups in its constructor
+* External function mod_assign_external::get_assignments now have a new optional parameter: includenotenrolledcourses.
+  Its default value is false, setting it to true will return assignments for courses a user can see even if it's not enroled.
+
 === 2.9 ===
 * External parameter now returns PARAM_RAW instead of PARAM_TEXT for webservices using feedback comments.
+* External function mod_assign_external::get_assignments now returns additional optional fields:
+   - intro: Assignment intro.
+   - introformat: Intro format.
+   - introattachments: Intro attachments files.
 
 === 2.8 ===
 * Some DB changes were made to simplify the SQL required to query the latest attempt.

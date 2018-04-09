@@ -39,7 +39,7 @@ if ($verbosescales !== 1) {
 $PAGE->set_url($url);
 
 if (!$course = $DB->get_record('course', array('id'=>$id))) {
-    print_error('nocourseid');
+    print_error('invalidcourseid');
 }
 
 require_login($course);
@@ -51,7 +51,8 @@ $separatemode = (groups_get_course_groupmode($COURSE) == SEPARATEGROUPS and
         !has_capability('moodle/site:accessallgroups', $context));
 $currentgroup = groups_get_course_group($course);
 
-print_grade_page_head($course->id, 'import', 'csv', get_string('importcsv', 'grades'));
+print_grade_page_head($course->id, 'import', 'csv', get_string('importcsv', 'grades'), false, false, true,
+        'importcsv', 'grades');
 
 $renderer = $PAGE->get_renderer('gradeimport_csv');
 

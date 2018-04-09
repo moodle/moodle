@@ -39,7 +39,7 @@ class backup_survey_activity_structure_step extends backup_activity_structure_st
         // Define each element separated
         $survey = new backup_nested_element('survey', array('id'), array(
             'name', 'intro', 'introformat', 'template',
-            'questions', 'days', 'timecreated', 'timemodified'));
+            'questions', 'days', 'timecreated', 'timemodified', 'completionsubmit'));
 
         $answers = new backup_nested_element('answers');
 

@@ -96,6 +96,7 @@ class assign_upgrade_manager {
         $data->markingworkflow = 0;
         $data->markingallocation = 0;
         $data->cutoffdate = 0;
+        $data->gradingduedate = 0;
         // New way to specify no late submissions.
         if ($oldassignment->preventlate) {
             $data->cutoffdate = $data->duedate;
@@ -412,4 +413,28 @@ class assign_upgrade_manager {
 
         return $newcm;
     }
+}
+
+/**
+ * Determines if the assignment as any null grades that were rescaled.
+ *
+ * Null grades are stored as -1 but should never be rescaled.
+ *
+ * @return int[] Array of the ids of all the assignments with rescaled null grades.
+ */
+function get_assignments_with_rescaled_null_grades() {
+    global $DB;
+
+    $query = 'SELECT id, assignment FROM {assign_grades}
+              WHERE grade < 0 AND grade <> -1';
+
+    $assignments = array_values($DB->get_records_sql($query));
+
+    $getassignmentid = function ($assignment) {
+        return $assignment->assignment;
+    };
+
+    $assignments = array_map($getassignmentid, $assignments);
+
+    return $assignments;
 }

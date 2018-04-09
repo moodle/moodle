@@ -12,14 +12,17 @@ Feature: Show hidden blocks in a docked block region when editing
       | user | course | role |
       | admin | C1 | editingteacher |
     And I log in as "admin"
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
+    And I add the "Search forums" block
+    And I add the "Latest announcements" block
+    And I add the "Upcoming events" block
+    And I add the "Recent activity" block
     # Hide all the blocks in the non-default region
     And I configure the "Search forums" block
     And I set the following fields to these values:
       | Visible | No |
     And I click on "Save changes" "button"
-    And I configure the "Latest news" block
+    And I configure the "Latest announcements" block
     And I set the following fields to these values:
       | Visible | No |
     And I click on "Save changes" "button"
@@ -33,13 +36,13 @@ Feature: Show hidden blocks in a docked block region when editing
     When I click on "Save changes" "button"
     # Editing is on so they should be visible
     Then I should see "Search forums"
-    And I should see "Latest news"
+    And I should see "Latest announcements"
     And I should see "Upcoming events"
     And I should see "Recent activity"
     And I turn editing mode off
     # Editing is off, so they should no longer be visible
     And I should not see "Search forums"
-    And I should not see "Latest news"
+    And I should not see "Latest announcements"
     And I should not see "Upcoming events"
     And I should not see "Recent activity"
 

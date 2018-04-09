@@ -26,9 +26,9 @@
 
 define('AJAX_SCRIPT', true);
 
-require_once(dirname(dirname(__FILE__)).'/config.php');
-require_once(dirname(dirname(__FILE__)).'/lib/filelib.php');
-require_once(dirname(__FILE__).'/lib.php');
+require_once(__DIR__ . '/../config.php');
+require_once(__DIR__ . '/../lib/filelib.php');
+require_once(__DIR__.'/lib.php');
 
 $err = new stdClass();
 
@@ -40,6 +40,7 @@ $env       = optional_param('env', 'filepicker', PARAM_ALPHA);  // Opened in edi
 $license   = optional_param('license', $CFG->sitedefaultlicense, PARAM_TEXT);
 $author    = optional_param('author', '', PARAM_TEXT);          // File author
 $source    = optional_param('source', '', PARAM_RAW);           // File to download
+$sourcekey = optional_param('sourcekey', '', PARAM_RAW);        // Used to verify the source.
 $itemid    = optional_param('itemid', 0, PARAM_INT);            // Itemid
 $page      = optional_param('page', '', PARAM_RAW);             // Page
 $maxbytes  = optional_param('maxbytes', 0, PARAM_INT);          // Maxbytes
@@ -51,6 +52,7 @@ $saveas_path   = optional_param('savepath', '/', PARAM_PATH);   // save as file 
 $search_text   = optional_param('s', '', PARAM_CLEANHTML);
 $linkexternal  = optional_param('linkexternal', '', PARAM_ALPHA);
 $usefilereference  = optional_param('usefilereference', false, PARAM_BOOL);
+$usecontrolledlink  = optional_param('usecontrolledlink', false, PARAM_BOOL);
 
 list($context, $course, $cm) = get_context_info_array($contextid);
 require_login($course, false, $cm, false, true);
@@ -157,6 +159,16 @@ switch ($action) {
         // allow external links in url element all the time
         $allowexternallink = ($allowexternallink || ($env == 'url'));
 
+        // Validate the sourcekey.
+        if (empty($sourcekey)) {
+            throw new moodle_exception('missingsourcekey', 'repository');
+        }
+
+        // Check that the sourcekey matches.
+        if (sha1($source . repository::get_secret_key() . sesskey()) !== $sourcekey) {
+            throw new moodle_exception('sourcekeymismatch', 'repository');
+        }
+
         $reference = $repo->get_file_reference($source);
 
         // Use link of the files
@@ -220,12 +232,13 @@ switch ($action) {
                 }
             }
 
-            if ($usefilereference) {
+            if ($usefilereference || $usecontrolledlink) {
                 if ($repo->has_moodle_files()) {
                     $sourcefile = repository::get_moodle_file($reference);
                     $record->contenthash = $sourcefile->get_contenthash();
                     $record->filesize = $sourcefile->get_filesize();
                 }
+
                 // Check if file exists.
                 if (repository::draftfile_exists($itemid, $saveas_path, $saveas_filename)) {
                     // File name being used, rename it.
@@ -252,7 +265,7 @@ switch ($action) {
                         'url'=>moodle_url::make_draftfile_url($storedfile->get_itemid(), $storedfile->get_filepath(), $storedfile->get_filename())->out(),
                         'id'=>$storedfile->get_itemid(),
                         'file'=>$storedfile->get_filename(),
-                        'icon' => $OUTPUT->pix_url(file_file_icon($storedfile, 32))->out(),
+                        'icon' => $OUTPUT->image_url(file_file_icon($storedfile, 32))->out(),
                     );
                 }
                 // Repository plugin callback
@@ -276,6 +289,10 @@ switch ($action) {
             } else {
                 // Download file to moodle.
                 $downloadedfile = $repo->get_file($reference, $saveas_filename);
+
+                if (!empty($downloadedfile['newfilename'])) {
+                    $record->filename = $downloadedfile['newfilename'];
+                }
                 if (empty($downloadedfile['path'])) {
                     $err->error = get_string('cannotdownload', 'repository');
                     die(json_encode($err));
@@ -283,7 +300,9 @@ switch ($action) {
 
                 // Check if exceed maxbytes.
                 if ($maxbytes != -1 && filesize($downloadedfile['path']) > $maxbytes) {
-                    throw new file_exception('maxbytes');
+                    $maxbytesdisplay = display_size($maxbytes);
+                    throw new file_exception('maxbytesfile', (object) array('file' => $record->filename,
+                                                                            'size' => $maxbytesdisplay));
                 }
 
                 // Check if we exceed the max bytes of the area.

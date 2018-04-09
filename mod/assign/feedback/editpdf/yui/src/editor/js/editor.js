@@ -12,6 +12,8 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+/* eslint-disable no-unused-vars */
+/* global SELECTOR, TOOLSELECTOR, AJAXBASE, COMMENTCOLOUR, ANNOTATIONCOLOUR, AJAXBASEPROGRESS, CLICKTIMEOUT */
 
 /**
  * Provides an in browser PDF editor.
@@ -40,7 +42,16 @@ EDITOR.prototype = {
      * @type M.core.dialogue
      * @protected
      */
-    dialogue : null,
+    dialogue: null,
+
+    /**
+     * The panel used for all action menu displays.
+     *
+     * @property type
+     * @type Y.Node
+     * @protected
+     */
+    panel: null,
 
     /**
      * The number of pages in the pdf.
@@ -49,7 +60,7 @@ EDITOR.prototype = {
      * @type Number
      * @protected
      */
-    pagecount : 0,
+    pagecount: 0,
 
     /**
      * The active page in the editor.
@@ -58,7 +69,7 @@ EDITOR.prototype = {
      * @type Number
      * @protected
      */
-    currentpage : 0,
+    currentpage: 0,
 
     /**
      * A list of page objects. Each page has a list of comments and annotations.
@@ -67,7 +78,16 @@ EDITOR.prototype = {
      * @type array
      * @protected
      */
-    pages : [],
+    pages: [],
+
+    /**
+     * The reported status of the document.
+     *
+     * @property documentstatus
+     * @type int
+     * @protected
+     */
+    documentstatus: 0,
 
     /**
      * The yui node for the loading icon.
@@ -76,7 +96,7 @@ EDITOR.prototype = {
      * @type Node
      * @protected
      */
-    loadingicon : null,
+    loadingicon: null,
 
     /**
      * Image object of the current page image.
@@ -85,7 +105,7 @@ EDITOR.prototype = {
      * @type Image
      * @protected
      */
-    pageimage : null,
+    pageimage: null,
 
     /**
      * YUI Graphic class for drawing shapes.
@@ -94,7 +114,7 @@ EDITOR.prototype = {
      * @type Graphic
      * @protected
      */
-    graphic : null,
+    graphic: null,
 
     /**
      * Info about the current edit operation.
@@ -103,7 +123,7 @@ EDITOR.prototype = {
      * @type M.assignfeedback_editpdf.edit
      * @protected
      */
-    currentedit : new M.assignfeedback_editpdf.edit(),
+    currentedit: new M.assignfeedback_editpdf.edit(),
 
     /**
      * Current drawable.
@@ -112,7 +132,7 @@ EDITOR.prototype = {
      * @type M.assignfeedback_editpdf.drawable|false
      * @protected
      */
-    currentdrawable : false,
+    currentdrawable: false,
 
     /**
      * Current drawables.
@@ -121,7 +141,7 @@ EDITOR.prototype = {
      * @type array(M.assignfeedback_editpdf.drawable)
      * @protected
      */
-    drawables : [],
+    drawables: [],
 
     /**
      * Current comment when the comment menu is open.
@@ -129,7 +149,7 @@ EDITOR.prototype = {
      * @type M.assignfeedback_editpdf.comment
      * @protected
      */
-    currentcomment : null,
+    currentcomment: null,
 
     /**
      * Current annotation when the select tool is used.
@@ -137,7 +157,15 @@ EDITOR.prototype = {
      * @type M.assignfeedback_editpdf.annotation
      * @protected
      */
-    currentannotation : null,
+    currentannotation: null,
+
+    /**
+     * Track the previous annotation so we can remove selection highlights.
+     * @property lastannotation
+     * @type M.assignfeedback_editpdf.annotation
+     * @protected
+     */
+    lastannotation: null,
 
     /**
      * Last selected annotation tool
@@ -145,7 +173,7 @@ EDITOR.prototype = {
      * @type String
      * @protected
      */
-    lastanntationtool : "pen",
+    lastannotationtool: "pen",
 
     /**
      * The users comments quick list
@@ -153,7 +181,7 @@ EDITOR.prototype = {
      * @type M.assignfeedback_editpdf.quickcommentlist
      * @protected
      */
-    quicklist : null,
+    quicklist: null,
 
     /**
      * The search comments window.
@@ -161,7 +189,7 @@ EDITOR.prototype = {
      * @type M.core.dialogue
      * @protected
      */
-    searchcommentswindow : null,
+    searchcommentswindow: null,
 
 
     /**
@@ -170,7 +198,7 @@ EDITOR.prototype = {
      * @type String
      * @protected
      */
-    currentstamp : null,
+    currentstamp: null,
 
     /**
      * The stamps.
@@ -178,7 +206,7 @@ EDITOR.prototype = {
      * @type Array
      * @protected
      */
-    stamps : [],
+    stamps: [],
 
     /**
      * Prevent new comments from appearing
@@ -188,13 +216,22 @@ EDITOR.prototype = {
      * @type Boolean
      * @public
      */
-    editingcomment : false,
+    editingcomment: false,
+
+    /**
+     * Should inactive comments be collapsed?
+     *
+     * @property collapsecomments
+     * @type Boolean
+     * @public
+     */
+    collapsecomments: true,
 
     /**
      * Called during the initialisation process of the object.
      * @method initializer
      */
-    initializer : function() {
+    initializer: function() {
         var link;
 
         link = Y.one('#' + this.get('linkid'));
@@ -203,11 +240,24 @@ EDITOR.prototype = {
             link.on('click', this.link_handler, this);
             link.on('key', this.link_handler, 'down:13', this);
 
-            this.currentedit.start = false;
-            this.currentedit.end = false;
-            if (!this.get('readonly')) {
-                this.quicklist = new M.assignfeedback_editpdf.quickcommentlist(this);
-            }
+            // We call the amd module to see if we can take control of the review panel.
+            require(['mod_assign/grading_review_panel'], function(ReviewPanelManager) {
+                var panelManager = new ReviewPanelManager();
+
+                var panel = panelManager.getReviewPanel('assignfeedback_editpdf');
+                if (panel) {
+                    panel = Y.one(panel);
+                    panel.empty();
+                    link.ancestor('.fitem').hide();
+                    this.open_in_panel(panel);
+                }
+                this.currentedit.start = false;
+                this.currentedit.end = false;
+                if (!this.get('readonly')) {
+                    this.quicklist = new M.assignfeedback_editpdf.quickcommentlist(this);
+                }
+            }.bind(this));
+
         }
     },
 
@@ -215,11 +265,11 @@ EDITOR.prototype = {
      * Called to show/hide buttons and set the current colours/stamps.
      * @method refresh_button_state
      */
-    refresh_button_state : function() {
-        var button, currenttoolnode, imgurl;
+    refresh_button_state: function() {
+        var button, currenttoolnode, imgurl, drawingregion;
 
         // Initalise the colour buttons.
-        button = Y.one(SELECTOR.COMMENTCOLOURBUTTON);
+        button = this.get_dialogue_element(SELECTOR.COMMENTCOLOURBUTTON);
 
         imgurl = M.util.image_url('background_colour_' + this.currentedit.commentcolour, 'assignfeedback_editpdf');
         button.one('img').setAttribute('src', imgurl);
@@ -230,15 +280,17 @@ EDITOR.prototype = {
             button.one('img').setStyle('borderStyle', 'solid');
         }
 
-        button = Y.one(SELECTOR.ANNOTATIONCOLOURBUTTON);
+        button = this.get_dialogue_element(SELECTOR.ANNOTATIONCOLOURBUTTON);
         imgurl = M.util.image_url('colour_' + this.currentedit.annotationcolour, 'assignfeedback_editpdf');
         button.one('img').setAttribute('src', imgurl);
 
-        currenttoolnode = Y.one(TOOLSELECTOR[this.currentedit.tool]);
+        currenttoolnode = this.get_dialogue_element(TOOLSELECTOR[this.currentedit.tool]);
         currenttoolnode.addClass('assignfeedback_editpdf_selectedbutton');
         currenttoolnode.setAttribute('aria-pressed', 'true');
+        drawingregion = this.get_dialogue_element(SELECTOR.DRAWINGREGION);
+        drawingregion.setAttribute('data-currenttool', this.currentedit.tool);
 
-        button = Y.one(SELECTOR.STAMPSBUTTON);
+        button = this.get_dialogue_element(SELECTOR.STAMPSBUTTON);
         button.one('img').setAttrs({'src': this.get_stamp_image_url(this.currentedit.stamp),
                                     'height': '16',
                                     'width': '16'});
@@ -248,8 +300,8 @@ EDITOR.prototype = {
      * Called to get the bounds of the drawing region.
      * @method get_canvas_bounds
      */
-    get_canvas_bounds : function() {
-        var canvas = Y.one(SELECTOR.DRAWINGCANVAS),
+    get_canvas_bounds: function() {
+        var canvas = this.get_dialogue_element(SELECTOR.DRAWINGCANVAS),
             offsetcanvas = canvas.getXY(),
             offsetleft = offsetcanvas[0],
             offsettop = offsetcanvas[1],
@@ -264,7 +316,7 @@ EDITOR.prototype = {
      * @method get_canvas_coordinates
      * @param M.assignfeedback_editpdf.point point in window coordinats.
      */
-    get_canvas_coordinates : function(point) {
+    get_canvas_coordinates: function(point) {
         var bounds = this.get_canvas_bounds(),
             newpoint = new M.assignfeedback_editpdf.point(point.x - bounds.x, point.y - bounds.y);
 
@@ -279,7 +331,7 @@ EDITOR.prototype = {
      * @method get_window_coordinates
      * @param M.assignfeedback_editpdf.point point in window coordinats.
      */
-    get_window_coordinates : function(point) {
+    get_window_coordinates: function(point) {
         var bounds = this.get_canvas_bounds(),
             newpoint = new M.assignfeedback_editpdf.point(point.x + bounds.x, point.y + bounds.y);
 
@@ -287,11 +339,42 @@ EDITOR.prototype = {
     },
 
     /**
+     * Open the edit-pdf editor in the panel in the page instead of a popup.
+     * @method open_in_panel
+     */
+    open_in_panel: function(panel) {
+        var drawingcanvas, drawingregion;
+
+        this.panel = panel;
+        panel.append(this.get('body'));
+        panel.addClass(CSS.DIALOGUE);
+
+        this.loadingicon = this.get_dialogue_element(SELECTOR.LOADINGICON);
+
+        drawingcanvas = this.get_dialogue_element(SELECTOR.DRAWINGCANVAS);
+        this.graphic = new Y.Graphic({render: drawingcanvas});
+
+        drawingregion = this.get_dialogue_element(SELECTOR.DRAWINGREGION);
+        drawingregion.on('scroll', this.move_canvas, this);
+
+        if (!this.get('readonly')) {
+            drawingcanvas.on('gesturemovestart', this.edit_start, null, this);
+            drawingcanvas.on('gesturemove', this.edit_move, null, this);
+            drawingcanvas.on('gesturemoveend', this.edit_end, null, this);
+
+            this.refresh_button_state();
+        }
+
+        this.start_generation();
+    },
+
+    /**
      * Called to open the pdf editing dialogue.
      * @method link_handler
      */
-    link_handler : function(e) {
-        var drawingcanvas, drawingregion, resize = true;
+    link_handler: function(e) {
+        var drawingcanvas, drawingregion;
+        var resize = true;
         e.preventDefault();
 
         if (!this.dialogue) {
@@ -308,12 +391,12 @@ EDITOR.prototype = {
             // Add custom class for styling.
             this.dialogue.get('boundingBox').addClass(CSS.DIALOGUE);
 
-            this.loadingicon = Y.one(SELECTOR.LOADINGICON);
+            this.loadingicon = this.get_dialogue_element(SELECTOR.LOADINGICON);
 
-            drawingcanvas = Y.one(SELECTOR.DRAWINGCANVAS);
-            this.graphic = new Y.Graphic({render : SELECTOR.DRAWINGCANVAS});
+            drawingcanvas = this.get_dialogue_element(SELECTOR.DRAWINGCANVAS);
+            this.graphic = new Y.Graphic({render: drawingcanvas});
 
-            drawingregion = Y.one(SELECTOR.DRAWINGREGION);
+            drawingregion = this.get_dialogue_element(SELECTOR.DRAWINGREGION);
             drawingregion.on('scroll', this.move_canvas, this);
 
             if (!this.get('readonly')) {
@@ -324,7 +407,7 @@ EDITOR.prototype = {
                 this.refresh_button_state();
             }
 
-            this.load_all_pages();
+            this.start_generation();
             drawingcanvas.on('windowresize', this.resize, this);
 
             resize = false;
@@ -341,121 +424,138 @@ EDITOR.prototype = {
 
     /**
      * Called to load the information and annotations for all pages.
-     * @method load_all_pages
+     *
+     * @method start_generation
      */
-    load_all_pages : function() {
-        var ajaxurl = AJAXBASE,
-            config,
-            checkconversionstatus,
-            ajax_error_total;
+    start_generation: function() {
+        this.poll_document_conversion_status();
+    },
 
-        config = {
+    /**
+     * Poll the current document conversion status and start the next step
+     * in the process.
+     *
+     * @method poll_document_conversion_status
+     */
+    poll_document_conversion_status: function() {
+        if (this.get('destroyed')) {
+            return;
+        }
+
+        Y.io(AJAXBASE, {
             method: 'get',
             context: this,
             sync: false,
-            data : {
-                sesskey : M.cfg.sesskey,
-                action : 'loadallpages',
-                userid : this.get('userid'),
-                attemptnumber : this.get('attemptnumber'),
-                assignmentid : this.get('assignmentid'),
-                readonly : this.get('readonly') ? 1 : 0
+            data: {
+                sesskey: M.cfg.sesskey,
+                action: 'pollconversions',
+                userid: this.get('userid'),
+                attemptnumber: this.get('attemptnumber'),
+                assignmentid: this.get('assignmentid'),
+                readonly: this.get('readonly') ? 1 : 0
             },
             on: {
                 success: function(tid, response) {
-                    this.all_pages_loaded(response.responseText);
+                    var data = this.handle_response_data(response),
+                        poll = false;
+                    if (data) {
+                        this.documentstatus = data.status;
+                        if (data.status === 0) {
+                            // The combined document is still waiting for input to be ready.
+                            poll = true;
+
+                        } else if (data.status === 1) {
+                            // The combine document is ready for conversion into a single PDF.
+                            poll = true;
+
+                        } else if (data.status === 2 || data.status === -1) {
+                            // The combined PDF is ready.
+                            // We now know the page count and can convert it to a set of images.
+                            this.pagecount = data.pagecount;
+
+                            if (data.pageready == data.pagecount) {
+                                this.prepare_pages_for_display(data);
+                            } else {
+                                // Some pages are not ready yet.
+                                // Note: We use a different polling process here which does not block.
+                                this.update_page_load_progress();
+
+                                // Fetch the images for the combined document.
+                                this.start_document_to_image_conversion();
+                            }
+                        }
+
+                        if (poll) {
+                            // Check again in 1 second.
+                            Y.later(1000, this, this.poll_document_conversion_status);
+                        }
+                    }
                 },
                 failure: function(tid, response) {
                     return new M.core.exception(response.responseText);
                 }
             }
-        };
+        });
+    },
 
-        Y.io(ajaxurl, config);
-
-        // If pages are not loaded, check PDF conversion status for the progress bar.
-        if (this.pagecount <= 0) {
-            checkconversionstatus = {
-                method: 'get',
-                context: this,
-                sync: false,
-                data : {
-                    sesskey : M.cfg.sesskey,
-                    action : 'conversionstatus',
-                    userid : this.get('userid'),
-                    attemptnumber : this.get('attemptnumber'),
-                    assignmentid : this.get('assignmentid')
-                },
-                on: {
-                    success: function(tid, response) {
-                        ajax_error_total = 0;
-                        if (this.pagecount === 0) {
-                            var pagetotal = this.get('pagetotal');
-
-                            // Update the progress bar.
-                            var progressbarcontainer = Y.one(SELECTOR.PROGRESSBARCONTAINER);
-                            var progressbar = progressbarcontainer.one('.bar');
-                            if (progressbar) {
-                                // Calculate progress.
-                                var progress = (response.response / pagetotal) * 100;
-                                progressbar.setStyle('width', progress + '%');
-                                progressbarcontainer.setAttribute('aria-valuenow', progress);
-                            }
-
-                            // New ajax request delayed of a second.
-                            Y.later(1000, this, function () {
-                                Y.io(AJAXBASEPROGRESS, checkconversionstatus);
-                            });
-                        }
-                    },
-                    failure: function(tid, response) {
-                        ajax_error_total = ajax_error_total + 1;
-                        // We only continue on error if the all pages were not generated,
-                        // and if the ajax call did not produce 5 errors in the row.
-                        if (this.pagecount === 0 && ajax_error_total < 5) {
-                            Y.later(1000, this, function () {
-                                Y.io(AJAXBASEPROGRESS, checkconversionstatus);
-                            });
-                        }
-                        return new M.core.exception(response.responseText);
-                    }
-                }
-            };
-            // We start the AJAX "generated page total number" call a second later to give a chance to
-            // the AJAX "combined pdf generation" call to clean the previous submission images.
-            Y.later(1000, this, function () {
-                ajax_error_total = 0;
-                Y.io(AJAXBASEPROGRESS, checkconversionstatus);
-            });
+    /**
+     * Spwan the PDF to Image conversion on the server.
+     *
+     * @method get_images_for_documents
+     */
+    start_document_to_image_conversion: function() {
+        if (this.get('destroyed')) {
+            return;
         }
+        Y.io(AJAXBASE, {
+            method: 'get',
+            context: this,
+            sync: false,
+            data: {
+                sesskey: M.cfg.sesskey,
+                action: 'pollconversions',
+                userid: this.get('userid'),
+                attemptnumber: this.get('attemptnumber'),
+                assignmentid: this.get('assignmentid'),
+                readonly: this.get('readonly') ? 1 : 0
+            },
+            on: {
+                success: function(tid, response) {
+                    var data = this.handle_response_data(response);
+                    if (data) {
+                        this.documentstatus = data.status;
+                        if (data.status === 2) {
+                            // The pages are ready. Add all of the annotations to them.
+                            this.prepare_pages_for_display(data);
+                        }
+                    }
+                },
+                failure: function(tid, response) {
+                    return new M.core.exception(response.responseText);
+                }
+            }
+        });
     },
 
     /**
      * The info about all pages in the pdf has been returned.
+     *
      * @param string The ajax response as text.
      * @protected
-     * @method all_pages_loaded
+     * @method prepare_pages_for_display
      */
-    all_pages_loaded : function(responsetext) {
-        var data, i, j, comment, error;
-        try {
-            data = Y.JSON.parse(responsetext);
-            if (data.error || !data.pagecount) {
+    prepare_pages_for_display: function(data) {
+        var i, j, comment, error;
+        if (!data.pagecount) {
+            if (this.dialogue) {
                 this.dialogue.hide();
-                // Display alert dialogue.
-                error = new M.core.alert({ message: M.util.get_string('cannotopenpdf', 'assignfeedback_editpdf') });
-                error.show();
-                return;
             }
-        } catch (e) {
-            this.dialogue.hide();
             // Display alert dialogue.
-            error = new M.core.alert({ title: M.util.get_string('cannotopenpdf', 'assignfeedback_editpdf')});
+            error = new M.core.alert({message: M.util.get_string('cannotopenpdf', 'assignfeedback_editpdf')});
             error.show();
             return;
         }
 
-        this.pagecount = data.pagecount;
         this.pages = data.pages;
 
         for (i = 0; i < this.pages.length; i++) {
@@ -486,13 +586,135 @@ EDITOR.prototype = {
     },
 
     /**
+     * Fetch the page images.
+     *
+     * @method update_page_load_progress
+     */
+    update_page_load_progress: function() {
+        if (this.get('destroyed')) {
+            return;
+        }
+        var checkconversionstatus,
+            ajax_error_total = 0,
+            progressbar = this.get_dialogue_element(SELECTOR.PROGRESSBARCONTAINER + ' .bar');
+
+        if (!progressbar) {
+            return;
+        }
+
+        // If pages are not loaded, check PDF conversion status for the progress bar.
+        checkconversionstatus = {
+            method: 'get',
+            context: this,
+            sync: false,
+            data: {
+                sesskey: M.cfg.sesskey,
+                action: 'conversionstatus',
+                userid: this.get('userid'),
+                attemptnumber: this.get('attemptnumber'),
+                assignmentid: this.get('assignmentid')
+            },
+            on: {
+                success: function(tid, response) {
+                    if (this.get('destroyed')) {
+                        return;
+                    }
+                    ajax_error_total = 0;
+
+                    var progress = 0;
+                    var progressbar = this.get_dialogue_element(SELECTOR.PROGRESSBARCONTAINER + ' .bar');
+                    if (progressbar) {
+                        // Calculate progress.
+                        progress = (response.response / this.pagecount) * 100;
+                        progressbar.setStyle('width', progress + '%');
+                        progressbar.ancestor(SELECTOR.PROGRESSBARCONTAINER).setAttribute('aria-valuenow', progress);
+
+                        if (progress < 100) {
+                            // Keep polling until all pages are generated.
+                            M.util.js_pending('checkconversionstatus');
+                            Y.later(1000, this, function() {
+                                M.util.js_complete('checkconversionstatus');
+                                Y.io(AJAXBASEPROGRESS, checkconversionstatus);
+                            });
+                        }
+                    }
+                },
+                failure: function(tid, response) {
+                    if (this.get('destroyed')) {
+                        return;
+                    }
+                    ajax_error_total = ajax_error_total + 1;
+                    // We only continue on error if the all pages were not generated,
+                    // and if the ajax call did not produce 5 errors in the row.
+                    if (this.pagecount === 0 && ajax_error_total < 5) {
+                        M.util.js_pending('checkconversionstatus');
+                        Y.later(1000, this, function() {
+                            M.util.js_complete('checkconversionstatus');
+                            Y.io(AJAXBASEPROGRESS, checkconversionstatus);
+                        });
+                    }
+                    return new M.core.exception(response.responseText);
+                }
+            }
+        };
+        // We start the AJAX "generated page total number" call a second later to give a chance to
+        // the AJAX "combined pdf generation" call to clean the previous submission images.
+        M.util.js_pending('checkconversionstatus');
+        Y.later(1000, this, function() {
+            ajax_error_total = 0;
+            M.util.js_complete('checkconversionstatus');
+            Y.io(AJAXBASEPROGRESS, checkconversionstatus);
+        });
+    },
+
+    /**
+     * Handle response data.
+     *
+     * @method  handle_response_data
+     * @param   {object} response
+     * @return  {object}
+     */
+    handle_response_data: function(response) {
+        if (this.get('destroyed')) {
+            return;
+        }
+        var data;
+        try {
+            data = Y.JSON.parse(response.responseText);
+            if (data.error) {
+                if (this.dialogue) {
+                    this.dialogue.hide();
+                }
+
+                new M.core.alert({
+                    message: M.util.get_string('cannotopenpdf', 'assignfeedback_editpdf'),
+                    visible: true
+                });
+            } else {
+                return data;
+            }
+        } catch (e) {
+            if (this.dialogue) {
+                this.dialogue.hide();
+            }
+
+            new M.core.alert({
+                title: M.util.get_string('cannotopenpdf', 'assignfeedback_editpdf'),
+                visible: true
+            });
+        }
+
+        return;
+    },
+
+    /**
      * Get the full pluginfile url for an image file - just given the filename.
      *
      * @public
      * @method get_stamp_image_url
      * @param string filename
      */
-    get_stamp_image_url : function(filename) {
+    get_stamp_image_url: function(filename) {
         var urls = this.get('stampfiles'),
             fullurl = '';
 
@@ -510,26 +732,31 @@ EDITOR.prototype = {
      * @protected
      * @method setup_toolbar
      */
-    setup_toolbar : function() {
+    setup_toolbar: function() {
         var toolnode,
             commentcolourbutton,
             annotationcolourbutton,
             searchcommentsbutton,
+            expcolcommentsbutton,
             currentstampbutton,
             stampfiles,
             picker,
             filename;
 
-        searchcommentsbutton = Y.one(SELECTOR.SEARCHCOMMENTSBUTTON);
+        searchcommentsbutton = this.get_dialogue_element(SELECTOR.SEARCHCOMMENTSBUTTON);
         searchcommentsbutton.on('click', this.open_search_comments, this);
         searchcommentsbutton.on('key', this.open_search_comments, 'down:13', this);
+
+        expcolcommentsbutton = this.get_dialogue_element(SELECTOR.EXPCOLCOMMENTSBUTTON);
+        expcolcommentsbutton.on('click', this.expandCollapseComments, this);
+        expcolcommentsbutton.on('key', this.expandCollapseComments, 'down:13', this);
 
         if (this.get('readonly')) {
             return;
         }
         // Setup the tool buttons.
         Y.each(TOOLSELECTOR, function(selector, tool) {
-            toolnode = Y.one(selector);
+            toolnode = this.get_dialogue_element(selector);
             toolnode.on('click', this.handle_tool_button, this, tool);
             toolnode.on('key', this.handle_tool_button, 'down:13', this, tool);
             toolnode.setAttribute('aria-pressed', 'false');
@@ -537,12 +764,12 @@ EDITOR.prototype = {
 
         // Set the default tool.
 
-        commentcolourbutton = Y.one(SELECTOR.COMMENTCOLOURBUTTON);
+        commentcolourbutton = this.get_dialogue_element(SELECTOR.COMMENTCOLOURBUTTON);
         picker = new M.assignfeedback_editpdf.colourpicker({
             buttonNode: commentcolourbutton,
             colours: COMMENTCOLOUR,
             iconprefix: 'background_colour_',
-            callback: function (e) {
+            callback: function(e) {
                 var colour = e.target.getAttribute('data-colour');
                 if (!colour) {
                     colour = e.target.ancestor().getAttribute('data-colour');
@@ -553,12 +780,12 @@ EDITOR.prototype = {
             context: this
         });
 
-        annotationcolourbutton = Y.one(SELECTOR.ANNOTATIONCOLOURBUTTON);
+        annotationcolourbutton = this.get_dialogue_element(SELECTOR.ANNOTATIONCOLOURBUTTON);
         picker = new M.assignfeedback_editpdf.colourpicker({
             buttonNode: annotationcolourbutton,
             iconprefix: 'colour_',
             colours: ANNOTATIONCOLOUR,
-            callback: function (e) {
+            callback: function(e) {
                 var colour = e.target.getAttribute('data-colour');
                 if (!colour) {
                     colour = e.target.ancestor().getAttribute('data-colour');
@@ -575,11 +802,11 @@ EDITOR.prototype = {
 
         stampfiles = this.get('stampfiles');
         if (stampfiles.length <= 0) {
-            Y.one(TOOLSELECTOR.stamp).ancestor().hide();
+            this.get_dialogue_element(TOOLSELECTOR.stamp).ancestor().hide();
         } else {
             filename = stampfiles[0].substr(stampfiles[0].lastIndexOf('/') + 1);
             this.currentedit.stamp = filename;
-            currentstampbutton = Y.one(SELECTOR.STAMPSBUTTON);
+            currentstampbutton = this.get_dialogue_element(SELECTOR.STAMPSBUTTON);
 
             picker = new M.assignfeedback_editpdf.stamppicker({
                 buttonNode: currentstampbutton,
@@ -606,17 +833,18 @@ EDITOR.prototype = {
      * @protected
      * @method handle_tool_button
      */
-    handle_tool_button : function(e, tool) {
+    handle_tool_button: function(e, tool) {
         var currenttoolnode;
 
         e.preventDefault();
 
         // Change style of the pressed button.
-        currenttoolnode = Y.one(TOOLSELECTOR[this.currentedit.tool]);
+        currenttoolnode = this.get_dialogue_element(TOOLSELECTOR[this.currentedit.tool]);
         currenttoolnode.removeClass('assignfeedback_editpdf_selectedbutton');
         currenttoolnode.setAttribute('aria-pressed', 'false');
         this.currentedit.tool = tool;
-        if (tool !== "comment" && tool !== "select" && tool !== "stamp") {
+
+        if (tool !== "comment" && tool !== "select" && tool !== "drag" && tool !== "stamp") {
             this.lastannotationtool = tool;
         }
         this.refresh_button_state();
@@ -628,7 +856,7 @@ EDITOR.prototype = {
      * @method stringify_current_page
      * @return string
      */
-    stringify_current_page : function() {
+    stringify_current_page: function() {
         var comments = [],
             annotations = [],
             page,
@@ -641,7 +869,7 @@ EDITOR.prototype = {
             annotations[i] = this.pages[this.currentpage].annotations[i].clean();
         }
 
-        page = { comments : comments, annotations : annotations };
+        page = {comments: comments, annotations: annotations};
 
         return Y.JSON.stringify(page);
     },
@@ -651,7 +879,7 @@ EDITOR.prototype = {
      * @protected
      * @method get_current_drawable
      */
-    get_current_drawable : function() {
+    get_current_drawable: function() {
         var comment,
             annotation,
             drawable = false;
@@ -674,11 +902,24 @@ EDITOR.prototype = {
     },
 
     /**
+     * Find an element within the dialogue.
+     * @protected
+     * @method get_dialogue_element
+     */
+    get_dialogue_element: function(selector) {
+        if (this.panel) {
+            return this.panel.one(selector);
+        } else {
+            return this.dialogue.get('boundingBox').one(selector);
+        }
+    },
+
+    /**
      * Redraw the active edit.
      * @protected
      * @method redraw_active_edit
      */
-    redraw_current_edit : function() {
+    redraw_current_edit: function() {
         if (this.currentdrawable) {
             this.currentdrawable.erase();
         }
@@ -691,16 +932,14 @@ EDITOR.prototype = {
      * @param Event
      * @method edit_start
      */
-    edit_start : function(e) {
-        e.preventDefault();
-        var canvas = Y.one(SELECTOR.DRAWINGCANVAS),
+    edit_start: function(e) {
+        var canvas = this.get_dialogue_element(SELECTOR.DRAWINGCANVAS),
             offset = canvas.getXY(),
             scrolltop = canvas.get('docScrollY'),
             scrollleft = canvas.get('docScrollX'),
-            point = {x : e.clientX - offset[0] + scrollleft,
-                     y : e.clientY - offset[1] + scrolltop},
-            selected = false,
-            lastannotation;
+            point = {x: e.clientX - offset[0] + scrollleft,
+                     y: e.clientY - offset[1] + scrolltop},
+            selected = false;
 
         // Ignore right mouse click.
         if (e.button === 3) {
@@ -717,7 +956,7 @@ EDITOR.prototype = {
 
         this.currentedit.starttime = new Date().getTime();
         this.currentedit.start = point;
-        this.currentedit.end = {x : point.x, y : point.y};
+        this.currentedit.end = {x: point.x, y: point.y};
 
         if (this.currentedit.tool === 'select') {
             var x = this.currentedit.end.x,
@@ -732,13 +971,13 @@ EDITOR.prototype = {
             });
 
             if (selected) {
-                lastannotation = this.currentannotation;
+                this.lastannotation = this.currentannotation;
                 this.currentannotation = selected;
-                if (lastannotation && lastannotation !== selected) {
+                if (this.lastannotation && this.lastannotation !== selected) {
                     // Redraw the last selected annotation to remove the highlight.
-                    if (lastannotation.drawable) {
-                        lastannotation.drawable.erase();
-                        this.drawables.push(lastannotation.draw());
+                    if (this.lastannotation.drawable) {
+                        this.lastannotation.drawable.erase();
+                        this.drawables.push(this.lastannotation.draw());
                     }
                 }
                 // Redraw the newly selected annotation to show the highlight.
@@ -746,12 +985,21 @@ EDITOR.prototype = {
                     this.currentannotation.drawable.erase();
                 }
                 this.drawables.push(this.currentannotation.draw());
+            } else {
+                this.lastannotation = this.currentannotation;
+                this.currentannotation = null;
+
+                // Redraw the last selected annotation to remove the highlight.
+                if (this.lastannotation && this.lastannotation.drawable) {
+                    this.lastannotation.drawable.erase();
+                    this.drawables.push(this.lastannotation.draw());
+                }
             }
         }
         if (this.currentannotation) {
             // Used to calculate drag offset.
-            this.currentedit.annotationstart = { x : this.currentannotation.x,
-                                                 y : this.currentannotation.y };
+            this.currentedit.annotationstart = {x: this.currentannotation.x,
+                                                 y: this.currentannotation.y};
         }
     },
 
@@ -761,13 +1009,16 @@ EDITOR.prototype = {
      * @param Event
      * @method edit_move
      */
-    edit_move : function(e) {
+    edit_move: function(e) {
         e.preventDefault();
         var bounds = this.get_canvas_bounds(),
-            canvas = Y.one(SELECTOR.DRAWINGCANVAS),
+            canvas = this.get_dialogue_element(SELECTOR.DRAWINGCANVAS),
+            drawingregion = this.get_dialogue_element(SELECTOR.DRAWINGREGION),
             clientpoint = new M.assignfeedback_editpdf.point(e.clientX + canvas.get('docScrollX'),
                                                              e.clientY + canvas.get('docScrollY')),
-            point = this.get_canvas_coordinates(clientpoint);
+            point = this.get_canvas_coordinates(clientpoint),
+            diffX,
+            diffY;
 
         // Ignore events out of the canvas area.
         if (point.x < 0 || point.x > bounds.width || point.y < 0 || point.y > bounds.height) {
@@ -780,9 +1031,16 @@ EDITOR.prototype = {
 
         if (this.currentedit.tool === 'select') {
             if (this.currentannotation && this.currentedit) {
-                this.currentannotation.move( this.currentedit.annotationstart.x + point.x - this.currentedit.start.x,
+                this.currentannotation.move(this.currentedit.annotationstart.x + point.x - this.currentedit.start.x,
                                              this.currentedit.annotationstart.y + point.y - this.currentedit.start.y);
             }
+        } else if (this.currentedit.tool === 'drag') {
+            diffX = point.x - this.currentedit.start.x;
+            diffY = point.y - this.currentedit.start.y;
+
+            drawingregion.getDOMNode().scrollLeft -= diffX;
+            drawingregion.getDOMNode().scrollTop -= diffY;
+
         } else {
             if (this.currentedit.start) {
                 this.currentedit.end = point;
@@ -797,7 +1055,7 @@ EDITOR.prototype = {
      * @param Event
      * @method edit_end
      */
-    edit_end : function() {
+    edit_end: function() {
         var duration,
             comment,
             annotation;
@@ -848,21 +1106,25 @@ EDITOR.prototype = {
      * @public
      * @method resize
      */
-    resize : function() {
+    resize: function() {
         var drawingregion, drawregionheight;
 
-        if (!this.dialogue.get('visible')) {
-            return;
+        if (this.dialogue) {
+            if (!this.dialogue.get('visible')) {
+                return;
+            }
+            this.dialogue.centerDialogue();
         }
-        this.dialogue.centerDialogue();
 
         // Make sure the dialogue box is not bigger than the max height of the viewport.
         drawregionheight = Y.one('body').get('winHeight') - 120; // Space for toolbar + titlebar.
         if (drawregionheight < 100) {
             drawregionheight = 100;
         }
-        drawingregion = Y.one(SELECTOR.DRAWINGREGION);
-        drawingregion.setStyle('maxHeight', drawregionheight +'px');
+        drawingregion = this.get_dialogue_element(SELECTOR.DRAWINGREGION);
+        if (this.dialogue) {
+            drawingregion.setStyle('maxHeight', drawregionheight + 'px');
+        }
         this.redraw();
         return true;
     },
@@ -872,7 +1134,7 @@ EDITOR.prototype = {
      * @public
      * @method create_annotation
      */
-    create_annotation : function(type, data) {
+    create_annotation: function(type, data) {
         data.type = type;
         data.editor = this;
         if (type === "line") {
@@ -896,7 +1158,10 @@ EDITOR.prototype = {
      * @protected
      * @method save_current_page
      */
-    save_current_page : function() {
+    save_current_page: function() {
+        if (this.get('destroyed')) {
+            return;
+        }
         var ajaxurl = AJAXBASE,
             config;
 
@@ -904,14 +1169,14 @@ EDITOR.prototype = {
             method: 'post',
             context: this,
             sync: false,
-            data : {
-                'sesskey' : M.cfg.sesskey,
-                'action' : 'savepage',
-                'index' : this.currentpage,
-                'userid' : this.get('userid'),
-                'attemptnumber' : this.get('attemptnumber'),
-                'assignmentid' : this.get('assignmentid'),
-                'page' : this.stringify_current_page()
+            data: {
+                'sesskey': M.cfg.sesskey,
+                'action': 'savepage',
+                'index': this.currentpage,
+                'userid': this.get('userid'),
+                'attemptnumber': this.get('attemptnumber'),
+                'assignmentid': this.get('assignmentid'),
+                'page': this.stringify_current_page()
             },
             on: {
                 success: function(tid, response) {
@@ -921,7 +1186,16 @@ EDITOR.prototype = {
                         if (jsondata.error) {
                             return new M.core.ajaxException(jsondata);
                         }
-                        Y.one(SELECTOR.UNSAVEDCHANGESDIV).addClass('haschanges');
+                        Y.one(SELECTOR.UNSAVEDCHANGESINPUT).set('value', 'true');
+                        Y.one(SELECTOR.UNSAVEDCHANGESDIV).setStyle('opacity', 1);
+                        Y.one(SELECTOR.UNSAVEDCHANGESDIV).setStyle('display', 'inline-block');
+                        Y.one(SELECTOR.UNSAVEDCHANGESDIV).transition({
+                            duration: 1,
+                            delay: 2,
+                            opacity: 0
+                        }, function() {
+                            Y.one(SELECTOR.UNSAVEDCHANGESDIV).setStyle('display', 'none');
+                        });
                     } catch (e) {
                         return new M.core.exception(e);
                     }
@@ -933,7 +1207,6 @@ EDITOR.prototype = {
         };
 
         Y.io(ajaxurl, config);
-
     },
 
     /**
@@ -943,10 +1216,10 @@ EDITOR.prototype = {
      * @protected
      * @method open_search_comments
      */
-    open_search_comments : function(e) {
+    open_search_comments: function(e) {
         if (!this.searchcommentswindow) {
             this.searchcommentswindow = new M.assignfeedback_editpdf.commentsearch({
-                editor : this
+                editor: this
             });
         }
 
@@ -955,11 +1228,27 @@ EDITOR.prototype = {
     },
 
     /**
+     * Toggle function to expand/collapse all comments on page.
+     *
+     * @protected
+     * @method expandCollapseComments
+     */
+    expandCollapseComments: function() {
+        if (this.collapsecomments) {
+            this.collapsecomments = false;
+        } else {
+            this.collapsecomments = true;
+        }
+
+        this.redraw();
+    },
+
+    /**
      * Redraw all the comments and annotations.
      * @protected
      * @method redraw
      */
-    redraw : function() {
+    redraw: function() {
         var i,
             page;
 
@@ -984,14 +1273,14 @@ EDITOR.prototype = {
      * @protected
      * @method change_page
      */
-    change_page : function() {
-        var drawingcanvas = Y.one(SELECTOR.DRAWINGCANVAS),
+    change_page: function() {
+        var drawingcanvas = this.get_dialogue_element(SELECTOR.DRAWINGCANVAS),
             page,
             previousbutton,
             nextbutton;
 
-        previousbutton = Y.one(SELECTOR.PREVIOUSBUTTON);
-        nextbutton = Y.one(SELECTOR.NEXTBUTTON);
+        previousbutton = this.get_dialogue_element(SELECTOR.PREVIOUSBUTTON);
+        nextbutton = this.get_dialogue_element(SELECTOR.NEXTBUTTON);
 
         if (this.currentpage > 0) {
             previousbutton.removeAttribute('disabled');
@@ -1011,7 +1300,7 @@ EDITOR.prototype = {
         drawingcanvas.setStyle('height', page.height + 'px');
 
         // Update page select.
-        Y.one(SELECTOR.PAGESELECT).set('value', this.currentpage);
+        this.get_dialogue_element(SELECTOR.PAGESELECT).set('selectedIndex', this.currentpage);
 
         this.resize(); // Internally will call 'redraw', after checking the dialogue size.
     },
@@ -1022,21 +1311,23 @@ EDITOR.prototype = {
      * @protected
      * @method setup_navigation
      */
-    setup_navigation : function() {
+    setup_navigation: function() {
         var pageselect,
             i,
+            strinfo,
             option,
             previousbutton,
             nextbutton;
 
-        pageselect = Y.one(SELECTOR.PAGESELECT);
+        pageselect = this.get_dialogue_element(SELECTOR.PAGESELECT);
 
         var options = pageselect.all('option');
         if (options.size() <= 1) {
             for (i = 0; i < this.pages.length; i++) {
                 option = Y.Node.create('<option/>');
                 option.setAttribute('value', i);
-                option.setHTML(M.util.get_string('pagenumber', 'assignfeedback_editpdf', i+1));
+                strinfo = {page: i + 1, total: this.pages.length};
+                option.setHTML(M.util.get_string('pagexofy', 'assignfeedback_editpdf', strinfo));
                 pageselect.append(option);
             }
         }
@@ -1046,8 +1337,8 @@ EDITOR.prototype = {
             this.change_page();
         }, this);
 
-        previousbutton = Y.one(SELECTOR.PREVIOUSBUTTON);
-        nextbutton = Y.one(SELECTOR.NEXTBUTTON);
+        previousbutton = this.get_dialogue_element(SELECTOR.PREVIOUSBUTTON);
+        nextbutton = this.get_dialogue_element(SELECTOR.NEXTBUTTON);
 
         previousbutton.on('click', this.previous_page, this);
         previousbutton.on('key', this.previous_page, 'down:13', this);
@@ -1060,7 +1351,7 @@ EDITOR.prototype = {
      * @protected
      * @method previous_page
      */
-    previous_page : function(e) {
+    previous_page: function(e) {
         e.preventDefault();
         this.currentpage--;
         if (this.currentpage < 0) {
@@ -1074,7 +1365,7 @@ EDITOR.prototype = {
      * @protected
      * @method next_page
      */
-    next_page : function(e) {
+    next_page: function(e) {
         e.preventDefault();
         this.currentpage++;
         if (this.currentpage >= this.pages.length) {
@@ -1091,7 +1382,7 @@ EDITOR.prototype = {
     move_canvas: function() {
         var drawingregion, x, y, i;
 
-        drawingregion = Y.one(SELECTOR.DRAWINGREGION);
+        drawingregion = this.get_dialogue_element(SELECTOR.DRAWINGREGION);
         x = parseInt(drawingregion.get('scrollLeft'), 10);
         y = parseInt(drawingregion.get('scrollTop'), 10);
 
@@ -1103,51 +1394,47 @@ EDITOR.prototype = {
 };
 
 Y.extend(EDITOR, Y.Base, EDITOR.prototype, {
-    NAME : 'moodle-assignfeedback_editpdf-editor',
-    ATTRS : {
-        userid : {
-            validator : Y.Lang.isInteger,
-            value : 0
+    NAME: 'moodle-assignfeedback_editpdf-editor',
+    ATTRS: {
+        userid: {
+            validator: Y.Lang.isInteger,
+            value: 0
         },
-        assignmentid : {
-            validator : Y.Lang.isInteger,
-            value : 0
+        assignmentid: {
+            validator: Y.Lang.isInteger,
+            value: 0
         },
-        attemptnumber : {
-            validator : Y.Lang.isInteger,
-            value : 0
+        attemptnumber: {
+            validator: Y.Lang.isInteger,
+            value: 0
         },
-        header : {
-            validator : Y.Lang.isString,
-            value : ''
+        header: {
+            validator: Y.Lang.isString,
+            value: ''
         },
-        body : {
-            validator : Y.Lang.isString,
-            value : ''
+        body: {
+            validator: Y.Lang.isString,
+            value: ''
         },
-        footer : {
-            validator : Y.Lang.isString,
-            value : ''
+        footer: {
+            validator: Y.Lang.isString,
+            value: ''
         },
-        linkid : {
-            validator : Y.Lang.isString,
-            value : ''
+        linkid: {
+            validator: Y.Lang.isString,
+            value: ''
         },
-        deletelinkid : {
-            validator : Y.Lang.isString,
-            value : ''
+        deletelinkid: {
+            validator: Y.Lang.isString,
+            value: ''
         },
-        readonly : {
-            validator : Y.Lang.isBoolean,
-            value : true
+        readonly: {
+            validator: Y.Lang.isBoolean,
+            value: true
         },
-        stampfiles : {
-            validator : Y.Lang.isArray,
-            value : ''
-        },
-        pagetotal : {
-            validator : Y.Lang.isInteger,
-            value : 0
+        stampfiles: {
+            validator: Y.Lang.isArray,
+            value: ''
         }
     }
 });
@@ -1162,5 +1449,10 @@ M.assignfeedback_editpdf.editor = M.assignfeedback_editpdf.editor || {};
  * @param {Object} params
  */
 M.assignfeedback_editpdf.editor.init = M.assignfeedback_editpdf.editor.init || function(params) {
-    return new EDITOR(params);
+    if (typeof M.assignfeedback_editpdf.instance !== 'undefined') {
+        M.assignfeedback_editpdf.instance.destroy();
+    }
+
+    M.assignfeedback_editpdf.instance = new EDITOR(params);
+    return M.assignfeedback_editpdf.instance;
 };

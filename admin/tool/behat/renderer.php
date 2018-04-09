@@ -24,9 +24,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-global $CFG;
-require_once($CFG->libdir . '/behat/classes/behat_selectors.php');
-
 /**
  * Renderer for behat tool web features
  *
@@ -44,6 +41,8 @@ class tool_behat_renderer extends plugin_renderer_base {
      * @return string HTML code
      */
     public function render_stepsdefinitions($stepsdefinitions, $form) {
+        global $CFG;
+        require_once($CFG->libdir . '/behat/classes/behat_selectors.php');
 
         $html = $this->generic_info();
 
@@ -140,7 +139,7 @@ class tool_behat_renderer extends plugin_renderer_base {
         $msg = get_string('wrongbehatsetup', 'tool_behat', $a);
 
         // Error box including generic error string + specific error msg.
-        $html .= $this->output->box_start('box errorbox');
+        $html .= $this->output->box_start('box errorbox alert alert-danger');
         $html .= html_writer::tag('div', $msg);
         $html .= $this->output->box_end();
 
@@ -165,7 +164,7 @@ class tool_behat_renderer extends plugin_renderer_base {
         // Info.
         $installurl = behat_command::DOCS_URL . '#Installation';
         $installlink = html_writer::tag('a', $installurl, array('href' => $installurl, 'target' => '_blank'));
-        $writetestsurl = behat_command::DOCS_URL . '#Writting_features';
+        $writetestsurl = behat_command::DOCS_URL . '#Writing_features';
         $writetestslink = html_writer::tag('a', $writetestsurl, array('href' => $writetestsurl, 'target' => '_blank'));
         $writestepsurl = behat_command::DOCS_URL . '#Adding_steps_definitions';
         $writestepslink = html_writer::tag('a', $writestepsurl, array('href' => $writestepsurl, 'target' => '_blank'));

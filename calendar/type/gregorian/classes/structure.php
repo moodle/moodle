@@ -68,8 +68,11 @@ class structure extends type_base {
     public function get_months() {
         $months = array();
 
+        $date = new \DateTime('@1263556800');
+        $date->setTimezone(new \DateTimeZone('UTC'));
         for ($i = 1; $i <= 12; $i++) {
-            $months[$i] = userdate(gmmktime(12, 0, 0, $i, 15, 2000), '%B');
+            $date->setDate(2000, $i, 15);
+            $months[$i] = userdate($date->getTimestamp(), '%B', 'UTC');
         }
 
         return $months;
@@ -320,38 +323,21 @@ class structure extends type_base {
             $format = $formatnohour;
         }
 
-        // Add daylight saving offset for string timezones only, as we can't get dst for
-        // float values. if timezone is 99 (user default timezone), then try update dst.
-        if ((99 == $timezone) || !is_numeric($timezone)) {
-            $time += dst_offset_on($time, $timezone);
+        $time = (int)$time; // Moodle allows rubbish in input...
+        $datestring = date_format_string($time, $format, $timezone);
+
+        date_default_timezone_set(\core_date::get_user_timezone($timezone));
+
+        if ($fixday) {
+            $daystring  = ltrim(str_replace(array(' 0', ' '), '', strftime(' %d', $time)));
+            $datestring = str_replace('DD', $daystring, $datestring);
+        }
+        if ($fixhour) {
+            $hourstring = ltrim(str_replace(array(' 0', ' '), '', strftime(' %I', $time)));
+            $datestring = str_replace('HH', $hourstring, $datestring);
         }
 
-        $timezone = get_user_timezone_offset($timezone);
-
-        // If we are running under Windows convert to windows encoding and then back to UTF-8
-        // (because it's impossible to specify UTF-8 to fetch locale info in Win32).
-        if (abs($timezone) > 13) { // Server time.
-            $datestring = date_format_string($time, $format, $timezone);
-            if ($fixday) {
-                $daystring  = ltrim(str_replace(array(' 0', ' '), '', strftime(' %d', $time)));
-                $datestring = str_replace('DD', $daystring, $datestring);
-            }
-            if ($fixhour) {
-                $hourstring = ltrim(str_replace(array(' 0', ' '), '', strftime(' %I', $time)));
-                $datestring = str_replace('HH', $hourstring, $datestring);
-            }
-        } else {
-            $time += (int)($timezone * 3600);
-            $datestring = date_format_string($time, $format, $timezone);
-            if ($fixday) {
-                $daystring  = ltrim(str_replace(array(' 0', ' '), '', gmstrftime(' %d', $time)));
-                $datestring = str_replace('DD', $daystring, $datestring);
-            }
-            if ($fixhour) {
-                $hourstring = ltrim(str_replace(array(' 0', ' '), '', gmstrftime(' %I', $time)));
-                $datestring = str_replace('HH', $hourstring, $datestring);
-            }
-        }
+        \core_date::set_default_server_timezone();
 
         return $datestring;
     }

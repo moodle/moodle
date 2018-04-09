@@ -113,7 +113,7 @@ class edit_index extends XMLDBAction {
         if ($structure->getIndexUses($table->getName(), $index->getName())) {
             $disabled = ' disabled="disabled " ';
         }
-        $o.= '      <tr valign="top"><td><label for="name" accesskey="n">Name:</label></td><td colspan="2"><input name="name" type="text" size="30" id="name"' . $disabled . ' value="' . s($index->getName()) . '" /></td></tr>';
+        $o.= '      <tr valign="top"><td><label for="name" accesskey="n">Name:</label></td><td colspan="2"><input name="name" type="text" size="'.xmldb_field::NAME_MAX_LENGTH.'" id="name"' . $disabled . ' value="' . s($index->getName()) . '" /></td></tr>';
         // XMLDB key comment
         $o.= '      <tr valign="top"><td><label for="comment" accesskey="c">Comment:</label></td><td colspan="2"><textarea name="comment" rows="3" cols="80" id="comment">' . s($index->getComment()) . '</textarea></td></tr>';
         // xmldb_index Type

@@ -22,7 +22,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
+require(__DIR__.'/../../config.php');
 require_once('lib.php');
 require_once('locallib.php');
 require_once("$CFG->dirroot/mod/wiki/filesedit_form.php");
@@ -60,10 +60,11 @@ if (!wiki_user_can_view($subwiki, $wiki)) {
 require_capability('mod/wiki:managefiles', $context);
 
 if (empty($returnurl)) {
-    if (!empty($_SERVER["HTTP_REFERER"])) {
-        $returnurl = $_SERVER["HTTP_REFERER"];
+    $referer = get_local_referer(false);
+    if (!empty($referer)) {
+        $returnurl = $referer;
     } else {
-        $returnurl = new moodle_url('/mod/wiki/files.php', array('subwiki'=>$subwiki->id));
+        $returnurl = new moodle_url('/mod/wiki/files.php', array('subwiki' => $subwiki->id, 'pageid' => $pageid));
     }
 }
 
@@ -82,7 +83,8 @@ $data = new stdClass();
 $data->returnurl = $returnurl;
 $data->subwikiid = $subwiki->id;
 $maxbytes = get_max_upload_file_size($CFG->maxbytes, $COURSE->maxbytes);
-$options = array('subdirs'=>0, 'maxbytes'=>$maxbytes, 'maxfiles'=>-1, 'accepted_types'=>'*', 'return_types'=>FILE_INTERNAL | FILE_REFERENCE);
+$types = FILE_INTERNAL | FILE_REFERENCE | FILE_CONTROLLED_LINK;
+$options = array('subdirs' => 0, 'maxbytes' => $maxbytes, 'maxfiles' => -1, 'accepted_types' => '*', 'return_types' => $types);
 file_prepare_standard_filemanager($data, 'files', $options, $context, 'mod_wiki', 'attachments', $subwiki->id);
 
 $mform = new mod_wiki_filesedit_form(null, array('data'=>$data, 'options'=>$options));
@@ -95,7 +97,7 @@ if ($mform->is_cancelled()) {
 }
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading($wiki->name);
+echo $OUTPUT->heading(format_string($wiki->name));
 echo $OUTPUT->box(format_module_intro('wiki', $wiki, $PAGE->cm->id), 'generalbox', 'intro');
 echo $OUTPUT->box_start('generalbox');
 $mform->display();

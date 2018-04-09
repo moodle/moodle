@@ -1,0 +1,180 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core/loginform
+
+    Moodle template for the login page.
+
+    Example context (json):
+    {
+        "autofocusform": false,
+        "canloginasguest": true,
+        "canloginbyemail": true,
+        "cansignup": true,
+        "error": "testerror",
+        "errorformatted": "Test error formatted",
+        "forgotpasswordurl": "http://example.com/login/forgot_password.php",
+        "hasidentityproviders": false,
+        "hasinstructions": true,
+        "instructions": "For full access to this site, you first need to create an account.",
+        "loginurl": "http://example.com/stable_master/login/index.php",
+        "rememberusername": true,
+        "signupurl": "http://localhost/stable_master/login/signup.php",
+        "cookieshelpiconformatted": "",
+        "username": ""
+    }
+}}
+{{#hasinstructions}}
+<div class="loginbox clearfix twocolumns">
+{{/hasinstructions}}
+{{^hasinstructions}}
+<div class="loginbox clearfix onecolumn">
+{{/hasinstructions}}
+
+    <div class="loginpanel">
+        {{#cansignup}}
+            <div class="skiplinks">
+                <a class="skip" href="{{signupurl}}">{{#str}} tocreatenewaccount {{/str}}</a>
+            </div>
+        {{/cansignup}}
+
+        <h2>{{#str}} login {{/str}}</h2>
+
+        <div class="subcontent loginsub">
+            {{#error}}
+                <div class="loginerrors" role="alert">
+                    <a href="#" id="loginerrormessage" class="accesshide">{{error}}</a>
+                    {{{errorformatted}}}
+                </div>
+            {{/error}}
+            <form action="{{loginurl}}" method="post" id="login">
+                <div class="loginform">
+                    <div class="form-label">
+                        <label for="username">
+                            {{^canloginbyemail}}
+                                {{#str}} username {{/str}}
+                            {{/canloginbyemail}}
+                            {{#canloginbyemail}}
+                                {{#str}} usernameemail {{/str}}
+                            {{/canloginbyemail}}
+                        </label>
+                    </div>
+                    <div class="form-input">
+                        <input type="text" name="username" id="username" size="15" value="{{username}}">
+                    </div>
+                    <div class="clearer"><!-- --></div>
+                    <div class="form-label">
+                        <label for="password">{{#str}} password {{/str}}</label>
+                    </div>
+                    <div class="form-input">
+                        <input type="password" name="password" id="password" size="15" value="">
+                    </div>
+                </div>
+
+                <div class="clearer"><!-- --></div>
+                {{#rememberusername}}
+                    <div class="rememberpass">
+                        <input type="checkbox" name="rememberusername" id="rememberusername" value="1" {{#username}}checked="checked"{{/username}} />
+                        <label for="rememberusername">{{#str}} rememberusername, admin {{/str}}</label>
+                    </div>
+                {{/rememberusername}}
+                <div class="clearer"><!-- --></div>
+                <input id="anchor" type="hidden" name="anchor" value="" />
+                <script>document.getElementById('anchor').value = location.hash;</script>
+                <input type="submit" id="loginbtn" value={{#quote}}{{#str}} login {{/str}}{{/quote}} />
+                <div class="forgetpass">
+                    <a href="{{forgotpasswordurl}}">{{#str}} forgotten {{/str}}</a>
+                </div>
+            </form>
+
+            <div class="desc">
+                {{#str}} cookiesenabled {{/str}}
+                {{{cookieshelpiconformatted}}}
+            </div>
+
+        </div>
+
+        {{#canloginasguest}}
+            <div class="subcontent guestsub">
+                <div class="desc">{{#str}} someallowguest {{/str}}</div>
+                <form action="{{loginurl}}" method="post" id="guestlogin">
+                    <div class="guestform">
+                        <input type="hidden" name="username" value="guest" />
+                        <input type="hidden" name="password" value="guest" />
+                        <input type="submit" value={{#quote}}{{#str}} loginguest {{/str}}{{/quote}} />
+                    </div>
+                </form>
+            </div>
+        {{/canloginasguest}}
+
+    </div>
+
+    <div class="signuppanel">
+    {{#hasinstructions}}
+        <h2>{{#str}} firsttime {{/str}}</h2>
+        <div class="subcontent">
+            {{{instructions}}}
+            {{#cansignup}}
+                <div class="signupform">
+                    <form action="{{signupurl}}" method="get" id="signup">
+                        <div>
+                            <input type="submit" value={{#quote}}{{#str}} startsignup {{/str}}{{/quote}} />
+                        </div>
+                    </form>
+                </div>
+            {{/cansignup}}
+        </div>
+    {{/hasinstructions}}
+
+    {{#hasidentityproviders}}
+        <div class="subcontent potentialidps">
+            <h6>{{#str}} potentialidps, auth {{/str}}</h6>
+            <div class="potentialidplist">
+                {{#identityproviders}}
+                    <div class="potentialidp">
+                        <a href="{{url}}" title={{#quote}}{{name}}{{/quote}} class="btn">
+                        {{#iconurl}}
+                            <img src="{{iconurl}}" alt="" width="24" height="24"/>
+                        {{/iconurl}}
+                        {{name}}
+                        </a>
+                    </div>
+                {{/identityproviders}}
+            </div>
+        </div>
+    {{/hasidentityproviders}}
+    </div>
+</div>
+
+{{#js}}
+    {{#error}}
+        require(['jquery'], function($) {
+            $('#loginerrormessage').focus();
+        });
+    {{/error}}
+    {{^error}}
+        {{#autofocusform}}
+            require(['jquery'], function($) {
+                if ($('#username').val()) {
+                    $('#password').focus();
+                } else {
+                    $('#username').focus();
+                }
+            });
+        {{/autofocusform}}
+    {{/error}}
+{{/js}}

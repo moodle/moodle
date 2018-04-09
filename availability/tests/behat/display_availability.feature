@@ -34,17 +34,12 @@ Feature: display_availability
       | user     | course | role           |
       | teacher1 | C1     | editingteacher |
       | student1 | C1     | student        |
-    And I log in as "admin"
-    And I set the following administration settings values:
-      | Enable conditional access | 1 |
-    And I log out
 
   @javascript
   Scenario: Activity availability display
     # Set up.
     Given I log in as "teacher1"
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
 
     # Add a Page with 1 restriction.
     When I add a "Page" to section "1"
@@ -76,7 +71,7 @@ Feature: display_availability
     And I press "Add restriction..."
     And I click on "User profile" "button" in the "Add restriction..." "dialogue"
     And I set the field "User profile field" to "Email address"
-    And I set the field "Value to compare against" to "email@example.org"
+    And I set the field "Value to compare against" to "email@example.com"
     And I set the field "Method of comparison" to "is equal to"
     And I press "Save and return to course"
 
@@ -105,7 +100,7 @@ Feature: display_availability
     # Change to student view.
     Given I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
 
     # Page 1 display still there but should be dimmed and not a link.
     Then I should see "Page 1" in the "#section-1 .dimmed_text" "css_element"
@@ -125,8 +120,7 @@ Feature: display_availability
   Scenario: Section availability display
     # Set up.
     Given I log in as "teacher1"
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
 
     # Add a restriction to section 1 (visible to students).
     When I edit the section "1"
@@ -148,8 +142,7 @@ Feature: display_availability
     And I press "Save changes"
 
     # This is necessary because otherwise it fails in Chrome, see MDL-44959
-    And I am on homepage
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
 
     # Add Pages to each section.
     And I add a "Page" to section "1" and I fill the form with:
@@ -173,7 +166,7 @@ Feature: display_availability
     # Change to student view.
     Given I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
 
     # The contents of both sections should be hidden.
     Then I should not see "Page 1" in the "region-main" "region"

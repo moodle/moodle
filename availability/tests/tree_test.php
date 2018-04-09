@@ -341,9 +341,15 @@ class tree_testcase extends \advanced_testcase {
      * @param int $userid User id
      */
     protected function get_available_results($structure, \core_availability\info $info, $userid) {
+        global $PAGE;
         $tree = new tree($structure);
         $result = $tree->check_available(false, $info, true, $userid);
-        return array($result->is_available(), $tree->get_result_information($info, $result));
+        $information = $tree->get_result_information($info, $result);
+        if (!is_string($information)) {
+            $renderer = $PAGE->get_renderer('core', 'availability');
+            $information = $renderer->render($information);
+        }
+        return array($result->is_available(), $information);
     }
 
     /**
@@ -389,6 +395,8 @@ class tree_testcase extends \advanced_testcase {
      * Tests the get_full_information() function.
      */
     public function test_get_full_information() {
+        global $PAGE;
+        $renderer = $PAGE->get_renderer('core', 'availability');
         // Setup.
         $info = new \core_availability\mock_info();
 
@@ -417,7 +425,7 @@ class tree_testcase extends \advanced_testcase {
                 self::mock(array('m' => 3)));
         $tree = new tree($structure);
         $this->assertRegExp('~<ul.*<ul.*<li.*1.*<li.*2.*</ul>.*<li.*3~',
-                $tree->get_full_information($info));
+                $renderer->render($tree->get_full_information($info)));
 
         // Test intro messages before list. First, OR message.
         $structure->c = array(
@@ -426,13 +434,13 @@ class tree_testcase extends \advanced_testcase {
         );
         $tree = new tree($structure);
         $this->assertRegExp('~Not available unless any of:.*<ul>~',
-                $tree->get_full_information($info));
+                $renderer->render($tree->get_full_information($info)));
 
         // Now, OR message when not shown.
         $structure->show = false;
         $tree = new tree($structure);
         $this->assertRegExp('~hidden.*<ul>~',
-                $tree->get_full_information($info));
+                $renderer->render($tree->get_full_information($info)));
 
         // AND message.
         $structure->op = '&';
@@ -440,11 +448,11 @@ class tree_testcase extends \advanced_testcase {
         $structure->showc = array(false, false);
         $tree = new tree($structure);
         $this->assertRegExp('~Not available unless:.*<ul>~',
-                $tree->get_full_information($info));
+                $renderer->render($tree->get_full_information($info)));
 
         // Hidden markers on items.
         $this->assertRegExp('~1.*hidden.*2.*hidden~',
-                $tree->get_full_information($info));
+                $renderer->render($tree->get_full_information($info)));
 
         // Hidden markers on child tree and items.
         $structure->c[1] = tree::get_nested_json(array(
@@ -452,11 +460,11 @@ class tree_testcase extends \advanced_testcase {
                 self::mock(array('m' => '3'))), tree::OP_AND);
         $tree = new tree($structure);
         $this->assertRegExp('~1.*hidden.*All of \(hidden.*2.*3~',
-                $tree->get_full_information($info));
+                $renderer->render($tree->get_full_information($info)));
         $structure->c[1]->op = '|';
         $tree = new tree($structure);
         $this->assertRegExp('~1.*hidden.*Any of \(hidden.*2.*3~',
-                $tree->get_full_information($info));
+                $renderer->render($tree->get_full_information($info)));
 
         // Hidden markers on single-item display, AND and OR.
         $structure->showc = array(false);
@@ -480,7 +488,7 @@ class tree_testcase extends \advanced_testcase {
                 self::mock(array('m' => '2'))), tree::OP_AND);
         $tree = new tree($structure);
         $this->assertRegExp('~Not available \(hidden.*1.*2~',
-                $tree->get_full_information($info));
+                $renderer->render($tree->get_full_information($info)));
 
         // Single item tree containing single item.
         unset($structure->c[0]->c[1]);
@@ -600,6 +608,15 @@ class tree_testcase extends \advanced_testcase {
         ksort($result);
         $this->assertEquals(array(1, 3), array_keys($result));
 
+        // Tree with OR condition one of which doesn't filter.
+        $structure = tree::get_root_json(array(
+                self::mock(array('filter' => array(3))),
+                self::mock(array())), tree::OP_OR);
+        $tree = new tree($structure);
+        $result = $tree->filter_user_list($users, false, $info, $checker);
+        ksort($result);
+        $this->assertEquals(array(1, 2, 3), array_keys($result));
+
         // Tree with two condition that both filter (&).
         $structure = tree::get_root_json(array(
                 self::mock(array('filter' => array(2, 3))),
@@ -656,6 +673,63 @@ class tree_testcase extends \advanced_testcase {
         $this->assertEquals('{"op":"&","c":[' . $childstr . ',' . $childstr .
                     '],"showc":[true,false]}',
                 json_encode(tree::get_root_json(array($child, $child), tree::OP_AND, array(true, false))));
+    }
+
+    /**
+     * Tests the behaviour of the counter in unique_sql_parameter().
+     *
+     * There was a problem with static counters used to implement a sequence of
+     * parameter placeholders (MDL-53481). As always with static variables, it
+     * is a bit tricky to unit test the behaviour reliably as it depends on the
+     * actual tests executed and also their order.
+     *
+     * To minimise risk of false expected behaviour, this test method should be
+     * first one where {@link core_availability\tree::get_user_list_sql()} is
+     * used. We also use higher number of condition instances to increase the
+     * risk of the counter collision, should there remain a problem.
+     */
+    public function test_unique_sql_parameter_behaviour() {
+        global $DB;
+        $this->resetAfterTest();
+        $generator = $this->getDataGenerator();
+
+        // Create a test course with multiple groupings and groups and a student in each of them.
+        $course = $generator->create_course();
+        $user = $generator->create_user();
+        $studentroleid = $DB->get_field('role', 'id', array('shortname' => 'student'));
+        $generator->enrol_user($user->id, $course->id, $studentroleid);
+        // The total number of groupings and groups must not be greater than 61.
+        // There is a limit in MySQL on the max number of joined tables.
+        $groups = [];
+        for ($i = 0; $i < 25; $i++) {
+            $group = $generator->create_group(array('courseid' => $course->id));
+            groups_add_member($group, $user);
+            $groups[] = $group;
+        }
+        $groupings = [];
+        for ($i = 0; $i < 25; $i++) {
+            $groupings[] = $generator->create_grouping(array('courseid' => $course->id));
+        }
+        foreach ($groupings as $grouping) {
+            foreach ($groups as $group) {
+                groups_assign_grouping($grouping->id, $group->id);
+            }
+        }
+        $info = new \core_availability\mock_info($course);
+
+        // Make a huge tree with 'AND' of all groups and groupings conditions.
+        $conditions = [];
+        foreach ($groups as $group) {
+            $conditions[] = \availability_group\condition::get_json($group->id);
+        }
+        foreach ($groupings as $groupingid) {
+            $conditions[] = \availability_grouping\condition::get_json($grouping->id);
+        }
+        shuffle($conditions);
+        $tree = new tree(tree::get_root_json($conditions));
+        list($sql, $params) = $tree->get_user_list_sql(false, $info, false);
+        // This must not throw exception.
+        $DB->fix_sql_params($sql, $params);
     }
 
     /**
@@ -718,6 +792,16 @@ class tree_testcase extends \advanced_testcase {
         $result = $DB->get_fieldset_sql($sql, $params);
         sort($result);
         $this->assertEquals(array($userinneither->id), $result);
+
+        // Tree with 'OR' of group conditions and a non-filtering condition.
+        // The non-filtering condition should mean that ALL users are included.
+        $tree = new tree(tree::get_root_json(array(
+            \availability_group\condition::get_json($group1->id),
+            \availability_date\condition::get_json(\availability_date\condition::DIRECTION_UNTIL, 3)
+        ), tree::OP_OR));
+        list($sql, $params) = $tree->get_user_list_sql(false, $info, false);
+        $this->assertEquals('', $sql);
+        $this->assertEquals(array(), $params);
     }
 
     /**

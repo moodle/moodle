@@ -53,8 +53,8 @@ class condition extends \core_availability\condition {
      */
     public function __construct($structure) {
         // Get cmid.
-        if (isset($structure->cm) && is_int($structure->cm)) {
-            $this->cmid = $structure->cm;
+        if (isset($structure->cm) && is_number($structure->cm)) {
+            $this->cmid = (int)$structure->cm;
         } else {
             throw new \coding_exception('Missing or invalid ->cm for completion condition');
         }

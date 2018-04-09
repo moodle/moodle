@@ -28,7 +28,7 @@
  */
 
 /**
- * Japanese language class. Now Encoding is EUC-JP and LF
+ * Japanese language class. Now Encoding is UTF-8.
  *
  * @class    CAS_Languages_Japanese
  * @category Authentication
@@ -47,7 +47,7 @@ class CAS_Languages_Japanese implements CAS_Languages_LanguageInterface
      */
     public function getUsingServer()
     {
-        return 'using server';
+        return 'サーバーを使っています。';
     }
 
     /**
@@ -57,7 +57,7 @@ class CAS_Languages_Japanese implements CAS_Languages_LanguageInterface
      */
     public function getAuthenticationWanted()
     {
-        return 'CAS�ˤ��ǧ�ڤ�Ԥ��ޤ�';
+        return 'CASによる認証を行います。';
     }
 
     /**
@@ -67,7 +67,7 @@ class CAS_Languages_Japanese implements CAS_Languages_LanguageInterface
      */
     public function getLogout()
     {
-        return 'CAS����?�����Ȥ��ޤ�!';
+        return 'CASからログアウトします!';
     }
 
     /**
@@ -77,7 +77,7 @@ class CAS_Languages_Japanese implements CAS_Languages_LanguageInterface
      */
     public function getShouldHaveBeenRedirected()
     {
-        return 'CAS�����Ф˹Ԥ�ɬ�פ�����ޤ�����ưŪ��ž������ʤ����� <a href="%s">������</a> �򥯥�å�����³�Ԥ��ޤ��';
+        return 'CASサーバに行く必要があります。自動的に転送されない場合は <a href="%s">こちら</a> をクリックして続行します。';
     }
 
     /**
@@ -87,7 +87,7 @@ class CAS_Languages_Japanese implements CAS_Languages_LanguageInterface
      */
     public function getAuthenticationFailed()
     {
-        return 'CAS�ˤ��ǧ�ڤ˼��Ԥ��ޤ���';
+        return 'CASによる認証に失敗しました。';
     }
 
     /**
@@ -97,7 +97,7 @@ class CAS_Languages_Japanese implements CAS_Languages_LanguageInterface
      */
     public function getYouWereNotAuthenticated()
     {
-        return '<p>ǧ�ڤǤ��ޤ���Ǥ���.</p><p>�⤦���٥ꥯ�����Ȥ������������<a href="%s">������</a>�򥯥�å�.</p><p>���꤬��褷�ʤ����� <a href="mailto:%s">���Υ����Ȥδ����</a>���䤤��碌�Ƥ�������.</p>';
+        return '<p>認証できませんでした。</p><p>もう一度リクエストを送信する場合は<a href="%s">こちら</a>をクリック。</p><p>問題が解決しない場合は <a href="mailto:%s">このサイトの管理者</a>に問い合わせてください。</p>';
     }
 
     /**
@@ -107,7 +107,7 @@ class CAS_Languages_Japanese implements CAS_Languages_LanguageInterface
      */
     public function getServiceUnavailable()
     {
-        return '�����ӥ� `<b>%s</b>\' �����ѤǤ��ޤ��� (<b>%s</b>).';
+        return 'サービス `<b>%s</b>\' は利用できません (<b>%s</b>)。';
     }
 }
 ?>

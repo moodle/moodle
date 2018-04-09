@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* global SELECTOR */
 var COMMENTSEARCHNAME = "commentsearch",
     COMMENTSEARCH;
 
@@ -32,7 +34,7 @@ Y.extend(COMMENTSEARCH, M.core.dialogue, {
      * @method initializer
      * @return void
      */
-    initializer : function(config) {
+    initializer: function(config) {
         var editor,
             container,
             placeholder,
@@ -49,10 +51,10 @@ Y.extend(COMMENTSEARCH, M.core.dialogue, {
         placeholder = M.util.get_string('filter', 'assignfeedback_editpdf');
         commentfilter = Y.Node.create('<input type="text" size="20" placeholder="' + placeholder + '"/>');
         container.append(commentfilter);
-        commentlist = Y.Node.create('<ul role="menu" class="assignfeedback_editpdf_menu"/>');
+        commentlist = Y.Node.create('<ul role="menu" class="assignfeedback_editpdf_search"/>');
         container.append(commentlist);
 
-        commentfilter.on('keyup', this.filter_search_comments, null, this);
+        commentfilter.on('keyup', this.filter_search_comments, this);
         commentlist.delegate('click', this.focus_on_comment, 'a', this);
         commentlist.delegate('key', this.focus_on_comment, 'enter,space', 'a', this);
 
@@ -68,17 +70,19 @@ Y.extend(COMMENTSEARCH, M.core.dialogue, {
      * @protected
      * @method filter_search_comments
      */
-    filter_search_comments : function() {
+    filter_search_comments: function() {
         var filternode,
             commentslist,
-            filtertext;
+            filtertext,
+            dialogueid;
 
-        filternode = Y.one(SELECTOR.SEARCHFILTER);
-        commentslist = Y.one(SELECTOR.SEARCHCOMMENTSLIST);
+        dialogueid = this.get('id');
+        filternode = Y.one('#' + dialogueid + SELECTOR.SEARCHFILTER);
+        commentslist = Y.one('#' + dialogueid + SELECTOR.SEARCHCOMMENTSLIST);
 
         filtertext = filternode.get('value');
 
-        commentslist.all('li').each(function (node) {
+        commentslist.all('li').each(function(node) {
             if (node.get('text').indexOf(filtertext) !== -1) {
                 node.show();
             } else {
@@ -94,7 +98,7 @@ Y.extend(COMMENTSEARCH, M.core.dialogue, {
      * @protected
      * @method focus_on_comment
      */
-    focus_on_comment : function(e) {
+    focus_on_comment: function(e) {
         e.preventDefault();
         var target = e.target.ancestor('li'),
             comment = target.getData('comment'),
@@ -102,14 +106,16 @@ Y.extend(COMMENTSEARCH, M.core.dialogue, {
 
         this.hide();
 
-        if (comment.pageno === editor.currentpage) {
-            comment.drawable.nodes[0].one('textarea').focus();
-        } else {
+        comment.pageno = comment.clean().pageno;
+        if (comment.pageno !== editor.currentpage) {
             // Comment is on a different page.
             editor.currentpage = comment.pageno;
             editor.change_page();
-            comment.drawable.nodes[0].one('textarea').focus();
         }
+
+        comment.node = comment.drawable.nodes[0].one('textarea');
+        comment.node.ancestor('div').removeClass('commentcollapsed');
+        comment.node.focus();
     },
 
     /**
@@ -118,7 +124,7 @@ Y.extend(COMMENTSEARCH, M.core.dialogue, {
      * @method show
      * @return void
      */
-    show : function() {
+    show: function() {
         var commentlist = this.get('boundingBox').one('ul'),
             editor = this.get('editor');
 
@@ -137,8 +143,8 @@ Y.extend(COMMENTSEARCH, M.core.dialogue, {
         COMMENTSEARCH.superclass.show.call(this);
     }
 }, {
-    NAME : COMMENTSEARCHNAME,
-    ATTRS : {
+    NAME: COMMENTSEARCHNAME,
+    ATTRS: {
         /**
          * The editor this search window is attached to.
          *
@@ -146,8 +152,8 @@ Y.extend(COMMENTSEARCH, M.core.dialogue, {
          * @type M.assignfeedback_editpdf.editor
          * @default null
          */
-        editor : {
-            value : null
+        editor: {
+            value: null
         }
 
     }

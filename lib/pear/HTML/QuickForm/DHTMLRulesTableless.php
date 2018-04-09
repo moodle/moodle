@@ -198,11 +198,6 @@ function validate_' . $this->_attributes['id'] . '(frm) {
     } // end func getValidationScript
 
     // }}}
-
-    function display() {
-        $this->getValidationScript();
-        return parent::display();
-    }
 }
 
 ?>

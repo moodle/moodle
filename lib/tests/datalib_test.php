@@ -56,7 +56,7 @@ class core_datalib_testcase extends advanced_testcase {
             'idnumber' => 'idnumbertest1',
             'firstname' => 'First Name User Test 1',
             'lastname' => 'Last Name User Test 1',
-            'email' => 'usertest1@email.com',
+            'email' => 'usertest1@example.com',
             'address' => '2 Test Street Perth 6000 WA',
             'phone1' => '01010101010',
             'phone2' => '02020203',
@@ -71,7 +71,7 @@ class core_datalib_testcase extends advanced_testcase {
             'descriptionformat' => FORMAT_MOODLE,
             'city' => 'Perth',
             'url' => 'http://moodle.org',
-            'country' => 'au'
+            'country' => 'AU'
             );
         $user1 = self::getDataGenerator()->create_user($user1);
         $user2 = array(
@@ -79,7 +79,7 @@ class core_datalib_testcase extends advanced_testcase {
             'idnumber' => 'idnumbertest2',
             'firstname' => 'First Name User Test 2',
             'lastname' => 'Last Name User Test 2',
-            'email' => 'usertest2@email.com',
+            'email' => 'usertest2@example.com',
             'address' => '222 Test Street Perth 6000 WA',
             'phone1' => '01010101010',
             'phone2' => '02020203',
@@ -94,7 +94,7 @@ class core_datalib_testcase extends advanced_testcase {
             'descriptionformat' => FORMAT_MOODLE,
             'city' => 'Perth',
             'url' => 'http://moodle.org',
-            'country' => 'au'
+            'country' => 'AU'
             );
         $user2 = self::getDataGenerator()->create_user($user2);
 

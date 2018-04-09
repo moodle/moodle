@@ -22,7 +22,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(dirname(__FILE__) . '/../../config.php');
+require_once(__DIR__ . '/../../config.php');
 require_once($CFG->libdir . '/tablelib.php');
 
 require_login();
@@ -106,7 +106,7 @@ foreach($feeds as $feed) {
     if (!empty($feed->preferredtitle)) {
         $feedtitle = s($feed->preferredtitle);
     } else {
-        $feedtitle =  s($feed->title);
+        $feedtitle = $feed->title;
     }
 
     $viewlink = html_writer::link($CFG->wwwroot .'/blocks/rss_client/viewfeed.php?rssid=' . $feed->id . $extraparams, $feedtitle);
@@ -114,6 +114,13 @@ foreach($feeds as $feed) {
     $feedinfo = '<div class="title">' . $viewlink . '</div>' .
         '<div class="url">' . html_writer::link($feed->url, $feed->url) .'</div>' .
         '<div class="description">' . $feed->description . '</div>';
+    if ($feed->skipuntil) {
+        $skipuntil = userdate($feed->skipuntil, get_string('strftimedatetime', 'langconfig'));
+        $skipmsg = get_string('failedfeed', 'block_rss_client', $skipuntil);
+        $notification = new \core\output\notification($skipmsg, 'error');
+        $notification->set_show_closebutton(false);
+        $feedinfo .= $OUTPUT->render($notification);
+    }
 
     $editurl = new moodle_url('/blocks/rss_client/editfeed.php?rssid=' . $feed->id . $extraparams);
     $editaction = $OUTPUT->action_icon($editurl, new pix_icon('t/edit', get_string('edit')));

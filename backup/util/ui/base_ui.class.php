@@ -317,7 +317,7 @@ abstract class base_ui {
      * Gets the requested setting
      * @param string $name
      * @param bool $default
-     * @return mixed
+     * @return base_setting
      */
     public function get_setting($name, $default = false) {
         try {

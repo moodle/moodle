@@ -20,8 +20,8 @@ var SELECTORS = {
         EVENTCOMPONENT: '#id_eventcomponent',
         EVENTEDULEVEL: '#id_eventedulevel',
         EVENTCRUD: '#id_eventcrud',
-        FILTERBUTTON : '#id_filterbutton',
-        CLEARBUTTON : '#id_clearbutton'
+        FILTERBUTTON: '#id_filterbutton',
+        CLEARBUTTON: '#id_clearbutton'
     };
 
 Y.extend(EventFilter, Y.Base, {
@@ -116,7 +116,7 @@ Y.extend(EventFilter, Y.Base, {
                      * @return {number} order for which the column should be sorted.
                      * @method sortFn
                      */
-                    sortFn: function (eventDataListA, eventDataListB, desc) {
+                    sortFn: function(eventDataListA, eventDataListB, desc) {
                         var rawEventDataA = eventDataListA.getAttrs().raweventname,
                             rawEventDataB = eventDataListB.getAttrs().raweventname,
                             order = (rawEventDataA > rawEventDataB ? 1 : -1);

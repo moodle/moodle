@@ -44,6 +44,15 @@ var manager = {
     _header: null,
 
     /**
+     * A reference to the add to quiz button.
+     *
+     * @property _addbutton
+     * @type Node
+     * @private
+     */
+    _addbutton: null,
+
+    /**
      * The ID of the first checkbox on the page.
      *
      * @property _firstCheckbox
@@ -69,6 +78,18 @@ var manager = {
         });
 
         this._header.on('click', this._headerClick, this);
+
+        this._addbutton = Y.one('.modulespecificbuttonscontainer input[name="add"]');
+        // input[name="add"] is not always available.
+        if (this._addbutton) {
+            this._addbutton.setAttrs({
+                disabled: true
+            });
+
+            this._header.on('click', this._questionClick, this);
+            Y.one('.categoryquestionscontainer').delegate('change', this._questionClick,
+                'td.checkbox input[type="checkbox"]', this);
+        }
 
         // Store the first checkbox details.
         var table = this._header.ancestor('table');
@@ -96,6 +117,19 @@ var manager = {
         }
 
         this._header.set('checked', false);
+    },
+
+    /**
+     * Handle toggling of a question checkbox.
+     *
+     * @method _questionClick
+     * @private
+     */
+    _questionClick: function() {
+        var areChecked = Y.all('td.checkbox input[type="checkbox"]:checked').size();
+        this._addbutton.setAttrs({
+            disabled: (areChecked === 0)
+        });
     }
 };
 

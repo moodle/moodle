@@ -16,7 +16,7 @@
 // along with Moodle. If not, see <http://www.gnu.org/licenses/>.
 
 require_once('../../config.php');
-require_once(dirname(__FILE__) . '/create_form.php');
+require_once(__DIR__ . '/create_form.php');
 require_once($CFG->dirroot . '/mod/wiki/lib.php');
 require_once($CFG->dirroot . '/mod/wiki/locallib.php');
 require_once($CFG->dirroot . '/mod/wiki/pagelib.php');
@@ -27,8 +27,6 @@ require_once($CFG->dirroot . '/mod/wiki/pagelib.php');
 // 'create' action will create a new page in db, and redirect to
 // page editing page.
 $action = optional_param('action', 'new', PARAM_TEXT);
-// The title of the new page, can be empty
-$title = optional_param('title', get_string('newpage', 'wiki'), PARAM_TEXT);
 $wid = optional_param('wid', 0, PARAM_INT);
 $swid = optional_param('swid', 0, PARAM_INT);
 $group = optional_param('group', 0, PARAM_INT);
@@ -46,20 +44,20 @@ if (!empty($swid)) {
     $subwiki = wiki_get_subwiki($swid);
 
     if (!$wiki = wiki_get_wiki($subwiki->wikiid)) {
-        print_error('invalidwikiid', 'wiki');
+        print_error('incorrectwikiid', 'wiki');
     }
 
 } else {
     $subwiki = wiki_get_subwiki_by_group($wid, $group, $uid);
 
     if (!$wiki = wiki_get_wiki($wid)) {
-        print_error('invalidwikiid', 'wiki');
+        print_error('incorrectwikiid', 'wiki');
     }
 
 }
 
 if (!$cm = get_coursemodule_from_instance('wiki', $wiki->id)) {
-    print_error('invalidcoursemoduleid', 'wiki');
+    print_error('invalidcoursemodule');
 }
 
 $groups = new stdClass();
@@ -86,6 +84,8 @@ $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST)
 
 require_login($course, true, $cm);
 
+// The title of the new page, cannot be empty.
+$title = optional_param('title', get_string('newpage', 'wiki'), PARAM_TEXT);
 $wikipage = new page_wiki_create($wiki, $subwiki, $cm);
 
 if (!empty($swid)) {

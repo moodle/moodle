@@ -48,10 +48,13 @@ class qtype_random_edit_form extends question_edit_form {
         $mform->addElement('header', 'generalheader', get_string("general", 'form'));
 
         $mform->addElement('questioncategory', 'category', get_string('category', 'question'),
-                array('contexts' => $this->contexts->having_cap('moodle/question:useall')));
+                array('contexts' => $this->contexts->having_cap('moodle/question:useall'), 'top' => true));
 
         $mform->addElement('advcheckbox', 'questiontext[text]',
                 get_string('includingsubcategories', 'qtype_random'), null, null, array(0, 1));
+
+        $tops = question_get_top_categories_for_contexts(array_column($this->contexts->all(), 'id'));
+        $mform->hideIf('questiontext[text]', 'category', 'in', $tops);
 
         $mform->addElement('hidden', 'qtype');
         $mform->setType('qtype', PARAM_ALPHA);

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--moodle: this schema was generated using code from https://github.com/gooh/phpunit-schema-->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
   <xs:annotation>
-    <xs:documentation source="http://www.phpunit.de/manual/current/en/appendixes.configuration.html">
-            This Schema file defines the rules by which the XML configuration file of PHPUnit may be structured.
-        </xs:documentation>
+    <xs:documentation source="https://phpunit.de/manual/5.4/en/appendixes.configuration.html">
+      This Schema file defines the rules by which the XML configuration file of PHPUnit 5.4 may be structured.
+    </xs:documentation>
+    <xs:appinfo source="http://www.phpunit.de/manual/current/en/appendixes.configuration.html"/>
   </xs:annotation>
   <xs:element name="phpunit" type="phpUnitType">
     <xs:annotation>
@@ -14,7 +14,6 @@
   <xs:complexType name="filtersType">
     <xs:choice>
       <xs:sequence>
-        <xs:element name="blacklist" type="filterType"/>
         <xs:element name="whitelist" type="whiteListType" minOccurs="0"/>
       </xs:sequence>
       <xs:sequence>
@@ -35,7 +34,8 @@
   <xs:complexType name="whiteListType">
     <xs:complexContent>
       <xs:extension base="filterType">
-        <xs:attribute name="addUncoveredFilesFromWhitelist" default="true" type="xs:boolean"/>
+        <xs:attribute name="addUncoveredFilesFromWhitelist" default="false" type="xs:boolean"/>
+        <xs:attribute name="processUncoveredFilesFromWhitelist" default="true" type="xs:boolean"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -114,24 +114,26 @@
       <xs:simpleType>
         <xs:restriction base="xs:string">
           <xs:enumeration value="coverage-html"/>
+          <xs:enumeration value="coverage-text"/>
           <xs:enumeration value="coverage-clover"/>
+          <xs:enumeration value="coverage-crap4j"/>
+          <xs:enumeration value="coverage-xml"/>
           <xs:enumeration value="json"/>
           <xs:enumeration value="plain"/>
           <xs:enumeration value="tap"/>
+          <xs:enumeration value="teamcity"/>
           <xs:enumeration value="junit"/>
           <xs:enumeration value="testdox-html"/>
           <xs:enumeration value="testdox-text"/>
+          <xs:enumeration value="testdox-xml"/>
         </xs:restriction>
       </xs:simpleType>
     </xs:attribute>
     <xs:attribute name="target" type="xs:anyURI"/>
-    <xs:attribute name="title" type="xs:string"/>
-    <xs:attribute name="charset" type="xs:string" default="UTF-8"/>
-    <xs:attribute name="yui" type="xs:boolean" default="true"/>
-    <xs:attribute name="highlight" type="xs:boolean" default="false"/>
     <xs:attribute name="lowUpperBound" type="xs:nonNegativeInteger" default="35"/>
     <xs:attribute name="highLowerBound" type="xs:nonNegativeInteger" default="70"/>
-    <xs:attribute name="logIncompleteSkipped" type="xs:boolean" default="false"/>
+    <xs:attribute name="showUncoveredFiles" type="xs:boolean" default="false"/>
+    <xs:attribute name="threshold" type="xs:nonNegativeInteger" default="30"/>
   </xs:complexType>
   <xs:group name="pathGroup">
     <xs:sequence>
@@ -160,17 +162,19 @@
   </xs:attributeGroup>
   <xs:complexType name="phpType">
     <xs:sequence>
-      <xs:element name="includePath" type="xs:anyURI" minOccurs="0" maxOccurs="unbounded"/>
-      <xs:element name="ini" type="namedValueType" minOccurs="0" maxOccurs="unbounded"/>
-      <xs:element name="const" type="namedValueType" minOccurs="0" maxOccurs="unbounded"/>
-      <xs:element name="var" type="namedValueType" minOccurs="0" maxOccurs="unbounded"/>
-      <xs:element name="env" type="namedValueType" minOccurs="0" maxOccurs="unbounded"/>
-      <xs:element name="post" type="namedValueType" minOccurs="0" maxOccurs="unbounded"/>
-      <xs:element name="get" type="namedValueType" minOccurs="0" maxOccurs="unbounded"/>
-      <xs:element name="cookie" type="namedValueType" minOccurs="0" maxOccurs="unbounded"/>
-      <xs:element name="server" type="namedValueType" minOccurs="0" maxOccurs="unbounded"/>
-      <xs:element name="files" type="namedValueType" minOccurs="0" maxOccurs="unbounded"/>
-      <xs:element name="request" type="namedValueType" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:choice maxOccurs="unbounded">
+        <xs:element name="includePath" type="xs:anyURI" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element name="ini" type="namedValueType" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element name="const" type="namedValueType" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element name="var" type="namedValueType" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element name="env" type="namedValueType" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element name="post" type="namedValueType" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element name="get" type="namedValueType" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element name="cookie" type="namedValueType" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element name="server" type="namedValueType" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element name="files" type="namedValueType" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element name="request" type="namedValueType" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:choice>
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="namedValueType">
@@ -190,59 +194,64 @@
     <xs:attribute name="bootstrap" type="xs:anyURI"/>
     <xs:attribute name="cacheTokens" type="xs:boolean"/>
     <xs:attribute name="colors" type="xs:boolean" default="false"/>
+    <xs:attribute name="columns" type="xs:integer" default="80"/>
     <xs:attribute name="convertErrorsToExceptions" type="xs:boolean" default="true"/>
     <xs:attribute name="convertNoticesToExceptions" type="xs:boolean" default="true"/>
     <xs:attribute name="convertWarningsToExceptions" type="xs:boolean" default="true"/>
     <xs:attribute name="forceCoversAnnotation" type="xs:boolean" default="false"/>
-    <xs:attribute name="mapTestClassNameToCoveredClassName" type="xs:boolean" default="false"/>
-    <xs:attribute name="printerClass" type="xs:string" default="PHPUnit_TextUI_ResultPrinter"/>
+    <xs:attribute name="printerClass" type="xs:string" default="PHPUnit\TextUI\ResultPrinter"/>
     <xs:attribute name="printerFile" type="xs:anyURI"/>
     <xs:attribute name="processIsolation" type="xs:boolean" default="false"/>
     <xs:attribute name="stopOnError" type="xs:boolean" default="false"/>
     <xs:attribute name="stopOnFailure" type="xs:boolean" default="false"/>
+    <xs:attribute name="stopOnWarning" type="xs:boolean" default="false"/>
     <xs:attribute name="stopOnIncomplete" type="xs:boolean" default="false"/>
+    <xs:attribute name="stopOnRisky" type="xs:boolean" default="false"/>
     <xs:attribute name="stopOnSkipped" type="xs:boolean" default="false"/>
-    <xs:attribute name="strict" type="xs:boolean" default="false"/>
-    <xs:attribute name="testSuiteLoaderClass" type="xs:string" default="PHPUnit_Runner_StandardTestSuiteLoader"/>
-    <xs:attribute name="testSuiteLoaderFile" type="xs:anyURI"/>
+    <xs:attribute name="failOnRisky" type="xs:boolean" default="false"/>
+    <xs:attribute name="failOnWarning" type="xs:boolean" default="false"/>
+    <xs:attribute name="beStrictAboutChangesToGlobalState" type="xs:boolean" default="false"/>
+    <xs:attribute name="beStrictAboutOutputDuringTests" type="xs:boolean" default="false"/>
+    <xs:attribute name="beStrictAboutResourceUsageDuringSmallTests" type="xs:boolean" default="false"/>
+    <xs:attribute name="beStrictAboutTestsThatDoNotTestAnything" type="xs:boolean" default="false"/>
+    <xs:attribute name="beStrictAboutTodoAnnotatedTests" type="xs:boolean" default="false"/>
+    <xs:attribute name="beStrictAboutCoversAnnotation" type="xs:boolean" default="false"/>
+    <xs:attribute name="checkForUnintentionallyCoveredCode" type="xs:boolean" default="false"/>
+    <xs:attribute name="enforceTimeLimit" type="xs:boolean" default="false"/>
     <xs:attribute name="timeoutForSmallTests" type="xs:integer" default="1"/>
     <xs:attribute name="timeoutForMediumTests" type="xs:integer" default="10"/>
     <xs:attribute name="timeoutForLargeTests" type="xs:integer" default="60"/>
+    <xs:attribute name="testSuiteLoaderClass" type="xs:string" default="PHPUnit\Runner\StandardTestSuiteLoader"/>
+    <xs:attribute name="testSuiteLoaderFile" type="xs:anyURI"/>
     <xs:attribute name="verbose" type="xs:boolean" default="false"/>
+    <xs:attribute name="stderr" type="xs:boolean" default="false"/>
+    <xs:attribute name="reverseDefectList" type="xs:boolean" default="false"/>
+    <xs:attribute name="registerMockObjectsFromTestArgumentsRecursively" type="xs:boolean" default="false"/>
   </xs:attributeGroup>
   <xs:group name="configGroup">
     <xs:all>
       <xs:element ref="testSuiteFacet" minOccurs="0"/>
       <xs:element name="groups" type="groupsType" minOccurs="0"/>
+      <xs:element name="testdoxGroups" type="groupsType" minOccurs="0"/>
       <xs:element name="filter" type="filtersType" minOccurs="0"/>
       <xs:element name="logging" type="loggersType" minOccurs="0"/>
       <xs:element name="listeners" type="listenersType" minOccurs="0"/>
       <xs:element name="php" type="phpType" minOccurs="0"/>
-      <xs:element name="selenium" type="seleniumType" minOccurs="0"/>
     </xs:all>
   </xs:group>
-  <xs:complexType name="seleniumType">
-    <xs:sequence>
-      <xs:element name="browser" type="browserType"/>
-    </xs:sequence>
-  </xs:complexType>
-  <xs:complexType name="browserType">
-    <xs:attribute name="name" type="xs:string"/>
-    <xs:attribute name="browser" type="xs:string"/>
-    <xs:attribute name="host" type="xs:anyURI"/>
-    <xs:attribute name="port" type="xs:nonNegativeInteger"/>
-    <xs:attribute name="timeout" type="xs:nonNegativeInteger"/>
-  </xs:complexType>
   <xs:element name="testSuiteFacet" abstract="true"/>
   <xs:element name="testsuite" type="testSuiteType" substitutionGroup="testSuiteFacet"/>
   <xs:element name="testsuites" type="testSuitesType" substitutionGroup="testSuiteFacet"/>
   <xs:complexType name="testSuitesType">
     <xs:sequence>
-      <xs:element name="testsuite" type="testSuiteType" maxOccurs="unbounded"/><!--moodle: added macOccures-->
+      <xs:element name="testsuite" type="testSuiteType" maxOccurs="unbounded"/>
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="testSuiteType">
-    <xs:group ref="pathGroup"/>
+    <xs:sequence>
+      <xs:group ref="pathGroup"/>
+      <xs:element name="exclude" type="xs:anyURI" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
     <xs:attribute name="name" type="xs:string" use="required"/>
   </xs:complexType>
 </xs:schema>

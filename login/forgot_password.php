@@ -19,6 +19,14 @@
  *
  * Finds the user and calls the appropriate routine for their authentication type.
  *
+ * There are several pathways to/through this page, summarised below:
+ * 1. User clicks the 'forgotten your username or password?' link on the login page.
+ *  - No token is received, render the username/email search form.
+ * 2. User clicks the link in the forgot password email
+ *  - Token received as GET param, store the token in session, redirect to self
+ * 3. Redirected from (2)
+ *  - Fetch token from session, and continue to run the reset routine defined in 'core_login_process_password_set()'.
+ *
  * @package    core
  * @subpackage auth
  * @copyright  1999 onwards Martin Dougiamas  http://dougiamas.com
@@ -32,9 +40,6 @@ require_once('forgot_password_form.php');
 require_once('set_password_form.php');
 
 $token = optional_param('token', false, PARAM_ALPHANUM);
-
-//HTTPS is required in this page when $CFG->loginhttps enabled
-$PAGE->https_required();
 
 $PAGE->set_url('/login/forgot_password.php');
 $systemcontext = context_system::instance();
@@ -59,12 +64,27 @@ if (isloggedin() and !isguestuser()) {
     redirect($CFG->wwwroot.'/index.php', get_string('loginalready'), 5);
 }
 
+// Fetch the token from the session, if present, and unset the session var immediately.
+$tokeninsession = false;
+if (!empty($SESSION->password_reset_token)) {
+    $token = $SESSION->password_reset_token;
+    unset($SESSION->password_reset_token);
+    $tokeninsession = true;
+}
+
 if (empty($token)) {
     // This is a new password reset request.
     // Process the request; identify the user & send confirmation email.
     core_login_process_password_reset_request();
 } else {
-    // User clicked on confirmation link in email message
-    // validate the token & set new password
-    core_login_process_password_set($token);
+    // A token has been found, but not in the session, and not from a form post.
+    // This must be the user following the original rest link, so store the reset token in the session and redirect to self.
+    // The session var is intentionally used only during the lifespan of one request (the redirect) and is unset above.
+    if (!$tokeninsession && $_SERVER['REQUEST_METHOD'] === 'GET') {
+        $SESSION->password_reset_token = $token;
+        redirect($CFG->wwwroot . '/login/forgot_password.php');
+    } else {
+        // Continue with the password reset process.
+        core_login_process_password_set($token);
+    }
 }

@@ -26,3 +26,4 @@ $string['center'] = 'Center';
 $string['leftalign'] = 'Left align';
 $string['pluginname'] = 'Text align';
 $string['rightalign'] = 'Right align';
+$string['privacy:metadata'] = 'The atto_align plugin does not store any personal data.';

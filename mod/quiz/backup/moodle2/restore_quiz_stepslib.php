@@ -33,6 +33,19 @@ defined('MOODLE_INTERNAL') || die();
  */
 class restore_quiz_activity_structure_step extends restore_questions_activity_structure_step {
 
+    /**
+     * @var bool tracks whether the quiz contains at least one section. Before
+     * Moodle 2.9 quiz sections did not exist, so if the file being restored
+     * did not contain any, we need to create one in {@link after_execute()}.
+     */
+    protected $sectioncreated = false;
+
+    /**
+     * @var bool when restoring old quizzes (2.8 or before) this records the
+     * shufflequestionsoption quiz option which has moved to the quiz_sections table.
+     */
+    protected $legacyshufflequestionsoption = false;
+
     protected function define_structure() {
 
         $paths = array();
@@ -46,6 +59,7 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
 
         $paths[] = new restore_path_element('quiz_question_instance',
                 '/activity/quiz/question_instances/question_instance');
+        $paths[] = new restore_path_element('quiz_section', '/activity/quiz/sections/section');
         $paths[] = new restore_path_element('quiz_feedback', '/activity/quiz/feedbacks/feedback');
         $paths[] = new restore_path_element('quiz_override', '/activity/quiz/overrides/override');
 
@@ -87,10 +101,11 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
         $oldid = $data->id;
         $data->course = $this->get_courseid();
 
+        // Any changes to the list of dates that needs to be rolled should be same during course restore and course reset.
+        // See MDL-9367.
+
         $data->timeopen = $this->apply_date_offset($data->timeopen);
         $data->timeclose = $this->apply_date_offset($data->timeclose);
-        $data->timecreated = $this->apply_date_offset($data->timecreated);
-        $data->timemodified = $this->apply_date_offset($data->timemodified);
 
         if (property_exists($data, 'questions')) {
             // Needed by {@link process_quiz_attempt_legacy}, in which case it will be present.
@@ -225,6 +240,10 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
             $data->overduehandling = get_config('quiz', 'overduehandling');
         }
 
+        // Old shufflequestions setting is now stored in quiz sections,
+        // so save it here if necessary so it is available when we need it.
+        $this->legacyshufflequestionsoption = !empty($data->shufflequestions);
+
         // Insert the quiz record.
         $newitemid = $DB->insert_record('quiz', $data);
         // Immediately after inserting "activity" record, call this.
@@ -232,7 +251,7 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
     }
 
     protected function process_quiz_question_instance($data) {
-        global $DB;
+        global $CFG, $DB;
 
         $data = (object)$data;
 
@@ -271,9 +290,34 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
         }
 
         $data->quizid = $this->get_new_parentid('quiz');
-        $data->questionid = $this->get_mappingid('question', $data->questionid);
+        $questionmapping = $this->get_mapping('question', $data->questionid);
+        $data->questionid = $questionmapping ? $questionmapping->newitemid : false;
+
+        if (isset($data->questioncategoryid)) {
+            $data->questioncategoryid = $this->get_mappingid('question_category', $data->questioncategoryid);
+        } else if ($questionmapping && $questionmapping->info->qtype == 'random') {
+            // Backward compatibility for backups created using Moodle 3.4 or earlier.
+            $data->questioncategoryid = $this->get_mappingid('question_category', $questionmapping->parentitemid);
+            $data->includingsubcategories = $questionmapping->info->questiontext ? 1 : 0;
+        }
+
+        if (isset($data->tags)) {
+            require_once($CFG->dirroot . '/mod/quiz/locallib.php');
+
+            $tags = quiz_extract_random_question_tags($data->tags, $this->task->is_samesite());
+            $data->tags = quiz_build_random_question_tag_json($tags);
+        }
 
         $DB->insert_record('quiz_slots', $data);
+    }
+
+    protected function process_quiz_section($data) {
+        global $DB;
+
+        $data = (object) $data;
+        $data->quizid = $this->get_new_parentid('quiz');
+        $newitemid = $DB->insert_record('quiz_sections', $data);
+        $this->sectioncreated = true;
     }
 
     protected function process_quiz_feedback($data) {
@@ -304,8 +348,13 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
 
         $data->quiz = $this->get_new_parentid('quiz');
 
-        $data->userid = $this->get_mappingid('user', $data->userid);
-        $data->groupid = $this->get_mappingid('group', $data->groupid);
+        if ($data->userid !== null) {
+            $data->userid = $this->get_mappingid('user', $data->userid);
+        }
+
+        if ($data->groupid !== null) {
+            $data->groupid = $this->get_mappingid('group', $data->groupid);
+        }
 
         $data->timeopen = $this->apply_date_offset($data->timeopen);
         $data->timeclose = $this->apply_date_offset($data->timeclose);
@@ -327,8 +376,6 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
         $data->userid = $this->get_mappingid('user', $data->userid);
         $data->grade = $data->gradeval;
 
-        $data->timemodified = $this->apply_date_offset($data->timemodified);
-
         $DB->insert_record('quiz_grades', $data);
     }
 
@@ -340,9 +387,6 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
 
         $data->userid = $this->get_mappingid('user', $data->userid);
 
-        $data->timestart = $this->apply_date_offset($data->timestart);
-        $data->timefinish = $this->apply_date_offset($data->timefinish);
-        $data->timemodified = $this->apply_date_offset($data->timemodified);
         if (!empty($data->timecheckstate)) {
             $data->timecheckstate = $this->apply_date_offset($data->timecheckstate);
         } else {
@@ -387,10 +431,19 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
     }
 
     protected function after_execute() {
+        global $DB;
+
         parent::after_execute();
         // Add quiz related files, no need to match by itemname (just internally handled context).
         $this->add_related_files('mod_quiz', 'intro', null);
         // Add feedback related files, matching by itemname = 'quiz_feedback'.
         $this->add_related_files('mod_quiz', 'feedback', 'quiz_feedback');
+
+        if (!$this->sectioncreated) {
+            $DB->insert_record('quiz_sections', array(
+                    'quizid' => $this->get_new_parentid('quiz'),
+                    'firstslot' => 1, 'heading' => '',
+                    'shufflequestions' => $this->legacyshufflequestionsoption));
+        }
     }
 }

@@ -25,7 +25,7 @@
 $string['alphabet'] = 'A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z';
 $string['backupnameformat'] = '%Y%m%d-%H%M';
 $string['decsep'] = '.';
-$string['firstdayofweek'] = '0';
+$string['firstdayofweek'] = '1';
 $string['iso6391'] = 'en';
 $string['iso6392'] = 'eng';
 $string['labelsep'] = ': ';
@@ -48,6 +48,8 @@ $string['strftimemonthyear'] = '%B %Y';
 $string['strftimerecent'] = '%d %b, %H:%M';
 $string['strftimerecentfull'] = '%a, %d %b %Y, %I:%M %p';
 $string['strftimetime'] = '%I:%M %p';
+$string['strftimetime12'] = '%I:%M %p';
+$string['strftimetime24'] = '%H:%M';
 $string['thisdirection'] = 'ltr';
 $string['thisdirectionvertical'] = 'btt';
 $string['thislanguage'] = 'English';

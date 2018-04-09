@@ -33,9 +33,18 @@ class HTML_QuickForm_Renderer
     *
     * @access public
     */
-    function HTML_QuickForm_Renderer()
-    {
+    public function __construct() {
     } // end constructor
+
+    /**
+     * Old syntax of class constructor. Deprecated in PHP7.
+     *
+     * @deprecated since Moodle 3.1
+     */
+    public function HTML_QuickForm_Renderer() {
+        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
+        self::__construct();
+    }
 
    /**
     * Called when visiting a form, before processing any form elements

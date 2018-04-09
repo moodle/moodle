@@ -3,7 +3,7 @@
  * Provides a wrapper around an object to return null for non-existent
  * properties (instead of throwing an error).
  *
- * Copyright 2012-2014 Horde LLC (http://www.horde.org/)
+ * Copyright 2012-2017 Horde LLC (http://www.horde.org/)
  *
  * @author   Michael Slusarz <slusarz@horde.org>
  * @category Horde

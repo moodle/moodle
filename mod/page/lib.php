@@ -58,6 +58,10 @@ function page_get_extra_capabilities() {
  * @return array status array
  */
 function page_reset_userdata($data) {
+
+    // Any changes to the list of dates that needs to be rolled should be same during course restore and course reset.
+    // See MDL-9367.
+
     return array();
 }
 
@@ -128,6 +132,9 @@ function page_add_instance($data, $mform = null) {
         $DB->update_record('page', $data);
     }
 
+    $completiontimeexpected = !empty($data->completionexpected) ? $data->completionexpected : null;
+    \core_completion\api::update_completion_date_event($cmid, 'page', $data->id, $completiontimeexpected);
+
     return $data->id;
 }
 
@@ -168,6 +175,9 @@ function page_update_instance($data, $mform) {
         $DB->update_record('page', $data);
     }
 
+    $completiontimeexpected = !empty($data->completionexpected) ? $data->completionexpected : null;
+    \core_completion\api::update_completion_date_event($cmid, 'page', $data->id, $completiontimeexpected);
+
     return true;
 }
 
@@ -182,6 +192,9 @@ function page_delete_instance($id) {
     if (!$page = $DB->get_record('page', array('id'=>$id))) {
         return false;
     }
+
+    $cm = get_coursemodule_from_instance('page', $id);
+    \core_completion\api::update_completion_date_event($cm->id, 'page', $id, null);
 
     // note: all context files are deleted automatically
 
@@ -338,14 +351,20 @@ function page_pluginfile($course, $cm, $context, $filearea, $args, $forcedownloa
             return false;
         }
 
-        // remove @@PLUGINFILE@@/
-        $content = str_replace('@@PLUGINFILE@@/', '', $page->content);
-
+        // We need to rewrite the pluginfile URLs so the media filters can work.
+        $content = file_rewrite_pluginfile_urls($page->content, 'webservice/pluginfile.php', $context->id, 'mod_page', 'content',
+                                                $page->revision);
         $formatoptions = new stdClass;
         $formatoptions->noclean = true;
         $formatoptions->overflowdiv = true;
         $formatoptions->context = $context;
         $content = format_text($content, $page->contentformat, $formatoptions);
+
+        // Remove @@PLUGINFILE@@/.
+        $options = array('reverse' => true);
+        $content = file_rewrite_pluginfile_urls($content, 'webservice/pluginfile.php', $context->id, 'mod_page', 'content',
+                                                $page->revision, $options);
+        $content = str_replace('@@PLUGINFILE@@/', '', $content);
 
         send_file($content, $filename, 0, 0, true, true);
     } else {
@@ -409,6 +428,11 @@ function page_export_contents($cm, $baseurl) {
         $file['userid']       = $fileinfo->get_userid();
         $file['author']       = $fileinfo->get_author();
         $file['license']      = $fileinfo->get_license();
+        $file['mimetype']     = $fileinfo->get_mimetype();
+        $file['isexternalfile'] = $fileinfo->is_external_file();
+        if ($file['isexternalfile']) {
+            $file['repositorytype'] = $fileinfo->get_repository_type();
+        }
         $contents[] = $file;
     }
 
@@ -473,4 +497,76 @@ function page_dndupload_handle($uploadinfo) {
     $data->printintro = $config->printintro;
 
     return page_add_instance($data, null);
+}
+
+/**
+ * Mark the activity completed (if required) and trigger the course_module_viewed event.
+ *
+ * @param  stdClass $page       page object
+ * @param  stdClass $course     course object
+ * @param  stdClass $cm         course module object
+ * @param  stdClass $context    context object
+ * @since Moodle 3.0
+ */
+function page_view($page, $course, $cm, $context) {
+
+    // Trigger course_module_viewed event.
+    $params = array(
+        'context' => $context,
+        'objectid' => $page->id
+    );
+
+    $event = \mod_page\event\course_module_viewed::create($params);
+    $event->add_record_snapshot('course_modules', $cm);
+    $event->add_record_snapshot('course', $course);
+    $event->add_record_snapshot('page', $page);
+    $event->trigger();
+
+    // Completion.
+    $completion = new completion_info($course);
+    $completion->set_module_viewed($cm);
+}
+
+/**
+ * Check if the module has any update that affects the current user since a given time.
+ *
+ * @param  cm_info $cm course module data
+ * @param  int $from the time to check updates from
+ * @param  array $filter  if we need to check only specific updates
+ * @return stdClass an object with the different type of areas indicating if they were updated or not
+ * @since Moodle 3.2
+ */
+function page_check_updates_since(cm_info $cm, $from, $filter = array()) {
+    $updates = course_check_module_updates_since($cm, $from, array('content'), $filter);
+    return $updates;
+}
+
+/**
+ * This function receives a calendar event and returns the action associated with it, or null if there is none.
+ *
+ * This is used by block_myoverview in order to display the event appropriately. If null is returned then the event
+ * is not displayed on the block.
+ *
+ * @param calendar_event $event
+ * @param \core_calendar\action_factory $factory
+ * @return \core_calendar\local\event\entities\action_interface|null
+ */
+function mod_page_core_calendar_provide_event_action(calendar_event $event,
+                                                      \core_calendar\action_factory $factory) {
+    $cm = get_fast_modinfo($event->courseid)->instances['page'][$event->instance];
+
+    $completion = new \completion_info($cm->get_course());
+
+    $completiondata = $completion->get_data($cm, false);
+
+    if ($completiondata->completionstate != COMPLETION_INCOMPLETE) {
+        return null;
+    }
+
+    return $factory->create_instance(
+        get_string('view'),
+        new \moodle_url('/mod/page/view.php', ['id' => $cm->id]),
+        1,
+        true
+    );
 }

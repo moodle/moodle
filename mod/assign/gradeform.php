@@ -65,7 +65,7 @@ class mod_assign_grade_form extends moodleform {
      */
     protected function get_form_identifier() {
         $params = $this->_customdata[2];
-        return get_class($this) . '_' . $params['rownum'];
+        return get_class($this) . '_' . $params['userid'];
     }
 
     /**
@@ -78,18 +78,13 @@ class mod_assign_grade_form extends moodleform {
         $errors = parent::validation($data, $files);
         $instance = $this->assignment->get_instance();
 
-        if ($instance->markingworkflow && !empty($data['sendstudentnotifications']) &&
-                $data['workflowstate'] != ASSIGN_MARKING_WORKFLOW_STATE_RELEASED) {
-            $errors['sendstudentnotifications'] = get_string('studentnotificationworkflowstateerror', 'assign');
-        }
-
         // Advanced grading.
         if (!array_key_exists('grade', $data)) {
             return $errors;
         }
 
         if ($instance->grade > 0) {
-            if (unformat_float($data['grade']) === null && (!empty($data['grade']))) {
+            if (unformat_float($data['grade'], true) === false && (!empty($data['grade']))) {
                 $errors['grade'] = get_string('invalidfloatforgrade', 'assign', $data['grade']);
             } else if (unformat_float($data['grade']) > $instance->grade) {
                 $errors['grade'] = get_string('gradeabovemaximum', 'assign', $instance->grade);

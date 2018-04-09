@@ -69,6 +69,11 @@ class restore_course_task extends restore_task {
         // Executed conditionally if restoring to new course or if overwrite_conf setting is enabled
         if ($this->get_target() == backup::TARGET_NEW_COURSE || $this->get_setting_value('overwrite_conf') == true) {
             $this->add_step(new restore_course_structure_step('course_info', 'course.xml'));
+
+            // Search reindexing (if enabled).
+            if (\core_search\manager::is_indexing_enabled()) {
+                $this->add_step(new restore_course_search_index('course_search_index'));
+            }
         }
 
         $this->add_step(new restore_course_legacy_files_step('legacy_files'));
@@ -78,7 +83,10 @@ class restore_course_task extends restore_task {
             // No need to do anything with enrolments.
 
         } else if (!$this->get_setting_value('users') or $this->plan->get_mode() == backup::MODE_HUB) {
-            if ($this->get_target() == backup::TARGET_CURRENT_ADDING or $this->get_target() == backup::TARGET_EXISTING_ADDING) {
+            if ($this->get_setting_value('enrolments') == backup::ENROL_ALWAYS && $this->plan->get_mode() != backup::MODE_HUB) {
+                // Restore enrolment methods.
+                $this->add_step(new restore_enrolments_structure_step('course_enrolments', 'enrolments.xml'));
+            } else if ($this->get_target() == backup::TARGET_CURRENT_ADDING or $this->get_target() == backup::TARGET_EXISTING_ADDING) {
                 // Keep current enrolments unchanged.
             } else {
                 // If no instances yet add default enrol methods the same way as when creating new course in UI.
@@ -111,6 +119,12 @@ class restore_course_task extends restore_task {
         if ($this->get_setting_value('calendarevents')) {
             $this->add_step(new restore_calendarevents_structure_step('course_calendar', 'calendar.xml'));
         }
+
+        // Course competencies.
+        $this->add_step(new restore_course_competencies_structure_step('course_competencies', 'competencies.xml'));
+
+        // Activity completion defaults.
+        $this->add_step(new restore_completion_defaults_structure_step('course_completion_defaults', 'completiondefaults.xml'));
 
         // At the end, mark it as built
         $this->built = true;
@@ -156,17 +170,37 @@ class restore_course_task extends restore_task {
      */
     protected function define_settings() {
 
-        //$name, $vtype, $value = null, $visibility = self::VISIBLE, $status = self::NOT_LOCKED
-        $fullname = new restore_course_generic_text_setting('course_fullname', base_setting::IS_TEXT, $this->get_info()->original_course_fullname);
-        $fullname->get_ui()->set_label(get_string('setting_course_fullname', 'backup'));
+        // Define overwrite_conf to decide if course configuration will be restored over existing one.
+        $overwrite = new restore_course_overwrite_conf_setting('overwrite_conf', base_setting::IS_BOOLEAN, false);
+        $overwrite->set_ui(new backup_setting_ui_select($overwrite, $overwrite->get_name(),
+            array(1 => get_string('yes'), 0 => get_string('no'))));
+        $overwrite->get_ui()->set_label(get_string('setting_overwrite_conf', 'backup'));
+        if ($this->get_target() == backup::TARGET_NEW_COURSE) {
+            $overwrite->set_value(true);
+            $overwrite->set_status(backup_setting::LOCKED_BY_CONFIG);
+            $overwrite->set_visibility(backup_setting::HIDDEN);
+            $course = (object)['fullname' => null, 'shortname' => null, 'startdate' => null];
+        } else {
+            $course = get_course($this->get_courseid());
+        }
+        $this->add_setting($overwrite);
+
+        $fullnamedefaultvalue = $this->get_info()->original_course_fullname;
+        $fullname = new restore_course_defaultcustom_setting('course_fullname', base_setting::IS_TEXT, $fullnamedefaultvalue);
+        $fullname->set_ui(new backup_setting_ui_defaultcustom($fullname, get_string('setting_course_fullname', 'backup'),
+            ['customvalue' => $fullnamedefaultvalue, 'defaultvalue' => $course->fullname]));
         $this->add_setting($fullname);
 
-        $shortname = new restore_course_generic_text_setting('course_shortname', base_setting::IS_TEXT, $this->get_info()->original_course_shortname);
-        $shortname->get_ui()->set_label(get_string('setting_course_shortname', 'backup'));
+        $shortnamedefaultvalue = $this->get_info()->original_course_shortname;
+        $shortname = new restore_course_defaultcustom_setting('course_shortname', base_setting::IS_TEXT, $shortnamedefaultvalue);
+        $shortname->set_ui(new backup_setting_ui_defaultcustom($shortname, get_string('setting_course_shortname', 'backup'),
+            ['customvalue' => $shortnamedefaultvalue, 'defaultvalue' => $course->shortname]));
         $this->add_setting($shortname);
 
-        $startdate = new restore_course_generic_text_setting('course_startdate', base_setting::IS_INTEGER, $this->get_info()->original_course_startdate);
-        $startdate->set_ui(new backup_setting_ui_dateselector($startdate, get_string('setting_course_startdate', 'backup')));
+        $startdatedefaultvalue = $this->get_info()->original_course_startdate;
+        $startdate = new restore_course_defaultcustom_setting('course_startdate', base_setting::IS_INTEGER, $startdatedefaultvalue);
+        $startdate->set_ui(new backup_setting_ui_defaultcustom($startdate, get_string('setting_course_startdate', 'backup'),
+            ['customvalue' => $startdatedefaultvalue, 'defaultvalue' => $course->startdate, 'type' => 'date_time_selector']));
         $this->add_setting($startdate);
 
         $keep_enrols = new restore_course_generic_setting('keep_roles_and_enrolments', base_setting::IS_BOOLEAN, false);
@@ -188,17 +222,6 @@ class restore_course_task extends restore_task {
             $keep_groups->set_visibility(backup_setting::HIDDEN);
         }
         $this->add_setting($keep_groups);
-
-        // Define overwrite_conf to decide if course configuration will be restored over existing one
-        $overwrite = new restore_course_overwrite_conf_setting('overwrite_conf', base_setting::IS_BOOLEAN, false);
-        $overwrite->set_ui(new backup_setting_ui_select($overwrite, $overwrite->get_name(), array(1=>get_string('yes'), 0=>get_string('no'))));
-        $overwrite->get_ui()->set_label(get_string('setting_overwriteconf', 'backup'));
-        if ($this->get_target() == backup::TARGET_NEW_COURSE) {
-            $overwrite->set_value(true);
-            $overwrite->set_status(backup_setting::LOCKED_BY_CONFIG);
-            $overwrite->set_visibility(backup_setting::HIDDEN);
-        }
-        $this->add_setting($overwrite);
 
     }
 }

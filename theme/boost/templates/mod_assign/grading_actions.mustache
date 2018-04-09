@@ -1,0 +1,55 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_assign/grading_actions
+
+    Actions panel at the bottom of the assignment grading UI.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * data-region
+
+    Context variables required for this template:
+    * see mod/assign/classes/output/grading_app.php
+
+    This template is initially hidden, and is only displayed after the current user info has been loaded.
+}}
+{{#showreview}}
+<div class="btn-toolbar collapse-buttons">
+    <div class="btn-group">
+        <button type="button" class="btn btn-secondary collapse-review-panel">{{#pix}} layout-expand-right, mod_assign, {{#str}} collapsereviewpanel, mod_assign {{/str}} {{/pix}}</button>
+        <button type="button" class="btn btn-secondary collapse-none active">{{#pix}} layout-default, mod_assign, {{#str}} defaultlayout, mod_assign {{/str}} {{/pix}}</button>
+        <button type="button" class="btn btn-secondary collapse-grade-panel">{{#pix}} layout-expand-left, mod_assign, {{#str}} collapsegradepanel, mod_assign {{/str}} {{/pix}}</button>
+    </div>
+</div>
+{{/showreview}}
+<form data-region="grading-actions-form" class="hide">
+    <label>{{#str}}sendstudentnotifications, mod_assign{{/str}}
+           <input type="checkbox" name="sendstudentnotifications"
+                  {{#defaultsendnotifications}}checked="checked"{{/defaultsendnotifications}} />
+    </label>
+    <button type="submit" class="btn btn-primary" name="savechanges">{{#str}}savechanges{{/str}}</button>
+    <button type="submit" class="btn btn-primary" name="saveandshownext">{{#str}}saveandnext{{/str}}</button>
+    <button type="submit" class="btn btn-secondary" name="resetbutton">{{#str}}reset{{/str}}</button>
+</form>
+{{#js}}
+require(['mod_assign/grading_actions'], function(GradingActions) {
+    new GradingActions('[data-region="grade-actions"]');
+});
+{{/js}}

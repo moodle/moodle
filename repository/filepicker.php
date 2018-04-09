@@ -101,7 +101,7 @@ $home_url = new moodle_url('/repository/draftfiles_manager.php', $params);
 
 $params['savepath'] = $savepath;
 $params['repo_id'] = $repo_id;
-$url = new moodle_url($CFG->httpswwwroot."/repository/filepicker.php", $params);
+$url = new moodle_url("/repository/filepicker.php", $params);
 $PAGE->set_url('/repository/filepicker.php', $params);
 
 switch ($action) {
@@ -212,7 +212,7 @@ case 'sign':
                 // TODO MDL-28482: need a better solution
                 // paging_bar is not a good option because it starts page numbering from 0 and
                 // repositories number pages starting from 1.
-                $pagingurl = new moodle_url("$CFG->httpswwwroot/repository/filepicker.php?action=list&itemid=$itemid&ctx_id=$contextid&repo_id=$repo_id&course=$courseid&sesskey=".  sesskey());
+                $pagingurl = new moodle_url("/repository/filepicker.php?action=list&itemid=$itemid&ctx_id=$contextid&repo_id=$repo_id&course=$courseid&sesskey=".  sesskey());
                 if (!isset($list['perpage']) && !isset($list['total'])) {
                     $list['perpage'] = 10; // instead of setting perpage&total we use number of pages, the result is the same
                 }

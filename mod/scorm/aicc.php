@@ -111,7 +111,12 @@ if (!empty($command)) {
                         $userdata->status = '';
                         $userdata->score_raw = '';
                     }
-                    $userdata->student_id = $aiccuser->username;
+                    $aiccuserid = get_config('scorm', 'aiccuserid');
+                    if (!empty($aiccuserid)) {
+                        $userdata->student_id = $aiccuser->id;
+                    } else {
+                        $userdata->student_id = $aiccuser->username;
+                    }
                     $userdata->student_name = $aiccuser->lastname .', '. $aiccuser->firstname;
                     $userdata->mode = $mode;
                     if ($userdata->mode == 'normal') {
@@ -212,7 +217,7 @@ if (!empty($command)) {
                         $datamodel['[comments]'] = 'cmi.comments';
                         $datarows = explode("\r\n", $aiccdata);
                         reset($datarows);
-                        while ((list(, $datarow) = each($datarows)) !== false) {
+                        foreach ($datarows as $datarow) {
                             if (($equal = strpos($datarow, '=')) !== false) {
                                 $element = strtolower(trim(substr($datarow, 0, $equal)));
                                 $value = trim(substr($datarow, $equal + 1));

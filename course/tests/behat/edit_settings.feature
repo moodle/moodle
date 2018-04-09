@@ -8,7 +8,7 @@ Feature: Edit course settings
   Scenario: Edit course settings
     Given the following "users" exist:
       | username | firstname | lastname | email |
-      | teacher1 | Teacher | 1 | teacher1@asd.com |
+      | teacher1 | Teacher | 1 | teacher1@example.com |
     And the following "courses" exist:
       | fullname | shortname | summary | format |
       | Course 1 | C1 | <p>Course summary</p> | topics |
@@ -16,8 +16,8 @@ Feature: Edit course settings
       | user | course | role |
       | teacher1 | C1 | editingteacher |
     And I log in as "teacher1"
-    And I follow "Course 1"
-    When I click on "Edit settings" "link" in the "Administration" "block"
+    And I am on "Course 1" course homepage
+    When I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
       | Course full name | Edited course fullname |
       | Course short name | Edited course shortname |
@@ -28,11 +28,11 @@ Feature: Edit course settings
     And I should not see "C1"
     And I should see "Edited course fullname"
     And I should see "Edited course shortname"
-    And I click on "Edit settings" "link" in the "Administration" "block"
+    And I navigate to "Edit settings" in current page administration
     And the field "Course full name" matches value "Edited course fullname"
     And the field "Course short name" matches value "Edited course shortname"
     And the field "Course summary" matches value "Edited course summary"
-    And I am on homepage
+    And I am on site homepage
     And I should see "Edited course fullname"
 
   Scenario: Edit course settings and return to the management interface

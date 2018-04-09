@@ -48,6 +48,7 @@ class edit_field_save extends XMLDBAction {
             'floatincorrectlength' => 'tool_xmldb',
             'charincorrectlength' => 'tool_xmldb',
             'numberincorrectdecimals' => 'tool_xmldb',
+            'numberincorrectwholepart' => 'tool_xmldb',
             'floatincorrectdecimals' => 'tool_xmldb',
             'defaultincorrect' => 'tool_xmldb',
             'back' => 'tool_xmldb',
@@ -157,6 +158,9 @@ class edit_field_save extends XMLDBAction {
                                        $decimals >= 0 &&
                                        $decimals < $length))) {
                 $errors[] = $this->str['numberincorrectdecimals'];
+            }
+            if (!empty($decimals) && ($length - $decimals > xmldb_field::INTEGER_MAX_LENGTH)) {
+                $errors[] = $this->str['numberincorrectwholepart'];
             }
             if (!(empty($default) || (is_numeric($default) &&
                                        !empty($default)))) {

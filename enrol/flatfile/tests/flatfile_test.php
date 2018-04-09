@@ -467,4 +467,80 @@ class enrol_flatfile_testcase extends advanced_testcase {
         $this->assertEquals(1, $DB->count_records('role_assignments', array('roleid'=>$teacherrole->id)));
         $this->assertEquals(0, $DB->count_records('role_assignments', array('roleid'=>$managerrole->id)));
     }
+
+    /**
+     * Flatfile enrolment sync task test.
+     */
+    public function test_flatfile_sync_task() {
+        global $CFG, $DB;
+        $this->resetAfterTest();
+
+        $flatfileplugin = enrol_get_plugin('flatfile');
+
+        $trace = new null_progress_trace();
+        $this->enable_plugin();
+        $file = "$CFG->dataroot/enrol.txt";
+        $flatfileplugin->set_config('location', $file);
+
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $this->assertNotEmpty($studentrole);
+
+        $user1 = $this->getDataGenerator()->create_user(array('idnumber' => 'u1'));
+        $course1 = $this->getDataGenerator()->create_course(array('idnumber' => 'c1'));
+        $context1 = context_course::instance($course1->id);
+
+        $data =
+            "add,student,u1,c1";
+        file_put_contents($file, $data);
+
+        $task = new enrol_flatfile\task\flatfile_sync_task;
+        $task->execute();
+
+        $this->assertEquals(1, $DB->count_records('role_assignments', array('roleid' => $studentrole->id)));
+    }
+
+    /**
+     * Test for getting user enrolment actions.
+     */
+    public function test_get_user_enrolment_actions() {
+        global $CFG, $PAGE;
+        $this->resetAfterTest();
+
+        // Set page URL to prevent debugging messages.
+        $PAGE->set_url('/enrol/editinstance.php');
+
+        $pluginname = 'flatfile';
+
+        // Only enable the flatfile enrol plugin.
+        $CFG->enrol_plugins_enabled = $pluginname;
+
+        $generator = $this->getDataGenerator();
+
+        // Get the enrol plugin.
+        $plugin = enrol_get_plugin($pluginname);
+
+        // Create a course.
+        $course = $generator->create_course();
+        // Enable this enrol plugin for the course.
+        $plugin->add_instance($course);
+
+        // Create a student.
+        $student = $generator->create_user();
+        // Enrol the student to the course.
+        $generator->enrol_user($student->id, $course->id, 'student', $pluginname);
+
+        // Teachers don't have enrol/flatfile:manage and enrol/flatfile:unenrol capabilities by default.
+        // Login as admin for simplicity.
+        $this->setAdminUser();
+
+        require_once($CFG->dirroot . '/enrol/locallib.php');
+        $manager = new course_enrolment_manager($PAGE, $course);
+        $userenrolments = $manager->get_user_enrolments($student->id);
+        $this->assertCount(1, $userenrolments);
+
+        $ue = reset($userenrolments);
+        $actions = $plugin->get_user_enrolment_actions($manager, $ue);
+        // Flatfile enrolment has 2 enrol actions for active users -- edit and unenrol.
+        $this->assertCount(2, $actions);
+    }
 }

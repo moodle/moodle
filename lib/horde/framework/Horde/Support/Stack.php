@@ -2,7 +2,7 @@
 /**
  * Simple class for using an array as a stack.
  *
- * Copyright 2008-2014 Horde LLC (http://www.horde.org/)
+ * Copyright 2008-2017 Horde LLC (http://www.horde.org/)
  *
  * @category   Horde
  * @package    Support

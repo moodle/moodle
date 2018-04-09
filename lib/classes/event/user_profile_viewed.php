@@ -111,4 +111,15 @@ class user_profile_viewed extends base {
             throw new \coding_exception('The \'relateduserid\' must be set.');
         }
     }
+
+    public static function get_objectid_mapping() {
+        return array('db' => 'user', 'restore' => 'user');
+    }
+
+    public static function get_other_mapping() {
+        $othermapped = array();
+        $othermapped['courseid'] = array('db' => 'course', 'restore' => 'course');
+
+        return $othermapped;
+    }
 }

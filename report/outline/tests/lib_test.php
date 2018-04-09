@@ -24,6 +24,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+global $CFG;
+
 /**
  * Class report_outline_lib_testcase
  *
@@ -32,6 +34,41 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later.
  */
 class report_outline_lib_testcase extends advanced_testcase {
+
+    /**
+     * @var stdClass The user.
+     */
+    private $user;
+
+    /**
+     * @var stdClass The course.
+     */
+    private $course;
+
+    /**
+     * @var context_course Course context.
+     */
+    private $coursecontext;
+
+    /**
+     * @var \core_user\output\myprofile\tree The navigation tree.
+     */
+    private $tree;
+
+    /**
+     * @var int Dummy role for testing.
+     */
+    private $roleid;
+
+    public function setUp() {
+        $this->user = $this->getDataGenerator()->create_user();
+        $this->user2 = $this->getDataGenerator()->create_user();
+        $this->course = $this->getDataGenerator()->create_course();
+        $this->tree = new \core_user\output\myprofile\tree();
+        $this->coursecontext = context_course::instance($this->course->id);
+        $this->roleid = create_role('Dummy role', 'dummyrole', 'dummy role description');
+        $this->resetAfterTest();
+    }
 
     /**
      * Test report_log_supports_logstore.
@@ -52,5 +89,56 @@ class report_outline_lib_testcase extends advanced_testcase {
         foreach ($expectedstores as $expectedstore) {
             $this->assertContains($expectedstore, $stores);
         }
+    }
+
+    /**
+     * Tests the report_outline_myprofile_navigation() function as an admin user.
+     */
+    public function test_report_outline_myprofile_navigation() {
+        $this->setAdminUser();
+        $iscurrentuser = false;
+
+        report_outline_myprofile_navigation($this->tree, $this->user, $iscurrentuser, $this->course);
+        $reflector = new ReflectionObject($this->tree);
+        $nodes = $reflector->getProperty('nodes');
+        $nodes->setAccessible(true);
+        $this->assertArrayHasKey('outline', $nodes->getValue($this->tree));
+        $this->assertArrayHasKey('complete', $nodes->getValue($this->tree));
+    }
+
+    /**
+     * Tests the report_outline_myprofile_navigation() function as a user without permission.
+     */
+    public function test_report_outline_myprofile_navigation_without_permission() {
+        $this->setUser($this->user);
+        $iscurrentuser = true;
+
+        report_outline_myprofile_navigation($this->tree, $this->user, $iscurrentuser, $this->course);
+        $reflector = new ReflectionObject($this->tree);
+        $nodes = $reflector->getProperty('nodes');
+        $nodes->setAccessible(true);
+        $this->assertArrayNotHasKey('outline', $nodes->getValue($this->tree));
+        $this->assertArrayNotHasKey('complete', $nodes->getValue($this->tree));
+    }
+
+    /**
+     * Test that the current user can not access user report without report/outline:viewuserreport permission.
+     */
+    public function test_report_outline_can_not_access_user_report_without_viewuserreport_permission() {
+        $this->getDataGenerator()->role_assign($this->roleid, $this->user->id, $this->coursecontext->id);
+        $this->setUser($this->user);
+
+        $this->assertFalse(report_outline_can_access_user_report($this->user, $this->course));
+    }
+
+    /**
+     * Test that the current user can access user report with report/outline:viewuserreport permission.
+     */
+    public function test_report_outline_can_access_user_report_with_viewuserreport_permission() {
+        assign_capability('report/outline:viewuserreport', CAP_ALLOW, $this->roleid, $this->coursecontext->id, true);
+        $this->getDataGenerator()->role_assign($this->roleid, $this->user->id, $this->coursecontext->id);
+        $this->setUser($this->user);
+
+        $this->assertTrue(report_outline_can_access_user_report($this->user, $this->course));
     }
 }

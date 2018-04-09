@@ -26,6 +26,7 @@
  */
 
 require_once('HTML/QuickForm/input.php');
+require_once('templatable_form_element.php');
 
 /**
  * recaptcha type form element
@@ -37,13 +38,13 @@ require_once('HTML/QuickForm/input.php');
  * @copyright 2008 Nicolas Connault <nicolasconnault@gmail.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class MoodleQuickForm_recaptcha extends HTML_QuickForm_input {
+class MoodleQuickForm_recaptcha extends HTML_QuickForm_input implements templatable {
+    use templatable_form_element {
+        export_for_template as export_for_template_base;
+    }
 
     /** @var string html for help button, if empty then no help */
     var $_helpbutton='';
-
-    /** @var bool if true, recaptcha will be servered from https */
-    var $_https=false;
 
     /**
      * constructor
@@ -53,61 +54,31 @@ class MoodleQuickForm_recaptcha extends HTML_QuickForm_input {
      * @param mixed $attributes (optional) Either a typical HTML attribute string
      *              or an associative array
      */
-    function MoodleQuickForm_recaptcha($elementName = null, $elementLabel = null, $attributes = null) {
-        global $CFG;
-        parent::HTML_QuickForm_input($elementName, $elementLabel, $attributes);
+    public function __construct($elementName = null, $elementLabel = null, $attributes = null) {
+        parent::__construct($elementName, $elementLabel, $attributes);
         $this->_type = 'recaptcha';
-        if (is_https()) {
-            $this->_https = true;
-        } else {
-            $this->_https = false;
-        }
     }
 
     /**
-     * Returns the recaptcha element in HTML
+     * Old syntax of class constructor. Deprecated in PHP7.
      *
-     * @return string
+     * @deprecated since Moodle 3.1
      */
-    function toHtml() {
-        global $CFG, $PAGE;
-        require_once $CFG->libdir . '/recaptchalib.php';
+    public function MoodleQuickForm_recaptcha($elementName = null, $elementLabel = null, $attributes = null) {
+        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
+        self::__construct($elementName, $elementLabel, $attributes);
+    }
 
-        $recaptureoptions = Array('theme'=>'custom', 'custom_theme_widget'=>'recaptcha_widget');
-        $html = html_writer::script(js_writer::set_variable('RecaptchaOptions', $recaptureoptions));
+    /**
+     * Returns the reCAPTCHA element in HTML
+     *
+     * @return string The HTML to render
+     */
+    public function toHtml() {
+        global $CFG;
+        require_once($CFG->libdir . '/recaptchalib_v2.php');
 
-        $attributes = $this->getAttributes();
-        if (empty($attributes['error_message'])) {
-            $attributes['error_message'] = null;
-            $this->setAttributes($attributes);
-        }
-        $error = $attributes['error_message'];
-        unset($attributes['error_message']);
-
-        $strincorrectpleasetryagain = get_string('incorrectpleasetryagain', 'auth');
-        $strenterthewordsabove = get_string('enterthewordsabove', 'auth');
-        $strenterthenumbersyouhear = get_string('enterthenumbersyouhear', 'auth');
-        $strgetanothercaptcha = get_string('getanothercaptcha', 'auth');
-        $strgetanaudiocaptcha = get_string('getanaudiocaptcha', 'auth');
-        $strgetanimagecaptcha = get_string('getanimagecaptcha', 'auth');
-
-        $html .= '
-<div id="recaptcha_widget" style="display:none">
-
-<div id="recaptcha_image"></div>
-<div class="recaptcha_only_if_incorrect_sol" style="color:red">' . $strincorrectpleasetryagain . '</div>
-
-<span class="recaptcha_only_if_image"><label for="recaptcha_response_field">' . $strenterthewordsabove . '</label></span>
-<span class="recaptcha_only_if_audio"><label for="recaptcha_response_field">' . $strenterthenumbersyouhear . '</label></span>
-
-<input type="text" id="recaptcha_response_field" name="recaptcha_response_field" />
-<input type="hidden" name="recaptcha_element" value="dummyvalue" /> <!-- Dummy value to fool formslib -->
-<div><a href="javascript:Recaptcha.reload()">' . $strgetanothercaptcha . '</a></div>
-<div class="recaptcha_only_if_image"><a href="javascript:Recaptcha.switch_type(\'audio\')">' . $strgetanaudiocaptcha . '</a></div>
-<div class="recaptcha_only_if_audio"><a href="javascript:Recaptcha.switch_type(\'image\')">' . $strgetanimagecaptcha . '</a></div>
-</div>';
-
-        return $html . recaptcha_get_html($CFG->recaptchapublickey, $error, $this->_https);
+        return recaptcha_get_challenge_html(RECAPTCHA_API_URL, $CFG->recaptchapublickey);
     }
 
     /**
@@ -120,26 +91,39 @@ class MoodleQuickForm_recaptcha extends HTML_QuickForm_input {
     }
 
     /**
-     * Checks input and challenged field
+     * Checks recaptcha response with Google.
      *
-     * @param string $challenge_field recaptcha shown  to user
-     * @param string $response_field input value by user
+     * @param string $responsestr
      * @return bool
      */
-    function verify($challenge_field, $response_field) {
+    public function verify($responsestr) {
         global $CFG;
-        require_once $CFG->libdir . '/recaptchalib.php';
-        $response = recaptcha_check_answer($CFG->recaptchaprivatekey,
-                                           getremoteaddr(),
-                                           $challenge_field,
-                                           $response_field,
-                                           $this->_https);
-        if (!$response->is_valid) {
+        require_once($CFG->libdir . '/recaptchalib_v2.php');
+
+        $response = recaptcha_check_response(RECAPTCHA_VERIFY_URL, $CFG->recaptchaprivatekey,
+                                           getremoteaddr(), $responsestr);
+        if (!$response['isvalid']) {
             $attributes = $this->getAttributes();
-            $attributes['error_message'] = $response->error;
+            $attributes['error_message'] = $response['error'];
             $this->setAttributes($attributes);
-            return $response->error;
+            return $response['error'];
         }
         return true;
     }
+
+    public function export_for_template(renderer_base $output) {
+        $context = $this->export_for_template_base($output);
+        $context['html'] = $this->toHtml();
+        return $context;
+    }
+
+    /**
+     * Get force LTR option.
+     *
+     * @return bool
+     */
+    public function get_force_ltr() {
+        return true;
+    }
+
 }

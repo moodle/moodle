@@ -82,15 +82,19 @@ class checker {
     }
 
     /**
-     * Is automatic deployment enabled?
+     * Is checking for available updates enabled?
+     *
+     * The feature is enabled unless it is prohibited via config.php.
+     * If enabled, the button for manual checking for available updates is
+     * displayed at admin screens. To perform scheduled checks for updates
+     * automatically, the admin setting $CFG->updateautocheck has to be enabled.
      *
      * @return bool
      */
     public function enabled() {
         global $CFG;
 
-        // The feature can be prohibited via config.php.
-        return empty($CFG->disableupdateautodeploy);
+        return empty($CFG->disableupdatenotifications);
     }
 
     /**
@@ -192,7 +196,7 @@ class checker {
     public function cron() {
         global $CFG;
 
-        if (!$this->cron_autocheck_enabled()) {
+        if (!$this->enabled() or !$this->cron_autocheck_enabled()) {
             $this->cron_mtrace('Automatic check for available updates not enabled, skipping.');
             return;
         }
@@ -262,7 +266,7 @@ class checker {
             throw new checker_exception('err_response_status', $response['status']);
         }
 
-        if (empty($response['apiver']) or $response['apiver'] !== '1.2') {
+        if (empty($response['apiver']) or $response['apiver'] !== '1.3') {
             throw new checker_exception('err_response_format_version', $response['apiver']);
         }
 
@@ -409,7 +413,7 @@ class checker {
         if (!empty($CFG->config_php_settings['alternativeupdateproviderurl'])) {
             return $CFG->config_php_settings['alternativeupdateproviderurl'];
         } else {
-            return 'https://download.moodle.org/api/1.2/updates.php';
+            return 'https://download.moodle.org/api/1.3/updates.php';
         }
     }
 
@@ -754,6 +758,9 @@ class checker {
             $text .= get_string('updateavailabledetailslink', 'core_admin', $a) . PHP_EOL;
             $a = array('url' => html_writer::link($CFG->wwwroot.'/'.$CFG->admin.'/index.php', $CFG->wwwroot.'/'.$CFG->admin.'/index.php'));
             $html .= html_writer::tag('p', get_string('updateavailabledetailslink', 'core_admin', $a)) . PHP_EOL;
+
+            $text .= PHP_EOL . get_string('updateavailablerecommendation', 'core_admin') . PHP_EOL;
+            $html .= html_writer::tag('p', get_string('updateavailablerecommendation', 'core_admin')) . PHP_EOL;
         }
 
         if (!empty($pluginupdates)) {
@@ -785,13 +792,14 @@ class checker {
         }
 
         $a = array('siteurl' => $CFG->wwwroot);
-        $text .= get_string('updatenotificationfooter', 'core_admin', $a) . PHP_EOL;
+        $text .= PHP_EOL . get_string('updatenotificationfooter', 'core_admin', $a) . PHP_EOL;
         $a = array('siteurl' => html_writer::link($CFG->wwwroot, $CFG->wwwroot));
         $html .= html_writer::tag('footer', html_writer::tag('p', get_string('updatenotificationfooter', 'core_admin', $a),
             array('style' => 'font-size:smaller; color:#333;')));
 
         foreach ($admins as $admin) {
-            $message = new \stdClass();
+            $message = new \core\message\message();
+            $message->courseid          = SITEID;
             $message->component         = 'moodle';
             $message->name              = 'availableupdate';
             $message->userfrom          = get_admin();

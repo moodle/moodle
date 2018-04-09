@@ -28,7 +28,7 @@
  */
 define('AJAX_SCRIPT', true);
 
-require_once(dirname(__FILE__) . "/../../config.php");
+require_once(__DIR__ . "/../../config.php");
 require_once($CFG->dirroot . '/mod/lti/locallib.php');
 
 $courseid = required_param('course', PARAM_INT);
@@ -48,38 +48,42 @@ switch ($action) {
         require_capability('moodle/course:manageactivities', $context);
         require_capability('mod/lti:addinstance', $context);
 
-        if (empty($toolid) && !empty($toolurl)) {
-            $tool = lti_get_tool_by_url_match($toolurl, $courseid);
-
-            if (!empty($tool)) {
-                $toolid = $tool->id;
-
-                $response->toolid = $tool->id;
-                $response->toolname = s($tool->name);
-                $response->tooldomain = s($tool->tooldomain);
-            }
+        if (!empty($toolurl) && lti_is_cartridge($toolurl)) {
+            $response->cartridge = true;
         } else {
-            $response->toolid = $toolid;
-        }
+            if (empty($toolid) && !empty($toolurl)) {
+                $tool = lti_get_tool_by_url_match($toolurl, $courseid);
 
-        if (!empty($toolid)) {
-            // Look up privacy settings.
-            $query = '
-                SELECT name, value
-                FROM {lti_types_config}
-                WHERE
-                    typeid = :typeid
-                AND name IN (\'sendname\', \'sendemailaddr\', \'acceptgrades\')
-            ';
+                if (!empty($tool)) {
+                    $toolid = $tool->id;
 
-            $privacyconfigs = $DB->get_records_sql($query, array('typeid' => $toolid));
-            $success = count($privacyconfigs) > 0;
-            foreach ($privacyconfigs as $config) {
-                $configname = $config->name;
-                $response->$configname = $config->value;
+                    $response->toolid = $tool->id;
+                    $response->toolname = s($tool->name);
+                    $response->tooldomain = s($tool->tooldomain);
+                }
+            } else {
+                $response->toolid = $toolid;
             }
-            if (!$success) {
-                $response->error = s(get_string('tool_config_not_found', 'mod_lti'));
+
+            if (!empty($toolid)) {
+                // Look up privacy settings.
+                $query = '
+                    SELECT name, value
+                    FROM {lti_types_config}
+                    WHERE
+                        typeid = :typeid
+                    AND name IN (\'sendname\', \'sendemailaddr\', \'acceptgrades\')
+                ';
+
+                $privacyconfigs = $DB->get_records_sql($query, array('typeid' => $toolid));
+                $success = count($privacyconfigs) > 0;
+                foreach ($privacyconfigs as $config) {
+                    $configname = $config->name;
+                    $response->$configname = $config->value;
+                }
+                if (!$success) {
+                    $response->error = s(get_string('tool_config_not_found', 'mod_lti'));
+                }
             }
         }
 

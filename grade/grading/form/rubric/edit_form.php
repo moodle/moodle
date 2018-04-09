@@ -25,7 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot.'/lib/formslib.php');
-require_once(dirname(__FILE__).'/rubriceditor.php');
+require_once(__DIR__.'/rubriceditor.php');
 MoodleQuickForm::registerElementType('rubriceditor', $CFG->dirroot.'/grade/grading/form/rubric/rubriceditor.php', 'MoodleQuickForm_rubriceditor');
 
 /**
@@ -50,8 +50,8 @@ class gradingform_rubric_editrubric extends moodleform {
         $form->setType('returnurl', PARAM_LOCALURL);
 
         // name
-        $form->addElement('text', 'name', get_string('name', 'gradingform_rubric'), array('size'=>52));
-        $form->addRule('name', get_string('required'), 'required');
+        $form->addElement('text', 'name', get_string('name', 'gradingform_rubric'), array('size' => 52, 'aria-required' => 'true'));
+        $form->addRule('name', get_string('required'), 'required', null, 'client');
         $form->setType('name', PARAM_TEXT);
 
         // description

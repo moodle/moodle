@@ -10,15 +10,13 @@ Feature: Grade letters can be overridden
       | Course 1 | C1        |
     And the following "users" exist:
       | username | firstname | lastname | email            | idnumber |
-      | teacher1 | Teacher   | 1        | teacher1@asd.com | t1       |
+      | teacher1 | Teacher   | 1        | teacher1@example.com | t1       |
     And the following "course enrolments" exist:
       | user     | course | role           |
       | teacher1 | C1     | editingteacher |
     And I log in as "teacher1"
-    And I follow "Course 1"
-    And I follow "Grades"
-    And I follow "Letters"
-    And I follow "Edit grade letters"
+    And I am on "Course 1" course homepage
+    And I navigate to "Letters > Edit" in the course gradebook
 
   Scenario Outline: Grade letters can be completely overridden
     When I set the following fields to these values:

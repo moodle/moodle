@@ -19,8 +19,8 @@ class HTMLPurifier_Arborize
             if ($token instanceof HTMLPurifier_Token_End) {
                 $token->start = null; // [MUT]
                 $r = array_pop($stack);
-                assert($r->name === $token->name);
-                assert(empty($token->attr));
+                //assert($r->name === $token->name);
+                //assert(empty($token->attr));
                 $r->endCol = $token->col;
                 $r->endLine = $token->line;
                 $r->endArmor = $token->armor;
@@ -32,7 +32,7 @@ class HTMLPurifier_Arborize
                 $stack[] = $node;
             }
         }
-        assert(count($stack) == 1);
+        //assert(count($stack) == 1);
         return $stack[0];
     }
 

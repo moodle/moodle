@@ -10,8 +10,8 @@ Feature: I need to export grades as text
       | Course 1 | C1 | 0 | 1 |
     And the following "users" exist:
       | username | firstname | lastname | email |
-      | teacher1 | Teacher | 1 | teacher1@asd.com |
-      | student1 | Student | 1 | student1@asd.com |
+      | teacher1 | Teacher | 1 | teacher1@example.com |
+      | student1 | Student | 1 | student1@example.com |
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
@@ -19,16 +19,17 @@ Feature: I need to export grades as text
     And the following "activities" exist:
       | activity | course | idnumber | name | intro | assignsubmission_onlinetext_enabled |
       | assign | C1 | a1 | Test assignment name | Submit your online text | 1 |
+      | assign | C1 | a2 | Test assignment name 2 | Submit your online text | 1 |
     And I log in as "teacher1"
-    And I follow "Course 1"
-    And I follow "Grades"
+    And I am on "Course 1" course homepage
+    And I navigate to "View > Grader report" in the course gradebook
     And I turn editing mode on
     And I give the grade "80.00" to the user "Student 1" for the grade item "Test assignment name"
     And I press "Save changes"
 
   @javascript
   Scenario: Export grades as text
-    When I set the field "Grade report" to "Plain text file"
+    When I navigate to "Export > Plain text file" in the course gradebook
     And I expand all fieldsets
     And I click on "Course total" "checkbox"
     And I set the field "Grade export decimal points" to "1"
@@ -40,7 +41,7 @@ Feature: I need to export grades as text
 
   @javascript
   Scenario: Export grades as text using real
-    When I set the field "Grade report" to "Plain text file"
+    When I navigate to "Export > Plain text file" in the course gradebook
     And I expand all fieldsets
     And  I set the following fields to these values:
       | Real        | 1                        |
@@ -51,7 +52,7 @@ Feature: I need to export grades as text
 
   @javascript
   Scenario: Export grades as text using percentages and letters
-    When I set the field "Grade report" to "Plain text file"
+    When I navigate to "Export > Plain text file" in the course gradebook
     And  I set the following fields to these values:
       | Percentage   | 1                        |
       | Letter       | 1                        |
@@ -59,10 +60,12 @@ Feature: I need to export grades as text
     Then I should see "Student,1"
     And I should see "80.00 %"
     And I should see "B-"
+    And I should not see "40.00 %"
+    And I should not see ",F,"
 
   @javascript
   Scenario: Export grades as text using real, percentages and letters
-    When I set the field "Grade report" to "Plain text file"
+    When I navigate to "Export > Plain text file" in the course gradebook
     And  I set the following fields to these values:
       | Real         | 1                        |
       | Percentage   | 1                        |
@@ -72,3 +75,5 @@ Feature: I need to export grades as text
     And I should see "80.00"
     And I should see "80.00 %"
     And I should see "B-"
+    And I should not see "40.00 %"
+    And I should not see ",F,"

@@ -115,6 +115,9 @@ abstract class backup_general_helper extends backup_helper {
      */
     public static function get_backup_information($tempdir) {
         global $CFG;
+        // Make a request cache and store the data in there.
+        static $cachesha1 = null;
+        static $cache = null;
 
         $info = new stdclass(); // Final information goes here
 
@@ -122,6 +125,12 @@ abstract class backup_general_helper extends backup_helper {
         if (!file_exists($moodlefile)) { // Shouldn't happen ever, but...
             throw new backup_helper_exception('missing_moodle_backup_xml_file', $moodlefile);
         }
+
+        $moodlefilesha1 = sha1_file($moodlefile);
+        if ($moodlefilesha1 === $cachesha1) {
+            return clone $cache;
+        }
+
         // Load the entire file to in-memory array
         $xmlparser = new progressive_parser();
         $xmlparser->set_file($moodlefile);
@@ -143,12 +152,16 @@ abstract class backup_general_helper extends backup_helper {
         $info->mnet_remoteusers         = $infoarr['mnet_remoteusers'];
         $info->original_wwwroot         = $infoarr['original_wwwroot'];
         $info->original_site_identifier_hash = $infoarr['original_site_identifier_hash'];
-        $info->original_course_id       = $infoarr['original_course_id'];
-        $info->original_course_fullname = $infoarr['original_course_fullname'];
-        $info->original_course_shortname= $infoarr['original_course_shortname'];
-        $info->original_course_startdate= $infoarr['original_course_startdate'];
-        $info->original_course_contextid= $infoarr['original_course_contextid'];
-        $info->original_system_contextid= $infoarr['original_system_contextid'];
+        $info->original_course_id        = $infoarr['original_course_id'];
+        $info->original_course_fullname  = $infoarr['original_course_fullname'];
+        $info->original_course_shortname = $infoarr['original_course_shortname'];
+        $info->original_course_startdate = $infoarr['original_course_startdate'];
+        // Old versions may not have this.
+        if (isset($infoarr['original_course_enddate'])) {
+            $info->original_course_enddate  = $infoarr['original_course_enddate'];
+        }
+        $info->original_course_contextid = $infoarr['original_course_contextid'];
+        $info->original_system_contextid = $infoarr['original_system_contextid'];
         // Moodle backup file don't have this option before 2.3
         if (!empty($infoarr['include_file_references_to_external_content'])) {
             $info->include_file_references_to_external_content = 1;
@@ -221,11 +234,14 @@ abstract class backup_general_helper extends backup_helper {
                 case 'activity':
                     $info->activities[$setting['activity']]->settings[$setting['name']] = $setting['value'];
                     break;
-                default: // Shouldn't happen
-                    throw new backup_helper_exception('wrong_setting_level_moodle_backup_xml_file', $setting['level']);
+                default: // Shouldn't happen but tolerated for portability of customized backups.
+                    debugging("Unknown backup setting level: {$setting['level']}", DEBUG_DEVELOPER);
+                    break;
             }
         }
 
+        $cache = clone $info;
+        $cachesha1 = $moodlefilesha1;
         return $info;
     }
 

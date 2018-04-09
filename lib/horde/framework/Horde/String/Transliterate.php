@@ -1,12 +1,12 @@
 <?php
 /**
- * Copyright 2014 Horde LLC (http://www.horde.org/)
+ * Copyright 2014-2017 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file COPYING for license information (LGPL). If you
  * did not receive this file, see http://www.horde.org/licenses/lgpl21.
  *
  * @category  Horde
- * @copyright 2014 Horde LLC
+ * @copyright 2014-2017 Horde LLC
  * @license   http://www.horde.org/licenses/lgpl21 LGPL 2.1
  * @package   Util
  */
@@ -17,7 +17,7 @@
  * @author    Michael Slusarz <slusarz@horde.org>
  * @author    Jan Schneider <jan@horde.org>
  * @category  Horde
- * @copyright 2014 Horde LLC
+ * @copyright 2014-2017 Horde LLC
  * @license   http://www.horde.org/licenses/lgpl21 LGPL 2.1
  * @package   Util
  * @since     2.4.0
@@ -29,14 +29,14 @@ class Horde_String_Transliterate
      *
      * @var array
      */
-    static protected $_map;
+    protected static $_map;
 
     /**
      * Transliterator instance.
      *
      * @var Transliterator
      */
-    static protected $_transliterator;
+    protected static $_transliterator;
 
     /**
      * Transliterates an UTF-8 string to ASCII, replacing non-English
@@ -50,40 +50,71 @@ class Horde_String_Transliterate
      *
      * @return string  Transliterated string (UTF-8).
      */
-    static public function toAscii($str)
+    public static function toAscii($str)
     {
-        switch (true) {
-        case class_exists('Transliterator'):
-            return self::_intlToAscii($str);
-        case extension_loaded('iconv'):
-            return self::_iconvToAscii($str);
-        default:
-            return self::_fallbackToAscii($str);
+        $methods = array(
+            '_intlToAscii',
+            '_iconvToAscii',
+            '_fallbackToAscii'
+        );
+
+        foreach ($methods as $val) {
+            if (($out = call_user_func(array(__CLASS__, $val), $str)) !== false) {
+                return $out;
+            }
         }
+
+        return $str;
     }
 
     /**
+     * Transliterate using the Transliterator package.
+     *
+     * @param string $str  Input string (UTF-8).
+     *
+     * @return mixed  Transliterated string (UTF-8), or false on error.
      */
-    static protected function _intlToAscii($str)
+    protected static function _intlToAscii($str)
     {
-        if (!isset(self::$_transliterator)) {
-            self::$_transliterator = Transliterator::create(
-                'Any-Latin; Latin-ASCII'
-            );
+        if (class_exists('Transliterator')) {
+            if (!isset(self::$_transliterator)) {
+                self::$_transliterator = Transliterator::create(
+                    'Any-Latin; Latin-ASCII'
+                );
+            }
+
+            if (!is_null(self::$_transliterator)) {
+                /* Returns false on error. */
+                return self::$_transliterator->transliterate($str);
+            }
         }
-        return self::$_transliterator->transliterate($str);
+
+        return false;
     }
 
     /**
+     * Transliterate using the iconv extension.
+     *
+     * @param string $str  Input string (UTF-8).
+     *
+     * @return mixed  Transliterated string (UTF-8), or false on error.
      */
-    static protected function _iconvToAscii($str)
+    protected static function _iconvToAscii($str)
     {
-        return iconv('UTF-8', 'ASCII//TRANSLIT', $str);
+        return extension_loaded('iconv')
+            /* Returns false on error. */
+            ? iconv('UTF-8', 'ASCII//TRANSLIT', $str)
+            : false;
     }
 
     /**
+     * Transliterate using a built-in ASCII mapping.
+     *
+     * @param string $str  Input string (UTF-8).
+     *
+     * @return string  Transliterated string (UTF-8).
      */
-    static protected function _fallbackToAscii($str)
+    protected static function _fallbackToAscii($str)
     {
         if (!isset(self::$_map)) {
             self::$_map = array(
@@ -158,6 +189,7 @@ class Horde_String_Transliterate
             );
         }
 
-        return strtr($str, self::$_map);
+        /* This should never return false. */
+        return strtr(strval($str), self::$_map);
     }
 }

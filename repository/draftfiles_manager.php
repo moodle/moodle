@@ -73,7 +73,7 @@ $fs = get_file_storage();
 
 $params = array('ctx_id' => $contextid, 'itemid' => $itemid, 'env' => $env, 'course'=>$courseid, 'maxbytes'=>$maxbytes, 'areamaxbytes'=>$areamaxbytes, 'maxfiles'=>$maxfiles, 'subdirs'=>$subdirs, 'sesskey'=>sesskey());
 $PAGE->set_url('/repository/draftfiles_manager.php', $params);
-$filepicker_url = new moodle_url($CFG->httpswwwroot."/repository/filepicker.php", $params);
+$filepicker_url = new moodle_url("/repository/filepicker.php", $params);
 
 $params['action'] = 'browse';
 $home_url = new moodle_url('/repository/draftfiles_manager.php', $params);
@@ -322,7 +322,7 @@ default:
             } else {
                 // a folder
                 echo '<li>';
-                echo '<img src="'.$OUTPUT->pix_url(file_folder_icon()) . '" class="iconsmall" />';
+                echo $OUTPUT->pix_icon(file_folder_icon(), get_string('folder'));
 
                 $home_url->param('action', 'browse');
                 $home_url->param('draftpath', $file->filepath);

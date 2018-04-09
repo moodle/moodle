@@ -26,7 +26,7 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-require_once(dirname(__FILE__).'/lib.php');
+require_once(__DIR__.'/lib.php');
 require_once($CFG->dirroot.'/mod/book/locallib.php');
 
 /**
@@ -115,7 +115,7 @@ function booktool_exportimscp_prepare_files($book, $context) {
 
     $css_file_record = array('contextid'=>$context->id, 'component'=>'booktool_exportimscp', 'filearea'=>'temp',
             'itemid'=>$book->revision, 'filepath'=>"/css/", 'filename'=>'styles.css');
-    $fs->create_file_from_pathname($css_file_record, dirname(__FILE__).'/imscp.css');
+    $fs->create_file_from_pathname($css_file_record, __DIR__.'/imscp.css');
 
     // Init imsmanifest and others
     $imsmanifest = '';
@@ -231,8 +231,16 @@ function booktool_exportimscp_chapter_content($chapter, $context) {
     $options->noclean = true;
     $options->context = $context;
 
-    $chaptercontent = str_replace('@@PLUGINFILE@@/', '', $chapter->content);
+    // We need to rewrite the pluginfile URLs so the media filters can work.
+    $chaptercontent = file_rewrite_pluginfile_urls($chapter->content, 'pluginfile.php', $context->id, 'mod_book', 'chapter',
+                                                    $chapter->id);
     $chaptercontent = format_text($chaptercontent, $chapter->contentformat, $options);
+
+    // Now remove again the full pluginfile URLs.
+    $options = array('reverse' => true);
+    $chaptercontent = file_rewrite_pluginfile_urls($chaptercontent, 'pluginfile.php', $context->id, 'mod_book', 'chapter',
+                                                    $chapter->id, $options);
+    $chaptercontent = str_replace('@@PLUGINFILE@@/', '', $chaptercontent);
 
     $chaptertitle = format_string($chapter->title, true, array('context'=>$context));
 

@@ -64,6 +64,7 @@ $dboptions['dbsocket'] = get_config('logstore_database', 'dbsocket');
 $dboptions['dbport'] = get_config('logstore_database', 'dbport');
 $dboptions['dbschema'] = get_config('logstore_database', 'dbschema');
 $dboptions['dbcollation'] = get_config('logstore_database', 'dbcollation');
+$dboptions['dbhandlesoptions'] = get_config('logstore_database', 'dbhandlesoptions');
 
 try {
     $db->connect(get_config('logstore_database', 'dbhost'), get_config('logstore_database', 'dbuser'),

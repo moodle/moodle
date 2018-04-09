@@ -17,7 +17,7 @@
 /**
  * Unit tests for grade/report/user/lib.php.
  *
- * @package  core_grade
+ * @package  core_grades
  * @category phpunit
  * @copyright 2012 Andrew Davis
  * @license  http://www.gnu.org/copyleft/gpl.html GNU Public License
@@ -228,6 +228,74 @@ class core_grade_report_graderlib_testcase extends advanced_testcase {
         $report1 = $this->create_report($course1);
         $this->assertEquals(count($toobigvalue['aggregatesonly']) - 1, count($report1->collapsed['aggregatesonly']));
         $this->assertEquals(count($toobigvalue['gradesonly']) - 1, count($report1->collapsed['gradesonly']));
+    }
+
+    /**
+     * Tests the get_right_rows function with one 'normal' and one 'ungraded' quiz.
+     *
+     * Previously, with an ungraded quiz (which results in a grade item with type GRADETYPE_NONE)
+     * there was a bug in get_right_rows in some situations.
+     */
+    public function test_get_right_rows() {
+        global $USER, $DB;
+        $this->resetAfterTest(true);
+
+        // Create manager and student on a course.
+        $generator = $this->getDataGenerator();
+        $manager = $generator->create_user();
+        $student = $generator->create_user();
+        $course = $generator->create_course();
+        $generator->enrol_user($manager->id, $course->id, 'manager');
+        $generator->enrol_user($student->id, $course->id, 'student');
+
+        // Create a couple of quizzes on the course.
+        $normalquiz = $generator->create_module('quiz', array('course' => $course->id,
+                'name' => 'NormalQuiz'));
+        $ungradedquiz = $generator->create_module('quiz', array('course' => $course->id,
+                'name' => 'UngradedQuiz'));
+
+        // Set the grade for the second one to 0 (note, you have to do this after creating it,
+        // otherwise it doesn't create an ungraded grade item).
+        $ungradedquiz->instance = $ungradedquiz->id;
+        quiz_set_grade(0, $ungradedquiz);
+
+        // Set current user.
+        $this->setUser($manager);
+        $USER->gradeediting[$course->id] = false;
+
+        // Get the report.
+        $report = $this->create_report($course);
+        $report->load_users();
+        $report->load_final_grades();
+        $result = $report->get_right_rows(false);
+
+        // There should be 3 rows (2 header rows, plus the grades for the first user).
+        $this->assertCount(3, $result);
+
+        // The second row should contain 2 cells - one for the graded quiz and course total.
+        $this->assertCount(2, $result[1]->cells);
+        $this->assertContains('NormalQuiz', $result[1]->cells[0]->text);
+        $this->assertContains('Course total', $result[1]->cells[1]->text);
+
+        // User row should contain grade values '-'.
+        $this->assertCount(2, $result[2]->cells);
+        $this->assertContains('>-<', $result[2]->cells[0]->text);
+        $this->assertContains('>-<', $result[2]->cells[1]->text);
+
+        // Supposing the user cannot view hidden grades, this shouldn't make any difference (due
+        // to a bug, it previously did).
+        $context = context_course::instance($course->id);
+        $managerroleid = $DB->get_field('role', 'id', array('shortname' => 'manager'));
+        assign_capability('moodle/grade:viewhidden', CAP_PROHIBIT, $managerroleid, $context->id, true);
+        $context->mark_dirty();
+        $this->assertFalse(has_capability('moodle/grade:viewhidden', $context));
+
+        // Recreate the report. Confirm it returns successfully still.
+        $report = $this->create_report($course);
+        $report->load_users();
+        $report->load_final_grades();
+        $result = $report->get_right_rows(false);
+        $this->assertCount(3, $result);
     }
 
     private function create_grade_category($course) {

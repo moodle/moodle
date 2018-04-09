@@ -56,6 +56,12 @@ defined('MOODLE_INTERNAL') || die();
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class message {
+    /** @var int Course id. */
+    private $courseid;
+
+    /** @var string Module name. */
+    private $modulename;
+
     /** @var string Component name. */
     private $component;
 
@@ -95,6 +101,9 @@ class message {
     /** @var  string An email address which can be used to send an reply. */
     private $replyto;
 
+    /** @var  string A name which can be used with replyto. */
+    private $replytoname;
+
     /** @var  int Used internally to store the id of the row representing this message in DB. */
     private $savedmessageid;
 
@@ -104,10 +113,32 @@ class message {
     /** @var  string Name of the attachment. Note:- not all processors support this.*/
     private $attachname;
 
+    /** @var  int The time the message was created.*/
+    private $timecreated;
+
     /** @var array a list of properties that is allowed for each message. */
-    private $properties = array('component', 'name', 'userfrom', 'userto', 'subject', 'fullmessage', 'fullmessageformat',
-                                'fullmessagehtml', 'smallmessage', 'notification', 'contexturl', 'contexturlname', 'savedmessageid',
-                                'replyto', 'attachment', 'attachname');
+    private $properties = array(
+        'courseid',
+        'modulename',
+        'component',
+        'name',
+        'userfrom',
+        'userto',
+        'subject',
+        'fullmessage',
+        'fullmessageformat',
+        'fullmessagehtml',
+        'smallmessage',
+        'notification',
+        'contexturl',
+        'contexturlname',
+        'replyto',
+        'replytoname',
+        'savedmessageid',
+        'attachment',
+        'attachname',
+        'timecreated'
+        );
 
     /** @var array property to store any additional message processor specific content */
     private $additionalcontent = array();
@@ -211,6 +242,20 @@ class message {
     public function __set($prop, $value) {
         if (in_array($prop, $this->properties)) {
             return $this->$prop = $value;
+        }
+        throw new \coding_exception("Invalid property $prop specified");
+    }
+
+    /**
+     * Magic method to check if property is set.
+     *
+     * @param string $prop name of property to check.
+     * @return bool
+     * @throws \coding_exception
+     */
+    public function __isset($prop) {
+        if (in_array($prop, $this->properties)) {
+            return isset($this->$prop);
         }
         throw new \coding_exception("Invalid property $prop specified");
     }

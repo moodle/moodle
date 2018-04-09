@@ -180,6 +180,56 @@ class core_text_testcase extends advanced_testcase {
     }
 
     /**
+     * Test unicode safe string truncation.
+     */
+    public function test_str_max_bytes() {
+        // These are all 3 byte characters, so this is a 12-byte string.
+        $str = '言語設定';
+
+        $this->assertEquals(12, strlen($str));
+
+        // Step back, shortening the string 1 byte at a time. Should remove in 1 char chunks.
+        $conv = core_text::str_max_bytes($str, 12);
+        $this->assertEquals(12, strlen($conv));
+        $this->assertSame('言語設定', $conv);
+        $conv = core_text::str_max_bytes($str, 11);
+        $this->assertEquals(9, strlen($conv));
+        $this->assertSame('言語設', $conv);
+        $conv = core_text::str_max_bytes($str, 10);
+        $this->assertEquals(9, strlen($conv));
+        $this->assertSame('言語設', $conv);
+        $conv = core_text::str_max_bytes($str, 9);
+        $this->assertEquals(9, strlen($conv));
+        $this->assertSame('言語設', $conv);
+        $conv = core_text::str_max_bytes($str, 8);
+        $this->assertEquals(6, strlen($conv));
+        $this->assertSame('言語', $conv);
+
+        // Now try a mixed byte string.
+        $str = '言語設a定';
+
+        $this->assertEquals(13, strlen($str));
+
+        $conv = core_text::str_max_bytes($str, 11);
+        $this->assertEquals(10, strlen($conv));
+        $this->assertSame('言語設a', $conv);
+        $conv = core_text::str_max_bytes($str, 10);
+        $this->assertEquals(10, strlen($conv));
+        $this->assertSame('言語設a', $conv);
+        $conv = core_text::str_max_bytes($str, 9);
+        $this->assertEquals(9, strlen($conv));
+        $this->assertSame('言語設', $conv);
+        $conv = core_text::str_max_bytes($str, 8);
+        $this->assertEquals(6, strlen($conv));
+        $this->assertSame('言語', $conv);
+
+        // Test 0 byte case.
+        $conv = core_text::str_max_bytes($str, 0);
+        $this->assertEquals(0, strlen($conv));
+        $this->assertSame('', $conv);
+    }
+
+    /**
      * Tests the static strtolower method.
      */
     public function test_strtolower() {
@@ -295,10 +345,41 @@ class core_text_testcase extends advanced_testcase {
 
     /**
      * Tests the static encode_mimeheader method.
+     * This also tests method moodle_phpmailer::encodeHeader that calls core_text::encode_mimeheader
      */
     public function test_encode_mimeheader() {
+        global $CFG;
+        require_once($CFG->libdir.'/phpmailer/moodle_phpmailer.php');
+        $mailer = new moodle_phpmailer();
+
+        // Encode short string with non-latin characters.
         $str = "Žluťoučký koníček";
-        $this->assertSame('=?utf-8?B?xb1sdcWlb3XEjWvDvSBrb27DrcSNZWs=?=', core_text::encode_mimeheader($str));
+        $encodedstr = '=?utf-8?B?xb1sdcWlb3XEjWvDvSBrb27DrcSNZWs=?=';
+        $this->assertSame($encodedstr, core_text::encode_mimeheader($str));
+        $this->assertSame($encodedstr, $mailer->encodeHeader($str));
+        $this->assertSame('"' . $encodedstr . '"', $mailer->encodeHeader($str, 'phrase'));
+
+        // Encode short string without non-latin characters. Make sure the quotes are escaped in quoted email headers.
+        $latinstr = 'text"with quotes';
+        $this->assertSame($latinstr, core_text::encode_mimeheader($latinstr));
+        $this->assertSame($latinstr, $mailer->encodeHeader($latinstr));
+        $this->assertSame('"text\\"with quotes"', $mailer->encodeHeader($latinstr, 'phrase'));
+
+        // Encode long string without non-latin characters.
+        $longlatinstr = 'This is a very long text that still should not be split into several lines in the email headers because '.
+            'it does not have any non-latin characters. The "quotes" and \\backslashes should be escaped only if it\'s a part of email address';
+        $this->assertSame($longlatinstr, core_text::encode_mimeheader($longlatinstr));
+        $this->assertSame($longlatinstr, $mailer->encodeHeader($longlatinstr));
+        $longlatinstrwithslash = preg_replace(['/\\\\/', "/\"/"], ['\\\\\\', '\\"'], $longlatinstr);
+        $this->assertSame('"' . $longlatinstrwithslash . '"', $mailer->encodeHeader($longlatinstr, 'phrase'));
+
+        // Encode long string with non-latin characters.
+        $longstr = "Неопознанная ошибка в файле C:\\tmp\\: \"Не пользуйтесь виндоуз\"";
+        $encodedlongstr = "=?utf-8?B?0J3QtdC+0L/QvtC30L3QsNC90L3QsNGPINC+0YjQuNCx0LrQsCDQsiDRhNCw?=
+ =?utf-8?B?0LnQu9C1IEM6XHRtcFw6ICLQndC1INC/0L7Qu9GM0LfRg9C50YLQtdGB?=
+ =?utf-8?B?0Ywg0LLQuNC90LTQvtGD0Lci?=";
+        $this->assertSame($encodedlongstr, $mailer->encodeHeader($longstr));
+        $this->assertSame('"' . $encodedlongstr . '"', $mailer->encodeHeader($longstr, 'phrase'));
     }
 
     /**

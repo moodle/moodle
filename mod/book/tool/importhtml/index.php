@@ -22,9 +22,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require(dirname(__FILE__).'/../../../../config.php');
-require_once(dirname(__FILE__).'/locallib.php');
-require_once(dirname(__FILE__).'/import_form.php');
+require(__DIR__.'/../../../../config.php');
+require_once(__DIR__.'/locallib.php');
+require_once(__DIR__.'/import_form.php');
 
 $id        = required_param('id', PARAM_INT);           // Course Module ID
 $chapterid = optional_param('chapterid', 0, PARAM_INT); // Chapter ID

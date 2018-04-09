@@ -22,7 +22,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['configtitle'] = 'Title';
+$string['configtitle'] = 'Flickr block title';
 $string['date-posted-asc'] = 'Date posted ASC';
 $string['date-posted-desc'] = 'Date posted DESC';
 $string['date-taken-asc'] = 'Date taken ASC';
@@ -37,3 +37,4 @@ $string['pluginname'] = 'Flickr';
 $string['relevance'] = 'Relevance';
 $string['sortby'] = 'Sort by';
 $string['tag_flickr:addinstance'] = 'Add a new flickr block';
+$string['privacy:metadata'] = 'The Flickr block only shows data stored in other locations.';

@@ -23,6 +23,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['comments:myaddinstance'] = 'Add a new comments block to My home';
+$string['comments:myaddinstance'] = 'Add a new comments block to Dashboard';
 $string['comments:addinstance'] = 'Add a new comments block';
 $string['pluginname'] = 'Comments';

@@ -26,7 +26,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once(dirname(__FILE__) . '/lib.php');
+require_once(__DIR__ . '/lib.php');
 
 $settings->add(new admin_setting_configselect('workshopallocation_random/numofreviews',
         get_string('numofreviews', 'workshopallocation_random'),

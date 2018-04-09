@@ -33,5 +33,7 @@ $string['layoutgrid'] = 'Grid';
 $string['layoutlist'] = 'List';
 $string['levelgroup'] = 'Level grade and definition';
 $string['levels'] = 'Levels';
+$string['mustbeunique'] = 'Level grades must be unique within a criterion';
+$string['mustdefinelevel'] = 'At least one level is required';
 $string['mustchooseone'] = 'You have to select one of these items';
 $string['pluginname'] = 'Rubric';

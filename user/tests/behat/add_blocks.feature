@@ -7,8 +7,8 @@ Feature: Add blocks to my profile page
   Background:
     Given the following "users" exist:
       | username | firstname | lastname | email |
-      | student1 | Student | 1 | student1@asd.com |
-      | student2 | Student | 2 | student2@asd.com |
+      | student1 | Student | 1 | student1@example.com |
+      | student2 | Student | 2 | student2@example.com |
     And the following "courses" exist:
       | fullname | shortname | format |
       | Course 1 | C1 | topics |
@@ -21,5 +21,5 @@ Feature: Add blocks to my profile page
 
   Scenario: Add blocks to page
     When I press "Customise this page"
-    And I add the "Latest news" block
-    Then I should see "Latest news"
+    And I add the "Latest announcements" block
+    Then I should see "Latest announcements"

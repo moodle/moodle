@@ -46,8 +46,6 @@ if ($ADMIN->fulltree) {
     //--- general settings -----------------------------------------------------------------------------------
     $settings->add(new admin_setting_configtext('resource/framesize',
         get_string('framesize', 'resource'), get_string('configframesize', 'resource'), 130, PARAM_INT));
-    $settings->add(new admin_setting_configcheckbox('resource/requiremodintro',
-        get_string('requiremodintro', 'admin'), get_string('configrequiremodintro', 'admin'), 0));
     $settings->add(new admin_setting_configmultiselect('resource/displayoptions',
         get_string('displayoptions', 'resource'), get_string('configdisplayoptions', 'resource'),
         $defaultdisplayoptions, $displayoptions));
@@ -64,6 +62,8 @@ if ($ADMIN->fulltree) {
         get_string('showsize', 'resource'), get_string('showsize_desc', 'resource'), 0));
     $settings->add(new admin_setting_configcheckbox('resource/showtype',
         get_string('showtype', 'resource'), get_string('showtype_desc', 'resource'), 0));
+    $settings->add(new admin_setting_configcheckbox('resource/showdate',
+        get_string('showdate', 'resource'), get_string('showdate_desc', 'resource'), 0));
     $settings->add(new admin_setting_configtext('resource/popupwidth',
         get_string('popupwidth', 'resource'), get_string('popupwidthexplain', 'resource'), 620, PARAM_INT, 7));
     $settings->add(new admin_setting_configtext('resource/popupheight',

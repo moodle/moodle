@@ -1,12 +1,12 @@
 <?php
 /**
- * Copyright 2011-2014 Horde LLC (http://www.horde.org/)
+ * Copyright 2011-2017 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file COPYING for license information (LGPL). If you
  * did not receive this file, see http://www.horde.org/licenses/lgpl21.
  *
  * @category  Horde
- * @copyright 2011-2014 Horde LLC
+ * @copyright 2011-2017 Horde LLC
  * @license   http://www.horde.org/licenses/lgpl21 LGPL 2.1
  * @package   Imap_Client
  */
@@ -16,7 +16,7 @@
  *
  * @author    Michael Slusarz <slusarz@horde.org>
  * @category  Horde
- * @copyright 2011-2014 Horde LLC
+ * @copyright 2011-2017 Horde LLC
  * @license   http://www.horde.org/licenses/lgpl21 LGPL 2.1
  * @package   Imap_Client
  */
@@ -79,11 +79,19 @@ class Horde_Imap_Client_Data_Acl extends Horde_Imap_Client_Data_AclCommon implem
          * we are abstracting out use of ACL_CREATE/ACL_DELETE to their
          * component RFC 4314 rights. */
         foreach ($this->_virtual as $key => $val) {
+            foreach ($val as $right) {
+                if ($this[$right]) {
+                    foreach (array_keys($this->_virtual) as $virtual) {
+                        unset($this[$virtual]);
+                    }
+                    return;
+                }
+            }
+        }
+        foreach ($this->_virtual as $key => $val) {
             if ($this[$key]) {
                 unset($this[$key]);
-                if (!$this[reset($val)]) {
-                    $this->_rights = array_unique(array_merge($this->_rights, $val));
-                }
+                $this->_rights = array_unique(array_merge($this->_rights, $val));
             }
         }
     }

@@ -33,7 +33,7 @@ class core_role_allow_override_page extends core_role_allow_role_page {
     }
 
     protected function set_allow($fromroleid, $targetroleid) {
-        allow_override($fromroleid, $targetroleid);
+        core_role_set_override_allowed($fromroleid, $targetroleid);
     }
 
     protected function get_cell_tooltip($fromrole, $targetrole) {

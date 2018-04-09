@@ -56,6 +56,7 @@ class core_navigationlib_testcase extends advanced_testcase {
         $demo4 = $demo3->add('demo4', $inactiveurl, navigation_node::TYPE_COURSE,  null, 'demo4', new pix_icon('i/course', ''));
         $demo5 = $demo3->add('demo5', $activeurl, navigation_node::TYPE_COURSE, null, 'demo5', new pix_icon('i/course', ''));
         $demo5->add('activity1', null, navigation_node::TYPE_ACTIVITY, null, 'activity1')->make_active();
+        $demo6 = $demo3->add('demo6', null, navigation_node::TYPE_CONTAINER, 'container node test', 'demo6');
         $hiddendemo1 = $this->node->add('hiddendemo1', $inactiveurl, navigation_node::TYPE_CATEGORY, null, 'hiddendemo1', new pix_icon('i/course', ''));
         $hiddendemo1->hidden = true;
         $hiddendemo1->add('hiddendemo2', $inactiveurl, navigation_node::TYPE_COURSE, null, 'hiddendemo2', new pix_icon('i/course', ''))->helpbutton = 'Here is a help button';
@@ -239,9 +240,11 @@ class core_navigationlib_testcase extends advanced_testcase {
         $csstype2 = $this->node->get('demo3')->get('demo5')->get_css_type();
         $this->node->get('demo3')->get('demo5')->type = 1000;
         $csstype3 = $this->node->get('demo3')->get('demo5')->get_css_type();
+        $csstype4 = $this->node->get('demo3')->get('demo6')->get_css_type();
         $this->assertSame('type_category', $csstype1);
         $this->assertSame('type_course', $csstype2);
         $this->assertSame('type_unknown', $csstype3);
+        $this->assertSame('type_container', $csstype4);
     }
 
     public function test_node_make_active() {
@@ -451,6 +454,45 @@ class core_navigationlib_testcase extends advanced_testcase {
     }
 
     /**
+     * Test that users with the correct permissions can view the preferences page.
+     */
+    public function test_can_view_user_preferences() {
+        global $PAGE, $DB, $SITE;
+        $this->resetAfterTest();
+
+        $persontoview = $this->getDataGenerator()->create_user();
+        $persondoingtheviewing = $this->getDataGenerator()->create_user();
+
+        $PAGE->set_url('/');
+        $PAGE->set_course($SITE);
+
+        // Check that a standard user can not view the preferences page.
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $this->getDataGenerator()->role_assign($studentrole->id, $persondoingtheviewing->id);
+        $this->setUser($persondoingtheviewing);
+        $settingsnav = new exposed_settings_navigation();
+        $settingsnav->initialise();
+        $settingsnav->extend_for_user($persontoview->id);
+        $this->assertFalse($settingsnav->can_view_user_preferences($persontoview->id));
+
+        // Set persondoingtheviewing as a manager.
+        $managerrole = $DB->get_record('role', array('shortname' => 'manager'));
+        $this->getDataGenerator()->role_assign($managerrole->id, $persondoingtheviewing->id);
+        $settingsnav = new exposed_settings_navigation();
+        $settingsnav->initialise();
+        $settingsnav->extend_for_user($persontoview->id);
+        $this->assertTrue($settingsnav->can_view_user_preferences($persontoview->id));
+
+        // Check that the admin can view the preferences page.
+        $this->setAdminUser();
+        $settingsnav = new exposed_settings_navigation();
+        $settingsnav->initialise();
+        $settingsnav->extend_for_user($persontoview->id);
+        $preferencenode = $settingsnav->find('userviewingsettings' . $persontoview->id, null);
+        $this->assertTrue($settingsnav->can_view_user_preferences($persontoview->id));
+    }
+
+    /**
      * @depends test_setting__initialise
      * @param mixed $node
      * @return mixed
@@ -459,6 +501,49 @@ class core_navigationlib_testcase extends advanced_testcase {
         $this->resetAfterTest();
 
         $this->assertFalse($node->exposed_in_alternative_role());
+    }
+
+
+    public function test_navigation_node_collection_remove_with_no_type() {
+        $navigationnodecollection = new navigation_node_collection();
+        $this->setup_node();
+        $this->node->key = 100;
+
+        // Test it's empty
+        $this->assertEquals(0, count($navigationnodecollection->get_key_list()));
+
+        // Add a node
+        $navigationnodecollection->add($this->node);
+
+        // Test it's not empty
+        $this->assertEquals(1, count($navigationnodecollection->get_key_list()));
+
+        // Remove a node - passing key only!
+        $this->assertTrue($navigationnodecollection->remove(100));
+
+        // Test it's empty again!
+        $this->assertEquals(0, count($navigationnodecollection->get_key_list()));
+    }
+
+    public function test_navigation_node_collection_remove_with_type() {
+        $navigationnodecollection = new navigation_node_collection();
+        $this->setup_node();
+        $this->node->key = 100;
+
+        // Test it's empty
+        $this->assertEquals(0, count($navigationnodecollection->get_key_list()));
+
+        // Add a node
+        $navigationnodecollection->add($this->node);
+
+        // Test it's not empty
+        $this->assertEquals(1, count($navigationnodecollection->get_key_list()));
+
+        // Remove a node - passing type
+        $this->assertTrue($navigationnodecollection->remove(100, 1));
+
+        // Test it's empty again!
+        $this->assertEquals(0, count($navigationnodecollection->get_key_list()));
     }
 }
 

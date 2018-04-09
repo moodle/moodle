@@ -28,7 +28,7 @@ class Less_Tree_Media extends Less_Tree{
 		$this->rules[0]->allowImports = true;
 	}
 
-	function accept( $visitor ){
+    public function accept( $visitor ){
 		$this->features = $visitor->visitObj($this->features);
 		$this->rules = $visitor->visitArray($this->rules);
 	}
@@ -36,7 +36,7 @@ class Less_Tree_Media extends Less_Tree{
     /**
      * @see Less_Tree::genCSS
      */
-	function genCSS( $output ){
+    public function genCSS( $output ){
 
 		$output->add( '@media ', $this->currentFileInfo, $this->index );
 		$this->features->genCSS( $output );
@@ -169,7 +169,7 @@ class Less_Tree_Media extends Less_Tree{
 		return $result;
 	}
 
-	function bubbleSelectors($selectors) {
+    public function bubbleSelectors($selectors) {
 
 		if( !$selectors) return;
 

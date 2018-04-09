@@ -1,114 +1,118 @@
 /* styles using by feedback */
-.feedback_switchrequired img{
+.path-mod-feedback span.feedback_info {
+    font-weight: bold;
 }
 
-span.feedback_info {
-	font-weight:bold;
-}
-div.feedback_item_box_left, div.feedback_item_box_right {
+.path-mod-feedback div.feedback_is_dependent {
+    background: #ddd;
 }
 
-div.feedback_depend {
-	background:#DDDDDD;
+.path-mod-feedback span.feedback_depend {
+    color: #f00;
 }
 
-div.feedback_complete_depend {
-	background:#EEEEEE;
+.path-mod-feedback hr.feedback_pagebreak {
+    height: 4px;
+    color: #aaa;
+    background-color: #aaa;
+    border: 0;
+    margin: 0;
 }
 
-span.feedback_depend {
-	color:#ff0000;
+.path-mod-feedback .drag_target_active {
+    opacity: .25;
 }
 
-div.feedback_item_number_left, div.feedback_item_left {
-	float:left;
-}
-div.feedback_item_number_right, div.feedback_item_right {
-	float:right;
+.path-mod-feedback .drag_item_active {
+    opacity: .5;
 }
 
-div.feedback_item_commands_left {
-	float:right;
-	text-align:right;
-}
-
-div.feedback_item_commands_right {
-	float:left;
-	text-align:left;
-}
-
-li.feedback_item_check_h_left,
-li.feedback_item_check_h_right,
-li.feedback_item_radio_h_left,
-li.feedback_item_radio_h_right {
-	list-style-type:none;
-	display:inline;
-}
-
-div.feedback_item_select_h_left,
-div.feedback_item_select_h_right {
-    display:block;
-}
-
-li.feedback_item_check_v_left,
-li.feedback_item_check_v_right,
-li.feedback_item_radio_v_left,
-li.feedback_item_radio_v_right {
-	list-style-type:none;
-	display:block;
-}
-
-div.feedback_item_select_v_left,
-div.feedback_item_select_v_right {
-    display:block;
-}
-
-div.feedback_items label{
-    display: inline;
-}
-
-div.feedback_item_captcha_text_left,
-div.feedback_item_captcha_img_left {
-	display:inline;
-	margin: 5px;
-}
-div.feedback_item_captcha_text_right,
-div.feedback_item_captcha_img_right {
-	display:inline;
-	margin: 5px;
-}
-
-hr.feedback_pagebreak {
-	height:8px;
-	color:#aaaaaa;
-	background-color:#aaaaaa;
-	border:0px;
-}
-
-.drag_target_active {
-        opacity: .25;
-}
-
-.drag_item_active {
-        opacity: .5;
-}
-
-ul#feedback_draglist {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-}
-
-div#feedback_dragarea {
-    width:95%;
-}
-
-div img.feedback_bar_image {
+.path-mod-feedback .feedback_bar_image {
     height: 10px;
 }
 
-.path-mod-feedback input,
-.path-mod-feedback textarea,
-.path-mod-feedback .uneditable-input {
-    width: auto;
+.path-mod-feedback #analysis-form label {
+    display: inline;
+}
+
+.path-mod-feedback .templateslist td.cell.action,
+.path-mod-feedback .templateslist th.header.action {
+    width: 10%;
+}
+
+/* Analysis page */
+.path-mod-feedback table.analysis {
+    width: 100%;
+    border-top: 1px solid #aaa;
+    margin-top: 10px;
+}
+
+.path-mod-feedback table.analysis tr:first-child th {
+    padding-top: 10px;
+}
+
+.path-mod-feedback table.analysis tr:hover {
+    background: #f5f5f5;
+}
+
+.path-mod-feedback table.analysis td.singlevalue:before,
+.path-mod-feedback table.analysis td.optionname:before {
+    content: '- ';
+}
+
+.path-mod-feedback table.analysis.itemtype_textarea td {
+    padding: 4px 0;
+}
+
+.path-mod-feedback table.analysis tr.isempty {
+    display: none;
+}
+
+/* Responses list */
+.path-mod-feedback #showentrytable td.cell.completed_timemodified,
+.path-mod-feedback #showentryanontable td.cell.random_response {
+    font-weight: bold;
+}
+
+.path-mod-feedback #showentrytable td.cell.userpic,
+.path-mod-feedback #showentrytable td.cell.deleteentry,
+.path-mod-feedback #showentryanontable td.cell.deleteentry {
+    width: 10px;
+}
+
+/* Responses navigation */
+.path-mod-feedback .response_navigation {
+    margin: .5em 0;
+}
+
+.path-mod-feedback .response_navigation a {
+    display: block;
+}
+
+.path-mod-feedback .response_navigation a.back_to_list {
+    text-align: center;
+}
+
+.path-mod-feedback .response_navigation .prev_response:before {
+    /*rtl:raw:
+    content: ' ► ';
+    */
+    /*rtl:remove*/
+    content: ' ◄ ';
+}
+
+.path-mod-feedback .response_navigation .next_response:after {
+    /*rtl:raw:
+    content: ' ◄ ';
+    */
+    /*rtl:remove*/
+    content: ' ► ';
+}
+
+.path-mod-feedback .response_navigation .next_response {
+    text-align: right;
+}
+
+.path-mod-feedback .response_navigation .prev_response {
+    text-align: left;
 }

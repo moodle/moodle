@@ -1,6 +1,18 @@
 This file describes API changes in core filter API and plugins,
 information provided here is intended especially for developers.
 
+=== 3.0 ===
+
+* New argument $skipfilters to filter_manager::filter_text to allow applying
+  the filters with a given one omitted.
+
+* New admin setting class admin_setting_filter_types which can be used if you
+  want to make the disablefilters value in your code configurable.
+
+* Methods filter_manager::text_filtering_hash and moodle_text_filter::hash have been
+  deprecated. There were use by the old Moodle filtered text caching system
+  that was removed several releases ago.
+
 === 2.7 ===
 
 * Finally filter may use $PAGE and $OUTPUT, yay!

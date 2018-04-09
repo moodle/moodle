@@ -52,8 +52,9 @@ class restore_survey_activity_structure_step extends restore_activity_structure_
         $data = (object)$data;
         $oldid = $data->id;
         $data->course = $this->get_courseid();
-        $data->timemodified = $this->apply_date_offset($data->timemodified);
-        $data->timecreated = $this->apply_date_offset($data->timecreated);
+
+        // Any changes to the list of dates that needs to be rolled should be same during course restore and course reset.
+        // See MDL-9367.
 
         // insert the survey record
         $newitemid = $DB->insert_record('survey', $data);
@@ -81,7 +82,6 @@ class restore_survey_activity_structure_step extends restore_activity_structure_
         $oldid = $data->id;
         $data->survey = $this->get_new_parentid('survey');
         $data->userid = $this->get_mappingid('user', $data->userid);
-        $data->time = $this->apply_date_offset($data->time);
 
         $newitemid = $DB->insert_record('survey_answers', $data);
         // No need to save this mapping as far as nothing depend on it

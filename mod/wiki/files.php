@@ -77,7 +77,7 @@ $context = context_module::instance($cm->id);
 
 
 $PAGE->set_url('/mod/wiki/files.php', array('pageid'=>$pageid));
-require_login($course, true, $cm);
+require_course_login($course, true, $cm);
 
 if (!wiki_user_can_view($subwiki, $wiki)) {
     print_error('cannotviewfiles', 'wiki');
@@ -87,7 +87,7 @@ $PAGE->set_title(get_string('wikifiles', 'wiki'));
 $PAGE->set_heading($course->fullname);
 $PAGE->navbar->add(format_string(get_string('wikifiles', 'wiki')));
 echo $OUTPUT->header();
-echo $OUTPUT->heading($wiki->name);
+echo $OUTPUT->heading(format_string($wiki->name));
 echo $OUTPUT->box(format_module_intro('wiki', $wiki, $PAGE->cm->id), 'generalbox', 'intro');
 
 $renderer = $PAGE->get_renderer('mod_wiki');

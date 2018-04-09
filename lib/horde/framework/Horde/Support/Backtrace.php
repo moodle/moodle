@@ -2,7 +2,7 @@
 /**
  * Wrapper around backtraces providing utility methods.
  *
- * Copyright 1999-2014 Horde LLC (http://www.horde.org/)
+ * Copyright 1999-2017 Horde LLC (http://www.horde.org/)
  *
  * @category   Horde
  * @package    Support
@@ -20,13 +20,16 @@ class Horde_Support_Backtrace
     /**
      * Constructor.
      *
-     * @param Exception|array $backtrace  The backtrace source. Either an
-     *                                    exception or an existing backtrace.
+     * @param Exception|array $backtrace  The backtrace source. Either a
+     *                                    trowable, an exception or an existing
+     *                                    backtrace.
      *                                    Defaults to the current stack.
      */
     public function __construct($backtrace = null)
     {
-        if ($backtrace instanceof Exception) {
+        if ($backtrace instanceof Throwable) {
+            $this->createFromThrowable($backtrace);
+        } elseif ($backtrace instanceof Exception) {
             $this->createFromException($backtrace);
         } elseif ($backtrace) {
             $this->createFromDebugBacktrace($backtrace);
@@ -58,11 +61,25 @@ class Horde_Support_Backtrace
     }
 
     /**
-     * Wraps an Exception object's backtrace.
+     * Wraps an error object's backtrace.
      *
-     * @param Exception $e  The exception to wrap.
+     * @since Horde_Support 2.2.0
+     *
+     * @param Throwable $e  The error to wrap.
      */
-    public function createFromException(Exception $e)
+    public function createFromThrowable(Throwable $e)
+    {
+        $this->_createFromThrowable($e);
+    }
+
+    /**
+     * Wraps an error object's backtrace.
+     *
+     * @todo Merge with createFromThrowable with PHP 7.
+     *
+     * @param Throwable $e  The error to wrap.
+     */
+    protected function _createFromThrowable($e)
     {
         $this->backtrace = $e->getTrace();
         if ($previous = $e->getPrevious()) {
@@ -70,6 +87,18 @@ class Horde_Support_Backtrace
             $this->backtrace = array_merge($backtrace->backtrace,
                                            $this->backtrace);
         }
+    }
+
+    /**
+     * Wraps an Exception object's backtrace.
+     *
+     * @todo Remove with PHP 7.
+     *
+     * @param Exception $e  The exception to wrap.
+     */
+    public function createFromException(Exception $e)
+    {
+        $this->_createFromThrowable($e);
     }
 
     /**

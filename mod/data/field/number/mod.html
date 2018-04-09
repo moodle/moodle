@@ -7,4 +7,8 @@
         <td class="c0"><label for="description"><?php echo get_string('fielddescription', 'data'); ?></label></td>
         <td class="c1"><input class="fielddescription" type="text" name="description" id="description" value="<?php p($this->field->description);?>" /></td>
     </tr>
+    <tr>
+        <td class="c0"><label for="required"><?php echo get_string('requiredfield', 'data'); ?></label></td>
+        <td class="c1"><input class="requiredfield" type="checkbox" name="required" id="required" <?php p($this->field->required?"checked=\"checked\"":""); ?>/></td>
+    </tr>
 </table>

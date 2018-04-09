@@ -1,0 +1,41 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_calendar/event_summary_modal
+
+    This template renders the calendar events summary modal.
+
+    Example context (json):
+    {
+        "title": "Assignment due 1",
+    }
+}}
+{{< core/modal }}
+    {{$footer}}
+        {{#candelete}}
+            <button type="button" class="btn btn-secondary" data-action="delete">{{#str}} delete {{/str}}</button>
+        {{/candelete}}
+        {{#isactionevent}}
+            <a href="{{url}}">{{#str}} gotoactivity, core_calendar {{/str}}</a>
+        {{/isactionevent}}
+        {{^isactionevent}}
+            {{#canedit}}
+                <button type="button" class="btn btn-primary" data-action="edit">{{#str}} edit {{/str}}</button>
+            {{/canedit}}
+        {{/isactionevent}}
+    {{/footer}}
+{{/ core/modal }}

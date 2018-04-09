@@ -34,7 +34,14 @@ $string['admindirname'] = 'Директориум аdmin';
 $string['availablelangs'] = 'Достапни јазични пакети';
 $string['chooselanguagehead'] = 'Изберете јазик';
 $string['chooselanguagesub'] = 'Изберете јазик САМО за инсталацијата. Подоцна ќе можете да изберете јазик за страницата и за корисниците.';
+$string['clialreadyconfigured'] = 'Конфигурациската датотека config.php веќе постои. Ве молиме користете ја admin/cli/install_database.php за да го инсталирате Moodle на овој сајт.';
+$string['clialreadyinstalled'] = 'Конфигурациската датотека config.php веќе постои. Ве молиме користете ја admin/cli/install_database.php за да го надградите Moodle за овој сајт.';
+$string['cliinstallheader'] = 'Програма за инсталирање на Moodle {$a} командна линија';
+$string['databasehost'] = 'Домаќин на базата на податоци';
+$string['databasename'] = 'Име на базата на податоци';
+$string['databasetypehead'] = 'Одбери го двигателот на базата за податоци';
 $string['dataroot'] = 'Директориум';
+$string['datarootpermission'] = 'Дозвола за директориумот за податоци';
 $string['dbprefix'] = 'Префикс на табели';
 $string['dirroot'] = 'Moodle директориум';
 $string['environmenthead'] = 'Ја проверувам околината...';
@@ -58,6 +65,7 @@ $string['memorylimithelp'] = '<p>Прагот на меморијата кај P
     <p><blockquote>php_value memory_limit 40M</blockquote></p>
     <p>Како и да е, на некои компјутери, ова може да ги спречи <b>сите </b> PHP страници да работат (ќе забележите грешки на страниците) па ќе треба да ја преместите датотеката .htaccess.</p></li>
 </ol>';
+$string['pathswrongadmindir'] = 'Администраторскиот директориум не постои';
 $string['phpversion'] = 'Верзија на PHP';
 $string['phpversionhelp'] = '<p>На Moodle му е потребна верзија на PHP, и тоа најмалку 4.1.0. </p>
 <p>Моментално работите на верзијата {$a} </p>

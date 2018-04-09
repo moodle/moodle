@@ -63,6 +63,19 @@ class question_category_list extends moodle_list {
     public function get_records() {
         $this->records = get_categories_for_contexts($this->context->id, $this->sortby);
     }
+
+    /**
+     * Returns the highest category id that the $item can have as its parent.
+     * Note: question categories cannot go higher than the TOP category.
+     *
+     * @param list_item $item The item which its top level parent is going to be returned.
+     * @return int
+     */
+    public function get_top_level_parent_id($item) {
+        // Put the item at the highest level it can go.
+        $topcategory = question_get_top_category($item->item->contextid, true);
+        return $topcategory->id;
+    }
 }
 
 
@@ -112,12 +125,11 @@ class question_category_list_item extends list_item {
         $item .= format_text($category->info, $category->infoformat,
                 array('context' => $this->parentlist->context, 'noclean' => true));
 
-        // don't allow delete if this is the last category in this context.
-        if (!question_is_only_toplevel_category_in_context($category->id)) {
+        // Don't allow delete if this is the top category, or the last editable category in this context.
+        if ($category->parent && !question_is_only_child_of_top_category_in_context($category->id)) {
             $deleteurl = new moodle_url($this->parentlist->pageurl, array('delete' => $this->id, 'sesskey' => sesskey()));
             $item .= html_writer::link($deleteurl,
-                    html_writer::empty_tag('img', array('src' => $OUTPUT->pix_url('t/delete'),
-                            'class' => 'iconsmall', 'alt' => $str->delete)),
+                    $OUTPUT->pix_icon('t/delete', $str->delete),
                     array('title' => $str->delete));
         }
 
@@ -162,7 +174,7 @@ class question_category_object {
      *
      * Gets necessary strings and sets relevant path information
      */
-    public function question_category_object($page, $pageurl, $contexts, $currentcat, $defaultcategory, $todelete, $addcontexts) {
+    public function __construct($page, $pageurl, $contexts, $currentcat, $defaultcategory, $todelete, $addcontexts) {
         global $CFG, $COURSE, $OUTPUT;
 
         $this->tab = str_repeat('&nbsp;', $this->tabsize);
@@ -192,6 +204,16 @@ class question_category_object {
         $this->pageurl = $pageurl;
 
         $this->initialize($page, $contexts, $currentcat, $defaultcategory, $todelete, $addcontexts);
+    }
+
+    /**
+     * Old syntax of class constructor. Deprecated in PHP7.
+     *
+     * @deprecated since Moodle 3.1
+     */
+    public function question_category_object($page, $pageurl, $contexts, $currentcat, $defaultcategory, $todelete, $addcontexts) {
+        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
+        self::__construct($page, $pageurl, $contexts, $currentcat, $defaultcategory, $todelete, $addcontexts);
     }
 
     /**
@@ -286,17 +308,19 @@ class question_category_object {
 
     public function edit_single_category($categoryid) {
     /// Interface for adding a new category
-        global $COURSE, $DB;
+        global $DB;
         /// Interface for editing existing categories
-        if ($category = $DB->get_record("question_categories", array("id" => $categoryid))) {
-
+        $category = $DB->get_record("question_categories", array("id" => $categoryid));
+        if (empty($category)) {
+            print_error('invalidcategory', '', '', $categoryid);
+        } else if ($category->parent == 0) {
+            print_error('cannotedittopcat', 'question', '', $categoryid);
+        } else {
             $category->parent = "{$category->parent},{$category->contextid}";
             $category->submitbutton = get_string('savechanges');
             $category->categoryheader = $this->str->edit;
             $this->catform->set_data($category);
             $this->catform->display();
-        } else {
-            print_error('invalidcategory', '', '', $categoryid);
         }
     }
 
@@ -431,7 +455,7 @@ class question_category_object {
 
         // Get the record we are updating.
         $oldcat = $DB->get_record('question_categories', array('id' => $updateid));
-        $lastcategoryinthiscontext = question_is_only_toplevel_category_in_context($updateid);
+        $lastcategoryinthiscontext = question_is_only_child_of_top_category_in_context($updateid);
 
         if (!empty($newparent) && !$lastcategoryinthiscontext) {
             list($parentid, $tocontextid) = explode(',', $newparent);
@@ -444,10 +468,16 @@ class question_category_object {
         $fromcontext = context::instance_by_id($oldcat->contextid);
         require_capability('moodle/question:managecategory', $fromcontext);
 
-        // If moving to another context, check permissions some more.
+        // If moving to another context, check permissions some more, and confirm contextid,stamp uniqueness.
+        $newstamprequired = false;
         if ($oldcat->contextid != $tocontextid) {
             $tocontext = context::instance_by_id($tocontextid);
             require_capability('moodle/question:managecategory', $tocontext);
+
+            // Confirm stamp uniqueness in the new context. If the stamp already exists, generate a new one.
+            if ($DB->record_exists('question_categories', array('contextid' => $tocontextid, 'stamp' => $oldcat->stamp))) {
+                $newstamprequired = true;
+            }
         }
 
         // Update the category record.
@@ -458,6 +488,9 @@ class question_category_object {
         $cat->infoformat = $newinfoformat;
         $cat->parent = $parentid;
         $cat->contextid = $tocontextid;
+        if ($newstamprequired) {
+            $cat->stamp = make_unique_id_code();
+        }
         $DB->update_record('question_categories', $cat);
 
         // If the category name has changed, rename any random questions in that category.

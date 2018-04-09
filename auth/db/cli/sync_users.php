@@ -81,6 +81,14 @@ if (!is_enabled_auth('db')) {
     cli_error('auth_db plugin is disabled, synchronisation stopped', 2);
 }
 
+cli_problem('[AUTH DB] The sync users cron has been deprecated. Please use the scheduled task instead.');
+
+// Abort execution of the CLI script if the \auth_db\task\sync_users is enabled.
+$task = \core\task\manager::get_scheduled_task('auth_db\task\sync_users');
+if (!$task->get_disabled()) {
+    cli_error('[AUTH DB] The scheduled task sync_users is enabled, the cron execution has been aborted.');
+}
+
 if (empty($options['verbose'])) {
     $trace = new null_progress_trace();
 } else {

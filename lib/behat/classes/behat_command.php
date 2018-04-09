@@ -44,12 +44,39 @@ class behat_command {
 
     /**
      * Ensures the behat dir exists in moodledata
+     *
      * @return string Full path
      */
-    public static function get_behat_dir() {
+    public static function get_parent_behat_dir() {
         global $CFG;
 
-        $behatdir = $CFG->behat_dataroot . '/behat';
+        // If not set then return empty string.
+        if (!isset($CFG->behat_dataroot_parent)) {
+            return "";
+        }
+
+        return $CFG->behat_dataroot_parent;
+    }
+
+    /**
+     * Ensures the behat dir exists in moodledata
+     * @param int $runprocess run process for which behat dir is returned.
+     * @return string Full path
+     */
+    public static function get_behat_dir($runprocess = 0) {
+        global $CFG;
+
+        // If not set then return empty string.
+        if (!isset($CFG->behat_dataroot)) {
+            return "";
+        }
+
+        // If $CFG->behat_parallel_run starts with index 0 and $runprocess for parallel run starts with 1.
+        if (!empty($runprocess) && isset($CFG->behat_parallel_run[$runprocess - 1]['behat_dataroot'])) {
+            $behatdir = $CFG->behat_parallel_run[$runprocess - 1]['behat_dataroot'] . '/behat';;
+        } else {
+            $behatdir = $CFG->behat_dataroot . '/behat';
+        }
 
         if (!is_dir($behatdir)) {
             if (!mkdir($behatdir, $CFG->directorypermissions, true)) {
@@ -73,9 +100,11 @@ class behat_command {
      * normal cmd.exe (in Windows).
      *
      * @param  bool $custombyterm  If the provided command should depend on the terminal where it runs
+     * @param bool $parallelrun If parallel run is installed.
+     * @param bool $absolutepath return command with absolute path.
      * @return string
      */
-    public final static function get_behat_command($custombyterm = false) {
+    public final static function get_behat_command($custombyterm = false, $parallerun = false, $absolutepath = false) {
 
         $separator = DIRECTORY_SEPARATOR;
         $exec = 'behat';
@@ -89,7 +118,24 @@ class behat_command {
                 $exec = 'behat.bat';
             }
         }
-        return 'vendor' . $separator . 'bin' . $separator . $exec;
+
+        // If relative path then prefix relative path.
+        if ($absolutepath) {
+            $pathprefix = testing_cli_argument_path('/');
+            if (!empty($pathprefix)) {
+                $pathprefix .= $separator;
+            }
+        } else {
+            $pathprefix = '';
+        }
+
+        if (!$parallerun) {
+            $command = $pathprefix . 'vendor' . $separator . 'bin' . $separator . $exec;
+        } else {
+            $command = 'php ' . $pathprefix . 'admin' . $separator . 'tool' . $separator . 'behat' . $separator . 'cli'
+                . $separator . 'run.php';
+        }
+        return $command;
     }
 
     /**
@@ -129,7 +175,7 @@ class behat_command {
 
             // Returning composer error code to avoid conflicts with behat and moodle error codes.
             self::output_msg(get_string('errorcomposer', 'tool_behat'));
-            return BEHAT_EXITCODE_COMPOSER;
+            return TESTING_EXITCODE_COMPOSER;
         }
 
         // Behat test command.
@@ -139,7 +185,7 @@ class behat_command {
 
             // Returning composer error code to avoid conflicts with behat and moodle error codes.
             self::output_msg(get_string('errorbehatcommand', 'tool_behat', self::get_behat_command()));
-            return BEHAT_EXITCODE_COMPOSER;
+            return TESTING_EXITCODE_COMPOSER;
         }
 
         // No empty values.
@@ -177,7 +223,7 @@ class behat_command {
     }
 
     /**
-     * Has the site installed composer with --dev option
+     * Has the site installed composer.
      * @return bool
      */
     public static function are_behat_dependencies_installed() {

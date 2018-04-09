@@ -49,7 +49,7 @@ It\'s highly recommended to be running the latest (+ version) available of your 
 This functionality doesn\'t perform any action against the DB (just reads from it), so can be safely executed at any moment.';
 $string['confirmcheckforeignkeys'] = 'This functionality will search for potential violations of the foreign keys defined in the install.xml definitions. (Moodle does not currently generate actual foreign key constraints in the database, which is why invalid data may be present.)
 
-It\'s highly recommended to be running the latest (+ version) available of your Moodle release before executing the search of missing indexes.
+It\'s highly recommended to be running the latest (+ version) available of your Moodle release before executing the search for potential violations of the foreign keys.
 
 This functionality doesn\'t perform any action against the DB (just reads from it), so can be safely executed at any moment.';
 $string['confirmcheckindexes'] = 'This functionality will search for potential missing indexes in your Moodle server, generating (but not executing!) automatically the needed SQL statements to keep everything updated.
@@ -165,6 +165,7 @@ $string['nowrongintsfound'] = 'No wrong integers have been found, your DB doesn\
 $string['nowrongoraclesemanticsfound'] = 'No Oracle columns using BYTE semantics have been found, your DB doesn\'t need further actions.';
 $string['numberincorrectdecimals'] = 'Incorrect number of decimals for number field';
 $string['numberincorrectlength'] = 'Incorrect length for number field';
+$string['numberincorrectwholepart'] = 'Too big whole number part for number field';
 $string['pendingchanges'] = 'Note: You have performed changes to this file. They can be saved at any moment.';
 $string['pendingchangescannotbesaved'] = 'There are changes in this file but they cannot be saved! Please verify that both the directory and the "install.xml" within it have write permissions for the web server.';
 $string['pendingchangescannotbesavedreload'] = 'There are changes in this file but they cannot be saved! Please verify that both the directory and the "install.xml" within it have write permissions for the web server. Then reload this page and you should be able to save those changes.';

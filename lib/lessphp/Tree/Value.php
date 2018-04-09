@@ -15,7 +15,7 @@ class Less_Tree_Value extends Less_Tree{
 		$this->value = $value;
 	}
 
-	function accept($visitor) {
+    public function accept($visitor) {
 		$this->value = $visitor->visitArray($this->value);
 	}
 

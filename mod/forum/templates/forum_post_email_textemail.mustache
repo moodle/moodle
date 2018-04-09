@@ -1,0 +1,69 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_forum/forum_post_email_textemail
+
+    Template which defines a forum post for sending in a single-post text email.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * coursename
+    * forumname
+    * showdiscussionname
+    * discussionname
+    * permalink
+    * subject
+    * authorfullname
+    * postdate
+    * message
+    * attachments
+    * canreply
+    * replylink
+    * unsubscribeforumlink
+    * unsubscribediscussionlink
+    * forumindexlink
+}}
+{{{ coursename }}} -> {{# str }} forums, forum {{/ str }} -> {{{ forumname }}}{{# showdiscussionname }} -> {{{ discussionname }}} {{/ showdiscussionname }}
+{{ permalink }}
+{{{ subject }}}
+{{# str }} bynameondate, forum, {
+        "name": {{# quote }}{{{ authorfullname }}}{{/ quote }},
+        "date": {{# quote}}{{ postdate }}{{/ quote }}
+    } {{/ str }}
+---------------------------------------------------------------------
+{{{ message }}}
+
+{{{ attachments }}}
+---------------------------------------------------------------------
+{{# canreply }}
+{{# str }} postmailinfolink, forum, {
+        "coursename": {{# quote }}{{{ coursename }}}{{/ quote }},
+        "replylink": {{# quote }}{{ replylink }}{{/ quote }}
+    } {{/ str }}
+{{/ canreply }}
+{{# unsubscribeforumlink }}
+{{# str }} unsubscribelink, forum, {{{ unsubscribeforumlink }}} {{/ str }}
+{{/ unsubscribeforumlink }}
+{{# unsubscribediscussionlink }}
+{{# str }} unsubscribediscussionlink, forum, {{{ unsubscribediscussionlink }}} {{/ str }}
+{{/ unsubscribediscussionlink }}
+{{# str }} digestmailpostlink, forum, {{{ forumindexlink }}} {{/ str }}

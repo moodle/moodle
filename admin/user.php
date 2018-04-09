@@ -38,12 +38,6 @@
     $strunlock = get_string('unlockaccount', 'admin');
     $strconfirm = get_string('confirm');
 
-    if (empty($CFG->loginhttps)) {
-        $securewwwroot = $CFG->wwwroot;
-    } else {
-        $securewwwroot = str_replace('http:','https:',$CFG->wwwroot);
-    }
-
     $returnurl = new moodle_url('/admin/user.php', array('sort' => $sort, 'dir' => $dir, 'perpage' => $perpage, 'page'=>$page));
 
     // The $user variable is also used outside of these if statements.
@@ -70,6 +64,9 @@
 
         $user = $DB->get_record('user', array('id'=>$delete, 'mnethostid'=>$CFG->mnet_localhost_id), '*', MUST_EXIST);
 
+        if ($user->deleted) {
+            print_error('usernotdeleteddeleted', 'error');
+        }
         if (is_siteadmin($user->id)) {
             print_error('useradminodelete', 'error');
         }
@@ -78,11 +75,15 @@
             echo $OUTPUT->header();
             $fullname = fullname($user, true);
             echo $OUTPUT->heading(get_string('deleteuser', 'admin'));
+
             $optionsyes = array('delete'=>$delete, 'confirm'=>md5($delete), 'sesskey'=>sesskey());
-            echo $OUTPUT->confirm(get_string('deletecheckfull', '', "'$fullname'"), new moodle_url($returnurl, $optionsyes), $returnurl);
+            $deleteurl = new moodle_url($returnurl, $optionsyes);
+            $deletebutton = new single_button($deleteurl, get_string('delete'), 'post');
+
+            echo $OUTPUT->confirm(get_string('deletecheckfull', '', "'$fullname'"), $deletebutton, $returnurl);
             echo $OUTPUT->footer();
             die;
-        } else if (data_submitted() and !$user->deleted) {
+        } else if (data_submitted()) {
             if (delete_user($user)) {
                 \core\session\manager::gc(); // Remove stale sessions.
                 redirect($returnurl);
@@ -159,10 +160,13 @@
 
     // Carry on with the user listing
     $context = context_system::instance();
-    $extracolumns = get_extra_user_fields($context);
+    // These columns are always shown in the users list.
+    $requiredcolumns = array('city', 'country', 'lastaccess');
+    // Extra columns containing the extra user fields, excluding the required columns (city and country, to be specific).
+    $extracolumns = get_extra_user_fields($context, $requiredcolumns);
     // Get all user name fields as an array.
     $allusernamefields = get_all_user_name_fields(false, null, null, null, true);
-    $columns = array_merge($allusernamefields, $extracolumns, array('city', 'country', 'lastaccess'));
+    $columns = array_merge($allusernamefields, $extracolumns, $requiredcolumns);
 
     foreach ($columns as $column) {
         $string[$column] = get_user_field_name($column);
@@ -180,7 +184,8 @@
             } else {
                 $columnicon = ($dir == "ASC") ? "sort_asc" : "sort_desc";
             }
-            $columnicon = "<img class='iconsort' src=\"" . $OUTPUT->pix_url('t/' . $columnicon) . "\" alt=\"\" />";
+            $columnicon = $OUTPUT->pix_icon('t/' . $columnicon, get_string(strtolower($columndir)), 'core',
+                                            ['class' => 'iconsort']);
 
         }
         $$column = "<a href=\"user.php?sort=$column&amp;dir=$columndir\">".$string[$column]."</a>$columnicon";
@@ -190,9 +195,14 @@
     // We don't need to check the fullnamedisplay setting here as the fullname function call further down has
     // the override parameter set to true.
     $fullnamesetting = $CFG->alternativefullnameformat;
-    // If we are using language or it is empty, then retrieve all of the user's names.
+    // If we are using language or it is empty, then retrieve the default user names of just 'firstname' and 'lastname'.
     if ($fullnamesetting == 'language' || empty($fullnamesetting)) {
-        $fullnamesetting = implode(' ', $allusernamefields);
+        // Set $a variables to return 'firstname' and 'lastname'.
+        $a = new stdClass();
+        $a->firstname = 'firstname';
+        $a->lastname = 'lastname';
+        // Getting the fullname display will ensure that the order in the language file is maintained.
+        $fullnamesetting = get_string('fullnamedisplay', null, $a);
     }
 
     // Order in string will ensure that the name columns are in the correct order.
@@ -239,7 +249,7 @@
 
     } else {
 
-        $countries = get_string_manager()->get_list_of_countries(false);
+        $countries = get_string_manager()->get_list_of_countries(true);
         if (empty($mnethosts)) {
             $mnethosts = $DB->get_records('mnet_host', null, 'id', 'id,wwwroot,name');
         }
@@ -249,11 +259,17 @@
                 $users[$key]->country = $countries[$user->country];
             }
         }
-        if ($sort == "country") {  // Need to resort by full country name, not code
+        if ($sort == "country") {
+            // Need to resort by full country name, not code.
             foreach ($users as $user) {
                 $susers[$user->id] = $user->country;
             }
-            asort($susers);
+            // Sort by country name, according to $dir.
+            if ($dir === 'DESC') {
+                arsort($susers);
+            } else {
+                asort($susers);
+            }
             foreach ($susers as $key => $value) {
                 $nusers[] = $users[$key];
             }
@@ -286,7 +302,8 @@
                 if (is_mnet_remote_user($user) or $user->id == $USER->id or is_siteadmin($user)) {
                     // no deleting of self, mnet accounts or admins allowed
                 } else {
-                    $buttons[] = html_writer::link(new moodle_url($returnurl, array('delete'=>$user->id, 'sesskey'=>sesskey())), html_writer::empty_tag('img', array('src'=>$OUTPUT->pix_url('t/delete'), 'alt'=>$strdelete, 'class'=>'iconsmall')), array('title'=>$strdelete));
+                    $url = new moodle_url($returnurl, array('delete'=>$user->id, 'sesskey'=>sesskey()));
+                    $buttons[] = html_writer::link($url, $OUTPUT->pix_icon('t/delete', $strdelete));
                 }
             }
 
@@ -303,17 +320,20 @@
 
                 } else {
                     if ($user->suspended) {
-                        $buttons[] = html_writer::link(new moodle_url($returnurl, array('unsuspend'=>$user->id, 'sesskey'=>sesskey())), html_writer::empty_tag('img', array('src'=>$OUTPUT->pix_url('t/show'), 'alt'=>$strunsuspend, 'class'=>'iconsmall')), array('title'=>$strunsuspend));
+                        $url = new moodle_url($returnurl, array('unsuspend'=>$user->id, 'sesskey'=>sesskey()));
+                        $buttons[] = html_writer::link($url, $OUTPUT->pix_icon('t/show', $strunsuspend));
                     } else {
                         if ($user->id == $USER->id or is_siteadmin($user)) {
                             // no suspending of admins or self!
                         } else {
-                            $buttons[] = html_writer::link(new moodle_url($returnurl, array('suspend'=>$user->id, 'sesskey'=>sesskey())), html_writer::empty_tag('img', array('src'=>$OUTPUT->pix_url('t/hide'), 'alt'=>$strsuspend, 'class'=>'iconsmall')), array('title'=>$strsuspend));
+                            $url = new moodle_url($returnurl, array('suspend'=>$user->id, 'sesskey'=>sesskey()));
+                            $buttons[] = html_writer::link($url, $OUTPUT->pix_icon('t/hide', $strsuspend));
                         }
                     }
 
                     if (login_is_lockedout($user)) {
-                        $buttons[] = html_writer::link(new moodle_url($returnurl, array('unlock'=>$user->id, 'sesskey'=>sesskey())), html_writer::empty_tag('img', array('src'=>$OUTPUT->pix_url('t/unlock'), 'alt'=>$strunlock, 'class'=>'iconsmall')), array('title'=>$strunlock));
+                        $url = new moodle_url($returnurl, array('unlock'=>$user->id, 'sesskey'=>sesskey()));
+                        $buttons[] = html_writer::link($url, $OUTPUT->pix_icon('t/unlock', $strunlock));
                     }
                 }
             }
@@ -322,7 +342,8 @@
             if (has_capability('moodle/user:update', $sitecontext)) {
                 // prevent editing of admins by non-admins
                 if (is_siteadmin($USER) or !is_siteadmin($user)) {
-                    $buttons[] = html_writer::link(new moodle_url($securewwwroot.'/user/editadvanced.php', array('id'=>$user->id, 'course'=>$site->id)), html_writer::empty_tag('img', array('src'=>$OUTPUT->pix_url('t/edit'), 'alt'=>$stredit, 'class'=>'iconsmall')), array('title'=>$stredit));
+                    $url = new moodle_url('/user/editadvanced.php', array('id'=>$user->id, 'course'=>$site->id));
+                    $buttons[] = html_writer::link($url, $OUTPUT->pix_icon('t/edit', $stredit));
                 }
             }
 
@@ -380,7 +401,7 @@
         echo $OUTPUT->paging_bar($usercount, $page, $perpage, $baseurl);
     }
     if (has_capability('moodle/user:create', $sitecontext)) {
-        $url = new moodle_url($securewwwroot . '/user/editadvanced.php', array('id' => -1));
+        $url = new moodle_url('/user/editadvanced.php', array('id' => -1));
         echo $OUTPUT->single_button($url, get_string('addnewuser'), 'get');
     }
 

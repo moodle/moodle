@@ -31,65 +31,11 @@
 class core_register_renderer extends plugin_renderer_base {
 
     /**
-     * Display Moodle.org registration message about benefit to register on Moodle.org
+     * Display message about the benefits of registering on Moodle.org
      *
      * @return string
      */
     public function moodleorg_registration_message() {
-        $moodleorgurl = html_writer::link('http://moodle.org', 'Moodle.org');
-        $moodleorgstatsurl = html_writer::link('http://moodle.org/stats', get_string('statsmoodleorg', 'admin'));
-        $moochurl = html_writer::link(HUB_MOODLEORGHUBURL, get_string('moodleorghubname', 'admin'));
-        $moodleorgregmsg = get_string('registermoodleorg', 'admin', $moodleorgurl);
-        $items = array(get_string('registermoodleorgli1', 'admin'),
-            get_string('registermoodleorgli2', 'admin', $moodleorgstatsurl),
-            get_string('registermoodleorgli3', 'admin', $moochurl));
-        $moodleorgregmsg .= html_writer::alist($items);
-        return $moodleorgregmsg;
+        return format_text(get_string('registermoodlenet', 'admin'), FORMAT_HTML, ['noclean' => true]);
     }
-
-    /**
-     * Display a box message confirming a site registration (add or update)
-     * @param string $confirmationmessage
-     * @return string
-     */
-    public function registration_confirmation($confirmationmessage) {
-        $linktositelist = html_writer::tag('a', get_string('sitelist', 'hub'),
-                        array('href' => new moodle_url('/local/hub/index.php')));
-        $message = $confirmationmessage . html_writer::empty_tag('br') . $linktositelist;
-        return $this->output->box($message);
-    }
-
-    /**
-     * Display the listing of registered on hub
-     */
-    public function registeredonhublisting($hubs) {
-        global $CFG;
-        $table = new html_table();
-        $table->head = array(get_string('hub', 'hub'), get_string('operation', 'hub'));
-        $table->size = array('80%', '20%');
-
-        foreach ($hubs as $hub) {
-            if ($hub->huburl == HUB_MOODLEORGHUBURL) {
-                $hub->hubname = get_string('registeredmoodleorg', 'hub', $hub->hubname);
-            }
-            $hublink = html_writer::tag('a', $hub->hubname, array('href' => $hub->huburl));
-            $hublinkcell = html_writer::tag('div', $hublink, array('class' => 'registeredhubrow'));
-
-            $unregisterhuburl = new moodle_url("/" . $CFG->admin . "/registration/index.php",
-                            array('sesskey' => sesskey(), 'huburl' => $hub->huburl,
-                                'unregistration' => 1));
-            $unregisterbutton = new single_button($unregisterhuburl,
-                            get_string('unregister', 'hub'));
-            $unregisterbutton->class = 'centeredbutton';
-            $unregisterbuttonhtml = $this->output->render($unregisterbutton);
-
-            //add button cells
-            $cells = array($hublinkcell, $unregisterbuttonhtml);
-            $row = new html_table_row($cells);
-            $table->data[] = $row;
-        }
-
-        return html_writer::table($table);
-    }
-
 }

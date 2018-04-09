@@ -44,11 +44,26 @@ class cleanup_task extends \core\task\scheduled_task {
     public function execute() {
         global $CFG, $DB;
 
-        // Delete old logs to save space (this might need a timer to slow it down...).
-        if (!empty($CFG->loglifetime)) { // Value in days.
-            $loglifetime = time(0) - ($CFG->loglifetime * 3600 * 24);
-            $DB->delete_records_select("log", "time < ?", array($loglifetime));
-            mtrace(" Deleted old legacy log records");
+        if (empty($CFG->loglifetime)) {
+            return;
         }
+
+        $loglifetime = time() - ($CFG->loglifetime * 3600 * 24); // Value in days.
+        $lifetimep = array($loglifetime);
+        $start = time();
+
+        while ($min = $DB->get_field_select("log", "MIN(time)", "time < ?", $lifetimep)) {
+            // Break this down into chunks to avoid transaction for too long and generally thrashing database.
+            // Experiments suggest deleting one day takes up to a few seconds; probably a reasonable chunk size usually.
+            // If the cleanup has just been enabled, it might take e.g a month to clean the years of logs.
+            $params = array(min($min + 3600 * 24, $loglifetime));
+            $DB->delete_records_select("log", "time < ?", $params);
+            if (time() > $start + 300) {
+                // Do not churn on log deletion for too long each run.
+                break;
+            }
+        }
+
+        mtrace(" Deleted old legacy log records");
     }
 }

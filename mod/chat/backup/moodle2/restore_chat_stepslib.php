@@ -51,8 +51,9 @@ class restore_chat_activity_structure_step extends restore_activity_structure_st
         $oldid = $data->id;
         $data->course = $this->get_courseid();
 
+        // Any changes to the list of dates that needs to be rolled should be same during course restore and course reset.
+        // See MDL-9367.
         $data->chattime = $this->apply_date_offset($data->chattime);
-        $data->timemodified = $this->apply_date_offset($data->timemodified);
 
         // Insert the chat record.
         $newitemid = $DB->insert_record('chat', $data);
@@ -69,7 +70,7 @@ class restore_chat_activity_structure_step extends restore_activity_structure_st
         $data->userid = $this->get_mappingid('user', $data->userid);
         $data->groupid = $this->get_mappingid('group', $data->groupid);
         $data->message = $data->message_text;
-        $data->timestamp = $this->apply_date_offset($data->timestamp);
+        $data->issystem = $data->system;
 
         $newitemid = $DB->insert_record('chat_messages', $data);
         $this->set_mapping('chat_message', $oldid, $newitemid); // Because of decode.

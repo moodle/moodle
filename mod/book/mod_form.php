@@ -24,7 +24,7 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-require_once(dirname(__FILE__).'/locallib.php');
+require_once(__DIR__.'/locallib.php');
 require_once($CFG->dirroot.'/course/moodleform_mod.php');
 
 class mod_book_mod_form extends moodleform_mod {
@@ -46,7 +46,7 @@ class mod_book_mod_form extends moodleform_mod {
         }
         $mform->addRule('name', null, 'required', null, 'client');
         $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
-        $this->add_intro_editor($config->requiremodintro, get_string('moduleintro'));
+        $this->standard_intro_elements(get_string('moduleintro'));
 
         // Appearance.
         $mform->addElement('header', 'appearancehdr', get_string('appearance'));

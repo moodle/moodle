@@ -27,8 +27,7 @@
 
 require_once(__DIR__ . '/../../../../lib/behat/behat_base.php');
 
-use Behat\Behat\Context\Step\Given as Given,
-    Behat\Gherkin\Node\TableNode as TableNode;
+use Behat\Gherkin\Node\TableNode as TableNode;
 
 /**
  * Steps definitions related to mod_workshop.
@@ -48,17 +47,18 @@ class behat_mod_workshop extends behat_base {
      */
     public function i_change_phase_in_workshop_to($workshopname, $phase) {
         $workshopname = $this->escape($workshopname);
-        $phaseliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($phase);
-        $switchphase = $this->getSession()->getSelectorsHandler()->xpathLiteral(get_string('switchphase', 'workshop'));
+        $phaseliteral = behat_context_helper::escape($phase);
 
-        $xpath = "//*[@class='userplan']/descendant::div[./span[contains(.,$phaseliteral)]]/".
-                "descendant-or-self::a[./img[@alt=$switchphase]]";
+        $xpath = "//*[@class='userplan']/descendant::div[./span[contains(.,$phaseliteral)]]";
         $continue = $this->escape(get_string('continue'));
-        return array(
-            new Given("I follow \"$workshopname\""),
-            new Given("I click on \"$xpath\" \"xpath_element\""),
-            new Given("I press \"$continue\""),
+
+        $this->execute('behat_general::click_link', $workshopname);
+
+        $this->execute('behat_general::i_click_on_in_the',
+            array('a.action-icon', "css_element", $this->escape($xpath), "xpath_element")
         );
+
+        $this->execute("behat_forms::press_button", $continue);
     }
 
     /**
@@ -71,13 +71,15 @@ class behat_mod_workshop extends behat_base {
     public function i_add_a_submission_in_workshop_as($workshopname, $table) {
         $workshopname = $this->escape($workshopname);
         $savechanges = $this->escape(get_string('savechanges'));
-        $xpath = "//div[contains(concat(' ', normalize-space(@class), ' '), ' ownsubmission ')]/descendant::input[@type='submit']";
-        return array(
-            new Given("I follow \"$workshopname\""),
-            new Given("I click on \"$xpath\" \"xpath_element\""),
-            new Given("I set the following fields to these values:", $table),
-            new Given("I press \"$savechanges\""),
-        );
+        $xpath = "//div[contains(concat(' ', normalize-space(@class), ' '), ' ownsubmission ')]/descendant::*[@type='submit']";
+
+        $this->execute('behat_general::click_link', $workshopname);
+
+        $this->execute("behat_general::i_click_on", array($xpath, "xpath_element"));
+
+        $this->execute("behat_forms::i_set_the_following_fields_to_these_values", $table);
+
+        $this->execute("behat_forms::press_button", $savechanges);
     }
 
     /**
@@ -88,15 +90,14 @@ class behat_mod_workshop extends behat_base {
      * @param TableNode $table data to fill the submission form with, must contain 'Title'
      */
     public function i_edit_assessment_form_in_workshop_as($workshopname, $table) {
-        $workshopname = $this->escape($workshopname);
-        $editassessmentform = $this->escape(get_string('editassessmentform', 'workshop'));
-        $saveandclose = $this->escape(get_string('saveandclose', 'workshop'));
-        return array(
-            new Given("I follow \"$workshopname\""),
-            new Given("I follow \"$editassessmentform\""),
-            new Given("I set the following fields to these values:", $table),
-            new Given("I press \"$saveandclose\""),
-        );
+        $this->execute('behat_general::click_link', $workshopname);
+
+        $this->execute('behat_navigation::i_navigate_to_in_current_page_administration',
+            get_string('editassessmentform', 'workshop'));
+
+        $this->execute("behat_forms::i_set_the_following_fields_to_these_values", $table);
+
+        $this->execute("behat_forms::press_button", get_string('saveandclose', 'workshop'));
     }
 
     /**
@@ -109,17 +110,21 @@ class behat_mod_workshop extends behat_base {
      */
     public function i_assess_submission_in_workshop_as($submission, $workshopname, TableNode $table) {
         $workshopname = $this->escape($workshopname);
-        $submissionliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($submission);
+        $submissionliteral = behat_context_helper::escape($submission);
         $xpath = "//div[contains(concat(' ', normalize-space(@class), ' '), ' assessment-summary ') ".
                 "and contains(.,$submissionliteral)]";
         $assess = $this->escape(get_string('assess', 'workshop'));
         $saveandclose = $this->escape(get_string('saveandclose', 'workshop'));
-        return array(
-            new Given("I follow \"$workshopname\""),
-            new Given("I click on \"$assess\" \"button\" in the \"$xpath\" \"xpath_element\""),
-            new Given("I set the following fields to these values:", $table),
-            new Given("I press \"$saveandclose\""),
+
+        $this->execute('behat_general::click_link', $workshopname);
+
+        $this->execute('behat_general::i_click_on_in_the',
+            array($assess, "button", $xpath, "xpath_element")
         );
+
+        $this->execute("behat_forms::i_set_the_following_fields_to_these_values", $table);
+
+        $this->execute("behat_forms::press_button", $saveandclose);
     }
 
     /**
@@ -131,9 +136,9 @@ class behat_mod_workshop extends behat_base {
      * @param string $reviewer
      */
     public function i_should_see_grade_for_workshop_participant_set_by_peer($grade, $participant, $reviewer) {
-        $participantliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($participant);
-        $reviewerliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($reviewer);
-        $gradeliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($grade);
+        $participantliteral = behat_context_helper::escape($participant);
+        $reviewerliteral = behat_context_helper::escape($reviewer);
+        $gradeliteral = behat_context_helper::escape($grade);
         $participantselector = "contains(concat(' ', normalize-space(@class), ' '), ' participant ') ".
                 "and contains(.,$participantliteral)";
         $trxpath = "//table/tbody/tr[td[$participantselector]]";
@@ -151,5 +156,28 @@ class behat_mod_workshop extends behat_base {
             }
         }
         $this->find('xpath', $xpath);
+    }
+
+    /**
+     * Configure portfolio plugin, set value for portfolio instance
+     *
+     * @When /^I set portfolio instance "(?P<portfolioinstance_string>(?:[^"]|\\")*)" to "(?P<value_string>(?:[^"]|\\")*)"$/
+     * @param string $portfolioinstance
+     * @param string $value
+     */
+    public function i_set_portfolio_instance_to($portfolioinstance, $value) {
+
+        $rowxpath = "//table[contains(@class, 'generaltable')]//tr//td[contains(text(), '"
+            . $portfolioinstance . "')]/following-sibling::td";
+
+        $selectxpath = $rowxpath.'//select';
+        $select = $this->find('xpath', $selectxpath);
+        $select->selectOption($value);
+
+        if (!$this->running_javascript()) {
+            $this->execute('behat_general::i_click_on_in_the',
+                array(get_string('go'), "button", $rowxpath, "xpath_element")
+            );
+        }
     }
 }

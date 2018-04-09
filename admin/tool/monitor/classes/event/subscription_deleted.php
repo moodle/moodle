@@ -64,4 +64,9 @@ class subscription_deleted extends \core\event\base {
     public function get_description() {
         return "The user with id '$this->userid' deleted the event monitor subscription with id '$this->objectid'.";
     }
+
+    public static function get_objectid_mapping() {
+        // No mapping required for this event because event monitor subscriptions are not backed up.
+        return array('db' => 'tool_monitor_subscriptions', 'restore' => \core\event\base::NOT_MAPPED);
+    }
 }

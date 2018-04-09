@@ -24,7 +24,10 @@
     </td>
 </tr>
 
-<tr><td align="center" colspan="2"><input type="submit" name="preview" value="<?php print_string('preview'); ?>" /></td></tr>
+<tr><td align="center" colspan="2">
+        <input type="submit" name="send" value="<?php print_string('sendmessage', 'message'); ?>" />
+        <input type="submit" name="preview" value="<?php print_string('preview'); ?>" />
+</td></tr>
 </table>
 <?php echo $OUTPUT->box_end(); ?>
 <table align="center"><tr><th colspan="4" scope="row"><?php print_string('currentlyselectedusers'); ?></th></tr>
@@ -39,10 +42,10 @@
                 echo '<td>'.$user->email.'</td><td>';
             }
             if (empty($user->email)) {
-                $error = get_string('emailempty');
+                $error = get_string('emailuserhasnone');
             }
             if (!empty($error)) {
-                echo '<img src="'.$OUTPUT->pix_url('t/emailno') . '" alt="'.$error.'" class="iconsmall" title="'.$error.'"/>';
+                echo $OUTPUT->pix_icon('t/emailno', $error);
                 unset($error);
             }
             echo '</td><td><input type="submit" onClick="this.form.deluser.value='.$user->id.';" value="' . get_string('remove') . '" /></td></tr>';

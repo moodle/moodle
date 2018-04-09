@@ -51,7 +51,6 @@ class qformat_default {
     public $stoponerror = true;
     public $translator = null;
     public $canaccessbackupdata = true;
-
     protected $importcontext = null;
 
     // functions to indicate import/export functionality
@@ -289,8 +288,9 @@ class qformat_default {
     public function importprocess($category) {
         global $USER, $CFG, $DB, $OUTPUT;
 
-        // reset the timer in case file upload was slow
+        // Raise time and memory, as importing can be quite intensive.
         core_php_time_limit::raise();
+        raise_memory_limit(MEMORY_EXTRA);
 
         // STAGE 1: Parse the file
         echo $OUTPUT->notification(get_string('parsingquestions', 'question'), 'notifysuccess');
@@ -424,9 +424,31 @@ class qformat_default {
 
             $result = question_bank::get_qtype($question->qtype)->save_question_options($question);
 
-            if (!empty($CFG->usetags) && isset($question->tags)) {
-                require_once($CFG->dirroot . '/tag/lib.php');
-                tag_set('question', $question->id, $question->tags, 'core_question', $question->context->id);
+            if (core_tag_tag::is_enabled('core_question', 'question')) {
+                // Is the current context we're importing in a course context?
+                $importingcontext = $this->importcontext;
+                $importingcoursecontext = $importingcontext->get_course_context(false);
+                $isimportingcontextcourseoractivity = !empty($importingcoursecontext);
+
+                if (!empty($question->coursetags)) {
+                    if ($isimportingcontextcourseoractivity) {
+                        $mergedtags = array_merge($question->coursetags, $question->tags);
+
+                        core_tag_tag::set_item_tags('core_question', 'question', $question->id,
+                            $question->context, $mergedtags);
+                    } else {
+                        core_tag_tag::set_item_tags('core_question', 'question', $question->id,
+                            context_course::instance($this->course->id), $question->coursetags);
+
+                        if (!empty($question->tags)) {
+                            core_tag_tag::set_item_tags('core_question', 'question', $question->id,
+                                $importingcontext, $question->tags);
+                        }
+                    }
+                } else if (!empty($question->tags)) {
+                    core_tag_tag::set_item_tags('core_question', 'question', $question->id,
+                        $question->context, $question->tags);
+                }
             }
 
             if (!empty($result->error)) {
@@ -499,6 +521,12 @@ class qformat_default {
             $contextid = false;
         }
 
+        // Before 3.5, question categories could be created at top level.
+        // From 3.5 onwards, all question categories should be a child of a special category called the "top" category.
+        if (isset($catnames[0]) && (($catnames[0] != 'top') || (count($catnames) < 3))) {
+            array_unshift($catnames, 'top');
+        }
+
         if ($this->contextfromfile && $contextid !== false) {
             $context = context::instance_by_id($contextid);
             require_capability('moodle/question:add', $context);
@@ -509,8 +537,14 @@ class qformat_default {
 
         // Now create any categories that need to be created.
         foreach ($catnames as $catname) {
-            if ($category = $DB->get_record('question_categories',
+            if ($parent == 0) {
+                $category = question_get_top_category($context->id, true);
+                $parent = $category->id;
+            } else if ($category = $DB->get_record('question_categories',
                     array('name' => $catname, 'contextid' => $context->id, 'parent' => $parent))) {
+                $parent = $category->id;
+            } else if ($parent == 0) {
+                $category = question_get_top_category($context->id, true);
                 $parent = $category->id;
             } else {
                 require_capability('moodle/question:managecategory', $context);
@@ -621,9 +655,6 @@ class qformat_default {
         $question->questiontextformat = FORMAT_MOODLE;
         $question->generalfeedback = '';
         $question->generalfeedbackformat = FORMAT_MOODLE;
-        $question->correctfeedback = '';
-        $question->partiallycorrectfeedback = '';
-        $question->incorrectfeedback = '';
         $question->answernumbering = 'abc';
         $question->penalty = 0.3333333;
         $question->length = 1;
@@ -632,6 +663,8 @@ class qformat_default {
         // to know where the data came from
         $question->export_process = true;
         $question->import_process = true;
+
+        $this->add_blank_combined_feedback($question);
 
         return $question;
     }
@@ -673,15 +706,21 @@ class qformat_default {
      * @return object question
      */
     protected function add_blank_combined_feedback($question) {
-        $question->correctfeedback['text'] = '';
-        $question->correctfeedback['format'] = $question->questiontextformat;
-        $question->correctfeedback['files'] = array();
-        $question->partiallycorrectfeedback['text'] = '';
-        $question->partiallycorrectfeedback['format'] = $question->questiontextformat;
-        $question->partiallycorrectfeedback['files'] = array();
-        $question->incorrectfeedback['text'] = '';
-        $question->incorrectfeedback['format'] = $question->questiontextformat;
-        $question->incorrectfeedback['files'] = array();
+        $question->correctfeedback = [
+            'text' => '',
+            'format' => $question->questiontextformat,
+            'files' => []
+        ];
+        $question->partiallycorrectfeedback = [
+            'text' => '',
+            'format' => $question->questiontextformat,
+            'files' => []
+        ];
+        $question->incorrectfeedback = [
+            'text' => '',
+            'format' => $question->questiontextformat,
+            'files' => []
+        ];
         return $question;
     }
 
@@ -818,7 +857,7 @@ class qformat_default {
             // export the question displaying message
             $count++;
 
-            if (question_has_capability_on($question, 'view', $question->category)) {
+            if (question_has_capability_on($question, 'view')) {
                 $expout .= $this->writequestion($question, $contextid) . "\n";
             }
         }

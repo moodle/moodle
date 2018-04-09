@@ -1,12 +1,12 @@
 <?php
 /**
- * Copyright 2012-2014 Horde LLC (http://www.horde.org/)
+ * Copyright 2012-2017 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file COPYING for license information (LGPL). If you
  * did not receive this file, see http://www.horde.org/licenses/lgpl21.
  *
  * @category  Horde
- * @copyright 2012-2014 Horde LLC
+ * @copyright 2012-2017 Horde LLC
  * @license   http://www.horde.org/licenses/lgpl21 LGPL 2.1
  * @package   Imap_Client
  */
@@ -20,7 +20,7 @@
  *
  * @author    Michael Slusarz <slusarz@horde.org>
  * @category  Horde
- * @copyright 2012-2014 Horde LLC
+ * @copyright 2012-2017 Horde LLC
  * @internal
  * @license   http://www.horde.org/licenses/lgpl21 LGPL 2.1
  * @package   Imap_Client
@@ -51,6 +51,20 @@ class Horde_Imap_Client_Tokenize implements Iterator
     protected $_level = false;
 
     /**
+     * Array of literal stream objects.
+     *
+     * @var array
+     */
+    protected $_literals = array();
+
+    /**
+     * Return Horde_Stream object for literal tokens?
+     *
+     * @var boolean
+     */
+    protected $_literalStream = false;
+
+    /**
      * next() modifiers.
      *
      * @var array
@@ -77,6 +91,13 @@ class Horde_Imap_Client_Tokenize implements Iterator
         if (!is_null($data)) {
             $this->add($data);
         }
+    }
+
+    /**
+     */
+    public function __clone()
+    {
+        throw new LogicException('Object can not be cloned.');
     }
 
     /**
@@ -115,6 +136,21 @@ class Horde_Imap_Client_Tokenize implements Iterator
     public function add($data)
     {
         $this->_stream->add($data);
+    }
+
+    /**
+     * Add data to literal stream at the current position.
+     *
+     * @param mixed $data  Data to add (string, resource, or Horde_Stream
+     *                     object).
+     */
+    public function addLiteralStream($data)
+    {
+        $pos = $this->_stream->pos();
+        if (!isset($this->_literals[$pos])) {
+            $this->_literals[$pos] = new Horde_Stream_Temp();
+        }
+        $this->_literals[$pos]->add($data);
     }
 
     /**
@@ -163,9 +199,10 @@ class Horde_Imap_Client_Tokenize implements Iterator
      */
     public function getLiteralLength()
     {
-        $this->_stream->end(-1);
-        if ($this->_stream->peek() === '}') {
-            $literal_data = $this->_stream->getString($this->_stream->search('{', true) - 1);
+        if ($this->_stream->substring(-1, 1) === '}') {
+            $literal_data = $this->_stream->getString(
+                $this->_stream->search('{', true) - 1
+            );
             $literal_len = substr($literal_data, 2, -1);
 
             if (is_numeric($literal_len)) {
@@ -197,7 +234,7 @@ class Horde_Imap_Client_Tokenize implements Iterator
 
     /**
      * @return mixed  Either a string, boolean (true for open paren, false for
-     *                close paren/EOS), or null.
+     *                close paren/EOS), Horde_Stream object, or null.
      */
     public function next()
     {
@@ -210,7 +247,7 @@ class Horde_Imap_Client_Tokenize implements Iterator
 
         do {
             $check_len = true;
-            $in_quote = $text = false;
+            $in_quote = $text = $binary = false;
 
             while (($c = fgetc($stream)) !== false) {
                 switch ($c) {
@@ -254,14 +291,36 @@ class Horde_Imap_Client_Tokenize implements Iterator
 
                     case '~':
                         // Ignore binary string identifier. PHP strings are
-                        // binary-safe.
-                        break;
+                        // binary-safe. But keep it if it is not used as string
+                        // identifier.
+                        $binary = true;
+                        $text .= $c;
+                        continue;
 
                     case '{':
-                        $text = $this->_stream->substring(
-                            0,
-                            intval($this->_stream->getToChar('}'))
-                        );
+                        if ($binary) {
+                            $text = substr($text, 0, -1);
+                        }
+                        $literal_len = intval($this->_stream->getToChar('}'));
+                        $pos = $this->_stream->pos();
+                        if (isset($this->_literals[$pos])) {
+                            $text = $this->_literals[$pos];
+                            if (!$this->_literalStream) {
+                                $text = strval($text);
+                            }
+                        } elseif ($this->_literalStream) {
+                            $text = new Horde_Stream_Temp();
+                            while (($literal_len > 0) && !feof($stream)) {
+                                $part = $this->_stream->substring(
+                                    0,
+                                    min($literal_len, 8192)
+                                );
+                                $text->add($part);
+                                $literal_len -= strlen($part);
+                            }
+                        } else {
+                            $text = $this->_stream->substring(0, $literal_len);
+                        }
                         $check_len = false;
                         break 3;
 
@@ -277,6 +336,7 @@ class Horde_Imap_Client_Tokenize implements Iterator
                     }
                     break;
                 }
+                $binary = false;
             }
 
             if ($check_len) {
@@ -286,7 +346,7 @@ class Horde_Imap_Client_Tokenize implements Iterator
                     break;
 
                 case 3:
-                    if (($text === 'NIL') || (strcasecmp($text, 'NIL') === 0)) {
+                    if (strcasecmp($text, 'NIL') === 0) {
                         $text = null;
                     }
                     break;
@@ -312,6 +372,25 @@ class Horde_Imap_Client_Tokenize implements Iterator
         $this->_current = $text;
 
         return $text;
+    }
+
+    /**
+     * Force return of literal data as stream, if next token.
+     *
+     * @see next()
+     */
+    public function nextStream()
+    {
+        $changed = $this->_literalStream;
+        $this->_literalStream = true;
+
+        $out = $this->next();
+
+        if ($changed) {
+            $this->_literalStream = false;
+        }
+
+        return $out;
     }
 
     /**

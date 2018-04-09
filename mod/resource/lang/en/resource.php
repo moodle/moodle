@@ -60,9 +60,14 @@ $string['filterfilesexplain'] = 'Select type of file content filtering, please n
 $string['filtername'] = 'Resource names auto-linking';
 $string['forcedownload'] = 'Force download';
 $string['framesize'] = 'Frame height';
+$string['indicator:cognitivedepth'] = 'File cognitive';
+$string['indicator:cognitivedepth_help'] = 'This indicator is based on the cognitive depth reached by the student in a File resource.';
+$string['indicator:socialbreadth'] = 'File social';
+$string['indicator:socialbreadth_help'] = 'This indicator is based on the social breadth reached by the student in a File resource.';
 $string['legacyfiles'] = 'Migration of old course file';
 $string['legacyfilesactive'] = 'Active';
 $string['legacyfilesdone'] = 'Finished';
+$string['modifieddate'] = 'Modified {$a}';
 $string['modulename'] = 'File';
 $string['modulename_help'] = 'The file module enables a teacher to provide a file as a course resource. Where possible, the file will be displayed within the course interface; otherwise students will be prompted to download it. The file may include supporting files, for example an HTML page may have embedded images or Flash objects.
 
@@ -88,12 +93,22 @@ $string['popupwidth'] = 'Pop-up width (in pixels)';
 $string['popupwidthexplain'] = 'Specifies default width of popup windows.';
 $string['printintro'] = 'Display resource description';
 $string['printintroexplain'] = 'Display resource description below content? Some display types may not display description even if enabled.';
+$string['privacy:metadata'] = 'The mod_resource plugin does not store any personal data.';
 $string['resource:addinstance'] = 'Add a new resource';
 $string['resourcecontent'] = 'Files and subfolders';
 $string['resourcedetails_sizetype'] = '{$a->size} {$a->type}';
+$string['resourcedetails_sizedate'] = '{$a->size} {$a->date}';
+$string['resourcedetails_typedate'] = '{$a->type} {$a->date}';
+$string['resourcedetails_sizetypedate'] = '{$a->size} {$a->type} {$a->date}';
 $string['resource:exportresource'] = 'Export resource';
 $string['resource:view'] = 'View resource';
+$string['search:activity'] = 'File';
 $string['selectmainfile'] = 'Please select the main file by clicking the icon next to file name.';
+$string['showdate'] = 'Show upload/modified date';
+$string['showdate_desc'] = 'Display upload/modified date on course page?';
+$string['showdate_help'] = 'Displays the upload/modified date beside links to the file.
+
+If there are multiple files in this resource, the start file upload/modified date is displayed.';
 $string['showsize'] = 'Show size';
 $string['showsize_help'] = 'Displays the file size, such as \'3.1 MB\', beside links to the file.
 
@@ -106,3 +121,4 @@ $string['showtype_help'] = 'Displays the type of the file, such as \'Word docume
 If there are multiple files in this resource, the start file type is displayed.
 
 If the file type is not known to the system, it will not display.';
+$string['uploadeddate'] = 'Uploaded {$a}';

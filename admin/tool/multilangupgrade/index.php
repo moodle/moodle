@@ -121,7 +121,7 @@ echo $OUTPUT->box_end();
 
 /// Rebuild course cache which might be incorrect now
 echo $OUTPUT->notification('Rebuilding course cache...', 'notifysuccess');
-rebuild_course_cache();
+rebuild_course_cache(0, true);
 echo $OUTPUT->notification('...finished', 'notifysuccess');
 
 echo $OUTPUT->continue_button(new moodle_url('/admin/'));

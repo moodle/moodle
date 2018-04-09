@@ -4,6 +4,7 @@
     margin-left: auto;
     margin-right: auto;
 }
+
 .atto_image_preview_box {
     max-height: 200px;
     margin-bottom: 1em;
@@ -17,13 +18,53 @@
 .atto_image_size {
     display: inline-block;
 }
+
 .atto_image_size input[type=checkbox] {
     margin-left: 1em;
     margin-right: 1em;
 }
+
 .atto_image_size input[type=text] {
     width: 3em;
 }
+
 .atto_image_size label {
     display: inline-block;
 }
+
+.atto_image_button_text-top {
+    vertical-align: text-top;
+    margin: 0 0.5em;
+}
+
+.atto_image_button_middle {
+    vertical-align: middle;
+    margin: 0 0.5em;
+}
+
+.atto_image_button_text-bottom {
+    vertical-align: text-bottom;
+    margin: 0 0.5em;
+}
+
+.atto_image_button_text-top.img-responsive,
+.atto_image_button_middle.img-responsive,
+.atto_image_button_text-bottom.img-responsive {
+    /* If the image is display: block then linking the image to URLs won't work. */
+    display: inline-block;
+    max-width: calc(100% - 1em);
+}
+
+/*rtl:begin:ignore*/
+.atto_image_button_left {
+    float: left;
+    margin: 0 0.5em 0 0;
+    max-width: calc(100% - 1em);
+}
+
+.atto_image_button_right {
+    float: right;
+    margin: 0 0 0 0.5em;
+    max-width: calc(100% - 1em);
+}
+/*rtl:end:ignore*/

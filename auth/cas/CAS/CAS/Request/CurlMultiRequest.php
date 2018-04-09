@@ -122,7 +122,7 @@ implements CAS_Request_MultiRequestInterface
         $handles = array();
         $multiHandle = curl_multi_init();
         foreach ($this->_requests as $i => $request) {
-            $handle = $request->_initAndConfigure();
+            $handle = $request->initAndConfigure();
             curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
             $handles[$i] = $handle;
             curl_multi_add_handle($multiHandle, $handle);

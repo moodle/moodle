@@ -10,7 +10,7 @@
 
     // Support for WAYFless URLs.
     $target = optional_param('target', '', PARAM_LOCALURL);
-    if (!empty($target)) {
+    if (!empty($target) && empty($SESSION->wantsurl)) {
         $SESSION->wantsurl = $target;
     }
 
@@ -28,7 +28,7 @@
 
     }
 
-    $pluginconfig   = get_config('auth/shibboleth');
+    $pluginconfig   = get_config('auth_shibboleth');
     $shibbolethauth = get_auth_plugin('shibboleth');
 
     // Check whether Shibboleth is configured properly
@@ -54,7 +54,7 @@
                 && $user = authenticate_user_login($frm->username, $frm->password)) {
             complete_user_login($user);
 
-            if (user_not_fully_set_up($USER)) {
+            if (user_not_fully_set_up($USER, true)) {
                 $urltogo = $CFG->wwwroot.'/user/edit.php?id='.$USER->id.'&amp;course='.SITEID;
                 // We don't delete $SESSION->wantsurl yet, so we get there later
 

@@ -138,9 +138,10 @@ class custom_view extends \core_question\bank\view {
      *
      * @return string HTML code for the form
      */
-    public function render($tabname, $page, $perpage, $cat, $recurse, $showhidden, $showquestiontext) {
+    public function render($tabname, $page, $perpage, $cat, $recurse, $showhidden,
+            $showquestiontext, $tagids = []) {
         ob_start();
-        $this->display($tabname, $page, $perpage, $cat, $recurse, $showhidden, $showquestiontext);
+        $this->display($tabname, $page, $perpage, $cat, $recurse, $showhidden, $showquestiontext, $tagids);
         $out = ob_get_contents();
         ob_end_clean();
         return $out;
@@ -167,6 +168,7 @@ class custom_view extends \core_question\bank\view {
             $params = array(
                     'type' => 'submit',
                     'name' => 'add',
+                    'class' => 'btn btn-primary',
                     'value' => get_string('addselectedquestionstoquiz', 'quiz'),
             );
             if ($cmoptions->hasattempts) {
@@ -235,5 +237,43 @@ class custom_view extends \core_question\bank\view {
 
     protected function create_new_question_form($category, $canadd) {
         // Don't display this.
+    }
+
+    /**
+     * Override the base implementation in \core_question\bank\view
+     * because we don't want to print the headers in the fragment
+     * for the modal.
+     */
+    protected function display_question_bank_header() {
+    }
+
+    /**
+     * Override the base implementation in \core_question\bank\view
+     * because we don't want it to read from the $_POST global variables
+     * for the sort parameters since they are not present in a fragment.
+     *
+     * Unfortunately the best we can do is to look at the URL for
+     * those parameters (only marginally better really).
+     */
+    protected function init_sort_from_params() {
+        $this->sort = [];
+        for ($i = 1; $i <= self::MAX_SORTS; $i++) {
+            if (!$sort = $this->baseurl->param('qbs' . $i)) {
+                break;
+            }
+            // Work out the appropriate order.
+            $order = 1;
+            if ($sort[0] == '-') {
+                $order = -1;
+                $sort = substr($sort, 1);
+                if (!$sort) {
+                    break;
+                }
+            }
+            // Deal with subsorts.
+            list($colname, $subsort) = $this->parse_subsort($sort);
+            $this->requiredcolumns[$colname] = $this->get_column_type($colname);
+            $this->sort[$sort] = $order;
+        }
     }
 }

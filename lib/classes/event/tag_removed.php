@@ -75,6 +75,34 @@ class tag_removed extends base {
     }
 
     /**
+     * Creates an event from taginstance object
+     *
+     * @since Moodle 3.1
+     * @param stdClass $taginstance
+     * @param string $tagname
+     * @param string $tagrawname
+     * @param bool $addsnapshot trust that $taginstance has all necessary fields and add it as a record snapshot
+     * @return tag_removed
+     */
+    public static function create_from_tag_instance($taginstance, $tagname, $tagrawname, $addsnapshot = false) {
+        $event = self::create(array(
+            'objectid' => $taginstance->id,
+            'contextid' => $taginstance->contextid,
+            'other' => array(
+                'tagid' => $taginstance->tagid,
+                'tagname' => $tagname,
+                'tagrawname' => $tagrawname,
+                'itemid' => $taginstance->itemid,
+                'itemtype' => $taginstance->itemtype
+            )
+        ));
+        if ($addsnapshot) {
+            $event->add_record_snapshot('tag_instance', $taginstance);
+        }
+        return $event;
+    }
+
+    /**
      * Custom validation.
      *
      * @throws \coding_exception when validation does not pass.
@@ -103,4 +131,18 @@ class tag_removed extends base {
             throw new \coding_exception('The \'tagrawname\' value must be set in other.');
         }
     }
+
+    public static function get_objectid_mapping() {
+        // Tags cannot be mapped.
+        return array('db' => 'tag_instance', 'restore' => base::NOT_MAPPED);
+    }
+
+    public static function get_other_mapping() {
+        $othermapped = array();
+        $othermapped['tagid'] = array('db' => 'tag', 'restore' => base::NOT_MAPPED);
+        $othermapped['itemid'] = base::NOT_MAPPED;
+
+        return $othermapped;
+    }
+
 }

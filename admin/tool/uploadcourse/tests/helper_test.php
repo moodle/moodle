@@ -129,7 +129,6 @@ class tool_uploadcourse_helper_testcase extends advanced_testcase {
         $this->assertTrue(isset($result['backup_destination']));
         $c1backupfile = $result['backup_destination']->copy_content_to_temp();
         $bc->destroy();
-        unset($bc); // File logging is a mess, we can only try to rely on gc to close handles.
 
         // Creating backup file.
         $bc = new backup_controller(backup::TYPE_1COURSE, $c2->id, backup::FORMAT_MOODLE,
@@ -139,7 +138,6 @@ class tool_uploadcourse_helper_testcase extends advanced_testcase {
         $this->assertTrue(isset($result['backup_destination']));
         $c2backupfile = $result['backup_destination']->copy_content_to_temp();
         $bc->destroy();
-        unset($bc); // File logging is a mess, we can only try to rely on gc to close handles.
 
         $oldcfg = isset($CFG->keeptempdirectoriesonbackup) ? $CFG->keeptempdirectoriesonbackup : false;
         $CFG->keeptempdirectoriesonbackup = true;

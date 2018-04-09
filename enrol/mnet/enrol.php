@@ -125,7 +125,7 @@ class enrol_mnet_mnetservice_enrol {
      */
     public function enrol_user(array $userdata, $courseid) {
         global $CFG, $DB;
-        require_once(dirname(__FILE__).'/lib.php');
+        require_once(__DIR__.'/lib.php');
 
         if (!$client = get_mnet_remote_client()) {
             die('Callable via XML-RPC only');

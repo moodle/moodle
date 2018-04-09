@@ -56,7 +56,7 @@ class mod_assign_mod_form extends moodleform_mod {
         $mform->addRule('name', null, 'required', null, 'client');
         $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
 
-        $this->add_intro_editor(true, get_string('description', 'assign'));
+        $this->standard_intro_elements(get_string('description', 'assign'));
 
         $mform->addElement('filemanager', 'introattachments',
                             get_string('introattachments', 'assign'),
@@ -94,6 +94,10 @@ class mod_assign_mod_form extends moodleform_mod {
         $name = get_string('cutoffdate', 'assign');
         $mform->addElement('date_time_selector', 'cutoffdate', $name, array('optional'=>true));
         $mform->addHelpButton('cutoffdate', 'cutoffdate', 'assign');
+
+        $name = get_string('gradingduedate', 'assign');
+        $mform->addElement('date_time_selector', 'gradingduedate', $name, array('optional' => true));
+        $mform->addHelpButton('gradingduedate', 'gradingduedate', 'assign');
 
         $name = get_string('alwaysshowdescription', 'assign');
         $mform->addElement('checkbox', 'alwaysshowdescription', $name);
@@ -138,10 +142,18 @@ class mod_assign_mod_form extends moodleform_mod {
             $mform->freeze('teamsubmission');
         }
 
+        $name = get_string('preventsubmissionnotingroup', 'assign');
+        $mform->addElement('selectyesno', 'preventsubmissionnotingroup', $name);
+        $mform->addHelpButton('preventsubmissionnotingroup',
+            'preventsubmissionnotingroup',
+            'assign');
+        $mform->setType('preventsubmissionnotingroup', PARAM_BOOL);
+        $mform->hideIf('preventsubmissionnotingroup', 'teamsubmission', 'eq', 0);
+
         $name = get_string('requireallteammemberssubmit', 'assign');
         $mform->addElement('selectyesno', 'requireallteammemberssubmit', $name);
         $mform->addHelpButton('requireallteammemberssubmit', 'requireallteammemberssubmit', 'assign');
-        $mform->disabledIf('requireallteammemberssubmit', 'teamsubmission', 'eq', 0);
+        $mform->hideIf('requireallteammemberssubmit', 'teamsubmission', 'eq', 0);
         $mform->disabledIf('requireallteammemberssubmit', 'submissiondrafts', 'eq', 0);
 
         $groupings = groups_get_all_groupings($assignment->get_course()->id);
@@ -154,7 +166,7 @@ class mod_assign_mod_form extends moodleform_mod {
         $name = get_string('teamsubmissiongroupingid', 'assign');
         $mform->addElement('select', 'teamsubmissiongroupingid', $name, $options);
         $mform->addHelpButton('teamsubmissiongroupingid', 'teamsubmissiongroupingid', 'assign');
-        $mform->disabledIf('teamsubmissiongroupingid', 'teamsubmission', 'eq', 0);
+        $mform->hideIf('teamsubmissiongroupingid', 'teamsubmission', 'eq', 0);
         if ($assignment->has_submissions_or_grades()) {
             $mform->freeze('teamsubmissiongroupingid');
         }
@@ -201,32 +213,6 @@ class mod_assign_mod_form extends moodleform_mod {
         $this->apply_admin_defaults();
 
         $this->add_action_buttons();
-
-        // Add warning popup/noscript tag, if grades are changed by user.
-        $hasgrade = false;
-        if (!empty($this->_instance)) {
-            $hasgrade = $DB->record_exists_select('assign_grades',
-                                                  'assignment = ? AND grade <> -1',
-                                                  array($this->_instance));
-        }
-
-        if ($mform->elementExists('grade') && $hasgrade) {
-            $module = array(
-                'name' => 'mod_assign',
-                'fullpath' => '/mod/assign/module.js',
-                'requires' => array('node', 'event'),
-                'strings' => array(array('changegradewarning', 'mod_assign'))
-                );
-            $PAGE->requires->js_init_call('M.mod_assign.init_grade_change', null, false, $module);
-
-            // Add noscript tag in case.
-            $noscriptwarning = $mform->createElement('static',
-                                                     'warning',
-                                                     null,
-                                                     html_writer::tag('noscript',
-                                                     get_string('changegradewarning', 'mod_assign')));
-            $mform->insertElementBefore($noscriptwarning, 'grade');
-        }
     }
 
     /**
@@ -250,6 +236,14 @@ class mod_assign_mod_form extends moodleform_mod {
         if ($data['allowsubmissionsfromdate'] && $data['cutoffdate']) {
             if ($data['allowsubmissionsfromdate'] > $data['cutoffdate']) {
                 $errors['cutoffdate'] = get_string('cutoffdatefromdatevalidation', 'assign');
+            }
+        }
+        if ($data['gradingduedate']) {
+            if ($data['allowsubmissionsfromdate'] && $data['allowsubmissionsfromdate'] > $data['gradingduedate']) {
+                $errors['gradingduedate'] = get_string('gradingduefromdatevalidation', 'assign');
+            }
+            if ($data['duedate'] && $data['duedate'] > $data['gradingduedate']) {
+                $errors['gradingduedate'] = get_string('gradingdueduedatevalidation', 'assign');
             }
         }
         if ($data['blindmarking'] && $data['attemptreopenmethod'] == ASSIGN_ATTEMPT_REOPEN_METHOD_UNTILPASS) {
@@ -297,7 +291,9 @@ class mod_assign_mod_form extends moodleform_mod {
     public function add_completion_rules() {
         $mform =& $this->_form;
 
-        $mform->addElement('checkbox', 'completionsubmit', '', get_string('completionsubmit', 'assign'));
+        $mform->addElement('advcheckbox', 'completionsubmit', '', get_string('completionsubmit', 'assign'));
+        // Enable this completion rule by default.
+        $mform->setDefault('completionsubmit', 1);
         return array('completionsubmit');
     }
 

@@ -20,10 +20,6 @@
  * This script is meant to be called from a cronjob to sync moodle with the LDAP
  * backend in those setups where the LDAP backend acts as 'master'.
  *
- * Sample cron entry:
- * # 5 minutes past 4am
- * 5 4 * * * $sudo -u www-data /usr/bin/php /var/www/moodle/auth/ldap/cli/sync_users.php
- *
  * Notes:
  *   - it is required to use the web server account when executing PHP CLI scripts
  *   - you need to change the "www-data" to match the apache user account
@@ -44,12 +40,15 @@
  * @package    auth_ldap
  * @copyright  2004 Martin Langhoff
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @deprecated since Moodle 3.0 MDL-51824 - please do not use this CLI script any more, use scheduled task instead.
+ * @todo MDL-50264 This will be deleted in Moodle 3.2.
  */
 
 define('CLI_SCRIPT', true);
 
-require(dirname(dirname(dirname(dirname(__FILE__)))).'/config.php'); // global moodle config file.
+require(__DIR__.'/../../../config.php'); // global moodle config file.
 require_once($CFG->dirroot.'/course/lib.php');
+require_once($CFG->libdir.'/clilib.php');
 
 // Ensure errors are well explained
 set_debugging(DEBUG_DEVELOPER, true);
@@ -57,6 +56,14 @@ set_debugging(DEBUG_DEVELOPER, true);
 if (!is_enabled_auth('ldap')) {
     error_log('[AUTH LDAP] '.get_string('pluginnotenabled', 'auth_ldap'));
     die;
+}
+
+cli_problem('[AUTH LDAP] The users sync cron has been deprecated. Please use the scheduled task instead.');
+
+// Abort execution of the CLI script if the auth_ldap\task\sync_task is enabled.
+$taskdisabled = \core\task\manager::get_scheduled_task('auth_ldap\task\sync_task');
+if (!$taskdisabled->get_disabled()) {
+    cli_error('[AUTH LDAP] The scheduled task sync_task is enabled, the cron execution has been aborted.');
 }
 
 $ldapauth = get_auth_plugin('ldap');

@@ -83,7 +83,7 @@ class generate_all_documentation extends XMLDBAction {
             $doc = new DOMDocument();
             $xsl = new XSLTProcessor();
 
-            $doc->load(dirname(__FILE__).'/../generate_documentation/xmldb.xsl');
+            $doc->load(__DIR__.'/../generate_documentation/xmldb.xsl');
             $xsl->importStyleSheet($doc);
 
             $dbdirs = get_db_directories();

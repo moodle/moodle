@@ -1,0 +1,59 @@
+<div data-region="competency-breakdown-report" data-courseid="{{course.id}}" data-userid="{{user.id}}">
+<div data-region="configurecoursecompetencies">
+{{#pushratingstouserplans}}
+    <p class="alert">
+    {{#str}}coursecompetencyratingsarepushedtouserplans, tool_lp{{/str}}
+    </p>
+{{/pushratingstouserplans}}
+{{^pushratingstouserplans}}
+    <p class="alert alert-info">
+    {{#str}}coursecompetencyratingsarenotpushedtouserplans, tool_lp{{/str}}
+    </p>
+{{/pushratingstouserplans}}
+</div>
+<div class="row-fluid">
+<span class="span6">
+    <table class="table table-bordered">
+        <summary class="accesshide">
+            <p>{{#str}}coursecompetencybreakdownsummary, report_competency{{/str}}</p>
+        </summary>
+        <tr>
+            <th scope="col">
+                <span>{{#str}}competency, report_competency{{/str}}</span>
+            </th>
+            <th scope="col">
+                <span>{{#str}}rating, report_competency{{/str}}</span>
+            </th>
+        </tr>
+        {{#usercompetencies}}
+        <tr>
+            {{#competency}}
+            <td>
+                <a href="#" data-action="competency-dialogue" data-id="{{competency.id}}">
+                    {{{competency.shortname}}} <em data-id="{{competency.id}}">{{competency.idnumber}}</em>
+                </a>
+            </td>
+            {{/competency}}
+            {{#usercompetencycourse}}
+            <td class="alert {{#proficiency}}alert-success{{/proficiency}}"
+                data-user-competency="true"
+                data-userid="{{user.id}}"
+                data-competencyid="{{competencyid}}"
+                data-courseid="{{course.id}}">
+                {{> report_competency/user_competency_summary}}
+            </td>
+            {{/usercompetencycourse}}
+        </tr>
+        {{/usercompetencies}}
+    </table>
+</span>
+</div>
+</div>
+{{#js}}
+require(['tool_lp/competencydialogue'], function(Compdialogue) {
+    Compdialogue.init();
+});
+require(['report_competency/grading_popup'], function(Popup) {
+    (new Popup('[data-region=competency-breakdown-report]', '[data-user-competency=true]'));
+});
+{{/js}}

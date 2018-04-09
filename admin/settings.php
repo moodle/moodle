@@ -20,7 +20,11 @@ $adminroot = admin_get_root(); // need all settings
 $settingspage = $adminroot->locate($section, true);
 
 if (empty($settingspage) or !($settingspage instanceof admin_settingpage)) {
-    print_error('sectionerror', 'admin', "$CFG->wwwroot/$CFG->admin/");
+    if (moodle_needs_upgrading()) {
+        redirect(new moodle_url('/admin/index.php'));
+    } else {
+        print_error('sectionerror', 'admin', "$CFG->wwwroot/$CFG->admin/");
+    }
     die;
 }
 
@@ -35,15 +39,20 @@ $statusmsg = '';
 $errormsg  = '';
 
 if ($data = data_submitted() and confirm_sesskey()) {
-    if (admin_write_settings($data)) {
-        $statusmsg = get_string('changessaved');
-    }
 
+    $count = admin_write_settings($data);
+    // Regardless of whether any setting change was written (a positive count), check validation errors for those that didn't.
     if (empty($adminroot->errors)) {
+        // No errors. Did we change any setting? If so, then redirect with success.
+        if ($count) {
+            redirect($PAGE->url, get_string('changessaved'), null, \core\output\notification::NOTIFY_SUCCESS);
+        }
+        // We didn't change a setting.
         switch ($return) {
             case 'site': redirect("$CFG->wwwroot/");
             case 'admin': redirect("$CFG->wwwroot/$CFG->admin/");
         }
+        redirect($PAGE->url);
     } else {
         $errormsg = get_string('errorwithsettings', 'admin');
         $firsterror = reset($adminroot->errors);
@@ -72,18 +81,23 @@ if (empty($SITE->fullname)) {
 
     // ---------------------------------------------------------------------------------------------------------------
 
-    echo '<form action="settings.php" method="post" id="adminsettings">';
-    echo '<div class="settingsform clearfix">';
-    echo html_writer::input_hidden_params($PAGE->url);
-    echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
-    echo '<input type="hidden" name="return" value="'.$return.'" />';
+    $pageparams = $PAGE->url->params();
+    $context = [
+        'actionurl' => $PAGE->url->out(false),
+        'params' => array_map(function($param) use ($pageparams) {
+            return [
+                'name' => $param,
+                'value' => $pageparams[$param]
+            ];
+        }, array_keys($pageparams)),
+        'sesskey' => sesskey(),
+        'return' => $return,
+        'title' => null,
+        'settings' => $settingspage->output_html(),
+        'showsave' => true
+    ];
 
-    echo $settingspage->output_html();
-
-    echo '<div class="form-buttons"><input class="form-submit" type="submit" value="'.get_string('savechanges','admin').'" /></div>';
-
-    echo '</div>';
-    echo '</form>';
+    echo $OUTPUT->render_from_template('core_admin/settings', $context);
 
 } else {
     if ($PAGE->user_allowed_editing()) {
@@ -114,21 +128,23 @@ if (empty($SITE->fullname)) {
 
     // ---------------------------------------------------------------------------------------------------------------
 
-    echo '<form action="settings.php" method="post" id="adminsettings">';
-    echo '<div class="settingsform clearfix">';
-    echo html_writer::input_hidden_params($PAGE->url);
-    echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
-    echo '<input type="hidden" name="return" value="'.$return.'" />';
-    echo $OUTPUT->heading($settingspage->visiblename);
+    $pageparams = $PAGE->url->params();
+    $context = [
+        'actionurl' => $PAGE->url->out(false),
+        'params' => array_map(function($param) use ($pageparams) {
+            return [
+                'name' => $param,
+                'value' => $pageparams[$param]
+            ];
+        }, array_keys($pageparams)),
+        'sesskey' => sesskey(),
+        'return' => $return,
+        'title' => $settingspage->visiblename,
+        'settings' => $settingspage->output_html(),
+        'showsave' => $settingspage->show_save()
+    ];
 
-    echo $settingspage->output_html();
-
-    if ($settingspage->show_save()) {
-        echo '<div class="form-buttons"><input class="form-submit" type="submit" value="'.get_string('savechanges','admin').'" /></div>';
-    }
-
-    echo '</div>';
-    echo '</form>';
+    echo $OUTPUT->render_from_template('core_admin/settings', $context);
 }
 
 $PAGE->requires->yui_module('moodle-core-formchangechecker',

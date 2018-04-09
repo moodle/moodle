@@ -163,5 +163,16 @@ class course_module_updated extends base {
         ));
         return $event;
     }
+
+    public static function get_objectid_mapping() {
+        return array('db' => 'course_modules', 'restore' => 'course_module');
+    }
+
+    public static function get_other_mapping() {
+        $othermapping = array();
+        $othermapping['instanceid'] = base::NOT_MAPPED;
+
+        return $othermapping;
+    }
 }
 

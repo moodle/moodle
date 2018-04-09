@@ -53,6 +53,26 @@ class tag_created extends base {
     }
 
     /**
+     * Creates an event from tag object
+     *
+     * @since Moodle 3.1
+     * @param \core_tag_tag|\stdClass $tag
+     * @return tag_created
+     */
+    public static function create_from_tag($tag) {
+        $event = self::create(array(
+            'objectid' => $tag->id,
+            'relateduserid' => $tag->userid,
+            'context' => \context_system::instance(),
+            'other' => array(
+                'name' => $tag->name,
+                'rawname' => $tag->rawname
+            )
+        ));
+        return $event;
+    }
+
+    /**
      * Returns localised general event name.
      *
      * @return string
@@ -86,5 +106,14 @@ class tag_created extends base {
         if (!isset($this->other['rawname'])) {
             throw new \coding_exception('The \'rawname\' value must be set in other.');
         }
+    }
+
+    public static function get_objectid_mapping() {
+        // Tags cannot be mapped.
+        return array('db' => 'tag', 'restore' => base::NOT_MAPPED);
+    }
+
+    public static function get_other_mapping() {
+        return false;
     }
 }

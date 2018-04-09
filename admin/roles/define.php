@@ -28,7 +28,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(dirname(__FILE__) . '/../../config.php');
+require_once(__DIR__ . '/../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 
 $action = required_param('action', PARAM_ALPHA);
@@ -103,7 +103,8 @@ if ($action === 'add' and $resettype !== 'none') {
             'contextlevels' => 1,
             'allowassign'   => 1,
             'allowoverride' => 1,
-            'allowswitch'   => 1);
+            'allowswitch'   => 1,
+            'allowview'   => 1);
         if ($showadvanced) {
             $definitiontable = new core_role_define_role_table_advanced($systemcontext, 0);
         } else {
@@ -150,7 +151,8 @@ if ($action === 'add' and $resettype !== 'none') {
             'contextlevels' => $data->contextlevels,
             'allowassign'   => $data->allowassign,
             'allowoverride' => $data->allowoverride,
-            'allowswitch'   => $data->allowswitch);
+            'allowswitch'   => $data->allowswitch,
+            'allowview'     => $data->allowview);
         if ($showadvanced) {
             $definitiontable = new core_role_define_role_table_advanced($systemcontext, $roleid);
         } else {
@@ -201,7 +203,7 @@ if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey() && $de
     $event = \core\event\role_capabilities_updated::create(
         array(
             'context' => $systemcontext,
-            'objectid' => $roleid
+            'objectid' => $tableroleid
         )
     );
     $event->set_legacy_logdata(array(SITEID, 'role', $action, 'admin/roles/define.php?action=view&roleid=' . $tableroleid,
@@ -252,13 +254,13 @@ if ($action === 'view') {
     echo '<div class="mform">';
 } else {
     ?>
-<form id="rolesform" class="mform" action="<?php p($baseurl->out(false)); ?>" method="post"><div>
+<form id="rolesform" class="mform fcontainer" action="<?php p($baseurl->out(false)); ?>" method="post"><div>
 <input type="hidden" name="sesskey" value="<?php p(sesskey()) ?>" />
 <input type="hidden" name="return" value="<?php p($return); ?>" />
 <input type="hidden" name="resettype" value="none" />
-<div class="submit buttons">
-    <input type="submit" name="savechanges" value="<?php p($submitlabel); ?>" />
-    <input type="submit" name="cancel" value="<?php print_string('cancel'); ?>" />
+<div class="submitbuttons">
+    <input type="submit" name="savechanges" class="btn btn-primary" value="<?php p($submitlabel); ?>" />
+    <input type="submit" name="cancel" class="btn btn-secondary" value="<?php print_string('cancel'); ?>" />
 </div>
     <?php
 }
@@ -271,9 +273,9 @@ if ($action === 'view') {
     echo '</div>';
 } else {
     ?>
-<div class="submit buttons">
-    <input type="submit" name="savechanges" value="<?php p($submitlabel); ?>" />
-    <input type="submit" name="cancel" value="<?php print_string('cancel'); ?>" />
+<div class="submitbuttons">
+    <input type="submit" name="savechanges" class="btn btn-primary" value="<?php p($submitlabel); ?>" />
+    <input type="submit" name="cancel" class="btn btn-secondary" value="<?php print_string('cancel'); ?>" />
 </div>
 </div></form>
 <?php

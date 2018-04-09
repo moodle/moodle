@@ -23,9 +23,10 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
+require(__DIR__.'/../../config.php');
 require_once($CFG->dirroot.'/mod/forum/lib.php');
 require_once($CFG->dirroot.'/rating/lib.php');
+require_once($CFG->dirroot.'/user/lib.php');
 
 $courseid  = optional_param('course', null, PARAM_INT); // Limit the posts to just this course
 $userid = optional_param('id', $USER->id, PARAM_INT);        // User id whose posts we want to view
@@ -108,13 +109,12 @@ if ($isspecificcourse) {
     // We are going to search for all of the users posts in all courses!
     // a general require login here as we arn't actually within any course.
     require_login();
-    $PAGE->set_context(context_system::instance());
+    $PAGE->set_context(context_user::instance($user->id));
 
     // Now we need to get all of the courses to search.
     // All courses where the user has posted within a forum will be returned.
     $courses = forum_get_courses_user_posted_in($user, $discussionsonly);
 }
-
 
 $params = array(
     'context' => $PAGE->context,
@@ -135,36 +135,14 @@ if (empty($result->posts)) {
     // In either case we need to decide whether we can show personal information
     // about the requested user to the current user so we will execute some checks
 
-    // First check the obvious, its the current user, a specific course has been
-    // provided (require_login has been called), or they have a course contact role.
-    // True to any of those and the current user can see the details of the
-    // requested user.
-    $canviewuser = ($iscurrentuser || $isspecificcourse || empty($CFG->forceloginforprofiles) || has_coursecontact_role($userid));
-    // Next we'll check the caps, if the current user has the view details and a
-    // specific course has been requested, or if they have the view all details
-    $canviewuser = ($canviewuser || ($isspecificcourse && has_capability('moodle/user:viewdetails', $coursecontext) || has_capability('moodle/user:viewalldetails', $usercontext)));
-
-    // If none of the above was true the next step is to check a shared relation
-    // through some course
-    if (!$canviewuser) {
-        // Get all of the courses that the users have in common
-        $sharedcourses = enrol_get_shared_courses($USER->id, $user->id, true);
-        foreach ($sharedcourses as $sharedcourse) {
-            // Check the view cap within the course context
-            if (has_capability('moodle/user:viewdetails', context_course::instance($sharedcourse->id))) {
-                $canviewuser = true;
-                break;
-            }
-        }
-        unset($sharedcourses);
-    }
+    $canviewuser = user_can_view_profile($user, null, $usercontext);
 
     // Prepare the page title
     $pagetitle = get_string('noposts', 'mod_forum');
 
     // Get the page heading
     if ($isspecificcourse) {
-        $pageheading = format_string($course->shortname, true, array('context' => $coursecontext));
+        $pageheading = format_string($course->fullname, true, array('context' => $coursecontext));
     } else {
         $pageheading = get_string('pluginname', 'mod_forum');
     }
@@ -179,9 +157,43 @@ if (empty($result->posts)) {
         } else {
             $notification = get_string('nopostsmadebyyou', 'forum');
         }
+        // These are the user's forum interactions.
+        // Shut down the navigation 'Users' node.
+        $usernode = $PAGE->navigation->find('users', null);
+        $usernode->make_inactive();
+        // Edit navbar.
+        if (isset($courseid) && $courseid != SITEID) {
+            // Create as much of the navbar automatically.
+            $newusernode = $PAGE->navigation->find('user' . $user->id, null);
+            $newusernode->make_active();
+            // Check to see if this is a discussion or a post.
+            if ($mode == 'posts') {
+                $navbar = $PAGE->navbar->add(get_string('posts', 'forum'), new moodle_url('/mod/forum/user.php',
+                        array('id' => $user->id, 'course' => $courseid)));
+            } else {
+                $navbar = $PAGE->navbar->add(get_string('discussions', 'forum'), new moodle_url('/mod/forum/user.php',
+                        array('id' => $user->id, 'course' => $courseid, 'mode' => 'discussions')));
+            }
+        }
     } else if ($canviewuser) {
         $PAGE->navigation->extend_for_user($user);
         $PAGE->navigation->set_userid_for_parent_checks($user->id); // see MDL-25805 for reasons and for full commit reference for reversal when fixed.
+
+        // Edit navbar.
+        if (isset($courseid) && $courseid != SITEID) {
+            // Create as much of the navbar automatically.
+            $usernode = $PAGE->navigation->find('user' . $user->id, null);
+            $usernode->make_active();
+            // Check to see if this is a discussion or a post.
+            if ($mode == 'posts') {
+                $navbar = $PAGE->navbar->add(get_string('posts', 'forum'), new moodle_url('/mod/forum/user.php',
+                        array('id' => $user->id, 'course' => $courseid)));
+            } else {
+                $navbar = $PAGE->navbar->add(get_string('discussions', 'forum'), new moodle_url('/mod/forum/user.php',
+                        array('id' => $user->id, 'course' => $courseid, 'mode' => 'discussions')));
+            }
+        }
+
         $fullname = fullname($user);
         if ($discussionsonly) {
             $notification = get_string('nodiscussionsstartedby', 'forum', $fullname);
@@ -202,9 +214,24 @@ if (empty($result->posts)) {
 
     // Display a page letting the user know that there's nothing to display;
     $PAGE->set_title($pagetitle);
-    $PAGE->set_heading($pageheading);
+    if ($isspecificcourse) {
+        $PAGE->set_heading($pageheading);
+    } else if ($canviewuser) {
+        $PAGE->set_heading(fullname($user));
+    } else {
+        $PAGE->set_heading($SITE->fullname);
+    }
     echo $OUTPUT->header();
-    echo $OUTPUT->heading($pagetitle);
+    if (!$isspecificcourse) {
+        echo $OUTPUT->heading($pagetitle);
+    } else {
+        $userheading = array(
+                'heading' => fullname($user),
+                'user' => $user,
+                'usercontext' => $usercontext
+            );
+        echo $OUTPUT->context_header($userheading, 2);
+    }
     echo $OUTPUT->notification($notification);
     if (!$url->compare($PAGE->url)) {
         echo $OUTPUT->continue_button($url);
@@ -310,7 +337,7 @@ if ($discussionsonly) {
 if ($isspecificcourse) {
     $a = new stdClass;
     $a->fullname = $userfullname;
-    $a->coursename = format_string($course->shortname, true, array('context' => $coursecontext));
+    $a->coursename = format_string($course->fullname, true, array('context' => $coursecontext));
     $pageheading = $a->coursename;
     if ($discussionsonly) {
         $pagetitle = get_string('discussionsstartedbyuserincourse', 'mod_forum', $a);
@@ -323,13 +350,38 @@ if ($isspecificcourse) {
 }
 
 $PAGE->set_title($pagetitle);
-$PAGE->set_heading($pagetitle);
+$PAGE->set_heading($pageheading);
+
 $PAGE->navigation->extend_for_user($user);
 $PAGE->navigation->set_userid_for_parent_checks($user->id); // see MDL-25805 for reasons and for full commit reference for reversal when fixed.
 
+// Edit navbar.
+if (isset($courseid) && $courseid != SITEID) {
+    $usernode = $PAGE->navigation->find('user' . $user->id , null);
+    $usernode->make_active();
+    // Check to see if this is a discussion or a post.
+    if ($mode == 'posts') {
+        $navbar = $PAGE->navbar->add(get_string('posts', 'forum'), new moodle_url('/mod/forum/user.php',
+                array('id' => $user->id, 'course' => $courseid)));
+    } else {
+        $navbar = $PAGE->navbar->add(get_string('discussions', 'forum'), new moodle_url('/mod/forum/user.php',
+                array('id' => $user->id, 'course' => $courseid, 'mode' => 'discussions')));
+    }
+}
+
 echo $OUTPUT->header();
-echo $OUTPUT->heading($inpageheading);
 echo html_writer::start_tag('div', array('class' => 'user-content'));
+
+if ($isspecificcourse) {
+    $userheading = array(
+        'heading' => fullname($user),
+        'user' => $user,
+        'usercontext' => $usercontext
+    );
+    echo $OUTPUT->context_header($userheading, 2);
+} else {
+    echo $OUTPUT->heading($inpageheading);
+}
 
 if (!empty($postoutput)) {
     echo $OUTPUT->paging_bar($result->totalcount, $page, $perpage, $url);

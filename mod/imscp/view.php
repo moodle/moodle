@@ -23,6 +23,7 @@
  */
 
 require('../../config.php');
+require_once($CFG->dirroot . '/mod/imscp/lib.php');
 require_once("$CFG->dirroot/mod/imscp/locallib.php");
 require_once($CFG->libdir . '/completionlib.php');
 
@@ -44,17 +45,8 @@ require_course_login($course, true, $cm);
 $context = context_module::instance($cm->id);
 require_capability('mod/imscp:view', $context);
 
-$params = array(
-    'context' => $context,
-    'objectid' => $imscp->id
-);
-$event = \mod_imscp\event\course_module_viewed::create($params);
-$event->add_record_snapshot('imscp', $imscp);
-$event->trigger();
-
-// Update 'viewed' state if required by completion system.
-$completion = new completion_info($course);
-$completion->set_module_viewed($cm);
+// Completion and trigger events.
+imscp_view($imscp, $course, $cm, $context);
 
 $PAGE->set_url('/mod/imscp/view.php', array('id' => $cm->id));
 $PAGE->requires->js('/mod/imscp/dummyapi.js', true);
@@ -70,15 +62,14 @@ $PAGE->requires->string_for_js('show', 'moodle');
 $PAGE->set_title($course->shortname.': '.$imscp->name);
 $PAGE->set_heading($course->fullname);
 $PAGE->set_activity_record($imscp);
-echo $OUTPUT->header();
-echo $OUTPUT->heading(format_string($imscp->name));
 
 // Verify imsmanifest was parsed properly.
 if (!$imscp->structure) {
-    echo $OUTPUT->notification(get_string('deploymenterror', 'imscp'), 'notifyproblem');
-    echo $OUTPUT->footer();
-    die;
+    redirect(course_get_url($course->id, $cm->section), get_string('deploymenterror', 'imscp'));
 }
+
+echo $OUTPUT->header();
+echo $OUTPUT->heading(format_string($imscp->name));
 
 imscp_print_content($imscp, $cm, $course);
 

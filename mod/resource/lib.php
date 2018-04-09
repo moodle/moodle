@@ -58,6 +58,10 @@ function resource_get_extra_capabilities() {
  * @return array status array
  */
 function resource_reset_userdata($data) {
+
+    // Any changes to the list of dates that needs to be rolled should be same during course restore and course reset.
+    // See MDL-9367.
+
     return array();
 }
 
@@ -109,6 +113,10 @@ function resource_add_instance($data, $mform) {
     // we need to use context now, so we need to make sure all needed info is already in db
     $DB->set_field('course_modules', 'instance', $data->id, array('id'=>$cmid));
     resource_set_mainfile($data);
+
+    $completiontimeexpected = !empty($data->completionexpected) ? $data->completionexpected : null;
+    \core_completion\api::update_completion_date_event($cmid, 'resource', $data->id, $completiontimeexpected);
+
     return $data->id;
 }
 
@@ -129,6 +137,10 @@ function resource_update_instance($data, $mform) {
 
     $DB->update_record('resource', $data);
     resource_set_mainfile($data);
+
+    $completiontimeexpected = !empty($data->completionexpected) ? $data->completionexpected : null;
+    \core_completion\api::update_completion_date_event($data->coursemodule, 'resource', $data->id, $completiontimeexpected);
+
     return true;
 }
 
@@ -154,6 +166,9 @@ function resource_set_display_options($data) {
     if (!empty($data->showtype)) {
         $displayoptions['showtype'] = 1;
     }
+    if (!empty($data->showdate)) {
+        $displayoptions['showdate'] = 1;
+    }
     $data->displayoptions = serialize($displayoptions);
 }
 
@@ -168,6 +183,9 @@ function resource_delete_instance($id) {
     if (!$resource = $DB->get_record('resource', array('id'=>$id))) {
         return false;
     }
+
+    $cm = get_coursemodule_from_instance('resource', $id);
+    \core_completion\api::update_completion_date_event($cm->id, 'resource', $id, null);
 
     // note: all context files are deleted automatically
 
@@ -210,8 +228,10 @@ function resource_get_coursemodule_info($coursemodule) {
         $info->icon ='i/invalid';
         return $info;
     }
+
+    // See if there is at least one file.
     $fs = get_file_storage();
-    $files = $fs->get_area_files($context->id, 'mod_resource', 'content', 0, 'sortorder DESC, id ASC', false); // TODO: this is not very efficient!!
+    $files = $fs->get_area_files($context->id, 'mod_resource', 'content', 0, 'sortorder DESC, id ASC', false, 0, 0, 1);
     if (count($files) >= 1) {
         $mainfile = reset($files);
         $info->icon = file_file_icon($mainfile, 24);
@@ -234,8 +254,16 @@ function resource_get_coursemodule_info($coursemodule) {
 
     }
 
-    // If any optional extra details are turned on, store in custom data
-    $info->customdata = resource_get_optional_details($resource, $coursemodule);
+    // If any optional extra details are turned on, store in custom data,
+    // add some file details as well to be used later by resource_get_optional_details() without retriving.
+    // Do not store filedetails if this is a reference - they will still need to be retrieved every time.
+    if (($filedetails = resource_get_file_details($resource, $coursemodule)) && empty($filedetails['isref'])) {
+        $displayoptions = @unserialize($resource->displayoptions);
+        $displayoptions['filedetails'] = $filedetails;
+        $info->customdata = serialize($displayoptions);
+    } else {
+        $info->customdata = $resource->displayoptions;
+    }
 
     return $info;
 }
@@ -247,7 +275,11 @@ function resource_get_coursemodule_info($coursemodule) {
  * @param cm_info $cm Course module information
  */
 function resource_cm_info_view(cm_info $cm) {
-    $details = $cm->customdata;
+    global $CFG;
+    require_once($CFG->dirroot . '/mod/resource/locallib.php');
+
+    $resource = (object)array('displayoptions' => $cm->customdata);
+    $details = resource_get_optional_details($resource, $cm);
     if ($details) {
         $cm->set_after_link(' ' . html_writer::tag('span', $details,
                 array('class' => 'resourcelinkdetails')));
@@ -432,6 +464,11 @@ function resource_export_contents($cm, $baseurl) {
         $file['userid']       = $fileinfo->get_userid();
         $file['author']       = $fileinfo->get_author();
         $file['license']      = $fileinfo->get_license();
+        $file['mimetype']     = $fileinfo->get_mimetype();
+        $file['isexternalfile'] = $fileinfo->is_external_file();
+        if ($file['isexternalfile']) {
+            $file['repositorytype'] = $fileinfo->get_repository_type();
+        }
         $contents[] = $file;
     }
 
@@ -471,7 +508,80 @@ function resource_dndupload_handle($uploadinfo) {
     $data->printintro = $config->printintro;
     $data->showsize = (isset($config->showsize)) ? $config->showsize : 0;
     $data->showtype = (isset($config->showtype)) ? $config->showtype : 0;
+    $data->showdate = (isset($config->showdate)) ? $config->showdate : 0;
     $data->filterfiles = $config->filterfiles;
 
     return resource_add_instance($data, null);
+}
+
+/**
+ * Mark the activity completed (if required) and trigger the course_module_viewed event.
+ *
+ * @param  stdClass $resource   resource object
+ * @param  stdClass $course     course object
+ * @param  stdClass $cm         course module object
+ * @param  stdClass $context    context object
+ * @since Moodle 3.0
+ */
+function resource_view($resource, $course, $cm, $context) {
+
+    // Trigger course_module_viewed event.
+    $params = array(
+        'context' => $context,
+        'objectid' => $resource->id
+    );
+
+    $event = \mod_resource\event\course_module_viewed::create($params);
+    $event->add_record_snapshot('course_modules', $cm);
+    $event->add_record_snapshot('course', $course);
+    $event->add_record_snapshot('resource', $resource);
+    $event->trigger();
+
+    // Completion.
+    $completion = new completion_info($course);
+    $completion->set_module_viewed($cm);
+}
+
+/**
+ * Check if the module has any update that affects the current user since a given time.
+ *
+ * @param  cm_info $cm course module data
+ * @param  int $from the time to check updates from
+ * @param  array $filter  if we need to check only specific updates
+ * @return stdClass an object with the different type of areas indicating if they were updated or not
+ * @since Moodle 3.2
+ */
+function resource_check_updates_since(cm_info $cm, $from, $filter = array()) {
+    $updates = course_check_module_updates_since($cm, $from, array('content'), $filter);
+    return $updates;
+}
+
+/**
+ * This function receives a calendar event and returns the action associated with it, or null if there is none.
+ *
+ * This is used by block_myoverview in order to display the event appropriately. If null is returned then the event
+ * is not displayed on the block.
+ *
+ * @param calendar_event $event
+ * @param \core_calendar\action_factory $factory
+ * @return \core_calendar\local\event\entities\action_interface|null
+ */
+function mod_resource_core_calendar_provide_event_action(calendar_event $event,
+                                                      \core_calendar\action_factory $factory) {
+    $cm = get_fast_modinfo($event->courseid)->instances['resource'][$event->instance];
+
+    $completion = new \completion_info($cm->get_course());
+
+    $completiondata = $completion->get_data($cm, false);
+
+    if ($completiondata->completionstate != COMPLETION_INCOMPLETE) {
+        return null;
+    }
+
+    return $factory->create_instance(
+        get_string('view'),
+        new \moodle_url('/mod/resource/view.php', ['id' => $cm->id]),
+        1,
+        true
+    );
 }

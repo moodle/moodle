@@ -21,7 +21,7 @@ Feature: An admin can create courses using a CSV file
     And I should see "Courses total: 3"
     And I should see "Courses created: 2"
     And I should see "Courses errors: 1"
-    And I follow "Home"
+    And I am on site homepage
     And I should see "Course 2"
     And I should see "Course 3"
 
@@ -38,7 +38,7 @@ Feature: An admin can create courses using a CSV file
     And I should see "Courses total: 3"
     And I should see "Courses created: 3"
     And I should see "Courses errors: 0"
-    And I follow "Home"
+    And I am on site homepage
     And I should see "Course 1"
     And I should see "Course 2"
     And I should see "Course 3"

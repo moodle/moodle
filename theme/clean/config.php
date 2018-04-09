@@ -39,7 +39,6 @@ $THEME->name = 'clean';
 $THEME->doctype = 'html5';
 $THEME->parents = array('bootstrapbase');
 $THEME->sheets = array('custom');
-$THEME->supportscssoptimisation = false;
 $THEME->yuicssmodules = array();
 $THEME->enable_dock = true;
 $THEME->editor_sheets = array();

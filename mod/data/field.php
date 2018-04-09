@@ -146,6 +146,7 @@ switch ($mode) {
 
                 $field->field->name = $fieldinput->name;
                 $field->field->description = $fieldinput->description;
+                $field->field->required = !empty($fieldinput->required) ? 1 : 0;
 
                 for ($i=1; $i<=10; $i++) {
                     if (isset($fieldinput->{'param'.$i})) {
@@ -264,7 +265,13 @@ if (($mode == 'new') && (!empty($newtype)) && confirm_sesskey()) {          /// 
     } else {    //else print quiz style list of fields
 
         $table = new html_table();
-        $table->head = array(get_string('fieldname','data'), get_string('type','data'), get_string('fielddescription', 'data'), get_string('action','data'));
+        $table->head = array(
+            get_string('fieldname', 'data'),
+            get_string('type', 'data'),
+            get_string('required', 'data'),
+            get_string('fielddescription', 'data'),
+            get_string('action', 'data'),
+        );
         $table->align = array('left','left','left', 'center');
         $table->wrap = array(false,false,false,false);
 
@@ -273,21 +280,28 @@ if (($mode == 'new') && (!empty($newtype)) && confirm_sesskey()) {          /// 
 
                 $field = data_get_field($ff, $data);
 
+                $baseurl = new moodle_url('/mod/data/field.php', array(
+                    'd'         => $data->id,
+                    'fid'       => $field->field->id,
+                    'sesskey'   => sesskey(),
+                ));
+
+                $displayurl = new moodle_url($baseurl, array(
+                    'mode'      => 'display',
+                ));
+
+                $deleteurl = new moodle_url($baseurl, array(
+                    'mode'      => 'delete',
+                ));
+
                 $table->data[] = array(
-
-                '<a href="field.php?mode=display&amp;d='.$data->id.
-                '&amp;fid='.$field->field->id.'&amp;sesskey='.sesskey().'">'.$field->field->name.'</a>',
-
-                $field->image().'&nbsp;'.get_string($field->type, 'data'),
-
-                shorten_text($field->field->description, 30),
-
-                '<a href="field.php?d='.$data->id.'&amp;mode=display&amp;fid='.$field->field->id.'&amp;sesskey='.sesskey().'">'.
-                '<img src="'.$OUTPUT->pix_url('t/edit') . '" class="iconsmall" alt="'.get_string('edit').'" title="'.get_string('edit').'" /></a>'.
-                '&nbsp;'.
-                '<a href="field.php?d='.$data->id.'&amp;mode=delete&amp;fid='.$field->field->id.'&amp;sesskey='.sesskey().'">'.
-                '<img src="'.$OUTPUT->pix_url('t/delete') . '" class="iconsmall" alt="'.get_string('delete').'" title="'.get_string('delete').'" /></a>'
-
+                    html_writer::link($displayurl, $field->field->name),
+                    $field->image() . '&nbsp;' . $field->name(),
+                    $field->field->required ? get_string('yes') : get_string('no'),
+                    shorten_text($field->field->description, 30),
+                    html_writer::link($displayurl, $OUTPUT->pix_icon('t/edit', get_string('edit'))) .
+                        '&nbsp;' .
+                        html_writer::link($deleteurl, $OUTPUT->pix_icon('t/delete', get_string('delete'))),
                 );
             }
         }
@@ -296,9 +310,10 @@ if (($mode == 'new') && (!empty($newtype)) && confirm_sesskey()) {          /// 
 
 
     echo '<div class="fieldadd">';
-    echo '<label for="fieldform_jump">'.get_string('newfield','data').$OUTPUT->help_icon('newfield', 'data').'</label>';
     $popupurl = $CFG->wwwroot.'/mod/data/field.php?d='.$data->id.'&mode=new&sesskey='.  sesskey();
-    echo $OUTPUT->single_select(new moodle_url($popupurl), 'newtype', $menufield, null, array(''=>'choosedots'), 'fieldform');
+    echo $OUTPUT->single_select(new moodle_url($popupurl), 'newtype', $menufield, null, array('' => 'choosedots'),
+        'fieldform', array('label' => get_string('newfield', 'data')));
+    echo $OUTPUT->help_icon('newfield', 'data');
     echo '</div>';
 
     echo '<div class="sortdefault">';
@@ -308,7 +323,7 @@ if (($mode == 'new') && (!empty($newtype)) && confirm_sesskey()) {          /// 
     echo '<input type="hidden" name="mode" value="sort" />';
     echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
     echo '<label for="defaultsort">'.get_string('defaultsortfield','data').'</label>';
-    echo '<select id="defaultsort" name="defaultsort">';
+    echo '<select id="defaultsort" name="defaultsort" class="custom-select">';
     if ($fields = $DB->get_records('data_fields', array('dataid'=>$data->id))) {
         echo '<optgroup label="'.get_string('fields', 'data').'">';
         foreach ($fields as $field) {
@@ -343,8 +358,8 @@ if (($mode == 'new') && (!empty($newtype)) && confirm_sesskey()) {          /// 
     $options = array(0 => get_string('ascending', 'data'),
                      1 => get_string('descending', 'data'));
     echo html_writer::label(get_string('sortby'), 'menudefaultsortdir', false, array('class' => 'accesshide'));
-    echo html_writer::select($options, 'defaultsortdir', $data->defaultsortdir, false);
-    echo '<input type="submit" value="'.get_string('save', 'data').'" />';
+    echo html_writer::select($options, 'defaultsortdir', $data->defaultsortdir, false, array('class' => 'custom-select'));
+    echo '<input type="submit" class="btn btn-secondary m-l-1" value="'.get_string('save', 'data').'" />';
     echo '</div>';
     echo '</form>';
     echo '</div>';

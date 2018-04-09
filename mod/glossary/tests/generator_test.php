@@ -64,12 +64,15 @@ class mod_glossary_generator_testcase extends advanced_testcase {
         $glossarygenerator = $this->getDataGenerator()->get_plugin_generator('mod_glossary');
 
         $entry1 = $glossarygenerator->create_content($glossary);
-        $entry2 = $glossarygenerator->create_content($glossary, array('concept' => 'Custom concept'), array('alias1', 'alias2'));
+        $entry2 = $glossarygenerator->create_content($glossary,
+            array('concept' => 'Custom concept', 'tags' => array('Cats', 'mice')), array('alias1', 'alias2'));
         $records = $DB->get_records('glossary_entries', array('glossaryid' => $glossary->id), 'id');
         $this->assertCount(2, $records);
         $this->assertEquals($entry1->id, $records[$entry1->id]->id);
         $this->assertEquals($entry2->id, $records[$entry2->id]->id);
         $this->assertEquals('Custom concept', $records[$entry2->id]->concept);
+        $this->assertEquals(array('Cats', 'mice'),
+            array_values(core_tag_tag::get_item_tags_array('mod_glossary', 'glossary_entries', $entry2->id)));
         $aliases = $DB->get_records_menu('glossary_alias', array('entryid' => $entry2->id), 'id ASC', 'id, alias');
         $this->assertSame(array('alias1', 'alias2'), array_values($aliases));
 

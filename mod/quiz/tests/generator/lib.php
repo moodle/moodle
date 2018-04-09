@@ -69,7 +69,6 @@ class mod_quiz_generator extends testing_module_generator {
             'rightanswerclosed'      => 1,
             'overallfeedbackclosed'  => 1,
             'questionsperpage'       => 1,
-            'shufflequestions'       => 0,
             'shuffleanswers'         => 1,
             'sumgrades'              => 0,
             'grade'                  => 100,

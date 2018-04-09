@@ -30,7 +30,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once(dirname(__FILE__) . '/../type/questiontypebase.php');
+require_once(__DIR__ . '/../type/questiontypebase.php');
 
 
 /**
@@ -294,10 +294,6 @@ abstract class question_bank {
      */
     public static function get_finder() {
         return question_finder::get_instance();
-        if (is_null(self::$questionfinder)) {
-            self::$questionfinder = new question_finder();
-        }
-        return self::$questionfinder;
     }
 
     /**
@@ -426,6 +422,25 @@ abstract class question_bank {
         require_once($CFG->dirroot . '/question/engine/statisticslib.php');
         question_usage_statistics_cron();
     }
+
+    /**
+     * Return a list of the different question types present in the given categories.
+     *
+     * @param  array $categories a list of category ids
+     * @return array the list of question types in the categories
+     * @since  Moodle 3.1
+     */
+    public static function get_all_question_types_in_categories($categories) {
+        global $DB;
+
+        list($categorysql, $params) = $DB->get_in_or_equal($categories);
+        $sql = "SELECT DISTINCT q.qtype
+                FROM {question} q
+                WHERE q.category $categorysql";
+
+        $qtypes = $DB->get_fieldset_sql($sql, $params);
+        return $qtypes;
+    }
 }
 
 
@@ -480,7 +495,7 @@ class question_finder implements cache_data_source {
     }
 
     /**
-     * Get the ids of all the questions in a list of categoryies.
+     * Get the ids of all the questions in a list of categories.
      * @param array $categoryids either a categoryid, or a comma-separated list
      *      category ids, or an array of them.
      * @param string $extraconditions extra conditions to AND with the rest of
@@ -503,6 +518,88 @@ class question_finder implements cache_data_source {
                  AND parent = 0
                  AND hidden = 0
                  {$extraconditions}", $qcparams + $extraparams, '', 'id,id AS id2');
+    }
+
+    /**
+     * Get the ids of all the questions in a list of categories, with the number
+     * of times they have already been used in a given set of usages.
+     *
+     * The result array is returned in order of increasing (count previous uses).
+     *
+     * @param array $categoryids an array question_category ids.
+     * @param qubaid_condition $qubaids which question_usages to count previous uses from.
+     * @param string $extraconditions extra conditions to AND with the rest of
+     *      the where clause. Must use named parameters.
+     * @param array $extraparams any parameters used by $extraconditions.
+     * @return array questionid => count of number of previous uses.
+     */
+    public function get_questions_from_categories_with_usage_counts($categoryids,
+            qubaid_condition $qubaids, $extraconditions = '', $extraparams = array()) {
+        return $this->get_questions_from_categories_and_tags_with_usage_counts(
+                $categoryids, $qubaids, $extraconditions, $extraparams);
+    }
+
+    /**
+     * Get the ids of all the questions in a list of categories that have ALL the provided tags,
+     * with the number of times they have already been used in a given set of usages.
+     *
+     * The result array is returned in order of increasing (count previous uses).
+     *
+     * @param array $categoryids an array of question_category ids.
+     * @param qubaid_condition $qubaids which question_usages to count previous uses from.
+     * @param string $extraconditions extra conditions to AND with the rest of
+     *      the where clause. Must use named parameters.
+     * @param array $extraparams any parameters used by $extraconditions.
+     * @param array $tagids an array of tag ids
+     * @return array questionid => count of number of previous uses.
+     */
+    public function get_questions_from_categories_and_tags_with_usage_counts($categoryids,
+            qubaid_condition $qubaids, $extraconditions = '', $extraparams = array(), $tagids = array()) {
+        global $DB;
+
+        list($qcsql, $qcparams) = $DB->get_in_or_equal($categoryids, SQL_PARAMS_NAMED, 'qc');
+
+        $select = "q.id, (SELECT COUNT(1)
+                            FROM " . $qubaids->from_question_attempts('qa') . "
+                           WHERE qa.questionid = q.id AND " . $qubaids->where() . "
+                         ) AS previous_attempts";
+        $from   = "{question} q";
+        $where  = "q.category {$qcsql}
+               AND q.parent = 0
+               AND q.hidden = 0";
+        $params = $qcparams;
+
+        if (!empty($tagids)) {
+            // We treat each additional tag as an AND condition rather than
+            // an OR condition.
+            //
+            // For example, if the user filters by the tags "foo" and "bar" then
+            // we reduce the question list to questions that are tagged with both
+            // "foo" AND "bar". Any question that does not have ALL of the specified
+            // tags will be omitted.
+            list($tagsql, $tagparams) = $DB->get_in_or_equal($tagids, SQL_PARAMS_NAMED, 'ti');
+            $tagparams['tagcount'] = count($tagids);
+            $tagparams['questionitemtype'] = 'question';
+            $tagparams['questioncomponent'] = 'core_question';
+            $where .= " AND q.id IN (SELECT ti.itemid
+                                       FROM {tag_instance} ti
+                                      WHERE ti.itemtype = :questionitemtype
+                                            AND ti.component = :questioncomponent
+                                            AND ti.tagid {$tagsql}
+                                   GROUP BY ti.itemid
+                                     HAVING COUNT(itemid) = :tagcount)";
+            $params += $tagparams;
+        }
+
+        if ($extraconditions) {
+            $extraconditions = ' AND (' . $extraconditions . ')';
+        }
+
+        return $DB->get_records_sql_menu("SELECT $select
+                                            FROM $from
+                                           WHERE $where $extraconditions
+                                        ORDER BY previous_attempts",
+                $qubaids->from_where_params() + $params + $extraparams);
     }
 
     /* See cache_data_source::load_for_cache. */

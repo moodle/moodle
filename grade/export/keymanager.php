@@ -31,13 +31,19 @@ $id = required_param('id', PARAM_INT); // course id
 $PAGE->set_url('/grade/export/keymanager.php', array('id' => $id));
 
 if (!$course = $DB->get_record('course', array('id'=>$id))) {
-    print_error('nocourseid');
+    print_error('invalidcourseid');
 }
 
 require_login($course);
 $context = context_course::instance($id);
 
 require_capability('moodle/grade:export', $context);
+
+// Check if the user has at least one grade publishing capability.
+$plugins = grade_helper::get_plugins_export($course->id);
+if (!isset($plugins['keymanager'])) {
+    print_error('nopermissions');
+}
 
 print_grade_page_head($course->id, 'export', 'keymanager', get_string('keymanager', 'grades'));
 

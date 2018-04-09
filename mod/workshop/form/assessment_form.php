@@ -120,4 +120,14 @@ class workshop_assessment_form extends moodleform {
     public function is_editable() {
         return !$this->_form->isFrozen();
     }
+
+    /**
+     * Return the form custom data.
+     *
+     * @return array an array containing the custom data
+     * @since  Moodle 3.4
+     */
+    public function get_customdata() {
+        return $this->_customdata;
+    }
 }

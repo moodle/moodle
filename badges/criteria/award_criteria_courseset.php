@@ -164,7 +164,7 @@ class award_criteria_courseset extends award_criteria {
                 $param = array(
                         'id' => $course->id,
                         'checked' => true,
-                        'name' => ucfirst(format_string($course->fullname, true, array('context' => $coursecontext))),
+                        'name' => format_string($course->fullname, true, array('context' => $coursecontext)),
                         'error' => false
                 );
 

@@ -102,6 +102,25 @@ abstract class message_output {
     public function can_send_to_any_users() {
         return false;
     }
+
+    /**
+     * Returns true if this processor has configurable message preferences. This is
+     * distinct from notification preferences.
+     *
+     * @return bool
+     */
+    public function has_message_preferences() {
+        return true;
+    }
+
+    /**
+     * Determines if this processor should process a message regardless of user preferences or site settings.
+     *
+     * @return bool
+     */
+    public function force_process_messages() {
+        return false;
+    }
 }
 
 

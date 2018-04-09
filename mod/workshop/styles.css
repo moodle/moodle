@@ -19,12 +19,12 @@
 }
 
 .path-mod-workshop .groupwidget {
-    text-align:center;
+    text-align: center;
     margin: 0.75em auto;
 }
 
 .path-mod-workshop .perpagewidget {
-    text-align:center;
+    text-align: center;
     margin: 0.75em auto;
 }
 
@@ -46,7 +46,7 @@
 .path-mod-workshop .submission-summary .title,
 .path-mod-workshop .submission-summary .userdate,
 .path-mod-workshop .submission-summary .grade-status {
-    margin: 0px 0px 0px 40px;
+    margin: 0 0 0 40px;
 }
 
 .path-mod-workshop .submission-summary .author {
@@ -57,7 +57,7 @@
 .path-mod-workshop .submission-summary.anonymous .author,
 .path-mod-workshop .submission-summary.anonymous .userdate,
 .path-mod-workshop .submission-summary.anonymous .grade-status {
-    margin: 0px 0px 0px 5px;
+    margin: 0 0 0 5px;
 }
 
 .path-mod-workshop .submission-summary .userdate {
@@ -71,8 +71,8 @@
 
 .path-mod-workshop .submission-summary .author .picture {
     position: absolute;
-    top: 0px;
-    left: 0px;
+    top: 0;
+    left: 0;
 }
 
 /**
@@ -80,7 +80,7 @@
  */
 .path-mod-workshop .submission-full {
     border: 1px solid #ddd;
-    margin: 0px 0px 1em 0px;
+    margin: 0 0 1em 0;
 }
 
 .path-mod-workshop .submission-full .header {
@@ -93,13 +93,13 @@
 .path-mod-workshop .submission-full .header .title,
 .path-mod-workshop .submission-full .header .author,
 .path-mod-workshop .submission-full .header .userdate {
-    margin: 0px 0px 0px 80px;
+    margin: 0 0 0 80px;
 }
 
 .path-mod-workshop .submission-full.anonymous .header .title,
 .path-mod-workshop .submission-full.anonymous .header .author,
 .path-mod-workshop .submission-full.anonymous .header .userdate {
-    margin: 0px 0px 0px 5px;
+    margin: 0 0 0 5px;
 }
 
 .path-mod-workshop .submission-full .header .userdate.created {
@@ -108,7 +108,7 @@
 
 .path-mod-workshop .submission-full .header .userdate.modified {
     padding-left: 10px;
-    margin-left: 0px;
+    margin-left: 0;
     border-left: 1px solid #000;
 }
 
@@ -149,18 +149,18 @@
  */
 .path-mod-workshop .submission-summary.example .title,
 .path-mod-workshop .submission-summary.example .userdate {
-    margin: 0px 0px 0px 0px;
+    margin: 0 0 0 0;
 }
 
 /**
  * Example submission - full display
  */
 .path-mod-workshop .submission-full.example .header {
-    min-height: 0px;
+    min-height: 0;
 }
 
 .path-mod-workshop .submission-full.example .header .title {
-    margin: 0px 0px 0px 0px;
+    margin: 0 0 0 0;
 }
 
 /**
@@ -168,15 +168,15 @@
  */
 .path-mod-workshop .message {
     padding: 5px 5em 5px 15px;
-    margin: 0px auto 20px auto;
-    width: 60%;
+    margin: 0 auto 20px auto;
+    width: 100%;
     font-size: 80%;
     position: relative;
 }
 
 .path-mod-workshop .message .singlebutton {
     text-align: left;
-    margin: 0px;
+    margin: 0;
 }
 
 .path-mod-workshop .message.ok {
@@ -200,7 +200,7 @@
 
 .path-mod-workshop .allocation-init-results {
     margin: 10px auto;
-    width: 60%;
+    width: 100%;
     font-size: 80%;
 }
 
@@ -232,70 +232,136 @@
  * User plan
  */
 .path-mod-workshop .userplan {
-    width: 70%;
+    width: 100%;
     margin: 1em auto 1em auto;
     font-size: 80%;
-    border-left: 1px solid #ddd;
-    border-right: 1px solid #ddd;
+    border: 1px solid #ddd;
+    position: relative;
+    overflow: hidden;
 }
 
-.path-mod-workshop .userplan th {
+.path-mod-workshop .userplan dt {
     vertical-align: bottom;
     white-space: normal;
     color: #999;
-    border-top: 1px solid #ddd;
     border-bottom: 1px solid #ddd;
     padding: 3px;
 }
 
-.path-mod-workshop .userplan th.active {
+.path-mod-workshop .userplan dt.active {
     vertical-align: top;
     color: black;
-    font-size: 140%;
     border: 1px solid #ddd;
     border-bottom: 0;
+    border-top: 0;
     background: #e7f1c3;
 }
 
-.path-mod-workshop .userplan td {
+.path-mod-workshop .userplan dt.active .phasetitle {
+    font-size: 140%;
+}
+
+.path-mod-workshop .userplan dl {
     width: 20%;
+    float: left;
+    margin: 0;
+}
+
+@media only screen and (max-width: 768px) {
+    .path-mod-workshop .userplan {
+        border-right: none;
+        border-top: none;
+    }
+
+    .path-mod-workshop .userplan dl {
+        width: 102%;
+        border-right: none;
+    }
+
+    .path-mod-workshop .userplan dt {
+        float: left;
+        width: 30%;
+        border-bottom: none;
+        border-top: 1px solid #ddd;
+    }
+    .path-mod-workshop .userplan dt.active {
+        border: none;
+    }
+
+    .path-mod-workshop .userplan dd {
+        float: left;
+        width: 65%;
+        border-left: 1px solid #ddd;
+        border-top: 1px solid #ddd;
+    }
+}
+
+@media only screen and (max-width: 420px) {
+    .path-mod-workshop .userplan {
+        border-bottom: none;
+    }
+
+    .path-mod-workshop .userplan dt {
+        float: left;
+        width: 70%;
+        border-bottom: none;
+        border-right: 1px solid #ddd;
+        border-left: 1px solid #ddd;
+        margin: 0;
+        padding: 5px;
+    }
+
+    .path-mod-workshop .userplan dd {
+        float: left;
+        width: 70%;
+        border-left: 1px solid #ddd;
+        border-top: 1px solid #ddd;
+        border-bottom: 1px solid #ddd;
+    }
+}
+
+.path-mod-workshop .userplan dd {
     vertical-align: top;
     border-right: 1px solid #ddd;
     background-color: #f5f5f5;
+    margin: 0;
+    min-height: 180px;
+    padding: 5px;
 }
 
-.path-mod-workshop .userplan td,
-.path-mod-workshop .userplan td a,
-.path-mod-workshop .userplan td a:link,
-.path-mod-workshop .userplan td a:hover,
-.path-mod-workshop .userplan td a:visited,
-.path-mod-workshop .userplan td a:active {
+.path-mod-workshop .userplan dd,
+.path-mod-workshop .userplan dd a,
+.path-mod-workshop .userplan dd a:link,
+.path-mod-workshop .userplan dd a:hover,
+.path-mod-workshop .userplan dd a:visited,
+.path-mod-workshop .userplan dd a:active {
     color: #999;
 }
 
-.path-mod-workshop .userplan td.active,
-.path-mod-workshop .userplan td.active a,
-.path-mod-workshop .userplan td.active a:link,
-.path-mod-workshop .userplan td.active a:hover,
-.path-mod-workshop .userplan td.active a:visited,
-.path-mod-workshop .userplan td.active a:active {
+.path-mod-workshop .userplan dd.active,
+.path-mod-workshop .userplan dd.active a,
+.path-mod-workshop .userplan dd.active a:link,
+.path-mod-workshop .userplan dd.active a:hover,
+.path-mod-workshop .userplan dd.active a:visited,
+.path-mod-workshop .userplan dd.active a:active {
     color: black;
 }
 
-.path-mod-workshop .userplan td.lastcol {
+.path-mod-workshop .userplan dd.lastcol {
     border-right: 0;
 }
 
-.path-mod-workshop .userplan td.active {
+.path-mod-workshop .userplan dd.active {
     border-left: 1px solid #ddd;
     border-right: 1px solid #ddd;
     background-color: #e7f1c3;
 }
 
-.path-mod-workshop .userplan th .actions {
-    display: inline;
+.path-mod-workshop .userplan dt .actions {
+    font-size: smaller;
 }
-.path-mod-workshop .userplan tr.phasetasks li {
+
+.path-mod-workshop .userplan dd.phasetasks li {
     background-image: url([[pix:mod_workshop|userplan/task-todo]]);
     background-position: top left;
     background-repeat: no-repeat;
@@ -304,31 +370,43 @@
     margin: .3em 0;
 }
 
-.path-mod-workshop .userplan tr.phasetasks li.completed {
+.dir-rtl.path-mod-workshop .userplan dd.phasetasks li {
+    background-position: top right;
+}
+
+.path-mod-workshop .userplan dd.phasetasks li.completed {
     background-image: url([[pix:mod_workshop|userplan/task-done]]);
 }
 
-.path-mod-workshop .userplan tr.phasetasks li.fail {
+.path-mod-workshop .userplan dd.phasetasks li.fail {
     background-image: url([[pix:mod_workshop|userplan/task-fail]]);
 }
 
-.path-mod-workshop .userplan tr.phasetasks li.info {
+.path-mod-workshop .userplan dd.phasetasks li.info {
     background-image: url([[pix:mod_workshop|userplan/task-info]]);
 }
 
-.path-mod-workshop .userplan tr.phasetasks .tasks {
-    list-style:none;
-    margin: 3px;
-    padding: 0px;
+.path-mod-workshop .userplan dd.phasetasks .tasks {
+    list-style: none;
+    margin: 0;
+    padding: 0;
 }
 
-.path-mod-workshop .userplan tr.phasetasks .title {
-    padding: 0px 10px 0px 20px;
+.path-mod-workshop .userplan dd.phasetasks .title {
+    padding: 0 10px 0 20px;
 }
 
-.path-mod-workshop .userplan tr.phasetasks .details {
-    padding: 0px 10px 0px 25px;
+.dir-rtl.path-mod-workshop .userplan dd.phasetasks .title {
+    padding: 0 20px 0 10px;
+}
+
+.path-mod-workshop .userplan dd.phasetasks .details {
+    padding: 0 10px 0 25px;
     font-size: 80%;
+}
+
+.dir-rtl.path-mod-workshop .userplan dd.phasetasks .details {
+    padding: 0 25px 0 10px;
 }
 
 /**
@@ -336,7 +414,7 @@
  */
 .path-mod-workshop .assessment-full {
     border: 1px solid #ddd;
-    margin: 0px auto 1em auto;
+    margin: 0 auto 1em auto;
 }
 
 .path-mod-workshop .assessment-full .header {
@@ -354,20 +432,24 @@
 .path-mod-workshop .assessment-full .header .reviewer,
 .path-mod-workshop .assessment-full .header .grade,
 .path-mod-workshop .assessment-full .header .weight {
-    margin: 0px 0px 0px 40px;
+    margin: 0 0 0 40px;
 }
 
 .path-mod-workshop .assessment-full.anonymous .header .title,
 .path-mod-workshop .assessment-full.anonymous .header .reviewer,
 .path-mod-workshop .assessment-full.anonymous .header .grade,
 .path-mod-workshop .assessment-full.anonymous .header .weight {
-    margin: 0px 0px 0px 5px;
+    margin: 0 0 0 5px;
 }
 
 .path-mod-workshop .assessment-full .header .reviewer .picture {
     position: absolute;
     top: 3px;
     left: 3px;
+}
+.dir-rtl.path-mod-workshop .assessment-full .header .reviewer .picture {
+    right: 3px;
+    left: auto;
 }
 
 .path-mod-workshop .assessment-full .header .actions {
@@ -386,7 +468,7 @@
 .path-mod-workshop .assessment-full .assessment-form-wrapper,
 .path-mod-workshop .assessment-full .overall-feedback-wrapper {
     margin-top: 0.5em;
-    padding: 0px 1em;
+    padding: 0 1em;
 }
 
 .path-mod-workshop .assessment-summary.graded .singlebutton input[type="submit"],
@@ -422,21 +504,21 @@
  * Assessment form
  */
 .path-mod-workshop .assessmentform .description {
-    margin: 0px 1em;
+    margin: 0 1em;
 }
 
 /**
  * Grading report
  */
 .path-mod-workshop .grading-report {
-    width: 90%;
+    width: 100%;
     margin: 1em auto 1em auto;
     font-size: 80%;
     border: 1px solid #ddd;
 }
 
 .path-mod-workshop .grading-report .userpicture {
-    margin: 0px 3px;
+    margin: 0 3px;
     vertical-align: middle;
 }
 
@@ -487,7 +569,7 @@
 
 .path-mod-workshop .grading-report .givengrade.null .user,
 .path-mod-workshop .grading-report .receivedgrade.null .user {
-    color: #ee0000;
+    color: #e00;
 }
 
 /**
@@ -534,8 +616,8 @@
  */
 .path-mod-workshop .feedback {
     border: 1px solid #ddd;
-    margin: 0px auto 1em auto;
-    width: 80%;
+    margin: 0 auto 1em auto;
+    width: 100%;
 }
 
 .path-mod-workshop .feedback .header {
@@ -546,7 +628,7 @@
 }
 
 .path-mod-workshop .feedback .header .title {
-    margin: 0px 0px 0px 40px;
+    margin: 0 0 0 40px;
 }
 
 .path-mod-workshop .feedback .header .picture {
@@ -590,4 +672,15 @@
     text-align: center;
 }
 
-.path-mod-workshop .workshop-risk-dataloss { vertical-align: text-bottom; }
+.path-mod-workshop .lastmodified {
+    line-height: 1.0em;
+}
+
+.path-mod-workshop .nothingfound {
+    font-size: 150%;
+    color: #ff4500;
+}
+
+.path-mod-workshop .workshop-risk-dataloss {
+    vertical-align: text-bottom;
+}

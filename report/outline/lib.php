@@ -70,19 +70,24 @@ function report_outline_can_access_user_report($user, $course) {
     $coursecontext = context_course::instance($course->id);
     $personalcontext = context_user::instance($user->id);
 
-    if (has_capability('report/outline:view', $coursecontext)) {
-        return true;
-    }
-
-    if (has_capability('moodle/user:viewuseractivitiesreport', $personalcontext)) {
+    if ($user->id == $USER->id) {
+        if ($course->showreports and (is_viewing($coursecontext, $USER) or is_enrolled($coursecontext, $USER))) {
+            return true;
+        }
+    } else if (has_capability('moodle/user:viewuseractivitiesreport', $personalcontext)) {
         if ($course->showreports and (is_viewing($coursecontext, $user) or is_enrolled($coursecontext, $user))) {
             return true;
         }
 
-    } else if ($user->id == $USER->id) {
-        if ($course->showreports and (is_viewing($coursecontext, $USER) or is_enrolled($coursecontext, $USER))) {
-            return true;
-        }
+    }
+
+    // Check if $USER shares group with $user (in case separated groups are enabled and 'moodle/site:accessallgroups' is disabled).
+    if (!groups_user_groups_visible($course, $user->id)) {
+        return false;
+    }
+
+    if (has_capability('report/outline:viewuserreport', $coursecontext)) {
+        return true;
     }
 
     return false;
@@ -114,8 +119,35 @@ function report_outline_page_type_list($pagetype, $parentcontext, $currentcontex
  * @return bool returns true if the store is supported by the report, false otherwise.
  */
 function report_outline_supports_logstore($instance) {
-    if ($instance instanceof \core\log\sql_internal_reader || $instance instanceof \logstore_legacy\log\store) {
+    if ($instance instanceof \core\log\sql_internal_table_reader || $instance instanceof \logstore_legacy\log\store) {
         return true;
     }
     return false;
+}
+
+/**
+ * Add nodes to myprofile page.
+ *
+ * @param \core_user\output\myprofile\tree $tree Tree object
+ * @param stdClass $user user object
+ * @param bool $iscurrentuser
+ * @param stdClass $course Course object
+ *
+ * @return bool
+ */
+function report_outline_myprofile_navigation(core_user\output\myprofile\tree $tree, $user, $iscurrentuser, $course) {
+    if (empty($course)) {
+        // We want to display these reports under the site context.
+        $course = get_fast_modinfo(SITEID)->get_course();
+    }
+    if (report_outline_can_access_user_report($user, $course)) {
+        $url = new moodle_url('/report/outline/user.php',
+                array('id' => $user->id, 'course' => $course->id, 'mode' => 'outline'));
+        $node = new core_user\output\myprofile\node('reports', 'outline', get_string('outlinereport'), null, $url);
+        $tree->add_node($node);
+        $url = new moodle_url('/report/outline/user.php',
+            array('id' => $user->id, 'course' => $course->id, 'mode' => 'complete'));
+        $node = new core_user\output\myprofile\node('reports', 'complete', get_string('completereport'), null, $url);
+        $tree->add_node($node);
+    }
 }

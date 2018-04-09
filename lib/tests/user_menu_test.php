@@ -58,9 +58,9 @@ class core_user_menu_testcase extends advanced_testcase {
 
             // And these are combinations containing both valid and invalid.
             array('messages,message|/message/index.php|message
-myfiles,moodle|/user/files.php|download
+privatefiles,moodle|/user/files.php|download
 ###
-mybadges,badges|/badges/mybadges.php|award
+badges,badges|/badges/mybadges.php|award
 -|-|-
 test
 -
@@ -85,6 +85,7 @@ test
         // Test using an admin user at the root of Moodle; this way we don't have to create a test user with avatar.
         $this->setAdminUser();
         $PAGE->set_url('/');
+        $CFG->theme = 'clean';
 
         // Set the configuration.
         set_config('customusermenuitems', $data);
@@ -92,7 +93,7 @@ test
         // We always add two dividers as standard.
         $dividercount += 2;
 
-        // The basic entry count will additionally include the wrapper menu, My home, My profile, and the Logout link.
+        // The basic entry count will additionally include the wrapper menu, Dashboard, Profile, Logout and switch roles link.
         $entrycount += 4;
 
         $output = $OUTPUT->user_menu($USER);

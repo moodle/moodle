@@ -153,7 +153,7 @@ abstract class setting_dependency {
      */
     abstract public function get_moodleform_properties();
     /**
-     * Returns true if the dependent setting is locked.
+     * Returns true if the dependent setting is locked by this setting_dependency.
      * @return bool
      */
     abstract public function is_locked();
@@ -185,7 +185,7 @@ class setting_dependency_disabledif_equals extends setting_dependency {
         $this->value = ($value)?(string)$value:0;
     }
     /**
-     * Returns true if the dependent setting is locked.
+     * Returns true if the dependent setting is locked by this setting_dependency.
      * @return bool
      */
     public function is_locked() {
@@ -193,8 +193,8 @@ class setting_dependency_disabledif_equals extends setting_dependency {
         if ($this->setting->get_status() !== base_setting::NOT_LOCKED || $this->setting->get_value() == $this->value) {
             return true;
         }
-        // Else return based upon the dependent settings status
-        return ($this->dependentsetting->get_status() !== base_setting::NOT_LOCKED);
+        // Else the dependent setting is not locked by this setting_dependency.
+        return false;
     }
     /**
      * Processes a value change in the primary setting
@@ -202,6 +202,11 @@ class setting_dependency_disabledif_equals extends setting_dependency {
      * @return bool
      */
     protected function process_value_change($oldvalue) {
+        if ($this->dependentsetting->get_status() == base_setting::LOCKED_BY_PERMISSION ||
+                $this->dependentsetting->get_status() == base_setting::LOCKED_BY_CONFIG) {
+            // When setting is locked by permission or config do not apply dependencies.
+            return false;
+        }
         $prevalue = $this->dependentsetting->get_value();
         // If the setting is the desired value enact the dependency
         if ($this->setting->get_value() == $this->value) {
@@ -338,7 +343,7 @@ class setting_dependency_disabledif_equals2 extends setting_dependency {
         $this->value = $value;
     }
     /**
-     * Returns true if the dependent setting is locked.
+     * Returns true if the dependent setting is locked by this setting_dependency.
      * @return bool
      */
     public function is_locked() {
@@ -346,8 +351,8 @@ class setting_dependency_disabledif_equals2 extends setting_dependency {
         if ($this->setting->get_status() !== base_setting::NOT_LOCKED || in_array($this->setting->get_value(), $this->value)) {
             return true;
         }
-        // Else return based upon the dependent settings status
-        return ($this->dependentsetting->get_status() !== base_setting::NOT_LOCKED);
+        // Else the dependent setting is not locked by this setting_dependency.
+        return false;
     }
     /**
      * Processes a value change in the primary setting
@@ -532,7 +537,7 @@ class setting_dependency_disabledif_not_empty extends setting_dependency_disable
     }
 
     /**
-     * Returns true if the dependent setting is locked.
+     * Returns true if the dependent setting is locked by this setting_dependency.
      * @return bool
      */
     public function is_locked() {
@@ -540,8 +545,8 @@ class setting_dependency_disabledif_not_empty extends setting_dependency_disable
         if ($this->setting->get_status() !== base_setting::NOT_LOCKED || !empty($value)) {
             return true;
         }
-        // Else return based upon the dependent settings status
-        return ($this->dependentsetting->get_status() !== base_setting::NOT_LOCKED);
+        // Else the dependent setting is not locked by this setting_dependency.
+        return false;
     }
 }
 
@@ -596,7 +601,7 @@ class setting_dependency_disabledif_empty extends setting_dependency_disabledif_
         return ($prevalue != $this->dependentsetting->get_value());
     }
     /**
-     * Returns true if the dependent setting is locked.
+     * Returns true if the dependent setting is locked by this setting_dependency.
      * @return bool
      */
     public function is_locked() {
@@ -604,7 +609,7 @@ class setting_dependency_disabledif_empty extends setting_dependency_disabledif_
         if ($this->setting->get_status() !== base_setting::NOT_LOCKED || empty($value)) {
             return true;
         }
-        // Else return based upon the dependent settings status
-        return ($this->dependentsetting->get_status() !== base_setting::NOT_LOCKED);
+        // Else the dependent setting is not locked by this setting_dependency.
+        return false;
     }
 }

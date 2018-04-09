@@ -64,9 +64,10 @@ class frontend extends \core_availability\frontend {
             foreach ($modinfo->cms as $id => $othercm) {
                 // Add each course-module if it has completion turned on and is not
                 // the one currently being edited.
-                if ($othercm->completion && (empty($cm) || $cm->id != $id)) {
-                    $cms[] = (object)array('id' => $id, 'name' =>
-                            format_string($othercm->name, true, array('context' => $context)));
+                if ($othercm->completion && (empty($cm) || $cm->id != $id) && !$othercm->deletioninprogress) {
+                    $cms[] = (object)array('id' => $id,
+                        'name' => format_string($othercm->name, true, array('context' => $context)),
+                        'completiongradeitemnumber' => $othercm->completiongradeitemnumber);
                 }
             }
 

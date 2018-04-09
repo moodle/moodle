@@ -12,7 +12,7 @@
  *   stream_filter_[app|pre]pend($stream, 'htmlspecialchars',
  *                               [ STREAM_FILTER_[READ|WRITE|ALL] ]);
  *
- * Copyright 2012-2014 Horde LLC (http://www.horde.org/)
+ * Copyright 2012-2017 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file COPYING for license information (LGPL). If you
  * did not receive this file, see http://www.horde.org/licenses/lgpl21.

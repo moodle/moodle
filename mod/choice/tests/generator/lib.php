@@ -47,6 +47,8 @@ class mod_choice_generator extends testing_module_generator {
             $record->option[] = 'Beer';
             $record->option[] = 'Wine';
             $record->option[] = 'Spirits';
+        } else if (!is_array($record->option)) {
+            $record->option = preg_split('/\s*,\s*/', trim($record->option), -1, PREG_SPLIT_NO_EMPTY);
         }
         return parent::create_instance($record, (array)$options);
     }

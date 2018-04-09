@@ -44,7 +44,7 @@ class core_role_preset_testcase extends advanced_testcase {
             $contextlevels = get_role_contextlevels($role->id);
             $this->assertEquals(array_values($contextlevels), array_values($info['contextlevels']));
 
-            foreach (array('assign', 'override', 'switch') as $type) {
+            foreach (array('assign', 'override', 'switch', 'view') as $type) {
                 $records = $DB->get_records('role_allow_'.$type, array('roleid'=>$role->id), "allow$type ASC");
                 $allows = array();
                 foreach ($records as $record) {

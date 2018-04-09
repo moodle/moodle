@@ -78,8 +78,9 @@ if ($courseid) {
         }
 
         // Return to previous page
-        if (!empty($_SERVER['HTTP_REFERER'])) {
-            redirect($_SERVER['HTTP_REFERER']);
+        $referer = get_local_referer(false);
+        if (!empty($referer)) {
+            redirect($referer);
         } else {
             redirect('view.php?id='.$course->id);
         }

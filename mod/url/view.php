@@ -24,12 +24,14 @@
  */
 
 require('../../config.php');
+require_once("$CFG->dirroot/mod/url/lib.php");
 require_once("$CFG->dirroot/mod/url/locallib.php");
 require_once($CFG->libdir . '/completionlib.php');
 
 $id       = optional_param('id', 0, PARAM_INT);        // Course module ID
 $u        = optional_param('u', 0, PARAM_INT);         // URL instance id
 $redirect = optional_param('redirect', 0, PARAM_BOOL);
+$forceview = optional_param('forceview', 0, PARAM_BOOL);
 
 if ($u) {  // Two ways to specify the module
     $url = $DB->get_record('url', array('id'=>$u), '*', MUST_EXIST);
@@ -46,19 +48,8 @@ require_course_login($course, true, $cm);
 $context = context_module::instance($cm->id);
 require_capability('mod/url:view', $context);
 
-$params = array(
-    'context' => $context,
-    'objectid' => $url->id
-);
-$event = \mod_url\event\course_module_viewed::create($params);
-$event->add_record_snapshot('course_modules', $cm);
-$event->add_record_snapshot('course', $course);
-$event->add_record_snapshot('url', $url);
-$event->trigger();
-
-// Update 'viewed' state if required by completion system
-$completion = new completion_info($course);
-$completion->set_module_viewed($cm);
+// Completion and trigger events.
+url_view($url, $course, $cm, $context);
 
 $PAGE->set_url('/mod/url/view.php', array('id' => $cm->id));
 
@@ -76,14 +67,10 @@ unset($exturl);
 
 $displaytype = url_get_final_display_type($url);
 if ($displaytype == RESOURCELIB_DISPLAY_OPEN) {
-    // For 'open' links, we always redirect to the content - except if the user
-    // just chose 'save and display' from the form then that would be confusing
-    if (!isset($_SERVER['HTTP_REFERER']) || strpos($_SERVER['HTTP_REFERER'], 'modedit.php') === false) {
-        $redirect = true;
-    }
+    $redirect = true;
 }
 
-if ($redirect) {
+if ($redirect && !$forceview) {
     // coming from course page or url index page,
     // the redirection is needed for completion tracking and logging
     $fullurl = str_replace('&amp;', '&', url_get_full_url($url, $cm, $course));

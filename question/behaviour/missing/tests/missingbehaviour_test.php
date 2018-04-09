@@ -27,9 +27,9 @@
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
-require_once(dirname(__FILE__) . '/../../../engine/lib.php');
-require_once(dirname(__FILE__) . '/../../../engine/tests/helpers.php');
-require_once(dirname(__FILE__) . '/../behaviour.php');
+require_once(__DIR__ . '/../../../engine/lib.php');
+require_once(__DIR__ . '/../../../engine/tests/helpers.php');
+require_once(__DIR__ . '/../behaviour.php');
 
 
 /**
@@ -39,31 +39,40 @@ require_once(dirname(__FILE__) . '/../behaviour.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qbehaviour_missing_test extends advanced_testcase {
+
+    /**
+     * @expectedException moodle_exception
+     */
     public function test_missing_cannot_start() {
         $qa = new question_attempt(test_question_maker::make_question('truefalse', 'true'), 0);
         $behaviour = new qbehaviour_missing($qa, 'deferredfeedback');
-        $this->setExpectedException('moodle_exception');
         $behaviour->init_first_step(new question_attempt_step(array()), 1);
     }
 
+    /**
+     * @expectedException moodle_exception
+     */
     public function test_missing_cannot_process() {
         $qa = new question_attempt(test_question_maker::make_question('truefalse', 'true'), 0);
         $behaviour = new qbehaviour_missing($qa, 'deferredfeedback');
-        $this->setExpectedException('moodle_exception');
         $behaviour->process_action(new question_attempt_pending_step(array()));
     }
 
+    /**
+     * @expectedException moodle_exception
+     */
     public function test_missing_cannot_get_min_fraction() {
         $qa = new question_attempt(test_question_maker::make_question('truefalse', 'true'), 0);
         $behaviour = new qbehaviour_missing($qa, 'deferredfeedback');
-        $this->setExpectedException('moodle_exception');
         $behaviour->get_min_fraction();
     }
 
+    /**
+     * @expectedException moodle_exception
+     */
     public function test_missing_cannot_get_max_fraction() {
         $qa = new question_attempt(test_question_maker::make_question('truefalse', 'true'), 0);
         $behaviour = new qbehaviour_missing($qa, 'deferredfeedback');
-        $this->setExpectedException('moodle_exception');
         $behaviour->get_max_fraction();
     }
 

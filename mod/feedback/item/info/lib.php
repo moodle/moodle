@@ -19,13 +19,16 @@ require_once($CFG->dirroot.'/mod/feedback/item/feedback_item_class.php');
 
 class feedback_item_info extends feedback_item_base {
     protected $type = "info";
-    private $commonparams;
-    private $item_form;
-    private $item;
 
-    public function init() {
+    /** Mode recording response time (for non-anonymous feedbacks only) */
+    const MODE_RESPONSETIME = 1;
+    /** Mode recording current course */
+    const MODE_COURSE = 2;
+    /** Mode recording current course category */
+    const MODE_CATEGORY = 3;
 
-    }
+    /** Special constant to keep the current timestamp as value for the form element */
+    const CURRENTTIMESTAMP = '__CURRENT__TIMESTAMP__';
 
     public function build_editform($item, $feedback, $cm) {
         global $DB, $CFG;
@@ -45,7 +48,7 @@ class feedback_item_info extends feedback_item_base {
         //the elements for position dropdownlist
         $positionlist = array_slice(range(0, $i_formselect_last), 1, $i_formselect_last, true);
 
-        $item->presentation = empty($item->presentation) ? 1 : $item->presentation;
+        $item->presentation = empty($item->presentation) ? self::MODE_COURSE : $item->presentation;
         $item->required = 0;
 
         //all items for dependitem
@@ -56,36 +59,32 @@ class feedback_item_info extends feedback_item_base {
                              'items'=>$feedbackitems,
                              'feedback'=>$feedback->id);
 
+        // Options for the 'presentation' select element.
+        $presentationoptions = array();
+        if ($feedback->anonymous == FEEDBACK_ANONYMOUS_NO || $item->presentation == self::MODE_RESPONSETIME) {
+            // "Response time" is hidden anyway in case of anonymous feedback, no reason to offer this option.
+            // However if it was already selected leave it in the dropdown.
+            $presentationoptions[self::MODE_RESPONSETIME] = get_string('responsetime', 'feedback');
+        }
+        $presentationoptions[self::MODE_COURSE]  = get_string('course');
+        $presentationoptions[self::MODE_CATEGORY]  = get_string('coursecategory');
+
         //build the form
         $this->item_form = new feedback_info_form('edit_item.php',
                                                   array('item'=>$item,
                                                   'common'=>$commonparams,
                                                   'positionlist'=>$positionlist,
-                                                  'position' => $position));
-    }
-
-    //this function only can used after the call of build_editform()
-    public function show_editform() {
-        $this->item_form->display();
-    }
-
-    public function is_cancelled() {
-        return $this->item_form->is_cancelled();
-    }
-
-    public function get_data() {
-        if ($this->item = $this->item_form->get_data()) {
-            return true;
-        }
-        return false;
+                                                  'position' => $position,
+                                                  'presentationoptions' => $presentationoptions));
     }
 
     public function save_item() {
         global $DB;
 
-        if (!$item = $this->item_form->get_data()) {
+        if (!$this->get_data()) {
             return false;
         }
+        $item = $this->item;
 
         if (isset($item->clone_item) AND $item->clone_item) {
             $item->id = ''; //to clone this item
@@ -102,8 +101,15 @@ class feedback_item_info extends feedback_item_base {
         return $DB->get_record('feedback_item', array('id'=>$item->id));
     }
 
-    //liefert eine Struktur ->name, ->data = array(mit Antworten)
-    public function get_analysed($item, $groupid = false, $courseid = false) {
+    /**
+     * Helper function for collected data, both for analysis page and export to excel
+     *
+     * @param stdClass $item the db-object from feedback_item
+     * @param int|false $groupid
+     * @param int $courseid
+     * @return stdClass
+     */
+    protected function get_analysed($item, $groupid = false, $courseid = false) {
 
         $presentation = $item->presentation;
         $analysed_val = new stdClass();
@@ -116,15 +122,15 @@ class feedback_item_info extends feedback_item_base {
                 $datavalue = new stdClass();
 
                 switch($presentation) {
-                    case 1:
+                    case self::MODE_RESPONSETIME:
                         $datavalue->value = $value->value;
-                        $datavalue->show = userdate($datavalue->value);
+                        $datavalue->show = $value->value ? userdate($datavalue->value) : '';
                         break;
-                    case 2:
+                    case self::MODE_COURSE:
                         $datavalue->value = $value->value;
                         $datavalue->show = $datavalue->value;
                         break;
-                    case 3:
+                    case self::MODE_CATEGORY:
                         $datavalue->value = $value->value;
                         $datavalue->show = $datavalue->value;
                         break;
@@ -139,26 +145,34 @@ class feedback_item_info extends feedback_item_base {
 
     public function get_printval($item, $value) {
 
-        if (!isset($value->value)) {
+        if (strval($value->value) === '') {
             return '';
         }
-        return userdate($value->value);
+        return $item->presentation == self::MODE_RESPONSETIME ?
+                userdate($value->value) : $value->value;
     }
 
     public function print_analysed($item, $itemnr = '', $groupid = false, $courseid = false) {
+        echo "<table class=\"analysis itemtype_{$item->typ}\">";
         $analysed_item = $this->get_analysed($item, $groupid, $courseid);
         $data = $analysed_item->data;
         if (is_array($data)) {
             echo '<tr><th colspan="2" align="left">';
-            echo $itemnr.'&nbsp;('.$item->label.') '.$item->name;
+            echo $itemnr . ' ';
+            if (strval($item->label) !== '') {
+                echo '('. format_string($item->label).') ';
+            }
+            echo format_text($item->name, FORMAT_HTML, array('noclean' => true, 'para' => false));
             echo '</th></tr>';
             $sizeofdata = count($data);
             for ($i = 0; $i < $sizeofdata; $i++) {
-                echo '<tr><td colspan="2" valign="top" align="left">-&nbsp;&nbsp;';
+                $class = strlen(trim($data[$i]->show)) ? '' : ' class="isempty"';
+                echo '<tr'.$class.'><td colspan="2" class="singlevalue">';
                 echo str_replace("\n", '<br />', $data[$i]->show);
                 echo '</td></tr>';
             }
         }
+        echo '</table>';
     }
 
     public function excelprint_item(&$worksheet, $row_offset,
@@ -183,232 +197,126 @@ class feedback_item_info extends feedback_item_base {
     }
 
     /**
-     * print the item at the edit-page of feedback
+     * Calculates the value of the item (time, course, course category)
      *
-     * @global object
-     * @param object $item
-     * @return void
+     * @param stdClass $item
+     * @param stdClass $feedback
+     * @param int $courseid
+     * @return string
      */
-    public function print_item_preview($item) {
-        global $USER, $DB, $OUTPUT;
-
-        $align = right_to_left() ? 'right' : 'left';
-        $presentation = $item->presentation;
-        $requiredmark = ($item->required == 1)?'<img class="req" title="'.get_string('requiredelement', 'form').'" alt="'.
-            get_string('requiredelement', 'form').'" src="'.$OUTPUT->pix_url('req') .'" />':'';
-
-        if ($item->feedback) {
-            $courseid = $DB->get_field('feedback', 'course', array('id'=>$item->feedback));
-        } else { // the item must be a template item
-            $cmid = required_param('id', PARAM_INT);
-            $courseid = $DB->get_field('course_modules', 'course', array('id'=>$cmid));
-        }
-        if (!$course = $DB->get_record('course', array('id'=>$courseid))) {
-            print_error('error');
-        }
-        if ($course->id !== SITEID) {
-            $coursecategory = $DB->get_record('course_categories', array('id'=>$course->category));
-        } else {
-            $coursecategory = false;
-        }
-        switch($presentation) {
-            case 1:
-                $itemvalue = time();
-                $itemshowvalue = userdate($itemvalue);
+    protected function get_current_value($item, $feedback, $courseid) {
+        global $DB;
+        switch ($item->presentation) {
+            case self::MODE_RESPONSETIME:
+                if ($feedback->anonymous != FEEDBACK_ANONYMOUS_YES) {
+                    // Response time is not allowed in anonymous feedbacks.
+                    return time();
+                }
                 break;
-            case 2:
-                $coursecontext = context_course::instance($course->id);
-                $itemvalue = format_string($course->shortname,
-                                           true,
-                                           array('context' => $coursecontext));
-
-                $itemshowvalue = $itemvalue;
+            case self::MODE_COURSE:
+                $course = get_course($courseid);
+                return format_string($course->shortname, true,
+                        array('context' => context_course::instance($course->id)));
                 break;
-            case 3:
-                if ($coursecategory) {
-                    $category_context = context_coursecat::instance($coursecategory->id);
-                    $itemvalue = format_string($coursecategory->name,
-                                               true,
-                                               array('context' => $category_context));
-
-                    $itemshowvalue = $itemvalue;
-                } else {
-                    $itemvalue = '';
-                    $itemshowvalue = '';
+            case self::MODE_CATEGORY:
+                if ($courseid !== SITEID) {
+                    $coursecategory = $DB->get_record_sql('SELECT cc.id, cc.name FROM {course_categories} cc, {course} c '
+                            . 'WHERE c.category = cc.id AND c.id = ?', array($courseid));
+                    return format_string($coursecategory->name, true,
+                            array('context' => context_coursecat::instance($coursecategory->id)));
                 }
                 break;
         }
-
-        //print the question and label
-        echo '<div class="feedback_item_label_'.$align.'">';
-        echo '('.$item->label.') ';
-        echo format_text($item->name.$requiredmark, true, false, false);
-        if ($item->dependitem) {
-            if ($dependitem = $DB->get_record('feedback_item', array('id'=>$item->dependitem))) {
-                echo ' <span class="feedback_depend">';
-                echo '('.$dependitem->label.'-&gt;'.$item->dependvalue.')';
-                echo '</span>';
-            }
-        }
-        echo '</div>';
-        //print the presentation
-        echo '<div class="feedback_item_presentation_'.$align.'">';
-        echo '<input type="hidden" name="'.$item->typ.'_'.$item->id.'" value="'.$itemvalue.'" />';
-        echo '<span class="feedback_item_info">'.$itemshowvalue.'</span>';
-        echo '</div>';
+        return '';
     }
 
     /**
-     * print the item at the complete-page of feedback
+     * Adds an input element to the complete form
      *
-     * @global object
-     * @param object $item
-     * @param string $value
-     * @param bool $highlightrequire
-     * @return void
+     * @param stdClass $item
+     * @param mod_feedback_complete_form $form
      */
-    public function print_item_complete($item, $value = '', $highlightrequire = false) {
-        global $USER, $DB, $OUTPUT;
-        $align = right_to_left() ? 'right' : 'left';
-
-        $presentation = $item->presentation;
-        if ($highlightrequire AND $item->required AND strval($value) == '') {
-            $highlight = 'error';
+    public function complete_form_element($item, $form) {
+        if ($form->get_mode() == mod_feedback_complete_form::MODE_VIEW_RESPONSE) {
+            $value = strval($form->get_item_value($item));
         } else {
-            $highlight = '';
+            $value = $this->get_current_value($item,
+                    $form->get_feedback(), $form->get_current_course_id());
         }
-        $requiredmark = ($item->required == 1)?'<img class="req" title="'.get_string('requiredelement', 'form').'" alt="'.
-            get_string('requiredelement', 'form').'" src="'.$OUTPUT->pix_url('req') .'" />':'';
+        $printval = $this->get_printval($item, (object)['value' => $value]);
 
-        $feedback = $DB->get_record('feedback', array('id'=>$item->feedback));
-
-        if ($courseid = optional_param('courseid', 0, PARAM_INT)) {
-            $course = $DB->get_record('course', array('id'=>$courseid));
-        } else {
-            $course = $DB->get_record('course', array('id'=>$feedback->course));
-        }
-
-        if ($course->id !== SITEID) {
-            $coursecategory = $DB->get_record('course_categories', array('id'=>$course->category));
-        } else {
-            $coursecategory = false;
-        }
-
-        switch($presentation) {
-            case 1:
-                if ($feedback->anonymous == FEEDBACK_ANONYMOUS_YES) {
-                    $itemvalue = 0;
-                    $itemshowvalue = '-';
-                } else {
-                    $itemvalue = time();
-                    $itemshowvalue = userdate($itemvalue);
-                }
+        $class = '';
+        switch ($item->presentation) {
+            case self::MODE_RESPONSETIME:
+                $class = 'info-responsetime';
+                $value = $value ? self::CURRENTTIMESTAMP : '';
                 break;
-            case 2:
-                $coursecontext = context_course::instance($course->id);
-                $itemvalue = format_string($course->shortname,
-                                           true,
-                                           array('context' => $coursecontext));
-
-                $itemshowvalue = $itemvalue;
+            case self::MODE_COURSE:
+                $class = 'info-course';
                 break;
-            case 3:
-                if ($coursecategory) {
-                    $category_context = context_coursecat::instance($coursecategory->id);
-                    $itemvalue = format_string($coursecategory->name,
-                                               true,
-                                               array('context' => $category_context));
-
-                    $itemshowvalue = $itemvalue;
-                } else {
-                    $itemvalue = '';
-                    $itemshowvalue = '';
-                }
+            case self::MODE_CATEGORY:
+                $class = 'info-category';
                 break;
         }
 
-        //print the question and label
-        echo '<div class="feedback_item_label_'.$align.'">';
-        echo '<span class="'.$highlight.'">';
-            echo format_text($item->name.$requiredmark, true, false, false);
-        echo '</span>';
-        echo '</div>';
+        $name = $this->get_display_name($item);
+        $inputname = $item->typ . '_' . $item->id;
 
-        //print the presentation
-        echo '<div class="feedback_item_presentation_'.$align.'">';
-        echo '<input type="hidden" name="'.$item->typ.'_'.$item->id.'" value="'.$itemvalue.'" />';
-        echo '<span class="feedback_item_info">'.$itemshowvalue.'</span>';
-        echo '</div>';
+        $element = $form->add_form_element($item,
+                ['select', $inputname, $name,
+                    array($value => $printval),
+                    array('class' => $class)],
+                false,
+                false);
+        $form->set_element_default($inputname, $value);
+        $element->freeze();
+        if ($form->get_mode() == mod_feedback_complete_form::MODE_COMPLETE) {
+            $element->setPersistantFreeze(true);
+        }
     }
 
     /**
-     * print the item at the complete-page of feedback
-     *
-     * @global object
-     * @param object $item
-     * @param string $value
-     * @return void
+     * Converts the value from complete_form data to the string value that is stored in the db.
+     * @param mixed $value element from mod_feedback_complete_form::get_data() with the name $item->typ.'_'.$item->id
+     * @return string
      */
-    public function print_item_show_value($item, $value = '') {
-        global $USER, $DB, $OUTPUT;
-        $align = right_to_left() ? 'right' : 'left';
-
-        $presentation = $item->presentation;
-        $requiredmark = ($item->required == 1)?'<img class="req" title="'.get_string('requiredelement', 'form').'" alt="'.
-            get_string('requiredelement', 'form').'" src="'.$OUTPUT->pix_url('req') .'" />':'';
-
-        if ($presentation == 1) {
-            $value = $value ? userdate($value) : '&nbsp;';
+    public function create_value($value) {
+        if ($value === self::CURRENTTIMESTAMP) {
+            return strval(time());
         }
-
-        //print the question and label
-        echo '<div class="feedback_item_label_'.$align.'">';
-            echo '('.$item->label.') ';
-            echo format_text($item->name . $requiredmark, true, false, false);
-        echo '</div>';
-
-        //print the presentation
-        echo $OUTPUT->box_start('generalbox boxalign'.$align);
-        echo $value;
-        echo $OUTPUT->box_end();
-    }
-
-    public function check_value($value, $item) {
-        return true;
-    }
-
-    public function create_value($data) {
-        $data = clean_text($data);
-        return $data;
-    }
-
-    //compares the dbvalue with the dependvalue
-    //the values can be the shortname of a course or the category name
-    //the date is not compareable :(.
-    public function compare_value($item, $dbvalue, $dependvalue) {
-        if ($dbvalue == $dependvalue) {
-            return true;
-        }
-        return false;
-    }
-
-    public function get_presentation($data) {
-        return $data->infotype;
-    }
-
-    public function get_hasvalue() {
-        return 1;
+        return parent::create_value($value);
     }
 
     public function can_switch_require() {
         return false;
     }
 
-    public function value_type() {
-        return PARAM_TEXT;
+    public function get_data_for_external($item) {
+        global $DB;
+        $feedback = $DB->get_record('feedback', array('id' => $item->feedback), '*', MUST_EXIST);
+        // Return the default value (course name, category name or timestamp).
+        return $this->get_current_value($item, $feedback, $feedback->course);
     }
 
-    public function clean_input_value($value) {
-        return clean_param($value, $this->value_type());
+    /**
+     * Return the analysis data ready for external functions.
+     *
+     * @param stdClass $item     the item (question) information
+     * @param int      $groupid  the group id to filter data (optional)
+     * @param int      $courseid the course id (optional)
+     * @return array an array of data with non scalar types json encoded
+     * @since  Moodle 3.3
+     */
+    public function get_analysed_for_external($item, $groupid = false, $courseid = false) {
+
+        $externaldata = array();
+        $data = $this->get_analysed($item, $groupid, $courseid);
+
+        if (is_array($data->data)) {
+            foreach ($data->data as $d) {
+                $externaldata[] = json_encode($d);
+            }
+        }
+        return $externaldata;
     }
 }

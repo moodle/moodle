@@ -51,6 +51,11 @@ require_login($course, false, $cm);
 $contextmodule = context_module::instance($cm->id);
 require_capability('mod/scorm:viewreport', $contextmodule);
 
+// Check user has group access.
+if (!groups_user_groups_visible($course, $userid, $cm)) {
+    throw new moodle_exception('nopermissiontoshow');
+}
+
 // Trigger a user report viewed event.
 $event = \mod_scorm\event\user_report_viewed::create(array(
     'context' => $contextmodule,
@@ -117,8 +122,7 @@ if ($scoes = $DB->get_records('scorm_scoes', array('scorm' => $scorm->id), 'sort
                 $detailslink = '&nbsp;';
             }
             $strstatus = get_string($trackdata->status, 'scorm');
-            $row[] = '<img src="'.$OUTPUT->pix_url($trackdata->status, 'scorm').'" alt="'.$strstatus.'" title="'.
-            $strstatus.'" />&nbsp;'.format_string($sco->title);
+            $row[] = $OUTPUT->pix_icon($trackdata->status, $strstatus, 'scorm') . '&nbsp;'.format_string($sco->title);
             $row[] = get_string($trackdata->status, 'scorm');
             $row[] = scorm_format_duration($trackdata->total_time);
             $row[] = $score;

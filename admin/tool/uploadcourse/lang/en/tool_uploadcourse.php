@@ -30,6 +30,7 @@ $string['allowresets'] = 'Allow resets';
 $string['allowresets_help'] = 'Whether the reset field is accepted or not.';
 $string['cachedef_helper'] = 'Helper caching';
 $string['cannotdeletecoursenotexist'] = 'Cannot delete a course that does not exist';
+$string['cannotforcelang'] = 'No permission to force language for this course';
 $string['cannotgenerateshortnameupdatemode'] = 'Cannot generate a shortname when updates are allowed';
 $string['cannotreadbackupfile'] = 'Cannot read the backup file';
 $string['cannotrenamecoursenotexist'] = 'Cannot rename a course that does not exist';

@@ -117,6 +117,14 @@ class mod_book_generator extends testing_module_generator {
                  WHERE id = ?";
         $DB->execute($sql, array($record->bookid));
 
+        if (property_exists($record, 'tags')) {
+            $cm = get_coursemodule_from_instance('book', $record->bookid);
+            $tags = is_array($record->tags) ? $record->tags : preg_split('/,/', $record->tags);
+
+            core_tag_tag::set_item_tags('mod_book', 'book_chapters', $record->id,
+                context_module::instance($cm->id), $tags);
+        }
+
         return $record;
     }
 

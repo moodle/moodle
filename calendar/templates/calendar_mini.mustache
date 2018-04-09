@@ -1,0 +1,46 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template calendar/calendar_mini
+
+    Calendar month view for blocks.
+
+    The purpose of this template is to render the month view for blocks.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Example context (json):
+    {
+    }
+}}
+<div{{!
+    }} id="calendar-month-{{date.year}}-{{date.month}}-{{uniqid}}" {{!
+    }} data-template="core_calendar/month_mini" {{!
+    }} data-includenavigation="{{#includenavigation}}true{{/includenavigation}}{{^includenavigation}}false{{/includenavigation}}"{{!
+    }} data-mini="true"{{!
+    }}>
+    {{> core_calendar/month_mini}}
+</div>
+{{#js}}
+require(['jquery', 'core_calendar/calendar_mini'], function($, CalendarMini) {
+    CalendarMini.init($("#calendar-month-{{date.year}}-{{date.month}}-{{uniqid}}"), !{{initialeventsloaded}});
+});
+{{/js}}

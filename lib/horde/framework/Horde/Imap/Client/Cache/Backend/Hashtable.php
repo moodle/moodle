@@ -1,12 +1,12 @@
 <?php
 /**
- * Copyright 2013-2014 Horde LLC (http://www.horde.org/)
+ * Copyright 2013-2017 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file COPYING for license information (LGPL). If you
  * did not receive this file, see http://www.horde.org/licenses/lgpl21.
  *
  * @category  Horde
- * @copyright 2013-2014 Horde LLC
+ * @copyright 2013-2017 Horde LLC
  * @license   http://www.horde.org/licenses/lgpl21 LGPL 2.1
  * @package   Imap_Client
  */
@@ -17,7 +17,7 @@
  *
  * @author    Michael Slusarz <slusarz@horde.org>
  * @category  Horde
- * @copyright 2013-2014 Horde LLC
+ * @copyright 2013-2017 Horde LLC
  * @license   http://www.horde.org/licenses/lgpl21 LGPL 2.1
  * @package   Imap_Client
  * @since     2.17.0
@@ -273,36 +273,39 @@ extends Horde_Imap_Client_Cache_Backend
     public function save()
     {
         foreach ($this->_update as $mbox => $val) {
-            if (!empty($val['u'])) {
-                $ptr = &$this->_data[$mbox];
-                foreach ($this->_getMsgCids($mbox, array_keys($val['u'])) as $k2 => $v2) {
-                    try {
-                        $this->_hash->set(
-                            $v2,
-                            $this->_pack->pack($ptr[$k2]),
-                            array('expire' => $this->_params['lifetime'])
-                        );
-                    } catch (Horde_Pack_Exception $e) {
-                        $this->deleteMsgs($mbox, array($v2));
-                        $val['d'][] = $v2;
-                    }
-                }
-            }
+            try {
+                if (!empty($val['u'])) {
+                     $ptr = &$this->_data[$mbox];
+                     foreach ($this->_getMsgCids($mbox, array_keys($val['u'])) as $k2 => $v2) {
+                         try {
+                             $this->_hash->set(
+                                 $v2,
+                                 $this->_pack->pack($ptr[$k2]),
+                                 array('expire' => $this->_params['lifetime'])
+                             );
+                         } catch (Horde_Pack_Exception $e) {
+                             $this->deleteMsgs($mbox, array($v2));
+                             $val['d'][] = $v2;
+                         }
+                     }
+                 }
 
-            if (!empty($val['d'])) {
-                $this->_hash->delete(array_values(
-                    $this->_getMsgCids($mbox, $val['d'])
-                ));
-            }
+                 if (!empty($val['d'])) {
+                     $this->_hash->delete(array_values(
+                         $this->_getMsgCids($mbox, $val['d'])
+                     ));
+                 }
 
-            if (!empty($val['m'])) {
-                try {
-                    $this->_hash->set(
-                        $this->_getCid($mbox),
-                        $this->_pack->pack($this->_mbox[$mbox]),
-                        array('expire' => $this->_params['lifetime'])
-                    );
-                } catch (Horde_Pack_Exception $e) {}
+                 if (!empty($val['m'])) {
+                     try {
+                         $this->_hash->set(
+                             $this->_getCid($mbox),
+                             $this->_pack->pack($this->_mbox[$mbox]),
+                             array('expire' => $this->_params['lifetime'])
+                         );
+                     } catch (Horde_Pack_Exception $e) {}
+                 }
+            } catch (Horde_Exception $e) {
             }
         }
 

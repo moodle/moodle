@@ -2,7 +2,7 @@
 
 // Allows the admin to control user logins from remote moodles.
 
-require_once dirname(dirname(dirname(__FILE__))) . '/config.php';
+require_once(__DIR__ . '/../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 include_once($CFG->dirroot.'/mnet/lib.php');
 
@@ -150,7 +150,7 @@ foreach ($columns as $column) {
     } else {
         $columndir = $dir == "ASC" ? "DESC" : "ASC";
         $columnicon = $dir == "ASC" ? "down" : "up";
-        $columnicon = " <img src=\"" . $OUTPUT->pix_url('t/' . $columnicon) . "\" alt=\"\" />";
+        $columnicon = " " . $OUTPUT->pix_icon('t/' . $columnicon, get_string('sort'));
     }
     $headings[$column] = "<a href=\"?sort=$column&amp;dir=$columndir&amp;\">".$string[$column]."</a>$columnicon";
 }

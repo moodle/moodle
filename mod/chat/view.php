@@ -16,7 +16,7 @@
 
 // This page prints a particular instance of chat.
 
-require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
+require(__DIR__.'/../../config.php');
 require_once($CFG->dirroot . '/mod/chat/lib.php');
 require_once($CFG->libdir . '/completionlib.php');
 
@@ -69,15 +69,8 @@ if (isguestuser()) {
     exit;
 }
 
-// Log this request - the problem here is that the view page
-// does not display the chat content which is actually in a new window.
-$params = array(
-    'objectid' => $chat->id,
-    'context' => $context
-);
-$event = \mod_chat\event\course_module_viewed::create($params);
-$event->add_record_snapshot('chat', $chat);
-$event->trigger();
+// Completion and trigger events.
+chat_view($chat, $course, $cm, $context);
 
 $strenterchat    = get_string('enterchat', 'chat');
 $stridle         = get_string('idle', 'chat');
@@ -86,10 +79,6 @@ $strnextsession  = get_string('nextsession', 'chat');
 
 $courseshortname = format_string($course->shortname, true, array('context' => context_course::instance($course->id)));
 $title = $courseshortname . ': ' . format_string($chat->name);
-
-// Mark viewed by user (if required).
-$completion = new completion_info($course);
-$completion->set_module_viewed($cm);
 
 // Initialize $PAGE.
 $PAGE->set_url('/mod/chat/view.php', array('id' => $cm->id));
@@ -130,7 +119,10 @@ if (has_capability('mod/chat:chat', $context)) {
     $span = $chat->chattime - $now;
     if ($chat->chattime and $chat->schedule and ($span > 0)) {  // A chat is scheduled.
         echo '<p>';
-        echo get_string('sessionstart', 'chat', format_time($span));
+        $chatinfo = new stdClass();
+        $chatinfo->date = userdate($chat->chattime);
+        $chatinfo->fromnow = format_time($span);
+        echo get_string('sessionstart', 'chat', $chatinfo);
         echo '</p>';
     }
 
@@ -153,7 +145,7 @@ if (has_capability('mod/chat:chat', $context)) {
     echo '</p>';
 
     if ($chat->studentlogs or has_capability('mod/chat:readlog', $context)) {
-        if ($msg = $DB->get_records_select('chat_messages', "chatid = ? $groupselect", array($chat->id))) {
+        if ($msg = chat_get_session_messages($chat->id, $currentgroup)) {
             echo '<p>';
             echo html_writer::link(new moodle_url('/mod/chat/report.php', array('id' => $cm->id)),
                                    get_string('viewreport', 'chat'));

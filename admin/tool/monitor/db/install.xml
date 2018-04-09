@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="tool/monitor/db" VERSION="20141103" COMMENT="XMLDB file for Moodle tool/monitor"
+<XMLDB PATH="admin/tool/monitor/db" VERSION="20141103" COMMENT="XMLDB file for Moodle tool/monitor"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+    xsi:noNamespaceSchemaLocation="../../../../lib/xmldb/xmldb.xsd"
 >
   <TABLES>
     <TABLE NAME="tool_monitor_rules" COMMENT="Table to store rules">
@@ -38,6 +38,7 @@
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="User id of the subscriber"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Timestamp of when this subscription was created"/>
         <FIELD NAME="lastnotificationsent" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Timestamp of the time when a notification was last sent for this subscription."/>
+        <FIELD NAME="inactivedate" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

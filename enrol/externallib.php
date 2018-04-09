@@ -86,6 +86,8 @@ class core_enrol_external extends external_api {
      */
     public static function get_enrolled_users_with_capability($coursecapabilities, $options) {
         global $CFG, $DB;
+
+        require_once($CFG->dirroot . '/course/lib.php');
         require_once($CFG->dirroot . "/user/lib.php");
 
         if (empty($coursecapabilities)) {
@@ -145,11 +147,8 @@ class core_enrol_external extends external_api {
                 throw new moodle_exception(get_string('errorcoursecontextnotvalid' , 'webservice', $exceptionparam));
             }
 
-            if ($courseid == SITEID) {
-                require_capability('moodle/site:viewparticipants', $context);
-            } else {
-                require_capability('moodle/course:viewparticipants', $context);
-            }
+            course_require_view_participants($context);
+
             // The accessallgroups capability is needed to use this option.
             if (!empty($groupid) && groups_is_member($groupid)) {
                 require_capability('moodle/site:accessallgroups', $coursecontext);
@@ -253,7 +252,7 @@ class core_enrol_external extends external_api {
                     'preferences' => new external_multiple_structure(
                         new external_single_structure(
                             array(
-                                'name'  => new external_value(PARAM_ALPHANUMEXT, 'The name of the preferences'),
+                                'name'  => new external_value(PARAM_RAW, 'The name of the preferences'),
                                 'value' => new external_value(PARAM_RAW, 'The value of the custom field'),
                             )
                     ), 'User preferences', VALUE_OPTIONAL),
@@ -293,13 +292,16 @@ class core_enrol_external extends external_api {
      * @return array of courses
      */
     public static function get_users_courses($userid) {
-        global $USER, $DB;
+        global $CFG, $USER, $DB;
+
+        require_once($CFG->dirroot . '/course/lib.php');
 
         // Do basic automatic PARAM checks on incoming data, using params description
         // If any problems are found then exceptions are thrown with helpful error messages
         $params = self::validate_parameters(self::get_users_courses_parameters(), array('userid'=>$userid));
 
-        $courses = enrol_get_users_courses($params['userid'], true, 'id, shortname, fullname, idnumber, visible');
+        $courses = enrol_get_users_courses($params['userid'], true, 'id, shortname, fullname, idnumber, visible,
+                   summary, summaryformat, format, showgrades, lang, enablecompletion, category, startdate, enddate');
         $result = array();
 
         foreach ($courses as $course) {
@@ -311,7 +313,7 @@ class core_enrol_external extends external_api {
                 continue;
             }
 
-            if ($userid != $USER->id and !has_capability('moodle/course:viewparticipants', $context)) {
+            if ($userid != $USER->id and !course_can_view_participants($context)) {
                 // we need capability to view participants
                 continue;
             }
@@ -320,7 +322,34 @@ class core_enrol_external extends external_api {
             $enrolledsql = "SELECT COUNT('x') FROM ($enrolledsqlselect) enrolleduserids";
             $enrolledusercount = $DB->count_records_sql($enrolledsql, $enrolledparams);
 
-            $result[] = array('id'=>$course->id, 'shortname'=>$course->shortname, 'fullname'=>$course->fullname, 'idnumber'=>$course->idnumber,'visible'=>$course->visible, 'enrolledusercount'=>$enrolledusercount);
+            list($course->summary, $course->summaryformat) =
+                external_format_text($course->summary, $course->summaryformat, $context->id, 'course', 'summary', null);
+            $course->fullname = external_format_string($course->fullname, $context->id);
+            $course->shortname = external_format_string($course->shortname, $context->id);
+
+            $progress = null;
+            if ($course->enablecompletion) {
+                $progress = \core_completion\progress::get_course_progress_percentage($course);
+            }
+
+            $result[] = array(
+                'id' => $course->id,
+                'shortname' => $course->shortname,
+                'fullname' => $course->fullname,
+                'idnumber' => $course->idnumber,
+                'visible' => $course->visible,
+                'enrolledusercount' => $enrolledusercount,
+                'summary' => $course->summary,
+                'summaryformat' => $course->summaryformat,
+                'format' => $course->format,
+                'showgrades' => $course->showgrades,
+                'lang' => clean_param($course->lang, PARAM_LANG),
+                'enablecompletion' => $course->enablecompletion,
+                'category' => $course->category,
+                'progress' => $progress,
+                'startdate' => $course->startdate,
+                'enddate' => $course->enddate,
+            );
         }
 
         return $result;
@@ -341,9 +370,115 @@ class core_enrol_external extends external_api {
                     'enrolledusercount' => new external_value(PARAM_INT, 'Number of enrolled users in this course'),
                     'idnumber'  => new external_value(PARAM_RAW, 'id number of course'),
                     'visible'   => new external_value(PARAM_INT, '1 means visible, 0 means hidden course'),
+                    'summary'   => new external_value(PARAM_RAW, 'summary', VALUE_OPTIONAL),
+                    'summaryformat' => new external_format_value('summary', VALUE_OPTIONAL),
+                    'format'    => new external_value(PARAM_PLUGIN, 'course format: weeks, topics, social, site', VALUE_OPTIONAL),
+                    'showgrades' => new external_value(PARAM_BOOL, 'true if grades are shown, otherwise false', VALUE_OPTIONAL),
+                    'lang'      => new external_value(PARAM_LANG, 'forced course language', VALUE_OPTIONAL),
+                    'enablecompletion' => new external_value(PARAM_BOOL, 'true if completion is enabled, otherwise false',
+                                                                VALUE_OPTIONAL),
+                    'category' => new external_value(PARAM_INT, 'course category id', VALUE_OPTIONAL),
+                    'progress' => new external_value(PARAM_FLOAT, 'Progress percentage', VALUE_OPTIONAL),
+                    'startdate' => new external_value(PARAM_INT, 'Timestamp when the course start', VALUE_OPTIONAL),
+                    'enddate' => new external_value(PARAM_INT, 'Timestamp when the course end', VALUE_OPTIONAL),
                 )
             )
         );
+    }
+
+    /**
+     * Returns description of method parameters value
+     *
+     * @return external_description
+     */
+    public static function get_potential_users_parameters() {
+        return new external_function_parameters(
+            array(
+                'courseid' => new external_value(PARAM_INT, 'course id'),
+                'enrolid' => new external_value(PARAM_INT, 'enrolment id'),
+                'search' => new external_value(PARAM_RAW, 'query'),
+                'searchanywhere' => new external_value(PARAM_BOOL, 'find a match anywhere, or only at the beginning'),
+                'page' => new external_value(PARAM_INT, 'Page number'),
+                'perpage' => new external_value(PARAM_INT, 'Number per page'),
+            )
+        );
+    }
+
+    /**
+     * Get potential users.
+     *
+     * @param int $courseid Course id
+     * @param int $enrolid Enrolment id
+     * @param string $search The query
+     * @param boolean $searchanywhere Match anywhere in the string
+     * @param int $page Page number
+     * @param int $perpage Max per page
+     * @return array An array of users
+     */
+    public static function get_potential_users($courseid, $enrolid, $search, $searchanywhere, $page, $perpage) {
+        global $PAGE, $DB, $CFG;
+
+        require_once($CFG->dirroot.'/enrol/locallib.php');
+        require_once($CFG->dirroot.'/user/lib.php');
+
+        $params = self::validate_parameters(
+            self::get_potential_users_parameters(),
+            array(
+                'courseid' => $courseid,
+                'enrolid' => $enrolid,
+                'search' => $search,
+                'searchanywhere' => $searchanywhere,
+                'page' => $page,
+                'perpage' => $perpage
+            )
+        );
+        $context = context_course::instance($params['courseid']);
+        try {
+            self::validate_context($context);
+        } catch (Exception $e) {
+            $exceptionparam = new stdClass();
+            $exceptionparam->message = $e->getMessage();
+            $exceptionparam->courseid = $params['courseid'];
+            throw new moodle_exception('errorcoursecontextnotvalid' , 'webservice', '', $exceptionparam);
+        }
+        require_capability('moodle/course:enrolreview', $context);
+
+        $course = $DB->get_record('course', array('id' => $params['courseid']));
+        $manager = new course_enrolment_manager($PAGE, $course);
+
+        $users = $manager->get_potential_users($params['enrolid'],
+                                               $params['search'],
+                                               $params['searchanywhere'],
+                                               $params['page'],
+                                               $params['perpage']);
+
+        $results = array();
+        // Add also extra user fields.
+        $requiredfields = array_merge(
+            ['id', 'fullname', 'profileimageurl', 'profileimageurlsmall'],
+            get_extra_user_fields($context)
+        );
+        foreach ($users['users'] as $id => $user) {
+            // Note: We pass the course here to validate that the current user can at least view user details in this course.
+            // The user we are looking at is not in this course yet though - but we only fetch the minimal set of
+            // user records, and the user has been validated to have course:enrolreview in this course. Otherwise
+            // there is no way to find users who aren't in the course in order to enrol them.
+            if ($userdetails = user_get_user_details($user, $course, $requiredfields)) {
+                $results[] = $userdetails;
+            }
+        }
+        return $results;
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     */
+    public static function get_potential_users_returns() {
+        global $CFG;
+        require_once($CFG->dirroot . '/user/externallib.php');
+        return new external_multiple_structure(core_user_external::user_description());
     }
 
     /**
@@ -363,11 +498,17 @@ class core_enrol_external extends external_api {
                         )
                     ), 'Option names:
                             * withcapability (string) return only users with this capability. This option requires \'moodle/role:review\' on the course context.
-                            * groupid (integer) return only users in this group id. This option requires \'moodle/site:accessallgroups\' on the course context.
+                            * groupid (integer) return only users in this group id. If the course has groups enabled and this param
+                                                isn\'t defined, returns all the viewable users.
+                                                This option requires \'moodle/site:accessallgroups\' on the course context if the
+                                                user doesn\'t belong to the group.
                             * onlyactive (integer) return only users with active enrolments and matching time restrictions. This option requires \'moodle/course:enrolreview\' on the course context.
                             * userfields (\'string, string, ...\') return only the values of these user fields.
                             * limitfrom (integer) sql limit from.
-                            * limitnumber (integer) maximum number of returned users.', VALUE_DEFAULT, array()),
+                            * limitnumber (integer) maximum number of returned users.
+                            * sortby (string) sort by id, firstname or lastname. For ordering like the site does, use siteorder.
+                            * sortdirection (string) ASC or DESC',
+                            VALUE_DEFAULT, array()),
             )
         );
     }
@@ -384,6 +525,8 @@ class core_enrol_external extends external_api {
      */
     public static function get_enrolled_users($courseid, $options = array()) {
         global $CFG, $USER, $DB;
+
+        require_once($CFG->dirroot . '/course/lib.php');
         require_once($CFG->dirroot . "/user/lib.php");
 
         $params = self::validate_parameters(
@@ -399,6 +542,9 @@ class core_enrol_external extends external_api {
         $userfields     = array();
         $limitfrom = 0;
         $limitnumber = 0;
+        $sortby = 'us.id';
+        $sortparams = array();
+        $sortdirection = 'ASC';
         foreach ($options as $option) {
             switch ($option['name']) {
             case 'withcapability':
@@ -422,6 +568,26 @@ class core_enrol_external extends external_api {
             case 'limitnumber' :
                 $limitnumber = clean_param($option['value'], PARAM_INT);
                 break;
+            case 'sortby':
+                $sortallowedvalues = array('id', 'firstname', 'lastname', 'siteorder');
+                if (!in_array($option['value'], $sortallowedvalues)) {
+                    throw new invalid_parameter_exception('Invalid value for sortby parameter (value: ' . $option['value'] . '),' .
+                        'allowed values are: ' . implode(',', $sortallowedvalues));
+                }
+                if ($option['value'] == 'siteorder') {
+                    list($sortby, $sortparams) = users_order_by_sql('us');
+                } else {
+                    $sortby = 'us.' . $option['value'];
+                }
+                break;
+            case 'sortdirection':
+                $sortdirection = strtoupper($option['value']);
+                $directionallowedvalues = array('ASC', 'DESC');
+                if (!in_array($sortdirection, $directionallowedvalues)) {
+                    throw new invalid_parameter_exception('Invalid value for sortdirection parameter
+                        (value: ' . $sortdirection . '),' . 'allowed values are: ' . implode(',', $directionallowedvalues));
+                }
+                break;
             }
         }
 
@@ -441,17 +607,14 @@ class core_enrol_external extends external_api {
             throw new moodle_exception('errorcoursecontextnotvalid' , 'webservice', '', $exceptionparam);
         }
 
-        if ($courseid == SITEID) {
-            require_capability('moodle/site:viewparticipants', $context);
-        } else {
-            require_capability('moodle/course:viewparticipants', $context);
-        }
+        course_require_view_participants($context);
+
         // to overwrite this parameter, you need role:review capability
         if ($withcapability) {
             require_capability('moodle/role:review', $coursecontext);
         }
         // need accessallgroups capability if you want to overwrite this option
-        if (!empty($groupid) && groups_is_member($groupid)) {
+        if (!empty($groupid) && !groups_is_member($groupid)) {
             require_capability('moodle/site:accessallgroups', $coursecontext);
         }
         // to overwrite this option, you need course:enrolereview permission
@@ -463,10 +626,30 @@ class core_enrol_external extends external_api {
         $ctxselect = ', ' . context_helper::get_preload_record_columns_sql('ctx');
         $ctxjoin = "LEFT JOIN {context} ctx ON (ctx.instanceid = u.id AND ctx.contextlevel = :contextlevel)";
         $enrolledparams['contextlevel'] = CONTEXT_USER;
-        $sql = "SELECT u.* $ctxselect
-                  FROM {user} u $ctxjoin
-                 WHERE u.id IN ($enrolledsql)
-                 ORDER BY u.id ASC";
+
+        $groupjoin = '';
+        if (empty($groupid) && groups_get_course_groupmode($course) == SEPARATEGROUPS &&
+                !has_capability('moodle/site:accessallgroups', $coursecontext)) {
+            // Filter by groups the user can view.
+            $usergroups = groups_get_user_groups($course->id);
+            if (!empty($usergroups['0'])) {
+                list($groupsql, $groupparams) = $DB->get_in_or_equal($usergroups['0'], SQL_PARAMS_NAMED);
+                $groupjoin = "JOIN {groups_members} gm ON (u.id = gm.userid AND gm.groupid $groupsql)";
+                $enrolledparams = array_merge($enrolledparams, $groupparams);
+            } else {
+                // User doesn't belong to any group, so he can't see any user. Return an empty array.
+                return array();
+            }
+        }
+        $sql = "SELECT us.*
+                  FROM {user} us
+                  JOIN (
+                      SELECT DISTINCT u.id $ctxselect
+                        FROM {user} u $ctxjoin $groupjoin
+                       WHERE u.id IN ($enrolledsql)
+                  ) q ON q.id = us.id
+                ORDER BY $sortby $sortdirection";
+        $enrolledparams = array_merge($enrolledparams, $sortparams);
         $enrolledusers = $DB->get_recordset_sql($sql, $enrolledparams, $limitfrom, $limitnumber);
         $users = array();
         foreach ($enrolledusers as $user) {
@@ -546,7 +729,7 @@ class core_enrol_external extends external_api {
                     'preferences' => new external_multiple_structure(
                         new external_single_structure(
                             array(
-                                'name'  => new external_value(PARAM_ALPHANUMEXT, 'The name of the preferences'),
+                                'name'  => new external_value(PARAM_RAW, 'The name of the preferences'),
                                 'value' => new external_value(PARAM_RAW, 'The value of the custom field'),
                             )
                     ), 'User preferences', VALUE_OPTIONAL),
@@ -581,14 +764,19 @@ class core_enrol_external extends external_api {
      *
      * @param int $courseid
      * @return array of course enrolment methods
+     * @throws moodle_exception
      */
     public static function get_course_enrolment_methods($courseid) {
+        global $DB;
 
         $params = self::validate_parameters(self::get_course_enrolment_methods_parameters(), array('courseid' => $courseid));
+        self::validate_context(context_system::instance());
 
-        $coursecontext = context_course::instance($params['courseid']);
-        $categorycontext = $coursecontext->get_parent_context();
-        self::validate_context($categorycontext);
+        $course = $DB->get_record('course', array('id' => $params['courseid']), '*', MUST_EXIST);
+        $context = context_course::instance($course->id);
+        if (!$course->visible and !has_capability('moodle/course:viewhiddencourses', $context)) {
+            throw new moodle_exception('coursehidden');
+        }
 
         $result = array();
         $enrolinstances = enrol_get_instances($params['courseid'], true);
@@ -618,6 +806,193 @@ class core_enrol_external extends external_api {
                     'status' => new external_value(PARAM_RAW, 'status of enrolment plugin'),
                     'wsfunction' => new external_value(PARAM_ALPHANUMEXT, 'webservice function to get more information', VALUE_OPTIONAL),
                 )
+            )
+        );
+    }
+
+    /**
+     * Returns description of edit_user_enrolment() parameters
+     *
+     * @return external_function_parameters
+     */
+    public static function edit_user_enrolment_parameters() {
+        return new external_function_parameters(
+            array(
+                'courseid' => new external_value(PARAM_INT, 'User enrolment ID'),
+                'ueid' => new external_value(PARAM_INT, 'User enrolment ID'),
+                'status' => new external_value(PARAM_INT, 'Enrolment status'),
+                'timestart' => new external_value(PARAM_INT, 'Enrolment start timestamp', VALUE_DEFAULT, 0),
+                'timeend' => new external_value(PARAM_INT, 'Enrolment end timestamp', VALUE_DEFAULT, 0),
+            )
+        );
+    }
+
+    /**
+     * External function that updates a given user enrolment.
+     *
+     * @param int $courseid The course ID.
+     * @param int $ueid The user enrolment ID.
+     * @param int $status The enrolment status.
+     * @param int $timestart Enrolment start timestamp.
+     * @param int $timeend Enrolment end timestamp.
+     * @return array An array consisting of the processing result, errors and form output, if available.
+     */
+    public static function edit_user_enrolment($courseid, $ueid, $status, $timestart = 0, $timeend = 0) {
+        global $CFG, $DB, $PAGE;
+
+        $params = self::validate_parameters(self::edit_user_enrolment_parameters(), [
+            'courseid' => $courseid,
+            'ueid' => $ueid,
+            'status' => $status,
+            'timestart' => $timestart,
+            'timeend' => $timeend,
+        ]);
+
+        $course = get_course($courseid);
+        $context = context_course::instance($course->id);
+        self::validate_context($context);
+
+        $userenrolment = $DB->get_record('user_enrolments', ['id' => $params['ueid']], '*', MUST_EXIST);
+        $userenroldata = [
+            'status' => $params['status'],
+            'timestart' => $params['timestart'],
+            'timeend' => $params['timeend'],
+        ];
+
+        $result = false;
+        $errors = [];
+
+        // Validate data against the edit user enrolment form.
+        $instance = $DB->get_record('enrol', ['id' => $userenrolment->enrolid], '*', MUST_EXIST);
+        $plugin = enrol_get_plugin($instance->enrol);
+        require_once("$CFG->dirroot/enrol/editenrolment_form.php");
+        $customformdata = [
+            'ue' => $userenrolment,
+            'modal' => true,
+            'enrolinstancename' => $plugin->get_instance_name($instance)
+        ];
+        $mform = new \enrol_user_enrolment_form(null, $customformdata, 'post', '', null, true, $userenroldata);
+        $mform->set_data($userenroldata);
+        $validationerrors = $mform->validation($userenroldata, null);
+        if (empty($validationerrors)) {
+            require_once($CFG->dirroot . '/enrol/locallib.php');
+            $manager = new course_enrolment_manager($PAGE, $course);
+            $result = $manager->edit_enrolment($userenrolment, (object)$userenroldata);
+        } else {
+            foreach ($validationerrors as $key => $errormessage) {
+                $errors[] = (object)[
+                    'key' => $key,
+                    'message' => $errormessage
+                ];
+            }
+        }
+
+        return [
+            'result' => $result,
+            'errors' => $errors,
+        ];
+    }
+
+    /**
+     * Returns description of edit_user_enrolment() result value
+     *
+     * @return external_description
+     */
+    public static function edit_user_enrolment_returns() {
+        return new external_single_structure(
+            array(
+                'result' => new external_value(PARAM_BOOL, 'True if the user\'s enrolment was successfully updated'),
+                'errors' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'key' => new external_value(PARAM_TEXT, 'The data that failed the validation'),
+                            'message' => new external_value(PARAM_TEXT, 'The error message'),
+                        )
+                    ), 'List of validation errors'
+                ),
+            )
+        );
+    }
+
+    /**
+     * Returns description of unenrol_user_enrolment() parameters
+     *
+     * @return external_function_parameters
+     */
+    public static function unenrol_user_enrolment_parameters() {
+        return new external_function_parameters(
+            array(
+                'ueid' => new external_value(PARAM_INT, 'User enrolment ID')
+            )
+        );
+    }
+
+    /**
+     * External function that unenrols a given user enrolment.
+     *
+     * @param int $ueid The user enrolment ID.
+     * @return array An array consisting of the processing result, errors.
+     */
+    public static function unenrol_user_enrolment($ueid) {
+        global $CFG, $DB, $PAGE;
+
+        $params = self::validate_parameters(self::unenrol_user_enrolment_parameters(), [
+            'ueid' => $ueid
+        ]);
+
+        $result = false;
+        $errors = [];
+
+        $userenrolment = $DB->get_record('user_enrolments', ['id' => $params['ueid']], '*');
+        if ($userenrolment) {
+            $userid = $userenrolment->userid;
+            $enrolid = $userenrolment->enrolid;
+            $enrol = $DB->get_record('enrol', ['id' => $enrolid], '*', MUST_EXIST);
+            $courseid = $enrol->courseid;
+            $course = get_course($courseid);
+            $context = context_course::instance($course->id);
+            self::validate_context($context);
+        } else {
+            $validationerrors['invalidrequest'] = get_string('invalidrequest', 'enrol');
+        }
+
+        // If the userenrolment exists, unenrol the user.
+        if (!isset($validationerrors)) {
+            require_once($CFG->dirroot . '/enrol/locallib.php');
+            $manager = new course_enrolment_manager($PAGE, $course);
+            $result = $manager->unenrol_user($userenrolment);
+        } else {
+            foreach ($validationerrors as $key => $errormessage) {
+                $errors[] = (object)[
+                    'key' => $key,
+                    'message' => $errormessage
+                ];
+            }
+        }
+
+        return [
+            'result' => $result,
+            'errors' => $errors,
+        ];
+    }
+
+    /**
+     * Returns description of unenrol_user_enrolment() result value
+     *
+     * @return external_description
+     */
+    public static function unenrol_user_enrolment_returns() {
+        return new external_single_structure(
+            array(
+                'result' => new external_value(PARAM_BOOL, 'True if the user\'s enrolment was successfully updated'),
+                'errors' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'key' => new external_value(PARAM_TEXT, 'The data that failed the validation'),
+                            'message' => new external_value(PARAM_TEXT, 'The error message'),
+                        )
+                    ), 'List of validation errors'
+                ),
             )
         );
     }
@@ -766,305 +1141,5 @@ class core_role_external extends external_api {
      */
     public static function unassign_roles_returns() {
         return null;
-    }
-}
-
-
-/**
- * Deprecated enrol and role external functions
- *
- * @package    core_enrol
- * @copyright  2010 Jerome Mouneyrac
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since Moodle 2.0
- * @deprecated Moodle 2.2 MDL-29106 - Please do not use this class any more.
- * @see core_enrol_external
- * @see core_role_external
- */
-class moodle_enrol_external extends external_api {
-
-
-    /**
-     * Returns description of method parameters
-     *
-     * @return external_function_parameters
-     * @since Moodle 2.0
-     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @see core_enrol_external::get_enrolled_users_parameters()
-     */
-    public static function get_enrolled_users_parameters() {
-        return new external_function_parameters(
-            array(
-                'courseid'       => new external_value(PARAM_INT, 'Course id'),
-                'withcapability' => new external_value(PARAM_CAPABILITY, 'User should have this capability', VALUE_DEFAULT, null),
-                'groupid'        => new external_value(PARAM_INT, 'Group id, null means all groups', VALUE_DEFAULT, null),
-                'onlyactive'     => new external_value(PARAM_INT, 'True means only active, false means all participants', VALUE_DEFAULT, 0),
-            )
-        );
-    }
-
-    /**
-     * Get list of course participants.
-     *
-     * @param int $courseid
-     * @param text $withcapability
-     * @param int $groupid
-     * @param bool $onlyactive
-     * @return array of course participants
-     * @since Moodle 2.0
-     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @see core_enrol_external::get_enrolled_users()
-     */
-    public static function get_enrolled_users($courseid, $withcapability = null, $groupid = null, $onlyactive = false) {
-        global $DB, $CFG, $USER;
-
-        // Do basic automatic PARAM checks on incoming data, using params description
-        // If any problems are found then exceptions are thrown with helpful error messages
-        $params = self::validate_parameters(self::get_enrolled_users_parameters(), array(
-            'courseid'=>$courseid,
-            'withcapability'=>$withcapability,
-            'groupid'=>$groupid,
-            'onlyactive'=>$onlyactive)
-        );
-
-        $coursecontext = context_course::instance($params['courseid'], IGNORE_MISSING);
-        if ($courseid == SITEID) {
-            $context = context_system::instance();
-        } else {
-            $context = $coursecontext;
-        }
-
-        try {
-            self::validate_context($context);
-        } catch (Exception $e) {
-            $exceptionparam = new stdClass();
-            $exceptionparam->message = $e->getMessage();
-            $exceptionparam->courseid = $params['courseid'];
-            throw new moodle_exception('errorcoursecontextnotvalid' , 'webservice', '', $exceptionparam);
-        }
-
-        if ($courseid == SITEID) {
-            require_capability('moodle/site:viewparticipants', $context);
-        } else {
-            require_capability('moodle/course:viewparticipants', $context);
-        }
-
-        if ($withcapability) {
-            require_capability('moodle/role:review', $coursecontext);
-        }
-        if ($groupid && groups_is_member($groupid)) {
-            require_capability('moodle/site:accessallgroups', $coursecontext);
-        }
-        if ($onlyactive) {
-            require_capability('moodle/course:enrolreview', $coursecontext);
-        }
-
-        list($sqlparams, $params) =  get_enrolled_sql($coursecontext, $withcapability, $groupid, $onlyactive);
-        $sql = "SELECT ue.userid, e.courseid, u.firstname, u.lastname, u.username, c.id as usercontextid
-                  FROM {user_enrolments} ue
-                  JOIN {enrol} e ON (e.id = ue.enrolid)
-                  JOIN {user} u ON (ue.userid = u.id)
-                  JOIN {context} c ON (u.id = c.instanceid AND contextlevel = " . CONTEXT_USER . ")
-                  WHERE e.courseid = :courseid AND ue.userid IN ($sqlparams)
-                  GROUP BY ue.userid, e.courseid, u.firstname, u.lastname, u.username, c.id";
-        $params['courseid'] = $courseid;
-        $enrolledusers = $DB->get_records_sql($sql, $params);
-        $result = array();
-        $isadmin = is_siteadmin($USER);
-        $canviewfullnames = has_capability('moodle/site:viewfullnames', $context);
-        foreach ($enrolledusers as $enrolleduser) {
-            $profilimgurl = moodle_url::make_pluginfile_url($enrolleduser->usercontextid, 'user', 'icon', NULL, '/', 'f1');
-            $profilimgurlsmall = moodle_url::make_pluginfile_url($enrolleduser->usercontextid, 'user', 'icon', NULL, '/', 'f2');
-            $resultuser = array(
-                'courseid' => $enrolleduser->courseid,
-                'userid' => $enrolleduser->userid,
-                'fullname' => fullname($enrolleduser),
-                'profileimgurl' => $profilimgurl->out(false),
-                'profileimgurlsmall' => $profilimgurlsmall->out(false)
-            );
-            // check if we can return username
-            if ($isadmin) {
-                $resultuser['username'] = $enrolleduser->username;
-            }
-            // check if we can return first and last name
-            if ($isadmin or $canviewfullnames) {
-                $resultuser['firstname'] = $enrolleduser->firstname;
-                $resultuser['lastname'] = $enrolleduser->lastname;
-            }
-            $result[] = $resultuser;
-        }
-
-        return $result;
-    }
-
-    /**
-     * Returns description of method result value
-     *
-     * @return external_description
-     * @since Moodle 2.0
-     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @see core_enrol_external::get_enrolled_users_returns()
-     */
-    public static function get_enrolled_users_returns() {
-        return new external_multiple_structure(
-            new external_single_structure(
-                array(
-                    'courseid' => new external_value(PARAM_INT, 'id of course'),
-                    'userid' => new external_value(PARAM_INT, 'id of user'),
-                    'firstname' => new external_value(PARAM_RAW, 'first name of user', VALUE_OPTIONAL),
-                    'lastname' => new external_value(PARAM_RAW, 'last name of user', VALUE_OPTIONAL),
-                    'fullname' => new external_value(PARAM_RAW, 'fullname of user'),
-                    'username' => new external_value(PARAM_RAW, 'username of user', VALUE_OPTIONAL),
-                    'profileimgurl' => new external_value(PARAM_URL, 'url of the profile image'),
-                    'profileimgurlsmall' => new external_value(PARAM_URL, 'url of the profile image (small version)')
-                )
-            )
-        );
-    }
-
-    /**
-     * Marking the method as deprecated.
-     *
-     * @return bool
-     */
-    public static function get_enrolled_users_is_deprecated() {
-        return true;
-    }
-
-    /**
-     * Returns description of method parameters
-     *
-     * @return external_function_parameters
-     * @since Moodle 2.1
-     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @see core_enrol_external::get_users_courses_parameters()
-     */
-    public static function get_users_courses_parameters() {
-        return core_enrol_external::get_users_courses_parameters();
-    }
-
-    /**
-     * Get list of courses user is enrolled in (only active enrolments are returned).
-     * Please note the current user must be able to access the course, otherwise the course is not included.
-     *
-     * @param int $userid
-     * @return array of courses
-     * @since Moodle 2.1
-     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @see use core_enrol_external::get_users_courses()
-     */
-    public static function get_users_courses($userid) {
-        return core_enrol_external::get_users_courses($userid);
-    }
-
-    /**
-     * Returns description of method result value
-     *
-     * @return external_description
-     * @since Moodle 2.1
-     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @see core_enrol_external::get_users_courses_returns()
-     */
-    public static function get_users_courses_returns() {
-        return core_enrol_external::get_users_courses_returns();
-    }
-
-    /**
-     * Marking the method as deprecated.
-     *
-     * @return bool
-     */
-    public static function get_users_courses_is_deprecated() {
-        return true;
-    }
-
-    /**
-     * Returns description of method parameters
-     *
-     * @return external_function_parameters
-     * @since Moodle 2.0
-     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @see core_role_external::assign_roles_parameters()
-     */
-    public static function role_assign_parameters() {
-        return core_role_external::assign_roles_parameters();
-    }
-
-    /**
-     * Manual role assignments to users
-     *
-     * @param array $assignments An array of manual role assignment
-     * @since Moodle 2.0
-     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @see core_role_external::assign_roles()
-     */
-    public static function role_assign($assignments) {
-        return core_role_external::assign_roles($assignments);
-    }
-
-    /**
-     * Returns description of method result value
-     *
-     * @return null
-     * @since Moodle 2.0
-     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @see core_role_external::assign_roles_returns()
-     */
-    public static function role_assign_returns() {
-        return core_role_external::assign_roles_returns();
-    }
-
-    /**
-     * Marking the method as deprecated.
-     *
-     * @return bool
-     */
-    public static function role_assign_is_deprecated() {
-        return true;
-    }
-
-    /**
-     * Returns description of method parameters
-     *
-     * @return external_function_parameters
-     * @since Moodle 2.0
-     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @see core_role_external::unassign_roles_parameters()
-     */
-    public static function role_unassign_parameters() {
-        return core_role_external::unassign_roles_parameters();
-    }
-
-     /**
-     * Unassign roles from users
-     *
-     * @param array $unassignments An array of unassignment
-     * @since Moodle 2.0
-     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @see core_role_external::unassign_roles()
-     */
-    public static function role_unassign($unassignments) {
-         return core_role_external::unassign_roles($unassignments);
-    }
-
-   /**
-     * Returns description of method result value
-     *
-     * @return null
-     * @since Moodle 2.0
-     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @see core_role_external::unassign_roles_returns()
-     */
-    public static function role_unassign_returns() {
-        return core_role_external::unassign_roles_returns();
-    }
-
-    /**
-     * Marking the method as deprecated.
-     *
-     * @return bool
-     */
-    public static function role_unassign_is_deprecated() {
-        return true;
     }
 }

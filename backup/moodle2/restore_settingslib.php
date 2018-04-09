@@ -79,6 +79,30 @@ class restore_comments_setting extends restore_role_assignments_setting {}
 class restore_badges_setting extends restore_generic_setting {}
 
 /**
+ * root setting to control if competencies will also be restored.
+ */
+class restore_competencies_setting extends restore_generic_setting {
+
+    /**
+     * restore_competencies_setting constructor.
+     * @param bool $hascompetencies Flag whether to set the restore setting as checked and unlocked.
+     */
+    public function __construct($hascompetencies) {
+        $defaultvalue = false;
+        $visibility = base_setting::HIDDEN;
+        $status = base_setting::LOCKED_BY_CONFIG;
+        if (\core_competency\api::is_enabled()) {
+            $visibility = base_setting::VISIBLE;
+            if ($hascompetencies) {
+                $defaultvalue = true;
+                $status = base_setting::NOT_LOCKED;
+            }
+        }
+        parent::__construct('competencies', base_setting::IS_BOOLEAN, $defaultvalue, $visibility, $status);
+    }
+}
+
+/**
  * root setting to control if restore will create
  * events or no, depends of @restore_users_setting
  * exactly in the same way than @restore_role_assignments_setting so we extend from it
@@ -118,6 +142,41 @@ class restore_course_generic_setting extends course_backup_setting {}
  * Setting to define is we are going to overwrite course configuration
  */
 class restore_course_overwrite_conf_setting extends restore_course_generic_setting {}
+
+/**
+ * Setting to switch between current and new course name/startdate
+ *
+ * @copyright   2017 Marina Glancy
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class restore_course_defaultcustom_setting extends restore_course_generic_setting {
+    /**
+     * Validates that the value $value has type $vtype
+     * @param int $vtype
+     * @param mixed $value
+     * @return mixed
+     */
+    public function validate_value($vtype, $value) {
+        if ($value === false) {
+            // Value "false" means default and is allowed for this setting type even if it does not match $vtype.
+            return $value;
+        }
+        return parent::validate_value($vtype, $value);
+    }
+
+    /**
+     * Special method for this element only. When value is "false" returns the default value.
+     * @return mixed
+     */
+    public function get_normalized_value() {
+        $value = $this->get_value();
+        if ($value === false && $this->get_ui() instanceof backup_setting_ui_defaultcustom) {
+            $attributes = $this->get_ui()->get_attributes();
+            return $attributes['defaultvalue'];
+        }
+        return $value;
+    }
+}
 
 
 class restore_course_generic_text_setting extends restore_course_generic_setting {

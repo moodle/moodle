@@ -104,8 +104,13 @@ class restore_qtype_match_plugin extends restore_qtype_plugin {
 
             // Adjust some columns.
             $data->questionid = $newquestionid;
-            $newitemid = $DB->insert_record('qtype_match_options', $data);
-            $this->set_mapping('qtype_match_options', $oldid, $newitemid);
+
+            // It is possible for old backup files to contain unique key violations.
+            // We need to check to avoid that.
+            if (!$DB->record_exists('qtype_match_options', array('questionid' => $data->questionid))) {
+                $newitemid = $DB->insert_record('qtype_match_options', $data);
+                $this->set_mapping('qtype_match_options', $oldid, $newitemid);
+            }
         }
     }
 

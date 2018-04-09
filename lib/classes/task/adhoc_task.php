@@ -40,6 +40,9 @@ abstract class adhoc_task extends task_base {
     /** @var integer|null $id - Adhoc tasks each have their own database record id. */
     private $id = null;
 
+    /** @var integer|null $userid - Adhoc tasks may choose to run as a specific user. */
+    private $userid = null;
+
     /**
      * Setter for $id.
      * @param int|null $id
@@ -49,11 +52,11 @@ abstract class adhoc_task extends task_base {
     }
 
     /**
-     * Getter for $id.
-     * @return int|null $id
+     * Getter for $userid.
+     * @return int|null $userid
      */
-    public function get_id() {
-        return $this->id;
+    public function get_userid() {
+        return $this->userid;
     }
 
     /**
@@ -88,5 +91,20 @@ abstract class adhoc_task extends task_base {
         return $this->customdata;
     }
 
+    /**
+     * Getter for $id.
+     * @return int|null $id
+     */
+    public function get_id() {
+        return $this->id;
+    }
+
+    /**
+     * Setter for $userid.
+     * @param int|null $userid
+     */
+    public function set_userid($userid) {
+        $this->userid = $userid;
+    }
 
 }

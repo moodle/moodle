@@ -30,7 +30,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['language'] = 'Langue';
+$string['language'] = 'Lenga';
+$string['moodlelogo'] = 'Lògo Moodle';
 $string['next'] = 'Seguent';
-$string['previous'] = 'Précédent';
-$string['reload'] = 'Actualiser';
+$string['previous'] = 'Precedent';
+$string['reload'] = 'Actualizar';

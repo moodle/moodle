@@ -7,8 +7,8 @@ Feature: Add activities to courses
   Background:
     Given the following "users" exist:
       | username | firstname | lastname | email |
-      | student1 | Student | 1 | student1@asd.com |
-      | student2 | Student | 2 | student2@asd.com |
+      | student1 | Student | 1 | student1@example.com |
+      | student2 | Student | 2 | student2@example.com |
     And the following "courses" exist:
       | fullname | shortname | format |
       | Course 1 | C1 | topics |
@@ -17,33 +17,39 @@ Feature: Add activities to courses
       | student1 | C1 | student |
       | student2 | C1 | student |
     And I log in as "admin"
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
 
   @javascript
   Scenario: Add an activity to a course
     When I add a "Database" to section "3" and I fill the form with:
       | Name | Test name |
       | Description | Test database description |
-      | Entries required for completion | 9 |
+      | ID number | TESTNAME |
       | Allow comments on entries | Yes |
     And I turn editing mode off
     Then I should not see "Adding a new"
-    And I follow "Test name"
-    And I click on "Edit settings" "link" in the "Administration" "block"
+    And I turn editing mode on
+    And I open "Test name" actions menu
+    And I click on "Edit settings" "link" in the "Test name" activity
     And I expand all fieldsets
     And the field "Name" matches value "Test name"
-    And the field "Entries required for completion" matches value "9"
+    And the field "ID number" matches value "TESTNAME"
     And the field "Allow comments on entries" matches value "Yes"
 
   @javascript
-  Scenario: Add an activity without the required fields
+  Scenario: Add an activity supplying only the name
     When I add a "Database" to section "3" and I fill the form with:
       | Name | Test name |
-    And I press "Save and return to course"
-    Then I should see "Adding a new"
-    And I should see "Required"
-    And I press "Cancel"
+    Then I should see "Test name"
+
+  @javascript
+  Scenario: Set activity description to required then add an activity supplying only the name
+    Given I set the following administration settings values:
+      | requiremodintro | Yes |
+    When I am on "Course 1" course homepage
+    And I add a "Database" to section "3" and I fill the form with:
+      | Name | Test name |
+    Then I should see "Required"
 
   Scenario: Add an activity to a course with Javascript disabled
     Then I should see "Add a resource to section 'Topic 1'"

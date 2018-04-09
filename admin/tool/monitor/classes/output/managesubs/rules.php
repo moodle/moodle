@@ -203,27 +203,24 @@ class rules extends \table_sql implements \renderable {
     /**
      * Gets a list of courses where the current user can subscribe to rules as a dropdown.
      *
+     * @param bool $choose A flag for whether to show the 'choose...' option in the select box.
      * @return \single_select|bool returns the list of courses, or false if the select box
      *      should not be displayed.
      */
-    public function get_user_courses_select() {
-        global $DB;
-
-        // If the number of courses on the site exceed the maximum drop down limit do not display the select box.
-        $numcourses = $DB->count_records('course');
-        if ($numcourses > COURSE_MAX_COURSES_PER_DROPDOWN) {
+    public function get_user_courses_select($choose = false) {
+        $options = tool_monitor_get_user_courses();
+        // If we have no options then don't create a select element.
+        if (!$options) {
             return false;
         }
-        $orderby = 'visible DESC, sortorder ASC';
-        $options = array(0 => get_string('site'));
-        if ($courses = get_user_capability_course('tool/monitor:subscribe', null, true, 'fullname', $orderby)) {
-            foreach ($courses as $course) {
-                $options[$course->id] = format_string($course->fullname, true,
-                    array('context' => \context_course::instance($course->id)));
-            }
+        $selected = $this->courseid;
+        $nothing = array();
+        if ($choose) {
+            $selected = null;
+            $nothing = array('choosedots');
         }
         $url = new \moodle_url('/admin/tool/monitor/index.php');
-        $select = new \single_select($url, 'courseid', $options, $this->courseid);
+        $select = new \single_select($url, 'courseid', $options, $selected, $nothing);
         $select->set_label(get_string('selectacourse', 'tool_monitor'));
         return $select;
     }

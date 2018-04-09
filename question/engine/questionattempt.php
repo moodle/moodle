@@ -49,10 +49,10 @@ class question_attempt {
     const USE_RAW_DATA = 'use raw data';
 
     /**
-     * @var string special value used by manual grading because {@link PARAM_FLOAT}
-     * converts '' to 0.
+     * @var string Should not longer be used.
+     * @deprecated since Moodle 3.0
      */
-    const PARAM_MARK = 'parammark';
+    const PARAM_MARK = PARAM_RAW_TRIMMED;
 
     /**
      * @var string special value to indicate a response variable that is uploaded
@@ -362,7 +362,7 @@ class question_attempt {
     /**
      * Get one of the steps in this attempt.
      *
-     * @param int $i the step number.
+     * @param int $i the step number, which counts from 0.
      * @return question_attempt_step
      */
     public function get_step($i) {
@@ -649,18 +649,29 @@ class question_attempt {
 
     /**
      * This is used by the manual grading code, particularly in association with
-     * validation. If there is a mark submitted in the request, then use that,
-     * otherwise use the latest mark for this question.
-     * @return number the current mark for this question.
-     * {@link get_fraction()} * {@link get_max_mark()}.
+     * validation. It gets the current manual mark for a question, in exactly the string
+     * form that the teacher entered it, if possible. This may come from the current
+     * POST request, if there is one, otherwise from the database.
+     *
+     * @return string the current manual mark for this question, in the format the teacher typed,
+     *     if possible.
      */
     public function get_current_manual_mark() {
-        $mark = $this->get_submitted_var($this->get_behaviour_field_name('mark'), question_attempt::PARAM_MARK);
-        if (is_null($mark)) {
-            return $this->get_mark();
-        } else {
+        // Is there a current value in the current POST data? If so, use that.
+        $mark = $this->get_submitted_var($this->get_behaviour_field_name('mark'), PARAM_RAW_TRIMMED);
+        if ($mark !== null) {
             return $mark;
         }
+
+        // Otherwise, use the stored value.
+        // If the question max mark has not changed, use the stored value that was input.
+        $storedmaxmark = $this->get_last_behaviour_var('maxmark');
+        if ($storedmaxmark !== null && ($storedmaxmark - $this->get_max_mark()) < 0.0000005) {
+            return $this->get_last_behaviour_var('mark');
+        }
+
+        // The max mark for this question has changed so we must re-scale the current mark.
+        return format_float($this->get_mark(), 7, true, true);
     }
 
     /**
@@ -746,6 +757,30 @@ class question_attempt {
      */
     public function summarise_action(question_attempt_step $step) {
         return $this->behaviour->summarise_action($step);
+    }
+
+    /**
+     * Return one of the bits of metadata for a this question attempt.
+     * @param string $name the name of the metadata variable to return.
+     * @return string the value of that metadata variable.
+     */
+    public function get_metadata($name) {
+        return $this->get_step(0)->get_metadata_var($name);
+    }
+
+    /**
+     * Set some metadata for this question attempt.
+     * @param string $name the name of the metadata variable to return.
+     * @param string $value the value to set that metadata variable to.
+     */
+    public function set_metadata($name, $value) {
+        $firststep = $this->get_step(0);
+        if (!$firststep->has_metadata_var($name)) {
+            $this->observer->notify_metadata_added($this, $name);
+        } else if ($value !== $firststep->get_metadata_var($name)) {
+            $this->observer->notify_metadata_modified($this, $name);
+        }
+        $firststep->set_metadata_var($name, $value);
     }
 
     /**
@@ -931,6 +966,10 @@ class question_attempt {
     public function start($preferredbehaviour, $variant, $submitteddata = array(),
             $timestamp = null, $userid = null, $existingstepid = null) {
 
+        if ($this->get_num_steps() > 0) {
+            throw new coding_exception('Cannot start a question that is already started.');
+        }
+
         // Initialise the behaviour.
         $this->variant = $variant;
         if (is_string($preferredbehaviour)) {
@@ -1002,9 +1041,6 @@ class question_attempt {
      */
     public function get_submitted_var($name, $type, $postdata = null) {
         switch ($type) {
-            case self::PARAM_MARK:
-                // Special case to work around PARAM_FLOAT converting '' to 0.
-                return question_utils::clean_param_mark($this->get_submitted_var($name, PARAM_RAW_TRIMMED, $postdata));
 
             case self::PARAM_FILES:
                 return $this->process_response_files($name, $name, $postdata);
@@ -1024,6 +1060,29 @@ class question_attempt {
 
                 return $var;
         }
+    }
+
+    /**
+     * Validate the manual mark for a question.
+     * @param unknown $currentmark the user input (e.g. '1,0', '1,0' or 'invalid'.
+     * @return string any errors with the value, or '' if it is OK.
+     */
+    public function validate_manual_mark($currentmark) {
+        if ($currentmark === null || $currentmark === '') {
+            return '';
+        }
+
+        $mark = question_utils::clean_param_mark($currentmark);
+        if ($mark === null) {
+            return get_string('manualgradeinvalidformat', 'question');
+        }
+
+        $maxmark = $this->get_max_mark();
+        if ($mark > $maxmark * $this->get_max_fraction() || $mark < $maxmark * $this->get_min_fraction()) {
+            return get_string('manualgradeoutofrange', 'question');
+        }
+
+        return '';
     }
 
     /**
@@ -1048,8 +1107,10 @@ class question_attempt {
             return null;
         }
 
-        return new question_file_saver($draftitemid, 'question', 'response_' .
-                str_replace($this->get_field_prefix(), '', $name), $text);
+        $filearea = str_replace($this->get_field_prefix(), '', $name);
+        $filearea = str_replace('-', 'bf_', $filearea);
+        $filearea = 'response_' . $filearea;
+        return new question_file_saver($draftitemid, 'question', $filearea, $text);
     }
 
     /**
@@ -1105,12 +1166,31 @@ class question_attempt {
                 $this->behaviour->get_expected_data(), $postdata, '-');
 
         $expected = $this->behaviour->get_expected_qt_data();
+        $this->check_qt_var_name_restrictions($expected);
+
         if ($expected === self::USE_RAW_DATA) {
             $submitteddata += $this->get_all_submitted_qt_vars($postdata);
         } else {
             $submitteddata += $this->get_expected_data($expected, $postdata, '');
         }
         return $submitteddata;
+    }
+
+    /**
+     * Ensure that no reserved prefixes are being used by installed
+     * question types.
+     * @param array $expected An array of question type variables
+     */
+    protected function check_qt_var_name_restrictions($expected) {
+        global $CFG;
+
+        if ($CFG->debugdeveloper) {
+            foreach ($expected as $key => $value) {
+                if (strpos($key, 'bf_') !== false) {
+                    debugging('The bf_ prefix is reserved and cannot be used by question types', DEBUG_DEVELOPER);
+                }
+            }
+        }
     }
 
     /**
@@ -1161,6 +1241,16 @@ class question_attempt {
      */
     public function get_right_answer_summary() {
         return $this->rightanswer;
+    }
+
+    /**
+     * Whether this attempt at this question could be completed just by the
+     * student interacting with the question, before {@link finish()} is called.
+     *
+     * @return boolean whether this attempt can finish naturally.
+     */
+    public function can_finish_during_attempt() {
+        return $this->behaviour->can_finish_during_attempt();
     }
 
     /**
@@ -1254,6 +1344,17 @@ class question_attempt {
         if ($finished) {
             $this->finish();
         }
+
+        $this->set_flagged($oldqa->is_flagged());
+    }
+
+    /**
+     * Change the max mark for this question_attempt.
+     * @param float $maxmark the new max mark.
+     */
+    public function set_max_mark($maxmark) {
+        $this->maxmark = $maxmark;
+        $this->observer->notify_attempt_modified($this);
     }
 
     /**
@@ -1290,16 +1391,17 @@ class question_attempt {
 
     /**
      * @return array(string, int) the most recent manual comment that was added
-     * to this question, and the FORMAT_... it is.
+     * to this question, the FORMAT_... it is and the step itself.
      */
     public function get_manual_comment() {
         foreach ($this->get_reverse_step_iterator() as $step) {
             if ($step->has_behaviour_var('comment')) {
                 return array($step->get_behaviour_var('comment'),
-                        $step->get_behaviour_var('commentformat'));
+                        $step->get_behaviour_var('commentformat'),
+                        $step);
             }
         }
-        return array(null, null);
+        return array(null, null, null);
     }
 
     /**
@@ -1319,7 +1421,7 @@ class question_attempt {
             if ($commentformat === null) {
                 $commentformat = FORMAT_HTML;
             }
-            return array($comment, $commentformat);
+            return array($comment, $commentformat, null);
         }
     }
 

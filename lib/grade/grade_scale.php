@@ -119,7 +119,26 @@ class grade_scale extends grade_object {
     public function insert($source=null) {
         $this->timecreated = time();
         $this->timemodified = time();
-        return parent::insert($source);
+
+        $result = parent::insert($source);
+        if ($result) {
+            // Trigger the scale created event.
+            if (!empty($this->standard)) {
+                $eventcontext = context_system::instance();
+            } else {
+                if (!empty($this->courseid)) {
+                    $eventcontext = context_course::instance($this->courseid);
+                } else {
+                    $eventcontext = context_system::instance();
+                }
+            }
+            $event = \core\event\scale_created::create(array(
+                'objectid' => $result,
+                'context' => $eventcontext
+            ));
+            $event->trigger();
+        }
+        return $result;
     }
 
     /**
@@ -130,17 +149,52 @@ class grade_scale extends grade_object {
      */
     public function update($source=null) {
         $this->timemodified = time();
-        return parent::update($source);
+
+        $result = parent::update($source);
+        if ($result) {
+            // Trigger the scale updated event.
+            if (!empty($this->standard)) {
+                $eventcontext = context_system::instance();
+            } else {
+                if (!empty($this->courseid)) {
+                    $eventcontext = context_course::instance($this->courseid);
+                } else {
+                    $eventcontext = context_system::instance();
+                }
+            }
+            $event = \core\event\scale_updated::create(array(
+                'objectid' => $this->id,
+                'context' => $eventcontext
+            ));
+            $event->trigger();
+        }
+        return $result;
     }
 
     /**
-     * Deletes this outcome from the database.
+     * Deletes this scale from the database.
      *
      * @param string $source from where was the object deleted (mod/forum, manual, etc.)
      * @return bool success
      */
     public function delete($source=null) {
         global $DB;
+
+        // Trigger the scale deleted event.
+        if (!empty($this->standard)) {
+            $eventcontext = context_system::instance();
+        } else {
+            if (!empty($this->courseid)) {
+                $eventcontext = context_course::instance($this->courseid);
+            } else {
+                $eventcontext = context_system::instance();
+            }
+        }
+        $event = \core\event\scale_deleted::create(array(
+            'objectid' => $this->id,
+            'context' => $eventcontext
+        ));
+        $event->trigger();
         if (parent::delete($source)) {
             $context = context_system::instance();
             $fs = get_file_storage();
@@ -259,12 +313,21 @@ class grade_scale extends grade_object {
     }
 
     /**
+     * Checks if this is the last scale on the site.
+     *
+     * @return bool
+     */
+    public function is_last_global_scale() {
+        return ($this->courseid == 0) && (count(self::fetch_all_global()) == 1);
+    }
+
+    /**
      * Checks if scale can be deleted.
      *
      * @return bool
      */
     public function can_delete() {
-        return !$this->is_used();
+        return !$this->is_used() && !$this->is_last_global_scale();
     }
 
     /**
@@ -289,37 +352,16 @@ class grade_scale extends grade_object {
             return true;
         }
 
-        $legacy_mods = false;
-        if ($mods = $DB->get_records('modules', array('visible' => 1))) {
-            foreach ($mods as $mod) {
-                //Check cm->name/lib.php exists
-                if (file_exists($CFG->dirroot.'/mod/'.$mod->name.'/lib.php')) {
-                    include_once($CFG->dirroot.'/mod/'.$mod->name.'/lib.php');
-                    $function_name = $mod->name.'_scale_used_anywhere';
-                    $old_function_name = $mod->name.'_scale_used';
-                    if (function_exists($function_name)) {
-                        if ($function_name($this->id)) {
-                            return true;
-                        }
-
-                    } else if (function_exists($old_function_name)) {
-                        $legacy_mods = true;
-                        debugging('Please notify the developer of module "'.$mod->name.'" that new function module_scale_used_anywhere() should be implemented.', DEBUG_DEVELOPER);
-                        break;
-                    }
-                }
-            }
+        // Ask the competency subsystem.
+        if (\core_competency\api::is_scale_used_anywhere($this->id)) {
+            return true;
         }
 
-        // some mods are missing the new xxx_scale_used_anywhere() - use the really slow old way
-        if ($legacy_mods) {
-            if (!empty($this->courseid)) {
-                if (course_scale_used($this->courseid,$this->id)) {
-                    return true;
-                }
-            } else {
-                $courses = array();
-                if (site_scale_used($this->id,$courses)) {
+        // Ask all plugins if the scale is used anywhere.
+        $pluginsfunction = get_plugins_with_function('scale_used_anywhere');
+        foreach ($pluginsfunction as $plugintype => $plugins) {
+            foreach ($plugins as $pluginfunction) {
+                if ($pluginfunction($this->id)) {
                     return true;
                 }
             }

@@ -30,6 +30,7 @@ global $CFG;
 require_once('HTML/QuickForm/element.php');
 require_once($CFG->dirroot.'/lib/filelib.php');
 require_once($CFG->dirroot.'/repository/lib.php');
+require_once('templatable_form_element.php');
 
 /**
  * Filemanager form element
@@ -40,7 +41,11 @@ require_once($CFG->dirroot.'/repository/lib.php');
  * @copyright 2009 Dongsheng Cai <dongsheng@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
+class MoodleQuickForm_filemanager extends HTML_QuickForm_element implements templatable {
+    use templatable_form_element {
+        export_for_template as export_for_template_base;
+    }
+
     /** @var string html for help button, if empty then no help will icon will be dispalyed. */
     public $_helpbutton = '';
 
@@ -60,7 +65,7 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
      *              or an associative array
      * @param array $options set of options to initalize filemanager
      */
-    function MoodleQuickForm_filemanager($elementName=null, $elementLabel=null, $attributes=null, $options=null) {
+    public function __construct($elementName=null, $elementLabel=null, $attributes=null, $options=null) {
         global $CFG, $PAGE;
 
         $options = (array)$options;
@@ -73,10 +78,20 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
             $this->_options['maxbytes'] = get_user_max_upload_file_size($PAGE->context, $CFG->maxbytes, $options['maxbytes']);
         }
         if (empty($options['return_types'])) {
-            $this->_options['return_types'] = (FILE_INTERNAL | FILE_REFERENCE);
+            $this->_options['return_types'] = (FILE_INTERNAL | FILE_REFERENCE | FILE_CONTROLLED_LINK);
         }
         $this->_type = 'filemanager';
-        parent::HTML_QuickForm_element($elementName, $elementLabel, $attributes);
+        parent::__construct($elementName, $elementLabel, $attributes);
+    }
+
+    /**
+     * Old syntax of class constructor. Deprecated in PHP7.
+     *
+     * @deprecated since Moodle 3.1
+     */
+    public function MoodleQuickForm_filemanager($elementName=null, $elementLabel=null, $attributes=null, $options=null) {
+        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
+        self::__construct($elementName, $elementLabel, $attributes, $options);
     }
 
     /**
@@ -285,7 +300,62 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
         // label element needs 'for' attribute work
         $html .= html_writer::empty_tag('input', array('value' => '', 'id' => 'id_'.$elname, 'type' => 'hidden'));
 
+        if (!empty($options->accepted_types) && $options->accepted_types != '*') {
+            $html .= html_writer::tag('p', get_string('filesofthesetypes', 'form'));
+            $util = new \core_form\filetypes_util();
+            $filetypes = $options->accepted_types;
+            $filetypedescriptions = $util->describe_file_types($filetypes);
+            $html .= $OUTPUT->render_from_template('core_form/filetypes-descriptions', $filetypedescriptions);
+        }
+
         return $html;
+    }
+
+    public function export_for_template(renderer_base $output) {
+        $context = $this->export_for_template_base($output);
+        $context['html'] = $this->toHtml();
+        return $context;
+    }
+
+    /**
+     * Check that all files have the allowed type.
+     *
+     * @param array $value Draft item id with the uploaded files.
+     * @return string|null Validation error message or null.
+     */
+    public function validateSubmitValue($value) {
+
+        $filetypesutil = new \core_form\filetypes_util();
+        $whitelist = $filetypesutil->normalize_file_types($this->_options['accepted_types']);
+
+        if (empty($whitelist) || $whitelist === ['*']) {
+            // Any file type is allowed, nothing to check here.
+            return;
+        }
+
+        $draftfiles = file_get_drafarea_files($value);
+        $wrongfiles = array();
+
+        if (empty($draftfiles)) {
+            // No file uploaded, nothing to check here.
+            return;
+        }
+
+        foreach ($draftfiles->list as $file) {
+            if (!$filetypesutil->is_allowed_file_type($file->filename, $whitelist)) {
+                $wrongfiles[] = $file->filename;
+            }
+        }
+
+        if ($wrongfiles) {
+            $a = array(
+                'whitelist' => implode(', ', $whitelist),
+                'wrongfiles' => implode(', ', $wrongfiles),
+            );
+            return get_string('err_wrongfileextension', 'core_form', $a);
+        }
+
+        return;
     }
 }
 
@@ -383,6 +453,10 @@ class form_filemanager implements renderable {
             $maxbytes = $this->options->maxbytes;
         }
         $this->options->maxbytes = get_user_max_upload_file_size($context, $CFG->maxbytes, $coursebytes, $maxbytes);
+
+        $this->options->userprefs = array();
+        $this->options->userprefs['recentviewmode'] = get_user_preferences('filemanager_recentviewmode', '');
+        user_preference_allow_ajax_update('filemanager_recentviewmode', PARAM_INT);
 
         // building file picker options
         $params = new stdClass();

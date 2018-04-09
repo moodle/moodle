@@ -52,7 +52,6 @@ class test_lock {
      */
     public static function acquire($framework) {
         global $CFG;
-
         $datarootpath = $CFG->{$framework . '_dataroot'} . '/' . $framework;
         $lockfile = $datarootpath . '/lock';
         if (!file_exists($datarootpath)) {

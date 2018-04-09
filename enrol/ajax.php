@@ -88,7 +88,7 @@ switch ($action) {
         break;
     case 'getassignable':
         $otheruserroles = optional_param('otherusers', false, PARAM_BOOL);
-        $outcome->response = array_reverse($manager->get_assignable_roles($otheruserroles), true);
+        $outcome->response = $manager->get_assignable_roles_for_json($otheruserroles);
         break;
     case 'searchotherusers':
         $search = optional_param('search', '', PARAM_RAW);

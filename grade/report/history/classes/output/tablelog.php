@@ -413,7 +413,7 @@ class tablelog extends \table_sql implements \renderable {
 
         $sql =  "SELECT $select
                    FROM {grade_grades_history} ggh
-              LEFT JOIN {grade_items} gi ON gi.id = ggh.itemid
+                   JOIN {grade_items} gi ON gi.id = ggh.itemid
                    JOIN {user} u ON u.id = ggh.userid
               LEFT JOIN {user} ug ON ug.id = ggh.usermodified
                   WHERE $where";

@@ -41,7 +41,7 @@ $instance = $DB->get_record('enrol', array('id'=>$ue->enrolid), '*', MUST_EXIST)
 $course = $DB->get_record('course', array('id'=>$instance->courseid), '*', MUST_EXIST);
 
 // The URL of the enrolled users page for the course.
-$usersurl = new moodle_url('/enrol/users.php', array('id' => $course->id));
+$usersurl = new moodle_url('/user/index.php', array('id' => $course->id));
 
 // Do not allow any changes if plugin disabled, not available or not suitable.
 if (!$plugin = enrol_get_plugin($instance->enrol)) {
@@ -73,7 +73,14 @@ $PAGE->set_pagelayout('admin');
 navigation_node::override_active_url($usersurl);
 
 // Get the enrolment edit form.
-$mform = new enrol_user_enrolment_form($url, array('user'=>$user, 'course'=>$course, 'ue'=>$ue));
+$mform = new enrol_user_enrolment_form($url,
+    [
+        'user' => $user,
+        'course' => $course,
+        'ue' => $ue,
+        'enrolinstancename' => $plugin->get_instance_name($instance)
+    ]
+);
 $mform->set_data($PAGE->url->params());
 
 if ($mform->is_cancelled()) {

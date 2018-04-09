@@ -61,11 +61,8 @@ class restore_final_task extends restore_task {
             $this->add_step(new restore_grade_history_structure_step('grade_history', 'grade_history.xml'));
         }
 
-        // Course completion, executed conditionally if restoring to new course
-        if ($this->get_target() !== backup::TARGET_CURRENT_ADDING &&
-            $this->get_target() !== backup::TARGET_EXISTING_ADDING) {
-            $this->add_step(new restore_course_completion_structure_step('course_completion', 'completion.xml'));
-        }
+        // Course completion.
+        $this->add_step(new restore_course_completion_structure_step('course_completion', 'completion.xml'));
 
         // Conditionally restore course badges.
         if ($this->get_setting_value('badges')) {
@@ -81,13 +78,21 @@ class restore_final_task extends restore_task {
         // during backup/restore.
         $this->add_step(new restore_update_availability('update_availability'));
 
+        // Refresh action events conditionally.
+        if ($this->get_setting_value('activities')) {
+            $this->add_step(new restore_calendar_action_events('restoring_action_events'));
+        }
+
         // Decode all the interlinks
         $this->add_step(new restore_decode_interlinks('decode_interlinks'));
 
         // Restore course logs (conditionally). They are restored here because we need all
-        // the activities to be already restored
+        // the activities to be already restored.
         if ($this->get_setting_value('logs')) {
+            // Legacy logs.
             $this->add_step(new restore_course_logs_structure_step('course_logs', 'course/logs.xml'));
+            // New log stores.
+            $this->add_step(new restore_course_logstores_structure_step('course_logstores', 'course/logstores.xml'));
         }
 
         // Review all the executed tasks having one after_restore method
@@ -108,6 +113,15 @@ class restore_final_task extends restore_task {
 
         // Clean the temp dir (conditionally) and drop temp table
         $this->add_step(new restore_drop_and_clean_temp_stuff('drop_and_clean_temp_stuff'));
+
+        // If restoring to a new course or overwriting config, reindex the whole course.
+        if (\core_search\manager::is_indexing_enabled()) {
+            $wholecourse = $this->get_target() == backup::TARGET_NEW_COURSE;
+            $wholecourse = $wholecourse || $this->setting_exists('overwrite_conf') && $this->get_setting_value('overwrite_conf');
+            if ($wholecourse) {
+                $this->add_step(new restore_course_search_index('course_search_index'));
+            }
+        }
 
         $this->built = true;
     }

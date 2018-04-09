@@ -18,6 +18,7 @@
  * The mod_lesson highscores viewed.
  *
  * @package    mod_lesson
+ * @deprecated since Moodle 3.0
  * @copyright  2013 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later.
  */
@@ -26,6 +27,8 @@ namespace mod_lesson\event;
 
 defined('MOODLE_INTERNAL') || die();
 
+debugging('mod_lesson\event\highscores_viewed has been deprecated. Since the functionality no longer resides in the lesson module.',
+        DEBUG_DEVELOPER);
 /**
  * The mod_lesson highscores viewed class.
  *
@@ -83,5 +86,15 @@ class highscores_viewed extends \core\event\base {
 
         return array($this->courseid, 'lesson', 'view highscores', 'highscores.php?id=' . $this->contextinstanceid,
             $lesson->name, $this->contextinstanceid);
+    }
+
+    public static function get_objectid_mapping() {
+        // The 'highscore' functionality was removed from core.
+        return false;
+    }
+
+    public static function get_other_mapping() {
+        // The 'highscore' functionality was removed from core.
+        return false;
     }
 }

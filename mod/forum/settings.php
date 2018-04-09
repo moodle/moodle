@@ -29,9 +29,6 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configselect('forum_displaymode', get_string('displaymode', 'forum'),
                        get_string('configdisplaymode', 'forum'), FORUM_MODE_NESTED, forum_get_layout_modes()));
 
-    $settings->add(new admin_setting_configcheckbox('forum_replytouser', get_string('replytouser', 'forum'),
-                       get_string('configreplytouser', 'forum'), 1));
-
     // Less non-HTML characters than this is short
     $settings->add(new admin_setting_configtext('forum_shortpost', get_string('shortpost', 'forum'),
                        get_string('configshortpost', 'forum'), 300, PARAM_INT));
@@ -56,6 +53,11 @@ if ($ADMIN->fulltree) {
     // Default number of attachments allowed per post in all forums
     $settings->add(new admin_setting_configtext('forum_maxattachments', get_string('maxattachments', 'forum'),
                        get_string('configmaxattachments', 'forum'), 9, PARAM_INT));
+
+    // Default Subscription mode setting.
+    $options = forum_get_subscriptionmode_options();
+    $settings->add(new admin_setting_configselect('forum_subscription', get_string('subscriptionmode', 'forum'),
+        get_string('configsubscriptiontype', 'forum'), FORUM_CHOOSESUBSCRIBE, $options));
 
     // Default Read Tracking setting.
     $options = array();
@@ -104,7 +106,35 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configselect('forum_enablerssfeeds', get_string('enablerssfeeds', 'admin'),
                        $str, 0, $options));
 
+    if (!empty($CFG->enablerssfeeds)) {
+        $options = array(
+            0 => get_string('none'),
+            1 => get_string('discussions', 'forum'),
+            2 => get_string('posts', 'forum')
+        );
+        $settings->add(new admin_setting_configselect('forum_rsstype', get_string('rsstypedefault', 'forum'),
+                get_string('configrsstypedefault', 'forum'), 0, $options));
+
+        $options = array(
+            0  => '0',
+            1  => '1',
+            2  => '2',
+            3  => '3',
+            4  => '4',
+            5  => '5',
+            10 => '10',
+            15 => '15',
+            20 => '20',
+            25 => '25',
+            30 => '30',
+            40 => '40',
+            50 => '50'
+        );
+        $settings->add(new admin_setting_configselect('forum_rssarticles', get_string('rssarticles', 'forum'),
+                get_string('configrssarticlesdefault', 'forum'), 0, $options));
+    }
+
     $settings->add(new admin_setting_configcheckbox('forum_enabletimedposts', get_string('timedposts', 'forum'),
-                       get_string('configenabletimedposts', 'forum'), 0));
+                       get_string('configenabletimedposts', 'forum'), 1));
 }
 

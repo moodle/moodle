@@ -36,7 +36,7 @@ class block_tag_flickr_edit_form extends block_edit_form {
         $mform->setType('config_title', PARAM_TEXT);
 
         $mform->addElement('text', 'config_numberofphotos', get_string('numberofphotos', 'block_tag_flickr'), array('size' => 5));
-        $mform->setType('config_numberofvideos', PARAM_INT);
+        $mform->setType('config_numberofphotos', PARAM_INT);
 
         $mform->addElement('selectyesno', 'config_includerelatedtags', get_string('includerelatedtags', 'block_tag_flickr'));
         $mform->setDefault('config_includerelatedtags', 0);

@@ -29,7 +29,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
-require_once(dirname(__FILE__) . '/../upgradelib.php');
+require_once(__DIR__ . '/../upgradelib.php');
 
 
 /**

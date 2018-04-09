@@ -49,7 +49,6 @@ class quiz_grading_report extends quiz_default_report {
     protected $context;
 
     public function display($quiz, $cm, $course) {
-        global $CFG, $DB, $PAGE;
 
         $this->quiz = $quiz;
         $this->cm = $cm;
@@ -116,11 +115,10 @@ class quiz_grading_report extends quiz_default_report {
         // Get the group, and the list of significant users.
         $this->currentgroup = $this->get_current_group($cm, $course, $this->context);
         if ($this->currentgroup == self::NO_GROUPS_ALLOWED) {
-            $this->users = array();
+            $this->userssql = array();
         } else {
-            $this->users = get_users_by_capability($this->context,
-                    array('mod/quiz:reviewmyattempts', 'mod/quiz:attempt'), '', '', '', '',
-                    $this->currentgroup, '', false);
+            $this->userssql = get_enrolled_sql($this->context,
+                    array('mod/quiz:reviewmyattempts', 'mod/quiz:attempt'), $this->currentgroup);
         }
 
         $hasquestions = quiz_has_questions($quiz->id);
@@ -158,29 +156,28 @@ class quiz_grading_report extends quiz_default_report {
     }
 
     protected function get_qubaids_condition() {
-        global $DB;
 
         $where = "quiza.quiz = :mangrquizid AND
                 quiza.preview = 0 AND
                 quiza.state = :statefinished";
         $params = array('mangrquizid' => $this->cm->instance, 'statefinished' => quiz_attempt::FINISHED);
 
+        $usersjoin = '';
         $currentgroup = groups_get_activity_group($this->cm, true);
+        $enrolleduserscount = count_enrolled_users($this->context,
+                array('mod/quiz:reviewmyattempts', 'mod/quiz:attempt'), $currentgroup);
         if ($currentgroup) {
-            $users = get_users_by_capability($this->context,
-                    array('mod/quiz:reviewmyattempts', 'mod/quiz:attempt'), 'u.id, u.id', '', '', '',
-                    $currentgroup, '', false);
-            if (empty($users)) {
+            $userssql = get_enrolled_sql($this->context,
+                    array('mod/quiz:reviewmyattempts', 'mod/quiz:attempt'), $currentgroup);
+            if ($enrolleduserscount < 1) {
                 $where .= ' AND quiza.userid = 0';
             } else {
-                list($usql, $uparam) = $DB->get_in_or_equal(array_keys($users),
-                        SQL_PARAMS_NAMED, 'mangru');
-                $where .= ' AND quiza.userid ' . $usql;
-                $params += $uparam;
+                $usersjoin = "JOIN ({$userssql[0]}) AS enr ON quiza.userid = enr.id";
+                $params += $userssql[1];
             }
         }
 
-        return new qubaid_join('{quiz_attempts} quiza', 'quiza.uniqueid', $where, $params);
+        return new qubaid_join("{quiz_attempts} quiza $usersjoin ", 'quiza.uniqueid', $where, $params);
     }
 
     protected function load_attempts_by_usage_ids($qubaids) {
@@ -269,7 +266,7 @@ class quiz_grading_report extends quiz_default_report {
     }
 
     protected function display_index($includeauto) {
-        global $OUTPUT;
+        global $OUTPUT, $PAGE;
 
         if ($groupmode = groups_get_activity_groupmode($this->cm)) {
             // Groups is being used.
@@ -300,6 +297,8 @@ class quiz_grading_report extends quiz_default_report {
 
             $row[] = $this->questions[$counts->slot]->number;
 
+            $row[] = $PAGE->get_renderer('question', 'bank')->qtype_icon($this->questions[$counts->slot]->type);
+
             $row[] = format_string($counts->name);
 
             $row[] = $this->format_count_for_table($counts, 'needsgrading', 'grade');
@@ -325,6 +324,7 @@ class quiz_grading_report extends quiz_default_report {
         $table->id = 'questionstograde';
 
         $table->head[] = get_string('qno', 'quiz_grading');
+        $table->head[] = get_string('qtypeveryshort', 'question');
         $table->head[] = get_string('questionname', 'quiz_grading');
         $table->head[] = get_string('tograde', 'quiz_grading');
         $table->head[] = get_string('alreadygraded', 'quiz_grading');
@@ -409,6 +409,7 @@ class quiz_grading_report extends quiz_default_report {
             $quba = question_engine::load_questions_usage_by_activity($qubaid);
             $displayoptions = quiz_get_review_options($this->quiz, $attempt, $this->context);
             $displayoptions->hide_all_feedback();
+            $displayoptions->rightanswer = question_display_options::VISIBLE;
             $displayoptions->history = question_display_options::HIDDEN;
             $displayoptions->manualcomment = question_display_options::EDITABLE;
 
@@ -420,7 +421,7 @@ class quiz_grading_report extends quiz_default_report {
         }
 
         echo html_writer::tag('div', html_writer::empty_tag('input', array(
-                'type' => 'submit', 'value' => get_string('saveandnext', 'quiz_grading'))),
+                'type' => 'submit', 'class' => 'btn btn-primary', 'value' => get_string('saveandnext', 'quiz_grading'))),
                 array('class' => 'mdl-align')) .
                 html_writer::end_tag('div') . html_writer::end_tag('form');
     }

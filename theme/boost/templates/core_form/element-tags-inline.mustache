@@ -1,0 +1,39 @@
+{{< core_form/element-template-inline }}
+    {{$element}}
+        {{^element.frozen}}
+        <input type="hidden" name="{{element.nameraw}}" value="_qf__force_multiselect_submission">
+        <select class="custom-select {{#error}}form-control-danger{{/error}}" name="{{element.name}}"
+            id="{{element.id}}"
+            {{#element.multiple}}multiple{{/element.multiple}}
+            {{#error}}
+                autofocus aria-describedby="id_error_{{element.name}}"
+            {{/error}}
+            {{{element.attributes}}} >
+            {{#element.options}}
+            <option value="{{value}}" {{#selected}}selected{{/selected}}>{{{text}}}</option>
+            {{/element.options}}
+        </select>
+        {{/element.frozen}}
+        {{#element.frozen}}
+            {{#element.options}}
+                {{#selected}}{{{text}}}{{/selected}}
+            {{/element.options}}
+        {{/element.frozen}}
+        {{#element.managestandardtagsurl}}
+            <a href="{{element.managestandardtagsurl}}">{{#str}}managestandardtags, core_tag{{/str}}</a>
+        {{/element.managestandardtagsurl}}
+    {{/element}}
+{{/ core_form/element-template-inline }}
+{{^element.frozen}}
+{{#js}}
+require(['core/form-autocomplete'], function(module) {
+    module.enhance({{#quote}}#{{element.id}}{{/quote}},
+                   {{element.tags}},
+                   {{#quote}}{{element.ajax}}{{/quote}},
+                   {{#quote}}{{element.placeholder}}{{/quote}},
+                   {{element.casesensitive}},
+                   {{element.showsuggestions}},
+                   {{#quote}}{{element.noselectionstring}}{{/quote}});
+});
+{{/js}}
+{{/element.frozen}}

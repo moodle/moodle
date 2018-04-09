@@ -16,6 +16,7 @@
 
 require_once('../config.php');
 require_once('lib.php');
+require_once($CFG->dirroot . '/course/lib.php');
 
 $noteid = required_param('id', PARAM_INT);
 
@@ -48,9 +49,7 @@ if (!has_capability('moodle/notes:manage', $context)) {
 if (data_submitted() && confirm_sesskey()) {
     // If data was submitted and is valid, then delete note.
     $returnurl = $CFG->wwwroot . '/notes/index.php?course=' . $course->id . '&amp;user=' . $note->userid;
-    if (!note_delete($note)) {
-        print_error('cannotdeletepost', 'notes', $returnurl);
-    }
+    note_delete($note);
     redirect($returnurl);
 
 } else {
@@ -61,9 +60,7 @@ if (data_submitted() && confirm_sesskey()) {
 
     // Output HTML.
     $link = null;
-    if (has_capability('moodle/course:viewparticipants', $context)
-        || has_capability('moodle/site:viewparticipants', context_system::instance())) {
-
+    if (course_can_view_participants($context) || course_can_view_participants(context_system::instance())) {
         $link = new moodle_url('/user/index.php', array('id' => $course->id));
     }
     $PAGE->navbar->add(get_string('participants'), $link);

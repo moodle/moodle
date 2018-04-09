@@ -24,13 +24,14 @@
  * @author     Yuliya Bozhko <yuliya.bozhko@totaralms.com>
  */
 
-require_once(dirname(dirname(__FILE__)) . '/config.php');
+require_once(__DIR__ . '/../config.php');
 require_once($CFG->libdir . '/badgeslib.php');
 require_once($CFG->dirroot . '/badges/lib/awardlib.php');
 
 $badgeid = required_param('id', PARAM_INT);
 $role = optional_param('role', 0, PARAM_INT);
 $award = optional_param('award', false, PARAM_BOOL);
+$revoke = optional_param('revoke', false, PARAM_BOOL);
 
 require_login();
 
@@ -97,7 +98,9 @@ if (count($acceptedroles) > 1) {
     } else {
         // Get all the roles that user has and use the ones required by this badge.
         $roles = get_user_roles($context, $USER->id);
-        $roleids = array_map(create_function('$o', 'return $o->roleid;'), $roles);
+        $roleids = array_map(function($o) {
+            return $o->roleid;
+        }, $roles);
         $selection = array_intersect($acceptedroles, $roleids);
     }
 
@@ -110,14 +113,16 @@ if (count($acceptedroles) > 1) {
         if (!$role) {
             $pageurl = new moodle_url('/badges/award.php', array('id' => $badgeid));
             echo $OUTPUT->header();
-            echo $OUTPUT->box(get_string('selectaward', 'badges') . $OUTPUT->single_select(new moodle_url($pageurl), 'role', $select));
+            echo $OUTPUT->box($OUTPUT->single_select(new moodle_url($pageurl), 'role', $select, '', array('' => 'choosedots'),
+                null, array('label' => get_string('selectaward', 'badges'))));
             echo $OUTPUT->footer();
             die();
         } else {
             $pageurl = new moodle_url('/badges/award.php', array('id' => $badgeid));
             $issuerrole = new stdClass();
             $issuerrole->roleid = $role;
-            $roleselect = get_string('selectaward', 'badges') . $OUTPUT->single_select(new moodle_url($pageurl), 'role', $select, $role, null);
+            $roleselect = $OUTPUT->single_select(new moodle_url($pageurl), 'role', $select, $role, null, null,
+                array('label' => get_string('selectaward', 'badges')));
         }
     } else {
         echo $OUTPUT->header();
@@ -164,6 +169,19 @@ if ($award && data_submitted() && has_capability('moodle/badges:awardbadge', $co
             badges_award_handle_manual_criteria_review($data);
         } else {
             echo $OUTPUT->error_text(get_string('error:cannotawardbadge', 'badges'));
+        }
+    }
+
+    $recipientselector->invalidate_selected_users();
+    $existingselector->invalidate_selected_users();
+    $recipientselector->set_existing_recipients($existingselector->find_users(''));
+} else if ($revoke && data_submitted() && has_capability('moodle/badges:revokebadge', $context)) {
+    require_sesskey();
+    $users = $existingselector->get_selected_users();
+
+    foreach ($users as $user) {
+        if (!process_manual_revoke($user->id, $USER->id, $issuerrole->roleid, $badgeid)) {
+            echo $OUTPUT->error_text(get_string('error:cannotrevokebadge', 'badges'));
         }
     }
 

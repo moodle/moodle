@@ -19,8 +19,7 @@ Feature: Settings form fields disabled if not required
       | student1 | C1     | student        |
       | student2 | C1     | student        |
     And I log in as "teacher"
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
 
   @javascript
   Scenario: Depending on the number of attempts, different form fields are disabled.
@@ -52,13 +51,15 @@ Feature: Settings form fields disabled if not required
     # And the "id_delay2_enabled" "field" should be enabled
 
     When I press "Save and display"
-    And I navigate to "User overrides" node in "Quiz administration"
+    And I navigate to "User overrides" in current page administration
     And I press "Add user override"
     And I set the following fields to these values:
         | Override user    | Student1 |
         | Attempts allowed | 3        |
     And I press "Save"
-    And I navigate to "Edit settings" node in "Quiz administration"
+    And I follow "Test quiz"
+    And I navigate to "Edit settings" in current page administration
+    And I expand all fieldsets
     And I set the field "Attempts allowed" to "1"
     Then the "Grading method" "field" should be enabled
     And the "Each attempt builds on the last" "field" should be enabled
@@ -66,11 +67,13 @@ Feature: Settings form fields disabled if not required
     And the "id_delay2_enabled" "field" should be enabled
 
     When I press "Save and display"
-    And I navigate to "User overrides" node in "Quiz administration"
-    And I follow "Edit"
+    And I navigate to "User overrides" in current page administration
+    And I click on "Edit" "link" in the "region-main" "region"
     And I set the field "Attempts allowed" to "2"
     And I press "Save"
-    And I navigate to "Edit settings" node in "Quiz administration"
+    And I follow "Test quiz"
+    And I navigate to "Edit settings" in current page administration
+    And I expand all fieldsets
     And I set the field "Attempts allowed" to "1"
     Then the "Grading method" "field" should be enabled
     And the "Each attempt builds on the last" "field" should be enabled
@@ -78,15 +81,38 @@ Feature: Settings form fields disabled if not required
     And the "id_delay2_enabled" "field" should be disabled
 
     When I press "Save and display"
-    And I navigate to "User overrides" node in "Quiz administration"
+    And I navigate to "User overrides" in current page administration
     And I press "Add user override"
     And I set the following fields to these values:
         | Override user    | Student2  |
         | Attempts allowed | Unlimited |
     And I press "Save"
-    And I navigate to "Edit settings" node in "Quiz administration"
+    And I follow "Test quiz"
+    And I navigate to "Edit settings" in current page administration
+    And I expand all fieldsets
     And I set the field "Attempts allowed" to "1"
     Then the "Grading method" "field" should be enabled
     And the "Each attempt builds on the last" "field" should be enabled
     And the "id_delay1_enabled" "field" should be enabled
     And the "id_delay2_enabled" "field" should be enabled
+
+  @javascript
+  Scenario: Depending on whether there is a close date, some review options are disabled.
+    When I add a "Quiz" to section "1"
+    And I expand all fieldsets
+    And I set the field "Name" to "Test quiz"
+    Then the "id_attemptclosed" "checkbox" should be disabled
+    Then the "id_correctnessclosed" "checkbox" should be disabled
+    Then the "id_marksclosed" "checkbox" should be disabled
+    Then the "id_specificfeedbackclosed" "checkbox" should be disabled
+    Then the "id_generalfeedbackclosed" "checkbox" should be disabled
+    Then the "id_rightanswerclosed" "checkbox" should be disabled
+    Then the "id_overallfeedbackclosed" "checkbox" should be disabled
+    And I set the field "id_timeclose_enabled" to "1"
+    Then the "id_attemptclosed" "checkbox" should be enabled
+    Then the "id_correctnessclosed" "checkbox" should be enabled
+    Then the "id_marksclosed" "checkbox" should be enabled
+    Then the "id_specificfeedbackclosed" "checkbox" should be enabled
+    Then the "id_generalfeedbackclosed" "checkbox" should be enabled
+    Then the "id_rightanswerclosed" "checkbox" should be enabled
+    Then the "id_overallfeedbackclosed" "checkbox" should be enabled

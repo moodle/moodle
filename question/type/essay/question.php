@@ -26,6 +26,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->dirroot . '/question/type/questionbase.php');
 
 /**
  * Represents an essay question.
@@ -50,6 +51,9 @@ class qtype_essay_question extends question_with_responses {
     public $graderinfoformat;
     public $responsetemplate;
     public $responsetemplateformat;
+
+    /** @var array The string array of file types accepted upon file submission. */
+    public $filetypeslist;
 
     public function make_behaviour(question_attempt $qa, $preferredbehaviour) {
         return question_engine::make_behaviour('manualgraded', $qa, $preferredbehaviour);
@@ -90,13 +94,25 @@ class qtype_essay_question extends question_with_responses {
     }
 
     public function is_complete_response(array $response) {
-        // Determine if the given response has inline text and attachments.
+        // Determine if the given response has online text and attachments.
         $hasinlinetext = array_key_exists('answer', $response) && ($response['answer'] !== '');
         $hasattachments = array_key_exists('attachments', $response)
             && $response['attachments'] instanceof question_response_files;
 
         // Determine the number of attachments present.
         if ($hasattachments) {
+            // Check the filetypes.
+            $filetypesutil = new \core_form\filetypes_util();
+            $whitelist = $filetypesutil->normalize_file_types($this->filetypeslist);
+            $wrongfiles = array();
+            foreach ($response['attachments']->get_files() as $file) {
+                if (!$filetypesutil->is_allowed_file_type($file->get_filename(), $whitelist)) {
+                    $wrongfiles[] = $file->get_filename();
+                }
+            }
+            if ($wrongfiles) { // At least one filetype is wrong.
+                return false;
+            }
             $attachcount = count($response['attachments']->get_files());
         } else {
             $attachcount = 0;
@@ -111,6 +127,18 @@ class qtype_essay_question extends question_with_responses {
 
         // The response is complete iff all of our requirements are met.
         return $hascontent && $meetsinlinereq && $meetsattachmentreq;
+    }
+
+    public function is_gradable_response(array $response) {
+        // Determine if the given response has online text and attachments.
+        if (array_key_exists('answer', $response) && ($response['answer'] !== '')) {
+            return true;
+        } else if (array_key_exists('attachments', $response)
+                && $response['attachments'] instanceof question_response_files) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public function is_same_response(array $prevresponse, array $newresponse) {
@@ -139,7 +167,7 @@ class qtype_essay_question extends question_with_responses {
             return $this->responseformat === 'editorfilepicker';
 
         } else if ($component == 'qtype_essay' && $filearea == 'graderinfo') {
-            return $options->manualcomment;
+            return $options->manualcomment && $args[0] == $this->id;
 
         } else {
             return parent::check_file_access($qa, $options, $component,

@@ -1,0 +1,255 @@
+.blockmovetarget .accesshide {
+    position: relative;
+    left: initial;
+}
+
+.block:target {
+    padding-top: 0 !important; /* stylelint-disable declaration-no-important */
+    margin-top: 0 !important;
+}
+
+.block_search_forums .searchform {
+    /* Override plugin's default. */
+    text-align: left;
+}
+
+.block.block_navigation .block_tree ul,
+.block_settings .block_tree ul {
+    margin-left: 0;
+}
+
+.block .block-controls {
+    .dropdown-toggle {
+        /* So that the caret takes the colour of the icon. */
+        color: $body-color;
+    }
+}
+
+$blocks-column-width: 250px !default;
+
+[data-region="blocks-column"] {
+    width: $blocks-column-width;
+    float: right;
+}
+
+$blocks-plus-gutter: $blocks-column-width + $grid-gutter-width;
+
+/* We put an absolutely positioned div in a relatively positioned div so it takes up no space */
+#region-main-settings-menu {
+    position: relative;
+    float: left;
+    width: 100%;
+}
+#region-main-settings-menu > div {
+    position: absolute;
+    right: 0;
+    z-index: 100;
+    margin: 1rem;
+}
+.region_main_settings_menu_proxy {
+    width: 4rem;
+    height: 2rem;
+    background-color: $card-bg;
+    margin-left: $card-spacer-x / 2;
+    margin-bottom: $card-spacer-x / 2;
+    border-bottom-left-radius: 0.5rem;
+    float: right;
+}
+
+// Required for IE11 to prevent blocks being pushed under the content.
+#region-main {
+    float: left;
+    width: 100%;
+}
+#region-main-settings-menu.has-blocks,
+#region-main.has-blocks {
+    display: inline-block;
+    width: calc(100% - #{$blocks-plus-gutter});
+    @include media-breakpoint-down(lg) {
+        width: 100%;
+    }
+}
+
+[data-region="blocks-column"] {
+    @include media-breakpoint-down(lg) {
+        width: 100%;
+    }
+}
+
+$chart-size: 70px;
+$doughnut-border-size: 15px;
+$doughnut-dasharray: 173;
+$doughnut-empty-colour: $gray-lighter;
+$doughnut-fill-colour: $brand-warning;
+
+.progress-chart-container {
+    height: $chart-size;
+    width: $chart-size;
+
+    .progress-doughnut {
+        position: relative;
+        height: $chart-size;
+        width: $chart-size;
+        background-clip: padding-box;
+        border: $doughnut-border-size solid $doughnut-empty-colour;
+        border-radius: 50%;
+        box-sizing: border-box;
+
+        .progress-text {
+            position: absolute;
+            top: 50%;
+            /*rtl:ignore*/
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: $doughnut-empty-colour;
+
+            &.has-percent {
+                color: $doughnut-fill-colour;
+            }
+        }
+
+        .progress-indicator {
+            position: absolute;
+            top: ($doughnut-border-size * -1);
+            left: ($doughnut-border-size * -1);
+            height: $chart-size;
+            width: $chart-size;
+
+            svg {
+                position: relative;
+                height: 100%;
+                width: 100%;
+
+                .circle {
+                    stroke-width: $doughnut-border-size;
+                    stroke: $doughnut-fill-colour;
+                    fill: none;
+                    stroke-dasharray: $doughnut-dasharray;
+                    stroke-dashoffset: $doughnut-dasharray;
+                    transform: rotate(-90deg);
+                    transform-origin: center center;
+
+                    @for $i from 1 through 100 {
+                        &.percent-#{$i} {
+                            stroke-dashoffset: $doughnut-dasharray - ($i / 100 * $doughnut-dasharray);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    .no-progress {
+        height: $chart-size;
+        width: $chart-size;
+        background-color: $doughnut-empty-colour;
+        border-radius: 50%;
+        position: relative;
+
+        .icon {
+            position: absolute;
+            top: 50%;
+            /*rtl:ignore*/
+            left: 50%;
+            margin: 0;
+            transform: translate(-45%, -45%);
+            color: #fff;
+            height: ($chart-size / 2) + 10px;
+            width: ($chart-size / 2) + 10px;
+            font-size: ($chart-size / 2) + 10px;
+        }
+    }
+}
+
+.block_myoverview {
+    .event-list-item {
+        .event-icon {
+            vertical-align: middle;
+
+            &::before {
+                content: '';
+                display: inline-block;
+                height: 100%;
+                vertical-align: middle;
+            }
+        }
+
+        .event-name-container {
+            vertical-align: middle;
+            max-width: calc(100% - 50px);
+
+            .event-name {
+                display: block;
+            }
+        }
+    }
+
+    .content-centred {
+        max-width: 900px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .empty-placeholder-image-sm {
+        height: 50px;
+    }
+
+    .empty-placeholder-image-lg {
+        height: 125px;
+    }
+
+    .courses-view-course-item {
+        height: 220px;
+        overflow-y: hidden;
+    }
+}
+
+@media (min-width: 1600px) {
+    .block_myoverview {
+        .courses-view-course-item {
+            height: 190px;
+        }
+    }
+}
+
+// Show expand collapse with font-awesome.
+.block_settings .block_tree [aria-expanded="true"],
+.block_settings .block_tree [aria-expanded="true"].emptybranch,
+.block_settings .block_tree [aria-expanded="false"],
+.block_navigation .block_tree [aria-expanded="true"],
+.block_navigation .block_tree [aria-expanded="true"].emptybranch,
+.block_navigation .block_tree [aria-expanded="false"] {
+    background-image: none;
+}
+.block_settings .block_tree [aria-expanded="true"]:before,
+.block_navigation .block_tree [aria-expanded="true"]:before {
+    content: $fa-var-angle-down;
+    margin-right: 0;
+    font-size: 16px;
+    @extend .fa;
+    width: 16px;
+}
+
+.block_settings .block_tree [aria-expanded="false"]:before,
+.block_navigation .block_tree [aria-expanded="false"]:before {
+    content: $fa-var-angle-right;
+    font-size: 16px;
+    margin-right: 0;
+    @extend .fa;
+    width: 16px;
+}
+.dir-rtl {
+    .block_settings .block_tree [aria-expanded="false"]:before,
+    .block_navigation .block_tree [aria-expanded="false"]:before {
+        content: $fa-var-angle-left;
+    }
+}
+
+.block_navigation .block_tree p.hasicon,
+.block_settings .block_tree p.hasicon {
+    text-indent: -3px;
+
+    .icon {
+        margin-right: 2px;
+    }
+}

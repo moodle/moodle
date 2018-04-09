@@ -1,14 +1,14 @@
-<h1><a name="toc-1"></a>Top-level heading (1)</h1>
-<h2><a name="toc-2"></a>This a test for creole 0.1 (2)</h2>
-<h3><a name="toc-3"></a>This is a Subheading (3)</h3>
-<h4>Subsub (4)</h4>
-<h5>Subsubsub (5)</h5>
+<h3><a name="toc-1"></a>Top-level heading (1)</h3>
+<h4><a name="toc-2"></a>This a test for creole 0.1 (2)</h4>
+<h5><a name="toc-3"></a>This is a Subheading (3)</h5>
+<h6>Subsub (4)</h6>
+<h6>Subsubsub (5)</h6>
 <p>The ending equal signs should not be displayed:</p>
 <p>Top-level heading (1)</p>
-<h2><a name="toc-4"></a>This a test for creole 0.1 (2)</h2>
-<h3><a name="toc-5"></a>This is a Subheading (3)</h3>
-<h4>Subsub (4)</h4>
-<h5>Subsubsub (5)</h5>
+<h4><a name="toc-4"></a>This a test for creole 0.1 (2)</h4>
+<h5><a name="toc-5"></a>This is a Subheading (3)</h5>
+<h6>Subsub (4)</h6>
+<h6>Subsubsub (5)</h6>
 <p>You can make things <strong>bold</strong> or <em>italic</em> or <strong><em>both</em></strong> or <em><strong>both</strong></em>.</p>
 <p>Character formatting extends across line breaks: <strong>bold,
 this is still bold. This line deliberately does not end in star-star.</strong></p>
@@ -86,15 +86,15 @@ Guitar Chord C:
 ||---|---|---|
 </pre>
 <p>You can also use it inline nowiki <tt> in a sentence </tt> like this.</p>
-<h1><a name="toc-6"></a>Escapes</h1>
+<h3><a name="toc-6"></a>Escapes</h3>
 <p>Normal Link: <a href="http://wikicreole.org/">http://wikicreole.org/</a> - now same link, but escaped: http://wikicreole.org/ </p>
 <p>Normal asterisks: **not bold**</p>
 <p>a tilde alone: ~</p>
 <p>a tilde escapes itself: ~xxx</p>
-<h3><a name="toc-7"></a>Creole 0.2</h3>
+<h5><a name="toc-7"></a>Creole 0.2</h5>
 <p>This should be a flower with the ALT text &quot;this is a flower&quot; if your wiki supports ALT text on images:</p>
 <p><div class="wiki_image_left"><p></p><img src="Red-Flower.jpg" alt="here is a red flower" /></div></p>
-<h3><a name="toc-8"></a>Creole 0.4</h3>
+<h5><a name="toc-8"></a>Creole 0.4</h5>
 <p>Tables are done like this:</p>
 <table>
 <thead>
@@ -123,7 +123,7 @@ Guitar Chord C:
 Pone: xyz<br />
 Fax: +45<br />
 Mobile: abc</p>
-<h3><a name="toc-9"></a>Creole 0.5</h3>
+<h5><a name="toc-9"></a>Creole 0.5</h5>
 <table>
 <thead>
 <tr>
@@ -142,5 +142,5 @@ Mobile: abc</p>
 </tr>
 </tbody>
 </table>
-<h3><a name="toc-10"></a>Creole 1.0</h3>
+<h5><a name="toc-10"></a>Creole 1.0</h5>
 <p>If interwiki links are setup in your wiki, this links to the WikiCreole page about Creole 1.0 test cases: <a href="http://WikiCreole%3ACreole1.0TestCases">WikiCreole:Creole1.0TestCases</a>.</p>

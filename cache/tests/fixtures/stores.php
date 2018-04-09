@@ -43,39 +43,53 @@ abstract class cachestore_tests extends advanced_testcase {
     abstract protected function get_class_name();
 
     /**
+     * Sets up the fixture, for example, open a network connection.
+     * This method is called before a test is executed.
+     */
+    public function setUp() {
+        $class = $this->get_class_name();
+        if (!class_exists($class) || !$class::are_requirements_met()) {
+            $this->markTestSkipped('Could not test '.$class.'. Requirements are not met.');
+        }
+        parent::setUp();
+    }
+    /**
      * Run the unit tests for the store.
      */
     public function test_test_instance() {
         $class = $this->get_class_name();
-        if (!class_exists($class) || !method_exists($class, 'initialise_test_instance') || !$class::are_requirements_met()) {
-            $this->markTestSkipped('Could not test '.$class.'. Requirements are not met.');
-        }
 
         $modes = $class::get_supported_modes();
         if ($modes & cache_store::MODE_APPLICATION) {
             $definition = cache_definition::load_adhoc(cache_store::MODE_APPLICATION, $class, 'phpunit_test');
-            $instance = $class::initialise_unit_test_instance($definition);
-            if (!$instance) {
+            $instance = new $class($class.'_test', $class::unit_test_configuration());
+
+            if (!$instance->is_ready()) {
                 $this->markTestSkipped('Could not test '.$class.'. No test instance configured for application caches.');
             } else {
+                $instance->initialise($definition);
                 $this->run_tests($instance);
             }
         }
         if ($modes & cache_store::MODE_SESSION) {
             $definition = cache_definition::load_adhoc(cache_store::MODE_SESSION, $class, 'phpunit_test');
-            $instance = $class::initialise_unit_test_instance($definition);
-            if (!$instance) {
+            $instance = new $class($class.'_test', $class::unit_test_configuration());
+
+            if (!$instance->is_ready()) {
                 $this->markTestSkipped('Could not test '.$class.'. No test instance configured for session caches.');
             } else {
+                $instance->initialise($definition);
                 $this->run_tests($instance);
             }
         }
         if ($modes & cache_store::MODE_REQUEST) {
             $definition = cache_definition::load_adhoc(cache_store::MODE_REQUEST, $class, 'phpunit_test');
-            $instance = $class::initialise_unit_test_instance($definition);
-            if (!$instance) {
+            $instance = new $class($class.'_test', $class::unit_test_configuration());
+
+            if (!$instance->is_ready()) {
                 $this->markTestSkipped('Could not test '.$class.'. No test instance configured for request caches.');
             } else {
+                $instance->initialise($definition);
                 $this->run_tests($instance);
             }
         }
@@ -85,16 +99,31 @@ abstract class cachestore_tests extends advanced_testcase {
      * Test the store for basic functionality.
      */
     public function run_tests(cache_store $instance) {
+        $object = new stdClass;
+        $object->data = 1;
 
         // Test set with a string.
         $this->assertTrue($instance->set('test1', 'test1'));
         $this->assertTrue($instance->set('test2', 'test2'));
         $this->assertTrue($instance->set('test3', '3'));
+        $this->assertTrue($instance->set('other3', '3'));
 
         // Test get with a string.
         $this->assertSame('test1', $instance->get('test1'));
         $this->assertSame('test2', $instance->get('test2'));
         $this->assertSame('3', $instance->get('test3'));
+
+        // Test find and find with prefix if this class implements the searchable interface.
+        if ($instance->is_searchable()) {
+            // Extra settings here ignore the return order of the array.
+            $this->assertEquals(['test3', 'test1', 'test2', 'other3'], $instance->find_all(), '', 0, 1, true);
+
+            // Extra settings here ignore the return order of the array.
+            $this->assertEquals(['test2', 'test1', 'test3'], $instance->find_by_prefix('test'), '', 0, 1, true);
+            $this->assertEquals(['test2'], $instance->find_by_prefix('test2'));
+            $this->assertEquals(['other3'], $instance->find_by_prefix('other'));
+            $this->assertEquals([], $instance->find_by_prefix('nothere'));
+        }
 
         // Test set with an int.
         $this->assertTrue($instance->set('test1', 1));
@@ -112,6 +141,13 @@ abstract class cachestore_tests extends advanced_testcase {
         // Test get with an bool.
         $this->assertSame(true, $instance->get('test1'));
         $this->assertInternalType('boolean', $instance->get('test1'));
+
+        // Test with an object.
+        $this->assertTrue($instance->set('obj', $object));
+        if ($instance::get_supported_features() & cache_store::DEREFERENCES_OBJECTS) {
+            $this->assertNotSame($object, $instance->get('obj'), 'Objects must be dereferenced when returned.');
+        }
+        $this->assertEquals($object, $instance->get('obj'));
 
         // Test delete.
         $this->assertTrue($instance->delete('test1'));

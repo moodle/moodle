@@ -22,7 +22,9 @@
  * @copyright 2012 Dongsheng Cai {@link http://dongsheng.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
+require(__DIR__.'/../../config.php');
+require_once($CFG->dirroot . '/repository/lib.php');
+
 $json = required_param('tlelinks', PARAM_RAW);
 
 require_login();
@@ -60,6 +62,7 @@ if (isset($info->license)) {
 }
 
 $source = base64_encode(json_encode(array('url'=>$url,'filename'=>$filename)));
+$sourcekey = sha1($source . repository::get_secret_key() . sesskey());
 
 $js =<<<EOD
 <html>
@@ -70,6 +73,7 @@ $js =<<<EOD
         var resource = {};
         resource.title = "$filename";
         resource.source = "$source";
+        resource.sourcekey = "$sourcekey";
         resource.thumbnail = '$thumbnail';
         resource.author = "$author";
         resource.license = "$license";

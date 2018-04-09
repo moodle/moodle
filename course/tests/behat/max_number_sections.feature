@@ -7,7 +7,7 @@ Feature: The maximum number of weeks/topics in a course can be configured
   Background:
     Given the following "users" exist:
       | username | firstname | lastname | email |
-      | manager1 | Manager | 1 | manager1@asd.com |
+      | manager1 | Manager | 1 | manager1@example.com |
     And the following "system role assigns" exist:
       | user | course | role |
       | manager1 | Acceptance test site | manager |

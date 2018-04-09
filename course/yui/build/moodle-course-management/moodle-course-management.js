@@ -1,5 +1,7 @@
 YUI.add('moodle-course-management', function (Y, NAME) {
 
+/* global DragDrop, Category, Course */
+
 /**
  * Provides drop down menus for list of action links.
  *
@@ -27,10 +29,10 @@ Console.ATTRS = {
      * @attribute element
      * @type Node
      */
-    element : {
-        setter : function(node) {
+    element: {
+        setter: function(node) {
             if (typeof node === 'string') {
-                node = Y.one('#'+node);
+                node = Y.one('#' + node);
             }
             return node;
         }
@@ -42,8 +44,8 @@ Console.ATTRS = {
      * @type Node
      * @default null
      */
-    categorylisting : {
-        value : null
+    categorylisting: {
+        value: null
     },
 
     /**
@@ -52,8 +54,8 @@ Console.ATTRS = {
      * @type Node
      * @default null
      */
-    courselisting : {
-        value : null
+    courselisting: {
+        value: null
     },
 
     /**
@@ -62,8 +64,8 @@ Console.ATTRS = {
      * @type Node|null
      * @default null
      */
-    coursedetails : {
-        value : null
+    coursedetails: {
+        value: null
     },
 
     /**
@@ -72,8 +74,8 @@ Console.ATTRS = {
      * @type Number
      * @default null
      */
-    activecategoryid : {
-        value : null
+    activecategoryid: {
+        value: null
     },
 
     /**
@@ -82,8 +84,8 @@ Console.ATTRS = {
      * @type Number
      * @default Null
      */
-    activecourseid : {
-        value : null
+    activecourseid: {
+        value: null
     },
 
     /**
@@ -92,8 +94,8 @@ Console.ATTRS = {
      * @type Array
      * @default []
      */
-    categories : {
-        setter : function(item, name) {
+    categories: {
+        setter: function(item, name) {
             if (Y.Lang.isArray(item)) {
                 return item;
             }
@@ -101,7 +103,7 @@ Console.ATTRS = {
             items.push(item);
             return items;
         },
-        value : []
+        value: []
     },
 
     /**
@@ -110,11 +112,11 @@ Console.ATTRS = {
      * @type Course[]
      * @default Array
      */
-    courses : {
-        validator : function(val) {
+    courses: {
+        validator: function(val) {
             return Y.Lang.isArray(val);
         },
-        value : []
+        value: []
     },
 
     /**
@@ -123,15 +125,15 @@ Console.ATTRS = {
      * @type Number
      * @default null
      */
-    page : {
-        getter : function(value, name) {
+    page: {
+        getter: function(value, name) {
             if (value === null) {
                 value = this.get('element').getData(name);
                 this.set(name, value);
             }
             return value;
         },
-        value : null
+        value: null
     },
 
     /**
@@ -140,15 +142,15 @@ Console.ATTRS = {
      * @type Number
      * @default null
      */
-    totalpages : {
-        getter : function(value, name) {
+    totalpages: {
+        getter: function(value, name) {
             if (value === null) {
                 value = this.get('element').getData(name);
                 this.set(name, value);
             }
             return value;
         },
-        value : null
+        value: null
     },
 
     /**
@@ -157,15 +159,15 @@ Console.ATTRS = {
      * @type Number
      * @default null
      */
-    totalcourses : {
-        getter : function(value, name) {
+    totalcourses: {
+        getter: function(value, name) {
             if (value === null) {
                 value = this.get('element').getData(name);
                 this.set(name, value);
             }
             return value;
         },
-        value : null
+        value: null
     },
 
     /**
@@ -174,14 +176,14 @@ Console.ATTRS = {
      * @type String
      * @default /course/ajax/management.php
      */
-    ajaxurl : {
-        getter : function(value) {
+    ajaxurl: {
+        getter: function(value) {
             if (value === null) {
                 value = M.cfg.wwwroot + '/course/ajax/management.php';
             }
             return value;
         },
-        value : null
+        value: null
     },
 
     /**
@@ -190,8 +192,8 @@ Console.ATTRS = {
      * @type DragDrop
      * @default null
      */
-    dragdrop : {
-        value : null
+    dragdrop: {
+        value: null
     }
 };
 Console.prototype = {
@@ -202,13 +204,13 @@ Console.prototype = {
      * @private
      * @type {boolean}
      */
-    categoriesinit : false,
+    categoriesinit: false,
 
     /**
      * Initialises a new instance of the Console.
      * @method initializer
      */
-    initializer : function() {
+    initializer: function() {
         this.set('element', 'coursecat-management');
         var element = this.get('element'),
             categorylisting = element.one('#category-listing'),
@@ -236,7 +238,7 @@ Console.prototype = {
 
         if (courselisting) {
             // No need for dragdrop if we don't have a course listing.
-            this.set('dragdrop', new DragDrop({console:this}));
+            this.set('dragdrop', new DragDrop({console: this}));
         }
     },
 
@@ -246,7 +248,7 @@ Console.prototype = {
      * @private
      * @return {boolean}
      */
-    initialiseCategories : function(listing) {
+    initialiseCategories: function(listing) {
         var count = 0;
         if (!listing) {
             return false;
@@ -266,17 +268,17 @@ Console.prototype = {
             menuresortcoursesby.setAttribute('disabled', true);
         }
 
-        listing.all('.listitem[data-id]').each(function(node){
+        listing.all('.listitem[data-id]').each(function(node) {
             this.set('categories', new Category({
-                node : node,
-                console : this
+                node: node,
+                console: this
             }));
             count++;
         }, this);
         if (!this.categoriesinit) {
             this.get('categorylisting').delegate('click', this.handleCategoryDelegation, 'a[data-action]', this);
             this.get('categorylisting').delegate('click', this.handleCategoryDelegation, 'input[name="bcat[]"]', this);
-            this.get('categorylisting').delegate('click', this.handleBulkSortByaction, '#menuselectsortby', this);
+            this.get('categorylisting').delegate('change', this.handleBulkSortByaction, '#menuselectsortby', this);
             this.categoriesinit = true;
         } else {
         }
@@ -288,7 +290,7 @@ Console.prototype = {
      * @private
      * @return {boolean}
      */
-    initialiseCourses : function() {
+    initialiseCourses: function() {
         var category = this.getCategoryById(this.get('activecategoryid')),
             listing = this.get('courselisting'),
             count = 0;
@@ -302,11 +304,11 @@ Console.prototype = {
             menumovecoursesto.setAttribute('disabled', true);
         }
 
-        listing.all('.listitem[data-id]').each(function(node){
+        listing.all('.listitem[data-id]').each(function(node) {
             this.registerCourse(new Course({
-                node : node,
-                console : this,
-                category : category
+                node: node,
+                console: this,
+                category: category
             }));
             count++;
         }, this);
@@ -319,7 +321,7 @@ Console.prototype = {
      * @method registerCourse
      * @param {Course} course
      */
-    registerCourse : function(course) {
+    registerCourse: function(course) {
         var courses = this.get('courses');
         courses.push(course);
         this.set('courses', courses);
@@ -332,7 +334,7 @@ Console.prototype = {
      * @protected
      * @param {EventFacade} e
      */
-    handleCourseDelegation : function(e) {
+    handleCourseDelegation: function(e) {
         var target = e.currentTarget,
             action = target.getData('action'),
             courseid = target.ancestor('.listitem').getData('id'),
@@ -350,7 +352,7 @@ Console.prototype = {
      * @protected
      * @param {EventFacade} e
      */
-    handleCategoryDelegation : function(e) {
+    handleCategoryDelegation: function(e) {
         var target = e.currentTarget,
             action = target.getData('action'),
             categoryid = target.ancestor('.listitem').getData('id'),
@@ -368,7 +370,7 @@ Console.prototype = {
      * @param {Node} checkboxnode Checkbox node on which action happened.
      * @return bool
      */
-    isCourseSelected : function(checkboxnode) {
+    isCourseSelected: function(checkboxnode) {
         var selected = false;
 
         // If any course selected then show move to category select box.
@@ -399,7 +401,7 @@ Console.prototype = {
      * @param {Node} checkboxnode Checkbox node on which action happened.
      * @return bool
      */
-    isCategorySelected : function(checkboxnode) {
+    isCategorySelected: function(checkboxnode) {
         var selected = false;
 
         // If any category selected then show move to category select box.
@@ -430,7 +432,7 @@ Console.prototype = {
      * @protected
      * @param {EventFacade} e
      */
-    handleBulkSortByaction : function(e) {
+    handleBulkSortByaction: function(e) {
         var sortcategoryby = this.get('categorylisting').one('#menuresortcategoriesby'),
             sortcourseby = this.get('categorylisting').one('#menuresortcoursesby'),
             sortbybutton = this.get('categorylisting').one('input[name="bulksort"]'),
@@ -479,7 +481,7 @@ Console.prototype = {
      * @param {Number} id
      * @return {Category|Boolean} The category or false if it can't be found.
      */
-    getCategoryById : function(id) {
+    getCategoryById: function(id) {
         var i,
             category,
             categories = this.get('categories'),
@@ -501,7 +503,7 @@ Console.prototype = {
      * @param {Number} id
      * @return {Course|Boolean} The course or false if not found/
      */
-    getCourseById : function(id) {
+    getCourseById: function(id) {
         var i,
             course,
             courses = this.get('courses'),
@@ -522,7 +524,7 @@ Console.prototype = {
      * @method removeCourseById
      * @param {Number} id
      */
-    removeCourseById : function(id) {
+    removeCourseById: function(id) {
         var courses = this.get('courses'),
             length = courses.length,
             course,
@@ -545,7 +547,7 @@ Console.prototype = {
      * @param {Function} callback The function to call when all is done.
      * @param {Object} context The object to use as the context for the callback.
      */
-    performAjaxAction : function(action, args, callback, context) {
+    performAjaxAction: function(action, args, callback, context) {
         var io = new Y.IO();
         args.action = action;
         args.ajax = '1';
@@ -555,13 +557,13 @@ Console.prototype = {
             };
         }
         io.send(this.get('ajaxurl'), {
-            method : 'POST',
-            on : {
-                complete : callback
+            method: 'POST',
+            on: {
+                complete: callback
             },
-            context : context,
-            data : args,
-            'arguments' : args
+            context: context,
+            data: args,
+            'arguments': args
         });
     }
 };
@@ -581,6 +583,8 @@ M.course.management.console = null;
 M.course.management.init = function(config) {
     M.course.management.console = new Console(config);
 };
+/* global Console */
+
 /**
  * Drag and Drop handler
  *
@@ -601,8 +605,8 @@ DragDrop.ATTRS = {
      * @type Console
      * @writeOnce
      */
-    console : {
-        writeOnce : 'initOnly'
+    console: {
+        writeOnce: 'initOnly'
     }
 };
 DragDrop.prototype = {
@@ -612,7 +616,7 @@ DragDrop.prototype = {
      * @protected
      * @default false
      */
-    goingup : false,
+    goingup: false,
 
     /**
      * The last Y position of the course being dragged
@@ -620,7 +624,7 @@ DragDrop.prototype = {
      * @protected
      * @default null
      */
-    lasty : null,
+    lasty: null,
 
     /**
      * The sibling above the course being dragged currently (tracking its original position).
@@ -629,13 +633,13 @@ DragDrop.prototype = {
      * @protected
      * @default false
      */
-    previoussibling : null,
+    previoussibling: null,
 
     /**
      * Initialises the DragDrop instance.
      * @method initializer
      */
-    initializer : function() {
+    initializer: function() {
         var managementconsole = this.get('console'),
             container = managementconsole.get('element'),
             categorylisting = container.one('#category-listing'),
@@ -650,7 +654,11 @@ DragDrop.prototype = {
             return false;
         }
 
-        courseul.all('> li').each(function(li){
+        while (contstraint.get('scrollHeight') === 0 && !contstraint.compareTo(window.document.body)) {
+            contstraint = contstraint.get('parentNode');
+        }
+
+        courseul.all('> li').each(function(li) {
             this.initCourseListing(li, contstraint);
         }, this);
         courseul.setData('dd', new Y.DD.Drop({
@@ -658,7 +666,7 @@ DragDrop.prototype = {
         }));
         if (canmoveoutof && categoryul) {
             // Category UL may not be there if viewmode is just courses.
-            categoryul.all('li > div').each(function(div){
+            categoryul.all('li > div').each(function(div) {
                 this.initCategoryListitem(div);
             }, this);
         }
@@ -677,10 +685,10 @@ DragDrop.prototype = {
      * @method initCourseListing
      * @param Node
      */
-    initCourseListing : function(node, contstraint) {
+    initCourseListing: function(node, contstraint) {
         node.setData('dd', new Y.DD.Drag({
-            node : node,
-            target : {
+            node: node,
+            target: {
                 padding: '0 0 0 20'
             }
         }).addHandle(
@@ -698,7 +706,7 @@ DragDrop.prototype = {
      * @method initCategoryListitem
      * @param Node
      */
-    initCategoryListitem : function(node) {
+    initCategoryListitem: function(node) {
         node.setData('dd', new Y.DD.Drop({
             node: node
         }));
@@ -710,7 +718,7 @@ DragDrop.prototype = {
      * @private
      * @param {EventFacade} e
      */
-    dragStart : function(e) {
+    dragStart: function(e) {
         var drag = e.target,
             node = drag.get('node'),
             dragnode = drag.get('dragNode');
@@ -725,7 +733,7 @@ DragDrop.prototype = {
      * @private
      * @param {EventFacade} e
      */
-    dragEnd : function(e) {
+    dragEnd: function(e) {
         var drag = e.target,
             node = drag.get('node');
         node.removeClass('course-being-dragged');
@@ -738,7 +746,7 @@ DragDrop.prototype = {
      * @private
      * @param {EventFacade} e
      */
-    dragDrag : function(e) {
+    dragDrag: function(e) {
         var y = e.target.lastXY[1];
         if (y < this.lasty) {
             this.goingup = true;
@@ -754,8 +762,8 @@ DragDrop.prototype = {
      * @private
      * @param {EventFacade} e
      */
-    dropOver : function(e) {
-        //Get a reference to our drag and drop nodes
+    dropOver: function(e) {
+        // Get a reference to our drag and drop nodes
         var drag = e.drag.get('node'),
             drop = e.drop.get('node'),
             tag = drop.get('tagName').toLowerCase();
@@ -779,7 +787,7 @@ DragDrop.prototype = {
      * @private
      * @param {EventFacade} e
      */
-    dropEnter : function(e) {
+    dropEnter: function(e) {
         var drop = e.drop.get('node'),
             tag = drop.get('tagName').toLowerCase();
         if (tag === 'div') {
@@ -793,7 +801,7 @@ DragDrop.prototype = {
      * @private
      * @param {EventFacade} e
      */
-    dropExit : function(e) {
+    dropExit: function(e) {
         var drop = e.drop.get('node'),
             tag = drop.get('tagName').toLowerCase();
         if (tag === 'div') {
@@ -807,7 +815,7 @@ DragDrop.prototype = {
      * @private
      * @param {EventFacade} e
      */
-    dropHit : function(e) {
+    dropHit: function(e) {
         var drag = e.drag.get('node'),
             drop = e.drop.get('node'),
             iscategory = (drop.ancestor('.listitem-category') !== null),
@@ -838,7 +846,7 @@ DragDrop.prototype = {
             course = managementconsole.getCourseById(courseid);
             previoussibling = drag.get('previousSibling');
             aftercourseid = (previoussibling) ? previoussibling.getData('id') || 0 : 0;
-            previousid = (this.previoussibling) ?  this.previoussibling.getData('id') : 0;
+            previousid = (this.previoussibling) ? this.previoussibling.getData('id') : 0;
             if (aftercourseid !== previousid) {
                 course.moveAfter(aftercourseid, previousid);
             }
@@ -866,14 +874,14 @@ Item.ATTRS = {
      * @attribute node
      * @type Node
      */
-    node : {},
+    node: {},
 
     /**
      * The management console.
      * @attribute console
      * @type Console
      */
-    console : {},
+    console: {},
 
     /**
      * Describes the type of this item. Should be set by the extending class.
@@ -881,8 +889,8 @@ Item.ATTRS = {
      * @type {String}
      * @default item
      */
-    itemname : {
-        value : 'item'
+    itemname: {
+        value: 'item'
     }
 };
 Item.prototype = {
@@ -893,7 +901,7 @@ Item.prototype = {
      * @type Timeout
      * @default null
      */
-    highlighttimeout : null,
+    highlighttimeout: null,
 
     /**
      * Checks and parses an AJAX response for an item.
@@ -905,7 +913,7 @@ Item.prototype = {
      * @param {Object} args The arguments given to the request.
      * @return {Object|Boolean}
      */
-    checkAjaxResponse : function(transactionid, response, args) {
+    checkAjaxResponse: function(transactionid, response, args) {
         if (response.status !== 200) {
             return false;
         }
@@ -931,7 +939,7 @@ Item.prototype = {
      * @param {Object} args The arguments given to the request.
      * @return {Boolean}
      */
-    moveup : function(transactionid, response, args) {
+    moveup: function(transactionid, response, args) {
         var node,
             nodeup,
             nodedown,
@@ -996,7 +1004,7 @@ Item.prototype = {
      * @param {Object} args The arguments given to the request.
      * @return {Boolean}
      */
-    movedown : function(transactionid, response, args) {
+    movedown: function(transactionid, response, args) {
         var node,
             next,
             nodeup,
@@ -1061,7 +1069,7 @@ Item.prototype = {
      * @param {Object} args The arguments given to the request.
      * @return {Boolean}
      */
-    show : function(transactionid, response, args) {
+    show: function(transactionid, response, args) {
         var outcome = this.checkAjaxResponse(transactionid, response, args),
             hidebtn;
         if (outcome === false) {
@@ -1080,7 +1088,7 @@ Item.prototype = {
      * Marks the item as visible
      * @method markVisible
      */
-    markVisible : function() {
+    markVisible: function() {
         this.get('node').setAttribute('data-visible', '1');
         return true;
     },
@@ -1094,7 +1102,7 @@ Item.prototype = {
      * @param {Object} args The arguments given to the request.
      * @return {Boolean}
      */
-    hide : function(transactionid, response, args) {
+    hide: function(transactionid, response, args) {
         var outcome = this.checkAjaxResponse(transactionid, response, args),
             showbtn;
         if (outcome === false) {
@@ -1112,7 +1120,7 @@ Item.prototype = {
      * Marks the item as hidden.
      * @method makeHidden
      */
-    markHidden : function() {
+    markHidden: function() {
         this.get('node').setAttribute('data-visible', '0');
         return true;
     },
@@ -1123,7 +1131,7 @@ Item.prototype = {
      * @method updated
      * @param {Boolean} moved True if this item was moved.
      */
-    updated : function(moved) {
+    updated: function(moved) {
         if (moved) {
             this.highlight();
         }
@@ -1134,19 +1142,21 @@ Item.prototype = {
      *
      * @method highlight
      */
-    highlight : function() {
+    highlight: function() {
         var node = this.get('node');
         node.siblings('.highlight').removeClass('highlight');
         node.addClass('highlight');
         if (this.highlighttimeout) {
             window.clearTimeout(this.highlighttimeout);
         }
-        this.highlighttimeout = window.setTimeout(function(){
+        this.highlighttimeout = window.setTimeout(function() {
             node.removeClass('highlight');
         }, 2500);
     }
 };
 Y.extend(Item, Y.Base, Item.prototype);
+/* global Item */
+
 /**
  * A managed category.
  *
@@ -1168,16 +1178,16 @@ Category.ATTRS = {
      * @writeOnce
      * @default null
      */
-    categoryid : {
-        getter : function (value, name) {
+    categoryid: {
+        getter: function(value, name) {
             if (value === null) {
                 value = this.get('node').getData('id');
                 this.set(name, value);
             }
             return value;
         },
-        value : null,
-        writeOnce : true
+        value: null,
+        writeOnce: true
     },
 
     /**
@@ -1186,8 +1196,8 @@ Category.ATTRS = {
      * @type Boolean
      * @default null
      */
-    selected : {
-        getter : function(value, name) {
+    selected: {
+        getter: function(value, name) {
             if (value === null) {
                 value = this.get('node').getData(name);
                 if (value === null) {
@@ -1197,7 +1207,7 @@ Category.ATTRS = {
             }
             return value;
         },
-        value : null
+        value: null
     },
 
     /**
@@ -1206,11 +1216,11 @@ Category.ATTRS = {
      * @type Course[]
      * @default Array
      */
-    courses : {
-        validator : function(val) {
+    courses: {
+        validator: function(val) {
             return Y.Lang.isArray(val);
         },
-        value : []
+        value: []
     }
 };
 Category.prototype = {
@@ -1218,7 +1228,7 @@ Category.prototype = {
      * Initialises an instance of a Category.
      * @method initializer
      */
-    initializer : function() {
+    initializer: function() {
         this.set('itemname', 'category');
     },
 
@@ -1227,7 +1237,7 @@ Category.prototype = {
      * @method getName
      * @return {String}
      */
-    getName : function() {
+    getName: function() {
         return this.get('node').one('a.categoryname').get('innerHTML');
     },
 
@@ -1236,7 +1246,7 @@ Category.prototype = {
      * @method registerCourse
      * @param {Course} course
      */
-    registerCourse : function(course) {
+    registerCourse: function(course) {
         var courses = this.get('courses');
         courses.push(course);
         this.set('courses', courses);
@@ -1250,8 +1260,8 @@ Category.prototype = {
      * @param {EventFacade} e
      * @return {Boolean}
      */
-    handle : function(action, e) {
-        var catarg = {categoryid : this.get('categoryid')},
+    handle: function(action, e) {
+        var catarg = {categoryid: this.get('categoryid')},
             selected = this.get('console').get('activecategoryid');
         if (selected && selected !== catarg.categoryid) {
             catarg.selectedcategory = selected;
@@ -1308,42 +1318,60 @@ Category.prototype = {
      * Expands the category making its sub categories visible.
      * @method expand
      */
-    expand : function() {
+    expand: function() {
         var node = this.get('node'),
             action = node.one('a[data-action=expand]'),
             ul = node.one('ul[role=group]');
         node.removeClass('collapsed').setAttribute('aria-expanded', 'true');
         action.setAttribute('data-action', 'collapse').setAttrs({
-            title : M.util.get_string('collapsecategory', 'moodle', this.getName())
-        }).one('img').setAttrs({
-            src : M.util.image_url('t/switch_minus', 'moodle'),
-            alt : M.util.get_string('collapse', 'moodle')
+            title: M.util.get_string('collapsecategory', 'moodle', this.getName())
         });
+
+        require(['core/str', 'core/templates', 'core/notification'], function(Str, Templates, Notification) {
+            Str.get_string('collapse', 'core')
+                .then(function(string) {
+                    return Templates.renderPix('t/switch_minus', 'core', string);
+                })
+                .then(function(html) {
+                    html = Y.Node.create(html).addClass('tree-icon').getDOMNode().outerHTML;
+                    return action.set('innerHTML', html);
+                }).fail(Notification.exception);
+        });
+
         if (ul) {
             ul.setAttribute('aria-hidden', 'false');
         }
-        this.get('console').performAjaxAction('expandcategory', {categoryid : this.get('categoryid')}, null, this);
+        this.get('console').performAjaxAction('expandcategory', {categoryid: this.get('categoryid')}, null, this);
     },
 
     /**
      * Collapses the category making its sub categories hidden.
      * @method collapse
      */
-    collapse : function() {
+    collapse: function() {
         var node = this.get('node'),
             action = node.one('a[data-action=collapse]'),
             ul = node.one('ul[role=group]');
         node.addClass('collapsed').setAttribute('aria-expanded', 'false');
         action.setAttribute('data-action', 'expand').setAttrs({
-            title : M.util.get_string('expandcategory', 'moodle', this.getName())
-        }).one('img').setAttrs({
-            src : M.util.image_url('t/switch_plus', 'moodle'),
-            alt : M.util.get_string('expand', 'moodle')
+            title: M.util.get_string('expandcategory', 'moodle', this.getName())
         });
+
+        require(['core/str', 'core/templates', 'core/notification'], function(Str, Templates, Notification) {
+            Str.get_string('expand', 'core')
+                .then(function(string) {
+                    return Templates.renderPix('t/switch_plus', 'core', string);
+                })
+                .then(function(html) {
+                    html = Y.Node.create(html).addClass('tree-icon').getDOMNode().outerHTML;
+                    return action.set('innerHTML', html);
+                }).fail(Notification.exception);
+        });
+
         if (ul) {
             ul.setAttribute('aria-hidden', 'true');
         }
-        this.get('console').performAjaxAction('collapsecategory', {categoryid : this.get('categoryid')}, null, this);
+        this.get('console').performAjaxAction('collapsecategory', {categoryid: this.get('categoryid')}, null, this);
     },
 
     /**
@@ -1356,7 +1384,7 @@ Category.prototype = {
      * @param {Object} args The arguments given to the request.
      * @return {Boolean} Returns true on success - false otherwise.
      */
-    loadSubcategories : function(transactionid, response, args) {
+    loadSubcategories: function(transactionid, response, args) {
         var outcome = this.checkAjaxResponse(transactionid, response, args),
             node = this.get('node'),
             managementconsole = this.get('console'),
@@ -1384,24 +1412,24 @@ Category.prototype = {
      * @method moveCourseTo
      * @param {Course} course
      */
-    moveCourseTo : function(course) {
+    moveCourseTo: function(course) {
         var self = this;
         Y.use('moodle-core-notification-confirm', function() {
             var confirm = new M.core.confirm({
-                title : M.util.get_string('confirm', 'moodle'),
-                question : M.util.get_string('confirmcoursemove', 'moodle', {
-                    course : course.getName(),
-                    category : self.getName()
+                title: M.util.get_string('confirm', 'moodle'),
+                question: M.util.get_string('confirmcoursemove', 'moodle', {
+                    course: course.getName(),
+                    category: self.getName()
                 }),
-                yesLabel : M.util.get_string('move', 'moodle'),
-                noLabel : M.util.get_string('cancel', 'moodle')
+                yesLabel: M.util.get_string('move', 'moodle'),
+                noLabel: M.util.get_string('cancel', 'moodle')
             });
             confirm.on('complete-yes', function() {
                 confirm.hide();
                 confirm.destroy();
                 this.get('console').performAjaxAction('movecourseintocategory', {
-                    categoryid : this.get('categoryid'),
-                    courseid : course.get('courseid')
+                    categoryid: this.get('categoryid'),
+                    courseid: course.get('courseid')
                 }, this.completeMoveCourse, this);
             }, self);
             confirm.show();
@@ -1417,7 +1445,7 @@ Category.prototype = {
      * @param {Object} args The arguments given to the request.
      * @return {Boolean}
      */
-    completeMoveCourse : function(transactionid, response, args) {
+    completeMoveCourse: function(transactionid, response, args) {
         var outcome = this.checkAjaxResponse(transactionid, response, args),
             managementconsole = this.get('console'),
             category,
@@ -1468,7 +1496,7 @@ Category.prototype = {
      * @param {Object} args The arguments given to the request.
      * @return {Boolean}
      */
-    show : function(transactionid, response, args) {
+    show: function(transactionid, response, args) {
         var outcome = this.checkAjaxResponse(transactionid, response, args),
             hidebtn;
         if (outcome === false) {
@@ -1498,7 +1526,7 @@ Category.prototype = {
      * @param {Object} args The arguments given to the request.
      * @return {Boolean}
      */
-    hide : function(transactionid, response, args) {
+    hide: function(transactionid, response, args) {
         var outcome = this.checkAjaxResponse(transactionid, response, args),
             showbtn;
         if (outcome === false) {
@@ -1524,7 +1552,7 @@ Category.prototype = {
      * @chainable
      * @param courses
      */
-    updateCourseVisiblity : function(courses) {
+    updateCourseVisiblity: function(courses) {
         var managementconsole = this.get('console'),
             key,
             course;
@@ -1552,7 +1580,7 @@ Category.prototype = {
      * @chainable
      * @param categories
      */
-    updateChildVisibility : function(categories) {
+    updateChildVisibility: function(categories) {
         var managementconsole = this.get('console'),
             key,
             category;
@@ -1575,6 +1603,8 @@ Category.prototype = {
     }
 };
 Y.extend(Category, Item, Category.prototype);
+/* global Item */
+
 /**
  * A managed course.
  *
@@ -1595,7 +1625,7 @@ Course.ATTRS = {
      * @attribute courseid
      * @type Number
      */
-    courseid : {},
+    courseid: {},
 
     /**
      * True if this is the selected course.
@@ -1603,17 +1633,17 @@ Course.ATTRS = {
      * @type Boolean
      * @default null
      */
-    selected : {
-        getter : function(value, name) {
+    selected: {
+        getter: function(value, name) {
             if (value === null) {
                 value = this.get('node').getData(name);
                 this.set(name, value);
             }
             return value;
         },
-        value : null
+        value: null
     },
-    node : {
+    node: {
 
     },
     /**
@@ -1622,8 +1652,8 @@ Course.ATTRS = {
      * @type Console
      * @writeOnce
      */
-    console : {
-        writeOnce : 'initOnly'
+    console: {
+        writeOnce: 'initOnly'
     },
 
     /**
@@ -1632,8 +1662,8 @@ Course.ATTRS = {
      * @type Category
      * @writeOnce
      */
-    category : {
-        writeOnce : 'initOnly'
+    category: {
+        writeOnce: 'initOnly'
     }
 };
 Course.prototype = {
@@ -1641,7 +1671,7 @@ Course.prototype = {
      * Initialises the new course instance.
      * @method initializer
      */
-    initializer : function() {
+    initializer: function() {
         var node = this.get('node'),
             category = this.get('category');
         this.set('courseid', node.getData('id'));
@@ -1656,7 +1686,7 @@ Course.prototype = {
      * @method getName
      * @return {String}
      */
-    getName : function() {
+    getName: function() {
         return this.get('node').one('a.coursename').get('innerHTML');
     },
 
@@ -1667,9 +1697,9 @@ Course.prototype = {
      * @param {EventFacade} e
      * @return {Boolean}
      */
-    handle : function(action, e) {
+    handle: function(action, e) {
         var managementconsole = this.get('console'),
-            args = {courseid : this.get('courseid')};
+            args = {courseid: this.get('courseid')};
         switch (action) {
             case 'moveup':
                 e.halt();
@@ -1707,7 +1737,7 @@ Course.prototype = {
      * Removes this course.
      * @method remove
      */
-    remove : function() {
+    remove: function() {
         this.get('console').removeCourseById(this.get('courseid'));
         this.get('node').remove();
     },
@@ -1719,12 +1749,12 @@ Course.prototype = {
      * @param {Number} moveaftercourse The course to move after or 0 to put it at the top.
      * @param {Number} previousid the course it was previously after in case we need to revert.
      */
-    moveAfter : function(moveaftercourse, previousid) {
+    moveAfter: function(moveaftercourse, previousid) {
         var managementconsole = this.get('console'),
             args = {
-                courseid : this.get('courseid'),
-                moveafter : moveaftercourse,
-                previous : previousid
+                courseid: this.get('courseid'),
+                moveafter: moveaftercourse,
+                previous: previousid
             };
         managementconsole.performAjaxAction('movecourseafter', args, this.moveAfterResponse, this);
     },
@@ -1739,12 +1769,12 @@ Course.prototype = {
      * @param {Objects} args The arguments that were given with the request.
      * @return {Boolean}
      */
-    moveAfterResponse : function(transactionid, response, args) {
+    moveAfterResponse: function(transactionid, response, args) {
         var outcome = this.checkAjaxResponse(transactionid, response, args),
             node = this.get('node'),
             previous;
         if (outcome === false) {
-            previous = node.ancestor('ul').one('li[data-id='+args.previous+']');
+            previous = node.ancestor('ul').one('li[data-id=' + args.previous + ']');
             if (previous) {
                 // After the last previous.
                 previous.insertAfter(node, 'after');

@@ -202,12 +202,18 @@ class core_moodlelib_testcase extends advanced_testcase {
             $this->fail('coding_exception expected');
         } catch (moodle_exception $ex) {
             $this->assertInstanceOf('coding_exception', $ex);
+        } catch (Error $error) {
+            // PHP 7.1 throws Error even earlier.
+            $this->assertRegExp('/Too few arguments to function/', $error->getMessage());
         }
         try {
             @optional_param('username');
             $this->fail('coding_exception expected');
         } catch (moodle_exception $ex) {
             $this->assertInstanceOf('coding_exception', $ex);
+        } catch (Error $error) {
+            // PHP 7.1 throws Error even earlier.
+            $this->assertRegExp('/Too few arguments to function/', $error->getMessage());
         }
         try {
             optional_param('', 'default_user', PARAM_RAW);
@@ -248,12 +254,18 @@ class core_moodlelib_testcase extends advanced_testcase {
             $this->fail('coding_exception expected');
         } catch (moodle_exception $ex) {
             $this->assertInstanceOf('coding_exception', $ex);
+        } catch (Error $error) {
+            // PHP 7.1 throws Error even earlier.
+            $this->assertRegExp('/Too few arguments to function/', $error->getMessage());
         }
         try {
             @optional_param_array('username');
             $this->fail('coding_exception expected');
         } catch (moodle_exception $ex) {
             $this->assertInstanceOf('coding_exception', $ex);
+        } catch (Error $error) {
+            // PHP 7.1 throws Error even earlier.
+            $this->assertRegExp('/Too few arguments to function/', $error->getMessage());
         }
         try {
             optional_param_array('', array('a'=>'default_user'), PARAM_RAW);
@@ -305,6 +317,9 @@ class core_moodlelib_testcase extends advanced_testcase {
             $this->fail('coding_exception expected');
         } catch (moodle_exception $ex) {
             $this->assertInstanceOf('coding_exception', $ex);
+        } catch (Error $error) {
+            // PHP 7.1 throws Error even earlier.
+            $this->assertRegExp('/Too few arguments to function/', $error->getMessage());
         }
         try {
             required_param('username', '');
@@ -348,6 +363,9 @@ class core_moodlelib_testcase extends advanced_testcase {
             $this->fail('coding_exception expected');
         } catch (moodle_exception $ex) {
             $this->assertInstanceOf('coding_exception', $ex);
+        } catch (Error $error) {
+            // PHP 7.1 throws Error.
+            $this->assertRegExp('/Too few arguments to function/', $error->getMessage());
         }
         try {
             required_param_array('', PARAM_RAW);
@@ -409,6 +427,9 @@ class core_moodlelib_testcase extends advanced_testcase {
             $this->fail('moodle_exception expected');
         } catch (moodle_exception $ex) {
             $this->assertInstanceOf('moodle_exception', $ex);
+        } catch (Error $error) {
+            // PHP 7.1 throws Error even earlier.
+            $this->assertRegExp('/Too few arguments to function/', $error->getMessage());
         }
     }
 
@@ -429,6 +450,9 @@ class core_moodlelib_testcase extends advanced_testcase {
             $this->fail('moodle_exception expected');
         } catch (moodle_exception $ex) {
             $this->assertInstanceOf('moodle_exception', $ex);
+        } catch (Error $error) {
+            // PHP 7.1 throws Error even earlier.
+            $this->assertRegExp('/Too few arguments to function/', $error->getMessage());
         }
 
         try {
@@ -573,22 +597,67 @@ class core_moodlelib_testcase extends advanced_testcase {
 
     public function test_clean_param_url() {
         // Test PARAM_URL and PARAM_LOCALURL a bit.
+        // Valid URLs.
         $this->assertSame('http://google.com/', clean_param('http://google.com/', PARAM_URL));
         $this->assertSame('http://some.very.long.and.silly.domain/with/a/path/', clean_param('http://some.very.long.and.silly.domain/with/a/path/', PARAM_URL));
         $this->assertSame('http://localhost/', clean_param('http://localhost/', PARAM_URL));
         $this->assertSame('http://0.255.1.1/numericip.php', clean_param('http://0.255.1.1/numericip.php', PARAM_URL));
+        $this->assertSame('https://google.com/', clean_param('https://google.com/', PARAM_URL));
+        $this->assertSame('https://some.very.long.and.silly.domain/with/a/path/', clean_param('https://some.very.long.and.silly.domain/with/a/path/', PARAM_URL));
+        $this->assertSame('https://localhost/', clean_param('https://localhost/', PARAM_URL));
+        $this->assertSame('https://0.255.1.1/numericip.php', clean_param('https://0.255.1.1/numericip.php', PARAM_URL));
+        $this->assertSame('ftp://ftp.debian.org/debian/', clean_param('ftp://ftp.debian.org/debian/', PARAM_URL));
         $this->assertSame('/just/a/path', clean_param('/just/a/path', PARAM_URL));
+        // Invalid URLs.
         $this->assertSame('', clean_param('funny:thing', PARAM_URL));
+        $this->assertSame('', clean_param('http://example.ee/sdsf"f', PARAM_URL));
+        $this->assertSame('', clean_param('javascript://comment%0Aalert(1)', PARAM_URL));
+        $this->assertSame('', clean_param('rtmp://example.com/livestream', PARAM_URL));
+        $this->assertSame('', clean_param('rtmp://example.com/live&foo', PARAM_URL));
+        $this->assertSame('', clean_param('rtmp://example.com/fms&mp4:path/to/file.mp4', PARAM_URL));
+        $this->assertSame('', clean_param('mailto:support@moodle.org', PARAM_URL));
+        $this->assertSame('', clean_param('mailto:support@moodle.org?subject=Hello%20Moodle', PARAM_URL));
+        $this->assertSame('', clean_param('mailto:support@moodle.org?subject=Hello%20Moodle&cc=feedback@moodle.org', PARAM_URL));
     }
 
     public function test_clean_param_localurl() {
         global $CFG;
-        $this->assertSame('', clean_param('http://google.com/', PARAM_LOCALURL));
-        $this->assertSame('', clean_param('http://some.very.long.and.silly.domain/with/a/path/', PARAM_LOCALURL));
-        $this->assertSame(clean_param($CFG->wwwroot, PARAM_LOCALURL), $CFG->wwwroot);
-        $this->assertSame('/just/a/path', clean_param('/just/a/path', PARAM_LOCALURL));
+
+        $this->resetAfterTest();
+
+        // External, invalid.
         $this->assertSame('', clean_param('funny:thing', PARAM_LOCALURL));
+        $this->assertSame('', clean_param('http://google.com/', PARAM_LOCALURL));
+        $this->assertSame('', clean_param('https://google.com/?test=true', PARAM_LOCALURL));
+        $this->assertSame('', clean_param('http://some.very.long.and.silly.domain/with/a/path/', PARAM_LOCALURL));
+
+        // Local absolute.
+        $this->assertSame(clean_param($CFG->wwwroot, PARAM_LOCALURL), $CFG->wwwroot);
+        $this->assertSame($CFG->wwwroot . '/with/something?else=true',
+            clean_param($CFG->wwwroot . '/with/something?else=true', PARAM_LOCALURL));
+
+        // Local relative.
+        $this->assertSame('/just/a/path', clean_param('/just/a/path', PARAM_LOCALURL));
         $this->assertSame('course/view.php?id=3', clean_param('course/view.php?id=3', PARAM_LOCALURL));
+
+        // Local absolute HTTPS in a non HTTPS site.
+        $CFG->wwwroot = str_replace('https:', 'http:', $CFG->wwwroot); // Need to simulate non-https site.
+        $httpsroot = str_replace('http:', 'https:', $CFG->wwwroot);
+        $this->assertSame('', clean_param($httpsroot, PARAM_LOCALURL));
+        $this->assertSame('', clean_param($httpsroot . '/with/something?else=true', PARAM_LOCALURL));
+
+        // Local absolute HTTPS in a HTTPS site.
+        $CFG->wwwroot = str_replace('http:', 'https:', $CFG->wwwroot);
+        $httpsroot = $CFG->wwwroot;
+        $this->assertSame($httpsroot, clean_param($httpsroot, PARAM_LOCALURL));
+        $this->assertSame($httpsroot . '/with/something?else=true',
+            clean_param($httpsroot . '/with/something?else=true', PARAM_LOCALURL));
+
+        // Test open redirects are not possible.
+        $CFG->wwwroot = 'http://www.example.com';
+        $this->assertSame('', clean_param('http://www.example.com.evil.net/hack.php', PARAM_LOCALURL));
+        $CFG->wwwroot = 'https://www.example.com';
+        $this->assertSame('', clean_param('https://www.example.com.evil.net/hack.php', PARAM_LOCALURL));
     }
 
     public function test_clean_param_file() {
@@ -841,6 +910,14 @@ class core_moodlelib_testcase extends advanced_testcase {
             "tags that ...</blockquote></p></div>", shorten_text($text));
     }
 
+    public function test_shorten_text_with_tags_and_html_comment() {
+        $text = "<div class='frog'><p><blockquote><!--[if !IE]><!-->Long text with ".
+            "tags that will<!--<![endif]--> ".
+            "be chopped off but <b>should be added back again</b></blockquote></p></div>";
+        $this->assertEquals("<div class='frog'><p><blockquote><!--[if !IE]><!-->Long text with " .
+            "tags that ...<!--<![endif]--></blockquote></p></div>", shorten_text($text));
+    }
+
     public function test_shorten_text_with_entities() {
         // Remember to allow 3 chars for the final '...'.
         // ......123456789012345678901234567_____890...
@@ -930,26 +1007,36 @@ class core_moodlelib_testcase extends advanced_testcase {
                 shorten_text($text, 1));
     }
 
+    public function test_shorten_filename() {
+        // Test filename that contains more than 100 characters.
+        $filename = 'sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium totam rem';
+        $this->assertSame('sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium tot',
+            shorten_filename($filename));
+        // Filename contains extension.
+        $this->assertSame('sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium tot.zip',
+            shorten_filename($filename . '.zip'));
+        // Limit filename to 50 chars.
+        $this->assertSame('sed ut perspiciatis unde omnis iste natus error si',
+            shorten_filename($filename, 50));
+        $this->assertSame('sed ut perspiciatis unde omnis iste natus error si.zip',
+            shorten_filename($filename . '.zip', 50));
+
+        // Test filename that contains less than 100 characters.
+        $filename = 'sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque';
+        $this->assertSame('sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque',
+            shorten_filename($filename));
+        // Filename contains extension.
+        $this->assertSame('sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque.zip',
+            shorten_filename($filename . '.zip'));
+    }
+
     public function test_usergetdate() {
         global $USER, $CFG, $DB;
         $this->resetAfterTest();
 
-        // Check if forcetimezone is set then save it and set it to use user timezone.
-        $cfgforcetimezone = null;
-        if (isset($CFG->forcetimezone)) {
-            $cfgforcetimezone = $CFG->forcetimezone;
-            $CFG->forcetimezone = 99; // Get user default timezone.
-        }
-
         $this->setAdminUser();
 
-        $userstimezone = $USER->timezone;
         $USER->timezone = 2;// Set the timezone to a known state.
-
-        // The string version of date comes from server locale setting and does
-        // not respect user language, so it is necessary to reset that.
-        $oldlocale = setlocale(LC_TIME, '0');
-        setlocale(LC_TIME, 'en_AU.UTF-8');
 
         $ts = 1261540267; // The time this function was created.
 
@@ -981,15 +1068,6 @@ class core_moodlelib_testcase extends advanced_testcase {
         $this->assertSame(356, $yday);
         $this->assertSame('Wednesday', $weekday);
         $this->assertSame('December', $month);
-        // Set the timezone back to what it was.
-        $USER->timezone = $userstimezone;
-
-        // Restore forcetimezone if changed.
-        if (!is_null($cfgforcetimezone)) {
-            $CFG->forcetimezone = $cfgforcetimezone;
-        }
-
-        setlocale(LC_TIME, $oldlocale);
     }
 
     public function test_mark_user_preferences_changed() {
@@ -1154,6 +1232,26 @@ class core_moodlelib_testcase extends advanced_testcase {
         } catch (moodle_exception $ex) {
             $this->assertInstanceOf('coding_exception', $ex);
         }
+    }
+
+    public function test_set_user_preference_for_current_user() {
+        global $USER;
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        set_user_preference('test_pref', 2);
+        set_user_preference('test_pref', 1, $USER->id);
+        $this->assertEquals(1, get_user_preferences('test_pref'));
+    }
+
+    public function test_unset_user_preference_for_current_user() {
+        global $USER;
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        set_user_preference('test_pref', 1);
+        unset_user_preference('test_pref', $USER->id);
+        $this->assertNull(get_user_preferences('test_pref'));
     }
 
     public function test_get_extra_user_fields() {
@@ -1356,30 +1454,15 @@ class core_moodlelib_testcase extends advanced_testcase {
             ),
             array(
                 'time' => '1293876000 ',
-                'usertimezone' => '14', // Server time zone.
+                'usertimezone' => '20', // Fallback to server time zone.
                 'timezone' => '99',     // This should show user time.
                 'expectedoutput' => 'Saturday, 1 January 2011, 6:00 PM'
             ),
         );
 
-        // Check if forcetimezone is set then save it and set it to use user timezone.
-        $cfgforcetimezone = null;
-        if (isset($CFG->forcetimezone)) {
-            $cfgforcetimezone = $CFG->forcetimezone;
-            $CFG->forcetimezone = 99; // Get user default timezone.
-        }
-        // Store user default timezone to restore later.
-        $userstimezone = $USER->timezone;
-
-        // The string version of date comes from server locale setting and does
-        // not respect user language, so it is necessary to reset that.
-        $oldlocale = setlocale(LC_TIME, '0');
-        setlocale(LC_TIME, 'en_AU.UTF-8');
-
         // Set default timezone to Australia/Perth, else time calculated
-        // will not match expected values. Before that save system defaults.
-        $systemdefaulttimezone = date_default_timezone_get();
-        date_default_timezone_set('Australia/Perth');
+        // will not match expected values.
+        $this->setTimezone(99, 'Australia/Perth');
 
         foreach ($testvalues as $vals) {
             $USER->timezone = $vals['usertimezone'];
@@ -1390,21 +1473,81 @@ class core_moodlelib_testcase extends advanced_testcase {
             $actualoutput = core_text::strtolower($actualoutput);
 
             $this->assertSame($vals['expectedoutput'], $actualoutput,
-                "Expected: {$vals['expectedoutput']} => Actual: {$actualoutput},
-                Please check if timezones are updated (Site adminstration -> location -> update timezone)");
+                "Expected: {$vals['expectedoutput']} => Actual: {$actualoutput} \ndata: " . var_export($vals, true));
         }
+    }
 
-        // Restore user timezone back to what it was.
-        $USER->timezone = $userstimezone;
+    /**
+     * Make sure the DST changes happen at the right time in Moodle.
+     */
+    public function test_dst_changes() {
+        // DST switching in Prague.
+        // From 2AM to 3AM in 1989.
+        $date = new DateTime('1989-03-26T01:59:00+01:00');
+        $this->assertSame('Sunday, 26 March 1989, 01:59', userdate($date->getTimestamp(), '%A, %d %B %Y, %H:%M', 'Europe/Prague'));
+        $date = new DateTime('1989-03-26T02:01:00+01:00');
+        $this->assertSame('Sunday, 26 March 1989, 03:01', userdate($date->getTimestamp(), '%A, %d %B %Y, %H:%M', 'Europe/Prague'));
+        // From 3AM to 2AM in 1989 - not the same as the west Europe.
+        $date = new DateTime('1989-09-24T01:59:00+01:00');
+        $this->assertSame('Sunday, 24 September 1989, 02:59', userdate($date->getTimestamp(), '%A, %d %B %Y, %H:%M', 'Europe/Prague'));
+        $date = new DateTime('1989-09-24T02:01:00+01:00');
+        $this->assertSame('Sunday, 24 September 1989, 02:01', userdate($date->getTimestamp(), '%A, %d %B %Y, %H:%M', 'Europe/Prague'));
+        // From 2AM to 3AM in 2014.
+        $date = new DateTime('2014-03-30T01:59:00+01:00');
+        $this->assertSame('Sunday, 30 March 2014, 01:59', userdate($date->getTimestamp(), '%A, %d %B %Y, %H:%M', 'Europe/Prague'));
+        $date = new DateTime('2014-03-30T02:01:00+01:00');
+        $this->assertSame('Sunday, 30 March 2014, 03:01', userdate($date->getTimestamp(), '%A, %d %B %Y, %H:%M', 'Europe/Prague'));
+        // From 3AM to 2AM in 2014.
+        $date = new DateTime('2014-10-26T01:59:00+01:00');
+        $this->assertSame('Sunday, 26 October 2014, 02:59', userdate($date->getTimestamp(), '%A, %d %B %Y, %H:%M', 'Europe/Prague'));
+        $date = new DateTime('2014-10-26T02:01:00+01:00');
+        $this->assertSame('Sunday, 26 October 2014, 02:01', userdate($date->getTimestamp(), '%A, %d %B %Y, %H:%M', 'Europe/Prague'));
+        // From 2AM to 3AM in 2020.
+        $date = new DateTime('2020-03-29T01:59:00+01:00');
+        $this->assertSame('Sunday, 29 March 2020, 01:59', userdate($date->getTimestamp(), '%A, %d %B %Y, %H:%M', 'Europe/Prague'));
+        $date = new DateTime('2020-03-29T02:01:00+01:00');
+        $this->assertSame('Sunday, 29 March 2020, 03:01', userdate($date->getTimestamp(), '%A, %d %B %Y, %H:%M', 'Europe/Prague'));
+        // From 3AM to 2AM in 2020.
+        $date = new DateTime('2020-10-25T01:59:00+01:00');
+        $this->assertSame('Sunday, 25 October 2020, 02:59', userdate($date->getTimestamp(), '%A, %d %B %Y, %H:%M', 'Europe/Prague'));
+        $date = new DateTime('2020-10-25T02:01:00+01:00');
+        $this->assertSame('Sunday, 25 October 2020, 02:01', userdate($date->getTimestamp(), '%A, %d %B %Y, %H:%M', 'Europe/Prague'));
 
-        // Restore forcetimezone.
-        if (!is_null($cfgforcetimezone)) {
-            $CFG->forcetimezone = $cfgforcetimezone;
-        }
+        // DST switching in NZ.
+        // From 3AM to 2AM in 2015.
+        $date = new DateTime('2015-04-05T02:59:00+13:00');
+        $this->assertSame('Sunday, 5 April 2015, 02:59', userdate($date->getTimestamp(), '%A, %d %B %Y, %H:%M', 'Pacific/Auckland'));
+        $date = new DateTime('2015-04-05T03:01:00+13:00');
+        $this->assertSame('Sunday, 5 April 2015, 02:01', userdate($date->getTimestamp(), '%A, %d %B %Y, %H:%M', 'Pacific/Auckland'));
+        // From 2AM to 3AM in 2009.
+        $date = new DateTime('2015-09-27T01:59:00+12:00');
+        $this->assertSame('Sunday, 27 September 2015, 01:59', userdate($date->getTimestamp(), '%A, %d %B %Y, %H:%M', 'Pacific/Auckland'));
+        $date = new DateTime('2015-09-27T02:01:00+12:00');
+        $this->assertSame('Sunday, 27 September 2015, 03:01', userdate($date->getTimestamp(), '%A, %d %B %Y, %H:%M', 'Pacific/Auckland'));
 
-        // Restore system default values.
-        date_default_timezone_set($systemdefaulttimezone);
-        setlocale(LC_TIME, $oldlocale);
+        // DST switching in Perth.
+        // From 3AM to 2AM in 2009.
+        $date = new DateTime('2008-03-30T01:59:00+08:00');
+        $this->assertSame('Sunday, 30 March 2008, 02:59', userdate($date->getTimestamp(), '%A, %d %B %Y, %H:%M', 'Australia/Perth'));
+        $date = new DateTime('2008-03-30T02:01:00+08:00');
+        $this->assertSame('Sunday, 30 March 2008, 02:01', userdate($date->getTimestamp(), '%A, %d %B %Y, %H:%M', 'Australia/Perth'));
+        // From 2AM to 3AM in 2009.
+        $date = new DateTime('2008-10-26T01:59:00+08:00');
+        $this->assertSame('Sunday, 26 October 2008, 01:59', userdate($date->getTimestamp(), '%A, %d %B %Y, %H:%M', 'Australia/Perth'));
+        $date = new DateTime('2008-10-26T02:01:00+08:00');
+        $this->assertSame('Sunday, 26 October 2008, 03:01', userdate($date->getTimestamp(), '%A, %d %B %Y, %H:%M', 'Australia/Perth'));
+
+        // DST switching in US.
+        // From 2AM to 3AM in 2014.
+        $date = new DateTime('2014-03-09T01:59:00-05:00');
+        $this->assertSame('Sunday, 9 March 2014, 01:59', userdate($date->getTimestamp(), '%A, %d %B %Y, %H:%M', 'America/New_York'));
+        $date = new DateTime('2014-03-09T02:01:00-05:00');
+        $this->assertSame('Sunday, 9 March 2014, 03:01', userdate($date->getTimestamp(), '%A, %d %B %Y, %H:%M', 'America/New_York'));
+        // From 3AM to 2AM in 2014.
+        $date = new DateTime('2014-11-02T01:59:00-04:00');
+        $this->assertSame('Sunday, 2 November 2014, 01:59', userdate($date->getTimestamp(), '%A, %d %B %Y, %H:%M', 'America/New_York'));
+        $date = new DateTime('2014-11-02T02:01:00-04:00');
+        $this->assertSame('Sunday, 2 November 2014, 01:01', userdate($date->getTimestamp(), '%A, %d %B %Y, %H:%M', 'America/New_York'));
     }
 
     public function test_make_timestamp() {
@@ -1523,7 +1666,7 @@ class core_moodlelib_testcase extends advanced_testcase {
                 'expectedoutput' => '1309485600'
             ),
             array(
-                'usertimezone' => '14', // Server time.
+                'usertimezone' => '-14', // Server time.
                 'year' => '2011',
                 'month' => '7',
                 'day' => '1',
@@ -1536,25 +1679,9 @@ class core_moodlelib_testcase extends advanced_testcase {
             )
         );
 
-        // Check if forcetimezone is set then save it and set it to use user timezone.
-        $cfgforcetimezone = null;
-        if (isset($CFG->forcetimezone)) {
-            $cfgforcetimezone = $CFG->forcetimezone;
-            $CFG->forcetimezone = 99; // Get user default timezone.
-        }
-
-        // Store user default timezone to restore later.
-        $userstimezone = $USER->timezone;
-
-        // The string version of date comes from server locale setting and does
-        // not respect user language, so it is necessary to reset that.
-        $oldlocale = setlocale(LC_TIME, '0');
-        setlocale(LC_TIME, 'en_AU.UTF-8');
-
         // Set default timezone to Australia/Perth, else time calculated
-        // Will not match expected values. Before that save system defaults.
-        $systemdefaulttimezone = date_default_timezone_get();
-        date_default_timezone_set('Australia/Perth');
+        // will not match expected values.
+        $this->setTimezone(99, 'Australia/Perth');
 
         // Test make_timestamp with all testvals and assert if anything wrong.
         foreach ($testvalues as $vals) {
@@ -1578,18 +1705,6 @@ class core_moodlelib_testcase extends advanced_testcase {
                 "Expected: {$vals['expectedoutput']} => Actual: {$actualoutput},
                 Please check if timezones are updated (Site adminstration -> location -> update timezone)");
         }
-
-        // Restore user timezone back to what it was.
-        $USER->timezone = $userstimezone;
-
-        // Restore forcetimezone.
-        if (!is_null($cfgforcetimezone)) {
-            $CFG->forcetimezone = $cfgforcetimezone;
-        }
-
-        // Restore system default values.
-        date_default_timezone_set($systemdefaulttimezone);
-        setlocale(LC_TIME, $oldlocale);
     }
 
     /**
@@ -1732,7 +1847,7 @@ class core_moodlelib_testcase extends advanced_testcase {
     }
 
     /**
-     * @expectedException PHPUnit_Framework_Error_Warning
+     * @expectedException PHPUnit\Framework\Error\Warning
      */
     public function test_get_string_limitation() {
         // This is one of the limitations to the lang_string class. It can't be
@@ -1859,6 +1974,10 @@ class core_moodlelib_testcase extends advanced_testcase {
 
         $user = $this->getDataGenerator()->create_user(array('idnumber'=>'abc'));
         $user2 = $this->getDataGenerator()->create_user(array('idnumber'=>'xyz'));
+        $usersharedemail1 = $this->getDataGenerator()->create_user(array('email' => 'sharedemail@example.invalid'));
+        $usersharedemail2 = $this->getDataGenerator()->create_user(array('email' => 'sharedemail@example.invalid'));
+        $useremptyemail1 = $this->getDataGenerator()->create_user(array('email' => ''));
+        $useremptyemail2 = $this->getDataGenerator()->create_user(array('email' => ''));
 
         // Delete user and capture event.
         $sink = $this->redirectEvents();
@@ -1924,6 +2043,30 @@ class core_moodlelib_testcase extends advanced_testcase {
         $result = delete_user($admin);
         $this->assertFalse($result);
 
+        // Simultaneously deleting users with identical email addresses.
+        $result1 = delete_user($usersharedemail1);
+        $result2 = delete_user($usersharedemail2);
+
+        $usersharedemail1after = $DB->get_record('user', array('id' => $usersharedemail1->id));
+        $usersharedemail2after = $DB->get_record('user', array('id' => $usersharedemail2->id));
+        $this->assertTrue($result1);
+        $this->assertTrue($result2);
+        $this->assertStringStartsWith($usersharedemail1->email . '.', $usersharedemail1after->username);
+        $this->assertStringStartsWith($usersharedemail2->email . '.', $usersharedemail2after->username);
+
+        // Simultaneously deleting users without email addresses.
+        $result1 = delete_user($useremptyemail1);
+        $result2 = delete_user($useremptyemail2);
+
+        $useremptyemail1after = $DB->get_record('user', array('id' => $useremptyemail1->id));
+        $useremptyemail2after = $DB->get_record('user', array('id' => $useremptyemail2->id));
+        $this->assertTrue($result1);
+        $this->assertTrue($result2);
+        $this->assertStringStartsWith($useremptyemail1->username . '.' . $useremptyemail1->id . '@unknownemail.invalid.',
+            $useremptyemail1after->username);
+        $this->assertStringStartsWith($useremptyemail2->username . '.' . $useremptyemail2->id . '@unknownemail.invalid.',
+            $useremptyemail2after->username);
+
         $this->resetDebugging();
     }
 
@@ -1956,15 +2099,8 @@ class core_moodlelib_testcase extends advanced_testcase {
     public function test_date_format_string() {
         global $CFG;
 
-        // Forcing locale and timezone.
-        $oldlocale = setlocale(LC_TIME, '0');
-        if ($CFG->ostype == 'WINDOWS') {
-            setlocale(LC_TIME, 'English_Australia.1252');
-        } else {
-            setlocale(LC_TIME, 'en_AU.UTF-8');
-        }
-        $systemdefaulttimezone = date_default_timezone_get();
-        date_default_timezone_set('Australia/Perth');
+        $this->resetAfterTest();
+        $this->setTimezone(99, 'Australia/Perth');
 
         $tests = array(
             array(
@@ -1978,9 +2114,11 @@ class core_moodlelib_testcase extends advanced_testcase {
                 'expected' => 'Saturday, 01 January 2011, 10:00 AM'
             ),
             array(
-                'tz' => -12,
+                // Note: this function expected the timestamp in weird format before,
+                // since 2.9 it uses UTC.
+                'tz' => 'Pacific/Auckland',
                 'str' => '%A, %d %B %Y, %I:%M %p',
-                'expected' => 'Saturday, 01 January 2011, 10:00 AM'
+                'expected' => 'Saturday, 01 January 2011, 11:00 PM'
             ),
             // Following tests pass on Windows only because en lang pack does
             // not contain localewincharset, in real life lang pack maintainers
@@ -2011,10 +2149,6 @@ class core_moodlelib_testcase extends advanced_testcase {
             $str = date_format_string(1293876000, $test['str'], $test['tz']);
             $this->assertSame(core_text::strtolower($test['expected']), core_text::strtolower($str));
         }
-
-        // Restore system default values.
-        date_default_timezone_set($systemdefaulttimezone);
-        setlocale(LC_TIME, $oldlocale);
     }
 
     public function test_get_config() {
@@ -2594,13 +2728,132 @@ class core_moodlelib_testcase extends advanced_testcase {
         $this->assertEventContextNotUsed($event);
     }
 
+    /**
+     * A data provider for testing email messageid
+     */
+    public function generate_email_messageid_provider() {
+        return array(
+            'nopath' => array(
+                'wwwroot' => 'http://www.example.com',
+                'ids' => array(
+                    'a-custom-id' => '<a-custom-id@www.example.com>',
+                    'an-id-with-/-a-slash' => '<an-id-with-%2F-a-slash@www.example.com>',
+                ),
+            ),
+            'path' => array(
+                'wwwroot' => 'http://www.example.com/path/subdir',
+                'ids' => array(
+                    'a-custom-id' => '<a-custom-id/path/subdir@www.example.com>',
+                    'an-id-with-/-a-slash' => '<an-id-with-%2F-a-slash/path/subdir@www.example.com>',
+                ),
+            ),
+        );
+    }
+
+    /**
+     * Test email message id generation
+     *
+     * @dataProvider generate_email_messageid_provider
+     *
+     * @param string $wwwroot The wwwroot
+     * @param array $msgids An array of msgid local parts and the final result
+     */
+    public function test_generate_email_messageid($wwwroot, $msgids) {
+        global $CFG;
+
+        $this->resetAfterTest();
+        $CFG->wwwroot = $wwwroot;
+
+        foreach ($msgids as $local => $final) {
+            $this->assertEquals($final, generate_email_messageid($local));
+        }
+    }
+
+    /**
+     * A data provider for testing email diversion
+     */
+    public function diverted_emails_provider() {
+        return array(
+            'nodiverts' => array(
+                'divertallemailsto' => null,
+                'divertallemailsexcept' => null,
+                array(
+                    'foo@example.com',
+                    'test@real.com',
+                    'fred.jones@example.com',
+                    'dev1@dev.com',
+                    'fred@example.com',
+                    'fred+verp@example.com',
+                ),
+                false,
+            ),
+            'alldiverts' => array(
+                'divertallemailsto' => 'somewhere@elsewhere.com',
+                'divertallemailsexcept' => null,
+                array(
+                    'foo@example.com',
+                    'test@real.com',
+                    'fred.jones@example.com',
+                    'dev1@dev.com',
+                    'fred@example.com',
+                    'fred+verp@example.com',
+                ),
+                true,
+            ),
+            'alsodiverts' => array(
+                'divertallemailsto' => 'somewhere@elsewhere.com',
+                'divertallemailsexcept' => '@dev.com, fred(\+.*)?@example.com',
+                array(
+                    'foo@example.com',
+                    'test@real.com',
+                    'fred.jones@example.com',
+                ),
+                true,
+            ),
+            'divertsexceptions' => array(
+                'divertallemailsto' => 'somewhere@elsewhere.com',
+                'divertallemailsexcept' => '@dev.com, fred(\+.*)?@example.com',
+                array(
+                    'dev1@dev.com',
+                    'fred@example.com',
+                    'fred+verp@example.com',
+                ),
+                false,
+            ),
+        );
+    }
+
+    /**
+     * Test email diversion
+     *
+     * @dataProvider diverted_emails_provider
+     *
+     * @param string $divertallemailsto An optional email address
+     * @param string $divertallemailsexcept An optional exclusion list
+     * @param array $addresses An array of test addresses
+     * @param boolean $expected Expected result
+     */
+    public function test_email_should_be_diverted($divertallemailsto, $divertallemailsexcept, $addresses, $expected) {
+        global $CFG;
+
+        $this->resetAfterTest();
+        $CFG->divertallemailsto = $divertallemailsto;
+        $CFG->divertallemailsexcept = $divertallemailsexcept;
+
+        foreach ($addresses as $address) {
+            $this->assertEquals($expected, email_should_be_diverted($address));
+        }
+    }
+
     public function test_email_to_user() {
         global $CFG;
 
         $this->resetAfterTest();
 
-        $user1 = $this->getDataGenerator()->create_user();
-        $user2 = $this->getDataGenerator()->create_user();
+        $user1 = $this->getDataGenerator()->create_user(array('maildisplay' => 1));
+        $user2 = $this->getDataGenerator()->create_user(array('maildisplay' => 1));
+        $user3 = $this->getDataGenerator()->create_user(array('maildisplay' => 0));
+        set_config('allowedemaildomains', "example.com\r\nmoodle.org");
 
         $subject = 'subject';
         $messagetext = 'message text';
@@ -2642,16 +2895,42 @@ class core_moodlelib_testcase extends advanced_testcase {
         email_to_user($user1, $user2, $subject, $messagetext);
         $this->assertDebuggingCalled('Unit tests must not send real emails! Use $this->redirectEmails()');
 
-        // Test $CFG->emailonlyfromnoreplyaddress.
-        set_config('emailonlyfromnoreplyaddress', 1);
-        $this->assertNotEmpty($CFG->emailonlyfromnoreplyaddress);
+        // Test that an empty noreplyaddress will default to a no-reply address.
         $sink = $this->redirectEmails();
-        email_to_user($user1, $user2, $subject, $messagetext);
-        unset_config('emailonlyfromnoreplyaddress');
-        email_to_user($user1, $user2, $subject, $messagetext);
+        email_to_user($user1, $user3, $subject, $messagetext);
         $result = $sink->get_messages();
         $this->assertEquals($CFG->noreplyaddress, $result[0]->from);
-        $this->assertNotEquals($CFG->noreplyaddress, $result[1]->from);
+        $sink->close();
+        set_config('noreplyaddress', '');
+        $sink = $this->redirectEmails();
+        email_to_user($user1, $user3, $subject, $messagetext);
+        $result = $sink->get_messages();
+        $this->assertEquals('noreply@www.example.com', $result[0]->from);
+        $sink->close();
+
+        // Test $CFG->allowedemaildomains.
+        set_config('noreplyaddress', 'noreply@www.example.com');
+        $this->assertNotEmpty($CFG->allowedemaildomains);
+        $sink = $this->redirectEmails();
+        email_to_user($user1, $user2, $subject, $messagetext);
+        unset_config('allowedemaildomains');
+        email_to_user($user1, $user2, $subject, $messagetext);
+        $result = $sink->get_messages();
+        $this->assertNotEquals($CFG->noreplyaddress, $result[0]->from);
+        $this->assertEquals($CFG->noreplyaddress, $result[1]->from);
+        $sink->close();
+
+        // Try to send an unsafe attachment, we should see an error message in the eventual mail body.
+        $attachment = '../test.txt';
+        $attachname = 'txt';
+
+        $sink = $this->redirectEmails();
+        email_to_user($user1, $user2, $subject, $messagetext, '', $attachment, $attachname);
+        $this->assertSame(1, $sink->count());
+        $result = $sink->get_messages();
+        $this->assertCount(1, $result);
+        $this->assertContains('error.txt', $result[0]->body);
+        $this->assertContains('Error in attachment.  User attempted to attach a filename with a unsafe name.', $result[0]->body);
         $sink->close();
     }
 
@@ -2685,6 +2964,149 @@ class core_moodlelib_testcase extends advanced_testcase {
         $this->assertEquals(context_user::instance($user->id), $event->get_context());
         $this->assertEventContextNotUsed($event);
     }
+
+    /**
+     * Data provider for test_generate_confirmation_link
+     * @return Array of confirmation urls and expected resultant confirmation links
+     */
+    public function generate_confirmation_link_provider() {
+        global $CFG;
+        return [
+            "Simple name" => [
+                "username" => "simplename",
+                "confirmationurl" => null,
+                "expected" => $CFG->wwwroot . "/login/confirm.php?data=/simplename"
+            ],
+            "Period in between words in username" => [
+                "username" => "period.inbetween",
+                "confirmationurl" => null,
+                "expected" => $CFG->wwwroot . "/login/confirm.php?data=/period%2Einbetween"
+            ],
+            "Trailing periods in username" => [
+                "username" => "trailingperiods...",
+                "confirmationurl" => null,
+                "expected" => $CFG->wwwroot . "/login/confirm.php?data=/trailingperiods%2E%2E%2E"
+            ],
+            "At symbol in username" => [
+                "username" => "at@symbol",
+                "confirmationurl" => null,
+                "expected" => $CFG->wwwroot . "/login/confirm.php?data=/at%40symbol"
+            ],
+            "Dash symbol in username" => [
+                "username" => "has-dash",
+                "confirmationurl" => null,
+                "expected" => $CFG->wwwroot . "/login/confirm.php?data=/has-dash"
+            ],
+            "Underscore in username" => [
+                "username" => "under_score",
+                "confirmationurl" => null,
+                "expected" => $CFG->wwwroot . "/login/confirm.php?data=/under_score"
+            ],
+            "Many different characters in username" => [
+                "username" => "many_-.@characters@_@-..-..",
+                "confirmationurl" => null,
+                "expected" => $CFG->wwwroot . "/login/confirm.php?data=/many_-%2E%40characters%40_%40-%2E%2E-%2E%2E"
+            ],
+            "Custom relative confirmation url" => [
+                "username" => "many_-.@characters@_@-..-..",
+                "confirmationurl" => "/custom/local/url.php",
+                "expected" => $CFG->wwwroot . "/custom/local/url.php?data=/many_-%2E%40characters%40_%40-%2E%2E-%2E%2E"
+            ],
+            "Custom relative confirmation url with parameters" => [
+                "username" => "many_-.@characters@_@-..-..",
+                "confirmationurl" => "/custom/local/url.php?with=param",
+                "expected" => $CFG->wwwroot . "/custom/local/url.php?with=param&data=/many_-%2E%40characters%40_%40-%2E%2E-%2E%2E"
+            ],
+            "Custom local confirmation url" => [
+                "username" => "many_-.@characters@_@-..-..",
+                "confirmationurl" => $CFG->wwwroot . "/custom/local/url.php",
+                "expected" => $CFG->wwwroot . "/custom/local/url.php?data=/many_-%2E%40characters%40_%40-%2E%2E-%2E%2E"
+            ],
+            "Custom local confirmation url with parameters" => [
+                "username" => "many_-.@characters@_@-..-..",
+                "confirmationurl" => $CFG->wwwroot . "/custom/local/url.php?with=param",
+                "expected" => $CFG->wwwroot . "/custom/local/url.php?with=param&data=/many_-%2E%40characters%40_%40-%2E%2E-%2E%2E"
+            ],
+            "Custom external confirmation url" => [
+                "username" => "many_-.@characters@_@-..-..",
+                "confirmationurl" => "http://moodle.org/custom/external/url.php",
+                "expected" => "http://moodle.org/custom/external/url.php?data=/many_-%2E%40characters%40_%40-%2E%2E-%2E%2E"
+            ],
+            "Custom external confirmation url with parameters" => [
+                "username" => "many_-.@characters@_@-..-..",
+                "confirmationurl" => "http://moodle.org/ext.php?with=some&param=eters",
+                "expected" => "http://moodle.org/ext.php?with=some&param=eters&data=/many_-%2E%40characters%40_%40-%2E%2E-%2E%2E"
+            ],
+            "Custom external confirmation url with parameters" => [
+                "username" => "many_-.@characters@_@-..-..",
+                "confirmationurl" => "http://moodle.org/ext.php?with=some&data=test",
+                "expected" => "http://moodle.org/ext.php?with=some&data=/many_-%2E%40characters%40_%40-%2E%2E-%2E%2E"
+            ],
+        ];
+    }
+
+    /**
+     * Test generate_confirmation_link
+     * @dataProvider generate_confirmation_link_provider
+     * @param string $username The name of the user
+     * @param string $confirmationurl The url the user should go to to confirm
+     * @param string $expected The expected url of the confirmation link
+     */
+    public function test_generate_confirmation_link($username, $confirmationurl, $expected) {
+        $this->resetAfterTest();
+        $sink = $this->redirectEmails();
+
+        $user = $this->getDataGenerator()->create_user(
+            [
+                "username" => $username,
+                "confirmed" => false,
+                "email" => 'test@example.com',
+            ]
+        );
+
+        send_confirmation_email($user, $confirmationurl);
+        $sink->close();
+        $messages = $sink->get_messages();
+        $message = array_shift($messages);
+        $messagebody = quoted_printable_decode($message->body);
+
+        $this->assertContains($expected, $messagebody);
+    }
+
+    /**
+     * Test generate_confirmation_link with custom admin link
+     */
+    public function test_generate_confirmation_link_with_custom_admin() {
+        global $CFG;
+
+        $this->resetAfterTest();
+        $sink = $this->redirectEmails();
+
+        $admin = $CFG->admin;
+        $CFG->admin = 'custom/admin/path';
+
+        $user = $this->getDataGenerator()->create_user(
+            [
+                "username" => "many_-.@characters@_@-..-..",
+                "confirmed" => false,
+                "email" => 'test@example.com',
+            ]
+        );
+        $confirmationurl = "/admin/test.php?with=params";
+        $expected = $CFG->wwwroot . "/" . $CFG->admin . "/test.php?with=params&data=/many_-%2E%40characters%40_%40-%2E%2E-%2E%2E";
+
+        send_confirmation_email($user, $confirmationurl);
+        $sink->close();
+        $messages = $sink->get_messages();
+        $message = array_shift($messages);
+        $messagebody = quoted_printable_decode($message->body);
+
+        $sink->close();
+        $this->assertContains($expected, $messagebody);
+
+        $CFG->admin = $admin;
+    }
+
 
     /**
      * Test remove_course_content deletes course contents
@@ -2763,7 +3185,7 @@ class core_moodlelib_testcase extends advanced_testcase {
         $userinfo->authormiddlename = '';
         $userinfo->authorpicture = 23;
         $userinfo->authorimagealt = 'Michael Jordan draining another basket.';
-        $userinfo->authoremail = 'test@testing.net';
+        $userinfo->authoremail = 'test@example.com';
 
 
         // Return an object with user picture information.
@@ -2779,7 +3201,7 @@ class core_moodlelib_testcase extends advanced_testcase {
         $expectedarray->lastnamephonetic = 'カンベッル';
         $expectedarray->middlename = '';
         $expectedarray->alternatename = '';
-        $expectedarray->email = 'test@testing.net';
+        $expectedarray->email = 'test@example.com';
         $expectedarray->picture = 23;
         $expectedarray->imagealt = 'Michael Jordan draining another basket.';
         $this->assertEquals($user, $expectedarray);
@@ -2796,7 +3218,7 @@ class core_moodlelib_testcase extends advanced_testcase {
         $this->assertEquals(3, $count);
 
         $count = count_words('one"two three-four');
-        $this->assertEquals(3, $count);
+        $this->assertEquals(2, $count);
 
         $count = count_words('one@two three_four');
         $this->assertEquals(4, $count);
@@ -2863,5 +3285,460 @@ class core_moodlelib_testcase extends advanced_testcase {
 
         $_SERVER['HTTP_X_FORWARDED_FOR'] = $xforwardedfor;
 
+    }
+
+    /*
+     * Test emulation of random_bytes() function.
+     */
+    public function test_random_bytes_emulate() {
+        $result = random_bytes_emulate(10);
+        $this->assertSame(10, strlen($result));
+        $this->assertnotSame($result, random_bytes_emulate(10));
+
+        $result = random_bytes_emulate(21);
+        $this->assertSame(21, strlen($result));
+        $this->assertnotSame($result, random_bytes_emulate(21));
+
+        $result = random_bytes_emulate(666);
+        $this->assertSame(666, strlen($result));
+
+        $result = random_bytes_emulate(40);
+        $this->assertSame(40, strlen($result));
+
+        $this->assertDebuggingNotCalled();
+
+        $result = random_bytes_emulate(0);
+        $this->assertSame('', $result);
+        $this->assertDebuggingCalled();
+
+        $result = random_bytes_emulate(-1);
+        $this->assertSame('', $result);
+        $this->assertDebuggingCalled();
+    }
+
+    /**
+     * Test function for creation of random strings.
+     */
+    public function test_random_string() {
+        $pool = 'a-zA-Z0-9';
+
+        $result = random_string(10);
+        $this->assertSame(10, strlen($result));
+        $this->assertRegExp('/^[' . $pool . ']+$/', $result);
+        $this->assertNotSame($result, random_string(10));
+
+        $result = random_string(21);
+        $this->assertSame(21, strlen($result));
+        $this->assertRegExp('/^[' . $pool . ']+$/', $result);
+        $this->assertNotSame($result, random_string(21));
+
+        $result = random_string(666);
+        $this->assertSame(666, strlen($result));
+        $this->assertRegExp('/^[' . $pool . ']+$/', $result);
+
+        $result = random_string();
+        $this->assertSame(15, strlen($result));
+        $this->assertRegExp('/^[' . $pool . ']+$/', $result);
+
+        $this->assertDebuggingNotCalled();
+
+        $result = random_string(0);
+        $this->assertSame('', $result);
+        $this->assertDebuggingCalled();
+
+        $result = random_string(-1);
+        $this->assertSame('', $result);
+        $this->assertDebuggingCalled();
+    }
+
+    /**
+     * Test function for creation of complex random strings.
+     */
+    public function test_complex_random_string() {
+        $pool = preg_quote('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789`~!@#%^&*()_+-=[];,./<>?:{} ', '/');
+
+        $result = complex_random_string(10);
+        $this->assertSame(10, strlen($result));
+        $this->assertRegExp('/^[' . $pool . ']+$/', $result);
+        $this->assertNotSame($result, complex_random_string(10));
+
+        $result = complex_random_string(21);
+        $this->assertSame(21, strlen($result));
+        $this->assertRegExp('/^[' . $pool . ']+$/', $result);
+        $this->assertNotSame($result, complex_random_string(21));
+
+        $result = complex_random_string(666);
+        $this->assertSame(666, strlen($result));
+        $this->assertRegExp('/^[' . $pool . ']+$/', $result);
+
+        $result = complex_random_string();
+        $this->assertEquals(28, strlen($result), '', 4); // Expected length is 24 - 32.
+        $this->assertRegExp('/^[' . $pool . ']+$/', $result);
+
+        $this->assertDebuggingNotCalled();
+
+        $result = complex_random_string(0);
+        $this->assertSame('', $result);
+        $this->assertDebuggingCalled();
+
+        $result = complex_random_string(-1);
+        $this->assertSame('', $result);
+        $this->assertDebuggingCalled();
+    }
+
+    /**
+     * Data provider for private ips.
+     */
+    public function data_private_ips() {
+        return array(
+            array('10.0.0.0'),
+            array('172.16.0.0'),
+            array('192.168.1.0'),
+            array('fdfe:dcba:9876:ffff:fdc6:c46b:bb8f:7d4c'),
+            array('fdc6:c46b:bb8f:7d4c:fdc6:c46b:bb8f:7d4c'),
+            array('fdc6:c46b:bb8f:7d4c:0000:8a2e:0370:7334'),
+            array('127.0.0.1'), // This has been buggy in past: https://bugs.php.net/bug.php?id=53150.
+        );
+    }
+
+    /**
+     * Checks ip_is_public returns false for private ips.
+     *
+     * @param string $ip the ipaddress to test
+     * @dataProvider data_private_ips
+     */
+    public function test_ip_is_public_private_ips($ip) {
+        $this->assertFalse(ip_is_public($ip));
+    }
+
+    /**
+     * Data provider for public ips.
+     */
+    public function data_public_ips() {
+        return array(
+            array('2400:cb00:2048:1::8d65:71b3'),
+            array('2400:6180:0:d0::1b:2001'),
+            array('141.101.113.179'),
+            array('123.45.67.178'),
+        );
+    }
+
+    /**
+     * Checks ip_is_public returns true for public ips.
+     *
+     * @param string $ip the ipaddress to test
+     * @dataProvider data_public_ips
+     */
+    public function test_ip_is_public_public_ips($ip) {
+        $this->assertTrue(ip_is_public($ip));
+    }
+
+    /**
+     * Test the function can_send_from_real_email_address
+     *
+     * @param string $email Email address for the from user.
+     * @param int $display The user's email display preference.
+     * @param bool $samecourse Are the users in the same course?
+     * @param string $config The CFG->allowedemaildomains config values
+     * @param bool $result The expected result.
+     * @dataProvider data_can_send_from_real_email_address
+     */
+    public function test_can_send_from_real_email_address($email, $display, $samecourse, $config, $result) {
+        $this->resetAfterTest();
+
+        $fromuser = $this->getDataGenerator()->create_user();
+        $touser = $this->getDataGenerator()->create_user();
+        $course = $this->getDataGenerator()->create_course();
+        set_config('allowedemaildomains', $config);
+
+        $fromuser->email = $email;
+        $fromuser->maildisplay = $display;
+        if ($samecourse) {
+            $this->getDataGenerator()->enrol_user($fromuser->id, $course->id, 'student');
+            $this->getDataGenerator()->enrol_user($touser->id, $course->id, 'student');
+        } else {
+            $this->getDataGenerator()->enrol_user($fromuser->id, $course->id, 'student');
+        }
+        $this->assertEquals($result, can_send_from_real_email_address($fromuser, $touser));
+    }
+
+    /**
+     * Data provider for test_can_send_from_real_email_address.
+     *
+     * @return array Returns an array of test data for the above function.
+     */
+    public function data_can_send_from_real_email_address() {
+        return [
+            // Test from email is in allowed domain.
+            // Test that from display is set to show no one.
+            [
+                'email' => 'fromuser@example.com',
+                'display' => core_user::MAILDISPLAY_HIDE,
+                'samecourse' => false,
+                'config' => "example.com\r\ntest.com",
+                'result' => false
+            ],
+            // Test that from display is set to course members only (course member).
+            [
+                'email' => 'fromuser@example.com',
+                'display' => core_user::MAILDISPLAY_COURSE_MEMBERS_ONLY,
+                'samecourse' => true,
+                'config' => "example.com\r\ntest.com",
+                'result' => true
+            ],
+            // Test that from display is set to course members only (Non course member).
+            [
+                'email' => 'fromuser@example.com',
+                'display' => core_user::MAILDISPLAY_COURSE_MEMBERS_ONLY,
+                'samecourse' => false,
+                'config' => "example.com\r\ntest.com",
+                'result' => false
+            ],
+            // Test that from display is set to show everyone.
+            [
+                'email' => 'fromuser@example.com',
+                'display' => core_user::MAILDISPLAY_EVERYONE,
+                'samecourse' => false,
+                'config' => "example.com\r\ntest.com",
+                'result' => true
+            ],
+            // Test a few different config value formats for parsing correctness.
+            [
+                'email' => 'fromuser@example.com',
+                'display' => core_user::MAILDISPLAY_EVERYONE,
+                'samecourse' => false,
+                'config' => "\n test.com\nexample.com \n",
+                'result' => true
+            ],
+            [
+                'email' => 'fromuser@example.com',
+                'display' => core_user::MAILDISPLAY_EVERYONE,
+                'samecourse' => false,
+                'config' => "\r\n example.com \r\n test.com \r\n",
+                'result' => true
+            ],
+
+            // Test from email is not in allowed domain.
+            // Test that from display is set to show no one.
+            [   'email' => 'fromuser@moodle.com',
+                'display' => core_user::MAILDISPLAY_HIDE,
+                'samecourse' => false,
+                'config' => "example.com\r\ntest.com",
+                'result' => false
+            ],
+            // Test that from display is set to course members only (course member).
+            [   'email' => 'fromuser@moodle.com',
+                'display' => core_user::MAILDISPLAY_COURSE_MEMBERS_ONLY,
+                'samecourse' => true,
+                'config' => "example.com\r\ntest.com",
+                'result' => false
+            ],
+            // Test that from display is set to course members only (Non course member.
+            [   'email' => 'fromuser@moodle.com',
+                'display' => core_user::MAILDISPLAY_COURSE_MEMBERS_ONLY,
+                'samecourse' => false,
+                'config' => "example.com\r\ntest.com",
+                'result' => false
+            ],
+            // Test that from display is set to show everyone.
+            [   'email' => 'fromuser@moodle.com',
+                'display' => core_user::MAILDISPLAY_EVERYONE,
+                'samecourse' => false,
+                'config' => "example.com\r\ntest.com",
+                'result' => false
+            ],
+            // Test a few erroneous config value and confirm failure.
+            [   'email' => 'fromuser@moodle.com',
+                'display' => core_user::MAILDISPLAY_EVERYONE,
+                'samecourse' => false,
+                'config' => "\r\n   \r\n",
+                'result' => false
+            ],
+            [   'email' => 'fromuser@moodle.com',
+                'display' => core_user::MAILDISPLAY_EVERYONE,
+                'samecourse' => false,
+                'config' => " \n   \n \n ",
+                'result' => false
+            ],
+        ];
+    }
+
+    /**
+     * Test that generate_email_processing_address() returns valid email address.
+     */
+    public function test_generate_email_processing_address() {
+        global $CFG;
+        $this->resetAfterTest();
+
+        $data = (object)[
+            'id' => 42,
+            'email' => 'my.email+from_moodle@example.com',
+        ];
+
+        $modargs = 'B'.base64_encode(pack('V', $data->id)).substr(md5($data->email), 0, 16);
+
+        $CFG->maildomain = 'example.com';
+        $CFG->mailprefix = 'mdl+';
+        $this->assertTrue(validate_email(generate_email_processing_address(0, $modargs)));
+
+        $CFG->maildomain = 'mail.example.com';
+        $CFG->mailprefix = 'mdl-';
+        $this->assertTrue(validate_email(generate_email_processing_address(23, $modargs)));
+    }
+
+    /**
+     * Test safe method unserialize_array().
+     */
+    public function test_unserialize_array() {
+        $a = [1, 2, 3];
+        $this->assertEquals($a, unserialize_array(serialize($a)));
+        $this->assertEquals($a, unserialize_array(serialize($a)));
+        $a = ['a' => 1, 2 => 2, 'b' => 'cde'];
+        $this->assertEquals($a, unserialize_array(serialize($a)));
+        $this->assertEquals($a, unserialize_array(serialize($a)));
+        $a = ['a' => 1, 2 => 2, 'b' => 'c"d"e'];
+        $this->assertEquals($a, unserialize_array(serialize($a)));
+        $a = ['a' => 1, 2 => ['c' => 'd', 'e' => 'f'], 'b' => 'cde'];
+        $this->assertEquals($a, unserialize_array(serialize($a)));
+
+        // Can not unserialize if any string contains semicolons.
+        $a = ['a' => 1, 2 => 2, 'b' => 'c"d";e'];
+        $this->assertEquals(false, unserialize_array(serialize($a)));
+
+        // Can not unserialize if there are any objects.
+        $a = (object)['a' => 1, 2 => 2, 'b' => 'cde'];
+        $this->assertEquals(false, unserialize_array(serialize($a)));
+        $a = ['a' => 1, 2 => 2, 'b' => (object)['a' => 'cde']];
+        $this->assertEquals(false, unserialize_array(serialize($a)));
+
+        // Array used in the grader report.
+        $a = array('aggregatesonly' => [51, 34], 'gradesonly' => [21, 45, 78]);
+        $this->assertEquals($a, unserialize_array(serialize($a)));
+    }
+
+    /**
+     * Test that the component_class_callback returns the correct default value when the class was not found.
+     *
+     * @dataProvider component_class_callback_default_provider
+     * @param $default
+     */
+    public function test_component_class_callback_not_found($default) {
+        $this->assertSame($default, component_class_callback('thisIsNotTheClassYouWereLookingFor', 'anymethod', [], $default));
+    }
+
+    /**
+     * Test that the component_class_callback returns the correct default value when the class was not found.
+     *
+     * @dataProvider component_class_callback_default_provider
+     * @param $default
+     */
+    public function test_component_class_callback_method_not_found($default) {
+        require_once(__DIR__ . '/fixtures/component_class_callback_example.php');
+
+        $this->assertSame($default, component_class_callback(test_component_class_callback_example::class, 'this_is_not_the_method_you_were_looking_for', ['abc'], $default));
+    }
+
+    /**
+     * Test that the component_class_callback returns the default when the method returned null.
+     *
+     * @dataProvider component_class_callback_default_provider
+     * @param $default
+     */
+    public function test_component_class_callback_found_returns_null($default) {
+        require_once(__DIR__ . '/fixtures/component_class_callback_example.php');
+
+        $this->assertSame($default, component_class_callback(test_component_class_callback_example::class, 'method_returns_value', [null], $default));
+        $this->assertSame($default, component_class_callback(test_component_class_callback_child_example::class, 'method_returns_value', [null], $default));
+    }
+
+    /**
+     * Test that the component_class_callback returns the expected value and not the default when there was a value.
+     *
+     * @dataProvider component_class_callback_data_provider
+     * @param $default
+     */
+    public function test_component_class_callback_found_returns_value($value) {
+        require_once(__DIR__ . '/fixtures/component_class_callback_example.php');
+
+        $this->assertSame($value, component_class_callback(test_component_class_callback_example::class, 'method_returns_value', [$value], 'This is not the value you were looking for'));
+        $this->assertSame($value, component_class_callback(test_component_class_callback_child_example::class, 'method_returns_value', [$value], 'This is not the value you were looking for'));
+    }
+
+    /**
+     * Test that the component_class_callback handles multiple params correctly.
+     *
+     * @dataProvider component_class_callback_multiple_params_provider
+     * @param $default
+     */
+    public function test_component_class_callback_found_accepts_multiple($params, $count) {
+        require_once(__DIR__ . '/fixtures/component_class_callback_example.php');
+
+        $this->assertSame($count, component_class_callback(test_component_class_callback_example::class, 'method_returns_all_params', $params, 'This is not the value you were looking for'));
+        $this->assertSame($count, component_class_callback(test_component_class_callback_child_example::class, 'method_returns_all_params', $params, 'This is not the value you were looking for'));
+    }
+
+    /**
+     * Data provider with list of default values for user in component_class_callback tests.
+     *
+     * @return array
+     */
+    public function component_class_callback_default_provider() {
+        return [
+            'null' => [null],
+            'empty string' => [''],
+            'string' => ['This is a string'],
+            'int' => [12345],
+            'stdClass' => [(object) ['this is my content']],
+            'array' => [['a' => 'b',]],
+        ];
+    }
+
+    /**
+     * Data provider with list of default values for user in component_class_callback tests.
+     *
+     * @return array
+     */
+    public function component_class_callback_data_provider() {
+        return [
+            'empty string' => [''],
+            'string' => ['This is a string'],
+            'int' => [12345],
+            'stdClass' => [(object) ['this is my content']],
+            'array' => [['a' => 'b',]],
+        ];
+    }
+
+    /**
+     * Data provider with list of default values for user in component_class_callback tests.
+     *
+     * @return array
+     */
+    public function component_class_callback_multiple_params_provider() {
+        return [
+            'empty array' => [
+                [],
+                0,
+            ],
+            'string value' => [
+                ['one'],
+                1,
+            ],
+            'string values' => [
+                ['one', 'two'],
+                2,
+            ],
+            'arrays' => [
+                [[], []],
+                2,
+            ],
+            'nulls' => [
+                [null, null, null, null],
+                4,
+            ],
+            'mixed' => [
+                ['a', 1, null, (object) [], []],
+                5,
+            ],
+        ];
     }
 }

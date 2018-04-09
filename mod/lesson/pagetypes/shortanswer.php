@@ -199,30 +199,30 @@ class lesson_page_type_shortanswer extends lesson_page {
             $cells = array();
             if ($this->lesson->custom && $answer->score > 0) {
                 // if the score is > 0, then it is correct
-                $cells[] = '<span class="labelcorrect">'.get_string("answer", "lesson")." $i</span>: \n";
+                $cells[] = '<label class="correct">' . get_string('answer', 'lesson') . ' ' . $i . '</label>:';
             } else if ($this->lesson->custom) {
-                $cells[] = '<span class="label">'.get_string("answer", "lesson")." $i</span>: \n";
+                $cells[] = '<label>' . get_string('answer', 'lesson') . ' ' . $i . '</label>:';
             } else if ($this->lesson->jumpto_is_correct($this->properties->id, $answer->jumpto)) {
                 // underline correct answers
-                $cells[] = '<span class="correct">'.get_string("answer", "lesson")." $i</span>: \n";
+                $cells[] = '<span class="correct">' . get_string('answer', 'lesson') . ' ' . $i . '</span>:' . "\n";
             } else {
-                $cells[] = '<span class="labelcorrect">'.get_string("answer", "lesson")." $i</span>: \n";
+                $cells[] = '<label class="correct">' . get_string('answer', 'lesson') . ' ' . $i . '</label>:';
             }
             $cells[] = format_text($answer->answer, $answer->answerformat, $options);
             $table->data[] = new html_table_row($cells);
 
             $cells = array();
-            $cells[] = "<span class=\"label\">".get_string("response", "lesson")." $i</span>";
+            $cells[] = '<label>' . get_string('response', 'lesson') . ' ' . $i . '</label>:';
             $cells[] = format_text($answer->response, $answer->responseformat, $options);
             $table->data[] = new html_table_row($cells);
 
             $cells = array();
-            $cells[] = "<span class=\"label\">".get_string("score", "lesson").'</span>';
+            $cells[] = '<label>' . get_string('score', 'lesson') . '</label>:';
             $cells[] = $answer->score;
             $table->data[] = new html_table_row($cells);
 
             $cells = array();
-            $cells[] = "<span class=\"label\">".get_string("jump", "lesson").'</span>';
+            $cells[] = '<label>' . get_string('jump', 'lesson') . '</label>:';
             $cells[] = $this->get_jump_name($answer->jumpto);
             $table->data[] = new html_table_row($cells);
             if ($i === 1){
@@ -267,7 +267,8 @@ class lesson_page_type_shortanswer extends lesson_page {
                     $total = $stats["total"];
                     unset($stats["total"]);
                     foreach ($stats as $valentered => $ntimes) {
-                        $data = '<input type="text" size="50" disabled="disabled" readonly="readonly" value="'.s($valentered).'" />';
+                        $data = '<input type="text" size="50" disabled="disabled" class="form-control" ' .
+                                'readonly="readonly" value="'.s($valentered).'" />';
                         $percent = $ntimes / $total * 100;
                         $percent = round($percent, 2);
                         $percent .= "% ".get_string("enteredthis", "lesson");
@@ -279,7 +280,8 @@ class lesson_page_type_shortanswer extends lesson_page {
                 $i++;
             } else if ($useranswer != null && ($answer->id == $useranswer->answerid || $answer == end($answers))) {
                  // get in here when what the user entered is not one of the answers
-                $data = '<input type="text" size="50" disabled="disabled" readonly="readonly" value="'.s($useranswer->useranswer).'">';
+                $data = '<input type="text" size="50" disabled="disabled" class="form-control" ' .
+                        'readonly="readonly" value="'.s($useranswer->useranswer).'">';
                 if (isset($pagestats[$this->properties->id][$useranswer->useranswer])) {
                     $percent = $pagestats[$this->properties->id][$useranswer->useranswer] / $pagestats[$this->properties->id]["total"] * 100;
                     $percent = round($percent, 2);
@@ -328,6 +330,8 @@ class lesson_page_type_shortanswer extends lesson_page {
 class lesson_add_page_form_shortanswer extends lesson_add_page_form_base {
     public $qtype = 'shortanswer';
     public $qtypestring = 'shortanswer';
+    protected $answerformat = '';
+    protected $responseformat = LESSON_ANSWER_HTML;
 
     public function custom_definition() {
 
@@ -337,7 +341,8 @@ class lesson_add_page_form_shortanswer extends lesson_add_page_form_base {
 
         for ($i = 0; $i < $this->_customdata['lesson']->maxanswers; $i++) {
             $this->_form->addElement('header', 'answertitle'.$i, get_string('answer').' '.($i+1));
-            $this->add_answer($i);
+            // Only first answer is required.
+            $this->add_answer($i, null, ($i < 1));
             $this->add_response($i);
             $this->add_jumpto($i, null, ($i == 0 ? LESSON_NEXTPAGE : LESSON_THISPAGE));
             $this->add_score($i, null, ($i===0)?1:0);
@@ -368,6 +373,9 @@ class lesson_display_answer_form_shortanswer extends moodleform {
             $contentsparts = explode( $placeholder, $contents, 2);
             $attrs['size'] = round(strlen($placeholder) * 1.1);
         }
+
+        // Disable shortforms.
+        $mform->setDisableShortforms();
 
         $mform->addElement('header', 'pageheader');
         $mform->addElement('hidden', 'id');

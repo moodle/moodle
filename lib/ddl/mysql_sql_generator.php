@@ -118,10 +118,22 @@ class mysql_sql_generator extends sql_generator {
      * Note: the returned value is a bit higher to compensate for
      *       errors and changes of column data types.
      *
+     * @deprecated since Moodle 2.9 MDL-49723 - please do not use this function any more.
+     */
+    public function guess_antolope_row_size(array $columns) {
+        throw new coding_exception('guess_antolope_row_size() can not be used any more, please use guess_antelope_row_size() instead.');
+    }
+
+    /**
+     * Calculate proximate row size when using InnoDB tables in Antelope row format.
+     *
+     * Note: the returned value is a bit higher to compensate for errors and changes of column data types.
+     *
      * @param xmldb_field[]|database_column_info[] $columns
      * @return int approximate row size in bytes
      */
-    public function guess_antolope_row_size(array $columns) {
+    public function guess_antelope_row_size(array $columns) {
+
         if (empty($columns)) {
             return 0;
         }
@@ -199,12 +211,15 @@ class mysql_sql_generator extends sql_generator {
 
         // Do we need to use compressed format for rows?
         $rowformat = "";
-        $size = $this->guess_antolope_row_size($xmldb_table->getFields());
+        $size = $this->guess_antelope_row_size($xmldb_table->getFields());
         if ($size > self::ANTELOPE_MAX_ROW_SIZE) {
             if ($this->mdb->is_compressed_row_format_supported()) {
                 $rowformat = "\n ROW_FORMAT=Compressed";
             }
         }
+
+        $utf8mb4rowformat = $this->mdb->get_row_format_sql($engine, $collation);
+        $rowformat = ($utf8mb4rowformat == '') ? $rowformat : $utf8mb4rowformat;
 
         $sqlarr = parent::getCreateTableSQL($xmldb_table);
 
@@ -226,7 +241,7 @@ class mysql_sql_generator extends sql_generator {
                     if (strpos($collation, 'utf8_') === 0) {
                         $sql .= "\n DEFAULT CHARACTER SET utf8";
                     }
-                    $sql .= "\n DEFAULT COLLATE = $collation";
+                    $sql .= "\n DEFAULT COLLATE = $collation ";
                 }
                 if ($rowformat) {
                     $sql .= $rowformat;
@@ -289,8 +304,8 @@ class mysql_sql_generator extends sql_generator {
         if ($this->table_exists($xmldb_table)) {
             $tablename = $xmldb_table->getName();
 
-            $size = $this->guess_antolope_row_size($this->mdb->get_columns($tablename));
-            $size += $this->guess_antolope_row_size(array($xmldb_field));
+            $size = $this->guess_antelope_row_size($this->mdb->get_columns($tablename));
+            $size += $this->guess_antelope_row_size(array($xmldb_field));
 
             if ($size > self::ANTELOPE_MAX_ROW_SIZE) {
                 if ($this->mdb->is_compressed_row_format_supported()) {
@@ -329,7 +344,7 @@ class mysql_sql_generator extends sql_generator {
                     if (strpos($collation, 'utf8_') === 0) {
                         $sqlarr[$i] .= " DEFAULT CHARACTER SET utf8";
                     }
-                    $sqlarr[$i] .= " DEFAULT COLLATE $collation";
+                    $sqlarr[$i] .= " DEFAULT COLLATE $collation ROW_FORMAT=DYNAMIC";
                 }
             }
         }
@@ -553,9 +568,9 @@ class mysql_sql_generator extends sql_generator {
      * @return array An array of database specific reserved words
      */
     public static function getReservedWords() {
-        // This file contains the reserved words for MySQL databases
-        // from http://dev.mysql.com/doc/refman/6.0/en/reserved-words.html
+        // This file contains the reserved words for MySQL databases.
         $reserved_words = array (
+            // From http://dev.mysql.com/doc/refman/6.0/en/reserved-words.html.
             'accessible', 'add', 'all', 'alter', 'analyze', 'and', 'as', 'asc',
             'asensitive', 'before', 'between', 'bigint', 'binary',
             'blob', 'both', 'by', 'call', 'cascade', 'case', 'change',
@@ -595,7 +610,13 @@ class mysql_sql_generator extends sql_generator {
             'upgrade', 'usage', 'use', 'using', 'utc_date', 'utc_time',
             'utc_timestamp', 'values', 'varbinary', 'varchar', 'varcharacter',
             'varying', 'when', 'where', 'while', 'with', 'write', 'x509',
-            'xor', 'year_month', 'zerofill'
+            'xor', 'year_month', 'zerofill',
+            // Added in MySQL 8.0, compared to MySQL 5.7:
+            // https://dev.mysql.com/doc/refman/8.0/en/keywords.html#keywords-new-in-current-series.
+            '_filename', 'admin', 'cume_dist', 'dense_rank', 'empty', 'except', 'first_value', 'grouping', 'groups',
+            'json_table', 'lag', 'last_value', 'lead', 'nth_value', 'ntile',
+            'of', 'over', 'percent_rank', 'persist', 'persist_only', 'rank', 'recursive', 'row_number',
+            'system', 'window'
         );
         return $reserved_words;
     }

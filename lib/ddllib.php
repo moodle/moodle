@@ -70,7 +70,7 @@ require_once($CFG->libdir.'/ddl/database_manager.php');
 
 
 /**
- * DDL exception class, use instead of error() and "return false;" in ddl code.
+ * DDL exception class, use instead of print_error() and "return false;" in ddl code.
  */
 class ddl_exception extends moodle_exception {
     /**

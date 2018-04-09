@@ -3,8 +3,28 @@
     text-align: center;
     margin: 10px;
 }
+.userprofile .page-context-header {
+    margin-bottom: 10px;
+}
 .userprofile .description {
+    margin-top: 10px;
+    margin-bottom: 30px;
+}
+.userprofile .profile_tree {
+    .content-columns(2);
+}
+.userprofile .profile_tree section {
+    display: inline-block;
+    width: 100%;
+    border: 1px solid #ddd;
+    border-radius: @baseBorderRadius;
+    padding: 0 15px;
     margin-bottom: 20px;
+    .box-sizing(border-box);
+}
+.userprofile .profile_tree section h3 {
+    font-size: round(@baseFontSize * 1.30);
+    line-height: @baseLineHeight;
 }
 .userprofile dl.list {
     .dl-horizontal;
@@ -17,22 +37,82 @@
     float: left;
     clear: none;
 }
-.dir-rtl {
-    .userprofile .description {
-        margin-right:0;
+#page-user-profile .node_category,
+.path-user .node_category {
+    ul {
+        margin-left: 0;
+        margin-right: 0;
+        list-style: none;
     }
-    .user-box {
-        float:right;
+    li {
+        margin-top: 5px;
     }
-    .userprofile dl.list dt {
-        float:right;
-        text-align: left;
-        padding-left: 10px;
-    }
-    .userprofile dl.list dd {
-        margin-left:0;
+    .editprofile,
+    .viewmore {
+        text-align: right;
     }
 }
+// This rule overrides the automatic no-overflow on the participants table. It kills the auto-complete.
+#participantsform .no-overflow {
+    overflow: visible;
+}
+
+/**
+ * This rule has been added to duplicate the style of icons with the
+ * .iconsmall class for consistent rendering.
+ *
+ * Loading a pix icon using the template helper returns icons with
+ * the class 'smallicon' instead of 'iconsmall'.
+ */
+#page-user-profile {
+    .ajax-contact-button {
+        img {
+            &.smallicon {
+                margin: 0;
+                padding: 0.3em;
+                height: 12px;
+                width: 12px;
+                vertical-align: middle;
+            }
+        }
+    }
+}
+
+.ajax-contact-button {
+    box-sizing: border-box;
+    position: relative;
+
+    &.loading {
+        .loading-icon {
+            display: block;
+        }
+    }
+
+    .loading-icon {
+        display: none;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(255, 255, 255, 0.7);
+
+        .smallicon {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+    }
+}
+
+@media (max-width: 480px) {
+    .userprofile .profile_tree {
+        /** Display the profile on one column on phones. */
+        .content-columns(1);
+    }
+}
+
 .userlist .action-icon img {
     vertical-align: middle;
 }
@@ -48,9 +128,12 @@
 .userlist table#participants {
     text-align: center;
 }
-.userlist table#participants td,
-.userlist table#participants th {
+.userlist table#participants td {
+    text-align: left;
+    padding: 4px;
     vertical-align: middle;
+}
+.userlist table#participants th {
     text-align: left;
     padding: 4px;
 }
@@ -112,13 +195,32 @@
     font-weight: bold;
 }
 .groupinfobox {
-    .well
+    .well;
+    position: relative;
+
+    h3 {
+        margin-top: 0px;
+    }
 }
+
 .groupinfobox .left {
     padding: 10px;
     width: 100px;
     vertical-align: top;
 }
+
+.group-image {
+    display: block;
+    float: left;
+    margin-right: 1em;
+}
+
+.group-edit {
+    position: absolute;
+    right: 0;
+    margin-right: 0.6em;
+}
+
 .course-participation #showall {
     text-align: center;
     margin: 10px 0;
@@ -161,9 +263,6 @@
     margin: 0.2em 0;
     text-align: left;
 }
-.dir-rtl #userselector_options p {
-    text-align: right;
-}
 /** user full profile */
 #page-user-profile .messagebox {
     text-align: center;
@@ -176,20 +275,6 @@
     margin-left: auto;
     margin-right: auto;
 }
-/** Overide for RTL layout **/
-.dir-rtl .userprofilebox .descriptionbox {
-    margin: 0;
-}
-.dir-rtl .userlist table#participants td,
-.dir-rtl .userlist table#participants th {
-    text-align: right;
-}
-.dir-rtl .userlist table#participants {
-    margin: 0 auto;
-}
-#page-my-index.dir-rtl .block h3 {
-    text-align: right;
-}
 
 .profileeditor {
     > .singleselect {
@@ -198,31 +283,18 @@
     > .singlebutton {
         display: inline-block;
         margin: 0 0 0 0.5em;
-        div, input {
+        div,
+        input {
             margin: 0;
         }
     }
 }
-.dir-rtl .profileeditor {
-    > .singleselect {
-        margin: 0 0 0 0.5em;
-    }
-    > .singlebutton {
-        margin: 0 0.5em 0 0;
-    }
-}
-#groupeditform {
-    .groups,
-    .members {
-        width: 49%;
-        float: left;
-        text-align: left;
-    }
-}
-.dir-rtl #groupeditform {
-    .groups,
-    .members {
-        float: right;
-        text-align: right;
+
+/** Preferences page */
+.preferences-group {
+    ul {
+        list-style: none;
+        margin-left: 0;
+        margin-right: 0;
     }
 }

@@ -120,6 +120,8 @@ if ($confirm and confirm_sesskey()) { // the operation was confirmed.
         glossary_rss_delete_file($glossary);
     }
 
+    core_tag_tag::remove_all_item_tags('mod_glossary', 'glossary_entries', $origentry->id);
+
     $event = \mod_glossary\event\entry_deleted::create(array(
         'context' => $context,
         'objectid' => $origentry->id,

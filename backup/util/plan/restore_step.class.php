@@ -51,6 +51,8 @@ abstract class restore_step extends base_step {
      * Note we are using one static cache here, but *by restoreid*, so it's ok for concurrence/multiple
      * executions in the same request
      *
+     * Note: The policy is to roll date only for configurations and not for user data. see MDL-9367.
+     *
      * @param int $value Time value (seconds since epoch), or empty for nothing
      * @return int Time value after applying the date offset, or empty for nothing
      */
@@ -70,20 +72,16 @@ abstract class restore_step extends base_step {
         $original = $this->task->get_info()->original_course_startdate;
         $setting = 0;
         if ($this->setting_exists('course_startdate')) { // Seting may not exist (MDL-25019).
-            $setting  = $this->get_setting_value('course_startdate');
+            $settingobject = $this->task->get_setting('course_startdate');
+            if (method_exists($settingobject, 'get_normalized_value')) {
+                $setting = $settingobject->get_normalized_value();
+            } else {
+                $setting = $settingobject->get_value();
+            }
         }
 
         if (empty($original) || empty($setting)) {
             // Original course has not startdate or setting doesn't exist, offset = 0.
-            $cache[$this->get_restoreid()] = 0;
-
-        } else if (abs($setting - $original) < 24 * 60 * 60) {
-            // Less than 24h of difference, offset = 0 (this avoids some problems with timezones).
-            $cache[$this->get_restoreid()] = 0;
-
-        } else if (!has_capability('moodle/restore:rolldates',
-               context_course::instance($this->get_courseid()), $this->task->get_userid())) {
-            // Re-enforce 'moodle/restore:rolldates' capability for the user in the course, just in case.
             $cache[$this->get_restoreid()] = 0;
 
         } else {
@@ -93,6 +91,66 @@ abstract class restore_step extends base_step {
 
         // Return the passed value with cached offset applied.
         return $value + $cache[$this->get_restoreid()];
+    }
+
+    /**
+     * Returns symmetric-key AES-256 decryption of base64 encoded contents.
+     *
+     * This method is used in restore operations to decrypt contents encrypted with
+     * {@link encrypted_final_element} automatically decoding (base64) and decrypting
+     * contents using the key stored in backup_encryptkey config.
+     *
+     * Requires openssl, cipher availability, and key existence (backup
+     * automatically sets it if missing). Integrity is provided via HMAC.
+     *
+     * @param string $value {@link encrypted_final_element} value to decode and decrypt.
+     * @return string|null decoded and decrypted value or null if the operation can not be performed.
+     */
+    public function decrypt($value) {
+
+        // No openssl available, skip this field completely.
+        if (!function_exists('openssl_encrypt')) {
+            return null;
+        }
+
+        // No hash available, skip this field completely.
+        if (!function_exists('hash_hmac')) {
+            return null;
+        }
+
+        // Cypher not available, skip this field completely.
+        if (!in_array(backup::CIPHER, openssl_get_cipher_methods())) {
+            return null;
+        }
+
+        // Get the decrypt key. Skip if missing.
+        $key = get_config('backup', 'backup_encryptkey');
+        if ($key === false) {
+            return null;
+        }
+
+        // And decode it.
+        $key = base64_decode($key);
+
+        // Arrived here, let's proceed with authentication (provides integrity).
+        $hmaclen = 32; // SHA256 is 32 bytes.
+        $ivlen = openssl_cipher_iv_length(backup::CIPHER);
+        list($hmac, $iv, $text) = array_values(unpack("a{$hmaclen}hmac/a{$ivlen}iv/a*text", base64_decode($value)));
+
+        // Verify HMAC matches expectations, skip if not (integrity failed).
+        if (!hash_equals($hmac, hash_hmac('sha256', $iv . $text, $key, true))) {
+            return null;
+        }
+
+        // Arrived here, integrity is ok, let's decrypt.
+        $result = openssl_decrypt($text, backup::CIPHER, $key, OPENSSL_RAW_DATA, $iv);
+
+        // For some reason decrypt failed (strange, HMAC check should have deteted it), skip this field completely.
+        if ($result === false) {
+            return null;
+        }
+
+        return $result;
     }
 }
 

@@ -45,19 +45,21 @@ class user_edit_form extends moodleform {
         $mform = $this->_form;
         $editoroptions = null;
         $filemanageroptions = null;
-        $userid = $USER->id;
+        $usernotfullysetup = user_not_fully_set_up($USER);
 
-        if (is_array($this->_customdata)) {
-            if (array_key_exists('editoroptions', $this->_customdata)) {
-                $editoroptions = $this->_customdata['editoroptions'];
-            }
-            if (array_key_exists('filemanageroptions', $this->_customdata)) {
-                $filemanageroptions = $this->_customdata['filemanageroptions'];
-            }
-            if (array_key_exists('userid', $this->_customdata)) {
-                $userid = $this->_customdata['userid'];
-            }
+        if (!is_array($this->_customdata)) {
+            throw new coding_exception('invalid custom data for user_edit_form');
         }
+        $editoroptions = $this->_customdata['editoroptions'];
+        $filemanageroptions = $this->_customdata['filemanageroptions'];
+        $user = $this->_customdata['user'];
+        $userid = $user->id;
+
+        if (empty($user->country)) {
+            // We must unset the value here so $CFG->country can be used as default one.
+            unset($user->country);
+        }
+
         // Accessibility: "Required" is bad legend text.
         $strgeneral  = get_string('general');
         $strrequired = get_string('required');
@@ -72,19 +74,39 @@ class user_edit_form extends moodleform {
         $mform->addElement('header', 'moodle', $strgeneral);
 
         // Shared fields.
-        useredit_shared_definition($mform, $editoroptions, $filemanageroptions);
+        useredit_shared_definition($mform, $editoroptions, $filemanageroptions, $user);
 
         // Extra settigs.
-        if (!empty($CFG->disableuserimages)) {
+        if (!empty($CFG->disableuserimages) || $usernotfullysetup) {
             $mform->removeElement('deletepicture');
             $mform->removeElement('imagefile');
             $mform->removeElement('imagealt');
         }
 
+        // If the user isn't fully set up, let them know that they will be able to change
+        // their profile picture once their profile is complete.
+        if ($usernotfullysetup) {
+            $userpicturewarning = $mform->createElement('warning', 'userpicturewarning', 'notifymessage', get_string('newpictureusernotsetup'));
+            $enabledusernamefields = useredit_get_enabled_name_fields();
+            if ($mform->elementExists('moodle_additional_names')) {
+                $mform->insertElementBefore($userpicturewarning, 'moodle_additional_names');
+            } else if ($mform->elementExists('moodle_interests')) {
+                $mform->insertElementBefore($userpicturewarning, 'moodle_interests');
+            } else {
+                $mform->insertElementBefore($userpicturewarning, 'moodle_optional');
+            }
+
+            // This is expected to exist when the form is submitted.
+            $imagefile = $mform->createElement('hidden', 'imagefile');
+            $mform->insertElementBefore($imagefile, 'userpicturewarning');
+        }
+
         // Next the customisable profile fields.
         profile_definition($mform, $userid);
 
-        $this->add_action_buttons(false, get_string('updatemyprofile'));
+        $this->add_action_buttons(true, get_string('updatemyprofile'));
+
+        $this->set_data($user);
     }
 
     /**
@@ -96,14 +118,9 @@ class user_edit_form extends moodleform {
         $mform = $this->_form;
         $userid = $mform->getElementValue('id');
 
-        // If language does not exist, use site default lang.
-        if ($langsel = $mform->getElementValue('lang')) {
-            $lang = reset($langsel);
-            // Check lang exists.
-            if (!get_string_manager()->translation_exists($lang, false)) {
-                $langel =& $mform->getElement('lang');
-                $langel->setValue($CFG->lang);
-            }
+        // Trim required name fields.
+        foreach (useredit_get_required_name_fields() as $field) {
+            $mform->applyFilter($field, 'trim');
         }
 
         if ($user = $DB->get_record('user', array('id' => $userid))) {
@@ -132,6 +149,9 @@ class user_edit_form extends moodleform {
             // Disable fields that are locked by auth plugins.
             $fields = get_user_fieldnames();
             $authplugin = get_auth_plugin($user->auth);
+            $customfields = $authplugin->get_custom_user_profile_fields();
+            $customfieldsdata = profile_user_record($userid, false);
+            $fields = array_merge($fields, $customfields);
             foreach ($fields as $field) {
                 if ($field === 'description') {
                     // Hard coded hack for description field. See MDL-37704 for details.
@@ -142,14 +162,23 @@ class user_edit_form extends moodleform {
                 if (!$mform->elementExists($formfield)) {
                     continue;
                 }
+
+                // Get the original value for the field.
+                if (in_array($field, $customfields)) {
+                    $key = str_replace('profile_field_', '', $field);
+                    $value = isset($customfieldsdata->{$key}) ? $customfieldsdata->{$key} : '';
+                } else {
+                    $value = $user->{$field};
+                }
+
                 $configvariable = 'field_lock_' . $field;
                 if (isset($authplugin->config->{$configvariable})) {
                     if ($authplugin->config->{$configvariable} === 'locked') {
                         $mform->hardFreeze($formfield);
-                        $mform->setConstant($formfield, $user->$field);
-                    } else if ($authplugin->config->{$configvariable} === 'unlockedifempty' and $user->$field != '') {
+                        $mform->setConstant($formfield, $value);
+                    } else if ($authplugin->config->{$configvariable} === 'unlockedifempty' and $value != '') {
                         $mform->hardFreeze($formfield);
-                        $mform->setConstant($formfield, $user->$field);
+                        $mform->setConstant($formfield, $value);
                     }
                 }
             }
@@ -181,7 +210,9 @@ class user_edit_form extends moodleform {
             // Mail not confirmed yet.
         } else if (!validate_email($usernew->email)) {
             $errors['email'] = get_string('invalidemail');
-        } else if (($usernew->email !== $user->email) and $DB->record_exists('user', array('email' => $usernew->email, 'mnethostid' => $CFG->mnet_localhost_id))) {
+        } else if (($usernew->email !== $user->email)
+                and empty($CFG->allowaccountssameemail)
+                and $DB->record_exists('user', array('email' => $usernew->email, 'mnethostid' => $CFG->mnet_localhost_id))) {
             $errors['email'] = get_string('emailexists');
         }
 

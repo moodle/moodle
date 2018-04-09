@@ -26,13 +26,14 @@
 define('NO_DEBUG_DISPLAY', true);
 define('NO_MOODLE_COOKIES', true);
 
-require_once(dirname(__FILE__) . '/../../config.php');
+require_once(__DIR__ . '/../../config.php');
 require_once($CFG->dirroot . '/mod/lti/locallib.php');
 
 
 $response = new \mod_lti\local\ltiservice\response();
 
 $isget = $response->get_request_method() == 'GET';
+$isdelete = $response->get_request_method() == 'DELETE';
 
 if ($isget) {
     $response->set_accept(isset($_SERVER['HTTP_ACCEPT']) ? $_SERVER['HTTP_ACCEPT'] : '');
@@ -51,7 +52,7 @@ foreach ($services as $service) {
     foreach ($resources as $resource) {
         if (($isget && !empty($accept) && (strpos($accept, '*/*') === false) &&
              !in_array($accept, $resource->get_formats())) ||
-            (!$isget && !in_array($response->get_content_type(), $resource->get_formats()))) {
+            ((!$isget && !$isdelete) && !in_array($response->get_content_type(), $resource->get_formats()))) {
             continue;
         }
         $template = $resource->get_template();

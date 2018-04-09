@@ -1,0 +1,185 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template calendar/month_mini
+
+    Calendar month view for blocks.
+
+    The purpose of this template is to render the month view for blocks.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Example context (json):
+    {
+    }
+}}
+<div{{!
+    }} id="month-mini-{{date.year}}-{{date.month}}-{{uniqid}}"{{!
+    }} class="calendarwrapper"{{!
+    }} data-courseid="{{courseid}}"{{!
+    }} data-categoryid="{{categoryid}}"{{!
+    }} data-month="{{date.mon}}"{{!
+    }} data-year="{{date.year}}"{{!
+    }} data-view="month"{{!
+    }}>
+    {{> core/overlay_loading}}
+    <table class="minicalendar calendartable">
+        <caption class="calendar-controls">
+            {{#includenavigation}}
+                <a{{!
+                    }} href="#"{{!
+                    }} class="arrow_link previous"{{!
+                    }} title="{{#str}}monthprev, calendar{{/str}}"{{!
+                    }} data-year="{{previousperiod.year}}"{{!
+                    }} data-month="{{previousperiod.mon}}"{{!
+                }}>
+                    <span class="arrow">{{{larrow}}}</span>
+                </a>
+                <span class="hide"> | </span>
+                <span class="current">
+                    <a href="{{{url}}}" title="{{#str}}monththis, calendar{{/str}}">{{periodname}}</a>
+                </span>
+                <span class="hide"> | </span>
+                <a{{!
+                    }} href="#"{{!
+                    }} class="arrow_link next"{{!
+                    }} title="{{#str}}monthnext, calendar{{/str}}"{{!
+                    }} data-year="{{nextperiod.year}}"{{!
+                    }} data-month="{{nextperiod.mon}}"{{!
+                }}>
+                    <span class="arrow">{{{rarrow}}}</span>
+                </a>
+            {{/includenavigation}}
+            {{^includenavigation}}
+                <h3>
+                    <a href="{{{url}}}" title="{{#str}}monththis, calendar{{/str}}">{{periodname}}</a>
+                </h3>
+            {{/includenavigation}}
+        </caption>
+        <thead>
+          <tr>
+                {{# daynames }}
+                <th class="header text-xs-center" scope="col">
+                    <abbr title="{{fullname}}">{{shortname}}</abbr>
+                </th>
+                {{/ daynames }}
+            </tr>
+        </thead>
+        <tbody>
+{{#weeks}}
+            <tr data-region="month-view-week">
+                {{#prepadding}}
+                    <td class="dayblank">&nbsp;</td>
+                {{/prepadding}}
+                {{#days}}
+                    <td class="day text-center{{!
+                            This is the list of additional classes to display.
+
+                            This cell is for today.
+                            }}{{#istoday}} today{{/istoday}}{{!
+
+                            This day falls on a weekend.
+                            }}{{#isweekend}} weekend{{/isweekend}}{{!
+
+                            There is at least one event.
+                            }}{{#events.0}} hasevent{{/events.0}}{{!
+
+                            There are events on this day which span multiple days.
+                            }}{{#durationevents.0}} duration{{/durationevents.0}}{{!
+                            }}{{#durationevents}} duration_{{.}}{{/durationevents}}{{!
+                            }}{{#islastday}} duraction_finish{{/islastday}}{{!
+
+                            These event types fall on this day.
+                            }}{{#calendareventtypes}}{{!
+                            }} calendar_event_{{.}}{{!
+                            }}{{/calendareventtypes}}{{!
+
+                            This day contains the last day of an event.
+                            }}{{#haslastdayofevent}}{{!
+                            }} duration_finish{{!
+                            }}{{/haslastdayofevent}}{{!
+                        }}"{{!
+
+                        Add data-eventtype-[eventtype] data attributes.
+                        These are used to show and hide events using the filter.
+                        }}{{#calendareventtypes}}{{!
+                        }} data-eventtype-{{.}}="1"{{!
+                        }}{{/calendareventtypes}}{{!
+
+                        This is the timestamp for this month.
+                        }} data-day-timestamp="{{timestamp}}"{{!
+                    }}>{{!
+                        }}{{#popovertitle}}
+                            {{< core_calendar/minicalendar_day_link }}
+                                {{$day}}{{mday}}{{/day}}
+                                {{$url}}{{viewdaylink}}{{/url}}
+                                {{$title}}{{popovertitle}}{{/title}}
+                                {{$nocontent}}{{#str}}eventnone, calendar{{/str}}{{/nocontent}}
+                                {{$content}}
+                                    {{#events}}
+                                        <div data-popover-eventtype-{{calendareventtype}}="1">
+                                            {{#modulename}}
+                                                {{#pix}} icon, {{modulename}} {{/pix}}
+                                            {{/modulename}}
+                                            {{^modulename}}
+                                                {{#pix}} i/{{eventtype}}event, core {{/pix}}
+                                            {{/modulename}}
+                                            {{{popupname}}}
+                                        </div>
+                                    {{/events}}
+                                {{/content}}
+                            {{/ core_calendar/minicalendar_day_link }}
+                        {{/popovertitle}}{{!
+                        }}{{^popovertitle}}
+                            {{mday}}
+                        {{/popovertitle}}{{!
+                    }}</td>
+                {{/days}}
+                {{#postpadding}}
+                    <td class="dayblank">&nbsp;</td>
+                {{/postpadding}}
+            </tr>
+{{/weeks}}
+        </tbody>
+    </table>
+</div>
+{{#js}}
+require([
+    'jquery',
+    'core_calendar/selectors',
+    'core_calendar/events',
+], function(
+    $,
+    CalendarSelectors,
+    CalendarEvents
+) {
+
+    $('body').on(CalendarEvents.filterChanged, function(e, data) {
+        M.util.js_pending("month-mini-{{uniqid}}-filterChanged");
+        // A filter value has been changed.
+        // Find all matching cells in the popover data, and hide them.
+        $("#month-mini-{{date.year}}-{{date.month}}-{{uniqid}}")
+            .find(CalendarSelectors.popoverType[data.type])
+            .toggleClass('hidden', !!data.hidden);
+        M.util.js_complete("month-mini-{{uniqid}}-filterChanged");
+    });
+});
+{{/js}}

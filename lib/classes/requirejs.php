@@ -90,7 +90,7 @@ class core_requirejs {
         $subsystems = core_component::get_core_subsystems();
         foreach ($subsystems as $subsystem => $dir) {
             if (!empty($dir) && is_dir($dir . '/amd')) {
-                $jsdirs[$subsystem] = $dir . '/amd';
+                $jsdirs['core_' . $subsystem] = $dir . '/amd';
             }
         }
         $plugintypes = core_component::get_plugin_types();
@@ -107,6 +107,11 @@ class core_requirejs {
             $srcdir = $dir . '/build';
             if ($debug) {
                 $srcdir = $dir . '/src';
+            }
+            if (!is_dir($srcdir) || !is_readable($srcdir)) {
+                // This is probably an empty amd directory without src or build.
+                // Skip it - RecursiveDirectoryIterator fatals if the directory is not readable as an iterator.
+                continue;
             }
             $items = new RecursiveDirectoryIterator($srcdir);
             foreach ($items as $item) {

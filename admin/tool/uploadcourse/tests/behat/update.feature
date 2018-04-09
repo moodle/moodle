@@ -24,7 +24,7 @@ Feature: An admin can update courses using a CSV file
     And I should see "Courses updated: 1"
     And I should see "Courses created: 0"
     And I should see "Courses errors: 2"
-    And I follow "Home"
+    And I am on site homepage
     And I should see "Course 1"
     And I should not see "Course 2"
     And I should not see "Course 3"

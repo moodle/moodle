@@ -39,6 +39,7 @@ if (!empty($CFG->defaulthomepage) && ($CFG->defaulthomepage == HOMEPAGE_MY) && o
 }
 $PAGE->set_url('/', $urlparams);
 $PAGE->set_course($SITE);
+$PAGE->set_pagelayout('frontpage');
 $PAGE->set_other_editing_capability('moodle/course:update');
 $PAGE->set_other_editing_capability('moodle/course:manageactivities');
 $PAGE->set_other_editing_capability('moodle/course:activityvisibility');
@@ -52,16 +53,21 @@ if ($CFG->forcelogin) {
     user_accesstime_log();
 }
 
-$hassiteconfig = has_capability('moodle/site:config', context_system::instance());
+$hasmaintenanceaccess = has_capability('moodle/site:maintenanceaccess', context_system::instance());
 
 // If the site is currently under maintenance, then print a message.
-if (!empty($CFG->maintenance_enabled) and !$hassiteconfig) {
+if (!empty($CFG->maintenance_enabled) and !$hasmaintenanceaccess) {
     print_maintenance_message();
 }
+
+$hassiteconfig = has_capability('moodle/site:config', context_system::instance());
 
 if ($hassiteconfig && moodle_needs_upgrading()) {
     redirect($CFG->wwwroot .'/'. $CFG->admin .'/index.php');
 }
+
+// If site registration needs updating, redirect.
+\core\hub\registration::registration_reminder('/index.php');
 
 if (get_home_page() != HOMEPAGE_SITE) {
     // Redirect logged-in users to My Moodle overview if required.
@@ -71,16 +77,24 @@ if (get_home_page() != HOMEPAGE_SITE) {
     } else if (!empty($CFG->defaulthomepage) && ($CFG->defaulthomepage == HOMEPAGE_MY) && $redirect === 1) {
         redirect($CFG->wwwroot .'/my/');
     } else if (!empty($CFG->defaulthomepage) && ($CFG->defaulthomepage == HOMEPAGE_USER)) {
-        $PAGE->settingsnav->get('usercurrentsettings')->add(
-            get_string('makethismyhome'),
-            new moodle_url('/', array('setdefaulthome' => true)),
-            navigation_node::TYPE_SETTING);
+        $frontpagenode = $PAGE->settingsnav->find('frontpage', null);
+        if ($frontpagenode) {
+            $frontpagenode->add(
+                get_string('makethismyhome'),
+                new moodle_url('/', array('setdefaulthome' => true)),
+                navigation_node::TYPE_SETTING);
+        } else {
+            $frontpagenode = $PAGE->settingsnav->add(get_string('frontpagesettings'), null, navigation_node::TYPE_SETTING, null);
+            $frontpagenode->force_open();
+            $frontpagenode->add(get_string('makethismyhome'),
+                new moodle_url('/', array('setdefaulthome' => true)),
+                navigation_node::TYPE_SETTING);
+        }
     }
 }
 
-$eventparams = array('context' => context_course::instance(SITEID));
-$event = \core\event\course_viewed::create($eventparams);
-$event->trigger();
+// Trigger event.
+course_view(context_course::instance(SITEID));
 
 // If the hub plugin is installed then we let it take over the homepage here.
 if (file_exists($CFG->dirroot.'/local/hub/lib.php') and get_config('local_hub', 'hubenabled')) {
@@ -96,7 +110,6 @@ if (file_exists($CFG->dirroot.'/local/hub/lib.php') and get_config('local_hub', 
 
 $PAGE->set_pagetype('site-index');
 $PAGE->set_docs_path('');
-$PAGE->set_pagelayout('frontpage');
 $editing = $PAGE->user_is_editing();
 $PAGE->set_title($SITE->fullname);
 $PAGE->set_heading($SITE->fullname);
@@ -137,7 +150,7 @@ if (!empty($CFG->customfrontpageinclude)) {
         $context = context_course::instance(SITEID);
 
         // If the section name is set we show it.
-        if (!is_null($section->name)) {
+        if (trim($section->name) !== '') {
             echo $OUTPUT->heading(
                 format_string($section->name, true, array('context' => $context)),
                 2,
@@ -159,9 +172,9 @@ if (!empty($CFG->customfrontpageinclude)) {
 
         if ($editing && has_capability('moodle/course:update', $context)) {
             $streditsummary = get_string('editsummary');
-            echo "<a title=\"$streditsummary\" ".
-                 " href=\"course/editsection.php?id=$section->id\"><img src=\"" . $OUTPUT->pix_url('t/edit') . "\" ".
-                 " class=\"iconsmall\" alt=\"$streditsummary\" /></a><br /><br />";
+            echo "<a title=\"$streditsummary\" " .
+                 " href=\"course/editsection.php?id=$section->id\">" . $OUTPUT->pix_icon('t/edit', $streditsummary) .
+                 "</a><br /><br />";
         }
 
         $courserenderer = $PAGE->get_renderer('core', 'course');
@@ -197,9 +210,9 @@ foreach (explode(',', $frontpagelayout) as $v) {
                 $newsforumcontext = context_module::instance($newsforumcm->id, MUST_EXIST);
 
                 $forumname = format_string($newsforum->name, true, array('context' => $newsforumcontext));
-                echo html_writer::tag('a',
+                echo html_writer::link('#skipsitenews',
                     get_string('skipa', 'access', core_text::strtolower(strip_tags($forumname))),
-                    array('href' => '#skipsitenews', 'class' => 'skip-block'));
+                    array('class' => 'skip-block skip'));
 
                 // Wraps site news forum in div container.
                 echo html_writer::start_tag('div', array('id' => 'site-news-forum'));
@@ -233,9 +246,9 @@ foreach (explode(',', $frontpagelayout) as $v) {
         case FRONTPAGEENROLLEDCOURSELIST:
             $mycourseshtml = $courserenderer->frontpage_my_courses();
             if (!empty($mycourseshtml)) {
-                echo html_writer::tag('a',
+                echo html_writer::link('#skipmycourses',
                     get_string('skipa', 'access', core_text::strtolower(get_string('mycourses'))),
-                    array('href' => '#skipmycourses', 'class' => 'skip-block'));
+                    array('class' => 'skip skip-block'));
 
                 // Wrap frontpage course list in div container.
                 echo html_writer::start_tag('div', array('id' => 'frontpage-course-list'));
@@ -254,9 +267,9 @@ foreach (explode(',', $frontpagelayout) as $v) {
         case FRONTPAGEALLCOURSELIST:
             $availablecourseshtml = $courserenderer->frontpage_available_courses();
             if (!empty($availablecourseshtml)) {
-                echo html_writer::tag('a',
+                echo html_writer::link('#skipavailablecourses',
                     get_string('skipa', 'access', core_text::strtolower(get_string('availablecourses'))),
-                    array('href' => '#skipavailablecourses', 'class' => 'skip-block'));
+                    array('class' => 'skip skip-block'));
 
                 // Wrap frontpage course list in div container.
                 echo html_writer::start_tag('div', array('id' => 'frontpage-course-list'));
@@ -272,9 +285,9 @@ foreach (explode(',', $frontpagelayout) as $v) {
         break;
 
         case FRONTPAGECATEGORYNAMES:
-            echo html_writer::tag('a',
+            echo html_writer::link('#skipcategories',
                 get_string('skipa', 'access', core_text::strtolower(get_string('categories'))),
-                array('href' => '#skipcategories', 'class' => 'skip-block'));
+                array('class' => 'skip skip-block'));
 
             // Wrap frontpage category names in div container.
             echo html_writer::start_tag('div', array('id' => 'frontpage-category-names'));
@@ -289,9 +302,9 @@ foreach (explode(',', $frontpagelayout) as $v) {
         break;
 
         case FRONTPAGECATEGORYCOMBO:
-            echo html_writer::tag('a',
+            echo html_writer::link('#skipcourses',
                 get_string('skipa', 'access', core_text::strtolower(get_string('courses'))),
-                array('href' => '#skipcourses', 'class' => 'skip-block'));
+                array('class' => 'skip skip-block'));
 
             // Wrap frontpage category combo in div container.
             echo html_writer::start_tag('div', array('id' => 'frontpage-category-combo'));

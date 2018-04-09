@@ -5,7 +5,7 @@
  * Some French punctuation requires a thin non-breaking space (U+202F) character before it,
  * for example before a colon or exclamation mark.
  * There is one of these characters between these quotes: " "
- * @link http://unicode.org/udhr/n/notes_fra.html
+ * @see http://unicode.org/udhr/n/notes_fra.html
  */
 
 $PHPMAILER_LANG['authenticate']         = 'Erreur SMTP : échec de l\'authentification.';
@@ -26,3 +26,4 @@ $PHPMAILER_LANG['signing']              = 'Erreur de signature : ';
 $PHPMAILER_LANG['smtp_connect_failed']  = 'Échec de la connexion SMTP.';
 $PHPMAILER_LANG['smtp_error']           = 'Erreur du serveur SMTP : ';
 $PHPMAILER_LANG['variable_set']         = 'Impossible d\'initialiser ou de réinitialiser une variable : ';
+$PHPMAILER_LANG['extension_missing']    = 'Extension manquante : ';

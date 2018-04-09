@@ -69,7 +69,6 @@ class assign_submission_comments extends assign_submission_plugin {
         $options->displaycancel = true;
 
         $comment = new comment($options);
-        $comment->set_view_permission(true);
 
         $o = $this->assignment->get_renderer()->container($comment->output(true), 'commentscontainer');
         return $o;
@@ -187,5 +186,15 @@ class assign_submission_comments extends assign_submission_plugin {
      */
     public function is_configurable() {
         return false;
+    }
+
+    /**
+     * Return the plugin configs for external functions.
+     *
+     * @return array the list of settings
+     * @since Moodle 3.2
+     */
+    public function get_config_for_external() {
+        return (array) $this->get_config();
     }
 }

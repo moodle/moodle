@@ -11,15 +11,14 @@ Feature: In an assignment, students can add and edit text online
       | Course 1 | C1 | 0 | 1 |
     And the following "users" exist:
       | username | firstname | lastname | email |
-      | teacher1 | Teacher | 1 | teacher1@asd.com |
-      | student1 | Student | 1 | student1@asd.com |
+      | teacher1 | Teacher | 1 | teacher1@example.com |
+      | student1 | Student | 1 | student1@example.com |
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
     And I log in as "teacher1"
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
     And I add a "Assignment" to section "1" and I fill the form with:
       | Assignment name | Test assignment name |
       | Description | Submit your online text |
@@ -29,7 +28,7 @@ Feature: In an assignment, students can add and edit text online
       | assignsubmission_file_enabled | 0 |
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I follow "Test assignment name"
     When I press "Add submission"
     And I set the following fields to these values:
@@ -49,3 +48,40 @@ Feature: In an assignment, students can add and edit text online
     Then I should see "Submitted for grading"
     And I should see "I'm the student second submission"
     And I should not see "I'm the student first submission"
+
+  @javascript
+  Scenario: Auto-draft save online text submission
+    Given the following "courses" exist:
+      | fullname | shortname | category | groupmode |
+      | Course 1 | C1 | 0 | 1 |
+    And the following "users" exist:
+      | username | firstname | lastname | email |
+      | teacher1 | Teacher | 1 | teacher1@example.com |
+      | student1 | Student | 1 | student1@example.com |
+    And the following "course enrolments" exist:
+      | user | course | role |
+      | teacher1 | C1 | editingteacher |
+      | student1 | C1 | student |
+    And the following config values are set as admin:
+      | autosavefrequency | 1 | editor_atto |
+    And I log in as "teacher1"
+    And I am on "Course 1" course homepage with editing mode on
+    And I add a "Assignment" to section "1" and I fill the form with:
+      | Assignment name | Test assignment name |
+      | Description | Submit your online text |
+      | assignsubmission_onlinetext_enabled | 1 |
+      | assignsubmission_file_enabled | 0 |
+    And I log out
+    And I log in as "student1"
+    And I am on "Course 1" course homepage
+    And I follow "Test assignment name"
+    When I press "Add submission"
+    And I set the following fields to these values:
+      | Online text | text submission |
+    # Wait for the draft auto save.
+    And I wait "2" seconds
+    And I am on "Course 1" course homepage
+    And I follow "Test assignment name"
+    When I press "Add submission"
+    # Confirm draft was restored.
+    Then I should see "text submission" in the "#id_onlinetext_editoreditable" "css_element"

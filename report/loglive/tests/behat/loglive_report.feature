@@ -11,11 +11,9 @@ Feature: In a report, admin can see loglive data
     And I log in as "admin"
     And I navigate to "Manage log stores" node in "Site administration > Plugins > Logging"
     And I click on "Enable" "link" in the "Legacy log" "table_row"
-    And I set the following administration settings values:
-      | Log legacy data | 1 |
-    And I am on homepage
-    And I follow "Course 1"
-    And I turn editing mode on
+    And the following config values are set as admin:
+      | loglegacy | 1 | logstore_legacy |
+    And I am on "Course 1" course homepage with editing mode on
     And I add a "Database" to section "3" and I fill the form with:
       | Name | Test name |
       | Description | Test database description |
@@ -33,7 +31,7 @@ Feature: In a report, admin can see loglive data
 
   @javascript @_switch_window
   Scenario: Check loglive report entries and make sure the pause/resume button works for standard reader along with ajax calls
-    Given I am on homepage
+    Given I am on site homepage
     When I navigate to "Live logs" node in "Site administration > Reports"
     And I set the field "reader" to "Standard log"
     And I wait to be redirected
@@ -41,8 +39,7 @@ Feature: In a report, admin can see loglive data
     And I press "Pause live updates"
     And I follow "Course module created"
     And I switch to "action" window
-    And I am on homepage
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I add a "Database" to section "3" and I fill the form with:
       | Name | Test name2 |
       | Description | Test database description |
@@ -56,7 +53,7 @@ Feature: In a report, admin can see loglive data
 
   @javascript @_switch_window
   Scenario: Check loglive report entries and make sure the pause/resume button works for legacy reader along with ajax calls
-    Given I am on homepage
+    Given I am on site homepage
     When I navigate to "Live logs" node in "Site administration > Reports"
     And I set the field "reader" to "Legacy log"
     And I wait to be redirected
@@ -64,8 +61,7 @@ Feature: In a report, admin can see loglive data
     And I press "Pause live updates"
     And I follow "course_add mod"
     And I switch to "action" window
-    And I am on homepage
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
     And I add a "Database" to section "3" and I fill the form with:
       | Name | Test name2 |
       | Description | Test database description |
@@ -76,4 +72,3 @@ Feature: In a report, admin can see loglive data
     And I wait "8" seconds
     And I should see "Test name2"
     And I log out
-

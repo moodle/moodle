@@ -1,0 +1,19 @@
+This files describes API changes in /admin/*.
+
+=== 3.3 ===
+
+* The admin settings admin_setting_configselect and admin_setting_configmultiselect now support the optgroup tag.
+  Grouping of options can be created with this new tag.
+  For using it, the option parameters needs the Group names as indexes:
+  [
+    "Spain" =>  ["madrid" => "Madrid", "barcelona" => "Barcelona"],
+    "France" => ["paris" => "Paris", "marseille" => "Marseille"],
+  ]
+
+=== 3.2 ===
+
+* Admin settings have been refined to better support right-to-left languages. In RTL,
+  most fields should not have their direction flipped, a URL, a path to a file, ...
+  are always displayed LTR. The admin setting will now best guess if they should be
+  RTLized based on their PARAM_* type. To override that guess, use
+  admin_setting::set_force_ltr(true/false).

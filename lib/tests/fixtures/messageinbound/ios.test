@@ -1,0 +1,337 @@
+----CLIENT----
+OS: ios 8.1.1
+Mail Client: ios (iPad Mini Retina)
+Client Version: 8.1.1
+Date: 04/05/2015
+
+----EXPECTEDPLAIN----
+Sample reply messages:
+
+Thanks for offering to help with QA testing. I've added you to the testers group in the tracker, so you can now pass or fail QA tests. Hopefully the process is fully explained in http://docs.moodle.org/dev/QA_testing but if there's anything you're not sure about, please post in the testing and QA forum.
+
+
+Thanks for offering to help with QA testing. Please create an account in the Moodle Tracker and let me know your Tracker username then I can add you to the testers group.
+
+
+Thanks for offering to help with QA testing. We recently finished the Moodle 2.8 QA cycle, so our next QA cycle won't be for a while, however you are welcome to try things out on our Moodle QA Testing site http://qa.moodle.net/ and post in the Testing and QA forum http://moodle.org/mod/forum/view.php?id=56 about any issues you come across, or any questions you have. If you come across any bugs (obvious problems), please report them in the Moodle tracker.
+
+
+Thanks for helping with QA testing. Your help would be appreciated even more if you could just add a comment when passing a test, such as feedback about the feature e.g. “Teachers are going to love this” or even simply "This test passes - yippee!" to confirm that the test wasn't accidentally passed without being run.
+
+Thanks for helping with QA testing. It has been observed that you assigned this issue to yourself for testing, but no action has been taken on this.  It will be helpful if you can either test this or un-assign yourself, so someone else can take it.
+
+----EXPECTEDHTML----
+ 
+
+Sample reply messages:
+
+Thanks for offering to help with QA testing. I've added you to the testers
+group in the tracker, so you can now pass or fail QA tests. Hopefully the
+process is fully explained in http://docs.moodle.org/dev/QA_testing [10]
+but if there's anything you're not sure about, please post in the testing
+and QA forum.
+
+Thanks for offering to help with QA testing. Please create an account in
+the Moodle Tracker and let me know your Tracker username then I can add you
+to the testers group.
+
+Thanks for offering to help with QA testing. We recently finished the
+Moodle 2.8 QA cycle, so our next QA cycle won't be for a while, however you
+are welcome to try things out on our Moodle QA Testing site
+http://qa.moodle.net/ [11] and post in the Testing and QA forum
+http://moodle.org/mod/forum/view.php?id=56 [12] about any issues you come
+across, or any questions you have. If you come across any bugs (obvious
+problems), please report them in the Moodle tracker.
+
+Thanks for helping with QA testing. Your help would be appreciated even
+more if you could just add a comment when passing a test, such as feedback
+about the feature e.g. “Teachers are going to love this” or even simply
+"This test passes - yippee!" to confirm that the test wasn't accidentally
+passed without being run.
+
+Thanks for helping with QA testing. It has been observed that you assigned
+this issue to yourself for testing, but no action has been taken on this.
+ It will be helpful if you can either test this or un-assign yourself, so
+someone else can take it.
+
+Sent from my iPad
+
+----FULLSOURCE----
+Delivered-To: moodlehqtest+aaaaaaaaaaiaaaaaaaaaagaaaaaaaaayvgt8xe92mmlgeicg@example.com
+Received: by 10.50.159.130 with SMTP id xc2csp1451249igb;
+        Sun, 3 May 2015 20:02:36 -0700 (PDT)
+X-Received: by 10.67.4.230 with SMTP id ch6mr38162348pad.137.1430708556295;
+        Sun, 03 May 2015 20:02:36 -0700 (PDT)
+Return-Path: <andrewrn@example.com>
+Received: from mail-pa0-x229.google.com (mail-pa0-x229.google.com. [2607:f8b0:400e:c03::229])
+        by mx.google.com with ESMTPS id gl6si17965581pac.197.2015.05.03.20.02.35
+        for <moodlehqtest+AAAAAAAAAAIAAAAAAAAAAgAAAAAAAAAYvGT8Xe92mmlGEicg@example.com>
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 03 May 2015 20:02:36 -0700 (PDT)
+Received-SPF: pass (google.com: domain of andrewrn@example.com designates 2607:f8b0:400e:c03::229 as permitted sender) client-ip=2607:f8b0:400e:c03::229;
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of andrewrn@example.com designates 2607:f8b0:400e:c03::229 as permitted sender) smtp.mail=andrewrn@example.com;
+       dkim=pass header.i=@example.com;
+       dmarc=pass (p=NONE dis=NONE) header.from=gmail.com
+Received: by mail-pa0-x229.google.com with SMTP id yx8so148925642pac.1
+        for <moodlehqtest+AAAAAAAAAAIAAAAAAAAAAgAAAAAAAAAYvGT8Xe92mmlGEicg@example.com>; Sun, 03 May 2015 20:02:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20120113;
+        h=from:content-type:content-transfer-encoding:mime-version:subject
+         :message-id:date:references:in-reply-to:to;
+        bh=EZm73X2O6OdzfLc1nsBxWhkpKHmDJNt33U63cRjQHAw=;
+        b=IX/H6XP5WADMopMjPPQXpvr1Wm9TV67Ru+lWfBKXx8FstY2qSAf4g7P+EtCNBgWnac
+         qNm6cTY+x3kx/ZPQLfpaQD4+QrEHteu8T4pilbjN0ikpu8K1lRMGXRqDjLf49yNJaXpP
+         J4kMoye4i+3LA6ffGGer/5gax/s/gZ2M6nD8OCTuCxIVu51etROhDdo5OfsUK5w97R6P
+         33bMm6wfzd/OjLrNNaFZydGEHK4qQUgwn7GcYi1cAq7g9SLl1lWT6n65IrhMkaqroDnV
+         rBYzYdYKhJs2e16r0TBoKh0u+YHtZM9wF/3odFevDPxSnL56+lKUPpTkmuADNEQ+fJw9
+         zrMw==
+X-Received: by 10.70.140.108 with SMTP id rf12mr38069446pdb.140.1430708555833;
+        Sun, 03 May 2015 20:02:35 -0700 (PDT)
+Return-Path: <andrewrn@example.com>
+Received: from [172.20.255.99] (59-100-142-46.cust.static-ipl.aapt.com.au. [59.100.142.46])
+        by mx.google.com with ESMTPSA id yv6sm2329352pac.29.2015.05.03.20.02.34
+        for <moodlehqtest+AAAAAAAAAAIAAAAAAAAAAgAAAAAAAAAYvGT8Xe92mmlGEicg@example.com>
+        (version=TLSv1 cipher=ECDHE-RSA-RC4-SHA bits=128/128);
+        Sun, 03 May 2015 20:02:34 -0700 (PDT)
+From: Andrew Robert Nicols <andrewrn@example.com>
+Content-Type: multipart/alternative;
+	boundary=Apple-Mail-97963C5D-72E2-413A-89FF-624233E4337F
+Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0 (1.0)
+Subject: Re: MDL-48002: Testing of MDL-48002
+Message-Id: <ECE56778-577F-4B37-A28B-7789A19BBF3A@example.com>
+Date: Mon, 4 May 2015 11:02:31 +0800
+References: <15b35e982364f0003cea36e7a0464787ee6127fe5c21a54d229021314547699c@banana.per.in.moodle.com>
+In-Reply-To: <15b35e982364f0003cea36e7a0464787ee6127fe5c21a54d229021314547699c@banana.per.in.moodle.com>
+To: "moodlehqtest+AAAAAAAAAAIAAAAAAAAAAgAAAAAAAAAYvGT8Xe92mmlGEicg@example.com" <moodlehqtest+AAAAAAAAAAIAAAAAAAAAAgAAAAAAAAAYvGT8Xe92mmlGEicg@example.com>
+X-Mailer: iPad Mail (12B435)
+
+
+--Apple-Mail-97963C5D-72E2-413A-89FF-624233E4337F
+Content-Type: text/plain;
+	charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+ =09
+Sample reply messages:
+
+Thanks for offering to help with QA testing. I've added you to the testers g=
+roup in the tracker, so you can now pass or fail QA tests. Hopefully the pro=
+cess is fully explained in http://docs.moodle.org/dev/QA_testing but if ther=
+e's anything you're not sure about, please post in the testing and QA forum.=
+
+
+
+Thanks for offering to help with QA testing. Please create an account in the=
+ Moodle Tracker and let me know your Tracker username then I can add you to t=
+he testers group.
+
+
+Thanks for offering to help with QA testing. We recently finished the Moodle=
+ 2.8 QA cycle, so our next QA cycle won't be for a while, however you are we=
+lcome to try things out on our Moodle QA Testing site http://qa.moodle.net/ a=
+nd post in the Testing and QA forum http://moodle.org/mod/forum/view.php?id=3D=
+56 about any issues you come across, or any questions you have. If you come a=
+cross any bugs (obvious problems), please report them in the Moodle tracker.=
+
+
+
+Thanks for helping with QA testing. Your help would be appreciated even more=
+ if you could just add a comment when passing a test, such as feedback about=
+ the feature e.g. =E2=80=9CTeachers are going to love this=E2=80=9D or even s=
+imply "This test passes - yippee!" to confirm that the test wasn't accidenta=
+lly passed without being run.
+
+Thanks for helping with QA testing. It has been observed that you assigned t=
+his issue to yourself for testing, but no action has been taken on this.  It=
+ will be helpful if you can either test this or un-assign yourself, so someo=
+ne else can take it.
+
+Sent from my iPad
+
+> On 4 May 2015, at 11:02 am, Admin User <andrew@nicols.co.uk> wrote:
+>=20
+> MDL-48002 =C2=BB Forums =C2=BB MDL-48002 =C2=BB Testing of MDL-48002
+> =09
+> Testing of MDL-48002
+> by Admin User - Monday, 4 May 2015, 10:48 AM
+>  =09
+> We are trying to test that this issue will work as expected.
+>=20
+> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis convallis ph=
+aretra justo dignissim cursus. Sed sagittis, velit vel scelerisque sollicitu=
+din, neque purus pulvinar nisi, quis semper urna dolor nec est. Maecenas ut d=
+ui accumsan, tincidunt sem ac, efficitur lorem. Vivamus consequat viverra er=
+os eget cursus. Morbi porttitor nunc vehicula consequat laoreet. Pellentesqu=
+e ac diam vel libero finibus sodales a fringilla erat. Ut elementum ante ege=
+t convallis dignissim. Proin iaculis mauris nec diam maximus, ac scelerisque=
+ metus tincidunt. Nullam tincidunt turpis ut aliquam volutpat. Vestibulum an=
+te ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; D=
+onec neque quam, sollicitudin bibendum ipsum id, malesuada convallis orci.
+>=20
+> Cras posuere, velit et consectetur euismod, orci ante malesuada libero, eu=
+ tincidunt tortor elit vitae tellus. Nunc vel felis id metus fringilla lobor=
+tis. Sed sit amet ipsum vitae dolor aliquet dapibus eu vel nulla. Sed id dui=
+ nec nisl hendrerit blandit ut et turpis. Donec dictum nunc mauris, quis pla=
+cerat tellus fermentum ac. Phasellus at fermentum quam. Phasellus magna magn=
+a, pharetra pharetra pellentesque a, convallis non leo. Nunc ac semper est. U=
+t interdum condimentum nunc sit amet sollicitudin. Aenean vitae sodales dolo=
+r, vitae porta felis. Aliquam tincidunt posuere lorem sed mollis. Vestibulum=
+ sed quam convallis, commodo ante et, rhoncus metus. Sed arcu diam, venenati=
+s vel urna eu, porta viverra massa. Suspendisse nec consectetur risus, quis h=
+endrerit arcu. Ut purus metus, varius sit amet mauris non, posuere ultricies=
+ velit. Nullam nec luctus lorem.
+>=20
+> Proin quis turpis efficitur, auctor dui nec, vulputate ligula. Sed egestas=
+ facilisis magna nec posuere. Nam nisl nibh, dictum in velit eget, dapibus e=
+uismod lacus. Phasellus mollis eros nibh, eu venenatis libero luctus eu. Eti=
+am ultricies turpis interdum, rutrum leo sed, sollicitudin lectus. Suspendis=
+se potenti. Vestibulum in purus orci. Pellentesque fringilla nunc ac diam tr=
+istique pellentesque. Duis tincidunt mi ipsum, ac consequat augue iaculis a.=
+ Ut ut erat at lacus lobortis facilisis at at ipsum. Aliquam ut nisi posuere=
+, dictum arcu id, placerat nisl. Vivamus in ex et lorem tempor iaculis eleme=
+ntum quis nunc.
+>=20
+> Some more text here.
+>=20
+> Now in the reply we will not remove the content and sent a bit of a reply.=
+
+>=20
+> Reply
+> See this post in context
+> Unsubscribe from this discussion Unsubscribe from all forums Change your f=
+orum digest preferences
+> You can reply to this via email.
+
+--Apple-Mail-97963C5D-72E2-413A-89FF-624233E4337F
+Content-Type: text/html;
+	charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+<html><head><meta http-equiv=3D"content-type" content=3D"text/html; charset=3D=
+utf-8"></head><body dir=3D"auto"><div><table border=3D"0" cellpadding=3D"3" c=
+ellspacing=3D"0" class=3D"forumpost" style=3D"-webkit-text-size-adjust: auto=
+;"><tbody><tr><td class=3D"left side" valign=3D"top"><span style=3D"-webkit-=
+text-size-adjust: none; background-color: rgba(255, 255, 255, 0);">&nbsp;</s=
+pan></td><td class=3D"content"><p></p><p dir=3D"ltr" style=3D"margin-top: 0p=
+t; margin-bottom: 0pt;"><span style=3D"vertical-align: baseline; -webkit-tex=
+t-size-adjust: none; background-color: rgba(255, 255, 255, 0);">Sample reply=
+ messages:</span></p><span style=3D"-webkit-text-size-adjust: none; backgrou=
+nd-color: rgba(255, 255, 255, 0);"><br></span><p dir=3D"ltr" style=3D"margin=
+-top: 0pt; margin-bottom: 0pt;"><span style=3D"font-style: italic; vertical-=
+align: baseline; -webkit-text-size-adjust: none; background-color: rgba(255,=
+ 255, 255, 0);">Thanks for offering to help with QA testing. I've added you t=
+o the testers group in the tracker, so you can now pass or fail QA tests. Ho=
+pefully the process is fully explained in <a href=3D"http://docs.moodle.org/=
+dev/QA_testing" x-apple-data-detectors=3D"true" x-apple-data-detectors-type=3D=
+"link" x-apple-data-detectors-result=3D"1">http://docs.moodle.org/dev/QA_tes=
+ting</a> but if there's anything you're not sure about, please post in the t=
+esting and QA forum.</span></p><span style=3D"-webkit-text-size-adjust: none=
+; background-color: rgba(255, 255, 255, 0);"><br><br></span><p dir=3D"ltr" s=
+tyle=3D"margin-top: 0pt; margin-bottom: 0pt;"><span style=3D"font-style: ita=
+lic; vertical-align: baseline; -webkit-text-size-adjust: none; background-co=
+lor: rgba(255, 255, 255, 0);">Thanks for offering to help with QA testing. P=
+lease create an account in the Moodle Tracker and let me know your Tracker u=
+sername then I can add you to the testers group.</span></p><span style=3D"-w=
+ebkit-text-size-adjust: none; background-color: rgba(255, 255, 255, 0);"><br=
+><br></span><p dir=3D"ltr" style=3D"margin-top: 0pt; margin-bottom: 0pt;"><s=
+pan style=3D"font-style: italic; vertical-align: baseline; -webkit-text-size=
+-adjust: none; background-color: rgba(255, 255, 255, 0);">Thanks for offerin=
+g to help with QA testing. We recently finished the Moodle 2.8 QA cycle, so o=
+ur next QA cycle won't be for a while, however you are welcome to try things=
+ out on our Moodle QA Testing site <a href=3D"http://qa.moodle.net/" x-apple=
+-data-detectors=3D"true" x-apple-data-detectors-type=3D"link" x-apple-data-d=
+etectors-result=3D"3">http://qa.moodle.net/</a> and post in the Testing and Q=
+A forum <a href=3D"http://moodle.org/mod/forum/view.php?id=3D56" x-apple-dat=
+a-detectors=3D"true" x-apple-data-detectors-type=3D"link" x-apple-data-detec=
+tors-result=3D"4">http://moodle.org/mod/forum/view.php?id=3D56</a> about any=
+ issues you come across, or any questions you have. If you come across any b=
+ugs (obvious problems), please report them in the Moodle tracker.</span></p>=
+<span style=3D"-webkit-text-size-adjust: none; background-color: rgba(255, 2=
+55, 255, 0);"><br><br></span><p dir=3D"ltr" style=3D"margin-top: 0pt; margin=
+-bottom: 0pt;"><span style=3D"font-style: italic; vertical-align: baseline; -=
+webkit-text-size-adjust: none; background-color: rgba(255, 255, 255, 0);">Th=
+anks for helping with QA testing. Your help would be appreciated even more i=
+f you could just add a comment when passing a test, such as feedback about t=
+he feature e.g. =E2=80=9CTeachers are going to love this=E2=80=9D or even si=
+mply "This test passes - yippee!" to confirm that the test wasn't accidental=
+ly passed without being run.</span></p><span style=3D"-webkit-text-size-adju=
+st: none; background-color: rgba(255, 255, 255, 0);"><br></span><p dir=3D"lt=
+r" style=3D"margin-top: 0pt; margin-bottom: 0pt;"><span style=3D"font-style:=
+ italic; vertical-align: baseline; -webkit-text-size-adjust: none; backgroun=
+d-color: rgba(255, 255, 255, 0);">Thanks for helping with QA testing. It has=
+ been observed that you assigned this issue to yourself for testing, but no a=
+ction has been taken on this. &nbsp;It will be helpful if you can either tes=
+t this or un-assign yourself, so someone else can take it.</span></p></td></=
+tr></tbody></table><br>Sent from my iPad</div><div><br>On 4 May 2015, at 11:=
+02 am, Admin User &lt;<a href=3D"mailto:andrew@nicols.co.uk">andrew@nicols.c=
+o.uk</a>&gt; wrote:<br><br></div><blockquote type=3D"cite"><div>
+
+
+<div class=3D"navbar"><a target=3D"_blank" href=3D"http://banana.per.in.mood=
+le.com/mdl48002/course/view.php?id=3D3">MDL-48002</a> =C2=BB <a target=3D"_b=
+lank" href=3D"http://banana.per.in.moodle.com/mdl48002/mod/forum/index.php?i=
+d=3D3">Forums</a> =C2=BB <a target=3D"_blank" href=3D"http://banana.per.in.m=
+oodle.com/mdl48002/mod/forum/view.php?f=3D5">MDL-48002</a> =C2=BB <a target=3D=
+"_blank" href=3D"http://banana.per.in.moodle.com/mdl48002/mod/forum/discuss.=
+php?d=3D8">Testing of MDL-48002</a></div><table border=3D"0" cellpadding=3D"=
+3" cellspacing=3D"0" class=3D"forumpost"><tbody><tr class=3D"header"><td wid=
+th=3D"35" valign=3D"top" class=3D"picture left"><a href=3D"http://banana.per=
+.in.moodle.com/mdl48002/user/view.php?id=3D2&amp;course=3D3"><img src=3D"htt=
+p://banana.per.in.moodle.com/mdl48002/theme/image.php/_s/clean/core/14307067=
+79/u/f2" alt=3D"Picture of Admin User" title=3D"Picture of Admin User" class=
+=3D"userpicture defaultuserpic" width=3D"35" height=3D"35"></a></td><td clas=
+s=3D"topic starter"><div class=3D"subject">Testing of MDL-48002</div><div cl=
+ass=3D"author">by <a href=3D"http://banana.per.in.moodle.com/mdl48002/user/v=
+iew.php?id=3D2&amp;course=3D3">Admin User</a> - Monday, 4 May 2015, 10:48 AM=
+</div></td></tr><tr><td class=3D"left side" valign=3D"top">&nbsp;</td><td cl=
+ass=3D"content"><p>We are trying to test that this issue will work as expect=
+ed.</p><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis conv=
+allis pharetra justo dignissim cursus. Sed sagittis, velit vel scelerisque s=
+ollicitudin, neque purus pulvinar nisi, quis semper urna dolor nec est. Maec=
+enas ut dui accumsan, tincidunt sem ac, efficitur lorem. Vivamus consequat v=
+iverra eros eget cursus. Morbi porttitor nunc vehicula consequat laoreet. Pe=
+llentesque ac diam vel libero finibus sodales a fringilla erat. Ut elementum=
+ ante eget convallis dignissim. Proin iaculis mauris nec diam maximus, ac sc=
+elerisque metus tincidunt. Nullam tincidunt turpis ut aliquam volutpat. Vest=
+ibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia=
+ Curae; Donec neque quam, sollicitudin bibendum ipsum id, malesuada convalli=
+s orci.</p><p>Cras posuere, velit et consectetur euismod, orci ante malesuad=
+a libero, eu tincidunt tortor elit vitae tellus. Nunc vel felis id metus fri=
+ngilla lobortis. Sed sit amet ipsum vitae dolor aliquet dapibus eu vel nulla=
+. Sed id dui nec nisl hendrerit blandit ut et turpis. Donec dictum nunc maur=
+is, quis placerat tellus fermentum ac. Phasellus at fermentum quam. Phasellu=
+s magna magna, pharetra pharetra pellentesque a, convallis non leo. Nunc ac s=
+emper est. Ut interdum condimentum nunc sit amet sollicitudin. Aenean vitae s=
+odales dolor, vitae porta felis. Aliquam tincidunt posuere lorem sed mollis.=
+ Vestibulum sed quam convallis, commodo ante et, rhoncus metus. Sed arcu dia=
+m, venenatis vel urna eu, porta viverra massa. Suspendisse nec consectetur r=
+isus, quis hendrerit arcu. Ut purus metus, varius sit amet mauris non, posue=
+re ultricies velit. Nullam nec luctus lorem.</p><p>Proin quis turpis efficit=
+ur, auctor dui nec, vulputate ligula. Sed egestas facilisis magna nec posuer=
+e. Nam nisl nibh, dictum in velit eget, dapibus euismod lacus. Phasellus mol=
+lis eros nibh, eu venenatis libero luctus eu. Etiam ultricies turpis interdu=
+m, rutrum leo sed, sollicitudin lectus. Suspendisse potenti. Vestibulum in p=
+urus orci. Pellentesque fringilla nunc ac diam tristique pellentesque. Duis t=
+incidunt mi ipsum, ac consequat augue iaculis a. Ut ut erat at lacus loborti=
+s facilisis at at ipsum. Aliquam ut nisi posuere, dictum arcu id, placerat n=
+isl. Vivamus in ex et lorem tempor iaculis elementum quis nunc.</p><p>Some m=
+ore text here.</p><p>Now in the reply we will not remove the content and sen=
+t a bit of a reply.</p><div class=3D"commands"><a target=3D"_blank" href=3D"=
+http://banana.per.in.moodle.com/mdl48002/mod/forum/post.php?reply=3D24">Repl=
+y</a></div><div class=3D"link"><a target=3D"_blank" href=3D"http://banana.pe=
+r.in.moodle.com/mdl48002/mod/forum/discuss.php?d=3D8#p24">See this post in c=
+ontext</a></div></td></tr></tbody></table>
+
+<hr><div class=3D"mdl-align unsubscribelink"><a href=3D"http://banana.per.in=
+.moodle.com/mdl48002/mod/forum/subscribe.php?id=3D5&amp;d=3D8">Unsubscribe f=
+rom this discussion</a>&nbsp;<a href=3D"http://banana.per.in.moodle.com/mdl4=
+8002/mod/forum/unsubscribeall.php">Unsubscribe from all forums</a>&nbsp;<a h=
+ref=3D"http://banana.per.in.moodle.com/mdl48002/mod/forum/index.php?id=3D3">=
+Change your forum digest preferences</a></div><p>You can reply to this via e=
+mail.</p>
+
+</div></blockquote></body></html>=
+
+--Apple-Mail-97963C5D-72E2-413A-89FF-624233E4337F--

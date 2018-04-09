@@ -1,5 +1,26 @@
 This files describes API changes for question type plugins.
 
+=== 3.5 ===
+  + Added new classes backup_qtype_extrafields_plugin and restore_qtype_extrafields_plugin
+   in order to use extra fields method in backup/restore question type. Require and inherit new classes for using it. See
+   backup_qtype_shortanswer_plugin and restore_qtype_shortanswer_plugin for an example of using this.
+  + The declaration of is_gradable_response has been moved from question_automatically_gradable to
+   question_manually_gradable.
+  + The default implementation of is_gradable_response has been moved from question_graded_automatically to
+   question_with_responses.
+
+=== 3.1.5, 3.2.2, 3.3 ===
+
+* If you are using check_combined_feedback_file_access in your check_file_access method,
+  then you must now pass $args as the 4th argument, so the correct permission checks
+  can be performed. If you don't, you will get a developer debug notice.
+
+=== 3.1 ===
+
+* The following functions, previously used (exclusively) by upgrade steps are not available
+  anymore because of the upgrade cleanup performed for this version. See MDL-51580 for more info:
+    - qtype_essay_convert_to_html()
+
 === 2.7 ===
   + We have added a new method to the question_type base class 'break_down_stats_and_response_analysis_by_variant'. By default it
    returns true. If your question type does not have variants of question instances then you can ignore this method as it only

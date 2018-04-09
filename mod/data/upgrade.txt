@@ -1,0 +1,30 @@
+This files describes API changes in /mod/data - plugins,
+information provided here is intended especially for developers.
+
+=== 3.4 ===
+* External function mod_data_external::search_entries() now returns the maxcount field: Total count of records that the user could
+    see in the database (if all the search criterias were removed).
+* External function get_entry now returns an additional field "ratinginfo" containing the entry rating information.
+
+=== 3.3.2 ===
+* data_refresh_events() Now takes two additional parameters to refine the update to a specific instance. This function
+  now optionally takes the module instance object or ID, and the course module object or ID. Please try to send the full
+  objects instead of the ids to save DB calls.
+
+=== 3.3 ===
+
+* External function get_databases_by_courses now return more fields for users with mod/data:viewentry capability enabled:
+    maxentries, rssarticles, singletemplate, listtemplate, listtemplateheader, listtemplatefooter, addtemplate,
+    rsstemplate, rsstitletemplate, csstemplate, jstemplate, asearchtemplate, approval, defaultsort, defaultsortdir, manageapproved.
+* Data field classes extending data_field_base should implement the get_config_for_external method.
+    This method is used for returning the field settings for external functions.
+    You should check the user capabilities of the current user before returning any field setting value.
+    This is intended to protect field settings like private keys for external systems.
+* Required entries has been added to the Activity completion setting of mod_form. Entries required for completion
+    (in the entries section) is no longer displayed for new instances and will be deprecated in a future release
+    in favour of the new completion setting.
+
+=== 3.2 ===
+
+* New hook - update_content_import - Can be implemented by field subplugins data_field_* class
+    This can be used to pre-process data from a csv file before it is inserted into the database.

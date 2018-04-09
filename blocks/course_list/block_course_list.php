@@ -46,7 +46,7 @@ class block_course_list extends block_list {
         $this->content->icons = array();
         $this->content->footer = '';
 
-        $icon  = '<img src="' . $OUTPUT->pix_url('i/course') . '" class="icon" alt="" />';
+        $icon = $OUTPUT->pix_icon('i/course', get_string('course'));
 
         $adminseesall = true;
         if (isset($CFG->block_course_list_adminview)) {
@@ -57,14 +57,7 @@ class block_course_list extends block_list {
 
         if (empty($CFG->disablemycourses) and isloggedin() and !isguestuser() and
           !(has_capability('moodle/course:update', context_system::instance()) and $adminseesall)) {    // Just print My Courses
-            // As this is producing navigation sort order should default to $CFG->navsortmycoursessort instead
-            // of using the default.
-            if (!empty($CFG->navsortmycoursessort)) {
-                $sortorder = 'visible DESC, ' . $CFG->navsortmycoursessort . ' ASC';
-            } else {
-                $sortorder = 'visible DESC, sortorder ASC';
-            }
-            if ($courses = enrol_get_my_courses(NULL, $sortorder)) {
+            if ($courses = enrol_get_my_courses()) {
                 foreach ($courses as $course) {
                     $coursecontext = context_course::instance($course->id);
                     $linkcss = $course->visible ? "" : " class=\"dimmed\" ";
@@ -139,7 +132,7 @@ class block_course_list extends block_list {
             return;
         }
 
-        $icon = '<img src="'.$OUTPUT->pix_url('i/mnethost') . '" class="icon" alt="" />';
+        $icon = $OUTPUT->pix_icon('i/mnethost', get_string('host', 'mnet'));
 
         // shortcut - the rest is only for logged in users!
         if (!isloggedin() || isguestuser()) {

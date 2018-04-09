@@ -150,4 +150,13 @@ class assessable_submitted extends base {
             throw new \coding_exception('The \'submission_editable\' value must be set in other.');
         }
     }
+
+    public static function get_objectid_mapping() {
+        return array('db' => 'assign_submission', 'restore' => 'submission');
+    }
+
+    public static function get_other_mapping() {
+        // Nothing to map.
+        return false;
+    }
 }

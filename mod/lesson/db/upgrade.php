@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -47,95 +46,66 @@ defined('MOODLE_INTERNAL') || die();
  *
  * @global stdClass $CFG
  * @global moodle_database $DB
- * @global core_renderer $OUTPUT
  * @param int $oldversion
  * @return bool
  */
 function xmldb_lesson_upgrade($oldversion) {
-    global $CFG, $DB, $OUTPUT;
+    global $CFG, $DB;
 
     $dbman = $DB->get_manager();
 
-
-    // Moodle v2.2.0 release upgrade line
-    // Put any upgrade step following this
-
-    // Moodle v2.3.0 release upgrade line
-    // Put any upgrade step following this
-
-
-    // Moodle v2.4.0 release upgrade line
-    // Put any upgrade step following this
-
-
-    // Moodle v2.5.0 release upgrade line.
+    // Automatically generated Moodle v3.2.0 release upgrade line.
     // Put any upgrade step following this.
 
-
-    // Moodle v2.6.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    // Moodle v2.7.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    if ($oldversion < 2014091001) {
+    if ($oldversion < 2016120515) {
+        // Define new fields to be added to lesson.
         $table = new xmldb_table('lesson');
-        $field = new xmldb_field('intro', XMLDB_TYPE_TEXT, null, null, null, null, null, 'name');
-        // Conditionally launch add field.
+        $field = new xmldb_field('allowofflineattempts', XMLDB_TYPE_INTEGER, '1', null, null, null, 0, 'completiontimespent');
+        // Conditionally launch add field allowofflineattempts.
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
-        $field = new xmldb_field('introformat', XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'intro');
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-        upgrade_mod_savepoint(true, 2014091001, 'lesson');
+        // Lesson savepoint reached.
+        upgrade_mod_savepoint(true, 2016120515, 'lesson');
     }
-
-    if ($oldversion < 2014100600) {
-        // Previously there was no module intro in lesson so don't require
-        // it to be filled in for upgraded sites.
-        set_config('requiremodintro', 0, 'lesson');
-        upgrade_mod_savepoint(true, 2014100600, 'lesson');
-    }
-
-    // Moodle v2.8.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    if ($oldversion < 2014112300) {
-
-        // Define field completionendreached to be added to lesson.
-        $table = new xmldb_table('lesson');
-        $field = new xmldb_field('completionendreached', XMLDB_TYPE_INTEGER, '1', null, null, null, '0', 'timemodified');
-
-        // Conditionally launch add field completionendreached.
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        // Define field completed to be added to lesson_timer.
+    if ($oldversion < 2016120516) {
+        // New field for lesson_timer.
         $table = new xmldb_table('lesson_timer');
-        $field = new xmldb_field('completed', XMLDB_TYPE_INTEGER, '1', null, null, null, '0', 'lessontime');
-
-        // Conditionally launch add field completed.
+        $field = new xmldb_field('timemodifiedoffline', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, 0, 'completed');
+        // Conditionally launch add field timemodifiedoffline.
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
         // Lesson savepoint reached.
-        upgrade_mod_savepoint(true, 2014112300, 'lesson');
+        upgrade_mod_savepoint(true, 2016120516, 'lesson');
     }
 
-    if ($oldversion < 2014122900) {
+    // Automatically generated Moodle v3.3.0 release upgrade line.
+    // Put any upgrade step following this.
 
-        // Changing precision of field grade on table lesson to (10).
-        $table = new xmldb_table('lesson');
-        $field = new xmldb_field('grade', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'conditions');
+    if ($oldversion < 2017051501) {
 
-        // Launch change of precision for field grade.
-        $dbman->change_field_precision($table, $field);
+        // Delete orphaned lesson answer and response files.
+        $sql = "SELECT DISTINCT f.contextid, f.component, f.filearea, f.itemid
+                  FROM {files} f
+             LEFT JOIN {lesson_answers} la ON f.itemid = la.id
+                 WHERE component = :component
+                   AND (filearea = :fileareaanswer OR filearea = :filearearesponse)
+                   AND la.id IS NULL";
 
-        // Lesson savepoint reached.
-        upgrade_mod_savepoint(true, 2014122900, 'lesson');
+        $orphanedfiles = $DB->get_recordset_sql($sql, array('component' => 'mod_lesson', 'fileareaanswer' => 'page_answers',
+                'filearearesponse' => 'page_responses'));
+        $fs = get_file_storage();
+        foreach ($orphanedfiles as $file) {
+            $fs->delete_area_files($file->contextid, $file->component, $file->filearea, $file->itemid);
+        }
+        $orphanedfiles->close();
+
+        upgrade_mod_savepoint(true, 2017051501, 'lesson');
     }
+
+    // Automatically generated Moodle v3.4.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }

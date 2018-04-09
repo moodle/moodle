@@ -47,6 +47,11 @@ class Less_Environment{
 
 	public static $mixin_stack = 0;
 
+	/**
+	 * @var array
+	 */
+	public $functions = array();
+
 
 	public function Init(){
 
@@ -114,7 +119,7 @@ class Less_Environment{
 	 * @return string Canonicalized path
 	 *
 	 */
-	static function normalizePath($path){
+	public static function normalizePath($path){
 
 		$segments = explode('/',$path);
 		$segments = array_reverse($segments);

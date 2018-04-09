@@ -84,7 +84,7 @@ interface workshop_strategy {
     /**
      * Returns a general information about the assessment dimensions
      *
-     * @return array [dimid] => stdclass (->id ->max ->min ->weight)
+     * @return array [dimid] => stdclass (->id ->max ->min ->weight and optionally ->scale containing scale items)
      */
     public function get_dimensions_info();
 

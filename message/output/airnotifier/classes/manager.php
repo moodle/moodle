@@ -139,6 +139,7 @@ class message_airnotifier_manager {
                 return $key['accesskey'];
             }
         }
+        debugging("Unexpected response from the Airnotifier server: $resp");
         return false;
     }
 
@@ -164,11 +165,12 @@ class message_airnotifier_manager {
         $params = array();
         $resp = $curl->post($serverurl, $params);
 
-        if ($resp = json_decode($resp, true)) {
-            if (!empty($resp['status'])) {
-                return $resp['status'] == 'ok' || $resp['status'] == 'token exists';
+        if ($token = json_decode($resp, true)) {
+            if (!empty($token['status'])) {
+                return $token['status'] == 'ok' || $token['status'] == 'token exists';
             }
         }
+        debugging("Unexpected response from the Airnotifier server: $resp");
         return false;
     }
 
@@ -182,6 +184,30 @@ class message_airnotifier_manager {
         return (!empty($CFG->airnotifierurl) && !empty($CFG->airnotifierport) &&
                 !empty($CFG->airnotifieraccesskey)  && !empty($CFG->airnotifierappname) &&
                 !empty($CFG->airnotifiermobileappname));
+    }
+
+    /**
+     * Enables or disables a registered user device so it can receive Push notifications
+     *
+     * @param  int $deviceid the device id
+     * @param  bool $enable  true to enable it, false to disable it
+     * @return bool true if the device was enabled, false in case of error
+     * @since  Moodle 3.2
+     */
+    public static function enable_device($deviceid, $enable) {
+        global $DB, $USER;
+
+        if (!$device = $DB->get_record('message_airnotifier_devices', array('id' => $deviceid), '*')) {
+            return false;
+        }
+
+        // Check that the device belongs to the current user.
+        if (!$userdevice = $DB->get_record('user_devices', array('id' => $device->userdeviceid, 'userid' => $USER->id), '*')) {
+            return false;
+        }
+
+        $device->enable = $enable;
+        return $DB->update_record('message_airnotifier_devices', $device);
     }
 
 }

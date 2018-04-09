@@ -22,6 +22,17 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->dirroot . '/course/lib.php');
+
+/**
+ * Participants block
+ *
+ * @package    block_participants
+ * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class block_participants extends block_list {
     function init() {
         $this->title = get_string('pluginname', 'block_participants');
@@ -48,18 +59,18 @@ class block_participants extends block_list {
             $this->content = '';
             return $this->content;
         } else if ($this->page->course->id == SITEID) {
-            if (!has_capability('moodle/site:viewparticipants', context_system::instance())) {
+            if (!course_can_view_participants(context_system::instance())) {
                 $this->content = '';
                 return $this->content;
             }
         } else {
-            if (!has_capability('moodle/course:viewparticipants', $currentcontext)) {
+            if (!course_can_view_participants($currentcontext)) {
                 $this->content = '';
                 return $this->content;
             }
         }
 
-        $icon = '<img src="'.$OUTPUT->pix_url('i/users') . '" class="icon" alt="" />';
+        $icon = $OUTPUT->pix_icon('i/users', '');
         $this->content->items[] = '<a title="'.get_string('listofallpeople').'" href="'.
                                   $CFG->wwwroot.'/user/index.php?contextid='.$currentcontext->id.'">'.$icon.get_string('participants').'</a>';
 

@@ -33,9 +33,9 @@ defined('MOODLE_INTERNAL') || die();
 $string['admindirname'] = '管理目錄';
 $string['availablelangs'] = '可使用的語言包';
 $string['chooselanguagehead'] = '選擇一種語言';
-$string['chooselanguagesub'] = '請選擇在安裝過程中使用的語言。稍後您可以根據需要重新選擇用於網站和使用者的語言。';
-$string['clialreadyconfigured'] = '檔案 config.php  已經存在，若你要安裝這一網站，請使用dmin/cli/install_database.php';
-$string['clialreadyinstalled'] = '檔案 config.php  已經存在，若你要升級這一網站，請使用admin/cli/upgrade.php';
+$string['chooselanguagesub'] = '請選擇在安裝過程中所用的語言。這語言也將會當作這網站的預設語言。但稍後您可以根據需要再重新選擇。';
+$string['clialreadyconfigured'] = '檔案 config.php  已經存在，若你要這一網站上安裝Moodle，請使用admin/cli/install_database.php';
+$string['clialreadyinstalled'] = '檔案 config.php  已經存在，若你要在這一網站為Moodle升級，請使用admin/cli/install_database.php';
 $string['cliinstallheader'] = 'Moodle {$a} 命令列安裝程式';
 $string['databasehost'] = '資料庫主機';
 $string['databasename'] = '資料庫名稱';
@@ -49,16 +49,19 @@ $string['environmentsub2'] = '每一個Moodle版本都有一些PHP版本的最�
 若你不知道要怎樣新的PHP版本或啟用PHP擴展，請聯絡伺服器管理員。';
 $string['errorsinenvironment'] = '環境檢查失敗!';
 $string['installation'] = '安裝';
-$string['langdownloaderror'] = '很不幸地，語言“{$a}”並未安裝。安裝過程將以英文繼續。';
-$string['memorylimithelp'] = '<p>PHP記憶體上限目前設定為{$a}。</p>
-<p>稍後它可能會造成Moodle記憶體的問題，尤其是您啟動了很多的模組及大量的使用者後。
-<p>建議您儘可能將PHP的上限設得高一點，比如16M。
-以下有幾種方式您可以試試:
+$string['langdownloaderror'] = '很不幸地，語言“{$a}”無法下載安裝。此安裝過程將以英文繼續進行。';
+$string['memorylimithelp'] = '<p>你的伺服器的PHP記憶體上限目前設定為{$a}。</p>
+<p>稍後它可能會造成Moodle記憶體的問題，尤其當您啟動了很多的模組以及有大量的用戶之後。</p>
+<p>若可能，建議您將PHP的上限設得高一點，比如40M。
+以下有幾種方式您可以試試：</p>
 <ol>
-<li>如果可以的話，用<i>--enable-memory-limit</i>重新編譯PHP。讓Moodle自己設定記憶體上限.
-<li>如果您要使用php.ini檔, 您可以改變<b>memory_limit</b>這個設定值，例如到16M。如果您無法使用這個檔，您可以請您的管理者幫您做
-<li>在一些PHP伺服器上，您可以在Moodle目錄下，建立.htaccess檔，包含這行:<p><blockquote>php_value memory_limit 16M</blockquote></p>
-<p>然而，在一些伺服器上，這將造成<b>所有的</b> PHP 網頁無法運作(當您看這些網頁時，您就會看到錯誤) 因此，您就必須將 .htaccess 檔案移除。
+<li>如果可以的話，用<i>--enable-memory-limit</i>重新編譯PHP。讓Moodle自己設定記憶體上限。
+<li>如果您可以更改 php.ini 檔，就改變<b>memory_limit</b> 這個設定值，例如，改到40M。如果您無法更改這個檔案，您可以請寄存主機的管理者幫您做。</li>
+<li>在一些PHP伺服器上，您可以在Moodle目錄下，建立.htaccess檔，包含這行:
+
+<blockquote>php_value memory_limit 40M</blockquote>
+
+<p>然而，在某些伺服器上，這可能造成<b>所有的</b> PHP 網頁無法運作(當您查看這些網頁時，您就會看到錯誤訊息) 因此，您就必須將 .htaccess 檔案移除。</li>
 </ol>';
 $string['paths'] = '路徑';
 $string['pathserrcreatedataroot'] = '資料目錄 ({$a->dataroot})無法由這安裝程式建立';
@@ -66,9 +69,17 @@ $string['pathshead'] = '確認路徑';
 $string['pathsrodataroot'] = '資料根目錄是無法寫入的';
 $string['pathsroparentdataroot'] = '上層目錄({$a->parent})是不可寫入的。安裝程式無法建立資料目錄({$a->dataroot})。';
 $string['pathssubadmindir'] = '有些網站主機使用/admin這個網址來瀏覽控制面版或其他功能。很不幸，這個設定和Moodle管理頁面的標準路徑產生衝突。這個問題可以解決，只需在您的安裝目錄中把admin更換名稱，然後把新名稱輸入到這裡。例如<em>moodleadmin</em>這麼做會改變Moodle中的管理連接。';
-$string['pathssubdataroot'] = '你需要有一個地方讓Moodle可以儲存上傳的檔案。這一目錄對於網頁伺服器用戶(通常是"nobody"或"apache")而言，應該是可讀的和<b>可寫的</b>。但是它必須不能經由網頁直接存取。若此目錄不存在，這安裝程式將會試著建立它。';
-$string['pathssubdirroot'] = 'Moodle安裝的完整目錄路徑。';
-$string['pathssubwwwroot'] = '可以瀏覽到Moodle的完整網址。Moodle不支援透過多個網址瀏覽，如果您的網站有多個公開網址，您必須把這個網址以外的網址都設定為永久重新導向。如果您的網站可以透過內部網址瀏覽，有可以透過這個公開網址瀏覽，那麼請設定DNS使網內用戶也能使用這公開的網址。如果此網址不正確，請在你的瀏覽器中修改URL來重新安裝，並設定另一個網址。';
+$string['pathssubdataroot'] = '<p>你需要有一個目錄讓Moodle可以儲存所有的用戶上傳的檔案。</p><p>這目錄對於網頁伺服器用戶(通常是"www-data"、"nobody"或"apache")而言，應該是可讀的和<b>可寫的</b>。</p>
+<p>它必須是不能透過網際網路直接存取的。</p>
+<p>若此目錄目前不存在，這安裝過程將會試著建立它。</p>';
+$string['pathssubdirroot'] = '包含Moodle程式碼的目錄的完整路徑';
+$string['pathssubwwwroot'] = '可以進入使用Moodle的完整網址，也就是用戶為了要使用Moodle，而需要輸入到瀏覽器的網址列的地址。
+
+不可能使用多個網址來存取Moodle，如果您的網站有多個公開網址，您必須選擇一個最簡單的網址，並把其他的網址都設定為永久重新導向。
+
+如果您的網站可以透過網際網路，也可以透過內部網路來瀏覽，那麼在此請設定公開的網址。
+
+如果目前的網址不正確，請在你的瀏覽器的網址列中更改網址，並重新安裝。';
 $string['pathsunsecuredataroot'] = '資料根(Dataroot)目錄的位置不安全';
 $string['pathswrongadmindir'] = '管理目錄不存在';
 $string['phpextension'] = '{$a} PHP擴展';
@@ -78,9 +89,10 @@ $string['phpversionhelp'] = '<p>Moodle 需要的PHP版本至少要4.3.0或是5.1
 <p>您必須更新您的 PHP 或在有更新版本的主機上進行安裝！(若是5.0.x，你可以下降到4.4.x 版本)</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = '這個頁面是提醒您已經成功安裝與啟動 <strong>{$a->packname} {$a->packversion}</strong> ，恭喜！';
-$string['welcomep30'] = '<strong>{$a->installername}</strong>包含了可以建立<strong>Moodle</strong>執行環境的應用程序：';
+$string['welcomep30'] = '這一<strong>{$a->installername}</strong>的版本包含了一些可以建立<strong>Moodle</strong>執行環境的應用程序：';
 $string['welcomep40'] = '這個軟體還包含了<strong>Moodle {$a->moodlerelease} ({$a->moodleversion})</strong>。';
-$string['welcomep50'] = '使用本軟體個包中包含的應用程序時應遵循它們各自的授權協議。整個<strong>{$a->installername}</strong> 軟體都是<a href="http://www.opensource.org/docs/definition_plain.html">開放原始碼</a> ，並且遵循 <a href="http://www.gnu.org/copyleft/gpl.html">GPL</a> 授權協議發佈。';
-$string['welcomep60'] = '接下來的頁面將會透過一些簡單的步驟引導您安裝 <strong>Moodle</strong> 到電腦中，您可以接受預設值，或是針對自己的需求調整修改。';
+$string['welcomep50'] = '使用本軟體包所包含的所有應用程序時，應遵循它們各自的授權協議。整個<strong>{$a->installername}</strong> 軟體都是<a href="http://www.opensource.org/docs/definition_plain.html">開放原始碼</a> ，並且是在 <a href="http://www.gnu.org/copyleft/gpl.html">GPL</a> 授權協議下發佈。';
+$string['welcomep60'] = '接下來的一些頁面將會透過一些簡單的步驟引導您配置和設定在你電腦上的 <strong>Moodle</strong> 。
+您可以接受這些預設值，或是針對你自己的需要來調整。';
 $string['welcomep70'] = '點選 "下一步" 按鈕，繼續設定<strong>Moodle</strong>.';
 $string['wwwroot'] = '網站位址';

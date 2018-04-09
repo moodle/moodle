@@ -40,61 +40,129 @@ define('CACHE_DISABLE_ALL', true);
 require_once(__DIR__ . '/../../../../lib/clilib.php');
 require_once(__DIR__ . '/../../../../lib/behat/lib.php');
 
+list($options, $unrecognized) = cli_get_params(
+    array(
+        'parallel' => 0,
+        'maxruns'  => false,
+        'help'     => false,
+        'fromrun'  => 1,
+        'torun'    => 0,
+        'optimize-runs' => '',
+        'add-core-features-to-theme' => false,
+    ),
+    array(
+        'j' => 'parallel',
+        'm' => 'maxruns',
+        'h' => 'help',
+        'o' => 'optimize-runs',
+        'a' => 'add-core-features-to-theme',
+    )
+);
+
+// Checking run.php CLI script usage.
+$help = "
+Behat utilities to initialise behat tests
+
+Usage:
+  php init.php [--parallel=value [--maxruns=value] [--fromrun=value --torun=value]] [--help]
+
+Options:
+-j, --parallel   Number of parallel behat run to initialise
+-m, --maxruns    Max parallel processes to be executed at one time.
+--fromrun        Execute run starting from (Used for parallel runs on different vms)
+--torun          Execute run till (Used for parallel runs on different vms)
+
+-o, --optimize-runs Split features with specified tags in all parallel runs.
+-a, --add-core-features-to-theme Add all core features to specified theme's
+
+-h, --help     Print out this help
+
+Example from Moodle root directory:
+\$ php admin/tool/behat/cli/init.php --parallel=2
+
+More info in http://docs.moodle.org/dev/Acceptance_testing#Running_tests
+";
+
+if (!empty($options['help'])) {
+    echo $help;
+    exit(0);
+}
+
+// Check which util file to call.
+$utilfile = 'util_single_run.php';
+$commandoptions = "";
+// If parallel run then use utilparallel.
+if ($options['parallel'] && $options['parallel'] > 1) {
+    $utilfile = 'util.php';
+    // Sanitize all input options, so they can be passed to util.
+    foreach ($options as $option => $value) {
+        if ($value) {
+            $commandoptions .= " --$option=\"$value\"";
+        }
+    }
+} else {
+    // Only sanitize options for single run.
+    $cmdoptionsforsinglerun = array('add-core-features-to-theme');
+
+    foreach ($cmdoptionsforsinglerun as $option) {
+        if (!empty($options[$option])) {
+            $commandoptions .= " --$option='$options[$option]'";
+        }
+    }
+}
+
 // Changing the cwd to admin/tool/behat/cli.
-chdir(__DIR__);
+$cwd = getcwd();
 $output = null;
-exec("php util.php --diag", $output, $code);
+
+// If behat dependencies not downloaded then do it first, else symfony/process can't be used.
+testing_update_composer_dependencies();
+
+// Check whether the behat test environment needs to be updated.
+chdir(__DIR__);
+exec("php $utilfile --diag $commandoptions", $output, $code);
+
 if ($code == 0) {
     echo "Behat test environment already installed\n";
 
 } else if ($code == BEHAT_EXITCODE_INSTALL) {
-
-    testing_update_composer_dependencies();
-
     // Behat and dependencies are installed and we need to install the test site.
     chdir(__DIR__);
-    passthru("php util.php --install", $code);
+    passthru("php $utilfile --install $commandoptions", $code);
     if ($code != 0) {
+        chdir($cwd);
         exit($code);
     }
 
 } else if ($code == BEHAT_EXITCODE_REINSTALL) {
-
-    testing_update_composer_dependencies();
-
     // Test site data is outdated.
     chdir(__DIR__);
-    passthru("php util.php --drop", $code);
+    passthru("php $utilfile --drop $commandoptions", $code);
     if ($code != 0) {
+        chdir($cwd);
         exit($code);
     }
 
-    passthru("php util.php --install", $code);
-    if ($code != 0) {
-        exit($code);
-    }
-
-} else if ($code == BEHAT_EXITCODE_COMPOSER) {
-    // Missing Behat dependencies.
-
-    testing_update_composer_dependencies();
-
-    // Returning to admin/tool/behat/cli.
     chdir(__DIR__);
-    passthru("php util.php --install", $code);
+    passthru("php $utilfile --install $commandoptions", $code);
     if ($code != 0) {
+        chdir($cwd);
         exit($code);
     }
 
 } else {
     // Generic error, we just output it.
     echo implode("\n", $output)."\n";
+    chdir($cwd);
     exit($code);
 }
 
 // Enable editing mode according to config.php vars.
-passthru("php util.php --enable", $code);
+chdir(__DIR__);
+passthru("php $utilfile --enable $commandoptions", $code);
 if ($code != 0) {
+    echo "Error enabling site" . PHP_EOL;
+    chdir($cwd);
     exit($code);
 }
 

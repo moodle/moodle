@@ -57,7 +57,7 @@ if (!isset($CFG)) {
 
 // We can detect real dirroot path reliably since PHP 4.0.2,
 // it can not be anything else, there is no point in having this in config.php
-$CFG->dirroot = dirname(dirname(__FILE__));
+$CFG->dirroot = dirname(__DIR__);
 
 // File permissions on created directories in the $CFG->dataroot
 if (!isset($CFG->directorypermissions)) {
@@ -80,7 +80,14 @@ if (defined('BEHAT_SITE_RUNNING')) {
     // The behat is configured on this server, we need to find out if this is the behat test
     // site based on the URL used for access.
     require_once(__DIR__ . '/../lib/behat/lib.php');
-    if (behat_is_test_site()) {
+
+    // Update config variables for parallel behat runs.
+    behat_update_vars_for_process();
+
+    // If behat is being installed for parallel run, then we modify params for parallel run only.
+    if (behat_is_test_site() && !(defined('BEHAT_PARALLEL_UTIL') && empty($CFG->behatrunprocess))) {
+        clearstatcache();
+
         // Checking the integrity of the provided $CFG->behat_* vars and the
         // selected wwwroot to prevent conflicts with production and phpunit environments.
         behat_check_config_vars();
@@ -89,10 +96,11 @@ if (defined('BEHAT_SITE_RUNNING')) {
         if (!file_exists("$CFG->behat_dataroot/behattestdir.txt")) {
             if ($dh = opendir($CFG->behat_dataroot)) {
                 while (($file = readdir($dh)) !== false) {
-                    if ($file === 'behat' or $file === '.' or $file === '..' or $file === '.DS_Store') {
+                    if ($file === 'behat' or $file === '.' or $file === '..' or $file === '.DS_Store' or is_numeric($file)) {
                         continue;
                     }
-                    behat_error(BEHAT_EXITCODE_CONFIG, '$CFG->behat_dataroot directory is not empty, ensure this is the directory where you want to install behat test dataroot');
+                    behat_error(BEHAT_EXITCODE_CONFIG, "$CFG->behat_dataroot directory is not empty, ensure this is the " .
+                        "directory where you want to install behat test dataroot");
                 }
                 closedir($dh);
                 unset($dh);
@@ -109,7 +117,8 @@ if (defined('BEHAT_SITE_RUNNING')) {
 
         if (!defined('BEHAT_UTIL') and !defined('BEHAT_TEST')) {
             // Somebody tries to access test site directly, tell them if not enabled.
-            if (!file_exists($CFG->behat_dataroot . '/behat/test_environment_enabled.txt')) {
+            $behatdir = preg_replace("#[/|\\\]" . BEHAT_PARALLEL_SITE_NAME . "\d{0,}$#", '', $CFG->behat_dataroot);
+            if (!file_exists($behatdir . '/test_environment_enabled.txt')) {
                 behat_error(BEHAT_EXITCODE_CONFIG, 'Behat is configured but not enabled on this test site.');
             }
         }
@@ -131,11 +140,6 @@ if (defined('BEHAT_SITE_RUNNING')) {
         $CFG->prefix = $CFG->behat_prefix;
         $CFG->dataroot = $CFG->behat_dataroot;
     }
-}
-
-// Force timezone to be Australia/Perth for behat tests, so we don't get time zone problems.
-if (defined('BEHAT_SITE_RUNNING') || defined('BEHAT_TEST') || defined('BEHAT_UTIL')) {
-    @date_default_timezone_set('Australia/Perth');
 }
 
 // Normalise dataroot - we do not want any symbolic links, trailing / or any other weirdness there
@@ -277,14 +281,8 @@ if (!defined('CACHE_DISABLE_STORES')) {
     define('CACHE_DISABLE_STORES', false);
 }
 
-// Servers should define a default timezone in php.ini, but if they don't then make sure something is defined.
-// This is a quick hack.  Ideally we should ask the admin for a value.  See MDL-22625 for more on this.
-if (function_exists('date_default_timezone_set') and function_exists('date_default_timezone_get')) {
-    $olddebug = error_reporting(0);
-    date_default_timezone_set(date_default_timezone_get());
-    error_reporting($olddebug);
-    unset($olddebug);
-}
+// Servers should define a default timezone in php.ini, but if they don't then make sure no errors are shown.
+date_default_timezone_set(@date_default_timezone_get());
 
 // Detect CLI scripts - CLI scripts are executed from command line, do not have session and we do not want HTML in output
 // In your new CLI scripts just add "define('CLI_SCRIPT', true);" before requiring config.php.
@@ -317,6 +315,9 @@ if (!defined('WS_SERVER')) {
 // Detect CLI maintenance mode - this is useful when you need to mess with database, such as during upgrades
 if (file_exists("$CFG->dataroot/climaintenance.html")) {
     if (!CLI_SCRIPT) {
+        header($_SERVER['SERVER_PROTOCOL'] . ' 503 Moodle under maintenance');
+        header('Status: 503 Moodle under maintenance');
+        header('Retry-After: 300');
         header('Content-type: text/html; charset=utf-8');
         header('X-UA-Compatible: IE=edge');
         /// Headers to make it not cacheable and json
@@ -339,15 +340,13 @@ if (file_exists("$CFG->dataroot/climaintenance.html")) {
     }
 }
 
-if (CLI_SCRIPT) {
-    // sometimes people use different PHP binary for web and CLI, make 100% sure they have the supported PHP version
-    if (version_compare(phpversion(), '5.4.4') < 0) {
-        $phpversion = phpversion();
-        // do NOT localise - lang strings would not work here and we CAN NOT move it to later place
-        echo "Moodle 2.7 or later requires at least PHP 5.4.4 (currently using version $phpversion).\n";
-        echo "Some servers may have multiple PHP versions installed, are you using the correct executable?\n";
-        exit(1);
-    }
+// Sometimes people use different PHP binary for web and CLI, make 100% sure they have the supported PHP version.
+if (version_compare(PHP_VERSION, '5.6.5') < 0) {
+    $phpversion = PHP_VERSION;
+    // Do NOT localise - lang strings would not work here and we CAN NOT move it to later place.
+    echo "Moodle 3.2 or later requires at least PHP 5.6.5 (currently using version $phpversion).\n";
+    echo "Some servers may have multiple PHP versions installed, are you using the correct executable?\n";
+    exit(1);
 }
 
 // Detect ajax scripts - they are similar to CLI because we can not redirect, output html, etc.
@@ -367,6 +366,11 @@ $CFG->yui3version = '3.17.2';
 $CFG->yuipatchlevel = 0;
 $CFG->yuipatchedmodules = array(
 );
+
+if (!empty($CFG->disableonclickaddoninstall)) {
+    // This config.php flag has been merged into another one.
+    $CFG->disableupdateautodeploy = true;
+}
 
 // Store settings from config.php in array in $CFG - we can use it later to detect problems and overrides.
 if (!isset($CFG->config_php_settings)) {
@@ -524,8 +528,8 @@ global $FULLSCRIPT;
  */
 global $SCRIPT;
 
-// Set httpswwwroot default value (this variable will replace $CFG->wwwroot
-// inside some URLs used in HTTPSPAGEREQUIRED pages.
+// Set httpswwwroot to $CFG->wwwroot for backwards compatibility
+// The loginhttps option is deprecated, so httpswwwroot is no longer necessary. See MDL-42834.
 $CFG->httpswwwroot = $CFG->wwwroot;
 
 require_once($CFG->libdir .'/setuplib.php');        // Functions that MUST be loaded first
@@ -551,8 +555,8 @@ if (!PHPUNIT_TEST or PHPUNIT_UTIL) {
 }
 
 // Acceptance tests needs special output to capture the errors,
-// but not necessary for behat CLI command.
-if (defined('BEHAT_SITE_RUNNING') && !defined('BEHAT_TEST')) {
+// but not necessary for behat CLI command and init script.
+if (defined('BEHAT_SITE_RUNNING') && !defined('BEHAT_TEST') && !defined('BEHAT_UTIL')) {
     require_once(__DIR__ . '/behat/lib.php');
     set_error_handler('behat_error_handler', E_ALL | E_STRICT);
 }
@@ -571,9 +575,6 @@ if (!empty($_SERVER['HTTP_X_moz']) && $_SERVER['HTTP_X_moz'] === 'prefetch'){
 //point pear include path to moodles lib/pear so that includes and requires will search there for files before anywhere else
 //the problem is that we need specific version of quickforms and hacked excel files :-(
 ini_set('include_path', $CFG->libdir.'/pear' . PATH_SEPARATOR . ini_get('include_path'));
-//point zend include path to moodles lib/zend so that includes and requires will search there for files before anywhere else
-//please note zend library is supposed to be used only from web service protocol classes, it may be removed in future
-ini_set('include_path', $CFG->libdir.'/zend' . PATH_SEPARATOR . ini_get('include_path'));
 
 // Register our classloader, in theory somebody might want to replace it to load other hacked core classes.
 if (defined('COMPONENT_CLASSLOADER')) {
@@ -581,6 +582,9 @@ if (defined('COMPONENT_CLASSLOADER')) {
 } else {
     spl_autoload_register('core_component::classloader');
 }
+
+// Remember the default PHP timezone, we will need it later.
+core_date::store_default_php_timezone();
 
 // Load up standard libraries
 require_once($CFG->libdir .'/filterlib.php');       // Functions for filtering test as it is output
@@ -676,11 +680,6 @@ if (!defined('NO_UPGRADE_CHECK') and isset($CFG->upgraderunning)) {
     }
 }
 
-// Turn on SQL logging if required
-if (!empty($CFG->logsql)) {
-    $DB->set_logging(true);
-}
-
 // enable circular reference collector in PHP 5.3,
 // it helps a lot when using large complex OOP structures such as in amos or gradebook
 if (function_exists('gc_enable')) {
@@ -709,6 +708,14 @@ ini_set('arg_separator.output', '&amp;');
 
 // Work around for a PHP bug   see MDL-11237
 ini_set('pcre.backtrack_limit', 20971520);  // 20 MB
+
+// Work around for PHP7 bug #70110. See MDL-52475 .
+if (ini_get('pcre.jit')) {
+    ini_set('pcre.jit', 0);
+}
+
+// Set PHP default timezone to server timezone.
+core_date::set_default_server_timezone();
 
 // Location of standard files
 $CFG->wordlist = $CFG->libdir .'/wordlist.txt';
@@ -832,7 +839,7 @@ unset($urlthemename);
 
 // Ensure a valid theme is set.
 if (!isset($CFG->theme)) {
-    $CFG->theme = 'clean';
+    $CFG->theme = 'boost';
 }
 
 // Set language/locale of printed times.  If user has chosen a language that
@@ -908,36 +915,65 @@ if (!empty($CFG->debugvalidators) and !empty($CFG->guestloginbutton)) {
 
 // Apache log integration. In apache conf file one can use ${MOODULEUSER}n in
 // LogFormat to get the current logged in username in moodle.
-if ($USER && function_exists('apache_note')
-    && !empty($CFG->apacheloguser) && isset($USER->username)) {
-    $apachelog_userid = $USER->id;
-    $apachelog_username = clean_filename($USER->username);
-    $apachelog_name = '';
-    if (isset($USER->firstname)) {
-        // We can assume both will be set
-        // - even if to empty.
-        $apachelog_name = clean_filename($USER->firstname . " " .
-                                         $USER->lastname);
+// Alternatvely for other web servers a header X-MOODLEUSER can be set which
+// can be using in the logfile and stripped out if needed.
+if ($USER && isset($USER->username)) {
+    $logmethod = '';
+    $logvalue = 0;
+    if (!empty($CFG->apacheloguser) && function_exists('apache_note')) {
+        $logmethod = 'apache';
+        $logvalue = $CFG->apacheloguser;
     }
-    if (\core\session\manager::is_loggedinas()) {
-        $realuser = \core\session\manager::get_realuser();
-        $apachelog_username = clean_filename($realuser->username." as ".$apachelog_username);
-        $apachelog_name = clean_filename($realuser->firstname." ".$realuser->lastname ." as ".$apachelog_name);
-        $apachelog_userid = clean_filename($realuser->id." as ".$apachelog_userid);
+    if (!empty($CFG->headerloguser)) {
+        $logmethod = 'header';
+        $logvalue = $CFG->headerloguser;
     }
-    switch ($CFG->apacheloguser) {
-        case 3:
-            $logname = $apachelog_username;
-            break;
-        case 2:
-            $logname = $apachelog_name;
-            break;
-        case 1:
-        default:
-            $logname = $apachelog_userid;
-            break;
+    if (!empty($logmethod)) {
+        $loguserid = $USER->id;
+        $logusername = clean_filename($USER->username);
+        $logname = '';
+        if (isset($USER->firstname)) {
+            // We can assume both will be set
+            // - even if to empty.
+            $logname = clean_filename($USER->firstname . " " . $USER->lastname);
+        }
+        if (\core\session\manager::is_loggedinas()) {
+            $realuser = \core\session\manager::get_realuser();
+            $logusername = clean_filename($realuser->username." as ".$logusername);
+            $logname = clean_filename($realuser->firstname." ".$realuser->lastname ." as ".$logname);
+            $loguserid = clean_filename($realuser->id." as ".$loguserid);
+        }
+        switch ($logvalue) {
+            case 3:
+                $logname = $logusername;
+                break;
+            case 2:
+                $logname = $logname;
+                break;
+            case 1:
+            default:
+                $logname = $loguserid;
+                break;
+        }
+        if ($logmethod == 'apache') {
+            apache_note('MOODLEUSER', $logname);
+        }
+
+        if ($logmethod == 'header') {
+            header("X-MOODLEUSER: $logname");
+        }
     }
-    apache_note('MOODLEUSER', $logname);
+}
+
+// Ensure the urlrewriteclass is setup correctly (to avoid crippling site).
+if (isset($CFG->urlrewriteclass)) {
+    if (!class_exists($CFG->urlrewriteclass)) {
+        debugging("urlrewriteclass {$CFG->urlrewriteclass} was not found, disabling.");
+        unset($CFG->urlrewriteclass);
+    } else if (!in_array('core\output\url_rewriter', class_implements($CFG->urlrewriteclass))) {
+        debugging("{$CFG->urlrewriteclass} does not implement core\output\url_rewriter, disabling.", DEBUG_DEVELOPER);
+        unset($CFG->urlrewriteclass);
+    }
 }
 
 // Use a custom script replacement if one exists
@@ -1021,6 +1057,12 @@ if (isset($CFG->maintenance_later) and $CFG->maintenance_later <= time()) {
     } else if (!CLI_SCRIPT) {
         redirect(new moodle_url('/'));
     }
+}
+
+// Add behat_shutdown_function to shutdown manager, so we can capture php errors,
+// but not necessary for behat CLI command as it's being captured by behat process.
+if (defined('BEHAT_SITE_RUNNING') && !defined('BEHAT_TEST')) {
+    core_shutdown_manager::register_function('behat_shutdown_function');
 }
 
 // note: we can not block non utf-8 installations here, because empty mysql database

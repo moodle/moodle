@@ -24,7 +24,7 @@
  * @author     Yuliya Bozhko <yuliya.bozhko@totaralms.com>
  */
 
-require_once(dirname(dirname(__FILE__)) . '/config.php');
+require_once(__DIR__ . '/../config.php');
 require_once($CFG->libdir . '/badgeslib.php');
 require_once($CFG->libdir . '/filelib.php');
 
@@ -34,41 +34,60 @@ $bake = optional_param('bake', 0, PARAM_BOOL);
 $PAGE->set_context(context_system::instance());
 $output = $PAGE->get_renderer('core', 'badges');
 
-$badge = new issued_badge($id);
-
-if ($bake && ($badge->recipient->id == $USER->id)) {
-    $name = str_replace(' ', '_', $badge->badgeclass['name']) . '.png';
-    $filehash = badges_bake($id, $badge->badgeid, $USER->id, true);
-    $fs = get_file_storage();
-    $file = $fs->get_file_by_hash($filehash);
-    send_stored_file($file, 0, 0, true, array('filename' => $name));
-}
-
 $PAGE->set_url('/badges/badge.php', array('hash' => $id));
 $PAGE->set_pagelayout('base');
 $PAGE->set_title(get_string('issuedbadge', 'badges'));
 
-if (isloggedin()) {
-    $PAGE->set_heading($badge->badgeclass['name']);
-    $PAGE->navbar->add($badge->badgeclass['name']);
-    if ($badge->recipient->id == $USER->id) {
-        $url = new moodle_url('/badges/mybadges.php');
-    } else {
-        $url = new moodle_url($CFG->wwwroot);
+$badge = new issued_badge($id);
+if (!empty($badge->recipient->id)) {
+    if ($bake && ($badge->recipient->id == $USER->id)) {
+        $name = str_replace(' ', '_', $badge->badgeclass['name']) . '.png';
+        $name = clean_param($name, PARAM_FILE);
+        $filehash = badges_bake($id, $badge->badgeid, $USER->id, true);
+        $fs = get_file_storage();
+        $file = $fs->get_file_by_hash($filehash);
+        send_stored_file($file, 0, 0, true, array('filename' => $name));
     }
-    navigation_node::override_active_url($url);
+
+    if (isloggedin()) {
+        $PAGE->set_heading($badge->badgeclass['name']);
+        $PAGE->navbar->add($badge->badgeclass['name']);
+        if ($badge->recipient->id == $USER->id) {
+            $url = new moodle_url('/badges/mybadges.php');
+        } else {
+            $url = new moodle_url($CFG->wwwroot);
+        }
+        navigation_node::override_active_url($url);
+    } else {
+        $PAGE->set_heading($badge->badgeclass['name']);
+        $PAGE->navbar->add($badge->badgeclass['name']);
+        $url = new moodle_url($CFG->wwwroot);
+        navigation_node::override_active_url($url);
+    }
+
+    // Include JS files for backpack support.
+    badges_setup_backpack_js();
+
+    echo $OUTPUT->header();
+
+    echo $output->render($badge);
 } else {
-    $PAGE->set_heading($badge->badgeclass['name']);
-    $PAGE->navbar->add($badge->badgeclass['name']);
-    $url = new moodle_url($CFG->wwwroot);
-    navigation_node::override_active_url($url);
+    echo $OUTPUT->header();
+
+    echo $OUTPUT->container($OUTPUT->error_text(get_string('error:badgeawardnotfound', 'badges')) .
+                            html_writer::tag('p', $OUTPUT->close_window_button()), 'important', 'notice');
 }
 
-// Include JS files for backpack support.
-badges_setup_backpack_js();
+// Trigger event, badge viewed.
+$other = array('badgeid' => $badge->badgeid, 'badgehash' => $id);
+$eventparams = array('context' => $PAGE->context, 'other' => $other);
 
-echo $OUTPUT->header();
+// If the badge does not belong to this user, log it appropriately.
+if (($badge->recipient->id != $USER->id)) {
+    $eventparams['relateduserid'] = $badge->recipient->id;
+}
 
-echo $output->render($badge);
+$event = \core\event\badge_viewed::create($eventparams);
+$event->trigger();
 
 echo $OUTPUT->footer();

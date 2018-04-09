@@ -635,3 +635,121 @@ class glossary_file_info_container extends file_info {
         return $this->browser->get_file_info($this->context);
     }
 }
+
+/**
+ * Returns glossary entries tagged with a specified tag.
+ *
+ * This is a callback used by the tag area mod_glossary/glossary_entries to search for glossary entries
+ * tagged with a specific tag.
+ *
+ * @param core_tag_tag $tag
+ * @param bool $exclusivemode if set to true it means that no other entities tagged with this tag
+ *             are displayed on the page and the per-page limit may be bigger
+ * @param int $fromctx context id where the link was displayed, may be used by callbacks
+ *            to display items in the same context first
+ * @param int $ctx context id where to search for records
+ * @param bool $rec search in subcontexts as well
+ * @param int $page 0-based number of page being displayed
+ * @return \core_tag\output\tagindex
+ */
+function mod_glossary_get_tagged_entries($tag, $exclusivemode = false, $fromctx = 0, $ctx = 0, $rec = 1, $page = 0) {
+    global $OUTPUT;
+    $perpage = $exclusivemode ? 20 : 5;
+
+    // Build the SQL query.
+    $ctxselect = context_helper::get_preload_record_columns_sql('ctx');
+    $query = "SELECT ge.id, ge.concept, ge.glossaryid, ge.approved, ge.userid,
+                    cm.id AS cmid, c.id AS courseid, c.shortname, c.fullname, $ctxselect
+                FROM {glossary_entries} ge
+                JOIN {glossary} g ON g.id = ge.glossaryid
+                JOIN {modules} m ON m.name='glossary'
+                JOIN {course_modules} cm ON cm.module = m.id AND cm.instance = g.id
+                JOIN {tag_instance} tt ON ge.id = tt.itemid
+                JOIN {course} c ON cm.course = c.id
+                JOIN {context} ctx ON ctx.instanceid = cm.id AND ctx.contextlevel = :coursemodulecontextlevel
+               WHERE tt.itemtype = :itemtype AND tt.tagid = :tagid AND tt.component = :component
+                 AND cm.deletioninprogress = 0
+                 AND ge.id %ITEMFILTER% AND c.id %COURSEFILTER%";
+
+    $params = array('itemtype' => 'glossary_entries', 'tagid' => $tag->id, 'component' => 'mod_glossary',
+                    'coursemodulecontextlevel' => CONTEXT_MODULE);
+
+    if ($ctx) {
+        $context = $ctx ? context::instance_by_id($ctx) : context_system::instance();
+        $query .= $rec ? ' AND (ctx.id = :contextid OR ctx.path LIKE :path)' : ' AND ctx.id = :contextid';
+        $params['contextid'] = $context->id;
+        $params['path'] = $context->path.'/%';
+    }
+
+    $query .= " ORDER BY ";
+    if ($fromctx) {
+        // In order-clause specify that modules from inside "fromctx" context should be returned first.
+        $fromcontext = context::instance_by_id($fromctx);
+        $query .= ' (CASE WHEN ctx.id = :fromcontextid OR ctx.path LIKE :frompath THEN 0 ELSE 1 END),';
+        $params['fromcontextid'] = $fromcontext->id;
+        $params['frompath'] = $fromcontext->path.'/%';
+    }
+    $query .= ' c.sortorder, cm.id, ge.id';
+
+    $totalpages = $page + 1;
+
+    // Use core_tag_index_builder to build and filter the list of items.
+    $builder = new core_tag_index_builder('mod_glossary', 'glossary_entries', $query, $params, $page * $perpage, $perpage + 1);
+    while ($item = $builder->has_item_that_needs_access_check()) {
+        context_helper::preload_from_record($item);
+        $courseid = $item->courseid;
+        if (!$builder->can_access_course($courseid)) {
+            $builder->set_accessible($item, false);
+            continue;
+        }
+        $modinfo = get_fast_modinfo($builder->get_course($courseid));
+        // Set accessibility of this item and all other items in the same course.
+        $builder->walk(function ($taggeditem) use ($courseid, $modinfo, $builder) {
+            global $USER;
+            if ($taggeditem->courseid == $courseid) {
+                $accessible = false;
+                if (($cm = $modinfo->get_cm($taggeditem->cmid)) && $cm->uservisible) {
+                    if ($taggeditem->approved) {
+                        $accessible = true;
+                    } else if ($taggeditem->userid == $USER->id) {
+                        $accessible = true;
+                    } else {
+                        $accessible = has_capability('mod/glossary:approve', context_module::instance($cm->id));
+                    }
+                }
+                $builder->set_accessible($taggeditem, $accessible);
+            }
+        });
+    }
+
+    $items = $builder->get_items();
+    if (count($items) > $perpage) {
+        $totalpages = $page + 2; // We don't need exact page count, just indicate that the next page exists.
+        array_pop($items);
+    }
+
+    // Build the display contents.
+    if ($items) {
+        $tagfeed = new core_tag\output\tagfeed();
+        foreach ($items as $item) {
+            context_helper::preload_from_record($item);
+            $modinfo = get_fast_modinfo($item->courseid);
+            $cm = $modinfo->get_cm($item->cmid);
+            $pageurl = new moodle_url('/mod/glossary/showentry.php', array('eid' => $item->id, 'displayformat' => 'dictionary'));
+            $pagename = format_string($item->concept, true, array('context' => context_module::instance($item->cmid)));
+            $pagename = html_writer::link($pageurl, $pagename);
+            $courseurl = course_get_url($item->courseid, $cm->sectionnum);
+            $cmname = html_writer::link($cm->url, $cm->get_formatted_name());
+            $coursename = format_string($item->fullname, true, array('context' => context_course::instance($item->courseid)));
+            $coursename = html_writer::link($courseurl, $coursename);
+            $icon = html_writer::link($pageurl, html_writer::empty_tag('img', array('src' => $cm->get_icon_url())));
+            $tagfeed->add($icon, $pagename, $cmname.'<br>'.$coursename);
+        }
+
+        $content = $OUTPUT->render_from_template('core_tag/tagfeed',
+            $tagfeed->export_for_template($OUTPUT));
+
+        return new core_tag\output\tagindex($tag, 'mod_glossary', 'glossary_entries', $content,
+            $exclusivemode, $fromctx, $ctx, $rec, $page, $totalpages);
+    }
+}

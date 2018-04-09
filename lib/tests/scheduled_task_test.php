@@ -51,6 +51,11 @@ class core_scheduled_task_testcase extends advanced_testcase {
     }
 
     public function test_get_next_scheduled_time() {
+        global $CFG;
+        $this->resetAfterTest();
+
+        $this->setTimezone('Europe/London');
+
         // Test job run at 1 am.
         $testclass = new \core\task\scheduled_test_task();
 
@@ -60,11 +65,13 @@ class core_scheduled_task_testcase extends advanced_testcase {
         // Next valid time should be 1am of the next day.
         $nexttime = $testclass->get_next_scheduled_time();
 
-        $oneam = mktime(1, 0, 0);
+        $oneamdate = new DateTime('now', new DateTimeZone('Europe/London'));
+        $oneamdate->setTime(1, 0, 0);
         // Make it 1 am tomorrow if the time is after 1am.
-        if ($oneam < time()) {
-            $oneam += 86400;
+        if ($oneamdate->getTimestamp() < time()) {
+            $oneamdate->add(new DateInterval('P1D'));
         }
+        $oneam = $oneamdate->getTimestamp();
 
         $this->assertEquals($oneam, $nexttime, 'Next scheduled time is 1am.');
 
@@ -118,22 +125,9 @@ class core_scheduled_task_testcase extends advanced_testcase {
         global $CFG, $USER;
 
         // The timezones used in this test are chosen because they do not use DST - that would break the test.
+        $this->resetAfterTest();
 
-        $currenttimezonephp = date_default_timezone_get();
-        $currenttimezonecfg = null;
-        if (!empty($CFG->timezone)) {
-            $currenttimezonecfg = $CFG->timezone;
-        }
-        $userstimezone = null;
-        if (!empty($USER->timezone)) {
-            $userstimezone = $USER->timezone;
-        }
-
-        // We are testing a difference between $CFG->timezone and the php.ini timezone.
-        // GMT+8.
-        date_default_timezone_set('Australia/Perth');
-        // GMT-04:30.
-        $CFG->timezone = 'America/Caracas';
+        $this->setTimezone('Asia/Kabul');
 
         $testclass = new \core\task\scheduled_test_task();
 
@@ -149,12 +143,9 @@ class core_scheduled_task_testcase extends advanced_testcase {
         $userdate = userdate($nexttime);
 
         // Should be displayed in user timezone.
-        // I used http://www.timeanddate.com/worldclock/fixedtime.html?msg=Moodle+Test&iso=20140314T01&p1=58
-        // to verify this time.
-        $this->assertContains('11:15 AM', core_text::strtoupper($userdate));
-
-        $CFG->timezone = $currenttimezonecfg;
-        date_default_timezone_set($currenttimezonephp);
+        // I used http://www.timeanddate.com/worldclock/fixedtime.html?msg=Moodle+Test&iso=20160502T01&p1=113
+        // setting my location to Kathmandu to verify this time.
+        $this->assertContains('2:15 AM', core_text::strtoupper($userdate));
     }
 
     public function test_reset_scheduled_tasks_for_component() {
@@ -226,6 +217,47 @@ class core_scheduled_task_testcase extends advanced_testcase {
         $this->assertEquals($initcount, $finalcount);
     }
 
+    /**
+     * Tests that the reset function deletes old tasks.
+     */
+    public function test_reset_scheduled_tasks_for_component_delete() {
+        global $DB;
+        $this->resetAfterTest(true);
+
+        $count = $DB->count_records('task_scheduled', array('component' => 'moodle'));
+        $allcount = $DB->count_records('task_scheduled');
+
+        $task = new \core\task\scheduled_test_task();
+        $task->set_component('moodle');
+        $record = \core\task\manager::record_from_scheduled_task($task);
+        $DB->insert_record('task_scheduled', $record);
+        $this->assertTrue($DB->record_exists('task_scheduled', array('classname' => '\core\task\scheduled_test_task',
+            'component' => 'moodle')));
+
+        $task = new \core\task\scheduled_test2_task();
+        $task->set_component('moodle');
+        $record = \core\task\manager::record_from_scheduled_task($task);
+        $DB->insert_record('task_scheduled', $record);
+        $this->assertTrue($DB->record_exists('task_scheduled', array('classname' => '\core\task\scheduled_test2_task',
+            'component' => 'moodle')));
+
+        $aftercount = $DB->count_records('task_scheduled', array('component' => 'moodle'));
+        $afterallcount = $DB->count_records('task_scheduled');
+
+        $this->assertEquals($count + 2, $aftercount);
+        $this->assertEquals($allcount + 2, $afterallcount);
+
+        // Now check that the right things were deleted.
+        \core\task\manager::reset_scheduled_tasks_for_component('moodle');
+
+        $this->assertEquals($count, $DB->count_records('task_scheduled', array('component' => 'moodle')));
+        $this->assertEquals($allcount, $DB->count_records('task_scheduled'));
+        $this->assertFalse($DB->record_exists('task_scheduled', array('classname' => '\core\task\scheduled_test2_task',
+            'component' => 'moodle')));
+        $this->assertFalse($DB->record_exists('task_scheduled', array('classname' => '\core\task\scheduled_test_task',
+            'component' => 'moodle')));
+    }
+
     public function test_get_next_scheduled_task() {
         global $DB;
 
@@ -282,6 +314,33 @@ class core_scheduled_task_testcase extends advanced_testcase {
         // Should not get any task.
         $task = \core\task\manager::get_next_scheduled_task($now);
         $this->assertNull($task);
+
+        // Check ordering.
+        $DB->delete_records('task_scheduled');
+        $record->lastruntime = 2;
+        $record->disabled = 0;
+        $record->classname = '\core\task\scheduled_test_task';
+        $DB->insert_record('task_scheduled', $record);
+
+        $record->lastruntime = 1;
+        $record->classname = '\core\task\scheduled_test2_task';
+        $DB->insert_record('task_scheduled', $record);
+
+        // Should get handed the second task.
+        $task = \core\task\manager::get_next_scheduled_task($now);
+        $this->assertInstanceOf('\core\task\scheduled_test2_task', $task);
+        $task->execute();
+        \core\task\manager::scheduled_task_complete($task);
+
+        // Should get handed the first task.
+        $task = \core\task\manager::get_next_scheduled_task($now);
+        $this->assertInstanceOf('\core\task\scheduled_test_task', $task);
+        $task->execute();
+        \core\task\manager::scheduled_task_complete($task);
+
+        // Should not get any task.
+        $task = \core\task\manager::get_next_scheduled_task($now);
+        $this->assertNull($task);
     }
 
     public function test_get_broken_scheduled_task() {
@@ -329,6 +388,7 @@ class core_scheduled_task_testcase extends advanced_testcase {
         // Set a random value.
         $testclass->set_minute('R');
         $testclass->set_hour('R');
+        $testclass->set_day_of_week('R');
 
         // Verify the minute has changed within allowed bounds.
         $minute = $testclass->get_minute();
@@ -341,6 +401,12 @@ class core_scheduled_task_testcase extends advanced_testcase {
         $this->assertInternalType('int', $hour);
         $this->assertGreaterThanOrEqual(0, $hour);
         $this->assertLessThanOrEqual(23, $hour);
+
+        // Verify the dayofweek has changed within allowed bounds.
+        $dayofweek = $testclass->get_day_of_week();
+        $this->assertInternalType('int', $dayofweek);
+        $this->assertGreaterThanOrEqual(0, $dayofweek);
+        $this->assertLessThanOrEqual(6, $dayofweek);
     }
 
     /**
@@ -388,8 +454,10 @@ class core_scheduled_task_testcase extends advanced_testcase {
         $iter = new \RecursiveIteratorIterator($dir, \RecursiveIteratorIterator::CHILD_FIRST);
 
         for ($iter->rewind(); $iter->valid(); $iter->next()) {
-            $node = $iter->getRealPath();
-            touch($node, time() - (8 * 24 * 3600));
+            if ($iter->isDir() && !$iter->isDot()) {
+                $node = $iter->getRealPath();
+                touch($node, time() - (8 * 24 * 3600));
+            }
         }
 
         // Run the scheduled task again to remove all of the files and directories.
@@ -398,5 +466,39 @@ class core_scheduled_task_testcase extends advanced_testcase {
         // All of the files and directories should be deleted.
         // There should only be two items in the array, '.' and '..'.
         $this->assertEquals(2, count($filesarray));
+    }
+
+    /**
+     * Test that the function to clear the fail delay from a task works correctly.
+     */
+    public function test_clear_fail_delay() {
+
+        $this->resetAfterTest();
+
+        // Get an example task to use for testing. Task is set to run every minute by default.
+        $taskname = '\core\task\send_new_user_passwords_task';
+
+        // Pretend task started running and then failed 3 times.
+        $before = time();
+        $cronlockfactory = \core\lock\lock_config::get_lock_factory('cron');
+        for ($i = 0; $i < 3; $i ++) {
+            $task = \core\task\manager::get_scheduled_task($taskname);
+            $lock = $cronlockfactory->get_lock('\\' . get_class($task), 10);
+            $task->set_lock($lock);
+            \core\task\manager::scheduled_task_failed($task);
+        }
+
+        // Confirm task is now delayed by several minutes.
+        $task = \core\task\manager::get_scheduled_task($taskname);
+        $this->assertEquals(240, $task->get_fail_delay());
+        $this->assertGreaterThan($before + 230, $task->get_next_run_time());
+
+        // Clear the fail delay and re-get the task.
+        \core\task\manager::clear_fail_delay($task);
+        $task = \core\task\manager::get_scheduled_task($taskname);
+
+        // There should be no delay and it should run within the next minute.
+        $this->assertEquals(0, $task->get_fail_delay());
+        $this->assertLessThan($before + 70, $task->get_next_run_time());
     }
 }

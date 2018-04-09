@@ -13,7 +13,7 @@ Feature: Course category management interface performs as expected
     And I go to the courses management page
     And I should see "Course and category management" in the "h2" "css_element"
     And I should see "Course categories" in the ".view-mode-selector" "css_element"
-    And I should see "Course categories" in the "h3" "css_element"
+    And I should see "Course categories" in the "#page-content" "css_element"
     And I should see the "Course categories and courses" management page
 
   @javascript

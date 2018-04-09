@@ -52,9 +52,11 @@ class enrol_cohort_handler {
         $sql = "SELECT e.*, r.id as roleexists
                   FROM {enrol} e
              LEFT JOIN {role} r ON (r.id = e.roleid)
-                 WHERE e.customint1 = :cohortid AND e.enrol = 'cohort'
+                 WHERE e.customint1 = :cohortid AND e.enrol = 'cohort' AND e.status = :enrolstatus
               ORDER BY e.id ASC";
-        if (!$instances = $DB->get_records_sql($sql, array('cohortid'=>$event->objectid))) {
+        $params['cohortid'] = $event->objectid;
+        $params['enrolstatus'] = ENROL_INSTANCE_ENABLED;
+        if (!$instances = $DB->get_records_sql($sql, $params)) {
             return true;
         }
 
@@ -184,13 +186,14 @@ function enrol_cohort_sync(progress_trace $trace, $courseid = NULL) {
     $onecourse = $courseid ? "AND e.courseid = :courseid" : "";
     $sql = "SELECT cm.userid, e.id AS enrolid, ue.status
               FROM {cohort_members} cm
-              JOIN {enrol} e ON (e.customint1 = cm.cohortid AND e.enrol = 'cohort' $onecourse)
+              JOIN {enrol} e ON (e.customint1 = cm.cohortid AND e.enrol = 'cohort' AND e.status = :enrolstatus $onecourse)
               JOIN {user} u ON (u.id = cm.userid AND u.deleted = 0)
          LEFT JOIN {user_enrolments} ue ON (ue.enrolid = e.id AND ue.userid = cm.userid)
              WHERE ue.id IS NULL OR ue.status = :suspended";
     $params = array();
     $params['courseid'] = $courseid;
     $params['suspended'] = ENROL_USER_SUSPENDED;
+    $params['enrolstatus'] = ENROL_INSTANCE_ENABLED;
     $rs = $DB->get_recordset_sql($sql, $params);
     foreach($rs as $ue) {
         if (!isset($instances[$ue->enrolid])) {
@@ -286,43 +289,13 @@ function enrol_cohort_sync(progress_trace $trace, $courseid = NULL) {
 
 
     // Finally sync groups.
-    $onecourse = $courseid ? "AND e.courseid = :courseid" : "";
-
-    // Remove invalid.
-    $sql = "SELECT gm.*, e.courseid, g.name AS groupname
-              FROM {groups_members} gm
-              JOIN {groups} g ON (g.id = gm.groupid)
-              JOIN {enrol} e ON (e.enrol = 'cohort' AND e.courseid = g.courseid $onecourse)
-              JOIN {user_enrolments} ue ON (ue.userid = gm.userid AND ue.enrolid = e.id)
-             WHERE gm.component='enrol_cohort' AND gm.itemid = e.id AND g.id <> e.customint2";
-    $params = array();
-    $params['courseid'] = $courseid;
-
-    $rs = $DB->get_recordset_sql($sql, $params);
-    foreach($rs as $gm) {
-        groups_remove_member($gm->groupid, $gm->userid);
+    $affectedusers = groups_sync_with_enrolment('cohort', $courseid);
+    foreach ($affectedusers['removed'] as $gm) {
         $trace->output("removing user from group: $gm->userid ==> $gm->courseid - $gm->groupname", 1);
     }
-    $rs->close();
-
-    // Add missing.
-    $sql = "SELECT ue.*, g.id AS groupid, e.courseid, g.name AS groupname
-              FROM {user_enrolments} ue
-              JOIN {enrol} e ON (e.id = ue.enrolid AND e.enrol = 'cohort' $onecourse)
-              JOIN {groups} g ON (g.courseid = e.courseid AND g.id = e.customint2)
-              JOIN {user} u ON (u.id = ue.userid AND u.deleted = 0)
-         LEFT JOIN {groups_members} gm ON (gm.groupid = g.id AND gm.userid = ue.userid)
-             WHERE gm.id IS NULL";
-    $params = array();
-    $params['courseid'] = $courseid;
-
-    $rs = $DB->get_recordset_sql($sql, $params);
-    foreach($rs as $ue) {
-        groups_add_member($ue->groupid, $ue->userid, 'enrol_cohort', $ue->enrolid);
+    foreach ($affectedusers['added'] as $ue) {
         $trace->output("adding user to group: $ue->userid ==> $ue->courseid - $ue->groupname", 1);
     }
-    $rs->close();
-
 
     $trace->output('...user enrolment synchronisation finished.');
 

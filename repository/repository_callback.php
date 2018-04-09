@@ -26,9 +26,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(dirname(dirname(__FILE__)).'/config.php');
-require_once(dirname(dirname(__FILE__)).'/lib/filelib.php');
-require_once(dirname(__FILE__).'/lib.php');
+require_once(__DIR__ . '/../config.php');
+require_once(__DIR__ . '/../lib/filelib.php');
+require_once(__DIR__.'/lib.php');
 
 require_login();
 
@@ -67,17 +67,38 @@ $repo->callback();
 // If Moodle is working on HTTPS mode, then we are not allowed to access
 // parent window, in this case, we need to alert user to refresh the repository
 // manually.
-$strhttpsbug = get_string('cannotaccessparentwin', 'repository');
+$strhttpsbug = json_encode(get_string('cannotaccessparentwin', 'repository'));
 $strrefreshnonjs = get_string('refreshnonjsfilepicker', 'repository');
+$reloadparent = optional_param('reloadparent', false, PARAM_BOOL);
+// If this request is coming from a popup, close window and reload parent window.
+if ($reloadparent == true) {
+    $js = <<<EOD
+<html>
+<head>
+    <script type="text/javascript">
+        window.opener.location.reload();
+        window.close();
+    </script>
+</head>
+<body></body>
+</html>
+EOD;
+    die($js);
+}
+
 $js =<<<EOD
 <html>
 <head>
     <script type="text/javascript">
-    if(window.opener){
-        window.opener.M.core_filepicker.active_filepicker.list();
-        window.close();
-    } else {
-        alert("{$strhttpsbug }");
+    try {
+        if (window.opener) {
+            window.opener.M.core_filepicker.active_filepicker.list();
+            window.close();
+        } else {
+            throw new Error('Whoops!');
+        }
+    } catch (e) {
+        alert({$strhttpsbug});
     }
     </script>
 </head>

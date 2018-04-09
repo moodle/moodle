@@ -51,7 +51,7 @@ $capabilities = array(
 
     'mod/scorm:skipview' => array(
 
-        'captype' => 'write',
+        'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
         'archetypes' => array(
             'student' => CAP_ALLOW
@@ -83,7 +83,7 @@ $capabilities = array(
     ),
     'mod/scorm:deleteresponses' => array(
 
-        'captype' => 'read',
+        'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'archetypes' => array(
             'teacher' => CAP_ALLOW,

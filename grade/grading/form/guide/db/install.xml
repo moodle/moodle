@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="grade/grading/form/markingguide/db" VERSION="20120404" COMMENT="XMLDB file for Moodle marking guide"
+<XMLDB PATH="grade/grading/form/guide/db" VERSION="20120404" COMMENT="XMLDB file for Moodle marking guide"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:noNamespaceSchemaLocation="../../../../../lib/xmldb/xmldb.xsd"
         >

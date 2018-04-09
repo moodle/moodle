@@ -10,9 +10,9 @@ Feature: We can use a minimum grade different than zero
       | Course 1 | C1 | 0 | 1 |
     And the following "users" exist:
       | username | firstname | lastname | email | idnumber |
-      | teacher1 | Teacher | 1 | teacher1@asd.com | t1 |
-      | student1 | Student | 1 | student1@asd.com | s1 |
-      | student2 | Student | 2 | student2@asd.com | s2 |
+      | teacher1 | Teacher | 1 | teacher1@example.com | t1 |
+      | student1 | Student | 1 | student1@example.com | s1 |
+      | student2 | Student | 2 | student2@example.com | s2 |
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
@@ -25,10 +25,8 @@ Feature: We can use a minimum grade different than zero
     And I log in as "admin"
     And I set the following administration settings values:
       | grade_aggregations_visible | Mean of grades,Weighted mean of grades,Simple weighted mean of grades,Mean of grades (with extra credits),Median of grades,Lowest grade,Highest grade,Mode of grades,Natural |
-    And I am on homepage
-    And I follow "Course 1"
-    And I follow "Grades"
-    And I navigate to "Categories and items" node in "Grade administration > Setup"
+    And I am on "Course 1" course homepage
+    And I navigate to "Setup > Gradebook setup" in the course gradebook
     And I press "Add grade item"
     And I set the following fields to these values:
       | Item name | Manual item 1 |
@@ -66,14 +64,14 @@ Feature: We can use a minimum grade different than zero
       | Minimum grade | 50 |
       | Grade category | Sub category 2 |
     And I press "Save changes"
-    And I navigate to "Course grade settings" node in "Grade administration > Setup"
+    And I navigate to "Setup > Course grade settings" in the course gradebook
     And I set the field "Show weightings" to "Show"
     And I set the field "Show contribution to course total" to "Show"
     And I press "Save changes"
 
   @javascript
   Scenario: Natural aggregation with negative and positive grade
-    And I navigate to "Categories and items" node in "Grade administration > Setup"
+    And I navigate to "Setup > Gradebook setup" in the course gradebook
     And I set the following settings for grade item "Sub category 1":
       | Aggregation          | Natural |
       | Exclude empty grades | 0       |
@@ -85,8 +83,8 @@ Feature: We can use a minimum grade different than zero
       | Exclude empty grades | 0       |
     And I log out
     And I log in as "teacher1"
-    And I follow "Course 1"
-    And I follow "Grades"
+    And I am on "Course 1" course homepage
+    And I navigate to "View > Grader report" in the course gradebook
     And I turn editing mode on
     When I give the grade "-25.00" to the user "Student 1" for the grade item "Manual item 1"
     And I give the grade "50.00" to the user "Student 1" for the grade item "Manual item 2"
@@ -101,7 +99,7 @@ Feature: We can use a minimum grade different than zero
     And I give the grade "0.00" to the user "Student 2" for the grade item "Manual item 5"
     And I give the grade "0.00" to the user "Student 2" for the grade item "Manual item 6"
     And I press "Save changes"
-    And I follow "User report"
+    And I navigate to "View > User report" in the course gradebook
     And I set the field "Select all or one user" to "Student 1"
     Then the following should exist in the "user-grade" table:
       | Grade item    | Calculated weight | Grade  | Contribution to course total |

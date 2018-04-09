@@ -114,5 +114,10 @@ class report_viewed extends \core\event\base {
             throw new \coding_exception('The \'relateduserid\' must be set.');
         }
     }
+
+    public static function get_other_mapping() {
+        // Nothing to map.
+        return array();
+    }
 }
 

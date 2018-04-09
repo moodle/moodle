@@ -134,6 +134,14 @@ if (optional_param('add', false, PARAM_BOOL) && confirm_sesskey()) {
     redirect($afteractionurl);
 }
 
+if ($addsectionatpage = optional_param('addsectionatpage', false, PARAM_INT)) {
+    // Add a section to the quiz.
+    $structure->check_can_be_edited();
+    $structure->add_section_heading($addsectionatpage);
+    quiz_delete_previews($quiz);
+    redirect($afteractionurl);
+}
+
 if ((optional_param('addrandom', false, PARAM_BOOL)) && confirm_sesskey()) {
     // Add random questions to the quiz.
     $structure->check_can_be_edited();
@@ -151,8 +159,8 @@ if ((optional_param('addrandom', false, PARAM_BOOL)) && confirm_sesskey()) {
 if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
 
     // If rescaling is required save the new maximum.
-    $maxgrade = unformat_float(optional_param('maxgrade', -1, PARAM_RAW));
-    if ($maxgrade >= 0) {
+    $maxgrade = unformat_float(optional_param('maxgrade', '', PARAM_RAW_TRIMMED), true);
+    if (is_float($maxgrade) && $maxgrade >= 0) {
         quiz_set_grade($maxgrade, $quiz);
         quiz_update_all_final_grades($quiz);
         quiz_update_grades($quiz, 0, true);

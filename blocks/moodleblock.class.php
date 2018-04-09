@@ -343,14 +343,10 @@ class block_base {
      * Default behavior: save all variables as $CFG properties
      * You don't need to override this if you 're satisfied with the above
      *
-     * @param array $data
-     * @return boolean
+     * @deprecated since Moodle 2.9 MDL-49385 - Please use Admin Settings functionality to save block configuration.
      */
     function config_save($data) {
-        foreach ($data as $name => $value) {
-            set_config($name, $value);
-        }
-        return true;
+        throw new coding_exception('config_save() can not be used any more, use Admin Settings functionality to save block configuration.');
     }
 
     /**
@@ -478,8 +474,8 @@ class block_base {
      */
     function instance_config_save($data, $nolongerused = false) {
         global $DB;
-        $DB->set_field('block_instances', 'configdata', base64_encode(serialize($data)),
-                array('id' => $this->instance->id));
+        $DB->update_record('block_instances', ['id' => $this->instance->id,
+                'configdata' => base64_encode(serialize($data)), 'timemodified' => time()]);
     }
 
     /**
@@ -495,6 +491,15 @@ class block_base {
      * @return boolean
      */
     function instance_create() {
+        return true;
+    }
+
+    /**
+     * Copy any block-specific data when copying to a new block instance.
+     * @param int $fromid the id number of the block instance to copy from
+     * @return boolean
+     */
+    public function instance_copy($fromid) {
         return true;
     }
 

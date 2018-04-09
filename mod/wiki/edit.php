@@ -40,7 +40,7 @@ require_once($CFG->dirroot . '/mod/wiki/pagelib.php');
 $pageid = required_param('pageid', PARAM_INT);
 $contentformat = optional_param('contentformat', '', PARAM_ALPHA);
 $option = optional_param('editoption', '', PARAM_TEXT);
-$section = optional_param('section', "", PARAM_TEXT);
+$section = optional_param('section', "", PARAM_RAW);
 $version = optional_param('version', -1, PARAM_INT);
 $attachments = optional_param('attachments', 0, PARAM_INT);
 $deleteuploads = optional_param('deleteuploads', 0, PARAM_RAW);

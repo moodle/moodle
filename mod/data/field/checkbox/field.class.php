@@ -25,21 +25,38 @@
 class data_field_checkbox extends data_field_base {
 
     var $type = 'checkbox';
+    /**
+     * priority for globalsearch indexing
+     *
+     * @var int
+     */
+    protected static $priority = self::LOW_PRIORITY;
 
-    function display_add_field($recordid=0) {
-        global $CFG, $DB;
+    function display_add_field($recordid = 0, $formdata = null) {
+        global $CFG, $DB, $OUTPUT;
 
         $content = array();
 
-        if ($recordid) {
+        if ($formdata) {
+            $fieldname = 'field_' . $this->field->id;
+            $content = $formdata->$fieldname;
+        } else if ($recordid) {
             $content = $DB->get_field('data_content', 'content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid));
             $content = explode('##', $content);
         } else {
             $content = array();
         }
 
-        $str = '<div title="'.s($this->field->description).'">';
-        $str .= '<fieldset><legend><span class="accesshide">'.$this->field->name.'</span></legend>';
+        $str = '<div title="' . s($this->field->description) . '">';
+        $str .= '<fieldset><legend><span class="accesshide">'.$this->field->name;
+        if ($this->field->required) {
+            $str .= '$nbsp;' . get_string('requiredelement', 'form');
+            $str .= '</span></legend>';
+            $image = $OUTPUT->pix_icon('req', get_string('requiredelement', 'form'));
+            $str .= html_writer::div($image, 'inline-req');
+        } else {
+            $str .= '</span></legend>';
+        }
 
         $i = 0;
         foreach (explode("\n", $this->field->param1) as $checkbox) {
@@ -49,7 +66,7 @@ class data_field_checkbox extends data_field_base {
             }
             $str .= '<input type="hidden" name="field_' . $this->field->id . '[]" value="" />';
             $str .= '<input type="checkbox" id="field_'.$this->field->id.'_'.$i.'" name="field_' . $this->field->id . '[]" ';
-            $str .= 'value="' . s($checkbox) . '" ';
+            $str .= 'value="' . s($checkbox) . '" class="mod-data-input m-r-1" ';
 
             if (array_search($checkbox, $content) !== false) {
                 $str .= 'checked />';
@@ -77,27 +94,37 @@ class data_field_checkbox extends data_field_base {
 
         $str = '';
         $found = false;
+        $marginclass = ['class' => 'm-r-1'];
         foreach (explode("\n",$this->field->param1) as $checkbox) {
             $checkbox = trim($checkbox);
-
             if (in_array($checkbox, $content)) {
-                $str .= html_writer::checkbox('f_'.$this->field->id.'[]', s($checkbox), true, $checkbox);
+                $str .= html_writer::checkbox('f_'.$this->field->id.'[]', s($checkbox), true, $checkbox, $marginclass);
             } else {
-                $str .= html_writer::checkbox('f_'.$this->field->id.'[]', s($checkbox), false, $checkbox);
+                $str .= html_writer::checkbox('f_'.$this->field->id.'[]', s($checkbox), false, $checkbox, $marginclass);
             }
+            $str .= html_writer::empty_tag('br');
             $found = true;
         }
         if (!$found) {
             return '';
         }
 
-        $str .= html_writer::checkbox('f_'.$this->field->id.'_allreq', null, $allrequired, get_string('selectedrequired', 'data'));
+        $requiredstr = get_string('selectedrequired', 'data');
+        $str .= html_writer::checkbox('f_'.$this->field->id.'_allreq', null, $allrequired, $requiredstr, $marginclass);
         return $str;
     }
 
-    function parse_search_field() {
-        $selected    = optional_param_array('f_'.$this->field->id, array(), PARAM_NOTAGS);
-        $allrequired = optional_param('f_'.$this->field->id.'_allreq', 0, PARAM_BOOL);
+    public function parse_search_field($defaults = null) {
+        $paramselected = 'f_'.$this->field->id;
+        $paramallrequired = 'f_'.$this->field->id.'_allreq';
+
+        if (empty($defaults[$paramselected])) { // One empty means the other ones are empty too.
+            $defaults = array($paramselected => array(), $paramallrequired => 0);
+        }
+
+        $selected    = optional_param_array($paramselected, $defaults[$paramselected], PARAM_NOTAGS);
+        $allrequired = optional_param($paramallrequired, $defaults[$paramallrequired], PARAM_BOOL);
+
         if (empty($selected)) {
             // no searching
             return '';
@@ -164,7 +191,7 @@ class data_field_checkbox extends data_field_base {
         global $DB;
 
         if ($content = $DB->get_record('data_content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid))) {
-            if (empty($content->content)) {
+            if (strval($content->content) === '') {
                 return false;
             }
 
@@ -211,5 +238,55 @@ class data_field_checkbox extends data_field_base {
         return implode('##', $vals);
     }
 
-}
+    /**
+     * Check whether any boxes in the checkbox where checked.
+     *
+     * @param mixed $value The submitted values
+     * @param mixed $name
+     * @return bool
+     */
+    function notemptyfield($value, $name) {
+        $found = false;
+        foreach ($value as $checkboxitem) {
+            if (strval($checkboxitem) !== '') {
+                $found = true;
+                break;
+            }
+        }
+        return $found;
+    }
 
+    /**
+     * Returns the presentable string value for a field content.
+     *
+     * The returned string should be plain text.
+     *
+     * @param stdClass $content
+     * @return string
+     */
+    public static function get_content_value($content) {
+        $arr = explode('##', $content->content);
+
+        $strvalue = '';
+        foreach ($arr as $a) {
+            $strvalue .= $a . ' ';
+        }
+
+        return trim($strvalue, "\r\n ");
+    }
+
+    /**
+     * Return the plugin configs for external functions.
+     *
+     * @return array the list of config parameters
+     * @since Moodle 3.3
+     */
+    public function get_config_for_external() {
+        // Return all the config parameters.
+        $configs = [];
+        for ($i = 1; $i <= 10; $i++) {
+            $configs["param$i"] = $this->field->{"param$i"};
+        }
+        return $configs;
+    }
+}

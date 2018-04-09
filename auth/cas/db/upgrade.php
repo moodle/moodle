@@ -22,40 +22,30 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
+ * Function to upgrade auth_cas.
  * @param int $oldversion the version we are upgrading from
  * @return bool result
  */
 function xmldb_auth_cas_upgrade($oldversion) {
+    global $CFG;
 
-    // Moodle v2.5.0 release upgrade line
-    // Put any upgrade step following this
-
-    // MDL-39323 New setting in 2.5, make sure it's defined.
-    if ($oldversion < 2013052100) {
-        if (get_config('start_tls', 'auth/cas') === false) {
-            set_config('start_tls', 0, 'auth/cas');
-        }
-        upgrade_plugin_savepoint(true, 2013052100, 'auth', 'cas');
-    }
-
-    if ($oldversion < 2013091700) {
-        // The value of the phpCAS language constants has changed from
-        // 'langname' to 'CAS_Languages_Langname'.
-        if ($cas_language = get_config('auth/cas', 'language')) {
-            set_config('language', 'CAS_Languages_'.ucfirst($cas_language), 'auth/cas');
-        }
-
-        upgrade_plugin_savepoint(true, 2013091700, 'auth', 'cas');
-    }
-
-    // Moodle v2.6.0 release upgrade line.
+    // Automatically generated Moodle v3.2.0 release upgrade line.
     // Put any upgrade step following this.
 
-    // Moodle v2.7.0 release upgrade line.
+    if ($oldversion < 2017020700) {
+        // Convert info in config plugins from auth/cas to auth_cas.
+        upgrade_fix_config_auth_plugin_names('cas');
+        upgrade_fix_config_auth_plugin_defaults('cas');
+        upgrade_plugin_savepoint(true, 2017020700, 'auth', 'cas');
+    }
+
+    // Automatically generated Moodle v3.3.0 release upgrade line.
     // Put any upgrade step following this.
 
-    // Moodle v2.8.0 release upgrade line.
+    // Automatically generated Moodle v3.4.0 release upgrade line.
     // Put any upgrade step following this.
 
     return true;

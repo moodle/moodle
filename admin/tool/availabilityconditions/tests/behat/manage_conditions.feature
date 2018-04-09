@@ -8,13 +8,17 @@ Feature: Manage availability conditions
   Scenario: Display list of availability conditions
     # Check the report doesn't show when not enabled.
     Given I log in as "admin"
+    And I press "Customise this page"
+    And I add the "Administration" block if not present
+    And the following config values are set as admin:
+      | enableavailability | 0 |
     And I expand "Site administration" node
     When I expand "Plugins" node
     Then I should not see "Availability restrictions"
 
     # Enable it and check I can now see and click on it.
-    And I set the following administration settings values:
-      | Enable conditional access | 1 |
+    And the following config values are set as admin:
+      | enableavailability | 1 |
     And I am on homepage
     And I navigate to "Manage restrictions" node in "Site administration > Plugins > Availability restrictions"
 
@@ -29,27 +33,23 @@ Feature: Manage availability conditions
       | fullname | shortname | format |
       | Course 1 | C1        | topics |
     And I log in as "admin"
-    And I set the following administration settings values:
-      | Enable conditional access | 1 |
-    And I am on homepage
+    And I am on site homepage
     When I navigate to "Manage restrictions" node in "Site administration > Plugins > Availability restrictions"
 
     # Check the icon is there (it should be a Hide icon, meaning is currently visible).
-    Then "input[title=Hide]" "css_element" should exist in the "Restriction by date" "table_row"
+    Then "Hide" "icon" should exist in the "Restriction by date" "table_row"
 
     # Click the icon. It should toggle to hidden (title=Show).
-    And I click on "input[title=Hide]" "css_element" in the "Restriction by date" "table_row"
-    And "input[title=Show]" "css_element" should exist in the "Restriction by date" "table_row"
+    And I click on "Hide" "icon" in the "Restriction by date" "table_row"
+    And "Show" "icon" should exist in the "Restriction by date" "table_row"
 
     # Toggle it back to visible (title=Hide).
-    And I click on "input[title=Show]" "css_element" in the "Restriction by date" "table_row"
-    And "input[title=Hide]" "css_element" should exist in the "Restriction by date" "table_row"
+    And I click on "Show" "icon" in the "Restriction by date" "table_row"
+    And "Hide" "icon" should exist in the "Restriction by date" "table_row"
 
     # OK, toggling works. Set the grade one to Hide and we'll go see if it actually worked.
-    And I click on "input[title=Hide]" "css_element" in the "Restriction by grade" "table_row"
-    And I am on homepage
-    And I follow "Course 1"
-    And I turn editing mode on
+    And I click on "Hide" "icon" in the "Restriction by grade" "table_row"
+    And I am on "Course 1" course homepage with editing mode on
     And I add a "Page" to section "1"
     And I expand all fieldsets
     And I click on "Add restriction..." "button"

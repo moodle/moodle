@@ -22,10 +22,5 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['downloadas'] = 'Download table data as {$a->formatsmenu} {$a->downloadbutton}';
-$string['downloadcsv'] = 'Comma separated values text file';
-$string['downloadexcel'] = 'Excel spreadsheet';
-$string['downloadods'] = 'OpenDocument spreadsheet';
-$string['downloadoptions'] = 'Select download options';
-$string['downloadtsv'] = 'Tab separated values text file';
-$string['downloadxhtml'] = 'Unpaged XHTML document';
+$string['downloadas'] = 'Download table data as';
+

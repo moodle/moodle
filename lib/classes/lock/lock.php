@@ -49,6 +49,9 @@ class lock {
     /** @var bool $released Has this lock been released? If a lock falls out of scope without being released - show a warning. */
     protected $released;
 
+    /** @var string $caller Where was this called from? Stored for when a warning is shown */
+    protected $caller = 'unknown';
+
     /**
      * Construct a lock containing the unique key required to release it.
      * @param mixed $key - The lock key. The type of this is up to the lock_factory being used.
@@ -59,6 +62,12 @@ class lock {
         $this->factory = $factory;
         $this->key = $key;
         $this->released = false;
+        $caller = debug_backtrace(true, 2)[1];
+        if ($caller && array_key_exists('file', $caller ) ) {
+            $this->caller = $caller['file'] . ' on line ' . $caller['line'];
+        } else if ($caller && array_key_exists('class', $caller)) {
+            $this->caller = $caller['class'] . $caller['type'] . $caller['function'];
+        }
     }
 
     /**
@@ -103,10 +112,14 @@ class lock {
      */
     public function __destruct() {
         if (!$this->released && defined('PHPUNIT_TEST')) {
+            $key = $this->key;
             $this->release();
-            throw new \coding_exception('\core\lock\lock(' . $this->key . ') has fallen out of scope ' .
-                                        'without being released.' . "\n" .
-                                        'Locks must ALWAYS be released by calling $mylock->release().');
+            throw new \coding_exception("A lock was created but not released at:\n" .
+                                        $this->caller . "\n\n" .
+                                        " Code should look like:\n\n" .
+                                        " \$factory = \core\lock\lock_config::get_lock_factory('type');\n" .
+                                        " \$lock = \$factory->get_lock($key);\n" .
+                                        " \$lock->release();  // Locks must ALWAYS be released like this.\n\n");
         }
     }
 

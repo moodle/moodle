@@ -15,7 +15,7 @@ Feature: Test importing questions from Moodle XML format.
       | user    | course | role           |
       | teacher | C1     | editingteacher |
     And I log in as "teacher"
-    And I follow "Course 1"
+    And I am on "Course 1" course homepage
 
   @javascript @_file_upload
   Scenario: import some true/false questions from Moodle XML format
@@ -34,6 +34,7 @@ Feature: Test importing questions from Moodle XML format.
     # Now export again.
     And I navigate to "Export" node in "Course administration > Question bank"
     And I set the field "id_format_xml" to "1"
+    And I set the field "Export category" to "TrueFalse"
     And I press "Export questions to file"
     And following "click here" should download between "57000" and "58000" bytes
 

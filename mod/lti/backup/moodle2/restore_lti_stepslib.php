@@ -53,11 +53,28 @@ defined('MOODLE_INTERNAL') || die;
  */
 class restore_lti_activity_structure_step extends restore_activity_structure_step {
 
+    /** @var bool */
+    protected $newltitype = false;
+
     protected function define_structure() {
 
         $paths = array();
+        // To know if we are including userinfo.
+        $userinfo = $this->get_setting_value('userinfo');
+
         $lti = new restore_path_element('lti', '/activity/lti');
         $paths[] = $lti;
+        $paths[] = new restore_path_element('ltitype', '/activity/lti/ltitype');
+        $paths[] = new restore_path_element('ltitypesconfig', '/activity/lti/ltitype/ltitypesconfigs/ltitypesconfig');
+        $paths[] = new restore_path_element('ltitypesconfigencrypted',
+            '/activity/lti/ltitype/ltitypesconfigs/ltitypesconfigencrypted');
+        $paths[] = new restore_path_element('ltitoolproxy', '/activity/lti/ltitype/ltitoolproxy');
+        $paths[] = new restore_path_element('ltitoolsetting', '/activity/lti/ltitype/ltitoolproxy/ltitoolsettings/ltitoolsetting');
+
+        if ($userinfo) {
+            $submission = new restore_path_element('ltisubmission', '/activity/lti/ltisubmissions/ltisubmission');
+            $paths[] = $submission;
+        }
 
         // Add support for subplugin structures.
         $this->add_subplugin_structure('ltisource', $lti);
@@ -75,19 +92,190 @@ class restore_lti_activity_structure_step extends restore_activity_structure_ste
         $data->course = $this->get_courseid();
         $data->servicesalt = uniqid('', true);
 
+        // Any changes to the list of dates that needs to be rolled should be same during course restore and course reset.
+        // See MDL-9367.
+
          // Grade used to be a float (whole numbers only), restore as int.
         $data->grade = (int) $data->grade;
 
-        // Clean any course or site typeid. All modules
-        // are restored as self-contained. Note this is
-        // an interim solution until the issue below is implemented.
-        // TODO: MDL-34161 - Fix restore to support course/site tools & submissions.
         $data->typeid = 0;
+
+        // Try to decrypt resourcekey and password. Null if not possible (DB default).
+        // Note these fields were originally encrypted on backup using {link @encrypted_final_element}.
+        $data->resourcekey = isset($data->resourcekey) ? $this->decrypt($data->resourcekey) : null;
+        $data->password = isset($data->password) ? $this->decrypt($data->password) : null;
 
         $newitemid = $DB->insert_record('lti', $data);
 
         // Immediately after inserting "activity" record, call this.
         $this->apply_activity_instance($newitemid);
+    }
+
+    /**
+     * Process an lti type restore
+     * @param mixed $data The data from backup XML file
+     * @return void
+     */
+    protected function process_ltitype($data) {
+        global $DB, $USER;
+
+        $data = (object)$data;
+        $oldid = $data->id;
+        if (!empty($data->createdby)) {
+            $data->createdby = $this->get_mappingid('user', $data->createdby) ?: $USER->id;
+        }
+
+        $courseid = $this->get_courseid();
+        $data->course = ($this->get_mappingid('course', $data->course) == $courseid) ? $courseid : SITEID;
+
+        // Try to find existing lti type with the same properties.
+        $ltitypeid = $this->find_existing_lti_type($data);
+
+        $this->newltitype = false;
+        if (!$ltitypeid && $data->course == $courseid) {
+            unset($data->toolproxyid); // Course tools can not use LTI2.
+            $ltitypeid = $DB->insert_record('lti_types', $data);
+            $this->newltitype = true;
+            $this->set_mapping('ltitype', $oldid, $ltitypeid);
+        }
+
+        // Add the typeid entry back to LTI module.
+        $DB->update_record('lti', ['id' => $this->get_new_parentid('lti'), 'typeid' => $ltitypeid]);
+    }
+
+    /**
+     * Attempts to find existing record in lti_type
+     * @param stdClass $data
+     * @return int|null field lti_types.id or null if tool is not found
+     */
+    protected function find_existing_lti_type($data) {
+        global $DB;
+        if ($ltitypeid = $this->get_mappingid('ltitype', $data->id)) {
+            return $ltitypeid;
+        }
+
+        $ltitype = null;
+        $params = (array)$data;
+        if ($this->task->is_samesite()) {
+            // If we are restoring on the same site try to find lti type with the same id.
+            $sql = 'id = :id AND course = :course';
+            $sql .= ($data->toolproxyid) ? ' AND toolproxyid = :toolproxyid' : ' AND toolproxyid IS NULL';
+            if ($DB->record_exists_select('lti_types', $sql, $params)) {
+                $this->set_mapping('ltitype', $data->id, $data->id);
+                if ($data->toolproxyid) {
+                    $this->set_mapping('ltitoolproxy', $data->toolproxyid, $data->toolproxyid);
+                }
+                return $data->id;
+            }
+        }
+
+        if ($data->course != $this->get_courseid()) {
+            // Site tools are not backed up and are not restored.
+            return null;
+        }
+
+        // Now try to find the same type on the current site available in this course.
+        // Compare only fields baseurl, course and name, if they are the same we assume it is the same tool.
+        // LTI2 is not possible in the course so we add "lt.toolproxyid IS NULL" to the query.
+        $sql = 'SELECT id
+            FROM {lti_types}
+           WHERE ' . $DB->sql_compare_text('baseurl', 255) . ' = ' . $DB->sql_compare_text(':baseurl', 255) . ' AND
+                 course = :course AND name = :name AND toolproxyid IS NULL';
+        if ($ltitype = $DB->get_record_sql($sql, $params, IGNORE_MULTIPLE)) {
+            $this->set_mapping('ltitype', $data->id, $ltitype->id);
+            return $ltitype->id;
+        }
+
+        return null;
+    }
+
+    /**
+     * Process an lti config restore
+     * @param mixed $data The data from backup XML file
+     */
+    protected function process_ltitypesconfig($data) {
+        global $DB;
+
+        $data = (object)$data;
+        $data->typeid = $this->get_new_parentid('ltitype');
+
+        // Only add configuration if the new lti_type was created.
+        if ($data->typeid && $this->newltitype) {
+            if ($data->name == 'servicesalt') {
+                $data->value = uniqid('', true);
+            }
+            $DB->insert_record('lti_types_config', $data);
+        }
+    }
+
+    /**
+     * Process an lti config restore
+     * @param mixed $data The data from backup XML file
+     */
+    protected function process_ltitypesconfigencrypted($data) {
+        global $DB;
+
+        $data = (object)$data;
+        $data->typeid = $this->get_new_parentid('ltitype');
+
+        // Only add configuration if the new lti_type was created.
+        if ($data->typeid && $this->newltitype) {
+            $data->value = $this->decrypt($data->value);
+            if (!is_null($data->value)) {
+                $DB->insert_record('lti_types_config', $data);
+            }
+        }
+    }
+
+    /**
+     * Process a restore of LTI tool registration
+     * This method is empty because we actually process registration as part of process_ltitype()
+     * @param mixed $data The data from backup XML file
+     */
+    protected function process_ltitoolproxy($data) {
+
+    }
+
+    /**
+     * Process an lti tool registration settings restore (only settings for the current activity)
+     * @param mixed $data The data from backup XML file
+     */
+    protected function process_ltitoolsetting($data) {
+        global $DB;
+
+        $data = (object)$data;
+        $data->toolproxyid = $this->get_new_parentid('ltitoolproxy');
+
+        if (!$data->toolproxyid) {
+            return;
+        }
+
+        $data->course = $this->get_courseid();
+        $data->coursemoduleid = $this->task->get_moduleid();
+        $DB->insert_record('lti_tool_settings', $data);
+    }
+
+    /**
+     * Process a submission restore
+     * @param mixed $data The data from backup XML file
+     */
+    protected function process_ltisubmission($data) {
+        global $DB;
+
+        $data = (object)$data;
+        $oldid = $data->id;
+
+        $data->ltiid = $this->get_new_parentid('lti');
+
+        $data->datesubmitted = $this->apply_date_offset($data->datesubmitted);
+        $data->dateupdated = $this->apply_date_offset($data->dateupdated);
+        if ($data->userid > 0) {
+            $data->userid = $this->get_mappingid('user', $data->userid);
+        }
+
+        $newitemid = $DB->insert_record('lti_submission', $data);
+
+        $this->set_mapping('ltisubmission', $oldid, $newitemid);
     }
 
     protected function after_execute() {

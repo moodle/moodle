@@ -25,7 +25,7 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-require_once(dirname(__FILE__).'/lib.php');
+require_once(__DIR__.'/lib.php');
 require_once($CFG->dirroot.'/lib/statslib.php');
 
 function report_stats_mode_menu($course, $mode, $time, $url) {
@@ -85,16 +85,36 @@ function report_stats_report($course, $report, $mode, $user, $roleid, $time) {
         $userid = 0;
     }
 
-    $courses = get_courses('all','c.shortname','c.id,c.shortname,c.fullname');
+    $fields = 'c.id,c.shortname,c.visible';
+    $ccselect = ', ' . context_helper::get_preload_record_columns_sql('ctx');
+    $ccjoin = "LEFT JOIN {context} ctx ON (ctx.instanceid = c.id AND ctx.contextlevel = :contextlevel)";
+    $sortstatement = 'ORDER BY c.shortname';
+
+    $sql = "SELECT $fields $ccselect FROM {course} c $ccjoin $sortstatement";
+
+    $params = array();
+    $params['contextlevel'] = CONTEXT_COURSE;
+
+    $courses = $DB->get_recordset_sql($sql, $params);
+
     $courseoptions = array();
 
     foreach ($courses as $c) {
+        context_helper::preload_from_record($c);
         $context = context_course::instance($c->id);
 
         if (has_capability('report/stats:view', $context)) {
+            if (isset($c->visible) && $c->visible <= 0) {
+                // For hidden courses, require visibility check.
+                if (!has_capability('moodle/course:viewhiddencourses', $context)) {
+                    continue;
+                }
+            }
             $courseoptions[$c->id] = format_string($c->shortname, true, array('context' => $context));
         }
     }
+
+    $courses->close();
 
     $reportoptions = stats_get_report_options($course->id, $mode);
     $timeoptions = report_stats_timeoptions($mode);
@@ -107,7 +127,7 @@ function report_stats_report($course, $report, $mode, $user, $roleid, $time) {
     $table->width = 'auto';
 
     if ($mode == STATS_MODE_DETAILED) {
-        $param = stats_get_parameters($time, null, $course->id, $mode); // we only care about the table and the time string (if we have time)
+        $param = stats_get_parameters($time, null, $course->id, $mode, $roleid); // We only care about the table and the time string (if we have time).
 
         list($sort, $moreparams) = users_order_by_sql('u');
         $moreparams['courseid'] = $course->id;
@@ -138,18 +158,18 @@ function report_stats_report($course, $report, $mode, $user, $roleid, $time) {
                                html_writer::label(get_string('users'), 'menuuserid'), html_writer::select($users, 'userid', $userid, false),
                                html_writer::label(get_string('statsreporttype'), 'menureport'), html_writer::select($reportoptions, 'report', ($report == 5) ? $report.$roleid : $report, false),
                                html_writer::label(get_string('statstimeperiod'), 'menutime'), html_writer::select($timeoptions, 'time', $time, false),
-                               '<input type="submit" value="'.get_string('view').'" />') ;
+                               '<input type="submit" class="btn btn-secondary" value="'.get_string('view').'" />');
     } else if ($mode == STATS_MODE_RANKED) {
         $table->align = array('left','left','left','left','left','left');
         $table->data[] = array(html_writer::label(get_string('statsreporttype'), 'menureport'), html_writer::select($reportoptions, 'report', ($report == 5) ? $report.$roleid : $report, false),
                                html_writer::label(get_string('statstimeperiod'), 'menutime'), html_writer::select($timeoptions, 'time', $time, false),
-                               '<input type="submit" value="'.get_string('view').'" />') ;
+                               '<input type="submit" class="btn btn-secondary" value="'.get_string('view').'" />');
     } else if ($mode == STATS_MODE_GENERAL) {
         $table->align = array('left','left','left','left','left','left','left');
         $table->data[] = array(html_writer::label(get_string('course'), 'menucourse'), html_writer::select($courseoptions, 'course', $course->id, false),
                                html_writer::label(get_string('statsreporttype'), 'menureport'), html_writer::select($reportoptions, 'report', ($report == 5) ? $report.$roleid : $report, false),
                                html_writer::label(get_string('statstimeperiod'), 'menutime'), html_writer::select($timeoptions, 'time', $time, false),
-                               '<input type="submit" value="'.get_string('view').'" />') ;
+                               '<input type="submit" class="btn btn-secondary" value="'.get_string('view').'" />');
     }
 
     echo '<form action="index.php" method="post">'."\n"
@@ -170,7 +190,7 @@ function report_stats_report($course, $report, $mode, $user, $roleid, $time) {
             print_error('reportnotavailable');
         }
 
-        $param = stats_get_parameters($time,$report,$course->id,$mode);
+        $param = stats_get_parameters($time, $report, $course->id, $mode, $roleid);
 
         if ($mode == STATS_MODE_DETAILED) {
             $param->table = 'user_'.$param->table;
@@ -200,15 +220,28 @@ function report_stats_report($course, $report, $mode, $user, $roleid, $time) {
 
             $stats = stats_fix_zeros($stats,$param->timeafter,$param->table,(!empty($param->line2)));
 
-            echo $OUTPUT->heading(format_string($course->shortname).' - '.get_string('statsreport'.$report)
-                    .((!empty($user)) ? ' '.get_string('statsreportforuser').' ' .fullname($user,true) : '')
-                    .((!empty($roleid)) ? ' '.$DB->get_field('role','name', array('id'=>$roleid)) : ''));
+            $rolename = '';
+            $userdisplayname = '';
+            $coursecontext = context_course::instance($course->id);
 
+            if (!empty($roleid) && $role = $DB->get_record('role', ['id' => $roleid])) {
+                $rolename = ' ' . role_get_name($role, $coursecontext);
+            }
+            if (!empty($user)) {
+                $userdisplayname = ' ' . fullname($user, true);
+            }
+            echo $OUTPUT->heading(
+                format_string($course->shortname) .
+                ' - ' .
+                get_string('statsreport' . $report) .
+                $rolename .
+                $userdisplayname
+            );
 
             if ($mode == STATS_MODE_DETAILED) {
-                echo '<div class="graph"><img src="'.$CFG->wwwroot.'/report/stats/graph.php?mode='.$mode.'&amp;course='.$course->id.'&amp;time='.$time.'&amp;report='.$report.'&amp;userid='.$userid.'" alt="'.get_string('statisticsgraph').'" /></div>';
+                report_stats_print_chart($course->id, $report, $time, $mode, $userid);
             } else {
-                echo '<div class="graph"><img src="'.$CFG->wwwroot.'/report/stats/graph.php?mode='.$mode.'&amp;course='.$course->id.'&amp;time='.$time.'&amp;report='.$report.'&amp;roleid='.$roleid.'" alt="'.get_string('statisticsgraph').'" /></div>';
+                report_stats_print_chart($course->id, $report, $time, $mode, null, $roleid);
             }
 
             $table = new html_table();
@@ -231,7 +264,8 @@ function report_stats_report($course, $report, $mode, $user, $roleid, $time) {
                 // bad luck, we can not link other report
             } else if (empty($param->crosstab)) {
                 foreach  ($stats as $stat) {
-                    $a = array(userdate($stat->timeend-(60*60*24),get_string('strftimedate'),$CFG->timezone),$stat->line1);
+                    $a = array(userdate($stat->timeend - DAYSECS, get_string('strftimedate'), $CFG->timezone),
+                            $stat->line1);
                     if (isset($stat->line2)) {
                         $a[] = $stat->line2;
                     }
@@ -253,14 +287,14 @@ function report_stats_report($course, $report, $mode, $user, $roleid, $time) {
                 $times = array();
                 $missedlines = array();
                 $coursecontext = context_course::instance($course->id);
-                $rolenames = role_fix_names(get_all_roles($coursecontext), $coursecontext, ROLENAME_ALIAS, true);
+                $rolenames = get_viewable_roles($coursecontext);
                 foreach ($stats as $stat) {
                     if (!empty($stat->zerofixed)) {
                         $missedlines[] = $stat->timeend;
                     }
                     $data[$stat->timeend][$stat->roleid] = $stat->line1;
                     if ($stat->roleid != 0) {
-                        if (!array_key_exists($stat->roleid,$roles)) {
+                        if (!array_key_exists($stat->roleid, $roles) && array_key_exists($stat->roleid, $rolenames)) {
                             $roles[$stat->roleid] = $rolenames[$stat->roleid];
                         }
                     } else {
@@ -269,7 +303,8 @@ function report_stats_report($course, $report, $mode, $user, $roleid, $time) {
                         }
                     }
                     if (!array_key_exists($stat->timeend,$times)) {
-                        $times[$stat->timeend] = userdate($stat->timeend,get_string('strftimedate'),$CFG->timezone);
+                        $times[$stat->timeend] = userdate($stat->timeend - DAYSECS, get_string('strftimedate'),
+                                $CFG->timezone);
                     }
                 }
 
@@ -312,4 +347,115 @@ function report_stats_report($course, $report, $mode, $user, $roleid, $time) {
             echo html_writer::table($table);
         }
     }
+}
+
+/**
+ * Fetch statistics data and generate a line chart.
+ *
+ * The statistic chart can be view, posts separated by roles and dates.
+ *
+ * @param int $courseid course id.
+ * @param int $report the report type constant eg. STATS_REPORT_LOGINS as defined on statslib.
+ * @param int $time timestamp of the selected time period.
+ * @param int $mode the report mode, eg. STATS_MODE_DETAILED as defined on statslib.
+ * @param int $userid selected user id.
+ * @param int $roleid selected role id.
+ */
+function report_stats_print_chart($courseid, $report, $time, $mode, $userid = 0, $roleid = 0) {
+    global $DB, $CFG, $OUTPUT;
+
+    $course = $DB->get_record("course", array("id" => $courseid), '*', MUST_EXIST);
+    $coursecontext = context_course::instance($course->id);
+
+    stats_check_uptodate($course->id);
+
+    $param = stats_get_parameters($time, $report, $course->id, $mode, $roleid);
+
+    if (!empty($userid)) {
+        $param->table = 'user_' . $param->table;
+    }
+
+    // TODO: cleanup this ugly mess.
+    $sql = 'SELECT '.((empty($param->fieldscomplete)) ? 'id,roleid,timeend,' : '').$param->fields
+        .' FROM {stats_'.$param->table.'} WHERE '
+        .(($course->id == SITEID) ? '' : ' courseid = '.$course->id.' AND ')
+        .((!empty($userid)) ? ' userid = '.$userid.' AND ' : '')
+        .((!empty($roleid)) ? ' roleid = '.$roleid.' AND ' : '')
+        . ((!empty($param->stattype)) ? ' stattype = \''.$param->stattype.'\' AND ' : '')
+        .' timeend >= '.$param->timeafter
+        .' '.$param->extras
+        .' ORDER BY timeend DESC';
+    $stats = $DB->get_records_sql($sql, $param->params);
+    $stats = stats_fix_zeros($stats, $param->timeafter, $param->table, (!empty($param->line2)),
+            (!empty($param->line3)));
+    $stats = array_reverse($stats);
+
+    $chart = new \core\chart_line();
+    if (empty($param->crosstab)) {
+        $data = [];
+        $times = [];
+        foreach ($stats as $stat) {
+            // Build the array of formatted times indexed by timestamp used as labels.
+            if (!array_key_exists($stat->timeend, $times)) {
+                $times[$stat->timeend] = userdate($stat->timeend - DAYSECS, get_string('strftimedate'), $CFG->timezone);
+
+                // Just add the data if the time hasn't been added yet.
+                // The number of lines of data must match the number of labels.
+                $data['line1'][] = $stat->line1;
+                if (isset($stat->line2)) {
+                    $data['line2'][] = $stat->line2;
+                }
+                if (isset($stat->line3)) {
+                    $data['line3'][] = $stat->line3;
+                }
+            }
+        }
+        foreach ($data as $line => $serie) {
+            $series = new \core\chart_series($param->{$line}, array_values($serie));
+            $chart->add_series($series);
+        }
+    } else {
+        $data = array();
+        $times = array();
+        $roles = array();
+        $missedlines = array();
+        $rolenames = get_viewable_roles($coursecontext);
+
+        foreach ($stats as $stat) {
+            $data[$stat->roleid][$stat->timeend] = $stat->line1;
+            if (!empty($stat->zerofixed)) {
+                $missedlines[] = $stat->timeend;
+            }
+            if ($stat->roleid != 0) {
+                if (!array_key_exists($stat->roleid, $roles) && array_key_exists($stat->roleid, $rolenames)) {
+                    $roles[$stat->roleid] = $rolenames[$stat->roleid];
+                }
+            } else {
+                if (!array_key_exists($stat->roleid, $roles)) {
+                    $roles[$stat->roleid] = get_string('all');
+                }
+            }
+
+            // Build the array of formatted times indexed by timestamp used as labels.
+            if (!array_key_exists($stat->timeend, $times)) {
+                $times[$stat->timeend] = userdate($stat->timeend - DAYSECS, get_string('strftimedate'), $CFG->timezone);
+            }
+        }
+        // Fill empty days with zero to avoid chart errors.
+        foreach (array_keys($times) as $t) {
+            foreach ($data as $roleid => $stuff) {
+                if (!array_key_exists($t, $stuff)) {
+                    $data[$roleid][$t] = 0;
+                }
+            }
+        }
+        krsort($roles);
+        foreach ($roles as $roleid => $rolename) {
+            ksort($data[$roleid]);
+            $series = new \core\chart_series($rolename, array_values($data[$roleid]));
+            $chart->add_series($series);
+        }
+    }
+    $chart->set_labels(array_values($times));
+    echo $OUTPUT->render_chart($chart, false);
 }

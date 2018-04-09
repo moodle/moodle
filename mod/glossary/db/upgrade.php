@@ -1,5 +1,4 @@
 <?php
-
 // This file keeps track of upgrades to
 // the glossary module
 //
@@ -21,51 +20,16 @@
 // before any action that may take longer time to finish.
 
 function xmldb_glossary_upgrade($oldversion) {
-    global $CFG, $DB, $OUTPUT;
+    global $CFG;
 
-    $dbman = $DB->get_manager();
-
-
-    // Moodle v2.2.0 release upgrade line
-    // Put any upgrade step following this
-
-    if ($oldversion < 2012022000) {
-
-        // Define field approvaldisplayformat to be added to glossary
-        $table = new xmldb_table('glossary');
-        $field = new xmldb_field('approvaldisplayformat', XMLDB_TYPE_CHAR, '50', null, XMLDB_NOTNULL, null, 'default', 'defaultapproval');
-
-        // Conditionally launch add field approvaldisplayformat
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        // glossary savepoint reached
-        upgrade_mod_savepoint(true, 2012022000, 'glossary');
-    }
-
-    // Moodle v2.3.0 release upgrade line
-    // Put any upgrade step following this
-
-
-    // Moodle v2.4.0 release upgrade line
-    // Put any upgrade step following this
-
-
-    // Moodle v2.5.0 release upgrade line.
+    // Automatically generated Moodle v3.2.0 release upgrade line.
     // Put any upgrade step following this.
 
-
-    // Moodle v2.6.0 release upgrade line.
+    // Automatically generated Moodle v3.3.0 release upgrade line.
     // Put any upgrade step following this.
 
-    // Moodle v2.7.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    // Moodle v2.8.0 release upgrade line.
+    // Automatically generated Moodle v3.4.0 release upgrade line.
     // Put any upgrade step following this.
 
     return true;
 }
-
-
