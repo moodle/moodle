@@ -90,6 +90,25 @@ class api {
 
                 require("$path/db/mobile.php");
                 foreach ($addons as $addonname => $addoninfo) {
+
+                    // Add handlers (for site add-ons).
+                    $handlers = !empty($addoninfo['handlers']) ? $addoninfo['handlers'] : array();
+                    $handlers = json_encode($handlers); // JSON formatted, since it is a complex structure that may vary over time.
+
+                    // Now language strings used by the app.
+                    $lang = array();
+                    if (!empty($addoninfo['lang'])) {
+                        $stringmanager = get_string_manager();
+                        $langs = $stringmanager->get_list_of_translations();
+                        foreach ($langs as $langid => $langname) {
+                            foreach ($addoninfo['lang'] as $stringinfo) {
+                                $lang[$langid][$stringinfo[0]] =
+                                    $stringmanager->get_string($stringinfo[0], $stringinfo[1], null, $langid);
+                            }
+                        }
+                    }
+                    $lang = json_encode($lang);
+
                     $plugininfo = array(
                         'component' => $component,
                         'version' => $version,
@@ -97,7 +116,9 @@ class api {
                         'dependencies' => !empty($addoninfo['dependencies']) ? $addoninfo['dependencies'] : array(),
                         'fileurl' => '',
                         'filehash' => '',
-                        'filesize' => 0
+                        'filesize' => 0,
+                        'handlers' => $handlers,
+                        'lang' => $lang,
                     );
 
                     // All the mobile packages must be under the plugin mobile directory.
