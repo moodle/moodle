@@ -479,7 +479,8 @@ class mod_quiz_renderer extends plugin_renderer_base {
 
         // Start the form.
         $output .= html_writer::start_tag('form',
-                array('action' => $attemptobj->processattempt_url(), 'method' => 'post',
+                array('action' => new moodle_url($attemptobj->processattempt_url(),
+                array('cmid' => $attemptobj->get_cmid())), 'method' => 'post',
                 'enctype' => 'multipart/form-data', 'accept-charset' => 'utf-8',
                 'id' => 'responseform'));
         $output .= html_writer::start_tag('div');
@@ -731,6 +732,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
             'finishattempt' => 1,
             'timeup' => 0,
             'slots' => '',
+            'cmid' => $attemptobj->get_cmid(),
             'sesskey' => sesskey(),
         );
 
