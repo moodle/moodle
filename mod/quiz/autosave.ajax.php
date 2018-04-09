@@ -35,9 +35,10 @@ require_sesskey();
 // Get submitted parameters.
 $attemptid = required_param('attempt',  PARAM_INT);
 $thispage  = optional_param('thispage', 0, PARAM_INT);
+$cmid      = optional_param('cmid', null, PARAM_INT);
 
 $transaction = $DB->start_delegated_transaction();
-$attemptobj = quiz_attempt::create($attemptid);
+$attemptobj = quiz_create_attempt_handling_errors($attemptid, $cmid);
 
 // Check login.
 require_login($attemptobj->get_course(), false, $attemptobj->get_cm());

@@ -385,4 +385,71 @@ class mod_quiz_attempt_overdue_testcase extends advanced_testcase {
         groups_delete_group_members($course->id);
         $this->assertEquals(1200, $DB->get_field('quiz_attempts', 'timecheckstate', array('id'=>$attemptid)));
     }
+
+    /**
+     * Test the functions quiz_create_attempt_handling_errors
+     */
+    public function test_quiz_create_attempt_handling_errors() {
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        // Make a quiz.
+        $course = $this->getDataGenerator()->create_course();
+        $user1 = $this->getDataGenerator()->create_user();
+        $student = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($student->id, $course->id, 'student');
+        $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
+        $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $quiz = $quizgenerator->create_instance(array('course' => $course->id, 'questionsperpage' => 0, 'grade' => 100.0,
+            'sumgrades' => 2));
+        // Create questions.
+        $cat = $questiongenerator->create_question_category();
+        $saq = $questiongenerator->create_question('shortanswer', null, array('category' => $cat->id));
+        $numq = $questiongenerator->create_question('numerical', null, array('category' => $cat->id));
+        // Add them to the quiz.
+        quiz_add_quiz_question($saq->id, $quiz);
+        quiz_add_quiz_question($numq->id, $quiz);
+        $quizobj = quiz::create($quiz->id, $user1->id);
+        $quba = question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
+        $quba->set_preferred_behaviour($quizobj->get_quiz()->preferredbehaviour);
+        $timenow = time();
+        // Create an attempt.
+        $attempt = quiz_create_attempt($quizobj, 1, false, $timenow, false, $user1->id);
+        quiz_start_new_attempt($quizobj, $quba, $attempt, 1, $timenow);
+        quiz_attempt_save_started($quizobj, $quba, $attempt);
+        $result = quiz_create_attempt_handling_errors($attempt->id, $quiz->cmid);
+        $this->assertEquals($result->get_attemptid(), $attempt->id);
+        try {
+            $result = quiz_create_attempt_handling_errors($attempt->id, 9999);
+            $this->fail('Exception expected due to invalid course module id.');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('invalidcoursemodule', $e->errorcode);
+        }
+        try {
+            quiz_create_attempt_handling_errors(9999, $result->get_cmid());
+            $this->fail('Exception expected due to quiz content change.');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('attempterrorcontentchange', $e->errorcode);
+        }
+        try {
+            quiz_create_attempt_handling_errors(9999);
+            $this->fail('Exception expected due to invalid quiz attempt id.');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('attempterrorinvalid', $e->errorcode);
+        }
+        // Set up as normal user without permission to view preview.
+        $this->setUser($student->id);
+        try {
+            quiz_create_attempt_handling_errors(9999, $result->get_cmid());
+            $this->fail('Exception expected due to quiz content change for user without permission.');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('attempterrorcontentchangeforuser', $e->errorcode);
+        }
+        try {
+            quiz_create_attempt_handling_errors($attempt->id, 9999);
+            $this->fail('Exception expected due to invalid course module id for user without permission.');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('invalidcoursemodule', $e->errorcode);
+        }
+    }
 }
