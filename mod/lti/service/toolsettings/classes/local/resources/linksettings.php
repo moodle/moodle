@@ -23,11 +23,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-
 namespace ltiservice_toolsettings\local\resources;
 
-use ltiservice_toolsettings\local\resources\systemsettings;
-use ltiservice_toolsettings\local\resources\contextsettings;
 use ltiservice_toolsettings\local\service\toolsettings;
 
 defined('MOODLE_INTERNAL') || die();
@@ -45,7 +42,7 @@ class linksettings extends \mod_lti\local\ltiservice\resource_base {
     /**
      * Class constructor.
      *
-     * @param ltiservice_toolsettings\local\resources\linksettings $service Service instance
+     * @param \mod_lti\local\ltiservice\service_base $service Service instance
      */
     public function __construct($service) {
 
@@ -63,7 +60,7 @@ class linksettings extends \mod_lti\local\ltiservice\resource_base {
     /**
      * Execute the request for this resource.
      *
-     * @param mod_lti\local\ltiservice\response $response  Response object for this request.
+     * @param \mod_lti\local\ltiservice\response $response  Response object for this request.
      */
     public function execute($response) {
         global $DB, $COURSE;
@@ -82,6 +79,7 @@ class linksettings extends \mod_lti\local\ltiservice\resource_base {
 
         $systemsetting = null;
         $contextsetting = null;
+        $lti = null;
         if ($ok) {
             $ok = !empty($linkid);
             if ($ok) {
@@ -195,13 +193,14 @@ class linksettings extends \mod_lti\local\ltiservice\resource_base {
      */
     public function parse_value($value) {
 
-        $id = optional_param('id', 0, PARAM_INT); // Course Module ID.
-        if (!empty($id)) {
-            $cm = get_coursemodule_from_id('lti', $id, 0, false, MUST_EXIST);
-            $this->params['link_id'] = $cm->instance;
+        if (strpos($value, '$LtiLink.custom.url') !== false) {
+            $id = optional_param('id', 0, PARAM_INT); // Course Module ID.
+            if (!empty($id)) {
+                $cm = get_coursemodule_from_id('lti', $id, 0, false, MUST_EXIST);
+                $this->params['link_id'] = $cm->instance;
+            }
+            $value = str_replace('$LtiLink.custom.url', parent::get_endpoint(), $value);
         }
-        $value = str_replace('$LtiLink.custom.url', parent::get_endpoint(), $value);
-
         return $value;
 
     }

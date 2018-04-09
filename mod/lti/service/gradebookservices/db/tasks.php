@@ -15,17 +15,25 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'ltiservice_memberships', language 'en'
+ * This file defines tasks performed by the plugin.
  *
- * @package    ltiservice_memberships
- * @copyright  2015 Vital Source Technologies http://vitalsource.com
- * @author     Stephen Vickers
+ * @package    ltiservice_gradebookservices
+ * @copyright  2017 Cengage Learning http://www.cengage.com
+ * @author     Dirk Singels, Diego del Blanco, Claude Vervoort
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['allow'] = 'Use this service to retrieve members\' information as per privacy settings';
-$string['ltiservice_memberships'] = 'IMS LTI Membership: ';
-$string['ltiservice_memberships_help'] = 'Allow the tool to retrieve member\'s info from the course using the IMS LTI Membership Service. The privacy settings will apply.';
-$string['notallow'] = 'Do not use this service';
-$string['pluginname'] = 'Memberships LTI Service';
-$string['servicename'] = 'Memberships';
+defined('MOODLE_INTERNAL') || die();
+
+// List of tasks.
+$tasks = array(
+    array(
+        'classname' => 'ltiservice_gradebookservices\task\cleanup_task',
+        'blocking' => 0,
+        'minute' => 'R',
+        'hour' => 'R',
+        'day' => '*',
+        'dayofweek' => '*',
+        'month' => '*'
+    )
+);
