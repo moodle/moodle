@@ -15,20 +15,32 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings
+ * Privacy Subsystem implementation for report_stats.
  *
- * @package    report
- * @subpackage stats
- * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @package    report_stats
+ * @copyright  2018 Zig Tan <zig@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['eventreportviewed'] = 'Statistics report viewed';
-$string['eventuserreportviewed'] = 'User statistics report viewed';
-$string['nocapability'] = 'Can not access user statistics report';
-$string['pluginname'] = 'Statistics';
-$string['page-report-stats-x'] = 'Any statistics report';
-$string['page-report-stats-index'] = 'Course statistics report';
-$string['page-report-stats-user'] = 'User course statistics report';
-$string['stats:view'] = 'View course statistics report';
-$string['privacy:metadata'] = 'The report_stats plugin does not store any personal data.';
+namespace report_stats\privacy;
+
+defined('MOODLE_INTERNAL') || die();
+
+/**
+ * Privacy Subsystem for report_stats implementing null_provider.
+ *
+ * @copyright  2018 Zig Tan <zig@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class provider implements \core_privacy\local\metadata\null_provider {
+
+    /**
+     * Get the language string identifier with the component's language
+     * file to explain why this plugin stores no data.
+     *
+     * @return  string
+     */
+    public static function get_reason() {
+        return 'privacy:metadata';
+    }
+}
