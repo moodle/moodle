@@ -82,15 +82,13 @@ class process_data_request_task extends adhoc_task {
         api::update_request_status($requestid, api::DATAREQUEST_STATUS_PROCESSING);
 
         if ($request->type == api::DATAREQUEST_TYPE_EXPORT) {
-            // TODO: Update this code to retrieve the approved_contextlist properly.
+            // Get the collection of approved_contextlist objects needed for core_privacy data export.
+            $approvedclcollection = api::get_approved_contextlist_collection_for_request($requestpersistent);
+
+            // Export the data.
             $manager = new \core_privacy\manager();
-            $contextcollection = $manager->get_contexts_for_userid($foruser->id);
-            $approvedcollection = new \core_privacy\local\request\contextlist_collection($foruser->id);
-            foreach ($contextcollection as $contextlist) {
-                $approvedcollection->add_contextlist(new \core_privacy\local\request\approved_contextlist($foruser,
-                        $contextlist->get_component(), $contextlist->get_contextids()));
-            }
-            $exportedcontent = $manager->export_user_data($approvedcollection);
+            $exportedcontent = $manager->export_user_data($approvedclcollection);
+
             $fs = get_file_storage();
             $filerecord = new \stdClass;
             $filerecord->component = 'tool_dataprivacy';
@@ -106,15 +104,12 @@ class process_data_request_task extends adhoc_task {
             $thing = $fs->create_file_from_pathname($filerecord, $exportedcontent);
 
         } else if ($request->type == api::DATAREQUEST_TYPE_DELETE) {
-            // TODO: Update this code to retrieve the approved_contextlist properly.
+            // Get the collection of approved_contextlist objects needed for core_privacy data deletion.
+            $approvedclcollection = api::get_approved_contextlist_collection_for_request($requestpersistent);
+
+            // Delete the data
             $manager = new \core_privacy\manager();
-            $contextcollection = $manager->get_contexts_for_userid($foruser->id);
-            $approvedcollection = new \core_privacy\local\request\contextlist_collection($foruser->id);
-            foreach ($contextcollection as $contextlist) {
-                $approvedcollection->add_contextlist(new \core_privacy\local\request\approved_contextlist($foruser,
-                        $contextlist->get_component(), $contextlist->get_contextids()));
-            }
-            $manager->delete_user_data($approvedcollection);
+            $manager->delete_user_data($approvedclcollection);
         }
 
         // When the preparation of the metadata finishes, update the request status to awaiting approval.
@@ -150,7 +145,8 @@ class process_data_request_task extends adhoc_task {
                 // Message to the recipient.
                 $messagetextdata['message'] = get_string('resultdownloadready', 'tool_dataprivacy', $SITE->fullname);
                 // Prepare download link.
-                $downloadurl = new moodle_url('#'); // TODO: Replace with the proper download URL.
+                $downloadurl = moodle_url::make_pluginfile_url($usercontext->id, 'tool_dataprivacy', 'export', $thing->get_itemid(),
+                    $thing->get_filepath(), $thing->get_filename(), true);
                 $downloadlink = new action_link($downloadurl, get_string('download', 'tool_dataprivacy'));
                 $messagetextdata['downloadlink'] = $downloadlink->export_for_template($output);
                 break;

@@ -185,7 +185,29 @@ function tool_dataprivacy_output_fragment_contextlevel_form($args) {
  * @return bool Returns false if we don't find a file.
  */
 function tool_dataprivacy_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = array()) {
+    global $USER;
+
     if ($context->contextlevel == CONTEXT_USER) {
+        // Make sure the user is logged in.
+        require_login(null, false);
+
+        // Validate the user downloading this archive.
+        $usercontext = context_user::instance($USER->id);
+        // The user downloading this is not the user the archive has been prepared for. Check if it's the requester (e.g. parent).
+        if ($usercontext->instanceid !== $context->instanceid) {
+            // Get the data request ID. This should be the first element of the $args array.
+            $itemid = $args[0];
+            // Fetch the data request object. An invalid ID will throw an exception.
+            $datarequest = new \tool_dataprivacy\data_request($itemid);
+
+            // Check if the user is the requester and has the capability to make data requests for the target user.
+            $candownloadforuser = has_capability('tool/dataprivacy:makedatarequestsforchildren', $context);
+            if ($USER->id != $datarequest->get('requestedby') || !$candownloadforuser) {
+                return false;
+            }
+        }
+
+        // All good. Serve the exported data.
         $fs = get_file_storage();
         $relativepath = implode('/', $args);
         $fullpath = "/$context->id/tool_dataprivacy/$filearea/$relativepath";

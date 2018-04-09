@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Adhoc task that processes a data request and prepares the user's metadata for review.
+ * Adhoc task that processes a data request and prepares the user's relevant contexts for review.
  *
  * @package    tool_dataprivacy
  * @copyright  2018 Jun Pataleta
@@ -28,12 +28,13 @@ use coding_exception;
 use core\task\adhoc_task;
 use moodle_exception;
 use tool_dataprivacy\api;
+use tool_dataprivacy\contextlist_context;
 use tool_dataprivacy\data_request;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Class that processes a data request and prepares the user's metadata for review.
+ * Class that processes a data request and prepares the user's relevant contexts for review.
  *
  * Custom data accepted:
  * - requestid -> The ID of the data request to be processed.
@@ -70,14 +71,17 @@ class initiate_data_request_task extends adhoc_task {
         }
 
         // Update the status of this request as pre-processing.
-        mtrace('Generating user metadata...');
+        mtrace('Generating the contexts containing personal data for the user...');
         api::update_request_status($requestid, api::DATAREQUEST_STATUS_PREPROCESSING);
 
-        // TODO: Add code here to process the request and prepare the metadata to for review.
+        // Add the list of relevant contexts to the request, and mark all as pending approval.
+        $privacymanager = new \core_privacy\manager();
+        $contextlistcollection = $privacymanager->get_contexts_for_userid($datarequest->get('userid'));
+        api::add_request_contexts_with_status($contextlistcollection, $requestid, contextlist_context::STATUS_PENDING);
 
-        // When the preparation of the metadata finishes, update the request status to awaiting approval.
+        // When the preparation of the contexts finishes, update the request status to awaiting approval.
         api::update_request_status($requestid, api::DATAREQUEST_STATUS_AWAITING_APPROVAL);
-        mtrace('User metadata generation complete...');
+        mtrace('Context generation complete...');
 
         // Get the list of the site Data Protection Officers.
         $dpos = api::get_site_dpos();

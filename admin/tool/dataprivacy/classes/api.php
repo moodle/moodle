@@ -28,6 +28,8 @@ use context_system;
 use core\invalid_persistent_exception;
 use core\message\message;
 use core\task\manager;
+use core_privacy\local\request\approved_contextlist;
+use core_privacy\local\request\contextlist_collection;
 use core_user;
 use dml_exception;
 use moodle_exception;
@@ -337,6 +339,11 @@ class api {
 
         // Update the status and the DPO.
         $result = self::update_request_status($requestid, self::DATAREQUEST_STATUS_APPROVED, $USER->id);
+
+        // Approve all the contexts attached to the request.
+        // Currently, approving the request implicitly approves all associated contexts, but this may change in future, allowing
+        // users to selectively approve certain contexts only.
+        self::update_request_contexts_with_status($requestid, contextlist_context::STATUS_APPROVED);
 
         // Fire an ad hoc task to initiate the data request process.
         $task = new process_data_request_task();
@@ -752,5 +759,115 @@ class api {
 
         $expiredctx->set('status', $status);
         $expiredctx->save();
+    }
+
+    /**
+     * Adds the contexts from the contextlist_collection to the request with the status provided.
+     *
+     * @param contextlist_collection $clcollection a collection of contextlists for all components.
+     * @param int $requestid the id of the request.
+     * @param int $status the status to set the contexts to.
+     */
+    public static function add_request_contexts_with_status(contextlist_collection $clcollection, int $requestid, int $status) {
+        foreach ($clcollection as $contextlist) {
+            // Convert the \core_privacy\local\request\contextlist into a contextlist persistent and store it.
+            $clp = \tool_dataprivacy\contextlist::from_contextlist($contextlist);
+            $clp->create();
+            $contextlistid = $clp->get('id');
+
+            // Store the associated contexts in the contextlist.
+            foreach ($contextlist->get_contextids() as $contextid) {
+                $context = new contextlist_context();
+                $context->set('contextid', $contextid)
+                    ->set('contextlistid', $contextlistid)
+                    ->set('status', $status)
+                    ->create();
+            }
+
+            // Create the relation to the request.
+            $requestcontextlist = request_contextlist::create_relation($requestid, $contextlistid);
+            $requestcontextlist->create();
+        }
+    }
+
+    /**
+     * Sets the status of all contexts associated with the request.
+     *
+     * @param int $requestid the requestid to which the contexts belong.
+     * @param int $status the status to set to.
+     * @throws \dml_exception if the requestid is invalid.
+     * @throws \moodle_exception if the status is invalid.
+     */
+    public static function update_request_contexts_with_status(int $requestid, int $status) {
+        // Validate contextlist_context status using the persistent's attribute validation.
+        $contextlistcontext = new contextlist_context();
+        $contextlistcontext->set('status', $status);
+        if (array_key_exists('status', $contextlistcontext->get_errors())) {
+            throw new moodle_exception("Invalid contextlist_context status: $status");
+        }
+
+        // Validate requestid using the persistent's record validation.
+        // A dml_exception is thrown if the record is missing.
+        $datarequest = new data_request($requestid);
+
+        // Bulk update the status of the request contexts.
+        global $DB;
+
+        $select = "SELECT ctx.id as id
+                     FROM {" . request_contextlist::TABLE . "} rcl
+                     JOIN {" . contextlist::TABLE . "} cl ON rcl.contextlistid = cl.id
+                     JOIN {" . contextlist_context::TABLE . "} ctx ON cl.id = ctx.contextlistid
+                    WHERE rcl.requestid = ?";
+
+        $update = "UPDATE {" . contextlist_context::TABLE . "}
+                      SET status = ?
+                    WHERE id IN ({$select})";
+        $DB->execute($update, [$status, $requestid]);
+    }
+
+    /**
+     * Finds all request contextlists having at least on approved context, and returns them as in a contextlist_collection.
+     *
+     * @param data_request $request the data request with which the contextlists are associated.
+     * @return contextlist_collection the collection of approved_contextlist objects.
+     */
+    public static function get_approved_contextlist_collection_for_request(data_request $request) : contextlist_collection {
+        $foruser = core_user::get_user($request->get('userid'));
+
+        // Fetch all approved contextlists and create the core_privacy\local\request\contextlist objects here.
+        global $DB;
+        $sql = "SELECT cl.component, ctx.contextid
+                  FROM {" . request_contextlist::TABLE . "} rcl
+                  JOIN {" . contextlist::TABLE . "} cl ON rcl.contextlistid = cl.id
+                  JOIN {" . contextlist_context::TABLE . "} ctx ON cl.id = ctx.contextlistid
+                 WHERE rcl.requestid = ?
+                   AND ctx.status = ?
+              ORDER BY cl.component, ctx.contextid";
+
+        // Create the approved contextlist collection object.
+        $lastcomponent = null;
+        $approvedcollection = new contextlist_collection($foruser->id);
+
+        $rs = $DB->get_recordset_sql($sql, [$request->get('id'), contextlist_context::STATUS_APPROVED]);
+        foreach ($rs as $record) {
+            // If we encounter a new component, and we've built up contexts for the last, then add the approved_contextlist for the
+            // last (the one we've just finished with) and reset the context array for the next one.
+            if ($lastcomponent != $record->component) {
+                if (!empty($contexts)) {
+                    $approvedcollection->add_contextlist(new approved_contextlist($foruser, $lastcomponent, $contexts));
+                }
+                $contexts = [];
+            }
+            $contexts[] = $record->contextid;
+            $lastcomponent = $record->component;
+        }
+        $rs->close();
+
+        // The data for the last component contextlist won't have been written yet, so write it now.
+        if (!empty($contexts)) {
+            $approvedcollection->add_contextlist(new approved_contextlist($foruser, $lastcomponent, $contexts));
+        }
+
+        return $approvedcollection;
     }
 }
