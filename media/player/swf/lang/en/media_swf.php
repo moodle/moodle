@@ -24,3 +24,4 @@
 
 $string['pluginname'] = 'Flash animation';
 $string['pluginname_help'] = 'For security reasons this format is only embedded within trusted text.';
+$string['privacy:metadata'] = 'The Flash animation media plugin does not store any personal data.';

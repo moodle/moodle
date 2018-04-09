@@ -24,3 +24,4 @@
 
 $string['pluginname'] = 'HTML5 audio';
 $string['pluginname_help'] = 'Audio files played by the browser\'s native audio player. (Format support depends on the browser.)';
+$string['privacy:metadata'] = 'The HTML5 audio media plugin does not store any personal data.';

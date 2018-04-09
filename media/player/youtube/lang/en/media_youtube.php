@@ -24,5 +24,6 @@
 
 $string['pluginname'] = 'YouTube';
 $string['pluginname_help'] = 'The video-sharing website youtube.com. Video and playlist links are supported.';
+$string['privacy:metadata'] = 'The Youtube media plugin does not store any personal data.';
 $string['supportsvideo'] = 'YouTube videos';
 $string['supportsplaylist'] = 'YouTube playlists';
