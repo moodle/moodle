@@ -37,3 +37,4 @@ $string['pause'] = 'Pause live updates';
 $string['pluginname'] = 'Live logs';
 $string['resume'] = 'Resume live updates';
 $string['selectlogreader'] = 'Select log reader';
+$string['privacy:metadata'] = 'The report_loglive plugin does not store any personal data.';
