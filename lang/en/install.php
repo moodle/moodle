@@ -167,7 +167,6 @@ $string['memorylimithelp'] = '<p>The PHP memory limit for your server is current
     <p>However, on some servers this will prevent <b>all</b> PHP pages from working 
     (you will see errors when you look at pages) so you\'ll have to remove the .htaccess file.</p></li>
 </ol>';
-$string['mssqlextensionisnotpresentinphp'] = 'PHP has not been properly configured with the MSSQL extension so that it can communicate with SQL*Server.  Please check your php.ini file or recompile PHP.';
 $string['mysqliextensionisnotpresentinphp'] = 'PHP has not been properly configured with the MySQLi extension for it to communicate with MySQL. Please check your php.ini file or recompile PHP.';
 $string['nativemariadb'] = 'MariaDB (native/mariadb)';
 $string['nativemariadbhelp'] = '<p>The database is where most of the Moodle settings and data are stored and must be configured here.</p>
@@ -180,9 +179,6 @@ $string['nativemysqlihelp'] = '<p>The database is where most of the Moodle setti
 <p>The database name, username, and password are required fields; table prefix is optional.</p>
 <p>The database name may contain only alphanumeric characters, dollar ($) and underscore (_).</p>
 <p>If the database currently does not exist, and the user you specify has permission, Moodle will attempt to create a new database with the correct permissions and settings.</p>';
-$string['nativemssql'] = 'SQL*Server FreeTDS (native/mssql)';
-$string['nativemssqlhelp'] = 'Now you need to configure the database where most Moodle data will be stored.
-This database must already have been created and a username and password created to access it. Table prefix is mandatory.';
 $string['nativeoci'] = 'Oracle (native/oci)';
 $string['nativeocihelp'] = 'Now you need to configure the database where most Moodle data will be stored.
 This database must already have been created and a username and password created to access it. Table prefix is mandatory.';
@@ -254,3 +250,4 @@ $string['welcomep60'] = 'The following pages will lead you through some easy to 
 $string['welcomep70'] = 'Click the "Next" button below to continue with the set up of <strong>Moodle</strong>.';
 $string['wwwroot'] = 'Web address';
 $string['wwwrooterror'] = 'The \'Web Address\' does not appear to be valid - this Moodle installation doesn\'t appear to be there. The value below has been reset.';
+// Deprecated since 3.4.
