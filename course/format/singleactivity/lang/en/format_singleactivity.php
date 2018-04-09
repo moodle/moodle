@@ -32,3 +32,4 @@ $string['orphanedwarning'] = 'These activities are unreachable by users!';
 $string['pluginname'] = 'Single activity format';
 $string['sectionname'] = '';
 $string['warningchangeformat'] = 'When changing the existing course format to "Single activity" make sure that you removed all extra activities from the course including "Announcements". Note that sections structure may be modified.';
+$string['privacy:metadata'] = 'The Single activity format plugin does not store any personal data.';
