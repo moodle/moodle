@@ -80,6 +80,8 @@ function atto_recordrtc_strings_for_js() {
                      'gumnotfound',
                      'gumnotreadable_title',
                      'gumnotreadable',
+                     'gumnotsupported',
+                     'gumnotsupported_title',
                      'gumoverconstrained_title',
                      'gumoverconstrained',
                      'gumsecurity_title',
