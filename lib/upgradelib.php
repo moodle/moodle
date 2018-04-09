@@ -430,6 +430,10 @@ function upgrade_stale_php_files_present() {
     global $CFG;
 
     $someexamplesofremovedfiles = array(
+        // Removed in 3.5.
+        '/lib/dml/mssql_native_moodle_database.php',
+        '/lib/dml/mssql_native_moodle_recordset.php',
+        '/lib/dml/mssql_native_moodle_temptables.php',
         // Removed in 3.4.
         '/auth/README.txt',
         '/calendar/set.php',
