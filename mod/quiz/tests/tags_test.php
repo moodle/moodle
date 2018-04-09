@@ -36,6 +36,7 @@ class mod_quiz_tags_testcase extends advanced_testcase {
         global $CFG, $USER, $DB;
 
         require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
+        require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -82,8 +83,16 @@ class mod_quiz_tags_testcase extends advanced_testcase {
         $tag3 = core_tag_tag::get_by_name(0, 't3', 'id, name');
         $this->assertNotFalse($tag3);
 
-        $tagrecords = array($tag2->to_object());
-        $this->assertEquals(quiz_build_random_question_tag_json($tagrecords), $question->randomfromtags);
+        $slottags = quiz_retrieve_slot_tags($question->slotid);
+        $this->assertEquals(
+                [
+                    ['tagid' => $tag2->id, 'tagname' => $tag2->name]
+                ],
+                array_map(function($tag) {
+                    return ['tagid' => $tag->tagid, 'tagname' => $tag->tagname];
+                }, $slottags),
+                '', 0.0, 10, true
+        );
 
         $defaultcategory = question_get_default_category(context_course::instance($newcourseid)->id);
         $this->assertEquals($defaultcategory->id, $question->randomfromcategory);

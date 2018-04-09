@@ -2432,68 +2432,6 @@ function quiz_is_overriden_calendar_event(\calendar_event $event) {
 }
 
 /**
- * Providing a list of tag records, this function validates each pair and builds a json string
- * that can be stored in the quiz_slots.tags field.
- *
- * @param stdClass[] $tagrecords List of tag objects with id and name properties.
- * @return string
- */
-function quiz_build_random_question_tag_json($tagrecords) {
-    $tags = [];
-    foreach ($tagrecords as $tagrecord) {
-        if ($tagrecord->id && $tag = core_tag_tag::get($tagrecord->id, 'id, name')) {
-            $tags[] = [
-                'id' => (int)$tagrecord->id,
-                'name' => $tag->name
-            ];
-        } else if ($tag = core_tag_tag::get_by_name(0, $tagrecord->name, 'id, name')) {
-            $tags[] = [
-                'id' => (int)$tag->id,
-                'name' => $tagrecord->name
-            ];
-        } else {
-            $tags[] = [
-                'id' => null,
-                'name' => $tagrecord->name
-            ];
-        }
-    }
-    return json_encode($tags);
-}
-
-/**
- * Providing tags data in the JSON format, this function returns tag records containing the id and name properties.
- *
- * @param string $tagsjson The JSON string representing an array of tags in the [{"id":tagid,"name":"tagname"}] format.
- *      E.g. [{"id":1,"name":"tag1"},{"id":2,"name":"tag2"}]
- *      Usually equal to the value of the tags field retrieved from the quiz_slots table.
- * @param bool $matchbyid If set to true, then the function tries to find tags by their id.
- *      If no tag is found by the tag id or if $matchbyid is set to false, then the function tries to find the tag by its name.
- * @return array An array of tags containing the id and name properties, indexed by tag ids.
- */
-function quiz_extract_random_question_tags($tagsjson, $matchbyid = true) {
-    $tagrecords = [];
-    if (!empty($tagsjson)) {
-        $tags = json_decode($tagsjson);
-
-        foreach ($tags as $tagdata) {
-            if ($matchbyid && $tag = core_tag_tag::get($tagdata->id, 'id, name')) {
-                $tagrecords[] = $tag->to_object();
-            } else if ($tag = core_tag_tag::get_by_name(0, $tagdata->name, 'id, name')) {
-                $tagrecords[] = $tag->to_object();
-            } else {
-                $tagrecords[] = (object)[
-                    'id' => null,
-                    'name' => $tagdata->name
-                ];
-            }
-        }
-    }
-
-    return $tagrecords;
-}
-
-/**
  * Retrieves tag information for the given quiz slot.
  * A quiz slot have some tags if and only if it is representing a random question by tags.
  *
