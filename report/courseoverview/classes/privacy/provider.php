@@ -15,14 +15,32 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'report_courseoverview'.
+ * Privacy Subsystem implementation for report_courseoverview.
  *
- * @package    report
- * @subpackage courseoverview
- * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @package    report_courseoverview
+ * @copyright  2018 Zig Tan <zig@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['courseoverview:view'] = 'View course overview report';
-$string['pluginname'] = 'Course overview';
-$string['privacy:metadata'] = 'The report_courseoverview plugin does not store any personal data.';
+namespace report_courseoverview\privacy;
+
+defined('MOODLE_INTERNAL') || die();
+
+/**
+ * Privacy Subsystem for report_courseoverview implementing null_provider.
+ *
+ * @copyright  2018 Zig Tan <zig@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class provider implements \core_privacy\local\metadata\null_provider {
+
+    /**
+     * Get the language string identifier with the component's language
+     * file to explain why this plugin stores no data.
+     *
+     * @return  string
+     */
+    public static function get_reason() : string {
+        return 'privacy:metadata';
+    }
+}
