@@ -64,6 +64,10 @@ class cohort_summary_exporter extends \core\external\exporter {
             ),
             'visible' => array(
                 'type' => PARAM_BOOL,
+            ),
+            'theme' => array(
+                'type' => PARAM_THEME,
+                'null' => NULL_ALLOWED
             )
         );
     }

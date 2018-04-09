@@ -2200,5 +2200,21 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2018032700.00);
     }
 
+    if ($oldversion < 2018040500.01) {
+
+        // Define field indexpriority to be added to search_index_requests. Allow null initially.
+        $table = new xmldb_table('cohort');
+        $field = new xmldb_field('theme', XMLDB_TYPE_CHAR, '50',
+                null, null, null, null, 'timemodified');
+
+        // Conditionally add field.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2018040500.01);
+    }
+
     return true;
 }

@@ -4694,6 +4694,14 @@ function get_complete_user_data($field, $value, $mnethostid = null) {
         }
     }
 
+    // Add cohort theme.
+    if (!empty($CFG->allowcohortthemes)) {
+        require_once($CFG->dirroot . '/cohort/lib.php');
+        if ($cohorttheme = cohort_get_user_cohort_theme($user->id)) {
+            $user->cohorttheme = $cohorttheme;
+        }
+    }
+
     // Add the custom profile fields to the user record.
     $user->profile = array();
     if (!isguestuser($user)) {
