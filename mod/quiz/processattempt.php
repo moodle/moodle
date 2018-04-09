@@ -44,8 +44,9 @@ $next          = optional_param('next',          false, PARAM_BOOL);
 $finishattempt = optional_param('finishattempt', false, PARAM_BOOL);
 $timeup        = optional_param('timeup',        0,      PARAM_BOOL); // True if form was submitted by timer.
 $scrollpos     = optional_param('scrollpos',     '',     PARAM_RAW);
+$cmid          = optional_param('cmid', null, PARAM_INT);
 
-$attemptobj = quiz_attempt::create($attemptid);
+$attemptobj = quiz_create_attempt_handling_errors($attemptid, $cmid);
 
 // Set $nexturl now.
 if ($next) {
