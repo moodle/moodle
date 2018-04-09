@@ -99,8 +99,7 @@ class page_viewdoc implements renderable, templatable {
         }
 
         if (empty($this->policy)) {
-            // TODO Make this nicer error message.
-            throw new \moodle_exception('err_no_active_version', 'tool_policy');
+            throw new \moodle_exception('errorpolicyversionnotfound', 'tool_policy');
         }
     }
 

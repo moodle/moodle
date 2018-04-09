@@ -102,7 +102,6 @@ class user_agreement implements \templatable, \renderable {
             $linkparams['returnurl'] = $this->pageurl->out_as_local_url(false);
             $link = new \moodle_url('/admin/tool/policy/accept.php', $linkparams);
             $data['acceptlink'] = $link->out(false);
-            $data['acceptmodaldata'] = $link->get_query_string(false); // TODO not needed?
         }
         $data['singleversion'] = count($this->versions) == 1;
         if ($data['singleversion']) {

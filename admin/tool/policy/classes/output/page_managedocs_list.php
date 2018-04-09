@@ -93,7 +93,7 @@ class page_managedocs_list implements renderable, templatable {
 
             foreach ($policy->archivedversions as $i => $version) {
                 $data->versions[] = $this->export_version_for_template($output, $policy, $version,
-                    policy_version::STATUS_ARCHIVED, false, false, false);
+                    false, false, false);
             }
             return $data;
         }
@@ -107,27 +107,27 @@ class page_managedocs_list implements renderable, templatable {
                 // There is no current and no draft versions, display the first archived version.
                 $firstpolicy = array_shift($policy->archivedversions);
                 $data->versions[] = $this->export_version_for_template($output, $policy, $firstpolicy,
-                    policy_version::STATUS_ARCHIVED, false, $i > 0, $i < count($policies) - 1);
+                    false, $i > 0, $i < count($policies) - 1);
             }
 
             if (!empty($policy->currentversion)) {
 
                 // Current version of the policy.
                 $data->versions[] = $this->export_version_for_template($output, $policy, $policy->currentversion,
-                    policy_version::STATUS_ACTIVE, false, $i > 0, $i < count($policies) - 1);
+                    false, $i > 0, $i < count($policies) - 1);
 
             } else if ($policy->draftversions) {
 
                 // There is no current version, display the first draft version as the current.
                 $firstpolicy = array_shift($policy->draftversions);
                 $data->versions[] = $this->export_version_for_template($output, $policy, $firstpolicy,
-                    policy_version::STATUS_DRAFT, false, $i > 0, $i < count($policies) - 1);
+                    false, $i > 0, $i < count($policies) - 1);
             }
 
             foreach ($policy->draftversions as $draft) {
                 // Show all [other] draft policies indented.
                 $data->versions[] = $this->export_version_for_template($output, $policy, $draft,
-                    policy_version::STATUS_DRAFT, true, false, false);
+                    true, false, false);
             }
 
         }
@@ -141,14 +141,14 @@ class page_managedocs_list implements renderable, templatable {
      * @param \renderer_base $output
      * @param \stdClass $policy
      * @param \stdClass $version
-     * @param int $status
      * @param bool $isindented display indented (normally drafts of the current version)
      * @param bool $moveup can move up
      * @param bool $movedown can move down
      * @return \stdClass
      */
-    protected function export_version_for_template($output, $policy, $version, $status, $isindented, $moveup, $movedown) {
+    protected function export_version_for_template($output, $policy, $version, $isindented, $moveup, $movedown) {
 
+        $status = $version->status;
         $version->statustext = get_string('status' . $status, 'tool_policy');
 
         if ($status == policy_version::STATUS_ACTIVE) {
@@ -226,8 +226,7 @@ class page_managedocs_list implements renderable, templatable {
                 ['data-action' => 'makecurrent']
             ));
         }
-        if ($status == policy_version::STATUS_DRAFT) {
-            // TODO can we also delete non-draft version that is guest only or has no acceptances?
+        if (api::can_delete_version($version)) {
             $actionmenu->add(new action_menu_link(
                 new moodle_url($editbaseurl, ['delete' => $version->id]),
                 null,
