@@ -36,6 +36,7 @@ $string['configuseflash'] = 'Use Flash player if video format is not natively su
 $string['limitsize'] = 'Limit size';
 $string['pluginname'] = 'VideoJS player';
 $string['pluginname_help'] = 'A JavaScript wrapper for video files played by the browser\'s native video player with a Flash player fallback. (Format support depends on the browser.)';
+$string['privacy:metadata'] = 'The VideoJS player media plugin does not store any personal data.';
 $string['videoextensions'] = 'Video file extensions';
 $string['useflash'] = 'Use Flash fallback';
 $string['videocssclass'] = 'CSS class for video';
