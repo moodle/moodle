@@ -48,3 +48,4 @@ $string['performance:view'] = 'View performance report';
 $string['performancereportdesc'] = 'This report lists issues which may affect performance of the site {$a}';
 $string['pluginname'] = 'Performance overview';
 $string['value'] = 'Value';
+$string['privacy:metadata'] = 'The report_performance plugin does not store any personal data.';
