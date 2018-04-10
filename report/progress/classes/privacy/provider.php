@@ -15,17 +15,32 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Lang strings
+ * Privacy provider implementation for report_progress.
  *
- * @package    report
- * @subpackage progress
- * @copyright  2008 Sam Marshall
+ * @package    report_progress
+ * @copyright  2018 Mihail Geshoski <mihail@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Activity completion';
-$string['page-report-progress-x'] = 'Any activity completion report';
-$string['page-report-progress-index'] = 'Activity completion report';
-$string['page-report-progress-user'] = 'User activity completion report';
-$string['privacy:metadata'] = 'The Activity completion report only shows data stored in other locations.';
-$string['progress:view'] = 'View activity completion reports';
+namespace report_progress\privacy;
+
+defined('MOODLE_INTERNAL') || die();
+
+/**
+ * Privacy provider implementation for report_progress.
+ *
+ * @copyright  2018 Mihail Geshoski <mihail@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class provider implements \core_privacy\local\metadata\null_provider {
+
+    /**
+     * Get the language string identifier with the component's language
+     * file to explain why this plugin stores no data.
+     *
+     * @return  string
+     */
+    public static function get_reason() : string {
+        return 'privacy:metadata';
+    }
+}
