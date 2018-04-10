@@ -90,7 +90,7 @@ class quiz_last_responses_table extends quiz_attempts_report_table {
             $summary = trim($value);
         }
 
-        if ($this->is_downloading() && $this->is_downloading() != 'xhtml') {
+        if ($this->is_downloading() && $this->is_downloading() != 'html') {
             return $summary;
         }
         $summary = s($summary);
