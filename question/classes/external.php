@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once("$CFG->libdir/externallib.php");
 require_once($CFG->dirroot . '/question/engine/lib.php');
+require_once($CFG->libdir . '/questionlib.php');
 
 /**
  * Question external functions
@@ -166,9 +167,12 @@ class core_question_external extends external_api {
 
         $cantag = question_has_capability_on($question, 'tag');
         $questioncontext = \context::instance_by_id($question->contextid);
+        $contexts = new \question_edit_contexts($editingcontext);
+
         $formoptions = [
             'editingcontext' => $editingcontext,
-            'questioncontext' => $questioncontext
+            'questioncontext' => $questioncontext,
+            'contexts' => $contexts->all()
         ];
 
         $mform = new \core_question\form\tags(null, $formoptions, 'post', '', null, $cantag, $data);

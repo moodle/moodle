@@ -327,8 +327,17 @@ abstract class question_edit_form extends question_wizard_form {
         $iseditingcontextcourseoractivity = !empty($editingcoursecontext);
 
         $mform->addElement('header', 'tagsheader', get_string('tags'));
-        $mform->addElement('tags', 'tags', get_string('tags'),
-                array('itemtype' => 'question', 'component' => 'core_question'));
+        $tags = \core_tag_tag::get_tags_by_area_in_contexts('core_question', 'question', $this->contexts->all());
+        $tagstrings = [];
+        foreach ($tags as $tag) {
+            $tagstrings[$tag->name] = $tag->name;
+        }
+        $options = [
+            'tags' => true,
+            'multiple' => true,
+            'noselectionstring' => get_string('anytags', 'quiz'),
+        ];
+        $mform->addElement('autocomplete', 'tags',  get_string('tags'), $tagstrings, $options);
 
         if (!$hastagcapability) {
             $mform->hardFreeze('tags');
@@ -341,8 +350,7 @@ abstract class question_edit_form extends question_wizard_form {
             $coursetagheader = get_string('questionformtagheader', 'core_question',
                 $editingcoursecontext->get_context_name(true));
             $mform->addElement('header', 'coursetagsheader', $coursetagheader);
-            $mform->addElement('tags', 'coursetags', get_string('tags'),
-                    array('itemtype' => 'question', 'component' => 'core_question'));
+            $mform->addElement('autocomplete', 'coursetags',  get_string('tags'), $tagstrings, $options);
 
             if (!$hastagcapability) {
                 $mform->hardFreeze('coursetags');
