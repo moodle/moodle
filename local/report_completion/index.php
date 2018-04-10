@@ -551,11 +551,20 @@ if (empty($charttype)) {
                             .get_string('email', 'local_report_completion').'","'
                             .get_string('course').'","'
                             .get_string('department', 'block_iomad_company_admin').'",';
-            $endcolumns = '"' . get_string('status', 'local_report_completion').'","'
-                          .get_string('timeenrolled', 'local_report_completion').'","'
-                          .get_string('timestarted', 'local_report_completion').'","'
-                          .get_string('timecompleted', 'local_report_completion').'","'
-                          .get_string('finalscore', 'local_report_completion')."\"\n";
+            if (!$showexpiry) {
+                $endcolumns = '"' . get_string('status', 'local_report_completion').'","'
+                              .get_string('timeenrolled', 'local_report_completion').'","'
+                              .get_string('timestarted', 'local_report_completion').'","'
+                              .get_string('timecompleted', 'local_report_completion').'","'
+                              .get_string('finalscore', 'local_report_completion')."\"\n";
+            } else {
+                $endcolumns = '"' . get_string('status', 'local_report_completion').'","'
+                              .get_string('timeenrolled', 'local_report_completion').'","'
+                              .get_string('timestarted', 'local_report_completion').'","'
+                              .get_string('timecompleted', 'local_report_completion').'","'
+                              .get_string('timeexpires', 'local_report_completion').'","'
+                              .get_string('finalscore', 'local_report_completion')."\"\n";
+            }
             $midcolumns = "";
             if (!empty($extrafields)) {
                 foreach ($extrafields as $extrafield) {
