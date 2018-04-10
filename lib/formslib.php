@@ -2894,7 +2894,7 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
         $formid = $form->getAttribute('id');
         parent::startForm($form);
         if ($form->isFrozen()){
-            $this->_formTemplate = "\n<div class=\"mform frozen\">\n{content}\n</div>";
+            $this->_formTemplate = "\n<div id=\"$formid\" class=\"mform frozen\">\n{collapsebtns}\n{content}\n</div>";
         } else {
             $this->_formTemplate = "\n<form{attributes}>\n\t<div style=\"display: none;\">{hidden}</div>\n{collapsebtns}\n{content}\n</form>";
             $this->_hiddenHtml .= $form->_pageparams;
