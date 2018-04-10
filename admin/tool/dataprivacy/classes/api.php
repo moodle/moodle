@@ -819,10 +819,25 @@ class api {
                      JOIN {" . contextlist_context::TABLE . "} ctx ON cl.id = ctx.contextlistid
                     WHERE rcl.requestid = ?";
 
-        $update = "UPDATE {" . contextlist_context::TABLE . "}
-                      SET status = ?
-                    WHERE id IN ({$select})";
-        $DB->execute($update, [$status, $requestid]);
+        // Fetch records IDs to be updated and update by chunks, if applicable (limit of 1000 records per update).
+        $limit = 1000;
+        $idstoupdate = $DB->get_fieldset_sql($select, [$requestid]);
+        $count = count($idstoupdate);
+        $idchunks = $idstoupdate;
+        if ($count > $limit) {
+            $idchunks = array_chunk($idstoupdate, $limit);
+        }
+        $transaction = $DB->start_delegated_transaction();
+        $initialparams = [$status];
+        foreach ($idchunks as $chunk) {
+            list($insql, $inparams) = $DB->get_in_or_equal($chunk);
+            $update = "UPDATE {" . contextlist_context::TABLE . "}
+                          SET status = ?
+                        WHERE id $insql";
+            $params = array_merge($initialparams, $inparams);
+            $DB->execute($update, $params);
+        }
+        $transaction->allow_commit();
     }
 
     /**
