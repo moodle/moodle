@@ -64,27 +64,28 @@
     {{#action}}
     <a class="list-group-item list-group-item-action {{#isactive}}font-weight-bold{{/isactive}}" href="{{{action}}}" data-key="{{key}}" data-isexpandable="{{isexpandable}}" data-indent="{{get_indent}}" data-showdivider="{{showdivider}}" data-type="{{type}}" data-nodetype="{{nodetype}}" data-collapse="{{collapse}}" data-forceopen="{{forceopen}}" data-isactive="{{isactive}}" data-hidden="{{hidden}}" data-preceedwithhr="{{preceedwithhr}}" {{#parent.key}}data-parent-key="{{.}}"{{/parent.key}}>
         <div class="m-l-{{get_indent}}">
+            <div class="media">
             {{#is_section}}
-                <div class="media">
-                    <span class="media-left">
-                        {{#pix}}i/folder{{/pix}}
-                    </span>
-                    <span class="media-body">{{{text}}}</span>
-                </div>
+                <span class="media-left">
+                    {{#pix}}i/folder{{/pix}}
+                </span>
             {{/is_section}}
-            {{^is_section}}
-                {{{text}}}
-            {{/is_section}}
+                <span class="media-body">{{{text}}}</span>
+            </div>
         </div>
     </a>
     {{/action}}
     {{^action}}
     <div class="list-group-item" data-key="{{key}}" data-isexpandable="{{isexpandable}}" data-indent="{{get_indent}}" data-showdivider="{{showdivider}}" data-type="{{type}}" data-nodetype="{{nodetype}}" data-collapse="{{collapse}}" data-forceopen="{{forceopen}}" data-isactive="{{isactive}}" data-hidden="{{hidden}}" data-preceedwithhr="{{preceedwithhr}}" {{#parent.key}}data-parent-key="{{.}}"{{/parent.key}}>
         <div class="m-l-{{get_indent}}">
+            <div class="media">
             {{#is_section}}
-                {{#pix}}i/folder{{/pix}}
+                <span class="media-left">
+                    {{#pix}}i/folder{{/pix}}
+                </span>
             {{/is_section}}
-            {{{text}}}
+                <span class="media-body">{{{text}}}</span>
+            </div>
         </div>
     </div>
     {{/action}}
