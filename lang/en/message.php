@@ -84,6 +84,7 @@ $string['nomessagesfound'] = 'No messages were found';
 $string['noreply'] = 'Do not reply to this message';
 $string['noncontacts'] = 'Non-contacts';
 $string['nonotifications'] = 'You have no notifications';
+$string['notificationdatahasnotbeenmigrated'] = 'Your notifications are temporarily unavailable due to upgrades in the notification infrastructure. Please wait for them to be migrated.';
 $string['notificationwindow'] = 'Notification window';
 $string['notificationpreferences'] = 'Notification preferences';
 $string['notificationimage'] = 'Notification image';

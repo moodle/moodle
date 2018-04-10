@@ -65,6 +65,14 @@ $context = [
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('notifications', 'message'));
+
+// Display a message if the notifications have not been migrated yet.
+if (!get_user_preferences('core_message_migrate_data', false, $userid)) {
+    $notify = new \core\output\notification(get_string('notificationdatahasnotbeenmigrated', 'message'),
+        \core\output\notification::NOTIFY_WARNING);
+    echo $OUTPUT->render($notify);
+}
+
 echo $renderer->render_from_template('message_popup/notification_area', $context);
 echo $OUTPUT->footer();
 
