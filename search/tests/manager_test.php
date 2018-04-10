@@ -902,5 +902,24 @@ class search_manager_testcase extends advanced_testcase {
 
         // Confirm table is now empty.
         $this->assertEquals(0, $DB->count_records('search_index_requests'));
+
+        // Make a request for a course context...
+        $course = $generator->create_course();
+        $context = context_course::instance($course->id);
+        $search::request_index($context);
+
+        // ...but then delete it (note: delete_course spews output, so we throw it away).
+        ob_start();
+        delete_course($course);
+        ob_end_clean();
+
+        // Process requests - it should only note the deleted context.
+        $search->process_index_requests(10, $progress);
+        $out = $progress->get_buffer();
+        $progress->reset_buffer();
+        $this->assertContains('Skipped deleted context: ' . $context->id, $out);
+
+        // Confirm request table is now empty.
+        $this->assertEquals(0, $DB->count_records('search_index_requests'));
     }
 }

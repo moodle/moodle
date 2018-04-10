@@ -1138,7 +1138,12 @@ class manager {
             }
 
             // Show a message before each request, indicating what will be indexed.
-            $context = \context::instance_by_id($request->contextid);
+            $context = \context::instance_by_id($request->contextid, IGNORE_MISSING);
+            if (!$context) {
+                $DB->delete_records('search_index_requests', ['id' => $request->id]);
+                $progress->output('Skipped deleted context: ' . $request->contextid);
+                continue;
+            }
             $contextname = $context->get_context_name();
             if ($request->searcharea) {
                 $contextname .= ' (search area: ' . $request->searcharea . ')';
