@@ -330,4 +330,28 @@ class helper {
         sort($ids);
         return implode('_', $ids);
     }
+
+    /**
+     * Checks if legacy messages exist for a given user.
+     *
+     * @param int $userid
+     * @return bool
+     */
+    public static function legacy_messages_exist($userid) {
+        global $DB;
+
+        $sql = "SELECT id
+                  FROM {message} m
+                 WHERE useridfrom = ?
+                    OR useridto = ?";
+        $messageexists = $DB->record_exists_sql($sql, [$userid, $userid]);
+
+        $sql = "SELECT id
+                  FROM {message_read} m
+                 WHERE useridfrom = ?
+                    OR useridto = ?";
+        $messagereadexists = $DB->record_exists_sql($sql, [$userid, $userid]);
+
+        return $messageexists || $messagereadexists;
+    }
 }

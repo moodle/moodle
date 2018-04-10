@@ -4432,19 +4432,7 @@ function complete_user_login($user) {
     // Queue migrating the messaging data, if we need to.
     if (!get_user_preferences('core_message_migrate_data', false, $USER->id)) {
         // Check if there are any legacy messages to migrate.
-        $sql = "SELECT id
-                  FROM {message} m
-                 WHERE useridfrom = ?
-                    OR useridto = ?";
-        $messageexists = $DB->record_exists_sql($sql, [$USER->id, $USER->id]);
-
-        $sql = "SELECT id
-                  FROM {message_read} m
-                 WHERE useridfrom = ?
-                    OR useridto = ?";
-        $messagereadexists = $DB->record_exists_sql($sql, [$USER->id, $USER->id]);
-
-        if ($messageexists || $messagereadexists) {
+        if (\core_message\helper::legacy_messages_exist($USER->id)) {
             \core_message\task\migrate_message_data::queue_task($USER->id);
         } else {
             set_user_preference('core_message_migrate_data', true, $USER->id);
