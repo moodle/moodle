@@ -194,20 +194,31 @@ class renderer_base {
      * If will then be rendered by a method based upon the classname for the widget.
      * For instance a widget of class `crazywidget` will be rendered by a protected
      * render_crazywidget method of this renderer.
+     * If no render_crazywidget method exists and crazywidget implements templatable,
+     * look for the 'crazywidget' template in the same component and render that.
      *
      * @param renderable $widget instance with renderable interface
      * @return string
      */
     public function render(renderable $widget) {
-        $classname = get_class($widget);
+        $classparts = explode('\\', get_class($widget));
         // Strip namespaces.
-        $classname = preg_replace('/^.*\\\/', '', $classname);
+        $classname = array_pop($classparts);
         // Remove _renderable suffixes
         $classname = preg_replace('/_renderable$/', '', $classname);
 
         $rendermethod = 'render_'.$classname;
         if (method_exists($this, $rendermethod)) {
             return $this->$rendermethod($widget);
+        }
+        if ($widget instanceof templatable) {
+            $component = array_shift($classparts);
+            if (!$component) {
+                $component = 'core';
+            }
+            $template = $component . '/' . $classname;
+            $context = $widget->export_for_template($this);
+            return $this->render_from_template($template, $context);
         }
         throw new coding_exception('Can not render widget, renderer method ('.$rendermethod.') not found.');
     }
