@@ -1244,4 +1244,38 @@ $cache = '.var_export($cache, true).';
             }
         }
     }
+
+    /**
+     * Returns a list of frankenstyle component names and their paths, for all components (plugins and subsystems).
+     *
+     * E.g.
+     *  [
+     *      'mod' => [
+     *          'mod_forum' => FORUM_PLUGIN_PATH,
+     *          ...
+     *      ],
+     *      ...
+     *      'core' => [
+     *          'core_comment' => COMMENT_SUBSYSTEM_PATH,
+     *          ...
+     *      ]
+     * ]
+     *
+     * @return array an associative array of components and their corresponding paths.
+     */
+    public static function get_component_list() : array {
+        $components = [];
+        // Get all plugins.
+        foreach (self::get_plugin_types() as $plugintype => $typedir) {
+            $components[$plugintype] = [];
+            foreach (self::get_plugin_list($plugintype) as $pluginname => $plugindir) {
+                $components[$plugintype][$plugintype . '_' . $pluginname] = $plugindir;
+            }
+        }
+        // Get all subsystems.
+        foreach (self::get_core_subsystems() as $subsystemname => $subsystempath) {
+            $components['core']['core_' . $subsystemname] = $subsystempath;
+        }
+        return $components;
+    }
 }

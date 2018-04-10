@@ -298,22 +298,9 @@ class manager {
      * @return array the array of frankenstyle component names.
      */
     protected function get_component_list() {
-        $components = [];
-        // Get all plugins.
-        $plugintypes = \core_component::get_plugin_types();
-        foreach ($plugintypes as $plugintype => $typedir) {
-            $plugins = \core_component::get_plugin_list($plugintype);
-            foreach ($plugins as $pluginname => $plugindir) {
-                $components[] = $plugintype . '_' . $pluginname;
-            }
-        }
-        // Get all subsystems.
-        foreach (\core_component::get_core_subsystems() as $name => $path) {
-            if (isset($path)) {
-                $components[] = 'core_' . $name;
-            }
-        }
-        return $components;
+        return array_keys(array_reduce(\core_component::get_component_list(), function($carry, $item) {
+            return array_merge($carry, $item);
+        }, []));
     }
 
     /**
