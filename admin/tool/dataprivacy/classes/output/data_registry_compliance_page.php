@@ -15,10 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Data registry renderable.
+ * Contains the data registry compliance renderable.
  *
  * @package    tool_dataprivacy
- * @copyright  2018 David Monllao
+ * @copyright  2018 Adrian Greeve
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace tool_dataprivacy\output;
@@ -27,10 +27,6 @@ defined('MOODLE_INTERNAL') || die();
 use renderable;
 use renderer_base;
 use templatable;
-
-require_once($CFG->libdir . '/coursecatlib.php');
-require_once($CFG->dirroot . '/' . $CFG->admin . '/tool/dataprivacy/lib.php');
-require_once($CFG->libdir . '/blocklib.php');
 
 /**
  * Class containing the data registry compliance renderable
