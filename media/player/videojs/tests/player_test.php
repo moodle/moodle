@@ -79,6 +79,19 @@ class media_videojs_testcase extends advanced_testcase {
         $this->assertTrue(in_array('.mp3', $player->get_supported_extensions()));
         $this->assertFalse(in_array('.ra', $player->get_supported_extensions()));
         $this->assertEmpty(array_diff($player->get_supported_extensions(), $nativeextensions));
+
+        // Try to use flash extensions and make sure they are not returned as supported.
+        set_config('videoextensions', '.flv,.f4v', 'media_videojs');
+        $player = new media_videojs_plugin();
+        $this->assertFalse(in_array('.flv', $player->get_supported_extensions()));
+        $this->assertFalse(in_array('.f4v', $player->get_supported_extensions()));
+
+        // Enable flash and test if flash extenstions are supported.
+        set_config('useflash', 1, 'media_videojs');
+        set_config('videoextensions', '.flv,.f4v', 'media_videojs');
+        $player = new media_videojs_plugin();
+        $this->assertTrue(in_array('.flv', $player->get_supported_extensions()));
+        $this->assertTrue(in_array('.f4v', $player->get_supported_extensions()));
     }
 
     /**
@@ -228,6 +241,11 @@ class media_videojs_testcase extends advanced_testcase {
         $this->assertNotRegExp('~somethinginvalid~i', $content);
     }
 
+    /**
+     * Helper function for testing youtube videos embedding.
+     *
+     * @param string $t output of core_media_manager::embed_url.
+     */
     protected function youtube_plugin_engaged($t) {
         $this->assertContains('mediaplugin_videojs', $t);
         $this->assertContains('data-setup-lazy="{&quot;techOrder&quot;: [&quot;youtube&quot;]', $t);
@@ -280,5 +298,81 @@ class media_videojs_testcase extends advanced_testcase {
         $t = $manager->embed_url($url);
         $this->assertNotContains('mediaplugin_videojs', $t);
 
+    }
+
+    /**
+     * Helper function for testing flash videos embedding.
+     *
+     * @param string $t output of core_media_manager::embed_url.
+     */
+    protected function flash_plugin_engaged($t) {
+        $this->assertContains('mediaplugin_videojs', $t);
+        $this->assertContains('data-setup-lazy="{&quot;techOrder&quot;: [&quot;flash&quot;, &quot;html5&quot;]', $t);
+    }
+
+    /**
+     * Test that VideoJS can embed flash videos.
+     */
+    public function test_flash() {
+        $manager = core_media_manager::instance();
+
+        // Flash enabled.
+        set_config('useflash', 1, 'media_videojs');
+        $url = new moodle_url('http://example.org/some_filename.flv');
+        $t = $manager->embed_url($url);
+        $this->flash_plugin_engaged($t);
+        $this->assertRegExp('~</video>~', $t);
+        $this->assertRegExp('~<source src="http://example.org/some_filename.flv"~', $t);
+        $this->assertRegExp('~<a class="mediafallbacklink" href="http://example.org/some_filename.flv">some_filename.flv</a>~', $t);
+
+        // Flash disabled.
+        set_config('useflash', 0, 'media_videojs');
+        $url = new moodle_url('http://example.org/some_filename.flv');
+        $t = $manager->embed_url($url);
+        $this->assertNotContains('mediaplugin_videojs', $t);
+        $this->assertRegExp('~<a class="mediafallbacklink" href="http://example.org/some_filename.flv">some_filename.flv</a>~', $t);
+    }
+
+    /**
+     * Test that VideoJS can embed RTMP streams.
+     */
+    public function test_rtmp() {
+        $manager = core_media_manager::instance();
+
+        // RTMP disabled, flash disabled.
+        set_config('useflash', 0, 'media_videojs');
+        set_config('rtmp', 0, 'media_videojs');
+        $url = new moodle_url('rtmp://example.com/fms&mp4:path/to/file.mp4');
+        $t = $manager->embed_url($url);
+        $this->assertNotContains('mediaplugin_videojs', $t);
+        $this->assertRegExp('~<a class="mediafallbacklink" href="rtmp://example.com/fms&mp4:path/to/file.mp4">file.mp4</a>~', $t);
+
+        // RTMP enabled, flash disabled.
+        set_config('useflash', 0, 'media_videojs');
+        set_config('rtmp', 1, 'media_videojs');
+        $url = new moodle_url('rtmp://example.com/fms&mp4:path/to/file.mp4');
+        $t = $manager->embed_url($url);
+        $this->assertNotContains('mediaplugin_videojs', $t);
+        $this->assertRegExp('~<a class="mediafallbacklink" href="rtmp://example.com/fms&mp4:path/to/file.mp4">file.mp4</a>~', $t);
+
+        // RTMP enabled, flash enabled, rtmp/mp4 type expected.
+        set_config('useflash', 1, 'media_videojs');
+        set_config('rtmp', 1, 'media_videojs');
+        $url = new moodle_url('rtmp://example.com/fms&mp4:path/to/file.mp4');
+        $t = $manager->embed_url($url);
+        $this->flash_plugin_engaged($t);
+        $this->assertRegExp('~</video>~', $t);
+        $this->assertRegExp('~<source src="rtmp://example.com/fms&mp4:path/to/file.mp4" type="rtmp/mp4"~', $t);
+        $this->assertRegExp('~<a class="mediafallbacklink" href="rtmp://example.com/fms&mp4:path/to/file.mp4">file.mp4</a>~', $t);
+
+        // RTMP enabled, flash enabled, rtmp/flv type expected.
+        set_config('useflash', 1, 'media_videojs');
+        set_config('rtmp', 1, 'media_videojs');
+        $url = new moodle_url('rtmp://example.com/fms&flv:path/to/file.flv');
+        $t = $manager->embed_url($url);
+        $this->flash_plugin_engaged($t);
+        $this->assertRegExp('~</video>~', $t);
+        $this->assertRegExp('~<source src="rtmp://example.com/fms&flv:path/to/file.flv" type="rtmp/flv"~', $t);
+        $this->assertRegExp('~<a class="mediafallbacklink" href="rtmp://example.com/fms&flv:path/to/file.flv">file.flv</a>~', $t);
     }
 }
