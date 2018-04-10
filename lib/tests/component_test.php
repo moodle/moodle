@@ -803,6 +803,6 @@ class core_component_testcase extends advanced_testcase {
         // Check a few of the known plugin types to confirm their presence at their respective type index.
         $this->assertEquals($componentslist['core']['core_comment'], $CFG->dirroot . '/comment');
         $this->assertEquals($componentslist['mod']['mod_forum'], $CFG->dirroot . '/mod/forum');
-        $this->assertEquals($componentslist['tool']['tool_analytics'], $CFG->dirroot . '/admin/tool/analytics');
+        $this->assertEquals($componentslist['tool']['tool_usertours'], $CFG->dirroot . '/' . $CFG->admin . '/tool/usertours');
     }
 }
