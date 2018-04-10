@@ -15,14 +15,32 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * JSON dataformat lang strings.
+ * Privacy provider implementation for dataformat_ods.
  *
- * @package    dataformat_json
- * @copyright  2016 Brendan Heywood (brendan@catalyst-au.net)
+ * @package    dataformat_ods
+ * @copyright  2018 Mihail Geshoski <mihail@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['dataformat'] = 'Javascript Object Notation (.json)';
-$string['privacy:metadata'] = 'The JSON Data format plugin does not store any personal data.';
-$string['shortname'] = 'JSON';
+namespace dataformat_ods\privacy;
 
+defined('MOODLE_INTERNAL') || die();
+
+/**
+ * Privacy provider implementation for dataformat_ods.
+ *
+ * @copyright  2018 Mihail Geshoski <mihail@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class provider implements \core_privacy\local\metadata\null_provider {
+
+    /**
+     * Get the language string identifier with the component's language
+     * file to explain why this plugin stores no data.
+     *
+     * @return  string
+     */
+    public static function get_reason() {
+        return 'privacy:metadata';
+    }
+}
