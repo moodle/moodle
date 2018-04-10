@@ -109,7 +109,7 @@ class process_data_request_task extends adhoc_task {
 
             // Delete the data
             $manager = new \core_privacy\manager();
-            $manager->delete_user_data($approvedclcollection);
+            $manager->delete_data_for_user($approvedclcollection);
         }
 
         // When the preparation of the metadata finishes, update the request status to awaiting approval.
