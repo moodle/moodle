@@ -104,10 +104,7 @@ function atto_recordrtc_strings_for_js() {
                      'uploadprogress',
                      'uploadfailed',
                      'uploadfailed404',
-                     'uploadaborted',
-                     'annotationprompt',
-                     'annotation:audio',
-                     'annotation:video'
+                     'uploadaborted'
                );
 
     $PAGE->requires->strings_for_js($strings, 'atto_recordrtc');

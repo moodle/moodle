@@ -26,9 +26,6 @@
 
 $string['allowedtypes'] = 'Allowed types';
 $string['allowedtypes_desc'] = 'Which recording buttons should appear in Atto';
-$string['annotationprompt'] = 'What should the annotation appear as?';
-$string['annotation:audio'] = 'Audio annotation';
-$string['annotation:video'] = 'Video annotation';
 $string['attachrecording'] = 'Attach recording';
 $string['audioandvideo'] = 'Audio and video';
 $string['audiobitrate'] = 'Audio bitrate';
