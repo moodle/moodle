@@ -28,7 +28,7 @@ if ($hassiteconfig
         $choices['1'] = new lang_string('emaildisplayyes');
         $choices['2'] = new lang_string('emaildisplaycourse');
         $temp->add(new admin_setting_configselect('defaultpreference_maildisplay', new lang_string('emaildisplay'),
-            '', 2, $choices));
+            new lang_string('emaildisplay_help'), 2, $choices));
 
         $choices = array();
         $choices['0'] = new lang_string('textformat');
@@ -150,6 +150,7 @@ if ($hassiteconfig
         $temp->add(new admin_setting_configmultiselect('hiddenuserfields', new lang_string('hiddenuserfields', 'admin'),
                    new lang_string('confighiddenuserfields', 'admin'), array(),
                        array('description' => new lang_string('description'),
+                             'email' => new lang_string('email'),
                              'city' => new lang_string('city'),
                              'country' => new lang_string('country'),
                              'timezone' => new lang_string('timezone'),
