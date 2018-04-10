@@ -1193,7 +1193,11 @@ function get_scorm_default (&$userdata, $scorm, $scoid, $attempt, $mode) {
     global $DB, $USER;
 
     $userdata->student_id = $USER->username;
-    $userdata->student_name = $USER->lastname .', '. $USER->firstname;
+    if (empty(get_config('scorm', 'scormstandard'))) {
+        $userdata->student_name = fullname($USER);
+    } else {
+        $userdata->student_name = $USER->lastname .', '. $USER->firstname;
+    }
 
     if ($usertrack = scorm_get_tracks($scoid, $USER->id, $attempt)) {
         // According to SCORM 2004(RTE V1, 4.2.8), only cmi.exit==suspend should allow previous datamodel elements on re-launch.

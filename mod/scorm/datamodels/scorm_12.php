@@ -43,7 +43,7 @@ if ($scoes = $DB->get_records('scorm_scoes', array('scorm' => $scorm->id), 'sort
 }
 
 // If SCORM 1.2 standard mode is disabled allow higher datamodel limits.
-if (intval(get_config("scorm", "scorm12standard"))) {
+if (intval(get_config("scorm", "scormstandard"))) {
     $cmistring256 = '^[\\u0000-\\uFFFF]{0,255}$';
     $cmistring4096 = '^[\\u0000-\\uFFFF]{0,4096}$';
 } else {
