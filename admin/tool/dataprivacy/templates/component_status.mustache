@@ -50,10 +50,9 @@
     <hr />
     <div class="row">
         {{#compliant}}
-            <a class="expand" data-component="{{raw_component}}" href='#'>
-            <h4 class="d-inline p-l-2 " id="{{raw_component}}">{{#pix}}t/collapsed, moodle, {{#str}}expandplugin, tool_dataprivacy{{/str}}{{/pix}}{{component}}</h4>
+            <a class="component-expand p-l-2" data-component="{{raw_component}}" href='#'>
+            <h4 class=" d-inline p-l-2 " id="{{raw_component}}">{{#pix}}t/collapsed, moodle, {{#str}}expandplugin, tool_dataprivacy{{/str}}{{/pix}}{{component}}</h4>
             </a>
-            <!-- <span class="badge badge-pill badge-success">{{#str}}compliant, tool_dataprivacy{{/str}}</span> -->
         {{/compliant}}
         {{^compliant}}
             <h4 class="d-inline p-l-3 " id="{{raw_component}}">{{component}}</h4>
@@ -104,29 +103,3 @@
         </div>
     {{/compliant}}
 </div>
-
-{{#js}}
-require(['jquery', 'core/url'], function($, url) {
-
-    var expandedImage = $('<img alt="" src="' + url.imageUrl('t/expanded') + '"/>');
-    var collapsedImage = $('<img alt="" src="' + url.imageUrl('t/collapsed') + '"/>');
-
-    $('.expand').click(function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        e.stopImmediatePropagation();
-        var component = $(this).data('component');
-        var metadata = $('[data-section=\'' + component + '\']');
-        var metainfo = metadata.attr('class');
-        if (metadata.attr('class') === 'hide') {
-            metadata.attr('class', 'visible');
-            $(this).children('img').attr('src', expandedImage.attr('src'));
-            metadata.attr('aria-expanded', true);
-        } else {
-            metadata.attr('class', 'hide');
-            $(this).children('img').attr('src', collapsedImage.attr('src'));
-            metadata.attr('aria-expanded', false);
-        }
-    });
-});
-{{/js}}

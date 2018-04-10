@@ -36,7 +36,7 @@
         }
     }
 }}
-<div>
+<div class="dataprivacy-main">
     <h2>{{#str}}pluginregistrytitle, tool_dataprivacy{{/str}}</h2>
     <hr />
     <p><strong>{{#str}}explanationtitle, tool_dataprivacy{{/str}}</strong></p>
@@ -51,11 +51,11 @@
     {{#types}}
     <div>
         <div>
-            <a class="other-expand" href='#' data-plugin="{{plugin_type_raw}}">
+            <a class="type-expand" href='#' data-plugin="{{plugin_type_raw}}">
             <h3 id="{{plugin_type_raw}}">{{#pix}}t/collapsed, moodle, {{#str}}expandplugintype, tool_dataprivacy{{/str}}{{/pix}}{{plugin_type}}</h3>
             </a>
         </div>
-        <div class="hide" data-plugintarget="{{plugin_type_raw}}" aria-expanded="false">
+        <div class="hide p-b-1" data-plugintarget="{{plugin_type_raw}}" aria-expanded="false">
             {{#plugins}}
                 {{> tool_dataprivacy/component_status}}
             {{/plugins}}
@@ -64,45 +64,31 @@
     {{/types}}
 </div>
 {{#js}}
-require(['jquery', 'core/url', 'core/str'], function($, url, str) {
+require(['jquery', 'tool_dataprivacy/expand_contract'], function($, ec) {
 
-    var expandedImage = $('<img alt="" src="' + url.imageUrl('t/expanded') + '"/>');
-    var collapsedImage = $('<img alt="" src="' + url.imageUrl('t/collapsed') + '"/>');
-
-    $('.other-expand').click(function(e) {
+    $('.type-expand').click(function(e) {
         e.preventDefault();
         e.stopPropagation();
-        e.stopImmediatePropagation();
-        window.console.log(this);
-        var plugin = $(this).data('plugin');
+        var thisnode = $(this);
+        var plugin = thisnode.data('plugin');
         var metadata = $('[data-plugintarget=\'' + plugin + '\']');
-        if (metadata.attr('class') === 'hide') {
-            metadata.attr('class', 'visible p-b-2');
-            $(this).children('img').attr('src', expandedImage.attr('src'));
-            metadata.attr('aria-expanded', true);
-        } else {
-            metadata.attr('class', 'hide');
-            $(this).children('img').attr('src', collapsedImage.attr('src'));
-            metadata.attr('aria-expanded', false);
-        }
+        ec.expandCollapse(metadata, thisnode);
+    });
+
+    $('.component-expand').click(function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var thisnode = $(this);
+        var plugin = thisnode.data('component');
+        var metadata = $('[data-section=\'' + plugin + '\']');
+        ec.expandCollapse(metadata, thisnode);
     });
 
     $('.tool_dataprivacy-expand-all').click(function(e) {
         e.preventDefault();
         e.stopPropagation();
         var nextstate = $(this).data('visibilityState');
-        var currentstate = (nextstate == 'visible') ? 'hide' : 'visible';
-        var ariaexpandedstate = (nextstate == 'visible') ? true : false;
-        $('.' + currentstate).each(function() {
-            $(this).attr('class', nextstate);
-            $(this).attr('aria-expanded', ariaexpandedstate);
-        });
-        $(this).data('visibilityState', currentstate);
-
-        str.get_string(currentstate, 'tool_dataprivacy').then(function(langString) {
-            var visibilitynode = $('.tool_dataprivacy-expand-all');
-            visibilitynode.html(langString);
-        }).catch(Notification.exception);
+        ec.expandCollapseAll(nextstate);
     });
 });
 {{/js}}

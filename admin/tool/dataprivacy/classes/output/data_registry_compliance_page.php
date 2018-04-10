@@ -26,7 +26,6 @@ defined('MOODLE_INTERNAL') || die();
 
 use renderable;
 use renderer_base;
-use stdClass;
 use templatable;
 
 require_once($CFG->libdir . '/coursecatlib.php');
@@ -41,6 +40,7 @@ require_once($CFG->libdir . '/blocklib.php');
  */
 class data_registry_compliance_page implements renderable, templatable {
 
+    /** @var array meta-data to be displayed about the system. */
     protected $metadata;
 
     /**
@@ -57,13 +57,6 @@ class data_registry_compliance_page implements renderable, templatable {
      * @return stdClass
      */
     public function export_for_template(renderer_base $output) {
-        global $PAGE;
-
-        $data = ['types' => $this->metadata];
-        // print_object($data);
-
-        return $data;
+        return ['types' => $this->metadata];
     }
-
-   
 }

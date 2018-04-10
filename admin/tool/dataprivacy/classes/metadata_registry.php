@@ -139,7 +139,7 @@ class metadata_registry {
         return array_map(function($plugins) {
             return array_filter($plugins, function($plugindata) {
                 return !$plugindata->is_standard();
-            });    
+            });
         }, \core_plugin_manager::instance()->get_plugins());
     }
 }

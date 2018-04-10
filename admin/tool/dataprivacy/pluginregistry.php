@@ -28,8 +28,8 @@ require_once($CFG->dirroot . '/' . $CFG->admin . '/tool/dataprivacy/lib.php');
 $contextlevel = optional_param('contextlevel', CONTEXT_SYSTEM, PARAM_INT);
 $contextid = optional_param('contextid', 0, PARAM_INT);
 
-$url = new moodle_url('/admin/tool/dataprivacy/dataregistry2.php');
-$title = get_string('dataregistry2', 'tool_dataprivacy');
+$url = new moodle_url('/' . $CFG->admin . '/tool/dataprivacy/pluginregistry.php');
+$title = get_string('pluginregistry', 'tool_dataprivacy');
 
 \tool_dataprivacy\page_helper::setup($url, $title);
 
