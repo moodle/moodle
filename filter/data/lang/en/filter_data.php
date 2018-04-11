@@ -26,3 +26,4 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['filtername'] = 'Database auto-linking';
+$string['privacy:metadata'] = 'The Database auto-linking plugin does not store any personal data.';
