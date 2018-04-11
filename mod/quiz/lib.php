@@ -183,7 +183,9 @@ function quiz_delete_instance($id) {
              WHERE slot.quizid = ? AND q.qtype = ?";
     $questionids = $DB->get_fieldset_sql($sql, array($quiz->id, 'random'));
 
-    // We need to do this before we try and delete randoms, otherwise they would still be 'in use'.
+    // We need to do the following deletes before we try and delete randoms, otherwise they would still be 'in use'.
+    $quizslots = $DB->get_fieldset_select('quiz_slots', 'id', 'quizid = ?', array($quiz->id));
+    $DB->delete_records_list('quiz_slot_tags', 'slotid', $quizslots);
     $DB->delete_records('quiz_slots', array('quizid' => $quiz->id));
     $DB->delete_records('quiz_sections', array('quizid' => $quiz->id));
 
