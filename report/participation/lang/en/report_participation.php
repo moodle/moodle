@@ -29,3 +29,4 @@ $string['participation:view'] = 'View course participation report';
 $string['page-report-participation-x'] = 'Any participation report';
 $string['page-report-participation-index'] = 'Course participation report';
 $string['pluginname'] = 'Course participation';
+$string['privacy:metadata'] = 'The Course participation plugin does not store any personal data.';
