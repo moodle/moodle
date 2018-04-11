@@ -399,6 +399,17 @@ class format_topics extends format_base {
         $rv['section_availability'] = $renderer->section_availability($this->get_section($section));
         return $rv;
     }
+
+    /**
+     * Return the plugin configs for external functions.
+     *
+     * @return array the list of configuration settings
+     * @since Moodle 3.5
+     */
+    public function get_config_for_external() {
+        // Return everything (nothing to hide).
+        return $this->get_format_options();
+    }
 }
 
 /**

@@ -1261,6 +1261,17 @@ abstract class format_base {
 
         return ['modules' => $modules];
     }
+
+    /**
+     * Return the plugin config settings for external functions,
+     * in some cases the configs will need formatting or be returned only if the current user has some capabilities enabled.
+     *
+     * @return array the list of configs
+     * @since Moodle 3.5
+     */
+    public function get_config_for_external() {
+        return array();
+    }
 }
 
 /**
