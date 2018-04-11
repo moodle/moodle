@@ -61,7 +61,7 @@ class award_criteria_cohort extends award_criteria {
             if (!$cohortname) {
                 $str = $OUTPUT->error_text(get_string('error:nosuchcohort', 'badges'));
             } else {
-                $str = html_writer::tag('b', '"' . $cohortname . '"');
+                $str = html_writer::tag('b', '"' . format_string($cohortname, true) . '"');
             }
             $output[] = $str;
         }

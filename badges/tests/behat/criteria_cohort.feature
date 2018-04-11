@@ -166,7 +166,7 @@ Feature: Award badges based on cohort
     And I log in as "user2"
     And I follow "Profile" in the user menu
     And I should not see "Site Badge"
-    
+
   @javascript
   Scenario: Award badge based on a single cohort membership or other criteria.
     Given the following "cohorts" exist:
@@ -222,7 +222,7 @@ Feature: Award badges based on cohort
     And I log in as "user3"
     And I follow "Profile" in the user menu
     And I should not see "Site Badge"
-    
+
   @javascript
   Scenario: Award badge based on a multiple cohort membership or other criteria.
     Given the following "cohorts" exist:
