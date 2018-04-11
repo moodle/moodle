@@ -30,4 +30,4 @@ $string['nologsfound'] = 'There were no logs found for this backup.';
 $string['pluginname'] = 'Backups report';
 $string['strftimetime'] = '%I:%M:%S %p';
 $string['viewlogs'] = 'View logs';
-$string['privacy:metadata'] = 'The report_backups plugin does not store any personal data.';
+$string['privacy:metadata'] = 'The Backups report plugin does not store any personal data.';
