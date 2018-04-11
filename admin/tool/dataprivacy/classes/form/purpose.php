@@ -26,6 +26,7 @@ namespace tool_dataprivacy\form;
 defined('MOODLE_INTERNAL') || die();
 
 use core\form\persistent;
+use tool_dataprivacy\purpose as purpose_persistent;
 
 /**
  * Data purpose form.
@@ -37,7 +38,7 @@ use core\form\persistent;
 class purpose extends persistent {
 
     /**
-     * @var The persistent class.
+     * @var string The persistent class.
      */
     protected static $persistentclass = 'tool_dataprivacy\\purpose';
 
@@ -45,6 +46,8 @@ class purpose extends persistent {
      * Define the form - called by parent constructor
      */
     public function definition() {
+        global $DB;
+
         $mform = $this->_form;
 
         $mform->addElement('text', 'name', get_string('name'), 'maxlength="100"');
@@ -54,6 +57,29 @@ class purpose extends persistent {
 
         $mform->addElement('editor', 'description', get_string('description'), null, ['autosave' => false]);
         $mform->setType('description', PARAM_CLEANHTML);
+
+        // Field for selecting lawful bases (from GDPR Article 6.1).
+        $lawfulbases = [];
+        foreach (purpose_persistent::GDPR_ART_6_1_ITEMS as $article) {
+            $key = 'gdpr_art_6_1_' . $article;
+            $lawfulbases[$key] = get_string($key . '_name', 'tool_dataprivacy');
+        }
+        $options = array(
+            'multiple' => true,
+        );
+        $mform->addElement('autocomplete', 'lawfulbases', get_string('lawfulbases', 'tool_dataprivacy'), $lawfulbases, $options);
+        $mform->addRule('lawfulbases', get_string('required'), 'required', null, 'server');
+        $mform->addHelpButton('lawfulbases', 'lawfulbases', 'tool_dataprivacy');
+
+        // Optional field for selecting reasons for collecting sensitive personal data (from GDPR Article 9.2).
+        $sensitivereasons = [];
+        foreach (purpose_persistent::GDPR_ART_9_2_ITEMS as $article) {
+            $key = 'gdpr_art_9_2_' . $article;
+            $sensitivereasons[$key] = get_string($key . '_name', 'tool_dataprivacy');
+        }
+        $mform->addElement('autocomplete', 'sensitivedatareasons', get_string('sensitivedatareasons', 'tool_dataprivacy'),
+            $sensitivereasons, $options);
+        $mform->addHelpButton('sensitivedatareasons', 'sensitivedatareasons', 'tool_dataprivacy');
 
         $number = $mform->createElement('text', 'retentionperiodnumber', null, ['size' => 8]);
         $unitoptions = [
@@ -88,6 +114,13 @@ class purpose extends persistent {
     protected static function convert_fields(\stdClass $data) {
         $data = parent::convert_fields($data);
 
+        if (is_array($data->lawfulbases)) {
+            $data->lawfulbases = implode(',', $data->lawfulbases);
+        }
+        if (is_array($data->sensitivedatareasons)) {
+            $data->sensitivedatareasons = implode(',', $data->sensitivedatareasons);
+        }
+
         // A single value.
         $data->retentionperiod = 'P' . $data->retentionperiodnumber . $data->retentionperiodunit;
         unset($data->retentionperiodnumber);
@@ -102,6 +135,11 @@ class purpose extends persistent {
      */
     protected function get_default_data() {
         $data = parent::get_default_data();
+
+        $data->lawfulbases = explode(',', $data->lawfulbases);
+        if (!empty($data->sensitivedatareasons)) {
+            $data->sensitivedatareasons = explode(',', $data->sensitivedatareasons);
+        }
 
         // Convert the single properties into number and unit.
         $strlen = strlen($data->retentionperiod);

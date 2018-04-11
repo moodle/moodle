@@ -24,7 +24,14 @@
 namespace tool_dataprivacy\external;
 defined('MOODLE_INTERNAL') || die();
 
+use coding_exception;
 use core\external\persistent_exporter;
+use DateInterval;
+use Exception;
+use external_single_structure;
+use external_value;
+use renderer_base;
+use tool_dataprivacy\purpose;
 
 /**
  * Class for exporting field data.
@@ -40,7 +47,7 @@ class purpose_exporter extends persistent_exporter {
      * @return string
      */
     protected static function define_class() {
-        return \tool_dataprivacy\purpose::class;
+        return purpose::class;
     }
 
     /**
@@ -60,25 +67,74 @@ class purpose_exporter extends persistent_exporter {
      * @return array
      */
     protected static function define_other_properties() {
-        return array(
-            'formattedretentionperiod' => array(
+        $namedescriptiontype = [
+            'name' => [
+                'type' => PARAM_TEXT,
+            ],
+            'description' => [
+                'type' => PARAM_TEXT,
+            ],
+        ];
+        return [
+            'formattedretentionperiod' => [
                 'type' => PARAM_TEXT
-            ),
-        );
+            ],
+            'formattedlawfulbases' => [
+                'type' => $namedescriptiontype,
+                'multiple' => true
+            ],
+            'formattedsensitivedatareasons' => [
+                'type' => $namedescriptiontype,
+                'multiple' => true,
+                'optional' => true
+            ],
+        ];
     }
 
     /**
      * Return other properties.
      *
-     * @param \renderer_base $output
-     * @throws coding_exception
-     * @throws dml_exception
+     * @param renderer_base $output
      * @return array
+     * @throws coding_exception
+     * @throws Exception
      */
-    protected function get_other_values(\renderer_base $output) {
+    protected function get_other_values(renderer_base $output) {
+        $values = [];
+
+        $formattedbases = [];
+        $lawfulbases = explode(',', $this->persistent->get('lawfulbases'));
+        if (!empty($lawfulbases)) {
+            foreach ($lawfulbases as $basis) {
+                if (empty(trim($basis))) {
+                    continue;
+                }
+                $formattedbases[] = (object)[
+                    'name' => get_string($basis . '_name', 'tool_dataprivacy'),
+                    'description' => get_string($basis . '_description', 'tool_dataprivacy')
+                ];
+            }
+        }
+        $values['formattedlawfulbases'] = $formattedbases;
+
+        $formattedsensitivereasons = [];
+        $sensitivereasons = explode(',', $this->persistent->get('sensitivedatareasons'));
+        if (!empty($sensitivereasons)) {
+            foreach ($sensitivereasons as $reason) {
+                if (empty(trim($reason))) {
+                    continue;
+                }
+                $formattedsensitivereasons[] = (object)[
+                    'name' => get_string($reason . '_name', 'tool_dataprivacy'),
+                    'description' => get_string($reason . '_description', 'tool_dataprivacy')
+                ];
+            }
+        }
+        $values['formattedsensitivedatareasons'] = $formattedsensitivereasons;
+
         $retentionperiod = $this->persistent->get('retentionperiod');
         if ($retentionperiod) {
-            $interval = new \DateInterval($retentionperiod);
+            $interval = new DateInterval($retentionperiod);
 
             // It is one or another.
             if ($interval->y) {
@@ -93,6 +149,8 @@ class purpose_exporter extends persistent_exporter {
         } else {
             $formattedtime = get_string('retentionperiodnotdefined', 'tool_dataprivacy');
         }
-        return ['formattedretentionperiod' => $formattedtime];
+        $values['formattedretentionperiod'] = $formattedtime;
+
+        return $values;
     }
 }

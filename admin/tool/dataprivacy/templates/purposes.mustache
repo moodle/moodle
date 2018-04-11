@@ -70,6 +70,8 @@
             <tr>
                 <th scope="col">{{#str}}name{{/str}}</th>
                 <th scope="col">{{#str}}description{{/str}}</th>
+                <th scope="col">{{#str}}lawfulbases, tool_dataprivacy{{/str}}</th>
+                <th scope="col">{{#str}}sensitivedatareasons, tool_dataprivacy{{/str}}</th>
                 <th scope="col">{{#str}}retentionperiod, tool_dataprivacy{{/str}}</th>
                 <th scope="col">{{#str}}protected, tool_dataprivacy{{/str}}</th>
                 <th scope="col">{{#str}}actions{{/str}}</th>
@@ -80,6 +82,24 @@
             <tr data-purposeid="{{id}}">
                 <td>{{{name}}}</td>
                 <td>{{{description}}}</td>
+                <td>
+                    <ul>
+                        {{#formattedlawfulbases}}
+                            <li>
+                                <span>{{name}}{{# pix }} i/info, core, {{description}} {{/ pix }}</span>
+                            </li>
+                        {{/formattedlawfulbases}}
+                    </ul>
+                </td>
+                <td>
+                    <ul>
+                        {{#formattedsensitivedatareasons}}
+                            <li>
+                                <span>{{name}}{{# pix }} i/info, core, {{description}} {{/ pix }}</span>
+                            </li>
+                        {{/formattedsensitivedatareasons}}
+                    </ul>
+                </td>
                 <td>{{formattedretentionperiod}}</td>
                 <td>
                     {{#protected}}

@@ -42,6 +42,12 @@ class purpose extends \core\persistent {
      */
     const TABLE = 'tool_dataprivacy_purpose';
 
+    /** Items under GDPR Article 6.1. */
+    const GDPR_ART_6_1_ITEMS = ['a', 'b', 'c', 'd', 'e', 'f'];
+
+    /** Items under GDPR Article 9.2. */
+    const GDPR_ART_9_2_ITEMS = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'];
+
     /**
      * Extended constructor to fetch from the cache if available.
      *
@@ -95,6 +101,16 @@ class purpose extends \core\persistent {
                 'choices' => array(FORMAT_HTML, FORMAT_MOODLE, FORMAT_PLAIN, FORMAT_MARKDOWN),
                 'type' => PARAM_INT,
                 'default' => FORMAT_HTML
+            ),
+            'lawfulbases' => array(
+                'type' => PARAM_TEXT,
+                'description' => 'Comma-separated IDs matching records in tool_dataprivacy_lawfulbasis.',
+            ),
+            'sensitivedatareasons' => array(
+                'type' => PARAM_TEXT,
+                'description' => 'Comma-separated IDs matching records in tool_dataprivacy_sensitive',
+                'null' => NULL_ALLOWED,
+                'default' => ''
             ),
             'retentionperiod' => array(
                 'type' => PARAM_ALPHANUM,
