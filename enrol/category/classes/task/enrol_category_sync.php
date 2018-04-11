@@ -57,7 +57,7 @@ class enrol_category_sync extends \core\task\scheduled_task {
         }
 
         require_once("$CFG->dirroot/enrol/category/locallib.php");
-        $trace = new null_progress_trace();
+        $trace = new \null_progress_trace();
         enrol_category_sync_full($trace);
     }
 }
