@@ -100,6 +100,9 @@ if ($showhistoric) {
 if ($charttype) {
     $params['charttype'] = $charttype;
 }
+if ($completiontype) {
+    $params['completiontype'] = $completiontype;
+}
 
 if ($compfromraw) {
     if (is_array($compfromraw)) {
