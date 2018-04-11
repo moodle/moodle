@@ -733,6 +733,14 @@ if (empty($charttype)) {
     
         if (empty($idlist['0'])) {
             foreach ($coursedata as $userid => $user) {
+
+                // Get the course info if it's all of them.
+                if ($courseid == 1) {
+                    if (!$iomadcourseinfo = $DB->get_record('iomad_courses', array('courseid' => $user->courseid))) {
+                        $iomadcourseinfo = new stdclass();
+                    }
+                }
+
                 if (empty($user->timestarted)) {
                     $statusstring = get_string('notstarted', 'local_report_completion');
                 } else {
