@@ -168,6 +168,7 @@ $compusertable->head = array(get_string('course', 'local_report_completion'),
                              get_string('dateenrolled', 'local_report_completion'),
                              get_string('datestarted', 'local_report_completion'),
                              get_string('datecompleted', 'local_report_completion'),
+                             get_string('timeexpires', 'local_report_completion'),
                              get_string('finalscore', 'local_report_completion'));
 $compusertable->align = array('left', 'center', 'center', 'center', 'center', 'center');
 $compusertable->width = '95%';
@@ -231,12 +232,18 @@ foreach ($usercourses as $usercourse) {
             } else {
                 $enrolledtime = "";
             }
+            $expiretime = "";
             if (!empty($usercompcourse->timecompleted)) {
                 $completetime = date($CFG->iomad_date_format, $usercompcourse->timecompleted);
+                if ($iomadcourserec = $DB->get_record('iomad_courses', array('courseid' => $usercourseid))) {
+                    if (!empty($iomadcourserec->validlength)) {
+                        $expiretime = date($CFG->iomad_date_format, $usercompcourse->timecompleted + $iomadcourserec->validlength * 24 * 60 * 60);
+                    }
+                }
             } else {
                 $completetime = "";
             }
-    
+
             // Link for user delete (TODO: this all needs refactored)
             $dellink = new moodle_url('/local/report_users/userdisplay.php', array(
                     'userid' => $userid,
@@ -308,6 +315,7 @@ foreach ($usercourses as $usercourse) {
                                                $enrolledtime,
                                                $starttime,
                                                $completetime,
+                                               $expiretime,
                                                $resultstring,
                                                $certstring . '&nbsp;' . $delaction);
             } else {
@@ -316,6 +324,7 @@ foreach ($usercourses as $usercourse) {
                                                $enrolledtime,
                                                $starttime,
                                                $completetime,
+                                               $expiretime,
                                                $resultstring,
                                                $delaction);
             }
