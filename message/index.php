@@ -147,6 +147,14 @@ $messagearea = new \core_message\output\messagearea\message_area($user1->id, $us
 // Now the page contents.
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('messages', 'message'));
+
+// Display a message if the messages have not been migrated yet.
+if (!get_user_preferences('core_message_migrate_data', false, $user1id)) {
+    $notify = new \core\output\notification(get_string('messagingdatahasnotbeenmigrated', 'message'),
+        \core\output\notification::NOTIFY_WARNING);
+    echo $OUTPUT->render($notify);
+}
+
 // Display a message that the user is viewing someone else's messages.
 if (!$currentuser) {
     $notify = new \core\output\notification(get_string('viewinganotherusersmessagearea', 'message'),

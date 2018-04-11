@@ -83,5 +83,26 @@ function xmldb_message_popup_upgrade($oldversion) {
     // Automatically generated Moodle v3.4.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2018032800) {
+        // Define table message_popup_notifications to be created.
+        $table = new xmldb_table('message_popup_notifications');
+
+        // Adding fields to table message_popup_notifications.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('notificationid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+
+        // Adding keys to table message_popup_notifications.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('notificationid', XMLDB_KEY_FOREIGN, array('notificationid'), 'notifications', array('id'));
+
+        // Conditionally launch create table for message_popup_notifications.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Popup savepoint reached.
+        upgrade_plugin_savepoint(true, 2018032800, 'message', 'popup');
+    }
+
     return true;
 }

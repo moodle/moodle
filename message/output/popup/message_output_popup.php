@@ -35,12 +35,29 @@ require_once($CFG->dirroot.'/message/output/lib.php');
 class message_output_popup extends message_output {
 
     /**
-     * Do nothing on send_message.
+     * Adds notifications to the 'message_popup_notifications' table if applicable.
+     *
+     * The reason for this is because we may not want to show all notifications in the notification popover. This
+     * can happen if the popup processor was disabled when the notification was sent. If the processor is disabled this
+     * function is never called so the notification will never be added to the 'message_popup_notifications' table.
+     * Essentially this table is used to filter what notifications to display from the 'notifications' table.
      *
      * @param object $eventdata the event data submitted by the message sender plus $eventdata->savedmessageid
      * @return true if ok, false if error
      */
     public function send_message($eventdata) {
+        global $DB;
+
+        // Prevent users from getting popup notifications from themselves (happens with forum notifications).
+        if ($eventdata->userfrom->id != $eventdata->userto->id && $eventdata->notification) {
+            if (!$DB->record_exists('message_popup_notifications', ['notificationid' => $eventdata->savedmessageid])) {
+                $record = new stdClass();
+                $record->notificationid = $eventdata->savedmessageid;
+
+                $DB->insert_record('message_popup_notifications', $record);
+            }
+        }
+
         return true;
     }
 
