@@ -402,6 +402,7 @@ class course_enrolment_manager {
         $extrafields = get_extra_user_fields($this->get_context(), array('username', 'lastaccess'));
         $extrafields[] = 'username';
         $extrafields[] = 'lastaccess';
+        $extrafields[] = 'maildisplay';
         $ufields = user_picture::fields('u', $extrafields);
 
         return array($ufields, $params, $wherecondition);
