@@ -165,3 +165,5 @@ $string['useracctctrlerror'] = 'Error getting userAccountControl for {$a}';
 // Deprecated since Moodle 3.4.
 $string['auth_ldap_creators'] = 'List of groups or contexts whose members are allowed to create new courses. Separate multiple groups with \';\'. Usually something like \'cn=teachers,ou=staff,o=myorg\'';
 $string['auth_ldap_creators_key'] = 'Creators';
+$string['privacy:metadata'] = 'The LDAP server authentication plugin does not store any personal data.';
+
