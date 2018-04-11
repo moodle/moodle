@@ -28,4 +28,4 @@ $string['mysessions'] = 'My active sessions';
 $string['pluginname'] = 'User sessions report';
 $string['thissession'] = 'Current session';
 $string['usersessions:manageownsessions'] = 'Manage own browser sessions';
-$string['privacy:metadata'] = 'The report_usersessions plugin does not store any personal data.';
+$string['privacy:metadata'] = 'The User sessions report plugin does not store any personal data.';
