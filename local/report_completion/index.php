@@ -453,7 +453,7 @@ if (!empty($CFG->iomad_report_fields)) {
 if (empty($charttype)) {
     if (!empty($courseid)) {
         // Get the course completion information.
-        $showexpiry = false;
+        $showexpiry = true;
         if ($iomadcourseinfo = $DB->get_record('iomad_courses', array('courseid' => $courseid))) {
             if (!empty($iomadcourseinfo->validlength)) {
                 $showexpiry = true;
@@ -759,7 +759,7 @@ if (empty($charttype)) {
                     $completetime = "-";
                 }
     
-                if ($showexpiry && !empty($user->timecompleted)) {
+                if ($showexpiry && !empty($user->timecompleted) && !empty($iomadcourseinfo->validlength)) {
                     $expirytime = date($CFG->iomad_date_format, $user->timecompleted + ($iomadcourseinfo->validlength * 24 * 60 * 60) );
                 } else {
                     $expirytime = "-";
