@@ -40,6 +40,10 @@
                                 {{ summary}}
                             </div>
                             <div class="finalresults">
+                                <p>{{#str}} timecompleted, local_report_completion {{/str}} {{ timecompleted }}
+                                {{#timeexpires}}
+                                    ({{#str}} timeexpires, local_report_completion {{/str}} {{ timeexpires }})
+                                {{/timeexpires}}</p>
                                 <p>{{#str}} finalscore, block_mycourses,  {{ finalscore }} {{/str}}
                                 {{#certificate}}
                                     <a class="btn btn-info" href="{{ certificate }}">{{#str}} downloadcert, block_mycourses {{/str}}</a></p>

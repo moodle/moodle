@@ -100,6 +100,12 @@ class completed_view implements renderable, templatable {
             $exportedcourse->fullname = $completed->coursefullname;
             $exportedcourse->image = $imageurl;
             $exportedcourse->summary = $coursesummary;
+            $exportedcourse->timecompleted = date($CFG->iomad_date_format, $completed->timecompleted);
+            if ($iomadcourserec = $DB->get_record('iomad_courses', array('courseid' => $completed->courseid))) {
+                if (!empty($iomadcourserec->validlength)) {
+                    $exportedcourse->timeexpires = date($CFG->iomad_date_format, $completed->timecompleted + $iomadcourserec->validlength * 24 * 60 * 60 );
+                }
+            }
             $exportedcourse->finalscore = intval($completed->finalgrade);
             $exportedcourse->certificate = $completed->certificate;
             $completedview['courses'][] = $exportedcourse;
