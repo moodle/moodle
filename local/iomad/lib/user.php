@@ -769,6 +769,7 @@ class iomad_user_filter_form extends moodleform {
         $mform->addElement('text', 'lastname', get_string('lastnamefilter', 'local_iomad'), 'size="20"');
         $mform->addElement('text', 'email', get_string('emailfilter', 'local_iomad'), 'size="20"');
         $mform->addElement('hidden', 'departmentid');
+        $mform->addElement('hidden', 'completiontype');
         $mform->addElement('hidden', 'eventid');
         $mform->addElement('hidden', 'courseid');
         $mform->addElement('hidden', 'licenseid');
@@ -777,6 +778,7 @@ class iomad_user_filter_form extends moodleform {
         $mform->setType('lastname', PARAM_CLEAN);
         $mform->setType('email', PARAM_EMAIL);
         $mform->setType('departmentid', PARAM_INT);
+        $mform->setType('completiontype', PARAM_INT);
         $mform->setType('eventid', PARAM_INT);
         $mform->setType('courseid', PARAM_INT);
         $mform->setType('licenseid', PARAM_INT);
