@@ -62,6 +62,7 @@ class external extends external_api {
     /**
      * Parameter description for cancel_data_request().
      *
+     * @since Moodle 3.5
      * @return external_function_parameters
      */
     public static function cancel_data_request_parameters() {
@@ -73,6 +74,7 @@ class external extends external_api {
     /**
      * Cancel a data request.
      *
+     * @since Moodle 3.5
      * @param int $requestid The request ID.
      * @return array
      * @throws invalid_persistent_exception
@@ -119,6 +121,7 @@ class external extends external_api {
     /**
      * Parameter description for cancel_data_request().
      *
+     * @since Moodle 3.5
      * @return external_description
      */
     public static function cancel_data_request_returns() {
@@ -131,6 +134,7 @@ class external extends external_api {
     /**
      * Parameter description for contact_dpo().
      *
+     * @since Moodle 3.5
      * @return external_function_parameters
      */
     public static function contact_dpo_parameters() {
@@ -142,6 +146,7 @@ class external extends external_api {
     /**
      * Deny a data request.
      *
+     * @since Moodle 3.5
      * @param string $message The message to be sent to the DPO.
      * @return array
      * @throws coding_exception
@@ -207,6 +212,7 @@ class external extends external_api {
     /**
      * Parameter description for deny_data_request().
      *
+     * @since Moodle 3.5
      * @return external_description
      */
     public static function contact_dpo_returns() {
@@ -219,6 +225,7 @@ class external extends external_api {
     /**
      * Parameter description for get_data_request().
      *
+     * @since Moodle 3.5
      * @return external_function_parameters
      */
     public static function get_data_request_parameters() {
@@ -230,6 +237,7 @@ class external extends external_api {
     /**
      * Fetch the details of a user's data request.
      *
+     * @since Moodle 3.5
      * @param int $requestid The request ID.
      * @return array
      * @throws coding_exception
@@ -266,6 +274,7 @@ class external extends external_api {
     /**
      * Parameter description for get_data_request().
      *
+     * @since Moodle 3.5
      * @return external_description
      */
     public static function get_data_request_returns() {
@@ -278,6 +287,7 @@ class external extends external_api {
     /**
      * Parameter description for approve_data_request().
      *
+     * @since Moodle 3.5
      * @return external_function_parameters
      */
     public static function approve_data_request_parameters() {
@@ -289,6 +299,7 @@ class external extends external_api {
     /**
      * Approve a data request.
      *
+     * @since Moodle 3.5
      * @param int $requestid The request ID.
      * @return array
      * @throws coding_exception
@@ -332,6 +343,7 @@ class external extends external_api {
     /**
      * Parameter description for approve_data_request().
      *
+     * @since Moodle 3.5
      * @return external_description
      */
     public static function approve_data_request_returns() {
@@ -344,6 +356,7 @@ class external extends external_api {
     /**
      * Parameter description for deny_data_request().
      *
+     * @since Moodle 3.5
      * @return external_function_parameters
      */
     public static function deny_data_request_parameters() {
@@ -355,6 +368,7 @@ class external extends external_api {
     /**
      * Deny a data request.
      *
+     * @since Moodle 3.5
      * @param int $requestid The request ID.
      * @return array
      * @throws coding_exception
@@ -398,6 +412,7 @@ class external extends external_api {
     /**
      * Parameter description for deny_data_request().
      *
+     * @since Moodle 3.5
      * @return external_description
      */
     public static function deny_data_request_returns() {
@@ -410,6 +425,7 @@ class external extends external_api {
     /**
      * Parameter description for get_data_request().
      *
+     * @since Moodle 3.5
      * @return external_function_parameters
      */
     public static function get_users_parameters() {
@@ -421,6 +437,7 @@ class external extends external_api {
     /**
      * Fetch the details of a user's data request.
      *
+     * @since Moodle 3.5
      * @param string $query The search request.
      * @return array
      * @throws required_capability_exception
@@ -460,6 +477,7 @@ class external extends external_api {
     /**
      * Parameter description for get_users().
      *
+     * @since Moodle 3.5
      * @return external_description
      * @throws coding_exception
      */
@@ -476,6 +494,7 @@ class external extends external_api {
     /**
      * Parameter description for create_purpose_form().
      *
+     * @since Moodle 3.5
      * @return external_function_parameters
      */
     public static function create_purpose_form_parameters() {
@@ -487,6 +506,7 @@ class external extends external_api {
     /**
      * Creates a data purpose from form data.
      *
+     * @since Moodle 3.5
      * @param string $jsonformdata
      * @return array
      */
@@ -527,6 +547,7 @@ class external extends external_api {
     /**
      * Returns for create_purpose_form().
      *
+     * @since Moodle 3.5
      * @return external_single_structure
      */
     public static function create_purpose_form_returns() {
@@ -540,6 +561,7 @@ class external extends external_api {
     /**
      * Parameter description for delete_purpose().
      *
+     * @since Moodle 3.5
      * @return external_function_parameters
      */
     public static function delete_purpose_parameters() {
@@ -551,6 +573,7 @@ class external extends external_api {
     /**
      * Deletes a data purpose.
      *
+     * @since Moodle 3.5
      * @param int $id The ID.
      * @return array
      * @throws invalid_persistent_exception
@@ -575,6 +598,7 @@ class external extends external_api {
     /**
      * Parameter description for delete_purpose().
      *
+     * @since Moodle 3.5
      * @return external_single_structure
      */
     public static function delete_purpose_returns() {
@@ -587,6 +611,7 @@ class external extends external_api {
     /**
      * Parameter description for create_category_form().
      *
+     * @since Moodle 3.5
      * @return external_function_parameters
      */
     public static function create_category_form_parameters() {
@@ -598,6 +623,7 @@ class external extends external_api {
     /**
      * Creates a data category from form data.
      *
+     * @since Moodle 3.5
      * @param string $jsonformdata
      * @return array
      */
@@ -638,6 +664,7 @@ class external extends external_api {
     /**
      * Returns for create_category_form().
      *
+     * @since Moodle 3.5
      * @return external_single_structure
      */
     public static function create_category_form_returns() {
@@ -651,6 +678,7 @@ class external extends external_api {
     /**
      * Parameter description for delete_category().
      *
+     * @since Moodle 3.5
      * @return external_function_parameters
      */
     public static function delete_category_parameters() {
@@ -662,6 +690,7 @@ class external extends external_api {
     /**
      * Deletes a data category.
      *
+     * @since Moodle 3.5
      * @param int $id The ID.
      * @return array
      * @throws invalid_persistent_exception
@@ -686,6 +715,7 @@ class external extends external_api {
     /**
      * Parameter description for delete_category().
      *
+     * @since Moodle 3.5
      * @return external_single_structure
      */
     public static function delete_category_returns() {
@@ -698,6 +728,7 @@ class external extends external_api {
     /**
      * Parameter description for set_contextlevel_form().
      *
+     * @since Moodle 3.5
      * @return external_function_parameters
      */
     public static function set_contextlevel_form_parameters() {
@@ -709,6 +740,7 @@ class external extends external_api {
     /**
      * Creates a data category from form data.
      *
+     * @since Moodle 3.5
      * @param string $jsonformdata
      * @return array
      */
@@ -753,6 +785,7 @@ class external extends external_api {
     /**
      * Returns for set_contextlevel_form().
      *
+     * @since Moodle 3.5
      * @return external_single_structure
      */
     public static function set_contextlevel_form_returns() {
@@ -765,6 +798,7 @@ class external extends external_api {
     /**
      * Parameter description for set_context_form().
      *
+     * @since Moodle 3.5
      * @return external_function_parameters
      */
     public static function set_context_form_parameters() {
@@ -776,6 +810,7 @@ class external extends external_api {
     /**
      * Creates a data category from form data.
      *
+     * @since Moodle 3.5
      * @param string $jsonformdata
      * @return array
      */
@@ -819,6 +854,7 @@ class external extends external_api {
     /**
      * Returns for set_context_form().
      *
+     * @since Moodle 3.5
      * @return external_single_structure
      */
     public static function set_context_form_returns() {
@@ -831,6 +867,7 @@ class external extends external_api {
     /**
      * Parameter description for tree_extra_branches().
      *
+     * @since Moodle 3.5
      * @return external_function_parameters
      */
     public static function tree_extra_branches_parameters() {
@@ -843,6 +880,7 @@ class external extends external_api {
     /**
      * Returns tree extra branches.
      *
+     * @since Moodle 3.5
      * @param int $contextid
      * @param string $element
      * @return array
@@ -882,6 +920,7 @@ class external extends external_api {
     /**
      * Returns for tree_extra_branches().
      *
+     * @since Moodle 3.5
      * @return external_single_structure
      */
     public static function tree_extra_branches_returns() {
@@ -894,6 +933,7 @@ class external extends external_api {
     /**
      * Parameters for confirm_contexts_for_deletion().
      *
+     * @since Moodle 3.5
      * @return external_function_parameters
      */
     public static function confirm_contexts_for_deletion_parameters() {
@@ -908,6 +948,7 @@ class external extends external_api {
     /**
      * Confirm a given array of expired context record IDs
      *
+     * @since Moodle 3.5
      * @param int[] $ids Array of record IDs from the expired contexts table.
      * @return array
      * @throws coding_exception
@@ -988,6 +1029,7 @@ class external extends external_api {
     /**
      * Returns for confirm_contexts_for_deletion().
      *
+     * @since Moodle 3.5
      * @return external_single_structure
      */
     public static function confirm_contexts_for_deletion_returns() {
@@ -1000,6 +1042,7 @@ class external extends external_api {
     /**
      * Gets the structure of a tree node (link + child branches).
      *
+     * @since Moodle 3.5
      * @param bool $allowchildbranches
      * @return array
      */
