@@ -26,3 +26,5 @@
 
 $string['pluginname'] = 'Radio button';
 $string['fieldtypelabel'] = 'Radio button field';
+$string['privacy:metadata'] = 'The Radio button field component does not store any personal data.';
+

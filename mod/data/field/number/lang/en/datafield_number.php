@@ -26,3 +26,4 @@
 
 $string['pluginname'] = 'Number';
 $string['fieldtypelabel'] = 'Number field';
+$string['privacy:metadata'] = 'The Number field component does not store any personal data.';
