@@ -48,3 +48,4 @@ $string['op_isempty'] = 'is empty';
 $string['op_isequalto'] = 'is equal to';
 $string['op_isnotempty'] = 'is not empty';
 $string['op_startswith'] = 'starts with';
+$string['privacy:metadata'] = 'The Restriction by profile plugin does not store any personal data.';
