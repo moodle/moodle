@@ -551,4 +551,19 @@ class tool_policy_api_testcase extends advanced_testcase {
         $this->assertEquals(1, $DB->count_records('tool_policy_acceptances',
             ['userid' => $user2->id, 'policyversionid' => $policy->id]));
     }
+
+    /**
+     * Test that user can login if sitepolicyhandler is set but there are no policies.
+     */
+    public function test_login_with_handler_without_policies() {
+        global $CFG;
+
+        $this->resetAfterTest();
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+
+        $CFG->sitepolicyhandler = 'tool_policy';
+
+        require_login(null, false, null, false, true);
+    }
 }

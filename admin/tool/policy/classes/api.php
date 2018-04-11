@@ -477,7 +477,7 @@ class api {
      * @param int $versionid
      */
     public static function make_current($versionid) {
-        global $DB;
+        global $DB, $USER;
 
         $policyversion = new policy_version($versionid);
         if (! $policyversion->get('id') || $policyversion->get('archived')) {
@@ -498,6 +498,11 @@ class api {
 
         // Reset the policyagreed flag to force everybody re-accept the policies.
         $DB->set_field('user', 'policyagreed', 0);
+
+        // Make sure that the current user is not immediately redirected to the policy acceptance page.
+        if (isloggedin() && !isguestuser()) {
+            $USER->policyagreed = 1;
+        }
     }
 
     /**

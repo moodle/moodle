@@ -144,14 +144,7 @@ class page_agreedocs implements renderable, templatable {
                     ];
                 }
                 $this->messages[] = $message;
-            } else if (empty($this->policies)) {
-                // There are no policies to agree to. Update the policyagreed value to avoid display empty consent page.
-                $currentuser = (!empty($this->behalfuser)) ? $this->behalfuser : $USER;
-                // Check for updating when the user policyagreed is false.
-                if (!$currentuser->policyagreed) {
-                    api::update_policyagreed($currentuser);
-                }
-            } else if (empty($USER->policyagreed)) {
+            } else if (!empty($this->policies) && empty($USER->policyagreed)) {
                 // Inform users they must agree to all policies before continuing.
                 $message = (object) [
                     'type' => 'error',

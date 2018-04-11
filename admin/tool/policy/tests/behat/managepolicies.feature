@@ -40,8 +40,7 @@ Feature: Manage policies
     And I log out
 
   Scenario: Create new policy and save as active
-    When I log in as "admin"
-    # TODO MDL-61844 change to manager!
+    When I log in as "manager"
     And I navigate to "Privacy and policies > Manage policies" in site administration
     And I follow "New policy"
     And I set the following fields to these values:
@@ -153,8 +152,7 @@ Feature: Manage policies
     Given the following policies exist:
       | Name       | Revision | Content    | Summary     | Status   |
       | Policy1    | v1       | full text2 | short text2 | draft    |
-    And I log in as "admin"
-    # TODO MDL-61844 change to manager!
+    And I log in as "manager"
     And I navigate to "Privacy and policies > Manage policies" in site administration
     And I open the action menu in "Policy1" "table_row"
     And I click on "Edit" "link" in the "Policy1" "table_row"
@@ -173,8 +171,7 @@ Feature: Manage policies
     Given the following policies exist:
       | Name       | Revision | Content    | Summary     | Status   |
       | Policy1    | v1       | full text2 | short text2 | draft    |
-    And I log in as "admin"
-    # TODO MDL-61844 change to manager!
+    And I log in as "manager"
     And I navigate to "Privacy and policies > Manage policies" in site administration
     And I open the action menu in "Policy1" "table_row"
     And I click on "Set status to \"Active\"" "link" in the "Policy1" "table_row"
