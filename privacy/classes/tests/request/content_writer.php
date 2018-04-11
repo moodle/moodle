@@ -141,13 +141,17 @@ class content_writer implements \core_privacy\local\request\content_writer {
      * @param   \stdClass       $data       The data to be exported
      */
     public function export_data(array $subcontext, \stdClass $data) : \core_privacy\local\request\content_writer {
-        array_push($subcontext, 'data');
-
-        $finalcontent = $data;
+        $finalcontent = [
+            'children' => [],
+            'data' => $data,
+        ];
 
         while ($pathtail = array_pop($subcontext)) {
             $finalcontent = [
-                $pathtail => $finalcontent,
+                'children' => [
+                    $pathtail => $finalcontent,
+                ],
+                'data' => [],
             ];
         }
 
@@ -165,10 +169,8 @@ class content_writer implements \core_privacy\local\request\content_writer {
     public function get_data(array $subcontext = []) {
         $basepath = $this->data[$this->context->id];
         while ($subpath = array_shift($subcontext)) {
-            if (isset($basepath[$subpath])) {
-                $basepath = $basepath[$subpath];
-            } else {
-                return [];
+            if (isset($basepath['children']) && isset($basepath['children'][$subpath])) {
+                $basepath = $basepath['children'][$subpath];
             }
         }
 
@@ -195,18 +197,22 @@ class content_writer implements \core_privacy\local\request\content_writer {
         $value,
         string $description
     ) : \core_privacy\local\request\content_writer {
-        array_push($subcontext, 'metadata');
-
         $finalcontent = [
-            $key => (object) [
-                'value' => $value,
-                'description' => $description,
+            'children' => [],
+            'metadata' => [
+                $key => (object) [
+                    'value' => $value,
+                    'description' => $description,
+                ],
             ],
         ];
 
         while ($pathtail = array_pop($subcontext)) {
             $finalcontent = [
-                $pathtail => $finalcontent,
+                'children' => [
+                    $pathtail => $finalcontent,
+                ],
+                'metadata' => [],
             ];
         }
 
@@ -224,8 +230,8 @@ class content_writer implements \core_privacy\local\request\content_writer {
     public function get_all_metadata(array $subcontext = []) {
         $basepath = $this->metadata[$this->context->id];
         while ($subpath = array_shift($subcontext)) {
-            if (isset($basepath[$subpath])) {
-                $basepath = $basepath[$subpath];
+            if (isset($basepath['children']) && isset($basepath['children'][$subpath])) {
+                $basepath = $basepath['children'][$subpath];
             }
         }
 
@@ -245,13 +251,14 @@ class content_writer implements \core_privacy\local\request\content_writer {
      * @return  array                       The metadata as a series of keys to value + descrition objects.
      */
     public function get_metadata(array $subcontext = [], $key, $valueonly = true) {
-        $data = $this->get_all_metadata($subcontext);
+        $keys = $this->get_all_metadata($subcontext);
 
-        if (!isset($data[$key])) {
+        if (isset($keys[$key])) {
+            $metadata = $keys[$key];
+        } else {
             return null;
         }
 
-        $metadata = $data[$key];
         if ($valueonly) {
             return $metadata->value;
         } else {
@@ -267,14 +274,19 @@ class content_writer implements \core_privacy\local\request\content_writer {
      * @param   \stdClass       $data       The related data to export.
      */
     public function export_related_data(array $subcontext, $name, $data) : \core_privacy\local\request\content_writer {
-        array_push($subcontext, $name);
-        array_push($subcontext, 'data');
-
-        $finalcontent = $data;
+        $finalcontent = [
+            'children' => [],
+            'data' => [
+                $name => $data,
+            ],
+        ];
 
         while ($pathtail = array_pop($subcontext)) {
             $finalcontent = [
-                $pathtail => $finalcontent,
+                'children' => [
+                    $pathtail => $finalcontent,
+                ],
+                'data' => [],
             ];
         }
 
@@ -290,22 +302,27 @@ class content_writer implements \core_privacy\local\request\content_writer {
      * @param   string          $filename   The name of the intended filename.
      * @return  array                       The metadata as a series of keys to value + descrition objects.
      */
-    public function get_related_data(array $subcontext = [], $filename) {
+    public function get_related_data(array $subcontext = [], $filename = null) {
         $basepath = $this->relateddata[$this->context->id];
-        $subcontext[] = $filename;
         while ($subpath = array_shift($subcontext)) {
-            if (isset($basepath[$subpath])) {
-                $basepath = $basepath[$subpath];
-            } else {
-                return [];
+            if (isset($basepath['children']) && isset($basepath['children'][$subpath])) {
+                $basepath = $basepath['children'][$subpath];
             }
         }
 
         if (isset($basepath['data'])) {
-            return $basepath['data'];
-        } else {
-            return [];
+            $data = $basepath['data'];
+            if (null !== $filename) {
+                if (isset($data[$filename])) {
+                    return $data[$filename];
+                }
+                return null;
+            }
+
+            return $data;
         }
+
+        return null;
     }
 
     /**
@@ -319,11 +336,17 @@ class content_writer implements \core_privacy\local\request\content_writer {
         $filename = clean_param($filename, PARAM_FILE);
 
         $finalcontent = [
-            $filename => $filecontent,
+            'children' => [],
+            'files' => [
+                $filename => $filecontent,
+            ],
         ];
         while ($pathtail = array_pop($subcontext)) {
             $finalcontent = [
-                $pathtail => $finalcontent,
+                'children' => [
+                    $pathtail => $finalcontent,
+                ],
+                'files' => [],
             ];
         }
 
@@ -340,18 +363,23 @@ class content_writer implements \core_privacy\local\request\content_writer {
      * @return  string                      The content of the file.
      */
     public function get_custom_file(array $subcontext = [], $filename = null) {
-        if (!empty($filename)) {
-            array_push($subcontext, $filename);
-        }
-
         $basepath = $this->customfiles[$this->context->id];
         while ($subpath = array_shift($subcontext)) {
-            if (isset($basepath[$subpath])) {
-                $basepath = $basepath[$subpath];
+            if (isset($basepath['children']) && isset($basepath['children'][$subpath])) {
+                $basepath = $basepath['children'][$subpath];
             }
         }
 
-        return $basepath;
+        if (isset($basepath['files'])) {
+            if (null !== $filename) {
+                if (isset($basepath['files'][$filename])) {
+                    return $basepath['files'][$filename];
+                }
+                return null;
+            }
+            return $basepath['files'];
+        }
+        return null;
     }
 
     /**
@@ -394,18 +422,24 @@ class content_writer implements \core_privacy\local\request\content_writer {
      */
     public function export_file(array $subcontext, \stored_file $file) : \core_privacy\local\request\content_writer  {
         if (!$file->is_directory()) {
-            $subcontextextra = [
-                'files',
-                $file->get_filepath(),
-            ];
-            $newsubcontext = array_merge($subcontext, $subcontextextra);
+            $filepath = explode(DIRECTORY_SEPARATOR, $file->get_filepath());
+            $filepath[] = $file->get_filename();
+            $filepath = array_filter($filepath);
+            $filepath = implode('/', $filepath);
 
             $finalcontent = [
-                $file,
+                'children' => [],
+                'files' => [
+                    $filepath => $file,
+                ],
             ];
+
             while ($pathtail = array_pop($subcontext)) {
                 $finalcontent = [
-                    $pathtail => $finalcontent,
+                    'children' => [
+                        $pathtail => $finalcontent,
+                    ],
+                    'files' => [],
                 ];
             }
 
@@ -424,12 +458,16 @@ class content_writer implements \core_privacy\local\request\content_writer {
     public function get_files(array $subcontext = []) {
         $basepath = $this->files[$this->context->id];
         while ($subpath = array_shift($subcontext)) {
-            if (isset($basepath[$subpath])) {
-                $basepath = $basepath[$subpath];
+            if (isset($basepath['children']) && isset($basepath['children'][$subpath])) {
+                $basepath = $basepath['children'][$subpath];
             }
         }
 
-        return $basepath;
+        if (isset($basepath['files'])) {
+            return $basepath['files'];
+        }
+
+        return [];
     }
 
     /**
