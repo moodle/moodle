@@ -69,3 +69,4 @@ $string['auth_dbuser_key'] = 'DB user';
 $string['auth_dbuserstoadd'] = 'User entries to add: {$a}';
 $string['auth_dbuserstoremove'] = 'User entries to remove: {$a}';
 $string['pluginname'] = 'External database';
+$string['privacy:metadata'] = 'The External database authentication plugin does not store any personal data.';
