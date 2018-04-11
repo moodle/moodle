@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -14,16 +13,29 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
 /**
- * Strings for component 'datafield_date', language 'en', branch 'master'
+ * Privacy Subsystem implementation for datafield_picture.
  *
- * @package    datafield
- * @subpackage date
- * @copyright  2011 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @package    datafield_picture
+ * @copyright  2018 Carlos Escobedo <carlos@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-$string['pluginname'] = 'Date';
-$string['fieldtypelabel'] = 'Date field';
-$string['privacy:metadata'] = 'The Date field component does not store any personal data.';
+namespace datafield_picture\privacy;
+defined('MOODLE_INTERNAL') || die();
+/**
+ * Privacy Subsystem for datafield_picture implementing null_provider.
+ *
+ * @copyright  2018 Carlos Escobedo <carlos@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class provider implements \core_privacy\local\metadata\null_provider {
+    /**
+     * Get the language string identifier with the component's language
+     * file to explain why this plugin stores no data.
+     *
+     * @return  string
+     */
+    public static function get_reason() : string {
+        return 'privacy:metadata';
+    }
+}

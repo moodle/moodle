@@ -26,3 +26,4 @@
 
 $string['pluginname'] = 'File';
 $string['fieldtypelabel'] = 'File field';
+$string['privacy:metadata'] = 'The File field component does not store any personal data.';
