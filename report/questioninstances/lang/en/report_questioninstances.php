@@ -36,3 +36,4 @@ $string['reportforqtype'] = 'Report for question type \'{$a}\'';
 $string['reportsettings'] = 'Report settings';
 $string['totalquestions'] = 'Total';
 $string['visiblequestions'] = 'Visible';
+$string['privacy:metadata'] = 'The Question instances plugin does not store any personal data.';

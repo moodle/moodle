@@ -34,3 +34,4 @@ $string['page-report-outline-x'] = 'Any outline report';
 $string['page-report-outline-index'] = 'Course outline report';
 $string['page-report-outline-user'] = 'User course outline report';
 $string['pluginname'] = 'Activity report';
+$string['privacy:metadata'] = 'The Activity report plugin does not store any personal data.';
