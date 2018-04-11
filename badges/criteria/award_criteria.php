@@ -75,6 +75,12 @@ define('BADGE_CRITERIA_TYPE_PROFILE', 6);
 define('BADGE_CRITERIA_TYPE_BADGE', 7);
 
 /*
+ * Cohort criteria type
+ * Criteria type constant, primarily for storing criteria type in the database.
+ */
+define('BADGE_CRITERIA_TYPE_COHORT', 8);
+
+/*
  * Criteria type constant to class name mapping
  */
 global $BADGE_CRITERIA_TYPES;
@@ -87,6 +93,7 @@ $BADGE_CRITERIA_TYPES = array(
     BADGE_CRITERIA_TYPE_COURSESET => 'courseset',
     BADGE_CRITERIA_TYPE_PROFILE   => 'profile',
     BADGE_CRITERIA_TYPE_BADGE     => 'badge',
+    BADGE_CRITERIA_TYPE_COHORT    => 'cohort',
 );
 
 /**
