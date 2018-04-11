@@ -36,3 +36,5 @@ $string['auth_fcuserid_key'] = 'User ID';
 $string['auth_fchost'] = 'The FirstClass server address. Use the IP number or DNS name.';
 $string['auth_fchost_key'] = 'Host';
 $string['pluginname'] = 'FirstClass server';
+$string['privacy:metadata'] = 'The FirstClass server authentication plugin does not store any personal data.';
+
