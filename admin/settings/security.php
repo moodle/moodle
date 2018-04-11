@@ -43,6 +43,9 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     $temp->add(new admin_setting_configtext('userquota', new lang_string('userquota', 'admin'),
                 new lang_string('configuserquota', 'admin', $params), $defaultuserquota, PARAM_INT, 30));
 
+    $temp->add(new admin_setting_configcheckbox('forceclean', new lang_string('forceclean', 'core_admin'),
+        new lang_string('forceclean_desc', 'core_admin'), 0));
+
     $temp->add(new admin_setting_configcheckbox('allowobjectembed', new lang_string('allowobjectembed', 'admin'), new lang_string('configallowobjectembed', 'admin'), 0));
     $temp->add(new admin_setting_configcheckbox('enabletrusttext', new lang_string('enabletrusttext', 'admin'), new lang_string('configenabletrusttext', 'admin'), 0));
     $temp->add(new admin_setting_configselect('maxeditingtime', new lang_string('maxeditingtime','admin'), new lang_string('configmaxeditingtime','admin'), 1800,
