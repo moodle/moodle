@@ -15,19 +15,32 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'report_backups'
+ * Privacy Subsystem implementation for report_competency.
  *
- * @package    report
- * @subpackage backups
- * @copyright  2007 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @package    report_competency
+ * @copyright  2018 Zig Tan <zig@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['backupofcourselogs'] = 'Backup logs of {$a}';
-$string['logsofbackupexecutedon'] = 'Logs of the backup executed on {$a}';
-$string['nobackupsfound'] = 'There were no backups found.';
-$string['nologsfound'] = 'There were no logs found for this backup.';
-$string['pluginname'] = 'Backups report';
-$string['strftimetime'] = '%I:%M:%S %p';
-$string['viewlogs'] = 'View logs';
-$string['privacy:metadata'] = 'The Backups reports plugin does not store any personal data.';
+namespace report_competency\privacy;
+
+defined('MOODLE_INTERNAL') || die();
+
+/**
+ * Privacy Subsystem for report_competency implementing null_provider.
+ *
+ * @copyright  2018 Zig Tan <zig@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class provider implements \core_privacy\local\metadata\null_provider {
+
+    /**
+     * Get the language string identifier with the component's language
+     * file to explain why this plugin stores no data.
+     *
+     * @return  string
+     */
+    public static function get_reason() : string {
+        return 'privacy:metadata';
+    }
+}

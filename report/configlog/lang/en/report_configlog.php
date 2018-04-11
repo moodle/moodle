@@ -30,3 +30,4 @@ $string['pluginname'] = 'Config changes';
 $string['setting'] = 'Setting';
 $string['timemodified'] = 'Date';
 $string['value'] = 'New value';
+$string['privacy:metadata'] = 'The Config changes plugin does not store any personal data.';

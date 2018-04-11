@@ -45,3 +45,4 @@ $string['timecreated'] = 'Time predicted';
 $string['timerange'] = 'Time range';
 $string['timerangewithdata'] = '{$a->timestart} to {$a->timeend}';
 $string['selectotherinsights'] = 'Select other insights...';
+$string['privacy:metadata'] = 'The Insights plugin does not store any personal data.';
