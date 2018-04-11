@@ -75,22 +75,6 @@ class enrol_category_plugin extends enrol_plugin {
     }
 
     /**
-     * Called for all enabled enrol plugins that returned true from is_cron_required().
-     * @return void
-     */
-    public function cron() {
-        global $CFG;
-
-        if (!enrol_is_enabled('category')) {
-            return;
-        }
-
-        require_once("$CFG->dirroot/enrol/category/locallib.php");
-        $trace = new null_progress_trace();
-        enrol_category_sync_full($trace);
-    }
-
-    /**
      * Called after updating/inserting course.
      *
      * @param bool $inserted true if course just inserted
