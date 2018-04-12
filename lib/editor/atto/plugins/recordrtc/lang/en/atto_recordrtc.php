@@ -60,6 +60,7 @@ $string['nowebrtc_title'] = 'WebRTC not supported';
 $string['onlyaudio'] = 'Audio only';
 $string['onlyvideo'] = 'Video only';
 $string['pluginname'] = 'RecordRTC';
+$string['privacy:metadata'] = 'The RecordRTC plugin does not store any personal data.';
 $string['recordagain'] = 'Record again';
 $string['recordingfailed'] = 'Recording failed, try again';
 $string['settings'] = 'RecordRTC settings';
