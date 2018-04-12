@@ -1139,7 +1139,8 @@ class global_navigation extends navigation_node {
                 'key' => 'home',
                 'type' => navigation_node::TYPE_SYSTEM,
                 'text' => get_string('home'),
-                'action' => new moodle_url('/')
+                'action' => new moodle_url('/'),
+                'icon' => new pix_icon('i/home', '')
             );
         } else {
             // We are using the users my moodle for the root element
@@ -1207,7 +1208,8 @@ class global_navigation extends navigation_node {
         if (get_home_page() == HOMEPAGE_SITE) {
             // The home element should be my moodle because the root element is the site
             if (isloggedin() && !isguestuser()) {  // Makes no sense if you aren't logged in
-                $this->rootnodes['home'] = $this->add(get_string('myhome'), new moodle_url('/my/'), self::TYPE_SETTING, null, 'home');
+                $this->rootnodes['home'] = $this->add(get_string('myhome'), new moodle_url('/my/'),
+                    self::TYPE_SETTING, null, 'home', new pix_icon('i/dashboard', ''));
                 $this->rootnodes['home']->showinflatnavigation = true;
             }
         } else {
@@ -3908,6 +3910,7 @@ class flat_navigation extends navigation_node_collection {
             $flat = new flat_navigation_node($addablock, 0);
             $flat->set_showdivider(true);
             $flat->key = 'addblock';
+            $flat->icon = new pix_icon('i/addblock', '');
             $this->add($flat);
             $blocks = [];
             foreach ($addable as $block) {
