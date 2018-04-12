@@ -67,22 +67,22 @@
     <table class="generaltable fullwidth">
         <caption class="accesshide">{{#str}}purposeslist, tool_dataprivacy{{/str}}</caption>
         <thead>
-            <tr>
-                <th scope="col">{{#str}}name{{/str}}</th>
-                <th scope="col">{{#str}}description{{/str}}</th>
-                <th scope="col">{{#str}}lawfulbases, tool_dataprivacy{{/str}}</th>
-                <th scope="col">{{#str}}sensitivedatareasons, tool_dataprivacy{{/str}}</th>
-                <th scope="col">{{#str}}retentionperiod, tool_dataprivacy{{/str}}</th>
-                <th scope="col">{{#str}}protected, tool_dataprivacy{{/str}}</th>
-                <th scope="col">{{#str}}actions{{/str}}</th>
+            <tr style="display: flex;">
+                <th scope="col" class="col-md-2">{{#str}}name{{/str}}</th>
+                <th scope="col" class="col-md-3">{{#str}}description{{/str}}</th>
+                <th scope="col" class="col-md-2">{{#str}}lawfulbases, tool_dataprivacy{{/str}}</th>
+                <th scope="col" class="col-md-2">{{#str}}sensitivedatareasons, tool_dataprivacy{{/str}}</th>
+                <th scope="col" class="col-md-1">{{#str}}retentionperiod, tool_dataprivacy{{/str}}</th>
+                <th scope="col" class="col-md-1">{{#str}}protected, tool_dataprivacy{{/str}}</th>
+                <th scope="col" class="col-md-1">{{#str}}actions{{/str}}</th>
             </tr>
         </thead>
         <tbody>
             {{#purposes}}
             <tr data-purposeid="{{id}}">
-                <td>{{{name}}}</td>
-                <td>{{{description}}}</td>
-                <td>
+                <td class="col-md-2">{{{name}}}</td>
+                <td class="col-md-3">{{{description}}}</td>
+                <td class="col-md-2">
                     <ul>
                         {{#formattedlawfulbases}}
                             <li>
@@ -91,7 +91,7 @@
                         {{/formattedlawfulbases}}
                     </ul>
                 </td>
-                <td>
+                <td class="col-md-2">
                     <ul>
                         {{#formattedsensitivedatareasons}}
                             <li>
@@ -100,8 +100,8 @@
                         {{/formattedsensitivedatareasons}}
                     </ul>
                 </td>
-                <td>{{formattedretentionperiod}}</td>
-                <td>
+                <td class="col-md-1">{{formattedretentionperiod}}</td>
+                <td class="col-md-1">
                     {{#protected}}
                         {{#pix}}i/checked, core, {{#str}}yes{{/str}}{{/pix}}
                     {{/protected}}
@@ -109,7 +109,7 @@
                         {{#str}}no{{/str}}
                     {{/protected}}
                 </td>
-                <td>
+                <td class="col-md-1">
                     {{#actions}}
                         {{> core/action_menu}}
                     {{/actions}}
