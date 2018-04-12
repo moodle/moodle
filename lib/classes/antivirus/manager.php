@@ -92,7 +92,7 @@ class manager {
         foreach ($antiviruses as $antivirus) {
             $result = $antivirus->scan_data($data);
             if ($result === $antivirus::SCAN_RESULT_FOUND) {
-                throw new \core\antivirus\scanner_exception('virusfounduser', '', array('item' => get_string('datastream', 'antivirus')));
+                throw new \core\antivirus\scanner_exception('virusfound', '', array('item' => get_string('datastream', 'antivirus')));
             }
         }
     }
