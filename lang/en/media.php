@@ -33,6 +33,7 @@ $string['mediaformats'] = 'Available players';
 $string['mediaformats_desc'] = 'When players are enabled, media files can be embedded using the multimedia plugins filter (if enabled) or using a file or URL resource. When not enabled, these formats are not embedded and users can download or follow links to these resources.
 
 Where two players support the same format, enabling both increases compatibility across different devices such as mobile phones. It is possible to increase compatibility further by providing multiple files in different formats for a single audio or video clip.';
+$string['privacy:metadata'] = 'Media embedding does not store any personal data.';
 $string['supports'] = 'Supports';
 $string['videoextensions'] = 'Video: {$a}';
 
