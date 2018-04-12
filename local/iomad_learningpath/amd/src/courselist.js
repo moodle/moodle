@@ -34,8 +34,10 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification'], 
 
                 var items = [];
                 $.each(courses, function(id, course) {
-                    items.push('<li class="text-truncate" data-courseid="' + course.id +
-                        '"><i class="fa fa-globe"></i> ' + course.fullname + '</li>');
+                    //items.push('<li class="text-truncate" data-courseid="' + course.id +
+                    //    '"><i class="fa fa-globe"></i> ' + course.fullname + ' <i class="fa fa-plus text-success"></i></li>');
+                    items.push('<li class="text-truncate"><i class="fa fa-globe"></i> ' + course.fullname +
+                        ' <i data-courseid="' + course.id + '" class="path-add fa fa-plus text-success"></i></li>');
                 });
                 $('#prospectivelist').append(items.join(''));
             }
@@ -102,8 +104,8 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification'], 
 
                 var items = [];
                 $.each(courses, function(id, course) {
-                    items.push('<li class="text-truncate" data-courseid="' + course.id +
-                        '"><i class="fa fa-globe"></i> ' + course.fullname + '</li>');
+                    items.push('<li class="text-truncate"><i class="fa fa-globe"></i> ' + course.fullname +
+                        ' <i data-courseid="' + course.id + '" class="path-delete fa fa-trash text-danger"></i></li>');
                 });
                 $('#pathcourselist').append(items.join(''));
             }
@@ -137,7 +139,7 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification'], 
             /**
              * Add click handler for adding course
              */
-            $('#prospectivelist').on('click', 'li', function() {
+            $('#prospectivelist').on('click', '.path-add', function() {
                 var courseid = $(this).data('courseid');
 
                 // Add the course to the path
@@ -156,7 +158,7 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification'], 
             /**
              * Add click handler for removing course
              */
-            $('#pathcourselist').on('click', 'li', function() {
+            $('#pathcourselist').on('click', '.path-delete', function() {
                 var courseid = $(this).data('courseid');
 
                 // Remove the course from the path
@@ -178,7 +180,7 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification'], 
 
                     // Get already selected courseids
                     var courses = [];
-                    $("#pathcourselist li").each(function() {
+                    $("#pathcourselist .path-delete").each(function() {
                         courses.push($(this).data('courseid'));
                     });
 

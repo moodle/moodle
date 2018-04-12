@@ -37,6 +37,8 @@ class companypaths {
 
     protected $company;
 
+    protected $categories;
+
     public function __construct($companyid, $context) {
         $this->context = $context;
         $this->companyid = $companyid;
@@ -205,16 +207,20 @@ class companypaths {
         $depcourses = company::get_recursive_department_courses($topdepartment->id);
 
         $courses = array();
+        $categories = array();
         foreach ($depcourses as $depcourse) {
-            
-            // Do not include courses already selected
-            if (in_array($depcourse->courseid, $selectedcourses)) {
-                continue;
-            }
 
             // Get full course object
             if (!$course = $DB->get_record('course', ['id' => $depcourse->courseid])) {
                 throw new \coding_exception('No course record found for courseid = ' . $depcourse->courseid);
+            }
+
+            // Collect categories regardless of selection
+            $categories[$course->category] = $course->category;
+            
+            // Do not include courses already selected
+            if (in_array($depcourse->courseid, $selectedcourses)) {
+                continue;
             }
 
             // Apply filter (if specified).
@@ -223,8 +229,36 @@ class companypaths {
             }
             $courses[$course->id] = $course;
         }
+        $this->categories = $categories;
 
         return $courses;
+    }
+
+    /**
+     * Return course categories used
+     * @param int $pathid
+     * @return array
+     */
+    public function get_categories($pathid) {
+        global $DB;
+
+        // Check if categories have been collected
+        if (!$this->categories) {
+            $this->get_prospective_courses($pathid);
+        }
+        
+        // loop over categories and get full(er) information. 
+        $cat0 = (object)['id' => 0, 'name' => get_string('all', 'local_iomad_learningpath')];
+        $cats = [0 => $cat0];
+        foreach ($this->categories as $categoryid) {
+            $cat = new \stdClass;
+            $coursecategory = $DB->get_record('course_categories', ['id' => $categoryid], '*', MUST_EXIST);
+            $cat->id = $coursecategory->id;
+            $cat->name = $coursecategory->name;
+            $cats[$categoryid] = $cat;
+        }
+
+        return $cats;
     }
 
     /**
@@ -243,8 +277,10 @@ class companypaths {
 
         // Work through courses.
         foreach ($courseids as $courseid) {
+
+            // Double clicking can try to add the same course twice. 
             if (!array_key_exists($courseid, $allcourses)) {
-                throw new \coding_exception("Course with id=$courseid is not one of company courses");
+                continue;
             }
 
             // If course already in the list then just skip it
