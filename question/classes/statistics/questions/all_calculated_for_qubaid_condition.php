@@ -410,29 +410,41 @@ class all_calculated_for_qubaid_condition {
     protected function all_subq_and_variant_stats_for_slot($slot, $limited) {
         // Random question in this slot?
         if ($this->for_slot($slot)->get_sub_question_ids()) {
-            if ($limited) {
-                $subqvariantstats = $this->all_subq_variants_for_one_slot($slot);
-                if ($this->too_many_subq_and_or_variant_rows($subqvariantstats)) {
-                    // Too many variants from randomly selected questions.
-                    return $this->find_min_median_and_max_facility_stats_objects($subqvariantstats);
-                }
-                $subqstats = $this->all_subqs_for_one_slot($slot);
-                if ($this->too_many_subq_and_or_variant_rows($subqstats)) {
-                    // Too many randomly selected questions.
-                    return $this->find_min_median_and_max_facility_stats_objects($subqstats);
-                }
-            }
             $toreturn = array();
-            $displaynumber = 1;
-            foreach ($this->for_slot($slot)->get_sub_question_ids() as $subqid) {
-                $toreturn[] = $this->make_new_subq_stat_for($displaynumber, $slot, $subqid);
-                if ($variants = $this->for_subq($subqid)->get_variants()) {
-                    foreach ($variants as $variant) {
-                        $toreturn[] = $this->make_new_subq_stat_for($displaynumber, $slot, $subqid, $variant);
-                    }
+
+            if ($limited) {
+                $randomquestioncalculated = $this->for_slot($slot);
+                // If we're showing a limited view of the statistics then add a
+                // random question summary stat rather than a stat for each
+                // subquestion.
+                $toreturn[] = $this->make_new_random_question_summary_stat($randomquestioncalculated);
+
+                if ($subqvariantstats = $this->all_subq_variants_for_one_slot($slot)) {
+                    $subqvariantfacilitystats = $this->find_min_median_and_max_facility_stats_objects($subqvariantstats);
+                    $toreturn = array_merge($toreturn, $subqvariantfacilitystats);
                 }
-                $displaynumber++;
+
+                if ($subqstats = $this->all_subqs_for_one_slot($slot)) {
+                    $subqfacilitystats = $this->find_min_median_and_max_facility_stats_objects($subqstats);
+                    $toreturn = array_merge($toreturn, $subqfacilitystats);
+                }
+
+                foreach ($toreturn as $index => $calculated) {
+                    $calculated->subqdisplayorder = $index + 1;
+                }
+            } else {
+                $displaynumber = 1;
+                foreach ($this->for_slot($slot)->get_sub_question_ids() as $subqid) {
+                    $toreturn[] = $this->make_new_subq_stat_for($displaynumber, $slot, $subqid);
+                    if ($variants = $this->for_subq($subqid)->get_variants()) {
+                        foreach ($variants as $variant) {
+                            $toreturn[] = $this->make_new_subq_stat_for($displaynumber, $slot, $subqid, $variant);
+                        }
+                    }
+                    $displaynumber++;
+                }
             }
+
             return $toreturn;
         } else {
             $variantstats = $this->all_variant_stats_for_one_slot($slot);
@@ -459,5 +471,22 @@ class all_calculated_for_qubaid_condition {
         $slotstat->question->number = $this->for_slot($slot)->question->number;
         $slotstat->subqdisplayorder = $displaynumber;
         return $slotstat;
+    }
+
+    /**
+     * Create a summary calculated object for a random question. This is used as a placeholder
+     * to indicate that a random question has sub questions to show rather than listing each
+     * subquestion directly.
+     *
+     * @param  calculated $randomquestioncalculated The calculated instance for the random question slot.
+     * @return calculated_random_question_summary
+     */
+    protected function make_new_random_question_summary_stat($randomquestioncalculated) {
+        $question = $randomquestioncalculated->question;
+        $slot = $randomquestioncalculated->slot;
+        $calculatedsummary = new calculated_random_question_summary($question, $slot);
+        $calculatedsummary->subquestions = $randomquestioncalculated->subquestions;
+
+        return $calculatedsummary;
     }
 }
