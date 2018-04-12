@@ -24,4 +24,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['privacy:metadata:user_private_key'] = 'Information about the user\'s access keys used in cookieless scripts, such as RSS.';
+$string['privacy:metadata:user_private_key:timecreated'] = 'The timestamp indicating when the key was created';
+$string['privacy:metadata:user_private_key:userid'] = 'The ID of the user which is associated to this key';
+$string['privacy:metadata:user_private_key:validuntil'] = 'The timestamp indicating when the key will expire';
+$string['privacy:metadata:user_private_key:value'] = 'The token used for getting the ID of the user';
 $string['rss'] = 'RSS';
