@@ -34,6 +34,7 @@ $string['errorduringimport'] = 'An error occurred when trying to import: {$a}';
 $string['fileurl'] = 'Remote file URL';
 $string['fileurl_help'] = 'The remote file URL field is for fetching data from a remote server, such as a student information system.';
 $string['pluginname'] = 'XML file';
+$string['privacy:metadata'] = 'The import grades from XML plugin does not store any personal data.';
 $string['xml:publish'] = 'Publish import grades from XML';
 $string['xml:view'] = 'Import grades from XML';
 $string['importxml'] = 'XML import';
