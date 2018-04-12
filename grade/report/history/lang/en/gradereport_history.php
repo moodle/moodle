@@ -46,6 +46,7 @@ $string['historyperpage_help'] = 'This setting determines the number of history 
 $string['loadmoreusers'] = 'Load more users...';
 $string['pluginname'] = 'Grade history';
 $string['preferences'] = 'Grade history preferences';
+$string['privacy:metadata'] = 'The Grade history report only shows data stored in other locations.';
 $string['revisedonly'] = 'Revised grades only';
 $string['revisedonly_help'] = 'Only show grades which have been revised.
 
