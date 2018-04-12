@@ -27,6 +27,9 @@ namespace tool_policy\privacy;
 use core_privacy\local\metadata\collection;
 use core_privacy\local\request\approved_contextlist;
 use core_privacy\local\request\contextlist;
+use core_privacy\local\request\moodle_content_writer;
+use core_privacy\local\request\transform;
+use core_privacy\local\request\writer;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -75,7 +78,13 @@ class provider implements
      * @return contextlist The list of contexts containing user info for the user.
      */
     public static function get_contexts_for_userid(int $userid) : contextlist {
-        return new contextlist();
+        $contextlist = new contextlist();
+        $contextlist->add_from_sql('SELECT DISTINCT c.id
+            FROM {tool_policy_acceptances} a
+            JOIN {context} c ON a.userid = c.instanceid AND c.contextlevel = ?
+            WHERE a.userid = ? OR a.usermodified = ?',
+            [CONTEXT_USER, $userid, $userid]);
+        return $contextlist;
     }
 
     /**
@@ -84,10 +93,48 @@ class provider implements
      * @param approved_contextlist $contextlist A list of contexts approved for export.
      */
     public static function export_user_data(approved_contextlist $contextlist) {
+        global $DB;
+        foreach ($contextlist->get_contexts() as $context) {
+            if ($context->contextlevel != CONTEXT_USER) {
+                continue;
+            }
+            $user = $contextlist->get_user();
+            $agreements = $DB->get_records_sql('SELECT a.id, a.userid, v.name, v.revision, a.usermodified, a.timecreated,
+                  a.timemodified, a.note, v.archived, p.currentversionid, a.status, a.policyversionid
+                FROM {tool_policy_acceptances} a
+                JOIN {tool_policy_versions} v ON v.id=a.policyversionid
+                JOIN {tool_policy} p ON v.policyid = p.id
+                WHERE a.userid = ? AND (a.userid = ? OR a.usermodified = ?)
+                ORDER BY a.userid, v.archived, v.timecreated DESC',
+                [$context->instanceid, $user->id, $user->id]);
+            foreach ($agreements as $agreement) {
+                $context = \context_user::instance($agreement->userid);
+                $subcontext = [
+                    get_string('userpoliciesagreements', 'tool_policy'),
+                    transform::user($agreement->userid)
+                ];
+                $name = 'policyagreement-' . $agreement->policyversionid;
+                $agreementcontent = (object) [
+                    'userid' => transform::user($agreement->userid),
+                    'status' => $agreement->status,
+                    'versionid' => $agreement->policyversionid,
+                    'name' => $agreement->name,
+                    'revision' => $agreement->revision,
+                    'isactive' => transform::yesno($agreement->policyversionid == $agreement->currentversionid),
+                    'usermodified' => transform::user($agreement->usermodified),
+                    'timecreated' => transform::datetime($agreement->timecreated),
+                    'timemodified' => transform::datetime($agreement->timemodified),
+                    'note' => $agreement->note,
+                ];
+                writer::with_context($context)->export_related_data($subcontext, $name, $agreementcontent);
+            }
+        }
     }
 
     /**
      * Delete all data for all users in the specified context.
+     *
+     * We never delete user agreements to the policies because they are part of privacy data.
      *
      * @param \context $context The context to delete in.
      */
@@ -96,6 +143,8 @@ class provider implements
 
     /**
      * Delete all user data for the specified user, in the specified contexts.
+     *
+     * We never delete user agreements to the policies because they are part of privacy data.
      *
      * @param approved_contextlist $contextlist A list of contexts approved for deletion.
      */
