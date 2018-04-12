@@ -303,4 +303,11 @@
     <license>GPL</license>
     <licenseversion>2.0+</licenseversion>
   </library>
+  <library>
+    <location>amd/src/popper.js</location>
+    <name>Popper.js</name>
+    <license>MIT</license>
+    <version>v1.12.6</version>
+    <licenseversion></licenseversion>
+  </library>
 </libraries>
