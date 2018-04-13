@@ -94,7 +94,7 @@ class accept_policy extends \moodleform {
      * @return array (userid=>username)
      */
     protected function validate_and_get_users($userids) {
-        global $DB, $USER;
+        global $DB;
         $usernames = [];
         list($sql, $params) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED);
         $params['usercontextlevel'] = CONTEXT_USER;
@@ -103,7 +103,6 @@ class accept_policy extends \moodleform {
             " FROM {user} u JOIN {context} ctx ON ctx.contextlevel=:usercontextlevel AND ctx.instanceid = u.id
             WHERE u.id " . $sql, $params);
 
-        $acceptany = has_capability('tool/policy:acceptbehalf', \context_system::instance());
         foreach ($userids as $userid) {
             if (!isset($users[$userid])) {
                 throw new \dml_missing_record_exception('user', 'id=?', [$userid]);
@@ -112,12 +111,8 @@ class accept_policy extends \moodleform {
             if (isguestuser($user)) {
                 throw new \moodle_exception('noguest');
             }
-            if ($userid == $USER->id) {
-                require_capability('tool/policy:accept', \context_system::instance());
-            } else if (!$acceptany) {
-                \context_helper::preload_from_record($user);
-                require_capability('tool/policy:acceptbehalf', \context_user::instance($userid));
-            }
+            \context_helper::preload_from_record($user);
+            api::can_accept_policies($userid, true);
             $usernames[$userid] = fullname($user);
         }
         return $usernames;

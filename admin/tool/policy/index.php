@@ -44,15 +44,9 @@ $PAGE->set_context(context_system::instance());
 $PAGE->set_url('/admin/tool/policy/index.php');
 $PAGE->set_popup_notification_allowed(false);
 
-$haspermissionagreedocs = false;
 if (!empty($USER->id)) {
     // Existing user.
-    if (empty($behalfid) || $behalfid == $USER->id) {
-        $haspermissionagreedocs = has_capability('tool/policy:accept', context_system::instance());
-    } else {
-        $usercontext = \context_user::instance($behalfid);
-        $haspermissionagreedocs = has_capability('tool/policy:acceptbehalf', $usercontext);
-    }
+    $haspermissionagreedocs = api::can_accept_policies($behalfid);
 } else {
     // New user.
     $haspermissionagreedocs = true;
@@ -63,6 +57,9 @@ if (!$haspermissionagreedocs) {
 } else if ($cancel) {
     redirect(new moodle_url('/'));
 } else {
+    if (!$behalfid && \core\session\manager::is_loggedinas()) {
+        $behalfid = $USER->id;
+    }
     $outputpage = new \tool_policy\output\page_agreedocs($agreedocs, $behalfid, $submit);
 }
 

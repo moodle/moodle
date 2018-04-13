@@ -228,3 +228,34 @@ Feature: Viewing acceptances reports and accepting on behalf of other users
     And I navigate to course participants
     And I follow "User Two"
     Then I should see "Policies and agreements"
+
+  Scenario: Agree on behalf of another user as an admin who is logged in as a manager
+    Given I log in as "admin"
+    And I set the following system permissions of "Manager" role:
+      | capability | permission |
+      | tool/policy:acceptbehalf | Allow |
+    And I log out
+    When I log in as "manager"
+    And I press "Next"
+    And I set the field "I agree to the This site policy" to "1"
+    And I press "Next"
+    And I log out
+    And I log in as "admin"
+    And I navigate to "Users > Accounts > Browse list of users" in site administration
+    And I follow "Manager"
+    And I follow "Log in as"
+    And I press "Continue"
+    And I navigate to "Privacy and policies > Manage policies" in site administration
+    And I click on "1 of 4 (25%)" "link" in the "This site policy" "table_row"
+    And I click on "Not agreed" "link" in the "User One" "table_row"
+    Then I should see "Consent details"
+    And I should see "User One"
+    And I should see "This site policy"
+    And I should see "I acknowledge that consents to these policies have been acquired"
+    And I set the field "Remarks" to "Consent received from a parent"
+    And I press "I agree to the policy"
+    And "Agreed on behalf of" "icon" should exist in the "User One" "table_row"
+    And "Max Manager" "link" should not exist in the "User One" "table_row"
+    And "Admin User" "link" should exist in the "User One" "table_row"
+    And "Consent received from a parent" "text" should exist in the "User One" "table_row"
+    And "Not agreed" "icon" should exist in the "User Two" "table_row"

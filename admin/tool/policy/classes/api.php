@@ -29,6 +29,7 @@ use coding_exception;
 use context_helper;
 use context_system;
 use context_user;
+use core\session\manager;
 use stdClass;
 use tool_policy\event\acceptance_created;
 use tool_policy\event\acceptance_updated;
@@ -773,6 +774,46 @@ class api {
     }
 
     /**
+     * Checks if user can accept policies for themselves or on behalf of another user
+     *
+     * @param int $userid
+     * @param bool $throwexception
+     * @return bool
+     */
+    public static function can_accept_policies($userid = null, $throwexception = false) {
+        global $USER;
+        if (!isloggedin() || isguestuser()) {
+            if ($throwexception) {
+                throw new \moodle_exception('noguest');
+            } else {
+                return false;
+            }
+        }
+        if (!$userid) {
+            $userid = $USER->id;
+        }
+
+        if ($userid == $USER->id && !manager::is_loggedinas()) {
+            if ($throwexception) {
+                require_capability('tool/policy:accept', context_system::instance());
+                return;
+            } else {
+                return has_capability('tool/policy:accept', context_system::instance());
+            }
+        }
+
+        // Check capability to accept on behalf as the real user.
+        $realuser = manager::get_realuser();
+        $usercontext = \context_user::instance($userid);
+        if ($throwexception) {
+            require_capability('tool/policy:acceptbehalf', $usercontext, $realuser);
+            return;
+        } else {
+            return has_capability('tool/policy:acceptbehalf', $usercontext, $realuser);
+        }
+    }
+
+    /**
      * Accepts the current revisions of all policies that the user has not yet accepted
      *
      * @param array|int $policyversionid
@@ -782,24 +823,18 @@ class api {
      */
     public static function accept_policies($policyversionid, $userid = null, $note = null, $lang = null) {
         global $DB, $USER;
-        if (!isloggedin() || isguestuser()) {
-            throw new \moodle_exception('noguest');
-        }
-        if (!$userid) {
-            $userid = $USER->id;
-        }
-        $usercontext = \context_user::instance($userid);
-        if ($userid == $USER->id) {
-            require_capability('tool/policy:accept', context_system::instance());
-        } else {
-            require_capability('tool/policy:acceptbehalf', $usercontext);
-        }
-
+        // Validate arguments and capabilities.
         if (empty($policyversionid)) {
             return;
         } else if (!is_array($policyversionid)) {
             $policyversionid = [$policyversionid];
         }
+        if (!$userid) {
+            $userid = $USER->id;
+        }
+        self::can_accept_policies($userid, true);
+
+        // Retrieve the list of policy versions that need agreement (do not update existing agreements).
         list($sql, $params) = $DB->get_in_or_equal($policyversionid, SQL_PARAMS_NAMED);
         $sql = "SELECT v.id AS versionid, a.*
                   FROM {tool_policy_versions} v
@@ -807,8 +842,9 @@ class api {
                   WHERE (a.id IS NULL or a.status <> 1) AND v.id " . $sql;
         $needacceptance = $DB->get_records_sql($sql, ['userid' => $userid] + $params);
 
+        $realuser = manager::get_realuser();
         $updatedata = ['status' => 1, 'lang' => $lang ?: current_language(),
-            'timemodified' => time(), 'usermodified' => $USER->id, 'note' => $note];
+            'timemodified' => time(), 'usermodified' => $realuser->id, 'note' => $note];
         foreach ($needacceptance as $versionid => $currentacceptance) {
             unset($currentacceptance->versionid);
             if ($currentacceptance->id) {
@@ -871,23 +907,16 @@ class api {
      */
     public static function revoke_acceptance($policyversionid, $userid, $note = null) {
         global $DB, $USER;
-        if (!isloggedin() || isguestuser()) {
-            throw new \moodle_exception('noguest');
-        }
         if (!$userid) {
             $userid = $USER->id;
         }
-        $usercontext = \context_user::instance($userid);
-        if ($userid == $USER->id) {
-            require_capability('tool/policy:accept', context_system::instance());
-        } else {
-            require_capability('tool/policy:acceptbehalf', $usercontext);
-        }
+        self::can_accept_policies($userid, true);
 
         if ($currentacceptance = $DB->get_record('tool_policy_acceptances',
                 ['policyversionid' => $policyversionid, 'userid' => $userid])) {
+            $realuser = manager::get_realuser();
             $updatedata = ['id' => $currentacceptance->id, 'status' => 0, 'timemodified' => time(),
-                'usermodified' => $USER->id, 'note' => $note];
+                'usermodified' => $realuser->id, 'note' => $note];
             $DB->update_record('tool_policy_acceptances', $updatedata);
             acceptance_updated::create_from_record((object)($updatedata + (array)$currentacceptance))->trigger();
         }

@@ -77,8 +77,7 @@ class user_agreement implements \templatable, \renderable {
         $this->accepted = $accepted;
         $this->canaccept = $canaccept;
         if (count($this->accepted) < count($this->versions) && $canaccept === null) {
-            $this->canaccept = (has_capability('tool/policy:acceptbehalf', \context_system::instance()) ||
-                has_capability('tool/policy:acceptbehalf', \context_user::instance($this->userid)));
+            $this->canaccept = \tool_policy\api::can_accept_policies($this->userid);
         }
     }
 

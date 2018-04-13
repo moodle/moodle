@@ -25,6 +25,7 @@
 
 namespace tool_policy\output;
 
+use core\session\manager;
 use moodle_exception;
 
 defined('MOODLE_INTERNAL') || die();
@@ -69,23 +70,16 @@ class page_nopermission implements renderable, templatable {
     public function __construct($behalfid) {
         global $USER;
 
-        $this->behalfid = $behalfid;
-        if (!empty($this->behalfid) && $USER->id != $this->behalfid) {
-            $this->behalfuser = core_user::get_user($this->behalfid, '*');
-            // If behalf user doesn't exist, behalfid parameter will be ignored.
-            if ($this->behalfuser === false) {
-                $this->behalfid = 0;
-            }
+        $behalfid = $behalfid ?: $USER->id;
+        $realuser = manager::get_realuser();
+        if ($realuser->id != $behalfid) {
+            $this->behalfuser = core_user::get_user($behalfid, '*', MUST_EXIST);
+            $this->behalfid = $this->behalfuser->id;
         }
 
         if (!empty($USER->id)) {
             // For existing users, it's needed to check if they have the capability for accepting policies.
-            if (empty($this->behalfid) || $this->behalfid == $USER->id) {
-                $this->haspermissionagreedocs = has_capability('tool/policy:accept', context_system::instance());
-            } else {
-                $usercontext = \context_user::instance($this->behalfid);
-                $this->haspermissionagreedocs = has_capability('tool/policy:acceptbehalf', $usercontext);
-            }
+            $this->haspermissionagreedocs = api::can_accept_policies($this->behalfid);
         }
 
         $this->policies = api::list_current_versions(policy_version::AUDIENCE_LOGGEDIN);
@@ -128,7 +122,7 @@ class page_nopermission implements renderable, templatable {
      * Export the page data for the mustache template.
      *
      * @param renderer_base $output renderer to be used to render the page elements.
-     * @return stdClass
+     * @return \stdClass
      */
     public function export_for_template(renderer_base $output) {
         global $CFG;
