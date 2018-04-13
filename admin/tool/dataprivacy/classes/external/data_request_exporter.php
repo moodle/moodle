@@ -29,9 +29,11 @@ use core\external\persistent_exporter;
 use core_user;
 use core_user\external\user_summary_exporter;
 use dml_exception;
+use moodle_exception;
 use renderer_base;
 use tool_dataprivacy\api;
 use tool_dataprivacy\data_request;
+use tool_dataprivacy\local\helper;
 
 /**
  * Class for exporting user evidence with all competencies.
@@ -110,6 +112,7 @@ class data_request_exporter extends persistent_exporter {
      * @return array
      * @throws coding_exception
      * @throws dml_exception
+     * @throws moodle_exception
      */
     protected function get_other_values(renderer_base $output) {
         $values = [];
@@ -135,52 +138,37 @@ class data_request_exporter extends persistent_exporter {
 
         $values['messagehtml'] = text_to_html($this->persistent->get('comments'));
 
-        if ($this->persistent->get('type') == api::DATAREQUEST_TYPE_EXPORT) {
-            $values['typename'] = get_string('requesttypeexport', 'tool_dataprivacy');
-            $values['typenameshort'] = get_string('requesttypeexportshort', 'tool_dataprivacy');
-        } else if ($this->persistent->get('type') == api::DATAREQUEST_TYPE_DELETE) {
-            $values['typename'] = get_string('requesttypedelete', 'tool_dataprivacy');
-            $values['typenameshort'] = get_string('requesttypedeleteshort', 'tool_dataprivacy');
-        } else {
-            $values['typename'] = get_string('requesttypeothers', 'tool_dataprivacy');
-            $values['typenameshort'] = get_string('requesttypeothersshort', 'tool_dataprivacy');
-        }
+        $values['typename'] = helper::get_request_type_string($this->persistent->get('type'));
+        $values['typenameshort'] = helper::get_shortened_request_type_string($this->persistent->get('type'));
 
         $values['canreview'] = false;
+        $values['statuslabel'] = helper::get_request_status_string($this->persistent->get('status'));
         switch ($this->persistent->get('status')) {
             case api::DATAREQUEST_STATUS_PENDING:
                 $values['statuslabelclass'] = 'label-default';
-                $values['statuslabel'] = get_string('statuspending', 'tool_dataprivacy');
                 break;
             case api::DATAREQUEST_STATUS_PREPROCESSING:
                 $values['statuslabelclass'] = 'label-default';
-                $values['statuslabel'] = get_string('statuspreprocessing', 'tool_dataprivacy');
                 break;
             case api::DATAREQUEST_STATUS_AWAITING_APPROVAL:
                 $values['statuslabelclass'] = 'label-info';
-                $values['statuslabel'] = get_string('statusawaitingapproval', 'tool_dataprivacy');
                 // DPO can review the request once it's ready.
                 $values['canreview'] = true;
                 break;
             case api::DATAREQUEST_STATUS_APPROVED:
                 $values['statuslabelclass'] = 'label-info';
-                $values['statuslabel'] = get_string('statusapproved', 'tool_dataprivacy');
                 break;
             case api::DATAREQUEST_STATUS_PROCESSING:
                 $values['statuslabelclass'] = 'label-info';
-                $values['statuslabel'] = get_string('statusprocessing', 'tool_dataprivacy');
                 break;
             case api::DATAREQUEST_STATUS_COMPLETE:
                 $values['statuslabelclass'] = 'label-success';
-                $values['statuslabel'] = get_string('statuscomplete', 'tool_dataprivacy');
                 break;
             case api::DATAREQUEST_STATUS_CANCELLED:
                 $values['statuslabelclass'] = 'label-warning';
-                $values['statuslabel'] = get_string('statuscancelled', 'tool_dataprivacy');
                 break;
             case api::DATAREQUEST_STATUS_REJECTED:
                 $values['statuslabelclass'] = 'label-important';
-                $values['statuslabel'] = get_string('statusrejected', 'tool_dataprivacy');
                 break;
         }
 

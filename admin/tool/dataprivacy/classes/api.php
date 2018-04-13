@@ -36,14 +36,9 @@ use moodle_exception;
 use moodle_url;
 use required_capability_exception;
 use stdClass;
+use tool_dataprivacy\local\helper;
 use tool_dataprivacy\task\initiate_data_request_task;
 use tool_dataprivacy\task\process_data_request_task;
-use tool_dataprivacy\purpose;
-use tool_dataprivacy\category;
-use tool_dataprivacy\contextlevel;
-use tool_dataprivacy\context_instance;
-use tool_dataprivacy\data_registry;
-use tool_dataprivacy\expired_context;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -400,19 +395,7 @@ class api {
 
         // Create message to send to the Data Protection Officer(s).
         $typetext = null;
-        switch ($request->get('type')) {
-            case self::DATAREQUEST_TYPE_EXPORT:
-                $typetext = get_string('requesttypeexport', 'tool_dataprivacy');
-                break;
-            case self::DATAREQUEST_TYPE_DELETE:
-                $typetext = get_string('requesttypedelete', 'tool_dataprivacy');
-                break;
-            case self::DATAREQUEST_TYPE_OTHERS:
-                $typetext = get_string('requesttypeothers', 'tool_dataprivacy');
-                break;
-            default:
-                throw new moodle_exception('errorinvalidrequesttype', 'tool_dataprivacy');
-        }
+        $typetext = helper::get_request_type_string($request->get('type'));
         $subject = get_string('datarequestemailsubject', 'tool_dataprivacy', $typetext);
 
         $requestedby = core_user::get_user($request->get('requestedby'));
