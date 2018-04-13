@@ -39,32 +39,32 @@ class content_writer implements \core_privacy\local\request\content_writer {
     /**
      * @var \context The context currently being exported.
      */
-    protected $context = null;
+    protected $context;
 
     /**
-     * @var array The collection of metadata which has been exported.
+     * @var \stdClass The collection of metadata which has been exported.
      */
-    protected $metadata = [];
+    protected $metadata;
 
     /**
-     * @var array The data which has been exported.
+     * @var \stdClass The data which has been exported.
      */
-    protected $data = [];
+    protected $data;
 
     /**
-     * @var array The related data which has been exported.
+     * @var \stdClass The related data which has been exported.
      */
-    protected $relateddata = [];
+    protected $relateddata;
 
     /**
-     * @var array The list of stored files which have been exported.
+     * @var \stdClass The list of stored files which have been exported.
      */
-    protected $files = [];
+    protected $files;
 
     /**
-     * @var array The custom files which have been exported.
+     * @var \stdClass The custom files which have been exported.
      */
-    protected $customfiles = [];
+    protected $customfiles;
 
     /**
      * @var array The site-wide user preferences which have been exported.
@@ -75,11 +75,11 @@ class content_writer implements \core_privacy\local\request\content_writer {
      * Whether any data has been exported at all within the current context.
      */
     public function has_any_data() {
-        $hasdata = !empty($this->data[$this->context->id]);
-        $hasrelateddata = !empty($this->relateddata[$this->context->id]);
-        $hasmetadata = !empty($this->metadata[$this->context->id]);
-        $hasfiles = !empty($this->files[$this->context->id]);
-        $hascustomfiles = !empty($this->customfiles[$this->context->id]);
+        $hasdata = !empty($this->data->{$this->context->id});
+        $hasrelateddata = !empty($this->relateddata->{$this->context->id});
+        $hasmetadata = !empty($this->metadata->{$this->context->id});
+        $hasfiles = !empty($this->files->{$this->context->id});
+        $hascustomfiles = !empty($this->customfiles->{$this->context->id});
         $hasuserprefs = !empty($this->userprefs);
 
         return $hasdata || $hasrelateddata || $hasmetadata || $hasfiles || $hascustomfiles || $hasuserprefs;
@@ -92,6 +92,11 @@ class content_writer implements \core_privacy\local\request\content_writer {
      * @param   \core_privacy\local\request\writer          $writer    The writer factory.
      */
     public function __construct(\core_privacy\local\request\writer $writer) {
+        $this->data = (object) [];
+        $this->relateddata = (object) [];
+        $this->metadata = (object) [];
+        $this->files = (object) [];
+        $this->customfiles = (object) [];
     }
 
     /**
@@ -102,24 +107,39 @@ class content_writer implements \core_privacy\local\request\content_writer {
     public function set_context(\context $context) {
         $this->context = $context;
 
-        if (empty($this->data[$this->context->id])) {
-            $this->data[$this->context->id] = [];
+        if (isset($this->data->{$this->context->id}) && empty((array) $this->data->{$this->context->id})) {
+            $this->data->{$this->context->id} = (object) [
+                'children' => (object) [],
+                'data' => [],
+            ];
         }
 
-        if (empty($this->relateddata[$this->context->id])) {
-            $this->relateddata[$this->context->id] = [];
+        if (isset($this->relateddata->{$this->context->id}) && empty((array) $this->relateddata->{$this->context->id})) {
+            $this->relateddata->{$this->context->id} = (object) [
+                'children' => (object) [],
+                'data' => [],
+            ];
         }
 
-        if (empty($this->metadata[$this->context->id])) {
-            $this->metadata[$this->context->id] = [];
+        if (isset($this->metadata->{$this->context->id}) && empty((array) $this->metadata->{$this->context->id})) {
+            $this->metadata->{$this->context->id} = (object) [
+                'children' => (object) [],
+                'data' => [],
+            ];
         }
 
-        if (empty($this->files[$this->context->id])) {
-            $this->files[$this->context->id] = [];
+        if (isset($this->files->{$this->context->id}) && empty((array) $this->files->{$this->context->id})) {
+            $this->files->{$this->context->id} = (object) [
+                'children' => (object) [],
+                'data' => [],
+            ];
         }
 
-        if (empty($this->customfiles[$this->context->id])) {
-            $this->customfiles[$this->context->id] = [];
+        if (isset($this->customfiles->{$this->context->id}) && empty((array) $this->customfiles->{$this->context->id})) {
+            $this->customfiles->{$this->context->id} = (object) [
+                'children' => (object) [],
+                'data' => [],
+            ];
         }
 
         return $this;
@@ -141,21 +161,8 @@ class content_writer implements \core_privacy\local\request\content_writer {
      * @param   \stdClass       $data       The data to be exported
      */
     public function export_data(array $subcontext, \stdClass $data) {
-        $finalcontent = [
-            'children' => [],
-            'data' => $data,
-        ];
-
-        while ($pathtail = array_pop($subcontext)) {
-            $finalcontent = [
-                'children' => [
-                    $pathtail => $finalcontent,
-                ],
-                'data' => [],
-            ];
-        }
-
-        $this->data[$this->context->id] = array_replace_recursive($this->data[$this->context->id], $finalcontent);
+        $current = $this->fetch_root($this->data, $subcontext);
+        $current->data = $data;
 
         return $this;
     }
@@ -167,18 +174,7 @@ class content_writer implements \core_privacy\local\request\content_writer {
      * @return  array                       The metadata as a series of keys to value + descrition objects.
      */
     public function get_data(array $subcontext = []) {
-        $basepath = $this->data[$this->context->id];
-        while ($subpath = array_shift($subcontext)) {
-            if (isset($basepath['children']) && isset($basepath['children'][$subpath])) {
-                $basepath = $basepath['children'][$subpath];
-            }
-        }
-
-        if (isset($basepath['data'])) {
-            return $basepath['data'];
-        } else {
-            return [];
-        }
+        return $this->fetch_data_root($this->data, $subcontext);
     }
 
     /**
@@ -192,31 +188,12 @@ class content_writer implements \core_privacy\local\request\content_writer {
      * @param   string          $description    The description of the value.
      * @return  $this
      */
-    public function export_metadata(array $subcontext,
-        $key,
-        $value,
-        $description
-    ) {
-        $finalcontent = [
-            'children' => [],
-            'metadata' => [
-                $key => (object) [
-                    'value' => $value,
-                    'description' => $description,
-                ],
-            ],
-        ];
-
-        while ($pathtail = array_pop($subcontext)) {
-            $finalcontent = [
-                'children' => [
-                    $pathtail => $finalcontent,
-                ],
-                'metadata' => [],
+    public function export_metadata(array $subcontext, $key, $value, $description) {
+        $current = $this->fetch_root($this->metadata, $subcontext);
+        $current->data[$key] = (object) [
+                'value' => $value,
+                'description' => $description,
             ];
-        }
-
-        $this->metadata[$this->context->id] = array_replace_recursive($this->metadata[$this->context->id], $finalcontent);
 
         return $this;
     }
@@ -228,18 +205,7 @@ class content_writer implements \core_privacy\local\request\content_writer {
      * @return  array                       The metadata as a series of keys to value + descrition objects.
      */
     public function get_all_metadata(array $subcontext = []) {
-        $basepath = $this->metadata[$this->context->id];
-        while ($subpath = array_shift($subcontext)) {
-            if (isset($basepath['children']) && isset($basepath['children'][$subpath])) {
-                $basepath = $basepath['children'][$subpath];
-            }
-        }
-
-        if (isset($basepath['metadata'])) {
-            return $basepath['metadata'];
-        } else {
-            return [];
-        }
+        return $this->fetch_data_root($this->metadata, $subcontext);
     }
 
     /**
@@ -274,23 +240,8 @@ class content_writer implements \core_privacy\local\request\content_writer {
      * @param   \stdClass       $data       The related data to export.
      */
     public function export_related_data(array $subcontext, $name, $data) {
-        $finalcontent = [
-            'children' => [],
-            'data' => [
-                $name => $data,
-            ],
-        ];
-
-        while ($pathtail = array_pop($subcontext)) {
-            $finalcontent = [
-                'children' => [
-                    $pathtail => $finalcontent,
-                ],
-                'data' => [],
-            ];
-        }
-
-        $this->relateddata[$this->context->id] = array_replace_recursive($this->relateddata[$this->context->id], $finalcontent);
+        $current = $this->fetch_root($this->relateddata, $subcontext);
+        $current->data[$name] = $data;
 
         return $this;
     }
@@ -303,26 +254,17 @@ class content_writer implements \core_privacy\local\request\content_writer {
      * @return  array                       The metadata as a series of keys to value + descrition objects.
      */
     public function get_related_data(array $subcontext = [], $filename = null) {
-        $basepath = $this->relateddata[$this->context->id];
-        while ($subpath = array_shift($subcontext)) {
-            if (isset($basepath['children']) && isset($basepath['children'][$subpath])) {
-                $basepath = $basepath['children'][$subpath];
-            }
+        $current = $this->fetch_data_root($this->relateddata, $subcontext);
+
+        if (null === $filename) {
+            return $current;
         }
 
-        if (isset($basepath['data'])) {
-            $data = $basepath['data'];
-            if (null !== $filename) {
-                if (isset($data[$filename])) {
-                    return $data[$filename];
-                }
-                return null;
-            }
-
-            return $data;
+        if (isset($current[$filename])) {
+            return $current[$filename];
         }
 
-        return null;
+        return [];
     }
 
     /**
@@ -335,22 +277,8 @@ class content_writer implements \core_privacy\local\request\content_writer {
     public function export_custom_file(array $subcontext, $filename, $filecontent) {
         $filename = clean_param($filename, PARAM_FILE);
 
-        $finalcontent = [
-            'children' => [],
-            'files' => [
-                $filename => $filecontent,
-            ],
-        ];
-        while ($pathtail = array_pop($subcontext)) {
-            $finalcontent = [
-                'children' => [
-                    $pathtail => $finalcontent,
-                ],
-                'files' => [],
-            ];
-        }
-
-        $this->customfiles[$this->context->id] = array_replace_recursive($this->customfiles[$this->context->id], $finalcontent);
+        $current = $this->fetch_root($this->customfiles, $subcontext);
+        $current->data[$filename] = $filecontent;
 
         return $this;
     }
@@ -363,22 +291,16 @@ class content_writer implements \core_privacy\local\request\content_writer {
      * @return  string                      The content of the file.
      */
     public function get_custom_file(array $subcontext = [], $filename = null) {
-        $basepath = $this->customfiles[$this->context->id];
-        while ($subpath = array_shift($subcontext)) {
-            if (isset($basepath['children']) && isset($basepath['children'][$subpath])) {
-                $basepath = $basepath['children'][$subpath];
-            }
+        $current = $this->fetch_data_root($this->customfiles, $subcontext);
+
+        if (null === $filename) {
+            return $current;
         }
 
-        if (isset($basepath['files'])) {
-            if (null !== $filename) {
-                if (isset($basepath['files'][$filename])) {
-                    return $basepath['files'][$filename];
-                }
-                return null;
-            }
-            return $basepath['files'];
+        if (isset($current[$filename])) {
+            return $current[$filename];
         }
+
         return null;
     }
 
@@ -427,23 +349,8 @@ class content_writer implements \core_privacy\local\request\content_writer {
             $filepath = array_filter($filepath);
             $filepath = implode('/', $filepath);
 
-            $finalcontent = [
-                'children' => [],
-                'files' => [
-                    $filepath => $file,
-                ],
-            ];
-
-            while ($pathtail = array_pop($subcontext)) {
-                $finalcontent = [
-                    'children' => [
-                        $pathtail => $finalcontent,
-                    ],
-                    'files' => [],
-                ];
-            }
-
-            $this->files[$this->context->id] = array_replace_recursive($this->files[$this->context->id], $finalcontent);
+            $current = $this->fetch_root($this->files, $subcontext);
+            $current->data[$filepath] = $file;
         }
 
         return $this;
@@ -456,18 +363,7 @@ class content_writer implements \core_privacy\local\request\content_writer {
      * @return  \stored_file[]              The list of stored_files in this context + subcontext.
      */
     public function get_files(array $subcontext = []) {
-        $basepath = $this->files[$this->context->id];
-        while ($subpath = array_shift($subcontext)) {
-            if (isset($basepath['children']) && isset($basepath['children'][$subpath])) {
-                $basepath = $basepath['children'][$subpath];
-            }
-        }
-
-        if (isset($basepath['files'])) {
-            return $basepath['files'];
-        }
-
-        return [];
+        return $this->fetch_data_root($this->files, $subcontext);
     }
 
     /**
@@ -518,5 +414,47 @@ class content_writer implements \core_privacy\local\request\content_writer {
      */
     public function finalise_content() {
         return 'mock_path';
+    }
+
+    /**
+     * Fetch the entire root record at the specified location type, creating it if required.
+     *
+     * @param   \stdClass   $base The base to use - e.g. $this->data
+     * @param   array       $subcontext The subcontext to fetch
+     * @return  array
+     */
+    protected function fetch_root($base, $subcontext) {
+        if (!isset($base->{$this->context->id})) {
+            $base->{$this->context->id} = (object) [
+                'children' => (object) [],
+                'data' => [],
+            ];
+        }
+
+        $current = $base->{$this->context->id};
+        foreach ($subcontext as $node) {
+            if (!isset($current->children->{$node})) {
+                $current->children->{$node} = (object) [
+                    'children' => (object) [],
+                    'data' => [],
+                ];
+            }
+            $current = $current->children->{$node};
+        }
+
+        return $current;
+    }
+
+    /**
+     * Fetch the data region of the specified root.
+     *
+     * @param   \stdClass   $base The base to use - e.g. $this->data
+     * @param   array       $subcontext The subcontext to fetch
+     * @return  array
+     */
+    protected function fetch_data_root($base, $subcontext) {
+        $root = $this->fetch_root($base, $subcontext);
+
+        return $root->data;
     }
 }

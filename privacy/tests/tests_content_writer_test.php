@@ -94,6 +94,22 @@ class tests_content_writer_test extends advanced_testcase {
     }
 
     /**
+     * Test export and recover with children.
+     */
+    public function test_get_data_with_children() {
+        $writer = $this->get_writer_instance();
+        $context = \context_system::instance();
+
+        $writer->set_context($context)
+            ->export_data(['a'], (object) ['parent' => true])
+            ->export_data(['a', 'b'], (object) ['parent' => false]);
+
+        $this->assertTrue($writer->get_data(['a'])->parent);
+        $this->assertFalse($writer->get_data(['a', 'b'])->parent);
+        $this->assertEquals([], $writer->get_data(['a', 'b', 'c']));
+    }
+
+    /**
      * It should be possible to store and retrieve metadata.
      */
     public function test_export_metadata() {
@@ -168,6 +184,21 @@ class tests_content_writer_test extends advanced_testcase {
     }
 
     /**
+     * Test export and recover with children.
+     */
+    public function test_get_metadata_with_children() {
+        $writer = $this->get_writer_instance();
+        $context = \context_system::instance();
+
+        $writer->set_context($context)
+            ->export_metadata(['a'], 'abc', 'ABC', 'A, B, C')
+            ->export_metadata(['a', 'b'], 'def', 'DEF', 'D, E, F');
+
+        $this->assertEquals('ABC', $writer->get_metadata(['a'], 'abc'));
+        $this->assertEquals('DEF', $writer->get_metadata(['a', 'b'], 'def'));
+    }
+
+    /**
      * It should be possible to export files in the files and children contexts.
      */
     public function test_export_file_special_folders() {
@@ -213,6 +244,29 @@ class tests_content_writer_test extends advanced_testcase {
 
         $writer->set_context($usercontext);
         $files = $writer->get_files([]);
+        $this->assertCount(1, $files);
+        $this->assertEquals($fileb, $files['foo/foo.txt']);
+    }
+
+    /**
+     * Test export and recover with children.
+     */
+    public function test_get_file_with_children() {
+        $writer = $this->get_writer_instance();
+        $context = \context_system::instance();
+
+        $filea = $this->get_stored_file('/foo/', 'foo.txt');
+        $fileb = $this->get_stored_file('/foo/', 'foo.txt');
+
+        $writer->set_context($context)
+            ->export_file(['a'], $filea)
+            ->export_file(['a', 'b'], $fileb);
+
+        $files = $writer->get_files(['a']);
+        $this->assertCount(1, $files);
+        $this->assertEquals($filea, $files['foo/foo.txt']);
+
+        $files = $writer->get_files(['a', 'b']);
         $this->assertCount(1, $files);
         $this->assertEquals($fileb, $files['foo/foo.txt']);
     }
@@ -270,6 +324,21 @@ class tests_content_writer_test extends advanced_testcase {
     }
 
     /**
+     * Test export and recover with children.
+     */
+    public function test_get_related_data_with_children() {
+        $writer = $this->get_writer_instance();
+        $context = \context_system::instance();
+
+        $writer->set_context($context)
+            ->export_related_data(['a'], 'abc', 'ABC')
+            ->export_related_data(['a', 'b'], 'def', 'DEF');
+
+        $this->assertEquals('ABC', $writer->get_related_data(['a'], 'abc'));
+        $this->assertEquals('DEF', $writer->get_related_data(['a', 'b'], 'def'));
+    }
+
+    /**
      * It should be possible to export related files in the files and children contexts.
      */
     public function test_export_custom_file() {
@@ -318,6 +387,21 @@ class tests_content_writer_test extends advanced_testcase {
         $files = $writer->get_custom_file(['file.txt']);
         $this->assertCount(1, $files);
         $this->assertEquals('Content 2', $files['file.txt']);
+    }
+
+    /**
+     * Test export and recover with children.
+     */
+    public function test_get_custom_file_with_children() {
+        $writer = $this->get_writer_instance();
+        $context = \context_system::instance();
+
+        $writer->set_context($context)
+            ->export_custom_file(['a'], 'file.txt', 'ABC')
+            ->export_custom_file(['a', 'b'], 'file.txt', 'DEF');
+
+        $this->assertEquals('ABC', $writer->get_custom_file(['a'], 'file.txt'));
+        $this->assertEquals('DEF', $writer->get_custom_file(['a', 'b'], 'file.txt'));
     }
 
     /**
