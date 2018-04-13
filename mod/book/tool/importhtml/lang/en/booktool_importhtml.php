@@ -31,6 +31,7 @@ $string['importhtml:import'] = 'Import chapters';
 $string['importing'] = 'Importing';
 $string['importingchapters'] = 'Importing chapters into book';
 $string['pluginname'] = 'Book chapter import';
+$string['privacy:metadata'] = 'The Book chapter import plugin does not store any personal data.';
 $string['relinking'] = 'Relinking';
 $string['type'] = 'Type';
 $string['typeonefile'] = 'One HTML file with headings as chapters';
