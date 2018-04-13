@@ -37,6 +37,29 @@ global $CFG;
  */
 class sitepolicy_test extends advanced_testcase {
 
+
+    /**
+     * Tests for \core_privacy\local\sitepolicy\manager::get_handler_classname() behaviour.
+     */
+    public function test_get_handler_classname() {
+        global $CFG;
+        $this->resetAfterTest(true);
+
+        $manager = $this->get_mock_manager_with_handler();
+
+        // If no handler is specified, then we should get the default one.
+        $CFG->sitepolicyhandler = '';
+        $this->assertEquals($manager->get_handler_classname(), \core_privacy\local\sitepolicy\default_handler::class);
+
+        // If non-existing handler is specified, we should get the default one too.
+        $CFG->sitepolicyhandler = 'non_existing_plugin_which_i_really_hope_will_never_exist';
+        $this->assertEquals($manager->get_handler_classname(), \core_privacy\local\sitepolicy\default_handler::class);
+
+        // If the defined handler is among known handlers, we should get its class name.
+        $CFG->sitepolicyhandler = 'testtool_testhandler';
+        $this->assertEquals($manager->get_handler_classname(), 'mock_sitepolicy_handler');
+    }
+
     /**
      * Tests for \core_privacy\local\sitepolicy\manager::is_defined()
      */
