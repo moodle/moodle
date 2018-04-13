@@ -52,6 +52,13 @@ abstract class expired_contexts_manager {
     abstract protected function get_expired_contexts();
 
     /**
+     * Specify with context levels this expired contexts manager is deleting.
+     *
+     * @return int[]
+     */
+    abstract protected function get_context_levels();
+
+    /**
      * Flag expired contexts as expired.
      *
      * @return int The number of contexts flagged as expired.
@@ -85,27 +92,15 @@ abstract class expired_contexts_manager {
 
         $privacymanager = new \core_privacy\manager();
 
-        $levels = [CONTEXT_USER, CONTEXT_MODULE, CONTEXT_BLOCK, CONTEXT_COURSE];
-        foreach ($levels as $level) {
+        foreach ($this->get_context_levels() as $level) {
 
             $expiredcontexts = expired_context::get_records_by_contextlevel($level, expired_context::STATUS_APPROVED);
 
             foreach ($expiredcontexts as $expiredctx) {
 
-                $context = \context::instance_by_id($expiredctx->get('contextid'), IGNORE_MISSING);
-                if (!$context) {
-                    api::delete_expired_context($expiredctx->get('contextid'));
+                if (!$this->delete_expired_context($privacymanager, $expiredctx)) {
                     continue;
                 }
-
-                if (!PHPUNIT_TEST) {
-                    mtrace('Deleting context ' . $context->id . ' - ' .
-                        shorten_text($context->get_context_name(true, true)));
-                }
-
-                $privacymanager->delete_data_for_all_users_in_context($context);
-
-                api::set_expired_context_status($expiredctx, expired_context::STATUS_CLEANED);
 
                 $numprocessed += 1;
                 if ($numprocessed == self::DELETE_LIMIT) {
@@ -117,6 +112,32 @@ abstract class expired_contexts_manager {
         }
 
         return $numprocessed;
+    }
+
+    /**
+     * Deletes user data from the provided context.
+     *
+     * @param \core_privacy\manager $privacymanager
+     * @param \tool_dataprivacy\expired_context $expiredctx
+     * @return \context|false
+     */
+    protected function delete_expired_context(\core_privacy\manager $privacymanager, \tool_dataprivacy\expired_context $expiredctx) {
+
+        $context = \context::instance_by_id($expiredctx->get('contextid'), IGNORE_MISSING);
+        if (!$context) {
+            api::delete_expired_context($expiredctx->get('contextid'));
+            return false;
+        }
+
+        if (!PHPUNIT_TEST) {
+            mtrace('Deleting context ' . $context->id . ' - ' .
+                shorten_text($context->get_context_name(true, true)));
+        }
+
+        $privacymanager->delete_data_for_all_users_in_context($context);
+        api::set_expired_context_status($expiredctx, expired_context::STATUS_CLEANED);
+
+        return $context;
     }
 
     /**

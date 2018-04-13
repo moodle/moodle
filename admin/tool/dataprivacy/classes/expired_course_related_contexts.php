@@ -36,6 +36,15 @@ defined('MOODLE_INTERNAL') || die();
 class expired_course_related_contexts extends \tool_dataprivacy\expired_contexts_manager {
 
     /**
+     * Course-related context levels.
+     *
+     * @return int[]
+     */
+    protected function get_context_levels() {
+        return [CONTEXT_MODULE, CONTEXT_BLOCK, CONTEXT_COURSE];
+    }
+
+    /**
      * Returns a recordset with user context instances that are possibly expired (to be confirmed by get_recordset_callback).
      *
      * @return \stdClass[]

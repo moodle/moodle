@@ -199,5 +199,10 @@ class process_data_request_task extends adhoc_task {
             }
             mtrace('Message sent to requester: ' . $messagetextdata['username']);
         }
+
+        if ($request->type == api::DATAREQUEST_TYPE_DELETE) {
+            // Delete the user.
+            delete_user($foruser);
+        }
     }
 }

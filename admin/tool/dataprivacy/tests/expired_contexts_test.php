@@ -77,7 +77,7 @@ class tool_dataprivacy_expired_contexts_testcase extends advanced_testcase {
         // Old course.
         $course2 = $this->getDataGenerator()->create_course(['startdate' => '1', 'enddate' => '2']);
         // Ongoing course.
-        $course3 = $this->getDataGenerator()->create_course(['startdate' => '1', 'enddate' => time()]);
+        $course3 = $this->getDataGenerator()->create_course(['startdate' => '1', 'enddate' => time() + YEARSECS]);
 
         $this->getDataGenerator()->enrol_user($user1->id, $course1->id, 'student');
         $this->getDataGenerator()->enrol_user($user2->id, $course2->id, 'student');
@@ -90,7 +90,7 @@ class tool_dataprivacy_expired_contexts_testcase extends advanced_testcase {
         $this->assertEquals(2, $numexpired);
         $this->assertEquals(2, $DB->count_records('tool_dataprivacy_ctxexpired', ['status' => expired_context::STATUS_EXPIRED]));
 
-        // Approve user1 to be deleted.
+        // Approve user2 to be deleted.
         $user2ctx = \context_user::instance($user2->id);
         $expiredctx = expired_context::get_record(['contextid' => $user2ctx->id]);
         api::set_expired_context_status($expiredctx, expired_context::STATUS_APPROVED);
@@ -108,6 +108,10 @@ class tool_dataprivacy_expired_contexts_testcase extends advanced_testcase {
         $this->assertEquals(2, $DB->count_records('tool_dataprivacy_ctxexpired'));
         $deleted = $expired->delete();
         $this->assertEquals(0, $deleted);
+
+        // The user is deleted.
+        $deleteduser = \core_user::get_user($user2->id, 'id, deleted', IGNORE_MISSING);
+        $this->assertEquals(1, $deleteduser->deleted);
     }
 
     /**

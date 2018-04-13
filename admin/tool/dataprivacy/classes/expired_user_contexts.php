@@ -37,6 +37,15 @@ defined('MOODLE_INTERNAL') || die();
 class expired_user_contexts extends \tool_dataprivacy\expired_contexts_manager {
 
     /**
+     * Only user level.
+     *
+     * @return int[]
+     */
+    protected function get_context_levels() {
+        return [CONTEXT_USER];
+    }
+
+    /**
      * Returns the user context instances that are expired.
      *
      * @return \stdClass[]
@@ -94,5 +103,26 @@ class expired_user_contexts extends \tool_dataprivacy\expired_contexts_manager {
         }
 
         return $expiredcontexts;
+    }
+
+    /**
+     * Deletes user data from the provided context.
+     *
+     * Overwritten to delete the user.
+     *
+     * @param \core_privacy\manager $privacymanager
+     * @param \tool_dataprivacy\expired_context $expiredctx
+     * @return \context|false
+     */
+    protected function delete_expired_context(\core_privacy\manager $privacymanager, \tool_dataprivacy\expired_context $expiredctx) {
+        if (!$context = parent::delete_expired_context($privacymanager, $expiredctx)) {
+            return false;
+        }
+
+        // Delete the user.
+        $user = \core_user::get_user($context->instanceid, '*', MUST_EXIST);
+        delete_user($user);
+
+        return $context;
     }
 }
