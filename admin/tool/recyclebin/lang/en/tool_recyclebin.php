@@ -55,3 +55,4 @@ $string['taskcleanupcoursebin'] = 'Cleanup course recycle bin';
 $string['recyclebin:deleteitems'] = 'Delete recycle bin items';
 $string['recyclebin:restoreitems'] = 'Restore recycle bin items';
 $string['recyclebin:viewitems'] = 'View recycle bin items';
+$string['privacy:metadata'] = 'The Recycle bin plugin does not store any personal data.';
