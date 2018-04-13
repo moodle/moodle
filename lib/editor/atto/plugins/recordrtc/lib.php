@@ -90,8 +90,6 @@ function atto_recordrtc_strings_for_js() {
                      'gumtype',
                      'insecurealert_title',
                      'insecurealert',
-                     'browseralert_title',
-                     'browseralert',
                      'startrecording',
                      'recordagain',
                      'stoprecording',

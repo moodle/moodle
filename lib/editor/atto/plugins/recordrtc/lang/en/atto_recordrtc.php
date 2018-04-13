@@ -31,8 +31,6 @@ $string['audioandvideo'] = 'Audio and video';
 $string['audiobitrate'] = 'Audio bitrate';
 $string['audiobitrate_desc'] = 'Quality of audio recording (larger number means higher quality)';
 $string['audiortc'] = 'Insert audio recording';
-$string['browseralert'] = 'Use Firefox >= 29, Chrome >= 49 or Opera >= 36 for best experience';
-$string['browseralert_title'] = 'Warning!';
 $string['gumabort'] = 'Something strange happened which prevented the webcam/microphone from being used';
 $string['gumabort_title'] = 'Something happened';
 $string['gumnotallowed'] = 'The user must allow the browser access to the webcam/microphone';
