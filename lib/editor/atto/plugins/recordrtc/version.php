@@ -15,15 +15,18 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Atto text editor integration version file.
+ * Atto text editor recordrtc version file.
  *
- * @package    editor_atto
- * @copyright  2013 Damyon Wiese  <damyon@moodle.com>
+ * @package    atto_recordrtc
+ * @author     Jesus Federico (jesus [at] blindsidenetworks [dt] com)
+ * @author     Jacob Prud'homme (jacob [dt] prudhomme [at] blindsidenetworks [dt] com)
+ * @copyright  2017 Blindside Networks Inc.
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2018041100;        // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2017110800;        // Requires this Moodle version.
-$plugin->component = 'editor_atto';  // Full name of the plugin (used for diagnostics).
+$plugin->version   = 2018031500;
+$plugin->requires  = 2018022800;
+$plugin->component = 'atto_recordrtc';
+$plugin->maturity = MATURITY_STABLE;

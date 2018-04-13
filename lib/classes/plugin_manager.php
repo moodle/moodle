@@ -1684,8 +1684,8 @@ class core_plugin_manager {
                 'backcolor', 'bold', 'charmap', 'clear', 'collapse', 'emoticon',
                 'equation', 'fontcolor', 'html', 'image', 'indent', 'italic',
                 'link', 'managefiles', 'media', 'noautolink', 'orderedlist',
-                'rtl', 'strike', 'subscript', 'superscript', 'table', 'title',
-                'underline', 'undo', 'unorderedlist'
+                'recordrtc', 'rtl', 'strike', 'subscript', 'superscript', 'table',
+                'title', 'underline', 'undo', 'unorderedlist'
             ),
 
             'assignment' => array(

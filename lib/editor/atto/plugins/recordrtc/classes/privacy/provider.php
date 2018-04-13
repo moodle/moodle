@@ -15,15 +15,32 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Atto text editor integration version file.
+ * Privacy Subsystem implementation for atto_recordrtc.
  *
- * @package    editor_atto
- * @copyright  2013 Damyon Wiese  <damyon@moodle.com>
+ * @package    atto_recordrtc
+ * @copyright  2018 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace atto_recordrtc\privacy;
+
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2018041100;        // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2017110800;        // Requires this Moodle version.
-$plugin->component = 'editor_atto';  // Full name of the plugin (used for diagnostics).
+/**
+ * Privacy Subsystem for atto_recordrtc implementing null_provider.
+ *
+ * @copyright  2018 Mark Nelson <markn@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class provider implements \core_privacy\local\metadata\null_provider {
+
+    /**
+     * Get the language string identifier with the component's language
+     * file to explain why this plugin stores no data.
+     *
+     * @return string
+     */
+    public static function get_reason() : string {
+        return 'privacy:metadata';
+    }
+}
