@@ -83,7 +83,8 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
         $ADMIN->add('development', new admin_externalpage('mnettestclient', new lang_string('testclient', 'mnet'), "$CFG->wwwroot/$CFG->admin/mnet/testclient.php"));
     }
 
-    $ADMIN->add('development', new admin_externalpage('purgecaches', new lang_string('purgecaches','admin'), "$CFG->wwwroot/$CFG->admin/purgecaches.php"));
+    $ADMIN->add('development', new admin_externalpage('purgecaches', new lang_string('purgecachespage', 'admin'),
+            "$CFG->wwwroot/$CFG->admin/purgecaches.php"));
 
     $ADMIN->add('development', new admin_externalpage('thirdpartylibs', new lang_string('thirdpartylibs','admin'), "$CFG->wwwroot/$CFG->admin/thirdpartylibs.php"));
 } // end of speedup
