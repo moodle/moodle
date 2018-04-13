@@ -26,7 +26,6 @@ namespace tool_dataprivacy\form;
 defined('MOODLE_INTERNAL') || die();
 
 use core\form\persistent;
-use tool_dataprivacy\purpose as purpose_persistent;
 
 /**
  * Data purpose form.
@@ -46,8 +45,6 @@ class purpose extends persistent {
      * Define the form - called by parent constructor
      */
     public function definition() {
-        global $DB;
-
         $mform = $this->_form;
 
         $mform->addElement('text', 'name', get_string('name'), 'maxlength="100"');
@@ -60,7 +57,7 @@ class purpose extends persistent {
 
         // Field for selecting lawful bases (from GDPR Article 6.1).
         $lawfulbases = [];
-        foreach (purpose_persistent::GDPR_ART_6_1_ITEMS as $article) {
+        foreach (\tool_dataprivacy\purpose::GDPR_ART_6_1_ITEMS as $article) {
             $key = 'gdpr_art_6_1_' . $article;
             $lawfulbases[$key] = get_string($key . '_name', 'tool_dataprivacy');
         }
@@ -73,7 +70,7 @@ class purpose extends persistent {
 
         // Optional field for selecting reasons for collecting sensitive personal data (from GDPR Article 9.2).
         $sensitivereasons = [];
-        foreach (purpose_persistent::GDPR_ART_9_2_ITEMS as $article) {
+        foreach (\tool_dataprivacy\purpose::GDPR_ART_9_2_ITEMS as $article) {
             $key = 'gdpr_art_9_2_' . $article;
             $sensitivereasons[$key] = get_string($key . '_name', 'tool_dataprivacy');
         }
