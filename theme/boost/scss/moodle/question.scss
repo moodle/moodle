@@ -344,11 +344,26 @@ body.path-question-type {
 
 .que .specificfeedback,
 .que .generalfeedback,
+.que .numpartscorrect
 .que .rightanswer,
 .que .im-feedback,
 .que .feedback,
 .que p {
     margin: 0 0 0.5em;
+}
+
+.que .correctness {
+    @extend .tag;
+    &.correct {
+        background-color: $state-success-text;
+    }
+    &.partiallycorrect {
+        background-color: $state-warning-text;
+    }
+    &.notanswered,
+    &.incorrect {
+        background-color: $state-danger-text;
+    }
 }
 
 .que .qtext {
