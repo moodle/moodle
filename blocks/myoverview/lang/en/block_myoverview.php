@@ -44,4 +44,4 @@ $string['sortbydates'] = 'Sort by dates';
 $string['timeline'] = 'Timeline';
 $string['viewcourse'] = 'View course';
 $string['viewcoursename'] = 'View course {$a}';
-$string['privacy:metadata'] = 'The Course overview block only shows data stored in other locations.';
+$string['privacy:metadata:overviewlasttab'] = 'This stores the last tab selected by the user in the overview tab.';
