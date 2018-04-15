@@ -73,6 +73,8 @@ class content_writer implements \core_privacy\local\request\content_writer {
 
     /**
      * Whether any data has been exported at all within the current context.
+     *
+     * @return  bool
      */
     public function has_any_data() {
         $hasdata = !empty($this->data->{$this->context->id});
@@ -92,6 +94,32 @@ class content_writer implements \core_privacy\local\request\content_writer {
         $hasanydata = $hasanydata || $hascustomfiles;
         $hasanydata = $hasanydata || $hasuserprefs;
         $hasanydata = $hasanydata || $hasglobaluserprefs;
+
+        return $hasanydata;
+    }
+
+    /**
+     * Whether any data has been exported for any context.
+     *
+     * @return  bool
+     */
+    public function has_any_data_in_any_context() {
+        $checkfordata = function($location) {
+            foreach ($location as $context => $data) {
+                if (!empty($data)) {
+                    return true;
+                }
+            }
+
+            return false;
+        };
+
+        $hasanydata = $checkfordata($this->data);
+        $hasanydata = $hasanydata || $checkfordata($this->relateddata);
+        $hasanydata = $hasanydata || $checkfordata($this->metadata);
+        $hasanydata = $hasanydata || $checkfordata($this->files);
+        $hasanydata = $hasanydata || $checkfordata($this->customfiles);
+        $hasanydata = $hasanydata || $checkfordata($this->userprefs);
 
         return $hasanydata;
     }
