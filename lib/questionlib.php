@@ -1789,7 +1789,7 @@ function question_pluginfile($course, $context, $component, $filearea, $args, $f
         }
 
         // export data to moodle file pool
-        if (!$content = $qformat->exportprocess(true)) {
+        if (!$content = $qformat->exportprocess()) {
             send_file_not_found();
         }
 
