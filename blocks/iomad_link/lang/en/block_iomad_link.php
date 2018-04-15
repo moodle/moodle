@@ -19,3 +19,4 @@ $string['iomad_link:myaddinstance'] = 'Add a new Iomad Dashboard link block to t
 $string['iomad_link:view'] = 'View link to Iomad Dashboard';
 $string['link'] = 'Go to Iomad Dashboard';
 $string['pluginname'] = 'Iomad - Link to Dashboard';
+$string['privacy:metadata'] = 'The Iomad Dashboard link block only shows data stored in other locations.';

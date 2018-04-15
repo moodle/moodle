@@ -44,6 +44,7 @@ $string['percentage'] = 'Percentage';
 $string['percentright'] = 'Answered Correctly';
 $string['percentwrong'] = 'Answered incorrectly';
 $string['pluginname'] = 'iomad SCORM overview report';
+$string['privacy:metadata'] = 'The Local Iomad SCORM overview report only shows data stored in other locations.';
 $string['question'] = 'Question';
 $string['questiontype'] = 'Question Type';
 $string['remaining'] = 'Remaining';
@@ -52,6 +53,7 @@ $string['report_scorm_overview:view'] = 'View iomad SCORM overview report';
 $string['repscormoverview'] = 'SCORM overview report';
 $string['reportselect'] = 'Report filter';
 $string['scormnoresults'] = 'There are no results recorded for this.';
+
 $string['select'] = '--select--';
 $string['status'] = 'Status';
 $string['trackedcount'] = 'Number of tracked resources/activities: ';

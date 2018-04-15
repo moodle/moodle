@@ -28,5 +28,6 @@ $string['iomad_company_selector:addinstance'] = 'Add a new Iomad company selecto
 $string['iomad_company_selector:myaddinstance'] = 'Add a new Iomad company selector block to the users dashboard';
 $string['nocurrentcompany'] = 'Please select a company from the drop down list';
 $string['pluginname'] = 'iomad - Company Selector';
+$string['privacy:metadata'] = 'The Iomad company selector block only shows data stored in other locations.';
 $string['selectacompany'] = 'Select a Company';
 $string['title'] = 'Company select';

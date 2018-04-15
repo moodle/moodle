@@ -62,6 +62,7 @@ $string['none'] = 'No approval required';
 $string['of'] = ' used of ';
 $string['pluginadministration'] = 'Training event administration';
 $string['pluginname'] = 'Training Event';
+$string['privacy:metadata'] = 'The Iomad training event activity only shows data stored in other locations.';
 $string['publish'] = 'Publish this event by email';
 $string['remove'] = 'Remove';
 $string['removerequest'] = 'Withdraw approval request';

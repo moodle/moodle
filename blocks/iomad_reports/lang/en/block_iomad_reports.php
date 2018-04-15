@@ -20,3 +20,4 @@ $string['iomad_reports:view'] = 'Access to Iomad Reports';
 $string['link'] = 'Go to Iomad Dashboard';
 $string['nocompanyselected'] = 'No company is selected';
 $string['pluginname'] = 'Iomad Reports';
+$string['privacy:metadata'] = 'The Iomad company selector block only shows data stored in other locations.';

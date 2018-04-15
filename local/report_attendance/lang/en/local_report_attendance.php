@@ -32,6 +32,7 @@ $string['nousers'] = 'No users in this course';
 $string['participant'] = 'Participant';
 $string['percentage'] = 'Percent Complete';
 $string['pluginname'] = 'Attendance report by course';
+$string['privacy:metadata'] = 'The Local Iomad attendance report only shows data stored in other locations.';
 $string['repcourseattendance'] = 'Attendance report by course';
 $string['remaining'] = 'Remaining';
 $string['reportselect'] = 'Report filter';

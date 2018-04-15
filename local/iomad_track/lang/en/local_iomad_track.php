@@ -15,3 +15,4 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 $string['pluginname'] = 'Iomad completion tracking';
+$string['privacy:metadata'] = 'The Local Iomad completion tracking plugin only shows data stored in other locations.';

@@ -40,5 +40,6 @@ $string['noonetoapprove'] = 'No users to approve';
 $string['notapproved'] = "Not Approved";
 $string['pending'] = "Approve Pending";
 $string['pluginname'] = 'Iomad approve users enroll';
+$string['privacy:metadata'] = 'The Iomand Approve Access block only shows data stored in other locations.';
 $string['title'] = 'Approve users';
 $string['userstoapprove'] = 'You have new approval requests';

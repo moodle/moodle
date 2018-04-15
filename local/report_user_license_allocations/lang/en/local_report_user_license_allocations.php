@@ -36,6 +36,7 @@ $string['nocerttodownload'] = 'Certificate not achieved';
 $string['nofurtherdetail'] = 'No further details to show';
 $string['notstarted'] = 'Not started';
 $string['pluginname'] = 'User license allocation history report';
+$string['privacy:metadata'] = 'The Local Iomad license allocation report only shows data stored in other locations.';
 $string['report_user_license_allocations_title'] = 'User license allocation history report';
 $string['report_user_license_allocations:view'] = 'View the user license allocation history report';
 $string['repuserlicallocation'] = 'User license allocation history report';

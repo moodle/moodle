@@ -15,6 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 $string['pluginname'] = 'Iomad settings';
+$string['privacy:metadata'] = 'The Local Iomad settings plugin only shows data stored in other locations.';
 $string['establishment_code'] = 'Establishment Code';
 $string['establishment_code_help'] = 'What should the admin see in the course list block?';
 $string['customtext2'] = 'Custom Text 2';

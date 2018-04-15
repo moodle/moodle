@@ -20,3 +20,4 @@ $string['iomad_welcome:myaddinstance'] = 'Add a new Iomad Welcome block to the u
 $string['iomad_welcome:view'] = 'View Iomad Welcome';
 $string['message'] = 'Welcome to <b>IOMAD</b> from E-Learn Design Limited. Iomad is controlled from its own Dashboard. Follow the link below. You will start by creating your first company.';
 $string['pluginname'] = 'Iomad - Welcome';
+$string['privacy:metadata'] = 'The Iomad Welcome block only shows data stored in other locations.';

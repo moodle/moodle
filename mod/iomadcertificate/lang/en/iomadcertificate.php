@@ -172,6 +172,7 @@ $string['printteacher'] = 'Print Teacher Name(s)';
 $string['printteacher_help'] = 'For printing the teacher name on the certificate, set the role of teacher at the module level.  Do this if, for example, you have more than one teacher for the course or you have more than one certificate in the course and you want to print different teacher names on each certificate.  Click to edit the certificate, then click on the Locally assigned roles tab.  Then assign the role of Teacher (editing teacher) to the certificate (they do not HAVE to be a teacher in the course--you can assign that role to anyone).  Those names will be printed on the certificate for teacher.';
 $string['printwmark'] = 'Watermark Image';
 $string['printwmark_help'] = 'A watermark file can be placed in the background of the certificate. A watermark is a faded graphic. A watermark could be a logo, seal, crest, wording, or whatever you want to use as a graphic background.';
+I$string['privacy:metadata'] = 'The Iomad Crtificate activity only shows data stored in other locations.';
 $string['receivedcerts'] = 'Received certificates';
 $string['receiveddate'] = 'Date Received';
 $string['removecert'] = 'Issued certificates removed';

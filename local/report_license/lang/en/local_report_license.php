@@ -31,6 +31,7 @@ $string['nousers'] = 'No users in this course';
 $string['participant'] = 'Participant';
 $string['percentage'] = 'Percent Complete';
 $string['pluginname'] = 'License usage report by course';
+$string['privacy:metadata'] = 'The Local Iomad license usage report only shows data stored in other locations.';
 $string['repcourselicense'] = 'License report by course';
 $string['remaining'] = 'Remaining';
 $string['reportselect'] = 'Report filter';

@@ -139,6 +139,7 @@ $string['pp_transactionid'] = 'Transaction ID';
 $string['pp_transactiontype'] = 'Transaction Type';
 $string['pricefrom'] = 'From {$a}';
 $string['priceoptions'] = 'Price options';
+$string['privacy:metadata'] = 'The Iomad E-Commerce block only shows data stored in other locations.';
 $string['process'] = 'Process';
 $string['processed'] = 'Processed';
 $string['process_help'] = 'Items with checked boxes in the "Process" column will be processed as "order complete" when saving changes.';

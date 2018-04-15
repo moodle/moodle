@@ -33,4 +33,5 @@ $string['nomatchingcourses'] = 'No courses match \'{$a}\'';
 $string['none'] = 'None';
 $string['pluginname'] = 'Course selectors';
 $string['previouslyselectedcourses'] = 'Previously selected courses not matching \'{$a}\'';
+$string['privacy:metadata'] = 'The Iomad local course selector plugin only shows data stored in other locations.';
 $string['search'] = 'Search';

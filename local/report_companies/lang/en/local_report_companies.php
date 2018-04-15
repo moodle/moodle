@@ -26,6 +26,7 @@ $string['nomanagers'] = 'No managers specified for this company';
 $string['nousers'] = 'No users specified for this company';
 $string['overview'] = 'Overview';
 $string['pluginname'] = 'Iomad company overview report';
+$string['privacy:metadata'] = 'The Local Iomad company overview report only shows data stored in other locations.';
 $string['totalusercount'] = 'Total number of users : ';
 $string['totalcoursecount'] = 'Total number of courses :';
 $string['courses'] = 'Company courses';

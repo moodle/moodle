@@ -41,6 +41,7 @@ $string['language'] = 'Language';
 $string['language_help'] = 'This is the list of currently installed language packs.  Changing the language will replace the templates for that language pack only.'; 
 $string['override'] = 'Replace';
 $string['pluginname'] = 'Local: Email';
+$string['privacy:metadata'] = 'The Iomad Local Email plugin only shows data stored in other locations.';
 $string['save_to_override_default_template'] = 'Save to replace default template';
 $string['select_email_var'] = 'Select email variable';
 $string['select_course'] = 'Select course';

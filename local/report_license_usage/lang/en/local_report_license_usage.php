@@ -16,6 +16,7 @@
 
 $string['blocktitle'] = 'License Allocation History Report';
 $string['pluginname'] = 'License allocation history report';
+$string['privacy:metadata'] = 'The Local Iomad license allocation hisroty report only shows data stored in other locations.';
 $string['report_license_usage_title'] = 'License allocation history report';
 $string['report_license_usage:view'] = 'View the license allocation history report';
 $string['repuserlicallocation'] = 'License allocation history report';

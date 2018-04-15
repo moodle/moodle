@@ -31,6 +31,7 @@ $string['nousers'] = 'No users in this course';
 $string['participant'] = 'Participant';
 $string['percentage'] = 'Percent Complete';
 $string['pluginname'] = 'User login report';
+$string['privacy:metadata'] = 'The Local Iomad user login report only shows data stored in other locations.';
 $string['repuserlogins'] = 'User logins report';
 $string['remaining'] = 'Remaining';
 $string['reportselect'] = 'Report filter';

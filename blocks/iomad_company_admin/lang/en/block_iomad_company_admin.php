@@ -483,6 +483,7 @@ $string['pottemplates'] = 'Potential templates';
 $string['pottemplatesmatching'] = 'Potential templates matching \'{$a}\'';
 $string['potusersmatching'] = 'Potential users matching \'{$a}\'';
 $string['potusers'] = 'Potential users';
+$string['privacy:metadata'] = 'The Iomad Company admin block only shows data stored in other locations.';
 $string['profile_field_company_not_empty_does_not_match_selected'] = 'profile_field_company is not empty and does not match the selected company.';
 $string['profile_field_company_not_set'] = 'profile_field_company is required when no company has been selected.';
 $string['programallocate'] = 'Allocate program license';

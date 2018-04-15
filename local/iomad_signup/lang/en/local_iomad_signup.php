@@ -30,6 +30,7 @@ $string['enable'] = 'Enable';
 $string['enable_help'] = 'New users will be assigned to a company on creation when this is enabled';
 $string['logininfo'] = 'Fill out the form below to create a new user.  An email will be sent to the email address you specify to verify the account and allow access.';
 $string['pluginname'] = 'Iomad signup';
+$string['privacy:metadata'] = 'The Local Iomad signup plugin only shows data stored in other locations.';
 $string['role'] = 'Role to be assigned';
 $string['showinstructions'] = 'Show the self signup instructions on the login page';
 $string['showinstructions_help'] = 'By default Moodle will show the self signup intructions on the login page when self enrol is enabled.  This allows them to be removed';

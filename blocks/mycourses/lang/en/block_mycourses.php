@@ -45,6 +45,7 @@ $string['nocourses'] = '(No courses)';
 $string['noinprogress'] = 'No courses in progress';
 $string['notstartedheader'] = 'Courses not started';
 $string['pluginname'] = 'My Courses';
+$string['privacy:metadata'] = 'The My Courses block only shows data stored in other locations.';
 $string['showsummarylabel'] = 'Show course summary';
 $string['showsummarydesc'] = 'Show the course summary in the listing';
 $string['title'] = 'My courses';

@@ -20,3 +20,4 @@ $string['iomad_dashboard:view'] = 'View the Iomad Dashboard';
 $string['iomad'] = 'Iomad';
 $string['name'] = 'Iomad Dashboard';
 $string['pluginname'] = 'Iomad Dashboard';
+$string['privacy:metadata'] = 'The Local Iomad dashboard plugin only shows data stored in other locations.';

@@ -19,5 +19,6 @@
  */
 
 $string['blocktitle'] = 'Email Reports';
-$string['pluginname'] = 'Email reports';
 $string['crontask'] = 'Email reports cron task';
+$string['pluginname'] = 'Email reports';
+$string['privacy:metadata'] = 'The Iomad Local email reports plugin only shows data stored in other locations.';

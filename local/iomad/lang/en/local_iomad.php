@@ -32,6 +32,7 @@ $string['lastnamefilter'] = 'Last name contains';
 $string['missingaccesstocourse'] = 'You\'re not allowed to that.';
 $string['nopermissions'] = 'The Iomad administrator has not given you permission to do this.';
 $string['pluginname'] = 'Iomad';
+$string['privacy:metadata'] = 'The Local Iomad plugin only shows data stored in other locations.';
 $string['setupiomad'] = 'Start setting up iomad';
 $string['show_suspended_users'] = 'Show suspended users?';
 $string['userfilter'] = 'Filter results';
