@@ -535,7 +535,8 @@ class tool_dataprivacy_api_testcase extends advanced_testcase {
             'name' => 'bbb',
             'description' => '<b>yeah</b>',
             'descriptionformat' => 1,
-            'retentionperiod' => 'PT1M'
+            'retentionperiod' => 'PT1M',
+            'lawfulbases' => 'gdpr_art_6_1_a'
         ]);
 
         $this->setUser($pleb);
@@ -553,7 +554,8 @@ class tool_dataprivacy_api_testcase extends advanced_testcase {
             'name' => 'bbb',
             'description' => '<b>yeah</b>',
             'descriptionformat' => 1,
-            'retentionperiod' => 'PT1M'
+            'retentionperiod' => 'PT1M',
+            'lawfulbases' => 'gdpr_art_6_1_a'
         ]);
 
         $this->setUser($pleb);
@@ -572,7 +574,8 @@ class tool_dataprivacy_api_testcase extends advanced_testcase {
             'name' => 'bbb',
             'description' => '<b>yeah</b>',
             'descriptionformat' => 1,
-            'retentionperiod' => 'PT1M'
+            'retentionperiod' => 'PT1M',
+            'lawfulbases' => 'gdpr_art_6_1_a'
         ]);
 
         $this->setUser($pleb);
@@ -594,11 +597,13 @@ class tool_dataprivacy_api_testcase extends advanced_testcase {
             'name' => 'bbb',
             'description' => '<b>yeah</b>',
             'descriptionformat' => 1,
-            'retentionperiod' => 'PT1M'
+            'retentionperiod' => 'PT1M',
+            'lawfulbases' => 'gdpr_art_6_1_a,gdpr_art_6_1_c,gdpr_art_6_1_e'
         ]);
         $this->assertInstanceOf('\tool_dataprivacy\purpose', $purpose);
         $this->assertEquals('bbb', $purpose->get('name'));
         $this->assertEquals('PT1M', $purpose->get('retentionperiod'));
+        $this->assertEquals('gdpr_art_6_1_a,gdpr_art_6_1_c,gdpr_art_6_1_e', $purpose->get('lawfulbases'));
 
         // Update.
         $purpose->set('retentionperiod', 'PT2M');
@@ -606,7 +611,7 @@ class tool_dataprivacy_api_testcase extends advanced_testcase {
         $this->assertEquals('PT2M', $purpose->get('retentionperiod'));
 
         // Retrieve.
-        $purpose = api::create_purpose((object)['name' => 'aaa', 'retentionperiod' => 'PT1M']);
+        $purpose = api::create_purpose((object)['name' => 'aaa', 'retentionperiod' => 'PT1M', 'lawfulbases' => 'gdpr_art_6_1_a']);
         $purposes = api::get_purposes();
         $this->assertCount(2, $purposes);
         $this->assertEquals('aaa', $purposes[0]->get('name'));
@@ -1038,9 +1043,9 @@ class tool_dataprivacy_api_testcase extends advanced_testcase {
      */
     protected function add_purposes_and_categories() {
 
-        $purpose1 = api::create_purpose((object)['name' => 'p1', 'retentionperiod' => 'PT1H']);
-        $purpose2 = api::create_purpose((object)['name' => 'p2', 'retentionperiod' => 'PT2H']);
-        $purpose3 = api::create_purpose((object)['name' => 'p3', 'retentionperiod' => 'PT3H']);
+        $purpose1 = api::create_purpose((object)['name' => 'p1', 'retentionperiod' => 'PT1H', 'lawfulbases' => 'gdpr_art_6_1_a']);
+        $purpose2 = api::create_purpose((object)['name' => 'p2', 'retentionperiod' => 'PT2H', 'lawfulbases' => 'gdpr_art_6_1_b']);
+        $purpose3 = api::create_purpose((object)['name' => 'p3', 'retentionperiod' => 'PT3H', 'lawfulbases' => 'gdpr_art_6_1_c']);
 
         $cat1 = api::create_category((object)['name' => 'a']);
         $cat2 = api::create_category((object)['name' => 'b']);

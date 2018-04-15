@@ -54,7 +54,7 @@ class tool_dataprivacy_expired_contexts_testcase extends advanced_testcase {
     public function test_expired_users() {
         global $DB;
 
-        $purpose = api::create_purpose((object)['name' => 'p1', 'retentionperiod' => 'PT1H']);
+        $purpose = api::create_purpose((object)['name' => 'p1', 'retentionperiod' => 'PT1H', 'lawfulbases' => 'gdpr_art_6_1_a']);
         $cat = api::create_category((object)['name' => 'a']);
 
         $record = (object)[
@@ -122,8 +122,8 @@ class tool_dataprivacy_expired_contexts_testcase extends advanced_testcase {
     public function test_expired_course_related_contexts() {
         global $DB;
 
-        $purpose1 = api::create_purpose((object)['name' => 'p1', 'retentionperiod' => 'PT1H']);
-        $purpose2 = api::create_purpose((object)['name' => 'p1', 'retentionperiod' => 'P1000Y']);
+        $purpose1 = api::create_purpose((object)['name' => 'p1', 'retentionperiod' => 'PT1H', 'lawfulbases' => 'gdpr_art_6_1_a']);
+        $purpose2 = api::create_purpose((object)['name' => 'p1', 'retentionperiod' => 'P1000Y', 'lawfulbases' => 'gdpr_art_6_1_b']);
         $cat = api::create_category((object)['name' => 'a']);
 
         $record = (object)[
