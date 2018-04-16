@@ -282,11 +282,10 @@ class mod_lesson_renderer extends plugin_renderer_base {
             $pagetable->cellspacing = 0;
             $pagetable->cellpadding = '5px';
             $pagetable->data = array();
-            $pagetable->id = 'lesson-' . $pageid;
 
             $pageheading = new html_table_cell();
 
-            $pageheading->text = format_string($page->title);
+            $pageheading->text = html_writer::tag('a', '', array('id' => 'lesson-' . $pageid)) . format_string($page->title);
             if ($canedit) {
                 $pageheading->text .= ' '.$this->page_action_links($page, $npages);
             }
@@ -309,7 +308,7 @@ class mod_lesson_renderer extends plugin_renderer_base {
 
             $pagetable = $page->display_answers($pagetable);
 
-            $content .= html_writer::start_tag('div', array('class' => 'no-overflow'));
+            $content .= html_writer::start_tag('div');
             $content .= html_writer::table($pagetable);
             $content .= html_writer::end_tag('div');
 
