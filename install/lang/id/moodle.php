@@ -31,6 +31,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['language'] = 'Bahasa';
+$string['moodlelogo'] = 'Logo Moodle';
 $string['next'] = 'Selanjutnya';
 $string['previous'] = 'Sebelumnya';
 $string['reload'] = 'Muat ulang';
