@@ -170,6 +170,7 @@ define([
             modal.getRoot().on('submit', 'form', function(e) {
                 save(modal, root).then(function() {
                     modal.hide();
+                    location.reload();
                     return;
                 }).fail(Notification.exception);
 
