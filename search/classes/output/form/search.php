@@ -102,7 +102,7 @@ class search extends \moodleform {
             // Get groups on course (we don't show group selector if there aren't any).
             $courseid = $this->_customdata['withincourseid'];
             $allgroups = groups_get_all_groups($courseid);
-            if ($allgroups && $search->get_engine()->supports_groups()) {
+            if ($allgroups && $search->get_engine()->supports_group_filtering()) {
                 $groupnames = [];
                 foreach ($allgroups as $group) {
                     $groupnames[$group->id] = $group->name;
