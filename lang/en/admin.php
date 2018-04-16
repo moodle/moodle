@@ -128,7 +128,7 @@ $string['clitypevaluedefault'] = 'type value, press Enter to use default value (
 $string['cliunknowoption'] = 'Unrecognised options:
   {$a}
 Please use --help option.';
-$string['cliupgradefinished'] = 'Command line upgrade completed successfully.';
+$string['cliupgradefinished'] = 'Command line upgrade from {$a->oldversion} to {$a->newversion} completed successfully.';
 $string['cliupgradenoneed'] = 'No upgrade needed for the installed version {$a}. Thanks for coming anyway!';
 $string['cliyesnoprompt'] = 'type y (means yes) or n (means no)';
 $string['commentsperpage'] = 'Comments displayed per page';
