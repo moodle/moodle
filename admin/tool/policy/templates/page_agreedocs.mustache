@@ -57,7 +57,6 @@
 
 <form id="agreedocsform" method="post" action="{{myurl}}">
     <input type="hidden" name="sesskey" value="{{sesskey}}">
-    <input type="hidden" name="action" value="agreedocs">
 
 {{#behalfuser}}
 <div class="clearfix">
@@ -115,9 +114,10 @@
 {{# str }}somefieldsrequired, form, <i class="icon fa fa-exclamation-circle text-danger fa-fw" title="{{# str }} required {{/ str }}" ></i>{{/ str }}
 <hr>
 
-<input type="submit" class="btn btn-primary" value={{#quote}}{{#str}} next {{/str}}{{/quote}}>
-<input type="reset" class="btn btn-secondary" value={{#quote}}{{#str}} cancel {{/str}}{{/quote}}>
-
+<input type="submit" class="btn btn-primary" name="submit" value={{#quote}}{{#str}} next {{/str}}{{/quote}}>
+{{#cancancel}}
+<input type="submit" class="btn btn-secondary" name="cancel" value={{#quote}}{{#str}} cancel {{/str}}{{/quote}}>
+{{/cancancel}}
 </form>
 
 {{#js}}

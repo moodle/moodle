@@ -35,7 +35,8 @@ define('NO_SITEPOLICY_CHECK', true);
 // @codingStandardsIgnoreLine See the {@link page_agreedocs} for the access control checks.
 require(__DIR__.'/../../../config.php');
 
-$action = optional_param('action', null, PARAM_ALPHA);
+$submit = optional_param('submit', null, PARAM_NOTAGS);
+$cancel = optional_param('cancel', null, PARAM_NOTAGS);
 $agreedocs = optional_param_array('agreedoc', null, PARAM_INT);
 $behalfid = optional_param('userid', null, PARAM_INT);
 
@@ -59,8 +60,10 @@ if (!empty($USER->id)) {
 
 if (!$haspermissionagreedocs) {
     $outputpage = new \tool_policy\output\page_nopermission($behalfid);
+} else if ($cancel) {
+    redirect(new moodle_url('/'));
 } else {
-    $outputpage = new \tool_policy\output\page_agreedocs($agreedocs, $behalfid, $action);
+    $outputpage = new \tool_policy\output\page_agreedocs($agreedocs, $behalfid, $submit);
 }
 
 $output = $PAGE->get_renderer('tool_policy');

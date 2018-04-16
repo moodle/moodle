@@ -401,6 +401,9 @@ class page_agreedocs implements renderable, templatable {
             $data->behalfuser = html_writer::link(\context_user::instance($this->behalfid)->get_url(), $userfullname);
         }
 
+        // User can cancel accepting policies only if it is a part of signup.
+        $data->cancancel = !isloggedin() || isguestuser();
+
         return $data;
     }
 
