@@ -28,8 +28,6 @@ use coding_exception;
 use core\external\persistent_exporter;
 use DateInterval;
 use Exception;
-use external_single_structure;
-use external_value;
 use renderer_base;
 use tool_dataprivacy\purpose;
 
@@ -67,24 +65,16 @@ class purpose_exporter extends persistent_exporter {
      * @return array
      */
     protected static function define_other_properties() {
-        $namedescriptiontype = [
-            'name' => [
-                'type' => PARAM_TEXT,
-            ],
-            'description' => [
-                'type' => PARAM_TEXT,
-            ],
-        ];
         return [
             'formattedretentionperiod' => [
                 'type' => PARAM_TEXT
             ],
             'formattedlawfulbases' => [
-                'type' => $namedescriptiontype,
+                'type' => name_description_exporter::read_properties_definition(),
                 'multiple' => true
             ],
             'formattedsensitivedatareasons' => [
-                'type' => $namedescriptiontype,
+                'type' => name_description_exporter::read_properties_definition(),
                 'multiple' => true,
                 'optional' => true
             ],
