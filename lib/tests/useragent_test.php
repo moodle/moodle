@@ -64,7 +64,7 @@ class core_useragent_testcase extends advanced_testcase {
                     ),
 
                     'versionclasses'                => array(
-                        'safari',
+                        'edge',
                     ),
                 ),
             ),
@@ -97,8 +97,7 @@ class core_useragent_testcase extends advanced_testcase {
                     ),
 
                     'versionclasses'                => array(
-                        'safari',
-                        'android',
+                        'edge'
                     ),
 
                     'devicetype'                    => 'mobile',
@@ -898,8 +897,7 @@ class core_useragent_testcase extends advanced_testcase {
                     'is_webkit'                     => true,
 
                     'versionclasses'                => array(
-                        'safari',
-                        'ios',
+                        'ios'
                     ),
 
                     'devicetype'                    => 'mobile',
@@ -922,7 +920,6 @@ class core_useragent_testcase extends advanced_testcase {
                     'is_webkit'                     => true,
 
                     'versionclasses'                => array(
-                        'safari',
                         'ios',
                     ),
 
@@ -944,7 +941,6 @@ class core_useragent_testcase extends advanced_testcase {
                     'is_webkit'                     => true,
 
                     'versionclasses'                => array(
-                        'safari',
                         'ios',
                     ),
 
@@ -953,7 +949,7 @@ class core_useragent_testcase extends advanced_testcase {
             ),
 
             // Android WebKit 525; G1 Phone.
-            array(
+            'Android WebKit 525; G1 Phone' => array(
                 'Mozilla/5.0 (Linux; U; Android 1.1; en-gb; dream) AppleWebKit/525.10+ (KHTML, like Gecko) Version/3.0.4 Mobile Safari/523.12.2 – G1 Phone',
                 array(
                     'is_webkit_android'             => true,
@@ -965,7 +961,6 @@ class core_useragent_testcase extends advanced_testcase {
 
                     'versionclasses'                => array(
                         'android',
-                        'safari',
                     ),
 
                     'devicetype'                    => 'mobile',
@@ -975,7 +970,7 @@ class core_useragent_testcase extends advanced_testcase {
             ),
 
             // Android WebKit 530; Nexus.
-            array(
+            'Android WebKit 530; Nexus' => array(
                 'Mozilla/5.0 (Linux; U; Android 2.1; en-us; Nexus One Build/ERD62) AppleWebKit/530.17 (KHTML, like Gecko) Version/4.0 Mobile Safari/530.17 –Nexus',
                 array(
                     'is_webkit_android'             => true,
@@ -988,7 +983,6 @@ class core_useragent_testcase extends advanced_testcase {
 
                     'versionclasses'                => array(
                         'android',
-                        'safari',
                     ),
 
                     'devicetype'                    => 'mobile',
@@ -1017,7 +1011,7 @@ class core_useragent_testcase extends advanced_testcase {
                     ),
 
                     'versionclasses'                => array(
-                        'safari',
+                        'chrome',
                         'android',
                     ),
 
@@ -1045,7 +1039,7 @@ class core_useragent_testcase extends advanced_testcase {
                     ),
 
                     'versionclasses'                => array(
-                        'safari',
+                        'chrome',
                         'android',
                     ),
 
@@ -1066,7 +1060,7 @@ class core_useragent_testcase extends advanced_testcase {
                     'is_webkit'                     => true,
 
                     'versionclasses'                => array(
-                        'safari',
+                        'chrome',
                     ),
                 ),
             ),
@@ -1086,7 +1080,7 @@ class core_useragent_testcase extends advanced_testcase {
                     'is_webkit'                     => true,
 
                     'versionclasses'                => array(
-                        'safari',
+                        'chrome',
                     ),
                 ),
             ),
@@ -1231,7 +1225,6 @@ class core_useragent_testcase extends advanced_testcase {
                     ),
 
                     'versionclasses'                => array(
-                        'safari',
                         'ios',
                     ),
 

@@ -1,6 +1,19 @@
 This files describes API changes in /theme/* themes,
 information provided here is intended especially for theme designer.
 
+=== 3.6 ===
+
+* The body tag has various browser-specific classes for those cases where some
+  browser-sniffing is unavoidable. This used not to recognised Microsoft Edge,
+  but now it does (class 'edge'). Also, both Safari and Chrome used to be
+  class 'safari', but now there are separate classes 'safari' and 'chrome'.
+  The body's class should change to match the browser:
+  - Google Chrome (Mac & Window): The body class should change from safari to chrome.
+  - Google Chrome (Android) : The body class should change from safari, android to chrome, android.
+  - Microsoft Edge: The body class should change from safari to edge.
+  - Mobile safari: The class ios should exist, safari class should be removed.
+* Remove class .safari styling from activity chooser dialog for theme boost and bootstrapbase.
+
 === 3.4 ===
 
 * There was a mustache template login.mustache in /lib/templates/ rendering the login form
