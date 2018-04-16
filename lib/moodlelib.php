@@ -3020,6 +3020,10 @@ function require_course_login($courseorid, $autologinguest = true, $cm = null, $
         // Always login for hidden activities.
         require_login($courseorid, $autologinguest, $cm, $setwantsurltome, $preventredirect);
 
+    } else if (isloggedin() && !isguestuser()) {
+        // User is already logged in. Make sure the login is complete (user is fully setup, policies agreed).
+        require_login($courseorid, $autologinguest, $cm, $setwantsurltome, $preventredirect);
+
     } else if ($issite) {
         // Login for SITE not required.
         // We still need to instatiate PAGE vars properly so that things that rely on it like navigation function correctly.
