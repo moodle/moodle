@@ -103,7 +103,7 @@ $plugin_instance = $DB->get_record("enrol", array("id" => $data->instanceid, "en
 $plugin = enrol_get_plugin('paypal');
 
 /// Open a connection back to PayPal to validate the data
-$paypaladdr = empty($CFG->usepaypalsandbox) ? 'www.paypal.com' : 'www.sandbox.paypal.com';
+$paypaladdr = empty($CFG->usepaypalsandbox) ? 'ipnpb.paypal.com' : 'ipnpb.sandbox.paypal.com';
 $c = new curl();
 $options = array(
     'returntransfer' => true,
@@ -180,19 +180,25 @@ if (strlen($result) > 0) {
 
         // At this point we only proceed with a status of completed or pending with a reason of echeck
 
-
-
-        if ($existing = $DB->get_record("enrol_paypal", array("txn_id"=>$data->txn_id))) {   // Make sure this transaction doesn't exist already
+        // Make sure this transaction doesn't exist already.
+        if ($existing = $DB->get_record("enrol_paypal", array("txn_id" => $data->txn_id), "*", IGNORE_MULTIPLE)) {
             \enrol_paypal\util::message_paypal_error_to_admin("Transaction $data->txn_id is being repeated!", $data);
             die;
-
         }
 
-        if (core_text::strtolower($data->business) !== core_text::strtolower($plugin->get_config('paypalbusiness'))) {   // Check that the email is the one we want it to be
-            \enrol_paypal\util::message_paypal_error_to_admin("Business email is {$data->business} (not ".
+        // Check that the receiver email is the one we want it to be.
+        if (isset($data->business)) {
+            $recipient = $data->business;
+        } else if (isset($data->receiver_email)) {
+            $recipient = $data->receiver_email;
+        } else {
+            $recipient = 'empty';
+        }
+
+        if (core_text::strtolower($recipient) !== core_text::strtolower($plugin->get_config('paypalbusiness'))) {
+            \enrol_paypal\util::message_paypal_error_to_admin("Business email is {$recipient} (not ".
                     $plugin->get_config('paypalbusiness').")", $data);
             die;
-
         }
 
         if (!$user = $DB->get_record('user', array('id'=>$data->userid))) {   // Check that user exists
