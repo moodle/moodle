@@ -26,3 +26,4 @@ $string['areafiles:view'] = 'View repository Embedded files';
 $string['configplugin'] = 'Configuration for repository Embedded files';
 $string['pluginname_help'] = 'Files embedded in the current text editor';
 $string['pluginname'] = 'Embedded files';
+$string['privacy:metadata'] = 'The Embedded files repository plugin does not store or transmit any personal data.';
