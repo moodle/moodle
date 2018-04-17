@@ -349,21 +349,6 @@ class provider implements
                        fv.item AS valueitem,
                        fv.completed AS valuecompleted,
                        fv.tmp_completed AS valuetmp_completed,
-                       fv.value AS valuevalue,
-
-                       fi.id AS itemid,
-                       fi.feedback AS itemfeedback,
-                       fi.template AS itemtemplate,
-                       fi.name AS itemname,
-                       fi.label AS itemlabel,
-                       fi.presentation AS itempresentation,
-                       fi.typ AS itemtyp,
-                       fi.hasvalue AS itemhasvalue,
-                       fi.position AS itemposition,
-                       fi.required AS itemrequired,
-                       fi.dependitem AS itemdependitem,
-                       fi.dependvalue AS itemdependvalue,
-                       fi.options AS itemoptions,
 
                        $ctxfields
                   FROM {context} ctx
@@ -375,8 +360,6 @@ class provider implements
                     ON fc.feedback = f.id
                   JOIN {%s} fv
                     ON fv.completed = fc.id
-                  JOIN {feedback_item} fi
-                    ON fi.id = fv.item
                  WHERE ctx.id $insql
                    AND fc.userid = :userid{$i}";
 
@@ -392,9 +375,34 @@ class provider implements
         list($nontmpsql, $nontmpparams) = $makefetchsql(false);
         list($tmpsql, $tmpparams) = $makefetchsql(true);
 
+        // Oracle does not support UNION on text fields, therefore we must get the itemdescription
+        // and valuevalue after doing the union by joining on the result.
         $sql = "
-            SELECT q.*
+            SELECT q.*,
+
+                   COALESCE(fv.value, fvt.value) AS valuevalue,
+
+                   fi.id AS itemid,
+                   fi.feedback AS itemfeedback,
+                   fi.template AS itemtemplate,
+                   fi.name AS itemname,
+                   fi.label AS itemlabel,
+                   fi.presentation AS itempresentation,
+                   fi.typ AS itemtyp,
+                   fi.hasvalue AS itemhasvalue,
+                   fi.position AS itemposition,
+                   fi.required AS itemrequired,
+                   fi.dependitem AS itemdependitem,
+                   fi.dependvalue AS itemdependvalue,
+                   fi.options AS itemoptions
+
               FROM ($nontmpsql UNION $tmpsql) q
+         LEFT JOIN {feedback_value} fv
+                ON fv.id = q.valueid AND q.istmp = 0
+         LEFT JOIN {feedback_valuetmp} fvt
+                ON fvt.id = q.valueid AND q.istmp = 1
+              JOIN {feedback_item} fi
+                ON (fi.id = fv.item OR fi.id = fvt.item)
           ORDER BY q.contextid, q.istmp, q.submissionid, q.valueid";
         $params = array_merge($nontmpparams, $tmpparams);
 
