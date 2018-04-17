@@ -158,6 +158,9 @@
         <testsuite name="core_plagiarism_testsuite">
             <directory suffix="_test.php">plagiarism/tests</directory>
         </testsuite>
+        <testsuite name="core_portfolio_testsuite">
+            <directory suffix="_test.php">portfolio/tests</directory>
+        </testsuite>
         <testsuite name="core_editor_testsuite">
             <directory suffix="_test.php">lib/editor/tests</directory>
         </testsuite>
