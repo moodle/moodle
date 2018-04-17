@@ -139,7 +139,7 @@ class imscc11_backup_convert extends backup_execution_step {
 
         require_once($CFG->dirroot . '/backup/cc/cc_includes.php');
 
-        $tempdir = $CFG->tempdir . '/backup/' . uniqid('', true);
+        $tempdir = $CFG->backuptempdir . '/' . uniqid('', true);
 
         if (mkdir($tempdir, $CFG->directorypermissions, true)) {
 

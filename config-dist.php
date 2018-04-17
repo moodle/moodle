@@ -434,9 +434,15 @@ $CFG->admin = 'admin';
 // Localcachedir is intended for server clusters, it does not have to be shared by cluster nodes.
 // The directories must not be accessible via web.
 //
-//     $CFG->tempdir = '/var/www/moodle/temp';        // Directory MUST BE SHARED by all clsuter nodes.
+//     $CFG->tempdir = '/var/www/moodle/temp';        // Directory MUST BE SHARED by all cluster nodes.
 //     $CFG->cachedir = '/var/www/moodle/cache';      // Directory MUST BE SHARED by all cluster nodes, locking required.
 //     $CFG->localcachedir = '/var/local/cache';      // Intended for local node caching.
+//
+// It is possible to specify a different backup temp directory, use local fast filesystem
+// for normal web servers. Server clusters MUST use shared filesystem for backuptempdir!
+// The directory must not be accessible via web.
+//
+//     $CFG->backuptempdir = '/var/www/moodle/backuptemp';  // Directory MUST BE SHARED by all cluster nodes.
 //
 // Some filesystems such as NFS may not support file locking operations.
 // Locking resolves race conditions and is strongly recommended for production servers.

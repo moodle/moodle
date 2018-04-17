@@ -442,6 +442,7 @@ if ($interactive) {
     }
 }
 $CFG->tempdir       = $CFG->dataroot.'/temp';
+$CFG->backuptempdir = $CFG->tempdir.'/backup';
 $CFG->cachedir      = $CFG->dataroot.'/cache';
 $CFG->localcachedir = $CFG->dataroot.'/localcache';
 

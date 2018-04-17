@@ -36,6 +36,7 @@
  *  - $CFG->dataroot - Path to moodle data files directory on server's filesystem.
  *  - $CFG->dirroot  - Path to moodle's library folder on server's filesystem.
  *  - $CFG->libdir   - Path to moodle's library folder on server's filesystem.
+ *  - $CFG->backuptempdir  - Path to moodle's backup temp file directory on server's filesystem.
  *  - $CFG->tempdir  - Path to moodle's temp file directory on server's filesystem.
  *  - $CFG->cachedir - Path to moodle's cache directory on server's filesystem (shared by cluster nodes).
  *  - $CFG->localcachedir - Path to moodle's local cache directory (not shared by cluster nodes).
@@ -190,6 +191,11 @@ $CFG->libdir = $CFG->dirroot .'/lib';
 // Allow overriding of tempdir but be backwards compatible
 if (!isset($CFG->tempdir)) {
     $CFG->tempdir = "$CFG->dataroot/temp";
+}
+
+// Allow overriding of backuptempdir but be backwards compatible
+if (!isset($CFG->backuptempdir)) {
+    $CFG->backuptempdir = "$CFG->tempdir/backup";
 }
 
 // Allow overriding of cachedir but be backwards compatible

@@ -45,7 +45,7 @@ class core_course_restore_testcase extends advanced_testcase {
      * @return string
      */
     protected function backup_course($courseid, $userid = 2) {
-        globaL $CFG;
+        $backuptempdir = make_backup_temp_directory('');
         $packer = get_file_packer('application/vnd.moodle.backup');
 
         $bc = new backup_controller(backup::TYPE_1COURSE, $courseid, backup::FORMAT_MOODLE, backup::INTERACTIVE_NO,
@@ -53,7 +53,7 @@ class core_course_restore_testcase extends advanced_testcase {
         $bc->execute_plan();
 
         $results = $bc->get_results();
-        $results['backup_destination']->extract_to_pathname($packer, "$CFG->tempdir/backup/core_course_testcase");
+        $results['backup_destination']->extract_to_pathname($packer, "$backuptempdir/core_course_testcase");
 
         $bc->destroy();
         unset($bc);
