@@ -45,7 +45,7 @@ class provider implements
      * @return  collection     A listing of user data stored through this system.
      */
     public static function get_metadata(collection $collection) {
-        return $collection->add_external_location_link('Mahara site', ['data' => 'privacy:metadata:data'], 'privacy:metadata');
+        return $collection->add_external_location_link('mahara', ['data' => 'privacy:metadata:data'], 'privacy:metadata');
     }
 
     /**

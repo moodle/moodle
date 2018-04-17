@@ -45,7 +45,7 @@ class provider implements
      * @return  collection     A listing of user data stored through this system.
      */
     public static function get_metadata(collection $collection) {
-        return $collection->add_external_location_link('Google Docs account', ['data' => 'privacy:metadata:data'],
+        return $collection->add_external_location_link('docs.google.com', ['data' => 'privacy:metadata:data'],
                                                        'privacy:metadata');
     }
 
