@@ -28,3 +28,5 @@ $string['oauthinfo'] = '<p>To use this plugin, you must register your site with 
 $string['picasa:view'] = 'View picasa repository';
 $string['pluginname'] = 'Picasa web album';
 $string['secret'] = 'Secret';
+$string['privacy:metadata:repository_picasa'] = 'The Picasa web album repository plugin does not store any personal data, but does transmit user data from Moodle to the remote system.';
+$string['privacy:metadata:repository_picasa:searchtext'] = 'The Picasa repository user search text query.';
