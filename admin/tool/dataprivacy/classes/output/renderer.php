@@ -94,7 +94,7 @@ class renderer extends plugin_renderer_base {
     /**
      * Render the data compliance registry.
      *
-     * @param data_registry_page $page
+     * @param data_registry_compliance_page $page
      * @return string html for the page
      * @throws moodle_exception
      */

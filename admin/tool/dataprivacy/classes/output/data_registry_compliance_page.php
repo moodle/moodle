@@ -41,6 +41,8 @@ class data_registry_compliance_page implements renderable, templatable {
 
     /**
      * Constructor.
+     *
+     * @param array $metadata
      */
     public function __construct($metadata) {
         $this->metadata = $metadata;

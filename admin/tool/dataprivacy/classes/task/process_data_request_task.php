@@ -107,7 +107,7 @@ class process_data_request_task extends adhoc_task {
             // Get the collection of approved_contextlist objects needed for core_privacy data deletion.
             $approvedclcollection = api::get_approved_contextlist_collection_for_request($requestpersistent);
 
-            // Delete the data
+            // Delete the data.
             $manager = new \core_privacy\manager();
             $manager->delete_data_for_user($approvedclcollection);
         }

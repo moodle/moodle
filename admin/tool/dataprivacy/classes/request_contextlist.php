@@ -57,8 +57,8 @@ class request_contextlist extends persistent {
     /**
      * Creates a new relation, but does not persist it.
      *
-     * @param $requestid
-     * @param $contextlistid
+     * @param int $requestid
+     * @param int $contextlistid
      * @return $this
      * @throws \coding_exception
      */

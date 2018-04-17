@@ -59,7 +59,6 @@ class data_registry {
     /**
      * Returns purpose and category var names from a context class name
      *
-     * @access private
      * @param string $classname
      * @return string[]
      */
@@ -75,7 +74,6 @@ class data_registry {
      *
      * The caller code is responsible of checking that $contextlevel is an integer.
      *
-     * @access private
      * @param int $contextlevel
      * @return int|false[]
      */
@@ -102,7 +100,6 @@ class data_registry {
      *
      * At least the system defaults need to be set.
      *
-     * @access private
      * @return bool
      */
     public static function defaults_set() {
@@ -116,7 +113,6 @@ class data_registry {
     /**
      * Returns all site categories that are visible to the current user.
      *
-     * @access private
      * @return \coursecat[]
      */
     public static function get_site_categories() {
@@ -144,7 +140,6 @@ class data_registry {
      * Important to note that it returns course-level assigned roles
      * if the provided context level is below course.
      *
-     * @access private
      * @param \context $context
      * @return array
      */
@@ -169,7 +164,6 @@ class data_registry {
     /**
      * Returns the effective value given a context instance
      *
-     * @access private
      * @param \context $context
      * @param string $element 'category' or 'purpose'
      * @param int|false $forcedvalue Use this value as if this was this context instance value.

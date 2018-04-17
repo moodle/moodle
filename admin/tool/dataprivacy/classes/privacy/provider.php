@@ -80,8 +80,8 @@ class provider implements
      * @return  contextlist   $contextlist  The contextlist containing the list of contexts used in this plugin.
      */
     public static function get_contexts_for_userid(int $userid) : contextlist {
-        $sql = "SELECT id 
-                  FROM {context} 
+        $sql = "SELECT id
+                  FROM {context}
                  WHERE instanceid = :userid
                        AND contextlevel = :contextlevel";
 
@@ -136,7 +136,7 @@ class provider implements
             $contextdatatowrite[] = $data;
         }
 
-        // {User context} / Privacy and policies / Data requests.
+        // User context / Privacy and policies / Data requests.
         $subcontext = [
             get_string('privacyandpolicies', 'admin'),
             get_string('datarequests', 'tool_dataprivacy'),
