@@ -29,3 +29,4 @@ $string['pluginname_help'] = 'Files in user private area';
 $string['pluginname'] = 'Private files';
 $string['emptyfilelist'] = 'There are no files to show';
 $string['user:view'] = 'View user private files';
+$string['privacy:metadata'] = 'The Private files repository plugin does not store or transmit any personal data.';
