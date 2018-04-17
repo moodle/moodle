@@ -40,4 +40,5 @@ $string['saved'] = 'Box data saved';
 $string['shareurl'] = 'Share URL';
 $string['username'] = 'Username for Box';
 $string['warninghttps'] = 'Box requires your website to be using HTTPS in order for the repository to work.';
-
+$string['privacy:metadata:repository_boxnet'] = 'The Box repository plugin does not store any personal data, but does transmit user data from Moodle to the remote system.';
+$string['privacy:metadata:repository_boxnet:query'] = 'The Box repository user search text query.';
