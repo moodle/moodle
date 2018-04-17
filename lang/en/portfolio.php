@@ -166,6 +166,7 @@ $string['plugincouldnotpackage'] = 'Failed to package up your data for export: o
 $string['pluginismisconfigured'] = 'Portfolio plugin is misconfigured, skipping. Error was: {$a}';
 $string['portfolio'] = 'Portfolio';
 $string['portfolios'] = 'Portfolios';
+$string['privacy:metadata'] = 'The portfolio subsystem acts as a channel, passing requests from plugins to the various portfolio plugins.';
 $string['queuesummary'] = 'Currently queued transfers';
 $string['returntowhereyouwere'] = 'Return to where you were';
 $string['save'] = 'Save';
