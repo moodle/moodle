@@ -15,21 +15,32 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Book module language strings
+ * Privacy provider implementation for booktool_print.
  *
  * @package    booktool_print
- * @copyright  2011 Petr Skoda {@link http://skodak.org}
+ * @copyright  2018 Mihail Geshoski <mihail@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die;
+namespace booktool_print\privacy;
 
-$string['eventbookprinted'] = 'Book printed';
-$string['eventchapterprinted'] = 'Chapter printed';
-$string['pluginname'] = 'Book printing';
-$string['printbook'] = 'Print book';
-$string['printchapter'] = 'Print this chapter';
-$string['printdate'] = 'Date';
-$string['printedby'] = 'Printed by';
-$string['print:print'] = 'Print book';
-$string['privacy:metadata'] = 'The Book printing plugin does not store any personal data.';
+defined('MOODLE_INTERNAL') || die();
+
+/**
+ * Privacy provider implementation for booktool_print.
+ *
+ * @copyright  2018 Mihail Geshoski <mihail@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class provider implements \core_privacy\local\metadata\null_provider {
+
+    /**
+     * Get the language string identifier with the component's language
+     * file to explain why this plugin stores no data.
+     *
+     * @return  string
+     */
+    public static function get_reason() {
+        return 'privacy:metadata';
+    }
+}
