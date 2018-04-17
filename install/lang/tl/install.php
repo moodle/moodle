@@ -30,13 +30,13 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['admindirname'] = 'Pang-Admin na Bugsok';
+$string['admindirname'] = 'Pang-Admin na direktoryo';
 $string['availablelangs'] = 'Magagamit na mga pakete ng wika';
 $string['chooselanguagehead'] = 'Pumilì ng wika';
 $string['chooselanguagesub'] = 'Pumili po ng wika para sa pagluluklok LAMANG.  Sa mga susunod na iskrin ay makakapili ka ng wika para sa site o tagagamit.';
-$string['dataroot'] = 'Bugsok ng Datos';
+$string['dataroot'] = 'Direktoryo ng Datos';
 $string['dbprefix'] = 'Unlapi ng mga teybol';
-$string['dirroot'] = 'Bugsok ng Moodle';
+$string['dirroot'] = 'Direktoryo ng Moodle';
 $string['environmenthead'] = 'Sinusuri ang kapaligiran mo...';
 $string['installation'] = 'Pagluklok';
 $string['langdownloaderror'] = 'Ikinalulungkot namin na ang wikang "{$a}" ay hindi nailuklok. Ang kabuuan ng pagluluklok ay itutuloy sa Ingles.';
@@ -50,14 +50,14 @@ $string['memorylimithelp'] = '<p>Ang memory limit ng PHP para sa server mo ay ka
 <ol>
 <li>Kunga maaari mong gawin, muling ikompayl ang PHP na may <i>--enable-memory-limit</i>.
      Pahihintulutan nito ang Moodle na itakda ang memory limit sa sarili nito.</li>
-<li>Kung mapapasok mo ang iyong sakong php.ini, mababago mo ang <b>memory_limit</b>
+<li>Kung mapapasok mo ang iyong php.ini file, mababago mo ang <b>memory_limit</b>
     na kaayusan doon at gawin itong mga 40M.  Kung wala kang karapatang pasukin ito
     baka puwede mong hilingin sa administrador na gawin ito para sa iyo.</li>
-<li>Sa ilang PHP serve maaari kang lumikha ng isang sakong .htaccess sa bugsok ng Moodle
+<li>Sa ilang PHP serve maaari kang lumikha ng isang fileng .htaccess sa direktoryo ng Moodle
     na naglalaman ng linyang ito:
     <p><blockquote>php_value memory_limit 40M</blockquote></p>
     <p>Subali\'t sa ilang server ay pipigilin nito ang paggana ng <b>lahat</b> ng pahinang PHP
-    (makakakita ka ng mga error kapag tumingin ka sa mga pahina) kaya\'t kakailanganin mong tanggalin ang sakong .htaccess.</p></li>
+    (makakakita ka ng mga error kapag tumingin ka sa mga pahina) kaya\'t kakailanganin mong tanggalin ang .htaccess file.</p></li>
 </ol>';
 $string['phpversion'] = 'Bersiyon ng PHP';
 $string['phpversionhelp'] = '<p>Kinakailangan ng Moodle ang isang bersiyon ng PHP na kahit man lamang 4.3.0. o 5.1.0 (ang 5.0.x ay maraming problema)</p>
