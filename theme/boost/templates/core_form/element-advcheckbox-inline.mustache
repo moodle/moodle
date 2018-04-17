@@ -7,7 +7,7 @@
         <input type="hidden" name="{{element.name}}" value="{{element.frozenvalue}}">
     {{/element.frozen}}
 {{/element.hardfrozen}}
-<input type="checkbox" name="{{element.name}}" class="{{element.extraclasses}}"
+<input type="checkbox" name="{{element.name}}" class="form-check-input {{element.extraclasses}}"
     id="{{element.id}}"
     {{#element.selectedvalue}}
         value="{{element.selectedvalue}}"
@@ -27,7 +27,7 @@
     <em>{{{.}}}</em>
 {{/text}}
 {{{helpbutton}}}
-<span class="form-control-feedback" id="id_error_{{element.name}}" {{^error}} style="display: none;"{{/error}}>
+<span class="form-control-feedback invalid-feedback" id="id_error_{{element.name}}" {{^error}} style="display: none;"{{/error}}>
     {{{error}}}
 </span>
 {{^element.frozen}}

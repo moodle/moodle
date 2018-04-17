@@ -2,7 +2,7 @@
     {{$element}}
         {{^element.frozen}}
         <input type="hidden" name="{{element.nameraw}}" value="_qf__force_multiselect_submission">
-        <select class="custom-select {{#error}}form-control-danger{{/error}}" name="{{element.name}}"
+        <select class="custom-select {{#error}}is-invalid{{/error}}" name="{{element.name}}"
             id="{{element.id}}"
             {{#element.multiple}}multiple{{/element.multiple}}
             {{#error}}

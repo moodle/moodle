@@ -27,12 +27,22 @@
     .custom-select {
         max-width: 100%;
     }
+    .form-group {
+        margin-right: 0.25rem;
+    }
+}
+
+#jump-to-activity.custom-select {
+    width: 100%;
 }
 
 .mform fieldset {
     margin-left: $spacer * 1.5;
     margin-bottom: $spacer / 2;
     border-bottom: $border-width solid $table-border-color;
+}
+.mform > .form-group {
+    margin-left: $spacer * 1.5;
 }
 
 .editor_atto_content.form-control {
@@ -96,6 +106,10 @@ input#id_externalurl {
 
 .form-item .form-inline {
     display: inline;
+}
+
+.form-inline label:not(.sr-only):not(.accesshide) + select {
+    margin-left: 0.5rem;
 }
 
 .formsettingheading .form-horizontal {
@@ -257,7 +271,7 @@ fieldset.coursesearchbox label {
 }
 .form-autocomplete-selection {
     margin: $input-padding-y-sm;
-    // Padding top and bottom, plus m-b-1 and the 100% lineheight.
+    // Padding top and bottom, plus mb-1 and the 100% lineheight.
     min-height: 2 * $input-padding-y-sm + 2 * $font-size-base;
 }
 
@@ -326,6 +340,7 @@ select[size],
 select[multiple] {
     overflow: auto;
 }
+
 select[size="1"] {
     overflow: visible;
 }

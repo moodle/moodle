@@ -75,6 +75,7 @@
             position: absolute;
             right: 0;
             top: 0;
+            display: flex;
         }
 
         .contentwithoutlink,
@@ -231,7 +232,7 @@
     content: "";
     border-left: $brand-primary 2px solid;
     position: absolute;
-    left: -15px;
+    left: -$card-spacer-x;
     top: 0;
     bottom: 0;
 }
@@ -841,7 +842,6 @@ span.editinstructions {
 
     .listing-actions {
         text-align: center;
-        padding: 0.4rem 0.3rem 0.3rem;
 
         > .moodle-actionmenu {
             display: inline-block;
@@ -859,18 +859,9 @@ span.editinstructions {
 
     .listitem {
 
-        > div {
-            &:hover {
-                background-color: $table-bg-hover;
-            }
-        }
-
         &[data-selected='1'] {
-            > div {
-                background-color: $table-bg-accent;
-            }
-
-            > div:hover {
+            background-color: $table-bg-accent;
+            &:hover {
                 background-color: $table-bg-hover;
             }
         }
@@ -966,10 +957,6 @@ span.editinstructions {
             .coursename {
                 display: inline-block;
             }
-
-            > div {
-                padding-left: 1rem;
-            }
         }
 
         > .firstpage .listitem:first-child > div .item-actions .action-moveup,
@@ -1035,8 +1022,6 @@ span.editinstructions {
     }
 
     .detail-pair {
-        border-bottom: 1px solid $table-border-color;
-        margin: 0 1rem;
 
         > * {
             display: inline-block;
@@ -1068,13 +1053,13 @@ span.editinstructions {
         text-align: center;
 
         .yui3-button {
-            background-color: $btn-info-bg;
+            @include button-variant($info, $info);
             border: 0;
             margin: 0.4rem 0.2rem 0.45rem;
             font-size: 10.4px;
 
             &.active-page {
-                background-color: $btn-primary-color;
+                @include button-variant($primary, $primary);
             }
         }
     }

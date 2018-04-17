@@ -1,7 +1,6 @@
-/* FONT PATH
- * -------------------------- */
+// Import font awesome.
 
-$fa-version:          "4.7.0" !default;
+$fa-version: "4.7.0" !default;
 
 @font-face {
   font-family: 'FontAwesome';
@@ -15,3 +14,5 @@ $fa-version:          "4.7.0" !default;
   font-weight: normal;
   font-style: normal;
 }
+
+@import "fontawesome/font-awesome";

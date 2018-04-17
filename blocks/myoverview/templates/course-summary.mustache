@@ -27,17 +27,13 @@
     }
 }}
 <div class="course-info-container" id="course-info-container-{{id}}">
-    <div class="hidden-sm-up hidden-tablet hidden-phone">
+    <div class="d-sm-none d-lg-block">
         {{> block_myoverview/progress-chart}}
         <h4 class="h5"><a href="{{viewurl}}" class="{{^visible}}dimmed{{/visible}}">{{{fullnamedisplay}}}</a></h4>
     </div>
-    <div class="hidden-sm-down hidden-tablet hidden-desktop">
-        {{> block_myoverview/progress-chart}}
-        <h4 class="h5"><a href="{{viewurl}}" class="{{^visible}}dimmed{{/visible}}">{{{fullnamedisplay}}}</a></h4>
-    </div>
-    <div class="hidden-xs-down hidden-md-up visible-tablet">
+    <div class="d-none d-sm-block d-lg-none visible-tablet">
         <div class="media">
-            <div class="media-left">
+            <div class="media-left pr-3">
                 <div class="media-object">
                     {{> block_myoverview/progress-chart}}
                 </div>

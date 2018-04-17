@@ -15,29 +15,26 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    Page header.
+    secure navbar.
 }}
-<header role="banner" class="pos-f-t navbar navbar-full navbar-light bg-faded navbar-static-top moodle-has-zindex">
+<nav class="fixed-top navbar navbar-light bg-white navbar-expand moodle-has-zindex">
 
-    <div class="container-fluid">
-
-        <span class="navbar-brand {{# output.should_display_navbar_logo }}has-logo{{/ output.should_display_navbar_logo }}
+        <a href="{{{ config.wwwroot }}}" class="navbar-brand {{# output.should_display_navbar_logo }}has-logo{{/ output.should_display_navbar_logo }}
             {{^ output.should_display_navbar_logo }}
-                hidden-sm-down
+                d-none d-sm-inline
             {{/ output.should_display_navbar_logo }}
                 ">
-
             {{# output.should_display_navbar_logo }}
-                <span class="logo hidden-xs-down">
+                <span class="logo d-none d-sm-inline">
                     <img src="{{output.get_compact_logo_url}}" alt="{{sitename}}">
                 </span>
             {{/ output.should_display_navbar_logo }}
-            <span class="site-name hidden-sm-down">{{{ sitename }}}</span>
-        </span>
-        <div class="pull-xs-right nav-link">
+            <span class="site-name d-none d-md-inline">{{{ sitename }}}</span>
+        </a>
+
+        <ul class="nav navbar-nav ml-auto">
+            <li class="nav-item">
             {{{ output.secure_login_info }}}
-        </div>
-
-    </div>
-</header>
-
+            </li>
+        </ul>
+</nav>

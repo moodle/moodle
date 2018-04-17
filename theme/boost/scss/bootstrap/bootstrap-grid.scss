@@ -1,23 +1,32 @@
-// Bootstrap Grid only
-//
-// Includes relevant variables and mixins for the regular (non-flexbox) grid
-// system, as well as the generated predefined classes (e.g., `.col-4-sm`).
+/*!
+ * Bootstrap Grid v4.0.0 (https://getbootstrap.com)
+ * Copyright 2011-2018 The Bootstrap Authors
+ * Copyright 2011-2018 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+ */
 
+@at-root {
+  @-ms-viewport { width: device-width; } // stylelint-disable-line at-rule-no-vendor-prefix
+}
 
-//
-// Variables
-//
+html {
+  box-sizing: border-box;
+  -ms-overflow-style: scrollbar;
+}
 
-@import "custom";
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+@import "functions";
 @import "variables";
 
-//
-// Grid mixins
-//
-
-@import "mixins/clearfix";
 @import "mixins/breakpoints";
 @import "mixins/grid-framework";
 @import "mixins/grid";
 
 @import "grid";
+@import "utilities/display";
+@import "utilities/flex";

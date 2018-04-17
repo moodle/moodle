@@ -474,7 +474,6 @@
                 }
 
                 .message {
-                    @include make-row(0);
 
                     .deletemessagecheckbox {
                         display: none;

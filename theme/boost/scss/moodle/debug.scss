@@ -3,7 +3,7 @@
 // for fixed positioned elements that end up obscuring the item thus
 // leading to errors that could be avoided by scrolling an additional amount.
 body.behat-site {
-    .navbar-static-top {
+    .fixed-top {
         position: absolute;
     }
 

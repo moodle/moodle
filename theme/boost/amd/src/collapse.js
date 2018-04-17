@@ -1,9 +1,11 @@
-define(['exports', './util'], function (exports, _util) {
-  'use strict';
+define(["exports", "jquery", "./util"], function (exports, _jquery, _util) {
+  "use strict";
 
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
+
+  var _jquery2 = _interopRequireDefault(_jquery);
 
   var _util2 = _interopRequireDefault(_util);
 
@@ -13,11 +15,37 @@ define(['exports', './util'], function (exports, _util) {
     };
   }
 
-  var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
-    return typeof obj;
-  } : function (obj) {
-    return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj;
-  };
+  function _typeof(obj) {
+    if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
+      _typeof = function _typeof(obj) {
+        return typeof obj;
+      };
+    } else {
+      _typeof = function _typeof(obj) {
+        return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+      };
+    }
+
+    return _typeof(obj);
+  }
+
+  function _extends() {
+    _extends = Object.assign || function (target) {
+      for (var i = 1; i < arguments.length; i++) {
+        var source = arguments[i];
+
+        for (var key in source) {
+          if (Object.prototype.hasOwnProperty.call(source, key)) {
+            target[key] = source[key];
+          }
+        }
+      }
+
+      return target;
+    };
+
+    return _extends.apply(this, arguments);
+  }
 
   function _classCallCheck(instance, Constructor) {
     if (!(instance instanceof Constructor)) {
@@ -25,87 +53,76 @@ define(['exports', './util'], function (exports, _util) {
     }
   }
 
-  var _createClass = function () {
-    function defineProperties(target, props) {
-      for (var i = 0; i < props.length; i++) {
-        var descriptor = props[i];
-        descriptor.enumerable = descriptor.enumerable || false;
-        descriptor.configurable = true;
-        if ("value" in descriptor) descriptor.writable = true;
-        Object.defineProperty(target, descriptor.key, descriptor);
-      }
+  function _defineProperties(target, props) {
+    for (var i = 0; i < props.length; i++) {
+      var descriptor = props[i];
+      descriptor.enumerable = descriptor.enumerable || false;
+      descriptor.configurable = true;
+      if ("value" in descriptor) descriptor.writable = true;
+      Object.defineProperty(target, descriptor.key, descriptor);
     }
+  }
 
-    return function (Constructor, protoProps, staticProps) {
-      if (protoProps) defineProperties(Constructor.prototype, protoProps);
-      if (staticProps) defineProperties(Constructor, staticProps);
-      return Constructor;
-    };
-  }();
+  function _createClass(Constructor, protoProps, staticProps) {
+    if (protoProps) _defineProperties(Constructor.prototype, protoProps);
+    if (staticProps) _defineProperties(Constructor, staticProps);
+    return Constructor;
+  }
 
   /**
    * --------------------------------------------------------------------------
-   * Bootstrap (v4.0.0-alpha.4): collapse.js
+   * Bootstrap (v4.0.0): collapse.js
    * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
    * --------------------------------------------------------------------------
    */
-
   var Collapse = function ($) {
-
     /**
      * ------------------------------------------------------------------------
      * Constants
      * ------------------------------------------------------------------------
      */
-
     var NAME = 'collapse';
-    var VERSION = '4.0.0-alpha.4';
+    var VERSION = '4.0.0';
     var DATA_KEY = 'bs.collapse';
-    var EVENT_KEY = '.' + DATA_KEY;
+    var EVENT_KEY = ".".concat(DATA_KEY);
     var DATA_API_KEY = '.data-api';
     var JQUERY_NO_CONFLICT = $.fn[NAME];
     var TRANSITION_DURATION = 600;
-
     var Default = {
       toggle: true,
       parent: ''
     };
-
     var DefaultType = {
       toggle: 'boolean',
-      parent: 'string'
+      parent: '(string|element)'
     };
-
     var Event = {
-      SHOW: 'show' + EVENT_KEY,
-      SHOWN: 'shown' + EVENT_KEY,
-      HIDE: 'hide' + EVENT_KEY,
-      HIDDEN: 'hidden' + EVENT_KEY,
-      CLICK_DATA_API: 'click' + EVENT_KEY + DATA_API_KEY
+      SHOW: "show".concat(EVENT_KEY),
+      SHOWN: "shown".concat(EVENT_KEY),
+      HIDE: "hide".concat(EVENT_KEY),
+      HIDDEN: "hidden".concat(EVENT_KEY),
+      CLICK_DATA_API: "click".concat(EVENT_KEY).concat(DATA_API_KEY)
     };
-
     var ClassName = {
-      IN: 'in',
+      SHOW: 'show',
       COLLAPSE: 'collapse',
       COLLAPSING: 'collapsing',
       COLLAPSED: 'collapsed'
     };
-
     var Dimension = {
       WIDTH: 'width',
       HEIGHT: 'height'
     };
-
     var Selector = {
-      ACTIVES: '.panel > .in, .panel > .collapsing',
+      ACTIVES: '.show, .collapsing',
       DATA_TOGGLE: '[data-toggle="collapse"]'
-    };
+      /**
+       * ------------------------------------------------------------------------
+       * Class Definition
+       * ------------------------------------------------------------------------
+       */
 
-    /**
-     * ------------------------------------------------------------------------
-     * Class Definition
-     * ------------------------------------------------------------------------
-     */
+    };
 
     var Collapse = function () {
       function Collapse(element, config) {
@@ -114,7 +131,20 @@ define(['exports', './util'], function (exports, _util) {
         this._isTransitioning = false;
         this._element = element;
         this._config = this._getConfig(config);
-        this._triggerArray = $.makeArray($('[data-toggle="collapse"][href="#' + element.id + '"],' + ('[data-toggle="collapse"][data-target="#' + element.id + '"]')));
+        this._triggerArray = $.makeArray($("[data-toggle=\"collapse\"][href=\"#".concat(element.id, "\"],") + "[data-toggle=\"collapse\"][data-target=\"#".concat(element.id, "\"]")));
+        var tabToggles = $(Selector.DATA_TOGGLE);
+
+        for (var i = 0; i < tabToggles.length; i++) {
+          var elem = tabToggles[i];
+
+          var selector = _util2.default.getSelectorFromElement(elem);
+
+          if (selector !== null && $(selector).filter(element).length > 0) {
+            this._selector = selector;
+
+            this._triggerArray.push(elem);
+          }
+        }
 
         this._parent = this._config.parent ? this._getParent() : null;
 
@@ -125,40 +155,41 @@ define(['exports', './util'], function (exports, _util) {
         if (this._config.toggle) {
           this.toggle();
         }
-      }
+      } // Getters
 
-      // getters
 
       _createClass(Collapse, [{
-        key: 'toggle',
+        key: "toggle",
         value: function toggle() {
-          if ($(this._element).hasClass(ClassName.IN)) {
+          if ($(this._element).hasClass(ClassName.SHOW)) {
             this.hide();
           } else {
             this.show();
           }
         }
       }, {
-        key: 'show',
+        key: "show",
         value: function show() {
           var _this = this;
 
-          if (this._isTransitioning || $(this._element).hasClass(ClassName.IN)) {
+          if (this._isTransitioning || $(this._element).hasClass(ClassName.SHOW)) {
             return;
           }
 
-          var actives = void 0;
-          var activesData = void 0;
+          var actives;
+          var activesData;
 
           if (this._parent) {
-            actives = $.makeArray($(Selector.ACTIVES));
-            if (!actives.length) {
+            actives = $.makeArray($(this._parent).find(Selector.ACTIVES).filter("[data-parent=\"".concat(this._config.parent, "\"]")));
+
+            if (actives.length === 0) {
               actives = null;
             }
           }
 
           if (actives) {
-            activesData = $(actives).data(DATA_KEY);
+            activesData = $(actives).not(this._selector).data(DATA_KEY);
+
             if (activesData && activesData._isTransitioning) {
               return;
             }
@@ -166,12 +197,14 @@ define(['exports', './util'], function (exports, _util) {
 
           var startEvent = $.Event(Event.SHOW);
           $(this._element).trigger(startEvent);
+
           if (startEvent.isDefaultPrevented()) {
             return;
           }
 
           if (actives) {
-            Collapse._jQueryInterface.call($(actives), 'hide');
+            Collapse._jQueryInterface.call($(actives).not(this._selector), 'hide');
+
             if (!activesData) {
               $(actives).data(DATA_KEY, null);
             }
@@ -180,19 +213,16 @@ define(['exports', './util'], function (exports, _util) {
           var dimension = this._getDimension();
 
           $(this._element).removeClass(ClassName.COLLAPSE).addClass(ClassName.COLLAPSING);
-
           this._element.style[dimension] = 0;
-          this._element.setAttribute('aria-expanded', true);
 
-          if (this._triggerArray.length) {
+          if (this._triggerArray.length > 0) {
             $(this._triggerArray).removeClass(ClassName.COLLAPSED).attr('aria-expanded', true);
           }
 
           this.setTransitioning(true);
 
           var complete = function complete() {
-            $(_this._element).removeClass(ClassName.COLLAPSING).addClass(ClassName.COLLAPSE).addClass(ClassName.IN);
-
+            $(_this._element).removeClass(ClassName.COLLAPSING).addClass(ClassName.COLLAPSE).addClass(ClassName.SHOW);
             _this._element.style[dimension] = '';
 
             _this.setTransitioning(false);
@@ -206,50 +236,59 @@ define(['exports', './util'], function (exports, _util) {
           }
 
           var capitalizedDimension = dimension[0].toUpperCase() + dimension.slice(1);
-          var scrollSize = 'scroll' + capitalizedDimension;
-
+          var scrollSize = "scroll".concat(capitalizedDimension);
           $(this._element).one(_util2.default.TRANSITION_END, complete).emulateTransitionEnd(TRANSITION_DURATION);
-
-          this._element.style[dimension] = this._element[scrollSize] + 'px';
+          this._element.style[dimension] = "".concat(this._element[scrollSize], "px");
         }
       }, {
-        key: 'hide',
+        key: "hide",
         value: function hide() {
           var _this2 = this;
 
-          if (this._isTransitioning || !$(this._element).hasClass(ClassName.IN)) {
+          if (this._isTransitioning || !$(this._element).hasClass(ClassName.SHOW)) {
             return;
           }
 
           var startEvent = $.Event(Event.HIDE);
           $(this._element).trigger(startEvent);
+
           if (startEvent.isDefaultPrevented()) {
             return;
           }
 
           var dimension = this._getDimension();
-          var offsetDimension = dimension === Dimension.WIDTH ? 'offsetWidth' : 'offsetHeight';
 
-          this._element.style[dimension] = this._element[offsetDimension] + 'px';
+          this._element.style[dimension] = "".concat(this._element.getBoundingClientRect()[dimension], "px");
 
           _util2.default.reflow(this._element);
 
-          $(this._element).addClass(ClassName.COLLAPSING).removeClass(ClassName.COLLAPSE).removeClass(ClassName.IN);
+          $(this._element).addClass(ClassName.COLLAPSING).removeClass(ClassName.COLLAPSE).removeClass(ClassName.SHOW);
 
-          this._element.setAttribute('aria-expanded', false);
+          if (this._triggerArray.length > 0) {
+            for (var i = 0; i < this._triggerArray.length; i++) {
+              var trigger = this._triggerArray[i];
 
-          if (this._triggerArray.length) {
-            $(this._triggerArray).addClass(ClassName.COLLAPSED).attr('aria-expanded', false);
+              var selector = _util2.default.getSelectorFromElement(trigger);
+
+              if (selector !== null) {
+                var $elem = $(selector);
+
+                if (!$elem.hasClass(ClassName.SHOW)) {
+                  $(trigger).addClass(ClassName.COLLAPSED).attr('aria-expanded', false);
+                }
+              }
+            }
           }
 
           this.setTransitioning(true);
 
           var complete = function complete() {
             _this2.setTransitioning(false);
+
             $(_this2._element).removeClass(ClassName.COLLAPSING).addClass(ClassName.COLLAPSE).trigger(Event.HIDDEN);
           };
 
-          this._element.style[dimension] = 0;
+          this._element.style[dimension] = '';
 
           if (!_util2.default.supportsTransitionEnd()) {
             complete();
@@ -259,15 +298,14 @@ define(['exports', './util'], function (exports, _util) {
           $(this._element).one(_util2.default.TRANSITION_END, complete).emulateTransitionEnd(TRANSITION_DURATION);
         }
       }, {
-        key: 'setTransitioning',
+        key: "setTransitioning",
         value: function setTransitioning(isTransitioning) {
           this._isTransitioning = isTransitioning;
         }
       }, {
-        key: 'dispose',
+        key: "dispose",
         value: function dispose() {
           $.removeData(this._element, DATA_KEY);
-
           this._config = null;
           this._parent = null;
           this._element = null;
@@ -275,58 +313,70 @@ define(['exports', './util'], function (exports, _util) {
           this._isTransitioning = null;
         }
       }, {
-        key: '_getConfig',
+        key: "_getConfig",
         value: function _getConfig(config) {
-          config = $.extend({}, Default, config);
-          config.toggle = Boolean(config.toggle); // coerce string values
+          config = _extends({}, Default, config);
+          config.toggle = Boolean(config.toggle); // Coerce string values
+
           _util2.default.typeCheckConfig(NAME, config, DefaultType);
+
           return config;
         }
       }, {
-        key: '_getDimension',
+        key: "_getDimension",
         value: function _getDimension() {
           var hasWidth = $(this._element).hasClass(Dimension.WIDTH);
           return hasWidth ? Dimension.WIDTH : Dimension.HEIGHT;
         }
       }, {
-        key: '_getParent',
+        key: "_getParent",
         value: function _getParent() {
           var _this3 = this;
 
-          var parent = $(this._config.parent)[0];
-          var selector = '[data-toggle="collapse"][data-parent="' + this._config.parent + '"]';
+          var parent = null;
 
+          if (_util2.default.isElement(this._config.parent)) {
+            parent = this._config.parent; // It's a jQuery object
+
+            if (typeof this._config.parent.jquery !== 'undefined') {
+              parent = this._config.parent[0];
+            }
+          } else {
+            parent = $(this._config.parent)[0];
+          }
+
+          var selector = "[data-toggle=\"collapse\"][data-parent=\"".concat(this._config.parent, "\"]");
           $(parent).find(selector).each(function (i, element) {
             _this3._addAriaAndCollapsedClass(Collapse._getTargetFromElement(element), [element]);
           });
-
           return parent;
         }
       }, {
-        key: '_addAriaAndCollapsedClass',
+        key: "_addAriaAndCollapsedClass",
         value: function _addAriaAndCollapsedClass(element, triggerArray) {
           if (element) {
-            var isOpen = $(element).hasClass(ClassName.IN);
-            element.setAttribute('aria-expanded', isOpen);
+            var isOpen = $(element).hasClass(ClassName.SHOW);
 
-            if (triggerArray.length) {
+            if (triggerArray.length > 0) {
               $(triggerArray).toggleClass(ClassName.COLLAPSED, !isOpen).attr('aria-expanded', isOpen);
             }
           }
         }
       }], [{
-        key: '_getTargetFromElement',
+        key: "_getTargetFromElement",
         value: function _getTargetFromElement(element) {
           var selector = _util2.default.getSelectorFromElement(element);
+
           return selector ? $(selector)[0] : null;
         }
       }, {
-        key: '_jQueryInterface',
+        key: "_jQueryInterface",
         value: function _jQueryInterface(config) {
           return this.each(function () {
             var $this = $(this);
             var data = $this.data(DATA_KEY);
-            var _config = $.extend({}, Default, $this.data(), (typeof config === 'undefined' ? 'undefined' : _typeof(config)) === 'object' && config);
+
+            var _config = _extends({}, Default, $this.data(), _typeof(config) === 'object' && config);
 
             if (!data && _config.toggle && /show|hide/.test(config)) {
               _config.toggle = false;
@@ -338,20 +388,21 @@ define(['exports', './util'], function (exports, _util) {
             }
 
             if (typeof config === 'string') {
-              if (data[config] === undefined) {
-                throw new Error('No method named "' + config + '"');
+              if (typeof data[config] === 'undefined') {
+                throw new TypeError("No method named \"".concat(config, "\""));
               }
+
               data[config]();
             }
           });
         }
       }, {
-        key: 'VERSION',
+        key: "VERSION",
         get: function get() {
           return VERSION;
         }
       }, {
-        key: 'Default',
+        key: "Default",
         get: function get() {
           return Default;
         }
@@ -365,17 +416,24 @@ define(['exports', './util'], function (exports, _util) {
      * Data Api implementation
      * ------------------------------------------------------------------------
      */
-
     $(document).on(Event.CLICK_DATA_API, Selector.DATA_TOGGLE, function (event) {
-      event.preventDefault();
+      // preventDefault only for <a> elements (which change the URL) not inside the collapsible element
+      if (event.currentTarget.tagName === 'A') {
+        event.preventDefault();
+      }
 
-      var target = Collapse._getTargetFromElement(this);
-      var data = $(target).data(DATA_KEY);
-      var config = data ? 'toggle' : $(this).data();
+      var $trigger = $(this);
 
-      Collapse._jQueryInterface.call($(target), config);
+      var selector = _util2.default.getSelectorFromElement(this);
+
+      $(selector).each(function () {
+        var $target = $(this);
+        var data = $target.data(DATA_KEY);
+        var config = data ? 'toggle' : $trigger.data();
+
+        Collapse._jQueryInterface.call($target, config);
+      });
     });
-
     /**
      * ------------------------------------------------------------------------
      * jQuery
@@ -384,13 +442,14 @@ define(['exports', './util'], function (exports, _util) {
 
     $.fn[NAME] = Collapse._jQueryInterface;
     $.fn[NAME].Constructor = Collapse;
+
     $.fn[NAME].noConflict = function () {
       $.fn[NAME] = JQUERY_NO_CONFLICT;
       return Collapse._jQueryInterface;
     };
 
     return Collapse;
-  }(jQuery);
+  }(_jquery2.default);
 
   exports.default = Collapse;
 });

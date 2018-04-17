@@ -240,12 +240,7 @@ img.resize {
     white-space: nowrap;
 }
 
-.action-menu .userpicture {
-    margin-left: 1rem;
-}
-
-.block img.resize,
-.breadcrumb img.resize {
+.block img.resize {
     height: 0.9em;
     width: 0.8em;
 }
@@ -1092,78 +1087,14 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
     text-align: center;
 }
 
-.initialbar {
 
-    overflow: auto;
-
-    .initialbarlabel {
-        display: inline-block;
-        width: 6em;
-        float: left;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
-
-    .initialbarall {
-        float: left;
-        width: 4em;
-        margin-bottom: 2px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
-
-    .initialbargroups {
-        float: left;
-    }
-
-    .initialbargroup {
-        float: left;
-        display: inline-block;
-        white-space: nowrap;
-        margin: 0;
-        padding: 0;
-
-        li {
-            float: left;
-            list-style: none;
-        }
-    }
-
-    .letter {
-        display: inline-block;
-        height: 1.5em;
-        min-width: 1.5em;
-        text-align: center;
-
-        color: $pagination-color;
-        border-width: $pagination-border-width;
-        border-color: $pagination-border-color;
-        border-style: solid;
-        background-color: $pagination-bg;
-    }
-    .letter:hover {
-        color: $pagination-hover-color;
-        border-color: $pagination-hover-border;
-        background-color: $pagination-hover-bg;
-    }
-
-    .letter.active {
-        color: $pagination-active-color;
-        border-color: $pagination-active-border;
-        background-color: $pagination-active-bg;
-    }
-
-}
-
-@media (max-width: 400px) {
-    .initialbar {
-        .letter {
-            /* This is chosen so that 23 letter at 320px just fits */
-            font-size: 11.5px;
-        }
-    }
+.initialbarlabel {
+    display: inline-block;
+    width: 6em;
+    float: left;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 
@@ -1229,6 +1160,7 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
 
 .moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd h1 {
     @extend .modal-title;
+    font-size: 1.5rem;
 }
 
 .moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd .yui3-widget-buttons {
@@ -1248,7 +1180,7 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
 }
 
 .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-bd {
-    @extend .modal-body;
+    padding: 0.5rem;
 }
 
 .moodle-dialogue-base .moodle-dialogue-fullscreen .moodle-dialogue-content {
@@ -1307,7 +1239,7 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
 }
 
 .moodle-dialogue-confirm .confirmation-message {
-    margin: 0.5em 1em;
+    margin: 0.5rem 0;
 }
 .moodle-dialogue-confirm .confirmation-buttons {
     text-align: right;
@@ -1813,18 +1745,6 @@ img#persona_signin {
     border-width: 0;
 }
 
-.breadcrumb-nav {
-    float: left;
-}
-
-.breadcrumb-button .singlebutton div {
-    margin-right: 0;
-}
-
-.breadcrumb-nav .breadcrumb {
-    margin: 0;
-}
-
 /** Page header */
 #page-header {
     .logo {
@@ -2184,4 +2104,8 @@ $footer-link-color: $bg-inverse-link-color !default;
             font-size: 30px;
         }
     }
+}
+
+.open.atto_menu>.dropdown-menu {
+    display: block;
 }

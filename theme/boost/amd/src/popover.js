@@ -1,9 +1,11 @@
-define(['exports', './tooltip'], function (exports, _tooltip) {
-  'use strict';
+define(["exports", "jquery", "./tooltip"], function (exports, _jquery, _tooltip) {
+  "use strict";
 
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
+
+  var _jquery2 = _interopRequireDefault(_jquery);
 
   var _tooltip2 = _interopRequireDefault(_tooltip);
 
@@ -13,11 +15,19 @@ define(['exports', './tooltip'], function (exports, _tooltip) {
     };
   }
 
-  var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
-    return typeof obj;
-  } : function (obj) {
-    return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj;
-  };
+  function _typeof(obj) {
+    if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
+      _typeof = function _typeof(obj) {
+        return typeof obj;
+      };
+    } else {
+      _typeof = function _typeof(obj) {
+        return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+      };
+    }
+
+    return _typeof(obj);
+  }
 
   function _classCallCheck(instance, Constructor) {
     if (!(instance instanceof Constructor)) {
@@ -25,35 +35,37 @@ define(['exports', './tooltip'], function (exports, _tooltip) {
     }
   }
 
-  var _createClass = function () {
-    function defineProperties(target, props) {
-      for (var i = 0; i < props.length; i++) {
-        var descriptor = props[i];
-        descriptor.enumerable = descriptor.enumerable || false;
-        descriptor.configurable = true;
-        if ("value" in descriptor) descriptor.writable = true;
-        Object.defineProperty(target, descriptor.key, descriptor);
-      }
+  function _defineProperties(target, props) {
+    for (var i = 0; i < props.length; i++) {
+      var descriptor = props[i];
+      descriptor.enumerable = descriptor.enumerable || false;
+      descriptor.configurable = true;
+      if ("value" in descriptor) descriptor.writable = true;
+      Object.defineProperty(target, descriptor.key, descriptor);
     }
+  }
 
-    return function (Constructor, protoProps, staticProps) {
-      if (protoProps) defineProperties(Constructor.prototype, protoProps);
-      if (staticProps) defineProperties(Constructor, staticProps);
-      return Constructor;
-    };
-  }();
+  function _createClass(Constructor, protoProps, staticProps) {
+    if (protoProps) _defineProperties(Constructor.prototype, protoProps);
+    if (staticProps) _defineProperties(Constructor, staticProps);
+    return Constructor;
+  }
 
   function _possibleConstructorReturn(self, call) {
-    if (!self) {
+    if (call && (_typeof(call) === "object" || typeof call === "function")) {
+      return call;
+    }
+
+    if (self === void 0) {
       throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
     }
 
-    return call && (typeof call === "object" || typeof call === "function") ? call : self;
+    return self;
   }
 
   function _inherits(subClass, superClass) {
     if (typeof superClass !== "function" && superClass !== null) {
-      throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
+      throw new TypeError("Super expression must either be null or a function");
     }
 
     subClass.prototype = Object.create(superClass && superClass.prototype, {
@@ -67,67 +79,81 @@ define(['exports', './tooltip'], function (exports, _tooltip) {
     if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
   }
 
+  function _extends() {
+    _extends = Object.assign || function (target) {
+      for (var i = 1; i < arguments.length; i++) {
+        var source = arguments[i];
+
+        for (var key in source) {
+          if (Object.prototype.hasOwnProperty.call(source, key)) {
+            target[key] = source[key];
+          }
+        }
+      }
+
+      return target;
+    };
+
+    return _extends.apply(this, arguments);
+  }
+
   /**
    * --------------------------------------------------------------------------
-   * Bootstrap (v4.0.0-alpha.4): popover.js
+   * Bootstrap (v4.0.0): popover.js
    * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
    * --------------------------------------------------------------------------
    */
-
   var Popover = function ($) {
-
     /**
      * ------------------------------------------------------------------------
      * Constants
      * ------------------------------------------------------------------------
      */
-
     var NAME = 'popover';
-    var VERSION = '4.0.0-alpha.4';
+    var VERSION = '4.0.0';
     var DATA_KEY = 'bs.popover';
-    var EVENT_KEY = '.' + DATA_KEY;
+    var EVENT_KEY = ".".concat(DATA_KEY);
     var JQUERY_NO_CONFLICT = $.fn[NAME];
+    var CLASS_PREFIX = 'bs-popover';
+    var BSCLS_PREFIX_REGEX = new RegExp("(^|\\s)".concat(CLASS_PREFIX, "\\S+"), 'g');
 
-    var Default = $.extend({}, _tooltip2.default.Default, {
+    var Default = _extends({}, _tooltip2.default.Default, {
       placement: 'right',
       trigger: 'click',
       content: '',
-      template: '<div class="popover" role="tooltip">' + '<div class="popover-arrow"></div>' + '<h3 class="popover-title"></h3>' + '<div class="popover-content"></div></div>'
+      template: '<div class="popover" role="tooltip">' + '<div class="arrow"></div>' + '<h3 class="popover-header"></h3>' + '<div class="popover-body"></div></div>'
     });
 
-    var DefaultType = $.extend({}, _tooltip2.default.DefaultType, {
+    var DefaultType = _extends({}, _tooltip2.default.DefaultType, {
       content: '(string|element|function)'
     });
 
     var ClassName = {
       FADE: 'fade',
-      IN: 'in'
+      SHOW: 'show'
     };
-
     var Selector = {
-      TITLE: '.popover-title',
-      CONTENT: '.popover-content',
-      ARROW: '.popover-arrow'
+      TITLE: '.popover-header',
+      CONTENT: '.popover-body'
     };
-
     var Event = {
-      HIDE: 'hide' + EVENT_KEY,
-      HIDDEN: 'hidden' + EVENT_KEY,
-      SHOW: 'show' + EVENT_KEY,
-      SHOWN: 'shown' + EVENT_KEY,
-      INSERTED: 'inserted' + EVENT_KEY,
-      CLICK: 'click' + EVENT_KEY,
-      FOCUSIN: 'focusin' + EVENT_KEY,
-      FOCUSOUT: 'focusout' + EVENT_KEY,
-      MOUSEENTER: 'mouseenter' + EVENT_KEY,
-      MOUSELEAVE: 'mouseleave' + EVENT_KEY
-    };
+      HIDE: "hide".concat(EVENT_KEY),
+      HIDDEN: "hidden".concat(EVENT_KEY),
+      SHOW: "show".concat(EVENT_KEY),
+      SHOWN: "shown".concat(EVENT_KEY),
+      INSERTED: "inserted".concat(EVENT_KEY),
+      CLICK: "click".concat(EVENT_KEY),
+      FOCUSIN: "focusin".concat(EVENT_KEY),
+      FOCUSOUT: "focusout".concat(EVENT_KEY),
+      MOUSEENTER: "mouseenter".concat(EVENT_KEY),
+      MOUSELEAVE: "mouseleave".concat(EVENT_KEY)
+      /**
+       * ------------------------------------------------------------------------
+       * Class Definition
+       * ------------------------------------------------------------------------
+       */
 
-    /**
-     * ------------------------------------------------------------------------
-     * Class Definition
-     * ------------------------------------------------------------------------
-     */
+    };
 
     var Popover = function (_Tooltip) {
       _inherits(Popover, _Tooltip);
@@ -139,39 +165,59 @@ define(['exports', './tooltip'], function (exports, _tooltip) {
       }
 
       _createClass(Popover, [{
-        key: 'isWithContent',
+        key: "isWithContent",
         value: function isWithContent() {
           return this.getTitle() || this._getContent();
         }
       }, {
-        key: 'getTipElement',
+        key: "addAttachmentClass",
+        value: function addAttachmentClass(attachment) {
+          $(this.getTipElement()).addClass("".concat(CLASS_PREFIX, "-").concat(attachment));
+        }
+      }, {
+        key: "getTipElement",
         value: function getTipElement() {
-          return this.tip = this.tip || $(this.config.template)[0];
+          this.tip = this.tip || $(this.config.template)[0];
+          return this.tip;
         }
       }, {
-        key: 'setContent',
+        key: "setContent",
         value: function setContent() {
-          var $tip = $(this.getTipElement());
+          var $tip = $(this.getTipElement()); // We use append for html objects to maintain js events
 
-          // we use append for html objects to maintain js events
           this.setElementContent($tip.find(Selector.TITLE), this.getTitle());
-          this.setElementContent($tip.find(Selector.CONTENT), this._getContent());
 
-          $tip.removeClass(ClassName.FADE).removeClass(ClassName.IN);
+          var content = this._getContent();
 
-          this.cleanupTether();
+          if (typeof content === 'function') {
+            content = content.call(this.element);
+          }
+
+          this.setElementContent($tip.find(Selector.CONTENT), content);
+          $tip.removeClass("".concat(ClassName.FADE, " ").concat(ClassName.SHOW));
         }
       }, {
-        key: '_getContent',
+        key: "_getContent",
         value: function _getContent() {
-          return this.element.getAttribute('data-content') || (typeof this.config.content === 'function' ? this.config.content.call(this.element) : this.config.content);
+          return this.element.getAttribute('data-content') || this.config.content;
+        }
+      }, {
+        key: "_cleanTipClass",
+        value: function _cleanTipClass() {
+          var $tip = $(this.getTipElement());
+          var tabClass = $tip.attr('class').match(BSCLS_PREFIX_REGEX);
+
+          if (tabClass !== null && tabClass.length > 0) {
+            $tip.removeClass(tabClass.join(''));
+          }
         }
       }], [{
-        key: '_jQueryInterface',
+        key: "_jQueryInterface",
         value: function _jQueryInterface(config) {
           return this.each(function () {
             var data = $(this).data(DATA_KEY);
-            var _config = (typeof config === 'undefined' ? 'undefined' : _typeof(config)) === 'object' ? config : null;
+
+            var _config = _typeof(config) === 'object' ? config : null;
 
             if (!data && /destroy|hide/.test(config)) {
               return;
@@ -183,45 +229,46 @@ define(['exports', './tooltip'], function (exports, _tooltip) {
             }
 
             if (typeof config === 'string') {
-              if (data[config] === undefined) {
-                throw new Error('No method named "' + config + '"');
+              if (typeof data[config] === 'undefined') {
+                throw new TypeError("No method named \"".concat(config, "\""));
               }
+
               data[config]();
             }
           });
         }
       }, {
-        key: 'VERSION',
+        key: "VERSION",
         get: function get() {
           return VERSION;
         }
       }, {
-        key: 'Default',
+        key: "Default",
         get: function get() {
           return Default;
         }
       }, {
-        key: 'NAME',
+        key: "NAME",
         get: function get() {
           return NAME;
         }
       }, {
-        key: 'DATA_KEY',
+        key: "DATA_KEY",
         get: function get() {
           return DATA_KEY;
         }
       }, {
-        key: 'Event',
+        key: "Event",
         get: function get() {
           return Event;
         }
       }, {
-        key: 'EVENT_KEY',
+        key: "EVENT_KEY",
         get: function get() {
           return EVENT_KEY;
         }
       }, {
-        key: 'DefaultType',
+        key: "DefaultType",
         get: function get() {
           return DefaultType;
         }
@@ -235,16 +282,16 @@ define(['exports', './tooltip'], function (exports, _tooltip) {
      * jQuery
      * ------------------------------------------------------------------------
      */
-
     $.fn[NAME] = Popover._jQueryInterface;
     $.fn[NAME].Constructor = Popover;
+
     $.fn[NAME].noConflict = function () {
       $.fn[NAME] = JQUERY_NO_CONFLICT;
       return Popover._jQueryInterface;
     };
 
     return Popover;
-  }(jQuery);
+  }(_jquery2.default);
 
   exports.default = Popover;
 });

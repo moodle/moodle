@@ -2643,7 +2643,7 @@ class core_renderer extends renderer_base {
 <div class="filemanager-loading mdl-align" id='filepicker-loading-{$client_id}'>
 $icon_progress
 </div>
-<div id="filepicker-wrapper-{$client_id}" class="mdl-left" style="display:none">
+<div id="filepicker-wrapper-{$client_id}" class="mdl-left w-100" style="display:none">
     <div>
         <input type="button" class="btn btn-secondary fp-btn-choose" id="filepicker-button-{$client_id}" value="{$straddfile}"{$buttonname}/>
         <span> $maxsize </span>
@@ -3389,7 +3389,7 @@ EOD;
         }
 
         $returnstr .= html_writer::span(
-            html_writer::span($usertextcontents, 'usertext') .
+            html_writer::span($usertextcontents, 'usertext mr-1') .
             html_writer::span($avatarcontents, $avatarclasses),
             'userbutton'
         );

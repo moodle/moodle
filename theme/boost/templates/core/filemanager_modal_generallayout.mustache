@@ -1,5 +1,5 @@
-<div tabindex="0" class="file-picker fp-generallayout container-fluid row" role="dialog" aria-live="assertive">
-    <div class="fp-repo-area col-md-3 nav nav-pills nav-stacked" role="tablist">
+<div tabindex="0" class="file-picker fp-generallayout row" role="dialog" aria-live="assertive">
+    <div class="fp-repo-area col-md-3 nav nav-pills flex-column" role="tablist">
             <div class="fp-repo nav-item" role="tab" aria-selected="false" tabindex="-1">
                 <a href="#" class="nav-link" tabindex="-1"><img class="fp-repo-icon" alt=" " src="#" width="16" height="16" />&nbsp;<span class="fp-repo-name"></span></a>
             </div>
@@ -7,7 +7,7 @@
     </div>
     <div class="col-md-9">
         <div class="fp-repo-items" tabindex="0">
-            <div class="fp-navbar bg-faded card m-b-0 clearfix icon-no-spacing">
+            <div class="fp-navbar bg-faded card mb-0 clearfix icon-no-spacing">
                 <div>
                     <div class="fp-toolbar">
                         <div class="fp-tb-back">
@@ -38,7 +38,7 @@
                         </div>
                         <div class="fp-tb-message"></div>
                     </div>
-                    <div class="fp-viewbar btn-group pull-xs-right">
+                    <div class="fp-viewbar btn-group float-sm-right">
                         <a role="button" title="{{#str}}displayicons, repository{{/str}}" class="fp-vb-icons btn btn-secondary btn-sm" href="#">
                             {{#pix}}fp/view_icon_active, theme{{/pix}}
                         </a>

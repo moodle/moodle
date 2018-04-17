@@ -395,7 +395,7 @@ class core_backup_renderer extends plugin_renderer_base {
         $count ++;
         $html  = html_writer::start_tag('div', array('class' => 'detail-pair'));
         $html .= html_writer::tag('label', $label, array('class' => 'detail-pair-label', 'for' => 'detail-pair-value-'.$count));
-        $html .= html_writer::tag('div', $value, array('class' => 'detail-pair-value', 'name' => 'detail-pair-value-'.$count));
+        $html .= html_writer::tag('div', $value, array('class' => 'detail-pair-value pl-2', 'name' => 'detail-pair-value-'.$count));
         $html .= html_writer::end_tag('div');
         return $html;
     }
@@ -792,7 +792,7 @@ class core_backup_renderer extends plugin_renderer_base {
         $url = $component->get_url();
 
         $output = html_writer::start_tag('div', array('class' => 'restore-course-search form-inline m-b-1'));
-        $output .= html_writer::start_tag('div', array('class' => 'rcs-results'));
+        $output .= html_writer::start_tag('div', array('class' => 'rcs-results w-100'));
 
         $table = new html_table();
         $table->head = array('', get_string('name'), get_string('description'));

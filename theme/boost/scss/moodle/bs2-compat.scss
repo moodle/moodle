@@ -3,7 +3,6 @@
 // Well -> Panel -> Card. We skipped panel (BS3) so lets just support well and card.
 .well {
     @extend .card;
-    @extend .card-block;
 }
 
 // Some things just got renamed.

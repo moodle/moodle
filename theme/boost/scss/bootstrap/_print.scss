@@ -1,4 +1,4 @@
-// scss-lint:disable QualifyingElement
+// stylelint-disable declaration-no-important, selector-no-qualifying-type
 
 // Source: https://github.com/h5bp/html5-boilerplate/blob/master/src/css/main.css
 
@@ -12,20 +12,18 @@
   @media print {
     *,
     *::before,
-    *::after,
-    *::first-letter,
-    *::first-line {
+    *::after {
       // Bootstrap specific; comment out `color` and `background`
-      //color: #000 !important; // Black prints faster:
-                                //   http://www.sanbeiji.com/archives/953
+      //color: #000 !important; // Black prints faster: http://www.sanbeiji.com/archives/953
       text-shadow: none !important;
       //background: transparent !important;
       box-shadow: none !important;
     }
 
-    a,
-    a:visited {
-      text-decoration: underline;
+    a {
+      &:not(.btn) {
+        text-decoration: underline;
+      }
     }
 
     // Bootstrap specific; comment the following selector out
@@ -45,9 +43,12 @@
 
     //a[href^="#"]::after,
     //a[href^="javascript:"]::after {
-    //  content: "";
+    // content: "";
     //}
 
+    pre {
+      white-space: pre-wrap !important;
+    }
     pre,
     blockquote {
       border: $border-width solid #999;   // Bootstrap custom code; using `$border-width` instead of 1px
@@ -82,17 +83,24 @@
 
     // Bootstrap specific changes start
 
+    // Specify a size and min-width to make printing closer across browsers.
+    // We don't set margin here because it breaks `size` in Chrome. We also
+    // don't use `!important` on `size` as it breaks in Chrome.
+    @page {
+      size: $print-page-size;
+    }
+    body {
+      min-width: $print-body-min-width !important;
+    }
+    .container {
+      min-width: $print-body-min-width !important;
+    }
+
     // Bootstrap components
     .navbar {
       display: none;
     }
-    .btn,
-    .dropup > .btn {
-      > .caret {
-        border-top-color: #000 !important;
-      }
-    }
-    .tag {
+    .badge {
       border: $border-width solid #000;
     }
 
