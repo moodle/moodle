@@ -45,7 +45,7 @@ class provider implements
      * @return  collection     A listing of user data stored through this system.
      */
     public static function get_metadata(collection $collection) : collection {
-        return $collection->add_external_location_link('Flickr account', ['data' => 'privacy:metadata:data'], 'privacy:metadata');
+        return $collection->add_external_location_link('flickr.com', ['data' => 'privacy:metadata:data'], 'privacy:metadata');
     }
 
     /**

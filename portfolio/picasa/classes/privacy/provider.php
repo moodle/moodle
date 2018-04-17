@@ -45,7 +45,7 @@ class provider implements
      * @return  collection     A listing of user data stored through this system.
      */
     public static function get_metadata(collection $collection) : collection {
-        return $collection->add_external_location_link('Picasa photo storage', ['data' => 'privacy:metadata:data'],
+        return $collection->add_external_location_link('picasa.google.com', ['data' => 'privacy:metadata:data'],
                                                        'privacy:metadata');
     }
 

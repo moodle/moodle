@@ -45,7 +45,7 @@ class provider implements
      * @return  collection     A listing of user data stored through this system.
      */
     public static function get_metadata(collection $collection) : collection {
-        return $collection->add_external_location_link('Box cloud storage', ['data' => 'privacy:metadata:data'],
+        return $collection->add_external_location_link('box.net', ['data' => 'privacy:metadata:data'],
                                                        'privacy:metadata');
     }
 
