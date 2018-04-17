@@ -7,6 +7,7 @@ Feature: Use global search interface
   Background:
     Given the following config values are set as admin:
       | enableglobalsearch | 1 |
+      | searchengine | solr |
     And the following "courses" exist:
       | shortname | fullname   |
       | F1        | Amphibians |
@@ -108,12 +109,12 @@ Feature: Use global search interface
       | activity | PAGE1    |
     And I search for "frogs" using the header global search box
     And I expand all fieldsets
-    Then I should not see "Groups" in the "region-main" "region"
+    Then I should not see "All groups" in the "region-main" "region"
     And I select "Course: Amphibians" from the "Search within" singleselect
-    And I should see "Groups" in the "region-main" "region"
+    And I should see "All groups" in the "region-main" "region"
     And I set the field "Groups" to "A Group"
     And I select "Forum: ForumSG" from the "Search within" singleselect
-    And I should see "Groups" in the "region-main" "region"
+    And I should see "A Group" in the "region-main" "region"
     And I am on "Amphibians" course homepage
     And I follow "ForumName1"
     And global search expects the query "frogs" and will return:
@@ -121,8 +122,8 @@ Feature: Use global search interface
       | activity | PAGE1    |
     And I search for "frogs" using the header global search box
     And I expand all fieldsets
-    Then I should not see "Groups" in the "region-main" "region"
+    Then I should not see "All groups" in the "region-main" "region"
     And I select "Course: Amphibians" from the "Search within" singleselect
-    And I should see "Groups" in the "region-main" "region"
+    And I should see "All groups" in the "region-main" "region"
     And I select "Forum: ForumName1" from the "Search within" singleselect
-    And I should not see "Groups" in the "region-main" "region"
+    And I should not see "All groups" in the "region-main" "region"
