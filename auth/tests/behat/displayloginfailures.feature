@@ -25,11 +25,11 @@ Feature: Test the 'showlogfailures' feature works.
     And I set the field "Password" to "teacher1"
     And I press "Log in"
     # Confirm the notices are displayed.
-    Then I should see "1 failed logins since your last login" in the "header.navbar" "css_element"
+    Then I should see "1 failed logins since your last login" in the "nav.navbar" "css_element"
     And I should see "1 failed logins since your last login" in the "page-footer" "region"
     # Confirm the notices disappear when navigating to another page.
     And I am on homepage
-    And I should not see "1 failed logins since your last login" in the "header.navbar" "css_element"
+    And I should not see "1 failed logins since your last login" in the "nav.navbar" "css_element"
     And I should not see "1 failed logins since your last login" in the "page-footer" "region"
 
   # Given the user has at least one failed login attempt, when they login, then they should see both header and footer notices.
@@ -46,10 +46,10 @@ Feature: Test the 'showlogfailures' feature works.
     And I set the field "Password" to "admin"
     And I press "Log in"
     # Confirm the notices are displayed.
-    Then I should see "1 failed logins since your last login" in the "header.navbar" "css_element"
+    Then I should see "1 failed logins since your last login" in the "nav.navbar" "css_element"
     And I should see "1 failed logins since your last login (Logs)" in the "page-footer" "region"
     # Confirm that the link works and that the notices disappear when navigating to another page.
     And I click on "Logs" "link" in the "page-footer" "region"
     And I should see "User login failed" in the "table.reportlog" "css_element"
-    And I should not see "1 failed logins since your last login" in the "header.navbar" "css_element"
+    And I should not see "1 failed logins since your last login" in the "nav.navbar" "css_element"
     And I should not see "1 failed logins since your last login (Logs)" in the "page-footer" "region"
