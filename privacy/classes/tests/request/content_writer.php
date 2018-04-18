@@ -74,28 +74,41 @@ class content_writer implements \core_privacy\local\request\content_writer {
     /**
      * Whether any data has been exported at all within the current context.
      *
+     * @param array $subcontext The location within the current context that this data belongs -
+     *   in this method it can be partial subcontext path (or none at all to check presence of any data anywhere).
+     *   User preferences never have subcontext, if $subcontext is specified, user preferences are not checked.
      * @return  bool
      */
-    public function has_any_data() {
-        $hasdata = !empty($this->data->{$this->context->id});
-        $hasrelateddata = !empty($this->relateddata->{$this->context->id});
-        $hasmetadata = !empty($this->metadata->{$this->context->id});
-        $hasfiles = !empty($this->files->{$this->context->id});
-        $hascustomfiles = !empty($this->customfiles->{$this->context->id});
-        $hasuserprefs = !empty($this->userprefs->{$this->context->id});
+    public function has_any_data($subcontext = []) {
+        if (empty($subcontext)) {
+            // When subcontext is not specified check presence of user preferences in this context and in system context.
+            $hasuserprefs = !empty($this->userprefs->{$this->context->id});
+            $systemcontext = \context_system::instance();
+            $hasglobaluserprefs = !empty($this->userprefs->{$systemcontext->id});
+            if ($hasuserprefs || $hasglobaluserprefs) {
+                return true;
+            }
+        }
 
-        $systemcontext = \context_system::instance();
-        $hasglobaluserprefs = !empty($this->userprefs->{$systemcontext->id});
-
-        $hasanydata = $hasdata;
-        $hasanydata = $hasanydata || $hasrelateddata;
-        $hasanydata = $hasanydata || $hasmetadata;
-        $hasanydata = $hasanydata || $hasfiles;
-        $hasanydata = $hasanydata || $hascustomfiles;
-        $hasanydata = $hasanydata || $hasuserprefs;
-        $hasanydata = $hasanydata || $hasglobaluserprefs;
-
-        return $hasanydata;
+        foreach (['data', 'relateddata', 'metadata', 'files', 'customfiles'] as $datatype) {
+            if (!property_exists($this->$datatype, $this->context->id)) {
+                // No data of this type for this context at all. Continue to the next data type.
+                continue;
+            }
+            $basepath = $this->$datatype->{$this->context->id};
+            foreach ($subcontext as $subpath) {
+                if (!isset($basepath->children->$subpath)) {
+                    // No data of this type is present for this path. Continue to the next data type.
+                    continue 2;
+                }
+                $basepath = $basepath->children->$subpath;
+            }
+            if (!empty($basepath)) {
+                // Some data found for this type for this subcontext.
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
