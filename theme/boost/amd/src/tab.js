@@ -1,9 +1,11 @@
-define(['exports', './util'], function (exports, _util) {
-  'use strict';
+define(["exports", "jquery", "./util"], function (exports, _jquery, _util) {
+  "use strict";
 
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
+
+  var _jquery2 = _interopRequireDefault(_jquery);
 
   var _util2 = _interopRequireDefault(_util);
 
@@ -19,113 +21,103 @@ define(['exports', './util'], function (exports, _util) {
     }
   }
 
-  var _createClass = function () {
-    function defineProperties(target, props) {
-      for (var i = 0; i < props.length; i++) {
-        var descriptor = props[i];
-        descriptor.enumerable = descriptor.enumerable || false;
-        descriptor.configurable = true;
-        if ("value" in descriptor) descriptor.writable = true;
-        Object.defineProperty(target, descriptor.key, descriptor);
-      }
+  function _defineProperties(target, props) {
+    for (var i = 0; i < props.length; i++) {
+      var descriptor = props[i];
+      descriptor.enumerable = descriptor.enumerable || false;
+      descriptor.configurable = true;
+      if ("value" in descriptor) descriptor.writable = true;
+      Object.defineProperty(target, descriptor.key, descriptor);
     }
+  }
 
-    return function (Constructor, protoProps, staticProps) {
-      if (protoProps) defineProperties(Constructor.prototype, protoProps);
-      if (staticProps) defineProperties(Constructor, staticProps);
-      return Constructor;
-    };
-  }();
+  function _createClass(Constructor, protoProps, staticProps) {
+    if (protoProps) _defineProperties(Constructor.prototype, protoProps);
+    if (staticProps) _defineProperties(Constructor, staticProps);
+    return Constructor;
+  }
 
   /**
    * --------------------------------------------------------------------------
-   * Bootstrap (v4.0.0-alpha.4): tab.js
+   * Bootstrap (v4.0.0): tab.js
    * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
    * --------------------------------------------------------------------------
    */
-
   var Tab = function ($) {
-
     /**
      * ------------------------------------------------------------------------
      * Constants
      * ------------------------------------------------------------------------
      */
-
     var NAME = 'tab';
-    var VERSION = '4.0.0-alpha.4';
+    var VERSION = '4.0.0';
     var DATA_KEY = 'bs.tab';
-    var EVENT_KEY = '.' + DATA_KEY;
+    var EVENT_KEY = ".".concat(DATA_KEY);
     var DATA_API_KEY = '.data-api';
     var JQUERY_NO_CONFLICT = $.fn[NAME];
     var TRANSITION_DURATION = 150;
-
     var Event = {
-      HIDE: 'hide' + EVENT_KEY,
-      HIDDEN: 'hidden' + EVENT_KEY,
-      SHOW: 'show' + EVENT_KEY,
-      SHOWN: 'shown' + EVENT_KEY,
-      CLICK_DATA_API: 'click' + EVENT_KEY + DATA_API_KEY
+      HIDE: "hide".concat(EVENT_KEY),
+      HIDDEN: "hidden".concat(EVENT_KEY),
+      SHOW: "show".concat(EVENT_KEY),
+      SHOWN: "shown".concat(EVENT_KEY),
+      CLICK_DATA_API: "click".concat(EVENT_KEY).concat(DATA_API_KEY)
     };
-
     var ClassName = {
       DROPDOWN_MENU: 'dropdown-menu',
       ACTIVE: 'active',
+      DISABLED: 'disabled',
       FADE: 'fade',
-      IN: 'in'
+      SHOW: 'show'
     };
-
     var Selector = {
-      A: 'a',
-      LI: 'li',
       DROPDOWN: '.dropdown',
-      UL: 'ul:not(.dropdown-menu)',
-      FADE_CHILD: '> .nav-item .fade, > .fade',
+      NAV_LIST_GROUP: '.nav, .list-group',
       ACTIVE: '.active',
-      ACTIVE_CHILD: '> .nav-item > .active, > .active',
-      DATA_TOGGLE: '[data-toggle="tab"], [data-toggle="pill"]',
+      ACTIVE_UL: '> li > .active',
+      DATA_TOGGLE: '[data-toggle="tab"], [data-toggle="pill"], [data-toggle="list"]',
       DROPDOWN_TOGGLE: '.dropdown-toggle',
       DROPDOWN_ACTIVE_CHILD: '> .dropdown-menu .active'
-    };
+      /**
+       * ------------------------------------------------------------------------
+       * Class Definition
+       * ------------------------------------------------------------------------
+       */
 
-    /**
-     * ------------------------------------------------------------------------
-     * Class Definition
-     * ------------------------------------------------------------------------
-     */
+    };
 
     var Tab = function () {
       function Tab(element) {
         _classCallCheck(this, Tab);
 
         this._element = element;
-      }
+      } // Getters
 
-      // getters
 
       _createClass(Tab, [{
-        key: 'show',
+        key: "show",
         value: function show() {
           var _this = this;
 
-          if (this._element.parentNode && this._element.parentNode.nodeType === Node.ELEMENT_NODE && $(this._element).hasClass(ClassName.ACTIVE)) {
+          if (this._element.parentNode && this._element.parentNode.nodeType === Node.ELEMENT_NODE && $(this._element).hasClass(ClassName.ACTIVE) || $(this._element).hasClass(ClassName.DISABLED)) {
             return;
           }
 
-          var target = void 0;
-          var previous = void 0;
-          var ulElement = $(this._element).closest(Selector.UL)[0];
+          var target;
+          var previous;
+          var listElement = $(this._element).closest(Selector.NAV_LIST_GROUP)[0];
+
           var selector = _util2.default.getSelectorFromElement(this._element);
 
-          if (ulElement) {
-            previous = $.makeArray($(ulElement).find(Selector.ACTIVE));
+          if (listElement) {
+            var itemSelector = listElement.nodeName === 'UL' ? Selector.ACTIVE_UL : Selector.ACTIVE;
+            previous = $.makeArray($(listElement).find(itemSelector));
             previous = previous[previous.length - 1];
           }
 
           var hideEvent = $.Event(Event.HIDE, {
             relatedTarget: this._element
           });
-
           var showEvent = $.Event(Event.SHOW, {
             relatedTarget: previous
           });
@@ -144,17 +136,15 @@ define(['exports', './util'], function (exports, _util) {
             target = $(selector)[0];
           }
 
-          this._activate(this._element, ulElement);
+          this._activate(this._element, listElement);
 
           var complete = function complete() {
             var hiddenEvent = $.Event(Event.HIDDEN, {
               relatedTarget: _this._element
             });
-
             var shownEvent = $.Event(Event.SHOWN, {
               relatedTarget: previous
             });
-
             $(previous).trigger(hiddenEvent);
             $(_this._element).trigger(shownEvent);
           };
@@ -166,57 +156,66 @@ define(['exports', './util'], function (exports, _util) {
           }
         }
       }, {
-        key: 'dispose',
+        key: "dispose",
         value: function dispose() {
-          $.removeClass(this._element, DATA_KEY);
+          $.removeData(this._element, DATA_KEY);
           this._element = null;
         }
       }, {
-        key: '_activate',
+        key: "_activate",
         value: function _activate(element, container, callback) {
-          var active = $(container).find(Selector.ACTIVE_CHILD)[0];
-          var isTransitioning = callback && _util2.default.supportsTransitionEnd() && (active && $(active).hasClass(ClassName.FADE) || Boolean($(container).find(Selector.FADE_CHILD)[0]));
+          var _this2 = this;
 
-          var complete = $.proxy(this._transitionComplete, this, element, active, isTransitioning, callback);
+          var activeElements;
+
+          if (container.nodeName === 'UL') {
+            activeElements = $(container).find(Selector.ACTIVE_UL);
+          } else {
+            activeElements = $(container).children(Selector.ACTIVE);
+          }
+
+          var active = activeElements[0];
+          var isTransitioning = callback && _util2.default.supportsTransitionEnd() && active && $(active).hasClass(ClassName.FADE);
+
+          var complete = function complete() {
+            return _this2._transitionComplete(element, active, callback);
+          };
 
           if (active && isTransitioning) {
             $(active).one(_util2.default.TRANSITION_END, complete).emulateTransitionEnd(TRANSITION_DURATION);
           } else {
             complete();
           }
-
-          if (active) {
-            $(active).removeClass(ClassName.IN);
-          }
         }
       }, {
-        key: '_transitionComplete',
-        value: function _transitionComplete(element, active, isTransitioning, callback) {
+        key: "_transitionComplete",
+        value: function _transitionComplete(element, active, callback) {
           if (active) {
-            $(active).removeClass(ClassName.ACTIVE);
-
-            var dropdownChild = $(active).find(Selector.DROPDOWN_ACTIVE_CHILD)[0];
+            $(active).removeClass("".concat(ClassName.SHOW, " ").concat(ClassName.ACTIVE));
+            var dropdownChild = $(active.parentNode).find(Selector.DROPDOWN_ACTIVE_CHILD)[0];
 
             if (dropdownChild) {
               $(dropdownChild).removeClass(ClassName.ACTIVE);
             }
 
-            active.setAttribute('aria-expanded', false);
+            if (active.getAttribute('role') === 'tab') {
+              active.setAttribute('aria-selected', false);
+            }
           }
 
           $(element).addClass(ClassName.ACTIVE);
-          element.setAttribute('aria-expanded', true);
 
-          if (isTransitioning) {
-            _util2.default.reflow(element);
-            $(element).addClass(ClassName.IN);
-          } else {
-            $(element).removeClass(ClassName.FADE);
+          if (element.getAttribute('role') === 'tab') {
+            element.setAttribute('aria-selected', true);
           }
 
-          if (element.parentNode && $(element.parentNode).hasClass(ClassName.DROPDOWN_MENU)) {
+          _util2.default.reflow(element);
 
+          $(element).addClass(ClassName.SHOW);
+
+          if (element.parentNode && $(element.parentNode).hasClass(ClassName.DROPDOWN_MENU)) {
             var dropdownElement = $(element).closest(Selector.DROPDOWN)[0];
+
             if (dropdownElement) {
               $(dropdownElement).find(Selector.DROPDOWN_TOGGLE).addClass(ClassName.ACTIVE);
             }
@@ -229,27 +228,28 @@ define(['exports', './util'], function (exports, _util) {
           }
         }
       }], [{
-        key: '_jQueryInterface',
+        key: "_jQueryInterface",
         value: function _jQueryInterface(config) {
           return this.each(function () {
             var $this = $(this);
             var data = $this.data(DATA_KEY);
 
             if (!data) {
-              data = data = new Tab(this);
+              data = new Tab(this);
               $this.data(DATA_KEY, data);
             }
 
             if (typeof config === 'string') {
-              if (data[config] === undefined) {
-                throw new Error('No method named "' + config + '"');
+              if (typeof data[config] === 'undefined') {
+                throw new TypeError("No method named \"".concat(config, "\""));
               }
+
               data[config]();
             }
           });
         }
       }, {
-        key: 'VERSION',
+        key: "VERSION",
         get: function get() {
           return VERSION;
         }
@@ -263,12 +263,11 @@ define(['exports', './util'], function (exports, _util) {
      * Data Api implementation
      * ------------------------------------------------------------------------
      */
-
     $(document).on(Event.CLICK_DATA_API, Selector.DATA_TOGGLE, function (event) {
       event.preventDefault();
+
       Tab._jQueryInterface.call($(this), 'show');
     });
-
     /**
      * ------------------------------------------------------------------------
      * jQuery
@@ -277,13 +276,14 @@ define(['exports', './util'], function (exports, _util) {
 
     $.fn[NAME] = Tab._jQueryInterface;
     $.fn[NAME].Constructor = Tab;
+
     $.fn[NAME].noConflict = function () {
       $.fn[NAME] = JQUERY_NO_CONFLICT;
       return Tab._jQueryInterface;
     };
 
     return Tab;
-  }(jQuery);
+  }(_jquery2.default);
 
   exports.default = Tab;
 });

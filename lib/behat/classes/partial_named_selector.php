@@ -127,7 +127,7 @@ class behat_partial_named_selector extends \Behat\Mink\Selector\PartialNamedSele
 XPATH
         , 'block' => <<<XPATH
 .//*[@data-block][contains(concat(' ', normalize-space(@class), ' '), concat(' ', %locator%, ' ')) or
-     descendant::*[self::h2|self::h3][normalize-space(.) = %locator%]  or
+     descendant::*[self::h2|self::h3|self::h4|self::h5][normalize-space(.) = %locator%]  or
      @aria-label = %locator%]
 XPATH
         , 'dialogue' => <<<XPATH
@@ -143,7 +143,7 @@ XPATH
 .//div[
         contains(concat(' ', normalize-space(@class), ' '), ' modal-content ')
             and
-        normalize-space(descendant::h4[contains(concat(' ', normalize-space(@class), ' '), ' modal-title ')]) = %locator%
+        normalize-space(descendant::*[self::h4 or self::h5][contains(concat(' ', normalize-space(@class), ' '), ' modal-title ')]) = %locator%
     ]
         |
 .//div[

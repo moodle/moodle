@@ -57,7 +57,7 @@
                 <div class="col-lg-5 text-xs-right text-lg-left text-truncate">
                     {{#userdate}} {{timesort}}, {{#str}} strftimerecent {{/str}} {{/userdate}}
                 </div>
-                <div class="hidden-md-down col-lg-7 text-truncate">
+                <div class="hidden-md-down d-none d-md-block col-lg-7 text-truncate">
                     {{#action.actionable}}
                         <a href="{{{action.url}}}">{{action.name}}</a>
                         {{#action.itemcount}}

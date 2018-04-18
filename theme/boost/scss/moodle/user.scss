@@ -18,9 +18,10 @@
 
     section {
         @extend .card;
-        @extend .card-block;
+        @extend .card-body;
         display: inline-block;
         width: 100%;
+        margin-bottom: 1rem;
 
         h3 {
             @extend .lead;

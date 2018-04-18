@@ -19,8 +19,8 @@
 {{/showskiplink}}
 
 {{! Start Block Container }}
-<aside id="{{id}}"
-     class="{{#hidden}}hidden{{/hidden}} block block_{{type}} {{#hascontrols}}block_with_controls{{/hascontrols}} card m-b-1"
+<section id="{{id}}"
+     class="{{#hidden}}hidden{{/hidden}} block block_{{type}} {{#hascontrols}}block_with_controls{{/hascontrols}} card mb-3"
      role="{{ariarole}}"
      data-block="{{type}}"
      {{#arialabel}}
@@ -33,20 +33,20 @@
      {{/arialabel}}>
 
     {{! Block contents }}
-    <div class="card-block">
+    <div class="card-body">
+
+        {{! Block header }}
+        {{#title}}
+            <h5 id="instance-{{blockinstanceid}}-header" class="card-title d-inline">{{{title}}}</h5>
+        {{/title}}
 
         {{#hascontrols}}
-            <div class="block-controls pull-xs-right header">
+            <div class="block-controls pull-right header">
                 {{{controls}}}
             </div>
         {{/hascontrols}}
 
-        {{! Block header }}
-        {{#title}}
-            <h3 id="instance-{{blockinstanceid}}-header" class="card-title">{{{title}}}</h3>
-        {{/title}}
-
-        <div class="card-text content">
+        <div class="card-text content mt-3">
             {{{content}}}
             <div class="footer">{{{footer}}}</div>
             {{{annotation}}}
@@ -55,7 +55,7 @@
     </div>
 
 {{! End Block Container }}
-</aside>
+</section>
 
 {{! Block Skip Link Target }}
 {{#showskiplink}}

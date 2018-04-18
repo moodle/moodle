@@ -77,15 +77,44 @@
         }
     }
 }}
-<div class="dropdown d-inline">
-    <a href="#" class="{{triggerextraclasses}} dropdown-toggle" id="dropdown-{{instance}}" title="{{title}}" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{{actiontext}}}{{{menutrigger}}}{{#icon}}{{#pix}}{{key}},{{component}},{{title}}{{/pix}}{{/icon}}{{#rawicon}}{{{.}}}{{/rawicon}}{{#menutrigger}}<b class="caret"></b>{{/menutrigger}}</a>
+<div class="dropdown">
+    <a href="#" class="{{triggerextraclasses}} dropdown-toggle" id="dropdown-{{instance}}" title="{{title}}" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        {{{actiontext}}}
+        {{{menutrigger}}}
+            {{#icon}}
+                {{#pix}}
+                    {{key}},{{component}},{{title}}
+                {{/pix}}
+            {{/icon}}
+            {{#rawicon}}{{{.}}}{{/rawicon}}
+        {{#menutrigger}}
+        <b class="caret"></b>
+        {{/menutrigger}}
+    </a>
     {{#secondary}}
         <div class="dropdown-menu dropdown-menu-right {{classes}}"{{#attributes}} {{name}}="{{value}}"{{/attributes}}>
-            {{#items}}{{!
-                }}{{#actionmenulink}}<a href="{{url}}" class="dropdown-item {{classes}}" {{#attributes}}{{name}}={{#quote}}{{value}}{{/quote}} {{/attributes}}{{#showtext}}aria-labelledby="actionmenuaction-{{instance}}"{{/showtext}}>{{#icon}}{{#pix}}{{key}},{{component}},{{title}}{{/pix}}{{/icon}}{{#showtext}}<span class="menu-action-text" id="actionmenuaction-{{instance}}">{{{text}}}</span>{{/showtext}}</a>{{/actionmenulink}}{{!
-                }}{{#actionmenufiller}}<div class="dropdown-divider"></div>{{/actionmenufiller}}{{!
-                }}{{^actionmenulink}}{{^actionmenufiller}}<div class="dropdown-item">{{> core/action_menu_item }}</div>{{/actionmenufiller}}{{/actionmenulink}}{{!
-            }}{{/items}}
+            {{#items}}
+                {{#actionmenulink}}
+                    <a href="{{url}}" class="dropdown-item {{classes}}" {{#attributes}}{{name}}={{#quote}}{{value}}{{/quote}} {{/attributes}}{{#showtext}}aria-labelledby="actionmenuaction-{{instance}}"{{/showtext}}>
+                        {{#icon}}
+                            {{#pix}}{{key}},{{component}},{{title}}{{/pix}}
+                        {{/icon}}
+                        {{#showtext}}
+                        <span class="menu-action-text" id="actionmenuaction-{{instance}}">
+                            {{{text}}}
+                        </span>
+                        {{/showtext}}
+                    </a>
+                {{/actionmenulink}}
+                {{#actionmenufiller}}
+                    <div class="dropdown-divider"></div>
+                {{/actionmenufiller}}
+                {{^actionmenulink}}
+                    {{^actionmenufiller}}
+                        <div class="dropdown-item">{{> core/action_menu_item }}</div>
+                    {{/actionmenufiller}}
+                {{/actionmenulink}}
+            {{/items}}
         </div>
     {{/secondary}}
 </div>

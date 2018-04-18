@@ -32,7 +32,7 @@ $blocks-column-width: 250px !default;
     float: right;
 }
 
-$blocks-plus-gutter: $blocks-column-width + $grid-gutter-width;
+$blocks-plus-gutter: $blocks-column-width + ( $grid-gutter-width / 2 );
 
 /* We put an absolutely positioned div in a relatively positioned div so it takes up no space */
 #region-main-settings-menu {
@@ -196,19 +196,6 @@ $doughnut-fill-colour: $brand-warning;
 
     .empty-placeholder-image-lg {
         height: 125px;
-    }
-
-    .courses-view-course-item {
-        height: 220px;
-        overflow-y: hidden;
-    }
-}
-
-@media (min-width: 1600px) {
-    .block_myoverview {
-        .courses-view-course-item {
-            height: 190px;
-        }
     }
 }
 

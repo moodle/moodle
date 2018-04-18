@@ -23,12 +23,12 @@ Feature: Browse course list and return back from enrolment page
     And I follow "Miscellaneous"
     And I follow "Sample course"
     And I press "Continue"
-    Then I should see "Courses" in the ".breadcrumb-nav" "css_element"
-    And I click on "Courses" "link" in the ".breadcrumb-nav" "css_element"
+    Then I should see "Courses" in the ".breadcrumb" "css_element"
+    And I click on "Courses" "link" in the ".breadcrumb" "css_element"
     And I follow "Sample category"
     And I am on "Course 1" course homepage
     And I press "Continue"
-    And I should see "Sample category" in the ".breadcrumb-nav" "css_element"
+    And I should see "Sample category" in the ".breadcrumb" "css_element"
 
   @javascript
   Scenario: A user can return to the previous page from enrolment page by clicking navigation links
@@ -47,7 +47,7 @@ Feature: Browse course list and return back from enrolment page
     And I expand "Sample category" node
     And I follow "Course 1"
     And I press "Continue"
-    Then I should see "Edit profile" in the ".breadcrumb-nav" "css_element"
+    Then I should see "Edit profile" in the ".breadcrumb" "css_element"
 
   Scenario: User can return to the choice activity from enrolment page
     Given the following "roles" exist:
@@ -72,4 +72,4 @@ Feature: Browse course list and return back from enrolment page
     And I should see "Sorry, only enrolled users are allowed to make choices."
     And I press "Enrol me in this course"
     And I press "Continue"
-    Then I should see "Test choice" in the ".breadcrumb-nav" "css_element"
+    Then I should see "Test choice" in the ".breadcrumb" "css_element"

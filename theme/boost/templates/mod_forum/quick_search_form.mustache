@@ -1,13 +1,18 @@
 <div class="forumsearch">
     <form action="{{actionurl}}" class="form-inline">
         <input type="hidden" name="id" value="{{courseid}}">
-        <div class="form-group">
+        <div class="input-group">
+            <div class="input-group-prepend">
             {{#helpicon}}
                 {{>core/help_icon}}
             {{/helpicon}}
+            </div>
             <label class="sr-only" for="search">{{#str}}search, forum{{/str}}</label>
             <input id="search" name="search" type="text" class="form-control" value="{{query}}">
+            <div class="input-group-append">
+                <button class="btn btn-secondary" id="searchforums" type="submit">{{#str}}searchforums, mod_forum{{/str}}</button>
+            </div>
         </div>
-        <button class="btn btn-secondary" id="searchforums" type="submit">{{#str}}searchforums, mod_forum{{/str}}</button>
+
     </form>
 </div>

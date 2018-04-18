@@ -254,11 +254,6 @@ div#dock {
     width: 100%;
 }
 
-// Dropdown styling.
-.dropdown-menu {
-    margin-top: 11px;
-}
-
 // Survey module
 
 .path-mod-survey {
@@ -292,8 +287,6 @@ div#dock {
 
 // Usermenu
 .usermenu {
-    float: right;
-
     .login {
         line-height: 2.25rem;
 
@@ -516,6 +509,8 @@ $popout-header-height: 4rem;
 .path-mod-assign [data-region="grade-panel"] .fitem > .col-md-9 {
     width: 100%;
     padding: 0;
+    max-width: 100%;
+    flex: none;
 }
 .path-mod-assign [data-region="grade-panel"] fieldset,
 .path-mod-assign [data-region="grade-panel"] .fitem.row {
