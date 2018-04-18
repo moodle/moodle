@@ -37,3 +37,4 @@ $string['webdavbasicauth'] = 'WebDAV basic authentication';
 $string['webdavdigestauth'] = 'WebDAV digest authentication';
 $string['webdav'] = 'WebDAV';
 $string['webdav:view'] = 'View WebDav repository';
+$string['privacy:metadata'] = 'The WebDAV repository plugin does not store any personal data, but it is transmitted from Moodle to the remote system.';

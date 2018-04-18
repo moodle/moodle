@@ -30,3 +30,4 @@ $string['pluginname'] = 'Microsoft OneDrive (legacy)';
 $string['secret'] = 'Secret';
 $string['skydrive:view'] = 'View OneDrive (legacy)';
 $string['deprecatedwarning'] = 'Warning: The API used by this repository plugin has been deprecated by Microsoft and it will stop working eventually. Please migrate to the newer "Microsoft OneDrive" repository.';
+$string['privacy:metadata'] = 'The Microsoft OneDrive (legacy) repository plugin does not store any personal data, but does transmit user data from Moodle to the remote system.';
