@@ -35,3 +35,5 @@ $string['cachelimit_info'] = 'Enter the maximum size of files (in bytes) to be c
 $string['dropbox:view'] = 'View a Dropbox folder';
 $string['logoutdesc'] = '(Logout when you finish using Dropbox)';
 $string['oauth2redirecturi'] = 'OAuth 2 Redirect URI';
+$string['privacy:metadata:repository_dropbox'] = 'The Dropbox repository plugin does not store any personal data, but does transmit user data from Moodle to the remote system.';
+$string['privacy:metadata:repository_dropbox:query'] = 'The Dropbox repository user search text query.';

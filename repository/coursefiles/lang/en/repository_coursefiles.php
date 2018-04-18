@@ -30,3 +30,4 @@ $string['remember'] = 'Remember me';
 $string['pluginname_help'] = 'Legacy course files';
 $string['pluginname'] = 'Legacy course files';
 $string['coursefiles:view'] = 'Use course files repository plugin';
+$string['privacy:metadata'] = 'The Legacy course files repository plugin does not store or transmit any personal data.';
