@@ -154,9 +154,11 @@ ol {
  * calc((0.5rem + 1px) * -1); is stripped out by lib/php-css-parser/Parser.php.
  * See MDL-61879. For now the arrow positions of popovers are fixed until this is resolved.
  */
- .bs-popover-right .arrow, .bs-popover-auto[x-placement^="right"] .arrow {
+.bs-popover-right .arrow,
+.bs-popover-auto[x-placement^="right"] .arrow {
     left: -9px;
- }
-  .bs-popover-left .arrow, .bs-popover-auto[x-placement^="left"] .arrow {
+}
+.bs-popover-left .arrow,
+.bs-popover-auto[x-placement^="left"] .arrow {
     right: -9px;
- }
+}
