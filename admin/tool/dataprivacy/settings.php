@@ -28,10 +28,10 @@ if ($hassiteconfig) {
     $privacysettings = $ADMIN->locate('privacysettings');
 
     if ($ADMIN->fulltree) {
-        // Contact data protection officer.
+        // Contact data protection officer. Disabled by default.
         $privacysettings->add(new admin_setting_configcheckbox('tool_dataprivacy/contactdataprotectionofficer',
                 new lang_string('contactdataprotectionofficer', 'tool_dataprivacy'),
-                new lang_string('contactdataprotectionofficer_desc', 'tool_dataprivacy'), 1)
+                new lang_string('contactdataprotectionofficer_desc', 'tool_dataprivacy'), 0)
         );
 
         // Fetch roles that are assignable.

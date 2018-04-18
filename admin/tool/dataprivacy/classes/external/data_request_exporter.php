@@ -127,6 +127,8 @@ class data_request_exporter extends persistent_exporter {
             $user = core_user::get_user($requestedbyid, '*', MUST_EXIST);
             $userexporter = new user_summary_exporter($user);
             $values['requestedbyuser'] = $userexporter->export($output);
+        } else {
+            $values['requestedbyuser'] = $values['foruser'];
         }
 
         if (!empty($this->persistent->get('dpo'))) {

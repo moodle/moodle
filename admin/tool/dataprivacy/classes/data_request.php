@@ -56,6 +56,16 @@ class data_request extends persistent {
                 'type' => PARAM_TEXT,
                 'default' => ''
             ],
+            'commentsformat' => [
+                'choices' => [
+                    FORMAT_HTML,
+                    FORMAT_MOODLE,
+                    FORMAT_PLAIN,
+                    FORMAT_MARKDOWN
+                ],
+                'type' => PARAM_INT,
+                'default' => FORMAT_PLAIN
+            ],
             'userid' => [
                 'default' => 0,
                 'type' => PARAM_INT
@@ -87,6 +97,16 @@ class data_request extends persistent {
                 'default' => '',
                 'type' => PARAM_TEXT,
                 'null' => NULL_ALLOWED
+            ],
+            'dpocommentformat' => [
+                'choices' => [
+                    FORMAT_HTML,
+                    FORMAT_MOODLE,
+                    FORMAT_PLAIN,
+                    FORMAT_MARKDOWN
+                ],
+                'type' => PARAM_INT,
+                'default' => FORMAT_PLAIN
             ],
         ];
     }

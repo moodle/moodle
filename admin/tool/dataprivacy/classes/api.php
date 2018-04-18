@@ -36,7 +36,7 @@ use moodle_exception;
 use moodle_url;
 use required_capability_exception;
 use stdClass;
-use tool_dataprivacy\local\helper;
+use tool_dataprivacy\external\data_request_exporter;
 use tool_dataprivacy\task\initiate_data_request_task;
 use tool_dataprivacy\task\process_data_request_task;
 
@@ -393,12 +393,18 @@ class api {
     public static function notify_dpo($dpo, data_request $request) {
         global $PAGE, $SITE;
 
+        $output = $PAGE->get_renderer('tool_dataprivacy');
+
+        $usercontext = \context_user::instance($request->get('requestedby'));
+        $requestexporter = new data_request_exporter($request, ['context' => $usercontext]);
+        $requestdata = $requestexporter->export($output);
+
         // Create message to send to the Data Protection Officer(s).
         $typetext = null;
-        $typetext = helper::get_request_type_string($request->get('type'));
+        $typetext = $requestdata->typename;
         $subject = get_string('datarequestemailsubject', 'tool_dataprivacy', $typetext);
 
-        $requestedby = core_user::get_user($request->get('requestedby'));
+        $requestedby = $requestdata->requestedbyuser;
         $datarequestsurl = new moodle_url('/admin/tool/dataprivacy/datarequests.php');
         $message = new message();
         $message->courseid          = $SITE->id;
@@ -406,7 +412,7 @@ class api {
         $message->name              = 'contactdataprotectionofficer';
         $message->userfrom          = $requestedby;
         $message->replyto           = $requestedby->email;
-        $message->replytoname       = fullname($requestedby->email);
+        $message->replytoname       = $requestedby->fullname;
         $message->subject           = $subject;
         $message->fullmessageformat = FORMAT_HTML;
         $message->notification      = 1;
@@ -415,20 +421,19 @@ class api {
 
         // Prepare the context data for the email message body.
         $messagetextdata = [
-            'requestedby' => fullname($requestedby),
+            'requestedby' => $requestedby->fullname,
             'requesttype' => $typetext,
-            'requestdate' => userdate($request->get('timecreated')),
-            'requestcomments' => text_to_html($request->get('comments')),
+            'requestdate' => userdate($requestdata->timecreated),
+            'requestcomments' => $requestdata->messagehtml,
             'datarequestsurl' => $datarequestsurl
         ];
-        $requestingfor = core_user::get_user($request->get('userid'));
+        $requestingfor = $requestdata->foruser;
         if ($requestedby->id == $requestingfor->id) {
             $messagetextdata['requestfor'] = $messagetextdata['requestedby'];
         } else {
-            $messagetextdata['requestfor'] = fullname($requestingfor);
+            $messagetextdata['requestfor'] = $requestingfor->fullname;
         }
 
-        $output = $PAGE->get_renderer('tool_dataprivacy');
         // Email the data request to the Data Protection Officer(s)/Admin(s).
         $messagetextdata['dponame'] = fullname($dpo);
         // Render message email body.

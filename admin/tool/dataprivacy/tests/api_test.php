@@ -217,16 +217,16 @@ class tool_dataprivacy_api_testcase extends advanced_testcase {
      * Test for api::can_contact_dpo()
      */
     public function test_can_contact_dpo() {
-        // Default ('contactdataprotectionofficer' is enabled by default).
-        $this->assertTrue(api::can_contact_dpo());
-
-        // Disable.
-        set_config('contactdataprotectionofficer', 0, 'tool_dataprivacy');
+        // Default ('contactdataprotectionofficer' is disabled by default).
         $this->assertFalse(api::can_contact_dpo());
 
-        // Enable again.
+        // Enable.
         set_config('contactdataprotectionofficer', 1, 'tool_dataprivacy');
         $this->assertTrue(api::can_contact_dpo());
+
+        // Disable again.
+        set_config('contactdataprotectionofficer', 0, 'tool_dataprivacy');
+        $this->assertFalse(api::can_contact_dpo());
     }
 
     /**
@@ -467,9 +467,10 @@ class tool_dataprivacy_api_testcase extends advanced_testcase {
      */
     public function notify_dpo_provider() {
         return [
-            [api::DATAREQUEST_TYPE_EXPORT, 'requesttypeexport'],
-            [api::DATAREQUEST_TYPE_DELETE, 'requesttypedelete'],
-            [api::DATAREQUEST_TYPE_OTHERS, 'requesttypeothers'],
+            [false, api::DATAREQUEST_TYPE_EXPORT, 'requesttypeexport', 'Export my user data'],
+            [false, api::DATAREQUEST_TYPE_DELETE, 'requesttypedelete', 'Delete my user data'],
+            [false, api::DATAREQUEST_TYPE_OTHERS, 'requesttypeothers', 'Nothing. Just wanna say hi'],
+            [true, api::DATAREQUEST_TYPE_EXPORT, 'requesttypeexport', 'Admin export data of another user'],
         ];
     }
 
@@ -477,20 +478,28 @@ class tool_dataprivacy_api_testcase extends advanced_testcase {
      * Test for api::notify_dpo()
      *
      * @dataProvider notify_dpo_provider
+     * @param bool $byadmin Whether the admin requests data on behalf of the user
      * @param int $type The request type
      * @param string $typestringid The request lang string identifier
+     * @param string $comments The requestor's message to the DPO.
      */
-    public function test_notify_dpo($type, $typestringid) {
+    public function test_notify_dpo($byadmin, $type, $typestringid, $comments) {
         $generator = new testing_data_generator();
         $user1 = $generator->create_user();
-
-        // Make a data request as user 1.
-        $this->setUser($user1);
-        $request = api::create_data_request($user1->id, $type);
-
-        $sink = $this->redirectMessages();
         // Let's just use admin as DPO (It's the default if not set).
         $dpo = get_admin();
+        if ($byadmin) {
+            $this->setAdminUser();
+            $requestedby = $dpo;
+        } else {
+            $this->setUser($user1);
+            $requestedby = $user1;
+        }
+
+        // Make a data request for user 1.
+        $request = api::create_data_request($user1->id, $type, $comments);
+
+        $sink = $this->redirectMessages();
         $messageid = api::notify_dpo($dpo, $request);
         $this->assertNotFalse($messageid);
         $messages = $sink->get_messages();
@@ -498,7 +507,7 @@ class tool_dataprivacy_api_testcase extends advanced_testcase {
         $message = reset($messages);
 
         // Check some of the message properties.
-        $this->assertEquals($user1->id, $message->useridfrom);
+        $this->assertEquals($requestedby->id, $message->useridfrom);
         $this->assertEquals($dpo->id, $message->useridto);
         $typestring = get_string($typestringid, 'tool_dataprivacy');
         $subject = get_string('datarequestemailsubject', 'tool_dataprivacy', $typestring);
