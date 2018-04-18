@@ -114,7 +114,7 @@ class purpose extends persistent {
         if (is_array($data->lawfulbases)) {
             $data->lawfulbases = implode(',', $data->lawfulbases);
         }
-        if (is_array($data->sensitivedatareasons)) {
+        if (!empty($data->sensitivedatareasons) && is_array($data->sensitivedatareasons)) {
             $data->sensitivedatareasons = implode(',', $data->sensitivedatareasons);
         }
 
