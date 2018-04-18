@@ -190,7 +190,7 @@ class quiz_statistics_report extends quiz_default_report {
             if ($quizstats->s()) {
                 $this->output_quiz_structure_analysis_table($questionstats);
 
-                if ($this->table->is_downloading() == 'xhtml' && $quizstats->s() != 0) {
+                if ($this->table->is_downloading() == 'html' && $quizstats->s() != 0) {
                     $this->output_statistics_graph($quiz->id, $qubaids);
                 }
 
@@ -403,14 +403,14 @@ class quiz_statistics_report extends quiz_default_report {
                 $questiontabletitle = get_string('analysisnameonly', 'quiz_statistics', $a);
             }
 
-            if ($this->table->is_downloading() == 'xhtml') {
+            if ($this->table->is_downloading() == 'html') {
                 $questiontabletitle = get_string('analysisofresponsesfor', 'quiz_statistics', $questiontabletitle);
             }
 
             // Set up the table.
             $exportclass->start_table($questiontabletitle);
 
-            if ($this->table->is_downloading() == 'xhtml') {
+            if ($this->table->is_downloading() == 'html') {
                 echo $this->render_question_text($question);
             }
         }
@@ -487,8 +487,8 @@ class quiz_statistics_report extends quiz_default_report {
     protected function download_quiz_info_table($quizinfo) {
         global $OUTPUT;
 
-        // XHTML download is a special case.
-        if ($this->table->is_downloading() == 'xhtml') {
+        // HTML download is a special case.
+        if ($this->table->is_downloading() == 'html') {
             echo $OUTPUT->heading(get_string('quizinformation', 'quiz_statistics'), 3);
             echo $this->output_quiz_info_table($quizinfo);
             return;
