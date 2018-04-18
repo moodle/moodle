@@ -758,4 +758,58 @@ class search_solr_engine_testcase extends advanced_testcase {
         $this->assertCount(10, $results->results);
         $this->assertEquals(1, $results->actualpage);
     }
+
+    /**
+     * Tests with bogus content (that can be entered into Moodle) to see if it crashes.
+     */
+    public function test_bogus_content() {
+        $generator = $this->getDataGenerator();
+        $course1 = $generator->create_course(['fullname' => 'Course 1']);
+        $course1context = \context_course::instance($course1->id);
+
+        // It is possible to enter into a Moodle database content containing these characters,
+        // which are Unicode non-characters / byte order marks. If sent to Solr, these cause
+        // failures.
+        $boguscontent = html_entity_decode('&#xfffe;') . 'frog';
+        $this->create_search_record($course1->id, $course1context->id, 'C1', $boguscontent);
+        $boguscontent = html_entity_decode('&#xffff;') . 'frog';
+        $this->create_search_record($course1->id, $course1context->id, 'C1', $boguscontent);
+
+        // Unicode Standard Version 9.0 - Core Specification, section 23.7, lists 66 non-characters
+        // in total. Here are some of them - these work OK for me but it may depend on platform.
+        $boguscontent = html_entity_decode('&#xfdd0;') . 'frog';
+        $this->create_search_record($course1->id, $course1context->id, 'C1', $boguscontent);
+        $boguscontent = html_entity_decode('&#xfdef;') . 'frog';
+        $this->create_search_record($course1->id, $course1context->id, 'C1', $boguscontent);
+        $boguscontent = html_entity_decode('&#x1fffe;') . 'frog';
+        $this->create_search_record($course1->id, $course1context->id, 'C1', $boguscontent);
+        $boguscontent = html_entity_decode('&#x10ffff;') . 'frog';
+        $this->create_search_record($course1->id, $course1context->id, 'C1', $boguscontent);
+
+        // Do the indexing (this will check it doesn't throw warnings).
+        $this->search->index();
+
+        // Confirm that all 6 documents are found in search.
+        $querydata = new stdClass();
+        $querydata->q = 'frog';
+        $results = $this->search->search($querydata);
+        $this->assertCount(6, $results);
+    }
+
+    /**
+     * Adds a record to the mock search area, so that the search engine can find it later.
+     *
+     * @param int $courseid Course id
+     * @param int $contextid Context id
+     * @param string $title Title for search index
+     * @param string $content Content for search index
+     */
+    protected function create_search_record($courseid, $contextid, $title, $content) {
+        $record = new \stdClass();
+        $record->content = $content;
+        $record->title = $title;
+        $record->courseid = $courseid;
+        $record->contextid = $contextid;
+        $this->generator->create_record($record);
+    }
 }
