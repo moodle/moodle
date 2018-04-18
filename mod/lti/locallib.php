@@ -921,9 +921,35 @@ function lti_tool_configuration_from_content_item($typeid, $messagetype, $ltiver
         } else {
             $config->typeid = $typeid;
         }
+        $config->instructorchoiceacceptgrades = LTI_SETTING_NEVER;
+        if (!$islti2 && isset($typeconfig['acceptgrades'])) {
+            $acceptgrades = $typeconfig['acceptgrades'];
+            if ($acceptgrades == LTI_SETTING_ALWAYS) {
+                // We create a line item regardless if the definition contains one or not.
+                $config->instructorchoiceacceptgrades = LTI_SETTING_ALWAYS;
+            }
+            if ($acceptgrades == LTI_SETTING_DELEGATE || $acceptgrades == LTI_SETTING_ALWAYS) {
+                if (isset($item->lineItem)) {
+                    $lineitem = $item->lineItem;
+                    $config->instructorchoiceacceptgrades = LTI_SETTING_ALWAYS;
+                    $maxscore = 100;
+                    if (isset($lineitem->scoreConstraints)) {
+                        $sc = $lineitem->scoreConstraints;
+                        if (isset($sc->totalMaximum)) {
+                            $maxscore = $sc->totalMaximum;
+                        } else if (isset($sc->normalMaximum)) {
+                            $maxscore = $sc->normalMaximum;
+                        }
+                    }
+                    $config->grade_modgrade_point = $maxscore;
+                    if (isset($lineitem->assignedActivity) && isset($lineitem->assignedActivity->activityId)) {
+                        $config->cmidnumber = $lineitem->assignedActivity->activityId;
+                    }
+                }
+            }
+        }
         $config->instructorchoicesendname = LTI_SETTING_NEVER;
         $config->instructorchoicesendemailaddr = LTI_SETTING_NEVER;
-        $config->instructorchoiceacceptgrades = LTI_SETTING_NEVER;
         $config->launchcontainer = LTI_LAUNCH_CONTAINER_DEFAULT;
         if (isset($item->placementAdvice->presentationDocumentTarget)) {
             if ($item->placementAdvice->presentationDocumentTarget === 'window') {
@@ -941,6 +967,7 @@ function lti_tool_configuration_from_content_item($typeid, $messagetype, $ltiver
             }
             $config->instructorcustomparameters = implode("\n", $customparameters);
         }
+        $config->contentitemjson = json_encode($item);
     }
     return $config;
 }
