@@ -78,11 +78,9 @@ $toform = fullclone($question);
 $toform->category = "{$category->id},{$category->contextid}";
 $toform->includesubcategories = $slot->includingsubcategories;
 $toform->fromtags = array();
-if ($slot->tags) {
-    $tags = quiz_extract_random_question_tags($slot->tags);
-    foreach ($tags as $tag) {
-        $toform->fromtags[] = "{$tag->id},{$tag->name}";
-    }
+$currentslottags = quiz_retrieve_slot_tags($slot->id);
+foreach ($currentslottags as $slottag) {
+    $toform->fromtags[] = "{$slottag->tagid},{$slottag->tagname}";
 }
 $toform->returnurl = $returnurl;
 
@@ -117,6 +115,8 @@ if ($mform->is_cancelled()) {
     $slot->questioncategoryid = $fromform->category;
     $slot->includingsubcategories = $fromform->includesubcategories;
 
+    $DB->update_record('quiz_slots', $slot);
+
     $tags = [];
     foreach ($fromform->fromtags as $tagstring) {
         list($tagid, $tagname) = explode(',', $tagstring);
@@ -125,9 +125,39 @@ if ($mform->is_cancelled()) {
             'name' => $tagname
         ];
     }
-    $slot->tags = quiz_build_random_question_tag_json($tags);
 
-    $DB->update_record('quiz_slots', $slot);
+    $recordstokeep = [];
+    $recordstoinsert = [];
+    $searchableslottags = array_map(function($slottag) {
+        return ['tagid' => $slottag->tagid, 'tagname' => $slottag->tagname];
+    }, $currentslottags);
+
+    foreach ($tags as $tag) {
+        if ($key = array_search(['tagid' => $tag->id, 'tagname' => $tag->name], $searchableslottags)) {
+            // If found, $key would be the id field in the quiz_slot_tags table.
+            // Therefore, there was no need to check !== false here.
+            $recordstokeep[] = $key;
+        } else {
+            $recordstoinsert[] = (object)[
+                'slotid' => $slot->id,
+                'tagid' => $tag->id,
+                'tagname' => $tag->name
+            ];
+        }
+    }
+
+    // Now, delete the remaining records.
+    if (!empty($recordstokeep)) {
+        list($select, $params) = $DB->get_in_or_equal($recordstokeep, SQL_PARAMS_QM, 'param', false);
+        $DB->delete_records_select('quiz_slot_tags', "id $select", $params);
+    } else {
+        $DB->delete_records('quiz_slot_tags', array('slotid' => $slot->id));
+    }
+
+    // And now, insert the extra records if there is any.
+    if (!empty($recordstoinsert)) {
+        $DB->insert_records('quiz_slot_tags', $recordstoinsert);
+    }
 
     // Purge this question from the cache.
     question_bank::notify_question_edited($question->id);

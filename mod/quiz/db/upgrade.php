@@ -117,13 +117,6 @@ function xmldb_quiz_upgrade($oldversion) {
             $dbman->add_field($table, $field);
         }
 
-        // Define field tags to be added to quiz_slots.
-        $field = new xmldb_field('tags', XMLDB_TYPE_TEXT, null, null, null, null, null, 'includingsubcategories');
-        // Conditionally launch add field tags.
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
         // Quiz savepoint reached.
         upgrade_mod_savepoint(true, 2018020700, 'quiz');
     }
@@ -161,6 +154,46 @@ function xmldb_quiz_upgrade($oldversion) {
 
         // Quiz savepoint reached.
         upgrade_mod_savepoint(true, 2018020701, 'quiz');
+    }
+
+    if ($oldversion < 2018040700) {
+
+        // Define field tags to be dropped from quiz_slots. This field was added earlier to master only.
+        $table = new xmldb_table('quiz_slots');
+        $field = new xmldb_field('tags');
+
+        // Conditionally launch drop field quizid.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Quiz savepoint reached.
+        upgrade_mod_savepoint(true, 2018040700, 'quiz');
+    }
+
+    if ($oldversion < 2018040800) {
+
+        // Define table quiz_slot_tags to be created.
+        $table = new xmldb_table('quiz_slot_tags');
+
+        // Adding fields to table quiz_slot_tags.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('slotid', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+        $table->add_field('tagid', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+        $table->add_field('tagname', XMLDB_TYPE_CHAR, '255', null, null, null, null);
+
+        // Adding keys to table quiz_slot_tags.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('slotid', XMLDB_KEY_FOREIGN, array('slotid'), 'quiz_slots', array('id'));
+        $table->add_key('tagid', XMLDB_KEY_FOREIGN, array('tagid'), 'tag', array('id'));
+
+        // Conditionally launch create table for quiz_slot_tags.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Quiz savepoint reached.
+        upgrade_mod_savepoint(true, 2018040800, 'quiz');
     }
 
     return true;

@@ -209,7 +209,7 @@ class core_tag_tag {
     }
 
     /**
-     * Simple function to just return a single tag object by its id
+     * Simple function to just return an array of tag objects by their ids
      *
      * @param    int[]  $ids
      * @param    string $returnfields which fields do we want returned from table {tag}.

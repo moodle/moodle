@@ -421,223 +421,168 @@ class mod_quiz_locallib_testcase extends advanced_testcase {
         $this->assertEquals($comparearray, quiz_get_user_timeclose($course->id));
     }
 
-    public function test_quiz_build_random_question_tag_json() {
-        $this->resetAfterTest();
+    /**
+     * This function creates a quiz with some standard (non-random) and some random questions.
+     * The standard questions are created first and then random questions follow them.
+     * So in a quiz with 3 standard question and 2 random question, the first random question is at slot 4.
+     *
+     * @param int $qnum Number of standard questions that should be created in the quiz.
+     * @param int $randomqnum Number of random questions that should be created in the quiz.
+     * @param array $questiontags Tags to be used for random questions.
+     *      This is an array in the following format:
+     *      [
+     *          0 => ['foo', 'bar'],
+     *          1 => ['baz', 'qux']
+     *      ]
+     * @param string[] $unusedtags Some additional tags to be created.
+     * @return array An array of 2 elements: $quiz and $tagobjects.
+     *      $tagobjects is an associative array of all created tag objects with its key being tag names.
+     */
+    private function setup_quiz_and_tags($qnum, $randomqnum, $questiontags = [], $unusedtags = []) {
+        global $SITE;
 
-        // Setup test data.
-        $footagrecord = array(
-            'isstandard' => 1,
-            'flag' => 0,
-            'rawname' => 'foo',
-            'description' => 'foo desc'
-        );
-        $footag = $this->getDataGenerator()->create_tag($footagrecord);
-        $bartagrecord = array(
-            'isstandard' => 1,
-            'flag' => 0,
-            'rawname' => 'bar',
-            'description' => 'bar desc'
-        );
-        $bartag = $this->getDataGenerator()->create_tag($bartagrecord);
-        $baztagrecord = array(
-            'isstandard' => 1,
-            'flag' => 0,
-            'rawname' => 'baz',
-            'description' => 'baz desc'
-        );
-        $baztag = $this->getDataGenerator()->create_tag($baztagrecord);
-        $quxtagrecord = array(
-            'isstandard' => 1,
-            'flag' => 0,
-            'rawname' => 'qux',
-            'description' => 'qux desc'
-        );
-        $quxtag = $this->getDataGenerator()->create_tag($quxtagrecord);
-        $quuxtagrecord = array(
-            'isstandard' => 1,
-            'flag' => 0,
-            'rawname' => 'quux',
-            'description' => 'quux desc'
-        );
-        $quuxtag = $this->getDataGenerator()->create_tag($quuxtagrecord);
+        $tagobjects = [];
 
-        $tagrecords = array(
-            (object)[
-                'id' => $footag->id,
-                'name' => 'foo'
-            ],
-            (object)[
-                'id' => 999, // An invalid tag id.
-                'name' => 'bar'
-            ],
-            (object)[
-                'id' => null,
-                'name' => 'baz'
-            ],
-            (object)[
-                'id' => $quxtag->id,
-                'name' => 'invalidqux'  // An invalid tag name.
-            ],
-            (object)[
-                'id' => 999, // An invalid tag id.
-                'name' => 'invalidquux'  // An invalid tag name.
-            ],
-        );
+        // Get all the tags that need to be created.
+        $alltags = [];
+        foreach ($questiontags as $questiontag) {
+            $alltags = array_merge($alltags, $questiontag);
+        }
+        $alltags = array_merge($alltags, $unusedtags);
+        $alltags = array_unique($alltags);
 
-        $expectedjson = json_encode(array(
-            ['id' => (int)$footag->id, 'name' => $footag->name],
-            ['id' => (int)$bartag->id, 'name' => $bartag->name],
-            ['id' => (int)$baztag->id, 'name' => $baztag->name],
-            ['id' => (int)$quxtag->id, 'name' => $quxtag->name],
-            ['id' => null, 'name' => 'invalidquux'],
-        ));
-        $this->assertEquals($expectedjson, quiz_build_random_question_tag_json($tagrecords));
+        // Create tags.
+        foreach ($alltags as $tagname) {
+            $tagrecord = array(
+                'isstandard' => 1,
+                'flag' => 0,
+                'rawname' => $tagname,
+                'description' => $tagname . ' desc'
+            );
+            $tagobjects[$tagname] = $this->getDataGenerator()->create_tag($tagrecord);
+        }
+
+        // Create a quiz.
+        $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
+        $quiz = $quizgenerator->create_instance(array('course' => $SITE->id, 'questionsperpage' => 3, 'grade' => 100.0));
+
+        // Create a question category in the system context.
+        $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $cat = $questiongenerator->create_question_category();
+
+        // Setup standard questions.
+        for ($i = 0; $i < $qnum; $i++) {
+            $question = $questiongenerator->create_question('shortanswer', null, array('category' => $cat->id));
+            quiz_add_quiz_question($question->id, $quiz);
+        }
+        // Setup random questions.
+        for ($i = 0; $i < $randomqnum; $i++) {
+            // Just create a standard question first, so there would be enough questions to pick a random question from.
+            $question = $questiongenerator->create_question('shortanswer', null, array('category' => $cat->id));
+            $tagids = [];
+            if (!empty($questiontags[$i])) {
+                foreach ($questiontags[$i] as $tagname) {
+                    $tagids[] = $tagobjects[$tagname]->id;
+                }
+            }
+            quiz_add_random_questions($quiz, 0, $cat->id, 1, false, $tagids);
+        }
+
+        return array($quiz, $tagobjects);
     }
 
-    public function test_quiz_extract_random_question_tags() {
+    public function test_quiz_retrieve_slot_tags() {
+        global $DB;
+
         $this->resetAfterTest();
+        $this->setAdminUser();
 
-        // Setup test data.
-        $footagrecord = array(
-                'isstandard' => 1,
-                'flag' => 0,
-                'rawname' => 'foo',
-                'description' => 'foo desc'
-        );
-        $footag = $this->getDataGenerator()->create_tag($footagrecord);
-        $bartagrecord = array(
-                'isstandard' => 1,
-                'flag' => 0,
-                'rawname' => 'bar',
-                'description' => 'bar desc'
-        );
-        $bartag = $this->getDataGenerator()->create_tag($bartagrecord);
-        $baztagrecord = array(
-                'isstandard' => 1,
-                'flag' => 0,
-                'rawname' => 'baz',
-                'description' => 'baz desc'
-        );
-        $baztag = $this->getDataGenerator()->create_tag($baztagrecord);
-        $quxtagrecord = array(
-                'isstandard' => 1,
-                'flag' => 0,
-                'rawname' => 'qux',
-                'description' => 'qux desc'
-        );
-        $quxtag = $this->getDataGenerator()->create_tag($quxtagrecord);
-        $quuxtagrecord = array(
-                'isstandard' => 1,
-                'flag' => 0,
-                'rawname' => 'quux',
-                'description' => 'quux desc'
-        );
-        $quuxtag = $this->getDataGenerator()->create_tag($quuxtagrecord);
+        list($quiz, $tags) = $this->setup_quiz_and_tags(1, 1, [['foo', 'bar']], ['baz']);
 
-        $tagjson = json_encode(array(
-            [
-                'id' => $footag->id,
-                'name' => 'foo'
-            ],
-            [
-                'id' => 999, // An invalid tag id.
-                'name' => 'bar'
-            ],
-            [
-                'id' => null,
-                'name' => 'baz'
-            ],
-            [
-                'id' => $quxtag->id,
-                'name' => 'invalidqux' // An invalid tag name.
-            ],
-            [
-                'id' => 999, // An invalid tag id.
-                'name' => 'invalidquux'  // An invalid tag name.
-            ],
-        ));
+        // Get the random question's slotid. It is at the second slot.
+        $slotid = $DB->get_field('quiz_slots', 'id', array('quizid' => $quiz->id, 'slot' => 2));
+        $slottags = quiz_retrieve_slot_tags($slotid);
 
-        $expectedrecords = array(
-            (object)['id' => $footag->id, 'name' => $footag->name],
-            (object)['id' => $bartag->id, 'name' => $bartag->name],
-            (object)['id' => $baztag->id, 'name' => $baztag->name],
-            (object)['id' => $quxtag->id, 'name' => $quxtag->name],
-            (object)['id' => null, 'name' => 'invalidquux'],
-        );
-
-        $this->assertEquals($expectedrecords, quiz_extract_random_question_tags($tagjson));
+        $this->assertEquals(
+                [
+                    ['tagid' => $tags['foo']->id, 'tagname' => $tags['foo']->name],
+                    ['tagid' => $tags['bar']->id, 'tagname' => $tags['bar']->name]
+                ],
+                array_map(function($slottag) {
+                    return ['tagid' => $slottag->tagid, 'tagname' => $slottag->tagname];
+                }, $slottags),
+                '', 0.0, 10, true);
     }
 
-    public function test_quiz_extract_random_question_tag_ids() {
+    public function test_quiz_retrieve_slot_tags_with_removed_tag() {
+        global $DB;
+
         $this->resetAfterTest();
+        $this->setAdminUser();
 
-        // Setup test data.
-        $footagrecord = array(
-                'isstandard' => 1,
-                'flag' => 0,
-                'rawname' => 'foo',
-                'description' => 'foo desc'
-        );
-        $footag = $this->getDataGenerator()->create_tag($footagrecord);
-        $bartagrecord = array(
-                'isstandard' => 1,
-                'flag' => 0,
-                'rawname' => 'bar',
-                'description' => 'bar desc'
-        );
-        $bartag = $this->getDataGenerator()->create_tag($bartagrecord);
-        $baztagrecord = array(
-                'isstandard' => 1,
-                'flag' => 0,
-                'rawname' => 'baz',
-                'description' => 'baz desc'
-        );
-        $baztag = $this->getDataGenerator()->create_tag($baztagrecord);
-        $quxtagrecord = array(
-                'isstandard' => 1,
-                'flag' => 0,
-                'rawname' => 'qux',
-                'description' => 'qux desc'
-        );
-        $quxtag = $this->getDataGenerator()->create_tag($quxtagrecord);
-        $quuxtagrecord = array(
-                'isstandard' => 1,
-                'flag' => 0,
-                'rawname' => 'quux',
-                'description' => 'quux desc'
-        );
-        $quuxtag = $this->getDataGenerator()->create_tag($quuxtagrecord);
+        list($quiz, $tags) = $this->setup_quiz_and_tags(1, 1, [['foo', 'bar']], ['baz']);
 
-        $tagjson = json_encode(array(
-            [
-                'id' => $footag->id,
-                'name' => 'foo'
-            ],
-            [
-                'id' => 999, // An invalid tag id.
-                'name' => 'bar'
-            ],
-            [
-                'id' => null,
-                'name' => 'baz'
-            ],
-            [
-                'id' => $quxtag->id,
-                'name' => 'invalidqux' // An invalid tag name.
-            ],
-            [
-                'id' => 999, // An invalid tag id.
-                'name' => 'invalidquux'  // An invalid tag name.
-            ],
-        ));
+        // Get the random question's slotid. It is at the second slot.
+        $slotid = $DB->get_field('quiz_slots', 'id', array('quizid' => $quiz->id, 'slot' => 2));
+        $slottags = quiz_retrieve_slot_tags($slotid);
 
-        $expectedrecords = array(
-            $footag->id,
-            $bartag->id,
-            $baztag->id,
-            $quxtag->id,
-        );
+        // Now remove the foo tag and check again.
+        core_tag_tag::delete_tags([$tags['foo']->id]);
+        $slottags = quiz_retrieve_slot_tags($slotid);
 
-        $this->assertEquals($expectedrecords, quiz_extract_random_question_tag_ids($tagjson));
+        $this->assertEquals(
+                [
+                    ['tagid' => null, 'tagname' => $tags['foo']->name],
+                    ['tagid' => $tags['bar']->id, 'tagname' => $tags['bar']->name]
+                ],
+                array_map(function($slottag) {
+                    return ['tagid' => $slottag->tagid, 'tagname' => $slottag->tagname];
+                }, $slottags),
+                '', 0.0, 10, true);
+    }
+
+    public function test_quiz_retrieve_slot_tags_for_standard_question() {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        list($quiz, $tags) = $this->setup_quiz_and_tags(1, 1, [['foo', 'bar']]);
+
+        // Get the standard question's slotid. It is at the first slot.
+        $slotid = $DB->get_field('quiz_slots', 'id', array('quizid' => $quiz->id, 'slot' => 1));
+
+        // There should be no slot tags for a non-random question.
+        $this->assertCount(0, quiz_retrieve_slot_tags($slotid));
+    }
+
+    public function test_quiz_retrieve_slot_tag_ids() {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        list($quiz, $tags) = $this->setup_quiz_and_tags(1, 1, [['foo', 'bar']], ['baz']);
+
+        // Get the random question's slotid. It is at the second slot.
+        $slotid = $DB->get_field('quiz_slots', 'id', array('quizid' => $quiz->id, 'slot' => 2));
+        $tagids = quiz_retrieve_slot_tag_ids($slotid);
+
+        $this->assertEquals([$tags['foo']->id, $tags['bar']->id], $tagids, '', 0.0, 10, true);
+    }
+
+    public function test_quiz_retrieve_slot_tag_ids_for_standard_question() {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        list($quiz, $tags) = $this->setup_quiz_and_tags(1, 1, [['foo', 'bar']], ['baz']);
+
+        // Get the standard question's slotid. It is at the first slot.
+        $slotid = $DB->get_field('quiz_slots', 'id', array('quizid' => $quiz->id, 'slot' => 1));
+        $tagids = quiz_retrieve_slot_tag_ids($slotid);
+
+        $this->assertEquals([], $tagids, '', 0.0, 10, true);
     }
 }
