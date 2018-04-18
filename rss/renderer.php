@@ -57,7 +57,7 @@ class core_rss_renderer extends plugin_renderer_base {
         $stroperation = get_string('operation', 'webservice');
         $strtoken = get_string('key', 'webservice');
 
-        $return = $OUTPUT->heading(get_string('rss'), 3, 'main', true);
+        $return = $OUTPUT->heading(get_string('rss', 'rss'), 3, 'main', true);
         $return .= $OUTPUT->box_start('generalbox webservicestokenui');
 
         $return .= get_string('rsskeyshelp');
