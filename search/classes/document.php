@@ -278,6 +278,9 @@ class document implements \renderable, \templatable {
         if ($fielddata['type'] === 'int' || $fielddata['type'] === 'tdate') {
             $this->data[$fieldname] = intval($value);
         } else {
+            // Remove disallowed Unicode characters.
+            $value = \core_text::remove_unicode_non_characters($value);
+
             // Replace all groups of line breaks and spaces by single spaces.
             $this->data[$fieldname] = preg_replace("/\s+/u", " ", $value);
             if ($this->data[$fieldname] === null) {
