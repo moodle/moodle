@@ -170,7 +170,7 @@ class moodle_content_writer implements content_writer {
      * @param   string          $filearea   The filearea within that component.
      * @param   string          $itemid     Which item those files belong to.
      */
-    public function export_area_files(array $subcontext, $component, $filearea, $itemid) : content_writer  {
+    public function export_area_files(array $subcontext, $component, $filearea, $itemid) : content_writer {
         $fs = get_file_storage();
         $files = $fs->get_area_files($this->context->id, $component, $filearea, $itemid);
         foreach ($files as $file) {
@@ -186,7 +186,7 @@ class moodle_content_writer implements content_writer {
      * @param   array           $subcontext The location within the current context that this data belongs.
      * @param   \stored_file    $file       The file to be exported.
      */
-    public function export_file(array $subcontext, \stored_file $file) : content_writer  {
+    public function export_file(array $subcontext, \stored_file $file) : content_writer {
         if (!$file->is_directory()) {
             $pathitems = array_merge(
                 $subcontext,
