@@ -26,7 +26,7 @@ namespace core\oauth2;
 defined('MOODLE_INTERNAL') || die();
 
 use core\persistent;
-
+use lang_string;
 /**
  * Class for loading/storing oauth2 user field mappings from the DB
  *
@@ -57,7 +57,7 @@ class user_field_mapping extends persistent {
                 'type' => PARAM_INT
             ),
             'externalfield' => array(
-                'type' => PARAM_ALPHANUMEXT,
+                'type' => PARAM_RAW_TRIMMED,
             ),
             'internalfield' => array(
                 'type' => PARAM_ALPHANUMEXT,
@@ -73,5 +73,18 @@ class user_field_mapping extends persistent {
      */
     public function get_internalfield_list() {
         return array_combine(self::get_user_fields(), self::get_user_fields());
+    }
+
+    /**
+     * Ensures that no HTML is saved to externalfield field
+     * but preserves all special characters that can be a part of the claim
+     * @return boolean true if validation is successful, string error if externalfield is not validated
+     */
+    protected function validate_externalfield($value){
+        // This parameter type is set to PARAM_RAW_TRIMMED and HTML check is done here.
+        if (clean_param($value, PARAM_NOTAGS) !== $value){
+            return new lang_string('userfieldexternalfield_error', 'tool_oauth2');
+        }
+        return true;
     }
 }

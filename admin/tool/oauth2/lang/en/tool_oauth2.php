@@ -98,6 +98,7 @@ $string['systemauthstatus'] = 'System account connected';
 $string['usebasicauth'] = 'Authenticate token requests via HTTP headers';
 $string['usebasicauth_help'] = 'Utilise the HTTP Basic authentication scheme when sending client ID and password with a refresh token request. Recommended by the OAuth 2 standard, but may not be available with some issuers.';
 $string['userfieldexternalfield'] = 'External field name';
+$string['userfieldexternalfield_error'] = 'This field cannot contain HTML.';
 $string['userfieldexternalfield_help'] = 'Name of the field provided by the external OAuth system.';
 $string['userfieldinternalfield_help'] = 'Name of the Moodle user field that should be mapped from the external field.';
 $string['userfieldinternalfield'] = 'Internal field name';
