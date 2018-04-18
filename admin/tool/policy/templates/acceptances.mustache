@@ -29,60 +29,60 @@
     * policies
 
     Example context (json):
-	{
+    {
         "hasonbehalfagreements": true,
         "policies": [
-			{
-			  "versions": [
-					{
-					  "isfirst": true,
-					  "policyid": 1,
-					  "viewurl": "/",
-					  "name": "Terms &amp; conditions",
-					  "revision": "2.0",
-					  "hasarchived": true,
-					  "timeaccepted": "1 Mar 2018",
-					  "agreement": {
-					    "onbehalf": false,
-					    "status": false,
-					    "canaccept": true,
-					    "acceptlink": "#"
-					  }
-					},
-					{
-					  "isfirst": false,
-					  "policyid": 1,
-					  "viewurl": "/",
-					  "name": "Terms &amp; conditions",
-					  "revision": "1.0-beta",
-					  "acceptedby": "<a href=\"#\">Mary Smith</a>",
-					  "note": "Based on parent's agreement via email",
-					  "hasarchived": false,
-					  "timeaccepted": "15 Feb 2018",
-					  "agreement": {
-					    "onbehalf": true,
-					    "status": true,
-					    "canaccept": false
-					  }
-					}
-			  ]
-			}
-	  ]
-	}
+            {
+              "versions": [
+                    {
+                        "isfirst": true,
+                        "policyid": 1,
+                        "viewurl": "/",
+                        "name": "Terms &amp; conditions",
+                        "revision": "2.0",
+                        "hasarchived": true,
+                        "timeaccepted": "1 Mar 2018",
+                        "agreement": {
+                            "onbehalf": false,
+                            "status": false,
+                            "canaccept": true,
+                            "acceptlink": "#"
+                        }
+                    },
+                    {
+                        "isfirst": false,
+                        "policyid": 1,
+                        "viewurl": "/",
+                        "name": "Terms &amp; conditions",
+                        "revision": "1.0-beta",
+                        "acceptedby": "<a href=\"#\">Mary Smith</a>",
+                        "note": "Based on parent's agreement via email",
+                        "hasarchived": false,
+                        "timeaccepted": "15 Feb 2018",
+                        "agreement": {
+                            "onbehalf": true,
+                            "status": true,
+                            "canaccept": false
+                        }
+                    }
+                ]
+            }
+        ]
+    }
 }}
 <table class="generaltable fullwidth">
     <thead>
     <tr>
-		<th>{{#str}} policydocname, tool_policy {{/str}}</th>
-		<th>{{#str}} policydocrevision, tool_policy {{/str}}</th>
-		<th>{{#str}} agreed, tool_policy {{/str}}</th>
-		<th>{{#str}} agreedon, tool_policy {{/str}}</th>
-		{{#hasonbehalfagreements}}
-		<th>{{#str}} agreedby, tool_policy {{/str}}</th>
-		<th>{{#str}} acceptancenote, tool_policy {{/str}}</th>
-		{{/hasonbehalfagreements}}
-		<th></th>
-	</tr>
+        <th>{{#str}} policydocname, tool_policy {{/str}}</th>
+        <th>{{#str}} policydocrevision, tool_policy {{/str}}</th>
+        <th>{{#str}} agreed, tool_policy {{/str}}</th>
+        <th>{{#str}} agreedon, tool_policy {{/str}}</th>
+        {{#hasonbehalfagreements}}
+        <th>{{#str}} agreedby, tool_policy {{/str}}</th>
+        <th>{{#str}} acceptancenote, tool_policy {{/str}}</th>
+        {{/hasonbehalfagreements}}
+        <th></th>
+    </tr>
     </thead>
     <tbody>
         {{#policies}}
