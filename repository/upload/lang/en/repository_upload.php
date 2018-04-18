@@ -35,3 +35,4 @@ $string['upload_error_no_tmp_dir'] = 'PHP is missing a temporary folder.';
 $string['upload_error_cant_write'] = 'Failed to write file to disk.';
 $string['upload_error_extension'] = 'A PHP extension stopped the file upload.';
 $string['upload_error_invalid_file'] = 'The file \'{$a}\' is either empty or a folder. To upload folders zip them first.';
+$string['privacy:metadata'] = 'The Upload a file repository plugin does not store or transmit any personal data.';
