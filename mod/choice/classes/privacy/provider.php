@@ -114,7 +114,7 @@ class provider implements
                        co.text as answer,
                        ca.timemodified
                   FROM {context} c
-            INNER JOIN {course_modules} cm ON cm.id = c.instanceid
+            INNER JOIN {course_modules} cm ON cm.id = c.instanceid AND c.contextlevel = :contextlevel
             INNER JOIN {choice} ch ON ch.id = cm.instance
             INNER JOIN {choice_options} co ON co.choiceid = ch.id
             INNER JOIN {choice_answers} ca ON ca.optionid = co.id AND ca.choiceid = ch.id
@@ -122,7 +122,7 @@ class provider implements
                        AND ca.userid = :userid
               ORDER BY cm.id";
 
-        $params = ['userid' => $user->id] + $contextparams;
+        $params = ['contextlevel' => CONTEXT_MODULE, 'userid' => $user->id] + $contextparams;
 
         // Reference to the choice activity seen in the last iteration of the loop. By comparing this with the current record, and
         // because we know the results are ordered, we know when we've moved to the answers for a new choice activity and therefore
