@@ -181,16 +181,15 @@ class calculator {
 
             // Finish computing the averages, and put the sub-question data into the
             // corresponding questions.
-
-            // This cannot be a foreach loop because we need to have both
-            // $question and $nextquestion available, but apart from that it is
-            // foreach ($this->questions as $qid => $question).
             $slots = $this->stats->get_all_slots();
-            $this->progress->start_progress('', count($slots), 1);
-            foreach ($slots as $slot) {
+            $totalnumberofslots = count($slots);
+            $maxindex = $totalnumberofslots - 1;
+            $this->progress->start_progress('', $totalnumberofslots, 1);
+            foreach ($slots as $index => $slot) {
                 $this->stats->for_slot($slot)->sort_variants();
                 $this->progress->increment_progress();
-                $nextslot = current($slots);
+                $nextslotindex = $index + 1;
+                $nextslot = ($nextslotindex > $maxindex) ? false : $slots[$nextslotindex];
 
                 $this->initial_question_walker($this->stats->for_slot($slot));
 
