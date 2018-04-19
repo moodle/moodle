@@ -126,7 +126,7 @@ class provider implements
             writer::export_user_preference(
                 'repository_flickr',
                 'repository_flickr_access_token_secret',
-                $accesstokensecret,
+                '',
                 get_string('privacy:metadata:repository_flickr:preference:repository_flickr_access_token_secret', 'repository_flickr')
             );
         }
