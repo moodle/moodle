@@ -461,7 +461,7 @@ class renderer extends \core_course_management_renderer {
         $html .= html_writer::start_div('card-body');
         $html .= $this->course_listing_actions($category, $course, $perpage);
         $html .= $this->listing_pagination($category, $page, $perpage);
-        $html .= html_writer::start_tag('ul', array('class' => 'ml', 'role' => 'group'));
+        $html .= html_writer::start_tag('ul', array('class' => 'ml course-list', 'role' => 'group'));
         foreach ($category->get_courses($options) as $listitem) {
             $html .= $this->course_listitem($category, $listitem, $courseid);
         }

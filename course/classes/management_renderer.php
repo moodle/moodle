@@ -528,7 +528,7 @@ class core_course_management_renderer extends plugin_renderer_base {
             array('id' => 'course-listing-title', 'tabindex' => '0'));
         $html .= $this->course_listing_actions($category, $course, $perpage);
         $html .= $this->listing_pagination($category, $page, $perpage);
-        $html .= html_writer::start_tag('ul', array('class' => 'ml-1', 'role' => 'group'));
+        $html .= html_writer::start_tag('ul', array('class' => 'ml-1 course-list', 'role' => 'group'));
         foreach ($category->get_courses($options) as $listitem) {
             $html .= $this->course_listitem($category, $listitem, $courseid);
         }
