@@ -37,6 +37,8 @@ require_once($CFG->libdir.'/formslib.php');
 class quiz_add_random_form extends moodleform {
 
     protected function definition() {
+        global $OUTPUT, $PAGE;
+
         $mform =& $this->_form;
         $mform->setDisableShortforms();
 
@@ -44,7 +46,7 @@ class quiz_add_random_form extends moodleform {
         $usablecontexts = $contexts->having_cap('moodle/question:useall');
 
         // Random from existing category section.
-        $mform->addElement('header', 'categoryheader',
+        $mform->addElement('header', 'existingcategoryheader',
                 get_string('randomfromexistingcategory', 'quiz'));
 
         $mform->addElement('questioncategory', 'category', get_string('category'),
@@ -71,10 +73,13 @@ class quiz_add_random_form extends moodleform {
         $mform->addElement('select', 'numbertoadd', get_string('randomnumber', 'quiz'),
                 $this->get_number_of_questions_to_add_choices());
 
+        $previewhtml = $OUTPUT->render_from_template('mod_quiz/random_question_form_preview', []);
+        $mform->addElement('html', $previewhtml);
+
         $mform->addElement('submit', 'existingcategory', get_string('addrandomquestion', 'quiz'));
 
         // Random from a new category section.
-        $mform->addElement('header', 'categoryheader',
+        $mform->addElement('header', 'newcategoryheader',
                 get_string('randomquestionusinganewcategory', 'quiz'));
 
         $mform->addElement('text', 'name', get_string('name'), 'maxlength="254" size="50"');
@@ -97,6 +102,12 @@ class quiz_add_random_form extends moodleform {
         $mform->setType('cmid', PARAM_INT);
         $mform->addElement('hidden', 'returnurl', 0);
         $mform->setType('returnurl', PARAM_LOCALURL);
+
+        // Add the javascript required to enhance this mform.
+        $PAGE->requires->js_call_amd('mod_quiz/add_random_form', 'init', [
+            $mform->getAttribute('id'),
+            $contexts->lowest()->id
+        ]);
     }
 
     public function validation($fromform, $files) {
