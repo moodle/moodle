@@ -50,26 +50,8 @@ function local_iomad_track_pluginfile($course, $birecord_or_cm, $context, $filea
         send_file_not_found();
     }
 
-    // If block is in course context, then check if user has capability to access course.
-    if ($context->get_course_context(false)) {
-        require_course_login($course);
-    } else if ($CFG->forcelogin) {
-        require_login();
-    } else {
-        // Get parent context and see if user have proper permission.
-        $parentcontext = $context->get_parent_context();
-        if ($parentcontext->contextlevel === CONTEXT_COURSECAT) {
-            // Check if category is visible and user can view this category.
-            $category = $DB->get_record('course_categories', array('id' => $parentcontext->instanceid), '*', MUST_EXIST);
-            if (!$category->visible) {
-                require_capability('moodle/category:viewhiddencategories', $parentcontext);
-            }
-        } else if ($parentcontext->contextlevel === CONTEXT_USER && $parentcontext->instanceid != $USER->id) {
-            // The block is in the context of a user, it is only visible to the user who it belongs to.
-            send_file_not_found();
-        }
-        // At this point there is no way to check SYSTEM context, so ignoring it.
-    }
+    require_login();
+
     if ($filearea !== 'issue') {
         send_file_not_found();
     }
