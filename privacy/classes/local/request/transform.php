@@ -64,7 +64,7 @@ class transform {
      * @return  string      The translated string.
      */
     public static function date($date) {
-        return userdate($date, get_string('strftimetime', 'langconfig'));
+        return userdate($date, get_string('strftimedate', 'langconfig'));
     }
 
     /**
