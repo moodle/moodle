@@ -212,7 +212,7 @@ class provider implements
                     // Loop over each blog entry in context.
                     $sql = "userid = :userid AND module IN (:blog, :blogext) AND id $insql";
                     $params = array_merge($inparams, ['userid' => $contextuserid, 'blog' => 'blog', 'blogext' => 'blog_external']);
-                    $recordset = $DB->get_recordset_select('post', $sql, $params);
+                    $recordset = $DB->get_recordset_select('post', $sql, $params, 'id');
                     foreach ($recordset as $record) {
 
                         $subject = format_string($record->subject);
