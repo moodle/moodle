@@ -54,7 +54,7 @@ if (\core_search\manager::is_global_search_enabled() === false) {
     exit;
 }
 
-$search = \core_search\manager::instance();
+$search = \core_search\manager::instance(true);
 
 // Set up custom data for form.
 $customdata = ['searchengine' => $search->get_engine()->get_plugin_name()];

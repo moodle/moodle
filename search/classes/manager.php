@@ -134,14 +134,29 @@ class manager {
     }
 
     /**
+     * @var int Record time of each successful schema check, but not more than once per 10 minutes.
+     */
+    const SCHEMA_CHECK_TRACKING_DELAY = 10 * 60;
+
+    /**
+     * @var int Require a new schema check at least every 4 hours.
+     */
+    const SCHEMA_CHECK_REQUIRED_EVERY = 4 * 3600;
+
+    /**
      * Returns an initialised \core_search instance.
+     *
+     * While constructing the instance, checks on the search schema may be carried out. The $fast
+     * parameter provides a way to skip those checks on pages which are used frequently. It has
+     * no effect if an instance has already been constructed in this request.
      *
      * @see \core_search\engine::is_installed
      * @see \core_search\engine::is_server_ready
+     * @param bool $fast Set to true when calling on a page that requires high performance
      * @throws \core_search\engine_exception
      * @return \core_search\manager
      */
-    public static function instance() {
+    public static function instance($fast = false) {
         global $CFG;
 
         // One per request, this should be purged during testing.
@@ -157,6 +172,17 @@ class manager {
             throw new \core_search\engine_exception('enginenotfound', 'search', '', $CFG->searchengine);
         }
 
+        // Get time now and at last schema check.
+        $now = (int)self::get_current_time();
+        $lastschemacheck = get_config($engine->get_plugin_name(), 'lastschemacheck');
+
+        // On pages where performance matters, tell the engine to skip schema checks.
+        $skipcheck = false;
+        if ($fast && $now < $lastschemacheck + self::SCHEMA_CHECK_REQUIRED_EVERY) {
+            $skipcheck = true;
+            $engine->skip_schema_check();
+        }
+
         if (!$engine->is_installed()) {
             throw new \core_search\engine_exception('enginenotinstalled', 'search', '', $CFG->searchengine);
         }
@@ -165,9 +191,17 @@ class manager {
         if ($serverstatus !== true) {
             // Skip this error in Behat when faking seach results.
             if (!defined('BEHAT_SITE_RUNNING') || !get_config('core_search', 'behat_fakeresult')) {
+                // Clear the record of successful schema checks since it might have failed.
+                unset_config('lastschemacheck', $engine->get_plugin_name());
                 // Error message with no details as this is an exception that any user may find if the server crashes.
                 throw new \core_search\engine_exception('engineserverstatus', 'search');
             }
+        }
+
+        // If we did a successful schema check, record this, but not more than once per 10 minutes
+        // (to avoid updating the config db table/cache too often in case it gets called frequently).
+        if (!$skipcheck && $now >= $lastschemacheck + self::SCHEMA_CHECK_TRACKING_DELAY) {
+            set_config('lastschemacheck', $now, $engine->get_plugin_name());
         }
 
         static::$instance = new \core_search\manager($engine);

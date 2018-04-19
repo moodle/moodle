@@ -70,8 +70,6 @@ class search extends \moodleform {
         $mform->addElement('text', 'title', get_string('title', 'search'));
         $mform->setType('title', PARAM_TEXT);
 
-        $search = \core_search\manager::instance();
-
         $searchareas = \core_search\manager::get_search_areas_list(true);
         $areanames = array();
         foreach ($searchareas as $areaid => $searcharea) {
