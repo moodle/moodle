@@ -281,8 +281,8 @@ class provider implements
      * @return int
      */
     protected static function get_survey_id_from_context(context_module $context) {
-        $cm = get_coursemodule_from_id('survey', $context->instanceid, 0, false, MUST_EXIST);
-        return (int) $cm->instance;
+        $cm = get_coursemodule_from_id('survey', $context->instanceid);
+        return $cm ? (int) $cm->instance : 0;
     }
     /**
      * Loop and export from a recordset.
