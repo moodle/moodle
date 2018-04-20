@@ -32,7 +32,7 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['cannotcreatelangdir'] = 'Hindi makalikha ng lang bgsk.';
 $string['cannotcreatetempdir'] = 'Hindi makalikha ng temp bgsk.';
-$string['cannotdownloadcomponents'] = 'Hindi mailusong ang mga piyesa';
+$string['cannotdownloadcomponents'] = 'Hindi mai-download ang mga sangkap';
 $string['cannotdownloadzipfile'] = 'Hindi mai-download ang ZIP file.';
 $string['cannotfindcomponent'] = 'Hindi makita ang piyesa.';
 $string['cannotsavemd5file'] = 'Hindi mai-save ang file na md5.';

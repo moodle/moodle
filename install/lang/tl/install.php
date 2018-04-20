@@ -42,20 +42,18 @@ $string['installation'] = 'Pagluklok';
 $string['langdownloaderror'] = 'Ikinalulungkot namin na ang wikang "{$a}" ay hindi nailuklok. Ang kabuuan ng pagluluklok ay itutuloy sa Ingles.';
 $string['memorylimithelp'] = '<p>Ang memory limit ng PHP para sa server mo ay kasalukuyang nakatakda sa {$a}.</p>
 
-<p>Maaaring magdulot ito ng mga problemang pangmemorya sa Moodle sa mga susunod na panahon, lalo na
-   kung marami kang binuhay na modyul at/o marami kang tagagamit.</p>
+<p>Maaaring magdulot ito ng mga problemang pangmemorya sa Moodle sa mga susunod na panahon, lalo na kung marami kang naka-enable na modyul at/o marami kang tagagamit.</p>
 
-<p>Iminumungkahi namin na isaayos mo ang PHP na may mas mataas na limit kung maaari, tulad ng 40M.
-    May iba\'t-ibang paraan na magagawa kayo upang ito ay maiisakatuparan:</p>
+<p>Iminumungkahi namin na isaayos mo ang PHP na may mas mataas na limit kung maaari, tulad ng 40M.  May iba\'t-ibang paraan na magagawa ka upang ito ay maisakatuparan:</p>
 <ol>
-<li>Kunga maaari mong gawin, muling ikompayl ang PHP na may <i>--enable-memory-limit</i>.
+<li>Kung maaari mong gawin, muling ikompayl ang PHP na may <i>--enable-memory-limit</i>.
      Pahihintulutan nito ang Moodle na itakda ang memory limit sa sarili nito.</li>
 <li>Kung mapapasok mo ang iyong php.ini file, mababago mo ang <b>memory_limit</b>
-    na kaayusan doon at gawin itong mga 40M.  Kung wala kang karapatang pasukin ito
+    na setting doon at gawin itong mga 40M.  Kung wala kang karapatang pasukin ito
     baka puwede mong hilingin sa administrador na gawin ito para sa iyo.</li>
-<li>Sa ilang PHP serve maaari kang lumikha ng isang fileng .htaccess sa direktoryo ng Moodle
+<li>Sa ilang PHP server maaari kang lumikha ng isang file na .htaccess sa direktoryo ng Moodle
     na naglalaman ng linyang ito:
-    <p><blockquote>php_value memory_limit 40M</blockquote></p>
+   <blockquote><div>php_value memory_limit 40M</div></blockquote>
     <p>Subali\'t sa ilang server ay pipigilin nito ang paggana ng <b>lahat</b> ng pahinang PHP
     (makakakita ka ng mga error kapag tumingin ka sa mga pahina) kaya\'t kakailanganin mong tanggalin ang .htaccess file.</p></li>
 </ol>';
