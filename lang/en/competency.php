@@ -133,6 +133,7 @@ $string['privacy:metadata:competency_usercompcourse'] = 'A record of a user\'s s
 $string['privacy:metadata:competency_usercompplan'] = 'A record of the state of competencies in a learning plan';
 $string['privacy:metadata:competency_userevidence'] = 'A record of the evidence of prior learning';
 $string['privacy:metadata:competency_userevidencecomp'] = 'A record of the competencies associated with evidence of prior learning';
+$string['privacy:metadata:core_comments'] = 'Comments made on learning plans and competencies';
 $string['privacy:metadata:evidence:action'] = 'The type of action taken with the evidence';
 $string['privacy:metadata:evidence:actionuserid'] = 'The user performing the action';
 $string['privacy:metadata:evidence:desca'] = 'The optional parameters of the translatable evidence description';
