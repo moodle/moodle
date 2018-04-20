@@ -371,9 +371,8 @@ class provider implements
                 $DB->delete_records('blog_association', ['contextid' => $context->id]);
                 break;
         }
-
         // Delete all the comments.
-        \core_comment\privacy\provider::delete_comments_for_all_users_in_context($context);
+        \core_comment\privacy\provider::delete_comments_for_all_users($context, 'blog', 'format_blog');
     }
 
     /**
@@ -383,21 +382,21 @@ class provider implements
      */
     public static function delete_data_for_user(approved_contextlist $contextlist) {
         global $DB;
-
         $userid = $contextlist->get_user()->id;
         $associationcontextids = [];
 
         foreach ($contextlist as $context) {
             if ($context->contextlevel == CONTEXT_USER && $context->instanceid == $userid) {
                 static::delete_all_user_data($context);
-
+                \core_comment\privacy\provider::delete_comments_for_all_users($context, 'blog', 'format_blog');
             } else if ($context->contextlevel == CONTEXT_COURSE) {
                 // Only delete the course associations.
                 $associationcontextids[] = $context->id;
-
             } else if ($context->contextlevel == CONTEXT_MODULE) {
                 // Only delete the module associations.
                 $associationcontextids[] = $context->id;
+            } else {
+                \core_comment\privacy\provider::delete_comments_for_user($contextlist, 'blog', 'format_blog');
             }
         }
 
@@ -416,9 +415,6 @@ class provider implements
             list($insql, $inparams) = $DB->get_in_or_equal($associds, SQL_PARAMS_NAMED, 'param', true);
             $DB->delete_records_select('blog_association', "id $insql", $inparams);
         }
-
-        // Delete the comments.
-        \core_comment\privacy\provider::delete_comments_for_user($contextlist);
     }
 
     /**
@@ -443,9 +439,6 @@ class provider implements
         // Delete all external blogs, and their associated tags.
         $DB->delete_records('blog_external', ['userid' => $userid]);
         core_tag_tag::delete_instances('core', 'blog_external', $usercontext->id);
-
-        // Delete all comments made in this context.
-        $DB->delete_records('comments', ['contextid' => $usercontext->id, 'component' => 'blog', 'commentarea' => 'format_blog']);
     }
 
     /**
