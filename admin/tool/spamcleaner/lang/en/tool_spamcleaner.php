@@ -43,3 +43,4 @@ $string['spamkeyword'] = 'Keyword';
 $string['spamoperation'] = 'Operation';
 $string['spamresult'] = 'Results of searching user profiles containing:';
 $string['spamsearch'] = 'Search for these keywords';
+$string['privacy:metadata'] = 'The Spam cleaner plugin does not store any personal data.';

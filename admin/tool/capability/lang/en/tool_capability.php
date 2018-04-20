@@ -34,3 +34,4 @@ $string['pluginname'] = 'Capability overview';
 $string['reportforcapability'] = 'Report for capability \'{$a}\'';
 $string['reportsettings'] = 'Report settings';
 $string['roleslabel'] = 'Roles:';
+$string['privacy:metadata'] = 'The Capability overview plugin does not store any personal data.';

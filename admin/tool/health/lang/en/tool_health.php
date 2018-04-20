@@ -29,3 +29,4 @@ $string['healthproblemsolution'] = 'Health problem solution';
 $string['healthreturntomain'] = 'Continue';
 $string['healthsolution'] = 'Solution';
 $string['pluginname'] = 'Health center';
+$string['privacy:metadata'] = 'The Health center plugin does not store any personal data.';
