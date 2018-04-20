@@ -129,7 +129,7 @@ class provider implements
      * @param  int $userid The user ID
      * @return array An array of records.
      */
-    protected static function get_records(int $userid) {
+    protected static function get_records($userid) {
         global $DB;
 
         return $DB->get_records('user_private_key', ['userid' => $userid, 'script' => 'rss']);
