@@ -16487,6 +16487,9 @@ body {
 .block_myoverview {
   background-color: transparent;
 }
+.block_myoverview .row-fluid [class*="span"] {
+  margin-left: 0px;
+}
 .block_myoverview .event-list-item {
   border-bottom: 1px solid #ddd;
   padding-bottom: 10px;
@@ -16529,6 +16532,14 @@ body {
 .block_myoverview .well {
   background-color: #fff;
   box-shadow: none;
+  margin: 0 5px 10px;
+}
+.block_myoverview .myoverviewimg {
+  height: 150px;
+}
+.block_myoverview .myoverviewimg.courseimage {
+  background-position: center;
+  background-size: cover;
 }
 /**
  * Moodle forms HTML isn't changeable via renderers (yet?) so this
