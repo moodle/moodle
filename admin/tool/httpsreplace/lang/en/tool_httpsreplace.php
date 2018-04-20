@@ -41,3 +41,4 @@ $string['replacing'] = 'Replacing HTTP content with HTTPS...';
 $string['searching'] = 'Searching {$a}';
 $string['takeabackupwarning'] = 'Warning: After running this tool, changes cannot be reverted. It is recommended that a site backup is made before proceeding, as there is a small risk of wrong content being replaced.';
 $string['toolintro'] = 'If you are planning on converting your site to HTTPS, you can use the <a href="{$a}">HTTPS conversion tool</a> to convert your embedded content to HTTPS.';
+$string['privacy:metadata'] = 'The HTTPS conversion tool plugin does not store any personal data.';
