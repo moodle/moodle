@@ -31,3 +31,4 @@ $string['passwdexpiretime'] = 'Password duration';
 $string['passwdexpiretime_desc'] = 'Length of time for which a password is valid.';
 $string['pluginname'] = 'Manual accounts';
 $string['passwdexpire_settings'] = 'Password expiry settings';
+$string['privacy:metadata:preference:passwordupdatetime'] = 'The date of the last password change.';
