@@ -53,3 +53,4 @@ $string['scaleconfiguration'] = 'Scale configuration';
 $string['scalevalues'] = 'Scale values';
 $string['shortname'] = 'Short name';
 $string['taxonomy'] = 'Taxonomy';
+$string['privacy:metadata'] = 'The Import competency framework plugin does not store any personal data.';

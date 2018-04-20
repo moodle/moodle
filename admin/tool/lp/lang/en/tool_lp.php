@@ -292,3 +292,4 @@ $string['xcompetencieslinkedoutofy'] = '{$a->x} out of {$a->y} competencies link
 $string['xcompetenciesproficientoutofy'] = '{$a->x} out of {$a->y} competencies are proficient';
 $string['xcompetenciesproficientoutofyincourse'] = 'You are proficient in {$a->x} out of {$a->y} competencies in this course.';
 $string['xplanscompletedoutofy'] = '{$a->x} out of {$a->y} learning plans completed for this template';
+$string['privacy:metadata'] = 'The Learning plans plugin does not store any personal data.';

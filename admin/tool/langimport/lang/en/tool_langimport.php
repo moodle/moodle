@@ -48,3 +48,4 @@ $string['selectlangs'] = 'Select languages to uninstall';
 $string['uninstall'] = 'Uninstall selected language pack(s)';
 $string['uninstallconfirm'] = 'You are about to completely uninstall these language packs: <strong>{$a}</strong>. Are you sure?';
 $string['updatelangs'] = 'Update all installed language packs';
+$string['privacy:metadata'] = 'The Language packs plugin does not store any personal data.';

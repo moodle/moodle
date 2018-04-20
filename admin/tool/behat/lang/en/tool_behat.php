@@ -50,3 +50,4 @@ $string['wrongbehatsetup'] = 'Something is wrong with the behat setup and so ste
 <li>$CFG->behat_dataroot, $CFG->behat_prefix and $CFG->behat_wwwroot are set in config.php with different values from $CFG->dataroot, $CFG->prefix and $CFG->wwwroot.</li>
 <li>You ran "{$a->behatinit}" from your Moodle root directory.</li>
 <li>Dependencies are installed in vendor/ and {$a->behatcommand} file has execution permissions.</li></ul>';
+$string['privacy:metadata'] = 'The Acceptance testing plugin does not store any personal data.';

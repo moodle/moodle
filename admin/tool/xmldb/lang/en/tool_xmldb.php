@@ -218,3 +218,4 @@ $string['yeswrongintsfound'] = '<p>Some wrong integers have been found in your D
 <p>After doing that, it\'s highly recommended to execute this utility again to check that no more wrong integers are found.</p>';
 $string['yeswrongoraclesemanticsfound'] = '<p>Some Oracle columns using BYTE semantics have been found in your DB. Here are their details and the needed SQL statements to be executed with your favourite SQL interface to create all them. Remember to backup your data first!</p>
 <p>After doing that, it\'s highly recommended to execute this utility again to check that no more wrong semantics are found.</p>';
+$string['privacy:metadata'] = 'The XMLDB editor plugin does not store any personal data.';
