@@ -304,6 +304,8 @@ class core_competency_privacy_testcase extends provider_testcase {
         $u4 = $dg->create_user();
         $u5 = $dg->create_user();
         $u6 = $dg->create_user();
+        $u7 = $dg->create_user();
+        $u8 = $dg->create_user();
         $u0ctx = context_user::instance($u0->id);
 
         $f = $ccg->create_framework();
@@ -317,7 +319,7 @@ class core_competency_privacy_testcase extends provider_testcase {
         $this->assert_contextlist(provider::get_contexts_for_userid($u4->id), []);
         $this->assert_contextlist(provider::get_contexts_for_userid($u5->id), []);
         $this->assert_contextlist(provider::get_contexts_for_userid($u6->id), []);
-        $uc = $plan = $ccg->create_user_competency(['userid' => $u0->id, 'competencyid' => $comp1->get('id'),
+        $uc = $ccg->create_user_competency(['userid' => $u0->id, 'competencyid' => $comp1->get('id'),
             'reviewerid' => $u6->id]);
         $this->assert_contextlist(provider::get_contexts_for_userid($u1->id), [$u0ctx]);
         $this->assert_contextlist(provider::get_contexts_for_userid($u2->id), []);
@@ -352,6 +354,22 @@ class core_competency_privacy_testcase extends provider_testcase {
         $this->assert_contextlist(provider::get_contexts_for_userid($u4->id), [$u0ctx]);
         $this->assert_contextlist(provider::get_contexts_for_userid($u5->id), [$u0ctx]);
         $this->assert_contextlist(provider::get_contexts_for_userid($u6->id), [$u0ctx]);
+
+        // Comment on competency.
+        $this->allow_anyone_to_comment_anywhere();
+        $this->assert_contextlist(provider::get_contexts_for_userid($u7->id), []);
+        $this->setUser($u7);
+        $comments = $uc->get_comment_object();
+        $comments->add('Hello there!');
+        $this->assert_contextlist(provider::get_contexts_for_userid($u7->id), [$u0ctx]);
+
+        // Comment on plan.
+        $this->assert_contextlist(provider::get_contexts_for_userid($u8->id), []);
+        $this->setUser($u8);
+        $plan = $ccg->create_plan(['userid' => $u0->id]);
+        $comments = $plan->get_comment_object();
+        $comments->add('Hi, planet!');
+        $this->assert_contextlist(provider::get_contexts_for_userid($u8->id), [$u0ctx]);
     }
 
     public function test_get_contexts_for_userid_with_actual_data_and_actual_data_is_goooood() {
@@ -457,6 +475,25 @@ class core_competency_privacy_testcase extends provider_testcase {
         $ucc2 = $ccg->create_user_competency_course(['userid' => $u2->id, 'courseid' => $c1->id,
             'competencyid' => $comp1->get('id')]);
 
+        // User 1 comments on both plans.
+        $this->allow_anyone_to_comment_anywhere();
+        $this->setUser($u1);
+        $p1a->get_comment_object()->add('Hi...');
+        $p1a->get_comment_object()->add('mister');
+        $p2->get_comment_object()->add('Ahoy!');
+
+        // User 2 comments on both competencies.
+        $this->setUser($u2);
+        $uc1a->get_comment_object()->add('Hi, too!');
+        $uc1a->get_comment_object()->add('How are you?');
+        $uc2->get_comment_object()->add('Ahoy, too!');
+
+        $p1acommentobj = $p1a->get_comment_object();
+        $p2commentobj = $p2->get_comment_object();
+        $uc1acommentobj = $uc1a->get_comment_object();
+        $uc2commentobj = $uc2->get_comment_object();
+
+        $this->setAdminUser();
         $this->assertTrue(\core_competency\user_evidence::record_exists($ue1a->get('id')));
         $this->assertTrue(\core_competency\user_evidence::record_exists($ue1b->get('id')));
         $this->assertTrue(\core_competency\user_evidence::record_exists($ue2->get('id')));
@@ -481,6 +518,18 @@ class core_competency_privacy_testcase extends provider_testcase {
         $this->assertTrue(\core_competency\user_competency_course::record_exists($ucc1a->get('id')));
         $this->assertTrue(\core_competency\user_competency_course::record_exists($ucc1b->get('id')));
         $this->assertTrue(\core_competency\user_competency_course::record_exists($ucc2->get('id')));
+        $this->assert_has_comments($p1acommentobj);
+        $this->assertEquals(2, $this->get_comments_count($p1acommentobj, $u1->id));
+        $this->assertEquals(0, $this->get_comments_count($p1acommentobj, $u2->id));
+        $this->assert_has_comments($p2commentobj);
+        $this->assertEquals(1, $this->get_comments_count($p2commentobj, $u1->id));
+        $this->assertEquals(0, $this->get_comments_count($p2commentobj, $u2->id));
+        $this->assert_has_comments($uc1acommentobj);
+        $this->assertEquals(0, $this->get_comments_count($uc1acommentobj, $u1->id));
+        $this->assertEquals(2, $this->get_comments_count($uc1acommentobj, $u2->id));
+        $this->assert_has_comments($uc2commentobj);
+        $this->assertEquals(0, $this->get_comments_count($uc2commentobj, $u1->id));
+        $this->assertEquals(1, $this->get_comments_count($uc2commentobj, $u2->id));
 
         // Deleting user context only.
         $appctx = new approved_contextlist($u1, 'core_competency', [$u1ctx->id]);
@@ -501,6 +550,13 @@ class core_competency_privacy_testcase extends provider_testcase {
         $this->assertFalse(\core_competency\evidence::record_exists($e1a->get('id')));
         $this->assertFalse(\core_competency\evidence::record_exists($e1b->get('id')));
 
+        $this->assert_has_no_comments($p1acommentobj);
+        $this->assertEquals(0, $this->get_comments_count($p1acommentobj, $u1->id));
+        $this->assertEquals(0, $this->get_comments_count($p1acommentobj, $u2->id));
+        $this->assert_has_no_comments($uc1acommentobj);
+        $this->assertEquals(0, $this->get_comments_count($uc1acommentobj, $u1->id));
+        $this->assertEquals(0, $this->get_comments_count($uc1acommentobj, $u2->id));
+
         // This should not have been affected.
         $this->assertTrue(\core_competency\user_competency_course::record_exists($ucc1a->get('id')));
         $this->assertTrue(\core_competency\user_competency_course::record_exists($ucc1b->get('id')));
@@ -513,6 +569,12 @@ class core_competency_privacy_testcase extends provider_testcase {
         $this->assertTrue(\core_competency\user_competency::record_exists($uc2->get('id')));
         $this->assertTrue(\core_competency\evidence::record_exists($e2->get('id')));
         $this->assertTrue(\core_competency\user_competency_course::record_exists($ucc2->get('id')));
+        $this->assert_has_comments($p2commentobj);
+        $this->assertEquals(1, $this->get_comments_count($p2commentobj, $u1->id));
+        $this->assertEquals(0, $this->get_comments_count($p2commentobj, $u2->id));
+        $this->assert_has_comments($uc2commentobj);
+        $this->assertEquals(0, $this->get_comments_count($uc2commentobj, $u1->id));
+        $this->assertEquals(1, $this->get_comments_count($uc2commentobj, $u2->id));
 
         // Deleting course context as well.
         $appctx = new approved_contextlist($u1, 'core_competency', [$u1ctx->id, $c1ctx->id]);
@@ -558,7 +620,15 @@ class core_competency_privacy_testcase extends provider_testcase {
 
         $p2a = $ccg->create_plan(['userid' => $u2->id]);
 
+        // User 2 comments.
+        $this->allow_anyone_to_comment_anywhere();
+        $this->setUser($u2);
+        $p1a->get_comment_object()->add('Hi...');
+        $p2a->get_comment_object()->add('Hi, hi!');
+        $uc1a->get_comment_object()->add('Hi, too!');
+
         // Confirm state.
+        $this->setAdminUser();
         $this->assertTrue(\core_competency\user_evidence::record_exists($ue1a->get('id')));
         $this->assertTrue(\core_competency\user_evidence_competency::record_exists($uec1a->get('id')));
         $this->assertTrue(\core_competency\plan::record_exists($p1a->get('id')));
@@ -566,6 +636,12 @@ class core_competency_privacy_testcase extends provider_testcase {
         $this->assertTrue(\core_competency\user_competency_plan::record_exists($ucp1a->get('id')));
         $this->assertTrue(\core_competency\user_competency::record_exists($uc1a->get('id')));
         $this->assertTrue(\core_competency\evidence::record_exists($e1a->get('id')));
+        $this->assert_has_comments($p1a->get_comment_object());
+        $this->assertEquals(1, $this->get_comments_count($p1a->get_comment_object(), $u2->id));
+        $this->assert_has_comments($p2a->get_comment_object());
+        $this->assertEquals(1, $this->get_comments_count($p2a->get_comment_object(), $u2->id));
+        $this->assert_has_comments($uc1a->get_comment_object());
+        $this->assertEquals(1, $this->get_comments_count($uc1a->get_comment_object(), $u2->id));
 
         $this->assertTrue(\core_competency\plan::record_exists($p2a->get('id')));
 
@@ -580,14 +656,22 @@ class core_competency_privacy_testcase extends provider_testcase {
         $this->assertTrue(\core_competency\user_competency_plan::record_exists($ucp1a->get('id')));
         $this->assertTrue(\core_competency\user_competency::record_exists($uc1a->get('id')));
         $this->assertTrue(\core_competency\evidence::record_exists($e1a->get('id')));
+        $this->assert_has_comments($p1a->get_comment_object());
+        $this->assertEquals(1, $this->get_comments_count($p1a->get_comment_object(), $u2->id));
+        $this->assert_has_comments($p2a->get_comment_object());
+        $this->assertEquals(1, $this->get_comments_count($p2a->get_comment_object(), $u2->id));
+        $this->assert_has_comments($uc1a->get_comment_object());
+        $this->assertEquals(1, $this->get_comments_count($uc1a->get_comment_object(), $u2->id));
 
         $this->assertTrue(\core_competency\plan::record_exists($p2a->get('id')));
 
         // Delete for user 2, but we pass u1 and u2 context.
+        $p2acommentobj = $p2a->get_comment_object();
         provider::delete_data_for_user(new approved_contextlist($u2, 'core_competency', [$u1ctx->id, $u2ctx->id]));
 
         // The plan got deleted.
         $this->assertFalse(\core_competency\plan::record_exists($p2a->get('id')));
+        $this->assert_has_no_comments($p2acommentobj);
 
         // Nothing should have happened for u1.
         $this->assertTrue(\core_competency\user_evidence::record_exists($ue1a->get('id')));
@@ -597,6 +681,10 @@ class core_competency_privacy_testcase extends provider_testcase {
         $this->assertTrue(\core_competency\user_competency_plan::record_exists($ucp1a->get('id')));
         $this->assertTrue(\core_competency\user_competency::record_exists($uc1a->get('id')));
         $this->assertTrue(\core_competency\evidence::record_exists($e1a->get('id')));
+        $this->assert_has_comments($p1a->get_comment_object());
+        $this->assertEquals(1, $this->get_comments_count($p1a->get_comment_object(), $u2->id));
+        $this->assert_has_comments($uc1a->get_comment_object());
+        $this->assertEquals(1, $this->get_comments_count($uc1a->get_comment_object(), $u2->id));
     }
 
     public function test_delete_data_for_all_users_in_context() {
@@ -1119,7 +1207,11 @@ class core_competency_privacy_testcase extends provider_testcase {
     public function test_export_data_for_user_with_related_learning_plans() {
         global $DB;
 
-        $path = [get_string('competencies', 'core_competency'), get_string('privacy:path:relatedtome', 'core_competency')];
+        $path = [
+            get_string('competencies', 'core_competency'),
+            get_string('privacy:path:relatedtome', 'core_competency'),
+            get_string('privacy:path:plans', 'core_competency'),
+        ];
         $yes = transform::yesno(true);
         $no = transform::yesno(false);
 
@@ -1134,6 +1226,7 @@ class core_competency_privacy_testcase extends provider_testcase {
         $u5 = $dg->create_user();
         $u6 = $dg->create_user();
         $u7 = $dg->create_user();
+        $u8 = $dg->create_user();
 
         $dg->role_assign($DB->get_field('role', 'id', ['archetype' => 'manager'], IGNORE_MULTIPLE), $u6->id);
         $u0ctx = context_user::instance($u0->id);
@@ -1174,33 +1267,45 @@ class core_competency_privacy_testcase extends provider_testcase {
         $p3c1 = $ccg->create_plan_competency(['planid' => $p3->get('id'), 'competencyid' => $comp1->get('id')]);
         $p3c3 = $ccg->create_plan_competency(['planid' => $p3->get('id'), 'competencyid' => $comp3->get('id')]);
 
+        // Add comments on plan.
+        $this->allow_anyone_to_comment_anywhere();
+        $this->setUser($u0);
+        $p1->get_comment_object()->add('Hello.');
+        $this->setUser($u8);
+        $p1->get_comment_object()->add('Hi.');
+
         // Export data for user 1.
+        writer::reset();
         provider::export_user_data(new approved_contextlist($u1, 'core_competency', [$u0ctx->id]));
-        $data = writer::with_context($u0ctx)->get_related_data($path, 'learning_plans');
-        $this->assertCount(1, $data->plans);
-        $this->assertEquals($p1->get('name'), $data->plans[0]['name']);
-        $this->assertEquals($yes, $data->plans[0]['created_or_modified_by_you']);
+        $planpath = array_merge($path, ["{$p1->get('name')} ({$p1->get('id')})"]);
+        $data = writer::with_context($u0ctx)->get_data($planpath);
+        $this->assertEquals($p1->get('name'), $data->name);
+        $this->assertEquals($yes, $data->created_or_modified_by_you);
 
         // Export data for user 2.
+        writer::reset();
         provider::export_user_data(new approved_contextlist($u2, 'core_competency', [$u0ctx->id]));
-        $data = writer::with_context($u0ctx)->get_related_data($path, 'learning_plans');
-        $this->assertCount(1, $data->plans);
-        $this->assertEquals($p2->get('name'), $data->plans[0]['name']);
-        $this->assertEquals($yes, $data->plans[0]['created_or_modified_by_you']);
+        $planpath = array_merge($path, ["{$p2->get('name')} ({$p2->get('id')})"]);
+        $data = writer::with_context($u0ctx)->get_data($planpath);
+        $this->assertEquals($p2->get('name'), $data->name);
+        $this->assertEquals($yes, $data->created_or_modified_by_you);
 
         // Export data for user 3.
+        writer::reset();
         provider::export_user_data(new approved_contextlist($u3, 'core_competency', [$u0ctx->id]));
-        $data = writer::with_context($u0ctx)->get_related_data($path, 'learning_plans');
-        $this->assertCount(2, $data->plans);
-        $this->assertEquals($p1->get('name'), $data->plans[0]['name']);
-        $this->assertEquals($no, $data->plans[0]['created_or_modified_by_you']);
-        $this->assertCount(1, $data->plans[0]['competencies']);
-        $this->assertEquals($comp1->get('shortname'), $data->plans[0]['competencies'][0]['name']);
-        $this->assertEquals($yes, $data->plans[0]['competencies'][0]['created_or_modified_by_you']);
+        $planpath = array_merge($path, ["{$p1->get('name')} ({$p1->get('id')})"]);
+        $data = writer::with_context($u0ctx)->get_data($planpath);
+        $this->assertEquals($p1->get('name'), $data->name);
+        $this->assertEquals($no, $data->created_or_modified_by_you);
+        $this->assertCount(1, $data->competencies);
+        $this->assertEquals($comp1->get('shortname'), $data->competencies[0]['name']);
+        $this->assertEquals($yes, $data->competencies[0]['created_or_modified_by_you']);
 
-        $this->assertEquals($p2->get('name'), $data->plans[1]['name']);
-        $this->assertEquals($no, $data->plans[1]['created_or_modified_by_you']);
-        $competencies = $data->plans[1]['competencies'];
+        $planpath = array_merge($path, ["{$p2->get('name')} ({$p2->get('id')})"]);
+        $data = writer::with_context($u0ctx)->get_data($planpath);
+        $this->assertEquals($p2->get('name'), $data->name);
+        $this->assertEquals($no, $data->created_or_modified_by_you);
+        $competencies = $data->competencies;
         $this->assertCount(2, $competencies);
         $this->assertEquals($comp2->get('shortname'), $competencies[0]['name']);
         $this->assertEquals($yes, $competencies[0]['created_or_modified_by_you']);
@@ -1208,22 +1313,26 @@ class core_competency_privacy_testcase extends provider_testcase {
         $this->assertEquals($yes, $competencies[1]['created_or_modified_by_you']);
 
         // Export data for user 4.
+        writer::reset();
         provider::export_user_data(new approved_contextlist($u4, 'core_competency', [$u0ctx->id]));
-        $data = writer::with_context($u0ctx)->get_related_data($path, 'learning_plans');
-        $this->assertEmpty($data->plans);
+        foreach ([$p1, $p2, $p3] as $plan) {
+            $planpath = array_merge($path, ["{$p2->get('name')} ({$p2->get('id')})"]);
+            $data = writer::with_context($u0ctx)->get_data($planpath);
+            $this->assertEmpty($data);
+        }
 
         // Export data for user 5.
+        writer::reset();
         provider::export_user_data(new approved_contextlist($u5, 'core_competency', [$u0ctx->id]));
-        $data = writer::with_context($u0ctx)->get_related_data($path, 'learning_plans');
-        $this->assertCount(1, $data->plans);
-        $plan = $data->plans[0];
-        $this->assertEquals($p3->get('name'), $plan['name']);
-        $this->assertEquals($yes, $plan['created_or_modified_by_you']);
-        $this->assertCount(2, $plan['competencies']);
-        $competency = $plan['competencies'][0];
+        $planpath = array_merge($path, ["{$p3->get('name')} ({$p3->get('id')})"]);
+        $data = writer::with_context($u0ctx)->get_data($planpath);
+        $this->assertEquals($p3->get('name'), $data->name);
+        $this->assertEquals($yes, $data->created_or_modified_by_you);
+        $this->assertCount(2, $data->competencies);
+        $competency = $data->competencies[0];
         $this->assertEquals($comp1->get('shortname'), $competency['name']);
         $this->assertEquals($yes, $competency['created_or_modified_by_you']);
-        $competency = $plan['competencies'][1];
+        $competency = $data->competencies[1];
         $this->assertEquals($comp3->get('shortname'), $competency['name']);
         $this->assertEquals($yes, $competency['created_or_modified_by_you']);
 
@@ -1232,38 +1341,58 @@ class core_competency_privacy_testcase extends provider_testcase {
         api::complete_plan($p3);
 
         // Export data for user 6.
+        writer::reset();
         provider::export_user_data(new approved_contextlist($u6, 'core_competency', [$u0ctx->id]));
-        $data = writer::with_context($u0ctx)->get_related_data($path, 'learning_plans');
-        $this->assertCount(1, $data->plans);
-        $plan = $data->plans[0];
-        $this->assertEquals($p3->get('name'), $plan['name']);
-        $this->assertEquals($yes, $plan['created_or_modified_by_you']);
-        $this->assertCount(2, $plan['competencies']);
-        $competency = $plan['competencies'][0];
+        $planpath = array_merge($path, ["{$p3->get('name')} ({$p3->get('id')})"]);
+        $data = writer::with_context($u0ctx)->get_data($planpath);
+        $this->assertEquals($p3->get('name'), $data->name);
+        $this->assertEquals($yes, $data->created_or_modified_by_you);
+        $this->assertCount(2, $data->competencies);
+        $competency = $data->competencies[0];
         $this->assertEquals($comp1->get('shortname'), $competency['name']);
         $this->assertArrayNotHasKey('created_or_modified_by_you', $competency);
         $this->assertEquals('A', $competency['rating']['rating']);
         $this->assertEquals($yes, $competency['rating']['created_or_modified_by_you']);
-        $competency = $plan['competencies'][1];
+        $competency = $data->competencies[1];
         $this->assertEquals($comp3->get('shortname'), $competency['name']);
         $this->assertArrayNotHasKey('created_or_modified_by_you', $competency);
         $this->assertEquals('-', $competency['rating']['rating']);
         $this->assertEquals($yes, $competency['rating']['created_or_modified_by_you']);
 
         // Export data for user 7.
+        writer::reset();
         provider::export_user_data(new approved_contextlist($u7, 'core_competency', [$u0ctx->id]));
-        $data = writer::with_context($u0ctx)->get_related_data($path, 'learning_plans');
-        $this->assertCount(1, $data->plans);
-        $plan = $data->plans[0];
-        $this->assertEquals($p2->get('name'), $plan['name']);
-        $this->assertEquals($no, $plan['created_or_modified_by_you']);
-        $this->assertEquals($yes, $plan['reviewer_is_you']);
+        $planpath = array_merge($path, ["{$p2->get('name')} ({$p2->get('id')})"]);
+        $data = writer::with_context($u0ctx)->get_data($planpath);
+        $this->assertEquals($p2->get('name'), $data->name);
+        $this->assertEquals($no, $data->created_or_modified_by_you);
+        $this->assertEquals($yes, $data->reviewer_is_you);
+
+        // Export data for user 8.
+        writer::reset();
+        $this->setUser($u8);
+        provider::export_user_data(new approved_contextlist($u8, 'core_competency', [$u0ctx->id]));
+        $planpath = array_merge($path, ["{$p1->get('name')} ({$p1->get('id')})"]);
+        $data = writer::with_context($u0ctx)->get_data($planpath);
+        $this->assertEquals($p1->get('name'), $data->name);
+        $this->assertEquals($no, $data->created_or_modified_by_you);
+        $this->assertEquals($no, $data->reviewer_is_you);
+        $commentspath = array_merge($planpath,  [get_string('commentsubcontext', 'core_comment')]);
+        $data = writer::with_context($u0ctx)->get_data($commentspath);
+        $this->assert_exported_comments(['Hi.'], $data->comments);
     }
 
     public function test_export_data_for_user_with_related_competencies() {
-        $path = [get_string('competencies', 'core_competency'), get_string('privacy:path:relatedtome', 'core_competency')];
+        $path = [
+            get_string('competencies', 'core_competency'),
+            get_string('privacy:path:relatedtome', 'core_competency'),
+            get_string('competencies', 'core_competency'),
+        ];
         $yes = transform::yesno(true);
         $no = transform::yesno(false);
+        $makecomppath = function($comp) use ($path) {
+            return array_merge($path, ["{$comp->get('shortname')} ({$comp->get('id')})"]);
+        };
 
         $dg = $this->getDataGenerator();
         $ccg = $dg->get_plugin_generator('core_competency');
@@ -1273,6 +1402,7 @@ class core_competency_privacy_testcase extends provider_testcase {
         $u2 = $dg->create_user();
         $u3 = $dg->create_user();
         $u4 = $dg->create_user();
+        $u5 = $dg->create_user();
 
         $u0ctx = context_user::instance($u0->id);
 
@@ -1299,14 +1429,21 @@ class core_competency_privacy_testcase extends provider_testcase {
             'privacy:metadata:competency_evidence', 'core_competency', null, false, null, 1, $u4->id, 'Ze note');
 
         $this->setUser($u4);
-        $ccg->create_user_competency(['userid' => $u0->id, 'competencyid' => $comp3->get('id')]);
-        $ccg->create_user_competency(['userid' => $u0->id, 'competencyid' => $comp4->get('id'), 'reviewerid' => $u2->id]);
+        $uc3 = $ccg->create_user_competency(['userid' => $u0->id, 'competencyid' => $comp3->get('id')]);
+        $uc4 = $ccg->create_user_competency(['userid' => $u0->id, 'competencyid' => $comp4->get('id'), 'reviewerid' => $u2->id]);
+
+        $this->allow_anyone_to_comment_anywhere();
+        $this->setUser($u0);
+        $uc3->get_comment_object()->add('...');
+        $this->setUser($u5);
+        $uc3->get_comment_object()->add('Hello!');
+        $uc3->get_comment_object()->add('It\'s me...');
 
         // Export data for user 1.
+        writer::reset();
         provider::export_user_data(new approved_contextlist($u1, 'core_competency', [$u0ctx->id]));
-        $data = writer::with_context($u0ctx)->get_related_data($path, 'competencies');
-        $this->assertCount(2, $data->competencies);
-        $competency = $data->competencies[0];
+        $data = writer::with_context($u0ctx)->get_data($makecomppath($comp1));
+        $competency = (array) $data;
         $this->assertEquals($comp1->get('shortname'), $competency['name']);
         $evidence = $competency['evidence'];
         $this->assertCount(2, $evidence);
@@ -1318,7 +1455,8 @@ class core_competency_privacy_testcase extends provider_testcase {
         $this->assertEquals('-', $evidence[1]['actionuserid']);
         $this->assertEquals($no, $evidence[1]['acting_user_is_you']);
         $this->assertEquals($yes, $evidence[1]['created_or_modified_by_you']);
-        $competency = $data->competencies[1];
+        $data = writer::with_context($u0ctx)->get_data($makecomppath($comp2));
+        $competency = (array) $data;
         $this->assertEquals($comp2->get('shortname'), $competency['name']);
         $evidence = $competency['evidence'];
         $this->assertCount(1, $evidence);
@@ -1328,10 +1466,10 @@ class core_competency_privacy_testcase extends provider_testcase {
         $this->assertEquals($yes, $evidence[0]['created_or_modified_by_you']);
 
         // Export data for user 2.
+        writer::reset();
         provider::export_user_data(new approved_contextlist($u2, 'core_competency', [$u0ctx->id]));
-        $data = writer::with_context($u0ctx)->get_related_data($path, 'competencies');
-        $this->assertCount(2, $data->competencies);
-        $competency = $data->competencies[0];
+        $data = writer::with_context($u0ctx)->get_data($makecomppath($comp1));
+        $competency = (array) $data;
         $this->assertEquals($comp1->get('shortname'), $competency['name']);
         $evidence = $competency['evidence'];
         $this->assertCount(1, $evidence);
@@ -1339,24 +1477,26 @@ class core_competency_privacy_testcase extends provider_testcase {
         $this->assertEquals($u3->id, $evidence[0]['actionuserid']);
         $this->assertEquals($no, $evidence[0]['acting_user_is_you']);
         $this->assertEquals($yes, $evidence[0]['created_or_modified_by_you']);
-        $competency = $data->competencies[1];
+        $data = writer::with_context($u0ctx)->get_data($makecomppath($comp4));
+        $competency = (array) $data;
         $this->assertEquals($comp4->get('shortname'), $competency['name']);
         $this->assertCount(0, $competency['evidence']);
         $this->assertEquals($yes, $competency['rating']['reviewer_is_you']);
         $this->assertEquals($no, $competency['rating']['created_or_modified_by_you']);
 
         // Export data for user 3.
+        writer::reset();
         provider::export_user_data(new approved_contextlist($u3, 'core_competency', [$u0ctx->id]));
-        $data = writer::with_context($u0ctx)->get_related_data($path, 'competencies');
-        $this->assertCount(2, $data->competencies);
-        $competency = $data->competencies[0];
+        $data = writer::with_context($u0ctx)->get_data($makecomppath($comp1));
+        $competency = (array) $data;
         $this->assertEquals($comp1->get('shortname'), $competency['name']);
         $evidence = $competency['evidence'];
         $this->assertCount(1, $evidence);
         $this->assertEquals($u3->id, $evidence[0]['actionuserid']);
         $this->assertEquals($yes, $evidence[0]['acting_user_is_you']);
         $this->assertEquals($no, $evidence[0]['created_or_modified_by_you']);
-        $competency = $data->competencies[1];
+        $data = writer::with_context($u0ctx)->get_data($makecomppath($comp2));
+        $competency = (array) $data;
         $this->assertEquals($comp2->get('shortname'), $competency['name']);
         $evidence = $competency['evidence'];
         $this->assertCount(1, $evidence);
@@ -1366,10 +1506,10 @@ class core_competency_privacy_testcase extends provider_testcase {
         $this->assertEquals($yes, $evidence[0]['created_or_modified_by_you']);
 
         // Export data for user 4.
+        writer::reset();
         provider::export_user_data(new approved_contextlist($u4, 'core_competency', [$u0ctx->id]));
-        $data = writer::with_context($u0ctx)->get_related_data($path, 'competencies');
-        $this->assertCount(3, $data->competencies);
-        $competency = $data->competencies[0];
+        $data = writer::with_context($u0ctx)->get_data($makecomppath($comp2));
+        $competency = (array) $data;
         $this->assertEquals($comp2->get('shortname'), $competency['name']);
         $this->assertNull($competency['rating']);
         $this->assertCount(1, $competency['evidence']);
@@ -1377,20 +1517,37 @@ class core_competency_privacy_testcase extends provider_testcase {
         $this->assertEquals($u4->id, $evidence['actionuserid']);
         $this->assertEquals($yes, $evidence['acting_user_is_you']);
         $this->assertEquals($no, $evidence['created_or_modified_by_you']);
-        $competency = $data->competencies[1];
+        $data = writer::with_context($u0ctx)->get_data($makecomppath($comp3));
+        $competency = (array) $data;
         $this->assertEquals($comp3->get('shortname'), $competency['name']);
         $this->assertEquals($no, $competency['rating']['reviewer_is_you']);
         $this->assertEquals($yes, $competency['rating']['created_or_modified_by_you']);
         $this->assertEmpty($competency['evidence']);
-        $competency = $data->competencies[2];
+        $data = writer::with_context($u0ctx)->get_data($makecomppath($comp4));
+        $competency = (array) $data;
         $this->assertEquals($comp4->get('shortname'), $competency['name']);
         $this->assertEquals($no, $competency['rating']['reviewer_is_you']);
         $this->assertEquals($yes, $competency['rating']['created_or_modified_by_you']);
         $this->assertEmpty($competency['evidence']);
+
+        // Export data for user 5.
+        $this->setUser($u5);
+        writer::reset();
+        provider::export_user_data(new approved_contextlist($u5, 'core_competency', [$u0ctx->id]));
+        $data = writer::with_context($u0ctx)->get_data($makecomppath($comp3));
+        $competency = (array) $data;
+        $this->assertEquals($comp3->get('shortname'), $competency['name']);
+        $data = writer::with_context($u0ctx)->get_data(array_merge($makecomppath($comp3),
+            [get_string('commentsubcontext', 'core_comment')]));
+        $this->assert_exported_comments(['Hello!', 'It\'s me...'], $data->comments);
     }
 
     public function test_export_data_for_user_with_related_user_evidence() {
-        $path = [get_string('competencies', 'core_competency'), get_string('privacy:path:relatedtome', 'core_competency')];
+        $path = [
+            get_string('competencies', 'core_competency'),
+            get_string('privacy:path:relatedtome', 'core_competency'),
+            get_string('privacy:path:userevidence', 'core_competency')
+        ];
         $yes = transform::yesno(true);
         $no = transform::yesno(false);
 
@@ -1430,39 +1587,40 @@ class core_competency_privacy_testcase extends provider_testcase {
 
         // Export for user 1.
         provider::export_user_data(new approved_contextlist($u1, 'core_competency', [$u0ctx->id]));
-        $data = writer::with_context($u0ctx)->get_related_data($path, 'evidence_of_prior_learning');
-        $this->assertCount(1, $data->evidence_of_prior_learning);
-        $this->assertEquals($ue1->get('name'), $data->evidence_of_prior_learning[0]['name']);
-        $this->assertEquals($yes, $data->evidence_of_prior_learning[0]['created_or_modified_by_you']);
-        $this->assertEmpty($data->evidence_of_prior_learning[0]['competencies']);
+        $uepath = array_merge($path, ["{$ue1->get('name')} ({$ue1->get('id')})"]);
+        $data = writer::with_context($u0ctx)->get_data($uepath);
+        $this->assertEquals($ue1->get('name'), $data->name);
+        $this->assertEquals($yes, $data->created_or_modified_by_you);
+        $this->assertEmpty($data->competencies);
 
         // Export for user 2.
         provider::export_user_data(new approved_contextlist($u2, 'core_competency', [$u0ctx->id]));
-        $data = writer::with_context($u0ctx)->get_related_data($path, 'evidence_of_prior_learning');
-        $this->assertCount(2, $data->evidence_of_prior_learning);
-        $this->assertEquals($ue1->get('name'), $data->evidence_of_prior_learning[0]['name']);
-        $this->assertEquals($no, $data->evidence_of_prior_learning[0]['created_or_modified_by_you']);
-        $this->assertCount(1, $data->evidence_of_prior_learning[0]['competencies']);
-        $competency = $data->evidence_of_prior_learning[0]['competencies'][0];
+        $uepath = array_merge($path, ["{$ue1->get('name')} ({$ue1->get('id')})"]);
+        $data = writer::with_context($u0ctx)->get_data($uepath);
+        $this->assertEquals($ue1->get('name'), $data->name);
+        $this->assertEquals($no, $data->created_or_modified_by_you);
+        $this->assertCount(1, $data->competencies);
+        $competency = $data->competencies[0];
         $this->assertEquals($comp1->get('shortname'), $competency['name']);
         $this->assertEquals($yes, $competency['created_or_modified_by_you']);
 
-        $this->assertEquals($ue2->get('name'), $data->evidence_of_prior_learning[1]['name']);
-        $this->assertEquals($yes, $data->evidence_of_prior_learning[1]['created_or_modified_by_you']);
-        $this->assertEmpty($data->evidence_of_prior_learning[1]['competencies']);
+        $uepath = array_merge($path, ["{$ue2->get('name')} ({$ue2->get('id')})"]);
+        $data = writer::with_context($u0ctx)->get_data($uepath);
+        $this->assertEquals($ue2->get('name'), $data->name);
+        $this->assertEquals($yes, $data->created_or_modified_by_you);
+        $this->assertEmpty($data->competencies);
 
         // Export for user 3.
         provider::export_user_data(new approved_contextlist($u3, 'core_competency', [$u0ctx->id]));
-        $data = writer::with_context($u0ctx)->get_related_data($path, 'evidence_of_prior_learning');
-        $this->assertCount(1, $data->evidence_of_prior_learning);
-        $evidence = $data->evidence_of_prior_learning[0];
-        $this->assertEquals($ue2->get('name'), $evidence['name']);
-        $this->assertEquals($no, $evidence['created_or_modified_by_you']);
-        $this->assertCount(2, $evidence['competencies']);
-        $competency = $evidence['competencies'][0];
+        $uepath = array_merge($path, ["{$ue2->get('name')} ({$ue2->get('id')})"]);
+        $evidence = writer::with_context($u0ctx)->get_data($uepath);
+        $this->assertEquals($ue2->get('name'), $evidence->name);
+        $this->assertEquals($no, $evidence->created_or_modified_by_you);
+        $this->assertCount(2, $evidence->competencies);
+        $competency = $evidence->competencies[0];
         $this->assertEquals($comp2->get('shortname'), $competency['name']);
         $this->assertEquals($yes, $competency['created_or_modified_by_you']);
-        $competency = $evidence['competencies'][1];
+        $competency = $evidence->competencies[1];
         $this->assertEquals($comp3->get('shortname'), $competency['name']);
         $this->assertEquals($yes, $competency['created_or_modified_by_you']);
     }
@@ -1477,6 +1635,7 @@ class core_competency_privacy_testcase extends provider_testcase {
 
         $u1 = $dg->create_user();
         $u2 = $dg->create_user();
+        $u3 = $dg->create_user();
         $u1ctx = context_user::instance($u1->id);
         $u2ctx = context_user::instance($u2->id);
 
@@ -1513,6 +1672,14 @@ class core_competency_privacy_testcase extends provider_testcase {
             'grade' => 3, 'proficiency' => false]);
         $uc1c = $ccg->create_user_competency(['competencyid' => $comp3->get('id'), 'userid' => $u1->id]);
 
+        // Add comments on plan.
+        $this->allow_anyone_to_comment_anywhere();
+        $this->setUser($u1);
+        $p1a->get_comment_object()->add('Hello.');
+        $p1a->get_comment_object()->add('It\'s me.');
+        $this->setUser($u3);
+        $p1a->get_comment_object()->add('After all these years...');
+
         // Complete the plan to create archiving, and modify the user competency again.
         api::complete_plan($p1c);
         $uc1a->set('grade', 1);
@@ -1537,6 +1704,9 @@ class core_competency_privacy_testcase extends provider_testcase {
         $comp = $data->competencies[2];
         $this->assertEquals($comp4->get('shortname'), $comp['name']);
         $this->assertNull($comp['rating']['rating']);
+        $data = writer::with_context($u1ctx)->get_data(array_merge($path, ["{$p1a->get('name')} ({$p1a->get('id')})",
+            get_string('commentsubcontext', 'core_comment')]));
+        $this->assert_exported_comments(['Hello.', 'It\'s me.', 'After all these years...'], $data->comments);
 
         // This plan is manually created.
         $data = writer::with_context($u1ctx)->get_data(array_merge($path, ["{$p1b->get('name')} ({$p1b->get('id')})"]));
@@ -1626,6 +1796,7 @@ class core_competency_privacy_testcase extends provider_testcase {
 
         $u1 = $dg->create_user();
         $u2 = $dg->create_user();
+        $u3 = $dg->create_user();
         $u1ctx = context_user::instance($u1->id);
         $u2ctx = context_user::instance($u2->id);
 
@@ -1649,6 +1820,14 @@ class core_competency_privacy_testcase extends provider_testcase {
         $e2a2 = $ccg->create_evidence(['usercompetencyid' => $uc2b->get('id'), 'note' => 'B']);
         $e2a3 = $ccg->create_evidence(['usercompetencyid' => $uc2b->get('id'), 'note' => 'C']);
 
+        // Add comments on competency.
+        $this->allow_anyone_to_comment_anywhere();
+        $this->setUser($u1);
+        $uc1a->get_comment_object()->add('Hello.');
+        $uc1a->get_comment_object()->add('It\'s me.');
+        $this->setUser($u3);
+        $uc1a->get_comment_object()->add('After all these years...');
+
         // Export for user 1 in both contexts.
         provider::export_user_data(new approved_contextlist($u1, 'core_competency', [$u1ctx->id, $u2ctx->id]));
         $data = writer::with_context($u1ctx)->get_data(array_merge($path, ["{$comp1->get('shortname')} ({$comp1->get('id')})"]));
@@ -1658,6 +1837,9 @@ class core_competency_privacy_testcase extends provider_testcase {
         $this->assertCount(2, $data->evidence);
         $this->assertEquals(get_string('privacy:evidence:action:complete', 'core_competency'), $data->evidence[1]['action']);
         $this->assertEquals('Not too bad', $data->evidence[0]['note']);
+        $data = writer::with_context($u1ctx)->get_data(array_merge($path, ["{$comp1->get('shortname')} ({$comp1->get('id')})",
+            get_string('commentsubcontext', 'core_comment')]));
+        $this->assert_exported_comments(['Hello.', 'It\'s me.', 'After all these years...'], $data->comments);
 
         $data = writer::with_context($u1ctx)->get_data(array_merge($path, ["{$comp2->get('shortname')} ({$comp2->get('id')})"]));
         $this->assertNotEmpty($data);
@@ -1789,6 +1971,22 @@ class core_competency_privacy_testcase extends provider_testcase {
     }
 
     /**
+     * Helps testing comments on plans.
+     *
+     * @return void
+     */
+    protected function allow_anyone_to_comment_anywhere() {
+        global $DB;
+        $roleid = $DB->get_field('role', 'id', ['archetype' => 'user'], MUST_EXIST);
+        assign_capability('moodle/competency:plancomment', CAP_ALLOW, $roleid, SYSCONTEXTID, true);
+        assign_capability('moodle/competency:planmanage', CAP_ALLOW, $roleid, SYSCONTEXTID, true);
+        assign_capability('moodle/competency:planmanagedraft', CAP_ALLOW, $roleid, SYSCONTEXTID, true);
+        assign_capability('moodle/competency:usercompetencycomment', CAP_ALLOW, $roleid, SYSCONTEXTID, true);
+        assign_capability('moodle/competency:usercompetencyview', CAP_ALLOW, $roleid, SYSCONTEXTID, true);
+        accesslib_clear_all_caches_for_unit_testing();
+    }
+
+    /**
      * Assert the content of a contextlist.
      *
      * @param contextlist $contextlist The list.
@@ -1800,8 +1998,6 @@ class core_competency_privacy_testcase extends provider_testcase {
         $expectedids = array_unique(array_map(function($item) {
             return $item instanceof context ? $item->id : $id;
         }, $expectedcontextsorids));
-        sort($contextids);
-        sort($expectedids);
         $this->assert_array_match($contextids, $expectedids);
     }
 
@@ -1813,6 +2009,78 @@ class core_competency_privacy_testcase extends provider_testcase {
      * @return void
      */
     protected function assert_array_match($array1, $array2) {
+        $array1 = (array) (object) $array1;
+        $array2 = (array) (object) $array2;
+        sort($array1);
+        sort($array2);
         $this->assertEquals($array1, $array2);
+    }
+
+    /**
+     * Assert the content of exported comments.
+     *
+     * @param array $expected The content of the comments.
+     * @param array $comments The exported comments.
+     * @return void
+     */
+    protected function assert_exported_comments($expected, $comments) {
+        $this->assertCount(count($expected), $comments);
+        $contents = array_map(function($comment) {
+            return strip_tags($comment->content);
+        }, $comments);
+        $this->assert_array_match($expected, $contents);
+    }
+
+    /**
+     * Assert that a comment object has comments.
+     *
+     * @param \comment $comment The comment object.
+     * @return void
+     */
+    protected function assert_has_comments(\comment $comment) {
+        global $DB;
+        $this->assertTrue($DB->record_exists('comments', [
+            'contextid' => $comment->get_context()->id,
+            'component' => $comment->get_component(),
+            'commentarea' => $comment->get_commentarea(),
+            'itemid' => $comment->get_itemid()
+        ]));
+    }
+
+    /**
+     * Assert that a comment object does not have any comments.
+     *
+     * @param \comment $comment The comment object.
+     * @return void
+     */
+    protected function assert_has_no_comments(\comment $comment) {
+        global $DB;
+        $this->assertFalse($DB->record_exists('comments', [
+            'contextid' => $comment->get_context()->id,
+            'component' => $comment->get_component(),
+            'commentarea' => $comment->get_commentarea(),
+            'itemid' => $comment->get_itemid()
+        ]));
+    }
+
+    /**
+     * Get the count of comments.
+     *
+     * @param \comment $comment The comment object.
+     * @param int $userid The user ID.
+     * @return int
+     */
+    protected function get_comments_count(\comment $comment, $userid = null) {
+        global $DB;
+        $params = [
+            'contextid' => $comment->get_context()->id,
+            'component' => $comment->get_component(),
+            'commentarea' => $comment->get_commentarea(),
+            'itemid' => $comment->get_itemid(),
+        ];
+        if ($userid) {
+            $params['userid'] = $userid;
+        }
+        return $DB->count_records('comments', $params);
     }
 }

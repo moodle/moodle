@@ -210,6 +210,9 @@ class provider implements
             'usermodified' => 'privacy:metadata:usermodified',
         ], 'privacy:metadata:competency_userevidencecomp');
 
+        // Comments can be left on learning plans and competencies.
+        $collection->link_subsystem('core_comments', 'privacy:metadata:core_comments');
+
         return $collection;
     }
 
@@ -385,6 +388,23 @@ class provider implements
         ];
         $contextlist->add_from_sql($sql, $params);
 
+        // Include the user contexts in which the user commented.
+        $sql = "
+            SELECT ctx.id
+              FROM {context} ctx
+              JOIN {comments} c
+                ON c.contextid = ctx.id
+             WHERE c.component = :component
+               AND c.commentarea IN (:planarea, :usercomparea)
+               AND c.userid = :userid";
+        $params = [
+            'component' => 'competency',    // Must not be core_competency.
+            'planarea' => 'plan',
+            'usercomparea' => 'user_competency',
+            'userid' => $userid
+        ];
+        $contextlist->add_from_sql($sql, $params);
+
         return $contextlist;
     }
 
@@ -522,7 +542,12 @@ class provider implements
      */
     protected static function delete_user_plans($userid) {
         global $DB;
+        $usercontext = context_user::instance($userid);
 
+        // Remove all the comments made on plans.
+        \core_comment\privacy\provider::delete_comments_for_all_users($usercontext, 'competency', 'plan');
+
+        // Find the user plan IDs.
         $planids = $DB->get_fieldset_select(plan::TABLE, 'id', 'userid = :userid', ['userid' => $userid]);
         if (empty($planids)) {
             return;
@@ -547,7 +572,12 @@ class provider implements
      */
     protected static function delete_user_competencies($userid) {
         global $DB;
+        $usercontext = context_user::instance($userid);
 
+        // Remove all the comments made on user competencies.
+        \core_comment\privacy\provider::delete_comments_for_all_users($usercontext, 'competency', 'user_competency');
+
+        // Find the user competency IDs.
         $ucids = $DB->get_fieldset_select(user_competency::TABLE, 'id', 'userid = :userid', ['userid' => $userid]);
         if (empty($ucids)) {
             return;
@@ -932,6 +962,10 @@ class provider implements
         $ucfields = user_competency::get_sql_fields('uc', 'uc_');
         $efields = evidence::get_sql_fields('e', 'e_');
 
+        $makecomppath = function($competencyid, $data) use ($path) {
+            return array_merge($path, [$data['name'] . ' (' . $competencyid . ')']);
+        };
+
         $sql = "
             SELECT $cfields, $ucfields, $efields
               FROM {" . user_competency::TABLE . "} uc
@@ -944,7 +978,9 @@ class provider implements
         $params = ['userid' => $userid];
 
         $recordset = $DB->get_recordset_sql($sql, $params);
-        static::recordset_loop_and_export($recordset, 'c_id', null, function($carry, $record) use ($userid, $helper) {
+        static::recordset_loop_and_export($recordset, 'c_id', null, function($carry, $record)
+                use ($context, $userid, $helper, $makecomppath) {
+
             $competency = new competency(null, competency::extract_record($record, 'c_'));
 
             if ($carry === null) {
@@ -953,6 +989,8 @@ class provider implements
                     'rating' => static::transform_user_competency($userid, $uc, $competency, $helper),
                     'evidence' => []
                 ]);
+                \core_comment\privacy\provider::export_comments($context, 'competency', 'user_competency',
+                    $uc->get('id'), $makecomppath($competency->get('id'), $carry), false);
             }
 
             // There is an evidence in this record.
@@ -963,11 +1001,8 @@ class provider implements
 
             return $carry;
 
-        }, function($competencyid, $data) use ($path, $context) {
-            writer::with_context($context)->export_data(
-                array_merge($path, [$data['name'] . ' (' . $competencyid . ')']),
-                (object) $data
-            );
+        }, function($competencyid, $data) use ($makecomppath, $context) {
+            writer::with_context($context)->export_data($makecomppath($competencyid, $data), (object) $data);
         });
     }
 
@@ -1065,10 +1100,9 @@ class provider implements
             return $carry;
 
         }, function($planid, $data) use ($context, $path) {
-            writer::with_context($context)->export_data(
-                array_merge($path, [$data['name'] . ' (' . $planid . ')']),
-                (object) $data
-            );
+            $planpath = array_merge($path, [$data['name'] . ' (' . $planid . ')']);
+            \core_comment\privacy\provider::export_comments($context, 'competency', 'plan', $planid, $planpath, false);
+            writer::with_context($context)->export_data($planpath, (object) $data);
         });
     }
 
@@ -1084,7 +1118,8 @@ class provider implements
 
         $path = [
             get_string('competencies', 'core_competency'),
-            get_string('privacy:path:relatedtome', 'core_competency')
+            get_string('privacy:path:relatedtome', 'core_competency'),
+            get_string('privacy:path:plans', 'core_competency'),
         ];
         $plans = [];
         $helper = new performance_helper();
@@ -1192,32 +1227,44 @@ class provider implements
         $sql = "
             SELECT $pfields
               FROM {" . plan::TABLE . "} p
+         LEFT JOIN {comments} c
+                ON c.contextid = :contextid
+               AND c.commentarea = :planarea
+               AND c.component = :competency
+               AND c.itemid = p.id
              WHERE p.userid = :targetuserid
                AND (p.usermodified = :userid1
-                OR p.reviewerid = :userid2)
+                OR p.reviewerid = :userid2
+                OR c.userid = :userid3)
                AND p.id $insql
           ORDER BY p.id";
         $params = array_merge($inparams, [
             'targetuserid' => $context->instanceid,
             'userid1' => $userid,
             'userid2' => $userid,
+            'userid3' => $userid,
+            'contextid' => $context->id,
+            'planarea' => 'plan',
+            'competency' => 'competency'
         ]);
 
         $recordset = $DB->get_recordset_sql($sql, $params);
         foreach ($recordset as $record) {
-            $initplan($record);
+            $planid = $record->p_id;
+            if (!isset($plans[$planid])) {
+                $initplan($record);
+            }
         }
         $recordset->close();
 
-        // Export.
-        writer::with_context($context)->export_related_data($path, 'learning_plans', (object) [
-            'plans' => array_reduce($plans, function($carry, $item) {
-                // Drop the keys.
-                $item['competencies'] = array_values($item['competencies']);
-                $carry[] = $item;
-                return $carry;
-            }, [])
-        ]);
+        // Export each plan on its own.
+        foreach ($plans as $planid => $plan) {
+            $planpath = array_merge($path, ["{$plan['name']} ({$planid})"]);
+            $plan['competencies'] = array_values($plan['competencies']);    // Drop the keys.
+
+            writer::with_context($context)->export_data($planpath, (object) $plan);
+            \core_comment\privacy\provider::export_comments($context, 'competency', 'plan', $planid, $planpath, true);
+        }
     }
 
     /**
@@ -1232,7 +1279,8 @@ class provider implements
 
         $path = [
             get_string('competencies', 'core_competency'),
-            get_string('privacy:path:relatedtome', 'core_competency')
+            get_string('privacy:path:relatedtome', 'core_competency'),
+            get_string('competencies', 'core_competency'),
         ];
         $competencies = [];
         $helper = new performance_helper();
@@ -1245,6 +1293,13 @@ class provider implements
             $competencies[$competency->get('id')] = array_merge(static::transform_competency_brief($competency), [
                 'evidence' => []
             ]);
+        };
+
+        $initusercomp = function($competency, $record) use (&$competencies, $userid, $helper) {
+            $competencyid = $competency->get('id');
+            $uc = new user_competency(null, user_competency::extract_record($record, 'uc_'));
+            $competencies[$competencyid]['uc_id'] = $uc->get('id');
+            $competencies[$competencyid]['rating'] = static::transform_user_competency($userid, $uc, $competency, $helper);
         };
 
         // Look for evidence.
@@ -1276,8 +1331,7 @@ class provider implements
             if (!array_key_exists('rating', $competencies[$competencyid])) {
                 $competencies[$competencyid]['rating'] = null;
                 if ($record->uc_reviewerid == $userid || $record->uc_usermodified == $userid) {
-                    $uc = new user_competency(null, user_competency::extract_record($record, 'uc_'));
-                    $competencies[$competencyid]['rating'] = static::transform_user_competency($userid, $uc, $competency, $helper);
+                    $initusercomp($competency, $record);
                 }
             }
 
@@ -1297,31 +1351,49 @@ class provider implements
               FROM {" . user_competency::TABLE . "} uc
               JOIN {" . competency::TABLE . "} c
                 ON c.id = uc.competencyid
+         LEFT JOIN {comments} cmt
+                ON cmt.contextid = :contextid
+               AND cmt.commentarea = :ucarea
+               AND cmt.component = :competency
+               AND cmt.itemid = uc.id
              WHERE uc.userid = :targetuserid
                AND (uc.usermodified = :userid1
-                OR uc.reviewerid = :userid2)
+                OR uc.reviewerid = :userid2
+                OR cmt.userid = :userid3)
                AND uc.competencyid $insql
           ORDER BY c.id, uc.id";
         $params = array_merge($inparams, [
             'targetuserid' => $context->instanceid,
             'userid1' => $userid,
             'userid2' => $userid,
+            'userid3' => $userid,
+            'contextid' => $context->id,
+            'ucarea' => 'user_competency',
+            'competency' => 'competency',
         ]);
 
         $recordset = $DB->get_recordset_sql($sql, $params);
         foreach ($recordset as $record) {
-            $initcompetency($record);
             $competency = new competency(null, competency::extract_record($record, 'c_'));
-            $uc = new user_competency(null, user_competency::extract_record($record, 'uc_'));
-            $competencies[$competency->get('id')]['rating'] = static::transform_user_competency($userid, $uc,
-                $competency, $helper);
+            if (!isset($competencies[$competency->get('id')])) {
+                $initcompetency($record);
+                $initusercomp($competency, $record);
+            }
         }
         $recordset->close();
 
-        // Export.
-        writer::with_context($context)->export_related_data($path, 'competencies', (object) [
-            'competencies' => array_values($competencies)
-        ]);
+        // Export each competency on its own.
+        foreach ($competencies as $competencyid => $competency) {
+            $comppath = array_merge($path, ["{$competency['name']} ({$competencyid})"]);
+            $ucid = isset($competency['uc_id']) ? $competency['uc_id'] : null;
+            unset($competency['uc_id']);
+
+            // Send to writer.
+            writer::with_context($context)->export_data($comppath, (object) $competency);
+            if ($ucid) {
+                \core_comment\privacy\provider::export_comments($context, 'competency', 'user_competency', $ucid, $comppath, true);
+            }
+        }
     }
 
     /**
@@ -1336,7 +1408,8 @@ class provider implements
 
         $path = [
             get_string('competencies', 'core_competency'),
-            get_string('privacy:path:relatedtome', 'core_competency')
+            get_string('privacy:path:relatedtome', 'core_competency'),
+            get_string('privacy:path:userevidence', 'core_competency'),
         ];
         $evidence = [];
         $helper = new performance_helper();
@@ -1406,12 +1479,11 @@ class provider implements
         $recordset->close();
 
         // Export files, then content.
-        foreach (array_keys($evidence) as $ueid) {
-            writer::with_context($context)->export_area_files($path, 'core_competency', 'userevidence', $ueid);
+        foreach ($evidence as $ueid => $data) {
+            $uepath = array_merge($path, ["{$data['name']} ({$ueid})"]);
+            writer::with_context($context)->export_area_files($uepath, 'core_competency', 'userevidence', $ueid);
+            writer::with_context($context)->export_data($uepath, (object) $data);
         }
-        writer::with_context($context)->export_related_data($path, 'evidence_of_prior_learning', (object) [
-            'evidence_of_prior_learning' => array_values($evidence)
-        ]);
     }
 
     /**
