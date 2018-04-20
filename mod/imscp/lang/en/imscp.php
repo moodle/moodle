@@ -43,5 +43,6 @@ $string['page-mod-imscp-x'] = 'Any IMS content package module page';
 $string['packagefile'] = 'Package file';
 $string['pluginadministration'] = 'IMSCP administration';
 $string['pluginname'] = 'IMS content package';
+$string['privacy:metadata'] = 'The IMS content package plugin does not store any personal data.';
 $string['search:activity'] = 'IMS content package - resource information';
 $string['toc'] = 'TOC';
