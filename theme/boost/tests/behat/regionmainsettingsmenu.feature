@@ -21,13 +21,13 @@ Feature: Region main settings menu
   Scenario: Teacher can use the region main settings menu
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And "#region-main-settings-menu [role=button]" "css_element" should not exist
+    And "#region-main-settings-menu [role=menuitem]" "css_element" should not exist
     And I follow "Choice name"
-    And I click on "#region-main-settings-menu [role=button]" "css_element"
+    And I click on "#region-main-settings-menu [role=menuitem]" "css_element"
     And I choose "Edit settings" in the open action menu
     And I should see "Updating: Choice"
     And I navigate to course participants
-    And I click on "#region-main-settings-menu [role=button]" "css_element"
+    And I click on "#region-main-settings-menu [role=menuitem]" "css_element"
     And I choose "Enrolment methods" in the open action menu
     And I should see "Enrolment methods"
     And I log out
@@ -35,7 +35,7 @@ Feature: Region main settings menu
   Scenario: Student cannot use all options in the region main settings menu
     And I log in as "student1"
     And I am on "Course 1" course homepage
-    And "#region-main-settings-menu [role=button]" "css_element" should not exist
+    And "#region-main-settings-menu [role=menuitem]" "css_element" should not exist
     And I follow "Choice name"
-    And "#region-main-settings-menu [role=button]" "css_element" should not exist
+    And "#region-main-settings-menu [role=menuitem]" "css_element" should not exist
     And I log out
