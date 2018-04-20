@@ -110,6 +110,8 @@ class provider_testcase extends advanced_testcase {
      * @param   string  $classname The name of the class for privacy
      */
     public function test_metadata_provider($component, $classname) {
+        global $DB;
+
         $collection = new collection($component);
         $metadata = $classname::get_metadata($collection);
         $this->assertInstanceOf(collection::class, $metadata);
@@ -120,6 +122,11 @@ class provider_testcase extends advanced_testcase {
             // All items must have a valid string name.
             // Note: This is not a string identifier.
             $this->assertInternalType('string', $item->get_name());
+
+            if ($item instanceof database_table) {
+                // Check that the table is valid.
+                $this->assertTrue($DB->get_manager()->table_exists($item->get_name()));
+            }
 
             if ($summary = $item->get_summary()) {
                 // Summary is optional, but when provided must be a valid string identifier.
