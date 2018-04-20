@@ -140,8 +140,15 @@ class api {
             if (empty($roleid)) {
                 continue;
             }
+            $allnames = get_all_user_name_fields(true, 'u');
+            $fields = 'u.id, u.confirmed, u.username, '. $allnames . ', ' .
+                      'u.maildisplay, u.mailformat, u.maildigest, u.email, u.emailstop, u.city, '.
+                      'u.country, u.picture, u.idnumber, u.department, u.institution, '.
+                      'u.lang, u.timezone, u.lastaccess, u.mnethostid, u.auth, u.suspended, u.deleted, ' .
+                      'r.name AS rolename, r.sortorder, '.
+                      'r.shortname AS roleshortname, rn.name AS rolecoursealias';
             // Fetch users that can manage data requests.
-            $dpos += get_role_users($roleid, $context);
+            $dpos += get_role_users($roleid, $context, false, $fields);
         }
 
         // If the site has no data protection officer, defer to site admin(s).
