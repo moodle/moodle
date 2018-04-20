@@ -146,10 +146,12 @@ class data_registry {
     public static function get_subject_scope(\context $context) {
 
         if ($contextcourse = $context->get_course_context(false)) {
-            // Below course level we only look at course-assigned roles.
-            $roles = get_user_roles($contextcourse, 0, false);
+            // Below course level we look at module or block level roles + course-assigned roles.
+            $courseroles = get_roles_with_assignment_on_context($contextcourse);
+            $roles = $courseroles + get_roles_with_assignment_on_context($context);
         } else {
-            $roles = get_user_roles($context, 0, false);
+            // We list category + system for others (we don't work with user instances so no need to work about them).
+            $roles = get_roles_used_in_context($context);
         }
 
         return array_map(function($role) {
