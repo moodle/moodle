@@ -103,3 +103,4 @@ $string['userfieldinternalfield_help'] = 'Name of the Moodle user field that sho
 $string['userfieldinternalfield'] = 'Internal field name';
 $string['userfieldmappingdeleted'] = 'User field mapping deleted';
 $string['userfieldmappingsforissuer'] = 'User field mappings for issuer: {$a}';
+$string['privacy:metadata'] = 'The OAuth 2 services plugin does not store any personal data.';

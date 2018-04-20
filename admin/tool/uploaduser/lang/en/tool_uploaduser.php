@@ -97,3 +97,4 @@ $string['uuupdatefromfile'] = 'Override with file';
 $string['uuupdatemissing'] = 'Fill in missing from file and defaults';
 $string['uuupdatetype'] = 'Existing user details';
 $string['uuusernametemplate'] = 'Username template';
+$string['privacy:metadata'] = 'The User upload plugin does not store any personal data.';

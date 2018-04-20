@@ -69,3 +69,4 @@ $string['warningcouldnotremovemodulecompetency'] = 'The activity or resource com
 $string['warningdestinationcoursecompetencyalreadyexists'] = 'The destination course competency already exists.';
 $string['warningdestinationmodulecompetencyalreadyexists'] = 'The destination activity or resource competency already exists.';
 $string['warnings'] = 'Warnings';
+$string['privacy:metadata'] = 'The Competencies migration tool plugin does not store any personal data.';

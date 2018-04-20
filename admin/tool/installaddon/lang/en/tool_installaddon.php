@@ -59,3 +59,4 @@ $string['remoterequestpluginfoexception'] = 'Oops... An error occurred while try
 $string['remoterequestnoninstallable'] = 'There is a request to install plugin {$a->name} ({$a->component}) version {$a->version} from the Moodle plugins directory on this site. However, the plugin installation pre-check failed (reason code: {$a->reason}).';
 $string['typedetectionfailed'] = 'Unable to detect the plugin type. Please choose the plugin type manually.';
 $string['typedetectionmismatch'] = 'The selected plugin type does not match the one declared by the plugin: {$a}';
+$string['privacy:metadata'] = 'The Plugin installer plugin does not store any personal data.';
