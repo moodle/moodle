@@ -40,4 +40,4 @@ $string['transferdata'] = 'Transfer data';
 $string['transferdbintro'] = 'This script will transfer the entire contents of this database to another database server. It is often used for migration of data to different database type.';
 $string['transferdbtoserver'] = 'Transfer this Moodle database to another server';
 $string['transferringdbto'] = 'Transferring this {$a->dbtypefrom} database to {$a->dbtype} database "{$a->dbname}" on "{$a->dbhost}"';
-
+$string['privacy:metadata'] = 'The Database transfer plugin does not store any personal data.';

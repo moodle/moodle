@@ -35,3 +35,4 @@ $string['searchtemplates'] = 'Search templates';
 $string['templatehasnoexample'] = 'This template has no example context, so it cannot be rendered here. To add an example context to this template, insert in a Mustache comment "Example context (json):", followed by the json encoded sample context for the template.';
 $string['templates'] = 'Templates';
 $string['templateselected'] = 'Template: {$a}';
+$string['privacy:metadata'] = 'The Template library plugin does not store any personal data.';
