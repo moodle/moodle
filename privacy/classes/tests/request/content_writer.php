@@ -308,6 +308,10 @@ class content_writer implements \core_privacy\local\request\content_writer {
     /**
      * Prepare a text area by processing pluginfile URLs within it.
      *
+     * Note that this method does not implement the pluginfile URL rewriting. Such a job tightly depends on how the
+     * actual writer exports files so it can be reliably tested only in real writers such as
+     * {@link core_privacy\local\request\moodle_content_writer}.
+     *
      * @param   array           $subcontext The location within the current context that this data belongs.
      * @param   string          $component  The name of the component that the files belong to.
      * @param   string          $filearea   The filearea within that component.
@@ -316,7 +320,7 @@ class content_writer implements \core_privacy\local\request\content_writer {
      * @return  string                      The processed string
      */
     public function rewrite_pluginfile_urls(array $subcontext, $component, $filearea, $itemid, $text) : string {
-        return str_replace('@@PLUGINFILE@@/', 'files/', $text);
+        return $text;
     }
 
     /**
