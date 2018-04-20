@@ -594,8 +594,17 @@ class core_blog_privacy_testcase extends provider_testcase {
 
                 $comments = $writer->get_data($commentpath);
                 $this->assertCount(2, $comments->comments);
-                $this->assertEquals('Hello, it\'s me!', strip_tags($comments->comments[0]->content));
-                $this->assertEquals('I was wondering if after', strip_tags($comments->comments[1]->content));
+
+                $c0 = strip_tags($comments->comments[0]->content);
+                $c1 = strip_tags($comments->comments[1]->content);
+                $expectedcomments = [
+                    'Hello, it\'s me!',
+                    'I was wondering if after',
+                ];
+
+                $this->assertNotFalse(array_search($c0, $expectedcomments));
+                $this->assertNotFalse(array_search($c1, $expectedcomments));
+                $this->assertNotEquals($c0, $c1);
 
             } else {
                 $tagdata = $writer->get_related_data($path, 'tags');
