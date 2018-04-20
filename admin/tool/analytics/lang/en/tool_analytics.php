@@ -92,3 +92,4 @@ $string['trainmodels'] = 'Train models';
 $string['viewlog'] = 'Log';
 $string['weeksenddateautomaticallyset'] = 'End date automatically set based on start date and the number of sections';
 $string['weeksenddatedefault'] = 'End date automatically calculated from the course start date.';
+$string['privacy:metadata'] = 'The Analytic models plugin does not store any personal data.';
