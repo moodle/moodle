@@ -141,7 +141,7 @@ class api {
                 continue;
             }
             // Fetch users that can manage data requests.
-            $dpos += get_role_users($roleid, $context, false, 'u.*');
+            $dpos += get_role_users($roleid, $context);
         }
 
         // If the site has no data protection officer, defer to site admin(s).
