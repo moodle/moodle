@@ -1,0 +1,197 @@
+@import url(https://fonts.googleapis.com/css?family=Roboto:300,400,500|Source+Sans+Pro:400,400i,600,600i,700);
+@font-face { /* where FontName and fontname represents the name of the font you want to add */
+	font-family: 'Novecento Sans Wide Book';
+	src: url([[font:theme|34778F_0_0.eot]]);
+	src: url([[font:theme|34778F_0_0.eot]]) format('embedded-opentype'),
+	  url([[font:theme|34778F_0_0.woff]]) format('woff'),
+	  url([[font:theme|34778F_0_0.woff2]]) format('woff2'),
+	  url([[font:theme|34778F_0_0.ttf]]) format('truetype'),
+	  url([[font:theme|34778F_0_0.svg]]) format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+
+.button, body .btn-secondary, body .btn-default, body .btn-primary, body .ical-link, body .navbar-light a.navbar-brand, input[type='submit'] {
+  background-color: #004272;
+  border: 0;
+  border-radius: 0;
+  color: white;
+  padding: .25rem 1rem; }
+  .button:hover, body .btn-secondary:hover, body .btn-default:hover, body .btn-primary:hover, body .ical-link:hover, body .navbar-light a.navbar-brand:hover, input[type='submit']:hover {
+    background-color: #007EA3;
+    color: white; }
+  .button i, body .btn-secondary i, body .btn-default i, body .btn-primary i, body .ical-link i, body .navbar-light a.navbar-brand i, .button span, body .btn-secondary span, body .btn-default span, body .btn-primary span, body .ical-link span, body .navbar-light a.navbar-brand span, input[type='submit'] i, input[type='submit'] span {
+    color: white; }
+
+body .btn {
+  padding: 7px 9px;
+  display: inline-block; }
+  body .btn.checked {
+    background-color: #007EA3 !important;
+    color: white; }
+
+body .btn-secondary:hover, body .btn-secondary:focus, body .btn-secondary:active:hover, body .btn-secondary:active:focus, body .btn-default:hover, body .btn-default:focus, body .btn-default:active:hover, body .btn-default:active:focus, body .btn-primary:hover, body .btn-primary:focus, body .btn-primary:active:hover, body .btn-primary:active:focus {
+  background-color: #007EA3;
+  color: white; }
+
+body .btn-secondary.active, body .btn-default.active, body .btn-primary.active {
+  background-color: #007EA3;
+  color: white; }
+  body .btn-secondary.active:hover, body .btn-secondary.active:focus, body .btn-secondary.active:active:hover, body .btn-secondary.active:active:focus, body .btn-default.active:hover, body .btn-default.active:focus, body .btn-default.active:active:hover, body .btn-default.active:active:focus, body .btn-primary.active:hover, body .btn-primary.active:focus, body .btn-primary.active:active:hover, body .btn-primary.active:active:focus {
+    background-color: #007EA3;
+    color: white; }
+
+body .btn-primary {
+  background-color: #007EA3; }
+  body .btn-primary:hover {
+    bavkground-color: #004272; }
+
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale; }
+
+html body h1, html body .a-h1 {
+  font-family: "Novecento Sans Wide Book", serif;
+  font-weight: 400;
+  font-size: 38px;
+  line-height: 1.18421;
+  color: #004272; }
+
+html body h2, html body .a-h2 {
+  font-family: "Novecento Sans Wide Book", serif;
+  font-weight: 400;
+  font-size: 32px;
+  line-height: 1.21875;
+  color: #004272; }
+  html body h2 i, html body .a-h2 i {
+    display: inline-block;
+    font-size: 32px;
+    line-height: 1.21875;
+    color: #004272;
+    position: relative;
+    top: 3px; }
+    html body h2 i.spin, html body .a-h2 i.spin {
+      top: 1px;
+      height: 35px;
+      width: 16px;
+      overflow: visible; }
+
+html body h3, html body .a-h3, html body h3 i, html body .a-h3 i {
+  font-family: "Roboto", sans-serif;
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 1.3;
+  letter-spacing: 1px;
+  color: #007EA3;
+  text-transform: uppercase; }
+
+html body h4, html body .a-h4 {
+  font-family: "Roboto", sans-serif;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 1.33333;
+  letter-spacing: 1px;
+  color: #007EA3; }
+
+html body h5, html body .a-h5 {
+  font-family: "Source Sans Pro", sans-serif;
+  font-weight: 800;
+  font-size: 18px;
+  line-height: 1.33333;
+  color: #4A4A4A; }
+
+html body h6, html body .a-h6 {
+  font-family: "Source Sans Pro", sans-serif;
+  font-weight: 800;
+  font-size: 16px;
+  line-height: 1.5;
+  color: #4A4A4A; }
+
+html body h1, html body h2, html body h3, html body h4, html body h5, html body h6 {
+  margin: 20px 0px; }
+
+html body ol, html body ul, html body li, html body input, html body select, html body p, html body blockquote {
+  margin: 10px 0px; }
+
+html body *, html body p, html body li {
+  font-family: "Source Sans Pro", sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  color: #4A4A4A; }
+
+html body ul {
+  padding-left: 30px; }
+  html body ul.list-block {
+    padding: 0; }
+    html body ul.list-block li {
+      list-style-type: none;
+      margin: 10px 0px; }
+  html body ul.list-inline {
+    margin: 0; }
+    html body ul.list-inline li {
+      list-style-type: none;
+      display: inline-block; }
+
+html body .text-info, html body .highlight {
+  color: #007EA3 !important; }
+
+html body .text-danger, html body .notconnected, html body .que .validationerror, html body .text-error {
+  color: #980808 !important; }
+
+html body .tag-info, html body #page-admin-index .adminwarning.availableupdatesinfo .moodleupdateinfo.maturity200 .info.release, html body .assignfeedback_editpdf_widget .label, html body .label-info {
+  background-color: #007EA3; }
+
+body .ical-link {
+  font-size: 1rem;
+  padding: .5rem 1rem;
+  font-weight: 400;
+  line-height: 1.25;
+  margin-left: 7px !important;
+  position: relative;
+  top: 1px; }
+
+body .calendar_filters .calendar_event_global, body .calendar_filters .calendar_event_course, body .calendar_filters .calendar_event_group, body .calendar_filters .calendar_event_user {
+  padding-bottom: 5px;
+  vertical-align: text-bottom; }
+
+body .initialbar {
+  margin-bottom: 15px; }
+  body .initialbar .letter {
+    color: #004272;
+    display: inline-block;
+    height: auto;
+    padding-bottom: 2px; }
+    body .initialbar .letter.active {
+      background-color: #007EA3;
+      border-color: #007EA3; }
+  body .initialbar .initialbargroup li {
+    margin: 0; }
+
+body .alert-danger, body #page-admin-index .adminerror {
+  background-color: #980808;
+  border-color: #980808;
+  color: #FFFFFF;
+  border-radius: 0; }
+  body .alert-danger .text-info, body .alert-danger .highlight, body #page-admin-index .adminerror .text-info, body #page-admin-index .adminerror .highlight {
+    color: #FFFFFF !important; }
+
+body .bg-inverse {
+  background: transparent !important; }
+  body .bg-inverse .container {
+    background-color: #FFFFFF;
+    padding: 15px;
+    max-width: 100% !important;
+    margin: 0 30px; }
+
+body #page-footer a {
+  color: #007EA3; }
+
+body #page {
+  margin-top: 57px; }
+
+body.safari, body.ltr {
+  background: #eceeef; }
+
+body .block_online_users .content .info {
+  text-align: left; }
