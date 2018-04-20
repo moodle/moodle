@@ -29,6 +29,8 @@ defined('MOODLE_INTERNAL') || die();
 use \core_privacy\local\metadata\collection;
 use \core_privacy\local\request\transform;
 
+require_once($CFG->dirroot . '/comment/lib.php');
+
 /**
  * Privacy class for requesting user data.
  *
