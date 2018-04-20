@@ -26,7 +26,8 @@ define(['jquery'],
 
         var SELECTORS = {
             PURPOSE_SELECT: '#id_purposeid',
-            RETENTION_FIELD: '.form-control-static',
+            RETENTION_FIELD_BOOST: '#id_error_retention_current',
+            RETENTION_FIELD_CLEAN: '#fitem_id_retention_current [data-fieldtype=static]',
         };
 
         /**
@@ -65,14 +66,16 @@ define(['jquery'],
                 var selected = $(ev.currentTarget).val();
                 var selectedPurpose = this.purposeRetentionPeriods[selected];
 
-                $(SELECTORS.RETENTION_FIELD).each(function() {
-                    var node = $(this);
-                    // Sucky way to select the text, but no id for static fields :(.
-                    var retentionField = node.siblings('#id_error_retention_current');
+                var cleanSelector = $(SELECTORS.RETENTION_FIELD_CLEAN);
+                if (cleanSelector.length > 0) {
+                    cleanSelector.text(selectedPurpose);
+                } else {
+                    var boostSelector = $(SELECTORS.RETENTION_FIELD_BOOST);
+                    var retentionField = boostSelector.siblings();
                     if (retentionField.length > 0) {
-                        node.text(selectedPurpose);
+                        retentionField.text(selectedPurpose);
                     }
-                });
+                }
 
             }.bind(this));
         };
