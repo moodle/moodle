@@ -27,6 +27,7 @@ namespace core_search\output\form;
 defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->libdir . '/formslib.php');
+require_once($CFG->libdir . '/externallib.php');
 
 class search extends \moodleform {
 
@@ -36,7 +37,7 @@ class search extends \moodleform {
      * @return void
      */
     function definition() {
-        global $USER;
+        global $USER, $DB, $OUTPUT;
 
         $mform =& $this->_form;
         $mform->disable_form_change_checker();
@@ -94,6 +95,31 @@ class search extends \moodleform {
         );
         $mform->addElement('course', 'courseids', get_string('courses', 'core'), $options);
         $mform->setType('courseids', PARAM_INT);
+
+        // If the search engine can search by user, and the user is logged in (so we have
+        // permission to call the user-listing web service) then show the user selector.
+        if ($search->get_engine()->supports_users() && isloggedin()) {
+            $options = [
+                'ajax' => 'core_search/form-search-user-selector',
+                'multiple' => true,
+                'noselectionstring' => get_string('allusers', 'search'),
+                'valuehtmlcallback' => function($value) {
+                    global $DB, $OUTPUT;
+                    $user = $DB->get_record('user', ['id' => (int)$value], '*', IGNORE_MISSING);
+                    if (!$user || !user_can_view_profile($user)) {
+                        return false;
+                    }
+                    $details = user_get_user_details($user);
+                    return $OUTPUT->render_from_template(
+                            'core_search/form-user-selector-suggestion', $details);
+                }
+            ];
+            if (!empty($this->_customdata['withincourseid'])) {
+                $options['withincourseid'] = $this->_customdata['withincourseid'];
+            }
+
+            $mform->addElement('autocomplete', 'userids', get_string('users'), [], $options);
+        }
 
         if (!empty($this->_customdata['searchwithin'])) {
             // Course options should be hidden if we choose to search within a specific location.
