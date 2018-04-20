@@ -57,6 +57,7 @@ $string['editchapter'] = 'Edit chapter "{$a}"';
 $string['hidechapter'] = 'Hide chapter "{$a}"';
 $string['movechapterup'] = 'Move chapter up "{$a}"';
 $string['movechapterdown'] = 'Move chapter down "{$a}"';
+$string['privacy:metadata'] = 'The book activity module does not store any personal data.';
 $string['search:activity'] = 'Book - resource information';
 $string['search:chapter'] = 'Book - chapters';
 $string['showchapter'] = 'Show chapter "{$a}"';
