@@ -89,7 +89,6 @@ class quiz_overview_report_testcase extends advanced_testcase {
 
         // The test data.
         $timestamp = 1234567890;
-        $fields = array('quiz', 'userid', 'attempt', 'sumgrades', 'state');
         $attempts = array(
             array($quiz, $student1, 1, 0.0,  quiz_attempt::FINISHED),
             array($quiz, $student1, 2, 5.0,  quiz_attempt::FINISHED),
@@ -165,6 +164,8 @@ class quiz_overview_report_testcase extends advanced_testcase {
         $reportoptions->states = array(quiz_attempt::IN_PROGRESS, quiz_attempt::OVERDUE, quiz_attempt::FINISHED);
 
         // Now do a minimal set-up of the table class.
+        $q->slot = 1;
+        $q->maxmark = 10;
         $table = new quiz_overview_table($quiz, $context, $qmsubselect, $reportoptions,
                 $empty, $studentsjoins, array(1 => $q), null);
         $table->download = $isdownloading; // Cannot call the is_downloading API, because it gives errors.
@@ -196,7 +197,16 @@ class quiz_overview_report_testcase extends advanced_testcase {
         $this->assertArrayHasKey($student3->id . '#0', $table->rawdata);
         $this->assertEquals(0, $table->rawdata[$student3->id . '#0']->gradedattempt);
 
-        // Ensure that filtering by inital does not break it.
+        // Check the calculation of averages.
+        $averagerow = $table->compute_average_row('overallaverage', $studentsjoins);
+        $this->assertContains('75.00', $averagerow['sumgrades']);
+        $this->assertContains('75.00', $averagerow['qsgrade1']);
+        if (!$isdownloading) {
+            $this->assertContains('(2)', $averagerow['sumgrades']);
+            $this->assertContains('(2)', $averagerow['qsgrade1']);
+        }
+
+        // Ensure that filtering by initial does not break it.
         // This involves setting a private properly of the base class, which is
         // only really possible using reflection :-(.
         $reflectionobject = new ReflectionObject($table);

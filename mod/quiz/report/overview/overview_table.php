@@ -92,42 +92,64 @@ class quiz_overview_table extends quiz_attempts_report_table {
         }
     }
 
-
     /**
-     * Add an average grade over the attempts of a set of users.
+     * Calculate the average overall and question scores for a set of attempts at the quiz.
+     *
      * @param string $label the title ot use for this row.
-     * @param \core\dml\sql_join $usersjoins (joins, wheres, params) for the users to average over.
+     * @param \core\dml\sql_join $usersjoins to indicate a set of users.
+     * @return array of table cells that make up the average row.
      */
-    protected function add_average_row($label, \core\dml\sql_join $usersjoins) {
+    public function compute_average_row($label, \core\dml\sql_join $usersjoins) {
         global $DB;
 
         list($fields, $from, $where, $params) = $this->base_sql($usersjoins);
         $record = $DB->get_record_sql("
-                SELECT AVG(quiza.sumgrades) AS grade, COUNT(quiza.sumgrades) AS numaveraged
-                  FROM $from
-                 WHERE $where", $params);
+                SELECT AVG(quizaouter.sumgrades) AS grade, COUNT(quizaouter.sumgrades) AS numaveraged
+                  FROM {quiz_attempts} quizaouter
+                  JOIN (
+                       SELECT DISTINCT quiza.id
+                         FROM $from
+                        WHERE $where
+                       ) relevant_attempt_ids ON quizaouter.id = relevant_attempt_ids.id
+                ", $params);
         $record->grade = quiz_rescale_grade($record->grade, $this->quiz, false);
-
         if ($this->is_downloading()) {
             $namekey = 'lastname';
         } else {
             $namekey = 'fullname';
         }
         $averagerow = array(
-            $namekey    => $label,
-            'sumgrades' => $this->format_average($record),
-            'feedbacktext'=> strip_tags(quiz_report_feedback_for_grade(
-                                        $record->grade, $this->quiz->id, $this->context))
+            $namekey       => $label,
+            'sumgrades'    => $this->format_average($record),
+            'feedbacktext' => strip_tags(quiz_report_feedback_for_grade(
+                                         $record->grade, $this->quiz->id, $this->context))
         );
 
         if ($this->options->slotmarks) {
             $dm = new question_engine_data_mapper();
-            $qubaids = new qubaid_join($from, 'quiza.uniqueid', $where, $params);
+            $qubaids = new qubaid_join("{quiz_attempts} quizaouter
+                  JOIN (
+                       SELECT DISTINCT quiza.id
+                         FROM $from
+                        WHERE $where
+                       ) relevant_attempt_ids ON quizaouter.id = relevant_attempt_ids.id",
+                    'quizaouter.uniqueid', '1 = 1', $params);
             $avggradebyq = $dm->load_average_marks($qubaids, array_keys($this->questions));
 
             $averagerow += $this->format_average_grade_for_questions($avggradebyq);
         }
 
+        return $averagerow;
+    }
+
+    /**
+     * Add an average grade row for a set of users.
+     *
+     * @param string $label the title ot use for this row.
+     * @param \core\dml\sql_join $usersjoins (joins, wheres, params) for the users to average over.
+     */
+    protected function add_average_row($label, \core\dml\sql_join $usersjoins) {
+        $averagerow = $this->compute_average_row($label, $usersjoins);
         $this->add_data_keyed($averagerow);
     }
 
@@ -163,7 +185,9 @@ class quiz_overview_table extends quiz_attempts_report_table {
 
     /**
      * Format an entry in an average row.
-     * @param object $record with fields grade and numaveraged
+     * @param object $record with fields grade and numaveraged.
+     * @param bool $question true if this is a question score, false if it is an overall score.
+     * @return string HTML fragment for an average score (with number of things included in the average).
      */
     protected function format_average($record, $question = false) {
         if (is_null($record->grade)) {
