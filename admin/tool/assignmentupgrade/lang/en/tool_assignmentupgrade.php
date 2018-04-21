@@ -58,3 +58,4 @@ $string['upgradeallconfirm'] = 'Upgrade all assignments?';
 $string['upgradeprogress'] = 'Upgrade assignment {$a->current} of {$a->total}';
 $string['upgradesingle'] = 'Upgrade single assignment';
 $string['viewcourse'] = 'View the course with the converted assignment';
+$string['privacy:metadata:preference:perpage'] = 'The assignment upgrade records per page preference set for the user.';
