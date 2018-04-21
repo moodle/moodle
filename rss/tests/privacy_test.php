@@ -26,6 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 use \core_privacy\tests\provider_testcase;
 use \core_rss\privacy\provider;
 use \core_privacy\local\request\writer;
+use \core_privacy\local\request\approved_contextlist;
 
 /**
  * Unit tests for rss\classes\privacy\provider.php
@@ -46,6 +47,7 @@ class core_rss_testcase extends provider_testcase {
      * Test getting the context for the user ID related to this plugin.
      */
     public function test_get_contexts_for_userid() {
+        // Create user and RSS user keys.
         $user = $this->getDataGenerator()->create_user();
         $context = \context_user::instance($user->id);
         $key = get_user_key('rss', $user->id);
@@ -60,15 +62,69 @@ class core_rss_testcase extends provider_testcase {
     public function test_export_user_data() {
         global $DB;
 
+        // Create user and RSS user keys.
         $user = $this->getDataGenerator()->create_user();
         $context = \context_user::instance($user->id);
         $keyvalue = get_user_key('rss', $user->id);
         $key = $DB->get_record('user_private_key', ['value' => $keyvalue]);
 
+        // Validate exported data.
+        $this->setUser($user);
         $writer = writer::with_context($context);
         $this->assertFalse($writer->has_any_data());
         $this->export_context_data_for_user($user->id, $context, 'core_rss');
-        $data = $writer->get_related_data([get_string('rss', 'rss'), $user->id], 'user_private_key-' . $key->id);
-        $this->assertEquals($key->value, $data->value);
+        $userkeydata = $writer->get_related_data([], 'userkeys');
+        $this->assertCount(1, $userkeydata->keys);
+        $this->assertEquals($key->script, reset($userkeydata->keys)->script);
+    }
+
+    /**
+     * Test for provider::delete_data_for_all_users_in_context().
+     */
+    public function test_delete_data_for_all_users_in_context() {
+        global $DB;
+
+        // Create user and RSS user keys.
+        $user = $this->getDataGenerator()->create_user();
+        $context = \context_user::instance($user->id);
+        $keyvalue = get_user_key('rss', $user->id);
+        $key = $DB->get_record('user_private_key', ['value' => $keyvalue]);
+
+        // Before deletion, we should have 1 user_private_key.
+        $count = $DB->count_records('user_private_key', ['script' => 'rss']);
+        $this->assertEquals(1, $count);
+
+        // Delete data.
+        provider::delete_data_for_all_users_in_context($context);
+
+        // After deletion, the user_private_key entries should have been deleted.
+        $count = $DB->count_records('user_private_key', ['script' => 'rss']);
+        $this->assertEquals(0, $count);
+    }
+
+    /**
+     * Test for provider::delete_data_for_user().
+     */
+    public function test_delete_data_for_user() {
+        global $DB;
+
+        // Create user and RSS user keys.
+        $user = $this->getDataGenerator()->create_user();
+        $context = \context_user::instance($user->id);
+        $keyvalue = get_user_key('rss', $user->id);
+        $key = $DB->get_record('user_private_key', ['value' => $keyvalue]);
+
+        // Before deletion, we should have 1 user_private_key.
+        $count = $DB->count_records('user_private_key', ['script' => 'rss']);
+        $this->assertEquals(1, $count);
+
+        // Delete data.
+        $contextlist = provider::get_contexts_for_userid($user->id);
+        $approvedcontextlist = new approved_contextlist($user, 'rss', $contextlist->get_contextids());
+        provider::delete_data_for_user($approvedcontextlist);
+
+        // After deletion, the user_private_key entries should have been deleted.
+        $count = $DB->count_records('user_private_key', ['script' => 'rss']);
+        $this->assertEquals(0, $count);
     }
 }
