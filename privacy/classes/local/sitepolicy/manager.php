@@ -61,10 +61,17 @@ class manager {
      */
     public function get_handler_classname() {
         global $CFG;
+
         if (!empty($CFG->sitepolicyhandler)) {
             $sitepolicyhandlers = $this->get_all_handlers();
-            $classname = $sitepolicyhandlers[$CFG->sitepolicyhandler];
-            return $classname;
+
+            if (!isset($sitepolicyhandlers[$CFG->sitepolicyhandler])) {
+                return default_handler::class;
+
+            } else {
+                return $sitepolicyhandlers[$CFG->sitepolicyhandler];
+            }
+
         } else {
             return default_handler::class;
         }
