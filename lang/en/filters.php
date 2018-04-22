@@ -72,6 +72,7 @@ $string['nofiltersenabled'] = 'No filter plugins have been enabled on this site.
 $string['off'] = 'Off';
 $string['offbutavailable'] = 'Off, but available';
 $string['on'] = 'On';
+$string['privacy:reason'] = 'The Filter subsystem does not store any personal data.';
 $string['profilefilterfield'] = 'Profile field name';
 $string['profilefilterlimiter'] = 'Profile field operator';
 $string['profilelabel'] = '{$a->label}: {$a->profile} {$a->operator} {$a->value}';
