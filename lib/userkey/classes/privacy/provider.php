@@ -48,7 +48,7 @@ class provider implements
      * @param   collection     $collection The initialised collection to add items to.
      * @return  collection     A listing of user data stored through this system.
      */
-    public static function get_metadata(collection $collection) : collection {
+    public static function get_metadata(collection $collection) {
         $collection->add_database_table('user_private_key', [
                 'script' => 'privacy:metadata:user_private_key:script',
                 'value' => 'privacy:metadata:user_private_key:value',
