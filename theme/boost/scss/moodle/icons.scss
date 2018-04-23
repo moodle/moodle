@@ -33,6 +33,10 @@ $icon-big-height: 64px;
     color: $navbar-dark-color !important; /* stylelint-disable-line declaration-no-important */
 }
 
+.action-menu-item a:first-of-type > .icon {
+    margin-left: 0.5rem;
+}
+
 // YUI 2 Tree View icons must not have a margin left.
 .ygtvcell .icon {
     margin-left: 0 !important; /* stylelint-disable-line declaration-no-important */
