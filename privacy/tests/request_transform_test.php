@@ -53,14 +53,37 @@ class request_transform_test extends advanced_testcase {
      * Test that the datetime is translated into a string.
      */
     public function test_datetime() {
-        $this->assertInternalType('string', transform::datetime(1));
+        $time = 1;
+
+        $datestr = transform::datetime($time);
+
+        // Assert it is a string.
+        $this->assertInternalType('string', $datestr);
+
+        // To prevent failures on MAC where we are returned with a lower-case 'am' we want to convert this to 'AM'.
+        $datestr = str_replace('am', 'AM', $datestr);
+
+        // Assert the formatted date is correct.
+        $dateobj = new DateTime();
+        $dateobj->setTimestamp($time);
+        $this->assertEquals($dateobj->format('l, j F Y, g:i A'), $datestr);
     }
 
     /**
      * Test that the date is translated into a string.
      */
     public function test_date() {
-        $this->assertInternalType('string', transform::date(1));
+        $time = 1;
+
+        $datestr = transform::date($time);
+
+        // Assert it is a string.
+        $this->assertInternalType('string', $datestr);
+
+        // Assert the formatted date is correct.
+        $dateobj = new DateTime();
+        $dateobj->setTimestamp($time);
+        $this->assertEquals($dateobj->format('j F Y'), $datestr);
     }
 
     /**
