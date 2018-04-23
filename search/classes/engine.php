@@ -589,4 +589,17 @@ abstract class engine {
     public function get_supported_orders(\context $context) {
         return ['relevance' => get_string('order_relevance', 'search')];
     }
+
+    /**
+     * Checks if the search engine supports searching by user.
+     *
+     * If it returns true to this function, the search engine should support the 'userids' option
+     * in the $filters value passed to execute_query(), returning only items where the userid in
+     * the search document matches one of those user ids.
+     *
+     * @return bool True if the search engine supports searching by user
+     */
+    public function supports_users() {
+        return false;
+    }
 }

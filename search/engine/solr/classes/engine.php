@@ -290,6 +290,9 @@ class engine extends \core_search\engine {
         if (!empty($data->groupids)) {
             $query->addFilterQuery('{!cache=false}groupid:(' . implode(' OR ', $data->groupids) . ')');
         }
+        if (!empty($data->userids)) {
+            $query->addFilterQuery('{!cache=false}userid:(' . implode(' OR ', $data->userids) . ')');
+        }
 
         if (!empty($data->timestart) or !empty($data->timeend)) {
             if (empty($data->timestart)) {
@@ -1398,5 +1401,14 @@ class engine extends \core_search\engine {
         }
 
         return $orders;
+    }
+
+    /**
+     * Solr supports search by user id.
+     *
+     * @return bool True
+     */
+    public function supports_users() {
+        return true;
     }
 }

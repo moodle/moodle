@@ -52,6 +52,8 @@ class MoodleQuickForm_autocomplete extends MoodleQuickForm_select {
     protected $showsuggestions = true;
     /** @var string $noselectionstring String that is shown when there are no selections. */
     protected $noselectionstring = '';
+    /** @var callable|null Function to call (with existing value) to render it to HTML */
+    protected $valuehtmlcallback = null;
 
     /**
      * constructor
@@ -95,6 +97,10 @@ class MoodleQuickForm_autocomplete extends MoodleQuickForm_select {
             $this->casesensitive = $attributes['casesensitive'] ? true : false;
             unset($attributes['casesensitive']);
         }
+        if (isset($attributes['valuehtmlcallback'])) {
+            $this->valuehtmlcallback = $attributes['valuehtmlcallback'];
+            unset($attributes['valuehtmlcallback']);
+        }
         parent::__construct($elementName, $elementLabel, $options, $attributes);
 
         $this->_type = 'autocomplete';
@@ -127,7 +133,23 @@ class MoodleQuickForm_autocomplete extends MoodleQuickForm_select {
                 $this->placeholder, $this->casesensitive, $this->showsuggestions, $this->noselectionstring));
         }
 
-        return parent::toHTML();
+        $html = parent::toHTML();
+
+        // Hacky bodge to add in the HTML code to the option tag. There is a nicer
+        // version of this code in the new template version (see export_for_template).
+        if ($this->valuehtmlcallback) {
+            $html = preg_replace_callback('~value="([^"]+)"~', function($matches) {
+                $value = html_entity_decode($matches[1]);
+                $htmlvalue = call_user_func($this->valuehtmlcallback, $value);
+                if ($htmlvalue !== false) {
+                    return $matches[0] . ' data-html="' . s($htmlvalue) . '"';
+                } else {
+                    return $matches[0];
+                }
+            }, $html);
+        }
+
+        return $html;
     }
 
     /**
@@ -209,8 +231,6 @@ class MoodleQuickForm_autocomplete extends MoodleQuickForm_select {
     }
 
     public function export_for_template(renderer_base $output) {
-        global $PAGE;
-
         $this->_generateId();
         $context = parent::export_for_template($output);
         $context['tags'] = !empty($this->tags);
@@ -219,6 +239,15 @@ class MoodleQuickForm_autocomplete extends MoodleQuickForm_select {
         $context['casesensitive'] = !empty($this->casesensitive);
         $context['showsuggestions'] = !empty($this->showsuggestions);
         $context['noselectionstring'] = $this->noselectionstring;
+        if ($this->valuehtmlcallback) {
+            foreach ($context['options'] as &$option) {
+                $value = $option['value'];
+                $html = call_user_func($this->valuehtmlcallback, $value);
+                if ($html !== false) {
+                    $option['html'] = $html;
+                }
+            }
+        }
 
         return $context;
     }

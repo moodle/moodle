@@ -36,6 +36,11 @@ information provided here is intended especially for developers.
 * API function \core_search\manager::instance() now includes a $fast parameter to skip schema
   checks (as above).
 
+* Search engines should now implement the 'userids' option to restrict search results to those from
+  specific users, and return true to the new supports_users() function. The supplied Solr search
+  engine includes this feature. If this is not implemented, the search engine will continue to work
+  but the 'Users' search option will not appear.
+
 === 3.4 ===
 
 * Search indexing now supports time limits to make the scheduled task run more neatly. In order for

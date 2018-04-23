@@ -26,6 +26,7 @@ $string['advancedsearch'] = 'Advanced search';
 $string['all'] = 'All';
 $string['allareas'] = 'All areas';
 $string['allcourses'] = 'All courses';
+$string['allusers'] = 'All users';
 $string['author'] = 'Author';
 $string['authorname'] = 'Author name';
 $string['back'] = 'Back';

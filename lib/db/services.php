@@ -1185,6 +1185,13 @@ $functions = array(
         'type' => 'write',
         'capabilities' => 'moodle/role:assign'
     ),
+    'core_search_get_relevant_users' => array(
+        'classname' => '\core_search\external',
+        'methodname' => 'get_relevant_users',
+        'description' => 'Gets relevant users for a search request.',
+        'type' => 'read',
+        'ajax' => true
+    ),
     'core_tag_get_tagindex' => array(
         'classname' => 'core_tag_external',
         'methodname' => 'get_tagindex',
