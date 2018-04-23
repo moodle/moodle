@@ -1,7 +1,7 @@
 // Javascript module for courselist page
 // Copyright 2018 Howard Miller (howardsmiller@gmail.com)
 
-define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification'], function($, jqui, mdlcfg, ajax, notification) {
+define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification', 'core/templates'], function($, jqui, mdlcfg, ajax, notification, templates) {
 
     return {
 
@@ -32,10 +32,16 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification'], 
                     return;
                 }
 
+                // Template for course list
+                var context = {courses: courses};
+                templates.render('local_iomad_learningpath/prospectivelist', context)
+                    .done(function(html) {
+                        $('#prospectivelist').append(html);
+                    })
+                    .fail(notification.exception);
+
                 var items = [];
                 $.each(courses, function(id, course) {
-                    //items.push('<li class="text-truncate" data-courseid="' + course.id +
-                    //    '"><i class="fa fa-globe"></i> ' + course.fullname + ' <i class="fa fa-plus text-success"></i></li>');
                     items.push('<li class="text-truncate"><i class="fa fa-globe"></i> ' + course.fullname +
                         ' <i data-courseid="' + course.id + '" class="path-add fa fa-plus text-success"></i></li>');
                 });

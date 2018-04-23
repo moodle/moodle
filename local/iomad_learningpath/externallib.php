@@ -114,6 +114,7 @@ class local_iomad_learningpath_external extends external_api {
                     'id' => new external_value(PARAM_INT, 'Course ID'),
                     'fullname' => new external_value(PARAM_TEXT, 'Course fullname'),
                     'shortname' => new external_value(PARAM_TEXT, 'Course shortname'),
+                    'image' => new external_value(PARAM_URL, 'Course image'),
                 )
             )
         );
@@ -147,7 +148,18 @@ class local_iomad_learningpath_external extends external_api {
         $companypaths = new local_iomad_learningpath\companypaths($companyid, $context);
         $courses = $companypaths->get_prospective_courses($params['pathid'], $params['filter']);
 
-        return $courses;
+        // Just the bits we need
+        $pcs = [];
+        foreach ($courses as $course) {
+            $pcs[] = [
+                'id' => $course->id,
+                'fullname' => $course->fullname,
+                'shortname' => $course->shortname,
+                'image' => '',
+            ];
+        }
+
+        return $pcs;
     }
 
     /**
@@ -285,6 +297,7 @@ class local_iomad_learningpath_external extends external_api {
                     'id' => new external_value(PARAM_INT, 'Course ID'),
                     'fullname' => new external_value(PARAM_TEXT, 'Course fullname'),
                     'shortname' => new external_value(PARAM_TEXT, 'Course shortname'),
+                    'image' => new external_value(PARAM_URL, 'Course image'),
                 )
             )
         );
@@ -321,7 +334,18 @@ class local_iomad_learningpath_external extends external_api {
         $companypaths = new local_iomad_learningpath\companypaths($companyid, $context);
         $courses = $companypaths->get_courselist($params['pathid']);
 
-        return $courses;
+        // Just the bits we need
+        $ccs = [];
+        foreach ($courses as $course) {
+            $ccs[] = [
+                'id' => $course->id,
+                'fullname' => $course->fullname,
+                'shortname' => $course->shortname,
+                'image' => '',
+            ];
+        }
+
+        return $ccs;
     }
 
     /**

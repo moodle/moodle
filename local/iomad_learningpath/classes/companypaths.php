@@ -169,6 +169,29 @@ class companypaths {
     }
 
     /**
+     * Get course image url
+     * @param int $courseid
+     * @return mixed url or false if no image
+     */
+    public function get_course_image_url($courseid) {
+        global $OUTPUT;
+
+        $fs = get_file_storage();
+
+        $context = \context_course::instance($courseid);
+        $files = $fs->get_area_files($context->id, 'course', 'overviewfiles', 0);
+        foreach ($files as $file) {
+            if ($file->is_valid_image()) {
+                return \moodle_url::make_pluginfile_url($file->get_contextid(), $file->get_component(), $file->get_filearea(),
+                    null, $file->get_filepath(), $file->get_filename());
+            }
+        }
+
+        // No image defined, so...
+        return $OUTPUT->image_url('courseimage', 'block_iomad_learningpath');
+    }
+
+    /**
      * Get course list for given path
      * @param int $pathid
      * @param bool $idonly just return course ids if set
@@ -186,6 +209,11 @@ class companypaths {
         // ID only?
         if ($idonly) {
             return array_keys($courses);
+        }
+
+        // Add images
+        foreach ($courses as $course) {
+            $course->image = $this->get_course_image_url($course->id);
         }
 
         return $courses;
@@ -227,6 +255,7 @@ class companypaths {
             if ($filter && (stripos($course->fullname, $filter) === false)) {
                 continue;
             }
+            $course->image = $this->get_course_image_url($course->id);
             $courses[$course->id] = $course;
         }
         $this->categories = $categories;
