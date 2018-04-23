@@ -45,6 +45,11 @@ class default_handler extends handler {
      */
     public static function is_defined($forguests = false) {
         global $CFG;
+        if (!empty($CFG->sitepolicyhandler)) {
+            // This handler can also be used as a fallback in case of invalid $CFG->sitepolicyhandler,
+            // in this case assume that no site policy is set.
+            return false;
+        }
         if (!$forguests) {
             return !empty($CFG->sitepolicy);
         } else {
@@ -76,6 +81,11 @@ class default_handler extends handler {
      */
     public static function get_embed_url($forguests = false) {
         global $CFG;
+        if (!empty($CFG->sitepolicyhandler)) {
+            // This handler can also be used as a fallback in case of invalid $CFG->sitepolicyhandler,
+            // in this case assume that no site policy is set.
+            return null;
+        }
         if ($forguests && !empty($CFG->sitepolicyguest)) {
             return new moodle_url($CFG->sitepolicyguest);
         } else if (!$forguests && !empty($CFG->sitepolicy)) {
