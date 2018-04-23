@@ -35,7 +35,6 @@ class core_geopattern extends \RedeyeVentures\GeoPattern\GeoPattern {
      */
     public function patternbyid($uniqueid) {
         $this->setString($uniqueid);
-        
     }
 
     public function datauri() {

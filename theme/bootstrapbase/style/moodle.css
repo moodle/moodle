@@ -16488,7 +16488,7 @@ body {
   background-color: transparent;
 }
 .block_myoverview .row-fluid [class*="span"] {
-  margin-left: 0px;
+  margin-left: 0;
 }
 .block_myoverview .event-list-item {
   border-bottom: 1px solid #ddd;
