@@ -9240,8 +9240,8 @@ function get_performance_info() {
                     $mode = ' <span title="request cache">[r]</span>';
                     break;
             }
-            $html .= '<ul class="cache-definition-stats list-unstyled m-l-1 cache-mode-'.$modeclass.' card d-inline-block">';
-            $html .= '<li class="cache-definition-stats-heading p-t-1 card-header bg-inverse font-weight-bold">' .
+            $html .= '<ul class="cache-definition-stats list-unstyled m-l-1 m-b-1 cache-mode-'.$modeclass.' card d-inline-block">';
+            $html .= '<li class="cache-definition-stats-heading p-t-1 card-header bg-dark bg-inverse font-weight-bold">' .
                 $definition . $mode.'</li>';
             $text .= "$definition {";
             foreach ($details['stores'] as $store => $data) {
