@@ -92,3 +92,4 @@ $string['zeroisnotruncation'] = '0 indicates no truncation';
 $string['roles'] = 'Roles';
 $string['ignore'] = 'Ignore';
 $string['importimsfile'] = 'Import IMS Enterprise file';
+$string['privacy:metadata'] = 'The IMS Enterprise file enrolments plugin does not store any personal data.';

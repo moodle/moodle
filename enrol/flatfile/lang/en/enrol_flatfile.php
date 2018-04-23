@@ -61,3 +61,4 @@ It could look something like this:
    del, student, 17, CF101
    add, student, 21, CF101, 1091115000, 1091215000
 </pre>';
+$string['privacy:metadata'] = 'The Flat file (CSV) enrolments plugin does not store any personal data.';
