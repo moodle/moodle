@@ -67,23 +67,6 @@ class provider implements
     }
 
     /**
-     * Checks whether the component's provider class implements the specified interface.
-     * This can either be implemented directly, or by implementing a descendant (extension) of the specified interface.
-     *
-     * @param string $component the frankenstyle component name.
-     * @param string $interface the name of the interface we want to check.
-     * @return bool True if an implementation was found, false otherwise.
-     */
-    protected static function component_implements($providerclass, $interface) {
-        if (class_exists($providerclass)) {
-            $rc = new \ReflectionClass($providerclass);
-            return $rc->implementsInterface($interface);
-        }
-
-        return false;
-    }
-
-    /**
      * Deletes all user content for a context in all plagiarism plugins.
      *
      * @param  \context $context The context to delete user data for.
@@ -110,14 +93,6 @@ class provider implements
      */
     protected static function call_plugin_method($methodname, $params) {
         // Note: Even if plagiarism is _now_ disabled, there may be legacy data to export.
-        $plugins = \core_component::get_plugin_list('plagiarism');
-        foreach (array_keys($plugins) as $plugin) {
-            $component = "plagiarism_{$plugin}";
-            $classname = manager::get_provider_classname_for_component($component);
-            if (static::component_implements($classname, plagiarism_provider::class)) {
-                // This plagiarism plugin implements the plagiarism_provider.
-                component_class_callback($classname, $methodname, $params);
-            }
-        }
+        \core_privacy\manager::plugintype_class_callback('plagiarism', plagiarism_provider::class, $methodname, $params);
     }
 }
