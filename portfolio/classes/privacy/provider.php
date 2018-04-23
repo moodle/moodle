@@ -27,6 +27,8 @@ defined('MOODLE_INTERNAL') || die();
 
 use core_privacy\local\metadata\collection;
 use core_privacy\local\request\context;
+use core_privacy\local\request\contextlist;
+use core_privacy\local\request\approved_contextlist;
 
 /**
  * Provider for the portfolio API.
@@ -35,10 +37,9 @@ use core_privacy\local\request\context;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class provider implements
-        // The Portfolio subsystem does not store any data itself.
-        // It has no database tables, and it purely acts as a conduit to the various portfolio plugins.
+        // The core portfolio system stores preferences related to the other portfolio subsystems.
         \core_privacy\local\metadata\provider,
-
+        \core_privacy\local\request\plugin\provider,
         // The portfolio subsystem will be called by other components.
         \core_privacy\local\request\subsystem\plugin_provider {
 
@@ -49,7 +50,100 @@ class provider implements
      * @return  collection     A listing of user data stored through this system.
      */
     public static function get_metadata(collection $collection) : collection {
-        return $collection->add_plugintype_link('portfolio', [], 'privacy:metadata');
+        $collection->add_database_table('portfolio_instance_user', [
+            'instance' => 'privacy:metadata:instance',
+            'userid' => 'privacy:metadata:userid',
+            'name' => 'privacy:metadata:name',
+            'value' => 'privacy:metadata:value'
+        ], 'privacy:metadata:instancesummary');
+        $collection->add_plugintype_link('portfolio', [], 'privacy:metadata');
+        return $collection;
+    }
+
+    /**
+     * Get the list of contexts that contain user information for the specified user.
+     *
+     * @param   int $userid The user to search.
+     * @return  contextlist $contextlist The contextlist containing the list of contexts used in this plugin.
+     */
+    public static function get_contexts_for_userid(int $userid) : contextlist {
+        $sql = "SELECT ctx.id
+                  FROM {context} ctx
+                  JOIN {portfolio_instance_user} piu ON ctx.instanceid = piu.userid AND ctx.contextlevel = :usercontext
+                 WHERE piu.userid = :userid";
+        $params = ['userid' => $userid, 'usercontext' => CONTEXT_USER];
+        $contextlist = new contextlist();
+        $contextlist->add_from_sql($sql, $params);
+        return $contextlist;
+    }
+
+    /**
+     * Export all user data for the specified user, in the specified contexts.
+     *
+     * @param approved_contextlist $contextlist The approved contexts to export information for.
+     */
+    public static function export_user_data(approved_contextlist $contextlist) {
+        global $DB;
+
+        if ($contextlist->get_component() != 'core_portfolio') {
+            return;
+        }
+
+        $correctusercontext = array_filter($contextlist->get_contexts(), function($context) use ($contextlist) {
+            if ($context->contextlevel == CONTEXT_USER && $context->instanceid == $contextlist->get_user()->id) {
+                return $context;
+            }
+        });
+
+        $usercontext = array_shift($correctusercontext);
+
+
+        $sql = "SELECT pi.name, piu.name AS preference, piu.value
+                  FROM {portfolio_instance_user} piu
+                  JOIN {portfolio_instance} pi ON piu.instance = pi.id
+                 WHERE piu.userid = :userid";
+        $params = ['userid' => $usercontext->instanceid];
+        $instances = $DB->get_records_sql($sql, $params);
+        if (!empty($instances)) {
+            \core_privacy\local\request\writer::with_context($contextlist->current())->export_data(
+                    [get_string('privacy:path', 'portfolio')], (object) $instances);
+        }
+    }
+
+    /**
+     * Delete all data for all users in the specified context.
+     *
+     * @param context $context The specific context to delete data for.
+     */
+    public static function delete_data_for_all_users_in_context(\context $context) {
+        global $DB;
+        // Context could be anything, BEWARE!
+        if ($context->contextlevel == CONTEXT_USER) {
+            $DB->delete_records('portfolio_instance_user', ['userid' => $context->instanceid]);
+        }
+    }
+
+    /**
+     * Delete all user data for the specified user, in the specified contexts.
+     *
+     * @param   approved_contextlist    $contextlist    The approved contexts and user information to delete information for.
+     */
+    public static function delete_data_for_user(approved_contextlist $contextlist) {
+        global $DB;
+
+        if ($contextlist->get_component() != 'core_portfolio') {
+            return;
+        }
+
+        $correctusercontext = array_filter($contextlist->get_contexts(), function($context) use ($contextlist) {
+            if ($context->contextlevel == CONTEXT_USER && $context->instanceid == $contextlist->get_user()->id) {
+                return $context;
+            }
+        });
+
+        $usercontext = array_shift($correctusercontext);
+
+        $DB->delete_records('portfolio_instance_user', ['userid' => $usercontext->instanceid]);
     }
 
     /**
