@@ -39,13 +39,6 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification', '
                         $('#prospectivelist').append(html);
                     })
                     .fail(notification.exception);
-
-                var items = [];
-                $.each(courses, function(id, course) {
-                    items.push('<li class="text-truncate"><i class="fa fa-globe"></i> ' + course.fullname +
-                        ' <i data-courseid="' + course.id + '" class="path-add fa fa-plus text-success"></i></li>');
-                });
-                $('#prospectivelist').append(items.join(''));
             }
 
 
