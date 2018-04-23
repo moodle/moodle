@@ -49,6 +49,11 @@ defined('MOODLE_INTERNAL') || die();
 class core_text {
 
     /**
+     * @var string[] Array of strings representing Unicode non-characters
+     */
+    protected static $noncharacters;
+
+    /**
      * Return t3lib helper class, which is used for conversion between charsets
      *
      * @param bool $reset
@@ -626,6 +631,39 @@ class core_text {
             return substr($str, strlen($bom));
         }
         return $str;
+    }
+
+    /**
+     * There are a number of Unicode non-characters including the byte-order mark (which may appear
+     * multiple times in a string) and also other ranges. These can cause problems for some
+     * processing.
+     *
+     * This function removes the characters using string replace, so that the rest of the string
+     * remains unchanged.
+     *
+     * @param string $value Input string
+     * @return string Cleaned string value
+     * @since Moodle 3.4.3
+     */
+    public static function remove_unicode_non_characters($value) {
+        // Set up list of all Unicode non-characters for fast replacing.
+        if (!self::$noncharacters) {
+            self::$noncharacters = [];
+            // This list of characters is based on the Unicode standard. It includes the last two
+            // characters of each code planes 0-16 inclusive...
+            for ($plane = 0; $plane <= 16; $plane++) {
+                $base = ($plane === 0 ? '' : dechex($plane));
+                self::$noncharacters[] = html_entity_decode('&#x' . $base . 'fffe;');
+                self::$noncharacters[] = html_entity_decode('&#x' . $base . 'ffff;');
+            }
+            // ...And the character range U+FDD0 to U+FDEF.
+            for ($char = 0xfdd0; $char <= 0xfdef; $char++) {
+                self::$noncharacters[] = html_entity_decode('&#x' . dechex($char) . ';');
+            }
+        }
+
+        // Do character replacement.
+        return str_replace(self::$noncharacters, '', $value);
     }
 
     /**
