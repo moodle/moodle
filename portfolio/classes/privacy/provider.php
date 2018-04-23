@@ -84,23 +84,6 @@ class provider implements
     }
 
     /**
-     * Checks whether the component's provider class implements the specified interface.
-     * This can either be implemented directly, or by implementing a descendant (extension) of the specified interface.
-     *
-     * @param string $providerclass the provider class name.
-     * @param string $interface the name of the interface we want to check.
-     * @return bool True if an implementation was found, false otherwise.
-     */
-    protected static function component_implements(string $providerclass, string $interface) : bool {
-        if (class_exists($providerclass)) {
-            $rc = new \ReflectionClass($providerclass);
-            return $rc->implementsInterface($interface);
-        }
-
-        return false;
-    }
-
-    /**
      * Internal method for looping through all of the portfolio plugins and calling a method.
      *
      * @param  string $methodname Name of the method to call on the plugins.
@@ -108,14 +91,6 @@ class provider implements
      */
     protected static function call_plugin_method($methodname, $params) {
         // Note: Even if portfolio is _now_ disabled, there may be legacy data to export.
-        $plugins = \core_component::get_plugin_list('portfolio');
-        foreach (array_keys($plugins) as $plugin) {
-            $component = "portfolio_{$plugin}";
-            $classname = manager::get_provider_classname_for_component($component);
-            if (static::component_implements($classname, portfolio_provider::class)) {
-                // This portfolio plugin implements the portfolio_provider.
-                component_class_callback($classname, $methodname, $params);
-            }
-        }
+        \core_privacy\manager::plugintype_class_callback('portfolio', portfolio_provider::class, $methodname, $params);
     }
 }
