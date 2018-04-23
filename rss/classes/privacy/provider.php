@@ -49,12 +49,8 @@ class provider implements
      * @return  collection A listing of user data stored through this system.
      */
     public static function get_metadata(collection $collection) {
-        $collection->add_database_table('user_private_key', [
-                'value' => 'privacy:metadata:user_private_key:value',
-                'userid' => 'privacy:metadata:user_private_key:userid',
-                'validuntil' => 'privacy:metadata:user_private_key:validuntil',
-                'timecreated' => 'privacy:metadata:user_private_key:timecreated'
-            ], 'privacy:metadata:user_private_key');
+        $collection->add_subsystem_link('core_userkey', [], 'privacy:metadata:core_userkey');
+
         return $collection;
     }
 
@@ -84,25 +80,20 @@ class provider implements
      * @param approved_contextlist $contextlist The approved contexts to export information for.
      */
     public static function export_user_data(approved_contextlist $contextlist) {
-        $results = static::get_records($contextlist->get_user()->id);
-        $context = $contextlist->current();
-        if ($context->contextlevel == CONTEXT_USER) {
-            foreach ($results as $result) {
-                $context = \context_user::instance($result->userid);
-                $subcontext = [
-                    get_string('rss', 'rss'),
-                    transform::user($result->userid)
-                ];
-                $name = 'user_private_key-' . $result->id;
-                $data = (object)[
-                    'value' => $result->value,
-                    'iprestriction' => $result->iprestriction,
-                    'validuntil' => $result->validuntil,
-                    'timecreated' => transform::datetime($result->timecreated),
-                ];
-                writer::with_context($context)->export_related_data($subcontext, $name, $data);
-            }
+        // If the user has data, then only the CONTEXT_USER should be present so get the first context.
+        $contexts = $contextlist->get_contexts();
+        if (count($contexts) == 0) {
+            return;
         }
+        $context = reset($contexts);
+
+        // Sanity check that context is at the user context level, then get the userid.
+        if ($context->contextlevel !== CONTEXT_USER) {
+            return;
+        }
+
+        // Export associated userkeys.
+        \core_userkey\privacy\provider::export_userkeys($context, [], 'rss');
     }
 
     /**
@@ -111,7 +102,15 @@ class provider implements
      * @param context $context A user context.
      */
     public static function delete_data_for_all_users_in_context(\context $context) {
-        // The information in user_private_key table is removed automaticaly when a user is deteled.
+        // Sanity check that context is at the user context level, then get the userid.
+        if ($context->contextlevel !== CONTEXT_USER) {
+            return;
+        }
+        $userid = $context->instanceid;
+
+        // Delete all the userkeys.
+        \core_userkey\privacy\provider::delete_userkeys('rss', $userid);
+
     }
 
     /**
@@ -120,18 +119,19 @@ class provider implements
      * @param approved_contextlist $contextlist The approved contexts and user information to delete information for.
      */
     public static function delete_data_for_user(approved_contextlist $contextlist) {
-        // The information in user_private_key table is removed automaticaly when a user is deteled.
-    }
+        // If the user has data, then only the user context should be present so get the first context.
+        $contexts = $contextlist->get_contexts();
+        if (count($contexts) == 0) {
+            return;
+        }
+        $context = reset($contexts);
 
-    /**
-     * Get records related to this plugin and user.
-     *
-     * @param  int $userid The user ID
-     * @return array An array of records.
-     */
-    protected static function get_records($userid) {
-        global $DB;
-
-        return $DB->get_records('user_private_key', ['userid' => $userid, 'script' => 'rss']);
+        // Sanity check that context is at the user context level, then get the userid.
+        if ($context->contextlevel !== CONTEXT_USER) {
+            return;
+        }
+        $userid = $context->instanceid;
+        // Delete all the userkeys.
+        \core_userkey\privacy\provider::delete_userkeys('rss', $userid);
     }
 }
