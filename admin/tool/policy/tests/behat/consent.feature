@@ -551,3 +551,63 @@ Feature: User must accept policy managed by this plugin when logging in and sign
     When I press "Next"
     Then I should not see "I understand and agree"
     And I should see "New account"
+
+  Scenario: Accept policy while being logged in as another user
+    Given the following config values are set as admin:
+      | sitepolicyhandler | tool_policy |
+    And the following policies exist:
+      | Name                | Type | Revision | Content    | Summary     | Status   | Audience |
+      | This site policy    | 0    |          | full text2 | short text2 | active   | all      |
+      | This privacy policy | 1    |          | full text3 | short text3 | active   | loggedin |
+    And the following "users" exist:
+      | username | firstname | lastname | email            |
+      | user1    | User      | 1        | user1@example.com    |
+    When I log in as "admin"
+    And I navigate to "Users > Accounts > Browse list of users" in site administration
+    And I follow "User 1"
+    And I follow "Log in as"
+    Then I should see "You are logged in as User 1"
+    And I press "Continue"
+    And I should see "Please read our This site policy"
+    And I press "Next"
+    And I should see "Please read our This privacy policy"
+    And I press "Next"
+    And I should see "Viewing this page on behalf of User 1"
+    And I set the field "I agree to the This site policy" to "1"
+    And I set the field "I agree to the This privacy policy" to "1"
+    And I press "Next"
+    And I log out
+    And I log in as "user1"
+    And I follow "Profile" in the user menu
+    And I follow "Policies and agreements"
+    And "Admin User" "link" should exist in the "This site policy" "table_row"
+    And "Admin User" "link" should exist in the "This privacy policy" "table_row"
+
+  Scenario: Log in as another user without capability to accept policies on their behalf
+    Given the following config values are set as admin:
+      | sitepolicyhandler | tool_policy |
+    And the following policies exist:
+      | Name                | Type | Revision | Content    | Summary     | Status   | Audience |
+      | This site policy    | 0    |          | full text2 | short text2 | active   | all      |
+      | This privacy policy | 1    |          | full text3 | short text3 | active   | loggedin |
+    And the following "users" exist:
+      | username | firstname | lastname | email            |
+      | user1    | User      | 1        | user1@example.com    |
+      | manager  | Max       | Manager  | man@example.com |
+    And the following "role assigns" exist:
+      | user    | role           | contextlevel | reference |
+      | manager | manager        | System       |           |
+    When I log in as "manager"
+    And I press "Next"
+    And I press "Next"
+    And I set the field "I agree to the This site policy" to "1"
+    And I set the field "I agree to the This privacy policy" to "1"
+    And I press "Next"
+    And I navigate to "Users > Accounts > Browse list of users" in site administration
+    And I follow "User 1"
+    And I follow "Log in as"
+    Then I should see "You are logged in as User 1"
+    And I press "Continue"
+    And I should see "Policies and agreements"
+    And I should see "No permission to agree to the policies on behalf of this user"
+    And I should see "Sorry, you do not have the required permission to agree to the following policies on behalf of User 1"
