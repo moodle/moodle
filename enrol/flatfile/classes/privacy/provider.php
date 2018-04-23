@@ -13,18 +13,29 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
 /**
- * Strings for component 'enrol_category', language 'en'.
+ * Privacy Subsystem implementation for enrol_flatfile.
  *
- * @package    enrol_category
- * @copyright  2010 Petr Skoda  {@link http://skodak.org}
+ * @package    enrol_flatfile
+ * @copyright  2018 Carlos Escobedo <carlos@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-$string['category:config'] = 'Configure category enrol instances';
-$string['category:synchronised'] = 'Role assignments synchronised to course enrolment';
-$string['enrolcategorysynctask'] = 'Category enrolment sync task';
-$string['pluginname'] = 'Category enrolments';
-$string['pluginname_desc'] = 'The category enrolments plugin synchronises any role assignments in the category context for roles with the capability enrol/category:synchronised allowed.';
-$string['privacy:metadata'] = 'The Category enrolments plugin does not store any personal data.';
+namespace enrol_flatfile\privacy;
+defined('MOODLE_INTERNAL') || die();
+/**
+ * Privacy Subsystem for enrol_flatfile implementing null_provider.
+ *
+ * @copyright  2018 Carlos Escobedo <carlos@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class provider implements \core_privacy\local\metadata\null_provider {
+    /**
+     * Get the language string identifier with the component's language
+     * file to explain why this plugin stores no data.
+     *
+     * @return  string
+     */
+    public static function get_reason() : string {
+        return 'privacy:metadata';
+    }
+}
