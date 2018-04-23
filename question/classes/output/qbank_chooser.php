@@ -57,10 +57,12 @@ class qbank_chooser extends \core\output\chooser {
                     return new qbank_chooser_item($qtype, $context);
                 }, $real));
 
-        $sections[] = new chooser_section('other', new lang_string('other'),
-                array_map(function($qtype) use ($context) {
+        if (!empty($fake)) {
+            $sections[] = new chooser_section('other', new lang_string('other'),
+                array_map(function ($qtype) use ($context) {
                     return new qbank_chooser_item($qtype, $context);
                 }, $fake));
+        }
 
         parent::__construct(new moodle_url('/question/question.php'),
                 new lang_string('chooseqtypetoadd', 'question'), $sections, 'qtype');
