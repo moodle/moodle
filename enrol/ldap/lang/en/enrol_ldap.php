@@ -128,3 +128,4 @@ $string['user_type'] = 'If the group membership contains distinguished names, sp
 $string['user_type_key'] = 'User type';
 $string['version'] = 'The version of the LDAP protocol your server is using';
 $string['version_key'] = 'Version';
+$string['privacy:metadata'] = 'The LDAP enrolments plugin does not store any personal data.';
