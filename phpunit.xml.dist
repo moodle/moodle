@@ -125,6 +125,9 @@
         <testsuite name="core_repository_testsuite">
             <directory suffix="_test.php">repository/tests</directory>
         </testsuite>
+        <testsuite name="core_userkey_testsuite">
+            <directory suffix="_test.php">lib/userkey/tests</directory>
+        </testsuite>
         <testsuite name="core_user_testsuite">
             <directory suffix="_test.php">user/tests</directory>
         </testsuite>
