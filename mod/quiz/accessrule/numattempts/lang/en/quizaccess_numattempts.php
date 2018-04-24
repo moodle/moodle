@@ -29,3 +29,4 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['attemptsallowedn'] = 'Attempts allowed: {$a}';
 $string['pluginname'] = 'Number of attempts quiz access rule';
+$string['privacy:metadata'] = 'The Number of attempts quiz access rule plugin does not store any personal data.';

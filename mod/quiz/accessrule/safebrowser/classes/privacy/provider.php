@@ -15,19 +15,32 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for the quizaccess_delaybetweenattempts plugin.
+ * Privacy Subsystem implementation for quizaccess_safebrowser.
  *
- * @package    quizaccess
- * @subpackage delaybetweenattempts
- * @copyright  2011 The Open University
+ * @package    quizaccess_safebrowser
+ * @copyright  2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace quizaccess_safebrowser\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * Privacy Subsystem for quizaccess_safebrowser implementing null_provider.
+ *
+ * @copyright  2018 Andrew Nicols <andrew@nicols.co.uk>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class provider implements \core_privacy\local\metadata\null_provider {
 
-$string['pluginname'] = 'Delay between attempts quiz access rule';
-$string['privacy:metadata'] = 'The Delay between attempts quiz access rule plugin does not store any personal data.';
-$string['youcannotwait'] = 'This quiz closes before you will be allowed to start another attempt.';
-$string['youmustwait'] = 'You must wait before you may re-attempt this quiz. You will be allowed to start another attempt after {$a}.';
+    /**
+     * Get the language string identifier with the component's language
+     * file to explain why this plugin stores no data.
+     *
+     * @return  string
+     */
+    public static function get_reason() {
+        return 'privacy:metadata';
+    }
+}
