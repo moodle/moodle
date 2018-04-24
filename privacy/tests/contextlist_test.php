@@ -38,13 +38,6 @@ use \core_privacy\local\request\contextlist;
 class contextlist_test extends advanced_testcase {
 
     /**
-     * Runs before each test is performed.
-     */
-    public function setUp() {
-        $this->resetAfterTest();
-    }
-
-    /**
      * Ensure that valid SQL results in the relevant contexts being added.
      */
     public function test_add_from_sql() {
@@ -78,6 +71,8 @@ class contextlist_test extends advanced_testcase {
      * Ensure that a valid user context id is added.
      */
     public function test_add_user_context() {
+        $this->resetAfterTest();
+
         $user = $this->getDataGenerator()->create_user();
 
         $cl = new contextlist();
@@ -94,6 +89,8 @@ class contextlist_test extends advanced_testcase {
      * Ensure that valid user contexts are added.
      */
     public function test_add_user_contexts() {
+        $this->resetAfterTest();
+
         $user1 = $this->getDataGenerator()->create_user();
         $user2 = $this->getDataGenerator()->create_user();
 
