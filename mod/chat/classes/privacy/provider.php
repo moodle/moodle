@@ -167,7 +167,12 @@ class provider implements
             return;
         }
 
-        $chatid = get_coursemodule_from_id('chat', $context->instanceid, 0, false, MUST_EXIST)->instance;
+        $cm = get_coursemodule_from_id('chat', $context->instanceid);
+        if (!$cm) {
+            return;
+        }
+
+        $chatid = $cm->instance;
         $DB->delete_records_select('chat_messages', 'chatid = :chatid', ['chatid' => $chatid]);
         $DB->delete_records_select('chat_messages_current', 'chatid = :chatid', ['chatid' => $chatid]);
         $DB->delete_records_select('chat_users', 'chatid = :chatid', ['chatid' => $chatid]);
