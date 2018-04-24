@@ -415,3 +415,9 @@ textarea[data-auto-rows] {
         display: none;
     }
 }
+
+// The autocomplete popup needs a display:block container to correctly position to popup.
+.form-inline[data-fieldtype="autocomplete"],
+.form-inline[data-fieldtype="tags"] {
+    display: block;
+}
