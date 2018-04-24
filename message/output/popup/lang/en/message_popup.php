@@ -23,3 +23,4 @@
  */
 
 $string['pluginname'] = 'Web';
+$string['privacy:metadata'] = 'The messaging Web plugin does not store any personal data.';
