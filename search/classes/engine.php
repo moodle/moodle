@@ -140,6 +140,15 @@ abstract class engine {
     }
 
     /**
+     * Clears the users cache.
+     *
+     * @return null
+     */
+    public static function clear_users_cache() {
+        self::$cachedusers = [];
+    }
+
+    /**
      * Returns a search instance of the specified area checking internal caching.
      *
      * @param string $areaid Area id

@@ -371,6 +371,7 @@ class manager {
         static::$instance = null;
 
         base_block::clear_static();
+        engine::clear_users_cache();
     }
 
     /**
