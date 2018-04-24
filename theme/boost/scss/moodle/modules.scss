@@ -485,6 +485,11 @@ div#dock {
     vertical-align: middle;
 }
 
+#page-mod-quiz-edit ul.slots li.section li.activity .instancemaxmarkcontainer {
+    padding: 0;
+    margin: 0 0.4em;
+}
+
 // Assign.
 .path-mod-assign [data-region="grade-actions-panel"] [data-region="grade-actions"] .collapse-buttons {
     top: auto;
