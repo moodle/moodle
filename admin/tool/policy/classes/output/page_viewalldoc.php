@@ -54,8 +54,8 @@ class page_viewalldoc implements renderable, templatable {
      */
     public function __construct() {
 
-        $this->prepare_policies();
         $this->prepare_global_page_access();
+        $this->prepare_policies();
     }
 
     /**
