@@ -79,6 +79,7 @@ class contextlist_test extends advanced_testcase {
      */
     public function test_add_user_context() {
         $user = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->create_user();
 
         $cl = new contextlist();
         $cl->add_user_context($user->id);
@@ -96,6 +97,7 @@ class contextlist_test extends advanced_testcase {
     public function test_add_user_contexts() {
         $user1 = $this->getDataGenerator()->create_user();
         $user2 = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->create_user();
 
         $cl = new contextlist();
         $cl->add_user_contexts([$user1->id, $user2->id]);
