@@ -57,4 +57,4 @@ $string['privacy:metadata:repository_flickr_public'] = 'The Flickr public reposi
 $string['privacy:metadata:repository_flickr_public:author'] = 'The Flickr public repository content author.';
 $string['privacy:metadata:repository_flickr_public:email_address'] = 'The Flickr public repository user email address.';
 $string['privacy:metadata:repository_flickr_public:text'] = 'The Flickr public repository user search text.';
-$string['privacy:metadata:repository_flickr_public:user_id'] = 'The Flickr public repository user id.';
+$string['privacy:metadata:repository_flickr_public:user_id'] = 'The Flickr public repository user ID.';
