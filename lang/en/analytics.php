@@ -86,5 +86,5 @@ $string['predictionsprocessor_help'] = 'A predictions processor is the machine-l
 $string['processingsitecontents'] = 'Processing site contents';
 $string['successfullyanalysed'] = 'Successfully analysed';
 $string['timesplittingmethod'] = 'Time-splitting method';
-$string['timesplittingmethod_help'] = 'The time-splitting method divides the course duration into parts; the predictions engine will run at the end of these parts. It is recommended that you only enable the time-splitting methods you may be interested in using. The evaluation process will iterate through all enabled time-spitting methods, so the more time-splitting methods enabled, the slower the evaluation process will be.';
+$string['timesplittingmethod_help'] = 'The time-splitting method divides the course duration into parts; the predictions engine will run at the end of these parts. It is recommended that you only enable the time-splitting methods you may be interested in using. The evaluation process will iterate through all enabled time-splitting methods, so the more time-splitting methods enabled, the slower the evaluation process will be.';
 $string['viewprediction'] = 'View prediction details';

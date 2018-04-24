@@ -47,4 +47,4 @@ $string['scienceandtech'] = 'Science &amp; Tech';
 $string['sports'] = 'Sports';
 $string['tag_youtube:addinstance'] = 'Add a new YouTube block';
 $string['travel'] = 'Travel &amp; Places';
-$string['privacy:metadata'] = 'The Youtube block only shows data stored in other locations.';
+$string['privacy:metadata'] = 'The YouTube block only shows data stored in other locations.';

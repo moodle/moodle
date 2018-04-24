@@ -28,7 +28,7 @@ $string['canntenrollate'] = 'You cannot enrol any more, since enrolment ended on
 $string['cohortnonmemberinfo'] = 'Only members of cohort \'{$a}\' can self-enrol.';
 $string['cohortonly'] = 'Only cohort members';
 $string['cohortonly_help'] = 'Self enrolment may be restricted to members of a specified cohort only. Note that changing this setting has no effect on existing enrolments.';
-$string['confirmbulkdeleteenrolment'] = 'Are you sure you want to delete these users enrolments?';
+$string['confirmbulkdeleteenrolment'] = 'Are you sure you want to delete these user enrolments?';
 $string['customwelcomemessage'] = 'Custom welcome message';
 $string['customwelcomemessage_help'] = 'A custom welcome message may be added as plain text or Moodle-auto format, including HTML tags and multi-lang tags.
 
