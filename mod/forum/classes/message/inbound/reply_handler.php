@@ -162,6 +162,7 @@ class reply_handler extends \core\message\inbound\handler {
         $addpost->subject      = $subject;
         $addpost->parent       = $post->id;
         $addpost->itemid       = file_get_unused_draft_itemid();
+        $addpost->deleted      = 0;
 
         list ($message, $format) = self::remove_quoted_text($messagedata);
         $addpost->message = $message;

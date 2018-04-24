@@ -101,5 +101,20 @@ function xmldb_forum_upgrade($oldversion) {
     // Automatically generated Moodle v3.4.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2018032900) {
+
+        // Define field deleted to be added to forum_posts.
+        $table = new xmldb_table('forum_posts');
+        $field = new xmldb_field('deleted', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'mailnow');
+
+        // Conditionally launch add field deleted.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Forum savepoint reached.
+        upgrade_mod_savepoint(true, 2018032900, 'forum');
+    }
+
     return true;
 }
