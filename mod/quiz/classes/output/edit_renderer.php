@@ -966,6 +966,7 @@ class edit_renderer extends \plugin_renderer_base {
 
         $question = $structure->get_question_in_slot($slotnumber);
         $slot = $structure->get_slot_by_number($slotnumber);
+        $slottags = $structure->get_slot_tags_for_slot_id($slot->id);
         $editurl = new \moodle_url('/mod/quiz/editrandom.php',
                 array('returnurl' => $pageurl->out_as_local_url(), 'slotid' => $slot->id));
 
@@ -980,13 +981,19 @@ class edit_renderer extends \plugin_renderer_base {
                 'class' => 'icon activityicon', 'alt' => ' ', 'role' => 'presentation'));
 
         $editicon = $this->pix_icon('t/edit', $configuretitle, 'moodle', array('title' => ''));
+        $qbankurlparams = array(
+            'cmid' => $structure->get_cmid(),
+            'cat' => $question->category . ',' . $question->contextid,
+            'recurse' => !empty($question->questiontext)
+        );
+
+        foreach ($slottags as $index => $slottag) {
+            $qbankurlparams["qtagids[{$index}]"] = $slottag->tagid;
+        }
 
         // If this is a random question, display a link to show the questions
         // selected from in the question bank.
-        $qbankurl = new \moodle_url('/question/edit.php', array(
-                'cmid' => $structure->get_cmid(),
-                'cat' => $question->category . ',' . $question->contextid,
-                'recurse' => !empty($question->questiontext)));
+        $qbankurl = new \moodle_url('/question/edit.php', $qbankurlparams);
         $qbanklink = ' ' . \html_writer::link($qbankurl,
                 get_string('seequestions', 'quiz'), array('class' => 'mod_quiz_random_qbank_link'));
 
