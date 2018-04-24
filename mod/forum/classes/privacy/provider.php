@@ -305,8 +305,6 @@ class provider implements
             static::export_digest_data($userid, $forum);
             static::export_subscription_data($userid, $forum);
             static::export_tracking_data($userid, $forum);
-
-
         }
         $forums->close();
 
@@ -373,6 +371,7 @@ class provider implements
                 'pinned' => transform::yesno((bool) $discussion->pinned),
                 'timemodified' => transform::datetime($discussion->timemodified),
                 'usermodified' => transform::datetime($discussion->usermodified),
+                'creator_was_you' => transform::yesno($discussion->userid == $userid),
             ];
 
             // Store the discussion content.
@@ -546,7 +545,7 @@ class provider implements
             'subject' => format_string($post->subject, true),
             'created' => transform::datetime($post->created),
             'modified' => transform::datetime($post->modified),
-            'author' => transform::user($post->userid),
+            'author_was_you' => transform::yesno($post->userid == $userid),
         ];
 
         $postdata->message = writer::with_context($context)
@@ -787,13 +786,10 @@ class provider implements
         $fs->delete_area_files($context->id, 'mod_forum', 'post');
 
         // Delete all ratings in the context.
-        $rm = new \rating_manager();
-        $rm->delete_ratings((object) [
-            'contextid' => $context->id,
-        ]);
+        \core_rating\privacy\provider::delete_ratings($context, 'mod_forum', 'post');
 
         // Delete all Tags.
-        \core_tag_tag::delete_instances('mod_forum', 'post', $context->id);
+        \core_tag\privacy\provider::delete_item_tags($context, 'mod_forum', 'forum_posts');
     }
 
     /**
@@ -803,6 +799,8 @@ class provider implements
      */
     public static function delete_data_for_user(approved_contextlist $contextlist) {
         global $DB;
+        $user = $contextlist->get_user();
+        $userid = $user->id;
         foreach ($contextlist as $context) {
             // Get the course module.
             $cm = $DB->get_record('course_modules', ['id' => $context->instanceid]);
@@ -824,7 +822,7 @@ class provider implements
             // Delete all discussion items.
             $DB->delete_records_select(
                 'forum_queue',
-                "userid AND discussionid IN (SELECT id FROM {forum_discussions} WHERE forum = :forum)",
+                "userid = :userid AND discussionid IN (SELECT id FROM {forum_discussions} WHERE forum = :forum)",
                 [
                     'userid' => $userid,
                     'forum' => $forum->id,
@@ -845,6 +843,7 @@ class provider implements
                 // Do not delete discussion or forum posts.
                 // Instead update them to reflect that the content has been deleted.
                 $postsql = "userid = :userid AND discussion IN (SELECT id FROM {forum_discussions} WHERE forum = :forum)";
+                $postidsql = "SELECT fp.id FROM {forum_posts} fp WHERE {$postsql}";
                 $postparams = [
                     'forum' => $forum->id,
                     'userid' => $userid,
@@ -852,29 +851,23 @@ class provider implements
 
                 // Update the subject.
                 $DB->set_field_select('forum_posts', 'subject', '', $postsql, $postparams);
-                    'subject',
-                    get_string('privacy:request:delete:post:subject', 'mod_forum'),
-                    $postsql,
-                    $postparams);
 
                 // Update the subject and its format.
                 $DB->set_field_select('forum_posts', 'message', '', $postsql, $postparams);
-                    'forum_posts',
-                    'message',
-                    get_string('privacy:request:delete:post:message', 'mod_forum'),
-                    $postsql,
-                    $postparams);
                 $DB->set_field_select('forum_posts', 'messageformat', FORMAT_PLAIN, $postsql, $postparams);
 
-                $discussion->name = get_string('privacy:request:delete:discussion:name', 'mod_forum', null, $lang);
-                $DB->update_record('forum_discussions', $discussion);
+                // Mark the post as deleted.
+                $DB->set_field_select('forum_posts', 'deleted', 1, $postsql, $postparams);
 
-                // Note: Do _not_ delete ratings.
+                // Note: Do _not_ delete ratings of other users. Only delete ratings on the users own posts.
                 // Ratings are aggregate fields and deleting the rating of this post will have an effect on the rating
                 // of any post.
+                \core_rating\privacy\provider::delete_ratings_select($context, 'mod_forum', 'post',
+                        "IN ($postidsql)", $postparams);
 
                 // Delete all Tags.
-                \core_tag_tag::delete_instances('mod_forum', 'post', $context->id);
+                \core_tag\privacy\provider::delete_item_tags_select($context, 'mod_forum', 'forum_posts',
+                        "IN ($postidsql)", $postparams);
             }
 
             $uniquediscussions->close();
