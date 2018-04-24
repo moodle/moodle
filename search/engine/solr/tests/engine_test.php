@@ -71,6 +71,7 @@ class search_solr_engine_testcase extends advanced_testcase {
     public function setUp() {
         $this->resetAfterTest();
         set_config('enableglobalsearch', true);
+        set_config('searchengine', 'solr');
 
         if (!function_exists('solr_get_version')) {
             $this->markTestSkipped('Solr extension is not loaded.');
