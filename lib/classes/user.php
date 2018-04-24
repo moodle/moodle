@@ -261,7 +261,7 @@ class core_user {
         if (!in_array('deleted', $extra)) {
             $extrafieldlist[] = 'deleted';
         }
-        $extrafields = \user_picture::fields('u',
+        $selectfields = \user_picture::fields('u',
                 array_merge(get_all_user_name_fields(), $extrafieldlist));
 
         $index = 1;
@@ -327,7 +327,7 @@ class core_user {
         $readcount = $max + 2;
         for ($i = 0; $i < $querylimit; $i++) {
             $rawresult = $DB->get_records_sql("
-                    SELECT users.*, $extrafields
+                    SELECT $selectfields
                       FROM ($userquery) users
                       JOIN {user} u ON u.id = users.id
                      WHERE $where
