@@ -88,34 +88,6 @@ class company_edit_form extends company_moodleform {
         $mform->setType('shortname', PARAM_NOTAGS);
         $mform->addRule('shortname', $strrequired, 'required', null, 'client');
 
-        if (iomad::has_capability('block/iomad_company_admin:company_add', $context)) {
-            // Add the parent company selector.
-            $companies = $DB->get_records_sql_menu("SELECT id,name FROM {company}
-                                            WHERE id != :companyid
-                                            ORDER by name", array('companyid' => $this->companyid));
-            $allcompanies = array('0' => get_string('none')) + $companies;
-            $mform->addElement('select', 'parentid', get_string('parentcompany', 'block_iomad_company_admin'), $allcompanies, array('onchange' => 'this.form.submit()'));
-            $mform->setDefault('parentid', $this->parentcompanyid);
-
-            // Add in the template selector for the company.
-            $templates = $DB->get_records_menu('company_role_templates', array(), 'name', 'id,name');
-            $mform->addElement('autocomplete', 'templates', get_string('availabletemplates', 'block_iomad_company_admin'), $templates, array('multiple' => true));
-            $mform->addHelpButton('templates', 'availabletemplates', 'block_iomad_company_admin');   
-
-        } else if (iomad::has_capability('block/iomad_company_admin:company_add_child', $context) && !empty($this->parentcompanyid)) {
-            // Add it as a hidden field.
-            $mform->addElement('hidden', 'parentid', $this->parentcompanyid);
-            foreach ($this->companyrecord->templates as $companytemplateid) {
-                $mform->addElement('hidden', 'templates[' . $companytemplateid . ']', $companytemplateid);
-            }
-        } else {
-            // Add it as a hidden field.
-            $mform->addElement('hidden', 'parentid');
-            foreach ($this->companyrecord->templates as $companytemplateid) {
-                $mform->addElement('hidden', 'templates[' . $companytemplateid . ']', $companytemplateid);
-            }
-        }
-
         $mform->addElement('hidden', 'previousroletemplateid');
 
         // Add the ecommerce selector.
@@ -252,7 +224,7 @@ class company_edit_form extends company_moodleform {
                                             WHERE id != :companyid
                                             ORDER by name", array('companyid' => $this->companyid));
             $allcompanies = array('0' => get_string('none')) + $companies;
-            $mform->addElement('select', 'parentid', get_string('parentcompany', 'block_iomad_company_admin'), $allcompanies);
+            $mform->addElement('select', 'parentid', get_string('parentcompany', 'block_iomad_company_admin'), $allcompanies, array('onchange' => 'this.form.submit()'));
             $mform->setDefault('parentid', 0);
             $mform->addHelpButton('parentid', 'parentcompany', 'block_iomad_company_admin');
 
@@ -861,6 +833,16 @@ if ($currentcourses = $DB->get_records('company_course',
 // Set up the form.
 $mform = new company_edit_form($PAGE->url, $isadding, $companyid, $companyrecord, $firstcompany, $parentid, $child);
 $companyrecord->templates = array();
+
+// Set the parent company id if it's being passed.
+if (!empty($companyrecord->parentid)) {
+    $companyrecord->currentparentid = $companyrecord->parentid;
+} else {
+    $companyrecord->currentparentid = 0;
+}
+if (!empty($parentid)) {
+    $companyrecord->parentid = $parentid;
+}
 if ($companytemplates = $DB->get_records('company_role_templates_ass', array('companyid' => $companyid), null, 'templateid')) {
     $companyrecord->templates = array_keys($companytemplates);
 }
