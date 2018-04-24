@@ -29,6 +29,8 @@ global $CFG;
 require_once(__DIR__ . '/helper.php');
 require_once($CFG->dirroot . '/rating/lib.php');
 
+use \mod_forum\privacy\provider;
+
 /**
  * Tests for the forum implementation of the Privacy Provider API.
  *
@@ -888,22 +890,22 @@ class mod_forum_privacy_provider_testcase extends \core_privacy\tests\provider_t
             }
         }
 
-        // Mark all posts as read by user1.
-        $user1 = reset($users);
+        // Mark all posts as read by user.
+        $user = reset($users);
         $ratedposts = [];
         foreach ($posts as $post) {
             $discussion = $discussions[$post->discussion];
             $forum = $forums[$discussion->forum];
             $context = $contexts[$forum->id];
 
-            // Mark the post as being read by user1.
-            forum_tp_add_read_record($user1->id, $post->id);
+            // Mark the post as being read by user.
+            forum_tp_add_read_record($user->id, $post->id);
 
             // Tag the post.
             \core_tag_tag::set_item_tags('mod_forum', 'forum_posts', $post->id, $context, ['example', 'tag']);
 
             // Rate the other users content.
-            if ($post->userid != $user1->id) {
+            if ($post->userid != $user->id) {
                 $ratedposts[$post->id] = $post;
                 $rm = new rating_manager();
                 $ratingoptions = (object) [
@@ -918,7 +920,6 @@ class mod_forum_privacy_provider_testcase extends \core_privacy\tests\provider_t
                 $rating = new \rating($ratingoptions);
                 $rating->update_rating(75);
             }
-            $posttags = \core_tag_tag::get_item_tags('mod_forum', 'forum_posts', $post->id);
         }
 
         // Run as the user under test.
@@ -941,7 +942,7 @@ class mod_forum_privacy_provider_testcase extends \core_privacy\tests\provider_t
         // Delete for the first forum.
         $forum = reset($forums);
         $context = $contexts[$forum->id];
-        $this->delete_data_for_all_users_in_context('mod_forum', $context);
+        provider::delete_data_for_all_users_in_context($context);
 
         // Determine what should have been deleted.
         $discussionsinforum = array_filter($discussions, function($discussion) use ($forum) {
@@ -976,9 +977,8 @@ class mod_forum_privacy_provider_testcase extends \core_privacy\tests\provider_t
         }
 
         // All tags should have been deleted.
-        $posttags = \core_tag_tag::get_items_tags('mod_forum', 'post', array_keys($postsinforum));
-        foreach ($posttags as $tags) {
-            $this->assertEmpty($tags);
+        foreach (array_keys($postsinforum) as $postid) {
+            $this->assertCount(0, \core_tag_tag::get_item_tags('mod_forum', 'forum_posts', $postid));
         }
 
         // Check the other forum too. It should remain intact.
@@ -1023,9 +1023,200 @@ class mod_forum_privacy_provider_testcase extends \core_privacy\tests\provider_t
         }
 
         // All tags should remain.
-        $posttags = \core_tag_tag::get_items_tags('mod_forum', 'forum_posts', array_keys($postsinforum));
-        foreach ($posttags as $tags) {
-            $this->assertNotEmpty($tags);
+        foreach (array_keys($postsinforum) as $postid) {
+            $this->assertNotEmpty(\core_tag_tag::get_item_tags('mod_forum', 'forum_posts', $postid));
         }
+    }
+
+    /**
+     * Ensure that all user data is deleted for a specific context.
+     */
+    public function test_delete_data_for_user() {
+        global $DB;
+
+        $fs = get_file_storage();
+        $course = $this->getDataGenerator()->create_course();
+        $users = $this->helper_create_users($course, 5);
+
+        $forums = [];
+        $contexts = [];
+        for ($i = 0; $i < 2; $i++) {
+            $forum = $this->getDataGenerator()->create_module('forum', [
+                'course' => $course->id,
+                'scale' => 100,
+            ]);
+            $cm = get_coursemodule_from_instance('forum', $forum->id);
+            $context = \context_module::instance($cm->id);
+            $forums[$forum->id] = $forum;
+            $contexts[$forum->id] = $context;
+        }
+
+        $discussions = [];
+        $posts = [];
+        $postsbyforum = [];
+        foreach ($users as $user) {
+            $postsbyforum[$user->id] = [];
+            foreach ($forums as $forum) {
+                $context = $contexts[$forum->id];
+
+                // Create a new discussion + post in the forum.
+                list($discussion, $post) = $this->helper_post_to_forum($forum, $user);
+                $discussion = $DB->get_record('forum_discussions', ['id' => $discussion->id]);
+                $discussions[$discussion->id] = $discussion;
+                $postsbyforum[$user->id][$context->id] = [];
+
+                // Add a number of replies.
+                $posts[$post->id] = $post;
+                $thisforumposts[$post->id] = $post;
+                $postsbyforum[$user->id][$context->id][$post->id] = $post;
+
+                $reply = $this->helper_reply_to_post($post, $user);
+                $posts[$reply->id] = $reply;
+                $postsbyforum[$user->id][$context->id][$reply->id] = $reply;
+
+                $reply = $this->helper_reply_to_post($post, $user);
+                $posts[$reply->id] = $reply;
+                $postsbyforum[$user->id][$context->id][$reply->id] = $reply;
+
+                $reply = $this->helper_reply_to_post($reply, $user);
+                $posts[$reply->id] = $reply;
+                $postsbyforum[$user->id][$context->id][$reply->id] = $reply;
+
+                // Add a fake inline image to the original post.
+                $fs->create_file_from_string([
+                        'contextid' => $context->id,
+                        'component' => 'mod_forum',
+                        'filearea'  => 'post',
+                        'itemid'    => $post->id,
+                        'filepath'  => '/',
+                        'filename'  => 'example.jpg',
+                    ], 'image contents (not really)');
+            }
+        }
+
+        // Mark all posts as read by user1.
+        $user1 = reset($users);
+        foreach ($posts as $post) {
+            $discussion = $discussions[$post->discussion];
+            $forum = $forums[$discussion->forum];
+            $context = $contexts[$forum->id];
+
+            // Mark the post as being read by user1.
+            forum_tp_add_read_record($user1->id, $post->id);
+        }
+
+        // Rate and tag all posts.
+        $ratedposts = [];
+        foreach ($users as $user) {
+            foreach ($posts as $post) {
+                $discussion = $discussions[$post->discussion];
+                $forum = $forums[$discussion->forum];
+                $context = $contexts[$forum->id];
+
+                // Tag the post.
+                \core_tag_tag::set_item_tags('mod_forum', 'forum_posts', $post->id, $context, ['example', 'tag']);
+
+                // Rate the other users content.
+                if ($post->userid != $user->id) {
+                    $ratedposts[$post->id] = $post;
+                    $rm = new rating_manager();
+                    $ratingoptions = (object) [
+                        'context' => $context,
+                        'component' => 'mod_forum',
+                        'ratingarea' => 'post',
+                        'itemid' => $post->id,
+                        'scaleid' => $forum->scale,
+                        'userid' => $user->id,
+                    ];
+
+                    $rating = new \rating($ratingoptions);
+                    $rating->update_rating(75);
+                }
+            }
+        }
+
+        // Delete for one of the forums for the first user.
+        $firstcontext = reset($contexts);
+        list($postinsql, $postinparams) = $DB->get_in_or_equal(
+                array_keys($postsbyforum[$user1->id][$firstcontext->id]), SQL_PARAMS_NAMED);
+
+        $othercontext = next($contexts);
+        list($otherpostinsql, $otherpostinparams) = $DB->get_in_or_equal(
+                array_keys($postsbyforum[$user1->id][$othercontext->id]), SQL_PARAMS_NAMED);
+
+        $approvedcontextlist = new \core_privacy\tests\request\approved_contextlist(
+            \core_user::get_user($user1->id),
+            'mod_forum',
+            [$firstcontext->id]
+        );
+        provider::delete_data_for_user($approvedcontextlist);
+
+        // All posts should remain.
+        $this->assertCount(40, $DB->get_records('forum_posts'));
+
+        // There should be 8 posts belonging to user1.
+        $this->assertCount(8, $DB->get_records('forum_posts', [
+                'userid' => $user1->id,
+            ]));
+
+        // Four of those posts should have been marked as deleted.
+        // That means that the deleted flag is set, and both the subject and message are empty.
+        $this->assertCount(4, $DB->get_records_select('forum_posts', "userid = :userid AND deleted = :deleted"
+                    . " AND " . $DB->sql_compare_text('subject') . " = " . $DB->sql_compare_text(':subject')
+                    . " AND " . $DB->sql_compare_text('message') . " = " . $DB->sql_compare_text(':message')
+                , [
+                    'userid' => $user1->id,
+                    'deleted' => 1,
+                    'subject' => '',
+                    'message' => '',
+                ]));
+
+        // Only user1's posts should have been marked this way.
+        $this->assertCount(4, $DB->get_records('forum_posts', [
+                'deleted' => 1,
+            ]));
+        $this->assertCount(4, $DB->get_records_select('forum_posts',
+            $DB->sql_compare_text('subject') . " = " . $DB->sql_compare_text(':subject'), [
+                'subject' => '',
+            ]));
+        $this->assertCount(4, $DB->get_records_select('forum_posts',
+            $DB->sql_compare_text('message') . " = " . $DB->sql_compare_text(':message'), [
+                'message' => '',
+            ]));
+
+        // Only the posts in the first discussion should have been marked this way.
+        $this->assertCount(4, $DB->get_records_select('forum_posts',
+            "deleted = :deleted AND id {$postinsql}",
+                array_merge($postinparams, [
+                    'deleted' => 1,
+                ])
+            ));
+
+        // Ratings should have been removed from the affected posts.
+        $this->assertCount(0, $DB->get_records_select('rating', "itemid {$postinsql}", $postinparams));
+
+        // Ratings should remain on posts in the other context.
+        $this->assertCount(16, $DB->get_records_select('rating', "itemid {$otherpostinsql}", $otherpostinparams));
+
+        // Ratings should remain where the user has rated another person's post.
+        $this->assertCount(32, $DB->get_records('rating', ['userid' => $user1->id]));
+
+        // Tags for the affected posts should be removed.
+        $this->assertCount(8, $DB->get_records_select('tag_instance', "itemid {$otherpostinsql}", $otherpostinparams));
+
+        // Tags should remain for the other posts by this user.
+        $this->assertCount(0, $DB->get_records_select('tag_instance', "itemid {$postinsql}", $postinparams));
+
+        // Tags should remain for others.
+        // Original total: 5 users * 2 forums * 4 posts * 2 tags
+        // Deleted posts: 8
+        // New total: 72.
+        $this->assertCount(72, $DB->get_records('tag_instance'));
+
+        // Files for the affected posts should be removed.
+        $this->assertCount(0, $DB->get_records_select('files', "itemid {$postinsql}", $postinparams));
+
+        // Files for the other posts should remain.
+        $this->assertCount(2, $DB->get_records_select('files', "itemid {$otherpostinsql}", $otherpostinparams));
     }
 }
