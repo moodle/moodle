@@ -50,7 +50,7 @@ abstract class moodleform_mod extends moodleform {
      */
     protected $_customcompletionelements;
     /**
-     * @var string name of module
+     * @var string name of module.
      */
     protected $_modname;
     /** current context, course or module depends if already exists*/
@@ -86,13 +86,15 @@ abstract class moodleform_mod extends moodleform {
         require_once($CFG->dirroot . '/course/format/lib.php');
         $this->courseformat = course_get_format($course);
 
-        // Guess module name
-        $matches = array();
-        if (!preg_match('/^mod_([^_]+)_mod_form$/', get_class($this), $matches)) {
-            debugging('Use $modname parameter or rename form to mod_xx_mod_form, where xx is name of your module');
-            print_error('unknownmodulename');
+        // Guess module name if not set.
+        if (is_null($this->_modname)) {
+            $matches = array();
+            if (!preg_match('/^mod_([^_]+)_mod_form$/', get_class($this), $matches)) {
+                debugging('Rename form to mod_xx_mod_form, where xx is name of your module');
+                print_error('unknownmodulename');
+            }
+            $this->_modname = $matches[1];
         }
-        $this->_modname = $matches[1];
         $this->init_features();
         parent::__construct('modedit.php');
     }
