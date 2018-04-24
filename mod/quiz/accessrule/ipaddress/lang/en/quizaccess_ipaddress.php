@@ -28,4 +28,5 @@ defined('MOODLE_INTERNAL') || die();
 
 
 $string['pluginname'] = 'IP address quiz access rule';
+$string['privacy:metadata'] = 'The IP address quiz access rule plugin does not store any personal data.';
 $string['subnetwrong'] = 'This quiz is only accessible from certain locations, and this computer is not on the allowed list.';
