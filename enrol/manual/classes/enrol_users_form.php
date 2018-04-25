@@ -129,6 +129,7 @@ class enrol_manual_enrol_users_form extends moodleform {
 
         $mform->addElement('checkbox', 'recovergrades', get_string('recovergrades', 'enrol'));
         $mform->setAdvanced('recovergrades');
+        $mform->setDefault('recovergrades', $CFG->recovergradesdefault);
         $mform->addElement('select', 'duration', get_string('defaultperiod', 'enrol_manual'), $periodmenu);
         $mform->setDefault('duration', $defaultperiod);
         $mform->setAdvanced('duration');
