@@ -164,6 +164,8 @@ class company_license_form extends company_moodleform {
             $mform->addHelpButton('type', 'licensetype', 'block_iomad_company_admin');
             $mform->addElement('selectyesno', 'program', get_string('licenseprogram', 'block_iomad_company_admin'));
             $mform->addHelpButton('program', 'licenseprogram', 'block_iomad_company_admin');
+            $mform->addElement('selectyesno', 'instant', get_string('licenseinstant', 'block_iomad_company_admin'));
+            $mform->addHelpButton('instant', 'licenseinstant', 'block_iomad_company_admin');
             $mform->addElement('date_selector', 'startdate', get_string('licensestartdate', 'block_iomad_company_admin'));
 
             $mform->addHelpButton('startdate', 'licensestartdate', 'block_iomad_company_admin');
@@ -420,12 +422,13 @@ if ( $mform->is_cancelled() || optional_param('cancel', false, PARAM_BOOL) ) {
             $licensedata['program'] = $data->program;
             $licensedata['allocation'] = $data->allocation * count($data->licensecourses);
         }
+        $licensedata['instant'] = $data->instant;
         $licensedata['expirydate'] = $data->expirydate;
         $licensedata['startdate'] = $data->startdate;
         if (empty($data->languages)) {
             $data->languages = array();
         }
-        if (empty($data->parentid)) { 
+        if (empty($data->parentid)) {
             $licensedata['companyid'] = $data->companyid;
         } else {
             $licensedata['companyid'] = $data->designatedcompany;

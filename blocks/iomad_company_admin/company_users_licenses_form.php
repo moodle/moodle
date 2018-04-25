@@ -286,13 +286,13 @@ class company_users_course_form extends moodleform {
                                 // Check we are not adding multiple times.
                                 if (!$DB->get_record('companylicense_users', $assignrecord)) {
                                     $assignrecord['issuedate'] = time();
-                                    $DB->insert_record('companylicense_users', $assignrecord);
+                                    $assignrecord['id'] = $DB->insert_record('companylicense_users', $assignrecord);
         
                                     // Create an event.
                                     $eventother = array('licenseid' => $licenserecord['id'],
                                                         'duedate' => $duedate);
                                     $event = \block_iomad_company_admin\event\user_license_assigned::create(array('context' => context_course::instance($course->id),
-                                                                                                                  'objectid' => $licenserecord['id'],
+                                                                                                                  'objectid' => $assignrecord['id'],
                                                                                                                   'courseid' => $course->id,
                                                                                                                   'userid' => $this->userid,
                                                                                                                   'other' => $eventother));

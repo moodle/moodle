@@ -331,7 +331,7 @@ class company_license_users_form extends moodleform {
                                 // Check if we are not assigning multiple times.
                                 if (!$DB->get_record('companylicense_users', $recordarray)) {
                                     $recordarray['issuedate'] = time();
-                                    $DB->insert_record('companylicense_users', $recordarray);
+                                    $recordarray['id'] = $DB->insert_record('companylicense_users', $recordarray);
                                     $count++;
                                     $due = optional_param_array('due', array(), PARAM_INT);
                                     if (!empty($due)) {
@@ -344,7 +344,7 @@ class company_license_users_form extends moodleform {
                                     $eventother = array('licenseid' => $this->license->id,
                                                         'duedate' => $duedate);
                                     $event = \block_iomad_company_admin\event\user_license_assigned::create(array('context' => context_course::instance($courseid),
-                                                                                                                  'objectid' => $this->license->id,
+                                                                                                                  'objectid' => $recordarray['id'],
                                                                                                                   'courseid' => $courseid,
                                                                                                                   'userid' => $adduser->id,
                                                                                                                   'other' => $eventother));

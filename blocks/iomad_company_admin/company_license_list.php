@@ -129,6 +129,7 @@ $straddlicense = get_string('licenseaddnew', 'block_iomad_company_admin');
 $strlicensename = get_string('licensename', 'block_iomad_company_admin');
 $strlicensereference = get_string('licensereference', 'block_iomad_company_admin');
 $strlicenseprogram = get_string('licenseprogram', 'block_iomad_company_admin');
+$strlicenseinstant = get_string('licenseinstant', 'block_iomad_company_admin');
 $strcoursesname = get_string('allocatedcourses', 'block_iomad_company_admin');
 $strlicenseshelflife = get_string('licenseexpires', 'block_iomad_company_admin');
 $strlicenseduration = get_string('licenseduration', 'block_iomad_company_admin');
@@ -139,6 +140,7 @@ $table = new html_table();
 $table->head = array ($strlicensename,
                       $strlicensereference,
                       $strlicenseprogram,
+                      $strlicenseinstant,
                       $strcoursesname,
                       $strlicenseshelflife,
                       $strlicenseduration,
@@ -146,7 +148,7 @@ $table->head = array ($strlicensename,
                       $strlicenseremaining,
                       "",
                       "");
-$table->align = array ("left", "left", "left", "left", "left", "center", "center", "center", "center");
+$table->align = array ("left", "left", "left", "left", "left", "left", "center", "center", "center", "center");
 $table->width = "95%";
 
 if ($departmentid == $companydepartment->id) {
@@ -251,6 +253,13 @@ if ($departmentid == $companydepartment->id) {
             $used = $license->used;
         }
 
+        // Deal with allocation numbers if a program.
+        if (!empty($license->instant)) {
+            $instantstring = get_string('yes');
+        } else {
+            $instantstring = get_string('no');
+        }
+
         // Deal with valid length if a subscription.
         if (!empty($license->type)) {
             $validlength = "-";
@@ -262,6 +271,7 @@ if ($departmentid == $companydepartment->id) {
         $dataarray = array ($license->name,
                            $license->reference,
                            $programstring,
+                           $instantstring,
                            $coursestring,
                            date($CFG->iomad_date_format, $license->expirydate),
                            $validlength,

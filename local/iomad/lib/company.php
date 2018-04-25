@@ -2848,6 +2848,7 @@ class company {
         global $DB, $CFG;
 
         $userid = $event->userid;
+        $userlicid = $event->objectid;
         $licenseid = $event->other['licenseid'];
         $courseid = $event->courseid;
         $duedate = $event->other['duedate'];
@@ -2883,6 +2884,44 @@ class company {
 
         // Update the license usage.
         self::update_license_usage($licenseid);
+
+        // Is this an immediate license?
+        if (!empty($licenserecord->immediate)) {
+            if ($instance = $DB->get_record('enrol', array('courseid' => $course->id, 'enrol' => 'license'))) {
+                // Enrol the user on the course.
+                $enrol = enrol_get_plugin('license');
+    
+                // Enrol the user in the course.
+                $timestart = time();
+    
+                if (empty($licenserecord->type)) {
+                    // Set the timeend to be time start + the valid length for the license in days.
+                    $timeend = $timestart + ($licenserecord->validlength * 24 * 60 * 60 );
+                } else {
+                    // Set the timeend to be when the license runs out.
+                    $timeend = $licenserecord->expirydate;
+                }
+    
+                $this->enrol_user($instance, $user->id, $instance->roleid, $timestart, $timeend);
+    
+                // Get the userlicense record.
+                $userlicense = $DB->get_record('companylicense_users', array('id' => $userlicid));
+    
+                // Add the user to the appropriate course group.
+                if (!empty($course->groupmode)) {
+                    $userlicense = $DB->get_record('companylicense_users', array('id' => $userlicid));
+                    self::add_user_to_shared_course($instance->courseid, $user->id, $license->companyid, $userlicense->groupid);
+                }
+    
+                // Update the userlicense record to mark it as in use.
+                $DB->set_field('companylicense_users', 'isusing', 1, array('id' => $userlicense->id));
+    
+                // Send welcome.
+                if ($instance->customint4) {
+                    $this->email_welcome_message($instance, $user);
+                }
+            }
+        }
 
         return true;
     }
