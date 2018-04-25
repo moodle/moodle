@@ -64,5 +64,5 @@ $string['printheading'] = 'Display page name';
 $string['printheadingexplain'] = 'Display page name above content?';
 $string['printintro'] = 'Display page description';
 $string['printintroexplain'] = 'Display page description above content?';
-$string['privacy:metadata'] = 'The mod_page plugin does not store any personal data.';
+$string['privacy:metadata'] = 'The Page resource plugin does not store any personal data.';
 $string['search:activity'] = 'Page';
