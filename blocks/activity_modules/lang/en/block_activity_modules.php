@@ -24,4 +24,4 @@
 
 $string['activity_modules:addinstance'] = 'Add a new activities block';
 $string['pluginname'] = 'Activities';
-$string['privacy:metadata'] = 'The Activites block only shows data stored in other locations.';
+$string['privacy:metadata'] = 'The Activities block only shows data stored in other locations.';
