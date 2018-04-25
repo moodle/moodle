@@ -24,23 +24,136 @@
 
 namespace block_iomad_approve_access\privacy;
 
+use core_privacy\local\metadata\collection;
+use core_privacy\local\request\approved_contextlist;
+use core_privacy\local\request\contextlist;
+use core_privacy\local\request\deletion_criteria;
+use core_privacy\local\request\helper;
+use core_privacy\local\request\writer;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Privacy Subsystem for block_iomad_approve_access implementing null_provider.
+ * Implementation of the privacy subsystem plugin provider for the choice activity module.
  *
- * @copyright  2018 E-Learn Design http://www.e-learndesign.co.uk
+ * @copyright  2018 E-Learn Design (http://www.e-learndesign.co.uk)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider implements \core_privacy\local\metadata\null_provider {
+class provider implements
+        // This plugin stores personal data.
+        \core_privacy\local\metadata\provider,
+
+        // This plugin is a core_user_data_provider.
+        \core_privacy\local\request\plugin\provider {
+    /**
+     * Return the fields which contain personal data.
+     *
+     * @param collection $items a reference to the collection to use to store the metadata.
+     * @return collection the updated collection of metadata items.
+     */
+    public static function get_metadata(collection $items) {
+        $items->add_database_table(
+            'block_iomad_approve_access',
+            [
+                'id' => 'privacy:metadata:block_iomad_approve_access:id',
+                'userid' => 'privacy:metadata:block_iomad_approve_access:userid',
+                'companyid' => 'privacy:metadata:block_iomad_approve_access:companyid',
+                'courseid' => 'privacy:metadata:block_iomad_approve_access:courseid',
+                'activityid' => 'privacy:metadata:block_iomad_approve_access:activityid',
+                'tm_ok' => 'privacy:metadata:block_iomad_approve_access:tm_ok',
+                'manager_ok' => 'privacy:metadata:block_iomad_approve_access:manger_ok',
+            ],
+            'privacy:metadata:block_iomad_approve_access'
+        );
+
+        return $items;
+    }
 
     /**
-     * Get the language string identifier with the component's language
-     * file to explain why this plugin stores no data.
+     * Get the list of contexts that contain user information for the specified user.
      *
-     * @return  string
+     * @param int $userid the userid.
+     * @return contextlist the list of contexts containing user info for the user.
      */
-    public static function get_reason() {
-        return 'privacy:metadata';
+    public static function get_contexts_for_userid($userid) {
+        // Fetch all choice answers.
+        $sql = "SELECT c.id
+                  FROM {context} c
+                WHERE contextlevel = :contextlevel";
+
+        $params = [
+            'userid'  => $userid,
+            'contextlevel'  => CONTEXT_SYSTEM,
+        ];
+        $contextlist = new contextlist();
+        $contextlist->add_from_sql($sql, $params);
+
+        return $contextlist;
+    }
+
+    /**
+     * Export personal data for the given approved_contextlist. User and context information is contained within the contextlist.
+     *
+     * @param approved_contextlist $contextlist a list of contexts approved for export.
+     */
+    public static function export_user_data(approved_contextlist $contextlist) {
+        global $DB;
+
+        if (empty($contextlist->count())) {
+            return;
+        }
+
+        $user = $contextlist->get_user();
+
+        $context = context_system::instance();
+
+        // Get the emails information.
+        $sql = "SELECT * FROM {block_iomad_approve_access}
+                     WHERE userid = :userid";
+        $params = array('userid' => $user->id);
+        if ($approvals = $DB->get_records_sql($sql, $params)) {
+            foreach ($approvals as $approval) {
+                writer::with_context($context)->export_data($context, $approval);
+            }
+        }
+    }
+
+
+    /**
+     * Delete all data for all users in the specified context.
+     *
+     * @param \context $context the context to delete in.
+     */
+    public static function delete_data_for_all_users_in_context(\context $context) {
+        global $DB;
+
+        if (empty($context)) {
+            return;
+        }
+        $DB->delete_records('block_iomad_approve_access');
+    }
+
+    /**
+     * Delete all user data for the specified user, in the specified contexts.
+     *
+     * @param approved_contextlist $contextlist a list of contexts approved for deletion.
+     */
+    public static function delete_data_for_user(approved_contextlist $contextlist) {
+        global $DB;
+
+        if (empty($contextlist->count())) {
+            return;
+        }
+
+        $user = $contextlist->get_user();
+        // Get the emails information.
+        $sql = "SELECT * FROM {block_iomad_approve_access}
+                     WHERE userid = :userid";
+        $params = array('userid' => $user->id);
+        if ($approvals = $DB->get_records_sql($sql, $params)) {
+            foreach ($approvals as $approval) {
+                $DB->delete_records('block_iomad_approve_access', array('id' => $approval->id));
+            }
+        }
     }
 }
