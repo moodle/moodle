@@ -3153,6 +3153,7 @@ class company {
                 $child->expirydate = $licenserecord->expirydate;
                 $child->type = $licenserecord->type;
                 $child->startdate = $licenserecord->startdate;
+                $child->instant = $licenserecord->instant;
 
                 // Create an event to deal with any child license allocations.
                 $eventother = $event->other;
