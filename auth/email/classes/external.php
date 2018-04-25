@@ -289,7 +289,7 @@ class auth_email_external extends external_api {
         $data['email2'] = $data['email'];
         // Force policy agreed if a site policy is set. The client is responsible of implementing the interface check.
         $manager = new \core_privacy\local\sitepolicy\manager();
-        if (!$manager->is_defined()) {
+        if ($manager->is_defined()) {
             $data['policyagreed'] = 1;
         }
         unset($data['recaptcharesponse']);
