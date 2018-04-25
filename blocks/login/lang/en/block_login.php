@@ -24,4 +24,4 @@
 
 $string['login:addinstance'] = 'Add a new login block';
 $string['pluginname'] = 'Login';
-$string['privacy:metadata'] = 'The Login block only provides a way to login and does not store any data itself.';
+$string['privacy:metadata'] = 'The Login block only provides a way to log in and does not store any data itself.';

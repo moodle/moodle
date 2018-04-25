@@ -28,4 +28,4 @@ $string['numbadgestodisplay'] = 'Number of latest badges to display';
 $string['nothingtodisplay'] = 'You have no badges to display';
 $string['badges:addinstance'] = 'Add a new My latest badges block';
 $string['badges:myaddinstance'] = 'Add a new My latest badges block to Dashboard';
-$string['privacy:metadata'] = 'The Badges block only shows data stored in other locations.';
+$string['privacy:metadata'] = 'The Latest badges block only shows data stored in other locations.';
