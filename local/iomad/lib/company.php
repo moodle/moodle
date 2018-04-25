@@ -2244,7 +2244,7 @@ class company {
      *
      **/
     public static function check_valid_user($companyid, $userid, $deparmentid=0) {
-        global $DB;
+        global $DB, $USER;
 
         if (is_siteadmin($userid)) {
             return true;
