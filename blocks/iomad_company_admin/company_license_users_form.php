@@ -520,7 +520,9 @@ if (iomad::has_capability('block/iomad_company_admin:unallocate_licenses', conte
             $licenselist[$license->id] = $license->name . " (" . get_string('licenseexpired', 'block_iomad_company_admin', date($CFG->iomad_date_format, $license->expirydate)) . ")";
         } else if ($license->startdate > time()) {
             $licenselist[$license->id] = $license->name . " (" . get_string('licensevalidfrom', 'block_iomad_company_admin', date($CFG->iomad_date_format, $license->startdate)) . ")";
-            $availablewarning = get_string('licensevalidfromwarning', 'block_iomad_company_admin', date($CFG->iomad_date_format, $license->startdate));
+            if ($licenseid == $license->id) {
+                $availablewarning = get_string('licensevalidfromwarning', 'block_iomad_company_admin', date($CFG->iomad_date_format, $license->startdate));
+            }
         } else {
             $licenselist[$license->id] = $license->name;
         }
@@ -541,7 +543,9 @@ if (iomad::has_capability('block/iomad_company_admin:unallocate_licenses', conte
             if ($alllicenses || $license->expirydate > time()) {
                 if ($license->startdate > time()) {
                     $licenselist[$license->id] = $license->name . " (" . get_string('licensevalidfrom', 'block_iomad_company_admin', date($CFG->iomad_date_format, $license->startdate)) . ")";
-                    $availablewarning = get_string('licensevalidfromwarning', 'block_iomad_company_admin', date($CFG->iomad_date_format, $license->startdate));
+                    if ($licenseid == $license->id) {
+                        $availablewarning = get_string('licensevalidfromwarning', 'block_iomad_company_admin', date($CFG->iomad_date_format, $license->startdate));
+                    }
                 } else {
                     $licenselist[$license->id] = $license->name;
                 }
