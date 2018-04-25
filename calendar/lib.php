@@ -1048,7 +1048,7 @@ class calendar_information {
             $course = get_course($courseid);
             $calendar->context = context_course::instance($course->id);
 
-            if (!$course->visible) {
+            if (!$course->visible && !is_role_switched($course->id)) {
                 require_capability('moodle/course:viewhiddencourses', $calendar->context);
             }
 
