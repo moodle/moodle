@@ -1646,7 +1646,7 @@ function xmldb_local_iomad_upgrade($oldversion) {
 
         // Set the default start date to be in the past.
         $startdate = strtotime('01/01/2004');
-        $DB->execute("UPDATE {company_license} SET startdate = :startdate", array('startdate' => $startdate));
+        $DB->execute("UPDATE {companylicense} SET startdate = :startdate", array('startdate' => $startdate));
 
         // Iomad savepoint reached.
         upgrade_plugin_savepoint(true, 2017090304, 'local', 'iomad');
