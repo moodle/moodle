@@ -413,8 +413,8 @@ if ( $mform->is_cancelled() || optional_param('cancel', false, PARAM_BOOL) ) {
 
         $new = false;
         $licensedata = array();
-        $licensedata['name'] = $data->name;
-        $licensedata['reference'] = $data->reference;
+        $licensedata['name'] = trim($data->name);
+        $licensedata['reference'] = trim($data->reference);
         if (empty($data->program)) {
             $licensedata['program'] = 0;
             $licensedata['allocation'] = $data->allocation;

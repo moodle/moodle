@@ -117,7 +117,7 @@ class department_edit_form extends company_moodleform {
 
         $errors = array();
 
-        if ($departmentbyname = $DB->get_record('department', array('company' => $this->selectedcompany, 'shortname' => $data['shortname']))) {
+        if ($departmentbyname = $DB->get_record('department', array('company' => $this->selectedcompany, 'shortname' => trim($data['shortname'])))) {
             if ($departmentbyname->id != $this->departmentid) {
                 $errors['shortname'] = get_string('departmentnameinuse', 'block_iomad_company_admin');
             }
@@ -192,6 +192,11 @@ if ($editform->is_cancelled()) {
     redirect($departmentlist);
     die;
 } else if ($createdata = $editform->get_data()) {
+
+    // Deal with leading/trailing spaces.
+    $createdata->fullname = trim($createdata->fullname);
+    $createdata->shortname = trim($createdata->shortname);
+
     // Create or update the department.
     if ($createdata->action != 0 ) {
         // We are creating a new department.

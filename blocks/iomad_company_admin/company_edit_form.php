@@ -868,6 +868,11 @@ if ($mform->is_cancelled()) {
         $catdata->name = $data->shortname;
         $data->profileid = $DB->insert_record('user_info_category', $catdata, false);
 
+        // Deal with leading/trailing spaces
+        $data->name = trim($data->name);
+        $data->shortname = trim($data->shortname);
+        $data->city = trim($data->city);
+
         $companyid = $DB->insert_record('company', $data);
 
         // Set up default department.
