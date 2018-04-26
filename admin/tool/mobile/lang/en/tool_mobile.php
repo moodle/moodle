@@ -75,3 +75,5 @@ $string['pluginnotenabledorconfigured'] = 'Plugin not enabled or configured.';
 $string['remoteaddons'] = 'Remote add-ons';
 $string['typeoflogin'] = 'Type of login';
 $string['typeoflogin_desc'] = 'If the site uses a SSO authentication method, then select via a browser window or via an embedded browser. An embedded browser provides a better user experience, though it doesn\'t work with all SSO plugins.';
+$string['privacy:metadata:preference:tool_mobile_autologin_request_last'] = 'The date of the last auto-login key request. Between each request 6 minutes are required.';
+$string['privacy:metadata:core_userkey'] = 'User\'s keys used to create auto-login key for the current user.';
