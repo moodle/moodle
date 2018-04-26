@@ -49,6 +49,7 @@ class cleanup_task extends \core\task\scheduled_task {
      */
     public function execute() {
         $manager = new \tool_messageinbound\manager();
-        return $manager->tidy_old_messages();
+        $manager->tidy_old_messages();
+        $manager->tidy_old_verification_failures();
     }
 }
