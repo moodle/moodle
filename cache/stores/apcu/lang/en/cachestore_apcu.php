@@ -30,5 +30,6 @@ $string['prefix'] = 'Prefix';
 $string['prefix_help'] = 'The above prefix gets used for all keys being stored in this APC store instance. By default the database prefix is used.';
 $string['prefixinvalid'] = 'The prefix you have selected is invalid. You can only use a-z A-Z 0-9-_.';
 $string['prefixnotunique'] = 'The prefix you have selected is not unique. Please choose a unique prefix.';
+$string['privacy:metadata'] = 'The APC user cache (APCu) plugin stores data briefly as part of its caching functionality but this data is regularly cleared and is not sent externally in any way.';
 $string['testperformance'] = 'Test performance';
 $string['testperformance_desc'] = 'If enabled, APCu performance will be included when viewing the Test performance page. Enabling this on a production site is not recommended.';
