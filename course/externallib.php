@@ -1718,7 +1718,7 @@ class core_course_external extends external_api {
 
                     $categoryinfo = array();
                     $categoryinfo['id'] = $category->id;
-                    $categoryinfo['name'] = $category->name;
+                    $categoryinfo['name'] = external_format_string($category->name, $context);
                     list($categoryinfo['description'], $categoryinfo['descriptionformat']) =
                         external_format_text($category->description, $category->descriptionformat,
                                 $context->id, 'coursecat', 'description', null);
@@ -1870,8 +1870,12 @@ class core_course_external extends external_api {
             external_validate_format($category['descriptionformat']);
 
             $newcategory = coursecat::create($category);
+            $context = context_coursecat::instance($newcategory->id);
 
-            $createdcategories[] = array('id' => $newcategory->id, 'name' => $newcategory->name);
+            $createdcategories[] = array(
+                'id' => $newcategory->id,
+                'name' => external_format_string($newcategory->name, $context),
+            );
         }
 
         $transaction->allow_commit();
@@ -2275,6 +2279,11 @@ class core_course_external extends external_api {
         list($summary, $summaryformat) =
             external_format_text($course->summary, $course->summaryformat, $coursecontext->id, 'course', 'summary', null);
 
+        $categoryname = '';
+        if (!empty($category)) {
+            $categoryname = external_format_string($category->name, $category->get_context());
+        }
+
         $displayname = get_course_display_name_for_list($course);
         $coursereturns = array();
         $coursereturns['id']                = $course->id;
@@ -2282,7 +2291,7 @@ class core_course_external extends external_api {
         $coursereturns['displayname']       = external_format_string($displayname, $coursecontext->id);
         $coursereturns['shortname']         = external_format_string($course->shortname, $coursecontext->id);
         $coursereturns['categoryid']        = $course->category;
-        $coursereturns['categoryname']      = $category == null ? '' : $category->name;
+        $coursereturns['categoryname']      = $categoryname;
         $coursereturns['summary']           = $summary;
         $coursereturns['summaryformat']     = $summaryformat;
         $coursereturns['summaryfiles']      = external_util::get_area_files($coursecontext->id, 'course', 'summary', false, false);
