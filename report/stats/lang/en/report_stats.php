@@ -32,3 +32,15 @@ $string['page-report-stats-index'] = 'Course statistics report';
 $string['page-report-stats-user'] = 'User course statistics report';
 $string['stats:view'] = 'View course statistics report';
 $string['privacy:metadata'] = 'The Statistics plugin does not store any personal data.';
+
+$string['privacy:metadata:courseid'] = 'An identifier for a course.';
+$string['privacy:metadata:userid'] = 'The user ID linked to this table.';
+$string['privacy:metadata:roleid'] = 'The role ID of the user.';
+$string['privacy:metadata:timeend'] = 'End time of logs view';
+$string['privacy:metadata:statsreads'] = 'Views of content';
+$string['privacy:metadata:statswrites'] = 'Content made in the course.';
+$string['privacy:metadata:stattype'] = 'The type of stat being recorded';
+$string['privacy:metadata:statssummary'] = 'Records basic statistics about user interaction in courses.';
+$string['privacy:weeklypath'] = 'Stats weekly';
+$string['privacy:dailypath'] = 'Stats daily';
+$string['privacy:monthlypath'] = 'Stats monthly';
