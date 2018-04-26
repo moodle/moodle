@@ -33,6 +33,7 @@ $string['autocreate_help'] = 'If enabled the directory specified in path will be
 $string['path'] = 'Cache path';
 $string['path_help'] = 'The directory that should be used to store files for this cache store. If left blank (default) a directory will be automatically created in the moodledata directory. This can be used to point a file store towards a directory on a better performing drive (such as one in memory).';
 $string['pluginname'] = 'File cache';
+$string['privacy:metadata'] = 'The File cache cachestore plugin stores data briefly as part of its caching functionality but this data is regularly cleared.';
 $string['prescan'] = 'Prescan directory';
 $string['prescan_help'] = 'If enabled the directory is scanned when the cache is first used and requests for files are first checked against the scan data. This can help if you have a slow file system and are finding that file operations are causing you a bottle neck.';
 $string['singledirectory'] = 'Single directory store';

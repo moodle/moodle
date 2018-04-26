@@ -29,3 +29,4 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['pluginname'] = 'Static request cache';
+$string['privacy:metadata'] = 'The Static request cachestore plugin stores some data, but this is only present for the lifetime of a single HTTP request.';
