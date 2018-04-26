@@ -2,6 +2,12 @@
     margin-top: 20px;
 }
 
+#pathcourselist, #prospectivelist {
+    min-height: 5rem;
+    border: dotted 1px #d5d5d5;
+    padding-left: 0;
+}
+
 #prospectivelist .ui-selected {
     background-color: #f5f5f5;
 }
@@ -13,3 +19,28 @@
     border-radius: 4px;
     margin-bottom: 10px;
 }
+
+.pathbox img {
+    height: 5rem;
+}
+
+.pathbox {
+    position: relative !important;
+}
+
+.pathbox .coursewrapper {
+    position: inherit !important;
+    white-space: normal !important;
+}
+
+.pathbox .courselink {
+    display: block;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
+
+.linkcursor {
+    cursor: pointer;
+}
+

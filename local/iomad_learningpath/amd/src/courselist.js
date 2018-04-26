@@ -11,10 +11,10 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification', '
             /**
              * Enable Bootstrap tooltips
              */
-            require(['theme_boost/loader']);
-            require(['theme_boost/tooltip'], function() {
+            //require(['theme_boost/loader']);
+            //require(['theme_boost/tooltip'], function() {
                 $('[data-toggle="tooltip"]').tooltip();
-            });
+            //});
 
 
             /**
@@ -33,7 +33,11 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification', '
                 }
 
                 // Template for course list
-                var context = {courses: courses};
+                var context = {
+                    courses: courses,
+                    wwwroot: mdlcfg.wwwroot,
+                    prospective: true
+                };
                 templates.render('local_iomad_learningpath/prospectivelist', context)
                     .done(function(html) {
                         $('#prospectivelist').append(html);
@@ -101,12 +105,17 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification', '
                     return;
                 }
 
-                var items = [];
-                $.each(courses, function(id, course) {
-                    items.push('<li class="text-truncate"><i class="fa fa-globe"></i> ' + course.fullname +
-                        ' <i data-courseid="' + course.id + '" class="path-delete fa fa-trash text-danger"></i></li>');
-                });
-                $('#pathcourselist').append(items.join(''));
+                // Template for course list
+                var context = {
+                    courses: courses,
+                    wwwroot: mdlcfg.wwwroot,
+                    prospective: false
+                };
+                templates.render('local_iomad_learningpath/pathcourselist', context)
+                    .done(function(html) {
+                        $('#pathcourselist').append(html);
+                    })
+                    .fail(notification.exception);
             }
 
 
@@ -173,9 +182,15 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification', '
             });
 
 
-            // Make list sortable somehow
+            /**
+             * Sort added courses list into order
+             */
             $("#pathcourselist").sortable({
-                update: function() {
+                handle: '.lphandle',
+                connectWith: '#prospectivelist',
+                dropOnEmpty: true,
+                update: function(event, ui) {
+console.log('update on pathcourselist');
 
                     // Get already selected courseids
                     var courses = [];
@@ -190,6 +205,20 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification', '
                         done: function() {},
                         fail: notification.exception
                     }]);
+                }
+            });
+
+            /**
+             * Permit drag to add
+             */
+            $('#prospectivelist').sortable({
+                handle: '.lphandle',
+                connectWith: '#pathcourselist',
+                dropOnEmpty: true,
+                update: function(event, ui) {
+                    var item = ui.item;
+                    var id = item.find('.path-add').first().data('courseid');
+                    console.log('updated prospective list ' + id);
                 }
             });
 

@@ -155,7 +155,7 @@ class local_iomad_learningpath_external extends external_api {
                 'id' => $course->id,
                 'fullname' => $course->fullname,
                 'shortname' => $course->shortname,
-                'image' => '',
+                'image' => $course->image,
             ];
         }
 
@@ -341,7 +341,7 @@ class local_iomad_learningpath_external extends external_api {
                 'id' => $course->id,
                 'fullname' => $course->fullname,
                 'shortname' => $course->shortname,
-                'image' => '',
+                'image' => $course->image,
             ];
         }
 

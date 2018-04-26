@@ -1,0 +1,20 @@
+<div class="pathbox card">
+    <div class="row">
+        <div class="col-md-1">
+            {{# prospective }}
+                <i data-courseid="{{ id }}" class="linkcursor path-add fa fa-plus fa-2x text-muted" data-toggle="tooltip" title="{{# str }}addtopath, local_iomad_learningpath{{/ str}}"></i><br/>
+            {{/ prospective }}
+            {{^ prospective }}
+                <i data-courseid="{{ id }}" class="linkcursor path-delete fa fa-trash fa-2x text-muted" data-toggle="tooltip" title="{{# str }}deletefrompath, local_iomad_learningpath{{/ str}}"></i><br/>
+            {{/ prospective }}
+            <i data-courseid="{{ id }}" class="lphandle linkcursor fa fa-arrows-alt fa-2x text-muted" data-toggle="tooltip" title="{{# str }}draganddrop, local_iomad_learningpath{{/ str}}"></i>
+        </div>
+        <div class="col-md-4">
+            <img class="img-responsive my-auto" src="{{{ image }}}" />
+        </div>
+        <div class="coursewrapper col-md-7">
+            <strong>{{ fullname }}</strong>
+            <a class="courselink btn btn-primary btn-sm" href="{{ wwwroot }}/course/view.php?id={{ id }}">{{# str }}courselink, local_iomad_learningpath{{/ str }}</a>
+        </div>
+    </div>
+<div>

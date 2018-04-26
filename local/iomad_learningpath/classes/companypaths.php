@@ -183,12 +183,12 @@ class companypaths {
         foreach ($files as $file) {
             if ($file->is_valid_image()) {
                 return \moodle_url::make_pluginfile_url($file->get_contextid(), $file->get_component(), $file->get_filearea(),
-                    null, $file->get_filepath(), $file->get_filename());
+                    null, $file->get_filepath(), $file->get_filename())->out();
             }
         }
 
         // No image defined, so...
-        return $OUTPUT->image_url('courseimage', 'block_iomad_learningpath');
+        return $OUTPUT->image_url('courseimage', 'block_iomad_learningpath')->out();
     }
 
     /**
@@ -213,7 +213,7 @@ class companypaths {
 
         // Add images
         foreach ($courses as $course) {
-            $course->image = $this->get_course_image_url($course->id);
+            $course->image = $this->get_course_image_url($course->courseid);
         }
 
         return $courses;
