@@ -546,7 +546,8 @@ class provider implements
             } else if ($data->page_qtype == LESSON_PAGE_MULTICHOICE && $data->page_qoption) {
                 // Multiple choice quesitons with multiple answers encode the answers.
                 list($insql, $inparams) = $DB->get_in_or_equal(explode(',', $answer), SQL_PARAMS_NAMED);
-                $records = $DB->get_records_select('lesson_answers', "id $insql", $inparams, 'id, answer, answerformat');
+                $orderby = 'id, ' . $DB->sql_order_by_text('answer') . ', answerformat';
+                $records = $DB->get_records_select('lesson_answers', "id $insql", $inparams, $orderby);
                 $answer = array_values(array_map(function($record) use ($options) {
                     return format_text($record->answer, $record->answerformat, $options);
                 }, empty($records) ? [] : $records));
