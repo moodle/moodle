@@ -113,7 +113,8 @@ select {
 }
 
 .forumpost {
-    @extend .card;
+    border: $border-width solid $border-color;
+    display: block;
     padding: 6px;
 
     .header {
@@ -136,6 +137,7 @@ select {
     }
 
     .row {
+        display: block;
         .topic,
         .content-mask,
         .options {
