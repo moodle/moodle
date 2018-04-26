@@ -20,7 +20,8 @@ M.core_completion.init = function(Y) {
             var current = args.state.get('value');
             var modulename = args.modulename.get('value'),
                 altstr,
-                iconkey;
+                iconkey,
+                button = args.image.get('parentNode');
 
 
             if (current == 1) {
@@ -32,6 +33,7 @@ M.core_completion.init = function(Y) {
                 iconkey = 'i/completion-manual-n';
                 args.state.set('value', 1);
             }
+            button.set('title', altstr);
 
             require(['core/templates', 'core/notification'], function(Templates, Notification) {
                 Templates.renderPix(iconkey, 'core', altstr).then(function(html) {
