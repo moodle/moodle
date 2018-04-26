@@ -502,6 +502,7 @@ class mod_choice_externallib_testcase extends externallib_advanced_testcase {
         $this->assertCount(0, choice_get_my_response($choice));
 
         // Now, as an admin we must be able to delete all the responses under any condition.
+        $this->setUser($student);
         // Submit again the responses.
         $results = mod_choice_external::submit_choice_response($choice->id, array($options[1], $options[2]));
         $results = external_api::clean_returnvalue(mod_choice_external::submit_choice_response_returns(), $results);
@@ -518,19 +519,48 @@ class mod_choice_externallib_testcase extends externallib_advanced_testcase {
         $this->assertCount(0, $results['warnings']);
 
         // Submit again the responses.
+        $this->setUser($student);
         $DB->set_field('choice', 'timeclose', 0, array('id' => $choice->id));
         $results = mod_choice_external::submit_choice_response($choice->id, array($options[1], $options[2]));
         $results = external_api::clean_returnvalue(mod_choice_external::submit_choice_response_returns(), $results);
-        // With other user account too, so we can test all the responses are deleted.
-        choice_user_submit_response( array($options[1], $options[2]), $choice, $student->id, $course, $cm);
 
-        // Test deleting all (not passing the answers ids), event not only mine.
+        // Test admin try to delete his own responses (he didn't respond so nothing should be deleted).
+        $this->setAdminUser();
         $results = mod_choice_external::delete_choice_responses($choice->id);
+        $results = external_api::clean_returnvalue(mod_choice_external::delete_choice_responses_returns(), $results);
+        $this->assertFalse($results['status']);
+        $this->assertCount(0, $results['warnings']);
+        $allresponses = choice_get_all_responses($choice);
+        $this->assertCount(2, $allresponses);   // No responses deleted (admin didn't submit any).
+
+        // Now admin submit a couple of responses more.
+        $results = mod_choice_external::submit_choice_response($choice->id, array($options[1], $options[2]));
+        $results = external_api::clean_returnvalue(mod_choice_external::submit_choice_response_returns(), $results);
+        $allresponses = choice_get_all_responses($choice);
+        $this->assertCount(4, $allresponses);
+        // Admin responses are deleted when passing an empty array.
+        $results = mod_choice_external::delete_choice_responses($choice->id);
+        $results = external_api::clean_returnvalue(mod_choice_external::delete_choice_responses_returns(), $results);
+        $this->assertTrue($results['status']);
+        $this->assertCount(0, $results['warnings']);
+        $allresponses = choice_get_all_responses($choice);
+        $this->assertCount(2, $allresponses);
+
+        // Now admin will delete all the other users responses.
+        $results = mod_choice_external::delete_choice_responses($choice->id, array_keys($allresponses));
         $results = external_api::clean_returnvalue(mod_choice_external::delete_choice_responses_returns(), $results);
 
         $this->assertTrue($results['status']);
         $this->assertCount(0, $results['warnings']);
-        $this->assertCount(0, choice_get_all_responses($choice));
+        $allresponses = choice_get_all_responses($choice);
+        $this->assertCount(0, $allresponses);   // Now all the responses were deleted.
+
+        // Admin try do delete an invalid response.
+        $results = mod_choice_external::delete_choice_responses($choice->id, array(-1));
+        $results = external_api::clean_returnvalue(mod_choice_external::delete_choice_responses_returns(), $results);
+
+        $this->assertFalse($results['status']);
+        $this->assertCount(1, $results['warnings']);
 
         // Now, in the DB 0 responses.
         $this->setUser($student);
