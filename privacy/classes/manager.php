@@ -355,7 +355,7 @@ class manager {
      * @param   string  $methodname The method to call
      * @param   array   $params The params to call
      */
-    public static function plugintype_class_callback(string $plugintype, string $interface, string $methodname, array $params) {
+    public static function plugintype_class_callback($plugintype, $interface, $methodname, array $params) {
         $components = \core_component::get_plugin_list($plugintype);
         foreach (array_keys($components) as $component) {
             static::component_class_callback("{$plugintype}_{$component}", $interface, $methodname, $params);
@@ -371,7 +371,7 @@ class manager {
      * @param   array   $params The params to call
      * @return  mixed
      */
-    public static function component_class_callback(string $component, string $interface, string $methodname, array $params) {
+    public static function component_class_callback($component, $interface, $methodname, array $params) {
         $classname = static::get_provider_classname_for_component($component);
         if (class_exists($classname) && is_subclass_of($classname, $interface)) {
             return component_class_callback($classname, $methodname, $params);
