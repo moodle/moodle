@@ -338,7 +338,7 @@ class local_iomad_learningpath_external extends external_api {
         $ccs = [];
         foreach ($courses as $course) {
             $ccs[] = [
-                'id' => $course->id,
+                'id' => $course->courseid,
                 'fullname' => $course->fullname,
                 'shortname' => $course->shortname,
                 'image' => $course->image,
@@ -387,6 +387,7 @@ class local_iomad_learningpath_external extends external_api {
 
     /**
      * Order courses in learning path
+     * (Valid) new course ids will simply be added in that position
      * @param int $pathid
      * @param array $courseids
      * @throws invalid_parameter_exception
@@ -407,6 +408,7 @@ class local_iomad_learningpath_external extends external_api {
         if (!$company = $DB->get_record('company', ['id' => $companyid])) {
             throw new invalid_parameter_exception("Company with id = $companyid does not exist");
         }
+        $companypaths = new local_iomad_learningpath\companypaths($companyid, $context);
 
         // Security
         $context = context_system::instance();
@@ -414,19 +416,19 @@ class local_iomad_learningpath_external extends external_api {
         iomad::require_capability('local/iomad_learningpath:manage', $context, $companyid);
 
         // Get existing list
-        $courses = $DB->get_records('iomad_learningpathcourse', ['path' => $params['pathid']]);
+        //$courses = $DB->get_records('iomad_learningpathcourse', ['path' => $params['pathid']]);
 
-        // Sanity checks
-        $coursecount = count($courses);
-        $idscount = count($params['courseids']);
-        if ($coursecount != $idscount) {
-            throw new coding_exception('countmismatch', "Count of learning path courses ($coursecount) does not match count in params ($idscount)");
+        // Find any new ones and add them
+        foreach ($params['courseids'] as $courseid) {
+            if (!$DB->record_exists('iomad_learningpathcourse', ['path' => $params['pathid'], 'course' => $courseid])) {
+                $companypaths->add_courses($path->id, [$courseid]);
+            }
         }
 
         // Work through courses.
         $sequence = 1;
         foreach ($params['courseids'] as $courseid) {
-            $course = $courses[$courseid];
+            $course = $DB->get_record('iomad_learningpathcourse', ['path' => $params['pathid'], 'course' => $courseid], '*', MUST_EXIST);
 
             // Update sequence.
             $course->sequence = $sequence;

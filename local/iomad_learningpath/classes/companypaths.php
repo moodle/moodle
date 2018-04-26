@@ -337,7 +337,7 @@ class companypaths {
 
         // Work through courses.
         foreach ($courseids as $courseid) {
-            $DB->delete_records('iomad_learningpathcourse', ['id' => $courseid]);
+            $DB->delete_records('iomad_learningpathcourse', ['course' => $courseid]);
         }
 
         // Fix the sequence

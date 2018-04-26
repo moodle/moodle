@@ -190,13 +190,13 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification', '
                 connectWith: '#prospectivelist',
                 dropOnEmpty: true,
                 update: function(event, ui) {
-console.log('update on pathcourselist');
 
                     // Get already selected courseids
                     var courses = [];
-                    $("#pathcourselist .path-delete").each(function() {
+                    $("#pathcourselist .pathbox").each(function() {
                         courses.push($(this).data('courseid'));
                     });
+console.log('update on pathcourselist ' + courses);
 
                     // Reorder
                     ajax.call([{
@@ -217,6 +217,7 @@ console.log('update on pathcourselist');
                 dropOnEmpty: true,
                 update: function(event, ui) {
                     var item = ui.item;
+                    item.find($(".path-add")).removeClass('fa-plus path-add').addClass('fa-trash path-delete');
                     var id = item.find('.path-add').first().data('courseid');
                     console.log('updated prospective list ' + id);
                 }
