@@ -43,6 +43,9 @@ if ($hassiteconfig) {
                 new lang_string('configenablemobilewebservice', 'admin', $enablemobiledoclink), $default));
     }
 
+    $temp->add(new admin_setting_configtext('tool_mobile/apppolicy', new lang_string('apppolicy', 'tool_mobile'),
+        new lang_string('apppolicy_help', 'tool_mobile'), '', PARAM_URL));
+
     $ADMIN->add('mobileapp', $temp);
 
     // Show only mobile settings if the mobile service is enabled.
