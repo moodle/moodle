@@ -200,6 +200,32 @@ class conversion extends \core\persistent {
     }
 
     /**
+     * Remove orphan records.
+     *
+     * Records are considered orphans when their source file not longer exists.
+     * In this scenario we do not want to keep the converted file any longer,
+     * in particular to be compliant with privacy laws.
+     */
+    public static function remove_orphan_records() {
+        global $DB;
+
+        $sql = "
+            SELECT c.id
+              FROM {" . self::TABLE . "} c
+         LEFT JOIN {files} f
+                ON f.id = c.sourcefileid
+             WHERE f.id IS NULL";
+        $ids = $DB->get_fieldset_sql($sql, []);
+
+        if (empty($ids)) {
+            return;
+        }
+
+        list($insql, $inparams) = $DB->get_in_or_equal($ids, SQL_PARAMS_NAMED);
+        $DB->delete_records_select(self::TABLE, "id $insql", $inparams);
+    }
+
+    /**
      * Set the source file id for the conversion.
      *
      * @param   stored_file $file The file to convert
