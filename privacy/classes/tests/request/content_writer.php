@@ -372,6 +372,8 @@ class content_writer implements \core_privacy\local\request\content_writer {
      * actual writer exports files so it can be reliably tested only in real writers such as
      * {@link core_privacy\local\request\moodle_content_writer}.
      *
+     * However we have to remove @@PLUGINFILE@@ since otherwise {@link format_text()} shows debugging messages
+     *
      * @param   array           $subcontext The location within the current context that this data belongs.
      * @param   string          $component  The name of the component that the files belong to.
      * @param   string          $filearea   The filearea within that component.
@@ -380,7 +382,7 @@ class content_writer implements \core_privacy\local\request\content_writer {
      * @return  string                      The processed string
      */
     public function rewrite_pluginfile_urls(array $subcontext, $component, $filearea, $itemid, $text) : string {
-        return $text;
+        return str_replace('@@PLUGINFILE@@/', 'files/', $text);
     }
 
     /**
