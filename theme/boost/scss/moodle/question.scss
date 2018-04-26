@@ -231,9 +231,10 @@ body.path-question-type {
         width: auto;
         height: auto;
         padding: 0;
-        margin: 0;
+        margin: 0 0.5rem 0 0;
         overflow: visible;
         clip: auto;
+        clip-path: none;
         border: 0;
     }
 }
@@ -634,7 +635,8 @@ body.path-question-type .mform fieldset.hidden {
 }
 
 // Fix for accurate positioning of ddwtos drag and drop question types.
-.que.ddwtos {
+.que.ddwtos,
+.que.ddwtos .drop {
     box-sizing: content-box;
 }
 
