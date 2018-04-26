@@ -33,18 +33,18 @@
 <div class="action-menu {{classes}} d-inline"{{#attributes}} {{name}}="{{value}}"{{/attributes}}>
     {{#primary}}
 
-        <div class="{{classes}} d-flex justify-content-end "{{#attributes}} {{name}}="{{value}}"{{/attributes}}>
+        <div class="{{classes}} d-flex "{{#attributes}} {{name}}="{{value}}"{{/attributes}}>
 
             {{#prioritise}}{{> core/action_menu_trigger }}{{/prioritise}}
 
             {{#items}}
-                <div>
+                <div class="action-menu-item">
                     {{> core/action_menu_item }}
                 </div>
             {{/items}}
 
             {{^prioritise}}
-                <div>
+                <div class="action-menu-trigger">
                     {{> core/action_menu_trigger }}
                 </div>
             {{/prioritise}}
