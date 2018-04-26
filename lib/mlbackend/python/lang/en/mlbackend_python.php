@@ -24,5 +24,6 @@
 
 $string['packageinstalledshouldbe'] = '"moodlemlbackend" python package should be updated. The required version is "{$a->required}" and the installed version is "{$a->installed}"';
 $string['pluginname'] = 'Python machine learning backend';
+$string['privacy:metadata'] = 'The Python machine learning backend plugin does not store any personal data.';
 $string['pythonpackagenotinstalled'] = '"moodlemlbackend" python package is not installed or there is a problem with it. Please execute "{$a}" from command line interface for more info';
 $string['pythonpathnotdefined'] = 'The path to your executable Python binary has not been defined. Please visit "{$a}" to set it.';
