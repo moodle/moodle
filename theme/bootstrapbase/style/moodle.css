@@ -18384,6 +18384,16 @@ div#dock {
   height: 300px;
   overflow-y: scroll;
 }
+@media (max-width: 768px) {
+  .backup-restore .backup-section.settings-section .detail-pair {
+    width: 100%;
+  }
+}
+@media (max-width: 900px) {
+  .backup-restore .backup-section.settings-section .detail-pair-label {
+    width: 50%;
+  }
+}
 table.flexible,
 .generaltable {
   width: 100%;
