@@ -40,6 +40,8 @@ $string['maperror'] = 'Weighted number of errors is less than or equals';
 $string['mapgrade'] = 'Grade for submission';
 $string['percents'] = '{$a} %';
 $string['pluginname'] = 'Number of errors';
+$string['privacy:metadata'] = 'The Number of errors plugin only stores the details of the assessment form. Actual personal data of how the form has been filled are stored by the Workshop module itself and are attached to exported assessments.';
+$string['privacy:export:metadata:map'] = 'If the weighted number of errors reaches {$a->nonegative} then the grade is {$a->grade} percents.';
 
 // Deprecated since Moodle 3.1.
 $string['dimensioncomment'] = 'Comment';
