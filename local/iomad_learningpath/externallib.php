@@ -424,9 +424,9 @@ class local_iomad_learningpath_external extends external_api {
 
         // Find any missing ones and delete them
         $courses = $DB->get_records('iomad_learningpathcourse', ['path' => $params['pathid']]);
-        foreach ($params['courseids'] as $courseid) {
-            if (!array_key_exists($courseid, $courses)) {
-                $companypaths->remove_courses($path->id, [$courseid]);
+        foreach ($courses as $course) {
+            if (!array_key_exists($course->course, $params['courseids'])) {
+                $companypaths->remove_courses($path->id, [$course->course]);
             }
         }
 
