@@ -152,6 +152,8 @@ class mod_workshop_generator extends testing_module_generator {
             'timecreated' => $timenow,
             'timemodified' => $timenow,
             'grade' => null,
+            'feedbackauthor' => '',
+            'feedbackreviewer' => '',
         );
 
         $id = $DB->insert_record('workshop_assessments', $record);
