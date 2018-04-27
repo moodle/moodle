@@ -39,6 +39,7 @@ $string['mustchoosegrade'] = 'You have to select a grade for this aspect';
 $string['pluginname'] = 'Accumulative grading';
 $string['poor'] = 'Poor';
 $string['present'] = 'Present';
+$string['privacy:metadata'] = 'The Accumulative grading plugin only stores the details of the assessment form. Actual personal data of how the form has been filled are stored by the Workshop module itself and are attached to exported assessments.';
 $string['scalename0'] = 'Yes/No (2 point)';
 $string['scalename1'] = 'Present/Absent (2 point)';
 $string['scalename2'] = 'Correct/Incorrect (2 point)';
