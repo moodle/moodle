@@ -33,3 +33,4 @@ $string['comparisonlevel7'] = 'lax';
 $string['comparisonlevel9'] = 'very lax';
 $string['configcomparison'] = 'Default value of the factor that influence the grading evaluation.';
 $string['pluginname'] = 'Comparison with the best assessment';
+$string['privacy:metadata'] = 'The Comparison with the best assessment plugin does not store any personal data. Actual personal data user\'s grades are stored by the Workshop module itself and are attached to the exported submissions and assessments data.';
