@@ -225,6 +225,10 @@ class data_field_picture extends data_field_base {
 
         // Should always be available since it is set by display_add_field before initializing the draft area.
         $content = $DB->get_record('data_content', array('fieldid' => $this->field->id, 'recordid' => $recordid));
+        if (!$content) {
+            $content = (object)array('fieldid' => $this->field->id, 'recordid' => $recordid);
+            $content->id = $DB->insert_record('data_content', $content);
+        }
 
         $names = explode('_', $name);
         switch ($names[2]) {
