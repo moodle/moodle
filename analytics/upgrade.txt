@@ -1,0 +1,9 @@
+This files describes API changes in analytics sub system,
+information provided here is intended especially for developers.
+
+=== 3.5 ===
+
+* There are two new methods for analysers, processes_user_data() and join_sample_user(). You
+  need to overwrite them if your analyser uses user data. As a general statement, you should
+  overwrite these new methods if your samples return 'user' data. These new methods are used
+  for analytics' privacy API implementation.
