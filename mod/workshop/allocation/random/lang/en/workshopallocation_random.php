@@ -43,6 +43,7 @@ $string['numofselfallocatedsubmissions'] = 'Self-allocating {$a} submission(s)';
 $string['numperauthor'] = 'per submission';
 $string['numperreviewer'] = 'per reviewer';
 $string['pluginname'] = 'Random allocation';
+$string['privacy:metadata'] = 'The Random allocation plugin does not store any personal data. Actual personal data about who is going to assess whom are stored by the Workshop module itself and they form basis for exporting the assessments details.';
 $string['randomallocationdone'] = 'Random allocation done';
 $string['resultnomorepeers'] = 'No more peers available';
 $string['resultnomorepeersingroup'] = 'No more peers available in this separate group';
