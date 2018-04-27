@@ -65,13 +65,13 @@ class provider implements
      */
     public static function get_contexts_for_userid(int $userid) : contextlist {
         $sql = "SELECT ctx.id
-                FROM {user_info_data} uid
+                FROM {user_info_data} uda
                 JOIN {user_info_field} uif
-                    ON uid.fieldid = uif.id
+                    ON uda.fieldid = uif.id
                 JOIN {context} ctx
-                    ON ctx.instanceid = uid.userid
+                    ON ctx.instanceid = uda.userid
                         AND ctx.contextlevel = :contextlevel
-                WHERE uid.userid = :userid
+                WHERE uda.userid = :userid
                     AND uif.datatype = :datatype";
         $params = [
             'userid' => $userid,
@@ -151,10 +151,10 @@ class provider implements
         global $DB;
 
         $sql = "SELECT *
-                FROM {user_info_data} uid
+                FROM {user_info_data} uda
                 JOIN {user_info_field} uif
-                    ON uid.fieldid = uif.id
-                WHERE uid.userid = :userid
+                    ON uda.fieldid = uif.id
+                WHERE uda.userid = :userid
                     AND uif.datatype = :datatype";
         $params = [
             'userid' => $userid,
