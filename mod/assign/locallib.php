@@ -4906,18 +4906,17 @@ class assign {
 
         $data = new stdClass();
         $adminconfig = $this->get_admin_config();
-        $requiresubmissionstatement = $this->get_instance()->requiresubmissionstatement &&
-                                       !empty($adminconfig->submissionstatement);
-
+        $requiresubmissionstatement = $this->get_instance()->requiresubmissionstatement;
         $submissionstatement = '';
-        if (!empty($adminconfig->submissionstatement)) {
-            // Format the submission statement before its sent. We turn off para because this is going within
-            // a form element.
-            $options = array(
-                'context' => $this->get_context(),
-                'para' => false
-            );
-            $submissionstatement = format_text($adminconfig->submissionstatement, FORMAT_MOODLE, $options);
+
+        if ($requiresubmissionstatement) {
+            $submissionstatement = $this->get_submissionstatement($adminconfig, $this->get_instance(), $this->get_context());
+        }
+
+        // If we get back an empty submission statement, we have to set $requiredsubmisisonstatement to false to prevent
+        // that the submission statement checkbox will be displayed.
+        if (empty($submissionstatement)) {
+            $requiresubmissionstatement = false;
         }
 
         if ($mform == null) {
@@ -6300,21 +6299,20 @@ class assign {
             $notices[] = get_string('submissionsclosed', 'assign');
             return false;
         }
-        $instance = $this->get_instance();
+
         $data = new stdClass();
         $adminconfig = $this->get_admin_config();
-        $requiresubmissionstatement = $instance->requiresubmissionstatement &&
-                                       !empty($adminconfig->submissionstatement);
+        $requiresubmissionstatement = $this->get_instance()->requiresubmissionstatement;
 
         $submissionstatement = '';
-        if (!empty($adminconfig->submissionstatement)) {
-            // Format the submission statement before its sent. We turn off para because this is going within
-            // a form element.
-            $options = array(
-                'context' => $this->get_context(),
-                'para' => false
-            );
-            $submissionstatement = format_text($adminconfig->submissionstatement, FORMAT_MOODLE, $options);
+        if ($requiresubmissionstatement) {
+            $submissionstatement = $this->get_submissionstatement($adminconfig, $this->get_instance(), $this->get_context());
+        }
+
+        // If we get back an empty submission statement, we have to set $requiredsubmisisonstatement to false to prevent
+        // that the submission statement checkbox will be displayed.
+        if (empty($submissionstatement)) {
+            $requiresubmissionstatement = false;
         }
 
         if ($mform == null) {
@@ -7618,25 +7616,23 @@ class assign {
 
         // Submission statement.
         $adminconfig = $this->get_admin_config();
-
-        $requiresubmissionstatement = $this->get_instance()->requiresubmissionstatement &&
-                                       !empty($adminconfig->submissionstatement);
+        $requiresubmissionstatement = $this->get_instance()->requiresubmissionstatement;
 
         $draftsenabled = $this->get_instance()->submissiondrafts;
+        $submissionstatement = '';
+
+        if ($requiresubmissionstatement) {
+            $submissionstatement = $this->get_submissionstatement($adminconfig, $this->get_instance(), $this->get_context());
+        }
+
+        // If we get back an empty submission statement, we have to set $requiredsubmisisonstatement to false to prevent
+        // that the submission statement checkbox will be displayed.
+        if (empty($submissionstatement)) {
+            $requiresubmissionstatement = false;
+        }
 
         // Only show submission statement if we are editing our own submission.
         if ($requiresubmissionstatement && !$draftsenabled && $userid == $USER->id) {
-
-            $submissionstatement = '';
-            if (!empty($adminconfig->submissionstatement)) {
-                // Format the submission statement before its sent. We turn off para because this is going within
-                // a form element.
-                $options = array(
-                    'context' => $this->get_context(),
-                    'para' => false
-                );
-                $submissionstatement = format_text($adminconfig->submissionstatement, FORMAT_MOODLE, $options);
-            }
             $mform->addElement('checkbox', 'submissionstatement', '', $submissionstatement);
             $mform->addRule('submissionstatement', get_string('required'), 'required', null, 'client');
         }
@@ -8870,6 +8866,64 @@ class assign {
     public function set_most_recent_team_submission($submission) {
         $this->mostrecentteamsubmission = $submission;
     }
+
+    /**
+     * Get the correct submission statement depending on single submisison, team submission or team submission
+     * where all team memebers must submit.
+     *
+     * @param array $adminconfig
+     * @param assign $instance
+     * @param context $context
+     *
+     * @return string
+     */
+    protected function get_submissionstatement($adminconfig, $instance, $context) {
+        $submissionstatement = '';
+
+        if (!($context instanceof context)) {
+            return $submissionstatement;
+        }
+
+        // Single submission.
+        if (!$instance->teamsubmission) {
+            // Single submission statement is not empty.
+            if (!empty($adminconfig->submissionstatement)) {
+                // Format the submission statement before its sent. We turn off para because this is going within
+                // a form element.
+                $options = array(
+                    'context' => $context,
+                    'para'    => false
+                );
+                $submissionstatement = format_text($adminconfig->submissionstatement, FORMAT_MOODLE, $options);
+            }
+        } else { // Team submission.
+            // One user can submit for the whole team.
+            if (!empty($adminconfig->submissionstatementteamsubmission) && !$instance->requireallteammemberssubmit) {
+                // Format the submission statement before its sent. We turn off para because this is going within
+                // a form element.
+                $options = array(
+                    'context' => $context,
+                    'para'    => false
+                );
+                $submissionstatement = format_text($adminconfig->submissionstatementteamsubmission,
+                    FORMAT_MOODLE, $options);
+            } else if (!empty($adminconfig->submissionstatementteamsubmissionallsubmit) &&
+                $instance->requireallteammemberssubmit) {
+                // All team members must submit.
+                // Format the submission statement before its sent. We turn off para because this is going within
+                // a form element.
+                $options = array(
+                    'context' => $context,
+                    'para'    => false
+                );
+                $submissionstatement = format_text($adminconfig->submissionstatementteamsubmissionallsubmit,
+                    FORMAT_MOODLE, $options);
+            }
+        }
+
+        return $submissionstatement;
+    }
+
 }
 
 /**
