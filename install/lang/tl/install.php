@@ -35,7 +35,7 @@ $string['availablelangs'] = 'Magagamit na mga pakete ng wika';
 $string['chooselanguagehead'] = 'Pumilì ng wika';
 $string['chooselanguagesub'] = 'Pumili po ng wika para sa pagluluklok LAMANG.  Sa mga susunod na iskrin ay makakapili ka ng wika para sa site o tagagamit.';
 $string['dataroot'] = 'Direktoryo ng Datos';
-$string['dbprefix'] = 'Unlapi ng mga teybol';
+$string['dbprefix'] = 'Unlapi ng mga table';
 $string['dirroot'] = 'Direktoryo ng Moodle';
 $string['environmenthead'] = 'Sinusuri ang kapaligiran mo...';
 $string['installation'] = 'Pagluklok';
@@ -67,6 +67,6 @@ $string['welcomep20'] = 'Nakikita mo ang pahinang ito dahil matagumpay mong nail
 $string['welcomep30'] = 'Ang lathala ng <strong>{$a->installername}</strong> na ito ay naglalaman ng mga aplikasyon na lilikha ng kapaligiran na tatakbuhan ng  <strong>Moodle</strong>, ito ay ang mga sumusunod:';
 $string['welcomep40'] = 'Nilalaman din ng paketeng ito ang  <strong>Moodle {$a->moodlerelease} ({$a->moodleversion})</strong>.';
 $string['welcomep50'] = 'Ang paggamit ng lahat ng aplikasyon sa paketeng ito ay alinsunod sa kani-kaniyang lisensiya.  Ang kumpletong pakete na <strong>{$a->installername}</strong> ay  <a href="http://www.opensource.org/docs/definition_plain.html">open source</a> at ipinamamahagi alinsunod sa lisensiyang <a href="http://www.gnu.org/copyleft/gpl.html">GPL</a>';
-$string['welcomep60'] = 'Dadalhin kayo ng mga sumusunod na pahina sa mga madaling hakbang upang maisaayos at mapatakbo ang <strong>Moodle</strong> sa kompyuter ninyo.  Kung gusto ninyo ay panatilihin ang umiiral o kaya ay baguhin ito ayon sa inyong pangangailangan.';
+$string['welcomep60'] = 'Dadalhin ka ng mga sumusunod na pahina sa mga madaling sundang hakbang upang maisaayos at mapatakbo ang <strong>Moodle</strong> sa kompyuter mo.  Maaari mong tanggapin ang default o kaya ay baguhin ito ayon sa inyong pangangailangan.';
 $string['welcomep70'] = 'Iklik ang "Susunod" na buton sa ibaba upang maituloy ang pasasaayos ng <strong>Moodle</strong>.';
 $string['wwwroot'] = 'Web address';
