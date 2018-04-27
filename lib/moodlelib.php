@@ -8273,6 +8273,25 @@ function shorten_filename($filename, $length = MAX_FILENAME_SIZE, $includehash =
 }
 
 /**
+ * Shortens a given array of filenames by removing characters positioned after the ideal string length.
+ *
+ * @param array $path The paths to reduce the length.
+ * @param int $length Ideal string length
+ * @param bool $includehash Whether to include a file hash in the shortened version. This ensures uniqueness.
+ * @return array $result Shortened paths in array.
+ */
+function shorten_filenames(array $path, $length = MAX_FILENAME_SIZE, $includehash = false) {
+    $result = null;
+
+    $result = array_reduce($path, function($carry, $singlepath) use ($length, $includehash) {
+        $carry[] = shorten_filename($singlepath, $length, $includehash);
+        return $carry;
+    }, []);
+
+    return $result;
+}
+
+/**
  * Given dates in seconds, how many weeks is the date from startdate
  * The first week is 1, the second 2 etc ...
  *
