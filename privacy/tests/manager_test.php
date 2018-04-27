@@ -213,4 +213,18 @@ class privacy_manager_testcase extends advanced_testcase {
         $this->expectException(\coding_exception::class);
         $string = $manager->get_null_provider_reason('mod_testcomponent');
     }
+
+    /**
+     * Test that manager::plugintype_class_callback() can be executed.
+     */
+    public function test_plugintype_class_callback() {
+        \core_privacy\manager::plugintype_class_callback('doesnotexist', 'unusable', 'foo', ['bar']);
+    }
+
+    /**
+     * Test that manager::component_class_callback() can be executed.
+     */
+    public function test_component_class_callback() {
+        \core_privacy\manager::component_class_callback('foo_bar', 'unusable', 'foo', ['bar']);
+    }
 }
