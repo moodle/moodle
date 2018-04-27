@@ -181,6 +181,15 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification', '
                 }]);
             });
 
+     
+            /**
+             * Fix plus/trash icons so they are correct for the list they are in
+             */
+            function fix_icons() {
+                $(".prospectivelist .fa-trash").removeClass('fa-trash path-add').addClass('fa-plus path-add');
+                $(".pathcourselist .fa-plus").removeClass('fa-plus path-delete').addClass('fa-trash path-delete');
+            }
+
 
             /**
              * Sort added courses list into order
@@ -205,6 +214,8 @@ console.log('update on pathcourselist ' + courses);
                         done: function() {},
                         fail: notification.exception
                     }]);
+
+                    //fix_icons();
                 }
             });
 
@@ -217,9 +228,10 @@ console.log('update on pathcourselist ' + courses);
                 dropOnEmpty: true,
                 update: function(event, ui) {
                     var item = ui.item;
-                    item.find($(".path-add")).removeClass('fa-plus path-add').addClass('fa-trash path-delete');
+                    //item.find($(".path-add")).removeClass('fa-plus path-add').addClass('fa-trash path-delete');
                     var id = item.find('.path-add').first().data('courseid');
-                    console.log('updated prospective list ' + id);
+console.log('updated prospective list ' + id);
+                    //fix_icons();
                 }
             });
 
