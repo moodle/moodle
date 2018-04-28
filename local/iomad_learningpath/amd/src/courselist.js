@@ -1,7 +1,8 @@
 // Javascript module for courselist page
 // Copyright 2018 Howard Miller (howardsmiller@gmail.com)
 
-define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification', 'core/templates'], function($, jqui, mdlcfg, ajax, notification, templates) {
+define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification', 'core/templates'],
+    function($, jqui, mdlcfg, ajax, notification, templates) {
 
     return {
 
@@ -181,13 +182,13 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification', '
                 }]);
             });
 
-     
+
             /**
              * Fix plus/trash icons so they are correct for the list they are in
              */
             function fix_icons() {
-                $(".prospectivelist .fa-trash").removeClass('fa-trash path-add').addClass('fa-plus path-add');
-                $(".pathcourselist .fa-plus").removeClass('fa-plus path-delete').addClass('fa-trash path-delete');
+                $("#prospectivelist .path-delete").removeClass('fa-trash path-delete').addClass('fa-plus path-add');
+                $("#pathcourselist .path-add").removeClass('fa-plus path-add').addClass('fa-trash path-delete');
             }
 
 
@@ -198,14 +199,13 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification', '
                 handle: '.lphandle',
                 connectWith: '#prospectivelist',
                 dropOnEmpty: true,
-                update: function(event, ui) {
+                update: function() {
 
                     // Get already selected courseids
                     var courses = [];
                     $("#pathcourselist .pathbox").each(function() {
                         courses.push($(this).data('courseid'));
                     });
-console.log('update on pathcourselist ' + courses);
 
                     // Reorder
                     ajax.call([{
@@ -215,7 +215,7 @@ console.log('update on pathcourselist ' + courses);
                         fail: notification.exception
                     }]);
 
-                    //fix_icons();
+                    fix_icons();
                 }
             });
 
@@ -226,12 +226,8 @@ console.log('update on pathcourselist ' + courses);
                 handle: '.lphandle',
                 connectWith: '#pathcourselist',
                 dropOnEmpty: true,
-                update: function(event, ui) {
-                    var item = ui.item;
-                    //item.find($(".path-add")).removeClass('fa-plus path-add').addClass('fa-trash path-delete');
-                    var id = item.find('.path-add').first().data('courseid');
-console.log('updated prospective list ' + id);
-                    //fix_icons();
+                update: function() {
+                    fix_icons();
                 }
             });
 
