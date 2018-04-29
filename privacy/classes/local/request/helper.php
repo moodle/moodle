@@ -211,10 +211,8 @@ class helper {
         }
 
         // Completion tracking.
-        $completioninfo = new \completion_info($course);
-        $completion = $completioninfo->is_enabled($cm);
-        if ($completion != COMPLETION_TRACKING_NONE) {
-            $completiondata = $completioninfo->get_data($cm, true, $user->id);
+        $completiondata = \core_completion\privacy\provider::get_activity_completion_info($user, $course, $cm);
+        if (isset($completiondata->completionstate)) {
             $basedata->completion = (object) [
                 'state' => $completiondata->completionstate,
             ];
@@ -273,7 +271,7 @@ class helper {
 
         if ($context instanceof \context_module) {
             // Delete course completion data for this context.
-            $DB->delete_records('course_modules_completion', ['coursemoduleid' => $context->instanceid]);
+            \core_completion\privacy\provider::delete_completion(null, null, $context->instanceid);
         }
     }
 
@@ -290,10 +288,7 @@ class helper {
         foreach ($contextlist as $context) {
             if ($context instanceof \context_module) {
                 // Delete course completion data for this context.
-                $DB->delete_records('course_modules_completion', [
-                    'coursemoduleid' => $context->instanceid,
-                    'userid' => $contextlist->get_user()->id,
-                ]);
+                \core_completion\privacy\provider::delete_completion($contextlist->get_user(), null, $context->instanceid);
             }
         }
 
