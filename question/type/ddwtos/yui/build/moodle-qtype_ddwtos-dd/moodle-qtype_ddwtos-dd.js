@@ -34,7 +34,7 @@ var DDWTOS_DD = function() {
  */
 Y.extend(DDWTOS_DD, Y.Base, {
     selectors: null,
-    touchscrolldisable: null,
+    passiveSupported: false,
     initializer: function() {
         var pendingid = 'qtype_ddwtos-' + Math.random().toString(36).slice(2); // Random string.
         M.util.js_pending(pendingid);
@@ -51,6 +51,7 @@ Y.extend(DDWTOS_DD, Y.Base, {
                 this.position_drag_items(pendingid);
             }, this);
         }
+        this.checkPassiveSupported();
     },
     /**
      * put all our selectors in the same place so we can quickly find and change them later
@@ -231,28 +232,34 @@ Y.extend(DDWTOS_DD, Y.Base, {
      * draggable items.
      */
     prevent_touchmove_from_scrolling: function(drag) {
-        var touchstart = (Y.UA.ie) ? 'MSPointerStart' : 'touchstart';
-        var touchend = (Y.UA.ie) ? 'MSPointerEnd' : 'touchend';
         var touchmove = (Y.UA.ie) ? 'MSPointerMove' : 'touchmove';
+        var eventHandler = function(event) {
+            event.preventDefault();
+        };
+        var dragId = drag.get('id');
+        var el = document.getElementById(dragId);
+        // Note do not dynamically add events within another event, as this causes issues on iOS11.3.
+        // See https://github.com/atlassian/react-beautiful-dnd/issues/413 and
+        // https://bugs.webkit.org/show_bug.cgi?id=184250 for fuller explanation.
+        el.addEventListener(touchmove, eventHandler, this.passiveSupported ? {passive: false, capture: true} : false);
+    },
 
-        // Disable scrolling when touching the draggable items.
-        drag.on(touchstart, function() {
-            if (this.touchscrolldisable) {
-                return; // Already disabled.
-            }
-            this.touchscrolldisable = Y.one('body').on(touchmove, function(e) {
-                e = e || window.event;
-                e.preventDefault();
+    /**
+     * Some older browsers do not support passing an options object to addEventListener.
+     * This is a check from https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener.
+     */
+    checkPassiveSupported: function() {
+        try {
+            var options = Object.defineProperty({}, 'passive', {
+                get: function() {
+                    this.passiveSupported = true;
+                }.bind(this)
             });
-        }, this);
-
-        // Allow scrolling after releasing the draggable items.
-        drag.on(touchend, function() {
-            if (this.touchscrolldisable) {
-                this.touchscrolldisable.detach();
-                this.touchscrolldisable = null;
-            }
-        }, this);
+            window.addEventListener('test', options, options);
+            window.removeEventListener('test', options, options);
+        } catch (err) {
+            this.passiveSupported = false;
+        }
     },
 
     make_drop_zones: function() {
@@ -433,5 +440,6 @@ M.qtype_ddwtos = M.qtype_ddwtos || {};
 M.qtype_ddwtos.init_question = function(config) {
     return new DDWTOS_DD(config);
 };
+
 
 }, '@VERSION@', {"requires": ["node", "dd", "dd-drop", "dd-constrain"]});
