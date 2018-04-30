@@ -184,6 +184,64 @@ class tests_content_writer_test extends advanced_testcase {
     }
 
     /**
+     * It should be possible to store and retrieve user preferences.
+     */
+    public function test_export_user_preference() {
+        $context = \context_system::instance();
+        $writer = $this->get_writer_instance();
+
+        $writer->set_context($context)
+            ->export_user_preference('core_tests', 'somekey', 'value1', 'description1')
+            ->export_user_preference('core_privacy', 'somekey', 'value2', 'description2')
+            ->export_user_preference('core_tests', 'someotherkey', 'value2', 'description2');
+
+        $someprefs = $writer->get_user_preferences('core_tests');
+        $this->assertCount(2, (array) $someprefs);
+        $this->assertTrue(isset($someprefs->somekey));
+        $this->assertEquals('value1', $someprefs->somekey->value);
+        $this->assertEquals('description1', $someprefs->somekey->description);
+        $this->assertTrue(isset($someprefs->someotherkey));
+        $this->assertEquals('value2', $someprefs->someotherkey->value);
+        $this->assertEquals('description2', $someprefs->someotherkey->description);
+
+        $someprefs = $writer->get_user_preferences('core_privacy');
+        $this->assertCount(1, (array) $someprefs);
+        $this->assertTrue(isset($someprefs->somekey));
+        $this->assertEquals('value2', $someprefs->somekey->value);
+        $this->assertEquals('description2', $someprefs->somekey->description);
+    }
+
+    /**
+     * It should be possible to store and retrieve user preferences at the same point in different contexts.
+     */
+    public function test_export_user_preference_no_context_clash() {
+        $writer = $this->get_writer_instance();
+
+        $context = \context_system::instance();
+        $writer->set_context($context)
+            ->export_user_preference('core_tests', 'somekey', 'value1', 'description1');
+
+        $adminuser = \core_user::get_user_by_username('admin');
+        $usercontext = \context_user::instance($adminuser->id);
+        $writer->set_context($usercontext)
+            ->export_user_preference('core_tests', 'somekey', 'value2', 'description2');
+
+        $writer->set_context($context);
+        $someprefs = $writer->get_user_preferences('core_tests');
+        $this->assertCount(1, (array) $someprefs);
+        $this->assertTrue(isset($someprefs->somekey));
+        $this->assertEquals('value1', $someprefs->somekey->value);
+        $this->assertEquals('description1', $someprefs->somekey->description);
+
+        $writer->set_context($usercontext);
+        $someprefs = $writer->get_user_preferences('core_tests');
+        $this->assertCount(1, (array) $someprefs);
+        $this->assertTrue(isset($someprefs->somekey));
+        $this->assertEquals('value2', $someprefs->somekey->value);
+        $this->assertEquals('description2', $someprefs->somekey->description);
+    }
+
+    /**
      * Test export and recover with children.
      */
     public function test_get_metadata_with_children() {
