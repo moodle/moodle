@@ -97,6 +97,31 @@ class companypaths {
     }
 
     /**
+     * Get/check group
+     * @param int $pathid
+     * @param int $groupid
+     * @return object
+     */
+    public function get_group($pathid, $groupid) {
+        global $DB;
+
+        if ($groupid) {
+ 
+            // Enforce the pathid even though just the id will do.
+            $group = $DB->get_record('iomad_learningpathgroup', ['learningpath' => $pathid, 'id' => $groupid], '*', MUST_EXIST);
+            return $group;
+        } else {
+            $group = new \stdClass;
+            $group->learningpath = $pathid;
+            $group->name = get_string('untitledgroup', 'local_iomad_learningpath');
+            $group->sequence = 0;
+
+            return $group;
+        }
+    }
+
+
+    /**
      * Take image uploaded on learning path form and 
      * process for size and thumbnail
      * @param object $context

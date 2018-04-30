@@ -15,16 +15,46 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version file for Iomad Learning Paths
+ * Edit path definition for Iomad Learning Paths
  *
- * @package    local_iomadlearninpath
+ * @package    local_iomad_learninpath
  * @copyright  2018 Howard Miller (howardsmiller@gmail.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
+namespace local_iomad_learningpath\output;
+
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version  = 2018043000;   // The (date) version of this plugin.
-$plugin->requires = 2017051500;   // Requires this Moodle version. (3.3)
-$plugin->component = 'local_iomad_learningpath';
+use renderable;
+use renderer_base;
+use templatable;
+use stdClass;
+
+class editgroup_page implements renderable, templatable {
+
+    protected $companypaths;
+
+    protected $form;
+
+    public function __construct($companypaths, $form) {
+        $this->companypaths = $companypaths;
+        $this->form = $form;
+    }
+
+    /**
+     * Export page contents for template
+     * @param renderer_base $output
+     * @return stdClass
+     */
+    public function export_for_template(renderer_base $output) {
+        $data = new stdClass();
+        $data->company = $this->companypaths->get_company();
+        $data->form = $this->form->render();
+
+        return $data;
+    }
+
+}
+

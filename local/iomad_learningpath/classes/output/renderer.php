@@ -54,6 +54,17 @@ class renderer extends plugin_renderer_base {
     }
 
     /**
+     * Render the learning path edit group page
+     * @param editpath_page $page
+     * @return string html for page
+     */
+    public function render_editgroup_page($page) {
+        $data = $page->export_for_template($this);
+        
+        return parent::render_from_template('local_iomad_learningpath/editgroup_page', $data);
+    }
+
+    /**
      * Render the courselist path page
      * @param courselist_page $page
      * @return string html for page

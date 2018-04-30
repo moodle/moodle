@@ -8,8 +8,13 @@
 
 <h2>{{ path.name }}</h2>
 
+
 <div class="row">
     <div class="col-sm-6">
+        <a href="editgroup.php?learningpath={{ path.id }}">
+            <i class="fa fa-plus fa-2x text-muted"></i>
+            {{# str }}addgroup, local_iomad_learningpath{{/ str }}
+        </a>
     </div>
     <div class="col-sm-6">
         <form class="form-inline">

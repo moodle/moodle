@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="local/iomad_learningpath/db" VERSION="20180327" COMMENT="XMLDB file for Moodle local/iomad_learningpath"
+<XMLDB PATH="local/iomad_learningpath/db" VERSION="20180430" COMMENT="XMLDB file for Moodle local/iomad_learningpath"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -40,12 +40,16 @@
     <TABLE NAME="iomad_learningpathgroup" COMMENT="Group together courses in path">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="learningpath" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="name" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="sequence" TYPE="int" LENGTH="11" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
+      <INDEXES>
+        <INDEX NAME="ix_lp" UNIQUE="false" FIELDS="learningpath"/>
+      </INDEXES>
     </TABLE>
     <TABLE NAME="iomad_learningpathuser" COMMENT="User's assigned to learning path">
       <FIELDS>
