@@ -313,7 +313,7 @@ class question_dataset_dependent_items_form extends question_wizard_form {
                 // Decode equations in question text.
                 $qtext = $this->qtypeobj->substitute_variables(
                         $this->question->questiontext, $data);
-                $textequations = $this->qtypeobj->find_math_equations($qtext);
+                $textequations = $this->qtypeobj->find_formulas($qtext);
                 if ($textequations != '' && count($textequations) > 0 ) {
                     $mform->addElement('static', "divider1[{$j}]", '',
                             'Formulas {=..} in question text');
