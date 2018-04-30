@@ -67,9 +67,9 @@ class content_writer implements \core_privacy\local\request\content_writer {
     protected $customfiles;
 
     /**
-     * @var array The site-wide user preferences which have been exported.
+     * @var \stdClass The user preferences which have been exported.
      */
-    protected $userprefs = [];
+    protected $userprefs;
 
     /**
      * Whether any data has been exported at all within the current context.
@@ -80,7 +80,7 @@ class content_writer implements \core_privacy\local\request\content_writer {
         $hasmetadata = !empty($this->metadata->{$this->context->id});
         $hasfiles = !empty($this->files->{$this->context->id});
         $hascustomfiles = !empty($this->customfiles->{$this->context->id});
-        $hasuserprefs = !empty($this->userprefs);
+        $hasuserprefs = !empty($this->userprefs->{$this->context->id});
 
         return $hasdata || $hasrelateddata || $hasmetadata || $hasfiles || $hascustomfiles || $hasuserprefs;
     }
@@ -97,6 +97,7 @@ class content_writer implements \core_privacy\local\request\content_writer {
         $this->metadata = (object) [];
         $this->files = (object) [];
         $this->customfiles = (object) [];
+        $this->userprefs = (object) [];
     }
 
     /**
@@ -137,6 +138,13 @@ class content_writer implements \core_privacy\local\request\content_writer {
 
         if (isset($this->customfiles->{$this->context->id}) && empty((array) $this->customfiles->{$this->context->id})) {
             $this->customfiles->{$this->context->id} = (object) [
+                'children' => (object) [],
+                'data' => [],
+            ];
+        }
+
+        if (isset($this->userprefs->{$this->context->id}) && empty((array) $this->userprefs->{$this->context->id})) {
+            $this->userprefs->{$this->context->id} = (object) [
                 'children' => (object) [],
                 'data' => [],
             ];
@@ -386,11 +394,13 @@ class content_writer implements \core_privacy\local\request\content_writer {
         string $value,
         string $description
     ) : \core_privacy\local\request\content_writer {
-        if (!isset($this->userprefs[$component])) {
-            $this->userprefs[$component] = (object) [];
+        $prefs = $this->fetch_root($this->userprefs, []);
+
+        if (!isset($prefs->{$component})) {
+            $prefs->{$component} = (object) [];
         }
 
-        $this->userprefs[$component]->$key = (object) [
+        $prefs->{$component}->$key = (object) [
             'value' => $value,
             'description' => $description,
         ];
@@ -405,8 +415,9 @@ class content_writer implements \core_privacy\local\request\content_writer {
      * @return  \stdClass
      */
     public function get_user_preferences(string $component) {
-        if (isset($this->userprefs[$component])) {
-            return $this->userprefs[$component];
+        $prefs = $this->fetch_root($this->userprefs, []);
+        if (isset($prefs->{$component})) {
+            return $prefs->{$component};
         } else {
             return (object) [];
         }
