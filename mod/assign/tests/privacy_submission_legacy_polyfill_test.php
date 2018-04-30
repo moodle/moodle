@@ -53,7 +53,6 @@ class mod_assignsubmission_privacy_legacy_polyfill_test extends advanced_testcas
      * Test the get_context_for_userid_within_submission shim.
      */
     public function test_get_context_for_userid_within_submission() {
-        
         $userid = 21;
         $contextlist = new \core_privacy\local\request\contextlist();
         $mock = $this->createMock(test_assignsubmission_legacy_polyfill_mock_wrapper::class);

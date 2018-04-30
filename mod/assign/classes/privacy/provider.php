@@ -252,7 +252,7 @@ class provider implements metadataprovider, pluginprovider, preference_provider 
 
         foreach ($contextlist as $context) {
             if ($context->contextlevel != CONTEXT_MODULE) {
-                continue;    
+                continue;
             }
             // Get the assign object.
             $assign = new \assign($context, null, null);
