@@ -24,6 +24,7 @@
  */
 
 $string['pluginname'] = 'Recent activity';
+$string['privacy:metadata'] = 'The recent activity block contains a cache of data stored elsewhere in Moodle.';
 $string['recent_activity:addinstance'] = 'Add a new recent activity block';
 $string['recent_activity:viewaddupdatemodule'] = 'View added and updated modules in recent activity block';
 $string['recent_activity:viewdeletemodule'] = 'View deleted modules in recent activity block';
