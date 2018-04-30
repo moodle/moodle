@@ -412,4 +412,47 @@ class core_files_conversion_testcase extends advanced_testcase {
 
         $this->assertEquals(1, $DB->count_records(conversion::TABLE));
     }
+
+    /**
+     * Test orphan records are removed.
+     */
+    public function test_remove_orphan_records() {
+        global $DB;
+        $this->resetAfterTest();
+
+        $sf1 = $this->create_stored_file('1', '1');
+        $sf2 = $this->create_stored_file('2', '2');
+        $sf3 = $this->create_stored_file('3', '3');
+        $c1 = new conversion(0, (object) ['sourcefileid' => $sf1->get_id(), 'targetformat' => 'pdf']);
+        $c1->create();
+        $c2 = new conversion(0, (object) ['sourcefileid' => $sf2->get_id(), 'targetformat' => 'pdf']);
+        $c2->create();
+        $c3 = new conversion(0, (object) ['sourcefileid' => $sf3->get_id(), 'targetformat' => 'pdf']);
+        $c3->create();
+
+        $this->assertTrue(conversion::record_exists($c1->get('id')));
+        $this->assertTrue(conversion::record_exists($c2->get('id')));
+        $this->assertTrue(conversion::record_exists($c3->get('id')));
+
+        // Nothing should happen here.
+        conversion::remove_orphan_records();
+        $this->assertTrue(conversion::record_exists($c1->get('id')));
+        $this->assertTrue(conversion::record_exists($c2->get('id')));
+        $this->assertTrue(conversion::record_exists($c3->get('id')));
+
+        // Delete file #2.
+        $sf2->delete();
+        conversion::remove_orphan_records();
+        $this->assertTrue(conversion::record_exists($c1->get('id')));
+        $this->assertFalse(conversion::record_exists($c2->get('id')));
+        $this->assertTrue(conversion::record_exists($c3->get('id')));
+
+        // Delete file #1, #3.
+        $sf1->delete();
+        $sf3->delete();
+        conversion::remove_orphan_records();
+        $this->assertFalse(conversion::record_exists($c1->get('id')));
+        $this->assertFalse(conversion::record_exists($c2->get('id')));
+        $this->assertFalse(conversion::record_exists($c3->get('id')));
+    }
 }
