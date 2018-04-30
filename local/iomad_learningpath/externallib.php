@@ -99,6 +99,7 @@ class local_iomad_learningpath_external extends external_api {
             array(
                 'pathid' => new external_value(PARAM_INT, 'ID of (target) learning path'),
                 'filter' => new external_value(PARAM_TEXT, 'Filter course list returned', VALUE_DEFAULT, ''),
+                'category' => new external_value(PARAM_INT, 'Show only courses in this category (and children)', VALUE_DEFAULT, 0),
             )
         );
     }
@@ -124,15 +125,16 @@ class local_iomad_learningpath_external extends external_api {
      * Get list of possible courses
      * @param int $pathid 
      * @param int $filter
+     * @param int $category (id) (0 = show all)
      * @param array $excludeids
      * @throws invalid_parameter_exception
      */
-    public static function getprospectivecourses($pathid, $filter = '') {
+    public static function getprospectivecourses($pathid, $filter = '', $category = 0) {
         global $DB;
 
         // Validate params
         $params = self::validate_parameters(self::getprospectivecourses_parameters(),
-            ['pathid' => $pathid, 'filter' => $filter]);
+            ['pathid' => $pathid, 'filter' => $filter, 'category' => $category]);
 
         // Find learning path and company
         $path = $DB->get_record('iomad_learningpath', ['id' => $params['pathid']], '*', MUST_EXIST);
@@ -146,7 +148,7 @@ class local_iomad_learningpath_external extends external_api {
 
         // Get full list of prospective courses
         $companypaths = new local_iomad_learningpath\companypaths($companyid, $context);
-        $courses = $companypaths->get_prospective_courses($params['pathid'], $params['filter']);
+        $courses = $companypaths->get_prospective_courses($params['pathid'], $params['filter'], $params['category']);
 
         // Just the bits we need
         $pcs = [];

@@ -223,9 +223,10 @@ class companypaths {
      * Get prospective course list for company
      * @param int $pathid
      * @param string $filter
+     * @param int $category (course category)
      * @return array of courses
      */
-    public function get_prospective_courses($pathid, $filter = '') {
+    public function get_prospective_courses($pathid, $filter = '', $category = 0) {
         global $DB;
 
         // Get currently selected courses
@@ -251,10 +252,18 @@ class companypaths {
                 continue;
             }
 
+            // Do not include courses NOT in the selected category
+            if ($category) {
+                if ($course->category != $category) {
+                    continue;
+                }
+            }
+
             // Apply filter (if specified).
             if ($filter && (stripos($course->fullname, $filter) === false)) {
                 continue;
             }
+
             $course->image = $this->get_course_image_url($course->id);
             $courses[$course->id] = $course;
         }

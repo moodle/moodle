@@ -54,12 +54,13 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification', '
             function course_list() {
 
                 var filter = $('#coursefilter').val();
+                var category = $('#category').val();
 
                 // Ajax stuff to get list
                 // call the web service
                 ajax.call([{
                     methodname: 'local_iomad_learningpath_getprospectivecourses',
-                    args: {pathid: pathid, filter: filter},
+                    args: {pathid: pathid, filter: filter, category: category},
                     done: function(courses) {
                         apply_filter(courses);
                     },
@@ -74,6 +75,9 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification', '
              */
             $(window).on('load', course_list());
             $('#coursefilter').on('input', function() {
+                course_list();
+            });
+            $('#category').on('change', function() {
                 course_list();
             });
 
