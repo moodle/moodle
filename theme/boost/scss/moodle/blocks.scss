@@ -215,14 +215,6 @@ $doughnut-fill-colour: $brand-warning;
     }
 }
 
-@media (min-width: 1600px) {
-    .block_myoverview {
-        .courses-view-course-item {
-            height: 190px;
-        }
-    }
-}
-
 // Show expand collapse with font-awesome.
 .block_settings .block_tree [aria-expanded="true"],
 .block_settings .block_tree [aria-expanded="true"].emptybranch,
