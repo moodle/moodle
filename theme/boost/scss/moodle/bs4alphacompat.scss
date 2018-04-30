@@ -217,3 +217,19 @@ $bs4aspacers: map-merge((
     @extend .col-#{$i};
   }
 }
+
+input[disabled] {
+    cursor: not-allowed;
+}
+
+// These have been removed in BS4 Stable. Adding in so RTL dropdowns will work.
+/*rtl:raw:
+.dropdown-menu-right {
+    right: 0;
+    left: auto;
+}
+.dropdown-menu-left {
+    right: auto;
+    left: 0;
+}
+*/
