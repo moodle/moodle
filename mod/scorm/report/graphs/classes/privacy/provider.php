@@ -15,14 +15,32 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'scorm_basic' report plugin
+ * Privacy Subsystem implementation for scormreport_graphs.
  *
- * @package    scormreport
- * @subpackage basic
- * @author     Ankit Kumar Agarwal
+ * @package    scormreport_graphs
+ * @copyright  2018 Sara Arjona <sara@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Basic report';
-$string['privacy:metadata:preference:scorm_report_detailed'] = 'Whether to track details in the SCORM basic report';
-$string['privacy:metadata:preference:scorm_report_pagesize'] = 'Number of users to display in the SCORM reports';
+namespace scormreport_graphs\privacy;
+
+defined('MOODLE_INTERNAL') || die();
+
+/**
+ * Privacy Subsystem for scormreport_graphs implementing null_provider.
+ *
+ * @copyright  2018 Sara Arjona <sara@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class provider implements \core_privacy\local\metadata\null_provider {
+
+    /**
+     * Get the language string identifier with the component's language
+     * file to explain why this plugin stores no data.
+     *
+     * @return  string
+     */
+    public static function get_reason() : string {
+        return 'privacy:metadata';
+    }
+}
