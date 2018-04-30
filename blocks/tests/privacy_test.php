@@ -300,18 +300,18 @@ class core_block_privacy_testcase extends provider_testcase {
         // Export data.
         provider::export_user_data(new approved_contextlist($u1, 'core_block', [$bmyprofile->context->id, $blogin->context->id,
             $bmentees->context->id, $bprivatefiles->context->id]));
-        $prefs = writer::with_context($bmentees->context)->get_user_preferences('core_block');
+        $prefs = writer::with_context($bmentees->context)->get_user_context_preferences('core_block');
         $this->assertEmpty((array) $prefs);
 
-        $prefs = writer::with_context($blogin->context)->get_user_preferences('core_block');
+        $prefs = writer::with_context($blogin->context)->get_user_context_preferences('core_block');
         $this->assertEquals($no, $prefs->block_is_docked->value);
         $this->assertEquals($yes, $prefs->block_is_hidden->value);
 
-        $prefs = writer::with_context($bprivatefiles->context)->get_user_preferences('core_block');
+        $prefs = writer::with_context($bprivatefiles->context)->get_user_context_preferences('core_block');
         $this->assertObjectNotHasAttribute('block_is_docked', $prefs);
         $this->assertEquals($no, $prefs->block_is_hidden->value);
 
-        $prefs = writer::with_context($bmyprofile->context)->get_user_preferences('core_block');
+        $prefs = writer::with_context($bmyprofile->context)->get_user_context_preferences('core_block');
         $this->assertEquals($yes, $prefs->block_is_docked->value);
         $this->assertObjectNotHasAttribute('block_is_hidden', $prefs);
     }

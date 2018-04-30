@@ -82,7 +82,18 @@ class content_writer implements \core_privacy\local\request\content_writer {
         $hascustomfiles = !empty($this->customfiles->{$this->context->id});
         $hasuserprefs = !empty($this->userprefs->{$this->context->id});
 
-        return $hasdata || $hasrelateddata || $hasmetadata || $hasfiles || $hascustomfiles || $hasuserprefs;
+        $systemcontext = \context_system::instance();
+        $hasglobaluserprefs = !empty($this->userprefs->{$systemcontext->id});
+
+        $hasanydata = $hasdata;
+        $hasanydata = $hasanydata || $hasrelateddata;
+        $hasanydata = $hasanydata || $hasmetadata;
+        $hasanydata = $hasanydata || $hasfiles;
+        $hasanydata = $hasanydata || $hascustomfiles;
+        $hasanydata = $hasanydata || $hasuserprefs;
+        $hasanydata = $hasanydata || $hasglobaluserprefs;
+
+        return $hasanydata;
     }
 
     /**
@@ -414,6 +425,22 @@ class content_writer implements \core_privacy\local\request\content_writer {
      * @return  \stdClass
      */
     public function get_user_preferences($component) {
+        $context = \context_system::instance();
+        $prefs = $this->fetch_root($this->userprefs, [], $context->id);
+        if (isset($prefs->{$component})) {
+            return $prefs->{$component};
+        } else {
+            return (object) [];
+        }
+    }
+
+    /**
+     * Get all user preferences for the specified component.
+     *
+     * @param   string          $component  The name of the component.
+     * @return  \stdClass
+     */
+    public function get_user_context_preferences($component) {
         $prefs = $this->fetch_root($this->userprefs, []);
         if (isset($prefs->{$component})) {
             return $prefs->{$component};
@@ -436,17 +463,19 @@ class content_writer implements \core_privacy\local\request\content_writer {
      *
      * @param   \stdClass   $base The base to use - e.g. $this->data
      * @param   array       $subcontext The subcontext to fetch
+     * @param   int         $temporarycontextid A temporary context ID to use for the fetch.
      * @return  array
      */
-    protected function fetch_root($base, $subcontext) {
-        if (!isset($base->{$this->context->id})) {
-            $base->{$this->context->id} = (object) [
+    protected function fetch_root($base, $subcontext, $temporarycontextid = null) {
+        $contextid = !empty($temporarycontextid) ? $temporarycontextid : $this->context->id;
+        if (!isset($base->{$contextid})) {
+            $base->{$contextid} = (object) [
                 'children' => (object) [],
                 'data' => [],
             ];
         }
 
-        $current = $base->{$this->context->id};
+        $current = $base->{$contextid};
         foreach ($subcontext as $node) {
             if (!isset($current->children->{$node})) {
                 $current->children->{$node} = (object) [
