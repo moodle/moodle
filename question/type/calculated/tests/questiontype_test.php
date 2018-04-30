@@ -127,4 +127,37 @@ class qtype_calculated_test extends advanced_testcase {
         $this->assertEquals("Lorem ipsum dolor...", $this->qtype->get_short_question_name($longquestionname, 20));
         $this->assertEquals("Lorem ipsum", $this->qtype->get_short_question_name($shortquestionname, 20));
     }
+
+    public function test_placehodler_regex() {
+        preg_match_all(qtype_calculated::PLACEHODLER_REGEX, '= {={a} + {b}}', $matches);
+        $this->assertEquals([['{a}', '{b}'], ['a', 'b']], $matches);
+    }
+
+    public function test_formulas_in_text_regex() {
+        preg_match_all(qtype_calculated::FORMULAS_IN_TEXT_REGEX, '= {={a} + {b}}', $matches);
+        $this->assertEquals([['{={a} + {b}}'], ['{a} + {b}']], $matches);
+    }
+
+    public function test_find_dataset_names() {
+        $this->assertEquals([], $this->qtype->find_dataset_names('Frog.'));
+
+        $this->assertEquals(['a' => 'a', 'b' => 'b'],
+                $this->qtype->find_dataset_names('= {={a} + {b}}'));
+
+        $this->assertEquals(['a' => 'a', 'b' => 'b'],
+                $this->qtype->find_dataset_names('What is {a} plus {b}? (Hint, it is not {={a}*{b}}.)'));
+
+        $this->assertEquals(['a' => 'a', 'b' => 'b', 'c' => 'c'],
+                $this->qtype->find_dataset_names('
+                        <p>If called with $a = {a} and $b = {b}, what does this PHP function return?</p>
+                        <pre>
+                        /**
+                         * What does this do?
+                         */
+                        function mystery($a, $b) {
+                            return {c}*$a + $b;
+                        }
+                        </pre>
+                        '));
+    }
 }
