@@ -95,6 +95,12 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
         $fs = get_file_storage();
         if ($this->post) {
             if ($this->attachment) {
+                // Make sure the requested file belongs to this post.
+                $file = $fs->get_file_by_id($this->attachment);
+                if ($file->get_contextid() != $this->modcontext->id
+                    || $file->get_itemid() != $this->post->id) {
+                    throw new portfolio_caller_exception('filenotfound');
+                }
                 $this->set_file_and_format_data($this->attachment);
             } else {
                 $attach = $fs->get_area_files($this->modcontext->id, 'mod_forum', 'attachment', $this->post->id, 'timemodified', false);
