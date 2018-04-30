@@ -317,7 +317,7 @@ class qtype_calculatedmulti_qe2_attempt_updater extends question_qtype_attempt_u
      */
     public function replace_expressions_in_text($text, $length = null, $format = null) {
         $vs = $this; // Can't see to use $this in a PHP closure.
-        $text = preg_replace_callback('~\{=([^{}]*(?:\{[^{}]+}[^{}]*)*)}~',
+        $text = preg_replace_callback(qtype_calculated::FORMULAS_IN_TEXT_REGEX,
                 function ($matches) use ($vs, $format, $length) {
                     return $vs->format_float($vs->calculate($matches[1]), $length, $format);
                 }, $text);
