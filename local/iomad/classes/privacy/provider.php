@@ -90,7 +90,7 @@ class provider implements
      * @return contextlist the list of contexts containing user info for the user.
      */
     public static function get_contexts_for_userid($userid) {
-        // Fetch all choice answers.
+        // System context only.
         $sql = "SELECT c.id
                   FROM {context} c
                 WHERE contextlevel = :contextlevel";
