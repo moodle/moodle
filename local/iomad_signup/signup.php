@@ -59,7 +59,7 @@ if (!$company = $DB->get_record('company', array('id'=> $wantedcompanyid, 'short
 
 $company->deptid = 0;
 if (!empty($wanteddepartment)) {
-    if ($department=$DB->get_record('department', array('companyid' => $company->id, 'shortname' => urldecode($wanteddepartment)))) {
+    if ($department=$DB->get_record('department', array('company' => $company->id, 'shortname' => urldecode($wanteddepartment)))) {
         $company->deptid = $department->id;
     }
 }
