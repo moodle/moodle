@@ -164,9 +164,18 @@ class assignsubmission_comments_privacy_testcase extends \mod_assign\tests\mod_a
         $exportdata = new \mod_assign\privacy\assign_plugin_request_data($context, $assign, $submission);
         \assignsubmission_comments\privacy\provider::export_submission_user_data($exportdata);
         $exportedcomments = $writer->get_data(['Comments']);
+
+        // Can't rely on these comments coming out in order.
+        if ($exportedcomments->comments[0]->userid == $user1->id) {
+            $exportedstudentcomment = $exportedcomments->comments[0]->content;
+            $exportedteachercomment = $exportedcomments->comments[1]->content;
+        } else {
+            $exportedstudentcomment = $exportedcomments->comments[1]->content;
+            $exportedteachercomment = $exportedcomments->comments[0]->content;
+        }
         $this->assertCount(2, $exportedcomments->comments);
-        $this->assertContains($studentcomment, $exportedcomments->comments[0]->content);
-        $this->assertContains($teachercomment, $exportedcomments->comments[1]->content);
+        $this->assertContains($studentcomment, $exportedstudentcomment);
+        $this->assertContains($teachercomment, $exportedteachercomment);
     }
 
     /**
