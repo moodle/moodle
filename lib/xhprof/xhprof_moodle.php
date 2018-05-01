@@ -64,13 +64,28 @@ function profiling_is_saved($value = null) {
 }
 
 /**
+ * Whether PHP profiling is available.
+ *
+ * This check ensures that one of the available PHP Profiling extensions is available.
+ *
+ * @return  bool
+ */
+function profiling_available() {
+    $hasextension = extension_loaded('tideways_xhprof');
+    $hasextension = $hasextension || extension_loaded('tideways');
+    $hasextension = $hasextension || extension_loaded('xhprof');
+
+    return $hasextension;
+}
+
+/**
  * Start profiling observing all the configuration
  */
 function profiling_start() {
     global $CFG, $SESSION, $SCRIPT;
 
     // If profiling isn't available, nothing to start
-    if (!extension_loaded('xhprof') && !extension_loaded('tideways')) {
+    if (!profiling_available()) {
         return false;
     }
 
@@ -147,7 +162,9 @@ function profiling_start() {
 
     // Arrived here, the script is going to be profiled, let's do it
     $ignore = array('call_user_func', 'call_user_func_array');
-    if (extension_loaded('tideways')) {
+    if (extension_loaded('tideways_xhprof')) {
+        tideways_xhprof_enable(TIDEWAYS_XHPROF_FLAGS_CPU + TIDEWAYS_XHPROF_FLAGS_MEMORY);
+    } else if (extension_loaded('tideways')) {
         tideways_enable(TIDEWAYS_FLAGS_CPU + TIDEWAYS_FLAGS_MEMORY, array('ignored_functions' =>  $ignore));
     } else {
         xhprof_enable(XHPROF_FLAGS_CPU + XHPROF_FLAGS_MEMORY, array('ignored_functions' => $ignore));
@@ -165,7 +182,7 @@ function profiling_stop() {
     global $CFG, $DB, $SCRIPT;
 
     // If profiling isn't available, nothing to stop
-    if (!extension_loaded('xhprof') && !extension_loaded('tideways')) {
+    if (!profiling_available()) {
         return false;
     }
 
@@ -184,7 +201,9 @@ function profiling_stop() {
 
     // Arrived here, profiling is running, stop and save everything
     profiling_is_running(false);
-    if (extension_loaded('tideways')) {
+    if (extension_loaded('tideways_xhprof')) {
+        $data = tideways_xhprof_disable();
+    } else if (extension_loaded('tideways')) {
         $data = tideways_disable();
     } else {
         $data = xhprof_disable();
