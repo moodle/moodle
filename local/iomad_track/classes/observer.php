@@ -176,7 +176,6 @@ class observer {
         $data = $event->get_data();
         $userid = $data['relateduserid'];
         $courseid = $data['courseid'];
-        $timecompleted = $data['timecreated'];
 
         // Get the full completion information.
         $comprec = $DB->get_record('course_completions', array('userid' => $userid,
@@ -226,7 +225,7 @@ class observer {
         $completion->userid = $userid;
         $completion->timeenrolled = $enrolrec->timestart;
         $completion->timestarted = $comprec->timestarted;
-        $completion->timecompleted = $timecompleted;
+        $completion->timecompleted = $comprec->timecompleted;
         if (!empty($graderec->finalgrade)) {
             $completion->finalscore = $graderec->finalgrade;
         } else {
