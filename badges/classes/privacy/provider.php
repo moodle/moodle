@@ -299,10 +299,10 @@ class provider implements
         if (in_array($userid, $contexts[CONTEXT_USER])) {
 
             // Export the badges.
-            $uid = $DB->sql_concat_join("'-'", ['b.id', 'COALESCE(bc.id, 0)', 'COALESCE(bi.id, 0)',
+            $uniqueid = $DB->sql_concat_join("'-'", ['b.id', 'COALESCE(bc.id, 0)', 'COALESCE(bi.id, 0)',
                 'COALESCE(bma.id, 0)', 'COALESCE(bcm.id, 0)']);
             $sql = "
-                SELECT $uid AS uid, b.id,
+                SELECT $uniqueid AS uniqueid, b.id,
                        bi.id AS biid, bi.dateissued, bi.dateexpire, bi.uniquehash,
                        bma.id AS bmaid, bma.datemet, bma.issuerid,
                        bcm.id AS bcmid,
