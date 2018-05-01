@@ -48,8 +48,9 @@
                     <div id="nopathcourses" class="alert alert-warning" style="display: none">
                         {{# str }}nocoursesinpath, local_iomad_learningpath{{/ str }}
                     </div>
-                    <ul id="pathcourselist">
-                    </ul>
+                    {{# groups }}
+                        {{> local_iomad_learningpath/groupcard }}
+                    {{/ groups }}
                 </p>
             </div>
         </div>

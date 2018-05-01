@@ -50,12 +50,15 @@ $path = $companypaths->get_path($id);
 $companypaths->breadcrumb(get_string('managecourses', 'local_iomad_learningpath'), $url);
 $courses = $companypaths->get_courselist($id);
 $categories = $companypaths->get_categories($id);
+$companypaths->check_group($id);
+$groups = $companypaths->get_display_courselist($id);
+// echo "<pre>"; var_dump($groups); die;
 
 // Javascript initialise
 $PAGE->requires->js_call_amd('local_iomad_learningpath/courselist', 'init', [$companyid, $id]);
 
 // Get renderer for page (and pass data).
-$courselist_page = new local_iomad_learningpath\output\courselist_page($context, $path, $courses, $categories);
+$courselist_page = new local_iomad_learningpath\output\courselist_page($context, $path, $groups, $categories);
 
 echo $OUTPUT->header();
 

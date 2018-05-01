@@ -1,0 +1,20 @@
+<div class="groupcard card">
+    <div class="card-block">
+        <div class="row">
+            <div class="col-md-10">
+                <h4 class="card-title">{{ name }}</h4>
+            </div>
+            <div class="col-md-2 text-right">
+                <a href="editgroup.php?learningpath={{ path.id }}&id={{ id }}" title="{{# str }}editgroup, local_iomad_learningpath{{/ str }}">
+                    <i class="fa fa-cog fa-2x text-muted"></i>
+                </a>
+                {{# showdelete }}
+                    <a href="editgroup.php?learningpath={{ path.id }}&delete={{ id }}" title="{{# str }}deletegroup, local_iomad_learningpath{{/ str }}">
+                        <i class="fa fa-trash fa-2x text-muted"></i>
+                    </a>
+                {{/ showdelete }}
+            </div>
+        </div>
+        <ul id="pathcourselist"> </ul>
+    </div>
+</div>

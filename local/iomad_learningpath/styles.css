@@ -47,3 +47,7 @@
 .text-center {
     text-align: center;
 }
+
+.groupcard .card-block {
+    padding: 0.5rem;
+}

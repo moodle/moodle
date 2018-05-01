@@ -33,9 +33,11 @@ iomad::require_capability('local/iomad_learningpath:manage', $context);
 // Parameters
 $learningpath = required_param('learningpath', PARAM_INT);
 $id = optional_param('id', 0, PARAM_INT);
+$delete = optional_param('delete', 0, PARAM_INT);
 
 // Page boilerplate stuff.
 $url = new moodle_url('/local/iomad_learningpath/editgroup.php', ['id' => $id, 'learningpath' => $learningpath]);
+$exiturl = new moodle_url('/local/iomad_learningpath/courselist.php', ['id' => $learningpath]);
 $PAGE->set_context($context);
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('admin');
@@ -55,11 +57,16 @@ $path = $companypaths->get_path($learningpath);
 // Get/create group
 $group = $companypaths->get_group($learningpath, $id);
 
+// Delete?
+if ($delete) {
+    $companypaths->delete_group($learningpath, $delete);
+    redirect($exiturl);
+}
+
 // Form
 $form = new local_iomad_learningpath\forms\editgroup_form();
 
 // Handle form activity.
-$exiturl = new moodle_url('/local/iomad_learningpath/courselist.php', ['id' => $learningpath]);
 if ($form->is_cancelled()) {
 
     redirect($exiturl);

@@ -38,14 +38,14 @@ class courselist_page implements renderable, templatable {
 
     protected $path;
 
-    protected $courses;
+    protected $groups;
 
     protected $categories;
 
-    public function __construct($context, $path, $courses, $categories) {
+    public function __construct($context, $path, $groups, $categories) {
         $this->context = $context;
         $this->path = $path;
-        $this->courses = $courses;
+        $this->groups = $groups;
         $this->categories = $categories;
     }
 
@@ -55,9 +55,17 @@ class courselist_page implements renderable, templatable {
      * @return stdClass
      */
     public function export_for_template(renderer_base $output) {
+        
+        // fix courses list inside groups
+        $groups = $this->groups;
+        foreach ($groups as $group) {
+            $group->courses = array_values($group->courses);
+            $group->showdelete = (count($group->courses) == 0) && (count($groups) > 1);
+        }
+
         $data = new stdClass();
         $data->path = $this->path;
-        $data->courses = array_values($this->courses);
+        $data->groups = array_values($groups);
         $data->categories = array_values($this->categories);
         $data->iscourses = !empty($this->courses);
         $data->done = $output->single_button(

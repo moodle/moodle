@@ -120,6 +120,36 @@ class companypaths {
         }
     }
 
+    /**
+     * Check path has at least one group.
+     * if not, create a default group and add all the courses
+     * @param int $pathid
+     */
+    public function check_group($pathid) {
+        global $DB;
+
+        if (!$DB->count_records('iomad_learningpathgroup', ['learningpath' => $pathid])) {
+            $group = $this->get_group($pathid, 0);
+            $groupid = $DB->insert_record('iomad_learningpathgroup', $group);
+            if ($courses = $DB->get_records('iomad_learningpathcourse', ['path' => $pathid])) {
+                foreach ($courses as $course) {
+                    $course->groupid = $groupid;
+                    $DB->update_record('iomad_learningpathcourse', $course);
+                }
+            }
+        }
+    }
+
+    /**
+     * Delete group
+     * @param int $pathid
+     * @param int $groupid
+     */
+    public function delete_group($pathid, $groupid) {
+        global $DB;
+
+        $DB->delete_records('iomad_learningpathgroup', ['learningpath' => $pathid, 'id' => $groupid]);
+    }
 
     /**
      * Take image uploaded on learning path form and 
@@ -219,17 +249,23 @@ class companypaths {
     /**
      * Get course list for given path
      * @param int $pathid
+     * @param int $groupid (0 = all)
      * @param bool $idonly just return course ids if set
      * @return array
      */
-    public function get_courselist($pathid, $idonly = false) {
+    public function get_courselist($pathid, $groupid = 0, $idonly = false) {
         global $DB;
 
         $sql = 'SELECT c.id courseid, c.shortname shortname, c.fullname fullname, lpc.*
             FROM {iomad_learningpathcourse} lpc JOIN {course} c ON lpc.course = c.id
-            WHERE lpc.path = :pathid
-            ORDER BY lpc.sequence';
-        $courses = $DB->get_records_sql($sql, ['pathid' => $pathid]);
+            WHERE lpc.path = :pathid ';
+        $params = ['pathid' => $pathid];
+        if ($groupid) {
+            $sql .= 'AND lpc.groupid = :groupid ';
+            $params['groupid'] = $groupid;
+        }
+        $sql .= 'ORDER BY lpc.groupid, lpc.sequence';
+        $courses = $DB->get_records_sql($sql, $params);
 
         // ID only?
         if ($idonly) {
@@ -245,6 +281,23 @@ class companypaths {
     }
 
     /**
+     * Get display courselist
+     * List of groups (if there are any) and their courses
+     * @param int $pathid
+     * @return array
+     */
+    public function get_display_courselist($pathid) {
+        global $DB;
+
+        $groups = $DB->get_records('iomad_learningpathgroup', ['learningpath' => $pathid]);
+        foreach ($groups as $group) {
+            $group->courses = $this->get_courselist($pathid, $group->id);
+        }
+
+        return $groups;
+    }
+
+    /**
      * Get prospective course list for company
      * @param int $pathid
      * @param string $filter
@@ -255,7 +308,7 @@ class companypaths {
         global $DB;
 
         // Get currently selected courses
-        $selectedcourses = $this->get_courselist($pathid, true);
+        $selectedcourses = $this->get_courselist($pathid, 0, true);
 
         $topdepartment = company::get_company_parentnode($this->companyid);
         $depcourses = company::get_recursive_department_courses($topdepartment->id);
