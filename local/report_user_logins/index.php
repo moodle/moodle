@@ -731,7 +731,6 @@ function iomad_get_users_listing($sort='lastaccess', $dir='ASC', $page=0, $recor
                                  FROM {user} u, {department} d, {company_users} cu, {company} c
                                  WHERE $select and cu.userid = u.id and d.id = cu.departmentid AND c.id = cu.companyid
                                  $companysql
-                                 $managertypesql
                                  $loginsql
                                  $sort", $params, $page, $recordsperpage);
 

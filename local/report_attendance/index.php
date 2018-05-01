@@ -149,7 +149,8 @@ if (!empty($courseid)) {
                                            get_string('department', 'block_iomad_company_admin'),
                                            get_string('email'));
 
-            if ($users = $DB->get_records_sql('SELECT userid AS id FROM {trainingevent_users}
+            if (!empty($allowedusers) &&
+                $users = $DB->get_records_sql('SELECT userid AS id FROM {trainingevent_users}
                                                WHERE trainingeventid='.$event->id.'
                                                AND userid IN ('.$allowedlist.')')) {
                 foreach ($users as $user) {
