@@ -381,8 +381,9 @@ class companypaths {
      * Add courses to path
      * @param int pathid
      * @param array $courseids
+     * @param int $groupid (0 = add to first group)
      */
-    public function add_courses($pathid, $courseids) {
+    public function add_courses($pathid, $courseids, $groupid = 0) {
         global $DB;
 
         // Make sure we only add courses in the prospective list.
@@ -390,6 +391,16 @@ class companypaths {
 
         // Get existing list
         $count = $DB->count_records('iomad_learningpathcourse', ['path' => $pathid]);
+
+        // Check/get groupid
+        if ($groupid) {
+            $group = $DB->get_record('iomad_learningpathgroup', ['learningpath' => $pathid, 'id' => $groupid], '*', MUST_EXIST);
+        } else {
+            $groups = $DB->get_records('iomad_learningpathgroup', ['learningpath' => $pathid]);
+            if (!$group = reset($groups)) {
+                throw new \Exception('No groups for learning path id = ' . $pathid);
+            }
+        }
 
         // Work through courses.
         foreach ($courseids as $courseid) {
@@ -410,6 +421,7 @@ class companypaths {
             $course->path = $pathid;
             $course->course = $courseid;
             $course->sequence = $count;
+            $course->groupid = $group->id;
             $DB->insert_record('iomad_learningpathcourse', $course);
         }
     }

@@ -173,6 +173,7 @@ class local_iomad_learningpath_external extends external_api {
             array(
                 'pathid' => new external_value(PARAM_INT, 'ID of Iomad Learning Path'),
                 'courseids' => new external_multiple_structure(new external_value(PARAM_INT, 'Course ID'), 'List of course IDs to add'),
+                'groupid' => new external_value(PARAM_INT, 'ID of group. If 0 just add to lowest numbered group', VALUE_DEFAULT, 0),
             )
         );
     }
@@ -189,13 +190,14 @@ class local_iomad_learningpath_external extends external_api {
      * Add courses to learning path
      * @param int $pathid
      * @param array $courseids
+     * $param int $groupid (0 = add to lowest group)
      * @throws invalid_parameter_exception
      */
-    public static function addcourses($pathid, $courseids) {
+    public static function addcourses($pathid, $courseids, $groupid = 0) {
         global $DB;
 
         // Validate params
-        $params = self::validate_parameters(self::addcourses_parameters(), ['pathid' => $pathid, 'courseids' => $courseids]);
+        $params = self::validate_parameters(self::addcourses_parameters(), ['pathid' => $pathid, 'courseids' => $courseids, 'groupid' => $groupid]);
 
         // get path
         if (!$path = $DB->get_record('iomad_learningpath', ['id' => $params['pathid']])) {
@@ -215,7 +217,7 @@ class local_iomad_learningpath_external extends external_api {
 
         // Add courses
         $companypaths = new local_iomad_learningpath\companypaths($companyid, $context);
-        $companypaths->add_courses($params['pathid'], $params['courseids']);
+        $companypaths->add_courses($params['pathid'], $params['courseids'], $params['groupid']);
 
         return true;
     }
