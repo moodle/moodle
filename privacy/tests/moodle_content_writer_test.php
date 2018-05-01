@@ -417,6 +417,8 @@ class moodle_content_writer_test extends advanced_testcase {
      * Exporting a single stored_file should cause that file to be output in the files directory.
      *
      * @dataProvider    export_file_provider
+     * @param   string  $filearea File area
+     * @param   int     $itemid Item ID
      * @param   string  $filepath File path
      * @param   string  $filename File name
      * @param   string  $content Content
@@ -791,6 +793,123 @@ class moodle_content_writer_test extends advanced_testcase {
                 'value',
                 'This is a much longer description which actually states what this is used for. Blah blah blah.',
             ],
+        ];
+    }
+
+    /**
+     * Test that exported data is human readable.
+     *
+     * @dataProvider unescaped_unicode_export_provider
+     * @param string $text
+     */
+    public function test_export_data_unescaped_unicode($text) {
+        $context = \context_system::instance();
+        $subcontext = [];
+        $data = (object) ['key' => $text];
+
+        $writer = $this->get_writer_instance()
+                ->set_context($context)
+                ->export_data($subcontext, $data);
+
+        $fileroot = $this->fetch_exported_content($writer);
+
+        $contextpath = $this->get_context_path($context, $subcontext, 'data.json');
+
+        $json = $fileroot->getChild($contextpath)->getContent();
+        $this->assertRegExp("/$text/", $json);
+
+        $expanded = json_decode($json);
+        $this->assertEquals($data, $expanded);
+    }
+
+    /**
+     * Test that exported metadata is human readable.
+     *
+     * @dataProvider unescaped_unicode_export_provider
+     * @param string $text
+     */
+    public function test_export_metadata_unescaped_unicode($text) {
+        $context = \context_system::instance();
+        $subcontext = ['a', 'b', 'c'];
+
+        $writer = $this->get_writer_instance()
+                ->set_context($context)
+                ->export_metadata($subcontext, $text, $text, $text);
+
+        $fileroot = $this->fetch_exported_content($writer);
+
+        $contextpath = $this->get_context_path($context, $subcontext, 'metadata.json');
+
+        $json = $fileroot->getChild($contextpath)->getContent();
+        $this->assertRegExp("/$text.*$text.*$text/", $json);
+
+        $expanded = json_decode($json);
+        $this->assertTrue(isset($expanded->$text));
+        $this->assertEquals($text, $expanded->$text->value);
+        $this->assertEquals($text, $expanded->$text->description);
+    }
+
+    /**
+     * Test that exported related data is human readable.
+     *
+     * @dataProvider unescaped_unicode_export_provider
+     * @param string $text
+     */
+    public function test_export_related_data_unescaped_unicode($text) {
+        $context = \context_system::instance();
+        $subcontext = [];
+        $data = (object) ['key' => $text];
+
+        $writer = $this->get_writer_instance()
+                ->set_context($context)
+                ->export_related_data($subcontext, 'name', $data);
+
+        $fileroot = $this->fetch_exported_content($writer);
+
+        $contextpath = $this->get_context_path($context, $subcontext, 'name.json');
+
+        $json = $fileroot->getChild($contextpath)->getContent();
+        $this->assertRegExp("/$text/", $json);
+
+        $expanded = json_decode($json);
+        $this->assertEquals($data, $expanded);
+    }
+
+    /**
+     * Test that exported user preference is human readable.
+     *
+     * @dataProvider unescaped_unicode_export_provider
+     * @param string $text
+     */
+    public function test_export_user_preference_unescaped_unicode($text) {
+        $context = \context_system::instance();
+        $component = 'core_privacy';
+
+        $writer = $this->get_writer_instance()
+                ->set_context($context)
+                ->export_user_preference($component, $text, $text, $text);
+
+        $fileroot = $this->fetch_exported_content($writer);
+
+        $contextpath = $this->get_context_path($context, [get_string('userpreferences')], "{$component}.json");
+
+        $json = $fileroot->getChild($contextpath)->getContent();
+        $this->assertRegExp("/$text.*$text.*$text/", $json);
+
+        $expanded = json_decode($json);
+        $this->assertTrue(isset($expanded->$text));
+        $this->assertEquals($text, $expanded->$text->value);
+        $this->assertEquals($text, $expanded->$text->description);
+    }
+
+    /**
+     * Provider for various user preferences.
+     *
+     * @return array
+     */
+    public function unescaped_unicode_export_provider() {
+        return [
+            'Unicode' => ['ةكءيٓ‌پچژکگیٹڈڑہھےâîûğŞAaÇÖáǽ你好!'],
         ];
     }
 
