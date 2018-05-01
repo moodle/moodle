@@ -448,7 +448,9 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
         }
         $o .= $this->output->heading($title, 3, 'section-title');
 
+        $o .= $this->section_availability($section);
         $o.= html_writer::start_tag('div', array('class' => 'summarytext'));
+
         if ($section->uservisible || $section->visible) {
             // Show summary if section is available or has availability restriction information.
             // Do not show summary if section is hidden but we still display it because of course setting
@@ -457,8 +459,6 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
         }
         $o.= html_writer::end_tag('div');
         $o.= $this->section_activity_summary($section, $course, null);
-
-        $o .= $this->section_availability($section);
 
         $o .= html_writer::end_tag('div');
         $o .= html_writer::end_tag('li');
