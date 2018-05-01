@@ -122,6 +122,7 @@ class iomad_signup_form extends moodleform {
         $mform->addElement('hidden', 'code', $company['shortname']);
         $mform->addElement('hidden', 'departmentid', $company['deptid']);
         $mform->setType('id', PARAM_INT);
+        $mform->setType('departmentid', PARAM_INT);
         $mform->setType('code', PARAM_CLEAN);
 
         // buttons
