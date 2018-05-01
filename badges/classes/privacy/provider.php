@@ -205,23 +205,23 @@ class provider implements
             $params = [];
 
             if (!empty($contexts[CONTEXT_SYSTEM])) {
-                $sqls[] = "type = :typesite";
+                $sqls[] = "b.type = :typesite";
                 $params['typesite'] = BADGE_TYPE_SITE;
             }
 
             if (!empty($contexts[CONTEXT_COURSE])) {
                 list($insql, $inparams) = $DB->get_in_or_equal($contexts[CONTEXT_COURSE], SQL_PARAMS_NAMED);
-                $sqls[] = "(type = :typecourse AND courseid $insql)";
+                $sqls[] = "(b.type = :typecourse AND b.courseid $insql)";
                 $params = array_merge($params, ['typecourse' => BADGE_TYPE_COURSE], $inparams);
             }
 
             $sqlwhere = '(' . implode(' OR ', $sqls) . ')';
             $sql = "
-                SELECT *, COALESCE(courseid, 0) AS normalisedcourseid
-                  FROM {badge}
-                 WHERE (usermodified = :userid1 OR usercreated = :userid2)
+                SELECT b.*, COALESCE(b.courseid, 0) AS normalisedcourseid
+                  FROM {badge} b
+                 WHERE (b.usermodified = :userid1 OR b.usercreated = :userid2)
                    AND $sqlwhere
-              ORDER BY courseid, id";
+              ORDER BY b.courseid, b.id";
             $params = array_merge($params, ['userid1' => $userid, 'userid2' => $userid]);
             $recordset = $DB->get_recordset_sql($sql, $params);
             static::recordset_loop_and_export($recordset, 'normalisedcourseid', [], function($carry, $record) use ($userid) {
