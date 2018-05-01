@@ -28,7 +28,9 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     $ADMIN->add('development', $temp);
 
     // "Profiling" settingpage (conditionally if the 'xhprof' extension is available only).
-    $xhprofenabled = extension_loaded('xhprof') || extension_loaded('tideways');
+    $xhprofenabled = extension_loaded('tideways_xhprof');
+    $xhprofenabled = $xhprofenabled || extension_loaded('tideways');
+    $xhprofenabled = $xhprofenabled || extension_loaded('xhprof');
     $temp = new admin_settingpage('profiling', new lang_string('profiling', 'admin'), 'moodle/site:config', !$xhprofenabled);
     // Main profiling switch.
     $temp->add(new admin_setting_configcheckbox('profilingenabled', new lang_string('profilingenabled', 'admin'), new lang_string('profilingenabled_help', 'admin'), false));
