@@ -94,7 +94,7 @@ class mod_trainingevent_mod_form extends moodleform_mod {
         global $DB;
 
         $errors = array();
-        if (!$DB->get_record('classroom', array('id' => $data['classroomid']))) {
+        if (empty($data['classroomid']) || !$DB->get_record('classroom', array('id' => $data['classroomid']))) {
             $errors['classroomid'] = get_string('invalidclassroom', 'trainingevent');
             return $errors;
         }
