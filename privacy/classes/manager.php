@@ -216,7 +216,7 @@ class manager {
                     // told to export.
                     $this->get_provider_classname($component)::export_user_data($approvedcontextlist);
                 }
-            } else {
+            } else if (!$this->component_implements($component, \core_privacy\local\request\context_aware_provider::class)) {
                 // This plugin does not know that it has data - export the shared data it doesn't know about.
                 local\request\helper::export_data_for_null_provider($approvedcontextlist);
             }
@@ -227,6 +227,14 @@ class manager {
             // Core user preference providers.
             if ($this->component_implements($component, \core_privacy\local\request\user_preference_provider::class)) {
                 $this->get_provider_classname($component)::export_user_preferences($contextlistcollection->get_userid());
+            }
+        }
+
+        // Check each component for context aware providers.
+        foreach ($this->get_component_list() as $component) {
+            // Core user preference providers.
+            if ($this->component_implements($component, \core_privacy\local\request\context_aware_provider::class)) {
+                $this->get_provider_classname($component)::export_complete_context_data($contextlistcollection);
             }
         }
 
