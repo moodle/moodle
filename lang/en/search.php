@@ -76,6 +76,7 @@ $string['notitle'] = 'No title';
 $string['normalsearch'] = 'Normal search';
 $string['openedon'] = 'opened on';
 $string['optimize'] = 'Optimize';
+$string['privacy:metadata'] = 'The search subsystem does not store any personal data.';
 $string['queryerror'] = 'The query you provided could not be parsed by the search engine: {$a}';
 $string['resultsreturnedfor'] = 'results returned for';
 $string['runindexer'] = 'Run indexer (real)';
