@@ -286,6 +286,7 @@ class local_iomad_learningpath_external extends external_api {
         return new external_function_parameters(
             array(
                 'pathid' => new external_value(PARAM_INT, 'ID of Iomad Learning Path'),
+                'groupid' => new external_value(PARAM_INT, 'ID of Iomad Learning Path group (0 = return all)', VALUE_DEFAULT, 0),
             )
         );
     }
@@ -310,13 +311,14 @@ class local_iomad_learningpath_external extends external_api {
     /**
      * Get list of courses in learning path
      * @param int $pathid 
+     * @param int $groupid
      * @throws invalid_parameter_exception
      */
-    public static function getcourses($pathid) {
+    public static function getcourses($pathid, $groupid = 0) {
         global $DB;
 
         // Validate params
-        $params = self::validate_parameters(self::getcourses_parameters(), ['pathid' => $pathid]);
+        $params = self::validate_parameters(self::getcourses_parameters(), ['pathid' => $pathid, 'groupid' => $groupid]);
 
         // get path
         if (!$path = $DB->get_record('iomad_learningpath', ['id' => $params['pathid']])) {
@@ -336,7 +338,7 @@ class local_iomad_learningpath_external extends external_api {
 
         // Get full list of courses
         $companypaths = new local_iomad_learningpath\companypaths($companyid, $context);
-        $courses = $companypaths->get_courselist($params['pathid']);
+        $courses = $companypaths->get_courselist($params['pathid'], $params['groupid']);
 
         // Just the bits we need
         $ccs = [];

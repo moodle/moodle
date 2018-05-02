@@ -87,22 +87,23 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification', '
              * Add hover effect.
              * Bind on ul as li entries are dynamic!
              */
-            $('#prospectivelist, #pathcourselist').on('mouseenter', 'li', function() {
+            $('#prospectivelist, .pathcourselist').on('mouseenter', 'li', function() {
                 $(this).addClass("text-primary");
             });
-            $('#prospectivelist, #pathcourselist').on('mouseleave', 'li', function() {
+            $('#prospectivelist, .pathcourselist').on('mouseleave', 'li', function() {
                 $(this).removeClass("text-primary");
             });
 
 
             /**
              * Handle response from add/display selected courses
+             * @param object pcl - the selected list (= group)
              * @param array courses - full course objects
              */
-            function apply_pathcourses(courses) {
+            function apply_pathcourses(pcl, courses) {
 
                 // Show/hide 'no courses' message.
-                $('#pathcourselist li').remove();
+                $('.pathcourselist li').remove();
                 if (courses.length) {
                     $('#nopathcourses').hide();
                 } else {
@@ -118,7 +119,7 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification', '
                 };
                 templates.render('local_iomad_learningpath/pathcourselist', context)
                     .done(function(html) {
-                        $('#pathcourselist').append(html);
+                        $(pcl).append(html);
                     })
                     .fail(notification.exception);
             }
@@ -132,14 +133,18 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification', '
 
                 // Ajax stuff to get list
                 // call the web service
-                ajax.call([{
-                    methodname: 'local_iomad_learningpath_getcourses',
-                    args: {pathid: pathid},
-                    done: function(courses) {
-                        apply_pathcourses(courses);
-                    },
-                    fail: notification.exception,
-                }]);
+                $(".pathcourselist").each(function() {
+                    var pcl = this;
+                    var groupid = $(pcl).data('groupid');
+                    ajax.call([{
+                        methodname: 'local_iomad_learningpath_getcourses',
+                        args: {pathid: pathid, groupid: groupid},
+                        done: function(courses) {
+                            apply_pathcourses(pcl, courses);
+                        },
+                        fail: notification.exception,
+                    }]);
+                });
             }
 
 
@@ -171,7 +176,7 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification', '
             /**
              * Add click handler for removing course
              */
-            $('#pathcourselist').on('click', '.path-delete', function() {
+            $('.pathcourselist').on('click', '.path-delete', function() {
                 var courseid = $(this).data('courseid');
 
                 // Remove the course from the path
@@ -192,14 +197,14 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification', '
              */
             function fix_icons() {
                 $("#prospectivelist .path-delete").removeClass('fa-trash path-delete').addClass('fa-plus path-add');
-                $("#pathcourselist .path-add").removeClass('fa-plus path-add').addClass('fa-trash path-delete');
+                $(".pathcourselist .path-add").removeClass('fa-plus path-add').addClass('fa-trash path-delete');
             }
 
 
             /**
              * Sort added courses list into order
              */
-            $("#pathcourselist").sortable({
+            $(".pathcourselist").sortable({
                 handle: '.lphandle',
                 connectWith: '#prospectivelist',
                 dropOnEmpty: true,
@@ -207,7 +212,7 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification', '
 
                     // Get already selected courseids
                     var courses = [];
-                    $("#pathcourselist .pathbox").each(function() {
+                    $(".pathcourselist .pathbox").each(function() {
                         courses.push($(this).data('courseid'));
                     });
 
@@ -228,7 +233,7 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification', '
              */
             $('#prospectivelist').sortable({
                 handle: '.lphandle',
-                connectWith: '#pathcourselist',
+                connectWith: '.pathcourselist',
                 dropOnEmpty: true,
                 update: function() {
                     fix_icons();
