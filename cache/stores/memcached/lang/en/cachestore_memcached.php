@@ -54,6 +54,8 @@ If the cache is shared by other applications then each key will be deleted indiv
 If you are running a dedicated cache for this application then the entire cache can safely be flushed without any risk of destroying another application's cache data. This should result in increased performance when purging the cache.
 ";
 $string['pluginname'] = 'Memcached';
+$string['privacy:metadata:memcached'] = 'The Memcached cachestore plugin stores data briefly as part of its caching functionality. This data is stored on an Memcache server where data is regularly removed.';
+$string['privacy:metadata:memcached:data'] = 'The various data stored in the cache';
 $string['prefix'] = 'Prefix key';
 $string['prefix_help'] = 'This can be used to create a "domain" for your item keys allowing you to create multiple memcached stores on a single memcached installation. It cannot be longer than 16 characters in order to ensure key length issues are not encountered.';
 $string['prefixinvalid'] = 'Invalid prefix. You can only use a-z A-Z 0-9-_.';
