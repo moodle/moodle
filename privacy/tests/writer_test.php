@@ -41,6 +41,14 @@ use \core_privacy\local\request\writer;
  */
 class writer_test extends advanced_testcase {
     /**
+     * Ensure that the writer is cleared away as appropriate after each
+     * test.
+     */
+    public function tearDown() {
+        writer::reset();
+    }
+
+    /**
      * Test that calling with_context multiple times will return the same write instance.
      */
     public function test_with_context() {
