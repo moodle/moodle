@@ -58,7 +58,7 @@ class tool_messageinbound_manager_testcase extends provider_testcase {
         global $DB;
 
         $now = time();
-        $stale = time() - DAYSECS;
+        $stale = $now - DAYSECS - 1;    // Make a second older because PHP Unit is too damn fast!!
 
         $this->create_messagelist(['timecreated' => $now]);
         $this->create_messagelist(['timecreated' => $now - HOURSECS]);
