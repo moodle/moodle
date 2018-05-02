@@ -247,6 +247,88 @@ class core_rating_privacy_testcase extends \core_privacy\tests\provider_testcase
     }
 
     /**
+     * Test delete_ratings() method.
+     */
+    public function test_delete_ratings() {
+        global $DB;
+        $this->resetAfterTest();
+
+        $course1 = $this->getDataGenerator()->create_course();
+        $course2 = $this->getDataGenerator()->create_course();
+        $course3 = $this->getDataGenerator()->create_course();
+
+        $u1 = $this->getDataGenerator()->create_user();
+        $u2 = $this->getDataGenerator()->create_user();
+        $u3 = $this->getDataGenerator()->create_user();
+
+        // Rate all courses as u1, and something else in the same context.
+        $this->rate_as_user($u1->id, 'core_course', 'course', $course1->id, \context_course::instance($course1->id), 25);
+        $this->rate_as_user($u1->id, 'core_course', 'course', $course2->id, \context_course::instance($course2->id), 50);
+        $this->rate_as_user($u1->id, 'core_course', 'course', $course3->id, \context_course::instance($course3->id), 75);
+        $this->rate_as_user($u1->id, 'core_course', 'files', $course3->id, \context_course::instance($course3->id), 99);
+        $this->rate_as_user($u1->id, 'core_user', 'user', $u3->id, \context_user::instance($u3->id), 10);
+
+        // Rate course2 as u2, and something else in a different context/component..
+        $this->rate_as_user($u2->id, 'core_course', 'course', $course2->id, \context_course::instance($course2->id), 90);
+        $this->rate_as_user($u2->id, 'core_user', 'user', $u3->id, \context_user::instance($u3->id), 20);
+
+        // Delete all ratings in course1.
+        $expectedratingscount = $DB->count_records('rating');
+        core_rating\privacy\provider::delete_ratings(\context_course::instance($course1->id));
+        $expectedratingscount -= 1;
+        $this->assertEquals($expectedratingscount, $DB->count_records('rating'));
+
+        // Delete ratings in course2 specifying wrong component.
+        core_rating\privacy\provider::delete_ratings(\context_course::instance($course2->id), 'other_component');
+        $this->assertEquals($expectedratingscount, $DB->count_records('rating'));
+
+        // Delete ratings in course2 specifying correct component.
+        core_rating\privacy\provider::delete_ratings(\context_course::instance($course2->id), 'core_course');
+        $expectedratingscount -= 2;
+        $this->assertEquals($expectedratingscount, $DB->count_records('rating'));
+
+        // Delete user ratings specifyng all attributes.
+        core_rating\privacy\provider::delete_ratings(\context_user::instance($u3->id), 'core_user', 'user', $u3->id);
+        $expectedratingscount -= 2;
+        $this->assertEquals($expectedratingscount, $DB->count_records('rating'));
+    }
+
+    /**
+     * Test delete_ratings_select() method.
+     */
+    public function test_delete_ratings_select() {
+        global $DB;
+        $this->resetAfterTest();
+
+        $course1 = $this->getDataGenerator()->create_course();
+        $course2 = $this->getDataGenerator()->create_course();
+        $course3 = $this->getDataGenerator()->create_course();
+
+        $u1 = $this->getDataGenerator()->create_user();
+        $u2 = $this->getDataGenerator()->create_user();
+        $u3 = $this->getDataGenerator()->create_user();
+
+        // Rate all courses as u1, and something else in the same context.
+        $this->rate_as_user($u1->id, 'core_course', 'course', $course1->id, \context_course::instance($course1->id), 25);
+        $this->rate_as_user($u1->id, 'core_course', 'course', $course2->id, \context_course::instance($course2->id), 50);
+        $this->rate_as_user($u1->id, 'core_course', 'course', $course3->id, \context_course::instance($course3->id), 75);
+        $this->rate_as_user($u1->id, 'core_course', 'files', $course3->id, \context_course::instance($course3->id), 99);
+        $this->rate_as_user($u1->id, 'core_user', 'user', $u3->id, \context_user::instance($u3->id), 10);
+
+        // Rate course2 as u2, and something else in a different context/component..
+        $this->rate_as_user($u2->id, 'core_course', 'course', $course2->id, \context_course::instance($course2->id), 90);
+        $this->rate_as_user($u2->id, 'core_user', 'user', $u3->id, \context_user::instance($u3->id), 20);
+
+        // Delete ratings in course1.
+        list($sql, $params) = $DB->get_in_or_equal([$course1->id, $course2->id], SQL_PARAMS_NAMED);
+        $expectedratingscount = $DB->count_records('rating');
+        core_rating\privacy\provider::delete_ratings_select(\context_course::instance($course1->id),
+            'core_course', 'course', $sql, $params);
+        $expectedratingscount -= 1;
+        $this->assertEquals($expectedratingscount, $DB->count_records('rating'));
+    }
+
+    /**
      * Assert that a user has the correct rating.
      *
      * @param   \stdClass   $author The user with the rating
