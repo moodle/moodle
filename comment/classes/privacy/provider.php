@@ -29,8 +29,6 @@ defined('MOODLE_INTERNAL') || die();
 use \core_privacy\local\metadata\collection;
 use \core_privacy\local\request\transform;
 
-require_once($CFG->dirroot . '/comment/lib.php');
-
 /**
  * Privacy class for requesting user data.
  *
@@ -67,33 +65,46 @@ class provider implements \core_privacy\local\metadata\provider, \core_privacy\l
      * @param  bool   $onlyforthisuser  Only return the comments this user made.
      */
     public static function export_comments(\context $context, string $component, string $commentarea, int $itemid,
-            array $subcontext, bool $onlyforthisuser = true) {
-        $data = new \stdClass;
-        $data->context   = $context;
-        $data->area      = $commentarea;
-        $data->itemid    = $itemid;
-        $data->component = $component;
+                                           array $subcontext, bool $onlyforthisuser = true) {
+        global $USER, $DB;
+        $params = [
+            'contextid' => $context->id,
+            'component' => $component,
+            'commentarea' => $commentarea,
+            'itemid' => $itemid
+        ];
+        $sql = "SELECT c.id, c.content, c.format, c.timecreated, c.userid
+                  FROM {comments} c
+                 WHERE c.contextid = :contextid AND
+                       c.commentarea = :commentarea AND
+                       c.itemid = :itemid AND
+                       (c.component IS NULL OR c.component = :component)";
+        if ($onlyforthisuser) {
+            $sql .= " AND c.userid = :userid";
+            $params['userid'] = $USER->id;
+        }
+        $sql .= " ORDER BY c.timecreated DESC";
 
-        $commentobject = new \comment($data);
-        $commentobject->set_view_permission(true);
-        $comments = $commentobject->get_comments(0);
-        $subcontext[] = get_string('commentsubcontext', 'core_comment');
-
-        $comments = array_filter($comments, function($comment) use ($onlyforthisuser) {
-            global $USER;
-
-            return (!$onlyforthisuser || $comment->userid == $USER->id);
-        });
-
-        $comments = array_map(function($comment) {
-            return (object) [
-                'content' => $comment->content,
-                'time' => transform::datetime($comment->timecreated),
-                'userid' => transform::user($comment->userid),
+        $rs = $DB->get_recordset_sql($sql, $params);
+        $comments = [];
+        foreach ($rs as $record) {
+            if ($record->userid != $USER->id) {
+                // Clean HTML in comments that were added by other users.
+                $comment = ['content' => format_text($record->content, $record->format, ['context' => $context])];
+            } else {
+                // Export comments made by this user as they are stored.
+                $comment = ['content' => $record->content, 'contentformat' => $record->format];
+            }
+            $comment += [
+                'time' => transform::datetime($record->timecreated),
+                'userid' => transform::user($record->userid),
             ];
-        }, $comments);
+            $comments[] = (object)$comment;
+        }
+        $rs->close();
 
         if (!empty($comments)) {
+            $subcontext[] = get_string('commentsubcontext', 'core_comment');
             \core_privacy\local\request\writer::with_context($context)
                 ->export_data($subcontext, (object) [
                     'comments' => $comments,
@@ -123,6 +134,26 @@ class provider implements \core_privacy\local\metadata\provider, \core_privacy\l
             $params['itemid'] = $itemid;
         }
         $DB->delete_records('comments', $params);
+    }
+
+    /**
+     * Deletes all comments for a specified context, component, and commentarea.
+     *
+     * @param  \context $context Details about which context to delete comments for.
+     * @param  string $component Component to delete.
+     * @param  string $commentarea Comment area to delete.
+     * @param  string $itemidstest an SQL fragment that the itemid must match. Used
+     *      in the query like WHERE itemid $itemidstest. Must use named parameters,
+     *      and may not use named parameters called contextid, component or commentarea.
+     * @param array $params any query params used by $itemidstest.
+     */
+    public static function delete_comments_for_all_users_select(\context $context, string $component, string $commentarea,
+            $itemidstest, $params = []) {
+        global $DB;
+        $params += ['contextid' => $context->id, 'component' => $component, 'commentarea' => $commentarea];
+        $DB->delete_records_select('comments',
+            'contextid = :contextid AND component = :component AND commentarea = :commentarea AND itemid ' . $itemidstest,
+            $params);
     }
 
     /**
