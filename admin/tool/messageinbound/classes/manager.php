@@ -311,6 +311,16 @@ class manager {
     }
 
     /**
+     * Remove older verification failures.
+     *
+     * @return void
+     */
+    public function tidy_old_verification_failures() {
+        global $DB;
+        $DB->delete_records_select('messageinbound_messagelist', 'timecreated < :time', ['time' => time() - DAYSECS]);
+    }
+
+    /**
      * Process a message and pass it through the Inbound Message handling systems.
      *
      * @param \Horde_Imap_Client_Data_Fetch $message The message to process
