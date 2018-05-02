@@ -222,6 +222,10 @@ input[disabled] {
     cursor: not-allowed;
 }
 
+.row-fluid {
+  @include make-row();
+}
+
 // These have been removed in BS4 Stable. Adding in so RTL dropdowns will work.
 /*rtl:raw:
 .dropdown-menu-right {
