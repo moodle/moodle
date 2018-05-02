@@ -24,6 +24,12 @@ information provided here is intended especially for developers.
   act as a site policy handler.
 * There is a new is_fulltext_search_supported() DML function. The default implementation returns false. This function
   is used by 'Simple search' global search engine to determine if the database full-text search capabilities can be used.
+* The following have been removed from the list of core subsystems:
+   - core_register
+   - core_publish
+  Following this change, \core_register_renderer has been removed and it's only method
+  \core_register_renderer::moodleorg_registration_message() has been moved to
+  \core_admin_renderer::moodleorg_registration_message().
 
 === 3.4 ===
 
