@@ -134,6 +134,7 @@ $string['nativelocking'] = 'This plugin handles its own locking.';
 $string['none'] = 'None';
 $string['plugin'] = 'Plugin';
 $string['pluginsummaries'] = 'Installed cache stores';
+$string['privacy:metadata:cachestore'] = 'The Cache subsystem stores data temporarily on behalf of other parts of Moodle. This data is not easily identifiable, and is very short lived. It serves as a cache of data stored elsewhere in Moodle, and should therefore already be handled by those Moodle components.';
 $string['purge'] = 'Purge';
 $string['purgedefinitionsuccess'] = 'Successfully purged the requested definition.';
 $string['purgestoresuccess'] = 'Successfully purged the requested store.';
