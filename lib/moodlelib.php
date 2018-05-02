@@ -8267,9 +8267,10 @@ function shorten_text($text, $ideal=30, $exact = false, $ending='...') {
  *
  * @param string $filename file name
  * @param int $length ideal string length
+ * @param bool $includehash Whether to include a file hash in the shortened version. This ensures uniqueness.
  * @return string $shortened shortened file name
  */
-function shorten_filename($filename, $length = MAX_FILENAME_SIZE) {
+function shorten_filename($filename, $length = MAX_FILENAME_SIZE, $includehash = false) {
     $shortened = $filename;
     // Extract a part of the filename if it's char size exceeds the ideal string length.
     if (core_text::strlen($filename) > $length) {
@@ -8278,10 +8279,12 @@ function shorten_filename($filename, $length = MAX_FILENAME_SIZE) {
         $extension = pathinfo($filename, PATHINFO_EXTENSION);
         if ($extension && !empty($mimetypes[$extension])) {
             $basename = pathinfo($filename, PATHINFO_FILENAME);
-            $shortened = core_text::substr($basename, 0, $length);
+            $hash = empty($includehash) ? '' : ' - ' . substr(sha1($basename), 0, 10);
+            $shortened = core_text::substr($basename, 0, $length - strlen($hash)) . $hash;
             $shortened .= '.' . $extension;
         } else {
-            $shortened = core_text::substr($filename, 0, $length);
+            $hash = empty($includehash) ? '' : ' - ' . substr(sha1($filename), 0, 10);
+            $shortened = core_text::substr($filename, 0, $length - strlen($hash)) . $hash;
         }
     }
     return $shortened;
