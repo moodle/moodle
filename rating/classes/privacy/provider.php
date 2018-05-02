@@ -159,4 +159,58 @@ class provider implements
         ];
         return $return;
     }
+
+    /**
+     * Deletes all ratings for a specified context, component, ratingarea and itemid.
+     *
+     * Only delete ratings when the item itself was deleted.
+     *
+     * We never delete ratings for one user but not others - this may affect grades, therefore ratings
+     * made by particular user are not considered personal information.
+     *
+     * @param  \context $context Details about which context to delete ratings for.
+     * @param  string $component Component to delete.
+     * @param  string $ratingarea Rating area to delete.
+     * @param  int $itemid The item ID for use with deletion.
+     */
+    public static function delete_ratings(\context $context, $component = null,
+            $ratingarea = null, $itemid = null) {
+        global $DB;
+
+        $options = ['contextid' => $context->id];
+        if ($component) {
+            $options['component'] = $component;
+        }
+        if ($ratingarea) {
+            $options['ratingarea'] = $ratingarea;
+        }
+        if ($itemid) {
+            $options['itemid'] = $itemid;
+        }
+
+        $DB->delete_records('rating', $options);
+    }
+
+    /**
+     * Deletes all tag instances for given context, component, itemtype using subquery for itemids
+     *
+     * In most situations you will want to specify $userid as null. Per-user tag instances
+     * are possible in Tags API, however there are no components or standard plugins that actually use them.
+     *
+     * @param  \context $context Details about which context to delete ratings for.
+     * @param  string $component Component to delete.
+     * @param  string $ratingarea Rating area to delete.
+     * @param  string $itemidstest an SQL fragment that the itemid must match. Used
+     *      in the query like WHERE itemid $itemidstest. Must use named parameters,
+     *      and may not use named parameters called contextid, component or ratingarea.
+     * @param array $params any query params used by $itemidstest.
+     */
+    public static function delete_ratings_select(\context $context, $component,
+             $ratingarea, $itemidstest, $params = []) {
+        global $DB;
+        $params += ['contextid' => $context->id, 'component' => $component, 'ratingarea' => $ratingarea];
+        $DB->delete_records_select('rating',
+            'contextid = :contextid AND component = :component AND ratingarea = :ratingarea AND itemid ' . $itemidstest,
+            $params);
+    }
 }
