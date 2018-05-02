@@ -103,11 +103,8 @@ class provider implements
      * @return void
      */
     protected static function call_subplugins_method_with_args($method, array $args = []) {
-        $interface = 'tool_log\local\privacy\logstore_provider';
-        $subplugins = manager::get_store_plugins();
-        foreach ($subplugins as $subplugin => $unused) {
-            \core_privacy\manager::component_class_callback($subplugin, $interface, $method, $args);
-        }
+        $interface = \tool_log\local\privacy\logstore_provider::class;
+        \core_privacy\manager::plugintype_class_callback('logstore', $interface, $method, $args);
     }
 
 }
