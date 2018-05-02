@@ -74,7 +74,7 @@ class mock_search_area extends \core_search\base {
         $doc->set('title', $info->title);
         $doc->set('content', $info->content);
         $doc->set('description1', $info->description1);
-        $doc->set('description1', $info->description2);
+        $doc->set('description2', $info->description2);
         $doc->set('contextid', $info->contextid);
         $doc->set('courseid', $info->courseid);
         $doc->set('userid', $info->userid);
