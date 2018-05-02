@@ -110,7 +110,7 @@ if (\core\hub\registration::is_registered()) {
     echo $OUTPUT->heading(get_string('registerwithmoodleorg', 'admin'));
 }
 
-$renderer = $PAGE->get_renderer('core', 'register');
+$renderer = $PAGE->get_renderer('core', 'admin');
 echo $renderer->moodleorg_registration_message();
 
 $siteregistrationform->display();
