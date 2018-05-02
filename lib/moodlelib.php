@@ -8888,7 +8888,7 @@ function cleardoubleslashes ($path) {
 }
 
 /**
- * Is current ip in give list?
+ * Is the current ip in a given list?
  *
  * @param string $list
  * @return bool
@@ -8903,8 +8903,9 @@ function remoteip_in_list($list) {
     }
 
     $list = explode("\n", $list);
-    foreach ($list as $subnet) {
-        $subnet = trim($subnet);
+    foreach ($list as $line) {
+        $tokens = explode('#', $line);
+        $subnet = trim($tokens[0]);
         if (address_in_subnet($clientip, $subnet)) {
             $inlist = true;
             break;
