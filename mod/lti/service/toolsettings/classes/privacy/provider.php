@@ -15,13 +15,32 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'ltiservice_toolsettings', language 'en'
+ * Privacy Subsystem implementation for ltiservice_toolsettings.
  *
  * @package    ltiservice_toolsettings
- * @copyright  2014 Vital Source Technologies http://vitalsource.com
- * @author     Stephen Vickers
+ * @copyright  2018 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Tool Settings Service';
-$string['privacy:metadata'] = 'The Tool Settings Service plugin does not store any personal data.';
+namespace ltiservice_toolsettings\privacy;
+
+defined('MOODLE_INTERNAL') || die();
+
+/**
+ * Privacy Subsystem for ltiservice_toolsettings implementing null_provider.
+ *
+ * @copyright  2018 Mark Nelson <markn@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class provider implements \core_privacy\local\metadata\null_provider {
+
+    /**
+     * Get the language string identifier with the component's language
+     * file to explain why this plugin stores no data.
+     *
+     * @return string
+     */
+    public static function get_reason() : string {
+        return 'privacy:metadata';
+    }
+}
