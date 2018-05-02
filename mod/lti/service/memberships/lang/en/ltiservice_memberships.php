@@ -24,4 +24,11 @@
  */
 
 $string['pluginname'] = 'Memberships LTI Service';
+$string['privacy:metadata:email'] = 'The email of the user using the LTI consumer.';
+$string['privacy:metadata:externalpurpose'] = 'This information is sent to an external LTI provider.';
+$string['privacy:metadata:firstname'] = 'The firstname of the user using the LTI consumer.';
+$string['privacy:metadata:fullname'] = 'The fullname of the user using the LTI consumer.';
+$string['privacy:metadata:lastname'] = 'The lastname of the user using the LTI consumer.';
+$string['privacy:metadata:userid'] = 'The ID of the user using the LTI consumer.';
+$string['privacy:metadata:useridnumber'] = 'The idnumber of the user using the LTI consumer.';
 $string['servicename'] = 'Memberships';

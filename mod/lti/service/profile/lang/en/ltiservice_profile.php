@@ -24,3 +24,4 @@
  */
 
 $string['pluginname'] = 'Tool Consumer Profile LTI Service';
+$string['privacy:metadata'] = 'The Tool Consumer Profile LTI Service plugin does not store any personal data.';
