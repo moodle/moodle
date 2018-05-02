@@ -37,7 +37,7 @@ require_once($CFG->dirroot . "/webservice/xmlrpc/lib.php");
 
 admin_externalpage_setup('registrationhubs');
 
-$renderer = $PAGE->get_renderer('core', 'register');
+$renderer = $PAGE->get_renderer('core', 'admin');
 
 $unregistration = optional_param('unregistration', 0, PARAM_INT);
 $cleanregdata = optional_param('cleanregdata', 0, PARAM_BOOL);
