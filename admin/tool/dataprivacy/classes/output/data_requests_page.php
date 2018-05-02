@@ -24,20 +24,17 @@
 namespace tool_dataprivacy\output;
 defined('MOODLE_INTERNAL') || die();
 
-use action_menu;
-use action_menu_link_secondary;
 use coding_exception;
-use context_system;
 use dml_exception;
 use moodle_exception;
 use moodle_url;
 use renderable;
 use renderer_base;
+use single_select;
 use stdClass;
 use templatable;
 use tool_dataprivacy\api;
-use tool_dataprivacy\data_request;
-use tool_dataprivacy\external\data_request_exporter;
+use tool_dataprivacy\local\helper;
 
 /**
  * Class containing data for a user's data requests.
@@ -47,16 +44,21 @@ use tool_dataprivacy\external\data_request_exporter;
  */
 class data_requests_page implements renderable, templatable {
 
-    /** @var data_request[] $requests List of data requests. */
-    protected $requests = [];
+    /** @var data_requests_table $table The data requests table. */
+    protected $table;
+
+    /** @var int[] $filters The applied filters. */
+    protected $filters = [];
 
     /**
      * Construct this renderable.
      *
-     * @param data_request[] $requests
+     * @param data_requests_table $table The data requests table.
+     * @param int[] $filters The applied filters.
      */
-    public function __construct($requests) {
-        $this->requests = $requests;
+    public function __construct($table, $filters) {
+        $this->table = $table;
+        $this->filters = $filters;
     }
 
     /**
@@ -78,43 +80,17 @@ class data_requests_page implements renderable, templatable {
             $data->httpsite = array('message' => $httpwarningmessage, 'announce' => 1);
         }
 
-        $requests = [];
-        foreach ($this->requests as $request) {
-            $requestid = $request->get('id');
-            $status = $request->get('status');
-            $requestexporter = new data_request_exporter($request, ['context' => context_system::instance()]);
-            $item = $requestexporter->export($output);
+        $url = new moodle_url('/admin/tool/dataprivacy/datarequests.php');
+        $filteroptions = helper::get_request_filter_options();
+        $filter = new request_filter($filteroptions, $this->filters, $url);
+        $data->filter = $filter->export_for_template($output);
 
-            // Prepare actions.
-            $actions = [];
+        ob_start();
+        $this->table->out(helper::DEFAULT_PAGE_SIZE, true);
+        $requests = ob_get_contents();
+        ob_end_clean();
 
-            // View action.
-            $actionurl = new moodle_url('#');
-            $actiondata = ['data-action' => 'view', 'data-requestid' => $requestid];
-            $actiontext = get_string('viewrequest', 'tool_dataprivacy');
-            $actions[] = new action_menu_link_secondary($actionurl, null, $actiontext, $actiondata);
-
-            if ($status == api::DATAREQUEST_STATUS_AWAITING_APPROVAL) {
-                // Approve.
-                $actiondata['data-action'] = 'approve';
-                $actiontext = get_string('approverequest', 'tool_dataprivacy');
-                $actions[] = new action_menu_link_secondary($actionurl, null, $actiontext, $actiondata);
-
-                // Deny.
-                $actiondata['data-action'] = 'deny';
-                $actiontext = get_string('denyrequest', 'tool_dataprivacy');
-                $actions[] = new action_menu_link_secondary($actionurl, null, $actiontext, $actiondata);
-            }
-
-            $actionsmenu = new action_menu($actions);
-            $actionsmenu->set_menu_trigger(get_string('actions'));
-            $actionsmenu->set_owner_selector('request-actions-' . $requestid);
-            $actionsmenu->set_alignment(\action_menu::TL, \action_menu::BL);
-            $item->actions = $actionsmenu->export_for_template($output);
-
-            $requests[] = $item;
-        }
-        $data->requests = $requests;
+        $data->datarequests = $requests;
         return $data;
     }
 }
