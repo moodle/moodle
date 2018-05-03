@@ -172,6 +172,7 @@ $string['permittedtransports'] = 'Permitted transports';
 $string['phperror'] = 'An internal PHP error prevented your request being fulfilled.';
 $string['position'] = 'Position';
 $string['postrequired'] = 'The delete function requires a POST request.';
+$string['privacy:metadata'] = 'The MNet plugin does not store any personal data.';
 $string['profileexportfields'] = 'Fields to send';
 $string['profilefielddesc'] = 'Here you can configure the list of profile fields that are sent and received over MNet when user accounts are created, or updated.  You can also override this for each MNet peer individually. Note that the following fields are always sent and are not optional: {$a}';
 $string['profilefields'] = 'Profile fields';
