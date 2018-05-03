@@ -33,7 +33,6 @@ use \core_privacy\local\request\approved_contextlist;
 /**
  * Privacy class for requesting user data.
  *
- * @package    profilefield_checkbox
  * @copyright  2018 Mihail Geshoski <mihail@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -48,13 +47,12 @@ class provider implements
      * @return  collection A listing of user data stored through this system.
      */
     public static function get_metadata(collection $collection) : collection {
-        $collection->add_database_table('user_info_data', [
+        return $collection->add_database_table('user_info_data', [
             'userid' => 'privacy:metadata:profilefield_checkbox:userid',
             'fieldid' => 'privacy:metadata:profilefield_checkbox:fieldid',
             'data' => 'privacy:metadata:profilefield_checkbox:data',
             'dataformat' => 'privacy:metadata:profilefield_checkbox:dataformat'
         ], 'privacy:metadata:profilefield_checkbox:tableexplanation');
-        return $collection;
     }
 
     /**
@@ -65,14 +63,12 @@ class provider implements
      */
     public static function get_contexts_for_userid(int $userid) : contextlist {
         $sql = "SELECT ctx.id
-                FROM {user_info_data} uda
-                JOIN {user_info_field} uif
-                    ON uda.fieldid = uif.id
-                JOIN {context} ctx
-                    ON ctx.instanceid = uda.userid
-                        AND ctx.contextlevel = :contextlevel
-                WHERE uda.userid = :userid
-                    AND uif.datatype = :datatype";
+                  FROM {user_info_data} uda
+                  JOIN {user_info_field} uif ON uda.fieldid = uif.id
+                  JOIN {context} ctx ON ctx.instanceid = uda.userid
+                       AND ctx.contextlevel = :contextlevel
+                 WHERE uda.userid = :userid
+                       AND uif.datatype = :datatype";
         $params = [
             'userid' => $userid,
             'contextlevel' => CONTEXT_USER,
@@ -90,20 +86,26 @@ class provider implements
      * @param approved_contextlist $contextlist The approved contexts to export information for.
      */
     public static function export_user_data(approved_contextlist $contextlist) {
-        $results = static::get_records($contextlist->get_user()->id);
-        foreach ($results as $result) {
-            $data = (object) [
-                'name' => $result->name,
-                'description' => $result->description,
-                'data' => $result->data
-            ];
-            \core_privacy\local\request\writer::with_context($contextlist->current())->export_data([
-                get_string('pluginname', 'profilefield_checkbox')], $data);
+        $user = $contextlist->get_user();
+        foreach ($contextlist->get_contexts() as $context) {
+            // Check if the context is a user context.
+            if ($context->contextlevel == CONTEXT_USER && $context->instanceid == $user->id) {
+                $results = static::get_records($user->id);
+                foreach ($results as $result) {
+                    $data = (object) [
+                        'name' => $result->name,
+                        'description' => $result->description,
+                        'data' => $result->data
+                    ];
+                    \core_privacy\local\request\writer::with_context($context)->export_data([
+                        get_string('pluginname', 'profilefield_checkbox')], $data);
+                }
+            }
         }
     }
 
     /**
-     * Delete all use data which matches the specified deletion_criteria.
+     * Delete all user data which matches the specified context.
      *
      * @param   context $context A user context.
      */
@@ -120,7 +122,13 @@ class provider implements
      * @param   approved_contextlist    $contextlist    The approved contexts and user information to delete information for.
      */
     public static function delete_data_for_user(approved_contextlist $contextlist) {
-        static::delete_data($contextlist->get_user()->id);
+        $user = $contextlist->get_user();
+        foreach ($contextlist->get_contexts() as $context) {
+            // Check if the context is a user context.
+            if ($context->contextlevel == CONTEXT_USER && $context->instanceid == $user->id) {
+                static::delete_data($context->instanceid);
+            }
+        }
     }
 
     /**
@@ -151,11 +159,10 @@ class provider implements
         global $DB;
 
         $sql = "SELECT *
-                FROM {user_info_data} uda
-                JOIN {user_info_field} uif
-                    ON uda.fieldid = uif.id
-                WHERE uda.userid = :userid
-                    AND uif.datatype = :datatype";
+                  FROM {user_info_data} uda
+                  JOIN {user_info_field} uif ON uda.fieldid = uif.id
+                 WHERE uda.userid = :userid
+                       AND uif.datatype = :datatype";
         $params = [
             'userid' => $userid,
             'datatype' => 'checkbox'
