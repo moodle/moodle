@@ -35,7 +35,6 @@ $ADMIN->add('root', new admin_category('badges', new lang_string('badges'), empt
 $ADMIN->add('root', new admin_category('location', new lang_string('location','admin')));
 $ADMIN->add('root', new admin_category('language', new lang_string('language')));
 $ADMIN->add('root', new admin_category('modules', new lang_string('plugins', 'admin')));
-$ADMIN->add('root', new admin_category('privacy', new lang_string('privacyandpolicies', 'admin')));
 $ADMIN->add('root', new admin_category('security', new lang_string('security','admin')));
 $ADMIN->add('root', new admin_category('appearance', new lang_string('appearance','admin')));
 $ADMIN->add('root', new admin_category('frontpage', new lang_string('frontpage','admin')));
