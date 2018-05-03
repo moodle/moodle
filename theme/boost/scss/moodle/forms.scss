@@ -421,3 +421,8 @@ textarea[data-auto-rows] {
 .form-inline[data-fieldtype="tags"] {
     display: block;
 }
+
+// Show editor at 100% width by default.
+[data-fieldtype="editor"] > div {
+    flex-grow: 1;
+}
