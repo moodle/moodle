@@ -104,8 +104,6 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification', '
 
                 // Show/hide 'no courses' message.
                 $(pcl).find('li').remove();
-                //$('.pathcourselist li').remove();
-                //var nogroupcourses = $(pcl).parent().find('.nogroupcourses');
                 var groupid = $(pcl).data('groupid');
                 var nogroupcourses = $(".nogroupcourses[data-groupid='" + groupid + "']");
                 if (courses.length) {
@@ -217,13 +215,17 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification', '
                     // Get already selected courseids
                     var courses = [];
                     $(".pathcourselist .pathbox").each(function() {
-                        courses.push($(this).data('courseid'));
+                        var courseid = $(this).data('courseid');
+                        var groupid = $(this).parent().parent().data('groupid');
+                        courses.push({courseid: courseid, groupid: groupid});
                     });
+
+console.log('drag and drop - courses ' + courses);
 
                     // Reorder
                     ajax.call([{
                         methodname: 'local_iomad_learningpath_ordercourses',
-                        args: {pathid: pathid, courseids: courses},
+                        args: {pathid: pathid, courses: courses},
                         done: function() {},
                         fail: notification.exception
                     }]);

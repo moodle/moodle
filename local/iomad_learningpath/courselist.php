@@ -52,7 +52,6 @@ $courses = $companypaths->get_courselist($id);
 $categories = $companypaths->get_categories($id);
 $companypaths->check_group($id);
 $groups = $companypaths->get_display_courselist($id);
-// echo "<pre>"; var_dump($groups); die;
 
 // Javascript initialise
 $PAGE->requires->js_call_amd('local_iomad_learningpath/courselist', 'init', [$companyid, $id]);

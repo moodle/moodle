@@ -300,6 +300,7 @@ class local_iomad_learningpath_external extends external_api {
             new external_single_structure(
                 array(
                     'id' => new external_value(PARAM_INT, 'Course ID'),
+                    'groupid' => new external_value(PARAM_INT, 'Group ID'),
                     'fullname' => new external_value(PARAM_TEXT, 'Course fullname'),
                     'shortname' => new external_value(PARAM_TEXT, 'Course shortname'),
                     'image' => new external_value(PARAM_URL, 'Course image'),
@@ -345,6 +346,7 @@ class local_iomad_learningpath_external extends external_api {
         foreach ($courses as $course) {
             $ccs[] = [
                 'id' => $course->courseid,
+                'groupid' => $params['groupid'],
                 'fullname' => $course->fullname,
                 'shortname' => $course->shortname,
                 'image' => $course->image,
@@ -362,7 +364,14 @@ class local_iomad_learningpath_external extends external_api {
         return new external_function_parameters(
             array(
                 'pathid' => new external_value(PARAM_INT, 'ID of Iomad Learning Path'),
-                'courseids' => new external_multiple_structure(new external_value(PARAM_INT, 'Course ID'), 'List of course IDs in order'),
+                'courses' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'courseid' => new external_value(PARAM_INT, 'id of course'),
+                            'groupid' => new external_value(PARAM_INT, 'id of group'),
+                        )
+                    )
+                ),
             )
         );
     }
@@ -395,14 +404,14 @@ class local_iomad_learningpath_external extends external_api {
      * Order courses in learning path
      * (Valid) new course ids will simply be added in that position
      * @param int $pathid
-     * @param array $courseids
+     * @param array $courses of objects {int courseid, int groupid}
      * @throws invalid_parameter_exception
      */
-    public static function ordercourses($pathid, $courseids) {
+    public static function ordercourses($pathid, $courses) {
         global $DB;
 
         // Validate params
-        $params = self::validate_parameters(self::ordercourses_parameters(), ['pathid' => $pathid, 'courseids' => $courseids]);
+        $params = self::validate_parameters(self::ordercourses_parameters(), ['pathid' => $pathid, 'courses' => $courses]);
 
         // get path
         if (!$path = $DB->get_record('iomad_learningpath', ['id' => $params['pathid']])) {
@@ -422,29 +431,33 @@ class local_iomad_learningpath_external extends external_api {
         $companypaths = new local_iomad_learningpath\companypaths($companyid, $context);
 
         // Find any new ones and add them
-        foreach ($params['courseids'] as $courseid) {
-            if (!$DB->record_exists('iomad_learningpathcourse', ['path' => $params['pathid'], 'course' => $courseid])) {
-                $companypaths->add_courses($path->id, [$courseid]);
+        // Also make a list of courseids for delete phase.
+        $courseids = [];
+        foreach ($params['courses'] as $course) {
+            $courseids[] = $course->courseid;
+            if (!$DB->record_exists('iomad_learningpathcourse', ['path' => $params['pathid'], 'course' => $course->courseid])) {
+                $companypaths->add_courses($path->id, [$course->courseid], $course->groupid);
             }
         }
 
         // Find any missing ones and delete them
         $courses = $DB->get_records('iomad_learningpathcourse', ['path' => $params['pathid']]);
         foreach ($courses as $course) {
-            if (!in_array($course->course, $params['courseids'])) {
+            if (!in_array($course->course, $courseids)) {
                 $companypaths->remove_courses($path->id, [$course->course]);
             }
         }
 
         // Work through courses.
         $sequence = 1;
-        foreach ($params['courseids'] as $courseid) {
-            $course = $DB->get_record('iomad_learningpathcourse', ['path' => $params['pathid'], 'course' => $courseid], '*', MUST_EXIST);
+        foreach ($params['courses'] as $course) {
+            $oldcourse = $DB->get_record('iomad_learningpathcourse', ['path' => $params['pathid'], 'course' => $course->courseid], '*', MUST_EXIST);
 
             // Update sequence.
-            $course->sequence = $sequence;
+            $oldcourse->groupid = $course->groupid;
+            $oldcourse->sequence = $sequence;
             $sequence++;
-            $DB->update_record('iomad_learningpathcourse', $course);
+            $DB->update_record('iomad_learningpathcourse', $oldcourse);
         }
 
         return true;

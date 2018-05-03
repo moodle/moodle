@@ -272,9 +272,10 @@ class companypaths {
             return array_keys($courses);
         }
 
-        // Add images
+        // Add images and groupid
         foreach ($courses as $course) {
             $course->image = $this->get_course_image_url($course->courseid);
+            $course->groupid = $groupid;
         }
 
         return $courses;
