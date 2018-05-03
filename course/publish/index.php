@@ -62,7 +62,7 @@ if (!empty($updatestatusid) && confirm_sesskey()) {
     }
 }
 
-$renderer = $PAGE->get_renderer('core', 'publish');
+$renderer = $PAGE->get_renderer('core', 'course');
 
 // Unpublish course.
 if ($publication = \core\hub\publication::get_publication($publicationid, $courseid)) {
