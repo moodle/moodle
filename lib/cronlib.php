@@ -78,6 +78,7 @@ function cron_run() {
         $pretime      = microtime(1);
         try {
             get_mailer('buffer');
+            cron_prepare_core_renderer();
             $task->execute();
             if ($DB->is_transaction_started()) {
                 throw new coding_exception("Task left transaction open");
@@ -107,6 +108,8 @@ function cron_run() {
                 mtrace(format_backtrace($e->getTrace(), true));
             }
             \core\task\manager::adhoc_task_failed($task);
+        } finally {
+            cron_prepare_core_renderer(true);
         }
         get_mailer('close');
         unset($task);
@@ -138,6 +141,7 @@ function cron_run_inner_scheduled_task(\core\task\task_base $task) {
     $pretime = microtime(1);
     try {
         get_mailer('buffer');
+        cron_prepare_core_renderer();
         $task->execute();
         if ($DB->is_transaction_started()) {
             throw new coding_exception("Task left transaction open");
@@ -167,6 +171,8 @@ function cron_run_inner_scheduled_task(\core\task\task_base $task) {
             mtrace(format_backtrace($e->getTrace(), true));
         }
         \core\task\manager::scheduled_task_failed($task);
+    } finally {
+        cron_prepare_core_renderer(true);
     }
     get_mailer('close');
 }
@@ -389,4 +395,44 @@ function cron_bc_hack_plugin_functions($plugintype, $plugins) {
     }
 
     return $plugins;
+}
+
+/**
+ * Prepare the output renderer for the cron run.
+ *
+ * This involves creating a new $PAGE, and $OUTPUT fresh for each task and prevents any one task from influencing
+ * any other.
+ *
+ * @param   bool    $restore Whether to restore the original PAGE and OUTPUT
+ */
+function cron_prepare_core_renderer($restore = false) {
+    global $OUTPUT, $PAGE;
+
+    // Store the original PAGE and OUTPUT values so that they can be reset at a later point to the original.
+    // This should not normally be required, but may be used in places such as the scheduled task tool's "Run now"
+    // functionality.
+    static $page = null;
+    static $output = null;
+
+    if (null === $page) {
+        $page = $PAGE;
+    }
+
+    if (null === $output) {
+        $output = $OUTPUT;
+    }
+
+    if (!empty($restore)) {
+        $PAGE = $page;
+        $page = null;
+
+        $OUTPUT = $output;
+        $output = null;
+    } else {
+        // Setup a new General renderer.
+        // Cron tasks may produce output to be used in web, so we must use the appropriate renderer target.
+        // This allows correct use of templates, etc.
+        $PAGE = new \moodle_page();
+        $OUTPUT = new \core_renderer($PAGE, RENDERER_TARGET_GENERAL);
+    }
 }
