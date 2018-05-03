@@ -40,7 +40,7 @@ Feature: Viewing acceptances reports and accepting on behalf of other users
     And I press "Next"
     And I set the field "I agree to the This site policy" to "1"
     And I press "Next"
-    And I navigate to "Privacy and policies > User agreements" in site administration
+    And I navigate to "Users > Privacy and policies > User agreements" in site administration
     And "Agreed" "icon" should exist in the "User One" "table_row"
     And "Agreed" "icon" should exist in the "Max Manager" "table_row"
     And "Not agreed" "icon" should exist in the "User Two" "table_row"
@@ -55,7 +55,7 @@ Feature: Viewing acceptances reports and accepting on behalf of other users
     And I press "Next"
     And I set the field "I agree to the This site policy" to "1"
     And I press "Next"
-    And I navigate to "Privacy and policies > Manage policies" in site administration
+    And I navigate to "Users > Privacy and policies > Manage policies" in site administration
     And I click on "1 of 4 (25%)" "link" in the "This site policy" "table_row"
     And I click on "Not agreed" "link" in the "User One" "table_row"
     Then I should see "Consent details"
@@ -80,7 +80,7 @@ Feature: Viewing acceptances reports and accepting on behalf of other users
     And I press "Next"
     And I set the field "I agree to the This site policy" to "1"
     And I press "Next"
-    And I navigate to "Privacy and policies > Manage policies" in site administration
+    And I navigate to "Users > Privacy and policies > Manage policies" in site administration
     And I click on "1 of 4 (25%)" "link" in the "This site policy" "table_row"
     And I click on "Not agreed" "link" in the "User One" "table_row"
     Then I should see "Consent details"
@@ -96,7 +96,7 @@ Feature: Viewing acceptances reports and accepting on behalf of other users
 
   Scenario: View acceptances made by users on their own, multiple policies
     Given I log in as "admin"
-    And I navigate to "Privacy and policies > Manage policies" in site administration
+    And I navigate to "Users > Privacy and policies > Manage policies" in site administration
     And I open the action menu in "This privacy policy" "table_row"
     And I click on "Set status to \"Active\"" "link" in the "This privacy policy" "table_row"
     And I press "Continue"
@@ -117,7 +117,7 @@ Feature: Viewing acceptances reports and accepting on behalf of other users
     And I set the field "I agree to the This site policy" to "1"
     And I set the field "I agree to the This privacy policy" to "1"
     And I press "Next"
-    And I navigate to "Privacy and policies > User agreements" in site administration
+    And I navigate to "Users > Privacy and policies > User agreements" in site administration
     And "Agreed" "icon" should exist in the "User One" "table_row"
     And "Not agreed" "icon" should not exist in the "User One" "table_row"
     And "Agreed" "icon" should exist in the "Max Manager" "table_row"
@@ -127,14 +127,14 @@ Feature: Viewing acceptances reports and accepting on behalf of other users
     And "Agreed" "icon" should exist in the "This site policy" "table_row"
     And "Agreed" "icon" should exist in the "This privacy policy" "table_row"
     And I am on site homepage
-    And I navigate to "Privacy and policies > User agreements" in site administration
+    And I navigate to "Users > Privacy and policies > User agreements" in site administration
     And I click on "0 of 2" "link" in the "User Two" "table_row"
     And "Not agreed" "icon" should exist in the "This site policy" "table_row"
     And "Not agreed" "icon" should exist in the "This privacy policy" "table_row"
 
   Scenario: Agree on behalf of another user as a manager, multiple policies, javascript off
     Given I log in as "admin"
-    And I navigate to "Privacy and policies > Manage policies" in site administration
+    And I navigate to "Users > Privacy and policies > Manage policies" in site administration
     And I open the action menu in "This privacy policy" "table_row"
     And I click on "Set status to \"Active\"" "link" in the "This privacy policy" "table_row"
     And I press "Continue"
@@ -148,7 +148,7 @@ Feature: Viewing acceptances reports and accepting on behalf of other users
     And I set the field "I agree to the This site policy" to "1"
     And I set the field "I agree to the This privacy policy" to "1"
     And I press "Next"
-    And I navigate to "Privacy and policies > User agreements" in site administration
+    And I navigate to "Users > Privacy and policies > User agreements" in site administration
     And I click on "Not agreed, click to agree to \"This site policy\"" "link" in the "User One" "table_row"
     Then I should see "Consent details"
     And I should see "User One"
@@ -167,7 +167,7 @@ Feature: Viewing acceptances reports and accepting on behalf of other users
   @javascript
   Scenario: Agree on behalf of another user as a manager, multiple policies, javascript on
     Given I log in as "admin"
-    And I navigate to "Privacy and policies > Manage policies" in site administration
+    And I navigate to "Users > Privacy and policies > Manage policies" in site administration
     And I open the action menu in "This privacy policy" "table_row"
     And I click on "Set status to \"Active\"" "link" in the "This privacy policy" "table_row"
     And I press "Activate"
@@ -181,7 +181,7 @@ Feature: Viewing acceptances reports and accepting on behalf of other users
     And I set the field "I agree to the This site policy" to "1"
     And I set the field "I agree to the This privacy policy" to "1"
     And I press "Next"
-    And I navigate to "Privacy and policies > User agreements" in site administration
+    And I navigate to "Users > Privacy and policies > User agreements" in site administration
     And I click on "Not agreed, click to agree to \"This site policy\"" "link" in the "User One" "table_row"
     Then I should see "Consent details"
     And I should see "User One"
@@ -245,7 +245,7 @@ Feature: Viewing acceptances reports and accepting on behalf of other users
     And I follow "Manager"
     And I follow "Log in as"
     And I press "Continue"
-    And I navigate to "Privacy and policies > Manage policies" in site administration
+    And I navigate to "Users > Privacy and policies > Manage policies" in site administration
     And I click on "1 of 4 (25%)" "link" in the "This site policy" "table_row"
     And I click on "Not agreed" "link" in the "User One" "table_row"
     Then I should see "Consent details"

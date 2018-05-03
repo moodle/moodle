@@ -18,7 +18,7 @@ Feature: Manage policies
 
   Scenario: Create new policy and save as draft
     When I log in as "manager"
-    And I navigate to "Privacy and policies > Manage policies" in site administration
+    And I navigate to "Users > Privacy and policies > Manage policies" in site administration
     And I follow "New policy"
     And I set the following fields to these values:
       | Name        | Policy1        |
@@ -41,7 +41,7 @@ Feature: Manage policies
 
   Scenario: Create new policy and save as active
     When I log in as "manager"
-    And I navigate to "Privacy and policies > Manage policies" in site administration
+    And I navigate to "Users > Privacy and policies > Manage policies" in site administration
     And I follow "New policy"
     And I set the following fields to these values:
       | Name        | Policy1        |
@@ -63,7 +63,7 @@ Feature: Manage policies
     And I press "Next"
     And I set the field "I agree to the Policy1" to "1"
     And I press "Next"
-    And I navigate to "Privacy and policies > Manage policies" in site administration
+    And I navigate to "Users > Privacy and policies > Manage policies" in site administration
     And I open the action menu in "Policy1" "table_row"
     And I click on "Edit" "link" in the "Policy1" "table_row"
     And "Draft" "field" should not exist
@@ -86,7 +86,7 @@ Feature: Manage policies
     And I press "Next"
     And I set the field "I agree to the Policy1" to "1"
     And I press "Next"
-    And I navigate to "Privacy and policies > Manage policies" in site administration
+    And I navigate to "Users > Privacy and policies > Manage policies" in site administration
     And I open the action menu in "Policy1" "table_row"
     And I click on "Edit" "link" in the "Policy1" "table_row"
     And I set the field "Version" to "v2"
@@ -105,7 +105,7 @@ Feature: Manage policies
     And I press "Next"
     And I set the field "I agree to the Policy1" to "1"
     And I press "Next"
-    And I navigate to "Privacy and policies > Manage policies" in site administration
+    And I navigate to "Users > Privacy and policies > Manage policies" in site administration
     And I open the action menu in "Policy1" "table_row"
     And I click on "Edit" "link" in the "Policy1" "table_row"
     And I set the field "Name" to "Policy2"
@@ -130,7 +130,7 @@ Feature: Manage policies
       | Name       | Revision | Content    | Summary     | Status   |
       | Policy1    | v1       | full text2 | short text2 | draft    |
     And I log in as "manager"
-    And I navigate to "Privacy and policies > Manage policies" in site administration
+    And I navigate to "Users > Privacy and policies > Manage policies" in site administration
     And I open the action menu in "Policy1" "table_row"
     And I click on "Edit" "link" in the "Policy1" "table_row"
     And I set the field "Version" to "v2"
@@ -153,7 +153,7 @@ Feature: Manage policies
       | Name       | Revision | Content    | Summary     | Status   |
       | Policy1    | v1       | full text2 | short text2 | draft    |
     And I log in as "manager"
-    And I navigate to "Privacy and policies > Manage policies" in site administration
+    And I navigate to "Users > Privacy and policies > Manage policies" in site administration
     And I open the action menu in "Policy1" "table_row"
     And I click on "Edit" "link" in the "Policy1" "table_row"
     And I set the field "Version" to "v2"
@@ -172,7 +172,7 @@ Feature: Manage policies
       | Name       | Revision | Content    | Summary     | Status   |
       | Policy1    | v1       | full text2 | short text2 | draft    |
     And I log in as "manager"
-    And I navigate to "Privacy and policies > Manage policies" in site administration
+    And I navigate to "Users > Privacy and policies > Manage policies" in site administration
     And I open the action menu in "Policy1" "table_row"
     And I click on "Set status to \"Active\"" "link" in the "Policy1" "table_row"
     Then I should see "All users will be required to accept this new policy version to be able to use the site"
@@ -192,7 +192,7 @@ Feature: Manage policies
     And I press "Next"
     And I set the field "I agree to the Policy1" to "1"
     And I press "Next"
-    And I navigate to "Privacy and policies > Manage policies" in site administration
+    And I navigate to "Users > Privacy and policies > Manage policies" in site administration
     And I open the action menu in "Policy1" "table_row"
     And I click on "Set status to \"Inactive\"" "link" in the "Policy1" "table_row"
     Then I should see "The policy will not apply until some version is made the current one"
@@ -233,7 +233,7 @@ Feature: Manage policies
     And I press "Next"
     And I set the field "I agree to the Policy1" to "1"
     And I press "Next"
-    And I navigate to "Privacy and policies > Manage policies" in site administration
+    And I navigate to "Users > Privacy and policies > Manage policies" in site administration
     And I open the action menu in "Policy1" "table_row"
     And I click on "Set status to \"Inactive\"" "link" in the "Policy1" "table_row"
     And I press "Continue"
