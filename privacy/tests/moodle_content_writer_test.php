@@ -914,6 +914,151 @@ class moodle_content_writer_test extends advanced_testcase {
     }
 
     /**
+     * Test that exported data is shortened when exceeds the limit.
+     *
+     * @dataProvider long_filename_provider
+     * @param string $longtext
+     * @param string $expected
+     * @param string $text
+     */
+    public function test_export_data_long_filename($longtext, $expected, $text) {
+        $context = \context_system::instance();
+        $subcontext = [$longtext];
+        $data = (object) ['key' => $text];
+
+        $writer = $this->get_writer_instance()
+                ->set_context($context)
+                ->export_data($subcontext, $data);
+
+        $fileroot = $this->fetch_exported_content($writer);
+
+        $contextpath = $this->get_context_path($context, $subcontext, 'data.json');
+        $expectedpath = 'System/'.$expected.'/data.json';
+        $this->assertEquals($expectedpath, $contextpath);
+
+        $json = $fileroot->getChild($contextpath)->getContent();
+        $this->assertRegExp("/$text/", $json);
+
+        $expanded = json_decode($json);
+        $this->assertEquals($data, $expanded);
+    }
+
+    /**
+     * Test that exported related data is shortened when exceeds the limit.
+     *
+     * @dataProvider long_filename_provider
+     * @param string $longtext
+     * @param string $expected
+     * @param string $text
+     */
+    public function test_export_related_data_long_filename($longtext, $expected, $text) {
+        $context = \context_system::instance();
+        $subcontext = [$longtext];
+        $data = (object) ['key' => $text];
+
+        $writer = $this->get_writer_instance()
+                ->set_context($context)
+                ->export_related_data($subcontext, 'name', $data);
+
+        $fileroot = $this->fetch_exported_content($writer);
+
+        $contextpath = $this->get_context_path($context, $subcontext, 'name.json');
+        $expectedpath = 'System/'.$expected.'/name.json';
+        $this->assertEquals($expectedpath, $contextpath);
+
+        $json = $fileroot->getChild($contextpath)->getContent();
+        $this->assertRegExp("/$text/", $json);
+
+        $expanded = json_decode($json);
+        $this->assertEquals($data, $expanded);
+    }
+
+    /**
+     * Test that exported metadata is shortened when exceeds the limit.
+     *
+     * @dataProvider long_filename_provider
+     * @param string $longtext
+     * @param string $expected
+     * @param string $text
+     */
+    public function test_export_metadata_long_filename($longtext, $expected, $text) {
+        $context = \context_system::instance();
+        $subcontext = [$longtext];
+        $data = (object) ['key' => $text];
+
+        $writer = $this->get_writer_instance()
+                ->set_context($context)
+                ->export_metadata($subcontext, $text, $text, $text);
+
+        $fileroot = $this->fetch_exported_content($writer);
+
+        $contextpath = $this->get_context_path($context, $subcontext, 'metadata.json');
+        $expectedpath = 'System/'.$expected.'/metadata.json';
+        $this->assertEquals($expectedpath, $contextpath);
+
+        $json = $fileroot->getChild($contextpath)->getContent();
+        $this->assertRegExp("/$text.*$text.*$text/", $json);
+
+        $expanded = json_decode($json);
+        $this->assertTrue(isset($expanded->$text));
+        $this->assertEquals($text, $expanded->$text->value);
+        $this->assertEquals($text, $expanded->$text->description);
+    }
+
+    /**
+     * Test that exported user preference is shortened when exceeds the limit.
+     *
+     * @dataProvider long_filename_provider
+     * @param string $longtext
+     * @param string $expected
+     * @param string $text
+     */
+    public function test_export_user_preference_long_filename($longtext, $expected, $text) {
+        $this->resetAfterTest();
+
+        if (!array_key_exists('json', core_filetypes::get_types())) {
+            // Add json as mime type to avoid lose the extension when shortening filenames.
+            core_filetypes::add_type('json', 'application/json', 'archive', [], '', 'JSON file archive');
+        }
+        $expectedpath = 'System/User preferences/'.$expected.'.json';
+
+        $context = \context_system::instance();
+        $component = $longtext;
+
+        $writer = $this->get_writer_instance()
+                ->set_context($context)
+                ->export_user_preference($component, $text, $text, $text);
+
+        $fileroot = $this->fetch_exported_content($writer);
+
+        $contextpath = $this->get_context_path($context, [get_string('userpreferences')], "{$component}.json");
+        $this->assertEquals($expectedpath, $contextpath);
+
+        $json = $fileroot->getChild($contextpath)->getContent();
+        $this->assertRegExp("/$text.*$text.*$text/", $json);
+
+        $expanded = json_decode($json);
+        $this->assertTrue(isset($expanded->$text));
+        $this->assertEquals($text, $expanded->$text->value);
+        $this->assertEquals($text, $expanded->$text->description);
+    }
+
+    /**
+     * Provider for long filenames.
+     *
+     * @return array
+     */
+    public function long_filename_provider() {
+        return [
+            'More than 100 characters' => [
+                'Etiam sit amet dui vel leo blandit viverra. Proin viverra suscipit velit. Aenean efficitur suscipit nibh nec suscipit',
+                'Etiam sit amet dui vel leo blandit viverra. Proin viverra suscipit velit. Aenean effici - 22f7a5030d',
+                'value',
+            ],
+        ];
+    }
+
+    /**
      * Get a fresh content writer.
      *
      * @return  moodle_content_writer
