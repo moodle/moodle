@@ -860,6 +860,7 @@ $string['pluginsoverviewsee'] = 'See <a href="{$a->url}">plugins overview</a> pa
 $string['policysettings'] = 'Policy settings';
 $string['privacyandpolicies'] = 'Privacy and policies';
 $string['privacysettings'] = 'Privacy settings';
+$string['privacy:metadata'] = 'The Administration plugin does not store any personal data.';
 $string['profilecategory'] = 'Category';
 $string['profilecategoryname'] = 'Category name (must be unique)';
 $string['profilecategorynamenotunique'] = 'This category name is already in use';
