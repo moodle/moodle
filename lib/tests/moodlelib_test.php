@@ -1106,6 +1106,137 @@ class core_moodlelib_testcase extends advanced_testcase {
         $this->assertSame($expected, shorten_filename($filename, $length, $includehash));
     }
 
+    /**
+     * Provider for long filenames and its expected result, with and without hash.
+     *
+     * @return array of ($filename, $length, $expected, $includehash)
+     */
+    public function shorten_filenames_provider() {
+        $shortfilename = 'sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque';
+        $longfilename = 'sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium totam rem';
+        $extfilename = $longfilename.'.zip';
+        $expected = 'sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium tot';
+        $expectedwithhash = 'sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque l - 3bec1da8b8';
+        $expectedext = 'sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium tot.zip';
+        $expectedextwithhash = 'sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque l - 3bec1da8b8.zip';
+        $expected50 = 'sed ut perspiciatis unde omnis iste natus error si';
+        $expected50withhash = 'sed ut perspiciatis unde omnis iste n - 3bec1da8b8';
+        $expected50ext = 'sed ut perspiciatis unde omnis iste natus error si.zip';
+        $expected50extwithhash = 'sed ut perspiciatis unde omnis iste n - 3bec1da8b8.zip';
+        $expected50short = 'sed ut perspiciatis unde omnis iste n - 5fb6543490';
+
+        return [
+            'Empty array without hash' => [
+                [],
+                null,
+                [],
+                false,
+            ],
+            'Empty array with hash' => [
+                [],
+                null,
+                [],
+                true,
+            ],
+            'Array with less than 100 characters' => [
+                [$shortfilename, $shortfilename, $shortfilename],
+                null,
+                [$shortfilename, $shortfilename, $shortfilename],
+                false,
+            ],
+            'Array with more than 100 characters without hash' => [
+                [$longfilename, $longfilename, $longfilename],
+                null,
+                [$expected, $expected, $expected],
+                false,
+            ],
+            'Array with more than 100 characters with hash' => [
+                [$longfilename, $longfilename, $longfilename],
+                null,
+                [$expectedwithhash, $expectedwithhash, $expectedwithhash],
+                true,
+            ],
+            'Array with more than 100 characters with extension' => [
+                [$extfilename, $extfilename, $extfilename],
+                null,
+                [$expectedext, $expectedext, $expectedext],
+                false,
+            ],
+            'Array with more than 100 characters with extension and hash' => [
+                [$extfilename, $extfilename, $extfilename],
+                null,
+                [$expectedextwithhash, $expectedextwithhash, $expectedextwithhash],
+                true,
+            ],
+            'Array with more than 100 characters mix (short, long, with extension) without hash' => [
+                [$shortfilename, $longfilename, $extfilename],
+                null,
+                [$shortfilename, $expected, $expectedext],
+                false,
+            ],
+            'Array with more than 100 characters mix (short, long, with extension) with hash' => [
+                [$shortfilename, $longfilename, $extfilename],
+                null,
+                [$shortfilename, $expectedwithhash, $expectedextwithhash],
+                true,
+            ],
+            'Array with less than 50 characters without hash' => [
+                [$longfilename, $longfilename, $longfilename],
+                50,
+                [$expected50, $expected50, $expected50],
+                false,
+            ],
+            'Array with less than 50 characters with hash' => [
+                [$longfilename, $longfilename, $longfilename],
+                50,
+                [$expected50withhash, $expected50withhash, $expected50withhash],
+                true,
+            ],
+            'Array with less than 50 characters with extension' => [
+                [$extfilename, $extfilename, $extfilename],
+                50,
+                [$expected50ext, $expected50ext, $expected50ext],
+                false,
+            ],
+            'Array with less than 50 characters with extension and hash' => [
+                [$extfilename, $extfilename, $extfilename],
+                50,
+                [$expected50extwithhash, $expected50extwithhash, $expected50extwithhash],
+                true,
+            ],
+            'Array with less than 50 characters mix (short, long, with extension) without hash' => [
+                [$shortfilename, $longfilename, $extfilename],
+                50,
+                [$expected50, $expected50, $expected50ext],
+                false,
+            ],
+            'Array with less than 50 characters mix (short, long, with extension) with hash' => [
+                [$shortfilename, $longfilename, $extfilename],
+                50,
+                [$expected50short, $expected50withhash, $expected50extwithhash],
+                true,
+            ],
+        ];
+    }
+
+    /**
+     * Test the {@link shorten_filenames()} method.
+     *
+     * @dataProvider shorten_filenames_provider
+     *
+     * @param string $filenames
+     * @param int $length
+     * @param string $expected
+     * @param boolean $includehash
+     */
+    public function test_shorten_filenames($filenames, $length, $expected, $includehash) {
+        if (null === $length) {
+            $length = MAX_FILENAME_SIZE;
+        }
+
+        $this->assertSame($expected, shorten_filenames($filenames, $length, $includehash));
+    }
+
     public function test_usergetdate() {
         global $USER, $CFG, $DB;
         $this->resetAfterTest();
