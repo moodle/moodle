@@ -37,7 +37,7 @@ require_once($CFG->dirroot . "/webservice/xmlrpc/lib.php");
 
 admin_externalpage_setup('registrationhubs');
 
-$renderer = $PAGE->get_renderer('core', 'register');
+$renderer = $PAGE->get_renderer('core', 'admin');
 
 $unregistration = optional_param('unregistration', 0, PARAM_INT);
 $cleanregdata = optional_param('cleanregdata', 0, PARAM_BOOL);
@@ -181,8 +181,7 @@ if (empty($cancel) and $unregistration and !$confirm) {
     echo $OUTPUT->header();
 
     //check if the site is registered on Moodle.org and display a message about registering on MOOCH
-    $adminrenderer = $PAGE->get_renderer('core', 'admin');
-    echo $adminrenderer->warn_if_not_registered();
+    echo $renderer->warn_if_not_registered();
 
     //do not check sesskey if confirm = false because this script is linked into email message
     if (!empty($errormessage)) {

@@ -109,7 +109,7 @@ if (has_capability('moodle/course:publish', context_course::instance($id))) {
         die();
     }
 
-    $renderer = $PAGE->get_renderer('core', 'publish');
+    $renderer = $PAGE->get_renderer('core', 'course');
 
     /// UNPUBLISH
     $cancel = optional_param('cancel', 0, PARAM_BOOL);
