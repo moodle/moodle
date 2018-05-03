@@ -31,6 +31,7 @@
     Example context (json):
     {
         "hasonbehalfagreements": true,
+        "canrevoke": true,
         "policies": [
             {
               "versions": [
@@ -70,6 +71,10 @@
         ]
     }
 }}
+{{^canrevoke}}
+    <div class="alert alert-info">{{#str}} contactdpo, tool_policy {{/str}}</div>
+{{/canrevoke}}
+
 <table class="generaltable fullwidth">
     <thead>
     <tr>

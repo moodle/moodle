@@ -814,6 +814,39 @@ class api {
     }
 
     /**
+     * Checks if user can revoke policies for themselves or on behalf of another user
+     *
+     * @param int $userid
+     * @param bool $throwexception
+     * @return bool
+     */
+    public static function can_revoke_policies($userid = null, $throwexception = false) {
+        global $USER;
+
+        if (!isloggedin() || isguestuser()) {
+            if ($throwexception) {
+                throw new \moodle_exception('noguest');
+            } else {
+                return false;
+            }
+        }
+        if (!$userid) {
+            $userid = $USER->id;
+        }
+
+        // At the moment, current users can't revoke their own policies.
+        // Check capability to revoke on behalf as the real user.
+        $realuser = manager::get_realuser();
+        $usercontext = \context_user::instance($userid);
+        if ($throwexception) {
+            require_capability('tool/policy:acceptbehalf', $usercontext, $realuser);
+            return;
+        } else {
+            return has_capability('tool/policy:acceptbehalf', $usercontext, $realuser);
+        }
+    }
+
+    /**
      * Accepts the current revisions of all policies that the user has not yet accepted
      *
      * @param array|int $policyversionid

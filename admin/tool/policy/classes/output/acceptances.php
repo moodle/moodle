@@ -50,6 +50,9 @@ class acceptances implements renderable, templatable {
     /** @var moodle_url */
     protected $returnurl;
 
+    /** @var bool */
+    protected $canrevoke;
+
     /**
      * Contructor.
      *
@@ -59,6 +62,7 @@ class acceptances implements renderable, templatable {
     public function __construct($userid, $returnurl = null) {
         $this->userid = $userid;
         $this->returnurl = $returnurl ? (new moodle_url($returnurl))->out(false) : null;
+        $this->canrevoke = \tool_policy\api::can_revoke_policies($this->userid);
     }
 
     /**
@@ -72,6 +76,7 @@ class acceptances implements renderable, templatable {
         $data->hasonbehalfagreements = false;
         $data->pluginbaseurl = (new moodle_url('/admin/tool/policy'))->out(false);
         $data->returnurl = $this->returnurl;
+        $data->canrevoke = $this->canrevoke;
 
         // Get the list of policies and versions that current user is able to see
         // and the respective acceptance records for the selected user.
