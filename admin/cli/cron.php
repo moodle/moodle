@@ -58,4 +58,37 @@ Example:
     die;
 }
 
+
+if (!function_exists('grade_update')) { //workaround for buggy PHP versions
+    require_once($CFG->libdir . '/gradelib.php');
+}
+
+
+
+echo 'Update user grades';
+
+$sql = "SELECT courseid, grademax, itemnumber, iteminstance FROM moodle.mdl_grade_grades g
+	join moodle.mdl_grade_items i on g.itemid = i.id
+	where i.itemmodule = 'quizoff' and aggregationstatus = 'used'";
+
+	$rs = $DB->get_recordset_sql($sql, NULL);
+
+	foreach ($rs as $gd) {
+		$courseid = $gd->courseid;
+		$grademax = $gd->grademax;
+		$itemnumber = $gd->itemnumber;
+		$iteminstance = $gd->iteminstance;
+		$params['grademax'] = $grademax + 1;
+		grade_update('mod/quizoff', $courseid, 'mod', 'quizoff', $iteminstance, $itemnumber, NULL, $params);
+		$params['grademax'] = $grademax;
+		grade_update('mod/quizoff', $courseid, 'mod', 'quizoff', $iteminstance, $itemnumber, NULL, $params);
+		grade_regrade_final_grades($courseid);
+		echo "Course " . $courseid . " updated";
+	}
+	if ($rs) {
+        	$rs->close();
+   	}
+echo '  Grade update end  ';
+
+
 cron_run();
