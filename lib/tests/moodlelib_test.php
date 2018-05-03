@@ -1007,27 +1007,238 @@ class core_moodlelib_testcase extends advanced_testcase {
                 shorten_text($text, 1));
     }
 
-    public function test_shorten_filename() {
-        // Test filename that contains more than 100 characters.
+    /**
+     * Provider for long filenames and its expected result, with and without hash.
+     *
+     * @return array of ($filename, $length, $expected, $includehash)
+     */
+    public function shorten_filename_provider() {
         $filename = 'sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium totam rem';
-        $this->assertSame('sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium tot',
-            shorten_filename($filename));
-        // Filename contains extension.
-        $this->assertSame('sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium tot.zip',
-            shorten_filename($filename . '.zip'));
-        // Limit filename to 50 chars.
-        $this->assertSame('sed ut perspiciatis unde omnis iste natus error si',
-            shorten_filename($filename, 50));
-        $this->assertSame('sed ut perspiciatis unde omnis iste natus error si.zip',
-            shorten_filename($filename . '.zip', 50));
+        $shortfilename = 'sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque';
 
-        // Test filename that contains less than 100 characters.
-        $filename = 'sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque';
-        $this->assertSame('sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque',
-            shorten_filename($filename));
-        // Filename contains extension.
-        $this->assertSame('sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque.zip',
-            shorten_filename($filename . '.zip'));
+        return [
+            'More than 100 characters' => [
+                $filename,
+                null,
+                'sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium tot',
+                false,
+            ],
+            'More than 100 characters with hash' => [
+                $filename,
+                null,
+                'sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque l - 3bec1da8b8',
+                true,
+            ],
+            'More than 100 characters with extension' => [
+                "{$filename}.zip",
+                null,
+                'sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium tot.zip',
+                false,
+            ],
+            'More than 100 characters with extension and hash' => [
+                "{$filename}.zip",
+                null,
+                'sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque l - 3bec1da8b8.zip',
+                true,
+            ],
+            'Limit filename to 50 chars' => [
+                $filename,
+                50,
+                'sed ut perspiciatis unde omnis iste natus error si',
+                false,
+            ],
+            'Limit filename to 50 chars with hash' => [
+                $filename,
+                50,
+                'sed ut perspiciatis unde omnis iste n - 3bec1da8b8',
+                true,
+            ],
+            'Limit filename to 50 chars with extension' => [
+                "{$filename}.zip",
+                50,
+                'sed ut perspiciatis unde omnis iste natus error si.zip',
+                false,
+            ],
+            'Limit filename to 50 chars with extension and hash' => [
+                "{$filename}.zip",
+                50,
+                'sed ut perspiciatis unde omnis iste n - 3bec1da8b8.zip',
+                true,
+            ],
+            'Test filename that contains less than 100 characters' => [
+                $shortfilename,
+                null,
+                $shortfilename,
+                false,
+            ],
+            'Test filename that contains less than 100 characters and hash' => [
+                $shortfilename,
+                null,
+                $shortfilename,
+                true,
+            ],
+            'Test filename that contains less than 100 characters with extension' => [
+                "{$shortfilename}.zip",
+                null,
+                "{$shortfilename}.zip",
+                false,
+            ],
+            'Test filename that contains less than 100 characters with extension and hash' => [
+                "{$shortfilename}.zip",
+                null,
+                "{$shortfilename}.zip",
+                true,
+            ],
+        ];
+    }
+
+    /**
+     * Test the {@link shorten_filename()} method.
+     *
+     * @dataProvider shorten_filename_provider
+     *
+     * @param string $filename
+     * @param int $length
+     * @param string $expected
+     * @param boolean $includehash
+     */
+    public function test_shorten_filename($filename, $length, $expected, $includehash) {
+        if (null === $length) {
+            $length = MAX_FILENAME_SIZE;
+        }
+
+        $this->assertSame($expected, shorten_filename($filename, $length, $includehash));
+    }
+
+    /**
+     * Provider for long filenames and its expected result, with and without hash.
+     *
+     * @return array of ($filename, $length, $expected, $includehash)
+     */
+    public function shorten_filenames_provider() {
+        $shortfilename = 'sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque';
+        $longfilename = 'sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium totam rem';
+        $extfilename = $longfilename.'.zip';
+        $expected = 'sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium tot';
+        $expectedwithhash = 'sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque l - 3bec1da8b8';
+        $expectedext = 'sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium tot.zip';
+        $expectedextwithhash = 'sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque l - 3bec1da8b8.zip';
+        $expected50 = 'sed ut perspiciatis unde omnis iste natus error si';
+        $expected50withhash = 'sed ut perspiciatis unde omnis iste n - 3bec1da8b8';
+        $expected50ext = 'sed ut perspiciatis unde omnis iste natus error si.zip';
+        $expected50extwithhash = 'sed ut perspiciatis unde omnis iste n - 3bec1da8b8.zip';
+        $expected50short = 'sed ut perspiciatis unde omnis iste n - 5fb6543490';
+
+        return [
+            'Empty array without hash' => [
+                [],
+                null,
+                [],
+                false,
+            ],
+            'Empty array with hash' => [
+                [],
+                null,
+                [],
+                true,
+            ],
+            'Array with less than 100 characters' => [
+                [$shortfilename, $shortfilename, $shortfilename],
+                null,
+                [$shortfilename, $shortfilename, $shortfilename],
+                false,
+            ],
+            'Array with more than 100 characters without hash' => [
+                [$longfilename, $longfilename, $longfilename],
+                null,
+                [$expected, $expected, $expected],
+                false,
+            ],
+            'Array with more than 100 characters with hash' => [
+                [$longfilename, $longfilename, $longfilename],
+                null,
+                [$expectedwithhash, $expectedwithhash, $expectedwithhash],
+                true,
+            ],
+            'Array with more than 100 characters with extension' => [
+                [$extfilename, $extfilename, $extfilename],
+                null,
+                [$expectedext, $expectedext, $expectedext],
+                false,
+            ],
+            'Array with more than 100 characters with extension and hash' => [
+                [$extfilename, $extfilename, $extfilename],
+                null,
+                [$expectedextwithhash, $expectedextwithhash, $expectedextwithhash],
+                true,
+            ],
+            'Array with more than 100 characters mix (short, long, with extension) without hash' => [
+                [$shortfilename, $longfilename, $extfilename],
+                null,
+                [$shortfilename, $expected, $expectedext],
+                false,
+            ],
+            'Array with more than 100 characters mix (short, long, with extension) with hash' => [
+                [$shortfilename, $longfilename, $extfilename],
+                null,
+                [$shortfilename, $expectedwithhash, $expectedextwithhash],
+                true,
+            ],
+            'Array with less than 50 characters without hash' => [
+                [$longfilename, $longfilename, $longfilename],
+                50,
+                [$expected50, $expected50, $expected50],
+                false,
+            ],
+            'Array with less than 50 characters with hash' => [
+                [$longfilename, $longfilename, $longfilename],
+                50,
+                [$expected50withhash, $expected50withhash, $expected50withhash],
+                true,
+            ],
+            'Array with less than 50 characters with extension' => [
+                [$extfilename, $extfilename, $extfilename],
+                50,
+                [$expected50ext, $expected50ext, $expected50ext],
+                false,
+            ],
+            'Array with less than 50 characters with extension and hash' => [
+                [$extfilename, $extfilename, $extfilename],
+                50,
+                [$expected50extwithhash, $expected50extwithhash, $expected50extwithhash],
+                true,
+            ],
+            'Array with less than 50 characters mix (short, long, with extension) without hash' => [
+                [$shortfilename, $longfilename, $extfilename],
+                50,
+                [$expected50, $expected50, $expected50ext],
+                false,
+            ],
+            'Array with less than 50 characters mix (short, long, with extension) with hash' => [
+                [$shortfilename, $longfilename, $extfilename],
+                50,
+                [$expected50short, $expected50withhash, $expected50extwithhash],
+                true,
+            ],
+        ];
+    }
+
+    /**
+     * Test the {@link shorten_filenames()} method.
+     *
+     * @dataProvider shorten_filenames_provider
+     *
+     * @param string $filenames
+     * @param int $length
+     * @param string $expected
+     * @param boolean $includehash
+     */
+    public function test_shorten_filenames($filenames, $length, $expected, $includehash) {
+        if (null === $length) {
+            $length = MAX_FILENAME_SIZE;
+        }
+
+        $this->assertSame($expected, shorten_filenames($filenames, $length, $includehash));
     }
 
     public function test_usergetdate() {
