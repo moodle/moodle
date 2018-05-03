@@ -188,7 +188,7 @@ EOD;
                         } else if ($convertedfile = $converter->start_conversion($file, 'pdf')) {
                             $files[$filename] = $convertedfile;
                         }
-                    } else {
+                    } else if ($converter->can_convert_format_to('html', 'pdf')) {
                         // Create a tmp stored_file from this html string.
                         $file = reset($file);
                         // Strip image tags, because they will not be resolvable.
