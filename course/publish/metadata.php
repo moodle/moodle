@@ -179,7 +179,7 @@ echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('publishcourseon', 'hub', 'Moodle.net'), 3, 'main');
 
 // Display hub information (logo, name, description).
-$renderer = $PAGE->get_renderer('core', 'publish');
+$renderer = $PAGE->get_renderer('core', 'course');
 if ($hubinfo = \core\hub\registration::get_moodlenet_info()) {
     echo $renderer->hubinfo($hubinfo);
 }
