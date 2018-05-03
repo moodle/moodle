@@ -370,6 +370,7 @@ div#dock {
 #page-mod-quiz-mod #id_reviewoptionshdr .col-md-3,
 #page-mod-quiz-mod #id_reviewoptionshdr .col-md-9 {
     width: auto;
+    max-width: none;
 }
 #page-mod-quiz-mod #id_reviewoptionshdr .form-group {
     float: left;
@@ -389,6 +390,7 @@ div#dock {
 #page-mod-quiz-mod #id_reviewoptionshdr .form-check {
     width: 90%;
     height: 22px;
+    justify-content: flex-start;
 }
 
 // Question navigation block.
