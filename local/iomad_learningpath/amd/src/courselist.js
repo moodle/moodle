@@ -103,11 +103,15 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification', '
             function apply_pathcourses(pcl, courses) {
 
                 // Show/hide 'no courses' message.
-                $('.pathcourselist li').remove();
+                $(pcl).find('li').remove();
+                //$('.pathcourselist li').remove();
+                //var nogroupcourses = $(pcl).parent().find('.nogroupcourses');
+                var groupid = $(pcl).data('groupid');
+                var nogroupcourses = $(".nogroupcourses[data-groupid='" + groupid + "']");
                 if (courses.length) {
-                    $('#nopathcourses').hide();
+                    nogroupcourses.hide();
                 } else {
-                    $('#nopathcourses').show();
+                    nogroupcourses.show();
                     return;
                 }
 

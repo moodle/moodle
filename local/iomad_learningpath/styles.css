@@ -2,7 +2,7 @@
     margin-top: 20px;
 }
 
-#pathcourselist, #prospectivelist {
+.pathcourselist, #prospectivelist {
     min-height: 5rem;
     border: dotted 1px #d5d5d5;
     padding-left: 0;
@@ -50,4 +50,8 @@
 
 .groupcard .card-block {
     padding: 0.5rem;
+}
+
+.nogroupcourses, #noprospective {
+    padding: 0.5rem 1rem !important;
 }

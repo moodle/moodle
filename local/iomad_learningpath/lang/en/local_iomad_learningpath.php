@@ -59,6 +59,7 @@ $string['managestudents'] = 'Manage student assignments';
 $string['managetitle'] = 'Manage learning paths';
 $string['name'] = 'Name';
 $string['name_help'] = 'Learning Path name';
+$string['nocoursesingroup'] = 'No courses in this learning path group';
 $string['nocoursesinpath'] = 'No courses in this learning path';
 $string['nopath'] = 'Path is missing';
 $string['nopaths'] = 'No learning paths have been created';

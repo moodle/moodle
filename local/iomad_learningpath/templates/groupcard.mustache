@@ -15,6 +15,13 @@
                 {{/ showdelete }}
             </div>
         </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="nogroupcourses alert alert-warning" data-groupid="{{ id }}" style="display: none">
+                    {{# str }}nocoursesingroup, local_iomad_learningpath{{/ str }}
+                </div>
+            </div>
+        </div>
         <ul class="pathcourselist" data-groupid="{{ id }}"> </ul>
     </div>
 </div>
