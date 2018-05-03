@@ -100,7 +100,7 @@ $registeredhub = $registrationmanager->get_registeredhub($huburl);
 //display the sending file page
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('sendingcourse', 'hub'), 3, 'main');
-$renderer = $PAGE->get_renderer('core', 'publish');
+$renderer = $PAGE->get_renderer('core', 'course');
 echo $renderer->sendingbackupinfo($backupfile);
 if (ob_get_level()) {
     ob_flush();

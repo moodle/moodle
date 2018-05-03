@@ -5,10 +5,8 @@ information provided here is intended especially for developers.
 * The following have been removed from the list of core subsystems:
    - core_register
    - core_publish
-  Following this change, \core_register_renderer has been removed and it's methods have been moved to \core_admin_renderer:
-   - moodleorg_registration_message()
-   - registration_confirmation()
-   - registeredonhublisting()
+  Following this change, \core_register_renderer and \core_publish_renderer have been removed and their methods have been
+  moved to \core_admin_renderer and \core_course_renderer respectively.
 
 === 3.3.5 ===
 

@@ -181,8 +181,7 @@ if (empty($cancel) and $unregistration and !$confirm) {
     echo $OUTPUT->header();
 
     //check if the site is registered on Moodle.org and display a message about registering on MOOCH
-    $adminrenderer = $PAGE->get_renderer('core', 'admin');
-    echo $adminrenderer->warn_if_not_registered();
+    echo $renderer->warn_if_not_registered();
 
     //do not check sesskey if confirm = false because this script is linked into email message
     if (!empty($errormessage)) {

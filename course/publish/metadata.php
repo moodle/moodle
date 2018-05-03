@@ -263,7 +263,7 @@ if (has_capability('moodle/course:publish', context_course::instance($id))) {
         //only print error log in apache (for backward compatibility)
         error_log(print_r($e->getMessage(), true));
     }
-    $renderer = $PAGE->get_renderer('core', 'publish');
+    $renderer = $PAGE->get_renderer('core', 'course');
     if (!empty($hubinfo)) {
         echo $renderer->hubinfo($hubinfo);
     }
