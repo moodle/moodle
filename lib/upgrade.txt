@@ -3,6 +3,7 @@ information provided here is intended especially for developers.
 
 === 3.5 ===
 
+* The cron runner now sets up a fresh PAGE and OUTPUT between each task.
 * The core_renderer methods notify_problem(), notify_success(), notify_message() and notify_redirect() that were
   deprecated in Moodle 3.1 have been removed. Use \core\notification::add(), or \core\output\notification as required.
 * The maximum supported precision (the total number of digits) for XMLDB_TYPE_NUMBER ("number") fields raised from 20 to
