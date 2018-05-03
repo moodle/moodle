@@ -205,7 +205,7 @@ class MoodleQuickForm_modgrade extends MoodleQuickForm_group {
                 $gradesexistmsg = get_string('modgradecantchangegradetype', 'grades');
             }
 
-            $gradesexisthtml = '<div class=\'alert\'>' . $gradesexistmsg . '</div>';
+            $gradesexisthtml = '<div class=\'alert alert-warning\'>' . $gradesexistmsg . '</div>';
             $this->_elements[] = $this->createFormElement('static', 'gradesexistmsg', '', $gradesexisthtml);
         }
 
