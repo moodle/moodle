@@ -28,6 +28,7 @@ $string['includingsubcategories'] = 'Including subcategories';
 $string['pluginname'] = 'Random';
 $string['pluginname_help'] = 'A random question is not a question type as such, but is a way of inserting a randomly-chosen question from a specified category into an activity.';
 $string['pluginnameediting'] = 'Editing a random question';
+$string['privacy:metadata'] = 'The Random question type plugin does not store any personal data.';
 $string['randomqname'] = 'Random ({$a})';
 $string['randomqnamefromtop'] = 'Faulty random question! Please delete this question.';
 $string['randomqnamefromtoptags'] = 'Faulty random question! Please delete this question.';

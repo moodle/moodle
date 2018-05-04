@@ -41,6 +41,7 @@ $string['pluginname_link'] = 'question/type/gapselect';
 $string['pluginnameadding'] = 'Adding a select missing words question';
 $string['pluginnameediting'] = 'Editing a select missing words question';
 $string['pluginnamesummary'] = 'Missing words in the question text are filled in using dropdown menus.';
+$string['privacy:metadata'] = 'The Select missing words plugin does not store any personal data.';
 $string['shuffle'] = 'Shuffle';
 $string['tagsnotallowed'] = '{$a->tag} is not allowed. (Only {$a->allowed} are permitted.)';
 $string['tagsnotallowedatall'] = '{$a->tag} is not allowed. (No HTML is allowed here.)';

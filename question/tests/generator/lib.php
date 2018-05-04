@@ -87,6 +87,30 @@ class core_question_generator extends component_generator_base {
         $question->category  = $fromform->category;
         $question->qtype     = $qtype;
         $question->createdby = 0;
+
+        return $this->update_question($question, $which, $overrides);
+    }
+
+    /**
+     * Update an existing question.
+     *
+     * @param stdClass $question the question data to update.
+     * @param string $which as for the corresponding argument of
+     *      {@link question_test_helper::get_question_form_data}. null for the default one.
+     * @param array|stdClass $overrides any fields that should be different from the base example.
+     */
+    public function update_question($question, $which = null, $overrides = null) {
+        global $CFG;
+        require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
+
+        $qtype = $question->qtype;
+
+        $fromform = test_question_maker::get_question_form_data($qtype, $which);
+        $fromform = (object) $this->datagenerator->combine_defaults_and_record(
+                (array) $question, $fromform);
+        $fromform = (object) $this->datagenerator->combine_defaults_and_record(
+                (array) $fromform, $overrides);
+
         return question_bank::get_qtype($qtype)->save_question($question, $fromform);
     }
 

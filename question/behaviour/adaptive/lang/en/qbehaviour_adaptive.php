@@ -32,6 +32,7 @@ $string['gradingdetailswithpenalty'] = 'Marks for this submission: {$a->raw}/{$a
 $string['gradingdetailswithtotalpenalty'] = 'Marks for this submission: {$a->raw}/{$a->max}. This submission attracted a penalty of {$a->penalty}. Total penalties so far: {$a->totalpenalty}.';
 $string['notcomplete'] = 'Not complete';
 $string['pluginname'] = 'Adaptive mode';
+$string['privacy:metadata'] = 'The Adaptive mode question behaviour plugin does not store any personal data.';
 
 // Old strings these are currently only used in the unit tests, to verify that the new
 // strings give the same results as the old strings.

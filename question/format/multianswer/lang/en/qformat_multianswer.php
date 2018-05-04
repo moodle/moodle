@@ -25,3 +25,4 @@
 $string['pluginname'] = 'Embedded answers (Cloze)';
 $string['pluginname_help'] = 'Embedded answers (Cloze) format enables the import of a passage of text with questions such as multiple-choice and short answer embedded within it.';
 $string['pluginname_link'] = 'question/type/multianswer';
+$string['privacy:metadata'] = 'The Embedded answers question plugin does not store any personal data.';

@@ -1,5 +1,11 @@
 This files describes API changes for code that uses the question API.
 
+=== 3.5 ===
+
+1) The question format exportprocess function now adds a
+   $checkcapabilities boolean to allow questions to be exported in
+   certain circumstances.
+
 === 3.2 ===
 
 1) The following renderers have been deprecated in favour of the renderable

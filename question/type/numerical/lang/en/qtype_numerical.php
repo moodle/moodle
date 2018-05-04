@@ -67,6 +67,7 @@ $string['pluginname_link'] = 'question/type/numerical';
 $string['pluginnameadding'] = 'Adding a Numerical question';
 $string['pluginnameediting'] = 'Editing a Numerical question';
 $string['pluginnamesummary'] = 'Allows a numerical response, possibly with units, that is graded by comparing against various model answers, possibly with tolerances.';
+$string['privacy:metadata'] = 'The Numerical question type plugin does not store any personal data.';
 $string['relative'] = 'Relative';
 $string['rightexample'] = 'on the right, for example 1.00cm or 1.00km';
 $string['selectunits'] = 'Select units';
