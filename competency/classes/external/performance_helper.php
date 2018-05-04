@@ -26,6 +26,7 @@ namespace core_competency\external;
 defined('MOODLE_INTERNAL') || die();
 
 use core_competency\competency;
+use core_competency\competency_framework;
 
 /**
  * Performance helper class.
@@ -106,6 +107,17 @@ class performance_helper {
         }
 
         return $this->scales[$scaleid];
+    }
+
+    /**
+     * Ingest a framework to avoid additional fetching.
+     *
+     * @param competency_framework $framework The framework.
+     * @return void
+     */
+    public function ingest_framework(competency_framework $framework) {
+        $id = $framework->get('id');
+        $this->frameworks[$id] = $framework;
     }
 
 }
