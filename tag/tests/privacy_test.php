@@ -86,4 +86,69 @@ class core_tag_privacy_testcase extends provider_testcase {
             $this->assertContains($exportedtag->rawname, $dummytags);
         }
     }
+
+    /**
+     * Test method delete_item_tags().
+     */
+    public function test_delete_item_tags() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        // Create a course to tag.
+        $course1 = $this->getDataGenerator()->create_course();
+        $context1 = context_course::instance($course1->id);
+        $course2 = $this->getDataGenerator()->create_course();
+        $context2 = context_course::instance($course2->id);
+
+        // Tag courses.
+        core_tag_tag::set_item_tags('core_course', 'course', $course1->id, $context1, ['Tag 1', 'Tag 2', 'Tag 3']);
+        core_tag_tag::set_item_tags('core_course', 'course', $course2->id, $context2, ['Tag 1', 'Tag 2']);
+
+        $expectedtagcount = $DB->count_records('tag_instance');
+        // Delete tags for course1.
+        core_tag\privacy\provider::delete_item_tags($context1, 'core_course', 'course');
+        $expectedtagcount -= 3;
+        $this->assertEquals($expectedtagcount, $DB->count_records('tag_instance'));
+
+        // Delete tags for course2. Use wrong itemid.
+        core_tag\privacy\provider::delete_item_tags($context2, 'core_course', 'course', $course1->id);
+        $this->assertEquals($expectedtagcount, $DB->count_records('tag_instance'));
+
+        // Use correct itemid.
+        core_tag\privacy\provider::delete_item_tags($context2, 'core_course', 'course', $course2->id);
+        $expectedtagcount -= 2;
+        $this->assertEquals($expectedtagcount, $DB->count_records('tag_instance'));
+    }
+
+    /**
+     * Test method delete_item_tags_select().
+     */
+    public function test_delete_item_tags_select() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        // Create a course to tag.
+        $course1 = $this->getDataGenerator()->create_course();
+        $context1 = context_course::instance($course1->id);
+        $course2 = $this->getDataGenerator()->create_course();
+        $context2 = context_course::instance($course2->id);
+
+        // Tag courses.
+        core_tag_tag::set_item_tags('core_course', 'course', $course1->id, $context1, ['Tag 1', 'Tag 2', 'Tag 3']);
+        core_tag_tag::set_item_tags('core_course', 'course', $course2->id, $context2, ['Tag 1', 'Tag 2']);
+
+        $expectedtagcount = $DB->count_records('tag_instance');
+        // Delete tags for course1.
+        list($sql, $params) = $DB->get_in_or_equal([$course1->id, $course2->id], SQL_PARAMS_NAMED);
+        core_tag\privacy\provider::delete_item_tags_select($context1, 'core_course', 'course', $sql, $params);
+        $expectedtagcount -= 3;
+        $this->assertEquals($expectedtagcount, $DB->count_records('tag_instance'));
+
+        // Delete tags for course2.
+        core_tag\privacy\provider::delete_item_tags_select($context2, 'core_course', 'course', $sql, $params);
+        $expectedtagcount -= 2;
+        $this->assertEquals($expectedtagcount, $DB->count_records('tag_instance'));
+    }
 }

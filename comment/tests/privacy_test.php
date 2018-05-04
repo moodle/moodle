@@ -161,6 +161,76 @@ class core_comment_privacy_testcase extends provider_testcase {
     }
 
     /**
+     * Tests the deletion of all comments in a context.
+     */
+    public function test_delete_comments_for_all_users_select() {
+        global $DB;
+
+        $course1 = $this->getDataGenerator()->create_course();
+        $course2 = $this->getDataGenerator()->create_course();
+
+        $coursecontext1 = context_course::instance($course1->id);
+        $coursecontext2 = context_course::instance($course2->id);
+
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+
+        $comment1 = $this->get_comment_object($coursecontext1, $course1);
+        $comment2 = $this->get_comment_object($coursecontext2, $course2);
+
+        $this->setUser($user1);
+        $comment1->add('First comment for user 1 on comment 1');
+        $comment2->add('First comment for user 1 on comment 2');
+        $this->setUser($user2);
+        $comment1->add('First comment for user 2 on comment 1');
+        $comment2->add('First comment for user 2 on comment 2');
+
+        // Because of the way things are set up with validation, creating an entry with the same context in a different component
+        // or comment area is a huge pain. We're just going to jam entries into the table instead.
+        $record = (object) [
+            'contextid' => $coursecontext1->id,
+            'component' => 'block_comments',
+            'commentarea' => 'other_comments',
+            'itemid' => 2,
+            'content' => 'Comment user 1 different comment area',
+            'format' => 0,
+            'userid' => $user1->id,
+            'timecreated' => time()
+        ];
+        $DB->insert_record('comments', $record);
+        $record = (object) [
+            'contextid' => $coursecontext1->id,
+            'component' => 'tool_dataprivacy',
+            'commentarea' => 'page_comments',
+            'itemid' => 2,
+            'content' => 'Comment user 1 different component',
+            'format' => 0,
+            'userid' => $user1->id,
+            'timecreated' => time()
+        ];
+        $DB->insert_record('comments', $record);
+
+        // Delete only for the first context. All records in the comments table for this context should be removed.
+        list($sql, $params) = $DB->get_in_or_equal([0, 1, 2, 3], SQL_PARAMS_NAMED);
+        \core_comment\privacy\provider::delete_comments_for_all_users_select($coursecontext1,
+            'block_comments', 'page_comments', $sql, $params);
+        // No records left here.
+        $this->assertCount(0, $comment1->get_comments());
+        // All of the records are left intact here.
+        $this->assertCount(2, $comment2->get_comments());
+        // Check the other comment area.
+        $result = $DB->get_records('comments', ['commentarea' => 'other_comments']);
+        $this->assertCount(1, $result);
+        $data = array_shift($result);
+        $this->assertEquals('other_comments', $data->commentarea);
+        // Check the different component, same commentarea.
+        $result = $DB->get_records('comments', ['component' => 'tool_dataprivacy']);
+        $this->assertCount(1, $result);
+        $data = array_shift($result);
+        $this->assertEquals('tool_dataprivacy', $data->component);
+    }
+
+    /**
      * Tests deletion of comments for a specified user and contexts.
      */
     public function test_delete_comments_for_user() {
@@ -229,7 +299,7 @@ class core_comment_privacy_testcase extends provider_testcase {
         // Nothing changed here as user 1 did not leave a comment.
         $comment3comments = $comment3->get_comments();
         $this->assertCount(1, $comment3comments);
-        $data = array_shift(($comment3comments));
+        $data = array_shift($comment3comments);
         $this->assertEquals($user2->id, $data->userid);
         // Check the other comment area.
         $result = $DB->get_records('comments', ['commentarea' => 'other_comments']);
