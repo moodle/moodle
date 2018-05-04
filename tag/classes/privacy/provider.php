@@ -146,4 +146,52 @@ class provider implements
                 ->export_related_data($subcontext, 'tags', $tags);
         }
     }
+
+    /**
+     * Deletes all tag instances for given context, component, itemtype, itemid
+     *
+     * In most situations you will want to specify $userid as null. Per-user tag instances
+     * are possible in Tags API, however there are no components or standard plugins that actually use them.
+     *
+     * @param   \context    $context The context to export for
+     * @param   string      $component Tagarea component
+     * @param   string      $itemtype Tagarea item type
+     * @param   int         $itemid The itemid within that component and itemtype (optional)
+     * @param   int         $userid Only delete tag instances made by this user, per-user tags must be enabled for the tagarea
+     */
+    public static function delete_item_tags(\context $context, $component, $itemtype,
+            $itemid = null, $userid = null) {
+        global $DB;
+        $params = ['contextid' => $context->id, 'component' => $component, 'itemtype' => $itemtype];
+        if ($itemid) {
+            $params['itemid'] = $itemid;
+        }
+        if ($userid) {
+            $params['userid'] = $userid;
+        }
+        $DB->delete_records('tag_instance', $params);
+    }
+
+    /**
+     * Deletes all tag instances for given context, component, itemtype using subquery for itemids
+     *
+     * In most situations you will want to specify $userid as null. Per-user tag instances
+     * are possible in Tags API, however there are no components or standard plugins that actually use them.
+     *
+     * @param   \context    $context The context to export for
+     * @param   string      $component Tagarea component
+     * @param   string      $itemtype Tagarea item type
+     * @param   string      $itemidstest an SQL fragment that the itemid must match. Used
+     *      in the query like WHERE itemid $itemidstest. Must use named parameters,
+     *      and may not use named parameters called contextid, component or itemtype.
+     * @param array $params any query params used by $itemidstest.
+     */
+    public static function delete_item_tags_select(\context $context, $component, $itemtype,
+                                            $itemidstest, $params = []) {
+        global $DB;
+        $params += ['contextid' => $context->id, 'component' => $component, 'itemtype' => $itemtype];
+        $DB->delete_records_select('tag_instance',
+            'contextid = :contextid AND component = :component AND itemtype = :itemtype AND itemid ' . $itemidstest,
+            $params);
+    }
 }
