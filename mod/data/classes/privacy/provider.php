@@ -436,7 +436,7 @@ class provider implements
         // Delete tags.
         \core_tag\privacy\provider::delete_item_tags_select($context, 'mod_data', 'data_records', $sql, $params);
         // Delete comments.
-        \core_comment\privacy\provider::delete_comments_for_all_users_select($context, 'mod_data', 'entry', $sql, $params);
+        \core_comment\privacy\provider::delete_comments_for_all_users_select($context, 'mod_data', 'database_entry', $sql, $params);
         // Delete ratings.
         \core_rating\privacy\provider::delete_ratings_select($context, 'mod_data', 'entry', $sql, $params);
 
