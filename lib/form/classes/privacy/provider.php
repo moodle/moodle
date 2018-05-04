@@ -25,9 +25,6 @@
 
 namespace core_form\privacy;
 
-use core_privacy\local\metadata\collection;
-use core_privacy\local\request\writer;
-
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -37,52 +34,14 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright 2018 David Mudrák <david@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider implements
-        // The forms subsystem does not store any data itself, it has no database tables.
-        \core_privacy\local\metadata\provider,
-
-        // The forms subsystem has user preferences.
-        \core_privacy\local\request\user_preference_provider {
+class provider implements \core_privacy\local\metadata\null_provider {
 
     /**
-     * Returns meta data about this system.
+     * Get the language string identifier to explain that the subsystem stores no data.
      *
-     * @param collection $collection The initialised collection to add items to.
-     * @return collection A listing of user data stored through this system.
+     * @return string
      */
-    public static function get_metadata(collection $collection) {
-
-        $collection->add_user_preference('filemanager_recentviewmode', 'privacy:metadata:preference:filemanager_recentviewmode');
-
-        return $collection;
-    }
-
-    /**
-     * Export all user preferences for the subsystem.
-     *
-     * @param int $userid The ID of the user whose data is to be exported.
-     */
-    public static function export_user_preferences($userid) {
-
-        $preference = get_user_preferences('filemanager_recentviewmode');
-
-        if ($preference !== null) {
-            switch ($preference) {
-                case 1:
-                    $value = get_string('displayasicons', 'core_repository');
-                    break;
-                case 2:
-                    $value = get_string('displayastree', 'core_repository');
-                    break;
-                case 3:
-                    $value = get_string('displaydetails', 'core_repository');
-                    break;
-                default:
-                    $value = $preference;
-            }
-
-            $desc = get_string('privacy:preference:filemanager_recentviewmode', 'core_form', $value);
-            writer::export_user_preference('core_form', 'filemanager_recentviewmode', $preference, $desc);
-        }
+    public static function get_reason() {
+        return 'privacy:metadata';
     }
 }
