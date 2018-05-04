@@ -770,7 +770,7 @@ class provider implements
                 ON ctx.id = f.contextid
              WHERE ucc.usermodified = :userid
                AND ucc.courseid $insql
-          ORDER BY ucc.courseid";
+          ORDER BY ucc.courseid, ucc.id";
         $params = array_merge($inparams, ['userid' => $userid]);
 
         // Export the data.
