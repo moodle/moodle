@@ -2216,5 +2216,15 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2018040500.01);
     }
 
+    if ($oldversion < 2018050200.01) {
+
+        // For upgraded sites we set $CFG->forceclean to 0 to preserve the current behavior.
+        // For new sites the default for this setting will be 1.
+        set_config('forceclean', 0);
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2018050200.01);
+    }
+
     return true;
 }
