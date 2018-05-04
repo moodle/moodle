@@ -17,18 +17,19 @@
 /**
  * Privacy class for requesting user data.
  *
- * @package    profilefield_checkbox
+ * @package    profilefield_datetime
  * @copyright  2018 Mihail Geshoski <mihail@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace profilefield_checkbox\privacy;
+namespace profilefield_datetime\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 
 use \core_privacy\local\metadata\collection;
 use \core_privacy\local\request\contextlist;
 use \core_privacy\local\request\approved_contextlist;
+use \core_privacy\local\request\transform;
 
 /**
  * Privacy class for requesting user data.
@@ -48,11 +49,11 @@ class provider implements
      */
     public static function get_metadata(collection $collection) : collection {
         return $collection->add_database_table('user_info_data', [
-            'userid' => 'privacy:metadata:profilefield_checkbox:userid',
-            'fieldid' => 'privacy:metadata:profilefield_checkbox:fieldid',
-            'data' => 'privacy:metadata:profilefield_checkbox:data',
-            'dataformat' => 'privacy:metadata:profilefield_checkbox:dataformat'
-        ], 'privacy:metadata:profilefield_checkbox:tableexplanation');
+            'userid' => 'privacy:metadata:profilefield_datetime:userid',
+            'fieldid' => 'privacy:metadata:profilefield_datetime:fieldid',
+            'data' => 'privacy:metadata:profilefield_datetime:data',
+            'dataformat' => 'privacy:metadata:profilefield_datetime:dataformat'
+        ], 'privacy:metadata:profilefield_datetime:tableexplanation');
     }
 
     /**
@@ -72,7 +73,7 @@ class provider implements
         $params = [
             'userid' => $userid,
             'contextlevel' => CONTEXT_USER,
-            'datatype' => 'checkbox'
+            'datatype' => 'datetime'
         ];
         $contextlist = new contextlist();
         $contextlist->add_from_sql($sql, $params);
@@ -95,10 +96,10 @@ class provider implements
                     $data = (object) [
                         'name' => $result->name,
                         'description' => $result->description,
-                        'data' => $result->data
+                        'data' => transform::date($result->data)
                     ];
                     \core_privacy\local\request\writer::with_context($context)->export_data([
-                        get_string('pluginname', 'profilefield_checkbox')], $data);
+                        get_string('pluginname', 'profilefield_datetime')], $data);
                 }
             }
         }
@@ -141,7 +142,7 @@ class provider implements
 
         $params = [
             'userid' => $userid,
-            'datatype' => 'checkbox'
+            'datatype' => 'datetime'
         ];
 
         $DB->delete_records_select('user_info_data', "fieldid IN (
@@ -165,7 +166,7 @@ class provider implements
                        AND uif.datatype = :datatype";
         $params = [
             'userid' => $userid,
-            'datatype' => 'checkbox'
+            'datatype' => 'datetime'
         ];
 
         return $DB->get_records_sql($sql, $params);
