@@ -159,7 +159,8 @@ class mod_data_generator_testcase extends advanced_testcase {
         $context = context_module::instance($cm->id);
         $this->assertEquals($data->cmid, $context->instanceid);
 
-        $fieldtypes = array('checkbox', 'date', 'menu', 'multimenu', 'number', 'radiobutton', 'text', 'textarea', 'url');
+        $fieldtypes = array('checkbox', 'date', 'menu', 'multimenu', 'number', 'radiobutton', 'text', 'textarea', 'url',
+            'latlong', 'file', 'picture');
 
         $count = 1;
 
@@ -192,12 +193,16 @@ class mod_data_generator_testcase extends advanced_testcase {
         $contents[] = 'text for testing';
         $contents[] = '<p>text area testing<br /></p>';
         $contents[] = array('example.url', 'sampleurl');
+        $contents[] = [-31.9489873, 115.8382036]; // Latlong.
+        $contents[] = 'Filename.pdf'; // File - filename.
+        $contents[] = array('Cat1234.jpg', 'Cat'); // Picture - filename with alt text.
         $count = 0;
         $fieldcontents = array();
         foreach ($fields as $fieldrecord) {
             $fieldcontents[$fieldrecord->id] = $contents[$count++];
         }
 
+        $this->setUser($user1);
         $datarecordid = $this->getDataGenerator()->get_plugin_generator('mod_data')->create_entry($data, $fieldcontents,
                                                                                                     $groupa->id);
 
