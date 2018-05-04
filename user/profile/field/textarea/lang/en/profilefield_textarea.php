@@ -23,3 +23,8 @@
  */
 
 $string['pluginname'] = 'Text area';
+$string['privacy:metadata:profile_field_textarea:userid'] = 'The ID of the user which data is stored by the Text area plugin.';
+$string['privacy:metadata:profile_field_textarea:fieldid'] = 'The ID of the profile field.';
+$string['privacy:metadata:profile_field_textarea:data'] = 'The stored user data.';
+$string['privacy:metadata:profile_field_textarea:dataformat'] = 'The format of the stored user data.';
+$string['privacy:metadata:profile_field_textarea:tableexplanation'] = 'Additional user information is stored here.';
