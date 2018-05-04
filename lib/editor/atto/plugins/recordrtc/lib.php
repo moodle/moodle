@@ -113,7 +113,7 @@ function atto_recordrtc_strings_for_js() {
  */
 function atto_recordrtc_get_fontawesome_icon_map() {
     return [
-        'atto_recordrtc:i/audiortc' => 'fa-file-audio-o',
-        'atto_recordrtc:i/videortc' => 'fa-file-video-o'
+        'atto_recordrtc:i/audiortc' => 'fa-microphone',
+        'atto_recordrtc:i/videortc' => 'fa-video-camera'
     ];
 }
