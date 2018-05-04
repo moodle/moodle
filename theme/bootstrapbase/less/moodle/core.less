@@ -1335,6 +1335,14 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
 .moodle-dialogue-base .moodle-dialogue-lightbox {
     background-color: #aaa;
 }
+// Prevent adding backdrops to popups in popups.
+.pagelayout-popup {
+    .moodle-dialogue-base {
+        .moodle-dialogue-lightbox {
+            background-color: transparent;
+        }
+    }
+}
 .moodle-dialogue-base .hidden,
 .moodle-dialogue-base .moodle-dialogue-hidden {
     display: none;
