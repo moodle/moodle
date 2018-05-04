@@ -122,8 +122,8 @@ class provider implements \core_privacy\local\metadata\provider, \core_privacy\l
             $joinusersql = $analyser->join_sample_user('aic');
             $sql = "SELECT DISTINCT aic.contextid FROM {analytics_indicator_calc} aic
                       {$joinusersql}
-                     WHERE u.id = :userid";
-            $contextlist->add_from_sql($sql, ['userid' => $userid]);
+                     WHERE u.id = :userid AND aic.sampleorigin = :analysersamplesorigin";
+            $contextlist->add_from_sql($sql, ['userid' => $userid, 'analysersamplesorigin' => $analyser->get_samples_origin()]);
         }
 
         // We can leave this out of the loop as there is no analyser-dependant stuff.
@@ -189,8 +189,8 @@ class provider implements \core_privacy\local\metadata\provider, \core_privacy\l
             $sql = "SELECT aic.*, $ctxfields FROM {analytics_indicator_calc} aic
                       JOIN {context} ctx ON ctx.id = aic.contextid
                       {$joinusersql}
-                     WHERE u.id = :userid AND aic.contextid {$contextsql}";
-            $params = ['userid' => $userid] + $contextparams;
+                     WHERE u.id = :userid AND aic.sampleorigin = :analysersamplesorigin AND aic.contextid {$contextsql}";
+            $params = ['userid' => $userid, 'analysersamplesorigin' => $analyser->get_samples_origin()] + $contextparams;
             $indicatorcalculations = $DB->get_recordset_sql($sql, $params);
             foreach ($indicatorcalculations as $calculation) {
                 \context_helper::preload_from_record($calculation);
@@ -311,9 +311,10 @@ class provider implements \core_privacy\local\metadata\provider, \core_privacy\l
             $joinusersql = $analyser->join_sample_user('aic');
             $sql = "SELECT DISTINCT aic.id FROM {analytics_indicator_calc} aic
                       {$joinusersql}
-                     WHERE u.id = :userid AND aic.contextid {$contextsql}";
+                     WHERE u.id = :userid AND aic.sampleorigin = :analysersamplesorigin AND aic.contextid {$contextsql}";
 
-            $indicatorcalcids = $DB->get_fieldset_sql($sql, ['userid' => $userid] + $contextparams);
+            $params = ['userid' => $userid, 'analysersamplesorigin' => $analyser->get_samples_origin()] + $contextparams;
+            $indicatorcalcids = $DB->get_fieldset_sql($sql, $params);
             if ($indicatorcalcids) {
                 list ($indicatorcalcidssql, $params) = $DB->get_in_or_equal($indicatorcalcids, SQL_PARAMS_NAMED);
                 $DB->delete_records_select('analytics_indicator_calc', "id $indicatorcalcidssql", $params);
