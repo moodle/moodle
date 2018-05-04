@@ -31,3 +31,4 @@ The question text is displayed both during the attempt and on the review page. A
 $string['pluginnameadding'] = 'Adding a description';
 $string['pluginnameediting'] = 'Editing a Description';
 $string['pluginnamesummary'] = 'This is not actually a question. Instead it is a way to add some instructions, rubric or other content to the activity. This is similar to the way that labels can be used to add content to the course page.';
+$string['privacy:metadata'] = 'The Description question type plugin does not store any personal data.';
