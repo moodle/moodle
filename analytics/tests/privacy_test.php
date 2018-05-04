@@ -42,7 +42,7 @@ require_once(__DIR__ . '/fixtures/test_analyser.php');
  * @copyright 2018 David Monllaó {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class privacy_model_testcase extends \core_privacy\tests\provider_testcase {
+class core_analytics_privacy_model_testcase extends \core_privacy\tests\provider_testcase {
 
     public function setUp() {
 
