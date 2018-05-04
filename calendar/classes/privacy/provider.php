@@ -453,37 +453,37 @@ class provider implements
         $params += $contextparams1;
         $params += $contextparams2;
 
-        // Get Calendar Events for the approved contexts and the owner.
-        $sql = "SELECT ctx.id AS contextid,
-                       e.id AS eventid,
-                       e.name AS name,
-                       e.description AS description,
-                       e.eventtype AS eventtype,
-                       e.timestart AS timestart,
-                       e.timeduration AS timeduration
-                  FROM {context} ctx
-            INNER JOIN {event} e ON
-                       (e.eventtype = 'site' AND ctx.contextlevel = :sitecontext) OR
-                       (e.categoryid = ctx.instanceid AND e.eventtype = 'category' AND ctx.contextlevel = :categorycontext) OR
-                       (e.courseid = ctx.instanceid AND e.eventtype = 'course' AND ctx.contextlevel = :coursecontext) OR
-                       (e.courseid = ctx.instanceid AND e.eventtype = 'group' AND ctx.contextlevel = :groupcontext) OR
-                       (e.userid = ctx.instanceid AND e.eventtype = 'user' AND ctx.contextlevel = :usercontext)
-                 WHERE e.userid = :cuserid
-                   AND ctx.id {$contextsql1}
-                 UNION
-                SELECT ctx.id AS contextid,
-                       e.id AS eventid,
-                       e.name AS name,
-                       e.description AS description,
-                       e.eventtype AS eventtype,
-                       e.timestart AS timestart,
-                       e.timeduration AS timeduration
-                  FROM {context} ctx
-            INNER JOIN {course_modules} cm ON cm.id = ctx.instanceid AND ctx.contextlevel = :modulecontext
-            INNER JOIN {modules} m ON m.id = cm.module
-            INNER JOIN {event} e ON e.modulename = m.name AND e.courseid = cm.course AND e.instance = cm.instance
-                 WHERE e.userid = :muserid
-                   AND ctx.id {$contextsql2}";
+        // Get Calendar Events details for the approved contexts and the owner.
+        $sql = "SELECT ctxid as contextid,
+                       details.id as eventid,
+                       details.name as name,
+                       details.description as description,
+                       details.eventtype as eventtype,
+                       details.timestart as timestart,
+                       details.timeduration as timeduration
+                  FROM (
+                          SELECT e.id AS id,
+                                 ctx.id AS ctxid
+                            FROM {context} ctx
+                      INNER JOIN {event} e ON
+                                 (e.eventtype = 'site' AND ctx.contextlevel = :sitecontext) OR
+                                 (e.categoryid = ctx.instanceid AND e.eventtype = 'category' AND ctx.contextlevel = :categorycontext) OR
+                                 (e.courseid = ctx.instanceid AND e.eventtype = 'course' AND ctx.contextlevel = :coursecontext) OR
+                                 (e.courseid = ctx.instanceid AND e.eventtype = 'group' AND ctx.contextlevel = :groupcontext) OR
+                                 (e.userid = ctx.instanceid AND e.eventtype = 'user' AND ctx.contextlevel = :usercontext)
+                           WHERE e.userid = :cuserid
+                             AND ctx.id {$contextsql1}
+                           UNION
+                          SELECT e.id AS id,
+                                 ctx.id AS ctxid
+                            FROM {context} ctx
+                      INNER JOIN {course_modules} cm ON cm.id = ctx.instanceid AND ctx.contextlevel = :modulecontext
+                      INNER JOIN {modules} m ON m.id = cm.module
+                      INNER JOIN {event} e ON e.modulename = m.name AND e.courseid = cm.course AND e.instance = cm.instance
+                           WHERE e.userid = :muserid
+                             AND ctx.id {$contextsql2}
+                  ) ids
+                  JOIN {event} details ON details.id = ids.id";
 
         return $DB->get_recordset_sql($sql, $params);
     }
