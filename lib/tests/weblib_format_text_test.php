@@ -109,6 +109,9 @@ class core_weblib_format_text_testcase extends advanced_testcase {
      * @param string $expected The expected filter value
      */
     public function test_format_text_blanktarget($link, $expected) {
+        global $CFG;
+        $this->resetAfterTest();
+        $CFG->forceclean = 0;
         $actual = format_text($link, FORMAT_MOODLE, array('blanktarget' => true, 'filter' => false, 'noclean' => true));
         $this->assertEquals($expected, $actual);
     }

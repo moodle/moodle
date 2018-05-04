@@ -858,7 +858,9 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
      * Test get_course_contents
      */
     public function test_get_course_contents() {
+        global $CFG;
         $this->resetAfterTest(true);
+        $CFG->forceclean = 0;
 
         list($course, $forumcm, $datacm, $pagecm, $labelcm, $urlcm) = $this->prepare_get_course_contents_test();
 
