@@ -759,11 +759,13 @@ class qformat_default {
     }
 
     /**
-     * Do the export
-     * For most types this should not need to be overrided
-     * @return stored_file
+     * Perform the export.
+     * For most types this should not need to be overrided.
+     *
+     * @param   bool    $checkcapabilities Whether to check capabilities when exporting the questions.
+     * @return  string  The content of the export.
      */
-    public function exportprocess() {
+    public function exportprocess($checkcapabilities = true) {
         global $CFG, $OUTPUT, $DB, $USER;
 
         // get the questions (from database) in this category
@@ -823,7 +825,7 @@ class qformat_default {
             // export the question displaying message
             $count++;
 
-            if (question_has_capability_on($question, 'view', $question->category)) {
+            if (!$checkcapabilities || question_has_capability_on($question, 'view', $question->category)) {
                 $expout .= $this->writequestion($question, $contextid) . "\n";
             }
         }

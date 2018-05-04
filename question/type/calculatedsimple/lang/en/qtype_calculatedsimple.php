@@ -34,6 +34,7 @@ $string['pluginname_link'] = 'question/type/calculatedsimple';
 $string['pluginnameadding'] = 'Adding a Simple calculated question';
 $string['pluginnameediting'] = 'Editing a Simple calculated question';
 $string['pluginnamesummary'] = 'A simpler version of calculated questions which are like numerical questions but with the numbers used selected randomly from a set when the quiz is taken.';
+$string['privacy:metadata'] = 'The Calculated simple question type plugin does not store any personal data.';
 $string['setno'] = 'Set {$a}';
 $string['setwildcardvalues'] = 'set(s) of wild card(s) values';
 $string['showitems'] = 'Display';

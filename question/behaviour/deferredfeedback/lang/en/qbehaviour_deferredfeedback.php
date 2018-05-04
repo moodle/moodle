@@ -24,3 +24,4 @@
  */
 
 $string['pluginname'] = 'Deferred feedback';
+$string['privacy:metadata'] = 'The Deferred feedback behaviour plugin does not store any personal data.';

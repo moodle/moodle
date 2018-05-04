@@ -24,5 +24,6 @@
  */
 
 $string['pluginname'] = 'Interactive with multiple tries';
+$string['privacy:metadata'] = 'The Interactive with multiple tries question behaviour plugin does not store any personal data.';
 $string['triesremaining'] = 'Tries remaining: {$a}';
 $string['tryagain'] = 'Try again';

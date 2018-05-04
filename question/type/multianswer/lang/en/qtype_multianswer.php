@@ -44,6 +44,7 @@ $string['pluginname_link'] = 'question/type/multianswer';
 $string['pluginnameadding'] = 'Adding an Embedded answers (Cloze) question';
 $string['pluginnameediting'] = 'Editing an Embedded answers (Cloze) question';
 $string['pluginnamesummary'] = 'Questions of this type are very flexible, but can only be created by entering text containing special codes that create embedded multiple-choice, short answers and numerical questions.';
+$string['privacy:metadata'] = 'The Embedded answers (Cloze) question type plugin does not store any personal data.';
 $string['qtypenotrecognized'] = 'questiontype {$a} not recognized';
 $string['questiondefinition'] = 'Question definition';
 $string['questiondeleted'] = 'Question deleted';

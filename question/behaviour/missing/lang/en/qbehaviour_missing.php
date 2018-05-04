@@ -25,3 +25,4 @@
 
 $string['pluginname'] = 'Missing behaviour';
 $string['questionusedunknownmodel'] = 'This question was attempted with a behaviour that is not currently available. The question is being displayed as well as possible, but some parts may be missing or wrong.';
+$string['privacy:metadata'] = 'The Missing question behaviour plugin does not store any personal data.';
