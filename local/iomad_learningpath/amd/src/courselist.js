@@ -208,7 +208,7 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification', '
              */
             $(".pathcourselist").sortable({
                 handle: '.lphandle',
-                connectWith: '#prospectivelist',
+                connectWith: '#prospectivelist, .pathcourselist',
                 dropOnEmpty: true,
                 update: function() {
 
@@ -219,8 +219,6 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification', '
                         var groupid = $(this).parent().parent().data('groupid');
                         courses.push({courseid: courseid, groupid: groupid});
                     });
-
-console.log('drag and drop - courses ' + courses);
 
                     // Reorder
                     ajax.call([{

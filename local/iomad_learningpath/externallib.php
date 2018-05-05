@@ -403,8 +403,9 @@ class local_iomad_learningpath_external extends external_api {
     /**
      * Order courses in learning path
      * (Valid) new course ids will simply be added in that position
+     * Missing ones get deleted 
      * @param int $pathid
-     * @param array $courses of objects {int courseid, int groupid}
+     * @param array $courses of arrays {int courseid, int groupid}
      * @throws invalid_parameter_exception
      */
     public static function ordercourses($pathid, $courses) {
@@ -434,27 +435,27 @@ class local_iomad_learningpath_external extends external_api {
         // Also make a list of courseids for delete phase.
         $courseids = [];
         foreach ($params['courses'] as $course) {
-            $courseids[] = $course->courseid;
-            if (!$DB->record_exists('iomad_learningpathcourse', ['path' => $params['pathid'], 'course' => $course->courseid])) {
-                $companypaths->add_courses($path->id, [$course->courseid], $course->groupid);
+            $courseids[] = $course['courseid'];
+            if (!$DB->record_exists('iomad_learningpathcourse', ['path' => $params['pathid'], 'course' => $course['courseid']])) {
+                $companypaths->add_courses($path->id, [$course['courseid']], $course['groupid']);
             }
         }
 
         // Find any missing ones and delete them
-        $courses = $DB->get_records('iomad_learningpathcourse', ['path' => $params['pathid']]);
-        foreach ($courses as $course) {
-            if (!in_array($course->course, $courseids)) {
-                $companypaths->remove_courses($path->id, [$course->course]);
+        $oldcourses = $DB->get_records('iomad_learningpathcourse', ['path' => $params['pathid']]);
+        foreach ($oldcourses as $oldcourse) {
+            if (!in_array($oldcourse->course, $courseids)) {
+                $companypaths->remove_courses($path->id, [$oldcourse->course]);
             }
         }
 
         // Work through courses.
         $sequence = 1;
         foreach ($params['courses'] as $course) {
-            $oldcourse = $DB->get_record('iomad_learningpathcourse', ['path' => $params['pathid'], 'course' => $course->courseid], '*', MUST_EXIST);
+            $oldcourse = $DB->get_record('iomad_learningpathcourse', ['path' => $params['pathid'], 'course' => $course['courseid']], '*', MUST_EXIST);
 
             // Update sequence.
-            $oldcourse->groupid = $course->groupid;
+            $oldcourse->groupid = $course['groupid'];
             $oldcourse->sequence = $sequence;
             $sequence++;
             $DB->update_record('iomad_learningpathcourse', $oldcourse);
