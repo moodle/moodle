@@ -473,7 +473,8 @@ class provider implements
                            WHERE e.userid = :muserid
                              AND ctx.id {$contextsql2}
                   ) ids
-                  JOIN {event} details ON details.id = ids.id";
+                  JOIN {event} details ON details.id = ids.id
+              ORDER BY ids.id";
 
         return $DB->get_recordset_sql($sql, $params);
     }
