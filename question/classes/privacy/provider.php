@@ -282,6 +282,7 @@ class provider implements
                             $comment
                         );
 
+                    // Export any files associated with the comment files area.
                     writer::with_context($context)
                         ->export_area_files(
                             $questionnocontext,
@@ -291,6 +292,17 @@ class provider implements
                         );
 
                     $stepdata->comment = $behaviour->format_comment($comment, $commentformat);
+                }
+
+                // Export any response files associated with this step.
+                foreach (\question_engine::get_all_response_file_areas() as $filearea) {
+                    writer::with_context($context)
+                        ->export_area_files(
+                                $questionnocontext,
+                                'question',
+                                $filearea,
+                                $step->get_id()
+                            );
                 }
 
                 $attemptdata->steps[$stepno] = $stepdata;
