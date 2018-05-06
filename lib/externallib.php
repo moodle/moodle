@@ -208,10 +208,10 @@ class external_api {
             // Do not allow access to write or delete webservices as a public user.
             if ($externalfunctioninfo->loginrequired) {
                 if (defined('NO_MOODLE_COOKIES') && NO_MOODLE_COOKIES && !PHPUNIT_TEST) {
-                    throw new moodle_exception('servicenotavailable', 'webservice');
+                    throw new moodle_exception('servicerequireslogin', 'webservice');
                 }
                 if (!isloggedin()) {
-                    throw new moodle_exception('servicenotavailable', 'webservice');
+                    throw new moodle_exception('servicerequireslogin', 'webservice');
                 } else {
                     require_sesskey();
                 }
