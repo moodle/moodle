@@ -16,7 +16,7 @@
                     <div class="col-md-4"></div>
                     <div class="col-md-8">
                         <div class="card-block p-b-0">
-                            <p class="m-b-0"><strong>{{ name }}</strong></p>
+                            <p class="learningpathtitle m-b-0"><strong>{{ name }}</strong></p>
                         </div>
                     </div>
                 </div>
@@ -46,9 +46,9 @@
 
             <div class="path_courses" data-pathid="{{ id }}" style="display:none">
                 <h2>{{ name }}</h2>
-                {{# courses }}
-                    {{> block_iomad_learningpath/coursecard }}
-                {{/ courses }}
+                {{# groups }}
+                    {{> block_iomad_learningpath/groupcard }}
+                {{/ groups }}
             </div>
 
         {{/ paths }}

@@ -42,18 +42,19 @@ class path {
      * @param int $pathid
      * @return [array, int/null]
      */
-    public function get_courselist($pathid) {
+    public function get_courselist($pathid, $groupid) {
         global $DB;
 
-        // Calculate overall progress for path
+        // Calculate overall progress for group
         $cumulativeprogress = 0;
         $completioncoursecount = 0;
 
         $sql = 'SELECT c.id courseid, c.shortname shortname, c.fullname fullname, c.summary summary, lpc.*
             FROM {iomad_learningpathcourse} lpc JOIN {course} c ON lpc.course = c.id
             WHERE lpc.path = :pathid
+            AND lpc.groupid = :groupid
             ORDER BY lpc.sequence';
-        $courses = $DB->get_records_sql($sql, ['pathid' => $pathid]);
+        $courses = $DB->get_records_sql($sql, ['pathid' => $pathid, 'groupid' => $groupid]);
 
         // Spot of processing
         foreach ($courses as $course) {
@@ -72,14 +73,47 @@ class path {
             }
         }
 
-        // Calculate overall progress for path
+        // Calculate overall progress for group
         if ($completioncoursecount) {
-            $pathprogress = round($cumulativeprogress / $completioncoursecount);
+            $groupprogress = round($cumulativeprogress / $completioncoursecount);
+        } else {
+            $groupprogress = null;
+        }
+
+        return [$courses, $groupprogress];
+    }
+
+    /**
+     * Get groups for path adding courselist
+     * @param int $pathid
+     * @return array
+     */
+    protected function get_groups($pathid) {
+        global $DB;
+
+        // Calculate overall progress for path
+        $cumulativeprogress = 0;
+        $completiongroupcount = 0;
+
+        $groups = $DB->get_records('iomad_learningpathgroup', ['learningpath' => $pathid]);
+        foreach ($groups as $group) {
+            list($courses, $progress) = $this->get_courselist($pathid, $group->id);
+            $group->progress = $progress !== null ? $progress : 0;
+            $group->courses = array_values($courses);
+            if ($progress !== null) {
+                $cumulativeprogress += $progress;
+                $completiongroupcount++;
+            }
+        }
+
+        // Calcultate overall progress for path
+        if ($completiongroupcount) {
+            $pathprogress = round($cumulativeprogress / $completiongroupcount);
         } else {
             $pathprogress = null;
         }
 
-        return [$courses, $pathprogress];
+        return [$groups, $pathprogress];
     }
 
 
@@ -103,9 +137,9 @@ class path {
         // Add url for image and courses array
         foreach ($paths as $path) {
             $path->imageurl = $this->get_path_image_url($path->id);
-            list($courses, $pathprogress) = $this->get_courselist($path->id);
-            $path->courses = array_values($courses);
-            $path->progress = $pathprogress;
+            list($groups, $pathprogress) = $this->get_groups($path->id);
+            $path->groups = array_values($groups);
+            $path->progress = $pathprogress !== null ? $pathprogress : 0;
         }
 
         return $paths; 
