@@ -528,9 +528,11 @@ class core_role_define_role_table_advanced extends core_role_capability_table_wi
             if (!$this->disabled) {
                 $output .= '<input type="hidden" name="contextlevel' . $cl . '" value="0" />';
             }
-            $output .= '<input type="checkbox" id="cl' . $cl . '" name="contextlevel' . $cl .
+            $output .= '<div class="form-check justify-content-start w-100">';
+            $output .= '<input class="form-check-input" type="checkbox" id="cl' . $cl . '" name="contextlevel' . $cl .
                 '" value="1" ' . $extraarguments . '/> ';
-            $output .= '<label for="cl' . $cl . '">' . $clname . "</label><br />\n";
+            $output .= '<label class="form-check-label" for="cl' . $cl . '">' . $clname . "</label>\n";
+            $output .= '</div>';
         }
         return $output;
     }
