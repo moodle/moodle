@@ -1,1 +1,10 @@
-{{> core_form/element-group-inline }}
+{{< core_form/element-template-inline }}
+    {{$element}}
+    <div class="d-flex ml-1">
+        {{#element.elements}}
+            {{{separator}}}
+            {{{html}}}
+        {{/element.elements}}
+        </div>
+    {{/element}}
+{{/ core_form/element-template-inline }}
