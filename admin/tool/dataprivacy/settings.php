@@ -49,7 +49,7 @@ if ($hassiteconfig) {
             }
         }
         if (!empty($roles)) {
-            $privacysettings->add(new admin_setting_configmultiselect('tool_dataprivacy/dporoles',
+            $privacysettings->add(new admin_setting_configmulticheckbox('tool_dataprivacy/dporoles',
                     new lang_string('dporolemapping', 'tool_dataprivacy'),
                     new lang_string('dporolemapping_desc', 'tool_dataprivacy'), null, $roles)
             );
