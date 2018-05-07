@@ -120,12 +120,16 @@ class renderer_base {
                              'userdate' => array($userdatehelper, 'transform'),
                          );
 
-            $this->mustache = new Mustache_Engine(array(
+            $this->mustache = new \core\output\mustache_engine(array(
                 'cache' => $cachedir,
                 'escape' => 's',
                 'loader' => $loader,
                 'helpers' => $helpers,
-                'pragmas' => [Mustache_Engine::PRAGMA_BLOCKS]));
+                'pragmas' => [Mustache_Engine::PRAGMA_BLOCKS],
+                // Don't allow the JavaScript helper to be executed from within another
+                // helper. If it's allowed it can be used by users to inject malicious
+                // JS into the page.
+                'blacklistednestedhelpers' => ['js']));
 
         }
 
