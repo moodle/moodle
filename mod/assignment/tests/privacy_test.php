@@ -55,6 +55,16 @@ class mod_assignment_privacy_testcase extends advanced_testcase {
     private $course2students = [];
 
     /**
+     * @var int array   Array of test assignments associated for Course 1.
+     */
+    private $course1assignments = [];
+
+    /**
+     * @var int array   Array of test assignments associated for Course 2.
+     */
+    private $course2assignments = [];
+
+    /**
      * Test for provider::get_contexts_for_userid().
      *
      * @throws coding_exception
@@ -116,7 +126,10 @@ class mod_assignment_privacy_testcase extends advanced_testcase {
         $contexts = $contextlist->get_contexts();
 
         // Context 1 - Course 1's Assignment 1 -- (onlinetext).
-        $writer = writer::with_context($contexts[0]);
+        $context = context_module::instance($this->course1assignments['ass1']->cmid);
+        $this->assertContains($context, $contexts);
+
+        $writer = writer::with_context($context);
         $subcontexts = [
             get_string('privacy:markedsubmissionspath', 'mod_assignment'),
             transform::user($teacher1->id)
@@ -136,7 +149,10 @@ class mod_assignment_privacy_testcase extends advanced_testcase {
         }
 
         // Context 2 - Course 1's Assignment 2 -- (single file upload).
-        $writer = writer::with_context($contexts[1]);
+        $context = context_module::instance($this->course1assignments['ass2']->cmid);
+        $this->assertContains($context, $contexts);
+
+        $writer = writer::with_context($context);
         foreach ($this->course1students as $student) {
             $subcontexts = [
                 get_string('privacy:markedsubmissionspath', 'mod_assignment'),
@@ -152,7 +168,10 @@ class mod_assignment_privacy_testcase extends advanced_testcase {
         }
 
         // Context 3 - Course 2's Assignment 1 -- (offline).
-        $writer = writer::with_context($contexts[2]);
+        $context = context_module::instance($this->course2assignments['ass1']->cmid);
+        $this->assertContains($context, $contexts);
+
+        $writer = writer::with_context($context);
         foreach ($this->course2students as $student) {
             $subcontexts = [
                 get_string('privacy:markedsubmissionspath', 'mod_assignment'),
@@ -164,7 +183,10 @@ class mod_assignment_privacy_testcase extends advanced_testcase {
         }
 
         // Context 4 - Course 2's Assignment 2 -- (multiple file upload).
-        $writer = writer::with_context($contexts[3]);
+        $context = context_module::instance($this->course2assignments['ass2']->cmid);
+        $this->assertContains($context, $contexts);
+
+        $writer = writer::with_context($context);
         foreach ($this->course2students as $student) {
             $subcontexts = [
                 get_string('privacy:markedsubmissionspath', 'mod_assignment'),
@@ -203,7 +225,10 @@ class mod_assignment_privacy_testcase extends advanced_testcase {
         $contexts = $contextlist->get_contexts();
 
         // Context 1 - Course 1's Assignment 1 -- (onlinetext).
-        $writer = writer::with_context($contexts[0]);
+        $context = context_module::instance($this->course1assignments['ass1']->cmid);
+        $this->assertContains($context, $contexts);
+
+        $writer = writer::with_context($context);
         $subcontexts = [
             get_string('privacy:submissionpath', 'mod_assignment')
         ];
@@ -213,7 +238,10 @@ class mod_assignment_privacy_testcase extends advanced_testcase {
         $this->assertEquals("<p>Course 1 - Ass 1: " . $student1->id . "</p>", $submission->data1);
 
         // Context 2 - Course 1's Assignment 2 -- (single file upload).
-        $writer = writer::with_context($contexts[1]);
+        $context = context_module::instance($this->course1assignments['ass2']->cmid);
+        $this->assertContains($context, $contexts);
+
+        $writer = writer::with_context($context);
         $subcontexts = [
             get_string('privacy:submissionpath', 'mod_assignment')
         ];
@@ -237,7 +265,10 @@ class mod_assignment_privacy_testcase extends advanced_testcase {
         $contexts = $contextlist->get_contexts();
 
         // Context 1 - Course 2's Assignment 1 -- (offline).
-        $writer = writer::with_context($contexts[0]);
+        $context = context_module::instance($this->course2assignments['ass1']->cmid);
+        $this->assertContains($context, $contexts);
+
+        $writer = writer::with_context($context);
         $subcontexts = [
             get_string('privacy:submissionpath', 'mod_assignment')
         ];
@@ -247,7 +278,10 @@ class mod_assignment_privacy_testcase extends advanced_testcase {
         $this->assertEquals("<p>Course 2 - Ass 1: " . $student2->id . "</p>", $submission->data1);
 
         // Context 2 - Course 2's Assignment 2 -- (multiple file upload).
-        $writer = writer::with_context($contexts[1]);
+        $context = context_module::instance($this->course2assignments['ass2']->cmid);
+        $this->assertContains($context, $contexts);
+
+        $writer = writer::with_context($context);
         $subcontexts = [
             get_string('privacy:submissionpath', 'mod_assignment')
         ];
@@ -367,6 +401,12 @@ class mod_assignment_privacy_testcase extends advanced_testcase {
                 'assignmenttype' => 'uploadsingle',
             ]
         );
+
+        $this->course1assignments = [
+            'ass1' => $course1assignment1,
+            'ass2' => $course1assignment2
+        ];
+
         $course2assignment1 = $this->getDataGenerator()->create_module('assignment',
             [
                 'course' => $course2->id,
@@ -381,6 +421,11 @@ class mod_assignment_privacy_testcase extends advanced_testcase {
                 'assignmenttype' => 'upload',
             ]
         );
+
+        $this->course2assignments = [
+            'ass1' => $course2assignment1,
+            'ass2' => $course2assignment2
+        ];
 
         // Teacher 1 add test assignment submission for Course 1 - Assignment 1.
         $this->add_assignment_submission(
