@@ -67,33 +67,67 @@ class core_course_privacy_testcase extends \core_privacy\tests\provider_testcase
         $this->assertCount(2, $completiondata->criteria);
     }
 
-    public function test_export_complete_context_data() {
+    /**
+     * Verify that if a module context is included in the contextlist_collection and its parent course is not, the
+     * export_context_data() call picks this up, and that the contextual course information is included.
+     */
+    public function test_export_context_data_module_context_only() {
         $this->resetAfterTest();
-        $user = $this->getDataGenerator()->create_user();
+
+        // Create a course and a single module.
         $course1 = $this->getDataGenerator()->create_course(['fullname' => 'Course 1', 'shortname' => 'C1']);
         $context1 = context_course::instance($course1->id);
-        $course2 = $this->getDataGenerator()->create_course(['fullname' => 'Course 2', 'shortname' => 'C2']);
-        $context2 = context_course::instance($course2->id);
-        $course3 = $this->getDataGenerator()->create_course(['fullname' => 'Course 3', 'shortname' => 'C3']);
+        $modassign = $this->getDataGenerator()->create_module('assign', ['course' => $course1->id, 'name' => 'assign test 1']);
+        $assigncontext = context_module::instance($modassign->cmid);
 
-        $this->setUser($user);
-        $modforum = $this->getDataGenerator()->create_module('forum', ['course' => $course1->id]);
-        $modresource = $this->getDataGenerator()->create_module('resource', ['course' => $course2->id]);
-        $modpage = $this->getDataGenerator()->create_module('page', ['course' => $course3->id]);
-        $forumcontext = context_module::instance($modforum->cmid);
-        $resourcecontext = context_module::instance($modresource->cmid);
-
+        // Now, let's assume during user info export, only the coursemodule context is returned in the contextlist_collection.
+        $user = $this->getDataGenerator()->create_user();
         $collection = new \core_privacy\local\request\contextlist_collection($user->id);
-        $approvedlist = new \core_privacy\local\request\approved_contextlist($user, 'mod_forum', [$forumcontext->id]);
-        $collection->add_contextlist($approvedlist);
-        $approvedlist = new \core_privacy\local\request\approved_contextlist($user, 'mod_resource', [$resourcecontext->id]);
+        $approvedlist = new \core_privacy\local\request\approved_contextlist($user, 'mod_assign', [$assigncontext->id]);
         $collection->add_contextlist($approvedlist);
 
-        $writer = \core_privacy\local\request\writer::with_context(context_system::instance());
-        \core_course\privacy\provider::export_complete_context_data($collection);
-        $courses = $writer->get_data();
-        print_object($courses);
-        // print_object($writer);
+        // Now, verify that core_course will detect this, and add relevant contextual information.
+        \core_course\privacy\provider::export_context_data($collection);
+        $writer = \core_privacy\local\request\writer::with_context($context1);
+        $this->assertTrue($writer->has_any_data());
+        $writerdata = $writer->get_data();
+        $this->assertObjectHasAttribute('fullname', $writerdata);
+        $this->assertObjectHasAttribute('shortname', $writerdata);
+        $this->assertObjectHasAttribute('idnumber', $writerdata);
+        $this->assertObjectHasAttribute('summary', $writerdata);
+    }
+
+    /**
+     * Verify that if a module context and its parent course context are both included in the contextlist_collection, that course
+     * contextual information is present in the export.
+     */
+    public function test_export_context_data_course_and_module_contexts() {
+        $this->resetAfterTest();
+
+        // Create a course and a single module.
+        $course1 = $this->getDataGenerator()->create_course(['fullname' => 'Course 1', 'shortname' => 'C1']);
+        $context1 = context_course::instance($course1->id);
+        $modassign = $this->getDataGenerator()->create_module('assign', ['course' => $course1->id, 'name' => 'assign test 1']);
+        $assigncontext = context_module::instance($modassign->cmid);
+
+        // Now, assume during user info export, that both module and course contexts are returned in the contextlist_collection.
+        $user = $this->getDataGenerator()->create_user();
+        $collection = new \core_privacy\local\request\contextlist_collection($user->id);
+        $approvedlist = new \core_privacy\local\request\approved_contextlist($user, 'mod_assign', [$assigncontext->id]);
+        $approvedlist2 = new \core_privacy\local\request\approved_contextlist($user, 'core_course', [$context1->id]);
+        $collection->add_contextlist($approvedlist);
+        $collection->add_contextlist($approvedlist2);
+
+        // Now, verify that core_course still adds relevant contextual information, even for courses which are explicitly listed in
+        // the contextlist_collection.
+        \core_course\privacy\provider::export_context_data($collection);
+        $writer = \core_privacy\local\request\writer::with_context($context1);
+        $this->assertTrue($writer->has_any_data());
+        $writerdata = $writer->get_data();
+        $this->assertObjectHasAttribute('fullname', $writerdata);
+        $this->assertObjectHasAttribute('shortname', $writerdata);
+        $this->assertObjectHasAttribute('idnumber', $writerdata);
+        $this->assertObjectHasAttribute('summary', $writerdata);
     }
 
     /**

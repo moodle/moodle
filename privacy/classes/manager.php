@@ -228,13 +228,11 @@ class manager {
             if ($this->component_implements($component, \core_privacy\local\request\user_preference_provider::class)) {
                 $this->get_provider_classname($component)::export_user_preferences($contextlistcollection->get_userid());
             }
-        }
 
-        // Check each component for context aware providers.
-        foreach ($this->get_component_list() as $component) {
-            // Core user preference providers.
+            // Contextual information providers. Give each component a chance to include context information based on the
+            // existence of a child context in the contextlist_collection.
             if ($this->component_implements($component, \core_privacy\local\request\context_aware_provider::class)) {
-                $this->get_provider_classname($component)::export_complete_context_data($contextlistcollection);
+                $this->get_provider_classname($component)::export_context_data($contextlistcollection);
             }
         }
 

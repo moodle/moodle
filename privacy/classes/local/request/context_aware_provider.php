@@ -15,8 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file contains the \core_privacy\local\request\plugin\provider interface to describe
- * a class which provides data in some form for a plugin.
+ * File containing the provider interface for plugins needing access to all approved contexts to fill in relevant contextual data.
  *
  * Plugins should implement this if they need access to all approved contexts.
  *
@@ -29,7 +28,7 @@ namespace core_privacy\local\request;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * The provider interface for plugins which need access to all approved contexts to fill in user data.
+ * The provider interface for plugins which need access to all approved contexts to fill in relevant contextual data.
  *
  * @copyright  2018 Adrian Greeve <adriangreeve.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -37,9 +36,14 @@ defined('MOODLE_INTERNAL') || die();
 interface context_aware_provider extends \core_privacy\local\request\core_data_provider {
 
     /**
-     * Export context information based on the whole approved context list collection.
+     * Give the component a chance to include any contextual information deemed relevant to any child contexts which are
+     * exporting personal data.
+     *
+     * By giving the component access to the full list of contexts being exported across all components, it can determine whether a
+     * descendant context is being exported, and decide whether to add relevant contextual information about itself. Having access
+     * to the full list of contexts being exported is what makes this component a context aware provider.
      *
      * @param  \core_privacy\local\request\contextlist_collection $contextcollection The collection of approved context lists.
      */
-    public static function export_complete_context_data(\core_privacy\local\request\contextlist_collection $contextcollection);
+    public static function export_context_data(\core_privacy\local\request\contextlist_collection $contextcollection);
 }
