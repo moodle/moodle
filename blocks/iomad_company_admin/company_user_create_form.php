@@ -109,21 +109,17 @@ class user_edit_form extends company_moodleform {
             $mform->addRule('email', $strrequired, 'required', null, 'client');
             $mform->setType('email', PARAM_EMAIL);
         }
-        $mform->addElement('advcheckbox', 'use_email_as_username', get_string('iomad_use_email_as_username', 'local_iomad_settings'));
-        if (!empty($CFG->iomad_use_email_as_username)) {
-            $mform->setDefault('use_email_as_username', 1);
-        } else {
-            $mform->setDefault('use_email_as_username', 0);
-        }
-        $mform->addElement('text', 'username', get_string('username'), 'size="20"');
-        $mform->addHelpButton('username', 'username', 'auth');
-        $mform->setType('username', PARAM_RAW);
-        $mform->disabledif('username', 'use_email_as_username', 'eq', 1);
-
-        $mform->addElement('text', 'city', get_string('city'), 'maxlength="120" size="21"');
-        $mform->setType('city', PARAM_TEXT);
-        if (!empty($CFG->defaultcity)) {
-            $mform->setDefault('city', $CFG->defaultcity);
+        if (!empty($CFG->iomad_allow_username)) {
+            $mform->addElement('advcheckbox', 'use_email_as_username', get_string('iomad_use_email_as_username', 'local_iomad_settings'));
+            if (!empty($CFG->iomad_use_email_as_username)) {
+                $mform->setDefault('use_email_as_username', 1);
+            } else {
+                $mform->setDefault('use_email_as_username', 0);
+            }
+            $mform->addElement('text', 'username', get_string('username'), 'size="20"');
+            $mform->addHelpButton('username', 'username', 'auth');
+            $mform->setType('username', PARAM_RAW);
+            $mform->disabledif('username', 'use_email_as_username', 'eq', 1);
         }
 
         /* /copied from /user/editlib.php */
