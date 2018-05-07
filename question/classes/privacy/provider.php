@@ -192,7 +192,13 @@ class provider implements
                     if ($qa->has_manual_comment()) {
                         // Note - the export of the step data will ensure that the files are exported.
                         // No need to do it again here.
-                        list($comment, $commentformat, $step) = $qa->get_manual_comment();
+                        list($comment, $commentformat) = $qa->get_manual_comment();
+                        // Get the step data.
+                        foreach ($qa->get_reverse_step_iterator() as $step) {
+                            if ($step->has_behaviour_var('comment')) {
+                                break;
+                            }
+                        }
 
                         $comment = writer::with_context($context)
                             ->rewrite_pluginfile_urls(
