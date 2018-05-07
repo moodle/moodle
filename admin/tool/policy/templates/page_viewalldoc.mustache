@@ -32,31 +32,52 @@
     {
         "policies": [
             {
+                "id": "2",
                 "name": "Terms &amp; conditions",
                 "summary": "Policy <u>summary</u>",
-                "content": "Policy <em>content</em>"
+                "content": "Policy <em>content</em>",
+                "policytypestr": "Site policy"
             },
             {
+                "id": "5",
                 "name": "Privacy",
                 "summary": "We keep your information private",
-                "content": "Very private"
+                "content": "Very private",
+                "policytypestr": "Privacy policy"
             }
         ]
     }
 }}
 
+<a id="top"></a>
+<div id="policies_index" class="m-b-3">
+<ul>
+    {{#policies }}
+        <li><a href="#policy-{{id}}">{{{name}}} ({{{policytypestr}}})</a></li>
+    {{/policies }}
+</ul>
+</div>
+
 {{#policies }}
+        <hr>
     <div class="policy_version m-b-3">
         <div class="clearfix m-t-2">
-            <h1>{{{name}}}</h1>
+            <h1><a id="policy-{{id}}">{{{name}}}</a></h1>
         </div>
         <div class="policy_document_summary clearfix m-b-1">
+            <h2>{{# str }} policydocsummary, tool_policy {{/ str }}</h2>
             {{{summary}}}
         </div>
         <div class="policy_document_content m-t-2">
+            <h2>{{# str }} policydoccontent, tool_policy {{/ str }}</h2>
             {{{content}}}
         </div>
-        <hr>
+        <div class="pull-right">
+            <a href="#top">
+                {{# str }} backtotop, tool_policy {{/ str }}
+                <i class="icon text-primary fa fa-caret-up" title="{{# str }} backtotop, tool_policy {{/ str }}" ></i>
+            </a>
+        </div>
     </div>
 
 {{/policies }}

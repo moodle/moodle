@@ -94,6 +94,25 @@ function tool_policy_before_standard_html_head() {
 }
 
 /**
+ * Callback to add footer elements.
+ *
+ * @return str valid html footer content
+ */
+function tool_policy_standard_footer_html() {
+    global $CFG;
+
+    $output = '';
+    if (!empty($CFG->sitepolicyhandler)
+            && $CFG->sitepolicyhandler == 'tool_policy') {
+        $url = (new moodle_url('/admin/tool/policy/viewall.php'))->out();
+        $output .= html_writer::link($url, get_string('userpolicysettings', 'tool_policy'));
+        $output = html_writer::div($output, 'policiesfooter');
+    }
+
+    return $output;
+}
+
+/**
  * Hooks redirection to policy acceptance pages before sign up.
  */
 function tool_policy_pre_signup_requests() {
