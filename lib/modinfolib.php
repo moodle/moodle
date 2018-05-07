@@ -1085,6 +1085,11 @@ class cm_info implements IteratorAggregate {
     private $content;
 
     /**
+     * @var bool
+     */
+    private $contentisformatted;
+
+    /**
      * @var string
      */
     private $extraclasses;
@@ -1338,6 +1343,10 @@ class cm_info implements IteratorAggregate {
         if (empty($this->content)) {
             return '';
         }
+        if ($this->contentisformatted) {
+            return $this->content;
+        }
+
         // Improve filter performance by preloading filter setttings for all
         // activities on the course (this does nothing if called multiple
         // times)
@@ -1619,10 +1628,13 @@ class cm_info implements IteratorAggregate {
     /**
      * Sets content to display on course view page below link (if present).
      * @param string $content New content as HTML string (empty string if none)
+     * @param bool $isformatted Whether user content is already passed through format_text/format_string and should not
+     *    be formatted again. This can be useful when module adds interactive elements on top of formatted user text.
      * @return void
      */
-    public function set_content($content) {
+    public function set_content($content, $isformatted = false) {
         $this->content = $content;
+        $this->contentisformatted = $isformatted;
     }
 
     /**

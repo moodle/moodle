@@ -3,8 +3,11 @@ information provided here is intended especially for developers.
 
 === 3.5 ===
 
-Required changes in code:
-* use new make_backup_temp_directory()
+* Backup directory now can be outside of temp directory. Use make_backup_temp_directory($name) instead of
+  make_temp_directory('/backup/'.$name)
+* Modules that provide their own interactive content and call cm_info::set_content() from [MODULENAME]_cm_info_view()
+  callback should format all user input and call set_content() with parameter $isformatted=true . Otherwise
+  scripts will be cleaned on the course page in case of $CFG->forceclean=1. See example in mod_folder.
 
 === 3.4 ===
 
