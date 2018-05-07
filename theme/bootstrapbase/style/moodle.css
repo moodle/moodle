@@ -15787,6 +15787,9 @@ li.activity.label,
 .choosercontainer #chooseform .option label {
   font-size: 12px;
 }
+.modal:focus {
+  outline: #5e9ed7 auto 5px;
+}
 /* block.invisible vs .invisible
  * block.hidden vs .invisible
  *

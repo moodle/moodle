@@ -44,11 +44,11 @@
     <div class="modal {{$classes}}{{/classes}}"
         data-region="modal"
         aria-labelledby="{{uniqid}}-modal-title"
-        role="document">
+        role="document" tabindex="0">
         <div class="modal-header {{$headerclasses}}{{headerclasses}}{{/headerclasses}}" data-region="header">
             <button type="button" class="close" data-action="hide" title="{{#str}} closebuttontitle {{/str}}"></button>
             {{$header}}
-                <h3 id="{{uniqid}}-modal-title" class="modal-title" data-region="title" tabindex="0">
+                <h3 id="{{uniqid}}-modal-title" class="modal-title" data-region="title">
                     {{$title}}{{title}}{{/title}}
                 </h3>
             {{/header}}
