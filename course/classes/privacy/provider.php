@@ -35,7 +35,6 @@ use \core_privacy\local\request\transform;
 /**
  * Privacy class for requesting user data.
  *
- * @package    core_course
  * @copyright  2018 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -103,27 +102,47 @@ class provider implements
     }
 
     /**
-     * Exports course information based on the whole approved context list collection.
+     * Give the component a chance to include any contextual information deemed relevant to any child contexts which are
+     * exporting personal data.
      *
-     * @param  \core_privacy\local\request\contextlist_collection $contextcollection The collection of approved context lists.
+     * By giving the component access to the full list of contexts being exported across all components, it can determine whether a
+     * descendant context is being exported, and decide whether to add relevant contextual information about itself. Having access
+     * to the full list of contexts being exported is what makes this component a context aware provider.
+     *
+     * E.g.
+     * If, during the core export process, a course module is included in the contextlist_collection but the course containing the
+     * module is not (perhaps there's no longer a user enrolment), then the course should include general contextual information in
+     * the export so we know basic details about which course the module belongs to. This method allows the course to make that
+     * decision, based on the existence of any decendant module contexts in the collection.
+     *
+     * @param \core_privacy\local\request\contextlist_collection $contextlistcollection
      */
-    public static function export_complete_context_data(\core_privacy\local\request\contextlist_collection $completelist) {
+    public static function export_context_data(\core_privacy\local\request\contextlist_collection $contextlistcollection) {
         global $DB;
 
-        $coursecontextids = $DB->get_records('context', ['contextlevel' => CONTEXT_COURSE], '', 'id, instanceid');
-
+        $coursecontextids = $DB->get_records_menu('context', ['contextlevel' => CONTEXT_COURSE], '', 'id, instanceid');
         $courseids = [];
-        foreach ($completelist as $component) {
+        foreach ($contextlistcollection as $component) {
             foreach ($component->get_contexts() as $context) {
-                if ($context->contextlevel == CONTEXT_USER
-                        || $context->contextlevel == CONTEXT_SYSTEM
-                        || $context->contextlevel == CONTEXT_COURSECAT) {
-                    // Move onto the next context as these will not contain course contexts.
+                // All course contexts have been accounted for, so skip all checks.
+                if (empty($coursecontextids)) {
+                    break;
+                }
+                // Move onto the next context as these will not contain course contexts.
+                if (in_array($context->contextlevel, [CONTEXT_USER, CONTEXT_SYSTEM, CONTEXT_COURSECAT])) {
                     continue;
                 }
-                foreach ($coursecontextids as $contextid => $record) {
+                // If the context is a course, then we just add it without the need to check context path.
+                if ($context->contextlevel == CONTEXT_COURSE) {
+                    $courseids[$context->id] = $context->instanceid;
+                    unset($coursecontextids[$context->id]);
+                    continue;
+                }
+                // Otherwise, we need to check all the course context paths, to see if this context is a descendant.
+                foreach ($coursecontextids as $contextid => $instanceid) {
                     if (stripos($context->path, '/' . $contextid . '/') !== false) {
-                        $courseids[$contextid] = $record->instanceid;
+                        $courseids[$contextid] = $instanceid;
+                        unset($coursecontextids[$contextid]);
                     }
                 }
             }
@@ -143,7 +162,8 @@ class provider implements
                 'fullname' => $course->fullname,
                 'shortname' => $course->shortname,
                 'idnumber' => $course->idnumber,
-                'summary' => writer::with_context($context)->rewrite_pluginfile_urls([], 'course', 'summary', 0, $course->summary),
+                'summary' => writer::with_context($context)->rewrite_pluginfile_urls([], 'course', 'summary', 0,
+                                                                                     format_string($course->summary)),
                 'format' => get_string('pluginname', 'format_' . $course->format),
                 'startdate' => transform::datetime($course->startdate),
                 'enddate' => transform::datetime($course->enddate)
