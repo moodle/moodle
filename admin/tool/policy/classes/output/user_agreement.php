@@ -59,6 +59,9 @@ class user_agreement implements \templatable, \renderable {
     /** @var bool */
     protected $canaccept;
 
+    /** @var bool */
+    protected $canrevoke;
+
     /**
      * user_agreement constructor
      *
@@ -68,8 +71,10 @@ class user_agreement implements \templatable, \renderable {
      * @param array $versions list of versions (id=>name)
      * @param bool $onbehalf whether at least one version was accepted by somebody else on behalf of the user
      * @param bool $canaccept does the current user have permission to accept the policy on behalf of user $userid
+     * @param bool $canrevoke does the current user have permission to revoke the policy on behalf of user $userid
      */
-    public function __construct($userid, $accepted, moodle_url $pageurl, $versions, $onbehalf = false, $canaccept = null) {
+    public function __construct($userid, $accepted, moodle_url $pageurl, $versions, $onbehalf = false,
+                                $canaccept = null, $canrevoke = null) {
         $this->userid = $userid;
         $this->onbehalf = $onbehalf;
         $this->pageurl = $pageurl;
@@ -78,6 +83,9 @@ class user_agreement implements \templatable, \renderable {
         $this->canaccept = $canaccept;
         if (count($this->accepted) < count($this->versions) && $canaccept === null) {
             $this->canaccept = \tool_policy\api::can_accept_policies($this->userid);
+        }
+        if (count($this->accepted) == count($this->versions) && $canrevoke === null) {
+            $this->canrevoke = \tool_policy\api::can_revoke_policies($this->userid);
         }
     }
 
@@ -92,6 +100,7 @@ class user_agreement implements \templatable, \renderable {
             'status' => count($this->accepted) == count($this->versions),
             'onbehalf' => $this->onbehalf,
             'canaccept' => $this->canaccept,
+            'canrevoke' => $this->canrevoke,
         ];
         if (!$data['status'] && $this->canaccept) {
             $linkparams = ['userids[0]' => $this->userid];
@@ -101,6 +110,15 @@ class user_agreement implements \templatable, \renderable {
             $linkparams['returnurl'] = $this->pageurl->out_as_local_url(false);
             $link = new \moodle_url('/admin/tool/policy/accept.php', $linkparams);
             $data['acceptlink'] = $link->out(false);
+        } else if ($data['status'] && $this->canrevoke) {
+            $linkparams = ['userids[0]' => $this->userid];
+            foreach (array_keys($this->versions) as $versionid) {
+                $linkparams["versionids[{$versionid}]"] = $versionid;
+            }
+            $linkparams['returnurl'] = $this->pageurl->out_as_local_url(false);
+            $linkparams['action'] = 'revoke';
+            $link = new \moodle_url('/admin/tool/policy/accept.php', $linkparams);
+            $data['revokelink'] = $link->out(false);
         }
         $data['singleversion'] = count($this->versions) == 1;
         if ($data['singleversion']) {

@@ -369,6 +369,72 @@ class tool_policy_api_testcase extends advanced_testcase {
     }
 
     /**
+     * Test behaviour of the {@link api::can_revoke_policies()} method.
+     */
+    public function test_can_revoke_policies() {
+        global $CFG;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $user = $this->getDataGenerator()->create_user();
+        $child = $this->getDataGenerator()->create_user();
+        $parent = $this->getDataGenerator()->create_user();
+        $officer = $this->getDataGenerator()->create_user();
+        $manager = $this->getDataGenerator()->create_user();
+
+        $syscontext = context_system::instance();
+        $childcontext = context_user::instance($child->id);
+
+        $roleminorid = create_role('Digital minor', 'digiminor', 'Not old enough to accept site policies themselves');
+        $roleparentid = create_role('Parent', 'parent', 'Can accept policies on behalf of their child');
+        $roleofficerid = create_role('Policy officer', 'policyofficer', 'Can see all acceptances but can\'t edit policy documents');
+        $rolemanagerid = create_role('Policy manager', 'policymanager', 'Can manage policy documents');
+
+        assign_capability('tool/policy:accept', CAP_PROHIBIT, $roleminorid, $syscontext->id);
+        assign_capability('tool/policy:acceptbehalf', CAP_ALLOW, $roleparentid, $syscontext->id);
+        assign_capability('tool/policy:acceptbehalf', CAP_ALLOW, $roleofficerid, $syscontext->id);
+        assign_capability('tool/policy:viewacceptances', CAP_ALLOW, $roleofficerid, $syscontext->id);
+        assign_capability('tool/policy:acceptbehalf', CAP_ALLOW, $rolemanagerid, $syscontext->id);
+        assign_capability('tool/policy:managedocs', CAP_ALLOW, $rolemanagerid, $syscontext->id);
+
+        role_assign($roleminorid, $child->id, $syscontext->id);
+        // Becoming a parent is easy. Being a good one is difficult.
+        role_assign($roleparentid, $parent->id, $childcontext->id);
+        role_assign($roleofficerid, $officer->id, $syscontext->id);
+        role_assign($rolemanagerid, $manager->id, $syscontext->id);
+
+        accesslib_clear_all_caches_for_unit_testing();
+
+        // Prepare a policy document with some versions.
+        list($policy1, $policy2, $policy3) = $this->create_versions(3);
+
+        // Normally users do not have access to revoke policies.
+        $this->setUser($user);
+        $this->assertFalse(api::can_revoke_policies($user->id));
+        $this->setUser($child);
+        $this->assertFalse(api::can_revoke_policies($child->id));
+
+        // The parent can revoke the policy on behalf of her child (but not her own policies).
+        $this->setUser($parent);
+        $this->assertFalse(api::can_revoke_policies($parent->id));
+        $this->assertTrue(api::can_revoke_policies($child->id));
+
+        // Officers and managers can revoke everything.
+        $this->setUser($officer);
+        $this->assertTrue(api::can_revoke_policies($officer->id));
+        $this->assertTrue(api::can_revoke_policies($child->id));
+        $this->assertTrue(api::can_revoke_policies($parent->id));
+        $this->assertTrue(api::can_revoke_policies($manager->id));
+
+        $this->setUser($manager);
+        $this->assertTrue(api::can_revoke_policies($manager->id));
+        $this->assertTrue(api::can_revoke_policies($child->id));
+        $this->assertTrue(api::can_revoke_policies($parent->id));
+        $this->assertTrue(api::can_revoke_policies($officer->id));
+    }
+
+    /**
      * Test {@link api::fix_revision_values()} behaviour.
      */
     public function test_fix_revision_values() {

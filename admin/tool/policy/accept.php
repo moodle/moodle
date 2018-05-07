@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Accept policies on behalf of users (non-JS version)
+ * Accept or revoke policies on behalf of users (non-JS version)
  *
  * @package     tool_policy
  * @copyright   2018 Marina Glancy
@@ -28,6 +28,7 @@ require_once($CFG->dirroot.'/user/editlib.php');
 $userids = optional_param_array('userids', null, PARAM_INT);
 $versionids = optional_param_array('versionids', null, PARAM_INT);
 $returnurl = optional_param('returnurl', null, PARAM_LOCALURL);
+$action = optional_param('action', null, PARAM_ALPHA);
 
 require_login();
 if (isguestuser()) {
@@ -48,7 +49,7 @@ if ($returnurl) {
 }
 // Initialise the form, this will also validate users, versions and check permission to accept policies.
 $form = new \tool_policy\form\accept_policy(null,
-    ['versionids' => $versionids, 'userids' => $userids, 'showbuttons' => true]);
+    ['versionids' => $versionids, 'userids' => $userids, 'showbuttons' => true, 'action' => $action]);
 $form->set_data(['returnurl' => $returnurl]);
 
 if ($form->is_cancelled()) {
@@ -58,8 +59,14 @@ if ($form->is_cancelled()) {
     redirect($returnurl);
 }
 
+if ($action == 'revoke') {
+    $title = get_string('revokedetails', 'tool_policy');
+} else {
+    $title = get_string('consentdetails', 'tool_policy');
+}
+
 $output = $PAGE->get_renderer('tool_policy');
 echo $output->header();
-echo $output->heading(get_string('consentdetails', 'tool_policy'));
+echo $output->heading($title);
 $form->display();
 echo $output->footer();

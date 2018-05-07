@@ -71,6 +71,14 @@ define(['jquery', 'core/str', 'core/modal_factory', 'core/modal_events', 'core/n
             },
             {
                 key: 'ok'
+            },
+            {
+                key: 'revokedetails',
+                component: 'tool_policy'
+            },
+            {
+                key: 'irevokethepolicy',
+                component: 'tool_policy'
             }
         ];
 
@@ -111,16 +119,33 @@ define(['jquery', 'core/str', 'core/modal_factory', 'core/modal_events', 'core/n
          * @param {object} triggerElement The trigger HTML jQuery object
          */
         AcceptOnBehalf.prototype.showFormModal = function(formData, triggerElement) {
+            var action;
+            var params = formData.split('&');
+            for (var i = 0; i < params.length; i++) {
+                var pair = params[i].split('=');
+                if (pair[0] == 'action') {
+                    action = pair[1];
+                }
+            }
             // Fetch the title string.
             Str.get_strings(this.stringKeys).done(function(strings) {
+                var title;
+                var saveText;
+                if (action == 'revoke') {
+                    title = strings[4];
+                    saveText = strings[5];
+                } else {
+                    title = strings[0];
+                    saveText = strings[1];
+                }
                 // Create the modal.
                 ModalFactory.create({
                     type: ModalFactory.types.SAVE_CANCEL,
-                    title: strings[0],
+                    title: title,
                     body: ''
                 }, triggerElement).done(function(modal) {
                     this.modal = modal;
-                    this.setupFormModal(formData, strings[1]);
+                    this.setupFormModal(formData, saveText);
                 }.bind(this));
             }.bind(this))
                 .fail(Notification.exception);
