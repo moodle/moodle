@@ -294,7 +294,7 @@ class provider implements
             [$recordobj->id], $recordobj->userid != $user->id);
         // Export ratings. For records that were not made by this user export only this user's ratings, for own records
         // export ratings from everybody.
-        \core_rating\privacy\provider::export_area_ratings($user->id, $context, [$recordobj->id], 'entry',
+        \core_rating\privacy\provider::export_area_ratings($user->id, $context, [$recordobj->id], 'mod_data', 'entry',
             $recordobj->id, $recordobj->userid != $user->id);
     }
 
