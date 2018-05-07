@@ -87,39 +87,38 @@
     <tbody>
         {{#policies}}
             {{#versions}}
-                <tr {{^isfirst}}class="archived{{policyid}}" style="display:none"{{/isfirst}}>
-                    <td>
-                        {{^isfirst}}
-                            <div style="float:left">
-                                {{#pix}} level, tool_policy {{/pix}}
+                {{#agreement}}
+                    <tr {{^isfirst}}class="archived{{policyid}}" style="display:none"{{/isfirst}}>
+                        <td>
+                            {{^isfirst}}
+                                <div style="float:left">
+                                    {{#pix}} level, tool_policy {{/pix}}
+                                </div>
+                            {{/isfirst}}
+                            <div {{^isfirst}}style="margin-left: 24px" {{/isfirst}}>
+                                <div><a href="{{viewurl}}">{{{name}}}</a></div>
                             </div>
-                        {{/isfirst}}
-                        <div {{^isfirst}}style="margin-left: 24px" {{/isfirst}}>
-                            <div><a href="{{viewurl}}">{{{name}}}</a></div>
-                        </div>
-                    </td>
-                    <td>
-                        <a href="{{viewurl}}">{{{revision}}}</a>
-                        {{#iscurrent}}<span class="label label-success">{{#str}} status1, tool_policy {{/str}}{{/iscurrent}}
-                    </td>
-                    <td>
-                        {{#agreement}}
+                        </td>
+                        <td>
+                            <a href="{{viewurl}}">{{{revision}}}</a>
+                            {{#iscurrent}}<span class="label label-success">{{#str}} status1, tool_policy {{/str}}{{/iscurrent}}
+                        </td>
+                        <td>
                             {{>tool_policy/user_agreement}}
-                        {{/agreement}}
-
-                    </td>
-                    <td>{{timeaccepted}}</td>
-                    {{#hasonbehalfagreements}}
-                    <td>{{{acceptedby}}}</td>
-                    <td>{{{note}}}</td>
-                    {{/hasonbehalfagreements}}
-                    <td>
-                        {{#hasarchived}}<a class="showarchived" data-target=".archived{{policyid}}" data-status="hidden" href="#">
-                            <div class="toggleoff" style="display:none">{{#pix}}t/less, moodle, {{#str}}detailedless, moodle{{/str}}{{/pix}}</div>
-                            <div class="toggleon">{{#pix}}t/more, moodle, {{#str}}detailedmore, moodle{{/str}}{{/pix}}</div>
-                        </a>{{/hasarchived}}
-                    </td>
-                </tr>
+                        </td>
+                        <td>{{timeaccepted}}</td>
+                        {{#hasonbehalfagreements}}
+                        <td>{{{acceptedby}}}</td>
+                        <td>{{{note}}}</td>
+                        {{/hasonbehalfagreements}}
+                        <td>
+                            {{#hasarchived}}<a class="showarchived" data-target=".archived{{policyid}}" data-status="hidden" href="#">
+                                <div class="toggleoff" style="display:none">{{#pix}}t/less, moodle, {{#str}}detailedless, moodle{{/str}}{{/pix}}</div>
+                                <div class="toggleon">{{#pix}}t/more, moodle, {{#str}}detailedmore, moodle{{/str}}{{/pix}}</div>
+                            </a>{{/hasarchived}}
+                        </td>
+                    </tr>
+                {{/agreement}}
             {{/versions}}
         {{/policies}}
     </tbody>
