@@ -8681,7 +8681,7 @@ class assign_portfolio_caller extends portfolio_module_caller_base {
 
             $submission = $DB->get_record('assign_submission', array('id' => $this->sid));
         } else {
-            $submissionid = $DB->get_field('files', 'itemid', array('id' => $this->fileid));
+            $submissionid = $DB->get_field('files', 'itemid', array('id' => $this->fileid, 'contextid' => $context->id));
             if ($submissionid) {
                 $submission = $DB->get_record('assign_submission', array('id' => $submissionid));
             }
