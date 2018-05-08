@@ -77,12 +77,14 @@ $event->trigger();
 $completion=new completion_info($course);
 $completion->set_module_viewed($cm);
 
-// Initialize $PAGE, compute blocks
-$PAGE->set_url('/mod/iomadcertificate/view.php', array('id' => $cm->id));
-$PAGE->set_context($context);
-$PAGE->set_cm($cm);
-$PAGE->set_title(format_string($iomadcertificate->name));
-$PAGE->set_heading(format_string($course->fullname));
+if (empty($action)) {
+    // Initialize $PAGE, compute blocks
+    $PAGE->set_url('/mod/iomadcertificate/view.php', array('id' => $cm->id));
+    $PAGE->set_context($context);
+    $PAGE->set_cm($cm);
+    $PAGE->set_title(format_string($iomadcertificate->name));
+    $PAGE->set_heading(format_string($course->fullname));
+}
 
 // Set the context
 $context = context_module::instance($cm->id);
