@@ -167,6 +167,12 @@ $string['pluginismisconfigured'] = 'Portfolio plugin is misconfigured, skipping.
 $string['portfolio'] = 'Portfolio';
 $string['portfolios'] = 'Portfolios';
 $string['privacy:metadata'] = 'The portfolio subsystem acts as a channel, passing requests from plugins to the various portfolio plugins.';
+$string['privacy:metadata:name'] = 'Name of the preference.';
+$string['privacy:metadata:instance'] = 'Identifier for the portfolio.';
+$string['privacy:metadata:instancesummary'] = 'This stores portfolio both instances and preferences for the portfolios user is using.';
+$string['privacy:metadata:value'] = 'Value for the preference';
+$string['privacy:metadata:userid'] = 'The user Identifier.';
+$string['privacy:path'] = 'Portfolio instances';
 $string['queuesummary'] = 'Currently queued transfers';
 $string['returntowhereyouwere'] = 'Return to where you were';
 $string['save'] = 'Save';
@@ -183,4 +189,5 @@ $string['unknownplugin'] = 'Unknown (may have since been removed by an administr
 $string['wait'] = 'Wait';
 $string['wanttowait_high'] = 'It is not recommended that you wait for this transfer to complete, but you can if you\'re sure and know what you\'re doing';
 $string['wanttowait_moderate'] = 'Do you want to wait for this transfer? It might take a few minutes';
+
 
