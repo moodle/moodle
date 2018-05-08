@@ -27,6 +27,10 @@ namespace core_tag\privacy;
 defined('MOODLE_INTERNAL') || die();
 
 use \core_privacy\local\metadata\collection;
+use core_privacy\local\request\approved_contextlist;
+use core_privacy\local\request\contextlist;
+use core_privacy\local\request\transform;
+use core_privacy\local\request\writer;
 
 /**
  * Privacy Subsystem implementation for core_tag.
@@ -39,7 +43,10 @@ class provider implements
         \core_privacy\local\metadata\provider,
 
         // The tag subsystem provides data to other components.
-        \core_privacy\local\request\subsystem\plugin_provider {
+        \core_privacy\local\request\subsystem\plugin_provider,
+
+        // The tag subsystem may have data that belongs to this user.
+        \core_privacy\local\request\plugin\provider {
 
     /**
      * Returns meta data about this system.
@@ -110,17 +117,9 @@ class provider implements
     ) {
         global $DB;
 
-        // Do not include the mdl_tag userid data because of bug with re-using existing tags by other users.
+        // Ignore mdl_tag.userid here because it only reflects the user who originally created the tag.
         $sql = "SELECT
-                    t.id,
-                    t.tagcollid,
-                    t.name,
-                    t.rawname,
-                    t.isstandard,
-                    t.description,
-                    t.descriptionformat,
-                    t.flag,
-                    t.timemodified
+                    t.rawname
                   FROM {tag} t
             INNER JOIN {tag_instance} ti ON ti.tagid = t.id
                  WHERE ti.component = :component
@@ -141,7 +140,7 @@ class provider implements
             'userid' => $userid,
         ];
 
-        if ($tags = $DB->get_records_sql($sql, $params)) {
+        if ($tags = $DB->get_fieldset_sql($sql, $params)) {
             $writer = \core_privacy\local\request\writer::with_context($context)
                 ->export_related_data($subcontext, 'tags', $tags);
         }
@@ -193,5 +192,92 @@ class provider implements
         $DB->delete_records_select('tag_instance',
             'contextid = :contextid AND component = :component AND itemtype = :itemtype AND itemid ' . $itemidstest,
             $params);
+    }
+
+    /**
+     * Get the list of contexts that contain user information for the specified user.
+     *
+     * @param   int         $userid     The user to search.
+     * @return  contextlist   $contextlist  The contextlist containing the list of contexts used in this plugin.
+     */
+    public static function get_contexts_for_userid(int $userid) : contextlist {
+        $contextlist = new contextlist();
+        $contextlist->add_from_sql("SELECT c.id
+                  FROM {context} c
+                  JOIN {tag} t ON t.userid = :userid
+                 WHERE contextlevel = :contextlevel",
+            ['userid' => $userid, 'contextlevel' => CONTEXT_SYSTEM]);
+        return $contextlist;
+    }
+
+    /**
+     * Export all user data for the specified user, in the specified contexts.
+     *
+     * @param   approved_contextlist    $contextlist    The approved contexts to export information for.
+     */
+    public static function export_user_data(approved_contextlist $contextlist) {
+        global $DB;
+        $context = \context_system::instance();
+        if (!$contextlist->count() || !in_array($context->id, $contextlist->get_contextids())) {
+            return;
+        }
+
+        $user = $contextlist->get_user();
+        $sql = "SELECT id, userid, tagcollid, name, rawname, isstandard, description, descriptionformat, flag, timemodified
+            FROM {tag} WHERE userid = ?";
+        $rs = $DB->get_recordset_sql($sql, [$user->id]);
+        foreach ($rs as $record) {
+            $subcontext = [get_string('tags', 'tag'), $record->id];
+            $tag = (object)[
+                'id' => $record->id,
+                'userid' => transform::user($record->userid),
+                'name' => $record->name,
+                'rawname' => $record->rawname,
+                'isstandard' => transform::yesno($record->isstandard),
+                'description' => writer::with_context($context)->rewrite_pluginfile_urls($subcontext,
+                    'tag', 'description', $record->id, strval($record->description)),
+                'descriptionformat' => $record->descriptionformat,
+                'flag' => $record->flag,
+                'timemodified' => transform::datetime($record->timemodified),
+
+            ];
+            writer::with_context($context)->export_data($subcontext, $tag);
+            writer::with_context($context)->export_area_files($subcontext, 'tag', 'description', $record->id);
+        }
+        $rs->close();
+    }
+
+    /**
+     * Delete all data for all users in the specified context.
+     *
+     * We do not delete tag instances in this method - this should be done by the components that define tagareas.
+     * We only delete tags themselves in case of system context.
+     *
+     * @param context $context   The specific context to delete data for.
+     */
+    public static function delete_data_for_all_users_in_context(\context $context) {
+        global $DB;
+        // Tags can only be defined in system context.
+        if ($context->id == \context_system::instance()->id) {
+            $DB->delete_records('tag_instance');
+            $DB->delete_records('tag', []);
+        }
+    }
+
+    /**
+     * Delete all user data for the specified user, in the specified contexts.
+     *
+     * @param   approved_contextlist    $contextlist    The approved contexts and user information to delete information for.
+     */
+    public static function delete_data_for_user(approved_contextlist $contextlist) {
+        global $DB;
+        $context = \context_system::instance();
+        if (!$contextlist->count() || !in_array($context->id, $contextlist->get_contextids())) {
+            return;
+        }
+
+        // Do not delete tags themselves in case they are used by somebody else.
+        // If the user is the only one using the tag, it will be automatically deleted anyway during the next cron cleanup.
+        $DB->set_field_select('tag', 'userid', 0, 'userid = ?', [$contextlist->get_user()->id]);
     }
 }
