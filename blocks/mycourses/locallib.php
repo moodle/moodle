@@ -86,6 +86,7 @@ function mycourses_get_my_completion($datefrom = 0) {
                                                          AND c.id IN (
                                                            SELECT courseid FROM {company_course}
                                                            WHERE companyid = :companyid)
+                                                         AND c.visible = 1
                                                          $inprogresssql",
                                                          array('companyid' => $companyid,
                                                                'enrol' => 'self'));
@@ -97,6 +98,7 @@ function mycourses_get_my_completion($datefrom = 0) {
                                                          AND c.id IN (
                                                            SELECT courseid FROM {iomad_courses}
                                                            WHERE shared = 1)
+                                                         AND c.visible = 1
                                                         $inprogresssql",
                                                         array('enrol' => 'self'));
         foreach ($companyselfenrolcourses as $companyselfenrolcourse) {
