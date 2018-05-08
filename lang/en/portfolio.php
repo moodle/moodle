@@ -190,4 +190,3 @@ $string['wait'] = 'Wait';
 $string['wanttowait_high'] = 'It is not recommended that you wait for this transfer to complete, but you can if you\'re sure and know what you\'re doing';
 $string['wanttowait_moderate'] = 'Do you want to wait for this transfer? It might take a few minutes';
 
-
