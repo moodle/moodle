@@ -272,6 +272,37 @@ class core_group_privacy_provider_testcase extends provider_testcase {
     }
 
     /**
+     * Test for provider::delete_groups_for_all_users() to check deleting from cache.
+     */
+    public function test_delete_groups_for_all_users_deletes_cache() {
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+
+        $group1 = $this->getDataGenerator()->create_group(array('courseid' => $course->id));
+        $group2 = $this->getDataGenerator()->create_group(array('courseid' => $course->id));
+
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+
+        $this->getDataGenerator()->enrol_user($user1->id, $course->id);
+        $this->getDataGenerator()->enrol_user($user2->id, $course->id);
+
+        $this->getDataGenerator()->create_group_member(array('userid' => $user1->id, 'groupid' => $group1->id));
+        $this->getDataGenerator()->create_group_member(array('userid' => $user1->id, 'groupid' => $group2->id));
+        $this->getDataGenerator()->create_group_member(array('userid' => $user2->id, 'groupid' => $group1->id));
+
+        $this->assertEquals([[$group1->id, $group2->id]], groups_get_user_groups($course->id, $user1->id), '', 0.0, 10, true);
+        $this->assertEquals([[$group1->id]], groups_get_user_groups($course->id, $user2->id));
+
+        $coursecontext = context_course::instance($course->id);
+        provider::delete_groups_for_all_users($coursecontext, '');
+
+        $this->assertEquals([[]], groups_get_user_groups($course->id, $user1->id));
+        $this->assertEquals([[]], groups_get_user_groups($course->id, $user2->id));
+    }
+
+    /**
      * Test for provider::delete_groups_for_user() to delete manual group memberships.
      */
     public function test_delete_groups_for_user() {
@@ -475,6 +506,34 @@ class core_group_privacy_provider_testcase extends provider_testcase {
                                           JOIN {groups} g ON gm.groupid = g.id
                                          WHERE gm.userid = ?", [$user1->id])
         );
+    }
+
+    /**
+     * Test for provider::delete_groups_for_user() to check deleting from cache.
+     */
+    public function test_delete_groups_for_user_deletes_cache() {
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+
+        $group1 = $this->getDataGenerator()->create_group(array('courseid' => $course->id));
+        $group2 = $this->getDataGenerator()->create_group(array('courseid' => $course->id));
+
+        $user = $this->getDataGenerator()->create_user();
+
+        $this->getDataGenerator()->enrol_user($user->id, $course->id);
+
+        $this->getDataGenerator()->create_group_member(array('userid' => $user->id, 'groupid' => $group1->id));
+        $this->getDataGenerator()->create_group_member(array('userid' => $user->id, 'groupid' => $group2->id));
+
+        $this->assertEquals([[$group1->id, $group2->id]], groups_get_user_groups($course->id, $user->id), '', 0.0, 10, true);
+
+        $this->setUser($user);
+        $coursecontext = context_course::instance($course->id);
+        $approvedcontextlist = new \core_privacy\tests\request\approved_contextlist($user, 'core_group', [$coursecontext->id]);
+        provider::delete_groups_for_user($approvedcontextlist, '');
+
+        $this->assertEquals([[]], groups_get_user_groups($course->id, $user->id));
     }
 
     /**
