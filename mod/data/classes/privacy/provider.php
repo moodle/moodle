@@ -48,9 +48,6 @@ class provider implements
         // This plugin is a core_user_data_provider.
         \core_privacy\local\request\plugin\provider {
 
-    /** @var array stores list of records marked for deletion */
-    protected static $deletedrecords = [];
-
     /**
      * Return the fields which contain personal data.
      *
@@ -322,6 +319,7 @@ class provider implements
         if (!$context instanceof \context_module) {
             return;
         }
+        $recordstobedeleted = [];
 
         $sql = "SELECT " . self::sql_fields() . "
                 FROM {course_modules} cm
@@ -335,10 +333,11 @@ class provider implements
         $rs = $DB->get_recordset_sql($sql, ['cmid' => $context->instanceid, 'modname' => 'data']);
         foreach ($rs as $row) {
             self::mark_data_content_for_deletion($context, $row);
+            $recordstobedeleted[$row->recordid] = $row->recordid;
         }
         $rs->close();
 
-        self::delete_data_records($context);
+        self::delete_data_records($context, $recordstobedeleted);
     }
 
     /**
@@ -354,6 +353,7 @@ class provider implements
         }
 
         $user = $contextlist->get_user();
+        $recordstobedeleted = [];
 
         foreach ($contextlist->get_contexts() as $context) {
             $sql = "SELECT " . self::sql_fields() . "
@@ -370,13 +370,14 @@ class provider implements
                 'modname' => 'data', 'userid' => $user->id]);
             foreach ($rs as $row) {
                 self::mark_data_content_for_deletion($context, $row);
+                $recordstobedeleted[$row->recordid] = $row->recordid;
             }
             $rs->close();
-            self::delete_data_records($context);
+            self::delete_data_records($context, $recordstobedeleted);
         }
 
         // Additionally remove comments this user made on other entries.
-        \core_comment\privacy\provider::delete_comments_for_user($contextlist, 'mod_data', 'entry');
+        \core_comment\privacy\provider::delete_comments_for_user($contextlist, 'mod_data', 'database_entry');
 
         // We do not delete ratings made by this user on other records because it may change grades.
     }
@@ -403,8 +404,6 @@ class provider implements
                     [$context, $recordobj, $fieldobj, $contentobj]);
             }
         }
-
-        self::$deletedrecords[$recordobj->id] = $recordobj->id;
     }
 
     /**
@@ -415,14 +414,15 @@ class provider implements
      * Deletes records from data_content and data_records tables, associated files, tags, comments and ratings.
      *
      * @param \context $context
+     * @param array $recordstobedeleted list of ids of the data records that need to be deleted
      */
-    protected static function delete_data_records($context) {
+    protected static function delete_data_records($context, $recordstobedeleted) {
         global $DB;
-        if (empty(self::$deletedrecords)) {
+        if (empty($recordstobedeleted)) {
             return;
         }
 
-        list($sql, $params) = $DB->get_in_or_equal(self::$deletedrecords, SQL_PARAMS_NAMED);
+        list($sql, $params) = $DB->get_in_or_equal($recordstobedeleted, SQL_PARAMS_NAMED);
 
         // Delete files.
         get_file_storage()->delete_area_files_select($context->id, 'mod_data', 'data_records',
@@ -437,7 +437,5 @@ class provider implements
         \core_comment\privacy\provider::delete_comments_for_all_users_select($context, 'mod_data', 'database_entry', $sql, $params);
         // Delete ratings.
         \core_rating\privacy\provider::delete_ratings_select($context, 'mod_data', 'entry', $sql, $params);
-
-        self::$deletedrecords = [];
     }
 }
