@@ -83,7 +83,7 @@ class core_tag_privacy_testcase extends provider_testcase {
 
         // Check the exported tag's rawname is found in the initial dummy tags.
         foreach ($exportedtags as $exportedtag) {
-            $this->assertContains($exportedtag->rawname, $dummytags);
+            $this->assertContains($exportedtag, $dummytags);
         }
     }
 
@@ -150,5 +150,96 @@ class core_tag_privacy_testcase extends provider_testcase {
         core_tag\privacy\provider::delete_item_tags_select($context2, 'core_course', 'course', $sql, $params);
         $expectedtagcount -= 2;
         $this->assertEquals($expectedtagcount, $DB->count_records('tag_instance'));
+    }
+
+    protected function set_up_tags() {
+        global $CFG;
+        require_once($CFG->dirroot.'/user/editlib.php');
+
+        $this->resetAfterTest(true);
+
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+
+        $this->setUser($user1);
+        useredit_update_interests($user1, ['Birdwatching', 'Computers']);
+
+        $this->setUser($user2);
+        useredit_update_interests($user2, ['computers']);
+
+        $this->setAdminUser();
+
+        $tag = core_tag_tag::get_by_name(0, 'computers', '*');
+        $tag->update(['description' => '<img src="@@PLUGINFILE@@/computer.jpg">']);
+        get_file_storage()->create_file_from_string([
+            'contextid' => context_system::instance()->id,
+            'component' => 'tag',
+            'filearea' => 'description',
+            'itemid' => $tag->id,
+            'filepath' => '/',
+            'filename' => 'computer.jpg'
+        ], "jpg:image");
+
+        return [$user1, $user2];
+    }
+
+    public function test_export_item_tags() {
+        list($user1, $user2) = $this->set_up_tags();
+        $this->assertEquals([context_system::instance()->id],
+            provider::get_contexts_for_userid($user1->id)->get_contextids());
+        $this->assertEmpty(provider::get_contexts_for_userid($user2->id)->get_contextids());
+    }
+
+    public function test_delete_data_for_user() {
+        global $DB;
+        list($user1, $user2) = $this->set_up_tags();
+        $context = context_system::instance();
+        $this->assertEquals(2, $DB->count_records('tag', []));
+        $this->assertEquals(0, $DB->count_records('tag', ['userid' => 0]));
+        provider::delete_data_for_user(new \core_privacy\local\request\approved_contextlist($user2, 'core_tag', [$context->id]));
+        $this->assertEquals(2, $DB->count_records('tag', []));
+        $this->assertEquals(0, $DB->count_records('tag', ['userid' => 0]));
+        provider::delete_data_for_user(new \core_privacy\local\request\approved_contextlist($user1, 'core_tag', [$context->id]));
+        $this->assertEquals(2, $DB->count_records('tag', []));
+        $this->assertEquals(2, $DB->count_records('tag', ['userid' => 0]));
+    }
+
+    public function test_delete_data_for_all_users_in_context() {
+        global $DB;
+        $course = $this->getDataGenerator()->create_course();
+        list($user1, $user2) = $this->set_up_tags();
+        $this->assertEquals(2, $DB->count_records('tag', []));
+        $this->assertEquals(3, $DB->count_records('tag_instance', []));
+        provider::delete_data_for_all_users_in_context(context_course::instance($course->id));
+        $this->assertEquals(2, $DB->count_records('tag', []));
+        $this->assertEquals(3, $DB->count_records('tag_instance', []));
+        provider::delete_data_for_all_users_in_context(context_system::instance());
+        $this->assertEquals(0, $DB->count_records('tag', []));
+        $this->assertEquals(0, $DB->count_records('tag_instance', []));
+    }
+
+    public function test_export_data_for_user() {
+        global $DB;
+        list($user1, $user2) = $this->set_up_tags();
+        $context = context_system::instance();
+        provider::export_user_data(new \core_privacy\local\request\approved_contextlist($user2, 'core_tag', [$context->id]));
+        $this->assertFalse(writer::with_context($context)->has_any_data());
+
+        $tagids = array_values(array_map(function($tag) {
+            return $tag->id;
+        }, core_tag_tag::get_by_name_bulk(core_tag_collection::get_default(), ['Birdwatching', 'Computers'])));
+
+        provider::export_user_data(new \core_privacy\local\request\approved_contextlist($user1, 'core_tag', [$context->id]));
+        $writer = writer::with_context($context);
+
+        $data = $writer->get_data(['Tags', $tagids[0]]);
+        $files = $writer->get_files(['Tags', $tagids[0]]);
+        $this->assertEquals('Birdwatching', $data->rawname);
+        $this->assertEmpty($files);
+
+        $data = $writer->get_data(['Tags', $tagids[1]]);
+        $files = $writer->get_files(['Tags', $tagids[1]]);
+        $this->assertEquals('Computers', $data->rawname);
+        $this->assertEquals(['computer.jpg'], array_keys($files));
     }
 }
