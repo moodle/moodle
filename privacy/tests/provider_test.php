@@ -128,6 +128,18 @@ class provider_testcase extends advanced_testcase {
                 $this->assertTrue($DB->get_manager()->table_exists($item->get_name()));
             }
 
+            if ($item instanceof \core_privacy\local\metadata\types\plugintype_link) {
+                // Check that plugin type is valid.
+                $this->assertTrue(array_key_exists($item->get_name(), \core_component::get_plugin_types()));
+            }
+
+            if ($item instanceof subsystem_link) {
+                // Check that core subsystem exists.
+                list($plugintype, $pluginname) = \core_component::normalize_component($item->get_name());
+                $this->assertEquals('core', $plugintype);
+                $this->assertTrue(\core_component::is_core_subsystem($pluginname));
+            }
+
             if ($summary = $item->get_summary()) {
                 // Summary is optional, but when provided must be a valid string identifier.
                 $this->assertInternalType('string', $summary);
