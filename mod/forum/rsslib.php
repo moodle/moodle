@@ -189,7 +189,7 @@ function forum_rss_feed_discussions_sql($forum, $cm, $newsince=0) {
               FROM {forum_discussions} d
                    JOIN {forum_posts} p ON p.discussion = d.id
                    JOIN {user} u ON p.userid = u.id
-             WHERE d.forum = {$forum->id} AND p.parent = 0
+             WHERE d.forum = {$forum->id} AND p.parent = 0 AND p.deleted <> 0
                    $timelimit $groupselect $newsince
           ORDER BY $forumsort";
     return array($sql, $params);
@@ -243,7 +243,7 @@ function forum_rss_feed_posts_sql($forum, $cm, $newsince=0) {
                {forum_posts} p,
                {user} u
             WHERE d.forum = {$forum->id} AND
-                p.discussion = d.id AND
+                p.discussion = d.id AND p.deleted <> 0 AND
                 u.id = p.userid $newsince
                 $groupselect
             ORDER BY p.created desc";
@@ -339,10 +339,17 @@ function forum_rss_feed_contents($forum, $sql, $params, $context) {
                 $message = get_string('forumbodyhidden', 'forum');
                 $item->author = get_string('forumauthorhidden', 'forum');
             } else if (!$isdiscussion && !forum_user_can_see_post($forum, $discussion, $post, $USER, $cm)) {
-                // This is a post which the user has no permission to view
-                $item->title = get_string('forumsubjecthidden', 'forum');
-                $message = get_string('forumbodyhidden', 'forum');
-                $item->author = get_string('forumauthorhidden', 'forum');
+                if (forum_user_can_see_post($forum, $discussion, $post, $USER, $cm, false)) {
+                    // This is a post which the user has no permission to view.
+                    $item->title = get_string('forumsubjecthidden', 'forum');
+                    $message = get_string('forumbodyhidden', 'forum');
+                    $item->author = get_string('forumauthorhidden', 'forum');
+                } else {
+                    // This is a post which has been deleted.
+                    $item->title = get_string('privacy:request:delete:post:subject', 'mod_forum');
+                    $message = get_string('privacy:request:delete:post:subject', 'mod_forum');
+                    $item->author = get_string('forumauthorhidden', 'forum');
+                }
             } else {
                 // The user must have permission to view
                 if ($isdiscussion && !empty($rec->discussionname)) {

@@ -219,7 +219,7 @@ if (! $post = forum_get_post_full($parent)) {
     print_error("notexists", 'forum', "$CFG->wwwroot/mod/forum/view.php?f=$forum->id");
 }
 
-if (!forum_user_can_see_post($forum, $discussion, $post, null, $cm)) {
+if (!forum_user_can_see_post($forum, $discussion, $post, null, $cm, false)) {
     print_error('noviewdiscussionspermission', 'forum', "$CFG->wwwroot/mod/forum/view.php?id=$forum->id");
 }
 
