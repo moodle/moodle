@@ -77,5 +77,22 @@ function xmldb_workshop_upgrade($oldversion) {
     // Automatically generated Moodle v3.3.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2017051501) {
+        // Drop the old Moodle 1.x tables, thanks privacy by design for forcing me to do so finally.
+
+        $oldtables = ['workshop_old', 'workshop_elements_old', 'workshop_rubrics_old', 'workshop_submissions_old',
+            'workshop_assessments_old', 'workshop_grades_old', 'workshop_stockcomments_old', 'workshop_comments_old'];
+
+        foreach ($oldtables as $oldtable) {
+            $table = new xmldb_table($oldtable);
+
+            if ($dbman->table_exists($table)) {
+                $dbman->drop_table($table);
+            }
+        }
+
+        upgrade_mod_savepoint(true, 2017051501, 'workshop');
+    }
+
     return true;
 }

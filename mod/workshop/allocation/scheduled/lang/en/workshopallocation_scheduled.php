@@ -47,6 +47,7 @@ Internally, the random allocation method is executed with the parameters pre-def
 
 Note that the scheduled allocation is *not* executed if you manually switch the workshop into the assessment phase before the submissions deadline. You have to allocate submissions yourself in that case. The scheduled allocation method is particularly useful when used together with the automatic phase switching feature.';
 $string['pluginname'] = 'Scheduled allocation';
+$string['privacy:metadata'] = 'The Scheduled allocation plugin does not store any personal data. Actual personal data about who is going to assess whom are stored by the Workshop module itself and they form basis for exporting the assessments details.';
 $string['randomallocationsettings'] = 'Allocation settings';
 $string['randomallocationsettings_help'] = 'Parameters for the random allocation method are defined here. They will be used by the random allocation plugin for the actual allocation of submissions.';
 $string['resultdisabled'] = 'Scheduled allocation disabled';
