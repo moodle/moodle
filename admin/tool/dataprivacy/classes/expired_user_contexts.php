@@ -115,12 +115,35 @@ class expired_user_contexts extends \tool_dataprivacy\expired_contexts_manager {
      * @return \context|false
      */
     protected function delete_expired_context(\core_privacy\manager $privacymanager, \tool_dataprivacy\expired_context $expiredctx) {
-        if (!$context = parent::delete_expired_context($privacymanager, $expiredctx)) {
+        $context = \context::instance_by_id($expiredctx->get('contextid'), IGNORE_MISSING);
+        if (!$context) {
+            api::delete_expired_context($expiredctx->get('contextid'));
             return false;
         }
 
-        // Delete the user.
+        if (!PHPUNIT_TEST) {
+            mtrace('Deleting context ' . $context->id . ' - ' .
+                shorten_text($context->get_context_name(true, true)));
+        }
+
+        // To ensure that all user data is deleted, instead of deleting by context, we run through and collect any stray
+        // contexts for the user that may still exist and call delete_data_for_user().
         $user = \core_user::get_user($context->instanceid, '*', MUST_EXIST);
+        $approvedlistcollection = new \core_privacy\local\request\contextlist_collection($user->id);
+        $contextlistcollection = $privacymanager->get_contexts_for_userid($user->id);
+
+        foreach ($contextlistcollection as $contextlist) {
+            $approvedlistcollection->add_contextlist(new \core_privacy\local\request\approved_contextlist(
+                $user,
+                $contextlist->get_component(),
+                $contextlist->get_contextids()
+            ));
+        }
+
+        $privacymanager->delete_data_for_user($approvedlistcollection);
+        api::set_expired_context_status($expiredctx, expired_context::STATUS_CLEANED);
+
+        // Delete the user.
         delete_user($user);
 
         return $context;
