@@ -58,6 +58,11 @@ class notification_sent extends base {
             $userfromid = 0;
         }
 
+        // If the courseid is null, then set it to the site id.
+        if (is_null($courseid)) {
+            $courseid = SITEID;
+        }
+
         $event = self::create(
             [
                 'objectid' => $notificationid,
