@@ -92,6 +92,7 @@ $string['order_relevance'] = 'Most relevant results first';
 $string['priority'] = 'Priority';
 $string['priority_reindexing'] = 'Reindexing';
 $string['priority_normal'] = 'Normal';
+$string['privacy:metadata'] = 'The search subsystem does not store any personal data.';
 $string['progress'] = 'Progress';
 $string['queryerror'] = 'The query you provided could not be parsed by the search engine: {$a}';
 $string['queueheading'] = 'Additional indexing queue ({$a} items)';
