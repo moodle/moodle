@@ -19,7 +19,7 @@
             {{/first}}
             {{#pages}}
                 <li class="page-item {{#active}}active{{/active}}">
-                    <a href="{{url}}" class="page-link">
+                    <a href="{{#url}}{{.}}{{/url}}{{^url}}#{{/url}}" class="page-link">
                         {{page}}
                         {{#active}}
                             <span class="sr-only">{{#str}}currentinparentheses, theme_boost{{/str}}</span>
