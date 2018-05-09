@@ -214,8 +214,8 @@ class mod_assign_privacy_testcase extends provider_testcase {
         // Check Submissions.
         $this->assertEquals($submissiontext, $writer->get_data(['attempt 1', 'Submission Text'])->text);
         $this->assertEquals($submissiontext2, $writer->get_data(['attempt 2', 'Submission Text'])->text);
-        $this->assertEquals(0, $writer->get_data(['attempt 1', 'submission'])->attemptnumber);
-        $this->assertEquals(1, $writer->get_data(['attempt 2', 'submission'])->attemptnumber);
+        $this->assertEquals(1, $writer->get_data(['attempt 1', 'submission'])->attemptnumber);
+        $this->assertEquals(2, $writer->get_data(['attempt 2', 'submission'])->attemptnumber);
         // Check grades.
         $this->assertEquals($grade1, $writer->get_data(['attempt 1', 'grade'])->grade);
         $this->assertEquals($grade2, $writer->get_data(['attempt 2', 'grade'])->grade);
