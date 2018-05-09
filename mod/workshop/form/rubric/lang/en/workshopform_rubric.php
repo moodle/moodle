@@ -37,3 +37,4 @@ $string['mustbeunique'] = 'Level grades must be unique within a criterion';
 $string['mustdefinelevel'] = 'At least one level is required';
 $string['mustchooseone'] = 'You have to select one of these items';
 $string['pluginname'] = 'Rubric';
+$string['privacy:metadata'] = 'The Rubric plugin only stores the details of the assessment form. Actual personal data of how the form has been filled are stored by the Workshop module itself and are attached to exported assessments.';
