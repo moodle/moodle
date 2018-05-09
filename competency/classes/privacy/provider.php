@@ -211,7 +211,7 @@ class provider implements
         ], 'privacy:metadata:competency_userevidencecomp');
 
         // Comments can be left on learning plans and competencies.
-        $collection->link_subsystem('core_comments', 'privacy:metadata:core_comments');
+        $collection->link_subsystem('core_comment', 'privacy:metadata:core_comments');
 
         return $collection;
     }

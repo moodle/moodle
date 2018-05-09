@@ -59,7 +59,7 @@ class provider implements metadataprovider, assignfeedback_provider {
         ];
         $collection->add_database_table('assignfeedback_editpdf_quick', $quickdata, 'privacy:metadata:tablepurpose');
         $collection->add_subsystem_link('core_files', [], 'privacy:metadata:filepurpose');
-        $collection->add_subsystem_link('core_fileconverted', [], 'privacy:metadata:conversionpurpose');
+        $collection->add_subsystem_link('core_fileconverter', [], 'privacy:metadata:conversionpurpose');
         return $collection;
     }
 
