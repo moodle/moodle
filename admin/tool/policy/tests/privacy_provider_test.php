@@ -112,7 +112,7 @@ class tool_policy_privacy_provider_testcase extends \core_privacy\tests\provider
         // Create policies and agree to them as admin.
         $this->setAdminUser();
         $admin = fullclone($USER);
-        $admincontext = context_user::instance($admin->id);
+        $admincontext = \context_user::instance($admin->id);
         $CFG->sitepolicyhandler = 'tool_policy';
         $policy1 = $this->add_policy();
         api::make_current($policy1->get('id'));
@@ -122,7 +122,7 @@ class tool_policy_privacy_provider_testcase extends \core_privacy\tests\provider
 
         // Agree to the policies for oneself.
         $this->setUser($this->user);
-        $usercontext = context_user::instance($this->user->id);
+        $usercontext = \context_user::instance($this->user->id);
         api::accept_policies([$policy1->get('id'), $policy2->get('id')]);
 
         // Request export for this user.
@@ -139,7 +139,7 @@ class tool_policy_privacy_provider_testcase extends \core_privacy\tests\provider
 
         $writer = writer::with_context($usercontext);
         $datauser = $writer->get_related_data([get_string('userpoliciesagreements', 'tool_policy'), $this->user->id]);
-        $this->assertEquals(2, count($datauser));
+        $this->assertCount(2, (array) $datauser);
         $this->assertEquals($policy1->get('name'), $datauser['policyagreement-'.$policy1->get('id')]->name);
         $this->assertEquals($this->user->id, $datauser['policyagreement-'.$policy1->get('id')]->usermodified);
         $this->assertEquals($policy2->get('name'), $datauser['policyagreement-'.$policy2->get('id')]->name);
@@ -159,8 +159,8 @@ class tool_policy_privacy_provider_testcase extends \core_privacy\tests\provider
         api::make_current($policy2->get('id'));
 
         // Agree to the policies for oneself and for another user.
-        $usercontext = context_user::instance($this->user->id);
-        $admincontext = context_user::instance($USER->id);
+        $usercontext = \context_user::instance($this->user->id);
+        $admincontext = \context_user::instance($USER->id);
         api::accept_policies([$policy1->get('id'), $policy2->get('id')]);
         api::accept_policies([$policy1->get('id'), $policy2->get('id')], $this->user->id, 'Mynote');
 
@@ -181,7 +181,7 @@ class tool_policy_privacy_provider_testcase extends \core_privacy\tests\provider
 
         $writer = writer::with_context($usercontext);
         $datauser = $writer->get_related_data([get_string('userpoliciesagreements', 'tool_policy'), $this->user->id]);
-        $this->assertEquals(2, count($datauser));
+        $this->assertCount(2, (array) $datauser);
         $this->assertEquals($policy1->get('name'), $datauser['policyagreement-'.$policy1->get('id')]->name);
         $this->assertEquals($admin->id, $datauser['policyagreement-'.$policy1->get('id')]->usermodified);
         $this->assertEquals('Mynote', $datauser['policyagreement-'.$policy1->get('id')]->note);
@@ -200,7 +200,7 @@ class tool_policy_privacy_provider_testcase extends \core_privacy\tests\provider
         // Admin can see all four agreements.
         $writer = writer::with_context($admincontext);
         $dataadmin = $writer->get_related_data([get_string('userpoliciesagreements', 'tool_policy'), $admin->id]);
-        $this->assertEquals(2, count($dataadmin));
+        $this->assertCount(2, (array) $dataadmin);
         $this->assertEquals($policy1->get('name'), $dataadmin['policyagreement-'.$policy1->get('id')]->name);
         $this->assertEquals($admin->id, $dataadmin['policyagreement-'.$policy1->get('id')]->usermodified);
         $this->assertEquals($policy2->get('name'), $dataadmin['policyagreement-'.$policy2->get('id')]->name);
@@ -208,7 +208,7 @@ class tool_policy_privacy_provider_testcase extends \core_privacy\tests\provider
 
         $writer = writer::with_context($usercontext);
         $datauser = $writer->get_related_data([get_string('userpoliciesagreements', 'tool_policy'), $this->user->id]);
-        $this->assertEquals(2, count($datauser));
+        $this->assertCount(2, (array) $datauser);
         $this->assertEquals($policy1->get('name'), $datauser['policyagreement-'.$policy1->get('id')]->name);
         $this->assertEquals($admin->id, $datauser['policyagreement-'.$policy1->get('id')]->usermodified);
         $this->assertEquals('Mynote', $datauser['policyagreement-'.$policy1->get('id')]->note);
