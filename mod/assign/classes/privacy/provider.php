@@ -376,7 +376,7 @@ class provider implements metadataprovider, pluginprovider, preference_provider 
             'timemodified' => transform::datetime($grade->timemodified),
             'grader' => transform::user($grade->grader),
             'grade' => $grade->grade,
-            'attemptnumber' => $grade->attemptnumber
+            'attemptnumber' => ($grade->attemptnumber + 1)
         ];
         writer::with_context($context)
                 ->export_data(array_merge($currentpath, [get_string('privacy:gradepath', 'mod_assign')]), $gradedata);
@@ -395,7 +395,7 @@ class provider implements metadataprovider, pluginprovider, preference_provider 
             'timemodified' => transform::datetime($submission->timemodified),
             'status' => get_string('submissionstatus_' . $submission->status, 'mod_assign'),
             'groupid' => $submission->groupid,
-            'attemptnumber' => $submission->attemptnumber,
+            'attemptnumber' => ($submission->attemptnumber + 1),
             'latest' => transform::yesno($submission->latest)
         ];
         writer::with_context($context)
