@@ -136,7 +136,7 @@ class mod_forum_portfolio_caller_testcase extends advanced_testcase {
             'attachment' => $secondpostfile->get_id()
         ));
 
-        $this->expectExceptionMessage('Sorry, the requested file could not be found');
+        $this->setExpectedException('portfolio_caller_exception', 'Sorry, the requested file could not be found');
         $caller->load_data();
     }
 }
