@@ -164,6 +164,18 @@ class provider_testcase extends advanced_testcase {
     }
 
     /**
+     * Test that all providers implement some form of compliant provider.
+     *
+     * @dataProvider get_component_list
+     * @param string $component frankenstyle component name, e.g. 'mod_assign'
+     * @param string $classname the fully qualified provider classname
+     */
+    public function test_all_providers_compliant($component, $classname) {
+        $manager = new manager();
+        $this->assertTrue($manager->component_is_compliant($component));
+    }
+
+    /**
      * Data provider for the metadata\provider tests.
      *
      * @return array
