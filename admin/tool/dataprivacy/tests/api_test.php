@@ -1073,4 +1073,126 @@ class tool_dataprivacy_api_testcase extends advanced_testcase {
             [$module1, $module2]
         ];
     }
+
+    /**
+     * Test that delete requests filter out protected purpose contexts.
+     */
+    public function test_add_request_contexts_with_status_delete() {
+        $data = $this->setup_test_add_request_contexts_with_status(api::DATAREQUEST_TYPE_DELETE);
+        $contextids = $data->list->get_contextids();
+
+        $this->assertCount(1, $contextids);
+        $this->assertEquals($data->contexts->unprotected, $contextids);
+    }
+
+    /**
+     * Test that export requests don't filter out protected purpose contexts.
+     */
+    public function test_add_request_contexts_with_status_export() {
+        $data = $this->setup_test_add_request_contexts_with_status(api::DATAREQUEST_TYPE_EXPORT);
+        $contextids = $data->list->get_contextids();
+
+        $this->assertCount(2, $contextids);
+        $this->assertEquals($data->contexts->used, $contextids, '', 0.0, 10, true);
+    }
+
+    /**
+     * Perform setup for the test_add_request_contexts_with_status_xxxxx tests.
+     *
+     * @param       int $type The type of request to create
+     * @return      \stdClass
+     */
+    protected function setup_test_add_request_contexts_with_status($type) {
+        $this->setAdminUser();
+
+        // User under test.
+        $s1 = $this->getDataGenerator()->create_user();
+
+        // Create three sample contexts.
+        // 1 which should not be returned; and
+        // 1 which will be returned and is not protected; and
+        // 1 which will be returned and is protected.
+
+        $c1 = $this->getDataGenerator()->create_course();
+        $c2 = $this->getDataGenerator()->create_course();
+        $c3 = $this->getDataGenerator()->create_course();
+
+        $ctx1 = \context_course::instance($c1->id);
+        $ctx2 = \context_course::instance($c2->id);
+        $ctx3 = \context_course::instance($c3->id);
+
+        $unprotected = api::create_purpose((object)[
+            'name' => 'Unprotected', 'retentionperiod' => 'PT1M', 'lawfulbases' => 'gdpr_art_6_1_a']);
+        $protected = api::create_purpose((object) [
+            'name' => 'Protected', 'retentionperiod' => 'PT1M', 'lawfulbases' => 'gdpr_art_6_1_a', 'protected' => true]);
+
+        $cat1 = api::create_category((object)['name' => 'a']);
+
+        // Set the defaults.
+        list($purposevar, $categoryvar) = data_registry::var_names_from_context(
+            \context_helper::get_class_for_level(CONTEXT_SYSTEM)
+        );
+        set_config($purposevar, $unprotected->get('id'), 'tool_dataprivacy');
+        set_config($categoryvar, $cat1->get('id'), 'tool_dataprivacy');
+
+        $contextinstance1 = api::set_context_instance((object) [
+                'contextid' => $ctx1->id,
+                'purposeid' => $unprotected->get('id'),
+                'categoryid' => $cat1->get('id'),
+            ]);
+
+        $contextinstance2 = api::set_context_instance((object) [
+                'contextid' => $ctx2->id,
+                'purposeid' => $unprotected->get('id'),
+                'categoryid' => $cat1->get('id'),
+            ]);
+
+        $contextinstance3 = api::set_context_instance((object) [
+                'contextid' => $ctx3->id,
+                'purposeid' => $protected->get('id'),
+                'categoryid' => $cat1->get('id'),
+            ]);
+
+        $collection = new \core_privacy\local\request\contextlist_collection($s1->id);
+        $contextlist = new \core_privacy\local\request\contextlist();
+        $contextlist->set_component('tool_dataprivacy');
+        $contextlist->add_from_sql('SELECT id FROM {context} WHERE id IN(:ctx2, :ctx3)', [
+                'ctx2' => $ctx2->id,
+                'ctx3' => $ctx3->id,
+            ]);
+
+        $collection->add_contextlist($contextlist);
+
+        // Create the sample data request.
+        $datarequest = api::create_data_request($s1->id, $type);
+        $requestid = $datarequest->get('id');
+
+        // Add the full collection with contexts 2, and 3.
+        api::add_request_contexts_with_status($collection, $requestid, \tool_dataprivacy\contextlist_context::STATUS_PENDING);
+
+        // Mark it as approved.
+        api::update_request_contexts_with_status($requestid, \tool_dataprivacy\contextlist_context::STATUS_APPROVED);
+
+        // Fetch the list.
+        $approvedcollection = api::get_approved_contextlist_collection_for_request($datarequest);
+
+        return (object) [
+            'contexts' => (object) [
+                'unused' => [
+                    $ctx1->id,
+                ],
+                'used' => [
+                    $ctx2->id,
+                    $ctx3->id,
+                ],
+                'unprotected' => [
+                    $ctx2->id,
+                ],
+                'protected' => [
+                    $ctx3->id,
+                ],
+            ],
+            'list' => $approvedcollection->get_contextlist_for_component('tool_dataprivacy'),
+        ];
+    }
 }
