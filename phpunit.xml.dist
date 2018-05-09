@@ -80,6 +80,7 @@
             <directory suffix="_test.php">backup/controller/tests</directory>
             <directory suffix="_test.php">backup/converter/moodle1/tests</directory>
             <directory suffix="_test.php">backup/moodle2/tests</directory>
+            <directory suffix="_test.php">backup/tests</directory>
             <directory suffix="_test.php">backup/util</directory>
         </testsuite>
         <testsuite name="core_badges_testsuite">
