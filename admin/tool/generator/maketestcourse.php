@@ -57,7 +57,7 @@ if ($data = $mform->get_data()) {
     $backend = new tool_generator_course_backend(
         $data->shortname,
         $data->size,
-        false,
+
         false,
         true,
         $data->fullname,
