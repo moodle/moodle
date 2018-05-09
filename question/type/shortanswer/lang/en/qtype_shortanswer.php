@@ -41,4 +41,4 @@ $string['pluginname_link'] = 'question/type/shortanswer';
 $string['pluginnameadding'] = 'Adding a short answer question';
 $string['pluginnameediting'] = 'Editing a Short answer question';
 $string['pluginnamesummary'] = 'Allows a response of one or a few words that is graded by comparing against various model answers, which may contain wildcards.';
-$string['privacy:metadata'] = 'The Short answer question type does not store any personal data.';
+$string['privacy:metadata'] = 'The Short answer question type plugin does not store any personal data.';
