@@ -162,3 +162,8 @@ ol {
 .bs-popover-auto[x-placement^="left"] .arrow {
     right: -9px;
 }
+
+// Fixes an issue on Safari when the .custom-select is inside a .card class.
+.custom-select {
+    word-wrap: normal;
+}

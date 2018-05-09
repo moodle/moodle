@@ -356,7 +356,7 @@ M.core_availability.List = function(json, root, parentRoot) {
     // Create DIV structure (without kids).
     this.node = Y.Node.create('<div class="availability-list"><h3 class="accesshide"></h3>' +
             '<div class="availability-inner">' +
-            '<div class="availability-header"><span class="p-l-1">' +
+            '<div class="availability-header m-b-1"><span>' +
             M.util.get_string('listheader_sign_before', 'availability') + '</span>' +
             ' <label><span class="accesshide">' + M.util.get_string('label_sign', 'availability') +
             ' </span><select class="availability-neg custom-select m-x-1"' +
@@ -376,7 +376,7 @@ M.core_availability.List = function(json, root, parentRoot) {
             '<div class="clearfix m-t-1"></div>' +
             '<div class="availability-button"></div></div><div class="clearfix"></div></div>');
     if (!root) {
-        this.node.addClass('availability-childlist');
+        this.node.addClass('availability-childlist d-sm-flex align-items-center');
     }
     this.inner = this.node.one('> .availability-inner');
 
@@ -687,24 +687,24 @@ M.core_availability.List.prototype.clickAdd = function() {
         // Add entry for plugin.
         li = Y.Node.create('<li class="clearfix row"></li>');
         id = 'availability_addrestriction_' + type;
-        button = Y.Node.create('<button type="button" class="btn btn-default col-xs-6"' +
-                'id="' + id + '">' + M.util.get_string('title', 'availability_' + type) + '</button>');
+        button = Y.Node.create('<div class="col-6"><button type="button" class="btn btn-default w-100"' +
+                'id="' + id + '">' + M.util.get_string('title', 'availability_' + type) + '</button></div>');
         button.on('click', this.getAddHandler(type, dialogRef), this);
         li.appendChild(button);
-        label = Y.Node.create('<label for="' + id + '" class="col-xs-6">' +
-                M.util.get_string('description', 'availability_' + type) + '</label>');
+        label = Y.Node.create('<div class="col-6"><label for="' + id + '">' +
+                M.util.get_string('description', 'availability_' + type) + '</label></div>');
         li.appendChild(label);
         ul.appendChild(li);
     }
     // Extra entry for lists.
     li = Y.Node.create('<li class="clearfix row"></li>');
     id = 'availability_addrestriction_list_';
-    button = Y.Node.create('<button type="button" class="btn btn-default col-xs-6"' +
-            'id="' + id + '">' + M.util.get_string('condition_group', 'availability') + '</button>');
+    button = Y.Node.create('<div class="col-6"><button type="button" class="btn btn-default w-100"' +
+            'id="' + id + '">' + M.util.get_string('condition_group', 'availability') + '</button></div>');
     button.on('click', this.getAddHandler(null, dialogRef), this);
     li.appendChild(button);
-    label = Y.Node.create('<label for="' + id + '" class="col-xs-6">' +
-            M.util.get_string('condition_group_info', 'availability') + '</label>');
+    label = Y.Node.create('<div class="col-6"><label for="' + id + '">' +
+            M.util.get_string('condition_group_info', 'availability') + '</label></div>');
     li.appendChild(label);
     ul.appendChild(li);
 
@@ -899,7 +899,7 @@ M.core_availability.Item = function(json, root) {
         this.pluginNode.addClass('availability_' + json.type);
     }
 
-    this.node = Y.Node.create('<div class="availability-item d-inline-block"><h3 class="accesshide"></h3></div>');
+    this.node = Y.Node.create('<div class="availability-item d-sm-flex align-items-center"><h3 class="accesshide"></h3></div>');
 
     // Add eye icon if required. This icon is added for root items, but may be
     // hidden depending on the selected list operator.
@@ -922,7 +922,7 @@ M.core_availability.Item = function(json, root) {
 
     // Add the invalid marker (empty).
     this.node.appendChild(document.createTextNode(' '));
-    this.node.appendChild(Y.Node.create('<span class="m-t-1 label label-warning"/>'));
+    this.node.appendChild(Y.Node.create('<span class="label label-warning"/>'));
 };
 
 /**

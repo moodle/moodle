@@ -37,7 +37,6 @@
 }
 
 .mform fieldset {
-    margin-left: $spacer * 1.5;
     margin-bottom: $spacer / 2;
     border-bottom: $border-width solid $table-border-color;
 }
@@ -51,20 +50,6 @@
 
 #adminsettings .form-control[size] {
     width: auto;
-}
-
-.mform fieldset.collapsible legend a.fheader {
-    padding: 0 5px 0 ($spacer * 1.5);
-    margin-left: -($spacer * 1.5);
-    background: url([[pix:t/expanded]]) 0 center no-repeat;
-}
-
-.mform fieldset.collapsed legend a.fheader {
-    /*rtl:raw:
-    background-image: url([[pix:t/collapsed_rtl]]);
-    */
-    /*rtl:remove*/
-    background-image: url([[pix:t/collapsed]]);
 }
 
 .jsenabled .mform .collapsed .fcontainer {
@@ -238,6 +223,15 @@ fieldset.coursesearchbox label {
     display: none;
 }
 
+.availability-field {
+    label {
+        display: inline-flex;
+    }
+    .availability-group label {
+        vertical-align: top;
+    }
+}
+
 .availability-eye {
     clear: left;
     float: left;
@@ -247,8 +241,12 @@ fieldset.coursesearchbox label {
     float: left;
     @include border-radius($card-border-radius);
     border: $card-border-width solid $card-border-color;
-    padding: $card-spacer-x / 2;
-    margin-left: $card-spacer-x / 2;
+    padding: 1rem;
+    margin-top: 0.5rem;
+}
+.availability-plugincontrols,
+.availability-childlist .availability-inner {
+    margin-left: .625rem;
 }
 .availability-field .availability-plugincontrols .availability-group select {
     max-width: 12rem;
@@ -425,4 +423,23 @@ textarea[data-auto-rows] {
 // Show editor at 100% width by default.
 [data-fieldtype="editor"] > div {
     flex-grow: 1;
+}
+
+@include media-breakpoint-up(sm) {
+    .mform fieldset {
+        margin-left: $spacer * 1.5;
+    }
+    .mform fieldset.collapsible legend a.fheader {
+        padding: 0 5px 0 ($spacer * 1.5);
+        margin-left: -($spacer * 1.5);
+        background: url([[pix:t/expanded]]) 0 center no-repeat;
+    }
+
+    .mform fieldset.collapsed legend a.fheader {
+        /*rtl:raw:
+        background-image: url([[pix:t/collapsed_rtl]]);
+        */
+        /*rtl:remove*/
+        background-image: url([[pix:t/collapsed]]);
+    }
 }
