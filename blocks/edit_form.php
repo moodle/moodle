@@ -50,6 +50,12 @@ class block_edit_form extends moodleform {
      */
     public $page;
 
+    /**
+     * Defaults set in set_data() that need to be returned in get_data() if form elements were not created
+     * @var array
+     */
+    protected $defaults = [];
+
     function __construct($actionurl, $block, $page) {
         global $CFG;
         $this->block = $block;
@@ -92,9 +98,6 @@ class block_edit_form extends moodleform {
         }
 
         $parentcontext = context::instance_by_id($this->block->instance->parentcontextid);
-        $mform->addElement('hidden', 'bui_parentcontextid', $parentcontext->id);
-        $mform->setType('bui_parentcontextid', PARAM_INT);
-
         $mform->addElement('static', 'bui_homecontext', get_string('createdat', 'block'), $parentcontext->get_context_name());
         $mform->addHelpButton('bui_homecontext', 'createdat', 'block');
 
@@ -109,21 +112,9 @@ class block_edit_form extends moodleform {
         // implies one (and only one) harcoded page-type that will be set later
         // when processing the form data at {@link block_manager::process_url_edit()}
 
-        // There are some conditions to check related to contexts
-        $ctxconditions = $this->page->context->contextlevel == CONTEXT_COURSE &&
-                         $this->page->context->instanceid == get_site()->id;
-        // And also some pagetype conditions
-        $pageconditions = isset($bits[0]) && isset($bits[1]) && $bits[0] == 'site' && $bits[1] == 'index';
-        // So now we can be 100% sure if edition is happening at frontpage
-        $editingatfrontpage = $ctxconditions && $pageconditions;
-
-        // Let the form to know about that, can be useful later
-        $mform->addElement('hidden', 'bui_editingatfrontpage', (int)$editingatfrontpage);
-        $mform->setType('bui_editingatfrontpage', PARAM_INT);
-
         // Front page, show the page-contexts element and set $pagetypelist to 'any page' (*)
         // as unique option. Processign the form will do any change if needed
-        if ($editingatfrontpage) {
+        if ($this->is_editing_the_frontpage()) {
             $contextoptions = array();
             $contextoptions[BUI_CONTEXTS_FRONTPAGE_ONLY] = get_string('showonfrontpageonly', 'block');
             $contextoptions[BUI_CONTEXTS_FRONTPAGE_SUBS] = get_string('showonfrontpageandsubs', 'block');
@@ -135,16 +126,13 @@ class block_edit_form extends moodleform {
         // Any other system context block, hide the page-contexts element,
         // it's always system-wide BUI_CONTEXTS_ENTIRE_SITE
         } else if ($parentcontext->contextlevel == CONTEXT_SYSTEM) {
-            $mform->addElement('hidden', 'bui_contexts', BUI_CONTEXTS_ENTIRE_SITE);
 
         } else if ($parentcontext->contextlevel == CONTEXT_COURSE) {
             // 0 means display on current context only, not child contexts
             // but if course managers select mod-* as pagetype patterns, block system will overwrite this option
             // to 1 (display on current context and child contexts)
-            $mform->addElement('hidden', 'bui_contexts', BUI_CONTEXTS_CURRENT);
         } else if ($parentcontext->contextlevel == CONTEXT_MODULE or $parentcontext->contextlevel == CONTEXT_USER) {
             // module context doesn't have child contexts, so display in current context only
-            $mform->addElement('hidden', 'bui_contexts', BUI_CONTEXTS_CURRENT);
         } else {
             $parentcontextname = $parentcontext->get_context_name();
             $contextoptions[BUI_CONTEXTS_CURRENT]      = get_string('showoncontextonly', 'block', $parentcontextname);
@@ -181,8 +169,6 @@ class block_edit_form extends moodleform {
         } else {
             $values = array_keys($pagetypelist);
             $value = array_pop($values);
-            $mform->addElement('hidden', 'bui_pagetypepattern', $value);
-            $mform->setType('bui_pagetypepattern', PARAM_RAW);
             // Now we are really hiding a lot (both page-contexts and page-type-patterns),
             // specially in some systemcontext pages having only one option (my/user...)
             // so, until it's decided if we are going to add the 'bring-back' pattern to
@@ -191,7 +177,7 @@ class block_edit_form extends moodleform {
             // TODO: Revisit this once MDL-30574 has been decided and implemented, although
             // perhaps it's not bad to always show this statically when only one pattern is
             // available.
-            if (!$editingatfrontpage) {
+            if (!$this->is_editing_the_frontpage()) {
                 // Try to beautify it
                 $strvalue = $value;
                 $strkey = 'page-'.str_replace('*', 'x', $strvalue);
@@ -205,10 +191,7 @@ class block_edit_form extends moodleform {
         }
 
         if ($this->page->subpage) {
-            if ($parentcontext->contextlevel == CONTEXT_USER) {
-                $mform->addElement('hidden', 'bui_subpagepattern', '%@NULL@%');
-                $mform->setType('bui_subpagepattern', PARAM_RAW);
-            } else {
+            if ($parentcontext->contextlevel != CONTEXT_USER) {
                 $subpageoptions = array(
                     '%@NULL@%' => get_string('anypagematchingtheabove', 'block'),
                     $this->page->subpage => get_string('thisspecificpage', 'block', $this->page->subpage),
@@ -252,6 +235,19 @@ class block_edit_form extends moodleform {
         $this->add_action_buttons();
     }
 
+    /**
+     * Returns true if the user is editing a frontpage.
+     * @return bool
+     */
+    public function is_editing_the_frontpage() {
+        // There are some conditions to check related to contexts.
+        $ctxconditions = $this->page->context->contextlevel == CONTEXT_COURSE &&
+            $this->page->context->instanceid == get_site()->id;
+        $issiteindex = (strpos($this->page->pagetype, 'site-index') === 0);
+        // So now we can be 100% sure if edition is happening at frontpage.
+        return ($ctxconditions && $issiteindex);
+    }
+
     function set_data($defaults) {
         // Prefix bui_ on all the core field names.
         $blockfields = array('showinsubcontexts', 'pagetypepattern', 'subpagepattern', 'parentcontextid',
@@ -281,6 +277,13 @@ class block_edit_form extends moodleform {
             $defaults->bui_contexts = $defaults->bui_showinsubcontexts;
         }
 
+        // Some fields may not be editable, remember the values here so we can return them in get_data().
+        $this->defaults = [
+            'bui_parentcontextid' => $defaults->bui_parentcontextid,
+            'bui_contexts' => $defaults->bui_contexts,
+            'bui_pagetypepattern' => $defaults->bui_pagetypepattern,
+            'bui_subpagepattern' => $defaults->bui_subpagepattern,
+        ];
         parent::set_data($defaults);
     }
 
@@ -290,5 +293,21 @@ class block_edit_form extends moodleform {
      */
     protected function specific_definition($mform) {
         // By default, do nothing.
+    }
+
+    /**
+     * Return submitted data if properly submitted or returns NULL if validation fails or
+     * if there is no submitted data.
+     *
+     * @return object submitted data; NULL if not valid or not submitted or cancelled
+     */
+    public function get_data() {
+        if ($data = parent::get_data()) {
+            // Blocklib expects 'bui_editingatfrontpage' property to be returned from this form.
+            $data->bui_editingatfrontpage = $this->is_editing_the_frontpage();
+            // Some fields are non-editable and we need to populate them with the values from set_data().
+            return (object)((array)$data + $this->defaults);
+        }
+        return $data;
     }
 }
