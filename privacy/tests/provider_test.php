@@ -46,7 +46,10 @@ class provider_testcase extends advanced_testcase {
      * @return array the array of frankenstyle component names with the relevant class name.
      */
     public function get_component_list() {
-        $components = [];
+        $components = ['core' => [
+            'component' => 'core',
+            'classname' => manager::get_provider_classname_for_component('core')
+        ]];
         // Get all plugins.
         $plugintypes = \core_component::get_plugin_types();
         foreach ($plugintypes as $plugintype => $typedir) {
@@ -204,4 +207,72 @@ class provider_testcase extends advanced_testcase {
         return false;
     }
 
+    /**
+     * Finds user fields in a table
+     *
+     * Returns fields that have foreign key to user table and fields that are named 'userid'.
+     *
+     * @param xmldb_table $table
+     * @return array
+     */
+    protected function get_userid_fields(xmldb_table $table) {
+        $userfields = [];
+
+        // Find all fields that have a foreign key to 'id' field in 'user' table.
+        $keys = $table->getKeys();
+        foreach ($keys as $key) {
+            $reffields = $key->getRefFields();
+            $fields = $key->getFields();
+            if ($key->getRefTable() === 'user' && count($reffields) == 1 && $reffields[0] == 'id' && count($fields) == 1) {
+                $userfields[$fields[0]] = $fields[0];
+            }
+        }
+        // Find fields with the name 'userid' even if they don't have a foreign key.
+        $fields = $table->getFields();
+        foreach ($fields as $field) {
+            if ($field->getName() == 'userid') {
+                $userfields['userid'] = 'userid';
+            }
+        }
+
+        return $userfields;
+    }
+
+    /**
+     * Test that all tables with user fields are covered by metadata providers
+     */
+    public function test_table_coverage() {
+        global $DB;
+        $dbman = $DB->get_manager();
+        $schema = $dbman->get_install_xml_schema();
+        $tables = [];
+        foreach ($schema->getTables() as $table) {
+            if ($table->getName() === 'role_sortorder') {
+                // TODO MDL-62459 this table is not used anywhere. Remove the table and this statement.
+                continue;
+            }
+            if ($fields = $this->get_userid_fields($table)) {
+                $tables[$table->getName()] = '  - ' . $table->getName() . ' (' . join(', ', $fields) . ')';
+            }
+        }
+
+        $componentlist = $this->metadata_provider_provider();
+        foreach ($componentlist as $componentarray) {
+            $component = $componentarray['component'];
+            $classname = $componentarray['classname'];
+            $collection = new collection($component);
+            $metadata = $classname::get_metadata($collection);
+            foreach ($metadata->get_collection() as $item) {
+                if ($item instanceof database_table) {
+                    unset($tables[$item->get_name()]);
+                }
+            }
+        }
+
+        if ($tables) {
+            $this->fail("The following tables with user fields must be covered with metadata providers: \n".
+                join("\n", $tables));
+        }
+
+    }
 }
