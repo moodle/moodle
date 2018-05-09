@@ -337,11 +337,11 @@ class mod_wiki_privacy_testcase extends provider_testcase {
 
         // This user was the last one to modify this page, so the page info is returned.
         $data12 = $data[$this->pagepaths[1][2]];
-        $this->assertEquals('update3 <img src="files/Hamster.jpg" alt="Hamster.jpg" />', $data12['page']['cachedcontent']);
+        $this->assertEquals('update3 <img src="files/Hamster.jpg" alt="Hamster.jpg" />', trim($data12['page']['cachedcontent']));
         // He made one revision.
         $this->assertEquals(1, count($data12['revisions']));
         $lastrevision = reset($data12['revisions']);
-        $this->assertEquals('update3 <img src="files/Hamster.jpg">', $lastrevision['content']);
+        $this->assertEquals('update3 <img src="files/Hamster.jpg">', trim($lastrevision['content']));
 
         // Only one file was used in the first wiki by this user - Hamster.jpg.
         $files = writer::with_context($this->contexts[1])->get_files([$this->subwikis[1]]);
