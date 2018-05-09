@@ -37,4 +37,5 @@ $string['pluginname'] = 'Flickr';
 $string['relevance'] = 'Relevance';
 $string['sortby'] = 'Sort by';
 $string['tag_flickr:addinstance'] = 'Add a new flickr block';
-$string['privacy:metadata'] = 'The Flickr block only shows data stored in other locations.';
+$string['privacy:metadata:block_tag_flickr'] = 'The Flickr block plugin does not store any personal data, but does transmit user data from Moodle to the remote system.';
+$string['privacy:metadata:block_tag_flickr:tags'] = 'The tag values sent as CSV format to search for Flickr images.';
