@@ -30,6 +30,10 @@
     .form-group {
         margin-right: 0.25rem;
     }
+    br + label {
+        justify-content: flex-start;
+        width: 100%;
+    }
 }
 
 #jump-to-activity.custom-select {
