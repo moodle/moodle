@@ -72,7 +72,7 @@ class provider implements
             // coursemoduleid, courseid, moduleid, groupid, rating, usermodified.
         ], 'privacy:metadata:post');
 
-        $collection->link_subsystem('core_comments', 'privacy:metadata:core_comments');
+        $collection->link_subsystem('core_comment', 'privacy:metadata:core_comments');
         $collection->link_subsystem('core_files', 'privacy:metadata:core_files');
         $collection->link_subsystem('core_tag', 'privacy:metadata:core_tag');
 
