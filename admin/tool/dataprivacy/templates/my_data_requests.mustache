@@ -75,6 +75,10 @@
     }
 }}
 
+{{#httpsite}}
+    {{> core/notification_warning}}
+{{/httpsite}}
+
 <div data-region="datarequests">
     <div class="m-t-1 m-b-1">
         <a href="{{newdatarequesturl}}" class="btn btn-primary" data-action="new-request">
