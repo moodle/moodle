@@ -43,4 +43,4 @@ $string['status_help'] = 'This setting determines whether a user can access the 
 $string['status_link'] = 'enrol/guest';
 $string['usepasswordpolicy'] = 'Use password policy';
 $string['usepasswordpolicy_desc'] = 'Use standard password policy for guest access passwords.';
-$string['privacy:metadata'] = 'The Guest access enrolments plugin does not store any personal data.';
+$string['privacy:metadata'] = 'The Guest access enrolment plugin does not store any personal data.';
