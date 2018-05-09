@@ -77,6 +77,42 @@ class mod_wiki_generator extends testing_module_generator {
     }
 
     /**
+     * Retrieves or generates a subwiki and returns its id
+     *
+     * @param stdClass $wiki
+     * @param int $subwikiid
+     * @param int $group
+     * @param int $userid
+     * @return int
+     */
+    public function get_subwiki($wiki, $subwikiid = null, $group = null, $userid = null) {
+        global $USER, $DB;
+
+        if ($subwikiid) {
+            $params = ['id' => $subwikiid, 'wikiid' => $wiki->id];
+            if ($group !== null) {
+                $params['group'] = $group;
+            }
+            if ($userid !== null) {
+                $params['userid'] = $userid;
+            }
+            return $DB->get_field('wiki_subwikis', 'id', $params, MUST_EXIST);
+        }
+
+        if ($userid === null) {
+            $userid = ($wiki->wikimode == 'individual') ? $USER->id : 0;
+        }
+        if ($group === null) {
+            $group = 0;
+        }
+        if ($subwiki = wiki_get_subwiki_by_group($wiki->id, $group, $userid)) {
+            return $subwiki->id;
+        } else {
+            return wiki_add_subwiki($wiki->id, $group, $userid);
+        }
+    }
+
+    /**
      * Generates a page in wiki.
      *
      * @param stdClass wiki object returned from create_instance (if known)
@@ -92,23 +128,15 @@ class mod_wiki_generator extends testing_module_generator {
             'title' => 'wiki page '.$this->pagecount,
             'wikiid' => $wiki->id,
             'subwikiid' => 0,
-            'group' => 0,
+            'group' => null,
+            'userid' => null,
             'content' => 'Wiki page content '.$this->pagecount,
             'format' => $wiki->defaultformat
         );
         if (empty($record['wikiid']) && empty($record['subwikiid'])) {
             throw new coding_exception('wiki page generator requires either wikiid or subwikiid');
         }
-        if (!$record['subwikiid']) {
-            if (!isset($record['userid'])) {
-                $record['userid'] = ($wiki->wikimode == 'individual') ? $USER->id : 0;
-            }
-            if ($subwiki = wiki_get_subwiki_by_group($record['wikiid'], $record['group'], $record['userid'])) {
-                $record['subwikiid'] = $subwiki->id;
-            } else {
-                $record['subwikiid'] = wiki_add_subwiki($record['wikiid'], $record['group'], $record['userid']);
-            }
-        }
+        $record['subwikiid'] = $this->get_subwiki($wiki, $record['subwikiid'], $record['group'], $record['userid']);
 
         $wikipage = wiki_get_page_by_title($record['subwikiid'], $record['title']);
         if (!$wikipage) {
