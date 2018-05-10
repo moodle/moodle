@@ -1,6 +1,13 @@
 This files describes API changes in /mod/* - activity modules,
 information provided here is intended especially for developers.
 
+=== 3.3.6 ===
+
+* There is a new privacy API that every subsystem and plugin has to implement so that the site can become GDPR
+  compliant. Activity modules use this API to report what information they store or process regarding users, and provide
+  ability to export and delete personal data. See https://docs.moodle.org/dev/Privacy_API for guidelines on how to
+  implement the privacy API in your activity module.
+
 === 3.3 ===
 
 * External functions that were returning file information now return the following additional file fields:
