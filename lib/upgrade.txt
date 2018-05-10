@@ -2,6 +2,11 @@ This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
 === 3.4.3 ===
+
+* There is a new privacy API that every subsystem and plugin has to implement so that the site can become GDPR
+  compliant. Plugins use this API to report what information they store or process regarding users, and provide ability
+  to export and delete personal data. See https://docs.moodle.org/dev/Privacy_API for guidelines on how to implement the
+  privacy API in your plugin.
 * The following have been removed from the list of core subsystems:
    - core_register
    - core_publish
