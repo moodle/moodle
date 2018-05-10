@@ -228,27 +228,18 @@ if ($hassiteconfig) {
     $setting->set_force_ltr(true);
     $temp->add($setting);
 
+    // See {@link https://gdpr-info.eu/art-8-gdpr/}.
+    $ageofdigitalconsentmap = implode(PHP_EOL, [
+        '*, 16',
+        'AT, 14',
+        'ES, 14',
+        'SI, 14',
+        'US, 13'
+    ]);
     $setting = new admin_setting_agedigitalconsentmap('agedigitalconsentmap',
         new lang_string('ageofdigitalconsentmap', 'admin'),
         new lang_string('ageofdigitalconsentmap_desc', 'admin'),
-        // See {@link https://gdpr-info.eu/art-8-gdpr/}.
-        implode(PHP_EOL, [
-            '*, 16',
-            'AT, 14',
-            'CZ, 13',
-            'DE, 14',
-            'DK, 13',
-            'ES, 13',
-            'FI, 15',
-            'GB, 13',
-            'HU, 14',
-            'IE, 13',
-            'LT, 16',
-            'LU, 16',
-            'NL, 16',
-            'PL, 13',
-            'SE, 13',
-        ]),
+        $ageofdigitalconsentmap,
         PARAM_RAW
     );
     $temp->add($setting);
