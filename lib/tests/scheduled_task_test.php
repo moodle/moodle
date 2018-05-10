@@ -415,9 +415,10 @@ class core_scheduled_task_testcase extends advanced_testcase {
      */
     public function test_file_temp_cleanup_task() {
         global $CFG;
+        $backuptempdir = make_backup_temp_directory('');
 
         // Create directories.
-        $dir = $CFG->tempdir . DIRECTORY_SEPARATOR . 'backup' . DIRECTORY_SEPARATOR . 'backup01' . DIRECTORY_SEPARATOR . 'courses';
+        $dir = $backuptempdir . DIRECTORY_SEPARATOR . 'backup01' . DIRECTORY_SEPARATOR . 'courses';
         mkdir($dir, 0777, true);
 
         // Create files to be checked and then deleted.
@@ -440,11 +441,11 @@ class core_scheduled_task_testcase extends advanced_testcase {
         // Change the time modified on modules.xml.
         touch($file02, time() - (8 * 24 * 3600));
         // Change the time modified on the courses directory.
-        touch($CFG->tempdir . DIRECTORY_SEPARATOR . 'backup' . DIRECTORY_SEPARATOR . 'backup01' . DIRECTORY_SEPARATOR .
+        touch($backuptempdir . DIRECTORY_SEPARATOR . 'backup01' . DIRECTORY_SEPARATOR .
                 'courses', time() - (8 * 24 * 3600));
         // Run the scheduled task to remove the file and directory.
         $task->execute();
-        $filesarray = scandir($CFG->tempdir . DIRECTORY_SEPARATOR . 'backup' . DIRECTORY_SEPARATOR . 'backup01');
+        $filesarray = scandir($backuptempdir . DIRECTORY_SEPARATOR . 'backup01');
         // There should only be two items in the array, '.' and '..'.
         $this->assertEquals(2, count($filesarray));
 
@@ -464,7 +465,41 @@ class core_scheduled_task_testcase extends advanced_testcase {
         $task->execute();
         $filesarray = scandir($CFG->tempdir);
         // All of the files and directories should be deleted.
-        // There should only be two items in the array, '.' and '..'.
-        $this->assertEquals(2, count($filesarray));
+        // There should only be three items in the array, '.', '..' and '.htaccess'.
+        $this->assertEquals([ '.', '..', '.htaccess' ], $filesarray);
+    }
+
+    /**
+     * Test that the function to clear the fail delay from a task works correctly.
+     */
+    public function test_clear_fail_delay() {
+
+        $this->resetAfterTest();
+
+        // Get an example task to use for testing. Task is set to run every minute by default.
+        $taskname = '\core\task\send_new_user_passwords_task';
+
+        // Pretend task started running and then failed 3 times.
+        $before = time();
+        $cronlockfactory = \core\lock\lock_config::get_lock_factory('cron');
+        for ($i = 0; $i < 3; $i ++) {
+            $task = \core\task\manager::get_scheduled_task($taskname);
+            $lock = $cronlockfactory->get_lock('\\' . get_class($task), 10);
+            $task->set_lock($lock);
+            \core\task\manager::scheduled_task_failed($task);
+        }
+
+        // Confirm task is now delayed by several minutes.
+        $task = \core\task\manager::get_scheduled_task($taskname);
+        $this->assertEquals(240, $task->get_fail_delay());
+        $this->assertGreaterThan($before + 230, $task->get_next_run_time());
+
+        // Clear the fail delay and re-get the task.
+        \core\task\manager::clear_fail_delay($task);
+        $task = \core\task\manager::get_scheduled_task($taskname);
+
+        // There should be no delay and it should run within the next minute.
+        $this->assertEquals(0, $task->get_fail_delay());
+        $this->assertLessThan($before + 70, $task->get_next_run_time());
     }
 }

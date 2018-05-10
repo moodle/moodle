@@ -2234,7 +2234,7 @@ class backup_questions_structure_step extends backup_structure_step {
 
         $tags = new backup_nested_element('tags');
 
-        $tag = new backup_nested_element('tag', array('id'), array('name', 'rawname'));
+        $tag = new backup_nested_element('tag', array('id', 'contextid'), array('name', 'rawname'));
 
         // Build the tree
 
@@ -2266,7 +2266,7 @@ class backup_questions_structure_step extends backup_structure_step {
                 ORDER BY id',
                 array('questionid' => backup::VAR_PARENTID));
 
-        $tag->set_source_sql("SELECT t.id, t.name, t.rawname
+        $tag->set_source_sql("SELECT t.id, ti.contextid, t.name, t.rawname
                               FROM {tag} t
                               JOIN {tag_instance} ti ON ti.tagid = t.id
                               WHERE ti.itemid = ?

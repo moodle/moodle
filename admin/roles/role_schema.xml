@@ -11,6 +11,7 @@
                 <xs:element ref="allowassign" minOccurs="0"/>
                 <xs:element ref="allowoverride" minOccurs="0"/>
                 <xs:element ref="allowswitch" minOccurs="0"/>
+                <xs:element ref="allowview" minOccurs="0"/>
                 <xs:element ref="permissions" minOccurs="0"/>
             </xs:sequence>
         </xs:complexType>
@@ -39,6 +40,13 @@
         </xs:complexType>
     </xs:element>
     <xs:element name="allowswitch">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" minOccurs="0" ref="shortname"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="allowview">
         <xs:complexType>
             <xs:sequence>
                 <xs:element maxOccurs="unbounded" minOccurs="0" ref="shortname"/>

@@ -209,9 +209,11 @@ class qtype_calculatedsimple_test_helper extends question_test_helper {
     }
 
     public function get_calculatedsimple_question_data_sumwithvariants() {
+        global $USER;
         $q = new stdClass();
 
         $q->name = 'Calculated simple';
+        $q->createdby = $USER->id;
         $q->questiontext = '<p>This is a simple sum of two variables.</p>';
         $q->questiontextformat = '1';
         $q->generalfeedback = '<p>The answer is  {a} + {b}</p>';

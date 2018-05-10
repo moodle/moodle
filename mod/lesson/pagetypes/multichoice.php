@@ -169,13 +169,12 @@ class lesson_page_type_multichoice extends lesson_page {
             foreach ($answers as $answer) {
                 foreach ($studentanswers as $answerid) {
                     if ($answerid == $answer->id) {
-                        $result->studentanswer .= '<br />'.format_text($answer->answer, $answer->answerformat, $formattextdefoptions);
-                        if (trim(strip_tags($answer->response))) {
-                            $responses[$answerid] = format_text($answer->response, $answer->responseformat, $formattextdefoptions);
-                        }
+                        $studentanswerarray[] = format_text($answer->answer, $answer->answerformat, $formattextdefoptions);
+                        $responses[$answerid] = format_text($answer->response, $answer->responseformat, $formattextdefoptions);
                     }
                 }
             }
+            $result->studentanswer = implode(self::MULTIANSWER_DELIMITER, $studentanswerarray);
             $correctpageid = null;
             $wrongpageid = null;
 
@@ -223,11 +222,11 @@ class lesson_page_type_multichoice extends lesson_page {
 
             if ((count($studentanswers) == $ncorrect) and ($nhits == $ncorrect)) {
                 $result->correctanswer = true;
-                $result->response  = implode('<br />', $responses);
+                $result->response  = implode(self::MULTIANSWER_DELIMITER, $responses);
                 $result->newpageid = $correctpageid;
                 $result->answerid  = $correctanswerid;
             } else {
-                $result->response  = implode('<br />', $responses);
+                $result->response  = implode(self::MULTIANSWER_DELIMITER, $responses);
                 $result->newpageid = $wrongpageid;
                 $result->answerid  = $wronganswerid;
             }
@@ -278,30 +277,30 @@ class lesson_page_type_multichoice extends lesson_page {
             $cells = array();
             if ($this->lesson->custom && $answer->score > 0) {
                 // if the score is > 0, then it is correct
-                $cells[] = '<span class="labelcorrect">'.get_string("answer", "lesson")." $i</span>: \n";
+                $cells[] = '<label class="correct">' . get_string('answer', 'lesson') . " {$i}</label>: \n";
             } else if ($this->lesson->custom) {
-                $cells[] = '<span class="label">'.get_string("answer", "lesson")." $i</span>: \n";
+                $cells[] = '<label>' . get_string('answer', 'lesson') . " {$i}</label>: \n";
             } else if ($this->lesson->jumpto_is_correct($this->properties->id, $answer->jumpto)) {
                 // underline correct answers
-                $cells[] = '<span class="correct">'.get_string("answer", "lesson")." $i</span>: \n";
+                $cells[] = '<span class="correct">' . get_string('answer', 'lesson') . " {$i}</span>: \n";
             } else {
-                $cells[] = '<span class="labelcorrect">'.get_string("answer", "lesson")." $i</span>: \n";
+                $cells[] = '<label class="correct">' . get_string('answer', 'lesson') . " {$i}</label>: \n";
             }
             $cells[] = format_text($answer->answer, $answer->answerformat, $options);
             $table->data[] = new html_table_row($cells);
 
             $cells = array();
-            $cells[] = "<span class=\"label\">".get_string("response", "lesson")." $i</span>";
+            $cells[] = '<label>' . get_string('response', 'lesson') . " {$i} </label>:\n";
             $cells[] = format_text($answer->response, $answer->responseformat, $options);
             $table->data[] = new html_table_row($cells);
 
             $cells = array();
-            $cells[] = "<span class=\"label\">".get_string("score", "lesson").'</span>';
+            $cells[] = '<label>' . get_string('score', 'lesson') . '</label>:';
             $cells[] = $answer->score;
             $table->data[] = new html_table_row($cells);
 
             $cells = array();
-            $cells[] = "<span class=\"label\">".get_string("jump", "lesson").'</span>';
+            $cells[] = '<label>' . get_string('jump', 'lesson') . '</label>:';
             $cells[] = $this->get_jump_name($answer->jumpto);
             $table->data[] = new html_table_row($cells);
             if ($i === 1){

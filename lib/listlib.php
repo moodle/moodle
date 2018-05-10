@@ -298,6 +298,17 @@ abstract class moodle_list {
     }
 
     /**
+     * Returns the value to be used as the parent for the $item when it goes to the top level.
+     * Override if needed.
+     *
+     * @param list_item $item The item which its top level parent is going to be returned.
+     * @return int
+     */
+    public function get_top_level_parent_id($item) {
+        return 0; // Top level items have no parent.
+    }
+
+    /**
      * Move a record up or down
      *
      * @param string $direction up / down
@@ -338,8 +349,10 @@ abstract class moodle_list {
     }
 
     /**
-     * @param integer $id an item index.
-     * @return object the item that used to be the parent of the item moved.
+     * Moves the item one step up in the tree.
+     *
+     * @param int $id an item index.
+     * @return list_item the item that used to be the parent of the item moved.
      */
     public function move_item_left($id) {
         global $DB;
@@ -352,7 +365,7 @@ abstract class moodle_list {
             if (isset($item->parentlist->parentitem->parentlist->parentitem)) {
                 $newparent = $item->parentlist->parentitem->parentlist->parentitem->id;
             } else {
-                $newparent = 0; // top level item
+                $newparent = $this->get_top_level_parent_id($item);
             }
             $DB->set_field($this->table, "parent", $newparent, array("id"=>$item->id));
             $oldparentkey = array_search($item->parentlist->parentitem->id, $newpeers);

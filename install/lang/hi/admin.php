@@ -35,4 +35,8 @@ $string['cliansweryes'] = 'वाई';
 $string['cliincorrectvalueerror'] = 'त्रुटि, "{$a->option}" के लिए गलत मान  जो की  "{$a->value}" है';
 $string['cliincorrectvalueretry'] = 'ग़लत मान, कृपया पुनः प्रयास करें';
 $string['clitypevalue'] = 'टाइप मूल्य';
+$string['clitypevaluedefault'] = 'वैल्यू टाइप करें, डिफ़ॉल्ट वैल्यू ({$ a}) का उपयोग करने के लिए Enter दबाएं';
+$string['cliunknowoption'] = 'अपरिचित विकल्प:
+   {$a}
+कृपया --help विकल्प का उपयोग करें।';
 $string['cliyesnoprompt'] = 'टाइप Y (का मतलब है हाँ) या N (का मतलब है नहीं )';

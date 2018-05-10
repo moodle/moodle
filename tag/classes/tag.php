@@ -209,7 +209,7 @@ class core_tag_tag {
     }
 
     /**
-     * Simple function to just return a single tag object by its id
+     * Simple function to just return an array of tag objects by their ids
      *
      * @param    int[]  $ids
      * @param    string $returnfields which fields do we want returned from table {tag}.
@@ -500,6 +500,64 @@ class core_tag_tag {
     }
 
     /**
+     * Bulk delete all tag instances.
+     *
+     * @param stdClass[] $taginstances A list of tag_instance records to delete. Each
+     *                                 record must also contain the name and rawname
+     *                                 columns from the related tag record.
+     */
+    public static function delete_instances_as_record(array $taginstances) {
+        global $DB;
+
+        if (empty($taginstances)) {
+            return;
+        }
+
+        $taginstanceids = array_map(function($taginstance) {
+            return $taginstance->id;
+        }, $taginstances);
+        // Now remove all the tag instances.
+        $DB->delete_records_list('tag_instance', 'id', $taginstanceids);
+        // Save the system context in case the 'contextid' column in the 'tag_instance' table is null.
+        $syscontextid = context_system::instance()->id;
+        // Loop through the tag instances and fire an 'tag_removed' event.
+        foreach ($taginstances as $taginstance) {
+            // We can not fire an event with 'null' as the contextid.
+            if (is_null($taginstance->contextid)) {
+                $taginstance->contextid = $syscontextid;
+            }
+
+            // Trigger tag removed event.
+            \core\event\tag_removed::create_from_tag_instance($taginstance, $taginstance->name,
+                    $taginstance->rawname, true)->trigger();
+        }
+    }
+
+    /**
+     * Bulk delete all tag instances by tag id.
+     *
+     * @param int[] $taginstanceids List of tag instance ids to be deleted.
+     */
+    public static function delete_instances_by_id(array $taginstanceids) {
+        global $DB;
+
+        if (empty($taginstanceids)) {
+            return;
+        }
+
+        list($idsql, $params) = $DB->get_in_or_equal($taginstanceids);
+        $sql = "SELECT ti.*, t.name, t.rawname, t.isstandard
+                  FROM {tag_instance} ti
+                  JOIN {tag} t
+                    ON ti.tagid = t.id
+                 WHERE ti.id {$idsql}";
+
+        if ($taginstances = $DB->get_records_sql($sql, $params)) {
+            static::delete_instances_as_record($taginstances);
+        }
+    }
+
+    /**
      * Bulk delete all tag instances for a component or tag area
      *
      * @param string $component
@@ -523,22 +581,9 @@ class core_tag_tag {
             $sql .= " AND ti.itemtype = :itemtype";
             $params['itemtype'] = $itemtype;
         }
-        if ($taginstances = $DB->get_records_sql($sql, $params)) {
-            // Now remove all the tag instances.
-            $DB->delete_records('tag_instance', $params);
-            // Save the system context in case the 'contextid' column in the 'tag_instance' table is null.
-            $syscontextid = context_system::instance()->id;
-            // Loop through the tag instances and fire an 'tag_removed' event.
-            foreach ($taginstances as $taginstance) {
-                // We can not fire an event with 'null' as the contextid.
-                if (is_null($taginstance->contextid)) {
-                    $taginstance->contextid = $syscontextid;
-                }
 
-                // Trigger tag removed event.
-                \core\event\tag_removed::create_from_tag_instance($taginstance, $taginstance->name,
-                        $taginstance->rawname, true)->trigger();
-            }
+        if ($taginstances = $DB->get_records_sql($sql, $params)) {
+            static::delete_instances_as_record($taginstances);
         }
     }
 
@@ -557,7 +602,7 @@ class core_tag_tag {
         global $DB;
         $this->ensure_fields_exist(array('name', 'rawname'), 'add_instance');
 
-        $taginstance = new StdClass;
+        $taginstance = new stdClass;
         $taginstance->tagid        = $this->id;
         $taginstance->component    = $component ? $component : '';
         $taginstance->itemid       = $itemid;
@@ -593,6 +638,62 @@ class core_tag_tag {
     }
 
     /**
+     * Get the array of core_tag_tag objects associated with a list of items.
+     *
+     * Use {@link core_tag_tag::get_item_tags_array()} if you wish to get the same data as simple array.
+     *
+     * @param string $component component responsible for tagging. For BC it can be empty but in this case the
+     *               query will be slow because DB index will not be used.
+     * @param string $itemtype type of the tagged item
+     * @param int[] $itemids
+     * @param int $standardonly wether to return only standard tags or any
+     * @param int $tiuserid tag instance user id, only needed for tag areas with user tagging
+     * @return core_tag_tag[] each object contains additional fields taginstanceid, taginstancecontextid and ordering
+     */
+    public static function get_items_tags($component, $itemtype, $itemids, $standardonly = self::BOTH_STANDARD_AND_NOT,
+            $tiuserid = 0) {
+        global $DB;
+
+        if (static::is_enabled($component, $itemtype) === false) {
+            // Tagging area is properly defined but not enabled - return empty array.
+            return array();
+        }
+
+        if (empty($itemids)) {
+            return array();
+        }
+
+        $standardonly = (int)$standardonly; // In case somebody passed bool.
+
+        list($idsql, $params) = $DB->get_in_or_equal($itemids, SQL_PARAMS_NAMED);
+        // Note: if the fields in this query are changed, you need to do the same changes in core_tag_tag::get_correlated_tags().
+        $sql = "SELECT ti.id AS taginstanceid, tg.id, tg.isstandard, tg.name, tg.rawname, tg.flag,
+                    tg.tagcollid, ti.ordering, ti.contextid AS taginstancecontextid, ti.itemid
+                  FROM {tag_instance} ti
+                  JOIN {tag} tg ON tg.id = ti.tagid
+                  WHERE ti.itemtype = :itemtype AND ti.itemid $idsql ".
+                ($component ? "AND ti.component = :component " : "").
+                ($tiuserid ? "AND ti.tiuserid = :tiuserid " : "").
+                (($standardonly == self::STANDARD_ONLY) ? "AND tg.isstandard = 1 " : "").
+                (($standardonly == self::NOT_STANDARD_ONLY) ? "AND tg.isstandard = 0 " : "").
+               "ORDER BY ti.ordering ASC, ti.id";
+
+        $params['itemtype'] = $itemtype;
+        $params['component'] = $component;
+        $params['tiuserid'] = $tiuserid;
+
+        $records = $DB->get_records_sql($sql, $params);
+        $result = array();
+        foreach ($itemids as $itemid) {
+            $result[$itemid] = [];
+        }
+        foreach ($records as $id => $record) {
+            $result[$record->itemid][$id] = new static($record);
+        }
+        return $result;
+    }
+
+    /**
      * Get the array of core_tag_tag objects associated with an item (instances).
      *
      * Use {@link core_tag_tag::get_item_tags_array()} if you wish to get the same data as simple array.
@@ -607,39 +708,8 @@ class core_tag_tag {
      */
     public static function get_item_tags($component, $itemtype, $itemid, $standardonly = self::BOTH_STANDARD_AND_NOT,
             $tiuserid = 0) {
-        global $DB;
-
-        if (static::is_enabled($component, $itemtype) === false) {
-            // Tagging area is properly defined but not enabled - return empty array.
-            return array();
-        }
-
-        $standardonly = (int)$standardonly; // In case somebody passed bool.
-
-        // Note: if the fields in this query are changed, you need to do the same changes in core_tag_tag::get_correlated_tags().
-        $sql = "SELECT ti.id AS taginstanceid, tg.id, tg.isstandard, tg.name, tg.rawname, tg.flag,
-                    tg.tagcollid, ti.ordering, ti.contextid AS taginstancecontextid
-                  FROM {tag_instance} ti
-                  JOIN {tag} tg ON tg.id = ti.tagid
-                  WHERE ti.itemtype = :itemtype AND ti.itemid = :itemid ".
-                ($component ? "AND ti.component = :component " : "").
-                ($tiuserid ? "AND ti.tiuserid = :tiuserid " : "").
-                (($standardonly == self::STANDARD_ONLY) ? "AND tg.isstandard = 1 " : "").
-                (($standardonly == self::NOT_STANDARD_ONLY) ? "AND tg.isstandard = 0 " : "").
-               "ORDER BY ti.ordering ASC, ti.id";
-
-        $params = array();
-        $params['itemtype'] = $itemtype;
-        $params['itemid'] = $itemid;
-        $params['component'] = $component;
-        $params['tiuserid'] = $tiuserid;
-
-        $records = $DB->get_records_sql($sql, $params);
-        $result = array();
-        foreach ($records as $id => $record) {
-            $result[$id] = new static($record);
-        }
-        return $result;
+        $tagobjects = static::get_items_tags($component, $itemtype, [$itemid], $standardonly, $tiuserid);
+        return empty($tagobjects) ? [] : $tagobjects[$itemid];
     }
 
     /**
@@ -703,12 +773,35 @@ class core_tag_tag {
             $tagobjects = array();
         }
 
+        $allowmultiplecontexts = core_tag_area::allows_tagging_in_multiple_contexts($component, $itemtype);
         $currenttags = static::get_item_tags($component, $itemtype, $itemid, self::BOTH_STANDARD_AND_NOT, $tiuserid);
+        $taginstanceidstomovecontext = [];
 
         // For data coherence reasons, it's better to remove deleted tags
         // before adding new data: ordering could be duplicated.
         foreach ($currenttags as $currenttag) {
-            if (!array_key_exists($currenttag->name, $tagobjects)) {
+            $hasbeenrequested = array_key_exists($currenttag->name, $tagobjects);
+            $issamecontext = $currenttag->taginstancecontextid == $context->id;
+
+            if ($allowmultiplecontexts) {
+                // If the tag area allows multiple contexts then we should only be
+                // managing tags in the given $context. All other tags can be ignored.
+                $shoulddelete = $issamecontext && !$hasbeenrequested;
+            } else {
+                // If the tag area only allows tag instances in a single context then
+                // all tags that aren't in the requested tags should be deleted, regardless
+                // of their context, if they are not part of the new set of tags.
+                $shoulddelete = !$hasbeenrequested;
+                // If the tag instance isn't in the correct context (legacy data)
+                // then we should take this opportunity to update it with the correct
+                // context id.
+                if (!$shoulddelete && !$issamecontext) {
+                    $currenttag->taginstancecontextid = $context->id;
+                    $taginstanceidstomovecontext[] = $currenttag->taginstanceid;
+                }
+            }
+
+            if ($shoulddelete) {
                 $taginstance = (object)array('id' => $currenttag->taginstanceid,
                     'itemtype' => $itemtype, 'itemid' => $itemid,
                     'contextid' => $currenttag->taginstancecontextid, 'tiuserid' => $tiuserid);
@@ -716,11 +809,30 @@ class core_tag_tag {
             }
         }
 
+        if (!empty($taginstanceidstomovecontext)) {
+            static::change_instances_context($taginstanceidstomovecontext, $context);
+        }
+
         $ordering = -1;
         foreach ($tagobjects as $name => $tag) {
             $ordering++;
             foreach ($currenttags as $currenttag) {
-                if (strval($currenttag->name) === strval($name)) {
+                $namesmatch = strval($currenttag->name) === strval($name);
+
+                if ($allowmultiplecontexts) {
+                    // If the tag area allows multiple contexts then we should only
+                    // skip adding a new instance if the existing one is in the correct
+                    // context.
+                    $contextsmatch = $currenttag->taginstancecontextid == $context->id;
+                    $shouldskipinstance = $namesmatch && $contextsmatch;
+                } else {
+                    // The existing behaviour for single context tag areas is to
+                    // skip adding a new instance regardless of whether the existing
+                    // instance is in the same context as the provided $context.
+                    $shouldskipinstance = $namesmatch;
+                }
+
+                if ($shouldskipinstance) {
                     if ($currenttag->ordering != $ordering) {
                         $currenttag->update_instance_ordering($currenttag->taginstanceid, $ordering);
                     }
@@ -888,8 +1000,26 @@ class core_tag_tag {
         if ($newcontext instanceof context) {
             $newcontext = $newcontext->id;
         }
+
         $DB->set_field_select('tag_instance', 'contextid', $newcontext,
             'component = :component AND itemtype = :itemtype AND itemid ' . $sql, $params);
+    }
+
+    /**
+     * Moves all of the specified tag instances into a new context.
+     *
+     * @param array $taginstanceids The list of tag instance ids that should be moved
+     * @param context $newcontext The context to move the tag instances into
+     */
+    public static function change_instances_context(array $taginstanceids, context $newcontext) {
+        global $DB;
+
+        if (empty($taginstanceids)) {
+            return;
+        }
+
+        list($sql, $params) = $DB->get_in_or_equal($taginstanceids);
+        $DB->set_field_select('tag_instance', 'contextid', $newcontext->id, "id {$sql}", $params);
     }
 
     /**
@@ -1113,7 +1243,7 @@ class core_tag_tag {
 
         // This is (and has to) return the same fields as the query in core_tag_tag::get_item_tags().
         $sql = "SELECT ti.id AS taginstanceid, tg.id, tg.isstandard, tg.name, tg.rawname, tg.flag,
-                tg.tagcollid, ti.ordering, ti.contextid AS taginstancecontextid
+                tg.tagcollid, ti.ordering, ti.contextid AS taginstancecontextid, ti.itemid
               FROM {tag} tg
         INNER JOIN {tag_instance} ti ON tg.id = ti.tagid
              WHERE tg.id $query AND tg.id <> ? AND tg.tagcollid = ?
@@ -1603,5 +1733,40 @@ class core_tag_tag {
 
         // Finally delete all tags that we combined into the current one.
         self::delete_tags($ids);
+    }
+
+    /**
+     * Retrieve a list of tags that have been used to tag the given $component
+     * and $itemtype in the provided $contexts.
+     *
+     * @param string $component The tag instance component
+     * @param string $itemtype The tag instance item type
+     * @param context[] $contexts The list of contexts to look for tag instances in
+     * @return core_tag_tag[]
+     */
+    public static function get_tags_by_area_in_contexts($component, $itemtype, array $contexts) {
+        global $DB;
+
+        $params = [$component, $itemtype];
+        $contextids = array_map(function($context) {
+            return $context->id;
+        }, $contexts);
+        list($contextsql, $contextsqlparams) = $DB->get_in_or_equal($contextids);
+        $params = array_merge($params, $contextsqlparams);
+
+        $subsql = "SELECT DISTINCT t.id
+                    FROM {tag} t
+                    JOIN {tag_instance} ti ON t.id = ti.tagid
+                   WHERE component = ?
+                   AND itemtype = ?
+                   AND contextid {$contextsql}";
+
+        $sql = "SELECT tt.*
+                FROM ($subsql) tv
+                JOIN {tag} tt ON tt.id = tv.id";
+
+        return array_map(function($record) {
+            return new core_tag_tag($record);
+        }, $DB->get_records_sql($sql, $params));
     }
 }

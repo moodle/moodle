@@ -1,5 +1,9 @@
 This files describes API changes in the quiz code.
 
+=== 3.5 ===
+* Removed questionbank.ajax.php. Please use the quiz_question_bank fragment instead.
+* Adding "random" questions to a quiz via quiz_add_quiz_question() has been deprecated. Please use quiz_add_random_questions().
+
 === 3.3.2 ===
 
 * quiz_refresh_events() Now takes two additional parameters to refine the update to a specific instance. This function

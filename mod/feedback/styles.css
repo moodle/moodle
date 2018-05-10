@@ -86,14 +86,11 @@
 }
 
 .path-mod-feedback .response_navigation a {
-    display: inline-block;
+    display: block;
 }
 
 .path-mod-feedback .response_navigation a.back_to_list {
-    margin: auto;
-    float: right;
-    left: -50%;
-    position: relative;
+    text-align: center;
 }
 
 .path-mod-feedback .response_navigation .prev_response:before {
@@ -113,9 +110,9 @@
 }
 
 .path-mod-feedback .response_navigation .next_response {
-    float: right;
+    text-align: right;
 }
 
 .path-mod-feedback .response_navigation .prev_response {
-    float: left;
+    text-align: left;
 }

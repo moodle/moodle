@@ -252,7 +252,7 @@ class core_enrol_external extends external_api {
                     'preferences' => new external_multiple_structure(
                         new external_single_structure(
                             array(
-                                'name'  => new external_value(PARAM_ALPHANUMEXT, 'The name of the preferences'),
+                                'name'  => new external_value(PARAM_RAW, 'The name of the preferences'),
                                 'value' => new external_value(PARAM_RAW, 'The value of the custom field'),
                             )
                     ), 'User preferences', VALUE_OPTIONAL),
@@ -343,7 +343,7 @@ class core_enrol_external extends external_api {
                 'summaryformat' => $course->summaryformat,
                 'format' => $course->format,
                 'showgrades' => $course->showgrades,
-                'lang' => $course->lang,
+                'lang' => clean_param($course->lang, PARAM_LANG),
                 'enablecompletion' => $course->enablecompletion,
                 'category' => $course->category,
                 'progress' => $progress,
@@ -453,7 +453,11 @@ class core_enrol_external extends external_api {
                                                $params['perpage']);
 
         $results = array();
-        $requiredfields = ['id', 'fullname', 'profileimageurl', 'profileimageurlsmall'];
+        // Add also extra user fields.
+        $requiredfields = array_merge(
+            ['id', 'fullname', 'profileimageurl', 'profileimageurlsmall'],
+            get_extra_user_fields($context)
+        );
         foreach ($users['users'] as $id => $user) {
             // Note: We pass the course here to validate that the current user can at least view user details in this course.
             // The user we are looking at is not in this course yet though - but we only fetch the minimal set of
@@ -725,7 +729,7 @@ class core_enrol_external extends external_api {
                     'preferences' => new external_multiple_structure(
                         new external_single_structure(
                             array(
-                                'name'  => new external_value(PARAM_ALPHANUMEXT, 'The name of the preferences'),
+                                'name'  => new external_value(PARAM_RAW, 'The name of the preferences'),
                                 'value' => new external_value(PARAM_RAW, 'The value of the custom field'),
                             )
                     ), 'User preferences', VALUE_OPTIONAL),

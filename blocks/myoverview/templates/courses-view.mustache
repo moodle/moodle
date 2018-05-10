@@ -24,21 +24,27 @@
 }}
 <div id="courses-view-{{uniqid}}" data-region="courses-view">
     {{#hascourses}}
-    <div class="text-xs-center text-center">
-        <div class="btn-group m-y-2" role="group" data-toggle="btns">
-            <a class="btn btn-default active" href="#myoverview_courses_view_in_progress" data-toggle="tab">
-                {{#str}} inprogress, block_myoverview {{/str}}
-            </a>
-            <a class="btn btn-default" href="#myoverview_courses_view_future" data-toggle="tab">
-                {{#str}} future, block_myoverview {{/str}}
-            </a>
-            <a class="btn btn-default" href="#myoverview_courses_view_past" data-toggle="tab">
-                {{#str}} past, block_myoverview {{/str}}
-            </a>
-        </div>
+    <div class="d-flex justify-content-center">
+        <ul class="nav nav-pills my-5">
+            <li class="nav-item">
+                <a class="nav-link active" href="#myoverview_courses_view_in_progress" data-toggle="tab">
+                    {{#str}} inprogress, block_myoverview {{/str}}
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#myoverview_courses_view_future" data-toggle="tab">
+                    {{#str}} future, block_myoverview {{/str}}
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#myoverview_courses_view_past" data-toggle="tab">
+                    {{#str}} past, block_myoverview {{/str}}
+                </a>
+            </li>
+        </ul>
     </div>
     <div class="tab-content">
-        <div class="tab-pane active fade in" id="myoverview_courses_view_in_progress">
+        <div class="tab-pane active fade show" id="myoverview_courses_view_in_progress">
             {{#inprogress}}
                 {{< block_myoverview/courses-view-by-status }}
                     {{$id}}courses-view-in-progress{{/id}}
@@ -48,12 +54,12 @@
                 {{/ block_myoverview/courses-view-by-status }}
             {{/inprogress}}
             {{^inprogress}}
-                <div class="text-xs-center text-center m-t-3">
+                <div class="justify-content-center text-center mt-5">
                     <img class="empty-placeholder-image-lg"
                          src="{{urls.nocourses}}"
                          alt="{{#str}} nocoursesinprogress, block_myoverview {{/str}}"
                          role="presentation">
-                    <p class="text-muted m-t-1">{{#str}} nocoursesinprogress, block_myoverview {{/str}}</p>
+                    <p class="text-muted mt-3">{{#str}} nocoursesinprogress, block_myoverview {{/str}}</p>
                 </div>
             {{/inprogress}}
         </div>
@@ -67,12 +73,12 @@
                 {{/ block_myoverview/courses-view-by-status }}
             {{/future}}
             {{^future}}
-                <div class="text-xs-center text-center m-t-3">
+                <div class="justify-content-center text-center mt-5">
                     <img class="empty-placeholder-image-lg"
                          src="{{urls.nocourses}}"
                          alt="{{#str}} nocoursesfuture, block_myoverview {{/str}}"
                          role="presentation">
-                    <p class="text-muted m-t-1">{{#str}} nocoursesfuture, block_myoverview {{/str}}</p>
+                    <p class="text-muted mt-3">{{#str}} nocoursesfuture, block_myoverview {{/str}}</p>
                 </div>
             {{/future}}
         </div>
@@ -86,33 +92,24 @@
                 {{/ block_myoverview/courses-view-by-status }}
             {{/past}}
             {{^past}}
-                <div class="text-xs-center text-center m-t-3">
+                <div class="justify-content-center text-center mt-5">
                     <img class="empty-placeholder-image-lg"
                          src="{{urls.nocourses}}"
                          alt="{{#str}} nocoursespast, block_myoverview {{/str}}"
                          role="presentation">
-                    <p class="text-muted m-t-1">{{#str}} nocoursespast, block_myoverview {{/str}}</p>
+                    <p class="text-muted mt-3">{{#str}} nocoursespast, block_myoverview {{/str}}</p>
                 </div>
             {{/past}}
         </div>
     </div>
     {{/hascourses}}
     {{^hascourses}}
-    <div class="text-xs-center text-center m-t-3">
+    <div class="justify-content-center text-center mt-5">
         <img class="empty-placeholder-image-lg"
              src="{{urls.nocourses}}"
              alt="{{#str}} nocourses, block_myoverview {{/str}}"
              role="presentation">
-        <p class="text-muted m-t-1">{{#str}} nocourses, block_myoverview {{/str}}</p>
+        <p class="text-muted mt-3">{{#str}} nocourses, block_myoverview {{/str}}</p>
     </div>
     {{/hascourses}}
 </div>
-{{#js}}
-require(['jquery', 'core/custom_interaction_events'], function($, customEvents) {
-    var root = $('#courses-view-{{uniqid}}');
-    customEvents.define(root, [customEvents.events.activate]);
-    root.on(customEvents.events.activate, '[data-toggle="btns"] > .btn', function() {
-        root.find('.btn.active').removeClass('active');
-    });
-});
-{{/js}}

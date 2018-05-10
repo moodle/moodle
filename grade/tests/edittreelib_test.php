@@ -17,7 +17,7 @@
 /**
  * Unit tests for grade/edit/tree/lib.php.
  *
- * @pacakge  core_grade
+ * @package  core_grades
  * @category phpunit
  * @author   Andrew Davis
  * @license  http://www.gnu.org/copyleft/gpl.html GNU Public License

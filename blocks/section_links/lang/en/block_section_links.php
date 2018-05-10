@@ -36,3 +36,4 @@ $string['pluginname'] = 'Section links';
 $string['section_links:addinstance'] = 'Add a new section links block';
 $string['topics'] = 'Topics';
 $string['weeks'] = 'Weeks';
+$string['privacy:metadata'] = 'The Section links block only shows data stored in other locations.';

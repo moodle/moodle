@@ -347,7 +347,7 @@ class tool_uploadcourse_course {
     /**
      * Get the directory of the object to restore.
      *
-     * @return string|false|null subdirectory in $CFG->tempdir/backup/..., false when an error occured
+     * @return string|false|null subdirectory in $CFG->backuptempdir/..., false when an error occured
      *                           and null when there is simply nothing.
      */
     protected function get_restore_content_dir() {
@@ -590,6 +590,23 @@ class tool_uploadcourse_course {
         // Course end date.
         if (!empty($coursedata['enddate'])) {
             $coursedata['enddate'] = strtotime($coursedata['enddate']);
+        }
+
+        // If lang is specified, check the user is allowed to set that field.
+        if (!empty($coursedata['lang'])) {
+            if ($exists) {
+                $courseid = $DB->get_field('course', 'id', ['shortname' => $this->shortname]);
+                if (!has_capability('moodle/course:setforcedlanguage', context_course::instance($courseid))) {
+                    $this->error('cannotforcelang', new lang_string('cannotforcelang', 'tool_uploadcourse'));
+                    return false;
+                }
+            } else {
+                $catcontext = context_coursecat::instance($coursedata['category']);
+                if (!guess_if_creator_will_have_course_capability('moodle/course:setforcedlanguage', $catcontext)) {
+                    $this->error('cannotforcelang', new lang_string('cannotforcelang', 'tool_uploadcourse'));
+                    return false;
+                }
+            }
         }
 
         // Ultimate check mode vs. existence.

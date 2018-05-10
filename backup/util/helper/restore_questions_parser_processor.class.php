@@ -26,7 +26,7 @@ require_once($CFG->dirroot.'/backup/util/xml/parser/processors/grouped_parser_pr
 
 /**
  * helper implementation of grouped_parser_processor that will
- * load all the categories and questions (header info only) from then questions.xml file
+ * load all the categories and questions (header info only) from the questions.xml file
  * to the backup_ids table storing the whole structure there for later processing.
  * Note: only "needed" categories are loaded (must have question_categoryref record in backup_ids)
  * Note: parentitemid will contain the category->contextid for categories

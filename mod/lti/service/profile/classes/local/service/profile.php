@@ -59,7 +59,7 @@ class profile extends \mod_lti\local\ltiservice\service_base {
 
         if (empty($this->resources)) {
             $this->resources = array();
-            $this->resources[] = new \ltiservice_profile\local\resource\profile($this);
+            $this->resources[] = new \ltiservice_profile\local\resources\profile($this);
         }
 
         return $this->resources;

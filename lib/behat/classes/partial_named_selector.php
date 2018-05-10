@@ -110,6 +110,7 @@ class behat_partial_named_selector extends \Behat\Mink\Selector\PartialNamedSele
         'xpath_element' => 'xpath_element',
         'form_row' => 'form_row',
         'autocomplete_selection' => 'autocomplete_selection',
+        'autocomplete_suggestions' => 'autocomplete_suggestions',
     );
 
     /**
@@ -126,7 +127,7 @@ class behat_partial_named_selector extends \Behat\Mink\Selector\PartialNamedSele
 XPATH
         , 'block' => <<<XPATH
 .//*[@data-block][contains(concat(' ', normalize-space(@class), ' '), concat(' ', %locator%, ' ')) or
-     descendant::*[self::h2|self::h3][normalize-space(.) = %locator%]  or
+     descendant::*[self::h2|self::h3|self::h4|self::h5][normalize-space(.) = %locator%]  or
      @aria-label = %locator%]
 XPATH
         , 'dialogue' => <<<XPATH
@@ -138,6 +139,18 @@ XPATH
     normalize-space(descendant::div[@class='hd']) = %locator%]
         |
 .//div[@data-region='modal' and descendant::*[@data-region='title'] = %locator%]
+        |
+.//div[
+        contains(concat(' ', normalize-space(@class), ' '), ' modal-content ')
+            and
+        normalize-space(descendant::*[self::h4 or self::h5][contains(concat(' ', normalize-space(@class), ' '), ' modal-title ')]) = %locator%
+    ]
+        |
+.//div[
+        contains(concat(' ', normalize-space(@class), ' '), ' modal ')
+            and
+        normalize-space(descendant::*[contains(concat(' ', normalize-space(@class), ' '), ' modal-header ')] = %locator%)
+    ]
 XPATH
         , 'icon' => <<<XPATH
 .//*[contains(concat(' ', normalize-space(@class), ' '), ' icon ') and ( contains(normalize-space(@title), %locator%))]
@@ -182,6 +195,9 @@ XPATH
 XPATH
         , 'autocomplete_selection' => <<<XPATH
 .//div[contains(concat(' ', normalize-space(@class), ' '), concat(' ', 'form-autocomplete-selection', ' '))]/span[@role='listitem'][contains(normalize-space(.), %locator%)]
+XPATH
+        , 'autocomplete_suggestions' => <<<XPATH
+.//ul[contains(concat(' ', normalize-space(@class), ' '), concat(' ', 'form-autocomplete-suggestions', ' '))]/li[@role='option'][contains(normalize-space(.), %locator%)]
 XPATH
     );
 

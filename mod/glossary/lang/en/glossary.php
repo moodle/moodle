@@ -151,6 +151,7 @@ $string['entrydeleted'] = 'Entry deleted';
 $string['entryexported'] = 'Entry successfully exported';
 $string['entryishidden'] = '(this entry is currently hidden)';
 $string['entryleveldefaultsettings'] = 'Entry level default settings';
+$string['entrylink'] = 'Entry link: {$a}';
 $string['entrysaved'] = 'This entry has been saved';
 $string['entryupdated'] = 'This entry has been updated';
 $string['entryusedynalink'] = 'This entry should be automatically linked';

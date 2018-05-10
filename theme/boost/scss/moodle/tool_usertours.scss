@@ -24,7 +24,7 @@ div[data-flexitour="step-background"] {
     @include border-radius($border-radius-lg);
 
     // The step container, and the target background should be at the same z-index.
-    z-index: #{$flexitour-base-zindex} + 1;
+    z-index: ($flexitour-base-zindex + 1);
 }
 
 span[data-flexitour="container"],
@@ -32,7 +32,7 @@ div[data-flexitour="step-background-fader"],
 [data-flexitour="step-backdrop"] > td,
 [data-flexitour="step-backdrop"] {
     // The step container, and the target background should be at the same z-index.
-    z-index: #{$flexitour-base-zindex} + 2;
+    z-index: ($flexitour-base-zindex + 2);
 }
 
 span[data-flexitour="container"] {

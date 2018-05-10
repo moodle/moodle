@@ -43,7 +43,7 @@
     {{> core_calendar/header }}
     {{> core_calendar/month_navigation }}
     {{> core/overlay_loading}}
-    <table id="month-detailed-{{uniqid}}" class="calendarmonth calendartable card-deck m-b-0">
+    <table id="month-detailed-{{uniqid}}" class="calendarmonth calendartable m-b-0">
         <thead>
             <tr>
                 {{# daynames }}
@@ -60,17 +60,18 @@
                     <td class="dayblank">&nbsp;</td>
                 {{/prepadding}}
                 {{#days}}
-                    <td class="clickable day text-sm-center text-md-left{{!
+                    <td class="day text-sm-center text-md-left{{!
                             }}{{#istoday}} today{{/istoday}}{{!
                             }}{{#isweekend}} weekend{{/isweekend}}{{!
                             }}{{#durationevents.0}} duration{{/durationevents.0}}{{!
                             }}{{#durationevents}} duration_{{.}}{{/durationevents}}{{!
+                            }}{{#defaulteventcontext}} clickable{{/defaulteventcontext}}{{!
                         }}"
                         data-day-timestamp="{{timestamp}}"
                         data-drop-zone="month-view-day"
                         data-region="day"
                         data-new-event-timestamp="{{neweventtimestamp}}">
-                        <div class="hidden-sm-down hidden-phone text-xs-center">
+                        <div class="d-none d-md-block hidden-phone text-xs-center">
                             {{#hasevents}}
                                 <a data-action="view-day-link" href="{{viewdaylink}}" class="day" title="{{viewdaylinktitle}}">{{mday}}</a>
                             {{/hasevents}}
@@ -118,7 +119,7 @@
                                 </div>
                             {{/hasevents}}
                         </div>
-                        <div class="hidden-md-up hidden-desktop hidden-tablet">
+                        <div class="d-md-none hidden-desktop hidden-tablet">
                             {{#hasevents}}
                                 <a data-action="view-day-link" href="{{viewdaylink}}" class="day" title="{{viewdaylinktitle}}">{{mday}}</a>
                             {{/hasevents}}

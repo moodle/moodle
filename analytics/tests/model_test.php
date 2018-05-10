@@ -226,13 +226,17 @@ class analytics_model_testcase extends advanced_testcase {
         $this->model->mark_as_trained();
         $this->assertEquals($originaluniqueid, $this->model->get_unique_id());
 
-        $this->model->enable();
-        $this->assertEquals($originaluniqueid, $this->model->get_unique_id());
+        // Wait for the current timestamp to change.
+        $this->waitForSecond();
+        $this->model->enable('\core\analytics\time_splitting\deciles');
+        $this->assertNotEquals($originaluniqueid, $this->model->get_unique_id());
+        $uniqueid = $this->model->get_unique_id();
 
-        // Wait 1 sec so the timestamp changes.
-        sleep(1);
+        // Wait for the current timestamp to change.
+        $this->waitForSecond();
         $this->model->enable('\core\analytics\time_splitting\quarters');
         $this->assertNotEquals($originaluniqueid, $this->model->get_unique_id());
+        $this->assertNotEquals($uniqueid, $this->model->get_unique_id());
     }
 
     /**

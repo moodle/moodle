@@ -12,3 +12,11 @@
         content: "#{$breadcrumb-divider}"; /* stylelint-disable-line declaration-block-no-duplicate-properties */
     }
 }
+
+/*rtl:raw:
+.dropdown-menu {
+    right: auto;
+    left: 0;
+    text-align: right;
+}
+*/

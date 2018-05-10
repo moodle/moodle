@@ -127,7 +127,10 @@ if (!$user2realuser) {
 if (!empty($user2->id)) {
     if ($currentuser && isset($conversations[$user2->id])) {
         // Mark the conversation we are loading as read.
-        \core_message\api::mark_all_read_for_user($user1->id, $user2->id);
+        if ($conversationid = \core_message\api::get_conversation_between_users([$user1->id, $user2->id])) {
+            \core_message\api::mark_all_messages_as_read($user1->id, $conversationid);
+        }
+
         // Ensure the UI knows it's read as well.
         $conversations[$user2->id]->isread = 1;
     }
@@ -144,6 +147,14 @@ $messagearea = new \core_message\output\messagearea\message_area($user1->id, $us
 // Now the page contents.
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('messages', 'message'));
+
+// Display a message if the messages have not been migrated yet.
+if (!get_user_preferences('core_message_migrate_data', false, $user1id)) {
+    $notify = new \core\output\notification(get_string('messagingdatahasnotbeenmigrated', 'message'),
+        \core\output\notification::NOTIFY_WARNING);
+    echo $OUTPUT->render($notify);
+}
+
 // Display a message that the user is viewing someone else's messages.
 if (!$currentuser) {
     $notify = new \core\output\notification(get_string('viewinganotherusersmessagearea', 'message'),

@@ -43,11 +43,17 @@ class course_search_testcase extends advanced_testcase {
      */
     protected $mycoursesareaid = null;
 
+    /**
+     * @var string Area id for sections
+     */
+    protected $sectionareaid = null;
+
     public function setUp() {
         $this->resetAfterTest(true);
         set_config('enableglobalsearch', true);
 
         $this->mycoursesareaid = \core_search\manager::generate_areaid('core_course', 'mycourse');
+        $this->sectionareaid = \core_search\manager::generate_areaid('core_course', 'section');
 
         // Set \core_search::instance to the mock_search_engine as we don't require the search engine to be working to test this.
         $search = testable_core_search::instance();
@@ -239,5 +245,205 @@ class course_search_testcase extends advanced_testcase {
         $this->assertEquals(\core_search\manager::ACCESS_GRANTED, $searcharea->check_access($course1->id));
         $this->assertEquals(\core_search\manager::ACCESS_DENIED, $searcharea->check_access($course2->id));
         $this->assertEquals(\core_search\manager::ACCESS_DENIED, $searcharea->check_access($course3->id));
+    }
+
+    /**
+     * Indexing section contents.
+     */
+    public function test_section_indexing() {
+        global $DB, $USER;
+
+        // Returns the instance as long as the area is supported.
+        $searcharea = \core_search\manager::get_search_area($this->sectionareaid);
+        $this->assertInstanceOf('\core_course\search\section', $searcharea);
+
+        // Create some courses in categories, and a forum.
+        $generator = $this->getDataGenerator();
+        $cat1 = $generator->create_category();
+        $cat2 = $generator->create_category(['parent' => $cat1->id]);
+        $course1 = $generator->create_course(['category' => $cat1->id]);
+        $course2 = $generator->create_course(['category' => $cat2->id]);
+        $forum = $generator->create_module('forum', ['course' => $course1->id]);
+
+        // Edit 2 sections on course 1 and one on course 2.
+        $existing = $DB->get_record('course_sections', ['course' => $course1->id, 'section' => 2]);
+        $course1section2id = $existing->id;
+        $new = clone($existing);
+        $new->name = 'Frogs';
+        course_update_section($course1->id, $existing, $new);
+
+        $existing = $DB->get_record('course_sections', ['course' => $course1->id, 'section' => 3]);
+        $course1section3id = $existing->id;
+        $new = clone($existing);
+        $new->summary = 'Frogs';
+        $new->summaryformat = FORMAT_HTML;
+        course_update_section($course1->id, $existing, $new);
+
+        $existing = $DB->get_record('course_sections', ['course' => $course2->id, 'section' => 1]);
+        $course2section1id = $existing->id;
+        $new = clone($existing);
+        $new->summary = 'Frogs';
+        $new->summaryformat = FORMAT_HTML;
+        course_update_section($course2->id, $existing, $new);
+
+        // Bodge timemodified into a particular order.
+        $DB->set_field('course_sections', 'timemodified', 1, ['id' => $course1section3id]);
+        $DB->set_field('course_sections', 'timemodified', 2, ['id' => $course1section2id]);
+        $DB->set_field('course_sections', 'timemodified', 3, ['id' => $course2section1id]);
+
+        // All records.
+        $results = self::recordset_to_ids($searcharea->get_document_recordset(0));
+        $this->assertEquals([$course1section3id, $course1section2id, $course2section1id], $results);
+
+        // Records after time 2.
+        $results = self::recordset_to_ids($searcharea->get_document_recordset(2));
+        $this->assertEquals([$course1section2id, $course2section1id], $results);
+
+        // Records after time 10 (there aren't any).
+        $results = self::recordset_to_ids($searcharea->get_document_recordset(10));
+        $this->assertEquals([], $results);
+
+        // Find the first block to use for a block context.
+        $blockid = array_values($DB->get_records('block_instances', null, 'id', 'id', 0, 1))[0]->id;
+        $blockcontext = context_block::instance($blockid);
+
+        // Check with block context - should be null.
+        $this->assertNull($searcharea->get_document_recordset(0, $blockcontext));
+
+        // Check with user context - should be null.
+        $this->setAdminUser();
+        $usercontext = context_user::instance($USER->id);
+        $this->assertNull($searcharea->get_document_recordset(0, $usercontext));
+
+        // Check with module context - should be null.
+        $modcontext = context_module::instance($forum->cmid);
+        $this->assertNull($searcharea->get_document_recordset(0, $modcontext));
+
+        // Check with course context - should return specific course entries.
+        $coursecontext = context_course::instance($course1->id);
+        $results = self::recordset_to_ids($searcharea->get_document_recordset(0, $coursecontext));
+        $this->assertEquals([$course1section3id, $course1section2id], $results);
+        $results = self::recordset_to_ids($searcharea->get_document_recordset(2, $coursecontext));
+        $this->assertEquals([$course1section2id], $results);
+
+        // Check with category context - should return course in categories and subcategories.
+        $catcontext = context_coursecat::instance($cat1->id);
+        $results = self::recordset_to_ids($searcharea->get_document_recordset(0, $catcontext));
+        $this->assertEquals([$course1section3id, $course1section2id, $course2section1id], $results);
+        $catcontext = context_coursecat::instance($cat2->id);
+        $results = self::recordset_to_ids($searcharea->get_document_recordset(0, $catcontext));
+        $this->assertEquals([$course2section1id], $results);
+
+        // Check with system context - should return everything (same as null, tested first).
+        $systemcontext = context_system::instance();
+        $results = self::recordset_to_ids($searcharea->get_document_recordset(0, $systemcontext));
+        $this->assertEquals([$course1section3id, $course1section2id, $course2section1id], $results);
+    }
+
+    /**
+     * Document contents for sections.
+     */
+    public function test_section_document() {
+        global $DB;
+
+        $searcharea = \core_search\manager::get_search_area($this->sectionareaid);
+
+        // Create a course.
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+
+        // Test with default title.
+        $sectionrec = (object)['id' => 123, 'course' => $course->id,
+                'section' => 3, 'timemodified' => 456,
+                'summary' => 'Kermit', 'summaryformat' => FORMAT_HTML];
+        $doc = $searcharea->get_document($sectionrec);
+        $this->assertInstanceOf('\core_search\document', $doc);
+        $this->assertEquals(123, $doc->get('itemid'));
+        $this->assertEquals($this->sectionareaid . '-123', $doc->get('id'));
+        $this->assertEquals($course->id, $doc->get('courseid'));
+        $this->assertFalse($doc->is_set('userid'));
+        $this->assertEquals(\core_search\manager::NO_OWNER_ID, $doc->get('owneruserid'));
+        $this->assertEquals('Topic 3', $doc->get('title'));
+        $this->assertEquals('Kermit', $doc->get('content'));
+
+        // Test with user-set title.
+        $DB->set_field('course_sections', 'name', 'Frogs',
+                ['course' => $course->id, 'section' => 3]);
+        rebuild_course_cache($course->id, true);
+        $doc = $searcharea->get_document($sectionrec);
+        $this->assertEquals('Frogs', $doc->get('title'));
+    }
+
+    /**
+     * Document access for sections.
+     */
+    public function test_section_access() {
+        global $DB;
+
+        $searcharea = \core_search\manager::get_search_area($this->sectionareaid);
+
+        // Create a course.
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+
+        // Create 2 users - student and manager. Initially, student is not even enrolled.
+        $student = $generator->create_user();
+        $manager = $generator->create_user();
+        $generator->enrol_user($manager->id, $course->id, 'manager');
+
+        // Two sections have content - one is hidden.
+        $DB->set_field('course_sections', 'name', 'Frogs',
+                ['course' => $course->id, 'section' => 1]);
+        $DB->set_field('course_sections', 'name', 'Toads',
+                ['course' => $course->id, 'section' => 2]);
+        $DB->set_field('course_sections', 'visible', '0',
+                ['course' => $course->id, 'section' => 2]);
+
+        // Make the modified time be in order of sections.
+        $DB->execute('UPDATE {course_sections} SET timemodified = section');
+
+        // Get the two document objects.
+        $rs = $searcharea->get_document_recordset();
+        $documents = [];
+        $index = 0;
+        foreach ($rs as $rec) {
+            $documents[$index++] = $searcharea->get_document($rec);
+        }
+        $this->assertCount(2, $documents);
+
+        // Log in as admin and check access.
+        $this->setAdminUser();
+        $this->assertEquals(\core_search\manager::ACCESS_GRANTED,
+                $searcharea->check_access($documents[0]->get('itemid')));
+        $this->assertEquals(\core_search\manager::ACCESS_GRANTED,
+                $searcharea->check_access($documents[1]->get('itemid')));
+
+        // Log in as manager and check access.
+        $this->setUser($manager);
+        $this->assertEquals(\core_search\manager::ACCESS_GRANTED,
+                $searcharea->check_access($documents[0]->get('itemid')));
+        $this->assertEquals(\core_search\manager::ACCESS_GRANTED,
+                $searcharea->check_access($documents[1]->get('itemid')));
+
+        // Log in as student and check access - none yet.
+        $this->setUser($student);
+        $this->assertEquals(\core_search\manager::ACCESS_DENIED,
+                $searcharea->check_access($documents[0]->get('itemid')));
+        $this->assertEquals(\core_search\manager::ACCESS_DENIED,
+                $searcharea->check_access($documents[1]->get('itemid')));
+
+        // Enrol student - now they should get access but not to the hidden one.
+        $generator->enrol_user($student->id, $course->id, 'student');
+        $this->assertEquals(\core_search\manager::ACCESS_GRANTED,
+                $searcharea->check_access($documents[0]->get('itemid')));
+        $this->assertEquals(\core_search\manager::ACCESS_DENIED,
+                $searcharea->check_access($documents[1]->get('itemid')));
+
+        // Delete the course and check it returns deleted.
+        delete_course($course, false);
+        $this->assertEquals(\core_search\manager::ACCESS_DELETED,
+                $searcharea->check_access($documents[0]->get('itemid')));
+        $this->assertEquals(\core_search\manager::ACCESS_DELETED,
+                $searcharea->check_access($documents[1]->get('itemid')));
     }
 }

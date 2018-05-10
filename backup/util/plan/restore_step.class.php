@@ -84,10 +84,6 @@ abstract class restore_step extends base_step {
             // Original course has not startdate or setting doesn't exist, offset = 0.
             $cache[$this->get_restoreid()] = 0;
 
-        } else if (abs($setting - $original) < 24 * 60 * 60) {
-            // Less than 24h of difference, offset = 0 (this avoids some problems with timezones).
-            $cache[$this->get_restoreid()] = 0;
-
         } else {
             // Arrived here, let's calculate the real offset.
             $cache[$this->get_restoreid()] = $setting - $original;

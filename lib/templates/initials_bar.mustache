@@ -76,10 +76,10 @@
 <div class="initialbar {{class}}">
     <span class="initialbarlabel">{{title}}</span>
     {{#current}}
-        <a class="initialbarall letter" href="{{url}}">{{all}}</a>
+        <a class="initialbarall page-item letter" href="{{url}}">{{all}}</a>
     {{/current}}
     {{^current}}
-        <div class="initialbarall letter active">{{all}}</div>
+        <div class="initialbarall letter page-item active">{{all}}</div>
     {{/current}}
 
     <div class="initialbargroups">
@@ -87,10 +87,10 @@
             <ul class="initialbargroup">
                 {{#letter}}
                     {{#selected}}
-                        <li><span class="letter active {{name}}">{{name}}</span></li>
+                        <li><span class="letter page-item active {{name}}">{{name}}</span></li>
                     {{/selected}}
                     {{^selected}}
-                        <li><a class="letter {{name}}" href="{{url}}">{{name}}</a></li>
+                        <li><a class="letter page-item {{name}}" href="{{url}}">{{name}}</a></li>
                     {{/selected}}
                 {{/letter}}
             </ul>

@@ -70,7 +70,6 @@ $string['addnewapp'] = 'Enable external application';
 $string['addserver'] = 'Add new trusted server';
 $string['addtype'] = 'Add preconfigured tool';
 $string['allow'] = 'Allow';
-$string['allowinstructorcustom'] = 'Allow teachers to add custom parameters';
 $string['allowsetting'] = 'Allow tool to store 8K of settings in Moodle';
 $string['always'] = 'Always';
 $string['automatic'] = 'Automatic, based on tool URL';
@@ -114,7 +113,7 @@ $string['courseinformation'] = 'Course information';
 $string['courselink'] = 'Go to course';
 $string['coursemisconf'] = 'Course is misconfigured';
 $string['createdon'] = 'Created on';
-$string['curllibrarymissing'] = 'PHP Curl library must be installed to use LTI';
+$string['curllibrarymissing'] = 'PHP cURL extension required for the External tool.';
 $string['custom'] = 'Custom parameters';
 $string['custom_config'] = 'Using custom tool configuration.';
 $string['custom_help'] = 'Custom parameters are settings used by the tool provider. For example, a custom parameter may be used to display
@@ -357,6 +356,19 @@ $string['preferwidget'] = 'Prefer widget launch';
 $string['preferwidth'] = 'Preferred width';
 $string['press_to_submit'] = 'Press to launch this activity';
 $string['privacy'] = 'Privacy';
+$string['privacy:metadata:createdby'] = 'The user who created the record';
+$string['privacy:metadata:lti_submission'] = 'LTI submission';
+$string['privacy:metadata:lti_submission:datesubmitted'] = 'The timestamp indicating when the submission was made';
+$string['privacy:metadata:lti_submission:dateupdated'] = 'The timestamp indicating when the submission was modified';
+$string['privacy:metadata:lti_submission:gradepercent'] = 'The grade for the user as a percentage';
+$string['privacy:metadata:lti_submission:originalgrade'] = 'The original grade for the user';
+$string['privacy:metadata:lti_submission:userid'] = 'The ID of the user who submitted for the LTI activity';
+$string['privacy:metadata:lti_tool_proxies'] = 'LTI proxies';
+$string['privacy:metadata:lti_tool_proxies:name'] = 'LTI proxy name';
+$string['privacy:metadata:lti_types'] = 'LTI types';
+$string['privacy:metadata:lti_types:name'] = 'LTI type name';
+$string['privacy:metadata:timecreated'] = 'The date at which the record was created';
+$string['privacy:metadata:timemodified'] = 'The date at which the record was modified';
 $string['quickgrade'] = 'Allow quick grading';
 $string['quickgrade_help'] = 'If enabled, multiple tools can be graded on one page. Add grades and comments then click the "Save all my feedback" button to save all changes for that page.';
 $string['redirect'] = 'You will be redirected in few seconds. If you are not, press the button.';
@@ -511,9 +523,10 @@ A base URL of *quiz.tool.com* would match the following:
 If two different tool configurations are for the same domain, the most specific match will be used.
 
 You can also insert a cartridge URL if you have one and the details for the tool will be automatically filled.';
+$string['toolurl_contentitemselectionrequest'] = 'Content Selection URL';
+$string['toolurl_contentitemselectionrequest_help'] = 'The Content Selection URL will be used to launch the content selection page from the tool provider. If it is empty, the Tool URL will be used';
 $string['typename'] = 'Tool name';
-$string['typename_help'] = 'The tool name is used to identify the tool provider within Moodle. The name entered will be visible
-to teachers when adding external tools within courses.';
+$string['typename_help'] = 'The tool name is used to identify the tool provider within Moodle. The name entered will be visible to teachers when adding external tools within courses.';
 $string['types'] = 'Types';
 $string['unabletocreatetooltype'] = 'Unable to create tool';
 $string['unabletofindtooltype'] = 'Unable to find tool for {$a->id}';

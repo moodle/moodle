@@ -2960,6 +2960,7 @@ class admin_setting_configselect extends admin_setting {
     public function __construct($name, $visiblename, $description, $defaultsetting, $choices) {
         // Look for optgroup and single options.
         if (is_array($choices)) {
+            $this->choices = [];
             foreach ($choices as $key => $val) {
                 if (is_array($val)) {
                     $this->optgroups[$key] = $val;
@@ -10576,6 +10577,96 @@ class admin_setting_filetypes extends admin_setting_configtext {
      * @return bool True because these values are not RTL compatible.
      */
     public function get_force_ltr() {
+        return true;
+    }
+}
+
+/**
+ * Used to validate the content and format of the age of digital consent map and ensuring it is parsable.
+ *
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright 2018 Mihail Geshoski <mihail@moodle.com>
+ */
+class admin_setting_agedigitalconsentmap extends admin_setting_configtextarea {
+
+    /**
+     * Constructor.
+     *
+     * @param string $name
+     * @param string $visiblename
+     * @param string $description
+     * @param mixed $defaultsetting string or array
+     * @param mixed $paramtype
+     * @param string $cols
+     * @param string $rows
+     */
+    public function __construct($name, $visiblename, $description, $defaultsetting, $paramtype = PARAM_RAW,
+                                $cols = '60', $rows = '8') {
+        parent::__construct($name, $visiblename, $description, $defaultsetting, $paramtype, $cols, $rows);
+        // Pre-set force LTR to false.
+        $this->set_force_ltr(false);
+    }
+
+    /**
+     * Validate the content and format of the age of digital consent map to ensure it is parsable.
+     *
+     * @param string $data The age of digital consent map from text field.
+     * @return mixed bool true for success or string:error on failure.
+     */
+    public function validate($data) {
+        if (empty($data)) {
+            return true;
+        }
+
+        try {
+            \core_auth\digital_consent::parse_age_digital_consent_map($data);
+        } catch (\moodle_exception $e) {
+            return get_string('invalidagedigitalconsent', 'admin', $e->getMessage());
+        }
+
+        return true;
+    }
+}
+
+/**
+ * Selection of plugins that can work as site policy handlers
+ *
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright 2018 Marina Glancy
+ */
+class admin_settings_sitepolicy_handler_select extends admin_setting_configselect {
+
+    /**
+     * Constructor
+     * @param string $name unique ascii name, either 'mysetting' for settings that in config, or 'myplugin/mysetting'
+     *        for ones in config_plugins.
+     * @param string $visiblename localised
+     * @param string $description long localised info
+     * @param string $defaultsetting
+     */
+    public function __construct($name, $visiblename, $description, $defaultsetting = '') {
+        parent::__construct($name, $visiblename, $description, $defaultsetting, null);
+    }
+
+    /**
+     * Lazy-load the available choices for the select box
+     */
+    public function load_choices() {
+        if (during_initial_install()) {
+            return false;
+        }
+        if (is_array($this->choices)) {
+            return true;
+        }
+
+        $this->choices = ['' => new lang_string('sitepolicyhandlercore', 'core_admin')];
+        $manager = new \core_privacy\local\sitepolicy\manager();
+        $plugins = $manager->get_all_handlers();
+        foreach ($plugins as $pname => $unused) {
+            $this->choices[$pname] = new lang_string('sitepolicyhandlerplugin', 'core_admin',
+                ['name' => new lang_string('pluginname', $pname), 'component' => $pname]);
+        }
+
         return true;
     }
 }

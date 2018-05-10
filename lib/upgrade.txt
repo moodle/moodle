@@ -1,7 +1,38 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 3.5 ===
+
+* The cron runner now sets up a fresh PAGE and OUTPUT between each task.
+* The core_renderer methods notify_problem(), notify_success(), notify_message() and notify_redirect() that were
+  deprecated in Moodle 3.1 have been removed. Use \core\notification::add(), or \core\output\notification as required.
+* The maximum supported precision (the total number of digits) for XMLDB_TYPE_NUMBER ("number") fields raised from 20 to
+  38 digits. Additionally, the whole number part (precision minus scale) must not be longer than the maximum length of
+  integer fields (20 digits). Note that PHP floats commonly support precision of roughly 15 digits only (MDL-32113).
+* Event triggering and event handlers:
+    - The following events, deprecated since moodle 2.6, have been finally removed: groups_members_removed,
+      groups_groupings_groups_removed, groups_groups_deleted, groups_groupings_deleted.
+* The following functions have been finally deprecated and can not be used any more:
+  - notify()
+* XMLDB now validates the PATH attribute on every install.xml file. Both the XMLDB editor and installation will fail
+  when a problem is detected with it. Please ensure your plugins contain correct directory relative paths.
+* Add recaptchalib_v2.php for support of reCAPTCHA v2.
+* Plugins can define class 'PLUGINNAME\privacy\local\sitepolicy\handler' if they implement an alternative mechanisms for
+  site policies managements and agreements. Administrators can define which component is to be used for handling site
+  policies and agreements. See https://docs.moodle.org/dev/Site_policy_handler
+* Scripts can define a constant NO_SITEPOLICY_CHECK and set it to true before requiring the main config.php file. It
+  will make the require_login() skipping the test for the user's policyagreed status. This is useful for plugins that
+  act as a site policy handler.
+* There is a new is_fulltext_search_supported() DML function. The default implementation returns false. This function
+  is used by 'Simple search' global search engine to determine if the database full-text search capabilities can be used.
+* The following have been removed from the list of core subsystems:
+   - core_register
+   - core_publish
+  Following this change, \core_register_renderer and \core_publish_renderer have been removed and their methods have been
+  moved to \core_admin_renderer and \core_course_renderer respectively.
+
 === 3.4 ===
+
 * oauth2_client::request method has an extra parameter to specify the accept header for the response (MDL-60733)
 * The following functions, previously used (exclusively) by upgrade steps are not available
   anymore because of the upgrade cleanup performed for this version. See MDL-57432 for more info:
@@ -58,6 +89,10 @@ information provided here is intended especially for developers.
 * $CFG->loginhttps is now deprecated, do not use it.
 * $PAGE->https_required and $PAGE->verify_https_required() are now deprecated. They are no longer used and will throw a coding_exception.
 * $CFG->httpswwwroot is now deprecated and will always result in the same value as wwwroot.
+* Added function core_role_set_view_allowed() to check if a user should be able to see a given role.
+  This should be checked whenever displaying a list of roles to a user, however, core_role_set_assign_allowed may need to override it
+  in some cases.
+* Deprecated allow_override, allow_assign and allow_switch and replaced with core_role_set_*_allowed to avoid function names conflicting.
 
 === 3.3.1 ===
 

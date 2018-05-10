@@ -56,4 +56,4 @@ $string['teaching'] = 'Teaching';
 $string['typedeclaration'] = 'Other event parameters';
 $string['update'] = 'update';
 $string['yes'] = 'yes';
-
+$string['privacy:metadata'] = 'The Events list plugin does not store any personal data.';

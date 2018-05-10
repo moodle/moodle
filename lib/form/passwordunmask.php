@@ -90,4 +90,21 @@ class MoodleQuickForm_passwordunmask extends MoodleQuickForm_password {
 
         return $context;
     }
+
+    /**
+     * Check that there is no whitespace at the beginning and end of the password.
+     *
+     * It turned out that wrapping whitespace can easily be pasted by accident when copying the text from elsewhere.
+     * Such a mistake is very hard to debug as the whitespace is not displayed.
+     *
+     * @param array $value Submitted value.
+     * @return string|null Validation error message or null.
+     */
+    public function validateSubmitValue($value) {
+        if ($value !== null && $value !== trim($value)) {
+            return get_string('err_wrappingwhitespace', 'core_form');
+        }
+
+        return;
+    }
 }

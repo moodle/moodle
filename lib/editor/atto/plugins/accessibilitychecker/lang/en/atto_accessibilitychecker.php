@@ -33,3 +33,4 @@ $string['report'] = 'Accessibility report:';
 $string['tablesmissingcaption'] = 'Tables should have captions. While it is not necessary for each table to have a caption, a caption is generally very helpful.';
 $string['tablesmissingheaders'] = 'Tables should use row and/or column headers.';
 $string['tableswithmergedcells'] = 'Tables should not contain merged cells. Despite being standard markup for tables for many years, some screen readers still do not fully support complex tables. When possible, try to "flatten" the table and avoid merged cells.';
+$string['privacy:metadata'] = 'The atto_accessibilitychecker plugin does not store any personal data.';

@@ -3,8 +3,8 @@
 */**/build/
 node_modules/
 vendor/
+admin/tool/policy/amd/src/jquery-eu-cookie-law-popup.js
 admin/tool/usertours/amd/src/tour.js
-admin/tool/usertours/amd/src/popper.js
 auth/cas/CAS/
 enrol/lti/ims-blti/
 filter/algebra/AlgParser.pm
@@ -41,7 +41,6 @@ lib/html2text/
 lib/markdown/
 lib/recaptchalib.php
 lib/xhprof/
-lib/xmlize.php
 lib/horde/
 lib/requirejs/
 lib/amd/src/loglevel.js
@@ -58,7 +57,10 @@ lib/maxmind/MaxMind/
 lib/ltiprovider/
 lib/amd/src/truncate.js
 lib/fonts/
+lib/amd/src/adapter.js
 lib/validateurlsyntax.php
+lib/amd/src/popper.js
+lib/geopattern-php/
 media/player/videojs/amd/src/video-lazy.js
 media/player/videojs/amd/src/Youtube-lazy.js
 media/player/videojs/videojs/

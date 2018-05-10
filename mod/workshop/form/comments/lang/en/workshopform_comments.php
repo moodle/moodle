@@ -29,5 +29,3 @@ $string['dimensiondescription'] = 'Description';
 $string['dimensionnumber'] = 'Aspect {$a}';
 $string['pluginname'] = 'Comments';
 
-// Deprecated since Moodle 3.1.
-$string['dimensioncomment'] = 'Comment';

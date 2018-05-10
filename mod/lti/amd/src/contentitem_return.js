@@ -36,6 +36,8 @@ define(['jquery'], function($) {
                 if (window != top) {
                     // Send return data to be processed by the parent window.
                     parent.processContentItemReturnData(returnData);
+                } else {
+                    window.processContentItemReturnData(returnData);
                 }
             });
         }

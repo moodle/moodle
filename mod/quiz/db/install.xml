@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/quiz/db" VERSION="20150323" COMMENT="XMLDB file for Moodle mod/quiz"
+<XMLDB PATH="mod/quiz/db" VERSION="20180407" COMMENT="XMLDB file for Moodle mod/quiz"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -63,12 +63,15 @@
         <FIELD NAME="page" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The page number that this questions appears on. If the question in slot n appears on page p, then the question in slot n+1 must appear on page p or p+1. Well, except that when a quiz is being created, there may be empty pages, which would cause the page number to jump here."/>
         <FIELD NAME="requireprevious" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Set to 1 when current question requires previous one to be answered first."/>
         <FIELD NAME="questionid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Foreign key references question.id."/>
+        <FIELD NAME="questioncategoryid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The question category that the random question will be picked from. Will be null if and only if the question is not a random question."/>
+        <FIELD NAME="includingsubcategories" TYPE="int" LENGTH="4" NOTNULL="false" SEQUENCE="false" COMMENT="Whether the random question can be picked from sub categories or not. Will be null if questioncategoryid is null."/>
         <FIELD NAME="maxmark" TYPE="number" LENGTH="12" NOTNULL="true" DEFAULT="0" SEQUENCE="false" DECIMALS="7" COMMENT="How many marks this question contributes to quiz.sumgrades."/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
         <KEY NAME="quizid" TYPE="foreign" FIELDS="quizid" REFTABLE="quiz" REFFIELDS="id"/>
         <KEY NAME="questionid" TYPE="foreign" FIELDS="questionid" REFTABLE="question" REFFIELDS="id"/>
+        <KEY NAME="questioncategoryid" TYPE="foreign" FIELDS="questioncategoryid" REFTABLE="questioncategory" REFFIELDS="id"/>
       </KEYS>
       <INDEXES>
         <INDEX NAME="quizid-slot" UNIQUE="true" FIELDS="quizid, slot"/>
@@ -181,6 +184,19 @@
       <INDEXES>
         <INDEX NAME="name" UNIQUE="true" FIELDS="name"/>
       </INDEXES>
+    </TABLE>
+    <TABLE NAME="quiz_slot_tags" COMMENT="Stores data about the tags that a question must have so that it can be selected for a quiz slot (when having a random question by tags on that slot).">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="slotid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The quiz slot that this tag belong to"/>
+        <FIELD NAME="tagid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="tagname" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="The tag name is to be stored as well, so we won't lose data if the tag is removed from Moodle (A tag with the same name might be added in future)."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="slotid" TYPE="foreign" FIELDS="slotid" REFTABLE="quiz_slots" REFFIELDS="id"/>
+        <KEY NAME="tagid" TYPE="foreign" FIELDS="tagid" REFTABLE="tag" REFFIELDS="id"/>
+      </KEYS>
     </TABLE>
   </TABLES>
 </XMLDB>

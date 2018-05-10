@@ -24,5 +24,7 @@
 
 $string['category:config'] = 'Configure category enrol instances';
 $string['category:synchronised'] = 'Role assignments synchronised to course enrolment';
+$string['enrolcategorysynctask'] = 'Category enrolment sync task';
 $string['pluginname'] = 'Category enrolments';
-$string['pluginname_desc'] = 'Category enrolment plugin is a legacy solution for enrolments at the course category level via role assignments. It is recommended to use cohort synchronisation instead.';
+$string['pluginname_desc'] = 'The category enrolments plugin synchronises any role assignments in the category context for roles with the capability enrol/category:synchronised allowed.';
+$string['privacy:metadata'] = 'The Category enrolments plugin does not store any personal data.';

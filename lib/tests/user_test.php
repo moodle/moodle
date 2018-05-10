@@ -117,6 +117,304 @@ class core_user_testcase extends advanced_testcase {
         $this->assertFalse(core_user::get_user_by_username('janedoe'));
     }
 
+    public function test_search() {
+        global $DB;
+
+        self::init_search_tests();
+
+        // Set up three courses for test.
+        $generator = $this->getDataGenerator();
+        $course1 = $generator->create_course();
+        $course2 = $generator->create_course();
+        $course3 = $generator->create_course();
+
+        // Manager user in system level.
+        $manager = $generator->create_user(['firstname' => 'Manager', 'lastname' => 'Person',
+                'email' => 'x@x.x']);
+        $systemcontext = \context_system::instance();
+        $generator->role_assign($DB->get_field('role', 'id', ['shortname' => 'manager']),
+                $manager->id, $systemcontext->id);
+
+        // Teachers in one and two courses.
+        $teacher1 = $generator->create_user(['firstname' => 'Alberto', 'lastname' => 'Unwin',
+                'email' => 'a.unwin@x.x']);
+        $generator->enrol_user($teacher1->id, $course1->id, 'teacher');
+        $teacher2and3 = $generator->create_user(['firstname' => 'Alexandra', 'lastname' => 'Penguin',
+                'email' => 'sillypenguin@x.x']);
+        $generator->enrol_user($teacher2and3->id, $course2->id, 'teacher');
+        $generator->enrol_user($teacher2and3->id, $course3->id, 'teacher');
+
+        // Students in each course and some on multiple courses.
+        $student1 = $generator->create_user(['firstname' => 'Amanda', 'lastname' => 'Hodder',
+                'email' => 'hodder_a@x.x']);
+        $generator->enrol_user($student1->id, $course1->id, 'student');
+        $student2 = $generator->create_user(['firstname' => 'Audrey', 'lastname' => 'Methuen',
+                'email' => 'audrey@x.x']);
+        $generator->enrol_user($student2->id, $course2->id, 'student');
+        $student3 = $generator->create_user(['firstname' => 'Austin', 'lastname' => 'Bloomsbury',
+                'email' => 'a.bloomsbury@x.x']);
+        $generator->enrol_user($student3->id, $course3->id, 'student');
+        $student1and2 = $generator->create_user(['firstname' => 'Augustus', 'lastname' => 'Random',
+                'email' => 'random@x.x']);
+        $generator->enrol_user($student1and2->id, $course1->id, 'student');
+        $generator->enrol_user($student1and2->id, $course2->id, 'student');
+        $studentall = $generator->create_user(['firstname' => 'Amelia', 'lastname' => 'House',
+                'email' => 'house@x.x']);
+        $generator->enrol_user($studentall->id, $course1->id, 'student');
+        $generator->enrol_user($studentall->id, $course2->id, 'student');
+        $generator->enrol_user($studentall->id, $course3->id, 'student');
+
+        // Special mixed user (name does not begin with A) is a teacher in one course and student
+        // in another.
+        $mixed = $generator->create_user(['firstname' => 'Xavier', 'lastname' => 'Harper',
+                'email' => 'xh1248@x.x']);
+        $generator->enrol_user($mixed->id, $course1->id, 'student');
+        $generator->enrol_user($mixed->id, $course3->id, 'teacher');
+
+        // As admin user, try searching for somebody at system level by first name, checking the
+        // results.
+        $this->setAdminUser();
+        $result = core_user::search('Amelia');
+        $this->assertCount(1, $result);
+
+        // Check some basic fields, and test other fields are present.
+        $this->assertEquals($studentall->id, $result[0]->id);
+        $this->assertEquals('Amelia', $result[0]->firstname);
+        $this->assertEquals('House', $result[0]->lastname);
+        $this->assertEquals('house@x.x', $result[0]->email);
+        $this->assertEquals(0, $result[0]->deleted);
+        $this->assertObjectHasAttribute('firstnamephonetic', $result[0]);
+        $this->assertObjectHasAttribute('lastnamephonetic', $result[0]);
+        $this->assertObjectHasAttribute('middlename', $result[0]);
+        $this->assertObjectHasAttribute('alternatename', $result[0]);
+        $this->assertObjectHasAttribute('imagealt', $result[0]);
+        $this->assertObjectHasAttribute('username', $result[0]);
+
+        // Now search by lastname, both names, and partials, case-insensitive.
+        $this->assertEquals($result, core_user::search('House'));
+        $this->assertEquals($result, core_user::search('Amelia house'));
+        $this->assertEquals($result, core_user::search('amelI'));
+        $this->assertEquals($result, core_user::search('hoUs'));
+        $this->assertEquals($result, core_user::search('Amelia H'));
+
+        // Admin user can also search by email (full or partial).
+        $this->assertEquals($result, core_user::search('house@x.x'));
+        $this->assertEquals($result, core_user::search('hOuse@'));
+
+        // What if we just search for A? (They all begin with A except the manager.)
+        $result = core_user::search('a');
+        $this->assertCount(7, $result);
+
+        // Au gets us Audrey, Austin, and Augustus - in alphabetical order by surname.
+        $result = core_user::search('au');
+        $this->assertCount(3, $result);
+        $this->assertEquals('Austin', $result[0]->firstname);
+        $this->assertEquals('Audrey', $result[1]->firstname);
+        $this->assertEquals('Augustus', $result[2]->firstname);
+
+        // But if we search within course 2 we'll get Audrey and Augustus first.
+        $course2context = \context_course::instance($course2->id);
+        $result = core_user::search('au', $course2context);
+        $this->assertCount(3, $result);
+        $this->assertEquals('Audrey', $result[0]->firstname);
+        $this->assertEquals('Augustus', $result[1]->firstname);
+        $this->assertEquals('Austin', $result[2]->firstname);
+
+        // Try doing a few searches as manager - we should get the same results and can still
+        // search by email too.
+        $this->setUser($manager);
+        $result = core_user::search('a');
+        $this->assertCount(7, $result);
+        $result = core_user::search('au', $course2context);
+        $this->assertCount(3, $result);
+        $result = core_user::search('house@x.x');
+        $this->assertCount(1, $result);
+
+        // Teacher 1. No site-level permission so can't see users outside the enrolled course.
+        $this->setUser($teacher1);
+        $result = core_user::search('au');
+        $this->assertCount(1, $result);
+        $this->assertEquals('Augustus', $result[0]->firstname);
+
+        // Can still search by email for that user.
+        $result = core_user::search('random@x.x');
+        $this->assertCount(1, $result);
+
+        // Search everyone - teacher can only see four users (including themself).
+        $result = core_user::search('a');
+        $this->assertCount(4, $result);
+
+        // Search within course 2 - you get the same four users (which doesn't include
+        // everyone on that course) but the two on course 2 should be first.
+        $result = core_user::search('a', $course2context);
+        $this->assertCount(4, $result);
+        $this->assertEquals('Amelia', $result[0]->firstname);
+        $this->assertEquals('Augustus', $result[1]->firstname);
+
+        // Other teacher.
+        $this->setUser($teacher2and3);
+        $result = core_user::search('au');
+        $this->assertCount(3, $result);
+
+        $result = core_user::search('a');
+        $this->assertCount(5, $result);
+
+        // Student can only see users on course 3.
+        $this->setUser($student3);
+        $result = core_user::search('a');
+        $this->assertCount(3, $result);
+
+        $result = core_user::search('au');
+        $this->assertCount(1, $result);
+        $this->assertEquals('Austin', $result[0]->firstname);
+
+        // Student cannot search by email.
+        $result = core_user::search('a.bloomsbury@x.x');
+        $this->assertCount(0, $result);
+
+        // Student on all courses can see all the A users.
+        $this->setUser($studentall);
+        $result = core_user::search('a');
+        $this->assertCount(7, $result);
+
+        // Mixed user can see users on courses 1 and 3.
+        $this->setUser($mixed);
+        $result = core_user::search('a');
+        $this->assertCount(6, $result);
+
+        // Mixed user can search by email for students on course 3 but not on course 1.
+        $result = core_user::search('hodder_a@x.x');
+        $this->assertCount(0, $result);
+        $result = core_user::search('house@x.x');
+        $this->assertCount(1, $result);
+    }
+
+    /**
+     * Tests the search() function with limits on the number to return.
+     */
+    public function test_search_with_count() {
+        self::init_search_tests();
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+
+        // Check default limit (30).
+        for ($i = 0; $i < 31; $i++) {
+            $student = $generator->create_user(['firstname' => 'Guy', 'lastname' => 'Xxx' . $i,
+                    'email' => 'xxx@x.x']);
+            $generator->enrol_user($student->id, $course->id, 'student');
+        }
+        $this->setAdminUser();
+        $result = core_user::search('Guy');
+        $this->assertCount(30, $result);
+
+        // Check a small limit.
+        $result = core_user::search('Guy', null, 10);
+        $this->assertCount(10, $result);
+
+        // Check no limit.
+        $result = core_user::search('Guy', null, 0);
+        $this->assertCount(31, $result);
+    }
+
+    /**
+     * When course is in separate groups mode and user is a student, they can't see people who
+     * are not in the same group. This is checked by the user profile permission thing and not
+     * currently by the original query.
+     */
+    public function test_search_group_permissions() {
+        global $DB;
+
+        self::init_search_tests();
+
+        // Create one user to do the searching.
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course(['groupmode' => SEPARATEGROUPS]);
+        $searcher = $generator->create_user(['firstname' => 'Searchy', 'lastname' => 'Sam',
+                'email' => 'xxx@x.x']);
+        $generator->enrol_user($searcher->id, $course->id, 'student');
+        $group = $generator->create_group(['courseid' => $course->id]);
+        groups_add_member($group, $searcher);
+
+        // Create a large number of people so that we have to make multiple database reads.
+        $targets = [];
+        for ($i = 0; $i < 50; $i++) {
+            $student = $generator->create_user(['firstname' => 'Guy', 'lastname' => 'Xxx' . $i,
+                    'email' => 'xxx@x.x']);
+            $generator->enrol_user($student->id, $course->id, 'student');
+            $targets[] = $student;
+        }
+
+        // The first and last people are in the same group.
+        groups_add_member($group, $targets[0]);
+        groups_add_member($group, $targets[49]);
+
+        // As searcher, we only find the 2 in the same group.
+        $this->setUser($searcher);
+        $result = core_user::search('Guy');
+        $this->assertCount(2, $result);
+
+        // If we change the course to visible groups though, we get the max number.
+        $DB->set_field('course', 'groupmode', VISIBLEGROUPS, ['id' => $course->id]);
+        $result = core_user::search('Guy');
+        $this->assertCount(30, $result);
+    }
+
+    /**
+     * When course is in separate groups mode and user is a student, they can't see people who
+     * are not in the same group. This is checked by the user profile permission thing and not
+     * currently by the original query.
+     */
+    public function test_search_deleted_users() {
+        self::init_search_tests();
+
+        // Create one user to do the searching.
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $searcher = $generator->create_user(['firstname' => 'Searchy', 'lastname' => 'Sam',
+                'email' => 'xxx@x.x']);
+        $generator->enrol_user($searcher->id, $course->id, 'student');
+
+        // Create another two users to search for.
+        $student1 = $generator->create_user(['firstname' => 'Amelia', 'lastname' => 'Aardvark']);
+        $student2 = $generator->create_user(['firstname' => 'Amelia', 'lastname' => 'Beetle']);
+        $generator->enrol_user($student1->id, $course->id, 'student');
+        $generator->enrol_user($student2->id, $course->id, 'student');
+
+        // As searcher, we find both users.
+        $this->setUser($searcher);
+        $result = core_user::search('Amelia');
+        $this->assertCount(2, $result);
+
+        // What if one is deleted?
+        delete_user($student1);
+        $result = core_user::search('Amelia');
+        $this->assertCount(1, $result);
+        $this->assertEquals('Beetle', $result[0]->lastname);
+
+        // Delete the other, for good measure.
+        delete_user($student2);
+        $result = core_user::search('Amelia');
+        $this->assertCount(0, $result);
+    }
+
+    /**
+     * Carries out standard setup for the search test functions.
+     */
+    protected static function init_search_tests() {
+        global $DB;
+
+        // For all existing users, set their name and email to something stupid so we don't
+        // accidentally find one, confusing the test counts.
+        $DB->set_field('user', 'firstname', 'Zaphod');
+        $DB->set_field('user', 'lastname', 'Beeblebrox');
+        $DB->set_field('user', 'email', 'zaphod@beeblebrox.example.org');
+
+        // This is the default value, but let's set it just to be certain in case it changes later.
+        // It affects what fields admin (and other users with the viewuseridentity permission) can
+        // search in addition to the name.
+        set_config('showuseridentity', 'email');
+    }
+
     /**
      * Test require_active_user
      */

@@ -163,10 +163,11 @@ $CFG->wwwroot              = install_guess_wwwroot(); // can not be changed - pp
 $CFG->httpswwwroot         = $CFG->wwwroot;
 $CFG->dataroot             = $config->dataroot;
 $CFG->tempdir              = $CFG->dataroot.'/temp';
+$CFG->backuptempdir        = $CFG->tempdir.'/backup';
 $CFG->cachedir             = $CFG->dataroot.'/cache';
 $CFG->localcachedir        = $CFG->dataroot.'/localcache';
 $CFG->admin                = $config->admin;
-$CFG->docroot              = 'http://docs.moodle.org';
+$CFG->docroot              = 'https://docs.moodle.org';
 $CFG->langotherroot        = $CFG->dataroot.'/lang';
 $CFG->langlocalroot        = $CFG->dataroot.'/lang';
 $CFG->directorypermissions = isset($distro->directorypermissions) ? $distro->directorypermissions : 00777; // let distros set dir permissions
@@ -483,7 +484,6 @@ if ($config->stage == INSTALL_DATABASETYPE) {
                        'pgsql'  => moodle_database::get_driver_instance('pgsql',  'native'),
                        'oci'    => moodle_database::get_driver_instance('oci',    'native'),
                        'sqlsrv' => moodle_database::get_driver_instance('sqlsrv', 'native'), // MS SQL*Server PHP driver
-                       'mssql'  => moodle_database::get_driver_instance('mssql',  'native'), // FreeTDS driver
                       );
 
     echo '<div class="userinput">';

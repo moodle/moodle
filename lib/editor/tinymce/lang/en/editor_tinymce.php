@@ -894,3 +894,4 @@ $string['advanced:cut_desc'] = 'Cut';
 $string['advanced:paste_desc'] = 'Paste';
 $string['advanced:shortcuts_desc'] = 'Accessibility help';
 $string['autosave:restore_content'] = 'Restore auto-saved content';
+$string['privacy:metadata'] = 'The TinyMCE HTML editor plugin does not store any personal data.';

@@ -44,7 +44,7 @@ function download_as_dataformat($filename, $dataformat, $columns, $iterator, $ca
 
     $classname = 'dataformat_' . $dataformat . '\writer';
     if (!class_exists($classname)) {
-        throw new coding_exception("Unable to locate dataformat/$type/classes/writer.php");
+        throw new coding_exception("Unable to locate dataformat/$dataformat/classes/writer.php");
     }
     $format = new $classname;
 

@@ -29,3 +29,4 @@ $string['mnet_hosts:addinstance'] = 'Add a new network servers block';
 $string['mnet_hosts:myaddinstance'] = 'Add a new network servers block to Dashboard';
 $string['pluginname'] = 'Network servers';
 $string['server'] = 'Server';
+$string['privacy:metadata'] = 'The Network servers block only allows interaction with Network servers and neither stores or exports data itself.';

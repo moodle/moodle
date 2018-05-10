@@ -81,15 +81,15 @@ class core_calendar_renderer extends plugin_renderer_base {
 
         // Previous.
         $calendar->set_time($prev);
-        list($previousmonth, ) = calendar_get_view($calendar, 'minithree', false);
+        list($previousmonth, ) = calendar_get_view($calendar, 'minithree', false, true);
 
         // Current month.
         $calendar->set_time($current);
-        list($currentmonth, ) = calendar_get_view($calendar, 'minithree', false);
+        list($currentmonth, ) = calendar_get_view($calendar, 'minithree', false, true);
 
         // Next month.
         $calendar->set_time($next);
-        list($nextmonth, ) = calendar_get_view($calendar, 'minithree', false);
+        list($nextmonth, ) = calendar_get_view($calendar, 'minithree', false, true);
 
         // Reset the time back.
         $calendar->set_time($current);
@@ -243,19 +243,41 @@ class core_calendar_renderer extends plugin_renderer_base {
      * @return string
      */
     public function course_filter_selector(moodle_url $returnurl, $label = null, $courseid = null) {
-        global $CFG;
+        global $CFG, $DB;
 
         if (!isloggedin() or isguestuser()) {
             return '';
         }
 
+        $contextrecords = [];
         $courses = calendar_get_default_courses($courseid, 'id, shortname');
+
+        if (!empty($courses) && count($courses) > CONTEXT_CACHE_MAX_SIZE) {
+            // We need to pull the context records from the DB to preload them
+            // below. The calendar_get_default_courses code will actually preload
+            // the contexts itself however the context cache is capped to a certain
+            // amount before it starts recycling. Unfortunately that starts to happen
+            // quite a bit if a user has access to a large number of courses (e.g. admin).
+            // So in order to avoid hitting the DB for each context as we loop below we
+            // can load all of the context records and add them to the cache just in time.
+            $courseids = array_map(function($c) {
+                return $c->id;
+            }, $courses);
+            list($insql, $params) = $DB->get_in_or_equal($courseids);
+            $contextsql = "SELECT ctx.instanceid, " . context_helper::get_preload_record_columns_sql('ctx') .
+                          " FROM {context} ctx WHERE ctx.contextlevel = ? AND ctx.instanceid $insql";
+            array_unshift($params, CONTEXT_COURSE);
+            $contextrecords = $DB->get_records_sql($contextsql, $params);
+        }
 
         unset($courses[SITEID]);
 
         $courseoptions = array();
         $courseoptions[SITEID] = get_string('fulllistofcourses');
         foreach ($courses as $course) {
+            if (isset($contextrecords[$course->id])) {
+                context_helper::preload_from_record($contextrecords[$course->id]);
+            }
             $coursecontext = context_course::instance($course->id);
             $courseoptions[$course->id] = format_string($course->shortname, true, array('context' => $coursecontext));
         }

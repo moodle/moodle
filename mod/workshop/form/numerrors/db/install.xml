@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/workshop/db" VERSION="20120122" COMMENT="XMLDB file for Moodle Number of errors subplugin"
+<XMLDB PATH="mod/workshop/form/numerrors/db" VERSION="20120122" COMMENT="XMLDB file for Moodle Number of errors subplugin"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+    xsi:noNamespaceSchemaLocation="../../../../../lib/xmldb/xmldb.xsd"
 >
   <TABLES>
     <TABLE NAME="workshopform_numerrors" COMMENT="The assessment dimensions definitions of Number of errors grading strategy forms">

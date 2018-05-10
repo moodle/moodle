@@ -43,6 +43,8 @@ class qtype_gapselect_edit_form_base_testable extends qtype_gapselect_edit_form_
         $category = question_make_default_categories(array($syscontext));
         $fakequestion = new stdClass();
         $fakequestion->qtype = 'stack';
+        $fakequestion->contextid = $syscontext->id;
+        $fakequestion->createdby = 2;
         $fakequestion->category = $category->id;
         $fakequestion->questiontext = 'Test [[1]] question [[2]]';
         $fakequestion->options = new stdClass();

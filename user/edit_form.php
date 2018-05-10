@@ -104,7 +104,7 @@ class user_edit_form extends moodleform {
         // Next the customisable profile fields.
         profile_definition($mform, $userid);
 
-        $this->add_action_buttons(false, get_string('updatemyprofile'));
+        $this->add_action_buttons(true, get_string('updatemyprofile'));
 
         $this->set_data($user);
     }

@@ -3694,10 +3694,15 @@ class workshop_user_plan implements renderable {
             $phase->tasks['submissionenddatetime'] = $task;
         }
         if (($workshop->submissionstart < time()) and $workshop->latesubmissions) {
-            $task = new stdclass();
-            $task->title = get_string('latesubmissionsallowed', 'workshop');
-            $task->completed = 'info';
-            $phase->tasks['latesubmissionsallowed'] = $task;
+            // If submission deadline has passed and late submissions are allowed, only display 'latesubmissionsallowed' text to
+            // users (students) who have not submitted and users(teachers, admins)  who can switch pahase..
+            if (has_capability('mod/workshop:switchphase', $workshop->context, $userid) ||
+                    (!$workshop->get_submission_by_author($userid) && $workshop->submissionend < time())) {
+                $task = new stdclass();
+                $task->title = get_string('latesubmissionsallowed', 'workshop');
+                $task->completed = 'info';
+                $phase->tasks['latesubmissionsallowed'] = $task;
+            }
         }
         if (isset($phase->tasks['submissionstartdatetime']) or isset($phase->tasks['submissionenddatetime'])) {
             if (has_capability('mod/workshop:ignoredeadlines', $workshop->context, $userid)) {

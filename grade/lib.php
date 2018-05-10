@@ -2127,7 +2127,12 @@ class grade_seq extends grade_structure {
         }
         unset($element['children']);
 
-        if ($category_grade_last and count($children) > 1) {
+        if ($category_grade_last and count($children) > 1 and
+            (
+                $children[0]['type'] === 'courseitem' or
+                $children[0]['type'] === 'categoryitem'
+            )
+        ) {
             $cat_item = array_shift($children);
             array_push($children, $cat_item);
         }

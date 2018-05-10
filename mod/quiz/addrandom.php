@@ -85,6 +85,10 @@ if ($data = $mform->get_data()) {
     if (!empty($data->existingcategory)) {
         list($categoryid) = explode(',', $data->category);
         $includesubcategories = !empty($data->includesubcategories);
+        if (!$includesubcategories) {
+            // If the chosen category is a top category.
+            $includesubcategories = $DB->record_exists('question_categories', ['id' => $categoryid, 'parent' => 0]);
+        }
         $returnurl->param('cat', $data->category);
 
     } else if (!empty($data->newcategory)) {
@@ -98,7 +102,15 @@ if ($data = $mform->get_data()) {
                 'It seems a form was submitted without any button being pressed???');
     }
 
-    quiz_add_random_questions($quiz, $addonpage, $categoryid, $data->numbertoadd, $includesubcategories);
+    if (empty($data->fromtags)) {
+        $data->fromtags = [];
+    }
+
+    $tagids = array_map(function($tagstrings) {
+        return (int)explode(',', $tagstrings)[0];
+    }, $data->fromtags);
+
+    quiz_add_random_questions($quiz, $addonpage, $categoryid, $data->numbertoadd, $includesubcategories, $tagids);
     quiz_delete_previews($quiz);
     quiz_update_sumgrades($quiz);
     redirect($returnurl);

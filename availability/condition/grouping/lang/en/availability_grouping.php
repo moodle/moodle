@@ -29,3 +29,4 @@ $string['pluginname'] = 'Restriction by grouping';
 $string['requires_grouping'] = 'You belong to a group in <strong>{$a}</strong>';
 $string['requires_notgrouping'] = 'You do not belong to a group in <strong>{$a}</strong>';
 $string['title'] = 'Grouping';
+$string['privacy:metadata'] = 'The Restriction by grouping plugin does not store any personal data.';

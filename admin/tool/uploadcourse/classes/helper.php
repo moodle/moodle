@@ -227,7 +227,7 @@ class tool_uploadcourse_helper {
         }
 
         // If we don't use the cache, or if we do and not set, or the directory doesn't exist any more.
-        if (!$usecache || (($backupid = $cache->get($cachekey)) === false || !is_dir("$CFG->tempdir/backup/$backupid"))) {
+        if (!$usecache || (($backupid = $cache->get($cachekey)) === false || !is_dir(get_backup_temp_directory($backupid)))) {
 
             // Use null instead of false because it would consider that the cache key has not been set.
             $backupid = null;
@@ -236,7 +236,7 @@ class tool_uploadcourse_helper {
                 // Extracting the backup file.
                 $packer = get_file_packer('application/vnd.moodle.backup');
                 $backupid = restore_controller::get_tempdir_name(SITEID, $USER->id);
-                $path = "$CFG->tempdir/backup/$backupid/";
+                $path = make_backup_temp_directory($backupid, false);
                 $result = $packer->extract_to_pathname($backupfile, $path);
                 if (!$result) {
                     $errors['invalidbackupfile'] = new lang_string('invalidbackupfile', 'tool_uploadcourse');

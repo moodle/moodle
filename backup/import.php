@@ -140,7 +140,7 @@ if ($backup->get_stage() == backup_ui::STAGE_FINAL) {
     // Check whether the backup directory still exists. If missing, something
     // went really wrong in backup, throw error. Note that backup::MODE_IMPORT
     // backups don't store resulting files ever
-    $tempdestination = $CFG->tempdir . '/backup/' . $backupid;
+    $tempdestination = make_backup_temp_directory($backupid, false);
     if (!file_exists($tempdestination) || !is_dir($tempdestination)) {
         print_error('unknownbackupexporterror'); // shouldn't happen ever
     }

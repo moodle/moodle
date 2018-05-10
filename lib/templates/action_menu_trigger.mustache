@@ -23,7 +23,8 @@
     {
         "instance": "1",
         "title": "Trigger me!",
-        "menutrigger": true
+        "menutrigger": true,
+        "triggerextraclasses": ""
     }
 }}
-<a href="#" class="toggle-display {{#menutrigger}}textmenu{{/menutrigger}}" id="action-menu-toggle-{{instance}}" title="{{title}}" role="menuitem">{{{actiontext}}}{{{menutrigger}}}{{#icon}}{{#pix}}{{key}}, {{component}}, {{title}}{{/pix}}{{/icon}}{{#rawicon}}{{{.}}}{{/rawicon}}{{#menutrigger}}<b class="caret"></b>{{/menutrigger}}</a>
+<a href="#" class="{{triggerextraclasses}} toggle-display {{#menutrigger}}textmenu{{/menutrigger}}" id="action-menu-toggle-{{instance}}" title="{{title}}" role="menuitem">{{{actiontext}}}{{{menutrigger}}}{{#icon}}{{#pix}}{{key}}, {{component}}, {{title}}{{/pix}}{{/icon}}{{#rawicon}}{{{.}}}{{/rawicon}}{{#menutrigger}}<b class="caret"></b>{{/menutrigger}}</a>

@@ -124,6 +124,17 @@ abstract class question_behaviour {
      */
     public function check_file_access($options, $component, $filearea, $args, $forcedownload) {
         $this->adjust_display_options($options);
+
+        if ($component == 'question' && $filearea == 'response_bf_comment') {
+            foreach ($this->qa->get_step_iterator() as $attemptstep) {
+                if ($attemptstep->get_id() == $args[0]) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         return $this->question->check_file_access($this->qa, $options, $component,
                 $filearea, $args, $forcedownload);
     }
@@ -202,7 +213,7 @@ abstract class question_behaviour {
             return array();
         }
 
-        $vars = array('comment' => PARAM_RAW, 'commentformat' => PARAM_INT);
+        $vars = array('comment' => question_attempt::PARAM_RAW_FILES, 'commentformat' => PARAM_INT);
         if ($this->qa->get_max_mark()) {
             $vars['mark'] = PARAM_RAW_TRIMMED;
             $vars['maxmark'] = PARAM_FLOAT;
@@ -507,15 +518,20 @@ abstract class question_behaviour {
      * @param $comment the comment text to format. If omitted,
      *      $this->qa->get_manual_comment() is used.
      * @param $commentformat the format of the comment, one of the FORMAT_... constants.
+     * @param $context the quiz context.
      * @return string the comment, ready to be output.
      */
-    public function format_comment($comment = null, $commentformat = null) {
+    public function format_comment($comment = null, $commentformat = null, $context = null) {
         $formatoptions = new stdClass();
         $formatoptions->noclean = true;
         $formatoptions->para = false;
 
         if (is_null($comment)) {
-            list($comment, $commentformat) = $this->qa->get_manual_comment();
+            list($comment, $commentformat, $commentstep) = $this->qa->get_manual_comment();
+        }
+
+        if ($context !== null) {
+            $comment = $this->qa->rewrite_response_pluginfile_urls($comment, $context->id, 'bf_comment', $commentstep);
         }
 
         return format_text($comment, $commentformat, $formatoptions);
@@ -528,8 +544,9 @@ abstract class question_behaviour {
     protected function summarise_manual_comment($step) {
         $a = new stdClass();
         if ($step->has_behaviour_var('comment')) {
-            $a->comment = shorten_text(html_to_text($this->format_comment(
-                    $step->get_behaviour_var('comment')), 0, false), 200);
+            list($comment, $commentformat, $commentstep) = $this->qa->get_manual_comment();
+            $comment = question_utils::to_plain_text($comment, $commentformat);
+            $a->comment = shorten_text($comment, 200);
         } else {
             $a->comment = '';
         }

@@ -51,7 +51,7 @@ trait templatable_form_element {
         $context = [];
 
         // Not all elements have all of these attributes - but they are common enough to be valid for a few.
-        $standardattributes = ['id', 'name', 'label', 'multiple', 'checked', 'error', 'size', 'value'];
+        $standardattributes = ['id', 'name', 'label', 'multiple', 'checked', 'error', 'size', 'value', 'type'];
         $standardproperties = ['helpbutton', 'hiddenLabel'];
 
         // Standard attributes.

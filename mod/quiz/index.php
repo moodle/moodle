@@ -43,20 +43,8 @@ $event->trigger();
 
 // Print the header.
 $strquizzes = get_string("modulenameplural", "quiz");
-$streditquestions = '';
-$editqcontexts = new question_edit_contexts($coursecontext);
-if ($editqcontexts->have_one_edit_tab_cap('questions')) {
-    $streditquestions =
-            "<form target=\"_parent\" method=\"get\" action=\"$CFG->wwwroot/question/edit.php\">
-               <div>
-               <input type=\"hidden\" name=\"courseid\" value=\"$course->id\" />
-               <input type=\"submit\" value=\"".get_string("editquestions", "quiz")."\" />
-               </div>
-             </form>";
-}
 $PAGE->navbar->add($strquizzes);
 $PAGE->set_title($strquizzes);
-$PAGE->set_button($streditquestions);
 $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
 echo $OUTPUT->heading($strquizzes, 2);
@@ -129,6 +117,8 @@ $table->align = $align;
 
 // Populate the table with the list of instances.
 $currentsection = '';
+// Get all closing dates.
+$timeclosedates = quiz_get_user_timeclose($course->id);
 foreach ($quizzes as $quiz) {
     $cm = get_coursemodule_from_instance('quiz', $quiz->id);
     $context = context_module::instance($cm->id);
@@ -158,7 +148,11 @@ foreach ($quizzes as $quiz) {
 
     // Close date.
     if ($quiz->timeclose) {
-        $data[] = userdate($quiz->timeclose);
+        if (($timeclosedates[$quiz->id]->usertimeclose == 0) AND ($timeclosedates[$quiz->id]->usertimelimit == 0)) {
+            $data[] = get_string('noclose', 'quiz');
+        } else {
+            $data[] = userdate($timeclosedates[$quiz->id]->usertimeclose);
+        }
     } else if ($showclosingheader) {
         $data[] = '';
     }

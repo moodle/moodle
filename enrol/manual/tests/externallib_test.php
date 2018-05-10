@@ -62,7 +62,7 @@ class enrol_manual_externallib_testcase extends externallib_advanced_testcase {
         $this->assignUserCapability('moodle/course:view', $context2->id, $roleid);
         $this->assignUserCapability('moodle/role:assign', $context2->id, $roleid);
 
-        allow_assign($roleid, 3);
+        core_role_set_assign_allowed($roleid, 3);
 
         // Call the external function.
         enrol_manual_external::enrol_users(array(

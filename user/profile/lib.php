@@ -88,7 +88,7 @@ class profile_field_base {
         $this->set_userid($userid);
         if ($fielddata) {
             $this->set_field($fielddata);
-            if ($userid && !empty($fielddata->hasuserdata)) {
+            if ($userid > 0 && !empty($fielddata->hasuserdata)) {
                 $this->set_user_data($fielddata->data, $fielddata->dataformat);
             }
         } else {
@@ -395,7 +395,7 @@ class profile_field_base {
             $this->set_field($field);
         }
 
-        if (!empty($this->field) && $this->userid) {
+        if (!empty($this->field) && $this->userid > 0) {
             $params = array('userid' => $this->userid, 'fieldid' => $this->fieldid);
             if ($data = $DB->get_record('user_info_data', $params, 'data, dataformat')) {
                 $this->set_user_data($data->data, $data->dataformat);
@@ -413,7 +413,7 @@ class profile_field_base {
     public function is_visible() {
         global $USER;
 
-        $context = $this->userid ? context_user::instance($this->userid) : context_system::instance();
+        $context = ($this->userid > 0) ? context_user::instance($this->userid) : context_system::instance();
 
         switch ($this->field->visible) {
             case PROFILE_VISIBLE_ALL:
@@ -507,12 +507,12 @@ function profile_get_user_fields_with_data($userid) {
 
     // Join any user info data present with each user info field for the user object.
     $sql = 'SELECT uif.*, uic.name AS categoryname ';
-    if ($userid) {
+    if ($userid > 0) {
         $sql .= ', uind.id AS hasuserdata, uind.data, uind.dataformat ';
     }
     $sql .= 'FROM {user_info_field} uif ';
     $sql .= 'LEFT JOIN {user_info_category} uic ON uif.categoryid = uic.id ';
-    if ($userid) {
+    if ($userid > 0) {
         $sql .= 'LEFT JOIN {user_info_data} uind ON uif.id = uind.fieldid AND uind.userid = :userid ';
     }
     $sql .= 'ORDER BY uic.sortorder ASC, uif.sortorder ASC ';
@@ -769,14 +769,36 @@ function profile_get_custom_fields($onlyinuserobject = false) {
 /**
  * Load custom profile fields into user object
  *
- * Please note originally in 1.9 we were using the custom field names directly,
- * but it was causing unexpected collisions when adding new fields to user table,
- * so instead we now use 'profile_' prefix.
- *
  * @param stdClass $user user object
  */
 function profile_load_custom_fields($user) {
     $user->profile = (array)profile_user_record($user->id);
+}
+
+/**
+ * Save custom profile fields for a user.
+ *
+ * @param int $userid The user id
+ * @param array $profilefields The fields to save
+ */
+function profile_save_custom_fields($userid, $profilefields) {
+    global $DB;
+
+    if ($fields = $DB->get_records('user_info_field')) {
+        foreach ($fields as $field) {
+            if (isset($profilefields[$field->shortname])) {
+                $conditions = array('fieldid' => $field->id, 'userid' => $userid);
+                $id = $DB->get_field('user_info_data', 'id', $conditions);
+                $data = $profilefields[$field->shortname];
+                if ($id) {
+                    $DB->set_field('user_info_data', 'data', $data, array('id' => $id));
+                } else {
+                    $record = array('fieldid' => $field->id, 'userid' => $userid, 'data' => $data);
+                    $DB->insert_record('user_info_data', $record);
+                }
+            }
+        }
+    }
 }
 
 /**

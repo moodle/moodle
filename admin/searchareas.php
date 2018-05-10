@@ -35,10 +35,7 @@ try {
     // Continue, we return an error later depending on the requested action.
 }
 
-echo $OUTPUT->header();
-
 if ($action) {
-    require_sesskey();
 
     if ($areaid) {
         // We need to check that the area exists.
@@ -48,44 +45,75 @@ if ($action) {
         }
     }
 
-    // All actions but enable/disable need the search engine to be ready.
     if ($action !== 'enable' && $action !== 'disable') {
+        // All actions but enable/disable need the search engine to be ready.
         if (!empty($searchmanagererror)) {
             throw $searchmanagererror;
         }
+
+        // Show confirm prompt for all these actions as they may be inadvisable, or may cause
+        // an interruption in search functionality, on production systems.
+        if (!optional_param('confirm', 0, PARAM_INT)) {
+            // Display confirmation prompt.
+            $a = null;
+            if ($areaid) {
+                $a = html_writer::tag('strong', $area->get_visible_name());
+            }
+
+            $actionparams = ['sesskey' => sesskey(), 'action' => $action, 'confirm' => 1];
+            if ($areaid) {
+                $actionparams['areaid'] = $areaid;
+            }
+            $actionurl = new moodle_url('/admin/searchareas.php', $actionparams);
+            $cancelurl = new moodle_url('/admin/searchareas.php');
+            echo $OUTPUT->header();
+            echo $OUTPUT->confirm(get_string('confirm_' . $action, 'search', $a),
+                    new single_button($actionurl, get_string('continue'), 'post', true),
+                    new single_button($cancelurl, get_string('cancel'), 'get'));
+            echo $OUTPUT->footer();
+            exit;
+        }
     }
+
+    // We are now taking an actual action, so require sesskey.
+    require_sesskey();
 
     switch ($action) {
         case 'enable':
             $area->set_enabled(true);
-            echo $OUTPUT->notification(get_string('searchareaenabled', 'admin'), \core\output\notification::NOTIFY_SUCCESS);
+            \core\notification::add(get_string('searchareaenabled', 'admin'), \core\output\notification::NOTIFY_SUCCESS);
             break;
         case 'disable':
             $area->set_enabled(false);
-            echo $OUTPUT->notification(get_string('searchareadisabled', 'admin'), \core\output\notification::NOTIFY_SUCCESS);
+            \core\notification::add(get_string('searchareadisabled', 'admin'), \core\output\notification::NOTIFY_SUCCESS);
             break;
         case 'delete':
             $search = \core_search\manager::instance();
             $search->delete_index($areaid);
-            echo $OUTPUT->notification(get_string('searchindexdeleted', 'admin'), \core\output\notification::NOTIFY_SUCCESS);
+            \core\notification::add(get_string('searchindexdeleted', 'admin'), \core\output\notification::NOTIFY_SUCCESS);
             break;
         case 'indexall':
             $searchmanager->index();
-            echo $OUTPUT->notification(get_string('searchindexupdated', 'admin'), \core\output\notification::NOTIFY_SUCCESS);
+            \core\notification::add(get_string('searchindexupdated', 'admin'), \core\output\notification::NOTIFY_SUCCESS);
             break;
         case 'reindexall':
             $searchmanager->index(true);
-            echo $OUTPUT->notification(get_string('searchreindexed', 'admin'), \core\output\notification::NOTIFY_SUCCESS);
+            \core\notification::add(get_string('searchreindexed', 'admin'), \core\output\notification::NOTIFY_SUCCESS);
             break;
         case 'deleteall':
             $searchmanager->delete_index();
-            echo $OUTPUT->notification(get_string('searchalldeleted', 'admin'), \core\output\notification::NOTIFY_SUCCESS);
+            \core\notification::add(get_string('searchalldeleted', 'admin'), \core\output\notification::NOTIFY_SUCCESS);
             break;
         default:
             throw new moodle_exception('invalidaction');
             break;
     }
+
+    // Redirect back to the main page after taking action.
+    redirect(new moodle_url('/admin/searchareas.php'));
 }
+
+echo $OUTPUT->header();
 
 $searchareas = \core_search\manager::get_search_areas_list();
 if (empty($searchmanagererror)) {
@@ -132,7 +160,17 @@ foreach ($searchareas as $area) {
                 $laststatus = '';
             }
             $columns[] = $laststatus;
-            $columns[] = html_writer::link(admin_searcharea_action_url('delete', $areaid), 'Delete index');
+            $accesshide = html_writer::span($area->get_visible_name(), 'accesshide');
+            $actions = [];
+            $actions[] = $OUTPUT->pix_icon('t/delete', '') .
+                    html_writer::link(admin_searcharea_action_url('delete', $areaid),
+                    get_string('deleteindex', 'search', $accesshide));
+            if ($area->supports_get_document_recordset()) {
+                $actions[] = $OUTPUT->pix_icon('i/reload', '') . html_writer::link(
+                        new moodle_url('searchreindex.php', ['areaid' => $areaid]),
+                        get_string('gradualreindex', 'search', $accesshide));
+            }
+            $columns[] = html_writer::alist($actions, ['class' => 'unstyled list-unstyled']);
 
         } else {
             $blankrow = new html_table_cell(get_string('searchnotavailable', 'admin'));
@@ -165,6 +203,13 @@ echo $OUTPUT->single_button(admin_searcharea_action_url('deleteall'), get_string
 echo $OUTPUT->box_end();
 
 echo html_writer::table($table);
+
+if (empty($searchmanagererror)) {
+    // Show information about queued index requests for specific contexts.
+    $searchrenderer = $PAGE->get_renderer('core_search');
+    echo $searchrenderer->render_index_requests_info($searchmanager->get_index_requests_info());
+}
+
 echo $OUTPUT->footer();
 
 /**
@@ -175,9 +220,12 @@ echo $OUTPUT->footer();
  * @return moodle_url
  */
 function admin_searcharea_action_url($action, $areaid = false) {
-    $params = array('action' => $action, 'sesskey' => sesskey());
+    $params = array('action' => $action);
     if ($areaid) {
         $params['areaid'] = $areaid;
+    }
+    if ($action === 'disable' || $action === 'enable') {
+        $params['sesskey'] = sesskey();
     }
     return new moodle_url('/admin/searchareas.php', $params);
 }

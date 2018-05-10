@@ -37,13 +37,12 @@ class backup_plan extends base_plan implements loggable {
      * Constructor - instantiates one object of this class
      */
     public function __construct($controller) {
-        global $CFG;
-
         if (! $controller instanceof backup_controller) {
             throw new backup_plan_exception('wrong_backup_controller_specified');
         }
+        $backuptempdir    = make_backup_temp_directory('');
         $this->controller = $controller;
-        $this->basepath   = $CFG->tempdir . '/backup/' . $controller->get_backupid();
+        $this->basepath   = $backuptempdir . '/' . $controller->get_backupid();
         $this->excludingdactivities = false;
         parent::__construct('backup_plan');
     }

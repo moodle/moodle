@@ -123,14 +123,13 @@ class enrol_manual_enrol_users_form extends moodleform {
 
         $roles = get_assignable_roles($context);
         $mform->addElement('select', 'roletoassign', get_string('assignrole', 'enrol_manual'), $roles);
-        $keys = array_keys($roles);
-        $defaultrole = end($keys);
-        $mform->setDefault('roletoassign', $defaultrole);
+        $mform->setDefault('roletoassign', $instance->roleid);
 
         $mform->addAdvancedStatusElement('main');
 
         $mform->addElement('checkbox', 'recovergrades', get_string('recovergrades', 'enrol'));
         $mform->setAdvanced('recovergrades');
+        $mform->setDefault('recovergrades', $CFG->recovergradesdefault);
         $mform->addElement('select', 'duration', get_string('defaultperiod', 'enrol_manual'), $periodmenu);
         $mform->setDefault('duration', $defaultperiod);
         $mform->setAdvanced('duration');

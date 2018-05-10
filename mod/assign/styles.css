@@ -56,9 +56,8 @@
     padding: 0;
 }
 
-.path-mod-assign .gradingbatchoperationsform .mform fieldset {
-    margin: 0;
-    padding: 0;
+.path-mod-assign textarea.quickgrade {
+    resize: both;
 }
 
 .path-mod-assign td.submissionstatus,

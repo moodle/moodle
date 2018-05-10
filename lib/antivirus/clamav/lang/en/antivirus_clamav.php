@@ -36,6 +36,7 @@ $string['pathtoclamdesc'] = 'If the running method is set to "command line", ent
 $string['pathtounixsocket'] = 'Unix domain socket';
 $string['pathtounixsocketdesc'] = 'If the running method is set to "Unix domain socket", enter the path to ClamAV Unix socket here. On Debian Linux this will be /var/run/clamav/clamd.ctl. Please make sure that clamav daemon has read access to uploaded files, the easiest way to ensure that is to add \'clamav\' user to your webserver group (\'www-data\' on Debian Linux).';
 $string['pluginname'] = 'ClamAV antivirus';
+$string['privacy:metadata'] = 'The ClamAV antivirus plugin does not store any personal data.';
 $string['quarantinedir'] = 'Quarantine directory';
 $string['runningmethod'] = 'Running method';
 $string['runningmethoddesc'] = 'Method of running ClamAV. Command line is used by default, however on Unix systems better performance can be obtained by using system sockets.';

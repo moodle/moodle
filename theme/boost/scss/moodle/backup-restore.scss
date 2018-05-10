@@ -37,9 +37,8 @@
     .section_level .activity_level {
         font-weight: normal;
     }
-
     .proceedbutton {
-        float: right;
+        margin-left: auto;
     }
 }
 
@@ -62,17 +61,6 @@
             .col-md-9.checkbox {
                 width: 100%;
                 left: 0;
-            }
-            /* These are labels with a value on the right */
-            .col-md-3 {
-                width: 50%;
-            }
-            .col-md-9 {
-                width: 50%;
-                left: 0;
-            }
-            .icon:first-of-type {
-                margin-left: 1rem;
             }
         }
     }

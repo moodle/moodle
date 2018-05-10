@@ -106,9 +106,10 @@ interface event_interface {
     public function get_times();
 
     /**
-     * Get repeats of this event.
+     * Get repeats of this event or null if the event has no
+     * repeats.
      *
-     * @return event_collection_interface
+     * @return event_collection_interface|null
      */
     public function get_repeats();
 

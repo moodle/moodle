@@ -27,6 +27,7 @@ require_once(__DIR__ . '/../config.php');
 $page = optional_param('page', 0, PARAM_INT);
 $q = optional_param('q', '', PARAM_NOTAGS);
 $title = optional_param('title', '', PARAM_NOTAGS);
+$contextid = optional_param('context', 0, PARAM_INT);
 // Moving areaids, courseids, timestart, and timeend further down as they might come as an array if they come from the form.
 
 $context = context_system::instance();
@@ -53,10 +54,32 @@ if (\core_search\manager::is_global_search_enabled() === false) {
     exit;
 }
 
-$search = \core_search\manager::instance();
+$search = \core_search\manager::instance(true);
 
-// We first get the submitted data as we want to set it all in the page URL.
-$mform = new \core_search\output\form\search(null, array('searchengine' => $search->get_engine()->get_plugin_name()));
+// Set up custom data for form.
+$customdata = ['searchengine' => $search->get_engine()->get_plugin_name()];
+if ($contextid) {
+    // When a context is supplied, check if it's within course level. If so, show dropdown.
+    $context = context::instance_by_id($contextid);
+    $coursecontext = $context->get_course_context(false);
+    if ($coursecontext) {
+        $searchwithin = [];
+        $searchwithin[''] = get_string('everywhere', 'search');
+        $searchwithin['course'] = $coursecontext->get_context_name();
+        if ($context->contextlevel != CONTEXT_COURSE) {
+            $searchwithin['context'] = $context->get_context_name();
+            if ($context->contextlevel == CONTEXT_MODULE) {
+                $customdata['withincmid'] = $context->instanceid;
+            }
+        }
+        $customdata['searchwithin'] = $searchwithin;
+        $customdata['withincourseid'] = $coursecontext->instanceid;
+    }
+
+    // Get available ordering options from search engine.
+    $customdata['orderoptions'] = $search->get_engine()->get_supported_orders($context);
+}
+$mform = new \core_search\output\form\search(null, $customdata);
 
 $data = $mform->get_data();
 if (!$data && $q) {
@@ -77,7 +100,28 @@ if (!$data && $q) {
     }
     $data->timestart = optional_param('timestart', 0, PARAM_INT);
     $data->timeend = optional_param('timeend', 0, PARAM_INT);
+
+    $data->context = $contextid;
+
     $mform->set_data($data);
+}
+
+// Convert the 'search within' option, if used, to course or context restrictions.
+if ($data && !empty($data->searchwithin)) {
+    switch ($data->searchwithin) {
+        case 'course':
+            $data->courseids = [$coursecontext->instanceid];
+            break;
+        case 'context':
+            $data->courseids = [$coursecontext->instanceid];
+            $data->contextids = [$context->id];
+            break;
+    }
+}
+
+// Inform search engine about source context.
+if (!empty($context) && $data) {
+    $data->context = $context;
 }
 
 // Set the page URL.

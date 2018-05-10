@@ -31,3 +31,4 @@ $string['url:view'] = 'Use URL downloader in file picker';
 $string['validname'] = 'You must provide a valid file name';
 $string['configplugin'] = 'URL repository type configuration';
 $string['validfiletype'] = 'You must provide a URL to an image file or a page containing images.';
+$string['privacy:metadata'] = 'The URL downloader repository plugin does not store or tranmit any personal data.';

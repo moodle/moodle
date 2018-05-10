@@ -28,3 +28,4 @@ $string['norecentblogentries'] = 'No recent entries';
 $string['numentriestodisplay'] = 'Number of recent entries to display';
 $string['pluginname'] = 'Recent blog entries';
 $string['recentinterval'] = 'Interval of time considered "recent"';
+$string['privacy:metadata'] = 'The Recent blog entries block only shows data stored in other locations.';

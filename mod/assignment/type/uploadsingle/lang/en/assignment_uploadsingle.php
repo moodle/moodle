@@ -23,3 +23,4 @@
  */
 
 $string['pluginname'] = 'Upload single';
+$string['privacy:metadata'] = 'The Upload single assignment plugin does not store any personal data.';

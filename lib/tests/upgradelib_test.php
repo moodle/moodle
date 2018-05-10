@@ -27,6 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->libdir.'/upgradelib.php');
+require_once($CFG->libdir.'/db/upgradelib.php');
 
 /**
  * Tests various classes and functions in upgradelib.php library.
@@ -819,5 +820,104 @@ class core_upgradelib_testcase extends advanced_testcase {
         $this->assertTrue(upgrade_theme_is_from_family('testtheme', 'infinite'), 'Infinite loop with testtheme parent is true');
         $this->assertFalse(upgrade_theme_is_from_family('testtheme', 'loop'), 'Infinite loop without testtheme parent is false');
         $this->assertTrue(upgrade_theme_is_from_family('testtheme', 'themewithbrokenparent'), 'No error on broken parent');
+    }
+
+    /**
+     * Data provider of serialized string.
+     *
+     * @return array
+     */
+    public function serialized_strings_dataprovider() {
+        return [
+            'A configuration that uses the old object' => [
+                'O:6:"object":3:{s:4:"text";s:32:"Nothing that anyone cares about.";s:5:"title";s:16:"Really old block";s:6:"format";s:1:"1";}',
+                true,
+                'O:8:"stdClass":3:{s:4:"text";s:32:"Nothing that anyone cares about.";s:5:"title";s:16:"Really old block";s:6:"format";s:1:"1";}'
+            ],
+            'A configuration that uses stdClass' => [
+                'O:8:"stdClass":5:{s:5:"title";s:4:"Tags";s:12:"numberoftags";s:2:"80";s:12:"showstandard";s:1:"0";s:3:"ctx";s:3:"289";s:3:"rec";s:1:"1";}',
+                false,
+                'O:8:"stdClass":5:{s:5:"title";s:4:"Tags";s:12:"numberoftags";s:2:"80";s:12:"showstandard";s:1:"0";s:3:"ctx";s:3:"289";s:3:"rec";s:1:"1";}'
+            ],
+            'A setting I saw when importing a course with blocks from 1.9' => [
+                'N;',
+                false,
+                'N;'
+            ],
+            'An object in an object' => [
+                'O:6:"object":2:{s:2:"id";i:5;s:5:"other";O:6:"object":1:{s:4:"text";s:13:"something new";}}',
+                true,
+                'O:8:"stdClass":2:{s:2:"id";i:5;s:5:"other";O:8:"stdClass":1:{s:4:"text";s:13:"something new";}}'
+            ],
+            'An array with an object in it' => [
+                'a:3:{s:4:"name";s:4:"Test";s:10:"additional";O:6:"object":2:{s:2:"id";i:5;s:4:"info";s:18:"text in the object";}s:4:"type";i:1;}',
+                true,
+                'a:3:{s:4:"name";s:4:"Test";s:10:"additional";O:8:"stdClass":2:{s:2:"id";i:5;s:4:"info";s:18:"text in the object";}s:4:"type";i:1;}'
+            ]
+        ];
+    }
+
+    /**
+     * Test that objects in serialized strings will be changed over to stdClass.
+     *
+     * @dataProvider serialized_strings_dataprovider
+     * @param string $initialstring The initial serialized setting.
+     * @param bool $expectededited If the string is expected to be edited.
+     * @param string $expectedresult The expected serialized setting to be returned.
+     */
+    public function test_upgrade_fix_serialized_objects($initialstring, $expectededited, $expectedresult) {
+        list($edited, $resultstring) = upgrade_fix_serialized_objects($initialstring);
+        $this->assertEquals($expectededited, $edited);
+        $this->assertEquals($expectedresult, $resultstring);
+    }
+
+    /**
+     * Data provider for base64_encoded block instance config data.
+     */
+    public function encoded_strings_dataprovider() {
+        return [
+            'Normal data using stdClass' => [
+                'Tzo4OiJzdGRDbGFzcyI6NTp7czo1OiJ0aXRsZSI7czo0OiJUYWdzIjtzOjEyOiJudW1iZXJvZnRhZ3MiO3M6MjoiODAiO3M6MTI6InNob3dzdGFuZGFyZCI7czoxOiIwIjtzOjM6ImN0eCI7czozOiIyODkiO3M6MzoicmVjIjtzOjE6IjEiO30=',
+                'Tzo4OiJzdGRDbGFzcyI6NTp7czo1OiJ0aXRsZSI7czo0OiJUYWdzIjtzOjEyOiJudW1iZXJvZnRhZ3MiO3M6MjoiODAiO3M6MTI6InNob3dzdGFuZGFyZCI7czoxOiIwIjtzOjM6ImN0eCI7czozOiIyODkiO3M6MzoicmVjIjtzOjE6IjEiO30='
+            ],
+            'No data at all' => [
+                '',
+                ''
+            ],
+            'Old data using object' => [
+                'Tzo2OiJvYmplY3QiOjM6e3M6NDoidGV4dCI7czozMjoiTm90aGluZyB0aGF0IGFueW9uZSBjYXJlcyBhYm91dC4iO3M6NToidGl0bGUiO3M6MTY6IlJlYWxseSBvbGQgYmxvY2siO3M6NjoiZm9ybWF0IjtzOjE6IjEiO30=',
+                'Tzo4OiJzdGRDbGFzcyI6Mzp7czo0OiJ0ZXh0IjtzOjMyOiJOb3RoaW5nIHRoYXQgYW55b25lIGNhcmVzIGFib3V0LiI7czo1OiJ0aXRsZSI7czoxNjoiUmVhbGx5IG9sZCBibG9jayI7czo2OiJmb3JtYXQiO3M6MToiMSI7fQ=='
+            ]
+        ];
+    }
+
+    /**
+     * Check that entries in the block_instances table are coverted over correctly.
+     *
+     * @dataProvider encoded_strings_dataprovider
+     * @param string $original The original base64_encoded block config setting.
+     * @param string $expected The expected base64_encoded block config setting.
+     */
+    public function test_upgrade_fix_block_instance_configuration($original, $expected) {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $data = new stdClass();
+        $data->blockname = 'html';
+        $data->parentcontextid = 1;
+        $data->showinsubcontexts = 0;
+        $data->requirebytheme = 0;
+        $data->pagetypepattern = 'admin-setting-frontpagesettings';
+        $data->defaultregion = 'side-post';
+        $data->defaultweight = 1;
+        $data->timecreated = time();
+        $data->timemodified = time();
+
+        $data->configdata = $original;
+        $entryid = $DB->insert_record('block_instances', $data);
+        upgrade_fix_block_instance_configuration();
+        $record = $DB->get_record('block_instances', ['id' => $entryid]);
+        $this->assertEquals($expected, $record->configdata);
     }
 }

@@ -28,3 +28,4 @@ $string['auth_emailrecaptcha'] = 'Adds a visual/audio confirmation form element 
 $string['auth_emailrecaptcha_key'] = 'Enable reCAPTCHA element';
 $string['auth_emailsettings'] = 'Settings';
 $string['pluginname'] = 'Email-based self-registration';
+$string['privacy:metadata'] = 'The Email-based self-registration authentication plugin does not store any personal data.';

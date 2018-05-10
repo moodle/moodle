@@ -111,6 +111,13 @@ class auth_plugin_base {
     var $customfields = null;
 
     /**
+     * The tag we want to prepend to any error log messages.
+     *
+     * @var string
+     */
+    protected $errorlogtag = '';
+
+    /**
      * This is the primary method that is used by the authenticate_user_login()
      * function in moodlelib.php.
      *
@@ -619,6 +626,92 @@ class auth_plugin_base {
     }
 
     /**
+     * Update a local user record from an external source.
+     * This is a lighter version of the one in moodlelib -- won't do
+     * expensive ops such as enrolment.
+     *
+     * @param string $username username
+     * @param array $updatekeys fields to update, false updates all fields.
+     * @param bool $triggerevent set false if user_updated event should not be triggered.
+     *             This will not affect user_password_updated event triggering.
+     * @param bool $suspenduser Should the user be suspended?
+     * @return stdClass|bool updated user record or false if there is no new info to update.
+     */
+    protected function update_user_record($username, $updatekeys = false, $triggerevent = false, $suspenduser = false) {
+        global $CFG, $DB;
+
+        require_once($CFG->dirroot.'/user/profile/lib.php');
+
+        // Just in case check text case.
+        $username = trim(core_text::strtolower($username));
+
+        // Get the current user record.
+        $user = $DB->get_record('user', array('username' => $username, 'mnethostid' => $CFG->mnet_localhost_id));
+        if (empty($user)) { // Trouble.
+            error_log($this->errorlogtag . get_string('auth_usernotexist', 'auth', $username));
+            print_error('auth_usernotexist', 'auth', '', $username);
+            die;
+        }
+
+        // Protect the userid from being overwritten.
+        $userid = $user->id;
+
+        $needsupdate = false;
+
+        if ($newinfo = $this->get_userinfo($username)) {
+            $newinfo = truncate_userinfo($newinfo);
+
+            if (empty($updatekeys)) { // All keys? this does not support removing values.
+                $updatekeys = array_keys($newinfo);
+            }
+
+            if (!empty($updatekeys)) {
+                $newuser = new stdClass();
+                $newuser->id = $userid;
+                // The cast to int is a workaround for MDL-53959.
+                $newuser->suspended = (int) $suspenduser;
+                // Load all custom fields.
+                $profilefields = (array) profile_user_record($user->id, false);
+                $newprofilefields = [];
+
+                foreach ($updatekeys as $key) {
+                    if (isset($newinfo[$key])) {
+                        $value = $newinfo[$key];
+                    } else {
+                        $value = '';
+                    }
+
+                    if (!empty($this->config->{'field_updatelocal_' . $key})) {
+                        if (preg_match('/^profile_field_(.*)$/', $key, $match)) {
+                            // Custom field.
+                            $field = $match[1];
+                            $currentvalue = isset($profilefields[$field]) ? $profilefields[$field] : null;
+                            $newprofilefields[$field] = $value;
+                        } else {
+                            // Standard field.
+                            $currentvalue = isset($user->$key) ? $user->$key : null;
+                            $newuser->$key = $value;
+                        }
+
+                        // Only update if it's changed.
+                        if ($currentvalue !== $value) {
+                            $needsupdate = true;
+                        }
+                    }
+                }
+            }
+
+            if ($needsupdate) {
+                user_update_user($newuser, false, $triggerevent);
+                profile_save_custom_fields($newuser->id, $newprofilefields);
+                return $DB->get_record('user', array('id' => $userid, 'deleted' => 0));
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Return the list of enabled identity providers.
      *
      * Each identity provider data contains the keys url, name and iconurl (or
@@ -1016,16 +1109,22 @@ function display_auth_lock_options($settings, $auth, $userfields, $helptext, $ma
     }
 
     foreach ($userfields as $field) {
-
         // Define the fieldname we display to the  user.
         // this includes special handling for some profile fields.
         $fieldname = $field;
+        $fieldnametoolong = false;
         if ($fieldname === 'lang') {
             $fieldname = get_string('language');
         } else if (!empty($customfields) && in_array($field, $customfields)) {
             // If custom field then pick name from database.
             $fieldshortname = str_replace('profile_field_', '', $fieldname);
             $fieldname = $customfieldname[$fieldshortname]->name;
+            if (core_text::strlen($fieldshortname) > 67) {
+                // If custom profile field name is longer than 67 characters we will not be able to store the setting
+                // such as 'field_updateremote_profile_field_NOTSOSHORTSHORTNAME' in the database because the character
+                // limit for the setting name is 100.
+                $fieldnametoolong = true;
+            }
         } else if ($fieldname == 'url') {
             $fieldname = get_string('webpage');
         } else {
@@ -1033,11 +1132,17 @@ function display_auth_lock_options($settings, $auth, $userfields, $helptext, $ma
         }
 
         // Generate the list of fields / mappings.
-        if ($mapremotefields) {
+        if ($fieldnametoolong) {
+            // Display a message that the field can not be mapped because it's too long.
+            $url = new moodle_url('/user/profile/index.php');
+            $a = (object)['fieldname' => s($fieldname), 'shortname' => s($field), 'charlimit' => 67, 'link' => $url->out()];
+            $settings->add(new admin_setting_heading($auth.'/field_not_mapped_'.sha1($field), '',
+                get_string('cannotmapfield', 'auth', $a)));
+        } else if ($mapremotefields) {
             // We are mapping to a remote field here.
             // Mapping.
             $settings->add(new admin_setting_configtext("auth_{$auth}/field_map_{$field}",
-                    get_string('auth_fieldmapping', 'auth', $fieldname), '', '', PARAM_ALPHANUMEXT, 30));
+                    get_string('auth_fieldmapping', 'auth', $fieldname), '', '', PARAM_RAW, 30));
 
             // Update local.
             $settings->add(new admin_setting_configselect("auth_{$auth}/field_updatelocal_{$field}",

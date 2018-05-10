@@ -145,7 +145,7 @@ if (has_capability('mod/chat:chat', $context)) {
     echo '</p>';
 
     if ($chat->studentlogs or has_capability('mod/chat:readlog', $context)) {
-        if ($msg = $DB->get_records_select('chat_messages', "chatid = ? $groupselect", array($chat->id))) {
+        if ($msg = chat_get_session_messages($chat->id, $currentgroup)) {
             echo '<p>';
             echo html_writer::link(new moodle_url('/mod/chat/report.php', array('id' => $cm->id)),
                                    get_string('viewreport', 'chat'));

@@ -841,10 +841,10 @@ class external extends external_api {
         $validcolumns = array('id', 'shortname', 'description', 'sortorder', 'idnumber',
             'parentid', 'competencyframeworkid');
         foreach ($params['filters'] as $filter) {
-            if (!in_array($filter->column, $validcolumns)) {
+            if (!in_array($filter['column'], $validcolumns)) {
                 throw new invalid_parameter_exception('Filter column was invalid');
             }
-            $safefilters[$filter->column] = $filter->value;
+            $safefilters[$filter['column']] = $filter['value'];
         }
 
         $context = null;

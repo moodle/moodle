@@ -379,7 +379,7 @@ if ($glossary->intro && $showcommonelements) {
 
 /// Search box
 if ($showcommonelements ) {
-    echo '<form method="post" class="form form-inline m-b-1" action="view.php">';
+    echo '<form method="post" class="form form-inline m-b-1" action="' . $CFG->wwwroot . '/mod/glossary/view.php">';
 
 
     if ($mode == 'search') {
@@ -433,7 +433,10 @@ if ($allentries) {
     }
 
     //Build paging bar
-    $paging = glossary_get_paging_bar($count, $page, $entriesbypage, "view.php?id=$id&amp;mode=$mode&amp;hook=".urlencode($hook)."&amp;sortkey=$sortkey&amp;sortorder=$sortorder&amp;fullsearch=$fullsearch&amp;",9999,10,'&nbsp;&nbsp;', $specialtext, -1);
+    $baseurl = new moodle_url('/mod/glossary/view.php', ['id' => $id, 'mode' => $mode, 'hook' => $hook,
+        'sortkey' => $sortkey, 'sortorder' => $sortorder, 'fullsearch' => $fullsearch]);
+    $paging = glossary_get_paging_bar($count, $page, $entriesbypage, $baseurl->out() . '&amp;',
+        9999, 10, '&nbsp;&nbsp;', $specialtext, -1);
 
     echo '<div class="paging">';
     echo $paging;
@@ -520,6 +523,10 @@ if ($allentries) {
         /// and finally print the entry.
         glossary_print_entry($course, $cm, $glossary, $entry, $mode, $hook,1,$displayformat);
         $entriesshown++;
+    }
+    // The all entries value may be a recordset or an array.
+    if ($allentries instanceof moodle_recordset) {
+        $allentries->close();
     }
 }
 if ( !$entriesshown ) {

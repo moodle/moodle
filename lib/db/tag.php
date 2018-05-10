@@ -69,6 +69,7 @@ $tagareas = array(
     array(
         'itemtype' => 'question', // Questions.
         'component' => 'core_question',
+        'multiplecontexts' => true,
     ),
     array(
         'itemtype' => 'post', // Blog posts.

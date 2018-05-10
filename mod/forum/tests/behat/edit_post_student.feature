@@ -40,22 +40,20 @@ Feature: Students can edit or delete their forum posts within a set time limit
     And I press "Continue"
     Then I should not see "Forum post subject"
 
-  @javascript
+  @javascript @block_recent_activity
   Scenario: Time limit expires
     Given I log out
     And I log in as "admin"
-    And I navigate to "Security > Site policies" in site administration
+    And I navigate to "Security > Site security settings" in site administration
     And I set the field "Maximum time to edit posts" to "1 minutes"
     And I press "Save changes"
     And I am on "Course 1" course homepage with editing mode on
     And I add the "Recent activity" block
-    And I add a "Forum" to section "1" and I fill the form with:
-      | Forum name | Test forum name |
-      | Forum type | Standard forum for general use |
-      | Description | Test forum description |
     And I log out
     And I log in as "student1"
     And I am on "Course 1" course homepage
+    And I should see "New forum posts:" in the "Recent activity" "block"
+    And I should see "Forum post subject" in the "Recent activity" "block"
     When I wait "61" seconds
     And I follow "Forum post subject"
     Then I should not see "Edit" in the "region-main" "region"

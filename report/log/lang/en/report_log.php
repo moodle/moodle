@@ -49,3 +49,4 @@ $string['restore'] = 'Restore';
 $string['selectlogreader'] = 'Select log reader';
 $string['web'] = 'Web';
 $string['ws'] = 'Web service';
+$string['privacy:metadata'] = 'The Logs plugin does not store any personal data.';

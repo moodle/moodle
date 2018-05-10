@@ -1062,6 +1062,16 @@ $capabilities = array(
         'clonepermissionsfrom' => 'moodle/course:update'
     ),
 
+    'moodle/course:setforcedlanguage' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => array(
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        ),
+        'clonepermissionsfrom' => 'moodle/course:update'
+    ),
+
 
     'moodle/site:viewparticipants' => array(
 
@@ -1471,6 +1481,28 @@ $capabilities = array(
             'editingteacher' => CAP_ALLOW,
             'manager' => CAP_ALLOW
         )
+    ),
+
+    // Controls whether the user can tag his own questions.
+    'moodle/question:tagmine' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => array(
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        ),
+        'clonepermissionsfrom' => 'moodle/question:editmine'
+    ),
+
+    // Controls whether the user can tag all questions.
+    'moodle/question:tagall' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => array(
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        ),
+        'clonepermissionsfrom' => 'moodle/question:editall'
     ),
 
     'moodle/site:doclinks' => array(

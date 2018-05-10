@@ -34,9 +34,6 @@ function xmldb_assign_upgrade($oldversion) {
 
     $dbman = $DB->get_manager();
 
-    // Moodle v3.1.0 release upgrade line.
-    // Put any upgrade step following this.
-
     if ($oldversion < 2016100301) {
 
         // Define table assign_overrides to be created.
@@ -167,6 +164,9 @@ function xmldb_assign_upgrade($oldversion) {
         // Main savepoint reached.
         upgrade_mod_savepoint(true, 2017061205, 'assign');
     }
+
+    // Automatically generated Moodle v3.4.0 release upgrade line.
+    // Put any upgrade step following this.
 
     return true;
 }

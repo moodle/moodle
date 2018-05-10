@@ -245,7 +245,7 @@ if ($roleid) {
     $select = new single_select($PAGE->url, 'roleid', $nameswithcounts, $roleid, null);
     $select->label = get_string('assignanotherrole', 'core_role');
     echo $OUTPUT->render($select);
-    echo '<p><a href="' . $PAGE->url . '">' . get_string('backtoallroles', 'core_role') . '</a></p>';
+    echo '<p><a href="' . $url . '">' . get_string('backtoallroles', 'core_role') . '</a></p>';
     echo '</div>';
 
 } else if (empty($assignableroles)) {

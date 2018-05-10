@@ -231,6 +231,23 @@ class xmldb_structure extends xmldb_object {
             $this->debug($this->errormsg);
             $result = false;
         }
+        // Normalize paths to compare them.
+        $filepath = realpath($this->name); // File path comes in name.
+        $filename = basename($filepath);
+        $normalisedpath = $this->path;
+        if ($CFG->admin !== 'admin') {
+            $needle = 'admin/';
+            if (strpos($this->path, $needle) === 0) {
+                $normalisedpath = substr_replace($this->path, "$CFG->admin/", 0, strlen($needle));
+            }
+        }
+        $structurepath = realpath($CFG->dirroot . DIRECTORY_SEPARATOR . $normalisedpath . DIRECTORY_SEPARATOR . $filename);
+        if ($filepath !== $structurepath) {
+            $relativepath = dirname(str_replace(realpath($CFG->dirroot) . DIRECTORY_SEPARATOR, '', $filepath));
+            $this->errormsg = 'PATH attribute does not match file directory: ' . $relativepath;
+            $this->debug($this->errormsg);
+            $result = false;
+        }
         if (isset($xmlarr['XMLDB']['@']['VERSION'])) {
             $this->version = trim($xmlarr['XMLDB']['@']['VERSION']);
         } else {

@@ -147,6 +147,7 @@ class core_calendar_event_mapper_testcase extends advanced_testcase {
         $record->timesort = 0;
         $record->type = 1;
         $record->courseid = 0;
+        $record->categoryid = 0;
 
         foreach ($properties as $name => $value) {
             $record->$name = $value;

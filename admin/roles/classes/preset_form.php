@@ -79,6 +79,7 @@ class core_role_preset_form extends moodleform {
             $mform->addElement('advcheckbox', 'allowassign', get_string('allowassign', 'core_role'));
             $mform->addElement('advcheckbox', 'allowoverride', get_string('allowoverride', 'core_role'));
             $mform->addElement('advcheckbox', 'allowswitch', get_string('allowswitch', 'core_role'));
+            $mform->addElement('advcheckbox', 'allowview', get_string('allowview', 'core_role'));
             $mform->addElement('advcheckbox', 'permissions', get_string('permissions', 'core_role'));
         }
 

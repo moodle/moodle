@@ -26,22 +26,28 @@
         "summary": "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout."
     }
 }}
-<div class="well well-small">
-    <div class="course-info-container" id="course-info-container-{{id}}">
-        <div class="media">
-            <div class="pull-left">
-                <div class="media-object">
-                    {{> block_myoverview/progress-chart}}
+<div class="span6">
+    <div class="well well-small">
+        <a href="{{viewurl}}">
+            <div class="myoverviewimg m-b-1 {{classes}}" style='background-image: url("{{{courseimage}}}");'>
+            </div>
+        </a>
+        <div class="course-info-container" id="course-info-container-{{id}}">
+            <div class="media">
+                <div class="pull-left">
+                    <div class="media-object">
+                        {{> block_myoverview/progress-chart}}
+                    </div>
+                </div>
+                <div class="media-body">
+                    <h4 class="media-heading">
+                        <a href="{{viewurl}}" class="{{^visible}}dimmed{{/visible}}">{{{fullnamedisplay}}}</a>
+                    </h4>
                 </div>
             </div>
-            <div class="media-body">
-                <h4 class="media-heading">
-                    <a href="{{viewurl}}" class="{{^visible}}dimmed{{/visible}}">{{{fullnamedisplay}}}</a>
-                </h4>
-            </div>
+            <p class="text-muted">
+                {{#shortentext}} 140, {{{summary}}}{{/shortentext}}
+            </p>
         </div>
-        <p class="text-muted">
-            {{#shortentext}} 140, {{{summary}}}{{/shortentext}}
-        </p>
     </div>
 </div>

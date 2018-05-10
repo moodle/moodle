@@ -657,7 +657,7 @@ function report_security_check_frontpagerole($detailed=false) {
 
     if ($riskycount or !$legacyok) {
         $result->status  = REPORT_SECURITY_CRITICAL;
-        $result->info    = get_string('check_frontpagerole_error', 'report_security', format_string($frontpage_role->name));
+        $result->info    = get_string('check_frontpagerole_error', 'report_security', role_get_name($frontpage_role));
 
     } else {
         $result->status  = REPORT_SECURITY_OK;
@@ -828,6 +828,7 @@ function report_security_check_riskbackup($detailed=false) {
                                'contextname'=>$context->get_context_name());
             $users[] = '<li>'.get_string('check_riskbackup_unassign', 'report_security', $a).'</li>';
         }
+        $rs->close();
         if (!empty($users)) {
             $users = '<ul>'.implode('', $users).'</ul>';
             $result->details .= get_string('check_riskbackup_details_users', 'report_security', $users);

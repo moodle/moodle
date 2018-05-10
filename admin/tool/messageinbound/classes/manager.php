@@ -311,6 +311,16 @@ class manager {
     }
 
     /**
+     * Remove older verification failures.
+     *
+     * @return void
+     */
+    public function tidy_old_verification_failures() {
+        global $DB;
+        $DB->delete_records_select('messageinbound_messagelist', 'timecreated < :time', ['time' => time() - DAYSECS]);
+    }
+
+    /**
      * Process a message and pass it through the Inbound Message handling systems.
      *
      * @param \Horde_Imap_Client_Data_Fetch $message The message to process
@@ -666,25 +676,9 @@ class manager {
 
         if (!empty($CFG->antiviruses)) {
             mtrace("--> Attempting virus scan of '{$attachment->filename}'");
-
-            // Store the file on disk - it will need to be virus scanned first.
-            $itemid = rand(1, 999999999);;
-            $directory = make_temp_directory("/messageinbound/{$itemid}", false);
-            $filepath = $directory . "/" . $attachment->filename;
-            if (!$fp = fopen($filepath, "w")) {
-                // Unable to open the temporary file to write this to disk.
-                mtrace("--> Unable to save the file to disk for virus scanning. Check file permissions.");
-
-                throw new \core\message\inbound\processing_failed_exception('attachmentfilepermissionsfailed',
-                        'tool_messageinbound');
-            }
-
-            fwrite($fp, $attachment->content);
-            fclose($fp);
-
             // Perform a virus scan now.
             try {
-                \core\antivirus\manager::scan_file($filepath, $attachment->filename, true);
+                \core\antivirus\manager::scan_data($attachment->content);
             } catch (\core\antivirus\scanner_exception $e) {
                 mtrace("--> A virus was found in the attachment '{$attachment->filename}'.");
                 $this->inform_attachment_virus();

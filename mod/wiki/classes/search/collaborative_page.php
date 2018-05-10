@@ -57,7 +57,7 @@ class collaborative_page extends \core_search\base_mod {
             return null;
         }
 
-        $sql = "SELECT p.*, w.id AS wikiid, w.course AS courseid
+        $sql = "SELECT p.*, w.id AS wikiid, w.course AS courseid, s.groupid AS groupid
                   FROM {wiki_pages} p
                   JOIN {wiki_subwikis} s ON s.id = p.subwikiid
                   JOIN {wiki} w ON w.id = s.wikiid
@@ -111,6 +111,9 @@ class collaborative_page extends \core_search\base_mod {
         $doc->set('content', $content);
         $doc->set('contextid', $context->id);
         $doc->set('courseid', $record->courseid);
+        if ($record->groupid > 0) {
+            $doc->set('groupid', $record->groupid);
+        }
         $doc->set('owneruserid', \core_search\manager::NO_OWNER_ID);
         $doc->set('modified', $record->timemodified);
 
@@ -204,5 +207,14 @@ class collaborative_page extends \core_search\base_mod {
         $fileareas = array('attachments'); // Filearea.
 
         return $fileareas;
+    }
+
+    /**
+     * Confirms that data entries support group restrictions.
+     *
+     * @return bool True
+     */
+    public function supports_group_restriction() {
+        return true;
     }
 }

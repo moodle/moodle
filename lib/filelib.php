@@ -904,6 +904,7 @@ function file_save_draft_area_files($draftitemid, $contextid, $component, $filea
 
         $newhashes = array();
         $filecount = 0;
+        $context = context::instance_by_id($contextid, MUST_EXIST);
         foreach ($draftfiles as $file) {
             if (!$options['subdirs'] && $file->get_filepath() !== '/') {
                 continue;
@@ -912,8 +913,11 @@ function file_save_draft_area_files($draftitemid, $contextid, $component, $filea
                 continue;
             }
             if (!$file->is_directory()) {
-                if ($options['maxbytes'] and $options['maxbytes'] < $file->get_filesize()) {
-                    // oversized file - should not get here at all
+                // Check to see if this file was uploaded by someone who can ignore the file size limits.
+                $fileusermaxbytes = get_user_max_upload_file_size($context, $options['maxbytes'], 0, 0, $file->get_userid());
+                if ($fileusermaxbytes != USER_CAN_IGNORE_FILE_SIZE_LIMITS
+                        && ($options['maxbytes'] and $options['maxbytes'] < $file->get_filesize())) {
+                    // Oversized file.
                     continue;
                 }
                 if ($options['maxfiles'] != -1 and $options['maxfiles'] <= $filecount) {
@@ -3027,7 +3031,6 @@ class curl {
      * Set HTTP Request Header
      *
      * @param array $header
-     * @param bool $replace If true, will remove any existing headers before appending the new one.
      */
     public function setHeader($header) {
         if (is_array($header)) {
@@ -3036,7 +3039,10 @@ class curl {
             }
         } else {
             // Remove newlines, they are not allowed in headers.
-            $this->header[] = preg_replace('/[\r\n]/', '', $header);
+            $newvalue = preg_replace('/[\r\n]/', '', $header);
+            if (!in_array($newvalue, $this->header)) {
+                $this->header[] = $newvalue;
+            }
         }
     }
 
@@ -4088,7 +4094,7 @@ function file_pluginfile($relativepath, $forcedownload, $preview = null, $offlin
         $filename = array_pop($args);
 
         if ($filearea === 'badgeimage') {
-            if ($filename !== 'f1' && $filename !== 'f2') {
+            if ($filename !== 'f1' && $filename !== 'f2' && $filename !== 'f3') {
                 send_file_not_found();
             }
             if (!$file = $fs->get_file($context->id, 'badges', 'badgeimage', $badge->id, '/', $filename.'.png')) {

@@ -36,7 +36,7 @@ class core_component_testcase extends advanced_testcase {
      * this is defined here to annoy devs that try to add more without any thinking,
      * always verify that it does not collide with any existing add-on modules and subplugins!!!
      */
-    const SUBSYSTEMCOUNT = 67;
+    const SUBSYSTEMCOUNT = 66;
 
     public function setUp() {
         $psr0namespaces = new ReflectionProperty('core_component', 'psr0namespaces');
@@ -505,8 +505,8 @@ class core_component_testcase extends advanced_testcase {
         $this->assertCount(5, core_component::get_component_classes_in_namespace('core_user', 'output\\myprofile'));
 
         // Without namespace it returns classes/ classes.
-        $this->assertCount(2, core_component::get_component_classes_in_namespace('tool_mobile', ''));
-        $this->assertCount(1, core_component::get_component_classes_in_namespace('tool_filetypes'));
+        $this->assertCount(3, core_component::get_component_classes_in_namespace('tool_mobile', ''));
+        $this->assertCount(2, core_component::get_component_classes_in_namespace('tool_filetypes'));
     }
 
     /**
@@ -778,5 +778,31 @@ class core_component_testcase extends advanced_testcase {
 
         $file = $psrclassloader->invokeArgs(null, array($classname, $prefix, $path, $separators));
         $this->assertEquals($result, $file);
+    }
+
+    /**
+     * Confirm the get_component_list method contains an entry for every component.
+     */
+    public function test_get_component_list_contains_all_components() {
+        global $CFG;
+        $componentslist = \core_component::get_component_list();
+
+        // We should have an entry for each plugin type, and one additional for 'core'.
+        $plugintypes = \core_component::get_plugin_types();
+        $numelementsexpected = count($plugintypes) + 1;
+        $this->assertEquals($numelementsexpected, count($componentslist));
+
+        // And an entry for each of the plugin types.
+        foreach (array_keys($plugintypes) as $plugintype) {
+            $this->assertArrayHasKey($plugintype, $componentslist);
+        }
+
+        // And finally, one for 'core'.
+        $this->assertArrayHasKey('core', $componentslist);
+
+        // Check a few of the known plugin types to confirm their presence at their respective type index.
+        $this->assertEquals($componentslist['core']['core_comment'], $CFG->dirroot . '/comment');
+        $this->assertEquals($componentslist['mod']['mod_forum'], $CFG->dirroot . '/mod/forum');
+        $this->assertEquals($componentslist['tool']['tool_usertours'], $CFG->dirroot . '/' . $CFG->admin . '/tool/usertours');
     }
 }

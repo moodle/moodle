@@ -139,15 +139,15 @@ class block_mnet_hosts extends block_list {
 
         if ($hosts) {
             foreach ($hosts as $host) {
-                $icon = $OUTPUT->pix_icon('i/'.$host->application.'_host', get_string('server', 'block_mnet_hosts')) . '&nbsp;';
-
                 if ($host->id == $USER->mnethostid) {
-                    $this->content->items[]="<a title=\"" .s($host->name).
-                        "\" href=\"{$host->wwwroot}\">".$icon. s($host->name) ."</a>";
+                    $url = new \moodle_url($host->wwwroot);
                 } else {
-                    $this->content->items[]="<a title=\"" .s($host->name).
-                        "\" href=\"{$CFG->wwwroot}/auth/mnet/jump.php?hostid={$host->id}\">" .$icon. s($host->name) ."</a>";
+                    $url = new \moodle_url('/auth/mnet/jump.php', array('hostid' => $host->id));
                 }
+                $this->content->items[] = html_writer::tag('a',
+                    $OUTPUT->pix_icon("i/{$host->application}_host", get_string('server', 'block_mnet_hosts')) . s($host->name),
+                    array('href' => $url->out(), 'title' => s($host->name))
+                );
             }
         }
 

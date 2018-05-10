@@ -95,3 +95,24 @@ Feature: Settings form fields disabled if not required
     And the "Each attempt builds on the last" "field" should be enabled
     And the "id_delay1_enabled" "field" should be enabled
     And the "id_delay2_enabled" "field" should be enabled
+
+  @javascript
+  Scenario: Depending on whether there is a close date, some review options are disabled.
+    When I add a "Quiz" to section "1"
+    And I expand all fieldsets
+    And I set the field "Name" to "Test quiz"
+    Then the "id_attemptclosed" "checkbox" should be disabled
+    Then the "id_correctnessclosed" "checkbox" should be disabled
+    Then the "id_marksclosed" "checkbox" should be disabled
+    Then the "id_specificfeedbackclosed" "checkbox" should be disabled
+    Then the "id_generalfeedbackclosed" "checkbox" should be disabled
+    Then the "id_rightanswerclosed" "checkbox" should be disabled
+    Then the "id_overallfeedbackclosed" "checkbox" should be disabled
+    And I set the field "id_timeclose_enabled" to "1"
+    Then the "id_attemptclosed" "checkbox" should be enabled
+    Then the "id_correctnessclosed" "checkbox" should be enabled
+    Then the "id_marksclosed" "checkbox" should be enabled
+    Then the "id_specificfeedbackclosed" "checkbox" should be enabled
+    Then the "id_generalfeedbackclosed" "checkbox" should be enabled
+    Then the "id_rightanswerclosed" "checkbox" should be enabled
+    Then the "id_overallfeedbackclosed" "checkbox" should be enabled

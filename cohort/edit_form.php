@@ -32,6 +32,7 @@ class cohort_edit_form extends moodleform {
      * Define the cohort edit form
      */
     public function definition() {
+        global $CFG;
 
         $mform = $this->_form;
         $editoroptions = $this->_customdata['editoroptions'];
@@ -53,6 +54,11 @@ class cohort_edit_form extends moodleform {
 
         $mform->addElement('editor', 'description_editor', get_string('description', 'cohort'), null, $editoroptions);
         $mform->setType('description_editor', PARAM_RAW);
+
+        if (!empty($CFG->allowcohortthemes)) {
+            $themes = array_merge(array('' => get_string('forceno')), cohort_get_list_of_themes());
+            $mform->addElement('select', 'theme', get_string('forcetheme'), $themes);
+        }
 
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);

@@ -24,3 +24,4 @@
 
 $string['auth_webservicedescription'] = 'This authentication method should be used for accounts that are exclusively for use by web service clients.';
 $string['pluginname'] = 'Web services authentication';
+$string['privacy:metadata'] = 'The Web services authentication plugin does not store any personal data.';

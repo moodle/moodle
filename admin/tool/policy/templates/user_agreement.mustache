@@ -1,0 +1,92 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template tool_policy/user_agreement
+
+    Template for the user agreement icon.
+
+    Classes required for JS:
+    -
+
+    Data attributes required for JS:
+    -
+
+    Context variables required for this template:
+    * status
+    * onbehalf
+    * canaccept
+    * acceptlink
+
+    Example context (json):
+    {
+        "status": false,
+        "onbehalf": false,
+        "canaccept": true,
+        "canrevoke": true,
+        "acceptlink": "/",
+        "revokelink": "/",
+        "singleversion": false,
+        "versionname": ""
+    }
+}}
+{{#status}}
+    {{#canrevoke}}
+        {{#singleversion}}
+            {{#onbehalf}}
+                <a href="{{revokelink}}" data-action="acceptmodal">{{#pix}}agreedyesonbehalf, tool_policy,
+                    {{#str}} agreedyesonbehalfwithlink, tool_policy, {{{versionname}}} {{/str}}{{/pix}}</a>
+            {{/onbehalf}}
+            {{^onbehalf}}
+                <a href="{{revokelink}}" data-action="acceptmodal">{{#pix}}agreedyes, tool_policy,
+                    {{#str}} agreedyeswithlink, tool_policy, {{{versionname}}} {{/str}}{{/pix}}</a>
+            {{/onbehalf}}
+        {{/singleversion}}
+        {{^singleversion}}
+            {{#onbehalf}}
+                <a href="{{revokelink}}" data-action="acceptmodal">{{#pix}}agreedyesonbehalf, tool_policy,
+                    {{#str}} agreedyesonbehalfwithlinkall, tool_policy {{/str}}{{/pix}}</a>
+            {{/onbehalf}}
+            {{^onbehalf}}
+                <a href="{{revokelink}}" data-action="acceptmodal">{{#pix}}agreedyes, tool_policy,
+                    {{#str}} agreedyeswithlinkall, tool_policy {{/str}}{{/pix}}</a>
+            {{/onbehalf}}
+        {{/singleversion}}
+    {{/canrevoke}}
+
+    {{^canrevoke}}
+        {{#onbehalf}}
+            <span>{{#pix}}agreedyesonbehalf, tool_policy, {{#str}} agreedyesonbehalf, tool_policy {{/str}}{{/pix}}</span>
+        {{/onbehalf}}
+        {{^onbehalf}}
+            <span>{{#pix}}agreedyes, tool_policy, {{#str}} agreedyes, tool_policy {{/str}}{{/pix}}</span>
+        {{/onbehalf}}
+    {{/canrevoke}}
+{{/status}}
+
+{{^status}}
+    {{#canaccept}}
+        {{#singleversion}}
+            <a href="{{acceptlink}}" data-action="acceptmodal">{{#pix}}agreedno, tool_policy, {{#str}} agreednowithlink, tool_policy, {{{versionname}}} {{/str}}{{/pix}}</a>
+        {{/singleversion}}
+        {{^singleversion}}
+            <a href="{{acceptlink}}" data-action="acceptmodal">{{#pix}}agreedno, tool_policy, {{#str}} agreednowithlinkall, tool_policy {{/str}}{{/pix}}</a>
+        {{/singleversion}}
+    {{/canaccept}}
+    {{^canaccept}}
+        <span>{{#pix}}agreedno, tool_policy, {{#str}} agreedno, tool_policy {{/str}}{{/pix}}</span>
+    {{/canaccept}}
+{{/status}}

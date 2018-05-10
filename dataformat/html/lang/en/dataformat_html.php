@@ -23,5 +23,6 @@
  */
 
 $string['dataformat'] = 'HTML table';
+$string['privacy:metadata'] = 'The HTML table data format plugin does not store any personal data.';
 $string['shortname'] = 'HTML';
 

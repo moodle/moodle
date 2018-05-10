@@ -41,3 +41,4 @@ This can be useful to save on bandwidth or because of local proxy restrictions.
 To use a local installation of MathJax, first download the full MathJax library from http://www.mathjax.org/. Then install it on a web server. Finally update the MathJax filter settings httpurl and/or httpsurl to point to the local MathJax.js URL.';
 $string['mathjaxsettings'] = 'MathJax configuration';
 $string['mathjaxsettings_desc'] = 'The default MathJax configuration should be appropriate for most users, but MathJax is highly configurable and any of the standard MathJax configuration options can be added here.';
+$string['privacy:metadata'] = 'The MathJax plugin does not store any personal data.';

@@ -61,6 +61,7 @@ $string['indicator:socialbreadth'] = 'Book social';
 $string['indicator:socialbreadth_help'] = 'This indicator is based on the social breadth reached by the student in a Book resource.';
 $string['movechapterup'] = 'Move chapter up "{$a}"';
 $string['movechapterdown'] = 'Move chapter down "{$a}"';
+$string['privacy:metadata'] = 'The book activity module does not store any personal data.';
 $string['search:activity'] = 'Book - resource information';
 $string['search:chapter'] = 'Book - chapters';
 $string['showchapter'] = 'Show chapter "{$a}"';

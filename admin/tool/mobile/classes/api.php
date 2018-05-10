@@ -90,6 +90,25 @@ class api {
 
                 require("$path/db/mobile.php");
                 foreach ($addons as $addonname => $addoninfo) {
+
+                    // Add handlers (for site add-ons).
+                    $handlers = !empty($addoninfo['handlers']) ? $addoninfo['handlers'] : array();
+                    $handlers = json_encode($handlers); // JSON formatted, since it is a complex structure that may vary over time.
+
+                    // Now language strings used by the app.
+                    $lang = array();
+                    if (!empty($addoninfo['lang'])) {
+                        $stringmanager = get_string_manager();
+                        $langs = $stringmanager->get_list_of_translations();
+                        foreach ($langs as $langid => $langname) {
+                            foreach ($addoninfo['lang'] as $stringinfo) {
+                                $lang[$langid][$stringinfo[0]] =
+                                    $stringmanager->get_string($stringinfo[0], $stringinfo[1], null, $langid);
+                            }
+                        }
+                    }
+                    $lang = json_encode($lang);
+
                     $plugininfo = array(
                         'component' => $component,
                         'version' => $version,
@@ -97,7 +116,9 @@ class api {
                         'dependencies' => !empty($addoninfo['dependencies']) ? $addoninfo['dependencies'] : array(),
                         'fileurl' => '',
                         'filehash' => '',
-                        'filesize' => 0
+                        'filesize' => 0,
+                        'handlers' => $handlers,
+                        'lang' => $lang,
                     );
 
                     // All the mobile packages must be under the plugin mobile directory.
@@ -149,6 +170,13 @@ class api {
             'maintenancemessage' => $maintenancemessage,
             'mobilecssurl' => !empty($CFG->mobilecssurl) ? $CFG->mobilecssurl : '',
             'tool_mobile_disabledfeatures' => get_config('tool_mobile', 'disabledfeatures'),
+            'country' => clean_param($CFG->country, PARAM_NOTAGS),
+            'agedigitalconsentverification' => \core_auth\digital_consent::is_age_digital_consent_verification_enabled(),
+            'autolang' => $CFG->autolang,
+            'lang' => clean_param($CFG->lang, PARAM_LANG),  // Avoid breaking WS because of incorrect package langs.
+            'langmenu' => $CFG->langmenu,
+            'langlist' => $CFG->langlist,
+            'locale' => $CFG->locale,
         );
 
         $typeoflogin = get_config('tool_mobile', 'typeoflogin');
@@ -178,6 +206,12 @@ class api {
         $identityprovidersdata = \auth_plugin_base::prepare_identity_providers_for_output($identityproviders, $OUTPUT);
         if (!empty($identityprovidersdata)) {
             $settings['identityproviders'] = $identityprovidersdata;
+        }
+
+        // If age is verified, return also the admin contact details.
+        if ($settings['agedigitalconsentverification']) {
+            $settings['supportname'] = clean_param($CFG->supportname, PARAM_NOTAGS);
+            $settings['supportemail'] = clean_param($CFG->supportemail, PARAM_EMAIL);
         }
 
         return $settings;
@@ -223,7 +257,9 @@ class api {
         }
 
         if (empty($section) or $section == 'sitepolicies') {
-            $settings->sitepolicy = $CFG->sitepolicy;
+            $manager = new \core_privacy\local\sitepolicy\manager();
+            $settings->sitepolicy = ($sitepolicy = $manager->get_embed_url()) ? $sitepolicy->out(false) : '';
+            $settings->sitepolicyhandler = $CFG->sitepolicyhandler;
             $settings->disableuserimages = $CFG->disableuserimages;
         }
 
@@ -241,6 +277,7 @@ class api {
             $settings->tool_mobile_customlangstrings = get_config('tool_mobile', 'customlangstrings');
             $settings->tool_mobile_disabledfeatures = get_config('tool_mobile', 'disabledfeatures');
             $settings->tool_mobile_custommenuitems = get_config('tool_mobile', 'custommenuitems');
+            $settings->tool_mobile_apppolicy = get_config('tool_mobile', 'apppolicy');
         }
 
         return $settings;
@@ -322,6 +359,7 @@ class api {
         }
 
         $features = array(
+            'NoDelegate_CoreOffline' => new lang_string('offlineuse', 'tool_mobile'),
             '$mmLoginEmailSignup' => new lang_string('startsignup'),
             "$mainmenu" => array(
                 '$mmSideMenuDelegate_mmCourses' => new lang_string('mycourses'),
@@ -342,6 +380,8 @@ class api {
                 '$mmCoursesDelegate_mmaGrades' => new lang_string('grades', 'grades'),
                 '$mmCoursesDelegate_mmaCourseCompletion' => new lang_string('coursecompletion', 'completion'),
                 '$mmCoursesDelegate_mmaNotes' => new lang_string('notes', 'notes'),
+                'NoDelegate_CoreCourseDownload' => new lang_string('downloadcourse', 'tool_mobile'),
+                'NoDelegate_CoreCoursesDownload' => new lang_string('downloadcourses', 'tool_mobile'),
             ),
             "$user" => array(
                 '$mmUserDelegate_mmaBadges' => new lang_string('badges', 'badges'),

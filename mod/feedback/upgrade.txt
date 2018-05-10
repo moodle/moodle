@@ -1,3 +1,10 @@
+=== 3.5 ===
+
+* The following functions, previously used (exclusively) by upgrade steps are not available
+  anymore because of the upgrade cleanup performed for this version. See MDL-59159 for more info:
+    - mod_feedback_upgrade_delete_duplicate_values()
+    - mod_feedback_upgrade_courseid()
+
 === 3.3.2 ===
 
 * feedback_refresh_events() Now takes two additional parameters to refine the update to a specific instance. This function

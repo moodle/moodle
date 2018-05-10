@@ -41,7 +41,7 @@ Feature: Non anonymous feedback with multiple submissions
     And I log in as "user1"
     And I am on "Course 1" course homepage
     And I follow "Course feedback"
-    And I follow "Answer the questions..."
+    And I follow "Answer the questions"
     And I set the following fields to these values:
       | first | 111 |
     And I press "Next"
@@ -52,7 +52,7 @@ Feature: Non anonymous feedback with multiple submissions
     And I log in as "user1"
     And I am on "Course 1" course homepage
     And I follow "Course feedback"
-    And I follow "Answer the questions..."
+    And I follow "Answer the questions"
     Then the field "first" matches value "111"
     And I press "Next"
     And the field "second" matches value "222"

@@ -89,4 +89,30 @@ class core_auth_external_testcase extends externallib_advanced_testcase {
         $this->expectExceptionMessage(get_string('invalidconfirmdata', 'error'));
         $result = core_auth_external::confirm_user($username, 'zzZZzz');
     }
+
+    /**
+     * Test age digital consent not enabled.
+     */
+    public function test_age_digital_consent_verification_is_not_enabled() {
+        global $CFG;
+
+        $CFG->agedigitalconsentverification = 0;
+        $result = core_auth_external::is_age_digital_consent_verification_enabled();
+        $result = external_api::clean_returnvalue(
+            core_auth_external::is_age_digital_consent_verification_enabled_returns(), $result);
+        $this->assertFalse($result['status']);
+    }
+
+    /**
+     * Test age digital consent is enabled.
+     */
+    public function test_age_digital_consent_verification_is_enabled() {
+        global $CFG;
+
+        $CFG->agedigitalconsentverification = 1;
+        $result = core_auth_external::is_age_digital_consent_verification_enabled();
+        $result = external_api::clean_returnvalue(
+            core_auth_external::is_age_digital_consent_verification_enabled_returns(), $result);
+        $this->assertTrue($result['status']);
+    }
 }

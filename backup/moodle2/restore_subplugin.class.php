@@ -87,6 +87,23 @@ abstract class restore_subplugin {
         }
     }
 
+    /**
+     * The after_restore dispatcher for any restore_subplugin class.
+     *
+     * This method will dispatch execution to the corresponding
+     * after_restore_xxx() method when available, with xxx
+     * being the connection point of the instance, so subplugin
+     * classes with multiple connection points will support
+     * multiple after_restore methods, one for each connection point.
+     */
+    public function launch_after_restore_methods() {
+        // Check if the after_restore method exists and launch it.
+        $afterestore = 'after_restore_' . basename($this->connectionpoint->get_path());
+        if (method_exists($this, $afterestore)) {
+            $this->$afterestore();
+        }
+    }
+
 // Protected API starts here
 
 // restore_step/structure_step/task wrappers

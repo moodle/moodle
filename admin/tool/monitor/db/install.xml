@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="tool/monitor/db" VERSION="20141103" COMMENT="XMLDB file for Moodle tool/monitor"
+<XMLDB PATH="admin/tool/monitor/db" VERSION="20141103" COMMENT="XMLDB file for Moodle tool/monitor"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+    xsi:noNamespaceSchemaLocation="../../../../lib/xmldb/xmldb.xsd"
 >
   <TABLES>
     <TABLE NAME="tool_monitor_rules" COMMENT="Table to store rules">

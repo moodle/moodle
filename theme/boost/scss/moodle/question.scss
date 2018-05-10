@@ -176,6 +176,7 @@
 
     label {
         margin: 0;
+        display: block;
     }
 
     .header {
@@ -230,9 +231,10 @@ body.path-question-type {
         width: auto;
         height: auto;
         padding: 0;
-        margin: 0;
+        margin: 0 0.5rem 0 0;
         overflow: visible;
         clip: auto;
+        clip-path: none;
         border: 0;
     }
 }
@@ -298,6 +300,13 @@ body.path-question-type {
     @extend .alert-info;
 }
 
+.que.multichoice .answer div.r0 .icon.fa-check,
+.que.multichoice .answer div.r1 .icon.fa-check,
+.que.multichoice .answer div.r0 .icon.fa-remove,
+.que.multichoice .answer div.r1 .icon.fa-remove {
+    text-indent: 0;
+}
+
 .formulation input[type="text"],
 .formulation select {
     width: auto;
@@ -336,11 +345,26 @@ body.path-question-type {
 
 .que .specificfeedback,
 .que .generalfeedback,
+.que .numpartscorrect
 .que .rightanswer,
 .que .im-feedback,
 .que .feedback,
 .que p {
     margin: 0 0 0.5em;
+}
+
+.que .correctness {
+    @extend .tag;
+    &.correct {
+        background-color: $state-success-text;
+    }
+    &.partiallycorrect {
+        background-color: $state-warning-text;
+    }
+    &.notanswered,
+    &.incorrect {
+        background-color: $state-danger-text;
+    }
 }
 
 .que .qtext {
@@ -611,8 +635,13 @@ body.path-question-type .mform fieldset.hidden {
 }
 
 // Fix for accurate positioning of ddwtos drag and drop question types.
-.que.ddwtos {
+.que.ddwtos,
+.que.ddwtos .drop {
     box-sizing: content-box;
+}
+
+.tag-condition-container {
+    position: relative;
 }
 
 @include media-breakpoint-down(sm) {

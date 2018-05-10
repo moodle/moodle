@@ -39,6 +39,8 @@ $string['prefix_help'] = 'This prefix is used for all key names on the memcache 
 * If you only have one Moodle instance using this server, you can leave this value default.
 * Due to key length restrictions, a maximum of 5 characters is permitted.';
 $string['prefixinvalid'] = 'Invalid prefix. You can only use a-z A-Z 0-9-_.';
+$string['privacy:metadata:memcache'] = 'The Memcache cachestore plugin stores data briefly as part of its caching functionality. This data is stored on an Memcache server where data is regularly removed.';
+$string['privacy:metadata:memcache:data'] = 'The various data stored in the cache';
 $string['servers'] = 'Servers';
 $string['servers_help'] = 'This sets the servers that should be utilised by this memcache adapter.
 Servers should be defined one per line and consist of a server address and optionally a port and weight.
@@ -64,7 +66,7 @@ For example:
 server.url.com
 ipaddress:port
 </pre>';
-$string['sessionhandlerconflict'] = 'Warning: A memcache instance ({$a}) has being configured to use the same memcached server as sessions. Purging all caches will lead to sessions also being purged.';
+$string['sessionhandlerconflict'] = 'Warning: A memcache instance ({$a}) has being configured to use the same memcache server as sessions. Purging all caches will lead to sessions also being purged.';
 $string['testservers'] = 'Test servers';
 $string['testservers_desc'] = 'One or more connection strings for memcache servers to test against. If a test server has been specified then memcache performance can be tested using the cache performance page in the administration block.
 As an example: 127.0.0.1:11211';

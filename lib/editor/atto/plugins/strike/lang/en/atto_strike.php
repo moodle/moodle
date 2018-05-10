@@ -23,3 +23,4 @@
  */
 
 $string['pluginname'] = 'Strike through';
+$string['privacy:metadata'] = 'The atto_strike plugin does not store any personal data.';

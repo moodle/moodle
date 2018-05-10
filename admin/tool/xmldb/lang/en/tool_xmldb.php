@@ -165,6 +165,7 @@ $string['nowrongintsfound'] = 'No wrong integers have been found, your DB doesn\
 $string['nowrongoraclesemanticsfound'] = 'No Oracle columns using BYTE semantics have been found, your DB doesn\'t need further actions.';
 $string['numberincorrectdecimals'] = 'Incorrect number of decimals for number field';
 $string['numberincorrectlength'] = 'Incorrect length for number field';
+$string['numberincorrectwholepart'] = 'Too big whole number part for number field';
 $string['pendingchanges'] = 'Note: You have performed changes to this file. They can be saved at any moment.';
 $string['pendingchangescannotbesaved'] = 'There are changes in this file but they cannot be saved! Please verify that both the directory and the "install.xml" within it have write permissions for the web server.';
 $string['pendingchangescannotbesavedreload'] = 'There are changes in this file but they cannot be saved! Please verify that both the directory and the "install.xml" within it have write permissions for the web server. Then reload this page and you should be able to save those changes.';
@@ -218,3 +219,4 @@ $string['yeswrongintsfound'] = '<p>Some wrong integers have been found in your D
 <p>After doing that, it\'s highly recommended to execute this utility again to check that no more wrong integers are found.</p>';
 $string['yeswrongoraclesemanticsfound'] = '<p>Some Oracle columns using BYTE semantics have been found in your DB. Here are their details and the needed SQL statements to be executed with your favourite SQL interface to create all them. Remember to backup your data first!</p>
 <p>After doing that, it\'s highly recommended to execute this utility again to check that no more wrong semantics are found.</p>';
+$string['privacy:metadata'] = 'The XMLDB editor plugin does not store any personal data.';

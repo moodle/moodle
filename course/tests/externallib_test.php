@@ -412,6 +412,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         $contextid = context_system::instance()->id;
         $roleid = $this->assignUserCapability('moodle/course:create', $contextid);
         $this->assignUserCapability('moodle/course:visibility', $contextid, $roleid);
+        $this->assignUserCapability('moodle/course:setforcedlanguage', $contextid, $roleid);
 
         $category  = self::getDataGenerator()->create_category();
 
@@ -1129,6 +1130,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         $this->assignUserCapability('moodle/course:changesummary', $contextid, $roleid);
         $this->assignUserCapability('moodle/course:visibility', $contextid, $roleid);
         $this->assignUserCapability('moodle/course:viewhiddencourses', $contextid, $roleid);
+        $this->assignUserCapability('moodle/course:setforcedlanguage', $contextid, $roleid);
 
         // Create category and course.
         $category1  = self::getDataGenerator()->create_category();
@@ -2041,9 +2043,10 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         global $DB;
         $this->resetAfterTest(true);
 
-        $category1 = self::getDataGenerator()->create_category();
+        $category1 = self::getDataGenerator()->create_category(array('name' => 'Cat 1'));
         $category2 = self::getDataGenerator()->create_category(array('parent' => $category1->id));
-        $course1 = self::getDataGenerator()->create_course(array('category' => $category1->id, 'shortname' => 'c1'));
+        $course1 = self::getDataGenerator()->create_course(
+            array('category' => $category1->id, 'shortname' => 'c1', 'format' => 'topics'));
         $course2 = self::getDataGenerator()->create_course(array('visible' => 0, 'category' => $category2->id, 'idnumber' => 'i2'));
 
         $student1 = self::getDataGenerator()->create_user();
@@ -2059,15 +2062,25 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         $this->assertCount(3, $result['courses']);
         // Expect to receive all the fields.
         $this->assertCount(37, $result['courses'][0]);
-        $this->assertCount(37, $result['courses'][1]);
-        $this->assertCount(37, $result['courses'][2]);
+        $this->assertCount(38, $result['courses'][1]);  // One more field because is not the site course.
+        $this->assertCount(38, $result['courses'][2]);  // One more field because is not the site course.
 
         $result = core_course_external::get_courses_by_field('id', $course1->id);
         $result = external_api::clean_returnvalue(core_course_external::get_courses_by_field_returns(), $result);
         $this->assertCount(1, $result['courses']);
         $this->assertEquals($course1->id, $result['courses'][0]['id']);
         // Expect to receive all the fields.
-        $this->assertCount(37, $result['courses'][0]);
+        $this->assertCount(38, $result['courses'][0]);
+        // Check default values for course format topics.
+        $this->assertCount(2, $result['courses'][0]['courseformatoptions']);
+        foreach ($result['courses'][0]['courseformatoptions'] as $option) {
+            if ($option['name'] == 'hiddensections') {
+                $this->assertEquals(0, $option['value']);
+            } else {
+                $this->assertEquals('coursedisplay', $option['name']);
+                $this->assertEquals(0, $option['value']);
+            }
+        }
 
         $result = core_course_external::get_courses_by_field('id', $course2->id);
         $result = external_api::clean_returnvalue(core_course_external::get_courses_by_field_returns(), $result);
@@ -2086,6 +2099,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         $result = external_api::clean_returnvalue(core_course_external::get_courses_by_field_returns(), $result);
         $this->assertCount(1, $result['courses']);
         $this->assertEquals($course1->id, $result['courses'][0]['id']);
+        $this->assertEquals('Cat 1', $result['courses'][0]['categoryname']);
 
         $result = core_course_external::get_courses_by_field('shortname', 'c1');
         $result = external_api::clean_returnvalue(core_course_external::get_courses_by_field_returns(), $result);
@@ -2110,14 +2124,14 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         $result = external_api::clean_returnvalue(core_course_external::get_courses_by_field_returns(), $result);
         $this->assertCount(2, $result['courses']);
         $this->assertCount(30, $result['courses'][0]);
-        $this->assertCount(30, $result['courses'][1]);
+        $this->assertCount(31, $result['courses'][1]);  // One field more (course format options), not present in site course.
 
         $result = core_course_external::get_courses_by_field('id', $course1->id);
         $result = external_api::clean_returnvalue(core_course_external::get_courses_by_field_returns(), $result);
         $this->assertCount(1, $result['courses']);
         $this->assertEquals($course1->id, $result['courses'][0]['id']);
         // Expect to receive all the files that a student can see.
-        $this->assertCount(30, $result['courses'][0]);
+        $this->assertCount(31, $result['courses'][0]);
 
         // Check default filters.
         $filters = $result['courses'][0]['filters'];
@@ -2210,6 +2224,21 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         $result = external_api::clean_returnvalue(core_course_external::get_courses_by_field_returns(), $result);
         $this->assertCount(0, $result['courses']);
     }
+
+    /**
+     * Test get_courses_by_field_invalid_theme_and_lang
+     */
+    public function test_get_courses_by_field_invalid_theme_and_lang() {
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        $course = self::getDataGenerator()->create_course(array('theme' => 'kkt', 'lang' => 'kkl'));
+        $result = core_course_external::get_courses_by_field('id', $course->id);
+        $result = external_api::clean_returnvalue(core_course_external::get_courses_by_field_returns(), $result);
+        $this->assertEmpty($result['courses']['0']['theme']);
+        $this->assertEmpty($result['courses']['0']['lang']);
+    }
+
 
     public function test_check_updates() {
         global $DB;

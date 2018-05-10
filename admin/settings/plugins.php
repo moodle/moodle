@@ -556,7 +556,7 @@ if ($hassiteconfig) {
     // Search engine selection.
     $temp->add(new admin_setting_heading('searchengineheading', new lang_string('searchengine', 'admin'), ''));
     $temp->add(new admin_setting_configselect('searchengine',
-                                new lang_string('selectsearchengine', 'admin'), '', 'solr', $engines));
+                                new lang_string('selectsearchengine', 'admin'), '', 'simpledb', $engines));
     $temp->add(new admin_setting_heading('searchoptionsheading', new lang_string('searchoptions', 'admin'), ''));
     $temp->add(new admin_setting_configcheckbox('searchindexwhendisabled',
             new lang_string('searchindexwhendisabled', 'admin'), new lang_string('searchindexwhendisabled_desc', 'admin'),

@@ -90,9 +90,6 @@ class core_group_external extends external_api {
             if ($DB->get_record('groups', array('courseid'=>$group->courseid, 'name'=>$group->name))) {
                 throw new invalid_parameter_exception('Group with the same name already exists in the course');
             }
-            if (!empty($group->idnumber) && $DB->count_records('groups', array('idnumber' => $group->idnumber))) {
-                throw new invalid_parameter_exception('Group with the same idnumber already exists');
-            }
 
             // now security checks
             $context = context_course::instance($group->courseid, IGNORE_MISSING);
@@ -627,9 +624,6 @@ class core_group_external extends external_api {
             if ($DB->count_records('groupings', array('courseid'=>$grouping->courseid, 'name'=>$grouping->name))) {
                 throw new invalid_parameter_exception('Grouping with the same name already exists in the course');
             }
-            if (!empty($grouping->idnumber) && $DB->count_records('groupings', array('idnumber' => $grouping->idnumber))) {
-                throw new invalid_parameter_exception('Grouping with the same idnumber already exists');
-            }
 
             // Now security checks            .
             $context = context_course::instance($grouping->courseid);
@@ -730,11 +724,6 @@ class core_group_external extends external_api {
             if ($grouping->name != $currentgrouping->name and
                     $DB->count_records('groupings', array('courseid'=>$currentgrouping->courseid, 'name'=>$grouping->name))) {
                 throw new invalid_parameter_exception('A different grouping with the same name already exists in the course');
-            }
-            // Check if the new modified grouping idnumber already exists.
-            if (!empty($grouping->idnumber) && $grouping->idnumber != $currentgrouping->idnumber &&
-                    $DB->count_records('groupings', array('idnumber' => $grouping->idnumber))) {
-                throw new invalid_parameter_exception('A different grouping with the same idnumber already exists');
             }
 
             $grouping->courseid = $currentgrouping->courseid;

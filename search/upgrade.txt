@@ -1,6 +1,46 @@
 This files describes API changes in /search/*,
 information provided here is intended especially for developers.
 
+=== 3.5 ===
+
+* Search areas may now optionally implement the get_contexts_to_reindex function (for modules and
+  blocks, see also get_contexts_to_reindex_extra_sql). This allows a search area to customise the
+  order in which it is reindexed when doing a gradual reindex, so as to reindex the most important
+  contexts first. If not implemented, the default behaviour for modules and blocks is to reindex
+  the newest items first; for other types of search area it will just index the whole system
+  context, oldest data first.
+* Search engines may now implement get_supported_orders function to provide multiple ordering
+  options (other than 'relevance' which is default). If there is more than one order then a choice
+  will be shown to users. (This is an optional feature, existing search engine plugins do not need
+  to be modified in order to continue working.)
+* Module search areas that wish to support group filtering should set the new optional search
+  document field groupid (note: to remain compatible with earlier versions, do this inside an if
+  statement so that it only happens on 3.4+) and return true to the supports_group_restriction
+  function. See documentation in \core_search\base_mod class and example in \mod_forum\search\post.
+* When a search engine supports group filtering, the \core_search\manager::search function now
+  accepts the optional 'groupids' parameter in its $data input. This parameter is an array of one
+  or more group IDs. If supplied, only results from those groups will be returned.
+* Search engine plugins will need to be be modified if they wish to support group filtering.
+  (Search engines should continue to work unmodified, but will not then support group filtering.)
+  The modification steps are:
+  - Implement the new update_schema function to make the schema change (add groupid field).
+  - Ensure that the groupid field is stored correctly when provided in a document while indexing.
+  - Return true to new supports_group_filtering() function.
+  - execute_query should support the new $data->groupids parameter (to allow users to restrict
+    search results to specific groups) and the modified meaning of the second parameter,
+    $accessinfo (to automatically restrict search results users cannot access due to groups).
+    See implementation in Solr search engine.
+* Search engine plugins can optionally use a new $this->should_skip_schema_check() function to
+  decide when to skip slow schema checking inside the is_server_ready function, improving user
+  performance on the search page. The Solr plugin implements this.
+* API function \core_search\manager::instance() now includes a $fast parameter to skip schema
+  checks (as above).
+
+* Search engines should now implement the 'userids' option to restrict search results to those from
+  specific users, and return true to the new supports_users() function. The supplied Solr search
+  engine includes this feature. If this is not implemented, the search engine will continue to work
+  but the 'Users' search option will not appear.
+
 === 3.4 ===
 
 * Search indexing now supports time limits to make the scheduled task run more neatly. In order for

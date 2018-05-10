@@ -12,7 +12,7 @@ $icon-big-height: 64px;
     font-size: $icon-height;
     width: $icon-width;
     height: $icon-height;
-    vertical-align: middle;
+    // vertical-align: middle;
     margin: 0;
     padding: 0;
     box-sizing: content-box;
@@ -29,39 +29,12 @@ $icon-big-height: 64px;
     }
 }
 
-$icon-color: $body-color !default;
-
-a .icon {
-    color: $icon-color;
-}
-
 .navbar-dark a .icon {
     color: $navbar-dark-color !important; /* stylelint-disable-line declaration-no-important */
 }
 
-a:first-of-type > .icon,
-span:first-of-type > .icon {
+.action-menu-item a:first-of-type > .icon {
     margin-left: 0.5rem;
-}
-
-// Fix the first icon for an action menu. This rule exists to reverse the
-// icon margin defined in the a:first-of-type > .icon rule.
-.action-menu .dropdown a:first-of-type > .icon {
-    margin-left: 0;
-}
-
-.pull-xs-right {
-    // Now we need to override the .action-menu .dropdown a:first-of-type > .icon
-    // rule above for when actions menus are in the pull-xs-right class.
-    .dropdown a .icon {
-        margin-left: 0;
-        margin-right: 0.5rem;
-    }
-
-    .icon {
-        margin-right: 0;
-        margin-left: 0.5rem;
-    }
 }
 
 // YUI 2 Tree View icons must not have a margin left.
@@ -89,4 +62,8 @@ span:first-of-type > .icon {
 .icon-large > .icon {
     width: ($icon-width * 2);
     height: ($icon-height * 2);
+}
+
+.helplink .icon {
+    margin-left: 0.5rem;
 }

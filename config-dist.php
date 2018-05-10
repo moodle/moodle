@@ -38,7 +38,7 @@ $CFG = new stdClass();
 // will be stored.  This database must already have been created         //
 // and a username/password created to access it.                         //
 
-$CFG->dbtype    = 'pgsql';      // 'pgsql', 'mariadb', 'mysqli', 'mssql', 'sqlsrv' or 'oci'
+$CFG->dbtype    = 'pgsql';      // 'pgsql', 'mariadb', 'mysqli', 'sqlsrv' or 'oci'
 $CFG->dblibrary = 'native';     // 'native' only at the moment
 $CFG->dbhost    = 'localhost';  // eg 'localhost' or 'db.isp.com' or IP
 $CFG->dbname    = 'moodle';     // database name, eg moodle
@@ -70,6 +70,15 @@ $CFG->dboptions = array(
                                 // can be removed for MySQL (by default it will
                                 // use 'utf8mb4_unicode_ci'. This option should
                                 // be removed for all other databases.
+    // 'fetchbuffersize' => 100000, // On PostgreSQL, this option sets a limit
+                                // on the number of rows that are fetched into
+                                // memory when doing a large recordset query
+                                // (e.g. search indexing). Default is 100000.
+                                // Uncomment and set to a value to change it,
+                                // or zero to turn off the limit. You need to
+                                // set to zero if you are using pg_bouncer in
+                                // 'transaction' mode (it is fine in 'session'
+                                // mode).
 );
 
 
@@ -409,8 +418,10 @@ $CFG->admin = 'admin';
 // example) in sites where the user theme should override all other theme
 // settings for accessibility reasons. You can also disable types of themes
 // (other than site)  by removing them from the array. The default setting is:
-//      $CFG->themeorder = array('course', 'category', 'session', 'user', 'site');
-// NOTE: course, category, session, user themes still require the
+//
+//     $CFG->themeorder = array('course', 'category', 'session', 'user', 'cohort', 'site');
+//
+// NOTE: course, category, session, user, cohort themes still require the
 // respective settings to be enabled
 //
 // It is possible to add extra themes directory stored outside of $CFG->dirroot.
@@ -423,9 +434,15 @@ $CFG->admin = 'admin';
 // Localcachedir is intended for server clusters, it does not have to be shared by cluster nodes.
 // The directories must not be accessible via web.
 //
-//     $CFG->tempdir = '/var/www/moodle/temp';        // Directory MUST BE SHARED by all clsuter nodes.
+//     $CFG->tempdir = '/var/www/moodle/temp';        // Directory MUST BE SHARED by all cluster nodes.
 //     $CFG->cachedir = '/var/www/moodle/cache';      // Directory MUST BE SHARED by all cluster nodes, locking required.
 //     $CFG->localcachedir = '/var/local/cache';      // Intended for local node caching.
+//
+// It is possible to specify a different backup temp directory, use local fast filesystem
+// for normal web servers. Server clusters MUST use shared filesystem for backuptempdir!
+// The directory must not be accessible via web.
+//
+//     $CFG->backuptempdir = '/var/www/moodle/backuptemp';  // Directory MUST BE SHARED by all cluster nodes.
 //
 // Some filesystems such as NFS may not support file locking operations.
 // Locking resolves race conditions and is strongly recommended for production servers.

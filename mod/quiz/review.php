@@ -33,6 +33,7 @@ require_once($CFG->dirroot . '/mod/quiz/report/reportlib.php');
 $attemptid = required_param('attempt', PARAM_INT);
 $page      = optional_param('page', 0, PARAM_INT);
 $showall   = optional_param('showall', null, PARAM_BOOL);
+$cmid      = optional_param('cmid', null, PARAM_INT);
 
 $url = new moodle_url('/mod/quiz/review.php', array('attempt'=>$attemptid));
 if ($page !== 0) {
@@ -42,7 +43,7 @@ if ($page !== 0) {
 }
 $PAGE->set_url($url);
 
-$attemptobj = quiz_attempt::create($attemptid);
+$attemptobj = quiz_create_attempt_handling_errors($attemptid, $cmid);
 $page = $attemptobj->force_page_number_into_range($page);
 
 // Now we can validate the params better, re-genrate the page URL.

@@ -74,12 +74,19 @@ class block_globalsearch extends block_base {
         // Input.
         $this->content->text .= html_writer::tag('label', get_string('search', 'search'),
             array('for' => 'searchform_search', 'class' => 'accesshide'));
-        $inputoptions = array('id' => 'searchform_search', 'name' => 'q', 'type' => 'text', 'size' => '15');
+        $inputoptions = array('id' => 'searchform_search', 'name' => 'q', 'class' => 'form-control',
+            'type' => 'text', 'size' => '15');
         $this->content->text .= html_writer::empty_tag('input', $inputoptions);
+
+        // Context id.
+        if ($this->page->context && $this->page->context->contextlevel !== CONTEXT_SYSTEM) {
+            $this->content->text .= html_writer::empty_tag('input', ['type' => 'hidden',
+                    'name' => 'context', 'value' => $this->page->context->id]);
+        }
 
         // Search button.
         $this->content->text .= html_writer::tag('button', get_string('search', 'search'),
-            array('id' => 'searchform_button', 'type' => 'submit', 'title' => 'globalsearch'));
+            array('id' => 'searchform_button', 'type' => 'submit', 'title' => 'globalsearch', 'class' => 'btn btn-secondary'));
         $this->content->text .= html_writer::end_tag('fieldset');
         $this->content->text .= html_writer::end_tag('form');
         $this->content->text .= html_writer::end_tag('div');

@@ -1109,6 +1109,7 @@ class single_select implements renderable, templatable {
         if (is_string($this->nothing) && $this->nothing !== '') {
             $nothing = ['' => $this->nothing];
             $hasnothing = true;
+            $nothingkey = '';
         } else if (is_array($this->nothing)) {
             $nothingvalue = reset($this->nothing);
             if ($nothingvalue === 'choose' || $nothingvalue === 'choosedots') {
@@ -1117,6 +1118,7 @@ class single_select implements renderable, templatable {
                 $nothing = $this->nothing;
             }
             $hasnothing = true;
+            $nothingkey = key($this->nothing);
         }
         if ($hasnothing) {
             $options = $nothing + $this->options;
@@ -1129,11 +1131,17 @@ class single_select implements renderable, templatable {
                 foreach ($options[$value] as $optgroupname => $optgroupvalues) {
                     $sublist = [];
                     foreach ($optgroupvalues as $optvalue => $optname) {
-                        $sublist[] = [
+                        $option = [
                             'value' => $optvalue,
                             'name' => $optname,
                             'selected' => strval($this->selected) === strval($optvalue),
                         ];
+
+                        if ($hasnothing && $nothingkey === $optvalue) {
+                            $option['ignore'] = 'data-ignore';
+                        }
+
+                        $sublist[] = $option;
                     }
                     $data->options[] = [
                         'name' => $optgroupname,
@@ -1142,12 +1150,18 @@ class single_select implements renderable, templatable {
                     ];
                 }
             } else {
-                $data->options[] = [
+                $option = [
                     'value' => $value,
                     'name' => $options[$value],
                     'selected' => strval($this->selected) === strval($value),
                     'optgroup' => false
                 ];
+
+                if ($hasnothing && $nothingkey === $value) {
+                    $option['ignore'] = 'data-ignore';
+                }
+
+                $data->options[] = $option;
             }
         }
 
@@ -4126,6 +4140,12 @@ class action_menu implements renderable, templatable {
     public $menutrigger = '';
 
     /**
+     * Any extra classes for toggling to the secondary menu.
+     * @var triggerextraclasses
+     */
+    public $triggerextraclasses = '';
+
+    /**
      * Place the action menu before all other actions.
      * @var prioritise
      */
@@ -4164,8 +4184,16 @@ class action_menu implements renderable, templatable {
         }
     }
 
-    public function set_menu_trigger($trigger) {
+    /**
+     * Sets the menu trigger text.
+     *
+     * @param string $trigger The text
+     * @param string $extraclasses Extra classes to style the secondary menu toggle.
+     * @return null
+     */
+    public function set_menu_trigger($trigger, $extraclasses = '') {
         $this->menutrigger = $trigger;
+        $this->triggerextraclasses = $extraclasses;
     }
 
     /**
@@ -4443,6 +4471,7 @@ class action_menu implements renderable, templatable {
         $actionicon = $this->actionicon;
         if (!empty($this->menutrigger)) {
             $primary->menutrigger = $this->menutrigger;
+            $primary->triggerextraclasses = $this->triggerextraclasses;
         } else {
             $primary->title = get_string('actions');
             $actionicon = new pix_icon('t/edit_menu', '', 'moodle', ['class' => 'iconsmall actionmenu', 'title' => '']);
@@ -4450,7 +4479,9 @@ class action_menu implements renderable, templatable {
 
         if ($actionicon instanceof pix_icon) {
             $primary->icon = $actionicon->export_for_pix();
-            $primary->title = !empty($actionicon->attributes['alt']) ? $this->actionicon->attributes['alt'] : '';
+            if (!empty($actionicon->attributes['alt'])) {
+                $primary->title = $actionicon->attributes['alt'];
+            }
         } else {
             $primary->iconraw = $actionicon ? $output->render($actionicon) : '';
         }
@@ -4751,8 +4782,8 @@ class progress_bar implements renderable, templatable {
      * @param bool $autostart Whether to start the progress bar right away.
      */
     public function __construct($htmlid = '', $width = 500, $autostart = false) {
-        if (!defined('NO_OUTPUT_BUFFERING') || !NO_OUTPUT_BUFFERING) {
-            debugging('progress_bar used without setting NO_OUTPUT_BUFFERING.', DEBUG_DEVELOPER);
+        if (!CLI_SCRIPT && !NO_OUTPUT_BUFFERING) {
+            debugging('progress_bar used in a non-CLI script without setting NO_OUTPUT_BUFFERING.', DEBUG_DEVELOPER);
         }
 
         if (!empty($htmlid)) {

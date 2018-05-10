@@ -145,9 +145,15 @@ abstract class base_message extends \core_search\base {
             $userfield) {
         global $DB;
 
+        if ($userfield == 'useridto') {
+            $userfield = 'mcm.userid';
+        } else {
+            $userfield = 'm.useridfrom';
+        }
+
         // Set up basic query.
         $where = $userfield . ' != :noreplyuser AND ' . $userfield .
-                ' != :supportuser AND timecreated >= :modifiedfrom';
+                ' != :supportuser AND m.timecreated >= :modifiedfrom';
         $params = [
             'noreplyuser' => \core_user::NOREPLY_USER,
             'supportuser' => \core_user::SUPPORT_USER,
@@ -179,6 +185,15 @@ abstract class base_message extends \core_search\base {
                 throw new \coding_exception('Unexpected contextlevel: ' . $context->contextlevel);
         }
 
-        return $DB->get_recordset_select('message_read', $where, $params, 'timeread ASC');
+        $sql = "SELECT m.*, mcm.userid as useridto
+                  FROM {messages} m
+            INNER JOIN {message_conversations} mc
+                    ON m.conversationid = mc.id
+            INNER JOIN {message_conversation_members} mcm
+                    ON mcm.conversationid = mc.id
+                 WHERE mcm.userid != m.useridfrom
+                   AND $where
+              ORDER BY m.timecreated ASC";
+        return $DB->get_recordset_sql($sql, $params);
     }
 }

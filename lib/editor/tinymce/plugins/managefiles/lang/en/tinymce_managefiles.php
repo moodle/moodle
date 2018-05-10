@@ -31,3 +31,4 @@ $string['refreshfiles'] = 'Refresh the lists of missing and unused files';
 $string['unusedfilesheader'] = 'Unused files';
 $string['unusedfilesdesc'] = 'The following embedded files are not used in the text area:';
 $string['deleteselected'] = 'Delete selected files';
+$string['privacy:metadata'] = 'The Manage embedded files TinyMCE plugin does not store any personal data.';

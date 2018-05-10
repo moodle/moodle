@@ -1,0 +1,10 @@
+{
+  "name": "moodle-atto_recordrtc-button",
+  "builds": {
+    "moodle-atto_recordrtc-button": {
+      "jsfiles": [
+        "button.js"
+      ]
+    }
+  }
+}

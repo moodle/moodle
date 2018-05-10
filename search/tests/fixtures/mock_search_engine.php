@@ -37,6 +37,9 @@ class engine extends \core_search\engine {
     /** @var \core_search\document[] Documents added */
     protected $added = [];
 
+    /** @var array Schema updates applied */
+    protected $schemaupdates = [];
+
     public function is_installed() {
         return true;
     }
@@ -96,5 +99,21 @@ class engine extends \core_search\engine {
         $added = $this->added;
         $this->added = [];
         return $added;
+    }
+
+    public function update_schema($oldversion, $newversion) {
+        $this->schemaupdates[] = [$oldversion, $newversion];
+    }
+
+    /**
+     * Gets all schema updates applied, as an array. Each entry has an array with two values,
+     * old and new version.
+     *
+     * @return array List of schema updates for comparison
+     */
+    public function get_and_clear_schema_updates() {
+        $result = $this->schemaupdates;
+        $this->schemaupdates = [];
+        return $result;
     }
 }

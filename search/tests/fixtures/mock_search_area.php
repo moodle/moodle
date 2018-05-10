@@ -29,11 +29,14 @@ defined('MOODLE_INTERNAL') || die;
 
 class mock_search_area extends \core_search\base {
 
+    /** @var float If set, waits when doing the indexing query (seconds) */
+    protected $indexingdelay = 0;
+
     /**
      * Multiple context level so we can test get_areas_user_accesses.
      * @var int[]
      */
-    protected static $levels = [CONTEXT_SYSTEM, CONTEXT_USER];
+    protected static $levels = [CONTEXT_COURSE, CONTEXT_USER];
 
     /**
      * To make things easier, base class required config stuff.
@@ -46,6 +49,11 @@ class mock_search_area extends \core_search\base {
 
     public function get_recordset_by_timestamp($modifiedfrom = 0) {
         global $DB;
+
+        if ($this->indexingdelay) {
+            \testable_core_search::fake_current_time(
+                    \core_search\manager::get_current_time() + $this->indexingdelay);
+        }
 
         $sql = "SELECT * FROM {temp_mock_search_area} WHERE timemodified >= ? ORDER BY timemodified ASC";
         return $DB->get_recordset_sql($sql, array($modifiedfrom));
@@ -126,4 +134,14 @@ class mock_search_area extends \core_search\base {
     public function get_visible_name($lazyload = false) {
         return 'Mock search area';
     }
+
+    /**
+     * Sets a fake delay to simulate time taken doing the indexing query.
+     *
+     * @param float $seconds Delay in seconds for each time indexing query is called
+     */
+    public function set_indexing_delay($seconds) {
+        $this->indexingdelay = $seconds;
+    }
+
 }

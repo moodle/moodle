@@ -97,11 +97,7 @@ class auth_db_testcase extends advanced_testcase {
                 break;
 
             case 'mssql':
-                if (get_class($DB) == 'mssql_native_moodle_database') {
-                    set_config('type', 'mssql_n', 'auth_db');
-                } else {
-                    set_config('type', 'mssqlnative', 'auth_db');
-                }
+                set_config('type', 'mssqlnative', 'auth_db');
                 set_config('sybasequoting', '1', 'auth_db');
                 break;
 

@@ -201,10 +201,13 @@ function theme_build_css_for_themes($themeconfigs = [], $directions = ['rtl', 'l
 
         // First generate all the new css.
         foreach ($directions as $direction) {
+            // Lock it on. Technically we should build all themes for SVG and no SVG - but ie9 is out of support.
+            $themeconfig->force_svg_use(true);
             $themeconfig->set_rtl_mode(($direction === 'rtl'));
 
             $themecss[$direction] = $themeconfig->get_css_content();
             if ($cache) {
+                $themeconfig->set_css_content_cache($themecss[$direction]);
                 $filename = theme_get_css_filename($themeconfig->name, $themerev, $newrevision, $direction);
                 css_store_css($themeconfig, $filename, $themecss[$direction]);
             }
@@ -894,6 +897,14 @@ class theme_config {
         global $CFG;
         $rev = theme_get_revision();
         if ($rev > -1) {
+            $themesubrevision = theme_get_sub_revision_for_theme($this->name);
+
+            // Provide the sub revision to allow us to invalidate cached theme CSS
+            // on a per theme basis, rather than globally.
+            if ($themesubrevision && $themesubrevision > 0) {
+                $rev .= "_{$themesubrevision}";
+            }
+
             $url = new moodle_url("/theme/styles.php");
             if (!empty($CFG->slasharguments)) {
                 $url->set_slashargument('/'.$this->name.'/'.$rev.'/editor', 'noparam', true);
@@ -1464,7 +1475,7 @@ class theme_config {
             // Compile!
             $compiled = $compiler->to_css();
 
-        } catch (\Leafo\ScssPhp\Exception $e) {
+        } catch (\Exception $e) {
             $compiled = false;
             debugging('Error while compiling SCSS: ' . $e->getMessage(), DEBUG_DEVELOPER);
         }

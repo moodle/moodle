@@ -35,3 +35,5 @@ $string['sortpublished'] = 'Date Published';
 $string['sortrating'] = 'Rating';
 $string['sortrelevance'] = 'Relevance';
 $string['sortviewcount'] = 'View Count';
+$string['privacy:metadata:repository_youtube'] = 'The YouTube videos repository plugin does not store any personal data, but does transmit user data from Moodle to the remote system.';
+$string['privacy:metadata:repository_youtube:searchtext'] = 'The YouTube videos repository user search text query.';

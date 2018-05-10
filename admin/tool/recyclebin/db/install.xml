@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="tool/recyclebin/db" VERSION="20160315" COMMENT="XMLDB file for Moodle tool/recyclebin"
+<XMLDB PATH="admin/tool/recyclebin/db" VERSION="20160315" COMMENT="XMLDB file for Moodle tool/recyclebin"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+    xsi:noNamespaceSchemaLocation="../../../../lib/xmldb/xmldb.xsd"
 >
   <TABLES>
     <TABLE NAME="tool_recyclebin_course" COMMENT="A list of items in the course recycle bin">

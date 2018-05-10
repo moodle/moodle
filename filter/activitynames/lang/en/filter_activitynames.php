@@ -24,3 +24,4 @@
  */
 
 $string['filtername'] = 'Activity names auto-linking';
+$string['privacy:metadata'] = 'The Activity names auto-linking plugin does not store any personal data.';

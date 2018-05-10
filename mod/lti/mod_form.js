@@ -90,7 +90,9 @@
                     };
 
                     require(['mod_lti/contentitem'], function(contentitem) {
-                        contentitem.init(contentItemUrl, postData);
+                        contentitem.init(contentItemUrl, postData, function() {
+                            M.mod_lti.editor.toggleGradeSection();
+                        });
                     });
                 }
             });

@@ -48,7 +48,7 @@ class core_badges_badgeslib_testcase extends advanced_testcase {
 
         $fordb = new stdClass();
         $fordb->id = null;
-        $fordb->name = "Test badge";
+        $fordb->name = "Test badge with 'apostrophe' and other friends (<>&@#)";
         $fordb->description = "Testing badges";
         $fordb->timecreated = time();
         $fordb->timemodified = time();
@@ -479,6 +479,38 @@ class core_badges_badgeslib_testcase extends advanced_testcase {
         // Check if badge is awarded.
         $this->assertDebuggingCalled('Error baking badge image!');
         $this->assertTrue($badge->is_issued($this->user->id));
+    }
+
+    /**
+     * Test badges observer when cohort_member_added event is fired.
+     */
+    public function test_badges_observer_cohort_criteria_review() {
+        global $CFG;
+
+        require_once("$CFG->dirroot/cohort/lib.php");
+
+        $cohort = $this->getDataGenerator()->create_cohort();
+
+        $this->preventResetByRollback(); // Messaging is not compatible with transactions.
+        $badge = new badge($this->badgeid);
+        $this->assertFalse($badge->is_issued($this->user->id));
+
+        // Set up the badge criteria.
+        $criteriaoverall = award_criteria::build(array('criteriatype' => BADGE_CRITERIA_TYPE_OVERALL, 'badgeid' => $badge->id));
+        $criteriaoverall->save(array('agg' => BADGE_CRITERIA_AGGREGATION_ANY));
+        $criteriaoverall1 = award_criteria::build(array('criteriatype' => BADGE_CRITERIA_TYPE_COHORT, 'badgeid' => $badge->id));
+        $criteriaoverall1->save(array('agg' => BADGE_CRITERIA_AGGREGATION_ANY, 'cohort_cohorts' => array('0' => $cohort->id)));
+
+        // Make the badge active.
+        $badge->set_status(BADGE_STATUS_ACTIVE);
+
+        // Add the user to the cohort.
+        cohort_add_member($cohort->id, $this->user->id);
+
+        // Verify that the badge was awarded.
+        $this->assertDebuggingCalled();
+        $this->assertTrue($badge->is_issued($this->user->id));
+
     }
 
     /**

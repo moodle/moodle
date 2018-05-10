@@ -34,4 +34,4 @@ $string['offlineattemptserror'] = 'It is not possible for a quiz to be attempted
 $string['offlinedatamessage'] = 'You have worked on this attempt using a mobile device. Data was last saved to this site {$a} ago.';
 $string['pleaseconfirm'] = 'Please check and confirm that you do not have any unsaved work.';
 $string['pluginname'] = 'Offline attempts access rule';
-
+$string['privacy:metadata'] = 'The Offline attempts quiz access rule plugin does not store any personal data.';

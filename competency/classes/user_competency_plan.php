@@ -66,7 +66,7 @@ class user_competency_plan extends persistent {
             ),
             'sortorder' => array(
                 'type' => PARAM_INT,
-                'default' => null,
+                'default' => 0,
             ),
         );
     }

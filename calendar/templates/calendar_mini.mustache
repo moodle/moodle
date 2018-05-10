@@ -35,11 +35,12 @@
     }} id="calendar-month-{{date.year}}-{{date.month}}-{{uniqid}}" {{!
     }} data-template="core_calendar/month_mini" {{!
     }} data-includenavigation="{{#includenavigation}}true{{/includenavigation}}{{^includenavigation}}false{{/includenavigation}}"{{!
+    }} data-mini="true"{{!
     }}>
     {{> core_calendar/month_mini}}
 </div>
 {{#js}}
 require(['jquery', 'core_calendar/calendar_mini'], function($, CalendarMini) {
-    CalendarMini.init($("#calendar-month-{{date.year}}-{{date.month}}-{{uniqid}}"));
+    CalendarMini.init($("#calendar-month-{{date.year}}-{{date.month}}-{{uniqid}}"), !{{initialeventsloaded}});
 });
 {{/js}}

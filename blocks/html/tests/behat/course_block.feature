@@ -21,12 +21,12 @@ Feature: HTML blocks in a course
     And I add the "HTML" block
     And I configure the "(new HTML block)" block
     And I set the field "Content" to "First block content"
-    And I set the field "Block title" to "First block header"
+    And I set the field "HTML block title" to "First block header"
     And I press "Save changes"
     And I add the "HTML" block
     And I configure the "(new HTML block)" block
     And I set the field "Content" to "Second block content"
-    And I set the field "Block title" to "Second block header"
+    And I set the field "HTML block title" to "Second block header"
     And I press "Save changes"
     And I log out
     And I log in as "student1"

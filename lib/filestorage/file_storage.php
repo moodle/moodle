@@ -2001,6 +2001,7 @@ class file_storage {
         foreach ($rs as $filerecord) {
             $files[$filerecord->pathnamehash] = $this->get_file_instance($filerecord);
         }
+        $rs->close();
 
         return $files;
     }

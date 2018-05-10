@@ -48,6 +48,3 @@ $string['scalename5'] = 'Excellent/Very poor (5 point)';
 $string['scalename6'] = 'Excellent/Very poor (7 point)';
 $string['verypoor'] = 'Very poor';
 
-// Deprecated since Moodle 3.1.
-$string['dimensioncomment'] = 'Comment';
-$string['dimensiongrade'] = 'Grade';

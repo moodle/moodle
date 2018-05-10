@@ -99,6 +99,54 @@ class core_scss extends \Leafo\ScssPhp\Compiler {
     }
 
     /**
+     * Compile scss.
+     *
+     * Overrides ScssPHP's implementation, using the SassC compiler if it is available.
+     *
+     * @param string $code SCSS to compile.
+     * @param string $path Path to SCSS to compile.
+     *
+     * @return string The compiled CSS.
+     */
+    public function compile($code, $path = null) {
+        global $CFG;
+
+        $pathtosassc = trim($CFG->pathtosassc ?? '');
+
+        if (!empty($pathtosassc) && is_executable($pathtosassc) && !is_dir($pathtosassc)) {
+            $process = proc_open(
+                $pathtosassc . ' -I' . implode(':', $this->importPaths) . ' -s',
+                [
+                    ['pipe', 'r'], // Set the process stdin pipe to read mode.
+                    ['pipe', 'w'], // Set the process stdout pipe to write mode.
+                    ['pipe', 'w'] // Set the process stderr pipe to write mode.
+                ],
+                $pipes // Pipes become available in $pipes (pass by reference).
+            );
+            if (is_resource($process)) {
+                fwrite($pipes[0], $code); // Write the raw scss to the sassc process stdin.
+                fclose($pipes[0]);
+
+                $stdout = stream_get_contents($pipes[1]);
+                $stderr = stream_get_contents($pipes[2]);
+
+                fclose($pipes[1]);
+                fclose($pipes[2]);
+
+                // The proc_close function returns the process exit status. Anything other than 0 is bad.
+                if (proc_close($process) !== 0) {
+                    throw new coding_exception($stderr);
+                }
+
+                // Compiled CSS code will be available from stdout.
+                return $stdout;
+            }
+        }
+
+        return parent::compile($code, $path);
+    }
+
+    /**
      * Compile child; returns a value to halt execution
      *
      * @param array $child

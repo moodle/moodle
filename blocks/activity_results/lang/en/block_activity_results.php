@@ -65,3 +65,4 @@ $string['worstgrade'] = 'The lowest grade:';
 $string['worstgrades'] = 'The {$a} lowest grades:';
 $string['worstgroupgrade'] = 'The group with the lowest average:';
 $string['worstgroupgrades'] = 'The {$a} groups with the lowest average:';
+$string['privacy:metadata'] = 'The Activity results block only shows data stored in other locations.';

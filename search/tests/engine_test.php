@@ -88,4 +88,45 @@ class search_engine_testcase extends advanced_testcase {
         $this->assertEquals($dbreads, $DB->perf_get_reads());
 
     }
+
+    /**
+     * Tests the core functions related to schema updates.
+     */
+    public function test_engine_schema_modification() {
+        // Apply a schema update starting from no version.
+        $engine = new \mock_search\engine();
+        $engine->check_latest_schema();
+        $updates = $engine->get_and_clear_schema_updates();
+        $this->assertCount(1, $updates);
+        $this->assertEquals(0, $updates[0][0]);
+        $this->assertEquals(\core_search\document::SCHEMA_VERSION, $updates[0][1]);
+
+        // Store older version and check that.
+        $engine->record_applied_schema_version(1066101400);
+
+        $engine = new \mock_search\engine();
+        $engine->check_latest_schema();
+        $updates = $engine->get_and_clear_schema_updates();
+        $this->assertCount(1, $updates);
+        $this->assertEquals(1066101400, $updates[0][0]);
+        $this->assertEquals(\core_search\document::SCHEMA_VERSION, $updates[0][1]);
+
+        // Store current version and check no updates.
+        $engine->record_applied_schema_version(\core_search\document::SCHEMA_VERSION);
+
+        $engine = new \mock_search\engine();
+        $engine->check_latest_schema();
+        $updates = $engine->get_and_clear_schema_updates();
+        $this->assertCount(0, $updates);
+    }
+
+    /**
+     * Tests the get_supported_orders stub function.
+     */
+    public function test_get_supported_orders() {
+        $engine = new \mock_search\engine();
+        $orders = $engine->get_supported_orders(\context_system::instance());
+        $this->assertCount(1, $orders);
+        $this->assertArrayHasKey('relevance', $orders);
+    }
 }

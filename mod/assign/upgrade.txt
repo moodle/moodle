@@ -1,5 +1,10 @@
 This files describes API changes in the assign code.
 
+=== 3.5 ===
+* Functions assign:get_assign_grading_summary_renderable, assign:can_view_submission, assign:count_submissions_with_status,
+  assign:count_submissions_need_grading and mod_assign_external::get_submission_status now admit an additional group parameter.
+  This parameter can be used to force those functions to retrieve data only for the given group.
+
 === 3.4 ===
 * assign::add_attempt requires that set_most_recent_team_submission() be called if attempting to use this function with a team
   submission.

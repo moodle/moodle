@@ -30,7 +30,7 @@
  * - define('TEST_SEARCH_SOLR_KEYPASSWORD', '');
  * - define('TEST_SEARCH_SOLR_CAINFOCERT', '');
  *
- * @package     core_search
+ * @package     search_solr
  * @category    phpunit
  * @copyright   2015 David Monllao {@link http://www.davidmonllao.com}
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -46,7 +46,7 @@ require_once($CFG->dirroot . '/search/engine/solr/tests/fixtures/testable_engine
 /**
  * Solr search engine base unit tests.
  *
- * @package     core_search
+ * @package     search_solr
  * @category    phpunit
  * @copyright   2015 David Monllao {@link http://www.davidmonllao.com}
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -54,7 +54,7 @@ require_once($CFG->dirroot . '/search/engine/solr/tests/fixtures/testable_engine
 class search_solr_engine_testcase extends advanced_testcase {
 
     /**
-     * @var \core_search::manager
+     * @var \core_search\manager
      */
     protected $search = null;
 
@@ -71,6 +71,7 @@ class search_solr_engine_testcase extends advanced_testcase {
     public function setUp() {
         $this->resetAfterTest();
         set_config('enableglobalsearch', true);
+        set_config('searchengine', 'solr');
 
         if (!function_exists('solr_get_version')) {
             $this->markTestSkipped('Solr extension is not loaded.');
@@ -209,7 +210,7 @@ class search_solr_engine_testcase extends advanced_testcase {
 
         // Based on core_mocksearch\search\indexer.
         $this->assertEquals($USER->id, $results[0]->get('userid'));
-        $this->assertEquals(\context_system::instance()->id, $results[0]->get('contextid'));
+        $this->assertEquals(\context_course::instance(SITEID)->id, $results[0]->get('contextid'));
 
         // Do a test to make sure we aren't searching non-query fields, like areaid.
         $querydata->q = \core_search\manager::generate_areaid('core_mocksearch', 'mock_search_area');
@@ -707,18 +708,18 @@ class search_solr_engine_testcase extends advanced_testcase {
         $querydata->q = 'Something1 Something2 Something3 Something4';
 
         // In this first set, it should have determined the first 10 of 40 are bad, so there could be up to 30 left.
-        $results = $this->engine->execute_query($querydata, true, 5);
+        $results = $this->engine->execute_query($querydata, (object)['everything' => true], 5);
         $this->assertEquals(30, $this->engine->get_query_total_count());
         $this->assertCount(5, $results);
 
         // To get to 15, it has to process the first 10 that are bad, 10 that are good, 10 that are bad, then 5 that are good.
         // So we now know 20 are bad out of 40.
-        $results = $this->engine->execute_query($querydata, true, 15);
+        $results = $this->engine->execute_query($querydata, (object)['everything' => true], 15);
         $this->assertEquals(20, $this->engine->get_query_total_count());
         $this->assertCount(15, $results);
 
         // Try to get more then all, make sure we still see 20 count and 20 returned.
-        $results = $this->engine->execute_query($querydata, true, 30);
+        $results = $this->engine->execute_query($querydata, (object)['everything' => true], 30);
         $this->assertEquals(20, $this->engine->get_query_total_count());
         $this->assertCount(20, $results);
     }
@@ -757,5 +758,434 @@ class search_solr_engine_testcase extends advanced_testcase {
         $this->assertEquals(20, $results->totalcount);
         $this->assertCount(10, $results->results);
         $this->assertEquals(1, $results->actualpage);
+    }
+
+    /**
+     * Tests searching for results restricted to context id.
+     */
+    public function test_context_restriction() {
+        // Use real search areas.
+        $this->search->clear_static();
+        $this->search->add_core_search_areas();
+
+        // Create 2 courses and some forums.
+        $generator = $this->getDataGenerator();
+        $course1 = $generator->create_course(['fullname' => 'Course 1', 'summary' => 'xyzzy']);
+        $contextc1 = \context_course::instance($course1->id);
+        $course1forum1 = $generator->create_module('forum', ['course' => $course1,
+                'name' => 'C1F1', 'intro' => 'xyzzy']);
+        $contextc1f1 = \context_module::instance($course1forum1->cmid);
+        $course1forum2 = $generator->create_module('forum', ['course' => $course1,
+                'name' => 'C1F2', 'intro' => 'xyzzy']);
+        $contextc1f2 = \context_module::instance($course1forum2->cmid);
+        $course2 = $generator->create_course(['fullname' => 'Course 2', 'summary' => 'xyzzy']);
+        $contextc2 = \context_course::instance($course1->id);
+        $course2forum = $generator->create_module('forum', ['course' => $course2,
+                'name' => 'C2F', 'intro' => 'xyzzy']);
+        $contextc2f = \context_module::instance($course2forum->cmid);
+
+        // Index the courses and forums.
+        $this->search->index();
+
+        // Search as admin user should find everything.
+        $querydata = new stdClass();
+        $querydata->q = 'xyzzy';
+        $results = $this->search->search($querydata);
+        $this->assert_result_titles(
+                ['Course 1', 'Course 2', 'C1F1', 'C1F2', 'C2F'], $results);
+
+        // Admin user manually restricts results by context id to include one course and one forum.
+        $querydata->contextids = [$contextc2f->id, $contextc1->id];
+        $results = $this->search->search($querydata);
+        $this->assert_result_titles(['Course 1', 'C2F'], $results);
+
+        // Student enrolled in only one course, same restriction, only has the available results.
+        $student2 = $generator->create_user();
+        $generator->enrol_user($student2->id, $course2->id, 'student');
+        $this->setUser($student2);
+        $results = $this->search->search($querydata);
+        $this->assert_result_titles(['C2F'], $results);
+
+        // Student enrolled in both courses, same restriction, same results as admin.
+        $student1 = $generator->create_user();
+        $generator->enrol_user($student1->id, $course1->id, 'student');
+        $generator->enrol_user($student1->id, $course2->id, 'student');
+        $this->setUser($student1);
+        $results = $this->search->search($querydata);
+        $this->assert_result_titles(['Course 1', 'C2F'], $results);
+
+        // Restrict both course and context.
+        $querydata->courseids = [$course2->id];
+        $results = $this->search->search($querydata);
+        $this->assert_result_titles(['C2F'], $results);
+        unset($querydata->courseids);
+
+        // Restrict both area and context.
+        $querydata->areaids = ['core_course-mycourse'];
+        $results = $this->search->search($querydata);
+        $this->assert_result_titles(['Course 1'], $results);
+
+        // Restrict area and context, incompatibly - this has no results (and doesn't do a query).
+        $querydata->contextids = [$contextc2f->id];
+        $results = $this->search->search($querydata);
+        $this->assert_result_titles([], $results);
+    }
+
+    /**
+     * Tests searching for results in groups, either by specified group ids or based on user
+     * access permissions.
+     */
+    public function test_groups() {
+        global $USER;
+
+        // Use real search areas.
+        $this->search->clear_static();
+        $this->search->add_core_search_areas();
+
+        // Create 2 courses and a selection of forums with different group mode.
+        $generator = $this->getDataGenerator();
+        $course1 = $generator->create_course(['fullname' => 'Course 1']);
+        $forum1nogroups = $generator->create_module('forum', ['course' => $course1, 'groupmode' => NOGROUPS]);
+        $forum1separategroups = $generator->create_module('forum', ['course' => $course1, 'groupmode' => SEPARATEGROUPS]);
+        $forum1visiblegroups = $generator->create_module('forum', ['course' => $course1, 'groupmode' => VISIBLEGROUPS]);
+        $course2 = $generator->create_course(['fullname' => 'Course 2']);
+        $forum2separategroups = $generator->create_module('forum', ['course' => $course2, 'groupmode' => SEPARATEGROUPS]);
+
+        // Create two groups on each course.
+        $group1a = $generator->create_group(['courseid' => $course1->id]);
+        $group1b = $generator->create_group(['courseid' => $course1->id]);
+        $group2a = $generator->create_group(['courseid' => $course2->id]);
+        $group2b = $generator->create_group(['courseid' => $course2->id]);
+
+        // Create search records in each activity and (where relevant) in each group.
+        $forumgenerator = $generator->get_plugin_generator('mod_forum');
+        $forumgenerator->create_discussion(['course' => $course1->id, 'userid' => $USER->id,
+                'forum' => $forum1nogroups->id, 'name' => 'F1NG', 'message' => 'xyzzy']);
+        $forumgenerator->create_discussion(['course' => $course1->id, 'userid' => $USER->id,
+                'forum' => $forum1separategroups->id, 'name' => 'F1SG-A',  'message' => 'xyzzy',
+                'groupid' => $group1a->id]);
+        $forumgenerator->create_discussion(['course' => $course1->id, 'userid' => $USER->id,
+                'forum' => $forum1separategroups->id, 'name' => 'F1SG-B', 'message' => 'xyzzy',
+                'groupid' => $group1b->id]);
+        $forumgenerator->create_discussion(['course' => $course1->id, 'userid' => $USER->id,
+                'forum' => $forum1visiblegroups->id, 'name' => 'F1VG-A', 'message' => 'xyzzy',
+                'groupid' => $group1a->id]);
+        $forumgenerator->create_discussion(['course' => $course1->id, 'userid' => $USER->id,
+                'forum' => $forum1visiblegroups->id, 'name' => 'F1VG-B', 'message' => 'xyzzy',
+                'groupid' => $group1b->id]);
+        $forumgenerator->create_discussion(['course' => $course2->id, 'userid' => $USER->id,
+                'forum' => $forum2separategroups->id, 'name' => 'F2SG-A', 'message' => 'xyzzy',
+                'groupid' => $group2a->id]);
+        $forumgenerator->create_discussion(['course' => $course2->id, 'userid' => $USER->id,
+                'forum' => $forum2separategroups->id, 'name' => 'F2SG-B', 'message' => 'xyzzy',
+                'groupid' => $group2b->id]);
+
+        $this->search->index();
+
+        // Search as admin user should find everything.
+        $querydata = new stdClass();
+        $querydata->q = 'xyzzy';
+        $results = $this->search->search($querydata);
+        $this->assert_result_titles(
+                ['F1NG', 'F1SG-A', 'F1SG-B', 'F1VG-A', 'F1VG-B', 'F2SG-A', 'F2SG-B'], $results);
+
+        // Admin user manually restricts results by groups.
+        $querydata->groupids = [$group1b->id, $group2a->id];
+        $results = $this->search->search($querydata);
+        $this->assert_result_titles(['F1SG-B', 'F1VG-B', 'F2SG-A'], $results);
+
+        // Student enrolled in both courses but no groups.
+        $student1 = $generator->create_user();
+        $generator->enrol_user($student1->id, $course1->id, 'student');
+        $generator->enrol_user($student1->id, $course2->id, 'student');
+        $this->setUser($student1);
+
+        unset($querydata->groupids);
+        $results = $this->search->search($querydata);
+        $this->assert_result_titles(['F1NG', 'F1VG-A', 'F1VG-B'], $results);
+
+        // Student enrolled in both courses and group A in both cases.
+        $student2 = $generator->create_user();
+        $generator->enrol_user($student2->id, $course1->id, 'student');
+        $generator->enrol_user($student2->id, $course2->id, 'student');
+        groups_add_member($group1a, $student2);
+        groups_add_member($group2a, $student2);
+        $this->setUser($student2);
+
+        $results = $this->search->search($querydata);
+        $this->assert_result_titles(['F1NG', 'F1SG-A', 'F1VG-A', 'F1VG-B', 'F2SG-A'], $results);
+
+        // Manually restrict results to group B in course 1.
+        $querydata->groupids = [$group1b->id];
+        $results = $this->search->search($querydata);
+        $this->assert_result_titles(['F1VG-B'], $results);
+
+        // Manually restrict results to group A in course 1.
+        $querydata->groupids = [$group1a->id];
+        $results = $this->search->search($querydata);
+        $this->assert_result_titles(['F1SG-A', 'F1VG-A'], $results);
+
+        // Manager enrolled in both courses (has access all groups).
+        $manager = $generator->create_user();
+        $generator->enrol_user($manager->id, $course1->id, 'manager');
+        $generator->enrol_user($manager->id, $course2->id, 'manager');
+        $this->setUser($manager);
+        unset($querydata->groupids);
+        $results = $this->search->search($querydata);
+        $this->assert_result_titles(
+                ['F1NG', 'F1SG-A', 'F1SG-B', 'F1VG-A', 'F1VG-B', 'F2SG-A', 'F2SG-B'], $results);
+    }
+
+    /**
+     * Tests searching for results restricted to specific user id(s).
+     */
+    public function test_user_restriction() {
+        // Use real search areas.
+        $this->search->clear_static();
+        $this->search->add_core_search_areas();
+
+        // Create a course, a forum, and a glossary.
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $forum = $generator->create_module('forum', ['course' => $course->id]);
+        $glossary = $generator->create_module('glossary', ['course' => $course->id]);
+
+        // Create 3 user accounts, all enrolled as students on the course.
+        $user1 = $generator->create_user();
+        $user2 = $generator->create_user();
+        $user3 = $generator->create_user();
+        $generator->enrol_user($user1->id, $course->id, 'student');
+        $generator->enrol_user($user2->id, $course->id, 'student');
+        $generator->enrol_user($user3->id, $course->id, 'student');
+
+        // All users create a forum discussion.
+        $forumgen = $generator->get_plugin_generator('mod_forum');
+        $forumgen->create_discussion(['course' => $course->id, 'forum' => $forum->id,
+            'userid' => $user1->id, 'name' => 'Post1', 'message' => 'plugh']);
+        $forumgen->create_discussion(['course' => $course->id, 'forum' => $forum->id,
+                'userid' => $user2->id, 'name' => 'Post2', 'message' => 'plugh']);
+        $forumgen->create_discussion(['course' => $course->id, 'forum' => $forum->id,
+                'userid' => $user3->id, 'name' => 'Post3', 'message' => 'plugh']);
+
+        // Two of the users create entries in the glossary.
+        $glossarygen = $generator->get_plugin_generator('mod_glossary');
+        $glossarygen->create_content($glossary, ['concept' => 'Entry1', 'definition' => 'plugh',
+                'userid' => $user1->id]);
+        $glossarygen->create_content($glossary, ['concept' => 'Entry3', 'definition' => 'plugh',
+                'userid' => $user3->id]);
+
+        // Index the data.
+        $this->search->index();
+
+        // Search without user restriction should find everything.
+        $querydata = new stdClass();
+        $querydata->q = 'plugh';
+        $results = $this->search->search($querydata);
+        $this->assert_result_titles(
+                ['Entry1', 'Entry3', 'Post1', 'Post2', 'Post3'], $results);
+
+        // Restriction to user 3 only.
+        $querydata->userids = [$user3->id];
+        $results = $this->search->search($querydata);
+        $this->assert_result_titles(
+                ['Entry3', 'Post3'], $results);
+
+        // Restriction to users 1 and 2.
+        $querydata->userids = [$user1->id, $user2->id];
+        $results = $this->search->search($querydata);
+        $this->assert_result_titles(
+                ['Entry1', 'Post1', 'Post2'], $results);
+
+        // Restriction to users 1 and 2 combined with context restriction.
+        $querydata->contextids = [context_module::instance($glossary->cmid)->id];
+        $results = $this->search->search($querydata);
+        $this->assert_result_titles(
+                ['Entry1'], $results);
+
+        // Restriction to users 1 and 2 combined with area restriction.
+        unset($querydata->contextids);
+        $querydata->areaids = [\core_search\manager::generate_areaid('mod_forum', 'post')];
+        $results = $this->search->search($querydata);
+        $this->assert_result_titles(
+                ['Post1', 'Post2'], $results);
+    }
+
+    /**
+     * Asserts that the returned documents have the expected titles (regardless of order).
+     *
+     * @param string[] $expected List of expected document titles
+     * @param \core_search\document[] $results List of returned documents
+     */
+    protected function assert_result_titles(array $expected, array $results) {
+        $titles = [];
+        foreach ($results as $result) {
+            $titles[] = $result->get('title');
+        }
+        sort($titles);
+        sort($expected);
+        $this->assertEquals($expected, $titles);
+    }
+
+    /**
+     * Tests the get_supported_orders function for contexts where we can only use relevance
+     * (system, category).
+     */
+    public function test_get_supported_orders_relevance_only() {
+        global $DB;
+
+        // System or category context: relevance only.
+        $orders = $this->engine->get_supported_orders(\context_system::instance());
+        $this->assertCount(1, $orders);
+        $this->assertArrayHasKey('relevance', $orders);
+
+        $categoryid = $DB->get_field_sql('SELECT MIN(id) FROM {course_categories}');
+        $orders = $this->engine->get_supported_orders(\context_coursecat::instance($categoryid));
+        $this->assertCount(1, $orders);
+        $this->assertArrayHasKey('relevance', $orders);
+    }
+
+    /**
+     * Tests the get_supported_orders function for contexts where we support location as well
+     * (course, activity, block).
+     */
+    public function test_get_supported_orders_relevance_and_location() {
+        global $DB;
+
+        // Test with course context.
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course(['fullname' => 'Frogs']);
+        $coursecontext = \context_course::instance($course->id);
+
+        $orders = $this->engine->get_supported_orders($coursecontext);
+        $this->assertCount(2, $orders);
+        $this->assertArrayHasKey('relevance', $orders);
+        $this->assertArrayHasKey('location', $orders);
+        $this->assertContains('Course: Frogs', $orders['location']);
+
+        // Test with activity context.
+        $page = $generator->create_module('page', ['course' => $course->id, 'name' => 'Toads']);
+
+        $orders = $this->engine->get_supported_orders(\context_module::instance($page->cmid));
+        $this->assertCount(2, $orders);
+        $this->assertArrayHasKey('relevance', $orders);
+        $this->assertArrayHasKey('location', $orders);
+        $this->assertContains('Page: Toads', $orders['location']);
+
+        // Test with block context.
+        $instance = (object)['blockname' => 'html', 'parentcontextid' => $coursecontext->id,
+                'showinsubcontexts' => 0, 'pagetypepattern' => 'course-view-*',
+                'defaultweight' => 0, 'timecreated' => 1, 'timemodified' => 1,
+                'configdata' => ''];
+        $blockid = $DB->insert_record('block_instances', $instance);
+        $blockcontext = \context_block::instance($blockid);
+
+        $orders = $this->engine->get_supported_orders($blockcontext);
+        $this->assertCount(2, $orders);
+        $this->assertArrayHasKey('relevance', $orders);
+        $this->assertArrayHasKey('location', $orders);
+        $this->assertContains('Block: HTML', $orders['location']);
+    }
+
+    /**
+     * Tests ordering by relevance vs location.
+     */
+    public function test_ordering() {
+        // Create 2 courses and 2 activities.
+        $generator = $this->getDataGenerator();
+        $course1 = $generator->create_course(['fullname' => 'Course 1']);
+        $course1context = \context_course::instance($course1->id);
+        $course1page = $generator->create_module('page', ['course' => $course1]);
+        $course1pagecontext = \context_module::instance($course1page->cmid);
+        $course2 = $generator->create_course(['fullname' => 'Course 2']);
+        $course2context = \context_course::instance($course2->id);
+        $course2page = $generator->create_module('page', ['course' => $course2]);
+        $course2pagecontext = \context_module::instance($course2page->cmid);
+
+        // Create one search record in each activity and course.
+        $this->create_search_record($course1->id, $course1context->id, 'C1', 'Xyzzy');
+        $this->create_search_record($course1->id, $course1pagecontext->id, 'C1P', 'Xyzzy');
+        $this->create_search_record($course2->id, $course2context->id, 'C2', 'Xyzzy');
+        $this->create_search_record($course2->id, $course2pagecontext->id, 'C2P', 'Xyzzy plugh');
+        $this->search->index();
+
+        // Default search works by relevance so the one with both words should be top.
+        $querydata = new stdClass();
+        $querydata->q = 'xyzzy plugh';
+        $results = $this->search->search($querydata);
+        $this->assertCount(4, $results);
+        $this->assertEquals('C2P', $results[0]->get('title'));
+
+        // Same if you explicitly specify relevance.
+        $querydata->order = 'relevance';
+        $results = $this->search->search($querydata);
+        $this->assertEquals('C2P', $results[0]->get('title'));
+
+        // If you specify order by location and you are in C2 or C2P then results are the same.
+        $querydata->order = 'location';
+        $querydata->context = $course2context;
+        $results = $this->search->search($querydata);
+        $this->assertEquals('C2P', $results[0]->get('title'));
+        $querydata->context = $course2pagecontext;
+        $results = $this->search->search($querydata);
+        $this->assertEquals('C2P', $results[0]->get('title'));
+
+        // But if you are in C1P then you get different results (C1P first).
+        $querydata->context = $course1pagecontext;
+        $results = $this->search->search($querydata);
+        $this->assertEquals('C1P', $results[0]->get('title'));
+    }
+
+    /**
+     * Tests with bogus content (that can be entered into Moodle) to see if it crashes.
+     */
+    public function test_bogus_content() {
+        $generator = $this->getDataGenerator();
+        $course1 = $generator->create_course(['fullname' => 'Course 1']);
+        $course1context = \context_course::instance($course1->id);
+
+        // It is possible to enter into a Moodle database content containing these characters,
+        // which are Unicode non-characters / byte order marks. If sent to Solr, these cause
+        // failures.
+        $boguscontent = html_entity_decode('&#xfffe;') . 'frog';
+        $this->create_search_record($course1->id, $course1context->id, 'C1', $boguscontent);
+        $boguscontent = html_entity_decode('&#xffff;') . 'frog';
+        $this->create_search_record($course1->id, $course1context->id, 'C1', $boguscontent);
+
+        // Unicode Standard Version 9.0 - Core Specification, section 23.7, lists 66 non-characters
+        // in total. Here are some of them - these work OK for me but it may depend on platform.
+        $boguscontent = html_entity_decode('&#xfdd0;') . 'frog';
+        $this->create_search_record($course1->id, $course1context->id, 'C1', $boguscontent);
+        $boguscontent = html_entity_decode('&#xfdef;') . 'frog';
+        $this->create_search_record($course1->id, $course1context->id, 'C1', $boguscontent);
+        $boguscontent = html_entity_decode('&#x1fffe;') . 'frog';
+        $this->create_search_record($course1->id, $course1context->id, 'C1', $boguscontent);
+        $boguscontent = html_entity_decode('&#x10ffff;') . 'frog';
+        $this->create_search_record($course1->id, $course1context->id, 'C1', $boguscontent);
+
+        // Do the indexing (this will check it doesn't throw warnings).
+        $this->search->index();
+
+        // Confirm that all 6 documents are found in search.
+        $querydata = new stdClass();
+        $querydata->q = 'frog';
+        $results = $this->search->search($querydata);
+        $this->assertCount(6, $results);
+    }
+
+    /**
+     * Adds a record to the mock search area, so that the search engine can find it later.
+     *
+     * @param int $courseid Course id
+     * @param int $contextid Context id
+     * @param string $title Title for search index
+     * @param string $content Content for search index
+     */
+    protected function create_search_record($courseid, $contextid, $title, $content) {
+        $record = new \stdClass();
+        $record->content = $content;
+        $record->title = $title;
+        $record->courseid = $courseid;
+        $record->contextid = $contextid;
+        $this->generator->create_record($record);
     }
 }

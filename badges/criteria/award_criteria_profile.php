@@ -52,7 +52,7 @@ class award_criteria_profile extends award_criteria {
 
         // Note: cannot use user_get_default_fields() here because it is not possible to decide which fields user can modify.
         $dfields = array('firstname', 'lastname', 'email', 'address', 'phone1', 'phone2', 'icq', 'skype', 'yahoo',
-                         'aim', 'msn', 'department', 'institution', 'description', 'city', 'url', 'country');
+                         'aim', 'msn', 'department', 'institution', 'description', 'picture', 'city', 'url', 'country');
 
         $sql = "SELECT uf.id as fieldid, uf.name as name, ic.id as categoryid, ic.name as categoryname, uf.datatype
                 FROM {user_info_field} uf
@@ -185,7 +185,12 @@ class award_criteria_profile extends award_criteria {
                 $whereparts[] = "uid{$idx}.id IS NOT NULL";
             } else {
                 // This is a field from {user} table.
-                $whereparts[] = $DB->sql_isnotempty('u', "u.{$param['field']}", false, true);
+                if ($param['field'] == 'picture') {
+                    // The picture field is numeric and requires special handling.
+                    $whereparts[] = "u.{$param['field']} != 0";
+                } else {
+                    $whereparts[] = $DB->sql_isnotempty('u', "u.{$param['field']}", false, true);
+                }
             }
         }
 
@@ -224,7 +229,13 @@ class award_criteria_profile extends award_criteria {
                 $params["fieldid{$idx}"] = $param['field'];
                 $whereparts[] = "uid{$idx}.id IS NOT NULL";
             } else {
-                $whereparts[] = $DB->sql_isnotempty('u', "u.{$param['field']}", false, true);
+                // This is a field from {user} table.
+                if ($param['field'] == 'picture') {
+                    // The picture field is numeric and requires special handling.
+                    $whereparts[] = "u.{$param['field']} != 0";
+                } else {
+                    $whereparts[] = $DB->sql_isnotempty('u', "u.{$param['field']}", false, true);
+                }
             }
         }
 

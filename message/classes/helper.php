@@ -51,48 +51,61 @@ class helper {
                                         $sort = 'timecreated ASC', $timefrom = 0, $timeto = 0) {
         global $DB;
 
-        $messageid = $DB->sql_concat("'message_'", 'id');
-        $messagereadid = $DB->sql_concat("'messageread_'", 'id');
+        $hash = self::get_conversation_hash([$userid, $otheruserid]);
 
-        $sql = "SELECT {$messageid} AS fakeid, id, useridfrom, useridto, subject, fullmessage, fullmessagehtml, fullmessageformat,
-                       smallmessage, notification, timecreated, 0 as timeread
-                  FROM {message} m
-                 WHERE ((useridto = ? AND useridfrom = ? AND timeusertodeleted = ?)
-                    OR (useridto = ? AND useridfrom = ? AND timeuserfromdeleted = ?))
-                   AND notification = 0
-                   %where%
-             UNION ALL
-                SELECT {$messagereadid} AS fakeid, id, useridfrom, useridto, subject, fullmessage, fullmessagehtml, fullmessageformat,
-                       smallmessage, notification, timecreated, timeread
-                  FROM {message_read} mr
-                 WHERE ((useridto = ? AND useridfrom = ? AND timeusertodeleted = ?)
-                    OR (useridto = ? AND useridfrom = ? AND timeuserfromdeleted = ?))
-                   AND notification = 0
-                   %where%
-              ORDER BY $sort";
-        $params1 = array($userid, $otheruserid, $timedeleted,
-                         $otheruserid, $userid, $timedeleted);
+        $sql = "SELECT m.id, m.useridfrom, m.subject, m.fullmessage, m.fullmessagehtml,
+                       m.fullmessageformat, m.smallmessage, m.timecreated, muaread.timecreated AS timeread
+                  FROM {message_conversations} mc
+            INNER JOIN {messages} m
+                    ON m.conversationid = mc.id
+             LEFT JOIN {message_user_actions} muaread
+                    ON (muaread.messageid = m.id
+                   AND muaread.userid = :userid1
+                   AND muaread.action = :readaction)";
+        $params = ['userid1' => $userid, 'readaction' => api::MESSAGE_ACTION_READ, 'convhash' => $hash];
 
-        $params2 = array($userid, $otheruserid, $timedeleted,
-                         $otheruserid, $userid, $timedeleted);
-        $where = array();
+        if (empty($timedeleted)) {
+            $sql .= " LEFT JOIN {message_user_actions} mua
+                             ON (mua.messageid = m.id
+                            AND mua.userid = :userid2
+                            AND mua.action = :deleteaction
+                            AND mua.timecreated is NOT NULL)";
+        } else {
+            $sql .= " INNER JOIN {message_user_actions} mua
+                              ON (mua.messageid = m.id
+                             AND mua.userid = :userid2
+                             AND mua.action = :deleteaction
+                             AND mua.timecreated = :timedeleted)";
+            $params['timedeleted'] = $timedeleted;
+        }
+
+        $params['userid2'] = $userid;
+        $params['deleteaction'] = api::MESSAGE_ACTION_DELETED;
+
+        $sql .= " WHERE mc.convhash = :convhash";
 
         if (!empty($timefrom)) {
-            $where[] = 'AND timecreated >= ?';
-            $params1[] = $timefrom;
-            $params2[] = $timefrom;
+            $sql .= " AND m.timecreated >= :timefrom";
+            $params['timefrom'] = $timefrom;
         }
 
         if (!empty($timeto)) {
-            $where[] = 'AND timecreated <= ?';
-            $params1[] = $timeto;
-            $params2[] = $timeto;
+            $sql .= " AND m.timecreated <= :timeto";
+            $params['timeto'] = $timeto;
         }
 
-        $sql = str_replace('%where%', implode(' ', $where), $sql);
-        $params = array_merge($params1, $params2);
+        if (empty($timedeleted)) {
+            $sql .= " AND mua.id is NULL";
+        }
 
-        return $DB->get_records_sql($sql, $params, $limitfrom, $limitnum);
+        $sql .= " ORDER BY m.$sort";
+
+        $messages = $DB->get_records_sql($sql, $params, $limitfrom, $limitnum);
+        foreach ($messages as &$message) {
+            $message->useridto = ($message->useridfrom == $userid) ? $otheruserid : $userid;
+        }
+
+        return $messages;
     }
 
     /**
@@ -294,6 +307,18 @@ class helper {
     }
 
     /**
+     * Returns the conversation hash between users for easy look-ups in the DB.
+     *
+     * @param array $userids
+     * @return string
+     */
+    public static function get_conversation_hash(array $userids) {
+        sort($userids);
+
+        return sha1(implode('-', $userids));
+    }
+
+    /**
      * Returns the cache key for the time created value of the last message between two users.
      *
      * @param int $userid
@@ -304,5 +329,29 @@ class helper {
         $ids = [$userid, $user2id];
         sort($ids);
         return implode('_', $ids);
+    }
+
+    /**
+     * Checks if legacy messages exist for a given user.
+     *
+     * @param int $userid
+     * @return bool
+     */
+    public static function legacy_messages_exist($userid) {
+        global $DB;
+
+        $sql = "SELECT id
+                  FROM {message} m
+                 WHERE useridfrom = ?
+                    OR useridto = ?";
+        $messageexists = $DB->record_exists_sql($sql, [$userid, $userid]);
+
+        $sql = "SELECT id
+                  FROM {message_read} m
+                 WHERE useridfrom = ?
+                    OR useridto = ?";
+        $messagereadexists = $DB->record_exists_sql($sql, [$userid, $userid]);
+
+        return $messageexists || $messagereadexists;
     }
 }

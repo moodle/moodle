@@ -115,6 +115,7 @@ $string['pluginname_link'] = 'question/type/calculated';
 $string['pluginnameadding'] = 'Adding a Calculated question';
 $string['pluginnameediting'] = 'Editing a Calculated question';
 $string['pluginnamesummary'] = 'Calculated questions are like numerical questions but with the numbers used selected randomly from a set when the quiz is taken.';
+$string['privacy:metadata'] = 'The Calculated question type plugin does not store any personal data.';
 $string['possiblehdr'] = 'Possible wild cards present only in the question text';
 $string['questiondatasets'] = 'Question datasets';
 $string['questiondatasets_help'] = 'Question datasets of wild cards that will be used in each individual question';

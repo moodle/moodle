@@ -113,7 +113,8 @@ select {
 }
 
 .forumpost {
-    @extend .card;
+    border: $border-width solid $border-color;
+    display: block;
     padding: 6px;
 
     .header {
@@ -136,6 +137,7 @@ select {
     }
 
     .row {
+        display: block;
         .topic,
         .content-mask,
         .options {
@@ -208,11 +210,6 @@ select {
     margin-left: 4px;
 }
 
-.navbar-fixed-top,
-.navbar-fixed-bottom {
-    z-index: 4030;
-}
-
 .ie .row-fluid .desktop-first-column {
     margin-left: 0;
 }
@@ -237,6 +234,12 @@ div#dock {
 .path-mod-lesson .invisiblefieldset.fieldsetfix {
     display: block;
 }
+.path-mod-lesson .answeroption .checkbox label p {
+    display: inline;
+}
+#page-mod-lesson-view .branchbuttoncontainer .singlebutton button[type="submit"] {
+    white-space: normal;
+}
 
 .path-mod-wiki .wiki_headingtitle,
 .path-mod-wiki .midpad,
@@ -246,11 +249,6 @@ div#dock {
 
 .path-mod-wiki .wiki_contentbox {
     width: 100%;
-}
-
-// Dropdown styling.
-.dropdown-menu {
-    margin-top: 11px;
 }
 
 // Survey module
@@ -286,8 +284,6 @@ div#dock {
 
 // Usermenu
 .usermenu {
-    float: right;
-
     .login {
         line-height: 2.25rem;
 
@@ -369,6 +365,7 @@ div#dock {
 #page-mod-quiz-mod #id_reviewoptionshdr .col-md-3,
 #page-mod-quiz-mod #id_reviewoptionshdr .col-md-9 {
     width: auto;
+    max-width: none;
 }
 #page-mod-quiz-mod #id_reviewoptionshdr .form-group {
     float: left;
@@ -388,6 +385,7 @@ div#dock {
 #page-mod-quiz-mod #id_reviewoptionshdr .form-check {
     width: 90%;
     height: 22px;
+    justify-content: flex-start;
 }
 
 // Question navigation block.
@@ -481,6 +479,15 @@ div#dock {
     }
 }
 
+#page-mod-quiz-edit ul.slots li.section li.activity .instancemaxmarkcontainer form input {
+    height: 1.4em;
+    vertical-align: middle;
+}
+
+#page-mod-quiz-edit ul.slots li.section li.activity .instancemaxmarkcontainer {
+    padding: 0;
+    margin: 0 0.4em;
+}
 
 // Assign.
 .path-mod-assign [data-region="grade-actions-panel"] [data-region="grade-actions"] .collapse-buttons {
@@ -506,6 +513,8 @@ $popout-header-height: 4rem;
 .path-mod-assign [data-region="grade-panel"] .fitem > .col-md-9 {
     width: 100%;
     padding: 0;
+    max-width: 100%;
+    flex: none;
 }
 .path-mod-assign [data-region="grade-panel"] fieldset,
 .path-mod-assign [data-region="grade-panel"] .fitem.row {

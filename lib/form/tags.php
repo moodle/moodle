@@ -244,7 +244,11 @@ class MoodleQuickForm_tags extends MoodleQuickForm_autocomplete {
      */
     public function exportValue(&$submitValues, $assoc = false) {
         if (!$this->is_tagging_enabled()) {
-            return $assoc ? array($this->getName() => array()) : array();
+            return $this->_prepareValue([], $assoc);
+        }
+        if ($this->_findValue($submitValues) === '_qf__force_multiselect_submission') {
+            // Nothing was selected.
+            return $this->_prepareValue([], $assoc);
         }
 
         return parent::exportValue($submitValues, $assoc);
@@ -257,6 +261,7 @@ class MoodleQuickForm_tags extends MoodleQuickForm_autocomplete {
             $url = new moodle_url('/tag/manage.php', array('tc' => $this->get_tag_collection()));
             $context['managestandardtagsurl'] = $url->out(false);
         }
+        $context['nameraw'] = $this->getName();
 
         return $context;
     }

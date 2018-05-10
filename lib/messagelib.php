@@ -127,33 +127,53 @@ function message_send($eventdata) {
         $userstate = 'loggedoff';
     }
 
-    // Create the message object
-    $savemessage = new stdClass();
-    $savemessage->courseid          = $eventdata->courseid;
-    $savemessage->useridfrom        = $eventdata->userfrom->id;
-    $savemessage->useridto          = $eventdata->userto->id;
-    $savemessage->subject           = $eventdata->subject;
-    $savemessage->fullmessage       = $eventdata->fullmessage;
-    $savemessage->fullmessageformat = $eventdata->fullmessageformat;
-    $savemessage->fullmessagehtml   = $eventdata->fullmessagehtml;
-    $savemessage->smallmessage      = $eventdata->smallmessage;
-    $savemessage->notification      = $eventdata->notification;
-    $savemessage->eventtype         = $eventdata->name;
-    $savemessage->component         = $eventdata->component;
+    // Check if we are creating a notification or message.
+    if ($eventdata->notification) {
+        $table = 'notifications';
 
-    if (!empty($eventdata->contexturl)) {
-        $savemessage->contexturl = (string)$eventdata->contexturl;
+        $tabledata = new stdClass();
+        $tabledata->useridfrom = $eventdata->userfrom->id;
+        $tabledata->useridto = $eventdata->userto->id;
+        $tabledata->subject = $eventdata->subject;
+        $tabledata->fullmessage = $eventdata->fullmessage;
+        $tabledata->fullmessageformat = $eventdata->fullmessageformat;
+        $tabledata->fullmessagehtml = $eventdata->fullmessagehtml;
+        $tabledata->smallmessage = $eventdata->smallmessage;
+        $tabledata->eventtype = $eventdata->name;
+        $tabledata->component = $eventdata->component;
+
+        if (!empty($eventdata->contexturl)) {
+            $tabledata->contexturl = (string)$eventdata->contexturl;
+        } else {
+            $tabledata->contexturl = null;
+        }
+
+        if (!empty($eventdata->contexturlname)) {
+            $tabledata->contexturlname = (string)$eventdata->contexturlname;
+        } else {
+            $tabledata->contexturlname = null;
+        }
     } else {
-        $savemessage->contexturl = null;
+        $table = 'messages';
+
+        if (!$conversationid = \core_message\api::get_conversation_between_users([$eventdata->userfrom->id,
+                $eventdata->userto->id])) {
+            $conversationid = \core_message\api::create_conversation_between_users([$eventdata->userfrom->id,
+                $eventdata->userto->id]);
+        }
+
+        $tabledata = new stdClass();
+        $tabledata->courseid = $eventdata->courseid;
+        $tabledata->useridfrom = $eventdata->userfrom->id;
+        $tabledata->conversationid = $conversationid;
+        $tabledata->subject = $eventdata->subject;
+        $tabledata->fullmessage = $eventdata->fullmessage;
+        $tabledata->fullmessageformat = $eventdata->fullmessageformat;
+        $tabledata->fullmessagehtml = $eventdata->fullmessagehtml;
+        $tabledata->smallmessage = $eventdata->smallmessage;
     }
 
-    if (!empty($eventdata->contexturlname)) {
-        $savemessage->contexturlname = (string)$eventdata->contexturlname;
-    } else {
-        $savemessage->contexturlname = null;
-    }
-
-    $savemessage->timecreated = time();
+    $tabledata->timecreated = time();
 
     if (PHPUNIT_TEST and class_exists('phpunit_util')) {
         // Add some more tests to make sure the normal code can actually work.
@@ -173,9 +193,21 @@ function message_send($eventdata) {
         unset($messageproviders);
         // Now ask phpunit if it wants to catch this message.
         if (phpunit_util::is_redirecting_messages()) {
-            $savemessage->timeread = time();
-            $messageid = $DB->insert_record('message_read', $savemessage);
-            $message = $DB->get_record('message_read', array('id'=>$messageid));
+            $messageid = $DB->insert_record($table, $tabledata);
+            $message = $DB->get_record($table, array('id' => $messageid));
+
+            // Add the useridto attribute for BC.
+            $message->useridto = $eventdata->userto->id;
+
+            // Mark the message/notification as read.
+            if ($eventdata->notification) {
+                \core_message\api::mark_notification_as_read($message);
+            } else {
+                \core_message\api::mark_message_as_read($eventdata->userto->id, $message);
+            }
+
+            // Unit tests need this detail.
+            $message->notification = $eventdata->notification;
             phpunit_util::message_sent($message);
             return $messageid;
         }
@@ -183,7 +215,7 @@ function message_send($eventdata) {
 
     // Fetch enabled processors.
     // If we are dealing with a message some processors may want to handle it regardless of user and site settings.
-    if (empty($savemessage->notification)) {
+    if (!$eventdata->notification) {
         $processors = array_filter(get_message_processors(false), function($processor) {
             if ($processor->object->force_process_messages()) {
                 return true;
@@ -226,7 +258,7 @@ function message_send($eventdata) {
         }
 
         // Populate the list of processors we will be using
-        if (empty($savemessage->notification) && $processor->object->force_process_messages()) {
+        if (!$eventdata->notification && $processor->object->force_process_messages()) {
             $processorlist[] = $processor->name;
         } else if ($permitted == 'forced' && $userisconfigured) {
             // An admin is forcing users to use this message processor. Use this processor unconditionally.
@@ -248,20 +280,20 @@ function message_send($eventdata) {
     }
 
     // Only cache messages, not notifications.
-    if (empty($savemessage->notification)) {
+    if (!$eventdata->notification) {
         // Cache the timecreated value of the last message between these two users.
         $cache = cache::make('core', 'message_time_last_message_between_users');
-        $key = \core_message\helper::get_last_message_time_created_cache_key($savemessage->useridfrom,
-            $savemessage->useridto);
-        $cache->set($key, $savemessage->timecreated);
+        $key = \core_message\helper::get_last_message_time_created_cache_key($eventdata->userfrom->id,
+            $eventdata->userto->id);
+        $cache->set($key, $tabledata->timecreated);
     }
 
     // Store unread message just in case we get a fatal error any time later.
-    $savemessage->id = $DB->insert_record('message', $savemessage);
-    $eventdata->savedmessageid = $savemessage->id;
+    $tabledata->id = $DB->insert_record($table, $tabledata);
+    $eventdata->savedmessageid = $tabledata->id;
 
     // Let the manager do the sending or buffering when db transaction in progress.
-    return \core\message\manager::send_message($eventdata, $savemessage, $processorlist);
+    return \core\message\manager::send_message($eventdata, $tabledata, $processorlist);
 }
 
 

@@ -52,7 +52,7 @@ class core_question_renderer extends plugin_renderer_base {
     public function question_preview_link($questionid, context $context, $showlabel) {
         if ($showlabel) {
             $alt = '';
-            $label = ' ' . get_string('preview');
+            $label = get_string('preview');
             $attributes = array();
         } else {
             $alt = get_string('preview');

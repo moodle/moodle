@@ -70,6 +70,7 @@ class client extends \oauth2_client {
         if (empty($returnurl)) {
             $returnurl = new moodle_url('/');
         }
+        $this->basicauth = $issuer->get('basicauth');
         parent::__construct($issuer->get('clientid'), $issuer->get('clientsecret'), $returnurl, $scopes);
     }
 
@@ -177,10 +178,16 @@ class client extends \oauth2_client {
         $refreshtoken = $systemaccount->get('refreshtoken');
 
         $params = array('refresh_token' => $refreshtoken,
-            'client_id' => $this->issuer->get('clientid'),
-            'client_secret' => $this->issuer->get('clientsecret'),
             'grant_type' => 'refresh_token'
         );
+
+        if ($this->basicauth) {
+            $idsecret = urlencode($this->issuer->get('clientid')) . ':' . urlencode($this->issuer->get('clientsecret'));
+            $this->setHeader('Authorization: Basic ' . base64_encode($idsecret));
+        } else {
+            $params['client_id'] = $this->issuer->get('clientid');
+            $params['client_secret'] = $this->issuer->get('clientsecret');
+        }
 
         // Requests can either use http GET or POST.
         if ($this->use_http_get()) {

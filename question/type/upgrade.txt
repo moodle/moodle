@@ -1,5 +1,17 @@
 This files describes API changes for question type plugins.
 
+=== 3.5 ===
+  + Added new classes backup_qtype_extrafields_plugin and restore_qtype_extrafields_plugin
+   in order to use extra fields method in backup/restore question type. Require and inherit new classes for using it. See
+   backup_qtype_shortanswer_plugin and restore_qtype_shortanswer_plugin for an example of using this.
+  + The declaration of is_gradable_response has been moved from question_automatically_gradable to
+   question_manually_gradable.
+  + The default implementation of is_gradable_response has been moved from question_graded_automatically to
+   question_with_responses.
+  + Note that format_text() is no longer applied to the results of
+   qtype_elements_embedded_in_question_text_renderer::embedded_element(). If question type overrides
+   this method make sure you apply format_text() to any text that came from a user.
+
 === 3.1.5, 3.2.2, 3.3 ===
 
 * If you are using check_combined_feedback_file_access in your check_file_access method,

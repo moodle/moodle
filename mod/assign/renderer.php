@@ -178,8 +178,7 @@ class mod_assign_renderer extends plugin_renderer_base {
         $o = '';
 
         $o .= $this->output->container_start('submitforgrading');
-        $o .= $this->output->heading(get_string('submitassignment', 'assign'), 3);
-        $o .= $this->output->spacer(array('height'=>30));
+        $o .= $this->output->heading(get_string('confirmsubmissionheading', 'assign'), 3);
 
         $cancelurl = new moodle_url('/mod/assign/view.php', array('id' => $page->coursemoduleid));
         if (count($page->notifications)) {
@@ -194,9 +193,7 @@ class mod_assign_renderer extends plugin_renderer_base {
             $o .= $this->output->continue_button($cancelurl);
         } else {
             // All submission plugins ready - show the confirmation form.
-            $o .= $this->output->box_start('generalbox submitconfirm');
             $o .= $this->moodleform($page->confirmform);
-            $o .= $this->output->box_end();
         }
         $o .= $this->output->container_end();
 
@@ -339,9 +336,11 @@ class mod_assign_renderer extends plugin_renderer_base {
         $urlparams = array('id' => $summary->coursemoduleid, 'action' => 'grading');
         $url = new moodle_url('/mod/assign/view.php', $urlparams);
         $o .= '<a href="' . $url . '" class="btn btn-secondary">' . get_string('viewgrading', 'mod_assign') . '</a> ';
-        $urlparams = array('id' => $summary->coursemoduleid, 'action' => 'grader');
-        $url = new moodle_url('/mod/assign/view.php', $urlparams);
-        $o .= '<a href="' . $url . '" class="btn btn-primary">' . get_string('grade') . '</a>';
+        if ($summary->cangrade) {
+            $urlparams = array('id' => $summary->coursemoduleid, 'action' => 'grader');
+            $url = new moodle_url('/mod/assign/view.php', $urlparams);
+            $o .= '<a href="' . $url . '" class="btn btn-primary">' . get_string('grade') . '</a>';
+        }
         $o .= $this->output->container_end();
 
         // Close the container and insert a spacer.
@@ -925,7 +924,7 @@ class mod_assign_renderer extends plugin_renderer_base {
                     $o .= $this->output->single_button(new moodle_url('/mod/assign/view.php', $urlparams),
                                                        get_string('addsubmission', 'assign'), 'get');
                     $o .= $this->output->box_start('boxaligncenter submithelp');
-                    $o .= get_string('editsubmission_help', 'assign');
+                    $o .= get_string('addsubmission_help', 'assign');
                     $o .= $this->output->box_end();
                     $o .= $this->output->box_end();
                 } else if ($submission->status == ASSIGN_SUBMISSION_STATUS_REOPENED) {

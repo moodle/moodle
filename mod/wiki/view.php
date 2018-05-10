@@ -70,7 +70,7 @@ if ($id) {
     // Checking course instance
     $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
 
-    require_login($course, true, $cm);
+    require_course_login($course, true, $cm);
 
     // Checking wiki instance
     if (!$wiki = wiki_get_wiki($cm->instance)) {
@@ -142,7 +142,7 @@ if ($id) {
     // Checking course instance
     $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
 
-    require_login($course, true, $cm);
+    require_course_login($course, true, $cm);
     /*
      * Case 2:
      *
@@ -173,7 +173,7 @@ if ($id) {
     // Checking course instance
     $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
 
-    require_login($course, true, $cm);
+    require_course_login($course, true, $cm);
 
     $groupmode = groups_get_activity_groupmode($cm);
 

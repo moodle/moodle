@@ -18,9 +18,9 @@ Feature: The my overview block allows users to easily access their courses and s
       | activity | course | idnumber  | name            | intro                   | timeopen      | timeclose     |
       | choice   | C2     | choice1   | Test choice 1   | Test choice description | ##yesterday## | ##tomorrow##  |
       | choice   | C1     | choice2   | Test choice 2   | Test choice description | ##1 month ago## | ##15 days ago##  |
-      | choice   | C3     | choice3   | Test choice 3   | Test choice description | ##first day of next month## | ##last day of next month##  |
+      | choice   | C3     | choice3   | Test choice 3   | Test choice description | ##first day of +5 months## | ##last day of +5 months##  |
       | feedback | C2     | feedback1 | Test feedback 1 | Test feedback description | ##yesterday## | ##tomorrow##  |
-      | feedback | C3     | feedback3 | Test feedback 3 | Test feedback description | ##first day of next month## | ##last day of next month## |
+      | feedback | C3     | feedback3 | Test feedback 3 | Test feedback description | ##first day of +5 months## | ##last day of +5 months## |
     And the following "course enrolments" exist:
       | user | course | role |
       | student1 | C1 | student |

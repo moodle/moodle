@@ -28,6 +28,8 @@ defined('MOODLE_INTERNAL') || die();
 
 /** Default socket timeout */
 define('ANTIVIRUS_CLAMAV_SOCKET_TIMEOUT', 10);
+/** Default socket data stream chunk size */
+define('ANTIVIRUS_CLAMAV_SOCKET_CHUNKSIZE', 1024);
 
 /**
  * Class implementing ClamAV antivirus.
@@ -67,6 +69,9 @@ class scanner extends \core\antivirus\scanner {
 
         // Execute the scan using preferable method.
         $method = 'scan_file_execute_' . $this->get_config('runningmethod');
+        if (!method_exists($this, $method)) {
+            throw new \coding_exception('Attempting to call non-existing method ' . $method);
+        }
         $return = $this->$method($file);
 
         if ($return === self::SCAN_RESULT_ERROR) {
@@ -78,6 +83,32 @@ class scanner extends \core\antivirus\scanner {
             }
         }
         return $return;
+    }
+
+    /**
+     * Scan data.
+     *
+     * @param string $data The variable containing the data to scan.
+     * @return int Scanning result constant.
+     */
+    public function scan_data($data) {
+        // We can do direct stream scanning if unixsocket running method is in use,
+        // if not, use default process.
+        if ($this->get_config('runningmethod') === 'unixsocket') {
+            $return = $this->scan_data_execute_unixsocket($data);
+
+            if ($return === self::SCAN_RESULT_ERROR) {
+                $this->message_admins($this->get_scanning_notice());
+                // If plugin settings require us to act like virus on any error,
+                // return SCAN_RESULT_FOUND result.
+                if ($this->get_config('clamfailureonupload') === 'actlikevirus') {
+                    return self::SCAN_RESULT_FOUND;
+                }
+            }
+            return $return;
+        } else {
+            return parent::scan_data($data);
+        }
     }
 
     /**
@@ -186,21 +217,75 @@ class scanner extends \core\antivirus\scanner {
             // After scanning we revert permissions to initial ones.
             chmod($file, $perms);
             // Parse the output.
-            $splitoutput = explode(': ', $output);
-            $message = trim($splitoutput[1]);
-            if ($message === 'OK') {
-                return self::SCAN_RESULT_OK;
+            return $this->parse_unixsocket_response($output);
+        }
+    }
+
+    /**
+     * Scan data using unix socket.
+     *
+     * We are running INSTREAM command and passing data stream in chunks.
+     * The format of the chunk is: <length><data> where <length> is the size of the following
+     * data in bytes expressed as a 4 byte unsigned integer in network byte order and <data>
+     * is the actual chunk. Streaming is terminated by sending a zero-length chunk.
+     * Do not exceed StreamMaxLength as defined in clamd.conf, otherwise clamd will
+     * reply with INSTREAM size limit exceeded and close the connection.
+     *
+     * @param string $data The varaible containing the data to scan.
+     * @return int Scanning result constant.
+     */
+    public function scan_data_execute_unixsocket($data) {
+        $socket = stream_socket_client('unix://' . $this->get_config('pathtounixsocket'), $errno, $errstr, ANTIVIRUS_CLAMAV_SOCKET_TIMEOUT);
+        if (!$socket) {
+            // Can't open socket for some reason, notify admins.
+            $notice = get_string('errorcantopensocket', 'antivirus_clamav', "$errstr ($errno)");
+            $this->set_scanning_notice($notice);
+            return self::SCAN_RESULT_ERROR;
+        } else {
+            // Initiate data stream scanning.
+            // Using 'n' as command prefix is forcing clamav to only treat \n as newline delimeter,
+            // this is to avoid unexpected newline characters on different systems.
+            fwrite($socket, "nINSTREAM\n");
+            // Send data in chunks of ANTIVIRUS_CLAMAV_SOCKET_CHUNKSIZE size.
+            while (strlen($data) > 0) {
+                $chunk = substr($data, 0, ANTIVIRUS_CLAMAV_SOCKET_CHUNKSIZE);
+                $data = substr($data, ANTIVIRUS_CLAMAV_SOCKET_CHUNKSIZE);
+                $size = pack('N', strlen($chunk));
+                fwrite($socket, $size);
+                fwrite($socket, $chunk);
+            }
+            // Terminate streaming.
+            fwrite($socket, pack('N', 0));
+
+            $output = stream_get_line($socket, 4096);
+            fclose($socket);
+
+            // Parse the output.
+            return $this->parse_unixsocket_response($output);
+        }
+    }
+
+    /**
+     * Parse unix socket command response.
+     *
+     * @param string $output The unix socket command response.
+     * @return int Scanning result constant.
+     */
+    private function parse_unixsocket_response($output) {
+        $splitoutput = explode(': ', $output);
+        $message = trim($splitoutput[1]);
+        if ($message === 'OK') {
+            return self::SCAN_RESULT_OK;
+        } else {
+            $parts = explode(' ', $message);
+            $status = array_pop($parts);
+            if ($status === 'FOUND') {
+                return self::SCAN_RESULT_FOUND;
             } else {
-                $parts = explode(' ', $message);
-                $status = array_pop($parts);
-                if ($status === 'FOUND') {
-                    return self::SCAN_RESULT_FOUND;
-                } else {
-                    $notice = get_string('clamfailed', 'antivirus_clamav', $this->get_clam_error_code(2));
-                    $notice .= "\n\n" . $output;
-                    $this->set_scanning_notice($notice);
-                    return self::SCAN_RESULT_ERROR;
-                }
+                $notice = get_string('clamfailed', 'antivirus_clamav', $this->get_clam_error_code(2));
+                $notice .= "\n\n" . $output;
+                $this->set_scanning_notice($notice);
+                return self::SCAN_RESULT_ERROR;
             }
         }
     }

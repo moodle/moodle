@@ -104,6 +104,9 @@ function groups_add_member($grouporid, $userorid, $component=null, $itemid=0) {
     $DB->set_field('groups', 'timemodified', $member->timeadded, array('id'=>$groupid));
     $group->timemodified = $member->timeadded;
 
+    // Invalidate the group and grouping cache for users.
+    cache_helper::invalidate_by_definition('core', 'user_group_groupings', array(), array($userid));
+
     // Trigger group event.
     $params = array(
         'context' => $context,
@@ -204,6 +207,9 @@ function groups_remove_member($grouporid, $userorid) {
     $time = time();
     $DB->set_field('groups', 'timemodified', $time, array('id' => $groupid));
     $group->timemodified = $time;
+
+    // Invalidate the group and grouping cache for users.
+    cache_helper::invalidate_by_definition('core', 'user_group_groupings', array(), array($userid));
 
     // Trigger group event.
     $params = array(
@@ -496,6 +502,8 @@ function groups_delete_group($grouporid) {
 
     // Invalidate the grouping cache for the course
     cache_helper::invalidate_by_definition('core', 'groupdata', array(), array($group->courseid));
+    // Purge the group and grouping cache for users.
+    cache_helper::purge_by_definition('core', 'user_group_groupings');
 
     // Trigger group event.
     $params = array(
@@ -547,6 +555,8 @@ function groups_delete_grouping($groupingorid) {
 
     // Invalidate the grouping cache for the course
     cache_helper::invalidate_by_definition('core', 'groupdata', array(), array($grouping->courseid));
+    // Purge the group and grouping cache for users.
+    cache_helper::purge_by_definition('core', 'user_group_groupings');
 
     // Trigger group event.
     $params = array(
@@ -590,14 +600,6 @@ function groups_delete_group_members($courseid, $userid=0, $unused=false) {
     }
     $rs->close();
 
-    // TODO MDL-41312 Remove events_trigger_legacy('groups_members_removed').
-    // This event is kept here for backwards compatibility, because it cannot be
-    // translated to a new event as it is wrong.
-    $eventdata = new stdClass();
-    $eventdata->courseid = $courseid;
-    $eventdata->userid   = $userid;
-    events_trigger_legacy('groups_members_removed', $eventdata);
-
     return true;
 }
 
@@ -618,14 +620,12 @@ function groups_delete_groupings_groups($courseid, $showfeedback=false) {
     foreach ($results as $result) {
         groups_unassign_grouping($result->groupingid, $result->groupid, false);
     }
+    $results->close();
 
     // Invalidate the grouping cache for the course
     cache_helper::invalidate_by_definition('core', 'groupdata', array(), array($courseid));
-
-    // TODO MDL-41312 Remove events_trigger_legacy('groups_groupings_groups_removed').
-    // This event is kept here for backwards compatibility, because it cannot be
-    // translated to a new event as it is wrong.
-    events_trigger_legacy('groups_groupings_groups_removed', $courseid);
+    // Purge the group and grouping cache for users.
+    cache_helper::purge_by_definition('core', 'user_group_groupings');
 
     // no need to show any feedback here - we delete usually first groupings and then groups
 
@@ -646,14 +646,12 @@ function groups_delete_groups($courseid, $showfeedback=false) {
     foreach ($groups as $group) {
         groups_delete_group($group);
     }
+    $groups->close();
 
     // Invalidate the grouping cache for the course
     cache_helper::invalidate_by_definition('core', 'groupdata', array(), array($courseid));
-
-    // TODO MDL-41312 Remove events_trigger_legacy('groups_groups_deleted').
-    // This event is kept here for backwards compatibility, because it cannot be
-    // translated to a new event as it is wrong.
-    events_trigger_legacy('groups_groups_deleted', $courseid);
+    // Purge the group and grouping cache for users.
+    cache_helper::purge_by_definition('core', 'user_group_groupings');
 
     if ($showfeedback) {
         echo $OUTPUT->notification(get_string('deleted').' - '.get_string('groups', 'group'), 'notifysuccess');
@@ -676,14 +674,12 @@ function groups_delete_groupings($courseid, $showfeedback=false) {
     foreach ($groupings as $grouping) {
         groups_delete_grouping($grouping);
     }
+    $groupings->close();
 
     // Invalidate the grouping cache for the course.
     cache_helper::invalidate_by_definition('core', 'groupdata', array(), array($courseid));
-
-    // TODO MDL-41312 Remove events_trigger_legacy('groups_groupings_deleted').
-    // This event is kept here for backwards compatibility, because it cannot be
-    // translated to a new event as it is wrong.
-    events_trigger_legacy('groups_groupings_deleted', $courseid);
+    // Purge the group and grouping cache for users.
+    cache_helper::purge_by_definition('core', 'user_group_groupings');
 
     if ($showfeedback) {
         echo $OUTPUT->notification(get_string('deleted').' - '.get_string('groupings', 'group'), 'notifysuccess');
@@ -818,7 +814,7 @@ function groups_parse_name($format, $groupnumber) {
  * @param int groupingid
  * @param int groupid
  * @param int $timeadded  The time the group was added to the grouping.
- * @param bool $invalidatecache If set to true the course group cache will be invalidated as well.
+ * @param bool $invalidatecache If set to true the course group cache and the user group cache will be invalidated as well.
  * @return bool true or exception
  */
 function groups_assign_grouping($groupingid, $groupid, $timeadded = null, $invalidatecache = true) {
@@ -841,6 +837,8 @@ function groups_assign_grouping($groupingid, $groupid, $timeadded = null, $inval
     if ($invalidatecache) {
         // Invalidate the grouping cache for the course
         cache_helper::invalidate_by_definition('core', 'groupdata', array(), array($courseid));
+        // Purge the group and grouping cache for users.
+        cache_helper::purge_by_definition('core', 'user_group_groupings');
     }
 
     // Trigger event.
@@ -860,7 +858,7 @@ function groups_assign_grouping($groupingid, $groupid, $timeadded = null, $inval
  *
  * @param int groupingid
  * @param int groupid
- * @param bool $invalidatecache If set to true the course group cache will be invalidated as well.
+ * @param bool $invalidatecache If set to true the course group cache and the user group cache will be invalidated as well.
  * @return bool success
  */
 function groups_unassign_grouping($groupingid, $groupid, $invalidatecache = true) {
@@ -871,6 +869,8 @@ function groups_unassign_grouping($groupingid, $groupid, $invalidatecache = true
     if ($invalidatecache) {
         // Invalidate the grouping cache for the course
         cache_helper::invalidate_by_definition('core', 'groupdata', array(), array($courseid));
+        // Purge the group and grouping cache for users.
+        cache_helper::purge_by_definition('core', 'user_group_groupings');
     }
 
     // Trigger event.
@@ -955,6 +955,7 @@ function groups_calculate_role_people($rs, $context) {
     }
 
     $allroles = role_fix_names(get_all_roles($context), $context);
+    $visibleroles = get_viewable_roles($context);
 
     // Array of all involved roles
     $roles = array();
@@ -1013,14 +1014,15 @@ function groups_calculate_role_people($rs, $context) {
 
     // Now we rearrange the data to store users by role
     foreach ($users as $userid=>$userdata) {
-        $rolecount = count($userdata->roles);
+        $visibleuserroles = array_intersect_key($userdata->roles, $visibleroles);
+        $rolecount = count($visibleuserroles);
         if ($rolecount == 0) {
             // does not have any roles
             $roleid = 0;
         } else if($rolecount > 1) {
             $roleid = '*';
         } else {
-            $userrole = reset($userdata->roles);
+            $userrole = reset($visibleuserroles);
             $roleid = $userrole->id;
         }
         $roles[$roleid]->users[$userid] = $userdata;

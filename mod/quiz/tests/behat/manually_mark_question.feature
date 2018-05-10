@@ -36,15 +36,15 @@ Feature: Teachers can override the grade for any question
     And I press "Submit all and finish"
     And I click on "Submit all and finish" "button" in the "Confirmation" "dialogue"
     And I log out
-    And I log in as "teacher1"
+
+  @javascript @_switch_window @_bug_phantomjs
+  Scenario: Validating the marking of an essay question attempt.
+    When I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I follow "Quiz 1"
     And I follow "Attempts: 1"
     And I follow "Review attempt"
-
-  @javascript @_switch_window @_bug_phantomjs
-  Scenario: Validating the marking of an essay question attempt.
-    When I follow "Make comment or override mark"
+    And I follow "Make comment or override mark"
     And I switch to "commentquestion" window
     And I set the field "Mark" to "25"
     And I press "Save"
@@ -55,5 +55,37 @@ Feature: Teachers can override the grade for any question
     And I set the field "Mark" to "10.0"
     And I press "Save" and switch to main window
     And I should see "Complete" in the "Manually graded 10 with comment: " "table_row"
+    # This time is same as time the window is open. So wait for it to close before proceeding.
+    And I wait "2" seconds
+
+  @javascript @_switch_window @_file_upload @_bug_phantomjs
+  Scenario: Comment on a response to an essay question attempt.
+    When I log in as "teacher1"
+    And I follow "Manage private files"
+    And I upload "mod/quiz/tests/fixtures/moodle_logo.jpg" file to "Files" filemanager
+    And I click on "Save changes" "button"
+    And I am on "Course 1" course homepage
+    And I follow "Quiz 1"
+    And I follow "Attempts: 1"
+    And I follow "Review attempt"
+    And I follow "Make comment or override mark"
+    And I switch to "commentquestion" window
+    And I set the field "Comment" to "Administrator's comment"
+    # Atto needs focus to add image, select empty p tag to do so.
+    And I select the text in the "Comment" Atto editor
+    And I click on "Image" "button" in the "[data-fieldtype=editor]" "css_element"
+    And I click on "Browse repositories..." "button"
+    And I click on "Private files" "link" in the ".fp-repo-area" "css_element"
+    And I click on "moodle_logo.jpg" "link"
+    And I click on "Select this file" "button"
+    And I set the field "Describe this image for someone who cannot see it" to "It's the logo"
+    And I click on "Save image" "button"
+    # Editor is not inserting the html for the image correctly
+    # when running under behat so line below manually inserts it.
+    And I set the field "Comment" to "<img src=\"@@PLUGINFILE@@/moodle_logo.jpg\" alt=\"It's the logo\" width=\"48\" height=\"48\" class=\"img-responsive atto_image_button_text-bottom\"><!-- File hash: a8e3ffba4ab315b3fb9187ebbf122fe9 -->"
+    And I press "Save" and switch to main window
+    And I switch to the main window
+    And I should see "Commented: [It's the logo]" in the ".history table" "css_element"
+    And "img[contains(@src, 'moodle_logo.jpg')]" "xpath_element" should exist in the ".comment" "css_element"
     # This time is same as time the window is open. So wait for it to close before proceeding.
     And I wait "2" seconds

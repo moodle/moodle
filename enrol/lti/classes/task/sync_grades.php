@@ -154,8 +154,8 @@ class sync_grades extends \core\task\scheduled_task {
                             continue;
                         }
 
-                        // This can happen if the sync process has an unexpected error.
-                        if ($grade == $ltiuser->lastgrade) {
+                        // Check to see if the grade has changed.
+                        if (!grade_floats_different($grade, $ltiuser->lastgrade)) {
                             mtrace("Not sent - The grade $mtracecontent was not sent as the grades are the same.");
                             continue;
                         }
@@ -174,7 +174,7 @@ class sync_grades extends \core\task\scheduled_task {
                         }
 
                         if (strpos(strtolower($response), 'success') !== false) {
-                            $DB->set_field('enrol_lti_users', 'lastgrade', intval($grade), array('id' => $ltiuser->id));
+                            $DB->set_field('enrol_lti_users', 'lastgrade', grade_floatval($grade), array('id' => $ltiuser->id));
                             mtrace("Success - The grade '$floatgrade' $mtracecontent was sent.");
                             $sendcount = $sendcount + 1;
                         } else {

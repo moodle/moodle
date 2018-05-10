@@ -99,7 +99,7 @@ class cc11_resource extends entities11 {
                                 $link = 'http://invalidurldetected/';
                             }
                         } else {
-                            $link = $rawlink;
+                            $link = htmlspecialchars(trim($rawlink), ENT_COMPAT, 'UTF-8', false);
                         }
                     }
                 }

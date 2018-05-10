@@ -14,6 +14,11 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
 
     $temp->add(new admin_setting_configcheckbox('dndallowtextandlinks', new lang_string('dndallowtextandlinks', 'admin'), new lang_string('configdndallowtextandlinks', 'admin'), 0));
 
+    $temp->add(new admin_setting_configexecutable('pathtosassc', new lang_string('pathtosassc', 'admin'), new lang_string('pathtosassc_help', 'admin'), ''));
+
+    $temp->add(new admin_setting_configcheckbox('forceclean', new lang_string('forceclean', 'core_admin'),
+        new lang_string('forceclean_desc', 'core_admin'), 0));
+
     $ADMIN->add('experimental', $temp);
 
     // "debugging" settingpage
@@ -28,7 +33,9 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     $ADMIN->add('development', $temp);
 
     // "Profiling" settingpage (conditionally if the 'xhprof' extension is available only).
-    $xhprofenabled = extension_loaded('xhprof') || extension_loaded('tideways');
+    $xhprofenabled = extension_loaded('tideways_xhprof');
+    $xhprofenabled = $xhprofenabled || extension_loaded('tideways');
+    $xhprofenabled = $xhprofenabled || extension_loaded('xhprof');
     $temp = new admin_settingpage('profiling', new lang_string('profiling', 'admin'), 'moodle/site:config', !$xhprofenabled);
     // Main profiling switch.
     $temp->add(new admin_setting_configcheckbox('profilingenabled', new lang_string('profilingenabled', 'admin'), new lang_string('profilingenabled_help', 'admin'), false));

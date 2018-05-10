@@ -1684,8 +1684,8 @@ class core_plugin_manager {
                 'backcolor', 'bold', 'charmap', 'clear', 'collapse', 'emoticon',
                 'equation', 'fontcolor', 'html', 'image', 'indent', 'italic',
                 'link', 'managefiles', 'media', 'noautolink', 'orderedlist',
-                'rtl', 'strike', 'subscript', 'superscript', 'table', 'title',
-                'underline', 'undo', 'unorderedlist'
+                'recordrtc', 'rtl', 'strike', 'subscript', 'superscript', 'table',
+                'title', 'underline', 'undo', 'unorderedlist'
             ),
 
             'assignment' => array(
@@ -1804,7 +1804,7 @@ class core_plugin_manager {
             ),
 
             'ltiservice' => array(
-                'memberships', 'profile', 'toolproxy', 'toolsettings'
+                'gradebookservices', 'memberships', 'profile', 'toolproxy', 'toolsettings'
             ),
 
             'mlbackend' => array(
@@ -1884,7 +1884,7 @@ class core_plugin_manager {
             ),
 
             'search' => array(
-                'solr'
+                'simpledb', 'solr'
             ),
 
             'scormreport' => array(
@@ -1905,10 +1905,10 @@ class core_plugin_manager {
 
             'tool' => array(
                 'analytics', 'assignmentupgrade', 'availabilityconditions', 'behat', 'capability', 'cohortroles', 'customlang',
-                'dbtransfer', 'filetypes', 'generator', 'health', 'httpsreplace', 'innodb', 'installaddon',
+                'dataprivacy', 'dbtransfer', 'filetypes', 'generator', 'health', 'httpsreplace', 'innodb', 'installaddon',
                 'langimport', 'log', 'lp', 'lpimportcsv', 'lpmigrate', 'messageinbound', 'mobile', 'multilangupgrade',
-                'monitor', 'oauth2', 'phpunit', 'profiling', 'recyclebin', 'replace', 'spamcleaner', 'task', 'templatelibrary',
-                'unittest', 'uploadcourse', 'uploaduser', 'unsuproles', 'usertours', 'xmldb'
+                'monitor', 'oauth2', 'phpunit', 'policy', 'profiling', 'recyclebin', 'replace', 'spamcleaner', 'task',
+                'templatelibrary', 'uploadcourse', 'uploaduser', 'unsuproles', 'usertours', 'xmldb'
             ),
 
             'webservice' => array(

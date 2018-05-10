@@ -28,10 +28,10 @@ Feature: Set the site home page and dashboard as the default home page
     And I follow "Make this my default home page"
     And I should not see "Make this my default home page"
     And I am on "Course 1" course homepage
-    And "Home" "text" should exist in the ".breadcrumb-nav" "css_element"
+    And "Home" "text" should exist in the ".breadcrumb" "css_element"
     And I am on site homepage
     And I follow "Dashboard"
     And I follow "Make this my default home page"
     And I should not see "Make this my default home page"
     And I am on "Course 1" course homepage
-    Then "Dashboard" "text" should exist in the ".breadcrumb-nav" "css_element"
+    Then "Dashboard" "text" should exist in the ".breadcrumb" "css_element"

@@ -42,3 +42,4 @@ $string['pluginname_link'] = 'question/type/match';
 $string['pluginnameadding'] = 'Adding a Matching question';
 $string['pluginnameediting'] = 'Editing a Matching question';
 $string['pluginnamesummary'] = 'The answer to each of a number of sub-question must be selected from a list of possibilities.';
+$string['privacy:metadata'] = 'The Matching question type does not store any personal data.';

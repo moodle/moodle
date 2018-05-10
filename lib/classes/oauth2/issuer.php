@@ -72,6 +72,10 @@ class issuer extends persistent {
                 'type' => PARAM_BOOL,
                 'default' => false
             ),
+            'basicauth' => array(
+                'type' => PARAM_BOOL,
+                'default' => false
+            ),
             'scopessupported' => array(
                 'type' => PARAM_RAW,
                 'null' => NULL_ALLOWED,

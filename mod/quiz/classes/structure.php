@@ -62,6 +62,14 @@ class structure {
     /** @var bool caches the results of can_be_edited. */
     protected $canbeedited = null;
 
+    /** @var bool tracks whether tags have been loaded */
+    protected $hasloadedtags = false;
+
+    /**
+     * @var \stdClass[] the tags for slots. Indexed by slot id.
+     */
+    protected $slottags = array();
+
     /**
      * Create an instance of this class representing an empty quiz.
      * @return structure
@@ -407,6 +415,23 @@ class structure {
             throw new \coding_exception('The \'slotid\' could not be found.');
         }
         return $this->slots[$slotid];
+    }
+
+    /**
+     * Get a slot by it's slot number. Throws an exception if it is missing.
+     *
+     * @param int $slotnumber The slot number
+     * @return \stdClass
+     * @throws \coding_exception
+     */
+    public function get_slot_by_number($slotnumber) {
+        foreach ($this->slots as $slot) {
+            if ($slot->slot == $slotnumber) {
+                return $slot;
+            }
+        }
+
+        throw new \coding_exception('The \'slotnumber\' could not be found.');
     }
 
     /**
@@ -897,6 +922,7 @@ class structure {
         $maxslot = $DB->get_field_sql('SELECT MAX(slot) FROM {quiz_slots} WHERE quizid = ?', array($this->get_quizid()));
 
         $trans = $DB->start_delegated_transaction();
+        $DB->delete_records('quiz_slot_tags', array('slotid' => $slot->id));
         $DB->delete_records('quiz_slots', array('id' => $slot->id));
         for ($i = $slot->slot + 1; $i <= $maxslot; $i++) {
             $DB->set_field('quiz_slots', 'slot', $i - 1,
@@ -1034,5 +1060,29 @@ class structure {
             throw new \coding_exception('Cannot remove the first section in a quiz.');
         }
         $DB->delete_records('quiz_sections', array('id' => $sectionid));
+    }
+
+    /**
+     * Set up this class with the slot tags for each of the slots.
+     */
+    protected function populate_slot_tags() {
+        $slotids = array_keys($this->slots);
+        $this->slottags = quiz_retrieve_tags_for_slot_ids($slotids);
+    }
+
+    /**
+     * Retrieve the list of slot tags for the given slot id.
+     *
+     * @param  int $slotid The id for the slot
+     * @return \stdClass[] The list of slot tag records
+     */
+    public function get_slot_tags_for_slot_id($slotid) {
+        if (!$this->hasloadedtags) {
+            // Lazy load the tags just in case they are never required.
+            $this->populate_slot_tags();
+            $this->hasloadedtags = true;
+        }
+
+        return isset($this->slottags[$slotid]) ? $this->slottags[$slotid] : [];
     }
 }

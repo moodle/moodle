@@ -127,8 +127,7 @@ class core_backup_moodle2_testcase extends advanced_testcase {
 
         // Extract backup file.
         $backupid = 'abc';
-        $backuppath = $CFG->tempdir . '/backup/' . $backupid;
-        check_dir_exists($backuppath);
+        $backuppath = make_backup_temp_directory($backupid);
         get_file_packer('application/vnd.moodle.backup')->extract_to_pathname(
                 __DIR__ . '/fixtures/availability_26_format.mbz', $backuppath);
 
@@ -596,7 +595,7 @@ class core_backup_moodle2_testcase extends advanced_testcase {
             assign_capability($cap, CAP_ALLOW, $roleidcat, $categorycontext);
         }
 
-        allow_assign($roleidcat, $studentrole->id);
+        core_role_set_assign_allowed($roleidcat, $studentrole->id);
         role_assign($roleidcat, $user->id, $categorycontext);
         accesslib_clear_all_caches_for_unit_testing();
 
@@ -954,5 +953,68 @@ class core_backup_moodle2_testcase extends advanced_testcase {
         $this->assertEquals('', $requests[1]->searcharea);
         $this->assertEquals($restoredforumcontext->id, $requests[2]->contextid);
         $this->assertEquals('', $requests[2]->searcharea);
+    }
+
+    /**
+     * The Question category hierarchical structure was changed in Moodle 3.5.
+     * From 3.5, all question categories in each context are a child of a single top level question category for that context.
+     * This test ensures that both Moodle 3.4 and 3.5 backups can still be correctly restored.
+     */
+    public function test_restore_question_category_34_35() {
+        global $DB, $USER, $CFG;
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        $backupfiles = array('question_category_34_format', 'question_category_35_format');
+
+        foreach ($backupfiles as $backupfile) {
+            // Extract backup file.
+            $backupid = $backupfile;
+            $backuppath = make_backup_temp_directory($backupid);
+            get_file_packer('application/vnd.moodle.backup')->extract_to_pathname(
+                    __DIR__ . "/fixtures/$backupfile.mbz", $backuppath);
+
+            // Do restore to new course with default settings.
+            $categoryid = $DB->get_field_sql("SELECT MIN(id) FROM {course_categories}");
+            $newcourseid = restore_dbops::create_new_course(
+                    'Test fullname', 'Test shortname', $categoryid);
+            $rc = new restore_controller($backupid, $newcourseid,
+                    backup::INTERACTIVE_NO, backup::MODE_GENERAL, $USER->id,
+                    backup::TARGET_NEW_COURSE);
+
+            $this->assertTrue($rc->execute_precheck());
+            $rc->execute_plan();
+            $rc->destroy();
+
+            // Get information about the resulting course and check that it is set up correctly.
+            $modinfo = get_fast_modinfo($newcourseid);
+            $quizzes = array_values($modinfo->get_instances_of('quiz'));
+            $contexts = $quizzes[0]->context->get_parent_contexts(true);
+
+            $topcategorycount = [];
+            foreach ($contexts as $context) {
+                $cats = $DB->get_records('question_categories', array('contextid' => $context->id), 'parent', 'id, name, parent');
+
+                // Make sure all question categories that were inside the backup file were restored correctly.
+                if ($context->contextlevel == CONTEXT_COURSE) {
+                    $this->assertEquals(['top', 'Default for C101'], array_column($cats, 'name'));
+                } else if ($context->contextlevel == CONTEXT_MODULE) {
+                    $this->assertEquals(['top', 'Default for Q1'], array_column($cats, 'name'));
+                }
+
+                $topcategorycount[$context->id] = 0;
+                foreach ($cats as $cat) {
+                    if (!$cat->parent) {
+                        $topcategorycount[$context->id]++;
+                    }
+                }
+
+                // Make sure there is a single top level category in this context.
+                if ($cats) {
+                    $this->assertEquals(1, $topcategorycount[$context->id]);
+                }
+            }
+        }
     }
 }

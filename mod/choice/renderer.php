@@ -93,7 +93,7 @@ class mod_choice_renderer extends plugin_renderer_base {
                 if (!empty($options['allowupdate']) && ($options['allowupdate'])) {
                     $url = new moodle_url('view.php',
                             array('id' => $coursemoduleid, 'action' => 'delchoice', 'sesskey' => sesskey()));
-                    $html .= html_writer::link($url, get_string('removemychoice', 'choice'));
+                    $html .= html_writer::link($url, get_string('removemychoice', 'choice'), array('class' => 'm-l-1'));
                 }
             } else {
                 $html .= html_writer::tag('label', get_string('havetologin', 'choice'));
@@ -222,32 +222,30 @@ class mod_choice_renderer extends plugin_renderer_base {
                     $optionusers = '';
                     foreach ($options->user as $user) {
                         $data = '';
-                        if (empty($user->imagealt)){
+                        if (empty($user->imagealt)) {
                             $user->imagealt = '';
                         }
 
                         $userfullname = fullname($user, $choices->fullnamecapability);
-                        $mediabody = '';
+                        $checkbox = '';
                         if ($choices->viewresponsecapability && $choices->deleterepsonsecapability) {
-                            $checkboxid = 'attempt-user'.$user->id.'-option'.$optionid;
-                            $attemptaction = html_writer::label($userfullname . ' ' . $optionsnames[$optionid],
-                                    $checkboxid, false, array('class' => 'accesshide'));
+                            $checkboxid = 'attempt-user' . $user->id . '-option' . $optionid;
+                            $checkbox .= html_writer::label($userfullname . ' ' . $optionsnames[$optionid],
+                                $checkboxid, false, array('class' => 'accesshide'));
                             if ($optionid > 0) {
-                                $attemptaction .= html_writer::checkbox('attemptid[]', $user->answerid, '', null,
-                                    array('id' => $checkboxid));
+                                $checkboxname = 'attemptid[]';
+                                $checkboxvalue = $user->answerid;
                             } else {
-                                $attemptaction .= html_writer::checkbox('userid[]', $user->id, '', null,
-                                    array('id' => $checkboxid));
+                                $checkboxname = 'userid[]';
+                                $checkboxvalue = $user->id;
                             }
-                            $mediabody .= html_writer::tag('div', $attemptaction, array('class'=>'media-left media-middle p-t-1'));
+                            $checkbox .= html_writer::checkbox($checkboxname, $checkboxvalue, '', null,
+                                array('id' => $checkboxid, 'class' => 'm-r-1'));
                         }
-                        $userimage = $this->output->user_picture($user, array('courseid' => $choices->courseid));
-                        $mediabody .= html_writer::tag('div', $userimage, array('class' => 'media-left media-middle'));
-
-                        $userlink = new moodle_url('/user/view.php', array('id'=>$user->id,'course' => $choices->courseid));
-                        $name = html_writer::tag('a', $userfullname, array('href' => $userlink));
-                        $mediabody .= html_writer::tag('div', $name, array('class' => 'media-body media-middle'));
-                        $data .= html_writer::tag('div', $mediabody, array('class' => 'media m-b-1'));
+                        $userimage = $this->output->user_picture($user, array('courseid' => $choices->courseid, 'link' => false));
+                        $profileurl = new moodle_url('/user/view.php', array('id' => $user->id, 'course' => $choices->courseid));
+                        $profilelink = html_writer::link($profileurl, $userimage . $userfullname);
+                        $data .= html_writer::div($checkbox . $profilelink, 'm-b-1');
 
                         $optionusers .= $data;
                     }
@@ -267,13 +265,9 @@ class mod_choice_renderer extends plugin_renderer_base {
             $selecturl = new moodle_url('#');
 
             $actiondata .= html_writer::start_div('selectallnone');
-            $selectallactions = new component_action('click',"checkall");
-            $selectall = new action_link($selecturl, get_string('selectall'), $selectallactions);
-            $actiondata .= $this->output->render($selectall) . ' / ';
+            $actiondata .= html_writer::link($selecturl, get_string('selectall'), ['data-select-info' => true]) . ' / ';
 
-            $deselectallactions = new component_action('click',"checknone");
-            $deselectall = new action_link($selecturl, get_string('deselectall'), $deselectallactions);
-            $actiondata .= $this->output->render($deselectall);
+            $actiondata .= html_writer::link($selecturl, get_string('deselectall'), ['data-select-info' => false]);
 
             $actiondata .= html_writer::end_div();
 
@@ -287,6 +281,9 @@ class mod_choice_renderer extends plugin_renderer_base {
             $select = new single_select($actionurl, 'action', $actionoptions, null,
                     array('' => get_string('chooseaction', 'choice')), 'attemptsform');
             $select->set_label(get_string('withselected', 'choice'));
+
+            $PAGE->requires->js_call_amd('mod_choice/select_all_choices', 'init');
+
             $actiondata .= $this->output->render($select);
         }
         $html .= html_writer::tag('div', $actiondata, array('class'=>'responseaction'));

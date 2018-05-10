@@ -86,6 +86,9 @@ var QUICKCOMMENTLIST = function(editor) {
                                                                                      jsondata.width,
                                                                                      jsondata.colour);
                             this.comments.push(quickcomment);
+                            this.comments.sort(function(a, b) {
+                                return a.rawtext.localeCompare(b.rawtext);
+                            });
                         }
                     } catch (e) {
                         return new M.core.exception(e);
@@ -182,6 +185,10 @@ var QUICKCOMMENTLIST = function(editor) {
                                                                                              comment.colour);
                                 this.comments.push(quickcomment);
                             }, this);
+
+                            this.comments.sort(function(a, b) {
+                                return a.rawtext.localeCompare(b.rawtext);
+                            });
                         }
                     } catch (e) {
                         return new M.core.exception(e);

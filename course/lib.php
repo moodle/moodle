@@ -2988,6 +2988,8 @@ class course_request {
     public function approve() {
         global $CFG, $DB, $USER;
 
+        require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
+
         $user = $DB->get_record('user', array('id' => $this->properties->requester, 'deleted'=>0), '*', MUST_EXIST);
 
         $courseconfig = get_config('moodlecourse');
@@ -3017,6 +3019,12 @@ class course_request {
         $data->lang               = $courseconfig->lang;
         $data->enablecompletion   = $courseconfig->enablecompletion;
         $data->numsections        = $courseconfig->numsections;
+        $data->startdate          = usergetmidnight(time());
+        if ($courseconfig->courseenddateenabled) {
+            $data->enddate        = usergetmidnight(time()) + $courseconfig->courseduration;
+        }
+
+        list($data->fullname, $data->shortname) = restore_dbops::calculate_course_names(0, $data->fullname, $data->shortname);
 
         $course = create_course($data);
         $context = context_course::instance($course->id, MUST_EXIST);

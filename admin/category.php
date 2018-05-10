@@ -54,14 +54,16 @@ $statusmsg = '';
 $errormsg  = '';
 
 if ($data = data_submitted() and confirm_sesskey()) {
-    if (admin_write_settings($data)) {
-        $statusmsg = get_string('changessaved');
-    }
-
+    $count = admin_write_settings($data);
     if (empty($adminroot->errors)) {
-        switch ($return) {
-            case 'site': redirect("$CFG->wwwroot/");
-            case 'admin': redirect("$CFG->wwwroot/$CFG->admin/");
+        // No errors. Did we change any setting?  If so, then indicate success.
+        if ($count) {
+            $statusmsg = get_string('changessaved');
+        } else {
+            switch ($return) {
+                case 'site': redirect("$CFG->wwwroot/");
+                case 'admin': redirect("$CFG->wwwroot/$CFG->admin/");
+            }
         }
     } else {
         $errormsg = get_string('errorwithsettings', 'admin');
@@ -73,7 +75,7 @@ if ($data = data_submitted() and confirm_sesskey()) {
 if ($PAGE->user_allowed_editing() && $adminediting != -1) {
     $USER->editing = $adminediting;
 }
-
+$buttons = null;
 if ($PAGE->user_allowed_editing()) {
     $url = clone($PAGE->url);
     if ($PAGE->user_is_editing()) {
@@ -127,7 +129,9 @@ if ($savebutton) {
 $visiblepathtosection = array_reverse($settingspage->visiblepath);
 $PAGE->set_title("$SITE->shortname: " . implode(": ",$visiblepathtosection));
 $PAGE->set_heading($SITE->fullname);
-$PAGE->set_button($buttons);
+if ($buttons) {
+    $PAGE->set_button($buttons);
+}
 
 echo $OUTPUT->header();
 

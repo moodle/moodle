@@ -403,6 +403,8 @@ abstract class oauth2_client extends curl {
     private $mocknextresponse = '';
     /** @var array $upgradedcodes list of upgraded codes in this request */
     private static $upgradedcodes = [];
+    /** @var bool basicauth */
+    protected $basicauth = false;
 
     /**
      * Returns the auth url for OAuth 2.0 request
@@ -542,11 +544,17 @@ abstract class oauth2_client extends curl {
     public function upgrade_token($code) {
         $callbackurl = self::callback_url();
         $params = array('code' => $code,
-            'client_id' => $this->clientid,
-            'client_secret' => $this->clientsecret,
             'grant_type' => 'authorization_code',
             'redirect_uri' => $callbackurl->out(false),
         );
+
+        if ($this->basicauth) {
+            $idsecret = urlencode($this->clientid) . ':' . urlencode($this->clientsecret);
+            $this->setHeader('Authorization: Basic ' . base64_encode($idsecret));
+        } else {
+            $params['client_id'] = $this->clientid;
+            $params['client_secret'] = $this->clientsecret;
+        }
 
         // Requests can either use http GET or POST.
         if ($this->use_http_get()) {

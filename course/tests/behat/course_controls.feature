@@ -21,8 +21,8 @@ Feature: Course activity controls works as expected
       | username | firstname | lastname | email |
       | teacher1 | Teacher | 1 | teacher1@example.com |
     And the following "courses" exist:
-      | fullname | shortname | format | coursedisplay | numsections |
-      | Course 1 | C1 | <courseformat> | <coursedisplay> | 5 |
+      | fullname | shortname | format | coursedisplay | numsections | startdate |
+      | Course 1 | C1 | <courseformat> | <coursedisplay> | 5 | 0 |
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
@@ -93,8 +93,8 @@ Feature: Course activity controls works as expected
       | username | firstname | lastname | email |
       | teacher1 | Teacher | 1 | teacher1@example.com |
     And the following "courses" exist:
-      | fullname | shortname | format | coursedisplay | numsections |
-      | Course 1 | C1 | <courseformat> | <coursedisplay> | 5 |
+      | fullname | shortname | format | coursedisplay | numsections | startdate |
+      | Course 1 | C1 | <courseformat> | <coursedisplay> | 5 | 0 |
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |

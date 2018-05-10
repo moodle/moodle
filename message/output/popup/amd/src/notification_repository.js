@@ -97,7 +97,7 @@ define(['core/ajax', 'core/notification'], function(Ajax, Notification) {
      */
     var markAsRead = function(id, timeread) {
         var args = {
-            messageid: id,
+            notificationid: id,
         };
 
         if (timeread) {
@@ -105,7 +105,7 @@ define(['core/ajax', 'core/notification'], function(Ajax, Notification) {
         }
 
         var request = {
-            methodname: 'core_message_mark_message_read',
+            methodname: 'core_message_mark_notification_read',
             args: args
         };
 

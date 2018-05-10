@@ -55,6 +55,10 @@ Feature: Add preconfigured tools via teacher interface
     And the field "Secure icon URL" matches value "https://download.moodle.org/unittest/test.jpg"
     And I press "Cancel"
     And I switch to the main window
+    And I press "Save and return to course"
+    And I open "Test tool activity 1" actions menu
+    And I choose "Edit settings" in the open action menu
+    And the field "Preconfigured tool" matches value "Placeholder"
 
   @javascript @_switch_window
   Scenario: Add and use a preconfigured tool

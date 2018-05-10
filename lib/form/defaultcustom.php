@@ -77,15 +77,15 @@ class MoodleQuickForm_defaultcustom extends MoodleQuickForm_group {
             'startyear' => $calendartype->get_min_year(),
             'stopyear' => $calendartype->get_max_year(),
             'defaulttime' => 0,
-            'step' => 5,
+            'step' => 1,
             'optional' => false,
         ];
 
         if (is_array($options)) {
             foreach ($options as $name => $value) {
                 if (array_key_exists($name, $this->_options)) {
-                    if ($name === 'type' && !in_array($value, ['text', 'date_selector'])) {
-                        throw new coding_exception('Only text and date_selector elements are supported in ' . $this->_type);
+                    if ($name === 'type' && !in_array($value, ['text', 'date_selector', 'date_time_selector'])) {
+                        throw new coding_exception('Only text, date_selector, and date_time_selector elements are supported in ' . $this->_type);
                     }
                     if ($name === 'optional' && $value) {
                         throw new coding_exception('Date selector can not be optional in ' . $this->_type);
@@ -105,6 +105,8 @@ class MoodleQuickForm_defaultcustom extends MoodleQuickForm_group {
         $calendartype = \core_calendar\type_factory::get_calendar_instance();
         $currentdate = $calendartype->timestamp_to_date_array($value, $this->_options['timezone']);
         return array(
+            'minute' => $currentdate['minutes'],
+            'hour' => $currentdate['hours'],
             'day' => $currentdate['mday'],
             'month' => $currentdate['mon'],
             'year' => $currentdate['year']);
@@ -135,6 +137,9 @@ class MoodleQuickForm_defaultcustom extends MoodleQuickForm_group {
                 get_string('newvaluefor', 'form', $this->getLabel()), $this->getAttributes());
             $element->setHiddenLabel(true);
         } else if ($this->_options['type'] === 'date_selector') {
+            $element = $this->createFormElement($this->_options['type'], 'value', '', $this->_options,
+                $this->getAttributes());
+        } else if ($this->_options['type'] === 'date_time_selector') {
             $element = $this->createFormElement($this->_options['type'], 'value', '', $this->_options,
                 $this->getAttributes());
         }
@@ -184,10 +189,17 @@ class MoodleQuickForm_defaultcustom extends MoodleQuickForm_group {
                 if ($this->has_customize_switch()) {
                     if ($this->_options['type'] === 'text') {
                         $caller->disabledIf($arg[0] . '[value]', $arg[0] . '[customize]', 'notchecked');
-                    } else {
+                    } else if ($this->_options['type'] === 'date_selector') {
                         $caller->disabledIf($arg[0] . '[value][day]', $arg[0] . '[customize]', 'notchecked');
                         $caller->disabledIf($arg[0] . '[value][month]', $arg[0] . '[customize]', 'notchecked');
                         $caller->disabledIf($arg[0] . '[value][year]', $arg[0] . '[customize]', 'notchecked');
+                    } else {
+                        // Date / Time selector.
+                        $caller->disabledIf($arg[0] . '[value][day]', $arg[0] . '[customize]', 'notchecked');
+                        $caller->disabledIf($arg[0] . '[value][month]', $arg[0] . '[customize]', 'notchecked');
+                        $caller->disabledIf($arg[0] . '[value][year]', $arg[0] . '[customize]', 'notchecked');
+                        $caller->disabledIf($arg[0] . '[value][hour]', $arg[0] . '[customize]', 'notchecked');
+                        $caller->disabledIf($arg[0] . '[value][minute]', $arg[0] . '[customize]', 'notchecked');
                     }
                 }
                 return $rv;
@@ -230,7 +242,7 @@ class MoodleQuickForm_defaultcustom extends MoodleQuickForm_group {
             $firstelement = reset($this->_elements);
             $defaultvalue = $this->_options['defaultvalue'];
             $customvalue = $this->_options['customvalue'];
-            if ($this->_options['type'] === 'date_selector') {
+            if ($this->_options['type'] === 'date_selector' || $this->_options['type'] === 'date_time_selector') {
                 $defaultvalue = $this->timestamp_to_date_array($defaultvalue);
                 $customvalue = $this->timestamp_to_date_array($customvalue);
             }

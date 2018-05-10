@@ -103,4 +103,15 @@ class renderer extends \plugin_renderer_base {
         $content .= $this->output->box_end();
         return $content;
     }
+
+    /**
+     * Returns information about queued index requests.
+     *
+     * @param \stdClass $info Info object from get_index_requests_info
+     * @return string HTML
+     * @throws \moodle_exception Any error with template
+     */
+    public function render_index_requests_info(\stdClass $info) {
+        return $this->output->render_from_template('core_search/index_requests', $info);
+    }
 }

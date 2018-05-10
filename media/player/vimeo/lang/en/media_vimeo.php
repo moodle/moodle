@@ -24,3 +24,4 @@
 
 $string['pluginname'] = 'Vimeo';
 $string['pluginname_help'] = 'The video-sharing website vimeo.com.';
+$string['privacy:metadata'] = 'The Vimeo media plugin does not store any personal data.';

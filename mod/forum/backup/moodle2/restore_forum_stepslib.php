@@ -168,8 +168,14 @@ class restore_forum_activity_structure_step extends restore_activity_structure_s
         $data->forum = $this->get_new_parentid('forum');
         $data->userid = $this->get_mappingid('user', $data->userid);
 
-        $newitemid = $DB->insert_record('forum_subscriptions', $data);
-        $this->set_mapping('forum_subscription', $oldid, $newitemid, true);
+        // Create only a new subscription if it does not already exist (see MDL-59854).
+        if ($subscription = $DB->get_record('forum_subscriptions',
+                array('forum' => $data->forum, 'userid' => $data->userid))) {
+            $this->set_mapping('forum_subscription', $oldid, $subscription->id, true);
+        } else {
+            $newitemid = $DB->insert_record('forum_subscriptions', $data);
+            $this->set_mapping('forum_subscription', $oldid, $newitemid, true);
+        }
 
     }
 

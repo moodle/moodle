@@ -79,6 +79,14 @@ class document implements \renderable, \templatable {
     protected $files = array();
 
     /**
+     * Change list (for engine implementers):
+     * 2017091700 - add optional field groupid
+     *
+     * @var int Schema version number (update if any change)
+     */
+    const SCHEMA_VERSION = 2017091700;
+
+    /**
      * All required fields any doc should contain.
      *
      * We have to choose a format to specify field types, using solr format as we have to choose one and solr is the
@@ -155,6 +163,11 @@ class document implements \renderable, \templatable {
      */
     protected static $optionalfields = array(
         'userid' => array(
+            'type' => 'int',
+            'stored' => true,
+            'indexed' => true
+        ),
+        'groupid' => array(
             'type' => 'int',
             'stored' => true,
             'indexed' => true
@@ -278,8 +291,21 @@ class document implements \renderable, \templatable {
         if ($fielddata['type'] === 'int' || $fielddata['type'] === 'tdate') {
             $this->data[$fieldname] = intval($value);
         } else {
+            // Remove disallowed Unicode characters.
+            $value = \core_text::remove_unicode_non_characters($value);
+
             // Replace all groups of line breaks and spaces by single spaces.
             $this->data[$fieldname] = preg_replace("/\s+/u", " ", $value);
+            if ($this->data[$fieldname] === null) {
+                if (isset($this->data['id'])) {
+                    $docid = $this->data['id'];
+                } else {
+                    $docid = '(unknown)';
+                }
+                throw new \moodle_exception('error_indexing', 'search', '', null, '"' . $fieldname .
+                        '" value causes preg_replace error (may be caused by unusual characters) ' .
+                        'in document with id "' . $docid . '"');
+            }
         }
 
         return $this->data[$fieldname];

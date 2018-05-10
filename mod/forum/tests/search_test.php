@@ -196,6 +196,7 @@ class mod_forum_search_testcase extends advanced_testcase {
         $record->userid = $user->id;
         $record->forum = $forum1->id;
         $record->message = 'discussion';
+        $record->groupid = 0;
         $discussion1 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record);
 
         // Create post1 in discussion1.
@@ -205,11 +206,13 @@ class mod_forum_search_testcase extends advanced_testcase {
         $record->userid = $user->id;
         $record->subject = 'subject1';
         $record->message = 'post1';
+        $record->groupid = -1;
         $discussion1reply1 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_post($record);
 
         $post1 = $DB->get_record('forum_posts', array('id' => $discussion1reply1->id));
         $post1->forumid = $forum1->id;
         $post1->courseid = $forum1->course;
+        $post1->groupid = -1;
 
         $doc = $searcharea->get_document($post1);
         $this->assertInstanceOf('\core_search\document', $doc);
@@ -219,6 +222,72 @@ class mod_forum_search_testcase extends advanced_testcase {
         $this->assertEquals($user->id, $doc->get('userid'));
         $this->assertEquals($discussion1reply1->subject, $doc->get('title'));
         $this->assertEquals($discussion1reply1->message, $doc->get('content'));
+    }
+
+    /**
+     * Group support for forum posts.
+     */
+    public function test_posts_group_support() {
+        // Get the search area and test generators.
+        $searcharea = \core_search\manager::get_search_area($this->forumpostareaid);
+        $generator = $this->getDataGenerator();
+        $forumgenerator = $generator->get_plugin_generator('mod_forum');
+
+        // Create a course, a user, and two groups.
+        $course = $generator->create_course();
+        $user = $generator->create_user();
+        $generator->enrol_user($user->id, $course->id, 'teacher');
+        $group1 = $generator->create_group(['courseid' => $course->id]);
+        $group2 = $generator->create_group(['courseid' => $course->id]);
+
+        // Separate groups forum.
+        $forum = self::getDataGenerator()->create_module('forum', ['course' => $course->id,
+                'groupmode' => SEPARATEGROUPS]);
+
+        // Create discussion with each group and one for all groups. One has a post in.
+        $discussion1 = $forumgenerator->create_discussion(['course' => $course->id,
+                'userid' => $user->id, 'forum' => $forum->id, 'message' => 'd1',
+                'groupid' => $group1->id]);
+        $forumgenerator->create_discussion(['course' => $course->id,
+                'userid' => $user->id, 'forum' => $forum->id, 'message' => 'd2',
+                'groupid' => $group2->id]);
+        $forumgenerator->create_discussion(['course' => $course->id,
+                'userid' => $user->id, 'forum' => $forum->id, 'message' => 'd3']);
+
+        // Create a reply in discussion1.
+        $forumgenerator->create_post(['discussion' => $discussion1->id, 'parent' => $discussion1->firstpost,
+                'userid' => $user->id, 'message' => 'p1']);
+
+        // Do the indexing of all 4 posts.
+        $rs = $searcharea->get_recordset_by_timestamp(0);
+        $results = [];
+        foreach ($rs as $rec) {
+            $results[$rec->message] = $rec;
+        }
+        $rs->close();
+        $this->assertCount(4, $results);
+
+        // Check each document has the correct groupid.
+        $doc = $searcharea->get_document($results['d1']);
+        $this->assertTrue($doc->is_set('groupid'));
+        $this->assertEquals($group1->id, $doc->get('groupid'));
+        $doc = $searcharea->get_document($results['d2']);
+        $this->assertTrue($doc->is_set('groupid'));
+        $this->assertEquals($group2->id, $doc->get('groupid'));
+        $doc = $searcharea->get_document($results['d3']);
+        $this->assertFalse($doc->is_set('groupid'));
+        $doc = $searcharea->get_document($results['p1']);
+        $this->assertTrue($doc->is_set('groupid'));
+        $this->assertEquals($group1->id, $doc->get('groupid'));
+
+        // While we're here, also test that the search area requests restriction by group.
+        $modinfo = get_fast_modinfo($course);
+        $this->assertTrue($searcharea->restrict_cm_access_by_group($modinfo->get_cm($forum->cmid)));
+
+        // In visible groups mode, it won't request restriction by group.
+        set_coursemodule_groupmode($forum->cmid, VISIBLEGROUPS);
+        $modinfo = get_fast_modinfo($course);
+        $this->assertFalse($searcharea->restrict_cm_access_by_group($modinfo->get_cm($forum->cmid)));
     }
 
     /**
@@ -389,5 +458,63 @@ class mod_forum_search_testcase extends advanced_testcase {
         }
         $recordset->close();
         $this->assertEquals(3, $nrecords);
+    }
+
+    /**
+     * Tests that reindexing works in order starting from the forum with most recent discussion.
+     */
+    public function test_posts_get_contexts_to_reindex() {
+        global $DB;
+
+        $generator = $this->getDataGenerator();
+        $adminuser = get_admin();
+
+        $course1 = $generator->create_course();
+        $course2 = $generator->create_course();
+
+        $time = time() - 1000;
+
+        // Create 3 forums (two in course 1, one in course 2 - doesn't make a difference).
+        $forum1 = $generator->create_module('forum', ['course' => $course1->id]);
+        $forum2 = $generator->create_module('forum', ['course' => $course1->id]);
+        $forum3 = $generator->create_module('forum', ['course' => $course2->id]);
+        $forum4 = $generator->create_module('forum', ['course' => $course2->id]);
+
+        // Hack added time for the course_modules entries. These should not be used (they would
+        // be used by the base class implementation). We are setting this so that the order would
+        // be 4, 3, 2, 1 if this ordering were used (newest first).
+        $DB->set_field('course_modules', 'added', $time + 100, ['id' => $forum1->cmid]);
+        $DB->set_field('course_modules', 'added', $time + 110, ['id' => $forum2->cmid]);
+        $DB->set_field('course_modules', 'added', $time + 120, ['id' => $forum3->cmid]);
+        $DB->set_field('course_modules', 'added', $time + 130, ['id' => $forum4->cmid]);
+
+        $forumgenerator = $generator->get_plugin_generator('mod_forum');
+
+        // Create one discussion in forums 1 and 3, three in forum 2, and none in forum 4.
+        $forumgenerator->create_discussion(['course' => $course1->id,
+                'forum' => $forum1->id, 'userid' => $adminuser->id, 'timemodified' => $time + 20]);
+
+        $forumgenerator->create_discussion(['course' => $course1->id,
+                'forum' => $forum2->id, 'userid' => $adminuser->id, 'timemodified' => $time + 10]);
+        $forumgenerator->create_discussion(['course' => $course1->id,
+                'forum' => $forum2->id, 'userid' => $adminuser->id, 'timemodified' => $time + 30]);
+        $forumgenerator->create_discussion(['course' => $course1->id,
+                'forum' => $forum2->id, 'userid' => $adminuser->id, 'timemodified' => $time + 11]);
+
+        $forumgenerator->create_discussion(['course' => $course2->id,
+                'forum' => $forum3->id, 'userid' => $adminuser->id, 'timemodified' => $time + 25]);
+
+        // Get the contexts in reindex order.
+        $area = \core_search\manager::get_search_area($this->forumpostareaid);
+        $contexts = iterator_to_array($area->get_contexts_to_reindex(), false);
+
+        // We expect them in order of newest discussion. Forum 4 is not included at all (which is
+        // correct because it has no content).
+        $expected = [
+            \context_module::instance($forum2->cmid),
+            \context_module::instance($forum3->cmid),
+            \context_module::instance($forum1->cmid)
+        ];
+        $this->assertEquals($expected, $contexts);
     }
 }

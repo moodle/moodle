@@ -35,3 +35,4 @@ $string['pathlatex'] = 'Path of <i>latex</i> binary';
 $string['pathmimetex'] = 'Path of <i>mimetex</i> binary';
 $string['pathmimetexdesc'] = 'Moodle will use its own mimetex binary unless another valid path is specified.';
 $string['source'] = 'TeX source';
+$string['privacy:metadata'] = 'The TeX notation plugin does not store any personal data.';

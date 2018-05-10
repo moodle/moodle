@@ -10,7 +10,7 @@
 }
 
 .mform .containsadvancedelements .advanced.show {
-    display: block;
+    display: flex;
 }
 
 #adminsettings span.error {
@@ -27,12 +27,22 @@
     .custom-select {
         max-width: 100%;
     }
+    .form-group {
+        margin-right: 0.25rem;
+    }
+}
+
+#jump-to-activity.custom-select {
+    width: 100%;
 }
 
 .mform fieldset {
     margin-left: $spacer * 1.5;
     margin-bottom: $spacer / 2;
     border-bottom: $border-width solid $table-border-color;
+}
+.mform > .form-group {
+    margin-left: $spacer * 1.5;
 }
 
 .editor_atto_content.form-control {
@@ -98,6 +108,10 @@ input#id_externalurl {
     display: inline;
 }
 
+.form-inline label:not(.sr-only):not(.accesshide) + select {
+    margin-left: 0.5rem;
+}
+
 .formsettingheading .form-horizontal {
     @extend .text-muted;
 }
@@ -153,12 +167,12 @@ div.backup-section + form,
 // I think this could be avoided (or at least tidied up) ifr
 // we used HTML5 input types like url, phone, email, number etc.
 /* rtl:ignore */
-.mform .fitem .felement input[name=email],
-.mform .fitem .felement input[name=email2],
-.mform .fitem .felement input[name=url],
-.mform .fitem .felement input[name=idnumber],
-.mform .fitem .felement input[name=phone1],
-.mform .fitem .felement input[name=phone2] {
+.mform .fitem .felement input[name="email"],
+.mform .fitem .felement input[name="email2"],
+.mform .fitem .felement input[name="url"],
+.mform .fitem .felement input[name="idnumber"],
+.mform .fitem .felement input[name="phone1"],
+.mform .fitem .felement input[name="phone2"] {
     text-align: left;
     direction: ltr;
 }
@@ -252,13 +266,13 @@ fieldset.coursesearchbox label {
     margin: 0;
     padding: 0;
     border: 0;
-    margin-top: $font-size-base * $line-height-base + $tag-padding-y;
+    margin-top: $font-size-base * $line-height-base + $input-padding-y-sm;
     vertical-align: bottom;
 }
 .form-autocomplete-selection {
-    margin: $tag-padding-y;
-    // Padding top and bottom, plus m-b-1 and the 100% lineheight.
-    min-height: 2 * $tag-padding-y + 2 * $font-size-base;
+    margin: $input-padding-y-sm;
+    // Padding top and bottom, plus mb-1 and the 100% lineheight.
+    min-height: 2 * $input-padding-y-sm + 2 * $font-size-base;
 }
 
 .form-autocomplete-multiple [role=listitem] {
@@ -326,7 +340,8 @@ select[size],
 select[multiple] {
     overflow: auto;
 }
-select[size=1] {
+
+select[size="1"] {
     overflow: visible;
 }
 
@@ -388,8 +403,8 @@ textarea[data-auto-rows] {
     background-image: $form-icon-danger;
     padding-right: ($input-padding-x * 3);
     background-repeat: no-repeat;
-    background-position: center right ($input-height / 4);
-    background-size: ($input-height / 2) ($input-height / 2);
+    background-position: center right 1rem;
+    background-size: 1.5rem;
 }
 
 // Styles for the JS file types browser provided by the "filetypes" element.
@@ -399,4 +414,15 @@ textarea[data-auto-rows] {
     [aria-expanded="true"] [data-filetypesbrowserfeature="hideifexpanded"] {
         display: none;
     }
+}
+
+// The autocomplete popup needs a display:block container to correctly position to popup.
+.form-inline[data-fieldtype="autocomplete"],
+.form-inline[data-fieldtype="tags"] {
+    display: block;
+}
+
+// Show editor at 100% width by default.
+[data-fieldtype="editor"] > div {
+    flex-grow: 1;
 }

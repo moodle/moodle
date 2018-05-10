@@ -334,4 +334,43 @@ class search_base_activity_testcase extends advanced_testcase {
         // that context in the list to search. (This is because the $cm->uservisible access flag
         // is only valid if the user is known to be able to access the course.)
     }
+
+    /**
+     * Tests the module version of get_contexts_to_reindex, which is supposed to return all the
+     * activity contexts in order of date added.
+     */
+    public function test_get_contexts_to_reindex() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        // Set up a course with two URLs and a Page.
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course(['fullname' => 'TCourse']);
+        $url1 = $generator->create_module('url', ['course' => $course->id, 'name' => 'TURL1']);
+        $url2 = $generator->create_module('url', ['course' => $course->id, 'name' => 'TURL2']);
+        $page = $generator->create_module('page', ['course' => $course->id, 'name' => 'TPage1']);
+
+        // Hack the items so they have different added times.
+        $now = time();
+        $DB->set_field('course_modules', 'added', $now - 3, ['id' => $url2->cmid]);
+        $DB->set_field('course_modules', 'added', $now - 2, ['id' => $url1->cmid]);
+        $DB->set_field('course_modules', 'added', $now - 1, ['id' => $page->cmid]);
+
+        // Check the URL contexts are in date order.
+        $urlarea = new \mod_url\search\activity();
+        $contexts = iterator_to_array($urlarea->get_contexts_to_reindex(), false);
+        $this->assertEquals([\context_module::instance($url1->cmid),
+                \context_module::instance($url2->cmid)], $contexts);
+
+        // Check the Page contexts.
+        $pagearea = new \mod_page\search\activity();
+        $contexts = iterator_to_array($pagearea->get_contexts_to_reindex(), false);
+        $this->assertEquals([\context_module::instance($page->cmid)], $contexts);
+
+        // Check another module area that has no instances.
+        $glossaryarea = new \mod_glossary\search\activity();
+        $contexts = iterator_to_array($glossaryarea->get_contexts_to_reindex(), false);
+        $this->assertEquals([], $contexts);
+    }
 }

@@ -181,10 +181,6 @@ class oracle_sql_generator extends sql_generator {
             case XMLDB_TYPE_FLOAT:
             case XMLDB_TYPE_NUMBER:
                 $dbtype = $this->number_type;
-                // 38 is the max allowed
-                if ($xmldb_length > 38) {
-                    $xmldb_length = 38;
-                }
                 if (!empty($xmldb_length)) {
                     $dbtype .= '(' . $xmldb_length;
                     if (!empty($xmldb_decimals)) {

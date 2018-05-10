@@ -1,0 +1,4 @@
+This files describes API changes in the tool_usertours code.
+
+=== 3.5 ===
+* Third party library Popper.js was moved from this plugin into core (core/popper)

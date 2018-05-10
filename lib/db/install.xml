@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20171026" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20180403" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -449,12 +449,14 @@
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
         <KEY NAME="categoryid" TYPE="foreign" FIELDS="categoryid" REFTABLE="course_categories" REFFIELDS="id"/>
+        <KEY NAME="subscriptionid" TYPE="foreign" FIELDS="subscriptionid" REFTABLE="event_subscriptions" REFFIELDS="id"/>
       </KEYS>
       <INDEXES>
         <INDEX NAME="courseid" UNIQUE="false" FIELDS="courseid"/>
         <INDEX NAME="userid" UNIQUE="false" FIELDS="userid"/>
         <INDEX NAME="timestart" UNIQUE="false" FIELDS="timestart"/>
         <INDEX NAME="timeduration" UNIQUE="false" FIELDS="timeduration"/>
+        <INDEX NAME="uuid" UNIQUE="false" FIELDS="uuid"/>
         <INDEX NAME="type-timesort" UNIQUE="false" FIELDS="type, timesort"/>
         <INDEX NAME="groupid-courseid-categoryid-visible-userid" UNIQUE="false" FIELDS="groupid, courseid, categoryid, visible, userid" COMMENT="used for calendar view"/>
       </INDEXES>
@@ -588,6 +590,92 @@
         <INDEX NAME="useridfrom_timeuserfromdeleted_notification" UNIQUE="false" FIELDS="useridfrom, timeuserfromdeleted, notification"/>
         <INDEX NAME="useridto_timeusertodeleted_notification" UNIQUE="false" FIELDS="useridto, timeusertodeleted, notification"/>
       </INDEXES>
+    </TABLE>
+    <TABLE NAME="messages" COMMENT="Stores all messages">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="useridfrom" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="conversationid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="subject" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="fullmessage" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="fullmessageformat" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="fullmessagehtml" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="smallmessage" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="useridfrom" TYPE="foreign" FIELDS="useridfrom" REFTABLE="user" REFFIELDS="id"/>
+        <KEY NAME="conversationid" TYPE="foreign" FIELDS="conversationid" REFTABLE="message_conversations" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="conversationid_timecreated" UNIQUE="false" FIELDS="conversationid, timecreated"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="message_conversations" COMMENT="Stores all message conversations">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="convhash" TYPE="char" LENGTH="40" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="convhash" UNIQUE="true" FIELDS="convhash"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="message_conversation_members" COMMENT="Stores all members in a conversations">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="conversationid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="conversationid" TYPE="foreign" FIELDS="conversationid" REFTABLE="message_conversations" REFFIELDS="id"/>
+        <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="message_user_actions" COMMENT="Stores all per-user actions on individual messages">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="messageid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="action" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
+        <KEY NAME="messageid" TYPE="foreign" FIELDS="messageid" REFTABLE="messages" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="userid_messageid_action" UNIQUE="true" FIELDS="userid, messageid, action"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="notifications" COMMENT="Stores all notifications">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="useridfrom" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="useridto" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="subject" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="The message subject"/>
+        <FIELD NAME="fullmessage" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="fullmessageformat" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="fullmessagehtml" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="smallmessage" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="component" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="eventtype" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="contexturl" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="contexturlname" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="timeread" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="useridto" TYPE="foreign" FIELDS="useridto" REFTABLE="user" REFFIELDS="id"/>
+      </KEYS>
     </TABLE>
     <TABLE NAME="message_contacts" COMMENT="Maintains lists of relationships between users">
       <FIELDS>
@@ -1073,6 +1161,21 @@
       </KEYS>
       <INDEXES>
         <INDEX NAME="roleid-allowoverride" UNIQUE="true" FIELDS="roleid, allowswitch" COMMENT="Each pair (roleid, allowswitch) must appear at most once."/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="role_allow_view" COMMENT="This table stores which which other roles a user is allowed to view to if they have one role.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="roleid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The role the user has."/>
+        <FIELD NAME="allowview" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The id of a role that the user is allowed to view to as a result of having this role."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="roleid" TYPE="foreign" FIELDS="roleid" REFTABLE="role" REFFIELDS="id"/>
+        <KEY NAME="allowview" TYPE="foreign" FIELDS="allowview" REFTABLE="role" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="roleid-allowview" UNIQUE="true" FIELDS="roleid, allowview" COMMENT="Each pair (roleid, allowview) must appear at most once."/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="role_assignments" COMMENT="assigning roles in different context">
@@ -2002,6 +2105,7 @@
         <FIELD NAME="callback" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="callbackfile" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="showstandard" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="multiplecontexts" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether the tag area allows tag instances to be created in multiple contexts."/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -2064,7 +2168,7 @@
         <KEY NAME="contextid" TYPE="foreign" FIELDS="contextid" REFTABLE="context" REFFIELDS="id"/>
       </KEYS>
       <INDEXES>
-        <INDEX NAME="taggeditem" UNIQUE="true" FIELDS="component, itemtype, itemid, tiuserid, tagid"/>
+        <INDEX NAME="taggeditem" UNIQUE="true" FIELDS="component, itemtype, itemid, contextid, tiuserid, tagid"/>
         <INDEX NAME="taglookup" UNIQUE="false" FIELDS="itemtype, component, tagid, contextid"/>
       </INDEXES>
     </TABLE>
@@ -2150,6 +2254,7 @@
         <FIELD NAME="component" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" COMMENT="Component (plugintype_pluignname) that manages the cohort, manual modifications are allowed only when set to NULL"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="theme" TYPE="char" LENGTH="50" NOTNULL="false" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -2335,19 +2440,6 @@
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key of the table, please edit me"/>
       </KEYS>
-    </TABLE>
-    <TABLE NAME="message_working" COMMENT="Lists all the messages and processors that need to be processed">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" COMMENT="id of the table, please edit me"/>
-        <FIELD NAME="unreadmessageid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="message that still needs some processing (on message table)"/>
-        <FIELD NAME="processorid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The processor with processes the message"/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key of the table, please edit me"/>
-      </KEYS>
-      <INDEXES>
-        <INDEX NAME="unreadmessageid_idx" UNIQUE="false" FIELDS="unreadmessageid" COMMENT="Index on unreadmessage id"/>
-      </INDEXES>
     </TABLE>
     <TABLE NAME="files" COMMENT="description of files, content is stored in sha1 file pool">
       <FIELDS>
@@ -3514,6 +3606,7 @@
         <FIELD NAME="scopessupported" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="The list of scopes this service supports."/>
         <FIELD NAME="enabled" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
         <FIELD NAME="showonloginpage" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
+        <FIELD NAME="basicauth" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Use HTTP Basic authentication scheme when sending client ID and password"/>
         <FIELD NAME="sortorder" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The defined sort order."/>
         <FIELD NAME="requireconfirmation" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
       </FIELDS>
@@ -3752,11 +3845,15 @@
         <FIELD NAME="timerequested" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Time at which this index update was requested."/>
         <FIELD NAME="partialarea" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="If processing of this context partially completed, set to the area that needs processing next. Blank indicates not processed yet."/>
         <FIELD NAME="partialtime" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="If processing partially completed, set to the timestamp within the next area where processing should start. 0 indicates not processed yet."/>
+        <FIELD NAME="indexpriority" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Priority value so that important requests can be dealt with first; higher numbers are processed first"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
         <KEY NAME="contextid" TYPE="foreign" FIELDS="contextid" REFTABLE="context" REFFIELDS="id"/>
       </KEYS>
+      <INDEXES>
+        <INDEX NAME="indexprioritytimerequested" UNIQUE="false" FIELDS="indexpriority, timerequested"/>
+      </INDEXES>
     </TABLE>
   </TABLES>
 </XMLDB>

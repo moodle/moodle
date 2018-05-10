@@ -470,7 +470,7 @@ function folder_cm_info_view(cm_info $cm) {
         }
         // display folder
         $renderer = $PAGE->get_renderer('mod_folder');
-        $cm->set_content($renderer->display_folder($folder));
+        $cm->set_content($renderer->display_folder($folder), true);
     }
 }
 

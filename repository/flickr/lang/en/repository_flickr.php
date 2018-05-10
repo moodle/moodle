@@ -43,3 +43,7 @@ $string['pluginname_help'] = 'Repository on flickr.com';
 $string['pluginname'] = 'Flickr';
 $string['secret'] = 'Secret';
 $string['username'] = 'Flickr account email';
+$string['privacy:metadata:repository_flickr'] = 'The Flickr repository plugin does store user preferences, and transmits user data from Moodle to the remote system.';
+$string['privacy:metadata:repository_flickr:text'] = 'The Flickr repository user search text query.';
+$string['privacy:metadata:repository_flickr:preference:repository_flickr_access_token'] = 'The Flickr repository OAuth token preference.';
+$string['privacy:metadata:repository_flickr:preference:repository_flickr_access_token_secret'] = 'The Flickr repository OAuth secret preference; this is excluded from privacy data exports.';

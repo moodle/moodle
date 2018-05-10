@@ -1013,6 +1013,10 @@ class model {
             if (!$this->is_static()) {
                 $this->model->trained = 0;
             }
+        } else if (empty($this->model->timesplitting)) {
+            // A valid timesplitting method needs to be supplied before a model can be enabled.
+            throw new \moodle_exception('invalidtimesplitting', 'analytics', '', $this->model->id);
+
         }
 
         // Purge pages with insights as this may change things.

@@ -290,4 +290,206 @@ class mod_chat_external_testcase extends externallib_advanced_testcase {
         $this->assertCount(2, $chats['chats']);
 
     }
+
+    /**
+     * Test get_sessions_empty_chat
+     */
+    public function test_get_sessions_empty_chat() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        // Setup test data.
+        $this->setAdminUser();
+        $course = $this->getDataGenerator()->create_course();
+        $chat = $this->getDataGenerator()->create_module('chat', array('course' => $course->id));
+
+        $result = mod_chat_external::get_sessions($chat->id);
+        $result = external_api::clean_returnvalue(mod_chat_external::get_sessions_returns(), $result);
+        $this->assertEmpty($result['sessions']);
+        $this->assertEmpty($result['warnings']);
+    }
+
+
+    /**
+     * Test get_sessions_no_permissions_for_student
+     */
+    public function test_get_sessions_no_permissions_for_student() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        // Setup test data.
+        $this->setAdminUser();
+        $course = $this->getDataGenerator()->create_course();
+        // Disable logs for students.
+        $chat = $this->getDataGenerator()->create_module('chat', array('course' => $course->id, 'studentlogs' => 0));
+        // The admin has permissions to check logs.
+        $result = mod_chat_external::get_sessions($chat->id);
+        $result = external_api::clean_returnvalue(mod_chat_external::get_sessions_returns(), $result);
+        $this->assertEmpty($result['sessions']);
+        $this->assertEmpty($result['warnings']);
+
+        $user = self::getDataGenerator()->create_user();
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        unassign_capability('mod/chat:readlog', $studentrole->id);
+        accesslib_clear_all_caches_for_unit_testing();
+
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, $studentrole->id);
+        $this->setUser($user);
+        // Students don't have permissions.
+        $this->expectException('moodle_exception');
+        mod_chat_external::get_sessions($chat->id);
+    }
+
+    /**
+     * Test get_sessions_not_completed_session
+     */
+    public function test_get_sessions_not_completed_session() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        // Setup test data.
+        $this->setAdminUser();
+        $course = $this->getDataGenerator()->create_course();
+        $chat = $this->getDataGenerator()->create_module('chat', array('course' => $course->id));
+
+        $user = self::getDataGenerator()->create_user();
+        $this->setUser($user);
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, $studentrole->id);
+
+        // Start a chat and send just one message.
+        $result = mod_chat_external::login_user($chat->id);
+        $result = external_api::clean_returnvalue(mod_chat_external::login_user_returns(), $result);
+        $chatsid = $result['chatsid'];
+        $result = mod_chat_external::send_chat_message($chatsid, 'hello!');
+        $result = external_api::clean_returnvalue(mod_chat_external::send_chat_message_returns(), $result);
+
+        // Check session is not marked as completed so it is not returned.
+        $result = mod_chat_external::get_sessions($chat->id);
+        $result = external_api::clean_returnvalue(mod_chat_external::get_sessions_returns(), $result);
+        $this->assertEmpty($result['sessions']);
+        $this->assertEmpty($result['warnings']);
+
+        // Pass showall parameter to indicate that we want not completed sessions.
+        $result = mod_chat_external::get_sessions($chat->id, 0, true);
+        $result = external_api::clean_returnvalue(mod_chat_external::get_sessions_returns(), $result);
+        $this->assertCount(1, $result['sessions']); // One session.
+        $this->assertFalse($result['sessions'][0]['iscomplete']); // Session not complete.
+        $this->assertEmpty($result['warnings']);
+    }
+
+    /**
+     * Test get_sessions_completed_session
+     */
+    public function test_get_sessions_completed_session() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        // Setup test data.
+        $this->setAdminUser();
+        $course = $this->getDataGenerator()->create_course();
+        $chat = $this->getDataGenerator()->create_module('chat', array('course' => $course->id));
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $this->getDataGenerator()->enrol_user($user1->id, $course->id, $studentrole->id);
+        $this->getDataGenerator()->enrol_user($user2->id, $course->id, $studentrole->id);
+
+        // Start a chat and completeit.
+        $this->setUser($user1);
+        $result = mod_chat_external::login_user($chat->id);
+        $result = external_api::clean_returnvalue(mod_chat_external::login_user_returns(), $result);
+        $chatsid = $result['chatsid'];
+        $result = mod_chat_external::send_chat_message($chatsid, 'hello!');
+        $result = external_api::clean_returnvalue(mod_chat_external::send_chat_message_returns(), $result);
+        $this->setUser($user2);
+        $result = mod_chat_external::login_user($chat->id);
+        $result = external_api::clean_returnvalue(mod_chat_external::login_user_returns(), $result);
+        $chatsid = $result['chatsid'];
+        $result = mod_chat_external::send_chat_message($chatsid, 'hello to you!');
+        $result = external_api::clean_returnvalue(mod_chat_external::send_chat_message_returns(), $result);
+        // Need to change first messages and last message times to mark the session completed.
+        // We receive 4 messages (2 system messages that indicates user joined and the 2 messages sent by the users).
+        $messages = $DB->get_records('chat_messages', array('chatid' => $chat->id));
+        // Messages just one hour ago and 70 seconds between them.
+        $timegap = 0;
+        $timenow = time();
+        foreach ($messages as $message) {
+            $DB->set_field('chat_messages', 'timestamp', $timenow - HOURSECS + $timegap, array('id' => $message->id));
+            $timegap += 70;
+        }
+        // Check session is completed.
+        $result = mod_chat_external::get_sessions($chat->id);
+        $result = external_api::clean_returnvalue(mod_chat_external::get_sessions_returns(), $result);
+        $this->assertCount(1, $result['sessions']); // One session.
+        $this->assertTrue($result['sessions'][0]['iscomplete']); // Session complete.
+        $this->assertEquals($timenow - HOURSECS + 70, $result['sessions'][0]['sessionstart']);  // First not system message time.
+        $this->assertEmpty($result['warnings']);
+    }
+
+    /**
+     * Test get_session_messages
+     */
+    public function test_get_session_messages() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        // Setup test data.
+        $this->setAdminUser();
+        $course = $this->getDataGenerator()->create_course();
+        $chat = $this->getDataGenerator()->create_module('chat', array('course' => $course->id));
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $this->getDataGenerator()->enrol_user($user1->id, $course->id, $studentrole->id);
+        $this->getDataGenerator()->enrol_user($user2->id, $course->id, $studentrole->id);
+
+        // Start a chat and send a few messages.
+        $this->setUser($user1);
+        $result = mod_chat_external::login_user($chat->id);
+        $result = external_api::clean_returnvalue(mod_chat_external::login_user_returns(), $result);
+        $chatsid = $result['chatsid'];
+        mod_chat_external::send_chat_message($chatsid, 'hello!');
+        mod_chat_external::send_chat_message($chatsid, 'bye bye!');
+
+        $this->setUser($user2);
+        $result = mod_chat_external::login_user($chat->id);
+        $result = external_api::clean_returnvalue(mod_chat_external::login_user_returns(), $result);
+        $chatsid = $result['chatsid'];
+        mod_chat_external::send_chat_message($chatsid, 'greetings!');
+
+        // Pass showall parameter to indicate that we want not completed sessions.
+        $result = mod_chat_external::get_sessions($chat->id, 0, true);
+        $result = external_api::clean_returnvalue(mod_chat_external::get_sessions_returns(), $result);
+        $this->assertCount(1, $result['sessions']); // One session.
+
+        $sessionstart = $result['sessions'][0]['sessionstart'];
+        $sessionend = $result['sessions'][0]['sessionend'];
+        $result = mod_chat_external::get_session_messages($chat->id, $sessionstart, $sessionend);
+        $result = external_api::clean_returnvalue(mod_chat_external::get_session_messages_returns(), $result);
+        $this->assertCount(5, $result['messages']); // 2 system + 3 personal messages.
+        $found = 0;
+        foreach ($result['messages'] as $message) {
+            if (!$message['issystem']) {
+                if ($message['userid'] == $user1->id) {
+                    if ($message['message'] != 'hello!') {
+                        $this->assertEquals('bye bye!', $message['message']);
+                        $found++;
+                    }
+                } else {
+                    $this->assertEquals($user2->id, $message['userid']);
+                    $this->assertEquals('greetings!', $message['message']);
+                    $found++;
+                }
+            }
+        }
+        $this->assertEquals(2, $found);
+    }
 }

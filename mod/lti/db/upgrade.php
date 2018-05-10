@@ -63,24 +63,6 @@ function xmldb_lti_upgrade($oldversion) {
 
     $dbman = $DB->get_manager();
 
-    if ($oldversion < 2016041800) {
-
-        // Define field description to be added to lti_types.
-        $table = new xmldb_table('lti_types');
-        $field = new xmldb_field('description', XMLDB_TYPE_TEXT, null, null, null, null, null, 'timemodified');
-
-        // Conditionally launch add field description.
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        // Lti savepoint reached.
-        upgrade_mod_savepoint(true, 2016041800, 'lti');
-    }
-
-    // Moodle v3.1.0 release upgrade line.
-    // Put any upgrade step following this.
-
     if ($oldversion < 2016052301) {
 
         // Changing type of field value on table lti_types_config to text.
@@ -100,5 +82,61 @@ function xmldb_lti_upgrade($oldversion) {
     // Automatically generated Moodle v3.3.0 release upgrade line.
     // Put any upgrade step following this.
 
+    // Automatically generated Moodle v3.4.0 release upgrade line.
+    // Put any upgrade step following this.
+
+    if ($oldversion < 2017111301) {
+
+        // A bug in the LTI plugin incorrectly inserted a grade item for
+        // LTI instances which were set to not allow grading.
+        // The change finds any LTI which does not have grading enabled,
+        // and updates any grades to delete them.
+
+        $ltis = $DB->get_recordset_sql("
+                SELECT
+                       l.id,
+                       l.course,
+                       l.instructorchoiceacceptgrades,
+                       t.enabledcapability,
+                       t.toolproxyid,
+                       tc.value AS acceptgrades
+                  FROM {lti} l
+            INNER JOIN {grade_items} gt
+                    ON l.id = gt.iteminstance
+             LEFT JOIN {lti_types} t
+                    ON t.id = l.typeid
+             LEFT JOIN {lti_types_config} tc
+                    ON tc.typeid = t.id AND tc.name = 'acceptgrades'
+                 WHERE gt.itemmodule = 'lti'
+                   AND gt.itemtype = 'mod'
+        ");
+
+        foreach ($ltis as $lti) {
+            $acceptgrades = true;
+            if (empty($lti->toolproxyid)) {
+                $typeacceptgrades = isset($lti->acceptgrades) ? $lti->acceptgrades : 2;
+                if (!($typeacceptgrades == 1 ||
+                        ($typeacceptgrades == 2 && $lti->instructorchoiceacceptgrades == 1))) {
+                    $acceptgrades = false;
+                }
+            } else {
+                $enabledcapabilities = explode("\n", $lti->enabledcapability);
+                $acceptgrades = in_array('Result.autocreate', $enabledcapabilities);
+            }
+
+            if (!$acceptgrades) {
+                // Required when doing CLI upgrade.
+                require_once($CFG->libdir . '/gradelib.php');
+                grade_update('mod/lti', $lti->course, 'mod', 'lti', $lti->id, 0, null, array('deleted' => 1));
+            }
+
+        }
+
+        $ltis->close();
+
+        upgrade_mod_savepoint(true, 2017111301, 'lti');
+    }
+
     return true;
+
 }

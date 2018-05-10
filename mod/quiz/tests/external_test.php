@@ -855,6 +855,9 @@ class mod_quiz_external_testcase extends externallib_advanced_testcase {
         // Create a new quiz with one attempt started.
         list($quiz, $context, $quizobj, $attempt, $attemptobj) = $this->create_quiz_with_questions(true);
 
+        // Set correctness mask so questions state can be fetched only after finishing the attempt.
+        $DB->set_field('quiz', 'reviewcorrectness', mod_quiz_display_options::IMMEDIATELY_AFTER, array('id' => $quiz->id));
+
         $quizobj = $attemptobj->get_quizobj();
         $quizobj->preload_questions();
         $quizobj->load_questions();
@@ -873,7 +876,7 @@ class mod_quiz_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals(1, $result['questions'][0]['slot']);
         $this->assertEquals(1, $result['questions'][0]['number']);
         $this->assertEquals('numerical', $result['questions'][0]['type']);
-        $this->assertEquals('todo', $result['questions'][0]['state']);
+        $this->assertArrayNotHasKey('state', $result['questions'][0]);  // We don't receive the state yet.
         $this->assertEquals(get_string('notyetanswered', 'question'), $result['questions'][0]['status']);
         $this->assertFalse($result['questions'][0]['flagged']);
         $this->assertEquals(0, $result['questions'][0]['page']);
@@ -894,7 +897,7 @@ class mod_quiz_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals(2, $result['questions'][0]['slot']);
         $this->assertEquals(2, $result['questions'][0]['number']);
         $this->assertEquals('numerical', $result['questions'][0]['type']);
-        $this->assertEquals('todo', $result['questions'][0]['state']);
+        $this->assertArrayNotHasKey('state', $result['questions'][0]);  // We don't receive the state yet.
         $this->assertEquals(get_string('notyetanswered', 'question'), $result['questions'][0]['status']);
         $this->assertFalse($result['questions'][0]['flagged']);
         $this->assertEquals(1, $result['questions'][0]['page']);
@@ -904,6 +907,11 @@ class mod_quiz_external_testcase extends externallib_advanced_testcase {
 
         // Finish previous attempt.
         $attemptobj->process_finish(time(), false);
+
+        // Now we should receive the question state.
+        $result = mod_quiz_external::get_attempt_review($attempt->id, 1);
+        $result = external_api::clean_returnvalue(mod_quiz_external::get_attempt_review_returns(), $result);
+        $this->assertEquals('gaveup', $result['questions'][0]['state']);
 
         // Change setting and expect two pages.
         $quiz->questionsperpage = 4;
@@ -1579,6 +1587,8 @@ class mod_quiz_external_testcase extends externallib_advanced_testcase {
     public function test_get_attempt_access_information() {
         global $DB;
 
+        $this->setAdminUser();
+
         // Create a new quiz with attempts.
         $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
         $data = array('course' => $this->course->id,
@@ -1599,8 +1609,7 @@ class mod_quiz_external_testcase extends externallib_advanced_testcase {
         $question = $questiongenerator->create_question('truefalse', null, array('category' => $cat->id));
         $question = $questiongenerator->create_question('essay', null, array('category' => $cat->id));
 
-        $question = $questiongenerator->create_question('random', null, array('category' => $cat->id));
-        quiz_add_quiz_question($question->id, $quiz);
+        quiz_add_random_questions($quiz, 0, $cat->id, 1, false);
 
         $quizobj = quiz::create($quiz->id, $this->student->id);
 
@@ -1662,7 +1671,7 @@ class mod_quiz_external_testcase extends externallib_advanced_testcase {
      * Test get_quiz_required_qtypes
      */
     public function test_get_quiz_required_qtypes() {
-        global $DB;
+        $this->setAdminUser();
 
         // Create a new quiz.
         $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
@@ -1683,8 +1692,7 @@ class mod_quiz_external_testcase extends externallib_advanced_testcase {
         $question = $questiongenerator->create_question('truefalse', null, array('category' => $cat->id));
         $question = $questiongenerator->create_question('essay', null, array('category' => $cat->id));
 
-        $question = $questiongenerator->create_question('random', null, array('category' => $cat->id));
-        quiz_add_quiz_question($question->id, $quiz);
+        quiz_add_random_questions($quiz, 0, $cat->id, 1, false);
 
         $this->setUser($this->student);
 

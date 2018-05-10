@@ -62,6 +62,7 @@ class core_message_testcase extends advanced_testcase {
         $message->contexturl = 'http://GalaxyFarFarAway.com';
         $message->contexturlname = 'Context name';
         $message->replyto = "random@example.com";
+        $message->replytoname = fullname($USER);
         $message->attachname = 'attachment';
         $content = array('*' => array('header' => ' test ', 'footer' => ' test ')); // Extra content for all types of messages.
         $message->set_additional_content('test', $content);
@@ -96,6 +97,7 @@ class core_message_testcase extends advanced_testcase {
         $this->assertSame($message->contexturl, $stdclass->contexturl);
         $this->assertSame($message->contexturlname, $stdclass->contexturlname);
         $this->assertSame($message->replyto, $stdclass->replyto);
+        $this->assertSame($message->replytoname, $stdclass->replytoname);
         $this->assertSame($message->attachname, $stdclass->attachname);
 
         // Extra content for fullmessage only.
@@ -165,7 +167,7 @@ class core_message_testcase extends advanced_testcase {
         $emails = $sink->get_messages();
         $this->assertCount(1, $emails);
         $email = reset($emails);
-        $recordexists = $DB->record_exists('message', array('id' => $messageid));
+        $recordexists = $DB->record_exists('messages', array('id' => $messageid));
         $this->assertSame(true, $recordexists);
         $this->assertSame($user1->email, $email->from);
         $this->assertSame($user2->email, $email->to);
@@ -205,7 +207,7 @@ class core_message_testcase extends advanced_testcase {
         $emails = $sink->get_messages();
         $this->assertCount(1, $emails);
         $email = reset($emails);
-        $recordexists = $DB->record_exists('message', array('id' => $messageid));
+        $recordexists = $DB->record_exists('messages', array('id' => $messageid));
         $this->assertSame(true, $recordexists);
         $this->assertSame($user1->email, $email->from);
         $this->assertSame($user2->email, $email->to);

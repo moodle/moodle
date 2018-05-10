@@ -40,3 +40,4 @@ $string['requires_complete_fail'] = 'The activity <strong>{$a}</strong> is compl
 $string['requires_not_complete_pass'] = 'The activity <strong>{$a}</strong> is not complete and passed';
 $string['requires_not_complete_fail'] = 'The activity <strong>{$a}</strong> is not complete and failed';
 $string['title'] = 'Activity completion';
+$string['privacy:metadata'] = 'The Restriction by activity completion plugin does not store any personal data.';

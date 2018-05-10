@@ -27,6 +27,7 @@
 
 global $CFG;
 require_once($CFG->libdir . '/form/autocomplete.php');
+require_once($CFG->dirroot . '/cohort/lib.php');
 
 /**
  * Form field type for choosing a cohort.

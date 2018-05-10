@@ -138,6 +138,7 @@ class dataset_manager_testcase extends advanced_testcase {
         // Training and prediction files are not mixed up.
         $trainingfile1 = \core_analytics\dataset_manager::merge_datasets(array($file), $fakemodelid,
             '\core\analytics\time_splitting\quarters', \core_analytics\dataset_manager::LABELLED_FILEAREA, false);
+        $this->waitForSecond();
         $trainingfile2 = \core_analytics\dataset_manager::merge_datasets(array($file), $fakemodelid,
             '\core\analytics\time_splitting\quarters', \core_analytics\dataset_manager::LABELLED_FILEAREA, false);
 

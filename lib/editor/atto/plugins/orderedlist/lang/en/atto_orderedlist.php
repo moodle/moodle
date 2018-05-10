@@ -23,3 +23,4 @@
  */
 
 $string['pluginname'] = 'Ordered list';
+$string['privacy:metadata'] = 'The atto_orderedlist plugin does not store any personal data.';

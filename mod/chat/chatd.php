@@ -342,7 +342,7 @@ EOD;
                 $msg->chatid    = $this->sets_info[$sessionid]['chatid'];
                 $msg->userid    = $this->sets_info[$sessionid]['userid'];
                 $msg->groupid   = $this->sets_info[$sessionid]['groupid'];
-                $msg->system    = 0;
+                $msg->issystem  = 0;
                 $msg->message   = 'beep '.$customdata['beep'];
                 $msg->timestamp = time();
 
@@ -428,7 +428,7 @@ EOD;
                 $msg->chatid    = $this->sets_info[$sessionid]['chatid'];
                 $msg->userid    = $this->sets_info[$sessionid]['userid'];
                 $msg->groupid   = $this->sets_info[$sessionid]['groupid'];
-                $msg->system    = 0;
+                $msg->issystem  = 0;
                 $msg->message   = urldecode($customdata['message']); // Have to undo the browser's encoding.
                 $msg->timestamp = time();
 
@@ -570,7 +570,7 @@ EOD;
         $msg->chatid = $chatuser->chatid;
         $msg->userid = $chatuser->userid;
         $msg->groupid = $chatuser->groupid;
-        $msg->system = 1;
+        $msg->issystem = 1;
         $msg->message = 'enter';
         $msg->timestamp = time();
 
@@ -785,7 +785,7 @@ EOD;
         $msg->chatid = $info['chatid'];
         $msg->userid = $info['userid'];
         $msg->groupid = $info['groupid'];
-        $msg->system = 1;
+        $msg->issystem = 1;
         $msg->message = 'exit';
         $msg->timestamp = time();
 

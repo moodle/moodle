@@ -184,17 +184,6 @@ class enrol_meta_plugin extends enrol_plugin {
     }
 
     /**
-     * Called for all enabled enrol plugins that returned true from is_cron_required().
-     * @return void
-     */
-    public function cron() {
-        global $CFG;
-
-        require_once("$CFG->dirroot/enrol/meta/locallib.php");
-        enrol_meta_sync();
-    }
-
-    /**
      * Is it possible to delete enrol instance via standard UI?
      *
      * @param stdClass $instance

@@ -287,14 +287,14 @@ function report_stats_report($course, $report, $mode, $user, $roleid, $time) {
                 $times = array();
                 $missedlines = array();
                 $coursecontext = context_course::instance($course->id);
-                $rolenames = role_fix_names(get_all_roles($coursecontext), $coursecontext, ROLENAME_ALIAS, true);
+                $rolenames = get_viewable_roles($coursecontext);
                 foreach ($stats as $stat) {
                     if (!empty($stat->zerofixed)) {
                         $missedlines[] = $stat->timeend;
                     }
                     $data[$stat->timeend][$stat->roleid] = $stat->line1;
                     if ($stat->roleid != 0) {
-                        if (!array_key_exists($stat->roleid,$roles)) {
+                        if (!array_key_exists($stat->roleid, $roles) && array_key_exists($stat->roleid, $rolenames)) {
                             $roles[$stat->roleid] = $rolenames[$stat->roleid];
                         }
                     } else {
@@ -419,7 +419,7 @@ function report_stats_print_chart($courseid, $report, $time, $mode, $userid = 0,
         $times = array();
         $roles = array();
         $missedlines = array();
-        $rolenames = role_fix_names(get_all_roles($coursecontext), $coursecontext, ROLENAME_ALIAS, true);
+        $rolenames = get_viewable_roles($coursecontext);
 
         foreach ($stats as $stat) {
             $data[$stat->roleid][$stat->timeend] = $stat->line1;
@@ -427,7 +427,7 @@ function report_stats_print_chart($courseid, $report, $time, $mode, $userid = 0,
                 $missedlines[] = $stat->timeend;
             }
             if ($stat->roleid != 0) {
-                if (!array_key_exists($stat->roleid, $roles)) {
+                if (!array_key_exists($stat->roleid, $roles) && array_key_exists($stat->roleid, $rolenames)) {
                     $roles[$stat->roleid] = $rolenames[$stat->roleid];
                 }
             } else {

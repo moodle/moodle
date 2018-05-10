@@ -144,6 +144,60 @@ class mod_wiki_search_testcase extends advanced_testcase {
     }
 
     /**
+     * Group support for wiki entries.
+     */
+    public function test_collaborative_page_group_support() {
+        // Get the search area and test generators.
+        $searcharea = \core_search\manager::get_search_area($this->wikicollabpageareaid);
+        $generator = $this->getDataGenerator();
+        $wikigenerator = $generator->get_plugin_generator('mod_wiki');
+
+        // Create a course, a user, and two groups.
+        $course = $generator->create_course();
+        $user = $generator->create_user();
+        $generator->enrol_user($user->id, $course->id, 'teacher');
+        $group1 = $generator->create_group(['courseid' => $course->id]);
+        $group2 = $generator->create_group(['courseid' => $course->id]);
+
+        // Separate groups wiki.
+        $wiki = self::getDataGenerator()->create_module('wiki', ['course' => $course->id,
+                'groupmode' => SEPARATEGROUPS]);
+
+        // Create page with each group and one for all groups.
+        $wikigenerator->create_page($wiki, ['title' => 'G1', 'group' => $group1->id]);
+        $wikigenerator->create_page($wiki, ['title' => 'G2', 'group' => $group2->id]);
+        $wikigenerator->create_page($wiki, ['title' => 'ALLGROUPS']);
+
+        // Do the indexing of all 3 pages.
+        $rs = $searcharea->get_recordset_by_timestamp(0);
+        $results = [];
+        foreach ($rs as $rec) {
+            $results[$rec->title] = $rec;
+        }
+        $rs->close();
+        $this->assertCount(3, $results);
+
+        // Check each document has the correct groupid.
+        $doc = $searcharea->get_document($results['G1']);
+        $this->assertTrue($doc->is_set('groupid'));
+        $this->assertEquals($group1->id, $doc->get('groupid'));
+        $doc = $searcharea->get_document($results['G2']);
+        $this->assertTrue($doc->is_set('groupid'));
+        $this->assertEquals($group2->id, $doc->get('groupid'));
+        $doc = $searcharea->get_document($results['ALLGROUPS']);
+        $this->assertFalse($doc->is_set('groupid'));
+
+        // While we're here, also test that the search area requests restriction by group.
+        $modinfo = get_fast_modinfo($course);
+        $this->assertTrue($searcharea->restrict_cm_access_by_group($modinfo->get_cm($wiki->cmid)));
+
+        // In visible groups mode, it won't request restriction by group.
+        set_coursemodule_groupmode($wiki->cmid, VISIBLEGROUPS);
+        $modinfo = get_fast_modinfo($course);
+        $this->assertFalse($searcharea->restrict_cm_access_by_group($modinfo->get_cm($wiki->cmid)));
+    }
+
+    /**
      * Check collaborative_page check access.
      *
      * @return void

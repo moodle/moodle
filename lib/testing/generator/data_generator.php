@@ -415,6 +415,10 @@ EOD;
             $record['category'] = $DB->get_field_select('course_categories', "MIN(id)", "parent=0");
         }
 
+        if (!isset($record['startdate'])) {
+            $record['startdate'] = usergetmidnight(time());
+        }
+
         if (isset($record['tags']) && !is_array($record['tags'])) {
             $record['tags'] = preg_split('/\s*,\s*/', trim($record['tags']), -1, PREG_SPLIT_NO_EMPTY);
         }
@@ -789,13 +793,13 @@ EOD;
 
         if ($record['archetype']) {
 
-            // We copy all the roles the archetype can assign, override and switch to.
+            // We copy all the roles the archetype can assign, override, switch to and view.
             if ($record['archetype']) {
-                $types = array('assign', 'override', 'switch');
+                $types = array('assign', 'override', 'switch', 'view');
                 foreach ($types as $type) {
                     $rolestocopy = get_default_role_archetype_allows($type, $record['archetype']);
                     foreach ($rolestocopy as $tocopy) {
-                        $functionname = 'allow_' . $type;
+                        $functionname = "core_role_set_{$type}_allowed";
                         $functionname($newroleid, $tocopy);
                     }
                 }
@@ -1124,6 +1128,7 @@ EOD;
         $record->timesort = 0;
         $record->eventtype = 'user';
         $record->courseid = 0;
+        $record->categoryid = 0;
 
         foreach ($data as $key => $value) {
             $record->$key = $value;

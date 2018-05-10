@@ -13,32 +13,37 @@
 
     .yui-layout-unit-right,
     .yui-layout-unit-bottom {
-        @extend .card;
-        @extend .card-block;
         border-radius: 0;
     }
 
     .yui-layout-unit div.yui-layout-bd {
         background-color: transparent;
     }
-
+    .yui-layout-unit.yui-layout-unit-center div.yui-layout-bd {
+        background-color: $gray-100;
+    }
+    // Override the default padding added by function $OUTPUT->box();
+    #chat-input-area.py-3 {
+        @extend .p-0;
+    }
     #chat-input-area table.generaltable,
     #chat-input-area table.generaltable td.cell {
         border: 0;
         padding: 3px 15px;
         white-space: nowrap;
+        margin-bottom: 0;
     }
 
     #chat-userlist {
         padding: 10px 5px;
 
         #users-list {
-            border-top: 1px solid #ddd;
+            border-top: 1px solid $gray-300;
             border-bottom: 1px solid $body-bg;
 
             li {
                 border-top: 1px solid $body-bg;
-                border-bottom: 1px solid #ddd;
+                border-bottom: 1px solid $gray-300;
                 padding: 5px 10px;
             }
 
@@ -58,23 +63,24 @@
             text-align: center;
             margin: 10px 0;
             font-size: $font-size-sm;
-            color: #777;
+            color: $gray-700;
         }
 
         .chat-message.course-theme {
-            @extend .card;
-            @extend .card-block;
-            background-color: $card-bg !important; /* stylelint-disable declaration-no-important */
+            margin-bottom: $card-spacer-y;
+            @include border-radius($card-border-radius);
+            border: $card-border-width solid $card-border-color;
+            padding: $card-spacer-x;
 
             .time {
                 float: right;
                 font-size: 11px;
-                color: #777;
+                color: $gray-700;
             }
         }
 
-        .mdl-chat-my-entry .chat-message.course-theme {
-            background-color: #f6f6f6;
+        .chat-message.course-theme {
+            background-color: $white;
 
             .user {
                 font-weight: bold;

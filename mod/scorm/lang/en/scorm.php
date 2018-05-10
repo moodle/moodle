@@ -150,11 +150,14 @@ $string['floating'] = 'Floating';
 $string['forcecompleted'] = 'Force completed';
 $string['forcecompleted_help'] = 'If enabled, the status of the current attempt is forced to "completed". (Only applicable to SCORM 1.2 packages.)';
 $string['forcecompleteddesc'] = 'This preference sets the default value for the force completed setting';
-$string['forcenewattempt'] = 'Force new attempt';
-$string['forcenewattempt_help'] = 'This setting hides the "Start new attempt" checkbox and prevents review mode.
+$string['forcenewattempts'] = 'Force new attempt';
+$string['forcenewattempts_help'] = 'There are 3 options:
 
-SCORM allows a student to return to the same attempt at any point and a new attempt is not possible unless the previous attempt has been set as "completed", "passed" or "failed". If the SCORM package does not do this, the student will always re-enter the same attempt.';
-$string['forcenewattemptdesc'] = 'This setting hides the "Start new attempt" checkbox and prevents review mode. SCORM allows a student to return to the same attempt at any point and a new attempt is not possible unless the previous attempt has been set as "completed", "passed" or "failed". If the SCORM package does not do this, the student will always re-enter the same attempt.';
+* No - If a previous attempt is completed, passed or failed, the student will be provided with the option to enter in review mode or start a new attempt.
+* When previous attempt completed, passed or failed - This relies on the SCORM package setting the status of \'completed\', \'passed\' or \'failed\'.
+* Always - Each re-entry to the SCORM activity will generate a new attempt and the student will not be returned to the same point they reached in their previous attempt.';
+$string['forceattemptalways'] = 'Always';
+$string['forceattemptoncomplete'] = 'When previous attempt completed, passed or failed';
 $string['forcejavascript'] = 'Force users to enable JavaScript';
 $string['forcejavascript_desc'] = 'If enabled (recommended) this prevents access to SCORM objects when JavaScript is not supported/enabled in a users browser. If disabled the user may view the SCORM but API communication will fail and no grade information will be saved.';
 $string['forcejavascriptmessage'] = 'JavaScript is required to view this object, please enable JavaScript in your browser and try again.';
@@ -297,6 +300,7 @@ $string['notattempted'] = 'Not attempted';
 $string['not_corr_type'] = 'Type mismatch for tag {$a->tag}';
 $string['notopenyet'] = 'Sorry, this activity is not available until {$a}';
 $string['objectives'] = 'Objectives';
+$string['openafterclose'] = 'You have specified an open date after the close date';
 $string['optallstudents'] = 'all users';
 $string['optattemptsonly'] = 'users with attempts only';
 $string['optnoattemptsonly'] = 'users with no attempts only';
@@ -328,6 +332,20 @@ $string['position_error'] = 'The {$a->tag} tag can\'t be child of {$a->parent} t
 $string['preferencesuser'] = 'Preferences for this report';
 $string['preferencespage'] = 'Preferences just for this page';
 $string['prev'] = 'Previous';
+$string['privacy:metadata:aicc:data'] = 'Personal data passed through from the AICC/SCORM subsystem.';
+$string['privacy:metadata:aicc:externalpurpose'] = 'This plugin sends data externally using the AICC HACP.';
+$string['privacy:metadata:aicc_session:lessonstatus'] = 'The lesson status to be tracked';
+$string['privacy:metadata:aicc_session:scormmode'] = 'The mode of the element to be tracked';
+$string['privacy:metadata:aicc_session:scormstatus'] = 'The status of the element to be tracked';
+$string['privacy:metadata:aicc_session:sessiontime'] = 'The session time to be tracked';
+$string['privacy:metadata:aicc_session:timecreated'] = 'The time when the tracked element was created';
+$string['privacy:metadata:attempt'] = 'The attempt number';
+$string['privacy:metadata:scoes_track:element'] = 'The name of the element to be tracked';
+$string['privacy:metadata:scoes_track:value'] = 'The value of the given element';
+$string['privacy:metadata:scorm_aicc_session'] = 'The session information of the AICC HACP';
+$string['privacy:metadata:scorm_scoes_track'] = 'The tracked data of the SCOes belonging to the activity';
+$string['privacy:metadata:timemodified'] = 'The time when the tracked element was last modified';
+$string['privacy:metadata:userid'] = 'The ID of the user who accessed the SCORM activity';
 $string['protectpackagedownloads'] = 'Protect package downloads';
 $string['protectpackagedownloads_desc'] = 'If enabled, SCORM packages can be downloaded only if the user has the course:manageactivities capability. If disabled, SCORM packages can always be downloaded (by mobile or other means).';
 $string['raw'] = 'Raw score';
@@ -342,9 +360,8 @@ $string['results'] = 'Results';
 $string['review'] = 'Review';
 $string['reviewmode'] = 'Review mode';
 $string['rightanswer'] = 'Right answer';
-$string['scorm12standard'] = 'Enable SCORM 1.2 standard mode';
-$string['scorm12standarddesc'] = 'Disabling this setting allows Moodle to store more data than the SCORM 1.2 specification allows.
-If your SCORM packages allow users to enter large amounts of text or if your package tries to store large amounts of data in the suspend_data field disable this.';
+$string['scormstandard'] = 'SCORM standards mode';
+$string['scormstandarddesc'] = 'When disabled, Moodle allows SCORM 1.2 packages to store more than the specification allows, and uses Moodle full name format settings when passing the users name to the SCORM package.';
 $string['scoes'] = 'Learning objects';
 $string['score'] = 'Score';
 $string['scorm:addinstance'] = 'Add a new SCORM package';

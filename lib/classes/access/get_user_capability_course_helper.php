@@ -39,7 +39,10 @@ class get_user_capability_course_helper {
      * an array of capability values at each relevant context for the given user and capability.
      *
      * This is organised by the effective context path (the one at which the capability takes
-     * effect) and then by role id.
+     * effect) and then by role id. Note, however, that the resulting array only has
+     * the information that will be needed later. If there are Prohibits present in some
+     * roles, then they cannot be overridden by other roles or role overrides in lower contexts,
+     * therefore, such information, if any, is absent from the results.
      *
      * @param int $userid User id
      * @param string $capability Capability e.g. 'moodle/course:view'
@@ -58,40 +61,99 @@ class get_user_capability_course_helper {
         }
         $rdefs = get_role_definitions(array_keys($roleids));
 
+        // A prohibit in any relevant role prevents the capability
+        // in that context and all subcontexts. We need to track that.
+        // Here, the array keys are the paths where there is a prohibit the values are the role id.
+        $prohibitpaths = [];
+
         // Get data for required capability at each context path where the user has a role that can
         // affect it.
-        $systemcontext = \context_system::instance();
         $pathroleperms = [];
-        foreach ($accessdata['ra'] as $userpath => $roles) {
+        foreach ($accessdata['ra'] as $rapath => $roles) {
+
             foreach ($roles as $roleid) {
                 // Get role definition for that role.
-                foreach ($rdefs[$roleid] as $rolepath => $caps) {
+                foreach ($rdefs[$roleid] as $rdefpath => $caps) {
                     // Ignore if this override/definition doesn't refer to the relevant cap.
                     if (!array_key_exists($capability, $caps)) {
                         continue;
                     }
 
-                    // Check path is /1 or matches a path the user has.
-                    if ($rolepath === '/' . $systemcontext->id) {
-                        // Note /1 is listed first in the array so this entry will be overridden
-                        // if there is an override for the role on this actual level.
-                        $effectivepath = $userpath;
-                    } else if (preg_match('~^' . $userpath . '($|/)~', $rolepath)) {
-                        $effectivepath = $rolepath;
+                    // Check a role definition or override above ra.
+                    if (self::path_is_above($rdefpath, $rapath)) {
+                        // Note that $rdefs is sorted by path, so if a more specific override
+                        // exists, it will be processed later and override this one.
+                        $effectivepath = $rapath;
+                    } else if (self::path_is_above($rapath, $rdefpath)) {
+                        $effectivepath = $rdefpath;
                     } else {
                         // Not inside an area where the user has the role, so ignore.
                         continue;
                     }
 
+                    // Check for already seen prohibits in higher context. Overrides can't change that.
+                    if (self::any_path_is_above($prohibitpaths, $effectivepath)) {
+                        continue;
+                    }
+
+                    // This is a releavant role assignment / permission combination. Save it.
                     if (!array_key_exists($effectivepath, $pathroleperms)) {
                         $pathroleperms[$effectivepath] = [];
                     }
                     $pathroleperms[$effectivepath][$roleid] = $caps[$capability];
+
+                    // Update $prohibitpaths if necessary.
+                    if ($caps[$capability] == CAP_PROHIBIT) {
+                        // First remove any lower-context prohibits that might have come from other roles.
+                        foreach ($prohibitpaths as $otherprohibitpath => $notused) {
+                            if (self::path_is_above($effectivepath, $otherprohibitpath)) {
+                                unset($prohibitpaths[$otherprohibitpath]);
+                            }
+                        }
+                        $prohibitpaths[$effectivepath] = $roleid;
+                    }
                 }
             }
         }
 
+        // Finally, if a later role had a higher-level prohibit that an earlier role,
+        // there may be more bits we can prune - but don't prune the prohibits!
+        foreach ($pathroleperms as $effectivepath => $roleperms) {
+            if ($roleid = self::any_path_is_above($prohibitpaths, $effectivepath)) {
+                unset($pathroleperms[$effectivepath]);
+                $pathroleperms[$effectivepath][$roleid] = CAP_PROHIBIT;
+            }
+        }
+
         return $pathroleperms;
+    }
+
+    /**
+     * Test if a context path $otherpath is the same as, or underneath, $parentpath.
+     *
+     * @param string $parentpath the path of the parent context.
+     * @param string $otherpath the path of another context.
+     * @return bool true if $otherpath is underneath (or equal to) $parentpath.
+     */
+    protected static function path_is_above($parentpath, $otherpath) {
+        return preg_match('~^' . $parentpath . '($|/)~', $otherpath);
+    }
+
+    /**
+     * Test if a context path $otherpath is the same as, or underneath, any of $prohibitpaths.
+     *
+     * @param array $prohibitpaths array keys are context paths.
+     * @param string $otherpath the path of another context.
+     * @return int releavant $roleid if $otherpath is underneath (or equal to)
+     *      any of the $prohibitpaths, 0 otherwise (so, can be used as a bool).
+     */
+    protected static function any_path_is_above($prohibitpaths, $otherpath) {
+        foreach ($prohibitpaths as $prohibitpath => $roleid) {
+            if (self::path_is_above($prohibitpath, $otherpath)) {
+                return $roleid;
+            }
+        }
+        return 0;
     }
 
     /**

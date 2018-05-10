@@ -51,8 +51,9 @@ define('LASTATTEMPT', '3');
 define('TOCJSLINK', 1);
 define('TOCFULLURL', 2);
 
-define('SCORM_EVENT_TYPE_OPEN', 'open');
-define('SCORM_EVENT_TYPE_CLOSE', 'close');
+define('SCORM_FORCEATTEMPT_NO', 0);
+define('SCORM_FORCEATTEMPT_ONCOMPLETE', 1);
+define('SCORM_FORCEATTEMPT_ALWAYS', 2);
 
 // Local Library of functions for module scorm.
 
@@ -197,6 +198,17 @@ function scorm_get_attemptstatus_array() {
                  SCORM_DISPLAY_ATTEMPTSTATUS_ALL => get_string('attemptstatusall', 'scorm'),
                  SCORM_DISPLAY_ATTEMPTSTATUS_MY => get_string('attemptstatusmy', 'scorm'),
                  SCORM_DISPLAY_ATTEMPTSTATUS_ENTRY => get_string('attemptstatusentry', 'scorm'));
+}
+
+/**
+ * Returns an array of the force attempt options
+ *
+ * @return array an array of attempt options
+ */
+function scorm_get_forceattempt_array() {
+    return array(SCORM_FORCEATTEMPT_NO => get_string('no'),
+                 SCORM_FORCEATTEMPT_ONCOMPLETE => get_string('forceattemptoncomplete', 'scorm'),
+                 SCORM_FORCEATTEMPT_ALWAYS => get_string('forceattemptalways', 'scorm'));
 }
 
 /**
@@ -934,8 +946,8 @@ function scorm_print_launch ($user, $scorm, $action, $cm) {
 
     $result = scorm_get_toc($user, $scorm, $cm->id, TOCFULLURL, $orgidentifier);
     $incomplete = $result->incomplete;
-    // Get latest incomplete sco to launch first.
-    if (!empty($result->sco->id)) {
+    // Get latest incomplete sco to launch first if force new attempt isn't set to always.
+    if (!empty($result->sco->id) && $scorm->forcenewattempt != SCORM_FORCEATTEMPT_ALWAYS) {
         $launchsco = $result->sco->id;
     } else {
         // Use launch defined by SCORM package.
@@ -972,8 +984,9 @@ function scorm_print_launch ($user, $scorm, $action, $cm) {
         } else {
             echo html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'mode', 'value' => 'normal'));
         }
-        if ($scorm->forcenewattempt == 1) {
-            if ($incomplete === false) {
+        if (!empty($scorm->forcenewattempt)) {
+            if ($scorm->forcenewattempt == SCORM_FORCEATTEMPT_ALWAYS ||
+                    ($scorm->forcenewattempt == SCORM_FORCEATTEMPT_ONCOMPLETE && $incomplete === false)) {
                 echo html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'newattempt', 'value' => 'on'));
             }
         } else if (!empty($attemptcount) && ($incomplete === false) && (($result->attemptleft > 0)||($scorm->maxattempt == 0))) {
@@ -1026,19 +1039,18 @@ function scorm_simple_play($scorm, $user, $context, $cmid) {
             $result = scorm_get_toc($user, $scorm, $cmid, TOCFULLURL, $orgidentifier);
             $url = new moodle_url('/mod/scorm/player.php', array('a' => $scorm->id, 'currentorg' => $orgidentifier));
 
-            // Set last incomplete sco to launch first.
-            if (!empty($result->sco->id)) {
+            // Set last incomplete sco to launch first if forcenewattempt not set to always.
+            if (!empty($result->sco->id) && $scorm->forcenewattempt != SCORM_FORCEATTEMPT_ALWAYS) {
                 $url->param('scoid', $result->sco->id);
             } else {
                 $url->param('scoid', $sco->id);
             }
 
             if ($scorm->skipview == SCORM_SKIPVIEW_ALWAYS || !scorm_has_tracks($scorm->id, $user->id)) {
-                if (!empty($scorm->forcenewattempt)) {
+                if ($scorm->forcenewattempt == SCORM_FORCEATTEMPT_ALWAYS ||
+                   ($result->incomplete === false && $scorm->forcenewattempt == SCORM_FORCEATTEMPT_ONCOMPLETE)) {
 
-                    if ($result->incomplete === false) {
-                        $url->param('newattempt', 'on');
-                    }
+                    $url->param('newattempt', 'on');
                 }
                 redirect($url);
             }

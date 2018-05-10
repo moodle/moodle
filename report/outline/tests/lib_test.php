@@ -46,15 +46,27 @@ class report_outline_lib_testcase extends advanced_testcase {
     private $course;
 
     /**
+     * @var context_course Course context.
+     */
+    private $coursecontext;
+
+    /**
      * @var \core_user\output\myprofile\tree The navigation tree.
      */
     private $tree;
+
+    /**
+     * @var int Dummy role for testing.
+     */
+    private $roleid;
 
     public function setUp() {
         $this->user = $this->getDataGenerator()->create_user();
         $this->user2 = $this->getDataGenerator()->create_user();
         $this->course = $this->getDataGenerator()->create_course();
         $this->tree = new \core_user\output\myprofile\tree();
+        $this->coursecontext = context_course::instance($this->course->id);
+        $this->roleid = create_role('Dummy role', 'dummyrole', 'dummy role description');
         $this->resetAfterTest();
     }
 
@@ -107,5 +119,26 @@ class report_outline_lib_testcase extends advanced_testcase {
         $nodes->setAccessible(true);
         $this->assertArrayNotHasKey('outline', $nodes->getValue($this->tree));
         $this->assertArrayNotHasKey('complete', $nodes->getValue($this->tree));
+    }
+
+    /**
+     * Test that the current user can not access user report without report/outline:viewuserreport permission.
+     */
+    public function test_report_outline_can_not_access_user_report_without_viewuserreport_permission() {
+        $this->getDataGenerator()->role_assign($this->roleid, $this->user->id, $this->coursecontext->id);
+        $this->setUser($this->user);
+
+        $this->assertFalse(report_outline_can_access_user_report($this->user, $this->course));
+    }
+
+    /**
+     * Test that the current user can access user report with report/outline:viewuserreport permission.
+     */
+    public function test_report_outline_can_access_user_report_with_viewuserreport_permission() {
+        assign_capability('report/outline:viewuserreport', CAP_ALLOW, $this->roleid, $this->coursecontext->id, true);
+        $this->getDataGenerator()->role_assign($this->roleid, $this->user->id, $this->coursecontext->id);
+        $this->setUser($this->user);
+
+        $this->assertTrue(report_outline_can_access_user_report($this->user, $this->course));
     }
 }

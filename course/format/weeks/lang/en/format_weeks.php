@@ -38,3 +38,4 @@ $string['hidefromothers'] = 'Hide week';
 $string['showfromothers'] = 'Show week';
 $string['automaticenddate'] = 'Calculate the end date from the number of sections';
 $string['automaticenddate_help'] = 'If enabled, the end date for the course will be automatically calculated from the number of sections and the course start date.';
+$string['privacy:metadata'] = 'The Weekly format plugin does not store any personal data.';

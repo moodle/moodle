@@ -15,8 +15,10 @@
     margin: 0 $spacer 0 0;
     overflow: hidden;
     float: right;
-    width: 16px;
+    width: 24px;
     transition: width 0.5s ease, left 0.5s ease;
+    padding-top: 0;
+    padding-bottom: 0;
 }
 
 .search-input-wrapper > div {
@@ -25,6 +27,7 @@
 
     .icon {
         margin-right: 0;
+        margin-top: 10px;
     }
 }
 
@@ -36,7 +39,6 @@
 
 .search-input-wrapper > form > input {
     margin: 0;
-    height: 23px;
 }
 
 .search-input-wrapper form.expanded {
@@ -67,4 +69,12 @@
 .search-areas-actions > div {
     margin-right: $spacer;
     display: inline-block;
+}
+
+#core-search-areas .lastcol li {
+    margin-left: 24px;
+    text-indent: -24px;
+}
+#core-search-areas .lastcol li > i {
+    text-indent: 0;
 }

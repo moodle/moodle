@@ -32,7 +32,7 @@ $blocks-column-width: 250px !default;
     float: right;
 }
 
-$blocks-plus-gutter: $blocks-column-width + $grid-gutter-width;
+$blocks-plus-gutter: $blocks-column-width + ( $grid-gutter-width / 2 );
 
 /* We put an absolutely positioned div in a relatively positioned div so it takes up no space */
 #region-main-settings-menu {
@@ -152,7 +152,7 @@ $doughnut-fill-colour: $brand-warning;
             /*rtl:ignore*/
             left: 50%;
             margin: 0;
-            transform: translate(-45%, -45%);
+            transform: translate(-63%, -50%);
             color: #fff;
             height: ($chart-size / 2) + 10px;
             width: ($chart-size / 2) + 10px;
@@ -197,17 +197,20 @@ $doughnut-fill-colour: $brand-warning;
     .empty-placeholder-image-lg {
         height: 125px;
     }
-
-    .courses-view-course-item {
-        height: 220px;
-        overflow-y: hidden;
-    }
 }
 
-@media (min-width: 1600px) {
-    .block_myoverview {
-        .courses-view-course-item {
-            height: 190px;
+.card-deck {
+    .card {
+        $card-gutter : $card-deck-margin * 2;
+        flex-grow: 0;
+        flex-shrink: 0;
+        flex-basis: calc(50% - #{$card-gutter});
+    }
+    .myoverviewimg {
+        height: 150px;
+        &.courseimage {
+            background-position: center;
+            background-size: cover;
         }
     }
 }

@@ -378,11 +378,6 @@ table.quizattemptsummary .noreviewmessage {
     display: none;
 }
 
-#mod_quiz_preflight_form .femptylabel .felement {
-    margin: 0;
-    padding: 0;
-}
-
 .moodle-dialogue-base .moodle-dialogue.mod_quiz_preflight_popup {
     width: 600px;
 }
@@ -663,8 +658,8 @@ table.quizreviewsummary td.cell {
     position: relative;
 }
 
-#page-mod-quiz-edit ul.section li.pagenumber:first-child .add-menu-outer .menu > :first-child,
-#page-mod-quiz-edit .last-add-menu .add-menu-outer .menu > :first-child {
+#page-mod-quiz-edit ul.section li.pagenumber:first-child .add-menu-outer .menu > :last-child,
+#page-mod-quiz-edit .last-add-menu .add-menu-outer .menu > :last-child {
     display: none;
 }
 
@@ -739,6 +734,11 @@ table.quizreviewsummary td.cell {
     margin: 0.3em 20px 0 0;
 }
 
+.instanceshufflequestions [type="checkbox"] {
+    vertical-align: middle;
+    margin-right: .5rem;
+}
+
 #page-mod-quiz-edit ul.section {
     margin: 0;
     padding: 0 20px;
@@ -795,12 +795,6 @@ table.quizreviewsummary td.cell {
 
 #page-mod-quiz-edit ul.slots li.section li.activity .instancemaxmarkcontainer form {
     display: inline;
-}
-
-#page-mod-quiz-edit ul.slots li.section li.activity .instancemaxmarkcontainer form input {
-    margin: 0;
-    padding: 0.2em;
-    height: 1em;
 }
 
 #page-mod-quiz-edit ul.slots li.section li.activity .instancemaxmark {

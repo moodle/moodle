@@ -34,14 +34,7 @@
          }
     }
 }}
-{{{ output.doctype }}}
-<html {{{ output.htmlattributes }}}>
-<head>
-    <title>{{{ output.page_title }}}</title>
-    <link rel="shortcut icon" href="{{{ output.favicon }}}" />
-    {{{ output.standard_head_html }}}
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
+{{> theme_boost/head }}
 
 <body {{{ bodyattributes }}}>
 
@@ -49,13 +42,13 @@
 
     {{{ output.standard_top_of_body_html }}}
 
-    {{>theme_boost/header-secure}}
+    {{>theme_boost/navbar-secure}}
 
     <div id="page" class="container-fluid">
         {{! Secured full header }}
 
         <div id="page-header" class="row">
-            <div class="col-xs-12 p-y-1">
+            <div class="col-12 py-3">
                 <div class="page-context-header">
                     <div class="page-header-headings">
                         {{{ output.page_heading }}}
@@ -65,7 +58,7 @@
         </div>
 
         <div id="page-content" class="row">
-            <div id="region-main-box" class="col-xs-12">
+            <div id="region-main-box" class="col-12">
                 <section id="region-main" {{#hasblocks}}class="has-blocks"{{/hasblocks}}>
                     <div class="card card-block">
                     {{{ output.course_content_header }}}
@@ -82,7 +75,7 @@
         </div>
     </div>
 </div>
-<footer id="page-footer" class="p-y-1 bg-inverse">
+<footer id="page-footer" class="py-3 bg-dark text-light">
     <div class="container">
         <div id="course-footer">{{{ output.course_footer }}}</div>
 

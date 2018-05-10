@@ -200,6 +200,7 @@ class quiz_override_form extends moodleform {
         }
         $mform->addElement('select', 'attempts',
                 get_string('attemptsallowed', 'quiz'), $attemptoptions);
+        $mform->addHelpButton('attempts', 'attempts', 'quiz');
         $mform->setDefault('attempts', $this->quiz->attempts);
 
         // Submit buttons.

@@ -105,7 +105,7 @@
                     </optgroup>
                 {{/optgroup}}
                 {{^optgroup}}
-                    <option value="{{value}}" {{#selected}}selected{{/selected}}>{{{name}}}</option>
+                    <option {{ignore}} value="{{value}}" {{#selected}}selected{{/selected}}>{{{name}}}</option>
                 {{/optgroup}}
             {{/options}}
         </select>
@@ -117,7 +117,10 @@
 {{#js}}
 require(['jquery'], function($) {
     $('#{{id}}').change(function() {
-        $('#{{formid}}').submit();
+        var ignore = $(this).find(':selected').attr('data-ignore');
+        if (typeof ignore === typeof undefined) {
+            $('#{{formid}}').submit();
+        }
     });
 });
 {{/js}}

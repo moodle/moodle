@@ -2402,21 +2402,25 @@ abstract class moodle_database {
 
         // Enclose the column name by the proper quotes if it's a reserved word.
         $columnname = $this->get_manager()->generator->getEncQuoted($column->name);
+
+        $searchsql = $this->sql_like($columnname, '?');
+        $searchparam = '%'.$this->sql_like_escape($search).'%';
+
         $sql = "UPDATE {".$table."}
                        SET $columnname = REPLACE($columnname, ?, ?)
-                     WHERE $columnname IS NOT NULL";
+                     WHERE $searchsql";
 
         if ($column->meta_type === 'X') {
-            $this->execute($sql, array($search, $replace));
+            $this->execute($sql, array($search, $replace, $searchparam));
 
         } else if ($column->meta_type === 'C') {
             if (core_text::strlen($search) < core_text::strlen($replace)) {
                 $colsize = $column->max_length;
                 $sql = "UPDATE {".$table."}
                        SET $columnname = " . $this->sql_substr("REPLACE(" . $columnname . ", ?, ?)", 1, $colsize) . "
-                     WHERE $columnname IS NOT NULL";
+                     WHERE $searchsql";
             }
-            $this->execute($sql, array($search, $replace));
+            $this->execute($sql, array($search, $replace, $searchparam));
         }
     }
 
@@ -2682,5 +2686,15 @@ abstract class moodle_database {
      */
     public function perf_get_queries_time() {
         return $this->queriestime;
+    }
+
+    /**
+     * Whether the database is able to support full-text search or not.
+     *
+     * @return bool
+     */
+    public function is_fulltext_search_supported() {
+        // No support unless specified.
+        return false;
     }
 }

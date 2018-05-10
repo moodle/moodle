@@ -165,6 +165,12 @@ function print_auth_lock_options($auth, $user_fields, $helptext, $retrieveopts, 
             // If custom field then pick name from database.
             $fieldshortname = str_replace('profile_field_', '', $fieldname);
             $fieldname = $customfieldname[$fieldshortname]->name;
+            if (core_text::strlen($fieldshortname) > 67) {
+                // If custom profile field name is longer than 67 characters we will not be able to store the setting
+                // such as 'field_updateremote_profile_field_NOTSOSHORTSHORTNAME' in the database because the character
+                // limit for the setting name is 100.
+                continue;
+            }
         } elseif ($fieldname == 'url') {
             $fieldname = get_string('webpage');
         } else {

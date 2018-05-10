@@ -17,7 +17,7 @@
 /**
  * Unit tests for grade/import/lib.php.
  *
- * @package   core_grade
+ * @package   core_grades
  * @category  phpunit
  * @copyright 2015 Adrian Greeve <adrian@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU Public License

@@ -80,3 +80,4 @@ $string['videosourcelabel'] = 'Video source URL';
 $string['videowidth'] = 'Video width';
 $string['width'] = 'Width';
 
+$string['privacy:metadata'] = 'The atto_media plugin does not store any personal data.';

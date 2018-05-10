@@ -69,7 +69,15 @@ class message_sent extends base_message {
             return \core_search\manager::ACCESS_DENIED;
         }
 
-        $message = $DB->get_record('message_read', array('id' => $id));
+        $sql = "SELECT m.*, mcm.userid as useridto
+                  FROM {messages} m
+            INNER JOIN {message_conversations} mc
+                    ON m.conversationid = mc.id
+            INNER JOIN {message_conversation_members} mcm
+                    ON mcm.conversationid = mc.id
+                 WHERE mcm.userid != m.useridfrom
+                   AND m.id = :id";
+        $message = $DB->get_record_sql($sql, array('id' => $id));
         if (!$message) {
             return \core_search\manager::ACCESS_DELETED;
         }
@@ -85,7 +93,9 @@ class message_sent extends base_message {
             return \core_search\manager::ACCESS_DENIED;
         }
 
-        if ($message->timeuserfromdeleted != 0) {
+        $userfromdeleted = $DB->record_exists('message_user_actions', ['messageid' => $id, 'userid' => $message->useridfrom,
+            'action' => \core_message\api::MESSAGE_ACTION_DELETED]);
+        if ($userfromdeleted) {
             return \core_search\manager::ACCESS_DELETED;
         }
 

@@ -23,5 +23,6 @@
  */
 
 $string['dataformat'] = 'Comma separated values (.csv)';
+$string['privacy:metadata'] = 'The CSV data format plugin does not store any personal data.';
 $string['shortname'] = 'CSV';
 

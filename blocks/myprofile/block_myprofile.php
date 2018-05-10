@@ -75,7 +75,7 @@ class block_myprofile extends block_base {
         $this->content->text .= '<div class="myprofileitem fullname">'.fullname($USER).'</div>';
 
         if(!isset($this->config->display_country) || $this->config->display_country == 1) {
-            $countries = get_string_manager()->get_list_of_countries();
+            $countries = get_string_manager()->get_list_of_countries(true);
             if (isset($countries[$USER->country])) {
                 $this->content->text .= '<div class="myprofileitem country">';
                 $this->content->text .= get_string('country') . ': ' . $countries[$USER->country];

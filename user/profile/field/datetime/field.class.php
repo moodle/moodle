@@ -81,7 +81,8 @@ class profile_field_datetime extends profile_field_base {
         }
 
         if (is_numeric($datetime)) {
-            $datetime = userdate($datetime, '%Y-%m-%d-%H-%M-%S');
+            $gregoriancalendar = \core_calendar\type_factory::get_calendar_instance('gregorian');
+            $datetime = $gregoriancalendar->timestamp_to_date_string($datetime, '%Y-%m-%d-%H-%M-%S', 99, true, true);
         }
 
         $datetime = explode('-', $datetime);

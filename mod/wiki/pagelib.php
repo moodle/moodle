@@ -84,7 +84,7 @@ abstract class page_wiki {
      */
     protected $tabs_options = array();
     /**
-     * @var object wiki renderer
+     * @var mod_wiki_renderer wiki renderer
      */
     protected $wikioutput;
     /**

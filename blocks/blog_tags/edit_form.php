@@ -33,7 +33,7 @@ class block_blog_tags_edit_form extends block_edit_form {
         // Fields for editing HTML block title and contents.
         $mform->addElement('header', 'configheader', get_string('blocksettings', 'block'));
 
-        $mform->addElement('text', 'config_title', get_string('blocktitle', 'blog'));
+        $mform->addElement('text', 'config_title', get_string('configtitle', 'block_blog_tags'));
         $mform->setDefault('config_title', get_string('blogtags', 'blog'));
         $mform->setType('config_title', PARAM_TEXT);
 

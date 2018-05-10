@@ -45,3 +45,4 @@ $string['title'] = 'Title';
 $string['type'] = 'How a new entry is chosen';
 $string['viewglossary'] = 'View all entries';
 $string['whichfooter'] = 'You can display links to actions of the glossary this block is associated with. The block will only display links to actions which are enabled for that glossary.';
+$string['privacy:metadata'] = 'The Random glossary entry block only shows data stored in other locations.';

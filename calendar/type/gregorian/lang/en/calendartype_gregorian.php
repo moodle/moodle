@@ -24,3 +24,4 @@
 
 $string['name'] = 'Gregorian';
 $string['pluginname'] = 'Gregorian calendar type';
+$string['privacy:metadata'] = 'The Gregorian calendar format plugin does not store any personal data.';

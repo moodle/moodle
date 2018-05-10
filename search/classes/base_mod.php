@@ -192,4 +192,98 @@ abstract class base_mod extends base {
         return [$sql, $params];
     }
 
+    /**
+     * This can be used in subclasses to change ordering within the get_contexts_to_reindex
+     * function.
+     *
+     * It returns 2 values:
+     * - Extra SQL joins (tables course_modules 'cm' and context 'x' already exist).
+     * - An ORDER BY value which must use aggregate functions, by default 'MAX(cm.added) DESC'.
+     *
+     * Note the query already includes a GROUP BY on the context fields, so if your joins result
+     * in multiple rows, you can use aggregate functions in the ORDER BY. See forum for an example.
+     *
+     * @return string[] Array with 2 elements; extra joins for the query, and ORDER BY value
+     */
+    protected function get_contexts_to_reindex_extra_sql() {
+        return ['', 'MAX(cm.added) DESC'];
+    }
+
+    /**
+     * Gets a list of all contexts to reindex when reindexing this search area.
+     *
+     * For modules, the default is to return all contexts for modules of that type, in order of
+     * time added (most recent first).
+     *
+     * @return \Iterator Iterator of contexts to reindex
+     * @throws \moodle_exception If any DB error
+     */
+    public function get_contexts_to_reindex() {
+        global $DB;
+
+        list ($extrajoins, $dborder) = $this->get_contexts_to_reindex_extra_sql();
+        $contexts = [];
+        $selectcolumns = \context_helper::get_preload_record_columns_sql('x');
+        $groupbycolumns = '';
+        foreach (\context_helper::get_preload_record_columns('x') as $column => $thing) {
+            if ($groupbycolumns !== '') {
+                $groupbycolumns .= ',';
+            }
+            $groupbycolumns .= $column;
+        }
+        $rs = $DB->get_recordset_sql("
+                SELECT $selectcolumns
+                  FROM {course_modules} cm
+                  JOIN {context} x ON x.instanceid = cm.id AND x.contextlevel = ?
+                       $extrajoins
+                 WHERE cm.module = (SELECT id FROM {modules} WHERE name = ?)
+              GROUP BY $groupbycolumns
+              ORDER BY $dborder", [CONTEXT_MODULE, $this->get_module_name()]);
+        return new \core\dml\recordset_walk($rs, function($rec) {
+            $id = $rec->ctxid;
+            \context_helper::preload_from_record($rec);
+            return \context::instance_by_id($id);
+        });
+    }
+
+    /**
+     * Indicates whether this search area may restrict access by group.
+     *
+     * This should return true if the search area (sometimes) sets the 'groupid' schema field, and
+     * false if it never sets that field.
+     *
+     * (If this function returns false, but the field is set, then results may be restricted
+     * unintentionally.)
+     *
+     * If this returns true, the search engine will automatically apply group restrictions in some
+     * cases (by default, where a module is configured to use separate groups). See function
+     * restrict_cm_access_by_group().
+     *
+     * @return bool
+     */
+    public function supports_group_restriction() {
+        return false;
+    }
+
+    /**
+     * Checks whether the content of this search area should be restricted by group for a
+     * specific module. Called at query time.
+     *
+     * The default behaviour simply checks if the effective group mode is SEPARATEGROUPS, which
+     * is probably correct for most cases.
+     *
+     * If restricted by group, the search query will (where supported by the engine) filter out
+     * results for groups the user does not belong to, unless the user has 'access all groups'
+     * for the activity. This affects only documents which set the 'groupid' field; results with no
+     * groupid will not be restricted.
+     *
+     * Even if you return true to this function, you may still need to do group access checks in
+     * check_access, because the search engine may not support group restrictions.
+     *
+     * @param \cm_info $cm
+     * @return bool True to restrict by group
+     */
+    public function restrict_cm_access_by_group(\cm_info $cm) {
+        return $cm->effectivegroupmode == SEPARATEGROUPS;
+    }
 }

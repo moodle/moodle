@@ -128,6 +128,11 @@ class analysis_for_question {
         if (!isset($this->subparts[$variantno])) {
             $this->initialise_stats_for_variant($variantno);
         }
+        if (!isset($this->subparts[$variantno][$subpartid])) {
+            debugging('Unexpected sub-part id ' . $subpartid .
+                    ' encountered.');
+            $this->subparts[$variantno][$subpartid] = new analysis_for_subpart();
+        }
         return $this->subparts[$variantno][$subpartid];
     }
 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/workshop/db" VERSION="20120122" COMMENT="XMLDB file for workshop Rubric grading strategy"
+<XMLDB PATH="mod/workshop/form/rubric/db" VERSION="20120122" COMMENT="XMLDB file for workshop Rubric grading strategy"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+    xsi:noNamespaceSchemaLocation="../../../../../lib/xmldb/xmldb.xsd"
 >
   <TABLES>
     <TABLE NAME="workshopform_rubric" COMMENT="The assessment dimensions definitions of Rubric grading strategy forms">

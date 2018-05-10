@@ -56,9 +56,9 @@ Feature: Test category management actions
     And I log in as "admin"
     And I go to the courses management page
     And I should see the "Course categories and courses" management page
-    And I should see "Cat 1" in the "#category-listing ul.ml" "css_element"
-    And I should see "Cat 2" in the "#category-listing ul.ml" "css_element"
-    And I should see "Cat 3" in the "#category-listing ul.ml" "css_element"
+    And I should see "Cat 1" in the "#category-listing ul" "css_element"
+    And I should see "Cat 2" in the "#category-listing ul" "css_element"
+    And I should see "Cat 3" in the "#category-listing ul" "css_element"
     And I click on "delete" action for "Cat 2" in management category listing
     # Redirect
     And I should see "Delete category: Cat 2"
@@ -67,9 +67,9 @@ Feature: Test category management actions
     And I press "Cancel"
     # Redirect
     And I should see the "Course categories and courses" management page
-    And I should see "Cat 1" in the "#category-listing ul.ml" "css_element"
-    And I should see "Cat 2" in the "#category-listing ul.ml" "css_element"
-    And I should see "Cat 3" in the "#category-listing ul.ml" "css_element"
+    And I should see "Cat 1" in the "#category-listing ul" "css_element"
+    And I should see "Cat 2" in the "#category-listing ul" "css_element"
+    And I should see "Cat 3" in the "#category-listing ul" "css_element"
     And I click on "delete" action for "Cat 2" in management category listing
     # Redirect
     And I should see "Delete category: Cat 2"
@@ -82,9 +82,9 @@ Feature: Test category management actions
     And I press "Continue"
     # Redirect
     And I should see the "Course categories and courses" management page
-    And I should see "Cat 1" in the "#category-listing ul.ml" "css_element"
-    And I should not see "Cat 2" in the "#category-listing ul.ml" "css_element"
-    And I should see "Cat 3" in the "#category-listing ul.ml" "css_element"
+    And I should see "Cat 1" in the "#category-listing ul" "css_element"
+    And I should not see "Cat 2" in the "#category-listing ul" "css_element"
+    And I should see "Cat 3" in the "#category-listing ul" "css_element"
     And I click on "delete" action for "Cat 3" in management category listing
     # Redirect
     And I should see "Delete category: Cat 3"
@@ -98,10 +98,10 @@ Feature: Test category management actions
     And I press "Continue"
     # Redirect
     And I should see the "Course categories and courses" management page
-    And I should see "Cat 1" in the "#category-listing ul.ml" "css_element"
-    And I should not see "Cat 2" in the "#category-listing ul.ml" "css_element"
-    And I should not see "Cat 3" in the "#category-listing ul.ml" "css_element"
-    And I should see "Course 1" in the "#course-listing ul.ml" "css_element"
+    And I should see "Cat 1" in the "#category-listing ul" "css_element"
+    And I should not see "Cat 2" in the "#category-listing ul" "css_element"
+    And I should not see "Cat 3" in the "#category-listing ul" "css_element"
+    And I should see "Course 1" in the "#course-listing ul.course-list" "css_element"
 
   Scenario: Test I can assign roles for a category through the management interface.
     Given the following "categories" exist:
@@ -222,9 +222,9 @@ Feature: Test category management actions
     And I log in as "admin"
     And I go to the courses management page
     And I should see the "Course categories and courses" management page
-    And I should see "Cat 1" in the "#category-listing ul.ml" "css_element"
-    And I should see "Cat 2" in the "#category-listing ul.ml" "css_element"
-    And I should see "Cat 3" in the "#category-listing ul.ml" "css_element"
+    And I should see "Cat 1" in the "#category-listing ul" "css_element"
+    And I should see "Cat 2" in the "#category-listing ul" "css_element"
+    And I should see "Cat 3" in the "#category-listing ul" "css_element"
     And I select category "Cat 2" in the management interface
     And I select category "Cat 3" in the management interface
     And I set the field "menumovecategoriesto" to "Cat 1"
@@ -253,9 +253,9 @@ Feature: Test category management actions
     And I log in as "admin"
     And I go to the courses management page
     And I should see the "Course categories and courses" management page
-    And I should see "Cat 1" in the "#category-listing ul.ml" "css_element"
-    And I should see "Cat 2" in the "#category-listing ul.ml" "css_element"
-    And I should see "Cat 3" in the "#category-listing ul.ml" "css_element"
+    And I should see "Cat 1" in the "#category-listing ul" "css_element"
+    And I should see "Cat 2" in the "#category-listing ul" "css_element"
+    And I should see "Cat 3" in the "#category-listing ul" "css_element"
     And the "movecategoriesto" "select" should be disabled
     And the "resortcategoriesby" "select" should be disabled
     And the "resortcoursesby" "select" should be disabled
@@ -298,8 +298,8 @@ Feature: Test category management actions
     And I click on category "Cat 3" in the management interface
     #Redirect
     And I should see the "Course categories and courses" management page
-    And I should see "Course 1" in the "#course-listing ul.ml" "css_element"
-    And I should see "Course 2" in the "#course-listing ul.ml" "css_element"
+    And I should see "Course 1" in the "#course-listing ul.course-list" "css_element"
+    And I should see "Course 2" in the "#course-listing ul.course-list" "css_element"
     And the "movecategoriesto" "select" should be disabled
     And the "resortcategoriesby" "select" should be disabled
     And the "resortcoursesby" "select" should be disabled

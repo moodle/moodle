@@ -65,7 +65,7 @@
             "attributes": "",
             "options": [
                 {
-                    "text": "Hide my email address from everyone",
+                    "text": "Hide my email address from non-privileged users",
                     "value": 0,
                     "selected": false,
                     "disabled": false,
@@ -94,7 +94,7 @@
         {{^element.frozen}}
         <select class="{{^element.multiple}}custom-select{{/element.multiple}}
                        {{#element.multiple}}form-control{{/element.multiple}}
-                       {{#error}}form-control-danger{{/error}}"
+                       {{#error}}is-invalid{{/error}}"
             name="{{element.name}}"
             id="{{element.id}}"
             {{#element.multiple}}multiple size="{{element.size}}"{{/element.multiple}}

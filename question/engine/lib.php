@@ -954,6 +954,65 @@ abstract class question_utils {
         $text = str_replace('@@PLUGINFILE@@/', 'http://example.com/', $text);
         return html_to_text(format_text($text, $format, $options), 0, false);
     }
+
+    /**
+     * Get the options required to configure the filepicker for one of the editor
+     * toolbar buttons.
+     * @param mixed $acceptedtypes array of types of '*'.
+     * @param int $draftitemid the draft area item id.
+     * @param object $context the context.
+     * @return object the required options.
+     */
+    protected static function specific_filepicker_options($acceptedtypes, $draftitemid, $context) {
+        $filepickeroptions = new stdClass();
+        $filepickeroptions->accepted_types = $acceptedtypes;
+        $filepickeroptions->return_types = FILE_INTERNAL | FILE_EXTERNAL;
+        $filepickeroptions->context = $context;
+        $filepickeroptions->env = 'filepicker';
+
+        $options = initialise_filepicker($filepickeroptions);
+        $options->context = $context;
+        $options->client_id = uniqid();
+        $options->env = 'editor';
+        $options->itemid = $draftitemid;
+
+        return $options;
+    }
+
+    /**
+     * Get filepicker options for question related text areas.
+     * @param object $context the context.
+     * @param int $draftitemid the draft area item id.
+     * @return array An array of options
+     */
+    public static function get_filepicker_options($context, $draftitemid) {
+        return [
+                'image' => self::specific_filepicker_options(['image'], $draftitemid, $context),
+                'media' => self::specific_filepicker_options(['video', 'audio'], $draftitemid, $context),
+                'link'  => self::specific_filepicker_options('*', $draftitemid, $context),
+            ];
+    }
+
+    /**
+     * Get editor options for question related text areas.
+     * @param object $context the context.
+     * @return array An array of options
+     */
+    public static function get_editor_options($context) {
+        global $CFG;
+
+        $editoroptions = [
+                'subdirs'  => 0,
+                'context'  => $context,
+                'maxfiles' => EDITOR_UNLIMITED_FILES,
+                'maxbytes' => $CFG->maxbytes,
+                'noclean' => 0,
+                'trusttext' => 0,
+                'autosave' => false
+        ];
+
+        return $editoroptions;
+    }
 }
 
 

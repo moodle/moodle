@@ -154,7 +154,21 @@ $userform = new user_editadvanced_form(new moodle_url($PAGE->url, array('returnt
     'filemanageroptions' => $filemanageroptions,
     'user' => $user));
 
-if ($usernew = $userform->get_data()) {
+
+// Deciding where to send the user back in most cases.
+if ($returnto === 'profile') {
+    if ($course->id != SITEID) {
+        $returnurl = new moodle_url('/user/view.php', array('id' => $user->id, 'course' => $course->id));
+    } else {
+        $returnurl = new moodle_url('/user/profile.php', array('id' => $user->id));
+    }
+} else {
+    $returnurl = new moodle_url('/user/preferences.php', array('userid' => $user->id));
+}
+
+if ($userform->is_cancelled()) {
+    redirect($returnurl);
+} else if ($usernew = $userform->get_data()) {
     $usercreated = false;
 
     if (empty($usernew->auth)) {
@@ -292,15 +306,6 @@ if ($usernew = $userform->get_data()) {
             // Somebody double clicked when editing admin user during install.
             redirect("$CFG->wwwroot/$CFG->admin/");
         } else {
-            if ($returnto === 'profile') {
-                if ($course->id != SITEID) {
-                    $returnurl = new moodle_url('/user/view.php', array('id' => $user->id, 'course' => $course->id));
-                } else {
-                    $returnurl = new moodle_url('/user/profile.php', array('id' => $user->id));
-                }
-            } else {
-                $returnurl = new moodle_url('/user/preferences.php', array('userid' => $user->id));
-            }
             redirect($returnurl);
         }
     } else {

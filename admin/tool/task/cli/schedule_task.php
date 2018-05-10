@@ -71,6 +71,8 @@ if ($options['list']) {
     $shorttime = get_string('strftimedatetimeshort');
 
     $tasks = \core\task\manager::get_all_scheduled_tasks();
+    echo str_pad(get_string('scheduledtasks', 'tool_task'), 50, ' ') . ' ' . str_pad(get_string('runpattern', 'tool_task'), 17, ' ')
+        . ' ' . str_pad(get_string('lastruntime', 'tool_task'), 40, ' ') . get_string('nextruntime', 'tool_task') . "\n";
     foreach ($tasks as $task) {
         $class = '\\' . get_class($task);
         $schedule = $task->get_minute() . ' '
@@ -80,6 +82,7 @@ if ($options['list']) {
             . $task->get_month() . ' '
             . $task->get_day_of_week();
         $nextrun = $task->get_next_run_time();
+        $lastrun = $task->get_last_run_time();
 
         $plugininfo = core_plugin_manager::instance()->get_plugin_info($task->get_component());
         $plugindisabled = $plugininfo && $plugininfo->is_enabled() === false && !$task->get_run_if_component_disabled();
@@ -94,7 +97,14 @@ if ($options['list']) {
             $nextrun = get_string('asap', 'tool_task');
         }
 
-        echo str_pad($class, 50, ' ') . ' ' . str_pad($schedule, 17, ' ') . ' ' . $nextrun . "\n";
+        if ($lastrun) {
+            $lastrun = userdate($lastrun);
+        } else {
+            $lastrun = get_string('never');
+        }
+
+        echo str_pad($class, 50, ' ') . ' ' . str_pad($schedule, 17, ' ') .
+            ' ' . str_pad($lastrun, 40, ' ') . ' ' . $nextrun . "\n";
     }
     exit(0);
 }

@@ -896,21 +896,25 @@ function external_validate_format($format) {
  * @param string $str The string to be filtered. Should be plain text, expect
  * possibly for multilang tags.
  * @param boolean $striplinks To strip any link in the result text. Moodle 1.8 default changed from false to true! MDL-8713
- * @param int $contextid The id of the context for the string (affects filters).
+ * @param context|int $contextorid The id of the context for the string or the context (affects filters).
  * @param array $options options array/object or courseid
  * @return string text
  * @since Moodle 3.0
  */
-function external_format_string($str, $contextid, $striplinks = true, $options = array()) {
+function external_format_string($str, $contextorid, $striplinks = true, $options = array()) {
 
     // Get settings (singleton).
     $settings = external_settings::get_instance();
-    if (empty($contextid)) {
+    if (empty($contextorid)) {
         throw new coding_exception('contextid is required');
     }
 
     if (!$settings->get_raw()) {
-        $context = context::instance_by_id($contextid);
+        if (is_object($contextorid) && is_a($contextorid, 'context')) {
+            $context = $contextorid;
+        } else {
+            $context = context::instance_by_id($contextorid);
+        }
         $options['context'] = $context;
         $options['filter'] = isset($options['filter']) && !$options['filter'] ? false : $settings->get_filter();
         $str = format_string($str, $striplinks, $options);
@@ -944,7 +948,7 @@ function external_format_string($str, $contextid, $striplinks = true, $options =
  *
  * @param string $text The content that may contain ULRs in need of rewriting.
  * @param int $textformat The text format.
- * @param int $contextid This parameter and the next two identify the file area to use.
+ * @param context|int $contextorid This parameter and the next two identify the file area to use.
  * @param string $component
  * @param string $filearea helps identify the file area.
  * @param int $itemid helps identify the file area.
@@ -953,17 +957,28 @@ function external_format_string($str, $contextid, $striplinks = true, $options =
  * @since Moodle 2.3
  * @since Moodle 3.2 component, filearea and itemid are optional parameters
  */
-function external_format_text($text, $textformat, $contextid, $component = null, $filearea = null, $itemid = null,
+function external_format_text($text, $textformat, $contextorid, $component = null, $filearea = null, $itemid = null,
                                 $options = null) {
     global $CFG;
 
     // Get settings (singleton).
     $settings = external_settings::get_instance();
 
+    if (is_object($contextorid) && is_a($contextorid, 'context')) {
+        $context = $contextorid;
+        $contextid = $context->id;
+    } else {
+        $context = null;
+        $contextid = $contextorid;
+    }
+
     if ($component and $filearea and $settings->get_fileurl()) {
         require_once($CFG->libdir . "/filelib.php");
         $text = file_rewrite_pluginfile_urls($text, $settings->get_file(), $contextid, $component, $filearea, $itemid);
     }
+
+    // Note that $CFG->forceclean does not apply here if the client requests for the raw database content.
+    // This is consistent with web clients that are still able to load non-cleaned text into editors, too.
 
     if (!$settings->get_raw()) {
         $options = (array)$options;
@@ -979,7 +994,7 @@ function external_format_text($text, $textformat, $contextid, $component = null,
 
         $options['filter'] = isset($options['filter']) && !$options['filter'] ? false : $settings->get_filter();
         $options['para'] = isset($options['para']) ? $options['para'] : false;
-        $options['context'] = context::instance_by_id($contextid);
+        $options['context'] = !is_null($context) ? $context : context::instance_by_id($contextid);
         $options['allowid'] = isset($options['allowid']) ? $options['allowid'] : true;
 
         $text = format_text($text, $textformat, $options);
@@ -1163,6 +1178,9 @@ class external_settings {
     /** @var string In which file should the urls be rewritten */
     private $file = 'webservice/pluginfile.php';
 
+    /** @var string The session lang */
+    private $lang = '';
+
     /**
      * Constructor - protected - can not be instanciated
      */
@@ -1264,6 +1282,24 @@ class external_settings {
      */
     public function get_file() {
         return $this->file;
+    }
+
+    /**
+     * Set lang
+     *
+     * @param string $lang
+     */
+    public function set_lang($lang) {
+        $this->lang = $lang;
+    }
+
+    /**
+     * Get lang
+     *
+     * @return string
+     */
+    public function get_lang() {
+        return $this->lang;
     }
 }
 

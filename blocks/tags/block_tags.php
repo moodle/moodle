@@ -45,7 +45,7 @@ class block_tags extends block_base {
         if (empty($this->config->title)) {
             $this->title = get_string('pluginname', 'block_tags');
         } else {
-            $this->title = $this->config->title;
+            $this->title = format_string($this->config->title, true, ['context' => $this->context]);
         }
     }
 

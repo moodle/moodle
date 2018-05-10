@@ -51,6 +51,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->send_fake_message($sender, $recipient);
 
         \core_message\api::mark_all_read_for_user($recipient->id);
+        $this->assertDebuggingCalled();
         $this->assertEquals(message_count_unread_messages($recipient), 0);
     }
 
@@ -73,6 +74,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->send_fake_message($sender2, $recipient);
 
         \core_message\api::mark_all_read_for_user($recipient->id, $sender1->id);
+        $this->assertDebuggingCalled();
         $this->assertEquals(message_count_unread_messages($recipient), 3);
     }
 
@@ -88,9 +90,11 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->send_fake_message($sender, $recipient);
 
         \core_message\api::mark_all_read_for_user($recipient->id, 0, MESSAGE_TYPE_NOTIFICATION);
+        $this->assertDebuggingCalled();
         $this->assertEquals(message_count_unread_messages($recipient), 3);
 
         \core_message\api::mark_all_read_for_user($recipient->id, 0, MESSAGE_TYPE_MESSAGE);
+        $this->assertDebuggingCalled();
         $this->assertEquals(message_count_unread_messages($recipient), 0);
     }
 
@@ -631,7 +635,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
                             'messageposition'   => 0,
                             'with'              => 'user1',
                             'subject'           => 'S2',
-                            'unreadcount'       => 2,
+                            'unreadcount'       => 0, // Messages sent to and from the same user are counted as read.
                         ),
                     ),
                 ),
@@ -872,11 +876,9 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
             $subject    = $messagedata['subject'];
 
             if (isset($messagedata['state']) && $messagedata['state'] == 'unread') {
-                $table = 'message';
                 $messageid = $this->send_fake_message($from, $to, $subject);
             } else {
                 // If there is no state, or the state is not 'unread', assume the message is read.
-                $table = 'message_read';
                 $messageid = message_post_message($from, $to, $subject, FORMAT_PLAIN);
             }
 
@@ -890,7 +892,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
                 $updatemessage->timecreated = $defaulttimecreated;
             }
 
-            $DB->update_record($table, $updatemessage);
+            $DB->update_record('messages', $updatemessage);
         }
 
         foreach ($expectations as $username => $data) {
@@ -1155,34 +1157,39 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
 
         // Send some messages back and forth.
         $time = 1;
-        $this->send_fake_message($user1, $user2, 'Yo!', 0, $time + 1);
-        $this->send_fake_message($user2, $user1, 'Sup mang?', 0, $time + 2);
-        $this->send_fake_message($user1, $user2, 'Writing PHPUnit tests!', 0, $time + 3);
-        $this->send_fake_message($user2, $user1, 'Word.', 0, $time + 4);
+        $m1id = $this->send_fake_message($user1, $user2, 'Yo!', 0, $time + 1);
+        $m2id = $this->send_fake_message($user2, $user1, 'Sup mang?', 0, $time + 2);
+        $m3id = $this->send_fake_message($user1, $user2, 'Writing PHPUnit tests!', 0, $time + 3);
+        $m4id = $this->send_fake_message($user2, $user1, 'Word.', 0, $time + 4);
 
         // Delete the conversation as user 1.
         \core_message\api::delete_conversation($user1->id, $user2->id);
 
-        $messages = $DB->get_records('message', array(), 'timecreated ASC');
-        $this->assertCount(4, $messages);
+        $muas = $DB->get_records('message_user_actions', array(), 'timecreated ASC');
+        $this->assertCount(4, $muas);
+        // Sort by id.
+        ksort($muas);
 
-        $message1 = array_shift($messages);
-        $message2 = array_shift($messages);
-        $message3 = array_shift($messages);
-        $message4 = array_shift($messages);
+        $mua1 = array_shift($muas);
+        $mua2 = array_shift($muas);
+        $mua3 = array_shift($muas);
+        $mua4 = array_shift($muas);
 
-        $this->assertNotEmpty($message1->timeuserfromdeleted);
-        $this->assertEmpty($message1->timeusertodeleted);
+        $this->assertEquals($user1->id, $mua1->userid);
+        $this->assertEquals($m1id, $mua1->messageid);
+        $this->assertEquals(\core_message\api::MESSAGE_ACTION_DELETED, $mua1->action);
 
-        $this->assertEmpty($message2->timeuserfromdeleted);
-        $this->assertNotEmpty($message2->timeusertodeleted);
+        $this->assertEquals($user1->id, $mua2->userid);
+        $this->assertEquals($m2id, $mua2->messageid);
+        $this->assertEquals(\core_message\api::MESSAGE_ACTION_DELETED, $mua2->action);
 
-        $this->assertNotEmpty($message3->timeuserfromdeleted);
-        $this->assertEmpty($message3->timeusertodeleted);
+        $this->assertEquals($user1->id, $mua3->userid);
+        $this->assertEquals($m3id, $mua3->messageid);
+        $this->assertEquals(\core_message\api::MESSAGE_ACTION_DELETED, $mua3->action);
 
-        $this->assertEmpty($message4->timeuserfromdeleted);
-        $this->assertNotEmpty($message4->timeusertodeleted);
-
+        $this->assertEquals($user1->id, $mua4->userid);
+        $this->assertEquals($m4id, $mua4->messageid);
+        $this->assertEquals(\core_message\api::MESSAGE_ACTION_DELETED, $mua4->action);
     }
 
     /**
@@ -1601,5 +1608,336 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
 
         $this->assertContains('Message 2', $message1->text);
         $this->assertContains('Message 3', $message2->text);
+    }
+
+    /**
+     * Test returning blocked users.
+     */
+    public function test_get_blocked_users() {
+        global $USER;
+
+        // Set this user as the admin.
+        $this->setAdminUser();
+
+        // Create a user to add to the admin's contact list.
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+
+        // Add users to the admin's contact list.
+        message_add_contact($user1->id);
+        message_add_contact($user2->id, 1);
+
+        $this->assertCount(1, \core_message\api::get_blocked_users($USER->id));
+
+        // Block other user.
+        message_block_contact($user1->id);
+        $this->assertCount(2, \core_message\api::get_blocked_users($USER->id));
+
+        // Test deleting users.
+        delete_user($user1);
+        $this->assertCount(1, \core_message\api::get_blocked_users($USER->id));
+    }
+
+    /**
+     * Test returning contacts with unread message count.
+     */
+    public function test_get_contacts_with_unread_message_count() {
+        global $DB;
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+        $user4 = self::getDataGenerator()->create_user();
+
+        // Add the users to each of their contacts.
+        message_add_contact($user1->id, 0, $user2->id);
+        message_add_contact($user2->id, 0, $user1->id);
+        message_add_contact($user3->id, 0, $user2->id);
+
+        $this->send_fake_message($user1, $user2);
+        $this->send_fake_message($user1, $user2);
+        $this->send_fake_message($user1, $user2);
+        $message4id = $this->send_fake_message($user1, $user2);
+
+        $this->send_fake_message($user3, $user2);
+        $message6id = $this->send_fake_message($user3, $user2);
+        $this->send_fake_message($user3, $user2);
+        $this->send_fake_message($user3, $user2);
+        $this->send_fake_message($user3, $user2);
+
+        // Send a message that should never be included as the user is not a contact.
+        $this->send_fake_message($user4, $user2);
+
+        // Get the contacts and the unread message count.
+        $messages = \core_message\api::get_contacts_with_unread_message_count($user2->id);
+
+        // Confirm the size is correct.
+        $this->assertCount(2, $messages);
+        ksort($messages);
+
+        $messageinfo1 = array_shift($messages);
+        $messageinfo2 = array_shift($messages);
+        $this->assertEquals($user1->id, $messageinfo1->id);
+        $this->assertEquals(4, $messageinfo1->messagecount);
+        $this->assertEquals($user3->id, $messageinfo2->id);
+        $this->assertEquals(5, $messageinfo2->messagecount);
+
+        // Mark some of the messages as read.
+        $m4 = $DB->get_record('messages', ['id' => $message4id]);
+        $m6 = $DB->get_record('messages', ['id' => $message6id]);
+        \core_message\api::mark_message_as_read($user2->id, $m4);
+        \core_message\api::mark_message_as_read($user2->id, $m6);
+
+        // Get the contacts and the unread message count.
+        $messages = \core_message\api::get_contacts_with_unread_message_count($user2->id);
+
+        // Confirm the size is correct.
+        $this->assertCount(2, $messages);
+        ksort($messages);
+
+        // Confirm read messages are not included.
+        $messageinfo1 = array_shift($messages);
+        $messageinfo2 = array_shift($messages);
+        $this->assertEquals($user1->id, $messageinfo1->id);
+        $this->assertEquals(3, $messageinfo1->messagecount);
+        $this->assertEquals($user3->id, $messageinfo2->id);
+        $this->assertEquals(4, $messageinfo2->messagecount);
+
+        // Now, let's populate the database with messages from user2 to user 1.
+        $this->send_fake_message($user2, $user1);
+        $this->send_fake_message($user2, $user1);
+        $messageid = $this->send_fake_message($user2, $user1);
+
+        // Send a message that should never be included as the user is not a contact.
+        $this->send_fake_message($user4, $user1);
+
+        // Get the contacts and the unread message count.
+        $messages = \core_message\api::get_contacts_with_unread_message_count($user1->id);
+
+        // Confirm the size is correct.
+        $this->assertCount(1, $messages);
+        $messageinfo1 = array_shift($messages);
+        $this->assertEquals($user2->id, $messageinfo1->id);
+        $this->assertEquals(3, $messageinfo1->messagecount);
+
+        // Mark the last message as read.
+        $m = $DB->get_record('messages', ['id' => $messageid]);
+        \core_message\api::mark_message_as_read($user1->id, $m);
+
+        $messages = \core_message\api::get_contacts_with_unread_message_count($user1->id);
+
+        // Confirm the size is correct.
+        $this->assertCount(1, $messages);
+
+        // Confirm read messages are not included.
+        $messageinfo1 = array_shift($messages);
+        $this->assertEquals($user2->id, $messageinfo1->id);
+        $this->assertEquals(2, $messageinfo1->messagecount);
+    }
+
+    /**
+     * Test returning contacts with unread message count when there are no messages.
+     */
+    public function test_get_contacts_with_unread_message_count_no_messages() {
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        // Add the users to each of their contacts.
+        message_add_contact($user1->id, 0, $user2->id);
+
+        // Check we get the correct message count.
+        $messages = \core_message\api::get_contacts_with_unread_message_count($user2->id);
+
+        // Confirm the size is correct.
+        $this->assertCount(1, $messages);
+
+        $messageinfo = array_shift($messages);
+
+        $this->assertEquals($user1->id, $messageinfo->id);
+        $this->assertEquals(0, $messageinfo->messagecount);
+    }
+
+    /**
+     * Test returning non-contacts with unread message count.
+     */
+    public function test_get_non_contacts_with_unread_message_count() {
+        global $DB;
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+        $user4 = self::getDataGenerator()->create_user();
+
+        // Add a user to the contact list of the users we are testing this function with.
+        message_add_contact($user4->id, 0, $user1->id);
+        message_add_contact($user4->id, 0, $user2->id);
+
+        $this->send_fake_message($user1, $user2);
+        $this->send_fake_message($user1, $user2);
+        $this->send_fake_message($user1, $user2);
+        $message4id = $this->send_fake_message($user1, $user2);
+
+        $this->send_fake_message($user3, $user2);
+        $message6id = $this->send_fake_message($user3, $user2);
+        $this->send_fake_message($user3, $user2);
+        $this->send_fake_message($user3, $user2);
+        $this->send_fake_message($user3, $user2);
+
+        // Send a message that should never be included as the user is a contact.
+        $this->send_fake_message($user4, $user2);
+
+        // Get the non-contacts and the unread message count.
+        $messages = \core_message\api::get_non_contacts_with_unread_message_count($user2->id);
+
+        // Check we get the correct message count.
+        ksort($messages);
+        $this->assertCount(2, $messages);
+        $messageinfo1 = array_shift($messages);
+        $messageinfo2 = array_shift($messages);
+        $this->assertEquals($user1->id, $messageinfo1->id);
+        $this->assertEquals(4, $messageinfo1->messagecount);
+        $this->assertEquals($user3->id, $messageinfo2->id);
+        $this->assertEquals(5, $messageinfo2->messagecount);
+
+        // Mark some of the messages as read.
+        $m4 = $DB->get_record('messages', ['id' => $message4id]);
+        $m6 = $DB->get_record('messages', ['id' => $message6id]);
+        \core_message\api::mark_message_as_read($user2->id, $m4);
+        \core_message\api::mark_message_as_read($user2->id, $m6);
+
+        // Get the non-contacts and the unread message count.
+        $messages = \core_message\api::get_non_contacts_with_unread_message_count($user2->id);
+
+        // Check the marked message is not returned in the message count.
+        ksort($messages);
+        $this->assertCount(2, $messages);
+        $messageinfo1 = array_shift($messages);
+        $messageinfo2 = array_shift($messages);
+        $this->assertEquals($user1->id, $messageinfo1->id);
+        $this->assertEquals(3, $messageinfo1->messagecount);
+        $this->assertEquals($user3->id, $messageinfo2->id);
+        $this->assertEquals(4, $messageinfo2->messagecount);
+
+        // Now, let's populate the database with messages from user2 to user 1.
+        $this->send_fake_message($user2, $user1);
+        $this->send_fake_message($user2, $user1);
+        $messageid = $this->send_fake_message($user2, $user1);
+
+        // Send a message that should never be included as the user is a contact.
+        $this->send_fake_message($user4, $user1);
+
+        // Get the non-contacts and the unread message count.
+        $messages = \core_message\api::get_non_contacts_with_unread_message_count($user1->id);
+
+        // Confirm the size is correct.
+        $this->assertCount(1, $messages);
+        $messageinfo1 = array_shift($messages);
+        $this->assertEquals($user2->id, $messageinfo1->id);
+        $this->assertEquals(3, $messageinfo1->messagecount);
+
+        // Mark the last message as read.
+        $m = $DB->get_record('messages', ['id' => $messageid]);
+        \core_message\api::mark_message_as_read($user1->id, $m);
+
+        // Get the non-contacts and the unread message count.
+        $messages = \core_message\api::get_non_contacts_with_unread_message_count($user1->id);
+
+        // Check the marked message is not returned in the message count.
+        $this->assertCount(1, $messages);
+        $messageinfo1 = array_shift($messages);
+        $this->assertEquals($user2->id, $messageinfo1->id);
+        $this->assertEquals(2, $messageinfo1->messagecount);
+    }
+
+    /**
+     * Test marking a message as read.
+     */
+    public function test_mark_message_as_read() {
+        global $DB;
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        $this->send_fake_message($user1, $user2);
+        $m2id = $this->send_fake_message($user1, $user2);
+        $this->send_fake_message($user2, $user1);
+        $m4id = $this->send_fake_message($user2, $user1);
+
+        $m2 = $DB->get_record('messages', ['id' => $m2id]);
+        $m4 = $DB->get_record('messages', ['id' => $m4id]);
+        \core_message\api::mark_message_as_read($user2->id, $m2, 11);
+        \core_message\api::mark_message_as_read($user1->id, $m4, 12);
+
+        // Confirm there are two user actions.
+        $muas = $DB->get_records('message_user_actions', [], 'timecreated ASC');
+        $this->assertEquals(2, count($muas));
+
+        // Confirm they are correct.
+        $mua1 = array_shift($muas);
+        $mua2 = array_shift($muas);
+
+        // Confirm first action.
+        $this->assertEquals($user2->id, $mua1->userid);
+        $this->assertEquals($m2id, $mua1->messageid);
+        $this->assertEquals(\core_message\api::MESSAGE_ACTION_READ, $mua1->action);
+        $this->assertEquals(11, $mua1->timecreated);
+
+        // Confirm second action.
+        $this->assertEquals($user1->id, $mua2->userid);
+        $this->assertEquals($m4id, $mua2->messageid);
+        $this->assertEquals(\core_message\api::MESSAGE_ACTION_READ, $mua2->action);
+        $this->assertEquals(12, $mua2->timecreated);
+    }
+
+    /**
+     * Test marking a notification as read.
+     */
+    public function test_mark_notification_as_read() {
+        global $DB;
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        $this->send_fake_message($user1, $user2, 'Notification 1', 1);
+        $n2id = $this->send_fake_message($user1, $user2, 'Notification 2', 1);
+        $this->send_fake_message($user2, $user1, 'Notification 3', 1);
+        $n4id = $this->send_fake_message($user2, $user1, 'Notification 4', 1);
+
+        $n2 = $DB->get_record('notifications', ['id' => $n2id]);
+        $n4 = $DB->get_record('notifications', ['id' => $n4id]);
+
+        \core_message\api::mark_notification_as_read($n2, 11);
+        \core_message\api::mark_notification_as_read($n4, 12);
+
+        // Retrieve the notifications.
+        $n2 = $DB->get_record('notifications', ['id' => $n2id]);
+        $n4 = $DB->get_record('notifications', ['id' => $n4id]);
+
+        // Confirm they have been marked as read.
+        $this->assertEquals(11, $n2->timeread);
+        $this->assertEquals(12, $n4->timeread);
+    }
+
+    /**
+     * Test a conversation is not returned if there is none.
+     */
+    public function test_get_conversation_between_users_no_conversation() {
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        $this->assertFalse(\core_message\api::get_conversation_between_users([$user1->id, $user2->id]));
+    }
+
+    /**
+     * Test we can return a conversation that exists between users.
+     */
+    public function test_get_conversation_between_users_with_existing_conversation() {
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        $conversationid = \core_message\api::create_conversation_between_users([$user1->id, $user2->id]);
+
+        $this->assertEquals($conversationid,
+            \core_message\api::get_conversation_between_users([$user1->id, $user2->id]));
     }
 }

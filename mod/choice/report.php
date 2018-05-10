@@ -262,8 +262,6 @@
         }
         exit;
     }
-    // Always show those who haven't answered the question.
-    $choice->showunanswered = 1;
     $results = prepare_choice_show_results($choice, $course, $cm, $users);
     $renderer = $PAGE->get_renderer('mod_choice');
     echo $renderer->display_result($results, true);

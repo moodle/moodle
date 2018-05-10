@@ -255,17 +255,27 @@ class mod_wiki_external_testcase extends externallib_advanced_testcase {
         // Now, prohibit capabilities.
         $this->setUser($this->student);
         $contextcourse1 = context_course::instance($this->course->id);
+
+        // Default student role allows to view wiki and create pages.
+        $wikis = mod_wiki_external::get_wikis_by_courses(array($this->course->id));
+        $wikis = external_api::clean_returnvalue(mod_wiki_external::get_wikis_by_courses_returns(), $wikis);
+        $this->assertEquals('Test wiki 1', $wikis['wikis'][0]['intro']);
+        $this->assertEquals(1, $wikis['wikis'][0]['cancreatepages']);
+
         // Prohibit capability = mod:wiki:viewpage on Course1 for students.
-        assign_capability('mod/wiki:viewpage', CAP_PROHIBIT, $this->studentrole->id, $contextcourse1->id);
+        assign_capability('mod/wiki:viewpage', CAP_PROHIBIT, $this->studentrole->id, $contextcourse1->id, true);
         accesslib_clear_all_caches_for_unit_testing();
+        course_modinfo::clear_instance_cache(null);
 
         $wikis = mod_wiki_external::get_wikis_by_courses(array($this->course->id));
         $wikis = external_api::clean_returnvalue(mod_wiki_external::get_wikis_by_courses_returns(), $wikis);
-        $this->assertFalse(isset($wikis['wikis'][0]['intro']));
+        $this->assertEquals(0, count($wikis['wikis']));
 
         // Prohibit capability = mod:wiki:createpage on Course1 for students.
+        assign_capability('mod/wiki:viewpage', CAP_ALLOW, $this->studentrole->id, $contextcourse1->id, true);
         assign_capability('mod/wiki:createpage', CAP_PROHIBIT, $this->studentrole->id, $contextcourse1->id);
         accesslib_clear_all_caches_for_unit_testing();
+        course_modinfo::clear_instance_cache(null);
 
         $wikis = mod_wiki_external::get_wikis_by_courses(array($this->course->id));
         $wikis = external_api::clean_returnvalue(mod_wiki_external::get_wikis_by_courses_returns(), $wikis);

@@ -19,8 +19,8 @@ Feature: We can change the visibility of courses in the management interface.
     And I click on category "Cat 1" in the management interface
     # Redirect.
     And I should see the "Course categories and courses" management page
-    And I should see "Cat 1" in the "#category-listing ul.ml" "css_element"
-    And I should see "Course 1" in the "#course-listing ul.ml" "css_element"
+    And I should see "Cat 1" in the "#category-listing ul" "css_element"
+    And I should see "Course 1" in the "#course-listing ul.course-list" "css_element"
     And category in management listing should be visible "CAT1"
     And course in management listing should be visible "C1"
     And I toggle visibility of course "C1" in management listing
@@ -68,8 +68,8 @@ Feature: We can change the visibility of courses in the management interface.
     And a new page should have loaded since I started watching
     And I start watching to see if a new page loads
     And I should see the "Course categories and courses" management page
-    And I should see "Cat 1" in the "#category-listing ul.ml" "css_element"
-    And I should see "Course 1" in the "#course-listing ul.ml" "css_element"
+    And I should see "Cat 1" in the "#category-listing ul" "css_element"
+    And I should see "Course 1" in the "#course-listing ul.course-list" "css_element"
     And category in management listing should be visible "CAT1"
     And course in management listing should be visible "C1"
     And I toggle visibility of course "C1" in management listing
@@ -98,7 +98,7 @@ Feature: We can change the visibility of courses in the management interface.
     And I click on "Courses" "link" in the ".view-mode-selector" "css_element"
     And a new page should have loaded since I started watching
     And I start watching to see if a new page loads
-    And I should see "Course 1" in the "#course-listing ul.ml" "css_element"
+    And I should see "Course 1" in the "#course-listing ul.course-list" "css_element"
     And I toggle visibility of course "C1" in management listing
     And a new page should not have loaded since I started watching
     And course in management listing should be dimmed "C1"

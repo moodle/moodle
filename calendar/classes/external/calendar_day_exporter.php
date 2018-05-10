@@ -154,9 +154,11 @@ class calendar_day_exporter extends exporter {
         $return['events'] = array_map(function($event) use ($cache, $output, $url) {
             $context = $cache->get_context($event);
             $course = $cache->get_course($event);
+            $moduleinstance = $cache->get_module_instance($event);
             $exporter = new calendar_event_exporter($event, [
                 'context' => $context,
                 'course' => $course,
+                'moduleinstance' => $moduleinstance,
                 'daylink' => $url,
                 'type' => $this->related['type'],
                 'today' => $this->calendar->time,

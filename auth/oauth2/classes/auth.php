@@ -403,7 +403,20 @@ class auth extends \auth_plugin_base {
         if (!empty($linkedlogin) && empty($linkedlogin->get('confirmtoken'))) {
             $mappeduser = get_complete_user_data('id', $linkedlogin->get('userid'));
 
-            if ($mappeduser && $mappeduser->confirmed) {
+            if ($mappeduser && $mappeduser->suspended) {
+                $failurereason = AUTH_LOGIN_SUSPENDED;
+                $event = \core\event\user_login_failed::create([
+                    'userid' => $mappeduser->id,
+                    'other' => [
+                        'username' => $userinfo['username'],
+                        'reason' => $failurereason
+                    ]
+                ]);
+                $event->trigger();
+                $SESSION->loginerrormsg = get_string('invalidlogin');
+                $client->log_out();
+                redirect(new moodle_url('/login/index.php'));
+            } else if ($mappeduser && $mappeduser->confirmed) {
                 $userinfo = (array) $mappeduser;
                 $userwasmapped = true;
             } else {

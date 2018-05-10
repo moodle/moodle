@@ -37,3 +37,4 @@ $string['cursorinfo'] = 'An arrow indicates the position that new elements from 
 $string['saveequation'] = 'Save equation';
 $string['settings'] = 'Equation editor settings';
 $string['update'] = 'Update';
+$string['privacy:metadata'] = 'The atto_equation plugin does not store any personal data.';

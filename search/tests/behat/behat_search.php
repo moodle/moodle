@@ -96,7 +96,7 @@ class behat_search extends behat_base {
 
             // Find the specified activity.
             $idnumber = $input['idnumber'];
-            $cmid = $DB->get_field('course_modules', 'id', ['idnumber' => $idnumber], '*', IGNORE_MISSING);
+            $cmid = $DB->get_field('course_modules', 'id', ['idnumber' => $idnumber], IGNORE_MISSING);
             if (!$cmid) {
                 throw new Exception('Cannot find activity with idnumber: ' . $idnumber);
             }

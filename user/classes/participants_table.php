@@ -129,6 +129,9 @@ class participants_table extends \table_sql {
      */
     protected $profileroles;
 
+    /** @var \stdClass[] $viewableroles */
+    private $viewableroles;
+
     /**
      * Sets up the table.
      *
@@ -226,7 +229,7 @@ class participants_table extends \table_sql {
         $this->enrolid = $enrolid;
         $this->status = $status;
         $this->selectall = $selectall;
-        $this->countries = get_string_manager()->get_list_of_countries();
+        $this->countries = get_string_manager()->get_list_of_countries(true);
         $this->extrafields = $extrafields;
         $this->context = $context;
         if ($canseegroups) {
@@ -236,6 +239,7 @@ class participants_table extends \table_sql {
         $this->allroleassignments = get_users_roles($this->context, [], true, 'c.contextlevel DESC, r.sortorder ASC');
         $this->assignableroles = get_assignable_roles($this->context, ROLENAME_ALIAS, false);
         $this->profileroles = get_profile_roles($this->context);
+        $this->viewableroles = get_viewable_roles($this->context);
     }
 
     /**
@@ -299,7 +303,8 @@ class participants_table extends \table_sql {
                                                               $this->allroles,
                                                               $this->assignableroles,
                                                               $this->profileroles,
-                                                              $roles);
+                                                              $roles,
+                                                              $this->viewableroles);
 
         return $OUTPUT->render_from_template('core/inplace_editable', $editable->export_for_template($OUTPUT));
     }
@@ -380,8 +385,10 @@ class participants_table extends \table_sql {
                     case ENROL_USER_ACTIVE:
                         $currentdate = new DateTime();
                         $now = $currentdate->getTimestamp();
-                        // If user enrolment status has not yet started/already ended.
-                        if ($timestart > $now || ($timeend > 0 && $timeend < $now)) {
+                        $isexpired = $timestart > $now || ($timeend > 0 && $timeend < $now);
+                        $enrolmentdisabled = $ue->enrolmentinstance->status == ENROL_INSTANCE_DISABLED;
+                        // If user enrolment status has not yet started/already ended or the enrolment instance is disabled.
+                        if ($isexpired || $enrolmentdisabled) {
                             $status = get_string('participationnotcurrent', 'enrol');
                             $statusval = status_field::STATUS_NOT_CURRENT;
                         }

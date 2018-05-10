@@ -298,6 +298,7 @@ class enrol_lti_plugin extends enrol_plugin {
         );
         $mform->addElement('select', 'maildisplay', get_string('emaildisplay'), $choices);
         $mform->setDefault('maildisplay', $emaildisplay);
+        $mform->addHelpButton('maildisplay', 'emaildisplay');
 
         $city = get_config('enrol_lti', 'city');
         $mform->addElement('text', 'city', get_string('city'), 'maxlength="100" size="25"');

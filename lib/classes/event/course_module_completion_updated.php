@@ -81,7 +81,7 @@ class course_module_completion_updated extends base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/report/completion/index.php', array('course' => $this->courseid));
+        return new \moodle_url('/report/progress/index.php', array('course' => $this->courseid));
     }
 
     /**

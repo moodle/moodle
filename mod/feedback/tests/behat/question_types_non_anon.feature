@@ -73,7 +73,7 @@ Feature: Test creating different types of feedback questions for non-anonymous f
     And I log in as "student1"
     And I am on "Course 1" course homepage
     And I follow "Learning experience"
-    And I follow "Answer the questions..."
+    And I follow "Answer the questions"
     And I set the following fields to these values:
       | this is a longer text answer | my long answer |
       | option b                     | 1              |
@@ -88,7 +88,7 @@ Feature: Test creating different types of feedback questions for non-anonymous f
     And I log in as "student2"
     And I am on "Course 1" course homepage
     And I follow "Learning experience"
-    And I follow "Answer the questions..."
+    And I follow "Answer the questions"
     And I set the following fields to these values:
       | this is a longer text answer | lots of feedbacks |
       | option a                     | 1              |

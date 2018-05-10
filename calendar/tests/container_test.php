@@ -108,7 +108,7 @@ class core_calendar_container_testcase extends advanced_testcase {
         }
 
         $this->assertEquals($dbrow->userid, $event->get_user()->get('id'));
-        $this->assertEquals($legacyevent->id, $event->get_repeats()->get_id());
+        $this->assertEquals(null, $event->get_repeats());
         $this->assertEquals($dbrow->modulename, $event->get_course_module()->get('modname'));
         $this->assertEquals($dbrow->instance, $event->get_course_module()->get('instance'));
         $this->assertEquals($dbrow->timestart, $event->get_times()->get_start_time()->getTimestamp());
@@ -533,6 +533,7 @@ class core_calendar_container_testcase extends advanced_testcase {
         $record->timesort = 0;
         $record->type = 1;
         $record->courseid = 0;
+        $record->categoryid = 0;
 
         foreach ($properties as $name => $value) {
             $record->$name = $value;

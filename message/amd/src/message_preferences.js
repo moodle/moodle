@@ -40,6 +40,7 @@ define(['jquery', 'core/ajax', 'core/notification',
      */
     var MessagePreferences = function(element) {
         this.root = $(element);
+        this.userId = this.root.find(SELECTORS.PREFERENCES_CONTAINER).attr('data-user-id');
 
         this.registerEventListeners();
     };
@@ -75,6 +76,7 @@ define(['jquery', 'core/ajax', 'core/notification',
         var request = {
             methodname: 'core_user_update_user_preferences',
             args: {
+                userid: this.userId,
                 preferences: [
                     {
                         type: checkbox.attr('data-preference-key'),
@@ -109,7 +111,7 @@ define(['jquery', 'core/ajax', 'core/notification',
             if (!this.preferencesDisabled()) {
                 var preferencesContainer = $(e.target).closest(SELECTORS.PREFERENCES_CONTAINER);
                 var preferenceElement = $(e.target).closest(SELECTORS.PREFERENCE);
-                var messagePreference = new MessageNotificationPreference(preferencesContainer);
+                var messagePreference = new MessageNotificationPreference(preferencesContainer, this.userId);
 
                 preferenceElement.addClass('loading');
                 messagePreference.save().always(function() {

@@ -270,11 +270,6 @@ class enrol_paypal_plugin extends enrol_plugin {
         $this->enrol_user($instance, $userid, null, $data->timestart, $data->timeend, $data->status);
     }
 
-    public function cron() {
-        $trace = new text_progress_trace();
-        $this->process_expirations($trace);
-    }
-
     /**
      * Return an array of valid options for the status.
      *

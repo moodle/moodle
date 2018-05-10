@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 require_once("$CFG->libdir/externallib.php");
 
 use external_api;
+use external_files;
 use external_function_parameters;
 use external_value;
 use external_single_structure;
@@ -37,6 +38,7 @@ use context_system;
 use moodle_exception;
 use moodle_url;
 use core_text;
+use coding_exception;
 
 /**
  * This is the external API for this tool.
@@ -91,7 +93,9 @@ class external extends external_api {
                             'fileurl' => new external_value(PARAM_URL, 'The addon package url for download
                                                             or empty if it doesn\'t exist.'),
                             'filehash' => new external_value(PARAM_RAW, 'The addon package hash or empty if it doesn\'t exist.'),
-                            'filesize' => new external_value(PARAM_INT, 'The addon package size or empty if it doesn\'t exist.')
+                            'filesize' => new external_value(PARAM_INT, 'The addon package size or empty if it doesn\'t exist.'),
+                            'handlers' => new external_value(PARAM_RAW, 'Handlers definition (JSON)', VALUE_OPTIONAL),
+                            'lang' => new external_value(PARAM_RAW, 'Language strings used by the handlers (JSON)', VALUE_OPTIONAL),
                         )
                     )
                 ),
@@ -161,6 +165,19 @@ class external extends external_api {
                     ),
                     'Identity providers', VALUE_OPTIONAL
                 ),
+                'country' => new external_value(PARAM_NOTAGS, 'Default site country', VALUE_OPTIONAL),
+                'agedigitalconsentverification' => new external_value(PARAM_BOOL, 'Whether age digital consent verification
+                    is enabled.', VALUE_OPTIONAL),
+                'supportname' => new external_value(PARAM_NOTAGS, 'Site support contact name
+                    (only if age verification is enabled).', VALUE_OPTIONAL),
+                'supportemail' => new external_value(PARAM_EMAIL, 'Site support contact email
+                    (only if age verification is enabled).', VALUE_OPTIONAL),
+                'autolang' => new external_value(PARAM_INT, 'Whether to detect default language
+                    from browser setting.', VALUE_OPTIONAL),
+                'lang' => new external_value(PARAM_LANG, 'Default language for the site.', VALUE_OPTIONAL),
+                'langmenu' => new external_value(PARAM_INT, 'Whether the language menu should be displayed.', VALUE_OPTIONAL),
+                'langlist' => new external_value(PARAM_RAW, 'Languages on language menu.', VALUE_OPTIONAL),
+                'locale' => new external_value(PARAM_RAW, 'Sitewide locale.', VALUE_OPTIONAL),
                 'warnings' => new external_warnings(),
             )
         );
@@ -314,6 +331,132 @@ class external extends external_api {
                 'key' => new external_value(PARAM_ALPHANUMEXT, 'Auto-login key for a single usage with time expiration.'),
                 'autologinurl' => new external_value(PARAM_URL, 'Auto-login URL.'),
                 'warnings' => new external_warnings(),
+            )
+        );
+    }
+
+    /**
+     * Returns description of get_content() parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.5
+     */
+    public static function get_content_parameters() {
+        return new external_function_parameters(
+            array(
+                'component' => new external_value(PARAM_COMPONENT, 'Component where the class is e.g. mod_assign.'),
+                'method' => new external_value(PARAM_ALPHANUMEXT, 'Method to execute in class \$component\output\mobile.'),
+                'args' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_ALPHANUMEXT, 'Param name.'),
+                            'value' => new external_value(PARAM_RAW, 'Param value.')
+                        )
+                    ), 'Args for the method are optional.', VALUE_OPTIONAL
+                )
+            )
+        );
+    }
+
+    /**
+     * Returns a piece of content to be displayed in the Mobile app, it usually returns a template, javascript and
+     * other structured data that will be used to render a view in the Mobile app..
+     *
+     * Callbacks (placed in \$component\output\mobile) that are called by this web service are responsible for doing the
+     * appropriate security checks to access the information to be returned.
+     *
+     * @param string $component fame of the component.
+     * @param string $method function method name in class \$component\output\mobile.
+     * @param array $args optional arguments for the method.
+     * @return array HTML, JavaScript and other required data and information to create a view in the app.
+     * @since Moodle 3.5
+     * @throws coding_exception
+     */
+    public static function get_content($component, $method, $args = array()) {
+        global $OUTPUT, $PAGE, $USER;
+
+        $params = self::validate_parameters(self::get_content_parameters(),
+            array(
+                'component' => $component,
+                'method' => $method,
+                'args' => $args
+            )
+        );
+
+        // Reformat arguments into something less unwieldy.
+        $arguments = array();
+        foreach ($params['args'] as $paramargument) {
+            $arguments[$paramargument['name']] = $paramargument['value'];
+        }
+
+        // The component was validated via the PARAM_COMPONENT parameter type.
+        $classname = '\\' . $params['component'] .'\output\mobile';
+        if (!method_exists($classname, $params['method'])) {
+            throw new coding_exception("Missing method in $classname");
+        }
+        $result = call_user_func_array(array($classname, $params['method']), array($arguments));
+
+        // Populate otherdata.
+        $otherdata = array();
+        if (!empty($result['otherdata'])) {
+            $result['otherdata'] = (array) $result['otherdata'];
+            foreach ($result['otherdata'] as $name => $value) {
+                $otherdata[] = array(
+                    'name' => $name,
+                    'value' => $value
+                );
+            }
+        }
+
+        return array(
+            'templates'  => !empty($result['templates']) ? $result['templates'] : array(),
+            'javascript' => !empty($result['javascript']) ? $result['javascript'] : '',
+            'otherdata'  => $otherdata,
+            'files'      => !empty($result['files']) ? $result['files'] : array(),
+            'restrict'   => !empty($result['restrict']) ? $result['restrict'] : array(),
+        );
+    }
+
+    /**
+     * Returns description of get_content() result value
+     *
+     * @return array
+     * @since Moodle 3.5
+     */
+    public static function get_content_returns() {
+        return new external_single_structure(
+            array(
+                'templates' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_TEXT, 'ID of the template.'),
+                            'html' => new external_value(PARAM_RAW, 'HTML code.'),
+                        )
+                    ),
+                    'Templates required by the generated content.'
+                ),
+                'javascript' => new external_value(PARAM_RAW, 'JavaScript code.'),
+                'otherdata' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'Field name.'),
+                            'value' => new external_value(PARAM_RAW, 'Field value.')
+                        )
+                    ),
+                    'Other data that can be used or manipulated by the template via 2-way data-binding.'
+                ),
+                'files' => new external_files('Files in the content.'),
+                'restrict' => new external_single_structure(
+                    array(
+                        'users' => new external_multiple_structure(
+                            new external_value(PARAM_INT, 'user id'), 'List of allowed users.', VALUE_OPTIONAL
+                        ),
+                        'courses' => new external_multiple_structure(
+                            new external_value(PARAM_INT, 'course id'), 'List of allowed courses.', VALUE_OPTIONAL
+                        ),
+                    ),
+                    'Restrict this content to certain users or courses.'
+                )
             )
         );
     }

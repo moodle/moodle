@@ -242,7 +242,7 @@ class qtype_gapselect_test extends question_testcase {
     public function test_xml_export() {
         $qdata = new stdClass();
         $qdata->id = 123;
-        $qdata->contextid = 0;
+        $qdata->contextid = \context_system::instance()->id;
         $qdata->qtype = 'gapselect';
         $qdata->name = 'A select missing words question';
         $qdata->questiontext = 'Put these in order: [[1]], [[2]], [[3]].';

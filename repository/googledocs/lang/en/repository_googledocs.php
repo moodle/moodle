@@ -43,6 +43,9 @@ $string['defaultreturntype'] = 'Default return type';
 $string['fileoptions'] = 'The types and defaults for returned files is configurable here. Note that all files linked externally will be updated so that the owner is the Moodle system account.';
 $string['owner'] = 'Owned by: {$a}';
 $string['cachedef_folder'] = 'Google file IDs for folders in the system account';
+$string['privacy:metadata:repository_googledocs'] = 'The Google Drive repository plugin does not store any personal data, but does transmit user data from Moodle to the remote system.';
+$string['privacy:metadata:repository_googledocs:email'] = 'The email of the Google Drive repository user.';
+$string['privacy:metadata:repository_googledocs:searchtext'] = 'The Google Drive repository user search text query.';
 
 // Deprecated since Moodle 3.3.
 $string['oauthinfo'] = '<p>To use this plugin, you must register your site with Google, as described in the documentation <a href="{$a->docsurl}">Google OAuth 2.0 setup</a>.</p><p>As part of the registration process, you will need to enter the following URL as \'Authorized Redirect URIs\':</p><p>{$a->callbackurl}</p><p>Once registered, you will be provided with a client ID and secret which can be used to configure certain other Google Drive and Picasa plugins.</p><p>Please also note that you will have to enable the service \'Drive API\'.</p>';

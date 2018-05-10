@@ -222,8 +222,10 @@ class core_user_externallib_testcase extends externallib_advanced_testcase {
             'descriptionformat' => FORMAT_MOODLE,
             'city' => 'Perth',
             'url' => 'http://moodle.org',
-            'country' => 'AU'
-            );
+            'country' => 'AU',
+            'lang' => 'kkl',
+            'theme' => 'kkt',
+        );
         $user1 = self::getDataGenerator()->create_user($user1);
         if (!empty($CFG->usetags)) {
             require_once($CFG->dirroot . '/user/editlib.php');
@@ -327,6 +329,11 @@ class core_user_externallib_testcase extends externallib_advanced_testcase {
                 }
                 if (!empty($CFG->usetags) and !empty($generateduser->interests)) {
                     $this->assertEquals(implode(', ', $generateduser->interests), $returneduser['interests']);
+                }
+                // Check empty since incorrect values were used when creating the user.
+                if ($returneduser['id'] == $user1->id) {
+                    $this->assertEmpty($returneduser['lang']);
+                    $this->assertEmpty($returneduser['theme']);
                 }
             }
         }

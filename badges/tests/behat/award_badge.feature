@@ -5,6 +5,71 @@ Feature: Award badges
   I need to add criteria to badges in the system
 
   @javascript
+  Scenario: Award badge on other badges as criteria
+    Given the following "users" exist:
+      | username | firstname | lastname | email |
+      | teacher1 | Teacher | 1 | teacher1@example.com |
+      | student1 | Student | 1 | student1@example.com |
+    And the following "courses" exist:
+      | fullname | shortname | category | groupmode |
+      | Course 1 | C1 | 0 | 1 |
+    And the following "course enrolments" exist:
+      | user | course | role |
+      | teacher1 | C1 | editingteacher |
+      | student1 | C1 | student |
+    And I log in as "teacher1"
+    And I am on "Course 1" course homepage
+    # Create course badge 1.
+    And I navigate to "Add a new badge" node in "Course administration > Badges"
+    And I follow "Add a new badge"
+    And I set the following fields to these values:
+      | Name | Course Badge 1 |
+      | Description | Course badge 1 description |
+      | issuername | Tester of course badge |
+    And I upload "badges/tests/behat/badge.png" file to "Image" filemanager
+    And I press "Create badge"
+    And I set the field "type" to "Manual issue by role"
+    And I expand all fieldsets
+    # Set to ANY of the roles awards badge.
+    And I set the field "Teacher" to "1"
+    And I set the field "Any of the selected roles awards the badge" to "1"
+    And I press "Save"
+    And I press "Enable access"
+    And I press "Continue"
+    # Badge #2
+    And I navigate to "Add a new badge" node in "Course administration > Badges"
+    And I follow "Add a new badge"
+    And I set the following fields to these values:
+      | Name | Course Badge 2 |
+      | Description | Course badge 2 description |
+      | issuername | Tester of course badge |
+    And I upload "badges/tests/behat/badge.png" file to "Image" filemanager
+    And I press "Create badge"
+    # Set "course badge 1" as criteria
+    And I set the field "type" to "Awarded badges"
+    And I set the field "id_badge_badges" to "Course Badge 1"
+    And I press "Save"
+    And I press "Enable access"
+    And I press "Continue"
+    And I follow "Manage badges"
+    And I follow "Course Badge 1"
+    And I follow "Recipients (0)"
+    And I press "Award badge"
+    # Award course badge 1 to student 1.
+    And I set the field "potentialrecipients[]" to "Student 1 (student1@example.com)"
+    When I press "Award badge"
+    And I follow "Course Badge 1"
+    And I follow "Recipients (1)"
+    Then I should see "Recipients (1)"
+    And I log out
+    # Student 1 should have both badges.
+    And I log in as "student1"
+    And I follow "Profile" in the user menu
+    When I click on "Course 1" "link" in the "region-main" "region"
+    Then I should see "Course Badge 1"
+    And I should see "Course Badge 2"
+
+  @javascript
   Scenario: Award profile badge
     Given I log in as "admin"
     And I navigate to "Add a new badge" node in "Site administration > Badges"

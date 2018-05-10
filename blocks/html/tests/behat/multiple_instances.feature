@@ -29,12 +29,12 @@ Feature: Adding and configuring multiple HTML blocks
 
   Scenario: Adding multiple instances of HTML block on a page
     And I configure the "block_html" block
-    And I set the field "Block title" to "The HTML block header"
+    And I set the field "HTML block title" to "The HTML block header"
     And I set the field "Content" to "Static text with a header"
     And I press "Save changes"
     And I add the "HTML" block
     And I configure the "(new HTML block)" block
-    And I set the field "Block title" to "The second HTML block header"
+    And I set the field "HTML block title" to "The second HTML block header"
     And I set the field "Content" to "Second block contents"
     And I press "Save changes"
     And I log out

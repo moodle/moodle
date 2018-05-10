@@ -38,7 +38,6 @@ require_once($CFG->libdir.'/formslib.php');
 class question_category_edit_form extends moodleform {
 
     protected function definition() {
-        global $CFG, $DB;
         $mform    = $this->_form;
 
         $contexts   = $this->_customdata['contexts'];
@@ -46,10 +45,10 @@ class question_category_edit_form extends moodleform {
 
         $mform->addElement('header', 'categoryheader', get_string('addcategory', 'question'));
 
-        $questioncategoryel = $mform->addElement('questioncategory', 'parent', get_string('parentcategory', 'question'),
-                    array('contexts'=>$contexts, 'top'=>true, 'currentcat'=>$currentcat, 'nochildrenof'=>$currentcat));
+        $mform->addElement('questioncategory', 'parent', get_string('parentcategory', 'question'),
+                array('contexts' => $contexts, 'top' => true, 'currentcat' => $currentcat, 'nochildrenof' => $currentcat));
         $mform->setType('parent', PARAM_SEQUENCE);
-        if (question_is_only_toplevel_category_in_context($currentcat)) {
+        if (question_is_only_child_of_top_category_in_context($currentcat)) {
             $mform->hardFreeze('parent');
         }
         $mform->addHelpButton('parent', 'parentcategory', 'question');

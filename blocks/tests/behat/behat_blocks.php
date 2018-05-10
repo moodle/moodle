@@ -108,7 +108,7 @@ class behat_blocks extends behat_base {
         }
 
         $this->execute('behat_general::i_click_on_in_the',
-            array("a[role='menuitem']", "css_element", $this->escape($blockname), "block")
+            array(get_string('actions'), "link", $this->escape($blockname), "block")
         );
     }
 

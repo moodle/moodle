@@ -249,8 +249,6 @@ class core_completion_external extends external_api {
 
         $completion = new completion_info($course);
         $activities = $completion->get_activities();
-        $progresses = $completion->get_progress_all();
-        $userprogress = $progresses[$user->id];
 
         $results = array();
         foreach ($activities as $activity) {
@@ -260,23 +258,17 @@ class core_completion_external extends external_api {
                 continue;
             }
 
-            // Get progress information and state.
-            if (array_key_exists($activity->id, $userprogress->progress)) {
-                $thisprogress  = $userprogress->progress[$activity->id];
-                $state         = $thisprogress->completionstate;
-                $timecompleted = $thisprogress->timemodified;
-            } else {
-                $state = COMPLETION_INCOMPLETE;
-                $timecompleted = 0;
-            }
+            // Get progress information and state (we must use get_data because it works for all user roles in course).
+            $activitycompletiondata = $completion->get_data($activity, true, $user->id);
 
             $results[] = array(
                        'cmid'          => $activity->id,
                        'modname'       => $activity->modname,
                        'instance'      => $activity->instance,
-                       'state'         => $state,
-                       'timecompleted' => $timecompleted,
-                       'tracking'      => $activity->completion
+                       'state'         => $activitycompletiondata->completionstate,
+                       'timecompleted' => $activitycompletiondata->timemodified,
+                       'tracking'      => $activity->completion,
+                       'overrideby'    => $activitycompletiondata->overrideby
             );
         }
 
@@ -308,6 +300,8 @@ class core_completion_external extends external_api {
                             'timecompleted' => new external_value(PARAM_INT, 'timestamp for completed activity'),
                             'tracking'      => new external_value(PARAM_INT, 'type of tracking:
                                                                     0 means none, 1 manual, 2 automatic'),
+                            'overrideby' => new external_value(PARAM_INT, 'The user id who has overriden the status, or null',
+                                VALUE_OPTIONAL),
                         ), 'Activity'
                     ), 'List of activities status'
                 ),

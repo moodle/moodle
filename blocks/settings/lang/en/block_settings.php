@@ -28,3 +28,4 @@ $string['enabledock'] = 'Allow the user to dock this block';
 $string['pluginname'] = 'Administration';
 $string['settings:addinstance'] = 'Add a new administration block';
 $string['settings:myaddinstance'] = 'Add a new administration block to Dashboard';
+$string['privacy:metadata'] = 'The Administration block only shows data stored in other locations.';

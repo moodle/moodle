@@ -1918,13 +1918,12 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
     }
 
     // actual replacement of the tags
-    $newtext = preg_replace($patterns, $replacement, $data->asearchtemplate);
 
     $options = new stdClass();
     $options->para=false;
     $options->noclean=true;
     echo '<tr><td>';
-    echo format_text($newtext, FORMAT_HTML, $options);
+    echo preg_replace($patterns, $replacement, format_text($data->asearchtemplate, FORMAT_HTML, $options));
     echo '</td></tr>';
 
     echo '<tr><td colspan="4"><br/>' .
@@ -4553,4 +4552,118 @@ function mod_data_get_completion_active_rule_descriptions($cm) {
         }
     }
     return $descriptions;
+}
+
+/**
+ * This function calculates the minimum and maximum cutoff values for the timestart of
+ * the given event.
+ *
+ * It will return an array with two values, the first being the minimum cutoff value and
+ * the second being the maximum cutoff value. Either or both values can be null, which
+ * indicates there is no minimum or maximum, respectively.
+ *
+ * If a cutoff is required then the function must return an array containing the cutoff
+ * timestamp and error string to display to the user if the cutoff value is violated.
+ *
+ * A minimum and maximum cutoff return value will look like:
+ * [
+ *     [1505704373, 'The due date must be after the sbumission start date'],
+ *     [1506741172, 'The due date must be before the cutoff date']
+ * ]
+ *
+ * @param calendar_event $event The calendar event to get the time range for
+ * @param stdClass $instance The module instance to get the range from
+ * @return array
+ */
+function mod_data_core_calendar_get_valid_event_timestart_range(\calendar_event $event, \stdClass $instance) {
+    $mindate = null;
+    $maxdate = null;
+
+    if ($event->eventtype == DATA_EVENT_TYPE_OPEN) {
+        // The start time of the open event can't be equal to or after the
+        // close time of the database activity.
+        if (!empty($instance->timeavailableto)) {
+            $maxdate = [
+                $instance->timeavailableto,
+                get_string('openafterclose', 'data')
+            ];
+        }
+    } else if ($event->eventtype == DATA_EVENT_TYPE_CLOSE) {
+        // The start time of the close event can't be equal to or earlier than the
+        // open time of the database activity.
+        if (!empty($instance->timeavailablefrom)) {
+            $mindate = [
+                $instance->timeavailablefrom,
+                get_string('closebeforeopen', 'data')
+            ];
+        }
+    }
+
+    return [$mindate, $maxdate];
+}
+
+/**
+ * This function will update the data module according to the
+ * event that has been modified.
+ *
+ * It will set the timeopen or timeclose value of the data instance
+ * according to the type of event provided.
+ *
+ * @throws \moodle_exception
+ * @param \calendar_event $event
+ * @param stdClass $data The module instance to get the range from
+ */
+function mod_data_core_calendar_event_timestart_updated(\calendar_event $event, \stdClass $data) {
+    global $DB;
+
+    if (empty($event->instance) || $event->modulename != 'data') {
+        return;
+    }
+
+    if ($event->instance != $data->id) {
+        return;
+    }
+
+    if (!in_array($event->eventtype, [DATA_EVENT_TYPE_OPEN, DATA_EVENT_TYPE_CLOSE])) {
+        return;
+    }
+
+    $courseid = $event->courseid;
+    $modulename = $event->modulename;
+    $instanceid = $event->instance;
+    $modified = false;
+
+    $coursemodule = get_fast_modinfo($courseid)->instances[$modulename][$instanceid];
+    $context = context_module::instance($coursemodule->id);
+
+    // The user does not have the capability to modify this activity.
+    if (!has_capability('moodle/course:manageactivities', $context)) {
+        return;
+    }
+
+    if ($event->eventtype == DATA_EVENT_TYPE_OPEN) {
+        // If the event is for the data activity opening then we should
+        // set the start time of the data activity to be the new start
+        // time of the event.
+        if ($data->timeavailablefrom != $event->timestart) {
+            $data->timeavailablefrom = $event->timestart;
+            $data->timemodified = time();
+            $modified = true;
+        }
+    } else if ($event->eventtype == DATA_EVENT_TYPE_CLOSE) {
+        // If the event is for the data activity closing then we should
+        // set the end time of the data activity to be the new start
+        // time of the event.
+        if ($data->timeavailableto != $event->timestart) {
+            $data->timeavailableto = $event->timestart;
+            $modified = true;
+        }
+    }
+
+    if ($modified) {
+        $data->timemodified = time();
+        $DB->update_record('data', $data);
+        $event = \core\event\course_module_updated::create_from_cm($coursemodule, $context);
+        $event->trigger();
+    }
 }

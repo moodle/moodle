@@ -65,6 +65,7 @@ class award_criteria_manual extends award_criteria {
         $none = true;
 
         $roles = get_roles_with_capability('moodle/badges:awardbadge', CAP_ALLOW, $PAGE->context);
+        $visibleroles = get_viewable_roles($PAGE->context);
         $roleids = array_map(function($o) {
             return $o->id;
         }, $roles);
@@ -89,6 +90,9 @@ class award_criteria_manual extends award_criteria {
             $mform->addElement('header', 'first_header', $this->get_title());
             $mform->addHelpButton('first_header', 'criteria_' . $this->criteriatype, 'badges');
             foreach ($roleids as $rid) {
+                if (!key_exists($rid, $visibleroles)) {
+                    continue;
+                }
                 $checked = false;
                 if (in_array($rid, $existing)) {
                     $checked = true;

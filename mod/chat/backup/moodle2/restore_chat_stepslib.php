@@ -70,6 +70,7 @@ class restore_chat_activity_structure_step extends restore_activity_structure_st
         $data->userid = $this->get_mappingid('user', $data->userid);
         $data->groupid = $this->get_mappingid('group', $data->groupid);
         $data->message = $data->message_text;
+        $data->issystem = $data->system;
 
         $newitemid = $DB->insert_record('chat_messages', $data);
         $this->set_mapping('chat_message', $oldid, $newitemid); // Because of decode.

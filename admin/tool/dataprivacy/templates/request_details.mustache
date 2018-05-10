@@ -1,0 +1,85 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more comments.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template tool_dataprivacy/request_details
+
+    Data request details
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * foruser Object The context data provided by core_user/external/user_summary_exporter.
+    * reviewurl String The URL for the Review request link.
+    * timecreated Number The timestamp when the request was created.
+    * statuslabel String The text equivalent of the status.
+    * statuslabelclass String The class to be used for rendering the status text.
+    * messagehtml String The HTML version of the request message.
+
+    Example context (json):
+    {
+        "foruser" : {
+            "fullname": "Martha Smith",
+            "email": "martha@example.com",
+            "profileurl": "#",
+            "profileimageurl": "https://randomuser.me/api/portraits/women/60.jpg"
+        },
+        "canreview": true,
+        "reviewurl": "#",
+        "timecreated": 1517561224,
+        "statuslabel": "Pending",
+        "statuslabelclass": "label-default",
+        "messagehtml": "<p>Hello,</p><p>I would like to download all of my personal data.</p><p>Thanks!</p>"
+    }
+}}
+<div class="container"  data-requestid="{{id}}">
+    <div class="media">
+        <div class="media-left">
+            <img class="userpicture" src="{{foruser.profileimageurl}}"
+                 alt="{{#str}}pictureof, moodle, {{foruser.fullname}}{{/str}}"
+                 title="{{#str}}pictureof, moodle, {{foruser.fullname}}{{/str}}" />
+        </div>
+        <div class="media-body">
+            <h4 class="m-t-0 m-b-1">
+                <a href="{{foruser.profileurl}}" title="{{#str}}viewprofile{{/str}}">{{foruser.fullname}}</a>
+            </h4>
+            <a href="mailto:{{foruser.email}}">{{foruser.email}}</a>
+            <div class="clearfix m-t-1 m-b-1">
+            <span class="pull-left m-r-1">
+                <strong>{{#str}}daterequesteddetail, tool_dataprivacy{{/str}}</strong> {{#userdate}} {{timecreated}}, {{#str}} strftimedate {{/str}} {{/userdate}}
+            </span>
+                <span class="pull-left m-r-1">
+                <strong>{{#str}}statusdetail, tool_dataprivacy{{/str}}</strong>
+                <span class="label {{statuslabelclass}}">{{statuslabel}}</span>
+            </span>
+            </div>
+            {{#canreview}}
+                <!--a href="{{reviewurl}}" class="btn btn-default">{{#str}}reviewdata, tool_dataprivacy{{/str}}</a-->
+            {{/canreview}}
+        </div>
+    </div>
+    <hr>
+    <div class="m-b-1">
+        <strong>{{#str}}messagelabel, tool_dataprivacy{{/str}}</strong>
+    </div>
+    <div>
+        {{{messagehtml}}}
+    </div>
+</div>

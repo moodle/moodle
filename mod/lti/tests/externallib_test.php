@@ -369,7 +369,7 @@ class mod_lti_external_testcase extends externallib_advanced_testcase {
         $type = mod_lti_external::create_tool_type($this->getExternalTestFileUrl('/ims_cartridge_basic_lti_link.xml'), '', '');
         $this->assertEquals('Example tool', $type['name']);
         $this->assertEquals('Example tool description', $type['description']);
-        $this->assertEquals($this->getExternalTestFileUrl('/test.jpg', true), $type['urls']['icon']);
+        $this->assertEquals('https://download.moodle.org/unittest/test.jpg', $type['urls']['icon']);
         $typeentry = lti_get_type($type['id']);
         $this->assertEquals('http://www.example.com/lti/provider.php', $typeentry->baseurl);
         $config = lti_get_type_config($type['id']);

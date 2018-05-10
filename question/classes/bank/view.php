@@ -124,10 +124,9 @@ class view {
 
         if (empty($CFG->questionbankcolumns)) {
             $questionbankcolumns = array('checkbox_column', 'question_type_column',
-                                     'question_name_column', 'edit_action_column', 'copy_action_column',
-                                     'preview_action_column', 'delete_action_column',
-                                     'creator_name_column',
-                                     'modifier_name_column');
+                                     'question_name_column', 'tags_action_column', 'edit_action_column',
+                                     'copy_action_column', 'preview_action_column', 'delete_action_column',
+                                     'creator_name_column', 'modifier_name_column');
         } else {
              $questionbankcolumns = explode(',', $CFG->questionbankcolumns);
         }
@@ -408,6 +407,7 @@ class view {
         $questions = $DB->get_recordset_sql($this->loadsql, $this->sqlparams, $page * $perpage, $perpage);
         if (!$questions->valid()) {
             // No questions on this page. Reset to page 0.
+            $questions->close();
             $questions = $DB->get_recordset_sql($this->loadsql, $this->sqlparams, 0, $perpage);
         }
         return $questions;
@@ -461,25 +461,31 @@ class view {
      * displayoptions Sets display options
      */
     public function display($tabname, $page, $perpage, $cat,
-            $recurse, $showhidden, $showquestiontext) {
-        global $PAGE, $OUTPUT;
+            $recurse, $showhidden, $showquestiontext, $tagids = []) {
+        global $PAGE;
 
         if ($this->process_actions_needing_ui()) {
             return;
         }
         $editcontexts = $this->contexts->having_one_edit_tab_cap($tabname);
+        list($categoryid, $contextid) = explode(',', $cat);
+        $catcontext = \context::instance_by_id($contextid);
+        $thiscontext = $this->get_most_specific_context();
         // Category selection form.
-        echo $OUTPUT->heading(get_string('questionbank', 'question'), 2);
+        $this->display_question_bank_header();
+        array_unshift($this->searchconditions, new \core_question\bank\search\tag_condition([$catcontext, $thiscontext], $tagids));
         array_unshift($this->searchconditions, new \core_question\bank\search\hidden_condition(!$showhidden));
         array_unshift($this->searchconditions, new \core_question\bank\search\category_condition(
                 $cat, $recurse, $editcontexts, $this->baseurl, $this->course));
         $this->display_options_form($showquestiontext);
 
         // Continues with list of questions.
-        $this->display_question_list($this->contexts->having_one_edit_tab_cap($tabname),
+        $this->display_question_list($editcontexts,
                 $this->baseurl, $cat, $this->cm,
                 null, $page, $perpage, $showhidden, $showquestiontext,
                 $this->contexts->having_cap('moodle/question:add'));
+
+        $PAGE->requires->js_call_amd('core_question/edit_tags', 'init', ['#questionscontainer']);
     }
 
     protected function print_choose_category_message($categoryandcontext) {
@@ -592,7 +598,19 @@ class view {
         echo \html_writer::start_tag('form', array('method' => 'get',
                 'action' => new \moodle_url($scriptpath), 'id' => 'displayoptions'));
         echo \html_writer::start_div();
-        echo \html_writer::input_hidden_params($this->baseurl, array('recurse', 'showhidden', 'qbshowtext'));
+
+        $excludes = array('recurse', 'showhidden', 'qbshowtext');
+        // If the URL contains any tags then we need to prevent them
+        // being added to the form as hidden elements because the tags
+        // are managed separately.
+        if ($this->baseurl->param('qtagids[0]')) {
+            $index = 0;
+            while ($this->baseurl->param("qtagids[{$index}]")) {
+                $excludes[] = "qtagids[{$index}]";
+                $index++;
+            }
+        }
+        echo \html_writer::input_hidden_params($this->baseurl, $excludes);
 
         foreach ($this->searchconditions as $searchcondition) {
             echo $searchcondition->display_options($this);
@@ -631,6 +649,14 @@ class view {
         echo \html_writer::checkbox('qbshowtext', '1', $showquestiontext, get_string('showquestiontext', 'question'),
                                        array('id' => 'qbshowtext_on', 'class' => 'searchoptions'));
         echo "</div>\n";
+    }
+
+    /**
+     * Display the header element for the question bank.
+     */
+    protected function display_question_bank_header() {
+        global $OUTPUT;
+        echo $OUTPUT->heading(get_string('questionbank', 'question'), 2);
     }
 
     protected function create_new_question_form($category, $canadd) {
@@ -701,13 +727,14 @@ class view {
         echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
         echo \html_writer::input_hidden_params($this->baseurl);
 
-        echo '<div class="categoryquestionscontainer">';
+        echo '<div class="categoryquestionscontainer" id="questionscontainer">';
         $this->start_table();
         $rowcount = 0;
         foreach ($questions as $question) {
             $this->print_table_row($question, $rowcount);
             $rowcount += 1;
         }
+        $questions->close();
         $this->end_table();
         echo "</div>\n";
 
@@ -902,7 +929,7 @@ class view {
                 if (preg_match('!^q([0-9]+)$!', $key, $matches)) {
                     $key = $matches[1];
                     $questionlist .= $key.',';
-                    question_require_capability_on($key, 'edit');
+                    question_require_capability_on((int)$key, 'edit');
                     if (questions_in_use(array($key))) {
                         $questionnames .= '* ';
                         $inuse = true;

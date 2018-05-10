@@ -80,7 +80,7 @@ function transformForm(event) {
             decimalsField.value = '';
             break;
         case '2':  // XMLDB_TYPE_NUMBER
-            lengthTip.innerHTML = ' 1...20'; // Hardcoded xmldb_field::NUMBER_MAX_LENGTH, yes!
+            lengthTip.innerHTML = ' 1...38'; // Hardcoded xmldb_field::NUMBER_MAX_LENGTH, yes!
             lengthField.disabled = false;
             decimalsTip.innerHTML = ' 0...length or empty';
             break;

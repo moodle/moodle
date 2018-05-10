@@ -1,0 +1,105 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more comments.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template tool_dataprivacy/component_status
+
+    Data registry main page.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * none
+
+    Example context (json):
+    {
+        "compliant" : "True",
+        "raw_component" : "core_comment",
+        "component" : "Core comment",
+        "external" : "True",
+        "metadata" : {
+            "name" : "comments",
+            "type" : "database_table",
+            "summary" : "Stores comments of users",
+            "fields" : {
+                "field_name" : "content",
+                "field_summary" : "Stores the text of the content."
+            }
+        }
+    }
+}}
+
+<div classs="container-fluid">
+    <hr />
+    <div class="row">
+        {{#compliant}}
+            <a class="component-expand p-l-2" data-component="{{raw_component}}" href='#'>
+            <h4 class=" d-inline p-l-2 " id="{{raw_component}}">{{#pix}}t/collapsed, moodle, {{#str}}expandplugin, tool_dataprivacy{{/str}}{{/pix}}{{component}}</h4>
+            </a>
+        {{/compliant}}
+        {{^compliant}}
+            <h4 class="d-inline p-l-3 " id="{{raw_component}}">{{component}}</h4>
+            <span>{{#pix}}i/risk_xss, moodle, {{#str}}requiresattention, tool_dataprivacy{{/str}}{{/pix}}</span>
+        {{/compliant}}
+        {{#external}}
+            <span class="badge badge-pill badge-notice">{{#str}}external, tool_dataprivacy{{/str}}</span>
+        {{/external}}
+    </div>
+
+    {{#compliant}}
+        <div class="hide" data-section="{{raw_component}}" aria-expanded="false">
+            {{#metadata}}
+                <hr />
+                <div class="p-l-3">
+                    <dl class="row">
+                        <dt class="span3 col-xs-3">
+                            {{#link}}
+                                <a href="#{{name}}"><h5 style="word-wrap:break-word">{{name}}</h5></a>
+                            {{/link}}
+                            {{^link}}
+                                <h5 style="word-wrap:break-word">{{name}}</h5>
+                            {{/link}}
+                            <div class="small text-muted" style="word-wrap:break-word">{{type}}</div>
+                        </dt>
+                        <dd class="span9 col-xs-9">{{summary}}</dd>
+                    </dl>
+                    <dl>
+                        {{#fields}}
+                        <div class="row">
+                            <dt class="span3 col-xs-3 font-weight-normal" style="word-wrap:break-word">{{field_name}}</dt>
+                            <dd class="span9 col-xs-9">{{field_summary}}</dd>
+                        </div>
+                        {{/fields}}
+                    </dl>
+                </div>
+            {{/metadata}}
+            {{#nullprovider}}
+                <hr />
+                <div class="p-l-3">
+                    <div class="row">
+                        <div class="span12 col-xs-12">
+                            {{nullprovider}}
+                        </div>
+                    </div>
+                </div>
+            {{/nullprovider}}
+        </div>
+    {{/compliant}}
+</div>

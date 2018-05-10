@@ -211,9 +211,9 @@ class course_bin extends base_bin {
         // Get the backup file.
         $file = reset($files);
 
-        // Get a temp directory name and create it.
+        // Get a backup temp directory name and create it.
         $tempdir = \restore_controller::get_tempdir_name($context->id, $user->id);
-        $fulltempdir = make_temp_directory('/backup/' . $tempdir);
+        $fulltempdir = make_backup_temp_directory($tempdir);
 
         // Extract the backup to tempdir.
         $fb = get_file_packer('application/vnd.moodle.backup');

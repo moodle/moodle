@@ -279,8 +279,10 @@ class feedback_item_multichoicerated extends feedback_item_base {
         $options = array();
         foreach ($lines as $idx => $line) {
             list($weight, $optiontext) = explode(FEEDBACK_MULTICHOICERATED_VALUE_SEP, $line);
-            $options[$idx + 1] = format_text("<span class=\"weight\">($weight) </span>".$optiontext,
-                    FORMAT_HTML, array('noclean' => true, 'para' => false));
+            $a = new stdclass();
+            $a->weight = $weight;
+            $a->name = format_text($optiontext, FORMAT_HTML, array('noclean' => true, 'para' => false));
+            $options[$idx + 1] = get_string('multichoiceoption', 'feedback', $a);
         }
         if ($info->subtype === 'r' && !$this->hidenoselect($item)) {
             $options = array(0 => get_string('not_selected', 'feedback')) + $options;

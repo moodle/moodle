@@ -42,7 +42,7 @@ abstract class engine {
     /**
      * The search engine configuration.
      *
-     * @var stdClass
+     * @var \stdClass
      */
     protected $config = null;
 
@@ -65,7 +65,7 @@ abstract class engine {
     /**
      * User data required to show their fullnames. Indexed by userid.
      *
-     * @var stdClass[]
+     * @var \stdClass[]
      */
     protected static $cachedusers = array();
 
@@ -73,6 +73,11 @@ abstract class engine {
      * @var string Frankenstyle plugin name.
      */
     protected $pluginname = null;
+
+    /**
+     * @var bool If true, should skip schema validity check when checking the search engine is ready
+     */
+    protected $skipschemacheck = false;
 
     /**
      * Initialises the search engine configuration.
@@ -132,6 +137,15 @@ abstract class engine {
             self::$cachedusers[$userid] = $DB->get_record('user', array('id' => $userid), 'id, ' . $fields);
         }
         return self::$cachedusers[$userid];
+    }
+
+    /**
+     * Clears the users cache.
+     *
+     * @return null
+     */
+    public static function clear_users_cache() {
+        self::$cachedusers = [];
     }
 
     /**
@@ -215,6 +229,7 @@ abstract class engine {
         $lastindexeddoc = 0;
         $firstindexeddoc = 0;
         $partial = false;
+        $lastprogress = manager::get_current_time();
 
         foreach ($iterator as $document) {
             // Stop if we have exceeded the time limit (and there are still more items). Always
@@ -250,6 +265,17 @@ abstract class engine {
                 $firstindexeddoc = $lastindexeddoc;
             }
             $numrecords++;
+
+            // If indexing the area takes a long time, periodically output progress information.
+            if (isset($options['progress'])) {
+                $now = manager::get_current_time();
+                if ($now - $lastprogress >= manager::DISPLAY_INDEXING_PROGRESS_EVERY) {
+                    $lastprogress = $now;
+                    // The first date format is the same used in cron_trace_time_and_memory().
+                    $options['progress']->output(date('H:i:s', $now) . ': Done to ' . userdate(
+                            $lastindexeddoc, get_string('strftimedatetimeshort', 'langconfig')), 1);
+                }
+            }
         }
 
         return array($numrecords, $numdocs, $numdocsignored, $lastindexeddoc, $partial);
@@ -405,9 +431,37 @@ abstract class engine {
      *
      * This should also check that the search engine configuration is ok.
      *
+     * If the function $this->should_skip_schema_check() returns true, then this function may leave
+     * out time-consuming checks that the schema is valid. (This allows for improved performance on
+     * critical pages such as the main search form.)
+     *
      * @return true|string Returns true if all good or an error string.
      */
     abstract function is_server_ready();
+
+    /**
+     * Tells the search engine to skip any time-consuming checks that it might do as part of the
+     * is_server_ready function, and only carry out a basic check that it can contact the server.
+     *
+     * This setting is not remembered and applies only to the current request.
+     *
+     * @since Moodle 3.5
+     * @param bool $skip True to skip the checks, false to start checking again
+     */
+    public function skip_schema_check($skip = true) {
+        $this->skipschemacheck = $skip;
+    }
+
+    /**
+     * For use by subclasses. The engine can call this inside is_server_ready to check whether it
+     * should skip time-consuming schema checks.
+     *
+     * @since Moodle 3.5
+     * @return bool True if schema checks should be skipped
+     */
+    protected function should_skip_schema_check() {
+        return $this->skipschemacheck;
+    }
 
     /**
      * Adds a document to the search engine.
@@ -427,12 +481,36 @@ abstract class engine {
      *
      * Engines should reasonably attempt to fill up to limit with valid results if they are available.
      *
-     * @param  stdClass $filters Query and filters to apply.
-     * @param  array    $usercontexts Contexts where the user has access. True if the user can access all contexts.
+     * The $filters object may include the following fields (optional except q):
+     * - q: value of main search field; results should include this text
+     * - title: if included, title must match this search
+     * - areaids: array of search area id strings (only these areas will be searched)
+     * - courseids: array of course ids (only these courses will be searched)
+     * - groupids: array of group ids (only results specifically from these groupids will be
+     *   searched) - this option will be ignored if the search engine doesn't support groups
+     *
+     * The $accessinfo parameter has two different values (for historical compatibility). If the
+     * engine returns false to supports_group_filtering then it is an array of user contexts, or
+     * true if the user can access all contexts. (This parameter used to be called $usercontexts.)
+     * If the engine returns true to supports_group_filtering then it will be an object containing
+     * these fields:
+     * - everything (true if admin is searching with no restrictions)
+     * - usercontexts (same as above)
+     * - separategroupscontexts (array of context ids where separate groups are used)
+     * - visiblegroupscontextsareas (array of subset of those where some areas use visible groups)
+     * - usergroups (array of relevant group ids that user belongs to)
+     *
+     * The engine should apply group restrictions to those contexts listed in the
+     * 'separategroupscontexts' array. In these contexts, it shouled only include results if the
+     * groupid is not set, or if the groupid matches one of the values in USER_GROUPS array, or
+     * if the search area is one of those listed in 'visiblegroupscontextsareas' for that context.
+     *
+     * @param \stdClass $filters Query and filters to apply.
+     * @param \stdClass $accessinfo Information about the contexts the user can access
      * @param  int      $limit The maximum number of results to return. If empty, limit to manager::MAX_RESULTS.
      * @return \core_search\document[] Results or false if no results
      */
-    abstract function execute_query($filters, $usercontexts, $limit = 0);
+    public abstract function execute_query($filters, $accessinfo, $limit = 0);
 
     /**
      * Delete all documents.
@@ -441,4 +519,96 @@ abstract class engine {
      * @return void
      */
     abstract function delete($areaid = null);
+
+    /**
+     * Checks that the schema is the latest version. If the version stored in config does not match
+     * the current, this function will attempt to upgrade the schema.
+     *
+     * @return bool|string True if schema is OK, a string if user needs to take action
+     */
+    public function check_latest_schema() {
+        if (empty($this->config->schemaversion)) {
+            $currentversion = 0;
+        } else {
+            $currentversion = $this->config->schemaversion;
+        }
+        if ($currentversion < document::SCHEMA_VERSION) {
+            return $this->update_schema((int)$currentversion, (int)document::SCHEMA_VERSION);
+        } else {
+            return true;
+        }
+    }
+
+    /**
+     * Usually called by the engine; marks that the schema has been updated.
+     *
+     * @param int $version Records the schema version now applied
+     */
+    public function record_applied_schema_version($version) {
+        set_config('schemaversion', $version, $this->pluginname);
+    }
+
+    /**
+     * Requests the search engine to upgrade the schema. The engine should update the schema if
+     * possible/necessary, and should ensure that record_applied_schema_version is called as a
+     * result.
+     *
+     * If it is not possible to upgrade the schema at the moment, it can do nothing and return; the
+     * function will be called again next time search is initialised.
+     *
+     * The default implementation just returns, with a DEBUG_DEVELOPER warning.
+     *
+     * @param int $oldversion Old schema version
+     * @param int $newversion New schema version
+     * @return bool|string True if schema is updated successfully, a string if it needs updating manually
+     */
+    protected function update_schema($oldversion, $newversion) {
+        debugging('Unable to update search engine schema: ' . $this->pluginname, DEBUG_DEVELOPER);
+        return get_string('schemanotupdated', 'search');
+    }
+
+    /**
+     * Checks if this search engine supports groups.
+     *
+     * Note that returning true to this function causes the parameters to execute_query to be
+     * passed differently!
+     *
+     * In order to implement groups and return true to this function, the search engine should:
+     *
+     * 1. Handle the fields ->separategroupscontexts and ->usergroups in the $accessinfo parameter
+     *    to execute_query (ideally, using these to automatically restrict search results).
+     * 2. Support the optional groupids parameter in the $filter parameter for execute_query to
+     *    restrict results to only those where the stored groupid matches the given value.
+     *
+     * @return bool True if this engine supports searching by group id field
+     */
+    public function supports_group_filtering() {
+        return false;
+    }
+
+    /**
+     * Obtain a list of results orders (and names for them) that are supported by this
+     * search engine in the given context.
+     *
+     * By default, engines sort by relevance only.
+     *
+     * @param \context $context Context that the user requested search from
+     * @return array Array from order name => display text
+     */
+    public function get_supported_orders(\context $context) {
+        return ['relevance' => get_string('order_relevance', 'search')];
+    }
+
+    /**
+     * Checks if the search engine supports searching by user.
+     *
+     * If it returns true to this function, the search engine should support the 'userids' option
+     * in the $filters value passed to execute_query(), returning only items where the userid in
+     * the search document matches one of those user ids.
+     *
+     * @return bool True if the search engine supports searching by user
+     */
+    public function supports_users() {
+        return false;
+    }
 }

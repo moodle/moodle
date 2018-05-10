@@ -30,9 +30,13 @@ defined('MOODLE_INTERNAL') || die();
 class moodle1_block_html_handler extends moodle1_block_handler {
     private $fileman = null;
     protected function convert_configdata(array $olddata) {
+        global $CFG;
+        require_once($CFG->libdir . '/db/upgradelib.php');
         $instanceid = $olddata['id'];
         $contextid  = $this->converter->get_contextid(CONTEXT_BLOCK, $olddata['id']);
-        $configdata = unserialize(base64_decode($olddata['configdata']));
+        $decodeddata = base64_decode($olddata['configdata']);
+        list($updated, $configdata) = upgrade_fix_serialized_objects($decodeddata);
+        $configdata = unserialize($configdata);
 
         // get a fresh new file manager for this instance
         $this->fileman = $this->converter->get_file_manager($contextid, 'block_html');

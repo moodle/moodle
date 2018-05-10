@@ -2,6 +2,12 @@ This files describes API changes for course formats
 
 Overview of this plugin type at http://docs.moodle.org/dev/Course_formats
 
+=== 3.5 ===
+* Course formats should overwrite get_config_for_external function to return the course format settings viewable by the
+  current user.
+  If the course format does not have any setting that could be considerated private (like a private/access key/token),
+  is ok to return all the settigns via the get_format_options function.
+
 === 3.3 ===
 * Javascript code for editing activities and sections was moved to an AMD module, course/rest.php is no longer
   responsible for editing actions, instead it is done in web services. Carefully test all editing actions during upgrade.

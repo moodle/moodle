@@ -1,5 +1,9 @@
 This files describes API changes in the mod_scorm code.
 
+=== 3.5 ===
+* In get_scorms_by_courses() external/ws function, the force new attempt setting is no longer a boolean - now accepts 3 values:
+  No (0), On complete (1) and the new Always (2). See MDL-32585 for more details.
+
 === 3.3.2 ===
 
 * scorm_refresh_events() Now takes two additional parameters to refine the update to a specific instance. This function

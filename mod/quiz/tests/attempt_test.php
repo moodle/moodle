@@ -105,19 +105,19 @@ class mod_quiz_attempt_testcase extends basic_testcase {
 
         // Attempt pages.
         $this->assertEquals(new moodle_url(
-                '/mod/quiz/attempt.php?attempt=123'),
+                '/mod/quiz/attempt.php?attempt=123&cmid=0'),
                 $attempt->attempt_url());
 
         $this->assertEquals(new moodle_url(
-                '/mod/quiz/attempt.php?attempt=123&page=2'),
+                '/mod/quiz/attempt.php?attempt=123&page=2&cmid=0'),
                 $attempt->attempt_url(null, 2));
 
         $this->assertEquals(new moodle_url(
-                '/mod/quiz/attempt.php?attempt=123&page=1#'),
+                '/mod/quiz/attempt.php?attempt=123&page=1&cmid=0#'),
                 $attempt->attempt_url(3));
 
         $this->assertEquals(new moodle_url(
-                '/mod/quiz/attempt.php?attempt=123&page=1#q4'),
+                '/mod/quiz/attempt.php?attempt=123&page=1&cmid=0#q4'),
                 $attempt->attempt_url(4));
 
         $this->assertEquals(new moodle_url(
@@ -134,52 +134,52 @@ class mod_quiz_attempt_testcase extends basic_testcase {
 
         // Summary page.
         $this->assertEquals(new moodle_url(
-                '/mod/quiz/summary.php?attempt=123'),
+                '/mod/quiz/summary.php?attempt=123&cmid=0'),
                 $attempt->summary_url());
 
         // Review page.
         $this->assertEquals(new moodle_url(
-                '/mod/quiz/review.php?attempt=123'),
+                '/mod/quiz/review.php?attempt=123&cmid=0'),
                 $attempt->review_url());
 
         $this->assertEquals(new moodle_url(
-                '/mod/quiz/review.php?attempt=123&page=2'),
+                '/mod/quiz/review.php?attempt=123&page=2&cmid=0'),
                 $attempt->review_url(null, 2));
 
         $this->assertEquals(new moodle_url(
-                '/mod/quiz/review.php?attempt=123&page=1'),
+                '/mod/quiz/review.php?attempt=123&page=1&cmid=0'),
                 $attempt->review_url(3, -1, false));
 
         $this->assertEquals(new moodle_url(
-                '/mod/quiz/review.php?attempt=123&page=1#q4'),
+                '/mod/quiz/review.php?attempt=123&page=1&cmid=0#q4'),
                 $attempt->review_url(4, -1, false));
 
         $this->assertEquals(new moodle_url(
-                '/mod/quiz/review.php?attempt=123'),
+                '/mod/quiz/review.php?attempt=123&cmid=0'),
                 $attempt->review_url(null, 2, true));
 
         $this->assertEquals(new moodle_url(
-                '/mod/quiz/review.php?attempt=123'),
+                '/mod/quiz/review.php?attempt=123&cmid=0'),
                 $attempt->review_url(1, -1, true));
 
         $this->assertEquals(new moodle_url(
-                '/mod/quiz/review.php?attempt=123&page=2'),
+                '/mod/quiz/review.php?attempt=123&page=2&cmid=0'),
                 $attempt->review_url(null, 2, false));
 
         $this->assertEquals(new moodle_url(
-                '/mod/quiz/review.php?attempt=123&showall=0'),
+                '/mod/quiz/review.php?attempt=123&showall=0&cmid=0'),
                 $attempt->review_url(null, 0, false));
 
         $this->assertEquals(new moodle_url(
-                '/mod/quiz/review.php?attempt=123&showall=0'),
+                '/mod/quiz/review.php?attempt=123&showall=0&cmid=0'),
                 $attempt->review_url(1, -1, false));
 
         $this->assertEquals(new moodle_url(
-                '/mod/quiz/review.php?attempt=123&page=1'),
+                '/mod/quiz/review.php?attempt=123&page=1&cmid=0'),
                 $attempt->review_url(3, -1, false));
 
         $this->assertEquals(new moodle_url(
-                '/mod/quiz/review.php?attempt=123&page=2'),
+                '/mod/quiz/review.php?attempt=123&page=2&cmid=0'),
                 $attempt->review_url(null, 2));
 
         $this->assertEquals(new moodle_url(
@@ -203,7 +203,7 @@ class mod_quiz_attempt_testcase extends basic_testcase {
                 $attempt->review_url(1, -1, true, 0));
 
         $this->assertEquals(new moodle_url(
-                '/mod/quiz/review.php?attempt=123&page=2'),
+                '/mod/quiz/review.php?attempt=123&page=2&cmid=0'),
                 $attempt->review_url(null, 2, false, 0));
 
         $this->assertEquals(new moodle_url(
@@ -215,7 +215,7 @@ class mod_quiz_attempt_testcase extends basic_testcase {
                 $attempt->review_url(1, -1, false, 0));
 
         $this->assertEquals(new moodle_url(
-                '/mod/quiz/review.php?attempt=123&page=1#'),
+                '/mod/quiz/review.php?attempt=123&page=1&cmid=0#'),
                 $attempt->review_url(3, -1, false, 0));
 
         // Review with more than 50 questions in the quiz.
@@ -225,47 +225,47 @@ class mod_quiz_attempt_testcase extends basic_testcase {
                 '41,42,43,44,45,46,47,48,49,50,0,51,52,53,54,55,56,57,58,59,60,0');
 
         $this->assertEquals(new moodle_url(
-                '/mod/quiz/review.php?attempt=124'),
+                '/mod/quiz/review.php?attempt=124&cmid=0'),
                 $attempt->review_url());
 
         $this->assertEquals(new moodle_url(
-                '/mod/quiz/review.php?attempt=124&page=2'),
+                '/mod/quiz/review.php?attempt=124&page=2&cmid=0'),
                 $attempt->review_url(null, 2));
 
         $this->assertEquals(new moodle_url(
-                '/mod/quiz/review.php?attempt=124&page=1'),
+                '/mod/quiz/review.php?attempt=124&page=1&cmid=0'),
                 $attempt->review_url(11, -1, false));
 
         $this->assertEquals(new moodle_url(
-                '/mod/quiz/review.php?attempt=124&page=1#q12'),
+                '/mod/quiz/review.php?attempt=124&page=1&cmid=0#q12'),
                 $attempt->review_url(12, -1, false));
 
         $this->assertEquals(new moodle_url(
-                '/mod/quiz/review.php?attempt=124&showall=1'),
+                '/mod/quiz/review.php?attempt=124&showall=1&cmid=0'),
                 $attempt->review_url(null, 2, true));
 
         $this->assertEquals(new moodle_url(
-                '/mod/quiz/review.php?attempt=124&showall=1'),
+                '/mod/quiz/review.php?attempt=124&showall=1&cmid=0'),
                 $attempt->review_url(1, -1, true));
 
         $this->assertEquals(new moodle_url(
-                '/mod/quiz/review.php?attempt=124&page=2'),
+                '/mod/quiz/review.php?attempt=124&page=2&cmid=0'),
                 $attempt->review_url(null, 2, false));
 
         $this->assertEquals(new moodle_url(
-                '/mod/quiz/review.php?attempt=124'),
+                '/mod/quiz/review.php?attempt=124&cmid=0'),
                 $attempt->review_url(null, 0, false));
 
         $this->assertEquals(new moodle_url(
-                '/mod/quiz/review.php?attempt=124&page=1'),
+                '/mod/quiz/review.php?attempt=124&page=1&cmid=0'),
                 $attempt->review_url(11, -1, false));
 
         $this->assertEquals(new moodle_url(
-                '/mod/quiz/review.php?attempt=124&page=1#q12'),
+                '/mod/quiz/review.php?attempt=124&page=1&cmid=0#q12'),
                 $attempt->review_url(12, -1, false));
 
         $this->assertEquals(new moodle_url(
-                '/mod/quiz/review.php?attempt=124&page=2'),
+                '/mod/quiz/review.php?attempt=124&page=2&cmid=0'),
                 $attempt->review_url(null, 2));
 
         $this->assertEquals(new moodle_url(
@@ -289,7 +289,7 @@ class mod_quiz_attempt_testcase extends basic_testcase {
                 $attempt->review_url(1, -1, true, 0));
 
         $this->assertEquals(new moodle_url(
-                '/mod/quiz/review.php?attempt=124&page=2'),
+                '/mod/quiz/review.php?attempt=124&page=2&cmid=0'),
                 $attempt->review_url(null, 2, false, 0));
 
         $this->assertEquals(new moodle_url(
@@ -301,7 +301,7 @@ class mod_quiz_attempt_testcase extends basic_testcase {
                 $attempt->review_url(1, -1, false, 0));
 
         $this->assertEquals(new moodle_url(
-                '/mod/quiz/review.php?attempt=124&page=1#'),
+                '/mod/quiz/review.php?attempt=124&page=1&cmid=0#'),
                 $attempt->review_url(11, -1, false, 0));
     }
 }

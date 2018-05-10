@@ -794,7 +794,6 @@
 }
 
 #adminsettings .form-overridden {
-    @extend .form-control-feedback;
     @extend .alert-info;
 }
 

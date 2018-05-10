@@ -1,0 +1,110 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_search/index_requests
+
+    Template to provide admin information about the queue of index requests.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * topten
+    * count
+
+    Optional context variables for this template:
+    * ellipsis
+
+    Example context (json):
+    {
+        "topten":
+        [
+            {
+                "id": 42,
+                "timerequested": 123456789,
+                "contextid": 123,
+                "contextlink": "<a href='...'>Forum: Tutor group forum</a>",
+                "searcharea": "mod_forum-activity",
+                "areaname": "Forum activities",
+                "partialarea": "mod_forum-activity",
+                "partialareaname": "Forum activities",
+                "partialtime": 123400000,
+                "indexpriority": 100
+            }
+        ],
+        "total": 1,
+        "ellipsis": true
+    }
+}}
+{{#total}}
+    <div>
+        <h3>
+            {{#str}} queueheading, search, {{total}} {{/str}}
+        </h3>
+        <table class="generaltable">
+            <thead>
+            <tr>
+                <th scope="col">{{#str}} context, role {{/str}}</th>
+                <th scope="col">{{#str}} searcharea, search {{/str}}</th>
+                <th scope="col">{{#str}} time {{/str}}</th>
+                <th scope="col">{{#str}} progress, search {{/str}}</th>
+                <th scope="col">{{#str}} priority, search {{/str}}</th>
+            </tr>
+            </thead>
+            <tbody>
+
+
+            {{#topten}}
+                <tr>
+                    <td>
+                        {{{contextlink}}}
+                    </td>
+                    <td>
+                        {{#searcharea}} {{areaname}} {{/searcharea}}
+                    </td>
+                    <td>{{#userdate}} {{timerequested}}, {{#str}} strftimedatetimeshort {{/str}} {{/userdate}}</td>
+                    <td>
+                        {{#partialarea}}
+                            {{partialareaname}}:
+                        {{/partialarea}}
+                        {{#partialtime}}
+                            {{#userdate}} {{partialtime}}, {{#str}} strftimedatetimeshort {{/str}} {{/userdate}}
+                        {{/partialtime}}
+                    </td>
+                    <td>
+                        {{#priorityname}}
+                            {{priorityname}}
+                        {{/priorityname}}
+                        {{^priorityname}}
+                            {{indexpriority}}
+                        {{/priorityname}}
+                    </td>
+                </tr>
+            {{/topten}}
+
+            {{#ellipsis}}
+                <tr>
+                    <td colspan="5">...</td>
+                </tr>
+            {{/ellipsis}}
+            </tbody>
+        </table>
+    </div>
+{{/total}}

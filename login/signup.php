@@ -27,6 +27,7 @@
 require('../config.php');
 require_once($CFG->dirroot . '/user/editlib.php');
 require_once($CFG->libdir . '/authlib.php');
+require_once('lib.php');
 
 if (!$authplugin = signup_is_enabled()) {
     print_error('notlocalisederrormessage', 'error', '', 'Sorry, you may not use this page.');
@@ -58,6 +59,23 @@ if (isloggedin() and !isguestuser()) {
     echo $OUTPUT->footer();
     exit;
 }
+
+// If verification of age and location (digital minor check) is enabled.
+if (\core_auth\digital_consent::is_age_digital_consent_verification_enabled()) {
+    $cache = cache::make('core', 'presignup');
+    $isminor = $cache->get('isminor');
+    if ($isminor === false) {
+        // The verification of age and location (minor) has not been done.
+        redirect(new moodle_url('/login/verify_age_location.php'));
+    } else if ($isminor === 'yes') {
+        // The user that attempts to sign up is a digital minor.
+        redirect(new moodle_url('/login/digital_minor.php'));
+    }
+}
+
+// Plugins can create pre sign up requests.
+// Can be used to force additional actions before sign up such as acceptance of policies, validations, etc.
+core_login_pre_signup_requests();
 
 $mform_signup = $authplugin->signup_form();
 

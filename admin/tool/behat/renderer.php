@@ -139,7 +139,7 @@ class tool_behat_renderer extends plugin_renderer_base {
         $msg = get_string('wrongbehatsetup', 'tool_behat', $a);
 
         // Error box including generic error string + specific error msg.
-        $html .= $this->output->box_start('box errorbox');
+        $html .= $this->output->box_start('box errorbox alert alert-danger');
         $html .= html_writer::tag('div', $msg);
         $html .= $this->output->box_end();
 

@@ -32,4 +32,5 @@ $string['missing'] = 'Question of a type that is not installed on this system';
 $string['pluginname'] = 'Missing type';
 $string['pluginnameadding'] = 'Adding a question of a type that is not installed on this system';
 $string['pluginnameediting'] = 'Editing a question of a type that is not installed on this system';
+$string['privacy:metadata'] = 'The Missing type question type does not store any personal data.';
 $string['warningmissingtype'] = '<b>This question is of a type that has not been installed on your Moodle yet.<br />Please alert your Moodle administrator.</b>';

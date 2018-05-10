@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -98,13 +97,10 @@ class login_signup_form extends moodleform implements renderable, templatable {
             $mform->closeHeaderBefore('recaptcha_element');
         }
 
-        if (!empty($CFG->sitepolicy)) {
-            $mform->addElement('header', 'policyagreement', get_string('policyagreement'), '');
-            $mform->setExpanded('policyagreement');
-            $mform->addElement('static', 'policylink', '', '<a href="'.$CFG->sitepolicy.'" onclick="this.target=\'_blank\'">'.get_String('policyagreementclick').'</a>');
-            $mform->addElement('checkbox', 'policyagreed', get_string('policyaccept'));
-            $mform->addRule('policyagreed', get_string('policyagree'), 'required', null, 'client');
-        }
+        // Add "Agree to sitepolicy" controls. By default it is a link to the policy text and a checkbox but
+        // it can be implemented differently in custom sitepolicy handlers.
+        $manager = new \core_privacy\local\sitepolicy\manager();
+        $manager->signup_form($mform);
 
         // buttons
         $this->add_action_buttons(true, get_string('createaccount'));
@@ -121,15 +117,22 @@ class login_signup_form extends moodleform implements renderable, templatable {
         }
     }
 
-    function validation($data, $files) {
+    /**
+     * Validate user supplied data on the signup form.
+     *
+     * @param array $data array of ("fieldname"=>value) of submitted data
+     * @param array $files array of uploaded files "element_name"=>tmp_file_path
+     * @return array of "element_name"=>"error_description" if there are errors,
+     *         or an empty array if everything is OK (true allowed for backwards compatibility too).
+     */
+    public function validation($data, $files) {
         $errors = parent::validation($data, $files);
 
         if (signup_captcha_enabled()) {
-            $recaptcha_element = $this->_form->getElement('recaptcha_element');
-            if (!empty($this->_form->_submitValues['recaptcha_challenge_field'])) {
-                $challenge_field = $this->_form->_submitValues['recaptcha_challenge_field'];
-                $response_field = $this->_form->_submitValues['recaptcha_response_field'];
-                if (true !== ($result = $recaptcha_element->verify($challenge_field, $response_field))) {
+            $recaptchaelement = $this->_form->getElement('recaptcha_element');
+            if (!empty($this->_form->_submitValues['g-recaptcha-response'])) {
+                $response = $this->_form->_submitValues['g-recaptcha-response'];
+                if (!$recaptchaelement->verify($response)) {
                     $errors['recaptcha_element'] = get_string('incorrectpleasetryagain', 'auth');
                 }
             } else {
@@ -140,7 +143,6 @@ class login_signup_form extends moodleform implements renderable, templatable {
         $errors += signup_validate_data($data, $files);
 
         return $errors;
-
     }
 
     /**

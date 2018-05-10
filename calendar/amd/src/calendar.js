@@ -183,35 +183,38 @@ define([
                 .fail(Notification.exception);
         });
 
-        var eventFormPromise = CalendarCrud.registerEventFormModal(root);
+        var eventFormPromise = CalendarCrud.registerEventFormModal(root),
+            contextId = $(SELECTORS.CALENDAR_MONTH_WRAPPER).data('context-id');
         registerCalendarEventListeners(root, eventFormPromise);
 
-        // Bind click events to calendar days.
-        root.on('click', SELECTORS.DAY, function(e) {
+        if (contextId) {
+            // Bind click events to calendar days.
+            root.on('click', SELECTORS.DAY, function (e) {
 
-            var target = $(e.target);
+                var target = $(e.target);
 
-            if (!target.is(SELECTORS.VIEW_DAY_LINK)) {
-                var startTime = $(this).attr('data-new-event-timestamp');
-                eventFormPromise.then(function(modal) {
-                    var wrapper = target.closest(CalendarSelectors.wrapper);
-                    modal.setCourseId(wrapper.data('courseid'));
+                if (!target.is(SELECTORS.VIEW_DAY_LINK)) {
+                    var startTime = $(this).attr('data-new-event-timestamp');
+                    eventFormPromise.then(function (modal) {
+                        var wrapper = target.closest(CalendarSelectors.wrapper);
+                        modal.setCourseId(wrapper.data('courseid'));
 
-                    var categoryId = wrapper.data('categoryid');
-                    if (typeof categoryId !== 'undefined') {
-                        modal.setCategoryId(categoryId);
-                    }
+                        var categoryId = wrapper.data('categoryid');
+                        if (typeof categoryId !== 'undefined') {
+                            modal.setCategoryId(categoryId);
+                        }
 
-                    modal.setContextId(wrapper.data('contextId'));
-                    modal.setStartTime(startTime);
-                    modal.show();
-                    return;
-                })
-                .fail(Notification.exception);
+                        modal.setContextId(wrapper.data('contextId'));
+                        modal.setStartTime(startTime);
+                        modal.show();
+                        return;
+                    })
+                    .fail(Notification.exception);
 
-                e.preventDefault();
-            }
-        });
+                    e.preventDefault();
+                }
+            });
+        }
     };
 
     return {

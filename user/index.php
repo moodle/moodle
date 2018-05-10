@@ -178,9 +178,8 @@ foreach ($filtersapplied as $filter) {
             break;
     }
 }
-
 // If course supports groups we may need to set a default.
-if ($groupid !== false) {
+if (!empty($groupid)) {
     if ($canaccessallgroups) {
         // User can access all groups, let them filter by whatever was selected.
         $filtersapplied[] = USER_FILTER_GROUP . ':' . $groupid;
@@ -213,17 +212,17 @@ foreach ($enrolbuttons as $enrolbutton) {
 }
 echo html_writer::div($enrolbuttonsout, 'pull-right');
 
-// Render the unified filter.
-$renderer = $PAGE->get_renderer('core_user');
-echo $renderer->unified_filter($course, $context, $filtersapplied);
-
-echo '<div class="userlist">';
-
 // Should use this variable so that we don't break stuff every time a variable is added or changed.
 $baseurl = new moodle_url('/user/index.php', array(
         'contextid' => $context->id,
         'id' => $course->id,
         'perpage' => $perpage));
+
+// Render the unified filter.
+$renderer = $PAGE->get_renderer('core_user');
+echo $renderer->unified_filter($course, $context, $filtersapplied, $baseurl);
+
+echo '<div class="userlist">';
 
 $participanttable = new \core_user\participants_table($course->id, $groupid, $lastaccess, $roleid, $enrolid, $status,
     $searchkeywords, $bulkoperations, $selectall);
@@ -234,6 +233,8 @@ ob_start();
 $participanttable->out($perpage, true);
 $participanttablehtml = ob_get_contents();
 ob_end_clean();
+
+echo html_writer::tag('p', get_string('participantscount', 'moodle', $participanttable->totalrows));
 
 if ($bulkoperations) {
     echo '<form action="action_redir.php" method="post" id="participantsform">';

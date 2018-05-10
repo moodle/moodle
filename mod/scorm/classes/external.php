@@ -782,7 +782,7 @@ class mod_scorm_external extends external_api {
                             'maxattempt' => new external_value(PARAM_INT, 'Maximum number of attemtps', VALUE_OPTIONAL),
                             'forcecompleted' => new external_value(PARAM_BOOL, 'Status current attempt is forced to "completed"',
                                                                     VALUE_OPTIONAL),
-                            'forcenewattempt' => new external_value(PARAM_BOOL, 'Hides the "Start new attempt" checkbox',
+                            'forcenewattempt' => new external_value(PARAM_INT, 'Controls re-entry behaviour',
                                                                     VALUE_OPTIONAL),
                             'lastattemptlock' => new external_value(PARAM_BOOL, 'Prevents to launch new attempts once finished',
                                                                     VALUE_OPTIONAL),

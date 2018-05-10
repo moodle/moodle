@@ -49,10 +49,24 @@
 
 defined('MOODLE_INTERNAL') || die;
 
+global $CFG;
 require_once($CFG->libdir.'/formslib.php');
 require_once($CFG->dirroot.'/mod/lti/locallib.php');
 
-class mod_lti_edit_types_form extends moodleform{
+/**
+ * LTI Edit Form
+ *
+ * @package    mod_lti
+ * @copyright  2009 Marc Alier, Jordi Piguillem, Nikolas Galanis
+ *  marc.alier@upc.edu
+ * @copyright  2009 Universitat Politecnica de Catalunya http://www.upc.edu
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class mod_lti_edit_types_form extends moodleform {
+
+    /**
+     * Define this form.
+     */
     public function definition() {
         global $CFG;
 
@@ -147,6 +161,16 @@ class mod_lti_edit_types_form extends moodleform{
             $mform->disabledIf('lti_contentitem', null);
         }
 
+        $mform->addElement('text', 'lti_toolurl_ContentItemSelectionRequest',
+            get_string('toolurl_contentitemselectionrequest', 'lti'), array('size' => '64'));
+        $mform->setType('lti_toolurl_ContentItemSelectionRequest', PARAM_URL);
+        $mform->setAdvanced('lti_toolurl_ContentItemSelectionRequest');
+        $mform->addHelpButton('lti_toolurl_ContentItemSelectionRequest', 'toolurl_contentitemselectionrequest', 'lti');
+        $mform->disabledIf('lti_toolurl_ContentItemSelectionRequest', 'lti_contentitem', 'notchecked');
+        if ($istool) {
+            $mform->disabledIf('lti_toolurl__ContentItemSelectionRequest', null);
+        }
+
         $mform->addElement('hidden', 'oldicon');
         $mform->setType('oldicon', PARAM_URL);
 
@@ -159,6 +183,11 @@ class mod_lti_edit_types_form extends moodleform{
         $mform->setType('lti_secureicon', PARAM_URL);
         $mform->setAdvanced('lti_secureicon');
         $mform->addHelpButton('lti_secureicon', 'secure_icon_url', 'lti');
+
+        if (!$istool) {
+            // Display the lti advantage services.
+            $this->get_lti_advantage_services($mform);
+        }
 
         if (!$istool) {
             // Add privacy preferences fieldset where users choose whether to send their data.
@@ -252,5 +281,20 @@ class mod_lti_edit_types_form extends moodleform{
             unset($data->lti_contentitem);
         }
         return $data;
+    }
+
+    /**
+     * Generates the lti advantage extra configuration adding it to the mform
+     *
+     * @param MoodleQuickForm $mform
+     */
+    public function get_lti_advantage_services(&$mform) {
+        // For each service add the label and get the array of configuration.
+        $services = lti_get_services();
+        $mform->addElement('header', 'services', get_string('services', 'lti'));
+        foreach ($services as $service) {
+            /** @var \mod_lti\local\ltiservice\service_base $service */
+            $service->get_configuration_options($mform);
+        }
     }
 }

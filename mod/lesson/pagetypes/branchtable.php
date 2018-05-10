@@ -234,12 +234,12 @@ class lesson_page_type_branchtable extends lesson_page {
                 continue;
             }
             $cells = array();
-            $cells[] = "<span class=\"label\">".get_string("branch", "lesson")." $i<span>: ";
+            $cells[] = '<label>' . get_string('branch', 'lesson') . ' ' . $i . '</label>: ';
             $cells[] = format_text($answer->answer, $answer->answerformat, $options);
             $table->data[] = new html_table_row($cells);
 
             $cells = array();
-            $cells[] = "<span class=\"label\">".get_string("jump", "lesson")." $i<span>: ";
+            $cells[] = '<label>' . get_string('jump', 'lesson') . ' ' . $i . '</label>: ';
             $cells[] = $this->get_jump_name($answer->jumpto);
             $table->data[] = new html_table_row($cells);
 

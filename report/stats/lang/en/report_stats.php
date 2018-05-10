@@ -31,3 +31,4 @@ $string['page-report-stats-x'] = 'Any statistics report';
 $string['page-report-stats-index'] = 'Course statistics report';
 $string['page-report-stats-user'] = 'User course statistics report';
 $string['stats:view'] = 'View course statistics report';
+$string['privacy:metadata'] = 'The Statistics plugin does not store any personal data.';

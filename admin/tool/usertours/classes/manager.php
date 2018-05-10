@@ -819,7 +819,7 @@ class manager {
         $existingtourrecords->close();
 
         foreach ($shippedtours as $filename => $version) {
-            $filepath = $CFG->dirroot . '/admin/tool/usertours/tours/' . $filename;
+            $filepath = $CFG->dirroot . "/{$CFG->admin}/tool/usertours/tours/" . $filename;
             $tourjson = file_get_contents($filepath);
             $tour = self::import_tour_from_json($tourjson);
 

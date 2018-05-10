@@ -61,6 +61,7 @@ class core_cohort_cohortlib_testcase extends advanced_testcase {
         $this->assertEquals($cohort->descriptionformat, $newcohort->descriptionformat);
         $this->assertNotEmpty($newcohort->timecreated);
         $this->assertSame($newcohort->component, '');
+        $this->assertSame($newcohort->theme, '');
         $this->assertSame($newcohort->timecreated, $newcohort->timemodified);
     }
 
@@ -142,6 +143,7 @@ class core_cohort_cohortlib_testcase extends advanced_testcase {
         $this->assertSame($cohort->descriptionformat, $newcohort->descriptionformat);
         $this->assertSame($cohort->timecreated, $newcohort->timecreated);
         $this->assertSame($cohort->component, $newcohort->component);
+        $this->assertSame($newcohort->theme, '');
         $this->assertGreaterThan($newcohort->timecreated, $newcohort->timemodified);
         $this->assertLessThanOrEqual(time(), $newcohort->timemodified);
     }
@@ -158,6 +160,7 @@ class core_cohort_cohortlib_testcase extends advanced_testcase {
         $cohort->idnumber = 'testid';
         $cohort->description = 'test cohort desc';
         $cohort->descriptionformat = FORMAT_HTML;
+        $cohort->theme = '';
         $id = cohort_add_cohort($cohort);
         $this->assertNotEmpty($id);
 
@@ -168,6 +171,8 @@ class core_cohort_cohortlib_testcase extends advanced_testcase {
 
         // Peform the update.
         cohort_update_cohort($cohort);
+        // Add again theme property to the cohort object for comparing it to the event snapshop.
+        $cohort->theme = '';
 
         $events = $sink->get_events();
         $sink->close();
@@ -650,5 +655,88 @@ class core_cohort_cohortlib_testcase extends advanced_testcase {
         $this->setUser($user1);
         $result = cohort_get_available_cohorts($course1ctx, COHORT_ALL, 0, 0, '');
         $this->assertEquals(array($cohort1->id, $cohort2->id, $cohort4->id), array_keys($result));
+    }
+
+    /**
+     * Create a cohort with allowcohortthemes enabled/disabled.
+     */
+    public function test_cohort_add_theme_cohort() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        // Theme is added when allowcohortthemes is enabled.
+        set_config('allowcohortthemes', 1);
+        set_config('theme', 'boost');
+
+        $systemctx = context_system::instance();
+        $cohort1 = $this->getDataGenerator()->create_cohort(array('contextid' => $systemctx->id, 'name' => 'test cohort 1',
+            'idnumber' => 'testid1', 'description' => 'test cohort desc', 'descriptionformat' => FORMAT_HTML, 'theme' => 'clean'));
+
+        $id = cohort_add_cohort($cohort1);
+        $this->assertNotEmpty($id);
+        $newcohort = $DB->get_record('cohort', array('id' => $id));
+        $this->assertEquals($cohort1->contextid, $newcohort->contextid);
+        $this->assertSame($cohort1->name, $newcohort->name);
+        $this->assertSame($cohort1->description, $newcohort->description);
+        $this->assertEquals($cohort1->descriptionformat, $newcohort->descriptionformat);
+        $this->assertNotEmpty($newcohort->theme);
+        $this->assertSame($cohort1->theme, $newcohort->theme);
+        $this->assertNotEmpty($newcohort->timecreated);
+        $this->assertSame($newcohort->component, '');
+        $this->assertSame($newcohort->timecreated, $newcohort->timemodified);
+
+        // Theme is not added when allowcohortthemes is disabled.
+        set_config('allowcohortthemes', 0);
+
+        $cohort2 = $this->getDataGenerator()->create_cohort(array('contextid' => $systemctx->id, 'name' => 'test cohort 2',
+            'idnumber' => 'testid2', 'description' => 'test cohort desc', 'descriptionformat' => FORMAT_HTML, 'theme' => 'clean'));
+
+        $id = cohort_add_cohort($cohort2);
+        $this->assertNotEmpty($id);
+        $newcohort = $DB->get_record('cohort', array('id' => $id));
+        $this->assertSame($cohort2->name, $newcohort->name);
+        $this->assertEmpty($newcohort->theme);
+    }
+
+    /**
+     * Update a cohort with allowcohortthemes enabled/disabled.
+     */
+    public function test_cohort_update_theme_cohort() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        // Enable cohort themes.
+        set_config('allowcohortthemes', 1);
+        set_config('theme', 'boost');
+
+        $systemctx = context_system::instance();
+        $cohort1 = $this->getDataGenerator()->create_cohort(array('contextid' => $systemctx->id, 'name' => 'test cohort 1',
+            'idnumber' => 'testid1', 'description' => 'test cohort desc', 'descriptionformat' => FORMAT_HTML, 'theme' => 'clean'));
+        $id = cohort_add_cohort($cohort1);
+        $this->assertNotEmpty($id);
+
+        // Theme is updated when allowcohortthemes is enabled.
+        $cohort1 = $DB->get_record('cohort', array('id' => $id));
+        $cohort1->name = 'test cohort 1 updated';
+        $cohort1->theme = 'more';
+        cohort_update_cohort($cohort1);
+        $updatedcohort = $DB->get_record('cohort', array('id' => $id));
+        $this->assertEquals($cohort1->contextid, $updatedcohort->contextid);
+        $this->assertSame($cohort1->name, $updatedcohort->name);
+        $this->assertSame($cohort1->description, $updatedcohort->description);
+        $this->assertNotEmpty($updatedcohort->theme);
+        $this->assertSame($cohort1->theme, $updatedcohort->theme);
+
+        // Theme is not updated neither overwritten when allowcohortthemes is disabled.
+        set_config('allowcohortthemes', 0);
+        $cohort2 = $DB->get_record('cohort', array('id' => $id));
+        $cohort2->theme = 'clean';
+        cohort_update_cohort($cohort2);
+        $updatedcohort = $DB->get_record('cohort', array('id' => $id));
+        $this->assertEquals($cohort2->contextid, $updatedcohort->contextid);
+        $this->assertNotEmpty($updatedcohort->theme);
+        $this->assertSame($cohort1->theme, $updatedcohort->theme);
     }
 }

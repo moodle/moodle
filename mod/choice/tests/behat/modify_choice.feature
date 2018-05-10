@@ -26,7 +26,15 @@ Feature: Teacher can modify choices of the students
 
   @javascript
   Scenario: Delete students choice response as a teacher
-    When I log in as "student1"
+    When I log in as "teacher1"
+    And I am on "Course 1" course homepage
+    And I follow "Choice name"
+    And I navigate to "Edit settings" in current page administration
+    And I expand all fieldsets
+    And I set the field "Show column for unanswered" to "Yes"
+    And I press "Save and return to course"
+    And I log out
+    And I log in as "student1"
     And I am on "Course 1" course homepage
     And I choose "Option 1" from "Choice name" choice activity
     Then I should see "Your selection: Option 1"
@@ -44,7 +52,15 @@ Feature: Teacher can modify choices of the students
 
   @javascript
   Scenario: Teacher set answers of students who did not respond or change existing answers
-    When I log in as "student1"
+    When I log in as "teacher1"
+    And I am on "Course 1" course homepage
+    And I follow "Choice name"
+    And I navigate to "Edit settings" in current page administration
+    And I expand all fieldsets
+    And I set the field "Show column for unanswered" to "Yes"
+    And I press "Save and return to course"
+    And I log out
+    And I log in as "student1"
     And I am on "Course 1" course homepage
     And I choose "Option 1" from "Choice name" choice activity
     Then I should see "Your selection: Option 1"

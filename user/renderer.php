@@ -115,9 +115,10 @@ class core_user_renderer extends plugin_renderer_base {
      * @param stdClass $course The course object.
      * @param context $context The context object.
      * @param array $filtersapplied Array of currently applied filters.
+     * @param string|moodle_url $baseurl The url with params needed to call up this page.
      * @return bool|string
      */
-    public function unified_filter($course, $context, $filtersapplied) {
+    public function unified_filter($course, $context, $filtersapplied, $baseurl = null) {
         global $CFG, $DB, $USER;
 
         require_once($CFG->dirroot . '/enrol/locallib.php');
@@ -127,7 +128,12 @@ class core_user_renderer extends plugin_renderer_base {
         $filteroptions = [];
 
         // Filter options for role.
-        $roles = role_fix_names(get_profile_roles($context), $context, ROLENAME_ALIAS, true);
+        $roleseditable = has_capability('moodle/role:assign', $context);
+        $roles = get_viewable_roles($context);
+        if ($roleseditable) {
+            $roles += get_assignable_roles($context, ROLENAME_ALIAS);
+        }
+
         $criteria = get_string('role');
         $roleoptions = [];
         foreach ($roles as $id => $role) {
@@ -243,7 +249,7 @@ class core_user_renderer extends plugin_renderer_base {
         // Add missing applied filters to the filter options.
         $filteroptions = $this->handle_missing_applied_filters($filtersapplied, $filteroptions);
 
-        $indexpage = new \core_user\output\unified_filter($filteroptions, $filtersapplied);
+        $indexpage = new \core_user\output\unified_filter($filteroptions, $filtersapplied, $baseurl);
         $context = $indexpage->export_for_template($this->output);
 
         return $this->output->render_from_template('core_user/unified_filter', $context);

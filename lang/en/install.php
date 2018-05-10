@@ -24,17 +24,17 @@
 
 $string['admindirerror'] = 'The admin directory specified is incorrect';
 $string['admindirname'] = 'Admin directory';
-$string['admindirsetting'] = 'A very few webhosts use /admin as a special URL for you to access a 
-    control panel or something.  Unfortunately this conflicts with the 
-    standard location for the Moodle admin pages.  You can fix this by 
-    renaming the admin directory in your installation, and putting that 
+$string['admindirsetting'] = 'A very few webhosts use /admin as a special URL for you to access a
+    control panel or something.  Unfortunately this conflicts with the
+    standard location for the Moodle admin pages.  You can fix this by
+    renaming the admin directory in your installation, and putting that
     new name here.  For example: <br /> <br /><b>moodleadmin</b><br /> <br />
     This will fix admin links in Moodle.';
 $string['admindirsettinghead'] = 'Setting the admin directory ...';
-$string['admindirsettingsub'] = 'A very few webhosts use /admin as a special URL for you to access a 
-    control panel or something.  Unfortunately this conflicts with the 
-    standard location for the Moodle admin pages.  You can fix this by 
-    renaming the admin directory in your installation, and putting that 
+$string['admindirsettingsub'] = 'A very few webhosts use /admin as a special URL for you to access a
+    control panel or something.  Unfortunately this conflicts with the
+    standard location for the Moodle admin pages.  You can fix this by
+    renaming the admin directory in your installation, and putting that
     new name here.  For example: <br /> <br /><b>moodleadmin</b><br /> <br />
     This will fix admin links in Moodle.';
 $string['availablelangs'] = 'Available language packs';
@@ -81,9 +81,9 @@ $string['dbtype'] = 'Type';
 $string['directorysettings'] = '<p>Please confirm the locations of this Moodle installation.</p>
 
 <p><b>Web address:</b>
-Specify the full web address where Moodle will be accessed.  
-If your web site is accessible via multiple URLs then choose the 
-most natural one that your students would use.  Do not include 
+Specify the full web address where Moodle will be accessed.
+If your web site is accessible via multiple URLs then choose the
+most natural one that your students would use.  Do not include
 a trailing slash.</p>
 
 <p><b>Moodle directory:</b>
@@ -92,14 +92,14 @@ Make sure the upper/lower case is correct.</p>
 
 <p><b>Data directory:</b>
 You need a place where Moodle can save uploaded files.  This
-directory should be readable AND WRITEABLE by the web server user 
-(usually \'nobody\' or \'apache\'), but it must not be accessible 
+directory should be readable AND WRITEABLE by the web server user
+(usually \'nobody\' or \'apache\'), but it must not be accessible
 directly via the web. The installer will try to create it if doesn\'t exist.</p>';
 $string['directorysettingshead'] = 'Please confirm the locations of this Moodle installation';
 $string['directorysettingssub'] = '<b>Web address:</b>
-Specify the full web address where Moodle will be accessed.  
-If your web site is accessible via multiple URLs then choose the 
-most natural one that your students would use.  Do not include 
+Specify the full web address where Moodle will be accessed.
+If your web site is accessible via multiple URLs then choose the
+most natural one that your students would use.  Do not include
 a trailing slash.
 <br />
 <br />
@@ -110,8 +110,8 @@ Make sure the upper/lower case is correct.
 <br />
 <b>Data directory:</b>
 You need a place where Moodle can save uploaded files.  This
-directory must be readable AND WRITEABLE by the web server user 
-(usually \'nobody\' or \'apache\'), but it must not be accessible 
+directory must be readable AND WRITEABLE by the web server user
+(usually \'nobody\' or \'apache\'), but it must not be accessible
 directly via the web. The installer will try to create it if doesn\'t exist.';
 $string['dirroot'] = 'Moodle directory';
 $string['dirrooterror'] = 'The \'Moodle directory\' setting seems to be incorrect - we can\'t find a Moodle installation there. The value below has been reset.';
@@ -131,11 +131,11 @@ $string['fileuploads'] = 'File uploads';
 $string['fileuploadserror'] = 'This should be on';
 $string['fileuploadshelp'] = '<p>File uploading seems to be disabled on your server.</p>
 
-<p>Moodle can still be installed, but without this ability, you will not be able 
+<p>Moodle can still be installed, but without this ability, you will not be able
    to upload course files or new user profile images.</p>
 
-<p>To enable file uploading you (or your system administrator) will need to 
-   edit the main php.ini file on your system and change the setting for 
+<p>To enable file uploading you (or your system administrator) will need to
+   edit the main php.ini file on your system and change the setting for
    <b>file_uploads</b> to \'1\'.</p>';
 $string['chooselanguage'] = 'Choose a language';
 $string['chooselanguagehead'] = 'Choose a language';
@@ -150,24 +150,23 @@ $string['memorylimit'] = 'Memory limit';
 $string['memorylimiterror'] = 'The PHP memory limit is set quite low ... you may run into problems later.';
 $string['memorylimithelp'] = '<p>The PHP memory limit for your server is currently set to {$a}.</p>
 
-<p>This may cause Moodle to have memory problems later on, especially 
+<p>This may cause Moodle to have memory problems later on, especially
    if you have a lot of modules enabled and/or a lot of users.</p>
 
-<p>We recommend that you configure PHP with a higher limit if possible, like 40M.  
+<p>We recommend that you configure PHP with a higher limit if possible, like 40M.
    There are several ways of doing this that you can try:</p>
 <ol>
-<li>If you are able to, recompile PHP with <i>--enable-memory-limit</i>.  
+<li>If you are able to, recompile PHP with <i>--enable-memory-limit</i>.
     This will allow Moodle to set the memory limit itself.</li>
-<li>If you have access to your php.ini file, you can change the <b>memory_limit</b> 
-    setting in there to something like 40M.  If you don\'t have access you might 
+<li>If you have access to your php.ini file, you can change the <b>memory_limit</b>
+    setting in there to something like 40M.  If you don\'t have access you might
     be able to ask your administrator to do this for you.</li>
-<li>On some PHP servers you can create a .htaccess file in the Moodle directory 
+<li>On some PHP servers you can create a .htaccess file in the Moodle directory
     containing this line:
     <blockquote><div>php_value memory_limit 40M</div></blockquote>
-    <p>However, on some servers this will prevent <b>all</b> PHP pages from working 
+    <p>However, on some servers this will prevent <b>all</b> PHP pages from working
     (you will see errors when you look at pages) so you\'ll have to remove the .htaccess file.</p></li>
 </ol>';
-$string['mssqlextensionisnotpresentinphp'] = 'PHP has not been properly configured with the MSSQL extension so that it can communicate with SQL*Server.  Please check your php.ini file or recompile PHP.';
 $string['mysqliextensionisnotpresentinphp'] = 'PHP has not been properly configured with the MySQLi extension for it to communicate with MySQL. Please check your php.ini file or recompile PHP.';
 $string['nativemariadb'] = 'MariaDB (native/mariadb)';
 $string['nativemariadbhelp'] = '<p>The database is where most of the Moodle settings and data are stored and must be configured here.</p>
@@ -180,9 +179,6 @@ $string['nativemysqlihelp'] = '<p>The database is where most of the Moodle setti
 <p>The database name, username, and password are required fields; table prefix is optional.</p>
 <p>The database name may contain only alphanumeric characters, dollar ($) and underscore (_).</p>
 <p>If the database currently does not exist, and the user you specify has permission, Moodle will attempt to create a new database with the correct permissions and settings.</p>';
-$string['nativemssql'] = 'SQL*Server FreeTDS (native/mssql)';
-$string['nativemssqlhelp'] = 'Now you need to configure the database where most Moodle data will be stored.
-This database must already have been created and a username and password created to access it. Table prefix is mandatory.';
 $string['nativeoci'] = 'Oracle (native/oci)';
 $string['nativeocihelp'] = 'Now you need to configure the database where most Moodle data will be stored.
 This database must already have been created and a username and password created to access it. Table prefix is mandatory.';
@@ -224,12 +220,12 @@ $string['phpversionhelp'] = '<p>Moodle requires a PHP version of at least 5.6.5 
 $string['releasenoteslink'] = 'For information about this version of Moodle, please see the release notes at {$a}';
 $string['safemode'] = 'Safe mode';
 $string['safemodeerror'] = 'Moodle may have trouble with safe mode on';
-$string['safemodehelp'] = '<p>Moodle may have a variety of problems with safe mode on, not least is that 
+$string['safemodehelp'] = '<p>Moodle may have a variety of problems with safe mode on, not least is that
    it probably won\'t be allowed to create new files.</p>
-   
-<p>Safe mode is usually only enabled by paranoid public web hosts, so you may have 
+
+<p>Safe mode is usually only enabled by paranoid public web hosts, so you may have
    to just find a new web hosting company for your Moodle site.</p>
-   
+
 <p>You can try continuing the install if you like, but expect a few problems later on.</p>';
 $string['sessionautostart'] = 'Session auto start';
 $string['sessionautostarterror'] = 'This should be off';
@@ -239,18 +235,19 @@ $string['sessionautostarthelp'] = '<p>Moodle requires session support and will n
 $string['sqliteextensionisnotpresentinphp'] = 'PHP has not been properly configured with the SQLite extension.  Please check your php.ini file or recompile PHP.';
 $string['upgradingqtypeplugin'] = 'Upgrading question/type plugin';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
-$string['welcomep20'] = 'You are seeing this page because you have successfully installed and 
+$string['welcomep20'] = 'You are seeing this page because you have successfully installed and
     launched the <strong>{$a->packname} {$a->packversion}</strong> package in your computer. Congratulations!';
-$string['welcomep30'] = 'This release of the <strong>{$a->installername}</strong> includes the applications 
+$string['welcomep30'] = 'This release of the <strong>{$a->installername}</strong> includes the applications
     to create an environment in which <strong>Moodle</strong> will operate, namely:';
 $string['welcomep40'] = 'The package also includes <strong>Moodle {$a->moodlerelease} ({$a->moodleversion})</strong>.';
-$string['welcomep50'] = 'The use of all the applications in this package is governed by their respective 
-    licences. The complete <strong>{$a->installername}</strong> package is 
-    <a href="http://www.opensource.org/docs/definition_plain.html">open source</a> and is distributed 
+$string['welcomep50'] = 'The use of all the applications in this package is governed by their respective
+    licences. The complete <strong>{$a->installername}</strong> package is
+    <a href="http://www.opensource.org/docs/definition_plain.html">open source</a> and is distributed
     under the <a href="http://www.gnu.org/copyleft/gpl.html">GPL</a> license.';
-$string['welcomep60'] = 'The following pages will lead you through some easy to follow steps to 
-    configure and set up <strong>Moodle</strong> on your computer. You may accept the default 
+$string['welcomep60'] = 'The following pages will lead you through some easy to follow steps to
+    configure and set up <strong>Moodle</strong> on your computer. You may accept the default
     settings or, optionally, amend them to suit your own needs.';
 $string['welcomep70'] = 'Click the "Next" button below to continue with the set up of <strong>Moodle</strong>.';
 $string['wwwroot'] = 'Web address';
 $string['wwwrooterror'] = 'The \'Web Address\' does not appear to be valid - this Moodle installation doesn\'t appear to be there. The value below has been reset.';
+// Deprecated since 3.4.

@@ -51,7 +51,7 @@ if (!$wiki = wiki_get_wiki($subwiki->wikiid)) {
     print_error('incorrectwikiid', 'wiki');
 }
 
-require_login($course, true, $cm);
+require_course_login($course, true, $cm);
 
 if (!wiki_user_can_view($subwiki, $wiki)) {
     print_error('cannotviewpage', 'wiki');

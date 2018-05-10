@@ -39,7 +39,7 @@ class behat_theme_boost_behat_action_menu extends behat_action_menu {
 
     public function i_open_the_action_menu_in($element, $selectortype) {
         // Gets the node based on the requested selector type and locator.
-        $node = $this->get_node_in_container("css_element", "[role=button][aria-haspopup=true]", $selectortype, $element);
+        $node = $this->get_node_in_container("css_element", "[role=menuitem][aria-haspopup=true]", $selectortype, $element);
 
         // Check if it is not already opened.
         if ($node->getAttribute('aria-expanded') === 'true') {
@@ -55,7 +55,7 @@ class behat_theme_boost_behat_action_menu extends behat_action_menu {
             throw new DriverException('Action menu steps are not available with Javascript disabled');
         }
         // Gets the node based on the requested selector type and locator.
-        $menuselector = ".moodle-actionmenu .dropdown.open .dropdown-menu";
+        $menuselector = ".moodle-actionmenu .dropdown.show .dropdown-menu";
         $node = $this->get_node_in_container("link", $menuitemstring, "css_element", $menuselector);
         $this->ensure_node_is_visible($node);
         $node->click();

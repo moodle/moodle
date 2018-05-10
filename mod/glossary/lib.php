@@ -1226,10 +1226,9 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode='',$h
 
     $context = context_module::instance($cm->id);
 
-    $output = false;   //To decide if we must really return text in "return". Activate when needed only!
+    $output = false;   // To decide if we must really return text in "return". Activate when needed only!
     $importedentry = ($entry->sourceglossaryid == $glossary->id);
     $ismainglossary = $glossary->mainglossary;
-
 
     $return = '<span class="commands">';
     // Differentiate links for each entry.
@@ -1240,6 +1239,11 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode='',$h
         $return .= html_writer::tag('span', get_string('entryishidden','glossary'),
             array('class' => 'glossary-hidden-note'));
     }
+
+    // Entry link.
+    $return .= '<a class="icon" title="' . get_string('entrylink', 'glossary', $altsuffix) . '" ' .
+               ' href="showentry.php?eid=' . $entry->id . '">' .
+               $OUTPUT->pix_icon('e/insert_edit_link', get_string('entrylink', 'glossary', $altsuffix)) . '</a>';
 
     if (has_capability('mod/glossary:approve', $context) && !$glossary->defaultapproval && $entry->approved) {
         $output = true;
@@ -1325,7 +1329,6 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode='',$h
         $return .= '<div>'.$comment->output(true).'</div>';
         $output = true;
     }
-    $return .= '<hr>';
 
     //If we haven't calculated any REAL thing, delete result ($return)
     if (!$output) {
@@ -1369,11 +1372,12 @@ function  glossary_print_entry_lower_section($course, $cm, $glossary, $entry, $m
             echo '<tr valign="top"><td class="icons">'.$icons.'</td></tr>';
         }
         if (!empty($entry->rating)) {
-            echo '<tr valign="top"><td class="ratings">';
+            echo '<tr valign="top"><td class="ratings p-t-1">';
             glossary_print_entry_ratings($course, $entry);
             echo '</td></tr>';
         }
         echo '</table>';
+        echo "<hr>\n";
     }
 }
 
@@ -2382,6 +2386,16 @@ function glossary_generate_export_file($glossary, $ignored = "", $hook = 0) {
 
                     // Export attachments.
                     $co .= glossary_xml_export_files('ATTACHMENTFILES', 4, $context->id, 'attachment', $entry->id);
+
+                    // Export tags.
+                    $tags = core_tag_tag::get_item_tags_array('mod_glossary', 'glossary_entries', $entry->id);
+                    if (count($tags)) {
+                        $co .= glossary_start_tag("TAGS", 4, true);
+                        foreach ($tags as $tag) {
+                            $co .= glossary_full_tag("TAG", 5, false, $tag);
+                        }
+                        $co .= glossary_end_tag("TAGS", 4, true);
+                    }
 
                     $co .= glossary_end_tag("ENTRY",3,true);
                 }
@@ -3795,7 +3809,7 @@ function glossary_get_search_terms_sql(array $terms, $fullsearch = true, $glossa
  * @param  array $options Accepts:
  *                        - (bool) includenotapproved. When false, includes the non-approved entries created by
  *                          the current user. When true, also includes the ones that the user has the permission to approve.
- * @return array The first element being the recordset, the second the number of entries.
+ * @return array The first element being the array of results, the second the number of entries.
  * @since Moodle 3.1
  */
 function glossary_get_entries_by_search($glossary, $context, $query, $fullsearch, $order, $sort, $from, $limit,
@@ -3846,7 +3860,7 @@ function glossary_get_entries_by_search($glossary, $context, $query, $fullsearch
     $count = $DB->count_records_sql("SELECT COUNT(DISTINCT(ge.id)) $sqlfrom $sqlwhere", $params);
 
     $query = "$sqlwrapheader $sqlselect $sqlfrom $sqlwhere $sqlwrapfooter $sqlorderby";
-    $entries = $DB->get_recordset_sql($query, $params, $from, $limit);
+    $entries = $DB->get_records_sql($query, $params, $from, $limit);
 
     return array($entries, $count);
 }

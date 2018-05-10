@@ -502,3 +502,40 @@ function upgrade_block_positions() {
     WHERE pagetype IN ('my-index', 'user-profile') AND subpage NOT IN (SELECT $id FROM {my_pages})";
     $DB->execute($sql, ['']);
 }
+
+/**
+ * Fix configdata in block instances that are using the old object class that has been removed (deprecated).
+ */
+function upgrade_fix_block_instance_configuration() {
+    global $DB;
+
+    $sql = "SELECT *
+              FROM {block_instances}
+             WHERE " . $DB->sql_isnotempty('block_instances', 'configdata', true, true);
+    $blockinstances = $DB->get_recordset_sql($sql);
+    foreach ($blockinstances as $blockinstance) {
+        $configdata = base64_decode($blockinstance->configdata);
+        list($updated, $configdata) = upgrade_fix_serialized_objects($configdata);
+        if ($updated) {
+            $blockinstance->configdata = base64_encode($configdata);
+            $DB->update_record('block_instances', $blockinstance);
+        }
+    }
+    $blockinstances->close();
+}
+
+/**
+ * Provides a way to check and update a serialized string that uses the deprecated object class.
+ *
+ * @param  string $serializeddata Serialized string which may contain the now deprecated object.
+ * @return array Returns an array where the first variable is a bool with a status of whether the initial data was changed
+ * or not. The second variable is the said data.
+ */
+function upgrade_fix_serialized_objects($serializeddata) {
+    $updated = false;
+    if (strpos($serializeddata, ":6:\"object") !== false) {
+        $serializeddata = str_replace(":6:\"object", ":8:\"stdClass", $serializeddata);
+        $updated = true;
+    }
+    return [$updated, $serializeddata];
+}

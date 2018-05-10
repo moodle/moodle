@@ -398,7 +398,7 @@ function print_combined_install_output($processes) {
     // Show process name in first row.
     foreach ($processes as $name => $process) {
         // If we don't have enough space to show full run name then show runX.
-        if ($lengthofprocessline < strlen($name + 2)) {
+        if ($lengthofprocessline < strlen($name) + 2) {
             $name = substr($name, -5);
         }
         // One extra padding as we are adding | separator for rest of the data.

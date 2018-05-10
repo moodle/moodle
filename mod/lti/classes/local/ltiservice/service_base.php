@@ -28,11 +28,13 @@ namespace mod_lti\local\ltiservice;
 
 defined('MOODLE_INTERNAL') || die();
 
+global $CFG;
 require_once($CFG->dirroot . '/mod/lti/locallib.php');
 require_once($CFG->dirroot . '/mod/lti/OAuthBody.php');
 
 // TODO: Switch to core oauthlib once implemented - MDL-30149.
 use moodle\mod\lti as lti;
+use stdClass;
 
 
 /**
@@ -133,9 +135,79 @@ abstract class service_base {
     /**
      * Get the resources for this service.
      *
-     * @return array
+     * @return resource_base[]
      */
     abstract public function get_resources();
+
+    /**
+     * Returns the configuration options for this service.
+     *
+     * @param \MoodleQuickForm $mform Moodle quickform object definition
+     */
+    public function get_configuration_options(&$mform) {
+
+    }
+
+    /**
+     * Return an array with the names of the parameters that the service will be saving in the configuration
+     *
+     * @return array  Names list of the parameters that the service will be saving in the configuration
+     */
+    public function get_configuration_parameter_names() {
+        return array();
+    }
+
+    /**
+     * Default implementation will check for the existence of at least one mod_lti entry for that tool and context.
+     *
+     * It may be overridden if other inferences can be done.
+     *
+     * Ideally a Site Tool should be explicitly engaged with a course, the check on the presence of a link is a proxy
+     * to infer a Site Tool engagement until an explicit Site Tool - Course relationship exists.
+     *
+     * @param int $typeid The tool lti type id.
+     * @param int $courseid The course id.
+     * @return bool returns True if tool is used in context, false otherwise.
+     */
+    public function is_used_in_context($typeid, $courseid) {
+        global $DB;
+
+        $ok = $DB->record_exists('lti', array('course' => $courseid, 'typeid' => $typeid));
+        return $ok || $DB->record_exists('lti_types', array('course' => $courseid, 'id' => $typeid));
+    }
+
+    /**
+     * Checks if there is a site tool or a course tool for this site.
+     *
+     * @param int $typeid The tool lti type id.
+     * @param int $courseid The course id.
+     * @return bool returns True if tool is allowed in context, false otherwise.
+     */
+    public function is_allowed_in_context($typeid, $courseid) {
+        global $DB;
+
+        // Check if it is a Course tool for this course or a Site tool.
+        $type = $DB->get_record('lti_types', array('id' => $typeid));
+
+        return $type && ($type->course == $courseid || $type->course == SITEID);
+    }
+
+    /**
+     * Return an array of key/values to add to the launch parameters.
+     *
+     * @param string $messagetype  'basic-lti-launch-request' or 'ContentItemSelectionRequest'.
+     * @param string $courseid     The course id.
+     * @param string $userid       The user id.
+     * @param string $typeid       The tool lti type id.
+     * @param string $modlti       The id of the lti activity.
+     *
+     * The type is passed to check the configuration and not return parameters for services not used.
+     *
+     * @return array Key/value pairs to add as launch parameters.
+     */
+    public function get_launch_parameters($messagetype, $courseid, $userid, $typeid, $modlti = null) {
+        return array();
+    }
 
     /**
      * Get the path for service requests.
@@ -202,9 +274,35 @@ abstract class service_base {
         if ($ok) {
             $this->toolproxy = $toolproxy;
         }
-
         return $ok;
+    }
 
+    /**
+     * Check that the request has been properly signed.
+     *
+     * @param int $typeid The tool id
+     * @param int $courseid The course we are at
+     * @param string $body Request body (null if none)
+     *
+     * @return bool
+     */
+    public function check_type($typeid, $courseid, $body = null) {
+        $ok = false;
+        $tool = null;
+        $consumerkey = lti\get_oauth_key_from_headers();
+        if (empty($typeid)) {
+            return $ok;
+        } else if ($this->is_allowed_in_context($typeid, $courseid)) {
+            $tool = lti_get_type_type_config($typeid);
+            if ($tool !== false) {
+                if (!$this->is_unsigned() && ($tool->lti_resourcekey == $consumerkey)) {
+                    $ok = $this->check_signature($tool->lti_resourcekey, $tool->lti_password, $body);
+                } else {
+                    $ok = $this->is_unsigned();
+                }
+            }
+        }
+        return $ok;
     }
 
     /**

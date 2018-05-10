@@ -28,7 +28,8 @@ define(['jquery', 'core/custom_interaction_events', 'core/log'],
         TOGGLE_ACTION: '[data-action="toggle-drawer"]',
         TOGGLE_TARGET: 'aria-controls',
         TOGGLE_SIDE: 'left',
-        BODY: 'body'
+        BODY: 'body',
+        SECTION: '.list-group-item[href*="#section-"]'
     };
 
     /**
@@ -103,10 +104,6 @@ define(['jquery', 'core/custom_interaction_events', 'core/log'],
         body.addClass('drawer-ease');
         var open = trigger.attr('aria-expanded') == 'true';
         if (!open) {
-            var small = $(document).width() < 768;
-            if (small) {
-                this.closeAll();
-            }
             // Open.
             trigger.attr('aria-expanded', 'true');
             drawer.attr('aria-hidden', 'false');
@@ -155,6 +152,12 @@ define(['jquery', 'core/custom_interaction_events', 'core/log'],
             }.bind(this));
         }.bind(this));
 
+        $(SELECTORS.SECTION).click(function() {
+            var small = $(document).width() < 768;
+            if (small) {
+                this.closeAll();
+            }
+        }.bind(this));
     };
 
     return {

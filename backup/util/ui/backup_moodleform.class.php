@@ -122,6 +122,8 @@ class backup_confirmation_form extends backup_moodleform {
         if (!array_key_exists('setting_root_filename', $errors)) {
             if (trim($data['setting_root_filename']) == '') {
                 $errors['setting_root_filename'] = get_string('errorfilenamerequired', 'backup');
+            } else if (strlen(trim($data['setting_root_filename'])) > 255) {
+                $errors['setting_root_filename'] = get_string('errorfilenametoolong', 'backup');
             } else if (!preg_match('#\.mbz$#i', $data['setting_root_filename'])) {
                 $errors['setting_root_filename'] = get_string('errorfilenamemustbezip', 'backup');
             }

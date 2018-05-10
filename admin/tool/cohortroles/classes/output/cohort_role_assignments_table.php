@@ -94,11 +94,12 @@ class cohort_role_assignments_table extends table_sql {
             'idnumber' => $data->cohortidnumber,
             'description' => $data->cohortdescription,
             'visible' => $data->cohortvisible,
-            'name' => $data->cohortname
+            'name' => $data->cohortname,
+            'theme' => $data->cohorttheme
         );
         $context = context_helper::instance_by_id($data->cohortcontextid);
 
-        $exporter = new \tool_lp\external\cohort_summary_exporter($record, array('context' => $context));
+        $exporter = new \core_cohort\external\cohort_summary_exporter($record, array('context' => $context));
         $cohort = $exporter->export($OUTPUT);
 
         $html = $OUTPUT->render_from_template('tool_cohortroles/cohort-in-list', $cohort);
@@ -169,7 +170,7 @@ class cohort_role_assignments_table extends table_sql {
     protected function get_sql_and_params($count = false) {
         $fields = 'uca.id, uca.cohortid, uca.userid, uca.roleid, ';
         $fields .= 'c.name as cohortname, c.idnumber as cohortidnumber, c.contextid as cohortcontextid, ';
-        $fields .= 'c.visible as cohortvisible, c.description as cohortdescription, ';
+        $fields .= 'c.visible as cohortvisible, c.description as cohortdescription, c.theme as cohorttheme, ';
 
         // Add extra user fields that we need for the graded user.
         $extrafields = get_extra_user_fields($this->context);

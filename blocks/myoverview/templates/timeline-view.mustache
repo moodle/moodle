@@ -23,19 +23,23 @@
     {}
 }}
 <div id="timeline-view-{{uniqid}}" data-region="timeline-view">
-    <div class="row text-xs-center">
-        <div class="btn-group m-t-2" role="group" data-toggle="btns">
-            <a class="btn btn-default active" href="#myoverview_timeline_dates" data-toggle="tab">
+    <div class="d-flex justify-content-center">
+        <ul class="nav nav-pills my-5">
+            <li class="nav-item">
+            <a class="nav-link active" href="#myoverview_timeline_dates" data-toggle="tab">
                 {{#str}} sortbydates, block_myoverview {{/str}}
             </a>
-            <a class="btn btn-default" href="#myoverview_timeline_courses" data-toggle="tab">
+            </li>
+            <li class="nav-item">
+            <a class="nav-link" href="#myoverview_timeline_courses" data-toggle="tab">
                 {{#str}} sortbycourses, block_myoverview {{/str}}
             </a>
-        </div>
+            </li>
+        </ul>
     </div>
 
     <div class="tab-content">
-        <div class="tab-pane active fade in" id="myoverview_timeline_dates">
+        <div class="tab-pane active fade show" id="myoverview_timeline_dates">
             {{> block_myoverview/timeline-view-dates }}
         </div>
         <div class="tab-pane fade" id="myoverview_timeline_courses">
@@ -43,12 +47,3 @@
         </div>
     </div>
 </div>
-{{#js}}
-require(['jquery', 'core/custom_interaction_events'], function($, customEvents) {
-    var root = $('#timeline-view-{{uniqid}}');
-    customEvents.define(root, [customEvents.events.activate]);
-    root.on(customEvents.events.activate, '[data-toggle="btns"] > .btn', function() {
-        root.find('.btn.active').removeClass('active');
-    });
-});
-{{/js}}

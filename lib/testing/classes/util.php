@@ -676,6 +676,7 @@ abstract class testing_util {
                     $mysqlsequences[$table] = $info->auto_increment;
                 }
             }
+            $rs->close();
         }
 
         foreach ($data as $table => $records) {
@@ -812,6 +813,7 @@ abstract class testing_util {
         }
 
         make_temp_directory('');
+        make_backup_temp_directory('');
         make_cache_directory('');
         make_localcache_directory('');
         // Purge all data from the caches. This is required for consistency between tests.

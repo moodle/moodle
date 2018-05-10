@@ -400,12 +400,19 @@ div#dock {
 .path-mod-lesson .answeroptiongroup .felement label p:last-child {
     margin-bottom: 0;
 }
+.path-mod-lesson .answeroption .fradio label p,
+.path-mod-lesson .answeroption .fcheckbox label p {
+    display: inline;
+}
 
 /**
  * Style for view.php
  **/
 #page-mod-lesson-view .password-form .submitbutton {
     display: inline;
+}
+#page-mod-lesson-view .branchbuttoncontainer .singlebutton input[type="submit"] {
+    white-space: normal;
 }
 .path-mod-lesson .reviewessay {
     width: 40%;
@@ -805,6 +812,15 @@ div#dock {
 }
 
 // Quiz module
+#page-mod-quiz-edit ul.slots li.section li.activity .instancemaxmarkcontainer form input {
+    margin: 0;
+    padding: 0.2em;
+    height: 1em;
+}
+#mod_quiz_preflight_form .femptylabel .felement {
+    margin: 0;
+    padding: 0;
+}
 
 // Question navigation block.
 .path-mod-quiz #mod_quiz_navblock {

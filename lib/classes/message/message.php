@@ -101,6 +101,9 @@ class message {
     /** @var  string An email address which can be used to send an reply. */
     private $replyto;
 
+    /** @var  string A name which can be used with replyto. */
+    private $replytoname;
+
     /** @var  int Used internally to store the id of the row representing this message in DB. */
     private $savedmessageid;
 
@@ -130,6 +133,7 @@ class message {
         'contexturl',
         'contexturlname',
         'replyto',
+        'replytoname',
         'savedmessageid',
         'attachment',
         'attachname',

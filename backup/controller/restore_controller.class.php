@@ -32,7 +32,7 @@
  */
 class restore_controller extends base_controller {
 
-    protected $tempdir;   // Directory under tempdir/backup awaiting restore
+    protected $tempdir;   // Directory under $CFG->backuptempdir awaiting restore
     protected $restoreid; // Unique identificator for this restore
 
     protected $courseid; // courseid where restore is going to happen
@@ -68,7 +68,7 @@ class restore_controller extends base_controller {
      * while loading the plan, as well as for future use. (You can change it
      * for a different one later using set_progress.)
      *
-     * @param string $tempdir Directory under tempdir/backup awaiting restore
+     * @param string $tempdir Directory under $CFG->backuptempdir awaiting restore
      * @param int $courseid Course id where restore is going to happen
      * @param bool $interactive backup::INTERACTIVE_YES[true] or backup::INTERACTIVE_NO[false]
      * @param int $mode backup::MODE_[ GENERAL | HUB | IMPORT | SAMESITE ]

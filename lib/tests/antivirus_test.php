@@ -57,11 +57,7 @@ class core_antivirus_testcase extends advanced_testcase {
     public function test_manager_scan_file_no_virus() {
         // Run mock scanning.
         $this->assertFileExists($this->tempfile);
-        try {
-            \core\antivirus\manager::scan_file($this->tempfile, 'OK', true);
-        } catch (\moodle_exception $e) {
-            $this->fail('Exception scanner_exception is not expected in clean file scanning.');
-        }
+        $this->assertEmpty(\core\antivirus\manager::scan_file($this->tempfile, 'OK', true));
         // File expected to remain in place.
         $this->assertFileExists($this->tempfile);
     }
@@ -69,11 +65,7 @@ class core_antivirus_testcase extends advanced_testcase {
     public function test_manager_scan_file_error() {
         // Run mock scanning.
         $this->assertFileExists($this->tempfile);
-        try {
-            \core\antivirus\manager::scan_file($this->tempfile, 'ERROR', true);
-        } catch (\moodle_exception $e) {
-            $this->fail('Exception scanner_exception is not expected in error file scanning.');
-        }
+        $this->assertEmpty(\core\antivirus\manager::scan_file($this->tempfile, 'ERROR', true));
         // File expected to remain in place.
         $this->assertFileExists($this->tempfile);
     }
@@ -81,21 +73,31 @@ class core_antivirus_testcase extends advanced_testcase {
     public function test_manager_scan_file_virus() {
         // Run mock scanning without deleting infected file.
         $this->assertFileExists($this->tempfile);
-        try {
-            \core\antivirus\manager::scan_file($this->tempfile, 'FOUND', false);
-        } catch (\moodle_exception $e) {
-            $this->assertInstanceOf('\core\antivirus\scanner_exception', $e);
-        }
+        $this->expectException(\core\antivirus\scanner_exception::class);
+        $this->assertEmpty(\core\antivirus\manager::scan_file($this->tempfile, 'FOUND', false));
         // File expected to remain in place.
         $this->assertFileExists($this->tempfile);
 
         // Run mock scanning with deleting infected file.
-        try {
-            \core\antivirus\manager::scan_file($this->tempfile, 'FOUND', true);
-        } catch (\moodle_exception $e) {
-            $this->assertInstanceOf('\core\antivirus\scanner_exception', $e);
-        }
+        $this->expectException(\core\antivirus\scanner_exception::class);
+        $this->assertEmpty(\core\antivirus\manager::scan_file($this->tempfile, 'FOUND', true));
         // File expected to be deleted.
         $this->assertFileNotExists($this->tempfile);
+    }
+
+    public function test_manager_scan_data_no_virus() {
+        // Run mock scanning.
+        $this->assertEmpty(\core\antivirus\manager::scan_data('OK'));
+    }
+
+    public function test_manager_scan_data_error() {
+        // Run mock scanning.
+        $this->assertEmpty(\core\antivirus\manager::scan_data('ERROR'));
+    }
+
+    public function test_manager_scan_data_virus() {
+        // Run mock scanning.
+        $this->expectException(\core\antivirus\scanner_exception::class);
+        $this->assertEmpty(\core\antivirus\manager::scan_data('FOUND'));
     }
 }

@@ -47,12 +47,20 @@ $observers = array(
         'callback'    => 'core_badges_observer::course_module_criteria_review',
     ),
     array(
+        'eventname'   => '\core\event\badge_awarded',
+        'callback'    => 'core_badges_observer::badge_criteria_review',
+    ),
+    array(
         'eventname'   => '\core\event\course_completed',
         'callback'    => 'core_badges_observer::course_criteria_review',
     ),
     array(
         'eventname'   => '\core\event\user_updated',
         'callback'    => 'core_badges_observer::profile_criteria_review',
+    ),
+    array(
+        'eventname'   => '\core\event\cohort_member_added',
+        'callback'    => 'core_badges_observer::cohort_criteria_review',
     ),
 
     // Competencies.

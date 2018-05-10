@@ -88,8 +88,12 @@ class auth_email_external extends external_api {
         if (!empty($CFG->passwordpolicy)) {
             $result['passwordpolicy'] = print_password_policy();
         }
-        if (!empty($CFG->sitepolicy)) {
-            $result['sitepolicy'] = $CFG->sitepolicy;
+        $manager = new \core_privacy\local\sitepolicy\manager();
+        if ($sitepolicy = $manager->get_embed_url()) {
+            $result['sitepolicy'] = $sitepolicy->out(false);
+        }
+        if (!empty($CFG->sitepolicyhandler)) {
+            $result['sitepolicyhandler'] = $CFG->sitepolicyhandler;
         }
         if (!empty($CFG->defaultcity)) {
             $result['defaultcity'] = $CFG->defaultcity;
@@ -112,11 +116,11 @@ class auth_email_external extends external_api {
         }
 
         if (signup_captcha_enabled()) {
-            require_once($CFG->libdir . '/recaptchalib.php');
-            // We return the public key, maybe we want to use the javascript api to get the image.
+            // With reCAPTCHA v2 the captcha will be rendered by the mobile client using just the publickey.
+            // For now include placeholders for the v1 paramaters to support older mobile app versions.
             $result['recaptchapublickey'] = $CFG->recaptchapublickey;
             list($result['recaptchachallengehash'], $result['recaptchachallengeimage'], $result['recaptchachallengejs']) =
-                recaptcha_get_challenge_hash_and_urls(RECAPTCHA_API_SECURE_SERVER, $CFG->recaptchapublickey);
+                array('', '', '');
         }
 
         $result['warnings'] = array();
@@ -138,6 +142,7 @@ class auth_email_external extends external_api {
                 ),
                 'passwordpolicy' => new external_value(PARAM_RAW, 'Password policy', VALUE_OPTIONAL),
                 'sitepolicy' => new external_value(PARAM_RAW, 'Site policy', VALUE_OPTIONAL),
+                'sitepolicyhandler' => new external_value(PARAM_PLUGIN, 'Site policy handler', VALUE_OPTIONAL),
                 'defaultcity' => new external_value(PARAM_NOTAGS, 'Default city', VALUE_OPTIONAL),
                 'country' => new external_value(PARAM_ALPHA, 'Default country', VALUE_OPTIONAL),
                 'profilefields' => new external_multiple_structure(
@@ -287,7 +292,8 @@ class auth_email_external extends external_api {
         $data = $params;
         $data['email2'] = $data['email'];
         // Force policy agreed if a site policy is set. The client is responsible of implementing the interface check.
-        if (!empty($CFG->sitepolicy)) {
+        $manager = new \core_privacy\local\sitepolicy\manager();
+        if ($manager->is_defined()) {
             $data['policyagreed'] = 1;
         }
         unset($data['recaptcharesponse']);
@@ -307,11 +313,11 @@ class auth_email_external extends external_api {
 
         // Validate recaptcha.
         if (signup_captcha_enabled()) {
-            require_once($CFG->libdir . '/recaptchalib.php');
-            $response = recaptcha_check_answer($CFG->recaptchaprivatekey, getremoteaddr(), $params['recaptchachallengehash'],
-                                               $params['recaptcharesponse'], true);
-            if (!$response->is_valid) {
-                $errors['recaptcharesponse'] = $response->error;
+            require_once($CFG->libdir . '/recaptchalib_v2.php');
+            $response = recaptcha_check_response(RECAPTCHA_VERIFY_URL, $CFG->recaptchaprivatekey,
+                                                 getremoteaddr(), $params['recaptcharesponse']);
+            if (!$response['isvalid']) {
+                $errors['recaptcharesponse'] = $response['error'];
             }
         }
 

@@ -99,12 +99,19 @@ function(
     };
 
     return {
-        init: function(root) {
+        init: function(root, loadOnInit) {
             root = $(root);
 
             CalendarViewManager.init(root);
             registerEventListeners(root);
             registerCalendarEventListeners(root);
+
+            if (loadOnInit) {
+                // The calendar hasn't yet loaded it's events so we
+                // should load them as soon as we've initialised.
+                CalendarViewManager.reloadCurrentMonth(root);
+            }
+
         }
     };
 });

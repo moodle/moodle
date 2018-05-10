@@ -26,28 +26,24 @@
         "summary": "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout."
     }
 }}
-<div class="col-lg-6">
-    <div class="card m-b-1 courses-view-course-item">
-        <div class="card-block course-info-container" id="course-info-container-{{id}}">
-            <div class="hidden-sm-up hidden-phone">
+<div class="card mb-3 courses-view-course-item">
+    <a href="{{viewurl}}">
+        <div class="card-img-top myoverviewimg {{classes}}" style='background-image: url("{{{courseimage}}}");'>
+        </div>
+    </a>
+    <div class="card-body course-info-container" id="course-info-container-{{id}}">
+
+        <div class="media">
+            <div class="mr-2">
                 {{> block_myoverview/progress-chart}}
+            </div>
+            <div class="media-body">
                 <h4 class="h5"><a href="{{viewurl}}" class="{{^visible}}dimmed{{/visible}}">{{{fullnamedisplay}}}</a></h4>
             </div>
-            <div class="hidden-xs-down visible-phone">
-                <div class="media">
-                    <div class="media-left">
-                        <div class="media-object">
-                            {{> block_myoverview/progress-chart}}
-                        </div>
-                    </div>
-                    <div class="media-body">
-                        <h4 class="h5"><a href="{{viewurl}}" class="{{^visible}}dimmed{{/visible}}">{{{fullnamedisplay}}}</a></h4>
-                    </div>
-                </div>
-            </div>
-            <p class="text-muted">
-                {{#shortentext}} 140, {{summary}}{{/shortentext}}
-            </p>
         </div>
+
+        <p class="text-muted">
+            {{#shortentext}} 140, {{summary}}{{/shortentext}}
+        </p>
     </div>
 </div>

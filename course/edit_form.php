@@ -88,7 +88,7 @@ class course_edit_form extends moodleform {
             }
         } else {
             if (has_capability('moodle/course:changecategory', $coursecontext)) {
-                $displaylist = coursecat::make_categories_list('moodle/course:create');
+                $displaylist = coursecat::make_categories_list('moodle/course:changecategory');
                 if (!isset($displaylist[$course->category])) {
                     //always keep current
                     $displaylist[$course->category] = coursecat::get($course->category, MUST_EXIST, true)->get_formatted_name();
@@ -120,12 +120,13 @@ class course_edit_form extends moodleform {
                 $mform->setConstant('visible', $courseconfig->visible);
             }
         }
-
-        $mform->addElement('date_selector', 'startdate', get_string('startdate'));
+        $mform->addElement('date_time_selector', 'startdate', get_string('startdate'));
         $mform->addHelpButton('startdate', 'startdate');
-        $mform->setDefault('startdate', time() + 3600 * 24);
+        $date = (new DateTime())->setTimestamp(usergetmidnight(time()));
+        $date->modify('+1 day');
+        $mform->setDefault('startdate', $date->getTimestamp());
 
-        $mform->addElement('date_selector', 'enddate', get_string('enddate'), array('optional' => true));
+        $mform->addElement('date_time_selector', 'enddate', get_string('enddate'), array('optional' => true));
         $mform->addHelpButton('enddate', 'enddate');
 
         $mform->addElement('text','idnumber', get_string('idnumbercourse'),'maxlength="100"  size="10"');
@@ -204,8 +205,11 @@ class course_edit_form extends moodleform {
         $languages=array();
         $languages[''] = get_string('forceno');
         $languages += get_string_manager()->get_list_of_translations();
-        $mform->addElement('select', 'lang', get_string('forcelanguage'), $languages);
-        $mform->setDefault('lang', $courseconfig->lang);
+        if ((empty($course->id) && guess_if_creator_will_have_course_capability('moodle/course:setforcedlanguage', $categorycontext))
+                || (!empty($course->id) && has_capability('moodle/course:setforcedlanguage', $coursecontext))) {
+            $mform->addElement('select', 'lang', get_string('forcelanguage'), $languages);
+            $mform->setDefault('lang', $courseconfig->lang);
+        }
 
         // Multi-Calendar Support - see MDL-18375.
         $calendartypes = \core_calendar\type_factory::get_list_of_calendar_types();

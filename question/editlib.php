@@ -95,28 +95,42 @@ function get_questions_category( $category, $noparent=false, $recurse=true, $exp
 }
 
 /**
+ * Checks whether this is the only child of a top category in a context.
+ *
  * @param int $categoryid a category id.
- * @return bool whether this is the only top-level category in a context.
+ * @return bool
  */
-function question_is_only_toplevel_category_in_context($categoryid) {
+function question_is_only_child_of_top_category_in_context($categoryid) {
     global $DB;
     return 1 == $DB->count_records_sql("
             SELECT count(*)
-              FROM {question_categories} c1,
-                   {question_categories} c2
-             WHERE c2.id = ?
-               AND c1.contextid = c2.contextid
-               AND c1.parent = 0 AND c2.parent = 0", array($categoryid));
+              FROM {question_categories} c
+              JOIN {question_categories} p ON c.parent = p.id
+              JOIN {question_categories} s ON s.parent = c.parent
+             WHERE c.id = ? AND p.parent = 0", array($categoryid));
 }
 
 /**
- * Check whether this user is allowed to delete this category.
+ * Checks whether the category is a "Top" category (with no parent).
+ *
+ * @param int $categoryid a category id.
+ * @return bool
+ */
+function question_is_top_category($categoryid) {
+    global $DB;
+    return 0 == $DB->get_field('question_categories', 'parent', array('id' => $categoryid));
+}
+
+/**
+ * Ensures that this user is allowed to delete this category.
  *
  * @param int $todelete a category id.
  */
 function question_can_delete_cat($todelete) {
     global $DB;
-    if (question_is_only_toplevel_category_in_context($todelete)) {
+    if (question_is_top_category($todelete)) {
+        print_error('cannotdeletetopcat', 'question');
+    } else if (question_is_only_child_of_top_category_in_context($todelete)) {
         print_error('cannotdeletecate', 'question');
     } else {
         $contextid = $DB->get_field('question_categories', 'contextid', array('id' => $todelete));
@@ -264,21 +278,150 @@ class_alias('core_question\bank\view', 'question_bank_view', true);
  * @return array $thispageurl, $contexts, $cmid, $cm, $module, $pagevars
  */
 function question_edit_setup($edittab, $baseurl, $requirecmid = false, $unused = null) {
-    global $DB, $PAGE, $CFG;
+    global $PAGE;
 
     if ($unused !== null) {
         debugging('Deprecated argument passed to question_edit_setup()', DEBUG_DEVELOPER);
     }
 
+    $params = [];
+
+    if ($requirecmid) {
+        $params['cmid'] = required_param('cmid', PARAM_INT);
+    } else {
+        $params['cmid'] = optional_param('cmid', null, PARAM_INT);
+    }
+
+    if (!$params['cmid']) {
+        $params['courseid'] = required_param('courseid', PARAM_INT);
+    }
+
+    $params['qpage'] = optional_param('qpage', null, PARAM_INT);
+
+    // Pass 'cat' from page to page and when 'category' comes from a drop down menu
+    // then we also reset the qpage so we go to page 1 of
+    // a new cat.
+    $params['cat'] = optional_param('cat', null, PARAM_SEQUENCE); // If empty will be set up later.
+    $params['category'] = optional_param('category', null, PARAM_SEQUENCE);
+    $params['qperpage'] = optional_param('qperpage', null, PARAM_INT);
+
+    // Question table sorting options.
+    for ($i = 1; $i <= question_bank_view::MAX_SORTS; $i++) {
+        $param = 'qbs' . $i;
+        if ($sort = optional_param($param, '', PARAM_TEXT)) {
+            $params[$param] = $sort;
+        } else {
+            break;
+        }
+    }
+
+    // Display options.
+    $params['recurse'] = optional_param('recurse',    null, PARAM_BOOL);
+    $params['showhidden'] = optional_param('showhidden', null, PARAM_BOOL);
+    $params['qbshowtext'] = optional_param('qbshowtext', null, PARAM_BOOL);
+    // Category list page.
+    $params['cpage'] = optional_param('cpage', null, PARAM_INT);
+    $params['qtagids'] = optional_param_array('qtagids', null, PARAM_INT);
+
+    $PAGE->set_pagelayout('admin');
+
+    return question_build_edit_resources($edittab, $baseurl, $params);
+}
+
+/**
+ * Common function for building the generic resources required by the
+ * editing questions pages.
+ *
+ * Either a cmid or a course id must be provided as keys in $params or
+ * an exception will be thrown. All other params are optional and will have
+ * sane default applied if not provided.
+ *
+ * The acceptable keys for $params are:
+ * [
+ *      'cmid' => PARAM_INT,
+ *      'courseid' => PARAM_INT,
+ *      'qpage' => PARAM_INT,
+ *      'cat' => PARAM_SEQUENCE,
+ *      'category' => PARAM_SEQUENCE,
+ *      'qperpage' => PARAM_INT,
+ *      'recurse' => PARAM_INT,
+ *      'showhidden' => PARAM_INT,
+ *      'qbshowtext' => PARAM_INT,
+ *      'cpage' => PARAM_INT,
+ *      'recurse' => PARAM_BOOL,
+ *      'showhidden' => PARAM_BOOL,
+ *      'qbshowtext' => PARAM_BOOL,
+ *      'qtagids' => [PARAM_INT], (array of integers)
+ *      'qbs1' => PARAM_TEXT,
+ *      'qbs2' => PARAM_TEXT,
+ *      'qbs3' => PARAM_TEXT,
+ *      ... and more qbs keys up to question_bank_view::MAX_SORTS ...
+ *  ];
+ *
+ * @param string $edittab Code for this edit tab
+ * @param string $baseurl The name of the script calling this funciton. For examle 'qusetion/edit.php'.
+ * @param array $params The provided parameters to construct the resources with.
+ * @return array $thispageurl, $contexts, $cmid, $cm, $module, $pagevars
+ */
+function question_build_edit_resources($edittab, $baseurl, $params) {
+    global $DB, $PAGE, $CFG;
+
     $thispageurl = new moodle_url($baseurl);
     $thispageurl->remove_all_params(); // We are going to explicity add back everything important - this avoids unwanted params from being retained.
 
-    if ($requirecmid){
-        $cmid =required_param('cmid', PARAM_INT);
-    } else {
-        $cmid = optional_param('cmid', 0, PARAM_INT);
+    $cleanparams = [
+        'qsorts' => [],
+        'qtagids' => []
+    ];
+    $paramtypes = [
+        'cmid' => PARAM_INT,
+        'courseid' => PARAM_INT,
+        'qpage' => PARAM_INT,
+        'cat' => PARAM_SEQUENCE,
+        'category' => PARAM_SEQUENCE,
+        'qperpage' => PARAM_INT,
+        'recurse' => PARAM_INT,
+        'showhidden' => PARAM_INT,
+        'qbshowtext' => PARAM_INT,
+        'cpage' => PARAM_INT,
+        'recurse' => PARAM_BOOL,
+        'showhidden' => PARAM_BOOL,
+        'qbshowtext' => PARAM_BOOL
+    ];
+
+    foreach ($paramtypes as $name => $type) {
+        if (isset($params[$name])) {
+            $cleanparams[$name] = clean_param($params[$name], $type);
+        } else {
+            $cleanparams[$name] = null;
+        }
     }
-    if ($cmid){
+
+    if (!empty($params['qtagids'])) {
+        $cleanparams['qtagids'] = clean_param_array($params['qtagids'], PARAM_INT);
+    }
+
+    $cmid = $cleanparams['cmid'];
+    $courseid = $cleanparams['courseid'];
+    $qpage = $cleanparams['qpage'] ?: -1;
+    $cat = $cleanparams['cat'] ?: 0;
+    $category = $cleanparams['category'] ?: 0;
+    $qperpage = $cleanparams['qperpage'];
+    $recurse = $cleanparams['recurse'];
+    $showhidden = $cleanparams['showhidden'];
+    $qbshowtext = $cleanparams['qbshowtext'];
+    $cpage = $cleanparams['cpage'] ?: 1;
+    $recurse = $cleanparams['recurse'];
+    $showhidden = $cleanparams['showhidden'];
+    $qbshowtext = $cleanparams['qbshowtext'];
+    $qsorts = $cleanparams['qsorts'];
+    $qtagids = $cleanparams['qtagids'];
+
+    if (is_null($cmid) && is_null($courseid)) {
+        throw new \moodle_exception('Must provide a cmid or courseid');
+    }
+
+    if ($cmid) {
         list($module, $cm) = get_module_from_cmid($cmid);
         $courseid = $cm->course;
         $thispageurl->params(compact('cmid'));
@@ -287,7 +430,6 @@ function question_edit_setup($edittab, $baseurl, $requirecmid = false, $unused =
     } else {
         $module = null;
         $cm = null;
-        $courseid  = required_param('courseid', PARAM_INT);
         $thispageurl->params(compact('courseid'));
         require_login($courseid, false);
         $thiscontext = context_course::instance($courseid);
@@ -296,30 +438,41 @@ function question_edit_setup($edittab, $baseurl, $requirecmid = false, $unused =
     if ($thiscontext){
         $contexts = new question_edit_contexts($thiscontext);
         $contexts->require_one_edit_tab_cap($edittab);
-
     } else {
         $contexts = null;
     }
 
-    $PAGE->set_pagelayout('admin');
+    $pagevars['qpage'] = $qpage;
 
-    $pagevars['qpage'] = optional_param('qpage', -1, PARAM_INT);
-
-    //pass 'cat' from page to page and when 'category' comes from a drop down menu
-    //then we also reset the qpage so we go to page 1 of
-    //a new cat.
-    $pagevars['cat'] = optional_param('cat', 0, PARAM_SEQUENCE); // if empty will be set up later
-    if ($category = optional_param('category', 0, PARAM_SEQUENCE)) {
-        if ($pagevars['cat'] != $category) { // is this a move to a new category?
-            $pagevars['cat'] = $category;
-            $pagevars['qpage'] = 0;
-        }
+    // Pass 'cat' from page to page and when 'category' comes from a drop down menu
+    // then we also reset the qpage so we go to page 1 of
+    // a new cat.
+    if ($category && $category != $cat) { // Is this a move to a new category?
+        $pagevars['cat'] = $category;
+        $pagevars['qpage'] = 0;
+    } else {
+        $pagevars['cat'] = $cat; // If empty will be set up later.
     }
+
     if ($pagevars['cat']){
         $thispageurl->param('cat', $pagevars['cat']);
     }
+
     if (strpos($baseurl, '/question/') === 0) {
         navigation_node::override_active_url($thispageurl);
+    }
+
+    // This need to occur after the override_active_url call above because
+    // these values change on the page request causing the URLs to mismatch
+    // when trying to work out the active node.
+    for ($i = 1; $i <= question_bank_view::MAX_SORTS; $i++) {
+        $param = 'qbs' . $i;
+        if (isset($params[$param])) {
+            $value = clean_param($params[$param], PARAM_TEXT);
+        } else {
+            break;
+        }
+        $thispageurl->param($param, $value);
     }
 
     if ($pagevars['qpage'] > -1) {
@@ -328,20 +481,12 @@ function question_edit_setup($edittab, $baseurl, $requirecmid = false, $unused =
         $pagevars['qpage'] = 0;
     }
 
-    $pagevars['qperpage'] = question_get_display_preference(
-            'qperpage', DEFAULT_QUESTIONS_PER_PAGE, PARAM_INT, $thispageurl);
-
-    for ($i = 1; $i <= question_bank_view::MAX_SORTS; $i++) {
-        $param = 'qbs' . $i;
-        if (!$sort = optional_param($param, '', PARAM_TEXT)) {
-            break;
-        }
-        $thispageurl->param($param, $sort);
-    }
+    $pagevars['qperpage'] = question_set_or_get_user_preference(
+            'qperpage', $qperpage, DEFAULT_QUESTIONS_PER_PAGE, $thispageurl);
 
     $defaultcategory = question_make_default_categories($contexts->all());
 
-    $contextlistarr = array();
+    $contextlistarr = [];
     foreach ($contexts->having_one_edit_tab_cap($edittab) as $context){
         $contextlistarr[] = "'{$context->id}'";
     }
@@ -358,14 +503,19 @@ function question_edit_setup($edittab, $baseurl, $requirecmid = false, $unused =
     }
 
     // Display options.
-    $pagevars['recurse']    = question_get_display_preference('recurse',    1, PARAM_BOOL, $thispageurl);
-    $pagevars['showhidden'] = question_get_display_preference('showhidden', 0, PARAM_BOOL, $thispageurl);
-    $pagevars['qbshowtext'] = question_get_display_preference('qbshowtext', 0, PARAM_BOOL, $thispageurl);
+    $pagevars['recurse']    = question_set_or_get_user_preference('recurse', $recurse, 1, $thispageurl);
+    $pagevars['showhidden'] = question_set_or_get_user_preference('showhidden', $showhidden, 0, $thispageurl);
+    $pagevars['qbshowtext'] = question_set_or_get_user_preference('qbshowtext', $qbshowtext, 0, $thispageurl);
 
     // Category list page.
-    $pagevars['cpage'] = optional_param('cpage', 1, PARAM_INT);
+    $pagevars['cpage'] = $cpage;
     if ($pagevars['cpage'] != 1){
         $thispageurl->param('cpage', $pagevars['cpage']);
+    }
+
+    $pagevars['qtagids'] = $qtagids;
+    foreach ($pagevars['qtagids'] as $index => $qtagid) {
+        $thispageurl->param("qtagids[{$index}]", $qtagid);
     }
 
     return array($thispageurl, $contexts, $cmid, $cm, $module, $pagevars);
@@ -398,13 +548,36 @@ function question_get_category_id_from_pagevars(array $pagevars) {
  */
 function question_get_display_preference($param, $default, $type, $thispageurl) {
     $submittedvalue = optional_param($param, null, $type);
-    if (is_null($submittedvalue)) {
-        return get_user_preferences('question_bank_' . $param, $default);
+    return question_set_or_get_user_preference($param, $submittedvalue, $default, $thispageurl);
+}
+
+/**
+ * Get a user preference by name or set the user preference to a given value.
+ *
+ * If $value is null then the function will only attempt to retrieve the
+ * user preference requested by $name. If no user preference is found then the
+ * $default value will be returned. In this case the user preferences are not
+ * modified and nor are the params on $thispageurl.
+ *
+ * If $value is anything other than null then the function will set the user
+ * preference $name to the provided $value and will also set it as a param
+ * on $thispageurl.
+ *
+ * @param string $name The user_preference name is 'question_bank_' . $name.
+ * @param mixed $value The preference value.
+ * @param mixed $default The default value to use, if not otherwise set.
+ * @param moodle_url $thispageurl if the value has been explicitly set, we add
+ *      it to this URL.
+ * @return mixed the parameter value to use.
+ */
+function question_set_or_get_user_preference($name, $value, $default, $thispageurl) {
+    if (is_null($value)) {
+        return get_user_preferences('question_bank_' . $name, $default);
     }
 
-    set_user_preference('question_bank_' . $param, $submittedvalue);
-    $thispageurl->param($param, $submittedvalue);
-    return $submittedvalue;
+    set_user_preference('question_bank_' . $name, $value);
+    $thispageurl->param($name, $value);
+    return $value;
 }
 
 /**

@@ -31,3 +31,4 @@ $string['pluginname'] = 'Manage files';
 $string['unusedfilesdesc'] = 'The following embedded files are not used in the text area:';
 $string['unusedfilesremovalnotice'] = 'Any unused files will be automatically deleted when saving changes.';
 $string['unusedfilesheader'] = 'Unused files';
+$string['privacy:metadata'] = 'The atto_managefiles plugin does not store any personal data.';

@@ -239,7 +239,7 @@ class assign_submission_onlinetext extends assign_submission_plugin {
         $groupid = 0;
         // Get the group name as other fields are not transcribed in the logs and this information is important.
         if (empty($submission->userid) && !empty($submission->groupid)) {
-            $groupname = $DB->get_field('groups', 'name', array('id' => $submission->groupid), '*', MUST_EXIST);
+            $groupname = $DB->get_field('groups', 'name', array('id' => $submission->groupid), MUST_EXIST);
             $groupid = $submission->groupid;
         } else {
             $params['relateduserid'] = $submission->userid;
@@ -347,30 +347,36 @@ class assign_submission_onlinetext extends assign_submission_plugin {
         $showviewlink = true;
 
         if ($onlinetextsubmission) {
+            // This contains the shortened version of the text plus an optional 'Export to portfolio' button.
             $text = $this->assignment->render_editor_content(ASSIGNSUBMISSION_ONLINETEXT_FILEAREA,
                                                              $onlinetextsubmission->submission,
                                                              $this->get_type(),
                                                              'onlinetext',
-                                                             'assignsubmission_onlinetext');
+                                                             'assignsubmission_onlinetext', true);
 
-            $shorttext = shorten_text($text, 140);
+            // The actual submission text.
+            $onlinetext = trim($onlinetextsubmission->onlinetext);
+            // The shortened version of the submission text.
+            $shorttext = shorten_text($onlinetext, 140);
+
             $plagiarismlinks = '';
 
             if (!empty($CFG->enableplagiarism)) {
                 require_once($CFG->libdir . '/plagiarismlib.php');
 
                 $plagiarismlinks .= plagiarism_get_links(array('userid' => $submission->userid,
-                    'content' => trim($onlinetextsubmission->onlinetext),
+                    'content' => $onlinetext,
                     'cmid' => $this->assignment->get_course_module()->id,
                     'course' => $this->assignment->get_course()->id,
                     'assignment' => $submission->assignment));
             }
-            if ($text != $shorttext) {
-                $wordcount = get_string('numwords', 'assignsubmission_onlinetext', count_words($text));
+            // We compare the actual text submission and the shortened version. If they are not equal, we show the word count.
+            if ($onlinetext != $shorttext) {
+                $wordcount = get_string('numwords', 'assignsubmission_onlinetext', count_words($onlinetext));
 
-                return $plagiarismlinks . $wordcount . $shorttext;
+                return $plagiarismlinks . $wordcount . $text;
             } else {
-                return $plagiarismlinks . $shorttext;
+                return $plagiarismlinks . $text;
             }
         }
         return '';

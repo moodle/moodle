@@ -56,11 +56,6 @@ class api {
             $useridto = $USER->id;
         }
 
-        $params = [
-            'useridto1' => $useridto,
-            'useridto2' => $useridto,
-        ];
-
         // Is notification enabled ?
         if ($useridto == $USER->id) {
             $disabled = $USER->emailstop;
@@ -69,35 +64,22 @@ class api {
             $disabled = $user->emailstop;
         }
         if ($disabled) {
-            // Notifications are disabled, no need to run giant queries.
+            // Notifications are disabled.
             return array();
         }
 
-        $sql = "SELECT r.id, r.useridfrom, r.useridto,
-                       r.subject, r.fullmessage, r.fullmessageformat,
-                       r.fullmessagehtml, r.smallmessage, r.notification, r.contexturl,
-                       r.contexturlname, r.timecreated, r.timeuserfromdeleted, r.timeusertodeleted,
-                       r.component, r.eventtype, r.timeread
-                  FROM {message_read} r
-                 WHERE r.notification = 1
-                       AND r.id IN (SELECT messageid FROM {message_popup} WHERE isread = 1)
-                       AND r.useridto = :useridto1
-             UNION ALL
-                SELECT u.id, u.useridfrom, u.useridto,
-                       u.subject, u.fullmessage, u.fullmessageformat,
-                       u.fullmessagehtml, u.smallmessage, u.notification, u.contexturl,
-                       u.contexturlname, u.timecreated, u.timeuserfromdeleted, u.timeusertodeleted,
-                       u.component, u.eventtype, 0 as timeread
-                  FROM {message} u
-                 WHERE u.notification = 1
-                       AND u.id IN (SELECT messageid FROM {message_popup} WHERE isread = 0)
-                       AND u.useridto = :useridto2
+        $sql = "SELECT n.id, n.useridfrom, n.useridto,
+                       n.subject, n.fullmessage, n.fullmessageformat,
+                       n.fullmessagehtml, n.smallmessage, n.contexturl,
+                       n.contexturlname, n.timecreated, n.component,
+                       n.eventtype, n.timeread
+                  FROM {notifications} n
+                 WHERE n.id IN (SELECT notificationid FROM {message_popup_notifications})
+                   AND n.useridto = ?
               ORDER BY timecreated $sort, timeread $sort, id $sort";
 
         $notifications = [];
-        // Use recordset here to ensure records with the same id aren't ignored because
-        // we can have id clashes between the message and message_read tables.
-        $records = $DB->get_recordset_sql($sql, $params, $offset, $limit);
+        $records = $DB->get_recordset_sql($sql, [$useridto], $offset, $limit);
         foreach ($records as $record) {
             $notifications[] = (object) $record;
         }
@@ -122,9 +104,10 @@ class api {
 
         return $DB->count_records_sql(
             "SELECT count(id)
-            FROM {message}
-            WHERE id IN (SELECT messageid FROM {message_popup} WHERE isread = 0)
-            AND useridto = ?",
+               FROM {notifications}
+              WHERE id IN (SELECT notificationid FROM {message_popup_notifications})
+                AND useridto = ?
+                AND timeread is NULL",
             [$useridto]
         );
     }

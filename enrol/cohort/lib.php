@@ -162,19 +162,6 @@ class enrol_cohort_plugin extends enrol_plugin {
     }
 
     /**
-     * Called for all enabled enrol plugins that returned true from is_cron_required().
-     * @return void
-     */
-    public function cron() {
-        global $CFG;
-
-        require_once("$CFG->dirroot/enrol/cohort/locallib.php");
-        $trace = new null_progress_trace();
-        enrol_cohort_sync($trace);
-        $trace->finished();
-    }
-
-    /**
      * Called after updating/inserting course.
      *
      * @param bool $inserted true if course just inserted
@@ -437,8 +424,9 @@ class enrol_cohort_plugin extends enrol_plugin {
         $options = $this->get_status_options();
         $mform->addElement('select', 'status', get_string('status', 'enrol_cohort'), $options);
 
-        $options = $this->get_cohort_options($instance, $coursecontext);
-        $mform->addElement('select', 'customint1', get_string('cohort', 'cohort'), $options);
+        $options = ['contextid' => $coursecontext->id, 'multiple' => false];
+        $mform->addElement('cohort', 'customint1', get_string('cohort', 'cohort'), $options);
+
         if ($instance->id) {
             $mform->setConstant('customint1', $instance->customint1);
             $mform->hardFreeze('customint1', $instance->customint1);

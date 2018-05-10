@@ -304,12 +304,10 @@ if ($action === 'delete') {
         $table->attributes['class'] = '';
     }
 
-
-    $table->align = array('left', 'left');
-    $table->size = array('70%', null);
-    $table->attributes['class'] = 'compacttable generaltable form-inline';
-
     foreach ($answerpages as $page) {
+        $table->align = array('left', 'left');
+        $table->size = array('70%', null);
+        $table->attributes['class'] = 'compacttable generaltable form-inline';
         unset($table->data);
         if ($page->grayout) { // set the color of text
             $fontstart = "<span class=\"dimmed\">";

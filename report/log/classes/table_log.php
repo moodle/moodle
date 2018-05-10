@@ -143,7 +143,7 @@ class report_log_table_log extends table_sql {
     public function col_time($event) {
 
         if (empty($this->download)) {
-            $dateformat = get_string('strftimerecent', 'core_langconfig');
+            $dateformat = get_string('strftimedatetime', 'core_langconfig');
         } else {
             $dateformat = get_string('strftimedatetimeshort', 'core_langconfig');
         }

@@ -34,3 +34,4 @@ $string['planstoreview'] = 'Plans to review';
 $string['pluginname'] = 'Learning plans';
 $string['viewmore'] = 'View more...';
 $string['viewotherplans'] = 'View other plans...';
+$string['privacy:metadata'] = 'The Learning plans block only shows data stored in other locations.';

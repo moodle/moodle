@@ -49,6 +49,12 @@ class user_roles_editable extends \core\output\inplace_editable {
     /** @var \stdClass[] $profileroles */
     private $profileroles;
 
+    /** @var \stdClass[] $viewableroles */
+    private $viewableroles;
+
+    /** @var \stdClass[] $assignableroles */
+    private $assignableroles;
+
     /**
      * Constructor.
      *
@@ -60,7 +66,11 @@ class user_roles_editable extends \core\output\inplace_editable {
      * @param \stdClass[] $profileroles The list of roles that should be visible in a users profile.
      * @param \stdClass[] $userroles The list of user roles.
      */
-    public function __construct($course, $context, $user, $courseroles, $assignableroles, $profileroles, $userroles) {
+    public function __construct($course, $context, $user, $courseroles, $assignableroles, $profileroles, $userroles, $viewableroles = null) {
+        if ($viewableroles === null) {
+            debugging('Constructor for user_roles_editable now needs the result of get_viewable_roles passed as viewableroles');
+        }
+
         // Check capabilities to get editable value.
         $editable = has_capability('moodle/role:assign', $context);
 
@@ -77,6 +87,8 @@ class user_roles_editable extends \core\output\inplace_editable {
         // Remember these for the display value.
         $this->courseroles = $courseroles;
         $this->profileroles = $profileroles;
+        $this->viewableroles = array_keys($viewableroles);
+        $this->assignableroles = array_keys($assignableroles);
         $this->context = $context;
 
         parent::__construct('core_user', 'user_roles', $itemid, $editable, $value, $value);
@@ -106,8 +118,9 @@ class user_roles_editable extends \core\output\inplace_editable {
     public function export_for_template(\renderer_base $output) {
         $listofroles = [];
         $roleids = json_decode($this->value);
+        $viewableroleids = array_intersect($roleids, array_merge($this->viewableroles, $this->assignableroles));
 
-        foreach ($roleids as $id) {
+        foreach ($viewableroleids as $id) {
             // If this is a student, we only show a subset of the roles.
             if ($this->editable || array_key_exists($id, $this->profileroles)) {
                 $listofroles[] = format_string($this->courseroles[$id]->localname, true, ['context' => $this->context]);
@@ -116,6 +129,8 @@ class user_roles_editable extends \core\output\inplace_editable {
 
         if (!empty($listofroles)) {
             $this->displayvalue = implode($listofroles, ', ');
+        } else if (!empty($roleids) && empty($viewableroleids)) {
+            $this->displayvalue = get_string('novisibleroles', 'role');
         } else {
             $this->displayvalue = get_string('noroles', 'role');
         }
@@ -160,6 +175,7 @@ class user_roles_editable extends \core\output\inplace_editable {
         // Check that all the groups belong to the course.
         $allroles = role_fix_names(get_all_roles($context), $context);
         $assignableroles = get_assignable_roles($context, ROLENAME_ALIAS, false);
+        $viewableroles = get_viewable_roles($context);
         $userrolesbyid = get_user_roles($context, $userid, true, 'c.contextlevel DESC, r.sortorder ASC');
         $profileroles = get_profile_roles($context);
 
@@ -224,6 +240,6 @@ class user_roles_editable extends \core\output\inplace_editable {
 
         $course = get_course($courseid);
         $user = core_user::get_user($userid);
-        return new self($course, $context, $user, $allroles, $assignableroles, $profileroles, $userroles);
+        return new self($course, $context, $user, $allroles, $assignableroles, $profileroles, $userroles, $viewableroles);
     }
 }

@@ -65,6 +65,10 @@ class qtype_essay_edit_form extends question_edit_form {
         $mform->addHelpButton('attachmentsrequired', 'attachmentsrequired', 'qtype_essay');
         $mform->disabledIf('attachmentsrequired', 'attachments', 'eq', 0);
 
+        $mform->addElement('filetypes', 'filetypeslist', get_string('acceptedfiletypes', 'qtype_essay'));
+        $mform->addHelpButton('filetypeslist', 'acceptedfiletypes', 'qtype_essay');
+        $mform->disabledIf('filetypeslist', 'attachments', 'eq', 0);
+
         $mform->addElement('header', 'responsetemplateheader', get_string('responsetemplateheader', 'qtype_essay'));
         $mform->addElement('editor', 'responsetemplate', get_string('responsetemplate', 'qtype_essay'),
                 array('rows' => 10),  array_merge($this->editoroptions, array('maxfiles' => 0)));
@@ -88,6 +92,7 @@ class qtype_essay_edit_form extends question_edit_form {
         $question->responsefieldlines = $question->options->responsefieldlines;
         $question->attachments = $question->options->attachments;
         $question->attachmentsrequired = $question->options->attachmentsrequired;
+        $question->filetypeslist = $question->options->filetypeslist;
 
         $draftid = file_get_submitted_draft_itemid('graderinfo');
         $question->graderinfo = array();

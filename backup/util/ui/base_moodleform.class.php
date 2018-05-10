@@ -127,12 +127,6 @@ abstract class base_moodleform extends moodleform {
      */
     public function definition_after_data() {
         $buttonarray = array();
-        $buttonarray[] = $this->_form->createElement(
-            'submit',
-            'submitbutton',
-            get_string($this->uistage->get_ui()->get_name().'stage'.$this->uistage->get_stage().'action', 'backup'),
-            array('class' => 'proceedbutton')
-        );
         if (!$this->uistage->is_first_stage()) {
             $buttonarray[] = $this->_form->createElement('submit', 'previous', get_string('previousstage', 'backup'));
         } else if ($this->uistage instanceof backup_ui_stage) {
@@ -141,6 +135,12 @@ abstract class base_moodleform extends moodleform {
                 array('class' => 'oneclickbackup'));
         }
         $buttonarray[] = $this->_form->createElement('cancel', 'cancel', get_string('cancel'), array('class' => 'confirmcancel'));
+        $buttonarray[] = $this->_form->createElement(
+            'submit',
+            'submitbutton',
+            get_string($this->uistage->get_ui()->get_name().'stage'.$this->uistage->get_stage().'action', 'backup'),
+            array('class' => 'proceedbutton')
+        );
         $this->_form->addGroup($buttonarray, 'buttonar', '', array(' '), false);
         $this->_form->closeHeaderBefore('buttonar');
 
@@ -183,11 +183,22 @@ abstract class base_moodleform extends moodleform {
     public function add_settings(array $settingstasks) {
         global $OUTPUT;
 
+        // Determine highest setting level, which is displayed in this stage. This is relevant for considering only
+        // locks of dependency settings for parent settings, which are not displayed in this stage.
+        $highestlevel = backup_setting::ACTIVITY_LEVEL;
+        foreach ($settingstasks as $st) {
+            list($setting, $task) = $st;
+            if ($setting->get_level() < $highestlevel) {
+                $highestlevel = $setting->get_level();
+            }
+        }
+
         $defaults = array();
         foreach ($settingstasks as $st) {
             list($setting, $task) = $st;
             // If the setting cant be changed or isn't visible then add it as a fixed setting.
-            if (!$setting->get_ui()->is_changeable() || $setting->get_visibility() != backup_setting::VISIBLE) {
+            if (!$setting->get_ui()->is_changeable($highestlevel) ||
+                $setting->get_visibility() != backup_setting::VISIBLE) {
                 $this->add_fixed_setting($setting, $task);
                 continue;
             }
@@ -302,7 +313,8 @@ abstract class base_moodleform extends moodleform {
                     $icon = '';
                     break;
             }
-            $label = $settingui->get_label($task);
+            $context = context_course::instance($task->get_courseid());
+            $label = format_string($settingui->get_label($task), true, array('context' => $context));
             $labelicon = $settingui->get_icon();
             if (!empty($labelicon)) {
                 $label .= '&nbsp;'.$OUTPUT->render($labelicon);

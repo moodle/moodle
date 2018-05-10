@@ -137,7 +137,7 @@ define(['core/templates',
         // This hidden fields are added automatically by mforms and when it reaches the AJAX we get an error.
         var hidden = form.find(SELECTORS.UNWANTEDHIDDENFIELDS);
         hidden.each(function() {
-            this.remove();
+            $(this).remove();
         });
 
         var formData = form.serialize();

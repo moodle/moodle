@@ -160,7 +160,8 @@ function chat_update_instance($chat) {
 
     $event = new stdClass();
 
-    if ($event->id = $DB->get_field('event', 'id', array('modulename' => 'chat', 'instance' => $chat->id))) {
+    if ($event->id = $DB->get_field('event', 'id', array('modulename' => 'chat',
+        'instance' => $chat->id, 'eventtype' => CHAT_EVENT_TYPE_CHATTIME))) {
 
         if ($chat->schedule > 0) {
             $event->type        = CALENDAR_EVENT_TYPE_ACTION;
@@ -494,7 +495,8 @@ function chat_prepare_update_events($chat, $cm = null) {
     $event->description = format_module_intro('chat', $chat, $cm->id);
     $event->timestart   = $chat->chattime;
     $event->timesort    = $chat->chattime;
-    if ($event->id = $DB->get_field('event', 'id', array('modulename' => 'chat', 'instance' => $chat->id))) {
+    if ($event->id = $DB->get_field('event', 'id', array('modulename' => 'chat', 'instance' => $chat->id,
+            'eventtype' => CHAT_EVENT_TYPE_CHATTIME))) {
         $calendarevent = calendar_event::load($event->id);
         $calendarevent->update($event);
     } else if ($chat->schedule > 0) {
@@ -566,7 +568,7 @@ function chat_get_latest_message($chatid, $groupid=0) {
 
     $sql = "SELECT *
         FROM {chat_messages_current} WHERE chatid = :chatid $groupselect
-        ORDER BY timestamp DESC";
+        ORDER BY timestamp DESC, id DESC";
 
     // Return the lastest one message.
     return $DB->get_record_sql($sql, $params, true);
@@ -723,12 +725,12 @@ function chat_update_chat_times($chatid=0) {
  *
  * @param object $chatuser The chat user record.
  * @param string $messagetext The message to be sent.
- * @param bool $system False for non-system messages, true for system messages.
+ * @param bool $issystem False for non-system messages, true for system messages.
  * @param object $cm The course module object, pass it to save a database query when we trigger the event.
  * @return int The message ID.
  * @since Moodle 2.6
  */
-function chat_send_chatmessage($chatuser, $messagetext, $system = false, $cm = null) {
+function chat_send_chatmessage($chatuser, $messagetext, $issystem = false, $cm = null) {
     global $DB;
 
     $message = new stdClass();
@@ -736,14 +738,14 @@ function chat_send_chatmessage($chatuser, $messagetext, $system = false, $cm = n
     $message->userid    = $chatuser->userid;
     $message->groupid   = $chatuser->groupid;
     $message->message   = $messagetext;
-    $message->system    = $system ? 1 : 0;
+    $message->issystem  = $issystem ? 1 : 0;
     $message->timestamp = time();
 
     $messageid = $DB->insert_record('chat_messages', $message);
     $DB->insert_record('chat_messages_current', $message);
     $message->id = $messageid;
 
-    if (!$system) {
+    if (!$issystem) {
 
         if (empty($cm)) {
             $cm = get_coursemodule_from_instance('chat', $chatuser->chatid, $chatuser->course);
@@ -801,7 +803,7 @@ function chat_format_message_manually($message, $courseid, $sender, $currentuser
 
     // Start processing the message.
 
-    if (!empty($message->system)) {
+    if (!empty($message->issystem)) {
         // System event.
         $output->text = $message->strtime.': '.get_string('message'.$message->message, 'chat', fullname($sender));
         $output->html  = '<table class="chat-event"><tr'.$rowclass.'><td class="picture">'.$message->picture.'</td>';
@@ -984,7 +986,7 @@ function chat_format_message_theme ($message, $chatuser, $currentuser, $grouping
                         " href=\"$CFG->wwwroot/user/view.php?id=$sender->id&amp;course=$courseid\">$message->picture</a>";
 
     // Start processing the message.
-    if (!empty($message->system)) {
+    if (!empty($message->issystem)) {
         $result->type = 'system';
 
         $senderprofile = $CFG->wwwroot.'/user/view.php?id='.$sender->id.'&amp;course='.$courseid;
@@ -1479,4 +1481,99 @@ function mod_chat_core_calendar_provide_event_action(calendar_event $event,
             $actionable
         );
     }
+}
+
+/**
+ * Given a set of messages for a chat, return the completed chat sessions (including optionally not completed ones).
+ *
+ * @param  array $messages list of messages from a chat
+ * @param  bool $showall   whether to include incomplete sessions or not
+ * @return array           the list of sessions
+ * @since  Moodle 3.4
+ */
+function chat_get_sessions($messages, $showall = false) {
+    $sessions     = array();
+    $sessiongap   = 5 * 60;    // 5 minutes silence means a new session.
+    $sessionend   = 0;
+    $sessionstart = 0;
+    $sessionusers = array();
+    $lasttime     = 0;
+
+    $messagesleft = count($messages);
+
+    foreach ($messages as $message) {  // We are walking BACKWARDS through the messages.
+
+        $messagesleft --;              // Countdown.
+
+        if (!$lasttime) {
+            $lasttime = $message->timestamp;
+        }
+        if (!$sessionend) {
+            $sessionend = $message->timestamp;
+        }
+        if ((($lasttime - $message->timestamp) < $sessiongap) and $messagesleft) {  // Same session.
+            if ($message->userid and !$message->issystem) {       // Remember user and count messages.
+                if (empty($sessionusers[$message->userid])) {
+                    $sessionusers[$message->userid] = 1;
+                } else {
+                    $sessionusers[$message->userid] ++;
+                }
+            }
+        } else {
+            $sessionstart = $lasttime;
+
+            $iscomplete = ($sessionend - $sessionstart > 60 and count($sessionusers) > 1);
+            if ($showall or $iscomplete) {
+                $sessions[] = (object) array(
+                    'sessionstart' => $sessionstart,
+                    'sessionend' => $sessionend,
+                    'sessionusers' => $sessionusers,
+                    'iscomplete' => $iscomplete,
+                );
+            }
+
+            $sessionend = $message->timestamp;
+            $sessionusers = array();
+            $sessionusers[$message->userid] = 1;
+        }
+        $lasttime = $message->timestamp;
+    }
+    return $sessions;
+}
+
+/**
+ * Return the messages of the given chat session.
+ *
+ * @param  int $chatid      the chat id
+ * @param  mixed $group     false if groups not used, int if groups used, 0 means all groups
+ * @param  int $start       the session start timestamp (0 to not filter by time)
+ * @param  int $end         the session end timestamp (0 to not filter by time)
+ * @param  string $sort     an order to sort the results in (optional, a valid SQL ORDER BY parameter)
+ * @return array session messages
+ * @since  Moodle 3.4
+ */
+function chat_get_session_messages($chatid, $group = false, $start = 0, $end = 0, $sort = '') {
+    global $DB;
+
+    $params = array('chatid' => $chatid);
+
+    // If the user is allocated to a group, only show messages from people in the same group, or no group.
+    if ($group) {
+        $groupselect = " AND (groupid = :currentgroup OR groupid = 0)";
+        $params['currentgroup'] = $group;
+    } else {
+        $groupselect = "";
+    }
+
+    $select = "chatid = :chatid $groupselect";
+    if (!empty($start)) {
+        $select .= ' AND timestamp >= :start';
+        $params['start'] = $start;
+    }
+    if (!empty($end)) {
+        $select .= ' AND timestamp <= :end';
+        $params['end'] = $end;
+    }
+
+    return $DB->get_records_select('chat_messages', $select, $params, $sort);
 }

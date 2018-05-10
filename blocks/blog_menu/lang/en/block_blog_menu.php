@@ -25,3 +25,4 @@
 
 $string['blog_menu:addinstance'] = 'Add a new blog menu block';
 $string['pluginname'] = 'Blog menu';
+$string['privacy:metadata'] = 'The Blog menu block only shows data stored in other locations.';

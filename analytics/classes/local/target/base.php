@@ -205,10 +205,10 @@ abstract class base extends \core_analytics\calculable {
                 $message->contexturlname = $message->subject;
                 $message->courseid = $coursecontext->instanceid;
 
-                $message->fullmessage = get_string('insightinfomessage', 'analytics', $insighturl->out());
+                $message->fullmessage = get_string('insightinfomessage', 'analytics', $insighturl->out(false));
                 $message->fullmessageformat = FORMAT_PLAIN;
                 $message->fullmessagehtml = get_string('insightinfomessagehtml', 'analytics', $insighturl->out());
-                $message->smallmessage = get_string('insightinfomessage', 'analytics', $insighturl->out());
+                $message->smallmessage = get_string('insightinfomessage', 'analytics', $insighturl->out(false));
                 $message->contexturl = $insighturl->out(false);
 
                 message_send($message);

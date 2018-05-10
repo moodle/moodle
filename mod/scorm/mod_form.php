@@ -228,8 +228,9 @@ class mod_scorm_mod_form extends moodleform_mod {
         $mform->setDefault('whatgrade', $cfgscorm->whatgrade);
 
         // Force new attempt.
-        $mform->addElement('selectyesno', 'forcenewattempt', get_string('forcenewattempt', 'scorm'));
-        $mform->addHelpButton('forcenewattempt', 'forcenewattempt', 'scorm');
+        $newattemptselect = scorm_get_forceattempt_array();
+        $mform->addElement('select', 'forcenewattempt', get_string('forcenewattempts', 'scorm'), $newattemptselect);
+        $mform->addHelpButton('forcenewattempt', 'forcenewattempts', 'scorm');
         $mform->setDefault('forcenewattempt', $cfgscorm->forcenewattempt);
 
         // Last attempt lock - lock the enter button after the last available attempt has been made.

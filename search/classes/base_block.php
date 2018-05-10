@@ -343,4 +343,59 @@ abstract class base_block extends base {
 
         return [$sql, $params];
     }
+
+    /**
+     * This can be used in subclasses to change ordering within the get_contexts_to_reindex
+     * function.
+     *
+     * It returns 2 values:
+     * - Extra SQL joins (tables block_instances 'bi' and context 'x' already exist).
+     * - An ORDER BY value which must use aggregate functions, by default 'MAX(bi.timemodified) DESC'.
+     *
+     * Note the query already includes a GROUP BY on the context fields, so if your joins result
+     * in multiple rows, you can use aggregate functions in the ORDER BY. See forum for an example.
+     *
+     * @return string[] Array with 2 elements; extra joins for the query, and ORDER BY value
+     */
+    protected function get_contexts_to_reindex_extra_sql() {
+        return ['', 'MAX(bi.timemodified) DESC'];
+    }
+
+    /**
+     * Gets a list of all contexts to reindex when reindexing this search area.
+     *
+     * For blocks, the default is to return all contexts for blocks of that type, that are on a
+     * course page, in order of time added (most recent first).
+     *
+     * @return \Iterator Iterator of contexts to reindex
+     * @throws \moodle_exception If any DB error
+     */
+    public function get_contexts_to_reindex() {
+        global $DB;
+
+        list ($extrajoins, $dborder) = $this->get_contexts_to_reindex_extra_sql();
+        $contexts = [];
+        $selectcolumns = \context_helper::get_preload_record_columns_sql('x');
+        $groupbycolumns = '';
+        foreach (\context_helper::get_preload_record_columns('x') as $column => $thing) {
+            if ($groupbycolumns !== '') {
+                $groupbycolumns .= ',';
+            }
+            $groupbycolumns .= $column;
+        }
+        $rs = $DB->get_recordset_sql("
+                SELECT $selectcolumns
+                  FROM {block_instances} bi
+                  JOIN {context} x ON x.instanceid = bi.id AND x.contextlevel = ?
+                  JOIN {context} parent ON parent.id = bi.parentcontextid
+                       $extrajoins
+                 WHERE bi.blockname = ? AND parent.contextlevel = ?
+              GROUP BY $groupbycolumns
+              ORDER BY $dborder", [CONTEXT_BLOCK, $this->get_block_name(), CONTEXT_COURSE]);
+        return new \core\dml\recordset_walk($rs, function($rec) {
+            $id = $rec->ctxid;
+            \context_helper::preload_from_record($rec);
+            return \context::instance_by_id($id);
+        });
+    }
 }

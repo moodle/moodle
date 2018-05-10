@@ -108,3 +108,25 @@ Feature: Assign reset
     And I follow "Test assignment name"
     And I navigate to "Group overrides" in current page administration
     Then I should not see "Group 1"
+
+  Scenario: Use course reset to reset blind marking assignment.
+    Given I follow "Test assignment name"
+    And I navigate to "Edit settings" in current page administration
+    And I set the following fields to these values:
+        | blindmarking | 1 |
+    And I press "Save"
+    When I follow "Test assignment name"
+    And I navigate to "View all submissions" in current page administration
+    And I select "Reveal student identities" from the "Grading action" singleselect
+    And I press "Continue"
+    And I should see "Sam1 Student1"
+    And I am on "Course 1" course homepage
+    When I navigate to "Reset" node in "Course administration"
+    And I set the following fields to these values:
+        | Delete all submissions | 1 |
+    And I press "Reset course"
+    And I press "Continue"
+    And I am on "Course 1" course homepage
+    And I follow "Test assignment name"
+    And I navigate to "View all submissions" in current page administration
+    Then I should not see "Sam1 Student1"

@@ -99,10 +99,10 @@ if ($context->contextlevel == CONTEXT_COURSE) {
 if (!empty($new) && empty($edit)){
     $type = repository::get_type_by_typename($new);
 } else if (!empty($edit)){
-    $instance = repository::get_instance($edit);
+    $instance = repository::get_repository_by_id($edit, $context->id);
     $type = repository::get_type_by_id($instance->options['typeid']);
 } else if (!empty($delete)){
-    $instance = repository::get_instance($delete);
+    $instance = repository::get_repository_by_id($delete, $context->id);
     $type = repository::get_type_by_id($instance->options['typeid']);
 }
 

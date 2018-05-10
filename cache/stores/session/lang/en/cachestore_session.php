@@ -29,3 +29,4 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['pluginname'] = 'Session cache';
+$string['privacy:metadata:core_user'] = 'The Session cachestore plugin stores data briefly as part of its caching functionality. This data is stored in the short-lived user session.';

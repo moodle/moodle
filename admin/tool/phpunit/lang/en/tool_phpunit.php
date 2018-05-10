@@ -23,3 +23,4 @@
  */
 
 $string['pluginname'] = 'PHPUnit tests';
+$string['privacy:metadata'] = 'The PHPUnit tests plugin does not store any personal data.';

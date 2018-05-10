@@ -197,13 +197,6 @@
     <licenseversion>2.0</licenseversion>
   </library>
   <library>
-    <location>xmlize.php</location>
-    <name>XMLize</name>
-    <license>GPL</license>
-    <version>1.0</version>
-    <licenseversion>3.0+</licenseversion>
-  </library>
-  <library>
     <location>horde</location>
     <name>Horde</name>
     <license>LGPL/BSD</license>
@@ -257,7 +250,7 @@
     <location>scssphp</location>
     <name>scssphp</name>
     <license>MIT</license>
-    <version>0.6.7</version>
+    <version>0.7.5</version>
   </library>
   <library>
     <location>spout</location>
@@ -305,9 +298,29 @@
     <licenseversion>1.1</licenseversion>
   </library>
   <library>
+    <location>amd/src/adapter.js</location>
+    <name>WebRTC adapter</name>
+    <license>BSD</license>
+    <version>6.1.5</version>
+    <licenseversion>3-Clause</licenseversion>
+  </library>
+  <library>
     <location>validateurlsyntax.php</location>
     <name>Url Syntax Validation using PHP and Regular Expressions</name>
     <license>GPL</license>
     <licenseversion>2.0+</licenseversion>
+  </library>
+  <library>
+    <location>amd/src/popper.js</location>
+    <name>Popper.js</name>
+    <license>MIT</license>
+    <version>v1.12.6</version>
+    <licenseversion></licenseversion>
+  </library>
+  <library>
+    <location>geopattern-php</location>
+    <name>Generate tiling SVG patterns from a string</name>
+    <license>MIT</license>
+    <version>1.1.1</version>
   </library>
 </libraries>

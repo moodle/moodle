@@ -29,7 +29,7 @@ $string['apikeyinfo'] = 'Get a <a href="https://developers.google.com/youtube/v3
 $string['autosvehicles'] = 'Autos &amp; Vehicles';
 $string['category'] = 'Category';
 $string['comedy'] = 'Comedy';
-$string['configtitle'] = 'Title';
+$string['configtitle'] = 'YouTube block title';
 $string['education'] = 'Education';
 $string['entertainment'] = 'Entertainment';
 $string['filmsanimation'] = 'Films &amp; Animation';
@@ -47,3 +47,4 @@ $string['scienceandtech'] = 'Science &amp; Tech';
 $string['sports'] = 'Sports';
 $string['tag_youtube:addinstance'] = 'Add a new YouTube block';
 $string['travel'] = 'Travel &amp; Places';
+$string['privacy:metadata'] = 'The YouTube block only shows data stored in other locations.';

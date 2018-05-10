@@ -173,6 +173,235 @@ class core_user {
     }
 
     /**
+     * Searches for users by name, possibly within a specified context, with current user's access.
+     *
+     * Deciding which users to search is complicated because it relies on user permissions;
+     * ideally, we shouldn't show names if you aren't allowed to see their profile. The permissions
+     * for seeing profile are really complicated.
+     *
+     * Even if search is restricted to a course, it's possible that other people might have
+     * been able to contribute within the course (e.g. they were enrolled before and not now;
+     * or people with system-level roles) so if the user has permission we do want to include
+     * everyone. However, if there are multiple results then we prioritise the ones who are
+     * enrolled in the course.
+     *
+     * If you have moodle/user:viewdetails at system level, you can search everyone.
+     * Otherwise we check which courses you *do* have that permission and search everyone who is
+     * enrolled on those courses.
+     *
+     * Normally you can only search the user's name. If you have the moodle/site:viewuseridentity
+     * capability then we also let you search the fields which are listed as identity fields in
+     * the 'showuseridentity' config option. For example, this might include the user's ID number
+     * or email.
+     *
+     * The $max parameter controls the maximum number of users returned. If users are restricted
+     * from view for some reason, multiple runs of the main query might be made; the $querylimit
+     * parameter allows this to be restricted. Both parameters can be zero to remove limits.
+     *
+     * The returned user objects include id, username, all fields required for user pictures, and
+     * user identity fields.
+     *
+     * @param string $query Search query text
+     * @param \context_course|null $coursecontext Course context or null if system-wide
+     * @param int $max Max number of users to return, default 30 (zero = no limit)
+     * @param int $querylimit Max number of database queries, default 5 (zero = no limit)
+     * @return array Array of user objects with limited fields
+     */
+    public static function search($query, \context_course $coursecontext = null,
+            $max = 30, $querylimit = 5) {
+        global $CFG, $DB;
+        require_once($CFG->dirroot . '/user/lib.php');
+
+        // Allow limits to be turned off.
+        if (!$max) {
+            $max = PHP_INT_MAX;
+        }
+        if (!$querylimit) {
+            $querylimit = PHP_INT_MAX;
+        }
+
+        // Check permission to view profiles at each context.
+        $systemcontext = \context_system::instance();
+        $viewsystem = has_capability('moodle/user:viewdetails', $systemcontext);
+        if ($viewsystem) {
+            $userquery = 'SELECT id FROM {user}';
+            $userparams = [];
+        }
+        if (!$viewsystem) {
+            list($userquery, $userparams) = self::get_enrolled_sql_on_courses_with_capability(
+                    'moodle/user:viewdetails');
+            if (!$userquery) {
+                // No permissions anywhere, return nothing.
+                return [];
+            }
+        }
+
+        // Start building the WHERE clause based on name.
+        list ($where, $whereparams) = users_search_sql($query, 'u', false);
+
+        // We allow users to search with extra identity fields (as well as name) but only if they
+        // have the permission to display those identity fields.
+        $extrasql = '';
+        $extraparams = [];
+
+        if (empty($CFG->showuseridentity)) {
+            // Explode gives wrong result with empty string.
+            $extra = [];
+        } else {
+            $extra = explode(',', $CFG->showuseridentity);
+        }
+
+        // We need the username just to skip guests.
+        $extrafieldlist = $extra;
+        if (!in_array('username', $extra)) {
+            $extrafieldlist[] = 'username';
+        }
+        // The deleted flag will always be false because users_search_sql excludes deleted users,
+        // but it must be present or it causes PHP warnings in some functions below.
+        if (!in_array('deleted', $extra)) {
+            $extrafieldlist[] = 'deleted';
+        }
+        $selectfields = \user_picture::fields('u',
+                array_merge(get_all_user_name_fields(), $extrafieldlist));
+
+        $index = 1;
+        foreach ($extra as $fieldname) {
+            if ($extrasql) {
+                $extrasql .= ' OR ';
+            }
+            $extrasql .= $DB->sql_like('u.' . $fieldname, ':extra' . $index, false);
+            $extraparams['extra' . $index] = $query . '%';
+            $index++;
+        }
+
+        $identitysystem = has_capability('moodle/site:viewuseridentity', $systemcontext);
+        $usingshowidentity = false;
+        if ($identitysystem) {
+            // They have permission everywhere so just add the extra query to the normal query.
+            $where .= ' OR ' . $extrasql;
+            $whereparams = array_merge($whereparams, $extraparams);
+        } else {
+            // Get all courses where user can view full user identity.
+            list($sql, $params) = self::get_enrolled_sql_on_courses_with_capability(
+                    'moodle/site:viewuseridentity');
+            if ($sql) {
+                // Join that with the user query to get an extra field indicating if we can.
+                $userquery = "
+                        SELECT innerusers.id, COUNT(identityusers.id) AS showidentity
+                          FROM ($userquery) innerusers
+                     LEFT JOIN ($sql) identityusers ON identityusers.id = innerusers.id
+                      GROUP BY innerusers.id";
+                $userparams = array_merge($userparams, $params);
+                $usingshowidentity = true;
+
+                // Query on the extra fields only in those places.
+                $where .= ' OR (users.showidentity > 0 AND (' . $extrasql . '))';
+                $whereparams = array_merge($whereparams, $extraparams);
+            }
+        }
+
+        // Default order is just name order. But if searching within a course then we show users
+        // within the course first.
+        list ($order, $orderparams) = users_order_by_sql('u', $query, $systemcontext);
+        if ($coursecontext) {
+            list ($sql, $params) = get_enrolled_sql($coursecontext);
+            $mainfield = 'innerusers2.id';
+            if ($usingshowidentity) {
+                $mainfield .= ', innerusers2.showidentity';
+            }
+            $userquery = "
+                    SELECT $mainfield, COUNT(courseusers.id) AS incourse
+                      FROM ($userquery) innerusers2
+                 LEFT JOIN ($sql) courseusers ON courseusers.id = innerusers2.id
+                  GROUP BY $mainfield";
+            $userparams = array_merge($userparams, $params);
+
+            $order = 'incourse DESC, ' . $order;
+        }
+
+        // Get result (first 30 rows only) from database. Take a couple spare in case we have to
+        // drop some.
+        $result = [];
+        $got = 0;
+        $pos = 0;
+        $readcount = $max + 2;
+        for ($i = 0; $i < $querylimit; $i++) {
+            $rawresult = $DB->get_records_sql("
+                    SELECT $selectfields
+                      FROM ($userquery) users
+                      JOIN {user} u ON u.id = users.id
+                     WHERE $where
+                  ORDER BY $order", array_merge($userparams, $whereparams, $orderparams),
+                    $pos, $readcount);
+            foreach ($rawresult as $user) {
+                // Skip guest.
+                if ($user->username === 'guest') {
+                    continue;
+                }
+                // Check user can really view profile (there are per-user cases where this could
+                // be different for some reason, this is the same check used by the profile view pages
+                // to double-check that it is OK).
+                if (!user_can_view_profile($user)) {
+                    continue;
+                }
+                $result[] = $user;
+                $got++;
+                if ($got >= $max) {
+                    break;
+                }
+            }
+
+            if ($got >= $max) {
+                // All necessary results obtained.
+                break;
+            }
+            if (count($rawresult) < $readcount) {
+                // No more results from database.
+                break;
+            }
+            $pos += $readcount;
+        }
+
+        return $result;
+    }
+
+    /**
+     * Gets an SQL query that lists all enrolled user ids on any course where the current
+     * user has the specified capability. Helper function used for searching users.
+     *
+     * @param string $capability Required capability
+     * @return array Array containing SQL and params, or two nulls if there are no courses
+     */
+    protected static function get_enrolled_sql_on_courses_with_capability($capability) {
+        // Get all courses where user have the capability.
+        $courses = get_user_capability_course($capability, null, true,
+                'ctxid, ctxpath, ctxdepth, ctxlevel, ctxinstance');
+        if (!$courses) {
+            return [null, null];
+        }
+
+        // Loop around all courses getting the SQL for enrolled users. Note: This query could
+        // probably be more efficient (without the union) if get_enrolled_sql had a way to
+        // pass an array of courseids, but it doesn't.
+        $unionsql = '';
+        $unionparams = [];
+        foreach ($courses as $course) {
+            // Get SQL to list user ids enrolled in this course.
+            \context_helper::preload_from_record($course);
+            list ($sql, $params) = get_enrolled_sql(\context_course::instance($course->id));
+
+            // Combine to a big union query.
+            if ($unionsql) {
+                $unionsql .= ' UNION ';
+            }
+            $unionsql .= $sql;
+            $unionparams = array_merge($unionparams, $params);
+        }
+
+        return [$unionsql, $unionparams];
+    }
+
+    /**
      * Helper function to return dummy noreply user record.
      *
      * @return stdClass

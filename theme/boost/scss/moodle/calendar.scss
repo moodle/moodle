@@ -31,6 +31,7 @@ $calendarEventUserColor: #dce7ec !default; // Pale blue.
 .path-calendar {
     .calendartable {
         width: 100%;
+        table-layout: fixed;
 
         th,
         td {
@@ -372,6 +373,7 @@ $calendarEventUserColor: #dce7ec !default; // Pale blue.
             }
             .icon {
                 vertical-align: initial;
+                margin: 0 0.1rem 0 0.4rem;
             }
 
             > a {

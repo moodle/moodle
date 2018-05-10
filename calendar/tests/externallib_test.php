@@ -485,31 +485,61 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         // Create some category events.
         $this->setAdminUser();
         $record = new stdClass();
+        $record->courseid = 0;
         $record->categoryid = $category->id;
-        $this->create_calendar_event('category a', $USER->id, 'category', 0, time(), $record);
+        $record->timestart = time() - DAYSECS;
+        $catevent1 = $this->create_calendar_event('category a', $USER->id, 'category', 0, time(), $record);
 
+        $record = new stdClass();
+        $record->courseid = 0;
         $record->categoryid = $category2->id;
-        $this->create_calendar_event('category b', $USER->id, 'category', 0, time(), $record);
+        $record->timestart = time() + DAYSECS;
+        $catevent2 = $this->create_calendar_event('category b', $USER->id, 'category', 0, time(), $record);
 
         // Now as student, make sure we get the events of the courses I am enrolled.
         $this->setUser($user2);
         $paramevents = array('categoryids' => array($category2b->id));
-        $options = array('timeend' => time() + 7 * WEEKSECS);
+        $options = array('timeend' => time() + 7 * WEEKSECS, 'userevents' => false, 'siteevents' => false);
         $events = core_calendar_external::get_calendar_events($paramevents, $options);
         $events = external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
 
         // Should be just one, since there's just one category event of the course I am enrolled (course3 - cat2b).
         $this->assertEquals(1, count($events['events']));
+        $this->assertEquals($catevent2->id, $events['events'][0]['id']);
+        $this->assertEquals($category2->id, $events['events'][0]['categoryid']);
+        $this->assertEquals(0, count($events['warnings']));
+
+        // Now get category events but by course (there aren't course events in the course).
+        $paramevents = array('courseids' => array($course3->id));
+        $options = array('timeend' => time() + 7 * WEEKSECS, 'userevents' => false, 'siteevents' => false);
+        $events = core_calendar_external::get_calendar_events($paramevents, $options);
+        $events = external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
+        $this->assertEquals(1, count($events['events']));
+        $this->assertEquals($catevent2->id, $events['events'][0]['id']);
+        $this->assertEquals(0, count($events['warnings']));
+
+        // Empty events in one where I'm not enrolled and one parent category
+        // (parent of a category where this is a course where the user is enrolled).
+        $paramevents = array('categoryids' => array($category2->id, $category->id));
+        $options = array('timeend' => time() + 7 * WEEKSECS, 'userevents' => false, 'siteevents' => false);
+        $events = core_calendar_external::get_calendar_events($paramevents, $options);
+        $events = external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
+        $this->assertEquals(1, count($events['events']));
+        $this->assertEquals($catevent2->id, $events['events'][0]['id']);
         $this->assertEquals(0, count($events['warnings']));
 
         // Admin can see all category events.
         $this->setAdminUser();
         $paramevents = array('categoryids' => array($category->id, $category2->id, $category2b->id));
-        $options = array('timeend' => time() + 7 * WEEKSECS);
+        $options = array('timeend' => time() + 7 * WEEKSECS, 'userevents' => false, 'siteevents' => false);
         $events = core_calendar_external::get_calendar_events($paramevents, $options);
         $events = external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
         $this->assertEquals(2, count($events['events']));
         $this->assertEquals(0, count($events['warnings']));
+        $this->assertEquals($catevent1->id, $events['events'][0]['id']);
+        $this->assertEquals($category->id, $events['events'][0]['categoryid']);
+        $this->assertEquals($catevent2->id, $events['events'][1]['id']);
+        $this->assertEquals($category2->id, $events['events'][1]['categoryid']);
     }
 
     /**
@@ -2267,7 +2297,7 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         $data = external_api::clean_returnvalue(
             core_calendar_external::get_calendar_monthly_view_returns(),
             core_calendar_external::get_calendar_monthly_view($timestart->format('Y'), $timestart->format('n'),
-                                                              $course->id, null, false)
+                                                              $course->id, null, false, true)
         );
         $this->assertEquals($data['courseid'], $course->id);
         // User enrolled in the course can load the course calendar.
@@ -2275,7 +2305,7 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         $data = external_api::clean_returnvalue(
             core_calendar_external::get_calendar_monthly_view_returns(),
             core_calendar_external::get_calendar_monthly_view($timestart->format('Y'), $timestart->format('n'),
-                                                              $course->id, null, false)
+                                                              $course->id, null, false, true)
         );
         $this->assertEquals($data['courseid'], $course->id);
         // User not enrolled in the course cannot load the course calendar.
@@ -2284,7 +2314,7 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         $data = external_api::clean_returnvalue(
             core_calendar_external::get_calendar_monthly_view_returns(),
             core_calendar_external::get_calendar_monthly_view($timestart->format('Y'), $timestart->format('n'),
-                                                              $course->id, null, false)
+                                                              $course->id, null, false, false)
         );
     }
 

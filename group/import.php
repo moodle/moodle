@@ -118,7 +118,7 @@ if ($mform_post->is_cancelled()) {
             //decode encoded commas
             $record[$header[$key]] = preg_replace($csv_encode, $csv_delimiter, trim($value));
         }
-        if ($record[$header[0]]) {
+        if (trim($rawline) !== '') {
             // add a new group to the database
 
             // add fields to object $user
@@ -134,28 +134,32 @@ if ($mform_post->is_cancelled()) {
                 }
             }
 
-            if (isset($newgroup->idnumber)){
+            if (isset($newgroup->idnumber) && strlen($newgroup->idnumber)) {
                 //if idnumber is set, we use that.
                 //unset invalid courseid
                 if (!$mycourse = $DB->get_record('course', array('idnumber'=>$newgroup->idnumber))) {
                     echo $OUTPUT->notification(get_string('unknowncourseidnumber', 'error', $newgroup->idnumber));
                     unset($newgroup->courseid);//unset so 0 doesn't get written to database
+                } else {
+                    $newgroup->courseid = $mycourse->id;
                 }
-                $newgroup->courseid = $mycourse->id;
 
-            } else if (isset($newgroup->coursename)){
+            } else if (isset($newgroup->coursename) && strlen($newgroup->coursename)) {
                 //else use course short name to look up
                 //unset invalid coursename (if no id)
-                if (!$mycourse = $DB->get_record('course', array('shortname', $newgroup->coursename))) {
+                if (!$mycourse = $DB->get_record('course', array('shortname' => $newgroup->coursename))) {
                     echo $OUTPUT->notification(get_string('unknowncourse', 'error', $newgroup->coursename));
                     unset($newgroup->courseid);//unset so 0 doesn't get written to database
+                } else {
+                    $newgroup->courseid = $mycourse->id;
                 }
-                $newgroup->courseid = $mycourse->id;
 
             } else {
                 //else use use current id
                 $newgroup->courseid = $id;
             }
+            unset($newgroup->idnumber);
+            unset($newgroup->coursename);
 
             //if courseid is set
             if (isset($newgroup->courseid)) {
@@ -196,7 +200,7 @@ if ($mform_post->is_cancelled()) {
                     }
 
                     // Add group to grouping
-                    if (!empty($newgroup->groupingname) || is_numeric($newgroup->groupingname)) {
+                    if (isset($newgroup->groupingname) && strlen($newgroup->groupingname)) {
                         $groupingname = $newgroup->groupingname;
                         if (! $groupingid = groups_get_grouping_by_name($newgroup->courseid, $groupingname)) {
                             $data = new stdClass();

@@ -2084,4 +2084,13 @@ class core_admin_renderer extends plugin_renderer_base {
             return $this->warning(get_string('legacylogginginuse'));
         }
     }
+
+    /**
+     * Display message about the benefits of registering on Moodle.org
+     *
+     * @return string
+     */
+    public function moodleorg_registration_message() {
+        return format_text(get_string('registermoodlenet', 'admin'), FORMAT_HTML, ['noclean' => true]);
+    }
 }

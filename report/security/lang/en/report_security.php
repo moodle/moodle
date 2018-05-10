@@ -141,3 +141,4 @@ $string['statusok'] = 'OK';
 $string['statusserious'] = 'Serious';
 $string['statuswarning'] = 'Warning';
 $string['timewarning'] = 'Data processing may take a long time, please be patient...';
+$string['privacy:metadata'] = 'The Security overview plugin does not store any personal data.';

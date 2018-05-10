@@ -54,7 +54,7 @@ echo $renderer->extra_horizontal_navigation();
 echo '<div class="questionbankwindow boxwidthwide boxaligncenter">';
 $questionbank->display('questions', $pagevars['qpage'], $pagevars['qperpage'],
         $pagevars['cat'], $pagevars['recurse'], $pagevars['showhidden'],
-        $pagevars['qbshowtext']);
+        $pagevars['qbshowtext'], $pagevars['qtagids']);
 echo "</div>\n";
 
 echo $OUTPUT->footer();

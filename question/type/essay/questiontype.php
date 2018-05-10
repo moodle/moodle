@@ -67,6 +67,11 @@ class qtype_essay extends question_type {
         $options->responsefieldlines = $formdata->responsefieldlines;
         $options->attachments = $formdata->attachments;
         $options->attachmentsrequired = $formdata->attachmentsrequired;
+        if (!isset($formdata->filetypeslist)) {
+            $options->filetypeslist = "";
+        } else {
+            $options->filetypeslist = $formdata->filetypeslist;
+        }
         $options->graderinfo = $this->import_or_save_files($formdata->graderinfo,
                 $context, 'qtype_essay', 'graderinfo', $formdata->id);
         $options->graderinfoformat = $formdata->graderinfo['format'];
@@ -86,6 +91,8 @@ class qtype_essay extends question_type {
         $question->graderinfoformat = $questiondata->options->graderinfoformat;
         $question->responsetemplate = $questiondata->options->responsetemplate;
         $question->responsetemplateformat = $questiondata->options->responsetemplateformat;
+        $filetypesutil = new \core_form\filetypes_util();
+        $question->filetypeslist = $filetypesutil->normalize_file_types($questiondata->options->filetypeslist);
     }
 
     public function delete_question($questionid, $contextid) {

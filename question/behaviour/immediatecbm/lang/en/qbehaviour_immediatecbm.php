@@ -25,3 +25,4 @@
 
 $string['pleaseselectacertainty'] = 'Please select a certainty.';
 $string['pluginname'] = 'Immediate feedback with CBM';
+$string['privacy:metadata'] = 'The Immediate feedback with CBM question behaviour plugin does not store any personal data.';

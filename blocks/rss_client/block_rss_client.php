@@ -205,9 +205,11 @@
         }
 
         if(empty($feedrecord->preferredtitle)){
+            // Simplepie does escape HTML entities.
             $feedtitle = $this->format_title($simplepiefeed->get_title());
         }else{
-            $feedtitle = $this->format_title($feedrecord->preferredtitle);
+            // Moodle custom title does not does escape HTML entities.
+            $feedtitle = $this->format_title(s($feedrecord->preferredtitle));
         }
 
         if (empty($this->config->title)){
@@ -265,17 +267,19 @@
 
     /**
      * Strips a large title to size and adds ... if title too long
+     * This function does not escape HTML entities, so they have to be escaped
+     * before being passed here.
      *
      * @param string title to shorten
      * @param int max character length of title
-     * @return string title s() quoted and shortened if necessary
+     * @return string title shortened if necessary
      */
     function format_title($title,$max=64) {
 
         if (core_text::strlen($title) <= $max) {
-            return s($title);
+            return $title;
         } else {
-            return s(core_text::substr($title,0,$max-3).'...');
+            return core_text::substr($title, 0, $max - 3) . '...';
         }
     }
 

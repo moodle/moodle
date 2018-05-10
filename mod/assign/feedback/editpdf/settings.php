@@ -24,6 +24,11 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+// Enabled by default.
+$settings->add(new admin_setting_configcheckbox('assignfeedback_editpdf/default',
+                   new lang_string('default', 'assignfeedback_editpdf'),
+                   new lang_string('default_help', 'assignfeedback_editpdf'), 1));
+
 // Stamp files setting.
 $name = 'assignfeedback_editpdf/stamps';
 $title = get_string('stamps','assignfeedback_editpdf');

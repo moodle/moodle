@@ -29,9 +29,10 @@ require_once($CFG->libdir.'/adminlib.php');
 $confirm = optional_param('confirm', 0, PARAM_BOOL);
 $returnurl = optional_param('returnurl', null, PARAM_LOCALURL);
 
+admin_externalpage_setup('purgecaches');
+
 // If we have got here as a confirmed aciton, do it.
-if ($confirm && isloggedin() && confirm_sesskey()) {
-    require_capability('moodle/site:config', context_system::instance());
+if ($confirm && confirm_sesskey()) {
 
     // Valid request. Purge, and redirect the user back to where they came from.
     purge_all_caches();
@@ -45,8 +46,6 @@ if ($confirm && isloggedin() && confirm_sesskey()) {
 }
 
 // Otherwise, show a button to actually purge the caches.
-admin_externalpage_setup('purgecaches');
-
 $actionurl = new moodle_url('/admin/purgecaches.php', array('sesskey'=>sesskey(), 'confirm'=>1));
 if ($returnurl) {
     $actionurl->param('returnurl', $returnurl);

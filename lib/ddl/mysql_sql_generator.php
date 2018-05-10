@@ -568,9 +568,9 @@ class mysql_sql_generator extends sql_generator {
      * @return array An array of database specific reserved words
      */
     public static function getReservedWords() {
-        // This file contains the reserved words for MySQL databases
-        // from http://dev.mysql.com/doc/refman/6.0/en/reserved-words.html
+        // This file contains the reserved words for MySQL databases.
         $reserved_words = array (
+            // From http://dev.mysql.com/doc/refman/6.0/en/reserved-words.html.
             'accessible', 'add', 'all', 'alter', 'analyze', 'and', 'as', 'asc',
             'asensitive', 'before', 'between', 'bigint', 'binary',
             'blob', 'both', 'by', 'call', 'cascade', 'case', 'change',
@@ -610,7 +610,13 @@ class mysql_sql_generator extends sql_generator {
             'upgrade', 'usage', 'use', 'using', 'utc_date', 'utc_time',
             'utc_timestamp', 'values', 'varbinary', 'varchar', 'varcharacter',
             'varying', 'when', 'where', 'while', 'with', 'write', 'x509',
-            'xor', 'year_month', 'zerofill'
+            'xor', 'year_month', 'zerofill',
+            // Added in MySQL 8.0, compared to MySQL 5.7:
+            // https://dev.mysql.com/doc/refman/8.0/en/keywords.html#keywords-new-in-current-series.
+            '_filename', 'admin', 'cume_dist', 'dense_rank', 'empty', 'except', 'first_value', 'grouping', 'groups',
+            'json_table', 'lag', 'last_value', 'lead', 'nth_value', 'ntile',
+            'of', 'over', 'percent_rank', 'persist', 'persist_only', 'rank', 'recursive', 'row_number',
+            'system', 'window'
         );
         return $reserved_words;
     }

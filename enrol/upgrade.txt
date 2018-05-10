@@ -1,6 +1,11 @@
 This files describes API changes in /enrol/* - plugins,
 information provided here is intended especially for developers.
 
+=== 3.5 ===
+
+* Default sorting in enrol_get_my_courses(), enrol_get_all_users_courses() and enrol_get_users_courses() now respects
+  the site setting "navsortmycoursessort" and should be consistently used when displaying the courses in the UI.
+
 === 3.4 ===
 
 * render_course_enrolment_users_table method has been removed from the renderer. The enrolled users page is now

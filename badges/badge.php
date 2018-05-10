@@ -42,6 +42,7 @@ $badge = new issued_badge($id);
 if (!empty($badge->recipient->id)) {
     if ($bake && ($badge->recipient->id == $USER->id)) {
         $name = str_replace(' ', '_', $badge->badgeclass['name']) . '.png';
+        $name = clean_param($name, PARAM_FILE);
         $filehash = badges_bake($id, $badge->badgeid, $USER->id, true);
         $fs = get_file_storage();
         $file = $fs->get_file_by_hash($filehash);

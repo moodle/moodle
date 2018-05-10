@@ -1,0 +1,94 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more comments.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template tool_dataprivacy/data_registry_compliance
+
+    Data registry main page.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * none
+
+    Example context (json):
+    {
+        "types" : {
+            "plugin_type_raw" : "mod",
+            "plugin_type" : "Activities and Modules"
+        }
+    }
+}}
+<div class="dataprivacy-main">
+    <h2>{{#str}}pluginregistrytitle, tool_dataprivacy{{/str}}</h2>
+    <hr />
+    <p><strong>{{#str}}explanationtitle, tool_dataprivacy{{/str}}</strong></p>
+    <dl>
+        <dt>{{#pix}}i/risk_xss, moodle, {{#str}}requiresattention, tool_dataprivacy{{/str}}{{/pix}}</dt>
+        <dd>{{#str}}requiresattentionexplanation, tool_dataprivacy{{/str}}</dd>
+        <dt><span class="badge badge-pill badge-notice">{{#str}}external, tool_dataprivacy{{/str}}</span></dt>
+        <dd>{{#str}}externalexplanation, tool_dataprivacy{{/str}}</dd>
+    </dl>
+    <hr />
+    <div class="clearfix"><a class="tool_dataprivacy-expand-all pull-right" href="#" data-visibility-state='visible'>{{#str}}visible, tool_dataprivacy{{/str}}</a></div>
+    {{#types}}
+    <div>
+        <div>
+            <a class="type-expand" href='#' data-plugin="{{plugin_type_raw}}">
+            <h3 id="{{plugin_type_raw}}">{{#pix}}t/collapsed, moodle, {{#str}}expandplugintype, tool_dataprivacy{{/str}}{{/pix}}{{plugin_type}}</h3>
+            </a>
+        </div>
+        <div class="hide p-b-1" data-plugintarget="{{plugin_type_raw}}" aria-expanded="false">
+            {{#plugins}}
+                {{> tool_dataprivacy/component_status}}
+            {{/plugins}}
+        </div>
+    </div>
+    {{/types}}
+</div>
+{{#js}}
+require(['jquery', 'tool_dataprivacy/expand_contract'], function($, ec) {
+
+    $('.type-expand').click(function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var thisnode = $(this);
+        var plugin = thisnode.data('plugin');
+        var metadata = $('[data-plugintarget=\'' + plugin + '\']');
+        ec.expandCollapse(metadata, thisnode);
+    });
+
+    $('.component-expand').click(function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var thisnode = $(this);
+        var plugin = thisnode.data('component');
+        var metadata = $('[data-section=\'' + plugin + '\']');
+        ec.expandCollapse(metadata, thisnode);
+    });
+
+    $('.tool_dataprivacy-expand-all').click(function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var nextstate = $(this).data('visibilityState');
+        ec.expandCollapseAll(nextstate);
+    });
+});
+{{/js}}

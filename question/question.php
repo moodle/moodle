@@ -32,7 +32,7 @@ require_once($CFG->libdir . '/formslib.php');
 // Read URL parameters telling us which question to edit.
 $id = optional_param('id', 0, PARAM_INT); // question id
 $makecopy = optional_param('makecopy', 0, PARAM_BOOL);
-$qtype = optional_param('qtype', '', PARAM_FILE);
+$qtype = optional_param('qtype', '', PARAM_COMPONENT);
 $categoryid = optional_param('category', 0, PARAM_INT);
 $cmid = optional_param('cmid', 0, PARAM_INT);
 $courseid = optional_param('courseid', 0, PARAM_INT);
@@ -120,7 +120,10 @@ if ($id) {
     if (!$question = $DB->get_record('question', array('id' => $id))) {
         print_error('questiondoesnotexist', 'question', $returnurl);
     }
-    get_question_options($question, true);
+    // We can use $COURSE here because it's been initialised as part of the
+    // require_login above. Passing it as the third parameter tells the function
+    // to filter the course tags by that course.
+    get_question_options($question, true, [$COURSE]);
 
 } else if ($categoryid && $qtype) { // only for creating new questions
     $question = new stdClass();
@@ -146,15 +149,20 @@ if ($id) {
 
 $qtypeobj = question_bank::get_qtype($question->qtype);
 
-// Validate the question category.
-if (!$category = $DB->get_record('question_categories', array('id' => $question->category))) {
-    print_error('categorydoesnotexist', 'question', $returnurl);
+if (isset($question->categoryobject)) {
+    $category = $question->categoryobject;
+} else {
+    // Validate the question category.
+    if (!$category = $DB->get_record('question_categories', array('id' => $question->category))) {
+        print_error('categorydoesnotexist', 'question', $returnurl);
+    }
 }
 
 // Check permissions
 $question->formoptions = new stdClass();
 
 $categorycontext = context::instance_by_id($category->contextid);
+$question->contextid = $category->contextid;
 $addpermission = has_capability('moodle/question:add', $categorycontext);
 
 if ($id) {
@@ -261,10 +269,18 @@ if ($mform->is_cancelled()) {
             print_error('nopermissions', '', '', 'edit');
         }
     }
+
     $question = $qtypeobj->save_question($question, $fromform);
     if (isset($fromform->tags)) {
+        // If we have any question context level tags then set those tags now.
         core_tag_tag::set_item_tags('core_question', 'question', $question->id,
-                context::instance_by_id($contextid), $fromform->tags);
+                context::instance_by_id($contextid), $fromform->tags, 0);
+    }
+
+    if (isset($fromform->coursetags)) {
+        // If we have and course context level tags then set those now.
+        core_tag_tag::set_item_tags('core_question', 'question', $question->id,
+                context_course::instance($fromform->courseid), $fromform->coursetags, 0);
     }
 
     // Purge this question from the cache.

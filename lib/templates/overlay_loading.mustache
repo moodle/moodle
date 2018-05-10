@@ -33,6 +33,6 @@
     Example context (json):
     {}
 }}
-<span class="overlay-icon-container hidden" data-region="overlay-icon-container">
+<span class="overlay-icon-container {{$hiddenclass}}{{^visible}}hidden{{/visible}}{{/hiddenclass}}" data-region="overlay-icon-container">
     {{> core/loading }}
 </span>

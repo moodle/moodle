@@ -29,6 +29,7 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 
 require_once($CFG->dirroot . '/webservice/tests/helpers.php');
+require_once($CFG->dirroot . '/admin/tool/mobile/tests/fixtures/output/mobile.php');
 
 use tool_mobile\external;
 use tool_mobile\api;
@@ -86,6 +87,13 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
             'mobilecssurl' => '',
             'tool_mobile_disabledfeatures' => '',
             'launchurl' => "$CFG->wwwroot/$CFG->admin/tool/mobile/launch.php",
+            'country' => $CFG->country,
+            'agedigitalconsentverification' => \core_auth\digital_consent::is_age_digital_consent_verification_enabled(),
+            'autolang' => $CFG->autolang,
+            'lang' => $CFG->lang,
+            'langmenu' => $CFG->langmenu,
+            'langlist' => $CFG->langlist,
+            'locale' => $CFG->locale,
             'warnings' => array()
         );
         $this->assertEquals($expected, $result);
@@ -98,12 +106,20 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
         set_config('logo', 'mock.png', 'core_admin');
         set_config('logocompact', 'mock.png', 'core_admin');
         set_config('forgottenpasswordurl', 'mailto:fake@email.zy'); // Test old hack.
+        set_config('agedigitalconsentverification', 1);
+        set_config('autolang', 1);
+        set_config('lang', 'a_b');  // Set invalid lang.
 
         list($authinstructions, $notusedformat) = external_format_text($authinstructions, FORMAT_MOODLE, $context->id);
         $expected['registerauth'] = 'email';
         $expected['authinstructions'] = $authinstructions;
         $expected['typeoflogin'] = api::LOGIN_VIA_BROWSER;
         $expected['forgottenpasswordurl'] = ''; // Expect empty when it's not an URL.
+        $expected['agedigitalconsentverification'] = true;
+        $expected['supportname'] = $CFG->supportname;
+        $expected['supportemail'] = $CFG->supportemail;
+        $expected['autolang'] = '1';
+        $expected['lang'] = ''; // Expect empty because it was set to an invalid lang.
 
         if ($logourl = $OUTPUT->get_logo_url()) {
             $expected['logourl'] = $logourl->out(false);
@@ -150,12 +166,14 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
             array('name' => 'newsitems', 'value' => $SITE->newsitems),
             array('name' => 'commentsperpage', 'value' => $CFG->commentsperpage),
             array('name' => 'sitepolicy', 'value' => $mysitepolicy),
+            array('name' => 'sitepolicyhandler', 'value' => ''),
             array('name' => 'disableuserimages', 'value' => $CFG->disableuserimages),
             array('name' => 'mygradesurl', 'value' => user_mygrades_url()->out(false)),
             array('name' => 'tool_mobile_forcelogout', 'value' => 0),
             array('name' => 'tool_mobile_customlangstrings', 'value' => ''),
             array('name' => 'tool_mobile_disabledfeatures', 'value' => ''),
             array('name' => 'tool_mobile_custommenuitems', 'value' => ''),
+            array('name' => 'tool_mobile_apppolicy', 'value' => ''),
         );
         $this->assertCount(0, $result['warnings']);
         $this->assertEquals($expected, $result['settings']);
@@ -288,5 +306,54 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
         $this->expectException('moodle_exception');
         $this->expectExceptionMessage(get_string('autologinkeygenerationlockout', 'tool_mobile'));
         $result = external::get_autologin_key($token->privatetoken);
+    }
+
+    /**
+     * Test get_content.
+     */
+    public function test_get_content() {
+
+        $paramval = 16;
+        $result = external::get_content('tool_mobile', 'test_view', array(array('name' => 'param1', 'value' => $paramval)));
+        $result = external_api::clean_returnvalue(external::get_content_returns(), $result);
+        $this->assertCount(1, $result['templates']);
+        $this->assertCount(1, $result['otherdata']);
+        $this->assertCount(2, $result['restrict']['users']);
+        $this->assertCount(2, $result['restrict']['courses']);
+        $this->assertEquals('alert();', $result['javascript']);
+        $this->assertEquals('main', $result['templates'][0]['id']);
+        $this->assertEquals('The HTML code', $result['templates'][0]['html']);
+        $this->assertEquals('otherdata1', $result['otherdata'][0]['name']);
+        $this->assertEquals($paramval, $result['otherdata'][0]['value']);
+        $this->assertEquals(array(1, 2), $result['restrict']['users']);
+        $this->assertEquals(array(3, 4), $result['restrict']['courses']);
+        $this->assertEmpty($result['files']);
+    }
+
+    /**
+     * Test get_content non existent function in valid component.
+     */
+    public function test_get_content_non_existent_function() {
+
+        $this->expectException('coding_exception');
+        $result = external::get_content('tool_mobile', 'test_blahblah');
+    }
+
+    /**
+     * Test get_content incorrect component.
+     */
+    public function test_get_content_invalid_component() {
+
+        $this->expectException('moodle_exception');
+        $result = external::get_content('tool_mobile\hack', 'test_view');
+    }
+
+    /**
+     * Test get_content non existent component.
+     */
+    public function test_get_content_non_existent_component() {
+
+        $this->expectException('moodle_exception');
+        $result = external::get_content('tool_blahblahblah', 'test_view');
     }
 }

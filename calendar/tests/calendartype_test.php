@@ -221,9 +221,11 @@ class core_calendar_type_testcase extends advanced_testcase {
         $counter++;
 
         if ($element == 'dateselector') {
-            $el = $this->mform->addElement('date_selector', 'dateselector' . $counter, null, array('timezone' => 0.0, 'step' => 1));
+            $el = $this->mform->addElement('date_selector',
+                    'dateselector' . $counter, null, array('timezone' => 0.0));
         } else {
-            $el = $this->mform->addElement('date_time_selector', 'dateselector' . $counter, null, array('timezone' => 0.0, 'step' => 1, 'optional' => false));
+            $el = $this->mform->addElement('date_time_selector',
+                    'dateselector' . $counter, null, array('timezone' => 0.0, 'optional' => false));
         }
         $submitvalues = array('dateselector' . $counter => $date);
 

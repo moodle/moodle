@@ -58,7 +58,10 @@ class backup_quiz_activity_structure_step extends backup_questions_activity_stru
         $qinstances = new backup_nested_element('question_instances');
 
         $qinstance = new backup_nested_element('question_instance', array('id'), array(
-            'slot', 'page', 'requireprevious', 'questionid', 'maxmark'));
+            'slot', 'page', 'requireprevious', 'questionid', 'questioncategoryid', 'includingsubcategories', 'maxmark'));
+
+        $qinstancetags = new backup_nested_element('tags');
+        $qinstancetag = new backup_nested_element('tag', array('id'), array('tagid', 'tagname'));
 
         $sections = new backup_nested_element('sections');
 
@@ -98,6 +101,9 @@ class backup_quiz_activity_structure_step extends backup_questions_activity_stru
         $quiz->add_child($qinstances);
         $qinstances->add_child($qinstance);
 
+        $qinstance->add_child($qinstancetags);
+        $qinstancetags->add_child($qinstancetag);
+
         $quiz->add_child($sections);
         $sections->add_child($section);
 
@@ -118,6 +124,9 @@ class backup_quiz_activity_structure_step extends backup_questions_activity_stru
 
         $qinstance->set_source_table('quiz_slots',
                 array('quizid' => backup::VAR_PARENTID));
+
+        $qinstancetag->set_source_table('quiz_slot_tags',
+                array('slotid' => backup::VAR_PARENTID));
 
         $section->set_source_table('quiz_sections',
                 array('quizid' => backup::VAR_PARENTID));

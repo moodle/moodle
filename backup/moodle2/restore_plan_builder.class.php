@@ -36,6 +36,7 @@ require_once($CFG->dirroot . '/backup/moodle2/restore_block_task.class.php');
 require_once($CFG->dirroot . '/backup/moodle2/restore_default_block_task.class.php');
 require_once($CFG->dirroot . '/backup/moodle2/restore_plugin.class.php');
 require_once($CFG->dirroot . '/backup/moodle2/restore_qtype_plugin.class.php');
+require_once($CFG->dirroot . '/backup/moodle2/restore_qtype_extrafields_plugin.class.php');
 require_once($CFG->dirroot . '/backup/moodle2/restore_format_plugin.class.php');
 require_once($CFG->dirroot . '/backup/moodle2/restore_local_plugin.class.php');
 require_once($CFG->dirroot . '/backup/moodle2/restore_theme_plugin.class.php');
@@ -46,6 +47,7 @@ require_once($CFG->dirroot . '/backup/moodle2/restore_gradingform_plugin.class.p
 require_once($CFG->dirroot . '/backup/moodle2/restore_enrol_plugin.class.php');
 require_once($CFG->dirroot . '/backup/moodle2/backup_plugin.class.php');
 require_once($CFG->dirroot . '/backup/moodle2/backup_qtype_plugin.class.php');
+require_once($CFG->dirroot . '/backup/moodle2/backup_qtype_extrafields_plugin.class.php');
 require_once($CFG->dirroot . '/backup/moodle2/backup_format_plugin.class.php');
 require_once($CFG->dirroot . '/backup/moodle2/backup_local_plugin.class.php');
 require_once($CFG->dirroot . '/backup/moodle2/backup_theme_plugin.class.php');

@@ -156,10 +156,10 @@ class enrol_users_filter_form extends moodleform {
         // names if applied. The reason for not restricting to roles that can
         // be assigned at course level is that upper-level roles display in the
         // enrolments table so it makes sense to let users filter by them.
-        $allroles = $manager->get_all_roles();
+        $visibleroles = $manager->get_viewable_roles();
         $rolenames = array();
-        foreach ($allroles as $id => $role) {
-            $rolenames[$id] = $role->localname;
+        foreach ($visibleroles as $id => $role) {
+            $rolenames[$id] = $role;
         }
         $mform->addElement('select', 'role', get_string('role'),
                 array(0 => get_string('all')) + $rolenames);

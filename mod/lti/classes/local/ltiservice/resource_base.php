@@ -28,6 +28,7 @@ namespace mod_lti\local\ltiservice;
 
 defined('MOODLE_INTERNAL') || die();
 
+global $CFG;
 require_once($CFG->dirroot . '/mod/lti/locallib.php');
 
 
@@ -41,7 +42,16 @@ require_once($CFG->dirroot . '/mod/lti/locallib.php');
  */
 abstract class resource_base {
 
-    /** @var object Service associated with this resource. */
+    /**  HTTP Post method */
+    const HTTP_POST = 'POST';
+    /**  HTTP Get method */
+    const HTTP_GET = 'GET';
+    /**  HTTP Put method */
+    const HTTP_PUT = 'PUT';
+    /**  HTTP Delete method */
+    const HTTP_DELETE = 'DELETE';
+
+    /** @var service_base Service associated with this resource. */
     private $service;
     /** @var string Type for this resource. */
     protected $type;
@@ -62,7 +72,7 @@ abstract class resource_base {
     /**
      * Class constructor.
      *
-     * @param mod_lti\local\ltiservice\service_base $service Service instance
+     * @param service_base $service Service instance
      */
     public function __construct($service) {
 
@@ -125,7 +135,7 @@ abstract class resource_base {
     /**
      * Get the resource's service.
      *
-     * @return mod_lti\local\ltiservice\service_base
+     * @return mixed
      */
     public function get_service() {
 
@@ -190,7 +200,7 @@ abstract class resource_base {
     /**
      * Execute the request for this resource.
      *
-     * @param mod_lti\local\ltiservice\response $response  Response object for this request.
+     * @param response $response  Response object for this request.
      */
     public abstract function execute($response);
 
@@ -224,13 +234,52 @@ abstract class resource_base {
                     }
                 }
                 if (!$ok) {
-                    debugging('Requested service not included in tool proxy: ' . $this->get_id());
+                    debugging('Requested service not included in tool proxy: ' . $this->get_id(), DEBUG_DEVELOPER);
                 }
             }
         }
 
         return $ok;
 
+    }
+
+    /**
+     * Check to make sure the request is valid.
+     *
+     * @param int $typeid                   The typeid we want to use
+     * @param int $contextid                The course we are at
+     * @param string $permissionrequested   The permission to be checked
+     * @param string $body                  Body of HTTP request message
+     *
+     * @return boolean
+     */
+    public function check_type($typeid, $contextid, $permissionrequested, $body = null) {
+        $ok = false;
+        if ($this->get_service()->check_type($typeid, $contextid, $body)) {
+            $neededpermissions = $this->get_permissions($typeid);
+            foreach ($neededpermissions as $permission) {
+                if ($permission == $permissionrequested) {
+                    $ok = true;
+                    break;
+                }
+            }
+            if (!$ok) {
+                debugging('Requested service ' . $permissionrequested . ' not included in tool type: ' . $typeid,
+                    DEBUG_DEVELOPER);
+            }
+        }
+        return $ok;
+
+    }
+
+    /**
+     * get permissions from the config of the tool for that resource
+     *
+     * @param int $ltitype Type of LTI
+     * @return array with the permissions related to this resource by the $ltitype or empty if none.
+     */
+    public function get_permissions($ltitype) {
+        return array();
     }
 
     /**

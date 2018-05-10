@@ -65,147 +65,6 @@ define('MESSAGE_DEFAULT_MAX_POLL_IN_SECONDS', 2 * MINSECS);
 define('MESSAGE_DEFAULT_TIMEOUT_POLL_IN_SECONDS', 5 * MINSECS);
 
 /**
- * Retrieve users blocked by $user1
- *
- * @param object $user1 the user whose messages are being viewed
- * @param object $user2 the user $user1 is talking to. If they are being blocked
- *                      they will have a variable called 'isblocked' added to their user object
- * @return array the users blocked by $user1
- */
-function message_get_blocked_users($user1=null, $user2=null) {
-    global $DB, $USER;
-
-    if (empty($user1)) {
-        $user1 = $USER;
-    }
-
-    if (!empty($user2)) {
-        $user2->isblocked = false;
-    }
-
-    $blockedusers = array();
-
-    $userfields = user_picture::fields('u', array('lastaccess'));
-    $blockeduserssql = "SELECT $userfields, COUNT(m.id) AS messagecount
-                          FROM {message_contacts} mc
-                          JOIN {user} u ON u.id = mc.contactid
-                          LEFT OUTER JOIN {message} m ON m.useridfrom = mc.contactid AND m.useridto = :user1id1
-                         WHERE u.deleted = 0 AND mc.userid = :user1id2 AND mc.blocked = 1
-                      GROUP BY $userfields
-                      ORDER BY u.firstname ASC";
-    $rs =  $DB->get_recordset_sql($blockeduserssql, array('user1id1' => $user1->id, 'user1id2' => $user1->id));
-
-    foreach($rs as $rd) {
-        $blockedusers[] = $rd;
-
-        if (!empty($user2) && $user2->id == $rd->id) {
-            $user2->isblocked = true;
-        }
-    }
-    $rs->close();
-
-    return $blockedusers;
-}
-
-/**
- * Retrieve $user1's contacts (online, offline and strangers)
- *
- * @param object $user1 the user whose messages are being viewed
- * @param object $user2 the user $user1 is talking to. If they are a contact
- *                      they will have a variable called 'iscontact' added to their user object
- * @return array containing 3 arrays. array($onlinecontacts, $offlinecontacts, $strangers)
- */
-function message_get_contacts($user1=null, $user2=null) {
-    global $DB, $CFG, $USER;
-
-    if (empty($user1)) {
-        $user1 = $USER;
-    }
-
-    if (!empty($user2)) {
-        $user2->iscontact = false;
-    }
-
-    $timetoshowusers = 300; //Seconds default
-    if (isset($CFG->block_online_users_timetosee)) {
-        $timetoshowusers = $CFG->block_online_users_timetosee * 60;
-    }
-
-    // time which a user is counting as being active since
-    $timefrom = time()-$timetoshowusers;
-
-    // people in our contactlist who are online
-    $onlinecontacts  = array();
-    // people in our contactlist who are offline
-    $offlinecontacts = array();
-    // people who are not in our contactlist but have sent us a message
-    $strangers       = array();
-
-    $userfields = user_picture::fields('u', array('lastaccess'));
-
-    // get all in our contactlist who are not blocked in our contact list
-    // and count messages we have waiting from each of them
-    $contactsql = "SELECT $userfields, COUNT(m.id) AS messagecount
-                     FROM {message_contacts} mc
-                     JOIN {user} u ON u.id = mc.contactid
-                     LEFT OUTER JOIN {message} m ON m.useridfrom = mc.contactid AND m.useridto = ?
-                    WHERE u.deleted = 0 AND mc.userid = ? AND mc.blocked = 0
-                 GROUP BY $userfields
-                 ORDER BY u.firstname ASC";
-
-    $rs = $DB->get_recordset_sql($contactsql, array($user1->id, $user1->id));
-    foreach ($rs as $rd) {
-        if ($rd->lastaccess >= $timefrom) {
-            // they have been active recently, so are counted online
-            $onlinecontacts[] = $rd;
-
-        } else {
-            $offlinecontacts[] = $rd;
-        }
-
-        if (!empty($user2) && $user2->id == $rd->id) {
-            $user2->iscontact = true;
-        }
-    }
-    $rs->close();
-
-    // get messages from anyone who isn't in our contact list and count the number
-    // of messages we have from each of them
-    $strangersql = "SELECT $userfields, count(m.id) as messagecount
-                      FROM {message} m
-                      JOIN {user} u  ON u.id = m.useridfrom
-                      LEFT OUTER JOIN {message_contacts} mc ON mc.contactid = m.useridfrom AND mc.userid = m.useridto
-                     WHERE u.deleted = 0 AND mc.id IS NULL AND m.useridto = ?
-                  GROUP BY $userfields
-                  ORDER BY u.firstname ASC";
-
-    $rs = $DB->get_recordset_sql($strangersql, array($USER->id));
-    // Add user id as array index, so supportuser and noreply user don't get duplicated (if they are real users).
-    foreach ($rs as $rd) {
-        $strangers[$rd->id] = $rd;
-    }
-    $rs->close();
-
-    // Add noreply user and support user to the list, if they don't exist.
-    $supportuser = core_user::get_support_user();
-    if (!isset($strangers[$supportuser->id])) {
-        $supportuser->messagecount = message_count_unread_messages($USER, $supportuser);
-        if ($supportuser->messagecount > 0) {
-            $strangers[$supportuser->id] = $supportuser;
-        }
-    }
-
-    $noreplyuser = core_user::get_noreply_user();
-    if (!isset($strangers[$noreplyuser->id])) {
-        $noreplyuser->messagecount = message_count_unread_messages($USER, $noreplyuser);
-        if ($noreplyuser->messagecount > 0) {
-            $strangers[$noreplyuser->id] = $noreplyuser;
-        }
-    }
-    return array($onlinecontacts, $offlinecontacts, $strangers);
-}
-
-/**
  * Returns the count of unread messages for user. Either from a specific user or from all users.
  *
  * @param object $user1 the first user. Defaults to $USER
@@ -219,15 +78,24 @@ function message_count_unread_messages($user1=null, $user2=null) {
         $user1 = $USER;
     }
 
+    $sql = "SELECT COUNT(m.id)
+              FROM {messages} m
+        INNER JOIN {message_conversations} mc
+                ON mc.id = m.conversationid
+        INNER JOIN {message_conversation_members} mcm
+                ON mcm.conversationid = mc.id
+         LEFT JOIN {message_user_actions} mua
+                ON (mua.messageid = m.id AND mua.userid = ? AND (mua.action = ? OR mua.action = ?))
+             WHERE mua.id is NULL
+               AND mcm.userid = ?";
+    $params = [$user1->id, \core_message\api::MESSAGE_ACTION_DELETED, \core_message\api::MESSAGE_ACTION_READ,  $user1->id];
+
     if (!empty($user2)) {
-        return $DB->count_records_select('message', "useridto = ? AND useridfrom = ? AND notification = 0
-            AND timeusertodeleted = 0",
-            array($user1->id, $user2->id), "COUNT('id')");
-    } else {
-        return $DB->count_records_select('message', "useridto = ? AND notification = 0
-            AND timeusertodeleted = 0",
-            array($user1->id), "COUNT('id')");
+        $sql .= " AND m.useridfrom = ?";
+        $params[] = $user2->id;
     }
+
+    return $DB->count_records_sql($sql, $params);
 }
 
 /**
@@ -249,7 +117,7 @@ function message_format_message_text($message, $forcetexttohtml = false) {
     $format = $message->fullmessageformat;
 
     if (strval($message->smallmessage) !== '') {
-        if ($message->notification == 1) {
+        if (!empty($message->notification)) {
             if (strval($message->fullmessagehtml) !== '' or strval($message->fullmessage) !== '') {
                 $format = FORMAT_PLAIN;
             }
@@ -419,86 +287,6 @@ function message_unblock_contact($contactid, $userid = 0) {
  */
 function message_block_contact($contactid, $userid = 0) {
     return message_add_contact($contactid, 1, $userid);
-}
-
-/**
- * Checks if a user can delete a message.
- *
- * @param stdClass $message the message to delete
- * @param string $userid the user id of who we want to delete the message for (this may be done by the admin
- *  but will still seem as if it was by the user)
- * @return bool Returns true if a user can delete the message, false otherwise.
- */
-function message_can_delete_message($message, $userid) {
-    global $USER;
-
-    if ($message->useridfrom == $userid) {
-        $userdeleting = 'useridfrom';
-    } else if ($message->useridto == $userid) {
-        $userdeleting = 'useridto';
-    } else {
-        return false;
-    }
-
-    $systemcontext = context_system::instance();
-
-    // Let's check if the user is allowed to delete this message.
-    if (has_capability('moodle/site:deleteanymessage', $systemcontext) ||
-        ((has_capability('moodle/site:deleteownmessage', $systemcontext) &&
-            $USER->id == $message->$userdeleting))) {
-        return true;
-    }
-
-    return false;
-}
-
-/**
- * Deletes a message.
- *
- * This function does not verify any permissions.
- *
- * @param stdClass $message the message to delete
- * @param string $userid the user id of who we want to delete the message for (this may be done by the admin
- *  but will still seem as if it was by the user)
- * @return bool
- */
-function message_delete_message($message, $userid) {
-    global $DB;
-
-    // The column we want to alter.
-    if ($message->useridfrom == $userid) {
-        $coltimedeleted = 'timeuserfromdeleted';
-    } else if ($message->useridto == $userid) {
-        $coltimedeleted = 'timeusertodeleted';
-    } else {
-        return false;
-    }
-
-    // Don't update it if it's already been deleted.
-    if ($message->$coltimedeleted > 0) {
-        return false;
-    }
-
-    // Get the table we want to update.
-    if (isset($message->timeread)) {
-        $messagetable = 'message_read';
-    } else {
-        $messagetable = 'message';
-    }
-
-    // Mark the message as deleted.
-    $updatemessage = new stdClass();
-    $updatemessage->id = $message->id;
-    $updatemessage->$coltimedeleted = time();
-    $success = $DB->update_record($messagetable, $updatemessage);
-
-    if ($success) {
-        // Trigger event for deleting a message.
-        \core\event\message_deleted::create_from_ids($message->useridfrom, $message->useridto,
-            $userid, $messagetable, $message->id)->trigger();
-    }
-
-    return $success;
 }
 
 /**
@@ -723,71 +511,6 @@ function message_post_message($userfrom, $userto, $message, $format) {
 }
 
 /**
- * Moves messages from a particular user from the message table (unread messages) to message_read
- * This is typically only used when a user is deleted
- *
- * @param object $userid User id
- * @return boolean success
- */
-function message_move_userfrom_unread2read($userid) {
-    global $DB;
-
-    // move all unread messages from message table to message_read
-    if ($messages = $DB->get_records_select('message', 'useridfrom = ?', array($userid), 'timecreated')) {
-        foreach ($messages as $message) {
-            message_mark_message_read($message, 0); //set timeread to 0 as the message was never read
-        }
-    }
-    return true;
-}
-
-/**
- * Mark a single message as read
- *
- * @param stdClass $message An object with an object property ie $message->id which is an id in the message table
- * @param int $timeread the timestamp for when the message should be marked read. Usually time().
- * @param bool $messageworkingempty Is the message_working table already confirmed empty for this message?
- * @return int the ID of the message in the message_read table
- */
-function message_mark_message_read($message, $timeread, $messageworkingempty=false) {
-    global $DB;
-
-    $message->timeread = $timeread;
-
-    $messageid = $message->id;
-    unset($message->id);//unset because it will get a new id on insert into message_read
-
-    //If any processors have pending actions abort them
-    if (!$messageworkingempty) {
-        $DB->delete_records('message_working', array('unreadmessageid' => $messageid));
-    }
-    $messagereadid = $DB->insert_record('message_read', $message);
-
-    $DB->delete_records('message', array('id' => $messageid));
-
-    // Get the context for the user who received the message.
-    $context = context_user::instance($message->useridto, IGNORE_MISSING);
-    // If the user no longer exists the context value will be false, in this case use the system context.
-    if ($context === false) {
-        $context = context_system::instance();
-    }
-
-    // Trigger event for reading a message.
-    $event = \core\event\message_viewed::create(array(
-        'objectid' => $messagereadid,
-        'userid' => $message->useridto, // Using the user who read the message as they are the ones performing the action.
-        'context' => $context,
-        'relateduserid' => $message->useridfrom,
-        'other' => array(
-            'messageid' => $messageid
-        )
-    ));
-    $event->trigger();
-
-    return $messagereadid;
-}
-
-/**
  * Get all message processors, validate corresponding plugin existance and
  * system configuration
  *
@@ -962,42 +685,108 @@ function message_get_messages($useridto, $useridfrom = 0, $notifications = -1, $
                                 $sort = 'mr.timecreated DESC', $limitfrom = 0, $limitnum = 0) {
     global $DB;
 
-    $messagetable = $read ? '{message_read}' : '{message}';
-    $params = array('deleted' => 0);
-
-    // Empty useridto means that we are going to retrieve messages send by the useridfrom to any user.
+    // If the 'useridto' value is empty then we are going to retrieve messages sent by the useridfrom to any user.
     if (empty($useridto)) {
         $userfields = get_all_user_name_fields(true, 'u', '', 'userto');
-        $joinsql = "JOIN {user} u ON u.id = mr.useridto";
-        $usersql = "mr.useridfrom = :useridfrom AND u.deleted = :deleted";
-        $params['useridfrom'] = $useridfrom;
     } else {
         $userfields = get_all_user_name_fields(true, 'u', '', 'userfrom');
+    }
+
+    // Create the SQL we will be using.
+    $messagesql = "SELECT mr.*, $userfields, 0 as notification, '' as contexturl, '' as contexturlname,
+                          mua.timecreated as timeusertodeleted, mua2.timecreated as timeread,
+                          mua3.timecreated as timeuserfromdeleted
+                     FROM {messages} mr
+               INNER JOIN {message_conversations} mc
+                       ON mc.id = mr.conversationid
+               INNER JOIN {message_conversation_members} mcm
+                       ON mcm.conversationid = mc.id ";
+
+    $notificationsql = "SELECT mr.*, $userfields, 1 as notification
+                          FROM {notifications} mr ";
+
+    $messagejoinsql = "LEFT JOIN {message_user_actions} mua
+                              ON (mua.messageid = mr.id AND mua.userid = mcm.userid AND mua.action = ?)
+                       LEFT JOIN {message_user_actions} mua2
+                              ON (mua2.messageid = mr.id AND mua2.userid = mcm.userid AND mua2.action = ?)
+                       LEFT JOIN {message_user_actions} mua3
+                              ON (mua3.messageid = mr.id AND mua3.userid = mr.useridfrom AND mua3.action = ?)";
+    $messagejoinparams = [\core_message\api::MESSAGE_ACTION_DELETED, \core_message\api::MESSAGE_ACTION_READ,
+        \core_message\api::MESSAGE_ACTION_DELETED];
+    $notificationsparams = [];
+
+    // If the 'useridto' value is empty then we are going to retrieve messages sent by the useridfrom to any user.
+    if (empty($useridto)) {
+        // Create the messaging query and params.
+        $messagesql .= "INNER JOIN {user} u
+                                ON u.id = mcm.userid
+                                $messagejoinsql
+                             WHERE mr.useridfrom = ?
+                               AND mr.useridfrom != mcm.userid
+                               AND u.deleted = 0 ";
+        $messageparams = array_merge($messagejoinparams, [$useridfrom]);
+
+        // Create the notifications query and params.
+        $notificationsql .= "INNER JOIN {user} u
+                                     ON u.id = mr.useridto
+                                  WHERE mr.useridfrom = ?
+                                    AND u.deleted = 0 ";
+        $notificationsparams[] = $useridfrom;
+    } else {
+        // Create the messaging query and params.
         // Left join because useridfrom may be -10 or -20 (no-reply and support users).
-        $joinsql = "LEFT JOIN {user} u ON u.id = mr.useridfrom";
-        $usersql = "mr.useridto = :useridto AND (u.deleted IS NULL OR u.deleted = :deleted)";
-        $params['useridto'] = $useridto;
+        $messagesql .= "LEFT JOIN {user} u
+                               ON u.id = mr.useridfrom
+                               $messagejoinsql
+                            WHERE mcm.userid = ?
+                              AND mr.useridfrom != mcm.userid
+                              AND u.deleted = 0 ";
+        $messageparams = array_merge($messagejoinparams, [$useridto]);
         if (!empty($useridfrom)) {
-            $usersql .= " AND mr.useridfrom = :useridfrom";
-            $params['useridfrom'] = $useridfrom;
+            $messagesql .= " AND mr.useridfrom = ? ";
+            $messageparams[] = $useridfrom;
+        }
+
+        // Create the notifications query and params.
+        // Left join because useridfrom may be -10 or -20 (no-reply and support users).
+        $notificationsql .= "LEFT JOIN {user} u
+                                    ON (u.id = mr.useridfrom AND u.deleted = 0)
+                                 WHERE mr.useridto = ? ";
+        $notificationsparams[] = $useridto;
+        if (!empty($useridfrom)) {
+            $notificationsql .= " AND mr.useridfrom = ? ";
+            $notificationsparams[] = $useridfrom;
         }
     }
+    if ($read) {
+        $notificationsql .= "AND mr.timeread IS NOT NULL ";
+    } else {
+        $notificationsql .= "AND mr.timeread IS NULL ";
+    }
+    $messagesql .= "ORDER BY $sort";
+    $notificationsql .= "ORDER BY $sort";
 
-    // Now, if retrieve notifications, conversations or both.
-    $typesql = "";
-    if ($notifications !== -1) {
-        $typesql = "AND mr.notification = :notification";
-        $params['notification'] = ($notifications) ? 1 : 0;
+    // Handle messages if needed.
+    if ($notifications === -1 || $notifications === 0) {
+        $messages = $DB->get_records_sql($messagesql, $messageparams, $limitfrom, $limitnum);
+        // Get rid of the messages that have either been read or not read depending on the value of $read.
+        $messages = array_filter($messages, function ($message) use ($read) {
+            if ($read) {
+                return !is_null($message->timeread);
+            }
+
+            return is_null($message->timeread);
+        });
     }
 
-    $sql = "SELECT mr.*, $userfields
-              FROM $messagetable mr
-                   $joinsql
-             WHERE $usersql
-                   $typesql
-             ORDER BY $sort";
+    // All.
+    if ($notifications === -1) {
+        return array_merge($messages, $DB->get_records_sql($notificationsql, $notificationsparams, $limitfrom, $limitnum));
+    } else if ($notifications === 1) { // Just notifications.
+        return $DB->get_records_sql($notificationsql, $notificationsparams, $limitfrom, $limitnum);
+    }
 
-    $messages = $DB->get_records_sql($sql, $params, $limitfrom, $limitnum);
+    // Just messages.
     return $messages;
 }
 

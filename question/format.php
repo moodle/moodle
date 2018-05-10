@@ -51,7 +51,6 @@ class qformat_default {
     public $stoponerror = true;
     public $translator = null;
     public $canaccessbackupdata = true;
-
     protected $importcontext = null;
 
     // functions to indicate import/export functionality
@@ -425,8 +424,31 @@ class qformat_default {
 
             $result = question_bank::get_qtype($question->qtype)->save_question_options($question);
 
-            if (isset($question->tags)) {
-                core_tag_tag::set_item_tags('core_question', 'question', $question->id, $question->context, $question->tags);
+            if (core_tag_tag::is_enabled('core_question', 'question')) {
+                // Is the current context we're importing in a course context?
+                $importingcontext = $this->importcontext;
+                $importingcoursecontext = $importingcontext->get_course_context(false);
+                $isimportingcontextcourseoractivity = !empty($importingcoursecontext);
+
+                if (!empty($question->coursetags)) {
+                    if ($isimportingcontextcourseoractivity) {
+                        $mergedtags = array_merge($question->coursetags, $question->tags);
+
+                        core_tag_tag::set_item_tags('core_question', 'question', $question->id,
+                            $question->context, $mergedtags);
+                    } else {
+                        core_tag_tag::set_item_tags('core_question', 'question', $question->id,
+                            context_course::instance($this->course->id), $question->coursetags);
+
+                        if (!empty($question->tags)) {
+                            core_tag_tag::set_item_tags('core_question', 'question', $question->id,
+                                $importingcontext, $question->tags);
+                        }
+                    }
+                } else if (!empty($question->tags)) {
+                    core_tag_tag::set_item_tags('core_question', 'question', $question->id,
+                        $question->context, $question->tags);
+                }
             }
 
             if (!empty($result->error)) {
@@ -499,6 +521,12 @@ class qformat_default {
             $contextid = false;
         }
 
+        // Before 3.5, question categories could be created at top level.
+        // From 3.5 onwards, all question categories should be a child of a special category called the "top" category.
+        if (isset($catnames[0]) && (($catnames[0] != 'top') || (count($catnames) < 3))) {
+            array_unshift($catnames, 'top');
+        }
+
         if ($this->contextfromfile && $contextid !== false) {
             $context = context::instance_by_id($contextid);
             require_capability('moodle/question:add', $context);
@@ -509,8 +537,14 @@ class qformat_default {
 
         // Now create any categories that need to be created.
         foreach ($catnames as $catname) {
-            if ($category = $DB->get_record('question_categories',
+            if ($parent == 0) {
+                $category = question_get_top_category($context->id, true);
+                $parent = $category->id;
+            } else if ($category = $DB->get_record('question_categories',
                     array('name' => $catname, 'contextid' => $context->id, 'parent' => $parent))) {
+                $parent = $category->id;
+            } else if ($parent == 0) {
+                $category = question_get_top_category($context->id, true);
                 $parent = $category->id;
             } else {
                 require_capability('moodle/question:managecategory', $context);
@@ -759,11 +793,13 @@ class qformat_default {
     }
 
     /**
-     * Do the export
-     * For most types this should not need to be overrided
-     * @return stored_file
+     * Perform the export.
+     * For most types this should not need to be overrided.
+     *
+     * @param   bool    $checkcapabilities Whether to check capabilities when exporting the questions.
+     * @return  string  The content of the export.
      */
-    public function exportprocess() {
+    public function exportprocess($checkcapabilities = true) {
         global $CFG, $OUTPUT, $DB, $USER;
 
         // get the questions (from database) in this category
@@ -823,7 +859,7 @@ class qformat_default {
             // export the question displaying message
             $count++;
 
-            if (question_has_capability_on($question, 'view', $question->category)) {
+            if (!$checkcapabilities || question_has_capability_on($question, 'view')) {
                 $expout .= $this->writequestion($question, $contextid) . "\n";
             }
         }

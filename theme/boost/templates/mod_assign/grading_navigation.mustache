@@ -46,13 +46,21 @@
 <a href="{{config.wwwroot}}/course/view.php?id={{courseid}}" title="{{{coursename}}}">{{{coursename}}}</a><br/>
 
 {{!
-    Row 2) Assignment name & link.
+    Row 2) Assignment name & link, & edit settings.
 }}
 <a href="{{config.wwwroot}}/mod/assign/view.php?id={{cmid}}" title="{{name}}">{{name}}</a>
 
+{{#caneditsettings}}
+<a href="{{config.wwwroot}}/course/modedit.php?update={{cmid}}&return=1">{{#pix}}t/edit, core,{{#str}}editsettings{{/str}}{{/pix}}</a>
+{{/caneditsettings}}
+
+<br/>
+
 {{!
-    Row 3) Edit settings, due date, with tool-tip thing.
+    Row 3) Assignment grading & link, due date, with tool-tip thing.
 }}
+<a href="{{config.wwwroot}}/mod/assign/view.php?id={{cmid}}&action={{actiongrading}}" title="{{viewgrading}}">{{viewgrading}}</a>
+
 <div role="tooltip" id="tooltip-{{uniqid}}" class="accesshide">
 {{#duedate}}
 {{#str}}duedatecolon, mod_assign, {{duedatestr}}{{/str}}
@@ -67,10 +75,6 @@
 {{/duedate}}
 </div>
 
-<br/>
-{{#caneditsettings}}
-<a href="{{config.wwwroot}}/course/modedit.php?update={{cmid}}&return=1">{{#pix}}t/edit, core,{{#str}}editsettings{{/str}}{{/pix}}</a>
-{{/caneditsettings}}
 </span>
 </div>
 

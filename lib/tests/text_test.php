@@ -413,6 +413,27 @@ class core_text_testcase extends advanced_testcase {
     }
 
     /**
+     * Tests the static remove_unicode_non_characters method.
+     */
+    public function test_remove_unicode_non_characters() {
+        // Confirm that texts which don't contain these characters are unchanged.
+        $this->assertSame('Frogs!', core_text::remove_unicode_non_characters('Frogs!'));
+
+        // Even if they contain some very scary characters.
+        $example = html_entity_decode('A&#xfffd;&#x1d15f;B');
+        $this->assertSame($example, core_text::remove_unicode_non_characters($example));
+
+        // Non-characters are removed wherever they may be, with other characters left.
+        $example = html_entity_decode('&#xfffe;A&#xffff;B&#x8fffe;C&#xfdd0;D&#xfffd;E&#xfdd5;');
+        $expected = html_entity_decode('ABCD&#xfffd;E');
+        $this->assertSame($expected, core_text::remove_unicode_non_characters($example));
+
+        // If you only have a non-character, you get empty string.
+        $example = html_entity_decode('&#xfffe;');
+        $this->assertSame('', core_text::remove_unicode_non_characters($example));
+    }
+
+    /**
      * Tests the static get_encodings method.
      */
     public function test_get_encodings() {

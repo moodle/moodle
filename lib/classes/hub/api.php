@@ -67,36 +67,7 @@ class api {
             registration::require_registration();
         }
 
-        if (extension_loaded('xmlrpc')) {
-            // Use XMLRPC protocol.
-            return self::call_xmlrpc($token, $function, $data);
-        } else {
-            // Use REST.
-            return self::call_rest($token, $function, $data);
-        }
-    }
-
-    /**
-     * Performs REST request to moodle.net (using GET method)
-     *
-     * @param string $token
-     * @param string $function
-     * @param array $data
-     * @return mixed
-     * @throws moodle_exception
-     */
-    protected static function call_xmlrpc($token, $function, array $data) {
-        global $CFG;
-        require_once($CFG->dirroot . "/webservice/xmlrpc/lib.php");
-
-        $serverurl = HUB_MOODLEORGHUBURL . "/local/hub/webservice/webservices.php";
-        $xmlrpcclient = new webservice_xmlrpc_client($serverurl, $token);
-        try {
-            return $xmlrpcclient->call($function, $data);
-        } catch (\Exception $e) {
-            // Function webservice_xmlrpc_client::call() can throw Exception, wrap it into moodle_exception.
-            throw new moodle_exception('errorws', 'hub', '', $e->getMessage());
-        }
+        return self::call_rest($token, $function, $data);
     }
 
     /**
