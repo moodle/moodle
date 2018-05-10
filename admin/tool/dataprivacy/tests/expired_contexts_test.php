@@ -84,6 +84,22 @@ class tool_dataprivacy_expired_contexts_testcase extends advanced_testcase {
         $this->getDataGenerator()->enrol_user($user3->id, $course2->id, 'student');
         $this->getDataGenerator()->enrol_user($user4->id, $course3->id, 'student');
 
+        // Add an activity and some data for user 2.
+        $assignmod = $this->getDataGenerator()->create_module('assign', ['course' => $course2->id]);
+        $data = (object) [
+            'assignment' => $assignmod->id,
+            'userid' => $user2->id,
+            'timecreated' => time(),
+            'timemodified' => time(),
+            'status' => 'new',
+            'groupid' => 0,
+            'attemptnumber' => 0,
+            'latest' => 1,
+        ];
+        $DB->insert_record('assign_submission', $data);
+        // We should have one record in the assign submission table.
+        $this->assertEquals(1, $DB->count_records('assign_submission'));
+
         // Users without lastaccess are skipped as well as users enroled in courses with no end date.
         $expired = new \tool_dataprivacy\expired_user_contexts();
         $numexpired = $expired->flag_expired();
@@ -108,6 +124,9 @@ class tool_dataprivacy_expired_contexts_testcase extends advanced_testcase {
         $this->assertEquals(2, $DB->count_records('tool_dataprivacy_ctxexpired'));
         $deleted = $expired->delete();
         $this->assertEquals(0, $deleted);
+
+        // No user data left in mod_assign.
+        $this->assertEquals(0, $DB->count_records('assign_submission'));
 
         // The user is deleted.
         $deleteduser = \core_user::get_user($user2->id, 'id, deleted', IGNORE_MISSING);
