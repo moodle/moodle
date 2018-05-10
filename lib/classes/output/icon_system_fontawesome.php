@@ -109,7 +109,7 @@ class icon_system_fontawesome extends icon_system_font {
             'core:e/insert_date' => 'fa-calendar',
             'core:e/insert_edit_image' => 'fa-picture-o',
             'core:e/insert_edit_link' => 'fa-link',
-            'core:e/insert_edit_video' => 'fa-video-camera',
+            'core:e/insert_edit_video' => 'fa-file-video-o',
             'core:e/insert_file' => 'fa-file',
             'core:e/insert_horizontal_ruler' => 'fa-arrows-h',
             'core:e/insert_nonbreaking_space' => 'fa-square-o',

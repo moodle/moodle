@@ -36,7 +36,7 @@ if ($ADMIN->fulltree) {
 style1 = title, bold, italic
 list = unorderedlist, orderedlist
 links = link
-files = image, media, managefiles, recordrtc
+files = image, media, recordrtc, managefiles
 style2 = underline, strike, subscript, superscript
 align = align
 indent = indent
