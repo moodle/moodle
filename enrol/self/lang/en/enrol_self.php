@@ -115,5 +115,5 @@ $string['welcometocoursetext'] = 'Welcome to {$a->coursename}!
 If you have not done so already, you should edit your profile page so that we can learn more about you:
 
   {$a->profileurl}';
-$string['privacy:metadata'] = 'The Self enrolments plugin does not store any personal data.';
+$string['privacy:metadata'] = 'The Self enrolment plugin does not store any personal data.';
 
