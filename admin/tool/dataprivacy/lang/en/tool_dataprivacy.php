@@ -136,6 +136,7 @@ $string['gdpr_art_9_2_i_name'] = 'Public health (GDPR Art. 9.2(i))';
 $string['gdpr_art_9_2_j_description'] = 'Processing is necessary for archiving purposes in the public interest, scientific or historical research purposes or statistical purposes in accordance with Article 89(1) based on Union or Member State law which shall be proportionate to the aim pursued, respect the essence of the right to data protection and provide for suitable and specific measures to safeguard the fundamental rights and the interests of the data subject';
 $string['gdpr_art_9_2_j_name'] = 'Public interest, or scientific/historical/statistical research (GDPR Art. 9.2(j))';
 $string['hide'] = 'Collapse all';
+$string['httpwarning'] = 'Any data downloaded from this site may not be encrypted. Please contact your system administrator and request that they install SSL on this site.';
 $string['inherit'] = 'Inherit';
 $string['lawfulbases'] = 'Lawful bases';
 $string['lawfulbases_help'] = 'Select at least one option that will serve as the lawful basis for processing personal data. For details on these lawful bases, please see <a href="https://gdpr-info.eu/art-6-gdpr/" target="_blank">GDPR Art. 6.1</a>';

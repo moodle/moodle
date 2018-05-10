@@ -70,6 +70,11 @@ class my_data_requests_page implements renderable, templatable {
         $data = new stdClass();
         $data->newdatarequesturl = new moodle_url('/admin/tool/dataprivacy/createdatarequest.php');
 
+        if (!is_https()) {
+            $httpwarningmessage = get_string('httpwarning', 'tool_dataprivacy');
+            $data->httpsite = array('message' => $httpwarningmessage, 'announce' => 1);
+        }
+
         $requests = [];
         foreach ($this->requests as $request) {
             $requestid = $request->get('id');
