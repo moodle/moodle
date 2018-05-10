@@ -186,7 +186,7 @@ class path {
         }
 
         // No image defined, so...
-        return $OUTPUT->image_url('courseimage', 'block_iomad_learningpath');
+        return $OUTPUT->image_url('courseimage', 'block_iomad_learningpath')->out();
     }
 
 }

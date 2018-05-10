@@ -325,9 +325,8 @@ class generate {
             // Make sure it doesn't already exist.
             if (!$company = $DB->get_record('company', ['shortname' => $shortname])) {
                 $company = $this->company_record($shortname, $fullname);
-            } else {
-                $this->courses($company);
             }
+            $this->courses($company);
         }
     }
 
