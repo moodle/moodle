@@ -143,25 +143,25 @@ class provider implements
         // Fetch all forum discussions, and forum posts.
         $sql = "SELECT c.id
                   FROM {context} c
-            INNER JOIN {course_modules} cm ON cm.id = c.instanceid AND c.contextlevel = :contextlevel
-            INNER JOIN {modules} m ON m.id = cm.module AND m.name = :modname
-            INNER JOIN {forum} f ON f.id = cm.instance
+                  JOIN {course_modules} cm ON cm.id = c.instanceid AND c.contextlevel = :contextlevel
+                  JOIN {modules} m ON m.id = cm.module AND m.name = :modname
+                  JOIN {forum} f ON f.id = cm.instance
              LEFT JOIN {forum_discussions} d ON d.forum = f.id
              LEFT JOIN {forum_posts} p ON p.discussion = d.id
-             LEFT JOIN {forum_digests} dig ON dig.forum = f.id
-             LEFT JOIN {forum_subscriptions} sub ON sub.forum = f.id
-             LEFT JOIN {forum_track_prefs} pref ON pref.forumid = f.id
-             LEFT JOIN {forum_read} hasread ON hasread.forumid = f.id
-             LEFT JOIN {forum_discussion_subs} dsub ON dsub.forum = f.id
+             LEFT JOIN {forum_digests} dig ON dig.forum = f.id AND dig.userid = :digestuserid
+             LEFT JOIN {forum_subscriptions} sub ON sub.forum = f.id AND sub.userid = :subuserid
+             LEFT JOIN {forum_track_prefs} pref ON pref.forumid = f.id AND pref.userid = :prefuserid
+             LEFT JOIN {forum_read} hasread ON hasread.forumid = f.id AND hasread.userid = :hasreaduserid
+             LEFT JOIN {forum_discussion_subs} dsub ON dsub.forum = f.id AND dsub.userid = :dsubuserid
              {$ratingsql->join}
                  WHERE (
                     p.userid        = :postuserid OR
                     d.userid        = :discussionuserid OR
-                    dig.userid      = :digestuserid OR
-                    sub.userid      = :subuserid OR
-                    pref.userid     = :prefuserid OR
-                    hasread.userid  = :hasreaduserid OR
-                    dsub.userid     = :dsubuserid OR
+                    dig.id IS NOT NULL OR
+                    sub.id IS NOT NULL OR
+                    pref.id IS NOT NULL OR
+                    hasread.id IS NOT NULL OR
+                    dsub.id IS NOT NULL OR
                     {$ratingsql->userwhere}
                 )
         ";
@@ -269,8 +269,8 @@ class provider implements
                     sub.userid AS subscribed,
                     pref.userid AS tracked
                   FROM {context} c
-            INNER JOIN {course_modules} cm ON cm.id = c.instanceid
-            INNER JOIN {forum} f ON f.id = cm.instance
+                  JOIN {course_modules} cm ON cm.id = c.instanceid
+                  JOIN {forum} f ON f.id = cm.instance
              LEFT JOIN {forum_digests} dig ON dig.forum = f.id AND dig.userid = :digestuserid
              LEFT JOIN {forum_subscriptions} sub ON sub.forum = f.id AND sub.userid = :subuserid
              LEFT JOIN {forum_track_prefs} pref ON pref.forumid = f.id AND pref.userid = :prefuserid
@@ -334,15 +334,15 @@ class provider implements
                     g.name as groupname,
                     dsub.preference
                   FROM {forum} f
-            INNER JOIN {forum_discussions} d ON d.forum = f.id
+                  JOIN {forum_discussions} d ON d.forum = f.id
              LEFT JOIN {groups} g ON g.id = d.groupid
-             LEFT JOIN {forum_discussion_subs} dsub ON dsub.discussion = d.id
+             LEFT JOIN {forum_discussion_subs} dsub ON dsub.discussion = d.id AND dsub.userid = :dsubuserid
              LEFT JOIN {forum_posts} p ON p.discussion = d.id
                  WHERE f.id ${foruminsql}
                    AND (
                         d.userid    = :discussionuserid OR
                         p.userid    = :postuserid OR
-                        dsub.userid = :dsubuserid
+                        dsub.id IS NOT NULL
                    )
         ";
 
@@ -405,14 +405,14 @@ class provider implements
                     d.name,
                     d.groupid
                   FROM {forum} f
-            INNER JOIN {forum_discussions} d ON d.forum = f.id
-            INNER JOIN {forum_posts} p ON p.discussion = d.id
-             LEFT JOIN {forum_read} fr ON fr.postid = p.id
+                  JOIN {forum_discussions} d ON d.forum = f.id
+                  JOIN {forum_posts} p ON p.discussion = d.id
+             LEFT JOIN {forum_read} fr ON fr.postid = p.id AND fr.userid = :readuserid
             {$ratingsql->join}
                  WHERE f.id ${foruminsql} AND
                 (
                     p.userid = :postuserid OR
-                    fr.userid = :readuserid OR
+                    fr.id IS NOT NULL OR
                     {$ratingsql->userwhere}
                 )
               GROUP BY f.id, p.discussion, d.name, d.groupid
@@ -454,7 +454,7 @@ class provider implements
                     fr.id AS readflag,
                     rat.id AS hasratings
                     FROM {forum_discussions} d
-              INNER JOIN {forum_posts} p ON p.discussion = d.id
+                    JOIN {forum_posts} p ON p.discussion = d.id
                LEFT JOIN {forum_read} fr ON fr.postid = p.id AND fr.userid = :readuserid
             {$ratingsql->join} AND {$ratingsql->userwhere}
                    WHERE d.id = :discussionid
