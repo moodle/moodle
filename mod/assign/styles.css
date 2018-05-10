@@ -649,6 +649,15 @@
     background-color: transparent;
 }
 
+.path-mod-assign div.fileuploadsubmission {
+    float: left;
+    min-width: 300px;
+}
+
+.path-mod-assign div.fileuploadsubmissiontime {
+    float: right;
+}
+
 /***** End submission status *****/
 
 .path-mod-assign [data-region="grade-panel"] #id_gradeheader {

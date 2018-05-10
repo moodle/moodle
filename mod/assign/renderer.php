@@ -1417,11 +1417,15 @@ class mod_assign_renderer extends plugin_renderer_base {
                                              'moodle',
                                              array('class'=>'icon'));
             $result .= '<li yuiConfig=\'' . json_encode($yuiconfig) . '\'>' .
-                       '<div>' . $image . ' ' .
-                                 $file->fileurl . ' ' .
-                                 $plagiarismlinks . ' ' .
-                                 $file->portfoliobutton . '</div>' .
-                       '</li>';
+                '<div>' .
+                    '<div class="fileuploadsubmission">' . $image . ' ' .
+                    $file->fileurl . ' ' .
+                    $plagiarismlinks . ' ' .
+                    $file->portfoliobutton . ' ' .
+                    '</div>' .
+                    '<div class="fileuploadsubmissiontime">' . $file->timemodified . '</div>' .
+                '</div>' .
+            '</li>';
         }
 
         $result .= '</ul>';

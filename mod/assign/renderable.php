@@ -922,6 +922,12 @@ class assign_files implements renderable {
         }
         foreach ($dir['files'] as $file) {
             $file->portfoliobutton = '';
+
+            $file->timemodified = userdate(
+                $file->get_timemodified(),
+                get_string('strftimedatetime', 'langconfig')
+            );
+
             if (!empty($CFG->enableportfolios)) {
                 require_once($CFG->libdir . '/portfoliolib.php');
                 $button = new portfolio_add_button();
