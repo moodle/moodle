@@ -110,7 +110,7 @@ class file_temp_cleanup_task extends scheduled_task {
         $this->execute_on($CFG->tempdir);
 
         // Run on $CFG->backuptempdir too, if different from the default one, '$CFG->tempdir/backup'.
-        if (realpath(dirname($CFG->backuptempdir)) !== $CFG->tempdir) {
+        if (realpath(dirname($CFG->backuptempdir)) !== realpath($CFG->tempdir)) {
             // The $CFG->backuptempdir setting is different from the default '$CFG->tempdir/backup'.
             $this->execute_on($CFG->backuptempdir);
         }
