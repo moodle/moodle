@@ -131,10 +131,6 @@ $tag-font-weight: bold !default;
     position: static;
 }
 
-.form-check .form-check-input {
-    position: absolute;
-}
-
 @mixin tag-variant($color) {
     background-color: $color;
 
