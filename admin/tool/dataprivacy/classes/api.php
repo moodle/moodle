@@ -478,6 +478,10 @@ class api {
     public static function update_purpose(stdClass $record) {
         self::check_can_manage_data_registry();
 
+        if (!isset($record->sensitivedatareasons)) {
+            $record->sensitivedatareasons = '';
+        }
+
         $purpose = new purpose($record->id);
         $purpose->from_record($record);
 
