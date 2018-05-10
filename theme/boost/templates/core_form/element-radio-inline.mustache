@@ -28,7 +28,7 @@
     <em>{{{.}}}</em>
 {{/text}}
 {{{helpbutton}}}
-<span class="form-control-feedback invalid-feedback" id="id_error_{{element.name}}" {{^error}} style="display: none;"{{/error}}>
+<span class="form-control-feedback invalid-feedback" id="id_error_{{element.name}}" {{#error}} style="display: block;"{{/error}}>
     {{{error}}}
 </span>
 {{^element.frozen}}
