@@ -129,20 +129,22 @@ class provider implements
     public static function get_contexts_for_userid($userid) {
 
         $contextlist = new contextlist();
-
         $sql = "SELECT ctx.id
                   FROM {course_modules} cm
                   JOIN {modules} m ON cm.module = m.id AND m.name = :module
                   JOIN {context} ctx ON ctx.contextlevel = :contextlevel AND ctx.instanceid = cm.id
                   JOIN {workshop} w ON cm.instance = w.id
              LEFT JOIN {workshop_submissions} ws ON ws.workshopid = w.id
-             LEFT JOIN {workshop_assessments} wa ON wa.submissionid = ws.id
-             LEFT JOIN {workshop_aggregations} wr ON wr.workshopid = w.id
+             LEFT JOIN {workshop_assessments} wa ON wa.submissionid = ws.id AND (
+                    wa.reviewerid = :wareviewerid
+                        OR
+                    wa.gradinggradeoverby = :wagradinggradeoverby
+                )
+             LEFT JOIN {workshop_aggregations} wr ON wr.workshopid = w.id AND wr.userid = :wruserid
                  WHERE ws.authorid = :wsauthorid
                     OR ws.gradeoverby = :wsgradeoverby
-                    OR wa.reviewerid = :wareviewerid
-                    OR wa.gradinggradeoverby = :wagradinggradeoverby
-                    OR wr.userid = :wruserid";
+                    OR wa.id IS NOT NULL
+                    OR wr.id IS NOT NULL";
 
         $params = [
             'module' => 'workshop',
@@ -306,9 +308,8 @@ class provider implements
                   JOIN {modules} m ON cm.module = m.id AND m.name = :module
                   JOIN {context} ctx ON ctx.contextlevel = :contextlevel AND ctx.instanceid = cm.id
                   JOIN {workshop} w ON cm.instance = w.id
-                  JOIN {workshop_submissions} ws ON ws.workshopid = w.id
-                 WHERE ctx.id {$contextsql}
-                       AND ws.authorid = :authorid";
+                  JOIN {workshop_submissions} ws ON ws.workshopid = w.id AND ws.authorid = :authorid
+                 WHERE ctx.id {$contextsql}";
 
         $params = $contextparams + [
             'module' => 'workshop',
@@ -418,9 +419,8 @@ class provider implements
                   JOIN {context} ctx ON cm.id = ctx.instanceid AND ctx.contextlevel = :contextlevel
                   JOIN {workshop} w ON cm.instance = w.id
                   JOIN {workshop_submissions} ws ON ws.workshopid = w.id
-                  JOIN {workshop_assessments} wa ON wa.submissionid = ws.id
-                 WHERE ctx.id {$contextsql}
-                       AND wa.reviewerid = :reviewerid";
+                  JOIN {workshop_assessments} wa ON wa.submissionid = ws.id AND wa.reviewerid = :reviewerid
+                 WHERE ctx.id {$contextsql}";
 
         $params = $contextparams + [
             'module' => 'workshop',
@@ -570,9 +570,8 @@ class provider implements
                   JOIN {modules} m ON cm.module = m.id AND m.name = :module
                   JOIN {context} ctx ON ctx.contextlevel = :contextlevel AND ctx.instanceid = cm.id
                   JOIN {workshop} w ON cm.instance = w.id
-                  JOIN {workshop_submissions} ws ON ws.workshopid = w.id
-                 WHERE ctx.id {$contextsql}
-                       AND ws.authorid = :authorid";
+                  JOIN {workshop_submissions} ws ON ws.workshopid = w.id AND ws.authorid = :authorid
+                 WHERE ctx.id {$contextsql}";
 
         $params = $contextparams + [
             'module' => 'workshop',
@@ -607,10 +606,9 @@ class provider implements
                   JOIN {modules} m ON cm.module = m.id AND m.name = :module
                   JOIN {context} ctx ON cm.id = ctx.instanceid AND ctx.contextlevel = :contextlevel
                   JOIN {workshop} w ON cm.instance = w.id
-                  JOIN {workshop_submissions} ws ON ws.workshopid = w.id
+                  JOIN {workshop_submissions} ws ON ws.workshopid = w.id AND ws.authorid = :authorid
                   JOIN {workshop_assessments} wa ON wa.submissionid = ws.id
-                 WHERE ctx.id {$contextsql}
-                       AND ws.authorid = :authorid";
+                 WHERE ctx.id {$contextsql}";
 
         $params = $contextparams + [
             'module' => 'workshop',
@@ -642,9 +640,8 @@ class provider implements
                   JOIN {context} ctx ON cm.id = ctx.instanceid AND ctx.contextlevel = :contextlevel
                   JOIN {workshop} w ON cm.instance = w.id
                   JOIN {workshop_submissions} ws ON ws.workshopid = w.id
-                  JOIN {workshop_assessments} wa ON wa.submissionid = ws.id
-                 WHERE ctx.id {$contextsql}
-                       AND wa.reviewerid = :reviewerid";
+                  JOIN {workshop_assessments} wa ON wa.submissionid = ws.id AND wa.reviewerid = :reviewerid
+                 WHERE ctx.id {$contextsql}";
 
         $params = $contextparams + [
             'module' => 'workshop',
