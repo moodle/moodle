@@ -103,8 +103,9 @@ trait completion_creation {
      * Complete some of the course completion criteria.
      *
      * @param  stdClass $user The user object
+     * @param  bool $modulecompletion If true will complete the activity module completion thing.
      */
-    public function complete_course($user) {
+    public function complete_course($user, $modulecompletion = true) {
         $this->getDataGenerator()->enrol_user($user->id, $this->course->id, 'student');
         $completion = new \completion_info($this->course);
         $criteriacompletions = $completion->get_completions($user->id, COMPLETION_CRITERIA_TYPE_ROLE);
@@ -112,7 +113,9 @@ trait completion_creation {
         foreach ($criteriacompletions as $ccompletion) {
             $criteria->complete($ccompletion);
         }
-        // Set activity as complete.
-        $completion->update_state($this->cm, COMPLETION_COMPLETE, $user->id);
+        if ($modulecompletion) {
+            // Set activity as complete.
+            $completion->update_state($this->cm, COMPLETION_COMPLETE, $user->id);
+        }
     }
 }
