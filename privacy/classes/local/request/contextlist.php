@@ -55,6 +55,7 @@ class contextlist extends contextlist_base {
             $contextids[] = $context->ctxid;
             \context_helper::preload_from_record($context);
         }
+        $contexts->close();
 
         $this->set_contextids(array_merge($this->get_contextids(), $contextids));
 
