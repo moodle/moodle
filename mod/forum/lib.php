@@ -3545,7 +3545,7 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
     }
 
     // Output ratings
-    if (!empty($post->deleted) && !empty($post->rating)) {
+    if (!empty($post->rating)) {
         $output .= html_writer::tag('div', $OUTPUT->render($post->rating), array('class'=>'forum-post-rating'));
     }
 
@@ -3638,6 +3638,7 @@ function forum_rating_permissions($contextid, $component, $ratingarea) {
  *            context => object the context in which the rated items exists [required]
  *            component => The component for this module - should always be mod_forum [required]
  *            ratingarea => object the context in which the rated items exists [required]
+ *
  *            itemid => int the ID of the object being rated [required]
  *            scaleid => int the scale from which the user can select a rating. Used for bounds checking. [required]
  *            rating => int the submitted rating [required]
