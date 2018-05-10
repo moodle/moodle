@@ -171,8 +171,8 @@ class cronlib_testcase extends basic_testcase {
             $isvalid = true;
             $isvalid = $isvalid && !$iter->isDot();
             // Remove the default $CFG->tempdir/backup directory and $CFG->tempdir/.htaccess file from this comparison.
-            $isvalid = $isvalid && !($iter->isDir() && ($iter->getRealpath() === "{$tmpdir}/backup"));
-            $isvalid = $isvalid && !($iter->isFile() && ($iter->getRealpath() === "{$tmpdir}/.htaccess"));
+            $isvalid = $isvalid && !($iter->isDir() && ($iter->getRealpath() === $tmpdir . DIRECTORY_SEPARATOR . 'backup'));
+            $isvalid = $isvalid && !($iter->isFile() && ($iter->getRealpath() === $tmpdir . DIRECTORY_SEPARATOR . '.htaccess'));
             if ($isvalid) {
                 $actual[] = $iter->getRealPath();
             }
