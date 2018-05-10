@@ -36,7 +36,7 @@ use core_privacy\local\request\writer;
  */
 class provider implements
         \core_privacy\local\metadata\provider,
-        \core_privacy\local\request\subsystem\provider {
+        \core_privacy\local\request\plugin\provider {
     /**
      * Returns meta data about this system.
      *
@@ -137,9 +137,6 @@ class provider implements
      * @param   context $context The specific context to delete data for.
      */
     public static function delete_data_for_all_users_in_context(\context $context) {
-        if (empty($context)) {
-            return;
-        }
         // Sanity check that context is at the User context level.
         if ($context->contextlevel == CONTEXT_USER) {
             static::delete_user_data($context->instanceid);
@@ -164,7 +161,7 @@ class provider implements
         }
     }
     /**
-     * This does the deletion of user data for the auth_oauth2.
+     * This does the deletion of user data for the mnetservice_enrolments.
      *
      * @param  int $userid The user ID
      */
