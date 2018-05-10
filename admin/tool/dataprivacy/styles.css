@@ -12,3 +12,13 @@
     height: 70vh;
     overflow-y: scroll;
 }
+
+dd a.contactdpo {
+    /* Reverting dd's left margin */
+    margin-left: -10px;
+}
+
+.card dd a.contactdpo {
+    /* Reverting dd's left margin */
+    margin-left: inherit;
+}
