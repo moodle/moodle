@@ -139,15 +139,53 @@ class provider implements metadataprovider, pluginprovider, preference_provider 
                   JOIN {modules} m ON cm.module = m.id AND m.name = :modulename
                   JOIN {assign} a ON cm.instance = a.id
                   JOIN {context} ctx ON cm.id = ctx.instanceid AND ctx.contextlevel = :contextlevel
-             LEFT JOIN {assign_grades} ag ON a.id = ag.assignment
-             LEFT JOIN {assign_overrides} ao ON a.id = ao.assignid
-             LEFT JOIN {assign_submission} asn ON a.id = asn.assignment
-             LEFT JOIN {assign_user_flags} auf ON a.id = auf.assignment
-             LEFT JOIN {assign_user_mapping} aum ON a.id = aum.assignment
-                 WHERE ag.userid = :userid OR ag.grader = :graderid OR ao.userid = :aouserid
-                       OR asn.userid = :asnuserid OR auf.userid = :aufuserid OR aum.userid = :aumuserid";
+                  JOIN {assign_grades} ag ON a.id = ag.assignment AND (ag.userid = :userid OR ag.grader = :graderid)";
+
+                  global $DB;
+
         $contextlist = new contextlist();
         $contextlist->add_from_sql($sql, $params);
+
+        $sql = "SELECT ctx.id
+                  FROM {course_modules} cm
+                  JOIN {modules} m ON cm.module = m.id AND m.name = :modulename
+                  JOIN {assign} a ON cm.instance = a.id
+                  JOIN {context} ctx ON cm.id = ctx.instanceid AND ctx.contextlevel = :contextlevel
+                  JOIN {assign_overrides} ao ON a.id = ao.assignid
+                 WHERE ao.userid = :aouserid";
+
+        $contextlist->add_from_sql($sql, $params);
+
+        $sql = "SELECT ctx.id
+                  FROM {course_modules} cm
+                  JOIN {modules} m ON cm.module = m.id AND m.name = :modulename
+                  JOIN {assign} a ON cm.instance = a.id
+                  JOIN {context} ctx ON cm.id = ctx.instanceid AND ctx.contextlevel = :contextlevel
+                  JOIN {assign_submission} asn ON a.id = asn.assignment
+                 WHERE asn.userid = :asnuserid";
+
+        $contextlist->add_from_sql($sql, $params);
+
+        $sql = "SELECT ctx.id
+                  FROM {course_modules} cm
+                  JOIN {modules} m ON cm.module = m.id AND m.name = :modulename
+                  JOIN {assign} a ON cm.instance = a.id
+                  JOIN {context} ctx ON cm.id = ctx.instanceid AND ctx.contextlevel = :contextlevel
+                  JOIN {assign_user_flags} auf ON a.id = auf.assignment
+                 WHERE auf.userid = :aufuserid";
+
+        $contextlist->add_from_sql($sql, $params);
+
+        $sql = "SELECT ctx.id
+                  FROM {course_modules} cm
+                  JOIN {modules} m ON cm.module = m.id AND m.name = :modulename
+                  JOIN {assign} a ON cm.instance = a.id
+                  JOIN {context} ctx ON cm.id = ctx.instanceid AND ctx.contextlevel = :contextlevel
+                  JOIN {assign_user_mapping} aum ON a.id = aum.assignment
+                 WHERE aum.userid = :aumuserid";
+
+        $contextlist->add_from_sql($sql, $params);
+
         manager::plugintype_class_callback('assignfeedback', self::ASSIGNFEEDBACK_INTERFACE,
                 'get_context_for_userid_within_feedback', [$userid, $contextlist]);
         manager::plugintype_class_callback('assignsubmission', self::ASSIGNSUBMISSION_INTERFACE,
