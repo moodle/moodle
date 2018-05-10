@@ -39,11 +39,11 @@ trait gradingform_legacy_polyfill {
     /**
      * This method is used to export any user data this sub-plugin has using the object to get the context and userid.
      *
-     * @param \context $context Context owner of the data.
-     * @param \stdClass $definition Grading definition entry to export.
-     * @param  int $userid The user whose information is to be exported.
+     * @param context $context Context owner of the data.
+     * @param stdClass $definition Grading definition entry to export.
+     * @param int $userid The user whose information is to be exported.
      *
-     * @return \stdClass The data to export.
+     * @return stdClass The data to export.
      */
     public static function get_gradingform_export_data(\context $context, $definition, $userid) {
         return static::_get_gradingform_export_data($context, $definition, $userid);
@@ -52,7 +52,7 @@ trait gradingform_legacy_polyfill {
     /**
      * Any call to this method should delete all user data for the context defined.
      *
-     * @param \context $context Context owner of the data.
+     * @param context $context Context owner of the data.
      */
     public static function delete_gradingform_for_context(\context $context) {
         static::_delete_gradingform_for_context($context);
@@ -61,9 +61,10 @@ trait gradingform_legacy_polyfill {
     /**
      * A call to this method should delete user data (where practicle) from the userid and context.
      *
-     * @param approved_contextlist $contextlist The approved contexts and user information to delete information for.
+     * @param int $userid The user whose information is to be deleted.
+     * @param context $context Context owner of the data.
      */
-    public static function delete_gradingform_for_userid(approved_contextlist $contextlist) {
-        static::delete_gradingform_for_userid($contextlist);
+    public static function delete_gradingform_for_userid($userid, \context $context) {
+        static::_delete_gradingform_for_userid($userid, $context);
     }
 }

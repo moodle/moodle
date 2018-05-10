@@ -31,7 +31,7 @@ defined('MOODLE_INTERNAL') || die();
 use core_privacy\local\request\approved_contextlist;
 
 interface gradingform_provider extends
-    \core_privacy\local\request\plugin\subplugin_provider {
+    \core_privacy\local\request\plugin\subsystem_provider {
 
     /**
      * This method is used to export any user data this sub-plugin has using the object to get the context and userid.
@@ -54,7 +54,8 @@ interface gradingform_provider extends
     /**
      * A call to this method should delete user data (where practicle) from the userid and context.
      *
-     * @param approved_contextlist $contextlist The approved contexts and user information to delete information for.
+     * @param int $userid The user to delete.
+     * @param \context $context the context to refine the deletion.
      */
-    public static function delete_gradingform_for_userid(approved_contextlist $contextlist);
+    public static function delete_gradingform_for_userid($userid, \context $context);
 }
