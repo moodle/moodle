@@ -2985,5 +2985,20 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2017051504.08);
     }
 
+    if ($oldversion < 2017051505.11) {
+        // Update default digital age consent map according to the current legislation on each country.
+        $ageofdigitalconsentmap = implode(PHP_EOL, [
+            '*, 16',
+            'AT, 14',
+            'ES, 14',
+            'SI, 14',
+            'US, 13'
+        ]);
+        set_config('agedigitalconsentmap', $ageofdigitalconsentmap);
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2017051505.11);
+    }
+
     return true;
 }
