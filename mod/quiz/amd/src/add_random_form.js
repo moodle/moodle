@@ -42,6 +42,16 @@ define(
     };
 
     /**
+     * Get the selected category value from the form.
+     *
+     * @param {jquery} form The form element.
+     * @return {string} The category value.
+     */
+    var getCategorySelectValue = function(form) {
+        return form.find(SELECTORS.CATEGORY_FORM_ELEMENT).val();
+    };
+
+    /**
      * Get the category id from the form.
      *
      * @param {jquery} form The form element.
@@ -50,7 +60,7 @@ define(
     var getCategoryId = function(form) {
         // The value string is the category id and category context id joined
         // by a comma.
-        var valueString = form.find(SELECTORS.CATEGORY_FORM_ELEMENT).val();
+        var valueString = getCategorySelectValue(form);
         // Split the two ids.
         var values = valueString.split(',');
         // Return just the category id.
@@ -58,14 +68,31 @@ define(
     };
 
     /**
+     * Check if a top level category is selected in the form.
+     *
+     * @param {jquery} form The form element.
+     * @param {string[]} topCategories List of top category values (matching the select box values)
+     * @return {bool}
+     */
+    var isTopLevelCategorySelected = function(form, topCategories) {
+        var selectedValue = getCategorySelectValue(form);
+        return (topCategories.indexOf(selectedValue) > -1);
+    };
+
+    /**
      * Check if the form indicates we should include include subcategories in
      * the filter.
      *
      * @param {jquery} form The form element.
+     * @param {string[]} topCategories List of top category values (matching the select box values)
      * @return {bool}
      */
-    var shouldIncludeSubcategories = function(form) {
-        return form.find(SELECTORS.SUBCATEGORY_FORM_ELEMENT).is(':checked');
+    var shouldIncludeSubcategories = function(form, topCategories) {
+        if (isTopLevelCategorySelected(form, topCategories)) {
+            return true;
+        } else {
+            return form.find(SELECTORS.SUBCATEGORY_FORM_ELEMENT).is(':checked');
+        }
     };
 
     /**
@@ -89,13 +116,14 @@ define(
      *
      * @param {jquery} form The form element.
      * @param {int} contextId The current context id.
+     * @param {string[]} topCategories List of top category values (matching the select box values)
      */
-    var reloadQuestionPreview = function(form, contextId) {
+    var reloadQuestionPreview = function(form, contextId, topCategories) {
         var previewContainer = form.find(SELECTORS.PREVIEW_CONTAINER);
         RandomQuestionFormPreview.reload(
             previewContainer,
             getCategoryId(form),
-            shouldIncludeSubcategories(form),
+            shouldIncludeSubcategories(form, topCategories),
             getTagIds(form),
             contextId
         );
@@ -136,8 +164,9 @@ define(
      *
      * @param {jquery} form The form element.
      * @param {int} contextId The current context id.
+     * @param {string[]} topCategories List of top category values (matching the select box values)
      */
-    var addEventListeners = function(form, contextId) {
+    var addEventListeners = function(form, contextId, topCategories) {
         var reloadTimerId = null;
 
         form.on('change', function(e) {
@@ -160,7 +189,7 @@ define(
             // in case the user is still modifying the form. We don't want to
             // spam reload requests.
             reloadTimerId = setTimeout(function() {
-                reloadQuestionPreview(form, contextId);
+                reloadQuestionPreview(form, contextId, topCategories);
             }, RELOAD_DELAY);
         });
     };
@@ -171,12 +200,13 @@ define(
      *
      * @param {jquery} formId The form element id.
      * @param {int} contextId The current context id.
+     * @param {string[]} topCategories List of top category values (matching the select box values)
      */
-    var init = function(formId, contextId) {
+    var init = function(formId, contextId, topCategories) {
         var form = $('#' + formId);
 
-        reloadQuestionPreview(form, contextId);
-        addEventListeners(form, contextId);
+        reloadQuestionPreview(form, contextId, topCategories);
+        addEventListeners(form, contextId, topCategories);
     };
 
     return {
