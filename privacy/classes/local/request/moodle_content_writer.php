@@ -84,7 +84,7 @@ class moodle_content_writer implements content_writer {
     public function export_data(array $subcontext, \stdClass $data) {
         $path = $this->get_path($subcontext, 'data.json');
 
-        $this->write_data($path, json_encode($data, JSON_UNESCAPED_UNICODE));
+        $this->write_data($path, json_encode($data, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
 
         return $this;
     }
@@ -115,7 +115,7 @@ class moodle_content_writer implements content_writer {
         ];
 
         $path = $this->get_path($subcontext, 'metadata.json');
-        $this->write_data($path, json_encode($data, JSON_UNESCAPED_UNICODE));
+        $this->write_data($path, json_encode($data, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
 
         return $this;
     }
@@ -131,7 +131,7 @@ class moodle_content_writer implements content_writer {
     public function export_related_data(array $subcontext, $name, $data) {
         $path = $this->get_path($subcontext, "{$name}.json");
 
-        $this->write_data($path, json_encode($data, JSON_UNESCAPED_UNICODE));
+        $this->write_data($path, json_encode($data, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
 
         return $this;
     }
@@ -230,7 +230,7 @@ class moodle_content_writer implements content_writer {
             'value' => $value,
             'description' => $description,
         ];
-        $this->write_data($path, json_encode($data, JSON_UNESCAPED_UNICODE));
+        $this->write_data($path, json_encode($data, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
 
         return $this;
     }
