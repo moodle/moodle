@@ -178,14 +178,6 @@ div.editor_atto_content:hover .atto_control {
     direction: ltr;
 }
 
-.editor_atto_notification {
-    position: absolute;
-    bottom: -1.5em;
-    height: 1.5em;
-    margin-top: 1px;
-    cursor: pointer;
-}
-
 .editor_atto_notification .atto_info,
 .editor_atto_notification .atto_warning {
     display: inline-block;
