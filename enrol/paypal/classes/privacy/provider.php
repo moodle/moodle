@@ -108,16 +108,17 @@ class provider implements
                   FROM {enrol_paypal} ep
                   JOIN {enrol} e ON ep.instanceid = e.id
                   JOIN {context} ctx ON e.courseid = ctx.instanceid AND ctx.contextlevel = :contextcourse
-             LEFT JOIN {user} u1 ON LOWER(u1.email) = ep.receiver_email
-             LEFT JOIN {user} u2 ON LOWER(u2.email) = ep.business
+             LEFT JOIN {user} u ON u.id = :emailuserid AND (
+                    LOWER(u.email) = ep.receiver_email
+                        OR
+                    LOWER(u.email) = ep.business
+                )
                  WHERE ep.userid = :userid
-                       OR u1.id = :receiverid
-                       OR u2.id = :businessid";
+                       OR u.id IS NOT NULL";
         $params = [
             'contextcourse' => CONTEXT_COURSE,
             'userid'        => $userid,
-            'receiverid'    => $userid,
-            'businessid'    => $userid,
+            'emailuserid'   => $userid,
         ];
 
         $contextlist->add_from_sql($sql, $params);
@@ -147,19 +148,20 @@ class provider implements
                   FROM {enrol_paypal} ep
                   JOIN {enrol} e ON ep.instanceid = e.id
                   JOIN {context} ctx ON e.courseid = ctx.instanceid AND ctx.contextlevel = :contextcourse
-             LEFT JOIN {user} u1 ON LOWER(u1.email) = ep.receiver_email
-             LEFT JOIN {user} u2 ON LOWER(u2.email) = ep.business
+             LEFT JOIN {user} u ON u.id = :emailuserid AND (
+                    LOWER(u.email) = ep.receiver_email
+                        OR
+                    LOWER(u.email) = ep.business
+                )
                  WHERE ctx.id {$contextsql}
                        AND (ep.userid = :userid
-                            OR u1.id = :receiverid
-                            OR u2.id = :businessid)
+                        OR u.id IS NOT NULL)
               ORDER BY e.courseid";
 
         $params = [
             'contextcourse' => CONTEXT_COURSE,
             'userid'        => $user->id,
-            'receiverid'    => $user->id,
-            'businessid'    => $user->id,
+            'emailuserid'   => $user->id,
         ];
         $params += $contextparams;
 
