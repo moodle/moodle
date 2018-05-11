@@ -87,16 +87,27 @@ class provider implements \core_privacy\local\metadata\provider, \core_privacy\l
      * @return  contextlist $contextlist The contextlist containing the list of contexts used in this plugin.
      */
     public static function get_contexts_for_userid($userid) {
-        $params = ['dailyuser' => $userid, 'weeklyuser' => $userid, 'monthlyuser' => $userid, 'contextcourse' => CONTEXT_COURSE];
+        $params = ['userid' => $userid, 'contextcourse' => CONTEXT_COURSE];
         $sql = "SELECT ctx.id
                 FROM {context} ctx
-                LEFT JOIN {stats_user_daily} sud ON sud.courseid = ctx.instanceid
-                LEFT JOIN {stats_user_weekly} suw ON suw.courseid = ctx.instanceid
-                LEFT JOIN {stats_user_monthly} sum ON sum.courseid = ctx.instanceid
-                WHERE ctx.contextlevel = :contextcourse
-                AND (sud.userid = :dailyuser OR suw.userid = :weeklyuser OR sum.userid = :monthlyuser)";
+                JOIN {stats_user_daily} sud ON sud.courseid = ctx.instanceid AND sud.userid = :userid
+                WHERE ctx.contextlevel = :contextcourse";
+
         $contextlist = new contextlist();
         $contextlist->add_from_sql($sql, $params);
+
+        $sql = "SELECT ctx.id
+                FROM {context} ctx
+                JOIN {stats_user_weekly} suw ON suw.courseid = ctx.instanceid AND suw.userid = :userid
+                WHERE ctx.contextlevel = :contextcourse";
+        $contextlist->add_from_sql($sql, $params);
+
+        $sql = "SELECT ctx.id
+                FROM {context} ctx
+                JOIN {stats_user_monthly} sum ON sum.courseid = ctx.instanceid AND sum.userid = :userid
+                WHERE ctx.contextlevel = :contextcourse";
+        $contextlist->add_from_sql($sql, $params);
+
         return $contextlist;
     }
 
