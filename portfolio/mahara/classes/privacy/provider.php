@@ -36,6 +36,7 @@ use core_privacy\local\metadata\collection;
 class provider implements
         // This portfolio plugin does not store any data itself.
         // It has no database tables, and it purely acts as a conduit, sending data externally.
+        \core_privacy\local\metadata\provider,
         \core_portfolio\privacy\portfolio_provider {
 
     /**
