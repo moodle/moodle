@@ -91,8 +91,10 @@ class provider implements \core_privacy\local\metadata\provider, \core_privacy\l
         $sql = "SELECT DISTINCT ctx.id
                   FROM {context} ctx
              LEFT JOIN {tool_monitor_rules} mr ON ctx.instanceid = mr.userid AND ctx.contextlevel = :contextuserrule
+                       AND mr.userid = :useridsubscriptions
              LEFT JOIN {tool_monitor_subscriptions} ms ON ctx.instanceid = ms.userid AND ctx.contextlevel = :contextusersub
-                 WHERE (ms.userid = :useridrules OR mr.userid = :useridsubscriptions)";
+                       AND ms.userid = :useridrules
+                 WHERE ms.id IS NOT NULL OR mr.id IS NOT NULL";
 
         $contextlist = new contextlist();
         $contextlist->add_from_sql($sql, $params);
