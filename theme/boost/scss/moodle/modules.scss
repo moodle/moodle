@@ -237,8 +237,24 @@ div#dock {
 .path-mod-lesson .answeroption .checkbox label p {
     display: inline;
 }
+.path-mod-lesson .form-inline label.form-check-label {
+    display: inline-block;
+}
 #page-mod-lesson-view .branchbuttoncontainer .singlebutton button[type="submit"] {
     white-space: normal;
+}
+.path-mod-lesson .generaltable td {
+    vertical-align: middle;
+    label {
+        margin-bottom: 0;
+    }
+    .highlight {
+        display: inline-block;
+        margin-left: 0.25rem;
+    }
+    input[type="checkbox"] {
+        display: block;
+    }
 }
 
 .path-mod-wiki .wiki_headingtitle,

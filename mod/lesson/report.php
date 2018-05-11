@@ -281,7 +281,7 @@ if ($action === 'delete') {
 
         $table->head = array();
         $table->align = array('right', 'left');
-        $table->attributes['class'] = 'compacttable generaltable form-inline';
+        $table->attributes['class'] = 'generaltable';
 
         if (empty($userstats->gradeinfo)) {
             $table->align = array("center");
@@ -307,7 +307,7 @@ if ($action === 'delete') {
     foreach ($answerpages as $page) {
         $table->align = array('left', 'left');
         $table->size = array('70%', null);
-        $table->attributes['class'] = 'compacttable generaltable form-inline';
+        $table->attributes['class'] = 'generaltable';
         unset($table->data);
         if ($page->grayout) { // set the color of text
             $fontstart = "<span class=\"dimmed\">";
