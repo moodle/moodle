@@ -188,6 +188,7 @@ $string['requestfor'] = 'Requesting for';
 $string['requeststatus'] = 'Status';
 $string['requestsubmitted'] = 'Your request has been submitted to the site\'s Data Protection Officer';
 $string['requesttype'] = 'Type';
+$string['requesttypeuser'] = '{$a->typename} ({$a->user})';
 $string['requesttype_help'] = 'Select the reason why you would like to contact the site\'s Data Protection Officer';
 $string['requesttypedelete'] = 'Delete all of my personal data';
 $string['requesttypedeleteshort'] = 'Delete';
