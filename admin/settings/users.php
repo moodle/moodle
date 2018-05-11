@@ -233,7 +233,6 @@ if ($hassiteconfig) {
         '*, 16',
         'AT, 14',
         'ES, 14',
-        'SI, 14',
         'US, 13'
     ]);
     $setting = new admin_setting_agedigitalconsentmap('agedigitalconsentmap',
