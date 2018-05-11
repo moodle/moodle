@@ -59,6 +59,7 @@ $string['name'] = 'Name';
 $string['needregrademessage'] = 'The rubric definition was changed after this student had been graded. The student can not see this rubric until you check the rubric and update the grade.';
 $string['pluginname'] = 'Rubric';
 $string['previewrubric'] = 'Preview rubric';
+$string['privacy:metadata'] = 'The rubric grading form plugin does not store any personal data.';
 $string['regrademessage1'] = 'You are about to save changes to a rubric that has already been used for grading. Please indicate if existing grades need to be reviewed. If you set this then the rubric will be hidden from students until their item is regraded.';
 $string['regrademessage5'] = 'You are about to save significant changes to a rubric that has already been used for grading. The gradebook value will be unchanged, but the rubric will be hidden from students until their item is regraded.';
 $string['regradeoption0'] = 'Do not mark for regrade';
