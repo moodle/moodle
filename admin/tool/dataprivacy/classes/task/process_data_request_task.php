@@ -68,8 +68,9 @@ class process_data_request_task extends adhoc_task {
         $request = $requestpersistent->to_record();
 
         // Check if this request still needs to be processed. e.g. The user might have cancelled it before this task has run.
-        if ($request->status != api::DATAREQUEST_STATUS_APPROVED) {
-            mtrace("Request {$request->id} hasn\'t been approved yet or it has already been processed. Skipping...");
+        $status = $requestpersistent->get('status');
+        if (!api::is_active($status)) {
+            mtrace("Request {$requestid} with status {$status} doesn't need to be processed. Skipping...");
             return;
         }
 
