@@ -158,13 +158,14 @@ class provider implements
 
         foreach ($coursedata as $course) {
             $context = \context_course::instance($course->id);
+            $courseformat = $course->format !== 'site' ? get_string('pluginname', 'format_' . $course->format) : get_string('site');
             $data = (object) [
                 'fullname' => $course->fullname,
                 'shortname' => $course->shortname,
                 'idnumber' => $course->idnumber,
                 'summary' => writer::with_context($context)->rewrite_pluginfile_urls([], 'course', 'summary', 0,
                                                                                      format_string($course->summary)),
-                'format' => get_string('pluginname', 'format_' . $course->format),
+                'format' => $courseformat,
                 'startdate' => transform::datetime($course->startdate),
                 'enddate' => transform::datetime($course->enddate)
             ];

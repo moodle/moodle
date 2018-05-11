@@ -105,7 +105,7 @@ class core_course_privacy_testcase extends \core_privacy\tests\provider_testcase
         $this->resetAfterTest();
 
         // Create a course and a single module.
-        $course1 = $this->getDataGenerator()->create_course(['fullname' => 'Course 1', 'shortname' => 'C1']);
+        $course1 = $this->getDataGenerator()->create_course(['fullname' => 'Course 1', 'shortname' => 'C1', 'format' => 'site']);
         $context1 = context_course::instance($course1->id);
         $modassign = $this->getDataGenerator()->create_module('assign', ['course' => $course1->id, 'name' => 'assign test 1']);
         $assigncontext = context_module::instance($modassign->cmid);
