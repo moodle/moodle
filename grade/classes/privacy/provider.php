@@ -127,18 +127,21 @@ class provider implements
         $sql = "
             SELECT DISTINCT ctx.id
               FROM {context} ctx
-         LEFT JOIN {grade_outcomes_history} goh
-                ON (goh.courseid > 0 AND goh.courseid = ctx.instanceid AND ctx.contextlevel = :courselevel1)
+         LEFT JOIN {grade_outcomes_history} goh ON goh.loggeduser = :userid1 AND (
+                   (goh.courseid > 0 AND goh.courseid = ctx.instanceid AND ctx.contextlevel = :courselevel1)
                 OR ((goh.courseid IS NULL OR goh.courseid < 1) AND ctx.id = :syscontextid)
-         LEFT JOIN {grade_categories_history} gch
-                ON gch.courseid = ctx.instanceid
+            )
+         LEFT JOIN {grade_categories_history} gch ON gch.loggeduser = :userid2 AND (
+                   gch.courseid = ctx.instanceid
                AND ctx.contextlevel = :courselevel2
-         LEFT JOIN {grade_items_history} gih
-                ON gih.courseid = ctx.instanceid
+            )
+         LEFT JOIN {grade_items_history} gih ON gih.loggeduser = :userid3 AND (
+                   gih.courseid = ctx.instanceid
                AND ctx.contextlevel = :courselevel3
-             WHERE goh.loggeduser = :userid1
-                OR gch.loggeduser = :userid2
-                OR gih.loggeduser = :userid3";
+            )
+             WHERE goh.id IS NOT NULL
+                OR gch.id IS NOT NULL
+                OR gih.id IS NOT NULL";
         $params = [
             'syscontextid' => SYSCONTEXTID,
             'courselevel1' => CONTEXT_COURSE,
@@ -159,13 +162,16 @@ class provider implements
                AND ctx.contextlevel = :courselevel
          LEFT JOIN {grade_grades} gg
                 ON gg.itemid = gi.id
+               AND (gg.userid = :userid1 OR gg.usermodified = :userid2)
          LEFT JOIN {grade_grades_history} ggh
                 ON ggh.itemid = gi.id
-             WHERE gg.userid = :userid1
-                OR gg.usermodified = :userid2
-                OR ggh.userid = :userid3
+               AND (
+                   ggh.userid = :userid3
                 OR ggh.loggeduser = :userid4
-                OR ggh.usermodified = :userid5";
+                OR ggh.usermodified = :userid5
+            )
+             WHERE gg.id IS NOT NULL
+                OR ggh.id IS NOT NULL";
         $params = [
             'courselevel' => CONTEXT_COURSE,
             'userid1' => $userid,
@@ -184,14 +190,14 @@ class provider implements
              JOIN {grade_grades_history} ggh
                ON ctx.contextlevel = :userlevel
               AND ggh.userid = ctx.instanceid
-        LEFT JOIN {grade_items} gi
-               ON ggh.itemid = gi.id
-            WHERE gi.id IS NULL
               AND (
                   ggh.userid = :userid1
                OR ggh.usermodified = :userid2
                OR ggh.loggeduser = :userid3
-                  )";
+              )
+        LEFT JOIN {grade_items} gi
+               ON ggh.itemid = gi.id
+            WHERE gi.id IS NULL";
         $params = [
             'userlevel' => CONTEXT_USER,
             'userid1' => $userid,

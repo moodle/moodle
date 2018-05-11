@@ -148,7 +148,8 @@ class provider implements
             " . $qubaid->from . "
             WHERE (
                 qa.userid = :qauserid OR
-                " . $qubaid->where() . "
+                " . $qubaid->where() . " OR
+                qo.id IS NOT NULL
             ) AND qa.preview = 0
         ";
 

@@ -139,12 +139,13 @@ class provider implements
 
         // Join the rating table with the specified alias and the relevant join params.
         $join = "LEFT JOIN {rating} {$alias} ON ";
+        $join .= "{$alias}.userid = :ratinguserid{$count} AND ";
         $join .= "{$alias}.component = :ratingcomponent{$count} AND ";
         $join .= "{$alias}.ratingarea = :ratingarea{$count} AND ";
         $join .= "{$alias}.itemid = {$itemidjoin}";
 
         // Match against the specified user.
-        $userwhere = "{$alias}.userid = :ratinguserid{$count}";
+        $userwhere = "{$alias}.id IS NOT NULL";
 
         $params = [
             'ratingcomponent' . $count  => $component,

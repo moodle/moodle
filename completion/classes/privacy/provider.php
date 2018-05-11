@@ -89,8 +89,10 @@ class provider implements \core_privacy\local\metadata\provider, \core_privacy\l
 
         $join = "JOIN {course_completion_criteria} {$cccalias} ON {$joinfield} = {$cccalias}.course
              LEFT JOIN {course_modules_completion} {$cmcalias} ON {$cccalias}.moduleinstance = {$cmcalias}.coursemoduleid
-             LEFT JOIN {course_completion_crit_compl} {$ccccalias} ON {$ccccalias}.criteriaid = {$cccalias}.id";
-        $where = "{$cmcalias}.userid = :{$prefix}_moduleuserid OR {$ccccalias}.userid = :{$prefix}_courseuserid";
+                        AND {$cmcalias}.userid = :{$prefix}_moduleuserid
+             LEFT JOIN {course_completion_crit_compl} {$ccccalias} ON {$ccccalias}.criteriaid = {$cccalias}.id
+                        AND {$ccccalias}.userid = :{$prefix}_courseuserid";
+        $where = "{$cmcalias}.id IS NOT NULL OR {$ccccalias}.id IS NOT NULL";
         $params = ["{$prefix}_moduleuserid" => $userid, "{$prefix}_courseuserid" => $userid];
 
         return [$join, $where, $params];
