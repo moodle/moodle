@@ -2991,7 +2991,6 @@ function xmldb_main_upgrade($oldversion) {
             '*, 16',
             'AT, 14',
             'ES, 14',
-            'SI, 14',
             'US, 13'
         ]);
         set_config('agedigitalconsentmap', $ageofdigitalconsentmap);
