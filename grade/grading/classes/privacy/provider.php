@@ -93,9 +93,9 @@ class provider implements
                   FROM {context} c
                   JOIN {grading_areas} a ON a.contextid = c.id
                   JOIN {grading_definitions} d ON d.areaid = a.id
-             LEFT JOIN {grading_instances} i ON i.definitionid = d.id
+             LEFT JOIN {grading_instances} i ON i.definitionid = d.id AND i.raterid = :raterid
                  WHERE c.contextlevel = :contextlevel
-                   AND (d.usercreated = :usercreated OR d.usermodified = :usermodified OR i.raterid = :raterid)";
+                   AND (d.usercreated = :usercreated OR d.usermodified = :usermodified OR i.id IS NOT NULL)";
         $params = [
             'usercreated' => $userid,
             'usermodified' => $userid,
@@ -152,9 +152,9 @@ class provider implements
         ];
 
         if (!empty($userid)) {
-            $join .= ' LEFT JOIN {grading_instances} i ON i.definitionid = d.id';
+            $join .= ' LEFT JOIN {grading_instances} i ON i.definitionid = d.id AND i.raterid = :raterid';
             $select .= ' AND (usercreated = :usercreated
-                OR usermodified = :usermodified OR i.raterid = :raterid)';
+                OR usermodified = :usermodified OR i.id IS NOT NULL)';
             $params['usercreated'] = $userid;
             $params['usermodified'] = $userid;
             $params['raterid'] = $userid;
