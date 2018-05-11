@@ -43,11 +43,17 @@ class enrol_paypal_privacy_provider_testcase extends \core_privacy\tests\provide
     /** @var stdClass A user whose email address matches the business field in some of the PayPal transactions. */
     protected $businessuser2;
 
+    /** @var stdClass A user whose email address matches the business field in some of the PayPal transactions. */
+    protected $businessuser3;
+
     /** @var stdClass A user whose email address matches the receiver_email field in some of the PayPal transactions. */
     protected $receiveruser1;
 
     /** @var stdClass A user whose email address matches the receiver_email field in some of the PayPal transactions. */
     protected $receiveruser2;
+
+    /** @var stdClass A user whose email address matches the receiver_email field in some of the PayPal transactions. */
+    protected $receiveruser3;
 
     /** @var stdClass A user who is not enrolled in any course. */
     protected $student0;
@@ -58,6 +64,9 @@ class enrol_paypal_privacy_provider_testcase extends \core_privacy\tests\provide
     /** @var stdClass A student who is only enrolled in course2 with 2 transaction histories in the course. */
     protected $student2;
 
+    /** @var stdClass A student who is only enrolled in course3 with 1 transaction histories in the course. */
+    protected $student3;
+
     /** @var stdClass A student who is enrolled in both course1 and course2. */
     protected $student12;
 
@@ -66,6 +75,9 @@ class enrol_paypal_privacy_provider_testcase extends \core_privacy\tests\provide
 
     /** @var stdClass A test course with 2 enrolments for student2 and student12. */
     protected $course2;
+
+    /** @var stdClass A test course with 2 enrolments for student2 and student12. */
+    protected $course3;
 
     protected function setUp() {
         global $DB;
@@ -77,14 +89,17 @@ class enrol_paypal_privacy_provider_testcase extends \core_privacy\tests\provide
         $generator = $this->getDataGenerator();
 
         // Create seller accounts.
-        $this->businessuser1 = $generator->create_user(['email' => 'busines1@domain.invalid']);
-        $this->businessuser2 = $generator->create_user(['email' => 'busines2@domain.invalid']);
+        $this->businessuser1 = $generator->create_user(['email' => 'business1@domain.invalid']);
+        $this->businessuser2 = $generator->create_user(['email' => 'business2@domain.invalid']);
+        $this->businessuser3 = $generator->create_user(['email' => 'business3@domain.invalid']);
         $this->receiveruser1 = $generator->create_user(['email' => 'receiver1@domain.invalid']);
         $this->receiveruser2 = $generator->create_user(['email' => 'receiver2@domain.invalid']);
+        $this->receiveruser3 = $generator->create_user(['email' => 'receiver3@domain.invalid']);
 
         // Create courses.
         $this->course1 = $generator->create_course();
         $this->course2 = $generator->create_course();
+        $this->course3 = $generator->create_course();
 
         // Create enrolment instances.
         $paypalplugin = enrol_get_plugin('paypal');
@@ -97,96 +112,89 @@ class enrol_paypal_privacy_provider_testcase extends \core_privacy\tests\provide
                 ['roleid'   => $studentrole->id, 'courseid' => $this->course2->id]);
         $enrolinstance2 = $DB->get_record('enrol', array('id' => $enrolinstanceid));
 
+        $enrolinstanceid = $paypalplugin->add_instance($this->course3,
+                ['roleid'   => $studentrole->id, 'courseid' => $this->course3->id]);
+        $enrolinstance3 = $DB->get_record('enrol', array('id' => $enrolinstanceid));
+
         // Create students.
         $this->student0 = $generator->create_user();    // This user will not be enrolled in any course.
         $this->student1 = $generator->create_user();
         $this->student2 = $generator->create_user();
+        $this->student3 = $generator->create_user();
         $this->student12 = $generator->create_user();
 
         // Enrol student1 in course1.
         $paypalplugin->enrol_user($enrolinstance1, $this->student1->id, $studentrole->id);
-        $paypaldata = [
-            'business'       => $this->businessuser1->email,
-            'receiver_email' => $this->receiveruser1->email,
-            'receiver_id'    => 'SELLERSID',
-            'item_name'      => $this->course1->fullname,
-            'courseid'       => $this->course1->id,
-            'userid'         => $this->student1->id,
-            'instanceid'     => $enrolinstance1->id,
-            'payment_status' => 'Completed',
-            'txn_id'         => 'STUDENT1-IN-COURSE1-00',
-            'payment_type'   => 'instant',
-            'timeupdated'    => time(),
-        ];
-        $DB->insert_record('enrol_paypal', $paypaldata);
+        $this->create_enrol_paypal_record(
+            $this->businessuser1,
+            $this->receiveruser1,
+            $this->course1,
+            $this->student1,
+            $enrolinstance1,
+            'STUDENT1-IN-COURSE1-00',
+            time()
+        );
 
         // Enrol student2 in course2.
         $paypalplugin->enrol_user($enrolinstance2, $this->student2->id, $studentrole->id);
         // This user has 2 transaction histories.
         // Here is the first one.
-        $paypaldata = [
-            'business'       => $this->businessuser1->email,
-            'receiver_email' => $this->receiveruser2->email,
-            'receiver_id'    => 'SELLERSID',
-            'item_name'      => $this->course2->fullname,
-            'courseid'       => $this->course2->id,
-            'userid'         => $this->student2->id,
-            'instanceid'     => $enrolinstance2->id,
-            'payment_status' => 'Completed',
-            'txn_id'         => 'STUDENT2-IN-COURSE2-00',
-            'payment_type'   => 'instant',
-            'timeupdated'    => time() - 86400, // Yesterday.
-        ];
-        $DB->insert_record('enrol_paypal', $paypaldata);
+        $this->create_enrol_paypal_record(
+            $this->businessuser1,
+            $this->receiveruser2,
+            $this->course2,
+            $this->student2,
+            $enrolinstance2,
+            'STUDENT2-IN-COURSE2-00',
+            // Yesterday.
+            time() - DAYSECS
+        );
         // And now, the second one.
-        $paypaldata = [
-            'business'       => $this->businessuser1->email,
-            'receiver_email' => $this->receiveruser2->email,
-            'receiver_id'    => 'SELLERSID',
-            'item_name'      => $this->course2->fullname,
-            'courseid'       => $this->course2->id,
-            'userid'         => $this->student2->id,
-            'instanceid'     => $enrolinstance2->id,
-            'payment_status' => 'Completed',
-            'txn_id'         => 'STUDENT2-IN-COURSE2-01',
-            'payment_type'   => 'instant',
-            'timeupdated'    => time(),
-        ];
-        $DB->insert_record('enrol_paypal', $paypaldata);
+        $this->create_enrol_paypal_record(
+            $this->businessuser1,
+            $this->receiveruser2,
+            $this->course2,
+            $this->student2,
+            $enrolinstance2,
+            'STUDENT2-IN-COURSE2-01',
+            time()
+        );
 
         // Enrol student12 in course1 and course2.
         // First in course1.
         $paypalplugin->enrol_user($enrolinstance1, $this->student12->id, $studentrole->id);
-        $paypaldata = [
-            'business'       => $this->businessuser2->email,
-            'receiver_email' => $this->receiveruser1->email,
-            'receiver_id'    => 'SELLERSID',
-            'item_name'      => $this->course1->fullname,
-            'courseid'       => $this->course1->id,
-            'userid'         => $this->student12->id,
-            'instanceid'     => $enrolinstance1->id,
-            'payment_status' => 'Completed',
-            'txn_id'         => 'STUDENT12-IN-COURSE1-00',
-            'payment_type'   => 'instant',
-            'timeupdated'    => time(),
-        ];
-        $DB->insert_record('enrol_paypal', $paypaldata);
+        $this->create_enrol_paypal_record(
+            $this->businessuser2,
+            $this->receiveruser1,
+            $this->course1,
+            $this->student12,
+            $enrolinstance1,
+            'STUDENT12-IN-COURSE1-00',
+            time()
+        );
         // Then in course2.
         $paypalplugin->enrol_user($enrolinstance2, $this->student12->id, $studentrole->id);
-        $paypaldata = [
-            'business'       => $this->businessuser2->email,
-            'receiver_email' => $this->receiveruser2->email,
-            'receiver_id'    => 'SELLERSID',
-            'item_name'      => $this->course2->fullname,
-            'courseid'       => $this->course2->id,
-            'userid'         => $this->student12->id,
-            'instanceid'     => $enrolinstance2->id,
-            'payment_status' => 'Completed',
-            'txn_id'         => 'STUDENT12-IN-COURSE2-00',
-            'payment_type'   => 'instant',
-            'timeupdated'    => time(),
-        ];
-        $DB->insert_record('enrol_paypal', $paypaldata);
+        $this->create_enrol_paypal_record(
+            $this->businessuser2,
+            $this->receiveruser2,
+            $this->course2,
+            $this->student12,
+            $enrolinstance2,
+            'STUDENT12-IN-COURSE2-00',
+            time()
+        );
+
+        // Enrol student3 in course3 with businessuser3 as the receiver.
+        $paypalplugin->enrol_user($enrolinstance1, $this->student1->id, $studentrole->id);
+        $this->create_enrol_paypal_record(
+            $this->businessuser3,
+            $this->receiveruser3,
+            $this->course3,
+            $this->student3,
+            $enrolinstance3,
+            'STUDENT3-IN-COURSE3-00',
+            time()
+        );
     }
 
     /**
@@ -257,6 +265,51 @@ class enrol_paypal_privacy_provider_testcase extends \core_privacy\tests\provide
         $contextids = $contextlist->get_contextids();
         $this->assertContains($coursecontext1->id, $contextids);
         $this->assertContains($coursecontext2->id, $contextids);
+    }
+
+    /**
+     * Test for provider::get_contexts_for_userid with a user who is a receiver.
+     */
+    public function test_get_contexts_for_userid_receiver() {
+        $coursecontext1 = context_course::instance($this->course1->id);
+        $coursecontext2 = context_course::instance($this->course2->id);
+
+        // Receiver User 1 is the Receiver of one course.
+        $contextlist = provider::get_contexts_for_userid($this->receiveruser1->id);
+        $this->assertCount(1, $contextlist);
+
+        $contextids = $contextlist->get_contextids();
+        $this->assertEquals([$coursecontext1->id], $contextids);
+
+        // Receiver User 2 is the Receiver of course.
+        $contextlist = provider::get_contexts_for_userid($this->receiveruser2->id);
+        $this->assertCount(1, $contextlist);
+
+        $contextids = $contextlist->get_contextids();
+        $this->assertEquals([$coursecontext2->id], $contextids);
+    }
+
+    /**
+     * Test for provider::get_contexts_for_userid with a user who is a business.
+     */
+    public function test_get_contexts_for_userid_business() {
+        $coursecontext1 = context_course::instance($this->course1->id);
+        $coursecontext2 = context_course::instance($this->course2->id);
+        $coursecontext3 = context_course::instance($this->course3->id);
+
+        // Business User 1 is the Receiver of course 1 and course 2.
+        $contextlist = provider::get_contexts_for_userid($this->businessuser1->id);
+        $this->assertCount(2, $contextlist);
+
+        $contextids = $contextlist->get_contextids();
+        $this->assertEquals([$coursecontext1->id, $coursecontext2->id], $contextids, '', 0.0, 1, true);
+
+        // Business User 3 is the Receiver of course 3 only.
+        $contextlist = provider::get_contexts_for_userid($this->businessuser3->id);
+        $this->assertCount(1, $contextlist);
+
+        $contextids = $contextlist->get_contextids();
+        $this->assertEquals([$coursecontext3->id], $contextids);
     }
 
     /**
@@ -579,5 +632,35 @@ class enrol_paypal_privacy_provider_testcase extends \core_privacy\tests\provide
                 3,
                 $DB->count_records('enrol_paypal', ['receiver_email' => $this->receiveruser2->email])
         );
+    }
+
+    /**
+     * Helper function to create an enrol_paypal record.
+     *
+     * @param   \stdClass   $business The user associated with the business
+     * @param   \stdClass   $receiver The user associated with the receiver
+     * @param   \stdClass   $course The course to associate with
+     * @param   \stdClass   $user The user associated with the student
+     * @param   \stdClass   $enrol The enrolment instance
+     * @param   String      $txnid The Paypal txnid to use
+     * @param   int         $time The txn time
+     */
+    protected function create_enrol_paypal_record($business, $receiver, $course, $user, $enrol, $txnid, $time) {
+        global $DB;
+
+        $paypaldata = [
+            'business'       => $business->email,
+            'receiver_email' => $receiver->email,
+            'receiver_id'    => 'SELLERSID',
+            'item_name'      => $course->fullname,
+            'courseid'       => $course->id,
+            'userid'         => $user->id,
+            'instanceid'     => $enrol->id,
+            'payment_status' => 'Completed',
+            'txn_id'         => $txnid,
+            'payment_type'   => 'instant',
+            'timeupdated'    => $time,
+        ];
+        $DB->insert_record('enrol_paypal', $paypaldata);
     }
 }
