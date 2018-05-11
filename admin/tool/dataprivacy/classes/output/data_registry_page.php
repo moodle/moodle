@@ -312,29 +312,23 @@ class data_registry_page implements renderable, templatable {
 
         $branches = [];
 
-        $blockinstances = \core_block_external::get_course_blocks($coursecontext->instanceid);
-        if (empty($blockinstances['blocks'])) {
-            return $branches;
-        }
+        $children = $coursecontext->get_child_contexts();
+        foreach ($children as $childcontext) {
 
-        foreach ($blockinstances['blocks'] as $bi) {
-            if (function_exists('block_instance_by_id')) {
-                $blockinstance = block_instance_by_id($bi['instanceid']);
-            } else {
-                // TODO To be removed when MDL-61621 gets integrated.
-                $blockinstance = $DB->get_record('block_instances', ['id' => $bi['instanceid']]);
-                $blockinstance = block_instance($blockinstance->blockname, $blockinstance);
+            if ($childcontext->contextlevel !== CONTEXT_BLOCK) {
+                continue;
             }
-            $blockcontext = \context_block::instance($bi['instanceid']);
-            $displayname = shorten_text(format_string($blockinstance->get_title(), true, ['context' => $blockcontext->id]));
+
+            $blockinstance = block_instance_by_id($childcontext->instanceid);
+            $displayname = shorten_text(format_string($blockinstance->get_title(), true, ['context' => $childcontext]));
             $branches[] = self::complete([
                 'text' => $displayname,
-                'contextid' => $blockcontext->id,
+                'contextid' => $childcontext->id,
             ]);
+
         }
 
         return $branches;
-
     }
 
     /**
