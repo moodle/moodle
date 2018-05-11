@@ -105,9 +105,10 @@ class provider implements
             INNER JOIN {modules} m ON m.id = cm.module AND m.name = :modname
             INNER JOIN {data} d ON d.id = cm.instance
             INNER JOIN {data_records} dr ON dr.dataid = d.id
-            LEFT JOIN {comments} com ON com.commentarea=:commentarea and com.itemid = dr.id
-            LEFT JOIN {rating} r ON r.contextid = c.id AND r.itemid  = dr.id AND r.component = :moddata AND r.ratingarea = :ratingarea
-                 WHERE dr.userid = :userid OR com.userid = :userid1 OR r.userid = :userid2";
+             LEFT JOIN {comments} com ON com.commentarea=:commentarea and com.itemid = dr.id AND com.userid = :userid1
+             LEFT JOIN {rating} r ON r.contextid = c.id AND r.itemid  = dr.id AND r.component = :moddata
+                       AND r.ratingarea = :ratingarea AND r.userid = :userid2
+                 WHERE dr.userid = :userid OR com.id IS NOT NULL OR r.id IS NOT NULL";
 
         $params = [
             'modname'       => 'data',
