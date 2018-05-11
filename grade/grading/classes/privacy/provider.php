@@ -160,18 +160,22 @@ class provider implements
             $params['raterid'] = $userid;
         }
 
-        $sql = "SELECT DISTINCT d.id,
-                                d.method,
-                                d.name,
-                                d.description,
-                                d.timecopied,
-                                d.timecreated,
-                                d.usercreated,
-                                d.timemodified,
-                                d.usermodified
-                           FROM {grading_definitions} d
-                           $join
-                           WHERE $select";
+        $sql = "SELECT gd.id,
+                       gd.method,
+                       gd.name,
+                       gd.description,
+                       gd.timecopied,
+                       gd.timecreated,
+                       gd.usercreated,
+                       gd.timemodified,
+                       gd.usermodified
+                  FROM (
+                        SELECT DISTINCT d.id
+                                   FROM {grading_definitions} d
+                                  $join
+                                  WHERE $select
+                  ) ids
+                  JOIN {grading_definitions} gd ON gd.id = ids.id";
         $definitions = $DB->get_recordset_sql($sql, $params);
         $defdata = [];
         foreach ($definitions as $definition) {
