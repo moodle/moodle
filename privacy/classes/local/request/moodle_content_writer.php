@@ -162,7 +162,7 @@ class moodle_content_writer implements content_writer {
      * @return  string                      The processed string
      */
     public function rewrite_pluginfile_urls(array $subcontext, $component, $filearea, $itemid, $text) : string {
-        return str_replace('@@PLUGINFILE@@/', $this->get_files_target_path($component, $filearea, $itemid).'/', $text);
+        return str_replace('@@PLUGINFILE@@/', $this->get_files_target_url($component, $filearea, $itemid).'/', $text);
     }
 
     /**
@@ -316,6 +316,25 @@ class moodle_content_writer implements content_writer {
         }
 
         return implode(DIRECTORY_SEPARATOR, $parts);
+    }
+
+    /**
+     * Get a relative url to the directory of the exported files within a subcontext.
+     *
+     * @param string $component The name of the component that the files belong to.
+     * @param string $filearea The filearea within that component.
+     * @param string $itemid Which item those files belong to.
+     * @return string The url
+     */
+    protected function get_files_target_url($component, $filearea, $itemid) : string {
+        // We do not need to include the component because we organise things by context.
+        $parts = ['_files', $filearea];
+
+        if (!empty($itemid)) {
+            $parts[] = $itemid;
+        }
+
+        return implode('/', $parts);
     }
 
     /**
