@@ -272,7 +272,9 @@ class moodle_content_writer implements content_writer {
         // Join the directory together with the name.
         $filepath = implode(DIRECTORY_SEPARATOR, $path) . DIRECTORY_SEPARATOR . $name;
 
-        return preg_replace('@' . DIRECTORY_SEPARATOR . '+@', DIRECTORY_SEPARATOR, $filepath);
+        // To use backslash, it must be doubled ("\\\\" PHP string).
+        $separator = str_replace('\\', '\\\\', DIRECTORY_SEPARATOR);
+        return preg_replace('@(' . $separator . '|/)+@', $separator, $filepath);
     }
 
     /**
@@ -291,7 +293,9 @@ class moodle_content_writer implements content_writer {
         // Join the directory together with the name.
         $filepath = implode(DIRECTORY_SEPARATOR, $path);
 
-        return preg_replace('@' . DIRECTORY_SEPARATOR . '+@', DIRECTORY_SEPARATOR, $filepath);
+        // To use backslash, it must be doubled ("\\\\" PHP string).
+        $separator = str_replace('\\', '\\\\', DIRECTORY_SEPARATOR);
+        return preg_replace('@(' . $separator . '|/)+@', $separator, $filepath);
     }
 
     /**
