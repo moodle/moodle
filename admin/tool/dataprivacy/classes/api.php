@@ -37,6 +37,7 @@ use moodle_url;
 use required_capability_exception;
 use stdClass;
 use tool_dataprivacy\external\data_request_exporter;
+use tool_dataprivacy\local\helper;
 use tool_dataprivacy\task\initiate_data_request_task;
 use tool_dataprivacy\task\process_data_request_task;
 
@@ -218,16 +219,29 @@ class api {
      * @throws dml_exception
      */
     public static function get_data_requests($userid = 0) {
-        global $USER;
+        global $DB, $USER;
         $results = [];
         $sort = 'status ASC, timemodified ASC';
         if ($userid) {
             // Get the data requests for the user or data requests made by the user.
-            $select = "userid = :userid OR requestedby = :requestedby";
+            $select = "(userid = :userid OR requestedby = :requestedby)";
             $params = [
                 'userid' => $userid,
                 'requestedby' => $userid
             ];
+
+            // Build a list of user IDs that the user is allowed to make data requests for.
+            // Of course, the user should be included in this list.
+            $alloweduserids = [$userid];
+            // Get any users that the user can make data requests for.
+            if ($children = helper::get_children_of_user($userid)) {
+                // Get the list of user IDs of the children and merge to the allowed user IDs.
+                $alloweduserids = array_merge($alloweduserids, array_keys($children));
+            }
+            list($insql, $inparams) = $DB->get_in_or_equal($alloweduserids, SQL_PARAMS_NAMED);
+            $select .= " AND userid $insql";
+            $params = array_merge($params, $inparams);
+
             $results = data_request::get_records_select($select, $params, $sort);
         } else {
             // If the current user is one of the site's Data Protection Officers, then fetch all data requests.

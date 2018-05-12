@@ -108,4 +108,42 @@ class helper {
                 throw new moodle_exception('errorinvalidrequeststatus', 'tool_dataprivacy');
         }
     }
+
+    /**
+     * Get the users that a user can make data request for.
+     *
+     * E.g. User having a parent role and has the 'tool/dataprivacy:makedatarequestsforchildren' capability.
+     * @param int $userid The user's ID.
+     * @return array
+     */
+    public static function get_children_of_user($userid) {
+        global $DB;
+
+        // Get users that the user has role assignments to.
+        $allusernames = get_all_user_name_fields(true, 'u');
+        $sql = "SELECT u.id, $allusernames
+                  FROM {role_assignments} ra, {context} c, {user} u
+                 WHERE ra.userid = :userid
+                       AND ra.contextid = c.id
+                       AND c.instanceid = u.id
+                       AND c.contextlevel = :contextlevel";
+        $params = [
+            'userid' => $userid,
+            'contextlevel' => CONTEXT_USER
+        ];
+
+        // The final list of users that we will return;
+        $finalresults = [];
+
+        // Our prospective list of users.
+        if ($candidates = $DB->get_records_sql($sql, $params)) {
+            foreach ($candidates as $key => $child) {
+                $childcontext = \context_user::instance($child->id);
+                if (has_capability('tool/dataprivacy:makedatarequestsforchildren', $childcontext, $userid)) {
+                    $finalresults[$key] = $child;
+                }
+            }
+        }
+        return $finalresults;
+    }
 }
