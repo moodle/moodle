@@ -63,6 +63,7 @@ $string['dataprivacy:makedatarequestsforchildren'] = 'Make data requests for chi
 $string['dataprivacy:managedatarequests'] = 'Manage data requests';
 $string['dataprivacy:managedataregistry'] = 'Manage data registry';
 $string['dataregistry'] = 'Data registry';
+$string['datarequestcreatedforuser'] = 'Data request created for {$a}';
 $string['datarequestemailsubject'] = 'Data request: {$a}';
 $string['datarequests'] = 'Data requests';
 $string['daterequested'] = 'Date requested';
