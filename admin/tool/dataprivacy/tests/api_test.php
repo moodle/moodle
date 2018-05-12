@@ -57,6 +57,7 @@ class tool_dataprivacy_api_testcase extends advanced_testcase {
     public function test_update_request_status() {
         $generator = new testing_data_generator();
         $s1 = $generator->create_user();
+        $this->setUser($s1);
 
         // Create the sample data request.
         $datarequest = api::create_data_request($s1->id, api::DATAREQUEST_TYPE_EXPORT);
@@ -145,6 +146,7 @@ class tool_dataprivacy_api_testcase extends advanced_testcase {
         set_config('dporoles', $managerroleid, 'tool_dataprivacy');
 
         // Create the sample data request.
+        $this->setUser($s1);
         $datarequest = api::create_data_request($s1->id, api::DATAREQUEST_TYPE_EXPORT);
         $requestid = $datarequest->get('id');
 
@@ -186,6 +188,7 @@ class tool_dataprivacy_api_testcase extends advanced_testcase {
         set_config('dporoles', $managerroleid, 'tool_dataprivacy');
 
         // Create the sample data request.
+        $this->setUser($s1);
         $datarequest = api::create_data_request($s1->id, api::DATAREQUEST_TYPE_EXPORT);
         $requestid = $datarequest->get('id');
 
@@ -203,6 +206,7 @@ class tool_dataprivacy_api_testcase extends advanced_testcase {
         $teacher = $generator->create_user();
 
         // Create the sample data request.
+        $this->setUser($student);
         $datarequest = api::create_data_request($student->id, api::DATAREQUEST_TYPE_EXPORT);
 
         $requestid = $datarequest->get('id');
@@ -286,6 +290,71 @@ class tool_dataprivacy_api_testcase extends advanced_testcase {
         $datarequest = api::create_data_request($user->id, api::DATAREQUEST_TYPE_EXPORT, $comment);
         $this->assertEquals($user->id, $datarequest->get('userid'));
         $this->assertEquals($user->id, $datarequest->get('requestedby'));
+        $this->assertEquals(0, $datarequest->get('dpo'));
+        $this->assertEquals(api::DATAREQUEST_TYPE_EXPORT, $datarequest->get('type'));
+        $this->assertEquals(api::DATAREQUEST_STATUS_PENDING, $datarequest->get('status'));
+        $this->assertEquals($comment, $datarequest->get('comments'));
+
+        // Test adhoc task creation.
+        $adhoctasks = manager::get_adhoc_tasks(initiate_data_request_task::class);
+        $this->assertCount(1, $adhoctasks);
+    }
+
+    /**
+     * Test for api::create_data_request() made by DPO.
+     */
+    public function test_create_data_request_by_dpo() {
+        global $USER;
+
+        $generator = new testing_data_generator();
+        $user = $generator->create_user();
+        $comment = 'sample comment';
+
+        // Login as DPO (Admin is DPO by default).
+        $this->setAdminUser();
+
+        // Test data request creation.
+        $datarequest = api::create_data_request($user->id, api::DATAREQUEST_TYPE_EXPORT, $comment);
+        $this->assertEquals($user->id, $datarequest->get('userid'));
+        $this->assertEquals($USER->id, $datarequest->get('requestedby'));
+        $this->assertEquals($USER->id, $datarequest->get('dpo'));
+        $this->assertEquals(api::DATAREQUEST_TYPE_EXPORT, $datarequest->get('type'));
+        $this->assertEquals(api::DATAREQUEST_STATUS_PENDING, $datarequest->get('status'));
+        $this->assertEquals($comment, $datarequest->get('comments'));
+
+        // Test adhoc task creation.
+        $adhoctasks = manager::get_adhoc_tasks(initiate_data_request_task::class);
+        $this->assertCount(1, $adhoctasks);
+    }
+
+    /**
+     * Test for api::create_data_request() made by a parent.
+     */
+    public function test_create_data_request_by_parent() {
+        global $DB;
+
+        $generator = new testing_data_generator();
+        $user = $generator->create_user();
+        $parent = $generator->create_user();
+        $comment = 'sample comment';
+
+        // Get the teacher role pretend it's the parent roles ;).
+        $systemcontext = context_system::instance();
+        $usercontext = context_user::instance($user->id);
+        $parentroleid = $DB->get_field('role', 'id', array('shortname' => 'teacher'));
+        // Give the manager role with the capability to manage data requests.
+        assign_capability('tool/dataprivacy:makedatarequestsforchildren', CAP_ALLOW, $parentroleid, $systemcontext->id, true);
+        // Assign the parent to user.
+        role_assign($parentroleid, $parent->id, $usercontext->id);
+
+        // Login as the user's parent.
+        $this->setUser($parent);
+
+        // Test data request creation.
+        $datarequest = api::create_data_request($user->id, api::DATAREQUEST_TYPE_EXPORT, $comment);
+        $this->assertEquals($user->id, $datarequest->get('userid'));
+        $this->assertEquals($parent->id, $datarequest->get('requestedby'));
+        $this->assertEquals(0, $datarequest->get('dpo'));
         $this->assertEquals(api::DATAREQUEST_TYPE_EXPORT, $datarequest->get('type'));
         $this->assertEquals(api::DATAREQUEST_STATUS_PENDING, $datarequest->get('status'));
         $this->assertEquals($comment, $datarequest->get('comments'));
@@ -351,8 +420,10 @@ class tool_dataprivacy_api_testcase extends advanced_testcase {
         $comment = 'sample comment';
 
         // Make a data request as user 1.
+        $this->setUser($user1);
         $d1 = api::create_data_request($user1->id, api::DATAREQUEST_TYPE_EXPORT, $comment);
         // Make a data request as user 2.
+        $this->setUser($user2);
         $d2 = api::create_data_request($user2->id, api::DATAREQUEST_TYPE_EXPORT, $comment);
 
         // Fetching data requests of specific users.
@@ -406,6 +477,7 @@ class tool_dataprivacy_api_testcase extends advanced_testcase {
         $user1 = $generator->create_user();
 
         // Make a data request as user 1.
+        $this->setUser($user1);
         $request = api::create_data_request($user1->id, api::DATAREQUEST_TYPE_EXPORT);
         // Set the status.
         api::update_request_status($request->get('id'), $status);

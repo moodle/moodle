@@ -89,6 +89,7 @@ $string['effectiveretentionperioduser'] = '{$a} (since the last time the user ac
 $string['emailsalutation'] = 'Dear {$a},';
 $string['errorinvalidrequeststatus'] = 'Invalid request status!';
 $string['errorinvalidrequesttype'] = 'Invalid request type!';
+$string['errornocapabilitytorequestforothers'] = 'User {$a->requestedby} doesn\'t have the capability to make a data request on behalf of user {$a->userid}';
 $string['errornoexpiredcontexts'] = 'There are no expired contexts to process';
 $string['errorcontexthasunexpiredchildren'] = 'The context "{$a}" still has sub-contexts that have not yet expired. No contexts have been flagged for deletion.';
 $string['errorrequestalreadyexists'] = 'You already have an ongoing request.';

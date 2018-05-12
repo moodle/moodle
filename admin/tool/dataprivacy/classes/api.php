@@ -187,8 +187,25 @@ class api {
         $datarequest = new data_request();
         // The user the request is being made for.
         $datarequest->set('userid', $foruser);
+
+        $requestinguser = $USER->id;
+        // Check when the user is making a request on behalf of another.
+        if ($requestinguser != $foruser) {
+            if (self::is_site_dpo($requestinguser)) {
+                // The user making the request is a DPO. Should be fine.
+                $datarequest->set('dpo', $requestinguser);
+            } else {
+                // If not a DPO, only users with the capability to make data requests for the user should be allowed.
+                // (e.g. users with the Parent role, etc).
+                if (!api::can_create_data_request_for_user($foruser)) {
+                    $forusercontext = \context_user::instance($foruser);
+                    throw new required_capability_exception($forusercontext,
+                            'tool/dataprivacy:makedatarequestsforchildren', 'nopermissions', '');
+                }
+            }
+        }
         // The user making the request.
-        $datarequest->set('requestedby', $USER->id);
+        $datarequest->set('requestedby', $requestinguser);
         // Set status.
         $datarequest->set('status', self::DATAREQUEST_STATUS_PENDING);
         // Set request type.
@@ -304,17 +321,19 @@ class api {
      * @param int $requestid The request identifier.
      * @param int $status The request status.
      * @param int $dpoid The user ID of the Data Protection Officer
+     * @param string $comment The comment about the status update.
      * @return bool
      * @throws invalid_persistent_exception
      * @throws coding_exception
      */
-    public static function update_request_status($requestid, $status, $dpoid = 0) {
+    public static function update_request_status($requestid, $status, $dpoid = 0, $comment = '') {
         // Update the request.
         $datarequest = new data_request($requestid);
         $datarequest->set('status', $status);
         if ($dpoid) {
             $datarequest->set('dpo', $dpoid);
         }
+        $datarequest->set('dpocomment', $comment);
         return $datarequest->update();
     }
 
@@ -466,6 +485,19 @@ class api {
 
         // Send message.
         return message_send($message);
+    }
+
+    /**
+     * Checks whether a non-DPO user can make a data request for another user.
+     *
+     * @param int $user The user ID of the target user.
+     * @param int $requester The user ID of the user making the request.
+     * @return bool
+     * @throws coding_exception
+     */
+    public static function can_create_data_request_for_user($user, $requester = null) {
+        $usercontext = \context_user::instance($user);
+        return has_capability('tool/dataprivacy:makedatarequestsforchildren', $usercontext, $requester);
     }
 
     /**
