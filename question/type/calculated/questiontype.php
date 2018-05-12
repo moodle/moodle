@@ -46,12 +46,12 @@ class qtype_calculated extends question_type {
     /**
      * @const string REGEXP for a placeholder, wrapped in its {...} delimiters, with capturing brackets around the name.
      */
-    const PLACEHODLER_REGEX = '~\{(' . self::PLACEHOLDER_REGEX_PART . ')\}~';
+    const PLACEHODLER_REGEX = '~\{([[:alpha:]][^>} <`{"\']*)\}~';
 
     /**
      * @const string Regular expression that finds the formulas in content, with capturing brackets to get the forumlas.
      */
-    const FORMULAS_IN_TEXT_REGEX = '~\{=([^{}]*(?:\{' . self::PLACEHOLDER_REGEX_PART . '\}[^{}]*)*)\}~';
+    const FORMULAS_IN_TEXT_REGEX = '~\{=([^{}]*(?:\{[[:alpha:]][^>} <`{"\']*\}[^{}]*)*)\}~';
 
     const MAX_DATASET_ITEMS = 100;
 
