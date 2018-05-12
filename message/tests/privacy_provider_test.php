@@ -195,6 +195,7 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $writer = writer::with_context(\context_system::instance());
 
         $contacts = (array) $writer->get_data([get_string('contacts', 'core_message')]);
+        usort($contacts, ['static', 'sort_contacts']);
 
         $this->assertCount(3, $contacts);
 
@@ -261,6 +262,7 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $dbm2 = $DB->get_record('message', ['id' => $m2]);
         $dbm3 = $DB->get_record('message', ['id' => $m3]);
 
+        usort($messages, ['static', 'sort_messages']);
         $m1 = array_shift($messages);
         $m2 = array_shift($messages);
         $m3 = array_shift($messages);
@@ -290,6 +292,7 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $dbm5 = $DB->get_record('message', ['id' => $m5]);
         $dbm6 = $DB->get_record('message', ['id' => $m6]);
 
+        usort($messages, ['static', 'sort_messages']);
         $m4 = array_shift($messages);
         $m5 = array_shift($messages);
         $m6 = array_shift($messages);
@@ -549,5 +552,27 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $tabledata->timecreated = $timecreated;
 
         return $DB->insert_record($table, $tabledata);
+    }
+
+    /**
+     * Comparison function for sorting messages.
+     *
+     * @param   \stdClass $a
+     * @param   \stdClass $b
+     * @return  bool
+     */
+    protected static function sort_messages($a, $b) {
+        return $a->message > $b->message;
+    }
+
+    /**
+     * Comparison function for sorting contacts.
+     *
+     * @param   \stdClass $a
+     * @param   \stdClass $b
+     * @return  bool
+     */
+    protected static function sort_contacts($a, $b) {
+        return $a->contact > $b->contact;
     }
 }
