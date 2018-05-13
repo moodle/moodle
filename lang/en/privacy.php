@@ -23,3 +23,4 @@
  */
 
 $string['privacy:metadata'] = 'The privacy subsystem does not store any data of its own and is designed to act as a channel between components and the interface used to describe, export, and remove their data.';
+$string['privacy:subsystem:empty'] = 'This subsystem does not store any data.';
