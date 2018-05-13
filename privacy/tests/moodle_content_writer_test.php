@@ -1162,12 +1162,18 @@ class moodle_content_writer_test extends advanced_testcase {
         if (null === $subcontext) {
             $rcm = $rc->getMethod('get_context_path');
             $rcm->setAccessible(true);
-            return $rcm->invoke($writer);
+            $path = $rcm->invoke($writer);
         } else {
             $rcm = $rc->getMethod('get_path');
             $rcm->setAccessible(true);
-            return $rcm->invoke($writer, $subcontext, $name);
+            $path = $rcm->invoke($writer, $subcontext, $name);
         }
+
+        // PHPUnit uses mikey179/vfsStream which is a stream wrapper for a virtual file system that uses '/'
+        // as the directory separator.
+        $path = str_replace(DIRECTORY_SEPARATOR, '/', $path);
+
+        return $path;
     }
 
     /**
