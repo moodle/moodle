@@ -411,7 +411,10 @@ class content_writer implements \core_privacy\local\request\content_writer {
      */
     public function export_file(array $subcontext, \stored_file $file) : \core_privacy\local\request\content_writer  {
         if (!$file->is_directory()) {
-            $filepath = explode(DIRECTORY_SEPARATOR, $file->get_filepath());
+            $filepath = $file->get_filepath();
+            // Directory separator in the stored_file class should always be '/'. The following line is just a fail safe.
+            $filepath = str_replace(DIRECTORY_SEPARATOR, '/', $filepath);
+            $filepath = explode('/', $filepath);
             $filepath[] = $file->get_filename();
             $filepath = array_filter($filepath);
             $filepath = implode('/', $filepath);

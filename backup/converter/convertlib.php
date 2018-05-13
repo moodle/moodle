@@ -239,15 +239,17 @@ abstract class base_converter implements loggable {
     protected function replace_tempdir() {
         global $CFG;
 
+        $tempdir = $this->get_tempdir_path();
+
         if (empty($CFG->keeptempdirectoriesonbackup)) {
-            fulldelete($this->get_tempdir_path());
+            fulldelete($tempdir);
         } else {
-            if (!rename($this->get_tempdir_path(), $this->get_tempdir_path()  . '_' . $this->get_name() . '_' . $this->id . '_source')) {
+            if (!rename($tempdir, $tempdir . '_' . $this->get_name() . '_' . $this->id . '_source')) {
                 throw new convert_exception('failed_rename_source_tempdir');
             }
         }
 
-        if (!rename($this->get_workdir_path(), $this->get_tempdir_path())) {
+        if (!rename($this->get_workdir_path(), $tempdir)) {
             throw new convert_exception('failed_move_converted_into_place');
         }
     }
