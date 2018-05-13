@@ -295,7 +295,6 @@ class page_agreedocs implements renderable, templatable {
 
         // Page setup.
         $PAGE->set_context(context_system::instance());
-        $PAGE->set_pagelayout('standard');
         $PAGE->set_url($myurl);
         $PAGE->set_heading($SITE->fullname);
         $PAGE->set_title(get_string('policiesagreements', 'tool_policy'));
