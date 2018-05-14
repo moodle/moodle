@@ -163,8 +163,9 @@ class provider implements
             return;
         }
 
-        $instanceid = $DB->get_field('course_modules', 'instance', ['id' => $context->instanceid], MUST_EXIST);
-        $DB->delete_records('lti_submission', ['ltiid' => $instanceid]);
+        if ($cm = get_coursemodule_from_id('lti', $context->instanceid)) {
+            $DB->delete_records('lti_submission', ['ltiid' => key($ltiidstocmids)]);
+        }
     }
 
     /**

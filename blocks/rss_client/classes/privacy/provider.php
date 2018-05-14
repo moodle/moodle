@@ -108,7 +108,9 @@ class provider implements \core_privacy\local\metadata\provider, \core_privacy\l
      * @param   context $context A user context.
      */
     public static function delete_data_for_all_users_in_context(\context $context) {
-        static::delete_data($context->instanceid);
+        if ($context instanceof \context_user) {
+            static::delete_data($context->instanceid);
+        }
     }
 
     /**
