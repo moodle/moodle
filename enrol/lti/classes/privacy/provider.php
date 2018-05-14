@@ -156,7 +156,7 @@ class provider implements
 
         foreach ($contextlist->get_contexts() as $context) {
             if (!($context instanceof \context_course || $context instanceof \context_module)) {
-                return;
+                continue;
             }
 
             $enrolltitools = $DB->get_fieldset_select('enrol_lti_tools', 'id', 'contextid = :contextid',

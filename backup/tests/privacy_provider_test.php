@@ -169,7 +169,7 @@ class core_backup_privacy_provider_testcase extends \core_privacy\tests\provider
 
         $coursecontext = context_course::instance($this->course->id);
         $contextlist = new \core_privacy\local\request\approved_contextlist($this->user, 'core_backup',
-            [$coursecontext->id]);
+            [context_system::instance()->id, $coursecontext->id]);
         provider::delete_data_for_user($contextlist);
 
         // After deletion, the backup operation for the user should have been deleted.
