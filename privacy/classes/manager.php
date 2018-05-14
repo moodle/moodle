@@ -123,11 +123,17 @@ class manager {
         if ($this->component_implements($component, \core_privacy\local\metadata\null_provider::class)) {
             return true;
         }
+
+        if (static::is_empty_subsystem($component)) {
+            return true;
+        }
+
         // Components which store user data must implement the local\metadata\provider and the local\request\data_provider.
         if ($this->component_implements($component, \core_privacy\local\metadata\provider::class) &&
             $this->component_implements($component, \core_privacy\local\request\data_provider::class)) {
             return true;
         }
+
         return false;
     }
 
@@ -143,6 +149,23 @@ class manager {
         } else {
             throw new \coding_exception('Call to undefined method', 'Please only call this method on a null provider.');
         }
+    }
+
+    /**
+     * Return whether this is an 'empty' subsystem - that is, a subsystem without a directory.
+     *
+     * @param  string $component Frankenstyle component name.
+     * @return string The key to retrieve the language string for the null provider reason.
+     */
+    public static function is_empty_subsystem($component) {
+        if (strpos($component, 'core_') === 0) {
+            if (null === \core_component::get_subsystem_directory(substr($component, 5))) {
+                // This is a subsystem without a directory.
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
