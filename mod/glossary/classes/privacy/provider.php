@@ -248,39 +248,36 @@ class provider implements
             return;
         }
 
-        $instanceid = $DB->get_field('course_modules', 'instance', ['id' => $context->instanceid], MUST_EXIST);
-        $DB->record_exists('glossary', ['id' => $context->instanceid]);
-        $DB->delete_records('glossary_entries', ['glossaryid' => $instanceid]);
-
-        if ($context->contextlevel == CONTEXT_MODULE) {
-            $instanceid = $DB->get_field('course_modules', 'instance', ['id' => $context->instanceid], MUST_EXIST);
-            $DB->record_exists('glossary', ['id' => $context->instanceid]);
-
-            $entries = $DB->get_records('glossary_entries', ['glossaryid' => $instanceid]);
-            foreach ($entries as $entry) {
-                // Delete related entry categories.
-                $DB->delete_records('glossary_entries_categories', ['entryid' => $entry->id]);
-
-                // Delete related entry aliases.
-                $DB->delete_records('glossary_alias', ['entryid' => $entry->id]);
-            }
-
-            // Delete entry and attachment files.
-            get_file_storage()->delete_area_files($context->id, 'mod_glossary', 'entry');
-            get_file_storage()->delete_area_files($context->id, 'mod_glossary', 'attachment');
-
-            // Delete related ratings.
-            \core_rating\privacy\provider::delete_ratings($context, 'mod_glossary', 'entry');
-
-            // Delete comments.
-            \core_comment\privacy\provider::delete_comments_for_all_users($context, 'mod_glossary', 'glossary_entry');
-
-            // Delete tags.
-            \core_tag\privacy\provider::delete_item_tags($context, 'mod_glossary', 'glossary_entries');
-
-            // Now delete all user related entries.
-            $DB->delete_records('glossary_entries', ['glossaryid' => $instanceid]);
+        if (!$cm = get_coursemodule_from_id('glossary', $context->instanceid)) {
+            return;
         }
+
+        $instanceid = $cm->instance;
+
+        $entries = $DB->get_records('glossary_entries', ['glossaryid' => $instanceid]);
+        foreach ($entries as $entry) {
+            // Delete related entry categories.
+            $DB->delete_records('glossary_entries_categories', ['entryid' => $entry->id]);
+
+            // Delete related entry aliases.
+            $DB->delete_records('glossary_alias', ['entryid' => $entry->id]);
+        }
+
+        // Delete entry and attachment files.
+        get_file_storage()->delete_area_files($context->id, 'mod_glossary', 'entry');
+        get_file_storage()->delete_area_files($context->id, 'mod_glossary', 'attachment');
+
+        // Delete related ratings.
+        \core_rating\privacy\provider::delete_ratings($context, 'mod_glossary', 'entry');
+
+        // Delete comments.
+        \core_comment\privacy\provider::delete_comments_for_all_users($context, 'mod_glossary', 'glossary_entry');
+
+        // Delete tags.
+        \core_tag\privacy\provider::delete_item_tags($context, 'mod_glossary', 'glossary_entries');
+
+        // Now delete all user related entries.
+        $DB->delete_records('glossary_entries', ['glossaryid' => $instanceid]);
     }
 
     /**
@@ -300,7 +297,6 @@ class provider implements
             if ($context->contextlevel == CONTEXT_MODULE) {
 
                 $instanceid = $DB->get_field('course_modules', 'instance', ['id' => $context->instanceid], MUST_EXIST);
-                $DB->record_exists('glossary', ['id' => $context->instanceid]);
 
                 $entries = $DB->get_records('glossary_entries', ['glossaryid' => $instanceid, 'userid' => $userid]);
                 foreach ($entries as $entry) {

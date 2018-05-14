@@ -184,7 +184,7 @@ class provider implements \core_privacy\local\metadata\provider, \core_privacy\l
     public static function delete_data_for_all_users_in_context(\context $context) {
         global $DB;
 
-        if (empty($context)) {
+        if ($context->contextlevel != CONTEXT_COURSE) {
             return;
         }
 
