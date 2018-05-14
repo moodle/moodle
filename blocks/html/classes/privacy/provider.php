@@ -159,7 +159,9 @@ class provider implements
         }
 
         // The only way to delete data for the html block is to delete the block instance itself.
-        blocks_delete_instance(static::get_instance_from_context($context));
+        if ($blockinstance = static::get_instance_from_context($context)) {
+            blocks_delete_instance($blockinstance);
+        }
     }
 
     /**
@@ -174,7 +176,9 @@ class provider implements
             if (!$context instanceof \context_block) {
                 continue;
             }
-            blocks_delete_instance(static::get_instance_from_context($context));
+            if ($blockinstance = static::get_instance_from_context($context)) {
+                blocks_delete_instance($blockinstance);
+            }
         }
     }
 
@@ -187,6 +191,6 @@ class provider implements
     protected static function get_instance_from_context(\context_block $context) {
         global $DB;
 
-        return $DB->get_record('block_instances', ['id' => $context->instanceid]);
+        return $DB->get_record('block_instances', ['id' => $context->instanceid, 'blockname' => 'html']);
     }
 }
