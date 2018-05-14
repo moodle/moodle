@@ -2680,6 +2680,10 @@ function get_archetype_roles($archetype) {
 /**
  * Gets all the user roles assigned in this context, or higher contexts for a list of users.
  *
+ * If you try using the combination $userids = [], $checkparentcontexts = true then this is likely
+ * to cause an out-of-memory error on large Moodle sites, so this combination is deprecated and
+ * outputs a warning, even though it is the default.
+ *
  * @param context $context
  * @param array $userids. An empty list means fetch all role assignments for the context.
  * @param bool $checkparentcontexts defaults to true
@@ -2687,7 +2691,13 @@ function get_archetype_roles($archetype) {
  * @return array
  */
 function get_users_roles(context $context, $userids = [], $checkparentcontexts = true, $order = 'c.contextlevel DESC, r.sortorder ASC') {
-    global $USER, $DB;
+    global $DB;
+
+    if (!$userids && $checkparentcontexts) {
+        debugging('Please do not call get_users_roles() with $checkparentcontexts = true ' .
+                'and $userids array not set. This combination causes large Moodle sites ' .
+                'with lots of site-wide role assignemnts to run out of memory.', DEBUG_DEVELOPER);
+    }
 
     if ($checkparentcontexts) {
         $contextids = $context->get_parent_context_ids();

@@ -1612,7 +1612,7 @@ class core_accesslib_testcase extends advanced_testcase {
 
         $u2roles = get_user_roles($coursecontext, $user2->id);
 
-        $allroles = get_users_roles($coursecontext);
+        $allroles = get_users_roles($coursecontext, [], false);
         $specificuserroles = get_users_roles($coursecontext, [$user1->id, $user2->id]);
         $this->assertEquals($u1roles, $allroles[$user1->id]);
         $this->assertEquals($u1roles, $specificuserroles[$user1->id]);

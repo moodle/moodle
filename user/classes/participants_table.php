@@ -233,7 +233,6 @@ class participants_table extends \table_sql {
             $this->groups = groups_get_all_groups($courseid, 0, 0, 'g.*', true);
         }
         $this->allroles = role_fix_names(get_all_roles($this->context), $this->context);
-        $this->allroleassignments = get_users_roles($this->context, [], true, 'c.contextlevel DESC, r.sortorder ASC');
         $this->assignableroles = get_assignable_roles($this->context, ROLENAME_ALIAS, false);
         $this->profileroles = get_profile_roles($this->context);
     }
@@ -441,9 +440,21 @@ class participants_table extends \table_sql {
             $sort = 'ORDER BY ' . $sort;
         }
 
-        $this->rawdata = user_get_participants($this->course->id, $this->currentgroup, $this->accesssince,
+        $rawdata = user_get_participants($this->course->id, $this->currentgroup, $this->accesssince,
             $this->roleid, $this->enrolid, $this->status, $this->search, $twhere, $tparams, $sort, $this->get_page_start(),
             $this->get_page_size());
+        $this->rawdata = [];
+        foreach ($rawdata as $user) {
+            $this->rawdata[$user->id] = $user;
+        }
+        $rawdata->close();
+
+        if ($this->rawdata) {
+            $this->allroleassignments = get_users_roles($this->context, array_keys($this->rawdata),
+                    true, 'c.contextlevel DESC, r.sortorder ASC');
+        } else {
+            $this->allroleassignments = [];
+        }
 
         // Set initial bars.
         if ($useinitialsbar) {
