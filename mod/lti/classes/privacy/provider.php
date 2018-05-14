@@ -164,7 +164,7 @@ class provider implements
         }
 
         if ($cm = get_coursemodule_from_id('lti', $context->instanceid)) {
-            $DB->delete_records('lti_submission', ['ltiid' => key($ltiidstocmids)]);
+            $DB->delete_records('lti_submission', ['ltiid' => $cm->instance]);
         }
     }
 
