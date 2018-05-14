@@ -67,6 +67,7 @@ $string['dataprivacy:managedatarequests'] = 'Manage data requests';
 $string['dataprivacy:managedataregistry'] = 'Manage data registry';
 $string['dataregistry'] = 'Data registry';
 $string['dataregistryinfo'] = 'The data registry enables categories (types of data) and purposes (the reasons for processing data) to be set for all content on the site - from users and courses down to activities and blocks. For each purpose, a retention period may be set. When a retention period has expired, the data is flagged and listed for deletion, awaiting admin confirmation.';
+$string['datarequestcreatedforuser'] = 'Data request created for {$a}';
 $string['datarequestemailsubject'] = 'Data request: {$a}';
 $string['datarequests'] = 'Data requests';
 $string['daterequested'] = 'Date requested';

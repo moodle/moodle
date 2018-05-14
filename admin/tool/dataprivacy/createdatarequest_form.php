@@ -38,6 +38,9 @@ require_once($CFG->libdir.'/formslib.php');
  */
 class tool_dataprivacy_data_request_form extends moodleform {
 
+    /** @var bool Flag to indicate whether this form is being rendered for managing data requests or for regular requests. */
+    protected $manage = false;
+
     /**
      * Form definition.
      *
@@ -49,7 +52,8 @@ class tool_dataprivacy_data_request_form extends moodleform {
         global $DB, $USER;
         $mform =& $this->_form;
 
-        if (api::is_site_dpo($USER->id)) {
+        $this->manage = $this->_customdata['manage'];
+        if ($this->manage) {
             $options = [
                 'ajax' => 'tool_dataprivacy/form-user-selector',
                 'multiple' => false

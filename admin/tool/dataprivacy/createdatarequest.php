@@ -57,7 +57,7 @@ if (!\tool_dataprivacy\api::can_contact_dpo()) {
     redirect($returnurl, get_string('contactdpoviaprivacypolicy', 'tool_dataprivacy'), \core\output\notification::NOTIFY_ERROR);
 }
 
-$mform = new tool_dataprivacy_data_request_form($url->out(false));
+$mform = new tool_dataprivacy_data_request_form($url->out(false), ['manage' => !empty($manage)]);
 
 // Data request cancelled.
 if ($mform->is_cancelled()) {
@@ -68,7 +68,13 @@ if ($mform->is_cancelled()) {
 if ($data = $mform->get_data()) {
     \tool_dataprivacy\api::create_data_request($data->userid, $data->type, $data->comments);
 
-    redirect($returnurl, get_string('requestsubmitted', 'tool_dataprivacy'));
+    if ($manage) {
+        $foruser = core_user::get_user($data->userid);
+        $redirectmessage = get_string('datarequestcreatedforuser', 'tool_dataprivacy', fullname($foruser));
+    } else {
+        $redirectmessage = get_string('requestsubmitted', 'tool_dataprivacy');
+    }
+    redirect($returnurl, $redirectmessage);
 }
 
 $title = get_string('contactdataprotectionofficer', 'tool_dataprivacy');
