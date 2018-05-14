@@ -32,3 +32,4 @@ $string['trace:processingcomponent'] = 'Processing {$a->component} ({$a->progres
 $string['trace:fetchcomponents'] = 'Fetching {$a->total} components ({$a->datetime})';
 $string['trace:deletingapproved'] = 'Performing removal of approved {$a->total} contexts ({$a->datetime})';
 $string['trace:deletingcontext'] = 'Performing removal of context from {$a->total} components ({$a->datetime})';
+$string['privacy:subsystem:empty'] = 'This subsystem does not store any data.';
