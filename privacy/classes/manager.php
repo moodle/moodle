@@ -393,9 +393,12 @@ class manager {
      * @return array the array of frankenstyle component names.
      */
     protected function get_component_list() {
-        return array_keys(array_reduce(\core_component::get_component_list(), function($carry, $item) {
+        $components = array_keys(array_reduce(\core_component::get_component_list(), function($carry, $item) {
             return array_merge($carry, $item);
         }, []));
+        $components[] = 'core';
+
+        return $components;
     }
 
     /**
