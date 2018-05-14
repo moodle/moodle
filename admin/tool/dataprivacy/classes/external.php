@@ -96,8 +96,8 @@ class external extends external_api {
         self::validate_context($context);
 
         // Ensure the request exists.
-        $select = 'id = :id AND requestedby = :requestedby';
-        $params = ['id' => $requestid, 'requestedby' => $USER->id];
+        $select = 'id = :id AND (userid = :userid OR requestedby = :requestedby)';
+        $params = ['id' => $requestid, 'userid' => $USER->id, 'requestedby' => $USER->id];
         $requestexists = data_request::record_exists_select($select, $params);
 
         $result = false;
