@@ -82,14 +82,12 @@ class enrol_lti_privacy_provider_testcase extends \core_privacy\tests\provider_t
 
         $this->assertCount(2, $contextlist);
 
-        $contextforcourse = $contextlist->current();
-        $context = context_course::instance($this->course->id);
-        $this->assertEquals($context->id, $contextforcourse->id);
+        $coursectx = context_course::instance($this->course->id);
+        $activityctx = context_module::instance($this->activity->cmid);
+        $expectedids = [$coursectx->id, $activityctx->id];
 
-        $contextlist->next();
-        $contextforactivity = $contextlist->current();
-        $context = context_module::instance($this->activity->cmid);
-        $this->assertEquals($context->id, $contextforactivity->id);
+        $actualids = $contextlist->get_contextids();
+        $this->assertEquals($expectedids, $actualids, '', 0.0, 10, true);
     }
 
     /**
