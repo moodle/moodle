@@ -678,7 +678,7 @@ class core_renderer extends \core_renderer {
                     $link = new action_link(new moodle_url('#'), $menuitem->text, null, ['disabled' => true], $menuitem->icon);
                 }
                 if ($indent) {
-                    $link->add_class('ml-2');
+                    $link->add_class('ml-4');
                 }
                 if (!empty($menuitem->classes)) {
                     $link->add_class(implode(" ", $menuitem->classes));

@@ -314,7 +314,7 @@ class renderer extends \core_course_management_renderer {
             );
         } else {
             $icon = $this->output->pix_icon(
-                'i/navigationitem',
+                'i/empty',
                 '',
                 'moodle',
                 array('class' => 'tree-icon', 'title' => get_string('showcategory', 'moodle', $text))

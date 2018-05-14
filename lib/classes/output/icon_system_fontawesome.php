@@ -255,7 +255,7 @@ class icon_system_fontawesome extends icon_system_font {
             'core:i/mnethost' => 'fa-external-link',
             'core:i/moodle_host' => 'fa-graduation-cap',
             'core:i/move_2d' => 'fa-arrows',
-            'core:i/navigationitem' => 'fa-circle-thin',
+            'core:i/navigationitem' => 'fa-fw',
             'core:i/ne_red_mark' => 'fa-remove',
             'core:i/new' => 'fa-bolt',
             'core:i/news' => 'fa-newspaper-o',
