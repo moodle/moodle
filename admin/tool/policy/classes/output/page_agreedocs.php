@@ -278,9 +278,7 @@ class page_agreedocs implements renderable, templatable {
         // and $SESSION->wantsurl is defined, redirect to the return page.
         $hasagreedsignupuser = empty($USER->id) && $this->signupuserpolicyagreed;
         $hasagreedloggeduser = $USER->id == $userid && !empty($USER->policyagreed);
-        $canrevoke = api::can_revoke_policies($USER->id);
-        if (!is_siteadmin() && ($hasagreedsignupuser ||
-            ($hasagreedloggeduser && !$canrevoke))) {
+        if (!is_siteadmin() && ($hasagreedsignupuser || $hasagreedloggeduser)) {
             $this->redirect_to_previous_url();
         }
 
@@ -295,7 +293,6 @@ class page_agreedocs implements renderable, templatable {
 
         // Page setup.
         $PAGE->set_context(context_system::instance());
-        $PAGE->set_pagelayout('standard');
         $PAGE->set_url($myurl);
         $PAGE->set_heading($SITE->fullname);
         $PAGE->set_title(get_string('policiesagreements', 'tool_policy'));
