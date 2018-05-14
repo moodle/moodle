@@ -122,11 +122,15 @@ class metadata_registry {
      * @return array An array of plugin types which contain plugin data.
      */
     protected function get_full_component_list() {
+        global $CFG;
+
         $list = \core_component::get_component_list();
+        $list['core']['core'] = "{$CFG->dirroot}/lib";
         $formattedlist = [];
         foreach ($list as $plugintype => $plugin) {
             $formattedlist[] = ['plugin_type' => $plugintype, 'plugins' => array_keys($plugin)];
         }
+
         return $formattedlist;
     }
 

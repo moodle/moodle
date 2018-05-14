@@ -72,8 +72,9 @@ class tool_dataprivacy_metadata_registry_testcase extends advanced_testcase {
         }
 
         // Let's check core subsystems.
+        // The Privacy API adds an extra component in the form of 'core'.
         $coresubsystems = \core_component::get_core_subsystems();
-        $this->assertEquals(count($coresubsystems), count($data['core']));
+        $this->assertEquals(count($coresubsystems) + 1, count($data['core']));
     }
 
     /**
