@@ -101,6 +101,10 @@ class data_registry_page implements renderable, templatable {
         $data->actions = $actionmenu->export_for_template($output);
 
         if (!data_registry::defaults_set()) {
+            $data->info = (object)[
+                    'message' => get_string('dataregistryinfo', 'tool_dataprivacy'),
+                    'announce' => 1
+            ];
             $data->nosystemdefaults = (object)[
                 'message' => get_string('nosystemdefaults', 'tool_dataprivacy'),
                 'announce' => 1
@@ -131,7 +135,7 @@ class data_registry_page implements renderable, templatable {
                     'text' => get_string('user'),
                     'contextlevel' => CONTEXT_USER,
                 ], [
-                    'text' => get_string('categories', 'tool_dataprivacy'),
+                    'text' => get_string('categories'),
                     'branches' => $categorybranches,
                     'expandelement' => 'category',
                 ], [

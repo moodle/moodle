@@ -41,6 +41,11 @@
             {{> core/action_menu}}
         {{/actions}}
     </div>
+    {{#info}}
+        <div class="m-t-1">
+            {{> core/notification_info}}
+        </div>
+    {{/info}}
     {{#nosystemdefaults}}
         <div class="m-t-1">
             {{> core/notification_warning}}
