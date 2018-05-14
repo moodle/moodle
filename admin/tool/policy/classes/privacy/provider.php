@@ -49,11 +49,11 @@ class provider implements
     /**
      * Return the fields which contain personal data.
      *
-     * @param collection $items A reference to the collection to use to store the metadata.
-     * @return collection The updated collection of metadata items.
+     * @param   collection $collection The initialised collection to add items to.
+     * @return  collection A listing of user data stored through this system.
      */
-    public static function get_metadata(collection $items) : collection {
-        $items->add_database_table(
+    public static function get_metadata(collection $collection) : collection {
+        $collection->add_database_table(
             'tool_policy_acceptances',
             [
                 'policyversionid' => 'privacy:metadata:acceptances:policyversionid',
@@ -68,7 +68,29 @@ class provider implements
             'privacy:metadata:acceptances'
         );
 
-        return $items;
+        $collection->add_database_table(
+            'tool_policy_versions',
+            [
+                'name' => 'privacy:metadata:versions:name',
+                'type' => 'privacy:metadata:versions:type',
+                'audience' => 'privacy:metadata:versions:audience',
+                'archived' => 'privacy:metadata:versions:archived',
+                'usermodified' => 'privacy:metadata:versions:usermodified',
+                'timecreated' => 'privacy:metadata:versions:timecreated',
+                'timemodified' => 'privacy:metadata:versions:timemodified',
+                'policyid' => 'privacy:metadata:versions:policyid',
+                'revision' => 'privacy:metadata:versions:revision',
+                'summary' => 'privacy:metadata:versions:summary',
+                'summaryformat' => 'privacy:metadata:versions:summaryformat',
+                'content' => 'privacy:metadata:versions:content',
+                'contentformat' => 'privacy:metadata:versions:contentformat',
+            ],
+            'privacy:metadata:versions'
+        );
+
+        $collection->add_subsystem_link('core_files', [], 'privacy:metadata:subsystem:corefiles');
+
+        return $collection;
     }
 
     /**
@@ -79,11 +101,21 @@ class provider implements
      */
     public static function get_contexts_for_userid(int $userid) : contextlist {
         $contextlist = new contextlist();
-        $contextlist->add_from_sql('SELECT DISTINCT c.id
-            FROM {tool_policy_acceptances} a
-            JOIN {context} c ON a.userid = c.instanceid AND c.contextlevel = ?
-            WHERE a.userid = ? OR a.usermodified = ?',
-            [CONTEXT_USER, $userid, $userid]);
+
+        $sql = "SELECT c.id
+                  FROM {context} c
+             LEFT JOIN {tool_policy_versions} v ON v.usermodified = c.instanceid
+             LEFT JOIN {tool_policy_acceptances} a ON a.userid = c.instanceid
+                 WHERE c.contextlevel = :contextlevel
+                   AND (v.usermodified = :usermodified OR a.userid = :userid OR a.usermodified = :behalfuserid)";
+        $params = [
+            'contextlevel' => CONTEXT_USER,
+            'usermodified' => $userid,
+            'userid'       => $userid,
+            'behalfuserid' => $userid,
+        ];
+        $contextlist->add_from_sql($sql, $params);
+
         return $contextlist;
     }
 
@@ -94,40 +126,105 @@ class provider implements
      */
     public static function export_user_data(approved_contextlist $contextlist) {
         global $DB;
-        foreach ($contextlist->get_contexts() as $context) {
-            if ($context->contextlevel != CONTEXT_USER) {
-                continue;
+
+        // Remove contexts different from USER.
+        $contexts = array_reduce($contextlist->get_contexts(), function($carry, $context) {
+            if ($context->contextlevel == CONTEXT_USER) {
+                $carry[$context->instanceid] = $context;
             }
+            return $carry;
+        }, []);
+
+        if (empty($contexts)) {
+            return;
+        }
+
+        // Export user agreements.
+        $subcontext = [
+            get_string('privacyandpolicies', 'admin'),
+            get_string('useracceptances', 'tool_policy')
+        ];
+        $policyversionids = [];
+        foreach ($contexts as $context) {
             $user = $contextlist->get_user();
             $agreements = $DB->get_records_sql('SELECT a.id, a.userid, v.name, v.revision, a.usermodified, a.timecreated,
                   a.timemodified, a.note, v.archived, p.currentversionid, a.status, a.policyversionid
                 FROM {tool_policy_acceptances} a
-                JOIN {tool_policy_versions} v ON v.id=a.policyversionid
+                JOIN {tool_policy_versions} v ON v.id = a.policyversionid
                 JOIN {tool_policy} p ON v.policyid = p.id
                 WHERE a.userid = ? AND (a.userid = ? OR a.usermodified = ?)
                 ORDER BY a.userid, v.archived, v.timecreated DESC',
                 [$context->instanceid, $user->id, $user->id]);
             foreach ($agreements as $agreement) {
                 $context = \context_user::instance($agreement->userid);
-                $subcontext = [
-                    get_string('userpoliciesagreements', 'tool_policy'),
-                    transform::user($agreement->userid)
-                ];
                 $name = 'policyagreement-' . $agreement->policyversionid;
                 $agreementcontent = (object) [
-                    'userid' => transform::user($agreement->userid),
-                    'status' => $agreement->status,
-                    'versionid' => $agreement->policyversionid,
                     'name' => $agreement->name,
                     'revision' => $agreement->revision,
                     'isactive' => transform::yesno($agreement->policyversionid == $agreement->currentversionid),
-                    'usermodified' => transform::user($agreement->usermodified),
+                    'isagreed' => transform::yesno($agreement->status),
+                    'agreedby' => transform::user($agreement->usermodified),
                     'timecreated' => transform::datetime($agreement->timecreated),
                     'timemodified' => transform::datetime($agreement->timemodified),
                     'note' => $agreement->note,
                 ];
                 writer::with_context($context)->export_related_data($subcontext, $name, $agreementcontent);
+                $policyversionids[$agreement->policyversionid] = $agreement->policyversionid;
             }
+        }
+
+        // Export policy versions (agreed or modified by the user).
+        $userid = $contextlist->get_user()->id;
+        $context = \context_system::instance();
+        $subcontext = [
+            get_string('policydocuments', 'tool_policy')
+        ];
+        $writer = writer::with_context($context);
+        list($contextsql, $contextparams) = $DB->get_in_or_equal(array_keys($contexts), SQL_PARAMS_NAMED);
+        list($versionsql, $versionparams) = $DB->get_in_or_equal($policyversionids, SQL_PARAMS_NAMED);
+        $sql = "SELECT v.id,
+                       v.name,
+                       v.revision,
+                       v.summary,
+                       v.content,
+                       v.archived,
+                       v.usermodified,
+                       v.timecreated,
+                       v.timemodified,
+                       p.currentversionid
+                  FROM {tool_policy_versions} v
+                  JOIN {tool_policy} p ON p.id = v.policyid
+                 WHERE v.usermodified {$contextsql} OR v.id {$versionsql}";
+        $params = array_merge($contextparams, $versionparams);
+        $versions = $DB->get_recordset_sql($sql, $params);
+        foreach ($versions as $version) {
+            $name = 'policyversion-' . $version->id;
+            $versioncontent = (object) [
+                'name' => $version->name,
+                'revision' => $version->revision,
+                'summary' => $writer->rewrite_pluginfile_urls(
+                    $subcontext,
+                    'tool_policy',
+                    'policydocumentsummary',
+                    $version->id,
+                    $version->summary
+                ),
+                'content' => $writer->rewrite_pluginfile_urls(
+                    $subcontext,
+                    'tool_policy',
+                    'policydocumentcontent',
+                    $version->id,
+                    $version->content
+                ),
+                'isactive' => transform::yesno($version->id == $version->currentversionid),
+                'isarchived' => transform::yesno($version->archived),
+                'createdbyme' => transform::yesno($version->usermodified == $userid),
+                'timecreated' => transform::datetime($version->timecreated),
+                'timemodified' => transform::datetime($version->timemodified),
+            ];
+            $writer->export_related_data($subcontext, $name, $versioncontent);
+            $writer->export_area_files($subcontext, 'tool_policy', 'policydocumentsummary', $version->id);
+            $writer->export_area_files($subcontext, 'tool_policy', 'policydocumentcontent', $version->id);
         }
     }
 
