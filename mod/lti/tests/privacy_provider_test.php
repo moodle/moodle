@@ -271,7 +271,7 @@ class mod_lti_privacy_provider_testcase extends \core_privacy\tests\provider_tes
 
         $context = \context_module::instance($lti->cmid);
         $contextlist = new \core_privacy\local\request\approved_contextlist($user1, 'lti',
-            [$context->id]);
+            [context_system::instance()->id, $context->id]);
         provider::delete_data_for_user($contextlist);
 
         // After deletion the lti submission for the first user should have been deleted.
