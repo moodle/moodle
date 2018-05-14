@@ -167,7 +167,7 @@ class provider implements
         $userid = $contextlist->get_user()->id;
         foreach ($contextlist->get_contexts() as $context) {
             if (!$context instanceof \context_system && !$context instanceof \context_coursecat) {
-                return;
+                continue;
             }
             static::delete_data($context, $userid);
         }
