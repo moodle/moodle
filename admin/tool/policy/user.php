@@ -42,6 +42,7 @@ if ($userid != $USER->id) {
 }
 
 $PAGE->set_context($context);
+$PAGE->set_pagelayout('standard');
 $PAGE->set_url(new moodle_url('/admin/tool/policy/user.php', ['userid' => $userid]));
 
 $output = $PAGE->get_renderer('tool_policy');
