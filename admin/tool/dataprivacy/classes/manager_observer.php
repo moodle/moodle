@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * Class \tool_dataprivacy\manager
  *
@@ -25,51 +26,29 @@ namespace tool_dataprivacy;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Wrapper for \core_privacy\manager that sends notifications about exceptions to DPO
+ * A failure observer for the \core_privacy\manager.
  *
  * @package    tool_dataprivacy
  * @copyright  2018 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class manager extends \core_privacy\manager {
-
+class manager_observer implements \core_privacy\manager_observer {
     /**
-     * Call the named method with the specified params on the supplied component if it implements the relevant interface on its provider.
-     *
-     * @param   string  $component The component to call
-     * @param   string  $interface The interface to implement
-     * @param   string  $methodname The method to call
-     * @param   array   $params The params to call
-     * @return  mixed
-     */
-    public static function component_class_callback(string $component, string $interface, string $methodname, array $params) {
-        try {
-            return parent::component_class_callback($component, $interface, $methodname, $params);
-        } catch (\Throwable $e) {
-            debugging($e->getMessage(), DEBUG_DEVELOPER, $e->getTrace());
-            self::notify_dpo($e, $component, $interface, $methodname, $params);
-        }
-        return null;
-    }
-
-    /**
-     * Notifies all DPOs about exception occurred
+     * Notifies all DPOs that an exception occurred.
      *
      * @param \Throwable $e
      * @param string $component
      * @param string $interface
      * @param string $methodname
      * @param array $params
-     * @return mixed
      */
-    protected static function notify_dpo(\Throwable $e, string $component, string $interface, string $methodname, array $params) {
-
+    public function handle_component_failure($e, $component, $interface, $methodname, array $params) {
         // Get the list of the site Data Protection Officers.
         $dpos = api::get_site_dpos();
 
         $messagesubject = get_string('exceptionnotificationsubject', 'tool_dataprivacy');
         $a = (object)[
-            'fullmethodname' => static::get_provider_classname_for_component($component) . '::' . $methodname,
+            'fullmethodname' => \core_privacy\manager::get_provider_classname_for_component($component) . '::' . $methodname,
             'component' => $component,
             'message' => $e->getMessage(),
             'backtrace' => $e->getTraceAsString()
@@ -91,7 +70,7 @@ class manager extends \core_privacy\manager {
             $message->fullmessage       = html_to_text($messagebody);
 
             // Send message.
-            return message_send($message);
+            message_send($message);
         }
     }
 }

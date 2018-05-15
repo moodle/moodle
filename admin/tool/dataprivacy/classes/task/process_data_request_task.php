@@ -33,7 +33,6 @@ use moodle_exception;
 use moodle_url;
 use tool_dataprivacy\api;
 use tool_dataprivacy\data_request;
-use tool_dataprivacy\manager;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -88,7 +87,9 @@ class process_data_request_task extends adhoc_task {
             $approvedclcollection = api::get_approved_contextlist_collection_for_request($requestpersistent);
 
             // Export the data.
-            $manager = new manager();
+            $manager = new \core_privacy\manager();
+            $manager->set_observer(new \tool_dataprivacy\manager_observer());
+
             $exportedcontent = $manager->export_user_data($approvedclcollection);
 
             $fs = get_file_storage();
@@ -110,7 +111,9 @@ class process_data_request_task extends adhoc_task {
             $approvedclcollection = api::get_approved_contextlist_collection_for_request($requestpersistent);
 
             // Delete the data.
-            $manager = new manager();
+            $manager = new \core_privacy\manager();
+            $manager->set_observer(new \tool_dataprivacy\manager_observer());
+
             $manager->delete_data_for_user($approvedclcollection);
         }
 
