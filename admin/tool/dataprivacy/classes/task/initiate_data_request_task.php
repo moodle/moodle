@@ -30,6 +30,7 @@ use moodle_exception;
 use tool_dataprivacy\api;
 use tool_dataprivacy\contextlist_context;
 use tool_dataprivacy\data_request;
+use tool_dataprivacy\manager;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -96,7 +97,7 @@ class initiate_data_request_task extends adhoc_task {
         api::update_request_status($requestid, api::DATAREQUEST_STATUS_PREPROCESSING);
 
         // Add the list of relevant contexts to the request, and mark all as pending approval.
-        $privacymanager = new \core_privacy\manager();
+        $privacymanager = new manager();
         $contextlistcollection = $privacymanager->get_contexts_for_userid($datarequest->get('userid'));
         api::add_request_contexts_with_status($contextlistcollection, $requestid, contextlist_context::STATUS_PENDING);
 

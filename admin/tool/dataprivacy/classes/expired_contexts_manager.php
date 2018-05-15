@@ -90,7 +90,7 @@ abstract class expired_contexts_manager {
             return $numprocessed;
         }
 
-        $privacymanager = new \core_privacy\manager();
+        $privacymanager = new manager();
 
         foreach ($this->get_context_levels() as $level) {
 

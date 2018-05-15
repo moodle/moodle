@@ -39,7 +39,7 @@ class metadata_registry {
      * @return array An array with all of the plugin types / plugins and the user data they store.
      */
     public function get_registry_metadata() {
-        $manager = new \core_privacy\manager();
+        $manager = new manager();
         $pluginman = \core_plugin_manager::instance();
         $contributedplugins = $this->get_contrib_list();
         $metadata = $manager->get_metadata_for_components();
