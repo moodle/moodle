@@ -68,9 +68,11 @@ class defaults extends \moodleform {
             $purposeoptions = data_registry_page::category_options($this->_customdata['purposes'], false, $includeinherit);
 
             $mform->addElement('select', $categoryvar, get_string('category', 'tool_dataprivacy'), $categoryoptions);
+            $mform->addHelpButton($categoryvar, 'categorydefault', 'tool_dataprivacy');
             $mform->setType($categoryvar, PARAM_INT);
 
             $mform->addElement('select', $purposevar, get_string('purpose', 'tool_dataprivacy'), $purposeoptions);
+            $mform->addHelpButton($purposevar, 'purposedefault', 'tool_dataprivacy');
             $mform->setType($purposevar, PARAM_INT);
         }
 

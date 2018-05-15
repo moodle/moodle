@@ -26,21 +26,195 @@ namespace report_stats\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 
+use \core_privacy\local\metadata\collection;
+use \core_privacy\local\request\contextlist;
+use \core_privacy\local\request\approved_contextlist;
+
 /**
- * Privacy Subsystem for report_stats implementing null_provider.
+ * Privacy Subsystem for report_stats implementing provider.
  *
  * @copyright  2018 Zig Tan <zig@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider implements \core_privacy\local\metadata\null_provider {
+class provider implements \core_privacy\local\metadata\provider, \core_privacy\local\request\subsystem\provider{
 
     /**
-     * Get the language string identifier with the component's language
-     * file to explain why this plugin stores no data.
+     * Returns information about the user data stored in this component.
      *
-     * @return  string
+     * @param  collection $collection A list of information about this component
+     * @return collection The collection object filled out with information about this component.
      */
-    public static function get_reason() : string {
-        return 'privacy:metadata';
+    public static function get_metadata(collection $collection) : collection {
+        $statsuserdaily = [
+            'courseid' => 'privacy:metadata:courseid',
+            'userid' => 'privacy:metadata:userid',
+            'roleid' => 'privacy:metadata:roleid',
+            'timeend' => 'privacy:metadata:timeend',
+            'statsreads' => 'privacy:metadata:statsreads',
+            'statswrites' => 'privacy:metadata:statswrites',
+            'stattype' => 'privacy:metadata:stattype'
+        ];
+
+        $statsuserweekly = [
+            'courseid' => 'privacy:metadata:courseid',
+            'userid' => 'privacy:metadata:userid',
+            'roleid' => 'privacy:metadata:roleid',
+            'timeend' => 'privacy:metadata:timeend',
+            'statsreads' => 'privacy:metadata:statsreads',
+            'statswrites' => 'privacy:metadata:statswrites',
+            'stattype' => 'privacy:metadata:stattype'
+        ];
+
+        $statsusermonthly = [
+            'courseid' => 'privacy:metadata:courseid',
+            'userid' => 'privacy:metadata:userid',
+            'roleid' => 'privacy:metadata:roleid',
+            'timeend' => 'privacy:metadata:timeend',
+            'statsreads' => 'privacy:metadata:statsreads',
+            'statswrites' => 'privacy:metadata:statswrites',
+            'stattype' => 'privacy:metadata:stattype'
+        ];
+        $collection->add_database_table('stats_user_daily', $statsuserdaily, 'privacy:metadata:statssummary');
+        $collection->add_database_table('stats_user_weekly', $statsuserweekly, 'privacy:metadata:statssummary');
+        $collection->add_database_table('stats_user_monthly', $statsusermonthly, 'privacy:metadata:statssummary');
+        return $collection;
+    }
+
+    /**
+     * Get the list of contexts that contain user information for the specified user.
+     *
+     * @param   int $userid The user to search.
+     * @return  contextlist $contextlist The contextlist containing the list of contexts used in this plugin.
+     */
+    public static function get_contexts_for_userid(int $userid) : contextlist {
+        $params = ['userid' => $userid, 'contextcourse' => CONTEXT_COURSE];
+        $sql = "SELECT ctx.id
+                FROM {context} ctx
+                JOIN {stats_user_daily} sud ON sud.courseid = ctx.instanceid AND sud.userid = :userid
+                WHERE ctx.contextlevel = :contextcourse";
+
+        $contextlist = new contextlist();
+        $contextlist->add_from_sql($sql, $params);
+
+        $sql = "SELECT ctx.id
+                FROM {context} ctx
+                JOIN {stats_user_weekly} suw ON suw.courseid = ctx.instanceid AND suw.userid = :userid
+                WHERE ctx.contextlevel = :contextcourse";
+        $contextlist->add_from_sql($sql, $params);
+
+        $sql = "SELECT ctx.id
+                FROM {context} ctx
+                JOIN {stats_user_monthly} sum ON sum.courseid = ctx.instanceid AND sum.userid = :userid
+                WHERE ctx.contextlevel = :contextcourse";
+        $contextlist->add_from_sql($sql, $params);
+
+        return $contextlist;
+    }
+
+    /**
+     * Export all user data for the specified user, in the specified contexts.
+     *
+     * @param approved_contextlist $contextlist The approved contexts to export information for.
+     */
+    public static function export_user_data(approved_contextlist $contextlist) {
+        global $DB;
+
+        // Some sneeky person might have sent us the wrong context list. We should check.
+        if ($contextlist->get_component() != 'report_stats') {
+            return;
+        }
+
+        // Got to check that someone hasn't foolishly added a context between creating the context list and then filtering down
+        // to an approved context.
+        $contexts = array_filter($contextlist->get_contexts(), function($context) {
+            if ($context->contextlevel == CONTEXT_COURSE) {
+                return $context;
+            }
+        });
+
+        $tables = [
+            'stats_user_daily' => get_string('privacy:dailypath', 'report_stats'),
+            'stats_user_weekly' => get_string('privacy:weeklypath', 'report_stats'),
+            'stats_user_monthly' => get_string('privacy:monthlypath', 'report_stats')
+        ];
+
+        $courseids = array_map(function($context) {
+            return $context->instanceid;
+        }, $contexts);
+
+        foreach ($tables as $table => $path) {
+
+            list($insql, $params) = $DB->get_in_or_equal($courseids, SQL_PARAMS_NAMED);
+            $sql = "SELECT s.id, c.fullname, s.roleid, s.timeend, s.statsreads, s.statswrites, s.stattype, c.id as courseid
+                      FROM {" . $table . "} s
+                      JOIN {course} c ON s.courseid = c.id
+                     WHERE s.userid = :userid AND c.id $insql
+                     ORDER BY c.id ASC";
+            $params['userid'] = $contextlist->get_user()->id;
+            $records = $DB->get_records_sql($sql, $params);
+
+            $statsrecords = [];
+            foreach ($records as $record) {
+                $context = \context_course::instance($record->courseid);
+                if (!isset($statsrecords[$record->courseid])) {
+                    $statsrecords[$record->courseid] = new \stdClass();
+                    $statsrecords[$record->courseid]->context = $context;
+                }
+                $statsrecords[$record->courseid]->entries[] = [
+                    'course' => format_string($record->fullname, true, ['context' => $context]),
+                    'roleid' => $record->roleid,
+                    'timeend' => \core_privacy\local\request\transform::datetime($record->timeend),
+                    'statsreads' => $record->statsreads,
+                    'statswrites' => $record->statswrites,
+                    'stattype' => $record->stattype
+                ];
+            }
+            foreach ($statsrecords as $coursestats) {
+                \core_privacy\local\request\writer::with_context($coursestats->context)->export_data([$path],
+                        (object) $coursestats->entries);
+            }
+        }
+    }
+
+    /**
+     * Delete all data for all users in the specified context.
+     *
+     * @param context $context The specific context to delete data for.
+     */
+    public static function delete_data_for_all_users_in_context(\context $context) {
+        // Check that this context is a course context.
+        if ($context->contextlevel == CONTEXT_COURSE) {
+            static::delete_stats($context->instanceid);
+        }
+    }
+
+    /**
+     * Delete all user data for the specified user, in the specified contexts.
+     *
+     * @param approved_contextlist $contextlist The approved contexts and user information to delete information for.
+     */
+    public static function delete_data_for_user(approved_contextlist $contextlist) {
+        if ($contextlist->get_component() != 'report_stats') {
+            return;
+        }
+        foreach ($contextlist->get_contexts() as $context) {
+            if ($context->contextlevel == CONTEXT_COURSE) {
+                static::delete_stats($context->instanceid, $contextlist->get_user()->id);
+            }
+        }
+    }
+
+    /**
+     * Deletes stats for a given course.
+     *
+     * @param int $courseid The course ID to delete the stats for.
+     * @param int $userid Optionally a user id to delete records with.
+     */
+    protected static function delete_stats(int $courseid, int $userid = null) {
+        global $DB;
+        $params = (isset($userid)) ? ['courseid' => $courseid, 'userid' => $userid] : ['courseid' => $courseid];
+        $DB->delete_records('stats_user_daily', $params);
+        $DB->delete_records('stats_user_weekly', $params);
+        $DB->delete_records('stats_user_monthly', $params);
     }
 }

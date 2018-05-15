@@ -11,7 +11,7 @@ Feature: Add images to Atto
     And I open my profile in edit mode
     When I set the field "Description" to "<p>Image test</p>"
     And I select the text in the "Description" Atto editor
-    And I click on "Image" "button"
+    And I click on "Insert or edit image" "button"
     And I click on "Browse repositories..." "button"
     And I click on "Private files" "link" in the ".fp-repo-area" "css_element"
     And I click on "moodle-logo.png" "link"
@@ -43,7 +43,7 @@ Feature: Add images to Atto
     And I click on "Update profile" "button"
     And I click on "Edit profile" "link" in the "region-main" "region"
     And I select the text in the "Description" Atto editor
-    And I click on "Image" "button"
+    And I click on "Insert or edit image" "button"
     Then the field "Describe this image for someone who cannot see it" matches value "It's the Moodle"
     And the field "Width" matches value "123"
     And the field "Height" matches value "456"
@@ -54,7 +54,7 @@ Feature: Add images to Atto
     And I open my profile in edit mode
     And I set the field "Description" to "<p>Image: <img src='/nothing/here'>.</p>"
     And I select the text in the "Description" Atto editor
-    When I click on "Image" "button"
+    When I click on "Insert or edit image" "button"
     Then the field "Enter URL" matches value "/nothing/here"
     And I set the field "Describe this image for someone who cannot see it" to "Something"
     And I set the field "Enter URL" to ""
@@ -63,7 +63,7 @@ Feature: Add images to Atto
     And I press "Update profile"
     And I click on "Edit profile" "link" in the "region-main" "region"
     And I select the text in the "Description" Atto editor
-    And I click on "Image" "button"
+    And I click on "Insert or edit image" "button"
     And the field "Enter URL" matches value "/nothing/again"
     And the field "Width" matches value "123"
     And the field "Height" matches value "456"

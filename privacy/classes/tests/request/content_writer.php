@@ -74,28 +74,41 @@ class content_writer implements \core_privacy\local\request\content_writer {
     /**
      * Whether any data has been exported at all within the current context.
      *
+     * @param array $subcontext The location within the current context that this data belongs -
+     *   in this method it can be partial subcontext path (or none at all to check presence of any data anywhere).
+     *   User preferences never have subcontext, if $subcontext is specified, user preferences are not checked.
      * @return  bool
      */
-    public function has_any_data() {
-        $hasdata = !empty($this->data->{$this->context->id});
-        $hasrelateddata = !empty($this->relateddata->{$this->context->id});
-        $hasmetadata = !empty($this->metadata->{$this->context->id});
-        $hasfiles = !empty($this->files->{$this->context->id});
-        $hascustomfiles = !empty($this->customfiles->{$this->context->id});
-        $hasuserprefs = !empty($this->userprefs->{$this->context->id});
+    public function has_any_data($subcontext = []) {
+        if (empty($subcontext)) {
+            // When subcontext is not specified check presence of user preferences in this context and in system context.
+            $hasuserprefs = !empty($this->userprefs->{$this->context->id});
+            $systemcontext = \context_system::instance();
+            $hasglobaluserprefs = !empty($this->userprefs->{$systemcontext->id});
+            if ($hasuserprefs || $hasglobaluserprefs) {
+                return true;
+            }
+        }
 
-        $systemcontext = \context_system::instance();
-        $hasglobaluserprefs = !empty($this->userprefs->{$systemcontext->id});
-
-        $hasanydata = $hasdata;
-        $hasanydata = $hasanydata || $hasrelateddata;
-        $hasanydata = $hasanydata || $hasmetadata;
-        $hasanydata = $hasanydata || $hasfiles;
-        $hasanydata = $hasanydata || $hascustomfiles;
-        $hasanydata = $hasanydata || $hasuserprefs;
-        $hasanydata = $hasanydata || $hasglobaluserprefs;
-
-        return $hasanydata;
+        foreach (['data', 'relateddata', 'metadata', 'files', 'customfiles'] as $datatype) {
+            if (!property_exists($this->$datatype, $this->context->id)) {
+                // No data of this type for this context at all. Continue to the next data type.
+                continue;
+            }
+            $basepath = $this->$datatype->{$this->context->id};
+            foreach ($subcontext as $subpath) {
+                if (!isset($basepath->children->$subpath)) {
+                    // No data of this type is present for this path. Continue to the next data type.
+                    continue 2;
+                }
+                $basepath = $basepath->children->$subpath;
+            }
+            if (!empty($basepath)) {
+                // Some data found for this type for this subcontext.
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -359,6 +372,8 @@ class content_writer implements \core_privacy\local\request\content_writer {
      * actual writer exports files so it can be reliably tested only in real writers such as
      * {@link core_privacy\local\request\moodle_content_writer}.
      *
+     * However we have to remove @@PLUGINFILE@@ since otherwise {@link format_text()} shows debugging messages
+     *
      * @param   array           $subcontext The location within the current context that this data belongs.
      * @param   string          $component  The name of the component that the files belong to.
      * @param   string          $filearea   The filearea within that component.
@@ -367,7 +382,7 @@ class content_writer implements \core_privacy\local\request\content_writer {
      * @return  string                      The processed string
      */
     public function rewrite_pluginfile_urls(array $subcontext, $component, $filearea, $itemid, $text) : string {
-        return $text;
+        return str_replace('@@PLUGINFILE@@/', 'files/', $text);
     }
 
     /**
@@ -396,7 +411,10 @@ class content_writer implements \core_privacy\local\request\content_writer {
      */
     public function export_file(array $subcontext, \stored_file $file) : \core_privacy\local\request\content_writer  {
         if (!$file->is_directory()) {
-            $filepath = explode(DIRECTORY_SEPARATOR, $file->get_filepath());
+            $filepath = $file->get_filepath();
+            // Directory separator in the stored_file class should always be '/'. The following line is just a fail safe.
+            $filepath = str_replace(DIRECTORY_SEPARATOR, '/', $filepath);
+            $filepath = explode('/', $filepath);
             $filepath[] = $file->get_filename();
             $filepath = array_filter($filepath);
             $filepath = implode('/', $filepath);

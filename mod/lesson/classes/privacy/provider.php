@@ -133,19 +133,24 @@ class provider implements
                AND ctx.contextlevel = :modulelevel
          LEFT JOIN {lesson_attempts} la
                 ON la.lessonid = l.id
+               AND la.userid = :userid1
          LEFT JOIN {lesson_branch} lb
                 ON lb.lessonid = l.id
+               AND lb.userid = :userid2
          LEFT JOIN {lesson_grades} lg
                 ON lg.lessonid = l.id
+               AND lg.userid = :userid3
          LEFT JOIN {lesson_overrides} lo
                 ON lo.lessonid = l.id
+               AND lo.userid = :userid4
          LEFT JOIN {lesson_timer} lt
                 ON lt.lessonid = l.id
-             WHERE la.userid = :userid1
-                OR lb.userid = :userid2
-                OR lg.userid = :userid3
-                OR lt.userid = :userid4
-                OR lo.userid = :userid5";
+               AND lt.userid = :userid5
+             WHERE la.id IS NOT NULL
+                OR lb.id IS NOT NULL
+                OR lg.id IS NOT NULL
+                OR lo.id IS NOT NULL
+                OR lt.id IS NOT NULL";
 
         $params = [
             'lesson' => 'lesson',
@@ -377,7 +382,9 @@ class provider implements
             return;
         }
 
-        $lessonid = static::get_lesson_id_from_context($context);
+        if (!$lessonid = static::get_lesson_id_from_context($context)) {
+            return;
+        }
 
         $DB->delete_records('lesson_attempts', ['lessonid' => $lessonid]);
         $DB->delete_records('lesson_branch', ['lessonid' => $lessonid]);

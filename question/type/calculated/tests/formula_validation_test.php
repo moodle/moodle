@@ -46,6 +46,14 @@ class qtype_calculated_formula_validation_testcase extends basic_testcase {
         $this->assertFalse(qtype_calculated_find_formula_errors('1 + 1'));
         $this->assertFalse(qtype_calculated_find_formula_errors('{x} + {y}'));
         $this->assertFalse(qtype_calculated_find_formula_errors('{x}*{y}'));
+        $this->assertFalse(qtype_calculated_find_formula_errors('{x}*({y}+1)'));
+    }
+
+    public function test_simple_equations_errors() {
+        $this->assert_nonempty_string(qtype_calculated_find_formula_errors('{a{b}}'));
+        $this->assert_nonempty_string(qtype_calculated_find_formula_errors('{a{b}}'));
+        $this->assert_nonempty_string(qtype_calculated_find_formula_errors('{a}({b})'));
+        $this->assert_nonempty_string(qtype_calculated_find_formula_errors('2({b})'));
     }
 
     public function test_safe_functions_ok() {
@@ -57,6 +65,15 @@ class qtype_calculated_formula_validation_testcase extends basic_testcase {
         $this->assertFalse(qtype_calculated_find_formula_errors('max(1.0, 1.0)'));
         $this->assertFalse(qtype_calculated_find_formula_errors('max(1.0, 1.0, 2.0)'));
         $this->assertFalse(qtype_calculated_find_formula_errors('max(1.0, 1.0, 2, 3)'));
+    }
+
+    public function test_php_comments_blocked() {
+        $this->assert_nonempty_string(qtype_calculated_find_formula_errors('# No need for this.'));
+        $this->assert_nonempty_string(qtype_calculated_find_formula_errors('/* Also blocked. */'));
+        $this->assert_nonempty_string(qtype_calculated_find_formula_errors('1 + 1 /* Blocked too. */'));
+        $this->assert_nonempty_string(qtype_calculated_find_formula_errors('// As is this.'));
+        $this->assert_nonempty_string(qtype_calculated_find_formula_errors('1/*2'));
+        $this->assert_nonempty_string(qtype_calculated_find_formula_errors('/*{a*///{x}}'));
     }
 
     public function test_dangerous_functions_blocked() {

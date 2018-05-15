@@ -73,7 +73,7 @@ Feature: Teachers can override the grade for any question
     And I set the field "Comment" to "Administrator's comment"
     # Atto needs focus to add image, select empty p tag to do so.
     And I select the text in the "Comment" Atto editor
-    And I click on "Image" "button" in the "[data-fieldtype=editor]" "css_element"
+    And I click on "Insert or edit image" "button" in the "[data-fieldtype=editor]" "css_element"
     And I click on "Browse repositories..." "button"
     And I click on "Private files" "link" in the ".fp-repo-area" "css_element"
     And I click on "moodle_logo.jpg" "link"

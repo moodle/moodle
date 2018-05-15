@@ -58,7 +58,7 @@ Feature: Atto Autosave
     And I navigate to "Edit settings" node in "Course administration"
     And I set the field "Course summary" to "<p>Image test</p>"
     And I select the text in the "Course summary" Atto editor
-    And I click on "Image" "button"
+    And I click on "Insert or edit image" "button"
     And I click on "Browse repositories..." "button"
     And I click on "Private files" "link" in the ".fp-repo-area" "css_element"
     And I click on "moodle-logo.png" "link"

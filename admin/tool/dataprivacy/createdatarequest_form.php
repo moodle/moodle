@@ -23,6 +23,7 @@
  */
 
 use tool_dataprivacy\api;
+use tool_dataprivacy\local\helper;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -37,6 +38,9 @@ require_once($CFG->libdir.'/formslib.php');
  */
 class tool_dataprivacy_data_request_form extends moodleform {
 
+    /** @var bool Flag to indicate whether this form is being rendered for managing data requests or for regular requests. */
+    protected $manage = false;
+
     /**
      * Form definition.
      *
@@ -48,7 +52,8 @@ class tool_dataprivacy_data_request_form extends moodleform {
         global $DB, $USER;
         $mform =& $this->_form;
 
-        if (api::is_site_dpo($USER->id)) {
+        $this->manage = $this->_customdata['manage'];
+        if ($this->manage) {
             $options = [
                 'ajax' => 'tool_dataprivacy/form-user-selector',
                 'multiple' => false
@@ -58,27 +63,12 @@ class tool_dataprivacy_data_request_form extends moodleform {
 
         } else {
             // Get users whom you are being a guardian to if your role has the capability to make data requests for children.
-            $allusernames = get_all_user_name_fields(true, 'u');
-            $sql = "SELECT u.id, $allusernames
-                      FROM {role_assignments} ra, {context} c, {user} u
-                     WHERE ra.userid = :userid
-                           AND ra.contextid = c.id
-                           AND c.instanceid = u.id
-                           AND c.contextlevel = :contextlevel";
-            $params = [
-                'userid' => $USER->id,
-                'contextlevel' => CONTEXT_USER
-            ];
-            $children = $DB->get_records_sql($sql, $params);
-
-            if ($children) {
-                $useroptions = [];
-                $useroptions[$USER->id] = fullname($USER);
-                foreach ($children as $child) {
-                    $childcontext = context_user::instance($child->id);
-                    if (has_capability('tool/dataprivacy:makedatarequestsforchildren', $childcontext)) {
-                        $useroptions[$child->id] = fullname($child);
-                    }
+            if ($children = helper::get_children_of_user($USER->id)) {
+                $useroptions = [
+                    $USER->id => fullname($USER)
+                ];
+                foreach ($children as $key => $child) {
+                    $useroptions[$key] = fullname($child);
                 }
                 $mform->addElement('autocomplete', 'userid', get_string('requestfor', 'tool_dataprivacy'), $useroptions);
                 $mform->addRule('userid', null, 'required', null, 'client');

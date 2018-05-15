@@ -182,16 +182,13 @@ class provider implements
     public static function delete_data_for_all_users_in_context(\context $context) {
         global $DB;
 
-        if (empty($context)) {
-            return;
-        }
-
         if (!$context instanceof \context_module) {
             return;
         }
 
-        $instanceid = $DB->get_field('course_modules', 'instance', ['id' => $context->instanceid], MUST_EXIST);
-        $DB->delete_records('choice_answers', ['choiceid' => $instanceid]);
+        if ($cm = get_coursemodule_from_id('choice', $context->instanceid)) {
+            $DB->delete_records('choice_answers', ['choiceid' => $cm->instance]);
+        }
     }
 
     /**
@@ -210,7 +207,7 @@ class provider implements
         foreach ($contextlist->get_contexts() as $context) {
 
             if (!$context instanceof \context_module) {
-                return;
+                continue;
             }
             $instanceid = $DB->get_field('course_modules', 'instance', ['id' => $context->instanceid], MUST_EXIST);
             $DB->delete_records('choice_answers', ['choiceid' => $instanceid, 'userid' => $userid]);

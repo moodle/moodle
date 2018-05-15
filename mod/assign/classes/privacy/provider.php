@@ -139,15 +139,53 @@ class provider implements metadataprovider, pluginprovider, preference_provider 
                   JOIN {modules} m ON cm.module = m.id AND m.name = :modulename
                   JOIN {assign} a ON cm.instance = a.id
                   JOIN {context} ctx ON cm.id = ctx.instanceid AND ctx.contextlevel = :contextlevel
-             LEFT JOIN {assign_grades} ag ON a.id = ag.assignment
-             LEFT JOIN {assign_overrides} ao ON a.id = ao.assignid
-             LEFT JOIN {assign_submission} asn ON a.id = asn.assignment
-             LEFT JOIN {assign_user_flags} auf ON a.id = auf.assignment
-             LEFT JOIN {assign_user_mapping} aum ON a.id = aum.assignment
-                 WHERE ag.userid = :userid OR ag.grader = :graderid OR ao.userid = :aouserid
-                       OR asn.userid = :asnuserid OR auf.userid = :aufuserid OR aum.userid = :aumuserid";
+                  JOIN {assign_grades} ag ON a.id = ag.assignment AND (ag.userid = :userid OR ag.grader = :graderid)";
+
+                  global $DB;
+
         $contextlist = new contextlist();
         $contextlist->add_from_sql($sql, $params);
+
+        $sql = "SELECT ctx.id
+                  FROM {course_modules} cm
+                  JOIN {modules} m ON cm.module = m.id AND m.name = :modulename
+                  JOIN {assign} a ON cm.instance = a.id
+                  JOIN {context} ctx ON cm.id = ctx.instanceid AND ctx.contextlevel = :contextlevel
+                  JOIN {assign_overrides} ao ON a.id = ao.assignid
+                 WHERE ao.userid = :aouserid";
+
+        $contextlist->add_from_sql($sql, $params);
+
+        $sql = "SELECT ctx.id
+                  FROM {course_modules} cm
+                  JOIN {modules} m ON cm.module = m.id AND m.name = :modulename
+                  JOIN {assign} a ON cm.instance = a.id
+                  JOIN {context} ctx ON cm.id = ctx.instanceid AND ctx.contextlevel = :contextlevel
+                  JOIN {assign_submission} asn ON a.id = asn.assignment
+                 WHERE asn.userid = :asnuserid";
+
+        $contextlist->add_from_sql($sql, $params);
+
+        $sql = "SELECT ctx.id
+                  FROM {course_modules} cm
+                  JOIN {modules} m ON cm.module = m.id AND m.name = :modulename
+                  JOIN {assign} a ON cm.instance = a.id
+                  JOIN {context} ctx ON cm.id = ctx.instanceid AND ctx.contextlevel = :contextlevel
+                  JOIN {assign_user_flags} auf ON a.id = auf.assignment
+                 WHERE auf.userid = :aufuserid";
+
+        $contextlist->add_from_sql($sql, $params);
+
+        $sql = "SELECT ctx.id
+                  FROM {course_modules} cm
+                  JOIN {modules} m ON cm.module = m.id AND m.name = :modulename
+                  JOIN {assign} a ON cm.instance = a.id
+                  JOIN {context} ctx ON cm.id = ctx.instanceid AND ctx.contextlevel = :contextlevel
+                  JOIN {assign_user_mapping} aum ON a.id = aum.assignment
+                 WHERE aum.userid = :aumuserid";
+
+        $contextlist->add_from_sql($sql, $params);
+
         manager::plugintype_class_callback('assignfeedback', self::ASSIGNFEEDBACK_INTERFACE,
                 'get_context_for_userid_within_feedback', [$userid, $contextlist]);
         manager::plugintype_class_callback('assignsubmission', self::ASSIGNSUBMISSION_INTERFACE,
@@ -208,18 +246,8 @@ class provider implements metadataprovider, pluginprovider, preference_provider 
         global $DB;
 
         if ($context->contextlevel == CONTEXT_MODULE) {
-            // Apparently we can't trust anything that comes via the context.
-            // Go go mega query to find out it we have an assign context that matches an existing assignment.
-            $sql = "SELECT a.id
-                    FROM {assign} a
-                    JOIN {course_modules} cm ON a.id = cm.instance
-                    JOIN {modules} m ON m.id = cm.module AND m.name = :modulename
-                    JOIN {context} ctx ON ctx.instanceid = cm.id AND ctx.contextlevel = :contextmodule
-                    WHERE ctx.id = :contextid";
-            $params = ['modulename' => 'assign', 'contextmodule' => CONTEXT_MODULE, 'contextid' => $context->id];
-            $count = $DB->get_field_sql($sql, $params);
-            // If we have a count over zero then we can proceed.
-            if ($count > 0) {
+            $cm = get_coursemodule_from_id('assign', $context->instanceid);
+            if ($cm) {
                 // Get the assignment related to this context.
                 $assign = new \assign($context, null, null);
                 // What to do first... Get sub plugins to delete their stuff.
@@ -376,7 +404,7 @@ class provider implements metadataprovider, pluginprovider, preference_provider 
             'timemodified' => transform::datetime($grade->timemodified),
             'grader' => transform::user($grade->grader),
             'grade' => $grade->grade,
-            'attemptnumber' => $grade->attemptnumber
+            'attemptnumber' => ($grade->attemptnumber + 1)
         ];
         writer::with_context($context)
                 ->export_data(array_merge($currentpath, [get_string('privacy:gradepath', 'mod_assign')]), $gradedata);
@@ -395,7 +423,7 @@ class provider implements metadataprovider, pluginprovider, preference_provider 
             'timemodified' => transform::datetime($submission->timemodified),
             'status' => get_string('submissionstatus_' . $submission->status, 'mod_assign'),
             'groupid' => $submission->groupid,
-            'attemptnumber' => $submission->attemptnumber,
+            'attemptnumber' => ($submission->attemptnumber + 1),
             'latest' => transform::yesno($submission->latest)
         ];
         writer::with_context($context)

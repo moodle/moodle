@@ -41,6 +41,7 @@ $agreedocs = optional_param_array('agreedoc', null, PARAM_INT);
 $behalfid = optional_param('userid', null, PARAM_INT);
 
 $PAGE->set_context(context_system::instance());
+$PAGE->set_pagelayout('standard');
 $PAGE->set_url('/admin/tool/policy/index.php');
 $PAGE->set_popup_notification_allowed(false);
 

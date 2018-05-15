@@ -485,6 +485,23 @@ class core_message_events_testcase extends core_message_messagelib_testcase {
     }
 
     /**
+     * Test the notification sent event when null passed as course.
+     */
+    public function test_notification_sent_with_null_course() {
+        $event = \core\event\notification_sent::create_from_ids(1, 1, 1, null);
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $event->trigger();
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\core\event\notification_sent', $event);
+        $this->assertEquals(SITEID, $event->other['courseid']);
+    }
+
+    /**
      * Test the notification viewed event.
      */
     public function test_notification_viewed() {

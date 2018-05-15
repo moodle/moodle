@@ -17,7 +17,7 @@ Feature: Add media to Atto
     And I set the field "Blog entry body" to "<p>Media test</p>"
     And I select the text in the "Blog entry body" Atto editor
     And I set the field "Entry title" to "The best video in the entire world (not really)"
-    And I click on "Media" "button"
+    And I click on "Insert or edit an audio/video file" "button"
 
   @javascript
   Scenario: Insert some media as a link

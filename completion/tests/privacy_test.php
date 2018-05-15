@@ -47,7 +47,7 @@ class core_completion_privacy_test extends \core_privacy\tests\provider_testcase
         $this->resetAfterTest();
         $user = $this->getDataGenerator()->create_user();
         $this->create_course_completion();
-        $this->complete_course($user);
+        $this->complete_course($user, false);
 
         list($join, $where, $params) = \core_completion\privacy\provider::get_course_completion_join_sql($user->id, 'comp', 'c.id');
         $sql = "SELECT DISTINCT c.id

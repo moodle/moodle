@@ -87,6 +87,9 @@ class tests_content_writer_test extends advanced_testcase {
         $writer->set_context($context);
         $data = $writer->get_data(['data']);
         $this->assertSame($dataa, $data);
+        $this->assertTrue($writer->has_any_data());
+        $this->assertTrue($writer->has_any_data(['data']));
+        $this->assertFalse($writer->has_any_data(['somepath']));
 
         $writer->set_context($usercontext);
         $data = $writer->get_data(['data']);
@@ -181,6 +184,9 @@ class tests_content_writer_test extends advanced_testcase {
         $this->assertEquals('value2', $metadata->value);
         $this->assertEquals('description2', $metadata->description);
         $this->assertEquals('value2', $writer->get_metadata(['metadata'], 'somekey', true));
+        $this->assertTrue($writer->has_any_data());
+        $this->assertTrue($writer->has_any_data(['metadata']));
+        $this->assertFalse($writer->has_any_data(['somepath']));
     }
 
     /**
@@ -326,6 +332,8 @@ class tests_content_writer_test extends advanced_testcase {
         $files = $writer->get_files([]);
         $this->assertCount(1, $files);
         $this->assertEquals($fileb, $files['foo/foo.txt']);
+        $this->assertTrue($writer->has_any_data());
+        $this->assertFalse($writer->has_any_data(['somepath']));
     }
 
     /**
@@ -375,6 +383,10 @@ class tests_content_writer_test extends advanced_testcase {
 
         $data = $writer->get_related_data(['file', 'data'], 'file');
         $this->assertEquals('data1', $data);
+        $this->assertTrue($writer->has_any_data());
+        $this->assertTrue($writer->has_any_data(['file']));
+        $this->assertTrue($writer->has_any_data(['file', 'data']));
+        $this->assertFalse($writer->has_any_data(['somepath']));
     }
 
     /**
@@ -440,6 +452,9 @@ class tests_content_writer_test extends advanced_testcase {
         $this->assertEquals('Content 1', $files['file.txt']);
         $file = $writer->get_custom_file(['file.txt'], 'file.txt');
         $this->assertEquals('Content 1', $file);
+        $this->assertTrue($writer->has_any_data());
+        $this->assertTrue($writer->has_any_data(['file.txt']));
+        $this->assertFalse($writer->has_any_data(['somepath']));
     }
 
     /**

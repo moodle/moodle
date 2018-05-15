@@ -106,7 +106,8 @@ class quiz_add_random_form extends moodleform {
         // Add the javascript required to enhance this mform.
         $PAGE->requires->js_call_amd('mod_quiz/add_random_form', 'init', [
             $mform->getAttribute('id'),
-            $contexts->lowest()->id
+            $contexts->lowest()->id,
+            $tops
         ]);
     }
 

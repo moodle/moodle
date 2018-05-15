@@ -37,6 +37,7 @@ use moodle_url;
 use required_capability_exception;
 use stdClass;
 use tool_dataprivacy\external\data_request_exporter;
+use tool_dataprivacy\local\helper;
 use tool_dataprivacy\task\initiate_data_request_task;
 use tool_dataprivacy\task\process_data_request_task;
 
@@ -186,8 +187,25 @@ class api {
         $datarequest = new data_request();
         // The user the request is being made for.
         $datarequest->set('userid', $foruser);
+
+        $requestinguser = $USER->id;
+        // Check when the user is making a request on behalf of another.
+        if ($requestinguser != $foruser) {
+            if (self::is_site_dpo($requestinguser)) {
+                // The user making the request is a DPO. Should be fine.
+                $datarequest->set('dpo', $requestinguser);
+            } else {
+                // If not a DPO, only users with the capability to make data requests for the user should be allowed.
+                // (e.g. users with the Parent role, etc).
+                if (!api::can_create_data_request_for_user($foruser)) {
+                    $forusercontext = \context_user::instance($foruser);
+                    throw new required_capability_exception($forusercontext,
+                            'tool/dataprivacy:makedatarequestsforchildren', 'nopermissions', '');
+                }
+            }
+        }
         // The user making the request.
-        $datarequest->set('requestedby', $USER->id);
+        $datarequest->set('requestedby', $requestinguser);
         // Set status.
         $datarequest->set('status', self::DATAREQUEST_STATUS_PENDING);
         // Set request type.
@@ -218,16 +236,29 @@ class api {
      * @throws dml_exception
      */
     public static function get_data_requests($userid = 0) {
-        global $USER;
+        global $DB, $USER;
         $results = [];
         $sort = 'status ASC, timemodified ASC';
         if ($userid) {
             // Get the data requests for the user or data requests made by the user.
-            $select = "userid = :userid OR requestedby = :requestedby";
+            $select = "(userid = :userid OR requestedby = :requestedby)";
             $params = [
                 'userid' => $userid,
                 'requestedby' => $userid
             ];
+
+            // Build a list of user IDs that the user is allowed to make data requests for.
+            // Of course, the user should be included in this list.
+            $alloweduserids = [$userid];
+            // Get any users that the user can make data requests for.
+            if ($children = helper::get_children_of_user($userid)) {
+                // Get the list of user IDs of the children and merge to the allowed user IDs.
+                $alloweduserids = array_merge($alloweduserids, array_keys($children));
+            }
+            list($insql, $inparams) = $DB->get_in_or_equal($alloweduserids, SQL_PARAMS_NAMED);
+            $select .= " AND userid $insql";
+            $params = array_merge($params, $inparams);
+
             $results = data_request::get_records_select($select, $params, $sort);
         } else {
             // If the current user is one of the site's Data Protection Officers, then fetch all data requests.
@@ -290,17 +321,19 @@ class api {
      * @param int $requestid The request identifier.
      * @param int $status The request status.
      * @param int $dpoid The user ID of the Data Protection Officer
+     * @param string $comment The comment about the status update.
      * @return bool
      * @throws invalid_persistent_exception
      * @throws coding_exception
      */
-    public static function update_request_status($requestid, $status, $dpoid = 0) {
+    public static function update_request_status($requestid, $status, $dpoid = 0, $comment = '') {
         // Update the request.
         $datarequest = new data_request($requestid);
         $datarequest->set('status', $status);
         if ($dpoid) {
             $datarequest->set('dpo', $dpoid);
         }
+        $datarequest->set('dpocomment', $comment);
         return $datarequest->update();
     }
 
@@ -455,6 +488,19 @@ class api {
     }
 
     /**
+     * Checks whether a non-DPO user can make a data request for another user.
+     *
+     * @param int $user The user ID of the target user.
+     * @param int $requester The user ID of the user making the request.
+     * @return bool
+     * @throws coding_exception
+     */
+    public static function can_create_data_request_for_user($user, $requester = null) {
+        $usercontext = \context_user::instance($user);
+        return has_capability('tool/dataprivacy:makedatarequestsforchildren', $usercontext, $requester);
+    }
+
+    /**
      * Creates a new data purpose.
      *
      * @param stdClass $record
@@ -477,6 +523,10 @@ class api {
      */
     public static function update_purpose(stdClass $record) {
         self::check_can_manage_data_registry();
+
+        if (!isset($record->sensitivedatareasons)) {
+            $record->sensitivedatareasons = '';
+        }
 
         $purpose = new purpose($record->id);
         $purpose->from_record($record);
@@ -765,6 +815,7 @@ class api {
      * @param int $status the status to set the contexts to.
      */
     public static function add_request_contexts_with_status(contextlist_collection $clcollection, int $requestid, int $status) {
+        $request = new data_request($requestid);
         foreach ($clcollection as $contextlist) {
             // Convert the \core_privacy\local\request\contextlist into a contextlist persistent and store it.
             $clp = \tool_dataprivacy\contextlist::from_contextlist($contextlist);
@@ -773,6 +824,12 @@ class api {
 
             // Store the associated contexts in the contextlist.
             foreach ($contextlist->get_contextids() as $contextid) {
+                if ($request->get('type') == static::DATAREQUEST_TYPE_DELETE) {
+                    $context = \context::instance_by_id($contextid);
+                    if (($purpose = static::get_effective_context_purpose($context)) && !empty($purpose->get('protected'))) {
+                        continue;
+                    }
+                }
                 $context = new contextlist_context();
                 $context->set('contextid', $contextid)
                     ->set('contextlistid', $contextlistid)
@@ -869,6 +926,7 @@ class api {
                 }
                 $contexts = [];
             }
+
             $contexts[] = $record->contextid;
             $lastcomponent = $record->component;
         }

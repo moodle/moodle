@@ -56,6 +56,10 @@ class metadata_registry {
                     if (isset($metadata[$component])) {
                         $collection = $metadata[$component]->get_collection();
                         $internaldata = $this->format_metadata($collection, $component, $internaldata);
+                    } else if ($manager->is_empty_subsystem($component)) {
+                        // This is an unused subsystem.
+                        // Use the generic string.
+                        $internaldata['nullprovider'] = get_string('privacy:subsystem:empty', 'core_privacy');
                     } else {
                         // Call get_reason for null provider.
                         $internaldata['nullprovider'] = get_string($manager->get_null_provider_reason($component), $component);
@@ -122,11 +126,15 @@ class metadata_registry {
      * @return array An array of plugin types which contain plugin data.
      */
     protected function get_full_component_list() {
+        global $CFG;
+
         $list = \core_component::get_component_list();
+        $list['core']['core'] = "{$CFG->dirroot}/lib";
         $formattedlist = [];
         foreach ($list as $plugintype => $plugin) {
             $formattedlist[] = ['plugin_type' => $plugintype, 'plugins' => array_keys($plugin)];
         }
+
         return $formattedlist;
     }
 

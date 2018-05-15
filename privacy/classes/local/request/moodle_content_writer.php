@@ -84,7 +84,7 @@ class moodle_content_writer implements content_writer {
     public function export_data(array $subcontext, \stdClass $data) : content_writer {
         $path = $this->get_path($subcontext, 'data.json');
 
-        $this->write_data($path, json_encode($data, JSON_UNESCAPED_UNICODE));
+        $this->write_data($path, json_encode($data, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
 
         return $this;
     }
@@ -115,7 +115,7 @@ class moodle_content_writer implements content_writer {
         ];
 
         $path = $this->get_path($subcontext, 'metadata.json');
-        $this->write_data($path, json_encode($data, JSON_UNESCAPED_UNICODE));
+        $this->write_data($path, json_encode($data, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
 
         return $this;
     }
@@ -131,7 +131,7 @@ class moodle_content_writer implements content_writer {
     public function export_related_data(array $subcontext, $name, $data) : content_writer {
         $path = $this->get_path($subcontext, "{$name}.json");
 
-        $this->write_data($path, json_encode($data, JSON_UNESCAPED_UNICODE));
+        $this->write_data($path, json_encode($data, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
 
         return $this;
     }
@@ -162,7 +162,7 @@ class moodle_content_writer implements content_writer {
      * @return  string                      The processed string
      */
     public function rewrite_pluginfile_urls(array $subcontext, $component, $filearea, $itemid, $text) : string {
-        return str_replace('@@PLUGINFILE@@/', $this->get_files_target_path($component, $filearea, $itemid).'/', $text);
+        return str_replace('@@PLUGINFILE@@/', $this->get_files_target_url($component, $filearea, $itemid).'/', $text);
     }
 
     /**
@@ -230,7 +230,7 @@ class moodle_content_writer implements content_writer {
             'value' => $value,
             'description' => $description,
         ];
-        $this->write_data($path, json_encode($data, JSON_UNESCAPED_UNICODE));
+        $this->write_data($path, json_encode($data, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
 
         return $this;
     }
@@ -272,7 +272,9 @@ class moodle_content_writer implements content_writer {
         // Join the directory together with the name.
         $filepath = implode(DIRECTORY_SEPARATOR, $path) . DIRECTORY_SEPARATOR . $name;
 
-        return preg_replace('@' . DIRECTORY_SEPARATOR . '+@', DIRECTORY_SEPARATOR, $filepath);
+        // To use backslash, it must be doubled ("\\\\" PHP string).
+        $separator = str_replace('\\', '\\\\', DIRECTORY_SEPARATOR);
+        return preg_replace('@(' . $separator . '|/)+@', $separator, $filepath);
     }
 
     /**
@@ -291,7 +293,9 @@ class moodle_content_writer implements content_writer {
         // Join the directory together with the name.
         $filepath = implode(DIRECTORY_SEPARATOR, $path);
 
-        return preg_replace('@' . DIRECTORY_SEPARATOR . '+@', DIRECTORY_SEPARATOR, $filepath);
+        // To use backslash, it must be doubled ("\\\\" PHP string).
+        $separator = str_replace('\\', '\\\\', DIRECTORY_SEPARATOR);
+        return preg_replace('@(' . $separator . '|/)+@', $separator, $filepath);
     }
 
     /**
@@ -312,6 +316,25 @@ class moodle_content_writer implements content_writer {
         }
 
         return implode(DIRECTORY_SEPARATOR, $parts);
+    }
+
+    /**
+     * Get a relative url to the directory of the exported files within a subcontext.
+     *
+     * @param string $component The name of the component that the files belong to.
+     * @param string $filearea The filearea within that component.
+     * @param string $itemid Which item those files belong to.
+     * @return string The url
+     */
+    protected function get_files_target_url($component, $filearea, $itemid) : string {
+        // We do not need to include the component because we organise things by context.
+        $parts = ['_files', $filearea];
+
+        if (!empty($itemid)) {
+            $parts[] = $itemid;
+        }
+
+        return implode('/', $parts);
     }
 
     /**

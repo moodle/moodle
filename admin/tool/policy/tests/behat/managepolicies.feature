@@ -175,7 +175,7 @@ Feature: Manage policies
     And I navigate to "Users > Privacy and policies > Manage policies" in site administration
     And I open the action menu in "Policy1" "table_row"
     And I click on "Set status to \"Active\"" "link" in the "Policy1" "table_row"
-    Then I should see "All users will be required to accept this new policy version to be able to use the site"
+    Then I should see "All users will be required to agree to this new policy version to be able to use the site."
     And I press "Continue"
     And the following should exist in the "tool-policy-managedocs-wrapper" table:
       | Name                           | Policy status | Version    | Agreements   |
@@ -195,13 +195,13 @@ Feature: Manage policies
     And I navigate to "Users > Privacy and policies > Manage policies" in site administration
     And I open the action menu in "Policy1" "table_row"
     And I click on "Set status to \"Inactive\"" "link" in the "Policy1" "table_row"
-    Then I should see "The policy will not apply until some version is made the current one"
+    Then I should see "You are about to inactivate policy"
     And I press "Continue"
     And the following should exist in the "tool-policy-managedocs-wrapper" table:
       | Name                           | Policy status | Version    | Agreements   |
       | Policy1 Site policy, All users | Inactive      | v1         | 1 of 4 (25%) |
     And I open the action menu in "Policy1" "table_row"
-    And I click on "Create a new \"Draft\"" "link" in the "Policy1" "table_row"
+    And I click on "Create a new draft" "link" in the "Policy1" "table_row"
     And I set the field "Version" to "v2"
     And I set the field "Name" to "Policy2"
     And the field "status" matches value "0"
@@ -238,7 +238,7 @@ Feature: Manage policies
     And I click on "Set status to \"Inactive\"" "link" in the "Policy1" "table_row"
     And I press "Continue"
     And I open the action menu in "Policy1" "table_row"
-    And I click on "Create a new \"Draft\"" "link" in the "Policy1" "table_row"
+    And I click on "Create a new draft" "link" in the "Policy1" "table_row"
     And I set the field "Version" to "v2"
     And I set the field "Name" to "Policy2"
     And I set the field "Active" to "1"

@@ -55,6 +55,7 @@ class context_instance extends \core\form\persistent {
             $subjectscope = get_string('noassignedroles', 'tool_dataprivacy');
         }
         $this->_form->addElement('static', 'subjectscope', get_string('subjectscope', 'tool_dataprivacy'), $subjectscope);
+        $this->_form->addHelpButton('subjectscope', 'subjectscope', 'tool_dataprivacy');
 
         $this->add_purpose_category($this->_customdata['context']->contextlevel);
 
@@ -79,6 +80,7 @@ class context_instance extends \core\form\persistent {
         $addcategory = $mform->createElement('button', 'addcategory', $addcategorytext, ['data-add-element' => 'category']);
         $mform->addElement('group', 'categorygroup', get_string('category', 'tool_dataprivacy'),
             [$categoryselect, $addcategory], null, false);
+        $mform->addHelpButton('categorygroup', 'category', 'tool_dataprivacy');
         $mform->setType('categoryid', PARAM_INT);
         $mform->setDefault('categoryid', 0);
 
@@ -87,12 +89,14 @@ class context_instance extends \core\form\persistent {
         $addpurpose = $mform->createElement('button', 'addpurpose', $addpurposetext, ['data-add-element' => 'purpose']);
         $mform->addElement('group', 'purposegroup', get_string('purpose', 'tool_dataprivacy'),
             [$purposeselect, $addpurpose], null, false);
+        $mform->addHelpButton('purposegroup', 'purpose', 'tool_dataprivacy');
         $mform->setType('purposeid', PARAM_INT);
         $mform->setDefault('purposeid', 0);
 
         if (!empty($this->_customdata['currentretentionperiod'])) {
             $mform->addElement('static', 'retention_current', get_string('retentionperiod', 'tool_dataprivacy'),
                 $this->_customdata['currentretentionperiod']);
+            $mform->addHelpButton('retention_current', 'retentionperiod', 'tool_dataprivacy');
         }
     }
 

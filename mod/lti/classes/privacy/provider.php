@@ -163,8 +163,9 @@ class provider implements
             return;
         }
 
-        $instanceid = $DB->get_field('course_modules', 'instance', ['id' => $context->instanceid], MUST_EXIST);
-        $DB->delete_records('lti_submission', ['ltiid' => $instanceid]);
+        if ($cm = get_coursemodule_from_id('lti', $context->instanceid)) {
+            $DB->delete_records('lti_submission', ['ltiid' => $cm->instance]);
+        }
     }
 
     /**
@@ -182,7 +183,7 @@ class provider implements
         $userid = $contextlist->get_user()->id;
         foreach ($contextlist->get_contexts() as $context) {
             if (!$context instanceof \context_module) {
-                return;
+                continue;
             }
             $instanceid = $DB->get_field('course_modules', 'instance', ['id' => $context->instanceid], MUST_EXIST);
             $DB->delete_records('lti_submission', ['ltiid' => $instanceid, 'userid' => $userid]);

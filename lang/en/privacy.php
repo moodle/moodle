@@ -23,3 +23,13 @@
  */
 
 $string['privacy:metadata'] = 'The privacy subsystem does not store any data of its own and is designed to act as a channel between components and the interface used to describe, export, and remove their data.';
+$string['trace:done'] = 'Complete';
+$string['trace:exportcomplete'] = 'Export complete';
+$string['trace:exportingapproved'] = 'Performing primary export for {$a->total} components ({$a->datetime})';
+$string['trace:exportingrelated'] = 'Performing related export for {$a->total} components ({$a->datetime})';
+$string['trace:finalisingexport'] = 'Finalising export';
+$string['trace:processingcomponent'] = 'Processing {$a->component} ({$a->progress}/{$a->total}) ({$a->datetime})';
+$string['trace:fetchcomponents'] = 'Fetching {$a->total} components ({$a->datetime})';
+$string['trace:deletingapproved'] = 'Performing removal of approved {$a->total} contexts ({$a->datetime})';
+$string['trace:deletingcontext'] = 'Performing removal of context from {$a->total} components ({$a->datetime})';
+$string['privacy:subsystem:empty'] = 'This subsystem does not store any data.';

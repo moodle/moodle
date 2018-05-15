@@ -897,7 +897,7 @@ class moodle_content_writer_test extends advanced_testcase {
         $contextpath = $this->get_context_path($context, $subcontext, 'metadata.json');
 
         $json = $fileroot->getChild($contextpath)->getContent();
-        $this->assertRegExp("/$text.*$text.*$text/", $json);
+        $this->assertRegExp("/$text.*$text.*$text/is", $json);
 
         $expanded = json_decode($json);
         $this->assertTrue(isset($expanded->$text));
@@ -950,7 +950,7 @@ class moodle_content_writer_test extends advanced_testcase {
         $contextpath = $this->get_context_path($context, [get_string('userpreferences')], "{$component}.json");
 
         $json = $fileroot->getChild($contextpath)->getContent();
-        $this->assertRegExp("/$text.*$text.*$text/", $json);
+        $this->assertRegExp("/$text.*$text.*$text/is", $json);
 
         $expanded = json_decode($json);
         $this->assertTrue(isset($expanded->$text));
@@ -1053,7 +1053,7 @@ class moodle_content_writer_test extends advanced_testcase {
         $this->assertEquals($expectedpath, $contextpath);
 
         $json = $fileroot->getChild($contextpath)->getContent();
-        $this->assertRegExp("/$text.*$text.*$text/", $json);
+        $this->assertRegExp("/$text.*$text.*$text/is", $json);
 
         $expanded = json_decode($json);
         $this->assertTrue(isset($expanded->$text));
@@ -1091,7 +1091,7 @@ class moodle_content_writer_test extends advanced_testcase {
         $this->assertEquals($expectedpath, $contextpath);
 
         $json = $fileroot->getChild($contextpath)->getContent();
-        $this->assertRegExp("/$text.*$text.*$text/", $json);
+        $this->assertRegExp("/$text.*$text.*$text/is", $json);
 
         $expanded = json_decode($json);
         $this->assertTrue(isset($expanded->$text));
@@ -1162,12 +1162,18 @@ class moodle_content_writer_test extends advanced_testcase {
         if (null === $subcontext) {
             $rcm = $rc->getMethod('get_context_path');
             $rcm->setAccessible(true);
-            return $rcm->invoke($writer);
+            $path = $rcm->invoke($writer);
         } else {
             $rcm = $rc->getMethod('get_path');
             $rcm->setAccessible(true);
-            return $rcm->invoke($writer, $subcontext, $name);
+            $path = $rcm->invoke($writer, $subcontext, $name);
         }
+
+        // PHPUnit uses mikey179/vfsStream which is a stream wrapper for a virtual file system that uses '/'
+        // as the directory separator.
+        $path = str_replace(DIRECTORY_SEPARATOR, '/', $path);
+
+        return $path;
     }
 
     /**

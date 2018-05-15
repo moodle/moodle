@@ -128,6 +128,18 @@ class provider_testcase extends advanced_testcase {
                 $this->assertTrue($DB->get_manager()->table_exists($item->get_name()));
             }
 
+            if ($item instanceof \core_privacy\local\metadata\types\plugintype_link) {
+                // Check that plugin type is valid.
+                $this->assertTrue(array_key_exists($item->get_name(), \core_component::get_plugin_types()));
+            }
+
+            if ($item instanceof subsystem_link) {
+                // Check that core subsystem exists.
+                list($plugintype, $pluginname) = \core_component::normalize_component($item->get_name());
+                $this->assertEquals('core', $plugintype);
+                $this->assertTrue(\core_component::is_core_subsystem($pluginname));
+            }
+
             if ($summary = $item->get_summary()) {
                 // Summary is optional, but when provided must be a valid string identifier.
                 $this->assertInternalType('string', $summary);
@@ -149,6 +161,18 @@ class provider_testcase extends advanced_testcase {
                 }
             }
         }
+    }
+
+    /**
+     * Test that all providers implement some form of compliant provider.
+     *
+     * @dataProvider get_component_list
+     * @param string $component frankenstyle component name, e.g. 'mod_assign'
+     * @param string $classname the fully qualified provider classname
+     */
+    public function test_all_providers_compliant($component, $classname) {
+        $manager = new manager();
+        $this->assertTrue($manager->component_is_compliant($component));
     }
 
     /**

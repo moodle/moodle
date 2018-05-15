@@ -211,7 +211,7 @@ class provider implements
         ], 'privacy:metadata:competency_userevidencecomp');
 
         // Comments can be left on learning plans and competencies.
-        $collection->link_subsystem('core_comments', 'privacy:metadata:core_comments');
+        $collection->link_subsystem('core_comment', 'privacy:metadata:core_comments');
 
         return $collection;
     }
@@ -250,11 +250,13 @@ class provider implements
                  ON tpl.contextid = ctx.id
           LEFT JOIN {" . template_cohort::TABLE . "} tch
                  ON tch.templateid = tpl.id
+                AND tch.usermodified = :userid2
           LEFT JOIN {" . template_competency::TABLE . "} tc
                  ON tc.templateid = tpl.id
+                AND tc.usermodified = :userid3
               WHERE tpl.usermodified = :userid1
-                 OR tch.usermodified = :userid2
-                 OR tc.usermodified = :userid3";
+                 OR tch.id IS NOT NULL
+                 OR tc.id IS NOT NULL";
         $params = ['userid1' => $userid, 'userid2' => $userid, 'userid3' => $userid];
         $contextlist->add_from_sql($sql, $params);
 
@@ -309,12 +311,14 @@ class provider implements
                 AND ctx.contextlevel = :userlevel
           LEFT JOIN {" . plan_competency::TABLE . "} pc
                  ON pc.planid = p.id
+                AND pc.usermodified = :userid3
           LEFT JOIN {" . user_competency_plan::TABLE . "} upc
                  ON upc.planid = p.id
+                AND upc.usermodified = :userid4
               WHERE p.usermodified = :userid1
                  OR p.reviewerid = :userid2
-                 OR pc.usermodified = :userid3
-                 OR upc.usermodified = :userid4";
+                 OR pc.id IS NOT NULL
+                 OR upc.id IS NOT NULL";
         $params = [
             'userlevel' => CONTEXT_USER,
             'userid1' => $userid,
@@ -333,17 +337,19 @@ class provider implements
                 AND ctx.contextlevel = :userlevel1
           LEFT JOIN {" . evidence::TABLE . "} e
                  ON e.usercompetencyid = uc.id
+                AND (e.usermodified = :userid3 OR e.actionuserid = :userid4)
           LEFT JOIN {" . user_evidence::TABLE . "} ue
                  ON ue.userid = ctx.instanceid
                 AND ctx.contextlevel = :userlevel2
+                AND ue.usermodified = :userid5
           LEFT JOIN {" . user_evidence_competency::TABLE . "} uec
                  ON uec.userevidenceid = ue.id
+                AND uec.usermodified = :userid6
               WHERE uc.usermodified = :userid1
                  OR uc.reviewerid = :userid2
-                 OR e.usermodified = :userid3
-                 OR e.actionuserid = :userid4
-                 OR ue.usermodified = :userid5
-                 OR uec.usermodified = :userid6";
+                 OR e.id IS NOT NULL
+                 OR ue.id IS NOT NULL
+                 OR uec.id IS NOT NULL";
         $params = [
             'userlevel1' => CONTEXT_USER,
             'userlevel2' => CONTEXT_USER,
@@ -367,15 +373,19 @@ class provider implements
           LEFT JOIN {" . user_competency::TABLE . "} uc
                  ON uc.userid = ctx.instanceid
                 AND ctx.contextlevel = :userlevel2
+                AND uc.userid = :userid2
           LEFT JOIN {" . user_evidence::TABLE . "} ue
                  ON ue.userid = ctx.instanceid
                 AND ctx.contextlevel = :userlevel3
+                AND ue.userid = :userid3
           LEFT JOIN {" . user_competency_course::TABLE . "} ucc
-                 ON ucc.courseid = ctx.instanceid AND ctx.contextlevel = :courselevel
+                 ON ucc.courseid = ctx.instanceid
+                AND ctx.contextlevel = :courselevel
+                AND ucc.userid = :userid4
               WHERE p.userid = :userid1
-                 OR uc.userid = :userid2
-                 OR ue.userid = :userid3
-                 OR ucc.userid = :userid4";
+                 OR uc.id IS NOT NULL
+                 OR ue.id IS NOT NULL
+                 OR ucc.id IS NOT NULL";
         $params = [
             'userlevel1' => CONTEXT_USER,
             'userlevel2' => CONTEXT_USER,

@@ -123,11 +123,17 @@ class manager {
         if ($this->component_implements($component, \core_privacy\local\metadata\null_provider::class)) {
             return true;
         }
+
+        if (static::is_empty_subsystem($component)) {
+            return true;
+        }
+
         // Components which store user data must implement the local\metadata\provider and the local\request\data_provider.
         if ($this->component_implements($component, \core_privacy\local\metadata\provider::class) &&
             $this->component_implements($component, \core_privacy\local\request\data_provider::class)) {
             return true;
         }
+
         return false;
     }
 
@@ -143,6 +149,23 @@ class manager {
         } else {
             throw new \coding_exception('Call to undefined method', 'Please only call this method on a null provider.');
         }
+    }
+
+    /**
+     * Return whether this is an 'empty' subsystem - that is, a subsystem without a directory.
+     *
+     * @param  string $component Frankenstyle component name.
+     * @return string The key to retrieve the language string for the null provider reason.
+     */
+    public static function is_empty_subsystem($component) {
+        if (strpos($component, 'core_') === 0) {
+            if (null === \core_component::get_subsystem_directory(substr($component, 5))) {
+                // This is a subsystem without a directory.
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -168,8 +191,23 @@ class manager {
      * @return contextlist_collection the collection of contextlist items for the respective components.
      */
     public function get_contexts_for_userid(int $userid) : contextlist_collection {
+        $progress = static::get_log_tracer();
+
+        $components = $this->get_component_list();
+        $a = (object) [
+            'total' => count($components),
+            'progress' => 0,
+            'component' => '',
+            'datetime' => userdate(time()),
+        ];
         $clcollection = new contextlist_collection($userid);
-        foreach ($this->get_component_list() as $component) {
+
+        $progress->output(get_string('trace:fetchcomponents', 'core_privacy', $a), 1);
+        foreach ($components as $component) {
+            $a->component = $component;
+            $a->progress++;
+            $a->datetime = userdate(time());
+            $progress->output(get_string('trace:processingcomponent', 'core_privacy', $a), 2);
             if ($this->component_implements($component, \core_privacy\local\request\core_user_data_provider::class)) {
                 $contextlist = $this->get_provider_classname($component)::get_contexts_for_userid($userid);
             } else {
@@ -187,6 +225,7 @@ class manager {
                 $clcollection->add_contextlist($contextlist);
             }
         }
+        $progress->output(get_string('trace:done', 'core_privacy'), 1);
 
         return $clcollection;
     }
@@ -202,13 +241,29 @@ class manager {
      * approved_contextlists' components is not a core_data_provider.
      */
     public function export_user_data(contextlist_collection $contextlistcollection) {
+        $progress = static::get_log_tracer();
+
+        $a = (object) [
+            'total' => count($contextlistcollection),
+            'progress' => 0,
+            'component' => '',
+            'datetime' => userdate(time()),
+        ];
+
         // Export for the various components/contexts.
+        $progress->output(get_string('trace:exportingapproved', 'core_privacy', $a), 1);
         foreach ($contextlistcollection as $approvedcontextlist) {
+
             if (!$approvedcontextlist instanceof \core_privacy\local\request\approved_contextlist) {
                 throw new \moodle_exception('Contextlist must be an approved_contextlist');
             }
 
             $component = $approvedcontextlist->get_component();
+            $a->component = $component;
+            $a->progress++;
+            $a->datetime = userdate(time());
+            $progress->output(get_string('trace:processingcomponent', 'core_privacy', $a), 2);
+
             // Core user data providers.
             if ($this->component_implements($component, \core_privacy\local\request\core_user_data_provider::class)) {
                 if (count($approvedcontextlist)) {
@@ -216,21 +271,42 @@ class manager {
                     // told to export.
                     $this->get_provider_classname($component)::export_user_data($approvedcontextlist);
                 }
-            } else {
+            } else if (!$this->component_implements($component, \core_privacy\local\request\context_aware_provider::class)) {
                 // This plugin does not know that it has data - export the shared data it doesn't know about.
                 local\request\helper::export_data_for_null_provider($approvedcontextlist);
             }
         }
+        $progress->output(get_string('trace:done', 'core_privacy'), 1);
 
         // Check each component for non contextlist items too.
-        foreach ($this->get_component_list() as $component) {
+        $components = $this->get_component_list();
+        $a->total = count($components);
+        $a->progress = 0;
+        $a->datetime = userdate(time());
+        $progress->output(get_string('trace:exportingrelated', 'core_privacy', $a), 1);
+        foreach ($components as $component) {
+            $a->component = $component;
+            $a->progress++;
+            $a->datetime = userdate(time());
+            $progress->output(get_string('trace:processingcomponent', 'core_privacy', $a), 2);
             // Core user preference providers.
             if ($this->component_implements($component, \core_privacy\local\request\user_preference_provider::class)) {
                 $this->get_provider_classname($component)::export_user_preferences($contextlistcollection->get_userid());
             }
-        }
 
-        return local\request\writer::with_context(\context_system::instance())->finalise_content();
+            // Contextual information providers. Give each component a chance to include context information based on the
+            // existence of a child context in the contextlist_collection.
+            if ($this->component_implements($component, \core_privacy\local\request\context_aware_provider::class)) {
+                $this->get_provider_classname($component)::export_context_data($contextlistcollection);
+            }
+        }
+        $progress->output(get_string('trace:done', 'core_privacy'), 1);
+
+        $progress->output(get_string('trace:finalisingexport', 'core_privacy'), 1);
+        $location = local\request\writer::with_context(\context_system::instance())->finalise_content();
+
+        $progress->output(get_string('trace:exportcomplete', 'core_privacy'), 1);
+        return $location;
     }
 
     /**
@@ -245,13 +321,29 @@ class manager {
      * for an approved_contextlist isn't a core provider.
      */
     public function delete_data_for_user(contextlist_collection $contextlistcollection) {
+        $progress = static::get_log_tracer();
+
+        $a = (object) [
+            'total' => count($contextlistcollection),
+            'progress' => 0,
+            'component' => '',
+            'datetime' => userdate(time()),
+        ];
+
         // Delete the data.
+        $progress->output(get_string('trace:deletingapproved', 'core_privacy', $a), 1);
         foreach ($contextlistcollection as $approvedcontextlist) {
             if (!$approvedcontextlist instanceof \core_privacy\local\request\approved_contextlist) {
                 throw new \moodle_exception('Contextlist must be an approved_contextlist');
             }
 
-            if ($this->component_is_core_provider($approvedcontextlist->get_component())) {
+            $component = $approvedcontextlist->get_component();
+            $a->component = $component;
+            $a->progress++;
+            $a->datetime = userdate(time());
+            $progress->output(get_string('trace:processingcomponent', 'core_privacy', $a), 2);
+
+            if ($this->component_is_core_provider($component)) {
                 if (count($approvedcontextlist)) {
                     // The component knows about data that it has.
                     // Have it delete its own data.
@@ -262,6 +354,7 @@ class manager {
             // Delete any shared user data it doesn't know about.
             local\request\helper::delete_data_for_user($approvedcontextlist);
         }
+        $progress->output(get_string('trace:done', 'core_privacy'), 1);
     }
 
     /**
@@ -270,7 +363,23 @@ class manager {
      * @param   context         $context   The specific context to delete data for.
      */
     public function delete_data_for_all_users_in_context(\context $context) {
+        $progress = static::get_log_tracer();
+
+        $components = $this->get_component_list();
+        $a = (object) [
+            'total' => count($components),
+            'progress' => 0,
+            'component' => '',
+            'datetime' => userdate(time()),
+        ];
+
+        $progress->output(get_string('trace:deletingcontext', 'core_privacy', $a), 1);
         foreach ($this->get_component_list() as $component) {
+            $a->component = $component;
+            $a->progress++;
+            $a->datetime = userdate(time());
+            $progress->output(get_string('trace:processingcomponent', 'core_privacy', $a), 2);
+
             if ($this->component_implements($component, \core_privacy\local\request\core_user_data_provider::class)) {
                 // This component knows about specific data that it owns.
                 // Have it delete all of that user data for the context.
@@ -280,6 +389,7 @@ class manager {
             // Delete any shared user data it doesn't know about.
             local\request\helper::delete_data_for_all_users_in_context($component, $context);
         }
+        $progress->output(get_string('trace:done', 'core_privacy'), 1);
     }
 
     /**
@@ -298,9 +408,12 @@ class manager {
      * @return array the array of frankenstyle component names.
      */
     protected function get_component_list() {
-        return array_keys(array_reduce(\core_component::get_component_list(), function($carry, $item) {
+        $components = array_keys(array_reduce(\core_component::get_component_list(), function($carry, $item) {
             return array_merge($carry, $item);
         }, []));
+        $components[] = 'core';
+
+        return $components;
     }
 
     /**
@@ -371,5 +484,20 @@ class manager {
         }
 
         return null;
+    }
+
+    /**
+     * Get the tracer used for logging.
+     *
+     * The text tracer is used except for unit tests.
+     *
+     * @return  \progress_trace
+     */
+    protected static function get_log_tracer() {
+        if (PHPUNIT_TEST) {
+            return new \null_progress_trace();
+        }
+
+        return new \text_progress_trace();
     }
 }
