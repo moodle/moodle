@@ -158,22 +158,6 @@ class tool_policy_privacy_provider_testcase extends \core_privacy\tests\provider
         $this->assertEquals($this->user->id, $datauser->agreedby);
         $this->assertEquals(strip_tags($policy2->get('summary')), strip_tags($datauser->summary));
         $this->assertEquals(strip_tags($policy2->get('content')), strip_tags($datauser->content));
-
-        /**
-        // User can see policy documents.
-        $writer = writer::with_context($systemcontext);
-        $this->assertTrue($writer->has_any_data());
-
-        $subcontext = array_merge($agreementsubcontext, [get_string('policynamedversion', 'tool_policy', $policy1->to_record())]);
-        $dataversion = $writer->get_data($subcontext);
-        $this->assertEquals($policy1->get('name'), $dataversion->name);
-        $this->assertEquals(get_string('no'), $dataversion->createdbyme);
-
-        $subcontext = array_merge($agreementsubcontext, [get_string('policynamedversion', 'tool_policy', $policy2->to_record())]);
-        $dataversion = $writer->get_data($subcontext);
-        $this->assertEquals($policy1->get('name'), $dataversion->name);
-        $this->assertEquals(get_string('no'), $dataversion->createdbyme);
-         */
     }
 
     public function test_export_agreements_for_other() {
@@ -205,7 +189,14 @@ class tool_policy_privacy_provider_testcase extends \core_privacy\tests\provider
         // Request export for the manager.
         $contextlist = provider::get_contexts_for_userid($this->manager->id);
         $this->assertCount(3, $contextlist);
-        $this->assertEquals([$managercontext->id, $usercontext->id, $systemcontext->id], $contextlist->get_contextids(), '', 0.0, 1, true);
+        $this->assertEquals(
+            [$managercontext->id, $usercontext->id, $systemcontext->id],
+            $contextlist->get_contextids(),
+            '',
+            0.0,
+            1,
+            true
+        );
 
         $approvedcontextlist = new approved_contextlist($this->user, 'tool_policy', [$usercontext->id]);
         provider::export_user_data($approvedcontextlist);

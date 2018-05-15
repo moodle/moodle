@@ -140,36 +140,8 @@ class provider implements
     public static function export_user_data(approved_contextlist $contextlist) {
         global $DB;
 
-        // Remove contexts different from USER.
-        $contexts = array_reduce($contextlist->get_contexts(), function($carry, $context) {
-            if ($context->contextlevel == CONTEXT_USER) {
-                $carry[$context->instanceid] = $context;
-            }
-            if ($context->contextlevel == CONTEXT_SYSTEM) {
-                $carry[$context->instanceid] = $context;
-            }
-            return $carry;
-        }, []);
-
-        if (empty($contexts)) {
-            return;
-        }
-
         // Export user agreements.
-        $subcontext = [
-            get_string('privacyandpolicies', 'admin'),
-            get_string('useracceptances', 'tool_policy')
-        ];
-        $policyversionids = [];
-
-        $agreementsql = "SELECT
-                            a.id, a.userid, v.name, v.revision, a.usermodified, a.timecreated,
-                            a.timemodified, a.note, v.archived, p.currentversionid, a.status, a.policyversionid
-                         FROM {tool_policy_acceptances} a
-                         JOIN {tool_policy_versions} v ON v.id = a.policyversionid
-                         JOIN {tool_policy} p ON v.policyid = p.id
-                        WHERE a.userid = :userid OR a.usermodified = :usermodified";
-        foreach ($contexts as $context) {
+        foreach ($contextlist->get_contexts() as $context) {
             if ($context->contextlevel == CONTEXT_USER) {
                 static::export_policy_agreements_for_context($context);
             } else if ($context->contextlevel == CONTEXT_SYSTEM) {
@@ -182,6 +154,7 @@ class provider implements
      * Delete all data for all users in the specified context.
      *
      * We never delete user agreements to the policies because they are part of privacy data.
+     * We never delete policy versions because they are part of privacy data.
      *
      * @param \context $context The context to delete in.
      */
@@ -192,6 +165,7 @@ class provider implements
      * Delete all user data for the specified user, in the specified contexts.
      *
      * We never delete user agreements to the policies because they are part of privacy data.
+     * We never delete policy versions because they are part of privacy data.
      *
      * @param approved_contextlist $contextlist A list of contexts approved for deletion.
      */
@@ -206,10 +180,13 @@ class provider implements
     protected static function export_policy_agreements_for_context(\context_user $context) {
         global $DB;
 
+        $sysctx = \context_system::instance();
+        $fs = get_file_storage();
         $agreementsql = "
             SELECT
-                a.id, a.userid, a.timemodified, a.note, a.status, a.policyversionid, a.usermodified, a.timecreated,
-                v.id AS versionid, v.archived, v.name, v.revision,
+                a.id AS agreementid, a.userid, a.timemodified, a.note, a.status,
+                a.policyversionid AS versionid, a.usermodified, a.timecreated,
+                v.id, v.archived, v.name, v.revision,
                 v.summary, v.summaryformat,
                 v.content, v.contentformat,
                 p.currentversionid
@@ -249,7 +226,7 @@ class provider implements
             $agreementcontent = (object) [
                 'name' => $agreement->name,
                 'revision' => $agreement->revision,
-                'isactive' => transform::yesno($agreement->policyversionid == $agreement->currentversionid),
+                'isactive' => transform::yesno($agreement->versionid == $agreement->currentversionid),
                 'isagreed' => transform::yesno($agreement->status),
                 'agreedby' => transform::user($agreement->usermodified),
                 'timecreated' => transform::datetime($agreement->timecreated),
@@ -259,16 +236,23 @@ class provider implements
                 'content' => format_text($content, $agreement->contentformat),
             ];
 
-            writer::with_context($context)
-                ->export_data($subcontext, $agreementcontent)
-                ->export_area_files($subcontext, 'tool_policy', 'policydocumentsummary', $agreement->versionid)
-                ->export_area_files($subcontext, 'tool_policy', 'policydocumentcontent', $agreement->versionid);
+            writer::with_context($context)->export_data($subcontext, $agreementcontent);
+            // Manually export the files as they reside in the system context so we can't use
+            // the write's helper methods.
+            foreach ($fs->get_area_files($sysctx->id, 'tool_policy', 'policydocumentsummary', $agreement->versionid) as $file) {
+                writer::with_context($context)->export_file($subcontext, $file);
+            }
+            foreach ($fs->get_area_files($sysctx->id, 'tool_policy', 'policydocumentcontent', $agreement->versionid) as $file) {
+                writer::with_context($context)->export_file($subcontext, $file);
+            }
         }
         $agreements->close();
     }
 
     /**
      * Export all policy agreements that the user authored.
+     *
+     * @param stdClass $user The user who has created the policies to export.
      */
     protected static function export_authored_policies(\stdClass $user) {
         global $DB;
