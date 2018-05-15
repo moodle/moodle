@@ -42,3 +42,4 @@ $string['cliunknowoption'] = 'Unrecognised ఎంపికలు:
 $string['cliyesnoprompt'] = 'y (అంటే ఔనని) గానీ, n (అంటే వద్దని) గానీ నొక్కండి';
 $string['environmentrequireinstall'] = 'స్థాపించి, చేతనం చెయ్యడం తప్పనిసరి';
 $string['environmentrequireversion'] = '{$a->needed} వెర్షను తప్పనిసరి. మీరేమో {$a->current} వెర్షను వాడుతున్నారు';
+$string['upgradekeyset'] = 'అప్గ్రేడ్ కీ (ఇది సెట్ చేయకుండా ఖాళీగా వదలండి)';
