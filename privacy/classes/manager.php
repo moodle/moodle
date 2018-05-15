@@ -26,7 +26,6 @@ use core_privacy\local\metadata\collection;
 use core_privacy\local\metadata\null_provider;
 use core_privacy\local\request\context_aware_provider;
 use core_privacy\local\request\contextlist_collection;
-use core_privacy\local\request\core_data_provider;
 use core_privacy\local\request\core_user_data_provider;
 use core_privacy\local\request\data_provider;
 use core_privacy\local\request\user_preference_provider;
@@ -110,6 +109,21 @@ defined('MOODLE_INTERNAL') || die();
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class manager {
+
+    /**
+     * @var manager_observer Observer.
+     */
+    protected $observer;
+
+    /**
+     * Set the failure handler.
+     *
+     * @param   manager_observer $observer
+     */
+    public function set_observer(manager_observer $observer) {
+        $this->observer = $observer;
+    }
+
     /**
      * Checks whether the given component is compliant with the core_privacy API.
      * To be considered compliant, a component must declare whether (and where) it stores personal data.
@@ -152,7 +166,8 @@ class manager {
      */
     public function get_null_provider_reason($component) {
         if ($this->component_implements($component, null_provider::class)) {
-            return static::component_class_callback($component, null_provider::class, 'get_reason', []);
+            $reason = $this->handled_component_class_callback($component, null_provider::class, 'get_reason', []);
+            return empty($reason) ? 'privacy:reason' : $reason;
         } else {
             throw new \coding_exception('Call to undefined method', 'Please only call this method on a null provider.');
         }
@@ -184,7 +199,7 @@ class manager {
         // Get the metadata, and put into an assoc array indexed by component name.
         $metadata = [];
         foreach ($this->get_component_list() as $component) {
-            $componentmetadata = static::component_class_callback($component, metadata_provider::class,
+            $componentmetadata = $this->handled_component_class_callback($component, metadata_provider::class,
                 'get_metadata', [new collection($component)]);
             if ($componentmetadata !== null) {
                 $metadata[$component] = $componentmetadata;
@@ -195,6 +210,7 @@ class manager {
 
     /**
      * Gets a collection of resultset objects for all components.
+     *
      *
      * @param int $userid the id of the user we're fetching contexts for.
      * @return contextlist_collection the collection of contextlist items for the respective components.
@@ -217,7 +233,7 @@ class manager {
             $a->progress++;
             $a->datetime = userdate(time());
             $progress->output(get_string('trace:processingcomponent', 'core_privacy', $a), 2);
-            $contextlist = static::component_class_callback($component, core_user_data_provider::class,
+            $contextlist = $this->handled_component_class_callback($component, core_user_data_provider::class,
                 'get_contexts_for_userid', [$userid]);
             if ($contextlist === null) {
                 $contextlist = new local\request\contextlist();
@@ -278,7 +294,7 @@ class manager {
                 if (count($approvedcontextlist)) {
                     // This plugin has data it knows about. It is responsible for storing basic data about anything it is
                     // told to export.
-                    static::component_class_callback($component, core_user_data_provider::class,
+                    $this->handled_component_class_callback($component, core_user_data_provider::class,
                         'export_user_data', [$approvedcontextlist]);
                 }
             } else if (!$this->component_implements($component, context_aware_provider::class)) {
@@ -300,12 +316,12 @@ class manager {
             $a->datetime = userdate(time());
             $progress->output(get_string('trace:processingcomponent', 'core_privacy', $a), 2);
             // Core user preference providers.
-            static::component_class_callback($component, user_preference_provider::class,
+            $this->handled_component_class_callback($component, user_preference_provider::class,
                 'export_user_preferences', [$contextlistcollection->get_userid()]);
 
             // Contextual information providers. Give each component a chance to include context information based on the
             // existence of a child context in the contextlist_collection.
-            static::component_class_callback($component, context_aware_provider::class,
+            $this->handled_component_class_callback($component, context_aware_provider::class,
                 'export_context_data', [$contextlistcollection]);
         }
         $progress->output(get_string('trace:done', 'core_privacy'), 1);
@@ -354,7 +370,7 @@ class manager {
             if (count($approvedcontextlist)) {
                 // The component knows about data that it has.
                 // Have it delete its own data.
-                static::component_class_callback($approvedcontextlist->get_component(), core_user_data_provider::class,
+                $this->handled_component_class_callback($approvedcontextlist->get_component(), core_user_data_provider::class,
                     'delete_data_for_user', [$approvedcontextlist]);
             }
 
@@ -389,7 +405,7 @@ class manager {
 
             // If this component knows about specific data that it owns,
             // have it delete all of that user data for the context.
-            static::component_class_callback($component, core_user_data_provider::class,
+            $this->handled_component_class_callback($component, core_user_data_provider::class,
                 'delete_data_for_all_users_in_context', [$context]);
 
             // Delete any shared user data it doesn't know about.
@@ -495,5 +511,46 @@ class manager {
         }
 
         return new \text_progress_trace();
+    }
+
+    /**
+     * Call the named method with the specified params on the supplied component if it implements the relevant interface
+     * on its provider.
+     *
+     * @param   string  $component The component to call
+     * @param   string  $interface The interface to implement
+     * @param   string  $methodname The method to call
+     * @param   array   $params The params to call
+     * @return  mixed
+     */
+    protected function handled_component_class_callback($component, $interface, $methodname, array $params) {
+        try {
+            return static::component_class_callback($component, $interface, $methodname, $params);
+        } catch (\Exception $e) {
+            debugging($e->getMessage(), DEBUG_DEVELOPER, $e->getTrace());
+            $this->component_class_callback_failed($e, $component, $interface, $methodname, $params);
+
+            return null;
+        } catch (\Error $e) {
+            debugging($e->getMessage(), DEBUG_DEVELOPER, $e->getTrace());
+            $this->component_class_callback_failed($e, $component, $interface, $methodname, $params);
+
+            return null;
+        }
+    }
+
+    /**
+     * Notifies the observer of any failure.
+     *
+     * @param \Throwable $e
+     * @param string $component
+     * @param string $interface
+     * @param string $methodname
+     * @param array $params
+     */
+    protected function component_class_callback_failed($e, $component, $interface, $methodname, array $params) {
+        if ($this->observer) {
+            call_user_func_array([$this->observer, 'handle_component_failure'], func_get_args());
+        }
     }
 }
