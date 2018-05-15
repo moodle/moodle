@@ -87,16 +87,21 @@ class provider implements \core_privacy\local\metadata\provider, \core_privacy\l
      * @param approved_contextlist $contextlist The approved contexts to export information for.
      */
     public static function export_user_data(approved_contextlist $contextlist) {
+        $rssdata = [];
         $results = static::get_records($contextlist->get_user()->id);
         foreach ($results as $result) {
-            $data = (object) [
+            $rssdata[] = (object) [
                 'title' => $result->title,
                 'preferredtitle' => $result->preferredtitle,
                 'description' => $result->description,
                 'shared' => \core_privacy\local\request\transform::yesno($result->shared),
                 'url' => $result->url
             ];
-
+        }
+        if (!empty($rssdata)) {
+            $data = (object) [
+                'feeds' => $rssdata,
+            ];
             \core_privacy\local\request\writer::with_context($contextlist->current())->export_data([
                     get_string('pluginname', 'block_rss_client')], $data);
         }
