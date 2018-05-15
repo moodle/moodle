@@ -153,6 +153,7 @@ abstract class qtype_ddmarker_shape {
         foreach ($shapes as $shape) {
             $shapearray[$shape::name()] = $shape::human_readable_name();
         }
+        $shapearray['0'] = '';
         asort($shapearray);
         return $shapearray;
     }

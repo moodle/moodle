@@ -61,9 +61,7 @@ class qtype_ddmarker_edit_form extends qtype_ddtoimage_edit_form_base {
         $params = array('maxsizes' => $maxsizes,
                         'topnode' => 'fieldset#id_previewareaheader');
 
-        $PAGE->requires->yui_module('moodle-qtype_ddmarker-form',
-                                        'M.qtype_ddmarker.init_form',
-                                        array($params));
+        $PAGE->requires->js_call_amd('qtype_ddmarker/form', 'init', [$params]);
     }
 
 
@@ -111,10 +109,6 @@ class qtype_ddmarker_edit_form extends qtype_ddtoimage_edit_form_base {
         $shapearray = qtype_ddmarker_shape::shape_options();
         $grouparray[] = $mform->createElement('select', 'shape',
                                     get_string('shape', 'qtype_ddmarker'), $shapearray);
-        $grouparray[] = $mform->createElement('text', 'coords',
-                                    get_string('coords', 'qtype_ddmarker'),
-                                    array('size' => 50, 'class' => 'tweakcss'));
-        $mform->setType('coords', PARAM_RAW); // These are validated manually.
         $markernos = array();
         $markernos[0] = '';
         for ($i = 1; $i <= $imagerepeats; $i += 1) {
@@ -122,6 +116,10 @@ class qtype_ddmarker_edit_form extends qtype_ddtoimage_edit_form_base {
         }
         $grouparray[] = $mform->createElement('select', 'choice',
                                     get_string('marker', 'qtype_ddmarker'), $markernos);
+        $grouparray[] = $mform->createElement('text', 'coords',
+                get_string('coords', 'qtype_ddmarker'),
+                array('size' => 30, 'class' => 'tweakcss'));
+        $mform->setType('coords', PARAM_RAW); // These are validated manually.
         $dropzone = $mform->createElement('group', 'drops',
                 get_string('dropzone', 'qtype_ddmarker', '{no}'), $grouparray);
         return array($dropzone);
