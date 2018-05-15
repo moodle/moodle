@@ -30,5 +30,15 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['clianswerno'] = 'n';
+$string['cliansweryes'] = 'y';
+$string['cliincorrectvalueerror'] = 'Error, maling halagang "{$a->value}" para sa "{$a->option}"';
+$string['cliincorrectvalueretry'] = 'Maling halaga, ulitin po';
+$string['clitypevalue'] = 'iteklado ang halaga';
+$string['clitypevaluedefault'] = 'iteklado ang halaga, pindutin ang Enter para magamit ang default na halaga ({$a})';
+$string['cliunknowoption'] = 'Di-kilalang opsiyon:
+ {$a}
+Gamit po ang --help na opsiyon';
+$string['cliyesnoprompt'] = 'iteklado ang y (ibig sabihin ay yes/oo) o n (ibig sabihin ay no/hindi)';
 $string['environmentrequireinstall'] = 'ay kinakailangang ma-install at ma-enable';
 $string['environmentrequireversion'] = 'ang bersiyon {$a->needed} ay kinakailangan at ang pinatatakbo mo ay {$a->current}';
