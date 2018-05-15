@@ -754,19 +754,22 @@ class provider implements
         }
 
         // Get the course module.
-        $cm = $DB->get_record('course_modules', ['id' => $context->instanceid]);
-        $forum = $DB->get_record('forum', ['id' => $cm->instance]);
+        if (!$cm = get_coursemodule_from_id('forum', $context->instanceid)) {
+            return;
+        }
 
-        $DB->delete_records('forum_track_prefs', ['forumid' => $forum->id]);
-        $DB->delete_records('forum_subscriptions', ['forum' => $forum->id]);
-        $DB->delete_records('forum_read', ['forumid' => $forum->id]);
+        $forumid = $cm->instance;
+
+        $DB->delete_records('forum_track_prefs', ['forumid' => $forumid]);
+        $DB->delete_records('forum_subscriptions', ['forum' => $forumid]);
+        $DB->delete_records('forum_read', ['forumid' => $forumid]);
 
         // Delete all discussion items.
         $DB->delete_records_select(
             'forum_queue',
             "discussionid IN (SELECT id FROM {forum_discussions} WHERE forum = :forum)",
             [
-                'forum' => $forum->id,
+                'forum' => $forumid,
             ]
         );
 
@@ -774,12 +777,12 @@ class provider implements
             'forum_posts',
             "discussion IN (SELECT id FROM {forum_discussions} WHERE forum = :forum)",
             [
-                'forum' => $forum->id,
+                'forum' => $forumid,
             ]
         );
 
-        $DB->delete_records('forum_discussion_subs', ['forum' => $forum->id]);
-        $DB->delete_records('forum_discussions', ['forum' => $forum->id]);
+        $DB->delete_records('forum_discussion_subs', ['forum' => $forumid]);
+        $DB->delete_records('forum_discussions', ['forum' => $forumid]);
 
         // Delete all files from the posts.
         $fs = get_file_storage();

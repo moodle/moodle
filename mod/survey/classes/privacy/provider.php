@@ -229,9 +229,10 @@ class provider implements
             return;
         }
 
-        $surveyid = static::get_survey_id_from_context($context);
-        $DB->delete_records('survey_answers', ['survey' => $surveyid]);
-        $DB->delete_records('survey_analysis', ['survey' => $surveyid]);
+        if ($surveyid = static::get_survey_id_from_context($context)) {
+            $DB->delete_records('survey_answers', ['survey' => $surveyid]);
+            $DB->delete_records('survey_analysis', ['survey' => $surveyid]);
+        }
     }
 
     /**
