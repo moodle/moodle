@@ -162,6 +162,14 @@ ol {
 .bs-popover-auto[x-placement^="left"] .arrow {
     right: -9px;
 }
+.bs-popover-top .arrow,
+.bs-popover-auto[x-placement^="top"] .arrow {
+    bottom: -9px;
+}
+.bs-popover-bottom .arrow,
+.bs-popover-auto[x-placement^="bottom"] .arrow {
+    top: -9px;
+}
 
 // Fixes an issue on Safari when the .custom-select is inside a .card class.
 .custom-select {
