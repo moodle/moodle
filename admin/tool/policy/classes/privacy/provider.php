@@ -102,17 +102,30 @@ class provider implements
     public static function get_contexts_for_userid(int $userid) : contextlist {
         $contextlist = new contextlist();
 
+        // Policies a user has modified.
         $sql = "SELECT c.id
                   FROM {context} c
-             LEFT JOIN {tool_policy_versions} v ON v.usermodified = c.instanceid
-             LEFT JOIN {tool_policy_acceptances} a ON a.userid = c.instanceid
-                 WHERE c.contextlevel = :contextlevel
-                   AND (v.usermodified = :usermodified OR a.userid = :userid OR a.usermodified = :behalfuserid)";
+                  JOIN {tool_policy_versions} v ON v.usermodified = :userid
+                 WHERE c.contextlevel = :contextlevel";
+        $params = [
+            'contextlevel' => CONTEXT_SYSTEM,
+            'userid' => $userid,
+        ];
+        $contextlist->add_from_sql($sql, $params);
+
+        // Policies a user has accepted.
+        $sql = "SELECT c.id
+                  FROM {context} c
+                  JOIN {tool_policy_acceptances} a ON c.instanceid = a.userid
+                 WHERE
+                    c.contextlevel = :contextlevel
+                   AND (
+                    a.userid = :userid OR a.usermodified = :usermodified
+                   )";
         $params = [
             'contextlevel' => CONTEXT_USER,
+            'userid' => $userid,
             'usermodified' => $userid,
-            'userid'       => $userid,
-            'behalfuserid' => $userid,
         ];
         $contextlist->add_from_sql($sql, $params);
 
@@ -132,6 +145,9 @@ class provider implements
             if ($context->contextlevel == CONTEXT_USER) {
                 $carry[$context->instanceid] = $context;
             }
+            if ($context->contextlevel == CONTEXT_SYSTEM) {
+                $carry[$context->instanceid] = $context;
+            }
             return $carry;
         }, []);
 
@@ -145,86 +161,20 @@ class provider implements
             get_string('useracceptances', 'tool_policy')
         ];
         $policyversionids = [];
-        foreach ($contexts as $context) {
-            $user = $contextlist->get_user();
-            $agreements = $DB->get_records_sql('SELECT a.id, a.userid, v.name, v.revision, a.usermodified, a.timecreated,
-                  a.timemodified, a.note, v.archived, p.currentversionid, a.status, a.policyversionid
-                FROM {tool_policy_acceptances} a
-                JOIN {tool_policy_versions} v ON v.id = a.policyversionid
-                JOIN {tool_policy} p ON v.policyid = p.id
-                WHERE a.userid = ? AND (a.userid = ? OR a.usermodified = ?)
-                ORDER BY a.userid, v.archived, v.timecreated DESC',
-                [$context->instanceid, $user->id, $user->id]);
-            foreach ($agreements as $agreement) {
-                $context = \context_user::instance($agreement->userid);
-                $name = 'policyagreement-' . $agreement->policyversionid;
-                $agreementcontent = (object) [
-                    'name' => $agreement->name,
-                    'revision' => $agreement->revision,
-                    'isactive' => transform::yesno($agreement->policyversionid == $agreement->currentversionid),
-                    'isagreed' => transform::yesno($agreement->status),
-                    'agreedby' => transform::user($agreement->usermodified),
-                    'timecreated' => transform::datetime($agreement->timecreated),
-                    'timemodified' => transform::datetime($agreement->timemodified),
-                    'note' => $agreement->note,
-                ];
-                writer::with_context($context)->export_related_data($subcontext, $name, $agreementcontent);
-                $policyversionids[$agreement->policyversionid] = $agreement->policyversionid;
-            }
-        }
 
-        // Export policy versions (agreed or modified by the user).
-        $userid = $contextlist->get_user()->id;
-        $context = \context_system::instance();
-        $subcontext = [
-            get_string('policydocuments', 'tool_policy')
-        ];
-        $writer = writer::with_context($context);
-        list($contextsql, $contextparams) = $DB->get_in_or_equal(array_keys($contexts), SQL_PARAMS_NAMED);
-        list($versionsql, $versionparams) = $DB->get_in_or_equal($policyversionids, SQL_PARAMS_NAMED);
-        $sql = "SELECT v.id,
-                       v.name,
-                       v.revision,
-                       v.summary,
-                       v.content,
-                       v.archived,
-                       v.usermodified,
-                       v.timecreated,
-                       v.timemodified,
-                       p.currentversionid
-                  FROM {tool_policy_versions} v
-                  JOIN {tool_policy} p ON p.id = v.policyid
-                 WHERE v.usermodified {$contextsql} OR v.id {$versionsql}";
-        $params = array_merge($contextparams, $versionparams);
-        $versions = $DB->get_recordset_sql($sql, $params);
-        foreach ($versions as $version) {
-            $name = 'policyversion-' . $version->id;
-            $versioncontent = (object) [
-                'name' => $version->name,
-                'revision' => $version->revision,
-                'summary' => $writer->rewrite_pluginfile_urls(
-                    $subcontext,
-                    'tool_policy',
-                    'policydocumentsummary',
-                    $version->id,
-                    $version->summary
-                ),
-                'content' => $writer->rewrite_pluginfile_urls(
-                    $subcontext,
-                    'tool_policy',
-                    'policydocumentcontent',
-                    $version->id,
-                    $version->content
-                ),
-                'isactive' => transform::yesno($version->id == $version->currentversionid),
-                'isarchived' => transform::yesno($version->archived),
-                'createdbyme' => transform::yesno($version->usermodified == $userid),
-                'timecreated' => transform::datetime($version->timecreated),
-                'timemodified' => transform::datetime($version->timemodified),
-            ];
-            $writer->export_related_data($subcontext, $name, $versioncontent);
-            $writer->export_area_files($subcontext, 'tool_policy', 'policydocumentsummary', $version->id);
-            $writer->export_area_files($subcontext, 'tool_policy', 'policydocumentcontent', $version->id);
+        $agreementsql = "SELECT
+                            a.id, a.userid, v.name, v.revision, a.usermodified, a.timecreated,
+                            a.timemodified, a.note, v.archived, p.currentversionid, a.status, a.policyversionid
+                         FROM {tool_policy_acceptances} a
+                         JOIN {tool_policy_versions} v ON v.id = a.policyversionid
+                         JOIN {tool_policy} p ON v.policyid = p.id
+                        WHERE a.userid = :userid OR a.usermodified = :usermodified";
+        foreach ($contexts as $context) {
+            if ($context->contextlevel == CONTEXT_USER) {
+                static::export_policy_agreements_for_context($context);
+            } else if ($context->contextlevel == CONTEXT_SYSTEM) {
+                static::export_authored_policies($contextlist->get_user());
+            }
         }
     }
 
@@ -246,5 +196,134 @@ class provider implements
      * @param approved_contextlist $contextlist A list of contexts approved for deletion.
      */
     public static function delete_data_for_user(approved_contextlist $contextlist) {
+    }
+
+    /**
+     * Export all policy agreements relating to the specified user context.
+     *
+     * @param \context_user $context The context to export
+     */
+    protected static function export_policy_agreements_for_context(\context_user $context) {
+        global $DB;
+
+        $agreementsql = "
+            SELECT
+                a.id, a.userid, a.timemodified, a.note, a.status, a.policyversionid, a.usermodified, a.timecreated,
+                v.id AS versionid, v.archived, v.name, v.revision,
+                v.summary, v.summaryformat,
+                v.content, v.contentformat,
+                p.currentversionid
+             FROM {tool_policy_acceptances} a
+             JOIN {tool_policy_versions} v ON v.id = a.policyversionid
+             JOIN {tool_policy} p ON v.policyid = p.id
+            WHERE a.userid = :userid OR a.usermodified = :usermodified";
+
+        // Fetch all agreements related to this user.
+        $agreements = $DB->get_recordset_sql($agreementsql, [
+            'userid' => $context->instanceid,
+            'usermodified' => $context->instanceid,
+        ]);
+
+        $basecontext = [
+            get_string('privacyandpolicies', 'admin'),
+            get_string('useracceptances', 'tool_policy'),
+        ];
+
+        foreach ($agreements as $agreement) {
+            $subcontext = array_merge($basecontext, [get_string('policynamedversion', 'tool_policy', $agreement)]);
+
+            $summary = writer::with_context($context)->rewrite_pluginfile_urls(
+                $subcontext,
+                'tool_policy',
+                'policydocumentsummary',
+                $agreement->versionid,
+                $agreement->summary
+            );
+            $content = writer::with_context($context)->rewrite_pluginfile_urls(
+                $subcontext,
+                'tool_policy',
+                'policydocumentcontent',
+                $agreement->versionid,
+                $agreement->content
+            );
+            $agreementcontent = (object) [
+                'name' => $agreement->name,
+                'revision' => $agreement->revision,
+                'isactive' => transform::yesno($agreement->policyversionid == $agreement->currentversionid),
+                'isagreed' => transform::yesno($agreement->status),
+                'agreedby' => transform::user($agreement->usermodified),
+                'timecreated' => transform::datetime($agreement->timecreated),
+                'timemodified' => transform::datetime($agreement->timemodified),
+                'note' => $agreement->note,
+                'summary' => format_text($summary, $agreement->summaryformat),
+                'content' => format_text($content, $agreement->contentformat),
+            ];
+
+            writer::with_context($context)
+                ->export_data($subcontext, $agreementcontent)
+                ->export_area_files($subcontext, 'tool_policy', 'policydocumentsummary', $agreement->versionid)
+                ->export_area_files($subcontext, 'tool_policy', 'policydocumentcontent', $agreement->versionid);
+        }
+        $agreements->close();
+    }
+
+    /**
+     * Export all policy agreements that the user authored.
+     */
+    protected static function export_authored_policies(\stdClass $user) {
+        global $DB;
+
+        // Authored policies are exported against the system.
+        $context = \context_system::instance();
+        $basecontext = [
+            get_string('policydocuments', 'tool_policy'),
+        ];
+
+        $sql = "SELECT v.id,
+                       v.name,
+                       v.revision,
+                       v.summary,
+                       v.content,
+                       v.archived,
+                       v.usermodified,
+                       v.timecreated,
+                       v.timemodified,
+                       p.currentversionid
+                  FROM {tool_policy_versions} v
+                  JOIN {tool_policy} p ON p.id = v.policyid
+                 WHERE v.usermodified = :userid";
+        $versions = $DB->get_recordset_sql($sql, ['userid' => $user->id]);
+        foreach ($versions as $version) {
+            $subcontext = array_merge($basecontext, [get_string('policynamedversion', 'tool_policy', $version)]);
+
+            $versioncontent = (object) [
+                'name' => $version->name,
+                'revision' => $version->revision,
+                'summary' => writer::with_context($context)->rewrite_pluginfile_urls(
+                    $subcontext,
+                    'tool_policy',
+                    'policydocumentsummary',
+                    $version->id,
+                    $version->summary
+                ),
+                'content' => writer::with_context($context)->rewrite_pluginfile_urls(
+                    $subcontext,
+                    'tool_policy',
+                    'policydocumentcontent',
+                    $version->id,
+                    $version->content
+                ),
+                'isactive' => transform::yesno($version->id == $version->currentversionid),
+                'isarchived' => transform::yesno($version->archived),
+                'createdbyme' => transform::yesno($version->usermodified == $user->id),
+                'timecreated' => transform::datetime($version->timecreated),
+                'timemodified' => transform::datetime($version->timemodified),
+            ];
+            writer::with_context($context)
+                ->export_data($subcontext, $versioncontent)
+                ->export_area_files($subcontext, 'tool_policy', 'policydocumentsummary', $version->id)
+                ->export_area_files($subcontext, 'tool_policy', 'policydocumentcontent', $version->id);
+        }
+        $versions->close();
     }
 }
