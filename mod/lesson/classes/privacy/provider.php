@@ -382,7 +382,9 @@ class provider implements
             return;
         }
 
-        $lessonid = static::get_lesson_id_from_context($context);
+        if (!$lessonid = static::get_lesson_id_from_context($context)) {
+            return;
+        }
 
         $DB->delete_records('lesson_attempts', ['lessonid' => $lessonid]);
         $DB->delete_records('lesson_branch', ['lessonid' => $lessonid]);

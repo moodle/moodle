@@ -192,12 +192,14 @@ class provider implements
         }
 
         // Delete all Calendar Events in the specified context in batches.
-        $eventids = array_keys(self::get_calendar_event_ids_by_context($context));
-        self::delete_batch_records('event', 'id', $eventids);
+        if ($eventids = array_keys(self::get_calendar_event_ids_by_context($context))) {
+            self::delete_batch_records('event', 'id', $eventids);
+        }
 
         // Delete all Calendar Subscriptions in the specified context in batches.
-        $subscriptionids = array_keys(self::get_calendar_subscription_ids_by_context($context));
-        self::delete_batch_records('event_subscriptions', 'id', $subscriptionids);
+        if ($subscriptionids = array_keys(self::get_calendar_subscription_ids_by_context($context))) {
+            self::delete_batch_records('event_subscriptions', 'id', $subscriptionids);
+        }
     }
 
     /**

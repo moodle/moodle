@@ -246,18 +246,8 @@ class provider implements metadataprovider, pluginprovider, preference_provider 
         global $DB;
 
         if ($context->contextlevel == CONTEXT_MODULE) {
-            // Apparently we can't trust anything that comes via the context.
-            // Go go mega query to find out it we have an assign context that matches an existing assignment.
-            $sql = "SELECT a.id
-                    FROM {assign} a
-                    JOIN {course_modules} cm ON a.id = cm.instance
-                    JOIN {modules} m ON m.id = cm.module AND m.name = :modulename
-                    JOIN {context} ctx ON ctx.instanceid = cm.id AND ctx.contextlevel = :contextmodule
-                    WHERE ctx.id = :contextid";
-            $params = ['modulename' => 'assign', 'contextmodule' => CONTEXT_MODULE, 'contextid' => $context->id];
-            $count = $DB->get_field_sql($sql, $params);
-            // If we have a count over zero then we can proceed.
-            if ($count > 0) {
+            $cm = get_coursemodule_from_id('assign', $context->instanceid);
+            if ($cm) {
                 // Get the assignment related to this context.
                 $assign = new \assign($context, null, null);
                 // What to do first... Get sub plugins to delete their stuff.
