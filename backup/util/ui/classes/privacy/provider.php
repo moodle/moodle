@@ -163,7 +163,7 @@ class provider implements
         $userid = $contextlist->get_user()->id;
         foreach ($contextlist->get_contexts() as $context) {
             if (!$context instanceof \context_course) {
-                return;
+                continue;
             }
 
             $DB->delete_records('backup_controllers', ['itemid' => $context->instanceid, 'userid' => $userid]);
