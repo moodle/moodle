@@ -207,7 +207,7 @@ class provider implements
         foreach ($contextlist->get_contexts() as $context) {
 
             if (!$context instanceof \context_module) {
-                return;
+                continue;
             }
             $instanceid = $DB->get_field('course_modules', 'instance', ['id' => $context->instanceid], MUST_EXIST);
             $DB->delete_records('choice_answers', ['choiceid' => $instanceid, 'userid' => $userid]);

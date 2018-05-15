@@ -202,7 +202,10 @@ class core_cohort_testcase extends provider_testcase {
         $this->assertEquals(5, $count);
 
         $contextlist = provider::get_contexts_for_userid($user1->id);
-        $approvedcontextlist = new approved_contextlist($user1, 'cohort', $contextlist->get_contextids());
+        $contexts = [];
+        $contexts[] = \context_user::instance($user1->id)->id;
+        $contexts = array_merge($contexts, $contextlist->get_contextids());
+        $approvedcontextlist = new approved_contextlist($user1, 'cohort', $contexts);
         provider::delete_data_for_user($approvedcontextlist);
 
         // After deletion, the cohort_members entries for the first student should have been deleted.
