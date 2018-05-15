@@ -143,10 +143,6 @@ class provider implements
      * @param context $context A user context.
      */
     public static function delete_data_for_all_users_in_context(\context $context) {
-        if (empty($context)) {
-            return;
-        }
-
         if (!$context instanceof \context_system && !$context instanceof \context_coursecat) {
             return;
         }

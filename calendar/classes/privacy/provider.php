@@ -183,10 +183,6 @@ class provider implements
      * @param   context $context Transform the specific context to delete data for.
      */
     public static function delete_data_for_all_users_in_context(\context $context) {
-        if (empty($context)) {
-            return;
-        }
-
         // Delete all Calendar Events in the specified context in batches.
         if ($eventids = array_keys(self::get_calendar_event_ids_by_context($context))) {
             self::delete_batch_records('event', 'id', $eventids);

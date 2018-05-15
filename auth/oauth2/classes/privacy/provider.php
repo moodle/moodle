@@ -120,10 +120,6 @@ class provider implements
      * @param  \context $context The context to delete data for.
      */
     public static function delete_data_for_all_users_in_context(\context $context) {
-        if (empty($context)) {
-            return;
-        }
-
         if ($context->contextlevel != CONTEXT_USER) {
             return;
         }

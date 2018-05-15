@@ -313,9 +313,6 @@ class provider implements
         // Don't belong to the modifier user.
 
         // Remove data from role_assignments.
-        if (empty($context)) {
-            return;
-        }
         $DB->delete_records('role_assignments', ['contextid' => $context->id]);
     }
     /**

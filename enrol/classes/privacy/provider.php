@@ -164,9 +164,6 @@ class provider implements
     public static function delete_data_for_all_users_in_context(\context $context) {
         global $DB;
 
-        if (empty($context)) {
-            return;
-        }
         // Sanity check that context is at the User context level.
         if ($context->contextlevel == CONTEXT_COURSE) {
             $sql = "SELECT ue.id
