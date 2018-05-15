@@ -156,8 +156,8 @@ class enrol_lti_privacy_provider_testcase extends \core_privacy\tests\provider_t
         $count = $DB->count_records('enrol_lti_users');
         $this->assertEquals(4, $count);
 
-        $contextlist = new \core_privacy\local\request\approved_contextlist($this->user, 'core_backup',
-            [$coursecontext->id, $cmcontext->id]);
+        $contextlist = new \core_privacy\local\request\approved_contextlist($this->user, 'enrol_lti',
+            [context_system::instance()->id, $coursecontext->id, $cmcontext->id]);
         provider::delete_data_for_user($contextlist);
 
         $ltiusers = $DB->get_records('enrol_lti_users');

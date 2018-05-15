@@ -208,7 +208,7 @@ class mod_choice_privacy_provider_testcase extends \core_privacy\tests\provider_
         $context1 = context_module::instance($cm1->id);
         $context2 = context_module::instance($cm2->id);
         $contextlist = new \core_privacy\local\request\approved_contextlist($this->student, 'choice',
-                                                                            [$context1->id, $context2->id]);
+            [context_system::instance()->id, $context1->id, $context2->id]);
         provider::delete_data_for_user($contextlist);
 
         // After deletion, the choice answers for the first student should have been deleted.
