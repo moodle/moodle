@@ -23,7 +23,14 @@
  */
 namespace core_privacy;
 use core_privacy\local\metadata\collection;
+use core_privacy\local\metadata\null_provider;
+use core_privacy\local\request\context_aware_provider;
 use core_privacy\local\request\contextlist_collection;
+use core_privacy\local\request\core_data_provider;
+use core_privacy\local\request\core_user_data_provider;
+use core_privacy\local\request\data_provider;
+use core_privacy\local\request\user_preference_provider;
+use \core_privacy\local\metadata\provider as metadata_provider;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -120,7 +127,7 @@ class manager {
      */
     public function component_is_compliant(string $component) : bool {
         // Components which don't store user data need only implement the null_provider.
-        if ($this->component_implements($component, \core_privacy\local\metadata\null_provider::class)) {
+        if ($this->component_implements($component, null_provider::class)) {
             return true;
         }
 
@@ -129,8 +136,8 @@ class manager {
         }
 
         // Components which store user data must implement the local\metadata\provider and the local\request\data_provider.
-        if ($this->component_implements($component, \core_privacy\local\metadata\provider::class) &&
-            $this->component_implements($component, \core_privacy\local\request\data_provider::class)) {
+        if ($this->component_implements($component, metadata_provider::class) &&
+            $this->component_implements($component, data_provider::class)) {
             return true;
         }
 
@@ -144,8 +151,8 @@ class manager {
      * @return string The key to retrieve the language string for the null provider reason.
      */
     public function get_null_provider_reason(string $component) : string {
-        if ($this->component_implements($component, \core_privacy\local\metadata\null_provider::class)) {
-            return $this->get_provider_classname($component)::get_reason();
+        if ($this->component_implements($component, null_provider::class)) {
+            return static::component_class_callback($component, null_provider::class, 'get_reason', []);
         } else {
             throw new \coding_exception('Call to undefined method', 'Please only call this method on a null provider.');
         }
@@ -177,8 +184,10 @@ class manager {
         // Get the metadata, and put into an assoc array indexed by component name.
         $metadata = [];
         foreach ($this->get_component_list() as $component) {
-            if ($this->component_implements($component, \core_privacy\local\metadata\provider::class)) {
-                $metadata[$component] = $this->get_provider_classname($component)::get_metadata(new collection($component));
+            $componentmetadata = static::component_class_callback($component, metadata_provider::class,
+                'get_metadata', [new collection($component)]);
+            if ($componentmetadata !== null) {
+                $metadata[$component] = $componentmetadata;
             }
         }
         return $metadata;
@@ -208,9 +217,9 @@ class manager {
             $a->progress++;
             $a->datetime = userdate(time());
             $progress->output(get_string('trace:processingcomponent', 'core_privacy', $a), 2);
-            if ($this->component_implements($component, \core_privacy\local\request\core_user_data_provider::class)) {
-                $contextlist = $this->get_provider_classname($component)::get_contexts_for_userid($userid);
-            } else {
+            $contextlist = static::component_class_callback($component, core_user_data_provider::class,
+                'get_contexts_for_userid', [$userid]);
+            if ($contextlist === null) {
                 $contextlist = new local\request\contextlist();
             }
 
@@ -265,13 +274,14 @@ class manager {
             $progress->output(get_string('trace:processingcomponent', 'core_privacy', $a), 2);
 
             // Core user data providers.
-            if ($this->component_implements($component, \core_privacy\local\request\core_user_data_provider::class)) {
+            if ($this->component_implements($component, core_user_data_provider::class)) {
                 if (count($approvedcontextlist)) {
                     // This plugin has data it knows about. It is responsible for storing basic data about anything it is
                     // told to export.
-                    $this->get_provider_classname($component)::export_user_data($approvedcontextlist);
+                    static::component_class_callback($component, core_user_data_provider::class,
+                        'export_user_data', [$approvedcontextlist]);
                 }
-            } else if (!$this->component_implements($component, \core_privacy\local\request\context_aware_provider::class)) {
+            } else if (!$this->component_implements($component, context_aware_provider::class)) {
                 // This plugin does not know that it has data - export the shared data it doesn't know about.
                 local\request\helper::export_data_for_null_provider($approvedcontextlist);
             }
@@ -290,15 +300,13 @@ class manager {
             $a->datetime = userdate(time());
             $progress->output(get_string('trace:processingcomponent', 'core_privacy', $a), 2);
             // Core user preference providers.
-            if ($this->component_implements($component, \core_privacy\local\request\user_preference_provider::class)) {
-                $this->get_provider_classname($component)::export_user_preferences($contextlistcollection->get_userid());
-            }
+            static::component_class_callback($component, user_preference_provider::class,
+                'export_user_preferences', [$contextlistcollection->get_userid()]);
 
             // Contextual information providers. Give each component a chance to include context information based on the
             // existence of a child context in the contextlist_collection.
-            if ($this->component_implements($component, \core_privacy\local\request\context_aware_provider::class)) {
-                $this->get_provider_classname($component)::export_context_data($contextlistcollection);
-            }
+            static::component_class_callback($component, context_aware_provider::class,
+                'export_context_data', [$contextlistcollection]);
         }
         $progress->output(get_string('trace:done', 'core_privacy'), 1);
 
@@ -343,12 +351,11 @@ class manager {
             $a->datetime = userdate(time());
             $progress->output(get_string('trace:processingcomponent', 'core_privacy', $a), 2);
 
-            if ($this->component_is_core_provider($component)) {
-                if (count($approvedcontextlist)) {
-                    // The component knows about data that it has.
-                    // Have it delete its own data.
-                    $this->get_provider_classname($approvedcontextlist->get_component())::delete_data_for_user($approvedcontextlist);
-                }
+            if (count($approvedcontextlist)) {
+                // The component knows about data that it has.
+                // Have it delete its own data.
+                static::component_class_callback($approvedcontextlist->get_component(), core_user_data_provider::class,
+                    'delete_data_for_user', [$approvedcontextlist]);
             }
 
             // Delete any shared user data it doesn't know about.
@@ -360,7 +367,7 @@ class manager {
     /**
      * Delete all use data which matches the specified deletion criteria.
      *
-     * @param   context         $context   The specific context to delete data for.
+     * @param \context $context The specific context to delete data for.
      */
     public function delete_data_for_all_users_in_context(\context $context) {
         $progress = static::get_log_tracer();
@@ -380,26 +387,15 @@ class manager {
             $a->datetime = userdate(time());
             $progress->output(get_string('trace:processingcomponent', 'core_privacy', $a), 2);
 
-            if ($this->component_implements($component, \core_privacy\local\request\core_user_data_provider::class)) {
-                // This component knows about specific data that it owns.
-                // Have it delete all of that user data for the context.
-                $this->get_provider_classname($component)::delete_data_for_all_users_in_context($context);
-            }
+            // If this component knows about specific data that it owns,
+            // have it delete all of that user data for the context.
+            static::component_class_callback($component, core_user_data_provider::class,
+                'delete_data_for_all_users_in_context', [$context]);
 
             // Delete any shared user data it doesn't know about.
             local\request\helper::delete_data_for_all_users_in_context($component, $context);
         }
         $progress->output(get_string('trace:done', 'core_privacy'), 1);
-    }
-
-    /**
-     * Check whether the specified component is a core provider.
-     *
-     * @param string $component the frankenstyle component name.
-     * @return bool true if the component is a core provider, false otherwise.
-     */
-    protected function component_is_core_provider($component) {
-        return $this->component_implements($component, \core_privacy\local\request\core_data_provider::class);
     }
 
     /**
@@ -433,7 +429,7 @@ class manager {
      * @return string the fully qualified provider classname.
      */
     public static function get_provider_classname_for_component(string $component) {
-        return "$component\privacy\provider";
+        return "$component\\privacy\\provider";
     }
 
     /**
