@@ -103,57 +103,26 @@ class mod_quiz_privacy_provider_testcase extends \core_privacy\tests\provider_te
         global $DB;
         $this->resetAfterTest(true);
 
-        // Make a quiz.
         $course = $this->getDataGenerator()->create_course();
         $user = $this->getDataGenerator()->create_user();
-        $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
+        $otheruser = $this->getDataGenerator()->create_user();
 
-        $quiz = $quizgenerator->create_instance([
-                'course' => $course->id,
-                'questionsperpage' => 0,
-                'grade' => 100.0,
-                'sumgrades' => 2,
+        // Make a quiz with an override.
+        $this->setUser();
+        $quiz = $this->create_test_quiz($course);
+        $DB->insert_record('quiz_overrides', [
+                'quiz' => $quiz->id,
+                'userid' => $user->id,
+                'timeclose' => 1300,
+                'timelimit' => null,
             ]);
 
-        // Create a couple of questions.
-        $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
-        $cat = $questiongenerator->create_question_category();
-
-        $saq = $questiongenerator->create_question('shortanswer', null, array('category' => $cat->id));
-        quiz_add_quiz_question($saq->id, $quiz);
-        $numq = $questiongenerator->create_question('numerical', null, array('category' => $cat->id));
-        quiz_add_quiz_question($numq->id, $quiz);
-
         // Run as the user and make an attempt on the quiz.
-        $this->setUser($user);
-        $starttime = time();
-        $quizobj = quiz::create($quiz->id, $user->id);
+        list($quizobj, $quba, $attemptobj) = $this->attempt_quiz($quiz, $user);
+        $this->attempt_quiz($quiz, $otheruser);
         $context = $quizobj->get_context();
 
-        $quba = question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
-        $quba->set_preferred_behaviour($quizobj->get_quiz()->preferredbehaviour);
-
-        // Start the attempt.
-        $attempt = quiz_create_attempt($quizobj, 1, false, $starttime, false, $user->id);
-        quiz_start_new_attempt($quizobj, $quba, $attempt, 1, $starttime);
-        quiz_attempt_save_started($quizobj, $quba, $attempt);
-
-        // Answer the questions.
-        $attemptobj = quiz_attempt::create($attempt->id);
-
-        $tosubmit = [
-            1 => ['answer' => 'frog'],
-            2 => ['answer' => '3.14'],
-        ];
-
-        $attemptobj->process_submitted_actions($starttime, false, $tosubmit);
-
-        // Finish the attempt.
-        $attemptobj = quiz_attempt::create($attempt->id);
-        $this->assertTrue($attemptobj->has_response_to_at_least_one_graded_question());
-        $attemptobj->process_finish($starttime, false);
-
-        // Fetch the contexts -only one context should be returned.
+        // Fetch the contexts - only one context should be returned.
         $this->setUser();
         $contextlist = provider::get_contexts_for_userid($user->id);
         $this->assertCount(1, $contextlist);
@@ -179,6 +148,7 @@ class mod_quiz_privacy_provider_testcase extends \core_privacy\tests\provider_te
         $this->assertTrue(isset($quizdata->intro));
 
         // Fetch the attempt data.
+        $attempt = $attemptobj->get_attempt();
         $attemptsubcontext = [
             get_string('attempts', 'mod_quiz'),
             $attempt->attempt,
@@ -275,5 +245,186 @@ class mod_quiz_privacy_provider_testcase extends \core_privacy\tests\provider_te
         $this->setUser();
         $contextlist = provider::get_contexts_for_userid($user->id);
         $this->assertCount(0, $contextlist);
+    }
+
+    /**
+     * Export + Delete quiz data for a user who has made a single attempt.
+     */
+    public function test_delete_data_for_all_users_in_context() {
+        global $DB;
+        $this->resetAfterTest(true);
+
+        $course = $this->getDataGenerator()->create_course();
+        $user = $this->getDataGenerator()->create_user();
+        $otheruser = $this->getDataGenerator()->create_user();
+
+        // Make a quiz with an override.
+        $this->setUser();
+        $quiz = $this->create_test_quiz($course);
+        $DB->insert_record('quiz_overrides', [
+                'quiz' => $quiz->id,
+                'userid' => $user->id,
+                'timeclose' => 1300,
+                'timelimit' => null,
+            ]);
+
+        // Run as the user and make an attempt on the quiz.
+        list($quizobj, $quba, $attemptobj) = $this->attempt_quiz($quiz, $user);
+        list($quizobj, $quba, $attemptobj) = $this->attempt_quiz($quiz, $otheruser);
+
+        // Create another quiz and questions, and repeat the data insertion.
+        $this->setUser();
+        $otherquiz = $this->create_test_quiz($course);
+        $DB->insert_record('quiz_overrides', [
+                'quiz' => $otherquiz->id,
+                'userid' => $user->id,
+                'timeclose' => 1300,
+                'timelimit' => null,
+            ]);
+
+        // Run as the user and make an attempt on the quiz.
+        list($otherquizobj, $otherquba, $otherattemptobj) = $this->attempt_quiz($otherquiz, $user);
+        list($otherquizobj, $otherquba, $otherattemptobj) = $this->attempt_quiz($otherquiz, $otheruser);
+
+        // Delete all data for all users in the context under test.
+        $this->setUser();
+        $context = $quizobj->get_context();
+        provider::delete_data_for_all_users_in_context($context);
+
+        // The quiz attempt should have been deleted from this quiz.
+        $this->assertCount(0, $DB->get_records('quiz_attempts', ['quiz' => $quizobj->get_quizid()]));
+        $this->assertCount(0, $DB->get_records('quiz_overrides', ['quiz' => $quizobj->get_quizid()]));
+        $this->assertCount(0, $DB->get_records('question_attempts', ['questionusageid' => $quba->get_id()]));
+
+        // But not for the other quiz.
+        $this->assertNotCount(0, $DB->get_records('quiz_attempts', ['quiz' => $otherquizobj->get_quizid()]));
+        $this->assertNotCount(0, $DB->get_records('quiz_overrides', ['quiz' => $otherquizobj->get_quizid()]));
+        $this->assertNotCount(0, $DB->get_records('question_attempts', ['questionusageid' => $otherquba->get_id()]));
+    }
+
+    /**
+     * Export + Delete quiz data for a user who has made a single attempt.
+     */
+    public function test_wrong_context() {
+        global $DB;
+        $this->resetAfterTest(true);
+
+        $course = $this->getDataGenerator()->create_course();
+        $user = $this->getDataGenerator()->create_user();
+
+        // Make a choice.
+        $this->setUser();
+        $plugingenerator = $this->getDataGenerator()->get_plugin_generator('mod_choice');
+        $choice = $plugingenerator->create_instance(['course' => $course->id]);
+        $cm = get_coursemodule_from_instance('choice', $choice->id);
+        $context = \context_module::instance($cm->id);
+
+        // Fetch the contexts - no context should be returned.
+        $this->setUser();
+        $contextlist = provider::get_contexts_for_userid($user->id);
+        $this->assertCount(0, $contextlist);
+
+        // Perform the export and check the data.
+        $this->setUser($user);
+        $approvedcontextlist = new \core_privacy\tests\request\approved_contextlist(
+            \core_user::get_user($user->id),
+            'mod_quiz',
+            [$context->id]
+        );
+        provider::export_user_data($approvedcontextlist);
+
+        // Ensure that nothing was exported.
+        $writer = writer::with_context($context);
+        $this->assertFalse($writer->has_any_data_in_any_context());
+
+        $this->setUser();
+
+        $dbwrites = $DB->perf_get_writes();
+
+        // Perform a deletion with the approved contextlist containing an incorrect context.
+        $approvedcontextlist = new \core_privacy\tests\request\approved_contextlist(
+            \core_user::get_user($user->id),
+            'mod_quiz',
+            [$context->id]
+        );
+        provider::delete_data_for_user($approvedcontextlist);
+        $this->assertEquals($dbwrites, $DB->perf_get_writes());
+        $this->assertDebuggingNotCalled();
+
+        // Perform a deletion of all data in the context.
+        provider::delete_data_for_all_users_in_context($context);
+        $this->assertEquals($dbwrites, $DB->perf_get_writes());
+        $this->assertDebuggingNotCalled();
+    }
+
+    /**
+     * Create a test quiz for the specified course.
+     *
+     * @param   \stdClass $course
+     * @return  array
+     */
+    protected function create_test_quiz($course) {
+        global $DB;
+
+        $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
+
+        $quiz = $quizgenerator->create_instance([
+                'course' => $course->id,
+                'questionsperpage' => 0,
+                'grade' => 100.0,
+                'sumgrades' => 2,
+            ]);
+
+        // Create a couple of questions.
+        $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $cat = $questiongenerator->create_question_category();
+
+        $saq = $questiongenerator->create_question('shortanswer', null, array('category' => $cat->id));
+        quiz_add_quiz_question($saq->id, $quiz);
+        $numq = $questiongenerator->create_question('numerical', null, array('category' => $cat->id));
+        quiz_add_quiz_question($numq->id, $quiz);
+
+        return $quiz;
+    }
+
+    /**
+     * Answer questions for a quiz + user.
+     *
+     * @param   \stdClass   $quiz
+     * @param   \stdClass   $user
+     * @return  array
+     */
+    protected function attempt_quiz($quiz, $user) {
+        $this->setUser($user);
+
+        $starttime = time();
+        $quizobj = quiz::create($quiz->id, $user->id);
+        $context = $quizobj->get_context();
+
+        $quba = question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
+        $quba->set_preferred_behaviour($quizobj->get_quiz()->preferredbehaviour);
+
+        // Start the attempt.
+        $attempt = quiz_create_attempt($quizobj, 1, false, $starttime, false, $user->id);
+        quiz_start_new_attempt($quizobj, $quba, $attempt, 1, $starttime);
+        quiz_attempt_save_started($quizobj, $quba, $attempt);
+
+        // Answer the questions.
+        $attemptobj = quiz_attempt::create($attempt->id);
+
+        $tosubmit = [
+            1 => ['answer' => 'frog'],
+            2 => ['answer' => '3.14'],
+        ];
+
+        $attemptobj->process_submitted_actions($starttime, false, $tosubmit);
+
+        // Finish the attempt.
+        $attemptobj = quiz_attempt::create($attempt->id);
+        $attemptobj->process_finish($starttime, false);
+
+        $this->setUser();
+
+        return [$quizobj, $quba, $attemptobj];
     }
 }
