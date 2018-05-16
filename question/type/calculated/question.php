@@ -424,7 +424,13 @@ class qtype_calculated_variable_substituter {
         if ($error = qtype_calculated_find_formula_errors($expression)) {
             throw new moodle_exception('illegalformulasyntax', 'qtype_calculated', '', $error);
         }
-        return $this->calculate_raw($this->substitute_values_for_eval($expression));
+        $expression = $this->substitute_values_for_eval($expression);
+        if ($datasets = question_bank::get_qtype('calculated')->find_dataset_names($expression)) {
+            // Some placeholders were not substituted.
+            throw new moodle_exception('illegalformulasyntax', 'qtype_calculated', '',
+                '{' . reset($datasets) . '}');
+        }
+        return $this->calculate_raw($expression);
     }
 
     /**
