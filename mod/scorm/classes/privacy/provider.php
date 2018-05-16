@@ -134,7 +134,6 @@ class provider implements
         }
 
         // Get scoes_track data.
-        $subcontext = [];
         list($insql, $inparams) = $DB->get_in_or_equal($contexts, SQL_PARAMS_NAMED);
         $sql = "SELECT ss.id,
                        ss.attempt,
@@ -162,14 +161,17 @@ class provider implements
         }
         $scoestracks->close();
 
-        // The scoes_track data is organised in: {Course name}/{SCORM activity name}/attempt-X.json.
+        // The scoes_track data is organised in: {Course name}/{SCORM activity name}/{My attempts}/{Attempt X}/data.json
         // where X is the attempt number.
-        array_walk($alldata, function($attemptsdata, $contextid) use ($subcontext) {
+        array_walk($alldata, function($attemptsdata, $contextid) {
             $context = \context::instance_by_id($contextid);
-            array_walk($attemptsdata, function($data, $attempt) use ($context, $subcontext) {
-                writer::with_context($context)->export_related_data(
+            array_walk($attemptsdata, function($data, $attempt) use ($context) {
+                $subcontext = [
+                    get_string('myattempts', 'scorm'),
+                    get_string('attempt', 'scorm'). " $attempt"
+                ];
+                writer::with_context($context)->export_data(
                     $subcontext,
-                    'attempt-'.$attempt,
                     (object)['scoestrack' => $data]
                 );
             });
@@ -209,13 +211,15 @@ class provider implements
         }
         $aiccsessions->close();
 
-        // The aicc_session data is organised in: {Course name}/{SCORM activity name}/aiccsession.json.
+        // The aicc_session data is organised in: {Course name}/{SCORM activity name}/{My AICC sessions}/data.json
         // In this case, the attempt hasn't been included in the json file because it can be null.
         array_walk($alldata, function($data, $contextid) {
             $context = \context::instance_by_id($contextid);
-            writer::with_context($context)->export_related_data(
-                [],
-                'aiccsession',
+            $subcontext = [
+                get_string('myaiccsessions', 'scorm')
+            ];
+            writer::with_context($context)->export_data(
+                $subcontext,
                 (object)['sessions' => $data]
             );
         });
