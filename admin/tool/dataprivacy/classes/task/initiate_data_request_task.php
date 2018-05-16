@@ -30,7 +30,6 @@ use moodle_exception;
 use tool_dataprivacy\api;
 use tool_dataprivacy\contextlist_context;
 use tool_dataprivacy\data_request;
-use tool_dataprivacy\manager;
 
 defined('MOODLE_INTERNAL') || die();
 
