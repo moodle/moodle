@@ -154,6 +154,18 @@ class provider implements \core_privacy\local\metadata\provider, \core_privacy\l
             'requester' => 'privacy:metadata:requester'
         ];
 
+        $mypages = [
+            'userid' => 'privacy:metadata:my_pages:userid',
+            'name' => 'privacy:metadata:my_pages:name',
+            'private' => 'privacy:metadata:my_pages:private',
+        ];
+
+        $userpreferences = [
+            'userid' => 'privacy:metadata:user_preferences:userid',
+            'name' => 'privacy:metadata:user_preferences:name',
+            'value' => 'privacy:metadata:user_preferences:value'
+        ];
+
         $collection->add_database_table('user', $userfields, 'privacy:metadata:usertablesummary');
         $collection->add_database_table('user_password_history', $passwordhistory, 'privacy:metadata:passwordtablesummary');
         $collection->add_database_table('user_password_resets', $userpasswordresets, 'privacy:metadata:passwordresettablesummary');
@@ -161,6 +173,8 @@ class provider implements \core_privacy\local\metadata\provider, \core_privacy\l
         $collection->add_database_table('user_devices', $userdevices, 'privacy:metadata:devicetablesummary');
         $collection->add_database_table('course_request', $courserequest, 'privacy:metadata:requestsummary');
         $collection->add_database_table('sessions', $usersessions, 'privacy:metadata:sessiontablesummary');
+        $collection->add_database_table('my_pages', $mypages, 'privacy:metadata:my_pages');
+        $collection->add_database_table('user_preferences', $userpreferences, 'privacy:metadata:user_preferences');
         $collection->add_subsystem_link('core_files', [], 'privacy:metadata:filelink');
 
         return $collection;

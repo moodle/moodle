@@ -51,7 +51,7 @@ class provider implements
      * @return collection A listing of user data stored through this system.
      */
     public static function get_metadata(collection $collection) {
-        $collection->add_database_table('log', [
+        $collection->add_database_table('logstore_standard_log', [
             'eventname' => 'privacy:metadata:log:eventname',
             'userid' => 'privacy:metadata:log:userid',
             'relateduserid' => 'privacy:metadata:log:relateduserid',
