@@ -27,8 +27,9 @@ namespace mod_scorm\privacy;
 defined('MOODLE_INTERNAL') || die();
 
 use core_privacy\local\metadata\collection;
-use core_privacy\local\request\contextlist;
 use core_privacy\local\request\approved_contextlist;
+use core_privacy\local\request\contextlist;
+use core_privacy\local\request\helper;
 use core_privacy\local\request\transform;
 use core_privacy\local\request\writer;
 
@@ -122,10 +123,19 @@ class provider implements
             return;
         }
 
-        $userid = $contextlist->get_user()->id;
-        list($insql, $inparams) = $DB->get_in_or_equal($contexts, SQL_PARAMS_NAMED);
+        $user = $contextlist->get_user();
+        $userid = $user->id;
+        // Get SCORM data.
+        foreach ($contexts as $contextid) {
+            $context = \context::instance_by_id($contextid);
+            $data = helper::get_context_data($context, $user);
+            writer::with_context($context)->export_data([], $data);
+            helper::export_context_files($context, $user);
+        }
 
         // Get scoes_track data.
+        $subcontext = [];
+        list($insql, $inparams) = $DB->get_in_or_equal($contexts, SQL_PARAMS_NAMED);
         $sql = "SELECT ss.id,
                        ss.attempt,
                        ss.element,
@@ -154,11 +164,11 @@ class provider implements
 
         // The scoes_track data is organised in: {Course name}/{SCORM activity name}/attempt-X.json.
         // where X is the attempt number.
-        array_walk($alldata, function($attemptsdata, $contextid) {
+        array_walk($alldata, function($attemptsdata, $contextid) use ($subcontext) {
             $context = \context::instance_by_id($contextid);
-            array_walk($attemptsdata, function($data, $attempt) use ($context) {
+            array_walk($attemptsdata, function($data, $attempt) use ($context, $subcontext) {
                 writer::with_context($context)->export_related_data(
-                    [],
+                    $subcontext,
                     'attempt-'.$attempt,
                     (object)['scoestrack' => $data]
                 );
