@@ -142,7 +142,7 @@ class tool_dataprivacy_expired_contexts_testcase extends advanced_testcase {
         global $DB;
 
         $purpose1 = api::create_purpose((object)['name' => 'p1', 'retentionperiod' => 'PT1H', 'lawfulbases' => 'gdpr_art_6_1_a']);
-        $purpose2 = api::create_purpose((object)['name' => 'p1', 'retentionperiod' => 'P1000Y', 'lawfulbases' => 'gdpr_art_6_1_b']);
+        $purpose2 = api::create_purpose((object)['name' => 'p1', 'retentionperiod' => 'P1Y', 'lawfulbases' => 'gdpr_art_6_1_b']);
         $cat = api::create_category((object)['name' => 'a']);
 
         $record = (object)[
@@ -165,8 +165,12 @@ class tool_dataprivacy_expired_contexts_testcase extends advanced_testcase {
 
         $course1 = $this->getDataGenerator()->create_course();
 
-        // Old course.
-        $course2 = $this->getDataGenerator()->create_course(['startdate' => '1', 'enddate' => '2']);
+        // Course finished last week (so purpose1 retention period does delete stuff but purpose2 retention period does not).
+        $dt = new \DateTime();
+        $di = new \DateInterval('P7D');
+        $dt->sub($di);
+
+        $course2 = $this->getDataGenerator()->create_course(['startdate' => '1', 'enddate' => $dt->getTimestamp()]);
         $forum1 = $this->getDataGenerator()->create_module('forum', array('course' => $course2->id));
         $forum2 = $this->getDataGenerator()->create_module('forum', array('course' => $course2->id));
 
