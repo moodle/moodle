@@ -79,10 +79,10 @@ class mod_scorm_testcase extends provider_testcase {
         // Validate exported data for student0 (without any AICC/SCORM attempt).
         $this->setUser($this->student0);
         $writer = writer::with_context($this->context);
+
         $this->export_context_data_for_user($this->student0->id, $this->context, 'mod_scorm');
         $data = $writer->get_related_data([], 'attempt-1');
         $this->assertEmpty($data);
-        $this->export_context_data_for_user($this->student0->id, $this->context, 'mod_scorm');
         $data = $writer->get_related_data([], 'aiccsession');
         $this->assertEmpty($data);
 
@@ -92,6 +92,10 @@ class mod_scorm_testcase extends provider_testcase {
         $writer = writer::with_context($this->context);
         $this->assertFalse($writer->has_any_data());
         $this->export_context_data_for_user($this->student1->id, $this->context, 'mod_scorm');
+
+        $data = $writer->get_data([]);
+        $this->assertEquals('SCORM1', $data->name);
+
         $data = $writer->get_related_data([], 'attempt-1');
         $this->assertCount(1, (array) $data);
         $this->assertCount(2, (array) reset($data));
@@ -101,7 +105,6 @@ class mod_scorm_testcase extends provider_testcase {
         $data = $writer->get_related_data([], 'attempt-3');
         $this->assertEmpty($data);
         // The student1 has only 1 aicc_session.
-        $this->export_context_data_for_user($this->student1->id, $this->context, 'mod_scorm');
         $data = $writer->get_related_data([], 'aiccsession');
         $this->assertCount(1, (array) $data);
     }
@@ -189,7 +192,8 @@ class mod_scorm_testcase extends provider_testcase {
 
         // Setup test data.
         $course = $this->getDataGenerator()->create_course();
-        $scorm = $this->getDataGenerator()->create_module('scorm', array('course' => $course->id));
+        $params = array('course' => $course->id, 'name' => 'SCORM1');
+        $scorm = $this->getDataGenerator()->create_module('scorm', $params);
         $this->context = \context_module::instance($scorm->cmid);
 
         // Users enrolments.
