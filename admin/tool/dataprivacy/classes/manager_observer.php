@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Class \tool_dataprivacy\manager
+ * Class \tool_dataprivacy\manager_observer.
  *
  * @package    tool_dataprivacy
  * @copyright  2018 Marina Glancy
