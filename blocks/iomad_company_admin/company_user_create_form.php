@@ -421,6 +421,10 @@ if ($mform->is_cancelled()) {
     redirect($dashboardurl);
     die;
 } else if ($data = $mform->get_data()) {
+    // Trim first and lastnames
+    $data->firstname = trim($data->firstname);
+    $data->lastname = trim($data->lastname);
+
     $data->userid = $USER->id;
     if ($companyid > 0) {
         $data->companyid = $companyid;

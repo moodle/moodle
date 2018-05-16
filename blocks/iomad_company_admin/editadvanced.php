@@ -152,6 +152,10 @@ $userform = new user_editadvanced_form(null, array('editoroptions' => $editoropt
 $userform->set_data($user);
 
 if ($usernew = $userform->get_data()) {
+    // Trim first and lastnames
+    $usernew->firstname = trim($usernew->firstname);
+    $usernew->lastname = trim($usernew->lastname);
+
     if ($usernew->id == -1) {
         $event = \core\event\user_updated::create(array('context' => $systemcontext, 'userid' => $usernew->id, 'relateduserid' => $USER->id));
         $event->trigger();
