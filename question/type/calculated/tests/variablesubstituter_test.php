@@ -91,6 +91,12 @@ class qtype_calculated_variable_substituter_test extends advanced_testcase {
         $this->assertEquals('= 3', $vs->replace_expressions_in_text('= {={a} + {b}}'));
     }
 
+    public function test_expression_has_unmapped_placeholder() {
+        $this->setExpectedException('moodle_exception', (get_string('illegalformulasyntax', 'qtype_calculated', '{c}')));
+        $vs = new qtype_calculated_variable_substituter(array('a' => 1, 'b' => 2), '.');
+        $vs->calculate('{c} - {a} + {b}');
+    }
+
     public function test_replace_expressions_in_text_negative() {
         $vs = new qtype_calculated_variable_substituter(array('a' => -1, 'b' => 2), '.');
         $this->assertEquals('temperatures -1 and 2',
