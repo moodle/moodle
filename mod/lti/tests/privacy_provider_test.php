@@ -43,7 +43,10 @@ class mod_lti_privacy_provider_testcase extends \core_privacy\tests\provider_tes
         $collection = new collection('mod_lti');
         $newcollection = provider::get_metadata($collection);
         $itemcollection = $newcollection->get_collection();
-        $this->assertCount(3, $itemcollection);
+        $this->assertCount(4, $itemcollection);
+
+        $ltiproviderexternal = array_shift($itemcollection);
+        $this->assertEquals('lti_provider', $ltiproviderexternal->get_name());
 
         $ltisubmissiontable = array_shift($itemcollection);
         $this->assertEquals('lti_submission', $ltisubmissiontable->get_name());

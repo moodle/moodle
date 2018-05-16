@@ -49,6 +49,25 @@ class provider implements
      * @return collection the updated collection of metadata items.
      */
     public static function get_metadata(collection $items) : collection {
+        $items->add_external_location_link(
+            'lti_provider',
+            [
+                'userid' => 'privacy:metadata:userid',
+                'username' => 'privacy:metadata:username',
+                'useridnumber' => 'privacy:metadata:useridnumber',
+                'firstname' => 'privacy:metadata:firstname',
+                'lastname' => 'privacy:metadata:lastname',
+                'fullname' => 'privacy:metadata:fullname',
+                'email' => 'privacy:metadata:email',
+                'role' => 'privacy:metadata:role',
+                'courseid' => 'privacy:metadata:courseid',
+                'courseidnumber' => 'privacy:metadata:courseidnumber',
+                'courseshortname' => 'privacy:metadata:courseshortname',
+                'coursefullname' => 'privacy:metadata:coursefullname',
+            ],
+            'privacy:metadata:externalpurpose'
+        );
+
         $items->add_database_table(
             'lti_submission',
             [
