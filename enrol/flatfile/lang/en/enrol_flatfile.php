@@ -29,6 +29,7 @@ $string['filelockedmail'] = 'The text file you are using for file-based enrolmen
 $string['filelockedmailsubject'] = 'Important error: Enrolment file';
 $string['flatfile:manage'] = 'Manage user enrolments manually';
 $string['flatfile:unenrol'] = 'Unenrol users from the course manually';
+$string['flatfileenrolments'] = 'Flat file (CSV) enrolments';
 $string['flatfilesync'] = 'Flat file enrolment sync';
 $string['location'] = 'File location';
 $string['location_desc'] = 'Specify full path to the enrolment file. The file is automatically deleted after processing.';
@@ -61,4 +62,11 @@ It could look something like this:
    del, student, 17, CF101
    add, student, 21, CF101, 1091115000, 1091215000
 </pre>';
-$string['privacy:metadata'] = 'The Flat file (CSV) enrolment plugin does not store any personal data.';
+$string['privacy:metadata:enrol_flatfile'] = 'The Flat file (CSV) enrolment plugin may store personal data relating to future enrolments in the enrol_flatfile table.';
+$string['privacy:metadata:enrol_flatfile:action'] = 'The enrolment action expected at the given date.';
+$string['privacy:metadata:enrol_flatfile:courseid'] = 'The courseid to which the enrolment relates.';
+$string['privacy:metadata:enrol_flatfile:roleid'] = 'The id of the role to be assigned or revoked.';
+$string['privacy:metadata:enrol_flatfile:timestart'] = 'The time at which the enrolment change starts.';
+$string['privacy:metadata:enrol_flatfile:timeend'] = 'The time at which the enrolment change ends.';
+$string['privacy:metadata:enrol_flatfile:timemodified'] = 'The modification time of this enrolment change.';
+$string['privacy:metadata:enrol_flatfile:userid'] = 'The id of the user to which the role assignment relates.';
