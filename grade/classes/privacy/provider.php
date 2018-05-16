@@ -97,8 +97,42 @@ class provider implements
             'loggeduser' => 'privacy:metadata:history:loggeduser',
         ]), 'privacy:metadata:gradeshistory');
 
-        // The table grade_import_values is not reported because its data is temporary and only
+        $collection->add_database_table('scale_history', [
+            'action' => 'privacy:metadata:scale_history:action',
+            'timemodified' => 'privacy:metadata:scale_history:timemodified',
+            'loggeduser' => 'privacy:metadata:scale_history:loggeduser',
+            'userid' => 'privacy:metadata:scale_history:userid',
+            'name' => 'privacy:metadata:scale_history:name',
+            'scale' => 'privacy:metadata:scale_history:scale',
+            'description' => 'privacy:metadata:scale_history:description'
+        ], 'privacy:metadata:scale_history');
+
+        // The following tables are reported but not exported/deleted because their data is temporary and only
         // used during an import. It's content is deleted after a successful, or failed, import.
+
+        $collection->add_database_table('grade_import_newitem', [
+            'itemname' => 'privacy:metadata:grade_import_newitem:itemname',
+            'importcode' => 'privacy:metadata:grade_import_newitem:importcode',
+            'importer' => 'privacy:metadata:grade_import_newitem:importer'
+        ], 'privacy:metadata:grade_import_newitem');
+
+        $collection->add_database_table('grade_import_values', [
+            'userid' => 'privacy:metadata:grade_import_values:userid',
+            'finalgrade' => 'privacy:metadata:grade_import_values:finalgrade',
+            'feedback' => 'privacy:metadata:grade_import_values:feedback',
+            'importcode' => 'privacy:metadata:grade_import_values:importcode',
+            'importer' => 'privacy:metadata:grade_import_values:importer',
+            'importonlyfeedback' => 'privacy:metadata:grade_import_values:importonlyfeedback'
+        ], 'privacy:metadata:grade_import_values');
+
+        // Table 'scale' stores userid of the user who created a scale. This is not considered to be user data.
+        $collection->add_database_table('scale', [
+            'userid' => 'privacy:metadata:scale:userid',
+            'name' => 'privacy:metadata:scale:name',
+            'scale' => 'privacy:metadata:scale:scale',
+            'timemodified' => 'privacy:metadata:scale:timemodified',
+            'description' => 'privacy:metadata:scale:description'
+        ], 'privacy:metadata:scale');
 
         return $collection;
     }
