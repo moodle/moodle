@@ -47,6 +47,22 @@ class portfolio_privacy_provider_test extends \core_privacy\tests\provider_testc
             'value' => $value
         ];
         $DB->insert_record('portfolio_instance_user', $userinstance);
+
+        $DB->insert_record('portfolio_log', [
+            'portfolio' => $portfolioinstance->id,
+            'userid' => $user->id,
+            'caller_class' => 'forum_portfolio_caller',
+            'caller_component' => 'mod_forum',
+            'time' => time(),
+        ]);
+
+        $DB->insert_record('portfolio_log', [
+            'portfolio' => $portfolioinstance->id,
+            'userid' => $user->id,
+            'caller_class' => 'workshop_portfolio_caller',
+            'caller_component' => 'mod_workshop',
+            'time' => time(),
+        ]);
     }
 
     /**
@@ -57,9 +73,11 @@ class portfolio_privacy_provider_test extends \core_privacy\tests\provider_testc
         $collection = \core_portfolio\privacy\provider::get_metadata($collection);
         $this->assertNotEmpty($collection);
         $items = $collection->get_collection();
-        $this->assertEquals(2, count($items));
+        $this->assertEquals(4, count($items));
         $this->assertInstanceOf(\core_privacy\local\metadata\types\database_table::class, $items[0]);
-        $this->assertInstanceOf(\core_privacy\local\metadata\types\plugintype_link::class, $items[1]);
+        $this->assertInstanceOf(\core_privacy\local\metadata\types\database_table::class, $items[1]);
+        $this->assertInstanceOf(\core_privacy\local\metadata\types\database_table::class, $items[2]);
+        $this->assertInstanceOf(\core_privacy\local\metadata\types\plugintype_link::class, $items[3]);
     }
 
     /**
@@ -105,6 +123,7 @@ class portfolio_privacy_provider_test extends \core_privacy\tests\provider_testc
         \core_portfolio\privacy\provider::delete_data_for_all_users_in_context($systemcontext);
         $records = $DB->get_records('portfolio_instance_user');
         $this->assertCount(2, $records);
+        $this->assertCount(4, $DB->get_records('portfolio_log'));
         $context = context_user::instance($user1->id);
         \core_portfolio\privacy\provider::delete_data_for_all_users_in_context($context);
         $records = $DB->get_records('portfolio_instance_user');
@@ -112,6 +131,7 @@ class portfolio_privacy_provider_test extends \core_privacy\tests\provider_testc
         $this->assertCount(1, $records);
         $data = array_shift($records);
         $this->assertEquals($user2->id, $data->userid);
+        $this->assertCount(2, $DB->get_records('portfolio_log'));
     }
 
     /**
@@ -128,6 +148,7 @@ class portfolio_privacy_provider_test extends \core_privacy\tests\provider_testc
 
         $records = $DB->get_records('portfolio_instance_user');
         $this->assertCount(2, $records);
+        $this->assertCount(4, $DB->get_records('portfolio_log'));
 
         $context = context_user::instance($user1->id);
         $contextlist = new \core_privacy\local\request\approved_contextlist($user1, 'core_portfolio', [$context->id]);
@@ -137,5 +158,6 @@ class portfolio_privacy_provider_test extends \core_privacy\tests\provider_testc
         $this->assertCount(1, $records);
         $data = array_shift($records);
         $this->assertEquals($user2->id, $data->userid);
+        $this->assertCount(2, $DB->get_records('portfolio_log'));
     }
 }
