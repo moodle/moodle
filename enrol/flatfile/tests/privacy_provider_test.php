@@ -117,15 +117,17 @@ class enrol_flatfile_privacy_testcase extends provider_testcase {
         provider::export_user_data($approvedcontextlist);
 
         // Verify we see one future course enrolment in course1, and one in course3.
+        $subcontext = \core_enrol\privacy\provider::get_subcontext([get_string('pluginname', 'enrol_flatfile')]);
+
         $writer = writer::with_context($this->coursecontext1);
-        $this->assertNotEmpty($writer->get_data([get_string('flatfileenrolments', 'enrol_flatfile')]));
+        $this->assertNotEmpty($writer->get_data($subcontext));
 
         $writer = writer::with_context($this->coursecontext3);
-        $this->assertNotEmpty($writer->get_data([get_string('flatfileenrolments', 'enrol_flatfile')]));
+        $this->assertNotEmpty($writer->get_data($subcontext));
 
         // Verify we have nothing in course 2 for this user.
         $writer = writer::with_context($this->coursecontext2);
-        $this->assertEmpty($writer->get_data([get_string('flatfileenrolments', 'enrol_flatfile')]));
+        $this->assertEmpty($writer->get_data($subcontext));
     }
 
     /**
@@ -146,12 +148,14 @@ class enrol_flatfile_privacy_testcase extends provider_testcase {
         provider::export_user_data($subsetapprovedcontextlist);
 
         // Verify we see one future course enrolment in course1 only.
+        $subcontext = \core_enrol\privacy\provider::get_subcontext([get_string('pluginname', 'enrol_flatfile')]);
+
         $writer = writer::with_context($this->coursecontext1);
-        $this->assertNotEmpty($writer->get_data([get_string('flatfileenrolments', 'enrol_flatfile')]));
+        $this->assertNotEmpty($writer->get_data($subcontext));
 
         // And nothing in the course3 context.
         $writer = writer::with_context($this->coursecontext3);
-        $this->assertEmpty($writer->get_data([get_string('flatfileenrolments', 'enrol_flatfile')]));
+        $this->assertEmpty($writer->get_data($subcontext));
     }
 
     /**

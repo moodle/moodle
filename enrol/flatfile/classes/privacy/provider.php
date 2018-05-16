@@ -118,7 +118,7 @@ class provider implements
         $futureenrolments->close();
 
         // And finally, write out the data to the relevant course contexts.
-        $subcontext = [get_string('flatfileenrolments', 'enrol_flatfile')];
+        $subcontext = \core_enrol\privacy\provider::get_subcontext([get_string('pluginname', 'enrol_flatfile')]);
         foreach ($enrolmentdata as $courseid => $enrolments) {
             $data = (object) [
                 'pendingenrolments' => $enrolments,
