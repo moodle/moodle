@@ -60,6 +60,7 @@ class provider implements
      */
     public static function get_metadata(collection $collection) : collection {
 
+        // Tables without 'real' user information.
         $collection->add_database_table('grade_outcomes', [
             'timemodified' => 'privacy:metadata:outcomes:timemodified',
             'usermodified' => 'privacy:metadata:outcomes:usermodified',
@@ -80,6 +81,18 @@ class provider implements
             'loggeduser' => 'privacy:metadata:history:loggeduser',
         ], 'privacy:metadata:itemshistory');
 
+        $collection->add_database_table('scale', [
+            'userid' => 'privacy:metadata:scale:userid',
+            'timemodified' => 'privacy:metadata:scale:timemodified',
+        ], 'privacy:metadata:scale');
+
+        $collection->add_database_table('scale_history', [
+            'userid' => 'privacy:metadata:scale:userid',
+            'timemodified' => 'privacy:metadata:history:timemodified',
+            'loggeduser' => 'privacy:metadata:history:loggeduser',
+        ], 'privacy:metadata:scalehistory');
+
+        // Table with user information.
         $gradescommonfields = [
             'userid' => 'privacy:metadata:grades:userid',
             'usermodified' => 'privacy:metadata:grades:usermodified',
@@ -97,8 +110,23 @@ class provider implements
             'loggeduser' => 'privacy:metadata:history:loggeduser',
         ]), 'privacy:metadata:gradeshistory');
 
-        // The table grade_import_values is not reported because its data is temporary and only
+        // The following tables are reported but not exported/deleted because their data is temporary and only
         // used during an import. It's content is deleted after a successful, or failed, import.
+
+        $collection->add_database_table('grade_import_newitem', [
+            'itemname' => 'privacy:metadata:grade_import_newitem:itemname',
+            'importcode' => 'privacy:metadata:grade_import_newitem:importcode',
+            'importer' => 'privacy:metadata:grade_import_newitem:importer'
+        ], 'privacy:metadata:grade_import_newitem');
+
+        $collection->add_database_table('grade_import_values', [
+            'userid' => 'privacy:metadata:grade_import_values:userid',
+            'finalgrade' => 'privacy:metadata:grade_import_values:finalgrade',
+            'feedback' => 'privacy:metadata:grade_import_values:feedback',
+            'importcode' => 'privacy:metadata:grade_import_values:importcode',
+            'importer' => 'privacy:metadata:grade_import_values:importer',
+            'importonlyfeedback' => 'privacy:metadata:grade_import_values:importonlyfeedback'
+        ], 'privacy:metadata:grade_import_values');
 
         return $collection;
     }
@@ -118,18 +146,29 @@ class provider implements
               FROM {grade_outcomes} go
               JOIN {context} ctx
                 ON (go.courseid > 0 AND ctx.instanceid = go.courseid AND ctx.contextlevel = :courselevel)
-                OR (ctx.id = :syscontextid)
+                OR ((go.courseid IS NULL OR go.courseid < 1) AND ctx.id = :syscontextid)
              WHERE go.usermodified = :userid";
         $params = ['userid' => $userid, 'courselevel' => CONTEXT_COURSE, 'syscontextid' => SYSCONTEXTID];
         $contextlist->add_from_sql($sql, $params);
 
-        // Add where appear in the history of outcomes, categories or items.
+        // Add where we modified scales.
+        $sql = "
+            SELECT DISTINCT ctx.id
+              FROM {scale} s
+              JOIN {context} ctx
+                ON (s.courseid > 0 AND ctx.instanceid = s.courseid AND ctx.contextlevel = :courselevel)
+                OR (s.courseid = 0 AND ctx.id = :syscontextid)
+             WHERE s.userid = :userid";
+        $params = ['userid' => $userid, 'courselevel' => CONTEXT_COURSE, 'syscontextid' => SYSCONTEXTID];
+        $contextlist->add_from_sql($sql, $params);
+
+        // Add where appear in the history of outcomes, categories, scales or items.
         $sql = "
             SELECT DISTINCT ctx.id
               FROM {context} ctx
          LEFT JOIN {grade_outcomes_history} goh ON goh.loggeduser = :userid1 AND (
                    (goh.courseid > 0 AND goh.courseid = ctx.instanceid AND ctx.contextlevel = :courselevel1)
-                OR ((goh.courseid IS NULL OR goh.courseid < 1) AND ctx.id = :syscontextid)
+                OR ((goh.courseid IS NULL OR goh.courseid < 1) AND ctx.id = :syscontextid1)
             )
          LEFT JOIN {grade_categories_history} gch ON gch.loggeduser = :userid2 AND (
                    gch.courseid = ctx.instanceid
@@ -139,17 +178,28 @@ class provider implements
                    gih.courseid = ctx.instanceid
                AND ctx.contextlevel = :courselevel3
             )
+         LEFT JOIN {scale_history} sh
+                ON (sh.userid = :userid4 OR sh.loggeduser = :userid5)
+               AND (
+                       (sh.courseid > 0 AND sh.courseid = ctx.instanceid AND ctx.contextlevel = :courselevel4)
+                    OR (sh.courseid = 0 AND ctx.id = :syscontextid2)
+            )
              WHERE goh.id IS NOT NULL
                 OR gch.id IS NOT NULL
-                OR gih.id IS NOT NULL";
+                OR gih.id IS NOT NULL
+                OR sh.id IS NOT NULL";
         $params = [
-            'syscontextid' => SYSCONTEXTID,
+            'syscontextid1' => SYSCONTEXTID,
+            'syscontextid2' => SYSCONTEXTID,
             'courselevel1' => CONTEXT_COURSE,
             'courselevel2' => CONTEXT_COURSE,
             'courselevel3' => CONTEXT_COURSE,
+            'courselevel4' => CONTEXT_COURSE,
             'userid1' => $userid,
             'userid2' => $userid,
             'userid3' => $userid,
+            'userid4' => $userid,
+            'userid5' => $userid,
         ];
         $contextlist->add_from_sql($sql, $params);
 
@@ -239,6 +289,9 @@ class provider implements
 
         // Export the outcomes.
         static::export_user_data_outcomes_in_contexts($contextlist);
+
+        // Export the scales.
+        static::export_user_data_scales_in_contexts($contextlist);
 
         // Export the historical grades which have become orphans (their grade items were deleted).
         // We place those in ther user context of the graded user.
@@ -655,6 +708,100 @@ class provider implements
         }, function($courseid, $data) use ($relatedtomepath) {
             $context = $courseid ? context_course::instance($courseid) : context_system::instance();
             writer::with_context($context)->export_related_data($relatedtomepath, 'outcomes_history',
+                (object) ['modified_records' => $data]);
+        });
+    }
+
+    /**
+     * Export the user data related to scales.
+     *
+     * @param approved_contextlist $contextlist The approved contexts to export information for.
+     * @return void
+     */
+    protected static function export_user_data_scales_in_contexts(approved_contextlist $contextlist) {
+        global $DB;
+
+        $rootpath = [get_string('grades', 'core_grades')];
+        $relatedtomepath = array_merge($rootpath, [get_string('privacy:path:relatedtome', 'core_grades')]);
+        $userid = $contextlist->get_user()->id;
+
+        // Reorganise the contexts.
+        $reduced = array_reduce($contextlist->get_contexts(), function($carry, $context) {
+            if ($context->contextlevel == CONTEXT_SYSTEM) {
+                $carry['in_system'] = true;
+            } else if ($context->contextlevel == CONTEXT_COURSE) {
+                $carry['courseids'][] = $context->instanceid;
+            }
+            return $carry;
+        }, [
+            'in_system' => false,
+            'courseids' => []
+        ]);
+
+        // Construct SQL.
+        $sqltemplateparts = [];
+        $templateparams = [];
+        if ($reduced['in_system']) {
+            $sqltemplateparts[] = '{prefix}.courseid = 0';
+        }
+        if (!empty($reduced['courseids'])) {
+            list($insql, $inparams) = $DB->get_in_or_equal($reduced['courseids'], SQL_PARAMS_NAMED);
+            $sqltemplateparts[] = "{prefix}.courseid $insql";
+            $templateparams = array_merge($templateparams, $inparams);
+        }
+        if (empty($sqltemplateparts)) {
+            return;
+        }
+        $sqltemplate = '(' . implode(' OR ', $sqltemplateparts) . ')';
+
+        // Export edited scales.
+        $sqlwhere = str_replace('{prefix}', 's', $sqltemplate);
+        $sql = "
+            SELECT s.id, s.courseid, s.name, s.timemodified
+              FROM {scale} s
+             WHERE $sqlwhere
+               AND s.userid = :userid
+          ORDER BY s.courseid, s.timemodified, s.id";
+        $params = array_merge($templateparams, ['userid' => $userid]);
+        $recordset = $DB->get_recordset_sql($sql, $params);
+        static::recordset_loop_and_export($recordset, 'courseid', [], function($carry, $record) {
+            $carry[] = [
+                'name' => $record->name,
+                'timemodified' => transform::datetime($record->timemodified),
+                'created_or_modified_by_you' => transform::yesno(true)
+            ];
+            return $carry;
+
+        }, function($courseid, $data) use ($relatedtomepath) {
+            $context = $courseid ? context_course::instance($courseid) : context_system::instance();
+            writer::with_context($context)->export_related_data($relatedtomepath, 'scales',
+                (object) ['scales' => $data]);
+        });
+
+        // Export edits of scales history.
+        $sqlwhere = str_replace('{prefix}', 'sh', $sqltemplate);
+        $sql = "
+            SELECT sh.id, sh.courseid, sh.name, sh.userid, sh.timemodified, sh.action, sh.loggeduser
+              FROM {scale_history} sh
+             WHERE $sqlwhere
+               AND sh.loggeduser = :userid1
+                OR sh.userid = :userid2
+          ORDER BY sh.courseid, sh.timemodified, sh.id";
+        $params = array_merge($templateparams, ['userid1' => $userid, 'userid2' => $userid]);
+        $recordset = $DB->get_recordset_sql($sql, $params);
+        static::recordset_loop_and_export($recordset, 'courseid', [], function($carry, $record) use ($userid) {
+            $carry[] = [
+                'name' => $record->name,
+                'timemodified' => transform::datetime($record->timemodified),
+                'author_of_change_was_you' => transform::yesno($record->userid == $userid),
+                'author_of_action_was_you' => transform::yesno($record->loggeduser == $userid),
+                'action' => static::transform_history_action($record->action)
+            ];
+            return $carry;
+
+        }, function($courseid, $data) use ($relatedtomepath) {
+            $context = $courseid ? context_course::instance($courseid) : context_system::instance();
+            writer::with_context($context)->export_related_data($relatedtomepath, 'scales_history',
                 (object) ['modified_records' => $data]);
         });
     }
