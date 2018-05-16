@@ -227,4 +227,16 @@ class provider implements
         $DB->delete_records_select('user_enrolments', "id $sql", $params);
     }
 
+    /**
+     * Get the subcontext for export.
+     *
+     * @param array $subcontext Any additional subcontext to use.
+     * @return array The array containing the full subcontext, i.e. [enrolments, subcontext]
+     */
+    public static function get_subcontext(array $subcontext) {
+        return array_merge(
+            [get_string('privacy:metadata:user_enrolments', 'core_enrol')],
+            $subcontext
+        );
+    }
 }
