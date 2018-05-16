@@ -64,6 +64,11 @@ class core_grades_privacy_testcase extends provider_testcase {
         $u4 = $dg->create_user();
         $u5 = $dg->create_user();
         $u6 = $dg->create_user();
+        $u7 = $dg->create_user();
+        $u8 = $dg->create_user();
+        $u9 = $dg->create_user();
+        $u10 = $dg->create_user();
+        $u11 = $dg->create_user();
 
         $sysctx = context_system::instance();
         $c1ctx = context_course::instance($c1->id);
@@ -80,15 +85,21 @@ class core_grades_privacy_testcase extends provider_testcase {
             'fullname' => 'go2']), false);
 
         // Nothing as of now.
-        foreach ([$u1, $u2, $u3, $u4] as $u) {
+        foreach ([$u1, $u2, $u3, $u4, $u5, $u6, $u7, $u8, $u9, $u10, $u11] as $u) {
             $contexts = array_flip(provider::get_contexts_for_userid($u->id)->get_contextids());
             $this->assertEmpty($contexts);
         }
 
         $go0 = new grade_outcome(['shortname' => 'go0', 'fullname' => 'go0', 'usermodified' => $u1->id]);
         $go0->insert();
-        $go1 = new grade_outcome(['shortname' => 'go1', 'fullname' => 'go1', 'courseid' => $c1->id, 'usermodified' => $u1->id]);
+        $go1 = new grade_outcome(['shortname' => 'go1', 'fullname' => 'go1', 'courseid' => $c1->id, 'usermodified' => $u11->id]);
         $go1->insert();
+
+        // Create scales.
+        $s1 = new grade_scale(['name' => 's1', 'scale' => 'a,b', 'userid' => $u7->id, 'courseid' => 0, 'description' => '']);
+        $s1->insert();
+        $s2 = new grade_scale(['name' => 's2', 'scale' => 'a,b', 'userid' => $u8->id, 'courseid' => $c1->id, 'description' => '']);
+        $s2->insert();
 
         // User 2 creates history.
         $this->setUser($u2);
@@ -118,11 +129,18 @@ class core_grades_privacy_testcase extends provider_testcase {
         $this->setUser($u6);
         $gi2a->delete();
 
+        // User 9 creates history.
+        $this->setUser($u9);
+        $s1->name .= ' edited';
+        $s1->update();
+
         // Assert contexts.
         $contexts = array_flip(provider::get_contexts_for_userid($u1->id)->get_contextids());
-        $this->assertCount(2, $contexts);
-        $this->assertArrayHasKey($c1ctx->id, $contexts);
+        $this->assertCount(1, $contexts);
         $this->assertArrayHasKey($sysctx->id, $contexts);
+        $contexts = array_flip(provider::get_contexts_for_userid($u11->id)->get_contextids());
+        $this->assertCount(1, $contexts);
+        $this->assertArrayHasKey($c1ctx->id, $contexts);
         $contexts = array_flip(provider::get_contexts_for_userid($u2->id)->get_contextids());
         $this->assertCount(2, $contexts);
         $this->assertArrayHasKey($sysctx->id, $contexts);
@@ -140,6 +158,23 @@ class core_grades_privacy_testcase extends provider_testcase {
         $contexts = array_flip(provider::get_contexts_for_userid($u6->id)->get_contextids());
         $this->assertCount(1, $contexts);
         $this->assertArrayHasKey($c2ctx->id, $contexts);
+        $contexts = array_flip(provider::get_contexts_for_userid($u7->id)->get_contextids());
+        $this->assertCount(1, $contexts);
+        $this->assertArrayHasKey($sysctx->id, $contexts);
+        $contexts = array_flip(provider::get_contexts_for_userid($u8->id)->get_contextids());
+        $this->assertCount(1, $contexts);
+        $this->assertArrayHasKey($c1ctx->id, $contexts);
+        $contexts = array_flip(provider::get_contexts_for_userid($u9->id)->get_contextids());
+        $this->assertCount(1, $contexts);
+        $this->assertArrayHasKey($sysctx->id, $contexts);
+
+        // User 10 creates history.
+        $this->setUser($u10);
+        $s2->delete();
+
+        $contexts = array_flip(provider::get_contexts_for_userid($u10->id)->get_contextids());
+        $this->assertCount(1, $contexts);
+        $this->assertArrayHasKey($c1ctx->id, $contexts);
     }
 
     public function test_get_contexts_for_userid_grades_and_history() {
@@ -609,6 +644,10 @@ class core_grades_privacy_testcase extends provider_testcase {
         $u4 = $dg->create_user();
         $u5 = $dg->create_user();
         $u6 = $dg->create_user();
+        $u7 = $dg->create_user();
+        $u8 = $dg->create_user();
+        $u9 = $dg->create_user();
+        $u10 = $dg->create_user();
 
         $sysctx = context_system::instance();
         $u1ctx = context_user::instance($u1->id);
@@ -641,6 +680,14 @@ class core_grades_privacy_testcase extends provider_testcase {
         $go1 = new grade_outcome(['shortname' => 'go1', 'fullname' => 'go1', 'courseid' => $c1->id, 'usermodified' => $u1->id]);
         $go1->insert();
 
+        // Create scales.
+        $s1 = new grade_scale(['name' => 's1', 'scale' => 'a,b', 'userid' => $u7->id, 'courseid' => 0, 'description' => '']);
+        $s1->insert();
+        $s2 = new grade_scale(['name' => 's2', 'scale' => 'a,b', 'userid' => $u8->id, 'courseid' => $c1->id, 'description' => '']);
+        $s2->insert();
+        $s3 = new grade_scale(['name' => 's3', 'scale' => 'a,b', 'userid' => $u8->id, 'courseid' => $c2->id, 'description' => '']);
+        $s3->insert();
+
         // User 2 creates history.
         $this->setUser($u2);
         $go0->shortname .= ' edited';
@@ -668,6 +715,15 @@ class core_grades_privacy_testcase extends provider_testcase {
         // User 6 creates history.
         $this->setUser($u6);
         $gi2a->delete();
+
+        // User 9 creates history.
+        $this->setUser($u9);
+        $s1->name .= ' edited';
+        $s1->update();
+
+        // User 10 creates history.
+        $this->setUser($u10);
+        $s3->delete();
 
         $this->setAdminUser();
 
@@ -753,6 +809,74 @@ class core_grades_privacy_testcase extends provider_testcase {
         $this->assertCount(1, $data->modified_records);
         $this->assertEquals($gi2a->itemname, $data->modified_records[0]['name']);
         $this->assertEquals(transform::yesno(true), $data->modified_records[0]['logged_in_user_was_you']);
+        $this->assertEquals(get_string('privacy:request:historyactiondelete', 'core_grades'),
+            $data->modified_records[0]['action']);
+
+        // Export data for u7.
+        writer::reset();
+        provider::export_user_data(new approved_contextlist($u7, 'core_grades', $allcontexts));
+        $data = writer::with_context($c1ctx)->get_related_data($relatedtomepath, 'scales');
+        $this->assertEmpty($data);
+        $data = writer::with_context($sysctx)->get_related_data($relatedtomepath, 'scales');
+        $this->assertCount(1, $data->scales);
+        $this->assertEquals($s1->name, $data->scales[0]['name']);
+        $this->assertEquals(transform::yesno(true), $data->scales[0]['created_or_modified_by_you']);
+
+        // Export data for u8.
+        writer::reset();
+        provider::export_user_data(new approved_contextlist($u8, 'core_grades', $allcontexts));
+        $data = writer::with_context($sysctx)->get_related_data($relatedtomepath, 'scales');
+        $this->assertEmpty($data);
+        $data = writer::with_context($c1ctx)->get_related_data($relatedtomepath, 'scales');
+        $this->assertCount(1, $data->scales);
+        $this->assertEquals($s2->name, $data->scales[0]['name']);
+        $this->assertEquals(transform::yesno(true), $data->scales[0]['created_or_modified_by_you']);
+        $data = writer::with_context($c2ctx)->get_related_data($relatedtomepath, 'scales_history');
+        $this->assertCount(2, $data->modified_records);
+        $this->assertEquals($s3->name, $data->modified_records[0]['name']);
+        $this->assertEquals(transform::yesno(true), $data->modified_records[0]['author_of_change_was_you']);
+        $this->assertEquals(transform::yesno(false), $data->modified_records[0]['author_of_action_was_you']);
+        $this->assertEquals(get_string('privacy:request:historyactioninsert', 'core_grades'),
+            $data->modified_records[0]['action']);
+        $this->assertEquals($s3->name, $data->modified_records[1]['name']);
+        $this->assertEquals(transform::yesno(true), $data->modified_records[1]['author_of_change_was_you']);
+        $this->assertEquals(transform::yesno(false), $data->modified_records[1]['author_of_action_was_you']);
+        $this->assertEquals(get_string('privacy:request:historyactiondelete', 'core_grades'),
+            $data->modified_records[1]['action']);
+
+        // Export data for u9.
+        writer::reset();
+        provider::export_user_data(new approved_contextlist($u9, 'core_grades', $allcontexts));
+        $data = writer::with_context($c1ctx)->get_related_data($relatedtomepath, 'scales');
+        $this->assertEmpty($data);
+        $data = writer::with_context($sysctx)->get_related_data($relatedtomepath, 'scales');
+        $this->assertEmpty($data);
+        $data = writer::with_context($sysctx)->get_related_data($relatedtomepath, 'scales_history');
+        $this->assertCount(1, $data->modified_records);
+        $this->assertEquals($s1->name, $data->modified_records[0]['name']);
+        $this->assertEquals(transform::yesno(false), $data->modified_records[0]['author_of_change_was_you']);
+        $this->assertEquals(transform::yesno(true), $data->modified_records[0]['author_of_action_was_you']);
+        $this->assertEquals(get_string('privacy:request:historyactionupdate', 'core_grades'),
+            $data->modified_records[0]['action']);
+
+        // Export data for u10.
+        writer::reset();
+        provider::export_user_data(new approved_contextlist($u10, 'core_grades', $allcontexts));
+        $data = writer::with_context($c1ctx)->get_related_data($relatedtomepath, 'scales');
+        $this->assertEmpty($data);
+        $data = writer::with_context($c2ctx)->get_related_data($relatedtomepath, 'scales');
+        $this->assertEmpty($data);
+        $data = writer::with_context($sysctx)->get_related_data($relatedtomepath, 'scales');
+        $this->assertEmpty($data);
+        $data = writer::with_context($c1ctx)->get_related_data($relatedtomepath, 'scales_history');
+        $this->assertEmpty($data);
+        $data = writer::with_context($sysctx)->get_related_data($relatedtomepath, 'scales_history');
+        $this->assertEmpty($data);
+        $data = writer::with_context($c2ctx)->get_related_data($relatedtomepath, 'scales_history');
+        $this->assertCount(1, $data->modified_records);
+        $this->assertEquals($s3->name, $data->modified_records[0]['name']);
+        $this->assertEquals(transform::yesno(false), $data->modified_records[0]['author_of_change_was_you']);
+        $this->assertEquals(transform::yesno(true), $data->modified_records[0]['author_of_action_was_you']);
         $this->assertEquals(get_string('privacy:request:historyactiondelete', 'core_grades'),
             $data->modified_records[0]['action']);
     }
