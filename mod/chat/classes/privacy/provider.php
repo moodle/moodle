@@ -65,10 +65,26 @@ class provider implements
             'timestamp' => 'privacy:metadata:messages:timestamp',
         ], 'privacy:metadata:messages');
 
-        // The tables chat_messages_current and chat_users are not reported here
+        // The tables chat_messages_current and chat_users are not exported/deleted
         // because they are considered as short-lived data and are deleted on a
-        // regular basis by cron, or during normal requests. MDL-62006 was raised
-        // to discuss and/or implement support for those tables.
+        // regular basis by cron, or during normal requests. TODO MDL-62006.
+
+        $collection->add_database_table('chat_messages_current', [
+            'userid' => 'privacy:metadata:messages:userid',
+            'message' => 'privacy:metadata:messages:message',
+            'issystem' => 'privacy:metadata:messages:issystem',
+            'timestamp' => 'privacy:metadata:messages:timestamp'
+        ], 'privacy:metadata:chat_messages_current');
+
+        $collection->add_database_table('chat_users', [
+            'userid' => 'privacy:metadata:chat_users:userid',
+            'version' => 'privacy:metadata:chat_users:version',
+            'ip' => 'privacy:metadata:chat_users:ip',
+            'firstping' => 'privacy:metadata:chat_users:firstping',
+            'lastping' => 'privacy:metadata:chat_users:lastping',
+            'lastmessageping' => 'privacy:metadata:chat_users:lastmessageping',
+            'lang' => 'privacy:metadata:chat_users:lang'
+        ], 'privacy:metadata:chat_users');
 
         return $collection;
     }
