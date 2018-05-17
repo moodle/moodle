@@ -1,0 +1,20 @@
+version: "3"
+services:
+  web:
+    image: jhardison/moodle
+    ports:
+      - 8080:80
+    volumes:
+      - ./:/var/www/html
+      - moodle_data:/var/moodledata
+    environment:
+      - "MOODLE_URL:http://localhost:8080"
+  mysql:
+    image: mysql:5
+    environment:
+      - MYSQL_DATABASE=moodle
+      - MYSQL_ROOT_PASSWORD=moodle
+      - MYSQL_USER=moodle
+      - MYSQL_PASSWORD=moodle
+volumes:
+  moodle_data:
