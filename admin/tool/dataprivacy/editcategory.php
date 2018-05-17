@@ -24,6 +24,8 @@
 
 require_once(__DIR__ . '/../../../config.php');
 
+require_login(null, false);
+
 $id = optional_param('id', 0, PARAM_INT);
 
 $url = new \moodle_url('/admin/tool/dataprivacy/editcategory.php', array('id' => $id));

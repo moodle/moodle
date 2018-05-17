@@ -34,7 +34,6 @@ define(['jquery', 'core/url', 'core/str'], function($, url, str) {
          *
          * @param  {object} targetnode The node that we want to expand / collapse
          * @param  {object} thisnode The node that was clicked.
-         * @return {null}
          */
         expandCollapse: function(targetnode, thisnode) {
             if (targetnode.hasClass('hide')) {
@@ -58,7 +57,6 @@ define(['jquery', 'core/url', 'core/str'], function($, url, str) {
          * Expand or collapse all nodes on this page.
          *
          * @param  {string} nextstate The next state to change to.
-         * @return {null}
          */
         expandCollapseAll: function(nextstate) {
             var currentstate = (nextstate == 'visible') ? 'hide' : 'visible';
@@ -75,6 +73,7 @@ define(['jquery', 'core/url', 'core/str'], function($, url, str) {
 
             str.get_string(currentstate, 'tool_dataprivacy').then(function(langString) {
                 $('.tool_dataprivacy-expand-all').html(langString);
+                return;
             }).catch(Notification.exception);
 
             $(':header i.fa').each(function() {

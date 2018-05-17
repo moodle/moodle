@@ -64,7 +64,7 @@ class purpose extends \core\persistent {
                 // Replicate self::read.
                 $this->from_record($data);
 
-                // Using validate() as self::$validated is private.
+                // Validate the purpose record.
                 $this->validate();
 
                 // Now replicate the parent constructor.
