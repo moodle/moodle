@@ -24,6 +24,8 @@
 
 require_once(__DIR__ . '/../../../config.php');
 
+require_login(null, false);
+
 $url = new moodle_url("/admin/tool/dataprivacy/categories.php");
 $title = get_string('editcategories', 'tool_dataprivacy');
 

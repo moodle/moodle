@@ -24,6 +24,8 @@
 
 require_once(__DIR__ . '/../../../config.php');
 
+require_login(null, false);
+
 $url = new moodle_url("/admin/tool/dataprivacy/purposes.php");
 $title = get_string('editpurposes', 'tool_dataprivacy');
 

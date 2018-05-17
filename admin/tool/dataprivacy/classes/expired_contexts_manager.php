@@ -23,10 +23,7 @@
  */
 namespace tool_dataprivacy;
 
-use tool_dataprivacy\api;
-use tool_dataprivacy\purpose;
-use tool_dataprivacy\context_instance;
-use tool_dataprivacy\data_registry;
+use core_privacy\manager;
 use tool_dataprivacy\expired_context;
 
 defined('MOODLE_INTERNAL') || die();
@@ -90,7 +87,7 @@ abstract class expired_contexts_manager {
             return $numprocessed;
         }
 
-        $privacymanager = new \core_privacy\manager();
+        $privacymanager = new manager();
         $privacymanager->set_observer(new \tool_dataprivacy\manager_observer());
 
         foreach ($this->get_context_levels() as $level) {
@@ -118,11 +115,11 @@ abstract class expired_contexts_manager {
     /**
      * Deletes user data from the provided context.
      *
-     * @param \core_privacy\manager $privacymanager
-     * @param \tool_dataprivacy\expired_context $expiredctx
+     * @param manager $privacymanager
+     * @param expired_context $expiredctx
      * @return \context|false
      */
-    protected function delete_expired_context(\core_privacy\manager $privacymanager, \tool_dataprivacy\expired_context $expiredctx) {
+    protected function delete_expired_context(manager $privacymanager, expired_context $expiredctx) {
 
         $context = \context::instance_by_id($expiredctx->get('contextid'), IGNORE_MISSING);
         if (!$context) {

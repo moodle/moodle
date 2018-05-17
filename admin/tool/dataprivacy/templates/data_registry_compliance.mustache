@@ -55,7 +55,7 @@
             <h3 id="{{plugin_type_raw}}">{{#pix}}t/collapsed, moodle, {{#str}}expandplugintype, tool_dataprivacy{{/str}}{{/pix}}{{plugin_type}}</h3>
             </a>
         </div>
-        <div class="hide p-b-1" data-plugintarget="{{plugin_type_raw}}" aria-expanded="false">
+        <div class="hide p-b-1" data-plugintarget="{{plugin_type_raw}}" aria-expanded="false" role="contentinfo">
             {{#plugins}}
                 {{> tool_dataprivacy/component_status}}
             {{/plugins}}

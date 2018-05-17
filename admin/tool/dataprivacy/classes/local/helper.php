@@ -132,7 +132,7 @@ class helper {
             'contextlevel' => CONTEXT_USER
         ];
 
-        // The final list of users that we will return;
+        // The final list of users that we will return.
         $finalresults = [];
 
         // Our prospective list of users.
