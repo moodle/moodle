@@ -397,6 +397,78 @@ class core_files_file_storage_testcase extends advanced_testcase {
         $this->assertEquals($content, $importedfile->get_content());
     }
 
+    /**
+     * Create file from reference tests
+     *
+     * @copyright 2012 Dongsheng Cai {@link http://dongsheng.org}
+     */
+    public function test_create_file_from_reference_with_content_hash() {
+        global $CFG, $DB;
+
+        $this->resetAfterTest();
+        // Create user.
+        $generator = $this->getDataGenerator();
+        $user = $generator->create_user();
+        $this->setUser($user);
+        $usercontext = context_user::instance($user->id);
+        $syscontext = context_system::instance();
+
+        $fs = get_file_storage();
+
+        $repositorypluginname = 'user';
+        // Override repository permission.
+        $capability = 'repository/' . $repositorypluginname . ':view';
+        $guestroleid = $DB->get_field('role', 'id', array('shortname' => 'guest'));
+        assign_capability($capability, CAP_ALLOW, $guestroleid, $syscontext->id, true);
+
+        $args = array();
+        $args['type'] = $repositorypluginname;
+        $repos = repository::get_instances($args);
+        $userrepository = reset($repos);
+        $this->assertInstanceOf('repository', $userrepository);
+
+        $component = 'user';
+        $filearea = 'private';
+        $itemid = 0;
+        $filepath = '/';
+        $filename = 'userfile.txt';
+
+        $filerecord = array(
+                'contextid' => $usercontext->id,
+                'component' => $component,
+                'filearea' => $filearea,
+                'itemid' => $itemid,
+                'filepath' => $filepath,
+                'filename' => $filename,
+        );
+
+        $content = 'Test content';
+        $originalfile = $fs->create_file_from_string($filerecord, $content);
+        $this->assertInstanceOf('stored_file', $originalfile);
+
+        $otherfilerecord = $filerecord;
+        $otherfilerecord['filename'] = 'other-filename.txt';
+        $otherfilewithsamecontents = $fs->create_file_from_string($otherfilerecord, $content);
+        $this->assertInstanceOf('stored_file', $otherfilewithsamecontents);
+
+        $newfilerecord = array(
+                'contextid' => $syscontext->id,
+                'component' => 'core',
+                'filearea' => 'phpunit',
+                'itemid' => 0,
+                'filepath' => $filepath,
+                'filename' => $filename,
+                'contenthash' => $originalfile->get_contenthash(),
+        );
+        $ref = $fs->pack_reference($filerecord);
+        $newstoredfile = $fs->create_file_from_reference($newfilerecord, $userrepository->id, $ref);
+        $this->assertInstanceOf('stored_file', $newstoredfile);
+        $this->assertEquals($userrepository->id, $newstoredfile->get_repository_id());
+        $this->assertEquals($originalfile->get_contenthash(), $newstoredfile->get_contenthash());
+        $this->assertEquals($originalfile->get_filesize(), $newstoredfile->get_filesize());
+        $this->assertRegExp('#' . $filename . '$#', $newstoredfile->get_reference_details());
+    }
+
     private function setup_three_private_files() {
 
         $this->resetAfterTest();
