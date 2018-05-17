@@ -42,15 +42,33 @@ All usage of '*-xs-*' have been dropped. So what used to be col-xs-6 should now 
 
 Typography
 ----------
-Boostrap 4 uses the browser default font size. A setting has been added to boost to set the relative fontsize.
+Boostrap 4 uses a native font stack that selects the best font-family for each OS and device. For font sizing the browser default root font-size (typically 16px) is used. this variable can be changed using the variable '$font-size-base'.
+In the default Boost preset we use: "0.9375rem" which computes to 15px on most browser.
 
 Presets
 -------
-The usage of preset files has been removed. The theme still supports adding SASS variables and SASS logic in the advanced setting tab on the theme boost settings page. The Raw initial SCSS field is for sass variables, everything else that should be added after Bootstrap SASS should go to the Raw SCSS field. If you are looking for something more permanent you can add a bootswatch folder in scc/bootswatch/dist.
+The structure of preset files have changed. The new structure of a preset file is:
+
+// Space to set variables.
+$font-size-base: 0.9375rem
+
+// Import FontAwesome.
+@import "fontawesome";
+
+// Import All of Bootstrap.
+@import "bootstrap";
+
+// Import Core moodle CSS.
+@import "moodle";
+
+// Space to use Bootstrap mixins and extends.
+.navbar {
+  @include shadow();
+}
 
 Bootswatches
 ------------
-Bootswatches have been added, they should still be considered experimental, however, the aim is to make sure Boost works with bootswatches. Using the default Bootswatch is recommended. Dark coloured Bootswatches could cause issues.
+Bootstrap 4 bootswatches can be imported using the theme/boost/cli/import-bootswatch.php script. Generated bootswatches can be added in the theme boost settings page.
 
 Changed Components
 ------------------

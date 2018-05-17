@@ -117,6 +117,14 @@ class provider implements
             'forumid' => 'privacy:metadata:forum_track_prefs:forumid',
         ], 'privacy:metadata:forum_track_prefs');
 
+        // The 'forum_queue' table stores temporary data that is not exported/deleted.
+        $items->add_database_table('forum_queue', [
+            'userid' => 'privacy:metadata:forum_queue:userid',
+            'discussionid' => 'privacy:metadata:forum_queue:discussionid',
+            'postid' => 'privacy:metadata:forum_queue:postid',
+            'timemodified' => 'privacy:metadata:forum_queue:timemodified'
+        ], 'privacy:metadata:forum_queue');
+
         // Forum posts can be tagged and rated.
         $items->link_subsystem('core_tag', 'privacy:metadata:core_tag');
         $items->link_subsystem('core_rating', 'privacy:metadata:core_rating');

@@ -91,6 +91,16 @@ class provider implements \core_privacy\local\metadata\provider, \core_privacy\l
                 'timecreated'   => 'privacy:metadata:events_queue:timecreated',
             ], 'privacy:metadata:events_queue');
 
+        // The log table is defined in core but used in logstore_legacy.
+        $collection->add_database_table('log', [
+            'time' => 'privacy:metadata:log:time',
+            'userid' => 'privacy:metadata:log:userid',
+            'ip' => 'privacy:metadata:log:ip',
+            'action' => 'privacy:metadata:log:action',
+            'url' => 'privacy:metadata:log:url',
+            'info' => 'privacy:metadata:log:info'
+        ], 'privacy:metadata:log');
+
         return $collection;
     }
 

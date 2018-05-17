@@ -164,9 +164,6 @@ class provider implements
     public static function delete_data_for_all_users_in_context(\context $context) {
         global $DB;
 
-        if (empty($context)) {
-            return;
-        }
         // Sanity check that context is at the User context level.
         if ($context->contextlevel == CONTEXT_COURSE) {
             $sql = "SELECT ue.id
@@ -230,4 +227,16 @@ class provider implements
         $DB->delete_records_select('user_enrolments', "id $sql", $params);
     }
 
+    /**
+     * Get the subcontext for export.
+     *
+     * @param array $subcontext Any additional subcontext to use.
+     * @return array The array containing the full subcontext, i.e. [enrolments, subcontext]
+     */
+    public static function get_subcontext(array $subcontext) {
+        return array_merge(
+            [get_string('privacy:metadata:user_enrolments', 'core_enrol')],
+            $subcontext
+        );
+    }
 }

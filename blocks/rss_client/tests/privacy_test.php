@@ -64,17 +64,20 @@ class block_rss_client_testcase extends provider_testcase {
         $context = context_user::instance($user->id);
 
         $this->add_rss_feed($user);
+        $this->add_rss_feed($user);
 
         $writer = \core_privacy\local\request\writer::with_context($context);
         $this->assertFalse($writer->has_any_data());
         $this->export_context_data_for_user($user->id, $context, 'block_rss_client');
 
         $data = $writer->get_data([get_string('pluginname', 'block_rss_client')]);
-        $this->assertEquals('BBC News - World', $data->title);
-        $this->assertEquals('World News', $data->preferredtitle);
-        $this->assertEquals('Description: BBC News - World', $data->description);
-        $this->assertEquals(get_string('no'), $data->shared);
-        $this->assertEquals('http://feeds.bbci.co.uk/news/world/rss.xml?edition=uk', $data->url);
+        $this->assertCount(2, $data->feeds);
+        $feed1 = reset($data->feeds);
+        $this->assertEquals('BBC News - World', $feed1->title);
+        $this->assertEquals('World News', $feed1->preferredtitle);
+        $this->assertEquals('Description: BBC News - World', $feed1->description);
+        $this->assertEquals(get_string('no'), $feed1->shared);
+        $this->assertEquals('http://feeds.bbci.co.uk/news/world/rss.xml?edition=uk', $feed1->url);
     }
 
     /**

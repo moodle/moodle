@@ -215,10 +215,6 @@ class provider implements
     public static function delete_data_for_all_users_in_context(\context $context) {
         global $DB;
 
-        if (empty($context)) {
-            return;
-        }
-
         if ($context->contextlevel == CONTEXT_MODULE) {
             // Delete all assignment submissions for the assignment associated with the context module.
             $assignment = self::get_assignment_by_context($context);

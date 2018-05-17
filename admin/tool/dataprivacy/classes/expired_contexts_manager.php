@@ -91,6 +91,7 @@ abstract class expired_contexts_manager {
         }
 
         $privacymanager = new \core_privacy\manager();
+        $privacymanager->set_observer(new \tool_dataprivacy\manager_observer());
 
         foreach ($this->get_context_levels() as $level) {
 
