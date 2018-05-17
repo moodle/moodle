@@ -38,8 +38,20 @@ require_once($CFG->dirroot . '/question/type/numerical/question.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_calculated extends question_type {
-    /** Regular expression that finds the formulas in content. */
-    const FORMULAS_IN_TEXT_REGEX = '~\{=([^{}]*(?:\{[^{}]+}[^{}]*)*)\}~';
+    /**
+     * @const string a placeholder is a letter, followed by almost any characters. (This should probably be restricted more.)
+     */
+    const PLACEHOLDER_REGEX_PART = '[[:alpha:]][^>} <`{"\']*';
+
+    /**
+     * @const string REGEXP for a placeholder, wrapped in its {...} delimiters, with capturing brackets around the name.
+     */
+    const PLACEHODLER_REGEX = '~\{([[:alpha:]][^>} <`{"\']*)\}~';
+
+    /**
+     * @const string Regular expression that finds the formulas in content, with capturing brackets to get the forumlas.
+     */
+    const FORMULAS_IN_TEXT_REGEX = '~\{=([^{}]*(?:\{[[:alpha:]][^>} <`{"\']*\}[^{}]*)*)\}~';
 
     const MAX_DATASET_ITEMS = 100;
 
@@ -487,6 +499,15 @@ class qtype_calculated extends question_type {
     }
 
     /**
+     * Remove prefix #{..}# if exists.
+     * @param $name a question name,
+     * @return string the cleaned up question name.
+     */
+    public function clean_technical_prefix_from_question_name($name) {
+        return preg_replace('~#\{([^[:space:]]*)#~', '', $name);
+    }
+
+    /**
      * This method prepare the $datasets in a format similar to dadatesetdefinitions_form.php
      * so that they can be saved
      * using the function save_dataset_definitions($form)
@@ -553,11 +574,7 @@ class qtype_calculated extends question_type {
                 AND a.category != 0
                 AND b.question = ?
            ORDER BY a.name ", array($question->id));
-        $questionname = $question->name;
-        $regs= array();
-        if (preg_match('~#\{([^[:space:]]*)#~', $questionname , $regs)) {
-            $questionname = str_replace($regs[0], '', $questionname);
-        };
+        $questionname = $this->clean_technical_prefix_from_question_name($question->name);
 
         if (!empty($categorydatasetdefs)) {
             // There is at least one with the same name.
@@ -1527,15 +1544,28 @@ class qtype_calculated extends question_type {
             : '');
     }
 
+    /**
+     * Find the names of all datasets mentioned in a piece of question content like the question text.
+     * @param $text the text to analyse.
+     * @return array with dataset name for both key and value.
+     */
     public function find_dataset_names($text) {
-        // Returns the possible dataset names found in the text as an array.
-        // The array has the dataset name for both key and value.
-        $datasetnames = array();
-        while (preg_match('~\\{([[:alpha:]][^>} <{"\']*)\\}~', $text, $regs)) {
-            $datasetnames[$regs[1]] = $regs[1];
-            $text = str_replace($regs[0], '', $text);
-        }
-        return $datasetnames;
+        preg_match_all(self::PLACEHODLER_REGEX, $text, $matches);
+        return array_combine($matches[1], $matches[1]);
+    }
+
+    /**
+     * Find all the formulas in a bit of text.
+     *
+     * For example, called with "What is {a} plus {b}? (Hint, it is not {={a}*{b}}.)" this
+     * returns ['{a}*{b}'].
+     *
+     * @param $text text to analyse.
+     * @return array where they keys an values are the formulas.
+     */
+    public function find_formulas($text) {
+        preg_match_all(self::FORMULAS_IN_TEXT_REGEX, $text, $matches);
+        return array_combine($matches[1], $matches[1]);
     }
 
     /**
@@ -1908,13 +1938,17 @@ function qtype_calculated_calculate_answer($formula, $individualdata,
  * @return string|boolean false if there are no problems. Otherwise a string error message.
  */
 function qtype_calculated_find_formula_errors($formula) {
+    foreach (['//', '/*', '#', '<?', '?>'] as $commentstart) {
+        if (strpos($formula, $commentstart) !== false) {
+            return get_string('illegalformulasyntax', 'qtype_calculated', $commentstart);
+        }
+    }
+
     // Validates the formula submitted from the question edit page.
     // Returns false if everything is alright
     // otherwise it constructs an error message.
-    // Strip away dataset names.
-    while (preg_match('~\\{[[:alpha:]][^>} <{"\']*\\}~', $formula, $regs)) {
-        $formula = str_replace($regs[0], '1', $formula);
-    }
+    // Strip away dataset names. Use 1.0 to catch illegal concatenation like {a}{b}.
+    $formula = preg_replace(qtype_calculated::PLACEHODLER_REGEX, '1.0', $formula);
 
     // Strip away empty space and lowercase it.
     $formula = strtolower(str_replace(' ', '', $formula));
@@ -1978,14 +2012,14 @@ function qtype_calculated_find_formula_errors($formula) {
                 return get_string('unsupportedformulafunction', 'qtype_calculated', $regs[2]);
         }
 
-        // Exchange the function call with '1' and then check for
+        // Exchange the function call with '1.0' and then check for
         // another function call...
         if ($regs[1]) {
             // The function call is proceeded by an operator.
-            $formula = str_replace($regs[0], $regs[1] . '1', $formula);
+            $formula = str_replace($regs[0], $regs[1] . '1.0', $formula);
         } else {
             // The function call starts the formula.
-            $formula = preg_replace("~^{$regs[2]}\\([^)]*\\)~", '1', $formula);
+            $formula = preg_replace('~^' . preg_quote($regs[2], '~') . '\([^)]*\)~', '1.0', $formula);
         }
     }
 
@@ -2003,10 +2037,10 @@ function qtype_calculated_find_formula_errors($formula) {
  * @return string|boolean false if there are no problems. Otherwise a string error message.
  */
 function qtype_calculated_find_formula_errors_in_text($text) {
-    preg_match_all(qtype_calculated::FORMULAS_IN_TEXT_REGEX, $text, $matches);
+    $formulas = question_bank::get_qtype('calculated')->find_formulas($text);
 
     $errors = array();
-    foreach ($matches[1] as $match) {
+    foreach ($formulas as $match) {
         $error = qtype_calculated_find_formula_errors($match);
         if ($error) {
             $errors[] = $error;

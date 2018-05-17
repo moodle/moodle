@@ -30,8 +30,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['language'] = 'Bahasa';
-$string['moodlelogo'] = 'Logo Moodle';
-$string['next'] = 'Selanjutnya';
-$string['previous'] = 'Sebelumnya';
-$string['reload'] = 'Muat ulang';
+$string['parentlanguage'] = 'de';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Deutsch - Schweiz';

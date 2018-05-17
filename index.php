@@ -38,7 +38,6 @@ if (!empty($CFG->defaulthomepage) && ($CFG->defaulthomepage == HOMEPAGE_MY) && o
     $urlparams['redirect'] = 0;
 }
 $PAGE->set_url('/', $urlparams);
-$PAGE->set_course($SITE);
 $PAGE->set_pagelayout('frontpage');
 $PAGE->set_other_editing_capability('moodle/course:update');
 $PAGE->set_other_editing_capability('moodle/course:manageactivities');
@@ -47,11 +46,7 @@ $PAGE->set_other_editing_capability('moodle/course:activityvisibility');
 // Prevent caching of this page to stop confusion when changing page after making AJAX changes.
 $PAGE->set_cacheable(false);
 
-if ($CFG->forcelogin) {
-    require_login();
-} else {
-    user_accesstime_log();
-}
+require_course_login($SITE);
 
 $hassiteconfig = has_capability('moodle/site:config', context_system::instance());
 
