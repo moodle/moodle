@@ -201,7 +201,9 @@ function email_reports_cron() {
                     }
                     $managerusers = $DB->get_records_sql("SELECT * FROM {" . $tempcomptablename . "}
                                                           WHERE userid IN (" . $departmentids . ")
-                                                          $companysql");
+                                                          AND userid != :managerid
+                                                          $companysql",
+                                                          array('managerid' => $manager->userid));
                     
                     $summary = "<table><tr><th>" . get_string('firstname') . "</th>" .
                                "<th>" . get_string('lastname') . "</th>" .
@@ -429,7 +431,9 @@ function email_reports_cron() {
                     }
                     $managerusers = $DB->get_records_sql("SELECT * FROM {" . $tempcomptablename . "}
                                                           WHERE userid IN (" . $departmentids . ")
-                                                          $companysql");
+                                                          AND userid != :managerid
+                                                          $companysql",
+                                                          array('managerid' => $manager->userid));
                     $summary = "<table><tr><th>" . get_string('firstname') . "</th>" .
                                "<th>" . get_string('lastname') . "</th>" .
                                "<th>" . get_string('email') . "</th>" .
@@ -562,9 +566,10 @@ function email_reports_cron() {
                                                   JOIN {company_users} cu ON (u.id = cu.userid)
                                                   JOIN {department} d ON (cu.departmentid = d.id)
                                                   WHERE cc.userid IN (" . $departmentids . ")
-                                                  $companyusql
+                                                  AND cc.userid != :managerid
+                                                  $companysql
                                                   AND cc.timecompleted > :weekago",
-                                                  array('weekago' => $runtime - (60 * 60 * 24 * 7)));
+                                                  array('managerid' => $manager->userid, 'weekago' => $runtime - (60 * 60 * 24 * 7)));
             $summary = "<table><tr><th>" . get_string('firstname') . "</th>" .
                        "<th>" . get_string('lastname') . "</th>" .
                        "<th>" . get_string('email') . "</th>" .
