@@ -11,6 +11,8 @@ services:
       - "MOODLE_URL:http://localhost:8080"
   mysql:
     image: mysql:5
+    volumes:
+      - mysql_data:/var/lib/mysql
     environment:
       - MYSQL_DATABASE=moodle
       - MYSQL_ROOT_PASSWORD=moodle
@@ -18,3 +20,4 @@ services:
       - MYSQL_PASSWORD=moodle
 volumes:
   moodle_data:
+  mysql_data:
