@@ -75,5 +75,8 @@ function xmldb_scorm_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2018041100, 'scorm');
     }
 
+    // Automatically generated Moodle v3.5.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }

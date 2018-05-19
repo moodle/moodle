@@ -95,5 +95,8 @@ function xmldb_format_weeks_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2018030900, 'format', 'weeks');
     }
 
+    // Automatically generated Moodle v3.5.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }
