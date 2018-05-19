@@ -4,6 +4,11 @@
     "description": "Moodle - the world's open source learning platform",
     "type": "project",
     "homepage": "https://moodle.org",
+    "autoload": {
+        "psr-4": {
+            "Moodle\\": ""
+        }
+    },
     "require-dev": {
         "phpunit/phpunit": "6.5.*",
         "phpunit/dbUnit": "3.0.*",
