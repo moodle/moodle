@@ -57,5 +57,9 @@ function xmldb_qtype_essay_upgrade($oldversion) {
         // Essay savepoint reached.
         upgrade_plugin_savepoint(true, 2018021800, 'qtype', 'essay');
     }
+
+    // Automatically generated Moodle v3.5.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }

@@ -31,6 +31,9 @@ function xmldb_glossary_upgrade($oldversion) {
     // Automatically generated Moodle v3.4.0 release upgrade line.
     // Put any upgrade step following this.
 
+    // Automatically generated Moodle v3.5.0 release upgrade line.
+    // Put any upgrade step following this.
+
     if ($oldversion < 2018051401) {
 
         // Fetch the module ID for the glossary module.
