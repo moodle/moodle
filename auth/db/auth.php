@@ -38,7 +38,7 @@ class auth_plugin_db extends auth_plugin_base {
      */
     function __construct() {
         global $CFG;
-        require_once($CFG->libdir.'/adodb/adodb.inc.php');
+        require_once($CFG->dirroot.'/vendor/adodb/adodb-php/adodb.inc.php');
 
         $this->authtype = 'db';
         $this->config = get_config('auth_db');

@@ -14,7 +14,6 @@ lib/editor/tinymce/plugins/pdw/tinymce/
 lib/editor/tinymce/plugins/spellchecker/rpc.php
 lib/editor/tinymce/tiny_mce/
 lib/mlbackend/php/phpml/
-lib/adodb/
 lib/bennu/
 lib/evalmath/
 lib/lessphp/
@@ -44,7 +43,6 @@ lib/xhprof/
 lib/horde/
 lib/requirejs/
 lib/amd/src/loglevel.js
-lib/mustache/
 lib/amd/src/mustache.js
 lib/graphlib.php
 lib/php-css-parser/

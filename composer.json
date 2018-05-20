@@ -4,10 +4,26 @@
     "description": "Moodle - the world's open source learning platform",
     "type": "project",
     "homepage": "https://moodle.org",
+    "autoload": {
+        "psr-4": {
+            "Moodle\\": ""
+        }
+    },
     "require-dev": {
         "phpunit/phpunit": "6.5.*",
         "phpunit/dbUnit": "3.0.*",
         "moodlehq/behat-extension": "3.35.1",
-        "mikey179/vfsStream": "^1.6"
-    }
+        "mikey179/vfsStream": "^1.6",
+        "roave/security-advisories": "dev-master"
+    },
+    "require": {
+        "mustache/mustache": "^2.12",
+        "adodb/adodb-php": "dev-better-mood"
+    },
+    "repositories": [
+        {
+          "type": "vcs",
+          "url":  "https://github.com/BetterMood/ADOdb.git"
+        }
+    ]
 }

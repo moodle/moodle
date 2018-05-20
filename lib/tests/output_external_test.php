@@ -26,8 +26,8 @@ defined('MOODLE_INTERNAL') || die();
 use core\output\external;
 
 require_once(__DIR__.'/../../lib/externallib.php');
-require_once(__DIR__.'/../../lib/mustache/src/Mustache/Tokenizer.php');
-require_once(__DIR__.'/../../lib/mustache/src/Mustache/Parser.php');
+require_once(__DIR__ . '/../../vendor/mustache/mustache/src/Mustache/Tokenizer.php');
+require_once(__DIR__ . '/../../vendor/mustache/mustache/src/Mustache/Parser.php');
 
 /**
  * Class core_output_external_testcase - test \core\output\external class.

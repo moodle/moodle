@@ -56,6 +56,10 @@ if (!isset($CFG)) {
     }
 }
 
+// 2018-05-19 nschmoyer: fire up the autoloader right here, for now. Of course, this is a terrible spot for it but
+// we do what we can, right? Eventually, this should be at the very top of a front controller file.
+require_once(__DIR__.'/../vendor/autoload.php');
+
 // We can detect real dirroot path reliably since PHP 4.0.2,
 // it can not be anything else, there is no point in having this in config.php
 $CFG->dirroot = dirname(__DIR__);

@@ -387,9 +387,9 @@ class auth_db_testcase extends advanced_testcase {
      */
     public function test_adodb_colonscope() {
         global $CFG;
-        require_once($CFG->libdir.'/adodb/adodb.inc.php');
-        require_once($CFG->libdir.'/adodb/drivers/adodb-odbc.inc.php');
-        require_once($CFG->libdir.'/adodb/drivers/adodb-db2ora.inc.php');
+        require_once($CFG->dirroot.'/vendor/adodb/adodb-php/adodb.inc.php');
+        require_once($CFG->dirroot.'/vendor/adodb/adodb-php/drivers/adodb-odbc.inc.php');
+        require_once($CFG->dirroot.'/vendor/adodb/adodb-php/drivers/adodb-db2ora.inc.php');
 
         $this->resetAfterTest(false);
 

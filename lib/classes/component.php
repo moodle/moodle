@@ -70,7 +70,6 @@ class core_component {
     /** @var array associative array of PSR-0 namespaces and corresponding paths. */
     protected static $psr0namespaces = array(
         'Horde' => 'lib/horde/framework/Horde',
-        'Mustache' => 'lib/mustache/src/Mustache',
     );
     /** @var array associative array of PRS-4 namespaces and corresponding paths. */
     protected static $psr4namespaces = array(

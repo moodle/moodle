@@ -853,7 +853,7 @@ class enrol_database_plugin extends enrol_plugin {
     protected function db_init() {
         global $CFG;
 
-        require_once($CFG->libdir.'/adodb/adodb.inc.php');
+        require_once($CFG->dirroot.'/vendor/adodb/adodb-php/adodb.inc.php');
 
         // Connect to the external database (forcing new connection).
         $extdb = ADONewConnection($this->get_config('dbtype'));
