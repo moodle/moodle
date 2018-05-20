@@ -9,5 +9,14 @@
         "phpunit/dbUnit": "3.0.*",
         "moodlehq/behat-extension": "3.35.1",
         "mikey179/vfsStream": "^1.6"
-    }
+    },
+    "require": {
+      "adodb/adodb-php": "dev-better-mood"
+    },
+    "repositories": [
+      {
+        "type": "vcs",
+        "url":  "https://github.com/BetterMood/ADOdb.git"
+      }
+    ]
 }
