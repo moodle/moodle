@@ -44,7 +44,6 @@ lib/xhprof/
 lib/horde/
 lib/requirejs/
 lib/amd/src/loglevel.js
-lib/mustache/
 lib/amd/src/mustache.js
 lib/graphlib.php
 lib/php-css-parser/
