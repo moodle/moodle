@@ -795,6 +795,7 @@ class provider implements
         // Delete all files from the posts.
         $fs = get_file_storage();
         $fs->delete_area_files($context->id, 'mod_forum', 'post');
+        $fs->delete_area_files($context->id, 'mod_forum', 'attachment');
 
         // Delete all ratings in the context.
         \core_rating\privacy\provider::delete_ratings($context, 'mod_forum', 'post');
@@ -879,13 +880,14 @@ class provider implements
                 // Delete all Tags.
                 \core_tag\privacy\provider::delete_item_tags_select($context, 'mod_forum', 'forum_posts',
                         "IN ($postidsql)", $postparams);
+
+                // Delete all files from the posts.
+                $fs = get_file_storage();
+                $fs->delete_area_files_select($context->id, 'mod_forum', 'post', "IN ($postidsql)", $postparams);
+                $fs->delete_area_files_select($context->id, 'mod_forum', 'attachment', "IN ($postidsql)", $postparams);
             }
 
             $uniquediscussions->close();
-
-            // Delete all files from the posts.
-            $fs = get_file_storage();
-            $fs->delete_area_files($context->id, 'mod_forum', 'post');
         }
     }
 }
