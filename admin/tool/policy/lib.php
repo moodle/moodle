@@ -116,7 +116,7 @@ function tool_policy_standard_footer_html() {
  * Hooks redirection to policy acceptance pages before sign up.
  */
 function tool_policy_pre_signup_requests() {
-    global $CFG, $SESSION;
+    global $CFG;
 
     // Do nothing if we are not set as the site policies handler.
     if (empty($CFG->sitepolicyhandler) || $CFG->sitepolicyhandler !== 'tool_policy') {
@@ -127,7 +127,7 @@ function tool_policy_pre_signup_requests() {
     $userpolicyagreed = cache::make('core', 'presignup')->get('tool_policy_userpolicyagreed');
     if (!empty($policies) && !$userpolicyagreed) {
         // Redirect to "Policy" pages for consenting before creating the user.
-        $SESSION->wantsurl = (new \moodle_url('/login/signup.php'))->out();
+        cache::make('core', 'presignup')->set('tool_policy_issignup', 1);
         redirect(new \moodle_url('/admin/tool/policy/index.php'));
     }
 }
