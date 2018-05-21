@@ -887,6 +887,15 @@ class mod_forum_privacy_provider_testcase extends \core_privacy\tests\provider_t
                         'filepath'  => '/',
                         'filename'  => 'example.jpg',
                     ], 'image contents (not really)');
+                // And an attachment.
+                $fs->create_file_from_string([
+                        'contextid' => $context->id,
+                        'component' => 'mod_forum',
+                        'filearea'  => 'attachment',
+                        'itemid'    => $post->id,
+                        'filepath'  => '/',
+                        'filename'  => 'example.jpg',
+                    ], 'image contents (not really)');
             }
         }
 
@@ -962,6 +971,7 @@ class mod_forum_privacy_provider_testcase extends \core_privacy\tests\provider_t
         // All uploaded files relating to this context should have been deleted (post content).
         foreach ($postsinforum as $post) {
             $this->assertEmpty($fs->get_area_files($context->id, 'mod_forum', 'post', $post->id));
+            $this->assertEmpty($fs->get_area_files($context->id, 'mod_forum', 'attachment', $post->id));
         }
 
         // All ratings should have been deleted.
@@ -1093,6 +1103,15 @@ class mod_forum_privacy_provider_testcase extends \core_privacy\tests\provider_t
                         'filepath'  => '/',
                         'filename'  => 'example.jpg',
                     ], 'image contents (not really)');
+                // And a fake attachment.
+                $fs->create_file_from_string([
+                        'contextid' => $context->id,
+                        'component' => 'mod_forum',
+                        'filearea'  => 'attachment',
+                        'itemid'    => $post->id,
+                        'filepath'  => '/',
+                        'filename'  => 'example.jpg',
+                    ], 'image contents (not really)');
             }
         }
 
@@ -1139,12 +1158,26 @@ class mod_forum_privacy_provider_testcase extends \core_privacy\tests\provider_t
 
         // Delete for one of the forums for the first user.
         $firstcontext = reset($contexts);
-        list($postinsql, $postinparams) = $DB->get_in_or_equal(
-                array_keys($postsbyforum[$user1->id][$firstcontext->id]), SQL_PARAMS_NAMED);
 
-        $othercontext = next($contexts);
-        list($otherpostinsql, $otherpostinparams) = $DB->get_in_or_equal(
-                array_keys($postsbyforum[$user1->id][$othercontext->id]), SQL_PARAMS_NAMED);
+        $deletedpostids = [];
+        $otherpostids = [];
+        foreach ($postsbyforum as $user => $contexts) {
+            foreach ($contexts as $thiscontextid => $theseposts) {
+                $thesepostids = array_map(function($post) {
+                    return $post->id;
+                }, $theseposts);
+
+                if ($user == $user1->id && $thiscontextid == $firstcontext->id) {
+                    // This post is in the deleted context and by the target user.
+                    $deletedpostids = array_merge($deletedpostids, $thesepostids);
+                } else {
+                    // This post is by another user, or in a non-target context.
+                    $otherpostids = array_merge($otherpostids, $thesepostids);
+                }
+            }
+        }
+        list($postinsql, $postinparams) = $DB->get_in_or_equal($deletedpostids, SQL_PARAMS_NAMED);
+        list($otherpostinsql, $otherpostinparams) = $DB->get_in_or_equal($otherpostids, SQL_PARAMS_NAMED);
 
         $approvedcontextlist = new \core_privacy\tests\request\approved_contextlist(
             \core_user::get_user($user1->id),
@@ -1197,28 +1230,25 @@ class mod_forum_privacy_provider_testcase extends \core_privacy\tests\provider_t
         // Ratings should have been removed from the affected posts.
         $this->assertCount(0, $DB->get_records_select('rating', "itemid {$postinsql}", $postinparams));
 
-        // Ratings should remain on posts in the other context.
-        $this->assertCount(16, $DB->get_records_select('rating', "itemid {$otherpostinsql}", $otherpostinparams));
+        // Ratings should remain on posts in the other context, and posts not belonging to the affected user.
+        $this->assertCount(144, $DB->get_records_select('rating', "itemid {$otherpostinsql}", $otherpostinparams));
 
         // Ratings should remain where the user has rated another person's post.
         $this->assertCount(32, $DB->get_records('rating', ['userid' => $user1->id]));
 
         // Tags for the affected posts should be removed.
-        $this->assertCount(8, $DB->get_records_select('tag_instance', "itemid {$otherpostinsql}", $otherpostinparams));
-
-        // Tags should remain for the other posts by this user.
         $this->assertCount(0, $DB->get_records_select('tag_instance', "itemid {$postinsql}", $postinparams));
 
-        // Tags should remain for others.
-        // Original total: 5 users * 2 forums * 4 posts * 2 tags
-        // Deleted posts: 8
-        // New total: 72.
-        $this->assertCount(72, $DB->get_records('tag_instance'));
+        // Tags should remain for the other posts by this user, and all posts by other users.
+        $this->assertCount(72, $DB->get_records_select('tag_instance', "itemid {$otherpostinsql}", $otherpostinparams));
 
         // Files for the affected posts should be removed.
+        // 5 users * 2 forums * 1 file in each forum
+        // Original total: 10
+        // One post with file removed.
         $this->assertCount(0, $DB->get_records_select('files', "itemid {$postinsql}", $postinparams));
 
         // Files for the other posts should remain.
-        $this->assertCount(2, $DB->get_records_select('files', "itemid {$otherpostinsql}", $otherpostinparams));
+        $this->assertCount(18, $DB->get_records_select('files', "filename <> '.' AND itemid {$otherpostinsql}", $otherpostinparams));
     }
 }
