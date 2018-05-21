@@ -236,16 +236,30 @@ class page_agreedocs implements renderable, templatable {
     }
 
     /**
-     * Redirect to $SESSION->wantsurl if defined or to $CFG->wwwroot if not.
+     * Redirect to signup page if defined or to $CFG->wwwroot if not.
      */
     protected function redirect_to_previous_url() {
         global $SESSION;
 
-        if (!empty($SESSION->wantsurl)) {
-            $returnurl = $SESSION->wantsurl;
-            unset($SESSION->wantsurl);
+        if ($this->isexistinguser) {
+            // Existing user.
+            if (!empty($SESSION->wantsurl)) {
+                $returnurl = $SESSION->wantsurl;
+                unset($SESSION->wantsurl);
+            } else {
+                $returnurl = new moodle_url('/admin/tool/policy/user.php');
+            }
         } else {
-            $returnurl = (new moodle_url('/admin/tool/policy/user.php'))->out();
+            // Non-authenticated user.
+            $issignup = \cache::make('core', 'presignup')->get('tool_policy_issignup');
+            if ($issignup) {
+                // User came here from signup page - redirect back there.
+                $returnurl = new moodle_url('/login/signup.php');
+                \cache::make('core', 'presignup')->set('tool_policy_issignup', false);
+            } else {
+                // Guests should not be on this page unless it's part of signup - redirect home.
+                $returnurl = new moodle_url('/');
+            }
         }
 
         redirect($returnurl);
@@ -257,10 +271,10 @@ class page_agreedocs implements renderable, templatable {
      * @param int $userid
      */
     protected function prepare_global_page_access($userid) {
-        global $PAGE, $SESSION, $SITE, $USER;
+        global $PAGE, $SITE, $USER;
 
         // Guest users or not logged users (but the users during the signup process) are not allowed to access to this page.
-        $newsignupuser = !empty($SESSION->wantsurl) && strpos($SESSION->wantsurl, 'login/signup.php') !== false;
+        $newsignupuser = \cache::make('core', 'presignup')->get('tool_policy_issignup');
         if (!$this->isexistinguser && !$newsignupuser) {
             $this->redirect_to_previous_url();
         }
@@ -277,7 +291,7 @@ class page_agreedocs implements renderable, templatable {
         }
 
         // If the current user has the $USER->policyagreed = 1 or $userpolicyagreed = 1
-        // and $SESSION->wantsurl is defined, redirect to the return page.
+        // redirect to the return page.
         $hasagreedsignupuser = !$this->isexistinguser && $this->signupuserpolicyagreed;
         $hasagreedloggeduser = $USER->id == $userid && !empty($USER->policyagreed);
         if (!is_siteadmin() && ($hasagreedsignupuser || $hasagreedloggeduser)) {
