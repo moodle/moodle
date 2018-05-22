@@ -360,6 +360,7 @@ class icon_system_fontawesome extends icon_system_font {
             'core:t/message' => 'fa-comment',
             'core:t/more' => 'fa-caret-down',
             'core:t/move' => 'fa-arrows-v',
+            'core:t/online' => 'fa-circle',
             'core:t/passwordunmask-edit' => 'fa-pencil',
             'core:t/passwordunmask-reveal' => 'fa-eye',
             'core:t/portfolioadd' => 'fa-plus',
