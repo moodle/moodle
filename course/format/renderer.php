@@ -231,7 +231,12 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
         $o .= $this->section_availability($section);
 
         $o .= html_writer::start_tag('div', array('class' => 'summary'));
-        $o .= $this->format_summary_text($section);
+        if ($section->uservisible || $section->visible) {
+            // Show summary if section is available or has availability restriction information.
+            // Do not show summary if section is hidden but we still display it because of course setting
+            // "Hidden sections are shown in collapsed form".
+            $o .= $this->format_summary_text($section);
+        }
         $o .= html_writer::end_tag('div');
 
         return $o;
@@ -443,12 +448,17 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
         }
         $o .= $this->output->heading($title, 3, 'section-title');
 
+        $o .= $this->section_availability($section);
         $o.= html_writer::start_tag('div', array('class' => 'summarytext'));
-        $o.= $this->format_summary_text($section);
+
+        if ($section->uservisible || $section->visible) {
+            // Show summary if section is available or has availability restriction information.
+            // Do not show summary if section is hidden but we still display it because of course setting
+            // "Hidden sections are shown in collapsed form".
+            $o .= $this->format_summary_text($section);
+        }
         $o.= html_writer::end_tag('div');
         $o.= $this->section_activity_summary($section, $course, null);
-
-        $o .= $this->section_availability($section);
 
         $o .= html_writer::end_tag('div');
         $o .= html_writer::end_tag('li');
@@ -552,6 +562,10 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
         if (!$section->visible) {
             if ($canviewhidden) {
                 $o .= $this->courserenderer->availability_info(get_string('hiddenfromstudents'), 'ishidden');
+            } else {
+                // We are here because of the setting "Hidden sections are shown in collapsed form".
+                // Student can not see the section contents but can see its name.
+                $o .= $this->courserenderer->availability_info(get_string('notavailable'), 'ishidden');
             }
         } else if (!$section->uservisible) {
             if ($section->availableinfo) {
@@ -769,20 +783,11 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
         $course = course_get_format($course)->get_course();
 
         // Can we view the section in question?
-        if (!($sectioninfo = $modinfo->get_section_info($displaysection))) {
-            // This section doesn't exist
-            print_error('unknowncoursesection', 'error', null, $course->fullname);
-            return;
-        }
-
-        if (!$sectioninfo->uservisible) {
-            if (!$course->hiddensections) {
-                echo $this->start_section_list();
-                echo $this->section_hidden($displaysection, $course->id);
-                echo $this->end_section_list();
-            }
-            // Can't view this section.
-            return;
+        if (!($sectioninfo = $modinfo->get_section_info($displaysection)) || !$sectioninfo->uservisible) {
+            // This section doesn't exist or is not available for the user.
+            // We actually already check this in course/view.php but just in case exit from this function as well.
+            print_error('unknowncoursesection', 'error', course_get_url($course),
+                format_string($course->fullname));
         }
 
         // Copy activity clipboard..
@@ -891,18 +896,12 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
                 continue;
             }
             // Show the section if the user is permitted to access it, OR if it's not available
-            // but there is some available info text which explains the reason & should display.
+            // but there is some available info text which explains the reason & should display,
+            // OR it is hidden but the course has a setting to display hidden sections as unavilable.
             $showsection = $thissection->uservisible ||
-                    ($thissection->visible && !$thissection->available &&
-                    !empty($thissection->availableinfo));
+                    ($thissection->visible && !$thissection->available && !empty($thissection->availableinfo)) ||
+                    (!$thissection->visible && !$course->hiddensections);
             if (!$showsection) {
-                // If the hiddensections option is set to 'show hidden sections in collapsed
-                // form', then display the hidden section message - UNLESS the section is
-                // hidden by the availability system, which is set to hide the reason.
-                if (!$course->hiddensections && $thissection->available) {
-                    echo $this->section_hidden($section, $course->id);
-                }
-
                 continue;
             }
 
