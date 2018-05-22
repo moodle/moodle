@@ -111,6 +111,8 @@ $string['nosearch'] = 'Don\'t publish hub or courses';
 $string['notregisteredonhub'] = 'Your administrator needs to register this site with Moodle.net before you can share a course.';
 $string['operation'] = 'Actions';
 $string['participantnumberaverage'] = 'Average number of participants ({$a})';
+$string['policyagreed'] = 'Privacy notice and data processing agreement';
+$string['policyagreeddesc'] = 'I agree to the <a href="{$a}" target="_blank">Privacy notice and data processing agreement</a> for Moodle.net';
 $string['postaladdress'] = 'Postal address';
 $string['postaladdress_help'] = 'Postal address of this site, or of the entity represented by this site.';
 $string['postsnumber'] = 'Number of posts ({$a})';
