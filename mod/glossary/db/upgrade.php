@@ -36,14 +36,22 @@ function xmldb_glossary_upgrade($oldversion) {
         // Fetch the module ID for the glossary module.
         $glossarymoduleid = $DB->get_field('modules', 'id', ['name' => 'glossary']);
 
+        // Get id of section 1 on the frontpage course.
+        $fpsection1 = $DB->get_field('course_sections', 'id', ['course' => SITEID, 'section' => 1]);
+
         // Fetch sections for the frontpage not matching 1.
         $sectionselect = 'course = :course AND section <> 1';
         $sitesections = $DB->get_recordset_select('course_sections', $sectionselect, ['course' => SITEID]);
         $newsection1cmids = [];
         foreach ($sitesections as $section) {
+            // Check if we have anything to process for this section.
+            if (empty($section->sequence)) {
+                // If there's none, ignore.
+                continue;
+            }
             // Fetch the course module IDs of the course modules in the section.
             $cmids = explode(',', $section->sequence);
-            $newcmids = [];
+            $nonglossarycmids = [];
             // Update the section in the course_modules table for glossary instances if necessary.
             foreach ($cmids as $cmid) {
                 $params = [
@@ -52,19 +60,21 @@ function xmldb_glossary_upgrade($oldversion) {
                 ];
                 // Check if the record in the course_modules tables is that of a glossary activity.
                 if ($DB->record_exists('course_modules', $params)) {
-                    // If so, move it to section 1.
-                    $DB->set_field('course_modules', 'section', 1, $params);
+                    // If so, move it to front page's section 1.
+                    $DB->set_field('course_modules', 'section', $fpsection1, $params);
                     $newsection1cmids[] = $cmid;
                 } else {
                     // Otherwise, ignore this course module as we only want to update glossary items.
-                    $newcmids[] = $cmid;
+                    $nonglossarycmids[] = $cmid;
                 }
             }
             // Check if we need to update the section record or we can delete it.
-            if (!empty($newcmids)) {
-                // Update the section record with a sequence that now excludes the glossary instance(s).
-                $sequence = implode(',', $newcmids);
-                $DB->set_field('course_sections', 'section', $sequence, ['id' => $section->id]);
+            if (!empty($nonglossarycmids)) {
+                // Update the section record with a sequence that now excludes the glossary instance(s) (if it changed).
+                $sequence = implode(',', $nonglossarycmids);
+                if ($sequence != $section->sequence) {
+                    $DB->set_field('course_sections', 'sequence', $sequence, ['id' => $section->id]);
+                }
             } else {
                 // This section doesn't contain any items anymore, we can remove this.
                 $DB->delete_records('course_sections', ['id' => $section->id]);
@@ -75,7 +85,7 @@ function xmldb_glossary_upgrade($oldversion) {
         // Update the sequence field for the site's section 1 if necessary.
         if (!empty($newsection1cmids)) {
             $section1params = [
-                'course' => 1,
+                'course' => SITEID,
                 'section' => 1
             ];
             $section1sequence = $DB->get_field('course_sections', 'sequence', $section1params);
