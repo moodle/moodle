@@ -64,7 +64,8 @@ class site_registration_form extends \moodleform {
             'language' => explode('_', current_language())[0],
             'geolocation' => '',
             'emailalert' => 1,
-            'commnews' => 1
+            'commnews' => 1,
+            'policyagreed' => 0
 
         ]);
 
@@ -151,6 +152,10 @@ class site_registration_form extends \moodleform {
         $mform->addElement('hidden', 'imageurl', ''); // TODO: temporary.
         $mform->setType('imageurl', PARAM_URL);
 
+        $mform->addElement('checkbox', 'policyagreed', get_string('policyagreed', 'hub'),
+            get_string('policyagreeddesc', 'hub', HUB_MOODLEORGHUBURL . '/privacy'));
+        $mform->addRule('policyagreed', $strrequired, 'required', null, 'client');
+
         $mform->addElement('header', 'sitestats', get_string('sendfollowinginfo', 'hub'));
         $mform->setExpanded('sitestats', !empty($highlightfields));
         $mform->addElement('static', 'urlstring', get_string('siteurl', 'hub'), $siteinfo['url']);
@@ -182,7 +187,9 @@ class site_registration_form extends \moodleform {
         if (empty($siteinfo['commnewsnewemail'])) {
             $siteinfo['commnewsemail'] = '';
         }
-        $this->set_data($siteinfo);
+
+        // Set data. Always require to check policyagreed even if it was checked earlier.
+        $this->set_data(['policyagreed' => 0] + $siteinfo);
     }
 
     /**
@@ -262,7 +269,8 @@ class site_registration_form extends \moodleform {
 
             if (debugging('', DEBUG_DEVELOPER)) {
                 // Display debugging message for developers who added fields to the form and forgot to add them to registration::FORM_FIELDS.
-                $keys = array_diff(array_keys((array)$data), ['returnurl', 'mform_isexpanded_id_sitestats', 'submitbutton', 'update']);
+                $keys = array_diff(array_keys((array)$data),
+                    ['returnurl', 'mform_isexpanded_id_sitestats', 'submitbutton', 'update']);
                 if ($extrafields = array_diff($keys, registration::FORM_FIELDS)) {
                     debugging('Found extra fields in the form results: ' . join(', ', $extrafields), DEBUG_DEVELOPER);
                 }
