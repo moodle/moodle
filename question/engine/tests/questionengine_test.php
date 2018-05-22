@@ -131,4 +131,20 @@ class question_engine_test extends advanced_testcase {
     public function test_is_manual_grade_in_range_ungraded() {
         $this->assertTrue(question_engine::is_manual_grade_in_range(1, 2));
     }
+
+    public function test_render_question_number() {
+        global $PAGE;
+        $renderer = new testable_core_question_renderer($PAGE, 'core_question');
+
+        // Test with number is i character.
+        $this->assertEquals('<h3 class="no">Information</h3>', $renderer->number('i'));
+        // Test with number is empty string.
+        $this->assertEquals('', $renderer->number(''));
+        // Test with number is 0.
+        $this->assertEquals('<h3 class="no">Question <span class="qno">0</span></h3>', $renderer->number(0));
+        // Test with number is numeric.
+        $this->assertEquals('<h3 class="no">Question <span class="qno">1</span></h3>', $renderer->number(1));
+        // Test with number is string.
+        $this->assertEquals('<h3 class="no">Question <span class="qno">1 of 2</span></h3>', $renderer->number('1 of 2'));
+    }
 }
