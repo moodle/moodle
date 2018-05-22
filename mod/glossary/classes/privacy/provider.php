@@ -130,18 +130,33 @@ class provider implements
                   FROM {glossary_entries} ge
                   JOIN {glossary} g ON ge.glossaryid = g.id
                   JOIN {course_modules} cm ON g.id = cm.instance
-                  JOIN {context} c ON cm.id = c.instanceid
+                  JOIN {modules} m ON cm.module = m.id AND m.name = :modulename
+                  JOIN {context} c ON cm.id = c.instanceid AND c.contextlevel = :contextlevel
                  WHERE c.id {$contextsql}
-                   AND ge.userid = :userid
-             OR EXISTS (SELECT 1 FROM {comments} com WHERE com.commentarea = :commentarea AND com.itemid = ge.id
-                        AND com.userid = :commentuserid)
-             OR EXISTS (SELECT 1 FROM {rating} r WHERE r.contextid = c.id AND r.itemid  = ge.id
-                        AND r.component = :ratingcomponent
-                   AND r.ratingarea = :ratingarea
-                   AND r.userid = :ratinguserid)
+                   AND (
+                        ge.userid = :userid
+                        OR
+                        EXISTS (
+                                SELECT 1
+                                  FROM {comments} com
+                                 WHERE com.commentarea = :commentarea AND com.itemid = ge.id AND com.userid = :commentuserid
+                            )
+                        OR
+                        EXISTS (
+                                SELECT 1
+                                  FROM {rating} r
+                                 WHERE r.contextid = c.id
+                                   AND r.itemid  = ge.id
+                                   AND r.component = :ratingcomponent
+                                   AND r.ratingarea = :ratingarea
+                                   AND r.userid = :ratinguserid
+                            )
+                    )
                ORDER BY ge.id, cm.id";
         $params = [
             'userid' => $user->id,
+            'modulename' => 'glossary',
+            'contextlevel' => CONTEXT_MODULE,
             'commentarea' => 'glossary_entry',
             'commentuserid' => $user->id,
             'ratingcomponent' => 'mod_glossary',
@@ -240,9 +255,6 @@ class provider implements
      */
     public static function delete_data_for_all_users_in_context(\context $context) {
         global $DB;
-        if (empty($context)) {
-            return;
-        }
 
         if ($context->contextlevel != CONTEXT_MODULE) {
             return;

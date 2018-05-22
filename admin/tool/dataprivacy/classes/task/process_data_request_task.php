@@ -88,6 +88,8 @@ class process_data_request_task extends adhoc_task {
 
             // Export the data.
             $manager = new \core_privacy\manager();
+            $manager->set_observer(new \tool_dataprivacy\manager_observer());
+
             $exportedcontent = $manager->export_user_data($approvedclcollection);
 
             $fs = get_file_storage();
@@ -110,6 +112,8 @@ class process_data_request_task extends adhoc_task {
 
             // Delete the data.
             $manager = new \core_privacy\manager();
+            $manager->set_observer(new \tool_dataprivacy\manager_observer());
+
             $manager->delete_data_for_user($approvedclcollection);
         }
 

@@ -451,7 +451,7 @@ class api {
         $message->courseid          = $SITE->id;
         $message->component         = 'tool_dataprivacy';
         $message->name              = 'contactdataprotectionofficer';
-        $message->userfrom          = $requestedby;
+        $message->userfrom          = $requestedby->id;
         $message->replyto           = $requestedby->email;
         $message->replytoname       = $requestedby->fullname;
         $message->subject           = $subject;
