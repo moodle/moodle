@@ -25,9 +25,11 @@
         <div class="name">
             {{fullname}}
             {{#showonlinestatus}}
-                <span {{^isonline}}class="hidden"{{/isonline}} data-region="contact-icon-online">
-                    {{#pix}} t/go, core, {{#str}} online, message {{/str}} {{/pix}}
+            <div {{#isonline}}class="d-inline status online"{{/isonline}}{{^isonline}}class="hidden"{{/isonline}}>
+                <span class="online-text" data-region="contact-icon-online">
+                    {{#pix}} t/online, core, {{#str}} online, message {{/str}} {{/pix}}
                 </span>
+            </div>
             {{/showonlinestatus}}
             <span {{^isblocked}}class="hidden"{{/isblocked}} data-region="contact-icon-blocked">
                 {{#pix}} t/block, core, {{#str}} contactblocked, message {{/str}} {{/pix}}
