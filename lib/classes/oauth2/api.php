@@ -349,7 +349,7 @@ class api {
      * @param \core\oauth2\issuer $issuer The desired OAuth issuer
      */
     protected static function guess_image($issuer) {
-        if (empty($issuer->get('image'))) {
+        if (empty($issuer->get('image')) && !empty($issuer->get('baseurl'))) {
             $baseurl = parse_url($issuer->get('baseurl'));
             $imageurl = $baseurl['scheme'] . '://' . $baseurl['host'] . '/favicon.ico';
             $issuer->set('image', $imageurl);
