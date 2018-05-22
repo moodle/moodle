@@ -33,6 +33,14 @@ defined('MOODLE_INTERNAL') || die();
  */
 class file_browser_testcase extends advanced_testcase {
 
+    /** @var int */
+    protected $initialnonempty;
+    /** @var int */
+    protected $initialcategories;
+    /** @var int */
+    protected $initialcourses;
+    /** @var int */
+    protected $initialjpg;
     /** @var stdClass */
     protected $course1;
     /** @var stdClass */
@@ -56,6 +64,18 @@ class file_browser_testcase extends advanced_testcase {
         $this->resetAfterTest();
 
         $this->setAdminUser();
+
+        $browser = get_file_browser();
+        $fileinfo = $browser->get_file_info(context_system::instance());
+        $this->initialnonempty = $fileinfo->count_non_empty_children();
+        $this->initialcategories = count(array_filter($fileinfo->get_children(), function($a) {
+            return $a instanceof file_info_context_coursecat;
+        }));
+        $this->initialcourses = count(array_filter($fileinfo->get_children(), function($a) {
+            return $a instanceof file_info_context_course;
+        }));
+        $this->initialcourses -= 1; // This includes the site course by default.
+        $this->initialjpg = $fileinfo->count_non_empty_children(['.jpg']);
 
         $this->getDataGenerator()->create_category(); // Empty category.
         $this->course1 = $this->getDataGenerator()->create_course(); // Empty course.
@@ -98,11 +118,11 @@ class file_browser_testcase extends advanced_testcase {
         $browser = get_file_browser();
         $fileinfo = $browser->get_file_info(context_system::instance());
         $this->assertNotEmpty($fileinfo->count_non_empty_children());
-        $this->assertEquals(1, count($fileinfo->get_non_empty_children()));
+        $this->assertEquals($this->initialnonempty + 1, count($fileinfo->get_non_empty_children()));
         $categorychildren = array_filter($fileinfo->get_children(), function($a) {
             return $a instanceof file_info_context_coursecat;
         });
-        $this->assertEquals(2, count($categorychildren));
+        $this->assertEquals($this->initialcategories + 1, count($categorychildren));
     }
 
     /**
@@ -117,19 +137,19 @@ class file_browser_testcase extends advanced_testcase {
         $browser = get_file_browser();
         $fileinfo = $browser->get_file_info(context_system::instance());
         $this->assertNotEmpty($fileinfo->count_non_empty_children());
-        $this->assertEquals(2, count($fileinfo->get_non_empty_children()));
+        $this->assertEquals($this->initialnonempty + 2, count($fileinfo->get_non_empty_children()));
 
         // Should be 1 category children (empty category).
         $categorychildren = array_filter($fileinfo->get_children(), function($a) {
             return $a instanceof file_info_context_coursecat;
         });
-        $this->assertEquals(1, count($categorychildren));
+        $this->assertEquals($this->initialcategories, count($categorychildren));
 
         // Should be 2 course children - courses that belonged to hidden subcategory are now direct children of "System".
         $coursechildren = array_filter($fileinfo->get_children(), function($a) {
             return $a instanceof file_info_context_course;
         });
-        $this->assertEquals(2, count($coursechildren));
+        $this->assertEquals($this->initialcourses + 2, count($coursechildren));
     }
 
     /**
@@ -146,7 +166,7 @@ class file_browser_testcase extends advanced_testcase {
         $coursechildren = array_filter($fileinfo->get_children(), function($a) {
             return $a instanceof file_info_context_course;
         });
-        $this->assertEquals(2, count($coursechildren));
+        $this->assertEquals($this->initialcourses + 2, count($coursechildren));
     }
 
     /**
@@ -159,7 +179,7 @@ class file_browser_testcase extends advanced_testcase {
         $browser = get_file_browser();
         $fileinfo = $browser->get_file_info(context_system::instance());
         $this->assertNotEmpty($fileinfo->count_non_empty_children(['.jpg']));
-        $this->assertEquals(1, count($fileinfo->get_non_empty_children(['.jpg'])));
+        $this->assertEquals($this->initialjpg + 1, count($fileinfo->get_non_empty_children(['.jpg'])));
     }
 
     /**
