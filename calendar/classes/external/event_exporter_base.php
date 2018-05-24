@@ -79,6 +79,7 @@ class event_exporter_base extends exporter {
             $event->get_id()
         );
         $data->descriptionformat = $event->get_description()->get_format();
+        $data->location = htmlspecialchars($event->get_location());
         $data->groupid = $groupid;
         $data->userid = $userid;
         $data->categoryid = $categoryid;
@@ -119,6 +120,12 @@ class event_exporter_base extends exporter {
             ],
             'descriptionformat' => [
                 'type' => PARAM_INT,
+                'optional' => true,
+                'default' => null,
+                'null' => NULL_ALLOWED
+            ],
+            'location' => [
+                'type' => PARAM_RAW_TRIMMED,
                 'optional' => true,
                 'default' => null,
                 'null' => NULL_ALLOWED

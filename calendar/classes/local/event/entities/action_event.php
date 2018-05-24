@@ -78,6 +78,10 @@ class action_event implements action_event_interface {
         return $this->event->get_description();
     }
 
+    public function get_location() {
+        return $this->event->get_location();
+    }
+
     public function get_category() {
         return $this->event->get_category();
     }

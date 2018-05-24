@@ -5790,6 +5790,11 @@ img.iconsmall {
 .path-calendar .maincalendar .eventlist .event .side {
   width: 22px;
 }
+.path-calendar .maincalendar .eventlist .event .location {
+  clear: both;
+  word-break: break-all;
+  overflow-wrap: break-word;
+}
 .path-calendar .maincalendar .eventlist .event .description {
   background-color: #fff;
   clear: both;
@@ -5914,6 +5919,9 @@ img.iconsmall {
 }
 .summary-modal-container .description-content > p {
   margin: 0;
+}
+.summary-modal-container .location-content {
+  overflow-wrap: break-word;
 }
 /* course.less */
 /* COURSE CONTENT */

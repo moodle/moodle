@@ -58,7 +58,8 @@ class core_calendar_event_testcase extends advanced_testcase {
             $constructorparams['type'],
             $constructorparams['times'],
             $constructorparams['visible'],
-            $constructorparams['subscription']
+            $constructorparams['subscription'],
+            $constructorparams['location']
         );
 
         foreach ($constructorparams as $name => $value) {
@@ -98,7 +99,8 @@ class core_calendar_event_testcase extends advanced_testcase {
                         (new \DateTimeImmutable())->setTimestamp(time())
                     ),
                     'visible' => true,
-                    'subscription' => new std_proxy(1, $lamecallable)
+                    'subscription' => new std_proxy(1, $lamecallable),
+                    'location' => 'Test',
                 ]
             ],
         ];

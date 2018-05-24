@@ -100,6 +100,7 @@ class core_calendar_container_testcase extends advanced_testcase {
         $this->assertEquals($dbrow->description, $event->get_description()->get_value());
         $this->assertEquals($dbrow->format, $event->get_description()->get_format());
         $this->assertEquals($dbrow->courseid, $event->get_course()->get('id'));
+        $this->assertEquals($dbrow->location, $event->get_location());
 
         if ($dbrow->groupid == 0) {
             $this->assertNull($event->get_group());
@@ -337,6 +338,7 @@ class core_calendar_container_testcase extends advanced_testcase {
         $event = new \stdClass();
         $event->name = 'An event';
         $event->description = 'Event description';
+        $event->location = 'Event location';
         $event->format = FORMAT_HTML;
         $event->eventtype = \core_completion\api::COMPLETION_EVENT_TYPE_DATE_COMPLETION_EXPECTED;
         $event->userid = 1;
@@ -386,6 +388,7 @@ class core_calendar_container_testcase extends advanced_testcase {
         $event = new \stdClass();
         $event->name = 'An event';
         $event->description = 'Event description';
+        $event->location = 'Event location';
         $event->format = FORMAT_HTML;
         $event->eventtype = 'close';
         $event->userid = $user->id;
@@ -490,7 +493,8 @@ class core_calendar_container_testcase extends advanced_testcase {
                     'timesort' => 1486396800,
                     'visible' => 1,
                     'timemodified' => 1485793098,
-                    'subscriptionid' => null
+                    'subscriptionid' => null,
+                    'location' => 'Test location',
                 ]
             ],
 
@@ -512,7 +516,8 @@ class core_calendar_container_testcase extends advanced_testcase {
                     'timesort' => 1486396800,
                     'visible' => 1,
                     'timemodified' => 1485793098,
-                    'subscriptionid' => null
+                    'subscriptionid' => null,
+                    'location' => 'Test location',
                 ]
             ]
         ];
@@ -567,7 +572,8 @@ class core_calendar_container_testcase extends advanced_testcase {
             'timesort' => 1486396800,
             'visible' => 1,
             'timemodified' => 1485793098,
-            'subscriptionid' => null
+            'subscriptionid' => null,
+            'location' => 'Test location',
         ];
 
         foreach ((array) $skeleton as $key => $value) {

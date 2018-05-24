@@ -203,6 +203,10 @@ class event_mapper_test_action_event implements action_event_interface {
         return $this->event->get_description();
     }
 
+    public function get_location() {
+        return $this->event->get_location();
+    }
+
     public function get_category() {
         return $this->event->get_category();
     }
@@ -293,7 +297,7 @@ class event_mapper_test_event implements event_interface {
     /**
      * Constructor.
      *
-     * @param calendar_event $legacyevent Legacy event to exctract IDs etc from.
+     * @param calendar_event $legacyevent Legacy event to extract IDs etc from.
      */
     public function __construct($legacyevent = null) {
         if ($legacyevent) {
@@ -320,6 +324,10 @@ class event_mapper_test_event implements event_interface {
 
     public function get_description() {
         return new event_description('asdf', 1);
+    }
+
+    public function get_location() {
+        return 'Cube office';
     }
 
     public function get_category() {

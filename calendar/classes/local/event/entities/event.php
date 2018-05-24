@@ -53,6 +53,11 @@ class event implements event_interface {
     protected $description;
 
     /**
+     * @var string $location Location of this event.
+     */
+    protected $location;
+
+    /**
      * @var proxy_interface $category Category for this event.
      */
     protected $category;
@@ -118,6 +123,7 @@ class event implements event_interface {
      * @param times_interface            $times          The times associated with the event.
      * @param bool                       $visible        The event's visibility. True for visible, false for invisible.
      * @param proxy_interface            $subscription   The event's subscription.
+     * @param string                     $location       The event's location.
      */
     public function __construct(
         $id,
@@ -132,11 +138,13 @@ class event implements event_interface {
         $type,
         times_interface $times,
         $visible,
-        proxy_interface $subscription = null
+        proxy_interface $subscription = null,
+        $location = null
     ) {
         $this->id = $id;
         $this->name = $name;
         $this->description = $description;
+        $this->location = $location;
         $this->category = $category;
         $this->course = $course;
         $this->group = $group;
@@ -159,6 +167,10 @@ class event implements event_interface {
 
     public function get_description() {
         return $this->description;
+    }
+
+    public function get_location() {
+        return $this->location;
     }
 
     public function get_category() {
