@@ -53,7 +53,8 @@ if ($manage) {
 $PAGE->set_context($context);
 
 // If contactdataprotectionofficer is disabled, send the user back to the profile page, or the privacy policy page.
-if (!\tool_dataprivacy\api::can_contact_dpo()) {
+// That is, unless you have sufficient capabilities to perform this on behalf of a user.
+if (!$manage && !\tool_dataprivacy\api::can_contact_dpo()) {
     redirect($returnurl, get_string('contactdpoviaprivacypolicy', 'tool_dataprivacy'), \core\output\notification::NOTIFY_ERROR);
 }
 
