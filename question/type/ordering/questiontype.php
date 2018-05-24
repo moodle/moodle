@@ -161,13 +161,25 @@ class qtype_ordering extends question_type {
         // Insert all the new answers.
         foreach ($question->answer as $i => $answer) {
 
+			$answertext = '';
+			$answerformat = 0;
+			$answeritemid = null;
+
             // Extract $answer fields.
-            $answertext   = $answer['text'];
-            $answerformat = $answer['format'];
-            if (!empty($answer['itemid'])) {
-                $answeritemid = $answer['itemid'];
-            } else {
-                $answeritemid = null;
+            if (is_string($answer)) {
+            	// import from file
+				$answertext = $answer;
+            } else if (is_array($answer)) {
+            	// input from browser
+            	if (isset($answer['text'])) {
+					$answertext = $answer['text'];
+            	}
+            	if (isset($answer['format'])) {
+					$answerformat = $answer['format'];
+            	}
+				if (isset($answer['itemid'])) {
+					$answeritemid = $answer['itemid'];
+				}
             }
 
             // Reduce simple <p>...</p> to plain text.
