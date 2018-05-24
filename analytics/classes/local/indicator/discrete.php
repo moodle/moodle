@@ -52,8 +52,7 @@ abstract class discrete extends base {
     public static function get_feature_headers() {
         $fullclassname = '\\' . get_called_class();
 
-        $headers = array($fullclassname);
-        foreach (self::get_classes() as $class) {
+        foreach (static::get_classes() as $class) {
             $headers[] = $fullclassname . '/' . $class;
         }
 
@@ -116,26 +115,45 @@ abstract class discrete extends base {
      */
     protected function to_features($calculatedvalues) {
 
-        $classes = self::get_classes();
+        $classes = static::get_classes();
 
         foreach ($calculatedvalues as $sampleid => $calculatedvalue) {
 
-            $classindex = array_search($calculatedvalue, $classes, true);
+            // Using intval as it may come as a float from the db.
+            $classindex = array_search(intval($calculatedvalue), $classes, true);
 
-            if (!$classindex) {
-                throw new \coding_exception(get_class($this) . ' calculated "' . $calculatedvalue .
-                    '" which is not one of its defined classes (' . json_encode($classes) . ')');
+            if ($classindex === false && !is_null($calculatedvalue)) {
+                throw new \coding_exception(get_class($this) . ' calculated value "' . $calculatedvalue .
+                    '" is not one of its defined classes (' . json_encode($classes) . ')');
             }
 
             // We transform the calculated value into multiple features, one for each of the possible classes.
             $features = array_fill(0, count($classes), 0);
 
             // 1 to the selected value.
-            $features[$classindex] = 1;
+            if (!is_null($calculatedvalue)) {
+                $features[$classindex] = 1;
+            }
 
             $calculatedvalues[$sampleid] = $features;
         }
 
         return $calculatedvalues;
+    }
+
+    /**
+     * Validates the calculated value.
+     *
+     * @param float $calculatedvalue
+     * @return true
+     */
+    protected function validate_calculated_value($calculatedvalue) {
+
+        // Using intval as it may come as a float from the db.
+        if (!in_array(intval($calculatedvalue), static::get_classes())) {
+            throw new \coding_exception(get_class($this) . ' calculated value "' . $calculatedvalue .
+                '" is not one of its defined classes (' . json_encode(static::get_classes()) . ')');
+        }
+        return true;
     }
 }
