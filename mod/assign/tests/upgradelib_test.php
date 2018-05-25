@@ -30,7 +30,6 @@ global $CFG;
 require_once($CFG->dirroot . '/mod/assign/locallib.php');
 require_once($CFG->dirroot . '/mod/assign/upgradelib.php');
 require_once($CFG->dirroot . '/mod/assignment/lib.php');
-require_once($CFG->dirroot . '/mod/assign/tests/base_test.php');
 
 /**
  * Unit tests for (some of) mod/assign/upgradelib.php.
@@ -38,54 +37,84 @@ require_once($CFG->dirroot . '/mod/assign/tests/base_test.php');
  * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_assign_upgradelib_testcase extends mod_assign_base_testcase {
+class mod_assign_upgradelib_testcase extends advanced_testcase {
 
-    public function test_upgrade_upload_assignment() {
-        global $DB, $CFG;
-
-        $commentconfig = false;
-        if (!empty($CFG->usecomments)) {
-            $commentconfig = $CFG->usecomments;
-        }
-        $CFG->usecomments = false;
-
-        $this->setUser($this->editingteachers[0]);
-        $generator = $this->getDataGenerator()->get_plugin_generator('mod_assignment');
-        $params = array('course'=>$this->course->id,
-                        'assignmenttype'=>'upload');
-        $assignment = $generator->create_instance($params);
-
-        $this->setAdminUser();
-        $log = '';
-        $upgrader = new assign_upgrade_manager();
-
-        $this->assertTrue($upgrader->upgrade_assignment($assignment->id, $log));
-        $record = $DB->get_record('assign', array('course'=>$this->course->id));
-
-        $cm = get_coursemodule_from_instance('assign', $record->id);
-        $context = context_module::instance($cm->id);
-
-        $assign = new assign($context, $cm, $this->course);
-
-        $plugin = $assign->get_submission_plugin_by_type('onlinetext');
-        $this->assertEmpty($plugin->is_enabled());
-        $plugin = $assign->get_submission_plugin_by_type('comments');
-        $this->assertEmpty($plugin->is_enabled());
-        $plugin = $assign->get_submission_plugin_by_type('file');
-        $this->assertNotEmpty($plugin->is_enabled());
-        $plugin = $assign->get_feedback_plugin_by_type('comments');
-        $this->assertNotEmpty($plugin->is_enabled());
-        $plugin = $assign->get_feedback_plugin_by_type('file');
-        $this->assertNotEmpty($plugin->is_enabled());
-        $plugin = $assign->get_feedback_plugin_by_type('offline');
-        $this->assertEmpty($plugin->is_enabled());
-
-        $CFG->usecomments = $commentconfig;
-        course_delete_module($cm->id);
+    /**
+     * Data provider for assignment upgrade.
+     *
+     * @return  array
+     */
+    public function assignment_upgrade_provider() {
+        return [
+            'upload' => [
+                'type' => 'upload',
+                'submissionplugins' => [
+                    'onlinetext' => true,
+                    'comments' => true,
+                    'file' => false,
+                ],
+                'feedbackplugins' => [
+                    'comments' => false,
+                    'file' => false,
+                    'offline' => true,
+                ],
+            ],
+            'uploadsingle' => [
+                'type' => 'uploadsingle',
+                'submissionplugins' => [
+                    'onlinetext' => true,
+                    'comments' => true,
+                    'file' => false,
+                ],
+                'feedbackplugins' => [
+                    'comments' => false,
+                    'file' => false,
+                    'offline' => true,
+                ],
+            ],
+            'online' => [
+                'type' => 'online',
+                'submissionplugins' => [
+                    'onlinetext' => false,
+                    'comments' => true,
+                    'file' => true,
+                ],
+                'feedbackplugins' => [
+                    'comments' => false,
+                    'file' => true,
+                    'offline' => true,
+                ],
+            ],
+            'offline' => [
+                'type' => 'offline',
+                'submissionplugins' => [
+                    'onlinetext' => true,
+                    'comments' => true,
+                    'file' => true,
+                ],
+                'feedbackplugins' => [
+                    'comments' => false,
+                    'file' => true,
+                    'offline' => true,
+                ],
+            ],
+        ];
     }
 
-    public function test_upgrade_uploadsingle_assignment() {
+    /**
+     * Test assigment upgrade.
+     *
+     * @dataProvider assignment_upgrade_provider
+     * @param   string  $type The type of assignment
+     * @param   array   $plugins Which plugins shuld or shoudl not be enabled
+     */
+    public function test_upgrade_assignment($type, $plugins) {
         global $DB, $CFG;
+
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+        $teacher = $this->getDataGenerator()->create_and_enrol($course, 'teacher');
 
         $commentconfig = false;
         if (!empty($CFG->usecomments)) {
@@ -93,126 +122,30 @@ class mod_assign_upgradelib_testcase extends mod_assign_base_testcase {
         }
         $CFG->usecomments = false;
 
-        $this->setUser($this->editingteachers[0]);
+        // Create the old assignment.
+        $this->setUser($teacher);
         $generator = $this->getDataGenerator()->get_plugin_generator('mod_assignment');
-        $params = array('course'=>$this->course->id,
-                        'assignmenttype'=>'uploadsingle');
-        $assignment = $generator->create_instance($params);
+        $assignment = $generator->create_instance([
+                'course' => $course->id,
+                'assignmenttype' => $type,
+            ]);
 
+        // Run the upgrade.
         $this->setAdminUser();
         $log = '';
         $upgrader = new assign_upgrade_manager();
 
         $this->assertTrue($upgrader->upgrade_assignment($assignment->id, $log));
-        $record = $DB->get_record('assign', array('course'=>$this->course->id));
+        $record = $DB->get_record('assign', ['course' => $course->id]);
 
         $cm = get_coursemodule_from_instance('assign', $record->id);
         $context = context_module::instance($cm->id);
 
-        $assign = new assign($context, $cm, $this->course);
+        $assign = new assign($context, $cm, $course);
 
-        $plugin = $assign->get_submission_plugin_by_type('onlinetext');
-        $this->assertEmpty($plugin->is_enabled());
-        $plugin = $assign->get_submission_plugin_by_type('comments');
-        $this->assertEmpty($plugin->is_enabled());
-        $plugin = $assign->get_submission_plugin_by_type('file');
-        $this->assertNotEmpty($plugin->is_enabled());
-        $plugin = $assign->get_feedback_plugin_by_type('comments');
-        $this->assertNotEmpty($plugin->is_enabled());
-        $plugin = $assign->get_feedback_plugin_by_type('file');
-        $this->assertNotEmpty($plugin->is_enabled());
-        $plugin = $assign->get_feedback_plugin_by_type('offline');
-        $this->assertEmpty($plugin->is_enabled());
-
-        $CFG->usecomments = $commentconfig;
-        course_delete_module($cm->id);
-    }
-
-    public function test_upgrade_onlinetext_assignment() {
-        global $DB, $CFG;
-
-        $commentconfig = false;
-        if (!empty($CFG->usecomments)) {
-            $commentconfig = $CFG->usecomments;
+        foreach ($plugins as $plugin => $isempty) {
+            $plugin = $assign->get_submission_plugin_by_type($plugin);
+            $this->assertEquals($isempty, empty($plugin->is_enabled()));
         }
-        $CFG->usecomments = false;
-
-        $this->setUser($this->editingteachers[0]);
-        $generator = $this->getDataGenerator()->get_plugin_generator('mod_assignment');
-        $params = array('course'=>$this->course->id,
-                        'assignmenttype'=>'online');
-        $assignment = $generator->create_instance($params);
-
-        $this->setAdminUser();
-        $log = '';
-        $upgrader = new assign_upgrade_manager();
-
-        $this->assertTrue($upgrader->upgrade_assignment($assignment->id, $log));
-        $record = $DB->get_record('assign', array('course'=>$this->course->id));
-
-        $cm = get_coursemodule_from_instance('assign', $record->id);
-        $context = context_module::instance($cm->id);
-
-        $assign = new assign($context, $cm, $this->course);
-
-        $plugin = $assign->get_submission_plugin_by_type('onlinetext');
-        $this->assertNotEmpty($plugin->is_enabled());
-        $plugin = $assign->get_submission_plugin_by_type('comments');
-        $this->assertEmpty($plugin->is_enabled());
-        $plugin = $assign->get_submission_plugin_by_type('file');
-        $this->assertEmpty($plugin->is_enabled());
-        $plugin = $assign->get_feedback_plugin_by_type('comments');
-        $this->assertNotEmpty($plugin->is_enabled());
-        $plugin = $assign->get_feedback_plugin_by_type('file');
-        $this->assertEmpty($plugin->is_enabled());
-        $plugin = $assign->get_feedback_plugin_by_type('offline');
-        $this->assertEmpty($plugin->is_enabled());
-
-        $CFG->usecomments = $commentconfig;
-        course_delete_module($cm->id);
-    }
-
-    public function test_upgrade_offline_assignment() {
-        global $DB, $CFG;
-
-        $commentconfig = false;
-        if (!empty($CFG->usecomments)) {
-            $commentconfig = $CFG->usecomments;
-        }
-        $CFG->usecomments = false;
-
-        $this->setUser($this->editingteachers[0]);
-        $generator = $this->getDataGenerator()->get_plugin_generator('mod_assignment');
-        $params = array('course'=>$this->course->id,
-                        'assignmenttype'=>'offline');
-        $assignment = $generator->create_instance($params);
-
-        $this->setAdminUser();
-        $log = '';
-        $upgrader = new assign_upgrade_manager();
-
-        $this->assertTrue($upgrader->upgrade_assignment($assignment->id, $log));
-        $record = $DB->get_record('assign', array('course'=>$this->course->id));
-
-        $cm = get_coursemodule_from_instance('assign', $record->id);
-        $context = context_module::instance($cm->id);
-
-        $assign = new assign($context, $cm, $this->course);
-
-        $plugin = $assign->get_submission_plugin_by_type('onlinetext');
-        $this->assertEmpty($plugin->is_enabled());
-        $plugin = $assign->get_submission_plugin_by_type('comments');
-        $this->assertEmpty($plugin->is_enabled());
-        $plugin = $assign->get_submission_plugin_by_type('file');
-        $this->assertEmpty($plugin->is_enabled());
-        $plugin = $assign->get_feedback_plugin_by_type('comments');
-        $this->assertNotEmpty($plugin->is_enabled());
-        $plugin = $assign->get_feedback_plugin_by_type('file');
-        $this->assertEmpty($plugin->is_enabled());
-        $plugin = $assign->get_feedback_plugin_by_type('offline');
-        $this->assertEmpty($plugin->is_enabled());
-
-        $CFG->usecomments = $commentconfig;
-        course_delete_module($cm->id);
     }
 }
