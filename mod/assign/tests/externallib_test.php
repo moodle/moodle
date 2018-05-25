@@ -19,6 +19,7 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 
 require_once($CFG->dirroot . '/webservice/tests/helpers.php');
+require_once($CFG->dirroot . '/mod/assign/externallib.php');
 
 /**
  * External mod assign functions unit tests
@@ -29,14 +30,6 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class mod_assign_external_testcase extends externallib_advanced_testcase {
-
-    /**
-     * Tests set up
-     */
-    protected function setUp() {
-        global $CFG;
-        require_once($CFG->dirroot . '/mod/assign/externallib.php');
-    }
 
     /**
      * Test get_grades
