@@ -20,6 +20,7 @@ global $CFG;
 
 require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 require_once($CFG->dirroot . '/mod/assign/externallib.php');
+require_once(__DIR__ . '/fixtures/testable_assign.php');
 
 /**
  * External mod assign functions unit tests
@@ -1818,8 +1819,7 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
      * @return array an array containing all the required data for testing
      */
     private function create_submission_for_testing_status($submitforgrading = false) {
-        global $DB, $CFG;
-        require_once($CFG->dirroot . '/mod/assign/tests/base_test.php');
+        global $DB;
 
         // Create a course and assignment and users.
         $course = self::getDataGenerator()->create_course();
@@ -1844,7 +1844,7 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         $cm = get_coursemodule_from_instance('assign', $instance->id);
         $context = context_module::instance($cm->id);
 
-        $assign = new testable_assign($context, $cm, $course);
+        $assign = new mod_assign_testable_assign($context, $cm, $course);
 
         $student1 = self::getDataGenerator()->create_user();
         $student2 = self::getDataGenerator()->create_user();
@@ -2317,8 +2317,7 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
      * submitted.
      */
     public function test_get_participant_group_submission() {
-        global $DB, $CFG;
-        require_once($CFG->dirroot . '/mod/assign/tests/base_test.php');
+        global $DB;
 
         $this->resetAfterTest(true);
 
@@ -2335,7 +2334,7 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         $group = $this->getDataGenerator()->create_group(array('courseid' => $course->id));
         $cm = get_coursemodule_from_instance('assign', $assignmodule->id);
         $context = context_module::instance($cm->id);
-        $assign = new testable_assign($context, $cm, $course);
+        $assign = new mod_assign_testable_assign($context, $cm, $course);
 
         groups_add_member($group, $student);
 
