@@ -52,8 +52,8 @@ class mod_assign_locallib_testcase extends advanced_testcase {
         $PAGE->set_url(new moodle_url('/mod/assign/view.php', ['id' => $assign->get_course_module()->id]));
 
         $assign->register_return_link('RETURNACTION', ['param' => 1]);
-        $this->assertEquals($returnaction, $assign->get_return_action());
-        $this->assertEquals($returnparams, $assign->get_return_params());
+        $this->assertEquals('RETURNACTION', $assign->get_return_action());
+        $this->assertEquals(['param' => 1], $assign->get_return_params());
     }
 
     public function test_get_feedback_plugins() {
