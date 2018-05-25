@@ -116,7 +116,7 @@ class Hint_ResultPrinter extends PHPUnit\TextUI\ResultPrinter {
             }
         }
 
-        $this->write("\nTo re-run:\n $executable $testName $file\n");
+        $this->write("\nTo re-run:\n $executable \"$testName\" $file\n");
     }
 }
 
