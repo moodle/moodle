@@ -40,6 +40,7 @@
     <div class="settingsform clearfix">
         {{#params}}
             <input type="hidden" name="{{name}}" value="{{value}}">
+            <input type="hidden" name="action" value="save-settings">
         {{/params}}
         <input type="hidden" name="sesskey" value="{{sesskey}}">
         <input type="hidden" name="return" value="{{return}}">
