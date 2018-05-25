@@ -25,7 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
-require_once($CFG->dirroot . '/mod/assign/tests/base_test.php');
+require_once($CFG->dirroot . '/mod/assign/tests/generator.php');
 
 /**
  * Unit tests for assignfeedback_comments
@@ -33,60 +33,54 @@ require_once($CFG->dirroot . '/mod/assign/tests/base_test.php');
  * @copyright  2016 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class assignfeedback_comments_testcase extends mod_assign_base_testcase {
+class assignfeedback_comments_testcase extends advanced_testcase {
 
-    /**
-     * Create an assign object and submit an online text submission.
-     */
-    protected function create_assign_and_submit_text() {
-        $assign = $this->create_instance(array('assignsubmission_onlinetext_enabled' => 1,
-                                               'assignfeedback_comments_enabled' => 1));
-
-        $user = $this->students[0];
-        $this->setUser($user);
-
-        // Create an online text submission.
-        $submission = $assign->get_user_submission($user->id, true);
-
-        $data = new stdClass();
-        $data->onlinetext_editor = array(
-                'text' => '<p>This is some text.</p>',
-                'format' => 1,
-                'itemid' => file_get_unused_draft_itemid());
-        $plugin = $assign->get_submission_plugin_by_type('onlinetext');
-        $plugin->save($submission, $data);
-
-        return $assign;
-    }
+    // Use the generator helper.
+    use mod_assign_test_generator;
 
     /**
      * Test the is_feedback_modified() method for the comments feedback.
      */
     public function test_is_feedback_modified() {
-        $assign = $this->create_assign_and_submit_text();
+        $this->resetAfterTest();
+        $course = $this->getDataGenerator()->create_course();
+        $teacher = $this->getDataGenerator()->create_and_enrol($course, 'teacher');
+        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
 
-        $this->setUser($this->teachers[0]);
+        $assign = $this->create_instance($course, [
+                'assignsubmission_onlinetext_enabled' => 1,
+                'assignfeedback_comments_enabled' => 1,
+            ]);
+
+        // Create an online text submission.
+        $this->add_submission($student, $assign);
+
+        $this->setUser($teacher);
 
         // Create formdata.
-        $data = new stdClass();
-        $data->assignfeedbackcomments_editor = array(
+        $grade = $assign->get_user_grade($student->id, true);
+        $data = (object) [
+            'assignfeedbackcomments_editor' => [
                 'text' => '<p>first comment for this test</p>',
-                'format' => 1
-            );
-        $grade = $assign->get_user_grade($this->students[0]->id, true);
+                'format' => 1,
+            ]
+        ];
 
         // This is the first time that we are submitting feedback, so it is modified.
         $plugin = $assign->get_feedback_plugin_by_type('comments');
         $this->assertTrue($plugin->is_feedback_modified($grade, $data));
+
         // Save the feedback.
         $plugin->save($grade, $data);
+
         // Try again with the same data.
         $this->assertFalse($plugin->is_feedback_modified($grade, $data));
+
         // Change the data.
-        $data->assignfeedbackcomments_editor = array(
+        $data->assignfeedbackcomments_editor = [
                 'text' => '<p>Altered comment for this test</p>',
-                'format' => 1
-            );
+                'format' => 1,
+            ];
         $this->assertTrue($plugin->is_feedback_modified($grade, $data));
     }
 }
