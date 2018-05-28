@@ -484,9 +484,11 @@ class core_course_management_renderer extends plugin_renderer_base {
      * @param course_in_list $course The currently selected course.
      * @param int $page The page being displayed.
      * @param int $perpage The number of courses to display per page.
+     * @param string|null $viewmode The view mode the page is in, one out of 'default', 'combined', 'courses' or 'categories'.
      * @return string
      */
-    public function course_listing(coursecat $category = null, course_in_list $course = null, $page = 0, $perpage = 20) {
+    public function course_listing(coursecat $category = null, course_in_list $course = null, $page = 0, $perpage = 20,
+        $viewmode = 'default') {
 
         if ($category === null) {
             $html = html_writer::start_div('select-a-category');
@@ -527,13 +529,13 @@ class core_course_management_renderer extends plugin_renderer_base {
         $html .= html_writer::tag('h3', $category->get_formatted_name(),
             array('id' => 'course-listing-title', 'tabindex' => '0'));
         $html .= $this->course_listing_actions($category, $course, $perpage);
-        $html .= $this->listing_pagination($category, $page, $perpage);
+        $html .= $this->listing_pagination($category, $page, $perpage, false, $viewmode);
         $html .= html_writer::start_tag('ul', array('class' => 'ml', 'role' => 'group'));
         foreach ($category->get_courses($options) as $listitem) {
             $html .= $this->course_listitem($category, $listitem, $courseid);
         }
         $html .= html_writer::end_tag('ul');
-        $html .= $this->listing_pagination($category, $page, $perpage, true);
+        $html .= $this->listing_pagination($category, $page, $perpage, true, $viewmode);
         $html .= $this->course_bulk_actions($category);
         $html .= html_writer::end_div();
         return $html;
@@ -546,9 +548,10 @@ class core_course_management_renderer extends plugin_renderer_base {
      * @param int $page The current page.
      * @param int $perpage The number of courses to display per page.
      * @param bool $showtotals Set to true to show the total number of courses and what is being displayed.
+     * @param string|null $viewmode The view mode the page is in, one out of 'default', 'combined', 'courses' or 'categories'.
      * @return string
      */
-    protected function listing_pagination(coursecat $category, $page, $perpage, $showtotals = false) {
+    protected function listing_pagination(coursecat $category, $page, $perpage, $showtotals = false, $viewmode = 'default') {
         $html = '';
         $totalcourses = $category->get_courses_count();
         $totalpages = ceil($totalcourses / $perpage);
@@ -582,7 +585,12 @@ class core_course_management_renderer extends plugin_renderer_base {
             }
         }
         $items = array();
-        $baseurl = new moodle_url('/course/management.php', array('categoryid' => $category->id));
+        if ($viewmode !== 'default') {
+            $baseurl = new moodle_url('/course/management.php', array('categoryid' => $category->id,
+                'view' => $viewmode));
+        } else {
+            $baseurl = new moodle_url('/course/management.php', array('categoryid' => $category->id));
+        }
         if ($page > 0) {
             $items[] = $this->action_button(new moodle_url($baseurl, array('page' => 0)), get_string('first'));
             $items[] = $this->action_button(new moodle_url($baseurl, array('page' => $page - 1)), get_string('prev'));
