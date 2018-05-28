@@ -672,7 +672,7 @@ class behat_config_util {
     public function profile_guided_allocate($features, $nbuckets, $instance) {
 
         // No profile guided allocation is required in phpunit.
-        if (defined('PHPUNIT_TEST')) {
+        if (defined('PHPUNIT_TEST') && PHPUNIT_TEST) {
             return false;
         }
 
@@ -725,7 +725,8 @@ class behat_config_util {
             $totalweight += $weight;
         }
 
-        if ($totalweight && !defined('BEHAT_DISABLE_HISTOGRAM') && $instance == $nbuckets && !defined('PHPUNIT_TEST')) {
+        if ($totalweight && !defined('BEHAT_DISABLE_HISTOGRAM') && $instance == $nbuckets
+                && (!defined('PHPUNIT_TEST') || !PHPUNIT_TEST)) {
             echo "Bucket weightings:\n";
             foreach ($weights as $k => $weight) {
                 echo $k + 1 . ": " . str_repeat('*', 70 * $nbuckets * $weight / $totalweight) . PHP_EOL;
@@ -960,7 +961,7 @@ class behat_config_util {
                 unset($features[$key]);
             } else {
                 $featurestocheck = $this->get_components_features();
-                if (!isset($featurestocheck[$key]) && !defined('PHPUNIT_TEST')) {
+                if (!isset($featurestocheck[$key]) && (!defined('PHPUNIT_TEST') || !PHPUNIT_TEST)) {
                     behat_error(BEHAT_EXITCODE_REQUIREMENT, 'Blacklisted feature "' . $blacklistpath . '" not found.');
                 }
             }
