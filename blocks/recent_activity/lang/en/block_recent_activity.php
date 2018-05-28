@@ -23,6 +23,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['cleanuptask'] = 'Cleanup task for recent activity block';
 $string['pluginname'] = 'Recent activity';
 $string['privacy:metadata'] = 'The recent activity block contains a cache of data stored elsewhere in Moodle.';
 $string['privacy:metadata:block_recent_activity'] = 'Temporary log of recent teacher activity. Removed after two days';

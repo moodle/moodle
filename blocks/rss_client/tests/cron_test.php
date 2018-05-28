@@ -55,12 +55,12 @@ class block_rss_client_cron_testcase extends advanced_testcase {
         );
         $DB->insert_record('block_rss_client', $record);
 
-        $block = new block_rss_client();
+        $task = new \block_rss_client\task\refreshfeeds();
         ob_start();
 
         // Silence SimplePie php notices.
         $errorlevel = error_reporting($CFG->debug & ~E_USER_NOTICE);
-        $block->cron();
+        $task->execute();
         error_reporting($errorlevel);
 
         $cronoutput = ob_get_clean();
@@ -69,7 +69,7 @@ class block_rss_client_cron_testcase extends advanced_testcase {
     }
 
     /**
-     * Test that when a feed has an error the skip time is increaed correctly.
+     * Test that when a feed has an error the skip time is increased correctly.
      */
     public function test_error() {
         global $DB, $CFG;
@@ -114,20 +114,20 @@ class block_rss_client_cron_testcase extends advanced_testcase {
         );
         $record3->id = $DB->insert_record('block_rss_client', $record3);
 
-        // Run the cron.
-        $block = new block_rss_client();
+        // Run the scheduled task.
+        $task = new \block_rss_client\task\refreshfeeds();
         ob_start();
 
         // Silence SimplePie php notices.
         $errorlevel = error_reporting($CFG->debug & ~E_USER_NOTICE);
-        $block->cron();
+        $task->execute();
         error_reporting($errorlevel);
 
         $cronoutput = ob_get_clean();
         $skiptime1 = $record->skiptime * 2;
         $message1 = 'http://example.com/rss Error: could not load/find the RSS feed - skipping for ' . $skiptime1 . ' seconds.';
         $this->assertContains($message1, $cronoutput);
-        $skiptime2 = 330; // Assumes that the cron time in the version file is 300.
+        $skiptime2 = 0;
         $message2 = 'http://example.com/rss2 Error: could not load/find the RSS feed - skipping for ' . $skiptime2 . ' seconds.';
         $this->assertContains($message2, $cronoutput);
         $skiptime3 = block_rss_client::CLIENT_MAX_SKIPTIME;
