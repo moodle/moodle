@@ -808,11 +808,6 @@ EOD;
                         if (!$this->ok) {
                             $this->reason = 'Request is from an invalid tool consumer.';
                         }
-                    } else {
-                        $this->ok = isset($_POST['tool_consumer_instance_guid']);
-                        if (!$this->ok) {
-                            $this->reason = 'A tool consumer GUID must be included in the launch request.';
-                        }
                     }
                 }
                 if ($this->ok) {
