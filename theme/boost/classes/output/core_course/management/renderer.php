@@ -416,9 +416,11 @@ class renderer extends \core_course_management_renderer {
      * @param course_in_list $course The currently selected course.
      * @param int $page The page being displayed.
      * @param int $perpage The number of courses to display per page.
+     * @param string|null $viewmode The view mode the page is in, one out of 'default', 'combined', 'courses' or 'categories'.
      * @return string
      */
-    public function course_listing(coursecat $category = null, course_in_list $course = null, $page = 0, $perpage = 20) {
+    public function course_listing(coursecat $category = null, course_in_list $course = null,
+            $page = 0, $perpage = 20, $viewmode = 'default') {
 
         if ($category === null) {
             $html = html_writer::start_div('select-a-category');
@@ -460,13 +462,13 @@ class renderer extends \core_course_management_renderer {
             array('id' => 'course-listing-title', 'tabindex' => '0', 'class' => 'card-header'));
         $html .= html_writer::start_div('card-body');
         $html .= $this->course_listing_actions($category, $course, $perpage);
-        $html .= $this->listing_pagination($category, $page, $perpage);
+        $html .= $this->listing_pagination($category, $page, $perpage, false, $viewmode);
         $html .= html_writer::start_tag('ul', array('class' => 'ml course-list', 'role' => 'group'));
         foreach ($category->get_courses($options) as $listitem) {
             $html .= $this->course_listitem($category, $listitem, $courseid);
         }
         $html .= html_writer::end_tag('ul');
-        $html .= $this->listing_pagination($category, $page, $perpage, true);
+        $html .= $this->listing_pagination($category, $page, $perpage, true, $viewmode);
         $html .= $this->course_bulk_actions($category);
         $html .= html_writer::end_div();
         $html .= html_writer::end_div();
