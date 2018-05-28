@@ -33,16 +33,11 @@ $courseid = required_param('courseid', PARAM_INT);
 $context = context_course::instance($courseid);
 require_capability('local/kalturamediagallery:view', $context);
 
-$mediagallery = get_string('heading_mediagallery', 'local_kalturamediagallery');
-
 $course = get_course($courseid);
 
 $PAGE->set_context($context);
 $PAGE->set_course($course);
-$site = get_site();
-$header  = format_string($site->shortname).": $mediagallery";
-
-$PAGE->navbar->add(get_string('nav_mediagallery', 'local_kalturamediagallery'));
+$header = format_string($course->fullname) . ": " . get_string('heading_mediagallery', 'local_kalturamediagallery');
 
 $PAGE->set_url('/local/kalturamediagallery/index.php', array('courseid' => $courseid));
 $PAGE->set_pagetype('kalturamediagallery-index');
