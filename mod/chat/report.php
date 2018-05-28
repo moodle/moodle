@@ -82,6 +82,7 @@ $strdeletesession = get_string('deletesession', 'chat');
 $navlinks = array();
 
 $canexportsess = has_capability('mod/chat:exportsession', $context);
+$canviewfullnames = has_capability('moodle/site:viewfullnames', $context);
 
 // Print a session if one has been specified.
 
@@ -213,7 +214,7 @@ foreach ($sessions as $session) {
     foreach ($session->sessionusers as $sessionuser => $usermessagecount) {
         if ($user = $DB->get_record('user', array('id' => $sessionuser))) {
             $OUTPUT->user_picture($user, array('courseid' => $course->id));
-            echo '&nbsp;'.fullname($user, true); // XXX TODO  use capability instead of true.
+            echo '&nbsp;' . fullname($user, $canviewfullnames);
             echo "&nbsp;($usermessagecount)<br />";
         }
     }
