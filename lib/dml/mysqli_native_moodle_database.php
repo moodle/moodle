@@ -818,6 +818,14 @@ class mysqli_native_moodle_database extends moodle_database {
     }
 
     /**
+     * Indicates whether SQL_MODE default value has changed in a not backward compatible way.
+     * @return boolean True when SQL_MODE breaks BC; otherwise, false.
+     */
+    public function has_breaking_change_sqlmode() {
+        return false;
+    }
+
+    /**
      * Returns moodle column info for raw column from information schema.
      * @param stdClass $rawcolumn
      * @return stdClass standardised colum info
