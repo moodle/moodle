@@ -505,10 +505,14 @@ class mod_lesson_renderer extends plugin_renderer_base {
             $progress = $lesson->calculate_progress();
         }
 
-        // print out the Progress Bar.  Attempted to put as much as possible in the style sheets.
-        $content = '<br />' . html_writer::tag('div', $progress . '%', array('class' => 'progress_bar_completed', 'style' => 'width: '. $progress . '%;'));
-        $printprogress = html_writer::tag('div', get_string('progresscompleted', 'lesson', $progress) . $content, array('class' => 'progress_bar'));
-
+        $content = html_writer::start_tag('div');
+        $content .= html_writer::start_tag('div', array('class' => 'progress'));
+        $content .= html_writer::start_tag('div', array('class' => 'progress-bar bar', 'role' => 'progressbar',
+            'style' => 'width: ' . $progress .'%', 'aria-valuenow' => $progress, 'aria-valuemin' => 0, 'aria-valuemax' => 100));
+        $content .= $progress . "%";
+        $content .= html_writer::end_tag('div');
+        $content .= html_writer::end_tag('div');
+        $printprogress = html_writer::tag('div', get_string('progresscompleted', 'lesson', $progress) . $content);
         return $this->output->box($printprogress, 'progress_bar');
     }
 
