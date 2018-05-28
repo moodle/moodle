@@ -50,7 +50,7 @@ branch table contents
     And I follow "Expanded"
 
   Scenario: Edit lesson content page
-    Given I click on "//th[normalize-space(.)='First page name']/descendant::a[2]" "xpath_element"
+    Given I click on "//th[normalize-space(.)='First page name']/descendant::a[3]" "xpath_element"
     When I set the following fields to these values:
       | id_answer_editor_1 | |
     And I press "Save page"
@@ -73,7 +73,7 @@ branch table contents
     And I should see "Your score is 1 (out of 1)."
 
   Scenario: Edit lesson question page
-    Given I click on "//th[normalize-space(.)='Hardest question ever']/descendant::a[2]" "xpath_element"
+    Given I click on "//th[normalize-space(.)='Hardest question ever']/descendant::a[3]" "xpath_element"
     When I set the following fields to these values:
       | id_answer_editor_1 | |
     And I press "Save page"
