@@ -487,8 +487,8 @@ class core_course_management_renderer extends plugin_renderer_base {
      * @param string|null $viewmode The view mode the page is in, one out of 'default', 'combined', 'courses' or 'categories'.
      * @return string
      */
-    public function course_listing(coursecat $category = null, course_in_list $course = null, $page = 0,
-        $perpage = 20, $viewmode = 'default') {
+    public function course_listing(coursecat $category = null, course_in_list $course = null, $page = 0, $perpage = 20,
+        $viewmode = 'default') {
 
         if ($category === null) {
             $html = html_writer::start_div('select-a-category');
