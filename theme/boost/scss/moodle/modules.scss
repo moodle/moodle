@@ -77,7 +77,6 @@ select {
         }
 
         .discussion {
-            .author,
             .replies,
             .lastpost {
                 white-space: normal;
@@ -91,8 +90,6 @@ select {
             .topic,
             .discussionsubscription,
             .topic.starter,
-            .picture,
-            .author,
             .replies,
             .lastpost {
                 vertical-align: top;
