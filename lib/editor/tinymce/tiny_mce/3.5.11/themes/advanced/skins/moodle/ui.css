@@ -80,7 +80,7 @@
 .moodleSkin .mceToolbar .mceToolbarStart span, .moodleSkin .mceToolbar .mceToolbarEnd span {display:none;}
 .moodleSkin .mceToolbar .mceToolbarEndListBox span, .moodleSkin .mceToolbar .mceToolbarStartListBox span {display:none}
 .moodleSkin span.mceIcon {display:block;}
-.moodleSkin img.mceIcon {display:block; width:16px; height:16px; padding: 2px 0 0 2px;}
+.moodleSkin img.mceIcon:not(img) {display:block; width:16px; height:16px; padding: 2px 0 0 2px;}
 .moodleSkin td.mceCenter {text-align:center;}
 .moodleSkin td.mceCenter table {margin:0 auto; text-align:left;}
 .moodleSkin td.mceRight table {margin:0 0 0 auto;}

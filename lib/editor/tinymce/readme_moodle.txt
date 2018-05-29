@@ -25,3 +25,6 @@ lib/editor/tinymce/tiny_mce/3.5.10/theme/advanced/skins/moodle/
 
 TODO:
  * create some new automated script that sends other languages from upstream into AMOS
+
+HISTORY:
+MDL-62381 - Icon sizing is being overwritten on images.
