@@ -1063,6 +1063,9 @@ class stored_file {
      * @return  string|bool false if a problem occurs, the thumbnail image data otherwise
      */
     public function generate_image_thumbnail($width, $height) {
+        global $CFG;
+        require_once($CFG->libdir . '/gdlib.php');
+
         if (empty($width) or empty($height)) {
             return false;
         }
