@@ -367,7 +367,7 @@ class participants_table extends \table_sql {
         $canreviewenrol = has_capability('moodle/course:enrolreview', $this->context);
         if ($canreviewenrol) {
             $fullname = fullname($data);
-            $coursename = $this->course->fullname;
+            $coursename = format_string($this->course->fullname, true, array('context' => $this->context));
             require_once($CFG->dirroot . '/enrol/locallib.php');
             $manager = new \course_enrolment_manager($PAGE, $this->course);
             $userenrolments = $manager->get_user_enrolments($data->id);
