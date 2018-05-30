@@ -863,7 +863,7 @@ class core_course_courselib_testcase extends advanced_testcase {
         // Test move the marked section down..
         move_section_to($course, 2, 4);
 
-        // Verify that the coruse marker has been moved along with the section..
+        // Verify that the course marker has been moved along with the section..
         $course = $DB->get_record('course', array('id' => $course->id));
         $this->assertEquals(4, $course->marker);
 
