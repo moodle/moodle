@@ -305,7 +305,7 @@ class category_bin extends base_bin {
                 $file = $fs->get_file_instance($filer);
                 $file->delete();
             }
-            $file->close();
+            $files->close();
         }
 
         // Delete the record.
