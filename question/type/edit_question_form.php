@@ -316,6 +316,8 @@ abstract class question_edit_form extends question_wizard_form {
      * @param object $mform The form being built
      */
     protected function add_tag_fields($mform) {
+        global $CFG, $DB;
+
         $hastagcapability = question_has_capability_on($this->question, 'tag');
         // Is the question category in a course context?
         $qcontext = $this->categorycontext;
@@ -332,6 +334,18 @@ abstract class question_edit_form extends question_wizard_form {
         foreach ($tags as $tag) {
             $tagstrings[$tag->name] = $tag->name;
         }
+
+        $showstandard = core_tag_area::get_showstandard('core_question', 'question');
+        if ($showstandard != core_tag_tag::HIDE_STANDARD) {
+            $namefield = empty($CFG->keeptagnamecase) ? 'name' : 'rawname';
+            $standardtags = $DB->get_records('tag',
+                    array('isstandard' => 1, 'tagcollid' => core_tag_area::get_collection('core', 'question')),
+                    $namefield, 'id,' . $namefield);
+            foreach ($standardtags as $standardtag) {
+                $tagstrings[$standardtag->$namefield] = $standardtag->$namefield;
+            }
+        }
+
         $options = [
             'tags' => true,
             'multiple' => true,
