@@ -1444,11 +1444,13 @@ class iomad {
         }
     
         // Now find out what access is given to each role, going bottom-->up direction
+        $rdefs = get_role_definitions(array_keys($roles));
         $allowed = false;
+
         foreach ($roles as $roleid => $ignored) {
             foreach ($paths as $path) {
-                if (isset($accessdata['rdef']["{$path}:$roleid"][$capability])) {
-                    $perm = (int)$accessdata['rdef']["{$path}:$roleid"][$capability];
+                if (isset($rdefs[$roleid][$path][$capability])) {
+                    $perm = (int)$rdefs[$roleid][$path][$capability];
                     if ($perm === CAP_PROHIBIT) {
                         // any CAP_PROHIBIT found means no permission for the user
                         return false;
