@@ -1651,6 +1651,7 @@ $string['requestedcourses'] = 'Requested courses';
 $string['requestreason'] = 'Reason for course request';
 $string['required'] = 'Required';
 $string['requirespayment'] = 'This course requires payment for access';
+$string['resendemail'] = 'Resend email';
 $string['reset'] = 'Reset';
 $string['resetcomponent'] = 'Component';
 $string['resetcourse'] = 'Reset course';
