@@ -47,7 +47,30 @@ class contextlist extends contextlist_base {
         global $DB;
 
         $fields = \context_helper::get_preload_record_columns_sql('ctx');
-        $wrapper = "SELECT {$fields} FROM {context} ctx WHERE id IN ({$sql})";
+        if ($fieldname = $this->guess_id_field_from_sql($sql)) {
+            if (is_int($fieldname)) {
+                $wrapper = "
+                    SELECT
+                        {$fields}
+                    FROM {context} ctx
+                   WHERE ctx.id = :fieldvalue";
+                $params = ['fieldvalue' => $fieldname];
+            } else {
+                // Able to guess a field name.
+                $wrapper = "
+                    SELECT
+                        {$fields}
+                    FROM {context} ctx
+                    JOIN ({$sql}) target ON ctx.id = target.{$fieldname}";
+            }
+        } else {
+            // No field name available. Fall back on a potentially slower version.
+            $wrapper = "
+                SELECT
+                    {$fields}
+                FROM {context} ctx
+                WHERE ctx.id IN ({$sql})";
+        }
         $contexts = $DB->get_recordset_sql($wrapper, $params);
 
         $contextids = [];
@@ -109,5 +132,40 @@ class contextlist extends contextlist_base {
      */
     public function set_component($component) {
         parent::set_component($component);
+    }
+
+    /**
+     * Guess the name of the contextid field from the supplied SQL.
+     *
+     * @param   string  $sql The SQL to guess from
+     * @return  string  The field name.
+     */
+    protected function guess_id_field_from_sql($sql) {
+        // Get the list of relevant words from the SQL Query.
+        // We explode the SQL by the space character, then trim any extra whitespace (e.g. newlines), before we filter
+        // empty value, and finally we re-index the array.
+        $words = array_map('trim', explode(' ', $sql));
+        $words = array_filter($words, function($word) {
+            return $word !== '';
+        });
+        $words = array_values($words);
+
+        if ($firstfrom = array_search('FROM', $words)) {
+            // Found a FROM keyword.
+            // Select the previous word.
+            $fieldname = $words[$firstfrom - 1];
+            if (is_int($fieldname)) {
+                return $fieldname;
+            }
+
+            if ($hasdot = strpos($fieldname, '.')) {
+                // This field is against a table alias. Take off the alias.
+                $fieldname = substr($fieldname, $hasdot + 1);
+            }
+
+            return $fieldname;
+        }
+
+        return '';
     }
 }
