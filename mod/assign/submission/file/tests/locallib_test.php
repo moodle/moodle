@@ -73,6 +73,34 @@ class assignsubmission_file_locallib_testcase extends advanced_testcase {
     }
 
     /**
+     * Test that an empty directory is is not detected as a valid submission by submission_is_empty.
+     */
+    public function test_submission_is_empty_directory_only() {
+        $this->resetAfterTest();
+        $course = $this->getDataGenerator()->create_course();
+        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $assign = $this->create_instance($course, [
+                'assignsubmission_file_enabled' => 1,
+                'assignsubmission_file_maxfiles' => 12,
+                'assignsubmission_file_maxsizebytes' => 10,
+            ]);
+        $this->setUser($student->id);
+        $itemid = file_get_unused_draft_itemid();
+        $submission = (object)['files_filemanager' => $itemid];
+        $plugin = $assign->get_submission_plugin_by_type('file');
+        $fs = get_file_storage();
+        $fs->create_directory(
+                context_user::instance($student->id)->id,
+                'user',
+                'draft',
+                $itemid,
+                '/subdirectory/'
+        );
+
+        $this->assertTrue($plugin->submission_is_empty($submission));
+    }
+
+    /**
      * Test new_submission_empty
      *
      * @dataProvider submission_is_empty_testcases
@@ -106,6 +134,34 @@ class assignsubmission_file_locallib_testcase extends advanced_testcase {
     }
 
     /**
+     * Test that an empty directory is is not detected as a valid submission by new_submission_is_empty.
+     */
+    public function test_new_submission_empty_directory_only() {
+        $this->resetAfterTest();
+        $course = $this->getDataGenerator()->create_course();
+        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $assign = $this->create_instance($course, [
+                'assignsubmission_file_enabled' => 1,
+                'assignsubmission_file_maxfiles' => 12,
+                'assignsubmission_file_maxsizebytes' => 10,
+            ]);
+        $this->setUser($student->id);
+        $itemid = file_get_unused_draft_itemid();
+        $submission = (object)['files_filemanager' => $itemid];
+        $plugin = $assign->get_submission_plugin_by_type('file');
+        $fs = get_file_storage();
+        $fs->create_directory(
+                context_user::instance($student->id)->id,
+                'user',
+                'draft',
+                $itemid,
+                '/subdirectory/'
+        );
+
+        $this->assertTrue($assign->new_submission_empty($submission));
+    }
+
+    /**
      * Dataprovider for the test_submission_is_empty testcase
      *
      * @return array of testcases
@@ -117,6 +173,15 @@ class assignsubmission_file_locallib_testcase extends advanced_testcase {
                     'component' => 'user',
                     'filearea' => 'draft',
                     'filepath' => '/',
+                    'filename' => 'not_a_virus.exe'
+                ],
+                false
+            ],
+            'With file in directory' => [
+                [
+                    'component' => 'user',
+                    'filearea' => 'draft',
+                    'filepath' => '/subdir/',
                     'filename' => 'not_a_virus.exe'
                 ],
                 false
