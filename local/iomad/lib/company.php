@@ -251,7 +251,7 @@ class company {
 
         return $childcompanies;
     }
-    
+
     /**
      * Creates a recursive array of child companies.
      *
@@ -271,7 +271,7 @@ class company {
         }
         return $returnarray;
     }
-    
+
     /**
      * Creates a recursive array of parent companies .
      *
@@ -294,7 +294,7 @@ class company {
 
         return $returnarray;
     }
-    
+
     /**
      * Creates an array of child companies to be used in a Select menu
      *
@@ -399,7 +399,7 @@ class company {
 
         // Add the default.
         $templates = array(0 => get_string('none')) + $templates;
-        
+
         return $templates;
     }
 
@@ -724,7 +724,7 @@ class company {
 
     public function assign_parent_managers($parentid, $finalcompanyid = 0) {
         global $DB;
-        
+
         if (empty($finalcompanyid)) {
             $finalcompanyid = $this->id;
         }
@@ -732,7 +732,7 @@ class company {
         $parentmanagers = $parentcompany->get_company_managers();
         $finalcompany = new company($finalcompanyid);
         foreach ($parentmanagers as $managerid) {
-            
+
             $finalcompany->assign_user_to_company($managerid->userid, 0, 1, true);
         }
         // Is there any more?
@@ -744,7 +744,7 @@ class company {
 
     public function unassign_parent_managers($parentid, $finalcompanyid = 0) {
         global $DB;
-        
+
         if (empty($finalcompanyid)) {
             $finalcompanyid = $this->id;
         }
@@ -809,7 +809,7 @@ class company {
      *              $companyid = INT;
      *              $currentdepartment = department obtject;
      *              $importtree = json decoded department tree;
-     *              $toplevel = boolean - true if this is the first time the tree is being accessed so initial value will be the same as the parent department. 
+     *              $toplevel = boolean - true if this is the first time the tree is being accessed so initial value will be the same as the parent department.
      *
      **/
     public static function import_departments($companyid, $currentdepartment, $importtree, $toplevel = false) {
@@ -1759,14 +1759,14 @@ class company {
 
     public function get_menu_courses($shared = false, $licensed = false, $groups = false, $default = true) {
         global $DB;
-        
+
         // Deal with license option.
         if ($licensed) {
             $licensesql = "c.id NOT IN (
                              SELECT courseid FROM {iomad_courses}
                              WHERE licensed = 1
                            )
-                           AND"; 
+                           AND";
             $sharedlicsql = " AND licensed != 1 ";
         } else {
             $licensesql = "";
@@ -2292,7 +2292,7 @@ class company {
             iomad::has_capability('block/iomad_company_admin:company_add', $context)) {
             return true;
         }
-    
+
         // Get my companyid.
         $mycompanyid = iomad::get_my_companyid($context);
 
@@ -2342,7 +2342,7 @@ class company {
 
         // Is it a child license?
         $company = new company($companyid);
-        
+
         // Return a false by default.
         return $company->is_child_license($licenseid);
     }
@@ -2472,7 +2472,7 @@ class company {
     public static function remove_competency_template($companyid, $templateid) {
         global $DB;
 
-        $DB->delete_records('company_comp_templates', array('companyid' => $companyid, 
+        $DB->delete_records('company_comp_templates', array('companyid' => $companyid,
                                                             'templateid' => $templateid));
     }
 
@@ -2799,7 +2799,7 @@ class company {
         }
         $companyid = $event->objectid;
         $userid = $event->userid;
-        
+
         $company = new company($companyid);
         $childcompanies = $company->get_child_companies_recursive();
 
@@ -2807,7 +2807,7 @@ class company {
             $childcompany = new company($child->id);
             $childcompany->assign_user_to_company($userid, 0, $event->other['usertype'], true);
         }
-        
+
         return true;
     }
 
@@ -2826,7 +2826,7 @@ class company {
         }
         $companyid = $event->objectid;
         $userid = $event->userid;
-        
+
         $company = new company($companyid);
         $childcompanies = $company->get_child_companies_recursive();
 
@@ -2834,7 +2834,7 @@ class company {
             $childcompany = new company($child->id);
             $childcompany->unassign_user_from_company($userid, true);
         }
-        
+
         return true;
     }
 
@@ -2873,7 +2873,7 @@ class company {
         $license = new stdclass();
         $license->length = $licenserecord->validlength;
         $license->valid = date($CFG->iomad_date_format, $licenserecord->expirydate);
-                                
+
         if (!$noemail) {
         // Send out the email.
             EmailTemplate::send('license_allocated', array('course' => $course,
@@ -2886,14 +2886,14 @@ class company {
         self::update_license_usage($licenseid);
 
         // Is this an immediate license?
-        if (!empty($licenserecord->immediate)) {
+        if (!empty($licenserecord->instant)) {
             if ($instance = $DB->get_record('enrol', array('courseid' => $course->id, 'enrol' => 'license'))) {
                 // Enrol the user on the course.
                 $enrol = enrol_get_plugin('license');
-    
+
                 // Enrol the user in the course.
                 $timestart = time();
-    
+
                 if (empty($licenserecord->type)) {
                     // Set the timeend to be time start + the valid length for the license in days.
                     $timeend = $timestart + ($licenserecord->validlength * 24 * 60 * 60 );
@@ -2901,24 +2901,24 @@ class company {
                     // Set the timeend to be when the license runs out.
                     $timeend = $licenserecord->expirydate;
                 }
-    
-                $this->enrol_user($instance, $user->id, $instance->roleid, $timestart, $timeend);
-    
+
+                $enrol->enrol_user($instance, $user->id, $instance->roleid, $timestart, $timeend);
+
                 // Get the userlicense record.
                 $userlicense = $DB->get_record('companylicense_users', array('id' => $userlicid));
-    
+
                 // Add the user to the appropriate course group.
                 if (!empty($course->groupmode)) {
                     $userlicense = $DB->get_record('companylicense_users', array('id' => $userlicid));
                     self::add_user_to_shared_course($instance->courseid, $user->id, $license->companyid, $userlicense->groupid);
                 }
-    
+
                 // Update the userlicense record to mark it as in use.
                 $DB->set_field('companylicense_users', 'isusing', 1, array('id' => $userlicense->id));
-    
+
                 // Send welcome.
                 if ($instance->customint4) {
-                    $this->email_welcome_message($instance, $user);
+                    $enrol->email_welcome_message($instance, $user);
                 }
             }
         }
@@ -2996,7 +2996,7 @@ class company {
 
         $licenseid = $event->other['licenseid'];
         $parentid = $event->other['parentid'];
-        
+
         if (!$licenserecord = $DB->get_record('companylicense', array('id' => $licenseid))) {
             return;
         }
@@ -3020,7 +3020,7 @@ class company {
 
         $licenseid = $event->other['licenseid'];
         $parentid = $event->other['parentid'];
-        
+
         if (!$licenserecord = $DB->get_record('companylicense', array('id' => $licenseid))) {
             return;
         }
@@ -3084,7 +3084,7 @@ class company {
                             // Check if they have a license allocated.
                             if (!$DB->get_record('companylicense_users', array('userid' => $licuser->userid,
                                                                                'licensecourseid' => $currentcourse->courseid,
-                                                                               'licenseid' => $licenseid))) {   
+                                                                               'licenseid' => $licenseid))) {
                                 // If not, allocate it to them.
                                 $userlic = array('licenseid' => $licenseid,
                                                  'userid' => $licuser->userid,
@@ -3110,7 +3110,7 @@ class company {
         // Update the timeend for any users using this license.
         if (!empty($licenserecord->type)) {
             // This is a subscription license.
-            // Update the enrolment end 
+            // Update the enrolment end
             if ($enrolments = $DB->get_records_sql("SELECT e.id FROM {enrol} e
                                                     JOIN {companylicense_courses} clc ON (e.courseid = clc.courseid AND e.status = 0)
                                                     WHERE clc.licenseid = :licenseid",
@@ -3146,7 +3146,7 @@ class company {
                         $allocation = $child->allocation / $old * $new;
                         $DB->set_field('companylicense', 'allocation', $allocation, array('id' => $child->id));
                     }
-                }  
+                }
 
                 // Did we change anything else about the license?
                 $child->validlength = $licenserecord->validlength;
@@ -3183,7 +3183,7 @@ class company {
         global $DB, $CFG;
 
         $parentid = $event->other['parentid'];
-        
+
         if (empty($parentid) || !$licenserecord = $DB->get_record('companylicense', array('id' => $parentid))) {
             return;
         }
@@ -3205,7 +3205,7 @@ class company {
         global $DB, $CFG;
 
         $companyid = $event->other['companyid'];
-        
+
         if (empty($companyid) || !$companyrecord = $DB->get_record('company', array('id' => $companyid))) {
             return;
         }
@@ -3226,7 +3226,7 @@ class company {
         global $DB, $CFG;
 
         $companyid = $event->other['companyid'];
-        
+
         if (empty($companyid) || !$companyrecord = $DB->get_record('company', array('id' => $companyid))) {
             return;
         }
