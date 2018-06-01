@@ -44,19 +44,28 @@ class tool_dataprivacy_data_request_form extends moodleform {
     /**
      * Form definition.
      *
-     * @throws HTML_QuickForm_Error
      * @throws coding_exception
-     * @throws dml_exception
      */
     public function definition() {
-        global $DB, $USER;
+        global $USER;
         $mform =& $this->_form;
 
         $this->manage = $this->_customdata['manage'];
         if ($this->manage) {
             $options = [
                 'ajax' => 'tool_dataprivacy/form-user-selector',
-                'multiple' => false
+                'valuehtmlcallback' => function($value) {
+                    global $OUTPUT;
+
+                    $allusernames = get_all_user_name_fields(true);
+                    $fields = 'id, email, ' . $allusernames;
+                    $user = \core_user::get_user($value, $fields);
+                    $useroptiondata = [
+                        'fullname' => fullname($user),
+                        'email' => $user->email
+                    ];
+                    return $OUTPUT->render_from_template('tool_dataprivacy/form-user-selector-suggestion', $useroptiondata);
+                }
             ];
             $mform->addElement('autocomplete', 'userid', get_string('requestfor', 'tool_dataprivacy'), [], $options);
             $mform->addRule('userid', null, 'required', null, 'client');
