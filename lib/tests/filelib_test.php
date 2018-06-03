@@ -1053,6 +1053,79 @@ EOF;
     }
 
     /**
+     * Test file_rewrite_pluginfile_urls with includetoken.
+     */
+    public function test_file_rewrite_pluginfile_urls_includetoken() {
+        global $USER, $CFG;
+
+        $CFG->slasharguments = true;
+
+        $this->resetAfterTest();
+
+        $syscontext = context_system::instance();
+        $originaltext = 'Fake test with an image <img src="@@PLUGINFILE@@/image.png">';
+        $options = ['includetoken' => true];
+
+        // Rewrite the content. This will generate a new token.
+        $finaltext = file_rewrite_pluginfile_urls(
+                $originaltext, 'pluginfile.php', $syscontext->id, 'user', 'private', 0, $options);
+
+        $token = get_user_key('core_files', $USER->id);
+        $expectedurl = new \moodle_url("/tokenpluginfile.php/{$token}/{$syscontext->id}/user/private/0/image.png");
+        $expectedtext = "Fake test with an image <img src=\"{$expectedurl}\">";
+        $this->assertEquals($expectedtext, $finaltext);
+
+        // Do it again - the second time will use an existing token.
+        $finaltext = file_rewrite_pluginfile_urls(
+                $originaltext, 'pluginfile.php', $syscontext->id, 'user', 'private', 0, $options);
+        $this->assertEquals($expectedtext, $finaltext);
+
+        // Now undo.
+        $options['reverse'] = true;
+        $finaltext = file_rewrite_pluginfile_urls($finaltext, 'pluginfile.php', $syscontext->id, 'user', 'private', 0, $options);
+
+        // Compare the final text is the same that the original.
+        $this->assertEquals($originaltext, $finaltext);
+    }
+
+    /**
+     * Test file_rewrite_pluginfile_urls with includetoken with slasharguments disabled..
+     */
+    public function test_file_rewrite_pluginfile_urls_includetoken_no_slashargs() {
+        global $USER, $CFG;
+
+        $CFG->slasharguments = false;
+
+        $this->resetAfterTest();
+
+        $syscontext = context_system::instance();
+        $originaltext = 'Fake test with an image <img src="@@PLUGINFILE@@/image.png">';
+        $options = ['includetoken' => true];
+
+        // Rewrite the content. This will generate a new token.
+        $finaltext = file_rewrite_pluginfile_urls(
+                $originaltext, 'pluginfile.php', $syscontext->id, 'user', 'private', 0, $options);
+
+        $token = get_user_key('core_files', $USER->id);
+        $expectedurl = new \moodle_url("/tokenpluginfile.php");
+        $expectedurl .= "?token={$token}&file=/{$syscontext->id}/user/private/0/image.png";
+        $expectedtext = "Fake test with an image <img src=\"{$expectedurl}\">";
+        $this->assertEquals($expectedtext, $finaltext);
+
+        // Do it again - the second time will use an existing token.
+        $finaltext = file_rewrite_pluginfile_urls(
+                $originaltext, 'pluginfile.php', $syscontext->id, 'user', 'private', 0, $options);
+        $this->assertEquals($expectedtext, $finaltext);
+
+        // Now undo.
+        $options['reverse'] = true;
+        $finaltext = file_rewrite_pluginfile_urls($finaltext, 'pluginfile.php', $syscontext->id, 'user', 'private', 0, $options);
+
+        // Compare the final text is the same that the original.
+        $this->assertEquals($originaltext, $finaltext);
+    }
+
+    /**
      * Helpter function to create draft files
      *
      * @param  array  $filedata data for the file record (to not use defaults)
