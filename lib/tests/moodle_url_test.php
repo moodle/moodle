@@ -262,4 +262,86 @@ class core_moodle_url_testcase extends advanced_testcase {
         $url = new moodle_url('http://www.example.org/some/path/here.php');
         $this->assertSame('', $url->get_port());
     }
+
+    /**
+     * Test the make_pluginfile_url function.
+     *
+     * @dataProvider make_pluginfile_url_provider
+     * @param   bool    $slashargs
+     * @param   array   $args Args to be provided to make_pluginfile_url
+     * @param   string  $expected The expected result
+     */
+    public function test_make_pluginfile_url($slashargs, $args, $expected) {
+        global $CFG;
+
+        $this->resetAfterTest();
+
+        $CFG->slasharguments = $slashargs;
+        $url = call_user_func_array('moodle_url::make_pluginfile_url', $args);
+        $this->assertRegexp($expected, $url->out(true));
+    }
+
+    /**
+     * Data provider for make_pluginfile_url tests.
+     *
+     * @return  array[]
+     */
+    public function make_pluginfile_url_provider() {
+        $baseurl = "https://www.example.com/moodle/pluginfile.php";
+        $tokenbaseurl = "https://www.example.com/moodle/tokenpluginfile.php";
+        return [
+            'Standard with slashargs' => [
+                'slashargs' => true,
+                'args' => [
+                    1,
+                    'mod_forum',
+                    'posts',
+                    422,
+                    '/my/location/',
+                    'file.png',
+                ],
+                'expected' => "@{$baseurl}/1/mod_forum/posts/422/my/location/file.png@",
+            ],
+            'Standard without slashargs' => [
+                'slashargs' => false,
+                'args' => [
+                    1,
+                    'mod_forum',
+                    'posts',
+                    422,
+                    '/my/location/',
+                    'file.png',
+                ],
+                'expected' => "@{$baseurl}\?file=%2F1%2Fmod_forum%2Fposts%2F422%2Fmy%2Flocation%2Ffile.png@",
+            ],
+            'Token included with slashargs' => [
+                'slashargs' => true,
+                'args' => [
+                    1,
+                    'mod_forum',
+                    'posts',
+                    422,
+                    '/my/location/',
+                    'file.png',
+                    false,
+                    true,
+                ],
+                'expected' => "@{$tokenbaseurl}/[^/]*/1/mod_forum/posts/422/my/location/file.png@",
+            ],
+            'Token included without slashargs' => [
+                'slashargs' => false,
+                'args' => [
+                    1,
+                    'mod_forum',
+                    'posts',
+                    422,
+                    '/my/location/',
+                    'file.png',
+                    false,
+                    true,
+                ],
+                'expected' => "@{$tokenbaseurl}\?file=%2F1%2Fmod_forum%2Fposts%2F422%2Fmy%2Flocation%2Ffile.png&amp;token=[a-z0-9]*@",
+            ],
+        ];
+    }
 }

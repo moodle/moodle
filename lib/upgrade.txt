@@ -3,6 +3,12 @@ information provided here is intended especially for developers.
 
 === 3.6 ===
 
+* A new token-based version of pluginfile.php has been added which can be used for out-of-session file serving by
+  setting the `$includetoken` parameter to true on the `moodle_url::make_pluginfile_url()`, and
+  `moodle_url::make_file_url()` functions.
+* The following picture functions have been updated to support use of the new token-based file serving:
+    - print_group_picture
+    - get_group_picture_url
 * Custom AJAX handlers for the form autocomplete fields can now optionally return string in their processResults()
   callback. If a string is returned, it is displayed instead of the list of suggested items. This can be used, for
   example, to inform the user that there are too many items matching the current search criteria.
