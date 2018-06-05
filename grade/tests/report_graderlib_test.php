@@ -287,7 +287,6 @@ class core_grade_report_graderlib_testcase extends advanced_testcase {
         $context = context_course::instance($course->id);
         $managerroleid = $DB->get_field('role', 'id', array('shortname' => 'manager'));
         assign_capability('moodle/grade:viewhidden', CAP_PROHIBIT, $managerroleid, $context->id, true);
-        $context->mark_dirty();
         $this->assertFalse(has_capability('moodle/grade:viewhidden', $context));
 
         // Recreate the report. Confirm it returns successfully still.

@@ -279,7 +279,6 @@ class mod_feedback_lib_testcase extends advanced_testcase {
 
         $this->setUser($user);
         assign_capability('mod/feedback:complete', CAP_PROHIBIT, $studentrole->id, $context);
-        $context->mark_dirty();
 
         $factory = new \core_calendar\action_factory();
         $action = mod_feedback_core_calendar_provide_event_action($event, $factory);

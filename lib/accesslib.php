@@ -62,6 +62,8 @@
  * <b>Name conventions</b>
  *
  * "ctx" means context
+ * "ra" means role assignment
+ * "rdef" means role definition
  *
  * <b>accessdata</b>
  *
@@ -72,9 +74,7 @@
  * against userid in $ACCESSLIB_PRIVATE->accessdatabyuser).
  *
  * $accessdata is a multidimensional array, holding
- * role assignments (RAs), role-capabilities-perm sets
- * (role defs) and a list of courses we have loaded
- * data for.
+ * role assignments (RAs), role switches and initialization time.
  *
  * Things are keyed on "contextpaths" (the path field of
  * the context table) for fast walking up/down the tree.
@@ -201,6 +201,7 @@ function accesslib_clear_all_caches_for_unit_testing() {
     }
 
     accesslib_clear_all_caches(true);
+    accesslib_reset_role_cache();
 
     unset($USER->access);
 }
@@ -219,14 +220,30 @@ function accesslib_clear_all_caches($resetcontexts) {
 
     $ACCESSLIB_PRIVATE->dirtycontexts    = null;
     $ACCESSLIB_PRIVATE->accessdatabyuser = array();
-    $ACCESSLIB_PRIVATE->cacheroledefs    = array();
-
-    $cache = cache::make('core', 'roledefs');
-    $cache->purge();
 
     if ($resetcontexts) {
         context_helper::reset_caches();
     }
+}
+
+/**
+ * Full reset of accesslib's private role cache. ONLY TO BE USED FROM THIS LIBRARY FILE!
+ *
+ * This reset does not touch global $USER.
+ *
+ * Note: Only use this when the roles that need a refresh are unknown.
+ *
+ * @see accesslib_clear_role_cache()
+ *
+ * @access private
+ * @return void
+ */
+function accesslib_reset_role_cache() {
+    global $ACCESSLIB_PRIVATE;
+
+    $ACCESSLIB_PRIVATE->cacheroledefs = array();
+    $cache = cache::make('core', 'roledefs');
+    $cache->purge();
 }
 
 /**
@@ -1280,8 +1297,6 @@ function delete_role($roleid) {
 /**
  * Function to write context specific overrides, or default capabilities.
  *
- * NOTE: use $context->mark_dirty() after this
- *
  * @param string $capability string name
  * @param int $permission CAP_ constants
  * @param int $roleid role id
@@ -1334,8 +1349,6 @@ function assign_capability($capability, $permission, $roleid, $contextid, $overw
 
 /**
  * Unassign a capability from a role.
- *
- * NOTE: use $context->mark_dirty() after this
  *
  * @param string $capability the name of the capability
  * @param int $roleid the role id
@@ -2097,9 +2110,6 @@ function reset_role_capabilities($roleid) {
 
     // Reset any cache of this role, including MUC.
     accesslib_clear_role_cache($roleid);
-
-    // Mark the system context dirty.
-    context_system::instance()->mark_dirty();
 }
 
 /**
@@ -2217,7 +2227,7 @@ function update_capabilities($component = 'moodle') {
     capabilities_cleanup($component, $filecaps);
 
     // reset static caches
-    accesslib_clear_all_caches(false);
+    accesslib_reset_role_cache();
 
     // Flush the cached again, as we have changed DB.
     cache::make('core', 'capabilities')->delete('core_capabilities');
@@ -2381,8 +2391,6 @@ function is_inside_frontpage(context $context) {
  * @return stdClass or null if capability not found
  */
 function get_capability_info($capabilityname) {
-    global $ACCESSLIB_PRIVATE, $DB; // one request per page only
-
     $caps = get_all_capabilities();
 
     if (!isset($caps[$capabilityname])) {
@@ -4592,7 +4600,6 @@ function role_change_permission($roleid, $context, $capname, $permission) {
 
     if ($permission == CAP_INHERIT) {
         unassign_capability($capname, $roleid, $context->id);
-        $context->mark_dirty();
         return;
     }
 
@@ -4625,7 +4632,6 @@ function role_change_permission($roleid, $context, $capname, $permission) {
                 // permission already set in parent context or parent - just unset in this context
                 // we do this because we want as few overrides as possible for performance reasons
                 unassign_capability($capname, $roleid, $context->id);
-                $context->mark_dirty();
                 return;
             }
         }
@@ -4639,9 +4645,6 @@ function role_change_permission($roleid, $context, $capname, $permission) {
 
     // assign the needed capability
     assign_capability($capname, $permission, $roleid, $context->id, true);
-
-    // force cap reloading
-    $context->mark_dirty();
 }
 
 
@@ -5066,8 +5069,6 @@ abstract class context extends stdClass implements IteratorAggregate {
 
         $trans = $DB->start_delegated_transaction();
 
-        $this->mark_dirty();
-
         $setdepth = '';
         if (($newparent->depth +1) != $this->_depth) {
             $diff = $newparent->depth - $this->_depth + 1;
@@ -5189,11 +5190,6 @@ abstract class context extends stdClass implements IteratorAggregate {
         $DB->delete_records('context', array('id'=>$this->_id));
         // purge static context cache if entry present
         context::cache_remove($this);
-
-        // do not mark dirty contexts if parents unknown
-        if (!is_null($this->_path) and $this->_depth > 0) {
-            $this->mark_dirty();
-        }
     }
 
     // ====== context level related methods ======

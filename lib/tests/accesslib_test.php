@@ -196,7 +196,6 @@ class core_accesslib_testcase extends advanced_testcase {
 
         // Prevent the capability for this user role.
         assign_capability($capability, CAP_PROHIBIT, $role->id, $coursecontext);
-        $coursecontext->mark_dirty();
         $this->assertFalse(has_capability($capability, $coursecontext, $user->id));
 
         // Again, we seed the cache first by checking initial enrolment,
@@ -3212,7 +3211,7 @@ class core_accesslib_testcase extends advanced_testcase {
         $context = context_course::instance($course->id);
         $this->assertEquals($categorycontext, $context->get_parent_context());
         $dirty = get_cache_flags('accesslib/dirtycontexts', time()-2);
-        $this->assertTrue(isset($dirty[$oldpath]));
+        $this->assertFalse(isset($dirty[$oldpath]));
         $this->assertTrue(isset($dirty[$context->path]));
 
 
@@ -3238,7 +3237,7 @@ class core_accesslib_testcase extends advanced_testcase {
         $DB->delete_records('cache_flags', array());
         $context->delete(); // Should delete also linked blocks.
         $dirty = get_cache_flags('accesslib/dirtycontexts', time()-2);
-        $this->assertTrue(isset($dirty[$context->path]));
+        $this->assertFalse(isset($dirty[$context->path]));
         $this->assertFalse($DB->record_exists('context', array('id'=>$context->id)));
         $this->assertFalse($DB->record_exists('context', array('id'=>$bicontext->id)));
         $this->assertFalse($DB->record_exists('context', array('contextlevel'=>CONTEXT_MODULE, 'instanceid'=>$testpages[4])));
@@ -3258,7 +3257,7 @@ class core_accesslib_testcase extends advanced_testcase {
         $DB->delete_records('cache_flags', array());
         context_helper::delete_instance(CONTEXT_COURSE, $lastcourse);
         $dirty = get_cache_flags('accesslib/dirtycontexts', time()-2);
-        $this->assertTrue(isset($dirty[$coursecontext->path]));
+        $this->assertFalse(isset($dirty[$coursecontext->path]));
         $this->assertEquals(0, context_inspection::test_context_cache_size());
         $this->assertFalse($DB->record_exists('context', array('contextlevel'=>CONTEXT_COURSE, 'instanceid'=>$lastcourse)));
         context_course::instance($lastcourse);

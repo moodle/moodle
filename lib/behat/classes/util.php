@@ -354,6 +354,7 @@ class behat_util extends testing_util {
 
         // Reset all static caches.
         accesslib_clear_all_caches(true);
+        accesslib_reset_role_cache();
         // Reset the nasty strings list used during the last test.
         nasty_strings::reset_used_strings();
 

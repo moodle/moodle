@@ -2450,9 +2450,6 @@ function create_course($data, $editoroptions = NULL) {
     // purge appropriate caches in case fix_course_sortorder() did not change anything
     cache_helper::purge_by_event('changesincourse');
 
-    // new context created - better mark it as dirty
-    $context->mark_dirty();
-
     // Trigger a course created event.
     $event = \core\event\course_created::create(array(
         'objectid' => $course->id,

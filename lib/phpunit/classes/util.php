@@ -208,6 +208,7 @@ class phpunit_util extends testing_util {
         // reset all static caches
         \core\event\manager::phpunit_reset();
         accesslib_clear_all_caches(true);
+        accesslib_reset_role_cache();
         get_string_manager()->reset_caches(true);
         reset_text_filters_cache(true);
         core_text::reset_caches();

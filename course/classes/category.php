@@ -445,9 +445,6 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
         $path = $parent->path . '/' . $newcategory->id;
         $DB->set_field('course_categories', 'path', $path, array('id' => $newcategory->id));
 
-        // We should mark the context as dirty.
-        context_coursecat::instance($newcategory->id)->mark_dirty();
-
         fix_course_sortorder();
 
         // If this is data from form results, save embedded files and update description.

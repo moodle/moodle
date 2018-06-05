@@ -985,7 +985,6 @@ class core_course_courselib_testcase extends advanced_testcase {
         $modulecontext = context_module::instance($assign1->cmid);
         assign_capability('moodle/course:manageactivities', CAP_PROHIBIT, $roleids['editingteacher'],
             $modulecontext);
-        $modulecontext->mark_dirty();
         $this->assertFalse(course_can_delete_section($courseweeks, 1));
         $this->assertTrue(course_can_delete_section($courseweeks, 2));
 
@@ -3131,7 +3130,6 @@ class core_course_courselib_testcase extends advanced_testcase {
         $CFG->enableblogs = 0;
         // Disable view participants capability.
         assign_capability('moodle/course:viewparticipants', CAP_PROHIBIT, $roleid, $context);
-        $context->mark_dirty();
 
         $navoptions = course_get_user_navigation_options($context);
         $this->assertFalse($navoptions->blogs);
