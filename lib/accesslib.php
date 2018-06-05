@@ -182,6 +182,7 @@ global $ACCESSLIB_PRIVATE;
 $ACCESSLIB_PRIVATE = new stdClass();
 $ACCESSLIB_PRIVATE->cacheroledefs    = array(); // Holds site-wide role definitions.
 $ACCESSLIB_PRIVATE->dirtycontexts    = null;    // Dirty contexts cache, loaded from DB once per page
+$ACCESSLIB_PRIVATE->dirtyusers       = null;    // Dirty users cache, loaded from DB once per $USER->id
 $ACCESSLIB_PRIVATE->accessdatabyuser = array(); // Holds the cache of $accessdata structure for users (including $USER)
 
 /**
@@ -219,6 +220,7 @@ function accesslib_clear_all_caches($resetcontexts) {
     global $ACCESSLIB_PRIVATE;
 
     $ACCESSLIB_PRIVATE->dirtycontexts    = null;
+    $ACCESSLIB_PRIVATE->dirtyusers       = null;
     $ACCESSLIB_PRIVATE->accessdatabyuser = array();
 
     if ($resetcontexts) {
@@ -1007,7 +1009,10 @@ function reload_all_capabilities() {
 
     accesslib_clear_all_caches(true);
     unset($USER->access);
-    $ACCESSLIB_PRIVATE->dirtycontexts = array(); // prevent dirty flags refetching on this page
+
+    // Prevent dirty flags refetching on this page.
+    $ACCESSLIB_PRIVATE->dirtycontexts = array();
+    $ACCESSLIB_PRIVATE->dirtyusers    = array($USER->id => false);
 
     load_all_capabilities();
 
@@ -1506,13 +1511,8 @@ function role_assign($roleid, $userid, $contextid, $component = '', $itemid = 0,
 
     $ra->id = $DB->insert_record('role_assignments', $ra);
 
-    // mark context as dirty - again expensive, but needed
-    $context->mark_dirty();
-
-    if (!empty($USER->id) && $USER->id == $userid) {
-        // If the user is the current user, then do full reload of capabilities too.
-        reload_all_capabilities();
-    }
+    // Role assignments have changed, so mark user as dirty.
+    mark_user_dirty($userid);
 
     core_course_category::role_assignment_changed($roleid, $context);
 
@@ -1605,12 +1605,9 @@ function role_unassign_all(array $params, $subcontexts = false, $includemanual =
     foreach($ras as $ra) {
         $DB->delete_records('role_assignments', array('id'=>$ra->id));
         if ($context = context::instance_by_id($ra->contextid, IGNORE_MISSING)) {
-            // this is a bit expensive but necessary
-            $context->mark_dirty();
-            // If the user is the current user, then do full reload of capabilities too.
-            if (!empty($USER->id) && $USER->id == $ra->userid) {
-                reload_all_capabilities();
-            }
+            // Role assignments have changed, so mark user as dirty.
+            mark_user_dirty($ra->userid);
+
             $event = \core\event\role_unassigned::create(array(
                 'context' => $context,
                 'objectid' => $ra->roleid,
@@ -1644,12 +1641,9 @@ function role_unassign_all(array $params, $subcontexts = false, $includemanual =
                 $ras = $DB->get_records('role_assignments', $mparams);
                 foreach($ras as $ra) {
                     $DB->delete_records('role_assignments', array('id'=>$ra->id));
-                    // this is a bit expensive but necessary
-                    $context->mark_dirty();
-                    // If the user is the current user, then do full reload of capabilities too.
-                    if (!empty($USER->id) && $USER->id == $ra->userid) {
-                        reload_all_capabilities();
-                    }
+                    // Role assignments have changed, so mark user as dirty.
+                    mark_user_dirty($ra->userid);
+
                     $event = \core\event\role_unassigned::create(
                         array('context'=>$context, 'objectid'=>$ra->roleid, 'relateduserid'=>$ra->userid,
                             'other'=>array('id'=>$ra->id, 'component'=>$ra->component, 'itemid'=>$ra->itemid)));
@@ -1666,6 +1660,30 @@ function role_unassign_all(array $params, $subcontexts = false, $includemanual =
         $params['component'] = '';
         role_unassign_all($params, $subcontexts, false);
     }
+}
+
+/**
+ * Mark a user as dirty (with timestamp) so as to force reloading of the user session.
+ *
+ * @param int $userid
+ * @return void
+ */
+function mark_user_dirty($userid) {
+    global $CFG, $ACCESSLIB_PRIVATE;
+
+    if (during_initial_install()) {
+        return;
+    }
+
+    // Throw exception if invalid userid is provided.
+    if (empty($userid)) {
+        throw new coding_exception('Invalid user parameter supplied for mark_user_dirty() function!');
+    }
+
+    // Set dirty flag in database, set dirty field locally, and clear local accessdata cache.
+    set_cache_flag('accesslib/dirtyusers', $userid, 1, time() + $CFG->sessiontimeout);
+    $ACCESSLIB_PRIVATE->dirtyusers[$userid] = 1;
+    unset($ACCESSLIB_PRIVATE->accessdatabyuser[$userid]);
 }
 
 /**
@@ -5416,23 +5434,40 @@ abstract class context extends stdClass implements IteratorAggregate {
                 $ACCESSLIB_PRIVATE->dirtycontexts = array();
             }
         } else {
+            if (!isset($USER->access['time'])) {
+                // Nothing has been loaded yet, so we do not need to check dirty flags now.
+                return;
+            }
+
+            // From skodak: No idea why -2 is there, server cluster time difference maybe...
+            $changedsince = $USER->access['time'] - 2;
+
             if (!isset($ACCESSLIB_PRIVATE->dirtycontexts)) {
-                if (!isset($USER->access['time'])) {
-                    // nothing was loaded yet, we do not need to check dirty contexts now
-                    return;
-                }
-                // no idea why -2 is there, server cluster time difference maybe... (skodak)
-                $ACCESSLIB_PRIVATE->dirtycontexts = get_cache_flags('accesslib/dirtycontexts', $USER->access['time']-2);
+                $ACCESSLIB_PRIVATE->dirtycontexts = get_cache_flags('accesslib/dirtycontexts', $changedsince);
+            }
+
+            if (!isset($ACCESSLIB_PRIVATE->dirtyusers[$USER->id])) {
+                $ACCESSLIB_PRIVATE->dirtyusers[$USER->id] = get_cache_flag('accesslib/dirtyusers', $USER->id, $changedsince);
             }
         }
 
-        foreach ($ACCESSLIB_PRIVATE->dirtycontexts as $path=>$unused) {
-            if ($path === $this->_path or strpos($this->_path, $path.'/') === 0) {
-                // reload all capabilities of USER and others - preserving loginas, roleswitches, etc
-                // and then cleanup any marks of dirtyness... at least from our short term memory! :-)
-                reload_all_capabilities();
-                break;
+        $dirty = false;
+
+        if (!empty($ACCESSLIB_PRIVATE->dirtyusers[$USER->id])) {
+            $dirty = true;
+        } else {
+            foreach ($ACCESSLIB_PRIVATE->dirtycontexts as $path=>$unused) {
+                if ($path === $this->_path or strpos($this->_path, $path.'/') === 0) {
+                    $dirty = true;
+                    break;
+                }
             }
+        }
+
+        if ($dirty) {
+            // Reload all capabilities of USER and others - preserving loginas, roleswitches, etc.
+            // Then cleanup any marks of dirtyness... at least from our short term memory!
+            reload_all_capabilities();
         }
     }
 
