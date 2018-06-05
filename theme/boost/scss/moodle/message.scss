@@ -33,7 +33,7 @@
 
         &.online {
             .online-text {
-                display: block;
+                display: inherit;
             }
             .offline-text {
                 display: none;
