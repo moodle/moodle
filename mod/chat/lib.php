@@ -29,6 +29,9 @@ require_once($CFG->dirroot.'/calendar/lib.php');
 // Event types.
 define('CHAT_EVENT_TYPE_CHATTIME', 'chattime');
 
+// Gap between sessions. 5 minutes or more of idleness between messages in a chat means the messages belong in different sessions.
+define('CHAT_SESSION_GAP', 300);
+
 // The HTML head for the message window to start with (<!-- nix --> is used to get some browsers starting with output.
 global $CHAT_HTMLHEAD;
 $CHAT_HTMLHEAD = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\" \"http://www.w3.org/TR/REC-html40/loose.dtd\"><html><head></head>\n<body>\n\n".padding(200);
@@ -1493,7 +1496,6 @@ function mod_chat_core_calendar_provide_event_action(calendar_event $event,
  */
 function chat_get_sessions($messages, $showall = false) {
     $sessions     = [];
-    $sessiongap   = 5 * 60;    // 5 minutes silence means a new session.
     $start        = 0;
     $end          = 0;
     $sessiontimes = [];
@@ -1509,7 +1511,7 @@ function chat_get_sessions($messages, $showall = false) {
         }
 
         // If this message's timestamp has been more than the gap, it means it's been idle.
-        if ($start - $message->timestamp > $sessiongap) {
+        if ($start - $message->timestamp > CHAT_SESSION_GAP) {
             // Mark this as the session end of the next session.
             $end = $message->timestamp;
         }
