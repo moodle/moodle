@@ -825,6 +825,7 @@ $string['order3'] = 'Third';
 $string['order4'] = 'Fourth';
 $string['outgoingmailconfig'] = 'Outgoing mail configuration';
 $string['overridetossl'] = 'HTTPS for logins has now been deprecated. This instance is now forced to SSL. To remedy this warning change your wwwroot in config.php to https://';
+$string['pageinfodebugsummary'] = 'This page is: {$a}';
 $string['passwordchangelogout'] = 'Log out after password change';
 $string['passwordchangelogout_desc'] = 'If enabled, when a password is changed, all browser sessions are terminated, apart from the one in which the new password is specified. (This setting does not affect password changes via bulk user upload.)';
 $string['passwordchangetokendeletion'] = 'Remove web service access tokens after password change';
