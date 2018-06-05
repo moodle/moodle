@@ -116,14 +116,13 @@ class chat_portfolio_caller extends portfolio_module_caller_base {
     public function prepare_package() {
         $content = '';
         $lasttime = 0;
-        $sessiongap = 5 * 60;    // 5 minutes silence means a new session
         foreach ($this->messages as $message) {  // We are walking FORWARDS through messages
             $m = clone $message; // grrrrrr - this causes the sha1 to change as chat_format_message changes what it's passed.
             $formatmessage = chat_format_message($m, $this->cm->course, $this->user);
             if (!isset($formatmessage->html)) {
                 continue;
             }
-            if (empty($lasttime) || (($message->timestamp - $lasttime) > $sessiongap)) {
+            if (empty($lasttime) || (($message->timestamp - $lasttime) > CHAT_SESSION_GAP)) {
                 $content .= '<hr />';
                 $content .= userdate($message->timestamp);
             }

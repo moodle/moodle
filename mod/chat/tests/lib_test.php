@@ -214,7 +214,6 @@ class mod_chat_lib_testcase extends advanced_testcase {
      */
     public function test_chat_get_sessions_multiple() {
         $messages = [];
-        $widegap = 5 * 60; // 5 mins.
         $gap = 5; // 5 secs.
 
         $now = time();
@@ -282,7 +281,7 @@ class mod_chat_lib_testcase extends advanced_testcase {
             if ($i == 10 || $i == 25) {
                 // New session.
                 $session++;
-                $timestamp += $widegap + 1;
+                $timestamp += CHAT_SESSION_GAP + 1;
             } else {
                 $timestamp += $gap;
             }
