@@ -60,7 +60,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/str', 'core/url',
         this.initialLoad = false;
 
         // Let's find out how many unread notifications there are.
-        this.loadUnreadNotificationCount();
+        this.unreadCount = this.root.find(SELECTORS.COUNT_CONTAINER).html();
     };
 
     /**
@@ -186,21 +186,6 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/str', 'core/url',
      */
     NotificationPopoverController.prototype.hideUnreadCount = function() {
         this.root.find(SELECTORS.COUNT_CONTAINER).addClass('hidden');
-    };
-
-    /**
-     * Ask the server how many unread notifications are left, render the value
-     * as a badge on the menu toggle and update the aria labels on the menu
-     * toggle.
-     *
-     * @method loadUnreadNotificationCount
-     */
-    NotificationPopoverController.prototype.loadUnreadNotificationCount = function() {
-        NotificationRepo.countUnread({useridto: this.userId}).then(function(count) {
-            this.unreadCount = count;
-            this.renderUnreadCount();
-            this.updateButtonAriaLabel();
-        }.bind(this)).catch(DebugNotification.exception);
     };
 
     /**
