@@ -8127,7 +8127,7 @@ a.ygtvspacer:hover {
   color: #ff6961;
 }
 .messaging-area-container .status.online .online-text {
-  display: block;
+  display: inherit;
 }
 .messaging-area-container .status.online .offline-text {
   display: none;
