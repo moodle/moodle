@@ -122,10 +122,6 @@
     margin: 0 .3em;
 }
 
-.path-mod-forum .forumheaderlist .picture {
-    width: 35px;
-}
-
 .path-mod-forum .forumheaderlist .discussion .starter {
     vertical-align: middle;
 }
@@ -139,8 +135,7 @@
     text-align: right;
 }
 
-.path-mod-forum .forumheaderlist .replies,
-.path-mod-forum .forumheaderlist .discussion .author {
+.path-mod-forum .forumheaderlist .replies {
     white-space: nowrap;
 }
 
