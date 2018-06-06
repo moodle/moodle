@@ -266,7 +266,7 @@ $string['configuration'] = 'Configuration';
 $string['confirm'] = 'Confirm';
 $string['confirmdeletesection'] = 'Are you absolutely sure you want to completely delete "{$a}" and all the activities it contains?';
 $string['confirmed'] = 'Your registration has been confirmed';
-$string['confirmednot'] = 'Your registration has not yet been confirmed!';
+$string['confirmednot'] = 'Your registration has not yet been confirmed. Please check your mailbox for a confirmation email.';
 $string['confirmcheckfull'] = 'Are you absolutely sure you want to confirm {$a} ?';
 $string['confirmcoursemove'] = 'Are you sure you want to move this course ({$a->course}) into this category ({$a->category})?';
 $string['considereddigitalminor'] = 'You are considered to be a digital minor.';
@@ -602,10 +602,13 @@ line at the top of your web browser window.
 
 If you need help, please contact the site administrator,
 {$a->admin}';
+$string['emailconfirmationresend'] = 'Resend confirmation email';
 $string['emailconfirmationsubject'] = '{$a}: account confirmation';
 $string['emailconfirmsent'] = '<p>An email should have been sent to your address at <b>{$a}</b></p>
    <p>It contains easy instructions to complete your registration.</p>
    <p>If you continue to have difficulty, contact the site administrator.</p>';
+$string['emailconfirmsentfailure'] = 'Confirmation email failed to send';
+$string['emailconfirmsentsuccess'] = 'Confirmation email sent successfully';
 $string['emaildigest'] = 'Email digest type';
 $string['emaildigest_help'] = 'This is the daily digest setting that forums will use by default.
 
@@ -1286,7 +1289,7 @@ $string['moveselectedcoursesto'] = 'Move selected courses to...';
 $string['movetoanotherfolder'] = 'Move to another folder';
 $string['moveup'] = 'Move up';
 $string['msnid'] = 'MSN ID';
-$string['mustconfirm'] = 'You need to confirm your login';
+$string['mustconfirm'] = 'You need to confirm your account';
 $string['mustchangepassword'] = 'The new password must be different than the current one';
 $string['mycourses'] = 'My courses';
 $string['myfiles'] = 'My private files';
@@ -1648,6 +1651,7 @@ $string['requestedcourses'] = 'Requested courses';
 $string['requestreason'] = 'Reason for course request';
 $string['required'] = 'Required';
 $string['requirespayment'] = 'This course requires payment for access';
+$string['resendemail'] = 'Resend email';
 $string['reset'] = 'Reset';
 $string['resetcomponent'] = 'Component';
 $string['resetcourse'] = 'Reset course';
