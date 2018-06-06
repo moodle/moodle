@@ -3850,14 +3850,16 @@ function forum_print_discussion_header(&$post, $forum, $group = -1, $datestring 
     $postuser = username_load_fields_from_object($postuser, $post, null, $postuserfields);
     $postuser->id = $post->userid;
     echo '<td class="author">';
-    echo '<span class="picture">';
+    echo '<div class="media">';
+    echo '<span class="pull-left">';
     echo $OUTPUT->user_picture($postuser, array('courseid'=>$forum->course));
     echo '</span>';
-    echo '<span class="name">';
     // User name
+    echo '<div class="media-body">';
     $fullname = fullname($postuser, has_capability('moodle/site:viewfullnames', $modcontext));
     echo '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$post->userid.'&amp;course='.$forum->course.'">'.$fullname.'</a>';
-    echo '</span>';
+    echo '</div>';
+    echo '</div>';
     echo "</td>\n";
 
     // Group picture
