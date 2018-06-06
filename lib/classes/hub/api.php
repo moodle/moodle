@@ -91,15 +91,39 @@ class api {
         $curloutput = @json_decode($curl->get($serverurl, $params), true);
         $info = $curl->get_info();
         if ($curl->get_errno()) {
+            // Connection error.
             throw new moodle_exception('errorconnect', 'hub', '', $curl->error);
         } else if (isset($curloutput['exception'])) {
-            // Error message returned by web service.
-            throw new moodle_exception('errorws', 'hub', '', $curloutput['message']);
+            // Exception occurred on moodle.net .
+            self::process_curl_exception($token, $curloutput);
         } else if ($info['http_code'] != 200) {
             throw new moodle_exception('errorconnect', 'hub', '', $info['http_code']);
         } else {
             return $curloutput;
         }
+    }
+
+    /**
+     * Analyses exception received from moodle.net
+     *
+     * @param string $token token used for CURL request
+     * @param array $curloutput output from CURL request
+     * @throws moodle_exception
+     */
+    protected static function process_curl_exception($token, $curloutput) {
+        if (!isset($curloutput['exception'])) {
+            return;
+        }
+        if ($token === registration::get_token()) {
+            // Check if registration token was rejected or there are other problems with registration.
+            if (($curloutput['exception'] === 'moodle_exception' && $curloutput['errorcode'] === 'invalidtoken')
+                    || $curloutput['exception'] === 'registration_exception') {
+                // Force admin to repeat site registration process.
+                registration::reset_token();
+                throw new moodle_exception('errorwstokenreset', 'hub', '', $curloutput['message']);
+            }
+        }
+        throw new moodle_exception('errorws', 'hub', '', $curloutput['message']);
     }
 
     /**
@@ -109,7 +133,7 @@ class api {
      * @throws moodle_exception
      */
     public static function update_registration(array $siteinfo) {
-        $params = array('siteinfo' => $siteinfo);
+        $params = array('siteinfo' => $siteinfo, 'validateurl' => 1);
         self::call('hub_update_site_info', $params);
     }
 
@@ -276,7 +300,8 @@ class api {
      * @throws moodle_exception
      */
     public static function unregister_site() {
-        self::call('hub_unregister_site');
+        global $CFG;
+        self::call('hub_unregister_site', ['url' => [$CFG->wwwroot]]);
     }
 
     /**
