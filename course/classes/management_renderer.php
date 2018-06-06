@@ -139,7 +139,7 @@ class core_course_management_renderer extends plugin_renderer_base {
         $listing = coursecat::get(0)->get_children();
 
         $attributes = array(
-            'class' => 'ml-1',
+            'class' => 'ml',
             'role' => 'tree',
             'aria-labelledby' => 'category-listing-title'
         );
@@ -530,7 +530,7 @@ class core_course_management_renderer extends plugin_renderer_base {
             array('id' => 'course-listing-title', 'tabindex' => '0'));
         $html .= $this->course_listing_actions($category, $course, $perpage);
         $html .= $this->listing_pagination($category, $page, $perpage, false, $viewmode);
-        $html .= html_writer::start_tag('ul', array('class' => 'ml-1 course-list', 'role' => 'group'));
+        $html .= html_writer::start_tag('ul', array('class' => 'ml course-list', 'role' => 'group'));
         foreach ($category->get_courses($options) as $listitem) {
             $html .= $this->course_listitem($category, $listitem, $courseid);
         }
@@ -1117,7 +1117,7 @@ class core_course_management_renderer extends plugin_renderer_base {
         ));
         $html .= html_writer::tag('h3', get_string('courses'));
         $html .= $this->search_pagination($totalcourses, $page, $perpage);
-        $html .= html_writer::start_tag('ul', array('class' => 'ml-1'));
+        $html .= html_writer::start_tag('ul', array('class' => 'ml'));
         foreach ($courses as $listitem) {
             $i++;
             if ($i == $totalcourses) {
