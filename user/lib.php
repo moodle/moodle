@@ -1154,6 +1154,33 @@ function user_can_view_profile($user, $course = null, $usercontext = null) {
         return true;
     }
 
+    // Use callbacks so that (primarily) local plugins can prevent or allow profile access.
+    $forceallow = false;
+    $plugintypes = get_plugins_with_function('control_view_profile');
+    foreach ($plugintypes as $plugins) {
+        foreach ($plugins as $pluginfunction) {
+            $result = $pluginfunction($user, $course, $usercontext);
+            switch ($result) {
+                case core_user::VIEWPROFILE_DO_NOT_PREVENT:
+                    // If the plugin doesn't stop access, just continue to next plugin or use
+                    // default behaviour.
+                    break;
+                case core_user::VIEWPROFILE_FORCE_ALLOW:
+                    // Record that we are definitely going to allow it (unless another plugin
+                    // returns _PREVENT).
+                    $forceallow = true;
+                    break;
+                case core_user::VIEWPROFILE_PREVENT:
+                    // If any plugin returns PREVENT then we return false, regardless of what
+                    // other plugins said.
+                    return false;
+            }
+        }
+    }
+    if ($forceallow) {
+        return true;
+    }
+
     // Course contacts have visible profiles always.
     if (has_coursecontact_role($user->id)) {
         return true;
