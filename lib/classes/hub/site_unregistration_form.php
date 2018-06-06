@@ -42,6 +42,7 @@ class site_unregistration_form extends \moodleform {
      * Form definition
      */
     public function definition() {
+        global $CFG;
         $mform = & $this->_form;
         $mform->addElement('header', 'site', get_string('unregister', 'hub'));
 
@@ -55,6 +56,8 @@ class site_unregistration_form extends \moodleform {
 
         $mform->addElement('hidden', 'unregistration', 1);
         $mform->setType('unregistration', PARAM_INT);
+
+        $mform->addElement('static', 'explanation', '', get_string('unregisterexplained', 'hub', $CFG->wwwroot));
 
         $this->add_action_buttons(true, $unregisterlabel);
     }
