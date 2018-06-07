@@ -753,7 +753,17 @@ function user_convert_text_to_menu_items($text, $page) {
             $child->pix = $pixpath;
         } else {
             // Check for the specified image existing.
-            $pixpath = "t/" . $bits[2];
+            if (strpos($bits[2], '../') === 0) {
+                // The string starts with '../'.
+                // Strip off the first three characters - this should be the pix path.
+                $pixpath = substr($bits[2], 3);
+            } else if (strpos($bits[2], '/') === false) {
+                // There is no / in the path. Prefix it with 't/', which is the default path.
+                $pixpath = "t/{$bits[2]}";
+            } else {
+                // There is a '/' in the path - this is either a URL, or a standard pix path with no changes required.
+                $pixpath = $bits[2];
+            }
             if ($page->theme->resolve_image_location($pixpath, 'moodle', true)) {
                 // Use the image.
                 $child->pix = $pixpath;

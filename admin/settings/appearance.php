@@ -32,9 +32,9 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) { // sp
         'customusermenuitems',
         new lang_string('customusermenuitems', 'admin'),
         new lang_string('configcustomusermenuitems', 'admin'),
-        'grades,grades|/grade/report/mygrades.php|grades
-messages,message|/message/index.php|message
-preferences,moodle|/user/preferences.php|preferences',
+        'grades,grades|/grade/report/mygrades.php|t/grades
+messages,message|/message/index.php|t/message
+preferences,moodle|/user/preferences.php|t/preferences',
         PARAM_RAW,
         '50',
         '10'
