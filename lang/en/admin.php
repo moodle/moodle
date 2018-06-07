@@ -529,6 +529,7 @@ $string['environmentrequireversion'] = 'version {$a->needed} is required and you
 $string['environmentsettingok'] = 'recommended setting detected';
 $string['environmentshouldfixsetting'] = 'PHP setting should be changed.';
 $string['environmentxmlerror'] = 'Error reading environment data ({$a->error_code})';
+$string['environmentmariadbwrongdbtype'] = 'Wrong <code>$CFG->dbtype</code>: you need to change it in your <code>config.php</code> file, from \'<code>mysql</code>\' to \'<code>mariadb</code>\'.';
 $string['errordeletingconfig'] = 'An error occurred while deleting the configuration records for plugin \'{$a}\'.';
 $string['errorsetting'] = 'Could not save setting:';
 $string['errorwithsettings'] = 'Some settings were not changed due to an error.';
