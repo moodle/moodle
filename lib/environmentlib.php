@@ -1048,6 +1048,19 @@ function environment_check_database($version, $env_select) {
         return $result;
     }
 
+    // Check if the DB Vendor has been properly configured.
+    // Hack: this is required when playing with MySQL and MariaDB since they share the same PHP module and base DB classes,
+    // whilst they are slowly evolving using separate directions though MariaDB is still an "almost" drop-in replacement.
+    $dbvendorismysql = ($current_vendor === 'mysql');
+    $dbtypeismariadb = (stripos($dbinfo['description'], 'mariadb') !== false);
+    if ($dbvendorismysql && $dbtypeismariadb) {
+        $result->setStatus(false);
+        $result->setLevel($level);
+        $result->setInfo($current_vendor . ' (' . $dbinfo['description'] . ')');
+        $result->setFeedbackStr('environmentmariadbwrongdbtype');
+        return $result;
+    }
+
 /// And finally compare them, saving results
     if (version_compare($current_version, $needed_version, '>=')) {
         $result->setStatus(true);
