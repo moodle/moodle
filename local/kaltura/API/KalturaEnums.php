@@ -9,7 +9,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2011  Kaltura Inc.
+// Copyright (C) 2006-2018  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -37,7 +37,18 @@ require_once(dirname(__FILE__) . "/KalturaClientBase.php");
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaAppearInListType
+class KalturaAppTokenStatus extends KalturaEnumBase
+{
+	const DISABLED = 1;
+	const ACTIVE = 2;
+	const DELETED = 3;
+}
+
+/**
+ * @package Kaltura
+ * @subpackage Client
+ */
+class KalturaAppearInListType extends KalturaEnumBase
 {
 	const PARTNER_ONLY = 1;
 	const CATEGORY_MEMBERS_ONLY = 3;
@@ -47,7 +58,7 @@ class KalturaAppearInListType
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaAssetParamsDeletePolicy
+class KalturaAssetParamsDeletePolicy extends KalturaEnumBase
 {
 	const KEEP = 0;
 	const DELETE = 1;
@@ -57,7 +68,7 @@ class KalturaAssetParamsDeletePolicy
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaAssetParamsOrigin
+class KalturaAssetParamsOrigin extends KalturaEnumBase
 {
 	const CONVERT = 0;
 	const INGEST = 1;
@@ -68,21 +79,7 @@ class KalturaAssetParamsOrigin
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaAssetStatus
-{
-	const ERROR = -1;
-	const QUEUED = 0;
-	const READY = 2;
-	const DELETED = 3;
-	const IMPORTING = 7;
-	const EXPORTING = 9;
-}
-
-/**
- * @package Kaltura
- * @subpackage Client
- */
-class KalturaBatchJobErrorTypes
+class KalturaBatchJobErrorTypes extends KalturaEnumBase
 {
 	const APP = 0;
 	const RUNTIME = 1;
@@ -96,7 +93,7 @@ class KalturaBatchJobErrorTypes
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaBatchJobStatus
+class KalturaBatchJobStatus extends KalturaEnumBase
 {
 	const PENDING = 0;
 	const QUEUED = 1;
@@ -117,7 +114,7 @@ class KalturaBatchJobStatus
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaBitRateMode
+class KalturaBitRateMode extends KalturaEnumBase
 {
 	const CBR = 1;
 	const VBR = 2;
@@ -127,7 +124,7 @@ class KalturaBitRateMode
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaCategoryEntryStatus
+class KalturaCategoryEntryStatus extends KalturaEnumBase
 {
 	const PENDING = 1;
 	const ACTIVE = 2;
@@ -139,7 +136,7 @@ class KalturaCategoryEntryStatus
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaCategoryStatus
+class KalturaCategoryStatus extends KalturaEnumBase
 {
 	const UPDATING = 1;
 	const ACTIVE = 2;
@@ -151,7 +148,7 @@ class KalturaCategoryStatus
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaCategoryUserPermissionLevel
+class KalturaCategoryUserPermissionLevel extends KalturaEnumBase
 {
 	const MANAGER = 0;
 	const MODERATOR = 1;
@@ -164,7 +161,7 @@ class KalturaCategoryUserPermissionLevel
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaCategoryUserStatus
+class KalturaCategoryUserStatus extends KalturaEnumBase
 {
 	const ACTIVE = 1;
 	const PENDING = 2;
@@ -176,7 +173,17 @@ class KalturaCategoryUserStatus
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaCommercialUseType
+class KalturaChinaCacheAlgorithmType extends KalturaEnumBase
+{
+	const SHA1 = 1;
+	const SHA256 = 2;
+}
+
+/**
+ * @package Kaltura
+ * @subpackage Client
+ */
+class KalturaCommercialUseType extends KalturaEnumBase
 {
 	const NON_COMMERCIAL_USE = 0;
 	const COMMERCIAL_USE = 1;
@@ -186,7 +193,7 @@ class KalturaCommercialUseType
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaContributionPolicyType
+class KalturaContributionPolicyType extends KalturaEnumBase
 {
 	const ALL = 1;
 	const MEMBERS_WITH_CONTRIBUTION_PERMISSION = 2;
@@ -196,7 +203,7 @@ class KalturaContributionPolicyType
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaControlPanelCommandStatus
+class KalturaControlPanelCommandStatus extends KalturaEnumBase
 {
 	const PENDING = 1;
 	const HANDLED = 2;
@@ -208,7 +215,7 @@ class KalturaControlPanelCommandStatus
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaControlPanelCommandTargetType
+class KalturaControlPanelCommandTargetType extends KalturaEnumBase
 {
 	const DATA_CENTER = 1;
 	const SCHEDULER = 2;
@@ -221,7 +228,7 @@ class KalturaControlPanelCommandTargetType
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaControlPanelCommandType
+class KalturaControlPanelCommandType extends KalturaEnumBase
 {
 	const KILL = 4;
 }
@@ -230,7 +237,7 @@ class KalturaControlPanelCommandType
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaCountryRestrictionType
+class KalturaCountryRestrictionType extends KalturaEnumBase
 {
 	const RESTRICT_COUNTRY_LIST = 0;
 	const ALLOW_COUNTRY_LIST = 1;
@@ -240,7 +247,7 @@ class KalturaCountryRestrictionType
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaDVRStatus
+class KalturaDVRStatus extends KalturaEnumBase
 {
 	const DISABLED = 0;
 	const ENABLED = 1;
@@ -250,7 +257,19 @@ class KalturaDVRStatus
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaDirectoryRestrictionType
+class KalturaDeliveryStatus extends KalturaEnumBase
+{
+	const ACTIVE = 0;
+	const DELETED = 1;
+	const STAGING_IN = 2;
+	const STAGING_OUT = 3;
+}
+
+/**
+ * @package Kaltura
+ * @subpackage Client
+ */
+class KalturaDirectoryRestrictionType extends KalturaEnumBase
 {
 	const DONT_DISPLAY = 0;
 	const DISPLAY_WITH_LINK = 1;
@@ -260,7 +279,7 @@ class KalturaDirectoryRestrictionType
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaEditorType
+class KalturaEditorType extends KalturaEnumBase
 {
 	const SIMPLE = 1;
 	const ADVANCED = 2;
@@ -270,7 +289,7 @@ class KalturaEditorType
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaEmailIngestionProfileStatus
+class KalturaEmailIngestionProfileStatus extends KalturaEnumBase
 {
 	const INACTIVE = 0;
 	const ACTIVE = 1;
@@ -280,11 +299,24 @@ class KalturaEmailIngestionProfileStatus
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaEntryModerationStatus
+class KalturaEntryDisplayInSearchType extends KalturaEnumBase
+{
+	const SYSTEM = -1;
+	const NONE = 0;
+	const PARTNER_ONLY = 1;
+	const KALTURA_NETWORK = 2;
+}
+
+/**
+ * @package Kaltura
+ * @subpackage Client
+ */
+class KalturaEntryModerationStatus extends KalturaEnumBase
 {
 	const PENDING_MODERATION = 1;
 	const APPROVED = 2;
 	const REJECTED = 3;
+	const DELETED = 4;
 	const FLAGGED_FOR_REVIEW = 5;
 	const AUTO_APPROVED = 6;
 }
@@ -293,7 +325,32 @@ class KalturaEntryModerationStatus
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaFeatureStatusType
+class KalturaEntryServerNodeRecordingStatus extends KalturaEnumBase
+{
+	const STOPPED = 0;
+	const ON_GOING = 1;
+	const DONE = 2;
+	const DISMISSED = 3;
+}
+
+/**
+ * @package Kaltura
+ * @subpackage Client
+ */
+class KalturaEntryServerNodeStatus extends KalturaEnumBase
+{
+	const STOPPED = 0;
+	const PLAYABLE = 1;
+	const BROADCASTING = 2;
+	const AUTHENTICATED = 3;
+	const MARKED_FOR_DELETION = 4;
+}
+
+/**
+ * @package Kaltura
+ * @subpackage Client
+ */
+class KalturaFeatureStatusType extends KalturaEnumBase
 {
 	const LOCK_CATEGORY = 1;
 	const CATEGORY = 2;
@@ -307,7 +364,7 @@ class KalturaFeatureStatusType
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaFlavorAssetStatus
+class KalturaFlavorAssetStatus extends KalturaEnumBase
 {
 	const ERROR = -1;
 	const QUEUED = 0;
@@ -326,7 +383,7 @@ class KalturaFlavorAssetStatus
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaFlavorReadyBehaviorType
+class KalturaFlavorReadyBehaviorType extends KalturaEnumBase
 {
 	const NO_IMPACT = 0;
 	const INHERIT_FLAVOR_PARAMS = 0;
@@ -338,7 +395,7 @@ class KalturaFlavorReadyBehaviorType
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaGender
+class KalturaGender extends KalturaEnumBase
 {
 	const UNKNOWN = 0;
 	const MALE = 1;
@@ -349,7 +406,17 @@ class KalturaGender
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaInheritanceType
+class KalturaGroupUserStatus extends KalturaEnumBase
+{
+	const ACTIVE = 0;
+	const DELETED = 1;
+}
+
+/**
+ * @package Kaltura
+ * @subpackage Client
+ */
+class KalturaInheritanceType extends KalturaEnumBase
 {
 	const INHERIT = 1;
 	const MANUAL = 2;
@@ -359,7 +426,7 @@ class KalturaInheritanceType
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaIpAddressRestrictionType
+class KalturaIpAddressRestrictionType extends KalturaEnumBase
 {
 	const RESTRICT_LIST = 0;
 	const ALLOW_LIST = 1;
@@ -369,7 +436,7 @@ class KalturaIpAddressRestrictionType
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaLicenseType
+class KalturaLicenseType extends KalturaEnumBase
 {
 	const UNKNOWN = -1;
 	const NONE = 0;
@@ -394,7 +461,7 @@ class KalturaLicenseType
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaLimitFlavorsRestrictionType
+class KalturaLimitFlavorsRestrictionType extends KalturaEnumBase
 {
 	const RESTRICT_LIST = 0;
 	const ALLOW_LIST = 1;
@@ -404,7 +471,43 @@ class KalturaLimitFlavorsRestrictionType
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaMailJobStatus
+class KalturaLivePublishStatus extends KalturaEnumBase
+{
+	const DISABLED = 0;
+	const ENABLED = 1;
+}
+
+/**
+ * @package Kaltura
+ * @subpackage Client
+ */
+class KalturaLiveReportExportType extends KalturaEnumBase
+{
+	const PARTNER_TOTAL_ALL = 1;
+	const PARTNER_TOTAL_LIVE = 2;
+	const ENTRY_TIME_LINE_ALL = 11;
+	const ENTRY_TIME_LINE_LIVE = 12;
+	const LOCATION_ALL = 21;
+	const LOCATION_LIVE = 22;
+	const SYNDICATION_ALL = 31;
+	const SYNDICATION_LIVE = 32;
+}
+
+/**
+ * @package Kaltura
+ * @subpackage Client
+ */
+class KalturaLiveStatsEventType extends KalturaEnumBase
+{
+	const LIVE = 1;
+	const DVR = 2;
+}
+
+/**
+ * @package Kaltura
+ * @subpackage Client
+ */
+class KalturaMailJobStatus extends KalturaEnumBase
 {
 	const PENDING = 1;
 	const SENT = 2;
@@ -416,17 +519,7 @@ class KalturaMailJobStatus
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaMediaServerIndex
-{
-	const PRIMARY = 0;
-	const SECONDARY = 1;
-}
-
-/**
- * @package Kaltura
- * @subpackage Client
- */
-class KalturaMediaType
+class KalturaMediaType extends KalturaEnumBase
 {
 	const VIDEO = 1;
 	const IMAGE = 2;
@@ -441,7 +534,7 @@ class KalturaMediaType
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaModerationFlagType
+class KalturaModerationFlagType extends KalturaEnumBase
 {
 	const SEXUAL_CONTENT = 1;
 	const VIOLENT_REPULSIVE = 2;
@@ -455,7 +548,7 @@ class KalturaModerationFlagType
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaMrssExtensionMode
+class KalturaMrssExtensionMode extends KalturaEnumBase
 {
 	const APPEND = 1;
 	const REPLACE = 2;
@@ -465,7 +558,7 @@ class KalturaMrssExtensionMode
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaNotificationObjectType
+class KalturaNotificationObjectType extends KalturaEnumBase
 {
 	const ENTRY = 1;
 	const KSHOW = 2;
@@ -477,7 +570,7 @@ class KalturaNotificationObjectType
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaNotificationStatus
+class KalturaNotificationStatus extends KalturaEnumBase
 {
 	const PENDING = 1;
 	const SENT = 2;
@@ -492,7 +585,7 @@ class KalturaNotificationStatus
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaNotificationType
+class KalturaNotificationType extends KalturaEnumBase
 {
 	const ENTRY_ADD = 1;
 	const ENTR_UPDATE_PERMISSIONS = 2;
@@ -509,7 +602,7 @@ class KalturaNotificationType
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaNullableBoolean
+class KalturaNullableBoolean extends KalturaEnumBase
 {
 	const NULL_VALUE = -1;
 	const FALSE_VALUE = 0;
@@ -520,7 +613,7 @@ class KalturaNullableBoolean
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaPartnerGroupType
+class KalturaPartnerGroupType extends KalturaEnumBase
 {
 	const PUBLISHER = 1;
 	const VAR_GROUP = 2;
@@ -532,8 +625,9 @@ class KalturaPartnerGroupType
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaPartnerStatus
+class KalturaPartnerStatus extends KalturaEnumBase
 {
+	const DELETED = 0;
 	const ACTIVE = 1;
 	const BLOCKED = 2;
 	const FULL_BLOCK = 3;
@@ -543,7 +637,7 @@ class KalturaPartnerStatus
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaPartnerType
+class KalturaPartnerType extends KalturaEnumBase
 {
 	const KMC = 1;
 	const WIKI = 100;
@@ -562,7 +656,7 @@ class KalturaPartnerType
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaPermissionStatus
+class KalturaPermissionStatus extends KalturaEnumBase
 {
 	const ACTIVE = 1;
 	const BLOCKED = 2;
@@ -573,7 +667,7 @@ class KalturaPermissionStatus
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaPermissionType
+class KalturaPermissionType extends KalturaEnumBase
 {
 	const NORMAL = 1;
 	const SPECIAL_FEATURE = 2;
@@ -585,7 +679,7 @@ class KalturaPermissionType
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaPlaylistType
+class KalturaPlaylistType extends KalturaEnumBase
 {
 	const STATIC_LIST = 3;
 	const DYNAMIC = 10;
@@ -596,7 +690,7 @@ class KalturaPlaylistType
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaPrivacyType
+class KalturaPrivacyType extends KalturaEnumBase
 {
 	const ALL = 1;
 	const AUTHENTICATED_USERS = 2;
@@ -607,46 +701,51 @@ class KalturaPrivacyType
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaRecordStatus
+class KalturaRecordStatus extends KalturaEnumBase
 {
 	const DISABLED = 0;
-	const ENABLED = 1;
+	const APPENDED = 1;
+	const PER_SESSION = 2;
 }
 
 /**
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaReportType
+class KalturaRecordingStatus extends KalturaEnumBase
 {
-	const TOP_CONTENT = 1;
-	const CONTENT_DROPOFF = 2;
-	const CONTENT_INTERACTIONS = 3;
-	const MAP_OVERLAY = 4;
-	const TOP_CONTRIBUTORS = 5;
-	const TOP_SYNDICATION = 6;
-	const CONTENT_CONTRIBUTIONS = 7;
-	const USER_ENGAGEMENT = 11;
-	const SPEFICIC_USER_ENGAGEMENT = 12;
-	const USER_TOP_CONTENT = 13;
-	const USER_CONTENT_DROPOFF = 14;
-	const USER_CONTENT_INTERACTIONS = 15;
-	const APPLICATIONS = 16;
-	const USER_USAGE = 17;
-	const SPECIFIC_USER_USAGE = 18;
-	const VAR_USAGE = 19;
-	const TOP_CREATORS = 20;
-	const PLATFORMS = 21;
-	const OPERATION_SYSTEM = 22;
-	const BROWSERS = 23;
-	const PARTNER_USAGE = 201;
+	const STOPPED = 0;
+	const PAUSED = 1;
+	const ACTIVE = 2;
+	const DISABLED = 3;
 }
 
 /**
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaResponseType
+class KalturaResponseProfileStatus extends KalturaEnumBase
+{
+	const DISABLED = 1;
+	const ENABLED = 2;
+	const DELETED = 3;
+}
+
+/**
+ * @package Kaltura
+ * @subpackage Client
+ */
+class KalturaResponseProfileType extends KalturaEnumBase
+{
+	const INCLUDE_FIELDS = 1;
+	const EXCLUDE_FIELDS = 2;
+}
+
+/**
+ * @package Kaltura
+ * @subpackage Client
+ */
+class KalturaResponseType extends KalturaEnumBase
 {
 	const RESPONSE_TYPE_JSON = 1;
 	const RESPONSE_TYPE_XML = 2;
@@ -661,7 +760,22 @@ class KalturaResponseType
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaSearchOperatorType
+class KalturaSchedulerStatusType extends KalturaEnumBase
+{
+	const RUNNING_BATCHES_COUNT = 1;
+	const RUNNING_BATCHES_CPU = 2;
+	const RUNNING_BATCHES_MEMORY = 3;
+	const RUNNING_BATCHES_NETWORK = 4;
+	const RUNNING_BATCHES_DISC_IO = 5;
+	const RUNNING_BATCHES_DISC_SPACE = 6;
+	const RUNNING_BATCHES_IS_RUNNING = 7;
+}
+
+/**
+ * @package Kaltura
+ * @subpackage Client
+ */
+class KalturaSearchOperatorType extends KalturaEnumBase
 {
 	const SEARCH_AND = 1;
 	const SEARCH_OR = 2;
@@ -671,7 +785,7 @@ class KalturaSearchOperatorType
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaSearchProviderType
+class KalturaSearchProviderType extends KalturaEnumBase
 {
 	const FLICKR = 3;
 	const YOUTUBE = 4;
@@ -695,7 +809,19 @@ class KalturaSearchProviderType
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaSessionType
+class KalturaServerNodeStatus extends KalturaEnumBase
+{
+	const ACTIVE = 1;
+	const DISABLED = 2;
+	const DELETED = 3;
+	const NOT_REGISTERED = 4;
+}
+
+/**
+ * @package Kaltura
+ * @subpackage Client
+ */
+class KalturaSessionType extends KalturaEnumBase
 {
 	const USER = 0;
 	const ADMIN = 2;
@@ -705,7 +831,7 @@ class KalturaSessionType
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaSiteRestrictionType
+class KalturaSiteRestrictionType extends KalturaEnumBase
 {
 	const RESTRICT_SITE_LIST = 0;
 	const ALLOW_SITE_LIST = 1;
@@ -715,7 +841,7 @@ class KalturaSiteRestrictionType
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaStatsEventType
+class KalturaStatsEventType extends KalturaEnumBase
 {
 	const WIDGET_LOADED = 1;
 	const MEDIA_LOADED = 2;
@@ -763,7 +889,7 @@ class KalturaStatsEventType
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaStatsFeatureType
+class KalturaStatsFeatureType extends KalturaEnumBase
 {
 	const NONE = 0;
 	const RELATED = 1;
@@ -773,7 +899,7 @@ class KalturaStatsFeatureType
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaStatsKmcEventType
+class KalturaStatsKmcEventType extends KalturaEnumBase
 {
 	const CONTENT_PAGE_VIEW = 1001;
 	const CONTENT_ADD_PLAYLIST = 1010;
@@ -845,7 +971,7 @@ class KalturaStatsKmcEventType
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaStorageProfileDeliveryStatus
+class KalturaStorageProfileDeliveryStatus extends KalturaEnumBase
 {
 	const ACTIVE = 1;
 	const BLOCKED = 2;
@@ -855,7 +981,7 @@ class KalturaStorageProfileDeliveryStatus
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaStorageProfileReadyBehavior
+class KalturaStorageProfileReadyBehavior extends KalturaEnumBase
 {
 	const NO_IMPACT = 0;
 	const REQUIRED = 1;
@@ -865,7 +991,7 @@ class KalturaStorageProfileReadyBehavior
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaStorageProfileStatus
+class KalturaStorageProfileStatus extends KalturaEnumBase
 {
 	const DISABLED = 1;
 	const AUTOMATIC = 2;
@@ -876,7 +1002,7 @@ class KalturaStorageProfileStatus
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaSyndicationFeedStatus
+class KalturaSyndicationFeedStatus extends KalturaEnumBase
 {
 	const DELETED = -1;
 	const ACTIVE = 1;
@@ -886,7 +1012,7 @@ class KalturaSyndicationFeedStatus
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaSyndicationFeedType
+class KalturaSyndicationFeedType extends KalturaEnumBase
 {
 	const GOOGLE_VIDEO = 1;
 	const YAHOO = 2;
@@ -894,13 +1020,15 @@ class KalturaSyndicationFeedType
 	const TUBE_MOGUL = 4;
 	const KALTURA = 5;
 	const KALTURA_XSLT = 6;
+	const ROKU_DIRECT_PUBLISHER = 7;
+	const OPERA_TV_SNAP = 8;
 }
 
 /**
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaThumbAssetStatus
+class KalturaThumbAssetStatus extends KalturaEnumBase
 {
 	const ERROR = -1;
 	const QUEUED = 0;
@@ -915,7 +1043,7 @@ class KalturaThumbAssetStatus
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaThumbCropType
+class KalturaThumbCropType extends KalturaEnumBase
 {
 	const RESIZE = 1;
 	const RESIZE_WITH_PADDING = 2;
@@ -928,7 +1056,7 @@ class KalturaThumbCropType
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaUiConfCreationMode
+class KalturaUiConfCreationMode extends KalturaEnumBase
 {
 	const WIZARD = 2;
 	const ADVANCED = 3;
@@ -938,7 +1066,7 @@ class KalturaUiConfCreationMode
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaUiConfObjType
+class KalturaUiConfObjType extends KalturaEnumBase
 {
 	const PLAYER = 1;
 	const CONTRIBUTION_WIZARD = 2;
@@ -960,13 +1088,14 @@ class KalturaUiConfObjType
 	const CLIPPER = 18;
 	const KSR = 19;
 	const KUPLOAD = 20;
+	const WEBCASTING = 21;
 }
 
 /**
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaUpdateMethodType
+class KalturaUpdateMethodType extends KalturaEnumBase
 {
 	const MANUAL = 0;
 	const AUTOMATIC = 1;
@@ -976,7 +1105,7 @@ class KalturaUpdateMethodType
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaUploadErrorCode
+class KalturaUploadErrorCode extends KalturaEnumBase
 {
 	const NO_ERROR = 0;
 	const GENERAL_ERROR = 1;
@@ -987,7 +1116,7 @@ class KalturaUploadErrorCode
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaUploadTokenStatus
+class KalturaUploadTokenStatus extends KalturaEnumBase
 {
 	const PENDING = 0;
 	const PARTIAL_UPLOAD = 1;
@@ -1001,7 +1130,7 @@ class KalturaUploadTokenStatus
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaUserAgentRestrictionType
+class KalturaUserAgentRestrictionType extends KalturaEnumBase
 {
 	const RESTRICT_LIST = 0;
 	const ALLOW_LIST = 1;
@@ -1011,7 +1140,7 @@ class KalturaUserAgentRestrictionType
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaUserJoinPolicyType
+class KalturaUserJoinPolicyType extends KalturaEnumBase
 {
 	const AUTO_JOIN = 1;
 	const REQUEST_TO_JOIN = 2;
@@ -1022,7 +1151,7 @@ class KalturaUserJoinPolicyType
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaUserRoleStatus
+class KalturaUserRoleStatus extends KalturaEnumBase
 {
 	const ACTIVE = 1;
 	const BLOCKED = 2;
@@ -1033,7 +1162,7 @@ class KalturaUserRoleStatus
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaUserStatus
+class KalturaUserStatus extends KalturaEnumBase
 {
 	const BLOCKED = 0;
 	const ACTIVE = 1;
@@ -1044,7 +1173,27 @@ class KalturaUserStatus
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaWidgetSecurityType
+class KalturaUserType extends KalturaEnumBase
+{
+	const USER = 0;
+	const GROUP = 1;
+}
+
+/**
+ * @package Kaltura
+ * @subpackage Client
+ */
+class KalturaViewMode extends KalturaEnumBase
+{
+	const PREVIEW = 0;
+	const ALLOW_ALL = 1;
+}
+
+/**
+ * @package Kaltura
+ * @subpackage Client
+ */
+class KalturaWidgetSecurityType extends KalturaEnumBase
 {
 	const NONE = 1;
 	const TIMEHASH = 2;
@@ -1054,7 +1203,7 @@ class KalturaWidgetSecurityType
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaAccessControlOrderBy
+class KalturaAccessControlOrderBy extends KalturaEnumBase
 {
 	const CREATED_AT_ASC = "+createdAt";
 	const CREATED_AT_DESC = "-createdAt";
@@ -1064,7 +1213,7 @@ class KalturaAccessControlOrderBy
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaAccessControlProfileOrderBy
+class KalturaAccessControlProfileOrderBy extends KalturaEnumBase
 {
 	const CREATED_AT_ASC = "+createdAt";
 	const UPDATED_AT_ASC = "+updatedAt";
@@ -1076,7 +1225,7 @@ class KalturaAccessControlProfileOrderBy
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaAdminUserOrderBy
+class KalturaAdminUserOrderBy extends KalturaEnumBase
 {
 	const CREATED_AT_ASC = "+createdAt";
 	const ID_ASC = "+id";
@@ -1088,7 +1237,7 @@ class KalturaAdminUserOrderBy
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaAkamaiUniversalStreamType
+class KalturaAkamaiUniversalStreamType extends KalturaEnumBase
 {
 	const HD_IPHONE_IPAD_LIVE = "HD iPhone/iPad Live";
 	const UNIVERSAL_STREAMING_LIVE = "Universal Streaming Live";
@@ -1098,7 +1247,7 @@ class KalturaAkamaiUniversalStreamType
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaAmazonS3StorageProfileFilesPermissionLevel
+class KalturaAmazonS3StorageProfileFilesPermissionLevel extends KalturaEnumBase
 {
 	const ACL_AUTHENTICATED_READ = "authenticated-read";
 	const ACL_PRIVATE = "private";
@@ -1110,7 +1259,7 @@ class KalturaAmazonS3StorageProfileFilesPermissionLevel
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaAmazonS3StorageProfileOrderBy
+class KalturaAmazonS3StorageProfileOrderBy extends KalturaEnumBase
 {
 	const CREATED_AT_ASC = "+createdAt";
 	const UPDATED_AT_ASC = "+updatedAt";
@@ -1122,7 +1271,7 @@ class KalturaAmazonS3StorageProfileOrderBy
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaApiActionPermissionItemOrderBy
+class KalturaApiActionPermissionItemOrderBy extends KalturaEnumBase
 {
 	const CREATED_AT_ASC = "+createdAt";
 	const ID_ASC = "+id";
@@ -1136,7 +1285,7 @@ class KalturaApiActionPermissionItemOrderBy
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaApiParameterPermissionItemAction
+class KalturaApiParameterPermissionItemAction extends KalturaEnumBase
 {
 	const USAGE = "all";
 	const INSERT = "insert";
@@ -1148,7 +1297,7 @@ class KalturaApiParameterPermissionItemAction
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaApiParameterPermissionItemOrderBy
+class KalturaApiParameterPermissionItemOrderBy extends KalturaEnumBase
 {
 	const CREATED_AT_ASC = "+createdAt";
 	const ID_ASC = "+id";
@@ -1162,7 +1311,31 @@ class KalturaApiParameterPermissionItemOrderBy
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaAssetOrderBy
+class KalturaAppTokenHashType extends KalturaEnumBase
+{
+	const MD5 = "MD5";
+	const SHA1 = "SHA1";
+	const SHA256 = "SHA256";
+	const SHA512 = "SHA512";
+}
+
+/**
+ * @package Kaltura
+ * @subpackage Client
+ */
+class KalturaAppTokenOrderBy extends KalturaEnumBase
+{
+	const CREATED_AT_ASC = "+createdAt";
+	const UPDATED_AT_ASC = "+updatedAt";
+	const CREATED_AT_DESC = "-createdAt";
+	const UPDATED_AT_DESC = "-updatedAt";
+}
+
+/**
+ * @package Kaltura
+ * @subpackage Client
+ */
+class KalturaAssetOrderBy extends KalturaEnumBase
 {
 	const CREATED_AT_ASC = "+createdAt";
 	const DELETED_AT_ASC = "+deletedAt";
@@ -1178,7 +1351,7 @@ class KalturaAssetOrderBy
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaAssetParamsOrderBy
+class KalturaAssetParamsOrderBy extends KalturaEnumBase
 {
 }
 
@@ -1186,7 +1359,7 @@ class KalturaAssetParamsOrderBy
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaAssetParamsOutputOrderBy
+class KalturaAssetParamsOutputOrderBy extends KalturaEnumBase
 {
 }
 
@@ -1194,7 +1367,7 @@ class KalturaAssetParamsOutputOrderBy
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaAssetType
+class KalturaAssetType extends KalturaEnumBase
 {
 	const ATTACHMENT = "attachment.Attachment";
 	const CAPTION = "caption.Caption";
@@ -1202,6 +1375,8 @@ class KalturaAssetType
 	const IMAGE = "document.Image";
 	const PDF = "document.PDF";
 	const SWF = "document.SWF";
+	const TIMED_THUMB_ASSET = "thumbCuePoint.timedThumb";
+	const TRANSCRIPT = "transcript.Transcript";
 	const WIDEVINE_FLAVOR = "widevine.WidevineFlavor";
 	const FLAVOR = "1";
 	const THUMBNAIL = "2";
@@ -1212,7 +1387,7 @@ class KalturaAssetType
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaAudioCodec
+class KalturaAudioCodec extends KalturaEnumBase
 {
 	const NONE = "";
 	const AAC = "aac";
@@ -1220,6 +1395,7 @@ class KalturaAudioCodec
 	const AC3 = "ac3";
 	const AMRNB = "amrnb";
 	const COPY = "copy";
+	const EAC3 = "eac3";
 	const MP3 = "mp3";
 	const MPEG2 = "mpeg2";
 	const PCM = "pcm";
@@ -1232,7 +1408,69 @@ class KalturaAudioCodec
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaBaseEntryOrderBy
+class KalturaBaseEntryCloneOptions extends KalturaEnumBase
+{
+	const AD_CUE_POINTS = "adCuePoint.AD_CUE_POINTS";
+	const ANNOTATION_CUE_POINTS = "annotation.ANNOTATION_CUE_POINTS";
+	const CODE_CUE_POINTS = "codeCuePoint.CODE_CUE_POINTS";
+	const THUMB_CUE_POINTS = "thumbCuePoint.THUMB_CUE_POINTS";
+	const USERS = "1";
+	const CATEGORIES = "2";
+	const CHILD_ENTRIES = "3";
+	const ACCESS_CONTROL = "4";
+	const METADATA = "5";
+	const FLAVORS = "6";
+	const CAPTIONS = "7";
+}
+
+/**
+ * @package Kaltura
+ * @subpackage Client
+ */
+class KalturaBaseEntryCompareAttribute extends KalturaEnumBase
+{
+	const ACCESS_CONTROL_ID = "accessControlId";
+	const CREATED_AT = "createdAt";
+	const END_DATE = "endDate";
+	const MODERATION_COUNT = "moderationCount";
+	const MODERATION_STATUS = "moderationStatus";
+	const PARTNER_ID = "partnerId";
+	const PARTNER_SORT_VALUE = "partnerSortValue";
+	const RANK = "rank";
+	const REPLACEMENT_STATUS = "replacementStatus";
+	const START_DATE = "startDate";
+	const STATUS = "status";
+	const TOTAL_RANK = "totalRank";
+	const TYPE = "type";
+	const UPDATED_AT = "updatedAt";
+}
+
+/**
+ * @package Kaltura
+ * @subpackage Client
+ */
+class KalturaBaseEntryMatchAttribute extends KalturaEnumBase
+{
+	const ADMIN_TAGS = "adminTags";
+	const CATEGORIES_IDS = "categoriesIds";
+	const CREATOR_ID = "creatorId";
+	const DESCRIPTION = "description";
+	const GROUP_ID = "groupId";
+	const ID = "id";
+	const NAME = "name";
+	const REFERENCE_ID = "referenceId";
+	const REPLACED_ENTRY_ID = "replacedEntryId";
+	const REPLACING_ENTRY_ID = "replacingEntryId";
+	const SEARCH_TEXT = "searchText";
+	const TAGS = "tags";
+	const USER_ID = "userId";
+}
+
+/**
+ * @package Kaltura
+ * @subpackage Client
+ */
+class KalturaBaseEntryOrderBy extends KalturaEnumBase
 {
 	const CREATED_AT_ASC = "+createdAt";
 	const END_DATE_ASC = "+endDate";
@@ -1262,7 +1500,7 @@ class KalturaBaseEntryOrderBy
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaBaseSyndicationFeedOrderBy
+class KalturaBaseSyndicationFeedOrderBy extends KalturaEnumBase
 {
 	const CREATED_AT_ASC = "+createdAt";
 	const NAME_ASC = "+name";
@@ -1280,7 +1518,24 @@ class KalturaBaseSyndicationFeedOrderBy
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaBatchJobOrderBy
+class KalturaBatchJobObjectType extends KalturaEnumBase
+{
+	const ENTRY_DISTRIBUTION = "contentDistribution.EntryDistribution";
+	const DROP_FOLDER_FILE = "dropFolderXmlBulkUpload.DropFolderFile";
+	const METADATA = "metadata.Metadata";
+	const METADATA_PROFILE = "metadata.MetadataProfile";
+	const SCHEDULED_TASK_PROFILE = "scheduledTask.ScheduledTaskProfile";
+	const ENTRY = "1";
+	const CATEGORY = "2";
+	const FILE_SYNC = "3";
+	const ASSET = "4";
+}
+
+/**
+ * @package Kaltura
+ * @subpackage Client
+ */
+class KalturaBatchJobOrderBy extends KalturaEnumBase
 {
 	const CREATED_AT_ASC = "+createdAt";
 	const ESTIMATED_EFFORT_ASC = "+estimatedEffort";
@@ -1306,8 +1561,10 @@ class KalturaBatchJobOrderBy
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaBatchJobType
+class KalturaBatchJobType extends KalturaEnumBase
 {
+	const PARSE_MULTI_LANGUAGE_CAPTION_ASSET = "caption.parsemultilanguagecaptionasset";
+	const CONVERT = "0";
 	const PARSE_CAPTION_ASSET = "captionSearch.parseCaptionAsset";
 	const DISTRIBUTION_DELETE = "contentDistribution.DistributionDelete";
 	const DISTRIBUTION_DISABLE = "contentDistribution.DistributionDisable";
@@ -1316,10 +1573,11 @@ class KalturaBatchJobType
 	const DISTRIBUTION_SUBMIT = "contentDistribution.DistributionSubmit";
 	const DISTRIBUTION_SYNC = "contentDistribution.DistributionSync";
 	const DISTRIBUTION_UPDATE = "contentDistribution.DistributionUpdate";
-	const CONVERT = "0";
 	const DROP_FOLDER_CONTENT_PROCESSOR = "dropFolder.DropFolderContentProcessor";
 	const DROP_FOLDER_WATCHER = "dropFolder.DropFolderWatcher";
 	const EVENT_NOTIFICATION_HANDLER = "eventNotification.EventNotificationHandler";
+	const INTEGRATION = "integration.Integration";
+	const SCHEDULED_TASK = "scheduledTask.ScheduledTask";
 	const INDEX_TAGS = "tagSearch.IndexTagsByPrivacyContext";
 	const TAG_RESOLVE = "tagSearch.TagResolve";
 	const VIRUS_SCAN = "virusScan.VirusScan";
@@ -1358,14 +1616,25 @@ class KalturaBatchJobType
 	const CONVERT_LIVE_SEGMENT = "36";
 	const COPY_PARTNER = "37";
 	const VALIDATE_LIVE_MEDIA_SERVERS = "38";
+	const SYNC_CATEGORY_PRIVACY_CONTEXT = "39";
+	const LIVE_REPORT_EXPORT = "40";
+	const RECALCULATE_CACHE = "41";
+	const LIVE_TO_VOD = "42";
+	const COPY_CAPTIONS = "43";
+	const CHUNKED_ENCODE_JOB_SCHEDULER = "44";
+	const SERVER_NODE_MONITOR = "45";
+	const USERS_CSV = "46";
+	const CLIP_CONCAT = "47";
+	const COPY_CUE_POINTS = "48";
 }
 
 /**
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaBulkUploadAction
+class KalturaBulkUploadAction extends KalturaEnumBase
 {
+	const CANCEL = "scheduleBulkUpload.CANCEL";
 	const ADD = "1";
 	const UPDATE = "2";
 	const DELETE = "3";
@@ -1378,8 +1647,10 @@ class KalturaBulkUploadAction
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaBulkUploadObjectType
+class KalturaBulkUploadObjectType extends KalturaEnumBase
 {
+	const SCHEDULE_EVENT = "scheduleBulkUpload.SCHEDULE_EVENT";
+	const SCHEDULE_RESOURCE = "scheduleBulkUpload.SCHEDULE_RESOURCE";
 	const ENTRY = "1";
 	const CATEGORY = "2";
 	const USER = "3";
@@ -1391,7 +1662,7 @@ class KalturaBulkUploadObjectType
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaBulkUploadOrderBy
+class KalturaBulkUploadOrderBy extends KalturaEnumBase
 {
 }
 
@@ -1399,20 +1670,7 @@ class KalturaBulkUploadOrderBy
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaBulkUploadResultObjectType
-{
-	const ENTRY = "1";
-	const CATEGORY = "2";
-	const USER = "3";
-	const CATEGORY_USER = "4";
-	const CATEGORY_ENTRY = "5";
-}
-
-/**
- * @package Kaltura
- * @subpackage Client
- */
-class KalturaBulkUploadResultStatus
+class KalturaBulkUploadResultStatus extends KalturaEnumBase
 {
 	const ERROR = "1";
 	const OK = "2";
@@ -1423,19 +1681,21 @@ class KalturaBulkUploadResultStatus
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaBulkUploadType
+class KalturaBulkUploadType extends KalturaEnumBase
 {
 	const CSV = "bulkUploadCsv.CSV";
 	const FILTER = "bulkUploadFilter.FILTER";
 	const XML = "bulkUploadXml.XML";
 	const DROP_FOLDER_XML = "dropFolderXmlBulkUpload.DROP_FOLDER_XML";
+	const ICAL = "scheduleBulkUpload.ICAL";
+	const DROP_FOLDER_ICAL = "scheduleDropFolder.DROP_FOLDER_ICAL";
 }
 
 /**
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaCategoryEntryOrderBy
+class KalturaCategoryEntryAdvancedOrderBy extends KalturaEnumBase
 {
 	const CREATED_AT_ASC = "+createdAt";
 	const CREATED_AT_DESC = "-createdAt";
@@ -1445,7 +1705,17 @@ class KalturaCategoryEntryOrderBy
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaCategoryIdentifierField
+class KalturaCategoryEntryOrderBy extends KalturaEnumBase
+{
+	const CREATED_AT_ASC = "+createdAt";
+	const CREATED_AT_DESC = "-createdAt";
+}
+
+/**
+ * @package Kaltura
+ * @subpackage Client
+ */
+class KalturaCategoryIdentifierField extends KalturaEnumBase
 {
 	const FULL_NAME = "fullName";
 	const ID = "id";
@@ -1456,7 +1726,7 @@ class KalturaCategoryIdentifierField
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaCategoryOrderBy
+class KalturaCategoryOrderBy extends KalturaEnumBase
 {
 	const CREATED_AT_ASC = "+createdAt";
 	const DEPTH_ASC = "+depth";
@@ -1484,7 +1754,7 @@ class KalturaCategoryOrderBy
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaCategoryUserOrderBy
+class KalturaCategoryUserOrderBy extends KalturaEnumBase
 {
 	const CREATED_AT_ASC = "+createdAt";
 	const UPDATED_AT_ASC = "+updatedAt";
@@ -1496,7 +1766,17 @@ class KalturaCategoryUserOrderBy
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaConditionType
+class KalturaCloneComponentSelectorType extends KalturaEnumBase
+{
+	const INCLUDE_COMPONENT = "0";
+	const EXCLUDE_COMPONENT = "1";
+}
+
+/**
+ * @package Kaltura
+ * @subpackage Client
+ */
+class KalturaConditionType extends KalturaEnumBase
 {
 	const ABC_WATERMARK = "abcScreenersWatermarkAccessControl.abcWatermark";
 	const EVENT_NOTIFICATION_FIELD = "eventNotification.BooleanField";
@@ -1512,13 +1792,21 @@ class KalturaConditionType
 	const FIELD_MATCH = "6";
 	const FIELD_COMPARE = "7";
 	const ASSET_PROPERTIES_COMPARE = "8";
+	const USER_ROLE = "9";
+	const GEO_DISTANCE = "10";
+	const OR_OPERATOR = "11";
+	const HASH = "12";
+	const DELIVERY_PROFILE = "13";
+	const ACTIVE_EDGE_VALIDATE = "14";
+	const ANONYMOUS_IP = "15";
+	const ASSET_TYPE = "16";
 }
 
 /**
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaContainerFormat
+class KalturaContainerFormat extends KalturaEnumBase
 {
 	const _3GP = "3gp";
 	const APPLEHTTP = "applehttp";
@@ -1526,14 +1814,19 @@ class KalturaContainerFormat
 	const BMP = "bmp";
 	const COPY = "copy";
 	const FLV = "flv";
+	const HLS = "hls";
+	const ISMA = "isma";
 	const ISMV = "ismv";
 	const JPG = "jpg";
+	const M2TS = "m2ts";
+	const M4V = "m4v";
 	const MKV = "mkv";
 	const MOV = "mov";
 	const MP3 = "mp3";
 	const MP4 = "mp4";
 	const MPEG = "mpeg";
 	const MPEGTS = "mpegts";
+	const MXF = "mxf";
 	const OGG = "ogg";
 	const OGV = "ogv";
 	const PDF = "pdf";
@@ -1550,20 +1843,21 @@ class KalturaContainerFormat
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaContextType
+class KalturaContextType extends KalturaEnumBase
 {
 	const PLAY = "1";
 	const DOWNLOAD = "2";
 	const THUMBNAIL = "3";
 	const METADATA = "4";
 	const EXPORT = "5";
+	const SERVE = "6";
 }
 
 /**
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaControlPanelCommandOrderBy
+class KalturaControlPanelCommandOrderBy extends KalturaEnumBase
 {
 	const CREATED_AT_ASC = "+createdAt";
 	const UPDATED_AT_ASC = "+updatedAt";
@@ -1575,7 +1869,7 @@ class KalturaControlPanelCommandOrderBy
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaConversionProfileAssetParamsOrderBy
+class KalturaConversionProfileAssetParamsOrderBy extends KalturaEnumBase
 {
 }
 
@@ -1583,7 +1877,7 @@ class KalturaConversionProfileAssetParamsOrderBy
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaConversionProfileOrderBy
+class KalturaConversionProfileOrderBy extends KalturaEnumBase
 {
 	const CREATED_AT_ASC = "+createdAt";
 	const CREATED_AT_DESC = "-createdAt";
@@ -1593,7 +1887,7 @@ class KalturaConversionProfileOrderBy
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaConversionProfileStatus
+class KalturaConversionProfileStatus extends KalturaEnumBase
 {
 	const DISABLED = "1";
 	const ENABLED = "2";
@@ -1604,7 +1898,7 @@ class KalturaConversionProfileStatus
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaConversionProfileType
+class KalturaConversionProfileType extends KalturaEnumBase
 {
 	const MEDIA = "1";
 	const LIVE_STREAM = "2";
@@ -1614,7 +1908,50 @@ class KalturaConversionProfileType
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaDataEntryOrderBy
+class KalturaDataEntryCompareAttribute extends KalturaEnumBase
+{
+	const ACCESS_CONTROL_ID = "accessControlId";
+	const CREATED_AT = "createdAt";
+	const END_DATE = "endDate";
+	const MODERATION_COUNT = "moderationCount";
+	const MODERATION_STATUS = "moderationStatus";
+	const PARTNER_ID = "partnerId";
+	const PARTNER_SORT_VALUE = "partnerSortValue";
+	const RANK = "rank";
+	const REPLACEMENT_STATUS = "replacementStatus";
+	const START_DATE = "startDate";
+	const STATUS = "status";
+	const TOTAL_RANK = "totalRank";
+	const TYPE = "type";
+	const UPDATED_AT = "updatedAt";
+}
+
+/**
+ * @package Kaltura
+ * @subpackage Client
+ */
+class KalturaDataEntryMatchAttribute extends KalturaEnumBase
+{
+	const ADMIN_TAGS = "adminTags";
+	const CATEGORIES_IDS = "categoriesIds";
+	const CREATOR_ID = "creatorId";
+	const DESCRIPTION = "description";
+	const GROUP_ID = "groupId";
+	const ID = "id";
+	const NAME = "name";
+	const REFERENCE_ID = "referenceId";
+	const REPLACED_ENTRY_ID = "replacedEntryId";
+	const REPLACING_ENTRY_ID = "replacingEntryId";
+	const SEARCH_TEXT = "searchText";
+	const TAGS = "tags";
+	const USER_ID = "userId";
+}
+
+/**
+ * @package Kaltura
+ * @subpackage Client
+ */
+class KalturaDataEntryOrderBy extends KalturaEnumBase
 {
 	const CREATED_AT_ASC = "+createdAt";
 	const END_DATE_ASC = "+endDate";
@@ -1644,7 +1981,271 @@ class KalturaDataEntryOrderBy
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaDurationType
+class KalturaDeliveryProfileAkamaiAppleHttpManifestOrderBy extends KalturaEnumBase
+{
+	const CREATED_AT_ASC = "+createdAt";
+	const UPDATED_AT_ASC = "+updatedAt";
+	const CREATED_AT_DESC = "-createdAt";
+	const UPDATED_AT_DESC = "-updatedAt";
+}
+
+/**
+ * @package Kaltura
+ * @subpackage Client
+ */
+class KalturaDeliveryProfileAkamaiHdsOrderBy extends KalturaEnumBase
+{
+	const CREATED_AT_ASC = "+createdAt";
+	const UPDATED_AT_ASC = "+updatedAt";
+	const CREATED_AT_DESC = "-createdAt";
+	const UPDATED_AT_DESC = "-updatedAt";
+}
+
+/**
+ * @package Kaltura
+ * @subpackage Client
+ */
+class KalturaDeliveryProfileAkamaiHttpOrderBy extends KalturaEnumBase
+{
+	const CREATED_AT_ASC = "+createdAt";
+	const UPDATED_AT_ASC = "+updatedAt";
+	const CREATED_AT_DESC = "-createdAt";
+	const UPDATED_AT_DESC = "-updatedAt";
+}
+
+/**
+ * @package Kaltura
+ * @subpackage Client
+ */
+class KalturaDeliveryProfileGenericAppleHttpOrderBy extends KalturaEnumBase
+{
+	const CREATED_AT_ASC = "+createdAt";
+	const UPDATED_AT_ASC = "+updatedAt";
+	const CREATED_AT_DESC = "-createdAt";
+	const UPDATED_AT_DESC = "-updatedAt";
+}
+
+/**
+ * @package Kaltura
+ * @subpackage Client
+ */
+class KalturaDeliveryProfileGenericHdsOrderBy extends KalturaEnumBase
+{
+	const CREATED_AT_ASC = "+createdAt";
+	const UPDATED_AT_ASC = "+updatedAt";
+	const CREATED_AT_DESC = "-createdAt";
+	const UPDATED_AT_DESC = "-updatedAt";
+}
+
+/**
+ * @package Kaltura
+ * @subpackage Client
+ */
+class KalturaDeliveryProfileGenericHttpOrderBy extends KalturaEnumBase
+{
+	const CREATED_AT_ASC = "+createdAt";
+	const UPDATED_AT_ASC = "+updatedAt";
+	const CREATED_AT_DESC = "-createdAt";
+	const UPDATED_AT_DESC = "-updatedAt";
+}
+
+/**
+ * @package Kaltura
+ * @subpackage Client
+ */
+class KalturaDeliveryProfileGenericRtmpOrderBy extends KalturaEnumBase
+{
+	const CREATED_AT_ASC = "+createdAt";
+	const UPDATED_AT_ASC = "+updatedAt";
+	const CREATED_AT_DESC = "-createdAt";
+	const UPDATED_AT_DESC = "-updatedAt";
+}
+
+/**
+ * @package Kaltura
+ * @subpackage Client
+ */
+class KalturaDeliveryProfileGenericSilverLightOrderBy extends KalturaEnumBase
+{
+	const CREATED_AT_ASC = "+createdAt";
+	const UPDATED_AT_ASC = "+updatedAt";
+	const CREATED_AT_DESC = "-createdAt";
+	const UPDATED_AT_DESC = "-updatedAt";
+}
+
+/**
+ * @package Kaltura
+ * @subpackage Client
+ */
+class KalturaDeliveryProfileLiveAppleHttpOrderBy extends KalturaEnumBase
+{
+	const CREATED_AT_ASC = "+createdAt";
+	const UPDATED_AT_ASC = "+updatedAt";
+	const CREATED_AT_DESC = "-createdAt";
+	const UPDATED_AT_DESC = "-updatedAt";
+}
+
+/**
+ * @package Kaltura
+ * @subpackage Client
+ */
+class KalturaDeliveryProfileOrderBy extends KalturaEnumBase
+{
+	const CREATED_AT_ASC = "+createdAt";
+	const UPDATED_AT_ASC = "+updatedAt";
+	const CREATED_AT_DESC = "-createdAt";
+	const UPDATED_AT_DESC = "-updatedAt";
+}
+
+/**
+ * @package Kaltura
+ * @subpackage Client
+ */
+class KalturaDeliveryProfileRtmpOrderBy extends KalturaEnumBase
+{
+	const CREATED_AT_ASC = "+createdAt";
+	const UPDATED_AT_ASC = "+updatedAt";
+	const CREATED_AT_DESC = "-createdAt";
+	const UPDATED_AT_DESC = "-updatedAt";
+}
+
+/**
+ * @package Kaltura
+ * @subpackage Client
+ */
+class KalturaDeliveryProfileType extends KalturaEnumBase
+{
+	const EDGE_CAST_HTTP = "edgeCast.EDGE_CAST_HTTP";
+	const EDGE_CAST_RTMP = "edgeCast.EDGE_CAST_RTMP";
+	const FORENSIC_WATERMARK_APPLE_HTTP = "forensicWatermark.FORENSIC_WATERMARK_APPLE_HTTP";
+	const FORENSIC_WATERMARK_DASH = "forensicWatermark.FORENSIC_WATERMARK_DASH";
+	const KONTIKI_HTTP = "kontiki.KONTIKI_HTTP";
+	const UPLYNK_HTTP = "uplynk.UPLYNK_HTTP";
+	const UPLYNK_RTMP = "uplynk.UPLYNK_RTMP";
+	const VELOCIX_HDS = "velocix.VELOCIX_HDS";
+	const VELOCIX_HLS = "velocix.VELOCIX_HLS";
+	const APPLE_HTTP = "1";
+	const HDS = "3";
+	const HTTP = "4";
+	const RTMP = "5";
+	const RTSP = "6";
+	const SILVER_LIGHT = "7";
+	const AKAMAI_HLS_DIRECT = "10";
+	const AKAMAI_HLS_MANIFEST = "11";
+	const AKAMAI_HD = "12";
+	const AKAMAI_HDS = "13";
+	const AKAMAI_HTTP = "14";
+	const AKAMAI_RTMP = "15";
+	const AKAMAI_RTSP = "16";
+	const AKAMAI_SS = "17";
+	const GENERIC_HLS = "21";
+	const GENERIC_HDS = "23";
+	const GENERIC_HTTP = "24";
+	const GENERIC_HLS_MANIFEST = "25";
+	const GENERIC_HDS_MANIFEST = "26";
+	const GENERIC_SS = "27";
+	const GENERIC_RTMP = "28";
+	const LEVEL3_HLS = "31";
+	const LEVEL3_HTTP = "34";
+	const LEVEL3_RTMP = "35";
+	const LIMELIGHT_HTTP = "44";
+	const LIMELIGHT_RTMP = "45";
+	const LOCAL_PATH_APPLE_HTTP = "51";
+	const LOCAL_PATH_HDS = "53";
+	const LOCAL_PATH_HTTP = "54";
+	const LOCAL_PATH_RTMP = "55";
+	const VOD_PACKAGER_HLS = "61";
+	const VOD_PACKAGER_HDS = "63";
+	const VOD_PACKAGER_MSS = "67";
+	const VOD_PACKAGER_DASH = "68";
+	const VOD_PACKAGER_HLS_MANIFEST = "69";
+	const LIVE_HLS = "1001";
+	const LIVE_HDS = "1002";
+	const LIVE_DASH = "1003";
+	const LIVE_RTMP = "1005";
+	const LIVE_HLS_TO_MULTICAST = "1006";
+	const LIVE_PACKAGER_HLS = "1007";
+	const LIVE_PACKAGER_HDS = "1008";
+	const LIVE_PACKAGER_DASH = "1009";
+	const LIVE_PACKAGER_MSS = "1010";
+	const LIVE_AKAMAI_HDS = "1013";
+}
+
+/**
+ * @package Kaltura
+ * @subpackage Client
+ */
+class KalturaDeliveryServerNodeOrderBy extends KalturaEnumBase
+{
+	const CREATED_AT_ASC = "+createdAt";
+	const HEARTBEAT_TIME_ASC = "+heartbeatTime";
+	const UPDATED_AT_ASC = "+updatedAt";
+	const CREATED_AT_DESC = "-createdAt";
+	const HEARTBEAT_TIME_DESC = "-heartbeatTime";
+	const UPDATED_AT_DESC = "-updatedAt";
+}
+
+/**
+ * @package Kaltura
+ * @subpackage Client
+ */
+class KalturaDocumentEntryCompareAttribute extends KalturaEnumBase
+{
+	const ACCESS_CONTROL_ID = "accessControlId";
+	const CREATED_AT = "createdAt";
+	const END_DATE = "endDate";
+	const MODERATION_COUNT = "moderationCount";
+	const MODERATION_STATUS = "moderationStatus";
+	const PARTNER_ID = "partnerId";
+	const PARTNER_SORT_VALUE = "partnerSortValue";
+	const RANK = "rank";
+	const REPLACEMENT_STATUS = "replacementStatus";
+	const START_DATE = "startDate";
+	const STATUS = "status";
+	const TOTAL_RANK = "totalRank";
+	const TYPE = "type";
+	const UPDATED_AT = "updatedAt";
+}
+
+/**
+ * @package Kaltura
+ * @subpackage Client
+ */
+class KalturaDocumentEntryMatchAttribute extends KalturaEnumBase
+{
+	const ADMIN_TAGS = "adminTags";
+	const CATEGORIES_IDS = "categoriesIds";
+	const CREATOR_ID = "creatorId";
+	const DESCRIPTION = "description";
+	const GROUP_ID = "groupId";
+	const ID = "id";
+	const NAME = "name";
+	const REFERENCE_ID = "referenceId";
+	const REPLACED_ENTRY_ID = "replacedEntryId";
+	const REPLACING_ENTRY_ID = "replacingEntryId";
+	const SEARCH_TEXT = "searchText";
+	const TAGS = "tags";
+	const USER_ID = "userId";
+}
+
+/**
+ * @package Kaltura
+ * @subpackage Client
+ */
+class KalturaDrmSchemeName extends KalturaEnumBase
+{
+	const PLAYREADY_CENC = "drm.PLAYREADY_CENC";
+	const WIDEVINE_CENC = "drm.WIDEVINE_CENC";
+	const FAIRPLAY = "fairplay.FAIRPLAY";
+	const PLAYREADY = "playReady.PLAYREADY";
+	const WIDEVINE = "widevine.WIDEVINE";
+}
+
+/**
+ * @package Kaltura
+ * @subpackage Client
+ */
+class KalturaDurationType extends KalturaEnumBase
 {
 	const LONG = "long";
 	const MEDIUM = "medium";
@@ -1656,15 +2257,62 @@ class KalturaDurationType
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaDynamicEnum
+class KalturaESearchLanguage extends KalturaEnumBase
 {
+	const ARABIC = "Arabic";
+	const BASQUE = "Basque";
+	const BRAZILIAN = "Brazilian";
+	const BULGARIAN = "Bulgarian";
+	const CATALAN = "Catalan";
+	const CHINESE = "Chinese";
+	const CZECH = "Czech";
+	const DANISH = "Danish";
+	const DUTCH = "Dutch";
+	const ENGLISH = "English";
+	const FINNISH = "Finnish";
+	const FRENCH = "French";
+	const GALICIAN = "Galician";
+	const GERMAN = "German";
+	const GREEK = "Greek";
+	const HINDI = "Hindi";
+	const HUNGRIAN = "Hungarian";
+	const INDONESIAN = "Indonesian";
+	const ITALIAN = "Italian";
+	const JAPANESE = "Japanese";
+	const KOREAN = "Korean";
+	const LATVIAN = "Latvian";
+	const LITHUANIAN = "Lithuanian";
+	const NORWEGIAN = "Norwegian";
+	const PERSIAN = "Persian";
+	const PORTUGUESE = "Prtuguese";
+	const ROMANIAN = "Romanian";
+	const RUSSIAN = "Russian";
+	const SORANI = "Sorani";
+	const SPANISH = "Spanish";
+	const SWEDISH = "Swedish";
+	const THAI = "Thai";
+	const TURKISH = "Turkish";
 }
 
 /**
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaEntryIdentifierField
+class KalturaEdgeServerNodeOrderBy extends KalturaEnumBase
+{
+	const CREATED_AT_ASC = "+createdAt";
+	const HEARTBEAT_TIME_ASC = "+heartbeatTime";
+	const UPDATED_AT_ASC = "+updatedAt";
+	const CREATED_AT_DESC = "-createdAt";
+	const HEARTBEAT_TIME_DESC = "-heartbeatTime";
+	const UPDATED_AT_DESC = "-updatedAt";
+}
+
+/**
+ * @package Kaltura
+ * @subpackage Client
+ */
+class KalturaEntryIdentifierField extends KalturaEnumBase
 {
 	const ID = "id";
 	const REFERENCE_ID = "referenceId";
@@ -1674,19 +2322,42 @@ class KalturaEntryIdentifierField
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaEntryReplacementStatus
+class KalturaEntryReplacementStatus extends KalturaEnumBase
 {
 	const NONE = "0";
 	const APPROVED_BUT_NOT_READY = "1";
 	const READY_BUT_NOT_APPROVED = "2";
 	const NOT_READY_AND_NOT_APPROVED = "3";
+	const FAILED = "4";
 }
 
 /**
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaEntryStatus
+class KalturaEntryServerNodeOrderBy extends KalturaEnumBase
+{
+	const CREATED_AT_ASC = "+createdAt";
+	const UPDATED_AT_ASC = "+updatedAt";
+	const CREATED_AT_DESC = "-createdAt";
+	const UPDATED_AT_DESC = "-updatedAt";
+}
+
+/**
+ * @package Kaltura
+ * @subpackage Client
+ */
+class KalturaEntryServerNodeType extends KalturaEnumBase
+{
+	const LIVE_PRIMARY = "0";
+	const LIVE_BACKUP = "1";
+}
+
+/**
+ * @package Kaltura
+ * @subpackage Client
+ */
+class KalturaEntryStatus extends KalturaEnumBase
 {
 	const ERROR_IMPORTING = "-2";
 	const ERROR_CONVERTING = "-1";
@@ -1706,9 +2377,10 @@ class KalturaEntryStatus
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaEntryType
+class KalturaEntryType extends KalturaEnumBase
 {
 	const AUTOMATIC = "-1";
+	const CONFERENCE_ENTRY_SERVER = "conference.CONFERENCE_ENTRY_SERVER";
 	const EXTERNAL_MEDIA = "externalMedia.externalMedia";
 	const MEDIA_CLIP = "1";
 	const MIX = "2";
@@ -1723,16 +2395,68 @@ class KalturaEntryType
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaFileAssetObjectType
+class KalturaExternalMediaEntryCompareAttribute extends KalturaEnumBase
 {
-	const UI_CONF = "2";
+	const ACCESS_CONTROL_ID = "accessControlId";
+	const CREATED_AT = "createdAt";
+	const END_DATE = "endDate";
+	const LAST_PLAYED_AT = "lastPlayedAt";
+	const MEDIA_DATE = "mediaDate";
+	const MEDIA_TYPE = "mediaType";
+	const MODERATION_COUNT = "moderationCount";
+	const MODERATION_STATUS = "moderationStatus";
+	const MS_DURATION = "msDuration";
+	const PARTNER_ID = "partnerId";
+	const PARTNER_SORT_VALUE = "partnerSortValue";
+	const PLAYS = "plays";
+	const RANK = "rank";
+	const REPLACEMENT_STATUS = "replacementStatus";
+	const START_DATE = "startDate";
+	const STATUS = "status";
+	const TOTAL_RANK = "totalRank";
+	const TYPE = "type";
+	const UPDATED_AT = "updatedAt";
+	const VIEWS = "views";
 }
 
 /**
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaFileAssetOrderBy
+class KalturaExternalMediaEntryMatchAttribute extends KalturaEnumBase
+{
+	const ADMIN_TAGS = "adminTags";
+	const CATEGORIES_IDS = "categoriesIds";
+	const CREATOR_ID = "creatorId";
+	const DESCRIPTION = "description";
+	const DURATION_TYPE = "durationType";
+	const FLAVOR_PARAMS_IDS = "flavorParamsIds";
+	const GROUP_ID = "groupId";
+	const ID = "id";
+	const NAME = "name";
+	const REFERENCE_ID = "referenceId";
+	const REPLACED_ENTRY_ID = "replacedEntryId";
+	const REPLACING_ENTRY_ID = "replacingEntryId";
+	const SEARCH_TEXT = "searchText";
+	const TAGS = "tags";
+	const USER_ID = "userId";
+}
+
+/**
+ * @package Kaltura
+ * @subpackage Client
+ */
+class KalturaFileAssetObjectType extends KalturaEnumBase
+{
+	const UI_CONF = "2";
+	const ENTRY = "3";
+}
+
+/**
+ * @package Kaltura
+ * @subpackage Client
+ */
+class KalturaFileAssetOrderBy extends KalturaEnumBase
 {
 	const CREATED_AT_ASC = "+createdAt";
 	const UPDATED_AT_ASC = "+updatedAt";
@@ -1744,7 +2468,7 @@ class KalturaFileAssetOrderBy
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaFileAssetStatus
+class KalturaFileAssetStatus extends KalturaEnumBase
 {
 	const PENDING = "0";
 	const UPLOADING = "1";
@@ -1757,7 +2481,7 @@ class KalturaFileAssetStatus
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaFileSyncObjectType
+class KalturaFileSyncObjectType extends KalturaEnumBase
 {
 	const DISTRIBUTION_PROFILE = "contentDistribution.DistributionProfile";
 	const ENTRY_DISTRIBUTION = "contentDistribution.EntryDistribution";
@@ -1780,7 +2504,7 @@ class KalturaFileSyncObjectType
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaFlavorAssetOrderBy
+class KalturaFlavorAssetOrderBy extends KalturaEnumBase
 {
 	const CREATED_AT_ASC = "+createdAt";
 	const DELETED_AT_ASC = "+deletedAt";
@@ -1796,7 +2520,7 @@ class KalturaFlavorAssetOrderBy
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaFlavorParamsOrderBy
+class KalturaFlavorParamsOrderBy extends KalturaEnumBase
 {
 }
 
@@ -1804,7 +2528,7 @@ class KalturaFlavorParamsOrderBy
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaFlavorParamsOutputOrderBy
+class KalturaFlavorParamsOutputOrderBy extends KalturaEnumBase
 {
 }
 
@@ -1812,25 +2536,7 @@ class KalturaFlavorParamsOutputOrderBy
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaGenericSyndicationFeedOrderBy
-{
-	const CREATED_AT_ASC = "+createdAt";
-	const NAME_ASC = "+name";
-	const PLAYLIST_ID_ASC = "+playlistId";
-	const TYPE_ASC = "+type";
-	const UPDATED_AT_ASC = "+updatedAt";
-	const CREATED_AT_DESC = "-createdAt";
-	const NAME_DESC = "-name";
-	const PLAYLIST_ID_DESC = "-playlistId";
-	const TYPE_DESC = "-type";
-	const UPDATED_AT_DESC = "-updatedAt";
-}
-
-/**
- * @package Kaltura
- * @subpackage Client
- */
-class KalturaGenericXsltSyndicationFeedOrderBy
+class KalturaGenericSyndicationFeedOrderBy extends KalturaEnumBase
 {
 	const CREATED_AT_ASC = "+createdAt";
 	const NAME_ASC = "+name";
@@ -1848,16 +2554,36 @@ class KalturaGenericXsltSyndicationFeedOrderBy
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaGeoCoderType
+class KalturaGenericXsltSyndicationFeedOrderBy extends KalturaEnumBase
+{
+	const CREATED_AT_ASC = "+createdAt";
+	const NAME_ASC = "+name";
+	const PLAYLIST_ID_ASC = "+playlistId";
+	const TYPE_ASC = "+type";
+	const UPDATED_AT_ASC = "+updatedAt";
+	const CREATED_AT_DESC = "-createdAt";
+	const NAME_DESC = "-name";
+	const PLAYLIST_ID_DESC = "-playlistId";
+	const TYPE_DESC = "-type";
+	const UPDATED_AT_DESC = "-updatedAt";
+}
+
+/**
+ * @package Kaltura
+ * @subpackage Client
+ */
+class KalturaGeoCoderType extends KalturaEnumBase
 {
 	const KALTURA = "1";
+	const MAX_MIND = "2";
+	const DIGITAL_ELEMENT = "3";
 }
 
 /**
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaGoogleSyndicationFeedAdultValues
+class KalturaGoogleSyndicationFeedAdultValues extends KalturaEnumBase
 {
 	const NO = "No";
 	const YES = "Yes";
@@ -1867,7 +2593,7 @@ class KalturaGoogleSyndicationFeedAdultValues
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaGoogleVideoSyndicationFeedOrderBy
+class KalturaGoogleVideoSyndicationFeedOrderBy extends KalturaEnumBase
 {
 	const CREATED_AT_ASC = "+createdAt";
 	const NAME_ASC = "+name";
@@ -1885,7 +2611,19 @@ class KalturaGoogleVideoSyndicationFeedOrderBy
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaITunesSyndicationFeedAdultValues
+class KalturaGroupUserOrderBy extends KalturaEnumBase
+{
+	const CREATED_AT_ASC = "+createdAt";
+	const UPDATED_AT_ASC = "+updatedAt";
+	const CREATED_AT_DESC = "-createdAt";
+	const UPDATED_AT_DESC = "-updatedAt";
+}
+
+/**
+ * @package Kaltura
+ * @subpackage Client
+ */
+class KalturaITunesSyndicationFeedAdultValues extends KalturaEnumBase
 {
 	const CLEAN = "clean";
 	const NO = "no";
@@ -1896,7 +2634,7 @@ class KalturaITunesSyndicationFeedAdultValues
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaITunesSyndicationFeedCategories
+class KalturaITunesSyndicationFeedCategories extends KalturaEnumBase
 {
 	const ARTS = "Arts";
 	const ARTS_DESIGN = "Arts/Design";
@@ -1971,7 +2709,7 @@ class KalturaITunesSyndicationFeedCategories
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaITunesSyndicationFeedOrderBy
+class KalturaITunesSyndicationFeedOrderBy extends KalturaEnumBase
 {
 	const CREATED_AT_ASC = "+createdAt";
 	const NAME_ASC = "+name";
@@ -1989,150 +2727,555 @@ class KalturaITunesSyndicationFeedOrderBy
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaLanguage
+class KalturaLanguage extends KalturaEnumBase
 {
+	const ABQ = "Abaza";
 	const AB = "Abkhazian";
+	const ABE = "Abnaki Western";
+	const ABU = "Abure";
+	const ACN = "Achang";
+	const ACE = "Achinese";
+	const ACT = "Achterhooks";
+	const ACV = "Achumawi";
+	const ADJ = "Adioukrou";
+	const ADY = "Adyghe; Adygei";
+	const ADT = "Adynyamathanha";
+	const AAL = "Afade";
 	const AA = "Afar";
 	const AF = "Afrikaans";
+	const AGQ = "Aghem";
+	const AGX = "Aghul";
+	const AGU = "Aguacateco";
+	const AGR = "Aguaruna";
+	const AIN = "Ainu (Japan)";
+	const AKK = "Akkadian";
+	const AKL = "Aklanon";
+	const AKU = "Akum";
+	const AKZ = "Alabama";
 	const SQ = "Albanian";
+	const ALN = "Albanian (Gheg)";
+	const ALS = "Albanian (Tosk)";
+	const ALE = "Aleut";
+	const ALQ = "Algonquin";
+	const ALT = "Altai (Southern)";
 	const AM = "Amharic";
+	const RME = "Angloromani";
+	const APJ = "Apache (Jicarilla)";
+	const APW = "Apache (Western)";
 	const AR = "Arabic";
+	const ARB = "Arabic (standard)";
+	const B_T = "Arabic Tunisian Spoken";
+	const ARC = "Aramaic";
+	const SAM = "Aramaic Samaritan";
+	const ARP = "Arapaho";
+	const ARN = "Araucanian";
+	const ARI = "Arikara";
 	const HY = "Armenian";
+	const RUP = "Aromanian";
 	const AS_ = "Assamese";
+	const ASB = "Assiniboine";
+	const AII = "Assyrian Neo-Aramaic";
+	const AST = "Asturian";
+	const ATJ = "Atikamekw";
+	const AWA = "Awadhi";
 	const AY = "Aymara";
 	const AZ = "Azerbaijani";
+	const BCR = "Babine";
+	const BFQ = "Badaga";
+	const BDJ = "Bai";
+	const BAN = "Balinese";
+	const BCC = "Balochi Southern";
+	const BFT = "Balti";
+	const BAL = "Baluchi";
+	const BAS = "Basa (Cameroon)";
 	const BA = "Bashkir";
 	const EU = "Basque";
+	const BAR = "Bavarian";
+	const BEA = "Beaver";
+	const BEJ = "Beja";
+	const BEM = "Bemba (Zambia)";
 	const BN = "Bengali (Bangla)";
+	const BEW = "Betawi";
+	const KAP = "Bezhta";
+	const BHB = "Bhili";
+	const BHO = "Bhojpuri";
 	const DZ = "Bhutani";
 	const BH = "Bihari";
+	const BIK = "Bikol";
+	const BIN = "Bini";
+	const BPY = "Bishnupriya Manipuri";
 	const BI = "Bislama";
 	const BR = "Breton";
+	const BUG = "Buginese";
 	const BG = "Bulgarian";
+	const BUA = "Buriat";
 	const MY = "Burmese";
 	const BE = "Byelorussian (Belarusian)";
+	const CAD = "Caddo";
 	const KM = "Cambodian";
+	const YUE = "Cantonese";
+	const CRX = "Carrier";
+	const CAF = "Carrier Southern";
 	const CA = "Catalan";
+	const CHC = "Catawba";
+	const CAY = "Cayuga";
+	const CEB = "Cebuano";
+	const CHG = "Chagatai";
+	const CLD = "Chaldean Neo-Aramaic";
+	const CHR = "Cherokee";
+	const CHY = "Cheyenne";
+	const CIC = "Chickasaw";
+	const CLC = "Chilcotin";
 	const ZH = "Chinese";
+	const CHN = "Chinook jargon";
+	const CHP = "Chipewyan";
+	const CIW = "Chippewa";
+	const CHO = "Choctaw";
+	const CAA = "Chor";
+	const CKT = "Chukot";
+	const CIM = "Cimbrian";
+	const CLM = "Clallam Klallam";
+	const COJ = "Cochimi";
+	const COC = "Cocopa";
+	const KSH = "Colognian";
+	const COM = "Comanche";
+	const SWB = "Comorian";
+	const COO = "Comox";
+	const COP = "Coptic";
 	const CO = "Corsican";
+	const MUS = "Creek";
+	const CRH = "Crimean Tatar";
 	const HR = "Croatian";
+	const CUP = "Cupeo";
 	const CS = "Czech";
+	const DAK = "Dakota";
 	const DA = "Danish";
+	const DAR = "Dargwa";
+	const PRD = "Dari (Persian)";
+	const GBZ = "Dari Zoroastrian";
+	const DHV = "Dehu";
+	const DEL = "Delaware";
+	const DIN = "Dinka";
+	const DOI = "Dogri (generic)";
+	const DGR = "Dogrib";
+	const DLG = "Dolgan";
+	const DOH = "Dong";
+	const DUA = "Duala";
+	const DNG = "Dungan";
 	const NL = "Dutch";
+	const DYU = "Dyula";
+	const EEE = "E";
+	const EGL = "Emilian";
 	const EN = "English";
+	const EN_US = "English (American)";
+	const EN_GB = "English (British)";
+	const ENM = "English Middle (1100-1500)";
+	const MYV = "Erzya";
 	const EO = "Esperanto";
 	const ET = "Estonian";
+	const EVE = "Even";
+	const EVN = "Evenki";
 	const FO = "Faeroese";
+	const FAX = "Fala";
+	const FAN = "Fang (Equatorial Guinea)";
 	const FA = "Farsi";
 	const FJ = "Fiji";
+	const FIL = "Filipino";
 	const FI = "Finnish";
+	const FIT = "Finnish (Tornedalen)";
+	const FON = "Fon";
+	const FRP = "Franco-Prove";
+	const FRK = "Frankish";
 	const FR = "French";
 	const FY = "Frisian";
+	const FRR = "Frisian Northern";
+	const FUR = "Friulian";
+	const FVR = "Fur";
+	const GAA = "Ga";
 	const GV = "Gaelic (Manx)";
 	const GD = "Gaelic (Scottish)";
+	const GAG = "Gagauz";
 	const GL = "Galician";
+	const GAN = "Gan";
+	const GEZ = "Geez";
 	const KA = "Georgian";
 	const DE = "German";
+	const GEH = "German Hutterite";
+	const PDC = "German Pennsylvania";
+	const GIL = "Gilbertese";
+	const NIV = "Gilyak Nivkh";
+	const GIT = "Gitxsan";
 	const EL = "Greek";
+	const GRC = "Greek Ancient (to 1453)";
 	const KL = "Greenlandic";
 	const GN = "Guarani";
 	const GU = "Gujarati";
+	const GWI = "Gwichin";
+	const HAI = "Haida";
+	const HNN = "Hainanese";
+	const HAS = "Haisla";
+	const HAK = "Hakka";
+	const HUR = "Halkomelem";
+	const HAA = "Han";
+	const HNI = "Hani";
 	const HA = "Hausa";
-	const IW = "Hebrew";
+	const HAW = "Hawaiian";
 	const HE = "Hebrew";
+	const IW = "Hebrew";
+	const HEI = "Heiltsuk";
+	const HID = "Hidatsa";
+	const HIL = "Hiligaynon";
 	const HI = "Hindi";
+	const HMN = "Hmong";
+	const HKK = "Hokkien";
+	const HOP = "Hopi";
+	const CZH = "Huizhou Chinese";
 	const HU = "Hungarian";
 	const IS = "Icelandic";
+	const KPO = "Ikposo";
+	const ILO = "Iloko";
+	const SMN = "Inari Sami";
 	const IN = "Indonesian";
 	const ID = "Indonesian";
+	const IZH = "Ingrian";
+	const INH = "Ingush";
 	const IA = "Interlingua";
 	const IE = "Interlingue";
 	const IU = "Inuktitut";
 	const IK = "Inupiak";
 	const GA = "Irish";
 	const IT = "Italian";
+	const ITL = "Itelmen";
 	const JA = "Japanese";
 	const JV = "Javanese";
+	const CJY = "Jinyu Chinese";
+	const KAJ = "Jju";
+	const JCT = "Judeo-Crimean Tatar";
+	const JGE = "Judeo-Georgian";
+	const JUT = "Jutish";
+	const KBD = "Kabardian";
+	const KEA = "Kabuverdianu";
+	const KAB = "Kabyle";
+	const KFR = "Kachchi";
+	const KJV = "Kaikavian literary language (Kajkavian)";
+	const XAL = "Kalmyk Oirat";
 	const KN = "Kannada";
+	const KSK = "Kansa";
+	const KRC = "Karachay-Balkar";
+	const KIM = "Karagas";
+	const KDR = "Karaim";
+	const KAA = "Karakalpak";
+	const KRL = "Karelian";
 	const KS = "Kashmiri";
+	const CSB = "Kashubian";
+	const KKZ = "Kaska";
+	const KAW = "Kawi";
 	const KK = "Kazakh";
+	const KJH = "Khakas";
+	const KLJ = "Khalaj Turkic";
+	const KCA = "Khanty";
+	const KHA = "Khasi";
+	const KXM = "Khmer Northern";
+	const KIC = "Kickapoo";
 	const RW = "Kinyarwanda (Ruanda)";
+	const KIO = "Kiowa";
 	const KY = "Kirghiz";
 	const RN = "Kirundi (Rundi)";
+	const TLH = "Klingon tlhIngan-Hol";
+	const KFA = "Kodava";
+	const KOI = "Komi-Permyak";
+	const KOK = "Konkani (generic)";
+	const KNN = "Konkani (specific)";
+	const GOM = "Konkani Goan";
 	const KO = "Korean";
+	const KPY = "Koryak";
+	const KOS = "Kosraean";
+	const AVK = "Kotava";
+	const KPE = "Kpelle";
+	const DIH = "Kumiai";
+	const KUM = "Kumyk";
 	const KU = "Kurdish";
+	const KUT = "Kutenai";
+	const KWK = "Kwakiutl";
+	const GDM = "Laal";
+	const LLD = "Ladin";
+	const LAD = "Ladino";
+	const LAH = "Lahnda";
+	const LHU = "Lahu";
+	const LBE = "Lak";
+	const LKI = "Laki";
+	const LKT = "Lakota";
 	const LO = "Laothian";
 	const LA = "Latin";
 	const LV = "Latvian (Lettish)";
+	const LZZ = "Laz";
+	const LEZ = "Lezghian";
+	const LIJ = "Ligurian";
+	const LIL = "Lillooet";
+	const LIF = "Limbu";
 	const LI = "Limburgish ( Limburger)";
 	const LN = "Lingala";
 	const LT = "Lithuanian";
+	const JBO = "Lojban";
+	const LOM = "Loma (Liberia)";
+	const LMO = "Lombard";
+	const NDS = "Low German Low Saxon";
+	const LOZ = "Lozi";
+	const LUA = "Luba-Lulua";
+	const LUQ = "Lucumi";
+	const LUD = "Ludian";
+	const SMJ = "Lule Sami";
+	const LUN = "Lunda";
+	const LUO = "Luo (Kenya and Tanzania)";
+	const LUT = "Lushootseed";
 	const MK = "Macedonian";
+	const MAD = "Madurese";
+	const MAG = "Magahi";
+	const MAI = "Maithili";
 	const MG = "Malagasy";
 	const MS = "Malay";
 	const ML = "Malayalam";
+	const PQM = "Malecite-Passamaquoddy";
 	const MT = "Maltese";
+	const MNC = "Manchu";
+	const MID = "Mandaic";
+	const MHQ = "Mandan";
+	const CMN = "Mandarin Chinese";
+	const MNS = "Mansi";
 	const MI = "Maori";
+	const MRW = "Maranao";
 	const MR = "Marathi";
+	const CHM = "Mari (Russia)";
+	const MWR = "Marwari";
+	const MAS = "Masai";
+	const MFY = "Mayo";
+	const MNI = "Meitei";
+	const MEN = "Mende (Sierra Leone)";
+	const MEZ = "Menominee";
+	const MIC = "Micmac";
+	const MNP = "Min Bei Chinese";
+	const CDO = "Min Dong Chinese";
+	const MIN = "Minangkabau";
+	const XMF = "Mingrelian";
+	const MWL = "Mirandese";
+	const MOH = "Mohawk";
+	const MDF = "Moksha";
 	const MO = "Moldavian";
+	const MNW = "Mon";
 	const MN = "Mongolian";
+	const MFE = "Morisyen";
+	const MOS = "Mossi";
+	const MXI = "Mozarabic";
+	const MU = "Multilingual";
+	const MTQ = "Muong";
+	const NAQ = "Nama (Namibia)";
+	const GLD = "Nanai";
+	const NSK = "Naskapi";
 	const NA = "Nauru";
+	const NAP = "Neapolitan";
 	const NE = "Nepali";
+	const NEW_ = "Newari Nepal Bhasa";
+	const NIO = "Nganasan";
+	const NCG = "Nisgaa";
+	const NIU = "Niuean";
+	const NOG = "Nogai";
+	const NON = "Norse Old";
+	const NSO = "Northern Sotho Pedi Sepedi";
 	const NO = "Norwegian";
+	const NOV = "Novial";
+	const NYM = "Nyamwezi";
+	const NYO = "Nyoro";
+	const NYS = "Nyungah";
 	const OC = "Occitan";
+	const OJC = "Ojibwa Central";
+	const OJG = "Ojibwa Eastern";
+	const OJB = "Ojibwa Northwestern";
+	const OJS = "Ojibwa Severn";
+	const OJW = "Ojibwa Western";
+	const RYU = "Okinawan Central";
+	const ANG = "Old English";
+	const ONE = "Oneida";
+	const ONO = "Onondaga";
 	const OR_ = "Oriya";
 	const OM = "Oromo (Afan, Galla)";
+	const OTW = "Ottawa";
+	const PPI = "Paipai";
+	const PAU = "Palauan";
+	const PAM = "Pampanga";
+	const PAG = "Pangasinan";
+	const PAP = "Papiamento";
 	const PS = "Pashto (Pushto)";
+	const PRP = "Persian";
+	const PRS = "Persian (Dari)";
+	const PFL = "Pfaelzisch";
+	const PCD = "Picard";
+	const PMS = "Piedmontese";
+	const MYP = "Pirah";
+	const PIH = "Pitcairn-Norfolk";
+	const PDT = "Plautdietsch";
 	const PL = "Polish";
+	const PNT = "Pontic";
 	const PT = "Portuguese";
+	const POT = "Potawatomi";
+	const PRG = "Prussian";
+	const FUC = "Pulaar";
 	const PA = "Punjabi";
+	const QXQ = "Qashqai";
+	const ALC = "Qawasqar";
 	const QU = "Quechua";
+	const QUC = "Quich Central";
+	const RAP = "Rapanui";
+	const RAR = "Rarotongan";
+	const QTZ = "Reserved for local use.";
 	const RM = "Rhaeto-Romance";
+	const RGN = "Romagnol";
+	const RMF = "Romani Kalo Finnish";
+	const RMO = "Romani Sinte";
 	const RO = "Romanian";
+	const RUO = "Romanian Istro";
+	const RUQ = "Romanian Megleno";
+	const ROM = "Romany";
+	const RCF = "Runion Creole French";
 	const RU = "Russian";
+	const RUE = "Rusyn";
+	const ACF = "Saint Lucian Creole French";
+	const SAH = "Sakha";
+	const SLR = "Salar";
+	const STR = "Salish Straits";
+	const SJD = "Sami Kildin";
 	const SM = "Samoan";
 	const SG = "Sangro";
 	const SA = "Sanskrit";
+	const SAT = "Santali";
+	const SRM = "Saramaccan";
+	const SDC = "Sardinian Sassarese";
+	const STQ = "Saterland Frisian";
+	const SXU = "Saxon Upper";
+	const SCO = "Scots";
+	const SEC = "Sechelt";
+	const TRV = "Seediq";
+	const SEK = "Sekani";
+	const SEL = "Selkup";
+	const SEE = "Seneca";
 	const SR = "Serbian";
 	const SH = "Serbo-Croatian";
+	const SEI = "Seri";
 	const ST = "Sesotho";
 	const TN = "Setswana";
+	const SJW = "Shawnee";
 	const SN = "Shona";
+	const CJS = "Shor";
+	const SHH = "Shoshoni";
+	const SHS = "Shuswap";
+	const SCN = "Sicilian";
+	const SID = "Sidamo";
+	const SZL = "Silesian";
 	const SD = "Sindhi";
 	const SI = "Sinhalese";
 	const SS = "Siswati";
+	const SMS = "Skolt Sami";
+	const SCS = "Slavey North";
+	const XSL = "Slavey South";
 	const SK = "Slovak";
 	const SL = "Slovenian";
 	const SO = "Somali";
+	const SNK = "Soninke";
+	const DSB = "Sorbian Lower";
+	const HSB = "Sorbian Upper";
+	const SMA = "Southern Sami";
 	const ES = "Spanish";
+	const SRN = "Sranan";
+	const STO = "Stoney";
+	const XSV = "Sudovian";
+	const SUX = "Sumerian";
 	const SU = "Sundanese";
+	const SVA = "Svan";
+	const SWG = "Swabian";
 	const SW = "Swahili (Kiswahili)";
 	const SV = "Swedish";
+	const SWL = "Swedish Sign Language";
+	const GSW = "Swiss German Alemannic Alsatian";
+	const SYR = "Syriac";
+	const TAB = "Tabassaran";
+	const SHY = "Tachawit";
+	const SHI = "Tachelhit";
 	const TL = "Tagalog";
+	const TBW = "Tagbanwa";
+	const TGX = "Tagish";
+	const THT = "Tahltan";
+	const TDD = "Tai Na";
 	const TG = "Tajik";
+	const TLY = "Talysh";
+	const TTQ = "Tamajaq Tawallammat";
+	const TAQ = "Tamasheq";
+	const TZM = "Tamazight Central Atlas";
 	const TA = "Tamil";
+	const TAR = "Tarahumara Central";
+	const TTT = "Tat Muslim";
 	const TT = "Tatar";
 	const TE = "Telugu";
+	const TEO = "Teo Chew";
+	const TET = "Tetum";
 	const TH = "Thai";
+	const NOD = "Thai (Northern)";
+	const TTS = "Thai Northeastern";
+	const THP = "Thompson";
 	const BO = "Tibetan";
+	const TIG = "Tigre";
 	const TI = "Tigrinya";
+	const TLI = "Tlingit";
+	const TCX = "Toda";
+	const OOD = "Tohono Oodham";
+	const TPI = "Tok Pisin";
 	const TO = "Tonga";
+	const TOG = "Tonga (Nyasa)";
+	const DDO = "Tsez";
+	const TSI = "Tsimshian";
 	const TS = "Tsonga";
+	const TCY = "Tulu";
+	const TUM = "Tumbuka";
+	const MZB = "Tumzabt";
+	const TPN = "Tupinamb";
+	const TUV = "Turkana";
 	const TR = "Turkish";
+	const OTA = "Turkish Ottoman";
 	const TK = "Turkmen";
+	const TUS = "Tuscarora";
+	const TVL = "Tuvalu";
+	const TYV = "Tuvinian";
 	const TW = "Twi";
+	const UBY = "Ubykh";
+	const UDI = "Udi";
+	const UDM = "Udmurt";
 	const UG = "Uighur";
 	const UK = "Ukrainian";
+	const UN = "Undefined";
 	const UR = "Urdu";
+	const UUM = "Urum";
 	const UZ = "Uzbek";
+	const VEC = "Venetian";
+	const VEP = "Veps";
 	const VI = "Vietnamese";
 	const VO = "Volapuk";
+	const VOR = "Voro";
+	const VOT = "Votic";
+	const VRO = "Vro";
+	const AUC = "Waorani";
+	const WAR = "Waray (Philippines)";
 	const CY = "Welsh";
+	const PES = "Western Farsi";
+	const AMW = "Western Neo-Aramaic";
+	const WIY = "Wiyot";
 	const WO = "Wolof";
+	const WUU = "Wu Chinese";
+	const WYM = "Wymysorys";
 	const XH = "Xhosa";
+	const AME = "Yanesha";
 	const YI = "Yiddish";
 	const JI = "Yiddish";
 	const YO = "Yoruba";
+	const ZAI = "Zapotec Isthmus";
+	const DJE = "Zarma";
 	const ZU = "Zulu";
 }
 
@@ -2140,7 +3283,7 @@ class KalturaLanguage
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaLanguageCode
+class KalturaLanguageCode extends KalturaEnumBase
 {
 	const AA = "aa";
 	const AB = "ab";
@@ -2167,6 +3310,8 @@ class KalturaLanguageCode
 	const DZ = "dz";
 	const EL = "el";
 	const EN = "en";
+	const EN_GB = "en_gb";
+	const EN_US = "en_us";
 	const EO = "eo";
 	const ES = "es";
 	const ET = "et";
@@ -2225,6 +3370,7 @@ class KalturaLanguageCode
 	const MR = "mr";
 	const MS = "ms";
 	const MT = "mt";
+	const MU = "multilingual";
 	const MY = "my";
 	const NA = "na";
 	const NE = "ne";
@@ -2291,7 +3437,7 @@ class KalturaLanguageCode
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaLiveAssetOrderBy
+class KalturaLiveAssetOrderBy extends KalturaEnumBase
 {
 	const CREATED_AT_ASC = "+createdAt";
 	const DELETED_AT_ASC = "+deletedAt";
@@ -2307,11 +3453,64 @@ class KalturaLiveAssetOrderBy
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaLiveChannelOrderBy
+class KalturaLiveChannelCompareAttribute extends KalturaEnumBase
+{
+	const ACCESS_CONTROL_ID = "accessControlId";
+	const CREATED_AT = "createdAt";
+	const END_DATE = "endDate";
+	const LAST_PLAYED_AT = "lastPlayedAt";
+	const MEDIA_DATE = "mediaDate";
+	const MEDIA_TYPE = "mediaType";
+	const MODERATION_COUNT = "moderationCount";
+	const MODERATION_STATUS = "moderationStatus";
+	const MS_DURATION = "msDuration";
+	const PARTNER_ID = "partnerId";
+	const PARTNER_SORT_VALUE = "partnerSortValue";
+	const PLAYS = "plays";
+	const RANK = "rank";
+	const REPLACEMENT_STATUS = "replacementStatus";
+	const START_DATE = "startDate";
+	const STATUS = "status";
+	const TOTAL_RANK = "totalRank";
+	const TYPE = "type";
+	const UPDATED_AT = "updatedAt";
+	const VIEWS = "views";
+}
+
+/**
+ * @package Kaltura
+ * @subpackage Client
+ */
+class KalturaLiveChannelMatchAttribute extends KalturaEnumBase
+{
+	const ADMIN_TAGS = "adminTags";
+	const CATEGORIES_IDS = "categoriesIds";
+	const CREATOR_ID = "creatorId";
+	const DESCRIPTION = "description";
+	const DURATION_TYPE = "durationType";
+	const FLAVOR_PARAMS_IDS = "flavorParamsIds";
+	const GROUP_ID = "groupId";
+	const ID = "id";
+	const NAME = "name";
+	const REFERENCE_ID = "referenceId";
+	const REPLACED_ENTRY_ID = "replacedEntryId";
+	const REPLACING_ENTRY_ID = "replacingEntryId";
+	const SEARCH_TEXT = "searchText";
+	const TAGS = "tags";
+	const USER_ID = "userId";
+}
+
+/**
+ * @package Kaltura
+ * @subpackage Client
+ */
+class KalturaLiveChannelOrderBy extends KalturaEnumBase
 {
 	const CREATED_AT_ASC = "+createdAt";
 	const DURATION_ASC = "+duration";
 	const END_DATE_ASC = "+endDate";
+	const FIRST_BROADCAST_ASC = "+firstBroadcast";
+	const LAST_BROADCAST_ASC = "+lastBroadcast";
 	const LAST_PLAYED_AT_ASC = "+lastPlayedAt";
 	const MEDIA_TYPE_ASC = "+mediaType";
 	const MODERATION_COUNT_ASC = "+moderationCount";
@@ -2328,6 +3527,8 @@ class KalturaLiveChannelOrderBy
 	const CREATED_AT_DESC = "-createdAt";
 	const DURATION_DESC = "-duration";
 	const END_DATE_DESC = "-endDate";
+	const FIRST_BROADCAST_DESC = "-firstBroadcast";
+	const LAST_BROADCAST_DESC = "-lastBroadcast";
 	const LAST_PLAYED_AT_DESC = "-lastPlayedAt";
 	const MEDIA_TYPE_DESC = "-mediaType";
 	const MODERATION_COUNT_DESC = "-moderationCount";
@@ -2347,7 +3548,7 @@ class KalturaLiveChannelOrderBy
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaLiveChannelSegmentOrderBy
+class KalturaLiveChannelSegmentOrderBy extends KalturaEnumBase
 {
 	const CREATED_AT_ASC = "+createdAt";
 	const START_TIME_ASC = "+startTime";
@@ -2361,7 +3562,7 @@ class KalturaLiveChannelSegmentOrderBy
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaLiveChannelSegmentStatus
+class KalturaLiveChannelSegmentStatus extends KalturaEnumBase
 {
 	const ACTIVE = "2";
 	const DELETED = "3";
@@ -2371,7 +3572,7 @@ class KalturaLiveChannelSegmentStatus
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaLiveChannelSegmentTriggerType
+class KalturaLiveChannelSegmentTriggerType extends KalturaEnumBase
 {
 	const CHANNEL_RELATIVE = "1";
 	const ABSOLUTE_TIME = "2";
@@ -2383,7 +3584,7 @@ class KalturaLiveChannelSegmentTriggerType
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaLiveChannelSegmentType
+class KalturaLiveChannelSegmentType extends KalturaEnumBase
 {
 	const VIDEO_AND_AUDIO = "1";
 }
@@ -2392,11 +3593,64 @@ class KalturaLiveChannelSegmentType
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaLiveEntryOrderBy
+class KalturaLiveEntryCompareAttribute extends KalturaEnumBase
+{
+	const ACCESS_CONTROL_ID = "accessControlId";
+	const CREATED_AT = "createdAt";
+	const END_DATE = "endDate";
+	const LAST_PLAYED_AT = "lastPlayedAt";
+	const MEDIA_DATE = "mediaDate";
+	const MEDIA_TYPE = "mediaType";
+	const MODERATION_COUNT = "moderationCount";
+	const MODERATION_STATUS = "moderationStatus";
+	const MS_DURATION = "msDuration";
+	const PARTNER_ID = "partnerId";
+	const PARTNER_SORT_VALUE = "partnerSortValue";
+	const PLAYS = "plays";
+	const RANK = "rank";
+	const REPLACEMENT_STATUS = "replacementStatus";
+	const START_DATE = "startDate";
+	const STATUS = "status";
+	const TOTAL_RANK = "totalRank";
+	const TYPE = "type";
+	const UPDATED_AT = "updatedAt";
+	const VIEWS = "views";
+}
+
+/**
+ * @package Kaltura
+ * @subpackage Client
+ */
+class KalturaLiveEntryMatchAttribute extends KalturaEnumBase
+{
+	const ADMIN_TAGS = "adminTags";
+	const CATEGORIES_IDS = "categoriesIds";
+	const CREATOR_ID = "creatorId";
+	const DESCRIPTION = "description";
+	const DURATION_TYPE = "durationType";
+	const FLAVOR_PARAMS_IDS = "flavorParamsIds";
+	const GROUP_ID = "groupId";
+	const ID = "id";
+	const NAME = "name";
+	const REFERENCE_ID = "referenceId";
+	const REPLACED_ENTRY_ID = "replacedEntryId";
+	const REPLACING_ENTRY_ID = "replacingEntryId";
+	const SEARCH_TEXT = "searchText";
+	const TAGS = "tags";
+	const USER_ID = "userId";
+}
+
+/**
+ * @package Kaltura
+ * @subpackage Client
+ */
+class KalturaLiveEntryOrderBy extends KalturaEnumBase
 {
 	const CREATED_AT_ASC = "+createdAt";
 	const DURATION_ASC = "+duration";
 	const END_DATE_ASC = "+endDate";
+	const FIRST_BROADCAST_ASC = "+firstBroadcast";
+	const LAST_BROADCAST_ASC = "+lastBroadcast";
 	const LAST_PLAYED_AT_ASC = "+lastPlayedAt";
 	const MEDIA_TYPE_ASC = "+mediaType";
 	const MODERATION_COUNT_ASC = "+moderationCount";
@@ -2413,6 +3667,8 @@ class KalturaLiveEntryOrderBy
 	const CREATED_AT_DESC = "-createdAt";
 	const DURATION_DESC = "-duration";
 	const END_DATE_DESC = "-endDate";
+	const FIRST_BROADCAST_DESC = "-firstBroadcast";
+	const LAST_BROADCAST_DESC = "-lastBroadcast";
 	const LAST_PLAYED_AT_DESC = "-lastPlayedAt";
 	const MEDIA_TYPE_DESC = "-mediaType";
 	const MODERATION_COUNT_DESC = "-moderationCount";
@@ -2432,7 +3688,19 @@ class KalturaLiveEntryOrderBy
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaLiveParamsOrderBy
+class KalturaLiveEntryServerNodeOrderBy extends KalturaEnumBase
+{
+	const CREATED_AT_ASC = "+createdAt";
+	const UPDATED_AT_ASC = "+updatedAt";
+	const CREATED_AT_DESC = "-createdAt";
+	const UPDATED_AT_DESC = "-updatedAt";
+}
+
+/**
+ * @package Kaltura
+ * @subpackage Client
+ */
+class KalturaLiveParamsOrderBy extends KalturaEnumBase
 {
 }
 
@@ -2440,11 +3708,89 @@ class KalturaLiveParamsOrderBy
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaLiveStreamAdminEntryOrderBy
+class KalturaLiveReportOrderBy extends KalturaEnumBase
+{
+	const NAME_ASC = "+name";
+	const AUDIENCE_DESC = "-audience";
+	const EVENT_TIME_DESC = "-eventTime";
+	const PLAYS_DESC = "-plays";
+}
+
+/**
+ * @package Kaltura
+ * @subpackage Client
+ */
+class KalturaLiveReportType extends KalturaEnumBase
+{
+	const ENTRY_GEO_TIME_LINE = "ENTRY_GEO_TIME_LINE";
+	const ENTRY_SYNDICATION_TOTAL = "ENTRY_SYNDICATION_TOTAL";
+	const ENTRY_TIME_LINE = "ENTRY_TIME_LINE";
+	const ENTRY_TOTAL = "ENTRY_TOTAL";
+	const PARTNER_TOTAL = "PARTNER_TOTAL";
+}
+
+/**
+ * @package Kaltura
+ * @subpackage Client
+ */
+class KalturaLiveStreamAdminEntryCompareAttribute extends KalturaEnumBase
+{
+	const ACCESS_CONTROL_ID = "accessControlId";
+	const CREATED_AT = "createdAt";
+	const END_DATE = "endDate";
+	const LAST_PLAYED_AT = "lastPlayedAt";
+	const MEDIA_DATE = "mediaDate";
+	const MEDIA_TYPE = "mediaType";
+	const MODERATION_COUNT = "moderationCount";
+	const MODERATION_STATUS = "moderationStatus";
+	const MS_DURATION = "msDuration";
+	const PARTNER_ID = "partnerId";
+	const PARTNER_SORT_VALUE = "partnerSortValue";
+	const PLAYS = "plays";
+	const RANK = "rank";
+	const REPLACEMENT_STATUS = "replacementStatus";
+	const START_DATE = "startDate";
+	const STATUS = "status";
+	const TOTAL_RANK = "totalRank";
+	const TYPE = "type";
+	const UPDATED_AT = "updatedAt";
+	const VIEWS = "views";
+}
+
+/**
+ * @package Kaltura
+ * @subpackage Client
+ */
+class KalturaLiveStreamAdminEntryMatchAttribute extends KalturaEnumBase
+{
+	const ADMIN_TAGS = "adminTags";
+	const CATEGORIES_IDS = "categoriesIds";
+	const CREATOR_ID = "creatorId";
+	const DESCRIPTION = "description";
+	const DURATION_TYPE = "durationType";
+	const FLAVOR_PARAMS_IDS = "flavorParamsIds";
+	const GROUP_ID = "groupId";
+	const ID = "id";
+	const NAME = "name";
+	const REFERENCE_ID = "referenceId";
+	const REPLACED_ENTRY_ID = "replacedEntryId";
+	const REPLACING_ENTRY_ID = "replacingEntryId";
+	const SEARCH_TEXT = "searchText";
+	const TAGS = "tags";
+	const USER_ID = "userId";
+}
+
+/**
+ * @package Kaltura
+ * @subpackage Client
+ */
+class KalturaLiveStreamAdminEntryOrderBy extends KalturaEnumBase
 {
 	const CREATED_AT_ASC = "+createdAt";
 	const DURATION_ASC = "+duration";
 	const END_DATE_ASC = "+endDate";
+	const FIRST_BROADCAST_ASC = "+firstBroadcast";
+	const LAST_BROADCAST_ASC = "+lastBroadcast";
 	const LAST_PLAYED_AT_ASC = "+lastPlayedAt";
 	const MEDIA_TYPE_ASC = "+mediaType";
 	const MODERATION_COUNT_ASC = "+moderationCount";
@@ -2461,6 +3807,8 @@ class KalturaLiveStreamAdminEntryOrderBy
 	const CREATED_AT_DESC = "-createdAt";
 	const DURATION_DESC = "-duration";
 	const END_DATE_DESC = "-endDate";
+	const FIRST_BROADCAST_DESC = "-firstBroadcast";
+	const LAST_BROADCAST_DESC = "-lastBroadcast";
 	const LAST_PLAYED_AT_DESC = "-lastPlayedAt";
 	const MEDIA_TYPE_DESC = "-mediaType";
 	const MODERATION_COUNT_DESC = "-moderationCount";
@@ -2480,11 +3828,64 @@ class KalturaLiveStreamAdminEntryOrderBy
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaLiveStreamEntryOrderBy
+class KalturaLiveStreamEntryCompareAttribute extends KalturaEnumBase
+{
+	const ACCESS_CONTROL_ID = "accessControlId";
+	const CREATED_AT = "createdAt";
+	const END_DATE = "endDate";
+	const LAST_PLAYED_AT = "lastPlayedAt";
+	const MEDIA_DATE = "mediaDate";
+	const MEDIA_TYPE = "mediaType";
+	const MODERATION_COUNT = "moderationCount";
+	const MODERATION_STATUS = "moderationStatus";
+	const MS_DURATION = "msDuration";
+	const PARTNER_ID = "partnerId";
+	const PARTNER_SORT_VALUE = "partnerSortValue";
+	const PLAYS = "plays";
+	const RANK = "rank";
+	const REPLACEMENT_STATUS = "replacementStatus";
+	const START_DATE = "startDate";
+	const STATUS = "status";
+	const TOTAL_RANK = "totalRank";
+	const TYPE = "type";
+	const UPDATED_AT = "updatedAt";
+	const VIEWS = "views";
+}
+
+/**
+ * @package Kaltura
+ * @subpackage Client
+ */
+class KalturaLiveStreamEntryMatchAttribute extends KalturaEnumBase
+{
+	const ADMIN_TAGS = "adminTags";
+	const CATEGORIES_IDS = "categoriesIds";
+	const CREATOR_ID = "creatorId";
+	const DESCRIPTION = "description";
+	const DURATION_TYPE = "durationType";
+	const FLAVOR_PARAMS_IDS = "flavorParamsIds";
+	const GROUP_ID = "groupId";
+	const ID = "id";
+	const NAME = "name";
+	const REFERENCE_ID = "referenceId";
+	const REPLACED_ENTRY_ID = "replacedEntryId";
+	const REPLACING_ENTRY_ID = "replacingEntryId";
+	const SEARCH_TEXT = "searchText";
+	const TAGS = "tags";
+	const USER_ID = "userId";
+}
+
+/**
+ * @package Kaltura
+ * @subpackage Client
+ */
+class KalturaLiveStreamEntryOrderBy extends KalturaEnumBase
 {
 	const CREATED_AT_ASC = "+createdAt";
 	const DURATION_ASC = "+duration";
 	const END_DATE_ASC = "+endDate";
+	const FIRST_BROADCAST_ASC = "+firstBroadcast";
+	const LAST_BROADCAST_ASC = "+lastBroadcast";
 	const LAST_PLAYED_AT_ASC = "+lastPlayedAt";
 	const MEDIA_TYPE_ASC = "+mediaType";
 	const MODERATION_COUNT_ASC = "+moderationCount";
@@ -2501,6 +3902,8 @@ class KalturaLiveStreamEntryOrderBy
 	const CREATED_AT_DESC = "-createdAt";
 	const DURATION_DESC = "-duration";
 	const END_DATE_DESC = "-endDate";
+	const FIRST_BROADCAST_DESC = "-firstBroadcast";
+	const LAST_BROADCAST_DESC = "-lastBroadcast";
 	const LAST_PLAYED_AT_DESC = "-lastPlayedAt";
 	const MEDIA_TYPE_DESC = "-mediaType";
 	const MODERATION_COUNT_DESC = "-moderationCount";
@@ -2520,7 +3923,7 @@ class KalturaLiveStreamEntryOrderBy
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaMailType
+class KalturaMailType extends KalturaEnumBase
 {
 	const MAIL_TYPE_KALTURA_NEWSLETTER = "10";
 	const MAIL_TYPE_ADDED_TO_FAVORITES = "11";
@@ -2561,13 +3964,78 @@ class KalturaMailType
 	const MAIL_TYPE_SYSTEM_USER_RESET_PASSWORD_SUCCESS = "111";
 	const MAIL_TYPE_SYSTEM_USER_NEW_PASSWORD = "112";
 	const MAIL_TYPE_SYSTEM_USER_CREDENTIALS_SAVED = "113";
+	const MAIL_TYPE_LIVE_REPORT_EXPORT_SUCCESS = "130";
+	const MAIL_TYPE_LIVE_REPORT_EXPORT_FAILURE = "131";
+	const MAIL_TYPE_LIVE_REPORT_EXPORT_ABORT = "132";
+	const MAIL_TYPE_USERS_CSV = "133";
 }
 
 /**
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaMediaEntryOrderBy
+class KalturaMatchConditionType extends KalturaEnumBase
+{
+	const MATCH_ANY = "1";
+	const MATCH_ALL = "2";
+}
+
+/**
+ * @package Kaltura
+ * @subpackage Client
+ */
+class KalturaMediaEntryCompareAttribute extends KalturaEnumBase
+{
+	const ACCESS_CONTROL_ID = "accessControlId";
+	const CREATED_AT = "createdAt";
+	const END_DATE = "endDate";
+	const LAST_PLAYED_AT = "lastPlayedAt";
+	const MEDIA_DATE = "mediaDate";
+	const MEDIA_TYPE = "mediaType";
+	const MODERATION_COUNT = "moderationCount";
+	const MODERATION_STATUS = "moderationStatus";
+	const MS_DURATION = "msDuration";
+	const PARTNER_ID = "partnerId";
+	const PARTNER_SORT_VALUE = "partnerSortValue";
+	const PLAYS = "plays";
+	const RANK = "rank";
+	const REPLACEMENT_STATUS = "replacementStatus";
+	const START_DATE = "startDate";
+	const STATUS = "status";
+	const TOTAL_RANK = "totalRank";
+	const TYPE = "type";
+	const UPDATED_AT = "updatedAt";
+	const VIEWS = "views";
+}
+
+/**
+ * @package Kaltura
+ * @subpackage Client
+ */
+class KalturaMediaEntryMatchAttribute extends KalturaEnumBase
+{
+	const ADMIN_TAGS = "adminTags";
+	const CATEGORIES_IDS = "categoriesIds";
+	const CREATOR_ID = "creatorId";
+	const DESCRIPTION = "description";
+	const DURATION_TYPE = "durationType";
+	const FLAVOR_PARAMS_IDS = "flavorParamsIds";
+	const GROUP_ID = "groupId";
+	const ID = "id";
+	const NAME = "name";
+	const REFERENCE_ID = "referenceId";
+	const REPLACED_ENTRY_ID = "replacedEntryId";
+	const REPLACING_ENTRY_ID = "replacingEntryId";
+	const SEARCH_TEXT = "searchText";
+	const TAGS = "tags";
+	const USER_ID = "userId";
+}
+
+/**
+ * @package Kaltura
+ * @subpackage Client
+ */
+class KalturaMediaEntryOrderBy extends KalturaEnumBase
 {
 	const CREATED_AT_ASC = "+createdAt";
 	const DURATION_ASC = "+duration";
@@ -2607,7 +4075,7 @@ class KalturaMediaEntryOrderBy
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaMediaFlavorParamsOrderBy
+class KalturaMediaFlavorParamsOrderBy extends KalturaEnumBase
 {
 }
 
@@ -2615,7 +4083,7 @@ class KalturaMediaFlavorParamsOrderBy
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaMediaFlavorParamsOutputOrderBy
+class KalturaMediaFlavorParamsOutputOrderBy extends KalturaEnumBase
 {
 }
 
@@ -2623,7 +4091,7 @@ class KalturaMediaFlavorParamsOutputOrderBy
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaMediaInfoOrderBy
+class KalturaMediaInfoOrderBy extends KalturaEnumBase
 {
 }
 
@@ -2631,7 +4099,7 @@ class KalturaMediaInfoOrderBy
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaMediaParserType
+class KalturaMediaParserType extends KalturaEnumBase
 {
 	const MEDIAINFO = "0";
 	const REMOTE_MEDIAINFO = "remoteMediaInfo.RemoteMediaInfo";
@@ -2642,11 +4110,13 @@ class KalturaMediaParserType
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaMediaServerOrderBy
+class KalturaMediaServerNodeOrderBy extends KalturaEnumBase
 {
 	const CREATED_AT_ASC = "+createdAt";
+	const HEARTBEAT_TIME_ASC = "+heartbeatTime";
 	const UPDATED_AT_ASC = "+updatedAt";
 	const CREATED_AT_DESC = "-createdAt";
+	const HEARTBEAT_TIME_DESC = "-heartbeatTime";
 	const UPDATED_AT_DESC = "-updatedAt";
 }
 
@@ -2654,7 +4124,55 @@ class KalturaMediaServerOrderBy
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaMixEntryOrderBy
+class KalturaMixEntryCompareAttribute extends KalturaEnumBase
+{
+	const ACCESS_CONTROL_ID = "accessControlId";
+	const CREATED_AT = "createdAt";
+	const END_DATE = "endDate";
+	const LAST_PLAYED_AT = "lastPlayedAt";
+	const MODERATION_COUNT = "moderationCount";
+	const MODERATION_STATUS = "moderationStatus";
+	const MS_DURATION = "msDuration";
+	const PARTNER_ID = "partnerId";
+	const PARTNER_SORT_VALUE = "partnerSortValue";
+	const PLAYS = "plays";
+	const RANK = "rank";
+	const REPLACEMENT_STATUS = "replacementStatus";
+	const START_DATE = "startDate";
+	const STATUS = "status";
+	const TOTAL_RANK = "totalRank";
+	const TYPE = "type";
+	const UPDATED_AT = "updatedAt";
+	const VIEWS = "views";
+}
+
+/**
+ * @package Kaltura
+ * @subpackage Client
+ */
+class KalturaMixEntryMatchAttribute extends KalturaEnumBase
+{
+	const ADMIN_TAGS = "adminTags";
+	const CATEGORIES_IDS = "categoriesIds";
+	const CREATOR_ID = "creatorId";
+	const DESCRIPTION = "description";
+	const DURATION_TYPE = "durationType";
+	const GROUP_ID = "groupId";
+	const ID = "id";
+	const NAME = "name";
+	const REFERENCE_ID = "referenceId";
+	const REPLACED_ENTRY_ID = "replacedEntryId";
+	const REPLACING_ENTRY_ID = "replacingEntryId";
+	const SEARCH_TEXT = "searchText";
+	const TAGS = "tags";
+	const USER_ID = "userId";
+}
+
+/**
+ * @package Kaltura
+ * @subpackage Client
+ */
+class KalturaMixEntryOrderBy extends KalturaEnumBase
 {
 	const CREATED_AT_ASC = "+createdAt";
 	const DURATION_ASC = "+duration";
@@ -2692,7 +4210,7 @@ class KalturaMixEntryOrderBy
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaModerationFlagStatus
+class KalturaModerationFlagStatus extends KalturaEnumBase
 {
 	const PENDING = "1";
 	const MODERATED = "2";
@@ -2702,7 +4220,7 @@ class KalturaModerationFlagStatus
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaModerationObjectType
+class KalturaModerationObjectType extends KalturaEnumBase
 {
 	const ENTRY = "2";
 	const USER = "3";
@@ -2712,7 +4230,7 @@ class KalturaModerationObjectType
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaPartnerOrderBy
+class KalturaPartnerOrderBy extends KalturaEnumBase
 {
 	const ADMIN_EMAIL_ASC = "+adminEmail";
 	const ADMIN_NAME_ASC = "+adminName";
@@ -2734,7 +4252,7 @@ class KalturaPartnerOrderBy
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaPermissionItemOrderBy
+class KalturaPermissionItemOrderBy extends KalturaEnumBase
 {
 	const CREATED_AT_ASC = "+createdAt";
 	const ID_ASC = "+id";
@@ -2748,7 +4266,7 @@ class KalturaPermissionItemOrderBy
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaPermissionItemType
+class KalturaPermissionItemType extends KalturaEnumBase
 {
 	const API_ACTION_ITEM = "kApiActionPermissionItem";
 	const API_PARAMETER_ITEM = "kApiParameterPermissionItem";
@@ -2758,7 +4276,7 @@ class KalturaPermissionItemType
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaPermissionOrderBy
+class KalturaPermissionOrderBy extends KalturaEnumBase
 {
 	const CREATED_AT_ASC = "+createdAt";
 	const ID_ASC = "+id";
@@ -2774,7 +4292,55 @@ class KalturaPermissionOrderBy
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaPlayableEntryOrderBy
+class KalturaPlayableEntryCompareAttribute extends KalturaEnumBase
+{
+	const ACCESS_CONTROL_ID = "accessControlId";
+	const CREATED_AT = "createdAt";
+	const END_DATE = "endDate";
+	const LAST_PLAYED_AT = "lastPlayedAt";
+	const MODERATION_COUNT = "moderationCount";
+	const MODERATION_STATUS = "moderationStatus";
+	const MS_DURATION = "msDuration";
+	const PARTNER_ID = "partnerId";
+	const PARTNER_SORT_VALUE = "partnerSortValue";
+	const PLAYS = "plays";
+	const RANK = "rank";
+	const REPLACEMENT_STATUS = "replacementStatus";
+	const START_DATE = "startDate";
+	const STATUS = "status";
+	const TOTAL_RANK = "totalRank";
+	const TYPE = "type";
+	const UPDATED_AT = "updatedAt";
+	const VIEWS = "views";
+}
+
+/**
+ * @package Kaltura
+ * @subpackage Client
+ */
+class KalturaPlayableEntryMatchAttribute extends KalturaEnumBase
+{
+	const ADMIN_TAGS = "adminTags";
+	const CATEGORIES_IDS = "categoriesIds";
+	const CREATOR_ID = "creatorId";
+	const DESCRIPTION = "description";
+	const DURATION_TYPE = "durationType";
+	const GROUP_ID = "groupId";
+	const ID = "id";
+	const NAME = "name";
+	const REFERENCE_ID = "referenceId";
+	const REPLACED_ENTRY_ID = "replacedEntryId";
+	const REPLACING_ENTRY_ID = "replacingEntryId";
+	const SEARCH_TEXT = "searchText";
+	const TAGS = "tags";
+	const USER_ID = "userId";
+}
+
+/**
+ * @package Kaltura
+ * @subpackage Client
+ */
+class KalturaPlayableEntryOrderBy extends KalturaEnumBase
 {
 	const CREATED_AT_ASC = "+createdAt";
 	const DURATION_ASC = "+duration";
@@ -2812,9 +4378,10 @@ class KalturaPlayableEntryOrderBy
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaPlaybackProtocol
+class KalturaPlaybackProtocol extends KalturaEnumBase
 {
 	const APPLE_HTTP = "applehttp";
+	const APPLE_HTTP_TO_MC = "applehttp_to_mc";
 	const AUTO = "auto";
 	const AKAMAI_HD = "hdnetwork";
 	const AKAMAI_HDS = "hdnetworkmanifest";
@@ -2822,16 +4389,61 @@ class KalturaPlaybackProtocol
 	const HLS = "hls";
 	const HTTP = "http";
 	const MPEG_DASH = "mpegdash";
+	const MULTICAST_SL = "multicast_silverlight";
 	const RTMP = "rtmp";
 	const RTSP = "rtsp";
 	const SILVER_LIGHT = "sl";
+	const URL = "url";
 }
 
 /**
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaPlaylistOrderBy
+class KalturaPlaylistCompareAttribute extends KalturaEnumBase
+{
+	const ACCESS_CONTROL_ID = "accessControlId";
+	const CREATED_AT = "createdAt";
+	const END_DATE = "endDate";
+	const MODERATION_COUNT = "moderationCount";
+	const MODERATION_STATUS = "moderationStatus";
+	const PARTNER_ID = "partnerId";
+	const PARTNER_SORT_VALUE = "partnerSortValue";
+	const RANK = "rank";
+	const REPLACEMENT_STATUS = "replacementStatus";
+	const START_DATE = "startDate";
+	const STATUS = "status";
+	const TOTAL_RANK = "totalRank";
+	const TYPE = "type";
+	const UPDATED_AT = "updatedAt";
+}
+
+/**
+ * @package Kaltura
+ * @subpackage Client
+ */
+class KalturaPlaylistMatchAttribute extends KalturaEnumBase
+{
+	const ADMIN_TAGS = "adminTags";
+	const CATEGORIES_IDS = "categoriesIds";
+	const CREATOR_ID = "creatorId";
+	const DESCRIPTION = "description";
+	const GROUP_ID = "groupId";
+	const ID = "id";
+	const NAME = "name";
+	const REFERENCE_ID = "referenceId";
+	const REPLACED_ENTRY_ID = "replacedEntryId";
+	const REPLACING_ENTRY_ID = "replacingEntryId";
+	const SEARCH_TEXT = "searchText";
+	const TAGS = "tags";
+	const USER_ID = "userId";
+}
+
+/**
+ * @package Kaltura
+ * @subpackage Client
+ */
+class KalturaPlaylistOrderBy extends KalturaEnumBase
 {
 	const CREATED_AT_ASC = "+createdAt";
 	const END_DATE_ASC = "+endDate";
@@ -2861,7 +4473,19 @@ class KalturaPlaylistOrderBy
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaReportInterval
+class KalturaQuizUserEntryOrderBy extends KalturaEnumBase
+{
+	const CREATED_AT_ASC = "+createdAt";
+	const UPDATED_AT_ASC = "+updatedAt";
+	const CREATED_AT_DESC = "-createdAt";
+	const UPDATED_AT_DESC = "-updatedAt";
+}
+
+/**
+ * @package Kaltura
+ * @subpackage Client
+ */
+class KalturaReportInterval extends KalturaEnumBase
 {
 	const DAYS = "days";
 	const MONTHS = "months";
@@ -2871,7 +4495,7 @@ class KalturaReportInterval
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaReportOrderBy
+class KalturaReportOrderBy extends KalturaEnumBase
 {
 	const CREATED_AT_ASC = "+createdAt";
 	const CREATED_AT_DESC = "-createdAt";
@@ -2881,19 +4505,73 @@ class KalturaReportOrderBy
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaRuleActionType
+class KalturaReportType extends KalturaEnumBase
 {
-	const BLOCK = "1";
-	const PREVIEW = "2";
-	const LIMIT_FLAVORS = "3";
-	const ADD_TO_STORAGE = "4";
+	const QUIZ = "quiz.QUIZ";
+	const QUIZ_AGGREGATE_BY_QUESTION = "quiz.QUIZ_AGGREGATE_BY_QUESTION";
+	const QUIZ_USER_AGGREGATE_BY_QUESTION = "quiz.QUIZ_USER_AGGREGATE_BY_QUESTION";
+	const QUIZ_USER_PERCENTAGE = "quiz.QUIZ_USER_PERCENTAGE";
+	const TOP_CONTENT = "1";
+	const CONTENT_DROPOFF = "2";
+	const CONTENT_INTERACTIONS = "3";
+	const MAP_OVERLAY = "4";
+	const TOP_CONTRIBUTORS = "5";
+	const TOP_SYNDICATION = "6";
+	const CONTENT_CONTRIBUTIONS = "7";
+	const USER_ENGAGEMENT = "11";
+	const SPECIFIC_USER_ENGAGEMENT = "12";
+	const USER_TOP_CONTENT = "13";
+	const USER_CONTENT_DROPOFF = "14";
+	const USER_CONTENT_INTERACTIONS = "15";
+	const APPLICATIONS = "16";
+	const USER_USAGE = "17";
+	const SPECIFIC_USER_USAGE = "18";
+	const VAR_USAGE = "19";
+	const TOP_CREATORS = "20";
+	const PLATFORMS = "21";
+	const OPERATING_SYSTEM = "22";
+	const BROWSERS = "23";
+	const LIVE = "24";
+	const TOP_PLAYBACK_CONTEXT = "25";
+	const VPAAS_USAGE = "26";
+	const ENTRY_USAGE = "27";
+	const PARTNER_USAGE = "201";
 }
 
 /**
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaSchemaType
+class KalturaResponseProfileOrderBy extends KalturaEnumBase
+{
+	const CREATED_AT_ASC = "+createdAt";
+	const UPDATED_AT_ASC = "+updatedAt";
+	const CREATED_AT_DESC = "-createdAt";
+	const UPDATED_AT_DESC = "-updatedAt";
+}
+
+/**
+ * @package Kaltura
+ * @subpackage Client
+ */
+class KalturaRuleActionType extends KalturaEnumBase
+{
+	const DRM_POLICY = "drm.DRM_POLICY";
+	const BLOCK = "1";
+	const PREVIEW = "2";
+	const LIMIT_FLAVORS = "3";
+	const ADD_TO_STORAGE = "4";
+	const LIMIT_DELIVERY_PROFILES = "5";
+	const SERVE_FROM_REMOTE_SERVER = "6";
+	const REQUEST_HOST_REGEX = "7";
+	const LIMIT_THUMBNAIL_CAPTURE = "8";
+}
+
+/**
+ * @package Kaltura
+ * @subpackage Client
+ */
+class KalturaSchemaType extends KalturaEnumBase
 {
 	const BULK_UPLOAD_RESULT_XML = "bulkUploadXml.bulkUploadResultXML";
 	const BULK_UPLOAD_XML = "bulkUploadXml.bulkUploadXML";
@@ -2907,20 +4585,46 @@ class KalturaSchemaType
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaSearchConditionComparison
+class KalturaSearchConditionComparison extends KalturaEnumBase
 {
 	const EQUAL = "1";
 	const GREATER_THAN = "2";
 	const GREATER_THAN_OR_EQUAL = "3";
 	const LESS_THAN = "4";
 	const LESS_THAN_OR_EQUAL = "5";
+	const NOT_EQUAL = "6";
 }
 
 /**
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaSourceType
+class KalturaServerNodeOrderBy extends KalturaEnumBase
+{
+	const CREATED_AT_ASC = "+createdAt";
+	const HEARTBEAT_TIME_ASC = "+heartbeatTime";
+	const UPDATED_AT_ASC = "+updatedAt";
+	const CREATED_AT_DESC = "-createdAt";
+	const HEARTBEAT_TIME_DESC = "-heartbeatTime";
+	const UPDATED_AT_DESC = "-updatedAt";
+}
+
+/**
+ * @package Kaltura
+ * @subpackage Client
+ */
+class KalturaServerNodeType extends KalturaEnumBase
+{
+	const CONFERENCE_SERVER = "conference.CONFERENCE_SERVER";
+	const WOWZA_MEDIA_SERVER = "wowza.WOWZA_MEDIA_SERVER";
+	const EDGE = "1";
+}
+
+/**
+ * @package Kaltura
+ * @subpackage Client
+ */
+class KalturaSourceType extends KalturaEnumBase
 {
 	const LIMELIGHT_LIVE = "limeLight.LIVE_STREAM";
 	const VELOCIX_LIVE = "velocix.VELOCIX_LIVE";
@@ -2935,13 +4639,16 @@ class KalturaSourceType
 	const LIVE_CHANNEL = "33";
 	const RECORDED_LIVE = "34";
 	const CLIP = "35";
+	const KALTURA_RECORDED_LIVE = "36";
+	const LECTURE_CAPTURE = "37";
+	const LIVE_STREAM_ONTEXTDATA_CAPTIONS = "42";
 }
 
 /**
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaStorageProfileOrderBy
+class KalturaStorageProfileOrderBy extends KalturaEnumBase
 {
 	const CREATED_AT_ASC = "+createdAt";
 	const UPDATED_AT_ASC = "+updatedAt";
@@ -2953,7 +4660,7 @@ class KalturaStorageProfileOrderBy
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaStorageProfileProtocol
+class KalturaStorageProfileProtocol extends KalturaEnumBase
 {
 	const KONTIKI = "kontiki.KONTIKI";
 	const KALTURA_DC = "0";
@@ -2968,7 +4675,7 @@ class KalturaStorageProfileProtocol
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaSyndicationFeedEntriesOrderBy
+class KalturaSyndicationFeedEntriesOrderBy extends KalturaEnumBase
 {
 	const CREATED_AT_DESC = "-createdAt";
 	const RECENT = "recent";
@@ -2978,7 +4685,7 @@ class KalturaSyndicationFeedEntriesOrderBy
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaTaggedObjectType
+class KalturaTaggedObjectType extends KalturaEnumBase
 {
 	const ENTRY = "1";
 	const CATEGORY = "2";
@@ -2988,7 +4695,7 @@ class KalturaTaggedObjectType
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaThumbAssetOrderBy
+class KalturaThumbAssetOrderBy extends KalturaEnumBase
 {
 	const CREATED_AT_ASC = "+createdAt";
 	const DELETED_AT_ASC = "+deletedAt";
@@ -3004,7 +4711,7 @@ class KalturaThumbAssetOrderBy
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaThumbParamsOrderBy
+class KalturaThumbParamsOrderBy extends KalturaEnumBase
 {
 }
 
@@ -3012,7 +4719,7 @@ class KalturaThumbParamsOrderBy
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaThumbParamsOutputOrderBy
+class KalturaThumbParamsOutputOrderBy extends KalturaEnumBase
 {
 }
 
@@ -3020,7 +4727,7 @@ class KalturaThumbParamsOutputOrderBy
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaTubeMogulSyndicationFeedCategories
+class KalturaTubeMogulSyndicationFeedCategories extends KalturaEnumBase
 {
 	const ANIMALS_AND_PETS = "Animals &amp; Pets";
 	const ARTS_AND_ANIMATION = "Arts &amp; Animation";
@@ -3043,7 +4750,7 @@ class KalturaTubeMogulSyndicationFeedCategories
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaTubeMogulSyndicationFeedOrderBy
+class KalturaTubeMogulSyndicationFeedOrderBy extends KalturaEnumBase
 {
 	const CREATED_AT_ASC = "+createdAt";
 	const NAME_ASC = "+name";
@@ -3061,7 +4768,7 @@ class KalturaTubeMogulSyndicationFeedOrderBy
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaUiConfOrderBy
+class KalturaUiConfOrderBy extends KalturaEnumBase
 {
 	const CREATED_AT_ASC = "+createdAt";
 	const UPDATED_AT_ASC = "+updatedAt";
@@ -3073,7 +4780,7 @@ class KalturaUiConfOrderBy
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaUploadTokenOrderBy
+class KalturaUploadTokenOrderBy extends KalturaEnumBase
 {
 	const CREATED_AT_ASC = "+createdAt";
 	const CREATED_AT_DESC = "-createdAt";
@@ -3083,7 +4790,51 @@ class KalturaUploadTokenOrderBy
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaUserLoginDataOrderBy
+class KalturaUserEntryExtendedStatus extends KalturaEnumBase
+{
+	const PLAYBACK_COMPLETE = "viewHistory.PLAYBACK_COMPLETE";
+	const PLAYBACK_STARTED = "viewHistory.PLAYBACK_STARTED";
+	const VIEWED = "viewHistory.VIEWED";
+}
+
+/**
+ * @package Kaltura
+ * @subpackage Client
+ */
+class KalturaUserEntryOrderBy extends KalturaEnumBase
+{
+	const CREATED_AT_ASC = "+createdAt";
+	const UPDATED_AT_ASC = "+updatedAt";
+	const CREATED_AT_DESC = "-createdAt";
+	const UPDATED_AT_DESC = "-updatedAt";
+}
+
+/**
+ * @package Kaltura
+ * @subpackage Client
+ */
+class KalturaUserEntryStatus extends KalturaEnumBase
+{
+	const QUIZ_SUBMITTED = "quiz.3";
+	const ACTIVE = "1";
+	const DELETED = "2";
+}
+
+/**
+ * @package Kaltura
+ * @subpackage Client
+ */
+class KalturaUserEntryType extends KalturaEnumBase
+{
+	const QUIZ = "quiz.QUIZ";
+	const VIEW_HISTORY = "viewHistory.VIEW_HISTORY";
+}
+
+/**
+ * @package Kaltura
+ * @subpackage Client
+ */
+class KalturaUserLoginDataOrderBy extends KalturaEnumBase
 {
 }
 
@@ -3091,7 +4842,7 @@ class KalturaUserLoginDataOrderBy
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaUserOrderBy
+class KalturaUserOrderBy extends KalturaEnumBase
 {
 	const CREATED_AT_ASC = "+createdAt";
 	const ID_ASC = "+id";
@@ -3103,7 +4854,7 @@ class KalturaUserOrderBy
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaUserRoleOrderBy
+class KalturaUserRoleOrderBy extends KalturaEnumBase
 {
 	const CREATED_AT_ASC = "+createdAt";
 	const ID_ASC = "+id";
@@ -3119,7 +4870,7 @@ class KalturaUserRoleOrderBy
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaVideoCodec
+class KalturaVideoCodec extends KalturaEnumBase
 {
 	const NONE = "";
 	const APCH = "apch";
@@ -3135,11 +4886,13 @@ class KalturaVideoCodec
 	const H264B = "h264b";
 	const H264H = "h264h";
 	const H264M = "h264m";
+	const H265 = "h265";
 	const MPEG2 = "mpeg2";
 	const MPEG4 = "mpeg4";
 	const THEORA = "theora";
 	const VP6 = "vp6";
 	const VP8 = "vp8";
+	const VP9 = "vp9";
 	const WMV2 = "wmv2";
 	const WMV3 = "wmv3";
 	const WVC1A = "wvc1a";
@@ -3149,7 +4902,7 @@ class KalturaVideoCodec
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaWidgetOrderBy
+class KalturaWidgetOrderBy extends KalturaEnumBase
 {
 	const CREATED_AT_ASC = "+createdAt";
 	const CREATED_AT_DESC = "-createdAt";
@@ -3159,7 +4912,7 @@ class KalturaWidgetOrderBy
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaYahooSyndicationFeedAdultValues
+class KalturaYahooSyndicationFeedAdultValues extends KalturaEnumBase
 {
 	const ADULT = "adult";
 	const NON_ADULT = "nonadult";
@@ -3169,7 +4922,7 @@ class KalturaYahooSyndicationFeedAdultValues
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaYahooSyndicationFeedCategories
+class KalturaYahooSyndicationFeedCategories extends KalturaEnumBase
 {
 	const ACTION = "Action";
 	const ANIMALS = "Animals";
@@ -3197,7 +4950,7 @@ class KalturaYahooSyndicationFeedCategories
  * @package Kaltura
  * @subpackage Client
  */
-class KalturaYahooSyndicationFeedOrderBy
+class KalturaYahooSyndicationFeedOrderBy extends KalturaEnumBase
 {
 	const CREATED_AT_ASC = "+createdAt";
 	const NAME_ASC = "+name";
