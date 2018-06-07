@@ -382,7 +382,7 @@ class core_user {
     protected static function get_enrolled_sql_on_courses_with_capability($capability) {
         // Get all courses where user have the capability.
         $courses = get_user_capability_course($capability, null, true,
-                'ctxid, ctxpath, ctxdepth, ctxlevel, ctxinstance');
+                implode(',', array_values(context_helper::get_preload_record_columns('ctx'))));
         if (!$courses) {
             return [null, null];
         }

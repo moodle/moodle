@@ -530,17 +530,24 @@ class file_info_context_course extends file_info {
             'contextlevel' => CONTEXT_MODULE,
             'depth' => $this->context->depth + 1,
             'pathmask' => $this->context->path . '/%'];
-        $sql1 = "SELECT ctx.id AS contextid, f.component, f.filearea, f.itemid, ctx.instanceid AS cmid, " .
-                context_helper::get_preload_record_columns_sql('ctx') . "
+        $ctxfieldsas = context_helper::get_preload_record_columns_sql('ctx');
+        $ctxfields = implode(', ', array_keys(context_helper::get_preload_record_columns('ctx')));
+        $sql1 = "SELECT
+                    ctx.id AS contextid,
+                    f.component,
+                    f.filearea,
+                    f.itemid,
+                    ctx.instanceid AS cmid,
+                    {$ctxfieldsas}
             FROM {files} f
             INNER JOIN {context} ctx ON ctx.id = f.contextid
             WHERE f.filename <> :emptyfilename
               AND ctx.contextlevel = :contextlevel
               AND ctx.depth = :depth
               AND " . $DB->sql_like('ctx.path', ':pathmask') . " ";
-        $sql3 = ' GROUP BY ctx.id, f.component, f.filearea, f.itemid, ctx.instanceid,
-              ctx.path, ctx.depth, ctx.contextlevel
-            ORDER BY ctx.id, f.component, f.filearea, f.itemid';
+        $sql3 = "
+            GROUP BY ctx.id, f.component, f.filearea, f.itemid, {$ctxfields}
+            ORDER BY ctx.id, f.component, f.filearea, f.itemid";
         list($sql2, $params2) = $this->build_search_files_sql($extensions);
         $areas = [];
         if ($rs = $DB->get_recordset_sql($sql1. $sql2 . $sql3, array_merge($params1, $params2))) {

@@ -2429,7 +2429,8 @@ class core_moodlelib_testcase extends advanced_testcase {
             'contextlevel' => $obj->contextlevel,
             'instanceid'   => $obj->instanceid,
             'path'         => $obj->path,
-            'depth'        => $obj->depth
+            'depth'        => $obj->depth,
+            'locked'       => $obj->locked,
         );
         $this->assertEquals(convert_to_array($obj), $ar);
     }

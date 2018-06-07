@@ -411,6 +411,7 @@ $string['site:maintenanceaccess'] = 'Access site while in maintenance mode';
 $string['site:manageallmessaging'] = 'Add, remove, block and unblock contacts for any user';
 $string['site:manageblocks'] = 'Manage blocks on a page';
 $string['site:messageanyuser'] = 'Bypass user privacy preferences for messaging any user';
+$string['site:managecontextlocks'] = 'Manage locking of site contexts';
 $string['site:mnetloginfromremote'] = 'Login from a remote application via MNet';
 $string['site:mnetlogintoremote'] = 'Roam to a remote application via MNet';
 $string['site:readallmessages'] = 'Read all messages on site';
