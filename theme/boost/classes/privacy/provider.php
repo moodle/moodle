@@ -24,7 +24,6 @@
 
 namespace theme_boost\privacy;
 
-use \core_privacy\local\request\writer;
 use \core_privacy\local\metadata\collection;
 
 defined('MOODLE_INTERNAL') || die();
@@ -38,24 +37,20 @@ defined('MOODLE_INTERNAL') || die();
 class provider implements
     // This plugin has data.
     \core_privacy\local\metadata\provider,
-
-    \core_privacy\local\request\data_provider,
-
     // This plugin has some sitewide user preferences to export.
-    \core_privacy\local\request\user_preference_provider
-{
+    \core_privacy\local\request\user_preference_provider {
 
+    /** The user preference for the navigation drawer. */
     const DRAWER_OPEN_NAV = 'drawer-open-nav';
 
     /**
      * Returns meta data about this system.
      *
-     * @param   collection     $itemcollection The initialised item collection to add items to.
-     * @return  collection     A listing of user data stored through this system.
+     * @param  collection $items The initialised item collection to add items to.
+     * @return collection A listing of user data stored through this system.
      */
     public static function get_metadata(collection $items) {
         $items->add_user_preference(self::DRAWER_OPEN_NAV, 'privacy:metadata:preference:draweropennav');
-
         return $items;
     }
 
@@ -64,15 +59,19 @@ class provider implements
      *
      * @param int $userid The userid of the user whose data is to be exported.
      */
-    public static function export_user_preferences(int $userid) {
+    public static function export_user_preferences($userid) {
         $draweropennavpref = get_user_preferences(self::DRAWER_OPEN_NAV, null, $userid);
 
         if (isset($draweropennavpref)) {
-            writer::export_user_preference(
+            $preferencestring = get_string('privacy:drawernavclosed', 'theme_boost');
+            if ($draweropennavpref == 'true') {
+                $preferencestring = get_string('privacy:drawernavopen', 'theme_boost');
+            }
+            \core_privacy\local\request\writer::export_user_preference(
                 'theme_boost',
                 self::DRAWER_OPEN_NAV,
                 $draweropennavpref,
-                get_string('privacy:request:preference:draweropennav', 'theme_boost')
+                $preferencestring
             );
         }
     }
