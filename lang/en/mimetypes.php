@@ -36,6 +36,7 @@
  */
 
 $string['application/epub_zip'] = 'EPUB ebook';
+$string['application/json'] = '{$a->MIMETYPE2} text';
 $string['application/msword'] = 'Word document';
 $string['application/pdf'] = 'PDF document';
 $string['application/vnd.moodle.backup'] = 'Moodle backup';
