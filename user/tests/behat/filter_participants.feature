@@ -10,12 +10,12 @@ Feature: Course participants can be filtered
       | Course 1 | C1        |     1     |
       | Course 2 | C2        |     0     |
     And the following "users" exist:
-      | username | firstname | lastname | email                |
-      | student1 | Student   | 1        | student1@example.com |
-      | student2 | Student   | 2        | student2@example.com |
-      | student3 | Student   | 3        | student3@example.com |
-      | student4 | Student   | 4        | student4@example.com |
-      | teacher1 | Teacher   | 1        | teacher1@example.com |
+      | username | firstname | lastname | email                | idnumber | country | city   | maildisplay |
+      | student1 | Student   | 1        | student1@example.com | SID1     |         | SCITY1 | 0           |
+      | student2 | Student   | 2        | student2@example.com | SID2     | GB      | SCITY2 | 1           |
+      | student3 | Student   | 3        | student3@example.com | SID3     | AU      | SCITY3 | 0           |
+      | student4 | Student   | 4        | student4@example.com | SID4     | AT      | SCITY4 | 0           |
+      | teacher1 | Teacher   | 1        | teacher1@example.com | TID1     | US      | TCITY1 | 0           |
     And the following "course enrolments" exist:
       | user     | course | role           | status | timeend       |
       | student1 | C1     | student        |    0   |               |
@@ -151,3 +151,81 @@ Feature: Course participants can be filtered
     Then I should see "Role:" in the ".form-autocomplete-suggestions" "css_element"
     But I should not see "Status:" in the ".form-autocomplete-suggestions" "css_element"
     And I should not see "Enrolment methods:" in the ".form-autocomplete-suggestions" "css_element"
+
+  @javascript
+  Scenario: Filter by user identity fields
+    Given I log in as "teacher1"
+    And the following config values are set as admin:
+        | showuseridentity | idnumber,email,city,country |
+    And I am on "Course 1" course homepage
+    And I navigate to course participants
+    # Search by email (only).
+    When I set the field "Filters" to "student1@example.com"
+    And I press key "13" in the field "Filters"
+    Then I should see "Student 1" in the "participants" "table"
+    And I should not see "Student 2" in the "participants" "table"
+    And I should not see "Teacher 1" in the "participants" "table"
+    # Search by idnumber (only).
+    Given I click on ".tag[data-value='student1@example.com']" "css_element"
+    When I set the field "Filters" to "SID"
+    And I press key "13" in the field "Filters"
+    Then I should see "Student 1" in the "participants" "table"
+    And I should see "Student 2" in the "participants" "table"
+    And I should see "Student 3" in the "participants" "table"
+    And I should see "Student 4" in the "participants" "table"
+    And I should not see "Teacher 1" in the "participants" "table"
+    # Search by city (only).
+    Given I click on ".tag[data-value='SID']" "css_element"
+    When I set the field "Filters" to "SCITY"
+    And I press key "13" in the field "Filters"
+    Then I should see "Student 1" in the "participants" "table"
+    And I should see "Student 2" in the "participants" "table"
+    And I should see "Student 3" in the "participants" "table"
+    And I should see "Student 4" in the "participants" "table"
+    And I should not see "Teacher 1" in the "participants" "table"
+    # Search by country text (only) - should not match.
+    Given I click on ".tag[data-value='SCITY']" "css_element"
+    When I set the field "Filters" to "GB"
+    And I press key "13" in the field "Filters"
+    Then I should see "Nothing to display"
+    # Check no match.
+    Given I set the field "Filters" to "NOTHING"
+    When I press key "13" in the field "Filters"
+    Then I should see "Nothing to display"
+
+  @javascript
+  Scenario: Filter by user identity fields when cannot see the field data
+    Given I log in as "admin"
+    And I set the following system permissions of "Teacher" role:
+      | moodle/site:viewuseridentity | Prevent |
+    And the following config values are set as admin:
+      | showuseridentity | idnumber,email,city,country |
+    And I log out
+    And I log in as "teacher1"
+    And I am on "Course 1" course homepage
+    And I navigate to course participants
+    # Search by email (only) - should only see visible email + own.
+    When I set the field "Filters" to "@example.com"
+    And I press key "13" in the field "Filters"
+    Then I should not see "Student 1" in the "participants" "table"
+    And I should see "Student 2" in the "participants" "table"
+    And I should not see "Student 3" in the "participants" "table"
+    And I should not see "Student 4" in the "participants" "table"
+    And I should see "Teacher 1" in the "participants" "table"
+    # Search for other fields - should only see own results.
+    Given I click on ".tag[data-value='@example.com']" "css_element"
+    When I set the field "Filters" to "SID"
+    And I press key "13" in the field "Filters"
+    Then I should see "Nothing to display"
+    Given I click on ".tag[data-value='SID']" "css_element"
+    When I set the field "Filters" to "TID"
+    And I press key "13" in the field "Filters"
+    Then I should see "Teacher 1" in the "participants" "table"
+    Given I set the field "Filters" to "CITY"
+    When I press key "13" in the field "Filters"
+    Then I should see "Teacher 1" in the "participants" "table"
+    And I should not see "Student 1" in the "participants" "table"
+    # Check no match.
+    Given I set the field "Filters" to "NOTHING"
+    When I press key "13" in the field "Filters"
+    Then I should see "Nothing to display"
