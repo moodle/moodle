@@ -383,7 +383,13 @@ abstract class base_moodleform extends moodleform {
         $this->require_definition_after_data();
 
         $config = new stdClass;
-        $config->title = get_string('confirmcancel', 'backup');
+        if ($this->uistage->get_ui() instanceof import_ui) {
+            $config->title = get_string('confirmcancelimport', 'backup');
+        } else if ($this->uistage->get_ui() instanceof restore_ui) {
+            $config->title = get_string('confirmcancelrestore', 'backup');
+        } else {
+            $config->title = get_string('confirmcancel', 'backup');
+        }
         $config->question = get_string('confirmcancelquestion', 'backup');
         $config->yesLabel = get_string('confirmcancelyes', 'backup');
         $config->noLabel = get_string('confirmcancelno', 'backup');
