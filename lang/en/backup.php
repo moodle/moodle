@@ -120,6 +120,8 @@ $string['configrestoreroleassignments'] = 'If enabled by default roles assignmen
 $string['configrestoreuserscompletion'] = 'If enabled user completion information will be restored by default if it was included in the backup.';
 $string['configrestoreusers'] = 'Sets the default for whether to restore users if they were included in the backup.';
 $string['confirmcancel'] = 'Cancel backup';
+$string['confirmcancelrestore'] = 'Cancel restore';
+$string['confirmcancelimport'] = 'Cancel import';
 $string['confirmcancelquestion'] = 'Are you sure you wish to cancel?
 Any information you have entered will be lost.';
 $string['confirmcancelyes'] = 'Cancel';
@@ -198,6 +200,7 @@ $string['importcurrentstage2'] = 'Schema settings';
 $string['importcurrentstage4'] = 'Confirmation and review';
 $string['importcurrentstage8'] = 'Perform import';
 $string['importcurrentstage16'] = 'Complete';
+$string['importrootsettings'] = 'Import settings';
 $string['importsettings'] = 'General import settings';
 $string['importsuccess'] = 'Import complete. Click continue to return to the course.';
 $string['includeactivities'] = 'Include:';
