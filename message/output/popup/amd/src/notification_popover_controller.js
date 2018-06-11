@@ -224,8 +224,8 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/str', 'core/url',
 
             // Link to mark read page before loading the actual link.
             notification.contexturl = URL.relativeUrl('message/output/popup/mark_notification_read.php', {
-                redirecturl: notification.contexturl,
                 notificationid: notification.id,
+                redirecturl: notification.contexturl
             });
 
             var promise = Templates.render('message_popup/notification_content_item', notification)
