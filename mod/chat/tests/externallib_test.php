@@ -428,7 +428,8 @@ class mod_chat_external_testcase extends externallib_advanced_testcase {
         $result = external_api::clean_returnvalue(mod_chat_external::get_sessions_returns(), $result);
         $this->assertCount(1, $result['sessions']); // One session.
         $this->assertTrue($result['sessions'][0]['iscomplete']); // Session complete.
-        $this->assertEquals($timenow - HOURSECS + 70, $result['sessions'][0]['sessionstart']);  // First not system message time.
+        // The session started when user1 entered the chat.
+        $this->assertEquals($timenow - HOURSECS, $result['sessions'][0]['sessionstart']);
         $this->assertEmpty($result['warnings']);
     }
 

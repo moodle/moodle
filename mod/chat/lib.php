@@ -29,6 +29,9 @@ require_once($CFG->dirroot.'/calendar/lib.php');
 // Event types.
 define('CHAT_EVENT_TYPE_CHATTIME', 'chattime');
 
+// Gap between sessions. 5 minutes or more of idleness between messages in a chat means the messages belong in different sessions.
+define('CHAT_SESSION_GAP', 300);
+
 // The HTML head for the message window to start with (<!-- nix --> is used to get some browsers starting with output.
 global $CHAT_HTMLHEAD;
 $CHAT_HTMLHEAD = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\" \"http://www.w3.org/TR/REC-html40/loose.dtd\"><html><head></head>\n<body>\n\n".padding(200);
@@ -1486,58 +1489,63 @@ function mod_chat_core_calendar_provide_event_action(calendar_event $event,
 /**
  * Given a set of messages for a chat, return the completed chat sessions (including optionally not completed ones).
  *
- * @param  array $messages list of messages from a chat
+ * @param  array $messages list of messages from a chat. It is assumed that these are sorted by timestamp in DESCENDING order.
  * @param  bool $showall   whether to include incomplete sessions or not
  * @return array           the list of sessions
- * @since  Moodle 3.4
+ * @since  Moodle 3.5
  */
 function chat_get_sessions($messages, $showall = false) {
-    $sessions     = array();
-    $sessiongap   = 5 * 60;    // 5 minutes silence means a new session.
-    $sessionend   = 0;
-    $sessionstart = 0;
-    $sessionusers = array();
-    $lasttime     = 0;
+    $sessions     = [];
+    $start        = 0;
+    $end          = 0;
+    $sessiontimes = [];
 
-    $messagesleft = count($messages);
-
-    foreach ($messages as $message) {  // We are walking BACKWARDS through the messages.
-
-        $messagesleft --;              // Countdown.
-
-        if (!$lasttime) {
-            $lasttime = $message->timestamp;
+    // Group messages by session times.
+    foreach ($messages as $message) {
+        // Initialise values start-end times if necessary.
+        if (empty($start)) {
+            $start = $message->timestamp;
         }
-        if (!$sessionend) {
-            $sessionend = $message->timestamp;
+        if (empty($end)) {
+            $end = $message->timestamp;
         }
-        if ((($lasttime - $message->timestamp) < $sessiongap) and $messagesleft) {  // Same session.
-            if ($message->userid and !$message->issystem) {       // Remember user and count messages.
-                if (empty($sessionusers[$message->userid])) {
-                    $sessionusers[$message->userid] = 1;
-                } else {
-                    $sessionusers[$message->userid] ++;
-                }
+
+        // If this message's timestamp has been more than the gap, it means it's been idle.
+        if ($start - $message->timestamp > CHAT_SESSION_GAP) {
+            // Mark this as the session end of the next session.
+            $end = $message->timestamp;
+        }
+        // Use this time as the session's start (until it gets overwritten on the next iteration, if needed).
+        $start = $message->timestamp;
+
+        // Set this start-end pair in our list of session times.
+        $sessiontimes[$end]['sessionstart'] = $start;
+        if (!isset($sessiontimes[$end]['sessionend'])) {
+            $sessiontimes[$end]['sessionend'] = $end;
+        }
+        if ($message->userid && !$message->issystem) {
+            if (!isset($sessiontimes[$end]['sessionusers'][$message->userid])) {
+                $sessiontimes[$end]['sessionusers'][$message->userid] = 1;
+            } else {
+                $sessiontimes[$end]['sessionusers'][$message->userid]++;
             }
-        } else {
-            $sessionstart = $lasttime;
-
-            $iscomplete = ($sessionend - $sessionstart > 60 and count($sessionusers) > 1);
-            if ($showall or $iscomplete) {
-                $sessions[] = (object) array(
-                    'sessionstart' => $sessionstart,
-                    'sessionend' => $sessionend,
-                    'sessionusers' => $sessionusers,
-                    'iscomplete' => $iscomplete,
-                );
-            }
-
-            $sessionend = $message->timestamp;
-            $sessionusers = array();
-            $sessionusers[$message->userid] = 1;
         }
-        $lasttime = $message->timestamp;
     }
+
+    // Go through each session time and prepare the session data to be returned.
+    foreach ($sessiontimes as $sessionend => $sessiondata) {
+        if (!isset($sessiondata['sessionusers'])) {
+            $sessiondata['sessionusers'] = [];
+        }
+        $sessionusers = $sessiondata['sessionusers'];
+        $sessionstart = $sessiondata['sessionstart'];
+
+        $iscomplete = $sessionend - $sessionstart > 60 && count($sessionusers) > 1;
+        if ($showall || $iscomplete) {
+            $sessions[] = (object) ($sessiondata + ['iscomplete' => $iscomplete]);
+        }
+    }
+
     return $sessions;
 }
 
@@ -1550,7 +1558,7 @@ function chat_get_sessions($messages, $showall = false) {
  * @param  int $end         the session end timestamp (0 to not filter by time)
  * @param  string $sort     an order to sort the results in (optional, a valid SQL ORDER BY parameter)
  * @return array session messages
- * @since  Moodle 3.4
+ * @since  Moodle 3.5
  */
 function chat_get_session_messages($chatid, $group = false, $start = 0, $end = 0, $sort = '') {
     global $DB;
