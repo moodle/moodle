@@ -79,12 +79,20 @@ abstract class contextlist_base implements
      * Get the complete list of context objects that relate to this
      * request.
      *
-     * @return  \contect[]
+     * @return  \context[]
      */
     public function get_contexts() {
         $contexts = [];
         foreach ($this->contextids as $contextid) {
-            $contexts[] = \context::instance_by_id($contextid);
+            // It is possible that this context has been deleted and we now have subsequent calls being made with this
+            // contextlist. Exceptions here will stop the further processing of this component and that is why we are
+            // doing a try catch.
+            try {
+                $contexts[] = \context::instance_by_id($contextid);
+            } catch (\Exception $e) {
+                // Remove this context.
+                unset($this->contextids[$this->iteratorposition]);
+            }
         }
 
         return $contexts;
@@ -114,7 +122,25 @@ abstract class contextlist_base implements
      * @return  \context
      */
     public function current() {
-        return \context::instance_by_id($this->contextids[$this->iteratorposition]);
+        // It is possible that this context has been deleted and we now have subsequent calls being made with this
+        // contextlist. Exceptions here will stop the further processing of this component and that is why we are
+        // doing a try catch.
+        try {
+            $context = \context::instance_by_id($this->contextids[$this->iteratorposition]);
+        } catch (\Exception $e) {
+            // Remove this context.
+            unset($this->contextids[$this->iteratorposition]);
+            // Check to see if there are any more contexts left.
+            if ($this->count()) {
+                // Move the pointer to the next record and try again.
+                $this->next();
+                $context = $this->current();
+            } else {
+                // There are no more context ids left.
+                return;
+            }
+        }
+        return $context;
     }
 
     /**
