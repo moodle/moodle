@@ -3983,6 +3983,7 @@ class settings_navigation extends navigation_node {
         if ($context->contextlevel == CONTEXT_BLOCK) {
             $this->load_block_settings();
             $context = $context->get_parent_context();
+            $this->context = $context;
         }
         switch ($context->contextlevel) {
             case CONTEXT_SYSTEM:
