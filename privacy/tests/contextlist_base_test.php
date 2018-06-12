@@ -141,6 +141,130 @@ class contextlist_base_test extends advanced_testcase {
             $this->assertNotFalse(array_search($context, $contexts));
         }
     }
+
+    /**
+     * Test that deleting a context results in current returning nothing.
+     */
+    public function test_current_context_one_context() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $data = (object) [
+            'contextlevel' => CONTEXT_BLOCK,
+            'instanceid' => 45,
+            'path' => '1/5/67/107',
+            'depth' => 4
+        ];
+
+        $contextid = $DB->insert_record('context', $data);
+
+        $contextbase = new test_contextlist_base();
+        $contextbase->set_contextids([$contextid]);
+        $this->assertCount(1, $contextbase);
+        $currentcontext = $contextbase->current();
+        $this->assertEquals($contextid, $currentcontext->id);
+        $DB->delete_records('context', ['id' => $contextid]);
+        context_helper::reset_caches();
+        $this->assertEmpty($contextbase->current());
+    }
+
+    /**
+     * Test that deleting a context results in the next record being returned.
+     */
+    public function test_current_context_two_contexts() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $data = (object) [
+            'contextlevel' => CONTEXT_BLOCK,
+            'instanceid' => 45,
+            'path' => '1/5/67/107',
+            'depth' => 4
+        ];
+
+        $contextid1 = $DB->insert_record('context', $data);
+
+        $data = (object) [
+            'contextlevel' => CONTEXT_BLOCK,
+            'instanceid' => 47,
+            'path' => '1/5/54/213',
+            'depth' => 4
+        ];
+
+        $contextid2 = $DB->insert_record('context', $data);
+
+        $contextbase = new test_contextlist_base();
+        $contextbase->set_contextids([$contextid1, $contextid2]);
+        $this->assertCount(2, $contextbase);
+        $DB->delete_records('context', ['id' => $contextid1]);
+        context_helper::reset_caches();
+        // Current should return context 2.
+        $this->assertEquals($contextid2, $contextbase->current()->id);
+    }
+
+    /**
+     * Test that if there are no non-deleted contexts that nothing is returned.
+     */
+    public function test_get_contexts_all_deleted() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $data = (object) [
+            'contextlevel' => CONTEXT_BLOCK,
+            'instanceid' => 45,
+            'path' => '1/5/67/107',
+            'depth' => 4
+        ];
+
+        $contextid = $DB->insert_record('context', $data);
+
+        $contextbase = new test_contextlist_base();
+        $contextbase->set_contextids([$contextid]);
+        $this->assertCount(1, $contextbase);
+        $DB->delete_records('context', ['id' => $contextid]);
+        context_helper::reset_caches();
+        $this->assertEmpty($contextbase->get_contexts());
+    }
+
+    /**
+     * Test that get_contexts() returns only active contexts.
+     */
+    public function test_get_contexts_one_deleted() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $data = (object) [
+            'contextlevel' => CONTEXT_BLOCK,
+            'instanceid' => 45,
+            'path' => '1/5/67/107',
+            'depth' => 4
+        ];
+
+        $contextid1 = $DB->insert_record('context', $data);
+
+        $data = (object) [
+            'contextlevel' => CONTEXT_BLOCK,
+            'instanceid' => 47,
+            'path' => '1/5/54/213',
+            'depth' => 4
+        ];
+
+        $contextid2 = $DB->insert_record('context', $data);
+
+        $contextbase = new test_contextlist_base();
+        $contextbase->set_contextids([$contextid1, $contextid2]);
+        $this->assertCount(2, $contextbase);
+        $DB->delete_records('context', ['id' => $contextid1]);
+        context_helper::reset_caches();
+        $contexts = $contextbase->get_contexts();
+        $this->assertCount(1, $contexts);
+        $context = array_shift($contexts);
+        $this->assertEquals($contextid2, $context->id);
+    }
 }
 
 /**
