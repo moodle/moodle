@@ -116,8 +116,9 @@ class provider implements
         }
 
         $user = $contextlist->get_user();
-
         list($contextsql, $contextparams) = $DB->get_in_or_equal($contextlist->get_contextids(), SQL_PARAMS_NAMED);
+        $ratingquery = \core_rating\privacy\provider::get_sql_join('r', 'mod_glossary', 'entry', 'ge.id', $user->id);
+
         $sql = "SELECT ge.id as entryid,
                        cm.id AS cmid,
                        ge.userid,
@@ -132,37 +133,19 @@ class provider implements
                   JOIN {course_modules} cm ON g.id = cm.instance
                   JOIN {modules} m ON cm.module = m.id AND m.name = :modulename
                   JOIN {context} c ON cm.id = c.instanceid AND c.contextlevel = :contextlevel
+             LEFT JOIN {comments} com ON com.itemid = ge.id AND com.commentarea = :commentarea AND com.userid = :commentuserid
+             {$ratingquery->join}
                  WHERE c.id {$contextsql}
-                   AND (
-                        ge.userid = :userid
-                        OR
-                        EXISTS (
-                                SELECT 1
-                                  FROM {comments} com
-                                 WHERE com.commentarea = :commentarea AND com.itemid = ge.id AND com.userid = :commentuserid
-                            )
-                        OR
-                        EXISTS (
-                                SELECT 1
-                                  FROM {rating} r
-                                 WHERE r.contextid = c.id
-                                   AND r.itemid  = ge.id
-                                   AND r.component = :ratingcomponent
-                                   AND r.ratingarea = :ratingarea
-                                   AND r.userid = :ratinguserid
-                            )
-                    )
+                   AND (ge.userid = :userid OR com.id IS NOT NULL OR {$ratingquery->userwhere})
                ORDER BY ge.id, cm.id";
         $params = [
-            'userid' => $user->id,
-            'modulename' => 'glossary',
-            'contextlevel' => CONTEXT_MODULE,
-            'commentarea' => 'glossary_entry',
-            'commentuserid' => $user->id,
-            'ratingcomponent' => 'mod_glossary',
-            'ratingarea' => 'entry',
-            'ratinguserid' => $user->id
-        ] + $contextparams;
+                'userid' => $user->id,
+                'modulename' => 'glossary',
+                'contextlevel' => CONTEXT_MODULE,
+                'commentarea' => 'glossary_entry',
+                'commentuserid' => $user->id
+            ] + $contextparams;
+        $params = array_merge($params, $ratingquery->params);
         $glossaryentries = $DB->get_recordset_sql($sql, $params);
 
         // Reference to the glossary activity seen in the last iteration of the loop. By comparing this with the
@@ -266,14 +249,13 @@ class provider implements
 
         $instanceid = $cm->instance;
 
-        $entries = $DB->get_records('glossary_entries', ['glossaryid' => $instanceid]);
-        foreach ($entries as $entry) {
-            // Delete related entry categories.
-            $DB->delete_records('glossary_entries_categories', ['entryid' => $entry->id]);
+        $entries = $DB->get_records('glossary_entries', ['glossaryid' => $instanceid], '', 'id');
 
-            // Delete related entry aliases.
-            $DB->delete_records('glossary_alias', ['entryid' => $entry->id]);
-        }
+        // Delete related entry aliases.
+        $DB->delete_records_list('glossary_alias', 'entryid', array_keys($entries));
+
+        // Delete related entry categories.
+        $DB->delete_records_list('glossary_entries_categories', 'entryid', array_keys($entries));
 
         // Delete entry and attachment files.
         get_file_storage()->delete_area_files($context->id, 'mod_glossary', 'entry');
@@ -310,24 +292,29 @@ class provider implements
 
                 $instanceid = $DB->get_field('course_modules', 'instance', ['id' => $context->instanceid], MUST_EXIST);
 
-                $entries = $DB->get_records('glossary_entries', ['glossaryid' => $instanceid, 'userid' => $userid]);
-                foreach ($entries as $entry) {
-                    // Delete related entry categories.
-                    $DB->delete_records('glossary_entries_categories', ['entryid' => $entry->id]);
+                $entries = $DB->get_records('glossary_entries', ['glossaryid' => $instanceid, 'userid' => $userid],
+                        '', 'id');
 
-                    // Delete related entry aliases.
-                    $DB->delete_records('glossary_alias', ['entryid' => $entry->id]);
-
-                    // Delete tags.
-                    \core_tag\privacy\provider::delete_item_tags($context, 'mod_glossary', 'glossary_entries', $entry->id);
-
-                    // Delete entry and attachment files.
-                    get_file_storage()->delete_area_files($context->id, 'mod_glossary', 'entry', $entry->id);
-                    get_file_storage()->delete_area_files($context->id, 'mod_glossary', 'attachment', $entry->id);
-
-                    // Delete related ratings.
-                    \core_rating\privacy\provider::delete_ratings($context, 'mod_glossary', 'entry', $entry->id);
+                if (!$entries) {
+                    continue;
                 }
+
+                list($insql, $inparams) = $DB->get_in_or_equal(array_keys($entries), SQL_PARAMS_NAMED);
+                // Delete related entry aliases.
+                $DB->delete_records_list('glossary_alias', 'entryid', array_keys($entries));
+
+                // Delete related entry categories.
+                $DB->delete_records_list('glossary_entries_categories', 'entryid', array_keys($entries));
+
+                // Delete related entry and attachment files.
+                get_file_storage()->delete_area_files_select($context->id, 'mod_glossary', 'entry', $insql, $inparams);
+                get_file_storage()->delete_area_files_select($context->id, 'mod_glossary', 'attachment', $insql, $inparams);
+
+                // Delete user tags related to this glossary.
+                \core_tag\privacy\provider::delete_item_tags_select($context, 'mod_glossary', 'glossary_entries', $insql, $inparams);
+
+                // Delete related ratings.
+                \core_rating\privacy\provider::delete_ratings_select($context, 'mod_glossary', 'entry', $insql, $inparams);
 
                 // Delete comments.
                 \core_comment\privacy\provider::delete_comments_for_user($contextlist, 'mod_glossary', 'glossary_entry');
