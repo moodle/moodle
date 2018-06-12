@@ -1,5 +1,10 @@
 This files describes API changes in the assign code.
 
+=== 3.6 ===
+* The mod_assign_base_testcase unit test base class has been deprecated.
+  It encouraged poor unit test design and led to significant performance issues with unit tests. See MDL-55609 for
+  further information.
+
 === 3.5 ===
 * Functions assign:get_assign_grading_summary_renderable, assign:can_view_submission, assign:count_submissions_with_status,
   assign:count_submissions_need_grading and mod_assign_external::get_submission_status now admit an additional group parameter.
