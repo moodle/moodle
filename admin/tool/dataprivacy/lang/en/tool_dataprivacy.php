@@ -80,6 +80,7 @@ $string['defaultsinfo'] = 'Default categories and purposes are applied to all ne
 $string['deletecategory'] = 'Delete "{$a}" category';
 $string['deletecategorytext'] = 'Are you sure you want to delete "{$a}" category?';
 $string['deleteexpiredcontextstask'] = 'Delete expired contexts';
+$string['deleteexpireddatarequeststask'] = 'Delete files from completed data requests that have expired';
 $string['deletepurpose'] = 'Delete "{$a}" purpose';
 $string['deletepurposetext'] = 'Are you sure you want to delete "{$a}" purpose?';
 $string['defaultssaved'] = 'Defaults saved';
