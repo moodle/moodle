@@ -59,7 +59,7 @@ class mod_folder_renderer extends plugin_renderer_base {
         $foldertree = new folder_tree($folder, $cm);
         if ($folder->display == FOLDER_DISPLAY_INLINE) {
             // Display module name as the name of the root directory.
-            $foldertree->dir['dirname'] = $cm->get_formatted_name();
+            $foldertree->dir['dirname'] = $cm->get_formatted_name(array('escape' => false));
         }
         $output .= $this->output->box($this->render($foldertree),
                 'generalbox foldertree');
