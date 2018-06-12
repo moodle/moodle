@@ -106,7 +106,7 @@ class process_data_request_task extends adhoc_task {
             $filerecord->author    = fullname($foruser);
             // Save somewhere.
             $thing = $fs->create_file_from_pathname($filerecord, $exportedcontent);
-
+            $completestatus = api::DATAREQUEST_STATUS_DOWNLOAD_READY;
         } else if ($request->type == api::DATAREQUEST_TYPE_DELETE) {
             // Get the collection of approved_contextlist objects needed for core_privacy data deletion.
             $approvedclcollection = api::get_approved_contextlist_collection_for_request($requestpersistent);
