@@ -41,7 +41,11 @@
                 "comments": "I would like to download all of my daughter's personal data",
                 "statuslabelclass": "label-default",
                 "statuslabel": "Pending",
-                "timecreated" : 1517902435
+                "timecreated" : 1517902435,
+                "requestedbyuser" : {
+                    "fullname": "Martha Smith",
+                    "profileurl": "#"
+                }
             },
             {
                 "id": 2,
@@ -53,7 +57,11 @@
                 "comments": "Please give me all of the information you have about me...",
                 "statuslabelclass": "label-warning",
                 "statuslabel": "Awaiting completion",
-                "timecreated" : 1517902435
+                "timecreated" : 1517902435,
+                "requestedbyuser" : {
+                    "fullname": "Martha Smith",
+                    "profileurl": "#"
+                }
             },
             {
                 "id": 3,
@@ -65,7 +73,11 @@
                 "comments": "Please delete all of my son's personal data.",
                 "statuslabelclass": "label-success",
                 "statuslabel": "Complete",
-                "timecreated" : 1517902435
+                "timecreated" : 1517902435,
+                "requestedbyuser" : {
+                    "fullname": "Martha Smith",
+                    "profileurl": "#"
+                }
             },
             {
                 "id": 4,
@@ -77,7 +89,11 @@
                 "comments": "I would like to request for my personal data to be deleted from your site. Thanks!",
                 "statuslabelclass": "label-danger",
                 "statuslabel": "Rejected",
-                "timecreated" : 1517902435
+                "timecreated" : 1517902435,
+                "requestedbyuser" : {
+                    "fullname": "Martha Smith",
+                    "profileurl": "#"
+                }
             },
             {
                 "id": 5,
@@ -89,7 +105,11 @@
                 "comments": "Please let me download my data",
                 "statuslabelclass": "label-info",
                 "statuslabel": "Processing",
-                "timecreated" : 1517902435
+                "timecreated" : 1517902435,
+                "requestedbyuser" : {
+                    "fullname": "Martha Smith",
+                    "profileurl": "#"
+                }
             }
         ]
     }
@@ -111,6 +131,7 @@
                 <th scope="col">{{#str}}requesttype, tool_dataprivacy{{/str}}</th>
                 <th scope="col">{{#str}}user, tool_dataprivacy{{/str}}</th>
                 <th scope="col">{{#str}}daterequested, tool_dataprivacy{{/str}}</th>
+                <th scope="col">{{#str}}requestby, tool_dataprivacy{{/str}}</th>
                 <th scope="col">{{#str}}requeststatus, tool_dataprivacy{{/str}}</th>
                 <th scope="col" colspan="2">{{#str}}message, tool_dataprivacy{{/str}}</th>
             </tr>
@@ -126,6 +147,7 @@
                 <td>{{typenameshort}}</td>
                 <td><a href="{{foruser.profileurl}}" title="{{#str}}viewprofile{{/str}}">{{foruser.fullname}}</a></td>
                 <td>{{#userdate}} {{timecreated}}, {{#str}} strftimedatetime {{/str}} {{/userdate}}</td>
+                <td><a href="{{requestedbyuser.profileurl}}" title="{{#str}}viewprofile{{/str}}">{{requestedbyuser.fullname}}</a></td>
                 <td>
                     <span class="label {{statuslabelclass}}">{{statuslabel}}</span>
                 </td>
