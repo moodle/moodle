@@ -52,6 +52,7 @@ $string['blockperioddisabled'] = 'Don\'t block';
 $string['blogforum'] = 'Standard forum displayed in a blog-like format';
 $string['bynameondate'] = 'by {$a->name} - {$a->date}';
 $string['cachedef_forum_is_tracked'] = 'Forum tracking status for user';
+$string['calendardue'] = '{$a} is due';
 $string['cannotadd'] = 'Could not add the discussion for this forum';
 $string['cannotadddiscussion'] = 'Adding discussions to this forum requires group membership.';
 $string['cannotadddiscussionall'] = 'You do not have permission to add a new discussion topic for all participants.';

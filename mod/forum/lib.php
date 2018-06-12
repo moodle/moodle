@@ -86,6 +86,8 @@ define('FORUM_DISCUSSION_UNPINNED', 0);
 function forum_add_instance($forum, $mform = null) {
     global $CFG, $DB;
 
+    require_once($CFG->dirroot.'/mod/forum/locallib.php');
+
     $forum->timemodified = time();
 
     if (empty($forum->assessed)) {
@@ -127,6 +129,7 @@ function forum_add_instance($forum, $mform = null) {
         }
     }
 
+    forum_update_calendar($forum, $forum->coursemodule);
     forum_grade_item_update($forum);
 
     $completiontimeexpected = !empty($forum->completionexpected) ? $forum->completionexpected : null;
@@ -162,7 +165,9 @@ function forum_instance_created($context, $forum) {
  * @return bool success
  */
 function forum_update_instance($forum, $mform) {
-    global $DB, $OUTPUT, $USER;
+    global $CFG, $DB, $OUTPUT, $USER;
+
+    require_once($CFG->dirroot.'/mod/forum/locallib.php');
 
     $forum->timemodified = time();
     $forum->id           = $forum->instance;
@@ -249,6 +254,7 @@ function forum_update_instance($forum, $mform) {
         }
     }
 
+    forum_update_calendar($forum, $forum->coursemodule);
     forum_grade_item_update($forum);
 
     $completiontimeexpected = !empty($forum->completionexpected) ? $forum->completionexpected : null;
