@@ -90,10 +90,10 @@ class migrate_message_data extends \core\task\adhoc_task {
                             $this->migrate_data($userid, $otheruserid);
                             $transaction->allow_commit();
                         } catch (\Throwable $e) {
-                            $updatepreference = false;
+                            throw $e;
+                        } finally {
+                            $lock->release();
                         }
-
-                        $lock->release();
                     } else {
                         // Couldn't get a lock, move on to next user but make sure we don't update user preference so
                         // we still try again.
