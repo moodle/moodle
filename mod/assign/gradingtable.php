@@ -277,7 +277,8 @@ class assign_grading_table extends table_sql implements renderable {
                                  s.status = :submitted AND
                                  (s.timemodified >= g.timemodified OR g.timemodified IS NULL OR g.grade IS NULL';
 
-                if ($this->assignment->get_grade_item()->gradetype == GRADE_TYPE_SCALE) {
+                // Assignment grade is set to the negative grade scale id when scales are used.
+                if ($this->assignment->get_instance()->grade < 0) {
                     // Scale grades are set to -1 when not graded.
                     $where .= ' OR g.grade = -1';
                 }
