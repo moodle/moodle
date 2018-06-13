@@ -67,6 +67,8 @@ class fetcher {
      * @param int $courseid The course id to check
      */
     protected function set_sql($currentgroup, $now, $timetoshowusers, $context, $sitelevel, $courseid) {
+        global $USER, $DB;
+
         $timefrom = 100 * floor(($now - $timetoshowusers) / 100); // Round to nearest 100 seconds for better query cache.
 
         $groupmembers = "";
@@ -74,6 +76,7 @@ class fetcher {
         $groupby       = "";
         $lastaccess    = ", lastaccess";
         $timeaccess    = ", ul.timeaccess AS lastaccess";
+        $uservisibility = ", up.value AS uservisibility";
         $params = array();
 
         $userfields = \user_picture::fields('u', array('username'));
@@ -85,52 +88,75 @@ class fetcher {
             $groupby = "GROUP BY $userfields";
             $lastaccess = ", MAX(u.lastaccess) AS lastaccess";
             $timeaccess = ", MAX(ul.timeaccess) AS lastaccess";
+            $uservisibility = ", MAX(up.value) AS uservisibility";
             $params['currentgroup'] = $currentgroup;
         }
 
         $params['now'] = $now;
         $params['timefrom'] = $timefrom;
+        $params['userid'] = $USER->id;
+        $params['name'] = 'block_online_users_uservisibility';
+
         if ($sitelevel) {
-            $sql = "SELECT $userfields $lastaccess
+            $sql = "SELECT $userfields $lastaccess $uservisibility
                       FROM {user} u $groupmembers
+                 LEFT JOIN {user_preferences} up ON up.userid = u.id
+                           AND up.name = :name
                      WHERE u.lastaccess > :timefrom
                            AND u.lastaccess <= :now
                            AND u.deleted = 0
+                           AND (" . $DB->sql_cast_char2int('up.value') . " = 1
+                               OR up.value IS NULL
+                               OR u.id = :userid)
                            $groupselect $groupby
                   ORDER BY lastaccess DESC ";
 
             $csql = "SELECT COUNT(u.id)
-                      FROM {user} u $groupmembers
-                     WHERE u.lastaccess > :timefrom
-                           AND u.lastaccess <= :now
-                           AND u.deleted = 0
-                           $groupselect";
-
+                       FROM {user} u $groupmembers
+                  LEFT JOIN {user_preferences} up ON up.userid = u.id
+                            AND up.name = :name
+                      WHERE u.lastaccess > :timefrom
+                            AND u.lastaccess <= :now
+                            AND u.deleted = 0
+                            AND (" . $DB->sql_cast_char2int('up.value') . " = 1
+                                OR up.value IS NULL
+                                OR u.id = :userid)
+                            $groupselect";
         } else {
             // Course level - show only enrolled users for now.
             // TODO: add a new capability for viewing of all users (guests+enrolled+viewing).
             list($esqljoin, $eparams) = get_enrolled_sql($context);
             $params = array_merge($params, $eparams);
 
-            $sql = "SELECT $userfields $timeaccess
+            $sql = "SELECT $userfields $timeaccess $uservisibility
                       FROM {user_lastaccess} ul $groupmembers, {user} u
                       JOIN ($esqljoin) euj ON euj.id = u.id
+                 LEFT JOIN {user_preferences} up ON up.userid = u.id
+                           AND up.name = :name
                      WHERE ul.timeaccess > :timefrom
                            AND u.id = ul.userid
                            AND ul.courseid = :courseid
                            AND ul.timeaccess <= :now
                            AND u.deleted = 0
+                           AND (" . $DB->sql_cast_char2int('up.value') . " = 1
+                               OR up.value IS NULL
+                               OR u.id = :userid)
                            $groupselect $groupby
                   ORDER BY lastaccess DESC";
 
             $csql = "SELECT COUNT(u.id)
                       FROM {user_lastaccess} ul $groupmembers, {user} u
                       JOIN ($esqljoin) euj ON euj.id = u.id
+                 LEFT JOIN {user_preferences} up ON up.userid = u.id
+                           AND up.name = :name
                      WHERE ul.timeaccess > :timefrom
                            AND u.id = ul.userid
                            AND ul.courseid = :courseid
                            AND ul.timeaccess <= :now
                            AND u.deleted = 0
+                           AND (" . $DB->sql_cast_char2int('up.value') . " = 1
+                               OR up.value IS NULL
+                               OR u.id = :userid)
                            $groupselect";
 
             $params['courseid'] = $courseid;
