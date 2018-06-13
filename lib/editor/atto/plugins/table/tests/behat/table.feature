@@ -86,13 +86,13 @@ Feature: Atto tables
     And I click on "Table" "button"
     When I click on "Edit table" "link"
     # Check that the background colour is set correctly.
-    Then the field with xpath "//label/input[@name='backgroundColour' and @value='#FFFFFF']" matches value "1"
+    Then the field with xpath "//div[@class='tablebackgroundcolor']/input[@name='backgroundColour' and @value='#FFFFFF']" matches value "1"
     And the field "Table width (in %)" matches value "100"
     And the field "Borders" matches value "Around table"
     And the field "Style of borders" matches value "dashed"
     And the field "Size of borders" matches value "2"
     # Check that the border colour is set correctly.
-    And the field with xpath "//label/input[@name='borderColour' and @value='#FFFFFF']" matches value "1"
+    And the field with xpath "//div[@class='tablebordercolor']/input[@name='borderColour' and @value='#FFFFFF']" matches value "1"
 
   @javascript
   Scenario: Create a table with background colour and width with border settings off
