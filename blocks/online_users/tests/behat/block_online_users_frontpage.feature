@@ -49,3 +49,38 @@ Feature: The online users block allow you to see who is currently online on fron
     And I should see "Student 1" in the "Online users" "block"
     And I should see "Student 2" in the "Online users" "block"
     And I should see "3 online users" in the "Online users" "block"
+
+  @javascript
+  Scenario: Hide/show user's online status from/to other users in the online users block on front page
+    Given I log in as "admin"
+    And I am on site homepage
+    And I navigate to "Turn editing on" node in "Front page settings"
+    And I add the "Online users" block
+    And I log out
+    When I log in as "student1"
+    And I am on site homepage
+    Then "Hide" "icon" should exist in the "#change-user-visibility" "css_element"
+    When I click on "#change-user-visibility" "css_element"
+    And I wait "1" seconds
+    Then "Show" "icon" should exist in the "#change-user-visibility" "css_element"
+    And I log out
+    When I log in as "student2"
+    And I am on site homepage
+    Then I should see "2 online user" in the "Online users" "block"
+    And I should see "Admin" in the "Online users" "block"
+    And I should see "Student 2" in the "Online users" "block"
+    And I should not see "Student 1" in the "Online users" "block"
+    And I log out
+    When I log in as "student1"
+    And I am on site homepage
+    Then "Show" "icon" should exist in the "#change-user-visibility" "css_element"
+    When I click on "#change-user-visibility" "css_element"
+    And I wait "1" seconds
+    Then "Hide" "icon" should exist in the "#change-user-visibility" "css_element"
+    And I log out
+    When I log in as "student2"
+    And I am on site homepage
+    Then I should see "3 online users" in the "Online users" "block"
+    And I should see "Admin" in the "Online users" "block"
+    And I should see "Student 2" in the "Online users" "block"
+    And I should see "Student 1" in the "Online users" "block"
