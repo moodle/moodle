@@ -901,7 +901,7 @@ class restore_ui_stage_review extends restore_ui_stage {
             foreach ($tasks as $task) {
                 if ($task instanceof restore_root_task) {
                     // If its a backup root add a root settings heading to group nicely.
-                    $form->add_heading('rootsettings', get_string('rootsettings', 'backup'));
+                    $form->add_heading('rootsettings', get_string('restorerootsettings', 'backup'));
                 } else if (!$courseheading) {
                     // We haven't already add a course heading.
                     $form->add_heading('coursesettings', get_string('coursesettings', 'backup'));
