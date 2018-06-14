@@ -172,7 +172,7 @@ class migrate_message_data extends \core\task\adhoc_task {
         $tabledata->useridto = $notification->useridto;
         $tabledata->subject = $notification->subject;
         $tabledata->fullmessage = $notification->fullmessage;
-        $tabledata->fullmessageformat = $notification->fullmessageformat;
+        $tabledata->fullmessageformat = $notification->fullmessageformat ?? FORMAT_MOODLE;
         $tabledata->fullmessagehtml = $notification->fullmessagehtml;
         $tabledata->smallmessage = $notification->smallmessage;
         $tabledata->component = $notification->component;
@@ -210,7 +210,7 @@ class migrate_message_data extends \core\task\adhoc_task {
         $tabledata->conversationid = $conversationid;
         $tabledata->subject = $message->subject;
         $tabledata->fullmessage = $message->fullmessage;
-        $tabledata->fullmessageformat = $message->fullmessageformat;
+        $tabledata->fullmessageformat = $message->fullmessageformat ?? FORMAT_MOODLE;
         $tabledata->fullmessagehtml = $message->fullmessagehtml;
         $tabledata->smallmessage = $message->smallmessage;
         $tabledata->timecreated = $message->timecreated;

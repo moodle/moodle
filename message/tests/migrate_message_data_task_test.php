@@ -269,6 +269,62 @@ class core_message_migrate_message_data_task_testcase extends advanced_testcase 
     }
 
     /**
+     * Test migrating a legacy message that contains null as the format.
+     */
+    public function test_migrating_message_null_format() {
+        global $DB;
+
+        // Create users to test with.
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+
+        $this->create_legacy_message_or_notification($user1->id, $user2->id, null, false, null, null);
+
+        // Now, let's execute the task for user 1.
+        $task = new \core_message\task\migrate_message_data();
+        $task->set_custom_data(
+            [
+                'userid' => $user1->id
+            ]
+        );
+        $task->execute();
+
+        $messages = $DB->get_records('messages');
+        $this->assertCount(1, $messages);
+
+        $message = reset($messages);
+        $this->assertEquals(FORMAT_MOODLE, $message->fullmessageformat);
+    }
+
+    /**
+     * Test migrating a legacy notification that contains null as the format.
+     */
+    public function test_migrating_notification_null_format() {
+        global $DB;
+
+        // Create users to test with.
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+
+        $this->create_legacy_message_or_notification($user1->id, $user2->id, null, true, null, null);
+
+        // Now, let's execute the task for user 1.
+        $task = new \core_message\task\migrate_message_data();
+        $task->set_custom_data(
+            [
+                'userid' => $user1->id
+            ]
+        );
+        $task->execute();
+
+        $notifications = $DB->get_records('notifications');
+        $this->assertCount(1, $notifications);
+
+        $notification = reset($notifications);
+        $this->assertEquals(FORMAT_MOODLE, $notification->fullmessageformat);
+    }
+
+    /**
      * Creates a legacy message or notification to be used for testing.
      *
      * @param int $useridfrom The user id from
@@ -276,11 +332,12 @@ class core_message_migrate_message_data_task_testcase extends advanced_testcase 
      * @param int $timecreated
      * @param bool $notification
      * @param int|null $timeread The time the message/notification was read, null if it hasn't been.
+     * @param string|int|null $format The format of the message.
      * @return int The id of the message (in either the message or message_read table)
      * @throws dml_exception
      */
     private function create_legacy_message_or_notification($useridfrom, $useridto, $timecreated = null,
-            $notification = false, $timeread = null) {
+            $notification = false, $timeread = null, $format = FORMAT_PLAIN) {
         global $DB;
 
         $tabledata = new \stdClass();
@@ -312,7 +369,7 @@ class core_message_migrate_message_data_task_testcase extends advanced_testcase 
         $tabledata->useridto = $useridto;
         $tabledata->subject = 'Subject ' . $timecreated;
         $tabledata->fullmessage = 'Full message ' . $timecreated;
-        $tabledata->fullmessageformat = FORMAT_PLAIN;
+        $tabledata->fullmessageformat = $format;
         $tabledata->fullmessagehtml = 'Full message HTML ' . $timecreated;
         $tabledata->smallmessage = 'Small message ' . $timecreated;
         $tabledata->timecreated = $timecreated;
