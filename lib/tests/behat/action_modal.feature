@@ -24,11 +24,14 @@ Feature: Close modals by clicking outside them
 
   @javascript
   Scenario: The popup closes when clicked on dead space - Modal
+    Given the following "courses" exist:
+      | fullname | shortname |
+      | Course 1 | C1        |
     And I log in as "admin"
-    And I click on "Site home" "link"
+    And I am on "Course 1" course homepage
     And I turn editing mode on
-    And I click on "Add a block" "link"
-    And I click on ".modal" "css_element"
+    And I click on "Add topics" "link"
+    When I click on "[data-region='modal-container']" "css_element"
     Then ".modal-backdrop" "css_element" should not be visible
     And ".modal-content" "css_element" should not be visible
 
