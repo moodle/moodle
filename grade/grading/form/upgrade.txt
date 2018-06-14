@@ -1,6 +1,11 @@
 This files describes API changes in /grade/grading/form/* - Advanced grading methods
 information provided here is intended especially for developers.
 
+=== 3.6 ===
+
+* The privacy interface gradingform_provider has been deprecated. Please use
+  gradingform_provider_v2 instead.
+
 === 2.5.2 ===
 
 * Grading methods now can return grade with decimals. See API functions
