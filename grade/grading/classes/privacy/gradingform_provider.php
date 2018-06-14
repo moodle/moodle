@@ -19,6 +19,9 @@
  *
  * Grading method plugins should implement this if they store personal information.
  *
+ * @deprecated since Moodle 3.6 MDL-62535 Please use the gradingform_provider_v2 interface
+ * @todo MDL-63167 Remove this file.
+ *
  * @package    core_grading
  * @copyright  2018 Sara Arjona <sara@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -31,10 +34,14 @@ defined('MOODLE_INTERNAL') || die();
 use core_privacy\local\request\approved_contextlist;
 
 interface gradingform_provider extends
-    \core_privacy\local\request\plugin\subsystem_provider {
+    \core_privacy\local\request\plugin\subsystem_provider,
+    \core_privacy\local\deprecated {
 
     /**
      * This method is used to export any user data this sub-plugin has using the object to get the context and userid.
+     *
+     * @deprecated since Moodle 3.6 MDL-62535 Please use the methods in the gradingform_provider_v2 interface
+     * @todo MDL-63167 Remove this file.
      *
      * @param \context $context Context owner of the data.
      * @param \stdClass $definition Grading definition entry to export.
@@ -47,12 +54,18 @@ interface gradingform_provider extends
     /**
      * Any call to this method should delete all user data for the context defined.
      *
+     * @deprecated since Moodle 3.6 MDL-62535 Please use the methods in the gradingform_provider_v2 interface
+     * @todo MDL-63167 Remove this file.
+     *
      * @param \context $context Context owner of the data.
      */
     public static function delete_gradingform_for_context(\context $context);
 
     /**
      * A call to this method should delete user data (where practicle) from the userid and context.
+     *
+     * @deprecated since Moodle 3.6 MDL-62535 Please use the methods in the gradingform_provider_v2 interface
+     * @todo MDL-63167 Remove this file.
      *
      * @param int $userid The user to delete.
      * @param \context $context the context to refine the deletion.
