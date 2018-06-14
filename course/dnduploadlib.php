@@ -65,7 +65,8 @@ function dndupload_add_to_course($course, $modnames) {
             array('actionchoice', 'moodle'),
             array('servererror', 'moodle'),
             array('upload', 'moodle'),
-            array('cancel', 'moodle')
+            array('cancel', 'moodle'),
+            array('changesmadereallygoaway', 'moodle')
         ),
         'requires' => array('node', 'event', 'json', 'anim')
     );
