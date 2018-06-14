@@ -18,7 +18,7 @@ Feature: We can use natural aggregation and weights will be normalised to a tota
       | student1 | C1 | student |
     And the following "grade categories" exist:
       | fullname | course |
-      | Sub category 1 | C1 |
+      | <span lang="en" class="multilang">EN</span><span lang="fr" class="multilang">FR</span> Sub category 1 | C1 |
     And the following "activities" exist:
       | activity | course | idnumber | name | intro | grade |
       | assign | C1 | a1 | Test assignment one | Submit something! | 300 |
@@ -27,9 +27,11 @@ Feature: We can use natural aggregation and weights will be normalised to a tota
       | assign | C1 | a4 | Test assignment four | Submit nothing! | 150 |
     And the following "activities" exist:
       | activity | course | idnumber | name | intro | gradecategory | grade |
-      | assign | C1 | a5 | Test assignment five | Submit something! | Sub category 1 | 20 |
-      | assign | C1 | a6 | Test assignment six | Submit something! | Sub category 1 | 10 |
-      | assign | C1 | a7 | Test assignment seven | Submit nothing! | Sub category 1 | 15 |
+      | assign | C1 | a5 | Test assignment five | Submit something! | <span lang="en" class="multilang">EN</span><span lang="fr" class="multilang">FR</span> Sub category 1 | 20 |
+      | assign | C1 | a6 | Test assignment six | Submit something! | <span lang="en" class="multilang">EN</span><span lang="fr" class="multilang">FR</span> Sub category 1 | 10 |
+      | assign | C1 | a7 | Test assignment seven | Submit nothing! | <span lang="en" class="multilang">EN</span><span lang="fr" class="multilang">FR</span> Sub category 1 | 15 |
+    And the "multilang" filter is "on"
+    And the "multilang" filter applies to "content and headings"
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I navigate to "Setup > Gradebook setup" in the course gradebook
@@ -113,7 +115,7 @@ Feature: We can use natural aggregation and weights will be normalised to a tota
     And the field "Weight of Test assignment five" matches value "60.000"
     And the field "Weight of Test assignment six" matches value "40.000"
     And the field "Weight of Test assignment seven" matches value "50.0"
-    And I reset weights for grade category "Sub category 1"
+    And I reset weights for grade category "EN Sub category 1"
     And the field "Weight of Test assignment five" matches value "66.667"
     And the field "Weight of Test assignment six" matches value "33.333"
     And the field "Weight of Test assignment seven" matches value "50.0"
@@ -133,7 +135,7 @@ Feature: We can use natural aggregation and weights will be normalised to a tota
     And the field "Weight of Test assignment five" matches value "54.545"
     And the field "Weight of Test assignment six" matches value "45.455"
     And the field "Weight of Test assignment seven" matches value "50.0"
-    And I reset weights for grade category "Sub category 1"
+    And I reset weights for grade category "EN Sub category 1"
     And the field "Weight of Test assignment five" matches value "66.667"
     And the field "Weight of Test assignment six" matches value "33.333"
     And the field "Weight of Test assignment seven" matches value "50.0"
@@ -153,7 +155,7 @@ Feature: We can use natural aggregation and weights will be normalised to a tota
     And the field "Weight of Test assignment five" matches value "57.143"
     And the field "Weight of Test assignment six" matches value "42.857"
     And the field "Weight of Test assignment seven" matches value "50.0"
-    And I reset weights for grade category "Sub category 1"
+    And I reset weights for grade category "EN Sub category 1"
     And the field "Weight of Test assignment five" matches value "66.667"
     And the field "Weight of Test assignment six" matches value "33.333"
     And the field "Weight of Test assignment seven" matches value "50.0"
@@ -171,7 +173,7 @@ Feature: We can use natural aggregation and weights will be normalised to a tota
     And the field "Weight of Test assignment five" matches value "40.00"
     And the field "Weight of Test assignment six" matches value "60.000"
     And the field "Weight of Test assignment seven" matches value "50.0"
-    And I reset weights for grade category "Sub category 1"
+    And I reset weights for grade category "EN Sub category 1"
     And the field "Weight of Test assignment five" matches value "66.667"
     And the field "Weight of Test assignment six" matches value "33.333"
     And the field "Weight of Test assignment seven" matches value "50.0"
@@ -207,7 +209,7 @@ Feature: We can use natural aggregation and weights will be normalised to a tota
     And I set the field "Weight of Test assignment seven" to "105"
     And I press "Save changes"
 
-    And I reset weights for grade category "Sub category 1"
+    And I reset weights for grade category "EN Sub category 1"
     And the field "Weight of Test assignment five" matches value "66.667"
     And the field "Weight of Test assignment six" matches value "33.333"
     And the field "Weight of Test assignment seven" matches value "50.0"
@@ -236,7 +238,7 @@ Feature: We can use natural aggregation and weights will be normalised to a tota
     And I set the field "Weight of Test assignment six" to "55"
     And I set the field "Weight of Test assignment seven" to "40"
     And I press "Save changes"
-    And I reset weights for grade category "Sub category 1"
+    And I reset weights for grade category "EN Sub category 1"
     Then the field "Weight of Test assignment five" matches value "80.0"
     And the field "Weight of Test assignment six" matches value "40.0"
     And the field "Weight of Test assignment seven" matches value "60.0"
@@ -254,7 +256,7 @@ Feature: We can use natural aggregation and weights will be normalised to a tota
     And I press "Save changes"
     And the field "Weight of Test assignment six" matches value "0.0"
     And the field "Weight of Test assignment seven" matches value "100.0"
-    And I reset weights for grade category "Sub category 1"
+    And I reset weights for grade category "EN Sub category 1"
     And I set the field "Override weight of Test assignment five" to "1"
     And I set the field "Override weight of Test assignment six" to "1"
     And I set the field "Weight of Test assignment five" to "-10"

@@ -276,7 +276,7 @@ class grade_outcome extends grade_object {
      * @return string name
      */
     public function get_name() {
-        return format_string($this->fullname);
+        return format_string($this->fullname, false, array("context" => context_course::instance($this->courseid)));
     }
 
     /**
