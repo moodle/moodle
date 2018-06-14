@@ -6,14 +6,16 @@ Feature: View gradebook when single item scales are used
 
   Background:
     Given I log in as "admin"
+    And the "multilang" filter is "on"
+    And the "multilang" filter applies to "content and headings"
     And I set the following administration settings values:
       | grade_report_showranges    | 1 |
       | grade_aggregations_visible | Mean of grades,Weighted mean of grades,Simple weighted mean of grades,Mean of grades (with extra credits),Median of grades,Lowest grade,Highest grade,Mode of grades,Natural |
     And I navigate to "Scales" node in "Site administration > Grades"
     And I press "Add a new scale"
     And I set the following fields to these values:
-      | Name  | Singleitem |
-      | Scale | Ace!       |
+      | Name  | <span lang="en" class="multilang">EN</span><span lang="fr" class="multilang">FR</span> Singleitem |
+      | Scale | Ace!                                                                                              |
     And I press "Save changes"
     And I log out
     And the following "courses" exist:
@@ -31,17 +33,19 @@ Feature: View gradebook when single item scales are used
       | student2 | C1     | student        |
     And the following "grade categories" exist:
       | fullname       | course |
-      | Sub category 1 | C1     |
+      | <span lang="en" class="multilang">EN</span><span lang="fr" class="multilang">FR</span> Sub category 1 | C1     |
     And the following "activities" exist:
       | activity | course | idnumber | name                | intro             | gradecategory  |
-      | assign   | C1     | a1       | Test assignment one | Submit something! | Sub category 1 |
+      | assign   | C1     | a1       | Test assignment one | Submit something! | <span lang="en" class="multilang">EN</span><span lang="fr" class="multilang">FR</span> Sub category 1 |
+    And the "multilang" filter is "on"
+    And the "multilang" filter applies to "content and headings"
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I follow "Test assignment one"
     And I navigate to "Edit settings" in current page administration
     And I expand all fieldsets
     And I set the field "grade[modgrade_type]" to "Scale"
-    And I set the field "grade[modgrade_scale]" to "Singleitem"
+    And I set the field "grade[modgrade_scale]" to "EN Singleitem"
     And I press "Save and display"
     And I navigate to "View all submissions" in current page administration
     And I click on "Grade" "link" in the "Student 1" "table_row"
@@ -68,28 +72,28 @@ Feature: View gradebook when single item scales are used
     And I navigate to "View > User report" in the course gradebook
     And I select "Student 1" from the "Select all or one user" singleselect
     And the following should exist in the "user-grade" table:
-      | Grade item          | Grade | Range     | Contribution to course total |
-      | Test assignment one | Ace!  | Ace!–Ace! | 100.00 %                     |
-      | Sub category 1 total| 1.00  | 0–1       | -                            |
-      | Course total        | 1.00  | 0–1       | -                            |
+      | Grade item             | Grade | Range     | Contribution to course total |
+      | Test assignment one    | Ace!  | Ace!–Ace! | 100.00 %                     |
+      | EN Sub category 1 total| 1.00  | 0–1       | -                            |
+      | Course total           | 1.00  | 0–1       | -                            |
     And I select "Student 2" from the "Select all or one user" singleselect
     And the following should exist in the "user-grade" table:
-      | Grade item          | Grade | Range     | Contribution to course total |
-      | Test assignment one | -     | Ace!–Ace! | -                            |
-      | Sub category 1 total| -     | 0–1       | -                            |
-      | Course total        | -     | 0–1       | -                            |
+      | Grade item             | Grade | Range     | Contribution to course total |
+      | Test assignment one    | -     | Ace!–Ace! | -                            |
+      | EN Sub category 1 total| -     | 0–1       | -                            |
+      | Course total           | -     | 0–1       | -                            |
     And I navigate to "Setup > Gradebook setup" in the course gradebook
     And the following should exist in the "grade_edit_tree_table" table:
-      | Name                | Max grade |
-      | Test assignment one | 1.00      |
-      | Sub category 1 total| 1.00      |
-      | Course total        | 1.00      |
+      | Name                   | Max grade |
+      | Test assignment one    | 1.00      |
+      | EN Sub category 1 total| 1.00      |
+      | Course total           | 1.00      |
 
   Scenario Outline: Test displaying single item scales in gradebook in all other aggregation methods
     When I follow "Edit   Course 1"
     And I set the field "Aggregation" to "<aggregation>"
     And I press "Save changes"
-    And I follow "Edit   Sub category 1"
+    And I follow "Edit   EN Sub category 1"
     And I set the following fields to these values:
       | Aggregation     | <aggregation> |
       | Category name   | Sub category (<aggregation>) |
