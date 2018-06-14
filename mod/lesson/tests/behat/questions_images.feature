@@ -53,7 +53,7 @@ Feature: In a lesson activity, teacher can add embedded images in questions answ
     And I set the field "Describe this image for someone who cannot see it" to "It's the logo"
     And I click on "Save image" "button"
     And I press "Save page"
-    And I set the field "qtype" to "Question"
+    And I set the field "qtype" to "Add a question page"
     And I set the field "Select a question type" to "True/false"
     And I press "Add a question page"
     And I set the following fields to these values:

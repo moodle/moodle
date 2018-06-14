@@ -28,7 +28,7 @@ Feature: In a lesson activity, if custom scoring is not enabled, student should 
       | id_answer_editor_0 | Next page |
       | id_jumpto_0 | Next page |
     And I press "Save page"
-    And I select "Question" from the "qtype" singleselect
+    And I select "Add a question page" from the "qtype" singleselect
     And I set the field "Select a question type" to "Numerical"
     And I press "Add a question page"
     And I set the following fields to these values:
