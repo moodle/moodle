@@ -3703,6 +3703,12 @@ function forum_user_can_post_discussion($forum, $currentgroup=null, $unused=-1, 
         $context = context_module::instance($cm->id);
     }
 
+    if (forum_is_cutoff_date_reached($forum)) {
+        if (!has_capability('mod/forum:canoverridecutoff', $context)) {
+            return false;
+        }
+    }
+
     if ($currentgroup === null) {
         $currentgroup = groups_get_activity_group($cm);
     }
@@ -3794,6 +3800,12 @@ function forum_user_can_post($forum, $discussion, $user=NULL, $cm=NULL, $course=
 
     if (!$context) {
         $context = context_module::instance($cm->id);
+    }
+
+    if (forum_is_cutoff_date_reached($forum)) {
+        if (!has_capability('mod/forum:canoverridecutoff', $context)) {
+            return false;
+        }
     }
 
     // Check whether the discussion is locked.
@@ -6303,6 +6315,26 @@ function mod_forum_inplace_editable($itemtype, $itemid, $newvalue) {
         $renderer = $PAGE->get_renderer('mod_forum');
         return $renderer->render_digest_options($forum, $newvalue);
     }
+}
+
+/**
+ * Determine whether the specified forum's cutoff date is reached.
+ *
+ * @param stdClass $forum The forum
+ * @return bool
+ */
+function forum_is_cutoff_date_reached($forum) {
+    $entityfactory = \mod_forum\local\container::get_entity_factory();
+    $coursemoduleinfo = get_fast_modinfo($forum->course);
+    $cminfo = $coursemoduleinfo->instances['forum'][$forum->id];
+    $forumentity = $entityfactory->get_forum_from_stdclass(
+            $forum,
+            context_module::instance($cminfo->id),
+            $cminfo->get_course_module_record(),
+            $cminfo->get_course()
+    );
+
+    return $forumentity->is_cutoff_date_reached();
 }
 
 /**

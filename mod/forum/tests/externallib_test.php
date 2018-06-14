@@ -1458,7 +1458,34 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         $this->assertTrue($result['status']);
         $this->assertTrue($result['canpindiscussions']);
         $this->assertTrue($result['cancreateattachment']);
+    }
 
+    /*
+     * A basic test to make sure users cannot post to forum after the cutoff date.
+     */
+    public function test_can_add_discussion_after_cutoff() {
+        $this->resetAfterTest(true);
+
+        // Create courses to add the modules.
+        $course = self::getDataGenerator()->create_course();
+
+        $user = self::getDataGenerator()->create_user();
+
+        // Create a forum with cutoff date set to a past date.
+        $forum = self::getDataGenerator()->create_module('forum', ['course' => $course->id, 'cutoffdate' => time() - 1]);
+
+        // User with no mod/forum:canoverridecutoff capability.
+        self::setUser($user);
+        $this->getDataGenerator()->enrol_user($user->id, $course->id);
+
+        $result = mod_forum_external::can_add_discussion($forum->id);
+        $result = external_api::clean_returnvalue(mod_forum_external::can_add_discussion_returns(), $result);
+        $this->assertFalse($result['status']);
+
+        self::setAdminUser();
+        $result = mod_forum_external::can_add_discussion($forum->id);
+        $result = external_api::clean_returnvalue(mod_forum_external::can_add_discussion_returns(), $result);
+        $this->assertTrue($result['status']);
     }
 
     /**

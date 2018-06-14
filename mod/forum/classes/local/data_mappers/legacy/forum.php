@@ -69,7 +69,9 @@ class forum {
                 'completionreplies' => $forum->get_completion_replies(),
                 'completionposts' => $forum->get_completion_posts(),
                 'displaywordcount' => $forum->should_display_word_count(),
-                'lockdiscussionafter' => $forum->get_lock_discussions_after()
+                'lockdiscussionafter' => $forum->get_lock_discussions_after(),
+                'duedate' => $forum->get_due_date(),
+                'cutoffdate' => $forum->get_cutoff_date()
             ];
         }, $forums);
     }
