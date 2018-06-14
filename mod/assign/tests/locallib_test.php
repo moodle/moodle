@@ -190,6 +190,35 @@ class mod_assign_locallib_testcase extends advanced_testcase {
     }
 
     /**
+     * Test filter by requires grading.
+     *
+     * This is specifically checking an assignment with no grade to make sure we do not
+     * get an exception thrown when rendering the grading table for this type of assignment.
+     */
+    public function test_gradingtable_filter_by_requiresgrading_no_grade() {
+        global $PAGE;
+
+        $this->setUser($this->editingteachers[0]);
+        $params = array('assignsubmission_onlinetext_enabled' => 1,
+                        'assignfeedback_comments_enabled' => 0,
+                        'grade' => GRADE_TYPE_NONE);
+        $assign = $this->create_instance($params);
+
+        $PAGE->set_url(new moodle_url('/mod/assign/view.php', array(
+            'id' => $assign->get_course_module()->id,
+            'action' => 'grading',
+        )));
+
+        // Render the table with the requires grading filter.
+        $gradingtable = new assign_grading_table($assign, 1, ASSIGN_FILTER_REQUIRE_GRADING, 0, true);
+        $output = $assign->get_renderer()->render($gradingtable);
+
+        // Test that the filter function does not throw errors for assignments with no grade.
+        $this->assertContains(get_string('nothingtodisplay'), $output);
+    }
+
+
+    /**
      * Test submissions with extension date.
      */
     public function test_gradingtable_extension_due_date() {
