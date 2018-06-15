@@ -2892,7 +2892,14 @@ class company {
                 $enrol = enrol_get_plugin('license');
 
                 // Enrol the user in the course.
-                $timestart = time();
+                // Is the license available yet?
+                if (!empty($licenserecord->startdate) && $licenserecord->startdate > time()) {
+                    // If not set up the enrolment from when it is.
+                    $timestart = $licenserecord->startdate;
+                } else {
+                    // Otherwise start it now.
+                    $timestart = time();
+                }
 
                 if (empty($licenserecord->type)) {
                     // Set the timeend to be time start + the valid length for the license in days.
