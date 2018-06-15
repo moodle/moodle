@@ -3278,6 +3278,14 @@ class company {
             }
         }
 
+        // Deal with SCORM.
+        $DB->execute("DELETE FROM {scorm_scoes_track}
+                      WHERE userid = :userid
+                      AND scormid IN (
+                         SELECT id FROM {scorm}
+                         WHERE courseid = :coursid)",
+                      array('userid' => $userid, 'courseid' => $courseid));
+
         // Remove grades
         if ($items = $DB->get_records('grade_items', array('courseid' => $courseid))) {
             foreach ($items as $item) {
