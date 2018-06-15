@@ -208,7 +208,7 @@ class company {
         global $DB, $USER;
 
         // Is this an admin, or a normal user?
-        if (iomad::has_capability('block/iomad_company_admin:company_add', context_system::instance())) {
+        if (iomad::has_capability('block/iomad_company_admin:company_view_all', context_system::instance())) {
             if ($showsuspended) {
                 $companies = $DB->get_recordset('company', array(), 'name', '*');
             } else {
