@@ -1121,11 +1121,10 @@ class assign_grading_table extends table_sql implements renderable {
 
         if ($row->allowsubmissionsfromdate) {
             $userdate = userdate($row->allowsubmissionsfromdate);
-            $o = $this->output->container($userdate, 'allowsubmissionsfromdate');
+            $o = ($this->is_downloading()) ? $userdate : $this->output->container($userdate, 'allowsubmissionsfromdate');
         }
 
         return $o;
-
     }
 
     /**
@@ -1139,11 +1138,10 @@ class assign_grading_table extends table_sql implements renderable {
 
         if ($row->duedate) {
             $userdate = userdate($row->duedate);
-            $o = $this->output->container($userdate, 'duedate');
+            $o = ($this->is_downloading()) ? $userdate : $this->output->container($userdate, 'duedate');
         }
 
         return $o;
-
     }
 
     /**
@@ -1157,11 +1155,10 @@ class assign_grading_table extends table_sql implements renderable {
 
         if ($row->cutoffdate) {
             $userdate = userdate($row->cutoffdate);
-            $o = $this->output->container($userdate, 'cutoffdate');
+            $o = ($this->is_downloading()) ? $userdate : $this->output->container($userdate, 'cutoffdate');
         }
 
         return $o;
-
     }
 
     /**
