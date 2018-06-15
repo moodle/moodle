@@ -247,7 +247,8 @@ class user_edit_form extends company_moodleform {
                 }
                 if (!$licensecourses = $DB->get_records_sql_menu("SELECT c.id, c.fullname FROM {companylicense_courses} clc
                                                              JOIN {course} c ON (clc.courseid = c.id
-                                                             AND clc.licenseid = :licenseid)",
+                                                             AND clc.licenseid = :licenseid)
+                                                             ORDER BY c.fullname",
                                                              array('licenseid' => $mylicenseid))) {
                     $licensecourses = array();
                 }

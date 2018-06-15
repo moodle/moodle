@@ -48,9 +48,10 @@ if ($license = $DB->get_record('companylicense', array('id' => $licenseid))) {
         $selected="";
     }
     if ($courses = $DB->get_records_sql_menu("SELECT c.id, c.fullname FROM {companylicense_courses} clc
-                                                         JOIN {course} c ON (clc.courseid = c.id
-                                                         AND clc.licenseid = :licenseid)",
-                                                         array('licenseid' => $licenseid))) {
+                                              JOIN {course} c ON (clc.courseid = c.id
+                                              AND clc.licenseid = :licenseid)
+                                              ORDER BY c.fullname",
+                                              array('licenseid' => $licenseid))) {
         $return .= '<select id="licensecourseselector" name="licensecourses[]" multiple="multiple">';
         $return .= '<optgroup label="'.$license->name.' ('.$license->used.'/'.$license->allocation.')">';
         foreach ($courses as $id => $course) {
