@@ -55,6 +55,7 @@ function mycourses_get_my_completion($datefrom = 0) {
 
     // We dont care about these.  If you have enrolled then you are started.
     $mynotstartedenrolled = array();
+    $unsortedcourses = array();
 
     $mynotstartedlicense = $DB->get_records_sql("SELECT clu.id, clu.userid, clu.licensecourseid as courseid, c.fullname as coursefullname, c.summary as coursesummary
                                           FROM {companylicense_users} clu
@@ -102,18 +103,18 @@ function mycourses_get_my_completion($datefrom = 0) {
                                                         $inprogresssql",
                                                         array('enrol' => 'self'));
         foreach ($companyselfenrolcourses as $companyselfenrolcourse) {
-            $myselfenrolcourses[$companyselfenrolcourse->id] = $companyselfenrolcourse;
+            $myavailablecourses[$companyselfenrolcourse->coursefullname] = $companyselfenrolcourse;
         }
         foreach ($sharedselfenrolcourses as $sharedselfenrolcourse) {
-            $myselfenrolcourses[$sharedselfenrolcourse->id] = $sharedselfenrolcourse;
+            $myavailablecourses[$sharedselfenrolcourse->coursefullname] = $sharedselfenrolcourse;
         }
     }
     foreach($mynotstartedlicense as $licensedcourse) {
-        $myavailablecourses[] = $licensedcourse;
+        $myavailablecourses[$licensedcourse->coursefullname] = $licensedcourse;
     }
-    foreach($myselfenrolcourses as $myselfenrolcourse) {
-        $myavailablecourses[] = $myselfenrolcourse;
-    }
+
+    // Put them into alpahbetical order.
+    ksort($myavailablecourses, SORT_NATURAL | SORT_FLAG_CASE);
 
     // Deal with completed course scores and links for certificates.
     foreach ($mycompleted as $id => $completed) {
