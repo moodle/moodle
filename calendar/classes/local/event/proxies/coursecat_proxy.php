@@ -26,8 +26,6 @@ namespace core_calendar\local\event\proxies;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->libdir . '/coursecatlib.php');
-
 /**
  * Course category proxy.
  *
@@ -48,7 +46,7 @@ class coursecat_proxy implements proxy_interface {
     protected $base;
 
     /**
-     * @var \coursecat $category The proxied instance.
+     * @var \core_course_category $category The proxied instance.
      */
     protected $category;
 
@@ -81,11 +79,11 @@ class coursecat_proxy implements proxy_interface {
     /**
      * Get the full instance of the proxied class.
      *
-     * @return \coursecat
+     * @return \core_course_category
      */
-    public function get_proxied_instance() : \coursecat {
+    public function get_proxied_instance() : \core_course_category {
         if (!$this->category) {
-            $this->category = \coursecat::get($this->id, IGNORE_MISSING, true);
+            $this->category = \core_course_category::get($this->id, IGNORE_MISSING, true);
         }
         return $this->category;
     }

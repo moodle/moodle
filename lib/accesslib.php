@@ -1420,7 +1420,7 @@ function get_roles_with_capability($capability, $permission = null, $context = n
  * @return int new/existing id of the assignment
  */
 function role_assign($roleid, $userid, $contextid, $component = '', $itemid = 0, $timemodified = '') {
-    global $USER, $DB, $CFG;
+    global $USER, $DB;
 
     // first of all detect if somebody is using old style parameters
     if ($contextid === 0 or is_numeric($component)) {
@@ -1501,8 +1501,7 @@ function role_assign($roleid, $userid, $contextid, $component = '', $itemid = 0,
         reload_all_capabilities();
     }
 
-    require_once($CFG->libdir . '/coursecatlib.php');
-    coursecat::role_assignment_changed($roleid, $context);
+    core_course_category::role_assignment_changed($roleid, $context);
 
     $event = \core\event\role_assigned::create(array(
         'context' => $context,
@@ -1561,7 +1560,6 @@ function role_unassign($roleid, $userid, $contextid, $component = '', $itemid = 
  */
 function role_unassign_all(array $params, $subcontexts = false, $includemanual = false) {
     global $USER, $CFG, $DB;
-    require_once($CFG->libdir . '/coursecatlib.php');
 
     if (!$params) {
         throw new coding_exception('Missing parameters in role_unsassign_all() call');
@@ -1612,7 +1610,7 @@ function role_unassign_all(array $params, $subcontexts = false, $includemanual =
             ));
             $event->add_record_snapshot('role_assignments', $ra);
             $event->trigger();
-            coursecat::role_assignment_changed($ra->roleid, $context);
+            core_course_category::role_assignment_changed($ra->roleid, $context);
         }
     }
     unset($ras);
@@ -1644,7 +1642,7 @@ function role_unassign_all(array $params, $subcontexts = false, $includemanual =
                             'other'=>array('id'=>$ra->id, 'component'=>$ra->component, 'itemid'=>$ra->itemid)));
                     $event->add_record_snapshot('role_assignments', $ra);
                     $event->trigger();
-                    coursecat::role_assignment_changed($ra->roleid, $context);
+                    core_course_category::role_assignment_changed($ra->roleid, $context);
                 }
             }
         }

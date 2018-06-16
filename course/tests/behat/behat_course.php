@@ -1476,7 +1476,7 @@ class behat_course extends behat_base {
         $this->i_select_category_in_the_management_interface($name);
 
         $this->execute('behat_forms::i_set_the_field_to',
-            array('menumovecategoriesto', coursecat::get(0)->get_formatted_name())
+            array('menumovecategoriesto', core_course_category::get(0)->get_formatted_name())
         );
 
         // Save event.

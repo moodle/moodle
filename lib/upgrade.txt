@@ -101,6 +101,8 @@ information provided here is intended especially for developers.
   - file_merge_draft_areas()
   - file_replace_file_area_in_text()
   - extract_draft_file_urls_from_text()
+* Class coursecat is now alias to autoloaded class core_course_category, course_in_list is an alias to
+  core_course_list_element, class coursecat_sortable_records is deprecated without replacement.
 
 === 3.5 ===
 

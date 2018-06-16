@@ -126,7 +126,7 @@ class container {
 
                     if (!empty($dbrow->categoryid)) {
                         // This is a category event. Check that the category is visible to this user.
-                        $category = \coursecat::get($dbrow->categoryid, IGNORE_MISSING, true, $requestinguserid);
+                        $category = \core_course_category::get($dbrow->categoryid, IGNORE_MISSING, true, $requestinguserid);
 
                         if (empty($category) || !$category->is_uservisible($requestinguserid)) {
                             return true;

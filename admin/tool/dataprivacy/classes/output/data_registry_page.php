@@ -30,7 +30,6 @@ use stdClass;
 use templatable;
 use tool_dataprivacy\data_registry;
 
-require_once($CFG->libdir . '/coursecatlib.php');
 require_once($CFG->dirroot . '/' . $CFG->admin . '/tool/dataprivacy/lib.php');
 require_once($CFG->libdir . '/blocklib.php');
 
@@ -226,7 +225,7 @@ class data_registry_page implements renderable, templatable {
             throw new \coding_exception('A course category context should be provided');
         }
 
-        $coursecat = \coursecat::get($catcontext->instanceid);
+        $coursecat = \core_course_category::get($catcontext->instanceid);
         $courses = $coursecat->get_courses();
 
         $branches = [];

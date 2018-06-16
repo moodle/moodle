@@ -52,7 +52,7 @@ class category extends base {
      *                                  And whose values are the values to display
      */
     public static function get_filter_options() {
-        $options = \coursecat::make_categories_list();
+        $options = \core_course_category::make_categories_list();
         return $options;
     }
 

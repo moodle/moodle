@@ -1909,8 +1909,7 @@ abstract class enrol_plugin {
                     );
             $event->trigger();
             // Check if course contacts cache needs to be cleared.
-            require_once($CFG->libdir . '/coursecatlib.php');
-            coursecat::user_enrolment_changed($courseid, $ue->userid,
+            core_course_category::user_enrolment_changed($courseid, $ue->userid,
                     $ue->status, $ue->timestart, $ue->timeend);
         }
 
@@ -2004,8 +2003,7 @@ abstract class enrol_plugin {
                 );
         $event->trigger();
 
-        require_once($CFG->libdir . '/coursecatlib.php');
-        coursecat::user_enrolment_changed($instance->courseid, $ue->userid,
+        core_course_category::user_enrolment_changed($instance->courseid, $ue->userid,
                 $ue->status, $ue->timestart, $ue->timeend);
     }
 
@@ -2089,8 +2087,7 @@ abstract class enrol_plugin {
         $context->mark_dirty();
 
         // Check if courrse contacts cache needs to be cleared.
-        require_once($CFG->libdir . '/coursecatlib.php');
-        coursecat::user_enrolment_changed($courseid, $ue->userid, ENROL_USER_SUSPENDED);
+        core_course_category::user_enrolment_changed($courseid, $ue->userid, ENROL_USER_SUSPENDED);
 
         // reset current user enrolment caching
         if ($userid == $USER->id) {

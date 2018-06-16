@@ -36,11 +36,11 @@ use moodle_url;
 class coursecat_summary_exporter extends \core\external\exporter {
 
     /**
-     * @var \coursecat $category
+     * @var \core_course_category $category
      */
     protected $category;
 
-    public function __construct(\coursecat $category, $related) {
+    public function __construct(\core_course_category $category, $related) {
         $this->category = $category;
 
         $data = [];

@@ -26,7 +26,6 @@ define('CLI_SCRIPT', true);
 
 require(__DIR__ . '/../../../../config.php');
 require_once($CFG->libdir . '/clilib.php');
-require_once($CFG->libdir . '/coursecatlib.php');
 require_once($CFG->libdir . '/csvlib.class.php');
 
 $courseconfig = get_config('moodlecourse');
@@ -46,7 +45,7 @@ list($options, $unrecognized) = cli_get_params(array(
     'allowrenames' => false,
     'allowresets' => false,
     'reset' => false,
-    'category' => coursecat::get_default()->id,
+    'category' => core_course_category::get_default()->id,
 ),
 array(
     'h' => 'help',

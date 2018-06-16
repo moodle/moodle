@@ -59,6 +59,6 @@ class core_calendar_coursecat_proxy_testcase extends advanced_testcase {
         $this->assertEquals($name, $proxy->get('name'));
         $this->assertEquals(1, $DB->perf_get_reads() - $startreads);
 
-        $this->assertInstanceOf('coursecat', $proxy->get_proxied_instance());
+        $this->assertInstanceOf('core_course_category', $proxy->get_proxied_instance());
     }
 }
