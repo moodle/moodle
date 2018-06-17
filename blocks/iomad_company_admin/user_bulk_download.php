@@ -95,6 +95,19 @@ if ($format) {
             }
         }
     }
+    // Get non company categories.
+    if ($categories = $DB->get_records_sql('SELECT id, name
+                                            FROM {user_info_category}
+                                            WHERE name NOT IN (
+                                                SELECT shortname FROM {company})')) {
+        foreach ($categories as $category) {
+            if ($extrafields = $DB->get_records('user_info_field', array('categoryid' => $category->id))) {
+                foreach ($extrafields as $n => $v) {
+                    $fields['profile_field_'.$v->shortname] = 'profile_field_'.$v->shortname;
+                }
+            }
+        }
+    }
 
     $params = array('companyid'=>$companyid);
 
