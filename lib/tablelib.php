@@ -1233,29 +1233,35 @@ class flexible_table {
             switch ($column) {
 
                 case 'fullname':
-                // Check the full name display for sortable fields.
-                $nameformat = $CFG->fullnamedisplay;
-                if ($nameformat == 'language') {
-                    $nameformat = get_string('fullnamedisplay');
-                }
-                $requirednames = order_in_string(get_all_user_name_fields(), $nameformat);
-
-                if (!empty($requirednames)) {
-                    if ($this->is_sortable($column)) {
-                        // Done this way for the possibility of more than two sortable full name display fields.
-                        $this->headers[$index] = '';
-                        foreach ($requirednames as $name) {
-                            $sortname = $this->sort_link(get_string($name),
-                                    $name, $primarysortcolumn === $name, $primarysortorder);
-                            $this->headers[$index] .= $sortname . ' / ';
-                        }
-                        $helpicon = '';
-                        if (isset($this->helpforheaders[$index])) {
-                            $helpicon = $OUTPUT->render($this->helpforheaders[$index]);
-                        }
-                        $this->headers[$index] = substr($this->headers[$index], 0, -3). $helpicon;
+                    // Check the full name display for sortable fields.
+                    if (has_capability('moodle/site:viewfullnames', context_system::instance())) {
+                        $nameformat = $CFG->alternativefullnameformat;
+                    } else {
+                        $nameformat = $CFG->fullnamedisplay;
                     }
-                }
+
+                    if ($nameformat == 'language') {
+                        $nameformat = get_string('fullnamedisplay');
+                    }
+
+                    $requirednames = order_in_string(get_all_user_name_fields(), $nameformat);
+
+                    if (!empty($requirednames)) {
+                        if ($this->is_sortable($column)) {
+                            // Done this way for the possibility of more than two sortable full name display fields.
+                            $this->headers[$index] = '';
+                            foreach ($requirednames as $name) {
+                                $sortname = $this->sort_link(get_string($name),
+                                        $name, $primarysortcolumn === $name, $primarysortorder);
+                                $this->headers[$index] .= $sortname . ' / ';
+                            }
+                            $helpicon = '';
+                            if (isset($this->helpforheaders[$index])) {
+                                $helpicon = $OUTPUT->render($this->helpforheaders[$index]);
+                            }
+                            $this->headers[$index] = substr($this->headers[$index], 0, -3). $helpicon;
+                        }
+                    }
                 break;
 
                 case 'userpic':
@@ -1263,14 +1269,14 @@ class flexible_table {
                 break;
 
                 default:
-                if ($this->is_sortable($column)) {
-                    $helpicon = '';
-                    if (isset($this->helpforheaders[$index])) {
-                        $helpicon = $OUTPUT->render($this->helpforheaders[$index]);
+                    if ($this->is_sortable($column)) {
+                        $helpicon = '';
+                        if (isset($this->helpforheaders[$index])) {
+                            $helpicon = $OUTPUT->render($this->helpforheaders[$index]);
+                        }
+                        $this->headers[$index] = $this->sort_link($this->headers[$index],
+                                $column, $primarysortcolumn == $column, $primarysortorder) . $helpicon;
                     }
-                    $this->headers[$index] = $this->sort_link($this->headers[$index],
-                            $column, $primarysortcolumn == $column, $primarysortorder) . $helpicon;
-                }
             }
 
             $attributes = array(
