@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Contains standard functions for message_popup.
  *
@@ -23,6 +21,8 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright 2016 Ryan Wyllie <ryan@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+defined('MOODLE_INTERNAL') || die();
 
 /**
  * Renders the popup.
@@ -45,8 +45,10 @@ function message_popup_render_navbar_output(\renderer_base $renderer) {
 
     // Add the messages popover.
     if (!empty($CFG->messaging)) {
+        $unreadcount = \core_message\api::count_unread_conversations($USER);
         $context = [
             'userid' => $USER->id,
+            'unreadcount' => $unreadcount,
             'urls' => [
                 'seeall' => (new moodle_url('/message/index.php'))->out(),
                 'writeamessage' => (new moodle_url('/message/index.php', ['contactsfirst' => 1]))->out(),
@@ -59,8 +61,10 @@ function message_popup_render_navbar_output(\renderer_base $renderer) {
     // Add the notifications popover.
     $enabled = \core_message\api::is_processor_enabled("popup");
     if ($enabled) {
+        $unreadcount = \message_popup\api::count_unread_popup_notifications($USER->id);
         $context = [
             'userid' => $USER->id,
+            'unreadcount' => $unreadcount,
             'urls' => [
                 'seeall' => (new moodle_url('/message/output/popup/notifications.php'))->out(),
                 'preferences' => (new moodle_url('/message/notificationpreferences.php', ['userid' => $USER->id]))->out(),
