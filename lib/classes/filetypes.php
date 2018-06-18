@@ -139,6 +139,7 @@ abstract class core_filetypes {
             'jpg' => array('type' => 'image/jpeg', 'icon' => 'jpeg', 'groups' => array('image', 'web_image'), 'string' => 'image'),
             'jqz' => array('type' => 'text/xml', 'icon' => 'markup'),
             'js' => array('type' => 'application/x-javascript', 'icon' => 'text', 'groups' => array('web_file')),
+            'json' => array('type' => 'application/json', 'icon' => 'text'),
             'latex' => array('type' => 'application/x-latex', 'icon' => 'text'),
             'm' => array('type' => 'text/plain', 'icon' => 'sourcecode'),
             'mbz' => array('type' => 'application/vnd.moodle.backup', 'icon' => 'moodle'),
