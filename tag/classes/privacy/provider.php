@@ -166,7 +166,7 @@ class provider implements
             $params['itemid'] = $itemid;
         }
         if ($userid) {
-            $params['userid'] = $userid;
+            $params['tiuserid'] = $userid;
         }
         $DB->delete_records('tag_instance', $params);
     }
