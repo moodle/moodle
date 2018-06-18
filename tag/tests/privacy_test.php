@@ -122,6 +122,35 @@ class core_tag_privacy_testcase extends provider_testcase {
     }
 
     /**
+     * Test method delete_item_tags() with userid.
+     */
+    public function test_delete_item_tags_with_userid() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+        // Create a course to tag.
+        $course = $this->getDataGenerator()->create_course();
+        $context = context_course::instance($course->id);
+
+        // Create a user to perform tagging.
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+
+        // Tag courses.
+        core_tag_tag::set_item_tags('core_course', 'course', $course->id, $context, ['Tag 1', 'Tag 2'], $user->id);
+        $expectedtagcount = $DB->count_records('tag_instance');
+
+        // Delete tags for course. Use wrong userid.
+        core_tag\privacy\provider::delete_item_tags($context, 'core_course', 'course', null, 1);
+        $this->assertEquals($expectedtagcount, $DB->count_records('tag_instance'));
+
+        $expectedtagcount -= 2;
+        // Delete tags for course. Use correct userid.
+        core_tag\privacy\provider::delete_item_tags($context, 'core_course', 'course', null, $user->id);
+        $this->assertEquals($expectedtagcount, $DB->count_records('tag_instance'));
+    }
+
+    /**
      * Test method delete_item_tags_select().
      */
     public function test_delete_item_tags_select() {
