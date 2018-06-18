@@ -722,7 +722,7 @@ class renderer extends \core_course_management_renderer {
      */
     protected function detail_pair($key, $value, $class ='') {
         $html = html_writer::start_div('detail-pair row yui3-g '.preg_replace('#[^a-zA-Z0-9_\-]#', '-', $class));
-        $html .= html_writer::div(html_writer::span($key), 'pair-key col-md-4 yui3-u-1-4 font-weight-bold');
+        $html .= html_writer::div(html_writer::span($key), 'pair-key col-md-3 yui3-u-1-4 font-weight-bold');
         $html .= html_writer::div(html_writer::span($value), 'pair-value col-md-8 yui3-u-3-4');
         $html .= html_writer::end_div();
         return $html;

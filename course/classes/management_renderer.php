@@ -860,7 +860,7 @@ class core_course_management_renderer extends plugin_renderer_base {
     protected function detail_pair($key, $value, $class ='') {
         $html = html_writer::start_div('detail-pair row yui3-g '.preg_replace('#[^a-zA-Z0-9_\-]#', '-', $class));
         $html .= html_writer::div(html_writer::span($key), 'pair-key span3 col-md-3 yui3-u-1-4');
-        $html .= html_writer::div(html_writer::span($value), 'pair-value span9 col-md-9 m-b-1 yui3-u-3-4');
+        $html .= html_writer::div(html_writer::span($value), 'pair-value span9 col-md-9 m-b-1 yui3-u-3-4 form-inline');
         $html .= html_writer::end_div();
         return $html;
     }
