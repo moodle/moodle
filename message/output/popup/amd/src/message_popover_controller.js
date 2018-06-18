@@ -57,7 +57,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/str',
         this.initialLoad = false;
 
         // Let's find out how many unread messages there are.
-        this.loadUnreadMessageCount();
+        this.unreadCount = this.root.find(SELECTORS.COUNT_CONTAINER).html();
     };
 
     /**
@@ -137,21 +137,6 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/str',
      */
     MessagePopoverController.prototype.hideUnreadCount = function() {
         this.root.find(SELECTORS.COUNT_CONTAINER).addClass('hidden');
-    };
-
-    /**
-     * Ask the server how many unread messages are left, render the value
-     * as a badge on the menu toggle and update the aria labels on the menu
-     * toggle.
-     *
-     * @method loadUnreadMessageCount
-     */
-    MessagePopoverController.prototype.loadUnreadMessageCount = function() {
-        MessageRepo.countUnreadConversations({useridto: this.userId}).then(function(count) {
-            this.unreadCount = count;
-            this.renderUnreadCount();
-            this.updateButtonAriaLabel();
-        }.bind(this)).catch(Notification.exception);
     };
 
     /**
