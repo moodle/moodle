@@ -90,10 +90,10 @@ class migrate_message_data extends \core\task\adhoc_task {
                             $this->migrate_data($userid, $otheruserid);
                             $transaction->allow_commit();
                         } catch (\Throwable $e) {
-                            $updatepreference = false;
+                            throw $e;
+                        } finally {
+                            $lock->release();
                         }
-
-                        $lock->release();
                     } else {
                         // Couldn't get a lock, move on to next user but make sure we don't update user preference so
                         // we still try again.
@@ -172,7 +172,7 @@ class migrate_message_data extends \core\task\adhoc_task {
         $tabledata->useridto = $notification->useridto;
         $tabledata->subject = $notification->subject;
         $tabledata->fullmessage = $notification->fullmessage;
-        $tabledata->fullmessageformat = $notification->fullmessageformat;
+        $tabledata->fullmessageformat = $notification->fullmessageformat ?? FORMAT_MOODLE;
         $tabledata->fullmessagehtml = $notification->fullmessagehtml;
         $tabledata->smallmessage = $notification->smallmessage;
         $tabledata->component = $notification->component;
@@ -210,7 +210,7 @@ class migrate_message_data extends \core\task\adhoc_task {
         $tabledata->conversationid = $conversationid;
         $tabledata->subject = $message->subject;
         $tabledata->fullmessage = $message->fullmessage;
-        $tabledata->fullmessageformat = $message->fullmessageformat;
+        $tabledata->fullmessageformat = $message->fullmessageformat ?? FORMAT_MOODLE;
         $tabledata->fullmessagehtml = $message->fullmessagehtml;
         $tabledata->smallmessage = $message->smallmessage;
         $tabledata->timecreated = $message->timecreated;
