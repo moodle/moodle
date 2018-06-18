@@ -65,6 +65,8 @@ $string['checkdir'] = 'Check dir';
 $string['checkdiradvice'] = 'Ensure the data directory exists and is writable.';
 $string['incourse'] = 'in course {$a}';
 $string['index'] = 'Index';
+$string['indexwhendisabledfullnotice'] = 'Indexing is currently not permitted when search is disabled. To enable this, please see the <a href="{$a->url}">searchindexwhendisabled</a> setting.';
+$string['indexwhendisabledshortnotice'] = 'Indexing is not available.';
 $string['invalidindexerror'] = 'Index directory either contains an invalid index, or nothing at all.';
 $string['ittook'] = 'It took';
 $string['matchingfile'] = 'Matched from file <span class="filename">{$a}</span>';
