@@ -107,10 +107,10 @@ div.editor_atto_toolbar div.atto_group {
     margin: 4px;
 }
 
-.atto_form label.sameline {
+/*.atto_form label.sameline {
     display: inline-block;
     min-width: 10em;
-}
+}*/
 
 .atto_form textarea.fullwidth,
 .atto_form input.fullwidth {
@@ -118,14 +118,13 @@ div.editor_atto_toolbar div.atto_group {
 }
 
 .atto_form {
-    padding-left: 30px;
-    padding-right: 30px;
+    padding: 0.5rem;
 }
 
-.atto_form label {
+/*.atto_form label {
     display: block;
     margin: 0 0 5px 0;
-}
+}*/
 
 .atto_control {
     position: absolute;
