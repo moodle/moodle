@@ -198,11 +198,16 @@ class mod_assign_locallib_testcase extends advanced_testcase {
     public function test_gradingtable_filter_by_requiresgrading_no_grade() {
         global $PAGE;
 
-        $this->setUser($this->editingteachers[0]);
-        $params = array('assignsubmission_onlinetext_enabled' => 1,
-                        'assignfeedback_comments_enabled' => 0,
-                        'grade' => GRADE_TYPE_NONE);
-        $assign = $this->create_instance($params);
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+        $teacher = $this->getDataGenerator()->create_and_enrol($course, 'teacher');
+        $this->setUser($teacher);
+        $assign = $this->create_instance($course, [
+                'assignsubmission_onlinetext_enabled' => 1,
+                'assignfeedback_comments_enabled' => 0,
+                'grade' => GRADE_TYPE_NONE
+            ]);
 
         $PAGE->set_url(new moodle_url('/mod/assign/view.php', array(
             'id' => $assign->get_course_module()->id,
