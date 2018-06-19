@@ -190,6 +190,40 @@ class mod_assign_locallib_testcase extends advanced_testcase {
     }
 
     /**
+     * Test filter by requires grading.
+     *
+     * This is specifically checking an assignment with no grade to make sure we do not
+     * get an exception thrown when rendering the grading table for this type of assignment.
+     */
+    public function test_gradingtable_filter_by_requiresgrading_no_grade() {
+        global $PAGE;
+
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+        $teacher = $this->getDataGenerator()->create_and_enrol($course, 'teacher');
+        $this->setUser($teacher);
+        $assign = $this->create_instance($course, [
+                'assignsubmission_onlinetext_enabled' => 1,
+                'assignfeedback_comments_enabled' => 0,
+                'grade' => GRADE_TYPE_NONE
+            ]);
+
+        $PAGE->set_url(new moodle_url('/mod/assign/view.php', array(
+            'id' => $assign->get_course_module()->id,
+            'action' => 'grading',
+        )));
+
+        // Render the table with the requires grading filter.
+        $gradingtable = new assign_grading_table($assign, 1, ASSIGN_FILTER_REQUIRE_GRADING, 0, true);
+        $output = $assign->get_renderer()->render($gradingtable);
+
+        // Test that the filter function does not throw errors for assignments with no grade.
+        $this->assertContains(get_string('nothingtodisplay'), $output);
+    }
+
+
+    /**
      * Test submissions with extension date.
      */
     public function test_gradingtable_extension_due_date() {
@@ -2748,7 +2782,7 @@ class mod_assign_locallib_testcase extends advanced_testcase {
 
         $cm = get_coursemodule_from_instance('assign', $assign->get_instance()->id);
         $context = context_module::instance($cm->id);
-        $assign = new testable_assign($context, $cm, $course);
+        $assign = new mod_assign_testable_assign($context, $cm, $course);
 
         // Check that other teachers can't view this submission.
         $this->setUser($otherteacher);
