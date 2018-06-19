@@ -1697,6 +1697,74 @@ class core_accesslib_testcase extends advanced_testcase {
     }
 
     /**
+     * Test that the caching in get_role_definitions() and get_role_definitions_uncached()
+     * works as intended.
+     */
+    public function test_role_definition_caching() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        // Get some role ids.
+        $authenticatedrole = $DB->get_record('role', array('shortname' => 'user'), '*', MUST_EXIST);
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'), '*', MUST_EXIST);
+        $emptyroleid = create_role('No capabilities', 'empty', 'A role with no capabilties');
+        $course = $this->getDataGenerator()->create_course();
+        $coursecontext = context_course::instance($course->id);
+
+        // Instantiate the cache instance, since that does DB queries (get_config)
+        // and we don't care about those.
+        cache::make('core', 'roledefs');
+
+        // One database query is not necessarily one database read, it seems. Find out how many.
+        $startdbreads = $DB->perf_get_reads();
+        $rs = $DB->get_recordset('user');
+        $rs->close();
+        $readsperquery = $DB->perf_get_reads() - $startdbreads;
+
+        // Now load some role definitions, and check when it queries the database.
+
+        // Load the capabilities for two roles. Should be one query.
+        $startdbreads = $DB->perf_get_reads();
+        get_role_definitions([$authenticatedrole->id, $studentrole->id]);
+        $this->assertEquals(1 * $readsperquery, $DB->perf_get_reads() - $startdbreads);
+
+        // Load the capabilities for same two roles. Should not query the DB.
+        $startdbreads = $DB->perf_get_reads();
+        get_role_definitions([$authenticatedrole->id, $studentrole->id]);
+        $this->assertEquals(0 * $readsperquery, $DB->perf_get_reads() - $startdbreads);
+
+        // Include a third role. Should do one DB query.
+        $startdbreads = $DB->perf_get_reads();
+        get_role_definitions([$authenticatedrole->id, $studentrole->id, $emptyroleid]);
+        $this->assertEquals(1 * $readsperquery, $DB->perf_get_reads() - $startdbreads);
+
+        // Repeat call. No DB queries.
+        $startdbreads = $DB->perf_get_reads();
+        get_role_definitions([$authenticatedrole->id, $studentrole->id, $emptyroleid]);
+        $this->assertEquals(0 * $readsperquery, $DB->perf_get_reads() - $startdbreads);
+
+        // Alter a role.
+        role_change_permission($studentrole->id, $coursecontext, 'moodle/course:tag', CAP_ALLOW);
+
+        // Should now know to do one query.
+        $startdbreads = $DB->perf_get_reads();
+        get_role_definitions([$authenticatedrole->id, $studentrole->id]);
+        $this->assertEquals(1 * $readsperquery, $DB->perf_get_reads() - $startdbreads);
+
+        // Now clear the in-memory cache, and verify that it does not query the DB.
+        // Cannot use accesslib_clear_all_caches_for_unit_testing since that also
+        // clears the MUC cache.
+        global $ACCESSLIB_PRIVATE;
+        $ACCESSLIB_PRIVATE->cacheroledefs = array();
+
+        // Get all roles. Should not need the DB.
+        $startdbreads = $DB->perf_get_reads();
+        get_role_definitions([$authenticatedrole->id, $studentrole->id, $emptyroleid]);
+        $this->assertEquals(0 * $readsperquery, $DB->perf_get_reads() - $startdbreads);
+    }
+
+    /**
      * Tests get_user_capability_course() which checks a capability across all courses.
      */
     public function test_get_user_capability_course() {
