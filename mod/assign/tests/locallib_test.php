@@ -2777,7 +2777,7 @@ class mod_assign_locallib_testcase extends advanced_testcase {
 
         $cm = get_coursemodule_from_instance('assign', $assign->get_instance()->id);
         $context = context_module::instance($cm->id);
-        $assign = new testable_assign($context, $cm, $course);
+        $assign = new mod_assign_testable_assign($context, $cm, $course);
 
         // Check that other teachers can't view this submission.
         $this->setUser($otherteacher);
