@@ -156,15 +156,15 @@ class core_question_renderer extends plugin_renderer_base {
      * @return HTML fragment.
      */
     protected function number($number) {
+        if (trim($number) === '') {
+            return '';
+        }
         $numbertext = '';
-        if (is_numeric($number)) {
+        if (trim($number) === 'i') {
+            $numbertext = get_string('information', 'question');
+        } else {
             $numbertext = get_string('questionx', 'question',
                     html_writer::tag('span', $number, array('class' => 'qno')));
-        } else if ($number == 'i') {
-            $numbertext = get_string('information', 'question');
-        }
-        if (!$numbertext) {
-            return '';
         }
         return html_writer::tag('h3', $numbertext, array('class' => 'no'));
     }
