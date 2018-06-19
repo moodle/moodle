@@ -32,6 +32,8 @@ define(['jquery', 'core/custom_interaction_events', 'core/log'],
         SECTION: '.list-group-item[href*="#section-"]'
     };
 
+    var small = $(document).width() < 768;
+
     /**
      * Constructor for the Drawer.
      *
@@ -52,6 +54,10 @@ define(['jquery', 'core/custom_interaction_events', 'core/log'],
             var hidden = trigger.attr('aria-expanded') == 'false';
             var side = trigger.attr('data-side');
             var body = $(SELECTORS.BODY);
+            var preference = trigger.attr('data-preference');
+            if (small) {
+                M.util.set_user_preference(preference, 'false');
+            }
 
             drawer.on('mousewheel DOMMouseScroll', this.preventPageScroll);
 
@@ -64,7 +70,6 @@ define(['jquery', 'core/custom_interaction_events', 'core/log'],
         }.bind(this));
 
         this.registerEventListeners();
-        var small = $(document).width() < 768;
         if (small) {
             this.closeAll();
         }
@@ -83,7 +88,9 @@ define(['jquery', 'core/custom_interaction_events', 'core/log'],
             body.removeClass('drawer-open-' + side);
             drawer.attr('aria-hidden', 'true');
             drawer.addClass('closed');
-            M.util.set_user_preference(preference, 'false');
+            if (!small) {
+                M.util.set_user_preference(preference, 'false');
+            }
         });
     };
 
@@ -100,6 +107,9 @@ define(['jquery', 'core/custom_interaction_events', 'core/log'],
         var body = $(SELECTORS.BODY);
         var side = trigger.attr('data-side');
         var preference = trigger.attr('data-preference');
+        if (small) {
+            M.util.set_user_preference(preference, 'false');
+        }
 
         body.addClass('drawer-ease');
         var open = trigger.attr('aria-expanded') == 'true';
@@ -110,14 +120,18 @@ define(['jquery', 'core/custom_interaction_events', 'core/log'],
             drawer.focus();
             body.addClass('drawer-open-' + side);
             drawer.removeClass('closed');
-            M.util.set_user_preference(preference, 'true');
+            if (!small) {
+                M.util.set_user_preference(preference, 'true');
+            }
         } else {
             // Close.
             body.removeClass('drawer-open-' + side);
             trigger.attr('aria-expanded', 'false');
             drawer.attr('aria-hidden', 'true');
             drawer.addClass('closed');
-            M.util.set_user_preference(preference, 'false');
+            if (!small) {
+                M.util.set_user_preference(preference, 'false');
+            }
         }
     };
 
@@ -153,7 +167,6 @@ define(['jquery', 'core/custom_interaction_events', 'core/log'],
         }.bind(this));
 
         $(SELECTORS.SECTION).click(function() {
-            var small = $(document).width() < 768;
             if (small) {
                 this.closeAll();
             }
