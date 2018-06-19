@@ -326,6 +326,7 @@ $string['timetaken'] = 'Time taken';
 $string['title'] = 'Title';
 $string['totalcategorysearchresults'] = 'Total categories: {$a}';
 $string['totalcoursesearchresults'] = 'Total courses: {$a}';
+$string['undefinedrolemapping'] = 'Role mapping undefined for: \'{$a}\' archetype';
 $string['unnamedsection'] = 'Unnamed section';
 $string['userinfo'] = 'Userinfo';
 $string['module'] = 'Module';
