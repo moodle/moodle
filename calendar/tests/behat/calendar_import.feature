@@ -31,11 +31,11 @@ Feature: Import and edit calendar events
     And I should see "Event on 2-15-2017"
     And I should see "Event on 2-25-2017"
     And I click on "Event on 2-15-2017" "link"
+    And I should see "Some place"
     And I click on "Edit" "button"
     And I set the following fields to these values:
       | Event title    | Event on 2-20-2017 |
       | Description    | Event on 2-20-2017 |
-      | Location       | Some place |
       | timestart[day] | 20 |
     And I press "Save"
     When I view the calendar for "2" "2017"
