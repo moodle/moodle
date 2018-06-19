@@ -3614,14 +3614,15 @@ class admin_setting_configiplist extends admin_setting_configtextarea {
      */
     public function validate($data) {
         if(!empty($data)) {
-            $ips = explode("\n", $data);
+            $lines = explode("\n", $data);
         } else {
             return true;
         }
         $result = true;
         $badips = array();
-        foreach($ips as $ip) {
-            $ip = trim($ip);
+        foreach ($lines as $line) {
+            $tokens = explode('#', $line);
+            $ip = trim($tokens[0]);
             if (empty($ip)) {
                 continue;
             }
