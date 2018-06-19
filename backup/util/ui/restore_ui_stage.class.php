@@ -1061,7 +1061,26 @@ class restore_ui_stage_process extends restore_ui_stage {
                 if (!empty($info->role_mappings->mappings)) {
                     $context = context_course::instance($this->ui->get_controller()->get_courseid());
                     $assignableroles = get_assignable_roles($context, ROLENAME_ALIAS, false);
-                    $html .= $renderer->role_mappings($info->role_mappings->mappings, $assignableroles);
+
+                    // Get current role mappings.
+                    $currentroles = role_fix_names(get_all_roles(), $context);
+                    // Get backup role mappings.
+                    $rolemappings = $info->role_mappings->mappings;
+
+                    array_map(function($rolemapping) use ($currentroles) {
+                        foreach ($currentroles as $role) {
+                            // Find matching archetype to determine the backup's shortname for label display.
+                            if ($rolemapping->archetype == $role->archetype) {
+                                $rolemapping->name = $rolemapping->shortname;
+                                break;
+                            }
+                        }
+                        if ($rolemapping->name == null) {
+                            $rolemapping->name = get_string('undefinedrolemapping', 'backup', $rolemapping->archetype);
+                        }
+                    }, $rolemappings);
+
+                    $html .= $renderer->role_mappings($rolemappings, $assignableroles);
                 }
                 break;
             default:
