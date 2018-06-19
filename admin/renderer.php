@@ -1990,7 +1990,7 @@ class core_admin_renderer extends plugin_renderer_base {
                 if (empty($CFG->docroot) or $environment_result->plugin) {
                     $report = get_string($stringtouse, 'admin', $rec);
                 } else {
-                    $report = $this->doc_link(join($linkparts, '/'), get_string($stringtouse, 'admin', $rec));
+                    $report = $this->doc_link(join($linkparts, '/'), get_string($stringtouse, 'admin', $rec), true);
                 }
                 // Enclose report text in div so feedback text will be displayed underneath it.
                 $report = html_writer::div($report);
