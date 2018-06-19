@@ -320,6 +320,19 @@ abstract class base {
     abstract public function get_document($record, $options = array());
 
     /**
+     * Returns the document title to display.
+     *
+     * Allow to customize the document title string to display.
+     *
+     * @param \core_search\document $doc
+     * @return string Document title to display in the search results page
+     */
+    public function get_document_display_title(\core_search\document $doc) {
+
+        return $doc->get('title');
+    }
+
+    /**
      * Return the context info required to index files for
      * this search area.
      *
