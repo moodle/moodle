@@ -49,4 +49,22 @@ $capabilities = [
         'contextlevel' => CONTEXT_USER,
         'archetypes' => []
     ],
+
+    // Capability for users to download the results of their own data request.
+    'tool/dataprivacy:downloadownrequest' => [
+        'riskbitmask' => 0,
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_USER,
+        'archetypes' => [
+            'user' => CAP_ALLOW
+        ]
+    ],
+
+    // Capability for administrators to download other people's data requests.
+    'tool/dataprivacy:downloadallrequests' => [
+        'riskbitmask' => RISK_PERSONAL,
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_USER,
+        'archetypes' => []
+    ],
 ];
