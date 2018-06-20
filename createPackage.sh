@@ -7,4 +7,4 @@ echo "Generaating package for Kaltura_Video_Package_moodle"$BRANCH"_"$VER".zip\n
 
 FILENAME="Kaltura_Video_Package_moodle"$BRANCH"_"$VER".zip"
 
-zip -r $FILENAME lib filter mod local blocks pix
+zip -r $FILENAME lib filter mod local blocks
