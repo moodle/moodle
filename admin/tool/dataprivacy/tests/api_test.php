@@ -277,6 +277,57 @@ class tool_dataprivacy_api_testcase extends advanced_testcase {
     }
 
     /**
+     * Test for api::can_download_data_request_for_user()
+     */
+    public function test_can_download_data_request_for_user() {
+        $generator = $this->getDataGenerator();
+
+        // Three victims.
+        $victim1 = $generator->create_user();
+        $victim2 = $generator->create_user();
+        $victim3 = $generator->create_user();
+
+        // Assign a user as victim 1's parent.
+        $systemcontext = \context_system::instance();
+        $parentrole = $generator->create_role();
+        assign_capability('tool/dataprivacy:makedatarequestsforchildren', CAP_ALLOW, $parentrole, $systemcontext);
+        $parent = $generator->create_user();
+        role_assign($parentrole, $parent->id, \context_user::instance($victim1->id));
+
+        // Assign another user as data access wonder woman.
+        $wonderrole = $generator->create_role();
+        assign_capability('tool/dataprivacy:downloadallrequests', CAP_ALLOW, $wonderrole, $systemcontext);
+        $staff = $generator->create_user();
+        role_assign($wonderrole, $staff->id, $systemcontext);
+
+        // Finally, victim 3 has been naughty; stop them accessing their own data.
+        $naughtyrole = $generator->create_role();
+        assign_capability('tool/dataprivacy:downloadownrequest', CAP_PROHIBIT, $naughtyrole, $systemcontext);
+        role_assign($naughtyrole, $victim3->id, $systemcontext);
+
+        // Victims 1 and 2 can access their own data, regardless of who requested it.
+        $this->assertTrue(api::can_download_data_request_for_user($victim1->id, $victim1->id, $victim1->id));
+        $this->assertTrue(api::can_download_data_request_for_user($victim2->id, $staff->id, $victim2->id));
+
+        // Victim 3 cannot access his own data.
+        $this->assertFalse(api::can_download_data_request_for_user($victim3->id, $victim3->id, $victim3->id));
+
+        // Victims 1 and 2 cannot access another victim's data.
+        $this->assertFalse(api::can_download_data_request_for_user($victim2->id, $victim1->id, $victim1->id));
+        $this->assertFalse(api::can_download_data_request_for_user($victim1->id, $staff->id, $victim2->id));
+
+        // Staff can access everyone's data.
+        $this->assertTrue(api::can_download_data_request_for_user($victim1->id, $victim1->id, $staff->id));
+        $this->assertTrue(api::can_download_data_request_for_user($victim2->id, $staff->id, $staff->id));
+        $this->assertTrue(api::can_download_data_request_for_user($victim3->id, $staff->id, $staff->id));
+
+        // Parent can access victim 1's data only if they requested it.
+        $this->assertTrue(api::can_download_data_request_for_user($victim1->id, $parent->id, $parent->id));
+        $this->assertFalse(api::can_download_data_request_for_user($victim1->id, $staff->id, $parent->id));
+        $this->assertFalse(api::can_download_data_request_for_user($victim2->id, $parent->id, $parent->id));
+    }
+
+    /**
      * Test for api::create_data_request()
      */
     public function test_create_data_request() {
