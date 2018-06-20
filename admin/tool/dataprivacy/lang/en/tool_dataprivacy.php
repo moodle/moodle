@@ -193,6 +193,7 @@ $string['purposeupdated'] = 'Purpose updated';
 $string['replyto'] = 'Reply to';
 $string['requestactions'] = 'Actions';
 $string['requestby'] = 'Requested by';
+$string['requestbydetail'] = 'Requested by:';
 $string['requestcomments'] = 'Comments';
 $string['requestcomments_help'] = 'This box enables you to enter any further details about your data request.';
 $string['requestemailintro'] = 'You have received a data request:';
