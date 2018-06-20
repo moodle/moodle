@@ -1483,7 +1483,7 @@ class iomad {
      * @return bool
      */
     public static function has_capability($capability, context $context, $companyid = 0) {
-        global $USER;
+        global $USER, $DB;
         
         // If original version says no then it's no.
         // (We also rely on this doing a bunch of sanity checks, so we don't have to)
