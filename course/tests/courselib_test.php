@@ -3425,6 +3425,39 @@ class core_course_courselib_testcase extends advanced_testcase {
         ];
     }
 
+    /**
+     * Test reset_course_userdata() with reset_roles_overrides enabled.
+     */
+    public function test_course_roles_reset() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        $generator = $this->getDataGenerator();
+
+        // Create test course and user, enrol one in the other.
+        $course = $generator->create_course();
+        $user = $generator->create_user();
+        $roleid = $DB->get_field('role', 'id', array('shortname' => 'student'), MUST_EXIST);
+        $generator->enrol_user($user->id, $course->id, $roleid);
+
+        // Override course so it does NOT allow students 'mod/forum:viewdiscussion'.
+        $coursecontext = context_course::instance($course->id);
+        assign_capability('mod/forum:viewdiscussion', CAP_PREVENT, $roleid, $coursecontext->id);
+
+        // Check expected capabilities so far.
+        $this->assertFalse(has_capability('mod/forum:viewdiscussion', $coursecontext, $user));
+
+        // Oops, preventing student from viewing forums was a mistake, let's reset the course.
+        $resetdata = new stdClass();
+        $resetdata->id = $course->id;
+        $resetdata->reset_roles_overrides = true;
+        reset_course_userdata($resetdata);
+
+        // Check new expected capabilities - override at the course level should be reset.
+        $this->assertTrue(has_capability('mod/forum:viewdiscussion', $coursecontext, $user));
+    }
+
     public function test_course_check_module_updates_since() {
         global $CFG, $DB, $USER;
         require_once($CFG->dirroot . '/mod/glossary/lib.php');
