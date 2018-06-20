@@ -1289,9 +1289,18 @@ class auth_plugin_ldap extends auth_plugin_base {
                     $nuvalue = core_text::convert($newvalue, 'utf-8', $this->config->ldapencoding);
                     empty($nuvalue) ? $nuvalue = array() : $nuvalue;
                     $ouvalue = core_text::convert($oldvalue, 'utf-8', $this->config->ldapencoding);
-
                     foreach ($ldapkeys as $ldapkey) {
-                        $ldapkey   = $ldapkey;
+                        // Skip update if $ldapkey does not exist in LDAP.
+                        if (!isset($user_entry[$ldapkey][0])) {
+                            $success = false;
+                            error_log($this->errorlogtag.get_string('updateremfailfield', 'auth_ldap',
+                                                                     array('ldapkey' => $ldapkey,
+                                                                            'key' => $key,
+                                                                            'ouvalue' => $ouvalue,
+                                                                            'nuvalue' => $nuvalue)));
+                            continue;
+                        }
+
                         $ldapvalue = $user_entry[$ldapkey][0];
                         if (!$ambiguous) {
                             // Skip update if the values already match
