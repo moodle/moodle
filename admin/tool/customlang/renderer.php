@@ -134,11 +134,13 @@ class tool_customlang_renderer extends plugin_renderer_base {
         $output .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'translatorsubmitted', 'value'=>1));
         $output .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'sesskey', 'value'=>sesskey()));
         $output .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'p', 'value'=>$translator->currentpage));
-        $save1   = html_writer::empty_tag('input', array('type'=>'submit', 'name'=>'savecontinue', 'value'=>get_string('savecontinue', 'tool_customlang')));
-        $save2   = html_writer::empty_tag('input', array('type'=>'submit', 'name'=>'savecheckin', 'value'=>get_string('savecheckin', 'tool_customlang')));
-        $output .= html_writer::tag('fieldset', $save1.$save2, array('class'=>'buttonsbar'));
+        $save1   = html_writer::empty_tag('input', array('type' => 'submit', 'name' => 'savecontinue',
+            'value' => get_string('savecontinue', 'tool_customlang'), 'class' => 'btn btn-secondary'));
+        $save2   = html_writer::empty_tag('input', array('type' => 'submit', 'name' => 'savecheckin',
+            'value' => get_string('savecheckin', 'tool_customlang'), 'class' => 'btn btn-secondary'));
+        $output .= html_writer::tag('fieldset', $save1 . ' ' . $save2, array('class' => 'buttonsbar'));
         $output .= html_writer::table($table);
-        $output .= html_writer::tag('fieldset', $save1.$save2, array('class'=>'buttonsbar'));
+        $output .= html_writer::tag('fieldset', $save1 . ' ' . $save2, array('class' => 'buttonsbar'));
         $output .= html_writer::end_tag('div');
         $output .= html_writer::end_tag('form');
 
