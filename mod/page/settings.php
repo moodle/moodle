@@ -43,6 +43,8 @@ if ($ADMIN->fulltree) {
         get_string('printheading', 'page'), get_string('printheadingexplain', 'page'), 1));
     $settings->add(new admin_setting_configcheckbox('page/printintro',
         get_string('printintro', 'page'), get_string('printintroexplain', 'page'), 0));
+    $settings->add(new admin_setting_configcheckbox('page/printlastmodified',
+        get_string('printlastmodified', 'page'), get_string('printlastmodifiedexplain', 'page'), 1));
     $settings->add(new admin_setting_configselect('page/display',
         get_string('displayselect', 'page'), get_string('displayselectexplain', 'page'), RESOURCELIB_DISPLAY_OPEN, $displayoptions));
     $settings->add(new admin_setting_configtext('page/popupwidth',
