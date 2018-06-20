@@ -52,6 +52,7 @@ function local_mymedia_extend_navigation($navigation) {
     }
 
     $mymedia = get_string('nav_mymedia', 'local_mymedia');
-    $nodemymedia = $nodehome->add($mymedia, new moodle_url('/local/mymedia/mymedia.php'), navigation_node::NODETYPE_LEAF, $mymedia, 'mymedia');
+    $icon = new pix_icon('my-media', '', 'local_mymedia');
+    $nodemymedia = $nodehome->add($mymedia, new moodle_url('/local/mymedia/mymedia.php'), navigation_node::NODETYPE_LEAF, $mymedia, 'mymedia', $icon);
     $nodemymedia->showinflatnavigation = true;
 }
