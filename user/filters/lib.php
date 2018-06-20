@@ -31,6 +31,7 @@ require_once($CFG->dirroot.'/user/filters/courserole.php');
 require_once($CFG->dirroot.'/user/filters/globalrole.php');
 require_once($CFG->dirroot.'/user/filters/profilefield.php');
 require_once($CFG->dirroot.'/user/filters/yesno.php');
+require_once($CFG->dirroot.'/user/filters/anycourses.php');
 require_once($CFG->dirroot.'/user/filters/cohort.php');
 require_once($CFG->dirroot.'/user/filters/user_filter_forms.php');
 require_once($CFG->dirroot.'/user/filters/checkbox.php');
@@ -63,10 +64,11 @@ class user_filtering {
         }
 
         if (empty($fieldnames)) {
-            $fieldnames = array('realname' => 0, 'lastname' => 1, 'firstname' => 1, 'username' => 1, 'email' => 1, 'city' => 1, 'country' => 1,
-                                'confirmed' => 1, 'suspended' => 1, 'profile' => 1, 'courserole' => 1, 'systemrole' => 1,
-                                'cohort' => 1, 'firstaccess' => 1, 'lastaccess' => 1, 'neveraccessed' => 1, 'timemodified' => 1,
-                                'nevermodified' => 1, 'auth' => 1, 'mnethostid' => 1, 'idnumber' => 1);
+            $fieldnames = array('realname' => 0, 'lastname' => 1, 'firstname' => 1, 'username' => 1, 'email' => 1, 'city' => 1,
+                                'country' => 1, 'confirmed' => 1, 'suspended' => 1, 'profile' => 1, 'courserole' => 1,
+                                'anycourses' => 1, 'systemrole' => 1, 'cohort' => 1, 'firstaccess' => 1, 'lastaccess' => 1,
+                                'neveraccessed' => 1, 'timemodified' => 1, 'nevermodified' => 1, 'auth' => 1, 'mnethostid' => 1,
+                                'idnumber' => 1);
         }
 
         $this->_fields  = array();
@@ -142,6 +144,8 @@ class user_filtering {
             case 'suspended':   return new user_filter_yesno('suspended', get_string('suspended', 'auth'), $advanced, 'suspended');
             case 'profile':     return new user_filter_profilefield('profile', get_string('profilefields', 'admin'), $advanced);
             case 'courserole':  return new user_filter_courserole('courserole', get_string('courserole', 'filters'), $advanced);
+            case 'anycourses':
+                return new user_filter_anycourses('anycourses', get_string('anycourses', 'filters'), $advanced, 'user_enrolments');
             case 'systemrole':  return new user_filter_globalrole('systemrole', get_string('globalrole', 'role'), $advanced);
             case 'firstaccess': return new user_filter_date('firstaccess', get_string('firstaccess', 'filters'), $advanced, 'firstaccess');
             case 'lastaccess':  return new user_filter_date('lastaccess', get_string('lastaccess'), $advanced, 'lastaccess');
