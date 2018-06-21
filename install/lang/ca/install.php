@@ -67,7 +67,7 @@ $string['pathserrcreatedataroot'] = 'L\'instal·lador no pot crear el directori 
 $string['pathshead'] = 'Confirmeu els camins';
 $string['pathsrodataroot'] = 'No es pot escriure en el directori dataroot.';
 $string['pathsroparentdataroot'] = 'No es pot escriure en el directori pare ({$a->parent}). L\'instal·lador no pot crear el directori ({$a->dataroot}).';
-$string['pathssubadmindir'] = 'Alguns serveis d\'allotjament web (pocs) utilitzen /admin com a URL especial perquè accediu a un tauler de control o quelcom semblant. Malauradament, això entra en conflicte amb la ubicació estàndard de les pàgines d\'administració de Moodle. Podeu arreglar aquest problema canviant el nom del directori d\'administració de Moodle en la vostra instal·lació i posant el nou nom aquí. Per exemple: <em>moodleadmin</em>. Això arreglarà els enllaços d\'administració de Moodle.';
+$string['pathssubadmindir'] = 'Alguns serveis d\'allotjament web (pocs) utilitzen /admin com a URL especial perquè accediu a un tauler de control o quelcom semblant. Malauradament, això entra en conflicte amb la ubicació estàndard de les pàgines d\'administració de Moodle. Podeu arreglar aquest problema canviant el nom del directori d\'administració de Moodle en la vostra instal·lació i posant el nom nou aquí. Per exemple: <em>moodleadmin</em>. Això arreglarà els enllaços d\'administració de Moodle.';
 $string['pathssubdataroot'] = '<p>Directori on el Moodle emmagatzemarà els materials pujats pels usuaris.</p>
 <p>Aquest directori hauria de tenir permisos de lectura i escriptura per a l\'usuari del servidor web (normalment \'www-data\', \'nobody\', or \'apache\').</p>
 <p>No ha de ser accessible directament via web.</p>
