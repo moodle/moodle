@@ -90,6 +90,7 @@ class company {
      *
      **/
     public function get_managertypes() {
+        global $CFG;
 
         $returnarray = array('0' => get_string('user', 'block_iomad_company_admin'));
         $systemcontext = context_system::instance();
@@ -98,6 +99,9 @@ class company {
         }
         if (iomad::has_capability('block/iomad_company_admin:assign_department_manager', $systemcontext)) {
             $returnarray['2'] = get_string('departmentmanager', 'block_iomad_company_admin');
+        }
+        if (!$CFG->iomad_autoenrol_managers && iomad::has_capability('block/iomad_company_admin:assign_educator', $systemcontext)) {
+            $returnarray['3'] = get_string('educator', 'block_iomad_company_admin');
         }
         return $returnarray;
     }
@@ -2901,7 +2905,7 @@ class company {
                     $timestart = time();
                 }
 
-                if (empty($licenserecord->type)) {
+                if ($licenserecord->type == 0 || $licenserecord->type == 2) {
                     // Set the timeend to be time start + the valid length for the license in days.
                     $timeend = $timestart + ($licenserecord->validlength * 24 * 60 * 60 );
                 } else {
@@ -2909,7 +2913,19 @@ class company {
                     $timeend = $licenserecord->expirydate;
                 }
 
-                $enrol->enrol_user($instance, $user->id, $instance->roleid, $timestart, $timeend);
+                if ($licenserecord->type < 2) {
+                    $enrol->enrol_user($instance, $user->id, $instance->roleid, $timestart, $timeend);
+                } else {
+                    // Educator role.
+                    if ($DB->get_record('iomad_courses', array('courseid' => $course->id, 'shared' => 0))) {
+                        // Not shared.
+                        $role = $DB->get_record('role', array('shortname' => 'companycourseeditor'));
+                    } else {
+                        // Shared.
+                        $role = $DB->get_record('role', array('shortname' => 'companycoursenoneditor'));
+                    }
+                    $enrol->enrol_user($instance, $user->id, $role->id, $timestart, $timeend);
+                }
 
                 // Get the userlicense record.
                 $userlicense = $DB->get_record('companylicense_users', array('id' => $userlicid));

@@ -41,6 +41,7 @@ $services = array(
             'block_iomad_company_admin_delete_licenses',
             'block_iomad_company_admin_allocate_licenses',
             'block_iomad_company_admin_unallocate_liceses',
+            'block_iomad_company_admin_enrol_users',
         ),
         'requiredcapability' => '',
         'restrictusers' => 1,
@@ -167,6 +168,13 @@ $functions = array(
         'methodname' => 'unallocate_licenses',
         'classpath' => 'blocks/iomad_company_admin/externallib.php',
         'description' => 'Remove course licenses from users',
+        'type' => 'write',
+    ),
+    'block_iomad_company_admin_enrol_users' => array(
+        'classname' => 'block_iomad_company_admin_external',
+        'methodname' => 'enrol_users',
+        'classpath' => 'blocks/iomad_company_admin/externallib.php',
+        'description' => 'Assign users onto courses',
         'type' => 'write',
     ),
 );

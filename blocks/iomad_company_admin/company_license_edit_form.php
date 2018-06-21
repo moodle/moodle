@@ -105,7 +105,7 @@ class company_license_form extends company_moodleform {
 
 
     public function definition_after_data() {
-        global $DB;
+        global $DB, $CFG;
 
         $mform =& $this->_form;
 
@@ -158,8 +158,15 @@ class company_license_form extends company_moodleform {
         $mform->setType('reference', PARAM_ALPHANUMEXT);
 
         if (empty($this->parentid)) {
-            $licensetypes = array(get_string('standard', 'block_iomad_company_admin'),
-                                  get_string('reusable', 'block_iomad_company_admin'));
+            if ($CFG->iomad_autoenrol_managers) {
+                $licensetypes = array(get_string('standard', 'block_iomad_company_admin'),
+                                      get_string('reusable', 'block_iomad_company_admin'));
+            } else {
+                $licensetypes = array(get_string('standard', 'block_iomad_company_admin'),
+                                      get_string('reusable', 'block_iomad_company_admin'),
+                                      get_string('educator', 'block_iomad_company_admin'),
+                                      get_string('educatorreusable', 'block_iomad_company_admin'));
+            }
             $mform->addElement('select', 'type', get_string('licensetype', 'block_iomad_company_admin'), $licensetypes);
             $mform->addHelpButton('type', 'licensetype', 'block_iomad_company_admin');
             $mform->addElement('selectyesno', 'program', get_string('licenseprogram', 'block_iomad_company_admin'));
@@ -226,7 +233,7 @@ class company_license_form extends company_moodleform {
     }
 
     public function validation($data, $files) {
-        global $DB;
+        global $CFG, $DB;
 
         $errors = array();
 
@@ -294,7 +301,7 @@ class company_license_form extends company_moodleform {
             $errors['licensecourses'] = get_string('select_license_courses', 'block_iomad_company_admin');
         }
         
-        if (empty($data['type']) && empty($data['validlength'])) {
+        if (($data['type'] == 1 || $data['type'] == 3) && empty($data['validlength'])) {
             $errors['validlength'] = get_string('missinglicenseduration', 'block_iomad_company_admin');
         }
 
@@ -311,6 +318,10 @@ class company_license_form extends company_moodleform {
         // Is expiry date valid?
         if ($data['expirydate'] < time()) {
             $errors['expirydate'] = get_string('errorinvaliddate', 'calendar');
+        }
+
+        if ($CFG->iomad_autoenrol_managers && $data['type'] > 1) {
+            $errors['type'] = get_string('invalid');
         }
 
         return $errors;
@@ -478,6 +489,9 @@ if ( $mform->is_cancelled() || optional_param('cancel', false, PARAM_BOOL) ) {
             }
             if ($currlicensedata->startdate != $data->startdate) {
                 $eventother['oldstartdate'] = $currlicensedata->startdate;
+            }
+            if ($currlicensedata->educator != $data->educator) {
+                $eventother['educatorchange'] = true;
             }
             $event = \block_iomad_company_admin\event\company_license_updated::create(array('context' => context_system::instance(),
                                                                                             'userid' => $USER->id,

@@ -1528,4 +1528,170 @@ class block_iomad_company_admin_external extends external_api {
         return new external_value(PARAM_BOOL, 'Success or failure');
     }
 
+    /**
+     * Returns description of method parameters.
+     *
+     * @return external_function_parameters
+     * @since Moodle 2.2
+     */
+    public static function enrol_users_parameters() {
+        return new external_function_parameters(
+                array(
+                    'enrolments' => new external_multiple_structure(
+                            new external_single_structure(
+                                    array(
+                                        'roleid' => new external_value(PARAM_INT, 'Role to assign to the user'),
+                                        'userid' => new external_value(PARAM_INT, 'The user that is going to be enrolled'),
+                                        'courseid' => new external_value(PARAM_INT, 'The course to enrol the user role in'),
+                                        'timestart' => new external_value(PARAM_INT, 'Timestamp when the enrolment start', VALUE_OPTIONAL),
+                                        'timeend' => new external_value(PARAM_INT, 'Timestamp when the enrolment end', VALUE_OPTIONAL),
+                                        'suspend' => new external_value(PARAM_INT, 'set to 1 to suspend the enrolment', VALUE_OPTIONAL)
+                                    )
+                            )
+                    )
+                )
+        );
+    }
+
+    /**
+     * Enrolment of users.
+     *
+     * Function throw an exception at the first error encountered.
+     * @param array $enrolments  An array of user enrolment
+     * @since Moodle 2.2
+     */
+    public static function enrol_users($enrolments) {
+        global $DB, $CFG;
+
+        require_once($CFG->libdir . '/enrollib.php');
+
+        $params = self::validate_parameters(self::enrol_users_parameters(),
+                array('enrolments' => $enrolments));
+
+        $transaction = $DB->start_delegated_transaction(); // Rollback all enrolment if an error occurs
+                                                           // (except if the DB doesn't support it).
+
+        // Retrieve the manual enrolment plugin.
+        $enrol = enrol_get_plugin('manual');
+        if (empty($enrol)) {
+            throw new moodle_exception('manualpluginnotinstalled', 'enrol_manual');
+        }
+
+        foreach ($params['enrolments'] as $enrolment) {
+            // Get the company for the user.
+            if (!$company = company::by_userid($enrolment['userid'])) {
+                continue;
+            }
+
+            if (!$user = $DB->get_record('user', array('id' => $enrolment['userid']))) {
+                continue;
+            }
+
+            // Is this a licensed course?
+            if ($DB->get_record('iomad_courses', array('courseid' => $enrolment['courseid'], 'licensed' => 1))) {
+                // Create the license record.
+                $licenserec = array('name' => $enrolment['userid'] . '-' . $enrolment['courseid'] . '-' . $enrolment['timestart'],
+                                    'allocation' => 1,
+                                    'validlength' => $enrolment['timeend'] - $enrolment['timestart'],
+                                    'startdate' => $enrolment['timestart'],
+                                    'expirydate' => $enrolment['timeend'],
+                                    'companyid' => $company->id,
+                                    'instant' => true);
+                $licensid = $DB->insert_record('companylicense', $licenserec);
+                $DB->insert_record('companylicense_courses', array('licenseid' => $licenseid, 'courseid' => $enrolment['courseid']));
+
+                // Fire the license create event.
+                $eventother = array('licenseid' => $licenseid,
+                                    'parentid' => 0);
+
+                $event = \block_iomad_company_admin\event\company_license_created::create(array('context' => context_system::instance(),
+                                                                                                'userid' => $USER->id,
+                                                                                                'objectid' => $licenseid,
+                                                                                                'other' => $eventother));
+                $event->trigger();
+
+                // Allocate the license to the user.
+                $recordarray = array('licensecourseid' => $courseid,
+                                     'userid' => $adduser->id,
+                                     'licenseid' => $this->licenseid,
+                                     'issuedate' => time(),
+                                     'isusing' => 0);
+
+                $recordarray['id'] = $DB->insert_record('companylicense_users', $recordarray);
+
+                // Fire that event.
+                $eventother = array('licenseid' => $license->id,
+                                    'duedate' => $enrolment['timestart']);
+                $event = \block_iomad_company_admin\event\user_license_assigned::create(array('context' => context_course::instance($courseid),
+                                                                                              'objectid' => $recordarray['id'],
+                                                                                              'courseid' => $courseid,
+                                                                                              'userid' => $enrolment['userid'],
+                                                                                              'other' => $eventother));
+                $event->trigger();
+            } else {
+                $company_user::enrol($user, array($enrolment['courseid']));
+            }
+        }
+
+        $transaction->allow_commit();
+    }
+
+    /**
+     * Returns description of method result value.
+     *
+     * @return null
+     * @since Moodle 2.2
+     */
+    public static function enrol_users_returns() {
+        return null;
+    }
+
+    /**
+     * Returns description of method parameters.
+     *
+     * @return external_function_parameters
+     * @since Moodle 2.2
+     */
+    public static function check_sesskey_parameters() {
+        return new external_function_parameters(
+            array(
+                  'userid' => new external_value(PARAM_INT, 'The user that is going to be enrolled'),
+                  'code' => new external_value(PARAM_INT, 'The user moodle session key'),
+                 )
+        );
+    }
+
+    /**
+     * Users session check.
+     *
+     * Function throw an exception at the first error encountered.
+     * @param array $enrolments  An array of user enrolment
+     * @since Moodle 2.2
+     */
+    public static function check_sesskey($sesskey) {
+        global $DB, $CFG;
+
+        $params = self::validate_parameters(self::check_sesskey_parameters(),
+                array('sesskey' => $sesskey));
+
+        if (!$userrec = $DB->get_record('user', array('id' => $sesskey['userid']))) {
+            return false;
+        }
+        if ($userrec->currentlogin + $sesskey['code'] > time() - $CFG->sessiontimeout) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Returns description of method result value.
+     *
+     * @return null
+     * @since Moodle 2.2
+     */
+    public static function check_sesskey_returns() {
+        return null;
+    }
+
 }
+

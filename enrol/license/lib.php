@@ -225,14 +225,14 @@ class enrol_license_plugin extends enrol_plugin {
         $form = new enrol_license_enrol_form(null, $instance);
         $instanceid = optional_param('instance', 0, PARAM_INT);
 
-        if ($instance->id == $instanceid || $license->type == 1) {
-            if ($data = $form->get_data() || $license->type == 1) {
+        if ($instance->id == $instanceid || $license->type == 1 || $license->type == 3) {
+            if ($data = $form->get_data() || $license->type == 1 || $license->type == 3) {
                 $enrol = enrol_get_plugin('license');
 
                 // Enrol the user in the course.
                 $timestart = time();
 
-                if (empty($license->type)) {
+                if ($license->type == 1 || $license->type == 3) {
                     // Set the timeend to be time start + the valid length for the license in days.
                     $timeend = $timestart + ($license->validlength * 24 * 60 * 60 );
                 } else {
@@ -240,7 +240,19 @@ class enrol_license_plugin extends enrol_plugin {
                     $timeend = $license->expirydate;
                 }
 
-                $this->enrol_user($instance, $USER->id, $instance->roleid, $timestart, $timeend);
+                if ($license->type < 2) {
+                    $this->enrol_user($instance, $USER->id, $instance->roleid, $timestart, $timeend);
+                } else {
+                    // Educator role.
+                    if ($DB->get_record('iomad_courses', array('courseid' => $instance->courseid, 'shared' => 0))) {
+                        // Not shared.
+                        $role = $DB->get_record('role', array('shortname' => 'companycourseeditor'));
+                    } else {
+                        // Shared.
+                        $role = $DB->get_record('role', array('shortname' => 'companycoursenoneditor'));
+                    }
+                    $this->enrol_user($instance, $USER->id, $role->id, $timestart, $timeend);
+                }
 
                 // Get the userlicense record.
                 $userlicense = $DB->get_record('companylicense_users', array('id' => $license->id));

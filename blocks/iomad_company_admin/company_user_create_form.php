@@ -181,6 +181,14 @@ class user_edit_form extends company_moodleform {
         } else {
             $mform->addElement('hidden', 'managertype', 0);
         }
+        // Deal with the educator role.
+        if (!$CFG->iomad_autoenrol_managers) {
+            $mform->addElement('selectyesno', 'educator', get_string('assigneducator', 'block_iomad_company_admin'));
+            $mform->addHelpButton('educator', 'educator', 'block_iomad_company_admin');
+        } else {
+            $mform->addElement('hidden', 'educator', 0);
+            $mform->setType('educator', PARAM_BOOL);
+        }
 
         // Get global fields.
         if ($fields = $DB->get_records_sql("SELECT * FROM {user_info_field}
@@ -446,47 +454,47 @@ if ($mform->is_cancelled()) {
 
     $systemcontext = context_system::instance();
 
+    $companycourseeditorrole = $DB->get_record('role', array('shortname' => 'companycourseeditor'));
+    $companycoursenoneditorrole = $DB->get_record('role', array('shortname' => 'companycoursenoneditor'));
+
     // Check if we are assigning a different role to the user.
-    if (!empty($data->managertype) && $CFG->iomad_autoenrol_managers) {
-        $companycourseeditorrole = $DB->get_record('role', array('shortname' => 'companycourseeditor'));
-        $companycoursenoneditorrole = $DB->get_record('role', array('shortname' => 'companycoursenoneditor'));
+    if (!empty($data->managertype)) {
+        if ($CFG->iomad_autoenrol_managers) {
+            $data->educator = 1;
+        }
         if ($data->managertype == 2) {
             // Assign the department manager role.
             $departmentmanagerrole = $DB->get_record('role', array('shortname' => 'companydepartmentmanager'));
             role_assign($departmentmanagerrole->id, $userid, $systemcontext->id);
-            //  Assign appropriate roles to company courses.
-            if ($companycourses = $DB->get_records('company_course', array('companyid' => $companyid))) {
-            // Give them the manager role.
-                foreach ($companycourses as $companycourse) {
-                    if ($DB->record_exists('course', array('id' => $companycourse->courseid))) {
-                        company_user::enrol($user,
-                                            array($companycourse->courseid),
-                                            $companycourse->companyid,
-                                            $companycoursenoneditorrole->id);
-                    }
-                }
-            }
         } else if ($data->managertype == 1) {
             // Assign the user as a company manager.
             $companymanagerrole = $DB->get_record('role', array('shortname' => 'companymanager'));
             // Give them the manager role.
             role_assign($companymanagerrole->id, $userid, $systemcontext->id);
-            if ($companycourses = $DB->get_records('company_course', array('companyid' => $companyid))) {
-                foreach ($companycourses as $companycourse) {
-                    if ($DB->record_exists('course', array('id' => $companycourse->courseid))) {
-                        // If its a company created course then assign the editor role to the user.
-                        if ($DB->record_exists('company_created_courses', array ('companyid' => $companyid,
-                                                                                 'courseid' => $companycourse->courseid))) {
-                            company_user::enrol($user,
-                                                 array($companycourse->courseid),
-                                                 $companycourse->companyid,
-                                                 $companycourseeditorrole->id);
-                        } else {
-                             company_user::enrol($user,
-                                                 array($companycourse->courseid),
-                                                 $companycourse->companyid,
-                                                 $companycoursenoneditorrole->id);
-                        }
+        }
+    }
+
+    if (!empty($data->educator)) {
+        if ($companycourses = $DB->get_records('company_course', array('companyid' => $companyid))) {
+            foreach ($companycourses as $companycourse) {
+                if ($DB->record_exists('course', array('id' => $companycourse->courseid))) {
+                    //if its a licensed course - skip it.
+                    if ($DB->record_exists('iomad_courses', array ('licensed' => 1,
+                                                                   'courseid' => $companycourse->courseid))) {
+                        continue;
+                    }
+                    // If it's not a shared course - assign the editor type role.
+                    if ($DB->record_exists('iomad_courses', array ('shared' => 0,
+                                                                   'courseid' => $companycourse->courseid))) {
+                        company_user::enrol($user,
+                                             array($companycourse->courseid),
+                                             $companycourse->companyid,
+                                             $companycourseeditorrole->id);
+                    } else {
+                         company_user::enrol($user,
+                                             array($companycourse->courseid),
+                                             $companycourse->companyid,
+                                             $companycoursenoneditorrole->id);
                     }
                 }
             }

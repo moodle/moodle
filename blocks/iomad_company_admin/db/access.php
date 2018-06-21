@@ -99,6 +99,12 @@ $capabilities = array(
         'contextlevel' => CONTEXT_BLOCK
     ),
 
+    'block/iomad_company_admin:assign_educator' => array(
+
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_BLOCK
+    ),
+
     'block/iomad_company_admin:company_add' => array(
 
         'captype' => 'write',

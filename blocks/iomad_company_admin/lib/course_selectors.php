@@ -851,6 +851,7 @@ class current_user_license_course_selector extends course_selector_base {
         $this->companyid  = $options['companyid'];
         $this->departmentid = $options['departmentid'];
         $this->user = $options['user'];
+        $this->licenseid = $options['licenseid'];
 
         if (isset($options['licenses'])) {
             $this->licenses = true;
@@ -898,6 +899,7 @@ class current_user_license_course_selector extends course_selector_base {
         $params['siteid'] = $SITE->id;
         $params['timestamp'] = time();
         $params['userid'] = $this->user->id;
+        $params['licenseid'] = $this->licenseid;
 
         $fields      = 'SELECT ' . $this->required_fields_sql('c');
         $countfields = 'SELECT COUNT(1)';
@@ -911,6 +913,7 @@ class current_user_license_course_selector extends course_selector_base {
                         AND clu.licenseid = cl.id
                         AND $wherecondition
                         AND clu.userid = :userid
+                        AND clu.licenseid = :licenseid
                         AND clu.timecompleted IS NULL";
 
         $order = ' ORDER BY c.fullname ASC';
@@ -945,9 +948,12 @@ class potential_user_license_course_selector extends course_selector_base {
      * @return array
      */
     public function __construct($name, $options) {
+        global $DB;
+
         $this->companyid  = $options['companyid'];
         $this->user = $options['user'];
         $this->licenseid = $options['licenseid'];
+        $this->license = $DB->get_record('companylicense', array('id' => $this->licenseid));
  
         parent::__construct($name, $options);
     }

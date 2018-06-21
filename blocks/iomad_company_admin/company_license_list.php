@@ -128,6 +128,7 @@ $strsplit = get_string('split', 'block_iomad_company_admin');
 $straddlicense = get_string('licenseaddnew', 'block_iomad_company_admin');
 $strlicensename = get_string('licensename', 'block_iomad_company_admin');
 $strlicensereference = get_string('licensereference', 'block_iomad_company_admin');
+$strlicensetype = get_string('licensetype', 'block_iomad_company_admin');
 $strlicenseprogram = get_string('licenseprogram', 'block_iomad_company_admin');
 $strlicenseinstant = get_string('licenseinstant', 'block_iomad_company_admin');
 $strcoursesname = get_string('allocatedcourses', 'block_iomad_company_admin');
@@ -135,10 +136,15 @@ $strlicenseshelflife = get_string('licenseexpires', 'block_iomad_company_admin')
 $strlicenseduration = get_string('licenseduration', 'block_iomad_company_admin');
 $strlicenseallocated = get_string('licenseallocated', 'block_iomad_company_admin');
 $strlicenseremaining = get_string('licenseremaining', 'block_iomad_company_admin');
+$licensetypes = array(get_string('standard', 'block_iomad_company_admin'),
+                      get_string('reusable', 'block_iomad_company_admin'),
+                      get_string('educator', 'block_iomad_company_admin'),
+                      get_string('educatorreusable', 'block_iomad_company_admin'));
 
 $table = new html_table();
 $table->head = array ($strlicensename,
                       $strlicensereference,
+                      $strlicensetype,
                       $strlicenseprogram,
                       $strlicenseinstant,
                       $strcoursesname,
@@ -148,7 +154,7 @@ $table->head = array ($strlicensename,
                       $strlicenseremaining,
                       "",
                       "");
-$table->align = array ("left", "left", "left", "left", "left", "left", "center", "center", "center", "center");
+$table->align = array ("left", "left", "left", "left", "left", "left", "left", "center", "center", "center", "center");
 $table->width = "95%";
 
 if ($departmentid == $companydepartment->id) {
@@ -261,7 +267,7 @@ if ($departmentid == $companydepartment->id) {
         }
 
         // Deal with valid length if a subscription.
-        if (!empty($license->type)) {
+        if ($license->type == 1) {
             $validlength = "-";
         } else {
             $validlength = $license->validlength;
@@ -270,6 +276,7 @@ if ($departmentid == $companydepartment->id) {
         // Create the table data.
         $dataarray = array ($license->name,
                            $license->reference,
+                           $licensetypes[$license->type],
                            $programstring,
                            $instantstring,
                            $coursestring,
@@ -304,13 +311,43 @@ if ($departmentid == $companydepartment->id) {
             $editbutton = "";
         }
 
-        $table->data[] = array ("$license->name",
-                            "$license->expirydate",
-                            "$license->validlength",
-                            "$license->allocation",
-                            "$license->used",
-                            $editbutton,
-                            $deletebutton);
+        // Deal with allocation numbers if a program.
+        if (!empty($license->program)) {
+            $programstring = get_string('yes');
+            $allocation = $license->allocation / count($licensecourses);
+            $used = $license->used / count($licensecourses);
+        } else {
+            $programstring = get_string('no');
+            $allocation = $license->allocation;
+            $used = $license->used;
+        }
+
+        // Deal with allocation numbers if a program.
+        if (!empty($license->instant)) {
+            $instantstring = get_string('yes');
+        } else {
+            $instantstring = get_string('no');
+        }
+
+        // Deal with valid length if a subscription.
+        if ($license->type == 1) {
+            $validlength = "-";
+        } else {
+            $validlength = $license->validlength;
+        }
+
+        $table->data[] = array ($license->name,
+                                $license->reference,
+                                $licensetypes[$license->type],
+                                $programstring,
+                                $instantstring,
+                                $coursestring,
+                                date($CFG->iomad_date_format, $license->expirydate),
+                                $license->validlength,
+                                $license->allocation,
+                                $license->used,
+                                $editbutton,
+                                $deletebutton);
     }
 }
 

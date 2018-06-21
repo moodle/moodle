@@ -478,7 +478,16 @@ if ($coursesform->is_cancelled() || optional_param('cancel', false, PARAM_BOOL))
             $parentlevel = company::get_company_parentnode($companyid);
             $userhierarchylevel = $parentlevel->id;
             // Get all the licenses.
-            $licenses = $DB->get_records('companylicense', array('companyid' => $companyid), 'expirydate DESC', 'id,name,startdate,expirydate');
+            // Are we an educator?
+            if (!empty($userid) && $DB->get_record('company_users', array('userid' => $userid, 'educator' => 1))) {
+                $licenses = $DB->get_records('companylicense', array('companyid' => $companyid), 'expirydate DESC', 'id,type,name,startdate,expirydate');
+            } else {
+                $licenses = $DB->get_records_sql("SELECT id,type,name,startdate,expirydate FROM {companylicense}
+                                                  WHERE companyid = :companyid
+                                                  AND type < 2
+                                                  ORDER BY expirydate DESC",
+                                                  array('companyid' => $companyid));
+            }
             foreach ($licenses as $license) {
                 if ($license->expirydate < time()) {
                     $licenselist[$license->id] = $license->name . " (" . get_string('licenseexpired', 'block_iomad_company_admin', date($CFG->iomad_date_format, $license->expirydate)) . ")";
@@ -490,10 +499,18 @@ if ($coursesform->is_cancelled() || optional_param('cancel', false, PARAM_BOOL))
                 } else {
                     $licenselist[$license->id] = $license->name;
                 }
+                if ($license->type > 1) {
+                    $licenselist[$license->id] = $licenselist[$license->id] . " (" . get_string('educator', 'block_iomad_company_admin') .")";
+                }
             }
         } else {
             $userlevel = $company->get_userlevel($USER);
             $userhierarchylevel = $userlevel->id;
+            if (!empty($userid) && $DB->get_record('company_users', array('userid' => $userid, 'educator' => 1))) {
+                $educator = true;
+            } else {
+                $educator = false;
+            }
             $licenses = company::get_recursive_departments_licenses($userhierarchylevel);
             if (!empty($licenses)) {
                 foreach ($licenses as $deptlicenseid) {
@@ -501,6 +518,10 @@ if ($coursesform->is_cancelled() || optional_param('cancel', false, PARAM_BOOL))
                     if ($license = $DB->get_records('companylicense',
                                                      array('id' => $deptlicenseid->licenseid, 'companyid' => $companyid),
                                                      null, 'id,name,startdate,expirydate')) {
+                        if (!$educator && $license->type > 1) {
+                            continue;
+                        }
+                        
                         if ($license[$deptlicenseid->licenseid]->expirydate > time()) {
                             if ($license->startdate > time()) {
                                 $licenselist[$license->id] = $license->name . " (" . get_string('licensevalidfrom', 'block_iomad_company_admin', date($CFG->iomad_date_format, $license->startdate)) . ")";
@@ -510,6 +531,9 @@ if ($coursesform->is_cancelled() || optional_param('cancel', false, PARAM_BOOL))
                             } else {
                                 $licenselist[$license[$deptlicenseid->licenseid]->id]  = $license[$deptlicenseid->licenseid]->name;
                             }
+                        }
+                        if ($license->type > 1) {
+                            $licenselist[$license->id] = $licenselist[$license->id] . " (" . get_string('educator', 'block_iomad_company_admin') . ")";
                         }
                     }
                 }

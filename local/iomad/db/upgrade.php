@@ -1769,5 +1769,25 @@ function xmldb_local_iomad_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2017090310, 'local', 'iomad');
     }
 
+    if ($oldversion < 2017090311) {
+
+        // Define field educator to be added to company_users.
+        $table = new xmldb_table('company_users');
+        $field = new xmldb_field('educator', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'suspended');
+
+        // Conditionally launch add field educator.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // If we were automatically enrolling managers using the old method, mark them as an educator.
+        if ($CFG->iomad_autoenrol_managers) {
+            $DB->set_field_select('company_users', 'educator', 1, 'managertype != 0');
+        }
+
+        // Iomad savepoint reached.
+        upgrade_plugin_savepoint(true, 2017090311, 'local', 'iomad');
+    }
+
     return $result;
 }
