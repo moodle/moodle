@@ -529,7 +529,8 @@ class quiz_statistics_report extends quiz_default_report {
         $questions = quiz_report_get_significant_questions($quiz);
 
         // Only load main question not sub questions.
-        $questionstatistics = $DB->get_records_select('question_statistics', 'hashcode = ? AND slot IS NOT NULL',
+        $questionstatistics = $DB->get_records_select('question_statistics',
+                'hashcode = ? AND slot IS NOT NULL AND variant IS NULL',
             [$qubaids->get_hash_code()]);
 
         // Configure what to display.
