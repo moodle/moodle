@@ -177,7 +177,7 @@ class dropbox extends \oauth2_client {
      * This function attempts to deal with errors as per
      * https://www.dropbox.com/developers/documentation/http/documentation#error-handling.
      *
-     * @param   string      $data       The returned content.
+     * @param   mixed      $data       The returned content.
      * @throws  moodle_exception
      */
     protected function check_and_handle_api_errors($data) {
@@ -197,8 +197,8 @@ class dropbox extends \oauth2_client {
                 throw new authentication_exception('Authentication token expired');
                 break;
             case 409:
-                // Endpoint-specific error. Look to the response body for the specifics of the error.
-                throw new \coding_exception('Endpoint specific error: ' . $data);
+                // Endpoint-specific error. Look to the JSON response body for the specifics of the error.
+                throw new \coding_exception('Endpoint specific error: ' . $data->error_summary);
                 break;
             case 429:
                 // Your app is making too many requests for the given user or team and is being rate limited. Your app
