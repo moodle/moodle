@@ -61,6 +61,11 @@ if (\core\session\manager::is_loggedinas() and $USER->loginascontext->contextlev
     print_error('loginasnoenrol', '', $CFG->wwwroot.'/course/view.php?id='.$USER->loginascontext->instanceid);
 }
 
+// Check if user has access to the category where the course is located.
+if (!core_course_category::can_view_course_info($course) && !is_enrolled($context, $USER, '', true)) {
+    print_error('coursehidden', '', $CFG->wwwroot . '/');
+}
+
 // get all enrol forms available in this course
 $enrols = enrol_get_plugins(true);
 $enrolinstances = enrol_get_instances($course->id, true);

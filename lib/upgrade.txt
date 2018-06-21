@@ -26,6 +26,10 @@ attribute on forms to avoid collisions in forms loaded in AJAX requests.
   When the parameter is set to that constant, the function won't process file merging, keeping the original state of the file area.
 * Introduced new callback for plugin developers '<component>_pre_processor_message_send($procname, $proceventdata)':
   This will allow any plugin to manipulate messages or notifications before they are sent by a processor (email, mobile...)
+* New capability 'moodle/course:browse' in category context that controls whether user is able to browse list of courses
+  in this category. To work with list of courses use API methods in core_course_category and also 'course' form element.
+* It is possible to pass additional conditions to get_courses_search();
+  core_course_category::search_courses() now allows to search only among courses with completion enabled.
 
 === 3.6 ===
 

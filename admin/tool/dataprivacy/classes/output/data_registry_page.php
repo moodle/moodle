@@ -234,10 +234,6 @@ class data_registry_page implements renderable, templatable {
 
             $coursecontext = \context_course::instance($course->id);
 
-            if (!$course->visible && !has_capability('moodle/course:viewhiddencourses', $coursecontext)) {
-                continue;
-            }
-
             $coursenode = [
                 'text' => shorten_text(format_string($course->shortname, true, ['context' => $coursecontext])),
                 'contextid' => $coursecontext->id,

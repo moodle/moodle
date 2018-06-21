@@ -146,12 +146,13 @@ class MoodleQuickForm_course extends MoodleQuickForm_autocomplete {
                 WHERE c.id ". $whereclause." ORDER BY c.sortorder";
         $list = $DB->get_records_sql($sql, array('contextcourse' => CONTEXT_COURSE) + $params);
 
+        $mycourses = enrol_get_my_courses(null, null, 0, array_keys($list));
         $coursestoselect = array();
         foreach ($list as $course) {
             context_helper::preload_from_record($course);
             $context = context_course::instance($course->id);
             // Make sure we can see the course.
-            if (!$course->visible && !has_capability('moodle/course:viewhiddencourses', $context)) {
+            if (!array_key_exists($course->id, $mycourses) && !core_course_category::can_view_course_info($course)) {
                 continue;
             }
             $label = format_string(get_course_display_name_for_list($course), true, ['context' => $context]);

@@ -416,14 +416,6 @@ class core_course_list_element implements IteratorAggregate {
     }
 
     /**
-     * Returns true if this course is visible to the current user.
-     * @return bool
-     */
-    public function is_uservisible() {
-        return $this->visible || has_capability('moodle/course:viewhiddencourses', $this->get_context());
-    }
-
-    /**
      * Returns true if the current user can review enrolments for this course.
      *
      * Note: this function does not check that the current user can access the course.

@@ -1870,7 +1870,7 @@ class core_course_external extends external_api {
             if (!isset($excludedcats[$category->id])) {
 
                 // Final check to see if the category is visible to the user.
-                if ($category->visible or has_capability('moodle/category:viewhiddencategories', $context)) {
+                if (core_course_category::can_view_category($category)) {
 
                     $categoryinfo = array();
                     $categoryinfo['id'] = $category->id;
@@ -3235,14 +3235,18 @@ class core_course_external extends external_api {
             }
             // Get the public course information, even if we are not enrolled.
             $courseinlist = new core_course_list_element($course);
-            $coursesdata[$course->id] = self::get_course_public_information($courseinlist, $context);
 
             // Now, check if we have access to the course.
             try {
                 self::validate_context($context);
             } catch (Exception $e) {
+                // User can not access the course, check if they can see the public information about the course and return it.
+                if (core_course_category::can_view_course_info($course)) {
+                    $coursesdata[$course->id] = self::get_course_public_information($courseinlist, $context);
+                }
                 continue;
             }
+            $coursesdata[$course->id] = self::get_course_public_information($courseinlist, $context);
             // Return information for any user that can access the course.
             $coursefields = array('format', 'showgrades', 'newsitems', 'startdate', 'enddate', 'maxbytes', 'showreports', 'visible',
                 'groupmode', 'groupmodeforce', 'defaultgroupingid', 'enablecompletion', 'completionnotify', 'lang', 'theme',
