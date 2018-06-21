@@ -5319,7 +5319,7 @@ abstract class context extends stdClass implements IteratorAggregate {
      * Returns parent contexts of this context in reversed order, i.e. parent first,
      * then grand parent, etc.
      *
-     * @param bool $includeself tre means include self too
+     * @param bool $includeself true means include self too
      * @return array of context instances
      */
     public function get_parent_contexts($includeself = false) {
@@ -5337,10 +5337,10 @@ abstract class context extends stdClass implements IteratorAggregate {
     }
 
     /**
-     * Returns parent contexts of this context in reversed order, i.e. parent first,
+     * Returns parent context ids of this context in reversed order, i.e. parent first,
      * then grand parent, etc.
      *
-     * @param bool $includeself tre means include self too
+     * @param bool $includeself true means include self too
      * @return array of context ids
      */
     public function get_parent_context_ids($includeself = false) {
@@ -5355,6 +5355,35 @@ abstract class context extends stdClass implements IteratorAggregate {
         }
 
         return array_reverse($parentcontexts);
+    }
+
+    /**
+     * Returns parent context paths of this context.
+     *
+     * @param bool $includeself true means include self too
+     * @return array of context paths
+     */
+    public function get_parent_context_paths($includeself = false) {
+        if (empty($this->_path)) {
+            return array();
+        }
+
+        $contextids = explode('/', $this->_path);
+
+        $path = '';
+        $paths = array();
+        foreach ($contextids as $contextid) {
+            if ($contextid) {
+                $path .= '/' . $contextid;
+                $paths[$contextid] = $path;
+            }
+        }
+
+        if (!$includeself) {
+            unset($paths[$this->_id]);
+        }
+
+        return $paths;
     }
 
     /**
@@ -5455,9 +5484,11 @@ abstract class context extends stdClass implements IteratorAggregate {
 
         if (!empty($ACCESSLIB_PRIVATE->dirtyusers[$USER->id])) {
             $dirty = true;
-        } else {
-            foreach ($ACCESSLIB_PRIVATE->dirtycontexts as $path=>$unused) {
-                if ($path === $this->_path or strpos($this->_path, $path.'/') === 0) {
+        } else if (!empty($ACCESSLIB_PRIVATE->dirtycontexts)) {
+            $paths = $this->get_parent_context_paths(true);
+
+            foreach ($paths as $path) {
+                if (isset($ACCESSLIB_PRIVATE->dirtycontexts[$path])) {
                     $dirty = true;
                     break;
                 }

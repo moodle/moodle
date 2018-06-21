@@ -2733,12 +2733,17 @@ class core_accesslib_testcase extends advanced_testcase {
         $this->assertEquals(array($systemcontext->id=>$systemcontext), $systemcontext->get_parent_contexts(true));
         $this->assertEquals(array(), $systemcontext->get_parent_context_ids());
         $this->assertEquals(array($systemcontext->id), $systemcontext->get_parent_context_ids(true));
+        $this->assertEquals(array(), $systemcontext->get_parent_context_paths());
+        $this->assertEquals(array($systemcontext->id => $systemcontext->path), $systemcontext->get_parent_context_paths(true));
 
         $this->assertEquals($systemcontext, $frontpagecontext->get_parent_context());
         $this->assertEquals(array($systemcontext->id=>$systemcontext), $frontpagecontext->get_parent_contexts());
         $this->assertEquals(array($frontpagecontext->id=>$frontpagecontext, $systemcontext->id=>$systemcontext), $frontpagecontext->get_parent_contexts(true));
         $this->assertEquals(array($systemcontext->id), $frontpagecontext->get_parent_context_ids());
         $this->assertEquals(array($frontpagecontext->id, $systemcontext->id), $frontpagecontext->get_parent_context_ids(true));
+        $this->assertEquals(array($systemcontext->id => $systemcontext->path), $frontpagecontext->get_parent_context_paths());
+        $expected = array($systemcontext->id => $systemcontext->path, $frontpagecontext->id => $frontpagecontext->path);
+        $this->assertEquals($expected, $frontpagecontext->get_parent_context_paths(true));
 
         $this->assertFalse($systemcontext->get_parent_context());
         $frontpagecontext = context_course::instance($SITE->id);
