@@ -663,6 +663,12 @@ class theme_config {
     public $remapiconcache = [];
 
     /**
+     * The name of the function to call to get precompiled CSS.
+     * @var string
+     */
+    public $precompiledcsscallback = null;
+
+    /**
      * Load the config.php file for a particular theme, and return an instance
      * of this class. (That is, this is a factory method.)
      *
@@ -739,7 +745,8 @@ class theme_config {
             'rendererfactory', 'csspostprocess', 'editor_sheets', 'rarrow', 'larrow', 'uarrow', 'darrow',
             'hidefromselector', 'doctype', 'yuicssmodules', 'blockrtlmanipulations',
             'lessfile', 'extralesscallback', 'lessvariablescallback', 'blockrendermethod',
-            'scss', 'extrascsscallback', 'prescsscallback', 'csstreepostprocessor', 'addblockposition', 'iconsystem');
+            'scss', 'extrascsscallback', 'prescsscallback', 'csstreepostprocessor', 'addblockposition',
+            'iconsystem', 'precompiledcsscallback');
 
         foreach ($config as $key=>$value) {
             if (in_array($key, $configurable)) {
@@ -1090,7 +1097,13 @@ class theme_config {
                 } else {
                     if ($type === 'theme' && $identifier === self::SCSS_KEY) {
                         // We need the content from SCSS because this is the SCSS file from the theme.
-                        $csscontent .= $this->get_css_content_from_scss(false);
+                        if ($compiled = $this->get_css_content_from_scss(false)) {
+                            $csscontent .= $compiled;
+                        } else {
+                            // The compiler failed so default back to any precompiled css that might
+                            // exist.
+                            $csscontent .= $this->get_precompiled_css_content();
+                        }
                     } else if ($type === 'theme' && $identifier === $this->lessfile) {
                         // We need the content from LESS because this is the LESS file from the theme.
                         $csscontent .= $this->get_css_content_from_less(false);
@@ -1485,6 +1498,26 @@ class theme_config {
         unset($compiler);
 
         return $compiled;
+    }
+
+    /**
+     * Return the precompiled CSS if the precompiledcsscallback exists.
+     *
+     * @return string Return compiled css.
+     */
+    public function get_precompiled_css_content() {
+        $configs = [$this] + $this->parent_configs;
+        $css = '';
+
+        foreach ($configs as $config) {
+            if (isset($config->precompiledcsscallback)) {
+                $function = $config->precompiledcsscallback;
+                if (function_exists($function)) {
+                    $css .= $function($this);
+                }
+            }
+        }
+        return $css;
     }
 
     /**
