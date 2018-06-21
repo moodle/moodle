@@ -201,7 +201,7 @@ class renderer extends \core_course_management_renderer {
         $catatlevel[] = array_shift($selectedparents);
         $catatlevel = array_unique($catatlevel);
 
-        $listing = core_course_category::get(0)->get_children();
+        $listing = core_course_category::top()->get_children();
 
         $attributes = array(
             'class' => 'ml-1 list-unstyled',
@@ -265,10 +265,10 @@ class renderer extends \core_course_management_renderer {
             'aria-expanded' => $isexpanded ? 'true' : 'false'
         );
         $text = $category->get_formatted_name();
-        if ($category->parent) {
+        if (($parent = $category->get_parent_coursecat()) && $parent->id) {
             $a = new stdClass;
             $a->category = $text;
-            $a->parentcategory = $category->get_parent_coursecat()->get_formatted_name();
+            $a->parentcategory = $parent->get_formatted_name();
             $textlabel = get_string('categorysubcategoryof', 'moodle', $a);
         }
         $courseicon = $this->output->pix_icon('i/course', get_string('courses'));
@@ -392,7 +392,7 @@ class renderer extends \core_course_management_renderer {
         $cancreatecategory = $category && $category->can_create_subcategory();
         $cancreatecategory = $cancreatecategory || core_course_category::can_create_top_level_category();
         if ($category === null) {
-            $category = core_course_category::get(0);
+            $category = core_course_category::top();
         }
 
         if ($cancreatecategory) {

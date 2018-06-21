@@ -113,10 +113,7 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
     protected $theme = false;
 
     /** @var bool */
-    protected $fromcache;
-
-    /** @var bool */
-    protected $hasmanagecapability = null;
+    protected $fromcache = false;
 
     /**
      * Magic setter method, we do not want anybody to modify properties from the outside
@@ -232,17 +229,17 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
      */
     public static function get($id, $strictness = MUST_EXIST, $alwaysreturnhidden = false, $user = null) {
         if (!$id) {
-            if (!isset(self::$coursecat0)) {
-                $record = new stdClass();
-                $record->id = 0;
-                $record->visible = 1;
-                $record->depth = 0;
-                $record->path = '';
-                $record->locked = 0;
-                self::$coursecat0 = new self($record);
+            // Top-level category.
+            if ($alwaysreturnhidden || self::top()->is_uservisible()) {
+                return self::top();
             }
-            return self::$coursecat0;
+            if ($strictness == MUST_EXIST) {
+                throw new moodle_exception('cannotviewcategory');
+            }
+            return null;
         }
+
+        // Try to get category from cache or retrieve from the DB.
         $coursecatrecordcache = cache::make('core', 'coursecatrecords');
         $coursecat = $coursecatrecordcache->get($id);
         if ($coursecat === false) {
@@ -253,14 +250,66 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
                 $coursecatrecordcache->set($id, $coursecat);
             }
         }
-        if ($coursecat && ($alwaysreturnhidden || $coursecat->is_uservisible($user))) {
-            return $coursecat;
-        } else {
+
+        if (!$coursecat) {
+            // Course category not found.
             if ($strictness == MUST_EXIST) {
                 throw new moodle_exception('unknowncategory');
             }
+            $coursecat = null;
+        } else if (!$alwaysreturnhidden && !$coursecat->is_uservisible($user)) {
+            // Course category is found but user can not access it.
+            if ($strictness == MUST_EXIST) {
+                throw new moodle_exception('cannotviewcategory');
+            }
+            $coursecat = null;
         }
-        return null;
+        return $coursecat;
+    }
+
+    /**
+     * Returns the pseudo-category representing the whole system (id=0, context_system)
+     *
+     * @return core_course_category
+     */
+    public static function top() {
+        if (!isset(self::$coursecat0)) {
+            $record = new stdClass();
+            $record->id = 0;
+            $record->visible = 1;
+            $record->depth = 0;
+            $record->path = '';
+            $record->locked = 0;
+            self::$coursecat0 = new self($record);
+        }
+        return self::$coursecat0;
+    }
+
+    /**
+     * Returns the top-most category for the current user
+     *
+     * Examples:
+     * 1. User can browse courses everywhere - return self::top() - pseudo-category with id=0
+     * 2. User does not have capability to browse courses on the system level but
+     *    has it in ONE course category - return this course category
+     * 3. User has capability to browse courses in two course categories - return self::top()
+     *
+     * @return core_course_category|null
+     */
+    public static function user_top() {
+        $children = self::top()->get_children();
+        if (count($children) == 1) {
+            // User has access to only one category on the top level. Return this category as "user top category".
+            return reset($children);
+        }
+        if (count($children) > 1) {
+            // User has access to more than one category on the top level. Return the top as "user top category".
+            // In this case user actually may not have capability 'moodle/course:browse' on the top level.
+            return self::top();
+        }
+        // User can not access any categories on the top level.
+        // TODO MDL-10965 find ANY/ALL categories in the tree where user has access to.
+        return self::get(0, IGNORE_MISSING);
     }
 
     /**
@@ -343,7 +392,7 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
      * @return core_course_category
      */
     public static function get_default() {
-        if ($visiblechildren = self::get(0)->get_children()) {
+        if ($visiblechildren = self::top()->get_children()) {
             $defcategory = reset($visiblechildren);
         } else {
             $toplevelcategories = self::get_tree(0);
@@ -358,6 +407,9 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
      * during {@link fix_course_sortorder()}
      */
     protected function restore() {
+        if (!$this->id) {
+            return;
+        }
         // Update all fields in the current object.
         $newrecord = self::get($this->id, MUST_EXIST, true);
         foreach (self::$coursecatfields as $key => $unused) {
@@ -419,7 +471,7 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
         }
 
         if (empty($data->parent)) {
-            $parent = self::get(0);
+            $parent = self::top();
         } else {
             $parent = self::get($data->parent, MUST_EXIST, true);
         }
@@ -589,8 +641,47 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
      * @return bool
      */
     public function is_uservisible($user = null) {
-        return !$this->id || $this->visible ||
-            has_capability('moodle/category:viewhiddencategories', $this->get_context(), $user);
+        return self::can_view_category($this, $user);
+    }
+
+    /**
+     * Checks if current user has access to the category
+     *
+     * @param stdClass|core_course_category $category
+     * @param int|stdClass $user The user id or object. By default (null) checks access for the current user.
+     * @return bool
+     */
+    public static function can_view_category($category, $user = null) {
+        if (!$category->id) {
+            return has_capability('moodle/course:browse', context_system::instance(), $user);
+        }
+        $context = context_coursecat::instance($category->id);
+        if (!$category->visible && !has_capability('moodle/category:viewhiddencategories', $context, $user)) {
+            return false;
+        }
+        return has_capability('moodle/course:browse', $context, $user);
+    }
+
+    /**
+     * Checks if current user can view course information or enrolment page.
+     *
+     * This method does not check if user is already enrolled in the course
+     *
+     * @param stdClass $course course object (must have 'id', 'visible' and 'category' fields)
+     * @param null|stdClass $user The user id or object. By default (null) checks access for the current user.
+     */
+    public static function can_view_course_info($course, $user = null) {
+        if ($course->id == SITEID) {
+            return true;
+        }
+        if (!$course->visible) {
+            $coursecontext = context_course::instance($course->id);
+            if (!has_capability('moodle/course:viewhiddencourses', $coursecontext, $user)) {
+                return false;
+            }
+        }
+        $categorycontext = context_coursecat::instance($course->category);
+        return has_capability('moodle/course:browse', $categorycontext, $user);
     }
 
     /**
@@ -680,10 +771,27 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
      * Returns number of ALL categories in the system regardless if
      * they are visible to current user or not
      *
+     * @deprecated since Moodle 3.7
      * @return int
      */
     public static function count_all() {
+        debugging('Method core_course_category::count_all() is deprecated. Please use ' .
+            'core_course_category::is_simple_site()', DEBUG_DEVELOPER);
         return self::get_tree('countall');
+    }
+
+    /**
+     * Checks if the site has only one category and it is visible and available.
+     *
+     * In many situations we won't show this category at all
+     * @return bool
+     */
+    public static function is_simple_site() {
+        if (self::get_tree('countall') != 1) {
+            return false;
+        }
+        $default = self::get_default();
+        return $default->visible && $default->is_uservisible();
     }
 
     /**
@@ -1002,17 +1110,17 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
                 array('contextcourse' => CONTEXT_COURSE) + $params);
 
         if ($checkvisibility) {
+            $mycourses = enrol_get_my_courses();
             // Loop through all records and make sure we only return the courses accessible by user.
             foreach ($list as $course) {
                 if (isset($list[$course->id]->hassummary)) {
                     $list[$course->id]->hassummary = strlen($list[$course->id]->hassummary) > 0;
                 }
-                if (empty($course->visible)) {
-                    // Load context only if we need to check capability.
-                    context_helper::preload_from_record($course);
-                    if (!has_capability('moodle/course:viewhiddencourses', context_course::instance($course->id))) {
-                        unset($list[$course->id]);
-                    }
+                context_helper::preload_from_record($course);
+                $context = context_course::instance($course->id);
+                // Check that course is accessible by user.
+                if (!array_key_exists($course->id, $mycourses) && !self::can_view_course_info($course)) {
+                    unset($list[$course->id]);
                 }
             }
         }
@@ -1041,10 +1149,11 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
         if (($invisibleids = $coursecatcache->get('ic'. $this->id)) === false) {
             // We never checked visible children before.
             $hidden = self::get_tree($this->id.'i');
+            $catids = self::get_tree($this->id);
             $invisibleids = array();
-            if ($hidden) {
+            if ($catids) {
                 // Preload categories contexts.
-                list($sql, $params) = $DB->get_in_or_equal($hidden, SQL_PARAMS_NAMED, 'id');
+                list($sql, $params) = $DB->get_in_or_equal($catids, SQL_PARAMS_NAMED, 'id');
                 $ctxselect = context_helper::get_preload_record_columns_sql('ctx');
                 $contexts = $DB->get_records_sql("SELECT $ctxselect FROM {context} ctx
                     WHERE ctx.contextlevel = :contextcoursecat AND ctx.instanceid ".$sql,
@@ -1052,9 +1161,10 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
                 foreach ($contexts as $record) {
                     context_helper::preload_from_record($record);
                 }
-                // Check that user has 'viewhiddencategories' capability for each hidden category.
-                foreach ($hidden as $id) {
-                    if (!has_capability('moodle/category:viewhiddencategories', context_coursecat::instance($id))) {
+                // Check access for each category.
+                foreach ($catids as $id) {
+                    $cat = (object)['id' => $id, 'visible' => in_array($id, $hidden) ? 0 : 1];
+                    if (!self::can_view_category($cat)) {
                         $invisibleids[] = $id;
                     }
                 }
@@ -1602,11 +1712,15 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
         $limit = !empty($options['limit']) ? $options['limit'] : null;
         $sortfields = !empty($options['sort']) ? $options['sort'] : array('sortorder' => 1);
 
-        // Check if this category is hidden.
-        // Also 0-category never has courses unless this is recursive call.
-        if (!$this->is_uservisible() || (!$this->id && !$recursive)) {
+        if (!$this->id) {
+            // There are no courses on system level unless we need recursive list, in which case just use search.
+            return $recursive ? self::search_courses([], $options) : [];
+        }
+        if (!$this->is_uservisible()) {
+            // Check if this category is hidden.
             return array();
         }
+        // TODO MDL-10965 recursive search from category? not implemented.
 
         $coursecatcache = cache::make('core', 'coursecat');
         $cachekey = 'l-'. $this->id. '-'. (!empty($options['recursive']) ? 'r' : '').
@@ -2402,7 +2516,9 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
                 $thislist = preg_split('|,|', $thislist, -1, PREG_SPLIT_NO_EMPTY);
             }
         } else if ($baselist !== false) {
-            $thislist = array_keys($baselist);
+            $thislist = array_keys(array_filter($baselist, function($el) {
+                return $el['name'] !== false;
+            }));
         }
 
         if ($baselist === false) {
@@ -2416,24 +2532,18 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
             $baselist = array();
             $thislist = array();
             foreach ($rs as $record) {
-                // If the category's parent is not visible to the user, it is not visible as well.
-                if (!$record->parent || isset($baselist[$record->parent])) {
-                    context_helper::preload_from_record($record);
-                    $context = context_coursecat::instance($record->id);
-                    if (!$record->visible && !has_capability('moodle/category:viewhiddencategories', $context)) {
-                        // No cap to view category, added to neither $baselist nor $thislist.
-                        continue;
-                    }
-                    $baselist[$record->id] = array(
-                        'name' => format_string($record->name, true, array('context' => $context)),
-                        'path' => $record->path
-                    );
-                    if (!empty($requiredcapability) && !has_all_capabilities($requiredcapability, $context)) {
-                        // No required capability, added to $baselist but not to $thislist.
-                        continue;
-                    }
-                    $thislist[] = $record->id;
+                context_helper::preload_from_record($record);
+                $context = context_coursecat::instance($record->id);
+                $canview = self::can_view_category($record);
+                $baselist[$record->id] = array(
+                    'name' => $canview ? format_string($record->name, true, array('context' => $context)) : false,
+                    'path' => $record->path
+                );
+                if (!$canview || (!empty($requiredcapability) && !has_all_capabilities($requiredcapability, $context))) {
+                    // No required capability, added to $baselist but not to $thislist.
+                    continue;
                 }
+                $thislist[] = $record->id;
             }
             $rs->close();
             $coursecatcache->set($basecachekey, $baselist);
@@ -2448,9 +2558,11 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
             $contexts = $DB->get_records_sql($sql, array('contextcoursecat' => CONTEXT_COURSECAT));
             $thislist = array();
             foreach (array_keys($baselist) as $id) {
-                context_helper::preload_from_record($contexts[$id]);
-                if (has_all_capabilities($requiredcapability, context_coursecat::instance($id))) {
-                    $thislist[] = $id;
+                if ($baselist[$id]['name'] !== false) {
+                    context_helper::preload_from_record($contexts[$id]);
+                    if (has_all_capabilities($requiredcapability, context_coursecat::instance($id))) {
+                        $thislist[] = $id;
+                    }
                 }
             }
             $coursecatcache->set($thiscachekey, join(',', $thislist));
@@ -2463,7 +2575,9 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
             if (!$excludeid || !in_array($excludeid, $path)) {
                 $namechunks = array();
                 foreach ($path as $parentid) {
-                    $namechunks[] = $baselist[$parentid]['name'];
+                    if (array_key_exists($parentid, $baselist)) {
+                        $namechunks[] = $baselist[$parentid]['name'];
+                    }
                 }
                 $names[$id] = join($separator, $namechunks);
             }
@@ -2529,7 +2643,7 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
      * @return bool
      */
     public static function can_create_top_level_category() {
-        return has_capability('moodle/category:manage', context_system::instance());
+        return self::top()->has_manage_capability();
     }
 
     /**
@@ -2550,10 +2664,10 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
      * @return bool
      */
     public function has_manage_capability() {
-        if ($this->hasmanagecapability === null) {
-            $this->hasmanagecapability = has_capability('moodle/category:manage', $this->get_context());
+        if (!$this->is_uservisible()) {
+            return false;
         }
-        return $this->hasmanagecapability;
+        return has_capability('moodle/category:manage', $this->get_context());
     }
 
     /**
@@ -2561,7 +2675,7 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
      * @return bool
      */
     public function parent_has_manage_capability() {
-        return has_capability('moodle/category:manage', get_category_or_system_context($this->parent));
+        return ($parent = $this->get_parent_coursecat()) && $parent->has_manage_capability();
     }
 
     /**
@@ -2595,7 +2709,7 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
      * @return bool
      */
     public function can_change_sortorder() {
-        return $this->id && $this->get_parent_coursecat()->can_resort_subcategories();
+        return ($parent = $this->get_parent_coursecat()) && $parent->can_resort_subcategories();
     }
 
     /**
@@ -2603,7 +2717,7 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
      * @return bool
      */
     public function can_create_course() {
-        return has_capability('moodle/course:create', $this->get_context());
+        return $this->is_uservisible() && has_capability('moodle/course:create', $this->get_context());
     }
 
     /**
@@ -2619,7 +2733,7 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
      * @return bool
      */
     public function can_review_roles() {
-        return has_capability('moodle/role:assign', $this->get_context());
+        return $this->is_uservisible() && has_capability('moodle/role:assign', $this->get_context());
     }
 
     /**
@@ -2627,7 +2741,8 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
      * @return bool
      */
     public function can_review_permissions() {
-        return has_any_capability(array(
+        return $this->is_uservisible() &&
+        has_any_capability(array(
             'moodle/role:assign',
             'moodle/role:safeoverride',
             'moodle/role:override',
@@ -2640,7 +2755,8 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
      * @return bool
      */
     public function can_review_cohorts() {
-        return has_any_capability(array('moodle/cohort:view', 'moodle/cohort:manage'), $this->get_context());
+        return $this->is_uservisible() &&
+            has_any_capability(array('moodle/cohort:view', 'moodle/cohort:manage'), $this->get_context());
     }
 
     /**
@@ -2648,8 +2764,9 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
      * @return bool
      */
     public function can_review_filters() {
-        return has_capability('moodle/filter:manage', $this->get_context()) &&
-               count(filter_get_available_in_context($this->get_context())) > 0;
+        return $this->is_uservisible() &&
+                has_capability('moodle/filter:manage', $this->get_context()) &&
+                count(filter_get_available_in_context($this->get_context())) > 0;
     }
 
     /**
@@ -2681,7 +2798,7 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
      * @return bool
      */
     public function can_restore_courses_into() {
-        return has_capability('moodle/restore:restorecourse', $this->get_context());
+        return $this->is_uservisible() && has_capability('moodle/restore:restorecourse', $this->get_context());
     }
 
     /**
@@ -2845,10 +2962,15 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
     /**
      * Returns the parent core_course_category object for this category.
      *
-     * @return core_course_category
+     * Only returns parent if it exists and is visible to the current user
+     *
+     * @return core_course_category|null
      */
     public function get_parent_coursecat() {
-        return self::get($this->parent);
+        if (!$this->id) {
+            return null;
+        }
+        return self::get($this->parent, IGNORE_MISSING);
     }
 
 

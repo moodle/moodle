@@ -82,6 +82,7 @@ $course = get_course($courseid);
 if ($courseid != SITEID && !empty($courseid)) {
     navigation_node::override_active_url(new moodle_url('/course/view.php', array('id' => $course->id)));
 } else if (!empty($categoryid)) {
+    core_course_category::get($categoryid); // Check that category exists and can be accessed.
     $PAGE->set_category_by_id($categoryid);
     navigation_node::override_active_url(new moodle_url('/course/index.php', array('categoryid' => $categoryid)));
 } else {

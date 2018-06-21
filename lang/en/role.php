@@ -153,6 +153,7 @@ $string['confirmunassignyes'] = 'Remove';
 $string['confirmunassignno'] = 'Cancel';
 $string['context'] = 'Context';
 $string['course:activityvisibility'] = 'Hide/show activities';
+$string['course:browse'] = 'View list of courses where user is not enrolled';
 $string['course:bulkmessaging'] = 'Send a message to many people';
 $string['course:create'] = 'Create courses';
 $string['course:creategroupconversations'] = 'Create group conversations';

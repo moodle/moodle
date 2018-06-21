@@ -71,7 +71,8 @@ $strsearch = new lang_string("search");
 $strsearchresults = new lang_string("searchresults");
 $strnovalidcourses = new lang_string('novalidcourses');
 
-$PAGE->navbar->add($strcourses, new moodle_url('/course/index.php'));
+$courseurl = core_course_category::user_top() ? new moodle_url('/course/index.php') : null;
+$PAGE->navbar->add($strcourses, $courseurl);
 $PAGE->navbar->add($strsearch, new moodle_url('/course/search.php'));
 if (!empty($search)) {
     $PAGE->navbar->add(s($search));

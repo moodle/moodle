@@ -61,7 +61,23 @@ if (\core\session\manager::is_loggedinas() and $USER->loginascontext->contextlev
     print_error('loginasnoenrol', '', $CFG->wwwroot.'/course/view.php?id='.$USER->loginascontext->instanceid);
 }
 
-// get all enrol forms available in this course
+// Check if user already enrolled.
+if (is_enrolled($context, $USER, '', true)) {
+    if (!empty($SESSION->wantsurl)) {
+        $destination = $SESSION->wantsurl;
+        unset($SESSION->wantsurl);
+    } else {
+        $destination = "$CFG->wwwroot/course/view.php?id=$course->id";
+    }
+    redirect($destination);   // Bye!
+}
+
+// Check if user has access to the category where the course is located.
+if (!core_course_category::can_view_course_info($course)) {
+    print_error('coursehidden', '', $CFG->wwwroot . '/');
+}
+
+// Get all enrol forms available in this course.
 $enrols = enrol_get_plugins(true);
 $enrolinstances = enrol_get_instances($course->id, true);
 $forms = array();
@@ -73,17 +89,6 @@ foreach($enrolinstances as $instance) {
     if ($form) {
         $forms[$instance->id] = $form;
     }
-}
-
-// Check if user already enrolled
-if (is_enrolled($context, $USER, '', true)) {
-    if (!empty($SESSION->wantsurl)) {
-        $destination = $SESSION->wantsurl;
-        unset($SESSION->wantsurl);
-    } else {
-        $destination = "$CFG->wwwroot/course/view.php?id=$course->id";
-    }
-    redirect($destination);   // Bye!
 }
 
 $PAGE->set_title($course->shortname);

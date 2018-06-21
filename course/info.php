@@ -51,6 +51,9 @@
     if (!$course->visible and !has_capability('moodle/course:viewhiddencourses', $context)) {
         print_error('coursehidden', '', $CFG->wwwroot .'/');
     }
+    if (!core_course_category::can_view_course_info($course) && !is_enrolled($context, null, '', true)) {
+        print_error('coursehidden', '', $CFG->wwwroot .'/');
+    }
 
     $PAGE->set_course($course);
     $PAGE->set_pagelayout('incourse');
