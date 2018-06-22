@@ -5156,15 +5156,23 @@ abstract class context extends stdClass implements IteratorAggregate {
         require_once($CFG->dirroot.'/grade/grading/lib.php');
         grading_manager::delete_all_for_context($this->_id);
 
-        $ids = $DB->get_fieldset_select('role_capabilities', 'DISTINCT roleid', 'contextid = ?', array($this->_id));
-
         // now delete stuff from role related tables, role_unassign_all
         // and unenrol should be called earlier to do proper cleanup
         $DB->delete_records('role_assignments', array('contextid'=>$this->_id));
-        $DB->delete_records('role_capabilities', array('contextid'=>$this->_id));
         $DB->delete_records('role_names', array('contextid'=>$this->_id));
+        $this->delete_capabilities();
+    }
 
+    /**
+     * Unassign all capabilities from a context.
+     */
+    public function delete_capabilities() {
+        global $DB;
+
+        $ids = $DB->get_fieldset_select('role_capabilities', 'DISTINCT roleid', 'contextid = ?', array($this->_id));
         if ($ids) {
+            $DB->delete_records('role_capabilities', array('contextid' => $this->_id));
+
             // Reset any cache of these roles, including MUC.
             accesslib_clear_role_cache($ids);
         }
