@@ -38,6 +38,8 @@ $pdf->SetAutoPageBreak(false, 0);
 $pdf->AddPage();
 
 // Define variables
+global $DB;
+
 // Landscape
 if ($iomadcertificate->orientation == 'L') {
     $x = 40;
@@ -126,7 +128,7 @@ if ($files = $fs->get_area_files($sitecontext->id, 'local_iomad_settings', 'ioma
 }
 
 $companyid = 0;
-if ($companyid = iomad::is_company_user()) {
+if ($companyid = iomad::is_company_user($certuser)) {
     if ($files = $fs->get_area_files($sitecontext->id, 'local_iomad', 'companycertificateseal', $companyid, 'sortorder DESC, id ASC', false)) {
         if (!count($files) < 1) {
             if (!empty($certificateseal)) {
@@ -225,9 +227,14 @@ if ($usesignature) {
 }
 
 $gradeinfo = explode(':', iomadcertificate_get_grade($iomadcertificate, $course, $certuser->id));
+if (!empty($gradeinfo[1])) {
+    $gradestr = $gradeinfo[1];
+} else {
+    $gradestr = "0";
+}
 
 if ($showgrade) {
-    $dategradestring = get_string('companyscore', 'iomadcertificate', $gradeinfo[1]) . ' ' .
+    $dategradestring = get_string('companyscore', 'iomadcertificate', $gradestr) . ' ' .
     get_string('companydate', 'iomadcertificate', iomadcertificate_get_date($iomadcertificate, $certrecord, $course, $certuser->id));
 } else {
     $dategradestring = get_string('companydatecap', 'iomadcertificate', iomadcertificate_get_date($iomadcertificate, $certrecord, $course, $certuser->id));
