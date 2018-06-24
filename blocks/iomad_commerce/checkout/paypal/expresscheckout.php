@@ -62,7 +62,7 @@ $details = $DB->get_records_sql("SELECT c.fullname, ii.quantity, ii.price
 //  Calls the SetExpressCheckout API call.
 //  The calshortcutexpresscheckout function is defined in the file PayPalFunctions.php,
 //  it is included at the top of this file.
-$resarray = calshortcutexpresscheckout ($paymentamount, $currencycodetype, $paymenttype, $returnurl, $cancelurl, $details);
+$resarray = callshortcutexpresscheckout($paymentamount, $currencycodetype, $paymenttype, $returnurl, $cancelurl, $details);
 $ack = strtoupper($resarray["ACK"]);
 if ($ack == "SUCCESS" || $ack == "SUCCESSWITHWARNING") {
     RedirectToPayPal ($resarray["TOKEN"]);
