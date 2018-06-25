@@ -128,6 +128,7 @@ $cache = true;
 // likely being regenerated.
 if ($themerev <= 0 or $themerev != $rev or $themesubrev != $currentthemesubrev) {
     $rev = $themerev;
+    $themesubrev = $currentthemesubrev;
     $cache = false;
 
     $candidatedir = "$CFG->localcachedir/theme/$rev/$themename/css";
@@ -216,6 +217,7 @@ if ($sendaftergeneration || $lock) {
  */
 function theme_styles_generate_and_store($theme, $rev, $themesubrev, $candidatedir) {
     global $CFG;
+    require_once("{$CFG->libdir}/filelib.php");
 
     // Generate the content first.
     if (!$csscontent = $theme->get_css_cached_content()) {
@@ -259,6 +261,28 @@ function theme_styles_generate_and_store($theme, $rev, $themesubrev, $candidated
         . "/"
         . theme_styles_get_filename($type, 0, $theme->use_svg_icons());
     css_store_css($theme, $fallbacksheet, $csscontent, true, $chunkurl);
+
+    // Delete older revisions from localcache.
+    $themecachedirs = glob("{$CFG->localcachedir}/theme/*", GLOB_ONLYDIR);
+    foreach ($themecachedirs as $localcachedir) {
+        $cachedrev = [];
+        preg_match("/\/theme\/([0-9]+)$/", $localcachedir, $cachedrev);
+        $cachedrev = isset($cachedrev[1]) ? intval($cachedrev[1]) : 0;
+        if ($cachedrev > 0 && $cachedrev < $rev) {
+            fulldelete($localcachedir);
+        }
+    }
+
+    // Delete older theme subrevision CSS from localcache.
+    $subrevfiles = glob("{$CFG->localcachedir}/theme/{$rev}/{$theme->name}/css/*.css");
+    foreach ($subrevfiles as $subrevfile) {
+        $cachedsubrev = [];
+        preg_match("/_([0-9]+)\.([0-9]+\.)?css$/", $subrevfile, $cachedsubrev);
+        $cachedsubrev = isset($cachedsubrev[1]) ? intval($cachedsubrev[1]) : 0;
+        if ($cachedsubrev > 0 && $cachedsubrev < $themesubrev) {
+            fulldelete($subrevfile);
+        }
+    }
 
     return $candidatesheet;
 }
