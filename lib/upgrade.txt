@@ -89,6 +89,22 @@ information provided here is intended especially for developers.
   - file_merge_draft_areas()
   - file_replace_file_area_in_text()
   - extract_draft_file_urls_from_text()
+* \core_user_external::create_users() and \core_user_external::update_users() can now accept more user profile fields so user
+  creation/update via web service can now be very similar to the edit profile page's functionality. The new fields that have been
+  added are:
+  - maildisplay
+  - interests
+  - url
+  - icq
+  - skype
+  - aim
+  - yahoo
+  - msn
+  - institution
+  - department
+  - phone1
+  - phone2
+  - address
 
 === 3.5 ===
 
