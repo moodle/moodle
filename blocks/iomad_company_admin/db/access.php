@@ -211,6 +211,24 @@ $capabilities = array(
         'contextlevel' => CONTEXT_BLOCK,
     ),
 
+    'block/iomad_company_admin:edituserpassword' => array(
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_BLOCK,
+    ),
+
+    'block/iomad_company_admin:deleteuser' => array(
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_BLOCK,
+    ),
+
+    'block/iomad_company_admin:suspenduser' => array(
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_BLOCK,
+    ),
+
     'block/iomad_company_admin:editmanagers' => array(
 
         'captype' => 'write',

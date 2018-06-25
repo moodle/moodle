@@ -682,15 +682,17 @@ if (!$users) {
                     null,
                     $stredit
                 );
-                $url = new moodle_url('/blocks/iomad_company_admin/editusers.php', array(
-                    'password' => $user->id,
-                    'sesskey' => sesskey(),   
-                ));
-                $actions['password'] = new action_menu_link_secondary(
-                    $url,
-                    null,
-                    $strpassword
-                );
+                if (iomad::has_capability('block/iomad_company_admin:edituserpassword', $systemcontext)) {
+                    $url = new moodle_url('/blocks/iomad_company_admin/editusers.php', array(
+                        'password' => $user->id,
+                        'sesskey' => sesskey(),   
+                    ));
+                    $actions['password'] = new action_menu_link_secondary(
+                        $url,
+                        null,
+                        $strpassword
+                    );
+                }
             }
         }
 
@@ -701,35 +703,39 @@ if (!$users) {
                 && !iomad::has_capability('block/iomad_company_admin:editmanagers', $systemcontext)) {
                     // Do nothing.
                 } else {
-                    $url = new moodle_url('/blocks/iomad_company_admin/editusers.php', array(
-                        'delete' => $user->id,
-                        'sesskey' => sesskey(),
-                    ));
-                    $actions['delete'] = new action_menu_link_secondary(
-                        $url,
-                        null,
-                        $strdelete
-                    );
-                    if (!empty($user->suspended)) {
+                    if (iomad::has_capability('block/iomad_company_admin:deleteuser', $systemcontext)) {
                         $url = new moodle_url('/blocks/iomad_company_admin/editusers.php', array(
-                            'unsuspend' => $user->id,
+                            'delete' => $user->id,
                             'sesskey' => sesskey(),
                         ));
-                        $actions['unsuspend'] = new action_menu_link_secondary(
+                        $actions['delete'] = new action_menu_link_secondary(
                             $url,
                             null,
-                            $strunsuspend
+                            $strdelete
                         );
-                    } else {
-                        $url = new moodle_url('/blocks/iomad_company_admin/editusers.php', array(
-                            'suspend' => $user->id,
-                            'sesskey' => sesskey(),
-                        ));
-                        $actions['suspend'] = new action_menu_link_secondary(
-                            $url,
-                            null,
-                            $strsuspend
-                        );
+                    }
+                    if (iomad::has_capability('block/iomad_company_admin:suspenduser', $systemcontext)) {
+                        if (!empty($user->suspended)) {
+                            $url = new moodle_url('/blocks/iomad_company_admin/editusers.php', array(
+                                'unsuspend' => $user->id,
+                                'sesskey' => sesskey(),
+                            ));
+                            $actions['unsuspend'] = new action_menu_link_secondary(
+                                $url,
+                                null,
+                                $strunsuspend
+                            );
+                        } else {
+                            $url = new moodle_url('/blocks/iomad_company_admin/editusers.php', array(
+                                'suspend' => $user->id,
+                                'sesskey' => sesskey(),
+                            ));
+                            $actions['suspend'] = new action_menu_link_secondary(
+                                $url,
+                                null,
+                                $strsuspend
+                            );
+                        }
                     }
                 }
             }
