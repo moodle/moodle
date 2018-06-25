@@ -201,6 +201,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         // Set the required capabilities by the external function.
         $context = context_system::instance();
         $roleid = $this->assignUserCapability('moodle/category:manage', $context->id);
+        $this->assignUserCapability('moodle/category:viewhiddencategories', $context->id, $roleid);
 
         // Retrieve category1 + sub-categories except not visible ones
         $categories = core_course_external::get_categories(array(
@@ -259,10 +260,10 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
 
         $this->assertEquals($DB->count_records('course_categories'), count($categories));
 
-        $this->unassignUserCapability('moodle/category:manage', $context->id, $roleid);
+        $this->unassignUserCapability('moodle/category:viewhiddencategories', $context->id, $roleid);
 
-        // Ensure maxdepthcategory is 2 and retrieve all categories without category:manage capability. It should retrieve all
-        // visible categories as well.
+        // Ensure maxdepthcategory is 2 and retrieve all categories without category:viewhiddencategories capability.
+        // It should retrieve all visible categories as well.
         set_config('maxcategorydepth', 2);
         $categories = core_course_external::get_categories();
 
