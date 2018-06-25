@@ -1600,9 +1600,7 @@ class core_course_external extends external_api {
                             break;
 
                         case 'visible':
-                            if (has_capability('moodle/category:manage', $context)
-                                or has_capability('moodle/category:viewhiddencategories',
-                                        context_system::instance())) {
+                            if (has_capability('moodle/category:viewhiddencategories', $context)) {
                                 $value = clean_param($crit['value'], PARAM_INT);
                                 $conditions[$key] = $value;
                                 $wheres[] = $key . " = :" . $key;
@@ -1712,9 +1710,7 @@ class core_course_external extends external_api {
             if (!isset($excludedcats[$category->id])) {
 
                 // Final check to see if the category is visible to the user.
-                if ($category->visible
-                        or has_capability('moodle/category:viewhiddencategories', context_system::instance())
-                        or has_capability('moodle/category:manage', $context)) {
+                if ($category->visible or has_capability('moodle/category:viewhiddencategories', $context)) {
 
                     $categoryinfo = array();
                     $categoryinfo['id'] = $category->id;
