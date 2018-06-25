@@ -92,20 +92,18 @@ class convert_submissions extends scheduled_task {
             }
 
             mtrace('Convert ' . count($users) . ' submission attempt(s) for assignment ' . $assignmentid);
-            $keepinqueue = false;
+
             foreach ($users as $userid) {
-                $combineddocument = document_services::get_combined_pdf_for_attempt($assignment, $userid, $attemptnumber);
-                $status = $combineddocument->get_status();
-
-                switch ($combineddocument->get_status()) {
-                    case combined_document::STATUS_READY:
-                    case combined_document::STATUS_PENDING_INPUT:
-                        // The document has not been converted yet or is somehow still ready.
-                        $keepinqueue = true;
-                        continue;
-                }
-
                 try {
+                    $combineddocument = document_services::get_combined_pdf_for_attempt($assignment, $userid, $attemptnumber);
+                    $status = $combineddocument->get_status();
+
+                    switch ($combineddocument->get_status()) {
+                        case combined_document::STATUS_READY:
+                        case combined_document::STATUS_PENDING_INPUT:
+                            // The document has not been converted yet or is somehow still ready.
+                            continue;
+                    }
                     document_services::get_page_images_for_attempt(
                             $assignment,
                             $userid,
@@ -120,14 +118,12 @@ class convert_submissions extends scheduled_task {
                         );
                 } catch (\moodle_exception $e) {
                     mtrace('Conversion failed with error:' . $e->errorcode);
-                    $keepinqueue = true;
                 }
             }
 
-            if (!$keepinqueue) {
-                // Remove from queue unless requested not to.
-                $DB->delete_records('assignfeedback_editpdf_queue', array('id' => $record->id));
-            }
+            // Remove from queue.
+            $DB->delete_records('assignfeedback_editpdf_queue', array('id' => $record->id));
+
         }
     }
 
