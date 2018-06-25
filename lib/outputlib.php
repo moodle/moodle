@@ -245,6 +245,7 @@ function theme_build_css_for_themes($themeconfigs = [], $directions = ['rtl', 'l
  */
 function theme_reset_all_caches() {
     global $CFG, $PAGE;
+    require_once("{$CFG->libdir}/filelib.php");
 
     $next = theme_get_next_revision();
     theme_set_revision($next);
@@ -256,6 +257,12 @@ function theme_reset_all_caches() {
 
     // Purge compiled post processed css.
     cache::make('core', 'postprocessedcss')->purge();
+
+    // Delete all old theme localcaches.
+    $themecachedirs = glob("{$CFG->localcachedir}/theme/*", GLOB_ONLYDIR);
+    foreach ($themecachedirs as $localcachedir) {
+        fulldelete($localcachedir);
+    }
 
     if ($PAGE) {
         $PAGE->reload_theme();
