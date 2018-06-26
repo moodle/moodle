@@ -28,85 +28,112 @@ admin_externalpage_setup('searchareas');
 
 $areaid = optional_param('areaid', null, PARAM_ALPHAEXT);
 $action = optional_param('action', null, PARAM_ALPHA);
+$indexingenabled = \core_search\manager::is_indexing_enabled(); // This restricts many of the actions on this page.
 
+// Get a search manager instance, which we'll need for display and to handle some actions.
 try {
     $searchmanager = \core_search\manager::instance();
 } catch (core_search\engine_exception $searchmanagererror) {
-    // Continue, we return an error later depending on the requested action.
+    // In action cases, well throw this exception below. In non-action cases, we produce a lang string error.
 }
 
-echo $OUTPUT->header();
-
+// Handle all the actions.
 if ($action) {
     require_sesskey();
 
+    // If dealing with an areaid, we need to check that the area exists.
     if ($areaid) {
-        // We need to check that the area exists.
         $area = \core_search\manager::get_search_area($areaid);
         if ($area === false) {
             throw new moodle_exception('invalidrequest');
         }
     }
 
-    // All actions but enable/disable need the search engine to be ready.
-    if ($action !== 'enable' && $action !== 'disable') {
-        if (!empty($searchmanagererror)) {
-            throw $searchmanagererror;
+    // All the indexing actions.
+    if (in_array($action, ['delete', 'indexall', 'reindexall', 'deleteall'])) {
+
+        // All of these actions require that indexing is enabled.
+        if ($indexingenabled) {
+
+            // For all of these actions, we strictly need a manager instance.
+            if (isset($searchmanagererror)) {
+                throw $searchmanagererror;
+            }
+
+            switch ($action) {
+                case 'delete':
+                    $searchmanager->delete_index($areaid);
+                    \core\notification::success(get_string('searchindexdeleted', 'admin'));
+                    break;
+                case 'indexall':
+                    $searchmanager->index();
+                    \core\notification::success(get_string('searchindexupdated', 'admin'));
+                    break;
+                case 'reindexall':
+                    $searchmanager->index(true);
+                    \core\notification::success(get_string('searchreindexed', 'admin'));
+                    break;
+                case 'deleteall':
+                    $searchmanager->delete_index();
+                    \core\notification::success(get_string('searchalldeleted', 'admin'));
+                    break;
+                default:
+                    break;
+            }
+
+            // Redirect back to the main page after taking action.
+            redirect(new moodle_url('/admin/searchareas.php'));
         }
-    }
+    } else if (in_array($action, ['enable', 'disable'])) {
+        switch ($action) {
+            case 'enable':
+                $area->set_enabled(true);
+                \core\notification::success(get_string('searchareaenabled', 'admin'));
+                break;
+            case 'disable':
+                $area->set_enabled(false);
+                core\notification::success(get_string('searchareadisabled', 'admin'));
+                break;
+            default:
+                break;
+        }
 
-    switch ($action) {
-        case 'enable':
-            $area->set_enabled(true);
-            echo $OUTPUT->notification(get_string('searchareaenabled', 'admin'), \core\output\notification::NOTIFY_SUCCESS);
-            break;
-        case 'disable':
-            $area->set_enabled(false);
-            echo $OUTPUT->notification(get_string('searchareadisabled', 'admin'), \core\output\notification::NOTIFY_SUCCESS);
-            break;
-        case 'delete':
-            $search = \core_search\manager::instance();
-            $search->delete_index($areaid);
-            echo $OUTPUT->notification(get_string('searchindexdeleted', 'admin'), \core\output\notification::NOTIFY_SUCCESS);
-            break;
-        case 'indexall':
-            $searchmanager->index();
-            echo $OUTPUT->notification(get_string('searchindexupdated', 'admin'), \core\output\notification::NOTIFY_SUCCESS);
-            break;
-        case 'reindexall':
-            $searchmanager->index(true);
-            echo $OUTPUT->notification(get_string('searchreindexed', 'admin'), \core\output\notification::NOTIFY_SUCCESS);
-            break;
-        case 'deleteall':
-            $searchmanager->delete_index();
-            echo $OUTPUT->notification(get_string('searchalldeleted', 'admin'), \core\output\notification::NOTIFY_SUCCESS);
-            break;
-        default:
-            throw new moodle_exception('invalidaction');
-            break;
+        redirect(new moodle_url('/admin/searchareas.php'));
+    } else {
+        // Invalid action.
+        throw new moodle_exception('invalidaction');
     }
 }
 
-$searchareas = \core_search\manager::get_search_areas_list();
-if (empty($searchmanagererror)) {
-    $areasconfig = $searchmanager->get_areas_config($searchareas);
+
+// Display.
+if (isset($searchmanager) && $indexingenabled) {
+    \core\notification::info(get_string('indexinginfo', 'admin'));
+} else if (isset($searchmanager)) {
+    $params = (object) [
+        'url' => (new moodle_url("/admin/settings.php?section=manageglobalsearch#admin-searchindexwhendisabled"))->out(false)
+    ];
+    \core\notification::error(get_string('indexwhendisabledfullnotice', 'search', $params));
 } else {
-    $areasconfig = false;
-}
-
-if (!empty($searchmanagererror)) {
+    // In non-action cases, init errors are translated and displayed to the user as error notifications.
     $errorstr = get_string($searchmanagererror->errorcode, $searchmanagererror->module, $searchmanagererror->a);
-    echo $OUTPUT->notification($errorstr, \core\output\notification::NOTIFY_ERROR);
-} else {
-    echo $OUTPUT->notification(get_string('indexinginfo', 'admin'), \core\output\notification::NOTIFY_INFO);
+    \core\notification::error($errorstr);
 }
+
+echo $OUTPUT->header();
 
 $table = new html_table();
 $table->id = 'core-search-areas';
+$table->head = [
+    get_string('searcharea', 'search'),
+    get_string('enable'),
+    get_string('newestdocindexed', 'admin'),
+    get_string('searchlastrun', 'admin'),
+    get_string('searchindexactions', 'admin')
+];
 
-$table->head = array(get_string('searcharea', 'search'), get_string('enable'), get_string('newestdocindexed', 'admin'),
-    get_string('searchlastrun', 'admin'), get_string('searchindexactions', 'admin'));
-
+$searchareas = \core_search\manager::get_search_areas_list();
+$areasconfig = isset($searchmanager) ? $searchmanager->get_areas_config($searchareas) : false;
 foreach ($searchareas as $area) {
     $areaid = $area->get_area_id();
     $columns = array(new html_table_cell($area->get_visible_name()));
@@ -116,7 +143,7 @@ foreach ($searchareas as $area) {
             new pix_icon('t/hide', get_string('disable'), 'moodle', array('title' => '', 'class' => 'iconsmall')),
             null, array('title' => get_string('disable')));
 
-        if ($areasconfig) {
+        if ($areasconfig && $indexingenabled) {
             $columns[] = $areasconfig[$areaid]->lastindexrun;
 
             if ($areasconfig[$areaid]->indexingstart) {
@@ -135,7 +162,11 @@ foreach ($searchareas as $area) {
             $columns[] = html_writer::link(admin_searcharea_action_url('delete', $areaid), 'Delete index');
 
         } else {
-            $blankrow = new html_table_cell(get_string('searchnotavailable', 'admin'));
+            if (!$areasconfig) {
+                $blankrow = new html_table_cell(get_string('searchnotavailable', 'admin'));
+            } else {
+                $blankrow = new html_table_cell(get_string('indexwhendisabledshortnotice', 'search'));
+            }
             $blankrow->colspan = 3;
             $columns[] = $blankrow;
         }
@@ -154,10 +185,7 @@ foreach ($searchareas as $area) {
 }
 
 // Cross-search area tasks.
-$options = array();
-if (!empty($searchmanagererror)) {
-    $options['disabled'] = true;
-}
+$options = (isset($searchmanager) && $indexingenabled) ? [] : ['disabled' => true];
 echo $OUTPUT->box_start('search-areas-actions');
 echo $OUTPUT->single_button(admin_searcharea_action_url('indexall'), get_string('searchupdateindex', 'admin'), 'get', $options);
 echo $OUTPUT->single_button(admin_searcharea_action_url('reindexall'), get_string('searchreindexindex', 'admin'), 'get', $options);
@@ -165,6 +193,7 @@ echo $OUTPUT->single_button(admin_searcharea_action_url('deleteall'), get_string
 echo $OUTPUT->box_end();
 
 echo html_writer::table($table);
+
 echo $OUTPUT->footer();
 
 /**
