@@ -335,23 +335,30 @@ class iomad {
      * @param array $categories list of category objects
      * @return array filtered list of categories
      */
-    public static function iomad_filter_categories( $categories ) {
+    public static function iomad_filter_categories( $categories, $userid ) {
         global $DB, $USER;
 
         // Check if its the client admin.
-        if (self::has_capability('block/iomad_company_admin:company_view_all', context_system::instance())) {
+        if (self::has_capability('block/iomad_company_admin:company_view_all', context_system::instance()) && empty($userid)) {
             return $categories;
+        }
+
+        if (empty($userid)) {
+            $user = $USER;
+        } else {
+            $user = $DB->get_record('user', array('id' => $userid));
+            $user->company = company::get_company_byuserid($userid);
         }
 
         $iomadcategories = array();
         foreach ($categories as $id => $category) {
 
             // Try to find category in company list.
-            if ($company = $DB->get_record( 'company', array('category' => $id) ) ) {
+            if ($company = $DB->get_record( 'company', array('profileid' => $id) ) ) {
 
                 // If this is not the user's company then do not include.
-                if (!empty( $USER->company )) {
-                    if ($USER->company->id == $company->id) {
+                if (!empty( $user->company )) {
+                    if ($user->company->id == $company->id) {
                         $iomadcategories[ $id ] = $category;
                     }
                 }

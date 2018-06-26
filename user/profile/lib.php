@@ -515,8 +515,17 @@ function profile_get_user_fields_with_data($userid) {
     if ($userid > 0) {
         $sql .= 'LEFT JOIN {user_info_data} uind ON uif.id = uind.fieldid AND uind.userid = :userid ';
     }
+    $params = array('userid' => $userid);
+    // IOMAD - Filter the categories
+    if (!iomad::has_capability('block/iomad_company_admin:company_view_all', context_system::instance())) {
+        $sql .= " AND (uif.categoryid IN (
+                  SELECT c.profileid FROM {company} c JOIN {company_users} cu ON (c.id = cu.companyid AND cu.userid = :companyuserid))
+                  OR uif.categoryid IN (
+                  SELECT id FROM {user_info_category} WHERE id NOT IN (SELECT profileid from {company}))) ";
+        $params['companyuserid'] = $userid;
+    }
     $sql .= 'ORDER BY uic.sortorder ASC, uif.sortorder ASC ';
-    $fields = $DB->get_records_sql($sql, ['userid' => $userid]);
+    $fields = $DB->get_records_sql($sql, $params);
     $data = [];
     foreach ($fields as $field) {
         require_once($CFG->dirroot . '/user/profile/field/' . $field->datatype . '/field.class.php');

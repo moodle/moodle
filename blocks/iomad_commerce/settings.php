@@ -42,6 +42,17 @@ if ($ADMIN->fulltree) {
     $dir = dirname(__FILE__);
     require_once($dir .'/lib.php');
 
+    $settings->add(new admin_setting_configcheckbox('commerce_enable_external',
+                                                    get_string('useexternalshop', 'block_iomad_commerce'),
+                                                    get_string('useexternalshop_help', 'block_iomad_commerce'),
+                                                    1));
+
+    $settings->add(new admin_setting_configtext('commerce_externalshop_url',
+                                            get_string('commerce_externalshop_url', 'block_iomad_commerce'),
+                                            get_string('commerce_externalshop_url', 'block_iomad_commerce'),
+                                            '',
+                                            PARAM_TEXT));
+
     $settings->add(new admin_setting_configtext('commerce_admin_firstname',
                                             get_string('commerce_admin_firstname', 'block_iomad_commerce'),
                                             get_string('commerce_admin_firstname_help', 'block_iomad_commerce'),

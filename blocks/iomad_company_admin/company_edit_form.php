@@ -866,7 +866,7 @@ if ($mform->is_cancelled()) {
         $catdata = new stdclass();
         $catdata->sortorder = $DB->count_records('user_info_category') + 1;
         $catdata->name = $data->shortname;
-        $data->profileid = $DB->insert_record('user_info_category', $catdata, false);
+        $data->profileid = $DB->insert_record('user_info_category', $catdata);
 
         // Deal with leading/trailing spaces
         $data->name = trim($data->name);
