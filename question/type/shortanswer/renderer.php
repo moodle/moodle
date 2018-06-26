@@ -47,7 +47,7 @@ class qtype_shortanswer_renderer extends qtype_renderer {
             'value' => $currentanswer,
             'id' => $inputname,
             'size' => 80,
-            'class' => 'form-control',
+            'class' => 'form-control d-inline',
         );
 
         if ($options->readonly) {
