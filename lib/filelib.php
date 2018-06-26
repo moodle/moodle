@@ -2115,7 +2115,7 @@ function send_temp_file($path, $filename, $pathisstring=false) {
     }
 
     // if user is using IE, urlencode the filename so that multibyte file name will show up correctly on popup
-    if (core_useragent::is_ie()) {
+    if (core_useragent::is_ie() || core_useragent::is_edge()) {
         $filename = urlencode($filename);
     }
 
@@ -2264,7 +2264,7 @@ function send_file($path, $filename, $lifetime = null , $filter=0, $pathisstring
     }
 
     // if user is using IE, urlencode the filename so that multibyte file name will show up correctly on popup
-    if (core_useragent::is_ie()) {
+    if (core_useragent::is_ie() || core_useragent::is_edge()) {
         $filename = rawurlencode($filename);
     }
 
