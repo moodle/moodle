@@ -16,7 +16,7 @@
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-        <KEY NAME="questionusageid-slot" TYPE="foreign-unique" FIELDS="questionusageid, slot" REFTABLE="question_attempts" REFFIELDS="questionusageid, slot"/>
+        <KEY NAME="questionusageid-slot" TYPE="foreign" FIELDS="questionusageid, slot" REFTABLE="question_attempts" REFFIELDS="questionusageid, slot"/>
       </KEYS>
     </TABLE>
   </TABLES>
