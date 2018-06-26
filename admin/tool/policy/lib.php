@@ -83,7 +83,7 @@ function tool_policy_before_standard_html_head() {
     if (!empty($CFG->sitepolicyhandler)
             && $CFG->sitepolicyhandler == 'tool_policy'
             && empty($USER->policyagreed)
-            && isguestuser()) {
+            && (isguestuser() || !isloggedin())) {
         $output = $PAGE->get_renderer('tool_policy');
         $page = new \tool_policy\output\guestconsent();
 
