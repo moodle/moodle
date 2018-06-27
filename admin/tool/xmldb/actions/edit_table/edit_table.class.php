@@ -124,7 +124,7 @@ class edit_table extends XMLDBAction {
         $o.= '    <input type="hidden" name ="action" value="edit_table_save" />';
         $o.= '    <input type="hidden" name ="sesskey" value="' . sesskey() .'" />';
         $o.= '    <input type="hidden" name ="postaction" value="edit_table" />';
-        $o.= '    <table id="formelements" class="boxaligncenter">';
+        $o .= '    <table id="formelements">';
         // If the table is being used, we cannot rename it
         if ($structure->getTableUses($table->getName())) {
             $o.= '      <tr valign="top"><td>Name:</td><td><input type="hidden" name ="name" value="' . s($table->getName()) . '" />' . s($table->getName()) .'</td></tr>';
@@ -243,7 +243,7 @@ class edit_table extends XMLDBAction {
                 // The readable info
                 $r = '</td><td class="readableinfo cell">' . $field->readableInfo() . '</td>';
                 // Print table row
-                $o .= '<tr class="r' . $row . '"><td class="table cell">' . $f . $b . $r . '</tr>';
+                $o .= '<tr class="r' . $row . '"><td class="cell firstcol">' . $f . $b . $r . '</tr>';
                 $row = ($row + 1) % 2;
             }
             $o .= '</table>';
@@ -296,7 +296,7 @@ class edit_table extends XMLDBAction {
                 // The readable info
                 $r = '</td><td class="readableinfo cell">' . $key->readableInfo() . '</td>';
                 // Print table row
-            $o .= '<tr class="r' . $row . '"><td class="table cell">' . $k . $b . $r .'</tr>';
+                $o .= '<tr class="r' . $row . '"><td class="cell firstcol">' . $k . $b . $r .'</tr>';
                 $row = ($row + 1) % 2;
             }
             $o .= '</table>';
@@ -337,7 +337,7 @@ class edit_table extends XMLDBAction {
                 // The readable info
                 $r = '</td><td class="readableinfo cell">' . $index->readableInfo() . '</td>';
                 // Print table row
-            $o .= '<tr class="r' . $row . '"><td class="table cell">' . $i . $b . $r .'</tr>';
+                $o .= '<tr class="r' . $row . '"><td class="cell firstcol">' . $i . $b . $r .'</tr>';
                 $row = ($row + 1) % 2;
             }
             $o .= '</table>';
