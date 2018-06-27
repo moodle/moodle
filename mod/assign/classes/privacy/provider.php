@@ -141,8 +141,6 @@ class provider implements metadataprovider, pluginprovider, preference_provider 
                   JOIN {context} ctx ON cm.id = ctx.instanceid AND ctx.contextlevel = :contextlevel
                   JOIN {assign_grades} ag ON a.id = ag.assignment AND (ag.userid = :userid OR ag.grader = :graderid)";
 
-                  global $DB;
-
         $contextlist = new contextlist();
         $contextlist->add_from_sql($sql, $params);
 
@@ -475,10 +473,10 @@ class provider implements metadataprovider, pluginprovider, preference_provider 
                 $data->duedate = transform::datetime($overrides->duedate);
             }
             if (!empty($overrides->cutoffdate)) {
-                $overrides->cutoffdate = transform::datetime($overrides->cutoffdate);
+                $data->cutoffdate = transform::datetime($overrides->cutoffdate);
             }
             if (!empty($overrides->allowsubmissionsfromdate)) {
-                $overrides->allowsubmissionsfromdate = transform::datetime($overrides->allowsubmissionsfromdate);
+                $data->allowsubmissionsfromdate = transform::datetime($overrides->allowsubmissionsfromdate);
             }
             if (!empty($data)) {
                 writer::with_context($context)->export_data([get_string('overrides', 'mod_assign')], $data);
