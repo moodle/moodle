@@ -704,10 +704,6 @@ span.editinstructions {
     &.even {
         background-color: $table-bg-accent;
     }
-
-    &:hover {
-        background-color: $table-bg-hover;
-    }
 }
 
 .courses > .paging.paging-morelink {
