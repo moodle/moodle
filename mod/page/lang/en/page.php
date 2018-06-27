@@ -64,5 +64,7 @@ $string['printheading'] = 'Display page name';
 $string['printheadingexplain'] = 'Display page name above content?';
 $string['printintro'] = 'Display page description';
 $string['printintroexplain'] = 'Display page description above content?';
+$string['printlastmodified'] = 'Display last modified date';
+$string['printlastmodifiedexplain'] = 'Display last modified date below content?';
 $string['privacy:metadata'] = 'The Page resource plugin does not store any personal data.';
 $string['search:activity'] = 'Page';

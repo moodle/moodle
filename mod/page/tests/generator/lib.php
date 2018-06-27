@@ -57,6 +57,9 @@ class mod_page_generator extends testing_module_generator {
         if (!isset($record->printintro)) {
             $record->printintro = 0;
         }
+        if (!isset($record->printlastmodified)) {
+            $record->printlastmodified = 1;
+        }
 
         return parent::create_instance($record, (array)$options);
     }
