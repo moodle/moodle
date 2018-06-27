@@ -267,6 +267,10 @@ class mod_assign_renderer extends plugin_renderer_base {
         $o .= $this->output->box_start('boxaligncenter gradingsummarytable');
         $t = new html_table();
 
+        // Visibility Status.
+        $this->add_table_row_tuple($t, get_string('hiddenfromstudents'),
+            (!$summary->isvisible) ? get_string('yes') : get_string('no'));
+
         // Status.
         if ($summary->teamsubmission) {
             if ($summary->warnofungroupedusers) {
