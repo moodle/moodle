@@ -289,7 +289,8 @@ class data_registry {
      * @param int $forcedcategoryvalue Use this value as if this was this context level category.
      * @return int[]
      */
-    public static function get_effective_default_contextlevel_purpose_and_category($contextlevel, $forcedpurposevalue = false, $forcedcategoryvalue = false) {
+    public static function get_effective_default_contextlevel_purpose_and_category($contextlevel, $forcedpurposevalue = false,
+                                                                                   $forcedcategoryvalue = false) {
 
         list($purposeid, $categoryid) = self::get_defaults($contextlevel);
 

@@ -197,7 +197,7 @@ class api {
             } else {
                 // If not a DPO, only users with the capability to make data requests for the user should be allowed.
                 // (e.g. users with the Parent role, etc).
-                if (!api::can_create_data_request_for_user($foruser)) {
+                if (!self::can_create_data_request_for_user($foruser)) {
                     $forusercontext = \context_user::instance($foruser);
                     throw new required_capability_exception($forusercontext,
                             'tool/dataprivacy:makedatarequestsforchildren', 'nopermissions', '');

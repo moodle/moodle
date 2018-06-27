@@ -47,59 +47,68 @@
         "datarequestsurl": "#"
     }
 }}
-<style>
-    table, th, td {
-        border: 1px solid black;
-        padding: 0.5em;
-    }
-</style>
-<div>
-    <p>{{#str}}emailsalutation, tool_dataprivacy, {{dponame}}{{/str}}</p>
-    <p>{{#str}}requestemailintro, tool_dataprivacy{{/str}}</p>
-    <table>
-        <tr>
-            <th scope="row">
-                {{#str}}requesttype, tool_dataprivacy{{/str}}
-            </th>
-            <td>
-                {{requesttype}}
-            </td>
-        </tr>
-        <tr>
-            <th scope="row">
-                {{#str}}requestfor, tool_dataprivacy{{/str}}
-            </th>
-            <td>
-                {{requestfor}}
-            </td>
-        </tr>
-        {{^forself}}
-        <tr>
-            <th scope="row">
-                {{#str}}requestby, tool_dataprivacy{{/str}}
-            </th>
-            <td>
-                {{requestedby}}
-            </td>
-        </tr>
-        {{/forself}}
-        <tr>
-            <th scope="row">
-                {{#str}}requestcomments, tool_dataprivacy{{/str}}
-            </th>
-            <td>
-                {{{requestcomments}}}
-            </td>
-        </tr>
-        <tr>
-            <th scope="row">
-                {{#str}}daterequested, tool_dataprivacy{{/str}}
-            </th>
-            <td>
-                {{requestdate}}
-            </td>
-        </tr>
-    </table>
-    <hr>
-    <a href="{{datarequestsurl}}">{{#str}}viewrequest, tool_dataprivacy{{/str}}</a>
-</div>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        table, th, td {
+            border: 1px solid black;
+            padding: 0.5em;
+        }
+    </style>
+    <title>{{#str}}datarequestemailsubject, tool_dataprivacy, {{requesttype}}{{/str}}</title>
+</head>
+<body>
+    <div>
+        <p>{{#str}}emailsalutation, tool_dataprivacy, {{dponame}}{{/str}}</p>
+        <p>{{#str}}requestemailintro, tool_dataprivacy{{/str}}</p>
+        <table>
+            <tr>
+                <th scope="row">
+                    {{#str}}requesttype, tool_dataprivacy{{/str}}
+                </th>
+                <td>
+                    {{requesttype}}
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">
+                    {{#str}}requestfor, tool_dataprivacy{{/str}}
+                </th>
+                <td>
+                    {{requestfor}}
+                </td>
+            </tr>
+            {{^forself}}
+                <tr>
+                    <th scope="row">
+                        {{#str}}requestby, tool_dataprivacy{{/str}}
+                    </th>
+                    <td>
+                        {{requestedby}}
+                    </td>
+                </tr>
+            {{/forself}}
+            <tr>
+                <th scope="row">
+                    {{#str}}requestcomments, tool_dataprivacy{{/str}}
+                </th>
+                <td>
+                    {{{requestcomments}}}
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">
+                    {{#str}}daterequested, tool_dataprivacy{{/str}}
+                </th>
+                <td>
+                    {{requestdate}}
+                </td>
+            </tr>
+        </table>
+        <hr>
+        <a href="{{datarequestsurl}}">{{#str}}viewrequest, tool_dataprivacy{{/str}}</a>
+    </div>
+</body>
+</html>
