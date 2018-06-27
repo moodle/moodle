@@ -56,6 +56,13 @@ information provided here is intended especially for developers.
   hard-coded. Instead, the setting $CFG->showuseridentity should be always respected, which has always been the default
   behaviour (MDL-59847).
 
+* New functions to support the merging of user draft areas from the interface; see MDL-45170 for details:
+
+- file_copy_file_to_file_area()
+- file_merge_draft_areas()
+- file_replace_file_area_in_text()
+- extract_draft_file_urls_from_text()
+
 === 3.5 ===
 
 * There is a new privacy API that every subsystem and plugin has to implement so that the site can become GDPR

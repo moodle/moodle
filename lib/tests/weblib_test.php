@@ -887,4 +887,52 @@ EXPECTED;
             $_GET = $currentget;
         }
     }
+
+    /**
+     * Tests for extract_draft_file_urls_from_text() function.
+     */
+    public function test_extract_draft_file_urls_from_text() {
+        global $CFG;
+
+        $url1 = "{$CFG->wwwroot}/draftfile.php/5/user/draft/99999999/test1.jpg";
+        $url2 = "{$CFG->wwwroot}/draftfile.php/5/user/draft/99999998/test2.jpg";
+
+        $html = "<p>This is a test.</p><p><img src=\"${url1}\" alt=\"\" role=\"presentation\"></p>
+                <br>Test content.<p></p><p><img src=\"{$url2}\" alt=\"\" width=\"2048\" height=\"1536\"
+                role=\"presentation\" class=\"img-responsive atto_image_button_text-bottom\"><br></p>";
+        $draftareas = array(
+            array(
+                'urlbase' => 'draftfile.php',
+                'contextid' => '5',
+                'component' => 'user',
+                'filearea' => 'draft',
+                'itemid' => '99999999',
+                'filename' => 'test1.jpg',
+                0 => "{$CFG->wwwroot}/draftfile.php/5/user/draft/99999999/test1.jpg",
+                1 => 'draftfile.php',
+                2 => '5',
+                3 => 'user',
+                4 => 'draft',
+                5 => '99999999',
+                6 => 'test1.jpg'
+            ),
+            array(
+                'urlbase' => 'draftfile.php',
+                'contextid' => '5',
+                'component' => 'user',
+                'filearea' => 'draft',
+                'itemid' => '99999998',
+                'filename' => 'test2.jpg',
+                0 => "{$CFG->wwwroot}/draftfile.php/5/user/draft/99999998/test2.jpg",
+                1 => 'draftfile.php',
+                2 => '5',
+                3 => 'user',
+                4 => 'draft',
+                5 => '99999998',
+                6 => 'test2.jpg'
+            )
+        );
+        $extracteddraftareas = extract_draft_file_urls_from_text($html, 5, 'user', 'draft');
+        $this->assertEquals($draftareas, $extracteddraftareas);
+    }
 }
