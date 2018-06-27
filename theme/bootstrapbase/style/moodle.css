@@ -6480,7 +6480,6 @@ span.editinstructions {
 .courses .coursebox.even {
   background-color: #f9f9f9;
 }
-.courses .coursebox:hover,
 .course_category_tree .courses > .paging.paging-morelink:hover {
   background-color: #f5f5f5;
 }
