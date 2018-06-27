@@ -286,7 +286,11 @@ function get_role_definitions(array $roleids) {
     // Grab all keys we have not yet got in our static cache.
     if ($uncached = array_diff($roleids, array_keys($ACCESSLIB_PRIVATE->cacheroledefs))) {
         $cache = cache::make('core', 'roledefs');
-        $ACCESSLIB_PRIVATE->cacheroledefs += array_filter($cache->get_many($uncached));
+        foreach ($cache->get_many($uncached) as $roleid => $cachedroledef) {
+            if (is_array($cachedroledef)) {
+                $ACCESSLIB_PRIVATE->cacheroledefs[$roleid] = $cachedroledef;
+            }
+        }
 
         // Check we have the remaining keys from the MUC.
         if ($uncached = array_diff($roleids, array_keys($ACCESSLIB_PRIVATE->cacheroledefs))) {
@@ -313,20 +317,25 @@ function get_role_definitions_uncached(array $roleids) {
         return array();
     }
 
-    list($sql, $params) = $DB->get_in_or_equal($roleids);
+    // Create a blank results array: even if a role has no capabilities,
+    // we need to ensure it is included in the results to show we have
+    // loaded all the capabilities that there are.
     $rdefs = array();
+    foreach ($roleids as $roleid) {
+        $rdefs[$roleid] = array();
+    }
 
+    // Load all the capabilities for these roles in all contexts.
+    list($sql, $params) = $DB->get_in_or_equal($roleids);
     $sql = "SELECT ctx.path, rc.roleid, rc.capability, rc.permission
               FROM {role_capabilities} rc
               JOIN {context} ctx ON rc.contextid = ctx.id
              WHERE rc.roleid $sql";
     $rs = $DB->get_recordset_sql($sql, $params);
 
+    // Store the capabilities into the expected data structure.
     foreach ($rs as $rd) {
         if (!isset($rdefs[$rd->roleid][$rd->path])) {
-            if (!isset($rdefs[$rd->roleid])) {
-                $rdefs[$rd->roleid] = array();
-            }
             $rdefs[$rd->roleid][$rd->path] = array();
         }
         $rdefs[$rd->roleid][$rd->path][$rd->capability] = (int) $rd->permission;
