@@ -46,7 +46,7 @@
     }
 }}
 
-<div classs="container-fluid">
+<div class="container-fluid">
     <hr />
     <div class="row">
         {{#compliant}}
@@ -64,17 +64,17 @@
     </div>
 
     {{#compliant}}
-        <div class="hide" data-section="{{raw_component}}" aria-expanded="false">
+        <div class="hide" data-section="{{raw_component}}" aria-expanded="false" role="contentinfo">
             {{#metadata}}
                 <hr />
                 <div class="p-l-3">
                     <dl class="row">
                         <dt class="span3 col-xs-3">
                             {{#link}}
-                                <a href="#{{name}}"><h5 style="word-wrap:break-word">{{name}}</h5></a>
+                                <a href="#{{name}}"><strong style="word-wrap:break-word">{{name}}</strong></a>
                             {{/link}}
                             {{^link}}
-                                <h5 style="word-wrap:break-word">{{name}}</h5>
+                                <strong style="word-wrap:break-word">{{name}}</strong>
                             {{/link}}
                             <div class="small text-muted" style="word-wrap:break-word">{{type}}</div>
                         </dt>

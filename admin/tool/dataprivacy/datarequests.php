@@ -25,6 +25,8 @@
 require_once("../../../config.php");
 require_once('lib.php');
 
+require_login(null, false);
+
 $url = new moodle_url('/admin/tool/dataprivacy/datarequests.php');
 
 $title = get_string('datarequests', 'tool_dataprivacy');
