@@ -75,5 +75,68 @@ function xmldb_enrol_paypal_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2018053000, 'enrol', 'paypal');
     }
 
+    if ($oldversion < 2018062500) {
+
+        // Define key courseid (foreign) to be added to enrol_paypal.
+        $table = new xmldb_table('enrol_paypal');
+        $key = new xmldb_key('courseid', XMLDB_KEY_FOREIGN, array('courseid'), 'course', array('id'));
+
+        // Launch add key courseid.
+        $dbman->add_key($table, $key);
+
+        // Paypal savepoint reached.
+        upgrade_plugin_savepoint(true, 2018062500, 'enrol', 'paypal');
+    }
+
+    if ($oldversion < 2018062501) {
+
+        // Define key userid (foreign) to be added to enrol_paypal.
+        $table = new xmldb_table('enrol_paypal');
+        $key = new xmldb_key('userid', XMLDB_KEY_FOREIGN, array('userid'), 'user', array('id'));
+
+        // Launch add key userid.
+        $dbman->add_key($table, $key);
+
+        // Paypal savepoint reached.
+        upgrade_plugin_savepoint(true, 2018062501, 'enrol', 'paypal');
+    }
+
+    if ($oldversion < 2018062502) {
+
+        // Define key instanceid (foreign) to be added to enrol_paypal.
+        $table = new xmldb_table('enrol_paypal');
+        $key = new xmldb_key('instanceid', XMLDB_KEY_FOREIGN, array('instanceid'), 'enrol', array('id'));
+
+        // Launch add key instanceid.
+        $dbman->add_key($table, $key);
+
+        // Paypal savepoint reached.
+        upgrade_plugin_savepoint(true, 2018062502, 'enrol', 'paypal');
+    }
+
+    if ($oldversion < 2018062503) {
+
+        $table = new xmldb_table('enrol_paypal');
+
+        // Define index business (not unique) to be added to enrol_paypal.
+        $index = new xmldb_index('business', XMLDB_INDEX_NOTUNIQUE, array('business'));
+
+        // Conditionally launch add index business.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Define index receiver_email (not unique) to be added to enrol_paypal.
+        $index = new xmldb_index('receiver_email', XMLDB_INDEX_NOTUNIQUE, array('receiver_email'));
+
+        // Conditionally launch add index receiver_email.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Paypal savepoint reached.
+        upgrade_plugin_savepoint(true, 2018062503, 'enrol', 'paypal');
+    }
+
     return true;
 }
