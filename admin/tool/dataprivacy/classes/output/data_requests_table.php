@@ -180,16 +180,32 @@ class data_requests_table extends table_sql {
         $actiontext = get_string('viewrequest', 'tool_dataprivacy');
         $actions[] = new action_menu_link_secondary($actionurl, null, $actiontext, $actiondata);
 
-        if ($status == api::DATAREQUEST_STATUS_AWAITING_APPROVAL) {
-            // Approve.
-            $actiondata['data-action'] = 'approve';
-            $actiontext = get_string('approverequest', 'tool_dataprivacy');
-            $actions[] = new action_menu_link_secondary($actionurl, null, $actiontext, $actiondata);
+        switch ($status) {
+            case api::DATAREQUEST_STATUS_PENDING:
+                // Add action to mark a general enquiry request as complete.
+                if ($data->type == api::DATAREQUEST_TYPE_OTHERS) {
+                    $actiondata['data-action'] = 'complete';
+                    $nameemail = (object)[
+                        'name' => $data->foruser->fullname,
+                        'email' => $data->foruser->email
+                    ];
+                    $actiondata['data-requestid'] = $data->id;
+                    $actiondata['data-replytoemail'] = get_string('nameemail', 'tool_dataprivacy', $nameemail);
+                    $actiontext = get_string('markcomplete', 'tool_dataprivacy');
+                    $actions[] = new action_menu_link_secondary($actionurl, null, $actiontext, $actiondata);
+                }
+                break;
+            case api::DATAREQUEST_STATUS_AWAITING_APPROVAL:
+                // Approve.
+                $actiondata['data-action'] = 'approve';
+                $actiontext = get_string('approverequest', 'tool_dataprivacy');
+                $actions[] = new action_menu_link_secondary($actionurl, null, $actiontext, $actiondata);
 
-            // Deny.
-            $actiondata['data-action'] = 'deny';
-            $actiontext = get_string('denyrequest', 'tool_dataprivacy');
-            $actions[] = new action_menu_link_secondary($actionurl, null, $actiontext, $actiondata);
+                // Deny.
+                $actiondata['data-action'] = 'deny';
+                $actiontext = get_string('denyrequest', 'tool_dataprivacy');
+                $actions[] = new action_menu_link_secondary($actionurl, null, $actiontext, $actiondata);
+                break;
         }
 
         $actionsmenu = new action_menu($actions);

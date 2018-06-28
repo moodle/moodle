@@ -82,6 +82,7 @@ class my_data_requests_page implements renderable, templatable {
             $requestid = $request->get('id');
             $status = $request->get('status');
             $userid = $request->get('userid');
+            $type = $request->get('type');
 
             $usercontext = context_user::instance($userid, IGNORE_MISSING);
             if (!$usercontext) {
@@ -107,7 +108,8 @@ class my_data_requests_page implements renderable, templatable {
                     $item->statuslabelclass = 'label-success';
                     $item->statuslabel = get_string('statuscomplete', 'tool_dataprivacy');
                     $cancancel = false;
-                    $candownload = true;
+                    // Show download links only for export-type data requests.
+                    $candownload = $type == api::DATAREQUEST_TYPE_EXPORT;
                     break;
                 case api::DATAREQUEST_STATUS_CANCELLED:
                 case api::DATAREQUEST_STATUS_REJECTED:
