@@ -26,5 +26,6 @@ define([], function() {
     return {
         approve: 'tool_dataprivacy-data_request:approve',
         deny: 'tool_dataprivacy-data_request:deny',
+        complete: 'tool_dataprivacy-data_request:complete'
     };
 });

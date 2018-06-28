@@ -35,7 +35,12 @@
 }}
 {{< core/modal }}
     {{$footer}}
-        <button type="button" class="btn btn-primary" data-action="approve">{{#str}} approve, tool_dataprivacy {{/str}}</button>
-        <button type="button" class="btn btn-secondary" data-action="deny">{{#str}} deny, tool_dataprivacy {{/str}}</button>
+        {{#approvedeny}}
+            <button type="button" class="btn btn-primary" data-action="approve">{{#str}} approve, tool_dataprivacy {{/str}}</button>
+            <button type="button" class="btn btn-secondary" data-action="deny">{{#str}} deny, tool_dataprivacy {{/str}}</button>
+        {{/approvedeny}}
+        {{#canmarkcomplete}}
+            <button type="button" class="btn btn-primary" data-action="complete">{{#str}} markcomplete, tool_dataprivacy {{/str}}</button>
+        {{/canmarkcomplete}}
     {{/footer}}
 {{/ core/modal }}

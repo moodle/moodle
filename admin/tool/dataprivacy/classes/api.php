@@ -24,6 +24,7 @@
 namespace tool_dataprivacy;
 
 use coding_exception;
+use context_course;
 use context_system;
 use core\invalid_persistent_exception;
 use core\message\message;
@@ -426,7 +427,22 @@ class api {
         if ($dpoid) {
             $datarequest->set('dpo', $dpoid);
         }
-        $datarequest->set('dpocomment', $comment);
+        // Update the comment if necessary.
+        if (!empty(trim($comment))) {
+            $params = [
+                'date' => userdate(time()),
+                'comment' => $comment
+            ];
+            $commenttosave = get_string('datecomment', 'tool_dataprivacy', $params);
+            // Check if there's an existing DPO comment.
+            $currentcomment = trim($datarequest->get('dpocomment'));
+            if ($currentcomment) {
+                // Append the new comment to the current comment and give them 1 line space in between.
+                $commenttosave = $currentcomment . PHP_EOL . PHP_EOL . $commenttosave;
+            }
+            $datarequest->set('dpocomment', $commenttosave);
+        }
+
         return $datarequest->update();
     }
 
@@ -521,7 +537,6 @@ class api {
      * @param data_request $request The data request
      * @return int|false
      * @throws coding_exception
-     * @throws dml_exception
      * @throws moodle_exception
      */
     public static function notify_dpo($dpo, data_request $request) {

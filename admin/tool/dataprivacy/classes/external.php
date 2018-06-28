@@ -31,6 +31,7 @@ use context_helper;
 use context_system;
 use context_user;
 use core\invalid_persistent_exception;
+use core\notification;
 use core_user;
 use dml_exception;
 use external_api;
@@ -144,7 +145,7 @@ class external extends external_api {
     }
 
     /**
-     * Deny a data request.
+     * Make a general enquiry to a DPO.
      *
      * @since Moodle 3.5
      * @param string $message The message to be sent to the DPO.
@@ -210,12 +211,76 @@ class external extends external_api {
     }
 
     /**
-     * Parameter description for deny_data_request().
+     * Parameter description for contact_dpo().
      *
      * @since Moodle 3.5
      * @return external_description
      */
     public static function contact_dpo_returns() {
+        return new external_single_structure([
+            'result' => new external_value(PARAM_BOOL, 'The processing result'),
+            'warnings' => new external_warnings()
+        ]);
+    }
+
+    /**
+     * Parameter description for mark_complete().
+     *
+     * @since Moodle 3.5.2
+     * @return external_function_parameters
+     */
+    public static function mark_complete_parameters() {
+        return new external_function_parameters([
+            'requestid' => new external_value(PARAM_INT, 'The request ID', VALUE_REQUIRED)
+        ]);
+    }
+
+    /**
+     * Mark a user's general enquiry's status as complete.
+     *
+     * @since Moodle 3.5.2
+     * @param int $requestid The request ID of the general enquiry.
+     * @return array
+     * @throws coding_exception
+     * @throws invalid_parameter_exception
+     * @throws invalid_persistent_exception
+     * @throws restricted_context_exception
+     * @throws dml_exception
+     * @throws moodle_exception
+     */
+    public static function mark_complete($requestid) {
+        global $USER;
+
+        $warnings = [];
+        $params = external_api::validate_parameters(self::mark_complete_parameters(), [
+            'requestid' => $requestid,
+        ]);
+        $requestid = $params['requestid'];
+
+        // Validate context.
+        $context = context_system::instance();
+        self::validate_context($context);
+
+        $message = get_string('markedcomplete', 'tool_dataprivacy');
+        // Update the data request record.
+        if ($result = api::update_request_status($requestid, api::DATAREQUEST_STATUS_COMPLETE, $USER->id, $message)) {
+            // Add notification in the session to be shown when the page is reloaded on the JS side.
+            notification::success(get_string('requestmarkedcomplete', 'tool_dataprivacy'));
+        }
+
+        return [
+            'result' => $result,
+            'warnings' => $warnings
+        ];
+    }
+
+    /**
+     * Parameter description for mark_complete().
+     *
+     * @since Moodle 3.5.2
+     * @return external_description
+     */
+    public static function mark_complete_returns() {
         return new external_single_structure([
             'result' => new external_value(PARAM_BOOL, 'The processing result'),
             'warnings' => new external_warnings()
@@ -258,9 +323,9 @@ class external extends external_api {
         // Validate context.
         $context = context_system::instance();
         self::validate_context($context);
+        $requestpersistent = new data_request($requestid);
         require_capability('tool/dataprivacy:managedatarequests', $context);
 
-        $requestpersistent = new data_request($requestid);
         $exporter = new data_request_exporter($requestpersistent, ['context' => $context]);
         $renderer = $PAGE->get_renderer('tool_dataprivacy');
         $result = $exporter->export($renderer);
@@ -326,6 +391,9 @@ class external extends external_api {
         $result = false;
         if ($requestexists) {
             $result = api::approve_data_request($requestid);
+
+            // Add notification in the session to be shown when the page is reloaded on the JS side.
+            notification::success(get_string('requestapproved', 'tool_dataprivacy'));
         } else {
             $warnings[] = [
                 'item' => $requestid,
@@ -395,6 +463,9 @@ class external extends external_api {
         $result = false;
         if ($requestexists) {
             $result = api::deny_data_request($requestid);
+
+            // Add notification in the session to be shown when the page is reloaded on the JS side.
+            notification::success(get_string('requestdenied', 'tool_dataprivacy'));
         } else {
             $warnings[] = [
                 'item' => $requestid,
