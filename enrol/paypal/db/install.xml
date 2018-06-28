@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="enrol/paypal/db" VERSION="20120122" COMMENT="XMLDB file for Moodle enrol/paypal"
+<XMLDB PATH="enrol/paypal/db" VERSION="20180625" COMMENT="XMLDB file for Moodle enrol/paypal"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -30,7 +30,14 @@
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="courseid" TYPE="foreign" FIELDS="courseid" REFTABLE="course" REFFIELDS="id"/>
+        <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
+        <KEY NAME="instanceid" TYPE="foreign" FIELDS="instanceid" REFTABLE="enrol" REFFIELDS="id"/>
       </KEYS>
+      <INDEXES>
+        <INDEX NAME="business" UNIQUE="false" FIELDS="business"/>
+        <INDEX NAME="receiver_email" UNIQUE="false" FIELDS="receiver_email"/>
+      </INDEXES>
     </TABLE>
   </TABLES>
 </XMLDB>
