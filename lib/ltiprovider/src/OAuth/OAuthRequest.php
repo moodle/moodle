@@ -60,15 +60,6 @@ class OAuthRequest {
               $parameters = array();
           }
 
-          // It's a POST request of the proper content-type, so parse POST
-          // parameters and add those overriding any duplicates from GET
-          if ($http_method == "POST"
-              &&  isset($request_headers['Content-Type'])
-              && strstr($request_headers['Content-Type'], 'application/x-www-form-urlencoded')) {
-              $post_data = OAuthUtil::parse_parameters(file_get_contents(self::$POST_INPUT));
-              $parameters = array_merge($parameters, $post_data);
-          }
-
           // We have a Authorization-header with OAuth data. Parse the header
           // and add those overriding any duplicates from GET or POST
           if (isset($request_headers['Authorization']) && substr($request_headers['Authorization'], 0, 6) == 'OAuth ') {
@@ -76,6 +67,11 @@ class OAuthRequest {
               $parameters = array_merge($parameters, $header_parameters);
           }
 
+          // If there are parameters in $_POST, these are likely what will be used. Therefore, they should be considered
+          // the final value in the case of any duplicates from sources parsed above.
+          foreach ($_POST as $key => $value) {
+              $parameters[$key] = OAuthUtil::urldecode_rfc3986($value);
+          }
       }
 
       return new OAuthRequest($http_method, $http_url, $parameters);
