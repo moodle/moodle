@@ -39,11 +39,13 @@ function($, Ajax, Notification, Str, ModalFactory, ModalEvents, Templates, Modal
      * @type {{APPROVE_REQUEST: string}}
      * @type {{DENY_REQUEST: string}}
      * @type {{VIEW_REQUEST: string}}
+     * @type {{MARK_COMPLETE: string}}
      */
     var ACTIONS = {
         APPROVE_REQUEST: '[data-action="approve"]',
         DENY_REQUEST: '[data-action="deny"]',
-        VIEW_REQUEST: '[data-action="view"]'
+        VIEW_REQUEST: '[data-action="view"]',
+        MARK_COMPLETE: '[data-action="complete"]'
     };
 
     /**
@@ -73,16 +75,9 @@ function($, Ajax, Notification, Str, ModalFactory, ModalEvents, Templates, Modal
             };
 
             var promises = Ajax.call([request]);
-            var modalTitle = '';
-            var modalType = ModalFactory.types.DEFAULT;
             $.when(promises[0]).then(function(data) {
                 if (data.result) {
-                    // Check if the status is awaiting approval.
-                    if (data.result.status == 2) {
-                        modalType = ModalDataRequest.TYPE;
-                    }
-                    modalTitle = data.result.typename;
-                    return Templates.render('tool_dataprivacy/request_details', data.result);
+                    return data.result;
                 }
                 // Fail.
                 Notification.addNotification({
@@ -91,35 +86,51 @@ function($, Ajax, Notification, Str, ModalFactory, ModalEvents, Templates, Modal
                 });
                 return false;
 
-            }).then(function(html) {
+            }).then(function(data) {
+                var body = Templates.render('tool_dataprivacy/request_details', data);
+                var templateContext = {
+                    approvedeny: data.approvedeny,
+                    canmarkcomplete: data.canmarkcomplete
+                };
                 return ModalFactory.create({
-                    title: modalTitle,
-                    body: html,
-                    type: modalType,
-                    large: true
-                }).then(function(modal) {
-                    // Handle approve event.
-                    modal.getRoot().on(DataPrivacyEvents.approve, function() {
-                        showConfirmation(DataPrivacyEvents.approve, requestId);
-                    });
-
-                    // Handle deny event.
-                    modal.getRoot().on(DataPrivacyEvents.deny, function() {
-                        showConfirmation(DataPrivacyEvents.deny, requestId);
-                    });
-
-                    // Handle hidden event.
-                    modal.getRoot().on(ModalEvents.hidden, function() {
-                        // Destroy when hidden.
-                        modal.destroy();
-                    });
-
-                    return modal;
+                    title: data.typename,
+                    body: body,
+                    type: ModalDataRequest.TYPE,
+                    large: true,
+                    templateContext: templateContext
                 });
-            }).done(function(modal) {
+
+            }).then(function(modal) {
+                // Handle approve event.
+                modal.getRoot().on(DataPrivacyEvents.approve, function() {
+                    showConfirmation(DataPrivacyEvents.approve, requestId);
+                });
+
+                // Handle deny event.
+                modal.getRoot().on(DataPrivacyEvents.deny, function() {
+                    showConfirmation(DataPrivacyEvents.deny, requestId);
+                });
+
+                // Handle send event.
+                modal.getRoot().on(DataPrivacyEvents.complete, function() {
+                    var params = {
+                        'requestid': requestId
+                    };
+                    handleSave('tool_dataprivacy_mark_complete', params);
+                });
+
+                // Handle hidden event.
+                modal.getRoot().on(ModalEvents.hidden, function() {
+                    // Destroy when hidden.
+                    modal.destroy();
+                });
+
                 // Show the modal!
                 modal.show();
-            }).fail(Notification.exception);
+
+                return;
+
+            }).catch(Notification.exception);
         });
 
         $(ACTIONS.APPROVE_REQUEST).click(function(e) {
@@ -135,6 +146,11 @@ function($, Ajax, Notification, Str, ModalFactory, ModalEvents, Templates, Modal
             var requestId = $(this).data('requestid');
             showConfirmation(DataPrivacyEvents.deny, requestId);
         });
+
+        $(ACTIONS.MARK_COMPLETE).click(function(e) {
+            e.preventDefault();
+            showConfirmation(DataPrivacyEvents.complete, $(this).data('requestid'));
+        });
     };
 
     /**
@@ -146,6 +162,9 @@ function($, Ajax, Notification, Str, ModalFactory, ModalEvents, Templates, Modal
     function showConfirmation(action, requestId) {
         var keys = [];
         var wsfunction = '';
+        var params = {
+            'requestid': requestId
+        };
         switch (action) {
             case DataPrivacyEvents.approve:
                 keys = [
@@ -173,6 +192,19 @@ function($, Ajax, Notification, Str, ModalFactory, ModalEvents, Templates, Modal
                 ];
                 wsfunction = 'tool_dataprivacy_deny_data_request';
                 break;
+            case DataPrivacyEvents.complete:
+                keys = [
+                    {
+                        key: 'markcomplete',
+                        component: 'tool_dataprivacy'
+                    },
+                    {
+                        key: 'confirmcompletion',
+                        component: 'tool_dataprivacy'
+                    }
+                ];
+                wsfunction = 'tool_dataprivacy_mark_complete';
+                break;
         }
 
         var modalTitle = '';
@@ -189,26 +221,7 @@ function($, Ajax, Notification, Str, ModalFactory, ModalEvents, Templates, Modal
 
             // Handle save event.
             modal.getRoot().on(ModalEvents.save, function() {
-                // Confirm the request.
-                var params = {
-                    'requestid': requestId
-                };
-
-                var request = {
-                    methodname: wsfunction,
-                    args: params
-                };
-
-                Ajax.call([request])[0].done(function(data) {
-                    if (data.result) {
-                        window.location.reload();
-                    } else {
-                        Notification.addNotification({
-                            message: data.warnings[0].message,
-                            type: 'error'
-                        });
-                    }
-                }).fail(Notification.exception);
+                handleSave(wsfunction, params);
             });
 
             // Handle hidden event.
@@ -217,9 +230,39 @@ function($, Ajax, Notification, Str, ModalFactory, ModalEvents, Templates, Modal
                 modal.destroy();
             });
 
-            return modal;
-        }).done(function(modal) {
             modal.show();
+
+            return;
+
+        }).catch(Notification.exception);
+    }
+
+    /**
+     * Calls a web service function and reloads the page on success and shows a notification.
+     * Displays an error notification, otherwise.
+     *
+     * @param {String} wsfunction The web service function to call.
+     * @param {Object} params The parameters for the web service functoon.
+     */
+    function handleSave(wsfunction, params) {
+        // Confirm the request.
+        var request = {
+            methodname: wsfunction,
+            args: params
+        };
+
+        Ajax.call([request])[0].done(function(data) {
+            if (data.result) {
+                // On success, reload the page so that the data request table will be updated.
+                // TODO: Probably in the future, better to reload the table or the target data request via AJAX.
+                window.location.reload();
+            } else {
+                // Add the notification.
+                Notification.addNotification({
+                    message: data.warnings[0].message,
+                    type: 'error'
+                });
+            }
         }).fail(Notification.exception);
     }
 
