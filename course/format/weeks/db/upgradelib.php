@@ -25,10 +25,14 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * This method finds all courses in 'weeks' format that have actual number of sections
- * bigger than their 'numsections' course format option.
- * For each such course we call {@link format_weeks_upgrade_hide_extra_sections()} and
- * either delete or hide "orphaned" sections.
+ * This method finds all courses in 'topics' format that have actual number of sections
+ * different than their 'numsections' course format option.
+ *
+ * For courses where there are more sections than numsections, we call
+ * {@link format_weeks_upgrade_hide_extra_sections()} and
+ * either delete or hide "orphaned" sections. For courses where there are fewer sections
+ * than numsections, we call {@link format_weeks_upgrade_add_empty_sections()} to add
+ * these sections.
  */
 function format_weeks_upgrade_remove_numsections() {
     global $DB;
@@ -49,6 +53,7 @@ function format_weeks_upgrade_remove_numsections() {
     $actual = $DB->get_records_sql_menu($sql1, $params);
     $numsections = $DB->get_records_sql_menu($sql2, $params);
     $needfixing = [];
+    $needsections = [];
 
     $defaultnumsections = get_config('moodlecourse', 'numsections');
 
@@ -60,6 +65,8 @@ function format_weeks_upgrade_remove_numsections() {
         }
         if ($sectionsactual > $n) {
             $needfixing[$courseid] = $n;
+        } else if ($sectionsactual < $n) {
+            $needsections[$courseid] = $n;
         }
     }
     unset($actual);
@@ -67,6 +74,10 @@ function format_weeks_upgrade_remove_numsections() {
 
     foreach ($needfixing as $courseid => $numsections) {
         format_weeks_upgrade_hide_extra_sections($courseid, $numsections);
+    }
+
+    foreach ($needsections as $courseid => $numsections) {
+        format_weeks_upgrade_add_empty_sections($courseid, $numsections);
     }
 
     $DB->delete_records('course_format_options', ['format' => 'weeks', 'sectionid' => 0, 'name' => 'numsections']);
@@ -113,5 +124,21 @@ function format_weeks_upgrade_hide_extra_sections($courseid, $numsections) {
         // module visibility in this case.
         list($sql, $params) = $DB->get_in_or_equal($tohide);
         $DB->execute("UPDATE {course_sections} SET visible = 0 WHERE id " . $sql, $params);
+    }
+}
+
+/**
+ * This method adds empty sections to courses which have fewer sections than their
+ * 'numsections' course format option and adds these empty sections.
+ *
+ * @param int $courseid
+ * @param int $numsections
+ */
+function format_weeks_upgrade_add_empty_sections($courseid, $numsections) {
+    global $DB;
+    $existingsections = $DB->get_fieldset_sql('SELECT section from {course_sections} WHERE course = ?', [$courseid]);
+    $newsections = array_diff(range(0, $numsections), $existingsections);
+    foreach ($newsections as $sectionnum) {
+        course_create_section($courseid, $sectionnum, true);
     }
 }
