@@ -1537,8 +1537,6 @@ class core_message_external extends external_api {
                     }
                 }
 
-                $message->useridto = $useridto;
-
                 // We need to get the user from the query.
                 if (empty($userfromfullname)) {
                     // Check for non-reply and support users.
