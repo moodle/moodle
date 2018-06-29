@@ -308,6 +308,29 @@ class current_company_course_user_selector extends company_user_selector_base {
 }
 
 class potential_company_course_user_selector extends company_user_selector_base {
+
+    public function __construct($name, $options) {
+        $this->companyid  = $options['companyid'];
+        $this->courseid  = $options['courseid'];
+        $this->departmentid = $options['departmentid'];
+        $this->roletype = $options['roletype'];
+        $this->subdepartments = $options['subdepartments'];
+        $this->parentdepartmentid = $options['parentdepartmentid'];
+        parent::__construct($name, $options);
+    }
+
+    protected function get_options() {
+        $options = parent::get_options();
+        $options['companyid'] = $this->companyid;
+        $options['courseid'] = $this->courseid;
+        $options['departmentid'] = $this->departmentid;
+        $options['roletype'] = $this->roletype;
+        $options['subdepartments'] = $this->subdepartments;
+        $options['parentdepartmentid'] = $this->parentdepartmentid;
+        $options['file']    = 'blocks/iomad_company_admin/lib.php';
+        return $options;
+    }
+
     /**
      * Company users enrolled into the selected company course
      * @param <type> $search
