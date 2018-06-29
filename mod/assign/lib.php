@@ -258,7 +258,7 @@ function assign_update_events($assign, $override = null) {
         // Only load events for this override.
         if (isset($override->userid)) {
             $conds['userid'] = $override->userid;
-        } else {
+        } else if (isset($override->groupid)) {
             $conds['groupid'] = $override->groupid;
         }
     }
