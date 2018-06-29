@@ -23,11 +23,7 @@ Feature: Glossary entries can be organised in categories
     And the following "activities" exist:
       | activity | name       | intro                                                           | course | idnumber  |
       | label    | name       | check autolinking of CategoryAutoLinks and CategoryNoLinks text | C1     | label1    |
-# Log in as admin and enable autolinking filter
-    And I log in as "admin"
-    And I navigate to "Plugins > Filters > Manage filters" in site administration
-    And I click on "On" "option" in the "Glossary auto-linking" "table_row"
-    And I log out
+    And the "glossary" filter is "on"
 # Log in as a teacher and make sure nothing is yet autolinked
     And I log in as "teacher1"
     When I am on "Course 1" course homepage
