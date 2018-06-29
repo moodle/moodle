@@ -76,5 +76,7 @@ $string['hidehistoricusers'] = 'Remove historic results';
 $string['historicusers'] = 'Include historic results';
 $string['historiccompletedusers'] = 'Historic completed';
 $string['timeexpires'] = 'Valid until';
+$string['showsuspendedusers'] = 'Include suspended users';
+$string['hidesuspendedusers'] = 'Remove suspended users';
 $string['compfrom'] = 'Start date';
 $string['compto'] = 'End date';

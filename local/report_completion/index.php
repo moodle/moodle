@@ -285,16 +285,35 @@ if (empty($dodownload) && empty($showchart)) {
             $historicuserslink = new moodle_url($url, array('departmentid' => $departmentid,
                                                             'showchart' => 0,
                                                             'charttype' => '',
-                                                            'showhistoric' => 1
+                                                            'showhistoric' => 1,
+                                                            'showsuspended' => $showsuspended
                                                             ));
             echo $output->single_button($historicuserslink, get_string("historicusers", 'local_report_completion'));
         } else {
             $historicuserslink = new moodle_url($url, array('departmentid' => $departmentid,
                                                             'showchart' => 0,
                                                             'charttype' => '',
-                                                            'showhistoric' => 0
+                                                            'showhistoric' => 0,
+                                                            'showsuspended' => $showsuspended
                                                             ));
             echo $output->single_button($historicuserslink, get_string("hidehistoricusers", 'local_report_completion'));
+        }
+        if (!$showsuspended) {
+            $suspendeduserslink = new moodle_url($url, array('departmentid' => $departmentid,
+                                                             'showchart' => 0,
+                                                             'charttype' => '',
+                                                             'showhistoric' => $showhistoric,
+                                                             'showsuspended' => 1
+                                                            ));
+            echo $output->single_button($suspendeduserslink, get_string("showsuspendedusers", 'local_report_completion'));
+        } else {
+            $suspendeduserslink = new moodle_url($url, array('departmentid' => $departmentid,
+                                                             'showchart' => 0,
+                                                             'charttype' => '',
+                                                             'showhistoric' => $showhistoric,
+                                                             'showsuspended' => 0
+                                                            ));
+            echo $output->single_button($suspendeduserslink, get_string("hidesuspendedusers", 'local_report_completion'));
         }
     }
 

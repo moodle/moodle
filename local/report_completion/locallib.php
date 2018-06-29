@@ -63,7 +63,7 @@ class report_completion {
         if (count($alldepartments) > 0 ) {
             // Deal with suspended or not.
             if (empty($showsuspended)) {
-                $suspendedsql = " AND suspended = 0 ";
+                $suspendedsql = " AND userid IN (select id FROM {user} WHERE suspended = 0) ";
             } else {
                 $suspendedsql = "";
             }
