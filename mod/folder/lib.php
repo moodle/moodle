@@ -283,9 +283,13 @@ function folder_pluginfile($course, $cm, $context, $filearea, $args, $forcedownl
         return false;
     }
 
-    // finally send the file
-    // for folder module, we force download file all the time
-    send_stored_file($file, 0, 0, true, $options);
+    // Set security posture for in-browser display.
+    if (!$forcedownload) {
+        header("Content-Security-Policy: default-src 'none'; img-src 'self'");
+    }
+
+    // Finally send the file.
+    send_stored_file($file, 0, 0, $forcedownload, $options);
 }
 
 /**
