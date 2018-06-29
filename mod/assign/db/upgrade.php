@@ -171,5 +171,15 @@ function xmldb_assign_upgrade($oldversion) {
     // Automatically generated Moodle v3.5.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2018061100) {
+        require_once($CFG->dirroot.'/mod/assign/upgradelib.php');
+
+        // Clean up duplicate event records that may have been generated from MDL-61870.
+        delete_assignment_duplicate_group_events();
+
+        // Main savepoint reached.
+        upgrade_mod_savepoint(true, 2018061100, 'assign');
+    }
+
     return true;
 }
