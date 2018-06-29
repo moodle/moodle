@@ -676,6 +676,17 @@ class core_filterlib_testcase extends advanced_testcase {
         $this->assertInstanceOf('performance_measuring_filter_manager', $filterman);
     }
 
+    public function test_filter_get_globally_enabled_default() {
+        $enabledfilters = filter_get_globally_enabled();
+        $this->assertArrayNotHasKey('glossary', $enabledfilters);
+    }
+
+    public function test_filter_get_globally_enabled_after_change() {
+        filter_set_global_state('glossary', TEXTFILTER_ON);
+        $enabledfilters = filter_get_globally_enabled();
+        $this->assertArrayHasKey('glossary', $enabledfilters);
+    }
+
     public function test_filter_get_globally_enabled_filters_with_config() {
         $this->setup_available_in_context_tests();
 
