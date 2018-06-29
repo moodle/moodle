@@ -298,14 +298,15 @@ class qtype_ordering extends question_type {
     public function get_possible_responses($questiondata) {
         $responses = array();
         $question = $this->make_question($questiondata);
-        foreach ($question->correctresponse as $position => $answerid) {
-            $responses[] = $position.': '.$question->answers[$answerid]->answer;
+        if ($question->correctresponse) {
+			foreach ($question->correctresponse as $position => $answerid) {
+				$responses[] = $position.': '.$question->answers[$answerid]->answer;
+			}
         }
-        $responses = array(
-            0 => question_possible_response::no_response(),
-            1 => implode(', ', $responses)
-        );
-        return;
+		return array(
+			0 => question_possible_response::no_response(),
+			1 => implode(', ', $responses)
+		);
     }
 
     /**
