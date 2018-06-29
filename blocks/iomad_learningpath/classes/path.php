@@ -151,6 +151,7 @@ class path {
      * @return mixed url or false if no image
      */
     public function get_path_image_url($pathid) {
+        global $OUTPUT;
 
         $fs = get_file_storage();
         $pic = $fs->get_file(
@@ -161,6 +162,10 @@ class path {
             '/',
             'picture.png'
         );
+
+        if (!$pic) {
+            return $OUTPUT->image_url('learningpath', 'local_iomad_learningpath');
+        }
 
         return \moodle_url::make_pluginfile_url($pic->get_contextid(), $pic->get_component(), $pic->get_filearea(),
                     $pic->get_itemid(), $pic->get_filepath(), $pic->get_filename());
