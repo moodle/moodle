@@ -3295,12 +3295,11 @@ class company {
         }
 
         // Deal with SCORM.
-        $DB->execute("DELETE FROM {scorm_scoes_track}
-                      WHERE userid = :userid
-                      AND scormid IN (
-                         SELECT id FROM {scorm}
-                         WHERE courseid = :coursid)",
-                      array('userid' => $userid, 'courseid' => $courseid));
+        if ($scorms = $DB->get_records('scorm', array('course' => $courseid))) {
+            foreach ($scorms as $scorm) {
+                $DB->delete_records('scorm_scoes_track', array('userid' => $userid, 'scormid' => $scorm->id));
+            }
+        }
 
         // Remove grades
         if ($items = $DB->get_records('grade_items', array('courseid' => $courseid))) {
@@ -3313,35 +3312,35 @@ class company {
         if ($quizzes = $DB->get_records('quiz', array('course' => $courseid))) {
             // We have quiz(zes) so clear them down.
             foreach ($quizzes as $quiz) {
-                $DB->execute("DELETE FROM {quiz_attempts} WHERE quiz=:quiz AND userid = :userid", array('quiz' => $quiz->id, 'userid' => $userid));
-                $DB->execute("DELETE FROM {quiz_grades} WHERE quiz=:quiz AND userid = :userid", array('quiz' => $quiz->id, 'userid' => $userid));
-                $DB->execute("DELETE FROM {quiz_overrides} WHERE quiz=:quiz AND userid = :userid", array('quiz' => $quiz->id, 'userid' => $userid));
+                $DB->delete_records('quiz_attempts', array('quiz' => $quiz->id, 'userid' => $userid));
+                $DB->delete_records('quiz_grades', array('quiz' => $quiz->id, 'userid' => $userid));
+                $DB->delete_records('quiz_overrides', array('quiz' => $quiz->id, 'userid' => $userid));
             }
         }
 
         // Remove certificate info.
         if ($certificates = $DB->get_records('iomadcertificate', array('course' => $courseid))) {
             foreach ($certificates as $certificate) {
-                $DB->execute("DELETE FROM {iomadcertificate_issues} WHERE iomadcertificateid = :certid AND userid = :userid", array('certid' => $certificate->id, 'userid' => $userid));
+                $DB->delete_records('iomadcertificate_issues', array('iomadcertificateid' => $certificate->id, 'userid' => $userid));
             }
         }
 
         // Remove feedback info.
         if ($feedbacks = $DB->get_records('feedback', array('course' => $courseid))) {
             foreach ($feedbacks as $feedback) {
-                $DB->execute("DELETE FROM {feedback_completed} WHERE feedback = :feedbackid AND userid = :userid", array('feedbackid' => $feedback->id, 'userid' => $userid));
-                $DB->execute("DELETE FROM {feedback_completedtmp} WHERE feedback = :feedbackid AND userid = :userid", array('feedbackid' => $feedback->id, 'userid' => $userid));
-                $DB->execute("DELETE FROM {feedback_tracking} WHERE feedback = :feedbackid AND userid = :userid", array('feedbackid' => $feedback->id, 'userid' => $userid));
+                $DB->delete_records('feedback_completed', array('feedback' => $feedback->id, 'userid' => $userid));
+                $DB->delete_records('feedback_completedtmp', array('feedback' => $feedback->id, 'userid' => $userid));
+                $DB->delete_records('feedback_tracking', array('feedback' => $feedback->id, 'userid' => $userid));
             }
         }
 
         // Remove lesson info.
         if ($lessons = $DB->get_records('lesson', array('course' => $courseid))) {
             foreach ($lessons as $lesson) {
-                $DB->execute("DELETE FROM {lesson_attempts} WHERE lessonid = :lessonid AND userid = :userid", array('lessonid' => $lesson->id, 'userid' => $userid));
-                $DB->execute("DELETE FROM {lesson_grades} WHERE lessonid = :lessonid AND userid = :userid", array('lessonid' => $lesson->id, 'userid' => $userid));
-                $DB->execute("DELETE FROM {lesson_branch} WHERE lessonid = :lessonid AND userid = :userid", array('lessonid' => $lesson->id, 'userid' => $userid));
-                $DB->execute("DELETE FROM {lesson_timer} WHERE lessonid = :lessonid AND userid = :userid", array('lessonid' => $lesson->id, 'userid' => $userid));
+                $DB->delete_records('lesson_attempts', array('lessonid' => $lesson->id, 'userid' => $userid));
+                $DB->delete_records('lesson_grades', array('lessonid' => $lesson->id, 'userid' => $userid));
+                $DB->delete_records('lesson_branch', array('lessonid' => $lesson->id, 'userid' => $userid));
+                $DB->delete_records('lesson_timer', array('lessonid' => $lesson->id, 'userid' => $userid));
             }
         }
 

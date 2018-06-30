@@ -368,6 +368,7 @@ function email_reports_cron() {
         mtrace("Sending expiry warning email to $user->email");
         $event = \block_iomad_company_admin\event\user_course_expired::create(array('context' => context_course::instance($course->id),
                                                                                     'courseid' => $course->id,
+                                                                                    'objectid' => $course->id,
                                                                                     'userid' => $user->id));
         $event->trigger();
         EmailTemplate::send('expiry_warn_user', array('course' => $course, 'user' => $user, 'company' => $company));
