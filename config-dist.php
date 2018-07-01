@@ -73,12 +73,15 @@ $CFG->dboptions = array(
     // 'fetchbuffersize' => 100000, // On PostgreSQL, this option sets a limit
                                 // on the number of rows that are fetched into
                                 // memory when doing a large recordset query
-                                // (e.g. search indexing). Default is 100000.
-                                // Uncomment and set to a value to change it,
-                                // or zero to turn off the limit. You need to
-                                // set to zero if you are using pg_bouncer in
-                                // 'transaction' mode (it is fine in 'session'
-                                // mode).
+                                // (e.g. search indexing).
+                                // By default, this feature is disabled in
+                                // Moodle 3.4, using a value of zero. In Moodle
+                                // 3.5 and up the feature is enabled by default
+                                // with a buffer size of 100000.
+                                // Uncomment and set a positive value to enable it,
+                                // noting that you need to keep it to zero
+                                // if you are using pg_bouncer in 'transaction'
+                                // mode (it is fine in 'session' mode).
 );
 
 

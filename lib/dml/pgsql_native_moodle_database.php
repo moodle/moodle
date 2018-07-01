@@ -48,9 +48,6 @@ class pgsql_native_moodle_database extends moodle_database {
     /** @var int Number of cursors used (for constructing a unique ID) */
     protected $cursorcount = 0;
 
-    /** @var int Default number of rows to fetch at a time when using recordsets with cursors */
-    const DEFAULT_FETCH_BUFFER_SIZE = 100000;
-
     /**
      * Detects if all needed PHP stuff installed.
      * Note: can be used before connect()
@@ -782,7 +779,7 @@ class pgsql_native_moodle_database extends moodle_database {
         if (array_key_exists('fetchbuffersize', $this->dboptions)) {
             return (int)$this->dboptions['fetchbuffersize'];
         } else {
-            return self::DEFAULT_FETCH_BUFFER_SIZE;
+            return 0; // Disabled by default.
         }
     }
 
