@@ -1627,18 +1627,61 @@ function get_users_from_config($value, $capability, $includeadmins = true) {
 /**
  * Invalidates browser caches and cached data in temp.
  *
- * IMPORTANT - If you are adding anything here to do with the cache directory you should also have a look at
- * {@link phpunit_util::reset_dataroot()}
- *
  * @return void
  */
 function purge_all_caches() {
-    global $CFG, $DB;
+    purge_caches();
+}
 
-    reset_text_filters_cache();
-    js_reset_all_caches();
-    theme_reset_all_caches();
-    get_string_manager()->reset_caches();
+/**
+ * Selectively invalidate different types of cache.
+ *
+ * Purges the cache areas specified.  By default, this will purge all caches but can selectively purge specific
+ * areas alone or in combination.
+ *
+ * @param bool[] $options Specific parts of the cache to purge. Valid options are:
+ *        'muc'    Purge MUC caches?
+ *        'theme'  Purge theme cache?
+ *        'lang'   Purge language string cache?
+ *        'js'     Purge javascript cache?
+ *        'filter' Purge text filter cache?
+ *        'other'  Purge all other caches?
+ */
+function purge_caches($options = []) {
+    $defaults = array_fill_keys(['muc', 'theme', 'lang', 'js', 'filter', 'other'], false);
+    if (empty(array_filter($options))) {
+        $options = array_fill_keys(array_keys($defaults), true); // Set all options to true.
+    } else {
+        $options = array_merge($defaults, array_intersect_key($options, $defaults)); // Override defaults with specified options.
+    }
+    if ($options['muc']) {
+        cache_helper::purge_all();
+    }
+    if ($options['theme']) {
+        theme_reset_all_caches();
+    }
+    if ($options['lang']) {
+        get_string_manager()->reset_caches();
+    }
+    if ($options['js']) {
+        js_reset_all_caches();
+    }
+    if ($options['filter']) {
+        reset_text_filters_cache();
+    }
+    if ($options['other']) {
+        purge_other_caches();
+    }
+}
+
+/**
+ * Purge all non-MUC caches not otherwise purged in purge_caches.
+ *
+ * IMPORTANT - If you are adding anything here to do with the cache directory you should also have a look at
+ * {@link phpunit_util::reset_dataroot()}
+ */
+function purge_other_caches() {
+    global $DB, $CFG;
     core_text::reset_caches();
     if (class_exists('core_plugin_manager')) {
         core_plugin_manager::reset_caches();
@@ -1652,7 +1695,6 @@ function purge_all_caches() {
     }
 
     $DB->reset_caches();
-    cache_helper::purge_all();
 
     // Purge all other caches: rss, simplepie, etc.
     clearstatcache();

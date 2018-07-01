@@ -27,36 +27,43 @@ require_once('../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 
 $confirm = optional_param('confirm', 0, PARAM_BOOL);
-$returnurl = optional_param('returnurl', null, PARAM_LOCALURL);
+$returnurl = optional_param('returnurl', '/admin/purgecaches.php', PARAM_LOCALURL);
+$returnurl = new moodle_url($returnurl);
 
 admin_externalpage_setup('purgecaches');
 
+$form = new core_admin\form\purge_caches(null, ['returnurl' => $returnurl]);
+
 // If we have got here as a confirmed aciton, do it.
-if ($confirm && confirm_sesskey()) {
+if ($data = $form->get_data()) {
 
     // Valid request. Purge, and redirect the user back to where they came from.
-    purge_all_caches();
+    $selected = $data->purgeselectedoptions;
+    purge_caches($selected);
 
-    if ($returnurl) {
-        $returnurl = $CFG->wwwroot . $returnurl;
+    if (isset($data->all)) {
+        $message = get_string('purgecachesfinished', 'admin');
     } else {
-        $returnurl = new moodle_url('/admin/purgecaches.php');
+        $message = get_string('purgeselectedcachesfinished', 'admin');
     }
-    redirect($returnurl, get_string('purgecachesfinished', 'admin'));
+
+} else if ($confirm && confirm_sesskey()) {
+    purge_caches();
+    $message = get_string('purgecachesfinished', 'admin');
 }
 
-// Otherwise, show a button to actually purge the caches.
-$actionurl = new moodle_url('/admin/purgecaches.php', array('sesskey'=>sesskey(), 'confirm'=>1));
-if ($returnurl) {
-    $actionurl->param('returnurl', $returnurl);
+if (isset($message)) {
+    redirect($returnurl, $message);
 }
+
+// Otherwise, show a form to actually purge the caches.
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading(get_string('purgecaches', 'admin'));
+echo $OUTPUT->heading(get_string('purgecachespage', 'admin'));
 
 echo $OUTPUT->box_start('generalbox', 'notice');
 echo html_writer::tag('p', get_string('purgecachesconfirm', 'admin'));
-echo $OUTPUT->single_button($actionurl, get_string('purgecaches', 'admin'), 'post');
+echo $form->render();
 echo $OUTPUT->box_end();
 
 echo $OUTPUT->footer();
