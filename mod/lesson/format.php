@@ -726,8 +726,8 @@ class qformat_default {
         // @@PLUGINFILE@@ with a real URL, but it doesn't matter what.
         // We use http://example.com/.
         $text = str_replace('@@PLUGINFILE@@/', 'http://example.com/', $question->questiontext);
-        return html_to_text(format_text($text,
-                $question->questiontextformat, $formatoptions), 0, false);
+        return s(html_to_text(format_text($text,
+                $question->questiontextformat, $formatoptions), 0, false));
     }
 
     /**

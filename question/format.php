@@ -945,8 +945,8 @@ class qformat_default {
      * during import to let the user see roughly what is going on.
      */
     protected function format_question_text($question) {
-        return question_utils::to_plain_text($question->questiontext,
-                $question->questiontextformat);
+        return s(question_utils::to_plain_text($question->questiontext,
+                $question->questiontextformat));
     }
 }
 
