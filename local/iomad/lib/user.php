@@ -688,6 +688,126 @@ class company_user {
             $DB->set_field('companylicense_users', 'groupid', $companygroup->id, array('id' => $licenseinfo->id));
         }
     }
+    
+    /**
+     * 'Delete' user from course
+     * @param int userid
+     * @param int courseid
+     */
+    public static function delete_user_course($userid, $courseid, $action = '') {
+        global $DB, $CFG;
+
+        // Remove enrolments
+        $plugins = enrol_get_plugins(true);
+        $instances = enrol_get_instances($courseid, true);
+        foreach ($instances as $instance) {
+            $plugin = $plugins[$instance->enrol];
+            $plugin->unenrol_user($instance, $userid);
+        }
+
+        // Remove completions
+        $DB->delete_records('course_completions', array('userid' => $userid, 'course' => $courseid));
+        if ($compitems = $DB->get_records('course_completion_criteria', array('course' => $courseid))) {
+            foreach ($compitems as $compitem) {
+                $DB->delete_records('course_completion_crit_compl', array('userid' => $userid,
+                                                                          'criteriaid' => $compitem->id));
+            }
+        }
+        if ($modules = $DB->get_records_sql("SELECT id FROM {course_modules} WHERE course = :course AND completion != 0", array('course' => $courseid))) {
+            foreach ($modules as $module) {
+                $DB->delete_records('course_modules_completion', array('userid' => $userid, 'coursemoduleid' => $module->id));
+            }
+        }
+
+        // Deal with SCORM.
+        if ($scorms = $DB->get_records('scorm', array('course' => $courseid))) {
+            foreach ($scorms as $scorm) {
+                $DB->delete_records('scorm_scoes_track', array('userid' => $userid, 'scormid' => $scorm->id));
+            }
+        }
+
+        // Remove grades
+        if ($items = $DB->get_records('grade_items', array('courseid' => $courseid))) {
+            foreach ($items as $item) {
+                $DB->delete_records('grade_grades', array('userid' => $userid, 'itemid' => $item->id));
+            }
+        }
+
+        // Remove quiz entries.
+        if ($quizzes = $DB->get_records('quiz', array('course' => $courseid))) {
+            // We have quiz(zes) so clear them down.
+            foreach ($quizzes as $quiz) {
+                $DB->delete_records('quiz_attempts', array('quiz' => $quiz->id, 'userid' => $userid));
+                $DB->delete_records('quiz_grades', array('quiz' => $quiz->id, 'userid' => $userid));
+                $DB->delete_records('quiz_overrides', array('quiz' => $quiz->id, 'userid' => $userid));
+            }
+        }
+
+        // Remove certificate info.
+        if ($certificates = $DB->get_records('iomadcertificate', array('course' => $courseid))) {
+            foreach ($certificates as $certificate) {
+                $DB->delete_records('iomadcertificate_issues', array('iomadcertificateid' => $certificate->id, 'userid' => $userid));
+            }
+        }
+
+        // Remove feedback info.
+        if ($feedbacks = $DB->get_records('feedback', array('course' => $courseid))) {
+            foreach ($feedbacks as $feedback) {
+                $DB->delete_records('feedback_completed', array('feedback' => $feedback->id, 'userid' => $userid));
+                $DB->delete_records('feedback_completedtmp', array('feedback' => $feedback->id, 'userid' => $userid));
+                $DB->delete_records('feedback_tracking', array('feedback' => $feedback->id, 'userid' => $userid));
+            }
+        }
+
+        // Remove lesson info.
+        if ($lessons = $DB->get_records('lesson', array('course' => $courseid))) {
+            foreach ($lessons as $lesson) {
+                $DB->delete_records('lesson_attempts', array('lessonid' => $lesson->id, 'userid' => $userid));
+                $DB->delete_records('lesson_grades', array('lessonid' => $lesson->id, 'userid' => $userid));
+                $DB->delete_records('lesson_branch', array('lessonid' => $lesson->id, 'userid' => $userid));
+                $DB->delete_records('lesson_timer', array('lessonid' => $lesson->id, 'userid' => $userid));
+            }
+        }
+
+        if ($action == 'autodelete') {
+            // If this is being called from the course expiry event then the parameters are slightly different.
+            $params =  array('licensecourseid' => $courseid,
+                             'userid' =>$userid,
+                             'isusing' => 1,
+                             'timecompleted' => null);
+        } else {
+            $params =  array('licensecourseid' => $courseid,
+                             'userid' =>$userid,
+                             'isusing' => 1);
+        }
+        // Fix company licenses
+        if ($licenses = $DB->get_records('companylicense_users', $params)) {
+            $license = array_pop($licenses);
+            if ($action == 'autodelete') {
+                $license->timecompleted = time();
+                $DB->update_record('companylicense_users', $license);
+            } else if ($action == 'delete') {
+                $DB->delete_records('companylicense_users', array('id' => $license->id));
+                // Fix the usagecount.
+                $licenserecord = $DB->get_record('companylicense', array('id' => $license->licenseid));
+                $licenserecord->used = $DB->count_records('companylicense_users', array('licenseid' => $license->licenseid));
+                $DB->update_record('companylicense', $licenserecord);
+            } else if ($action == 'clear') {
+                $newlicense = $license;
+                $license->timecompleted = time();
+                $DB->update_record('companylicense_users', $license);
+                $newlicense->isusing = 0;
+                $newlicense->issuedate = time();
+                $newlicense->timecompleted = null;
+                $licenserecord = $DB->get_record('companylicense', array('id' => $license->licenseid));
+                if ($licenserecord->used < $licenserecord->allocation) {
+                    $DB->insert_record('companylicense_users', (array) $newlicense);
+                    $licenserecord->used = $DB->count_records('companylicense_users', array('licenseid' => $license->licenseid));
+                    $DB->update_record('companylicense', $licenserecord);
+               }
+            }
+        }
+    }
 }
 
 /**

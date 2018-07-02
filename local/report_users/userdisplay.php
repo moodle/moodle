@@ -128,7 +128,7 @@ if ($delete) {
 
 // Check for confirmed delete?
 if ($confirm) {
-   userrep::delete_user($userid, $courseid, $action);
+   company_user::delete_user_course($userid, $courseid, $action);
    redirect(new moodle_url('/local/report_users/userdisplay.php', array(
         'userid' => $userid)));
 }
