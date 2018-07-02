@@ -137,7 +137,8 @@ EOD;
                 $imgnode->parentNode->replaceChild($textnode, $imgnode);
             }
         }
-        return preg_replace('/^<\?xml[^>[]*(\[[^]]*\])?>/', '', $dom->saveHTML());
+        $count = 1;
+        return str_replace("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>", "", $dom->saveHTML(), $count);
     }
 
     /**
