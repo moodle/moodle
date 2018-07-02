@@ -229,7 +229,9 @@ class file_info_context_course extends file_info {
             }
         }
         $urlbase = $CFG->wwwroot.'/pluginfile.php';
-        return new file_info_stored($this->browser, $this->context, $storedfile, $urlbase, $section->section, true, true, true, false);
+        require_once($CFG->dirroot.'/course/lib.php');
+        $sectionname = get_section_name($this->course, $section);
+        return new file_info_stored($this->browser, $this->context, $storedfile, $urlbase, $sectionname, true, true, true, false);
     }
 
     /**
