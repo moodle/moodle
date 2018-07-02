@@ -60,11 +60,11 @@ $string['personal'] = 'personal';
 $string['personalnotes'] = 'Personal notes';
 $string['privacy:metadata:core_notes'] = 'The Notes component stores user notes within the core subsystem.';
 $string['privacy:metadata:core_notes:content'] = 'The content of the note.';
-$string['privacy:metadata:core_notes:courseid'] = 'The Id of the course associated with the note.';
+$string['privacy:metadata:core_notes:courseid'] = 'The ID of the course associated with the note';
 $string['privacy:metadata:core_notes:created'] = 'The creation date/time for the note.';
 $string['privacy:metadata:core_notes:lastmodified'] = 'The last modified date/time for the note.';
 $string['privacy:metadata:core_notes:publishstate'] = 'The publish state of the note.';
-$string['privacy:metadata:core_notes:userid'] = 'The Id of the user associated with the note.';
+$string['privacy:metadata:core_notes:userid'] = 'The ID of the user associated with the note';
 $string['publishstate'] = 'Context';
 $string['publishstate_help'] = 'A note\'s context determines who can see the note in everyday use. Users should be aware that all notes, including personal ones, may be disclosed under the laws of their jurisdictions.
 

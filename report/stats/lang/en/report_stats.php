@@ -33,7 +33,7 @@ $string['page-report-stats-user'] = 'User course statistics report';
 $string['stats:view'] = 'View course statistics report';
 $string['privacy:metadata'] = 'The Statistics plugin does not store any personal data.';
 
-$string['privacy:metadata:courseid'] = 'An identifier for a course.';
+$string['privacy:metadata:courseid'] = 'An identifier for a course';
 $string['privacy:metadata:userid'] = 'The user ID linked to this table.';
 $string['privacy:metadata:roleid'] = 'The role ID of the user.';
 $string['privacy:metadata:timeend'] = 'End time of logs view';

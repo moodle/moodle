@@ -1015,9 +1015,9 @@ $string['idnumbergroup_help'] = 'The ID number of a group is only used when matc
 $string['idnumbergrouping'] = 'Grouping ID number';
 $string['idnumbergrouping_help'] = 'The ID number of a grouping is only used when matching the grouping against external systems and is not displayed anywhere on the site. If the grouping has an official code name it may be entered, otherwise the field can be left blank.';
 $string['idnumbermod'] = 'ID number';
-$string['idnumbermod_help'] = 'Setting an ID number provides a way of identifying the activity for grade calculation purposes. If the activity is not included in any grade calculation then the ID number field may be left blank.
+$string['idnumbermod_help'] = 'Setting an ID number provides a way of identifying the activity or resource for purposes such as grade calculation or custom reporting. Otherwise the field may be left blank.
 
-The ID number can also be set in the gradebook, though it can only be edited on the activity settings page.';
+For gradable activities, the ID number can also be set in the gradebook, though it can only be edited on the activity settings page.';
 $string['idnumbertaken'] = 'This ID number is already taken';
 $string['imagealt'] = 'Picture description';
 $string['import'] = 'Import';
@@ -1560,7 +1560,7 @@ $string['privacy:metadata:events_queue'] = 'The queue of user events waiting to 
 $string['privacy:metadata:events_queue:eventdata'] = 'The data stored in the event.';
 $string['privacy:metadata:events_queue:stackdump'] = 'Any stacktrace associated with this event.';
 $string['privacy:metadata:events_queue:timecreated'] = 'The time that this event was created.';
-$string['privacy:metadata:events_queue:userid'] = 'The userid associated with this event.';
+$string['privacy:metadata:events_queue:userid'] = 'The user ID associated with this event';
 $string['privacy:metadata:log'] = 'A collection of past events';
 $string['privacy:metadata:log:action'] = 'A description of the action';
 $string['privacy:metadata:log:cmid'] = 'cmid';

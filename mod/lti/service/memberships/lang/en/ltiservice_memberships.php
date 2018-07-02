@@ -30,5 +30,5 @@ $string['privacy:metadata:firstname'] = 'The firstname of the user using the LTI
 $string['privacy:metadata:fullname'] = 'The fullname of the user using the LTI consumer.';
 $string['privacy:metadata:lastname'] = 'The lastname of the user using the LTI consumer.';
 $string['privacy:metadata:userid'] = 'The ID of the user using the LTI consumer.';
-$string['privacy:metadata:useridnumber'] = 'The idnumber of the user using the LTI consumer.';
+$string['privacy:metadata:useridnumber'] = 'The ID number of the user using the LTI consumer';
 $string['servicename'] = 'Memberships';
