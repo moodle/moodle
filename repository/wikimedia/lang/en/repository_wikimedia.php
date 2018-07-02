@@ -31,5 +31,5 @@ $string['maxwidth'] = 'Max image width (px)';
 $string['maxheight'] = 'Max image height (px)';
 $string['privacy:metadata:repository_wikimedia'] = 'The Wikimedia repository plugin does store user preferences, and transmits user data from Moodle to the remote system.';
 $string['privacy:metadata:repository_wikimedia:search_text'] = 'The Wikimedia repository user search text query.';
-$string['privacy:metadata:repository_wikimedia:preference:maxwidth'] = 'The user preference Max Width configured for the Wikimedia repository.';
+$string['privacy:metadata:repository_wikimedia:preference:maxwidth'] = 'The user preference max width configured for the Wikimedia repository';
 $string['privacy:metadata:repository_wikimedia:preference:maxheight'] = 'The user preference Max Height configured for the Wikimedia repository.';
