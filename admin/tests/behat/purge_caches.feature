@@ -6,7 +6,7 @@ Feature: Purge caches
 
   Background:
     Given I log in as "admin"
-    And I navigate to "Development > Purge all caches" in site administration
+    And I navigate to "Development > Purge caches" in site administration
 
   Scenario: Purge all caches
     Given I should not see "All caches were purged"
