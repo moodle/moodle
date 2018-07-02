@@ -84,7 +84,19 @@ class renderer_base {
             $themename = $this->page->theme->name;
             $themerev = theme_get_revision();
 
+            // Create new localcache directory.
             $cachedir = make_localcache_directory("mustache/$themerev/$themename");
+
+            // Remove old localcache directories.
+            $mustachecachedirs = glob("{$CFG->localcachedir}/mustache/*", GLOB_ONLYDIR);
+            foreach ($mustachecachedirs as $localcachedir) {
+                $cachedrev = [];
+                preg_match("/\/mustache\/([0-9]+)$/", $localcachedir, $cachedrev);
+                $cachedrev = isset($cachedrev[1]) ? intval($cachedrev[1]) : 0;
+                if ($cachedrev > 0 && $cachedrev < $themerev) {
+                    fulldelete($localcachedir);
+                }
+            }
 
             $loader = new \core\output\mustache_filesystem_loader();
             $stringhelper = new \core\output\mustache_string_helper();
