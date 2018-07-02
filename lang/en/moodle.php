@@ -383,6 +383,13 @@ $string['coursesectiontitle'] = 'Course: {$a->course}, {$a->sectionname}: {$a->s
 $string['coursesettings'] = 'Course default settings';
 $string['coursesmovedout'] = 'Courses moved out from {$a}';
 $string['coursespending'] = 'Courses pending approval';
+$string['coursesearch'] = 'Search courses';
+$string['coursesearch_help'] = '<p>You can search for multiple words at once and can refine your search as follows:</p>
+<ul>
+<li>word - find any match of this word within the text.</li>
+<li>+word - only exact matching words will be found.</li>
+<li>-word - don\'t include results containing this word.</li>
+</ul>';
 $string['coursestart'] = 'Course start';
 $string['coursesummary'] = 'Course summary';
 $string['coursesummary_help'] = 'The course summary is displayed in the list of courses. A course search searches course summary text in addition to course names.';
@@ -1743,12 +1750,6 @@ $string['searchagain'] = 'Search again';
 $string['searchbyemail'] = 'Search by email address';
 $string['searchbyusername'] = 'Search by username';
 $string['searchcourses'] = 'Search courses';
-$string['searchhelp'] = '<p>You can search for multiple words at once and can refine your search as follows:</p>
-<ul>
-<li>word - find any match of this word within the text.</li>
-<li>+word - only exact matching words will be found.</li>
-<li>-word - don\'t include results containing this word.</li>
-</ul>';
 $string['searchoptions'] = 'Search options';
 $string['searchresults'] = 'Search results';
 $string['sec'] = 'sec';
