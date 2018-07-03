@@ -154,3 +154,22 @@ Feature: Perform basic calendar functionality
     When I click on "Go to activity" "link"
     And I wait to be redirected
     Then I should see "Test choice"
+
+  @javascript
+  Scenario: Attempt to create event without fill required fields should display validation errors
+    Given I log in as "teacher1"
+    And I am on "Course 1" course homepage
+    And I follow "This month"
+    And I click on "New event" "button"
+    When I click on "Save" "button"
+    Then I should see "Required"
+    And I am on site homepage
+    And I follow "Calendar"
+    And I click on "New event" "button"
+    And I set the field "Type of event" to "Course"
+    When I click on "Save" "button"
+    Then I should see "Required"
+    And I should see "Select a course"
+    And I set the field "Event title" to "Really awesome event!"
+    When I click on "Save" "button"
+    Then I should see "Select a course"
