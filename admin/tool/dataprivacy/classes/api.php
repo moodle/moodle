@@ -232,16 +232,42 @@ class api {
      * (e.g. Users with the Data Protection Officer roles)
      *
      * @param int $userid The User ID.
+     * @param int[] $statuses The status filters.
+     * @param int[] $types The request type filters.
+     * @param string $sort The order by clause.
+     * @param int $offset Amount of records to skip.
+     * @param int $limit Amount of records to fetch.
      * @return data_request[]
+     * @throws coding_exception
      * @throws dml_exception
      */
-    public static function get_data_requests($userid = 0) {
+    public static function get_data_requests($userid = 0, $statuses = [], $types = [], $sort = '', $offset = 0, $limit = 0) {
         global $DB, $USER;
         $results = [];
-        $sort = 'status ASC, timemodified ASC';
+        $sqlparams = [];
+        $sqlconditions = [];
+
+        // Set default sort.
+        if (empty($sort)) {
+            $sort = 'status ASC, timemodified ASC';
+        }
+
+        // Set status filters.
+        if (!empty($statuses)) {
+            list($statusinsql, $sqlparams) = $DB->get_in_or_equal($statuses, SQL_PARAMS_NAMED);
+            $sqlconditions[] = "status $statusinsql";
+        }
+
+        // Set request type filter.
+        if (!empty($types)) {
+            list($typeinsql, $typeparams) = $DB->get_in_or_equal($types, SQL_PARAMS_NAMED);
+            $sqlconditions[] = "type $typeinsql";
+            $sqlparams = array_merge($sqlparams, $typeparams);
+        }
+
         if ($userid) {
             // Get the data requests for the user or data requests made by the user.
-            $select = "(userid = :userid OR requestedby = :requestedby)";
+            $sqlconditions[] = "(userid = :userid OR requestedby = :requestedby)";
             $params = [
                 'userid' => $userid,
                 'requestedby' => $userid
@@ -256,18 +282,85 @@ class api {
                 $alloweduserids = array_merge($alloweduserids, array_keys($children));
             }
             list($insql, $inparams) = $DB->get_in_or_equal($alloweduserids, SQL_PARAMS_NAMED);
-            $select .= " AND userid $insql";
-            $params = array_merge($params, $inparams);
+            $sqlconditions[] .= "userid $insql";
+            $select = implode(' AND ', $sqlconditions);
+            $params = array_merge($params, $inparams, $sqlparams);
 
-            $results = data_request::get_records_select($select, $params, $sort);
+            $results = data_request::get_records_select($select, $params, $sort, '*', $offset, $limit);
         } else {
             // If the current user is one of the site's Data Protection Officers, then fetch all data requests.
             if (self::is_site_dpo($USER->id)) {
-                $results = data_request::get_records(null, $sort, '');
+                if (!empty($sqlconditions)) {
+                    $select = implode(' AND ', $sqlconditions);
+                    $results = data_request::get_records_select($select, $sqlparams, $sort, '*', $offset, $limit);
+                } else {
+                    $results = data_request::get_records(null, $sort, '', $offset, $limit);
+                }
             }
         }
 
         return $results;
+    }
+
+    /**
+     * Fetches the count of data request records based on the given parameters.
+     *
+     * @param int $userid The User ID.
+     * @param int[] $statuses The status filters.
+     * @param int[] $types The request type filters.
+     * @return int
+     * @throws coding_exception
+     * @throws dml_exception
+     */
+    public static function get_data_requests_count($userid = 0, $statuses = [], $types = []) {
+        global $DB, $USER;
+        $count = 0;
+        $sqlparams = [];
+        $sqlconditions = [];
+        if (!empty($statuses)) {
+            list($statusinsql, $sqlparams) = $DB->get_in_or_equal($statuses, SQL_PARAMS_NAMED);
+            $sqlconditions[] = "status $statusinsql";
+        }
+        if (!empty($types)) {
+            list($typeinsql, $typeparams) = $DB->get_in_or_equal($types, SQL_PARAMS_NAMED);
+            $sqlconditions[] = "type $typeinsql";
+            $sqlparams = array_merge($sqlparams, $typeparams);
+        }
+        if ($userid) {
+            // Get the data requests for the user or data requests made by the user.
+            $sqlconditions[] = "(userid = :userid OR requestedby = :requestedby)";
+            $params = [
+                'userid' => $userid,
+                'requestedby' => $userid
+            ];
+
+            // Build a list of user IDs that the user is allowed to make data requests for.
+            // Of course, the user should be included in this list.
+            $alloweduserids = [$userid];
+            // Get any users that the user can make data requests for.
+            if ($children = helper::get_children_of_user($userid)) {
+                // Get the list of user IDs of the children and merge to the allowed user IDs.
+                $alloweduserids = array_merge($alloweduserids, array_keys($children));
+            }
+            list($insql, $inparams) = $DB->get_in_or_equal($alloweduserids, SQL_PARAMS_NAMED);
+            $sqlconditions[] .= "userid $insql";
+            $select = implode(' AND ', $sqlconditions);
+            $params = array_merge($params, $inparams, $sqlparams);
+
+            $count = data_request::count_records_select($select, $params);
+        } else {
+            // If the current user is one of the site's Data Protection Officers, then fetch all data requests.
+            if (self::is_site_dpo($USER->id)) {
+                if (!empty($sqlconditions)) {
+                    $select = implode(' AND ', $sqlconditions);
+                    $count = data_request::count_records_select($select, $sqlparams);
+                } else {
+                    $count = data_request::count_records();
+                }
+            }
+        }
+
+        return $count;
     }
 
     /**
