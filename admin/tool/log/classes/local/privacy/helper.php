@@ -99,8 +99,8 @@ class helper {
             'name' => $name,
             'description' => $description,
             'timecreated' => transform::datetime($record->timecreated),
-            'ip' => $record->ip,
             'origin' => static::transform_origin($record->origin),
+            'ip' => $isauthor ? $record->ip : '',
             'other' => $other ? $other : []
         ];
 
