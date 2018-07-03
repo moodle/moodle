@@ -981,8 +981,8 @@ class restore_process_course_modules_availability extends restore_execution_step
                 $DB->set_field('course_' . $table . 's', 'availability', $newvalue,
                         array('id' => $thingid));
             }
+            $rs->close();
         }
-        $rs->close();
     }
 }
 

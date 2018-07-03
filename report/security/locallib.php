@@ -828,6 +828,7 @@ function report_security_check_riskbackup($detailed=false) {
                                'contextname'=>$context->get_context_name());
             $users[] = '<li>'.get_string('check_riskbackup_unassign', 'report_security', $a).'</li>';
         }
+        $rs->close();
         if (!empty($users)) {
             $users = '<ul>'.implode('', $users).'</ul>';
             $result->details .= get_string('check_riskbackup_details_users', 'report_security', $users);

@@ -524,6 +524,10 @@ if ($allentries) {
         glossary_print_entry($course, $cm, $glossary, $entry, $mode, $hook,1,$displayformat);
         $entriesshown++;
     }
+    // The all entries value may be a recordset or an array.
+    if ($allentries instanceof moodle_recordset) {
+        $allentries->close();
+    }
 }
 if ( !$entriesshown ) {
     echo $OUTPUT->box(get_string("noentries","glossary"), "generalbox boxaligncenter boxwidthwide");

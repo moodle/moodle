@@ -504,8 +504,6 @@ class mod_feedback_responses_table extends table_sql {
             }
         }
         $this->build_table_chunk($chunk, $columnsgroups);
-
-        $this->rawdata->close();
     }
 
     /**
@@ -631,6 +629,7 @@ class mod_feedback_responses_table extends table_sql {
         }
         $this->query_db($this->pagesize, false);
         $this->build_table();
+        $this->close_recordset();
         return $this->dataforexternal;
     }
 }

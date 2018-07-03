@@ -45,6 +45,9 @@ class pgsql_native_moodle_database extends moodle_database {
     /** @var bool savepoint hack for MDL-35506 - workaround for automatic transaction rollback on error */
     protected $savepointpresent = false;
 
+    /** @var int Number of cursors used (for constructing a unique ID) */
+    protected $cursorcount = 0;
+
     /**
      * Detects if all needed PHP stuff installed.
      * Note: can be used before connect()
@@ -736,14 +739,89 @@ class pgsql_native_moodle_database extends moodle_database {
         list($sql, $params, $type) = $this->fix_sql_params($sql, $params);
 
         $this->query_start($sql, $params, SQL_QUERY_SELECT);
-        $result = pg_query_params($this->pgsql, $sql, $params);
-        $this->query_end($result);
 
-        return $this->create_recordset($result);
+        // For any query that doesn't explicitly specify a limit, we must use cursors to stop it
+        // loading the entire thing (unless the config setting is turned off).
+        $usecursors = !$limitnum && ($this->get_fetch_buffer_size() > 0);
+        if ($usecursors) {
+            // Work out the cursor unique identifer. This is based on a simple count used which
+            // should be OK because the identifiers only need to be unique within the current
+            // transaction.
+            $this->cursorcount++;
+            $cursorname = 'crs' . $this->cursorcount;
+
+            // Do the query to a cursor.
+            $sql = 'DECLARE ' . $cursorname . ' NO SCROLL CURSOR WITH HOLD FOR ' . $sql;
+            $result = pg_query_params($this->pgsql, $sql, $params);
+        } else {
+            $result = pg_query_params($this->pgsql, $sql, $params);
+            $cursorname = '';
+        }
+
+        $this->query_end($result);
+        if ($usecursors) {
+            pg_free_result($result);
+            $result = null;
+        }
+
+        return new pgsql_native_moodle_recordset($result, $this, $cursorname);
     }
 
-    protected function create_recordset($result) {
-        return new pgsql_native_moodle_recordset($result);
+    /**
+     * Gets size of fetch buffer used for recordset queries.
+     *
+     * If this returns 0 then cursors will not be used, meaning recordset queries will occupy enough
+     * memory as needed for the Postgres library to hold the entire query results in memory.
+     *
+     * @return int Fetch buffer size or 0 indicating not to use cursors
+     */
+    protected function get_fetch_buffer_size() {
+        if (array_key_exists('fetchbuffersize', $this->dboptions)) {
+            return (int)$this->dboptions['fetchbuffersize'];
+        } else {
+            return 0; // Disabled by default.
+        }
+    }
+
+    /**
+     * Retrieves data from cursor. For use by recordset only; do not call directly.
+     *
+     * Return value contains the next batch of Postgres data, and a boolean indicating if this is
+     * definitely the last batch (if false, there may be more)
+     *
+     * @param string $cursorname Name of cursor to read from
+     * @return array Array with 2 elements (next data batch and boolean indicating last batch)
+     */
+    public function fetch_from_cursor($cursorname) {
+        $count = $this->get_fetch_buffer_size();
+
+        $sql = 'FETCH ' . $count . ' FROM ' . $cursorname;
+
+        $this->query_start($sql, [], SQL_QUERY_AUX);
+        $result = pg_query($this->pgsql, $sql);
+        $last = pg_num_rows($result) !== $count;
+
+        $this->query_end($result);
+
+        return [$result, $last];
+    }
+
+    /**
+     * Closes a cursor. For use by recordset only; do not call directly.
+     *
+     * @param string $cursorname Name of cursor to close
+     * @return bool True if we actually closed one, false if the transaction was cancelled
+     */
+    public function close_cursor($cursorname) {
+        // If the transaction got cancelled, then ignore this request.
+        $sql = 'CLOSE ' . $cursorname;
+        $this->query_start($sql, [], SQL_QUERY_AUX);
+        $result = pg_query($this->pgsql, $sql);
+        $this->query_end($result);
+        if ($result) {
+            pg_free_result($result);
+        }
+        return true;
     }
 
     /**
@@ -1368,7 +1446,7 @@ class pgsql_native_moodle_database extends moodle_database {
     protected function begin_transaction() {
         $this->savepointpresent = true;
         $sql = "BEGIN ISOLATION LEVEL READ COMMITTED; SAVEPOINT moodle_pg_savepoint";
-        $this->query_start($sql, NULL, SQL_QUERY_AUX);
+        $this->query_start($sql, null, SQL_QUERY_AUX);
         $result = pg_query($this->pgsql, $sql);
         $this->query_end($result);
 
@@ -1383,7 +1461,7 @@ class pgsql_native_moodle_database extends moodle_database {
     protected function commit_transaction() {
         $this->savepointpresent = false;
         $sql = "RELEASE SAVEPOINT moodle_pg_savepoint; COMMIT";
-        $this->query_start($sql, NULL, SQL_QUERY_AUX);
+        $this->query_start($sql, null, SQL_QUERY_AUX);
         $result = pg_query($this->pgsql, $sql);
         $this->query_end($result);
 
@@ -1398,7 +1476,7 @@ class pgsql_native_moodle_database extends moodle_database {
     protected function rollback_transaction() {
         $this->savepointpresent = false;
         $sql = "RELEASE SAVEPOINT moodle_pg_savepoint; ROLLBACK";
-        $this->query_start($sql, NULL, SQL_QUERY_AUX);
+        $this->query_start($sql, null, SQL_QUERY_AUX);
         $result = pg_query($this->pgsql, $sql);
         $this->query_end($result);
 
