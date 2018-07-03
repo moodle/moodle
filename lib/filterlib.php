@@ -692,16 +692,21 @@ function filter_is_enabled($filtername) {
  * @return array where the keys and values are both the filter name, like 'tex'.
  */
 function filter_get_globally_enabled() {
-    static $enabledfilters = null;
-    if (is_null($enabledfilters)) {
-        $filters = filter_get_global_states();
-        $enabledfilters = array();
-        foreach ($filters as $filter => $filerinfo) {
-            if ($filerinfo->active != TEXTFILTER_DISABLED) {
-                $enabledfilters[$filter] = $filter;
-            }
+    $cache = \cache::make_from_params(\cache_store::MODE_REQUEST, 'core_filter', 'global_filters');
+    $enabledfilters = $cache->get('enabled');
+    if ($enabledfilters !== false) {
+        return $enabledfilters;
+    }
+
+    $filters = filter_get_global_states();
+    $enabledfilters = array();
+    foreach ($filters as $filter => $filerinfo) {
+        if ($filerinfo->active != TEXTFILTER_DISABLED) {
+            $enabledfilters[$filter] = $filter;
         }
     }
+
+    $cache->set('enabled', $enabledfilters);
     return $enabledfilters;
 }
 
