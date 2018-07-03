@@ -81,6 +81,8 @@ class renderer_base {
         global $CFG;
 
         if ($this->mustache === null) {
+            require_once("{$CFG->libdir}/filelib.php");
+
             $themename = $this->page->theme->name;
             $themerev = theme_get_revision();
 
