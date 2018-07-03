@@ -119,10 +119,9 @@ class create extends \moodleform {
         global $DB, $CFG;
 
         $errors = parent::validation($data, $files);
-        $coursekey = isset($data['groupcourseid']) ? 'groupcourseid' : 'courseid';
         $eventtypes = calendar_get_all_allowed_types();
         $eventtype = isset($data['eventtype']) ? $data['eventtype'] : null;
-
+        $coursekey = ($eventtype == 'group') ? 'groupcourseid' : 'courseid';
         if (empty($eventtype) || !isset($eventtypes[$eventtype])) {
             $errors['eventtype'] = get_string('invalideventtype', 'calendar');
         }
