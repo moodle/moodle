@@ -110,6 +110,16 @@ function theme_boost_get_main_scss_content($theme) {
 }
 
 /**
+ * Get compiled css.
+ *
+ * @return string compiled css
+ */
+function theme_boost_get_precompiled_css() {
+    global $CFG;
+    return file_get_contents($CFG->dirroot . '/theme/boost/style/moodle.css');
+}
+
+/**
  * Get SCSS to prepend.
  *
  * @param theme_config $theme The theme config object.
