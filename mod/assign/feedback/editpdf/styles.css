@@ -239,8 +239,8 @@
     padding: 0;
 }
 
-.assignfeedback_editpdf_dropdown .moodle-dialogue-hd,
-.assignfeedback_editpdf_dropdown .moodle-dialogue-ft {
+.moodle-dialogue-base .assignfeedback_editpdf_dropdown .moodle-dialogue-wrap .moodle-dialogue-hd,
+.moodle-dialogue-base .assignfeedback_editpdf_dropdown .moodle-dialogue-wrap .moodle-dialogue-ft {
     display: none;
 }
 
