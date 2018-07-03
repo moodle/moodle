@@ -1240,10 +1240,14 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode='',$h
             array('class' => 'glossary-hidden-note'));
     }
 
-    // Entry link.
-    $return .= '<a class="icon" title="' . get_string('entrylink', 'glossary', $altsuffix) . '" ' .
-               ' href="showentry.php?eid=' . $entry->id . '">' .
-               $OUTPUT->pix_icon('e/insert_edit_link', get_string('entrylink', 'glossary', $altsuffix)) . '</a>';
+    if ($entry->approved || has_capability('mod/glossary:approve', $context)) {
+        $output = true;
+        $return .= \html_writer::link(
+            new \moodle_url('/mod/glossary/showentry.php', ['eid' => $entry->id]),
+            $OUTPUT->pix_icon('fp/link', get_string('entrylink', 'glossary', $altsuffix), 'theme'),
+            ['title' => get_string('entrylink', 'glossary', $altsuffix), 'class' => 'icon']
+        );
+    }
 
     if (has_capability('mod/glossary:approve', $context) && !$glossary->defaultapproval && $entry->approved) {
         $output = true;
