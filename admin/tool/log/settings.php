@@ -25,6 +25,16 @@
 defined('MOODLE_INTERNAL') || die();
 
 if ($hassiteconfig) {
+
+    $privacysettings = $ADMIN->locate('privacysettings');
+
+    if ($ADMIN->fulltree) {
+        $privacysettings->add(new admin_setting_configcheckbox('tool_log/exportlog',
+                new lang_string('exportlog', 'tool_log'),
+                new lang_string('exportlogdetail', 'tool_log'), 1)
+        );
+    }
+
     $ADMIN->add('modules', new admin_category('logging', new lang_string('logging', 'tool_log')));
 
     $temp = new admin_settingpage('managelogging', new lang_string('managelogging', 'tool_log'));

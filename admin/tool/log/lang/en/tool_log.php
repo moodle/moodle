@@ -24,6 +24,8 @@
 
 $string['actlogshdr'] = 'Available log stores';
 $string['configlogplugins'] = 'Please enable all required plugins and arrange them in appropriate order.';
+$string['exportlog'] = 'Include logs when exporting.';
+$string['exportlogdetail'] = 'Include logs that relate to the user when exporting.';
 $string['logging'] = 'Logging';
 $string['managelogging'] = 'Manage log stores';
 $string['pluginname'] = 'Log store manager';
