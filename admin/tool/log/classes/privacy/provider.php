@@ -74,7 +74,9 @@ class provider implements
      * @param approved_contextlist $contextlist The approved contexts to export information for.
      */
     public static function export_user_data(approved_contextlist $contextlist) {
-        static::call_subplugins_method_with_args('export_user_data', [$contextlist]);
+        if (get_config('tool_log', 'exportlog')) {
+            static::call_subplugins_method_with_args('export_user_data', [$contextlist]);
+        }
     }
 
     /**
