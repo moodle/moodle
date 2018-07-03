@@ -1065,10 +1065,6 @@ class mod_assign_locallib_testcase extends advanced_testcase {
         $this->add_submission($student, $assign);
         $this->submit_for_grading($student, $assign);
 
-        // TODO Find a way to kill this waitForSecond
-        // This is to make sure the grade happens after the submission because
-        // we have no control over the timemodified values.
-        $this->waitForSecond();
         $this->mark_submission($teacher, $assign, $student, 50.0);
 
         $data = new stdClass();
@@ -1336,7 +1332,6 @@ class mod_assign_locallib_testcase extends advanced_testcase {
 
         $this->add_submission($student, $assign);
         $this->submit_for_grading($student, $assign);
-        $this->waitForSecond();
         $this->mark_submission($teacher, $assign, $student, 50.0);
 
         // Although it has been graded, it is still marked as submitted.

@@ -119,11 +119,19 @@ trait mod_assign_test_generator {
      * @param   bool        $changeuser Whether to switch user to the user being submitted as.
      */
     protected function mark_submission($teacher, $assign, $student, $grade = 50.0, $data = [], $attempt = 0) {
+        global $DB;
+
         // Mark the submission.
         $this->setUser($teacher);
         $data = (object) array_merge($data, [
                 'grade' => $grade,
             ]);
+
+        // Bump all timecreated and timemodified for this user back.
+        // The old assign_print_overview function includes submissions which have been graded where the grade modified
+        // date matches the submission modified date.
+        $DB->execute('UPDATE {assign_submission} SET timecreated = timecreated - 1, timemodified = timemodified - 1 WHERE userid = :userid',
+            ['userid' => $student->id]);
 
         $assign->testable_apply_grade_to_user($data, $student->id, $attempt);
     }
