@@ -445,7 +445,7 @@
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="subscriptionid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The event_subscription id this event is associated with."/>
         <FIELD NAME="priority" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The event's display priority. For multiple events with the same module name, instance and eventtype (e.g. for group overrides), the one with the higher priority will be displayed."/>
-        <FIELD NAME="location" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Meeting Location"/>
+        <FIELD NAME="location" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Event Location"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
