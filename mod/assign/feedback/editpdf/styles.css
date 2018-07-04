@@ -176,6 +176,10 @@
     float: left;
 }
 
+.assignfeedback_editpdf_widget .toolbar_group {
+    float: right;
+}
+
 .assignfeedback_editpdf_widget .toolbar button {
     box-shadow: none;
     -moz-box-shadow: none;
@@ -183,7 +187,7 @@
 }
 
 .assignfeedback_editpdf_widget .toolbar {
-    float: right;
+    float: left;
 }
 
 .assignfeedback_editpdf_widget .navigation,

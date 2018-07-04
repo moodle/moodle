@@ -159,46 +159,46 @@ class assignfeedback_editpdf_renderer extends plugin_renderer_base {
         $navigation3 .= $this->render_toolbar_button('comment_expcol', 'expcolcomments', $this->get_shortcut('expcolcomments'));
         $navigation3 = html_writer::div($navigation3, 'navigation-expcol', array('role' => 'navigation'));
 
-        $toolbar1 = '';
-        $toolbar2 = '';
-        $toolbar3 = '';
-        $toolbar4 = '';
+        $toolbargroup = '';
         $clearfix = html_writer::div('', 'clearfix');
         if (!$widget->readonly) {
-
             // Comments.
+            $toolbar1 = '';
             $toolbar1 .= $this->render_toolbar_button('comment', 'comment', $this->get_shortcut('comment'));
             $toolbar1 .= $this->render_toolbar_button('background_colour_clear', 'commentcolour', $this->get_shortcut('commentcolour'));
-            $toolbar1 = html_writer::div($toolbar1, 'toolbar', array('role'=>'toolbar'));
+            $toolbar1 = html_writer::div($toolbar1, 'toolbar', array('role' => 'toolbar'));
 
             // Select Tool.
+            $toolbar2 = '';
             $toolbar2 .= $this->render_toolbar_button('drag', 'drag', $this->get_shortcut('drag'));
             $toolbar2 .= $this->render_toolbar_button('select', 'select', $this->get_shortcut('select'));
-            $toolbar2 = html_writer::div($toolbar2, 'toolbar', array('role'=>'toolbar'));
+            $toolbar2 = html_writer::div($toolbar2, 'toolbar', array('role' => 'toolbar'));
 
             // Other Tools.
-            $toolbar3 = $this->render_toolbar_button('pen', 'pen', $this->get_shortcut('pen'));
+            $toolbar3 = '';
+            $toolbar3 .= $this->render_toolbar_button('pen', 'pen', $this->get_shortcut('pen'));
             $toolbar3 .= $this->render_toolbar_button('line', 'line', $this->get_shortcut('line'));
             $toolbar3 .= $this->render_toolbar_button('rectangle', 'rectangle', $this->get_shortcut('rectangle'));
             $toolbar3 .= $this->render_toolbar_button('oval', 'oval', $this->get_shortcut('oval'));
             $toolbar3 .= $this->render_toolbar_button('highlight', 'highlight', $this->get_shortcut('highlight'));
             $toolbar3 .= $this->render_toolbar_button('background_colour_clear', 'annotationcolour', $this->get_shortcut('annotationcolour'));
-            $toolbar3 = html_writer::div($toolbar3, 'toolbar', array('role'=>'toolbar'));
+            $toolbar3 = html_writer::div($toolbar3, 'toolbar', array('role' => 'toolbar'));
 
             // Stamps.
-            $toolbar4 .= $this->render_toolbar_button('stamp', 'stamp', 'n');
+            $toolbar4 = '';
+            $toolbar4 .= $this->render_toolbar_button('stamp', 'stamp', $this->get_shortcut('stamp'));
             $toolbar4 .= $this->render_toolbar_button('background_colour_clear', 'currentstamp', $this->get_shortcut('currentstamp'));
             $toolbar4 = html_writer::div($toolbar4, 'toolbar', array('role'=>'toolbar'));
+
+            // Add toolbars to toolbar_group in order of display, and float the toolbar_group right.
+            $toolbars = $toolbar1 . $toolbar2 . $toolbar3 . $toolbar4;
+            $toolbargroup = html_writer::div($toolbars, 'toolbar_group', array('role' => 'toolbar_group'));
         }
 
-        // Toobars written in reverse order because they are floated right.
         $pageheader = html_writer::div($navigation1 .
                                        $navigation2 .
                                        $navigation3 .
-                                       $toolbar4 .
-                                       $toolbar3 .
-                                       $toolbar2 .
-                                       $toolbar1 .
+                                       $toolbargroup .
                                        $clearfix,
                                        'pageheader');
         $body = $pageheader;
