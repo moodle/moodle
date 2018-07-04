@@ -243,6 +243,7 @@ class icon_system_fontawesome extends icon_system_font {
             'core:i/item' => 'fa-circle',
             'core:i/loading' => 'fa-circle-o-notch fa-spin',
             'core:i/loading_small' => 'fa-circle-o-notch fa-spin',
+            'core:i/location' => 'fa-map-marker',
             'core:i/lock' => 'fa-lock',
             'core:i/log' => 'fa-list-alt',
             'core:i/mahara_host' => 'fa-id-badge',

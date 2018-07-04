@@ -118,15 +118,22 @@ Feature: Perform basic calendar functionality
       | Type of event | user |
       | Event title | Really awesome event! |
       | Description | Come join this awesome event, sucka! |
+      | Location | Cube office |
     And I am on "Course 1" course homepage
     When I follow "This month"
     And I click on "Really awesome event!" "link"
+    And ".location-content" "css_element" should exist
+    And I should see "Cube office"
     And I click on "Edit" "button"
     And I set the following fields to these values:
       | Event title | Mediocre event :( |
       | Description | Wait, this event isn't that great. |
+      | Location | |
     And I press "Save"
+    And I should see "Mediocre event"
+    And I click on "Mediocre event :(" "link"
     Then I should see "Mediocre event"
+    And ".location-content" "css_element" should not exist
 
   @javascript
   Scenario: Module events editing

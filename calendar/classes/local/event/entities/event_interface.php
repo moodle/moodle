@@ -57,6 +57,13 @@ interface event_interface {
     public function get_description();
 
     /**
+     * Get the event's location.
+     *
+     * @return location_interface
+     */
+    public function get_location();
+
+    /**
      * Get the category object associated with the event.
      *
      * @return proxy_interface

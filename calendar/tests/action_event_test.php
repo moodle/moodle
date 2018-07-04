@@ -108,6 +108,10 @@ class core_calendar_action_event_test_event implements event_interface {
         return new event_description('asdf', 1);
     }
 
+    public function get_location() {
+        return 'Cube office';
+    }
+
     public function get_category() {
         return new \stdClass();
     }

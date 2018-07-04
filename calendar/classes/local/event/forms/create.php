@@ -98,6 +98,10 @@ class create extends \moodleform {
         $mform->setType('description', PARAM_RAW);
         $mform->setAdvanced('description');
 
+        $mform->addElement('text', 'location', get_string('location', 'moodle'), 'size="50"');
+        $mform->setType('location', PARAM_RAW_TRIMMED);
+        $mform->setAdvanced('location');
+
         // Add the variety of elements allowed for selecting event duration.
         $this->add_event_duration_elements($mform);
 

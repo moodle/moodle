@@ -136,7 +136,8 @@ class action_event_test_factory implements event_factory_interface {
                 (new \DateTimeImmutable())->setTimestamp($record->timemodified)
             ),
             !empty($record->visible),
-            $subscription
+            $subscription,
+            $record->location
         );
 
         $action = new action(

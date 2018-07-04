@@ -2254,5 +2254,19 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2018062800.02);
     }
 
+    if ($oldversion < 2018062800.03) {
+        // Define field location to be added to event.
+        $table = new xmldb_table('event');
+        $field = new xmldb_field('location', XMLDB_TYPE_TEXT, null, null, null, null, null, 'priority');
+
+        // Conditionally launch add field location.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2018062800.03);
+    }
+
     return true;
 }
