@@ -499,8 +499,14 @@ class model {
         $this->clear();
 
         // Method self::clear is already clearing the current model version.
-        $predictor = $this->get_predictions_processor();
-        $predictor->delete_output_dir($this->get_output_dir(array(), true));
+        $predictor = $this->get_predictions_processor(false);
+        if ($predictor->is_ready() !== true) {
+            $predictorname = \core_analytics\manager::get_predictions_processor_name($predictor);
+            debugging('Prediction processor ' . $predictorname . ' is not ready to be used. Model ' .
+                $this->model->id . ' could not be deleted.');
+        } else {
+            $predictor->delete_output_dir($this->get_output_dir(array(), true));
+        }
 
         $DB->delete_records('analytics_models', array('id' => $this->model->id));
         $DB->delete_records('analytics_models_log', array('modelid' => $this->model->id));
@@ -763,10 +769,11 @@ class model {
     /**
      * Returns the model predictions processor.
      *
+     * @param bool $checkisready
      * @return \core_analytics\predictor
      */
-    public function get_predictions_processor() {
-        return manager::get_predictions_processor($this->model->predictionsprocessor);
+    public function get_predictions_processor($checkisready = true) {
+        return manager::get_predictions_processor($this->model->predictionsprocessor, $checkisready);
     }
 
     /**
@@ -1488,8 +1495,14 @@ class model {
         \core_analytics\manager::check_can_manage_models();
 
         // Delete current model version stored stuff.
-        $predictor = $this->get_predictions_processor();
-        $predictor->clear_model($this->get_unique_id(), $this->get_output_dir());
+        $predictor = $this->get_predictions_processor(false);
+        if ($predictor->is_ready() !== true) {
+            $predictorname = \core_analytics\manager::get_predictions_processor_name($predictor);
+            debugging('Prediction processor ' . $predictorname . ' is not ready to be used. Model ' .
+                $this->model->id . ' could not be cleared.');
+        } else {
+            $predictor->clear_model($this->get_unique_id(), $this->get_output_dir());
+        }
 
         $predictionids = $DB->get_fieldset_select('analytics_predictions', 'id', 'modelid = :modelid',
             array('modelid' => $this->get_id()));

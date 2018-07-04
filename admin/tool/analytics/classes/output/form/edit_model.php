@@ -77,6 +77,9 @@ class edit_model extends \moodleform {
         );
         $predictionprocessors = ['' => get_string('defaultpredictoroption', 'analytics', $defaultprocessor)];
         foreach ($this->_customdata['predictionprocessors'] as $classname => $predictionsprocessor) {
+            if ($predictionsprocessor->is_ready() !== true) {
+                continue;
+            }
             $optionname = \tool_analytics\output\helper::class_to_option($classname);
             $predictionprocessors[$optionname] = \core_analytics\manager::get_predictions_processor_name($predictionsprocessor);
         }
