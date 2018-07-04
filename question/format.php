@@ -406,6 +406,13 @@ class qformat_default {
             $question->timecreated = time();
             $question->modifiedby = $USER->id;
             $question->timemodified = time();
+            if (isset($question->idnumber) && (string) $question->idnumber !== '') {
+                if ($DB->record_exists('question', ['idnumber' => $question->idnumber, 'category' => $question->category])) {
+                    // We cannot have duplicate idnumbers in a category.
+                    unset($question->idnumber);
+                }
+            }
+
             $fileoptions = array(
                     'subdirs' => true,
                     'maxfiles' => -1,

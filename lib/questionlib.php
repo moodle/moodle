@@ -673,7 +673,7 @@ function question_move_questions_to_category($questionids, $newcategoryid) {
             array('id' => $newcategoryid));
     list($questionidcondition, $params) = $DB->get_in_or_equal($questionids);
     $questions = $DB->get_records_sql("
-            SELECT q.id, q.qtype, qc.contextid
+            SELECT q.id, q.qtype, qc.contextid, q.idnumber
               FROM {question} q
               JOIN {question_categories} qc ON q.category = qc.id
              WHERE  q.id $questionidcondition", $params);
@@ -681,6 +681,27 @@ function question_move_questions_to_category($questionids, $newcategoryid) {
         if ($newcontextid != $question->contextid) {
             question_bank::get_qtype($question->qtype)->move_files(
                     $question->id, $question->contextid, $newcontextid);
+        }
+        // Check whether there could be a clash of idnumbers in the new category.
+        if (((string) $question->idnumber !== '') &&
+                $DB->record_exists('question', ['idnumber' => $question->idnumber, 'category' => $newcategoryid])) {
+            $rec = $DB->get_records_select('question', "category = ? AND idnumber LIKE ?",
+                    [$newcategoryid, $question->idnumber . '_%'], 'idnumber DESC', 'id, idnumber', 0, 1);
+            $unique = 1;
+            if (count($rec)) {
+                $rec = reset($rec);
+                $idnumber = $rec->idnumber;
+                if (strpos($idnumber, '_') !== false) {
+                    $unique = substr($idnumber, strpos($idnumber, '_') + 1) + 1;
+                }
+            }
+            // For the move process, add a numerical increment to the idnumber. This means that if a question is
+            // mistakenly moved then the idnumber will not be completely lost.
+            $q = new stdClass();
+            $q->id = $question->id;
+            $q->category = $newcategoryid;
+            $q->idnumber = $question->idnumber . '_' . $unique;
+            $DB->update_record('question', $q);
         }
     }
 

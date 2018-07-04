@@ -170,6 +170,8 @@ $string['getcontextfromfile'] = 'Get context from file';
 $string['changepublishstatuscat'] = '<a href="{$a->caturl}">Category "{$a->name}"</a> in course "{$a->coursename}" will have it\'s sharing status changed from <strong>{$a->changefrom} to {$a->changeto}</strong>.';
 $string['chooseqtypetoadd'] = 'Choose a question type to add';
 $string['editquestions'] = 'Edit questions';
+$string['idnumber'] = 'ID number';
+$string['idnumber_help'] = 'If used, the ID number must be unique within each question category. It provides another way of identifying a question which is sometimes useful, but can usually be left blank.';
 $string['ignorebroken'] = 'Ignore broken links';
 $string['impossiblechar'] = 'Impossible character {$a} detected as parenthesis character';
 $string['import'] = 'Import';

@@ -75,6 +75,7 @@ class qtype_ddwtos_test extends question_testcase {
         $dd->stamp = make_unique_id_code();
         $dd->version = make_unique_id_code();
         $dd->hidden = 0;
+        $dd->idnumber = null;
         $dd->timecreated = time();
         $dd->timemodified = time();
         $dd->createdby = $USER->id;
@@ -122,6 +123,7 @@ class qtype_ddwtos_test extends question_testcase {
         $expected = test_question_maker::make_question('ddwtos');
         $expected->stamp = $qdata->stamp;
         $expected->version = $qdata->version;
+        $expected->idnumber = null;
 
         $q = $this->qtype->make_question($qdata);
 
@@ -247,6 +249,7 @@ class qtype_ddwtos_test extends question_testcase {
         $qdata = new stdClass();
         $qdata->id = 123;
         $qdata->contextid = \context_system::instance()->id;
+        $qdata->idnumber = null;
         $qdata->qtype = 'ddwtos';
         $qdata->name = 'A drag-and-drop question';
         $qdata->questiontext = 'Put these in order: [[1]], [[2]], [[3]].';
@@ -304,6 +307,7 @@ class qtype_ddwtos_test extends question_testcase {
     <defaultgrade>3</defaultgrade>
     <penalty>0.3333333</penalty>
     <hidden>0</hidden>
+    <idnumber></idnumber>
     <shuffleanswers>1</shuffleanswers>
     <correctfeedback format="moodle_auto_format">
       <text><![CDATA[<p>Your answer is correct.</p>]]></text>
