@@ -11505,6 +11505,9 @@ div.editor_atto_toolbar button .icon {
       float: right; }
   .path-calendar .maincalendar .event .card-header img {
     vertical-align: baseline; }
+  .path-calendar .maincalendar .event .location {
+    word-break: break-all;
+    overflow-wrap: break-word; }
 
 #page-calendar-export .indent {
   padding-left: 20px; }
@@ -11608,6 +11611,9 @@ table.calendartable caption {
 
 .summary-modal-container .description-content > p {
   margin: 0; }
+
+.summary-modal-container .location-content {
+  overflow-wrap: break-word; }
 
 /* course.less */
 /* COURSE CONTENT */
