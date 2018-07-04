@@ -1264,7 +1264,7 @@ function filter_phrases($text, &$link_array, $ignoretagsopen=NULL, $ignoretagscl
         // A list of open/close tags that we should not replace within
         // Extended to include <script>, <textarea>, <select> and <a> tags
         // Regular expression allows tags with or without attributes
-        $filterignoretagsopen  = array('<head>' , '<nolink>' , '<span class="nolink">',
+        $filterignoretagsopen  = array('<head>' , '<nolink>' , '<span(\s[^>]*?)?class="nolink"(\s[^>]*?)?>',
                 '<script(\s[^>]*?)?>', '<textarea(\s[^>]*?)?>',
                 '<select(\s[^>]*?)?>', '<a(\s[^>]*?)?>');
         $filterignoretagsclose = array('</head>', '</nolink>', '</span>',
