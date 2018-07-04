@@ -23,11 +23,10 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-// NOTE: no MOODLE_INTERNAL test here, this file may be required by behat before including /config.php.
+// Note: You cannot use MOODLE_INTERNAL test here, or include files which do so.
+// This file is required by behat before including /config.php.
 
 require_once(__DIR__ . '/../../behat/behat_base.php');
-require_once(__DIR__ . '/../../filterlib.php');
-
 
 /**
  * Steps definitions related to filters.
@@ -48,6 +47,8 @@ class behat_filters extends behat_base {
      * @param string $statename 'on', 'off' or 'disabled'.
      */
     public function the_filter_is($filtername, $statename) {
+        require_once(__DIR__ . '/../../filterlib.php');
+
         switch ($statename) {
             case 'on':
                 $state = TEXTFILTER_ON;
