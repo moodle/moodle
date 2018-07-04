@@ -84,6 +84,7 @@ $string['inactivatingconfirm'] = '<p>You are about to inactivate policy <em>\'{$
 $string['inactivatingconfirmyes'] = 'Inactivate';
 $string['invalidversionid'] = 'There is no policy with this identifier!';
 $string['irevokethepolicy'] = 'Withdraw user consent';
+$string['listactivepolicies'] = 'List of active policies';
 $string['minorchange'] = 'Minor change';
 $string['minorchangeinfo'] = 'A minor change does not alter the meaning of the policy. Users are not required to agree to the policy again if the edit is marked as a minor change.';
 $string['managepolicies'] = 'Manage policies';
