@@ -69,8 +69,8 @@ class view {
 
     /**
      * Constructor
-     * @param question_edit_contexts $contexts
-     * @param moodle_url $pageurl
+     * @param \question_edit_contexts $contexts
+     * @param \moodle_url $pageurl
      * @param object $course course settings
      * @param object $cm (optional) activity settings.
      */
