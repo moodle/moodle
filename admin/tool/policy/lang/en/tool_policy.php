@@ -92,6 +92,7 @@ $string['moveup'] = 'Move up';
 $string['mustagreetocontinue'] = 'Before continuing you must agree to all these policies.';
 $string['newpolicy'] = 'New policy';
 $string['newversion'] = 'New version';
+$string['noactivepolicies'] = 'There are no policies with an active version.';
 $string['nofiltersapplied'] = 'No filters applied';
 $string['nopermissiontoagreedocs'] = 'No permission to agree to the policies';
 $string['nopermissiontoagreedocs_desc'] = 'Sorry, you do not have the required permissions to agree to the policies.<br />You will not be able to use this site until the following policies are agreed:';
