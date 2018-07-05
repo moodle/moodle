@@ -63,14 +63,7 @@ class page_viewalldoc implements renderable, templatable {
      *
      */
     protected function prepare_policies() {
-        global $USER;
-
-        if (isguestuser() || empty($USER->id)) {
-            $audience = policy_version::AUDIENCE_GUESTS;
-        } else {
-            $audience = policy_version::AUDIENCE_LOGGEDIN;
-        }
-        $this->policies = api::list_current_versions($audience);
+        $this->policies = api::list_current_versions();
     }
 
     /**
