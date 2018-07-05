@@ -335,7 +335,7 @@ class iomad {
      * @param array $categories list of category objects
      * @return array filtered list of categories
      */
-    public static function iomad_filter_categories( $categories, $userid ) {
+    public static function iomad_filter_categories( $categories, $userid = 0 ) {
         global $DB, $USER;
 
         // Check if its the client admin.
