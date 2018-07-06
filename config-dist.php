@@ -588,6 +588,14 @@ $CFG->admin = 'admin';
 //
 //      $CFG->disablelogintoken = true;
 //
+// Document conversion limit
+//
+// How many times the background task should attempt to convert a given attempt
+// before removing it from the queue. Currently this limit is only used by the
+// mod_assign conversion task.
+//
+//      $CFG->conversionattemptlimit = 3;
+//
 //=========================================================================
 // 7. SETTINGS FOR DEVELOPMENT SERVERS - not intended for production use!!!
 //=========================================================================
