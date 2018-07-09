@@ -135,94 +135,19 @@ function LogoutNotification($spsessionid) {
     if (!empty($CFG->session_handler_class)) {
         $sessionclass = $CFG->session_handler_class;
         if (preg_match('/database/i', $sessionclass) === 1) {
-            return logoutdbsession($spsessionid);
+            return \auth_shibboleth\helper::logout_db_session($spsessionid);
         } else if (preg_match('/file/i', $sessionclass) === 1) {
-            return logoutfilesession($spsessionid);
+            return \auth_shibboleth\helper::logout_file_session($spsessionid);
         } else {
             throw new moodle_exception("Shibboleth logout not implemented for '$sessionclass'");
         }
     } else {
         // Session handler class is not specified, check dbsessions instead.
         if (!empty($CFG->dbsessions)) {
-            return logoutdbsession($spsessionid);
+            return \auth_shibboleth\helper::logout_db_session($spsessionid);
         }
         // Assume file sessions if dbsessions isn't used.
-        return logoutfilesession($spsessionid);
+        return \auth_shibboleth\helper::logout_file_session($spsessionid);
     }
     // If no SoapFault was thrown, the function will return OK as the SP assumes.
 }
-
-// Delete session of user using $spsessionid.
-function logoutfilesession($spsessionid) {
-    global $CFG;
-
-    if (!empty($CFG->session_file_save_path)) {
-        $dir = $CFG->session_file_save_path;
-    } else {
-        $dir = $CFG->dataroot . '/sessions';
-    }
-
-    if (is_dir($dir)) {
-        if ($dh = opendir($dir)) {
-            // Read all session files.
-            while (($file = readdir($dh)) !== false) {
-                // Check if it is a file.
-                if (is_file($dir.'/'.$file)) {
-
-                    // Read session file data.
-                    $data = file($dir.'/'.$file);
-                    if (isset($data[0])) {
-                        $usersession = unserializesession($data[0]);
-
-                        // Check if we have found session that shall be deleted.
-                        if (isset($usersession['SESSION']) && isset($usersession['SESSION']->shibboleth_session_id)) {
-
-                            // If there is a match, delete file.
-                            if ($usersession['SESSION']->shibboleth_session_id == $spsessionid) {
-                                // Delete session file.
-                                if (!unlink($dir.'/'.$file)) {
-                                    return new SoapFault('LogoutError', 'Could not delete Moodle session file.');
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            closedir($dh);
-        }
-    }
-}
-
-function logoutdbsession($spsessionid) {
-    global $CFG, $DB;
-    $sessions = $DB->get_records_sql(
-        'SELECT userid, sessdata FROM {sessions} WHERE timemodified > ?',
-        array(time() - $CFG->sessiontimeout)
-    );
-    foreach ($sessions as $session) {
-        // Get user session from DB.
-        if (session_decode(base64_decode($session->sessdata))) {
-            if (isset($_SESSION['SESSION']) && isset($_SESSION['SESSION']->shibboleth_session_id)) {
-                // If there is a match, kill the session.
-                if ($_SESSION['SESSION']->shibboleth_session_id == trim($spsessionid)) {
-                    // Delete this user's sessions.
-                    \core\session\manager::kill_user_sessions($session->userid);
-                }
-            }
-        }
-    }
-}
-
-/*****************************************************************************/
-
-// Same function as in adodb, but cannot be used for file session for some reason...
-function unserializesession($serialized_string) {
-    $variables = array();
-    $a = preg_split("/(\w+)\|/", $serialized_string, -1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE);
-    $counta = count($a);
-    for ($i = 0; $i < $counta; $i = $i+2) {
-            $variables[$a[$i]] = unserialize($a[$i+1]);
-    }
-    return $variables;
-}
-
