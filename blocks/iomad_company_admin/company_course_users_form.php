@@ -162,10 +162,12 @@ class company_course_users_form extends moodleform {
                              'courseid' => $this->course->id,
                              'departmentid' => $this->departmentid,
                              'subdepartments' => $this->subhierarchieslist,
-                             'parentdepartmentid' => $this->parentlevel);
+                             'parentdepartmentid' => $this->parentlevel,
+                             'class' => 'potential_company_course_user_selector');
             if (empty($this->potentialusers)) {
                 $this->potentialusers = new potential_company_course_user_selector('potentialcourseusers', $options);
             }
+            $options['class'] = 'current_company_course_user_selector';
             if (empty($this->currentusers)) {
                 $this->currentusers = new current_company_course_user_selector('currentlyenrolledusers', $options);
             }

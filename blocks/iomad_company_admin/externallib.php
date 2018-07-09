@@ -1806,6 +1806,7 @@ class block_iomad_company_admin_external extends external_api {
                                         'timestart' => new external_value(PARAM_INT, 'Timestamp when the enrolment start', VALUE_OPTIONAL),
                                         'timeend' => new external_value(PARAM_INT, 'Timestamp when the enrolment end', VALUE_OPTIONAL),
                                         'suspend' => new external_value(PARAM_INT, 'set to 1 to suspend the enrolment', VALUE_OPTIONAL)
+                                        'quantity' => new external_value(PARAM_INT, 'Number of items purchased.', VALUE_OPTIONAL)
                                     )
                             )
                     )
@@ -1828,7 +1829,7 @@ class block_iomad_company_admin_external extends external_api {
         $params = self::validate_parameters(self::enrol_users_parameters(),
                 array('enrolments' => $enrolments));
 
-        $transaction = $DB->start_delegated_transaction(); // Rollback all enrolment if an error occurs
+        //$transaction = $DB->start_delegated_transaction(); // Rollback all enrolment if an error occurs
                                                            // (except if the DB doesn't support it).
 
         // Retrieve the manual enrolment plugin.
@@ -1846,18 +1847,38 @@ class block_iomad_company_admin_external extends external_api {
             if (!$user = $DB->get_record('user', array('id' => $enrolment['userid']))) {
                 continue;
             }
-
             // Is this a licensed course?
             if ($DB->get_record('iomad_courses', array('courseid' => $enrolment['courseid'], 'licensed' => 1))) {
+                if (empty($enrolment['timestart'])) {
+                    $enrolment['timestart'] = time();
+                }
+
+                // Do we have a default access period?
+                if (empty($enrolment['timeend'])) {
+                    if (!empty($CFG->commerce_admin_default_license_access_length)) {
+                        $enrolment['timeend'] = time() + $CFG->commerce_admin_default_license_access_length * 24 * 60 * 60;
+                    } else {
+                        // Set it to 30.
+                        $enrolment['timeend'] = time() + 30 * 24 * 60 * 60;
+                    }
+                }
+
+                // How about a default shelf life?
+                if (!empty($CFG->commerce_admin_default_license_shelf_life)) {
+                    $shelflife = $enrolment['timestart'] + $CFG->commerce_admin_default_license_shelf_life * 24 * 60 * 60;
+                } else {
+                    $shelflife =  $enrolment['timeend'] - $enrolment['timestart'];
+                }
+
                 // Create the license record.
                 $licenserec = array('name' => $enrolment['userid'] . '-' . $enrolment['courseid'] . '-' . $enrolment['timestart'],
-                                    'allocation' => 1,
-                                    'validlength' => $enrolment['timeend'] - $enrolment['timestart'],
+                                    'allocation' => $enrolment['quantity',
+                                    'validlength' => $shelflife,
                                     'startdate' => $enrolment['timestart'],
                                     'expirydate' => $enrolment['timeend'],
                                     'companyid' => $company->id,
                                     'instant' => true);
-                $licensid = $DB->insert_record('companylicense', $licenserec);
+                $licenseid = $DB->insert_record('companylicense', $licenserec);
                 $DB->insert_record('companylicense_courses', array('licenseid' => $licenseid, 'courseid' => $enrolment['courseid']));
 
                 // Fire the license create event.
@@ -1865,35 +1886,37 @@ class block_iomad_company_admin_external extends external_api {
                                     'parentid' => 0);
 
                 $event = \block_iomad_company_admin\event\company_license_created::create(array('context' => context_system::instance(),
-                                                                                                'userid' => $USER->id,
+                                                                                                'userid' => $user->id,
                                                                                                 'objectid' => $licenseid,
                                                                                                 'other' => $eventother));
                 $event->trigger();
 
-                // Allocate the license to the user.
-                $recordarray = array('licensecourseid' => $courseid,
-                                     'userid' => $adduser->id,
-                                     'licenseid' => $this->licenseid,
-                                     'issuedate' => time(),
-                                     'isusing' => 0);
-
-                $recordarray['id'] = $DB->insert_record('companylicense_users', $recordarray);
-
-                // Fire that event.
-                $eventother = array('licenseid' => $license->id,
-                                    'duedate' => $enrolment['timestart']);
-                $event = \block_iomad_company_admin\event\user_license_assigned::create(array('context' => context_course::instance($courseid),
-                                                                                              'objectid' => $recordarray['id'],
-                                                                                              'courseid' => $courseid,
-                                                                                              'userid' => $enrolment['userid'],
-                                                                                              'other' => $eventother));
-                $event->trigger();
+                if ($enrolment['quantity'] == 1) {
+                    // Allocate the license to the user.
+                    $recordarray = array('licensecourseid' => $enrolment['courseid'],
+                                         'userid' => $user->id,
+                                         'licenseid' => $licenseid,
+                                         'issuedate' => time(),
+                                         'isusing' => 0);
+    
+                    $recordarray['id'] = $DB->insert_record('companylicense_users', $recordarray);
+    
+                    // Fire that event.
+                    $eventother = array('licenseid' => $licenseid,
+                                        'duedate' => $enrolment['timestart']);
+                    $event = \block_iomad_company_admin\event\user_license_assigned::create(array('context' => context_course::instance($enrolment['courseid']),
+                                                                                                  'objectid' => $recordarray['id'],
+                                                                                                  'courseid' => $enrolment['courseid'],
+                                                                                                  'userid' => $enrolment['userid'],
+                                                                                                  'other' => $eventother));
+                    $event->trigger();
+                }
             } else {
-                $company_user::enrol($user, array($enrolment['courseid']));
+                company_user::enrol($user, array($enrolment['courseid']), $company->id);
             }
         }
 
-        $transaction->allow_commit();
+        //$transaction->allow_commit();
     }
 
     /**
@@ -1912,12 +1935,16 @@ class block_iomad_company_admin_external extends external_api {
      * @return external_function_parameters
      * @since Moodle 2.2
      */
-    public static function check_sesskey_parameters() {
+    public static function check_token_parameters() {
         return new external_function_parameters(
             array(
-                  'userid' => new external_value(PARAM_INT, 'The user that is going to be enrolled'),
-                  'code' => new external_value(PARAM_INT, 'The user moodle session key'),
-                 )
+                new external_single_structure(
+                    array(
+                          'username' => new external_value(PARAM_TEXT, 'The user that is going to be enrolled'),
+                          'token' => new external_value(PARAM_TEXT, 'The user moodle session key'),
+                    )
+                )
+            )
         );
     }
 
@@ -1928,19 +1955,36 @@ class block_iomad_company_admin_external extends external_api {
      * @param array $enrolments  An array of user enrolment
      * @since Moodle 2.2
      */
-    public static function check_sesskey($sesskey) {
+    public static function check_token($token) {
         global $DB, $CFG;
 
-        $params = self::validate_parameters(self::check_sesskey_parameters(),
-                array('sesskey' => $sesskey));
+        $params = self::validate_parameters(self::check_token_parameters(),
+                array($token));
 
-        if (!$userrec = $DB->get_record('user', array('id' => $sesskey['userid']))) {
-            return false;
+        if (!$userrec = $DB->get_record('user', array('username' => $token['username']))) {
+            $result = array();
+            $result['status'] = 0;
+            $result['warnings'] = array(array('item' => 'username',
+                                              'username' => $token['username'],
+                                              'warningcode' => 'userdoesntexist',
+                                              'message' => "user doesn't exist"));
+            return $result;
         }
-        if ($userrec->currentlogin + $sesskey['code'] > time() - $CFG->sessiontimeout) {
-            return true;
+
+        if (!$DB->get_record_select('company_transient_tokens', 'userid = :userid AND expires > :time', array('userid' => $userrec->id, 'time' => time()))) {
+            $result = array();
+            $result['status'] = 0;
+            $result['warnings'] = array(array('item' => 'token',
+                                              'token' => $token['token'],
+                                              'warningcode' => 'tokennotvalid',
+                                               'message' => "Token is invalid"));
+            return $result;
         }
-        return false;
+
+        $result = array();
+        $result['status'] = 1;
+        $result['warnings'] = array();
+        return $result;
     }
 
     /**
@@ -1949,8 +1993,13 @@ class block_iomad_company_admin_external extends external_api {
      * @return null
      * @since Moodle 2.2
      */
-    public static function check_sesskey_returns() {
-        return null;
+    public static function check_token_returns() {
+        return  new external_single_structure(
+            array(
+                'status' => new external_value(PARAM_BOOL, 'Status: true only if token is valid'),
+                'warnings' => new external_warnings()
+            )
+        );
     }
 
 }

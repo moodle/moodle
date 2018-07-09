@@ -874,6 +874,14 @@ if ($mform->is_cancelled()) {
 
         $companyid = $DB->insert_record('company', $data);
 
+        $eventother = array('companyid' => $companyid);
+
+        $event = \block_iomad_company_admin\event\company_created::create(array('context' => context_system::instance(),
+                                                                                'userid' => $USER->id,
+                                                                                'objectid' => $companyid,
+                                                                                'other' => $eventother));
+        $event->trigger();
+
         // Set up default department.
         company::initialise_departments($companyid);
         $data->id = $companyid;
@@ -916,6 +924,7 @@ if ($mform->is_cancelled()) {
         $data->id = $companyid;
 
         $company = new company($companyid);
+        $oldcompany = $DB->get_record('company', array('id' => $companyid));
         $oldtheme = $company->get_theme();
         $themechanged = $oldtheme != $data->theme;
 
@@ -941,6 +950,7 @@ if ($mform->is_cancelled()) {
 
             // Update the company record.
             $DB->update_record('company', $data);
+
             if (!empty($data->parentid)) {
                 // Assign the new ones.
                 $company->assign_parent_managers($data->parentid);
@@ -955,7 +965,17 @@ if ($mform->is_cancelled()) {
                 $data->previousroletemplateid = -1;
             }
         }
+
         $DB->update_record('company', $data);
+        // Fire an event for this.
+        $eventother = array('companyid' => $companyid,
+                            'oldcompany' => json_encode($oldcompany));
+
+        $event = \block_iomad_company_admin\event\company_updated::create(array('context' => context_system::instance(),
+                                                                                'userid' => $USER->id,
+                                                                                'objectid' => $companyid,
+                                                                                'other' => $eventother));
+        $event->trigger();
 
         // Deal with certificate info.
         if ($certificateinforec = (array) $DB->get_record('companycertificate', array('companyid' => $companyid))) {

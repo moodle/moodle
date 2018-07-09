@@ -817,6 +817,32 @@ class company_user {
             $transaction->rollback($e);
         }
     }
+
+    public static function generate_token() {
+        global $DB, $USER;
+
+        // Do clear up of old tokens.
+        $DB->delete_records_select('company_transient_tokens', "expires < :time" , array('time' => time() + 30));
+
+        if ($current = $DB->get_record('company_transient_tokens', array('userid' => $USER->id))) {
+            return $current->token;
+        }
+        // make sure the token doesn't exist (even if it should be almost impossible with the random generation)
+        $numtries = 0;
+        /*do {
+            $numtries ++;*/
+            $generatedtoken = md5(uniqid(rand(),1));
+/*            if ($numtries > 5){
+                throw new moodle_exception('tokengenerationfailed');
+            }
+*/        //} while ($DB->record_exists('company_transient_tokens', array('token'=>$generatedtoken)));
+        $newtoken = new stdclass();
+        $newtoken->userid = $USER->id;
+        $newtoken->token = $generatedtoken;
+        $newtoken->expires = time() + 30;
+        $DB->insert_record('company_transient_tokens', $newtoken);
+        return $generatedtoken;
+    }
 }
 
 /**

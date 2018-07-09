@@ -55,7 +55,9 @@ class block_iomad_commerce extends block_base {
         $this->content->footer = '';
 
         if (!empty($CFG->commerce_enable_external)) {
-            $link = $CFG->commerce_externalshop_url . "?userid=" . $USER->id . "&code=" . time() - $USER->currentlogin;
+            // Get and store a one time token.
+            $token = company_user::generate_token();
+            $link = new moodle_url($CFG->commerce_externalshop_url . '/wp-content/plugins/wooiomad/land.php', array('username' => $USER->username, 'token' => $token));
             $this->content->text = "<a class='btn' href='$link'>" . get_string('gotoshop', 'block_iomad_commerce') . '</a>';
         } else {
             // Has this been setup properly

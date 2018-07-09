@@ -2507,6 +2507,96 @@ class company {
     /***  Event Handlers  ***/
 
     /**
+     * Triggered via company_created event.
+     *
+     * @param \core\event\company_created $event
+     * @return bool true on success.
+     */
+    public static function company_created(\block_iomad_company_admin\event\company_created $event) {
+        global $CFG, $DB;
+
+        $companyid = $event->other['companyid'];
+        if (!$company = $DB->get_record('company', array('id' => $companyid))) {
+            return;
+        }
+
+        if ($CFG->commerce_enable_external) {
+            // Fire off the payload to the external site.
+            require_once($CFG->dirroot . '/blocks/iomad_commerce/locallib.php');
+            iomad_commerce::update_company($company, $company);
+        }
+
+        return true;
+    }
+
+    /**
+     * Triggered via company_suspended event.
+     *
+     * @param \block_iomad_company_user\event\company_suspended $event
+     * @return bool true on success.
+     */
+    public static function company_suspended(\block_iomad_company_admin\event\company_suspended $event) {
+        global $DB, $CFG;
+
+        $companyid = $event->other['companyid'];
+
+        if (empty($companyid) || !$companyrecord = $DB->get_record('company', array('id' => $companyid))) {
+            return;
+        }
+
+        $suspendcompany = new company($companyid);
+        $suspendcompany->suspend(true);
+
+        return true;
+    }
+
+    /**
+     * Triggered via company_unsuspended event.
+     *
+     * @param \block_iomad_company_user\event\company_unsuspended $event
+     * @return bool true on success.
+     */
+    public static function company_unsuspended(\block_iomad_company_admin\event\company_unsuspended $event) {
+        global $DB, $CFG;
+
+        $companyid = $event->other['companyid'];
+
+        if (empty($companyid) || !$companyrecord = $DB->get_record('company', array('id' => $companyid))) {
+            return;
+        }
+
+        $suspendcompany = new company($companyid);
+        $suspendcompany->suspend(false);
+
+        return true;
+    }
+
+    /**
+     * Triggered via company_updated event.
+     *
+     * @param \core\event\company_updated $event
+     * @return bool true on success.
+     */
+    public static function company_updated(\block_iomad_company_admin\event\company_updated $event) {
+        global $CFG, $DB;
+
+        $companyid = $event->other['companyid'];
+        if (!$company = $DB->get_record('company', array('id' => $companyid))) {
+            return;
+        }
+
+        $oldcompany = json_decode( $event->other['oldcompany']);
+
+        if ($CFG->commerce_enable_external) {
+            // Fire off the payload to the external site.
+            require_once($CFG->dirroot . '/blocks/iomad_commerce/locallib.php');
+            iomad_commerce::update_company($company, $oldcompany);
+        }
+
+        return true;
+    }
+
+    /**
      * Triggered via competency_framework_created event.
      *
      * @param \core\event\competency_framework_created $event
@@ -2699,6 +2789,57 @@ class company {
                     }
                 }
             }
+
+        return true;
+    }
+
+    /**
+     * Triggered via user_created event.
+     *
+     * @param \core\event\user_created $event
+     * @return bool true on success.
+     */
+    public static function user_created(\core\event\user_created $event) {
+        global $DB, $CFG;
+
+        $userid = $event->objectid;
+        $user = $DB->get_record('user', array('id' => $userid));
+        $user->manager = false;
+
+        if ($CFG->commerce_enable_external) {
+            // Fire off the payload to the external site.
+            require_once($CFG->dirroot . '/blocks/iomad_commerce/locallib.php');
+            iomad_commerce::update_user($user);
+        }
+
+        return true;
+    }
+
+    /**
+     * Triggered via user_updated event.
+     *
+     * @param \core\event\user_updated $event
+     * @return bool true on success.
+     */
+    public static function user_updated(\core\event\user_updated $event) {
+        global $DB, $CFG;
+
+        $userid = $event->objectid;
+        $user = $DB->get_record('user', array('id' => $userid));
+        if ($DB->get_record('company_users', array('userid'=> $user->id, 'managertype' => 1))) {
+            $user->manager = true;
+            $company = self::get_company_byuserid($user->id);
+            $user->country = $company->country;
+            $user->city = $company->city;
+            $user->adress = "";
+        } else {
+            $user->manager = false;
+        }
+
+        if ($CFG->commerce_enable_external) {
+            // Fire off the payload to the external site.
+            require_once($CFG->dirroot . '/blocks/iomad_commerce/locallib.php');
+            iomad_commerce::update_user($user);
         }
         return true;
     }
@@ -2806,6 +2947,12 @@ class company {
             }
         }
 
+        if ($CFG->commerce_enable_external) {
+            // Fire off the payload to the external site.
+            require_once($CFG->dirroot . '/blocks/iomad_commerce/locallib.php');
+            iomad_commerce::delete_user($event->other['username']);
+        }
+
         // Remove the user from any company.
         $DB->delete_records('company_users', array('userid' => $userid));
 
@@ -2819,21 +2966,28 @@ class company {
      * @return bool true on success.
      */
     public static function company_user_assigned(\block_iomad_company_admin\event\company_user_assigned $event) {
-        global $DB;
+        global $DB, $CFG;
 
-        // We only care if its a company manager.
-        if ($event->other['usertype'] != 1) {
-            return true;
-        }
         $companyid = $event->objectid;
         $userid = $event->userid;
-
         $company = new company($companyid);
-        $childcompanies = $company->get_child_companies_recursive();
+        $companyrec = $DB->get_record('company', array('id' => $companyid));
+        $user = $DB->get_record('user', array('id' => $userid));
 
-        foreach ($childcompanies as $child) {
-            $childcompany = new company($child->id);
-            $childcompany->assign_user_to_company($userid, 0, $event->other['usertype'], true);
+        // We only care if its a company manager.
+        if ($event->other['usertype'] == 1) {
+            $childcompanies = $company->get_child_companies_recursive();
+    
+            foreach ($childcompanies as $child) {
+                $childcompany = new company($child->id);
+                $childcompany->assign_user_to_company($userid, 0, $event->other['usertype'], true);
+            }
+        }
+
+        if ($CFG->commerce_enable_external) {
+            // Fire off the payload to the external site.
+            require_once($CFG->dirroot . '/blocks/iomad_commerce/locallib.php');
+            iomad_commerce::assign_user($user, $companyrec->name);
         }
 
         return true;

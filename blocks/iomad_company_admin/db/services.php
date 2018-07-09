@@ -42,6 +42,7 @@ $services = array(
             'block_iomad_company_admin_allocate_licenses',
             'block_iomad_company_admin_unallocate_liceses',
             'block_iomad_company_admin_enrol_users',
+            'block_iomad_company_admin_check_token',
         ),
         'requiredcapability' => '',
         'restrictusers' => 1,
@@ -176,5 +177,12 @@ $functions = array(
         'classpath' => 'blocks/iomad_company_admin/externallib.php',
         'description' => 'Assign users onto courses',
         'type' => 'write',
+    ),
+    'block_iomad_company_admin_check_token' => array(
+        'classname' => 'block_iomad_company_admin_external',
+        'methodname' => 'check_token',
+        'classpath' => 'blocks/iomad_company_admin/externallib.php',
+        'description' => 'Check SSO token',
+        'type' => 'read',
     ),
 );

@@ -66,8 +66,32 @@ $observers = array(
     ),
 
     array(
+        'eventname'   => '\core\event\user_created',
+        'callback'    => 'local_iomad_observer::user_created',
+        'includefile' => '/local/iomad/classes/observer.php'
+    ),
+
+    array(
+        'eventname'   => '\core\event\user_updated',
+        'callback'    => 'local_iomad_observer::user_updated',
+        'includefile' => '/local/iomad/classes/observer.php'
+    ),
+
+    array(
         'eventname'   => '\block_iomad_company_admin\event\company_user_assigned',
         'callback'    => 'local_iomad_observer::company_user_assigned',
+        'includefile' => '/local/iomad/classes/observer.php'
+    ),
+
+    array(
+        'eventname'   => '\block_iomad_company_admin\event\company_created',
+        'callback'    => 'local_iomad_observer::company_created',
+        'includefile' => '/local/iomad/classes/observer.php'
+    ),
+
+    array(
+        'eventname'   => '\block_iomad_company_admin\event\company_updated',
+        'callback'    => 'local_iomad_observer::company_updated',
         'includefile' => '/local/iomad/classes/observer.php'
     ),
 

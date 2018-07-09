@@ -105,6 +105,40 @@ class local_iomad_observer {
         company::user_deleted($event);
         return true;
     }
+
+    /**
+     * Triggered via user_created event.
+     *
+     * @param \core\event\user_created $event
+     * @return bool true on success.
+     */
+    public static function user_created($event) {
+        company::user_created($event);
+        return true;
+    }
+
+    /**
+     * Triggered via block_iomad_company_admin::company_created event.
+     *
+     * @param \block_iomad_company_admin\event\company_created $event
+     * @return bool true on success.
+     */
+    public static function company_created($event) {
+        company::company_created($event);
+        return true;
+    }
+
+    /**
+     * Triggered via block_iomad_company_admin::company_updated event.
+     *
+     * @param \block_iomad_company_admin\event\company_updated $event
+     * @return bool true on success.
+     */
+    public static function company_updated($event) {
+        company::company_updated($event);
+        return true;
+    }
+
     /**
      * Triggered via block_iomad_company_admin::company_user_assigned event.
      *

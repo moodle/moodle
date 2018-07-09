@@ -150,7 +150,7 @@ class webservice_rest_server extends webservice_base_server {
         if ($this->restformat == 'json') {
             $errorobject = new stdClass;
             $errorobject->exception = get_class($ex);
-            $errorobject->errorcode = $ex->errorcode;
+            //$errorobject->errorcode = $ex->errorcode;
             $errorobject->message = $ex->getMessage();
             if (debugging() and isset($ex->debuginfo)) {
                 $errorobject->debuginfo = $ex->debuginfo;

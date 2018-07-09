@@ -1784,5 +1784,28 @@ function xmldb_local_iomad_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2017090311, 'local', 'iomad');
     }
 
+    if ($oldversion < 2017090313) {
+
+        // Define table company_transient_tokens to be created.
+        $table = new xmldb_table('company_transient_tokens');
+
+        // Adding fields to table company_transient_tokens.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('userid', XMLDB_TYPE_INTEGER, '20', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('expires', XMLDB_TYPE_INTEGER, '20', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('token', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null);
+
+        // Adding keys to table company_transient_tokens.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+
+        // Conditionally launch create table for company_transient_tokens.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Iomad savepoint reached.
+        upgrade_plugin_savepoint(true, 2017090313, 'local', 'iomad');
+    }
+
     return $result;
 }

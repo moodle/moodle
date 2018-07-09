@@ -79,6 +79,18 @@ if ($ADMIN->fulltree) {
                                                     get_string('opentoallcompanies_help', 'block_iomad_commerce'),
                                                     1));
 
+    $settings->add(new admin_setting_configtext('commerce_admin_default_license_access_length',
+                                            get_string('commerce_default_license_access_length', 'block_iomad_commerce'),
+                                            get_string('commerce_default_license_access_length_help', 'block_iomad_commerce'),
+                                            30,
+                                            PARAM_INT));
+
+    $settings->add(new admin_setting_configtext('commerce_admin_default_license_shelf_life',
+                                            get_string('commerce_admin_default_license_shelf_life', 'block_iomad_commerce'),
+                                            get_string('commerce_admin_default_license_shelf_life_help', 'block_iomad_commerce'),
+                                            365,
+                                            PARAM_INT));
+
     $pp = get_payment_providers();
     foreach ($pp as $p) {
 
