@@ -118,6 +118,17 @@ class local_iomad_observer {
     }
 
     /**
+     * Triggered via user_updated event.
+     *
+     * @param \core\event\user_updated $event
+     * @return bool true on success.
+     */
+    public static function user_updated($event) {
+        company::user_updated($event);
+        return true;
+    }
+
+    /**
      * Triggered via block_iomad_company_admin::company_created event.
      *
      * @param \block_iomad_company_admin\event\company_created $event
