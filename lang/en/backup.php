@@ -124,8 +124,8 @@ $string['confirmcancelrestore'] = 'Cancel restore';
 $string['confirmcancelimport'] = 'Cancel import';
 $string['confirmcancelquestion'] = 'Are you sure you wish to cancel?
 Any information you have entered will be lost.';
-$string['confirmcancelyes'] = 'Cancel';
-$string['confirmcancelno'] = 'Stay';
+$string['confirmcancelyes'] = 'Cancel backup';
+$string['confirmcancelno'] = 'Do not cancel';
 $string['confirmnewcoursecontinue'] = 'New course warning';
 $string['confirmnewcoursecontinuequestion'] = 'A temporary (hidden) course will be created by the course restoration process. To abort restoration click cancel. Do not close the browser while restoring.';
 $string['coursecategory'] = 'Category the course will be restored into';

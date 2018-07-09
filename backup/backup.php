@@ -34,6 +34,7 @@ require_once($CFG->dirroot . '/backup/moodle2/backup_plan_builder.class.php');
 $courseid = required_param('id', PARAM_INT);
 $sectionid = optional_param('section', null, PARAM_INT);
 $cmid = optional_param('cm', null, PARAM_INT);
+$cancel      = optional_param('cancel', '', PARAM_ALPHA);
 /**
  * Part of the forms in stages after initial, is POST never GET
  */
@@ -104,7 +105,10 @@ $PAGE->set_title($heading);
 $PAGE->set_heading($heading);
 
 $renderer = $PAGE->get_renderer('core','backup');
-echo $OUTPUT->header();
+if (empty($cancel)) {
+    // Do not print the header if user cancelled the process, as we are going to redirect the user.
+    echo $OUTPUT->header();
+}
 
 // Prepare a progress bar which can display optionally during long-running
 // operations while setting up the UI.
