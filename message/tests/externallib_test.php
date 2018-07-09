@@ -672,6 +672,74 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
     }
 
     /**
+     * Test get_messages where we want all messages from a user, sent to any user.
+     */
+    public function test_get_messages_useridto_all() {
+        $this->resetAfterTest(true);
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+
+        $this->setUser($user1);
+
+        // Send a message from user 1 to two other users.
+        $this->send_message($user1, $user2, 'some random text 1', 0, 1);
+        $this->send_message($user1, $user3, 'some random text 2', 0, 2);
+
+        // Get messages sent from user 1.
+        $messages = core_message_external::get_messages(0, $user1->id, 'conversations', false, false, 0, 0);
+        $messages = external_api::clean_returnvalue(core_message_external::get_messages_returns(), $messages);
+
+        // Confirm the data is correct.
+        $messages = $messages['messages'];
+        $this->assertCount(2, $messages);
+
+        $message1 = array_shift($messages);
+        $message2 = array_shift($messages);
+
+        $this->assertEquals($user1->id, $message1['useridfrom']);
+        $this->assertEquals($user2->id, $message1['useridto']);
+
+        $this->assertEquals($user1->id, $message2['useridfrom']);
+        $this->assertEquals($user3->id, $message2['useridto']);
+    }
+
+    /**
+     * Test get_messages where we want all messages to a user, sent by any user.
+     */
+    public function test_get_messages_useridfrom_all() {
+        $this->resetAfterTest();
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+
+        $this->setUser($user1);
+
+        // Send a message to user 1 from two other users.
+        $this->send_message($user2, $user1, 'some random text 1', 0, 1);
+        $this->send_message($user3, $user1, 'some random text 2', 0, 2);
+
+        // Get messages sent to user 1.
+        $messages = core_message_external::get_messages($user1->id, 0, 'conversations', false, false, 0, 0);
+        $messages = external_api::clean_returnvalue(core_message_external::get_messages_returns(), $messages);
+
+        // Confirm the data is correct.
+        $messages = $messages['messages'];
+        $this->assertCount(2, $messages);
+
+        $message1 = array_shift($messages);
+        $message2 = array_shift($messages);
+
+        $this->assertEquals($user2->id, $message1['useridfrom']);
+        $this->assertEquals($user1->id, $message1['useridto']);
+
+        $this->assertEquals($user3->id, $message2['useridfrom']);
+        $this->assertEquals($user1->id, $message2['useridto']);
+    }
+
+    /**
      * Test get_blocked_users.
      */
     public function test_get_blocked_users() {
