@@ -678,14 +678,17 @@ M.core_filepicker.init = function(Y, options) {
                     'repository_id': this.active_repo.id,
                     'callback': function(id, o, args) {
                         scope.hide();
+                        // Add an arbitrary parameter to the URL to force browsers to re-load the new image even
+                        // if the file name has not changed.
+                        var urlimage = data.existingfile.url + "?time=" + (new Date()).getTime();
                         if (scope.options.editor_target && scope.options.env == 'editor') {
                             // editor needs to update url
-                            scope.options.editor_target.value = data.existingfile.url;
+                            scope.options.editor_target.value = urlimage;
                             scope.options.editor_target.onchange();
                         }
                         var fileinfo = {'client_id':scope.options.client_id,
-                                'url':data.existingfile.url,
-                                'file':data.existingfile.filename};
+                            'url': urlimage,
+                            'file': data.existingfile.filename};
                         var formcallback_scope = scope.options.magicscope ? scope.options.magicscope : scope;
                         scope.options.formcallback.apply(formcallback_scope, [fileinfo]);
                     }
