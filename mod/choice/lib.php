@@ -312,7 +312,7 @@ function choice_modify_responses($userids, $answerids, $newoptionid, $choice, $c
  * Process user submitted answers for a choice,
  * and either updating them or saving new answers.
  *
- * @param int $formanswer users submitted answers.
+ * @param int|array $formanswer the id(s) of the user submitted choice options.
  * @param object $choice the selected choice.
  * @param int $userid user identifier.
  * @param object $course current course.
@@ -361,6 +361,12 @@ function choice_user_submit_response($formanswer, $choice, $userid, $course, $cm
     }
 
     $current = $DB->get_records('choice_answers', array('choiceid' => $choice->id, 'userid' => $userid));
+
+    // Array containing [answerid => optionid] mapping.
+    $existinganswers = array_map(function($answer) {
+        return $answer->optionid;
+    }, $current);
+
     $context = context_module::instance($cm->id);
 
     $choicesexceeded = false;
@@ -404,7 +410,13 @@ function choice_user_submit_response($formanswer, $choice, $userid, $course, $cm
                 }
             }
         }
+
         foreach ($countanswers as $opt => $count) {
+            // Ignore the user's existing answers when checking whether an answer count has been exceeded.
+            // A user may wish to update their response with an additional choice option and shouldn't be competing with themself!
+            if (in_array($opt, $existinganswers)) {
+                continue;
+            }
             if ($count >= $choice->maxanswers[$opt]) {
                 $choicesexceeded = true;
                 break;
@@ -418,10 +430,8 @@ function choice_user_submit_response($formanswer, $choice, $userid, $course, $cm
     if (!($choice->limitanswers && $choicesexceeded)) {
         if ($current) {
             // Update an existing answer.
-            $existingchoices = array();
             foreach ($current as $c) {
                 if (in_array($c->optionid, $formanswers)) {
-                    $existingchoices[] = $c->optionid;
                     $DB->set_field('choice_answers', 'timemodified', time(), array('id' => $c->id));
                 } else {
                     $deletedanswersnapshots[] = $c;
@@ -431,7 +441,7 @@ function choice_user_submit_response($formanswer, $choice, $userid, $course, $cm
 
             // Add new ones.
             foreach ($formanswers as $f) {
-                if (!in_array($f, $existingchoices)) {
+                if (!in_array($f, $existinganswers)) {
                     $newanswer = new stdClass();
                     $newanswer->optionid = $f;
                     $newanswer->choiceid = $choice->id;
@@ -460,14 +470,9 @@ function choice_user_submit_response($formanswer, $choice, $userid, $course, $cm
             }
         }
     } else {
-        // Check to see if current choice already selected - if not display error.
-        $currentids = array_keys($current);
-
-        if (array_diff($currentids, $formanswers) || array_diff($formanswers, $currentids) ) {
-            // Release lock before error.
-            $choicelock->release();
-            print_error('choicefull', 'choice', $continueurl);
-        }
+        // This is a choice with limited options, and one of the options selected has just run over its limit.
+        $choicelock->release();
+        print_error('choicefull', 'choice', $continueurl);
     }
 
     // Release lock.
