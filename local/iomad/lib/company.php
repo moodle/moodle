@@ -2895,6 +2895,37 @@ class company {
     public static function user_updated(\core\event\user_updated $event) {
         global $DB, $CFG;
 
+        $userid = $event->objectid;
+        $user = $DB->get_record('user', array('id' => $userid));
+        if ($DB->get_record('company_users', array('userid'=> $user->id, 'managertype' => 1))) {
+            $user->manager = true;
+            $company = self::get_company_byuserid($user->id);
+            $user->country = $company->country;
+            $user->city = $company->city;
+            $user->adress = "";
+        } else {
+            $user->manager = false;
+        }
+>>>>>>> b2003418fa0... IOMAD: added web services to manage users enrolments from purchases from external e-commerce solution.  Updated iomad commerce block to send you over to this.  Added events and handlers so that if this is enabled users are managed on the external side, (created and updated along with company name changes)
+
+        if ($CFG->commerce_enable_external) {
+            // Fire off the payload to the external site.
+            require_once($CFG->dirroot . '/blocks/iomad_commerce/locallib.php');
+            iomad_commerce::update_user($user);
+        }
+
+        return true;
+    }
+
+    /**
+     * Triggered via user_updated event.
+     *
+     * @param \core\event\user_updated $event
+     * @return bool true on success.
+     */
+    public static function user_updated(\core\event\user_updated $event) {
+        global $DB, $CFG;
+
         $userid = $event->relateduserid;
         $user = $DB->get_record('user', array('id' => $userid));
         $company = self::get_company_byuserid($user->id);

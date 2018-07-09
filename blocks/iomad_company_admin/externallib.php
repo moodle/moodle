@@ -1986,6 +1986,7 @@ class block_iomad_company_admin_external extends external_api {
             }
         }
 
+        //$transaction->allow_commit();
         return array('status' => true);
     }
 
