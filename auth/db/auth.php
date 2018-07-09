@@ -472,6 +472,12 @@ class auth_plugin_db extends auth_plugin_base {
                     set_user_preference('auth_forcepasswordchange', 1, $id);
                     set_user_preference('create_password',          1, $id);
                 }
+
+                // Save custom profile fields here(MDL-56093).
+                require_once($CFG->dirroot . '/user/profile/lib.php');
+                $user->id = $id;
+                profile_save_data($user);
+
                 // Make sure user context is present.
                 context_user::instance($id);
             }
