@@ -688,14 +688,16 @@ function message_get_messages($useridto, $useridfrom = 0, $notifications = -1, $
     // If the 'useridto' value is empty then we are going to retrieve messages sent by the useridfrom to any user.
     if (empty($useridto)) {
         $userfields = get_all_user_name_fields(true, 'u', '', 'userto');
+        $messageuseridtosql = 'u.id as useridto';
     } else {
         $userfields = get_all_user_name_fields(true, 'u', '', 'userfrom');
+        $messageuseridtosql = "$useridto as useridto";
     }
 
     // Create the SQL we will be using.
     $messagesql = "SELECT mr.*, $userfields, 0 as notification, '' as contexturl, '' as contexturlname,
                           mua.timecreated as timeusertodeleted, mua2.timecreated as timeread,
-                          mua3.timecreated as timeuserfromdeleted
+                          mua3.timecreated as timeuserfromdeleted, $messageuseridtosql
                      FROM {messages} mr
                INNER JOIN {message_conversations} mc
                        ON mc.id = mr.conversationid
