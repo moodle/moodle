@@ -87,15 +87,14 @@ class userrep {
             foreach ($completionsinfo as $testcompletioninfo) {
                 $u = new stdclass();
                 // get the first occurrance of this info.
-                if ($completioninfo = $DB->get_record_sql("SELECT * FROM {".$tempcomptablename."}
-                                                           WHERE userid = :userid
-                                                           AND courseid = :courseid
-                                                           AND timeenrolled = :timeenrolled
-                                                           AND timestarted = :timestarted
-                                                           AND timecompleted = :timecompleted
-                                                           LIMIT 1",
-                                                           (array) $testcompletioninfo)) {
-
+                if ($completionsinfo = $DB->get_records_sql("SELECT * FROM {".$tempcomptablename."}
+                                                             WHERE userid = :userid
+                                                             AND courseid = :courseid
+                                                             AND timeenrolled = :timeenrolled
+                                                             AND timestarted = :timestarted
+                                                             AND timecompleted = :timecompleted",
+                                                             (array) $testcompletioninfo, 0, 1)) {
+                    $completioninfo = array_shift($completionsinfo);
                     $u->certsource = null;
                     if (!empty($completioninfo->timeenrolled)) {
                         $u->timeenrolled = $completioninfo->timeenrolled;

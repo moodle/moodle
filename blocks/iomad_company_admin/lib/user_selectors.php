@@ -484,9 +484,9 @@ class potential_department_user_selector extends user_selector_base {
                     WHERE
                     cu.userid = $id
                     AND c.id != :companyid
-                    ORDER BY cu.id
-                    LIMIT 1";
-            if ($company = $DB->get_record_sql($sql, array('companyid' => $this->companyid))) {
+                    ORDER BY cu.id";
+            if ($companies = $DB->get_records_sql($sql, array('companyid' => $this->companyid), 0, 1)) {
+                $company = array_shift($companies);
                 $userlist[$id]->email = $user->email." - ".$company->name;
             }
         }

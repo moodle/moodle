@@ -348,15 +348,12 @@ class company {
      **/
     public static function get_company_byuserid($userid) {
         global $DB;
-        $company = $DB->get_record_sql("SELECT c.*
-                                        FROM
-                                            {company_users} cu
-                                            INNER JOIN {company} c ON cu.companyid = c.id
-                                        WHERE cu.userid = :userid
-                                        ORDER BY cu.id
-                                        LIMIT 1",
-                                       array('userid' => $userid));
-        return $company;
+        $companies = $DB->get_record_sql("SELECT c.* FROM {company_users} cu
+                                          INNER JOIN {company} c ON cu.companyid = c.id
+                                          WHERE cu.userid = :userid
+                                          ORDER BY cu.id",
+                                          array('userid' => $userid), 0, 1);
+        return array_shift($companies);
     }
 
     /**

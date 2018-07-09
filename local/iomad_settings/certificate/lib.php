@@ -95,8 +95,8 @@ function iomad_settings_next_serial_number($certificateid, $sequence) {
 
     // Find the last serialnumber created in the same sequence.
     $lastserial = $DB->get_records_select('certificate_serialnumber', "certificateid = $certificateid
-                                                                       AND sequence >= $sequence
-                                                                       ORDER BY timecreated desc LIMIT 0,1");
+                                                                       AND sequence >= $sequence",
+                                                                       array(), "*", "timecreated desc", 0, 1);
 
     // Get the record out of the array (or set to null if no record returned).
     if (count($lastserial) > 0) {
