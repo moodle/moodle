@@ -4532,10 +4532,10 @@ class assign {
                                                       $this->show_intro(),
                                                       $this->get_course_module()->id,
                                                       $title, '', $postfix));
-        if ($userid == $USER->id) {
-            // We only show this if it their submission.
-            $o .= $this->plagiarism_print_disclosure();
-        }
+
+        // Show plagiarism disclosure for any user submitter.
+        $o .= $this->plagiarism_print_disclosure();
+
         $data = new stdClass();
         $data->userid = $userid;
         if (!$mform) {
