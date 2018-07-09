@@ -1,0 +1,114 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template tool_dataprivacy/data_request_email
+
+    Email template for the data request.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * string dponame The name of the Data Protection Officer
+    * string requestfor The user the request is being made for.
+    * string requestedby The one making the request.
+    * string requesttype The request type.
+    * string requestdate The date the request was made.
+    * string requestcomments Additional details regarding the request.
+    * bool forself Whether the request has been made on behalf of another user or not.
+    * string datarequestsurl The URL to the data requests page.
+
+    Example context (json):
+    {
+        "dponame": "Eva Ferrer",
+        "requestfor": "Oscar Olsen",
+        "requestedby": "Angus Zhang",
+        "requesttype": "Export user data",
+        "requestdate": "31 January 2018",
+        "requestcomments": "Dear admin,<br/> I would like to request a copy of my son's user data. Thanks!",
+        "forself": true,
+        "datarequestsurl": "#"
+    }
+}}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        table, th, td {
+            border: 1px solid black;
+            padding: 0.5em;
+        }
+    </style>
+    <title>{{#str}}datarequestemailsubject, tool_dataprivacy, {{requesttype}}{{/str}}</title>
+</head>
+<body>
+    <div>
+        <p>{{#str}}emailsalutation, tool_dataprivacy, {{dponame}}{{/str}}</p>
+        <p>{{#str}}requestemailintro, tool_dataprivacy{{/str}}</p>
+        <table>
+            <tr>
+                <th scope="row">
+                    {{#str}}requesttype, tool_dataprivacy{{/str}}
+                </th>
+                <td>
+                    {{requesttype}}
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">
+                    {{#str}}requestfor, tool_dataprivacy{{/str}}
+                </th>
+                <td>
+                    {{requestfor}}
+                </td>
+            </tr>
+            {{^forself}}
+                <tr>
+                    <th scope="row">
+                        {{#str}}requestby, tool_dataprivacy{{/str}}
+                    </th>
+                    <td>
+                        {{requestedby}}
+                    </td>
+                </tr>
+            {{/forself}}
+            <tr>
+                <th scope="row">
+                    {{#str}}requestcomments, tool_dataprivacy{{/str}}
+                </th>
+                <td>
+                    {{{requestcomments}}}
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">
+                    {{#str}}daterequested, tool_dataprivacy{{/str}}
+                </th>
+                <td>
+                    {{requestdate}}
+                </td>
+            </tr>
+        </table>
+        <hr>
+        <a href="{{datarequestsurl}}">{{#str}}viewrequest, tool_dataprivacy{{/str}}</a>
+    </div>
+</body>
+</html>

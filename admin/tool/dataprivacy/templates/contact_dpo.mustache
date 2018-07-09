@@ -1,0 +1,58 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template tool_dataprivacy/contact_dpo
+
+    The purpose of this template is to enable the user to contact the site's DPO via email.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * userid int The user's ID.
+    * email string The user's email address.
+
+    Example context (json):
+    {
+        "userid": 1,
+        "replytoemail": "martha@example.com"
+    }
+}}
+<div class="container">
+    <div class="row m-b-2">
+        <label class="col-md-3 span3 col-form-label">{{#str}}replyto, tool_dataprivacy{{/str}}</label>
+        <div class="col-md-9 span9 col-form-label">{{replytoemail}}</div>
+    </div>
+    <div class="row" data-region="messageinput">
+        <label for="message" class="col-md-3 span3 col-form-label">
+            {{#str}}message, tool_dataprivacy{{/str}}
+            <span class="pull-xs-right text-nowrap">
+            <abbr class="initialism text-danger" title="{{#str}}required{{/str}}">{{#pix}}req, core, {{#str}}required{{/str}}{{/pix}}</abbr>
+        </span>
+        </label>
+        <div class="col-md-9 span9">
+            <textarea class="form-control" id="message" cols="60" rows="8"></textarea>
+            <div class="form-control-feedback" id="id_error_message" hidden="hidden">
+                {{#str}}required, moodle{{/str}}
+            </div>
+        </div>
+    </div>
+</div>
+
