@@ -758,6 +758,34 @@ function file_get_drafarea_files($draftitemid, $filepath = '/') {
 }
 
 /**
+ * Returns all of the files in the draftarea.
+ *
+ * @param  int $draftitemid The draft item ID
+ * @param  string $filepath path for the uploaded files.
+ * @return array An array of files associated with this draft item id.
+ */
+function file_get_all_files_in_draftarea(int $draftitemid, string $filepath = '/') : array {
+    $files = [];
+    $draftfiles = file_get_drafarea_files($draftitemid, $filepath);
+    file_get_drafarea_folders($draftitemid, $filepath, $draftfiles);
+
+    if (!empty($draftfiles)) {
+        foreach ($draftfiles->list as $draftfile) {
+            if ($draftfile->type == 'file') {
+                $files[] = $draftfile;
+            }
+        }
+
+        if (isset($draftfiles->children)) {
+            foreach ($draftfiles->children as $draftfile) {
+                $files = array_merge($files, file_get_all_files_in_draftarea($draftitemid, $draftfile->filepath));
+            }
+        }
+    }
+    return $files;
+}
+
+/**
  * Returns draft area itemid for a given element.
  *
  * @category files
