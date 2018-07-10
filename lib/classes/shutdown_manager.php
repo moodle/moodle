@@ -80,10 +80,10 @@ class core_shutdown_manager {
                     call_user_func_array($callback, $params);
                 }
             } catch (Exception $e) {
-                error_log('Exception ignored in shutdown function '.var_export($callback, true).':'.$e->getMessage());
+                error_log('Exception ignored in shutdown function '.get_callable_name($callback).': '.$e->getMessage());
             } catch (Throwable $e) {
                 // Engine errors in PHP7 throw exceptions of type Throwable (this "catch" will be ignored in PHP5).
-                error_log('Exception ignored in shutdown function '.var_export($callback, true).':'.$e->getMessage());
+                error_log('Exception ignored in shutdown function '.get_callable_name($callback).': '.$e->getMessage());
             }
         }
 
