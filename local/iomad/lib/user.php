@@ -322,6 +322,8 @@ class company_user {
                 }
                 if (!$DB->get_record('user_enrolments', array('userid' => $user->id, 'enrolid' => $manualcache[$courseid]->id))) {
                     $manual->enrol_user($manualcache[$courseid], $user->id, $rid, $today, $timeend, ENROL_USER_ACTIVE);
+                } else {
+                    role_assign($rid, $user->id, context_course::instance($courseid));
                 }
                 if ($shared || $grouped) {
                     if (!empty($companyid)) {
