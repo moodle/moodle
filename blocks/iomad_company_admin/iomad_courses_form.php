@@ -90,23 +90,36 @@ if (empty($company) && !empty($companyid)) {
     $params['company'] = $company;
 }
 
+
 if (!empty($update)) {
     // Need to change something.
     if (!$coursedetails = (array) $DB->get_record('iomad_courses', array('courseid' => $courseid))) {
         print_error(get_string('invaliddetails', 'block_iomad_company_admin'));
     } else {
         if ('license' == $update) {
-            $coursedetails['licensed'] = $license;
+            if ($license == 3) {
+                $coursedetails['licensed'] = 0;
+            } else {
+                $coursedetails['licensed'] = $license;
+            }
             $DB->update_record('iomad_courses', $coursedetails);
-            if (empty($license)) {
+            if (empty($license) || $license == 3) {
                 // Changing to manual enrolment type only.
                 if ($instances = $DB->get_records('enrol', array('courseid' => $courseid))) {
                     foreach ($instances as $instance) {
                         $updateinstance = (array) $instance;
-                        if ($instance->enrol != 'manual') {
-                            $updateinstance['status'] = 1;
-                        } else {
-                            $updateinstance['status'] = 0;
+                        if ($license == 0) {
+                            if ($instance->enrol != 'manual') {
+                                $updateinstance['status'] = 1;
+                            } else {
+                                $updateinstance['status'] = 0;
+                            }
+                        } else if ($license == 3) {
+                            if ($instance->enrol == 'manual' || $instance->enrol == 'self') {
+                                $updateinstance['status'] = 0;
+                            } else {
+                                $updateinstance['status'] = 1;
+                            }
                         }
                         $DB->update_record('enrol', $updateinstance);
                     }
@@ -297,6 +310,7 @@ $table->head = array (
 $table->align = array ("left", "center", "center", "center", "center", "center", "center", "center");
 $table->width = "95%";
 $selectbutton = array('0' => get_string('no'), '1' => get_string('yes'));
+$licenseselectbutton = array('0' => get_string('no'), '1' => get_string('yes'), '3' => get_string('pluginname', 'enrol_self'));
 $sharedselectbutton = array('0' => get_string('no'),
                             '1' => get_string('open', 'block_iomad_company_admin'),
                             '2' => get_string('closed', 'block_iomad_company_admin'));
@@ -312,7 +326,7 @@ foreach ($courses as $course) {
     $linkparams['courseid'] = $course->id;
     $linkparams['update'] = 'license';
     $licenseurl = new moodle_url($baseurl, $linkparams);
-    $licenseselect = new single_select($licenseurl, 'license', $selectbutton, $iomaddetails->licensed);
+    $licenseselect = new single_select($licenseurl, 'license', $licenseselectbutton, $iomaddetails->licensed);
     $licenseselect->label = '';
     $licenseselect->formid = 'licenseselect'.$course->id;
     $licenseselectoutput = html_writer::tag('div', $OUTPUT->render($licenseselect), array('id' => 'license_selector'.$course->id));

@@ -215,7 +215,7 @@ if ($mform->is_cancelled()) {
                 } else if ($instance->enrol == 'license') {
                     $updateinstance['status'] = 1;
                 } else if ($instance->enrol == 'manual') {
-                    $updateinstance['status'] = 1;
+                    $updateinstance['status'] = 0;
                 }
                 $DB->update_record('enrol', $updateinstance);
             }
