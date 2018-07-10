@@ -118,6 +118,12 @@
     background-color: #cfefcf;
 }
 
+.path-mod-assign td.gradingreminder,
+.path-mod-assign div.gradingreminder {
+    color: black;
+    background-color: #efcfcf;
+}
+
 .path-mod-assign .gradingtable .c0 {
     display: none;
 }

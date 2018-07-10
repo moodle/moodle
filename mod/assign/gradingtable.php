@@ -1084,7 +1084,11 @@ class assign_grading_table extends table_sql implements renderable {
             // Add status of "grading" if markflow is not enabled.
             if (!$instance->markingworkflow) {
                 if ($row->grade !== null && $row->grade >= 0) {
-                    $o .= $this->output->container(get_string('graded', 'assign'), 'submissiongraded');
+                    if ($row->timemarked < $row->timesubmitted) {
+                        $o .= $this->output->container(get_string('gradedfollowupsubmit', 'assign'), 'gradingreminder');
+                    } else {
+                        $o .= $this->output->container(get_string('graded', 'assign'), 'submissiongraded');
+                    }
                 } else if (!$timesubmitted || $status == ASSIGN_SUBMISSION_STATUS_NEW) {
                     $now = time();
                     if ($due && ($now > $due)) {

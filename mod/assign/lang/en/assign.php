@@ -247,6 +247,7 @@ $string['filterrequiregrading'] = 'Requires grading';
 $string['filtersubmitted'] = 'Submitted';
 $string['graded'] = 'Graded';
 $string['gradedby'] = 'Graded by';
+$string['gradedfollowupsubmit'] = 'Graded - follow up submission received';
 $string['gradedon'] = 'Graded on';
 $string['gradebelowzero'] = 'Grade must be greater than or equal to zero.';
 $string['gradeabovemaximum'] = 'Grade must be less than or equal to {$a}.';
