@@ -118,6 +118,21 @@ Feature: Course participants can be filtered
     And I should not see "Teacher 1" in the "participants" "table"
 
   @javascript
+  Scenario: Reorder users without losing filter
+    Given I log in as "teacher1"
+    And I am on "Course 1" course homepage
+    And I navigate to course participants
+    And I open the autocomplete suggestions list
+    And I click on "Role: Student" item in the autocomplete list
+    When I click on "Surname" "link"
+    Then I should see "Role: Student"
+    And I should see "Student 1" in the "participants" "table"
+    And I should see "Student 2" in the "participants" "table"
+    And I should see "Student 3" in the "participants" "table"
+    And I should see "Student 4" in the "participants" "table"
+    And I should not see "Teacher 1" in the "participants" "table"
+
+  @javascript
   Scenario: Rendering filter options for teachers in a course that don't support groups
     Given I log in as "teacher1"
     And I am on "Course 2" course homepage
