@@ -55,17 +55,13 @@ if (!$quizzes = get_all_instances_in_course("quiz", $course)) {
     die;
 }
 
-// Check if we need the closing date header.
-$showclosingheader = false;
+// Check if we need the feedback header.
 $showfeedback = false;
 foreach ($quizzes as $quiz) {
-    if ($quiz->timeclose!=0) {
-        $showclosingheader=true;
-    }
     if (quiz_has_feedback($quiz)) {
         $showfeedback=true;
     }
-    if ($showclosingheader && $showfeedback) {
+    if ($showfeedback) {
         break;
     }
 }
@@ -74,10 +70,8 @@ foreach ($quizzes as $quiz) {
 $headings = array(get_string('name'));
 $align = array('left');
 
-if ($showclosingheader) {
-    array_push($headings, get_string('quizcloses', 'quiz'));
-    array_push($align, 'left');
-}
+array_push($headings, get_string('quizcloses', 'quiz'));
+array_push($align, 'left');
 
 if (course_format_uses_sections($course->format)) {
     array_unshift($headings, get_string('sectionname', 'format_'.$course->format));
@@ -147,14 +141,10 @@ foreach ($quizzes as $quiz) {
             format_string($quiz->name, true) . '</a>';
 
     // Close date.
-    if ($quiz->timeclose) {
-        if (($timeclosedates[$quiz->id]->usertimeclose == 0) AND ($timeclosedates[$quiz->id]->usertimelimit == 0)) {
-            $data[] = get_string('noclose', 'quiz');
-        } else {
-            $data[] = userdate($timeclosedates[$quiz->id]->usertimeclose);
-        }
-    } else if ($showclosingheader) {
-        $data[] = '';
+    if (($timeclosedates[$quiz->id]->usertimeclose != 0)) {
+        $data[] = userdate($timeclosedates[$quiz->id]->usertimeclose);
+    } else {
+        $data[] = get_string('noclose', 'quiz');
     }
 
     if ($showing == 'stats') {
