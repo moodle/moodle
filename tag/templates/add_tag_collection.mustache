@@ -1,0 +1,61 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_tag/add_tag_collection
+
+    Renders the form for adding tag collections.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * sesskey string The session key
+
+    Example context (json):
+    {
+        "actionurl" : "#",
+        "sesskey" : "UniqueSesskey1a2b3c"
+    }
+
+}}
+<form id="addtagcoll_form" method="post" action="{{actionurl}}" class="needs-validation">
+    <input type="hidden" name="sesskey" value="{{sesskey}}"/>
+    <div class="form-group control-group" data-region="addtagcoll_nameinput">
+        <label for="addtagcoll_name">
+            {{#str}}name{{/str}}
+            <span>
+                <abbr class="initialism text-danger" title="{{#str}}required{{/str}}">
+                    {{#pix}}req, core, {{#str}}required{{/str}}{{/pix}}
+                </abbr>
+            </span>
+        </label>
+        {{! Enclosing these controls in a div with the controls class for BS2 compatibility when showing validation errors.}}
+        <div class="controls">
+            <input id="addtagcoll_name" type="text" class="form-control" name="name" aria-required="true" required/>
+            <div class="form-control-feedback invalid-feedback" id="id_addtagcoll_name_error_message" hidden="hidden">
+                {{#str}}required{{/str}}
+            </div>
+        </div>
+    </div>
+    <div class="form-group form-check">
+        <input id="addtagcoll_searchable" name="searchable" type="checkbox" value="1" checked class="form-check-input"/>
+        <label for="addtagcoll_searchable" class="form-check-label">{{#str}}searchable, tag{{/str}}</label>
+    </div>
+</form>
