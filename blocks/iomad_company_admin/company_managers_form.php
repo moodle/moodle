@@ -415,7 +415,8 @@ class company_managers_form extends moodleform {
                         $userrecord = $DB->get_record('company_users', array('companyid' => $this->selectedcompany,
                                                                     'userid' => $removeuser->id));
                         // Is this a manager from another company?
-                        if ($DB->get_records_sql("SELECT id FROM {company_users}
+                        if ($roletype != 3 && 
+                            $DB->get_records_sql("SELECT id FROM {company_users}
                                                   WHERE userid = :userid
                                                   AND companyid NOT IN 
                                                   (" . join(',', array_keys($companytree)) .")
@@ -435,8 +436,10 @@ class company_managers_form extends moodleform {
                                 $userrecord->educator = 0;
                             }
                             $DB->update_record('company_users', $userrecord);
-                            role_unassign($companymanagerrole->id, $removeuser->id, $this->context->id);
-                            role_unassign($departmentmanagerrole->id, $removeuser->id, $this->context->id);
+                            if ($roletype != 3) {
+                                role_unassign($companymanagerrole->id, $removeuser->id, $this->context->id);
+                                role_unassign($departmentmanagerrole->id, $removeuser->id, $this->context->id);
+                            }
                         }
                         // Remove their capabilities from the company courses.
                         if ($CFG->iomad_autoenrol_managers || $roletype == 3) {
