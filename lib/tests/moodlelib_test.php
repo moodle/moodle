@@ -4065,4 +4065,57 @@ class core_moodlelib_testcase extends advanced_testcase {
             ],
         ];
     }
+
+    /**
+     * Test that {@link get_callable_name()} describes the callable as expected.
+     *
+     * @dataProvider callable_names_provider
+     * @param callable $callable
+     * @param string $expectedname
+     */
+    public function test_get_callable_name($callable, $expectedname) {
+        $this->assertSame($expectedname, get_callable_name($callable));
+    }
+
+    /**
+     * Provides a set of callables and their human readable names.
+     *
+     * @return array of (string)case => [(mixed)callable, (string|bool)expected description]
+     */
+    public function callable_names_provider() {
+        return [
+            'integer' => [
+                386,
+                false,
+            ],
+            'boolean' => [
+                true,
+                false,
+            ],
+            'static_method_as_literal' => [
+                'my_foobar_class::my_foobar_method',
+                'my_foobar_class::my_foobar_method',
+            ],
+            'static_method_of_literal_class' => [
+                ['my_foobar_class', 'my_foobar_method'],
+                'my_foobar_class::my_foobar_method',
+            ],
+            'static_method_of_object' => [
+                [$this, 'my_foobar_method'],
+                'core_moodlelib_testcase::my_foobar_method',
+            ],
+            'method_of_object' => [
+                [new lang_string('parentlanguage', 'core_langconfig'), 'my_foobar_method'],
+                'lang_string::my_foobar_method',
+            ],
+            'function_as_literal' => [
+                'my_foobar_callback',
+                'my_foobar_callback',
+            ],
+            'function_as_closure' => [
+                function($a) { return $a; },
+                'Closure::__invoke',
+            ],
+        ];
+    }
 }
