@@ -5326,12 +5326,14 @@ class assign {
     public function get_assign_grading_summary_renderable($activitygroup = null) {
 
         $instance = $this->get_instance();
+        $cm = $this->get_course_module();
 
         $draft = ASSIGN_SUBMISSION_STATUS_DRAFT;
         $submitted = ASSIGN_SUBMISSION_STATUS_SUBMITTED;
+        $isvisible = $cm->visible;
 
         if ($activitygroup === null) {
-            $activitygroup = groups_get_activity_group($this->get_course_module());
+            $activitygroup = groups_get_activity_group($cm);
         }
 
         if ($instance->teamsubmission) {
@@ -5349,7 +5351,8 @@ class assign {
                                                   $this->count_submissions_need_grading($activitygroup),
                                                   $instance->teamsubmission,
                                                   $warnofungroupedusers,
-                                                  $this->can_grade());
+                                                  $this->can_grade(),
+                                                  $isvisible);
         } else {
             // The active group has already been updated in groups_print_activity_menu().
             $countparticipants = $this->count_participants($activitygroup);
@@ -5364,8 +5367,8 @@ class assign {
                                                   $this->count_submissions_need_grading($activitygroup),
                                                   $instance->teamsubmission,
                                                   false,
-                                                  $this->can_grade());
-
+                                                  $this->can_grade(),
+                                                  $isvisible);
         }
 
         return $summary;
