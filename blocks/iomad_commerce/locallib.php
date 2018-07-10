@@ -47,6 +47,9 @@ class iomad_commerce {
     public static function assign_user($user, $companyname) {
 
         $call = 'updateUser';
+        if (empty($user->manager)) {
+            $user->manager = 'no';
+        }
         $payload = array('username' => $user->username,
                          'firstname' => $user->firstname,
                          'lastname' => $user->lastname,
