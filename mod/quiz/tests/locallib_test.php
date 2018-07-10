@@ -311,6 +311,7 @@ class mod_quiz_locallib_testcase extends advanced_testcase {
         // Create generator, course and quizzes.
         $student1 = $this->getDataGenerator()->create_user();
         $student2 = $this->getDataGenerator()->create_user();
+        $student3 = $this->getDataGenerator()->create_user();
         $teacher = $this->getDataGenerator()->create_user();
         $course = $this->getDataGenerator()->create_course();
         $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
@@ -323,6 +324,7 @@ class mod_quiz_locallib_testcase extends advanced_testcase {
 
         $student1id = $student1->id;
         $student2id = $student2->id;
+        $student3id = $student3->id;
         $teacherid = $teacher->id;
 
         // Users enrolments.
@@ -330,6 +332,7 @@ class mod_quiz_locallib_testcase extends advanced_testcase {
         $teacherrole = $DB->get_record('role', array('shortname' => 'editingteacher'));
         $this->getDataGenerator()->enrol_user($student1id, $course->id, $studentrole->id, 'manual');
         $this->getDataGenerator()->enrol_user($student2id, $course->id, $studentrole->id, 'manual');
+        $this->getDataGenerator()->enrol_user($student3id, $course->id, $studentrole->id, 'manual');
         $this->getDataGenerator()->enrol_user($teacherid, $course->id, $teacherrole->id, 'manual');
 
         // Create groups.
@@ -357,14 +360,31 @@ class mod_quiz_locallib_testcase extends advanced_testcase {
         $object = new stdClass();
         $object->id = $quiz1->id;
         $object->usertimeclose = $basetimestamp + 10800; // The overriden timeclose for quiz 1.
-        $object->usertimelimit = 0;
 
         $comparearray[$quiz1->id] = $object;
 
         $object = new stdClass();
         $object->id = $quiz2->id;
         $object->usertimeclose = $basetimestamp + 7200; // The unchanged timeclose for quiz 2.
-        $object->usertimelimit = 0;
+
+        $comparearray[$quiz2->id] = $object;
+
+        $this->assertEquals($comparearray, quiz_get_user_timeclose($course->id));
+
+        // Let's test quiz 1 closes in two hours (the original value) for user student 3 since member of no group.
+        $this->setUser($student3id);
+        $params = new stdClass();
+
+        $comparearray = array();
+        $object = new stdClass();
+        $object->id = $quiz1->id;
+        $object->usertimeclose = $basetimestamp + 7200; // The original timeclose for quiz 1.
+
+        $comparearray[$quiz1->id] = $object;
+
+        $object = new stdClass();
+        $object->id = $quiz2->id;
+        $object->usertimeclose = $basetimestamp + 7200; // The original timeclose for quiz 2.
 
         $comparearray[$quiz2->id] = $object;
 
@@ -386,14 +406,12 @@ class mod_quiz_locallib_testcase extends advanced_testcase {
         $object = new stdClass();
         $object->id = $quiz1->id;
         $object->usertimeclose = $basetimestamp + 14400; // The overriden timeclose for quiz 1.
-        $object->usertimelimit = 0;
 
         $comparearray[$quiz1->id] = $object;
 
         $object = new stdClass();
         $object->id = $quiz2->id;
         $object->usertimeclose = $basetimestamp + 7200; // The unchanged timeclose for quiz 2.
-        $object->usertimelimit = 0;
 
         $comparearray[$quiz2->id] = $object;
 
@@ -407,14 +425,12 @@ class mod_quiz_locallib_testcase extends advanced_testcase {
         $object = new stdClass();
         $object->id = $quiz1->id;
         $object->usertimeclose = $basetimestamp + 7200; // The unchanged timeclose for quiz 1.
-        $object->usertimelimit = 0;
 
         $comparearray[$quiz1->id] = $object;
 
         $object = new stdClass();
         $object->id = $quiz2->id;
         $object->usertimeclose = $basetimestamp + 7200; // The unchanged timeclose for quiz 2.
-        $object->usertimelimit = 0;
 
         $comparearray[$quiz2->id] = $object;
 

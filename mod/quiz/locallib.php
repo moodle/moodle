@@ -1209,18 +1209,17 @@ function quiz_get_user_image_options() {
 
 /**
  * Return an user's timeclose for all quizzes in a course, hereby taking into account group and user overrides.
- * The query used herein is very similar to the one in function quiz_get_attempt_usertime_sql, so, in case you
- * would change either one of them, make sure to apply your changes to both.
  *
  * @param int $courseid the course id.
- * @return object An object with quizids and unixdates of the most lenient close overrides, if any.
+ * @return object An object with of all quizids and close unixdates in this course, taking into account the most lenient
+ * overrides, if existing and 0 if no close date is set.
  */
 function quiz_get_user_timeclose($courseid) {
     global $DB, $USER;
 
     // For teacher and manager/admins return timeclose.
     if (has_capability('moodle/course:update', context_course::instance($courseid))) {
-        $sql = "SELECT quiz.id, quiz.timeclose AS usertimeclose, COALESCE(quiz.timelimit, 0) AS usertimelimit
+        $sql = "SELECT quiz.id, quiz.timeclose AS usertimeclose
                   FROM {quiz} quiz
                  WHERE quiz.course = :courseid";
 
@@ -1228,34 +1227,22 @@ function quiz_get_user_timeclose($courseid) {
         return $results;
     }
 
-    // The multiple qgo JOINS are necessary because we want timeclose/timelimit = 0 (unlimited) to supercede
-    // any other group override.
-
     $sql = "SELECT q.id,
-  COALESCE(v.oneclose, v.twoclose, v.threeclose, q.timeclose, 0) AS usertimeclose,
-  COALESCE(v.onelimit, v.twolimit, v.threelimit, q.timelimit, 0) AS usertimelimit
+  COALESCE(v.userclose, v.groupclose, q.timeclose, 0) AS usertimeclose
   FROM (
-      SELECT quiz.id AS quizid,
-             MAX(quo.timeclose) AS oneclose, MAX(qgo1.timeclose) AS twoclose, MAX(qgo2.timeclose) AS threeclose,
-             MAX(quo.timelimit) AS onelimit, MAX(qgo3.timelimit) AS twolimit, MAX(qgo4.timelimit) AS threelimit
+      SELECT quiz.id as quizid,
+             MAX(quo.timeclose) AS userclose, MAX(qgo.timeclose) AS groupclose
        FROM {quiz} quiz
-  LEFT JOIN {quiz_overrides} quo ON quo.quiz = quiz.id
-  LEFT JOIN {groups_members} gm ON gm.userid = quo.userid
-  LEFT JOIN {quiz_overrides} qgo1 ON qgo1.timeclose = 0 AND qgo1.quiz = quiz.id
-  LEFT JOIN {quiz_overrides} qgo2 ON qgo2.timeclose > 0 AND qgo2.quiz = quiz.id
-  LEFT JOIN {quiz_overrides} qgo3 ON qgo3.timelimit = 0 AND qgo3.quiz = quiz.id
-  LEFT JOIN {quiz_overrides} qgo4 ON qgo4.timelimit > 0 AND qgo4.quiz = quiz.id
-                                  AND qgo1.groupid = gm.groupid
-                                  AND qgo2.groupid = gm.groupid
-                                  AND qgo3.groupid = gm.groupid
-                                  AND qgo4.groupid = gm.groupid
+  LEFT JOIN {quiz_overrides} quo on quiz.id = quo.quiz AND quo.userid = :userid
+  LEFT JOIN {groups_members} gm ON gm.userid = :useringroupid
+  LEFT JOIN {quiz_overrides} qgo on quiz.id = qgo.quiz AND qgo.groupid = gm.groupid
       WHERE quiz.course = :courseid
-            AND ((quo.userid = :userid) OR ((gm.userid IS NULL) AND (quo.userid IS NULL)))
    GROUP BY quiz.id) v
-  JOIN {quiz} q ON q.id = v.quizid";
+       JOIN {quiz} q ON q.id = v.quizid";
 
-    $results = $DB->get_records_sql($sql, array('courseid' => $courseid, 'userid' => $USER->id));
+    $results = $DB->get_records_sql($sql, array('userid' => $USER->id, 'useringroupid' => $USER->id, 'courseid' => $courseid));
     return $results;
+
 }
 
 /**
