@@ -231,28 +231,6 @@ function lti_get_shortcuts($defaultitem) {
 
     // Add items defined in ltisource plugins.
     foreach (core_component::get_plugin_list('ltisource') as $pluginname => $dir) {
-        if ($moretypes = component_callback("ltisource_$pluginname", 'get_types')) {
-            // Callback 'get_types()' in 'ltisource' plugins is deprecated in 3.1 and will be removed in 3.5, TODO MDL-53697.
-            debugging('Deprecated callback get_types() is found in ltisource_' . $pluginname .
-                ', use get_shortcuts() instead', DEBUG_DEVELOPER);
-            $grouptitle = get_string('modulenameplural', 'mod_lti');
-            foreach ($moretypes as $subtype) {
-                // Instead of adding subitems combine the name of the group with the name of the subtype.
-                $subtype->title = get_string('activitytypetitle', '',
-                    (object)['activity' => $grouptitle, 'type' => $subtype->typestr]);
-                // Re-implement the logic of get_module_metadata() in Moodle 3.0 and below for converting
-                // subtypes into items in activity chooser.
-                $subtype->type = str_replace('&amp;', '&', $subtype->type);
-                $subtype->name = preg_replace('/.*type=/', '', $subtype->type);
-                $subtype->link = new moodle_url($defaultitem->link, array('type' => $subtype->name));
-                if (empty($subtype->help) && !empty($subtype->name) &&
-                        get_string_manager()->string_exists('help' . $subtype->name, $pluginname)) {
-                    $subtype->help = get_string('help' . $subtype->name, $pluginname);
-                }
-                unset($subtype->typestr);
-                $types[] = $subtype;
-            }
-        }
         // LTISOURCE plugins can also implement callback get_shortcuts() to add items to the activity chooser.
         // The return values are the same as of the 'mod' callbacks except that $defaultitem is only passed for reference and
         // should not be added to the return value.

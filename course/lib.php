@@ -669,9 +669,6 @@ function get_module_metadata($course, $modnames, $sectionreturn = null) {
         }
         $defaultmodule->archetype = plugin_supports('mod', $modname, FEATURE_MOD_ARCHETYPE, MOD_ARCHETYPE_OTHER);
 
-        // Legacy support for callback get_types() - do not use any more, use get_shortcuts() instead!
-        $typescallbackexists = component_callback_exists($modname, 'get_types');
-
         // Each module can implement callback modulename_get_shortcuts() in its lib.php and return the list
         // of elements to be added to activity chooser.
         $items = component_callback($modname, 'get_shortcuts', array($defaultmodule), null);
@@ -699,58 +696,14 @@ function get_module_metadata($course, $modnames, $sectionreturn = null) {
                 $modlist[$course->id][$modname][$item->name] = $item;
             }
             $return += $modlist[$course->id][$modname];
-            if ($typescallbackexists) {
-                debugging('Both callbacks get_shortcuts() and get_types() are found in module ' . $modname .
-                    '. Callback get_types() will be completely ignored', DEBUG_DEVELOPER);
-            }
             // If get_shortcuts() callback is defined, the default module action is not added.
             // It is a responsibility of the callback to add it to the return value unless it is not needed.
             continue;
         }
 
-        if ($typescallbackexists) {
-            debugging('Callback get_types() is found in module ' . $modname . ', this functionality is deprecated, ' .
-                'please use callback get_shortcuts() instead', DEBUG_DEVELOPER);
-        }
-        $types = component_callback($modname, 'get_types', array(), MOD_SUBTYPE_NO_CHILDREN);
-        if ($types !== MOD_SUBTYPE_NO_CHILDREN) {
-            // Legacy support for deprecated callback get_types(). To be removed in Moodle 3.5. TODO MDL-53697.
-            if (is_array($types) && count($types) > 0) {
-                $grouptitle = $modnamestr;
-                $icon = $OUTPUT->pix_icon('icon', '', $modname, array('class' => 'icon'));
-                foreach($types as $type) {
-                    if ($type->typestr === '--') {
-                        continue;
-                    }
-                    if (strpos($type->typestr, '--') === 0) {
-                        $grouptitle = str_replace('--', '', $type->typestr);
-                        continue;
-                    }
-                    // Set the Sub Type metadata.
-                    $subtype = new stdClass();
-                    $subtype->title = get_string('activitytypetitle', '',
-                        (object)['activity' => $grouptitle, 'type' => $type->typestr]);
-                    $subtype->type = str_replace('&amp;', '&', $type->type);
-                    $typename = preg_replace('/.*type=/', '', $subtype->type);
-                    $subtype->archetype = $type->modclass;
-
-                    if (!empty($type->help)) {
-                        $subtype->help = $type->help;
-                    } else if (get_string_manager()->string_exists('help' . $subtype->name, $modname)) {
-                        $subtype->help = get_string('help' . $subtype->name, $modname);
-                    }
-                    $subtype->link = new moodle_url($urlbase, array('add' => $modname, 'type' => $typename));
-                    $subtype->name = $modname . ':' . $subtype->link;
-                    $subtype->icon = $icon;
-                    $modlist[$course->id][$modname][$subtype->name] = $subtype;
-                }
-                $return += $modlist[$course->id][$modname];
-            }
-        } else {
-            // Neither get_shortcuts() nor get_types() callbacks found, use the default item for the activity chooser.
-            $modlist[$course->id][$modname][$modname] = $defaultmodule;
-            $return[$modname] = $defaultmodule;
-        }
+        // The callback get_shortcuts() was not found, use the default item for the activity chooser.
+        $modlist[$course->id][$modname][$modname] = $defaultmodule;
+        $return[$modname] = $defaultmodule;
     }
 
     core_collator::asort_objects_by_property($return, 'title');

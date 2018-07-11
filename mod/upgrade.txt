@@ -1,6 +1,12 @@
 This files describes API changes in /mod/* - activity modules,
 information provided here is intended especially for developers.
 
+=== 3.6 ===
+
+* The final deprecation of xxx_get_types() callback means that this function will no longer be called.
+  Please use get_shortcuts() instead.
+* lti_get_shortcuts has been deprecated. Please use get_shortcuts() instead to add items to the activity chooser.
+
 === 3.5 ===
 
 * There is a new privacy API that every subsystem and plugin has to implement so that the site can become GDPR
