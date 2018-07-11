@@ -43,6 +43,16 @@ $functions = [
         'ajax'          => true,
         'loginrequired' => true,
     ],
+    'tool_dataprivacy_mark_complete' => [
+        'classname'     => 'tool_dataprivacy\external',
+        'methodname'    => 'mark_complete',
+        'classpath'     => '',
+        'description'   => 'Mark a user\'s general enquiry as complete',
+        'type'          => 'write',
+        'capabilities'  => 'tool/dataprivacy:managedatarequests',
+        'ajax'          => true,
+        'loginrequired' => true,
+    ],
     'tool_dataprivacy_get_data_request' => [
         'classname'     => 'tool_dataprivacy\external',
         'methodname'    => 'get_data_request',
