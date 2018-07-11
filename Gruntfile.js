@@ -67,7 +67,7 @@ module.exports = function(grunt) {
      * @param {String} srcPath the  matched src path
      * @return {String} The rewritten destination path.
      */
-    var uglifyRename = function(destPath, srcPath) {
+    var babelRename = function(destPath, srcPath) {
         destPath = srcPath.replace('src', 'build');
         destPath = destPath.replace('.js', '.min.js');
         destPath = path.resolve(cwd, destPath);
@@ -116,14 +116,53 @@ module.exports = function(grunt) {
             // Check YUI module source files.
             yui: {src: ['**/yui/src/**/*.js', '!*/**/yui/src/*/meta/*.js']}
         },
-        uglify: {
-            amd: {
+        babel: {
+            options: {
+                sourceMaps: true,
+                comments: false,
+                plugins: [
+                    'transform-es2015-modules-amd-lazy',
+                    // This plugin modifies the Babel transpiling for "export default"
+                    // so that if it's used then only the exported value is returned
+                    // by the generated AMD module.
+                    //
+                    // It also adds the Moodle plugin name to the AMD module definition
+                    // so that it can be imported as expected in other modules.
+                    path.resolve('babel-plugin-add-module-to-define.js'),
+                    '@babel/plugin-syntax-dynamic-import',
+                    '@babel/plugin-syntax-import-meta',
+                    ['@babel/plugin-proposal-class-properties', {'loose': false}],
+                    '@babel/plugin-proposal-json-strings'
+                ],
+                presets: [
+                    ['minify', {
+                        // This minification plugin needs to be disabled because it breaks the
+                        // source map generation and causes invalid source maps to be output.
+                        simplify: false,
+                        builtIns: false
+                    }],
+                    ['@babel/preset-env', {
+                        targets: {
+                            browsers: [
+                                ">0.25%",
+                                "last 2 versions",
+                                "not ie <= 10",
+                                "not op_mini all",
+                                "not Opera > 0",
+                                "not dead"
+                            ]
+                        },
+                        modules: false,
+                        useBuiltIns: false
+                    }]
+                ]
+            },
+            dist: {
                 files: [{
                     expand: true,
                     src: amdSrc,
-                    rename: uglifyRename
-                }],
-                options: {report: 'none'}
+                    rename: babelRename
+                }]
             }
         },
         sass: {
@@ -330,9 +369,9 @@ module.exports = function(grunt) {
           var files = Object.keys(changedFiles);
           grunt.config('eslint.amd.src', files);
           grunt.config('eslint.yui.src', files);
-          grunt.config('uglify.amd.files', [{expand: true, src: files, rename: uglifyRename}]);
           grunt.config('shifter.options.paths', files);
           grunt.config('gherkinlint.options.files', files);
+          grunt.config('babel.dist.files', [{expand: true, src: files, rename: babelRename}]);
           changedFiles = Object.create(null);
     }, 200);
 
@@ -347,13 +386,14 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-sass');
     grunt.loadNpmTasks('grunt-eslint');
     grunt.loadNpmTasks('grunt-stylelint');
+    grunt.loadNpmTasks('grunt-babel');
 
     // Register JS tasks.
     grunt.registerTask('shifter', 'Run Shifter against the current directory', tasks.shifter);
     grunt.registerTask('gherkinlint', 'Run gherkinlint against the current directory', tasks.gherkinlint);
     grunt.registerTask('ignorefiles', 'Generate ignore files for linters', tasks.ignorefiles);
     grunt.registerTask('yui', ['eslint:yui', 'shifter']);
-    grunt.registerTask('amd', ['eslint:amd', 'uglify']);
+    grunt.registerTask('amd', ['eslint:amd', 'babel']);
     grunt.registerTask('js', ['amd', 'yui']);
 
     // Register CSS taks.
