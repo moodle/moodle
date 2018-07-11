@@ -16,6 +16,8 @@
 
 /**
  * Legacy log reader.
+ * @deprecated since Moodle 3.6 MDL-52953 - Please use supported log stores such as "standard" or "external" instead.
+ * @todo  MDL-52805 This is to be removed in Moodle 4.0
  *
  * @package    logstore_legacy
  * @copyright  2013 Petr Skoda {@link http://skodak.org}
@@ -30,6 +32,12 @@ class store implements \tool_log\log\store, \core\log\sql_reader {
     use \tool_log\helper\store,
         \tool_log\helper\reader;
 
+    /**
+     * @deprecated since Moodle 3.6 MDL-52953 - Please use supported log stores such as "standard" or "external" instead.
+     * @todo  MDL-52805 This is to be removed in Moodle 4.0
+     *
+     * @param \tool_log\log\manager $manager
+     */
     public function __construct(\tool_log\log\manager $manager) {
         $this->helper_setup($manager);
     }
@@ -83,6 +91,17 @@ class store implements \tool_log\log\store, \core\log\sql_reader {
         return array($selectwhere, $params, $sort);
     }
 
+    /**
+     * @deprecated since Moodle 3.6 MDL-52953 - Please use supported log stores such as "standard" or "external" instead.
+     * @todo MDL-52805 This will be removed in Moodle 4.0
+     *
+     * @param  string $selectwhere
+     * @param  array  $params
+     * @param  string $sort
+     * @param  int    $limitfrom
+     * @param  int    $limitnum
+     * @return array
+     */
     public function get_events_select($selectwhere, array $params, $sort, $limitfrom, $limitnum) {
         global $DB;
 
@@ -114,6 +133,8 @@ class store implements \tool_log\log\store, \core\log\sql_reader {
 
     /**
      * Fetch records using given criteria returning a Traversable object.
+     * @deprecated since Moodle 3.6 MDL-52953 - Please use supported log stores such as "standard" or "external" instead.
+     * @todo MDL-52805 This will be removed in Moodle 4.0
      *
      * Note that the traversable object contains a moodle_recordset, so
      * remember that is important that you call close() once you finish
@@ -146,6 +167,8 @@ class store implements \tool_log\log\store, \core\log\sql_reader {
 
     /**
      * Returns an event from the log data.
+     * @deprecated since Moodle 3.6 MDL-52953 - Please use supported log stores such as "standard" or "external" instead.
+     * @todo MDL-52805 This will be removed in Moodle 4.0
      *
      * @param stdClass $data Log data
      * @return \core\event\base
@@ -154,6 +177,14 @@ class store implements \tool_log\log\store, \core\log\sql_reader {
         return \logstore_legacy\event\legacy_logged::restore_legacy($data);
     }
 
+    /**
+     * @deprecated since Moodle 3.6 MDL-52953 - Please use supported log stores such as "standard" or "external" instead.
+     * @todo MDL-52805 This will be removed in Moodle 4.0
+     *
+     * @param  string $selectwhere
+     * @param  array  $params
+     * @return int
+     */
     public function get_events_select_count($selectwhere, array $params) {
         global $DB;
 
@@ -170,6 +201,8 @@ class store implements \tool_log\log\store, \core\log\sql_reader {
 
     /**
      * Are the new events appearing in the reader?
+     * @deprecated since Moodle 3.6 MDL-52953 - Please use supported log stores such as "standard" or "external" instead.
+     * @todo MDL-52805 This will be removed in Moodle 4.0
      *
      * @return bool true means new log events are being added, false means no new data will be added
      */
@@ -177,6 +210,10 @@ class store implements \tool_log\log\store, \core\log\sql_reader {
         return (bool)$this->get_config('loglegacy', true);
     }
 
+    /**
+     * @deprecated since Moodle 3.6 MDL-52953 - Please use supported log stores such as "standard" or "external" instead.
+     * @todo MDL-52805 This will be removed in Moodle 4.0
+     */
     public function dispose() {
     }
 
