@@ -49,4 +49,4 @@ if ($notification) {
     }
 }
 
-redirect($redirecturl);
+redirect(new moodle_url($redirecturl));
