@@ -45,4 +45,4 @@ if ($USER->id != $notification->useridto) {
 }
 
 \core_message\api::mark_notification_as_read($notification);
-redirect($redirecturl);
+redirect(new moodle_url($redirecturl));
