@@ -1,5 +1,8 @@
 {{< core_form/element-template }}
     {{$element}}
+        {{#element.filepickerclientid}}
+            <div id="url-wrapper-{{element.filepickerclientid}}" class="d-inline-block">
+        {{/element.filepickerclientid}}
         <input type="url"
                 class="form-control {{#error}}is-invalid{{/error}}"
                 name="{{element.name}}"
@@ -13,6 +16,9 @@
                     readonly {{#element.hardfrozen}}disabled{{/element.hardfrozen}}
                 {{/element.frozen}}
                 {{{element.attributes}}} >
+        {{#element.filepickerclientid}}
+            </div>
+        {{/element.filepickerclientid}}
         {{^element.frozen}}
             {{{element.filepickerhtml}}}
         {{/element.frozen}}
