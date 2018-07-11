@@ -435,6 +435,9 @@ class core_course_renderer extends plugin_renderer_base {
         $output .= html_writer::empty_tag('input', array('type' => 'submit',
             'value' => get_string('go')));
         $output .= html_writer::end_tag('fieldset');
+        if ($format != 'navbar') {
+            $output .= $this->output->help_icon("coursesearch", "core");
+        }
         $output .= html_writer::end_tag('form');
 
         return $output;
@@ -1853,7 +1856,6 @@ class core_course_renderer extends plugin_renderer_base {
             // just print search form
             $content .= $this->box_start('generalbox mdl-align');
             $content .= $this->course_search_form();
-            $content .= html_writer::tag('div', get_string("searchhelp"), array('class' => 'searchhelp'));
             $content .= $this->box_end();
         }
         return $content;
