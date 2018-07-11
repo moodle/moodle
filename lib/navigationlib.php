@@ -2727,7 +2727,7 @@ class global_navigation extends navigation_node {
             $gradenode = $coursenode->add(get_string('grades'), $url, self::TYPE_SETTING, null,
                 'grades', new pix_icon('i/grades', ''));
             // If the page type matches the grade part, then make the nav drawer grade node (incl. all sub pages) active.
-            if (strpos($this->page->pagetype, 'grade-') === 0) {
+            if ($this->page->context->contextlevel < CONTEXT_MODULE && strpos($this->page->pagetype, 'grade-') === 0) {
                 $gradenode->make_active();
             }
         }
