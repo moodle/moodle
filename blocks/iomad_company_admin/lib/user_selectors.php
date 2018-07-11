@@ -890,7 +890,7 @@ class potential_license_user_selector extends user_selector_base {
             $edusql = "";
         }
         $licenseusers = $this->get_license_user_ids();
-        if (count($licenseusers) > 0 && (!$this->multiple || $this->program)) {
+        if (count($licenseusers) > 0 && (!$this->multiple || !$this->program)) {
             $userfilter = " AND NOT u.id in (" . implode(',', $licenseusers) . ") ";
         } else {
             $userfilter = "";
