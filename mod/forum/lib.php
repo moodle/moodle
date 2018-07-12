@@ -2680,8 +2680,8 @@ function forum_get_discussions($cm, $forumsort="", $fullpost=true, $unused=-1, $
     }
 
     $allnames = get_all_user_name_fields(true, 'u');
-    $sql = "SELECT $postdata, d.name, d.timemodified, d.usermodified, d.groupid, d.timestart, d.timeend, d.pinned, $allnames,
-                   u.email, u.picture, u.imagealt $umfields
+    $sql = "SELECT $postdata, d.name, d.timemodified, d.usermodified, d.groupid, d.timestart, d.timeend, d.pinned, p.created,
+                   $allnames, u.email, u.picture, u.imagealt $umfields
               FROM {forum_discussions} d
                    JOIN {forum_posts} p ON p.discussion = d.id
                    JOIN {user} u ON p.userid = u.id
@@ -3465,10 +3465,10 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
     $output .= html_writer::div($postsubject, 'subject', ['role' => 'heading', 'aria-level' => '2']);
 
     if ($authorhidden) {
-        $bytext = userdate($post->modified);
+        $bytext = userdate($post->created);
     } else {
         $by = new stdClass();
-        $by->date = userdate($post->modified);
+        $by->date = userdate($post->created);
         $by->name = html_writer::link($postuser->profilelink, $postuser->fullname);
         $bytext = get_string('bynameondate', 'forum', $by);
     }
@@ -3918,7 +3918,7 @@ function forum_print_discussion_header(&$post, $forum, $group = -1, $datestring 
     }
 
     echo '<td class="lastpost">';
-    $usedate = (empty($post->timemodified)) ? $post->modified : $post->timemodified;  // Just in case
+    $usedate = (empty($post->created)) ? $post->timemodified : $post->created;
     $parenturl = '';
     $usermodified = new stdClass();
     $usermodified->id = $post->usermodified;
