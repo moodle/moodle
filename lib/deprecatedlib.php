@@ -58,17 +58,11 @@ function add_to_log($courseid, $module, $action, $url='', $info='', $cm=0, $user
 }
 
 /**
- * Function to call all event handlers when triggering an event
- *
  * @deprecated since 2.6
- *
- * @param string $eventname name of the event
- * @param mixed $eventdata event data object
- * @return int number of failed events
  */
 function events_trigger($eventname, $eventdata) {
-    debugging('events_trigger() is deprecated, please use new events instead', DEBUG_DEVELOPER);
-    return events_trigger_legacy($eventname, $eventdata);
+    throw new coding_exception('events_trigger() can not be used any more.'.
+        ' Please use new events instead.');
 }
 
 /**

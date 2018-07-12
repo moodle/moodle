@@ -216,16 +216,11 @@ class core_eventslib_testcase extends advanced_testcase {
     }
 
     /**
-     * Tests events_trigger() function.
+     * Tests that events_trigger throws an exception.
      */
-    public function test_events_trigger_debugging() {
-
-        events_update_definition('unittest');
-        $this->assertDebuggingCalled(self::DEBUGGING_MSG, DEBUG_DEVELOPER);
-
-        $this->assertEquals(0, events_trigger('test_instant', 'ok'));
-        $debugmessages = array('events_trigger() is deprecated, please use new events instead', self::DEBUGGING_MSG);
-        $this->assertDebuggingCalledCount(2, $debugmessages, array(DEBUG_DEVELOPER, DEBUG_DEVELOPER));
+    public function test_events_trigger_exception() {
+        $this->expectException('coding_exception');
+        events_trigger('test_instant', 'ok');
     }
 }
 
