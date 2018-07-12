@@ -59,6 +59,8 @@ if ($frm = data_submitted() and confirm_sesskey()) {
         // Invalidate the course groups cache seeing as we've changed it.
         cache_helper::invalidate_by_definition('core', 'groupdata', array(), array($courseid));
 
+        // Invalidate the user_group_groupings cache, too.
+        cache_helper::purge_by_definition('core', 'user_group_groupings');
     } else if (isset($frm->remove) and !empty($frm->removeselect)) {
         foreach ($frm->removeselect as $groupid) {
             // Ask this method not to purge the cache, we'll do it ourselves afterwards.
@@ -66,6 +68,9 @@ if ($frm = data_submitted() and confirm_sesskey()) {
         }
         // Invalidate the course groups cache seeing as we've changed it.
         cache_helper::invalidate_by_definition('core', 'groupdata', array(), array($courseid));
+
+        // Invalidate the user_group_groupings cache, too.
+        cache_helper::purge_by_definition('core', 'user_group_groupings');
     }
 }
 
