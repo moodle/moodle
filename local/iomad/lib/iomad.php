@@ -354,7 +354,7 @@ class iomad {
         foreach ($categories as $id => $category) {
 
             // Try to find category in company list.
-            if ($company = $DB->get_record( 'company', array('profileid' => $id) ) ) {
+            if ($company = $DB->get_record( 'company', array('category' => $id) ) ) {
 
                 // If this is not the user's company then do not include.
                 if (!empty( $user->company )) {
