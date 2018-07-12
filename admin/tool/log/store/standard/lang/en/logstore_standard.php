@@ -23,6 +23,8 @@
  */
 
 $string['buffersize'] = 'Write buffer size';
+$string['jsonformat'] = 'JSON format';
+$string['jsonformat_desc'] = 'Use standard JSON format instead of PHP serialised data in the \'other\' database field.';
 $string['pluginname'] = 'Standard log';
 $string['pluginname_desc'] = 'A log plugin stores log entries in a Moodle database table.';
 $string['privacy:metadata:log'] = 'A collection of past events';

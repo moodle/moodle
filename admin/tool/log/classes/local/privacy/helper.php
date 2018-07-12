@@ -49,7 +49,7 @@ class helper {
         $extra = ['origin' => $data->origin, 'ip' => $data->ip, 'realuserid' => $data->realuserid];
         $data = (array) $data;
         $id = $data['id'];
-        $data['other'] = unserialize($data['other']);
+        $data['other'] = \logstore_standard\log\store::decode_other($data['other']);
         if ($data['other'] === false) {
             $data['other'] = [];
         }

@@ -33,10 +33,20 @@ class logstore_standard_store_testcase extends advanced_testcase {
      */
     private $wedisabledgc = false;
 
-    public function test_log_writing() {
+    /**
+     * Tests log writing.
+     *
+     * @param bool $jsonformat True to test with JSON format
+     * @dataProvider test_log_writing_provider
+     * @throws moodle_exception
+     */
+    public function test_log_writing(bool $jsonformat) {
         global $DB;
         $this->resetAfterTest();
         $this->preventResetByRollback(); // Logging waits till the transaction gets committed.
+
+        // Apply JSON format system setting.
+        set_config('jsonformat', $jsonformat ? 1 : 0, 'logstore_standard');
 
         $this->setAdminUser();
         $user1 = $this->getDataGenerator()->create_user();
@@ -82,7 +92,11 @@ class logstore_standard_store_testcase extends advanced_testcase {
 
         $log1 = reset($logs);
         unset($log1->id);
-        $log1->other = unserialize($log1->other);
+        if ($jsonformat) {
+            $log1->other = json_decode($log1->other, true);
+        } else {
+            $log1->other = unserialize($log1->other);
+        }
         $log1 = (array)$log1;
         $data = $event1->get_data();
         $data['origin'] = 'cli';
@@ -112,7 +126,11 @@ class logstore_standard_store_testcase extends advanced_testcase {
 
         $log3 = array_shift($logs);
         unset($log3->id);
-        $log3->other = unserialize($log3->other);
+        if ($jsonformat) {
+            $log3->other = json_decode($log3->other, true);
+        } else {
+            $log3->other = unserialize($log3->other);
+        }
         $log3 = (array)$log3;
         $data = $event2->get_data();
         $data['origin'] = 'restore';
@@ -198,6 +216,19 @@ class logstore_standard_store_testcase extends advanced_testcase {
 
         set_config('enabled_stores', '', 'tool_log');
         get_log_manager(true);
+    }
+
+    /**
+     * Returns different JSON format settings so the test can be run with JSON format either on or
+     * off.
+     *
+     * @return [bool] Array of true/false
+     */
+    public static function test_log_writing_provider(): array {
+        return [
+            [false],
+            [true]
+        ];
     }
 
     /**
@@ -330,6 +361,34 @@ class logstore_standard_store_testcase extends advanced_testcase {
         $clean->execute();
 
         $this->assertEquals(1, $DB->count_records('logstore_standard_log'));
+    }
+
+    /**
+     * Tests the decode_other function can cope with both JSON and PHP serialized format.
+     *
+     * @param mixed $value Value to encode and decode
+     * @dataProvider test_decode_other_provider
+     */
+    public function test_decode_other($value) {
+        $this->assertEquals($value, \logstore_standard\log\store::decode_other(serialize($value)));
+        $this->assertEquals($value, \logstore_standard\log\store::decode_other(json_encode($value)));
+    }
+
+    /**
+     * List of possible values for 'other' field.
+     *
+     * I took these types from our logs based on the different first character of PHP serialized
+     * data - my query found only these types. The normal case is an array.
+     *
+     * @return array Array of parameters
+     */
+    public function test_decode_other_provider(): array {
+        return [
+            [['info' => 'd2819896', 'logurl' => 'discuss.php?d=2819896']],
+            [null],
+            ['just a string'],
+            [32768]
+        ];
     }
 
     /**

@@ -30,6 +30,10 @@ if ($hassiteconfig) {
         new lang_string('logguests', 'core_admin'),
         new lang_string('logguests_help', 'core_admin'), 1));
 
+    $settings->add(new admin_setting_configcheckbox('logstore_standard/jsonformat',
+            new lang_string('jsonformat', 'logstore_standard'),
+            new lang_string('jsonformat_desc', 'logstore_standard'), 1));
+
     $options = array(
         0    => new lang_string('neverdeletelogs'),
         1000 => new lang_string('numdays', '', 1000),

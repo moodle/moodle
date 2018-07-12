@@ -2,6 +2,13 @@ This files describes API changes in /admin/tool/log - plugins,
 information provided here is intended especially for developers.
 
 
+=== 3.7 ===
+
+* The new jsonformat option, which defaults to 'on' for a new install (and 'off' for existing installs) means that
+  the 'other' event field is now stored in JSON format instead of PHP serialize format in the database. The system
+  can read data in both formats but if any third-party software directly accesses the database field, it may need
+  to be modified (or require users to turn off jsonformat).
+
 === 3.6 ===
 
 * The legacy log store is in its first stage of deprecation and is due for removal in Moodle 4.0. Please use one of
