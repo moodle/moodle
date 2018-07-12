@@ -222,7 +222,7 @@ Feature: Users can edit tags to add description or rename
       | Select tag Turtle | 1 |
     And I press "Combine selected"
     And I should see "Select the tag that will be used after combining"
-    And I click on "//form[@id='combinetags_form']//input[@type='radio'][3]" "xpath_element"
+    And I click on "Turtle" "radio" in the "#combinetags_form" "css_element"
     And I press "Continue"
     Then I should see "Tags are combined"
     And I should not see "Dog"
