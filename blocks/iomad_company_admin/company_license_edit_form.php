@@ -49,6 +49,9 @@ class company_license_form extends company_moodleform {
         } else {
             $this->parentlicense = null;
         }
+        if (!$this->license = $DB->get_record('companylicense', array('id' => $licenseid))) {
+            $this->license = new stdclass();
+        }
 
         $company = new company($this->selectedcompany);
         $parentlevel = company::get_company_parentnode($company->id);
@@ -143,7 +146,10 @@ class company_license_form extends company_moodleform {
             $mform->addElement('static', 'parentlicenseavailable', get_string('parentlicenseavailable', 'block_iomad_company_admin') . ': ' . $free);
 
             // Add in the selector for the company the license will be for.
-            $mform->addElement('select', 'designatedcompany', get_string('designatedcompany', 'block_iomad_company_admin'), $companylist);
+            $designatedcompanyselect = $mform->addElement('select', 'designatedcompany', get_string('designatedcompany', 'block_iomad_company_admin'), $companylist);
+            if (!empty($this->license->companyid)) {
+                $designatedcompanyselect->setSelected($this->license->companyid);
+            }
         }
 
         $mform->addElement('text',  'name', get_string('licensename', 'block_iomad_company_admin'),
@@ -421,6 +427,10 @@ if ( $mform->is_cancelled() || optional_param('cancel', false, PARAM_BOOL) ) {
 } else {
     if ( $data = $mform->get_data() ) {
         global $DB, $USER;
+
+        if (empty($data->instant)) {
+            $data->instant = 0;
+        }
 
         $new = false;
         $licensedata = array();
