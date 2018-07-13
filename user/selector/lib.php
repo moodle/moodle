@@ -105,6 +105,7 @@ abstract class user_selector_base {
             $this->accesscontext = context_system::instance();
         }
 
+        // Populate the list of additional user identifiers to display.
         if (isset($options['extrafields'])) {
             $this->extrafields = $options['extrafields'];
         } else if (!empty($CFG->showuseridentity) &&
@@ -113,6 +114,27 @@ abstract class user_selector_base {
         } else {
             $this->extrafields = array();
         }
+
+        // Filter out hidden identifiers if the user can't see them.
+        $hiddenfields = array_filter(explode(',', $CFG->hiddenuserfields));
+        $hiddenidentifiers = array_intersect($this->extrafields, $hiddenfields);
+
+        if ($hiddenidentifiers) {
+            if ($this->accesscontext->get_course_context(false)) {
+                // We are somewhere inside a course.
+                $canviewhiddenuserfields = has_capability('moodle/course:viewhiddenuserfields', $this->accesscontext);
+
+            } else {
+                // We are not inside a course.
+                $canviewhiddenuserfields = has_capability('moodle/user:viewhiddendetails', $this->accesscontext);
+            }
+
+            if (!$canviewhiddenuserfields) {
+                // Remove hidden identifiers from the list.
+                $this->extrafields = array_diff($this->extrafields, $hiddenidentifiers);
+            }
+        }
+
         if (isset($options['exclude']) && is_array($options['exclude'])) {
             $this->exclude = $options['exclude'];
         }
