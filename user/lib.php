@@ -1245,7 +1245,7 @@ function user_get_tagged_users($tag, $exclusivemode = false, $fromctx = 0, $ctx 
  * Returns the SQL used by the participants table.
  *
  * @param int $courseid The course id
- * @param int $groupid The groupid, 0 means all groups
+ * @param int $groupid The groupid, 0 means all groups and USERSWITHOUTGROUP no group
  * @param int $accesssince The time since last access, 0 means any time
  * @param int $roleid The role id, 0 means all roles
  * @param int $enrolid The enrolment id, 0 means all enrolment methods will be returned.
@@ -1416,7 +1416,7 @@ function user_get_participants_sql($courseid, $groupid = 0, $accesssince = 0, $r
  * Returns the total number of participants for a given course.
  *
  * @param int $courseid The course id
- * @param int $groupid The groupid, 0 means all groups
+ * @param int $groupid The groupid, 0 means all groups and USERSWITHOUTGROUP no group
  * @param int $accesssince The time since last access, 0 means any time
  * @param int $roleid The role id, 0 means all roles
  * @param int $enrolid The applied filter for the user enrolment ID.
@@ -1440,7 +1440,7 @@ function user_get_total_participants($courseid, $groupid = 0, $accesssince = 0, 
  * Returns the participants for a given course.
  *
  * @param int $courseid The course id
- * @param int $groupid The group id
+ * @param int $groupid The groupid, 0 means all groups and USERSWITHOUTGROUP no group
  * @param int $accesssince The time since last access
  * @param int $roleid The role id
  * @param int $enrolid The applied filter for the user enrolment ID.

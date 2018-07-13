@@ -136,7 +136,7 @@ class participants_table extends \table_sql {
      * Sets up the table.
      *
      * @param int $courseid
-     * @param int|false $currentgroup False if groups not used, int if groups used, 0 for all groups.
+     * @param int|false $currentgroup False if groups not used, int if groups used, 0 all groups, USERSWITHOUTGROUP for no group
      * @param int $accesssince The time the user last accessed the site
      * @param int $roleid The role we are including, 0 means all enrolled users
      * @param int $enrolid The applied filter for the user enrolment ID.

@@ -9,6 +9,7 @@ Feature: Course participants can be filtered
       | fullname | shortname | groupmode |
       | Course 1 | C1        |     1     |
       | Course 2 | C2        |     0     |
+      | Course 3 | C3        |     0     |
     And the following "users" exist:
       | username | firstname | lastname | email                |
       | student1 | Student   | 1        | student1@example.com |
@@ -25,17 +26,26 @@ Feature: Course participants can be filtered
       | student1 | C2     | student        |    0   |               |
       | student2 | C2     | student        |    0   |               |
       | student3 | C2     | student        |    0   |               |
+      | student1 | C3     | student        |    0   |               |
+      | student2 | C3     | student        |    0   |               |
+      | student3 | C3     | student        |    0   |               |
       | teacher1 | C1     | editingteacher |    0   |               |
       | teacher1 | C2     | editingteacher |    0   |               |
+      | teacher1 | C3     | editingteacher |    0   |               |
     And the following "groups" exist:
       | name    | course | idnumber |
       | Group 1 | C1     | G1       |
       | Group 2 | C1     | G2       |
+      | Group A | C3     | GA       |
+      | Group B | C3     | GB       |
     And the following "group members" exist:
       | user     | group |
       | student2 | G1    |
       | student2 | G2    |
       | student3 | G2    |
+      | student1 | GA    |
+      | student2 | GA    |
+      | student2 | GB    |
 
   @javascript
   Scenario: No filters applied
@@ -62,11 +72,31 @@ Feature: Course participants can be filtered
     # Note the 'XX-IGNORE-XX' elements are for when there is less than 2 'not expected' items.
     Examples:
       | filter1                         | expected1 | expected2 | expected3 | notexpected1 | notexpected2 |
+      | Group: No group                 | Student 1 | Student 4 | Teacher 1 | Student 2    | Student 3    |
       | Group: Group 1                  | Student 2 |           |           | Student 1    | Student 3    |
       | Group: Group 2                  | Student 2 | Student 3 |           | Student 1    | XX-IGNORE-XX |
       | Role: Teacher                   | Teacher 1 |           |           | Student 1    | Student 2    |
       | Status: Active                  | Teacher 1 | Student 1 | Student 3 | Student 2    | Student 4    |
       | Status: Inactive                | Student 2 | Student 4 |           | Teacher 1    | Student 1    |
+
+  @javascript
+  Scenario Outline: Filter users which are group members in several courses
+    Given I log in as "teacher1"
+    And I am on "Course 3" course homepage
+    And I navigate to course participants
+    When I open the autocomplete suggestions list
+    And I click on "<filter1>" item in the autocomplete list
+    Then I should see "<expected1>" in the "participants" "table"
+    And I should see "<expected2>" in the "participants" "table"
+    And I should see "<expected3>" in the "participants" "table"
+    And I should not see "<notexpected1>" in the "participants" "table"
+    And I should not see "<notexpected2>" in the "participants" "table"
+    # Note the 'XX-IGNORE-XX' elements are for when there is less than 2 'not expected' items.
+    Examples:
+      | filter1                         | expected1 | expected2 | expected3 | notexpected1 | notexpected2 |
+      | Group: No group                 | Student 3 |           |           | Student 1    | Student 2    |
+      | Group: Group A                  | Student 1 | Student 2 |           | Student 3    | XX-IGNORE-XX |
+      | Group: Group B                  | Student 2 |           |           | Student 1    | Student 3    |
 
   @javascript
   Scenario: Multiple filters applied
