@@ -31,7 +31,7 @@ if (isguestuser()) {
 }
 
 $notificationid = required_param('notificationid', PARAM_INT);
-$redirecturl = optional_param('redirecturl', $CFG->wwwroot, PARAM_LOCALURL);
+$redirecturl = optional_param('redirecturl', $CFG->wwwroot, PARAM_URL);
 $notification = $DB->get_record('notifications', array('id' => $notificationid));
 
 // Check notification belongs to this user.
