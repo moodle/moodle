@@ -2936,7 +2936,11 @@ class assign {
                     $prefix = str_replace('_', ' ', $groupname . get_string('participant', 'assign'));
                     $prefix = clean_filename($prefix . '_' . $this->get_uniqueid_for_user($userid));
                 } else {
-                    $prefix = str_replace('_', ' ', $groupname . fullname($student));
+                    if ( $groupname ) {
+                        $prefix = $groupname . '-' . $student->lastname . '-' . $student->firstname;
+                    } else {
+                        $prefix = $student->lastname . '-' . $student->firstname;
+                    }
                     $prefix = clean_filename($prefix . '_' . $this->get_uniqueid_for_user($userid));
                 }
 
@@ -4387,7 +4391,7 @@ class assign {
      * @return string
      */
     protected function check_submit_for_grading($mform) {
-        global $USER, $CFG;
+        global $USER, $CFG, $PAGE;
 
         require_once($CFG->dirroot . '/mod/assign/submissionconfirmform.php');
 
@@ -4406,10 +4410,14 @@ class assign {
 
         $data = new stdClass();
         $adminconfig = $this->get_admin_config();
+        if (isset($PAGE->theme->settings->submissionstatement)) {
+            $adminconfig->submissionstatement = $PAGE->theme->settings->submissionstatement;
+        } else {
+            $submissionstatement = '';
+        }
         $requiresubmissionstatement = $this->get_instance()->requiresubmissionstatement &&
                                        !empty($adminconfig->submissionstatement);
 
-        $submissionstatement = '';
         if (!empty($adminconfig->submissionstatement)) {
             // Format the submission statement before its sent. We turn off para because this is going within
             // a form element.
@@ -7037,7 +7045,7 @@ class assign {
      * @return void
      */
     public function add_submission_form_elements(MoodleQuickForm $mform, stdClass $data) {
-        global $USER;
+        global $USER, $PAGE;
 
         $userid = $data->userid;
         // Team submissions.
@@ -7049,7 +7057,12 @@ class assign {
 
         // Submission statement.
         $adminconfig = $this->get_admin_config();
-
+        if (isset($PAGE->theme->settings->submissionstatement)) {
+            $adminconfig->submissionstatement = $PAGE->theme->settings->submissionstatement;
+        } else {
+            $submissionstatement = '';
+        }
+        
         $requiresubmissionstatement = $this->get_instance()->requiresubmissionstatement &&
                                        !empty($adminconfig->submissionstatement);
 
