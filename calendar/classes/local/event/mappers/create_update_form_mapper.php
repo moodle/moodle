@@ -58,7 +58,7 @@ class create_update_form_mapper implements create_update_form_mapper_interface {
 
         if ($legacyevent->eventtype == 'group') {
             // Set up the correct value for the to display on the form.
-            $data->groupid = "{$legacyevent->courseid}-{$legacyevent->groupid}";
+            $data->groupid = $legacyevent->groupid;
             $data->groupcourseid = $legacyevent->courseid;
         }
         if ($legacyevent->eventtype == 'course') {
@@ -93,12 +93,8 @@ class create_update_form_mapper implements create_update_form_mapper_interface {
                 $properties->courseid = $data->groupcourseid;
                 unset($properties->groupcourseid);
             }
-
-            // Pull the group id back out of the value. The form saves the value
-            // as "<courseid>-<groupid>" to allow the javascript to work correctly.
             if (isset($data->groupid)) {
-                list($courseid, $groupid) = explode('-', $data->groupid);
-                $properties->groupid = $groupid;
+                $properties->groupid = $data->groupid;
             }
         } else {
             // Default course id if none is set.

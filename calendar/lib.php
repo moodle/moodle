@@ -3508,18 +3508,18 @@ function calendar_get_view(\calendar_information $calendar, $view, $includenavig
  */
 function calendar_output_fragment_event_form($args) {
     global $CFG, $OUTPUT, $USER;
-
+    require_once($CFG->libdir . '/grouplib.php');
     $html = '';
     $data = [];
     $eventid = isset($args['eventid']) ? clean_param($args['eventid'], PARAM_INT) : null;
     $starttime = isset($args['starttime']) ? clean_param($args['starttime'], PARAM_INT) : null;
-    $courseid = isset($args['courseid']) ? clean_param($args['courseid'], PARAM_INT) : null;
+    $courseid = (isset($args['courseid']) && $args['courseid'] != SITEID) ? clean_param($args['courseid'], PARAM_INT) : null;
     $categoryid = isset($args['categoryid']) ? clean_param($args['categoryid'], PARAM_INT) : null;
     $event = null;
     $hasformdata = isset($args['formdata']) && !empty($args['formdata']);
     $context = \context_user::instance($USER->id);
     $editoroptions = \core_calendar\local\event\forms\create::build_editor_options($context);
-    $formoptions = ['editoroptions' => $editoroptions];
+    $formoptions = ['editoroptions' => $editoroptions, 'courseid' => $courseid];
     $draftitemid = 0;
 
     if ($hasformdata) {
@@ -3534,6 +3534,13 @@ function calendar_output_fragment_event_form($args) {
     }
 
     if (is_null($eventid)) {
+        if (!empty($courseid)) {
+            $groupcoursedata = groups_get_course_data($courseid);
+            $formoptions['groups'] = [];
+            foreach ($groupcoursedata->groups as $groupid => $groupdata) {
+                $formoptions['groups'][$groupid] = $groupdata->name;
+            }
+        }
         $mform = new \core_calendar\local\event\forms\create(
             null,
             $formoptions,
@@ -3545,16 +3552,19 @@ function calendar_output_fragment_event_form($args) {
         );
 
         // Let's check first which event types user can add.
-        calendar_get_allowed_types($allowed, $courseid);
+        $eventtypes = calendar_get_allowed_event_types($courseid);
 
         // If the user is on course context and is allowed to add course events set the event type default to course.
-        if ($courseid != SITEID && !empty($allowed->courses)) {
+        if ($courseid != SITEID && !empty($eventtypes['course'])) {
             $data['eventtype'] = 'course';
             $data['courseid'] = $courseid;
             $data['groupcourseid'] = $courseid;
-        } else if (!empty($categoryid) && !empty($allowed->category)) {
+        } else if (!empty($categoryid) && !empty($eventtypes['category'])) {
             $data['eventtype'] = 'category';
             $data['categoryid'] = $categoryid;
+        } else if (!empty($groupcoursedata) && !empty($eventtypes['group'])) {
+            $data['groupcourseid'] = $courseid;
+            $data['groups'] = $groupcoursedata->groups;
         }
         $mform->set_data($data);
     } else {
@@ -3564,6 +3574,15 @@ function calendar_output_fragment_event_form($args) {
         $data = array_merge((array) $eventdata, $data);
         $event->count_repeats();
         $formoptions['event'] = $event;
+
+        if (!empty($event->courseid)) {
+            $groupcoursedata = groups_get_course_data($event->courseid);
+            $formoptions['groups'] = [];
+            foreach ($groupcoursedata->groups as $groupid => $groupdata) {
+                $formoptions['groups'][$groupid] = $groupdata->name;
+            }
+        }
+
         $data['description']['text'] = file_prepare_draft_area(
             $draftitemid,
             $event->context->id,
@@ -3745,7 +3764,7 @@ function calendar_get_allowed_event_types(int $courseid = null) {
 
     // We still don't know if the user can create group and course events, so iterate over the courses to find out
     // if the user has capabilities in one of the courses.
-    if (empty($courseid) && ($types['course'] == false || $types['group'] == false)) {
+    if ($types['course'] == false || $types['group'] == false) {
         $courses = calendar_get_default_courses(null, 'id', true);
 
         if (!empty($courses)) {
