@@ -4660,6 +4660,10 @@ body.lockscroll {
   max-width: 500px;
   margin: 0 auto;
 }
+progress {
+  display: block;
+  width: 100%;
+}
 /* IE10 only fix for calendar titling */
 .ie10 .yui3-calendar-header-label {
   display: inline-block;
