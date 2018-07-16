@@ -45,6 +45,30 @@ require_login($course);
 require_capability('moodle/course:update', context_course::instance($course->id));
 require_sesskey();
 
+$desirednumsections = 0;
+$courseformat = course_get_format($course);
+$lastsectionnumber = $courseformat->get_last_section_number();
+$maxsections = $courseformat->get_max_sections();
+
+if (isset($courseformatoptions['numsections']) && $increase !== null) {
+    $desirednumsections = $courseformatoptions['numsections'] + 1;
+} else if (course_get_format($course)->uses_sections() && $insertsection !== null) {
+    // Count the sections in the course.
+    $desirednumsections = $lastsectionnumber + $numsections;
+}
+
+if ($desirednumsections > $maxsections) {
+    // Increase in number of sections is not allowed.
+    \core\notification::warning(get_string('maxsectionslimit', 'moodle', $maxsections));
+    $increase = null;
+    $insertsection = null;
+    $numsections = 0;
+
+    if (!$returnurl) {
+        $returnurl = course_get_url($course);
+    }
+}
+
 if (isset($courseformatoptions['numsections']) && $increase !== null) {
     if ($increase) {
         // Add an additional section.
