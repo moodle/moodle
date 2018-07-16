@@ -287,6 +287,12 @@ class auth_plugin_shibboleth extends auth_plugin_base {
     public function loginpage_idp_list($wantsurl) {
         $config = get_config('auth_shibboleth');
         $result = [];
+
+        // Before displaying the button check that Shibboleth is set-up correctly.
+        if (empty($config->user_attribute)) {
+            return $result;
+        }
+
         $url = new moodle_url('/auth/shibboleth/index.php');
         $iconurl = moodle_url::make_pluginfile_url(context_system::instance()->id,
                                                    'auth_shibboleth',
