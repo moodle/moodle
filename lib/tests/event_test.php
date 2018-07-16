@@ -592,10 +592,12 @@ class core_event_testcase extends advanced_testcase {
         );
 
         $DB->delete_records('log', array());
+        $this->expectException('coding_exception');
         events_update_definition('unittest');
-        $this->assertDebuggingCalled(self::DEBUGGING_MSG, DEBUG_DEVELOPER);
+
         $DB->delete_records_select('events_handlers', "component <> 'unittest'");
         events_get_handlers('reset');
+        $this->assertDebuggingCalled(self::DEBUGGING_MSG, DEBUG_DEVELOPER);
         $this->assertEquals(3, $DB->count_records('events_handlers'));
         set_config('loglifetime', 60*60*24*5);
 
@@ -604,20 +606,17 @@ class core_event_testcase extends advanced_testcase {
 
         $event1 = \core_tests\event\unittest_executed::create(array('context'=>\context_system::instance(), 'other'=>array('sample'=>5, 'xx'=>10)));
         $event1->trigger();
-        $this->assertDebuggingCalled(self::DEBUGGING_MSG, DEBUG_DEVELOPER);
 
         $event2 = \core_tests\event\unittest_executed::create(array('context'=>\context_system::instance(), 'other'=>array('sample'=>6, 'xx'=>11)));
         $event2->nest = true;
         $event2->trigger();
-        $this->assertDebuggingCalledCount(2, array(self::DEBUGGING_MSG, self::DEBUGGING_MSG), array(DEBUG_DEVELOPER, DEBUG_DEVELOPER));
 
         $this->assertSame(
-            array('observe_all-5', 'observe_one-5', 'legacy_handler-0', 'observe_all-nesting-6', 'legacy_handler-0', 'observe_one-6', 'observe_all-666', 'observe_one-666', 'legacy_handler-0'),
+            array('observe_all-5', 'observe_one-5', 'observe_all-nesting-6', 'observe_one-6', 'observe_all-666', 'observe_one-666'),
             \core_tests\event\unittest_observer::$info);
 
         $this->assertSame($event1, \core_tests\event\unittest_observer::$event[0]);
         $this->assertSame($event1, \core_tests\event\unittest_observer::$event[1]);
-        $this->assertSame(array(0, 5), \core_tests\event\unittest_observer::$event[2]);
 
         $logs = $DB->get_records('log', array(), 'id ASC');
         $this->assertCount(0, $logs);

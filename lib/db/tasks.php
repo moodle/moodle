@@ -150,15 +150,6 @@ $tasks = array(
         'month' => '*'
     ),
     array(
-        'classname' => 'core\task\events_cron_task',
-        'blocking' => 0,
-        'minute' => '*',
-        'hour' => '*',
-        'day' => '*',
-        'dayofweek' => '*',
-        'month' => '*'
-    ),
-    array(
         'classname' => 'core\task\completion_regular_task',
         'blocking' => 0,
         'minute' => '*',

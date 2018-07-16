@@ -834,10 +834,6 @@ abstract class base implements \IteratorAggregate {
         \core\event\manager::dispatch($this);
 
         $this->dispatched = true;
-
-        if ($legacyeventname = static::get_legacy_eventname()) {
-            events_trigger_legacy($legacyeventname, $this->get_legacy_eventdata());
-        }
     }
 
     /**
