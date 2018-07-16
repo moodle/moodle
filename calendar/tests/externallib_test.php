@@ -1981,12 +1981,12 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         $this->resetAfterTest(true);
         $this->setUser($user);
 
-        $this->expectException('moodle_exception');
-
-        external_api::clean_returnvalue(
+        $result = external_api::clean_returnvalue(
             core_calendar_external::submit_create_update_form_returns(),
             core_calendar_external::submit_create_update_form($querystring)
         );
+
+        $this->assertTrue($result['validationerror']);
     }
 
     /**
@@ -2019,7 +2019,7 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
                 'minute' => 0,
             ],
             'eventtype' => 'group',
-            'groupid' => "{$course->id}-{$group->id}", // The form format.
+            'groupid' => $group->id,
             'groupcourseid' => $course->id,
             'description' => [
                 'text' => '',
@@ -2091,7 +2091,7 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
                 'minute' => 0,
             ],
             'eventtype' => 'group',
-            'groupid' => "{$course->id}-{$group->id}", // The form format.
+            'groupid' => $group->id,
             'groupcourseid' => $course->id,
             'description' => [
                 'text' => '',
@@ -2164,7 +2164,7 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
                 'minute' => 0,
             ],
             'eventtype' => 'group',
-            'groupid' => "{$course->id}-{$group->id}", // The form format.
+            'groupid' => $group->id,
             'groupcourseid' => $course->id,
             'description' => [
                 'text' => '',
@@ -2237,7 +2237,7 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
                 'minute' => 0,
             ],
             'eventtype' => 'group',
-            'groupid' => "{$course->id}-{$group->id}", // The form format.
+            'groupid' => $group->id,
             'groupcourseid' => $course->id,
             'description' => [
                 'text' => '',
