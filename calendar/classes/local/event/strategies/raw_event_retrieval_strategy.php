@@ -170,7 +170,7 @@ class raw_event_retrieval_strategy implements raw_event_retrieval_strategy_inter
         $subqueryconditions = [];
 
         // Get the user's courses. Otherwise, get the default courses being shown by the calendar.
-        $usercourses = calendar_get_default_courses();
+        $usercourses = calendar_get_default_courses(null, 'id, category, groupmode, groupmodeforce');
 
         // Set calendar filters.
         list($usercourses, $usergroups, $user) = calendar_set_filters($usercourses, true);

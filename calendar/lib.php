@@ -1070,7 +1070,7 @@ class calendar_information {
             $category = (\coursecat::get($course->category, MUST_EXIST, true))->get_db_record();
         } else if (!empty($categoryid)) {
             $course = get_site();
-            $courses = calendar_get_default_courses();
+            $courses = calendar_get_default_courses(null, 'id, category, groupmode, groupmodeforce');
 
             // Filter available courses to those within this category or it's children.
             $ids = [$categoryid];
@@ -1084,7 +1084,7 @@ class calendar_information {
             $calendar->context = context_coursecat::instance($categoryid);
         } else {
             $course = get_site();
-            $courses = calendar_get_default_courses();
+            $courses = calendar_get_default_courses(null, 'id, category, groupmode, groupmodeforce');
             $category = null;
 
             $calendar->context = context_system::instance();
