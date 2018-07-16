@@ -6394,3 +6394,76 @@ function message_delete_message($message, $userid) {
 
     return \core_message\api::delete_message($userid, $message->id);
 }
+
+/**
+ * Get all of the allowed types for all of the courses and groups
+ * the logged in user belongs to.
+ *
+ * The returned array will optionally have 5 keys:
+ *      'user' : true if the logged in user can create user events
+ *      'site' : true if the logged in user can create site events
+ *      'category' : array of course categories that the user can create events for
+ *      'course' : array of courses that the user can create events for
+ *      'group': array of groups that the user can create events for
+ *      'groupcourses' : array of courses that the groups belong to (can
+ *                       be different from the list in 'course'.
+ * @deprecated since 3.6
+ * @return array The array of allowed types.
+ */
+function calendar_get_all_allowed_types() {
+    debugging('calendar_get_all_allowed_types() is deprecated. Please use calendar_get_allowed_types() instead.',
+        DEBUG_DEVELOPER);
+
+    global $CFG, $USER, $DB;
+
+    require_once($CFG->libdir . '/enrollib.php');
+
+    $types = [];
+
+    $allowed = new stdClass();
+
+    calendar_get_allowed_types($allowed);
+
+    if ($allowed->user) {
+        $types['user'] = true;
+    }
+
+    if ($allowed->site) {
+        $types['site'] = true;
+    }
+
+    if (coursecat::has_manage_capability_on_any()) {
+        $types['category'] = coursecat::make_categories_list('moodle/category:manage');
+    }
+
+    // This function warms the context cache for the course so the calls
+    // to load the course context in calendar_get_allowed_types don't result
+    // in additional DB queries.
+    $courses = calendar_get_default_courses(null, 'id, groupmode, groupmodeforce', true);
+
+    // We want to pre-fetch all of the groups for each course in a single
+    // query to avoid calendar_get_allowed_types from hitting the DB for
+    // each separate course.
+    $groups = groups_get_all_groups_for_courses($courses);
+
+    foreach ($courses as $course) {
+        $coursegroups = isset($groups[$course->id]) ? $groups[$course->id] : null;
+        calendar_get_allowed_types($allowed, $course, $coursegroups);
+
+        if (!empty($allowed->courses)) {
+            $types['course'][$course->id] = $course;
+        }
+
+        if (!empty($allowed->groups)) {
+            $types['groupcourses'][$course->id] = $course;
+
+            if (!isset($types['group'])) {
+                $types['group'] = array_values($allowed->groups);
+            } else {
+                $types['group'] = array_merge($types['group'], array_values($allowed->groups));
+            }
+        }
+    }
+
+    return $types;
+}
