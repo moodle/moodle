@@ -127,27 +127,15 @@ WSDL;
  * @return SoapFault or void if everything was fine
  */
 function LogoutNotification($spsessionid) {
-    global $CFG;
-
     // Delete session of user using $spsessionid.
-    // The setting $CFG->session_handler_class may not be set. But if it is,
-    // it should override $CFG->dbsessions.
-    if (!empty($CFG->session_handler_class)) {
-        $sessionclass = $CFG->session_handler_class;
-        if (preg_match('/database/i', $sessionclass) === 1) {
-            return \auth_shibboleth\helper::logout_db_session($spsessionid);
-        } else if (preg_match('/file/i', $sessionclass) === 1) {
+    $sessionclass = \core\session\manager::get_handler_class();
+    switch ($sessionclass) {
+        case '\core\session\file':
             return \auth_shibboleth\helper::logout_file_session($spsessionid);
-        } else {
-            throw new moodle_exception("Shibboleth logout not implemented for '$sessionclass'");
-        }
-    } else {
-        // Session handler class is not specified, check dbsessions instead.
-        if (!empty($CFG->dbsessions)) {
+        case '\core\session\database':
             return \auth_shibboleth\helper::logout_db_session($spsessionid);
-        }
-        // Assume file sessions if dbsessions isn't used.
-        return \auth_shibboleth\helper::logout_file_session($spsessionid);
+        default:
+            throw new moodle_exception("Shibboleth logout not implemented for '$sessionclass'");
     }
     // If no SoapFault was thrown, the function will return OK as the SP assumes.
 }
