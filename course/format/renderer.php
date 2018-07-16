@@ -953,7 +953,10 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
             return '';
         }
 
-        $options = course_get_format($course)->get_format_options();
+        $format = course_get_format($course);
+        $options = $format->get_format_options();
+        $maxsections = $format->get_max_sections();
+        $lastsection = $format->get_last_section_number();
         $supportsnumsections = array_key_exists('numsections', $options);
 
         if ($supportsnumsections) {
@@ -964,13 +967,15 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
             echo html_writer::start_tag('div', array('id' => 'changenumsections', 'class' => 'mdl-right'));
 
             // Increase number of sections.
-            $straddsection = get_string('increasesections', 'moodle');
-            $url = new moodle_url('/course/changenumsections.php',
-                array('courseid' => $course->id,
-                      'increase' => true,
-                      'sesskey' => sesskey()));
-            $icon = $this->output->pix_icon('t/switch_plus', $straddsection);
-            echo html_writer::link($url, $icon.get_accesshide($straddsection), array('class' => 'increase-sections'));
+            if ($lastsection < $maxsections) {
+                $straddsection = get_string('increasesections', 'moodle');
+                $url = new moodle_url('/course/changenumsections.php',
+                    array('courseid' => $course->id,
+                          'increase' => true,
+                          'sesskey' => sesskey()));
+                $icon = $this->output->pix_icon('t/switch_plus', $straddsection);
+                echo html_writer::link($url, $icon.get_accesshide($straddsection), array('class' => 'increase-sections'));
+            }
 
             if ($course->numsections > 0) {
                 // Reduce number of sections sections.
@@ -986,11 +991,14 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
             echo html_writer::end_tag('div');
 
         } else if (course_get_format($course)->uses_sections()) {
+            if ($lastsection >= $maxsections) {
+                // Don't allow more sections if we already hit the limit.
+                return;
+            }
             // Current course format does not have 'numsections' option but it has multiple sections suppport.
             // Display the "Add section" link that will insert a section in the end.
             // Note to course format developers: inserting sections in the other positions should check both
             // capabilities 'moodle/course:update' and 'moodle/course:movesections'.
-
             echo html_writer::start_tag('div', array('id' => 'changenumsections', 'class' => 'mdl-right'));
             if (get_string_manager()->string_exists('addsections', 'format_'.$course->format)) {
                 $straddsections = get_string('addsections', 'format_'.$course->format);
@@ -1003,8 +1011,9 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
                 $url->param('sectionreturn', $sectionreturn);
             }
             $icon = $this->output->pix_icon('t/add', $straddsections);
+            $newsections = $maxsections - $lastsection;
             echo html_writer::link($url, $icon . $straddsections,
-                array('class' => 'add-sections', 'data-add-sections' => $straddsections));
+                array('class' => 'add-sections', 'data-add-sections' => $straddsections, 'new-sections' => $newsections));
             echo html_writer::end_tag('div');
         }
     }

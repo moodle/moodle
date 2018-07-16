@@ -582,9 +582,10 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
                 // Add a handler for "Add sections" link to ask for a number of sections to add.
                 str.get_string('numberweeks').done(function(strNumberSections) {
                     var trigger = $(SELECTOR.ADDSECTIONS),
-                        modalTitle = trigger.attr('data-add-sections');
+                        modalTitle = trigger.attr('data-add-sections'),
+                        newSections = trigger.attr('new-sections');
                     var modalBody = $('<div><label for="add_section_numsections"></label> ' +
-                        '<input id="add_section_numsections" type="number" min="1" value="1"></div>');
+                        '<input id="add_section_numsections" type="number" min="1" max="' + newSections + '" value="1"></div>');
                     modalBody.find('label').html(strNumberSections);
                     ModalFactory.create({
                         title: modalTitle,
