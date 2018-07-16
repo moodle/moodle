@@ -18,14 +18,13 @@
 /**
  * Handles viewing the report
  *
- * @package    mod
- * @subpackage iomadcertificate
+ * @package    mod_iomadcertificate
  * @copyright  Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require_once('../../config.php');
-require_once('lib.php');
+require_once('locallib.php');
 
 $id   = required_param('id', PARAM_INT); // Course module ID
 $sort = optional_param('sort', '', PARAM_RAW);
@@ -67,7 +66,7 @@ if (!$iomadcertificate = $DB->get_record('iomadcertificate', array('id'=> $cm->i
 }
 
 // Requires a course login
-require_course_login($course->id, false, $cm);
+require_login($course, false, $cm);
 
 // Check capabilities
 $context = context_module::instance($cm->id);
@@ -100,16 +99,19 @@ if (!$download) {
 if (!$users = iomadcertificate_get_issues($iomadcertificate->id, $DB->sql_fullname(), $groupmode, $cm, $page, $perpage)) {
     echo $OUTPUT->header();
     groups_print_activity_menu($cm, $CFG->wwwroot . '/mod/iomadcertificate/report.php?id='.$id);
-    notify(get_string('noiomadcertificatesissued', 'iomadcertificate'));
+    echo $OUTPUT->notification(get_string('noiomadcertificatesissued', 'iomadcertificate'));
     echo $OUTPUT->footer($course);
     exit();
 }
+
+// Get extra fields to show the user.
+$extrafields = get_extra_user_fields($context);
 
 if ($download == "ods") {
     require_once("$CFG->libdir/odslib.class.php");
 
     // Calculate file name
-    $filename = clean_filename("$course->shortname " . rtrim($iomadcertificate->name, '.') . '.ods');
+    $filename = iomadcertificate_get_iomadcertificate_filename($iomadcertificate, $cm, $course) . '.ods';
     // Creating a workbook
     $workbook = new MoodleODSWorkbook("-");
     // Send HTTP headers
@@ -120,11 +122,15 @@ if ($download == "ods") {
     // Print names of all the fields
     $myxls->write_string(0, 0, get_string("lastname"));
     $myxls->write_string(0, 1, get_string("firstname"));
-    $myxls->write_string(0, 2, get_string("idnumber"));
-    $myxls->write_string(0, 3, get_string("group"));
-    $myxls->write_string(0, 4, $strdate);
-    $myxls->write_string(0, 5, $strgrade);
-    $myxls->write_string(0, 6, $strcode);
+    $nextposition = 2;
+    foreach ($extrafields as $field) {
+        $myxls->write_string(0, $nextposition, get_user_field_name($field));
+        $nextposition++;
+    }
+    $myxls->write_string(0, $nextposition, get_string("group"));
+    $myxls->write_string(0, $nextposition + 1, $strdate);
+    $myxls->write_string(0, $nextposition + 2, $strgrade);
+    $myxls->write_string(0, $nextposition + 3, $strcode);
 
     // Generate the data for the body of the spreadsheet
     $i = 0;
@@ -133,18 +139,21 @@ if ($download == "ods") {
         foreach ($users as $user) {
             $myxls->write_string($row, 0, $user->lastname);
             $myxls->write_string($row, 1, $user->firstname);
-            $studentid = (!empty($user->idnumber)) ? $user->idnumber : " ";
-            $myxls->write_string($row, 2, $studentid);
+            $nextposition = 2;
+            foreach ($extrafields as $field) {
+                $myxls->write_string($row, $nextposition, $user->$field);
+                $nextposition++;
+            }
             $ug2 = '';
             if ($usergrps = groups_get_all_groups($course->id, $user->id)) {
                 foreach ($usergrps as $ug) {
                     $ug2 = $ug2. $ug->name;
                 }
             }
-            $myxls->write_string($row, 3, $ug2);
-            $myxls->write_string($row, 4, userdate($user->timecreated));
-            $myxls->write_string($row, 5, iomadcertificate_get_grade($iomadcertificate, $course, $user->id));
-            $myxls->write_string($row, 6, $user->code);
+            $myxls->write_string($row, $nextposition, $ug2);
+            $myxls->write_string($row, $nextposition + 1, userdate($user->timecreated));
+            $myxls->write_string($row, $nextposition + 2, iomadcertificate_get_grade($iomadcertificate, $course, $user->id));
+            $myxls->write_string($row, $nextposition + 3, $user->code);
             $row++;
         }
         $pos = 6;
@@ -158,7 +167,7 @@ if ($download == "xls") {
     require_once("$CFG->libdir/excellib.class.php");
 
     // Calculate file name
-    $filename = clean_filename("$course->shortname " . rtrim($iomadcertificate->name, '.') . '.xls');
+    $filename = iomadcertificate_get_iomadcertificate_filename($iomadcertificate, $cm, $course) . '.xls';
     // Creating a workbook
     $workbook = new MoodleExcelWorkbook("-");
     // Send HTTP headers
@@ -169,11 +178,15 @@ if ($download == "xls") {
     // Print names of all the fields
     $myxls->write_string(0, 0, get_string("lastname"));
     $myxls->write_string(0, 1, get_string("firstname"));
-    $myxls->write_string(0, 2, get_string("idnumber"));
-    $myxls->write_string(0, 3, get_string("group"));
-    $myxls->write_string(0, 4, $strdate);
-    $myxls->write_string(0, 5, $strgrade);
-    $myxls->write_string(0, 6, $strcode);
+    $nextposition = 2;
+    foreach ($extrafields as $field) {
+        $myxls->write_string(0, $nextposition, get_user_field_name($field));
+        $nextposition++;
+    }
+    $myxls->write_string(0, $nextposition, get_string("group"));
+    $myxls->write_string(0, $nextposition + 1, $strdate);
+    $myxls->write_string(0, $nextposition + 2, $strgrade);
+    $myxls->write_string(0, $nextposition + 3, $strcode);
 
     // Generate the data for the body of the spreadsheet
     $i = 0;
@@ -182,18 +195,21 @@ if ($download == "xls") {
         foreach ($users as $user) {
             $myxls->write_string($row, 0, $user->lastname);
             $myxls->write_string($row, 1, $user->firstname);
-            $studentid = (!empty($user->idnumber)) ? $user->idnumber : " ";
-            $myxls->write_string($row,2,$studentid);
+            $nextposition = 2;
+            foreach ($extrafields as $field) {
+                $myxls->write_string($row, $nextposition, $user->$field);
+                $nextposition++;
+            }
             $ug2 = '';
             if ($usergrps = groups_get_all_groups($course->id, $user->id)) {
                 foreach ($usergrps as $ug) {
                     $ug2 = $ug2 . $ug->name;
                 }
             }
-            $myxls->write_string($row, 3, $ug2);
-            $myxls->write_string($row, 4, userdate($user->timecreated));
-            $myxls->write_string($row, 5, iomadcertificate_get_grade($iomadcertificate, $course, $user->id));
-            $myxls->write_string($row, 6, $user->code);
+            $myxls->write_string($row, $nextposition, $ug2);
+            $myxls->write_string($row, $nextposition + 1, userdate($user->timecreated));
+            $myxls->write_string($row, $nextposition + 2, iomadcertificate_get_grade($iomadcertificate, $course, $user->id));
+            $myxls->write_string($row, $nextposition + 3, $user->code);
             $row++;
         }
         $pos = 6;
@@ -204,7 +220,7 @@ if ($download == "xls") {
 }
 
 if ($download == "txt") {
-    $filename = clean_filename("$course->shortname " . rtrim($iomadcertificate->name, '.') . '.txt');
+    $filename = iomadcertificate_get_iomadcertificate_filename($iomadcertificate, $cm, $course) . '.txt';
 
     header("Content-Type: application/download\n");
     header("Content-Disposition: attachment; filename=\"$filename\"");
@@ -213,7 +229,10 @@ if ($download == "txt") {
     header("Pragma: public");
 
     // Print names of all the fields
-    echo get_string("lastname"). "\t" .get_string("firstname") . "\t". get_string("idnumber") . "\t";
+    echo get_string("lastname"). "\t" .get_string("firstname") . "\t";
+    foreach ($extrafields as $field) {
+        echo get_user_field_name($field) . "\t";
+    }
     echo get_string("group"). "\t";
     echo $strdate. "\t";
     echo $strgrade. "\t";
@@ -224,12 +243,10 @@ if ($download == "txt") {
     $row=1;
     if ($users) foreach ($users as $user) {
         echo $user->lastname;
-        echo "\t" . $user->firstname;
-        $studentid = " ";
-        if (!empty($user->idnumber)) {
-            $studentid = $user->idnumber;
+        echo "\t" . $user->firstname . "\t";
+        foreach ($extrafields as $field) {
+            echo $user->$field . "\t";
         }
-        echo "\t" . $studentid . "\t";
         $ug2 = '';
         if ($usergrps = groups_get_all_groups($course->id, $user->id)) {
             foreach ($usergrps as $ug) {
@@ -251,13 +268,25 @@ $usercount = count(iomadcertificate_get_issues($iomadcertificate->id, $DB->sql_f
 $table = new html_table();
 $table->width = "95%";
 $table->tablealign = "center";
-$table->head  = array($strto, $strdate, $strgrade, $strcode);
-$table->align = array("left", "left", "center", "center");
+$table->head = array($strto);
+$table->align = array('left');
+foreach ($extrafields as $field) {
+    $table->head[] = get_user_field_name($field);
+    $table->align[] = 'left';
+}
+$table->head = array_merge($table->head, array($strdate, $strgrade, $strcode));
+$table->align = array_merge($table->align, array('left', 'center', 'center'));
 foreach ($users as $user) {
     $name = $OUTPUT->user_picture($user) . fullname($user);
     $date = userdate($user->timecreated) . iomadcertificate_print_user_files($iomadcertificate, $user->id, $context->id);
     $code = $user->code;
-    $table->data[] = array ($name, $date, iomadcertificate_get_grade($iomadcertificate, $course, $user->id), $code);
+    $data = array();
+    $data[] = $name;
+    foreach ($extrafields as $field) {
+        $data[] = $user->$field;
+    }
+    $data = array_merge($data, array($date, iomadcertificate_get_grade($iomadcertificate, $course, $user->id), $code));
+    $table->data[] = $data;
 }
 
 // Create table to store buttons

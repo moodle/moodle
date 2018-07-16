@@ -18,14 +18,13 @@
 /**
  * This page lists all the instances of iomadcertificate in a particular course
  *
- * @package    mod
- * @subpackage iomadcertificate
+ * @package    mod_iomadcertificate
  * @copyright  Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require_once('../../config.php');
-require_once('lib.php');
+require_once('locallib.php');
 
 $id = required_param('id', PARAM_INT);           // Course Module ID
 
@@ -35,7 +34,7 @@ if (!$course = $DB->get_record('course', array('id'=> $id))) {
 }
 
 // Requires a login
-require_course_login($course);
+require_login($course);
 
 // Declare variables
 $currentsection = "";

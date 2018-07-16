@@ -18,17 +18,14 @@
 /**
  * letter_non_embedded iomadcertificate type
  *
- * @package    mod
- * @subpackage iomadcertificate
+ * @package    mod_iomadcertificate
  * @copyright  Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-if (!defined('MOODLE_INTERNAL')) {
-    die('Direct access to this script is forbidden.'); // It must be included from view.php
-}
+defined('MOODLE_INTERNAL') || die();
 
-$pdf = new PDF($iomadcertificate->orientation, 'pt', 'Letter', true, 'UTF-8', false);
+$pdf = new PDF($iomadcertificate->orientation, 'pt', 'LETTER', true, 'UTF-8', false);
 
 $pdf->SetTitle($iomadcertificate->name);
 $pdf->SetProtection(array('modify'));
@@ -92,12 +89,12 @@ $pdf->SetTextColor(0, 0, 120);
 iomadcertificate_print_text($pdf, $x, $y, 'C', 'Helvetica', '', 30, get_string('title', 'iomadcertificate'));
 $pdf->SetTextColor(0, 0, 0);
 iomadcertificate_print_text($pdf, $x, $y + 55, 'C', 'Times', '', 20, get_string('certify', 'iomadcertificate'));
-iomadcertificate_print_text($pdf, $x, $y + 105, 'C', 'Helvetica', '', 30, fullname($certuser));
+iomadcertificate_print_text($pdf, $x, $y + 105, 'C', 'Helvetica', '', 30, fullname($USER));
 iomadcertificate_print_text($pdf, $x, $y + 155, 'C', 'Helvetica', '', 20, get_string('statement', 'iomadcertificate'));
-iomadcertificate_print_text($pdf, $x, $y + 205, 'C', 'Helvetica', '', 20, $course->fullname);
-iomadcertificate_print_text($pdf, $x, $y + 255, 'C', 'Helvetica', '', 14, iomadcertificate_get_date($iomadcertificate, $certrecord, $course, $certuser->id));
-iomadcertificate_print_text($pdf, $x, $y + 283, 'C', 'Times', '', 10, iomadcertificate_get_grade($iomadcertificate, $course, $certuser->id));
-iomadcertificate_print_text($pdf, $x, $y + 311, 'C', 'Times', '', 10, iomadcertificate_get_outcome($iomadcertificate, $course, $certuser->id));
+iomadcertificate_print_text($pdf, $x, $y + 205, 'C', 'Helvetica', '', 20, format_string($course->fullname));
+iomadcertificate_print_text($pdf, $x, $y + 255, 'C', 'Helvetica', '', 14, iomadcertificate_get_date($iomadcertificate, $certrecord, $course));
+iomadcertificate_print_text($pdf, $x, $y + 283, 'C', 'Times', '', 10, iomadcertificate_get_grade($iomadcertificate, $course));
+iomadcertificate_print_text($pdf, $x, $y + 311, 'C', 'Times', '', 10, iomadcertificate_get_outcome($iomadcertificate, $course));
 if ($iomadcertificate->printhours) {
     iomadcertificate_print_text($pdf, $x, $y + 339, 'C', 'Times', '', 10, get_string('credithours', 'iomadcertificate') . ': ' . $iomadcertificate->printhours);
 }
@@ -114,4 +111,3 @@ if ($iomadcertificate->printteacher) {
 }
 
 iomadcertificate_print_text($pdf, $custx, $custy, 'L', null, null, null, $iomadcertificate->customtext);
-?>

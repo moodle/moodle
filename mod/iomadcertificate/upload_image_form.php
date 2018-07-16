@@ -18,8 +18,7 @@
 /**
  * Handles uploading files
  *
- * @package    mod
- * @subpackage iomadcertificate
+ * @package    mod_iomadcertificate
  * @copyright  Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -29,7 +28,7 @@ if (!defined('MOODLE_INTERNAL')) {
 }
 
 require_once($CFG->libdir.'/formslib.php');
-require_once($CFG->dirroot.'/mod/iomadcertificate/lib.php');
+require_once($CFG->dirroot.'/mod/iomadcertificate/locallib.php');
 
 class mod_iomadcertificate_upload_image_form extends moodleform {
 

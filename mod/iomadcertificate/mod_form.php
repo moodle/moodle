@@ -18,8 +18,7 @@
 /**
 * Instance add/edit form
 *
-* @package    mod
-* @subpackage iomadcertificate
+* @package    mod_iomadcertificate
 * @copyright  Mark Nelson <markn@moodle.com>
 * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 */
@@ -29,8 +28,7 @@ if (!defined('MOODLE_INTERNAL')) {
 }
 
 require_once ($CFG->dirroot.'/course/moodleform_mod.php');
-require_once($CFG->dirroot.'/mod/iomadcertificate/lib.php');
-require_once($CFG->dirroot.'/local/iomad_settings/certificate/mod_form_lib.php');
+require_once($CFG->dirroot.'/mod/iomadcertificate/locallib.php');
 
 class mod_iomadcertificate_mod_form extends moodleform_mod {
 
@@ -49,8 +47,7 @@ class mod_iomadcertificate_mod_form extends moodleform_mod {
         }
         $mform->addRule('name', null, 'required', null, 'client');
 
-        //$this->add_intro_editor(false, get_string('intro', 'iomadcertificate'));
-        $this->standard_intro_elements();
+        $this->standard_intro_elements(get_string('intro', 'iomadcertificate'));
 
         // Issue options
         $mform->addElement('header', 'issueoptions', get_string('issueoptions', 'iomadcertificate'));
@@ -130,8 +127,6 @@ class mod_iomadcertificate_mod_form extends moodleform_mod {
         $mform->setType('customtext', PARAM_RAW);
         $mform->addHelpButton('customtext', 'customtext', 'iomadcertificate');
 
-        add_iomad_settings_elements($mform);
-
         // Design Options
         $mform->addElement('header', 'designoptions', get_string('designoptions', 'iomadcertificate'));
         $mform->addElement('select', 'iomadcertificatetype', get_string('iomadcertificatetype', 'iomadcertificate'), iomadcertificate_types());
@@ -140,7 +135,7 @@ class mod_iomadcertificate_mod_form extends moodleform_mod {
 
         $orientation = array( 'L' => get_string('landscape', 'iomadcertificate'), 'P' => get_string('portrait', 'iomadcertificate'));
         $mform->addElement('select', 'orientation', get_string('orientation', 'iomadcertificate'), $orientation);
-        $mform->setDefault('orientation', 'landscape');
+        $mform->setDefault('orientation', 'L');
         $mform->addHelpButton('orientation', 'orientation', 'iomadcertificate');
 
         $mform->addElement('select', 'borderstyle', get_string('borderstyle', 'iomadcertificate'), iomadcertificate_get_images(CERT_IMAGE_BORDER));

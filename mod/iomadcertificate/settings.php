@@ -18,17 +18,22 @@
 /**
  * Provides some custom settings for the iomadcertificate module
  *
- * @package    mod
- * @subpackage iomadcertificate
+ * @package    mod_iomadcertificate
  * @copyright  Michael Avelar <michaela@moodlerooms.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die;
 
-require_once($CFG->dirroot.'/mod/iomadcertificate/adminsetting.class.php');
+if ($ADMIN->fulltree) {
 
-$settings->add(new mod_iomadcertificate_admin_setting_upload('iomadcertificate/uploadimage',
-    get_string('uploadimage', 'iomadcertificate'), get_string('uploadimagedesc', 'iomadcertificate'), ''));
+    $settings->add(new mod_iomadcertificate_admin_setting_upload('iomadcertificate/uploadimage',
+        get_string('uploadimage', 'mod_iomadcertificate'), get_string('uploadimagedesc', 'iomadcertificate'), ''));
 
-?>
+    $settings->add(new mod_iomadcertificate_admin_setting_font('iomadcertificate/fontsans',
+        get_string('fontsans', 'mod_iomadcertificate'), get_string('fontsans_desc', 'mod_iomadcertificate'), 'freesans'));
+
+    $settings->add(new mod_iomadcertificate_admin_setting_font('iomadcertificate/fontserif',
+        get_string('fontserif', 'mod_iomadcertificate'), get_string('fontserif_desc', 'mod_iomadcertificate'), 'freeserif'));
+
+}

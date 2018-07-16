@@ -18,8 +18,7 @@
 /**
  * This file keeps track of upgrades to the iomadcertificate module
  *
- * @package    mod
- * @subpackage iomadcertificate
+ * @package    mod_iomadcertificate
  * @copyright  Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -48,14 +47,14 @@ function xmldb_iomadcertificate_upgrade($oldversion=0) {
 
         $table = new xmldb_table('iomadcertificate');
         $field = new xmldb_field('lockgrade');
-        $field->set_attributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'printhours');
+        $field->set_attributes(XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'printhours');
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
 
         $table = new xmldb_table('iomadcertificate');
         $field = new xmldb_field('requiredgrade');
-        $field->set_attributes(XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'lockgrade');
+        $field->set_attributes(XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0', 'lockgrade');
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
@@ -63,12 +62,12 @@ function xmldb_iomadcertificate_upgrade($oldversion=0) {
         // Rename field save to savecert
         $field = new xmldb_field('save');
         if ($dbman->field_exists($table, $field)) {
-            $field->set_attributes(XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'emailothers');
+            $field->set_attributes(XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, '0', 'emailothers');
             // Launch rename field savecert
             $dbman->rename_field($table, $field, 'savecert');
         } else {
             $field = new xmldb_field('savecert');
-            $field->set_attributes(XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'emailothers');
+            $field->set_attributes(XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, '0', 'emailothers');
 
             $dbman->add_field($table, $field);
         }
@@ -79,11 +78,11 @@ function xmldb_iomadcertificate_upgrade($oldversion=0) {
 
     if ($oldversion < 2007061301) {
         $table = new xmldb_table('iomadcertificate_linked_modules');
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE,  null, null);
-        $table->add_field('iomadcertificate_id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'id');
-        $table->add_field('linkid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'iomadcertificate_id');
-        $table->add_field('linkgrade', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'linkid');
-        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'linkgrade');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE,  null, null);
+        $table->add_field('iomadcertificate_id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'id');
+        $table->add_field('linkid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'iomadcertificate_id');
+        $table->add_field('linkgrade', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'linkid');
+        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'linkgrade');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'), null, null);
         $table->add_index('iomadcertificate_id', XMLDB_INDEX_NOTUNIQUE, array('iomadcertificate_id'));
         $table->add_index('linkid', XMLDB_INDEX_NOTUNIQUE, array('linkid'));
@@ -95,21 +94,11 @@ function xmldb_iomadcertificate_upgrade($oldversion=0) {
         upgrade_mod_savepoint(true, 2007061301, 'iomadcertificate');
     }
 
-    if ($oldversion < 2007061302) {
-        $table = new xmldb_table('iomadcertificate_linked_modules');
-        $field = new xmldb_field('linkid');
-        $field->set_attributes(XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'iomadcertificate_id');
-        $dbman->change_field_unsigned($table, $field);
-
-        // Certificate savepoint reached
-        upgrade_mod_savepoint(true, 2007061302, 'iomadcertificate');
-    }
-
     if ($oldversion < 2007102800) {
         // Add new fields to iomadcertificate table
         $table = new xmldb_table('iomadcertificate');
         $field = new xmldb_field('reportcert');
-        $field->set_attributes(XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'savecert');
+        $field->set_attributes(XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, '0', 'savecert');
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
@@ -129,7 +118,7 @@ function xmldb_iomadcertificate_upgrade($oldversion=0) {
         // Add new fields to iomadcertificate table
         $table = new xmldb_table('iomadcertificate');
         $field = new xmldb_field('printoutcome');
-        $field->set_attributes(XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'gradefmt');
+        $field->set_attributes(XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, '0', 'gradefmt');
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
@@ -157,7 +146,7 @@ function xmldb_iomadcertificate_upgrade($oldversion=0) {
     if ($oldversion < 2009062900) {
         // Add new field to iomadcertificate table
         $table = new xmldb_table('iomadcertificate');
-        $field = new xmldb_field('introformat', XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'intro');
+        $field = new xmldb_field('introformat', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0', 'intro');
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
@@ -167,7 +156,7 @@ function xmldb_iomadcertificate_upgrade($oldversion=0) {
             $dbman->add_field($table, $field);
         }
 
-        $field = new xmldb_field('reissuecert', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'reportcert');
+        $field = new xmldb_field('reissuecert', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, '0', 'reportcert');
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
@@ -196,7 +185,7 @@ function xmldb_iomadcertificate_upgrade($oldversion=0) {
 
         // Define field id to be added to iomadcertificate
         $table = new xmldb_table('iomadcertificate');
-        $field = new xmldb_field('introformat', XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0, 'intro');
+        $field = new xmldb_field('introformat', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, 0, 'intro');
 
         // Conditionally launch add field id
         if (!$dbman->field_exists($table, $field)) {
@@ -217,7 +206,7 @@ function xmldb_iomadcertificate_upgrade($oldversion=0) {
         // It is possible for these fields not to be added, ever, it is included in the upgrade
         // process but fresh iomadcertificate 1.9 install from CVS MOODLE_19_STABLE set the Moodle version
         // to 2009080900, which means it missed all the earlier code written for upgrading to 2.0.
-        $reissuefield = new xmldb_field('reissuecert', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'reportcert');
+        $reissuefield = new xmldb_field('reissuecert', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, '0', 'reportcert');
         $orientationfield = new xmldb_field('orientation', XMLDB_TYPE_CHAR, '10', null, XMLDB_NOTNULL, null, ' ', 'iomadcertificatetype');
 
         // Have to check, may be added during earlier upgrade, or may be missing due to not being included in install.xml
@@ -399,7 +388,7 @@ function xmldb_iomadcertificate_upgrade($oldversion=0) {
     if ($oldversion < 2012072501) {
         // Add a column to store the required grade
         $table = new xmldb_table('iomadcertificate');
-        $requiredtimefield = new xmldb_field('requiredtime', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED,
+        $requiredtimefield = new xmldb_field('requiredtime', XMLDB_TYPE_INTEGER, '10', null,
             XMLDB_NOTNULL, null, '0', 'delivery');
 
         if (!$dbman->field_exists($table, $requiredtimefield)) {
@@ -435,32 +424,32 @@ function xmldb_iomadcertificate_upgrade($oldversion=0) {
         $table = new xmldb_table('iomadcertificate');
 
         // Change length of the fields that store images, so longer image names can be stored
-        $field = new xmldb_field('borderstyle', XMLDB_TYPE_CHAR, '255', XMLDB_UNSIGNED, XMLDB_NOTNULL, 0);
+        $field = new xmldb_field('borderstyle', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, 0);
         $dbman->change_field_precision($table, $field);
 
-        $field = new xmldb_field('printwmark', XMLDB_TYPE_CHAR, '255', XMLDB_UNSIGNED, XMLDB_NOTNULL, 0);
+        $field = new xmldb_field('printwmark', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, 0);
         $dbman->change_field_precision($table, $field);
 
-        $field = new xmldb_field('printsignature', XMLDB_TYPE_CHAR, '255', XMLDB_UNSIGNED, XMLDB_NOTNULL, 0);
+        $field = new xmldb_field('printsignature', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, 0);
         $dbman->change_field_precision($table, $field);
 
-        $field = new xmldb_field('printseal', XMLDB_TYPE_CHAR, '255', XMLDB_UNSIGNED, XMLDB_NOTNULL, 0);
+        $field = new xmldb_field('printseal', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, 0);
         $dbman->change_field_precision($table, $field);
 
         // Change length of fields that are unnecessarily large
-        $field = new xmldb_field('printnumber', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, 0, 0);
+        $field = new xmldb_field('printnumber', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, 0, 0);
         $dbman->change_field_precision($table, $field);
 
-        $field = new xmldb_field('printhours', XMLDB_TYPE_CHAR, '255', XMLDB_UNSIGNED, false, 0, 0);
+        $field = new xmldb_field('printhours', XMLDB_TYPE_CHAR, '255', null, false, 0, 0);
         $dbman->change_field_precision($table, $field);
 
-        $field = new xmldb_field('emailteachers', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, 0, 0);
+        $field = new xmldb_field('emailteachers', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, 0, 0);
         $dbman->change_field_precision($table, $field);
 
-        $field = new xmldb_field('savecert', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, 0, 0);
+        $field = new xmldb_field('savecert', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, 0, 0);
         $dbman->change_field_precision($table, $field);
 
-        $field = new xmldb_field('reportcert', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, 0, 0);
+        $field = new xmldb_field('reportcert', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, 0, 0);
         $dbman->change_field_precision($table, $field);
 
         // Certificate savepoint reached
@@ -470,7 +459,7 @@ function xmldb_iomadcertificate_upgrade($oldversion=0) {
     if ($oldversion < 2012090901) {
         $table = new xmldb_table('iomadcertificate');
 
-        $field = new xmldb_field('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, 0, 0, 'printseal');
+        $field = new xmldb_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, 0, 0, 'printseal');
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
@@ -484,54 +473,28 @@ function xmldb_iomadcertificate_upgrade($oldversion=0) {
         upgrade_mod_savepoint(true, 2012090901, 'iomadcertificate');
     }
 
-    if ($oldversion < 2014110701) {
-        $systemcontext = context_system::instance();
-        if ($companymanagerrole = $DB->get_record('role', array('shortname' => 'companymanager'))) {
-            assign_capability( 'mod/iomadcertificate:viewother', CAP_ALLOW, $companymanagerrole->id, $systemcontext->id );
-        }
-        if ($companydepartmentmanagerrole = $DB->get_record('role', array('shortname' => 'companydepartmentmanger'))) {
-            assign_capability( 'mod/iomadcertificate:viewother', CAP_ALLOW, $companydepartmentmanagerrole->id, $systemcontext->id );
-        }
-        if ($clientadministratorrole = $DB->get_record('role', array('shortname' => 'clientadministrator'))) {
-            assign_capability( 'mod/iomadcertificate:viewother', CAP_ALLOW, $clientadministratorrole->id, $systemcontext->id );
-        }
+    if ($oldversion < 2014081901) {
+        // Fix previous upgrades.
 
-        // Certificate savepoint reached
-        upgrade_mod_savepoint(true, 2014110701, 'iomadcertificate');
-    }
-
-    if ($oldversion < 2015061800) {
-        $systemcontext = context_system::instance();
-        if ($authenticateduserrole = $DB->get_record('role', array('shortname' => 'authenticateduser'))) {
-            assign_capability( 'mod/iomadcertificate:view', CAP_ALLOW, $authenticateduserrole->id, $systemcontext->id );
-        }
-
-        // Certificate savepoint reached
-        upgrade_mod_savepoint(true, 2015061800, 'iomadcertificate');
-    }
-
-    if ($oldversion < 2015111601) {
-
-        // Define field customtext2 to be added to iomadcertificate.
         $table = new xmldb_table('iomadcertificate');
-        $field = new xmldb_field('customtext2', XMLDB_TYPE_TEXT, null, null, null, null, null, 'timemodified');
 
-        // Conditionally launch add field customtext2.
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
+        $field = new xmldb_field('borderstyle', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, 0, '0');
+        $dbman->change_field_default($table, $field);
 
-        // Define field customtext3 to be added to iomadcertificate.
-        $table = new xmldb_table('iomadcertificate');
-        $field = new xmldb_field('customtext3', XMLDB_TYPE_TEXT, null, null, null, null, null, 'timemodified');
+        $field = new xmldb_field('printwmark', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, 0, '0');
+        $dbman->change_field_default($table, $field);
 
-        // Conditionally launch add field customtext3.
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
+        $field = new xmldb_field('printhours', XMLDB_TYPE_CHAR, '255', null, false, 0, null);
+        $dbman->change_field_default($table, $field);
 
-        // Iomadcertificate savepoint reached.
-        upgrade_mod_savepoint(true, 2015111601, 'iomadcertificate');
+        $field = new xmldb_field('printsignature', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, 0, '0');
+        $dbman->change_field_default($table, $field);
+
+        $field = new xmldb_field('printseal', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, 0, '0');
+        $dbman->change_field_default($table, $field);
+
+        // Certificate savepoint reached.
+        upgrade_mod_savepoint(true, 2014081901, 'iomadcertificate');
     }
 
     return true;

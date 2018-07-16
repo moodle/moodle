@@ -18,14 +18,13 @@
 /**
  * Handles uploading files
  *
- * @package    mod
- * @subpackage iomadcertificate
+ * @package    mod_iomadcertificate
  * @copyright  Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require('../../config.php');
-require_once($CFG->dirroot.'/mod/iomadcertificate/lib.php');
+require_once($CFG->dirroot.'/mod/iomadcertificate/locallib.php');
 require_once($CFG->dirroot.'/mod/iomadcertificate/upload_image_form.php');
 
 require_login();
@@ -63,4 +62,3 @@ if ($upload_form->is_cancelled()) {
 echo $OUTPUT->header();
 echo $upload_form->display();
 echo $OUTPUT->footer();
-?>

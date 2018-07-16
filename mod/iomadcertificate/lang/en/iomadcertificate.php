@@ -1,6 +1,6 @@
 <?php
 
-// This file is part of the Certificate module for Moodle - http://moodle.org/
+// This file is part of the Iomad Certificate module for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,13 +18,10 @@
 /**
  * Language strings for the certificate module
  *
- * @package    mod
- * @subpackage certificate
+ * @package    mod_certificate
  * @copyright  Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-require_once(dirname(__FILE__) . '/../../../../local/iomad_settings/lang/en/local_iomad_settings.php');
 
 $string['addlinklabel'] = 'Add another linked activity option';
 $string['addlinktitle'] = 'Click to add another linked activity option';
@@ -48,6 +45,7 @@ $string['iomadcertificate:manage'] = 'Manage a certificate instance';
 $string['iomadcertificate:printteacher'] = 'Be listed as a teacher on the certificate if the print teacher setting is on';
 $string['iomadcertificate:student'] = 'Retrieve a certificate';
 $string['iomadcertificate:view'] = 'View a certificate';
+$string['iomadcertificate:viewother'] = 'View another users certificate';
 $string['iomadcertificatename'] = 'Certificate Name';
 $string['iomadcertificatereport'] = 'Certificates Report';
 $string['iomadcertificatesfor'] = 'Certificates for';
@@ -86,27 +84,31 @@ Email Certificate: Choosing this option sends the certificate to the student as 
 After a user receives their certificate, if they click on the certificate link from the course homepage, they will see the date they received their certificate and will be able to review their received certificate.';
 $string['designoptions'] = 'Design Options';
 $string['download'] = 'Force download';
-$string['emailiomadcertificate'] = 'Email (Must also choose save!)';
+$string['emailiomadcertificate'] = 'Email';
 $string['emailothers'] = 'Email Others';
 $string['emailothers_help'] = 'Enter the email addresses here, separated by a comma, of those who should be alerted with an email whenever students receive a certificate.';
 $string['emailstudenttext'] = 'Attached is your certificate for {$a->course}.';
 $string['emailteachers'] = 'Email Teachers';
 $string['emailteachers_help'] = 'If enabled, then teachers are alerted with an email whenever students receive a certificate.';
 $string['emailteachermail'] = '
-{$a->student} has received their certificate: \'{$a->iomadcertificate}\'
+{$a->student} has received their certificate: \'{$a->certificate}\'
 for {$a->course}.
 
 You can review it here:
 
     {$a->url}';
 $string['emailteachermailhtml'] = '
-{$a->student} has received their certificate: \'<i>{$a->iomadcertificate}</i>\'
+{$a->student} has received their certificate: \'<i>{$a->certificate}</i>\'
 for {$a->course}.
 
 You can review it here:
 
     <a href="{$a->url}">Certificate Report</a>.';
 $string['entercode'] = 'Enter certificate code to verify:';
+$string['fontsans'] = 'Sans-serif font family';
+$string['fontsans_desc'] = 'Sans-serif font family for certificates with embedded fonts';
+$string['fontserif'] = 'Serif font family';
+$string['fontserif_desc'] = 'Serif font family for certificates with embedded fonts';
 $string['getiomadcertificate'] = 'Get your certificate';
 $string['grade'] = 'Grade';
 $string['gradedate'] = 'Grade Date';
@@ -120,9 +122,8 @@ $string['gradeletter'] = 'Letter Grade';
 $string['gradepercent'] = 'Percentage Grade';
 $string['gradepoints'] = 'Points Grade';
 $string['imagetype'] = 'Image Type';
-$string['incompletemessage'] = 'In order to download your certificate, you must first complete all required '.'activities. Please return to the course to complete your coursework.';
+$string['incompletemessage'] = 'In order to download your certificate, you must first complete all required activities. Please return to the course to complete your coursework.';
 $string['intro'] = 'Introduction';
-$string['iomadcertificate:viewother'] = 'View another users certificate';
 $string['issueoptions'] = 'Issue Options';
 $string['issued'] = 'Issued';
 $string['issueddate'] = 'Date Issued';
@@ -131,6 +132,8 @@ $string['lastviewed'] = 'You last received this certificate on:';
 $string['letter'] = 'Letter';
 $string['lockingoptions'] = 'Locking Options';
 $string['modulename'] = 'Iomad Certificate';
+$string['modulename_help'] = 'This module allows for the dynamic generation of certificates based on predefined conditions set by the teacher.';
+$string['modulename_link'] = 'Certificate_module';
 $string['modulenameplural'] = 'Iomad Certificates';
 $string['myiomadcertificates'] = 'My Certificates';
 $string['noiomadcertificates'] = 'There are no certificates';
@@ -150,8 +153,8 @@ $string['openwindow'] = 'Click the button below to open your certificate in a ne
 $string['or'] = 'Or';
 $string['orientation'] = 'Orientation';
 $string['orientation_help'] = 'Choose whether you want your certificate orientation to be portrait or landscape.';
-$string['pluginadministration'] = 'Certificate administration';
-$string['pluginname'] = 'Certificate';
+$string['pluginadministration'] = 'Iomad Certificate administration';
+$string['pluginname'] = 'Iomad Certificate';
 $string['portrait'] = 'Portrait';
 $string['printdate'] = 'Print Date';
 $string['printdate_help'] = 'This is the date that will be printed, if a print date is selected. If the course completion date is selected but the student has not completed the course, the date received will be printed. You can also choose to print the date based on when an activity was graded. If a certificate is issued before that activity is graded, the date received will be printed.';
@@ -172,7 +175,6 @@ $string['printteacher'] = 'Print Teacher Name(s)';
 $string['printteacher_help'] = 'For printing the teacher name on the certificate, set the role of teacher at the module level.  Do this if, for example, you have more than one teacher for the course or you have more than one certificate in the course and you want to print different teacher names on each certificate.  Click to edit the certificate, then click on the Locally assigned roles tab.  Then assign the role of Teacher (editing teacher) to the certificate (they do not HAVE to be a teacher in the course--you can assign that role to anyone).  Those names will be printed on the certificate for teacher.';
 $string['printwmark'] = 'Watermark Image';
 $string['printwmark_help'] = 'A watermark file can be placed in the background of the certificate. A watermark is a faded graphic. A watermark could be a logo, seal, crest, wording, or whatever you want to use as a graphic background.';
-$string['privacy:metadata'] = 'The Iomad Crtificate activity only shows data stored in other locations.';
 $string['receivedcerts'] = 'Received certificates';
 $string['receiveddate'] = 'Date Received';
 $string['removecert'] = 'Issued certificates removed';
@@ -188,7 +190,7 @@ $string['seal'] = 'Seal';
 $string['sigline'] = 'line';
 $string['signature'] = 'Signature';
 $string['statement'] = 'has completed the course';
-$string['summaryofattempts'] = 'Summary of Previously Received Certificates';
+$string['summaryofattempts'] = 'Summary of previously received certificates';
 $string['textoptions'] = 'Text Options';
 $string['title'] = 'CERTIFICATE of ACHIEVEMENT';
 $string['to'] = 'Awarded to';
@@ -211,3 +213,4 @@ $string['companydetails'] = 'has successfully completed the web-based training p
 $string['companyscore'] = 'with an overall score of {$a}';
 $string['companydate'] = 'on {$a}';
 $string['companydatecap'] = 'On {$a}';
+

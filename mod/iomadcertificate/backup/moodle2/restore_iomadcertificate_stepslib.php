@@ -16,7 +16,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package moodlecore
+ * @package    mod_iomadcertificate
  * @subpackage backup-moodle2
  * @copyright 2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -69,6 +69,9 @@ class restore_iomadcertificate_activity_structure_step extends restore_activity_
 
         $data->iomadcertificateid = $this->get_new_parentid('iomadcertificate');
         $data->timecreated = $this->apply_date_offset($data->timecreated);
+        if ($data->userid > 0) {
+            $data->userid = $this->get_mappingid('user', $data->userid);
+        }
 
         $newitemid = $DB->insert_record('iomadcertificate_issues', $data);
         $this->set_mapping('iomadcertificate_issue', $oldid, $newitemid);
