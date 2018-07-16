@@ -285,15 +285,9 @@ class auth_plugin_shibboleth extends auth_plugin_base {
      * @return array List of arrays with keys url, iconurl and name.
      */
     public function loginpage_idp_list($wantsurl) {
-        global $CFG;
         $config = get_config('auth_shibboleth');
-        if (empty($CFG->loginhttps)) {
-            $securewwwroot = $CFG->wwwroot;
-        } else {
-            $securewwwroot = str_replace('http:', 'https:', $CFG->wwwroot);
-        }
         $result = [];
-        $url = new moodle_url($securewwwroot.'/auth/shibboleth/index.php');
+        $url = new moodle_url('/auth/shibboleth/index.php');
         $iconurl = moodle_url::make_pluginfile_url(context_system::instance()->id,
                                                    'auth_shibboleth',
                                                    'logo',
