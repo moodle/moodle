@@ -87,7 +87,6 @@ require_once($CFG->dirroot . '/mod/assign/feedbackplugin.php');
 require_once($CFG->dirroot . '/mod/assign/submissionplugin.php');
 require_once($CFG->dirroot . '/mod/assign/renderable.php');
 require_once($CFG->dirroot . '/mod/assign/gradingtable.php');
-require_once($CFG->libdir . '/eventslib.php');
 require_once($CFG->libdir . '/portfolio/caller.php');
 
 use \mod_assign\output\grading_app;

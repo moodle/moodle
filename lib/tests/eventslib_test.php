@@ -53,7 +53,7 @@ class core_eventslib_testcase extends advanced_testcase {
         global $DB;
 
         events_update_definition('unittest');
-        $this->assertDebuggingCalled(self::DEBUGGING_MSG, DEBUG_DEVELOPER);
+        $this->assertDebuggingCalledCount(4);
 
         $dbcount = $DB->count_records('events_handlers', array('component'=>'unittest'));
         $handlers = array();
@@ -68,9 +68,10 @@ class core_eventslib_testcase extends advanced_testcase {
         global $DB;
 
         events_update_definition('unittest');
-        $this->assertDebuggingCalled(self::DEBUGGING_MSG, DEBUG_DEVELOPER);
+        $this->assertDebuggingCalledCount(4);
 
         events_uninstall('unittest');
+        $this->assertDebuggingCalledCount(4);
         $this->assertEquals(0, $DB->count_records('events_handlers', array('component'=>'unittest')), 'All handlers should be uninstalled: %s');
     }
 
@@ -81,7 +82,7 @@ class core_eventslib_testcase extends advanced_testcase {
         global $DB;
 
         events_update_definition('unittest');
-        $this->assertDebuggingCalled(self::DEBUGGING_MSG, DEBUG_DEVELOPER);
+        $this->assertDebuggingCalledCount(4);
 
         // First modify directly existing handler.
         $handler = $DB->get_record('events_handlers', array('component'=>'unittest', 'eventname'=>'test_instant'));
@@ -93,7 +94,7 @@ class core_eventslib_testcase extends advanced_testcase {
 
         // Update the definition, it should revert the handler back.
         events_update_definition('unittest');
-        $this->assertDebuggingCalled(self::DEBUGGING_MSG, DEBUG_DEVELOPER);
+        $this->assertDebuggingCalledCount(4);
         $handler = $DB->get_record('events_handlers', array('component'=>'unittest', 'eventname'=>'test_instant'));
         $this->assertSame($handler->handlerfunction, $original, 'update should sync db with file definition: %s');
     }

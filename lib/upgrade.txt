@@ -23,6 +23,12 @@ information provided here is intended especially for developers.
     - I set the field "<field_string>" to multiline
     - I follow "<link_string>"" in the open menu
 * Removed the lib/password_compat/lib/password.php file.
+* The eventslib.php file has been deleted and its functions have been moved to deprecatedlib.php. The affected functions are:
+  - events_get_cached()
+  - events_uninstall()
+  - events_cleanup()
+  - events_dequeue()
+  - events_get_handlers()
 
 === 3.5 ===
 

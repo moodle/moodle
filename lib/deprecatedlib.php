@@ -6607,3 +6607,136 @@ function groups_get_all_groups_for_courses($courses) {
 
     return $groups;
 }
+
+/**
+ * Gets the capabilities that have been cached in the database for this
+ * component.
+ * @deprecated since Moodle 3.6. Please use the Events 2 API.
+ * @todo final deprecation. To be removed in Moodle 4.0
+ *
+ * @access protected To be used from eventslib only
+ *
+ * @param string $component examples: 'moodle', 'mod_forum', 'block_quiz_results'
+ * @return array of events
+ */
+function events_get_cached($component) {
+    global $DB;
+
+    debugging('Events API using $handlers array has been deprecated in favour of Events 2 API, please use it instead.',
+            DEBUG_DEVELOPER);
+
+    $cachedhandlers = array();
+
+    if ($storedhandlers = $DB->get_records('events_handlers', array('component'=>$component))) {
+        foreach ($storedhandlers as $handler) {
+            $cachedhandlers[$handler->eventname] = array (
+                'id'              => $handler->id,
+                'handlerfile'     => $handler->handlerfile,
+                'handlerfunction' => $handler->handlerfunction,
+                'schedule'        => $handler->schedule,
+                'internal'        => $handler->internal);
+        }
+    }
+
+    return $cachedhandlers;
+}
+
+/**
+ * Remove all event handlers and queued events
+ * @deprecated since Moodle 3.6. Please use the Events 2 API.
+ * @todo final deprecation. To be removed in Moodle 4.0
+ *
+ * @category event
+ * @param string $component examples: 'moodle', 'mod_forum', 'block_quiz_results'
+ */
+function events_uninstall($component) {
+    debugging('Events API using $handlers array has been deprecated in favour of Events 2 API, please use it instead.',
+            DEBUG_DEVELOPER);
+    $cachedhandlers = events_get_cached($component);
+    events_cleanup($component, $cachedhandlers);
+
+    events_get_handlers('reset');
+}
+
+/**
+ * Deletes cached events that are no longer needed by the component.
+ * @deprecated since Moodle 3.6. Please use the Events 2 API.
+ * @todo final deprecation. To be removed in Moodle 4.0
+ *
+ * @access protected To be used from eventslib only
+ *
+ * @param string $component examples: 'moodle', 'mod_forum', 'block_quiz_results'
+ * @param array $cachedhandlers array of the cached events definitions that will be
+ * @return int number of unused handlers that have been removed
+ */
+function events_cleanup($component, $cachedhandlers) {
+    global $DB;
+    debugging('Events API using $handlers array has been deprecated in favour of Events 2 API, please use it instead.',
+            DEBUG_DEVELOPER);
+    $deletecount = 0;
+    foreach ($cachedhandlers as $eventname => $cachedhandler) {
+        if ($qhandlers = $DB->get_records('events_queue_handlers', array('handlerid'=>$cachedhandler['id']))) {
+            //debugging("Removing pending events from queue before deleting of event handler: $component - $eventname");
+            foreach ($qhandlers as $qhandler) {
+                events_dequeue($qhandler);
+            }
+        }
+        $DB->delete_records('events_handlers', array('eventname'=>$eventname, 'component'=>$component));
+        $deletecount++;
+    }
+
+    return $deletecount;
+}
+
+/**
+ * Removes this queued handler from the events_queued_handler table
+ *
+ * Removes events_queue record from events_queue if no more references to this event object exists
+ * @deprecated since Moodle 3.6. Please use the Events 2 API.
+ * @todo final deprecation. To be removed in Moodle 4.0
+ *
+ * @access protected To be used from eventslib only
+ *
+ * @param stdClass $qhandler A row from the events_queued_handler table
+ */
+function events_dequeue($qhandler) {
+    global $DB;
+    debugging('Events API using $handlers array has been deprecated in favour of Events 2 API, please use it instead.',
+            DEBUG_DEVELOPER);
+    // first delete the queue handler
+    $DB->delete_records('events_queue_handlers', array('id'=>$qhandler->id));
+
+    // if no more queued handler is pointing to the same event - delete the event too
+    if (!$DB->record_exists('events_queue_handlers', array('queuedeventid'=>$qhandler->queuedeventid))) {
+        $DB->delete_records('events_queue', array('id'=>$qhandler->queuedeventid));
+    }
+}
+
+/**
+ * Returns handlers for given event. Uses caching for better perf.
+ * @deprecated since Moodle 3.6. Please use the Events 2 API.
+ * @todo final deprecation. To be removed in Moodle 4.0
+ *
+ * @access protected To be used from eventslib only
+ *
+ * @staticvar array $handlers
+ * @param string $eventname name of event or 'reset'
+ * @return array|false array of handlers or false otherwise
+ */
+function events_get_handlers($eventname) {
+    global $DB;
+    static $handlers = array();
+    debugging('Events API using $handlers array has been deprecated in favour of Events 2 API, please use it instead.',
+            DEBUG_DEVELOPER);
+
+    if ($eventname === 'reset') {
+        $handlers = array();
+        return false;
+    }
+
+    if (!array_key_exists($eventname, $handlers)) {
+        $handlers[$eventname] = $DB->get_records('events_handlers', array('eventname'=>$eventname));
+    }
+
+    return $handlers[$eventname];
+}

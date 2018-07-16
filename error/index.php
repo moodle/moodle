@@ -1,7 +1,6 @@
 <?php
 
     require('../config.php');
-    require_once($CFG->libdir.'/eventslib.php');
 
     // Form submitted, do not check referer (original page unknown).
     if ($form = data_submitted()) {
