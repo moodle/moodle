@@ -105,7 +105,7 @@ if ($iomadcertificate->requiredtime && !has_capability('mod/iomadcertificate:man
 }
 
 // Create new iomadcertificate record, or return existing record
-$certrecord = iomadcertificate_get_issue($course, $USER, $iomadcertificate, $cm);
+$certrecord = iomadcertificate_get_issue($course, $certuser, $iomadcertificate, $cm);
 
 make_cache_directory('tcpdf');
 

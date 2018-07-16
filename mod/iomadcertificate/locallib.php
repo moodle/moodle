@@ -277,7 +277,7 @@ function iomadcertificate_email_student($course, $iomadcertificate, $certrecord,
  * @return bool return true if successful, false otherwise
  */
 function iomadcertificate_save_pdf($pdf, $certrecordid, $filename, $contextid) {
-    global $USER;
+    global $certuser;
 
     if (empty($certrecordid)) {
         return false;
@@ -301,7 +301,7 @@ function iomadcertificate_save_pdf($pdf, $certrecordid, $filename, $contextid) {
         'filepath'  => $filepath,     // any path beginning and ending in /
         'filename'  => $filename,    // any filename
         'mimetype'  => 'application/pdf',    // any filename
-        'userid'    => $USER->id);
+        'userid'    => $certuser->id);
 
     // We do not know the previous file name, better delete everything here,
     // luckily there is supposed to be always only one iomadcertificate here.
@@ -1003,13 +1003,13 @@ function iomadcertificate_get_grade($iomadcertificate, $course, $userid = null, 
  * @return string the outcome
  */
 function iomadcertificate_get_outcome($iomadcertificate, $course) {
-    global $USER;
+    global $certuser;
 
     if ($iomadcertificate->printoutcome > 0) {
         if ($grade_item = new grade_item(array('id' => $iomadcertificate->printoutcome))) {
             $outcomeinfo = new stdClass;
             $outcomeinfo->name = $grade_item->get_name();
-            $outcome = new grade_grade(array('itemid' => $grade_item->id, 'userid' => $USER->id));
+            $outcome = new grade_grade(array('itemid' => $grade_item->id, 'userid' => $certuser->id));
             $outcomeinfo->grade = grade_format_gradevalue($outcome->finalgrade, $grade_item, true, GRADE_DISPLAY_TYPE_REAL);
 
             return $outcomeinfo->name . ': ' . $outcomeinfo->grade;

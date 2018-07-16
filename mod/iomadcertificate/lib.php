@@ -266,7 +266,7 @@ function iomadcertificate_supports($feature) {
  * @return bool|nothing false if file not found, does not return anything if found - just send the file
  */
 function iomadcertificate_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload) {
-    global $CFG, $DB, $USER;
+    global $CFG, $DB, $certuser;
 
     if ($context->contextlevel != CONTEXT_MODULE) {
         return false;
@@ -287,7 +287,7 @@ function iomadcertificate_pluginfile($course, $cm, $context, $filearea, $args, $
     }
 
     $canmanageiomadcertificate = has_capability('mod/iomadcertificate:manage', $context);
-    if ($USER->id != $certrecord->userid and !$canmanageiomadcertificate) {
+    if ($certuser->id != $certrecord->userid and !$canmanageiomadcertificate) {
         return false;
     }
 
