@@ -7,6 +7,10 @@ information provided here is intended especially for developers.
 
 - external_function_info()
 
+* Following behat steps have been removed from core:
+    - I set the field "<field_string>" to multiline
+    - I follow "<link_string>"" in the open menu
+
 === 3.5 ===
 
 * There is a new privacy API that every subsystem and plugin has to implement so that the site can become GDPR
