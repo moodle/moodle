@@ -68,9 +68,3 @@
         {{/ core/paged_content_paging_dropdown_item }}
     </ul>
 </div>
-{{#js}}
-require(['jquery', 'core/paged_content_paging_dropdown'], function($, PagingControl) {
-    var root = $('#paging-dropdown-{{uniqid}}');
-    PagingControl.init(root);
-});
-{{/js}}
