@@ -202,24 +202,10 @@ abstract class quiz_attempts_report extends quiz_default_report {
             $headers[] = get_string('firstname');
         }
 
-        // When downloading, some extra fields are always displayed (because
-        // there's no space constraint) so do not include in extra-field list.
-        $extrafields = get_extra_user_fields($this->context,
-                $table->is_downloading() ? array('institution', 'department', 'email') : array());
+        $extrafields = get_extra_user_fields($this->context);
         foreach ($extrafields as $field) {
             $columns[] = $field;
             $headers[] = get_user_field_name($field);
-        }
-
-        if ($table->is_downloading()) {
-            $columns[] = 'institution';
-            $headers[] = get_string('institution');
-
-            $columns[] = 'department';
-            $headers[] = get_string('department');
-
-            $columns[] = 'email';
-            $headers[] = get_string('email');
         }
     }
 
