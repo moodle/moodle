@@ -120,31 +120,28 @@ function SCORMapi1_3(def, cmiobj, cmiint, cmicommentsuser, cmicommentslms, scorm
     }
 
     var correct_responses = {
-        'true-false':{'pre':'', 'max':1, 'delimiter':'', 'unique':false, 'duplicate':false,
+        'true-false':{'max':1, 'delimiter':'', 'unique':false, 'duplicate':false,
                       'format':'^true$|^false$',
                       'limit':1},
-        'choice':{'pre':'', 'max':36, 'delimiter':'[,]', 'unique':true, 'duplicate':false,
+        'choice':{'max':36, 'delimiter':'[,]', 'unique':true, 'duplicate':false,
                   'format':CMIShortIdentifier},
-//        'fill-in':{'pre':'^(((\{case_matters=(true|false)\})(\{order_matters=(true|false)\})?)|((\{order_matters=(true|false)\})(\{case_matters=(true|false)\})?))(.*?)$',
-        'fill-in':{'pre':'',
-                   'max':10, 'delimiter':'[,]', 'unique':false, 'duplicate':false,
+        'fill-in':{'max':10, 'delimiter':'[,]', 'unique':false, 'duplicate':false,
                    'format':CMILangString250cr},
-        'long-fill-in':{'pre':'^(\{case_matters=(true|false)\})?', 'max':1, 'delimiter':'', 'unique':false, 'duplicate':true,
+        'long-fill-in':{'max':1, 'delimiter':'', 'unique':false, 'duplicate':true,
                         'format':CMILangString4000},
-        'matching':{'pre':'', 'max':36, 'delimiter':'[,]', 'delimiter2':'[.]', 'unique':false, 'duplicate':false,
+        'matching':{'max':36, 'delimiter':'[,]', 'delimiter2':'[.]', 'unique':false, 'duplicate':false,
                     'format':CMIShortIdentifier, 'format2':CMIShortIdentifier},
-        'performance':{'pre':'^(\{order_matters=(true|false)\})?',
-                       'max':250, 'delimiter':'[,]', 'delimiter2':'[.]', 'unique':false, 'duplicate':false,
+        'performance':{'max':250, 'delimiter':'[,]', 'delimiter2':'[.]', 'unique':false, 'duplicate':false,
                        'format':'^$|' + CMIShortIdentifier, 'format2':CMIDecimal + '|^$|' + CMIShortIdentifier},
-        'sequencing':{'pre':'', 'max':36, 'delimiter':'[,]', 'unique':false, 'duplicate':false,
+        'sequencing':{'max':36, 'delimiter':'[,]', 'unique':false, 'duplicate':false,
                       'format':CMIShortIdentifier},
-        'likert':{'pre':'', 'max':1, 'delimiter':'', 'unique':false, 'duplicate':false,
+        'likert':{'max':1, 'delimiter':'', 'unique':false, 'duplicate':false,
                   'format':CMIShortIdentifier,
                   'limit':1},
-        'numeric':{'pre':'', 'max':2, 'delimiter':'[:]', 'unique':false, 'duplicate':false,
+        'numeric':{'max':2, 'delimiter':'[:]', 'unique':false, 'duplicate':false,
                    'format':CMIDecimal,
                    'limit':1},
-        'other':{'pre':'', 'max':1, 'delimiter':'', 'unique':false, 'duplicate':false,
+        'other':{'max':1, 'delimiter':'', 'unique':false, 'duplicate':false,
                  'format':CMIString4000,
                  'limit':1}
     }
@@ -860,14 +857,6 @@ function SCORMapi1_3(def, cmiobj, cmiint, cmicommentsuser, cmicommentslms, scorm
                 result = CRremovePrefixes(nodes[i]);
                 errorCode = result.errorCode;
                 nodes[i] = result.node;
-            }
-
-            // check for prefix on each node
-            if (correct_responses[interactiontype].pre != '') {
-                matches = nodes[i].match(correct_responses[interactiontype].pre);
-                if (matches != null) {
-                    nodes[i] = nodes[i].substr(matches[1].length);
-                }
             }
 
             if (correct_responses[interactiontype].delimiter2 != undefined) {
