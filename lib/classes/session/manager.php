@@ -123,28 +123,34 @@ class manager {
     }
 
     /**
+     * Get fully qualified name of session handler class.
+     *
+     * @return string The name of the handler class
+     */
+    public static function get_handler_class() {
+        global $CFG, $DB;
+
+        if (PHPUNIT_TEST) {
+            return '\core\session\file';
+        } else if (!empty($CFG->session_handler_class)) {
+            return $CFG->session_handler_class;
+        } else if (!empty($CFG->dbsessions) and $DB->session_lock_supported()) {
+            return '\core\session\database';
+        }
+
+        return '\core\session\file';
+    }
+
+    /**
      * Create handler instance.
      */
     protected static function load_handler() {
-        global $CFG, $DB;
-
         if (self::$handler) {
             return;
         }
 
         // Find out which handler to use.
-        if (PHPUNIT_TEST) {
-            $class = '\core\session\file';
-
-        } else if (!empty($CFG->session_handler_class)) {
-            $class = $CFG->session_handler_class;
-
-        } else if (!empty($CFG->dbsessions) and $DB->session_lock_supported()) {
-            $class = '\core\session\database';
-
-        } else {
-            $class = '\core\session\file';
-        }
+        $class = self::get_handler_class();
         self::$handler = new $class();
     }
 
