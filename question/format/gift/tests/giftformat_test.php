@@ -267,7 +267,18 @@ class qformat_gift_test extends question_testcase {
         $this->assert_same_gift($expectedgift, $gift);
     }
 
-    public function test_import_multichoice() {
+    /**
+     * Test import of multichoice question in GIFT format
+     *
+     * @dataProvider numberingstyle_provider
+     *
+     * @param string $numberingstyle multichoice numbering style to set for qtype_multichoice
+     *
+     */
+    public function test_import_multichoice($numberingstyle) {
+        $this->resetAfterTest(true);
+
+        set_config('answernumbering', $numberingstyle, 'qtype_multichoice');
         $gift = "
 // multiple choice with specified feedback for right and wrong answers
 ::Q2:: What's between orange and green in the spectrum?
@@ -293,7 +304,7 @@ class qformat_gift_test extends question_testcase {
             'length' => 1,
             'single' => 1,
             'shuffleanswers' => '1',
-            'answernumbering' => 'abc',
+            'answernumbering' => $numberingstyle,
             'correctfeedback' => array(
                 'text' => '',
                 'format' => FORMAT_MOODLE,
@@ -350,6 +361,23 @@ class qformat_gift_test extends question_testcase {
         $this->assertEquals($expectedq->answer, $q->answer);
         $this->assertEquals($expectedq->feedback, $q->feedback);
         $this->assert(new question_check_specified_fields_expectation($expectedq), $q);
+    }
+
+    /**
+     * Return a list of numbering styles (see question/type/multichoice/questiontype.php
+     * for valid choices)
+     *
+     * @return array Array of 1-element arrays of qtype_multichoice numbering styles
+     */
+    public function numberingstyle_provider() {
+        return [
+            ['abc'],
+            ['ABCD'],
+            ['123'],
+            ['iii'],
+            ['IIII'],
+            ['none']
+        ];
     }
 
     public function test_import_multichoice_multi() {
