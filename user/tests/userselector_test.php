@@ -241,6 +241,8 @@ class core_user_selector_testcase extends advanced_testcase {
         $implicitselector = new testable_user_selector('test');
         $explicitselector = new testable_user_selector('test', ['extrafields' => ['email', 'department']]);
 
+        $this->assertDebuggingCalled();
+
         foreach ($implicitselector->find_users('') as $found) {
             foreach ($found as $user) {
                 $this->assertObjectHasAttribute('idnumber', $user);
@@ -253,11 +255,11 @@ class core_user_selector_testcase extends advanced_testcase {
 
         foreach ($explicitselector->find_users('') as $found) {
             foreach ($found as $user) {
-                $this->assertObjectNotHasAttribute('idnumber', $user);
-                $this->assertObjectNotHasAttribute('country', $user);
-                $this->assertObjectNotHasAttribute('city', $user);
-                $this->assertObjectHasAttribute('email', $user);
-                $this->assertObjectHasAttribute('department', $user);
+                $this->assertObjectHasAttribute('idnumber', $user);
+                $this->assertObjectHasAttribute('country', $user);
+                $this->assertObjectHasAttribute('city', $user);
+                $this->assertObjectNotHasAttribute('email', $user);
+                $this->assertObjectNotHasAttribute('department', $user);
             }
         }
     }

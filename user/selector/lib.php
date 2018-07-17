@@ -105,35 +105,16 @@ abstract class user_selector_base {
             $this->accesscontext = context_system::instance();
         }
 
-        // Populate the list of additional user identifiers to display.
+        // Check if some legacy code tries to override $CFG->showuseridentity.
         if (isset($options['extrafields'])) {
-            $this->extrafields = $options['extrafields'];
-        } else if (!empty($CFG->showuseridentity) &&
-                has_capability('moodle/site:viewuseridentity', $this->accesscontext)) {
-            $this->extrafields = explode(',', $CFG->showuseridentity);
-        } else {
-            $this->extrafields = array();
+            debugging('The user_selector classes do not support custom list of extra identity fields any more. '.
+                'Instead, the user identity fields defined by the site administrator will be used to respect '.
+                'the configured privacy setting.', DEBUG_DEVELOPER);
+            unset($options['extrafields']);
         }
 
-        // Filter out hidden identifiers if the user can't see them.
-        $hiddenfields = array_filter(explode(',', $CFG->hiddenuserfields));
-        $hiddenidentifiers = array_intersect($this->extrafields, $hiddenfields);
-
-        if ($hiddenidentifiers) {
-            if ($this->accesscontext->get_course_context(false)) {
-                // We are somewhere inside a course.
-                $canviewhiddenuserfields = has_capability('moodle/course:viewhiddenuserfields', $this->accesscontext);
-
-            } else {
-                // We are not inside a course.
-                $canviewhiddenuserfields = has_capability('moodle/user:viewhiddendetails', $this->accesscontext);
-            }
-
-            if (!$canviewhiddenuserfields) {
-                // Remove hidden identifiers from the list.
-                $this->extrafields = array_diff($this->extrafields, $hiddenidentifiers);
-            }
-        }
+        // Populate the list of additional user identifiers to display.
+        $this->extrafields = get_extra_user_fields($this->accesscontext);
 
         if (isset($options['exclude']) && is_array($options['exclude'])) {
             $this->exclude = $options['exclude'];

@@ -22,6 +22,10 @@ information provided here is intended especially for developers.
     - I set the field "<field_string>" to multiline
     - I follow "<link_string>"" in the open menu
 * Removed the lib/password_compat/lib/password.php file.
+* The user_selector classes do not support custom list of extra identity fields any more. They obey the configured user
+  policy and respect the privacy setting made by site administrators. The list of user identifiers should never be
+  hard-coded. Instead, the setting $CFG->showuseridentity should be always respected, which has always been the default
+  behaviour (MDL-59847).
 
 === 3.5 ===
 
