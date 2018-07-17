@@ -71,8 +71,8 @@ if ($show_instructions) {
 <?php     if (is_enabled_auth('none')) { // instructions override the rest for security reasons
               print_string("loginstepsnone");
           } else if ($CFG->registerauth == 'email') {
-              if (!empty($CFG->auth_instructions)) {
-                  echo format_text($CFG->auth_instructions);
+              if (!empty($config->auth_instructions)) {
+                  echo format_text($config->auth_instructions);
               } else {
                   print_string("loginsteps", "", "signup.php");
               } ?>
@@ -82,14 +82,14 @@ if ($show_instructions) {
                    </form>
                  </div>
 <?php     } else if (!empty($CFG->registerauth)) {
-              echo format_text($CFG->auth_instructions); ?>
+              echo format_text($config->auth_instructions); ?>
               <div class="signupform">
                 <form action="../../login/signup.php" method="get" id="signup">
                 <div><input type="submit" value="<?php print_string("startsignup") ?>" /></div>
                 </form>
               </div>
 <?php     } else {
-              echo format_text($CFG->auth_instructions);
+              echo format_text($config->auth_instructions);
           } ?>
       </div>
     </div>
