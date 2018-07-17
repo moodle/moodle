@@ -933,7 +933,11 @@ class core_course_external extends external_api {
 
                 // Make sure maxbytes are less then CFG->maxbytes.
                 if (array_key_exists('maxbytes', $course)) {
-                    $course['maxbytes'] = get_max_upload_file_size($CFG->maxbytes, $course['maxbytes']);
+                    // We allow updates back to 0 max bytes, a special value denoting the course uses the site limit.
+                    // Otherwise, either use the size specified, or cap at the max size for the course.
+                    if ($course['maxbytes'] != 0) {
+                        $course['maxbytes'] = get_max_upload_file_size($CFG->maxbytes, $course['maxbytes']);
+                    }
                 }
 
                 if (!empty($course['courseformatoptions'])) {
