@@ -337,16 +337,13 @@ abstract class core_filetypes {
         // Get defaults.
         $mimetypes = self::get_default_types();
 
-        // If there are no custom types, just return.
+        // Get custom file types.
         $custom = self::get_custom_types();
-        if (empty($custom)) {
-            return $mimetypes;
-        }
 
         // Check value is an array.
         if (!is_array($custom)) {
             debugging('Invalid $CFG->customfiletypes (not array)', DEBUG_DEVELOPER);
-            return $mimetypes;
+            $custom = array();
         }
 
         foreach ($custom as $customentry) {
