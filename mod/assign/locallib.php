@@ -4522,10 +4522,10 @@ class assign {
                                                       $this->show_intro(),
                                                       $this->get_course_module()->id,
                                                       $title, '', $postfix));
-
-        // Show plagiarism disclosure for any user submitter.
-        $o .= $this->plagiarism_print_disclosure();
-
+        if ($userid == $USER->id) {
+            // We only show this if it is their submission.
+            $o .= $this->plagiarism_print_disclosure();
+        }
         $data = new stdClass();
         $data->userid = $userid;
         if (!$mform) {
@@ -7029,10 +7029,19 @@ class assign {
         } else {
             $submission = $this->get_user_submission($userid, true);
         }
+        
+        $cm = $this->get_course_module();
 
         if ($this->new_submission_empty($data)) {
             $notices[] = get_string('submissionempty', 'mod_assign');
-            return false;
+
+            if (!has_capability('mod/assign:editothersubmission', context_module::instance($cm->id))) {
+                return false;
+            } else {
+                $submission->status = ASSIGN_SUBMISSION_STATUS_NEW;
+                $this->update_submission($submission, $userid, true, $instance->teamsubmission);                
+            }
+          
         }
 
         // Check that no one has modified the submission since we started looking at it.
@@ -7074,7 +7083,13 @@ class assign {
             if ($allempty) {
                 $notices[] = get_string('submissionempty', 'mod_assign');
             }
-            return false;
+
+            if (!has_capability('mod/assign:editothersubmission', context_module::instance($cm->id))) {
+                return false;
+            } else {
+                $submission->status = ASSIGN_SUBMISSION_STATUS_NEW;
+                $this->update_submission($submission, $userid, true, $instance->teamsubmission);
+            }
         }
 
         $this->update_submission($submission, $userid, true, $instance->teamsubmission);
