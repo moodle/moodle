@@ -154,21 +154,10 @@ abstract class core_media_player {
     public abstract function get_rank();
 
     /**
-     * Returns if the current player is enabled.
-     *
      * @deprecated since Moodle 3.2
-     * @return bool True if player is enabled
      */
     public function is_enabled() {
-        debugging('Function core_media_player::is_enabled() is deprecated without replacement', DEBUG_DEVELOPER);
-
-        $enabled = \core\plugininfo\media::get_enabled_plugins();
-
-        if ($enabled && preg_match('/^media_(.*)_plugin$/', get_class($this), $matches)) {
-            return array_key_exists($matches[1], $enabled);
-        }
-
-        return false;
+        throw new coding_exception('core_media_player::is_enabled() can not be used anymore.');
     }
 
     /**
@@ -217,15 +206,10 @@ abstract class core_media_player {
     }
 
     /**
-     * Compares by rank order, highest first. Used for sort functions.
      * @deprecated since Moodle 3.2
-     * @param core_media_player $a Player A
-     * @param core_media_player $b Player B
-     * @return int Negative if A should go before B, positive for vice versa
      */
-    public static function compare_by_rank(core_media_player $a, core_media_player $b) {
-        debugging('Function core_media_player::compare_by_rank() is deprecated without replacement', DEBUG_DEVELOPER);
-        return $b->get_rank() - $a->get_rank();
+    public static function compare_by_rank() {
+        throw new coding_exception('core_media_player::compare_by_rank() can not be used anymore.');
     }
 
     /**
