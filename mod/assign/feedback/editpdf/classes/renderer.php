@@ -268,7 +268,8 @@ class assignfeedback_editpdf_renderer extends plugin_renderer_base {
             'stamp',
             'stamppicker',
             'cannotopenpdf',
-            'pagenumber'
+            'pagenumber',
+            'partialwarning'
         ), 'assignfeedback_editpdf');
 
         return $html;
