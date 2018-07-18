@@ -58,11 +58,11 @@ if (!$iomadcertificate = $DB->get_record('iomadcertificate', array('id'=> $cm->i
 if (!has_capability('mod/iomadcertificate:viewother',context_system::instance())) {
     if ($USER->id != $userid) {
         require_login($course->id, true, $cm);
+        $context = context_module::instance($cm->id);
+        require_capability('mod/iomadcertificate:view', $context);
     }
 }
 
-$context = context_module::instance($cm->id);
-require_capability('mod/iomadcertificate:view', $context);
 
 $event = \mod_iomadcertificate\event\course_module_viewed::create(array(
     'objectid' => $iomadcertificate->id,
