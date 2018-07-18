@@ -265,7 +265,6 @@ class core_question_privacy_provider_testcase extends \core_privacy\tests\provid
         $questioncount = $DB->count_records('question');
 
         // The delete functions should do nothing here.
-        $this->assertEquals($questioncount, $DB->count_records('question'));
 
         // Delete for all users in context.
         provider::delete_data_for_all_users_in_context($expectedcontext);
