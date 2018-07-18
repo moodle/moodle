@@ -25,6 +25,7 @@ information provided here is intended especially for developers.
     - site_scale_used()
     - clam_message_admins()
     - get_clam_error_code()
+    - prefixed_tablenode_transformations()
 * The following classes have been finally deprecated and can not be used any more:
     - core_media_renderer
     - core_media

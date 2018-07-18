@@ -45,20 +45,11 @@ use Behat\Gherkin\Node\TableNode;
 class behat_transformations extends behat_base {
 
     /**
-     * Transformations for TableNode arguments.
-     *
-     * Transformations applicable to TableNode arguments should also
-     * be applied, adding them in a different method for Behat API restrictions.
-     *
-     * @deprecated since Moodle 3.2 MDL-56335 - please do not use this function any more.
-     * @param TableNode $tablenode
-     * @return TableNode The transformed table
+     * @deprecated since Moodle 3.2
      */
-    public function prefixed_tablenode_transformations(TableNode $tablenode) {
-        debugging('prefixed_tablenode_transformations() is deprecated. Please use tablenode_transformations() instead.',
-            DEBUG_DEVELOPER);
-
-        return $this->tablenode_transformations($tablenode);
+    public function prefixed_tablenode_transformations() {
+        throw new coding_exception('prefixed_tablenode_transformations() can not be used anymore. ' .
+            'Please use tablenode_transformations() instead.');
     }
 
     /**
