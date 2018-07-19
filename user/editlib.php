@@ -184,21 +184,12 @@ function useredit_update_user_preference($usernew) {
 }
 
 /**
- * Updates the provided users profile picture based upon the expected fields returned from the edit or edit_advanced forms.
- *
- * @deprecated since Moodle 3.2 MDL-51789 - please use core_user::update_picture() instead.
- * @todo MDL-54858 This will be deleted in Moodle 3.6.
+ * @deprecated since Moodle 3.2
  * @see core_user::update_picture()
- *
- * @global moodle_database $DB
- * @param stdClass $usernew An object that contains some information about the user being updated
- * @param moodleform $userform The form that was submitted to edit the form (unused)
- * @param array $filemanageroptions
- * @return bool True if the user was updated, false if it stayed the same.
  */
-function useredit_update_picture(stdClass $usernew, moodleform $userform, $filemanageroptions = array()) {
-    debugging('useredit_update_picture() is deprecated. Please use core_user::update_picture() instead.', DEBUG_DEVELOPER);
-    return core_user::update_picture($usernew, $filemanageroptions);
+function useredit_update_picture() {
+    throw new coding_exception('useredit_update_picture() can not be used anymore. Please use ' .
+        'core_user::update_picture() instead.');
 }
 
 /**
