@@ -66,8 +66,8 @@ if (count($cohorts) < 2) {
 $countries = get_string_manager()->get_list_of_countries(true);
 $namefields = get_all_user_name_fields(true);
 foreach ($users as $key => $id) {
-    $user = $DB->get_record('user', array('id'=>$id, 'deleted'=>0), 'id, ' . $namefields . ', username,
-            email, country, lastaccess, city');
+    $user = $DB->get_record('user', array('id' => $id), 'id, ' . $namefields . ', username,
+            email, country, lastaccess, city, deleted');
     $user->fullname = fullname($user, true);
     $user->country = @$countries[$user->country];
     unset($user->firstname);
@@ -84,7 +84,7 @@ if (empty($users) or $mform->is_cancelled()) {
 } else if ($data = $mform->get_data()) {
     // process request
     foreach ($users as $user) {
-        if (!$DB->record_exists('cohort_members', array('cohortid'=>$data->cohort, 'userid'=>$user->id))) {
+        if (!$user->deleted && !$DB->record_exists('cohort_members', array('cohortid' => $data->cohort, 'userid' => $user->id))) {
             cohort_add_member($data->cohort, $user->id);
         }
     }
@@ -125,13 +125,25 @@ foreach ($columns as $column) {
 }
 
 foreach ($users as $user) {
-    $table->data[] = array (
-        '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.SITEID.'">'.$user->fullname.'</a>',
-        $user->email,
-        $user->city,
-        $user->country,
-        $user->lastaccess ? format_time(time() - $user->lastaccess) : $strnever
-    );
+    if ($user->deleted) {
+        $table->data[] = array (
+            $user->fullname,
+            '',
+            '',
+            '',
+            get_string('deleteduser', 'bulkusers')
+        );
+    } else {
+        $table->data[] = array(
+            '<a href="' . $CFG->wwwroot . '/user/view.php?id=' . $user->id . '&amp;course=' . SITEID . '">' .
+            $user->fullname .
+            '</a>',
+            $user->email,
+            $user->city,
+            $user->country,
+            $user->lastaccess ? format_time(time() - $user->lastaccess) : $strnever
+        );
+    }
 }
 
 echo $OUTPUT->header();
