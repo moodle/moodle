@@ -217,7 +217,7 @@ function lesson_update_events($lesson, $override = null) {
                 }
                 $event->name = get_string('lessoneventopens', 'lesson', $eventname);
                 // The method calendar_event::create will reuse a db record if the id field is set.
-                calendar_event::create($event);
+                calendar_event::create($event, false);
             }
             if ($deadline && $addclose) {
                 if ($oldevent = array_shift($oldevents)) {
@@ -236,7 +236,7 @@ function lesson_update_events($lesson, $override = null) {
                         $event->priority = $closepriorities[$deadline];
                     }
                 }
-                calendar_event::create($event);
+                calendar_event::create($event, false);
             }
         }
     }
