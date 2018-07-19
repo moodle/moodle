@@ -4024,7 +4024,7 @@ function truncate_userinfo(array $info) {
  * @throws coding_exception if invalid $user parameter detected
  */
 function delete_user(stdClass $user) {
-    global $CFG, $DB;
+    global $CFG, $DB, $SESSION;
     require_once($CFG->libdir.'/grouplib.php');
     require_once($CFG->libdir.'/gradelib.php');
     require_once($CFG->dirroot.'/message/lib.php');
@@ -4118,6 +4118,11 @@ function delete_user(stdClass $user) {
 
     // Remove users customised pages.
     $DB->delete_records('my_pages', array('userid' => $user->id, 'private' => 1));
+
+    // Delete user from $SESSION->bulk_users.
+    if (isset($SESSION->bulk_users[$user->id])) {
+        unset($SESSION->bulk_users[$user->id]);
+    }
 
     // Force logout - may fail if file based sessions used, sorry.
     \core\session\manager::kill_user_sessions($user->id);
