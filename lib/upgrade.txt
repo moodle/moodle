@@ -7,7 +7,8 @@ information provided here is intended especially for developers.
   callback. If a string is returned, it is displayed instead of the list if suggested items. This can be used, for
   example, to inform the user that there are too many items matching the current search criteria.
 * The following functions have been finally deprecated and can not be used any more:
-  - external_function_info()
+    - external_function_info()
+    - core_renderer::update_module_button()
 * Following api's have been removed in behat_config_manager, please use behat_config_util instead.
     - get_features_with_tags()
     - get_components_steps_definitions()
