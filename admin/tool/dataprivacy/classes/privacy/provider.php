@@ -143,7 +143,7 @@ class provider implements
             $contextdatatowrite[] = $data;
         }
 
-        // {User context} / Privacy and policies / Data requests.
+        // ...{User context} / Privacy and policies / Data requests.
         $subcontext = [
             get_string('privacyandpolicies', 'admin'),
             get_string('datarequests', 'tool_dataprivacy'),

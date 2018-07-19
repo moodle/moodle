@@ -25,6 +25,8 @@
 
 namespace tool_dataprivacy\form;
 
+defined('MOODLE_INTERNAL') || die();
+
 use MoodleQuickForm_autocomplete;
 
 global $CFG;
@@ -42,13 +44,13 @@ class request_user_autocomplete extends MoodleQuickForm_autocomplete {
     /**
      * Constructor.
      *
-     * @param string $elementName Element name
-     * @param mixed $elementLabel Label(s) for an element
+     * @param string $elementname Element name
+     * @param mixed $elementlabel Label(s) for an element
      * @param array $options Options to control the element's display
      *                       Valid options are:
      *                       - multiple bool Whether or not the field accepts more than one values.
      */
-    public function __construct($elementName = null, $elementLabel = null, $options = array()) {
+    public function __construct($elementname = null, $elementlabel = null, $options = array()) {
         $validattributes = array(
             'ajax' => 'tool_dataprivacy/form-user-selector',
         );
@@ -56,7 +58,7 @@ class request_user_autocomplete extends MoodleQuickForm_autocomplete {
             $validattributes['multiple'] = 'multiple';
         }
 
-        parent::__construct($elementName, $elementLabel, array(), $validattributes);
+        parent::__construct($elementname, $elementlabel, array(), $validattributes);
     }
 
     /**
