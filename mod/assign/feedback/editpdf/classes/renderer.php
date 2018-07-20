@@ -217,14 +217,13 @@ class assignfeedback_editpdf_renderer extends plugin_renderer_base {
 
         $canvas = html_writer::div($loading, 'drawingcanvas');
         $canvas = html_writer::div($canvas, 'drawingregion');
-        $changesmessage = html_writer::tag('div',
-                                           get_string('draftchangessaved', 'assignfeedback_editpdf'),
-                                           array(
-                                               'class' => 'assignfeedback_editpdf_unsavedchanges warning label label-info'
-                                           ));
-
-        $changesmessage = html_writer::div($changesmessage, 'unsaved-changes');
+        // Place for messages, but no warnings displayed yet.
+        $changesmessage = html_writer::div('', 'warningmessages');
         $canvas .= $changesmessage;
+
+        $infoicon = $this->image_icon('i/info', '');
+        $infomessage = html_writer::div($infoicon, 'infoicon');
+        $canvas .= $infomessage;
 
         $body .= $canvas;
 
@@ -269,7 +268,8 @@ class assignfeedback_editpdf_renderer extends plugin_renderer_base {
             'stamppicker',
             'cannotopenpdf',
             'pagenumber',
-            'partialwarning'
+            'partialwarning',
+            'draftchangessaved'
         ), 'assignfeedback_editpdf');
 
         return $html;

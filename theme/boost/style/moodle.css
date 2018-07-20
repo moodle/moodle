@@ -5792,7 +5792,7 @@ tbody.collapse.show {
 #page-admin-index .adminwarning,
 #page-admin-index .adminerror, .que .formulation,
 .que .outcome,
-.que .comment {
+.que .comment, .assignfeedback_editpdf_widget .label {
   position: relative;
   padding: 0.75rem 1.25rem;
   margin-bottom: 1rem;
@@ -5841,13 +5841,13 @@ tbody.collapse.show {
   .alert-success .alert-link, .que .comment .alert-link {
     color: #1f3e1f; }
 
-.alert-info, #page-admin-index .releasenoteslink, #adminsettings .form-overridden, .que .formulation {
+.alert-info, #page-admin-index .releasenoteslink, #adminsettings .form-overridden, .que .formulation, .assignfeedback_editpdf_widget .label {
   color: #2f6473;
   background-color: #def2f8;
   border-color: #d1edf6; }
-  .alert-info hr, #page-admin-index .releasenoteslink hr, #adminsettings .form-overridden hr, .que .formulation hr {
+  .alert-info hr, #page-admin-index .releasenoteslink hr, #adminsettings .form-overridden hr, .que .formulation hr, .assignfeedback_editpdf_widget .label hr {
     border-top-color: #bce5f2; }
-  .alert-info .alert-link, #page-admin-index .releasenoteslink .alert-link, #adminsettings .form-overridden .alert-link, .que .formulation .alert-link {
+  .alert-info .alert-link, #page-admin-index .releasenoteslink .alert-link, #adminsettings .form-overridden .alert-link, .que .formulation .alert-link, .assignfeedback_editpdf_widget .label .alert-link {
     color: #20454f; }
 
 .alert-warning,
@@ -8524,7 +8524,7 @@ a.dimmed_text:visited,
 /* stylelint-disable function-url-scheme-blacklist */
 /* stylelint-enable function-url-scheme-blacklist */
 .tag, .statusok, .statuswarning, .statusserious,
-.statuscritical, .que .correctness, .assignfeedback_editpdf_widget .label, .label, .badge {
+.statuscritical, .que .correctness, .label, .badge {
   display: inline-block;
   padding: 0.25rem 0.4em;
   font-size: 75%;
@@ -8570,9 +8570,9 @@ a.dimmed_text:visited,
   #page-admin-report-backups-index .backup-notyetrun[href]:focus {
     background-color: #449d44; }
 
-.tag-info, #page-admin-index .adminwarning.availableupdatesinfo .moodleupdateinfo.maturity200 .info.release, .assignfeedback_editpdf_widget .label {
+.tag-info, #page-admin-index .adminwarning.availableupdatesinfo .moodleupdateinfo.maturity200 .info.release {
   background-color: #5bc0de; }
-  .tag-info[href]:hover, #page-admin-index .adminwarning.availableupdatesinfo .moodleupdateinfo.maturity200 .info.release[href]:hover, .assignfeedback_editpdf_widget .label[href]:hover, .tag-info[href]:focus, #page-admin-index .adminwarning.availableupdatesinfo .moodleupdateinfo.maturity200 .info.release[href]:focus, .assignfeedback_editpdf_widget .label[href]:focus {
+  .tag-info[href]:hover, #page-admin-index .adminwarning.availableupdatesinfo .moodleupdateinfo.maturity200 .info.release[href]:hover, .tag-info[href]:focus, #page-admin-index .adminwarning.availableupdatesinfo .moodleupdateinfo.maturity200 .info.release[href]:focus {
     background-color: #31b0d5; }
 
 .tag-warning, .statuswarning, #page-admin-report-backups-index .backup-warning, #page-admin-index .updateplugin .updatepluginconfirmexternal, #page-admin-index .adminwarning.availableupdatesinfo .moodleupdateinfo.maturity100 .info.release,
@@ -12424,7 +12424,9 @@ span.editinstructions {
   #course-category-listings .select-a-category .que .outcome,
   .que #course-category-listings .select-a-category .outcome,
   #course-category-listings .select-a-category .que .comment,
-  .que #course-category-listings .select-a-category .comment {
+  .que #course-category-listings .select-a-category .comment,
+  #course-category-listings .select-a-category .assignfeedback_editpdf_widget .label,
+  .assignfeedback_editpdf_widget #course-category-listings .select-a-category .label {
     margin: 1em; }
 
 #course-category-listings #course-listing .listitem .drag-handle {
