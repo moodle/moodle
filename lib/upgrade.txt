@@ -1,6 +1,19 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 3.6 ===
+
+* Following api's have been removed in behat_config_manager, please use behat_config_util instead.
+    - get_features_with_tags()
+    - get_components_steps_definitions()
+    - get_config_file_contents()
+    - merge_behat_config()
+    - get_behat_profile()
+    - profile_guided_allocate()
+    - merge_config()
+    - clean_path()
+    - get_behat_tests_path()
+
 === 3.5 ===
 
 * There is a new privacy API that every subsystem and plugin has to implement so that the site can become GDPR
