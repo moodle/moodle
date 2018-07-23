@@ -284,6 +284,3 @@ $string['use_one_line_for_each_value'] = 'Use one line for each answer!';
 $string['use_this_template'] = 'Use this template';
 $string['using_templates'] = 'Use a template';
 $string['vertical'] = 'Vertical';
-// Deprecated since Moodle 3.2.
-$string['start'] = 'Start';
-$string['stop'] = 'End';
