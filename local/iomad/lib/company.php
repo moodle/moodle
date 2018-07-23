@@ -485,25 +485,50 @@ class company {
                                                          'shared' => 0));
         }
         // Set up manager roles.
-        if (!$licensed && $CFG->iomad_autoenrol_managers) {
-            if ($companymanagers = $DB->get_records_sql("SELECT * FROM {company_users}
-                                                         WHERE companyid = :companyid
-                                                         AND managertype != 0", array('companyid' => $this->id))) {
-                $companycoursenoneditorrole = $DB->get_record('role',
-                                                   array('shortname' => 'companycoursenoneditor'));
-                $companycourseeditorrole = $DB->get_record('role',
-                                                            array('shortname' => 'companycourseeditor'));
-                foreach ($companymanagers as $companymanager) {
-                    if ($user = $DB->get_record('user', array('id' => $companymanager->userid,
-                                                              'deleted' => 0)) ) {
-                        if ($DB->record_exists('course', array('id' => $course->id))) {
-                            if (!$own) {
-                                // Not created by a company manager.
-                                company_user::enrol($user, array($course->id), $this->id,
-                                                    $companycoursenoneditorrole->id);
-                            } else {
-                                if ($companymanager->managertype == 2) {
-                                    // Assign the department manager course access role.
+        if (!$licensed) {
+            $companycoursenoneditorrole = $DB->get_record('role',
+                                               array('shortname' => 'companycoursenoneditor'));
+            $companycourseeditorrole = $DB->get_record('role',
+                                                        array('shortname' => 'companycourseeditor'));
+            if ($CFG->iomad_autoenrol_managers) {
+                // Enrol the managers as teacher types.
+                if ($companymanagers = $DB->get_records_sql("SELECT * FROM {company_users}
+                                                             WHERE companyid = :companyid
+                                                             AND managertype != 0", array('companyid' => $this->id))) {
+                    foreach ($companymanagers as $companymanager) {
+                        if ($user = $DB->get_record('user', array('id' => $companymanager->userid,
+                                                                  'deleted' => 0)) ) {
+                            if ($DB->record_exists('course', array('id' => $course->id))) {
+                                if (!$own) {
+                                    // Not created by a company manager.
+                                    company_user::enrol($user, array($course->id), $this->id,
+                                                        $companycoursenoneditorrole->id);
+                                } else {
+                                    if ($companymanager->managertype == 2) {
+                                        // Assign the department manager course access role.
+                                        company_user::enrol($user, array($course->id), $this->id,
+                                                            $companycoursenoneditorrole->id);
+                                    } else {
+                                        // Assign the company manager course access role.
+                                        company_user::enrol($user, array($course->id), $this->id,
+                                                            $companycourseeditorrole->id);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            } else {
+                // Enrol the educators as teacher types.
+                if ($educators = $DB->get_records_sql("SELECT * FROM {company_users}
+                                                             WHERE companyid = :companyid
+                                                             AND educator != 0", array('companyid' => $this->id))) {
+                    foreach ($educators as $educator) {
+                        if ($user = $DB->get_record('user', array('id' => $educator->userid,
+                                                                  'deleted' => 0)) ) {
+                            if ($DB->record_exists('course', array('id' => $course->id))) {
+                                if ($DB->record_exists('iomad_courses', array('courseid' => $course->id, 'shared' => 1))) {
+                                    // Not created by a company manager.
                                     company_user::enrol($user, array($course->id), $this->id,
                                                         $companycoursenoneditorrole->id);
                                 } else {
@@ -3388,3 +3413,33 @@ class company {
         return true;
     }
 }
+            if ($companymanagers = $DB->get_records_sql("SELECT * FROM {company_users}
+                                                         WHERE companyid = :companyid
+                                                         AND managertype != 0", array('companyid' => $this->id))) {
+                $companycoursenoneditorrole = $DB->get_record('role',
+                                                   array('shortname' => 'companycoursenoneditor'));
+                $companycourseeditorrole = $DB->get_record('role',
+                                                            array('shortname' => 'companycourseeditor'));
+                foreach ($companymanagers as $companymanager) {
+                    if ($user = $DB->get_record('user', array('id' => $companymanager->userid,
+                                                              'deleted' => 0)) ) {
+                        if ($DB->record_exists('course', array('id' => $course->id))) {
+                            if (!$own) {
+                                // Not created by a company manager.
+                                company_user::enrol($user, array($course->id), $this->id,
+                                                    $companycoursenoneditorrole->id);
+                            } else {
+                                if ($companymanager->managertype == 2) {
+                                    // Assign the department manager course access role.
+                                    company_user::enrol($user, array($course->id), $this->id,
+                                                        $companycoursenoneditorrole->id);
+                                } else {
+                                    // Assign the company manager course access role.
+                                    company_user::enrol($user, array($course->id), $this->id,
+                                                        $companycourseeditorrole->id);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
