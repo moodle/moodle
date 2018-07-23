@@ -160,8 +160,27 @@ class block_iomad_company_admin_external extends external_api {
     public static function get_companies_parameters() {
         return new external_function_parameters(
             array(
-                'companyids' => new external_multiple_structure(
-                    new external_value(PARAM_INT, 'Company id'), 'List of company IDs', VALUE_DEFAULT, array()
+                'criteria' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'key' => new external_value(PARAM_ALPHA, 'the company column to search, expected keys (value format) are:
+                                "id" (int) matching company id,
+                                "name" (string) company name (Note: you can use % for searching but it may be considerably slower!),
+                                "shortname" (string) company short name (Note: you can use % for searching but it may be considerably slower!),
+                                "suspended" (bool) company is suspended or not,
+                                "city" (string) matching company city,
+                                "country" (string) matching company country,
+                                "timezone" (int) company timezone,
+                                "lang" (string) matching company language setting'),
+                            'value' => new external_value(PARAM_RAW, 'the value to search')
+                        )
+                    ), 'the key/value pairs to be considered in company search. Values can not be empty.
+                        Specify different keys only once (name => \'company1\', timezone => \'99\', ...) -
+                        key occurences are forbidden.
+                        The search is executed with AND operator on the criterias. Invalid criterias (keys) are ignored,
+                        the search is still executed on the valid criterias.
+                        You can search without criteria, but the function is not designed for it.
+                        It could very slow or timeout. The function is designed to search some specific companies.'
                 )
             )
         );
@@ -174,31 +193,97 @@ class block_iomad_company_admin_external extends external_api {
      * @param $companyids
      * @return array of objects
      */
-    public static function get_companies($companyids = array()) {
+    public static function get_companies($criteria = array()) {
         global $CFG, $DB;
 
         // Validate parameters
-        $params = self::validate_parameters(self::get_companies_parameters(), array('companyids' => $companyids));
+        $params = self::validate_parameters(self::get_companies_parameters(), array('criteria' => $criteria));
 
         // Get/check context/capability
         $context = context_system::instance();
         self::validate_context($context);
         require_capability('block/iomad_company_admin:company_add', $context);
 
-        // Get company records
-        if (empty($companyids)) {
-            $companies = $DB->get_records('company');
-        } else {
-            $companies = $DB->get_records_list('company', 'id', $params['companyids']);
+        $companies = array();
+        $warnings = array();
+        $sqlparams = array();
+        $usedkeys = array();
+        $sql = " shortname IS NOT NULL ";
+
+        foreach ($params['criteria'] as $criteriaindex => $criteria) {
+
+            // Check that the criteria has never been used.
+            if (array_key_exists($criteria['key'], $usedkeys)) {
+                throw new moodle_exception('keyalreadyset', '', '', null, 'The key ' . $criteria['key'] . ' can only be sent once');
+            } else {
+                $usedkeys[$criteria['key']] = true;
+            }
+
+            $invalidcriteria = false;
+            // Clean the parameters.
+            $paramtype = PARAM_RAW;
+            switch ($criteria['key']) {
+                case 'id':
+                case 'timezone':
+                    $paramtype = PARAM_INT;
+                    break;
+                case 'name':
+                case 'shortname':
+                case 'city':
+                case 'country':
+                    $paramtype = PARAM_RAW;
+                    break;
+                case 'lang':
+                    $paramtype = PARAM_CLEAN;
+                    break;
+                case 'suspended':
+                    $paramtype = PARAM_BOOL;
+                    break;
+                default:
+                    // Send back a warning that this search key is not supported in this version.
+                    // This warning will make the function extandable without breaking clients.
+                    $warnings[] = array(
+                        'item' => $criteria['key'],
+                        'warningcode' => 'invalidfieldparameter',
+                        'message' =>
+                            'The search key \'' . $criteria['key'] . '\' is not supported, look at the web service documentation'
+                    );
+                    // Do not add this invalid criteria to the created SQL request.
+                    $invalidcriteria = true;
+                    unset($params['criteria'][$criteriaindex]);
+                    break;
+            }
+
+            if (!$invalidcriteria) {
+                $cleanedvalue = clean_param($criteria['value'], $paramtype);
+
+                $sql .= ' AND ';
+
+                // Create the SQL.
+                switch ($criteria['key']) {
+                    case 'id':
+                    case 'timezone':
+                    case 'lang':
+                    case 'suspended':
+                        $sql .= $criteria['key'] . ' = :' . $criteria['key'];
+                        $sqlparams[$criteria['key']] = $cleanedvalue;
+                        break;
+                    case 'name':
+                    case 'shortname':
+                    case 'city':
+                    case 'country':
+                        $sql .= $DB->sql_like($criteria['key'], ':' . $criteria['key'], false);
+                        $sqlparams[$criteria['key']] = $cleanedvalue;
+                        break;
+                    default:
+                        break;
+                }
+            }
         }
 
-        // convert to suitable format (I think)
-        $companyinfo = array();
-        foreach ($companies as $company) {
-            $companyinfo[] = (array) $company;
-        }
+        $companies = $DB->get_records_select('company', $sql, $sqlparams, 'id ASC');
 
-        return $companyinfo;
+        return array('companies' => $companies, 'warnings' => $warnings);
     }
 
     /**
@@ -208,27 +293,30 @@ class block_iomad_company_admin_external extends external_api {
      * @return external_description
      */
     public static function get_companies_returns() {
-        return new external_multiple_structure(
-            new external_single_structure(
-                array(
-                     'id' => new external_value(PARAM_INT, 'Companid ID'),
-                     'name' => new external_value(PARAM_TEXT, 'Company long name'),
-                     'shortname' => new external_value(PARAM_TEXT, 'Compay short name'),
-                     'city' => new external_value(PARAM_TEXT, 'Company location city'),
-                     'country' => new external_value(PARAM_TEXT, 'Company location country'),
-                     'maildisplay' => new external_value(PARAM_INT, 'User default email display'),
-                     'mailformat' => new external_value(PARAM_INT, 'User default email format'),
-                     'maildigest' => new external_value(PARAM_INT, 'User default digest type'),
-                     'autosubscribe' => new external_value(PARAM_INT, 'User default forum auto-subscribe'),
-                     'trackforums' => new external_value(PARAM_INT, 'User default forum tracking'),
-                     'htmleditor' => new external_value(PARAM_INT, 'User default text editor'),
-                     'screenreader' => new external_value(PARAM_INT, 'User default screen reader'),
-                     'timezone' => new external_value(PARAM_TEXT, 'User default timezone'),
-                     'lang' => new external_value(PARAM_TEXT, 'User default language'),
-                     'suspended' => new external_value(PARAM_INT, 'Company is suspended when <> 0'),
-                     'ecommerce' => new external_value(PARAM_INT, 'Ecommerce is disabled when = 0', VALUE_DEFAULT, 0),
-                     'parentid' => new external_value(PARAM_INT, 'ID of parent company', VALUE_DEFAULT, 0),
-                )
+        return new external_single_structure(
+            array('companies' => new external_multiple_structure(
+                       array(
+                         'id' => new external_value(PARAM_INT, 'Companid ID'),
+                         'name' => new external_value(PARAM_TEXT, 'Company long name'),
+                         'shortname' => new external_value(PARAM_TEXT, 'Compay short name'),
+                         'city' => new external_value(PARAM_TEXT, 'Company location city'),
+                         'country' => new external_value(PARAM_TEXT, 'Company location country'),
+                         'maildisplay' => new external_value(PARAM_INT, 'User default email display'),
+                         'mailformat' => new external_value(PARAM_INT, 'User default email format'),
+                         'maildigest' => new external_value(PARAM_INT, 'User default digest type'),
+                         'autosubscribe' => new external_value(PARAM_INT, 'User default forum auto-subscribe'),
+                         'trackforums' => new external_value(PARAM_INT, 'User default forum tracking'),
+                         'htmleditor' => new external_value(PARAM_INT, 'User default text editor'),
+                         'screenreader' => new external_value(PARAM_INT, 'User default screen reader'),
+                         'timezone' => new external_value(PARAM_TEXT, 'User default timezone'),
+                         'lang' => new external_value(PARAM_TEXT, 'User default language'),
+                         'suspended' => new external_value(PARAM_INT, 'Company is suspended when <> 0'),
+                         'ecommerce' => new external_value(PARAM_INT, 'Ecommerce is disabled when = 0', VALUE_DEFAULT, 0),
+                         'parentid' => new external_value(PARAM_INT, 'ID of parent company', VALUE_DEFAULT, 0)
+                         )
+                    ),
+                     array('warnings' => new external_warnings('always set to \'key\'', 'faulty key name')
+                    )
             )
         );
     }
@@ -341,8 +429,24 @@ class block_iomad_company_admin_external extends external_api {
     public static function get_departments_parameters() {
         return new external_function_parameters(
             array(
-                'departmentids' => new external_multiple_structure(
-                    new external_value(PARAM_INT, 'Company id'), 'List of company IDs', VALUE_DEFAULT, array()
+                'criteria' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'key' => new external_value(PARAM_ALPHA, 'the user column to search, expected keys (value format) are:
+                                "id" (int) matching department id,
+                                "name" (string) department name (Note: you can use % for searching but it may be considerably slower!),
+                                "shortname" (string) department short name (Note: you can use % for searching but it may be considerably slower!),
+                                "company" (int) matching company id,
+                                "parent" (int) matching department parent id'),
+                            'value' => new external_value(PARAM_RAW, 'the value to search')
+                        )
+                    ), 'the key/value pairs to be considered in user search. Values can not be empty.
+                        Specify different keys only once (name => \'department1\', company => \'2\', ...) -
+                        key occurences are forbidden.
+                        The search is executed with AND operator on the criterias. Invalid criterias (keys) are ignored,
+                        the search is still executed on the valid criterias.
+                        You can search without criteria, but the function is not designed for it.
+                        It could very slow or timeout. The function is designed to search some specific users.'
                 )
             )
         );
@@ -355,31 +459,90 @@ class block_iomad_company_admin_external extends external_api {
      * @param $comapnyid
      * @return array of department records.
      */
-    public static function get_departments($companyids = array()) {
+    public static function get_departments($criteria = array()) {
         global $CFG, $DB;
 
         // Validate parameters
-        $params = self::validate_parameters(self::get_department_parameters(), $companyids);
+        $params = self::validate_parameters(self::get_department_parameters(), array('criteria' => $criteria));
 
         // Get/check context/capability
         $context = context_system::instance();
         self::validate_context($context);
         require_capability('block/iomad_company_admin:edit_all_departments', $context);
 
-        // Get course records
-        if (empty($companyids)) {
-            $departments = $DB->get_records('department');
-        } else {
-            $departments = $DB->get_records_list('department', 'company', $params['companyids']);
+        // Validate the criteria and retrieve the users.
+        $users = array();
+        $warnings = array();
+        $sqlparams = array();
+        $usedkeys = array();
+        $sql = ' company != 0 ';
+
+        foreach ($params['criteria'] as $criteriaindex => $criteria) {
+
+            // Check that the criteria has never been used.
+            if (array_key_exists($criteria['key'], $usedkeys)) {
+                throw new moodle_exception('keyalreadyset', '', '', null, 'The key ' . $criteria['key'] . ' can only be sent once');
+            } else {
+                $usedkeys[$criteria['key']] = true;
+            }
+
+            $invalidcriteria = false;
+            // Clean the parameters.
+            $paramtype = PARAM_RAW;
+            switch ($criteria['key']) {
+                case 'id':
+                    $paramtype = PARAM_INT;
+                    break;
+                case 'name':
+                case 'shortname':
+                    $paramtype = PARAM_RAW;
+                    break;
+                case 'company':
+                case 'parent':
+                    $paramtype = PARAM_INT;
+                    break;
+                default:
+                    // Send back a warning that this search key is not supported in this version.
+                    // This warning will make the function extendable without breaking clients.
+                    $warnings[] = array(
+                        'item' => $criteria['key'],
+                        'warningcode' => 'invalidfieldparameter',
+                        'message' =>
+                            'The search key \'' . $criteria['key'] . '\' is not supported, look at the web service documentation'
+                    );
+                    // Do not add this invalid criteria to the created SQL request.
+                    $invalidcriteria = true;
+                    unset($params['criteria'][$criteriaindex]);
+                    break;
+            }
+
+            if (!$invalidcriteria) {
+                $cleanedvalue = clean_param($criteria['value'], $paramtype);
+
+                $sql .= ' AND ';
+
+                // Create the SQL.
+                switch ($criteria['key']) {
+                    case 'id':
+                    case 'company':
+                    case 'parent':
+                        $sql .= $criteria['key'] . ' = :' . $criteria['key'];
+                        $sqlparams[$criteria['key']] = $cleanedvalue;
+                        break;
+                    case 'name':
+                    case 'shortname':
+                        $sql .= $DB->sql_like($criteria['key'], ':' . $criteria['key'], false);
+                        $sqlparams[$criteria['key']] = $cleanedvalue;
+                        break;
+                    default:
+                        break;
+                }
+            }
         }
 
-        // convert to suitable format (I think)
-        $departmentinfo = array();
-        foreach ($departments as $department) {
-            $departmentinfo[] = (array) $department;
-        }
+        $departments = $DB->get_records_select('department', $sql, $sqlparams, 'id ASC');
 
-        return $departmentinfo;
+        return array('departments' => $departments, 'warnings' => $warnings);
     }
 
      /**
@@ -392,11 +555,18 @@ class block_iomad_company_admin_external extends external_api {
         return new external_multiple_structure(
             new external_single_structure(
                 array(
-                     'id' => new external_value(PARAM_INT, 'Department ID'),
-                     'name' => new external_value(PARAM_TEXT, 'Department name'),
-                     'shortname' => new external_value(PARAM_TEXT, 'Department short name'),
-                     'company' => new external_value(PARAM_INT, 'Company ID'),
-                     'parent' => new external_value(PARAM_INT, 'Department parent id'),
+                    'departments' => new external_multiple_structure(
+                        array(
+                            'id' => new external_value(PARAM_INT, 'Department ID'),
+                            'name' => new external_value(PARAM_TEXT, 'Department name'),
+                            'shortname' => new external_value(PARAM_TEXT, 'Department short name'),
+                            'company' => new external_value(PARAM_INT, 'Company ID'),
+                            'parent' => new external_value(PARAM_INT, 'Department parent id'),
+                        ),
+                        array(
+                            'warnings' => new external_warnings('always set to \'key\'', 'faulty key name')
+                        )
+                    )
                 )
             )
         );
@@ -950,12 +1120,32 @@ class block_iomad_company_admin_external extends external_api {
     public static function get_license_info_parameters() {
         return new external_function_parameters(
             array(
-                'licenseids' => new external_multiple_structure(
-                    new external_value(PARAM_INT, 'License id'), 'List of license IDs', VALUE_DEFAULT, array()
+                'criteria' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'key' => new external_value(PARAM_ALPHA, 'the user column to search, expected keys (value format) are:
+                                "id" (int) matching user id,
+                                "name" (string) license name (Note: you can use % for searching but it may be considerably slower!),
+                                "startdate" (int) license start date in unix time,
+                                "expirydate" (int) license expiry date in unix time,
+                                "companyid" (int) license company id,
+                                "parentid"  (int) license parent id for split licenses,
+                                "program"  (bool) license is program,
+                                "instant"  (bool) license is instant,
+                                "type"  (int) license type (0 = standard, 1 = reusable, 3 = educator),
+                                "reference" license reference (Note: you can use % for searching but it may be considerably slower!)'),
+                            'value' => new external_value(PARAM_RAW, 'the value to search')
+                        )
+                    ), 'the key/value pairs to be considered in user search. Values can not be empty.
+                        Specify different keys only once (name => \'license1\', companyid => \'2\', ...) -
+                        key occurences are forbidden.
+                        The search is executed with AND operator on the criterias. Invalid criterias (keys) are ignored,
+                        the search is still executed on the valid criterias.
+                        You can search without criteria, but the function is not designed for it.
+                        It could very slow or timeout. The function is designed to search some specific users.'
                 )
             )
         );
-        //return new external_function_parameters(new external_value(PARAM_INT, 'Course id'), 'Course ID', VALUE_DEFAULT, 0);
     }
 
     /**
@@ -965,31 +1155,100 @@ class block_iomad_company_admin_external extends external_api {
      * @param $comapnyid
      * @return array of department records.
      */
-    public static function get_license_info($licenseids = array()) {
+    public static function get_license_info($criteria = array()) {
         global $CFG, $DB;
 
         // Validate parameters
-        $params = self::validate_parameters(self::get_license_info_parameters(), $licenseids);
+        $params = self::validate_parameters(self::get_license_info_parameters(), array('criteria' => $criteria));
 
         // Get/check context/capability
         $context = context_system::instance();
         self::validate_context($context);
         require_capability('block/iomad_company_admin:view_licenses', $context);
 
-        // Get course records
-        if (empty($licenseids)) {
-            $licenses = $DB->get_records('companylicense');
-        } else {
-            $licenses = $DB->get_records_list('companylicense', 'id', $params['licenseids']);
+        // Validate the criteria and retrieve the licenses.
+        $licenses = array();
+        $warnings = array();
+        $sqlparams = array();
+        $usedkeys = array();
+        $sql = ' allocation > 0 ';
+
+        foreach ($params['criteria'] as $criteriaindex => $criteria) {
+
+            // Check that the criteria has never been used.
+            if (array_key_exists($criteria['key'], $usedkeys)) {
+                throw new moodle_exception('keyalreadyset', '', '', null, 'The key ' . $criteria['key'] . ' can only be sent once');
+            } else {
+                $usedkeys[$criteria['key']] = true;
+            }
+
+            $invalidcriteria = false;
+            // Clean the parameters.
+            $paramtype = PARAM_RAW;
+            switch ($criteria['key']) {
+                case 'id':
+                case 'companyid':
+                case 'parentid':
+                case 'startdate':
+                case 'expirydate':
+                case 'type':
+                    $paramtype = PARAM_INT;
+                    break;
+                case 'program':
+                case 'instant':
+                    $paramtype = PARAM_BOOL;
+                    break;
+                case 'name':
+                case 'reference':
+                    $paramtype = PARAM_RAW;
+                    break;
+                default:
+                    // Send back a warning that this search key is not supported in this version.
+                    // This warning will make the function extandable without breaking clients.
+                    $warnings[] = array(
+                        'item' => $criteria['key'],
+                        'warningcode' => 'invalidfieldparameter',
+                        'message' =>
+                            'The search key \'' . $criteria['key'] . '\' is not supported, look at the web service documentation'
+                    );
+                    // Do not add this invalid criteria to the created SQL request.
+                    $invalidcriteria = true;
+                    unset($params['criteria'][$criteriaindex]);
+                    break;
+            }
+
+            if (!$invalidcriteria) {
+                $cleanedvalue = clean_param($criteria['value'], $paramtype);
+
+                $sql .= ' AND ';
+
+                // Create the SQL.
+                switch ($criteria['key']) {
+                    case 'id':
+                    case 'companyid':
+                    case 'parentid':
+                    case 'startdate':
+                    case 'expirydate':
+                    case 'program':
+                    case 'type':
+                    case 'instant':
+                        $sql .= $criteria['key'] . ' = :' . $criteria['key'];
+                        $sqlparams[$criteria['key']] = $cleanedvalue;
+                        break;
+                    case 'name':
+                    case 'reference':
+                        $sql .= $DB->sql_like($criteria['key'], ':' . $criteria['key'], false);
+                        $sqlparams[$criteria['key']] = $cleanedvalue;
+                        break;
+                    default:
+                        break;
+                }
+            }
         }
 
-        // convert to suitable format (I think)
-        $licenseinfo = array();
-        foreach ($licenses as $license) {
-            $licenseinfo[] = (array) $license;
-        }
+        $licenses = $DB->get_records_select('companylicense', $sql, $sqlparams, 'id ASC');
 
-        return $licenseinfo;
+        return array('licenses' => $licenses, 'warnings' => $warnings);
     }
 
    /**
@@ -999,18 +1258,20 @@ class block_iomad_company_admin_external extends external_api {
      * @return external_description
      */
     public static function get_license_info_returns() {
-        return new external_multiple_structure(
-            new external_single_structure(
-                array(
-                     'id' => new external_value(PARAM_INT, 'license ID'),
-                     'name' => new external_value(PARAM_TEXT, 'License name'),
-                     'allocation' => new external_value(PARAM_INT, 'Number of license slots'),
-                     'validlength' => new external_value(PARAM_INT, 'Course access length (days)'),
-                     'startdate' => new external_value(PARAM_INT, 'License start date'),
-                     'expirydate' => new external_value(PARAM_INT, 'License expiry date'),
-                     'used' => new external_value(PARAM_INT, 'Number allocated'),
-                     'companyid' => new external_value(PARAM_INT, 'Company id'),
-                     'parentid' => new external_value(PARAM_INT, 'Parent license id'),
+        return new external_single_structure(
+            array('licenses' => new external_multiple_structure(
+                    array(
+                         'id' => new external_value(PARAM_INT, 'license ID'),
+                         'name' => new external_value(PARAM_TEXT, 'License name'),
+                         'allocation' => new external_value(PARAM_INT, 'Number of license slots'),
+                         'validlength' => new external_value(PARAM_INT, 'Course access length (days)'),
+                         'expirydate' => new external_value(PARAM_INT, 'License expiry date'),
+                         'used' => new external_value(PARAM_INT, 'Number allocated'),
+                         'companyid' => new external_value(PARAM_INT, 'Company id'),
+                         'parentid' => new external_value(PARAM_INT, 'Parent license id'),
+                         )
+                    ),
+                     array('warnings' => new external_warnings('always set to \'key\'', 'faulty key name')
                 )
             )
         );
