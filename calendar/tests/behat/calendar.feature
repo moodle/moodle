@@ -163,8 +163,8 @@ Feature: Perform basic calendar functionality
     And I click on "New event" "button"
     When I click on "Save" "button"
     Then I should see "Required"
-    And I am on site homepage
-    And I follow "Calendar"
+    And I am on homepage
+    And I follow "This month"
     And I click on "New event" "button"
     And I set the field "Type of event" to "Course"
     When I click on "Save" "button"
