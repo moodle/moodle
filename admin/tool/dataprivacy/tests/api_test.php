@@ -417,27 +417,20 @@ class tool_dataprivacy_api_testcase extends advanced_testcase {
      * @return array
      */
     public function get_data_requests_provider() {
-        $generator = new testing_data_generator();
-        $user1 = $generator->create_user();
-        $user2 = $generator->create_user();
-        $user3 = $generator->create_user();
-        $user4 = $generator->create_user();
-        $user5 = $generator->create_user();
-        $users = [$user1, $user2, $user3, $user4, $user5];
         $completeonly = [api::DATAREQUEST_STATUS_COMPLETE];
         $completeandcancelled = [api::DATAREQUEST_STATUS_COMPLETE, api::DATAREQUEST_STATUS_CANCELLED];
 
         return [
             // Own data requests.
-            [$users, $user1, false, $completeonly],
+            ['user', false, $completeonly],
             // Non-DPO fetching all requets.
-            [$users, $user2, true, $completeonly],
+            ['user', true, $completeonly],
             // Admin fetching all completed and cancelled requests.
-            [$users, get_admin(), true, $completeandcancelled],
+            ['dpo', true, $completeandcancelled],
             // Admin fetching all completed requests.
-            [$users, get_admin(), true, $completeonly],
+            ['dpo', true, $completeonly],
             // Guest fetching all requests.
-            [$users, guest_user(), true, $completeonly],
+            ['guest', true, $completeonly],
         ];
     }
 
@@ -445,12 +438,31 @@ class tool_dataprivacy_api_testcase extends advanced_testcase {
      * Test for api::get_data_requests()
      *
      * @dataProvider get_data_requests_provider
-     * @param stdClass[] $users Array of users to create data requests for.
-     * @param stdClass $loggeduser The user logging in.
+     * @param string $usertype The type of the user logging in.
      * @param boolean $fetchall Whether to fetch all records.
      * @param int[] $statuses Status filters.
      */
-    public function test_get_data_requests($users, $loggeduser, $fetchall, $statuses) {
+    public function test_get_data_requests($usertype, $fetchall, $statuses) {
+        $generator = new testing_data_generator();
+        $user1 = $generator->create_user();
+        $user2 = $generator->create_user();
+        $user3 = $generator->create_user();
+        $user4 = $generator->create_user();
+        $user5 = $generator->create_user();
+        $users = [$user1, $user2, $user3, $user4, $user5];
+
+        switch ($usertype) {
+            case 'user':
+                $loggeduser = $user1;
+                break;
+            case 'dpo':
+                $loggeduser = get_admin();
+                break;
+            case 'guest':
+                $loggeduser = guest_user();
+                break;
+        }
+
         $comment = 'Data %s request comment by user %d';
         $exportstring = helper::get_shortened_request_type_string(api::DATAREQUEST_TYPE_EXPORT);
         $deletionstring = helper::get_shortened_request_type_string(api::DATAREQUEST_TYPE_DELETE);
