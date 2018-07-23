@@ -266,9 +266,6 @@ $string['when'] = 'When';
 $string['yesterday'] = 'Yesterday';
 $string['youcandeleteallrepeats'] = 'This event is part of a repeating event series. You can delete this event only, or all {$a} events in the series at once.';
 
-// Deprecated since Moodle 3.2.
-$string['for'] = 'for';
-
 // Deprecated since Moodle 3.4.
 $string['quickdownloadcalendar'] = 'Quick download / subscribe to calendar';
 $string['ical'] = 'iCal';

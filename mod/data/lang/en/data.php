@@ -400,17 +400,3 @@ $string['viewfromdate'] = 'Read only from';
 $string['viewtodate'] = 'Read only to';
 $string['viewtodatevalidation'] = 'The read only to date cannot be before the read only from date.';
 $string['wrongdataid'] = 'Wrong data id provided';
-
-// Deprecated since Moodle 3.2.
-$string['namedate'] = 'Date field';
-$string['namefile'] = 'File field';
-$string['namecheckbox'] = 'Checkbox field';
-$string['namelatlong'] = 'Latitude/longitude field';
-$string['namemenu'] = 'Menu field';
-$string['namemultimenu'] = 'Multiple-selection menu field';
-$string['namenumber'] = 'Number field';
-$string['namepicture'] = 'Picture field';
-$string['nameradiobutton'] = 'Radio button field';
-$string['nametext'] = 'Text field';
-$string['nametextarea'] = 'Textarea field';
-$string['nameurl'] = 'URL field';

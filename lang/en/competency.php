@@ -200,6 +200,3 @@ $string['usercompetencystatus_idle'] = 'Idle';
 $string['usercompetencystatus_inreview'] = 'In review';
 $string['usercompetencystatus_waitingforreview'] = 'Waiting for review';
 $string['userplans'] = 'Learning plans';
-
-// Deprecated since Moodle 3.2.
-$string['invalidpersistent'] = 'Invalid persistent';

@@ -1301,8 +1301,7 @@ $string['cachesession'] = 'Session cache';
 $string['cachesessionhelp'] = 'User specific cache that expires when the user\'s session ends. Designed to alleviate session bloat/strain.';
 $string['cacheapplication'] = 'Application cache';
 $string['cacheapplicationhelp'] = 'Cached items are shared among all users and expire by a determined time to live (ttl).';
-// Deprecated since Moodle 3.2.
-$string['mobile'] = 'Mobile';
+
 // Deprecated since Moodle 3.3.
 $string['loginpasswordautocomplete'] = 'Prevent password autocompletion on login form';
 $string['loginpasswordautocomplete_help'] = 'If enabled, users are not allowed to save their account password in their browser.';
