@@ -36,6 +36,11 @@
     }
 }
 
+.unresponsive.mform .form-inline,
+.unresponsive.mform .form-inline label {
+    display: inline-flex;
+}
+
 #jump-to-activity.custom-select {
     width: 100%;
 }
