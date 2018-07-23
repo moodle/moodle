@@ -151,11 +151,11 @@ function xmldb_block_iomad_company_admin_upgrade($oldversion) {
 
 
     // Fix company profile categories.
-    if ($oldversion < 2017090305.2) {
+    if ($oldversion < 2017090309) {
         $DB->execute("update mdl_company c join mdl_user_info_category uic on c.shortname=uic.name set c.profileid = uic.id");
 
         // Iomad savepoint reached.
-        upgrade_plugin_savepoint(true, 2017090305.2, 'block', 'iomad_company_admin');
+        upgrade_plugin_savepoint(true, 2017090309, 'block', 'iomad_company_admin');
     }
 
     return true;
