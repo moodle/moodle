@@ -122,6 +122,9 @@ function user_create_user($user, $updatepassword = true, $triggerevent = true) {
         \core\event\user_created::create_from_userid($newuserid)->trigger();
     }
 
+    // Purge the associated caches.
+    cache_helper::purge_by_event('createduser');
+
     return $newuserid;
 }
 
