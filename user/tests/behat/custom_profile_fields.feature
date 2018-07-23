@@ -1,7 +1,7 @@
 @core @core_user
 Feature: Custom profile fields should be visible and editable by those with the correct permissions.
 
-  Background: Attempting to self-register as a new user with empty names
+  Background:
     Given the following "users" exist:
       | username            | firstname           | lastname | email                           |
       | userwithinformation | userwithinformation | 1        | userwithinformation@example.com |
@@ -12,12 +12,16 @@ Feature: Custom profile fields should be visible and editable by those with the 
       | user                | course | role    |
       | userwithinformation | C1     | student |
 
+    And the following config values are set as admin:
+      | registerauth    | email |
+
     And I log in as "admin"
     And I navigate to "User profile fields" node in "Site administration > Users > Accounts"
     And I set the field "datatype" to "Text input"
     And I set the following fields to these values:
       | Short name                    | notvisible_field |
       | Name                          | notvisible_field |
+      | Display on signup page?       | Yes              |
       | Who is this field visible to? | Not visible      |
     And I click on "Save changes" "button"
 
@@ -25,6 +29,7 @@ Feature: Custom profile fields should be visible and editable by those with the 
     And I set the following fields to these values:
       | Short name                    | uservisible_field |
       | Name                          | uservisible_field |
+      | Display on signup page?       | Yes               |
       | Who is this field visible to? | Visible to user   |
     And I click on "Save changes" "button"
 
@@ -32,6 +37,7 @@ Feature: Custom profile fields should be visible and editable by those with the 
     And I set the following fields to these values:
       | Short name                    | everyonevisible_field |
       | Name                          | everyonevisible_field |
+      | Display on signup page?       | No                    |
       | Who is this field visible to? | Visible to everyone   |
     And I click on "Save changes" "button"
 
@@ -43,6 +49,27 @@ Feature: Custom profile fields should be visible and editable by those with the 
     And I set the field "everyonevisible_field" to "everyonevisible_field_information"
     And I click on "Update profile" "button"
     And I log out
+
+  @javascript
+  Scenario: Visible custom profile fields can be part of the sign up form for anonymous users.
+    Given I am on site homepage
+    And I follow "Log in"
+    When I press "Create new account"
+    And I expand all fieldsets
+    Then I should not see "notvisible_field"
+    And I should see "uservisible_field"
+    And I should not see "everyonevisible_field"
+
+  @javascript
+  Scenario: Visible custom profile fields can be part of the sign up form for guest users.
+    Given I log in as "guest"
+    And I am on site homepage
+    And I follow "Log in"
+    When I press "Create new account"
+    And I expand all fieldsets
+    Then I should not see "notvisible_field"
+    And I should see "uservisible_field"
+    And I should not see "everyonevisible_field"
 
   @javascript
   Scenario: User with moodle/user:update but without moodle/user:viewalldetails can only update visible profile fields.
