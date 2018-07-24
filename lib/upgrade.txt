@@ -8,6 +8,16 @@ information provided here is intended especially for developers.
   example, to inform the user that there are too many items matching the current search criteria.
 * The following functions have been finally deprecated and can not be used any more:
   - external_function_info()
+* Following api's have been removed in behat_config_manager, please use behat_config_util instead.
+    - get_features_with_tags()
+    - get_components_steps_definitions()
+    - get_config_file_contents()
+    - merge_behat_config()
+    - get_behat_profile()
+    - profile_guided_allocate()
+    - merge_config()
+    - clean_path()
+    - get_behat_tests_path()
 
 === 3.5 ===
 
