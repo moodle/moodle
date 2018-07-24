@@ -22,16 +22,12 @@
 
     $loginurl = (!empty($CFG->alternateloginurl)) ? $CFG->alternateloginurl : '';
 
-
-    if (!empty($CFG->registerauth) or is_enabled_auth('none') or !empty($CFG->auth_instructions)) {
+    $config = get_config('auth_shibboleth');
+    if (!empty($CFG->registerauth) or is_enabled_auth('none') or !empty($config->auth_instructions)) {
         $show_instructions = true;
     } else {
         $show_instructions = false;
     }
-
-    // Set SAML domain cookie
-    $config = get_config('auth_shibboleth');
-
 
     $IdPs = get_idp_list($config->organization_selection);
     if (isset($_POST['idp']) && isset($IdPs[$_POST['idp']])){
