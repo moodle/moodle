@@ -881,7 +881,10 @@ function print_side_block($heading='', $content='', $list=NULL, $icons=NULL, $fo
 /**
  * Prints a basic textarea field.
  *
- * @deprecated since Moodle 2.0
+ * This was 'deprecated' in 2.0, but not properly (there was no alternative) so the
+ * debugging message was commented out.
+ *
+ * @deprecated since Moodle 3.6
  *
  * When using this function, you should
  *
@@ -903,13 +906,12 @@ function print_textarea($unused, $rows, $cols, $width, $height, $name, $value=''
     /// However, you can set them to zero to override the mincols and minrows values below.
 
     // Disabling because there is not yet a viable $OUTPUT option for cases when mforms can't be used
-    // debugging('print_textarea() has been deprecated. You should be using mforms and the editor element.');
+    debugging('print_textarea() is deprecated. Please use $OUTPUT->print_textarea() instead.', DEBUG_DEVELOPER);
 
-    global $CFG;
+    global $OUTPUT;
 
     $mincols = 65;
     $minrows = 10;
-    $str = '';
 
     if ($id === '') {
         $id = 'edit-'.$name;
@@ -922,19 +924,12 @@ function print_textarea($unused, $rows, $cols, $width, $height, $name, $value=''
         $cols = $mincols;
     }
 
-    editors_head_setup();
-    $editor = editors_get_preferred_editor(FORMAT_HTML);
-    $editor->set_text($value);
-    $editor->use_editor($id, array('legacy'=>true));
-
-    $str .= "\n".'<textarea class="form-textarea" id="'. $id .'" name="'. $name .'" rows="'. $rows .'" cols="'. $cols .'" spellcheck="true">'."\n";
-    $str .= htmlspecialchars($value); // needed for editing of cleaned text!
-    $str .= '</textarea>'."\n";
-
+    $textarea = $OUTPUT->print_textarea($name, $id, $value, $rows, $cols);
     if ($return) {
-        return $str;
+        return $textarea;
     }
-    echo $str;
+
+    echo $textarea;
 }
 
 /**

@@ -6,6 +6,7 @@ information provided here is intended especially for developers.
 * Custom AJAX handlers for the form autocomplete fields can now optionally return string in their processResults()
   callback. If a string is returned, it is displayed instead of the list if suggested items. This can be used, for
   example, to inform the user that there are too many items matching the current search criteria.
+* The print_textarea() function has been deprecated. Please use $OUTPUT->print_textarea() instead.
 * The following functions have been finally deprecated and can not be used any more:
   - external_function_info()
 * Following api's have been removed in behat_config_manager, please use behat_config_util instead.

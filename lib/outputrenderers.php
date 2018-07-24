@@ -1519,6 +1519,35 @@ class core_renderer extends renderer_base {
     }
 
     /**
+     * Returns the HTML for a basic textarea field.
+     *
+     * @param string $name Name to use for the textarea element
+     * @param string $id The id to use fort he textarea element
+     * @param string $value Initial content to display in the textarea
+     * @param int $rows Number of rows to display
+     * @param int $cols Number of columns to display
+     * @return string the HTML to display
+     */
+    public function print_textarea($name, $id, $value, $rows, $cols) {
+        global $OUTPUT;
+
+        editors_head_setup();
+        $editor = editors_get_preferred_editor(FORMAT_HTML);
+        $editor->set_text($value);
+        $editor->use_editor($id, []);
+
+        $context = [
+            'id' => $id,
+            'name' => $name,
+            'value' => $value,
+            'rows' => $rows,
+            'cols' => $cols
+        ];
+
+        return $OUTPUT->render_from_template('core_form/editor_textarea', $context);
+    }
+
+    /**
      * Renders an action menu component.
      *
      * ARIA references:
