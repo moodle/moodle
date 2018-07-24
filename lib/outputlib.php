@@ -749,7 +749,7 @@ class theme_config {
             'parents', 'sheets', 'parents_exclude_sheets', 'plugins_exclude_sheets', 'usefallback',
             'javascripts', 'javascripts_footer', 'parents_exclude_javascripts',
             'layouts', 'enable_dock', 'enablecourseajax', 'requiredblocks',
-            'rendererfactory', 'csspostprocess', 'editor_sheets', 'rarrow', 'larrow', 'uarrow', 'darrow',
+            'rendererfactory', 'csspostprocess', 'editor_sheets', 'editor_scss', 'rarrow', 'larrow', 'uarrow', 'darrow',
             'hidefromselector', 'doctype', 'yuicssmodules', 'blockrtlmanipulations',
             'lessfile', 'extralesscallback', 'lessvariablescallback', 'blockrendermethod',
             'scss', 'extrascsscallback', 'prescsscallback', 'csstreepostprocessor', 'addblockposition',
@@ -971,6 +971,31 @@ class theme_config {
         }
 
         return $files;
+    }
+
+    /**
+     * Compiles and returns the content of the SCSS to be used in editor content
+     *
+     * @return string Compiled CSS from the editor SCSS
+     */
+    public function editor_scss_to_css() {
+        $css = '';
+
+        if (!empty($this->editor_scss)) {
+            $compiler = new core_scss();
+
+            foreach ($this->editor_scss as $filename) {
+                $compiler->set_file("{$this->dir}/scss/{$filename}.scss");
+
+                try {
+                    $css .= $compiler->to_css();
+                } catch (\Exception $e) {
+                    debugging('Error while compiling editor SCSS: ' . $e->getMessage(), DEBUG_DEVELOPER);
+                }
+            }
+        }
+
+        return $css;
     }
 
     /**
@@ -1270,13 +1295,22 @@ class theme_config {
      * @return string CSS markup
      */
     public function get_css_content_editor() {
-        // Do not bother to optimise anything here, just very basic stuff.
-        $cssfiles = $this->editor_css_files();
         $css = '';
+        $cssfiles = $this->editor_css_files();
+
+        // If editor has static CSS, include it.
         foreach ($cssfiles as $file) {
             $css .= file_get_contents($file)."\n";
         }
-        return $this->post_process($css);
+
+        // If editor has SCSS, compile and include it.
+        if (($convertedscss = $this->editor_scss_to_css())) {
+            $css .= $convertedscss;
+        }
+
+        $output = $this->post_process($css);
+
+        return $output;
     }
 
     /**
