@@ -72,7 +72,6 @@ $string['message'] = 'Message';
 $string['messagepreferences'] = 'Message preferences';
 $string['messages'] = 'Messages';
 $string['messagingdatahasnotbeenmigrated'] = 'Your messages are temporarily unavailable due to upgrades in the messaging infrastructure. Please wait for them to be migrated.';
-$string['messagingdisabled'] = 'Messaging is disabled on this site, emails will be sent instead';
 $string['newonlymsg'] = 'Show only new';
 $string['newmessage'] = 'New message';
 $string['newmessagesearch'] = 'Select or search for a contact to send a new message.';
@@ -179,3 +178,6 @@ $string['viewnotificationresource'] = 'Go to: {$a}';
 $string['viewunreadmessageswith'] = 'View unread messages with {$a}';
 $string['writeamessage'] = 'Write a message...';
 $string['you'] = 'You:';
+
+// Deprecated since Moodle 3.6.
+$string['messagingdisabled'] = 'Messaging is disabled on this site, emails will be sent instead';
