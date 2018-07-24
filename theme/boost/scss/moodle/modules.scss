@@ -241,6 +241,10 @@ div#dock {
 .path-mod-lesson .answeroption .checkbox label p {
     display: inline;
 }
+.path-mod-lesson .slideshow {
+    overflow: auto;
+    padding: 15px;
+}
 #page-mod-lesson-view .branchbuttoncontainer .singlebutton button[type="submit"] {
     white-space: normal;
 }
