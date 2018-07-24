@@ -484,7 +484,7 @@ function wiki_search_form($cm, $search = '', $subwiki = null) {
         $output .= '<input name="subwikiid" type="hidden" value="' . $subwiki->id . '" />';
     }
     $output .= '<input name="searchwikicontent" type="hidden" value="1" />';
-    $output .= '<input value="' . get_string('searchwikis', 'wiki') . '" type="submit" />';
+    $output .= '<input value="' . get_string('searchwikis', 'wiki') . '" class="btn btn-secondary" type="submit" />';
     $output .= '</fieldset>';
     $output .= '</form>';
     $output .= '</div>';
