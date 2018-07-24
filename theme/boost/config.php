@@ -29,6 +29,7 @@ require_once(__DIR__ . '/lib.php');
 $THEME->name = 'boost';
 $THEME->sheets = [];
 $THEME->editor_sheets = [];
+$THEME->editor_scss = ['editor'];
 $THEME->usefallback = true;
 $THEME->scss = function($theme) {
     return theme_boost_get_main_scss_content($theme);
