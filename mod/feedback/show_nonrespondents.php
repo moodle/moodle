@@ -31,7 +31,7 @@ require_once($CFG->libdir.'/tablelib.php');
 ////////////////////////////////////////////////////////
 $id = required_param('id', PARAM_INT);
 $subject = optional_param('subject', '', PARAM_CLEANHTML);
-$message = optional_param('message', '', PARAM_CLEANHTML);
+$message = optional_param_array('message', '', PARAM_CLEANHTML);
 $format = optional_param('format', FORMAT_MOODLE, PARAM_INT);
 $messageuser = optional_param_array('messageuser', false, PARAM_INT);
 $action = optional_param('action', '', PARAM_ALPHA);
@@ -43,6 +43,10 @@ $current_tab = 'nonrespondents';
 ////////////////////////////////////////////////////////
 //get the objects
 ////////////////////////////////////////////////////////
+
+if ($message) {
+    $message = $message['text'];
+}
 
 list ($course, $cm) = get_course_and_cm_from_cmid($id, 'feedback');
 if (! $feedback = $DB->get_record("feedback", array("id"=>$cm->instance))) {
@@ -275,7 +279,7 @@ if (empty($students)) {
         echo '<label for="feedback_subject">'.get_string('subject', 'feedback').'&nbsp;</label>';
         echo '<input type="text" id="feedback_subject" size="50" maxlength="255" name="subject" value="'.s($subject).'" />';
         echo '</div>';
-        print_textarea(true, 15, 25, 30, 10, "message", $message);
+        echo $OUTPUT->print_textarea('message', 'edit-message', $message, 15, 25);
         print_string('formathtml');
         echo '<input type="hidden" name="format" value="'.FORMAT_HTML.'" />';
         echo '<br /><div class="buttons">';

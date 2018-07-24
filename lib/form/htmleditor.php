@@ -88,21 +88,17 @@ class MoodleQuickForm_htmleditor extends MoodleQuickForm_textarea{
      *
      * @return string
      */
-    function toHtml(){
+    public function toHtml() {
+        global $OUTPUT;
+
         if ($this->_flagFrozen) {
             return $this->getFrozenHtml();
         } else {
+            $value = preg_replace("/(\r\n|\n|\r)/", '&#010;', $this->getValue());
+
             return $this->_getTabs() .
-                    print_textarea(true,
-                                    $this->_options['rows'],
-                                    $this->_options['cols'],
-                                    $this->_options['width'],
-                                    $this->_options['height'],
-                                    $this->getName(),
-                                    preg_replace("/(\r\n|\n|\r)/", '&#010;',$this->getValue()),
-                                    0, // unused anymore
-                                    true,
-                                    $this->getAttribute('id'));
+                $OUTPUT->print_textarea($this->getName(), $this->getAttribute('id'), $value, $this->_options['rows'],
+                    $this->_options['cols']);
         }
     }
 
