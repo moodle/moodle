@@ -53,28 +53,29 @@ trait eventtype {
      * @param array $eventtypes The available event types for the user
      */
     protected function add_event_type_elements($mform, $eventtypes) {
+        global $CFG, $DB;
         $options = [];
 
-        if (isset($eventtypes['user'])) {
+        if (!empty($eventtypes['user'])) {
             $options['user'] = get_string('user');
         }
-        if (isset($eventtypes['group'])) {
+        if (!empty($eventtypes['group'])) {
             $options['group'] = get_string('group');
         }
-        if (isset($eventtypes['course'])) {
+        if (!empty($eventtypes['course'])) {
             $options['course'] = get_string('course');
         }
-        if (isset($eventtypes['category'])) {
+        if (!empty($eventtypes['category'])) {
             $options['category'] = get_string('category');
         }
-        if (isset($eventtypes['site'])) {
+        if (!empty($eventtypes['site'])) {
             $options['site'] = get_string('site');
         }
 
         // If we only have one event type and it's 'user' event then don't bother
         // rendering the select boxes because there is no choice for the user to
         // make.
-        if (count(array_keys($eventtypes)) == 1 && isset($eventtypes['user'])) {
+        if (!empty($eventtypes['user']) && count($options) == 1) {
             $mform->addElement('hidden', 'eventtype');
             $mform->setType('eventtype', PARAM_TEXT);
             $mform->setDefault('eventtype', 'user');
@@ -87,9 +88,9 @@ trait eventtype {
             $mform->addElement('select', 'eventtype', get_string('eventkind', 'calendar'), $options);
         }
 
-        if (isset($eventtypes['category'])) {
+        if (!empty($eventtypes['category'])) {
             $categoryoptions = [];
-            foreach ($eventtypes['category'] as $id => $category) {
+            foreach (\coursecat::make_categories_list('moodle/category:manage') as $id => $category) {
                 $categoryoptions[$id] = $category;
             }
 
@@ -97,33 +98,26 @@ trait eventtype {
             $mform->hideIf('categoryid', 'eventtype', 'noteq', 'category');
         }
 
-        if (isset($eventtypes['course'])) {
-            $limit = !has_capability('moodle/calendar:manageentries', \context_system::instance());
-            $mform->addElement('course', 'courseid', get_string('course'), ['limittoenrolled' => $limit]);
+        $showall = $CFG->calendar_adminseesall && !has_capability('moodle/calendar:manageentries', \context_system::instance());
+        if (!empty($eventtypes['course'])) {
+            $mform->addElement('course', 'courseid', get_string('course'), ['limittoenrolled' => !$showall]);
             $mform->hideIf('courseid', 'eventtype', 'noteq', 'course');
         }
 
-        if (isset($eventtypes['group'])) {
-            $options = ['limittoenrolled' => true];
-            // Exclude courses without group.
-            if (isset($eventtypes['course']) && isset($eventtypes['groupcourses'])) {
-                $options['exclude'] = array_diff(array_keys($eventtypes['course']),
-                    array_keys($eventtypes['groupcourses']));
-            }
-
-            $mform->addElement('course', 'groupcourseid', get_string('course'), $options);
+        if (!empty($eventtypes['group'])) {
+            $groups = !(empty($this->_customdata['groups'])) ? $this->_customdata['groups'] : null;
+            // Get the list of courses without groups to filter on the course selector.
+            $sql = "SELECT c.id
+                      FROM {course} c
+                     WHERE c.id NOT IN (
+                            SELECT DISTINCT courseid FROM {groups}
+                           )";
+            $coursesnogroup = $DB->get_records_sql($sql);
+            $mform->addElement('course', 'groupcourseid', get_string('course'),  ['limittoenrolled' => !$showall,
+                    'exclude' => array_keys($coursesnogroup)]);
             $mform->hideIf('groupcourseid', 'eventtype', 'noteq', 'group');
 
-            $groupoptions = [];
-            foreach ($eventtypes['group'] as $group) {
-                // We are formatting it this way in order to provide the javascript both
-                // the course and group ids so that it can enhance the form for the user.
-                $index = "{$group->courseid}-{$group->id}";
-                $groupoptions[$index] = format_string($group->name, true,
-                    ['context' => \context_course::instance($group->courseid)]);
-            }
-
-            $mform->addElement('select', 'groupid', get_string('group'), $groupoptions);
+            $mform->addElement('select', 'groupid', get_string('group'), $groups);
             $mform->hideIf('groupid', 'eventtype', 'noteq', 'group');
             // We handle the group select hide/show actions on the event_form module.
         }

@@ -764,6 +764,7 @@ $functions = array(
         'classpath' => 'group/externallib.php',
         'description' => 'Returns all groups in specified course.',
         'type' => 'read',
+        'ajax' => true,
         'capabilities' => 'moodle/course:managegroups'
     ),
     'core_group_get_course_user_groups' => array(
