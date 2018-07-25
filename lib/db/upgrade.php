@@ -2254,5 +2254,30 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2018051700.08);
     }
 
+    if ($oldversion < 2018051701.03) {
+        // Find all duplicate top level categories per context.
+        $duplicates = $DB->get_records_sql("SELECT qc1.*
+                                              FROM {question_categories} qc1
+                                              JOIN {question_categories} qc2
+                                                ON qc1.contextid = qc2.contextid AND qc1.id <> qc2.id
+                                             WHERE qc1.parent = 0 AND qc2.parent = 0
+                                          ORDER BY qc1.contextid, qc1.id");
+
+        // For each context, let the first top category to remain as top category and make the rest its children.
+        $currentcontextid = 0;
+        $chosentopid = 0;
+        foreach ($duplicates as $duplicate) {
+            if ($currentcontextid != $duplicate->contextid) {
+                $currentcontextid = $duplicate->contextid;
+                $chosentopid = $duplicate->id;
+            } else {
+                $DB->set_field('question_categories', 'parent', $chosentopid, ['id' => $duplicate->id]);
+            }
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2018051701.03);
+    }
+
     return true;
 }
