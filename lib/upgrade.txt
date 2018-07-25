@@ -18,6 +18,9 @@ information provided here is intended especially for developers.
     - merge_config()
     - clean_path()
     - get_behat_tests_path()
+* Following behat steps have been removed from core:
+    - I set the field "<field_string>" to multiline
+    - I follow "<link_string>"" in the open menu
 * Removed the lib/password_compat/lib/password.php file.
 
 === 3.5 ===
