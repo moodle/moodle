@@ -53,7 +53,7 @@ trait eventtype {
      * @param array $eventtypes The available event types for the user
      */
     protected function add_event_type_elements($mform, $eventtypes) {
-        global $DB;
+        global $CFG, $DB;
         $options = [];
 
         if (!empty($eventtypes['user'])) {
@@ -98,23 +98,22 @@ trait eventtype {
             $mform->hideIf('categoryid', 'eventtype', 'noteq', 'category');
         }
 
+        $showall = $CFG->calendar_adminseesall && !has_capability('moodle/calendar:manageentries', \context_system::instance());
         if (!empty($eventtypes['course'])) {
-            $limit = !has_capability('moodle/calendar:manageentries', \context_system::instance());
-            $mform->addElement('course', 'courseid', get_string('course'), ['limittoenrolled' => $limit]);
+            $mform->addElement('course', 'courseid', get_string('course'), ['limittoenrolled' => !$showall]);
             $mform->hideIf('courseid', 'eventtype', 'noteq', 'course');
         }
 
         if (!empty($eventtypes['group'])) {
             $groups = !(empty($this->_customdata['groups'])) ? $this->_customdata['groups'] : null;
-            $limit = !has_capability('moodle/calendar:manageentries', \context_system::instance());
             // Get the list of courses without groups to filter on the course selector.
             $sql = "SELECT c.id
                       FROM {course} c
-                 LEFT JOIN {groups} g ON g.courseid = c.id
-                  GROUP BY c.id
-                    HAVING COUNT(g.id) = 0";
+                     WHERE c.id NOT IN (
+                            SELECT DISTINCT courseid FROM {groups}
+                           )";
             $coursesnogroup = $DB->get_records_sql($sql);
-            $mform->addElement('course', 'groupcourseid', get_string('course'),  ['limittoenrolled' => $limit,
+            $mform->addElement('course', 'groupcourseid', get_string('course'),  ['limittoenrolled' => !$showall,
                     'exclude' => array_keys($coursesnogroup)]);
             $mform->hideIf('groupcourseid', 'eventtype', 'noteq', 'group');
 
