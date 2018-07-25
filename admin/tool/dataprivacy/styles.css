@@ -24,3 +24,7 @@ dd a.contactdpo {
     /* Reverting dd's left margin */
     margin-left: inherit;
 }
+
+[data-region="data-requests-table"] .moodle-actionmenu {
+    min-width: 150px;
+}
