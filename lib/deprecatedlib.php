@@ -6394,3 +6394,222 @@ function message_delete_message($message, $userid) {
 
     return \core_message\api::delete_message($userid, $message->id);
 }
+
+/**
+ * Get all of the allowed types for all of the courses and groups
+ * the logged in user belongs to.
+ *
+ * The returned array will optionally have 5 keys:
+ *      'user' : true if the logged in user can create user events
+ *      'site' : true if the logged in user can create site events
+ *      'category' : array of course categories that the user can create events for
+ *      'course' : array of courses that the user can create events for
+ *      'group': array of groups that the user can create events for
+ *      'groupcourses' : array of courses that the groups belong to (can
+ *                       be different from the list in 'course'.
+ * @deprecated since 3.6
+ * @return array The array of allowed types.
+ */
+function calendar_get_all_allowed_types() {
+    debugging('calendar_get_all_allowed_types() is deprecated. Please use calendar_get_allowed_types() instead.',
+        DEBUG_DEVELOPER);
+
+    global $CFG, $USER, $DB;
+
+    require_once($CFG->libdir . '/enrollib.php');
+
+    $types = [];
+
+    $allowed = new stdClass();
+
+    calendar_get_allowed_types($allowed);
+
+    if ($allowed->user) {
+        $types['user'] = true;
+    }
+
+    if ($allowed->site) {
+        $types['site'] = true;
+    }
+
+    if (coursecat::has_manage_capability_on_any()) {
+        $types['category'] = coursecat::make_categories_list('moodle/category:manage');
+    }
+
+    // This function warms the context cache for the course so the calls
+    // to load the course context in calendar_get_allowed_types don't result
+    // in additional DB queries.
+    $courses = calendar_get_default_courses(null, 'id, groupmode, groupmodeforce', true);
+
+    // We want to pre-fetch all of the groups for each course in a single
+    // query to avoid calendar_get_allowed_types from hitting the DB for
+    // each separate course.
+    $groups = groups_get_all_groups_for_courses($courses);
+
+    foreach ($courses as $course) {
+        $coursegroups = isset($groups[$course->id]) ? $groups[$course->id] : null;
+        calendar_get_allowed_types($allowed, $course, $coursegroups);
+
+        if (!empty($allowed->courses)) {
+            $types['course'][$course->id] = $course;
+        }
+
+        if (!empty($allowed->groups)) {
+            $types['groupcourses'][$course->id] = $course;
+
+            if (!isset($types['group'])) {
+                $types['group'] = array_values($allowed->groups);
+            } else {
+                $types['group'] = array_merge($types['group'], array_values($allowed->groups));
+            }
+        }
+    }
+
+    return $types;
+}
+
+/**
+ * Gets array of all groups in a set of course.
+ *
+ * @category group
+ * @param array $courses Array of course objects or course ids.
+ * @return array Array of groups indexed by course id.
+ */
+function groups_get_all_groups_for_courses($courses) {
+    global $DB;
+
+    if (empty($courses)) {
+        return [];
+    }
+
+    $groups = [];
+    $courseids = [];
+
+    foreach ($courses as $course) {
+        $courseid = is_object($course) ? $course->id : $course;
+        $groups[$courseid] = [];
+        $courseids[] = $courseid;
+    }
+
+    $groupfields = [
+        'g.id as gid',
+        'g.courseid',
+        'g.idnumber',
+        'g.name',
+        'g.description',
+        'g.descriptionformat',
+        'g.enrolmentkey',
+        'g.picture',
+        'g.hidepicture',
+        'g.timecreated',
+        'g.timemodified'
+    ];
+
+    $groupsmembersfields = [
+        'gm.id as gmid',
+        'gm.groupid',
+        'gm.userid',
+        'gm.timeadded',
+        'gm.component',
+        'gm.itemid'
+    ];
+
+    $concatidsql = $DB->sql_concat_join("'-'", ['g.id', 'COALESCE(gm.id, 0)']) . ' AS uniqid';
+    list($courseidsql, $params) = $DB->get_in_or_equal($courseids);
+    $groupfieldssql = implode(',', $groupfields);
+    $groupmembersfieldssql = implode(',', $groupsmembersfields);
+    $sql = "SELECT {$concatidsql}, {$groupfieldssql}, {$groupmembersfieldssql}
+              FROM {groups} g
+         LEFT JOIN {groups_members} gm
+                ON gm.groupid = g.id
+             WHERE g.courseid {$courseidsql}";
+
+    $results = $DB->get_records_sql($sql, $params);
+
+    // The results will come back as a flat dataset thanks to the left
+    // join so we will need to do some post processing to blow it out
+    // into a more usable data structure.
+    //
+    // This loop will extract the distinct groups from the result set
+    // and add it's list of members to the object as a property called
+    // 'members'. Then each group will be added to the result set indexed
+    // by it's course id.
+    //
+    // The resulting data structure for $groups should be:
+    // $groups = [
+    //      '1' = [
+    //          '1' => (object) [
+    //              'id' => 1,
+    //              <rest of group properties>
+    //              'members' => [
+    //                  '1' => (object) [
+    //                      <group member properties>
+    //                  ],
+    //                  '2' => (object) [
+    //                      <group member properties>
+    //                  ]
+    //              ]
+    //          ],
+    //          '2' => (object) [
+    //              'id' => 2,
+    //              <rest of group properties>
+    //              'members' => [
+    //                  '1' => (object) [
+    //                      <group member properties>
+    //                  ],
+    //                  '3' => (object) [
+    //                      <group member properties>
+    //                  ]
+    //              ]
+    //          ]
+    //      ]
+    // ]
+    //
+    foreach ($results as $key => $result) {
+        $groupid = $result->gid;
+        $courseid = $result->courseid;
+        $coursegroups = $groups[$courseid];
+        $groupsmembersid = $result->gmid;
+        $reducefunc = function($carry, $field) use ($result) {
+            // Iterate over the groups properties and pull
+            // them out into a separate object.
+            list($prefix, $field) = explode('.', $field);
+
+            if (property_exists($result, $field)) {
+                $carry[$field] = $result->{$field};
+            }
+
+            return $carry;
+        };
+
+        if (isset($coursegroups[$groupid])) {
+            $group = $coursegroups[$groupid];
+        } else {
+            $initial = [
+                'id' => $groupid,
+                'members' => []
+            ];
+            $group = (object) array_reduce(
+                $groupfields,
+                $reducefunc,
+                $initial
+            );
+        }
+
+        if (!empty($groupsmembersid)) {
+            $initial = ['id' => $groupsmembersid];
+            $groupsmembers = (object) array_reduce(
+                $groupsmembersfields,
+                $reducefunc,
+                $initial
+            );
+
+            $group->members[$groupsmembers->userid] = $groupsmembers;
+        }
+
+        $coursegroups[$groupid] = $group;
+        $groups[$courseid] = $coursegroups;
+    }
+
+    return $groups;
+}
