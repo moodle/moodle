@@ -497,7 +497,7 @@ class page_wiki_edit extends page_wiki {
 
                 $form = '<form method="post" action="' . $CFG->wwwroot . '/mod/wiki/overridelocks.php?' . $params . '">';
                 $form .= '<input type="hidden" name="sesskey" value="' . sesskey() . '" />';
-                $form .= '<input type="submit" value="' . get_string('overridelocks', 'wiki') . '" />';
+                $form .= '<input type="submit" class="btn btn-secondary" value="' . get_string('overridelocks', 'wiki') . '" />';
                 $form .= '</form>';
 
                 print $OUTPUT->box($form, 'generalbox boxwidthnormal boxaligncenter');
@@ -1894,10 +1894,10 @@ class page_wiki_restoreversion extends page_wiki {
         echo html_writer::tag('div', get_string('restoreconfirm', 'wiki', $version->version));
         echo $OUTPUT->container_start(false, 'wiki_restoreform');
         echo '<form class="wiki_restore_yes" action="' . $restoreurl . '" method="post" id="restoreversion">';
-        echo '<div><input type="submit" name="confirm" value="' . get_string('yes') . '" /></div>';
+        echo '<div><input type="submit" class="btn btn-secondary" name="confirm" value="' . get_string('yes') . '" /></div>';
         echo '</form>';
         echo '<form class="wiki_restore_no" action="' . $return . '" method="post">';
-        echo '<div><input type="submit" name="norestore" value="' . get_string('no') . '" /></div>';
+        echo '<div><input type="submit" class="btn btn-secondary" name="norestore" value="' . get_string('no') . '" /></div>';
         echo '</form>';
         echo $OUTPUT->container_end();
         echo $OUTPUT->container_end();
@@ -1964,10 +1964,11 @@ class page_wiki_deletecomment extends page_wiki {
         echo html_writer::tag('p', $strdeletecheckfull);
         echo $OUTPUT->container_start(false, 'wiki_deletecommentform');
         echo '<form class="wiki_deletecomment_yes" action="' . $deleteurl . '" method="post" id="deletecomment">';
-        echo '<div><input type="submit" name="confirmdeletecomment" value="' . get_string('yes') . '" /></div>';
+        echo '<div><input type="submit" class="btn btn-secondary" name="confirmdeletecomment" value="'
+            . get_string('yes') . '" /></div>';
         echo '</form>';
         echo '<form class="wiki_deletecomment_no" action="' . $return . '" method="post">';
-        echo '<div><input type="submit" name="norestore" value="' . get_string('no') . '" /></div>';
+        echo '<div><input type="submit" class="btn btn-secondary" name="norestore" value="' . get_string('no') . '" /></div>';
         echo '</form>';
         echo $OUTPUT->container_end();
         echo $OUTPUT->container_end();
