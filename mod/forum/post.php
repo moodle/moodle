@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -37,32 +36,32 @@ $confirm = optional_param('confirm', 0, PARAM_INT);
 $groupid = optional_param('groupid', null, PARAM_INT);
 
 $PAGE->set_url('/mod/forum/post.php', array(
-        'reply' => $reply,
-        'forum' => $forum,
-        'edit'  => $edit,
-        'delete'=> $delete,
-        'prune' => $prune,
-        'name'  => $name,
-        'confirm'=>$confirm,
-        'groupid'=>$groupid,
-        ));
-//these page_params will be passed as hidden variables later in the form.
-$page_params = array('reply'=>$reply, 'forum'=>$forum, 'edit'=>$edit);
+    'reply' => $reply,
+    'forum' => $forum,
+    'edit'  => $edit,
+    'delete' => $delete,
+    'prune' => $prune,
+    'name'  => $name,
+    'confirm' => $confirm,
+    'groupid' => $groupid,
+));
+// These page_params will be passed as hidden variables later in the form.
+$pageparams = array('reply' => $reply, 'forum' => $forum, 'edit' => $edit);
 
 $sitecontext = context_system::instance();
 
 if (!isloggedin() or isguestuser()) {
 
     if (!isloggedin() and !get_local_referer()) {
-        // No referer+not logged in - probably coming in via email  See MDL-9052
+        // No referer+not logged in - probably coming in via email  See MDL-9052.
         require_login();
     }
 
-    if (!empty($forum)) {      // User is starting a new discussion in a forum
+    if (!empty($forum)) {      // User is starting a new discussion in a forum.
         if (! $forum = $DB->get_record('forum', array('id' => $forum))) {
             print_error('invalidforumid', 'forum');
         }
-    } else if (!empty($reply)) {      // User is writing a new reply
+    } else if (!empty($reply)) {      // User is writing a new reply.
         if (! $parent = forum_get_post_full($reply)) {
             print_error('invalidparentpostid', 'forum');
         }
@@ -77,7 +76,7 @@ if (!isloggedin() or isguestuser()) {
         print_error('invalidcourseid');
     }
 
-    if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $course->id)) { // For the logs
+    if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $course->id)) { // For the logs.
         print_error('invalidcoursemodule');
     } else {
         $modcontext = context_module::instance($cm->id);
@@ -95,9 +94,9 @@ if (!isloggedin() or isguestuser()) {
     exit;
 }
 
-require_login(0, false);   // Script is useless unless they're logged in
+require_login(0, false);   // Script is useless unless they're logged in.
 
-if (!empty($forum)) {      // User is starting a new discussion in a forum
+if (!empty($forum)) {      // User is starting a new discussion in a forum.
     if (! $forum = $DB->get_record("forum", array("id" => $forum))) {
         print_error('invalidforumid', 'forum');
     }
@@ -138,7 +137,7 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
     $post = new stdClass();
     $post->course        = $course->id;
     $post->forum         = $forum->id;
-    $post->discussion    = 0;           // ie discussion # not defined yet
+    $post->discussion    = 0;           // Ie discussion # not defined yet.
     $post->parent        = 0;
     $post->subject       = '';
     $post->userid        = $USER->id;
@@ -155,7 +154,7 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
     // Unsetting this will allow the correct return URL to be calculated later.
     unset($SESSION->fromdiscussion);
 
-} else if (!empty($reply)) {      // User is writing a new reply
+} else if (!empty($reply)) {      // User is writing a new reply.
 
     if (! $parent = forum_get_post_full($reply)) {
         print_error('invalidparentpostid', 'forum');
@@ -173,7 +172,7 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
         print_error('invalidcoursemodule');
     }
 
-    // Ensure lang, theme, etc. is set up properly. MDL-6926
+    // Ensure lang, theme, etc. is set up properly. MDL-6926.
     $PAGE->set_cm($cm, $course, $forum);
 
     // Retrieve the contexts.
@@ -193,9 +192,9 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
         print_error('nopostforum', 'forum');
     }
 
-    // Make sure user can post here
+    // Make sure user can post here.
     if (isset($cm->groupmode) && empty($course->groupmodeforce)) {
-        $groupmode =  $cm->groupmode;
+        $groupmode = $cm->groupmode;
     } else {
         $groupmode = $course->groupmode;
     }
@@ -234,7 +233,7 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
     // Unsetting this will allow the correct return URL to be calculated later.
     unset($SESSION->fromdiscussion);
 
-} else if (!empty($edit)) {  // User is editing their own post
+} else if (!empty($edit)) {  // User is editing their own post.
 
     if (! $post = forum_get_post_full($edit)) {
         print_error('invalidpostid', 'forum');
@@ -264,12 +263,12 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
 
     if (!($forum->type == 'news' && !$post->parent && $discussion->timestart > time())) {
         if (((time() - $post->created) > $CFG->maxeditingtime) and
-                    !has_capability('mod/forum:editanypost', $modcontext)) {
+            !has_capability('mod/forum:editanypost', $modcontext)) {
             print_error('maxtimehaspassed', 'forum', '', format_time($CFG->maxeditingtime));
         }
     }
     if (($post->userid <> $USER->id) and
-                !has_capability('mod/forum:editanypost', $modcontext)) {
+        !has_capability('mod/forum:editanypost', $modcontext)) {
         print_error('cannoteditposts', 'forum');
     }
 
@@ -285,7 +284,7 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
     // Unsetting this will allow the correct return URL to be calculated later.
     unset($SESSION->fromdiscussion);
 
-}else if (!empty($delete)) {  // User is deleting a post
+} else if (!empty($delete)) {  // User is deleting a post.
 
     if (! $post = forum_get_post_full($delete)) {
         print_error('invalidpostid', 'forum');
@@ -307,34 +306,34 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
     $modcontext = context_module::instance($cm->id);
 
     if ( !(($post->userid == $USER->id && has_capability('mod/forum:deleteownpost', $modcontext))
-                || has_capability('mod/forum:deleteanypost', $modcontext)) ) {
+        || has_capability('mod/forum:deleteanypost', $modcontext)) ) {
         print_error('cannotdeletepost', 'forum');
     }
 
 
     $replycount = forum_count_replies($post);
 
-    if (!empty($confirm) && confirm_sesskey()) {    // User has confirmed the delete
-        //check user capability to delete post.
+    if (!empty($confirm) && confirm_sesskey()) {    // User has confirmed the delete.
+        // Check user capability to delete post.
         $timepassed = time() - $post->created;
         if (($timepassed > $CFG->maxeditingtime) && !has_capability('mod/forum:deleteanypost', $modcontext)) {
             print_error("cannotdeletepost", "forum",
-                        forum_go_back_to(new moodle_url("/mod/forum/discuss.php", array('d' => $post->discussion))));
+                forum_go_back_to(new moodle_url("/mod/forum/discuss.php", array('d' => $post->discussion))));
         }
 
         if ($post->totalscore) {
             notice(get_string('couldnotdeleteratings', 'rating'),
-                   forum_go_back_to(new moodle_url("/mod/forum/discuss.php", array('d' => $post->discussion))));
+                forum_go_back_to(new moodle_url("/mod/forum/discuss.php", array('d' => $post->discussion))));
 
         } else if ($replycount && !has_capability('mod/forum:deleteanypost', $modcontext)) {
             print_error("couldnotdeletereplies", "forum",
-                        forum_go_back_to(new moodle_url("/mod/forum/discuss.php", array('d' => $post->discussion))));
+                forum_go_back_to(new moodle_url("/mod/forum/discuss.php", array('d' => $post->discussion))));
 
         } else {
-            if (! $post->parent) {  // post is a discussion topic as well, so delete discussion
+            if (! $post->parent) {  // Post is a discussion topic as well, so delete discussion.
                 if ($forum->type == 'single') {
                     notice("Sorry, but you are not allowed to delete that discussion!",
-                           forum_go_back_to(new moodle_url("/mod/forum/discuss.php", array('d' => $post->discussion))));
+                        forum_go_back_to(new moodle_url("/mod/forum/discuss.php", array('d' => $post->discussion))));
                 }
                 forum_delete_discussion($discussion, false, $course, $cm, $forum);
 
@@ -371,7 +370,7 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
         }
 
 
-    } else { // User just asked to delete something
+    } else { // User just asked to delete something.
 
         forum_set_return();
         $PAGE->navbar->add(get_string('delete', 'forum'));
@@ -381,13 +380,13 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
         if ($replycount) {
             if (!has_capability('mod/forum:deleteanypost', $modcontext)) {
                 print_error("couldnotdeletereplies", "forum",
-                      forum_go_back_to(new moodle_url('/mod/forum/discuss.php', array('d' => $post->discussion), 'p'.$post->id)));
+                    forum_go_back_to(new moodle_url('/mod/forum/discuss.php', array('d' => $post->discussion), 'p'.$post->id)));
             }
             echo $OUTPUT->header();
             echo $OUTPUT->heading(format_string($forum->name), 2);
-            echo $OUTPUT->confirm(get_string("deletesureplural", "forum", $replycount+1),
-                         "post.php?delete=$delete&confirm=$delete",
-                         $CFG->wwwroot.'/mod/forum/discuss.php?d='.$post->discussion.'#p'.$post->id);
+            echo $OUTPUT->confirm(get_string("deletesureplural", "forum", $replycount + 1),
+                "post.php?delete=$delete&confirm=$delete",
+                $CFG->wwwroot.'/mod/forum/discuss.php?d='.$post->discussion.'#p'.$post->id);
 
             forum_print_post($post, $discussion, $forum, $cm, $course, false, false, false);
 
@@ -400,8 +399,8 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
             echo $OUTPUT->header();
             echo $OUTPUT->heading(format_string($forum->name), 2);
             echo $OUTPUT->confirm(get_string("deletesure", "forum", $replycount),
-                         "post.php?delete=$delete&confirm=$delete",
-                         $CFG->wwwroot.'/mod/forum/discuss.php?d='.$post->discussion.'#p'.$post->id);
+                "post.php?delete=$delete&confirm=$delete",
+                $CFG->wwwroot.'/mod/forum/discuss.php?d='.$post->discussion.'#p'.$post->id);
             forum_print_post($post, $discussion, $forum, $cm, $course, false, false, false);
         }
 
@@ -410,7 +409,7 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
     die;
 
 
-} else if (!empty($prune)) {  // Pruning
+} else if (!empty($prune)) {  // Pruning.
 
     if (!$post = forum_get_post_full($prune)) {
         print_error('invalidpostid', 'forum');
@@ -427,7 +426,7 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
     if (!$post->parent) {
         print_error('alreadyfirstpost', 'forum');
     }
-    if (!$cm = get_coursemodule_from_instance("forum", $forum->id, $forum->course)) { // For the logs
+    if (!$cm = get_coursemodule_from_instance("forum", $forum->id, $forum->course)) { // For the logs.
         print_error('invalidcoursemodule');
     } else {
         $modcontext = context_module::instance($cm->id);
@@ -512,7 +511,8 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
     } else {
         // Display the prune form.
         $course = $DB->get_record('course', array('id' => $forum->course));
-        $PAGE->navbar->add(format_string($post->subject, true), new moodle_url('/mod/forum/discuss.php', array('d'=>$discussion->id)));
+        $subjectstr = format_string($post->subject, true);
+        $PAGE->navbar->add($subjectstr, new moodle_url('/mod/forum/discuss.php', array('d' => $discussion->id)));
         $PAGE->navbar->add(get_string("prune", "forum"));
         $PAGE->set_title(format_string($discussion->name).": ".format_string($post->subject));
         $PAGE->set_heading($course->fullname);
@@ -538,46 +538,48 @@ if (!isset($coursecontext)) {
 }
 
 
-// from now on user must be logged on properly
+// From now on user must be logged on properly.
 
-if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $course->id)) { // For the logs
+if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $course->id)) { // For the logs.
     print_error('invalidcoursemodule');
 }
 $modcontext = context_module::instance($cm->id);
 require_login($course, false, $cm);
 
 if (isguestuser()) {
-    // just in case
+    // Just in case.
     print_error('noguest');
 }
 
-if (!isset($forum->maxattachments)) {  // TODO - delete this once we add a field to the forum table
+if (!isset($forum->maxattachments)) {  // TODO - delete this once we add a field to the forum table.
     $forum->maxattachments = 3;
 }
 
 $thresholdwarning = forum_check_throttling($forum, $cm);
-$mform_post = new mod_forum_post_form('post.php', array('course' => $course,
-                                                        'cm' => $cm,
-                                                        'coursecontext' => $coursecontext,
-                                                        'modcontext' => $modcontext,
-                                                        'forum' => $forum,
-                                                        'post' => $post,
-                                                        'subscribe' => \mod_forum\subscriptions::is_subscribed($USER->id, $forum,
-                                                                null, $cm),
-                                                        'thresholdwarning' => $thresholdwarning,
-                                                        'edit' => $edit), 'post', '', array('id' => 'mformforum'));
+$mformpost = new mod_forum_post_form('post.php', array('course' => $course,
+    'cm' => $cm,
+    'coursecontext' => $coursecontext,
+    'modcontext' => $modcontext,
+    'forum' => $forum,
+    'post' => $post,
+    'subscribe' => \mod_forum\subscriptions::is_subscribed($USER->id, $forum,
+        null, $cm),
+    'thresholdwarning' => $thresholdwarning,
+    'edit' => $edit), 'post', '', array('id' => 'mformforum'));
 
 $draftitemid = file_get_submitted_draft_itemid('attachments');
-file_prepare_draft_area($draftitemid, $modcontext->id, 'mod_forum', 'attachment', empty($post->id)?null:$post->id, mod_forum_post_form::attachment_options($forum));
+$postid = empty($post->id) ? null : $post->id;
+$attachoptions = mod_forum_post_form::attachment_options($forum);
+file_prepare_draft_area($draftitemid, $modcontext->id, 'mod_forum', 'attachment', $postid, $attachoptions);
 
-//load data into form NOW!
+// Load data into form NOW!
 
-if ($USER->id != $post->userid) {   // Not the original author, so add a message to the end
+if ($USER->id != $post->userid) {   // Not the original author, so add a message to the end.
     $data = new stdClass();
     $data->date = userdate($post->modified);
     if ($post->messageformat == FORMAT_HTML) {
         $data->name = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$USER->id.'&course='.$post->course.'">'.
-                       fullname($USER).'</a>';
+            fullname($USER).'</a>';
         $post->message .= '<p><span class="edited">('.get_string('editedby', 'forum', $data).')</span></p>';
     } else {
         $data->name = fullname($USER);
@@ -599,8 +601,9 @@ if (!empty($parent)) {
 }
 
 $postid = empty($post->id) ? null : $post->id;
-$draftid_editor = file_get_submitted_draft_itemid('message');
-$currenttext = file_prepare_draft_area($draftid_editor, $modcontext->id, 'mod_forum', 'post', $postid, mod_forum_post_form::editor_options($modcontext, $postid), $post->message);
+$draftideditor = file_get_submitted_draft_itemid('message');
+$editoropts = mod_forum_post_form::editor_options($modcontext, $postid);
+$currenttext = file_prepare_draft_area($draftideditor, $modcontext->id, 'mod_forum', 'post', $postid, $editoropts, $post->message);
 
 $manageactivities = has_capability('moodle/course:manageactivities', $coursecontext);
 if (\mod_forum\subscriptions::subscription_disabled($forum) && !$manageactivities) {
@@ -622,54 +625,47 @@ if (\mod_forum\subscriptions::subscription_disabled($forum) && !$manageactivitie
     }
 }
 
-$mform_post->set_data(array(        'attachments'=>$draftitemid,
-                                    'general'=>$heading,
-                                    'subject'=>$post->subject,
-                                    'message'=>array(
-                                        'text'=>$currenttext,
-                                        'format'=>empty($post->messageformat) ? editors_get_preferred_format() : $post->messageformat,
-                                        'itemid'=>$draftid_editor
-                                    ),
-                                    'discussionsubscribe' => $discussionsubscribe,
-                                    'mailnow'=>!empty($post->mailnow),
-                                    'userid'=>$post->userid,
-                                    'parent'=>$post->parent,
-                                    'discussion'=>$post->discussion,
-                                    'course'=>$course->id) +
-                                    $page_params +
+$mformpost->set_data(
+    array(
+        'attachments' => $draftitemid,
+        'general' => $heading,
+        'subject' => $post->subject,
+        'message' => array(
+            'text' => $currenttext,
+            'format' => empty($post->messageformat) ? editors_get_preferred_format() : $post->messageformat,
+            'itemid' => $draftideditor
+        ),
+        'discussionsubscribe' => $discussionsubscribe,
+        'mailnow' => !empty($post->mailnow),
+        'userid' => $post->userid,
+        'parent' => $post->parent,
+        'discussion' => $post->discussion,
+        'course' => $course->id
+    ) +
 
-                            (isset($post->format)?array(
-                                    'format'=>$post->format):
-                                array())+
+    $pageparams +
 
-                            (isset($discussion->timestart)?array(
-                                    'timestart'=>$discussion->timestart):
-                                array())+
+    (isset($post->format) ? array('format' => $post->format) : array()) +
 
-                            (isset($discussion->timeend)?array(
-                                    'timeend'=>$discussion->timeend):
-                                array())+
+    (isset($discussion->timestart) ? array('timestart' => $discussion->timestart) : array()) +
 
-                            (isset($discussion->pinned) ? array(
-                                     'pinned' => $discussion->pinned) :
-                                array()) +
+    (isset($discussion->timeend) ? array('timeend' => $discussion->timeend) : array()) +
 
-                            (isset($post->groupid)?array(
-                                    'groupid'=>$post->groupid):
-                                array())+
+    (isset($discussion->pinned) ? array('pinned' => $discussion->pinned) : array()) +
 
-                            (isset($discussion->id)?
-                                    array('discussion'=>$discussion->id):
-                                    array()));
+    (isset($post->groupid) ? array('groupid' => $post->groupid) : array()) +
 
-if ($mform_post->is_cancelled()) {
+    (isset($discussion->id) ? array('discussion' => $discussion->id) : array())
+);
+
+if ($mformpost->is_cancelled()) {
     if (!isset($discussion->id) || $forum->type === 'qanda') {
         // Q and A forums don't have a discussion page, so treat them like a new thread..
         redirect(new moodle_url('/mod/forum/view.php', array('f' => $forum->id)));
     } else {
         redirect(new moodle_url('/mod/forum/discuss.php', array('d' => $discussion->id)));
     }
-} else if ($fromform = $mform_post->get_data()) {
+} else if ($fromform = $mformpost->get_data()) {
 
     if (empty($SESSION->fromurl)) {
         $errordestination = "$CFG->wwwroot/mod/forum/view.php?f=$forum->id";
@@ -683,25 +679,25 @@ if ($mform_post->is_cancelled()) {
     // WARNING: the $fromform->message array has been overwritten, do not use it anymore!
     $fromform->messagetrust  = trusttext_trusted($modcontext);
 
-    if ($fromform->edit) {           // Updating a post
+    if ($fromform->edit) {           // Updating a post.
         unset($fromform->groupid);
         $fromform->id = $fromform->edit;
         $message = '';
 
-        //fix for bug #4314
+        // Fix for bug #4314.
         if (!$realpost = $DB->get_record('forum_posts', array('id' => $fromform->id))) {
             $realpost = new stdClass();
             $realpost->userid = -1;
         }
 
 
-        // if user has edit any post capability
+        // If user has edit any post capability
         // or has either startnewdiscussion or reply capability and is editting own post
         // then he can proceed
-        // MDL-7066
+        // MDL-7066.
         if ( !(($realpost->userid == $USER->id && (has_capability('mod/forum:replypost', $modcontext)
-                            || has_capability('mod/forum:startdiscussion', $modcontext))) ||
-                            has_capability('mod/forum:editanypost', $modcontext)) ) {
+                    || has_capability('mod/forum:startdiscussion', $modcontext))) ||
+            has_capability('mod/forum:editanypost', $modcontext)) ) {
             print_error('cannotupdatepost', 'forum');
         }
 
@@ -715,7 +711,7 @@ if ($mform_post->is_cancelled()) {
                 print_error('cannotupdatepost', 'forum');
             }
 
-            $DB->set_field('forum_discussions' ,'groupid' , $fromform->groupinfo, array('firstpost' => $fromform->id));
+            $DB->set_field('forum_discussions', 'groupid', $fromform->groupinfo, array('firstpost' => $fromform->id));
         }
         // When editing first post/discussion.
         if (!$fromform->parent) {
@@ -727,14 +723,15 @@ if ($mform_post->is_cancelled()) {
                 unset($fromform->pinned);
             }
         }
-        $updatepost = $fromform; //realpost
+        $updatepost = $fromform; // Realpost.
         $updatepost->forum = $forum->id;
-        if (!forum_update_post($updatepost, $mform_post)) {
+        if (!forum_update_post($updatepost, $mformpost)) {
             print_error("couldnotupdate", "forum", $errordestination);
         }
 
-        // MDL-11818
-        if (($forum->type == 'single') && ($updatepost->parent == '0')){ // updating first post of single discussion type -> updating forum intro
+        // MDL-11818.
+        if (($forum->type == 'single') && ($updatepost->parent == '0')) {
+            // Updating first post of single discussion type -> updating forum intro.
             $forum->intro = $updatepost->message;
             $forum->timemodified = time();
             $DB->update_record("forum", $forum);
@@ -776,11 +773,11 @@ if ($mform_post->is_cancelled()) {
         $event->trigger();
 
         redirect(
-                forum_go_back_to($discussionurl),
-                $message . $subscribemessage,
-                null,
-                \core\output\notification::NOTIFY_SUCCESS
-            );
+            forum_go_back_to($discussionurl),
+            $message . $subscribemessage,
+            null,
+            \core\output\notification::NOTIFY_SUCCESS
+        );
 
     } else if ($fromform->discussion) { // Adding a new post to an existing discussion
         // Before we add this we must check that the user will not exceed the blocking threshold.
@@ -789,8 +786,8 @@ if ($mform_post->is_cancelled()) {
         unset($fromform->groupid);
         $message = '';
         $addpost = $fromform;
-        $addpost->forum=$forum->id;
-        if ($fromform->id = forum_add_new_post($addpost, $mform_post)) {
+        $addpost->forum = $forum->id;
+        if ($fromform->id = forum_add_new_post($addpost, $mformpost)) {
             $fromform->deleted = 0;
             $subscribemessage = forum_post_subscription($fromform, $forum, $discussion);
 
@@ -824,19 +821,19 @@ if ($mform_post->is_cancelled()) {
             $event->add_record_snapshot('forum_discussions', $discussion);
             $event->trigger();
 
-            // Update completion state
-            $completion=new completion_info($course);
-            if($completion->is_enabled($cm) &&
+            // Update completion state.
+            $completion = new completion_info($course);
+            if ($completion->is_enabled($cm) &&
                 ($forum->completionreplies || $forum->completionposts)) {
-                $completion->update_state($cm,COMPLETION_COMPLETE);
+                $completion->update_state($cm, COMPLETION_COMPLETE);
             }
 
             redirect(
-                    forum_go_back_to($discussionurl),
-                    $message . $subscribemessage,
-                    null,
-                    \core\output\notification::NOTIFY_SUCCESS
-                );
+                forum_go_back_to($discussionurl),
+                $message . $subscribemessage,
+                null,
+                \core\output\notification::NOTIFY_SUCCESS
+            );
 
         } else {
             print_error("couldnotadd", "forum", $errordestination);
@@ -904,7 +901,7 @@ if ($mform_post->is_cancelled()) {
 
             $discussion->groupid = $group;
             $message = '';
-            if ($discussion->id = forum_add_discussion($discussion, $mform_post)) {
+            if ($discussion->id = forum_add_discussion($discussion, $mformpost)) {
 
                 $params = array(
                     'context' => $modcontext,
@@ -933,17 +930,17 @@ if ($mform_post->is_cancelled()) {
         // Update completion status.
         $completion = new completion_info($course);
         if ($completion->is_enabled($cm) &&
-                ($forum->completiondiscussions || $forum->completionposts)) {
+            ($forum->completiondiscussions || $forum->completionposts)) {
             $completion->update_state($cm, COMPLETION_COMPLETE);
         }
 
         // Redirect back to the discussion.
         redirect(
-                forum_go_back_to($redirectto->out()),
-                $message . $subscribemessage,
-                null,
-                \core\output\notification::NOTIFY_SUCCESS
-            );
+            forum_go_back_to($redirectto->out()),
+            $message . $subscribemessage,
+            null,
+            \core\output\notification::NOTIFY_SUCCESS
+        );
     }
 }
 
@@ -953,7 +950,7 @@ if ($mform_post->is_cancelled()) {
 // variable will be loaded with all the particulars,
 // so bring up the form.
 
-// $course, $forum are defined.  $discussion is for edit and reply only.
+// Vars $course, $forum are defined. $discussion is for edit and reply only.
 
 if ($post->discussion) {
     if (! $toppost = $DB->get_record("forum_posts", array("discussion" => $post->discussion, "parent" => 0))) {
@@ -962,7 +959,7 @@ if ($post->discussion) {
 } else {
     $toppost = new stdClass();
     $toppost->subject = ($forum->type == "news") ? get_string("addanewtopic", "forum") :
-                                                   get_string("addanewdiscussion", "forum");
+        get_string("addanewdiscussion", "forum");
 }
 
 if (empty($post->edit)) {
@@ -985,7 +982,7 @@ if ($forum->type == 'single') {
     $strdiscussionname = format_string($discussion->name).':';
 }
 
-$forcefocus = empty($reply) ? NULL : 'message';
+$forcefocus = empty($reply) ? null : 'message';
 
 if (!empty($discussion->id)) {
     $PAGE->navbar->add(format_string($toppost->subject, true), "discuss.php?d=$discussion->id");
@@ -1005,7 +1002,7 @@ $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
 echo $OUTPUT->heading(format_string($forum->name), 2);
 
-// checkup
+// Checkup.
 if (!empty($parent) && !forum_user_can_see_post($forum, $discussion, $post, null, $cm)) {
     print_error('cannotreply', 'forum');
 }
@@ -1014,10 +1011,10 @@ if (empty($parent) && empty($edit) && !forum_user_can_post_discussion($forum, $g
 }
 
 if ($forum->type == 'qanda'
-            && !has_capability('mod/forum:viewqandawithoutposting', $modcontext)
-            && !empty($discussion->id)
-            && !forum_user_has_posted($forum->id, $discussion->id, $USER->id)) {
-    echo $OUTPUT->notification(get_string('qandanotify','forum'));
+    && !has_capability('mod/forum:viewqandawithoutposting', $modcontext)
+    && !empty($discussion->id)
+    && !forum_user_has_posted($forum->id, $discussion->id, $USER->id)) {
+    echo $OUTPUT->notification(get_string('qandanotify', 'forum'));
 }
 
 // If there is a warning message and we are not editing a post we need to handle the warning.
@@ -1042,12 +1039,13 @@ if (!empty($parent)) {
 } else {
     if (!empty($forum->intro)) {
         echo $OUTPUT->box(format_module_intro('forum', $forum, $cm->id), 'generalbox', 'intro');
-
-        if (!empty($CFG->enableplagiarism)) {
-            require_once($CFG->libdir.'/plagiarismlib.php');
-            echo plagiarism_print_disclosure($cm->id);
-        }
     }
+}
+
+// Call print disclosure for enabled plagiarism plugins.
+if (!empty($CFG->enableplagiarism)) {
+    require_once($CFG->libdir.'/plagiarismlib.php');
+    echo plagiarism_print_disclosure($cm->id);
 }
 
 if (!empty($formheading)) {
@@ -1057,9 +1055,9 @@ if (!empty($formheading)) {
 $data = new StdClass();
 if (isset($postid)) {
     $data->tags = core_tag_tag::get_item_tags_array('mod_forum', 'forum_posts', $postid);
-    $mform_post->set_data($data);
+    $mformpost->set_data($data);
 }
 
-$mform_post->display();
+$mformpost->display();
 
 echo $OUTPUT->footer();
