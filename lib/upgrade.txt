@@ -18,6 +18,7 @@ information provided here is intended especially for developers.
     - merge_config()
     - clean_path()
     - get_behat_tests_path()
+* Removed the lib/password_compat/lib/password.php file.
 
 === 3.5 ===
 
