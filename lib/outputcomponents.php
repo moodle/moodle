@@ -4383,6 +4383,9 @@ class action_menu implements renderable, templatable {
      * The constraint is applied when the dialogue is shown and limits the display of the dialogue to within the
      * element the constraint identifies.
      *
+     * This is required whenever the action menu is displayed inside any CSS element with the .no-overflow class
+     * (flexible_table and any of it's child classes are a likely candidate).
+     *
      * @param string $ancestorselector A snippet of CSS used to identify the ancestor to contrain the dialogue to.
      */
     public function set_constraint($ancestorselector) {
