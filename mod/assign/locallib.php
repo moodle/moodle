@@ -33,11 +33,12 @@ define('ASSIGN_SUBMISSION_STATUS_DRAFT', 'draft');
 define('ASSIGN_SUBMISSION_STATUS_SUBMITTED', 'submitted');
 
 // Search filters for grading page.
+define('ASSIGN_FILTER_NONE', 'none');
 define('ASSIGN_FILTER_SUBMITTED', 'submitted');
 define('ASSIGN_FILTER_NOT_SUBMITTED', 'notsubmitted');
 define('ASSIGN_FILTER_SINGLE_USER', 'singleuser');
-define('ASSIGN_FILTER_REQUIRE_GRADING', 'require_grading');
-define('ASSIGN_FILTER_GRANTED_EXTENSION', 'granted_extension');
+define('ASSIGN_FILTER_REQUIRE_GRADING', 'requiregrading');
+define('ASSIGN_FILTER_GRANTED_EXTENSION', 'grantedextension');
 
 // Marker filter for grading page.
 define('ASSIGN_MARKER_FILTER_NO_MARKER', -1);
@@ -1936,11 +1937,12 @@ class assign {
      * If this is a group assignment, group info is also returned.
      *
      * @param int $currentgroup
+     * @param boolean $tablesort Apply current user table sorting preferences.
      * @return array List of user records with extra fields 'submitted', 'notsubmitted', 'requiregrading', 'grantedextension',
      *               'groupid', 'groupname'
      */
-    public function list_participants_with_filter_status_and_group($currentgroup) {
-        $participants = $this->list_participants($currentgroup, false);
+    public function list_participants_with_filter_status_and_group($currentgroup, $tablesort = false) {
+        $participants = $this->list_participants($currentgroup, false, $tablesort);
 
         if (empty($participants)) {
             return $participants;
@@ -1950,15 +1952,54 @@ class assign {
     }
 
     /**
+     * Return a valid order by segment for list_participants that matches
+     * the sorting of the current grading table. Not every field is supported,
+     * we are only concerned with a list of users so we can't search on anything
+     * that is not part of the user information (like grading statud or last modified stuff).
+     *
+     * @return string Order by clause for list_participants
+     */
+    private function get_grading_sort_sql() {
+        $usersort = flexible_table::get_sort_for_table('mod_assign_grading');
+        $extrauserfields = get_extra_user_fields($this->get_context());
+
+        $userfields = explode(',', user_picture::fields('', $extrauserfields));
+        $orderfields = explode(',', $usersort);
+        $validlist = [];
+
+        foreach ($orderfields as $orderfield) {
+            $orderfield = trim($orderfield);
+            foreach ($userfields as $field) {
+                $parts = explode(' ', $orderfield);
+                if ($parts[0] == $field) {
+                    // Prepend the user table prefix and count this as a valid order field.
+                    array_push($validlist, 'u.' . $orderfield);
+                }
+            }
+        }
+        // Produce a final list.
+        $result = implode(',', $validlist);
+        if (empty($result)) {
+            // Fall back ordering when none has been set.
+            $result = 'u.lastname, u.firstname, u.id';
+        }
+
+        return $result;
+    }
+
+    /**
      * Load a list of users enrolled in the current course with the specified permission and group.
      * 0 for no group.
+     * Apply any current sort filters from the grading table.
      *
      * @param int $currentgroup
      * @param bool $idsonly
      * @return array List of user records
      */
-    public function list_participants($currentgroup, $idsonly) {
+    public function list_participants($currentgroup, $idsonly, $tablesort = false) {
         global $DB, $USER;
+
+        // Get the last known sort order for the grading table.
 
         if (empty($currentgroup)) {
             $currentgroup = 0;
@@ -1971,6 +2012,7 @@ class assign {
 
             $fields = 'u.*';
             $orderby = 'u.lastname, u.firstname, u.id';
+
             $additionaljoins = '';
             $additionalfilters = '';
             $instance = $this->get_instance();
@@ -1991,7 +2033,9 @@ class assign {
                 // Note, different DBs have different ordering of NULL values.
                 // Therefore we coalesce the current time into the timecreated field, and the max possible integer into
                 // the ID field.
-                $orderby = "COALESCE(s.timecreated, " . time() . ") ASC, COALESCE(s.id, " . PHP_INT_MAX . ") ASC, um.id ASC";
+                if (empty($tablesort)) {
+                    $orderby = "COALESCE(s.timecreated, " . time() . ") ASC, COALESCE(s.id, " . PHP_INT_MAX . ") ASC, um.id ASC";
+                }
             }
 
             if ($instance->markingworkflow &&
@@ -2024,6 +2068,19 @@ class assign {
             $users = $info->filter_user_list($users);
 
             $this->participants[$key] = $users;
+        }
+
+        if ($tablesort) {
+            // Resort the user list according to the grading table sort and filter settings.
+            $sortedfiltereduserids = $this->get_grading_userid_list(true, '');
+            $sortedfilteredusers = [];
+            foreach ($sortedfiltereduserids as $nextid) {
+                $nextid = intval($nextid);
+                if (isset($this->participants[$key][$nextid])) {
+                    $sortedfilteredusers[$nextid] = $this->participants[$key][$nextid];
+                }
+            }
+            $this->participants[$key] = $sortedfilteredusers;
         }
 
         if ($idsonly) {
@@ -2320,9 +2377,21 @@ class assign {
      * Utility function to get the userid for every row in the grading table
      * so the order can be frozen while we iterate it.
      *
+     * @param boolean $cached If true, the cached list from the session could be returned.
+     * @param string $useridlistid String value used for caching the participant list.
      * @return array An array of userids
      */
-    protected function get_grading_userid_list() {
+    protected function get_grading_userid_list($cached = false, $useridlistid = '') {
+        if ($cached) {
+            if (empty($useridlistid)) {
+                $useridlistid = $this->get_useridlist_key_id();
+            }
+            $useridlistkey = $this->get_useridlist_key($useridlistid);
+            if (empty($SESSION->mod_assign_useridlist[$useridlistkey])) {
+                $SESSION->mod_assign_useridlist[$useridlistkey] = $this->get_grading_userid_list(false, '');
+            }
+            return $SESSION->mod_assign_useridlist[$useridlistkey];
+        }
         $filter = get_user_preferences('assign_filter', '');
         $table = new assign_grading_table($this, 0, $filter, 0, false);
 
@@ -3935,11 +4004,7 @@ class assign {
         $attemptnumber = optional_param('attemptnumber', -1, PARAM_INT);
 
         if (!$userid) {
-            $useridlistkey = $this->get_useridlist_key($useridlistid);
-            if (empty($SESSION->mod_assign_useridlist[$useridlistkey])) {
-                $SESSION->mod_assign_useridlist[$useridlistkey] = $this->get_grading_userid_list();
-            }
-            $useridlist = $SESSION->mod_assign_useridlist[$useridlistkey];
+            $useridlist = $this->get_grading_userid_list(true, $useridlistid);
         } else {
             $rownum = 0;
             $useridlistid = 0;
@@ -4233,13 +4298,7 @@ class assign {
 
         $markingworkflow = $this->get_instance()->markingworkflow;
         // Get marking states to show in form.
-        $markingworkflowoptions = array();
-        if ($markingworkflow) {
-            $notmarked = get_string('markingworkflowstatenotmarked', 'assign');
-            $markingworkflowoptions[''] = get_string('filternone', 'assign');
-            $markingworkflowoptions[ASSIGN_MARKING_WORKFLOW_STATE_NOTMARKED] = $notmarked;
-            $markingworkflowoptions = array_merge($markingworkflowoptions, $this->get_marking_workflow_states_for_current_user());
-        }
+        $markingworkflowoptions = $this->get_marking_workflow_filters();
 
         // Print options for changing the filter and changing the number of results per page.
         $gradingoptionsformparams = array('cm'=>$cmid,
@@ -6780,13 +6839,7 @@ class assign {
         }
 
         // Get marking states to show in form.
-        $markingworkflowoptions = array();
-        if ($this->get_instance()->markingworkflow) {
-            $notmarked = get_string('markingworkflowstatenotmarked', 'assign');
-            $markingworkflowoptions[''] = get_string('filternone', 'assign');
-            $markingworkflowoptions[ASSIGN_MARKING_WORKFLOW_STATE_NOTMARKED] = $notmarked;
-            $markingworkflowoptions = array_merge($markingworkflowoptions, $this->get_marking_workflow_states_for_current_user());
-        }
+        $markingworkflowoptions = $this->get_marking_workflow_filters();
 
         $gradingoptionsparams = array('cm'=>$this->get_course_module()->id,
                                       'contextid'=>$this->context->id,
@@ -7278,11 +7331,7 @@ class assign {
         $bothids = ($userid && $useridlistid);
 
         if (!$userid || $bothids) {
-            $useridlistkey = $this->get_useridlist_key($useridlistid);
-            if (empty($SESSION->mod_assign_useridlist[$useridlistkey])) {
-                $SESSION->mod_assign_useridlist[$useridlistkey] = $this->get_grading_userid_list();
-            }
-            $useridlist = $SESSION->mod_assign_useridlist[$useridlistkey];
+            $useridlist = $this->get_grading_userid_list(true, $useridlistid);
         } else {
             $useridlist = array($userid);
             $rownum = 0;
@@ -8869,6 +8918,108 @@ class assign {
      */
     public function set_most_recent_team_submission($submission) {
         $this->mostrecentteamsubmission = $submission;
+    }
+
+    /**
+     * Return array of valid grading allocation filters for the grading interface.
+     *
+     * @param boolean $export Export the list of filters for a template.
+     * @return array
+     */
+    public function get_marking_allocation_filters($export = false) {
+        $markingallocation = $this->get_instance()->markingworkflow &&
+            $this->get_instance()->markingallocation &&
+            has_capability('mod/assign:manageallocations', $this->context);
+        // Get markers to use in drop lists.
+        $markingallocationoptions = array();
+        if ($markingallocation) {
+            list($sort, $params) = users_order_by_sql('u');
+            // Only enrolled users could be assigned as potential markers.
+            $markers = get_enrolled_users($this->context, 'mod/assign:grade', 0, 'u.*', $sort);
+            $markingallocationoptions[''] = get_string('filternone', 'assign');
+            $markingallocationoptions[ASSIGN_MARKER_FILTER_NO_MARKER] = get_string('markerfilternomarker', 'assign');
+            $viewfullnames = has_capability('moodle/site:viewfullnames', $this->context);
+            foreach ($markers as $marker) {
+                $markingallocationoptions[$marker->id] = fullname($marker, $viewfullnames);
+            }
+        }
+        if ($export) {
+            $allocationfilter = get_user_preferences('assign_markerfilter', '');
+            $result = [];
+            foreach ($markingallocationoptions as $option => $label) {
+                array_push($result, [
+                    'key' => $option,
+                    'name' => $label,
+                    'active' => ($allocationfilter == $option),
+                ]);
+            }
+            return $result;
+        }
+        return $markingworkflowoptions;
+    }
+
+    /**
+     * Return array of valid grading workflow filters for the grading interface.
+     *
+     * @param boolean $export Export the list of filters for a template.
+     * @return array
+     */
+    public function get_marking_workflow_filters($export = false) {
+        $markingworkflow = $this->get_instance()->markingworkflow;
+        // Get marking states to show in form.
+        $markingworkflowoptions = array();
+        if ($markingworkflow) {
+            $notmarked = get_string('markingworkflowstatenotmarked', 'assign');
+            $markingworkflowoptions[''] = get_string('filternone', 'assign');
+            $markingworkflowoptions[ASSIGN_MARKING_WORKFLOW_STATE_NOTMARKED] = $notmarked;
+            $markingworkflowoptions = array_merge($markingworkflowoptions, $this->get_marking_workflow_states_for_current_user());
+        }
+        if ($export) {
+            $workflowfilter = get_user_preferences('assign_workflowfilter', '');
+            $result = [];
+            foreach ($markingworkflowoptions as $option => $label) {
+                array_push($result, [
+                    'key' => $option,
+                    'name' => $label,
+                    'active' => ($workflowfilter == $option),
+                ]);
+            }
+            return $result;
+        }
+        return $markingworkflowoptions;
+    }
+
+    /**
+     * Return array of valid search filters for the grading interface.
+     *
+     * @return array
+     */
+    public function get_filters() {
+        $filterkeys = [
+            ASSIGN_FILTER_SUBMITTED,
+            ASSIGN_FILTER_NOT_SUBMITTED,
+            ASSIGN_FILTER_REQUIRE_GRADING,
+            ASSIGN_FILTER_GRANTED_EXTENSION
+        ];
+
+        $current = get_user_preferences('assign_filter', '');
+
+        $filters = [];
+        // First is always "no filter" option.
+        array_push($filters, [
+            'key' => 'none',
+            'name' => get_string('filternone', 'assign'),
+            'active' => ($current == '')
+        ]);
+
+        foreach ($filterkeys as $key) {
+            array_push($filters, [
+                'key' => $key,
+                'name' => get_string('filter' . $key, 'assign'),
+                'active' => ($current == $key)
+            ]);
+        }
+        return $filters;
     }
 }
 

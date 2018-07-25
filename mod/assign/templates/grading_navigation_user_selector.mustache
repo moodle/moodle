@@ -23,7 +23,7 @@
     * none
 
     Data attributes required for JS:
-    * data-action, data-assignmentid, data-groupid, data-region
+    * data-action, data-assignmentid, data-groupid, data-region, data-currentuserid
 
     Context variables required for this template:
     * see mod/assign/classes/output/grading_app.php
@@ -31,37 +31,73 @@
     This template uses ajax functionality, so it cannot be shown in the template library.
 }}
 <a href="#previous" data-action="previous-user">{{{larrow}}}</a>
-<span>
-<select data-action="change-user" data-assignmentid="{{assignmentid}}" data-groupid="{{groupid}}">
-</select>
-</span>
-<a href="#next" data-action="next-user">{{{rarrow}}}</a>
+    <span>
+        <select data-action="change-user" data-currentuserid="{{currentuserid}}" data-assignmentid="{{assignmentid}}" data-groupid="{{groupid}}">
+        </select>
+    </span>
+    <a href="#next" data-action="next-user">{{{rarrow}}}</a>
 
 <br>
 
 <span data-region="user-count">
-<small>
-<span data-region="user-count-summary">{{#str}}xofy, mod_assign, { "x": "{{index}}", "y": "{{count}}" }{{/str}}</span>
-</small>
+    <small>
+        <span data-region="user-count-summary">{{#str}}xofy, mod_assign, { "x": "{{index}}", "y": "{{count}}" }{{/str}}</span>
+    </small>
 </span>
 
-<span data-region="configure-filters" id="filter-configuration-{{uniqid}}" class="well well-small">
-<form>
-<label><input type="checkbox" name="filter_submitted">{{#str}}filtersubmitted, mod_assign{{/str}}</label>
-<label><input type="checkbox" name="filter_notsubmitted">{{#str}}filternotsubmitted, mod_assign{{/str}}</label>
-<label><input type="checkbox" name="filter_requiregrading">{{#str}}filterrequiregrading, mod_assign{{/str}}</label>
-<label><input type="checkbox" name="filter_grantedextension">{{#str}}filtergrantedextension, mod_assign{{/str}}</label>
-</form>
+<span data-region="configure-filters" id="filter-configuration-{{uniqid}}" class="well well-large p-2">
+    <form class="container-fluid">
+        <div class="row-fluid">
+            <label class="span4 text-right" for="filter-general-{{uniqid}}">
+                {{#str}}filter, mod_assign{{/str}}
+            </label>
+            <div class="span8">
+                <select name="filter" class="custom-select span8" id="filter-general-{{uniqid}}">
+                {{#filters}}
+                    <option value="{{key}}" {{#active}}selected="selected"{{/active}}> {{name}} </option>
+                {{/filters}}
+                </select>
+            </div>
+        </div>
+        {{#hasmarkingallocation}}
+        <div class="row-fluid">
+            <label class="span4 text-right" for="filter-marker-{{uniqid}}">
+                {{#str}}markerfilter, mod_assign{{/str}}
+            </label>
+            <div class="span8">
+                <select name="markerfilter" class="custom-select span8" id="filter-marker-{{uniqid}}">
+                {{#markingallocationfilters}}
+                    <option value="{{key}}" {{#active}}selected="selected"{{/active}} > {{name}} </option>
+                {{/markingallocationfilters}}
+                </select>
+            </div>
+        </div>
+        {{/hasmarkingallocation}}
+        {{#hasmarkingworkflow}}
+        <div class="row-fluid">
+            <label class="span4 text-right" for="filter-workflow-{{uniqid}}">
+                {{#str}}workflowfilter, mod_assign{{/str}}
+            </label>
+            <div class="span8">
+                <select name="workflowfilter" class="custom-select span8" id="filter-workflow-{{uniqid}}">
+                {{#markingworkflowfilters}}
+                    <option value="{{key}}" {{#active}}selected="selected"{{/active}} > {{name}} </option>
+                {{/markingworkflowfilters}}
+                </select>
+            </div>
+        </div>
+        {{/hasmarkingworkflow}}
+    </form>
 </span>
 
 <a href="#" data-region="user-filters" title="{{#str}}changefilters, mod_assign{{/str}}" aria-expanded="false" aria-controls="filter-configuration-{{uniqid}}">
-<span class="accesshide">
-{{#filters}}
-{{filtername}}
-{{/filters}}
-{{^filters}}
-{{#str}}nofilters, mod_assign{{/str}}
-{{/filters}}
-</span>
-{{#pix}}i/filter{{/pix}}
+    <span class="accesshide">
+        {{#filters}}
+            {{filtername}}
+        {{/filters}}
+        {{^filters}}
+            {{#str}}nofilters, mod_assign{{/str}}
+        {{/filters}}
+    </span>
+    {{#pix}}i/filter{{/pix}}
 </a>
