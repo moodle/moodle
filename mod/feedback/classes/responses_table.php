@@ -113,8 +113,12 @@ class mod_feedback_responses_table extends table_sql {
      */
     protected function init($group = 0) {
 
-        $tablecolumns = array('userpic', 'fullname');
-        $tableheaders = array(get_string('userpic'), get_string('fullnameuser'));
+        $tablecolumns = array('userpic', 'fullname', 'groups');
+        $tableheaders = array(
+            get_string('userpic'),
+            get_string('fullnameuser'),
+            get_string('groups')
+        );
 
         $extrafields = get_extra_user_fields($this->get_context());
         $ufields = user_picture::fields('u', $extrafields, $this->useridfield);
@@ -256,6 +260,21 @@ class mod_feedback_responses_table extends table_sql {
             }
         }
         return $name;
+    }
+
+    /**
+     * Prepares column groups for display
+     * @param array $row
+     * @return string
+     */
+    public function col_groups($row) {
+        $groups = '';
+        if ($usergrps = groups_get_all_groups($this->feedbackstructure->get_cm()->course, $row->userid, 0, 'name')) {
+            foreach ($usergrps as $group) {
+                $groups .= format_string($group->name). ' ';
+            }
+        }
+        return trim($groups);
     }
 
     /**
