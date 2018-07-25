@@ -609,6 +609,54 @@ class api {
     }
 
     /**
+     * Checks whether a user can download a data request.
+     *
+     * @param int $userid Target user id (subject of data request)
+     * @param int $requesterid Requester user id (person who requsted it)
+     * @param int|null $downloaderid Person who wants to download user id (default current)
+     * @return bool
+     * @throws coding_exception
+     */
+    public static function can_download_data_request_for_user($userid, $requesterid, $downloaderid = null) {
+        global $USER;
+
+        if (!$downloaderid) {
+            $downloaderid = $USER->id;
+        }
+
+        $usercontext = \context_user::instance($userid);
+        // If it's your own and you have the right capability, you can download it.
+        if ($userid == $downloaderid && has_capability('tool/dataprivacy:downloadownrequest', $usercontext, $downloaderid)) {
+            return true;
+        }
+        // If you can download anyone's in that context, you can download it.
+        if (has_capability('tool/dataprivacy:downloadallrequests', $usercontext, $downloaderid)) {
+            return true;
+        }
+        // If you can have the 'child access' ability to request in that context, and you are the one
+        // who requested it, then you can download it.
+        if ($requesterid == $downloaderid && self::can_create_data_request_for_user($userid, $requesterid)) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Gets an action menu link to download a data request.
+     *
+     * @param \context_user $usercontext User context (of user who the data is for)
+     * @param int $requestid Request id
+     * @return \action_menu_link_secondary Action menu link
+     * @throws coding_exception
+     */
+    public static function get_download_link(\context_user $usercontext, $requestid) {
+        $downloadurl = moodle_url::make_pluginfile_url($usercontext->id,
+                'tool_dataprivacy', 'export', $requestid, '/', 'export.zip', true);
+        $downloadtext = get_string('download', 'tool_dataprivacy');
+        return new \action_menu_link_secondary($downloadurl, null, $downloadtext);
+    }
+
+    /**
      * Creates a new data purpose.
      *
      * @param stdClass $record
