@@ -3797,6 +3797,7 @@ function calendar_get_allowed_event_types(int $courseid = null) {
                 return $c->id;
             }, $courses);
 
+            // Check whether the user has access to create events within courses which have groups.
             list($insql, $params) = $DB->get_in_or_equal($courseids, SQL_PARAMS_NAMED);
             $sql = "SELECT c.id, " . context_helper::get_preload_record_columns_sql('ctx') . "
                       FROM {course} c
@@ -3810,9 +3811,21 @@ function calendar_get_allowed_event_types(int $courseid = null) {
                 $context = context_course::instance($coursewithgroup->id);
 
                 if (has_capability('moodle/calendar:manageentries', $context)) {
+                    // The user has access to manage calendar entries for the whole course.
+                    // This includes groups if they have the accessallgroups capability.
                     $types['course'] = true;
-                    $types['group'] = (!empty(groups_get_all_groups($coursewithgroup->id, $USER->id))
-                        && has_capability('moodle/calendar:managegroupentries', $context));
+                    if (has_capability('moodle/site:accessallgroups', $context)) {
+                        // The user also has access to all groups so they can add calendar entries to any group.
+                        // The manageentries capability overrides the managegroupentries capability.
+                        $types['group'] = true;
+                        break;
+                    }
+
+                    if (empty($types['group']) && has_capability('moodle/calendar:managegroupentries', $context)) {
+                        // The user has the managegroupentries capability.
+                        // If they have access to _any_ group, then they can create calendar entries within that group.
+                        $types['group'] = !empty(groups_get_all_groups($coursewithgroup->id, $USER->id));
+                    }
                 }
 
                 // Okay, course and group event types are allowed, no need to keep the loop iteration.
@@ -3827,8 +3840,7 @@ function calendar_get_allowed_event_types(int $courseid = null) {
                 $contextsql = "SELECT c.id, " . context_helper::get_preload_record_columns_sql('ctx') . "
                                 FROM {course} c
                                 JOIN {context} ctx ON ctx.contextlevel = :contextlevel AND ctx.instanceid = c.id
-                                WHERE c.id $insql
-                            GROUP BY c.id, ctx.id";
+                                WHERE c.id $insql";
                 $params['contextlevel'] = CONTEXT_COURSE;
                 $contextrecords = $DB->get_recordset_sql($contextsql, $params);
                 foreach ($contextrecords as $course) {
