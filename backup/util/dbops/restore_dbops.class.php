@@ -723,7 +723,7 @@ abstract class restore_dbops {
 
             // 8) Check if backup is made on Moodle >= 3.5 and there are more than one top-level category in the context.
             if ($after35 && $topcats > 1) {
-                $errors[] = get_string('restoremultipletopcats', 'questions', $contextid);
+                $errors[] = get_string('restoremultipletopcats', 'question', $contextid);
             }
 
         }
