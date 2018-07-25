@@ -181,6 +181,23 @@ define(['jquery', 'core/ajax'], function($, Ajax) {
         return Ajax.call([request])[0];
     };
 
+    /**
+     * Get the groups by course id.
+     *
+     * @param {Number} courseid The course id to fetch the groups from.
+     * @return {promise} Resolved with the course groups.
+     */
+    var getCourseGroupsData = function(courseid) {
+        var request = {
+            methodname: 'core_group_get_course_groups',
+            args: {
+                courseid: courseid
+            }
+        };
+
+        return Ajax.call([request])[0];
+    };
+
     return {
         getEventById: getEventById,
         deleteEvent: deleteEvent,
@@ -188,6 +205,7 @@ define(['jquery', 'core/ajax'], function($, Ajax) {
         submitCreateUpdateForm: submitCreateUpdateForm,
         getCalendarMonthData: getCalendarMonthData,
         getCalendarDayData: getCalendarDayData,
-        getCalendarUpcomingData: getCalendarUpcomingData
+        getCalendarUpcomingData: getCalendarUpcomingData,
+        getCourseGroupsData: getCourseGroupsData
     };
 });
