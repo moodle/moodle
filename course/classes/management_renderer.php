@@ -247,8 +247,7 @@ class core_course_management_renderer extends plugin_renderer_base {
                 'i/empty',
                 '',
                 'moodle',
-                array('class' => 'tree-icon', 'title' => get_string('showcategory', 'moodle', $text))
-            );
+                array('class' => 'tree-icon'));
             $icon = html_writer::span($icon, 'float-left');
         }
         $actions = \core_course\management\helper::get_category_listitem_actions($category);
@@ -288,7 +287,7 @@ class core_course_management_renderer extends plugin_renderer_base {
         $html .= html_writer::end_div();
         if ($isexpanded) {
             $html .= html_writer::start_tag('ul',
-                array('class' => 'ml-1', 'role' => 'group', 'id' => 'subcategoryof'.$category->id));
+                array('class' => 'ml', 'role' => 'group', 'id' => 'subcategoryof'.$category->id));
             $catatlevel = \core_course\management\helper::get_expanded_categories($category->path);
             $catatlevel[] = array_shift($selectedcategories);
             $catatlevel = array_unique($catatlevel);
