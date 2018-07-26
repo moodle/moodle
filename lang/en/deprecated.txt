@@ -5,7 +5,6 @@ myfilesmanage,core
 mypreferences,core_grades
 myprofile,core
 viewallmyentries,core_blog
-revealpassword,core_form
 loginpasswordautocomplete,core_admin
 loginpasswordautocomplete_help,core_admin
 deletecomment,core
