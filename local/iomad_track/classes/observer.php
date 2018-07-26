@@ -20,6 +20,7 @@ namespace local_iomad_track;
 define('CERTIFICATE', 'iomadcertificate');
 
 require_once($CFG->dirroot . '/mod/' . CERTIFICATE . '/lib.php');
+require_once($CFG->dirroot . '/mod/' . CERTIFICATE . '/locallib.php');
 
 class observer {
 
