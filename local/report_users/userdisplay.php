@@ -71,7 +71,6 @@ if (empty($dodownload)) {
 
 
 // Get this list of courses the user is a member of.
-//$usercourses = enrol_get_users_courses($userid, true, null, 'visible DESC, sortorder ASC');
 $enrolcourses = enrol_get_users_courses($userid, true, null, 'visible DESC, sortorder ASC');
 if ($showhistoric) {
     $completioncourses = $DB->get_records_sql("SELECT distinct courseid as id FROM {local_iomad_track} 
@@ -80,7 +79,10 @@ if ($showhistoric) {
     $completioncourses = array();
 }
 
-$usercourses = array();
+// Get non started courses.
+$licensecourses = $DB->get_records_sql("SELECT distinct licensecourseid as id FROM {companylicense_users} 
+                                               WHERE userid = :userid AND isusing = 0", array('userid' => $userid));
+$rawusercourses = array();
 // We only want student roles here.
 $studentrole = $DB->get_record('role', array('shortname' => 'student'));
 foreach ($enrolcourses as $enrolcourse) {
@@ -88,13 +90,27 @@ foreach ($enrolcourses as $enrolcourse) {
     foreach ($roles as $role) {
         if ($role->roleid == $studentrole->id) {
 
-            $usercourses[$enrolcourse->id] = $enrolcourse;
+            $rawusercourses[$enrolcourse->id] = $enrolcourse;
         }
     }
 }
 foreach ($completioncourses as $completioncourse) {
-    $usercourses[$completioncourse->id] = $completioncourse;
+    $rawusercourses[$completioncourse->id] = $completioncourse;
 }
+foreach ($licensecourses as $licensecourse) {
+    $rawusercourses[$licensecourse->id] = $licensecourse;
+}
+
+// Sort them by name.
+if (!empty($rawusercourses)) {
+    $usercourses = $DB->get_records_sql("SELECT id FROM {course}
+                                         WHERE id IN (" . implode(',', array_keys($rawusercourses)) . ")
+                                         ORDER BY fullname");
+                                         
+} else {
+    $usercourses = array();
+}
+
 
 // Get the Users details.
 $userinfo = $DB->get_record('user', array('id' => $userid));
