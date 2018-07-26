@@ -71,47 +71,7 @@ function cron_run() {
     // Run all adhoc tasks.
     while (!\core\task\manager::static_caches_cleared_since($timenow) &&
            $task = \core\task\manager::get_next_adhoc_task($timenow)) {
-        mtrace("Execute adhoc task: " . get_class($task));
-        cron_trace_time_and_memory();
-        $predbqueries = null;
-        $predbqueries = $DB->perf_get_queries();
-        $pretime      = microtime(1);
-        try {
-            get_mailer('buffer');
-            cron_prepare_core_renderer();
-            $task->execute();
-            if ($DB->is_transaction_started()) {
-                throw new coding_exception("Task left transaction open");
-            }
-            if (isset($predbqueries)) {
-                mtrace("... used " . ($DB->perf_get_queries() - $predbqueries) . " dbqueries");
-                mtrace("... used " . (microtime(1) - $pretime) . " seconds");
-            }
-            mtrace("Adhoc task complete: " . get_class($task));
-            \core\task\manager::adhoc_task_complete($task);
-        } catch (Exception $e) {
-            if ($DB && $DB->is_transaction_started()) {
-                error_log('Database transaction aborted automatically in ' . get_class($task));
-                $DB->force_transaction_rollback();
-            }
-            if (isset($predbqueries)) {
-                mtrace("... used " . ($DB->perf_get_queries() - $predbqueries) . " dbqueries");
-                mtrace("... used " . (microtime(1) - $pretime) . " seconds");
-            }
-            mtrace("Adhoc task failed: " . get_class($task) . "," . $e->getMessage());
-            if ($CFG->debugdeveloper) {
-                 if (!empty($e->debuginfo)) {
-                    mtrace("Debug info:");
-                    mtrace($e->debuginfo);
-                }
-                mtrace("Backtrace:");
-                mtrace(format_backtrace($e->getTrace(), true));
-            }
-            \core\task\manager::adhoc_task_failed($task);
-        } finally {
-            cron_prepare_core_renderer(true);
-        }
-        get_mailer('close');
+        cron_run_inner_adhoc_task($task);
         unset($task);
     }
 
@@ -175,6 +135,57 @@ function cron_run_inner_scheduled_task(\core\task\task_base $task) {
         cron_prepare_core_renderer(true);
     }
     get_mailer('close');
+}
+
+/**
+ * Shared code that handles running of a single adhoc task within the cron.
+ *
+ * @param \core\task\task_base $task
+ */
+function cron_run_inner_adhoc_task(\core\task\task_base $task) {
+	global $DB, $CFG;
+	mtrace("Execute adhoc task: " . get_class($task));
+	cron_trace_time_and_memory();
+	$predbqueries = null;
+	$predbqueries = $DB->perf_get_queries();
+	$pretime      = microtime(1);
+
+	try {
+		get_mailer('buffer');
+		cron_prepare_core_renderer();
+		$task->execute();
+		if ($DB->is_transaction_started()) {
+			throw new coding_exception("Task left transaction open");
+		}
+		if (isset($predbqueries)) {
+			mtrace("... used " . ($DB->perf_get_queries() - $predbqueries) . " dbqueries");
+			mtrace("... used " . (microtime(1) - $pretime) . " seconds");
+		}
+		mtrace("Adhoc task complete: " . get_class($task));
+		\core\task\manager::adhoc_task_complete($task);
+	} catch (Exception $e) {
+		if ($DB && $DB->is_transaction_started()) {
+			error_log('Database transaction aborted automatically in ' . get_class($task));
+			$DB->force_transaction_rollback();
+		}
+		if (isset($predbqueries)) {
+			mtrace("... used " . ($DB->perf_get_queries() - $predbqueries) . " dbqueries");
+			mtrace("... used " . (microtime(1) - $pretime) . " seconds");
+		}
+		mtrace("Adhoc task failed: " . get_class($task) . "," . $e->getMessage());
+		if ($CFG->debugdeveloper) {
+				if (!empty($e->debuginfo)) {
+				mtrace("Debug info:");
+				mtrace($e->debuginfo);
+			}
+			mtrace("Backtrace:");
+			mtrace(format_backtrace($e->getTrace(), true));
+		}
+		\core\task\manager::adhoc_task_failed($task);
+	} finally {
+		cron_prepare_core_renderer(true);
+	}
+	get_mailer('close');
 }
 
 /**
