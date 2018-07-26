@@ -85,6 +85,3 @@ $string['timeunit'] = 'Time unit';
 $string['timing'] = 'Timing';
 $string['unmaskpassword'] = 'Unmask';
 $string['year'] = 'Year';
-
-// Deprecated since 3.2.
-$string['revealpassword'] = 'Reveal';
