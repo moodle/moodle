@@ -338,14 +338,16 @@ class format_buttons_renderer extends format_topics_renderer
             }
             $htmlsection[$section] .= $this->section_header($thissection, $course, false, 0);
             if ($thissection->uservisible) {
-                $htmlsection[$section] .= $this->courserenderer->course_section_cm_list($course, $thissection, 0);
+                // $htmlsection[$section] .= $this->courserenderer->course_section_cm_list($course, $thissection, 0);
+                $htmlsection[$section] .= $this->course_section_cm_list($course, $thissection, 0);
                 $htmlsection[$section] .= $this->courserenderer->course_section_add_cm_control($course, $section, 0);
             }
             $htmlsection[$section] .= $this->section_footer();
         }
         if ($section0->summary || !empty($modinfo->sections[0]) || $PAGE->user_is_editing()) {
             $htmlsection0 = $this->section_header($section0, $course, false, 0);
-            $htmlsection0 .= $this->courserenderer->course_section_cm_list($course, $section0, 0);
+            // $htmlsection0 .= $this->courserenderer->course_section_cm_list($course, $section0, 0);
+            $htmlsection0 .= $this->course_section_cm_list($course, $section0, 0);
             $htmlsection0 .= $this->courserenderer->course_section_add_cm_control($course, 0, 0);
             $htmlsection0 .= $this->section_footer();
         }
@@ -369,7 +371,8 @@ class format_buttons_renderer extends format_topics_renderer
                     continue;
                 }
                 echo $this->stealth_section_header($section);
-                echo $this->courserenderer->course_section_cm_list($course, $thissection, 0);
+                // echo $this->courserenderer->course_section_cm_list($course, $thissection, 0);
+                echo $this->course_section_cm_list($course, $thissection, 0);
                 echo $this->stealth_section_footer();
             }
             echo $this->end_section_list();
@@ -399,4 +402,88 @@ class format_buttons_renderer extends format_topics_renderer
             $PAGE->requires->js_init_call('M.format_buttons.init', [$course->numsections]);
         }
     }
+
+     /**
+     * Renders HTML to display a list of course modules in a course section
+     * Also displays "move here" controls in Javascript-disabled mode
+     *
+     * This function calls {@link core_course_renderer::course_section_cm()}
+     *
+     * @param stdClass $course course object
+     * @param int|stdClass|section_info $section relative section number or section object
+     * @param int $sectionreturn section number to return to
+     * @param int $displayoptions
+     * @return void
+     */
+    public function course_section_cm_list($course, $section, $sectionreturn = null, $displayoptions = array()) {
+        global $USER, $PAGE;
+
+        $output = '';
+        $modinfo = get_fast_modinfo($course);
+        if (is_object($section)) {
+            $section = $modinfo->get_section_info($section->section);
+        } else {
+            $section = $modinfo->get_section_info($section);
+        }
+        $completioninfo = new completion_info($course);
+
+        // check if we are currently in the process of moving a module with JavaScript disabled
+        $ismoving = $this->page->user_is_editing() && ismoving($course->id);
+        if ($ismoving) {
+            $movingpix = new pix_icon('movehere', get_string('movehere'), 'moodle', array('class' => 'movetarget'));
+            $strmovefull = strip_tags(get_string("movefull", "", "'$USER->activitycopyname'"));
+        }
+
+        // Get the list of modules visible to user (excluding the module being moved if there is one)
+        $moduleshtml = array();
+        if (!empty($modinfo->sections[$section->section])) {
+            foreach ($modinfo->sections[$section->section] as $modnumber) {
+                $mod = $modinfo->cms[$modnumber];
+
+                if ($ismoving and $mod->id == $USER->activitycopy) {
+                    // do not display moving mod
+                    continue;
+                }
+
+                // show only 'labels' in sections
+                if ($mod->modname == 'label') {
+                    if ($modulehtml = $this->courserenderer->course_section_cm_list_item($course, $completioninfo, $mod, $sectionreturn, $displayoptions)) {
+                        $moduleshtml[$modnumber] = $modulehtml;
+                    }
+                } else if ($PAGE->user_is_editing()) { // show other activities ONLY in editing mode, else comment here
+                    if ($modulehtml = $this->courserenderer->course_section_cm_list_item($course, $completioninfo, $mod, $sectionreturn, $displayoptions)) {
+                        $moduleshtml[$modnumber] = $modulehtml;
+                    }
+                } //and comment here
+
+            }
+        }
+
+        $sectionoutput = '';
+        if (!empty($moduleshtml) || $ismoving) {
+            foreach ($moduleshtml as $modnumber => $modulehtml) {
+                if ($ismoving) {
+                    $movingurl = new moodle_url('/course/mod.php', array('moveto' => $modnumber, 'sesskey' => sesskey()));
+                    $sectionoutput .= html_writer::tag('li',
+                            html_writer::link($movingurl, $this->output->render($movingpix), array('title' => $strmovefull)),
+                            array('class' => 'movehere'));
+                }
+
+                $sectionoutput .= $modulehtml;
+            }
+
+            if ($ismoving) {
+                $movingurl = new moodle_url('/course/mod.php', array('movetosection' => $section->id, 'sesskey' => sesskey()));
+                $sectionoutput .= html_writer::tag('li',
+                        html_writer::link($movingurl, $this->output->render($movingpix), array('title' => $strmovefull)),
+                        array('class' => 'movehere'));
+            }
+        }
+
+        // Always output the section module list.
+        $output .= html_writer::tag('ul', $sectionoutput, array('class' => 'section img-text'));
+
+        return $output;
+    }
+
 }
