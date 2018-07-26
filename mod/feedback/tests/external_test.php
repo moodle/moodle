@@ -518,7 +518,7 @@ class mod_feedback_external_testcase extends externallib_advanced_testcase {
         $this->assertCount(7, $tmpitems);   // 2 from the first page + 5 from the second page.
 
         // And finally, save everything! We are going to modify one previous recorded value.
-        $data[2]['value'] = 'b';
+        $data[2]['value'] = 2; // 2 is value of the option 'b'.
         $secondpagedata = [$data[2], $data[3], $data[4], $data[5], $data[6]];
         $result = mod_feedback_external::process_page($this->feedback->id, 1, $secondpagedata);
         $result = external_api::clean_returnvalue(mod_feedback_external::process_page_returns(), $result);
@@ -530,7 +530,9 @@ class mod_feedback_external_testcase extends externallib_advanced_testcase {
         // Check if the one we modified was correctly saved.
         $itemid = $itemscreated[4]->id;
         $itemsaved = $DB->get_field('feedback_value', 'value', array('item' => $itemid));
-        $this->assertEquals('b', $itemsaved);
+        $mcitem = new feedback_item_multichoice();
+        $itemval = $mcitem->get_printval($itemscreated[4], (object) ['value' => $itemsaved]);
+        $this->assertEquals('b', $itemval);
     }
 
     /**
