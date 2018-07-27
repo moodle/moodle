@@ -244,7 +244,7 @@ if ($mform->is_cancelled()) {
         $weakpasswords = 0;
         $numlicenses = 0;
         $numlicenseerrors = 0;
-        $erroredusers[] = array();
+        $erroredusers = array();
 
         // Caches.
         $ccache       = array(); // Course cache - do not fetch all courses here, we  will not probably use them all anyway!
