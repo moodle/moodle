@@ -6,7 +6,7 @@ Feature: Test validation of 'Age of digital consent' setting.
 
   Background:
     Given I log in as "admin"
-    And I navigate to "Privacy settings" node in "Site administration > Privacy and policies"
+    And I navigate to "Privacy settings" node in "Site administration > Users > Privacy and policies"
 
   Scenario: Admin provides valid value for 'Age of digital consent'.
     Given I set the field "s__agedigitalconsentmap" to multiline:
