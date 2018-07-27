@@ -13,6 +13,8 @@ information provided here is intended especially for theme designer.
   - Microsoft Edge: The body class should change from safari to edge.
   - Mobile safari: The class ios should exist, safari class should be removed.
 * Remove class .safari styling from activity chooser dialog for theme boost and bootstrapbase.
+* The following functions have been finally deprecated and can not be used anymore:
+  * core_course_renderer::add_modchoosertoggle()
 
 === 3.4 ===
 
