@@ -338,16 +338,30 @@ class format_buttons_renderer extends format_topics_renderer
             }
             $htmlsection[$section] .= $this->section_header($thissection, $course, false, 0);
             if ($thissection->uservisible) {
-                // $htmlsection[$section] .= $this->courserenderer->course_section_cm_list($course, $thissection, 0);
-                $htmlsection[$section] .= $this->course_section_cm_list($course, $thissection, 0);
-                $htmlsection[$section] .= $this->courserenderer->course_section_add_cm_control($course, $section, 0);
+                
+                if (!$PAGE->user_is_editing()) {
+                    // our labels output into sections except 0
+                    $htmlsection[$section] .= html_writer::start_tag('div', array('class' => 'labels-wrap'));
+                    $labelscontent = $this->labels_content($course, $thissection);
+                    $htmlsection[$section] .= html_writer::tag('div', $labelscontent, array('class' => 'labels-content'));
+                    $labelslist = $this->labels_list($course, $thissection);
+                    //$htmlsection[$section] .= $this->get_section_labels($course, $thissection, 0);
+                    $htmlsection[$section] .= html_writer::tag('div', $labelslist, array('class' => 'labels-list'));
+                    $htmlsection[$section] .= html_writer::end_tag('div');
+                    
+                    //$htmlsection[$section] .= $this->course_section_cm_list($course, $thissection, 0); // first version render
+                } else {
+                    $htmlsection[$section] .= $this->courserenderer->course_section_cm_list($course, $thissection, 0); // original render
+                    $htmlsection[$section] .= $this->courserenderer->course_section_add_cm_control($course, $section, 0);
+                }
             }
+
             $htmlsection[$section] .= $this->section_footer();
         }
         if ($section0->summary || !empty($modinfo->sections[0]) || $PAGE->user_is_editing()) {
             $htmlsection0 = $this->section_header($section0, $course, false, 0);
-            // $htmlsection0 .= $this->courserenderer->course_section_cm_list($course, $section0, 0);
-            $htmlsection0 .= $this->course_section_cm_list($course, $section0, 0);
+            $htmlsection0 .= $this->courserenderer->course_section_cm_list($course, $section0, 0); // original render
+            //$htmlsection0 .= $this->course_section_cm_list($course, $section0, 0); // first version render
             $htmlsection0 .= $this->courserenderer->course_section_add_cm_control($course, 0, 0);
             $htmlsection0 .= $this->section_footer();
         }
@@ -371,8 +385,8 @@ class format_buttons_renderer extends format_topics_renderer
                     continue;
                 }
                 echo $this->stealth_section_header($section);
-                // echo $this->courserenderer->course_section_cm_list($course, $thissection, 0);
-                echo $this->course_section_cm_list($course, $thissection, 0);
+                echo $this->courserenderer->course_section_cm_list($course, $thissection, 0); // original render
+                // echo $this->course_section_cm_list($course, $thissection, 0);  // first version render
                 echo $this->stealth_section_footer();
             }
             echo $this->end_section_list();
@@ -486,4 +500,86 @@ class format_buttons_renderer extends format_topics_renderer
         return $output;
     }
 
-}
+    /**
+     * Function to get all labels for section befor render
+     * @param stdClass $course course object
+     * @param int|stdClass|section_info $section relative section number or section object
+     * @param int $sectionreturn section number to return to
+     * @param int $displayoptions
+     * @return void
+     */
+    public function get_section_labels($course, $section, $sectionreturn = null, $displayoptions = array()) {
+        global $USER, $PAGE;
+
+        $modinfo = get_fast_modinfo($course);
+        if (is_object($section)) {
+            $section = $modinfo->get_section_info($section->section);
+        } else {
+            $section = $modinfo->get_section_info($section);
+        }
+
+        $moduleshtml = array();
+        if (!empty($modinfo->sections[$section->section])) {
+            foreach ($modinfo->sections[$section->section] as $modnumber) {
+                $mod = $modinfo->cms[$modnumber];
+
+                if ($mod->modname == 'label') {
+                    if (!$mod->is_visible_on_course_page()) {
+                        // nothing to be displayed to the user
+                        return $output;
+                    }
+                    if ($modulehtml =  $mod->get_formatted_content(array('overflowdiv' => true, 'noclean' => true))) {
+                        $moduleshtml[$modnumber] = $modulehtml;
+                    }
+                }
+            }
+        }
+
+        return $moduleshtml;
+
+    } // get_section_labels ends
+
+    // render list of labels
+    public function labels_list($course, $section) {
+        $labels = $this->get_section_labels($course, $section);
+        $output = '';
+        foreach ($labels as $modnum => $content) {
+
+            $reg = '/<h\d>(.*)<\/h\d>.*?(<pre>(.*)<\/pre>)?(.*)<\/div><\/div>/m'; // regex for <h></h>, <pre></pre> and others
+            preg_match($reg, $content, $lheader);
+
+            // print_object($lheader);
+
+            // here fetch icon url
+            if (empty($lheader[3])) {
+                $licon = $this->courserenderer->image_url('label-default', 'format_buttons');
+            } else {
+                $licon = $this->courserenderer->image_url($lheader[3], 'format_buttons');
+            }
+            
+            $output .= "<div id='label_{$modnum}' style='width: 20%; float: left;'>";
+            $output .= $lheader[1];
+            $output .= "&nbsp;<div class='licon' style='background: url({$licon}) no-repeat; background-size: contain; width: 15px; height: 15px; display:inline-block;'></div>";
+            $output .= "</div>";
+        }
+
+        return $output;
+    }
+
+    //render labels content
+    public function labels_content($course, $section) {
+        $labels = $this->get_section_labels($course, $section);
+        $output = '';
+        foreach ($labels as $modnum => $content) {
+            $reg = '/<h\d>(.*)<\/h\d>.*?(<pre>(.*)<\/pre>)?(.*)<\/div><\/div>/m'; // regex for <h></h>, <pre></pre> and others
+            preg_match($reg, $content, $lcontent);
+            
+            $output .= "<div id='label_content_{$modnum}' style='width: 80%; float: left;'>";
+            $output .= $lcontent[4];
+            $output .= "</div>";
+        }
+
+        return $output;
+    }
+
+} // class ends
