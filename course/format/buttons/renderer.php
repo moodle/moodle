@@ -340,6 +340,7 @@ class format_buttons_renderer extends format_topics_renderer
             if ($thissection->uservisible) {
                 
                 if (!$PAGE->user_is_editing()) {
+                    
                     // our labels output into sections except 0
                     $htmlsection[$section] .= html_writer::start_tag('div', array('class' => 'labels-wrap'));
                     $labelscontent = $this->labels_content($course, $thissection);
@@ -360,8 +361,8 @@ class format_buttons_renderer extends format_topics_renderer
         }
         if ($section0->summary || !empty($modinfo->sections[0]) || $PAGE->user_is_editing()) {
             $htmlsection0 = $this->section_header($section0, $course, false, 0);
-            $htmlsection0 .= $this->courserenderer->course_section_cm_list($course, $section0, 0); // original render
-            //$htmlsection0 .= $this->course_section_cm_list($course, $section0, 0); // first version render
+            // $htmlsection0 .= $this->courserenderer->course_section_cm_list($course, $section0, 0); // original render
+            $htmlsection0 .= $this->course_section_cm_list($course, $section0, 0); // first version render
             $htmlsection0 .= $this->courserenderer->course_section_add_cm_control($course, 0, 0);
             $htmlsection0 .= $this->section_footer();
         }
@@ -504,11 +505,9 @@ class format_buttons_renderer extends format_topics_renderer
      * Function to get all labels for section befor render
      * @param stdClass $course course object
      * @param int|stdClass|section_info $section relative section number or section object
-     * @param int $sectionreturn section number to return to
-     * @param int $displayoptions
-     * @return void
+     * @return arr Content parsed for labels render
      */
-    public function get_section_labels($course, $section, $sectionreturn = null, $displayoptions = array()) {
+    public function get_section_labels($course, $section) {
         global $USER, $PAGE;
 
         $modinfo = get_fast_modinfo($course);
@@ -518,7 +517,7 @@ class format_buttons_renderer extends format_topics_renderer
             $section = $modinfo->get_section_info($section);
         }
 
-        $moduleshtml = array();
+        $lables = array();
         if (!empty($modinfo->sections[$section->section])) {
             foreach ($modinfo->sections[$section->section] as $modnumber) {
                 $mod = $modinfo->cms[$modnumber];
@@ -528,37 +527,43 @@ class format_buttons_renderer extends format_topics_renderer
                         // nothing to be displayed to the user
                         return $output;
                     }
-                    if ($modulehtml =  $mod->get_formatted_content(array('overflowdiv' => true, 'noclean' => true))) {
-                        $moduleshtml[$modnumber] = $modulehtml;
+
+                    // get and parse label content into header, icon and the rest of the text
+                    if ($modulehtml =  $mod->get_formatted_content(array('noclean' => true))) {
+                        
+                        $reg = '/<h\d>(.*)<\/h\d>.*?(<pre>(.*)<\/pre>)?(.*)<\/div>/m'; // Regex for <h></h>, <pre></pre> and others. Last <div> is to close no-owerflow div 
+                        preg_match($reg, $modulehtml, $content);
+            
+                        $lables[$modnumber] = $content;
                     }
                 }
             }
         }
 
-        return $moduleshtml;
+        return $lables;
 
     } // get_section_labels ends
 
-    // render list of labels
+    /**
+     * Function to render labels list (menu) on the course page
+     * @param stdClass $course course object
+     * @param int|stdClass|section_info $section relative section number or section object
+     * @return str Output of the labels list
+     */
     public function labels_list($course, $section) {
         $labels = $this->get_section_labels($course, $section);
         $output = '';
         foreach ($labels as $modnum => $content) {
 
-            $reg = '/<h\d>(.*)<\/h\d>.*?(<pre>(.*)<\/pre>)?(.*)<\/div><\/div>/m'; // regex for <h></h>, <pre></pre> and others
-            preg_match($reg, $content, $lheader);
-
-            // print_object($lheader);
-
-            // here fetch icon url
-            if (empty($lheader[3])) {
+            // here we fetch icon url or set default one
+            if (empty($content[3])) {
                 $licon = $this->courserenderer->image_url('label-default', 'format_buttons');
             } else {
-                $licon = $this->courserenderer->image_url($lheader[3], 'format_buttons');
+                $licon = $this->courserenderer->image_url($content[3], 'format_buttons');
             }
             
             $output .= "<div id='label_{$modnum}' style='width: 20%; float: left;'>";
-            $output .= $lheader[1];
+            $output .= $content[1];
             $output .= "&nbsp;<div class='licon' style='background: url({$licon}) no-repeat; background-size: contain; width: 15px; height: 15px; display:inline-block;'></div>";
             $output .= "</div>";
         }
@@ -566,16 +571,19 @@ class format_buttons_renderer extends format_topics_renderer
         return $output;
     }
 
-    //render labels content
+    /**
+     * Function to render labels content on the course page
+     * @param stdClass $course course object
+     * @param int|stdClass|section_info $section relative section number or section object
+     * @return str Output of the labels content
+     */
     public function labels_content($course, $section) {
         $labels = $this->get_section_labels($course, $section);
         $output = '';
         foreach ($labels as $modnum => $content) {
-            $reg = '/<h\d>(.*)<\/h\d>.*?(<pre>(.*)<\/pre>)?(.*)<\/div><\/div>/m'; // regex for <h></h>, <pre></pre> and others
-            preg_match($reg, $content, $lcontent);
             
             $output .= "<div id='label_content_{$modnum}' style='width: 80%; float: left;'>";
-            $output .= $lcontent[4];
+            $output .= $content[4];
             $output .= "</div>";
         }
 
