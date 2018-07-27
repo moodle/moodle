@@ -27,10 +27,10 @@ Feature: Import course's content's twice
     And I log in as "teacher1"
 
   Scenario: Import course's contents to another course
-    Given I am on "Course 2" course homepage with editing mode on
+    Given I am on "Course 2" course homepage
     And I should not see "Online users"
     And I should not see "Test quiz"
-    And  I import "Course 1" course into "Course 2" course using this options:
+    And I import "Course 1" course into "Course 2" course using this options:
     And I am on "Course 2" course homepage
     And I should see "Online users"
     And I should see "Test quiz"
