@@ -22,6 +22,9 @@ information provided here is intended especially for developers.
     - I set the field "<field_string>" to multiline
     - I follow "<link_string>"" in the open menu
 * Removed the lib/password_compat/lib/password.php file.
+* Following functions have been deprecated, please use get_roles_used_in_context.
+    - get_roles_on_exact_context()
+    - get_roles_with_assignment_on_context()
 
 === 3.5 ===
 
