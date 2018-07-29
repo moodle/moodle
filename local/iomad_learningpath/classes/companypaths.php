@@ -148,6 +148,10 @@ class companypaths {
     public function delete_group($pathid, $groupid) {
         global $DB;
 
+        // Remove group courses from LP
+        $DB->delete_records('iomad_learningpathcourse', ['path' => $pathid, 'groupid' => $groupid]);
+
+        // Remove group
         $DB->delete_records('iomad_learningpathgroup', ['learningpath' => $pathid, 'id' => $groupid]);
     }
 
