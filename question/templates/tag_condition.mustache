@@ -70,8 +70,8 @@ function(
     var root = $('[data-region="tag-condition-container-{{uniqid}}"]');
     var selectElement = root.find('[data-region="tag-select"]');
     var loadingContainer = root.find('[data-region="overlay-icon-container"]');
-    var placeholderText = '{{#str}} filterbytags, core_question {{/str}}';
-    var noSelectionText = '{{#str}} notagfiltersapplied, core_question {{/str}}';
+    var placeholderText = {{#quote}}{{#str}} filterbytags, core_question {{/str}}{{/quote}};
+    var noSelectionText = {{#quote}}{{#str}} notagfiltersapplied, core_question {{/str}}{{/quote}};
 
     AutoComplete.enhance(
         selectElement, // Element to enhance.
