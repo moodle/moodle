@@ -9,7 +9,6 @@ information provided here is intended especially for developers.
 * The following functions have been finally deprecated and can not be used any more:
     - external_function_info()
     - core_renderer::update_module_button()
-    - external_function_info()
     - events_trigger()
     - events_cron()
     - events_dispatch()
@@ -20,6 +19,9 @@ information provided here is intended especially for developers.
     - events_queue_handler()
     - events_trigger_legacy()
     - events_update_definition()
+* The following classes have been finally deprecated and can not be used any more:
+    - core_media_renderer
+    - core_media
 * Following api's have been removed in behat_config_manager, please use behat_config_util instead.
     - get_features_with_tags()
     - get_components_steps_definitions()

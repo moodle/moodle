@@ -431,6 +431,7 @@ function upgrade_stale_php_files_present() {
 
     $someexamplesofremovedfiles = array(
         // Removed in 3.6.
+        '/lib/medialib.php',
         '/lib/password_compat/lib/password.php',
         // Removed in 3.5.
         '/lib/dml/mssql_native_moodle_database.php',
