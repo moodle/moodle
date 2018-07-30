@@ -210,7 +210,6 @@ class phpunit_util extends testing_util {
         accesslib_clear_all_caches(true);
         get_string_manager()->reset_caches(true);
         reset_text_filters_cache(true);
-        events_get_handlers('reset');
         core_text::reset_caches();
         get_message_processors(false, true, true);
         filter_manager::reset_caches();

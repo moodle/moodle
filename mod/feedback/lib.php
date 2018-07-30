@@ -25,8 +25,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-/** Include eventslib.php */
-require_once($CFG->libdir.'/eventslib.php');
 // Include forms lib.
 require_once($CFG->libdir.'/formslib.php');
 

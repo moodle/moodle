@@ -9,6 +9,17 @@ information provided here is intended especially for developers.
 * The following functions have been finally deprecated and can not be used any more:
     - external_function_info()
     - core_renderer::update_module_button()
+    - external_function_info()
+    - events_trigger()
+    - events_cron()
+    - events_dispatch()
+    - events_is_registered()
+    - events_load_def()
+    - events_pending_count()
+    - events_process_queued_handler()
+    - events_queue_handler()
+    - events_trigger_legacy()
+    - events_update_definition()
 * Following api's have been removed in behat_config_manager, please use behat_config_util instead.
     - get_features_with_tags()
     - get_components_steps_definitions()
@@ -23,6 +34,12 @@ information provided here is intended especially for developers.
     - I set the field "<field_string>" to multiline
     - I follow "<link_string>"" in the open menu
 * Removed the lib/password_compat/lib/password.php file.
+* The eventslib.php file has been deleted and its functions have been moved to deprecatedlib.php. The affected functions are:
+  - events_get_cached()
+  - events_uninstall()
+  - events_cleanup()
+  - events_dequeue()
+  - events_get_handlers()
 
 === 3.5 ===
 

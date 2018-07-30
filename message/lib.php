@@ -22,8 +22,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once($CFG->libdir.'/eventslib.php');
-
 define('MESSAGE_SHORTLENGTH', 300);
 
 define('MESSAGE_HISTORY_ALL', 1);
