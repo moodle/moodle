@@ -72,6 +72,7 @@ $string['privacy:metadata:block_rss_client:title'] = 'The title of the RSS feed.
 $string['privacy:metadata:block_rss_client:url'] = 'The URL of the RSS feed.';
 $string['privacy:metadata:block_rss_client:userid'] = 'The ID of the user that added the RSS feed.';
 $string['remotenewsfeed'] = 'Remote news feed';
+$string['refreshfeedstask'] = 'Refresh RSS feeds task';
 $string['rss_client:addinstance'] = 'Add a new remote RSS feeds block';
 $string['rss_client:createprivatefeeds'] = 'Create private RSS feeds';
 $string['rss_client:createsharedfeeds'] = 'Create shared RSS feeds';

@@ -15,15 +15,25 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version details
- *
- * @package    block_recent_activity
- * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * Task definition for block_rss_client.
+ * @author    Farhan Karmali <farhan6318@gmail.com>
+ * @copyright Farhan Karmali 2018
+ * @package   block_rss_client
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2018052900;        // The current plugin version (Date: YYYYMMDDXX)
-$plugin->requires  = 2018050800;        // Requires this Moodle version
-$plugin->component = 'block_recent_activity'; // Full name of the plugin (used for diagnostics)
+$tasks = array(
+    array(
+        'classname' => '\block_rss_client\task\refreshfeeds',
+        'blocking' => 0,
+        'minute' => '*/5',
+        'hour' => '*',
+        'day' => '*',
+        'month' => '*',
+        'dayofweek' => '*',
+        'disabled' => 0
+    )
+);
+

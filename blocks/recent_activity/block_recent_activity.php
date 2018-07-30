@@ -229,16 +229,6 @@ class block_recent_activity extends block_base {
     }
 
     /**
-     * Remove old entries from table block_recent_activity
-     */
-    public function cron() {
-        global $DB;
-        // Those entries will never be displayed as RECENT anyway.
-        $DB->delete_records_select('block_recent_activity', 'timecreated < ?',
-                array(time() - COURSE_MAX_RECENT_PERIOD));
-    }
-
-    /**
      * Migrates entries from table {log} into {block_recent_activity}
      *
      * We only migrate logs for the courses that actually have recent activity
