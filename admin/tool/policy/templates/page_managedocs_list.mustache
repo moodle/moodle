@@ -1,0 +1,146 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template tool_policy/page_managedocs_list
+
+    Template for the policy documents management page.
+
+    Classes required for JS:
+    -
+
+    Data attributes required for JS:
+    * data-policy-name
+    * data-policy-revision
+    * data-action
+
+    Context variables required for this template:
+    * haspolicies
+    * policies
+
+    Example context (json):
+    {
+        "title": "Manage policies",
+        "backurl": "/",
+        "pluginbaseurl": "/admin/tool/policy/",
+        "canviewacceptances": true,
+        "canmanage": true,
+        "versions": [
+            {
+                "id": 1,
+                "name": "Terms &amp; conditions",
+                "typetext": "Site policy",
+                "audiencetext": "All users",
+                "statustext": "Active",
+                "revision": "1.0",
+                "timemodified": 1521531208,
+                "acceptancescounturl": "#",
+                "acceptancescounttext": "10 out of 1000 (1%)"
+            },
+            {
+                "indented": true,
+                "name": "Terms &amp; conditions",
+                "typetext": "Site policy",
+                "audiencetext": "All users",
+                "statustext": "Draft",
+                "revision": "2.0",
+                "timemodified": 1521531208,
+                "acceptancescounttext": "N/A"
+            }
+        ]
+    }
+}}
+<h2>{{{title}}}</h2>
+{{#backurl}}
+    <div>
+        <div class="btn-group">
+            <a href="{{backurl}}" class="btn btn-secondary">{{#str}} back {{/str}}</a>
+        </div>
+    </div>
+{{/backurl}}
+{{#canaddnew}}
+    <div>
+        <div class="btn-group">
+            <a href="{{pluginbaseurl}}/editpolicydoc.php" class="btn btn-primary">{{#str}} newpolicy, tool_policy {{/str}}</a>
+        </div>
+    </div>
+{{/canaddnew}}
+
+<table id="tool-policy-managedocs-wrapper" class="generaltable fullwidth listpolicydocuments">
+    <thead>
+        <tr>
+            <th scope="col">{{#str}} policydocname, tool_policy {{/str}}</th>
+            <th scope="col">{{#str}} status, tool_policy {{/str}}</th>
+            <th scope="col">{{#str}} policydocrevision, tool_policy {{/str}}</th>
+            <th scope="col">{{#str}} lastmodified, core {{/str}}</th>
+            {{#canviewacceptances}}
+            <th scope="col">{{#str}} usersaccepted, tool_policy {{/str}}</th>
+            {{/canviewacceptances}}
+            {{#canmanage}}
+            <th scope="col"></th>
+            {{/canmanage}}
+        </tr>
+    </thead>
+    <tbody>
+        {{#versions}}
+        <tr data-policy-name="{{{name}}}" data-policy-revision="{{revision}}">
+            <td>
+                {{#indented}}
+                <div style="float:left">
+                    {{#pix}} level, tool_policy {{/pix}}
+                </div>
+                {{/indented}}
+                <div {{#indented}}style="margin-left: 24px" {{/indented}}>
+                    <div>{{{name}}}</div>
+                    <div class="text-muted, muted"><small>{{{typetext}}}, {{{audiencetext}}}</small></div>
+                </div>
+            </td>
+            <td>
+                {{{statustext}}}
+            </td>
+            <td>
+                {{revision}}
+            </td>
+            <td>
+                {{#userdate}} {{timemodified}}, {{#str}} strftimedatetime, core_langconfig {{/str}} {{/userdate}}
+            </td>
+            {{#canviewacceptances}}
+            <td>
+                {{#acceptancescounturl}}
+                    <a href="{{acceptancescounturl}}">{{acceptancescounttext}}</a>
+                {{/acceptancescounturl}}
+                {{^acceptancescounturl}}
+                    {{acceptancescounttext}}
+                {{/acceptancescounturl}}
+            </td>
+            {{/canviewacceptances}}
+            {{#canmanage}}
+            <td>
+                {{#actionmenu}}
+                {{>core/action_menu}}
+                {{/actionmenu}}
+            </td>
+            {{/canmanage}}
+        </tr>
+        {{/versions}}
+    </tbody>
+</table>
+
+{{#js}}
+require(['tool_policy/managedocsactions'], function(ManageDocsActions) {
+    ManageDocsActions.init('tool-policy-managedocs-wrapper');
+});
+{{/js}}
