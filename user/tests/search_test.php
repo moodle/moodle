@@ -119,7 +119,7 @@ class user_search_testcase extends advanced_testcase {
         $this->assertEquals(SITEID, $doc->get('courseid'));
         $this->assertFalse($doc->is_set('userid'));
         $this->assertEquals(\core_search\manager::NO_OWNER_ID, $doc->get('owneruserid'));
-        $this->assertEquals(content_to_text(fullname($user), false), $doc->get('title'));
+        $this->assertEquals(content_to_text(fullname($user), false), $searcharea->get_document_display_title($doc));
         $this->assertEquals(content_to_text($user->description, $user->descriptionformat), $doc->get('content'));
     }
 
