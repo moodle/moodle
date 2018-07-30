@@ -531,7 +531,7 @@ class format_buttons_renderer extends format_topics_renderer
                     // get and parse label content into header, icon and the rest of the text
                     if ($modulehtml =  $mod->get_formatted_content(array('noclean' => true))) {
                         
-                        $reg = '/<h\d>(.*)<\/h\d>.*?(<pre>(.*)<\/pre>)?(.*)<\/div>/m'; // Regex for <h></h>, <pre></pre> and others. Last <div> is to close no-owerflow div 
+                        $reg = '/<h\d>(.*)<\/h\d>.*?\s*(<pre>(.*)<\/pre>)?\s*(.*)<\/div>/sm'; // Regex for <h></h>, <pre></pre> and others. Last <div> is to close no-owerflow div 
                         preg_match($reg, $modulehtml, $content);
             
                         $lables[$modnumber] = $content;
