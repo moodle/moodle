@@ -1720,6 +1720,11 @@ class mod_assign_locallib_testcase extends advanced_testcase {
         $this->setUser($teacher);
         $this->assertEquals(true, $assign->can_grade());
 
+        // Test the viewgrades capability for other users.
+        $this->setUser();
+        $this->assertTrue($assign->can_grade($teacher->id));
+        $this->assertFalse($assign->can_grade($student->id));
+
         // Test the viewgrades capability - without mod/assign:grade.
         $this->setUser($student);
 

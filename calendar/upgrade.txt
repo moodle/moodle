@@ -1,6 +1,12 @@
 This files describes API changes in /calendar/* ,
 information provided here is intended especially for developers.
 
+=== 3.4.5 ===
+* calendar_get_default_courses() function now has optional $userid parameter.
+* calendar_set_filters() function now has optional $user parameter.
+* The core_calendar\local\event\container class now provides two new helper methods for getting and setting the requesting user:
+  set_requesting_user() and get_requesting_user().
+
 === 3.4 ===
 * calendar_get_mini, and calendar_get_upcoming have been deprecated. Please update to use the new exporters and renderers.
 * added core_calendar_get_valid_event_timestart_range and core_calendar_event_timestart_updated callbacks for module events
