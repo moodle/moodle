@@ -4,6 +4,7 @@ This files describes API changes in the assign code.
 * The mod_assign_base_testcase unit test base class has been deprecated.
   It encouraged poor unit test design and led to significant performance issues with unit tests. See MDL-55609 for
   further information.
+* The function can_grade() now has optional $user parameter.
 
 === 3.5 ===
 * Functions assign:get_assign_grading_summary_renderable, assign:can_view_submission, assign:count_submissions_with_status,

@@ -3315,11 +3315,12 @@ class assign {
     /**
      * Does this user have grade permission for this assignment?
      *
+     * @param int|stdClass $user The object or id of the user who will do the editing (default to current user).
      * @return bool
      */
-    public function can_grade() {
+    public function can_grade($user = null) {
         // Permissions check.
-        if (!has_capability('mod/assign:grade', $this->context)) {
+        if (!has_capability('mod/assign:grade', $this->context, $user)) {
             return false;
         }
 
