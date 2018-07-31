@@ -6145,7 +6145,7 @@ function setnew_password_and_mail($user, $fasthash = false) {
     $a->sitename    = format_string($site->fullname);
     $a->username    = $user->username;
     $a->newpassword = $newpassword;
-    $a->link        = $CFG->wwwroot .'/login/';
+    $a->link        = $CFG->wwwroot .'/login/?lang='.$lang;
     $a->signoff     = generate_email_signoff();
 
     $message = (string)new lang_string('newusernewpasswordtext', '', $a, $lang);
