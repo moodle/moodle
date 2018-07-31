@@ -935,4 +935,129 @@ class core_calendar_lib_testcase extends advanced_testcase {
         $types = calendar_get_allowed_event_types($course->id);
         $this->assertTrue($types['group']);
     }
+
+    /**
+     * This is a setup helper function that create some users, courses, groups and group memberships.
+     * This is useful to prepare the environment for testing the calendar_set_filters function.
+     *
+     * @return array An array of ($users, $courses, $coursegroups)
+     */
+    protected function setup_test_calendar_set_filters() {
+        $generator = $this->getDataGenerator();
+
+        // Create some users.
+        $users = [];
+        $users[] = $generator->create_user();
+        $users[] = $generator->create_user();
+        $users[] = $generator->create_user();
+
+        // Create some courses.
+        $courses = [];
+        $courses[] = $generator->create_course();
+        $courses[] = $generator->create_course();
+        $courses[] = $generator->create_course();
+        $courses[] = $generator->create_course();
+
+        // Create some groups.
+        $coursegroups = [];
+        $coursegroups[$courses[0]->id] = [];
+        $coursegroups[$courses[0]->id][] = $generator->create_group(['courseid' => $courses[0]->id]);
+        $coursegroups[$courses[0]->id][] = $generator->create_group(['courseid' => $courses[0]->id]);
+        $coursegroups[$courses[2]->id] = [];
+        $coursegroups[$courses[2]->id][] = $generator->create_group(['courseid' => $courses[2]->id]);
+        $coursegroups[$courses[2]->id][] = $generator->create_group(['courseid' => $courses[2]->id]);
+        $coursegroups[$courses[3]->id] = [];
+        $coursegroups[$courses[3]->id][] = $generator->create_group(['courseid' => $courses[3]->id]);
+        $coursegroups[$courses[3]->id][] = $generator->create_group(['courseid' => $courses[3]->id]);
+
+        // Create some enrolments and group memberships.
+        $generator->enrol_user($users[0]->id, $courses[0]->id, 'student');
+        $generator->create_group_member(['groupid' => $coursegroups[$courses[0]->id][0]->id, 'userid' => $users[0]->id]);
+        $generator->enrol_user($users[1]->id, $courses[0]->id, 'student');
+        $generator->create_group_member(['groupid' => $coursegroups[$courses[0]->id][1]->id, 'userid' => $users[1]->id]);
+        $generator->enrol_user($users[0]->id, $courses[1]->id, 'student');
+        $generator->enrol_user($users[0]->id, $courses[2]->id, 'student');
+
+        return array($users, $courses, $coursegroups);
+    }
+
+    /**
+     * This function tests calendar_set_filters for the case when user is not logged in.
+     */
+    public function test_calendar_set_filters_not_logged_in() {
+        $this->resetAfterTest();
+
+        list($users, $courses, $coursegroups) = $this->setup_test_calendar_set_filters();
+
+        $defaultcourses = calendar_get_default_courses(null, '*', false, $users[0]->id);
+        list($courseids, $groupids, $userid) = calendar_set_filters($defaultcourses);
+
+        $this->assertEquals(
+                [$courses[0]->id, $courses[1]->id, $courses[2]->id, SITEID],
+                array_values($courseids),
+                '', 0.0, 10, true);
+        $this->assertFalse($groupids);
+        $this->assertFalse($userid);
+    }
+
+    /**
+     * This function tests calendar_set_filters for the case when no one is logged in, but a user id is provided.
+     */
+    public function test_calendar_set_filters_not_logged_in_with_user() {
+        $this->resetAfterTest();
+
+        list($users, $courses, $coursegroups) = $this->setup_test_calendar_set_filters();
+
+        $defaultcourses = calendar_get_default_courses(null, '*', false, $users[1]->id);
+        list($courseids, $groupids, $userid) = calendar_set_filters($defaultcourses, false, $users[1]);
+
+        $this->assertEquals(array($courses[0]->id, SITEID), array_values($courseids));
+        $this->assertEquals(array($coursegroups[$courses[0]->id][1]->id), $groupids);
+        $this->assertEquals($users[1]->id, $userid);
+
+        $defaultcourses = calendar_get_default_courses(null, '*', false, $users[0]->id);
+        list($courseids, $groupids, $userid) = calendar_set_filters($defaultcourses, false, $users[0]);
+
+        $this->assertEquals(
+                [$courses[0]->id, $courses[1]->id, $courses[2]->id, SITEID],
+                array_values($courseids),
+                '', 0.0, 10, true);
+        $this->assertEquals(array($coursegroups[$courses[0]->id][0]->id), $groupids);
+        $this->assertEquals($users[0]->id, $userid);
+
+    }
+
+    /**
+     * This function tests calendar_set_filters for the case when user is logged in, but no user id is provided.
+     */
+    public function test_calendar_set_filters_logged_in_no_user() {
+        $this->resetAfterTest();
+
+        list($users, $courses, $coursegroups) = $this->setup_test_calendar_set_filters();
+
+        $this->setUser($users[0]);
+        $defaultcourses = calendar_get_default_courses(null, '*', false, $users[0]->id);
+        list($courseids, $groupids, $userid) = calendar_set_filters($defaultcourses, false);
+        $this->assertEquals([$courses[0]->id, $courses[1]->id, $courses[2]->id, SITEID], array_values($courseids), '', 0.0, 10,
+                true);
+        $this->assertEquals(array($coursegroups[$courses[0]->id][0]->id), $groupids);
+        $this->assertEquals($users[0]->id, $userid);
+    }
+
+    /**
+     * This function tests calendar_set_filters for the case when a user is logged in, but another user id is provided.
+     */
+    public function test_calendar_set_filters_logged_in_another_user() {
+        $this->resetAfterTest();
+
+        list($users, $courses, $coursegroups) = $this->setup_test_calendar_set_filters();
+
+        $this->setUser($users[0]);
+        $defaultcourses = calendar_get_default_courses(null, '*', false, $users[1]->id);
+        list($courseids, $groupids, $userid) = calendar_set_filters($defaultcourses, false, $users[1]);
+
+        $this->assertEquals(array($courses[0]->id, SITEID), array_values($courseids));
+        $this->assertEquals(array($coursegroups[$courses[0]->id][1]->id), $groupids);
+        $this->assertEquals($users[1]->id, $userid);
+    }
 }

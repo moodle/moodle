@@ -2039,34 +2039,29 @@ function calendar_events_by_day($events, $month, $year, &$eventsbyday, &$duratio
  *
  * @param array $courseeventsfrom An array of courses to load calendar events for
  * @param bool $ignorefilters specify the use of filters, false is set as default
+ * @param stdClass $user The user object. This defaults to the global $USER object.
  * @return array An array of courses, groups, and user to load calendar events for based upon filters
  */
-function calendar_set_filters(array $courseeventsfrom, $ignorefilters = false) {
-    global $USER, $CFG;
+function calendar_set_filters(array $courseeventsfrom, $ignorefilters = false, stdClass $user = null) {
+    global $CFG, $USER;
 
-    // For backwards compatability we have to check whether the courses array contains
-    // just id's in which case we need to load course objects.
-    $coursestoload = array();
-    foreach ($courseeventsfrom as $id => $something) {
-        if (!is_object($something)) {
-            $coursestoload[] = $id;
-            unset($courseeventsfrom[$id]);
-        }
+    if (is_null($user)) {
+        $user = $USER;
     }
 
     $courses = array();
-    $user = false;
+    $userid = false;
     $group = false;
 
     // Get the capabilities that allow seeing group events from all groups.
     $allgroupscaps = array('moodle/site:accessallgroups', 'moodle/calendar:manageentries');
 
-    $isloggedin = isloggedin();
+    $isvaliduser = !empty($user->id);
 
-    if ($ignorefilters || calendar_show_event_type(CALENDAR_EVENT_COURSE)) {
+    if ($ignorefilters || calendar_show_event_type(CALENDAR_EVENT_COURSE, $user)) {
         $courses = array_keys($courseeventsfrom);
     }
-    if ($ignorefilters || calendar_show_event_type(CALENDAR_EVENT_GLOBAL)) {
+    if ($ignorefilters || calendar_show_event_type(CALENDAR_EVENT_GLOBAL, $user)) {
         $courses[] = SITEID;
     }
     $courses = array_unique($courses);
@@ -2080,11 +2075,11 @@ function calendar_set_filters(array $courseeventsfrom, $ignorefilters = false) {
         $courses[] = SITEID;
     }
 
-    if ($ignorefilters || ($isloggedin && calendar_show_event_type(CALENDAR_EVENT_USER))) {
-        $user = $USER->id;
+    if ($ignorefilters || ($isvaliduser && calendar_show_event_type(CALENDAR_EVENT_USER, $user))) {
+        $userid = $user->id;
     }
 
-    if (!empty($courseeventsfrom) && (calendar_show_event_type(CALENDAR_EVENT_GROUP) || $ignorefilters)) {
+    if (!empty($courseeventsfrom) && (calendar_show_event_type(CALENDAR_EVENT_GROUP, $user) || $ignorefilters)) {
 
         if (count($courseeventsfrom) == 1) {
             $course = reset($courseeventsfrom);
@@ -2096,16 +2091,16 @@ function calendar_set_filters(array $courseeventsfrom, $ignorefilters = false) {
         if ($group === false) {
             if (!empty($CFG->calendar_adminseesall) && has_any_capability($allgroupscaps, \context_system::instance())) {
                 $group = true;
-            } else if ($isloggedin) {
+            } else if ($isvaliduser) {
                 $groupids = array();
                 foreach ($courseeventsfrom as $courseid => $course) {
                     // If the user is an editing teacher in there.
-                    if (!empty($USER->groupmember[$course->id])) {
+                    if (!empty($user->groupmember[$course->id])) {
                         // We've already cached the users groups for this course so we can just use that.
-                        $groupids = array_merge($groupids, $USER->groupmember[$course->id]);
+                        $groupids = array_merge($groupids, $user->groupmember[$course->id]);
                     } else if ($course->groupmode != NOGROUPS || !$course->groupmodeforce) {
                         // If this course has groups, show events from all of those related to the current user.
-                        $coursegroups = groups_get_user_groups($course->id, $USER->id);
+                        $coursegroups = groups_get_user_groups($course->id, $user->id);
                         $groupids = array_merge($groupids, $coursegroups['0']);
                     }
                 }
@@ -2119,7 +2114,7 @@ function calendar_set_filters(array $courseeventsfrom, $ignorefilters = false) {
         $courses = false;
     }
 
-    return array($courses, $group, $user);
+    return array($courses, $group, $userid);
 }
 
 /**

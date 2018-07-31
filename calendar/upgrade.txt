@@ -3,6 +3,7 @@ information provided here is intended especially for developers.
 
 === 3.5.2 ===
 * calendar_get_default_courses() function now has optional $userid parameter.
+* calendar_set_filters() function now has optional $user parameter.
 
 === 3.5 ===
 * core_calendar_external::get_calendar_events now returns the categoryid for category events.
