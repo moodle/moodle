@@ -4,7 +4,7 @@ information provided here is intended especially for developers.
 === 3.6 ===
 
 * Custom AJAX handlers for the form autocomplete fields can now optionally return string in their processResults()
-  callback. If a string is returned, it is displayed instead of the list if suggested items. This can be used, for
+  callback. If a string is returned, it is displayed instead of the list of suggested items. This can be used, for
   example, to inform the user that there are too many items matching the current search criteria.
 * The following functions have been finally deprecated and can not be used any more:
     - external_function_info()
@@ -42,9 +42,9 @@ information provided here is intended especially for developers.
   - events_cleanup()
   - events_dequeue()
   - events_get_handlers()
-
 * coursecat::get() now has optional $user parameter.
 * coursecat::is_uservisible() now has optional $user parameter.
+* Removed the lib/form/submitlink.php element which was deprecated in 3.2.
 
 === 3.5 ===
 
