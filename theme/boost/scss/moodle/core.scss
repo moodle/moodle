@@ -5,10 +5,11 @@
 // want white default colour.
 $bg-inverse-link-color: #fff !default;
 
-#region-main > .card {
+#region-main {
     overflow-x: auto;
     overflow-y: visible;
-    min-height: 45rem;
+    border: $card-border-width solid $card-border-color;
+    padding: $card-spacer-x;
 }
 
 .context-header-settings-menu,
