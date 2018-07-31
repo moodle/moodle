@@ -2039,34 +2039,29 @@ function calendar_events_by_day($events, $month, $year, &$eventsbyday, &$duratio
  *
  * @param array $courseeventsfrom An array of courses to load calendar events for
  * @param bool $ignorefilters specify the use of filters, false is set as default
+ * @param stdClass $user The user object. This defaults to the global $USER object.
  * @return array An array of courses, groups, and user to load calendar events for based upon filters
  */
-function calendar_set_filters(array $courseeventsfrom, $ignorefilters = false) {
-    global $USER, $CFG;
+function calendar_set_filters(array $courseeventsfrom, $ignorefilters = false, stdClass $user = null) {
+    global $CFG, $USER;
 
-    // For backwards compatability we have to check whether the courses array contains
-    // just id's in which case we need to load course objects.
-    $coursestoload = array();
-    foreach ($courseeventsfrom as $id => $something) {
-        if (!is_object($something)) {
-            $coursestoload[] = $id;
-            unset($courseeventsfrom[$id]);
-        }
+    if (is_null($user)) {
+        $user = $USER;
     }
 
     $courses = array();
-    $user = false;
+    $userid = false;
     $group = false;
 
     // Get the capabilities that allow seeing group events from all groups.
     $allgroupscaps = array('moodle/site:accessallgroups', 'moodle/calendar:manageentries');
 
-    $isloggedin = isloggedin();
+    $isvaliduser = !empty($user->id);
 
-    if ($ignorefilters || calendar_show_event_type(CALENDAR_EVENT_COURSE)) {
+    if ($ignorefilters || calendar_show_event_type(CALENDAR_EVENT_COURSE, $user)) {
         $courses = array_keys($courseeventsfrom);
     }
-    if ($ignorefilters || calendar_show_event_type(CALENDAR_EVENT_GLOBAL)) {
+    if ($ignorefilters || calendar_show_event_type(CALENDAR_EVENT_GLOBAL, $user)) {
         $courses[] = SITEID;
     }
     $courses = array_unique($courses);
@@ -2080,11 +2075,11 @@ function calendar_set_filters(array $courseeventsfrom, $ignorefilters = false) {
         $courses[] = SITEID;
     }
 
-    if ($ignorefilters || ($isloggedin && calendar_show_event_type(CALENDAR_EVENT_USER))) {
-        $user = $USER->id;
+    if ($ignorefilters || ($isvaliduser && calendar_show_event_type(CALENDAR_EVENT_USER, $user))) {
+        $userid = $user->id;
     }
 
-    if (!empty($courseeventsfrom) && (calendar_show_event_type(CALENDAR_EVENT_GROUP) || $ignorefilters)) {
+    if (!empty($courseeventsfrom) && (calendar_show_event_type(CALENDAR_EVENT_GROUP, $user) || $ignorefilters)) {
 
         if (count($courseeventsfrom) == 1) {
             $course = reset($courseeventsfrom);
@@ -2096,16 +2091,16 @@ function calendar_set_filters(array $courseeventsfrom, $ignorefilters = false) {
         if ($group === false) {
             if (!empty($CFG->calendar_adminseesall) && has_any_capability($allgroupscaps, \context_system::instance())) {
                 $group = true;
-            } else if ($isloggedin) {
+            } else if ($isvaliduser) {
                 $groupids = array();
                 foreach ($courseeventsfrom as $courseid => $course) {
                     // If the user is an editing teacher in there.
-                    if (!empty($USER->groupmember[$course->id])) {
+                    if (!empty($user->groupmember[$course->id])) {
                         // We've already cached the users groups for this course so we can just use that.
-                        $groupids = array_merge($groupids, $USER->groupmember[$course->id]);
+                        $groupids = array_merge($groupids, $user->groupmember[$course->id]);
                     } else if ($course->groupmode != NOGROUPS || !$course->groupmodeforce) {
                         // If this course has groups, show events from all of those related to the current user.
-                        $coursegroups = groups_get_user_groups($course->id, $USER->id);
+                        $coursegroups = groups_get_user_groups($course->id, $user->id);
                         $groupids = array_merge($groupids, $coursegroups['0']);
                     }
                 }
@@ -2119,7 +2114,7 @@ function calendar_set_filters(array $courseeventsfrom, $ignorefilters = false) {
         $courses = false;
     }
 
-    return array($courses, $group, $user);
+    return array($courses, $group, $userid);
 }
 
 /**
@@ -2317,20 +2312,25 @@ function calendar_delete_event_allowed($event) {
  *
  * @param int $courseid (optional) If passed, an additional course can be returned for admins (the current course).
  * @param string $fields Comma separated list of course fields to return.
- * @param bool $canmanage If true, this will return the list of courses the current user can create events in, rather
+ * @param bool $canmanage If true, this will return the list of courses the user can create events in, rather
  *                        than the list of courses they see events from (an admin can always add events in a course
  *                        calendar, even if they are not enrolled in the course).
+ * @param int $userid (optional) The user which this function returns the default courses for.
+ *                        By default the current user.
  * @return array $courses Array of courses to display
  */
-function calendar_get_default_courses($courseid = null, $fields = '*', $canmanage=false) {
-    global $CFG, $DB;
+function calendar_get_default_courses($courseid = null, $fields = '*', $canmanage = false, int $userid = null) {
+    global $CFG, $USER;
 
-    if (!isloggedin()) {
-        return array();
+    if (!$userid) {
+        if (!isloggedin()) {
+            return array();
+        }
+        $userid = $USER->id;
     }
 
-    if (has_capability('moodle/calendar:manageentries', context_system::instance()) &&
-            (!empty($CFG->calendar_adminseesall) || $canmanage)) {
+    if ((!empty($CFG->calendar_adminseesall) || $canmanage) &&
+            has_capability('moodle/calendar:manageentries', context_system::instance(), $userid)) {
 
         // Add a c. prefix to every field as expected by get_courses function.
         $fieldlist = explode(',', $fields);
@@ -2340,11 +2340,11 @@ function calendar_get_default_courses($courseid = null, $fields = '*', $canmanag
         }, $fieldlist);
         $courses = get_courses('all', 'c.shortname', implode(',', $prefixedfields));
     } else {
-        $courses = enrol_get_my_courses($fields);
+        $courses = enrol_get_users_courses($userid, true, $fields);
     }
 
     if ($courseid && $courseid != SITEID) {
-        if (empty($courses[$courseid]) && has_capability('moodle/calendar:manageentries', context_system::instance())) {
+        if (empty($courses[$courseid]) && has_capability('moodle/calendar:manageentries', context_system::instance(), $userid)) {
             // Allow a site admin to see calendars from courses he is not enrolled in.
             // This will come from $COURSE.
             $courses[$courseid] = get_course($courseid);
@@ -3326,6 +3326,11 @@ function calendar_get_legacy_events($tstart, $tend, $users, $groups, $courses,
         return $param;
     }, [$users, $groups, $courses, $categories]);
 
+    // If a single user is provided, we can use that for capability checks.
+    // Otherwise current logged in user is used - See MDL-58768.
+    if (is_array($userparam) && count($userparam) == 1) {
+        \core_calendar\local\event\container::set_requesting_user($userparam[0]);
+    }
     $mapper = \core_calendar\local\event\container::get_event_mapper();
     $events = \core_calendar\local\api::get_events(
         $tstart,

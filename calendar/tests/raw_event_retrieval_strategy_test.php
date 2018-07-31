@@ -88,15 +88,29 @@ class core_calendar_raw_event_retrieval_strategy_testcase extends advanced_testc
         $this->assertCount(2, $events);
 
         // Disable the lesson module.
-        $modulerecord = $DB->get_record('modules', ['name' => 'lesson']);
-        $modulerecord->visible = 0;
-        $DB->update_record('modules', $modulerecord);
+        $DB->set_field('modules', 'visible', 0, ['name' => 'lesson']);
 
         // Check that we only return the assign event.
         $events = $retrievalstrategy->get_raw_events(null, [0], null);
         $this->assertCount(1, $events);
         $event = reset($events);
         $this->assertEquals('assign', $event->modulename);
+
+        // Now, log out and repeat the above test in the reverse order.
+        $this->setUser();
+
+        // Check that we only return the assign event (given that the lesson module is still disabled).
+        $events = $retrievalstrategy->get_raw_events([$student->id], [0], null);
+        $this->assertCount(1, $events);
+        $event = reset($events);
+        $this->assertEquals('assign', $event->modulename);
+
+        // Enable the lesson module.
+        $DB->set_field('modules', 'visible', 1, ['name' => 'lesson']);
+
+        // Get all events.
+        $events = $retrievalstrategy->get_raw_events(null, [0], null);
+        $this->assertCount(2, $events);
     }
 
     /**
@@ -203,37 +217,37 @@ class core_calendar_raw_event_retrieval_strategy_testcase extends advanced_testc
             calendar_event::create($event, false);
         }
 
-        $timestart = $now - 100;
-        $timeend = $now + (3 * 86400);
         $groups = [$group1->id, $group2->id];
 
-        // Get user override events.
-        $this->setUser($useroverridestudent);
-        $events = $retrievalstrategy->get_raw_events([$useroverridestudent->id], $groups, [$course->id]);
-        $this->assertCount(1, $events);
-        $event = reset($events);
-        $this->assertEquals('Assignment 1 due date - User override', $event->name);
+        // Do the following tests multiple times when logged in with different users. Also run the whole set when logged out.
+        // In any cases, the tests should not depend on the logged-in user.
+        foreach ([$useroverridestudent, $nogroupstudent, $group12student, $group1student, null] as $login) {
+            $this->setUser($login);
 
-        // Get events for user that does not belong to any group and has no user override events.
-        $this->setUser($nogroupstudent);
-        $events = $retrievalstrategy->get_raw_events([$nogroupstudent->id], $groups, [$course->id]);
-        $this->assertCount(1, $events);
-        $event = reset($events);
-        $this->assertEquals('Assignment 1 due date', $event->name);
+            // Get user override events.
+            $events = $retrievalstrategy->get_raw_events([$useroverridestudent->id], $groups, [$course->id]);
+            $this->assertCount(1, $events);
+            $event = reset($events);
+            $this->assertEquals('Assignment 1 due date - User override', $event->name);
 
-        // Get events for user that belongs to groups A and B and has no user override events.
-        $this->setUser($group12student);
-        $events = $retrievalstrategy->get_raw_events([$group12student->id], $groups, [$course->id]);
-        $this->assertCount(1, $events);
-        $event = reset($events);
-        $this->assertEquals('Assignment 1 due date - Group A override', $event->name);
+            // Get events for user that does not belong to any group and has no user override events.
+            $events = $retrievalstrategy->get_raw_events([$nogroupstudent->id], $groups, [$course->id]);
+            $this->assertCount(1, $events);
+            $event = reset($events);
+            $this->assertEquals('Assignment 1 due date', $event->name);
 
-        // Get events for user that belongs to group A and has no user override events.
-        $this->setUser($group1student);
-        $events = $retrievalstrategy->get_raw_events([$group1student->id], $groups, [$course->id]);
-        $this->assertCount(1, $events);
-        $event = reset($events);
-        $this->assertEquals('Assignment 1 due date - Group A override', $event->name);
+            // Get events for user that belongs to groups A and B and has no user override events.
+            $events = $retrievalstrategy->get_raw_events([$group12student->id], $groups, [$course->id]);
+            $this->assertCount(1, $events);
+            $event = reset($events);
+            $this->assertEquals('Assignment 1 due date - Group A override', $event->name);
+
+            // Get events for user that belongs to group A and has no user override events.
+            $events = $retrievalstrategy->get_raw_events([$group1student->id], $groups, [$course->id]);
+            $this->assertCount(1, $events);
+            $event = reset($events);
+            $this->assertEquals('Assignment 1 due date - Group A override', $event->name);
+        }
 
         // Add repeating events.
         $repeatingevents = [
@@ -282,8 +296,6 @@ class core_calendar_raw_event_retrieval_strategy_testcase extends advanced_testc
      * Test retrieval strategy with category specifications.
      */
     public function test_get_raw_events_category() {
-        global $DB;
-
         $this->resetAfterTest();
         $retrievalstrategy = new raw_event_retrieval_strategy();
         $generator = $this->getDataGenerator();
@@ -340,6 +352,90 @@ class core_calendar_raw_event_retrieval_strategy_testcase extends advanced_testc
         // Get events for several categories.
         $events = $retrievalstrategy->get_raw_events(null, null, null, [$category1->id, $category2->id]);
         $this->assertCount(2, $events);
+    }
+
+    public function test_get_raw_events_for_multiple_users() {
+        $this->resetAfterTest();
+
+        $generator = $this->getDataGenerator();
+
+        // Create users.
+        $user1 = $generator->create_user();
+        $user2 = $generator->create_user();
+        $user3 = $generator->create_user();
+
+        // Create user events.
+        $events = [
+            [
+                'name' => 'User1 Event',
+                'eventtype' => 'user',
+                'userid' => $user1->id,
+                'timestart' => time(),
+            ], [
+                'name' => 'User2 Event',
+                'eventtype' => 'user',
+                'userid' => $user2->id,
+                'timestart' => time(),
+            ], [
+                'name' => 'User3 Event',
+                'eventtype' => 'user',
+                'userid' => $user3->id,
+                'timestart' => time(),
+            ]
+        ];
+        foreach ($events as $event) {
+            calendar_event::create($event, false);
+        }
+
+        $retrievalstrategy = new raw_event_retrieval_strategy();
+
+        // Get all events.
+        $events = $retrievalstrategy->get_raw_events([$user1->id, $user2->id]);
+        $this->assertCount(2, $events);
+        $this->assertEquals(
+                ['User1 Event', 'User2 Event'],
+                array_column($events, 'name'),
+                '', 0.0, 10, true);
+    }
+
+    public function test_get_raw_events_for_groups_with_no_members() {
+        $this->resetAfterTest();
+
+        $generator = $this->getDataGenerator();
+
+        $course = $generator->create_course();
+
+        // Create groups.
+        $group1 = $generator->create_group(['courseid' => $course->id, 'name' => 'Group 1']);
+        $group2 = $generator->create_group(['courseid' => $course->id, 'name' => 'Group 2']);
+
+        // Create group events.
+        $events = [
+            [
+                'name' => 'Group 1 Event',
+                'eventtype' => 'group',
+                'groupid' => $group1->id,
+                'timestart' => time(),
+            ], [
+                'name' => 'Group 2 Event',
+                'eventtype' => 'group',
+                'groupid' => $group2->id,
+                'timestart' => time(),
+            ]
+        ];
+        foreach ($events as $event) {
+            calendar_event::create($event, false);
+        }
+
+        $retrievalstrategy = new raw_event_retrieval_strategy;
+
+        // Get group eventsl.
+        $events = $retrievalstrategy->get_raw_events(null, [$group1->id, $group2->id]);
+        $this->assertCount(2, $events);
+        $this->assertEquals(
+                ['Group 1 Event', 'Group 2 Event'],
+                array_column($events, 'name'),
+                '', 0.0, 10, true);
     }
 }
 
