@@ -338,9 +338,9 @@ class format_buttons_renderer extends format_topics_renderer
             }
             $htmlsection[$section] .= $this->section_header($thissection, $course, false, 0);
             if ($thissection->uservisible) {
-                
+
                 if (!$PAGE->user_is_editing()) {
-                    
+
                     // our labels output into sections except 0
                     $htmlsection[$section] .= html_writer::start_tag('div', array('class' => 'labels-wrap'));
                     $labelscontent = $this->labels_content($course, $thissection);
@@ -349,7 +349,7 @@ class format_buttons_renderer extends format_topics_renderer
                     //$htmlsection[$section] .= $this->get_section_labels($course, $thissection, 0);
                     $htmlsection[$section] .= html_writer::tag('div', $labelslist, array('class' => 'labels-list'));
                     $htmlsection[$section] .= html_writer::end_tag('div');
-                    
+
                     //$htmlsection[$section] .= $this->course_section_cm_list($course, $thissection, 0); // first version render
                 } else {
                     $htmlsection[$section] .= $this->courserenderer->course_section_cm_list($course, $thissection, 0); // original render
@@ -530,10 +530,11 @@ class format_buttons_renderer extends format_topics_renderer
 
                     // get and parse label content into header, icon and the rest of the text
                     if ($modulehtml =  $mod->get_formatted_content(array('noclean' => true))) {
-                        
-                        $reg = '/<h\d>(.*)<\/h\d>.*?\s*(<pre>(.*)<\/pre>)?\s*(.*)<\/div>/sm'; // Regex for <h></h>, <pre></pre> and others. Last <div> is to close no-owerflow div 
+
+                        $reg = '/<h\d>(.*)<\/h\d>.*?\s*(<pre>(.*)<\/pre>)?\s*(.*)<\/div>/sm'; // Regex for <h></h>, <pre></pre> and others. Last <div> is to close no-owerflow div
+                        $reg = '/#name(.*)%name.*?\s*#icon(.*)%icon?\s*(.*)/im';
                         preg_match($reg, $modulehtml, $content);
-            
+
                         $lables[$modnumber] = $content;
                     }
                 }
@@ -556,15 +557,15 @@ class format_buttons_renderer extends format_topics_renderer
         foreach ($labels as $modnum => $content) {
 
             // here we fetch icon url or set default one
-            if (empty($content[3])) {
+            if (empty($content[2])) {
                 $licon = $this->courserenderer->image_url('label-default', 'format_buttons');
             } else {
-                $licon = $this->courserenderer->image_url($content[3], 'format_buttons');
+                $licon = $this->courserenderer->image_url($content[2], 'format_buttons');
             }
-            
-            $output .= "<div id='label_{$modnum}' style='width: 20%; float: left;'>";
+
+            $output .= "<div class = 'label_item' id='label_{$modnum}'>";
             $output .= $content[1];
-            $output .= "&nbsp;<div class='licon' style='background: url({$licon}) no-repeat; background-size: contain; width: 15px; height: 15px; display:inline-block;'></div>";
+            $output .= "&nbsp;<div class='licon' style='background: url({$licon}) no-repeat; background-size: contain;'></div>";
             $output .= "</div>";
         }
 
@@ -581,9 +582,9 @@ class format_buttons_renderer extends format_topics_renderer
         $labels = $this->get_section_labels($course, $section);
         $output = '';
         foreach ($labels as $modnum => $content) {
-            
-            $output .= "<div id='label_content_{$modnum}' style='width: 80%; float: left;'>";
-            $output .= $content[4];
+
+            $output .= "<div class = 'label_content' id='label_content_{$modnum}'>";
+            $output .= $content[3];
             $output .= "</div>";
         }
 

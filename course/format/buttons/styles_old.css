@@ -133,35 +133,6 @@
     white-space: pre;
 }
 
-  .label_content {
-    border: 1px solid #ddd;
-    width: 50%;
-    margin: 10px;
-  }
-  .labels-list {
-    position: absolute;
-    top: 0;
-    right: 35%;
-    top: 21%;
-
-  }
-
-  .label_item {
-    width: 100%;
-    background-color: #adfcf9;
-    height: 50px;
-    padding: 10px;
-    display: flex;
-    align-items: center;
-    border: 1px solid #ddd;
-    margin: 10px;
-  }
-  .licon {
-    width: 70px;
-    height: 40px;
-    margin-left: auto;
-  }
-
 /* editing */
 
 .editing .course-content ul.buttons li.section.main {
