@@ -24,6 +24,12 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+// File component for feedback comments.
+define('ASSIGNFEEDBACK_COMMENTS_COMPONENT', 'assignfeedback_comments');
+
+// File area for feedback comments.
+define('ASSIGNFEEDBACK_COMMENTS_FILEAREA', 'feedback');
+
 /**
  * Library class for comment feedback plugin extending feedback plugin base class.
  *
@@ -306,8 +312,8 @@ class assign_feedback_comments extends assign_feedback_plugin {
         }
 
         if ($feedbackcomments && !empty($feedbackcomments->commenttext)) {
-            $data->assignfeedbackcomments_editor['text'] = $feedbackcomments->commenttext;
-            $data->assignfeedbackcomments_editor['format'] = $feedbackcomments->commentformat;
+            $data->assignfeedbackcomments = $feedbackcomments->commenttext;
+            $data->assignfeedbackcommentsformat = $feedbackcomments->commentformat;
         } else {
             // No feedback given yet - maybe we need to copy the text from the submission?
             if (!empty($commentinlinenabled) && $submission) {
@@ -315,7 +321,16 @@ class assign_feedback_comments extends assign_feedback_plugin {
             }
         }
 
-        $mform->addElement('editor', 'assignfeedbackcomments_editor', $this->get_name(), null, null);
+        file_prepare_standard_editor(
+            $data,
+            'assignfeedbackcomments',
+            $this->get_editor_options(),
+            $this->assignment->get_context(),
+            ASSIGNFEEDBACK_COMMENTS_COMPONENT,
+            ASSIGNFEEDBACK_COMMENTS_FILEAREA,
+            $grade->id
+        );
+        $mform->addElement('editor', 'assignfeedbackcomments_editor', $this->get_name(), null, $this->get_editor_options());
 
         return true;
     }
@@ -329,15 +344,27 @@ class assign_feedback_comments extends assign_feedback_plugin {
      */
     public function save(stdClass $grade, stdClass $data) {
         global $DB;
+
+        // Save the files.
+        $data = file_postupdate_standard_editor(
+            $data,
+            'assignfeedbackcomments',
+            $this->get_editor_options(),
+            $this->assignment->get_context(),
+            ASSIGNFEEDBACK_COMMENTS_COMPONENT,
+            ASSIGNFEEDBACK_COMMENTS_FILEAREA,
+            $grade->id
+        );
+
         $feedbackcomment = $this->get_feedback_comments($grade->id);
         if ($feedbackcomment) {
-            $feedbackcomment->commenttext = $data->assignfeedbackcomments_editor['text'];
-            $feedbackcomment->commentformat = $data->assignfeedbackcomments_editor['format'];
+            $feedbackcomment->commenttext = $data->assignfeedbackcomments;
+            $feedbackcomment->commentformat = $data->assignfeedbackcommentsformat;
             return $DB->update_record('assignfeedback_comments', $feedbackcomment);
         } else {
             $feedbackcomment = new stdClass();
-            $feedbackcomment->commenttext = $data->assignfeedbackcomments_editor['text'];
-            $feedbackcomment->commentformat = $data->assignfeedbackcomments_editor['format'];
+            $feedbackcomment->commenttext = $data->assignfeedbackcomments;
+            $feedbackcomment->commentformat = $data->assignfeedbackcommentsformat;
             $feedbackcomment->grade = $grade->id;
             $feedbackcomment->assignment = $this->assignment->get_instance()->id;
             return $DB->insert_record('assignfeedback_comments', $feedbackcomment) > 0;
@@ -354,12 +381,17 @@ class assign_feedback_comments extends assign_feedback_plugin {
     public function view_summary(stdClass $grade, & $showviewlink) {
         $feedbackcomments = $this->get_feedback_comments($grade->id);
         if ($feedbackcomments) {
-            $text = format_text($feedbackcomments->commenttext,
-                                $feedbackcomments->commentformat,
-                                array('context' => $this->assignment->get_context()));
-            $short = shorten_text($text, 140);
+            $text = $this->rewrite_feedback_comments_urls($feedbackcomments->commenttext, $grade->id);
+            $text = format_text(
+                $text,
+                $feedbackcomments->commentformat,
+                [
+                    'context' => $this->assignment->get_context()
+                ]
+            );
 
             // Show the view all link if the text has been shortened.
+            $short = shorten_text($text, 140);
             $showviewlink = $short != $text;
             return $short;
         }
@@ -375,9 +407,16 @@ class assign_feedback_comments extends assign_feedback_plugin {
     public function view(stdClass $grade) {
         $feedbackcomments = $this->get_feedback_comments($grade->id);
         if ($feedbackcomments) {
-            return format_text($feedbackcomments->commenttext,
-                               $feedbackcomments->commentformat,
-                               array('context' => $this->assignment->get_context()));
+            $text = $this->rewrite_feedback_comments_urls($feedbackcomments->commenttext, $grade->id);
+            $text = format_text(
+                $text,
+                $feedbackcomments->commentformat,
+                [
+                    'context' => $this->assignment->get_context()
+                ]
+            );
+
+            return $text;
         }
         return '';
     }
@@ -483,6 +522,21 @@ class assign_feedback_comments extends assign_feedback_plugin {
     }
 
     /**
+     * Return any files this plugin wishes to save to the gradebook.
+     *
+     * @param stdClass $grade The assign_grades object from the db
+     * @return array
+     */
+    public function files_for_gradebook(stdClass $grade) : array {
+        return [
+            'contextid' => $this->assignment->get_context()->id,
+            'component' => ASSIGNFEEDBACK_COMMENTS_COMPONENT,
+            'filearea' => ASSIGNFEEDBACK_COMMENTS_FILEAREA,
+            'itemid' => $grade->id
+        ];
+    }
+
+    /**
      * The assignment has been deleted - cleanup
      *
      * @return bool
@@ -525,5 +579,39 @@ class assign_feedback_comments extends assign_feedback_plugin {
      */
     public function get_config_for_external() {
         return (array) $this->get_config();
+    }
+
+    /**
+     * Convert encoded URLs in $text from the @@PLUGINFILE@@/... form to an actual URL.
+     *
+     * @param string $text the Text to check
+     * @param int $gradeid The grade ID which refers to the id in the gradebook
+     */
+    private function rewrite_feedback_comments_urls(string $text, int $gradeid) {
+        return file_rewrite_pluginfile_urls(
+            $text,
+            'pluginfile.php',
+            $this->assignment->get_context()->id,
+            ASSIGNFEEDBACK_COMMENTS_COMPONENT,
+            ASSIGNFEEDBACK_COMMENTS_FILEAREA,
+            $gradeid
+        );
+    }
+
+    /**
+     * File format options.
+     *
+     * @return array
+     */
+    private function get_editor_options() {
+        global $COURSE;
+
+        return [
+            'subdirs' => 1,
+            'maxbytes' => $COURSE->maxbytes,
+            'accepted_types' => '*',
+            'context' => $this->assignment->get_context(),
+            'maxfiles' => EDITOR_UNLIMITED_FILES
+        ];
     }
 }
