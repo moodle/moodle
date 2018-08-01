@@ -1652,7 +1652,7 @@ class core_plugin_manager {
             'report' => array('search'),
             'repository' => array('alfresco'),
             'tinymce' => array('dragmath'),
-            'tool' => array('bloglevelupgrade', 'qeupgradehelper', 'timezoneimport'),
+            'tool' => array('bloglevelupgrade', 'qeupgradehelper', 'timezoneimport', 'assignmentupgrade'),
             'theme' => array('afterburner', 'anomaly', 'arialist', 'base', 'binarius', 'boxxie', 'brick', 'canvas',
                 'formal_white', 'formfactor', 'fusion', 'leatherbound', 'magazine', 'mymobile', 'nimble', 'nonzero',
                 'overlay', 'serenity', 'sky_high', 'splash', 'standard', 'standardold'),
@@ -1904,7 +1904,7 @@ class core_plugin_manager {
             ),
 
             'tool' => array(
-                'analytics', 'assignmentupgrade', 'availabilityconditions', 'behat', 'capability', 'cohortroles', 'customlang',
+                'analytics', 'availabilityconditions', 'behat', 'capability', 'cohortroles', 'customlang',
                 'dataprivacy', 'dbtransfer', 'filetypes', 'generator', 'health', 'httpsreplace', 'innodb', 'installaddon',
                 'langimport', 'log', 'lp', 'lpimportcsv', 'lpmigrate', 'messageinbound', 'mobile', 'multilangupgrade',
                 'monitor', 'oauth2', 'phpunit', 'policy', 'profiling', 'recyclebin', 'replace', 'spamcleaner', 'task',

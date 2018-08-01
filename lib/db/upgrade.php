@@ -2293,5 +2293,13 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2018072500.00);
     }
 
+    if ($oldversion < 2018073000.00) {
+        // Main savepoint reached.
+        if (!file_exists($CFG->dirroot . '/admin/tool/assignmentupgrade/version.php')) {
+            unset_all_config_for_plugin('tool_assignmentupgrade');
+        }
+        upgrade_main_savepoint(true, 2018073000.00);
+    }
+
     return true;
 }
