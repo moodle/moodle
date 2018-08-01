@@ -39,115 +39,36 @@ class core_tag_taglib_testcase extends advanced_testcase {
     }
 
     /**
-     * Test the tag_set function.
+     * Test that the tag_set function throws an exception.
      * This function was deprecated in 3.1
      */
     public function test_tag_set_get() {
-        global $DB;
-
-        // Create a course to tag.
-        $course = $this->getDataGenerator()->create_course();
-
-        // Create the tag and tag instance.
-        tag_set('course', $course->id, array('A random tag'), 'core', context_course::instance($course->id)->id);
-        $this->assertDebuggingCalled();
-
-        // Get the tag instance that should have been created.
-        $taginstance = $DB->get_record('tag_instance', array('itemtype' => 'course', 'itemid' => $course->id), '*', MUST_EXIST);
-        $this->assertEquals('core', $taginstance->component);
-        $this->assertEquals(context_course::instance($course->id)->id, $taginstance->contextid);
-
-        $tagbyname = tag_get('name', 'A random tag');
-        $this->assertDebuggingCalled();
-        $this->assertEquals('A random tag', $tagbyname->rawname);
-
-        $this->assertEmpty(tag_get('name', 'Non existing tag'));
-        $this->assertDebuggingCalled();
-
-        $tagbyid = tag_get('id', $tagbyname->id);
-        $this->assertDebuggingCalled();
-        $this->assertEquals('A random tag', $tagbyid->rawname);
-        $tagid = $tagbyname->id;
-
-        $this->assertEmpty(tag_get('id', $tagid + 1));
-        $this->assertDebuggingCalled();
-
-        tag_set('tag', $tagid, array('Some related tag'));
-        $this->assertDebuggingCalled();
-        $relatedtags = tag_get_related_tags($tagid);
-        $this->assertDebuggingCalled();
-        $this->assertCount(1, $relatedtags);
-        $this->assertEquals('Some related tag', $relatedtags[0]->rawname);
-
-        $tagids = tag_get_id(array('A random tag', 'Some related tag'));
-        $this->assertDebuggingCalled();
-        $this->assertCount(2, $tagids);
-        $this->assertEquals($tagid, $tagids['a random tag']);
-        $this->assertEquals($relatedtags[0]->id, $tagids['some related tag']);
+        $this->expectException('coding_exception');
+        $this->expectExceptionMessage('tag_set() can not be used anymore. Please use ' .
+            'core_tag_tag::set_item_tags().');
+        tag_set();
     }
 
     /**
-     * Test the tag_set_add function.
+     * Test that tag_set_add function throws an exception.
      * This function was deprecated in 3.1
      */
     public function test_tag_set_add() {
-        global $DB;
-
-        // Create a course to tag.
-        $course = $this->getDataGenerator()->create_course();
-
-        // Create the tag and tag instance.
-        tag_set_add('course', $course->id, 'A random tag', 'core', context_course::instance($course->id)->id);
-        $this->assertDebuggingCalled();
-
-        // Get the tag instance that should have been created.
-        $taginstance = $DB->get_record('tag_instance', array('itemtype' => 'course', 'itemid' => $course->id), '*', MUST_EXIST);
-        $this->assertEquals('core', $taginstance->component);
-        $this->assertEquals(context_course::instance($course->id)->id, $taginstance->contextid);
-        $tagid = $taginstance->tagid;
-
-        tag_set_add('tag', $tagid, 'Some related tag');
-        $this->assertDebuggingCalled();
-        $relatedtags = tag_get_related_tags($tagid);
-        $this->assertDebuggingCalled();
-        $this->assertCount(1, $relatedtags);
-        $this->assertEquals('Some related tag', $relatedtags[0]->rawname);
+        $this->expectException('coding_exception');
+        $this->expectExceptionMessage('tag_set_add() can not be used anymore. Please use ' .
+            'core_tag_tag::add_item_tag().');
+        tag_set_add();
     }
 
     /**
-     * Test the tag_set_delete function.
+     * Test that tag_set_delete function returns an exception.
      * This function was deprecated in 3.1
      */
     public function test_tag_set_delete() {
-        global $DB;
-
-        // Create a course to tag.
-        $course = $this->getDataGenerator()->create_course();
-
-        // Create the tag and tag instance we are going to delete.
-        tag_set_add('course', $course->id, 'A random tag', 'core', context_course::instance($course->id)->id);
-        $this->assertDebuggingCalled();
-
-        // Call the tag_set_delete function.
-        tag_set_delete('course', $course->id, 'a random tag', 'core', context_course::instance($course->id)->id);
-        $this->assertDebuggingCalled();
-
-        // Now check that there are no tags or tag instances.
-        $this->assertEquals(0, $DB->count_records('tag'));
-        $this->assertEquals(0, $DB->count_records('tag_instance'));
-
-        // Add tag again, add and remove related tag.
-        tag_set_add('course', $course->id, 'A random tag', 'core', context_course::instance($course->id)->id);
-        $this->assertDebuggingCalled();
-        $taginstance = $DB->get_record('tag_instance', array('itemtype' => 'course', 'itemid' => $course->id), '*', MUST_EXIST);
-        $tagid = $taginstance->tagid;
-        tag_set_add('tag', $tagid, 'Some related tag');
-        $this->assertDebuggingCalled();
-        tag_set_delete('tag', $tagid, 'Some related tag');
-        $this->assertDebuggingCalled();
-        $relatedtags = tag_get_related_tags($tagid);
-        $this->assertDebuggingCalled();
-        $this->assertCount(0, $relatedtags);
+        $this->expectException('coding_exception');
+        $this->expectExceptionMessage('tag_set_delete() can not be used anymore. Please use ' .
+            'core_tag_tag::remove_item_tag().');
+        tag_set_delete();
     }
 
     /**
@@ -174,32 +95,14 @@ class core_tag_taglib_testcase extends advanced_testcase {
     }
 
     /**
-     * Test the tag_assign function.
+     * Test that tag_assign function throws an exception.
      * This function was deprecated in 3.1
      */
     public function test_tag_assign() {
-        global $DB;
-
-        // Create a course to tag.
-        $course = $this->getDataGenerator()->create_course();
-
-        // Create the tag.
-        $tag = $this->getDataGenerator()->create_tag();
-        $tag2 = $this->getDataGenerator()->create_tag();
-
-        // Tag the course with the tag we created.
-        tag_assign('course', $course->id, $tag->id, 0, 0, 'core', context_course::instance($course->id)->id);
-        $this->assertDebuggingCalled();
-
-        // Get the tag instance that should have been created.
-        $taginstance = $DB->get_record('tag_instance', array('itemtype' => 'course', 'itemid' => $course->id), '*', MUST_EXIST);
-        $this->assertEquals('core', $taginstance->component);
-        $this->assertEquals(context_course::instance($course->id)->id, $taginstance->contextid);
-
-        // Now call the tag_assign function without specifying the component or
-        // contextid and ensure the function debugging is called twice.
-        tag_assign('course', $course->id, $tag2->id, 0, 0);
-        $this->assertDebuggingCalled();
+        $this->expectException('coding_exception');
+        $this->expectExceptionMessage('tag_assign() can not be used anymore. Please use core_tag_tag::set_item_tags() ' .
+            'or core_tag_tag::add_item_tag() instead.');
+        tag_assign();
     }
 
     /**
@@ -362,7 +265,7 @@ class core_tag_taglib_testcase extends advanced_testcase {
     }
 
     /**
-     * Test for function tag_compute_correlations() that is part of tag cron
+     * Test for function compute_correlations() that is part of tag cron
      */
     public function test_correlations() {
         global $DB;
@@ -401,7 +304,7 @@ class core_tag_taglib_testcase extends advanced_testcase {
         $this->assertCount(1, $correlatedtags); // Duplicates are filtered out here.
         $this->assertEquals('cats', $correlatedtags[0]->rawname);
 
-        // Make sure tag_get_correlated() returns 'dogs' and 'puppy' as the correlated tags to the 'dog'.
+        // Make sure get_correlated_tags() returns 'dogs' and 'puppy' as the correlated tags to the 'dog'.
         $correlatedtags = core_tag_tag::get($tags['dog'])->get_correlated_tags(true);
         $this->assertCount(6, $correlatedtags); // 2 tags times 3 instances.
 
@@ -416,31 +319,26 @@ class core_tag_taglib_testcase extends advanced_testcase {
         $this->assertEquals('kitten', $relatedtags[0]->rawname);
         $this->assertEquals('cats', $relatedtags[1]->rawname);
 
-        // Also test deprecated method tag_get_related_tags() and tag_get_correlated().
-        $correlatedtags = array_values(tag_get_correlated($tags['cat']));
-        $this->assertDebuggingCalled();
+        // Also test get_correlated_tags().
+        $correlatedtags = array_values(core_tag_tag::get($tags['cat'])->get_correlated_tags(true));
         $this->assertCount(3, $correlatedtags); // This will return all existing instances but they all point to the same tag.
         $this->assertEquals('cats', $correlatedtags[0]->rawname);
         $this->assertEquals('cats', $correlatedtags[1]->rawname);
         $this->assertEquals('cats', $correlatedtags[2]->rawname);
 
-        $correlatedtags = array_values(tag_get_related_tags($tags['cat'], TAG_RELATED_CORRELATED));
-        $this->assertDebuggingCalled();
+        $correlatedtags = array_values(core_tag_tag::get($tags['cat'])->get_correlated_tags());
         $this->assertCount(1, $correlatedtags); // Duplicates are filtered out here.
         $this->assertEquals('cats', $correlatedtags[0]->rawname);
 
-        $correlatedtags = array_values(tag_get_correlated($tags['dog']));
-        $this->assertDebuggingCalled();
+        $correlatedtags = array_values(core_tag_tag::get($tags['dog'])->get_correlated_tags(true));
         $this->assertCount(6, $correlatedtags); // 2 tags times 3 instances.
 
-        $correlatedtags = array_values(tag_get_related_tags($tags['dog'], TAG_RELATED_CORRELATED));
-        $this->assertDebuggingCalled();
+        $correlatedtags = array_values(core_tag_tag::get($tags['dog'])->get_correlated_tags());
         $this->assertCount(2, $correlatedtags);
         $this->assertEquals('dogs', $correlatedtags[0]->rawname);
         $this->assertEquals('puppy', $correlatedtags[1]->rawname);
 
-        $relatedtags = array_values(tag_get_related_tags($tags['cat']));
-        $this->assertDebuggingCalled();
+        $relatedtags = array_values(core_tag_tag::get($tags['cat'])->get_related_tags());
         $this->assertCount(2, $relatedtags);
         $this->assertEquals('kitten', $relatedtags[0]->rawname);
         $this->assertEquals('cats', $relatedtags[1]->rawname);
@@ -461,19 +359,15 @@ class core_tag_taglib_testcase extends advanced_testcase {
         $correlatedtag = reset($correlatedtags);
         $this->assertEquals(array_keys((array)$relatedtag->to_object()), array_keys((array)$correlatedtag->to_object()));
 
-        // Make sure tag_get_correlated() and tag_get_tags() return the same set of fields.
-        // Both functions were deprecated in 3.1.
-        $relatedtags = tag_get_tags('tag', $tags['cat']);
-        $this->assertDebuggingCalled();
+        $relatedtags = core_tag_tag::get_item_tags(null, 'tag', $tags['cat']);
         $relatedtag = reset($relatedtags);
-        $correlatedtags = tag_get_correlated($tags['cat']);
-        $this->assertDebuggingCalled();
+        $correlatedtags = core_tag_tag::get($tags['cat'])->get_correlated_tags();
         $correlatedtag = reset($correlatedtags);
         $this->assertEquals(array_keys((array)$relatedtag), array_keys((array)$correlatedtag));
     }
 
     /**
-     * Test for function tag_cleanup() that is part of tag cron
+     * Test for function cleanup() that is part of tag cron
      */
     public function test_cleanup() {
         global $DB;
@@ -497,7 +391,6 @@ class core_tag_taglib_testcase extends advanced_testcase {
         // Manually remove the instances pointing on tags 'dog' and 'fish'.
         $DB->execute('DELETE FROM {tag_instance} WHERE tagid in (?,?)', array($dogtag->id, $fishtag->id));
 
-        // Call tag_cleanup().
         $task->cleanup();
 
         // Tag 'cat' is still present because it's used. Tag 'dog' is present because it's standard.
@@ -509,7 +402,6 @@ class core_tag_taglib_testcase extends advanced_testcase {
         // Delete user without using API function.
         $DB->update_record('user', array('id' => $user->id, 'deleted' => 1));
 
-        // Call tag_cleanup().
         $task->cleanup();
 
         // Tag 'cat' was now deleted too.
@@ -519,7 +411,6 @@ class core_tag_taglib_testcase extends advanced_testcase {
         core_tag_tag::set_item_tags('core', 'course', 1231231, context_system::instance(), array('bird'));
         $this->assertTrue($DB->record_exists('tag', array('name' => 'bird')));
 
-        // Call tag_cleanup().
         $task->cleanup();
 
         // Tag 'bird' was now deleted because the related record does not exist in the DB.
@@ -535,7 +426,6 @@ class core_tag_taglib_testcase extends advanced_testcase {
         // Some hacker removes the tag without using API.
         $DB->delete_records('tag', array('id' => $sometag->id));
 
-        // Call tag_cleanup().
         $task->cleanup();
 
         // The tag instances were also removed.
@@ -834,15 +724,13 @@ class core_tag_taglib_testcase extends advanced_testcase {
         $this->assertEquals(array('Tag2', 'Tag3'), array_values(core_tag_tag::get_item_tags_array('core', 'user', $user2->id)));
 
         $tag11 = core_tag_tag::get_by_name($collid1, 'Tag1');
-        $related11 = tag_get_related_tags($tag11->id, TAG_RELATED_MANUAL);
-        $this->assertDebuggingCalled();
+        $related11 = core_tag_tag::get($tag11->id)->get_manual_related_tags();
         $related11 = array_map('core_tag_tag::make_display_name', $related11);
         sort($related11); // Order of related tags may be random.
         $this->assertEquals('Tag2, Tag4', join(', ', $related11));
 
         $tag21 = core_tag_tag::get_by_name($collid2, 'TAG1');
-        $related21 = tag_get_related_tags($tag21->id, TAG_RELATED_MANUAL);
-        $this->assertDebuggingCalled();
+        $related21 = core_tag_tag::get($tag21->id)->get_manual_related_tags();
         $related21 = array_map('core_tag_tag::make_display_name', $related21);
         sort($related21); // Order of related tags may be random.
         $this->assertEquals('Tag2, Tag4', join(', ', $related21));
@@ -887,22 +775,15 @@ class core_tag_taglib_testcase extends advanced_testcase {
         $this->assertEquals($collid2, $user2tags[2]->tagcollid);
     }
 
+    /**
+     * Tests that tag_normalize function throws an exception.
+     * This function was deprecated in 3.1
+     */
     public function test_normalize() {
-        $tagset = array('Cat', ' Dog  ', '<Mouse', '<>', 'mouse', 'Dog');
-
-        // Test function tag_normalize() that was deprecated in 3.1.
-        $this->assertEquals(array('Cat' => 'Cat', 'Dog' => 'Dog', '<Mouse' => 'Mouse', '<>' => '', 'mouse' => 'mouse'),
-            tag_normalize($tagset, TAG_CASE_ORIGINAL));
-        $this->assertDebuggingCalled();
-        $this->assertEquals(array('Cat' => 'cat', 'Dog' => 'dog', '<Mouse' => 'mouse', '<>' => '', 'mouse' => 'mouse'),
-            tag_normalize($tagset, TAG_CASE_LOWER));
-        $this->assertDebuggingCalled();
-
-        // Test replacement function core_tag_tag::normalize().
-        $this->assertEquals(array('Cat' => 'Cat', 'Dog' => 'Dog', '<Mouse' => 'Mouse', '<>' => '', 'mouse' => 'mouse'),
-            core_tag_tag::normalize($tagset, false));
-        $this->assertEquals(array('Cat' => 'cat', 'Dog' => 'dog', '<Mouse' => 'mouse', '<>' => '', 'mouse' => 'mouse'),
-            core_tag_tag::normalize($tagset, true));
+        $this->expectException('coding_exception');
+        $this->expectExceptionMessage('tag_normalize() can not be used anymore. Please use ' .
+            'core_tag_tag::normalize().');
+        tag_normalize();
     }
 
     /**
