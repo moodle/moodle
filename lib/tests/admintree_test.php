@@ -414,4 +414,28 @@ class core_admintree_testcase extends advanced_testcase {
         $this->assertEquals('These entries are invalid: nonvalid site name', $adminsetting->write_setting('nonvalid site name'));
         $this->assertEquals('Empty lines are not valid', $adminsetting->write_setting("localhost\n"));
     }
+
+    /**
+     * Verifies the $ADMIN global (adminroot cache) is properly reset when changing users, which might occur naturally during cron.
+     */
+    public function test_adminroot_cache_reset() {
+        $this->resetAfterTest();
+        global $DB;
+        // Current user is a manager at site context, which won't have access to the 'debugging' section of the admin tree.
+        $manageruser = $this->getDataGenerator()->create_user();
+        $context = context_system::instance();
+        $managerrole = $DB->get_record('role', array('shortname' => 'manager'));
+        role_assign($managerrole->id, $manageruser->id, $context->id);
+        $this->setUser($manageruser);
+        $adminroot = admin_get_root();
+        $section = $adminroot->locate('debugging');
+        $this->assertEmpty($section);
+
+        // Now, change the user to an admin user and confirm we get a new copy of the admin tree when next we ask for it.
+        $adminuser = get_admin();
+        $this->setUser($adminuser);
+        $adminroot = admin_get_root();
+        $section = $adminroot->locate('debugging');
+        $this->assertInstanceOf('\admin_settingpage', $section);
+    }
 }

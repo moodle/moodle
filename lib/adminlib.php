@@ -7970,9 +7970,7 @@ function admin_externalpage_setup($section, $extrabutton = '', array $extraurlpa
  * @return object admin_root object
  */
 function admin_get_root($reload=false, $requirefulltree=true) {
-    global $CFG, $DB, $OUTPUT;
-
-    static $ADMIN = NULL;
+    global $CFG, $DB, $OUTPUT, $ADMIN;
 
     if (is_null($ADMIN)) {
     // create the admin tree!
