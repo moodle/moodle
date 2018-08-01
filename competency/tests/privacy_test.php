@@ -50,7 +50,7 @@ class core_competency_privacy_testcase extends provider_testcase {
         global $PAGE;
         $this->resetAfterTest();
 
-        // We need this or exporters (core_competency\external\exporter) do not receive the right renderer.
+        // We need this or exporters (core\external\exporter) do not receive the right renderer.
         $PAGE->get_renderer('core');
     }
 
