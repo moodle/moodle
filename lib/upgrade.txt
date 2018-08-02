@@ -51,6 +51,10 @@ information provided here is intended especially for developers.
 * coursecat::get() now has optional $user parameter.
 * coursecat::is_uservisible() now has optional $user parameter.
 * Removed the lib/form/submitlink.php element which was deprecated in 3.2.
+* The user_selector classes do not support custom list of extra identity fields any more. They obey the configured user
+  policy and respect the privacy setting made by site administrators. The list of user identifiers should never be
+  hard-coded. Instead, the setting $CFG->showuseridentity should be always respected, which has always been the default
+  behaviour (MDL-59847).
 
 === 3.5 ===
 
