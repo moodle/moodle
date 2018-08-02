@@ -225,8 +225,8 @@ echo $renderer->unified_filter($course, $context, $filtersapplied, $baseurl);
 echo '<div class="userlist">';
 
 // Add filters to the baseurl after creating unified_filter to avoid losing them.
-foreach ($filtersapplied as $filter) {
-    $baseurl->param('unified-filters[]', $filter);
+foreach (array_unique($filtersapplied) as $filterix => $filter) {
+    $baseurl->param('unified-filters[' . $filterix . ']', $filter);
 }
 $participanttable = new \core_user\participants_table($course->id, $groupid, $lastaccess, $roleid, $enrolid, $status,
     $searchkeywords, $bulkoperations, $selectall);
