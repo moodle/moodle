@@ -1,5 +1,10 @@
 This files describes API changes in the mod_scorm code.
 
+=== 3.6 ===
+
+* The following renamed classes have been completely removed:
+  - scorm_default_report (now: mod_scorm\report)
+
 === 3.5 ===
 * In get_scorms_by_courses() external/ws function, the force new attempt setting is no longer a boolean - now accepts 3 values:
   No (0), On complete (1) and the new Always (2). See MDL-32585 for more details.
