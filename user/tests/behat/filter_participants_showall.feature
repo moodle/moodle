@@ -39,7 +39,7 @@ Feature: Course participants can be filtered to display all the users
     And the following "course enrolments" exist:
       | user      | course | role           | status | timeend       |
       | student1  | C1     | student        |    0   |               |
-      | student2  | C1     | student        |    1   |               |
+      | student2  | C1     | student        |    0   |               |
       | student3  | C1     | student        |    0   |               |
       | student4  | C1     | student        |    0   |               |
       | student5  | C1     | student        |    0   |               |
@@ -61,7 +61,7 @@ Feature: Course participants can be filtered to display all the users
       | student21 | C1     | student        |    0   |               |
       | student22 | C1     | student        |    0   |               |
       | student23 | C1     | student        |    0   |               |
-      | student24 | C1     | student        |    0   |               |
+      | student24 | C1     | student        |    1   |               |
       | student1  | C2     | student        |    0   |               |
       | student2  | C2     | student        |    0   |               |
       | student3  | C2     | student        |    0   |               |
@@ -87,4 +87,21 @@ Feature: Course participants can be filtered to display all the users
     And I click on "Show all 24" "link"
     Then I should see "Role: Student"
     And I should see "Number of participants: 24" in the "//div[@class='userlist']" "xpath_element"
+    And I should see "Show 20 per page"
+
+  @javascript
+  Scenario: Apply more than one filter and show all users
+    Given I log in as "teacher1"
+    And I am on "Course 1" course homepage
+    And I navigate to course participants
+    When I open the autocomplete suggestions list
+    And I click on "Role: Student" item in the autocomplete list
+    And I open the autocomplete suggestions list
+    And I click on "Status: Active" item in the autocomplete list
+    And I click on "Show all 23" "link"
+    Then I should see "Role: Student"
+    And I should see "Status: Active"
+    And I should see "Number of participants: 23" in the "//div[@class='userlist']" "xpath_element"
+    And I should see "Student 1"
+    And I should not see "Student 24"
     And I should see "Show 20 per page"
