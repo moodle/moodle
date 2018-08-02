@@ -1,5 +1,12 @@
 This files describes API changes in the quiz code.
 
+=== 3.6 ===
+
+* The following renamed classes have been completely removed:
+  - quiz_question_bank_view (now: mod_quiz\question\bank\custom_view)
+  - question_bank_add_to_quiz_action_column (now: mod_quiz\question\bank\add_action_column)
+  - question_bank_question_name_text_column (now: mod_quiz\question\bank\question_name_text_column)
+
 === 3.5 ===
 * Removed questionbank.ajax.php. Please use the quiz_question_bank fragment instead.
 * Adding "random" questions to a quiz via quiz_add_quiz_question() has been deprecated. Please use quiz_add_random_questions().
