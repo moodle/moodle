@@ -5463,6 +5463,9 @@ class assign {
         if (isset($grade->feedbacktext)) {
             $gradebookgrade['feedback'] = $grade->feedbacktext;
         }
+        if (isset($grade->feedbackfiles)) {
+            $gradebookgrade['feedbackfiles'] = $grade->feedbackfiles;
+        }
 
         return $gradebookgrade;
     }
@@ -5506,6 +5509,7 @@ class assign {
             // Remove the grade (if it exists) from the gradebook as it is not 'final'.
             $grade->grade = -1;
             $grade->feedbacktext = '';
+            $grade->feebackfiles = [];
         }
 
         if ($submission != null) {
@@ -6610,6 +6614,7 @@ class assign {
                         // This is the feedback plugin chose to push comments to the gradebook.
                         $grade->feedbacktext = $plugin->text_for_gradebook($grade);
                         $grade->feedbackformat = $plugin->format_for_gradebook($grade);
+                        $grade->feedbackfiles = $plugin->files_for_gradebook($grade);
                     }
                 }
             }
@@ -6710,6 +6715,7 @@ class assign {
             if ($plugin && $plugin->is_enabled() && $plugin->is_visible()) {
                 $grade->feedbacktext = $plugin->text_for_gradebook($grade);
                 $grade->feedbackformat = $plugin->format_for_gradebook($grade);
+                $grade->feedbackfiles = $plugin->files_for_gradebook($grade);
             }
             $this->gradebook_item_update(null, $grade);
         }
@@ -7988,6 +7994,7 @@ class assign {
                     // This is the feedback plugin chose to push comments to the gradebook.
                     $grade->feedbacktext = $plugin->text_for_gradebook($grade);
                     $grade->feedbackformat = $plugin->format_for_gradebook($grade);
+                    $grade->feedbackfiles = $plugin->files_for_gradebook($grade);
                 }
             }
         }
@@ -8465,6 +8472,7 @@ class assign {
                     if ($grade) {
                         $gradebookgrade->feedback = $gradebookplugin->text_for_gradebook($grade);
                         $gradebookgrade->feedbackformat = $gradebookplugin->format_for_gradebook($grade);
+                        $gradebookgrade->feedbackfiles = $gradebookplugin->files_for_gradebook($grade);
                     }
                 }
                 $grades[$gradebookgrade->userid] = $gradebookgrade;
