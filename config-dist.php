@@ -380,6 +380,12 @@ $CFG->admin = 'admin';
 //   profilingallowme, profilingallowall, profilinglifetime
 //       $CFG->earlyprofilingenabled = true;
 //
+// Disable database storage for profile data.
+// When using an exernal plugin to store profiling data it is often
+// desirable to not store the data in the database.
+//
+//      $CFG->disableprofilingtodatabase = true;
+//
 // Force displayed usernames
 //   A little hack to anonymise user names for all students.  If you set these
 //   then all non-teachers will always see these for every person.
