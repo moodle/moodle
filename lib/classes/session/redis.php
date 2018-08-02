@@ -396,7 +396,7 @@ class redis extends handler {
         }
 
         try {
-            return $this->connection->exists($sid);
+            return !empty($this->connection->exists($sid));
         } catch (RedisException $e) {
             return false;
         }
