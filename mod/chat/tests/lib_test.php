@@ -163,4 +163,25 @@ class mod_chat_lib_testcase extends advanced_testcase {
 
         return calendar_event::create($event);
     }
+
+    /**
+     * A user who does not have capabilities to add events to the calendar should be able to create an chat.
+     */
+    public function test_creation_with_no_calendar_capabilities() {
+        $this->resetAfterTest();
+        $course = self::getDataGenerator()->create_course();
+        $context = context_course::instance($course->id);
+        $user = self::getDataGenerator()->create_and_enrol($course, 'editingteacher');
+        $roleid = self::getDataGenerator()->create_role();
+        self::getDataGenerator()->role_assign($roleid, $user->id, $context->id);
+        assign_capability('moodle/calendar:manageentries', CAP_PROHIBIT, $roleid, $context, true);
+        $generator = self::getDataGenerator()->get_plugin_generator('mod_chat');
+        // Create an instance as a user without the calendar capabilities.
+        $this->setUser($user);
+        $params = array(
+            'course' => $course->id,
+            'chattime' => time() + 500,
+        );
+        $generator->create_instance($params);
+    }
 }
