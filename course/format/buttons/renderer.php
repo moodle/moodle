@@ -174,6 +174,97 @@ class format_buttons_renderer extends format_topics_renderer
     }
 
     /**
+     * get_button_section kadima
+     *
+     * @param stdclass $course
+     * @param string $sectionvisible
+     * @return string
+     */
+    protected function get_button_section_kadima($course, $sectionvisible)
+    {
+        global $PAGE;
+        $html = '';
+        $css = '';
+
+        $modinfo = get_fast_modinfo($course);
+        $inline = '';
+        $count = 1;
+
+        // start kadima container render
+        $html .= html_writer::start_tag('div',['class' => 'container-fluid buttons']); // don't forget to close it later 
+
+        $html .= html_writer::start_tag('div',['class' => 'sections-wrapper']);
+        $html .= html_writer::tag('button', '',['type' => 'button', 'name' => 'button', 'class' => 'slide-tabs slide-left']);
+        $html .= html_writer::start_tag('ul',['id' => 'sections', 'role' => 'tablist', 'class' => 'nav nav-tabs sections flex-nowrap']);
+
+        foreach ($modinfo->get_section_info_all() as $section => $thissection) {
+            if ($section == 0) {
+                continue;
+            }
+            if ($section > $course->numsections) {
+                continue;
+            }
+            if ($course->hiddensections && !(int)$thissection->visible) {
+                continue;
+            }
+
+            if ($course->sequential) {
+                $name = $section;
+            } else {
+                    $name = $count;
+            }
+            if ($course->sectiontype == 'alphabet' && is_numeric($name)) {
+                $name = $this->number_to_alphabet($name);
+            }
+            if ($course->sectiontype == 'roman' && is_numeric($name)) {
+                $name = $this->number_to_roman($name);
+            }
+
+            $class = '';
+            if (!$thissection->available &&
+            !empty($thissection->availableinfo)) {
+            $class .= ' sectionhidden';
+            } elseif (!$thissection->uservisible || !$thissection->visible) {
+                $class .= ' sectionhidden';
+                $onclick = false;
+            }
+            if ($course->marker == $section) {
+                $class .= ' current';
+            }
+            if (course_get_format($course)->is_section_current($section)) {
+                $class = ' active';
+            }
+            if ($sectionvisible == $section) {
+                $class .= ' sectionvisible';
+            }
+
+            if ($PAGE->user_is_editing()) {
+                $onclick = false;
+            }
+
+            $html .= html_writer::start_tag('li',['class' => 'nav-item']);
+            $html .= html_writer::start_tag('a',['href' => "#section$section",'class' => "nav-link $class", 'data-toggle' => 'tab', 'aria-controls' => "section-$section"]);
+            $html .= html_writer::start_tag('div',['class' => 'd-flex flex-column section-header']);
+            $html .= html_writer::tag('span', '', ['class' => 'section-icon']);
+            $html .= html_writer::tag('span', "Section $section", ['class' => 'lead section-title']); // put translation here
+            $html .= html_writer::tag('p', "$thissection->summary", ['class' => 'section-description']);
+            $html .= html_writer::end_tag('div');
+            $html .= html_writer::end_tag('a');
+            $html .= html_writer::end_tag('li');
+
+            $count++;
+        }
+        $html .= html_writer::end_tag('ul');
+        $html .= html_writer::tag('button', '', ['type' => 'button', 'name' => 'button', 'class' => 'slide-tabs slide-right']);
+        $html .= html_writer::end_tag('div');
+        
+        if ($PAGE->user_is_editing()) {
+            $html .= html_writer::tag('div', get_string('editing', 'format_buttons'), ['class' => 'alert alert-warning alert-block fade in']);
+        }
+        return $html;
+    }
+
+    /**
      * number_to_roman
      *
      * @param integer $number
@@ -312,9 +403,63 @@ class format_buttons_renderer extends format_topics_renderer
         } else {
             $sectionvisible = 1;
         }
+        // old htmlsection
+        // $htmlsection = false;
+        // foreach ($modinfo->get_section_info_all() as $section => $thissection) {
+        //     $htmlsection[$section] = '';
+        //     if ($section == 0) {
+        //         $section0 = $thissection;
+        //         continue;
+        //     }
+        //     if ($section > $course->numsections) {
+        //         continue;
+        //     }
+        //     /* if is not editing verify the rules to display the sections */
+        //     if (!$PAGE->user_is_editing()) {
+        //         if ($course->hiddensections && !(int)$thissection->visible) {
+        //             continue;
+        //         }
+        //         if (!$thissection->available && !empty($thissection->availableinfo)) {
+        //             $htmlsection[$section] .= $this->section_header($thissection, $course, false, 0);
+        //             continue;
+        //         }
+        //         if (!$thissection->uservisible || !$thissection->visible) {
+        //             $htmlsection[$section] .= $this->section_hidden($section, $course->id);
+        //             continue;
+        //         }
+        //     }
+        //     $htmlsection[$section] .= $this->section_header($thissection, $course, false, 0);
+        //     if ($thissection->uservisible) {
+
+        //         if (!$PAGE->user_is_editing()) {
+
+        //             // our labels output into sections except 0
+        //             $htmlsection[$section] .= html_writer::start_tag('div', array('class' => 'labels-wrap'));
+        //             $labelscontent = $this->labels_content($course, $thissection);
+        //             $htmlsection[$section] .= html_writer::tag('div', $labelscontent, array('class' => 'labels-content'));
+        //             $labelslist = $this->labels_list($course, $thissection);
+        //             //$htmlsection[$section] .= $this->get_section_labels($course, $thissection, 0);
+        //             $htmlsection[$section] .= html_writer::tag('div', $labelslist, array('class' => 'labels-list'));
+        //             $htmlsection[$section] .= html_writer::end_tag('div');
+
+        //             //$htmlsection[$section] .= $this->course_section_cm_list($course, $thissection, 0); // first version render
+        //         } else {
+        //             $htmlsection[$section] .= $this->courserenderer->course_section_cm_list($course, $thissection, 0); // original render
+        //             $htmlsection[$section] .= $this->courserenderer->course_section_add_cm_control($course, $section, 0);
+        //         }
+        //     }
+
+        //     $htmlsection[$section] .= $this->section_footer();
+        // }
+
+        // kadima html section
         $htmlsection = false;
         foreach ($modinfo->get_section_info_all() as $section => $thissection) {
             $htmlsection[$section] = '';
+            $currentsectionclass = '';
+            if (course_get_format($course)->is_section_current($section)) {
+                $currentsectionclass = ' active';
+            }
             if ($section == 0) {
                 $section0 = $thissection;
                 continue;
@@ -336,29 +481,48 @@ class format_buttons_renderer extends format_topics_renderer
                     continue;
                 }
             }
-            $htmlsection[$section] .= $this->section_header($thissection, $course, false, 0);
+            //$htmlsection[$section] .= $this->section_header($thissection, $course, false, 0);
             if ($thissection->uservisible) {
 
                 if (!$PAGE->user_is_editing()) {
-
                     // our labels output into sections except 0
-                    $htmlsection[$section] .= html_writer::start_tag('div', array('class' => 'labels-wrap'));
-                    $labelscontent = $this->labels_content($course, $thissection);
-                    $htmlsection[$section] .= html_writer::tag('div', $labelscontent, array('class' => 'labels-content'));
-                    $labelslist = $this->labels_list($course, $thissection);
-                    //$htmlsection[$section] .= $this->get_section_labels($course, $thissection, 0);
-                    $htmlsection[$section] .= html_writer::tag('div', $labelslist, array('class' => 'labels-list'));
-                    $htmlsection[$section] .= html_writer::end_tag('div');
+
+                    $htmlsection[$section] .=  html_writer::start_tag('div',['id' => "section$section",'class' => "tab-pane  $currentsectionclass", 'role' => 'tabpanel']);
+                    $htmlsection[$section] .=  html_writer::start_tag('div',['class' => 'd-flex flex-md-row-reverse']);
+                    $htmlsection[$section] .=  html_writer::start_tag('div',['class' => 'col col-md-2 topics-wrapper']);
+                    $htmlsection[$section] .=  html_writer::tag('button', '', ['type' => 'button', 'name' => 'button', 'class' => 'slide-tabs slide-top']);
+                    $htmlsection[$section] .=  html_writer::start_tag('ul',['id' => 'topics', 'class' => 'nav nav-tabs flex-column flex-nowrap topics', 'role' => 'tablist']);
+                    $htmlsection[$section] .=  $this->labels_list($course, $thissection);
+                    $htmlsection[$section] .=  html_writer::end_tag('ul');
+                    $htmlsection[$section] .=  html_writer::tag('button', '', ['type' => 'button', 'name' => 'button', 'class' => 'slide-tabs slide-bottom']);
+                    $htmlsection[$section] .=  html_writer::end_tag('div');
+                    $htmlsection[$section] .=  html_writer::start_tag('div',['class' => 'tab-content col col-md-10 topic-content']);
+                    $htmlsection[$section] .=  $this->labels_content($course, $thissection);
+                    $htmlsection[$section] .=  html_writer::end_tag('div');
+                    $htmlsection[$section] .=  html_writer::end_tag('div');
+                    $htmlsection[$section] .=  html_writer::end_tag('div');
+                    
+                    //first kadima render
+                    // $htmlsection[$section] .= html_writer::start_tag('div', array('class' => 'labels-wrap'));
+                    // $labelscontent = $this->labels_content($course, $thissection);
+                    // $htmlsection[$section] .= html_writer::tag('div', $labelscontent, array('class' => 'labels-content'));
+                    // $labelslist = $this->labels_list($course, $thissection);
+                    // //$htmlsection[$section] .= $this->get_section_labels($course, $thissection, 0);
+                    // $htmlsection[$section] .= html_writer::tag('div', $labelslist, array('class' => 'labels-list'));
+                    // $htmlsection[$section] .= html_writer::end_tag('div');
 
                     //$htmlsection[$section] .= $this->course_section_cm_list($course, $thissection, 0); // first version render
                 } else {
+                    // render sections edit mode
                     $htmlsection[$section] .= $this->courserenderer->course_section_cm_list($course, $thissection, 0); // original render
                     $htmlsection[$section] .= $this->courserenderer->course_section_add_cm_control($course, $section, 0);
                 }
             }
-
-            $htmlsection[$section] .= $this->section_footer();
+            
+            // old html do not uncomment! - breals the layout
+            //$htmlsection[$section] .= $this->section_footer(); // 
         }
+
         if ($section0->summary || !empty($modinfo->sections[0]) || $PAGE->user_is_editing()) {
             $htmlsection0 = $this->section_header($section0, $course, false, 0);
             // $htmlsection0 .= $this->courserenderer->course_section_cm_list($course, $section0, 0); // original render
@@ -373,10 +537,20 @@ class format_buttons_renderer extends format_topics_renderer
         if ($course->sectionposition == 0 and isset($htmlsection0)) {
             echo html_writer::tag('span', $htmlsection0, ['class' => 'above']);
         }
-        echo $this->get_button_section($course, $sectionvisible);
+        
+        // render section buttons here
+        echo $this->get_button_section_kadima($course, $sectionvisible);
+        echo html_writer::start_tag('div',['class' => 'tab-content']);  //tab content starts here
+
+        // putput sections (except 0) - here
         foreach ($htmlsection as $current) {
             echo $current;
         }
+
+        // end kadima reder here
+        echo html_writer::end_tag('div'); // tab content ends here
+        echo html_writer::end_tag('div'); // container-fluid buttons ends here (starts in get_button_section_kadima)
+
         if ($course->sectionposition == 1 and isset($htmlsection0)) {
             echo html_writer::tag('span', $htmlsection0, ['class' => 'below']);
         }
@@ -417,7 +591,8 @@ class format_buttons_renderer extends format_topics_renderer
             $PAGE->requires->js_init_call('M.format_buttons.init', [$course->numsections]);
         }
         // ==============================================================================
-        echo $this->course_format_buttons_design($course, $sections, $topics);
+        // don't needed - implemented above
+        //echo $this->course_format_buttons_design($course, $section);
     }
 
      /**
@@ -534,7 +709,7 @@ class format_buttons_renderer extends format_topics_renderer
                     if ($modulehtml =  $mod->get_formatted_content(array('noclean' => true))) {
 
                         $reg = '/<h\d>(.*)<\/h\d>.*?\s*(<pre>(.*)<\/pre>)?\s*(.*)<\/div>/sm'; // Regex for <h></h>, <pre></pre> and others. Last <div> is to close no-owerflow div
-                        $reg = '/#name(.*)%name.*?\s*#icon(.*)%icon?\s*(.*)/im';
+                        $reg = '/#name(.*)%name.*?\s*#icon(.*)%icon?\s*(.*)<\/div>/im';
                         preg_match($reg, $modulehtml, $content);
 
                         $lables[$modnumber] = $content;
@@ -542,7 +717,6 @@ class format_buttons_renderer extends format_topics_renderer
                 }
             }
         }
-
         return $lables;
 
     } // get_section_labels ends
@@ -565,10 +739,19 @@ class format_buttons_renderer extends format_topics_renderer
                 $licon = $this->courserenderer->image_url($content[2], 'format_buttons');
             }
 
-            $output .= "<div class = 'label_item' id='label_{$modnum}'>";
+            // kadima render
+            $output .=  html_writer::start_tag('li',['class' => 'nav-item']);
+            $output .= html_writer::start_tag('a',['href' => "#topic{$modnum}",'class' => "nav-link topic-link", 'data-toggle' => 'tab', 'aria-controls' => "topic{$modnum}"]);
+            $output .= html_writer::tag('span', '', ['class' => 'topic-icon', 'style' => "background: url({$licon}) no-repeat; background-size: contain;"]);
             $output .= $content[1];
-            $output .= "&nbsp;<div class='licon' style='background: url({$licon}) no-repeat; background-size: contain;'></div>";
-            $output .= "</div>";
+            $output .= html_writer::end_tag('a');
+            $output .= html_writer::end_tag('li');
+
+            // first test render - for reference
+            // $output .= "<div class = 'label_item' id='label_{$modnum}'>";
+            // $output .= $content[1];
+            // $output .= "&nbsp;<div class='licon' style='background: url({$licon}) no-repeat; background-size: contain;'></div>";
+            // $output .= "</div>";
         }
 
         return $output;
@@ -585,9 +768,12 @@ class format_buttons_renderer extends format_topics_renderer
         $output = '';
         foreach ($labels as $modnum => $content) {
 
-            $output .= "<div class = 'label_content' id='label_content_{$modnum}'>";
-            $output .= $content[3];
-            $output .= "</div>";
+            $output .= html_writer::tag('div', $content[3], ['id' => "topic{$modnum}", 'class' => 'tab-pane', 'role' => 'tabpanel']);
+
+            // first test render - for reference
+            // $output .= "<div class = 'label_content' id='label_content_{$modnum}'>";
+            // $output .= $content[3];
+            // $output .= "</div>";
         }
 
         return $output;
@@ -595,9 +781,16 @@ class format_buttons_renderer extends format_topics_renderer
     /*************************************************************************************/
     /**
      * Function for hardcode rendering tabs layout on the course page
+     * 
+     * @param stdclass $course
+     * @param array $sections (argument not used)
+     * @param array $mods (argument not used)
+     * @param array $modnames (argument not used)
+     * @param array $modnamesused (argument not used)
+
      * @return str Output layout markup
      */
-    public function course_format_buttons_design() {
+    public function course_format_buttons_design($course, $section) {
         $output = '';
 // section buttons
         $output .= '
