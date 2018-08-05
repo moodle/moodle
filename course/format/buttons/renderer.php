@@ -416,6 +416,8 @@ class format_buttons_renderer extends format_topics_renderer
         if (!$PAGE->user_is_editing()) {
             $PAGE->requires->js_init_call('M.format_buttons.init', [$course->numsections]);
         }
+        // ==============================================================================
+        echo $this->course_format_buttons_design($course, $sections, $topics);
     }
 
      /**
@@ -587,6 +589,439 @@ class format_buttons_renderer extends format_topics_renderer
             $output .= $content[3];
             $output .= "</div>";
         }
+
+        return $output;
+    }
+    /*************************************************************************************/
+    /**
+     * Function for hardcode rendering tabs layout on the course page
+     * @return str Output layout markup
+     */
+    public function course_format_buttons_design() {
+        $output = '';
+// section buttons
+        $output .= '
+        <div class="container-fluid buttons">
+          <div class="sections-wrapper">
+            <button type="button" name="button" class="slide-tabs slide-left"></button>
+            <ul class="nav nav-tabs sections flex-nowrap" id="sections" role="tablist">
+              <li class="nav-item">
+                <a href="#section0" class="nav-link active" data-toggle="tab" aria-controls="section-0">
+                  <div class="d-flex flex-column section-header">
+                    <span class="section-icon"></span>
+                    <span class="lead section-title">Section 0</span>
+                    <p class="section-description">section 0 description</p>
+                  </div>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="#section1" class="nav-link" data-toggle="tab" aria-controls="section-1">
+                  <div class="d-flex flex-column section-header">
+                    <span class="section-icon"></span>
+                    <span class="lead section-title">Section 1</span>
+                    <p class="section-description">section 1 description</p>
+                  </div>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="#section2" class="nav-link" data-toggle="tab" aria-controls="section-2">
+                  <div class="d-flex flex-column section-header">
+                    <span class="section-icon"></span>
+                    <span class="lead section-title">Section 2</span>
+                    <p class="section-description">section 2 description</p>
+                  </div>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="#section3" class="nav-link" data-toggle="tab" aria-controls="section-3">
+                  <div class="d-flex flex-column section-header">
+                    <span class="section-icon"></span>
+                    <span class="lead section-title">Section 3</span>
+                    <p class="section-description">section 3 description</p>
+                  </div>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="#section4" class="nav-link" data-toggle="tab" aria-controls="section-4">
+                  <div class="d-flex flex-column section-header">
+                    <span class="section-icon"></span>
+                    <span class="lead section-title">Section 4</span>
+                    <p class="section-description">section 4 description</p>
+                  </div>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="#section5" class="nav-link" data-toggle="tab" aria-controls="section-5">
+                  <div class="d-flex flex-column section-header">
+                    <span class="section-icon"></span>
+                    <span class="lead section-title">Section 5</span>
+                    <p class="section-description">section 5 description</p>
+                  </div>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="#section6" class="nav-link" data-toggle="tab" aria-controls="section-6">
+                  <div class="d-flex flex-column section-header">
+                    <span class="section-icon"></span>
+                    <span class="lead section-title">Section 6</span>
+                    <p class="section-description">section 6 description</p>
+                  </div>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="#section7" class="nav-link" data-toggle="tab" aria-controls="section-7">
+                  <div class="d-flex flex-column section-header">
+                    <span class="section-icon"></span>
+                    <span class="lead section-title">Section 7</span>
+                    <p class="section-description">section 7 description</p>
+                  </div>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="#section8" class="nav-link" data-toggle="tab" aria-controls="section-8">
+                  <div class="d-flex flex-column section-header">
+                    <span class="section-icon"></span>
+                    <span class="lead section-title">Section 8</span>
+                    <p class="section-description">section 8 description</p>
+                  </div>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="#section9" class="nav-link" data-toggle="tab" aria-controls="section-9">
+                  <div class="d-flex flex-column section-header">
+                    <span class="section-icon"></span>
+                    <span class="lead section-title">Section 9</span>
+                    <p class="section-description">section 9 description</p>
+                  </div>
+                </a>
+              </li>
+            </ul>
+            <button type="button" name="button" class="slide-tabs slide-right"></button>
+          </div>
+          <div class="tab-content">
+            <div id="section0" class="tab-pane active" role="tabpanel">
+              <div class="d-flex flex-md-row-reverse">
+                <div class="col col-md-2 topics-wrapper">
+                  <button type="button" name="button" class="slide-tabs slide-top"></button>
+                  <ul id="topics" class="nav nav-tabs flex-column flex-nowrap topics" role="tablist">
+                    <li class="nav-item"><a href="#topic00" class="nav-link topic-link active" data-toggle="tab" aria-controls="topic00"><span class="topic-icon"></span>Topic 0</a></li>
+                    <li class="nav-item"><a href="#topic01" class="nav-link topic-link" data-toggle="tab" aria-control="topic-01"><span class="topic-icon"></span>Topic 01</a></li>
+                    <li class="nav-item"><a href="#topic02" class="nav-link topic-link" data-toggle="tab" aria-control="topic-02"><span class="topic-icon"></span>Topic 02</a></li>
+                    <li class="nav-item"><a href="#topic03" class="nav-link topic-link" data-toggle="tab" aria-control="topic-03"><span class="topic-icon"></span>Topic 03</a></li>
+                    <li class="nav-item"><a href="#topic04" class="nav-link topic-link" data-toggle="tab" aria-control="topic-04"><span class="topic-icon"></span>Topic 04</a></li>
+                    <li class="nav-item"><a href="#topic05" class="nav-link topic-link" data-toggle="tab" aria-control="topic-05"><span class="topic-icon"></span>Topic 05</a></li>
+                    <li class="nav-item"><a href="#topic06" class="nav-link topic-link" data-toggle="tab" aria-control="topic-06"><span class="topic-icon"></span>Topic 06</a></li>
+                    <li class="nav-item"><a href="#topic07" class="nav-link topic-link" data-toggle="tab" aria-control="topic-07"><span class="topic-icon"></span>Topic 07</a></li>
+                    <li class="nav-item"><a href="#topic08" class="nav-link topic-link" data-toggle="tab" aria-control="topic-08"><span class="topic-icon"></span>Topic 08</a></li>
+                    <li class="nav-item"><a href="#topic09" class="nav-link topic-link" data-toggle="tab" aria-control="topic-09"><span class="topic-icon"></span>Topic 09</a></li>
+                  </ul>
+                  <button type="button" name="button" class="slide-tabs slide-bottom"></button>
+                </div>
+                <div class="tab-content col col-md-10 topic-content">
+                  <div class="tab-pane active" id="topic00" role="tabpanel">Topic 00 content</div>
+                  <div class="tab-pane" id="topic01" role="tabpanel">Topic 01 content</div>
+                  <div class="tab-pane" id="topic02" role="tabpanel">Topic 02 content</div>
+                  <div class="tab-pane" id="topic03" role="tabpanel">Topic 03 content</div>
+                  <div class="tab-pane" id="topic04" role="tabpanel">Topic 04 content</div>
+                  <div class="tab-pane" id="topic05" role="tabpanel">Topic 05 content</div>
+                  <div class="tab-pane" id="topic06" role="tabpanel">Topic 06 content</div>
+                  <div class="tab-pane" id="topic07" role="tabpanel">Topic 07 content</div>
+                  <div class="tab-pane" id="topic08" role="tabpanel">Topic 08 content</div>
+                  <div class="tab-pane" id="topic09" role="tabpanel">Topic 09 content</div>
+                </div>
+              </div>
+            </div>
+            <div id="section1" class="tab-pane" role="tabpanel">
+              <div class="d-flex flex-md-row-reverse">
+                <div class="col col-md-2 topics-wrapper">
+                  <button type="button" name="button" class="slide-tabs slide-top"></button>
+                  <ul id="topics" class="nav nav-tabs flex-column flex-nowrap topics" role="tablist">
+                    <li class="nav-item"><a href="#topic10" class="nav-link topic-link active" data-toggle="tab" aria-control="topic-10"><span class="topic-icon"></span><span class="lead topic-title">Topic 10</span></a></li>
+                    <li class="nav-item"><a href="#topic11" class="nav-link topic-link" data-toggle="tab" aria-control="topic-11"><span class="topic-icon"></span><span class="lead topic-title">Topic 11</span></a></li>
+                    <li class="nav-item"><a href="#topic12" class="nav-link topic-link" data-toggle="tab" aria-control="topic-12"><span class="topic-icon"></span><span class="lead topic-title">Topic 12</span></a></li>
+                    <li class="nav-item"><a href="#topic13" class="nav-link topic-link" data-toggle="tab" aria-control="topic-13"><span class="topic-icon"></span><span class="lead topic-title">Topic 13</span></a></li>
+                    <li class="nav-item"><a href="#topic14" class="nav-link topic-link" data-toggle="tab" aria-control="topic-14"><span class="topic-icon"></span><span class="lead topic-title">Topic 14</span></a></li>
+                    <li class="nav-item"><a href="#topic15" class="nav-link topic-link" data-toggle="tab" aria-control="topic-15"><span class="topic-icon"></span><span class="lead topic-title">Topic 15</span></a></li>
+                    <li class="nav-item"><a href="#topic16" class="nav-link topic-link" data-toggle="tab" aria-control="topic-16"><span class="topic-icon"></span><span class="lead topic-title">Topic 16</span></a></li>
+                    <li class="nav-item"><a href="#topic17" class="nav-link topic-link" data-toggle="tab" aria-control="topic-17"><span class="topic-icon"></span><span class="lead topic-title">Topic 17</span></a></li>
+                    <li class="nav-item"><a href="#topic18" class="nav-link topic-link" data-toggle="tab" aria-control="topic-18"><span class="topic-icon"></span><span class="lead topic-title">Topic 18</span></a></li>
+                    <li class="nav-item"><a href="#topic19" class="nav-link topic-link" data-toggle="tab" aria-control="topic-19"><span class="topic-icon"></span><span class="lead topic-title">Topic 19</span></a></li>
+                  </ul>
+                  <button type="button" name="button" class="slide-tabs slide-bottom"></button>
+                </div>
+                <div class="tab-content col col-md-10 topic-content">
+                  <div class="tab-pane active" id="topic10" role="tabpanel">Topic 10 content</div>
+                  <div class="tab-pane" id="topic11" role="tabpanel">Topic 11 content</div>
+                  <div class="tab-pane" id="topic12" role="tabpanel">Topic 12 content</div>
+                  <div class="tab-pane" id="topic13" role="tabpanel">Topic 13 content</div>
+                  <div class="tab-pane" id="topic14" role="tabpanel">Topic 14 content</div>
+                  <div class="tab-pane" id="topic15" role="tabpanel">Topic 15 content</div>
+                  <div class="tab-pane" id="topic16" role="tabpanel">Topic 16 content</div>
+                  <div class="tab-pane" id="topic17" role="tabpanel">Topic 17 content</div>
+                  <div class="tab-pane" id="topic18" role="tabpanel">Topic 18 content</div>
+                  <div class="tab-pane" id="topic19" role="tabpanel">Topic 19 content</div>
+                </div>
+              </div>
+            </div>
+            <div id="section2" class="tab-pane" role="tabpanel">
+              <div class="d-flex flex-md-row-reverse">
+                <div class="col col-md-2 topics-wrapper">
+                  <button type="button" name="button" class="slide-tabs slide-top"></button>
+                  <ul id="topics" class="nav nav-tabs flex-column flex-nowrap topics" role="tablist">
+                    <li class="nav-item"><a href="#topic20" class="nav-link topic-link active" data-toggle="tab" aria-control="topic-20"><span class="topic-icon"></span><span class="lead topic-title">Topic 20</span></a></li>
+                    <li class="nav-item"><a href="#topic21" class="nav-link topic-link" data-toggle="tab" aria-control="topic-21"><span class="topic-icon"></span><span class="lead topic-title">Topic 21</span></a></li>
+                    <li class="nav-item"><a href="#topic22" class="nav-link topic-link" data-toggle="tab" aria-control="topic-22"><span class="topic-icon"></span><span class="lead topic-title">Topic 22</span></a></li>
+                    <li class="nav-item"><a href="#topic23" class="nav-link topic-link" data-toggle="tab" aria-control="topic-23"><span class="topic-icon"></span><span class="lead topic-title">Topic 23</span></a></li>
+                    <li class="nav-item"><a href="#topic24" class="nav-link topic-link" data-toggle="tab" aria-control="topic-24"><span class="topic-icon"></span><span class="lead topic-title">Topic 24</span></a></li>
+                    <li class="nav-item"><a href="#topic25" class="nav-link topic-link" data-toggle="tab" aria-control="topic-25"><span class="topic-icon"></span><span class="lead topic-title">Topic 25</span></a></li>
+                    <li class="nav-item"><a href="#topic26" class="nav-link topic-link" data-toggle="tab" aria-control="topic-26"><span class="topic-icon"></span><span class="lead topic-title">Topic 26</span></a></li>
+                    <li class="nav-item"><a href="#topic27" class="nav-link topic-link" data-toggle="tab" aria-control="topic-27"><span class="topic-icon"></span><span class="lead topic-title">Topic 27</span></a></li>
+                    <li class="nav-item"><a href="#topic28" class="nav-link topic-link" data-toggle="tab" aria-control="topic-28"><span class="topic-icon"></span><span class="lead topic-title">Topic 28</span></a></li>
+                    <li class="nav-item"><a href="#topic29" class="nav-link topic-link" data-toggle="tab" aria-control="topic-29"><span class="topic-icon"></span><span class="lead topic-title">Topic 29</span></a></li>
+                  </ul>
+                  <button type="button" name="button" class="slide-tabs slide-bottom"></button>
+                </div>
+                <div class="tab-content col col-md-10 topic-content">
+                  <div class="tab-pane active" id="topic20" role="tabpanel">Topic 20 content</div>
+                  <div class="tab-pane" id="topic21" role="tabpanel">Topic 21 content</div>
+                  <div class="tab-pane" id="topic22" role="tabpanel">Topic 22 content</div>
+                  <div class="tab-pane" id="topic23" role="tabpanel">Topic 23 content</div>
+                  <div class="tab-pane" id="topic24" role="tabpanel">Topic 24 content</div>
+                  <div class="tab-pane" id="topic25" role="tabpanel">Topic 25 content</div>
+                  <div class="tab-pane" id="topic26" role="tabpanel">Topic 26 content</div>
+                  <div class="tab-pane" id="topic27" role="tabpanel">Topic 27 content</div>
+                  <div class="tab-pane" id="topic28" role="tabpanel">Topic 28 content</div>
+                  <div class="tab-pane" id="topic29" role="tabpanel">Topic 29 content</div>
+                </div>
+              </div>
+            </div>
+            <div id="section3" class="tab-pane" role="tabpanel">
+              <div class="d-flex flex-md-row-reverse">
+                <div class="col col-md-2 topics-wrapper">
+                  <button type="button" name="button" class="slide-tabs slide-top"></button>
+                  <ul id="topics" class="nav nav-tabs flex-column flex-nowrap topics" role="tablist">
+                    <li class="nav-item"><a href="#topic30" class="nav-link topic-link active" data-toggle="tab" aria-control="topic-30"><span class="topic-icon"></span><span class="lead topic-title">Topic 30</span></a></li>
+                    <li class="nav-item"><a href="#topic31" class="nav-link topic-link" data-toggle="tab" aria-control="topic-31"><span class="topic-icon"></span><span class="lead topic-title">Topic 31</span></a></li>
+                    <li class="nav-item"><a href="#topic32" class="nav-link topic-link" data-toggle="tab" aria-control="topic-32"><span class="topic-icon"></span><span class="lead topic-title">Topic 32</span></a></li>
+                    <li class="nav-item"><a href="#topic33" class="nav-link topic-link" data-toggle="tab" aria-control="topic-33"><span class="topic-icon"></span><span class="lead topic-title">Topic 33</span></a></li>
+                    <li class="nav-item"><a href="#topic34" class="nav-link topic-link" data-toggle="tab" aria-control="topic-34"><span class="topic-icon"></span><span class="lead topic-title">Topic 34</span></a></li>
+                    <li class="nav-item"><a href="#topic35" class="nav-link topic-link" data-toggle="tab" aria-control="topic-35"><span class="topic-icon"></span><span class="lead topic-title">Topic 35</span></a></li>
+                    <li class="nav-item"><a href="#topic36" class="nav-link topic-link" data-toggle="tab" aria-control="topic-36"><span class="topic-icon"></span><span class="lead topic-title">Topic 36</span></a></li>
+                    <li class="nav-item"><a href="#topic37" class="nav-link topic-link" data-toggle="tab" aria-control="topic-37"><span class="topic-icon"></span><span class="lead topic-title">Topic 37</span></a></li>
+                    <li class="nav-item"><a href="#topic38" class="nav-link topic-link" data-toggle="tab" aria-control="topic-38"><span class="topic-icon"></span><span class="lead topic-title">Topic 38</span></a></li>
+                    <li class="nav-item"><a href="#topic39" class="nav-link topic-link" data-toggle="tab" aria-control="topic-39"><span class="topic-icon"></span><span class="lead topic-title">Topic 39</span></a></li>
+                  </ul>
+                  <button type="button" name="button" class="slide-tabs slide-bottom"></button>
+                </div>
+                <div class="tab-content col col-md-10 topic-content">
+                  <div class="tab-pane active" id="topic30" role="tabpanel">Topic 30 content</div>
+                  <div class="tab-pane" id="topic31" role="tabpanel">Topic 31 content</div>
+                  <div class="tab-pane" id="topic32" role="tabpanel">Topic 32 content</div>
+                  <div class="tab-pane" id="topic33" role="tabpanel">Topic 33 content</div>
+                  <div class="tab-pane" id="topic34" role="tabpanel">Topic 34 content</div>
+                  <div class="tab-pane" id="topic35" role="tabpanel">Topic 35 content</div>
+                  <div class="tab-pane" id="topic36" role="tabpanel">Topic 36 content</div>
+                  <div class="tab-pane" id="topic37" role="tabpanel">Topic 37 content</div>
+                  <div class="tab-pane" id="topic38" role="tabpanel">Topic 38 content</div>
+                  <div class="tab-pane" id="topic39" role="tabpanel">Topic 39 content</div>
+                </div>
+              </div>
+            </div>
+            <div id="section4" class="tab-pane" role="tabpanel">
+              <div class="d-flex flex-md-row-reverse">
+                <div class="col col-md-2 topics-wrapper">
+                  <button type="button" name="button" class="slide-tabs slide-top"></button>
+                  <ul id="topics" class="nav nav-tabs flex-column flex-nowrap topics" role="tablist">
+                    <li class="nav-item"><a href="#topic40" class="nav-link topic-link active" data-toggle="tab" aria-control="topic-40"><span class="topic-icon"></span><span class="lead topic-title">Topic 40</span></a></li>
+                    <li class="nav-item"><a href="#topic41" class="nav-link topic-link" data-toggle="tab" aria-control="topic-41"><span class="topic-icon"></span><span class="lead topic-title">Topic 41</span></a></li>
+                    <li class="nav-item"><a href="#topic42" class="nav-link topic-link" data-toggle="tab" aria-control="topic-42"><span class="topic-icon"></span><span class="lead topic-title">Topic 42</span></a></li>
+                    <li class="nav-item"><a href="#topic43" class="nav-link topic-link" data-toggle="tab" aria-control="topic-43"><span class="topic-icon"></span><span class="lead topic-title">Topic 43</span></a></li>
+                    <li class="nav-item"><a href="#topic44" class="nav-link topic-link" data-toggle="tab" aria-control="topic-44"><span class="topic-icon"></span><span class="lead topic-title">Topic 44</span></a></li>
+                    <li class="nav-item"><a href="#topic45" class="nav-link topic-link" data-toggle="tab" aria-control="topic-45"><span class="topic-icon"></span><span class="lead topic-title">Topic 45</span></a></li>
+                    <li class="nav-item"><a href="#topic46" class="nav-link topic-link" data-toggle="tab" aria-control="topic-46"><span class="topic-icon"></span><span class="lead topic-title">Topic 46</span></a></li>
+                    <li class="nav-item"><a href="#topic47" class="nav-link topic-link" data-toggle="tab" aria-control="topic-47"><span class="topic-icon"></span><span class="lead topic-title">Topic 47</span></a></li>
+                    <li class="nav-item"><a href="#topic48" class="nav-link topic-link" data-toggle="tab" aria-control="topic-48"><span class="topic-icon"></span><span class="lead topic-title">Topic 48</span></a></li>
+                    <li class="nav-item"><a href="#topic49" class="nav-link topic-link" data-toggle="tab" aria-control="topic-49"><span class="topic-icon"></span><span class="lead topic-title">Topic 49</span></a></li>
+                  </ul>
+                  <button type="button" name="button" class="slide-tabs slide-bottom"></button>
+                </div>
+                <div class="tab-content col col-md-10 topic-content">
+                  <div class="tab-pane active" id="topic40" role="tabpanel">Topic 40 content</div>
+                  <div class="tab-pane" id="topic41" role="tabpanel">Topic 41 content</div>
+                  <div class="tab-pane" id="topic42" role="tabpanel">Topic 42 content</div>
+                  <div class="tab-pane" id="topic43" role="tabpanel">Topic 43 content</div>
+                  <div class="tab-pane" id="topic44" role="tabpanel">Topic 44 content</div>
+                  <div class="tab-pane" id="topic45" role="tabpanel">Topic 45 content</div>
+                  <div class="tab-pane" id="topic46" role="tabpanel">Topic 46 content</div>
+                  <div class="tab-pane" id="topic47" role="tabpanel">Topic 47 content</div>
+                  <div class="tab-pane" id="topic48" role="tabpanel">Topic 48 content</div>
+                  <div class="tab-pane" id="topic49" role="tabpanel">Topic 49 content</div>
+                </div>
+              </div>
+            </div>
+            <div id="section5" class="tab-pane" role="tabpanel">
+              <div class="d-flex flex-md-row-reverse">
+                <div class="col col-md-2 topics-wrapper">
+                  <button type="button" name="button" class="slide-tabs slide-top"></button>
+                  <ul id="topics" class="nav nav-tabs flex-column flex-nowrap topics" role="tablist">
+                    <li class="nav-item"><a href="#topic50" class="nav-link topic-link active" data-toggle="tab" aria-control="topic-50"><span class="topic-icon"></span><span class="lead topic-title">Topic 50</span></a></li>
+                    <li class="nav-item"><a href="#topic51" class="nav-link topic-link" data-toggle="tab" aria-control="topic-51"><span class="topic-icon"></span><span class="lead topic-title">Topic 51</span></a></li>
+                    <li class="nav-item"><a href="#topic52" class="nav-link topic-link" data-toggle="tab" aria-control="topic-52"><span class="topic-icon"></span><span class="lead topic-title">Topic 52</span></a></li>
+                    <li class="nav-item"><a href="#topic53" class="nav-link topic-link" data-toggle="tab" aria-control="topic-53"><span class="topic-icon"></span><span class="lead topic-title">Topic 53</span></a></li>
+                    <li class="nav-item"><a href="#topic54" class="nav-link topic-link" data-toggle="tab" aria-control="topic-54"><span class="topic-icon"></span><span class="lead topic-title">Topic 54</span></a></li>
+                    <li class="nav-item"><a href="#topic55" class="nav-link topic-link" data-toggle="tab" aria-control="topic-55"><span class="topic-icon"></span><span class="lead topic-title">Topic 55</span></a></li>
+                    <li class="nav-item"><a href="#topic56" class="nav-link topic-link" data-toggle="tab" aria-control="topic-56"><span class="topic-icon"></span><span class="lead topic-title">Topic 56</span></a></li>
+                    <li class="nav-item"><a href="#topic57" class="nav-link topic-link" data-toggle="tab" aria-control="topic-57"><span class="topic-icon"></span><span class="lead topic-title">Topic 57</span></a></li>
+                    <li class="nav-item"><a href="#topic58" class="nav-link topic-link" data-toggle="tab" aria-control="topic-58"><span class="topic-icon"></span><span class="lead topic-title">Topic 58</span></a></li>
+                    <li class="nav-item"><a href="#topic59" class="nav-link topic-link" data-toggle="tab" aria-control="topic-59"><span class="topic-icon"></span><span class="lead topic-title">Topic 59</span></a></li>
+                  </ul>
+                  <button type="button" name="button" class="slide-tabs slide-bottom"></button>
+                </div>
+                <div class="tab-content col col-md-10 topic-content">
+                  <div class="tab-pane active" id="topic50" role="tabpanel">Topic 50 content</div>
+                  <div class="tab-pane" id="topic51" role="tabpanel">Topic 51 content</div>
+                  <div class="tab-pane" id="topic52" role="tabpanel">Topic 52 content</div>
+                  <div class="tab-pane" id="topic53" role="tabpanel">Topic 53 content</div>
+                  <div class="tab-pane" id="topic54" role="tabpanel">Topic 54 content</div>
+                  <div class="tab-pane" id="topic55" role="tabpanel">Topic 55 content</div>
+                  <div class="tab-pane" id="topic56" role="tabpanel">Topic 56 content</div>
+                  <div class="tab-pane" id="topic57" role="tabpanel">Topic 57 content</div>
+                  <div class="tab-pane" id="topic58" role="tabpanel">Topic 58 content</div>
+                  <div class="tab-pane" id="topic59" role="tabpanel">Topic 59 content</div>
+                </div>
+              </div>
+            </div>
+            <div id="section6" class="tab-pane" role="tabpanel">
+              <div class="d-flex flex-md-row-reverse">
+                <div class="col col-md-2 topics-wrapper">
+                  <button type="button" name="button" class="slide-tabs slide-top"></button>
+                  <ul id="topics" class="nav nav-tabs flex-column flex-nowrap topics" role="tablist">
+                    <li class="nav-item"><a href="#topic60" class="nav-link topic-link active" data-toggle="tab" aria-control="topic-60"><span class="topic-icon"></span><span class="lead topic-title">Topic 60</span></a></li>
+                    <li class="nav-item"><a href="#topic61" class="nav-link topic-link" data-toggle="tab" aria-control="topic-61"><span class="topic-icon"></span><span class="lead topic-title">Topic 61</span></a></li>
+                    <li class="nav-item"><a href="#topic62" class="nav-link topic-link" data-toggle="tab" aria-control="topic-62"><span class="topic-icon"></span><span class="lead topic-title">Topic 62</span></a></li>
+                    <li class="nav-item"><a href="#topic63" class="nav-link topic-link" data-toggle="tab" aria-control="topic-63"><span class="topic-icon"></span><span class="lead topic-title">Topic 63</span></a></li>
+                    <li class="nav-item"><a href="#topic64" class="nav-link topic-link" data-toggle="tab" aria-control="topic-64"><span class="topic-icon"></span><span class="lead topic-title">Topic 64</span></a></li>
+                    <li class="nav-item"><a href="#topic65" class="nav-link topic-link" data-toggle="tab" aria-control="topic-65"><span class="topic-icon"></span><span class="lead topic-title">Topic 65</span></a></li>
+                    <li class="nav-item"><a href="#topic66" class="nav-link topic-link" data-toggle="tab" aria-control="topic-66"><span class="topic-icon"></span><span class="lead topic-title">Topic 66</span></a></li>
+                    <li class="nav-item"><a href="#topic67" class="nav-link topic-link" data-toggle="tab" aria-control="topic-67"><span class="topic-icon"></span><span class="lead topic-title">Topic 67</span></a></li>
+                    <li class="nav-item"><a href="#topic68" class="nav-link topic-link" data-toggle="tab" aria-control="topic-68"><span class="topic-icon"></span><span class="lead topic-title">Topic 68</span></a></li>
+                    <li class="nav-item"><a href="#topic69" class="nav-link topic-link" data-toggle="tab" aria-control="topic-69"><span class="topic-icon"></span><span class="lead topic-title">Topic 69</span></a></li>
+                  </ul>
+                  <button type="button" name="button" class="slide-tabs slide-bottom"></button>
+                </div>
+                <div class="tab-content col col-md-10 topic-content">
+                  <div class="tab-pane active" id="topic60" role="tabpanel">Topic 60 content</div>
+                  <div class="tab-pane" id="topic61" role="tabpanel">Topic 61 content</div>
+                  <div class="tab-pane" id="topic62" role="tabpanel">Topic 62 content</div>
+                  <div class="tab-pane" id="topic63" role="tabpanel">Topic 63 content</div>
+                  <div class="tab-pane" id="topic64" role="tabpanel">Topic 64 content</div>
+                  <div class="tab-pane" id="topic65" role="tabpanel">Topic 65 content</div>
+                  <div class="tab-pane" id="topic66" role="tabpanel">Topic 66 content</div>
+                  <div class="tab-pane" id="topic67" role="tabpanel">Topic 67 content</div>
+                  <div class="tab-pane" id="topic68" role="tabpanel">Topic 68 content</div>
+                  <div class="tab-pane" id="topic69" role="tabpanel">Topic 69 content</div>
+                </div>
+              </div>
+            </div>
+            <div id="section7" class="tab-pane" role="tabpanel">
+              <div class="d-flex flex-md-row-reverse">
+                <div class="col col-md-2 topics-wrapper">
+                  <button type="button" name="button" class="slide-tabs slide-top"></button>
+                  <ul id="topics" class="nav nav-tabs flex-column flex-nowrap topics" role="tablist">
+                    <li class="nav-item"><a href="#topic70" class="nav-link topic-link active" data-toggle="tab" aria-control="topic-70"><span class="topic-icon"></span><span class="lead topic-title">Topic 70</span></a></li>
+                    <li class="nav-item"><a href="#topic71" class="nav-link topic-link" data-toggle="tab" aria-control="topic-71"><span class="topic-icon"></span><span class="lead topic-title">Topic 71</span></a></li>
+                    <li class="nav-item"><a href="#topic72" class="nav-link topic-link" data-toggle="tab" aria-control="topic-72"><span class="topic-icon"></span><span class="lead topic-title">Topic 72</span></a></li>
+                    <li class="nav-item"><a href="#topic73" class="nav-link topic-link" data-toggle="tab" aria-control="topic-73"><span class="topic-icon"></span><span class="lead topic-title">Topic 73</span></a></li>
+                    <li class="nav-item"><a href="#topic74" class="nav-link topic-link" data-toggle="tab" aria-control="topic-74"><span class="topic-icon"></span><span class="lead topic-title">Topic 74</span></a></li>
+                    <li class="nav-item"><a href="#topic75" class="nav-link topic-link" data-toggle="tab" aria-control="topic-75"><span class="topic-icon"></span><span class="lead topic-title">Topic 75</span></a></li>
+                    <li class="nav-item"><a href="#topic76" class="nav-link topic-link" data-toggle="tab" aria-control="topic-76"><span class="topic-icon"></span><span class="lead topic-title">Topic 76</span></a></li>
+                    <li class="nav-item"><a href="#topic77" class="nav-link topic-link" data-toggle="tab" aria-control="topic-77"><span class="topic-icon"></span><span class="lead topic-title">Topic 77</span></a></li>
+                    <li class="nav-item"><a href="#topic78" class="nav-link topic-link" data-toggle="tab" aria-control="topic-78"><span class="topic-icon"></span><span class="lead topic-title">Topic 78</span></a></li>
+                    <li class="nav-item"><a href="#topic79" class="nav-link topic-link" data-toggle="tab" aria-control="topic-79"><span class="topic-icon"></span><span class="lead topic-title">Topic 79</span></a></li>
+                  </ul>
+                  <button type="button" name="button" class="slide-tabs slide-bottom"></button>
+                </div>
+                <div class="tab-content col col-md-10 topic-content">
+                  <div class="tab-pane active" id="topic70" role="tabpanel">Topic 70 content</div>
+                  <div class="tab-pane" id="topic71" role="tabpanel">Topic 71 content</div>
+                  <div class="tab-pane" id="topic72" role="tabpanel">Topic 72 content</div>
+                  <div class="tab-pane" id="topic73" role="tabpanel">Topic 73 content</div>
+                  <div class="tab-pane" id="topic74" role="tabpanel">Topic 74 content</div>
+                  <div class="tab-pane" id="topic75" role="tabpanel">Topic 75 content</div>
+                  <div class="tab-pane" id="topic76" role="tabpanel">Topic 76 content</div>
+                  <div class="tab-pane" id="topic77" role="tabpanel">Topic 77 content</div>
+                  <div class="tab-pane" id="topic78" role="tabpanel">Topic 78 content</div>
+                  <div class="tab-pane" id="topic79" role="tabpanel">Topic 79 content</div>
+                </div>
+              </div>
+            </div>
+            <div id="section8" class="tab-pane" role="tabpanel">
+              <div class="d-flex flex-md-row-reverse">
+                <div class="col col-md-2 topics-wrapper">
+                  <button type="button" name="button" class="slide-tabs slide-top"></button>
+                  <ul id="topics" class="nav nav-tabs flex-column flex-nowrap topics" role="tablist">
+                    <li class="nav-item"><a href="#topic80" class="nav-link topic-link active" data-toggle="tab" aria-control="topic-80"><span class="topic-icon"></span><span class="lead topic-title">Topic 80</span></a></li>
+                    <li class="nav-item"><a href="#topic81" class="nav-link topic-link" data-toggle="tab" aria-control="topic-81"><span class="topic-icon"></span><span class="lead topic-title">Topic 81</span></a></li>
+                    <li class="nav-item"><a href="#topic82" class="nav-link topic-link" data-toggle="tab" aria-control="topic-82"><span class="topic-icon"></span><span class="lead topic-title">Topic 82</span></a></li>
+                    <li class="nav-item"><a href="#topic83" class="nav-link topic-link" data-toggle="tab" aria-control="topic-83"><span class="topic-icon"></span><span class="lead topic-title">Topic 83</span></a></li>
+                    <li class="nav-item"><a href="#topic84" class="nav-link topic-link" data-toggle="tab" aria-control="topic-84"><span class="topic-icon"></span><span class="lead topic-title">Topic 84</span></a></li>
+                    <li class="nav-item"><a href="#topic85" class="nav-link topic-link" data-toggle="tab" aria-control="topic-85"><span class="topic-icon"></span><span class="lead topic-title">Topic 85</span></a></li>
+                    <li class="nav-item"><a href="#topic86" class="nav-link topic-link" data-toggle="tab" aria-control="topic-86"><span class="topic-icon"></span><span class="lead topic-title">Topic 86</span></a></li>
+                    <li class="nav-item"><a href="#topic87" class="nav-link topic-link" data-toggle="tab" aria-control="topic-87"><span class="topic-icon"></span><span class="lead topic-title">Topic 87</span></a></li>
+                    <li class="nav-item"><a href="#topic88" class="nav-link topic-link" data-toggle="tab" aria-control="topic-88"><span class="topic-icon"></span><span class="lead topic-title">Topic 88</span></a></li>
+                    <li class="nav-item"><a href="#topic89" class="nav-link topic-link" data-toggle="tab" aria-control="topic-89"><span class="topic-icon"></span><span class="lead topic-title">Topic 89</span></a></li>
+                  </ul>
+                  <button type="button" name="button" class="slide-tabs slide-bottom"></button>
+                </div>
+                <div class="tab-content col col-md-10 topic-content">
+                  <div class="tab-pane active" id="topic80" role="tabpanel">Topic 80 content</div>
+                  <div class="tab-pane" id="topic81" role="tabpanel">Topic 81 content</div>
+                  <div class="tab-pane" id="topic82" role="tabpanel">Topic 82 content</div>
+                  <div class="tab-pane" id="topic83" role="tabpanel">Topic 83 content</div>
+                  <div class="tab-pane" id="topic84" role="tabpanel">Topic 84 content</div>
+                  <div class="tab-pane" id="topic85" role="tabpanel">Topic 85 content</div>
+                  <div class="tab-pane" id="topic86" role="tabpanel">Topic 86 content</div>
+                  <div class="tab-pane" id="topic87" role="tabpanel">Topic 87 content</div>
+                  <div class="tab-pane" id="topic88" role="tabpanel">Topic 88 content</div>
+                  <div class="tab-pane" id="topic89" role="tabpanel">Topic 89 content</div>
+                </div>
+              </div>
+            </div>
+            <div id="section9" class="tab-pane" role="tabpanel">
+              <div class="d-flex flex-md-row-reverse">
+                <div class="col col-md-2 topics-wrapper">
+                  <button type="button" name="button" class="slide-tabs slide-top"></button>
+                  <ul id="topics" class="nav nav-tabs flex-column flex-nowrap topics" role="tablist">
+                    <li class="nav-item"><a href="#topic90" class="nav-link topic-link active" data-toggle="tab" aria-control="topic-90"><span class="topic-icon"></span><span class="lead topic-title">Topic 90</span></a></li>
+                    <li class="nav-item"><a href="#topic91" class="nav-link topic-link" data-toggle="tab" aria-control="topic-91"><span class="topic-icon"></span><span class="lead topic-title">Topic 91</span></a></li>
+                    <li class="nav-item"><a href="#topic92" class="nav-link topic-link" data-toggle="tab" aria-control="topic-92"><span class="topic-icon"></span><span class="lead topic-title">Topic 92</span></a></li>
+                    <li class="nav-item"><a href="#topic93" class="nav-link topic-link" data-toggle="tab" aria-control="topic-93"><span class="topic-icon"></span><span class="lead topic-title">Topic 93</span></a></li>
+                    <li class="nav-item"><a href="#topic94" class="nav-link topic-link" data-toggle="tab" aria-control="topic-94"><span class="topic-icon"></span><span class="lead topic-title">Topic 94</span></a></li>
+                    <li class="nav-item"><a href="#topic95" class="nav-link topic-link" data-toggle="tab" aria-control="topic-95"><span class="topic-icon"></span><span class="lead topic-title">Topic 95</span></a></li>
+                    <li class="nav-item"><a href="#topic96" class="nav-link topic-link" data-toggle="tab" aria-control="topic-96"><span class="topic-icon"></span><span class="lead topic-title">Topic 96</span></a></li>
+                    <li class="nav-item"><a href="#topic97" class="nav-link topic-link" data-toggle="tab" aria-control="topic-97"><span class="topic-icon"></span><span class="lead topic-title">Topic 97</span></a></li>
+                    <li class="nav-item"><a href="#topic98" class="nav-link topic-link" data-toggle="tab" aria-control="topic-98"><span class="topic-icon"></span><span class="lead topic-title">Topic 98</span></a></li>
+                    <li class="nav-item"><a href="#topic99" class="nav-link topic-link" data-toggle="tab" aria-control="topic-99"><span class="topic-icon"></span><span class="lead topic-title">Topic 99</span></a></li>
+                  </ul>
+                  <button type="button" name="button" class="slide-tabs slide-bottom"></button>
+                </div>
+                <div class="tab-content col col-md-10 topic-content">
+                  <div class="tab-pane active" id="topic90" role="tabpanel">Topic 90 content</div>
+                  <div class="tab-pane" id="topic91" role="tabpanel">Topic 91 content</div>
+                  <div class="tab-pane" id="topic92" role="tabpanel">Topic 92 content</div>
+                  <div class="tab-pane" id="topic93" role="tabpanel">Topic 93 content</div>
+                  <div class="tab-pane" id="topic94" role="tabpanel">Topic 94 content</div>
+                  <div class="tab-pane" id="topic95" role="tabpanel">Topic 95 content</div>
+                  <div class="tab-pane" id="topic96" role="tabpanel">Topic 96 content</div>
+                  <div class="tab-pane" id="topic97" role="tabpanel">Topic 97 content</div>
+                  <div class="tab-pane" id="topic98" role="tabpanel">Topic 98 content</div>
+                  <div class="tab-pane" id="topic99" role="tabpanel">Topic 99 content</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        ';
 
         return $output;
     }

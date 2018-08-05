@@ -42,9 +42,10 @@ if (($marker >= 0) && has_capability('moodle/course:setcurrentsection', $context
 $course = course_get_format($course)->get_course();
 course_create_sections_if_missing($course, range(0, $course->numsections));
 $renderer = $PAGE->get_renderer('format_buttons');
-if (!empty($displaysection)) {
-    $renderer->print_single_section_page($course, null, null, null, null, $displaysection);
-} else {
-    $renderer->print_multiple_section_page($course, null, null, null, null);
-}
-$PAGE->requires->js('/course/format/buttons/format.js');
+// if (!empty($displaysection)) {
+//     $renderer->print_single_section_page($course, null, null, null, null, $displaysection);
+// } else {
+//     $renderer->print_multiple_section_page($course, null, null, null, null);
+// }
+echo $renderer->course_format_buttons_design();
+$PAGE->requires->js_call_amd('format_buttons/slider', 'init');
