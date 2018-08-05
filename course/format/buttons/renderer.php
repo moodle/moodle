@@ -548,16 +548,19 @@ class format_buttons_renderer extends format_topics_renderer
         }
 
         // render section buttons here
-        echo $this->get_button_section_kadima($course, $sectionvisible);
-        echo html_writer::start_tag('div',['class' => 'tab-content']);  //tab content starts here
-
-        // putput sections (except 0) - here
-        foreach ($htmlsection as $current) {
-            echo $current;
+        if (!$PAGE->user_is_editing()) {
+          echo $this->get_button_section_kadima($course, $sectionvisible);
         }
+          echo html_writer::start_tag('div',['class' => 'tab-content']);  //tab content starts here
 
-        // end kadima reder here
-        echo html_writer::end_tag('div'); // tab content ends here
+          // putput sections (except 0) - here
+          foreach ($htmlsection as $current) {
+              echo $current;
+          }
+
+          // end kadima reder here
+          echo html_writer::end_tag('div'); // tab content ends here
+
         echo html_writer::end_tag('div'); // container-fluid buttons ends here (starts in get_button_section_kadima)
 
         if ($course->sectionposition == 1 and isset($htmlsection0)) {
