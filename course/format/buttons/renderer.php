@@ -191,7 +191,7 @@ class format_buttons_renderer extends format_topics_renderer
         $count = 1;
 
         // start kadima container render
-        $html .= html_writer::start_tag('div',['class' => 'container-fluid buttons']); // don't forget to close it later 
+        $html .= html_writer::start_tag('div',['class' => 'container-fluid buttons']); // don't forget to close it later
 
         $html .= html_writer::start_tag('div',['class' => 'sections-wrapper']);
         $html .= html_writer::tag('button', '',['type' => 'button', 'name' => 'button', 'class' => 'slide-tabs slide-left']);
@@ -234,6 +234,11 @@ class format_buttons_renderer extends format_topics_renderer
             if (course_get_format($course)->is_section_current($section)) {
                 $class = ' active';
             }
+            //TODO   open first section remove it after
+            if ($section == 2) {
+                $class = ' active show';
+            }
+
             if ($sectionvisible == $section) {
                 $class .= ' sectionvisible';
             }
@@ -257,7 +262,7 @@ class format_buttons_renderer extends format_topics_renderer
         $html .= html_writer::end_tag('ul');
         $html .= html_writer::tag('button', '', ['type' => 'button', 'name' => 'button', 'class' => 'slide-tabs slide-right']);
         $html .= html_writer::end_tag('div');
-        
+
         if ($PAGE->user_is_editing()) {
             $html .= html_writer::tag('div', get_string('editing', 'format_buttons'), ['class' => 'alert alert-warning alert-block fade in']);
         }
@@ -457,6 +462,10 @@ class format_buttons_renderer extends format_topics_renderer
         foreach ($modinfo->get_section_info_all() as $section => $thissection) {
             $htmlsection[$section] = '';
             $currentsectionclass = '';
+            // TODO
+            if ($section == 1) {
+                $currentsectionclass = ' active show';
+            }
             if (course_get_format($course)->is_section_current($section)) {
                 $currentsectionclass = ' active';
             }
@@ -501,7 +510,7 @@ class format_buttons_renderer extends format_topics_renderer
                     $htmlsection[$section] .=  html_writer::end_tag('div');
                     $htmlsection[$section] .=  html_writer::end_tag('div');
                     $htmlsection[$section] .=  html_writer::end_tag('div');
-                    
+
                     //first kadima render
                     // $htmlsection[$section] .= html_writer::start_tag('div', array('class' => 'labels-wrap'));
                     // $labelscontent = $this->labels_content($course, $thissection);
@@ -518,9 +527,9 @@ class format_buttons_renderer extends format_topics_renderer
                     $htmlsection[$section] .= $this->courserenderer->course_section_add_cm_control($course, $section, 0);
                 }
             }
-            
+
             // old html do not uncomment! - breals the layout
-            //$htmlsection[$section] .= $this->section_footer(); // 
+            //$htmlsection[$section] .= $this->section_footer(); //
         }
 
         if ($section0->summary || !empty($modinfo->sections[0]) || $PAGE->user_is_editing()) {
@@ -537,7 +546,7 @@ class format_buttons_renderer extends format_topics_renderer
         if ($course->sectionposition == 0 and isset($htmlsection0)) {
             echo html_writer::tag('span', $htmlsection0, ['class' => 'above']);
         }
-        
+
         // render section buttons here
         echo $this->get_button_section_kadima($course, $sectionvisible);
         echo html_writer::start_tag('div',['class' => 'tab-content']);  //tab content starts here
@@ -587,9 +596,9 @@ class format_buttons_renderer extends format_topics_renderer
             echo $this->end_section_list();
         }
         echo html_writer::tag('style', '.course-content ul.buttons #section-'.$sectionvisible.' { display: block; }');
-        if (!$PAGE->user_is_editing()) {
-            $PAGE->requires->js_init_call('M.format_buttons.init', [$course->numsections]);
-        }
+        // if (!$PAGE->user_is_editing()) {
+        //     $PAGE->requires->js_init_call('M.format_buttons.init', [$course->numsections]);
+        // }
         // ==============================================================================
         // don't needed - implemented above
         //echo $this->course_format_buttons_design($course, $section);
@@ -781,7 +790,7 @@ class format_buttons_renderer extends format_topics_renderer
     /*************************************************************************************/
     /**
      * Function for hardcode rendering tabs layout on the course page
-     * 
+     *
      * @param stdclass $course
      * @param array $sections (argument not used)
      * @param array $mods (argument not used)
