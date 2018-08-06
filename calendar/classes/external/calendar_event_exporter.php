@@ -180,6 +180,9 @@ class calendar_event_exporter extends event_exporter_base {
 
         if ($event->get_course_module()) {
             $values = array_merge($values, $this->get_module_timestamp_limits($event));
+        } else if ($course && $course->get('id') && $course->get('id') != SITEID && empty($event->get_group())) {
+            // This is a course event.
+            $values = array_merge($values, $this->get_course_timestamp_limits($event));
         }
 
         return $values;
@@ -211,6 +214,44 @@ class calendar_event_exporter extends event_exporter_base {
         }
 
         return $this->event->get_type();
+    }
+
+    /**
+     * Return the set of minimum and maximum date timestamp values
+     * for the given event.
+     *
+     * @param event_interface $event
+     * @return array
+     */
+    protected function get_course_timestamp_limits($event) {
+        $values = [];
+        $mapper = container::get_event_mapper();
+        $starttime = $event->get_times()->get_start_time();
+
+        list($min, $max) = component_callback(
+            'core_course',
+            'core_calendar_get_valid_event_timestart_range',
+            [$mapper->from_event_to_legacy_event($event), $event->get_course()->get_proxied_instance()],
+            [false, false]
+        );
+
+        // The callback will return false for either of the
+        // min or max cutoffs to indicate that there are no
+        // valid timestart values. In which case the event is
+        // not draggable.
+        if ($min === false || $max === false) {
+            return ['draggable' => false];
+        }
+
+        if ($min) {
+            $values = array_merge($values, $this->get_timestamp_min_limit($starttime, $min));
+        }
+
+        if ($max) {
+            $values = array_merge($values, $this->get_timestamp_max_limit($starttime, $max));
+        }
+
+        return $values;
     }
 
     /**
