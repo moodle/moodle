@@ -49,9 +49,11 @@
                             {{#pix}}t/delete, core, {{#str}}delete{{/str}}{{/pix}}
                         </a>
                     {{/candelete}}
-                    <a href="{{editurl}}" data-action="edit">
-                        {{#pix}}t/edit, core, {{#str}}edit{{/str}}{{/pix}}
-                    </a>
+                    {{^isactionevent}}
+                        <a href="{{editurl}}" data-action="edit">
+                            {{#pix}}t/edit, core, {{#str}}edit{{/str}}{{/pix}}
+                        </a>
+                    {{/isactionevent}}
                 {{/canedit}}
             </div>
             {{#icon}}<div class="d-inline-block mt-1 align-top">{{#pix}} {{key}}, {{component}}, {{alttext}} {{/pix}}</div>{{/icon}}
