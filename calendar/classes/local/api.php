@@ -242,6 +242,7 @@ class api {
             $startdate->format('n'),
             $startdate->format('j')
         );
+        $starttimestamp = $starttime->getTimestamp();
 
         if ($hascoursemodule) {
             $moduleinstance = $DB->get_record(
@@ -250,7 +251,6 @@ class api {
                 '*',
                 MUST_EXIST
             );
-            $legacyevent->timestart = $starttime->getTimestamp();
 
             // If there is a timestart range callback implemented then we can
             // use the values returned from the valid timestart range to apply
@@ -262,20 +262,30 @@ class api {
                 [$legacyevent, $moduleinstance],
                 [false, false]
             );
+        } else if ($legacyevent->courseid != 0 && $legacyevent->courseid != SITEID && $legacyevent->groupid == 0) {
+            // This is a course event.
+            list($min, $max) = component_callback(
+                'core_course',
+                'core_calendar_get_valid_event_timestart_range',
+                [$legacyevent, $event->get_course()->get_proxied_instance()],
+                [0, 0]
+            );
+        } else {
+            $min = $max = 0;
+        }
 
-            // If the callback returns false for either value it means that
-            // there is no valid time start range.
-            if ($min === false || $max === false) {
-                throw new \moodle_exception('The start day of this event can not be modified');
-            }
+        // If the callback returns false for either value it means that
+        // there is no valid time start range.
+        if ($min === false || $max === false) {
+            throw new \moodle_exception('The start day of this event can not be modified');
+        }
 
-            if ($min && $legacyevent->timestart < $min[0]) {
-                throw new \moodle_exception($min[1]);
-            }
+        if ($min && $starttimestamp < $min[0]) {
+            throw new \moodle_exception($min[1]);
+        }
 
-            if ($max && $legacyevent->timestart > $max[0]) {
-                throw new \moodle_exception($max[1]);
-            }
+        if ($max && $starttimestamp > $max[0]) {
+            throw new \moodle_exception($max[1]);
         }
 
         // This function does our capability checks.
