@@ -38,10 +38,10 @@ require_once(__DIR__ . '/helpers.php');
  */
 class core_calendar_event_exporter_testcase extends advanced_testcase {
     /**
-     * Data provider for the module timestamp min limit test case to confirm
+     * Data provider for the timestamp min limit test case to confirm
      * that the minimum time limit is set correctly on the boundary cases.
      */
-    public function get_module_timestamp_min_limit_test_cases() {
+    public function get_timestamp_min_limit_test_cases() {
         $now = time();
         $todaymidnight = usergetmidnight($now);
         $tomorrowmidnight = $todaymidnight + DAYSECS;
@@ -77,16 +77,16 @@ class core_calendar_event_exporter_testcase extends advanced_testcase {
     }
 
     /**
-     * @dataProvider get_module_timestamp_min_limit_test_cases()
+     * @dataProvider get_timestamp_min_limit_test_cases()
      */
-    public function test_get_module_timestamp_min_limit($starttime, $min, $expected) {
+    public function test_get_timestamp_min_limit($starttime, $min, $expected) {
         $class = \core_calendar\external\calendar_event_exporter::class;
         $mock = $this->getMockBuilder($class)
             ->disableOriginalConstructor()
             ->setMethods(null)
             ->getMock();
         $reflector = new ReflectionClass($class);
-        $method = $reflector->getMethod('get_module_timestamp_min_limit');
+        $method = $reflector->getMethod('get_timestamp_min_limit');
         $method->setAccessible(true);
 
         $result = $method->invoke($mock, $starttime, $min);
@@ -95,10 +95,10 @@ class core_calendar_event_exporter_testcase extends advanced_testcase {
     }
 
     /**
-     * Data provider for the module timestamp min limit test case to confirm
-     * that the minimum time limit is set correctly on the boundary cases.
+     * Data provider for the timestamp max limit test case to confirm
+     * that the maximum time limit is set correctly on the boundary cases.
      */
-    public function get_module_timestamp_max_limit_test_cases() {
+    public function get_timestamp_max_limit_test_cases() {
         $now = time();
         $todaymidnight = usergetmidnight($now);
         $yesterdaymidnight = $todaymidnight - DAYSECS;
@@ -134,16 +134,16 @@ class core_calendar_event_exporter_testcase extends advanced_testcase {
     }
 
     /**
-     * @dataProvider get_module_timestamp_max_limit_test_cases()
+     * @dataProvider get_timestamp_max_limit_test_cases()
      */
-    public function test_get_module_timestamp_max_limit($starttime, $max, $expected) {
+    public function test_get_timestamp_max_limit($starttime, $max, $expected) {
         $class = \core_calendar\external\calendar_event_exporter::class;
         $mock = $this->getMockBuilder($class)
             ->disableOriginalConstructor()
             ->setMethods(null)
             ->getMock();
         $reflector = new ReflectionClass($class);
-        $method = $reflector->getMethod('get_module_timestamp_max_limit');
+        $method = $reflector->getMethod('get_timestamp_max_limit');
         $method->setAccessible(true);
 
         $result = $method->invoke($mock, $starttime, $max);
