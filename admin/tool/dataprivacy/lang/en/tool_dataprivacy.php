@@ -184,6 +184,7 @@ $string['notset'] = 'Not set (use the default value)';
 $string['pluginregistry'] = 'Plugin privacy registry';
 $string['pluginregistrytitle'] = 'Plugin privacy compliance registry';
 $string['privacy'] = 'Privacy';
+$string['privacyofficeronly'] = 'Only users who are assigned a privacy officer role ({$a}) have access to this content';
 $string['privacy:metadata:preference:tool_dataprivacy_request-filters'] = 'The filters currently applied to the data requests page.';
 $string['privacy:metadata:request'] = 'Information from personal data requests (subject access and deletion requests) made for this site.';
 $string['privacy:metadata:request:comments'] = 'Any user comments accompanying the request.';
