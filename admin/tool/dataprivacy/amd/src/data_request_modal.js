@@ -42,6 +42,7 @@ define(['jquery', 'core/notification', 'core/custom_interaction_events', 'core/m
         };
 
         ModalDataRequest.TYPE = 'tool_dataprivacy-data_request';
+        ModalDataRequest.TYPE_ENQUIRY = 'tool_dataprivacy-complete_request';
         ModalDataRequest.prototype = Object.create(Modal.prototype);
         ModalDataRequest.prototype.constructor = ModalDataRequest;
 
@@ -89,6 +90,7 @@ define(['jquery', 'core/notification', 'core/custom_interaction_events', 'core/m
         // of this type using the modal factory.
         if (!registered) {
             ModalRegistry.register(ModalDataRequest.TYPE, ModalDataRequest, 'tool_dataprivacy/data_request_modal');
+            ModalRegistry.register(ModalDataRequest.TYPE_ENQUIRY, ModalDataRequest, 'tool_dataprivacy/mark_request_complete_modal');
             registered = true;
         }
 

@@ -87,17 +87,19 @@ function($, Ajax, Notification, Str, ModalFactory, ModalEvents, Templates, Modal
                 return false;
 
             }).then(function(data) {
+                // Determine the type of modal to show.
+                var modalType = ModalFactory.types.DEFAULT;
+                if (data.approvedeny) {
+                    modalType = ModalDataRequest.TYPE;
+                } else if (data.canmarkcomplete) {
+                    modalType = ModalDataRequest.TYPE_ENQUIRY;
+                }
                 var body = Templates.render('tool_dataprivacy/request_details', data);
-                var templateContext = {
-                    approvedeny: data.approvedeny,
-                    canmarkcomplete: data.canmarkcomplete
-                };
                 return ModalFactory.create({
                     title: data.typename,
                     body: body,
-                    type: ModalDataRequest.TYPE,
-                    large: true,
-                    templateContext: templateContext
+                    type: modalType,
+                    large: true
                 });
 
             }).then(function(modal) {
