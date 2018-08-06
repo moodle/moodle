@@ -4717,4 +4717,55 @@ class core_course_courselib_testcase extends advanced_testcase {
         $this->assertEquals($expectedcourses, $actual);
         $this->assertEquals($expectedprocessedcount, $processedcount);
     }
+
+
+    /**
+     * Testing core_course_core_calendar_get_valid_event_timestart_range when the course has no end date.
+     */
+    public function test_core_course_core_calendar_get_valid_event_timestart_range_no_enddate() {
+        global $CFG;
+        require_once($CFG->dirroot . "/calendar/lib.php");
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $generator = $this->getDataGenerator();
+        $now = time();
+        $course = $generator->create_course(['startdate' => $now - 86400]);
+
+        // Create a course event.
+        $event = new \calendar_event([
+            'name' => 'Test course event',
+            'eventtype' => 'course',
+            'courseid' => $course->id,
+        ]);
+
+        list ($min, $max) = core_course_core_calendar_get_valid_event_timestart_range($event, $course);
+        $this->assertEquals($course->startdate, $min[0]);
+        $this->assertNull($max);
+    }
+
+    /**
+     * Testing core_course_core_calendar_get_valid_event_timestart_range when the course has end date.
+     */
+    public function test_core_course_core_calendar_get_valid_event_timestart_range_with_enddate() {
+        global $CFG;
+        require_once($CFG->dirroot . "/calendar/lib.php");
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $generator = $this->getDataGenerator();
+        $now = time();
+        $course = $generator->create_course(['startdate' => $now - 86400, 'enddate' => $now + 86400]);
+
+        // Create a course event.
+        $event = new \calendar_event([
+            'name' => 'Test course event',
+            'eventtype' => 'course',
+            'courseid' => $course->id,
+        ]);
+
+        list ($min, $max) = core_course_core_calendar_get_valid_event_timestart_range($event, $course);
+        $this->assertEquals($course->startdate, $min[0]);
+        $this->assertNull($max);
+    }
 }
