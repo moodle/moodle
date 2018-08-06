@@ -1,6 +1,10 @@
 This files describes API changes in /calendar/* ,
 information provided here is intended especially for developers.
 
+=== 3.5.3 ===
+* added core_calendar_get_valid_event_timestart_range callback for course events when the update_event_start_day function is used
+  in the local api.
+
 === 3.5.2 ===
 * calendar_get_default_courses() function now has optional $userid parameter.
 * calendar_set_filters() function now has optional $user parameter.
