@@ -168,3 +168,20 @@ body:not(.jsenabled) .langmenu:hover > .dropdown-menu,
 .custom-select {
     word-wrap: normal;
 }
+
+/* Add commented out carousel transistions back in.
+ *
+ * The Css prefixer used in Moodle breaks on @supports syntax, See MDL-61515.
+ */
+.carousel-item-next.carousel-item-left,
+.carousel-item-prev.carousel-item-right {
+    transform: translateX(0);
+}
+.carousel-item-next,
+.active.carousel-item-right {
+    transform: translateX(100%);
+}
+.carousel-item-prev,
+.active.carousel-item-left {
+    transform: translateX(-100%);
+}
