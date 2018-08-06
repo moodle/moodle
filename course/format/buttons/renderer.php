@@ -190,12 +190,14 @@ class format_buttons_renderer extends format_topics_renderer
         $inline = '';
         $count = 1;
 
+        if (!$PAGE->user_is_editing()) {
         // start kadima container render
         $html .= html_writer::start_tag('div',['class' => 'container-fluid buttons']); // don't forget to close it later
 
         $html .= html_writer::start_tag('div',['class' => 'sections-wrapper']);
         $html .= html_writer::tag('button', '',['type' => 'button', 'name' => 'button', 'class' => 'slide-tabs slide-left']);
         $html .= html_writer::start_tag('ul',['id' => 'sections', 'role' => 'tablist', 'class' => 'nav nav-tabs sections flex-nowrap']);
+        }
 
         foreach ($modinfo->get_section_info_all() as $section => $thissection) {
             if ($section == 0) {
@@ -220,7 +222,7 @@ class format_buttons_renderer extends format_topics_renderer
                 $name = $this->number_to_roman($name);
             }
 
-            $class = '';
+            $class = 'buttonsection';
             if (!$thissection->available &&
             !empty($thissection->availableinfo)) {
             $class .= ' sectionhidden';
@@ -251,7 +253,7 @@ class format_buttons_renderer extends format_topics_renderer
             $html .= html_writer::start_tag('a',['href' => "#section$section",'class' => "nav-link $class", 'data-toggle' => 'tab', 'aria-controls' => "section-$section"]);
             $html .= html_writer::start_tag('div',['class' => 'd-flex flex-column section-header']);
             $html .= html_writer::tag('span', '', ['class' => 'section-icon']);
-            $html .= html_writer::tag('span', "Section $section", ['class' => 'lead section-title']); // put translation here
+            $html .= html_writer::tag('span', get_section_name($course, $section), ['class' => 'lead section-title']); 
             $html .= html_writer::tag('p', "$thissection->summary", ['class' => 'section-description']);
             $html .= html_writer::end_tag('div');
             $html .= html_writer::end_tag('a');
@@ -361,7 +363,7 @@ class format_buttons_renderer extends format_topics_renderer
         $o .= html_writer::start_tag('li', ['id' => 'section-'.$section->section,
         'class' => 'section main clearfix'.$sectionstyle,
         'role' => 'region', 'aria-label' => get_section_name($course, $section)]);
-        $o .= html_writer::tag('span', $this->section_title($section, $course), ['class' => 'hidden sectionname']);
+        $o .= html_writer::tag('span', $this->section_title($section, $course), ['class' => 'sectionname']);  // by default - ['class' => 'hidden sectionname']
         $leftcontent = $this->section_left_content($section, $course, $onsectionpage);
         $o .= html_writer::tag('div', $leftcontent, ['class' => 'left side']);
         $rightcontent = $this->section_right_content($section, $course, $onsectionpage);
@@ -490,7 +492,10 @@ class format_buttons_renderer extends format_topics_renderer
                     continue;
                 }
             }
-            //$htmlsection[$section] .= $this->section_header($thissection, $course, false, 0);
+            if ($PAGE->user_is_editing()) { // turn on section header only for editing mode
+            $htmlsection[$section] .= $this->section_header($thissection, $course, false, 0);
+            }
+            
             if ($thissection->uservisible) {
 
                 if (!$PAGE->user_is_editing()) {
@@ -528,13 +533,14 @@ class format_buttons_renderer extends format_topics_renderer
                 }
             }
 
-            // old html do not uncomment! - breals the layout
-            //$htmlsection[$section] .= $this->section_footer(); //
+            if ($PAGE->user_is_editing()) { // show section footer only in editing mode
+                $htmlsection[$section] .= $this->section_footer(); //
+            }
         }
 
         if ($section0->summary || !empty($modinfo->sections[0]) || $PAGE->user_is_editing()) {
             $htmlsection0 = $this->section_header($section0, $course, false, 0);
-            // $htmlsection0 .= $this->courserenderer->course_section_cm_list($course, $section0, 0); // original render
+            //$htmlsection0 .= $this->courserenderer->course_section_cm_list($course, $section0, 0); // original render
             $htmlsection0 .= $this->course_section_cm_list($course, $section0, 0); // first version render
             $htmlsection0 .= $this->courserenderer->course_section_add_cm_control($course, 0, 0);
             $htmlsection0 .= $this->section_footer();
@@ -550,18 +556,21 @@ class format_buttons_renderer extends format_topics_renderer
         // render section buttons here
         if (!$PAGE->user_is_editing()) {
           echo $this->get_button_section_kadima($course, $sectionvisible);
-        }
           echo html_writer::start_tag('div',['class' => 'tab-content']);  //tab content starts here
+        } else {
+            echo $this->get_button_section($course, $sectionvisible); 
+        }
 
           // putput sections (except 0) - here
           foreach ($htmlsection as $current) {
               echo $current;
           }
 
-          // end kadima reder here
-          echo html_writer::end_tag('div'); // tab content ends here
-
-        echo html_writer::end_tag('div'); // container-fluid buttons ends here (starts in get_button_section_kadima)
+          if (!$PAGE->user_is_editing()) {
+            // end kadima reder here
+            echo html_writer::end_tag('div'); // tab content ends here
+            echo html_writer::end_tag('div'); // container-fluid buttons ends here (starts in get_button_section_kadima)
+          }
 
         if ($course->sectionposition == 1 and isset($htmlsection0)) {
             echo html_writer::tag('span', $htmlsection0, ['class' => 'below']);

@@ -48,4 +48,5 @@ if (!empty($displaysection)) {
     $renderer->print_multiple_section_page($course, null, null, null, null);
 }
 //echo $renderer->course_format_buttons_design($course, null, null, null, null, $displaysection);
+$PAGE->requires->js('/course/format/buttons/format.js'); // do not remove - breaks js at course edit mode
 $PAGE->requires->js_call_amd('format_buttons/slider', 'init');
