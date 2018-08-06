@@ -146,7 +146,7 @@ class linkmemberships extends resource_base {
      */
     public function parse_value($value) {
 
-        if (strpos($value, '$ToolProxyBinding.memberships.url') !== false) {
+        if (strpos($value, '$LtiLink.memberships.url') !== false) {
             $id = optional_param('id', 0, PARAM_INT); // Course Module ID.
             if (!empty($id)) {
                 $cm = get_coursemodule_from_id('lti', $id, 0, false, MUST_EXIST);
