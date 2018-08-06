@@ -128,6 +128,25 @@ class api {
     }
 
     /**
+     * Fetches the role shortnames of Data Protection Officer roles.
+     *
+     * @return array An array of the DPO role shortnames
+     */
+    public static function get_dpo_role_names() : array {
+        global $DB;
+
+        $dporoleids = explode(',', str_replace(' ', '', get_config('tool_dataprivacy', 'dporoles')));
+        $dponames = array();
+
+        if (!empty($dporoleids)) {
+            list($insql, $inparams) = $DB->get_in_or_equal($dporoleids);
+            $dponames = $DB->get_fieldset_select('role', 'shortname', "id {$insql}", $inparams);
+        }
+
+        return $dponames;
+    }
+
+    /**
      * Fetches the list of users with the Data Protection Officer role.
      *
      * @throws dml_exception
