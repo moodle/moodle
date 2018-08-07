@@ -260,18 +260,47 @@ class assign_feedback_comments extends assign_feedback_plugin {
      *
      * @param stdClass $submission
      * @param stdClass $data - Form data to be filled with the converted submission text and format.
+     * @param stdClass|null $grade
      * @return boolean - True if feedback text was set.
      */
-    protected function convert_submission_text_to_feedback($submission, $data) {
+    protected function convert_submission_text_to_feedback($submission, $data, $grade) {
+        global $DB;
+
         $format = false;
         $text = '';
 
         foreach ($this->assignment->get_submission_plugins() as $plugin) {
             $fields = $plugin->get_editor_fields();
             if ($plugin->is_enabled() && $plugin->is_visible() && !$plugin->is_empty($submission) && !empty($fields)) {
+                $user = $DB->get_record('user', ['id' => $submission->userid]);
+                // Copy the files to the feedback area.
+                if ($files = $plugin->get_files($submission, $user)) {
+                    $fs = get_file_storage();
+                    $component = 'assignfeedback_comments';
+                    $filearea = ASSIGNFEEDBACK_COMMENTS_FILEAREA;
+                    $itemid = $grade->id;
+                    $fieldupdates = [
+                        'component' => $component,
+                        'filearea' => $filearea,
+                        'itemid' => $itemid
+                    ];
+                    foreach ($files as $file) {
+                        if ($file instanceof stored_file) {
+                            // Before we create it, check that it doesn't already exist.
+                            if (!$fs->file_exists(
+                                    $file->get_contextid(),
+                                    $component,
+                                    $filearea,
+                                    $itemid,
+                                    $file->get_filepath(),
+                                    $file->get_filename())) {
+                                $fs->create_file_from_storedfile($fieldupdates, $file);
+                            }
+                        }
+                    }
+                }
                 foreach ($fields as $key => $description) {
-                    $rawtext = strip_pluginfile_content($plugin->get_editor_text($key, $submission->id));
-
+                    $rawtext = clean_text($plugin->get_editor_text($key, $submission->id));
                     $newformat = $plugin->get_editor_format($key, $submission->id);
 
                     if ($format !== false && $newformat != $format) {
@@ -288,8 +317,8 @@ class assign_feedback_comments extends assign_feedback_plugin {
         if ($format === false) {
             $format = FORMAT_HTML;
         }
-        $data->assignfeedbackcomments_editor['text'] = $text;
-        $data->assignfeedbackcomments_editor['format'] = $format;
+        $data->assignfeedbackcomments = $text;
+        $data->assignfeedbackcommentsformat = $format;
 
         return true;
     }
@@ -317,7 +346,7 @@ class assign_feedback_comments extends assign_feedback_plugin {
         } else {
             // No feedback given yet - maybe we need to copy the text from the submission?
             if (!empty($commentinlinenabled) && $submission) {
-                $this->convert_submission_text_to_feedback($submission, $data);
+                $this->convert_submission_text_to_feedback($submission, $data, $grade);
             }
         }
 
