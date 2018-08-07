@@ -2,9 +2,9 @@ This files describes API changes in /course/*,
 information provided here is intended especially for developers.
 
 === 3.5 ===
- * There is a new capability 'moodle/course:forcelanguage' to control which users can force the course
+ * There is a new capability 'moodle/course:setforcedlanguage' to control which users can force the course
    language; create_course and update_course functions delegate access control to the caller code; if you
-   are calling those functions you may be interested in checking if the logged in user has 'moodle/course:forcelanguage' capability.
+   are calling those functions you may be interested in checking if the logged in user has 'moodle/course:setforcedlanguage' capability.
 
 === 3.3 ===
 
