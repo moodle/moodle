@@ -41,4 +41,8 @@ class qtype_gapselect_edit_form extends qtype_gapselect_edit_form_base {
     public function qtype() {
         return 'gapselect';
     }
+
+    function get_maximum_choice_group_number() {
+        return 20;
+    }
 }
