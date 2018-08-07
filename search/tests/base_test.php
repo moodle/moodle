@@ -139,4 +139,22 @@ class search_base_testcase extends advanced_testcase {
         $this->assertEquals([\context_system::instance()],
                 iterator_to_array($area->get_contexts_to_reindex(), false));
     }
+
+    /**
+     * Test default document icon.
+     */
+    public function test_get_default_doc_icon() {
+        $basearea = $this->getMockBuilder('\core_search\base')
+            ->disableOriginalConstructor()
+            ->getMockForAbstractClass();
+
+        $document = $this->getMockBuilder('\core_search\document')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $result = $basearea->get_doc_icon($document);
+
+        $this->assertEquals('i/empty', $result->get_name());
+        $this->assertEquals('moodle', $result->get_component());
+    }
 }

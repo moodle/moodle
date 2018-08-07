@@ -446,4 +446,36 @@ class course_search_testcase extends advanced_testcase {
         $this->assertEquals(\core_search\manager::ACCESS_DELETED,
                 $searcharea->check_access($documents[1]->get('itemid')));
     }
+
+    /**
+     * Test document icon for mycourse area.
+     */
+    public function test_get_doc_icon_for_mycourse_area() {
+        $searcharea = \core_search\manager::get_search_area($this->mycoursesareaid);
+
+        $document = $this->getMockBuilder('\core_search\document')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $result = $searcharea->get_doc_icon($document);
+
+        $this->assertEquals('i/course', $result->get_name());
+        $this->assertEquals('moodle', $result->get_component());
+    }
+
+    /**
+     * Test document icon for section area.
+     */
+    public function test_get_doc_icon_for_section_area() {
+        $searcharea = \core_search\manager::get_search_area($this->sectionareaid);
+
+        $document = $this->getMockBuilder('\core_search\document')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $result = $searcharea->get_doc_icon($document);
+
+        $this->assertEquals('i/section', $result->get_name());
+        $this->assertEquals('moodle', $result->get_component());
+    }
 }
