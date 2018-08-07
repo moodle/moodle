@@ -4,6 +4,7 @@ theme/clean/style/custom.css
 theme/more/style/custom.css
 node_modules/
 vendor/
+admin/tool/policy/amd/src/jquery-eu-cookie-law-popup.js
 admin/tool/usertours/amd/src/tour.js
 admin/tool/usertours/amd/src/popper.js
 auth/cas/CAS/
