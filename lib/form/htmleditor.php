@@ -20,6 +20,7 @@
  *
  * Contains HTML class for htmleditor type element
  *
+ * @deprecated since 3.6
  * @package   core_form
  * @copyright 2006 Jamie Pratt <me@jamiep.org>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -55,6 +56,8 @@ class MoodleQuickForm_htmleditor extends MoodleQuickForm_textarea{
      *              or an associative array
      */
     public function __construct($elementName=null, $elementLabel=null, $options=array(), $attributes=null){
+        debugging("The form element 'htmleditor' has been deprecated. Please use the 'editor' element instead.", DEBUG_DEVELOPER);
+
         parent::__construct($elementName, $elementLabel, $attributes);
         // set the options, do not bother setting bogus ones
         if (is_array($options)) {

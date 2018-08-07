@@ -6,6 +6,7 @@ information provided here is intended especially for developers.
 * Custom AJAX handlers for the form autocomplete fields can now optionally return string in their processResults()
   callback. If a string is returned, it is displayed instead of the list of suggested items. This can be used, for
   example, to inform the user that there are too many items matching the current search criteria.
+* The form element 'htmleditor' has been deprecated. Please use the 'editor' element instead.
 * The following functions have been finally deprecated and can not be used any more:
     - external_function_info()
     - core_renderer::update_module_button()
