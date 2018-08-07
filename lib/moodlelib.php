@@ -5009,7 +5009,6 @@ function remove_course_contents($courseid, $showfeedback = true, array $options 
 
             include_once("$moddir/lib.php");                 // Shows php warning only if plugin defective.
             $moddelete = $modname .'_delete_instance';       // Delete everything connected to an instance.
-            $moddeletecourse = $modname .'_delete_course';   // Delete other stray stuff (uncommon).
 
             if ($instances) {
                 foreach ($instances as $cm) {
@@ -5034,12 +5033,6 @@ function remove_course_contents($courseid, $showfeedback = true, array $options 
                         $DB->delete_records('course_modules', array('id' => $cm->id));
                     }
                 }
-            }
-            if (function_exists($moddeletecourse)) {
-                // Execute optional course cleanup callback. Deprecated since Moodle 3.2. TODO MDL-53297 remove in 3.6.
-                debugging("Callback delete_course is deprecated. Function $moddeletecourse should be converted " .
-                    'to observer of event \core\event\course_content_deleted', DEBUG_DEVELOPER);
-                $moddeletecourse($course, $showfeedback);
             }
             if ($instances and $showfeedback) {
                 echo $OUTPUT->notification($strdeleted.get_string('pluginname', $modname), 'notifysuccess');
@@ -5078,22 +5071,6 @@ function remove_course_contents($courseid, $showfeedback = true, array $options 
 
     if ($showfeedback) {
         echo $OUTPUT->notification($strdeleted.get_string('type_mod_plural', 'plugin'), 'notifysuccess');
-    }
-
-    // Cleanup the rest of plugins. Deprecated since Moodle 3.2. TODO MDL-53297 remove in 3.6.
-    $cleanuplugintypes = array('report', 'coursereport', 'format');
-    $callbacks = get_plugins_with_function('delete_course', 'lib.php');
-    foreach ($cleanuplugintypes as $type) {
-        if (!empty($callbacks[$type])) {
-            foreach ($callbacks[$type] as $pluginfunction) {
-                debugging("Callback delete_course is deprecated. Function $pluginfunction should be converted " .
-                    'to observer of event \core\event\course_content_deleted', DEBUG_DEVELOPER);
-                $pluginfunction($course->id, $showfeedback);
-            }
-            if ($showfeedback) {
-                echo $OUTPUT->notification($strdeleted.get_string('type_'.$type.'_plural', 'plugin'), 'notifysuccess');
-            }
-        }
     }
 
     // Delete questions and question categories.

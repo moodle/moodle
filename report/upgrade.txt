@@ -1,6 +1,11 @@
 This files describes API changes in /report/* - plugins,
 information provided here is intended especially for developers.
 
+=== 3.6 ===
+
+* The final deprecation of xxx_delete_course callback means that this function will no longer be called.
+  Please use the observer for event \core\event\course_content_deleted instead.
+
 === 3.2 ===
 * Callback delete_course is deprecated and should be replaced with observer for event \core\event\course_content_deleted
 * The report_log_print_graph signature and behaviour has changed to generate charts using
