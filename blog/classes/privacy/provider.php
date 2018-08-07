@@ -135,7 +135,7 @@ class provider implements
         if ($DB->record_exists('blog_external', ['userid' => $userid])) {
             $sql = "
                 SELECT ctx.id
-                  FROM {context}
+                  FROM {context} ctx
                  WHERE ctx.contextlevel = :ctxlevel
                    AND ctx.instanceid = :ctxuserid";
             $params = [
