@@ -8,6 +8,8 @@ information provided here is intended especially for developers.
 * lti_get_shortcuts has been deprecated. Please use get_shortcuts() instead to add items to the activity chooser.
 * Now, when mod_<modname>_core_calendar_is_event_visible or mod_<modname>_core_calendar_provide_event_action callback functions
   are called, the userid of the requesting user is also passed to them.
+* The following functions have been finally deprecated and can not be used anymore:
+    - update_module_button()
 
 === 3.5 ===
 

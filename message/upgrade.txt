@@ -1,6 +1,25 @@
 This files describes API changes in /message/ messaging system,
 information provided here is intended especially for developers.
 
+=== 3.6 ===
+
+* The following functions have been finally deprecated and can not be used anymore:
+  * message_get_course_contexts()
+  * message_remove_url_params()
+  * message_count_messages()
+  * message_count_blocked_users()
+  * message_contact_link()
+  * message_history_link()
+  * message_shorten_message()
+  * message_get_fragment()
+  * message_get_contact_add_remove_link()
+  * message_get_contact_block_link()
+  * message_mark_messages_read()
+  * message_page_type_list()
+  * message_can_post_message()
+  * message_is_user_non_contact_blocked()
+  * message_is_user_blocked()
+
 === 3.5 ===
 
 * Changed the database structure so there are no longer two tables for messages, with the only
