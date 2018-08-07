@@ -1,0 +1,96 @@
+/* jquery-eu-cookie-law-popup styles */
+.eupopup-container {
+    background-color: rgba(25, 25, 25, 0.9);
+    color: #efefef;
+    padding: 5px 20px;
+    font-size: 12px;
+    line-height: 1.2em;
+    text-align: center;
+    display: none;
+    z-index: 9999999;
+}
+
+.eupopup-container-bottom {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+.eupopup-closebutton {
+    font-size: 16px;
+    font-weight: 100;
+    line-height: 1;
+    color: #a2a2a2;
+    filter: alpha(opacity=20);
+    position: absolute;
+    font-family: helvetica, arial, verdana, sans-serif;
+    top: 0;
+    right: 0;
+    padding: 5px 10px;
+}
+
+.eupopup-buttons {
+    padding: 7px 0 5px 0;
+}
+
+.eupopup-button {
+    margin: 0 10px;
+}
+
+.eupopup-button:hover,
+.eupopup-button:focus {
+    text-decoration: underline;
+    color: #f6a21d;
+}
+
+/* tool_policy styles */
+.eupopup-body li {
+    display: inline;
+}
+
+.eupopup-body li:before {
+    content: ", ";
+}
+
+.eupopup-body li:first-child:before {
+    content: "";
+}
+
+.eupopup-body ul {
+    padding: 0;
+    margin: 0 0 3px;
+}
+
+.eupopup-closebutton:hover,
+.eupopup-closebutton:active {
+    text-decoration: none;
+}
+
+.eupopup-head {
+    font-size: 1.2em;
+    font-weight: bold;
+    padding: 7px;
+}
+
+.eupopup-button_1 {
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.eupopup-button_2 {
+    display: none;
+}
+
+.eupopup-button {
+    color: #f6a21d;
+}
+
+.policy-heading .policy-viewdoc-buttons {
+    text-align: center;
+    margin: 15px;
+}
+
+#page-admin-tool-policy-acceptances .colselect {
+    width: 35px;
+}
