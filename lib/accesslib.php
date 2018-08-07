@@ -2548,12 +2548,17 @@ function get_profile_roles(context $context) {
  * Gets the list of roles assigned to this context and up (parents)
  *
  * @param context $context
+ * @param boolean $includeparents, false means without parents.
  * @return array
  */
-function get_roles_used_in_context(context $context) {
+function get_roles_used_in_context(context $context, $includeparents = true) {
     global $DB;
 
-    list($contextlist, $params) = $DB->get_in_or_equal($context->get_parent_context_ids(true), SQL_PARAMS_NAMED, 'cl');
+    if ($includeparents === true) {
+        list($contextlist, $params) = $DB->get_in_or_equal($context->get_parent_context_ids(true), SQL_PARAMS_NAMED, 'cl');
+    } else {
+        list($contextlist, $params) = $DB->get_in_or_equal($context->id, SQL_PARAMS_NAMED, 'cl');
+    }
 
     if ($coursecontext = $context->get_course_context(false)) {
         $params['coursecontext'] = $coursecontext->id;
@@ -3989,22 +3994,6 @@ function get_user_capability_course($capability, $userid = null, $doanything = t
 }
 
 /**
- * This function finds the roles assigned directly to this context only
- * i.e. no roles in parent contexts
- *
- * @param context $context
- * @return array
- */
-function get_roles_on_exact_context(context $context) {
-    global $DB;
-
-    return $DB->get_records_sql("SELECT r.*
-                                   FROM {role_assignments} ra, {role} r
-                                  WHERE ra.roleid = r.id AND ra.contextid = ?",
-                                array($context->id));
-}
-
-/**
  * Switches the current user to another role for the current session and only
  * in the given context.
  *
@@ -4089,22 +4078,6 @@ function get_capabilities_from_role_on_context($role, context $context) {
                                    FROM {role_capabilities}
                                   WHERE contextid = ? AND roleid = ?",
                                 array($context->id, $role->id));
-}
-
-/**
- * Find out which roles has assignment on this context
- *
- * @param context $context
- * @return array
- *
- */
-function get_roles_with_assignment_on_context(context $context) {
-    global $DB;
-
-    return $DB->get_records_sql("SELECT r.*
-                                   FROM {role_assignments} ra, {role} r
-                                  WHERE ra.roleid = r.id AND ra.contextid = ?",
-                                array($context->id));
 }
 
 /**

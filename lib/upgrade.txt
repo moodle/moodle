@@ -72,6 +72,9 @@ information provided here is intended especially for developers.
 * The method message_sent::create_from_ids() parameter courseid is now required. A debugging
   message was previously displayed, and the SITEID was used, when not provided.
 * The method \core\message\manager::send_message() now only takes the object \core\message\message as the first parameter.
+* Following functions have been deprecated, please use get_roles_used_in_context.
+    - get_roles_on_exact_context()
+    - get_roles_with_assignment_on_context()
 
 === 3.5 ===
 
