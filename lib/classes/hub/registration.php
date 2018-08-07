@@ -275,6 +275,11 @@ class registration {
         try {
             api::update_registration($siteinfo);
         } catch (moodle_exception $e) {
+            if (!self::is_registered()) {
+                // Token was rejected during registration update and site and locally stored token was reset,
+                // proceed to site registration. This method will redirect away.
+                self::register('');
+            }
             \core\notification::add(get_string('errorregistrationupdate', 'hub', $e->getMessage()),
                 \core\output\notification::NOTIFY_ERROR);
             return false;
@@ -426,6 +431,20 @@ class registration {
         $DB->delete_records('registration_hubs', array('id' => $hub->id));
         self::$registration = null;
         return true;
+    }
+
+    /**
+     * Resets the registration token without changing site identifier so site can be re-registered
+     *
+     * @return bool
+     */
+    public static function reset_token() {
+        global $DB;
+        if (!$hub = self::get_registration()) {
+            return true;
+        }
+        $DB->delete_records('registration_hubs', array('id' => $hub->id));
+        self::$registration = null;
     }
 
     /**
