@@ -6949,6 +6949,7 @@ function get_string_manager($forcereload=false) {
                  $translist = array();
             } else {
                 $translist = explode(',', $CFG->langlist);
+                $translist = array_map('trim', $translist);
             }
 
             if (!empty($CFG->config_php_settings['customstringmanager'])) {
