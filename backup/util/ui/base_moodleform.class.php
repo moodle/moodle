@@ -391,7 +391,7 @@ abstract class base_moodleform extends moodleform {
             $config->title = get_string('confirmcancel', 'backup');
         }
         $config->question = get_string('confirmcancelquestion', 'backup');
-        $config->yesLabel = get_string('confirmcancelyes', 'backup');
+        $config->yesLabel = $config->title;
         $config->noLabel = get_string('confirmcancelno', 'backup');
         $config->closeButtonTitle = get_string('close', 'editor');
         $PAGE->requires->yui_module(
