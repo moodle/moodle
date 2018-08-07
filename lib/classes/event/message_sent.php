@@ -43,28 +43,18 @@ defined('MOODLE_INTERNAL') || die();
 class message_sent extends base {
     /**
      * Create event using ids.
-     * @todo MDL-55449 Make $courseid mandatory in Moodle 3.6
      * @param int $userfromid
      * @param int $usertoid
      * @param int $messageid
-     * @param int|null $courseid course id the event is related with. Use SITEID if no relation exists.
+     * @param int $courseid course id the event is related with.
      * @return message_sent
      */
-    public static function create_from_ids($userfromid, $usertoid, $messageid, $courseid = null) {
+    public static function create_from_ids(int $userfromid, int $usertoid, int $messageid, int $courseid) {
         // We may be sending a message from the 'noreply' address, which means we are not actually sending a
         // message from a valid user. In this case, we will set the userid to 0.
         // Check if the userid is valid.
         if (!\core_user::is_real_user($userfromid)) {
             $userfromid = 0;
-        }
-
-        // TODO: MDL-55449 Make $courseid mandatory in Moodle 3.6.
-        if (is_null($courseid)) {
-            // Arrived here with not defined $courseid to associate the event with.
-            // Let's default to SITEID and perform debugging so devs are aware. MDL-47162.
-            $courseid = SITEID;
-            debugging('message_sent::create_from_ids() needs a $courseid to be passed, nothing was detected. Please, change ' .
-                    'the call to include it, using SITEID if the message is unrelated to any real course.', DEBUG_DEVELOPER);
         }
 
         $event = self::create(array(

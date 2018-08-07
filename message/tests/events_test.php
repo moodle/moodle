@@ -272,22 +272,6 @@ class core_message_events_testcase extends core_message_messagelib_testcase {
         $this->assertEquals(4, $event->other['courseid']);
     }
 
-    public function test_mesage_sent_via_create_from_ids_without_other_courseid() {
-
-        // Creating a message_sent event without courseid leads to debugging + SITEID.
-        // TODO: MDL-55449 Ensure this leads to exception instead of debugging in Moodle 3.6.
-        $event = \core\event\message_sent::create_from_ids(1, 2, 3);
-
-        // Trigger and capturing the event.
-        $sink = $this->redirectEvents();
-        $event->trigger();
-        $events = $sink->get_events();
-        $event = reset($events);
-
-        $this->assertDebuggingCalled();
-        $this->assertEquals(SITEID, $event->other['courseid']);
-    }
-
     /**
      * Test the message viewed event.
      */

@@ -55,6 +55,10 @@ information provided here is intended especially for developers.
   policy and respect the privacy setting made by site administrators. The list of user identifiers should never be
   hard-coded. Instead, the setting $CFG->showuseridentity should be always respected, which has always been the default
   behaviour (MDL-59847).
+* The function message_send() in messagelib.php will now only take the object \core\message\message as a parameter.
+* The method message_sent::create_from_ids() parameter courseid is now required. A debugging
+  message was previously displayed, and the SITEID was used, when not provided.
+* The method \core\message\manager::send_message() now only takes the object \core\message\message as the first parameter.
 
 === 3.5 ===
 
