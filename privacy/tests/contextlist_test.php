@@ -105,4 +105,85 @@ class contextlist_test extends advanced_testcase {
         $this->assertContains(\context_user::instance($user1->id)->id, $contexts);
         $this->assertContains(\context_user::instance($user2->id)->id, $contexts);
     }
+
+    /**
+     * Test {@link \core_privacy\local\request\contextlist::test_guess_id_field_from_sql()} implementation.
+     *
+     * @dataProvider data_guess_id_field_from_sql
+     * @param string $sql Input SQL we try to extract the context id field name from.
+     * @param string $expected Expected detected value.
+     */
+    public function test_guess_id_field_from_sql($sql, $expected) {
+
+        $rc = new \ReflectionClass(contextlist::class);
+        $rcm = $rc->getMethod('guess_id_field_from_sql');
+        $rcm->setAccessible(true);
+        $actual = $rcm->invoke(new contextlist(), $sql);
+
+        $this->assertEquals($expected, $actual, 'Unable to guess context id field in: '.$sql);
+    }
+
+    /**
+     * Provides data sets for {@link self::test_guess_id_field_from_sql()}.
+     *
+     * @return array
+     */
+    public function data_guess_id_field_from_sql() {
+        return [
+            'easy' => [
+                'SELECT contextid FROM {foo}',
+                'contextid',
+            ],
+            'with_distinct' => [
+                'SELECT DISTINCT contextid FROM {foo}',
+                'contextid',
+            ],
+            'with_dot' => [
+                'SELECT cx.id FROM {foo} JOIN {context} cx ON blahblahblah',
+                'id',
+            ],
+            'letter_case_does_not_matter' => [
+                'Select ctxid From {foo} Where bar = ?',
+                'ctxid',
+            ],
+            'alias' => [
+                'SELECT foo.contextid AS ctx FROM {bar} JOIN {foo} ON bar.id = foo.barid',
+                'ctx',
+            ],
+            'tabs' => [
+                "SELECT\tctxid\t\tFROM foo f",
+                'ctxid',
+            ],
+            'whitespace' => [
+                "SELECT
+                    ctxid\t
+                   \tFROM foo f",
+                'ctxid',
+            ],
+            'just_number' => [
+                '1',
+                '1',
+            ],
+            'select_number' => [
+                'SELECT 2',
+                '2',
+            ],
+            'select_number_with_semicolon' => [
+                'SELECT 3;',
+                '3',
+            ],
+            'select_number_from_table' => [
+                'SELECT 4 FROM users',
+                '4',
+            ],
+            'invalid_1' => [
+                'SELECT 1+1',
+                '',
+            ],
+            'invalid_2' => [
+                'muhehe',
+                '',
+            ],
+        ];
+    }
 }

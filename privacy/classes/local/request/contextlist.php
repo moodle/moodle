@@ -47,7 +47,27 @@ class contextlist extends contextlist_base {
         global $DB;
 
         $fields = \context_helper::get_preload_record_columns_sql('ctx');
-        $wrapper = "SELECT {$fields} FROM {context} ctx WHERE id IN ({$sql})";
+        if ($fieldname = $this->guess_id_field_from_sql($sql)) {
+            if (is_numeric($fieldname)) {
+                $wrapper = "
+                  SELECT {$fields}
+                    FROM {context} ctx
+                   WHERE ctx.id = :fieldvalue";
+                $params = ['fieldvalue' => $fieldname];
+            } else {
+                // Able to guess a field name.
+                $wrapper = "
+                  SELECT {$fields}
+                    FROM {context} ctx
+                    JOIN ({$sql}) target ON ctx.id = target.{$fieldname}";
+            }
+        } else {
+            // No field name available. Fall back on a potentially slower version.
+            $wrapper = "
+              SELECT {$fields}
+                FROM {context} ctx
+               WHERE ctx.id IN ({$sql})";
+        }
         $contexts = $DB->get_recordset_sql($wrapper, $params);
 
         $contextids = [];
@@ -109,5 +129,49 @@ class contextlist extends contextlist_base {
      */
     public function set_component($component) {
         parent::set_component($component);
+    }
+
+    /**
+     * Guess the name of the contextid field from the supplied SQL.
+     *
+     * @param   string  $sql The SQL to guess from
+     * @return  string  The field name or a numeric value representing the context id
+     */
+    protected function guess_id_field_from_sql(string $sql) : string {
+        // Get the list of relevant words from the SQL Query.
+        // We explode the SQL by the space character, then trim any extra whitespace (e.g. newlines), before we filter
+        // empty value, and finally we re-index the array.
+        $sql = rtrim($sql, ';');
+        $words = array_map('trim', preg_split('/\s+/', $sql));
+        $words = array_filter($words, function($word) {
+            return $word !== '';
+        });
+        $words = array_values($words);
+
+        if ($firstfrom = array_search('FROM', array_map('strtoupper', $words))) {
+            // Found a FROM keyword.
+            // Select the previous word.
+            $fieldname = $words[$firstfrom - 1];
+            if (is_numeric($fieldname)) {
+                return $fieldname;
+            }
+
+            if ($hasdot = strpos($fieldname, '.')) {
+                // This field is against a table alias. Take off the alias.
+                $fieldname = substr($fieldname, $hasdot + 1);
+            }
+
+            return $fieldname;
+
+        } else if ((count($words) == 1) && (is_numeric($words[0]))) {
+            // Not a real SQL, just a single numerical value - such as one returned by {@link self::add_system_context()}.
+            return $words[0];
+
+        } else if ((count($words) == 2) && (strtoupper($words[0]) === 'SELECT') && (is_numeric($words[1]))) {
+            // SQL returning a constant numerical value.
+            return $words[1];
+        }
+
+        return '';
     }
 }
