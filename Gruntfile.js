@@ -37,7 +37,7 @@ module.exports = function(grunt) {
     var expected = semver.validRange(grunt.file.readJSON('package.json').engines.node);
     var actual = semver.valid(process.version);
     if (!semver.satisfies(actual, expected)) {
-        grunt.fail.fatal('Node version too old. Require ' + expected + ', version installed: ' + actual);
+        grunt.fail.fatal('Node version not satisfied. Require ' + expected + ', version installed: ' + actual);
     }
 
     // Windows users can't run grunt in a subdirectory, so allow them to set
