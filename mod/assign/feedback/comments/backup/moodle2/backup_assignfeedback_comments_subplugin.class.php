@@ -56,6 +56,12 @@ class backup_assignfeedback_comments_subplugin extends backup_subplugin {
         $subpluginelement->set_source_table('assignfeedback_comments',
                                             array('grade' => backup::VAR_PARENTID));
 
+        $subpluginelement->annotate_files(
+            'assignfeedback_comments',
+            'feedback',
+            'grade'
+        );
+
         return $subplugin;
     }
 }
