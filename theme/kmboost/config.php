@@ -44,6 +44,4 @@ $THEME->usefallback = true;
 //];
 
 $THEME->parents = ['boost'];
-$THEME->enable_dock = false;
-$THEME->yuicssmodules = array();
-$THEME->requiredblocks = '';
+$THEME->rendererfactory = 'theme_overridden_renderer_factory';
