@@ -1,0 +1,26 @@
+<div class="container-fluid">
+    <div id="elecbanner" class="carousel slide" data-ride="carousel" data-interval="{{slidespeed}}">
+        <ol class="carousel-indicators">
+            {{#banners}}
+            <li data-target="#elecbanner" data-slide-to="{{count}}"></li>
+            {{/banners}}
+        </ol>
+        <div class="carousel-inner" role="listbox">
+            {{#banners}}
+                
+                <div class="item {{active}}" role="listbox" style="background-image: url({{{bannerimage}}}); background-size: 100%; background-color: {{bannercolor}};">
+                {{#bannertitle}}
+                <h1>{{bannertitle}}</h1>
+                {{/bannertitle}}
+                {{#bannertext}}
+                <p>{{bannertext}}</p>
+                {{/bannertext}}
+                {{#bannerlinktext}}
+                    <a class="btn" href="{{bannerlinkurl}}">{{bannerlinktext}}</a>
+                {{/bannerlinktext}}
+                </div>
+        
+            {{/banners}}
+        </div>
+    </div>
+</div>

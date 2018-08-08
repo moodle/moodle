@@ -1,0 +1,19 @@
+{{#hascrumbs}}
+<div id="page-navbar" >
+    <div class="container-fluid">
+        <div class="breadcrumbcontainer {{addclasses}}">
+            <nav class="breadcrumb-nav elegancewidth" role="navigation" aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    {{#breadcrumbs}}
+                        <li class={{class}}>{{{item}}}</li>
+                    {{/breadcrumbs}}
+                </ol>
+            </nav>
+            {{#button}}
+            <div class="breadcrumb-button m-0">{{{button}}}</div>
+            {{/button}}
+            <div class="clearfix"></div>
+        </div>
+    </div>
+</div>
+{{/hascrumbs}}

@@ -1,0 +1,16 @@
+<div class="container-fluid km-categories">
+	<div class="row">
+		{{#links}}
+		<div class="col-md-{{{md}}} col-xs-{{{xs}}} col-xs-height col-xs-top">
+		{{#url}}
+			<a href="{{{url}}}">
+				<div>
+					<img alt="" src="{{{img}}}">				
+				</div>
+				<h2 class = "fix_cat_size">{{{title}}}</h2>
+			</a>
+	    {{/url}}		
+		</div>
+		{{/links}}
+	</div>
+</div>

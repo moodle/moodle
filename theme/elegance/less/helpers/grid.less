@@ -1,0 +1,111 @@
+.dir-ltr.editing.used-region-side-post.used-region-side-pre {
+    #region-main {
+        .make-sm-column(6);
+        .make-lg-column(6);
+        .make-sm-column-push(3);
+        .make-lg-column-push(3);
+    }
+    #block-region-side-post {
+        .make-sm-column(3);
+        .make-lg-column(3);
+        min-height: 100px;
+    }
+    #block-region-side-pre {
+        .make-sm-column(3);
+        .make-lg-column(3);
+        .make-sm-column-pull(6);
+        .make-lg-column-pull(6);
+        min-height: 100px;
+    }
+}
+
+.dir-rtl.editing.used-region-side-post.used-region-side-pre {
+    #region-main {
+        .make-sm-column(6);
+        .make-lg-column(6);
+        .make-sm-column-push(3);
+        .make-lg-column-push(3);
+    }
+    #block-region-side-pre {
+        .make-sm-column(3);
+        .make-lg-column(3);
+        .make-sm-column-push(3);
+        .make-lg-column-push(3);
+        min-height: 100px;
+    }
+    #block-region-side-post {
+        .make-sm-column(3);
+        .make-lg-column(3);
+        .make-sm-column-pull(9);
+        .make-lg-column-pull(9);
+        min-height: 100px;
+    }
+}
+
+.has_dock {
+    &.empty-region-side-pre #region-main, &.empty-region-side-post #region-main {
+        .make-sm-column(12);
+        .make-lg-column(12);
+        .make-sm-column-push(0);
+        .make-lg-column-push(0);
+    }
+
+    &.empty-region-side-pre.used-region-side-post #region-main,
+    &.empty-region-side-post.used-region-side-pre #region-main {
+        .make-sm-column(9);
+        .make-lg-column(9);
+    }
+
+    &.empty-region-side-pre #block-region-side-pre {
+        display: none;
+    }
+
+    &.empty-region-side-post #block-region-side-post {
+        display: none;
+    }
+}
+
+#dock {
+    z-index: 12000;
+}
+
+.has_dock.dir-ltr {
+    &.empty-region-side-pre.used-region-side-post #region-main {
+        .make-sm-column-push(0);
+        .make-lg-column-push(0);
+    }
+
+    &.empty-region-side-post.used-region-side-pre #region-main {
+        .make-sm-column-push(3);
+        .make-lg-column-push(3);
+    }
+
+    &.empty-region-side-post.used-region-side-pre #block-region-side-pre {
+        .make-sm-column-pull(9);
+        .make-lg-column-pull(9);
+    }
+}
+
+.has_dock.dir-rtl {
+    &.empty-region-side-pre.used-region-side-post #region-main {
+        .make-sm-column-push(3);
+        .make-lg-column-push(3);
+    }
+
+    &.empty-region-side-post.used-region-side-pre #region-main {
+        .make-sm-column-push(0);
+        .make-lg-column-push(0);
+    }
+
+    // Negate the push applied when transitioning from three columns.
+    // LTR does not have this vice-versa issue as no 'push' for post.
+    &.empty-region-side-post.used-region-side-pre #block-region-side-pre {
+        .make-sm-column-push(0);
+        .make-lg-column-push(0);
+    }
+
+    &.empty-region-side-pre.used-region-side-post #block-region-side-post {
+        .make-sm-column-pull(9);
+        .make-lg-column-pull(9);
+    }
+}

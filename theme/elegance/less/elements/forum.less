@@ -1,0 +1,239 @@
+#page-site-index,
+.path-news,
+.path-mod-forum {
+    .forumheaderlist {
+        tr {
+            th {
+                border: none;
+                padding: 10px 5px;
+            }
+            td {
+                border: none;
+                padding: 10px 5px;
+            }
+        }
+        .replies {
+            text-align: left !important;
+        }
+        .lastpost {
+            text-align: left !important;
+            a:last-child {
+                font-size: @font-size-small;
+            }
+        }
+    }
+
+    .indent {
+        margin-left: 40px;
+        .forumthread {
+            display: block;
+            margin-top: 20px;
+            font-size: @font-size-small;
+            color: @gray-light;
+            a[href] {
+                padding-right: 1ex;
+                font-size: @font-size-base;
+            }
+        }
+    }
+    .forumpost {
+        padding: 10px 10px 0;
+        position: relative;
+        background-color: #f4f4f4;
+        border: 1px solid #d0d0d0;
+        .main-content {
+            background-color: #FFF;
+        }
+        .header {
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+        }
+        .row {
+            &.header {
+                min-height: 111px;
+            }
+            .no-overflow {
+                margin-bottom: 0;
+            }
+            position: static;
+            margin: 0;
+            .left {
+                width: 110px;
+                padding: 0;
+                &.picture img {
+                    width: 100px;
+                    height: 100px;
+                    margin: 0;
+                    border: 1px solid #adc1de;
+                    vertical-align: middle;
+                }
+                .grouppictures {
+                    position: absolute;
+                    top: 48px;
+                    right: 14px;
+                    a {
+                    display: inline-block;
+                    margin: 0 2px 5px;
+                    padding: 5px 6px;
+                    background-color: #ffffff;
+                    border-radius: 50px;
+                    box-shadow: 0px 2px 1px rgba(0, 0, 0, 0.05);
+                    }
+                }
+            }
+            &.side {
+                .left {
+                    display: none;
+                }
+            }
+            .topic {
+                overflow: auto;
+                margin-left: 100px;
+                .subject  {
+                    padding-top: 6px;
+                    color: @headings-color;
+                }
+                .author-name {
+                    font-size: @font-size-base;
+                    font-weight: bold;
+                    margin-top: 12px;
+                }
+                .author-date {
+                    font-size: @font-size-small;
+                    color: @gray-light;
+                    margin-top: -4px;
+                }
+                .author {
+                    color: @gray-light;
+                    margin-top: -4px;
+                }
+            }
+            .content {
+                padding: 20px;
+                background-color: white;
+                border: 1px solid #d0d0d0;
+            }
+            .forum-post-rating {
+                display: inline-block;
+                .rating-aggregate-label {
+                    display: none;
+                }
+                .postratingmenu {
+                    margin-left: 10px;
+                    margin-right: 10px;
+                }
+                .iconhelp {
+                    vertical-align: baseline;
+                }
+            }
+            .options {
+                margin-left: 0;
+                margin-right: 0;
+                padding: 10px 10px 0;
+                .commands {
+                    display: inline-block;
+                    float: right;
+                    margin-left: 1em;
+                    margin-bottom: 10px;
+                    a {
+                        font-size: @font-size-small;
+                    }
+                }
+            }
+        }
+        blockquote {
+            .well;
+            border: 0;
+            box-shadow: none;
+            margin: 20px;
+            p {
+                font-size: @font-size-base;
+                font-weight: normal;
+            }
+        }
+    }
+    .forumpost.firstpost {
+        .row {
+            position: inherit;
+            .topic {
+                .subject {
+                    display: block;
+                    font-family: @headings-font-family;
+                    font-weight: @headings-font-weight;
+                    font-size: 24px;
+                    line-height: 30px;
+                    padding-top: 3px;
+                }
+                .author-name {
+                    margin-top: 5px;
+                }
+            }
+            .grouppictures {
+                top: -56px;
+                right: 4px;
+            }
+        }
+    }
+    .forumpost.unread {
+        .row {
+            border-bottom: 0;
+            border-radius: 4px;
+        }
+    }
+}
+
+.path-news.dir-rtl,
+.path-mod-forum.dir-rtl {
+    .forumheaderlist {
+        .replies {
+            text-align: right !important;
+        }
+        .lastpost {
+            text-align: right !important;
+        }
+    }
+    .discussioncontrol {
+       float: left;
+    }
+    .indent {
+        margin-left: inherit;
+        margin-right: 40px;
+    }
+    .forumpost {
+        .row {
+            .grouppictures {
+                right: inherit;
+                left: 14px;
+            }
+            .forum-post-rating {
+                float: right;
+            }
+            .commands {
+                float: left;
+                margin-right: 1em;
+            }
+        }
+    }
+    .forumpost.firstpost {
+        .row {
+            .grouppictures {
+                right: inherit;
+                left: 4px;
+            }
+        }
+    }
+}
+
+// Hacky trick to prevent the default behaviour of the floating sites bar
+// covering the top half of the post header when accessed via anchor.
+// The selector tries to cover forum post anchors like <a id="p12345"></a>.
+// We can't make this page-mod-forum specific as we are displaying forum posts
+// at other places, such as the /news page. The alternative would be to modify
+// forum code so that it adds some class to these anchors.
+a[id^="p"]:empty {
+    display: inline-block;
+    padding-top: 60px;
+    margin-top: -60px;
+    vertical-align: top;
+}
+

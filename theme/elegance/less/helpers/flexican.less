@@ -1,0 +1,45 @@
+html,body {
+	height:100%;
+}
+
+@media (min-width: @screen-sm) {
+    .row-flex, 
+    .row-flex > div[class*='col-'] {  
+        display: -webkit-box;
+        display: -moz-box;
+        display: -ms-flexbox;
+        display: -webkit-flex;
+        display: flex;
+        flex:1 1 auto;
+    }
+
+    .row-flex-wrap {
+    	-webkit-flex-flow: row wrap;
+        flex-flow: row wrap;
+        align-content: flex-start;
+        flex:0;
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    .row-flex > div[class*='col-'], .container-flex > div[class*='col-'] {
+    	 margin:-.2px; /* hack adjust for wrapping */
+    }
+
+    .container-flex > div[class*='col-'] div,.row-flex > div[class*='col-'] div {
+    	width:100%;
+    }
+
+    .flex-col {
+        display: flex;
+        display: -webkit-flex;
+        flex: 1 100%;
+    	flex-flow: column nowrap;
+    }
+
+    .flex-grow {
+    	display: flex;
+        -webkit-flex: 2;
+        flex: 2;
+    }
+}

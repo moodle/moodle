@@ -1,0 +1,331 @@
+.block {
+    background: none;
+    padding: 12px 0 8px;
+    .eboxshadow;
+    .bg-white;
+    font-family: "Roboto";
+
+    #icon {
+        margin-right: 5px;
+        color: #999;
+    }
+
+    .header {
+        padding: 0px 10px;
+        background: transparent;
+    }
+    .header .title h2 {
+        margin-bottom: 7px;
+    }
+
+    .header .title h2:before {
+        font-family: FontAwesome;
+        font-size: 1em;
+        margin-right: .3em;
+        color: #999;
+        content: "\f0c9";
+    }
+
+    .block_tree > li.type_custom{
+        margin-right: 0px;
+    }
+
+    .btn {
+        width: auto;
+        margin-bottom: 10px;
+    }
+}
+
+#hidden-blocks {
+    background: #ffe1e1;
+    padding: 20px;
+    border: 1px solid #EEE;
+    border-radius: 5px;
+    margin: 0px;
+}
+
+#hidden-blocks h4 {
+    text-align: left;
+    padding-bottom: 8px;
+    margin-bottom: 8px;
+    border-bottom: 1px solid #ccc;
+    margin-top: 0px;
+    color: #ff6666;
+}
+
+#hidden-blocks .block {
+    float: right;
+    width: 250px;
+    margin-left: 10px;
+}
+
+
+.block_login {
+    label {
+        -webkit-font-smoothing: antialiased;
+        color: @themecolor;
+        margin-bottom: 5px;
+        margin-top: 5px;
+    }
+
+    .username label:before {
+        content:"\f007";
+        font-family: FontAwesome;
+        margin-right: 5px;
+        color: #999;
+    }
+
+    .password label:before {
+        content:"\f084";
+        font-family: FontAwesome;
+        margin-right: 5px;
+        color: #999;
+    }
+
+    .c1.btn {
+        width: 100%;
+        border: 0;
+        padding: 0;
+        background-color: transparent;
+        border-radius: 0;
+    }
+    .btn input[type="submit"] {
+        .btn-success;
+        width: 100%;
+        margin: 0;
+    }
+    
+    .content .footer a {
+        .btn;
+        .btn-warning;
+        width: 100%;
+    }
+
+    input#login_username,
+    input#login_password {
+        width: 100%;
+    }
+
+    input:focus {
+        background: #fff;
+        outline: none;
+    }
+
+    input:-webkit-autofill {
+        background: #fff !important;
+    }
+
+    .content .footer div:nth-child(1) a {
+        .btn-warning;
+        .m-b-10;
+    }
+
+    .content .footer div:nth-child(2) a {
+        .btn-danger;
+    }
+}
+
+.block_myprofile .content {
+    text-align: center;
+}
+
+.block_myprofile .content {
+    .myprofileitem.picture {
+        .userpicture {
+            border-radius: 50%;
+            width: 100px;
+            height: 100px;
+            box-shadow: 0 0 3px 0 #aaa;
+            border: 5px solid #fff;
+            &:hover {
+                border-color: @themecolor;
+            }
+        }
+    }
+}
+
+.dir-rtl .collapsed .tree_item.branch:before { 
+    content: " \f053";
+    display: none;
+}
+
+.dir-rtl .glyphicon-chevron-right:before {
+content: "\e079";
+}
+
+.block_news_items .header .title h2:before {
+    content:"\f0a1";
+}
+
+.block_navigation .header .title h2:before {
+    content:"\f0e8";
+}
+
+.block_calendar_upcoming .header .title h2:before,
+.block_calendar_month .header .title h2:before {
+    content:"\f073";
+}
+
+.block_course_overview .coursebox {
+    border: 0px none;
+}
+
+.block_course_list .header .title h2:before {
+    content:"\f108";
+}
+
+.block_completionstatus .header .title h2:before,
+.block_selfcompletion .header .title h2:before {
+    content:"\f0e4";
+}
+
+.block_rss_client .header .title h2:before {
+    content:"\f09e";
+}
+
+.block_blog_menu .header .title h2:before {
+    content:"\f02d";
+}
+
+.block_quiz_results .header .title h2:before {
+    content:"\f080";
+}
+
+.block_quiz_navblock .header .title h2:before {
+    content:"\f126";
+}
+
+.block_glossary_random .header .title h2:before {
+    content:"\f0eb";
+}
+
+.block_book_toc .header .title h2:before {
+    content:"\f02d";
+}
+
+
+.block_participants .header .title h2:before,
+.block_online_users .header .title h2:before {
+    content:"\f0c0";
+}
+
+.block_html .header .title h2:before {
+    content:"\f022";
+}
+
+.block_section_links .header .title h2:before {
+    content:"\f02e";
+}
+
+.block_activity_modules .header .title h2:before {
+    content:"\f12e";
+}
+
+.block_comments .header .title h2:before {
+    content:"\f075";
+}
+
+.block_settings .header .title h2:before {
+    content:"\f085";
+}
+
+.block_admin_bookmarks .header .title h2:before{
+    content:"\f02e";
+}
+
+.block_blog_tags .header .title h2:before,
+.block_tags .header .title h2:before {
+    content:"\f02c";
+}
+
+.block_private_files .header .title h2:before {
+    content:"\f114";
+}
+
+.block_block_mentees .header .title h2:before {
+    content:"\f0c0";
+}
+
+.block_messages .header .title h2:before {
+    content:"\f0e0";
+}
+
+.block_community .header .title h2:before {
+    content:"\f0ac";
+}
+
+.block_login .header .title h2:before {
+    content:"\f007";
+}
+
+.block_recent_activity .header .title h2:before {
+    content:"\f017";
+}
+
+.block_search_forums .header .title h2:before {
+    content:"\f0e6";
+}
+
+.block_myprofile .header .title h2:before {
+    content:"\f007";
+}
+
+.block_adminblock .header .title h2:before {
+    content:"\f009";
+}
+
+.block_feedback .header .title h2:before {
+    content:"\f087";
+}
+
+.block_flickr .header .title h2:before {
+    content:"\f03e";
+}
+
+.block_youtube .header .title h2:before {
+    content:"\f145";
+}
+
+.block_course_badges .header .title h2:before {
+    content:"\f091";
+}
+
+.block_twitter_search .header .title h2:before {
+    content:"\f099";
+}
+
+/* @end */
+
+/* @group Frontpage */
+
+#block-region-side-middle .block {
+    .eboxshadow;
+}
+
+#block-region-side-middle .block_rss_client .list li {
+    clear: both;
+    border: 0px none;
+    margin-bottom: 0px;
+    border-bottom: 1px dashed #ddd;
+    height: 52px;
+    overflow: hidden;
+}
+
+#block-region-side-middle .block_rss_client .content li .link {
+    float: left;
+    margin-right: 5px;
+}
+
+#block-region-side-middle .block_rss_client .content li .description p {
+    margin-top: 0px;
+    margin-bottom: 0px;
+    font-size: .8em;
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; 
+}
+
+#block-region-side-middle .block_rss_client .header .title h2:before {
+    content:"\f086";
+}

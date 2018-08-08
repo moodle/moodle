@@ -1,0 +1,29 @@
+.path-login #page-content-wrapper {
+    background-image: @loginbg;
+    background-color: @loginbgcolor;
+}
+.loginbox.twocolumns {
+	.loginpanel,
+	.signuppanel {
+	    padding: 15px;
+	    background: none;
+	    background: rgba(255, 255, 255, 0.85);
+	    border: 2px solid #ecedf0;
+	    -webkit-border-radius: 5px;
+	    -moz-border-radius: 5px;
+	    border-radius: 5px;
+	    -webkit-box-shadow: 8px 8px 21px -3px rgba(0,0,0,@transparency);
+	    -moz-box-shadow: 8px 8px 21px -3px rgba(0,0,0,@transparency);
+	    box-shadow: 8px 8px 21px -3px rgba(0,0,0,@transparency);
+	    font-family: "Roboto";
+	}
+}
+
+@media (min-width: @screen-md) {
+    .loginbox.twocolumns .loginpanel,
+    .loginbox.twocolumns .signuppanel {
+    	width: 45%;
+    	margin: 5px;
+    	padding: 20px;
+    }
+}

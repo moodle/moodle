@@ -1,0 +1,113 @@
+@media (min-width: 768px) {
+    #region-main.col-sm-push-3 {
+        .dir-rtl & {
+            //right: 25%;
+            right:0;
+            left: auto;
+        }
+    }
+
+    #block-region-side-post.col-sm-pull-9 {
+        .dir-rtl & {
+            //left: 75%;
+            left:0;
+            right: auto;
+        }
+    }
+
+    .col-sm-1, .col-sm-2, .col-sm-3,
+    .col-sm-4, .col-sm-5, .col-sm-6,
+    .col-sm-7, .col-sm-8, .col-sm-9,
+    .col-sm-10, .col-sm-11, .col-sm-12 {
+        .dir-rtl & {
+            float: right;
+        }
+
+    }
+}
+
+// Course in edit mode.
+.dir-rtl {
+    .editing .section .activity .contentwithoutlink,
+    .editing .section .activity .activityinstance {padding:0;}
+    .section .activity .editing_move {right:0;left:auto;}
+}
+
+.dir-rtl {
+    // Main toolbar - nav bar.
+    .navbar-header.pull-left {float:right !important;}
+    #moodle-navbar,
+    .navbar-header.pull-right {float:left !important;}
+
+    // Side blocks & Main content layout.
+    ul.nav.pull-left.usermenu.loggedin > li > a {direction: ltr;}
+    ul.nav.pull-left.usermenu.loggedin > li > ul > li {text-align: right;}
+
+    // Course (&site) breadcrumbs.
+    .breadcrumb-nav {float: right;}
+    .breadcrumb-button {float: left;}
+
+    .breadcrumb>li.active>a {display: inline-table;}
+
+    // Course activities.
+    .section .activity .activityinstance,
+    .section .activity .activityinstance div {display: inline-table;}
+    .section .label {text-align: right;}
+
+    // Course in edit mode.
+    .section .activity .editing_move {left:0;right:auto;}
+    // Edit menu.
+    .moodle-actionmenu[data-enhanced].show .menu .iconsmall {margin: 4px -10px 4px 4px;}
+    .moodle-actionmenu[data-enhanced].show .menu>li>a {text-align: right;}
+    .section .activity .actions {
+        left: 25px;
+        right:auto;
+    }
+
+
+
+    // Blocks.
+    .block .header .block_action {float: left;}
+    .block .content .list li.listentry div a {display: inline-table;}
+
+    // Forms.
+    .mform .fitem .fitemtitle {float: right;}
+
+    .loginbox.onecolumn {float: right;}
+    
+    // Admin settings.
+    @media (min-width: 992px) {
+        .form-item .form-label {
+            float: right;
+        }
+        .form-item .form-description {
+            margin-right: 33.33333333%;
+            margin-left: auto;
+        }
+
+    }
+
+    // File picker.
+    .file-picker .fp-repo-area {float: right;}
+    .file-picker .fp-repo-items {margin-left: 0;}
+    .fp-iconview .fp-file {float: right;}
+    .fp-forminset .control-group label.control-label {float: right;}
+    .fp-fileinfo .fp-dimensions .fp-value {direction: ltr;}
+
+    // Quiz - questions.
+    .que {
+        clear: right;
+        text-align: right;
+    }
+
+    // Enroll user into a course.
+    .user-enroller-panel .uep-search-results .user .picture {float: right;}
+
+}
+
+// Activity chooser.
+.dir-rtl.jsenabled .choosercontainer #chooseform .instruction,
+.dir-rtl.jsenabled .choosercontainer #chooseform .typesummary {
+    left: 0;
+    right: 20.3em;
+}

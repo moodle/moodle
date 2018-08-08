@@ -1,0 +1,34 @@
+.navbar-default,
+.navbar-inverse {
+    .navbar-nav>li>a {
+        padding-bottom: 15px - @navbarborderwidth;
+        border-bottom: @navbarborderwidth solid transparent;
+        &:hover,
+        &:focus {
+            border-bottom: @navbarborderwidth solid @themecolor;
+        }
+    }
+    .usermenu {
+        .pull-left;
+    }
+}
+
+.navbar-inverse {
+    .dropdown>a .caret {
+        border-top-color: @themecolor;
+        border-bottom-color: @themecolor;
+        margin-left: 5px;
+    }
+}
+
+.dropdown-menu > li > a:hover,
+.dropdown-menu > li > a:focus {
+    background-color: @themecolor;
+    color: #fff;
+}
+
+.navbar .navbar-nav>.dropdown>a:hover .caret,
+.navbar .navbar-nav>.dropdown>a:focus .caret {
+    border-top-color: @themecolor;
+    border-bottom-color: @themecolor;
+}

@@ -1,0 +1,10 @@
+{
+    "name": "bmbrands/moodle-theme_elegance",
+    "type": "moodle-theme",
+    "require": {
+        "composer/installers": "~1.0"
+    },
+    "extra": {
+        "installer-name": "elegance"
+    }
+}

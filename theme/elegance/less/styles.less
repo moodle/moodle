@@ -1,0 +1,602 @@
+body, html {
+    -webkit-font-smoothing: antialiased; /* webkit prefix - edit font-smoothing property */
+    -moz-font-smoothing: antialiased; /* moz prefix - edit font-smoothing property */
+    -ms-font-smoothing: antialiased; /* ms prefix - edit font-smoothing property */
+    -o-font-smoothing: antialiased; /* o prefix - edit font-smoothing property */
+    font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    margin: 0px;
+    padding: 0px;
+    color: @text-color;
+    background-color: @bodycolor;
+    height: 100%;
+    min-height: 100%;
+    position: relative;
+}
+
+body,
+html {
+    &.path-login {
+        background-color: transparent;
+        background-image: none;
+        #region-main {
+            background-color: transparent;
+            box-shadow: none;
+        }
+    }
+}
+
+
+body.pagelayout-maintenance {
+    background-color: #FFF;
+}
+
+//Fix for https://github.com/bmbrands/moodle-theme_elegance/issues/167
+#page-mod-assign-grader {
+    position: static;
+}
+
+#page {
+    min-height: 100%;
+    position: relative;
+    padding-top: 5px;
+    padding-bottom: @footerheight + 10px;
+}
+
+#page-content-wrapper {
+    position: relative;
+    min-height: 100%;
+    background-color: @bodycolor;
+    background-image: url(@bodybg);
+    background-repeat: @bodybgrepeat;
+    background-position: @bodybgposition;
+    background-attachment: @bodybgattach;
+    background-size: @bodybgsize;
+    margin-top: @navbarpadding;
+}
+
+#page-footer {
+    margin-top: -@footerheight;
+    border: 0;
+    padding: 0;
+}
+
+#theme_switch_link {
+    display: none;
+}
+
+
+ul ul, ul ol, ol ol, ol ul {
+    margin-bottom: 21px;
+}
+
+h1, h2, h3, h4, h5, h6{
+    color: @text-color;
+}
+
+a {
+    color: @themecolor;
+    outline: none;
+}
+
+.container-fluid {
+    max-width: @maxwidth;
+}
+
+body.has_dock {
+    .container-fluid {
+        padding-left: 50px;
+    }
+    #page {
+        padding-left: 0;
+    }
+}
+
+#dockeditempanel .dockeditempanel_content {
+    .eboxshadow;
+    border: 0;
+    border-radius: 0;
+    &.block {
+        padding: 0;
+    }
+}
+
+a:hover, a:focus{
+    outline: none;
+    color: @text-color;
+    text-decoration: none;
+}
+
+body#page-site-index #page-content {
+    margin-top: 20px;
+}
+
+.fa-muted {
+    color: #ddd;
+}
+
+/* @group Buttons */
+
+
+#moodleheader {
+    .eboxshadow;
+    background-image: url(@headerbg);
+    background-color: @themecolor;
+}
+
+#logo {
+    background: url(@logo) no-repeat;
+    height: 25px;
+    width: 120px;
+    background-size: contain;
+}
+
+/* @group Navbar */
+
+.navbar {
+    margin-bottom: 0px;
+}
+.navbar-nav {
+    margin: 0;
+}
+
+.homelink a,
+.sitelink a {
+    float: left;
+    margin-right: 15px;
+    margin-top: -8px;
+    width: 100px;
+    height: 30px;
+    background: url([[pix:theme|moodlelogo]]);
+    color: transparent;
+}
+
+
+.alert {
+    padding: 8px 35px 8px 18px;
+    margin-bottom: 20px;
+    text-shadow: none;
+    background-color: #fcf8e3;
+    border: none;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    font-size: 18px;
+    font-weight: 400;
+    font-family: 'Roboto', sans-serif;
+}
+
+.alert>.icon-calendar,
+.alert>.icon-exclamation-sign,
+.alert>.icon-comment,
+blockquote>.icon-quote-left{
+    margin-right: 10px;
+    font-size: 27px;
+    float: left;
+    position: relative;
+}
+
+.alert>span{
+    padding-left: 37px;
+    display: block;
+}
+
+.alert-success {
+    color: #8b918a;
+    background-color: #EFF5EF;
+    border: 2px solid #c8cec7;
+}
+
+.alert-info {
+    color: #388f9d;
+    background-color: #EFF5F7;
+    border: 2px solid #75ccda;
+}
+
+.alert-danger, .alert-error {
+    color: #ac543d;
+    background-color: #F0EAEA;
+    border: 2px solid #e9917a;
+}
+
+/* @end */
+
+/* @group Icons */
+
+.block_tree .fa {
+    margin-right: 10px;
+}
+
+
+
+.course-content ul li.section.main {
+    padding-bottom: 20px;
+    border: none;
+    border-bottom: 1px dashed rgb(223, 223, 223);
+    margin-bottom: 30px;
+}
+
+
+.single-section h3.sectionname {
+    text-align: left;
+    font-family: "Roboto";
+    font-weight: 400;
+    color: @themecolor;
+    margin-left: 40px;
+    padding-bottom: 8px;
+    border-bottom: 1px d #eee;
+}
+
+
+/* @group Forms */
+
+.guestform{
+    border-top: 1px solid #ccc;
+    margin-top: 21px;
+    padding-top: 21px;
+}
+
+.mform .fitem .felement:first-child{
+    padding-left: 20px;
+}
+
+input#id_submitbutton{
+    margin-right: 10px;
+}
+
+.form-description {
+    clear: left
+}
+
+
+/* @end */
+
+/* @group Profile Image */
+
+
+/* @end */
+
+/* @group social links */
+
+
+/* @end */
+
+/* @group Tabs */
+.nav-tabs > li, .nav-pills > li {
+    float:none;
+    display:inline-block;
+}
+
+.nav-tabs, .nav-pills {
+    text-align:center;
+    margin: 0;
+}
+
+.nav>.disabled>a {
+    color: #000;
+    background: rgba(255,255,255,.50);
+}
+
+.nav-tabs>li.active>a, 
+.nav-tabs>li.active>a:hover, 
+.nav-tabs>li.active>a:focus, 
+.box.message .messagearea 
+.messagehistory 
+.messagehistorytype span.visible {
+    background: rgba(255,255,255,.50);
+}
+
+.nav>.disabled>a:hover {
+    border: 1px solid #ddd;
+}
+ 
+.nav-tabs>li>a {
+    color: #000;
+    cursor: default;
+    border: 1px solid #ddd;
+    border-bottom-color: transparent;
+    background: rgba(221,221,221,.50);
+    &:hover {
+         border: 1px solid #ccc;
+         background: rgba(221,221,221,.30);
+    }
+}
+
+/* @end */
+
+/* @group Gradebook */
+.gradereport-grader-table,
+table#user-grades {
+    background-color: #FFF;
+}
+.gradestable table {
+    border: 1px solid #AAA;
+}
+
+.gradestable tr.category th.cell.rowspan {
+    border-width:0; 
+    border-left:1px solid #AAA;
+}
+
+.gradestable tr.category th.cell.rowspan:hover {
+    background-color: #EEE;
+}
+
+.gradestable td.name {
+    border-left: 0px;
+}
+
+.gradestable td.colspan {
+    border-left: 1px solid #AAA;
+    border-bottom: 1px solid #AAA;
+    border-top: 0;
+    background-color: #DDD;
+}
+
+table#user-grades .catlevel1,
+table#user-grades .catlevel2,
+table#user-grades .catlevel3,
+table#user-grades .catlevel4 {
+    padding: 0px 10px;
+    border-right: 1px solid #ddd;
+}
+
+table#user-grades .catlevel1,
+.user-grade td.oddd1,
+.user-grade td.evend1 {
+    background-color: #fdd4d5 !important;
+}
+
+table#user-grades .catlevel2,
+.user-grade td.oddd2,
+.user-grade td.evend2 {
+    background-color: #d1e7f8 !important;
+}
+
+table#user-grades .catlevel3,
+.user-grade td.oddd3,
+.user-grade td.evend3 {
+    background-color: #e8ffc7 !important;
+}
+
+table#user-grades .catlevel4,
+.user-grade td.oddd4,
+.user-grade td.evend4 {
+    background-color: #fdffc7 !important;
+}
+
+table#user-grades .catlevel5,
+.user-grade td.oddd5,
+.user-grade td.evend5 {
+    background-color: #eed7ea !important;
+}
+
+.user-grade td.evend4 {
+    background-color: #ddd;
+}
+
+.user-grade {
+    border-color: #ddd;
+}
+
+.user-grade thead,
+.user-grade td.b1t, 
+.user-grade td.b2t,
+.user-grade td.b3t,
+.user-grade td.b4t,
+.user-grade td.b5t,
+.user-grade td.b1b,
+.user-grade td.b2b,
+.user-grade td.b3b,
+.user-grade td.b4b,
+.user-grade td.b5b {
+    border-color: #ddd !important;
+}
+
+.user-grade thead {
+    font-size: 1.2em;
+}
+
+table#user-grades .userpicture {
+    border-radius: 20px;
+    margin: 3px;
+    margin-right: 10px;
+    border: 1px solid #AAA;
+}
+
+table#user-grades td.fixedcolumn.cell.topleft.cell.c0 {
+    background: transparent !important;
+    border: 0px none !important;
+}
+
+table#user-grades th.header.useremail {
+    text-align: left;
+    padding-left: 10px;
+}
+
+table#user-grades th.userreport.c1 {
+    border: 1px solid #ddd;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+#grade_edit_tree_table {
+    background: #fff;
+}
+
+#grade_edit_tree_table .select,
+#grade_edit_tree_table input{
+    font-size: .9em;
+}
+
+#grade_edit_tree_table input {
+    width: 40px;
+    padding: 1px 5px;
+}
+
+#grade_edit_tree_table .level1,
+#grade_edit_tree_table .level2,
+#grade_edit_tree_table .level3,
+#grade_edit_tree_table .level4,
+#grade_edit_tree_table .level5 {
+    width: 5px;
+}
+
+
+.path-grade-report-grader .left_scroller #fixed_column th {
+    height: 5em;
+}
+
+.path-grade-report-grader .right_scroller table#user-grades td.grade{
+    height: 5em;
+}
+
+.pagelayout-report .no-overflow {
+    overflow: auto;
+}
+
+.path-mod-glossary .glossarypost .concept h4 {
+    margin-bottom: 0px;
+}
+
+.path-mod-glossary .glossarypost .time {
+    font-size: .7em;
+}
+
+#page-site-index .mdl-align {
+    width: 100%;
+}
+
+
+.back-to-top [class^="icon-"] {
+    font-size: 3em;
+}
+
+.back-to-top{
+    position: fixed;
+    top: 85%;
+    right: 15px;
+    display: none;
+    text-align:center; 
+    font:9px; 
+    text-transform:uppercase; 
+    text-decoration:none;
+    -webkit-transition: all .3s ease 0s;
+    -moz-transition: all .3s ease 0s;
+    -o-transition: all .3s ease 0s;
+    background-color: #000;
+    background-color: rgba(0, 0, 0, 0.25);
+    -webkit-box-shadow: 0 0 1px #fff;
+    -moz-box-shadow: 0 0 1px #fff;
+    box-shadow: 0 0 1px #fff;
+    padding: 5px 12px;
+    color: #fff;
+    border-radius: 5px;
+}
+
+.back-to-top:hover{
+    text-decoration: none;
+    color: #000;
+}
+
+.back-to-top a,
+.back-to-top a:visited {
+    color: #fff !important;
+}
+
+/* @end */
+
+/* @group Calendar */
+
+#page-calendar-view .maincalendar h2:before {
+    font-family: FontAwesome;
+    content:"\f073";
+    margin-right: 5px;
+    color: #999;
+}
+
+.path-calendar .maincalendar .calendarmonth {
+    background: rgba(255,255,255,.50);
+    box-shadow: 0px 3px 5px rgba(68,68,68,.30);
+    border-radius: 4px;
+}
+
+.calendar_filters {
+    padding-left:21px;
+}
+
+.block .content h3.eventskey {
+    font-size: 14px;
+    margin-left: 0.5em;
+}
+
+/* @end */
+
+/* @group Messages */
+
+#newmessageoverlay a {
+    text-decoration: none;
+    font-size: .8em;
+    color: #fff;
+    background: #0098e0;
+    padding: 5px;
+    border: 1px solid #b4b4b7;
+    border-radius: 3px;
+    -webkit-transition: 0.25s;
+    -moz-transition: 0.25s;
+    -o-transition: 0.25s;
+    transition: 0.25s;
+    font-family: "Roboto";
+}
+
+
+#site-news-forum h2::before {
+    font-family: FontAwesome;
+    content:"\f0a1";
+    margin-right: 5px;
+    color: #999;
+}
+
+
+.frontpage-course-list-enrolled .paging-morelink a:hover {
+    background: @themecolor;
+    color: #fff;
+}
+
+#frontpage-course-list h2::before,
+#frontpage-category-combo h2::before {
+    font-family: FontAwesome;
+    content:"\f109";
+    margin-right: 5px;
+    color: #999;
+}
+
+#frontpage-category-names h2::before {
+    font-family: FontAwesome;
+    content:"\f07c";
+    margin-right: 10px;
+    color: #999;
+}
+
+.guestform {
+    border-top: 0px none;
+}
+
+.box.message .contactselector,
+.box.message .messagearea,
+.messagesend {
+    width: 100%;
+}
+
+table.flexible, .generaltable {
+    font-size: .9em;
+}
+
+.userenrolment {
+    font-size: .8em;
+}
+
+
+.fluid-width-video-wrapper {
+    max-width: @videowidth;
+}

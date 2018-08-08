@@ -1,0 +1,115 @@
+.carousel {
+    position: relative;
+    width: 100%;
+    height: 250px;
+    overflow: auto;
+    font-size: 18px;
+    line-height: 24px;
+    text-align: center;
+    color: rgba(255,255,255,.6);
+    text-shadow: 0 0 1px rgba(0,0,0,.05), 0 1px 2px rgba(0,0,0,.3);
+    background: #000;
+    .eboxshadow;
+
+    .carousel-inner {
+        height: 250px;
+        .item {
+            height: 250px;
+        }
+    }
+
+    ul {
+        list-style: none;
+        width: 300%;
+        margin-left: 0px;
+    }
+
+    ul li {
+        display: block;
+        float: left;
+        width: 33%;
+        min-height: 250px;
+        padding-top: 20px;
+            
+    /*  -webkit-background-size: 100% 100%;*/
+        -moz-background-size: 100% 100%;
+        -o-background-size: 100% 100%;
+        -ms-background-size: 100% 100%;
+    /*  background-size: 100% 100%;*/
+            
+        box-shadow: inset 0 -3px 6px rgba(0,0,0,.1);
+    }
+        
+    h1, h2 {
+        font-size: 40px;
+        line-height: 52px;
+        color: #fff;
+        font-family: 'Bree Serif', serif;
+        font-weight: 300;
+        margin: 0;
+    }
+
+    p {
+        color: #fff;
+    }
+        
+    .btn {
+        display: inline-block;
+        margin: 25px 0 0;
+        padding: 9px 22px 7px;
+        clear: both;
+        color: #fff;
+        font-size: 12px;
+        font-weight: bold;
+        text-transform: uppercase;
+        text-decoration: none;
+        border: 2px solid rgba(255,255,255,.4);
+        border-radius: 5px;
+        background: transparent;
+    }
+
+    .btn:hover {
+        background: "[[setting:themecolor]]";
+    }
+
+    .btn:active {
+        -webkit-filter: drop-shadow(0 -1px 2px rgba(0,0,0,.5));
+        -moz-filter: drop-shadow(0 -1px 2px rgba(0,0,0,.5));
+        -ms-filter: drop-shadow(0 -1px 2px rgba(0,0,0,.5));
+        -o-filter: drop-shadow(0 -1px 2px rgba(0,0,0,.5));
+        filter: drop-shadow(0 -1px 2px rgba(0,0,0,.5));
+    }
+            
+    .btn, .dot {
+        -webkit-filter: drop-shadow(0 1px 2px rgba(0,0,0,.3));
+        -moz-filter: drop-shadow(0 1px 2px rgba(0,0,0,.3));
+        -ms-filter: drop-shadow(0 1px 2px rgba(0,0,0,.3));
+        -o-filter: drop-shadow(0 1px 2px rgba(0,0,0,.3));
+        filter: drop-shadow(0 1px 2px rgba(0,0,0,.3));
+    }
+        
+
+    .carousel-indicators li {
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        margin: 0 4px;
+                
+        text-indent: -999em;
+                
+        border: 2px solid #fff;
+        border-radius: 6px;
+                
+        cursor: pointer;
+        opacity: .4;
+                
+        -webkit-transition: background .5s, opacity .5s;
+        -moz-transition: background .5s, opacity .5s;
+        transition: background .5s, opacity .5s;
+    }
+
+    .dots li.active {
+        background: #fff;
+        opacity: 1;
+    }
+}
