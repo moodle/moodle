@@ -7,6 +7,7 @@ information provided here is intended especially for developers.
   callback. If a string is returned, it is displayed instead of the list of suggested items. This can be used, for
   example, to inform the user that there are too many items matching the current search criteria.
 * The form element 'htmleditor' has been deprecated. Please use the 'editor' element instead.
+* The print_textarea() function has been deprecated. Please use $OUTPUT->print_textarea() instead.
 * The following functions have been finally deprecated and can not be used any more:
     - external_function_info()
     - core_renderer::update_module_button()
