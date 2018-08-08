@@ -2043,7 +2043,7 @@ function content_to_text($content, $contentformat) {
  * @return array
  */
 function extract_draft_file_urls_from_text($text, $forcehttps = false, $contextid = null, $component = null,
-        $filearea = null, $itemid = null, $filename = null) {
+                                           $filearea = null, $itemid = null, $filename = null) {
     global $CFG;
 
     $wwwroot = $CFG->wwwroot;

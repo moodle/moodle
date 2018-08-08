@@ -882,9 +882,7 @@ function file_remove_editor_orphaned_files($editor) {
  *
  * @return string $text html content modified with new draft links
  */
-function file_merge_draft_areas($draftitemid, $usercontextid, $text, $forcehttps=false) {
-    global $CFG;
-
+function file_merge_draft_areas($draftitemid, $usercontextid, $text, $forcehttps = false) {
     if (is_null($text)) {
         return null;
     }
@@ -984,10 +982,16 @@ function file_copy_file_to_file_area($file, $filename, $itemid) {
         'filename' => $filename
     );
 
+    $newcontextid = $newfileinfo['contextid'];
+    $newcomponent = $newfileinfo['component'];
+    $newfilearea = $newfileinfo['filearea'];
+    $newitemid = $newfileinfo['itemid'];
+    $newfilepath = $newfileinfo['filepath'];
+    $newfilename = $newfileinfo['filename'];
+
     // Check if the file exists.
-    if ( ! $fs->file_exists($newfileinfo['contextid'], $newfileinfo['component'], $newfileinfo['filearea'],
-        $newfileinfo['itemid'], $newfileinfo['filepath'], $newfileinfo['filename']) ) {
-            $newfile = $fs->create_file_from_storedfile($newfileinfo, $oldfile);
+    if (!$fs->file_exists($newcontextid, $newcomponent, $newfilearea, $newitemid, $newfilepath, $newfilename)) {
+        $fs->create_file_from_storedfile($newfileinfo, $oldfile);
     }
 }
 

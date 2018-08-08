@@ -1504,7 +1504,7 @@ EOF;
         ];
 
         // Copy file2 into file1's draft area.
-        $newfile = file_copy_file_to_file_area($filerecord, $file2->get_filename(), $file1->get_itemid());
+        file_copy_file_to_file_area($filerecord, $file2->get_filename(), $file1->get_itemid());
         $draftfiles = $fs->get_area_files($usercontext->id, 'user', 'draft', $file1->get_itemid(), 'itemid', 0);
         $this->assertCount(2, $draftfiles);
         $draftfiles = $fs->get_area_files($usercontext->id, 'user', 'draft', $file2->get_itemid(), 'itemid', 0);

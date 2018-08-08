@@ -932,7 +932,7 @@ EXPECTED;
                 6 => 'test2.jpg'
             )
         );
-        $extracteddraftareas = extract_draft_file_urls_from_text($html, 5, 'user', 'draft');
+        $extracteddraftareas = extract_draft_file_urls_from_text($html, false, 5, 'user', 'draft');
         $this->assertEquals($draftareas, $extracteddraftareas);
     }
 }
