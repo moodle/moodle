@@ -39,7 +39,7 @@ information provided here is intended especially for developers.
     - get_logs_userday()
     - get_logs()
     - prevent_form_autofill_password()
-* The following classes have been finally deprecated and can not be used any more:
+    - prefixed_tablenode_transformations()
     - core_media_renderer
     - core_media
 * Following api's have been removed in behat_config_manager, please use behat_config_util instead.
