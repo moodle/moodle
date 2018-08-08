@@ -522,4 +522,14 @@ abstract class base {
     public function get_contexts_to_reindex() {
         return new \ArrayIterator([\context_system::instance()]);
     }
+
+    /**
+     * Returns an icon instance for the document.
+     *
+     * @param \core_search\document $doc
+     * @return \core_search\document_icon
+     */
+    public function get_doc_icon(document $doc) : document_icon {
+        return new document_icon('i/empty');
+    }
 }

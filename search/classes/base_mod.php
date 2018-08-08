@@ -286,4 +286,14 @@ abstract class base_mod extends base {
     public function restrict_cm_access_by_group(\cm_info $cm) {
         return $cm->effectivegroupmode == SEPARATEGROUPS;
     }
+
+    /**
+     * Returns an icon instance for the document.
+     *
+     * @param \core_search\document $doc
+     * @return \core_search\document_icon
+     */
+    public function get_doc_icon(document $doc) : document_icon {
+        return new document_icon('icon', $this->get_module_name());
+    }
 }
