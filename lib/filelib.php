@@ -871,6 +871,131 @@ function file_remove_editor_orphaned_files($editor) {
 }
 
 /**
+ * Finds all draft areas used in a textarea and copies the files into the primary textarea. If a user copies and pastes
+ * content from another draft area it's possible for a single textarea to reference multiple draft areas.
+ *
+ * @category files
+ * @param int $draftitemid the id of the primary draft area.
+ * @param int $usercontextid the user's context id.
+ * @param string $text some html content that needs to have files copied to the correct draft area.
+ * @param bool $forcehttps force https urls.
+ *
+ * @return string $text html content modified with new draft links
+ */
+function file_merge_draft_areas($draftitemid, $usercontextid, $text, $forcehttps = false) {
+    if (is_null($text)) {
+        return null;
+    }
+
+    $urls = extract_draft_file_urls_from_text($text, $forcehttps, $usercontextid, 'user', 'draft');
+
+    // No draft areas to rewrite.
+    if (empty($urls)) {
+        return $text;
+    }
+
+    foreach ($urls as $url) {
+        // Do not process the "home" draft area.
+        if ($url['itemid'] == $draftitemid) {
+            continue;
+        }
+
+        // Decode the filename.
+        $filename = urldecode($url['filename']);
+
+        // Copy the file.
+        file_copy_file_to_file_area($url, $filename, $draftitemid);
+
+        // Rewrite draft area.
+        $text = file_replace_file_area_in_text($url, $draftitemid, $text, $forcehttps);
+    }
+    return $text;
+}
+
+/**
+ * Rewrites a file area in arbitrary text.
+ *
+ * @param array $file General information about the file.
+ * @param int $newid The new file area itemid.
+ * @param string $text The text to rewrite.
+ * @param bool $forcehttps force https urls.
+ * @return string The rewritten text.
+ */
+function file_replace_file_area_in_text($file, $newid, $text, $forcehttps = false) {
+    global $CFG;
+
+    $wwwroot = $CFG->wwwroot;
+    if ($forcehttps) {
+        $wwwroot = str_replace('http://', 'https://', $wwwroot);
+    }
+
+    $search = [
+        $wwwroot,
+        $file['urlbase'],
+        $file['contextid'],
+        $file['component'],
+        $file['filearea'],
+        $file['itemid'],
+        $file['filename']
+    ];
+    $replace = [
+        $wwwroot,
+        $file['urlbase'],
+        $file['contextid'],
+        $file['component'],
+        $file['filearea'],
+        $newid,
+        $file['filename']
+    ];
+
+    $text = str_ireplace( implode('/', $search), implode('/', $replace), $text);
+    return $text;
+}
+
+/**
+ * Copies a file from one file area to another.
+ *
+ * @param array $file Information about the file to be copied.
+ * @param string $filename The filename.
+ * @param int $itemid The new file area.
+ */
+function file_copy_file_to_file_area($file, $filename, $itemid) {
+    $fs = get_file_storage();
+
+    // Load the current file in the old draft area.
+    $fileinfo = array(
+        'component' => $file['component'],
+        'filearea' => $file['filearea'],
+        'itemid' => $file['itemid'],
+        'contextid' => $file['contextid'],
+        'filepath' => '/',
+        'filename' => $filename
+    );
+    $oldfile = $fs->get_file($fileinfo['contextid'], $fileinfo['component'], $fileinfo['filearea'],
+        $fileinfo['itemid'], $fileinfo['filepath'], $fileinfo['filename']);
+    $newfileinfo = array(
+        'component' => $file['component'],
+        'filearea' => $file['filearea'],
+        'itemid' => $itemid,
+        'contextid' => $file['contextid'],
+        'filepath' => '/',
+        'filename' => $filename
+    );
+
+    $newcontextid = $newfileinfo['contextid'];
+    $newcomponent = $newfileinfo['component'];
+    $newfilearea = $newfileinfo['filearea'];
+    $newitemid = $newfileinfo['itemid'];
+    $newfilepath = $newfileinfo['filepath'];
+    $newfilename = $newfileinfo['filename'];
+
+    // Check if the file exists.
+    if (!$fs->file_exists($newcontextid, $newcomponent, $newfilearea, $newitemid, $newfilepath, $newfilename)) {
+        $fs->create_file_from_storedfile($newfileinfo, $oldfile);
+    }
+}
+
+/**
  * Saves files from a draft file area to a real one (merging the list of files).
  * Can rewrite URLs in some content at the same time if desired.
  *
@@ -914,6 +1039,10 @@ function file_save_draft_area_files($draftitemid, $contextid, $component, $filea
         // are not passed to file_save_draft_area_files()
         $allowreferences = false;
     }
+
+    // Check if the user has copy-pasted from other draft areas. Those files will be located in different draft
+    // areas and need to be copied into the current draft area.
+    $text = file_merge_draft_areas($draftitemid, $usercontext->id, $text, $forcehttps);
 
     // Check if the draft area has exceeded the authorised limit. This should never happen as validation
     // should have taken place before, unless the user is doing something nauthly. If so, let's just not save

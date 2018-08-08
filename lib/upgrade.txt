@@ -76,6 +76,11 @@ information provided here is intended especially for developers.
 * Following functions have been deprecated, please use get_roles_used_in_context.
     - get_roles_on_exact_context()
     - get_roles_with_assignment_on_context()
+* New functions to support the merging of user draft areas from the interface; see MDL-45170 for details:
+  - file_copy_file_to_file_area()
+  - file_merge_draft_areas()
+  - file_replace_file_area_in_text()
+  - extract_draft_file_urls_from_text()
 
 === 3.5 ===
 

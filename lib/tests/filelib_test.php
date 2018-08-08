@@ -1473,6 +1473,43 @@ EOF;
         $this->assertEquals($fourthrecord['filename'], $allfiles[3]->filename);
         $this->assertEquals($fifthrecord['filename'], $allfiles[4]->filename);
     }
+
+    public function test_file_copy_file_to_file_area() {
+        // Create two files in different draft areas but owned by the same user.
+        global $USER;
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        $filerecord = ['filename'  => 'file1.png', 'itemid' => file_get_unused_draft_itemid()];
+        $file1 = self::create_draft_file($filerecord);
+        $filerecord = ['filename'  => 'file2.png', 'itemid' => file_get_unused_draft_itemid()];
+        $file2 = self::create_draft_file($filerecord);
+
+        // Confirm one file in each draft area.
+        $fs = get_file_storage();
+        $usercontext = context_user::instance($USER->id);
+        $draftfiles = $fs->get_area_files($usercontext->id, 'user', 'draft', $file1->get_itemid(), 'itemid', 0);
+        $this->assertCount(1, $draftfiles);
+        $draftfiles = $fs->get_area_files($usercontext->id, 'user', 'draft', $file2->get_itemid(), 'itemid', 0);
+        $this->assertCount(1, $draftfiles);
+
+        // Create file record.
+        $filerecord = [
+            'component' => $file2->get_component(),
+            'filearea' => $file2->get_filearea(),
+            'itemid' => $file2->get_itemid(),
+            'contextid' => $file2->get_contextid(),
+            'filepath' => '/',
+            'filename' => $file2->get_filename()
+        ];
+
+        // Copy file2 into file1's draft area.
+        file_copy_file_to_file_area($filerecord, $file2->get_filename(), $file1->get_itemid());
+        $draftfiles = $fs->get_area_files($usercontext->id, 'user', 'draft', $file1->get_itemid(), 'itemid', 0);
+        $this->assertCount(2, $draftfiles);
+        $draftfiles = $fs->get_area_files($usercontext->id, 'user', 'draft', $file2->get_itemid(), 'itemid', 0);
+        $this->assertCount(1, $draftfiles);
+    }
 }
 
 /**

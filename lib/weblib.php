@@ -2030,6 +2030,63 @@ function content_to_text($content, $contentformat) {
 }
 
 /**
+ * Factory method for extracting draft file links from arbitrary text using regular expressions. Only text
+ * is required; other file fields may be passed to filter.
+ *
+ * @param string $text Some html content.
+ * @param bool $forcehttps force https urls.
+ * @param int $contextid This parameter and the next three identify the file area to save to.
+ * @param string $component The component name.
+ * @param string $filearea The filearea.
+ * @param int $itemid The item id for the filearea.
+ * @param string $filename The specific filename of the file.
+ * @return array
+ */
+function extract_draft_file_urls_from_text($text, $forcehttps = false, $contextid = null, $component = null,
+                                           $filearea = null, $itemid = null, $filename = null) {
+    global $CFG;
+
+    $wwwroot = $CFG->wwwroot;
+    if ($forcehttps) {
+        $wwwroot = str_replace('http://', 'https://', $wwwroot);
+    }
+    $urlstring = '/' . preg_quote($wwwroot, '/');
+
+    $urlbase = preg_quote('draftfile.php');
+    $urlstring .= "\/(?<urlbase>{$urlbase})";
+
+    if (is_null($contextid)) {
+        $contextid = '[0-9]+';
+    }
+    $urlstring .= "\/(?<contextid>{$contextid})";
+
+    if (is_null($component)) {
+        $component = '[a-z_]+';
+    }
+    $urlstring .= "\/(?<component>{$component})";
+
+    if (is_null($filearea)) {
+        $filearea = '[a-z_]+';
+    }
+    $urlstring .= "\/(?<filearea>{$filearea})";
+
+    if (is_null($itemid)) {
+        $itemid = '[0-9]+';
+    }
+    $urlstring .= "\/(?<itemid>{$itemid})";
+
+    // Filename matching magic based on file_rewrite_urls_to_pluginfile().
+    if (is_null($filename)) {
+        $filename = '[^\'\",&<>|`\s:\\\\]+';
+    }
+    $urlstring .= "\/(?<filename>{$filename})/";
+
+    // Regular expression which matches URLs and returns their components.
+    preg_match_all($urlstring, $text, $urls, PREG_SET_ORDER);
+    return $urls;
+}
+
+/**
  * This function will highlight search words in a given string
  *
  * It cares about HTML and will not ruin links.  It's best to use
