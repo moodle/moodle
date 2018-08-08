@@ -248,14 +248,16 @@ class format_buttons_renderer extends format_topics_renderer
                 $onclick = false;
             }
 
-            $html .= html_writer::start_tag('li',['class' => 'nav-item', 'data-position' => $section]);
-            $html .= html_writer::start_tag('a',['href' => "#section$section",'class' => "nav-link $class", 'aria-controls' => "section-$section"]);
+            $html .= html_writer::start_tag('li',['class' => 'nav-item', 'data-section' => $section]);
+            // $html .= html_writer::start_tag('a',['href' => "#section$section",'class' => "nav-link $class", 'aria-controls' => "section-$section"]);
+            $html .= html_writer::start_tag('div',['class' => 'd-flex flex-row section-header justify-content-center align-items-center']);
+            $html .= html_writer::tag('span', '', ['class' => 'section-icon d-inline-flex p-2 justify-content-center align-items-center']);
             $html .= html_writer::start_tag('div',['class' => 'd-flex flex-column section-header']);
-            $html .= html_writer::tag('span', '', ['class' => 'section-icon']);
             $html .= html_writer::tag('span', get_section_name($course, $section), ['class' => 'lead section-title']);
             $html .= html_writer::tag('p', "$thissection->summary", ['class' => 'section-description']);
             $html .= html_writer::end_tag('div');
-            $html .= html_writer::end_tag('a');
+            $html .= html_writer::end_tag('div');
+            // $html .= html_writer::end_tag('a');
             $html .= html_writer::end_tag('li');
 
             $count++;
@@ -500,14 +502,14 @@ class format_buttons_renderer extends format_topics_renderer
                 if (!$PAGE->user_is_editing()) {
                     // our labels output into sections except 0
 
-                    $htmlsection[$section] .=  html_writer::start_tag('div',['id' => "section$section",'class' => "section-content  $currentsectionclass", 'role' => 'section content']);
-                    $htmlsection[$section] .=  html_writer::start_tag('div',['class' => 'd-flex flex-md-row-reverse']);
+                    $htmlsection[$section] .=  html_writer::start_tag('div',['id' => "section$section",'class' => "section-content  $currentsectionclass", 'role' => 'section content' ]);
+                    $htmlsection[$section] .=  html_writer::start_tag('div',['class' => 'd-flex flex-xs-column flex-md-row-reverse']);
                     $htmlsection[$section] .=  html_writer::start_tag('div',['class' => 'col col-md-2 labels-wrapper']);
                     $htmlsection[$section] .=  html_writer::start_tag('ul',['id' => 'labels', 'class' => 'nav flex-column flex-nowrap slider labels', 'role' => 'labels list']);
                     $htmlsection[$section] .=  $this->labels_list($course, $thissection);
                     $htmlsection[$section] .=  html_writer::end_tag('ul');
                     $htmlsection[$section] .=  html_writer::end_tag('div');
-                    $htmlsection[$section] .=  html_writer::start_tag('div',['class' => 'label-content col col-md-10']);
+                    $htmlsection[$section] .=  html_writer::start_tag('div',['class' => 'label-content-wrapper col col-md-10']);
                     $htmlsection[$section] .=  $this->labels_content($course, $thissection);
                     $htmlsection[$section] .=  html_writer::end_tag('div');
                     $htmlsection[$section] .=  html_writer::end_tag('div');
@@ -758,11 +760,15 @@ class format_buttons_renderer extends format_topics_renderer
             }
 
             // kadima render
-            $output .=  html_writer::start_tag('li',['class' => 'nav-item', 'data-appearence'=>$modnum]);
-            $output .= html_writer::start_tag('a',['href' => "#label{$modnum}",'class' => "nav-link label-link", 'data-toggle' => 'd-none', 'aria-controls' => "label{$modnum}"]);
-            $output .= html_writer::tag('span', '', ['class' => 'label-icon', 'style' => "background: url({$licon}) no-repeat; background-size: contain;"]);
+            $output .=  html_writer::start_tag('li',['class' => 'nav-item label-item', 'data-label'=>$modnum]);
+            $output .= html_writer::start_tag('div', ['class'=> 'd-flex flex-row label-header justify-content-center align-items-center']);
+            // $output .= html_writer::start_tag('a',['href' => "#label{$modnum}",'class' => "nav-link label-link", 'aria-controls' => "label{$modnum}"]);
+            $output .= html_writer::tag('span', '', ['class' => 'label-icon d-inline-flex p-2 justify-content-center align-items-center', 'style' => "background: url({$licon}) no-repeat; background-size: contain;"]);
+            $output .= html_writer::start_tag('div', ['class'=> 'd-flex flex-column']);
             $output .= $content[1];
-            $output .= html_writer::end_tag('a');
+            $output .= html_writer::end_tag('div');
+            // $output .= html_writer::end_tag('a');
+            $output .= html_writer::end_tag('div');
             $output .= html_writer::end_tag('li');
 
             // first test render - for reference
@@ -786,7 +792,7 @@ class format_buttons_renderer extends format_topics_renderer
         $output = '';
         foreach ($labels as $modnum => $content) {
 
-            $output .= html_writer::tag('div', $content[3], ['id' => "label{$modnum}", 'class' => 'label-content', 'role' => 'label content']);
+            $output .= html_writer::tag('div', $content[3], ['id' => "label{$modnum}", 'class' => 'label-content d-none', 'role' => 'label content']);
 
             // first test render - for reference
             // $output .= "<div class = 'label_content' id='label_content_{$modnum}'>";
