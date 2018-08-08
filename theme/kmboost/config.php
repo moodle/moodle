@@ -36,11 +36,16 @@ $THEME->scss = function($theme) {
 
 $THEME->layouts = [
     'frontpage' => array(
-        'file' => 'columns2.php',
+        'file' => 'frontpage.php',
         'regions' => array(),
         'defaultregion' => '',
         'options' => array('nonavbar' => true),
-    )
+    ),
+     'coursecategory' => array(
+            'file' => 'categories.php',
+            'regions' => []
+
+        ),
 
 ];
 
