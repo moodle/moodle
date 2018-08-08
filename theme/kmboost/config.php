@@ -30,18 +30,19 @@ $THEME->name = 'kmboost';
 $THEME->sheets = [];
 $THEME->editor_sheets = [];
 $THEME->usefallback = true;
-//$THEME->scss = function($theme) {
-//    return theme_boost_get_main_scss_content($theme);
-//};
+$THEME->scss = function($theme) {
+    return theme_boost_get_main_scss_content($theme);
+};
 
-//$THEME->layouts = [
-//    // Most backwards compatible layout without the blocks - this is the layout used by default.
-//    'base' => array(
-//        'file' => 'columns2.php',
-//        'regions' => array(),
-//    ),
-//
-//];
+$THEME->layouts = [
+    'frontpage' => array(
+        'file' => 'columns2.php',
+        'regions' => array(),
+        'defaultregion' => '',
+        'options' => array('nonavbar' => true),
+    )
+
+];
 
 $THEME->parents = ['boost'];
 $THEME->rendererfactory = 'theme_overridden_renderer_factory';
