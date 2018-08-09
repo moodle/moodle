@@ -1070,7 +1070,7 @@ class calendar_information {
             $category = (\coursecat::get($course->category, MUST_EXIST, true))->get_db_record();
         } else if (!empty($categoryid)) {
             $course = get_site();
-            $courses = calendar_get_default_courses();
+            $courses = calendar_get_default_courses(null, 'id, category, groupmode, groupmodeforce');
 
             // Filter available courses to those within this category or it's children.
             $ids = [$categoryid];
@@ -1084,7 +1084,7 @@ class calendar_information {
             $calendar->context = context_coursecat::instance($categoryid);
         } else {
             $course = get_site();
-            $courses = calendar_get_default_courses();
+            $courses = calendar_get_default_courses(null, 'id, category, groupmode, groupmodeforce');
             $category = null;
 
             $calendar->context = context_system::instance();
@@ -2039,34 +2039,29 @@ function calendar_events_by_day($events, $month, $year, &$eventsbyday, &$duratio
  *
  * @param array $courseeventsfrom An array of courses to load calendar events for
  * @param bool $ignorefilters specify the use of filters, false is set as default
+ * @param stdClass $user The user object. This defaults to the global $USER object.
  * @return array An array of courses, groups, and user to load calendar events for based upon filters
  */
-function calendar_set_filters(array $courseeventsfrom, $ignorefilters = false) {
-    global $USER, $CFG;
+function calendar_set_filters(array $courseeventsfrom, $ignorefilters = false, stdClass $user = null) {
+    global $CFG, $USER;
 
-    // For backwards compatability we have to check whether the courses array contains
-    // just id's in which case we need to load course objects.
-    $coursestoload = array();
-    foreach ($courseeventsfrom as $id => $something) {
-        if (!is_object($something)) {
-            $coursestoload[] = $id;
-            unset($courseeventsfrom[$id]);
-        }
+    if (is_null($user)) {
+        $user = $USER;
     }
 
     $courses = array();
-    $user = false;
+    $userid = false;
     $group = false;
 
     // Get the capabilities that allow seeing group events from all groups.
     $allgroupscaps = array('moodle/site:accessallgroups', 'moodle/calendar:manageentries');
 
-    $isloggedin = isloggedin();
+    $isvaliduser = !empty($user->id);
 
-    if ($ignorefilters || calendar_show_event_type(CALENDAR_EVENT_COURSE)) {
+    if ($ignorefilters || calendar_show_event_type(CALENDAR_EVENT_COURSE, $user)) {
         $courses = array_keys($courseeventsfrom);
     }
-    if ($ignorefilters || calendar_show_event_type(CALENDAR_EVENT_GLOBAL)) {
+    if ($ignorefilters || calendar_show_event_type(CALENDAR_EVENT_GLOBAL, $user)) {
         $courses[] = SITEID;
     }
     $courses = array_unique($courses);
@@ -2080,11 +2075,11 @@ function calendar_set_filters(array $courseeventsfrom, $ignorefilters = false) {
         $courses[] = SITEID;
     }
 
-    if ($ignorefilters || ($isloggedin && calendar_show_event_type(CALENDAR_EVENT_USER))) {
-        $user = $USER->id;
+    if ($ignorefilters || ($isvaliduser && calendar_show_event_type(CALENDAR_EVENT_USER, $user))) {
+        $userid = $user->id;
     }
 
-    if (!empty($courseeventsfrom) && (calendar_show_event_type(CALENDAR_EVENT_GROUP) || $ignorefilters)) {
+    if (!empty($courseeventsfrom) && (calendar_show_event_type(CALENDAR_EVENT_GROUP, $user) || $ignorefilters)) {
 
         if (count($courseeventsfrom) == 1) {
             $course = reset($courseeventsfrom);
@@ -2096,16 +2091,16 @@ function calendar_set_filters(array $courseeventsfrom, $ignorefilters = false) {
         if ($group === false) {
             if (!empty($CFG->calendar_adminseesall) && has_any_capability($allgroupscaps, \context_system::instance())) {
                 $group = true;
-            } else if ($isloggedin) {
+            } else if ($isvaliduser) {
                 $groupids = array();
                 foreach ($courseeventsfrom as $courseid => $course) {
                     // If the user is an editing teacher in there.
-                    if (!empty($USER->groupmember[$course->id])) {
+                    if (!empty($user->groupmember[$course->id])) {
                         // We've already cached the users groups for this course so we can just use that.
-                        $groupids = array_merge($groupids, $USER->groupmember[$course->id]);
+                        $groupids = array_merge($groupids, $user->groupmember[$course->id]);
                     } else if ($course->groupmode != NOGROUPS || !$course->groupmodeforce) {
                         // If this course has groups, show events from all of those related to the current user.
-                        $coursegroups = groups_get_user_groups($course->id, $USER->id);
+                        $coursegroups = groups_get_user_groups($course->id, $user->id);
                         $groupids = array_merge($groupids, $coursegroups['0']);
                     }
                 }
@@ -2119,7 +2114,7 @@ function calendar_set_filters(array $courseeventsfrom, $ignorefilters = false) {
         $courses = false;
     }
 
-    return array($courses, $group, $user);
+    return array($courses, $group, $userid);
 }
 
 /**
@@ -2317,20 +2312,25 @@ function calendar_delete_event_allowed($event) {
  *
  * @param int $courseid (optional) If passed, an additional course can be returned for admins (the current course).
  * @param string $fields Comma separated list of course fields to return.
- * @param bool $canmanage If true, this will return the list of courses the current user can create events in, rather
+ * @param bool $canmanage If true, this will return the list of courses the user can create events in, rather
  *                        than the list of courses they see events from (an admin can always add events in a course
  *                        calendar, even if they are not enrolled in the course).
+ * @param int $userid (optional) The user which this function returns the default courses for.
+ *                        By default the current user.
  * @return array $courses Array of courses to display
  */
-function calendar_get_default_courses($courseid = null, $fields = '*', $canmanage=false) {
-    global $CFG, $DB;
+function calendar_get_default_courses($courseid = null, $fields = '*', $canmanage = false, int $userid = null) {
+    global $CFG, $USER;
 
-    if (!isloggedin()) {
-        return array();
+    if (!$userid) {
+        if (!isloggedin()) {
+            return array();
+        }
+        $userid = $USER->id;
     }
 
-    if (has_capability('moodle/calendar:manageentries', context_system::instance()) &&
-            (!empty($CFG->calendar_adminseesall) || $canmanage)) {
+    if ((!empty($CFG->calendar_adminseesall) || $canmanage) &&
+            has_capability('moodle/calendar:manageentries', context_system::instance(), $userid)) {
 
         // Add a c. prefix to every field as expected by get_courses function.
         $fieldlist = explode(',', $fields);
@@ -2340,11 +2340,11 @@ function calendar_get_default_courses($courseid = null, $fields = '*', $canmanag
         }, $fieldlist);
         $courses = get_courses('all', 'c.shortname', implode(',', $prefixedfields));
     } else {
-        $courses = enrol_get_my_courses($fields);
+        $courses = enrol_get_users_courses($userid, true, $fields);
     }
 
     if ($courseid && $courseid != SITEID) {
-        if (empty($courses[$courseid]) && has_capability('moodle/calendar:manageentries', context_system::instance())) {
+        if (empty($courses[$courseid]) && has_capability('moodle/calendar:manageentries', context_system::instance(), $userid)) {
             // Allow a site admin to see calendars from courses he is not enrolled in.
             // This will come from $COURSE.
             $courses[$courseid] = get_course($courseid);
@@ -3326,6 +3326,11 @@ function calendar_get_legacy_events($tstart, $tend, $users, $groups, $courses,
         return $param;
     }, [$users, $groups, $courses, $categories]);
 
+    // If a single user is provided, we can use that for capability checks.
+    // Otherwise current logged in user is used - See MDL-58768.
+    if (is_array($userparam) && count($userparam) == 1) {
+        \core_calendar\local\event\container::set_requesting_user($userparam[0]);
+    }
     $mapper = \core_calendar\local\event\container::get_event_mapper();
     $events = \core_calendar\local\api::get_events(
         $tstart,
@@ -3506,18 +3511,18 @@ function calendar_get_view(\calendar_information $calendar, $view, $includenavig
  */
 function calendar_output_fragment_event_form($args) {
     global $CFG, $OUTPUT, $USER;
-
+    require_once($CFG->libdir . '/grouplib.php');
     $html = '';
     $data = [];
     $eventid = isset($args['eventid']) ? clean_param($args['eventid'], PARAM_INT) : null;
     $starttime = isset($args['starttime']) ? clean_param($args['starttime'], PARAM_INT) : null;
-    $courseid = isset($args['courseid']) ? clean_param($args['courseid'], PARAM_INT) : null;
+    $courseid = (isset($args['courseid']) && $args['courseid'] != SITEID) ? clean_param($args['courseid'], PARAM_INT) : null;
     $categoryid = isset($args['categoryid']) ? clean_param($args['categoryid'], PARAM_INT) : null;
     $event = null;
     $hasformdata = isset($args['formdata']) && !empty($args['formdata']);
     $context = \context_user::instance($USER->id);
     $editoroptions = \core_calendar\local\event\forms\create::build_editor_options($context);
-    $formoptions = ['editoroptions' => $editoroptions];
+    $formoptions = ['editoroptions' => $editoroptions, 'courseid' => $courseid];
     $draftitemid = 0;
 
     if ($hasformdata) {
@@ -3532,6 +3537,13 @@ function calendar_output_fragment_event_form($args) {
     }
 
     if (is_null($eventid)) {
+        if (!empty($courseid)) {
+            $groupcoursedata = groups_get_course_data($courseid);
+            $formoptions['groups'] = [];
+            foreach ($groupcoursedata->groups as $groupid => $groupdata) {
+                $formoptions['groups'][$groupid] = $groupdata->name;
+            }
+        }
         $mform = new \core_calendar\local\event\forms\create(
             null,
             $formoptions,
@@ -3543,16 +3555,19 @@ function calendar_output_fragment_event_form($args) {
         );
 
         // Let's check first which event types user can add.
-        calendar_get_allowed_types($allowed, $courseid);
+        $eventtypes = calendar_get_allowed_event_types($courseid);
 
         // If the user is on course context and is allowed to add course events set the event type default to course.
-        if ($courseid != SITEID && !empty($allowed->courses)) {
+        if ($courseid != SITEID && !empty($eventtypes['course'])) {
             $data['eventtype'] = 'course';
             $data['courseid'] = $courseid;
             $data['groupcourseid'] = $courseid;
-        } else if (!empty($categoryid) && !empty($allowed->category)) {
+        } else if (!empty($categoryid) && !empty($eventtypes['category'])) {
             $data['eventtype'] = 'category';
             $data['categoryid'] = $categoryid;
+        } else if (!empty($groupcoursedata) && !empty($eventtypes['group'])) {
+            $data['groupcourseid'] = $courseid;
+            $data['groups'] = $groupcoursedata->groups;
         }
         $mform->set_data($data);
     } else {
@@ -3562,6 +3577,15 @@ function calendar_output_fragment_event_form($args) {
         $data = array_merge((array) $eventdata, $data);
         $event->count_repeats();
         $formoptions['event'] = $event;
+
+        if (!empty($event->courseid)) {
+            $groupcoursedata = groups_get_course_data($event->courseid);
+            $formoptions['groups'] = [];
+            foreach ($groupcoursedata->groups as $groupid => $groupdata) {
+                $formoptions['groups'][$groupid] = $groupdata->name;
+            }
+        }
+
         $data['description']['text'] = file_prepare_draft_area(
             $draftitemid,
             $event->context->id,
@@ -3689,4 +3713,176 @@ function calendar_is_valid_eventtype($type) {
         'site',
     ];
     return in_array($type, $validtypes);
+}
+
+/**
+ * Get event types the user can create event based on categories, courses and groups
+ * the logged in user belongs to.
+ *
+ * @param int|null $courseid The course id.
+ * @return array The array of allowed types.
+ */
+function calendar_get_allowed_event_types(int $courseid = null) {
+    global $DB, $CFG, $USER;
+
+    $types = [
+        'user' => false,
+        'site' => false,
+        'course' => false,
+        'group' => false,
+        'category' => false
+    ];
+
+    if (!empty($courseid) && $courseid != SITEID) {
+        $context = \context_course::instance($courseid);
+        $groups = groups_get_all_groups($courseid);
+
+        $types['user'] = has_capability('moodle/calendar:manageownentries', $context);
+
+        if (has_capability('moodle/calendar:manageentries', $context) || !empty($CFG->calendar_adminseesall)) {
+            $types['course'] = true;
+
+            $types['group'] = (!empty($groups) && has_capability('moodle/site:accessallgroups', $context))
+                || array_filter($groups, function($group) use ($USER) {
+                    return groups_is_member($group->id);
+                });
+        } else if (has_capability('moodle/calendar:managegroupentries', $context)) {
+            $types['group'] = (!empty($groups) && has_capability('moodle/site:accessallgroups', $context))
+                || array_filter($groups, function($group) use ($USER) {
+                    return groups_is_member($group->id);
+                });
+        }
+    }
+
+    if (has_capability('moodle/calendar:manageentries', \context_course::instance(SITEID))) {
+        $types['site'] = true;
+    }
+
+    if (has_capability('moodle/calendar:manageownentries', \context_system::instance())) {
+        $types['user'] = true;
+    }
+    if (coursecat::has_manage_capability_on_any()) {
+        $types['category'] = true;
+    }
+
+    // We still don't know if the user can create group and course events, so iterate over the courses to find out
+    // if the user has capabilities in one of the courses.
+    if ($types['course'] == false || $types['group'] == false) {
+        if ($CFG->calendar_adminseesall && has_capability('moodle/calendar:manageentries', context_system::instance())) {
+            $sql = "SELECT c.id, " . context_helper::get_preload_record_columns_sql('ctx') . "
+                      FROM {course} c
+                      JOIN {context} ctx ON ctx.contextlevel = ? AND ctx.instanceid = c.id
+                     WHERE c.id IN (
+                            SELECT DISTINCT courseid FROM {groups}
+                        )";
+            $courseswithgroups = $DB->get_recordset_sql($sql, [CONTEXT_COURSE]);
+            foreach ($courseswithgroups as $course) {
+                context_helper::preload_from_record($course);
+                $context = context_course::instance($course->id);
+
+                if (has_capability('moodle/calendar:manageentries', $context)) {
+                    if (has_any_capability(['moodle/site:accessallgroups', 'moodle/calendar:managegroupentries'], $context)) {
+                        // The user can manage group entries or access any group.
+                        $types['group'] = true;
+                        $types['course'] = true;
+                        break;
+                    }
+                }
+            }
+            $courseswithgroups->close();
+
+            if (false === $types['course']) {
+                // Course is still not confirmed. There may have been no courses with a group in them.
+                $ctxfields = context_helper::get_preload_record_columns_sql('ctx');
+                $sql = "SELECT
+                            c.id, c.visible, {$ctxfields}
+                        FROM {course}
+                        JOIN {context} ctx ON (ctx.instanceid = c.id AND ctx.contextlevel = :contextlevel)";
+                $params = [
+                    'contextlevel' => CONTEXT_COURSE,
+                ];
+                $courses = $DB->get_recordset_sql($sql, $params);
+                foreach ($courses as $course) {
+                    context_helper::preload_from_record($course);
+                    $context = context_course::instance($course->id);
+                    if (has_capability('moodle/calendar:manageentries', $context)) {
+                        $types['course'] = true;
+                        break;
+                    }
+                }
+                $courses->close();
+            }
+
+        } else {
+            $courses = calendar_get_default_courses(null, 'id');
+            if (empty($courses)) {
+                return $types;
+            }
+
+            $courseids = array_map(function($c) {
+                return $c->id;
+            }, $courses);
+
+            // Check whether the user has access to create events within courses which have groups.
+            list($insql, $params) = $DB->get_in_or_equal($courseids, SQL_PARAMS_NAMED);
+            $sql = "SELECT c.id, " . context_helper::get_preload_record_columns_sql('ctx') . "
+                      FROM {course} c
+                      JOIN {context} ctx ON ctx.contextlevel = :contextlevel AND ctx.instanceid = c.id
+                     WHERE c.id $insql
+                       AND c.id IN (SELECT DISTINCT courseid FROM {groups})";
+            $params['contextlevel'] = CONTEXT_COURSE;
+            $courseswithgroups = $DB->get_recordset_sql($sql, $params);
+            foreach ($courseswithgroups as $coursewithgroup) {
+                context_helper::preload_from_record($coursewithgroup);
+                $context = context_course::instance($coursewithgroup->id);
+
+                if (has_capability('moodle/calendar:manageentries', $context)) {
+                    // The user has access to manage calendar entries for the whole course.
+                    // This includes groups if they have the accessallgroups capability.
+                    $types['course'] = true;
+                    if (has_capability('moodle/site:accessallgroups', $context)) {
+                        // The user also has access to all groups so they can add calendar entries to any group.
+                        // The manageentries capability overrides the managegroupentries capability.
+                        $types['group'] = true;
+                        break;
+                    }
+
+                    if (empty($types['group']) && has_capability('moodle/calendar:managegroupentries', $context)) {
+                        // The user has the managegroupentries capability.
+                        // If they have access to _any_ group, then they can create calendar entries within that group.
+                        $types['group'] = !empty(groups_get_all_groups($coursewithgroup->id, $USER->id));
+                    }
+                }
+
+                // Okay, course and group event types are allowed, no need to keep the loop iteration.
+                if ($types['course'] == true && $types['group'] == true) {
+                    break;
+                }
+            }
+            $courseswithgroups->close();
+
+            if (false === $types['course']) {
+                list($insql, $params) = $DB->get_in_or_equal($courseids, SQL_PARAMS_NAMED);
+                $contextsql = "SELECT c.id, " . context_helper::get_preload_record_columns_sql('ctx') . "
+                                FROM {course} c
+                                JOIN {context} ctx ON ctx.contextlevel = :contextlevel AND ctx.instanceid = c.id
+                                WHERE c.id $insql";
+                $params['contextlevel'] = CONTEXT_COURSE;
+                $contextrecords = $DB->get_recordset_sql($contextsql, $params);
+                foreach ($contextrecords as $course) {
+                    context_helper::preload_from_record($course);
+                    $coursecontext = context_course::instance($course->id);
+                    if (has_capability('moodle/calendar:manageentries', $coursecontext)
+                            && ($courseid == $course->id || empty($courseid))) {
+                        $types['course'] = true;
+                        break;
+                    }
+                }
+                $contextrecords->close();
+            }
+
+        }
+    }
+
+    return $types;
 }

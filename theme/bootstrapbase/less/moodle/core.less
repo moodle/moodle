@@ -118,6 +118,8 @@ a.dimmed_text:visited,
 }
 .unlist,
 .unlist li,
+.list-unstyled,
+.list-unstyled li,
 .inline-list,
 .inline-list li,
 .block .list,
@@ -2100,12 +2102,6 @@ img#persona_signin {
                 color: @dropdownLinkColorHover;
                 background-color: @dropdownLinkBackgroundHover;
             }
-            &:first-child {
-                .border-top-radius(4px);
-            }
-            &:last-child {
-                .border-bottom-radius(4px);
-            }
         }
         a.hidden {
             display: none;
@@ -2120,6 +2116,12 @@ img#persona_signin {
         }
         > li {
             display: block;
+            &:first-child a {
+                .border-top-radius(4px);
+            }
+            &:last-child a {
+                .border-bottom-radius(4px);
+            }
         }
 
         /** bottom left of button **/

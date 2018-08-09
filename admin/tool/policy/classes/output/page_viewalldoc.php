@@ -102,6 +102,7 @@ class page_viewalldoc implements renderable, templatable {
 
         array_walk($data->policies, function($item, $key) {
             $item->policytypestr = get_string('policydoctype'.$item->type, 'tool_policy');
+            $item->policyaudiencestr = get_string('policydocaudience'.$item->audience, 'tool_policy');
         });
 
         return $data;

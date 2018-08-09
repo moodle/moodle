@@ -4360,7 +4360,7 @@ abstract class lesson_page extends lesson_base {
             if (count($answers) > 1) {
                 $answer = array_shift($answers);
                 foreach ($answers as $a) {
-                    $DB->delete_record('lesson_answers', array('id' => $a->id));
+                    $DB->delete_records('lesson_answers', array('id' => $a->id));
                 }
             } else if (count($answers) == 1) {
                 $answer = array_shift($answers);

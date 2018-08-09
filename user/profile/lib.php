@@ -22,9 +22,23 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-define ('PROFILE_VISIBLE_ALL',     '2'); // Only visible for users with moodle/user:update capability.
-define ('PROFILE_VISIBLE_PRIVATE', '1'); // Either we are viewing our own profile or we have moodle/user:update capability.
-define ('PROFILE_VISIBLE_NONE',    '0'); // Only visible for moodle/user:update capability.
+/**
+ * Visible to anyone who can view the user.
+ * Editable by the profile owner if they have the moodle/user:editownprofile capability
+ * or any user with the moodle/user:update capability.
+ */
+define('PROFILE_VISIBLE_ALL', '2');
+/**
+ * Visible to the profile owner or anyone with the moodle/user:viewalldetails capability.
+ * Editable by the profile owner if they have the moodle/user:editownprofile capability
+ * or any user with moodle/user:viewalldetails and moodle/user:update capabilities.
+ */
+define('PROFILE_VISIBLE_PRIVATE', '1');
+/**
+ * Only visible to users with the moodle/user:viewalldetails capability.
+ * Only editable by users with the moodle/user:viewalldetails and moodle/user:update capabilities.
+ */
+define('PROFILE_VISIBLE_NONE', '0');
 
 /**
  * Base class for the customisable profile fields.
@@ -131,15 +145,14 @@ class profile_field_base {
      * @return bool
      */
     public function edit_field($mform) {
-        if ($this->field->visible != PROFILE_VISIBLE_NONE
-          or has_capability('moodle/user:update', context_system::instance())) {
-
-            $this->edit_field_add($mform);
-            $this->edit_field_set_default($mform);
-            $this->edit_field_set_required($mform);
-            return true;
+        if (!$this->is_editable()) {
+            return false;
         }
-        return false;
+
+        $this->edit_field_add($mform);
+        $this->edit_field_set_default($mform);
+        $this->edit_field_set_required($mform);
+        return true;
     }
 
     /**
@@ -148,12 +161,12 @@ class profile_field_base {
      * @return bool
      */
     public function edit_after_data($mform) {
-        if ($this->field->visible != PROFILE_VISIBLE_NONE
-          or has_capability('moodle/user:update', context_system::instance())) {
-            $this->edit_field_set_locked($mform);
-            return true;
+        if (!$this->is_editable()) {
+            return false;
         }
-        return false;
+
+        $this->edit_field_set_locked($mform);
+        return true;
     }
 
     /**
@@ -419,7 +432,9 @@ class profile_field_base {
             case PROFILE_VISIBLE_ALL:
                 return true;
             case PROFILE_VISIBLE_PRIVATE:
-                if ($this->userid == $USER->id) {
+                if ($this->is_signup_field() && (empty($this->userid) || isguestuser($this->userid))) {
+                    return true;
+                } else if ($this->userid == $USER->id) {
                     return true;
                 } else {
                     return has_capability('moodle/user:viewalldetails', $context);
@@ -427,6 +442,36 @@ class profile_field_base {
             default:
                 return has_capability('moodle/user:viewalldetails', $context);
         }
+    }
+
+    /**
+     * Check if the field data is editable for the current user
+     * This method should not generally be overwritten by child classes.
+     * @return bool
+     */
+    public function is_editable() {
+        global $USER;
+
+        if (!$this->is_visible()) {
+            return false;
+        }
+
+        if ($this->is_signup_field() && (empty($this->userid) || isguestuser($this->userid))) {
+            // Allow editing the field on the signup page.
+            return true;
+        }
+
+        $systemcontext = context_system::instance();
+
+        if ($this->userid == $USER->id && has_capability('moodle/user:editownprofile', $systemcontext)) {
+            return true;
+        }
+
+        if (has_capability('moodle/user:update', $systemcontext)) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -565,27 +610,25 @@ function profile_load_data($user) {
  * @param int $userid id of user whose profile is being edited.
  */
 function profile_definition($mform, $userid = 0) {
-    global $CFG, $DB;
-
-    // If user is "admin" fields are displayed regardless.
-    $update = has_capability('moodle/user:update', context_system::instance());
-
     $categories = profile_get_user_fields_with_data_by_category($userid);
     foreach ($categories as $categoryid => $fields) {
         // Check first if *any* fields will be displayed.
-        $display = false;
+        $fieldstodisplay = [];
+
         foreach ($fields as $formfield) {
-            if ($formfield->is_visible()) {
-                $display = true;
+            if ($formfield->is_editable()) {
+                $fieldstodisplay[] = $formfield;
             }
         }
 
+        if (empty($fieldstodisplay)) {
+            continue;
+        }
+
         // Display the header and the fields.
-        if ($display or $update) {
-            $mform->addElement('header', 'category_'.$categoryid, format_string($formfield->get_category_name()));
-            foreach ($fields as $formfield) {
-                $formfield->edit_field($mform);
-            }
+        $mform->addElement('header', 'category_'.$categoryid, format_string($fields[0]->get_category_name()));
+        foreach ($fieldstodisplay as $formfield) {
+            $formfield->edit_field($mform);
         }
     }
 }

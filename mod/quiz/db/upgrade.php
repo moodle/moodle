@@ -106,7 +106,7 @@ function xmldb_quiz_upgrade($oldversion) {
         }
 
         // Define key questioncategoryid (foreign) to be added to quiz_slots.
-        $key = new xmldb_key('questioncategoryid', XMLDB_KEY_FOREIGN, array('questioncategoryid'), 'questioncategory', array('id'));
+        $key = new xmldb_key('questioncategoryid', XMLDB_KEY_FOREIGN, array('questioncategoryid'), 'question_categories', ['id']);
         // Launch add key questioncategoryid.
         $dbman->add_key($table, $key);
 

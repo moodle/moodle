@@ -592,7 +592,8 @@ class document implements \renderable, \templatable {
     public function export_for_template(\renderer_base $output) {
         list($componentname, $areaname) = \core_search\manager::extract_areaid_parts($this->get('areaid'));
 
-        $title = $this->is_set('title') ? $this->format_text($this->get('title')) : '';
+        $searcharea = \core_search\manager::get_search_area($this->data['areaid']);
+        $title = $this->is_set('title') ? $this->format_text($searcharea->get_document_display_title($this)) : '';
         $data = [
             'componentname' => $componentname,
             'areaname' => $areaname,

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/quiz/db" VERSION="20180407" COMMENT="XMLDB file for Moodle mod/quiz"
+<XMLDB PATH="mod/quiz/db" VERSION="20180719" COMMENT="XMLDB file for Moodle mod/quiz"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -71,7 +71,7 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
         <KEY NAME="quizid" TYPE="foreign" FIELDS="quizid" REFTABLE="quiz" REFFIELDS="id"/>
         <KEY NAME="questionid" TYPE="foreign" FIELDS="questionid" REFTABLE="question" REFFIELDS="id"/>
-        <KEY NAME="questioncategoryid" TYPE="foreign" FIELDS="questioncategoryid" REFTABLE="questioncategory" REFFIELDS="id"/>
+        <KEY NAME="questioncategoryid" TYPE="foreign" FIELDS="questioncategoryid" REFTABLE="question_categories" REFFIELDS="id"/>
       </KEYS>
       <INDEXES>
         <INDEX NAME="quizid-slot" UNIQUE="true" FIELDS="quizid, slot"/>

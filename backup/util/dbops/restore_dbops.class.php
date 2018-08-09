@@ -604,7 +604,8 @@ abstract class restore_dbops {
         //             6b) User cannot, check if we are in some contextlevel with fallback
         //                 7a) There is fallback, move ALL the qcats to fallback, warn. End qcat loop
         //                 7b) No fallback, error. End qcat loop
-        //         5b) Match, mark q to be mapped
+        //         5b) Random question, must always create new.
+        //         5c) Match, mark q to be mapped
         // 8) Check if backup is from Moodle >= 3.5 and error if more than one top-level category in the context.
 
         // Get all the contexts (question banks) in restore for the given contextlevel
@@ -708,7 +709,11 @@ abstract class restore_dbops {
                                 break 2; // out from qcat loop (both 7a and 7b), we have decided about ALL categories in context (bank)
                             }
 
-                        // 5b) Match, mark q to be mapped
+                        // 5b) Random questions must always be newly created.
+                        } else if ($question->qtype == 'random') {
+                            // Nothing to mark, newitemid means create
+
+                        // 5c) Match, mark q to be mapped.
                         } else {
                             self::set_backup_ids_record($restoreid, 'question', $question->id, $matchqid);
                         }
@@ -718,7 +723,7 @@ abstract class restore_dbops {
 
             // 8) Check if backup is made on Moodle >= 3.5 and there are more than one top-level category in the context.
             if ($after35 && $topcats > 1) {
-                $errors[] = get_string('restoremultipletopcats', 'questions', $contextid);
+                $errors[] = get_string('restoremultipletopcats', 'question', $contextid);
             }
 
         }

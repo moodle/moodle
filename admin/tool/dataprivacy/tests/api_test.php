@@ -277,6 +277,57 @@ class tool_dataprivacy_api_testcase extends advanced_testcase {
     }
 
     /**
+     * Test for api::can_download_data_request_for_user()
+     */
+    public function test_can_download_data_request_for_user() {
+        $generator = $this->getDataGenerator();
+
+        // Three victims.
+        $victim1 = $generator->create_user();
+        $victim2 = $generator->create_user();
+        $victim3 = $generator->create_user();
+
+        // Assign a user as victim 1's parent.
+        $systemcontext = \context_system::instance();
+        $parentrole = $generator->create_role();
+        assign_capability('tool/dataprivacy:makedatarequestsforchildren', CAP_ALLOW, $parentrole, $systemcontext);
+        $parent = $generator->create_user();
+        role_assign($parentrole, $parent->id, \context_user::instance($victim1->id));
+
+        // Assign another user as data access wonder woman.
+        $wonderrole = $generator->create_role();
+        assign_capability('tool/dataprivacy:downloadallrequests', CAP_ALLOW, $wonderrole, $systemcontext);
+        $staff = $generator->create_user();
+        role_assign($wonderrole, $staff->id, $systemcontext);
+
+        // Finally, victim 3 has been naughty; stop them accessing their own data.
+        $naughtyrole = $generator->create_role();
+        assign_capability('tool/dataprivacy:downloadownrequest', CAP_PROHIBIT, $naughtyrole, $systemcontext);
+        role_assign($naughtyrole, $victim3->id, $systemcontext);
+
+        // Victims 1 and 2 can access their own data, regardless of who requested it.
+        $this->assertTrue(api::can_download_data_request_for_user($victim1->id, $victim1->id, $victim1->id));
+        $this->assertTrue(api::can_download_data_request_for_user($victim2->id, $staff->id, $victim2->id));
+
+        // Victim 3 cannot access his own data.
+        $this->assertFalse(api::can_download_data_request_for_user($victim3->id, $victim3->id, $victim3->id));
+
+        // Victims 1 and 2 cannot access another victim's data.
+        $this->assertFalse(api::can_download_data_request_for_user($victim2->id, $victim1->id, $victim1->id));
+        $this->assertFalse(api::can_download_data_request_for_user($victim1->id, $staff->id, $victim2->id));
+
+        // Staff can access everyone's data.
+        $this->assertTrue(api::can_download_data_request_for_user($victim1->id, $victim1->id, $staff->id));
+        $this->assertTrue(api::can_download_data_request_for_user($victim2->id, $staff->id, $staff->id));
+        $this->assertTrue(api::can_download_data_request_for_user($victim3->id, $staff->id, $staff->id));
+
+        // Parent can access victim 1's data only if they requested it.
+        $this->assertTrue(api::can_download_data_request_for_user($victim1->id, $parent->id, $parent->id));
+        $this->assertFalse(api::can_download_data_request_for_user($victim1->id, $staff->id, $parent->id));
+        $this->assertFalse(api::can_download_data_request_for_user($victim2->id, $parent->id, $parent->id));
+    }
+
+    /**
      * Test for api::create_data_request()
      */
     public function test_create_data_request() {
@@ -417,27 +468,20 @@ class tool_dataprivacy_api_testcase extends advanced_testcase {
      * @return array
      */
     public function get_data_requests_provider() {
-        $generator = new testing_data_generator();
-        $user1 = $generator->create_user();
-        $user2 = $generator->create_user();
-        $user3 = $generator->create_user();
-        $user4 = $generator->create_user();
-        $user5 = $generator->create_user();
-        $users = [$user1, $user2, $user3, $user4, $user5];
         $completeonly = [api::DATAREQUEST_STATUS_COMPLETE];
         $completeandcancelled = [api::DATAREQUEST_STATUS_COMPLETE, api::DATAREQUEST_STATUS_CANCELLED];
 
         return [
             // Own data requests.
-            [$users, $user1, false, $completeonly],
+            ['user', false, $completeonly],
             // Non-DPO fetching all requets.
-            [$users, $user2, true, $completeonly],
+            ['user', true, $completeonly],
             // Admin fetching all completed and cancelled requests.
-            [$users, get_admin(), true, $completeandcancelled],
+            ['dpo', true, $completeandcancelled],
             // Admin fetching all completed requests.
-            [$users, get_admin(), true, $completeonly],
+            ['dpo', true, $completeonly],
             // Guest fetching all requests.
-            [$users, guest_user(), true, $completeonly],
+            ['guest', true, $completeonly],
         ];
     }
 
@@ -445,12 +489,31 @@ class tool_dataprivacy_api_testcase extends advanced_testcase {
      * Test for api::get_data_requests()
      *
      * @dataProvider get_data_requests_provider
-     * @param stdClass[] $users Array of users to create data requests for.
-     * @param stdClass $loggeduser The user logging in.
+     * @param string $usertype The type of the user logging in.
      * @param boolean $fetchall Whether to fetch all records.
      * @param int[] $statuses Status filters.
      */
-    public function test_get_data_requests($users, $loggeduser, $fetchall, $statuses) {
+    public function test_get_data_requests($usertype, $fetchall, $statuses) {
+        $generator = new testing_data_generator();
+        $user1 = $generator->create_user();
+        $user2 = $generator->create_user();
+        $user3 = $generator->create_user();
+        $user4 = $generator->create_user();
+        $user5 = $generator->create_user();
+        $users = [$user1, $user2, $user3, $user4, $user5];
+
+        switch ($usertype) {
+            case 'user':
+                $loggeduser = $user1;
+                break;
+            case 'dpo':
+                $loggeduser = get_admin();
+                break;
+            case 'guest':
+                $loggeduser = guest_user();
+                break;
+        }
+
         $comment = 'Data %s request comment by user %d';
         $exportstring = helper::get_shortened_request_type_string(api::DATAREQUEST_TYPE_EXPORT);
         $deletionstring = helper::get_shortened_request_type_string(api::DATAREQUEST_TYPE_DELETE);

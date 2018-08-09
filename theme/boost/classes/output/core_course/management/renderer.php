@@ -317,8 +317,7 @@ class renderer extends \core_course_management_renderer {
                 'i/empty',
                 '',
                 'moodle',
-                array('class' => 'tree-icon', 'title' => get_string('showcategory', 'moodle', $text))
-            );
+                array('class' => 'tree-icon'));
             $icon = html_writer::span($icon, 'float-left');
         }
         $actions = \core_course\management\helper::get_category_listitem_actions($category);

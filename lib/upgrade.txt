@@ -1,6 +1,14 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 3.5.2 ===
+
+* Custom AJAX handlers for the form autocomplete fields can now optionally return string in their processResults()
+  callback. If a string is returned, it is displayed instead of the list if suggested items. This can be used, for
+  example, to inform the user that there are too many items matching the current search criteria.
+* coursecat::get() now has optional $user parameter.
+* coursecat::is_uservisible() now has optional $user parameter.
+
 === 3.5 ===
 
 * There is a new privacy API that every subsystem and plugin has to implement so that the site can become GDPR

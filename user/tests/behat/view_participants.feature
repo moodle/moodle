@@ -270,7 +270,7 @@ Feature: View course participants
     Given I log in as "admin"
     And I am on "Course 1" course homepage
     And I navigate to course participants
-    When I navigate to "Enrolment methods" in current page administration
+    When I navigate to "Users > Enrolment methods" in current page administration
     And I click on "Disable" "link" in the "Manual enrolments" "table_row"
     Then I navigate to course participants
     And I should see "Not current" in the "student0x" "table_row"

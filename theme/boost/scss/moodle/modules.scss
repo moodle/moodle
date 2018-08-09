@@ -237,8 +237,21 @@ div#dock {
 .path-mod-lesson .form-inline label.form-check-label {
     display: inline-block;
 }
+.path-mod-lesson .slideshow {
+    overflow: auto;
+    padding: 15px;
+}
 #page-mod-lesson-view .branchbuttoncontainer .singlebutton button[type="submit"] {
     white-space: normal;
+}
+#page-mod-lesson-view {
+    .vertical .singlebutton {
+        display: block;
+        + .singlebutton {
+            margin-left: 0;
+            margin-top: 1rem;
+        }
+    }
 }
 .path-mod-lesson .generaltable td {
     vertical-align: middle;

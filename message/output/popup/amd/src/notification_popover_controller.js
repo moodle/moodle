@@ -223,10 +223,13 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/str', 'core/url',
             });
 
             // Link to mark read page before loading the actual link.
-            notification.contexturl = URL.relativeUrl('message/output/popup/mark_notification_read.php', {
-                notificationid: notification.id,
-                redirecturl: notification.contexturl
-            });
+            var notificationurlparams = {
+                notificationid: notification.id
+            };
+            if (notification.contexturl) {
+                notificationurlparams.redirecturl = notification.contexturl;
+            }
+            notification.contexturl = URL.relativeUrl('message/output/popup/mark_notification_read.php', notificationurlparams);
 
             var promise = Templates.render('message_popup/notification_content_item', notification)
             .then(function(html, js) {

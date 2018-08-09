@@ -504,7 +504,7 @@ function question_save_from_deletion($questionids, $newcontextid, $oldplace,
     // Make a category in the parent context to move the questions to.
     if (is_null($newcategory)) {
         $newcategory = new stdClass();
-        $newcategory->parent = 0;
+        $newcategory->parent = question_get_top_category($newcontextid, true)->id;
         $newcategory->contextid = $newcontextid;
         $newcategory->name = get_string('questionsrescuedfrom', 'question', $oldplace);
         $newcategory->info = get_string('questionsrescuedfrominfo', 'question', $oldplace);

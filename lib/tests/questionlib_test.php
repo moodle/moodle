@@ -458,6 +458,29 @@ class core_questionlib_testcase extends advanced_testcase {
         $this->assertEquals(0, $DB->count_records('question_categories', $criteria));
     }
 
+    /**
+     * This function tests the question_save_from_deletion function when it is supposed to make a new category and
+     * move question categories to that new category.
+     */
+    public function test_question_save_from_deletion() {
+        global $DB;
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        list($category, $course, $quiz, $qcat, $questions) = $this->setup_quiz_and_questions();
+
+        $context = context::instance_by_id($qcat->contextid);
+
+        $newcat = question_save_from_deletion(array_column($questions, 'id'),
+                $context->get_parent_context()->id, $context->get_context_name());
+
+        // Verify that the newcat itself is not a tep level category.
+        $this->assertNotEquals(0, $newcat->parent);
+
+        // Verify there is just a single top-level category.
+        $this->assertEquals(1, $DB->count_records('question_categories', ['contextid' => $qcat->contextid, 'parent' => 0]));
+    }
+
     public function test_question_remove_stale_questions_from_category() {
         global $DB;
         $this->resetAfterTest(true);

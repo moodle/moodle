@@ -493,7 +493,8 @@ class comment {
                 $textareaattrs = array(
                     'name' => 'content',
                     'rows' => 2,
-                    'id' => 'dlg-content-'.$this->cid
+                    'id' => 'dlg-content-'.$this->cid,
+                    'aria-label' => get_string('addcomment')
                 );
                 if (!$this->fullwidth) {
                     $textareaattrs['cols'] = '20';

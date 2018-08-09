@@ -1,0 +1,62 @@
+{{> theme_boost/head }}
+
+<body {{{ bodyattributes }}}>
+
+<div id="page-wrapper">
+
+    {{{ output.standard_top_of_body_html }}}
+
+    {{>theme_boost/navbar}}
+
+    <div id="page" class="container-fluid">
+        {{{ output.full_header }}}
+
+        <div id="page-content" class="row">
+            <div id="region-main-box" class="col-12">
+                {{#hasregionmainsettingsmenu}}
+                    <div id="region-main-settings-menu" class="d-print-none {{#hasblocks}}has-blocks{{/hasblocks}}">
+                        <div> {{{ output.region_main_settings_menu }}} </div>
+                    </div>
+                {{/hasregionmainsettingsmenu}}
+                <section id="region-main" {{#hasblocks}}class="has-blocks mb-3"{{/hasblocks}}>
+                    <div class="card">
+                        <div class="card-body">
+                            {{#hasregionmainsettingsmenu}}
+                                <div class="region_main_settings_menu_proxy"></div>
+                            {{/hasregionmainsettingsmenu}}
+
+                            <div style="background-color: #00aa00;">
+
+
+
+                            </div>
+
+
+
+
+                            {{{ output.main_content }}}
+                            {{{ output.course_content_footer }}}
+                        </div>
+                    </div>
+                </section>
+                {{#hasblocks}}
+                    <section data-region="blocks-column" class="d-print-none">
+                        {{{ sidepreblocks }}}
+                    </section>
+                {{/hasblocks}}
+            </div>
+        </div>
+    </div>
+    {{> theme_boost/nav-drawer }}
+</div>
+
+{{> theme_boost/footer }}
+
+</body>
+</html>
+{{#js}}
+    require(['theme_boost/loader']);
+    require(['theme_boost/drawer'], function(mod) {
+    mod.init();
+    });
+{{/js}}

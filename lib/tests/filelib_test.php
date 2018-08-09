@@ -1424,6 +1424,55 @@ EOF;
             $this->assertContains($file->get_filename(), $expected);
         }
     }
+
+    /**
+     * Test that all files in the draftarea are returned.
+     */
+    public function test_file_get_all_files_in_draftarea() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $filerecord = ['filename' => 'basepic.jpg'];
+        $file = self::create_draft_file($filerecord);
+
+        $secondrecord = [
+            'filename' => 'infolder.jpg',
+            'filepath' => '/assignment/',
+            'itemid' => $file->get_itemid()
+        ];
+        $file = self::create_draft_file($secondrecord);
+
+        $thirdrecord = [
+            'filename' => 'deeperfolder.jpg',
+            'filepath' => '/assignment/pics/',
+            'itemid' => $file->get_itemid()
+        ];
+        $file = self::create_draft_file($thirdrecord);
+
+        $fourthrecord = [
+            'filename' => 'differentimage.jpg',
+            'filepath' => '/secondfolder/',
+            'itemid' => $file->get_itemid()
+        ];
+        $file = self::create_draft_file($fourthrecord);
+
+        // This record has the same name as the last record, but it's in a different folder.
+        // Just checking this is also returned.
+        $fifthrecord = [
+            'filename' => 'differentimage.jpg',
+            'filepath' => '/assignment/pics/',
+            'itemid' => $file->get_itemid()
+        ];
+        $file = self::create_draft_file($fifthrecord);
+
+        $allfiles = file_get_all_files_in_draftarea($file->get_itemid());
+        $this->assertCount(5, $allfiles);
+        $this->assertEquals($filerecord['filename'], $allfiles[0]->filename);
+        $this->assertEquals($secondrecord['filename'], $allfiles[1]->filename);
+        $this->assertEquals($thirdrecord['filename'], $allfiles[2]->filename);
+        $this->assertEquals($fourthrecord['filename'], $allfiles[3]->filename);
+        $this->assertEquals($fifthrecord['filename'], $allfiles[4]->filename);
+    }
 }
 
 /**
