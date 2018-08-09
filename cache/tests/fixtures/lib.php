@@ -535,3 +535,20 @@ class cache_phpunit_factory extends cache_factory {
         parent::disable();
     }
 }
+
+/**
+ * Cache PHPUnit specific Cache helper.
+ *
+ * @copyright  2018 Andrew Nicols <andrew@nicols.co.uk>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class cache_phpunit_cache extends cache {
+    /**
+     * Make the changes which simulate a new request within the cache.
+     * This essentially resets currently held static values in the class, and increments the current timestamp.
+     */
+    public static function simulate_new_request() {
+        self::$now += 0.1;
+        self::$purgetoken = null;
+    }
+}
