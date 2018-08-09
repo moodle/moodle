@@ -1413,11 +1413,14 @@ function lti_get_ims_role($user, $cmid, $courseid, $islti2) {
  * @param int $typeid   Basic LTI tool typeid
  *
  * @return array        Tool Configuration
+ * v.sotiras@qmul.ac.uk 
+ * Moodle DB requires first field to be unique ID for each tuple
  */
 function lti_get_type_config($typeid) {
     global $DB;
-
-    $query = "SELECT name, value
+    $query = "SELECT (@id := @id +1) id,name, value
+        FROM (select @id :=0 id) id,
+           (SELECT name, value
                 FROM {lti_types_config}
                WHERE typeid = :typeid1
            UNION ALL
@@ -1431,18 +1434,16 @@ function lti_get_type_config($typeid) {
            UNION ALL
               SELECT 'secureicon' AS name, secureicon AS value
                 FROM {lti_types}
-               WHERE id = :typeid4";
-
+               WHERE id = :typeid4
+           ) dta";
     $typeconfig = array();
     $configs = $DB->get_records_sql($query,
         array('typeid1' => $typeid, 'typeid2' => $typeid, 'typeid3' => $typeid, 'typeid4' => $typeid));
-
     if (!empty($configs)) {
         foreach ($configs as $config) {
             $typeconfig[$config->name] = $config->value;
         }
     }
-
     return $typeconfig;
 }
 
