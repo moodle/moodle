@@ -1,4 +1,4 @@
-define(['jquery','format_buttons/atik'], function($, slick) {
+define(['jquery','format_buttons/slick'], function($, slick) {
 
   function sectionsSliderInit(elem){
       // $('.slider.sections').slick({
