@@ -3797,10 +3797,8 @@ select.form-control-lg:not([size]):not([multiple]), .input-group-lg > select.for
 
 .form-group, .form-buttons,
 .path-admin .buttons,
-#fitem_id_submitbutton,
 .fp-content-center form + div,
-div.backup-section + form,
-#fgroup_id_buttonar {
+div.backup-section + form {
   margin-bottom: 1rem; }
 
 .form-text {
@@ -4011,10 +4009,8 @@ div.backup-section + form,
       margin-bottom: 0; }
     .form-inline .form-group, .form-inline .form-buttons,
     .form-inline .path-admin .buttons, .path-admin .form-inline .buttons,
-    .form-inline #fitem_id_submitbutton,
     .form-inline .fp-content-center form + div, .fp-content-center .form-inline form + div,
-    .form-inline div.backup-section + form,
-    .form-inline #fgroup_id_buttonar {
+    .form-inline div.backup-section + form {
       display: flex;
       flex: 0 0 auto;
       flex-flow: row wrap;
@@ -14236,7 +14232,7 @@ body.path-question-type {
     font: inherit;
     position: static;
     padding-right: .3em; }
-  body.path-question-type .form-group .sr-only, body.path-question-type .form-buttons .sr-only, body.path-question-type .path-admin .buttons .sr-only, .path-admin body.path-question-type .buttons .sr-only, body.path-question-type #fitem_id_submitbutton .sr-only, body.path-question-type .fp-content-center form + div .sr-only, .fp-content-center body.path-question-type form + div .sr-only, body.path-question-type div.backup-section + form .sr-only, body.path-question-type #fgroup_id_buttonar .sr-only {
+  body.path-question-type .form-group .sr-only, body.path-question-type .form-buttons .sr-only, body.path-question-type .path-admin .buttons .sr-only, .path-admin body.path-question-type .buttons .sr-only, body.path-question-type .fp-content-center form + div .sr-only, .fp-content-center body.path-question-type form + div .sr-only, body.path-question-type div.backup-section + form .sr-only {
     position: static;
     width: auto;
     height: auto;
@@ -14851,10 +14847,8 @@ body.path-question-type .mform fieldset.hidden {
 
 .mform .form-inline .form-group, .mform .form-inline .form-buttons,
 .mform .form-inline .path-admin .buttons, .path-admin .mform .form-inline .buttons,
-.mform .form-inline #fitem_id_submitbutton,
 .mform .form-inline .fp-content-center form + div, .fp-content-center .mform .form-inline form + div,
-.mform .form-inline div.backup-section + form,
-.mform .form-inline #fgroup_id_buttonar {
+.mform .form-inline div.backup-section + form {
   margin: 0.1rem 0.25rem 0.1rem 0; }
 
 .mform .form-inline br + label {
@@ -14874,10 +14868,8 @@ body.path-question-type .mform fieldset.hidden {
 
 .mform > .form-group, .mform > .form-buttons,
 .path-admin .mform > .buttons,
-.mform > #fitem_id_submitbutton,
 .fp-content-center .mform > form + div,
-.mform > div.backup-section + form,
-.mform > #fgroup_id_buttonar {
+.mform > div.backup-section + form {
   margin-left: 1.5rem; }
 
 .editor_atto_content.form-control {
@@ -14926,10 +14918,8 @@ input#id_externalurl {
 
 .form-buttons,
 .path-admin .buttons,
-#fitem_id_submitbutton,
 .fp-content-center form + div,
-div.backup-section + form,
-#fgroup_id_buttonar {
+div.backup-section + form {
   padding-left: 0; }
 
 .form-item .form-setting .defaultsnext > input {
@@ -15139,10 +15129,8 @@ textarea[data-auto-rows] {
 
 [data-fieldtype="modgrade"] .form-group, [data-fieldtype="modgrade"] .form-buttons,
 [data-fieldtype="modgrade"] .path-admin .buttons, .path-admin [data-fieldtype="modgrade"] .buttons,
-[data-fieldtype="modgrade"] #fitem_id_submitbutton,
 [data-fieldtype="modgrade"] .fp-content-center form + div, .fp-content-center [data-fieldtype="modgrade"] form + div,
-[data-fieldtype="modgrade"] div.backup-section + form,
-[data-fieldtype="modgrade"] #fgroup_id_buttonar {
+[data-fieldtype="modgrade"] div.backup-section + form {
   padding-bottom: 0.375rem; }
 
 [data-fieldtype="modgrade"] {
@@ -15515,10 +15503,8 @@ div#dock {
 
 #page-mod-quiz-mod #id_reviewoptionshdr .form-group, #page-mod-quiz-mod #id_reviewoptionshdr .form-buttons,
 #page-mod-quiz-mod #id_reviewoptionshdr .path-admin .buttons, .path-admin #page-mod-quiz-mod #id_reviewoptionshdr .buttons,
-#page-mod-quiz-mod #id_reviewoptionshdr #fitem_id_submitbutton,
 #page-mod-quiz-mod #id_reviewoptionshdr .fp-content-center form + div, .fp-content-center #page-mod-quiz-mod #id_reviewoptionshdr form + div,
-#page-mod-quiz-mod #id_reviewoptionshdr div.backup-section + form,
-#page-mod-quiz-mod #id_reviewoptionshdr #fgroup_id_buttonar {
+#page-mod-quiz-mod #id_reviewoptionshdr div.backup-section + form {
   float: left;
   width: 20rem;
   display: inline-block;
@@ -15841,41 +15827,33 @@ div#dock {
     background-color: #fff; }
   .path-backup .mform .root_setting .form-group, .path-backup .mform .root_setting .form-buttons,
   .path-backup .mform .root_setting .path-admin .buttons, .path-admin .path-backup .mform .root_setting .buttons,
-  .path-backup .mform .root_setting #fitem_id_submitbutton,
   .path-backup .mform .root_setting .fp-content-center form + div, .fp-content-center .path-backup .mform .root_setting form + div,
   .path-backup .mform .root_setting div.backup-section + form,
-  .path-backup .mform .root_setting #fgroup_id_buttonar,
   .path-backup .mform .grouped_settings .form-group,
   .path-backup .mform .grouped_settings .form-buttons,
   .path-backup .mform .grouped_settings .path-admin .buttons,
   .path-admin .path-backup .mform .grouped_settings .buttons,
-  .path-backup .mform .grouped_settings #fitem_id_submitbutton,
   .path-backup .mform .grouped_settings .fp-content-center form + div,
   .fp-content-center .path-backup .mform .grouped_settings form + div,
-  .path-backup .mform .grouped_settings div.backup-section + form,
-  .path-backup .mform .grouped_settings #fgroup_id_buttonar {
+  .path-backup .mform .grouped_settings div.backup-section + form {
     /* These checkboxes with no label on the left. */ }
-    .path-backup .mform .root_setting .form-group .col-md-3.checkbox, .path-backup .mform .root_setting .form-buttons .col-md-3.checkbox, .path-backup .mform .root_setting .path-admin .buttons .col-md-3.checkbox, .path-admin .path-backup .mform .root_setting .buttons .col-md-3.checkbox, .path-backup .mform .root_setting #fitem_id_submitbutton .col-md-3.checkbox, .path-backup .mform .root_setting .fp-content-center form + div .col-md-3.checkbox, .fp-content-center .path-backup .mform .root_setting form + div .col-md-3.checkbox, .path-backup .mform .root_setting div.backup-section + form .col-md-3.checkbox, .path-backup .mform .root_setting #fgroup_id_buttonar .col-md-3.checkbox,
+    .path-backup .mform .root_setting .form-group .col-md-3.checkbox, .path-backup .mform .root_setting .form-buttons .col-md-3.checkbox, .path-backup .mform .root_setting .path-admin .buttons .col-md-3.checkbox, .path-admin .path-backup .mform .root_setting .buttons .col-md-3.checkbox, .path-backup .mform .root_setting .fp-content-center form + div .col-md-3.checkbox, .fp-content-center .path-backup .mform .root_setting form + div .col-md-3.checkbox, .path-backup .mform .root_setting div.backup-section + form .col-md-3.checkbox,
     .path-backup .mform .grouped_settings .form-group .col-md-3.checkbox,
     .path-backup .mform .grouped_settings .form-buttons .col-md-3.checkbox,
     .path-backup .mform .grouped_settings .path-admin .buttons .col-md-3.checkbox,
     .path-admin .path-backup .mform .grouped_settings .buttons .col-md-3.checkbox,
-    .path-backup .mform .grouped_settings #fitem_id_submitbutton .col-md-3.checkbox,
     .path-backup .mform .grouped_settings .fp-content-center form + div .col-md-3.checkbox,
     .fp-content-center .path-backup .mform .grouped_settings form + div .col-md-3.checkbox,
-    .path-backup .mform .grouped_settings div.backup-section + form .col-md-3.checkbox,
-    .path-backup .mform .grouped_settings #fgroup_id_buttonar .col-md-3.checkbox {
+    .path-backup .mform .grouped_settings div.backup-section + form .col-md-3.checkbox {
       width: 0%; }
-    .path-backup .mform .root_setting .form-group .col-md-9.checkbox, .path-backup .mform .root_setting .form-buttons .col-md-9.checkbox, .path-backup .mform .root_setting .path-admin .buttons .col-md-9.checkbox, .path-admin .path-backup .mform .root_setting .buttons .col-md-9.checkbox, .path-backup .mform .root_setting #fitem_id_submitbutton .col-md-9.checkbox, .path-backup .mform .root_setting .fp-content-center form + div .col-md-9.checkbox, .fp-content-center .path-backup .mform .root_setting form + div .col-md-9.checkbox, .path-backup .mform .root_setting div.backup-section + form .col-md-9.checkbox, .path-backup .mform .root_setting #fgroup_id_buttonar .col-md-9.checkbox,
+    .path-backup .mform .root_setting .form-group .col-md-9.checkbox, .path-backup .mform .root_setting .form-buttons .col-md-9.checkbox, .path-backup .mform .root_setting .path-admin .buttons .col-md-9.checkbox, .path-admin .path-backup .mform .root_setting .buttons .col-md-9.checkbox, .path-backup .mform .root_setting .fp-content-center form + div .col-md-9.checkbox, .fp-content-center .path-backup .mform .root_setting form + div .col-md-9.checkbox, .path-backup .mform .root_setting div.backup-section + form .col-md-9.checkbox,
     .path-backup .mform .grouped_settings .form-group .col-md-9.checkbox,
     .path-backup .mform .grouped_settings .form-buttons .col-md-9.checkbox,
     .path-backup .mform .grouped_settings .path-admin .buttons .col-md-9.checkbox,
     .path-admin .path-backup .mform .grouped_settings .buttons .col-md-9.checkbox,
-    .path-backup .mform .grouped_settings #fitem_id_submitbutton .col-md-9.checkbox,
     .path-backup .mform .grouped_settings .fp-content-center form + div .col-md-9.checkbox,
     .fp-content-center .path-backup .mform .grouped_settings form + div .col-md-9.checkbox,
-    .path-backup .mform .grouped_settings div.backup-section + form .col-md-9.checkbox,
-    .path-backup .mform .grouped_settings #fgroup_id_buttonar .col-md-9.checkbox {
+    .path-backup .mform .grouped_settings div.backup-section + form .col-md-9.checkbox {
       width: 100%;
       left: 0; }
 
