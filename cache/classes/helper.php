@@ -240,6 +240,7 @@ class cache_helper {
         $invalidationeventset = false;
         $factory = cache_factory::instance();
         $inuse = $factory->get_caches_in_use();
+        $purgetoken = null;
         foreach ($instance->get_definitions() as $name => $definitionarr) {
             $definition = cache_definition::load($name, $definitionarr);
             if ($definition->invalidates_on_event($event)) {
@@ -266,8 +267,11 @@ class cache_helper {
                         $data = array();
                     }
                     // Add our keys to them with the current cache timestamp.
+                    if (null === $purgetoken) {
+                        $purgetoken = cache::get_purge_token(true);
+                    }
                     foreach ($keys as $key) {
-                        $data[$key] = cache::now();
+                        $data[$key] = $purgetoken;
                     }
                     // Set that data back to the cache.
                     $cache->set($event, $data);
@@ -315,6 +319,7 @@ class cache_helper {
         $invalidationeventset = false;
         $factory = cache_factory::instance();
         $inuse = $factory->get_caches_in_use();
+        $purgetoken = null;
         foreach ($instance->get_definitions() as $name => $definitionarr) {
             $definition = cache_definition::load($name, $definitionarr);
             if ($definition->invalidates_on_event($event)) {
@@ -338,8 +343,11 @@ class cache_helper {
                     // Get the event invalidation cache.
                     $cache = cache::make('core', 'eventinvalidation');
                     // Create a key to invalidate all.
+                    if (null === $purgetoken) {
+                        $purgetoken = cache::get_purge_token(true);
+                    }
                     $data = array(
-                        'purged' => cache::now()
+                        'purged' => $purgetoken,
                     );
                     // Set that data back to the cache.
                     $cache->set($event, $data);
