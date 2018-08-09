@@ -460,7 +460,6 @@ Feature: User must accept policy managed by this plugin when logging in and sign
       | This privacy policy | 1    |          | full text3 | short text3 | active   | loggedin |
       | This guests policy  | 0    |          | full text4 | short text4 | active   | guest    |
     And I am on site homepage
-    And I change window size to "large"
     And I follow "Log in"
     When I press "Log in as a guest"
     Then I should see "If you continue browsing this website, you agree to our policies"
