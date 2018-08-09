@@ -176,6 +176,27 @@ class contextlist_test extends advanced_testcase {
                 'SELECT 4 FROM users',
                 '4',
             ],
+            'select_with_complex_subqueries' => [
+                'SELECT id FROM table WHERE id IN (
+                     SELECT x FROM xtable
+                     UNION
+                     SELECT y FROM (
+                         SELECT y FROM ytable
+                         JOIN ztable ON (z = y)))',
+                'id'
+            ],
+            'invalid_union_with_first_being_column_name' => [
+                'SELECT id FROM table UNION SELECT 1 FROM table',
+                ''
+            ],
+            'invalid_union_with_first_being_numeric' => [
+                'SELECT 1 FROM table UNION SELECT id FROM table',
+                ''
+            ],
+            'invalid_union_without_from' => [
+                'SELECT 1 UNION SELECT id FROM table',
+                ''
+            ],
             'invalid_1' => [
                 'SELECT 1+1',
                 '',
