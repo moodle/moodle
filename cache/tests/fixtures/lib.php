@@ -534,47 +534,21 @@ class cache_phpunit_factory extends cache_factory {
     public static function phpunit_disable() {
         parent::disable();
     }
+}
 
+/**
+ * Cache PHPUnit specific Cache helper.
+ *
+ * @copyright  2018 Andrew Nicols <andrew@nicols.co.uk>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class cache_phpunit_cache extends cache {
     /**
-     * @var bool Whether the warning notice about alternative cache store used has been displayed.
+     * Make the changes which simulate a new request within the cache.
+     * This essentially resets currently held static values in the class, and increments the current timestamp.
      */
-    protected $altcachestorenotice = false;
-
-    /**
-     * Creates a store instance given its name and configuration.
-     *
-     * If the store has already been instantiated then the original object will be returned. (reused)
-     *
-     * @param string $name The name of the store (must be unique remember)
-     * @param array $details
-     * @param cache_definition $definition The definition to instantiate it for.
-     * @return boolean|cache_store
-     */
-    public function create_store_from_config($name, array $details, cache_definition $definition) {
-
-        if (isset($details['use_test_store'])) {
-            // name, plugin, alt
-            $class = 'cachestore_'.$details['plugin'];
-            $method = 'initialise_unit_test_instance';
-            if (class_exists($class) && method_exists($class, $method)) {
-                $instance = $class::$method($definition);
-
-                if ($instance) {
-                    return $instance;
-                }
-            }
-
-            // Notify user that alternative store is being used, so action can be taken.
-            if (!$this->altcachestorenotice) {
-                echo PHP_EOL . "++ WARNING: " . 'Failed to use "' . $details['plugin'] . '" cache store, alt "' .
-                    $details['alt']['plugin'] . '" cache store is used.' . PHP_EOL . PHP_EOL;
-                $this->altcachestorenotice = true;
-            }
-            $details = $details['alt'];
-            $details['class'] = 'cachestore_'.$details['plugin'];
-            $name = $details['name'];
-        }
-
-        return parent::create_store_from_config($name, $details, $definition);
+    public static function simulate_new_request() {
+        self::$now += 0.1;
+        self::$purgetoken = null;
     }
 }
