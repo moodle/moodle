@@ -195,7 +195,7 @@ class format_buttons_renderer extends format_topics_renderer
         $html .= html_writer::start_tag('div',['class' => 'container-fluid buttons']); // don't forget to close it later
 
         $html .= html_writer::start_tag('div',['class' => 'sections-wrapper']);
-        $html .= html_writer::start_tag('ul',['id' => 'sections', 'role' => 'sections list', 'class' => 'nav slider sections']);
+        $html .= html_writer::start_tag('ul',['id' => 'sections', 'role' => 'sections-list', 'class' => 'nav slider sections']);
         }
 
         foreach ($modinfo->get_section_info_all() as $section => $thissection) {

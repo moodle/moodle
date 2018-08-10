@@ -1,10 +1,14 @@
 define(['jquery','format_buttons/slick'], function($, slick) {
 
   function initDefaults(){
-    var currentSection = 1;
+    
+    var currentSection = checkStorage('lastSection');
+    var currentLabel = checkStorage('lastLabel');
     initSlider($('.slider.sections'));
     sectionsEvents();
     initSlider($('#section'+currentSection+' .slider.labels'),0);
+    $('#section' + currentSection).toggleClass('d-none');
+    $('[data-label-content="' + currentLabel + '"]').toggleClass('d-none');
   }
 
   function sectionsEvents(){
@@ -14,6 +18,7 @@ define(['jquery','format_buttons/slick'], function($, slick) {
       item.addEventListener('click', function() {
         loop($('.section-content'));
         $('#section' + this.dataset.section).toggleClass('d-none');
+        addToStorage('lastSection', this.dataset.section);
         unslickLabels();
         initSlider($('#section' + this.dataset.section + ' .slider.labels'),0);
         labelsEvents(this.dataset.section);
@@ -26,7 +31,7 @@ define(['jquery','format_buttons/slick'], function($, slick) {
     for (var i = 0; i < labels.length; i++) {
       var item = labels[i];
       item.addEventListener('click', function() {
-        console.log(this);
+        addToStorage('lastLabel', this.dataset.label);
         var equils = $('[data-label-content="' + this.dataset.label + '"]');
         loop($('#section' + currentSection + ' .label-content'));
         $('[data-label-content="' + this.dataset.label + '"]').toggleClass('d-none');
@@ -41,9 +46,10 @@ define(['jquery','format_buttons/slick'], function($, slick) {
     (vert !== undefined)?vert = true:vert = false;
     // responsiveness / dropdown on xs vert
     if (vert){
-      console.log(elem);
+
       for (var i=0; i<brakepoints.length; i++){
         if (brakepoints[i] == 540){
+          // add dropdown touch event
           brp = {
             breakpoint: brakepoints[i],
             settings: 'unslick'
@@ -101,6 +107,23 @@ define(['jquery','format_buttons/slick'], function($, slick) {
       if (!htmlCollection[i].classList.contains('d-none')){
         htmlCollection[i].classList += " d-none";
       }
+    }
+  }
+
+  function checkStorage(key){
+    if (localStorage.key){
+      return localStorage.getItem(key);
+    } else {
+      localStorage.setItem(key, 1);
+      return 1;
+    }
+  }
+
+  function addToStorage(key, value){
+    // console.log(Window.localStorage.getItem( key ));
+    if (localStorage.getItem( key )){
+      localStorage.setItem(key, value);
+      console.log("localStorage set "+key+" "+value)
     }
   }
 
