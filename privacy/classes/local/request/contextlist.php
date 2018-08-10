@@ -138,6 +138,12 @@ class contextlist extends contextlist_base {
      * @return  string  The field name or a numeric value representing the context id
      */
     protected function guess_id_field_from_sql($sql) {
+        // We are not interested in any subquery/view/conditions for the purpose of this method, so
+        // let's reduce the query to the interesting parts by recursively cleaning all
+        // contents within parenthesis. If there are problems (null), we keep the text unmodified.
+        // So just top-level sql will remain after the reduction.
+        $recursiveregexp = '/\((([^()]*|(?R))*)\)/';
+        $sql = (preg_replace($recursiveregexp, '', $sql) ?: $sql);
         // Get the list of relevant words from the SQL Query.
         // We explode the SQL by the space character, then trim any extra whitespace (e.g. newlines), before we filter
         // empty value, and finally we re-index the array.
@@ -147,8 +153,15 @@ class contextlist extends contextlist_base {
             return $word !== '';
         });
         $words = array_values($words);
+        $uwords = array_map('strtoupper', $words); // Uppercase all them.
 
-        if ($firstfrom = array_search('FROM', array_map('strtoupper', $words))) {
+        // If the query has boolean operators (UNION, it is the only one we support cross-db)
+        // then we cannot guarantee whats coming after the first query, it can be anything.
+        if (array_search('UNION', $uwords)) {
+            return '';
+        }
+
+        if ($firstfrom = array_search('FROM', $uwords)) {
             // Found a FROM keyword.
             // Select the previous word.
             $fieldname = $words[$firstfrom - 1];
