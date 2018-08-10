@@ -78,12 +78,12 @@
     }
 }}
 <div class="dropdown d-inline">
-    <a href="#" class="{{triggerextraclasses}} dropdown-toggle" id="dropdown-{{instance}}" title="{{title}}" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{{actiontext}}}{{{menutrigger}}}{{#icon}}{{#pix}}{{key}},{{component}},{{title}}{{/pix}}{{/icon}}{{#rawicon}}{{{.}}}{{/rawicon}}{{#menutrigger}}<b class="caret"></b>{{/menutrigger}}</a>
+    <a tabindex="0" class="btn {{triggerextraclasses}} dropdown-toggle" id="dropdown-{{instance}}" aria-label="{{title}}" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" aria-controls="action-menu-{{instance}}-menu">{{{actiontext}}}{{{menutrigger}}}{{#icon}}{{#pix}}{{key}},{{component}},{{title}}{{/pix}}{{/icon}}{{#rawicon}}{{{.}}}{{/rawicon}}{{#menutrigger}}<b class="caret"></b>{{/menutrigger}}</a>
     {{#secondary}}
-        <div class="dropdown-menu dropdown-menu-right {{classes}}"{{#attributes}} {{name}}="{{value}}"{{/attributes}}>
+        <div class="dropdown-menu dropdown-menu-right {{classes}}"{{#attributes}} {{name}}="{{value}}"{{/attributes}} id="dropdown-menu-{{instance}}">
             {{#items}}{{!
                 }}{{#actionmenulink}}<a href="{{url}}" class="dropdown-item {{classes}}" {{#attributes}}{{name}}={{#quote}}{{value}}{{/quote}} {{/attributes}}{{#showtext}}aria-labelledby="actionmenuaction-{{instance}}"{{/showtext}}>{{#icon}}{{#pix}}{{key}},{{component}},{{title}}{{/pix}}{{/icon}}{{#showtext}}<span class="menu-action-text" id="actionmenuaction-{{instance}}">{{{text}}}</span>{{/showtext}}</a>{{/actionmenulink}}{{!
-                }}{{#actionmenufiller}}<div class="dropdown-divider"></div>{{/actionmenufiller}}{{!
+                }}{{#actionmenufiller}}<div class="dropdown-divider" role="presentation"><span class="filler">&nbsp;</span></div>{{/actionmenufiller}}{{!
                 }}{{^actionmenulink}}{{^actionmenufiller}}<div class="dropdown-item">{{> core/action_menu_item }}</div>{{/actionmenufiller}}{{/actionmenulink}}{{!
             }}{{/items}}
         </div>
