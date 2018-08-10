@@ -169,8 +169,14 @@ class mod_chat_lib_testcase extends advanced_testcase {
         $chatsid = chat_login_user($chat->id, 'ajax', 0, $course);
         $chatuser = $DB->get_record('chat_users', ['sid' => $chatsid]);
 
-        // This is when the session starts (when the user enters the chat).
-        $sessionstart = $chatuser->lastping;
+        // Get the messages for this chat session.
+        $messages = chat_get_session_messages($chat->id, false, 0, 0, 'timestamp DESC');
+
+        // We should have just 1 system (enter) messages.
+        $this->assertCount(1, $messages);
+
+        // This is when the session starts (when the first message - enter - has been sent).
+        $sessionstart = reset($messages)->timestamp;
 
         // Send some messages.
         chat_send_chatmessage($chatuser, 'hello!');
