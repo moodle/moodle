@@ -792,7 +792,7 @@ class format_buttons_renderer extends format_topics_renderer
         $output = '';
         foreach ($labels as $modnum => $content) {
 
-            $output .= html_writer::tag('div', $content[3], ['id' => "label{$modnum}", 'class' => 'label-content d-none', 'role' => 'label content']);
+            $output .= html_writer::tag('div', $content[3], ['id' => "label{$modnum}", 'class' => 'label-content d-none', 'role' => 'label content', 'data-label-content' => $modnum ]);
 
             // first test render - for reference
             // $output .= "<div class = 'label_content' id='label_content_{$modnum}'>";

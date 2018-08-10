@@ -92,13 +92,7 @@ define(['jquery','format_buttons/slick'], function($, slick) {
   }
 
   function unslickLabels(){
-    // var all = document.querySelectorAll('.labels.slick-initialized');
-    // console.log(all);
-    // for (var i=0;i<all.length;i++){
-      // var sl = all[i];
       $('.labels.slick-initialized').slick('unslick');
-      // sl.unslick();
-    // }
   }
 
   function loop (htmlCollection){
