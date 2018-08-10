@@ -52,38 +52,11 @@ if ($formaction == 'bulkchange.php') {
     // Get the enrolment plugin type and bulk action from the url.
     $plugin = $url->param('plugin');
     $operationname = $url->param('operation');
+    $dataformat = $url->param('dataformat');
 
     $course = $DB->get_record('course', array('id' => $id), '*', MUST_EXIST);
     $context = context_course::instance($id);
     $PAGE->set_context($context);
-
-    $instances = enrol_get_instances($course->id, false);
-    $instance = false;
-    foreach ($instances as $oneinstance) {
-        if ($oneinstance->enrol == $plugin) {
-            $instance = $oneinstance;
-            break;
-        }
-    }
-    if (!$instance) {
-        print_error('errorwithbulkoperation', 'enrol');
-    }
-
-    $manager = new course_enrolment_manager($PAGE, $course, $instance->id);
-    $plugins = $manager->get_enrolment_plugins();
-
-    if (!isset($plugins[$plugin])) {
-        print_error('errorwithbulkoperation', 'enrol');
-    }
-
-    $plugin = $plugins[$plugin];
-
-    $operations = $plugin->get_bulk_operations($manager);
-
-    if (!isset($operations[$operationname])) {
-        print_error('errorwithbulkoperation', 'enrol');
-    }
-    $operation = $operations[$operationname];
 
     $userids = optional_param_array('userid', array(), PARAM_INT);
     $default = new moodle_url('/user/index.php', ['id' => $course->id]);
@@ -103,72 +76,141 @@ if ($formaction == 'bulkchange.php') {
         }
     }
 
-    if (empty($userids)) {
-        redirect($returnurl, get_string('noselectedusers', 'bulkusers'));
-    }
+    if (empty($plugin) AND $operationname == 'download_participants') {
+        // Check permissions.
+        if (has_capability('moodle/course:manageactivities', $context)) {
+            $plugins = core_plugin_manager::instance()->get_plugins_of_type('dataformat');
+            if (isset($plugins[$dataformat])) {
+                if ($plugins[$dataformat]->is_enabled()) {
+                    require_once($CFG->dirroot . '/lib/dataformatlib.php');
 
-    $users = $manager->get_users_enrolments($userids);
+                    if (empty($userids)) {
+                        redirect($returnurl, get_string('noselectedusers', 'bulkusers'));
+                    }
 
-    $removed = array_diff($userids, array_keys($users));
-    if (!empty($removed)) {
-        // This manager does not filter by enrolment method - so we can get the removed users details.
-        $removedmanager = new course_enrolment_manager($PAGE, $course);
-        $removedusers = $removedmanager->get_users_enrolments($removed);
+                    $columnnames = array(
+                        'firstname' => get_string('firstname'),
+                        'lastname' => get_string('lastname'),
+                        'email' => get_string('email'),
+                    );
 
-        foreach ($removedusers as $removeduser) {
-            $msg = get_string('userremovedfromselectiona', 'enrol', fullname($removeduser));
-            \core\notification::warning($msg);
-        }
-    }
+                    $identityfields = get_extra_user_fields($context);
+                    $identityfieldsselect = '';
 
-    // We may have users from any kind of enrolment, we need to filter for the enrolment plugin matching the bulk action.
-    $matchesplugin = function($user) use ($plugin) {
-        foreach ($user->enrolments as $enrolment) {
-            if ($enrolment->enrolmentplugin->get_name() == $plugin->get_name()) {
-                return true;
+                    foreach ($identityfields as $field) {
+                        $columnnames[$field] = get_string($field);
+                        $identityfieldsselect .= ', u.' . $field . ' ';
+                    }
+
+                    if (!empty($userids)) {
+                        list($insql, $inparams) = $DB->get_in_or_equal($userids);
+                    }
+
+                    $sql = "SELECT u.firstname, u.lastname, u.email" . $identityfieldsselect . "
+                              FROM {user} u
+                             WHERE u.id $insql";
+
+                    $rs = $DB->get_recordset_sql($sql, $inparams);
+                    download_as_dataformat('courseid_' . $course->id . '_participants', $dataformat, $columnnames, $rs);
+                    $rs->close();
+                }
             }
         }
-        return false;
-    };
-    $filteredusers = array_filter($users, $matchesplugin);
-
-    if (empty($filteredusers)) {
-        redirect($returnurl, get_string('noselectedusers', 'bulkusers'));
-    }
-
-    $users = $filteredusers;
-
-    // Get the form for the bulk operation.
-    $mform = $operation->get_form($PAGE->url, array('users' => $users));
-    // If the mform is false then attempt an immediate process. This may be an immediate action that
-    // doesn't require user input OR confirmation.... who know what but maybe one day.
-    if ($mform === false) {
-        if ($operation->process($manager, $users, new stdClass)) {
-            redirect($returnurl);
-        } else {
+    } else {
+        $instances = enrol_get_instances($course->id, false);
+        $instance = false;
+        foreach ($instances as $oneinstance) {
+            if ($oneinstance->enrol == $plugin) {
+                $instance = $oneinstance;
+                break;
+            }
+        }
+        if (!$instance) {
             print_error('errorwithbulkoperation', 'enrol');
         }
-    }
-    // Check if the bulk operation has been cancelled.
-    if ($mform->is_cancelled()) {
-        redirect($returnurl);
-    }
-    if ($mform->is_submitted() && $mform->is_validated() && confirm_sesskey()) {
-        if ($operation->process($manager, $users, $mform->get_data())) {
+
+        $manager = new course_enrolment_manager($PAGE, $course, $instance->id);
+        $plugins = $manager->get_enrolment_plugins();
+
+        if (!isset($plugins[$plugin])) {
+            print_error('errorwithbulkoperation', 'enrol');
+        }
+
+        $plugin = $plugins[$plugin];
+
+        $operations = $plugin->get_bulk_operations($manager);
+
+        if (!isset($operations[$operationname])) {
+            print_error('errorwithbulkoperation', 'enrol');
+        }
+        $operation = $operations[$operationname];
+
+        if (empty($userids)) {
+            redirect($returnurl, get_string('noselectedusers', 'bulkusers'));
+        }
+
+        $users = $manager->get_users_enrolments($userids);
+
+        $removed = array_diff($userids, array_keys($users));
+        if (!empty($removed)) {
+            // This manager does not filter by enrolment method - so we can get the removed users details.
+            $removedmanager = new course_enrolment_manager($PAGE, $course);
+            $removedusers = $removedmanager->get_users_enrolments($removed);
+
+            foreach ($removedusers as $removeduser) {
+                $msg = get_string('userremovedfromselectiona', 'enrol', fullname($removeduser));
+                \core\notification::warning($msg);
+            }
+        }
+
+        // We may have users from any kind of enrolment, we need to filter for the enrolment plugin matching the bulk action.
+        $matchesplugin = function($user) use ($plugin) {
+            foreach ($user->enrolments as $enrolment) {
+                if ($enrolment->enrolmentplugin->get_name() == $plugin->get_name()) {
+                    return true;
+                }
+            }
+            return false;
+        };
+        $filteredusers = array_filter($users, $matchesplugin);
+
+        if (empty($filteredusers)) {
+            redirect($returnurl, get_string('noselectedusers', 'bulkusers'));
+        }
+
+        $users = $filteredusers;
+
+        // Get the form for the bulk operation.
+        $mform = $operation->get_form($PAGE->url, array('users' => $users));
+        // If the mform is false then attempt an immediate process. This may be an immediate action that
+        // doesn't require user input OR confirmation.... who know what but maybe one day.
+        if ($mform === false) {
+            if ($operation->process($manager, $users, new stdClass)) {
+                redirect($returnurl);
+            } else {
+                print_error('errorwithbulkoperation', 'enrol');
+            }
+        }
+        // Check if the bulk operation has been cancelled.
+        if ($mform->is_cancelled()) {
             redirect($returnurl);
         }
+        if ($mform->is_submitted() && $mform->is_validated() && confirm_sesskey()) {
+            if ($operation->process($manager, $users, $mform->get_data())) {
+                redirect($returnurl);
+            }
+        }
+
+        $pagetitle = get_string('bulkuseroperation', 'enrol');
+
+        $PAGE->set_title($pagetitle);
+        $PAGE->set_heading($pagetitle);
+        echo $OUTPUT->header();
+        echo $OUTPUT->heading($operation->get_title());
+        $mform->display();
+        echo $OUTPUT->footer();
+        exit();
     }
-
-    $pagetitle = get_string('bulkuseroperation', 'enrol');
-
-    $PAGE->set_title($pagetitle);
-    $PAGE->set_heading($pagetitle);
-    echo $OUTPUT->header();
-    echo $OUTPUT->heading($operation->get_title());
-    $mform->display();
-    echo $OUTPUT->footer();
-    exit();
-
 } else {
     throw new coding_exception('invalidaction');
 }
