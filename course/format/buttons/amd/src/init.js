@@ -1,120 +1,119 @@
 define(['jquery','format_buttons/slick'], function($, slick) {
 
-  function sectionsSliderInit(elem){
-      // $('.slider.sections').slick({
-      elem.slick({
-        dots: false,
-        autoplay: false,
-        arrows:true,
-        slidesToShow: 4,
-        slidesToScroll: 1,
-        responsive: [
-          {
-            breakpoint: 1200,
-            settings: {
-              slidesToShow: 3,
-              slidesToScroll: 1,
-              infinite: true,
-              dots: false
-            }
-          },
-          {
-            breakpoint: 992,
-            settings: {
-              slidesToShow: 2,
-              slidesToScroll: 1
-            }
-          },
-          {
-            breakpoint: 576,
-            settings: {
-              slidesToShow: 1,
-              slidesToScroll: 1
-            }
-          }
-        ]
-      });
-    }
-  function labelsSliderInit(elem){
-    elem.slick({
-      dots: false,
-        autoplay: false,
-        vertical: true,
-        slidesToShow: 4,
-        slidesToScroll: 1,
-        verticalSwiping: true,
-        arrows:true,
-        responsive: [
-          {
-            breakpoint: 1200,
-            settings: {
-              slidesToShow: 3,
-              slidesToScroll: 1,
-              infinite: true,
-              dots: false
-            }
-          },
-          {
-            breakpoint: 992,
-            settings: {
-              slidesToShow: 2,
-              slidesToScroll: 1
-            }
-          },
-          {
-            breakpoint: 576,
-            settings:
-            // {
-              'unslick'
-              // slidesToShow: 1,
-              // slidesToScroll: 1,
-              // vertical: false,
-              // verticalSwiping: false
-            // }
-          }
-        ]
-      });
-    }
-    // init sliders
-  function initSlidesEvents(){
-    var sections = $('.slider.sections .nav-item');
-    var labels = $('.slider.labels .nav-item');
+  function initDefaults(){
+    var currentSection = 1;
+    initSlider($('.slider.sections'));
+    sectionsEvents();
+    initSlider($('#section'+currentSection+' .slider.labels'),0);
+  }
 
-    for (var i=1; i<sections.length; i++){
+  function sectionsEvents(){
+    var sections = $('.slider.sections .nav-item');
+    for (var i = 0; i < sections.length; i++) {
       var item = sections[i];
-      item.addEventListener('click', function(){
-        var equils = $('#section'+this.dataset.section);
-        for (var j=0; j<$('.section-content').length;j++){
-          if ($('.section-content')[j].classList !== 'section-content d-none'){
-            $('.section-content')[j].classList = 'section-content d-none';
-          }
-        }
-        equils.toggleClass('d-none');
-        //
-        // TODO: set to unslick all prev label-sliders and init current labels-slider
-        labelsSliderInit($('#section'+this.dataset.section+' .slider.labels'));
-      });
-    }
-    for (var i=1; i<labels.length; i++){
-      var item = labels[i];
-      item.addEventListener('click', function(){
-        var equils = $('[data-label-content="'+this.dataset.label+'"]');
-        for (var j=0; j<$('.label-content').length;j++){
-          if ($('.label-content')[j].classList !== 'label-content d-none'){
-            $('.label-content')[j].classList = 'label-content d-none';
-          }
-        }
-        equils.toggleClass('d-none');
+      item.addEventListener('click', function() {
+        loop($('.section-content'));
+        $('#section' + this.dataset.section).toggleClass('d-none');
+        unslickLabels();
+        initSlider($('#section' + this.dataset.section + ' .slider.labels'),0);
+        labelsEvents(this.dataset.section);
       });
     }
   }
 
+  function labelsEvents(currentSection){
+    var labels = $('#section' + currentSection + ' .nav-item');
+    for (var i = 0; i < labels.length; i++) {
+      var item = labels[i];
+      item.addEventListener('click', function() {
+        console.log(this);
+        var equils = $('[data-label-content="' + this.dataset.label + '"]');
+        loop($('#section' + currentSection + ' .label-content'));
+        $('[data-label-content="' + this.dataset.label + '"]').toggleClass('d-none');
+      });
+    }
+  }
+
+  // if elem only - horizontal, 2 attr - vertical;
+  function initSlider(elem, vert){
+    var dir, resp=[], brakepoints= [1200, 992, 540], brp, slides=4;
+    (document.dir == "rtl")?dir = true:dir = false;
+    (vert !== undefined)?vert = true:vert = false;
+    // responsiveness / dropdown on xs vert
+    if (vert){
+      console.log(elem);
+      for (var i=0; i<brakepoints.length; i++){
+        if (brakepoints[i] == 540){
+          brp = {
+            breakpoint: brakepoints[i],
+            settings: 'unslick'
+          };
+          resp.push(brp);
+        } else {
+          brp = {
+            breakpoint: brakepoints[i],
+            settings: {
+              slidesToShow: slides,
+              slidesToScroll: 1,
+            }
+          };
+          resp.push(brp);
+        }
+      }
+    } else {
+      for (var i=0; i<brakepoints.length; i++){
+        brp = {
+          breakpoint: brakepoints[i],
+          settings: {
+            slidesToShow: --slides,
+            slidesToScroll: 1,
+          }
+        };
+        resp.push(brp);
+      }
+    }
+
+    var slickConfig = {
+      dots: false,
+      autoplay: false,
+      arrows: true,
+      vertical: vert,
+      verticalSwiping: vert,
+      rtl: dir,
+      slidesToShow: 4,
+      slidesToScroll: 1,
+      responsive:resp,
+    };
+    // console.log("rtl:"+slickConfig.rtl);
+    // console.log("vert:"+slickConfig.vertical);
+    // console.log("resp:"+slickConfig.responsive);
+    // console.log($.isArray(slickConfig.responsive));
+    elem.slick(slickConfig);
+  }
+
+  function unslickLabels(){
+    // var all = document.querySelectorAll('.labels.slick-initialized');
+    // console.log(all);
+    // for (var i=0;i<all.length;i++){
+      // var sl = all[i];
+      $('.labels.slick-initialized').slick('unslick');
+      // sl.unslick();
+    // }
+  }
+
+  function loop (htmlCollection){
+    for(var i=0; i<htmlCollection.length;i++){
+      var elem = htmlCollection[i];
+      if (!htmlCollection[i].classList.contains('d-none')){
+        htmlCollection[i].classList += " d-none";
+      }
+    }
+  }
+
+
     return {
         init: function() {
-
-          sectionsSliderInit($('.slider.sections'));
-          // labelsSliderInit($('.slider.labels'));
-          initSlidesEvents();
+          initDefaults();
         }
     };
 });

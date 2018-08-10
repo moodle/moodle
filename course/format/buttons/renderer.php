@@ -502,14 +502,14 @@ class format_buttons_renderer extends format_topics_renderer
                 if (!$PAGE->user_is_editing()) {
                     // our labels output into sections except 0
 
-                    $htmlsection[$section] .=  html_writer::start_tag('div',['id' => "section$section",'class' => "section-content  $currentsectionclass", 'role' => 'section content' ]);
-                    $htmlsection[$section] .=  html_writer::start_tag('div',['class' => 'd-flex flex-xs-column flex-md-row-reverse']);
-                    $htmlsection[$section] .=  html_writer::start_tag('div',['class' => 'col col-md-2 labels-wrapper']);
-                    $htmlsection[$section] .=  html_writer::start_tag('ul',['id' => 'labels', 'class' => 'nav flex-column flex-nowrap slider labels', 'role' => 'labels list']);
+                    $htmlsection[$section] .=  html_writer::start_tag('div',['id' => "section$section",'class' => "section-content d-none  $currentsectionclass", 'role' => 'section content' ]);
+                    $htmlsection[$section] .=  html_writer::start_tag('div',['class' => 'd-flex flex-column flex-md-row-reverse']);
+                    $htmlsection[$section] .=  html_writer::start_tag('div',['class' => 'col-12 col-md-2 labels-wrapper']);
+                    $htmlsection[$section] .=  html_writer::start_tag('ul',['class' => 'nav flex-column flex-nowrap slider labels', 'role' => 'labels list']);
                     $htmlsection[$section] .=  $this->labels_list($course, $thissection);
                     $htmlsection[$section] .=  html_writer::end_tag('ul');
                     $htmlsection[$section] .=  html_writer::end_tag('div');
-                    $htmlsection[$section] .=  html_writer::start_tag('div',['class' => 'label-content-wrapper col col-md-10']);
+                    $htmlsection[$section] .=  html_writer::start_tag('div',['class' => 'label-content-wrapper col-12 col-md-10']);
                     $htmlsection[$section] .=  $this->labels_content($course, $thissection);
                     $htmlsection[$section] .=  html_writer::end_tag('div');
                     $htmlsection[$section] .=  html_writer::end_tag('div');

@@ -2,6 +2,9 @@
   "name": "Moodle",
   "private": true,
   "description": "Moodle",
+  "scripts": {
+    "start": "gulp watch"
+  },
   "devDependencies": {
     "async": "1.5.2",
     "autoprefixer": "6.7.x",
