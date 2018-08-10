@@ -26,6 +26,7 @@ $string['abouttobeinstalled'] = 'about to be installed';
 $string['action'] = 'Action';
 $string['actionchoice'] = 'What do you want to do with the file \'{$a}\'?';
 $string['actions'] = 'Actions';
+$string['actionsmenu'] = 'Actions menu';
 $string['active'] = 'Active';
 $string['activeusers'] = 'Active users';
 $string['activities'] = 'Activities';
