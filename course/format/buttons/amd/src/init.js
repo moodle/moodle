@@ -139,7 +139,6 @@ define(['jquery','format_buttons/slick'], function($, slick) {
     }
   }
 
-
     return {
         init: function() {
           initDefaults();
