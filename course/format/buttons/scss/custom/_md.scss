@@ -1,0 +1,26 @@
+.sections-wrapper{
+  display: flex;
+  flex: 1;
+  .slider.sections{
+    width:84%;
+    padding: 0 5%;
+  }
+}
+.slider.labels{
+  max-height: 80vh;
+  padding: 5vh 0;
+  &.slick-slider{
+    .slick-slide{
+    }
+    .slick-arrow{
+      &.slick-prev{
+        left:50%;
+        top:0;
+      }
+      &.slick-next{
+        left:50%;
+        bottom:0;
+      }
+    }
+  }
+}

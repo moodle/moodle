@@ -1,0 +1,24 @@
+
+// @import "globals/font";
+@import "variables";
+
+@import "blocks/base";
+@import "blocks/slick";
+
+// custom styles
+@import "custom/custom";
+@media screen and (max-width:575px) {
+  @import "custom/xs";
+}
+@media screen and (min-width:576px) {
+  @import "custom/sm";
+}
+@media screen and (min-width:768px) {
+  @import "custom/md";
+}
+@media screen and (min-width:992px) {
+  @import "custom/lg";
+}
+@media screen and (min-width:1200px) {
+  @import "custom/xl";
+}

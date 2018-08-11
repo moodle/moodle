@@ -195,7 +195,7 @@ class format_buttons_renderer extends format_topics_renderer
         $html .= html_writer::start_tag('div',['class' => 'container-fluid buttons']); // don't forget to close it later
 
         $html .= html_writer::start_tag('div',['class' => 'sections-wrapper']);
-        $html .= html_writer::start_tag('ul',['id' => 'sections', 'role' => 'sections list', 'class' => 'nav slider sections']);
+        $html .= html_writer::start_tag('ul',['id' => 'sections', 'role' => 'sections-list', 'class' => 'nav slider sections']);
         }
 
         foreach ($modinfo->get_section_info_all() as $section => $thissection) {
@@ -253,7 +253,7 @@ class format_buttons_renderer extends format_topics_renderer
             $html .= html_writer::start_tag('div',['class' => 'd-flex flex-row section-header justify-content-center align-items-center']);
             $html .= html_writer::tag('span', '', ['class' => 'section-icon d-inline-flex p-2 justify-content-center align-items-center']);
             $html .= html_writer::start_tag('div',['class' => 'd-flex flex-column section-header']);
-            $html .= html_writer::tag('span', get_section_name($course, $section), ['class' => 'lead section-title']);
+            $html .= html_writer::tag('span', get_section_name($course, $section), ['class' => ' section-title']);
             $html .= html_writer::tag('p', "$thissection->summary", ['class' => 'section-description']);
             $html .= html_writer::end_tag('div');
             $html .= html_writer::end_tag('div');
@@ -502,14 +502,14 @@ class format_buttons_renderer extends format_topics_renderer
                 if (!$PAGE->user_is_editing()) {
                     // our labels output into sections except 0
 
-                    $htmlsection[$section] .=  html_writer::start_tag('div',['id' => "section$section",'class' => "section-content  $currentsectionclass", 'role' => 'section content' ]);
-                    $htmlsection[$section] .=  html_writer::start_tag('div',['class' => 'd-flex flex-xs-column flex-md-row-reverse']);
-                    $htmlsection[$section] .=  html_writer::start_tag('div',['class' => 'col col-md-2 labels-wrapper']);
-                    $htmlsection[$section] .=  html_writer::start_tag('ul',['id' => 'labels', 'class' => 'nav flex-column flex-nowrap slider labels', 'role' => 'labels list']);
+                    $htmlsection[$section] .=  html_writer::start_tag('div',['id' => "section$section",'class' => "section-content d-none  $currentsectionclass", 'role' => 'section content' ]);
+                    $htmlsection[$section] .=  html_writer::start_tag('div',['class' => 'd-flex flex-column flex-md-row-reverse']);
+                    $htmlsection[$section] .=  html_writer::start_tag('div',['class' => 'col-12 col-md-2 labels-wrapper']);
+                    $htmlsection[$section] .=  html_writer::start_tag('ul',['class' => 'nav flex-column flex-nowrap slider labels', 'role' => 'labels list']);
                     $htmlsection[$section] .=  $this->labels_list($course, $thissection);
                     $htmlsection[$section] .=  html_writer::end_tag('ul');
                     $htmlsection[$section] .=  html_writer::end_tag('div');
-                    $htmlsection[$section] .=  html_writer::start_tag('div',['class' => 'label-content-wrapper col col-md-10']);
+                    $htmlsection[$section] .=  html_writer::start_tag('div',['class' => 'label-content-wrapper col-12 col-md-10']);
                     $htmlsection[$section] .=  $this->labels_content($course, $thissection);
                     $htmlsection[$section] .=  html_writer::end_tag('div');
                     $htmlsection[$section] .=  html_writer::end_tag('div');
@@ -792,7 +792,7 @@ class format_buttons_renderer extends format_topics_renderer
         $output = '';
         foreach ($labels as $modnum => $content) {
 
-            $output .= html_writer::tag('div', $content[3], ['id' => "label{$modnum}", 'class' => 'label-content d-none', 'role' => 'label content']);
+            $output .= html_writer::tag('div', $content[3], ['id' => "label{$modnum}", 'class' => 'label-content d-none', 'role' => 'label content', 'data-label-content' => $modnum ]);
 
             // first test render - for reference
             // $output .= "<div class = 'label_content' id='label_content_{$modnum}'>";

@@ -1,0 +1,37 @@
+{
+  "name": "Moodle",
+  "private": true,
+  "description": "Moodle",
+  "scripts": {
+    "start": "gulp watch"
+  },
+  "devDependencies": {
+    "async": "1.5.2",
+    "autoprefixer": "6.7.x",
+    "css-mqpacker": "^5.0.1",
+    "del": "^2.2.2",
+    "gulp": "^3.9.1",
+    "gulp-cli": "^1.2.2",
+    "gulp-csso": "^3.0.0",
+    "gulp-delete-directory-files": "0.0.2",
+    "gulp-jsmin": "^0.1.5",
+    "gulp-minify": "^2.1.0",
+    "gulp-plumber": "1.1.0",
+    "gulp-postcss": "6.2.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-sass": "3.1.0",
+    "gulp-sequence": "^0.4.6",
+    "gulp-uglify": "^3.0.0",
+    "gulp-uglify-js": "0.0.4",
+    "pump": "^2.0.0",
+    "semver": "5.3.0",
+    "shifter": "0.5.0",
+    "stylelint": "7.4.1",
+    "stylelint-checkstyle-formatter": "0.1.0",
+    "xmldom": "0.1.22",
+    "xpath": "0.0.23"
+  },
+  "engines": {
+    "node": ">=4"
+  }
+}
