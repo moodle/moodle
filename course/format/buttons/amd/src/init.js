@@ -1,14 +1,15 @@
 define(['jquery','format_buttons/slick'], function($, slick) {
 
   function initDefaults(){
-    
-    var currentSection = checkStorage('lastSection');
-    var currentLabel = checkStorage('lastLabel');
+    var currentSection = checkStorage('lastSection'),
+        currentLabel = checkStorage('lastLabel');
     initSlider($('.slider.sections'));
     sectionsEvents();
-    initSlider($('#section'+currentSection+' .slider.labels'),0);
+    $('.slider.sections .nav-item[data-section="'+currentSection+'"]').toggleClass('active');
     $('#section' + currentSection).toggleClass('d-none');
-    $('[data-label-content="' + currentLabel + '"]').toggleClass('d-none');
+    initSlider($('#section'+currentSection+' .slider.labels'),0);
+    $('[data-label="' + currentLabel + '"]').toggleClass('active');
+    $('#label' + currentLabel ).toggleClass('d-none');
   }
 
   function sectionsEvents(){
@@ -16,6 +17,8 @@ define(['jquery','format_buttons/slick'], function($, slick) {
     for (var i = 0; i < sections.length; i++) {
       var item = sections[i];
       item.addEventListener('click', function() {
+        loopActive(sections, item);
+        $('.slider.sections .nav-item[data-section="'+this.dataset.section+'"]').toggleClass('active');
         loop($('.section-content'));
         $('#section' + this.dataset.section).toggleClass('d-none');
         addToStorage('lastSection', this.dataset.section);
@@ -32,6 +35,8 @@ define(['jquery','format_buttons/slick'], function($, slick) {
       var item = labels[i];
       item.addEventListener('click', function() {
         addToStorage('lastLabel', this.dataset.label);
+        loopActive(labels, item);
+        $('[data-label="' + this.dataset.label + '"]').toggleClass('active');
         var equils = $('[data-label-content="' + this.dataset.label + '"]');
         loop($('#section' + currentSection + ' .label-content'));
         $('[data-label-content="' + this.dataset.label + '"]').toggleClass('d-none');
@@ -46,7 +51,6 @@ define(['jquery','format_buttons/slick'], function($, slick) {
     (vert !== undefined)?vert = true:vert = false;
     // responsiveness / dropdown on xs vert
     if (vert){
-
       for (var i=0; i<brakepoints.length; i++){
         if (brakepoints[i] == 540){
           // add dropdown touch event
@@ -101,6 +105,16 @@ define(['jquery','format_buttons/slick'], function($, slick) {
       $('.labels.slick-initialized').slick('unslick');
   }
 
+  function loopActive(htmlCollection, currentActive){
+    for(var i=0; i<htmlCollection.length;i++){
+      var elem = htmlCollection[i];
+      if (htmlCollection[i].classList.contains('active')){
+        htmlCollection[i].classList.remove('active');
+      }
+    }
+    currentActive.classList.add('active');
+  }
+
   function loop (htmlCollection){
     for(var i=0; i<htmlCollection.length;i++){
       var elem = htmlCollection[i];
@@ -123,7 +137,6 @@ define(['jquery','format_buttons/slick'], function($, slick) {
     // console.log(Window.localStorage.getItem( key ));
     if (localStorage.getItem( key )){
       localStorage.setItem(key, value);
-      console.log("localStorage set "+key+" "+value)
     }
   }
 
