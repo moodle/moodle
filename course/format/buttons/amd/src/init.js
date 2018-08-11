@@ -112,7 +112,6 @@ define(['jquery','format_buttons/slick'], function($, slick) {
         htmlCollection[i].classList.remove('active');
       }
     }
-    currentActive.classList.add('active');
   }
 
   function loop (htmlCollection){

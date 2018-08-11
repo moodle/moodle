@@ -253,7 +253,7 @@ class format_buttons_renderer extends format_topics_renderer
             $html .= html_writer::start_tag('div',['class' => 'd-flex flex-row section-header justify-content-center align-items-center']);
             $html .= html_writer::tag('span', '', ['class' => 'section-icon d-inline-flex p-2 justify-content-center align-items-center']);
             $html .= html_writer::start_tag('div',['class' => 'd-flex flex-column section-header']);
-            $html .= html_writer::tag('span', get_section_name($course, $section), ['class' => 'lead section-title']);
+            $html .= html_writer::tag('span', get_section_name($course, $section), ['class' => ' section-title']);
             $html .= html_writer::tag('p', "$thissection->summary", ['class' => 'section-description']);
             $html .= html_writer::end_tag('div');
             $html .= html_writer::end_tag('div');

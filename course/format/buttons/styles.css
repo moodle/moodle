@@ -281,7 +281,7 @@
       border-bottom: 1px solid #000;
       border-left: 1px solid #000; }
 
-  .slick-slider .nav-item.active{
+  .slider.sections .nav-item.active, .slider.labels .nav-item.active{
     font-weight:700;
     transform: scale(1.2);
   }
