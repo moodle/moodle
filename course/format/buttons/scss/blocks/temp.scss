@@ -14,10 +14,13 @@
     margin: 0 5px;
     background-color: #ddd;
     transition: .2s;
-    &.slick-active,
     &:hover {
       background-color: #b7b7b7;
     }
+  }
+
+  .slider.sections .nav-item.active {
+      background-color: #b7b7b7;
   }
 }
 

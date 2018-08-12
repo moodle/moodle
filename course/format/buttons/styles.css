@@ -231,8 +231,10 @@
   margin: 0 5px;
   background-color: #ddd;
   transition: .2s; }
-  .sections-wrapper .slick-slide.slick-active, .sections-wrapper .slick-slide:hover {
+ .sections-wrapper .slick-slide:hover {
     background-color: #b7b7b7; }
+  .sections-wrapper   .slider.sections .nav-item.active{
+       background-color: #b7b7b7; }
 
 .labels-wrapper .slick-slide {
   margin: 5px 0;
