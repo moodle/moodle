@@ -35,7 +35,7 @@ define(['jquery'], function($) {
                       fade: false,
                       focusOnSelect: false,
                       focusOnChange: false,
-                      infinite: true,
+                      infinite: false,
                       initialSlide: 0,
                       lazyLoad: 'ondemand',
                       mobileFirst: false,

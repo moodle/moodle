@@ -48,4 +48,5 @@ if (!empty($displaysection)) {
     $renderer->print_multiple_section_page($course, null, null, null, null);
 }
 
+$PAGE->requires->js('/course/format/buttons/format.js'); 
 $PAGE->requires->js_call_amd('format_buttons/init', 'init');

@@ -1,0 +1,53 @@
+.sections-wrapper {
+  .section-description {
+    margin: 0;
+
+  }
+
+  .section-title {
+    font-size: 1.3rem;
+    line-height: 60px;
+  }
+
+  .slick-slide {
+    cursor: pointer;
+    margin: 0 5px;
+    background-color: #ddd;
+    transition: .2s;
+    &.slick-active,
+    &:hover {
+      background-color: #b7b7b7;
+    }
+  }
+}
+
+.labels-wrapper {
+  .slick-slide {
+    margin: 5px 0;
+    font-size: 1.3rem;
+    line-height: 60px;
+    cursor: pointer;
+    background-color: #7af2ff;
+    transition: .2s;
+    &:hover {
+      background-color: #85c7ce;
+    }
+  }
+
+  .label-icon {
+    width: 40px;
+    height: 27px;
+    margin-left: 5px;
+  }
+}
+
+.label-content-wrapper {
+  border: 1px solid #ddd;
+  margin-top: 20px;
+  padding: 10px;
+  height: 60vh;
+}
+
+.slick-arrow {
+  cursor: pointer;
+}
