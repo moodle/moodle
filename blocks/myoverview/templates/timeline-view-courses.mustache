@@ -86,7 +86,7 @@
             // If there was only one hidden block then we have no more to show now
             // so we can disable the button.
             if (blocks && blocks.length == 1) {
-                button.prop('disabled', true);
+                button.addClass('hidden');
             }
 
             if (data) {
