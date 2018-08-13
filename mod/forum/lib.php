@@ -6649,3 +6649,98 @@ function forum_user_can_reply_privately(\context_module $context, \stdClass $par
 
     return has_capability('mod/forum:postprivatereply', $context);
 }
+
+/**
+ * This function calculates the minimum and maximum cutoff values for the timestart of
+ * the given event.
+ *
+ * It will return an array with two values, the first being the minimum cutoff value and
+ * the second being the maximum cutoff value. Either or both values can be null, which
+ * indicates there is no minimum or maximum, respectively.
+ *
+ * If a cutoff is required then the function must return an array containing the cutoff
+ * timestamp and error string to display to the user if the cutoff value is violated.
+ *
+ * A minimum and maximum cutoff return value will look like:
+ * [
+ *     [1505704373, 'The date must be after this date'],
+ *     [1506741172, 'The date must be before this date']
+ * ]
+ *
+ * @param calendar_event $event The calendar event to get the time range for
+ * @param stdClass $forum The module instance to get the range from
+ * @return array Returns an array with min and max date.
+ */
+function mod_forum_core_calendar_get_valid_event_timestart_range(\calendar_event $event, \stdClass $forum) {
+    global $CFG;
+
+    require_once($CFG->dirroot . '/mod/forum/locallib.php');
+
+    $mindate = null;
+    $maxdate = null;
+
+    if ($event->eventtype == FORUM_EVENT_TYPE_DUE) {
+        if (!empty($forum->cutoffdate)) {
+            $maxdate = [
+                $forum->cutoffdate,
+                get_string('cutoffdatevalidation', 'forum'),
+            ];
+        }
+    }
+
+    return [$mindate, $maxdate];
+}
+
+/**
+ * This function will update the forum module according to the
+ * event that has been modified.
+ *
+ * It will set the timeclose value of the forum instance
+ * according to the type of event provided.
+ *
+ * @throws \moodle_exception
+ * @param \calendar_event $event
+ * @param stdClass $forum The module instance to get the range from
+ */
+function mod_forum_core_calendar_event_timestart_updated(\calendar_event $event, \stdClass $forum) {
+    global $CFG, $DB;
+
+    require_once($CFG->dirroot . '/mod/forum/locallib.php');
+
+    if ($event->eventtype != FORUM_EVENT_TYPE_DUE) {
+        return;
+    }
+
+    $courseid = $event->courseid;
+    $modulename = $event->modulename;
+    $instanceid = $event->instance;
+
+    // Something weird going on. The event is for a different module so
+    // we should ignore it.
+    if ($modulename != 'forum') {
+        return;
+    }
+
+    if ($forum->id != $instanceid) {
+        return;
+    }
+
+    $coursemodule = get_fast_modinfo($courseid)->instances[$modulename][$instanceid];
+    $context = context_module::instance($coursemodule->id);
+
+    // The user does not have the capability to modify this activity.
+    if (!has_capability('moodle/course:manageactivities', $context)) {
+        return;
+    }
+
+    if ($event->eventtype == FORUM_EVENT_TYPE_DUE) {
+        if ($forum->duedate != $event->timestart) {
+            $forum->duedate = $event->timestart;
+            $forum->timemodified = time();
+            // Persist the instance changes.
+            $DB->update_record('forum', $forum);
+            $event = \core\event\course_module_updated::create_from_cm($coursemodule, $context);
+            $event->trigger();
+        }
+    }
+}

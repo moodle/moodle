@@ -3767,4 +3767,200 @@ class mod_forum_lib_testcase extends advanced_testcase {
         $this->setUser($otheruser->id);
         $this->assertFalse(forum_post_is_visible_privately($post, $cm));
     }
+
+    /**
+     * An unkown event type should not have any limits
+     */
+    public function test_mod_forum_core_calendar_get_valid_event_timestart_range_unknown_event() {
+        global $CFG;
+        require_once($CFG->dirroot . "/calendar/lib.php");
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $duedate = time() + DAYSECS;
+        $forum = new \stdClass();
+        $forum->duedate = $duedate;
+
+        // Create a valid event.
+        $event = new \calendar_event([
+            'name' => 'Test event',
+            'description' => '',
+            'format' => 1,
+            'courseid' => $course->id,
+            'groupid' => 0,
+            'userid' => 2,
+            'modulename' => 'forum',
+            'instance' => 1,
+            'eventtype' => FORUM_EVENT_TYPE_DUE . "SOMETHING ELSE",
+            'timestart' => 1,
+            'timeduration' => 86400,
+            'visible' => 1
+        ]);
+
+        list ($min, $max) = mod_forum_core_calendar_get_valid_event_timestart_range($event, $forum);
+        $this->assertNull($min);
+        $this->assertNull($max);
+    }
+
+    /**
+     * Forums configured without a cutoff date should not have any limits applied.
+     */
+    public function test_mod_forum_core_calendar_get_valid_event_timestart_range_due_no_limit() {
+        global $CFG;
+        require_once($CFG->dirroot . '/calendar/lib.php');
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $duedate = time() + DAYSECS;
+        $forum = new \stdClass();
+        $forum->duedate = $duedate;
+
+        // Create a valid event.
+        $event = new \calendar_event([
+            'name' => 'Test event',
+            'description' => '',
+            'format' => 1,
+            'courseid' => $course->id,
+            'groupid' => 0,
+            'userid' => 2,
+            'modulename' => 'forum',
+            'instance' => 1,
+            'eventtype' => FORUM_EVENT_TYPE_DUE,
+            'timestart' => 1,
+            'timeduration' => 86400,
+            'visible' => 1
+        ]);
+
+        list($min, $max) = mod_forum_core_calendar_get_valid_event_timestart_range($event, $forum);
+        $this->assertNull($min);
+        $this->assertNull($max);
+    }
+
+    /**
+     * Forums should be top bound by the cutoff date.
+     */
+    public function test_mod_forum_core_calendar_get_valid_event_timestart_range_due_with_limits() {
+        global $CFG;
+        require_once($CFG->dirroot . '/calendar/lib.php');
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $duedate = time() + DAYSECS;
+        $cutoffdate = $duedate + DAYSECS;
+        $forum = new \stdClass();
+        $forum->duedate = $duedate;
+        $forum->cutoffdate = $cutoffdate;
+
+        // Create a valid event.
+        $event = new \calendar_event([
+            'name' => 'Test event',
+            'description' => '',
+            'format' => 1,
+            'courseid' => $course->id,
+            'groupid' => 0,
+            'userid' => 2,
+            'modulename' => 'forum',
+            'instance' => 1,
+            'eventtype' => FORUM_EVENT_TYPE_DUE,
+            'timestart' => 1,
+            'timeduration' => 86400,
+            'visible' => 1
+        ]);
+
+        list($min, $max) = mod_forum_core_calendar_get_valid_event_timestart_range($event, $forum);
+        $this->assertNull($min);
+        $this->assertEquals($cutoffdate, $max[0]);
+        $this->assertNotEmpty($max[1]);
+    }
+
+    /**
+     * An unknown event type should not change the forum instance.
+     */
+    public function test_mod_forum_core_calendar_event_timestart_updated_unknown_event() {
+        global $CFG, $DB;
+        require_once($CFG->dirroot . "/calendar/lib.php");
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $forumgenerator = $generator->get_plugin_generator('mod_forum');
+        $duedate = time() + DAYSECS;
+        $cutoffdate = $duedate + DAYSECS;
+        $forum = $forumgenerator->create_instance(['course' => $course->id]);
+        $forum->duedate = $duedate;
+        $forum->cutoffdate = $cutoffdate;
+        $DB->update_record('forum', $forum);
+
+        // Create a valid event.
+        $event = new \calendar_event([
+            'name' => 'Test event',
+            'description' => '',
+            'format' => 1,
+            'courseid' => $course->id,
+            'groupid' => 0,
+            'userid' => 2,
+            'modulename' => 'forum',
+            'instance' => $forum->id,
+            'eventtype' => FORUM_EVENT_TYPE_DUE . "SOMETHING ELSE",
+            'timestart' => 1,
+            'timeduration' => 86400,
+            'visible' => 1
+        ]);
+
+        mod_forum_core_calendar_event_timestart_updated($event, $forum);
+
+        $forum = $DB->get_record('forum', ['id' => $forum->id]);
+        $this->assertEquals($duedate, $forum->duedate);
+        $this->assertEquals($cutoffdate, $forum->cutoffdate);
+    }
+
+    /**
+     * Due date events should update the forum due date.
+     */
+    public function test_mod_forum_core_calendar_event_timestart_updated_due_event() {
+        global $CFG, $DB;
+        require_once($CFG->dirroot . "/calendar/lib.php");
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $forumgenerator = $generator->get_plugin_generator('mod_forum');
+        $duedate = time() + DAYSECS;
+        $cutoffdate = $duedate + DAYSECS;
+        $newduedate = $duedate + 1;
+        $forum = $forumgenerator->create_instance(['course' => $course->id]);
+        $forum->duedate = $duedate;
+        $forum->cutoffdate = $cutoffdate;
+        $DB->update_record('forum', $forum);
+
+        // Create a valid event.
+        $event = new \calendar_event([
+            'name' => 'Test event',
+            'description' => '',
+            'format' => 1,
+            'courseid' => $course->id,
+            'groupid' => 0,
+            'userid' => 2,
+            'modulename' => 'forum',
+            'instance' => $forum->id,
+            'eventtype' => FORUM_EVENT_TYPE_DUE,
+            'timestart' => $newduedate,
+            'timeduration' => 86400,
+            'visible' => 1
+        ]);
+
+        mod_forum_core_calendar_event_timestart_updated($event, $forum);
+
+        $forum = $DB->get_record('forum', ['id' => $forum->id]);
+        $this->assertEquals($newduedate, $forum->duedate);
+        $this->assertEquals($cutoffdate, $forum->cutoffdate);
+    }
 }
