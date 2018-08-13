@@ -3,7 +3,7 @@
         <ul class="m-t-1 pagination ">
             {{#previous}}
                 <li class="page-item">
-                    <a href="{{url}}" class="page-link">
+                    <a href="{{url}}" class="page-link" aria-label="Previous">
                         <span aria-hidden="true">&laquo;</span>
                         <span class="sr-only">{{#str}}previous{{/str}}</span>
                     </a>
@@ -37,7 +37,7 @@
             {{/last}}
             {{#next}}
                 <li class="page-item">
-                    <a href="{{url}}" class="page-link">
+                    <a href="{{url}}" class="page-link" aria-label="Next">
                         <span aria-hidden="true">&raquo;</span>
                         <span class="sr-only">{{#str}}next{{/str}}</span>
                     </a>
