@@ -1,39 +1,83 @@
+#buttons{
+  padding:0;
+}
 .sections-wrapper {
-  .section-description {
-    margin: 0;
-
-  }
-
-  .section-title {
-    font-size: 1.3rem;
-    line-height: 60px;
-  }
-
   .slick-slide {
     cursor: pointer;
-    margin: 0 5px;
-    background-color: #ddd;
+    margin-left: 5px;
+    margin-right: 5px;
     transition: .2s;
-    &:hover {
-      background-color: #b7b7b7;
-    }
   }
-
-  .slider.sections .nav-item.active {
+  .slider.sections .nav-item{
+    box-sizing: border-box;
+    border: 1px solid transparent;
+    // min-height: 100px;
+    margin-top:12px;
+    background-color: #ddd;
+    transition: all .3s ease-in-out;
+    .section-title {
+      font-size: 1.3rem;
+      line-height: 60px;
+    }
+    .section-description{
+      min-height: 1.375rem;
+      opacity:0;
+      transition: all .3s ease-in-out;
+    }
+    &:hover{
+      margin-top: 0;
+      padding: 12px 0 0 0;
       background-color: #b7b7b7;
+      transition: all .3s ease-in-out;
+      .section-description{
+        opacity: 1;
+        transition: all .3s ease-in-out;
+      }
+    }
+    &.active {
+      background-color: #fff;
+      margin-top: 0;
+      padding: 12px 0 0 0;
+      border:1px solid #b7b7b7;
+      border-bottom-color: transparent;
+      transition: all .3s ease-in-out;
+      .section-description{
+        opacity: 1;
+        transition: all .3s ease-in-out;
+      }
+    }
   }
 }
 
 .labels-wrapper {
-  .slick-slide {
-    margin: 5px 0;
+  .slider.labels{
+
+  }
+  .nav-item {
+    box-sizing: content-box;
+    max-width: 90%;
+    margin-right: 12px;
+    align-self: flex-start;
     font-size: 1.3rem;
     line-height: 60px;
     cursor: pointer;
     background-color: #7af2ff;
-    transition: .2s;
+    transition: all .3s ease-in-out;
+    // transform: scale(.9);
+    padding:0;
     &:hover {
+      margin:0;
+      padding: 12px;
+      background-color: #7af2ff;
+      // transform: scale(1);
+      transition: all .3s ease-in-out;
+    }
+    &.active{
       background-color: #85c7ce;
+      margin: 0;
+      padding: 12px;
+      // transform: scale(1);
+      transition: all .3s ease-in-out;
     }
   }
 
@@ -46,7 +90,7 @@
 
 .label-content-wrapper {
   border: 1px solid #ddd;
-  margin-top: 20px;
+  // margin-top: 20px;
   padding: 10px;
   height: 60vh;
 }

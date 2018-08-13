@@ -195,7 +195,7 @@ class format_buttons_renderer extends format_topics_renderer
         $html .= html_writer::start_tag('div',['class' => 'container-fluid buttons']); // don't forget to close it later
 
         $html .= html_writer::start_tag('div',['class' => 'sections-wrapper']);
-        $html .= html_writer::start_tag('ul',['id' => 'sections', 'role' => 'sections-list', 'class' => 'nav slider sections']);
+        $html .= html_writer::start_tag('ul',['id' => 'sections', 'role' => 'sections-list', 'class' => 'nav slider sections align-items-end align-content-end']);
         }
 
         foreach ($modinfo->get_section_info_all() as $section => $thissection) {
@@ -248,7 +248,7 @@ class format_buttons_renderer extends format_topics_renderer
                 $onclick = false;
             }
 
-            $html .= html_writer::start_tag('li',['class' => 'nav-item', 'data-section' => $section]);
+            $html .= html_writer::start_tag('li',['class' => 'nav-item mb-auto', 'data-section' => $section]);
             // $html .= html_writer::start_tag('a',['href' => "#section$section",'class' => "nav-link $class", 'aria-controls' => "section-$section"]);
             $html .= html_writer::start_tag('div',['class' => 'd-flex flex-row section-header justify-content-center align-items-center']);
             $html .= html_writer::tag('span', '', ['class' => 'section-icon d-inline-flex p-2 justify-content-center align-items-center']);
@@ -505,7 +505,7 @@ class format_buttons_renderer extends format_topics_renderer
                     $htmlsection[$section] .=  html_writer::start_tag('div',['id' => "section$section",'class' => "section-content d-none  $currentsectionclass", 'role' => 'section content' ]);
                     $htmlsection[$section] .=  html_writer::start_tag('div',['class' => 'd-flex flex-column flex-md-row-reverse']);
                     $htmlsection[$section] .=  html_writer::start_tag('div',['class' => 'col-12 col-md-2 labels-wrapper']);
-                    $htmlsection[$section] .=  html_writer::start_tag('ul',['class' => 'nav flex-column flex-nowrap slider labels', 'role' => 'labels list']);
+                    $htmlsection[$section] .=  html_writer::start_tag('ul',['class' => 'nav flex-column flex-nowrap  justify-content-start slider labels', 'role' => 'labels list']);
                     $htmlsection[$section] .=  $this->labels_list($course, $thissection);
                     $htmlsection[$section] .=  html_writer::end_tag('ul');
                     $htmlsection[$section] .=  html_writer::end_tag('div');

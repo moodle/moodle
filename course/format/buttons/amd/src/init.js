@@ -27,8 +27,6 @@ define(['jquery','format_buttons/slick'], function($, slick) {
     $('#section' + currentSection).toggleClass('d-none');
     initSlider($('#section'+currentSection+' .slider.labels'),0);
     labelsEvents(currentSection);
-    // $('[data-label="' + currentLabel + '"]').toggleClass('active');
-    // $('#label' + currentLabel ).toggleClass('d-none');
   }
 
   function sectionsEvents(){

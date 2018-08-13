@@ -15,18 +15,7 @@ var jsmin = require('gulp-jsmin');
 
 // sharingactivities - style
 gulp.task("clean", function() {
-  return del("style.css");
-});
-
-gulp.task('css', function(){
-  var processors = [
-    autoprefixer({browsers: ['last 2 version']}),
-    mqpacker({sort: true})
-  ];
-  return gulp.src('styles.css')
-    .pipe(postcss(processors))
-    .pipe(rename('style.css'))
-    .pipe(gulp.dest('.'));
+  return del("styles.css");
 });
 
 gulp.task('sass', function() {
@@ -34,6 +23,20 @@ gulp.task('sass', function() {
         .pipe(sass().on('error', sass.logError))
         .pipe(gulp.dest("."))
         // .pipe(browserSync.stream());
+});
+gulp.task('css', function(){
+  var processors = [
+    autoprefixer({browsers: ['last 2 version']}),
+    mqpacker({sort: true})
+  ];
+  return gulp.src('style.css')
+    .pipe(postcss(processors))
+    .pipe(rename('styles.css'))
+    .pipe(gulp.dest('.'));
+});
+
+gulp.task('styles', function(end) {
+  sequence('clean', 'sass', 'css', end);
 });
 
 gulp.task("style", function() {
@@ -81,6 +84,11 @@ gulp.task('minjs', function(end) {
 
 gulp.task('watch', function() {
   gulp.watch("amd/src/*.js", ["minjs"]);
-  gulp.watch("sass/**/*.scss", ["sass"]);
-  gulp.watch("sass/*.scss", ["style"]);
+  // gulp.watch("scss/**/*.scss", ['style']);
+  gulp.watch("scss/**/*.scss", ['styles']);
+  // gulp.watch("scss/**/*.scss", function() {
+  //   gulp.run('sass');
+  //   gulp.run('css');
+  // });
+  // gulp.watch("sass/*.scss", ["css"]);
 });

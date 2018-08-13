@@ -2,23 +2,21 @@
   display: flex;
   flex: 1;
   .slider.sections{
-    width:84%;
+    width:83.3333333333%;
     padding: 0 5%;
   }
 }
 .slider.labels{
-  max-height: 80vh;
-  padding: 5vh 0;
+  max-height: 60vh;
+  padding: 3vh 0;
   &.slick-slider{
     .slick-slide{
     }
     .slick-arrow{
       &.slick-prev{
-        left:50%;
         top:0;
       }
       &.slick-next{
-        left:50%;
         bottom:0;
       }
     }

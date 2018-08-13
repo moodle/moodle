@@ -18,7 +18,7 @@
     "gulp-minify": "^2.1.0",
     "gulp-plumber": "1.1.0",
     "gulp-postcss": "6.2.0",
-    "gulp-rename": "^1.2.2",
+    "gulp-rename": "^1.4.0",
     "gulp-sass": "3.1.0",
     "gulp-sequence": "^0.4.6",
     "gulp-uglify": "^3.0.0",
