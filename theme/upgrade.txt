@@ -17,6 +17,7 @@ information provided here is intended especially for theme designer.
   * css_is_colour()
   * css_is_width()
   * css_sort_by_count()
+  * core_course_renderer::add_modchoosertoggle()
   * class css_optimiser
 
 === 3.4 ===

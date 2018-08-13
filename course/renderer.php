@@ -69,62 +69,10 @@ class core_course_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Adds the item in course settings navigation to toggle modchooser
-     *
-     * Theme can overwrite as an empty function to exclude it (for example if theme does not
-     * use modchooser at all)
-     *
      * @deprecated since 3.2
      */
     protected function add_modchoosertoggle() {
-        debugging('core_course_renderer::add_modchoosertoggle() is deprecated.', DEBUG_DEVELOPER);
-
-        global $CFG;
-
-        // Only needs to be done once per page.
-        if (!$this->page->requires->should_create_one_time_item_now('core_course_modchoosertoggle')) {
-            return;
-        }
-
-        if ($this->page->state > moodle_page::STATE_PRINTING_HEADER ||
-                $this->page->course->id == SITEID ||
-                !$this->page->user_is_editing() ||
-                !($context = context_course::instance($this->page->course->id)) ||
-                !has_capability('moodle/course:manageactivities', $context) ||
-                !course_ajax_enabled($this->page->course) ||
-                !($coursenode = $this->page->settingsnav->find('courseadmin', navigation_node::TYPE_COURSE)) ||
-                !($turneditingnode = $coursenode->get('turneditingonoff'))) {
-            // Too late, or we are on site page, or we could not find the
-            // adjacent nodes in course settings menu, or we are not allowed to edit.
-            return;
-        }
-
-        if ($this->page->url->compare(new moodle_url('/course/view.php'), URL_MATCH_BASE)) {
-            // We are on the course page, retain the current page params e.g. section.
-            $modchoosertoggleurl = clone($this->page->url);
-        } else {
-            // Edit on the main course page.
-            $modchoosertoggleurl = new moodle_url('/course/view.php', array('id' => $this->page->course->id,
-                'return' => $this->page->url->out_as_local_url(false)));
-        }
-        $modchoosertoggleurl->param('sesskey', sesskey());
-        if ($usemodchooser = get_user_preferences('usemodchooser', $CFG->modchooserdefault)) {
-            $modchoosertogglestring = get_string('modchooserdisable', 'moodle');
-            $modchoosertoggleurl->param('modchooser', 'off');
-        } else {
-            $modchoosertogglestring = get_string('modchooserenable', 'moodle');
-            $modchoosertoggleurl->param('modchooser', 'on');
-        }
-        $modchoosertoggle = navigation_node::create($modchoosertogglestring, $modchoosertoggleurl, navigation_node::TYPE_SETTING, null, 'modchoosertoggle');
-
-        // Insert the modchoosertoggle after the settings node 'turneditingonoff' (navigation_node only has function to insert before, so we insert before and then swap).
-        $coursenode->add_node($modchoosertoggle, 'turneditingonoff');
-        $turneditingnode->remove();
-        $coursenode->add_node($turneditingnode, 'modchoosertoggle');
-
-        $modchoosertoggle->add_class('modchoosertoggle');
-        $modchoosertoggle->add_class('visibleifjs');
-        user_preference_allow_ajax_update('usemodchooser', PARAM_BOOL);
+        throw new coding_exception('core_course_renderer::add_modchoosertoggle() can not be used anymore.');
     }
 
     /**
