@@ -3,13 +3,32 @@ define(['jquery','format_buttons/slick'], function($, slick) {
   function initDefaults(){
     var currentSection = checkStorage('lastSection'),
         currentLabel = checkStorage('lastLabel');
+        // console.log("currentSection "+currentSection);
+        // console.log("currentLabel "+currentLabel);
+
+    if (currentSection == 1){
+      var check = document.querySelector('.slider.sections .nav-item');
+      if(check.dataset.section !== currentSection){
+        currentSection = check.dataset.section;
+      }
+    }
+    // console.log("currentSection "+currentSection);
+    if (currentLabel == 1){
+      var check = document.querySelector('#section'+currentSection+' .label-item');
+      if(check.dataset.label !== currentLabel){
+        localStorage.setItem('lastLabel', check.dataset.label);
+        currentLabel = check.dataset.label;
+      }
+    }
+
     initSlider($('.slider.sections'));
     sectionsEvents();
     $('.slider.sections .nav-item[data-section="'+currentSection+'"]').toggleClass('active');
     $('#section' + currentSection).toggleClass('d-none');
     initSlider($('#section'+currentSection+' .slider.labels'),0);
-    $('[data-label="' + currentLabel + '"]').toggleClass('active');
-    $('#label' + currentLabel ).toggleClass('d-none');
+    labelsEvents(currentSection);
+    // $('[data-label="' + currentLabel + '"]').toggleClass('active');
+    // $('#label' + currentLabel ).toggleClass('d-none');
   }
 
   function sectionsEvents(){
@@ -41,6 +60,14 @@ define(['jquery','format_buttons/slick'], function($, slick) {
         loop($('#section' + currentSection + ' .label-content'));
         $('[data-label-content="' + this.dataset.label + '"]').toggleClass('d-none');
       });
+    }
+    var checkLabel = document.querySelector('#section' + currentSection + ' .nav-item.active');
+    if (checkLabel == null){
+      var check = document.querySelector('#section'+currentSection+' .label-item');
+      check.classList += ' active';
+      var equils = $('[data-label-content="' + check.dataset.label + '"]');
+      loop($('#section' + currentSection + ' .label-content'));
+      $('[data-label-content="' + check.dataset.label + '"]').toggleClass('d-none');
     }
   }
 
@@ -124,16 +151,15 @@ define(['jquery','format_buttons/slick'], function($, slick) {
   }
 
   function checkStorage(key){
-    if (localStorage.key){
+    if (localStorage.getItem(key)){
       return localStorage.getItem(key);
     } else {
-      localStorage.setItem(key, 1);
-      return 1;
+       localStorage.setItem(key, 1);
+       return 1;
     }
   }
 
   function addToStorage(key, value){
-    // console.log(Window.localStorage.getItem( key ));
     if (localStorage.getItem( key )){
       localStorage.setItem(key, value);
     }
