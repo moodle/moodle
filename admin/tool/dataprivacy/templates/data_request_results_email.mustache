@@ -1,0 +1,54 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template tool_dataprivacy/data_request_results_email
+
+    Email template for the data request processing results.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * string username The user's name.
+    * string message The message to the user.
+    * object downloadlink The action link context data for the download link (e.g. in case of user data export).
+
+    Example context (json):
+    {
+        "username": "Eva Ferrer",
+        "message": "Your data is ready for download. Enjoy!",
+        "downloadlink": {
+            "url": "#",
+            "id": "test-id",
+            "attributes": [
+                {
+                    "name": "title",
+                    "value": "Download here!"
+                }
+            ],
+            "text": "Download here!"
+        }
+    }
+}}
+<div>
+    <p>{{#str}}emailsalutation, tool_dataprivacy, {{username}}{{/str}}</p>
+    <p>{{message}}</p>
+    <p>{{#downloadlink}}{{> core/action_link}}{{/downloadlink}}</p>
+</div>
