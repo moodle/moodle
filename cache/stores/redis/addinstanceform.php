@@ -58,5 +58,11 @@ class cachestore_redis_addinstance_form extends cachestore_addinstance_form {
         $form->addHelpButton('serializer', 'useserializer', 'cachestore_redis');
         $form->setDefault('serializer', Redis::SERIALIZER_PHP);
         $form->setType('serializer', PARAM_INT);
+
+        $compressoroptions = cachestore_redis::config_get_compressor_options();
+        $form->addElement('select', 'compressor', get_string('usecompressor', 'cachestore_redis'), $compressoroptions);
+        $form->addHelpButton('compressor', 'usecompressor', 'cachestore_redis');
+        $form->setDefault('compressor', cachestore_redis::COMPRESSOR_NONE);
+        $form->setType('compressor', PARAM_INT);
     }
 }

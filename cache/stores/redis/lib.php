@@ -39,6 +39,16 @@ defined('MOODLE_INTERNAL') || die();
 class cachestore_redis extends cache_store implements cache_is_key_aware, cache_is_lockable,
         cache_is_configurable, cache_is_searchable {
     /**
+     * Compressor: none.
+     */
+    const COMPRESSOR_NONE = 0;
+
+    /**
+     * Compressor: PHP GZip.
+     */
+    const COMPRESSOR_PHP_GZIP = 1;
+
+    /**
      * Name of this store.
      *
      * @var string
@@ -79,6 +89,13 @@ class cachestore_redis extends cache_store implements cache_is_key_aware, cache_
      * @var int
      */
     protected $serializer = Redis::SERIALIZER_PHP;
+
+    /**
+     * Compressor for this store.
+     *
+     * @var int
+     */
+    protected $compressor = self::COMPRESSOR_NONE;
 
     /**
      * Determines if the requirements for this type of store are met.
@@ -134,6 +151,9 @@ class cachestore_redis extends cache_store implements cache_is_key_aware, cache_
         if (array_key_exists('serializer', $configuration)) {
             $this->serializer = (int)$configuration['serializer'];
         }
+        if (array_key_exists('compressor', $configuration)) {
+            $this->compressor = (int)$configuration['compressor'];
+        }
         $password = !empty($configuration['password']) ? $configuration['password'] : '';
         $prefix = !empty($configuration['prefix']) ? $configuration['prefix'] : '';
         $this->redis = $this->new_redis($configuration['server'], $prefix, $password);
@@ -161,7 +181,10 @@ class cachestore_redis extends cache_store implements cache_is_key_aware, cache_
             if (!empty($password)) {
                 $redis->auth($password);
             }
-            $redis->setOption(Redis::OPT_SERIALIZER, $this->serializer);
+            // If using compressor, serialisation will be done at cachestore level, not php-redis.
+            if ($this->compressor == self::COMPRESSOR_NONE) {
+                $redis->setOption(Redis::OPT_SERIALIZER, $this->serializer);
+            }
             if (!empty($prefix)) {
                 $redis->setOption(Redis::OPT_PREFIX, $prefix);
             }
@@ -236,7 +259,13 @@ class cachestore_redis extends cache_store implements cache_is_key_aware, cache_
      * @return mixed The value of the key, or false if there is no value associated with the key.
      */
     public function get($key) {
-        return $this->redis->hGet($this->hash, $key);
+        $value = $this->redis->hGet($this->hash, $key);
+
+        if ($this->compressor == self::COMPRESSOR_NONE) {
+            return $value;
+        }
+
+        return $this->uncompress($value);
     }
 
     /**
@@ -246,7 +275,17 @@ class cachestore_redis extends cache_store implements cache_is_key_aware, cache_
      * @return array An array of the values of the given keys.
      */
     public function get_many($keys) {
-        return $this->redis->hMGet($this->hash, $keys);
+        $values = $this->redis->hMGet($this->hash, $keys);
+
+        if ($this->compressor == self::COMPRESSOR_NONE) {
+            return $values;
+        }
+
+        foreach ($values as &$value) {
+            $value = $this->uncompress($value);
+        }
+
+        return $values;
     }
 
     /**
@@ -257,6 +296,8 @@ class cachestore_redis extends cache_store implements cache_is_key_aware, cache_
      * @return bool True if the operation succeeded, false otherwise.
      */
     public function set($key, $value) {
+        $value = $this->compress($value);
+
         return ($this->redis->hSet($this->hash, $key, $value) !== false);
     }
 
@@ -270,7 +311,8 @@ class cachestore_redis extends cache_store implements cache_is_key_aware, cache_
     public function set_many(array $keyvaluearray) {
         $pairs = [];
         foreach ($keyvaluearray as $pair) {
-            $pairs[$pair['key']] = $pair['value'];
+            $key = $pair['key'];
+            $pairs[$key] = $this->compress($pairs[$key]);
         }
         if ($this->redis->hMSet($this->hash, $pairs)) {
             return count($pairs);
@@ -446,7 +488,8 @@ class cachestore_redis extends cache_store implements cache_is_key_aware, cache_
             'server' => $data->server,
             'prefix' => $data->prefix,
             'password' => $data->password,
-            'serializer' => $data->serializer
+            'serializer' => $data->serializer,
+            'compressor' => $data->compressor,
         );
     }
 
@@ -464,6 +507,9 @@ class cachestore_redis extends cache_store implements cache_is_key_aware, cache_
         $data['password'] = !empty($config['password']) ? $config['password'] : '';
         if (!empty($config['serializer'])) {
             $data['serializer'] = $config['serializer'];
+        }
+        if (!empty($config['compressor'])) {
+            $data['compressor'] = $config['compressor'];
         }
         $editform->set_data($data);
     }
@@ -537,5 +583,105 @@ class cachestore_redis extends cache_store implements cache_is_key_aware, cache_
             $options[Redis::SERIALIZER_IGBINARY] = get_string('serializer_igbinary', 'cachestore_redis');
         }
         return $options;
+    }
+
+    /**
+     * Gets an array of options to use as the compressor.
+     *
+     * @return array
+     */
+    public static function config_get_compressor_options() {
+        return [
+            self::COMPRESSOR_NONE     => get_string('compressor_none', 'cachestore_redis'),
+            self::COMPRESSOR_PHP_GZIP => get_string('compressor_php_gzip', 'cachestore_redis'),
+        ];
+    }
+
+    /**
+     * Compress the given value, serializing it first.
+     *
+     * @param mixed $value
+     * @return string
+     */
+    private function compress($value) {
+        $value = $this->serialize($value);
+
+        switch ($this->compressor) {
+            case self::COMPRESSOR_NONE:
+                return $value;
+
+            case self::COMPRESSOR_PHP_GZIP:
+                return gzencode($value);
+
+            default:
+                debugging("Invalid compressor: {$this->compressor}");
+                return $value;
+        }
+    }
+
+    /**
+     * Uncompresses (deflates) the data, unserialising it afterwards.
+     *
+     * @param string $value
+     * @return mixed
+     */
+    private function uncompress($value) {
+        if ($value === false) {
+            return false;
+        }
+
+        if ($this->compressor == self::COMPRESSOR_NONE) {
+            return $value;
+        }
+
+        switch ($this->compressor) {
+            case self::COMPRESSOR_PHP_GZIP:
+                $value = gzdecode($value);
+                break;
+            default:
+                debugging("Invalid compressor: {$this->compressor}");
+        }
+
+        return $this->unserialize($value);
+    }
+
+    /**
+     * Serializes the data according to the configured serializer.
+     *
+     * @param mixed $value
+     * @return string
+     */
+    private function serialize($value) {
+        switch ($this->serializer) {
+            case Redis::SERIALIZER_NONE:
+                return $value;
+            case Redis::SERIALIZER_PHP:
+                return serialize($value);
+            case Redis::SERIALIZER_IGBINARY:
+                return igbinary_serialize($value);
+            default:
+                debugging("Invalid serializer: {$this->serializer}");
+                return $value;
+        }
+    }
+
+    /**
+     * Unserializes the data according to the configured serializer
+     *
+     * @param string $value
+     * @return mixed
+     */
+    private function unserialize($value) {
+        switch ($this->serializer) {
+            case Redis::SERIALIZER_NONE:
+                return $value;
+            case Redis::SERIALIZER_PHP:
+                return unserialize($value);
+            case Redis::SERIALIZER_IGBINARY:
+                return igbinary_unserialize($value);
+            default:
+                debugging("Invalid serializer: {$this->serializer}");
+                return $value;
+        }
     }
 }
