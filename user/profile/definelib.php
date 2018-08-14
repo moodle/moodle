@@ -51,9 +51,12 @@ class profile_define_base {
 
         $strrequired = get_string('required');
 
+        // Accepted values for 'shortname' would follow [a-zA-Z0-9_] pattern,
+        // but we are accepting any PARAM_TEXT value here,
+        // and checking [a-zA-Z0-9_] pattern in define_validate_common() function to throw an error when needed.
         $form->addElement('text', 'shortname', get_string('profileshortname', 'admin'), 'maxlength="100" size="25"');
         $form->addRule('shortname', $strrequired, 'required', null, 'client');
-        $form->setType('shortname', PARAM_ALPHANUM);
+        $form->setType('shortname', PARAM_TEXT);
 
         $form->addElement('text', 'name', get_string('profilename', 'admin'), 'size="50"');
         $form->addRule('name', $strrequired, 'required', null, 'client');
@@ -128,14 +131,19 @@ class profile_define_base {
             $err['shortname'] = get_string('required');
 
         } else {
-            // Fetch field-record from DB.
-            $field = $DB->get_record('user_info_field', array('shortname' => $data->shortname));
-            // Check the shortname is unique.
-            if ($field and $field->id <> $data->id) {
-                $err['shortname'] = get_string('profileshortnamenotunique', 'admin');
+            // Check allowed pattern (numbers, letters and underscore).
+            if (!preg_match('/^[a-zA-Z0-9_]+$/', $data->shortname)) {
+                $err['shortname'] = get_string('profileshortnameinvalid', 'admin');
+            } else {
+                // Fetch field-record from DB.
+                $field = $DB->get_record('user_info_field', array('shortname' => $data->shortname));
+                // Check the shortname is unique.
+                if ($field and $field->id <> $data->id) {
+                    $err['shortname'] = get_string('profileshortnamenotunique', 'admin');
+                }
+                // NOTE: since 2.0 the shortname may collide with existing fields in $USER because we load these fields into
+                // $USER->profile array instead.
             }
-            // NOTE: since 2.0 the shortname may collide with existing fields in $USER because we load these fields into
-            // $USER->profile array instead.
         }
 
         // No further checks necessary as the form class will take care of it.
