@@ -455,30 +455,41 @@ function file_prepare_draft_area(&$draftitemid, $contextid, $component, $fileare
  * Passing a new option reverse = true in the $options var will make the function to convert actual URLs in $text to encoded URLs
  * in the @@PLUGINFILE@@ form.
  *
- * @category files
- * @global stdClass $CFG
- * @param string $text The content that may contain ULRs in need of rewriting.
- * @param string $file The script that should be used to serve these files. pluginfile.php, draftfile.php, etc.
- * @param int $contextid This parameter and the next two identify the file area to use.
- * @param string $component
- * @param string $filearea helps identify the file area.
- * @param int $itemid helps identify the file area.
- * @param array $options text and file options ('forcehttps'=>false), use reverse = true to reverse the behaviour of the function.
- * @return string the processed text.
+ * @param   string  $text The content that may contain ULRs in need of rewriting.
+ * @param   string  $file The script that should be used to serve these files. pluginfile.php, draftfile.php, etc.
+ * @param   int     $contextid This parameter and the next two identify the file area to use.
+ * @param   string  $component
+ * @param   string  $filearea helps identify the file area.
+ * @param   int     $itemid helps identify the file area.
+ * @param   array   $options
+ *          bool    $options.forcehttps Force the user of https
+ *          bool    $options.reverse Reverse the behaviour of the function
+ *          bool    $options.includetoken Use a token for authentication
+ *          string  The processed text.
  */
 function file_rewrite_pluginfile_urls($text, $file, $contextid, $component, $filearea, $itemid, array $options=null) {
-    global $CFG;
+    global $CFG, $USER;
 
     $options = (array)$options;
     if (!isset($options['forcehttps'])) {
         $options['forcehttps'] = false;
     }
 
-    if (!$CFG->slasharguments) {
-        $file = $file . '?file=';
+    $baseurl = "{$CFG->wwwroot}/{$file}";
+    if (!empty($options['includetoken'])) {
+        $token = get_user_key('core_files', $USER->id);
+        $finalfile = basename($file);
+        $tokenfile = "token{$finalfile}";
+        $file = substr($file, 0, strlen($file) - strlen($finalfile)) . $tokenfile;
+
+        if (!$CFG->slasharguments) {
+            $baseurl .= "?token={$token}&file=";
+        } else {
+            $baseurl .= "/{$token}";
+        }
     }
 
-    $baseurl = "$CFG->wwwroot/$file/$contextid/$component/$filearea/";
+    $baseurl .= "/{$contextid}/{$component}/{$filearea}/";
 
     if ($itemid !== null) {
         $baseurl .= "$itemid/";

@@ -37,3 +37,4 @@ $string['privacy:metadata:files:source'] = 'The source of the file';
 $string['privacy:metadata:files:timecreated'] = 'The time when the file was created';
 $string['privacy:metadata:files:timemodified'] = 'The time when the file was last modified';
 $string['privacy:metadata:files:userid'] = 'The user who created the file';
+$string['privacy:metadata:core_userkey'] = 'A private token is generated and stored. This token can be used to access Moodle files without requiring you to log in.';

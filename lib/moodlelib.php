@@ -3112,9 +3112,10 @@ function validate_user_key($keyvalue, $script, $instance) {
  * @uses PARAM_ALPHANUM
  * @param string $script unique script identifier
  * @param int $instance optional instance id
+ * @param string $keyvalue The key. If not supplied, this will be fetched from the current session.
  * @return int Instance ID
  */
-function require_user_key_login($script, $instance=null) {
+function require_user_key_login($script, $instance = null, $keyvalue = null) {
     global $DB;
 
     if (!NO_MOODLE_COOKIES) {
@@ -3124,7 +3125,9 @@ function require_user_key_login($script, $instance=null) {
     // Extra safety.
     \core\session\manager::write_close();
 
-    $keyvalue = required_param('key', PARAM_ALPHANUM);
+    if (null === $keyvalue) {
+        $keyvalue = required_param('key', PARAM_ALPHANUM);
+    }
 
     $key = validate_user_key($keyvalue, $script, $instance);
 
