@@ -26,10 +26,12 @@
     -
 
     Context variables required for this template:
+    * returnurl - url to the previous page
     * policies - policy array
 
     Example context (json):
     {
+        "returnurl": "#",
         "policies": [
             {
                 "id": "2",
@@ -50,6 +52,12 @@
         ]
     }
 }}
+
+{{#returnurl}}
+<div class="text-right m-b-1">
+    <a href="{{returnurl}}">{{# str }} backtoprevious, tool_policy {{/ str }}</a>
+</div>
+{{/returnurl}}
 
 <a id="top"></a>
 <div id="policies_index">

@@ -50,6 +50,7 @@ $string['agreedyesonbehalfwithlinkall'] = 'Consent given on behalf of user; clic
 $string['agreedyeswithlink'] = 'Consent given; click to withdraw user consent for {$a}';
 $string['agreedyeswithlinkall'] = 'Consent given; click to withdraw user consent for all policies';
 $string['agreepolicies'] = 'Please agree to the following policies';
+$string['backtoprevious'] = 'Go back to previous page';
 $string['backtotop'] = 'Back to top';
 $string['consentbulk'] = 'Consent';
 $string['consentdetails'] = 'Give consent on behalf of user';
