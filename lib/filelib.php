@@ -481,6 +481,7 @@ function file_rewrite_pluginfile_urls($text, $file, $contextid, $component, $fil
         $finalfile = basename($file);
         $tokenfile = "token{$finalfile}";
         $file = substr($file, 0, strlen($file) - strlen($finalfile)) . $tokenfile;
+        $baseurl = "{$CFG->wwwroot}/{$file}";
 
         if (!$CFG->slasharguments) {
             $baseurl .= "?token={$token}&file=";
