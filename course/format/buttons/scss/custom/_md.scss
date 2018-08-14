@@ -2,19 +2,22 @@
   display: flex;
   flex: 1;
   .slider.sections{
-    width:83.3333333333%;
+    width:75%;
     padding: 0 5%;
   }
 }
 .slider.labels{
-  max-height: 60vh;
+  max-height: 80vh;
   padding: 3vh 0;
   &.slick-slider{
-    .slick-slide{
+    .nav-item{
+      max-width: 90%;
+      margin-right: 12px;
+      align-self: flex-start;
     }
     .slick-arrow{
       &.slick-prev{
-        top:0;
+        top:-1rem;
       }
       &.slick-next{
         bottom:0;

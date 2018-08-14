@@ -250,7 +250,7 @@ class format_buttons_renderer extends format_topics_renderer
 
             $html .= html_writer::start_tag('li',['class' => 'nav-item mb-auto', 'data-section' => $section]);
             // $html .= html_writer::start_tag('a',['href' => "#section$section",'class' => "nav-link $class", 'aria-controls' => "section-$section"]);
-            $html .= html_writer::start_tag('div',['class' => 'd-flex flex-row section-header justify-content-center align-items-center']);
+            $html .= html_writer::start_tag('div',['class' => 'd-flex flex-row section-header justify-content-around align-items-center']);
             $html .= html_writer::tag('span', '', ['class' => 'section-icon d-inline-flex p-2 justify-content-center align-items-center']);
             $html .= html_writer::start_tag('div',['class' => 'd-flex flex-column section-header']);
             $html .= html_writer::tag('span', get_section_name($course, $section), ['class' => ' section-title']);
@@ -504,12 +504,12 @@ class format_buttons_renderer extends format_topics_renderer
 
                     $htmlsection[$section] .=  html_writer::start_tag('div',['id' => "section$section",'class' => "section-content d-none  $currentsectionclass", 'role' => 'section content' ]);
                     $htmlsection[$section] .=  html_writer::start_tag('div',['class' => 'd-flex flex-column flex-md-row-reverse']);
-                    $htmlsection[$section] .=  html_writer::start_tag('div',['class' => 'col-12 col-md-2 labels-wrapper']);
+                    $htmlsection[$section] .=  html_writer::start_tag('div',['class' => 'col-12 col-md-3 col-lg-2 labels-wrapper']);
                     $htmlsection[$section] .=  html_writer::start_tag('ul',['class' => 'nav flex-column flex-nowrap  justify-content-start slider labels', 'role' => 'labels list']);
                     $htmlsection[$section] .=  $this->labels_list($course, $thissection);
                     $htmlsection[$section] .=  html_writer::end_tag('ul');
                     $htmlsection[$section] .=  html_writer::end_tag('div');
-                    $htmlsection[$section] .=  html_writer::start_tag('div',['class' => 'label-content-wrapper col-12 col-md-10']);
+                    $htmlsection[$section] .=  html_writer::start_tag('div',['class' => 'label-content-wrapper col-12 col-md-9 col-lg-10']);
                     $htmlsection[$section] .=  $this->labels_content($course, $thissection);
                     $htmlsection[$section] .=  html_writer::end_tag('div');
                     $htmlsection[$section] .=  html_writer::end_tag('div');

@@ -55,9 +55,6 @@
   }
   .nav-item {
     box-sizing: content-box;
-    max-width: 90%;
-    margin-right: 12px;
-    align-self: flex-start;
     font-size: 1.3rem;
     line-height: 60px;
     cursor: pointer;
@@ -90,9 +87,9 @@
 
 .label-content-wrapper {
   border: 1px solid #ddd;
-  // margin-top: 20px;
+  margin-top: 1rem;
   padding: 10px;
-  height: 60vh;
+  height: 80vh;
 }
 
 .slick-arrow {

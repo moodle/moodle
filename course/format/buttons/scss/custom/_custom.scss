@@ -5,7 +5,7 @@
     &.slick-slider{
       .slick-arrow{
         width:2rem;
-        height:2rem; 
+        height:2rem;
         margin-top: -1rem;
         &.slick-prev{
           left:0;
@@ -21,6 +21,26 @@
             transform: rotate(225deg);
           }
         }
+        &.slick-disabled{
+          opacity: 0;
+        }
+      }
+    }
+    .nav-item{
+      .section-icon{
+        opacity:0;
+      }
+      &.active{
+        .section-icon{
+          opacity:1;
+          background-color: #7af2ff;
+        }
+      }
+      &:hover{
+        .section-icon{
+          opacity:1;
+          background-color: #7af2ff;
+        }
       }
     }
   }
@@ -34,7 +54,7 @@
       height:2rem;
       padding-left: 50%;
       &.slick-prev{
-        top:0;
+        // top:-1rem;
         &:before{
           margin-left: -1rem;
           transform: rotate(135deg);
@@ -47,6 +67,9 @@
           margin-left:-1rem;
           transform: rotate(-45deg);
         }
+      }
+      &.slick-disabled{
+        opacity: 0;
       }
     }
   }

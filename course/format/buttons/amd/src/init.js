@@ -163,6 +163,20 @@ define(['jquery','format_buttons/slick'], function($, slick) {
     }
   }
 
+  // bottom prev|next buttons for labels on xs breakpoint
+  // function xsButtons(){
+  //   var btns = '<button class="label-prev" onclick=""></button>';
+  //   var block = document.createElement('div');
+  // }
+  // function slideLabel(dir){
+  //   if (dir == 'prev'){
+  //     labelSlider.slick('slickPrev');
+  //   } else if (dir == 'next'){
+  //     labelSlider.slick('slickNext');
+  //   }
+  // }
+
+
     return {
         init: function() {
           initDefaults();
