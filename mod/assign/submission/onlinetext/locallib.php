@@ -577,8 +577,13 @@ class assign_submission_onlinetext extends assign_submission_plugin {
      */
     public function is_empty(stdClass $submission) {
         $onlinetextsubmission = $this->get_onlinetext_submission($submission->id);
+        $wordcount = 0;
 
-        return empty($onlinetextsubmission->onlinetext);
+        if (isset($onlinetextsubmission->onlinetext)) {
+            $wordcount = count_words(trim($onlinetextsubmission->onlinetext));
+        }
+
+        return $wordcount == 0;
     }
 
     /**
@@ -594,7 +599,13 @@ class assign_submission_onlinetext extends assign_submission_plugin {
         if (!isset($data->onlinetext_editor)) {
             return true;
         }
-        return !strlen((string)$data->onlinetext_editor['text']);
+        $wordcount = 0;
+
+        if (isset($data->onlinetext_editor['text'])) {
+            $wordcount = count_words(trim((string)$data->onlinetext_editor['text']));
+        }
+
+        return $wordcount == 0;
     }
 
     /**
