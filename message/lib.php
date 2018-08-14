@@ -88,11 +88,14 @@ function message_count_unread_messages($user1=null, $user2=null) {
                 ON (mua.messageid = m.id AND mua.userid = ? AND (mua.action = ? OR mua.action = ?))
              WHERE mua.id is NULL
                AND mcm.userid = ?";
-    $params = [$user1->id, \core_message\api::MESSAGE_ACTION_DELETED, \core_message\api::MESSAGE_ACTION_READ,  $user1->id];
+    $params = [$user1->id, \core_message\api::MESSAGE_ACTION_DELETED, \core_message\api::MESSAGE_ACTION_READ, $user1->id];
 
     if (!empty($user2)) {
         $sql .= " AND m.useridfrom = ?";
         $params[] = $user2->id;
+    } else {
+        $sql .= " AND m.useridfrom <> ?";
+        $params[] = $user1->id;
     }
 
     return $DB->count_records_sql($sql, $params);
