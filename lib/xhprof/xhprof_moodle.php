@@ -882,14 +882,29 @@ class moodle_xhprofrun implements iXHProfRuns {
         $rec = new stdClass();
         $rec->runid = $this->runid;
         $rec->url = $this->url;
-        $rec->data = base64_encode(gzcompress(serialize($xhprof_data), 9));
         $rec->totalexecutiontime = $this->totalexecutiontime;
         $rec->totalcputime = $this->totalcputime;
         $rec->totalcalls = $this->totalcalls;
         $rec->totalmemory = $this->totalmemory;
         $rec->timecreated = $this->timecreated;
 
-        $DB->insert_record('profiling', $rec);
+        // Send to database with compressed and endoded data.
+        if (empty($CFG->disableprofilingtodatabase)) {
+            $rec->data = base64_encode(gzcompress(serialize($xhprof_data), 9));
+            $DB->insert_record('profiling', $rec);
+        }
+
+        // Send raw data to plugins.
+        $rec->data = $xhprof_data;
+
+        // Allow a plugin to take the trace data and process it.
+        if ($pluginsfunction = get_plugins_with_function('store_profiling_data')) {
+            foreach ($pluginsfunction as $plugintype => $plugins) {
+                foreach ($plugins as $pluginfunction) {
+                    $pluginfunction($rec);
+                }
+            }
+        }
 
         if (PHPUNIT_TEST) {
             // Calculate export variables.
