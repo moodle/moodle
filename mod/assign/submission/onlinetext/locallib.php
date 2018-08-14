@@ -395,7 +395,9 @@ class assign_submission_onlinetext extends assign_submission_plugin {
         $files = array();
         $onlinetextsubmission = $this->get_onlinetext_submission($submission->id);
 
-        if ($onlinetextsubmission) {
+        // Note that this check is the same logic as the result from the is_empty function but we do
+        // not call it directly because we alread have the submission record.
+        if ($onlinetextsubmission && !empty($onlinetextsubmission->onlinetext)) {
             $finaltext = $this->assignment->download_rewrite_pluginfile_urls($onlinetextsubmission->onlinetext, $user, $this);
             $formattedtext = format_text($finaltext,
                                          $onlinetextsubmission->onlineformat,
