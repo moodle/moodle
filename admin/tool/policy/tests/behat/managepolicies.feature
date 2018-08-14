@@ -256,3 +256,21 @@ Feature: Manage policies
       | Policy1 Site policy, All users | Inactive      | v1         | 1 of 4 (25%) |
     And I should not see "v2"
     And I log out
+
+  Scenario: Current user can go back to previous page in List of active policies page
+    Given the following policies exist:
+      | Name       | Revision | Content    | Summary     | Status   |
+      | Policy1    | v1       | full text2 | short text2 | active   |
+    And I log in as "user1"
+    And I press "Next"
+    And I set the field "I agree to the Policy1" to "1"
+    And I press "Next"
+    And I follow "Preferences" in the user menu
+    And I should see "Preferences"
+    And I should see "Policies"
+    # User should see a redirect back to previous page link.
+    And I click on "Policies" "link"
+    And I should see "List of active policies"
+    And I should see "Go back to previous page"
+    When I click on "Go back to previous page" "link"
+    Then I should see "Preferences"
