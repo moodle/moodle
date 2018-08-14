@@ -221,11 +221,28 @@ class external_api {
             $params = call_user_func($callable,
                                      $externalfunctioninfo->parameters_desc,
                                      $args);
+            $params = array_values($params);
 
-            // Execute - gulp!
-            $callable = array($externalfunctioninfo->classname, $externalfunctioninfo->methodname);
-            $result = call_user_func_array($callable,
-                                           array_values($params));
+            // Allow any Moodle plugin a chance to override this call. This is a convenient spot to
+            // make arbitrary behaviour customisations. The overriding plugin could call the 'real'
+            // function first and then modify the results, or it could do a completely separate
+            // thing.
+            $callbacks = get_plugins_with_function('override_webservice_execution');
+            $result = false;
+            foreach ($callbacks as $plugintype => $plugins) {
+                foreach ($plugins as $plugin => $callback) {
+                    $result = $callback($externalfunctioninfo, $params);
+                    if ($result !== false) {
+                        break;
+                    }
+                }
+            }
+
+            // If the function was not overridden, call the real one.
+            if ($result === false) {
+                $callable = array($externalfunctioninfo->classname, $externalfunctioninfo->methodname);
+                $result = call_user_func_array($callable, $params);
+            }
 
             // Validate the return parameters.
             if ($externalfunctioninfo->returns_desc !== null) {

@@ -1392,9 +1392,27 @@ abstract class webservice_base_server extends webservice_server {
     protected function execute() {
         // validate params, this also sorts the params properly, we need the correct order in the next part
         $params = call_user_func(array($this->function->classname, 'validate_parameters'), $this->function->parameters_desc, $this->parameters);
+        $params = array_values($params);
+
+        // Allow any Moodle plugin a chance to override this call. This is a convenient spot to
+        // make arbitrary behaviour customisations, for example to affect the mobile app behaviour.
+        // The overriding plugin could call the 'real' function first and then modify the results,
+        // or it could do a completely separate thing.
+        $callbacks = get_plugins_with_function('override_webservice_execution');
+        foreach ($callbacks as $plugintype => $plugins) {
+            foreach ($plugins as $plugin => $callback) {
+                $result = $callback($this->function, $params);
+                if ($result !== false) {
+                    // If the callback returns anything other than false, we assume it replaces the
+                    // real function.
+                    $this->returns = $result;
+                    return;
+                }
+            }
+        }
 
         // execute - yay!
-        $this->returns = call_user_func_array(array($this->function->classname, $this->function->methodname), array_values($params));
+        $this->returns = call_user_func_array(array($this->function->classname, $this->function->methodname), $params);
     }
 
     /**
