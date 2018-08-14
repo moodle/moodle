@@ -1,3 +1,97 @@
+html[dir='ltr']{
+  .slider.sections{
+    &.slick-slider{
+      .slick-arrow{
+        margin-top: -1rem;
+        &.slick-prev{
+          left:0;
+          top:50%;
+          &:before{
+            transform: rotate(45deg);
+          }
+        }
+        &.slick-next{
+          right:0;
+          top:50%;
+          &:before{
+            transform: rotate(225deg);
+          }
+        }
+      }
+    }
+  }
+  .slider.labels{
+    .nav-item{
+      // float: right;
+    }
+    &.slick-slider{
+      .slick-arrow{
+        margin-top: -1rem;
+        &.slick-prev{
+          left:0;
+          top:0;
+          &:before{
+            transform: rotate(135deg);
+          }
+        }
+        &.slick-next{
+          left:0;
+          bottom:0;
+          &:before{
+            transform: rotate(-45deg);
+          }
+        }
+      }
+    }
+  }
+}
+html[dir='rtl']{
+  .slider.sections{
+    &.slick-slider{
+      .slick-arrow{
+        margin-top: -1rem;
+        &.slick-prev{
+          left:0;
+          top:50%;
+          &:before{
+            transform: rotate(-45deg);
+          }
+        }
+        &.slick-next{
+          right:0;
+          top:50%;
+          &:before{
+            transform: rotate(135deg);
+          }
+        }
+      }
+    }
+  }
+  .slider.labels{
+    .nav-item{
+      // float: left;
+    }
+    &.slick-slider{
+      .slick-arrow{
+        margin-top: -1rem;
+        &.slick-prev{
+          left:0;
+          top:0;
+          &:before{
+            transform: rotate(225deg);
+          }
+        }
+        &.slick-next{
+          right:0;
+          bottom:0;
+          &:before{
+            transform: rotate(45deg);
+          }
+        }
+      }
+    }
+  }
+}
 .sections-wrapper{
   display: flex;
   flex: 1;
@@ -11,9 +105,16 @@
   padding: 3vh 0;
   &.slick-slider{
     .nav-item{
+      box-sizing: content-box;
+      float: right;
       max-width: 90%;
-      margin-right: 12px;
-      align-self: flex-start;
+      padding:0;
+      &.active{
+        padding: 0 12px;
+      }
+      &:hover{
+        padding: 0 12px;
+      }
     }
     .slick-arrow{
       &.slick-prev{

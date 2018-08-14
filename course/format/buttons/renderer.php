@@ -194,7 +194,7 @@ class format_buttons_renderer extends format_topics_renderer
         // start kadima container render
         $html .= html_writer::start_tag('div',['class' => 'container-fluid buttons']); // don't forget to close it later
 
-        $html .= html_writer::start_tag('div',['class' => 'sections-wrapper']);
+        $html .= html_writer::start_tag('div',['class' => 'sections-wrapper justify-content-end']);
         $html .= html_writer::start_tag('ul',['id' => 'sections', 'role' => 'sections-list', 'class' => 'nav slider sections align-items-end align-content-end']);
         }
 
@@ -256,6 +256,7 @@ class format_buttons_renderer extends format_topics_renderer
             $html .= html_writer::tag('span', get_section_name($course, $section), ['class' => ' section-title']);
             $html .= html_writer::tag('p', "$thissection->summary", ['class' => 'section-description']);
             $html .= html_writer::end_tag('div');
+            $html .= html_writer::tag('span', 'i', ['class' => 'section-tooltip d-inline-flex p-2 justify-content-center align-items-center', 'data-toggle'=>'tooltip', 'title'=>'section tooltip']);
             $html .= html_writer::end_tag('div');
             // $html .= html_writer::end_tag('a');
             $html .= html_writer::end_tag('li');
@@ -503,9 +504,9 @@ class format_buttons_renderer extends format_topics_renderer
                     // our labels output into sections except 0
 
                     $htmlsection[$section] .=  html_writer::start_tag('div',['id' => "section$section",'class' => "section-content d-none  $currentsectionclass", 'role' => 'section content' ]);
-                    $htmlsection[$section] .=  html_writer::start_tag('div',['class' => 'd-flex flex-column flex-md-row-reverse']);
+                    $htmlsection[$section] .=  html_writer::start_tag('div',['class' => 'd-flex flex-column flex-md-row']);
                     $htmlsection[$section] .=  html_writer::start_tag('div',['class' => 'col-12 col-md-3 col-lg-2 labels-wrapper']);
-                    $htmlsection[$section] .=  html_writer::start_tag('ul',['class' => 'nav flex-column flex-nowrap  justify-content-start slider labels', 'role' => 'labels list']);
+                    $htmlsection[$section] .=  html_writer::start_tag('ul',['class' => 'nav flex-column flex-nowrap align-content-end justify-content-end slider labels', 'role' => 'labels list']);
                     $htmlsection[$section] .=  $this->labels_list($course, $thissection);
                     $htmlsection[$section] .=  html_writer::end_tag('ul');
                     $htmlsection[$section] .=  html_writer::end_tag('div');
