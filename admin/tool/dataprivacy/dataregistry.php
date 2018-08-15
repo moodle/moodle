@@ -38,7 +38,12 @@ $title = get_string('dataregistry', 'tool_dataprivacy');
 $output = $PAGE->get_renderer('tool_dataprivacy');
 echo $output->header();
 
-$dataregistry = new tool_dataprivacy\output\data_registry_page($contextlevel, $contextid);
-
-echo $output->render($dataregistry);
+if (\tool_dataprivacy\api::is_site_dpo($USER->id)) {
+    $dataregistry = new tool_dataprivacy\output\data_registry_page($contextlevel, $contextid);
+    echo $output->render($dataregistry);
+} else {
+    $dponamestring = implode (', ', tool_dataprivacy\api::get_dpo_role_names());
+    $message = get_string('privacyofficeronly', 'tool_dataprivacy', $dponamestring);
+    echo $OUTPUT->notification($message, 'error');
+}
 echo $OUTPUT->footer();
