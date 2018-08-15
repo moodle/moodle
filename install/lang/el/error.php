@@ -32,13 +32,13 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['cannotcreatedboninstall'] = '<p>Αδυναμία δημιουργίας βάσης δεδομένων.</p> <p>Η βάση δεδομένων που προσδιορίστηκε δεν υπάρχει και ο χρήστης που δώθηκε δεν έχει δικαίωμα να δημιουργήσει την βάση δεδομένων.</p> <p>Ο διαχειριστής του ιστοτόπου πρέπει να επαληθεύσει την ρύθμιση της βάσης δεδομένων.</p>';
 $string['cannotcreatelangdir'] = 'Δε δημιουργήθηκε φάκελος γλώσσας.';
-$string['cannotcreatetempdir'] = 'Δε δημιουργήθηκε φάκελος temp.';
+$string['cannotcreatetempdir'] = 'Αδυναμία δημιουργίας προσωρινού φακέλου';
 $string['cannotdownloadcomponents'] = 'Δεν μπορεί να γίνει λήψη των στοιχείων λογισμικού';
 $string['cannotdownloadzipfile'] = 'Δεν μπορεί να γίνει λήψη του αρχείου ZIP.';
 $string['cannotfindcomponent'] = 'Δεν βρέθηκε το στοιχείο λογισμικού.';
-$string['cannotsavemd5file'] = 'Δεν αποθηκεύτηκε το αρχείο md5.';
-$string['cannotsavezipfile'] = 'Δεν αποθηκεύτηκε το αρχείο ZIP.';
-$string['cannotunzipfile'] = 'Δεν έγινε αποσυμπίεση του αρχείου.';
+$string['cannotsavemd5file'] = 'Αδυναμία αποθήκευσης αρχείου md5.';
+$string['cannotsavezipfile'] = 'Αδυναμία αποθήκευσης συμπιεσμένου αρχείου';
+$string['cannotunzipfile'] = 'Αδυναμία αποσυμπίεσης αρχείου';
 $string['componentisuptodate'] = 'Το στοιχείο λογισμικού είναι ενημερωμένο.';
 $string['downloadedfilecheckfailed'] = 'Ο έλεγχος του ληφθέντος αρχείου απέτυχε.';
 $string['invalidmd5'] = 'Μη έγκυρο md5';
