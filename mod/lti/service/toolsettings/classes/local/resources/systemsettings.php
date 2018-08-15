@@ -50,12 +50,12 @@ class systemsettings extends resource_base {
 
         parent::__construct($service);
         $this->id = 'ToolProxySettings';
-        $this->template = '/toolproxy/{tool_proxy_id}';
+        $this->template = '/{config_type}/{tool_proxy_id}(/custom)';
         $this->variables[] = 'ToolProxy.custom.url';
         $this->formats[] = 'application/vnd.ims.lti.v2.toolsettings+json';
         $this->formats[] = 'application/vnd.ims.lti.v2.toolsettings.simple+json';
-        $this->methods[] = 'GET';
-        $this->methods[] = 'PUT';
+        $this->methods[] = self::HTTP_GET;
+        $this->methods[] = self::HTTP_PUT;
 
     }
 
@@ -68,10 +68,27 @@ class systemsettings extends resource_base {
 
         $params = $this->parse_template();
         $tpid = $params['tool_proxy_id'];
-        $bubble = optional_param('bubble', '', PARAM_ALPHA);
-        $ok = !empty($tpid) && $this->check_tool_proxy($tpid, $response->get_request_data());
+        $configtype = $params['config_type'];
+        $ok = (in_array($configtype, array('toolproxy', 'tool')));
+        if ($ok) {
+            $typeid = null;
+            if (($configtype === 'tool') && is_numeric($tpid)) {
+                $typeid = $tpid;
+            }
+            $bubble = optional_param('bubble', '', PARAM_ALPHA);
+            $ok = !empty($tpid) && $this->check_tool($typeid, $response->get_request_data(),
+                array(toolsettings::SCOPE_TOOL_SETTINGS));
+        }
         if (!$ok) {
             $response->set_code(401);
+        } else if (!empty($this->get_service()->get_tool_proxy())) {
+            $ok = ($this->get_service()->get_tool_proxy()->guid === $tpid);
+            $id = $this->get_service()->get_tool_proxy()->id;
+        } else if (!empty($typeid)) {
+            $id = -$typeid;
+        } else {
+            $ok = false;
+            $response->set_code(404);
         }
         $contenttype = $response->get_accept();
         $simpleformat = !empty($contenttype) && ($contenttype == $this->formats[1]);
@@ -85,7 +102,7 @@ class systemsettings extends resource_base {
         }
 
         if ($ok) {
-            $systemsettings = lti_get_tool_settings($this->get_service()->get_tool_proxy()->id);
+            $systemsettings = lti_get_tool_settings($id);
             if ($response->get_request_method() == 'GET') {
                 $json = '';
                 if ($simpleformat) {
@@ -127,7 +144,7 @@ class systemsettings extends resource_base {
                     }
                 }
                 if ($ok) {
-                    lti_set_tool_settings($settings, $this->get_service()->get_tool_proxy()->id);
+                    lti_set_tool_settings($settings, $id);
                 } else {
                     $response->set_code(406);
                 }

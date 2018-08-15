@@ -74,51 +74,35 @@ class lineitems extends resource_base {
             $contenttype = $response->get_content_type();
         }
         $container = empty($contenttype) || ($contenttype === $this->formats[0]);
-        // We will receive typeid when working with LTI 1.x, if not the we are in LTI 2.
-        $typeid = optional_param('type_id', null, PARAM_ALPHANUM);
-        if (is_null($typeid)) {
-            if (!$this->check_tool_proxy(null, $response->get_request_data())) {
-                $response->set_code(403);
-                $response->set_reason("Invalid tool proxy specified.");
-                return;
+        // We will receive typeid when working with LTI 1.x, if not then we are in LTI 2.
+        $typeid = optional_param('type_id', null, PARAM_INT);
+
+        $scopes = array(gradebookservices::SCOPE_GRADEBOOKSERVICES_LINEITEM);
+        if ($response->get_request_method() === self::HTTP_GET) {
+            $scopes[] = gradebookservices::SCOPE_GRADEBOOKSERVICES_LINEITEM_READ;
+        }
+
+        try {
+            if (!$this->check_tool($typeid, $response->get_request_data(), $scopes)) {
+                throw new \Exception(null, 401);
             }
-        } else {
-            switch ($response->get_request_method()) {
-                case self::HTTP_GET:
-                    if (!$this->check_type($typeid, $contextid, 'LineItem.collection:get', $response->get_request_data())) {
-                        $response->set_code(403);
-                        $response->set_reason("This resource does not support GET requests.");
-                        return;
-                    }
-                    break;
-                case self::HTTP_POST:
-                    if (!$this->check_type($typeid, $contextid, 'LineItem.collection:post', $response->get_request_data())) {
-                        $response->set_code(403);
-                        $response->set_reason("This resource does not support POST requests.");
-                        return;
-                    }
-                    break;
-                default:  // Should not be possible.
-                    $response->set_code(405);
-                    $response->set_reason("Invalid request method specified.");
-                    return;
+            $typeid = $this->get_service()->get_type()->id;
+            if (empty($contextid) || !($container ^ ($response->get_request_method() === self::HTTP_POST)) ||
+                    (!empty($contenttype) && !in_array($contenttype, $this->formats))) {
+                    throw new \Exception('No context or unsupported content type', 400);
             }
-        }
-        if (empty($contextid) || !($container ^ ($response->get_request_method() === self::HTTP_POST)) ||
-                (!empty($contenttype) && !in_array($contenttype, $this->formats))) {
-            $response->set_code(400);
-            $response->set_reason("Invalid request made.");
-            return;
-        }
-        if (!$DB->record_exists('course', array('id' => $contextid))) {
-            $response->set_code(404);
-            $response->set_reason("Not Found: Course $contextid doesn't exist.");
-            return;
-        }
-        switch ($response->get_request_method()) {
-            case self::HTTP_GET:
+            if (!($course = $DB->get_record('course', array('id' => $contextid), 'id', IGNORE_MISSING))) {
+                throw new \Exception("Not Found: Course {$contextid} doesn't exist", 404);
+            }
+            if (!$this->get_service()->is_allowed_in_context($typeid, $course->id)) {
+                throw new \Exception('Not allowed in context', 403);
+            }
+            if ($response->get_request_method() !== self::HTTP_POST) {
                 $resourceid = optional_param('resource_id', null, PARAM_TEXT);
-                $ltilinkid = optional_param('lti_link_id', null, PARAM_TEXT);
+                $ltilinkid = optional_param('resource_link_id', null, PARAM_TEXT);
+                if (is_null($ltilinkid)) {
+                    $ltilinkid = optional_param('lti_link_id', null, PARAM_TEXT);
+                }
                 $tag = optional_param('tag', null, PARAM_TEXT);
                 $limitnum = optional_param('limit', 0, PARAM_INT);
                 $limitfrom = optional_param('from', 0, PARAM_INT);
@@ -129,23 +113,18 @@ class lineitems extends resource_base {
                 $json = $this->get_json_for_get_request($items, $resourceid, $ltilinkid, $tag, $limitfrom,
                         $limitnum, $totalcount, $typeid, $response);
                 $response->set_content_type($this->formats[0]);
-                break;
-            case self::HTTP_POST:
-                try {
-                    $json = $this->get_json_for_post_request($response->get_request_data(), $contextid, $typeid);
-                    $response->set_code(201);
-                    $response->set_content_type($this->formats[1]);
-                } catch (\Exception $e) {
-                    $response->set_code($e->getCode());
-                    $response->set_reason($e->getMessage());
-                }
-                break;
-            default:  // Should not be possible.
-                $response->set_code(405);
-                $response->set_reason("Invalid request method specified.");
-                return;
+            } else {
+                $json = $this->get_json_for_post_request($response->get_request_data(), $contextid, $typeid);
+                $response->set_code(201);
+                $response->set_content_type($this->formats[1]);
+            }
+            $response->set_body($json);
+
+        } catch (\Exception $e) {
+            $response->set_code($e->getCode());
+            $response->set_reason($e->getMessage());
         }
-        $response->set_body($json);
+
     }
 
     /**
@@ -186,7 +165,7 @@ class lineitems extends resource_base {
                 $baseurl->param('resource_id', $resourceid);
             }
             if (isset($ltilinkid)) {
-                $baseurl->param('lti_link_id', $ltilinkid);
+                $baseurl->param('resource_link_id', $ltilinkid);
             }
             if (isset($tag)) {
                 $baseurl->param('tag', $tag);
@@ -217,7 +196,7 @@ class lineitems extends resource_base {
             }
         }
 
-        $jsonitems=[];
+        $jsonitems = [];
         $endpoint = parent::get_endpoint();
         foreach ($items as $item) {
             array_push($jsonitems, gradebookservices::item_for_json($item, $endpoint, $typeid));
@@ -255,7 +234,7 @@ class lineitems extends resource_base {
         if (empty($json) ||
                 !isset($json->scoreMaximum) ||
                 !isset($json->label)) {
-            throw new \Exception(null, 400);
+            throw new \Exception('No label or Score Maximum', 400);
         }
         if (is_numeric($json->scoreMaximum)) {
             $max = $json->scoreMaximum;
@@ -264,7 +243,10 @@ class lineitems extends resource_base {
         }
         require_once($CFG->libdir.'/gradelib.php');
         $resourceid = (isset($json->resourceId)) ? $json->resourceId : '';
-        $ltilinkid = (isset($json->ltiLinkId)) ? $json->ltiLinkId : null;
+        $ltilinkid = (isset($json->resourceLinkId)) ? $json->resourceLinkId : null;
+        if ($ltilinkid == null) {
+            $ltilinkid = (isset($json->ltiLinkId)) ? $json->ltiLinkId : null;
+        }
         if ($ltilinkid != null) {
             if (is_null($typeid)) {
                 if (!gradebookservices::check_lti_id($ltilinkid, $contextid, $this->get_service()->get_tool_proxy()->id)) {
@@ -314,24 +296,6 @@ class lineitems extends resource_base {
     }
 
     /**
-     * get permissions from the config of the tool for that resource
-     *
-     * @param string $typeid
-     *
-     * @return array with the permissions related to this resource by the lti type or null if none.
-     */
-    public function get_permissions($typeid) {
-        $tool = lti_get_type_type_config($typeid);
-        if ($tool->ltiservice_gradesynchronization == '1') {
-            return array('LineItem.collection:get');
-        } else if ($tool->ltiservice_gradesynchronization == '2') {
-            return array('LineItem.collection:get', 'LineItem.collection:post');
-        } else {
-            return array();
-        }
-    }
-
-    /**
      * Parse a value for custom parameter substitution variables.
      *
      * @param string $value String to be parsed
@@ -343,7 +307,11 @@ class lineitems extends resource_base {
 
         if (strpos($value, '$LineItems.url') !== false) {
             $this->params['context_id'] = $COURSE->id;
-            $value = str_replace('$LineItems.url', parent::get_endpoint(), $value);
+            $query = '';
+            if (($tool = $this->get_service()->get_type())) {
+                $query = "?type_id={$tool->id}";
+            }
+            $value = str_replace('$LineItems.url', parent::get_endpoint() . $query, $value);
         }
 
         return $value;

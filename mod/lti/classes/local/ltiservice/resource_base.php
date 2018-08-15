@@ -184,13 +184,18 @@ abstract class resource_base {
     public function get_endpoint() {
 
         $this->parse_template();
-        $url = $this->get_service()->get_service_path() . $this->get_template();
+        $template = preg_replace('/[\(\)]/', '', $this->get_template());
+        $url = $this->get_service()->get_service_path() . $template;
         foreach ($this->params as $key => $value) {
             $url = str_replace('{' . $key . '}', $value, $url);
         }
         $toolproxy = $this->get_service()->get_tool_proxy();
         if (!empty($toolproxy)) {
+            $url = str_replace('{config_type}', 'toolproxy', $url);
             $url = str_replace('{tool_proxy_id}', $toolproxy->guid, $url);
+        } else {
+            $url = str_replace('{config_type}', 'tool', $url);
+            $url = str_replace('{tool_proxy_id}', $this->get_service()->get_type()->id, $url);
         }
 
         return $url;
@@ -207,13 +212,63 @@ abstract class resource_base {
     /**
      * Check to make sure the request is valid.
      *
+     * @param int $typeid                   The typeid we want to use
+     * @param string $body                  Body of HTTP request message
+     * @param string[] $scopes              Array of scope(s) required for incoming request
+     *
+     * @return boolean
+     */
+    public function check_tool($typeid, $body = null, $scopes = null) {
+
+        $ok = $this->get_service()->check_tool($typeid, $body, $scopes);
+        if ($ok) {
+            if ($this->get_service()->get_tool_proxy()) {
+                $toolproxyjson = $this->get_service()->get_tool_proxy()->toolproxy;
+            }
+            if (!empty($toolproxyjson)) {
+                // Check tool proxy to ensure service being requested is included.
+                $toolproxy = json_decode($toolproxyjson);
+                if (!empty($toolproxy) && isset($toolproxy->security_contract->tool_service)) {
+                    $contexts = lti_get_contexts($toolproxy);
+                    $tpservices = $toolproxy->security_contract->tool_service;
+                    foreach ($tpservices as $service) {
+                        $fqid = lti_get_fqid($contexts, $service->service);
+                        $id = explode('#', $fqid, 2);
+                        if ($this->get_id() === $id[1]) {
+                            $ok = true;
+                            break;
+                        }
+                    }
+                }
+                if (!$ok) {
+                    debugging('Requested service not permitted: ' . $this->get_id(), DEBUG_DEVELOPER);
+                }
+            } else {
+                // Check that the scope required for the service request is included in those granted for the
+                // access token being used.
+                $permittedscopes = $this->get_service()->get_permitted_scopes();
+                $ok = is_null($permittedscopes) || empty($scopes) || !empty(array_intersect($permittedscopes, $scopes));
+            }
+        }
+
+        return $ok;
+
+    }
+
+    /**
+     * Check to make sure the request is valid.
+     *
      * @param string $toolproxyguid Consumer key
      * @param string $body          Body of HTTP request message
      *
      * @return boolean
+     * @deprecated since Moodle 3.7 MDL-62599 - please do not use this function any more.
+     * @see resource_base::check_tool()
      */
     public function check_tool_proxy($toolproxyguid, $body = null) {
 
+        debugging('check_tool_proxy() is deprecated to allow LTI 1 connections to support services. ' .
+                  'Please use resource_base::check_tool() instead.', DEBUG_DEVELOPER);
         $ok = false;
         if ($this->get_service()->check_tool_proxy($toolproxyguid, $body)) {
             $toolproxyjson = $this->get_service()->get_tool_proxy()->toolproxy;
@@ -234,7 +289,7 @@ abstract class resource_base {
                     }
                 }
                 if (!$ok) {
-                    debugging('Requested service not included in tool proxy: ' . $this->get_id(), DEBUG_DEVELOPER);
+                    debugging('Requested service not included in tool proxy: ' . $this->get_id());
                 }
             }
         }
@@ -252,8 +307,12 @@ abstract class resource_base {
      * @param string $body                  Body of HTTP request message
      *
      * @return boolean
+     * @deprecated since Moodle 3.7 MDL-62599 - please do not use this function any more.
+     * @see resource_base::check_tool()
      */
     public function check_type($typeid, $contextid, $permissionrequested, $body = null) {
+        debugging('check_type() is deprecated to allow LTI 1 connections to support services. ' .
+                  'Please use resource_base::check_tool() instead.', DEBUG_DEVELOPER);
         $ok = false;
         if ($this->get_service()->check_type($typeid, $contextid, $body)) {
             $neededpermissions = $this->get_permissions($typeid);
@@ -269,7 +328,6 @@ abstract class resource_base {
             }
         }
         return $ok;
-
     }
 
     /**
@@ -277,8 +335,12 @@ abstract class resource_base {
      *
      * @param int $ltitype Type of LTI
      * @return array with the permissions related to this resource by the $ltitype or empty if none.
+     * @deprecated since Moodle 3.7 MDL-62599 - please do not use this function any more.
+     * @see resource_base::check_tool()
      */
     public function get_permissions($ltitype) {
+        debugging('get_permissions() is deprecated to allow LTI 1 connections to support services. ' .
+                  'Please use resource_base::check_tool() instead.', DEBUG_DEVELOPER);
         return array();
     }
 
@@ -304,9 +366,10 @@ abstract class resource_base {
 
         if (empty($this->params)) {
             $this->params = array();
-            if (isset($_SERVER['PATH_INFO']) && !empty($_SERVER['PATH_INFO'])) {
+            if (!empty($_SERVER['PATH_INFO'])) {
                 $path = explode('/', $_SERVER['PATH_INFO']);
-                $parts = explode('/', $this->get_template());
+                $template = preg_replace('/\([0-9a-zA-Z_\-,\/]+\)/', '', $this->get_template());
+                $parts = explode('/', $template);
                 for ($i = 0; $i < count($parts); $i++) {
                     if ((substr($parts[$i], 0, 1) == '{') && (substr($parts[$i], -1) == '}')) {
                         $value = '';

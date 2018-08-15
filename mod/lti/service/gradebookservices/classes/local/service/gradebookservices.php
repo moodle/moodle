@@ -43,8 +43,19 @@ defined('MOODLE_INTERNAL') || die();
  */
 class gradebookservices extends service_base {
 
-    /** Internal service name */
-    const SERVICE_NAME = 'ltiservice_gradebookservices';
+    /** Read-only access to Gradebook services */
+    const GRADEBOOKSERVICES_READ = 1;
+    /** Full access to Gradebook services */
+    const GRADEBOOKSERVICES_FULL = 2;
+    /** Scope for full access to Lineitem service */
+    const SCOPE_GRADEBOOKSERVICES_LINEITEM = 'https://purl.imsglobal.org/spec/lti-ags/scope/lineitem';
+    /** Scope for full access to Lineitem service */
+    const SCOPE_GRADEBOOKSERVICES_LINEITEM_READ = 'https://purl.imsglobal.org/spec/lti-ags/scope/lineitem.readonly';
+    /** Scope for access to Result service */
+    const SCOPE_GRADEBOOKSERVICES_RESULT_READ = 'https://purl.imsglobal.org/spec/lti-ags/scope/result.readonly';
+    /** Scope for access to Score service */
+    const SCOPE_GRADEBOOKSERVICES_SCORE = 'https://purl.imsglobal.org/spec/lti-ags/scope/score';
+
 
     /**
      * Class constructor.
@@ -53,7 +64,7 @@ class gradebookservices extends service_base {
 
         parent::__construct();
         $this->id = 'gradebookservices';
-        $this->name = $this->get_string('servicename');
+        $this->name = get_string($this->get_component_id(), $this->get_component_id());
 
     }
 
@@ -78,12 +89,39 @@ class gradebookservices extends service_base {
     }
 
     /**
+     * Get the scope(s) permitted for this service.
+     *
+     * @return array
+     */
+    public function get_permitted_scopes() {
+
+        $scopes = array();
+        $ok = !empty($this->get_type());
+        if ($ok && isset($this->get_typeconfig()[$this->get_component_id()])) {
+            if (!empty($setting = $this->get_typeconfig()[$this->get_component_id()])) {
+                $scopes[] = self::SCOPE_GRADEBOOKSERVICES_LINEITEM_READ;
+                $scopes[] = self::SCOPE_GRADEBOOKSERVICES_RESULT_READ;
+                $scopes[] = self::SCOPE_GRADEBOOKSERVICES_SCORE;
+                if ($setting == self::GRADEBOOKSERVICES_FULL) {
+                    $scopes[] = self::SCOPE_GRADEBOOKSERVICES_LINEITEM;
+                }
+            }
+        }
+
+        return $scopes;
+
+    }
+
+    /**
      * Adds form elements for gradebook sync add/edit page.
      *
      * @param \MoodleQuickForm $mform Moodle quickform object definition
+     * @deprecated since Moodle 3.7 MDL-62599 - please do not use this function any more.
+     * @see gradebookservices::get_configuration_elements()
      */
     public function get_configuration_options(&$mform) {
-
+        debugging('get_configuration_options() has been deprecated, ' .
+                  'please use service_base::get_configuration_elements() instead.', DEBUG_DEVELOPER);
         $selectelementname = 'ltiservice_gradesynchronization';
         $identifier = 'grade_synchronization';
         $options = [
@@ -91,7 +129,6 @@ class gradebookservices extends service_base {
             $this->get_string('partialgs'),
             $this->get_string('alwaysgs')
         ];
-
         $mform->addElement('select', $selectelementname, $this->get_string($identifier), $options);
         $mform->setType($selectelementname, 'int');
         $mform->setDefault($selectelementname, 0);
@@ -99,23 +136,21 @@ class gradebookservices extends service_base {
     }
 
     /**
-     * Retrieves string from lang file
+     * Create form element for gradebook sync add/edit page.
      *
-     * @param string $identifier
-     * @return string
+     * @return array of \HTML_QuickForm_element Form elements
      */
-    private function get_string($identifier) {
-        return get_string($identifier, self::SERVICE_NAME);
-    }
+    public function get_configuration_elements() {
+        $elements = array();
+        $options = [
+            get_string('nevergs', $this->get_component_id()),
+            get_string('partialgs', $this->get_component_id()),
+            get_string('alwaysgs', $this->get_component_id())
+        ];
+        $elements[''] = new \MoodleQuickForm_select($this->get_component_id(), get_string($this->get_component_id(),
+            $this->get_component_id()), $options);
 
-    /**
-     * Return an array with the names of the parameters that the service will be saving in the configuration
-     *
-     * @return array with the names of the parameters that the service will be saving in the configuration
-     *
-     */
-    public function get_configuration_parameter_names() {
-        return array('ltiservice_gradesynchronization');
+        return $elements;
     }
 
     /**
@@ -134,15 +169,15 @@ class gradebookservices extends service_base {
      */
     public function get_launch_parameters($messagetype, $courseid, $user, $typeid, $modlti = null) {
         global $DB;
-
         $launchparameters = array();
-        $tool = lti_get_type_type_config($typeid);
+        $this->set_type(lti_get_type($typeid));
+        $this->set_typeconfig(lti_get_type_config($typeid));
         // Only inject parameters if the service is enabled for this tool.
-        if (isset($tool->ltiservice_gradesynchronization)) {
-            if ($tool->ltiservice_gradesynchronization == '1' || $tool->ltiservice_gradesynchronization == '2') {
+        if (isset($this->get_typeconfig()[$this->get_component_id()])) {
+            if ($this->get_typeconfig()[$this->get_component_id()] == self::GRADEBOOKSERVICES_READ ||
+                $this->get_typeconfig()[$this->get_component_id()] == self::GRADEBOOKSERVICES_FULL) {
                 // Check for used in context is only needed because there is no explicit site tool - course relation.
                 if ($this->is_allowed_in_context($typeid, $courseid)) {
-                    $endpoint = $this->get_service_path() . "/{$courseid}/lineitems";
                     if (is_null($modlti)) {
                         $id = null;
                     } else {
@@ -164,9 +199,10 @@ class gradebookservices extends service_base {
                             $id = null;
                         }
                     }
-                    $launchparameters['custom_lineitems_url'] = $endpoint . "?type_id={$typeid}";
+                    $launchparameters['gradebookservices_scope'] = implode(',', $this->get_permitted_scopes());
+                    $launchparameters['lineitems_url'] = '$LineItems.url';
                     if (!is_null($id)) {
-                        $launchparameters['custom_lineitem_url'] = $endpoint . "/{$id}/lineitem?type_id={$typeid}";
+                        $launchparameters['lineitem_url'] = '$LineItem.url';
                     }
                 }
             }
@@ -316,10 +352,26 @@ class gradebookservices extends service_base {
      * @param int $userid User ID
      *
      * @throws \Exception
+     * @deprecated since Moodle 3.7 MDL-62599 - please do not use this function any more.
+     * @see gradebookservices::save_grade_item($gradeitem, $score, $userid)
      */
     public static function save_score($gradeitem, $score, $userid) {
+        $service = new gradebookservices();
+        $service->save_grade_item($gradeitem, $score, $userid);
+    }
+
+    /**
+     * Set a grade item.
+     *
+     * @param object $gradeitem Grade Item record
+     * @param object $score Result object
+     * @param int $userid User ID
+     *
+     * @throws \Exception
+     */
+    public function save_grade_item($gradeitem, $score, $userid) {
         global $DB, $CFG;
-        $source = 'mod' . self::SERVICE_NAME;
+        $source = 'mod' . $this->get_component_id();
         if ($DB->get_record('user', array('id' => $userid)) === false) {
             throw new \Exception(null, 400);
         }
@@ -406,11 +458,13 @@ class gradebookservices extends service_base {
         if ($gbs) {
             $lineitem->tag = (!empty($gbs->tag)) ? $gbs->tag : '';
             if (isset($gbs->ltilinkid)) {
+                $lineitem->resourceLinkId = strval($gbs->ltilinkid);
                 $lineitem->ltiLinkId = strval($gbs->ltilinkid);
             }
         } else {
             $lineitem->tag = '';
             if (isset($item->iteminstance)) {
+                $lineitem->resourceLinkId = strval($item->iteminstance);
                 $lineitem->ltiLinkId = strval($item->iteminstance);
             }
         }

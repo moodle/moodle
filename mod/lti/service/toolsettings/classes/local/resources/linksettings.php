@@ -48,7 +48,7 @@ class linksettings extends \mod_lti\local\ltiservice\resource_base {
 
         parent::__construct($service);
         $this->id = 'LtiLinkSettings';
-        $this->template = '/links/{link_id}';
+        $this->template = '/links/{link_id}(/custom)';
         $this->variables[] = 'LtiLink.custom.url';
         $this->formats[] = 'application/vnd.ims.lti.v2.toolsettings+json';
         $this->formats[] = 'application/vnd.ims.lti.v2.toolsettings.simple+json';
@@ -72,7 +72,7 @@ class linksettings extends \mod_lti\local\ltiservice\resource_base {
         $simpleformat = !empty($contenttype) && ($contenttype == $this->formats[1]);
         $ok = (empty($bubble) || ((($bubble == 'distinct') || ($bubble == 'all')))) &&
              (!$simpleformat || empty($bubble) || ($bubble != 'all')) &&
-             (empty($bubble) || ($response->get_request_method() == 'GET'));
+             (empty($bubble) || ($response->get_request_method() == self::HTTP_GET));
         if (!$ok) {
             $response->set_code(406);
         }
@@ -84,38 +84,51 @@ class linksettings extends \mod_lti\local\ltiservice\resource_base {
             $ok = !empty($linkid);
             if ($ok) {
                 $lti = $DB->get_record('lti', array('id' => $linkid), 'course,typeid', MUST_EXIST);
-                $ltitype = $DB->get_record('lti_types', array('id' => $lti->typeid));
-                $toolproxy = $DB->get_record('lti_tool_proxies', array('id' => $ltitype->toolproxyid));
-                $ok = $this->check_tool_proxy($toolproxy->guid, $response->get_request_data());
+                $ok = $this->check_tool($lti->typeid, $response->get_request_data(),
+                    array(toolsettings::SCOPE_TOOL_SETTINGS));
             }
             if (!$ok) {
                 $response->set_code(401);
             }
         }
         if ($ok) {
-            $linksettings = lti_get_tool_settings($this->get_service()->get_tool_proxy()->id, $lti->course, $linkid);
-            if (!empty($bubble)) {
-                $contextsetting = new contextsettings($this->get_service());
-                if ($COURSE == 'site') {
-                    $contextsetting->params['context_type'] = 'Group';
-                } else {
-                    $contextsetting->params['context_type'] = 'CourseSection';
-                }
-                $contextsetting->params['context_id'] = $lti->course;
-                $contextsetting->params['vendor_code'] = $this->get_service()->get_tool_proxy()->vendorcode;
-                $contextsetting->params['product_code'] = $this->get_service()->get_tool_proxy()->id;
-                $contextsettings = lti_get_tool_settings($this->get_service()->get_tool_proxy()->id, $lti->course);
-                $systemsetting = new systemsettings($this->get_service());
-                $systemsetting->params['tool_proxy_id'] = $this->get_service()->get_tool_proxy()->id;
-                $systemsettings = lti_get_tool_settings($this->get_service()->get_tool_proxy()->id);
-                if ($bubble == 'distinct') {
-                    toolsettings::distinct_settings($systemsettings, $contextsettings, $linksettings);
-                }
+            if (!empty($this->get_service()->get_tool_proxy())) {
+                $id = $this->get_service()->get_tool_proxy()->id;
             } else {
-                $contextsettings = null;
-                $systemsettings = null;
+                $id = -$this->get_service()->get_type()->id;
             }
             if ($response->get_request_method() == 'GET') {
+                $linksettings = lti_get_tool_settings($id, $lti->course, $linkid);
+                if (!empty($bubble)) {
+                    $contextsetting = new contextsettings($this->get_service());
+                    if ($COURSE == 'site') {
+                        $contextsetting->params['context_type'] = 'Group';
+                    } else {
+                        $contextsetting->params['context_type'] = 'CourseSection';
+                    }
+                    $contextsetting->params['context_id'] = $lti->course;
+                    if ($id >= 0) {
+                        $contextsetting->params['vendor_code'] = $this->get_service()->get_tool_proxy()->vendorcode;
+                    } else {
+                        $contextsetting->params['vendor_code'] = 'tool';
+                    }
+                    $contextsetting->params['product_code'] = abs($id);
+                    $contextsettings = lti_get_tool_settings($id, $lti->course);
+                    $systemsetting = new systemsettings($this->get_service());
+                    if ($id >= 0) {
+                        $systemsetting->params['config_type'] = 'toolproxy';
+                    } else {
+                        $systemsetting->params['config_type'] = 'tool';
+                    }
+                    $systemsetting->params['tool_proxy_id'] = abs($id);
+                    $systemsettings = lti_get_tool_settings($id);
+                    if ($bubble == 'distinct') {
+                        toolsettings::distinct_settings($systemsettings, $contextsettings, $linksettings);
+                    }
+                } else {
+                    $contextsettings = null;
+                    $systemsettings = null;
+                }
                 $json = '';
                 if ($simpleformat) {
                     $response->set_content_type($this->formats[1]);
@@ -176,7 +189,7 @@ class linksettings extends \mod_lti\local\ltiservice\resource_base {
                     }
                 }
                 if ($ok) {
-                    lti_set_tool_settings($settings, $this->get_service()->get_tool_proxy()->id, $lti->course, $linkid);
+                    lti_set_tool_settings($settings, $id, $lti->course, $linkid);
                 } else {
                     $response->set_code(406);
                 }

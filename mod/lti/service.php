@@ -33,6 +33,7 @@ require_once($CFG->dirroot.'/mod/lti/servicelib.php');
 // TODO: Switch to core oauthlib once implemented - MDL-30149.
 use mod_lti\service_exception_handler;
 use moodle\mod\lti as lti;
+use ltiservice_basicoutcomes\local\service\basicoutcomes;
 
 $rawbody = file_get_contents("php://input");
 
@@ -46,24 +47,26 @@ if ($logrequests) {
     lti_log_request($rawbody);
 }
 
-foreach (lti\OAuthUtil::get_headers() as $name => $value) {
-    if ($name === 'Authorization') {
-        // TODO: Switch to core oauthlib once implemented - MDL-30149.
-        $oauthparams = lti\OAuthUtil::split_header($value);
+$ok = true;
+$type = null;
+$toolproxy = false;
 
-        $consumerkey = $oauthparams['oauth_consumer_key'];
-        break;
+$consumerkey = lti\get_oauth_key_from_headers(null, array(basicoutcomes::SCOPE_BASIC_OUTCOMES));
+if ($consumerkey === false) {
+    throw new Exception('Missing or invalid consumer key or access token.');
+} else if (is_string($consumerkey)) {
+    $toolproxy = lti_get_tool_proxy_from_guid($consumerkey);
+    if ($toolproxy !== false) {
+        $secrets = array($toolproxy->secret);
+    } else if (!empty($tool)) {
+        $secrets = array($typeconfig['password']);
+    } else {
+        $secrets = lti_get_shared_secrets_by_key($consumerkey);
     }
-}
-
-if (empty($consumerkey)) {
-    throw new Exception('Consumer key is missing.');
-}
-
-$sharedsecret = lti_verify_message($consumerkey, lti_get_shared_secrets_by_key($consumerkey), $rawbody);
-
-if ($sharedsecret === false) {
-    throw new Exception('Message signature not valid');
+    $sharedsecret = lti_verify_message($consumerkey, lti_get_shared_secrets_by_key($consumerkey), $rawbody);
+    if ($sharedsecret === false) {
+        throw new Exception('Message signature not valid');
+    }
 }
 
 // TODO MDL-46023 Replace this code with a call to the new library.

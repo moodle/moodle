@@ -64,12 +64,18 @@ if (defined('BEHAT_SITE_RUNNING') && BEHAT_SITE_RUNNING) {
 
 echo $OUTPUT->header();
 
-$form = new mod_lti_edit_types_form();
+if ($action == 'edit') {
+    $type = lti_get_type_type_config($typeid);
+} else {
+    $type = new stdClass();
+    $type->lti_clientid = null;
+}
+
+$form = new mod_lti_edit_types_form($url, (object)array('id' => $typeid, 'clientid' => $type->lti_clientid));
 
 // If the user just opened an add or edit form.
 if ($action == 'add' || $action == 'edit') {
     if ($action == 'edit') {
-        $type = lti_get_type_type_config($typeid);
         $form->set_data($type);
     }
     echo $OUTPUT->heading(get_string('toolsetup', 'lti'));

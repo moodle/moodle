@@ -24,8 +24,8 @@
  */
 
 $string['alwaysgs'] = 'Use this service for grade sync and column management ';
-$string['grade_synchronization'] = 'IMS LTI Assignment and Grade Services';
-$string['grade_synchronization_help'] = 'Whether to use the IMS LTI Assignment and Grade Services to synchronise grades instead of the Basic Outcomes service.
+$string['ltiservice_gradebookservices'] = 'IMS LTI Assignment and Grade Services';
+$string['ltiservice_gradebookservices_help'] = 'Whether to use the IMS LTI Assignment and Grade Services to synchronise grades instead of the Basic Outcomes service.
 
 * **Do not use this service** -  Basic Outcomes features and configuration will be used
 * **Use this service for grade sync only** - The service will populate the grades in an already existing gradebook column, but it will not be able to create new columns
@@ -40,5 +40,4 @@ $string['privacy:metadata:grade'] = 'The grade the user received in Moodle for t
 $string['privacy:metadata:maxgrade'] = 'The max grade that can be achieved for this LTI activity.';
 $string['privacy:metadata:timemodified'] = 'The last time the grade was updated';
 $string['privacy:metadata:userid'] = 'The ID of the user using the LTI consumer.';
-$string['servicename'] = 'LTI Assignment and Grade Services';
 $string['taskcleanup'] = 'LTI Assignment and Grade Services table cleanup';

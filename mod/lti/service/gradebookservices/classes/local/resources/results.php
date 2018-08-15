@@ -31,7 +31,7 @@ use mod_lti\local\ltiservice\resource_base;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * A resource implementing LISResults container.
+ * A resource implementing LISResult container.
  *
  * @package    ltiservice_gradebookservices
  * @copyright  2017 Cengage Learning http://www.cengage.com
@@ -66,90 +66,76 @@ class results extends resource_base {
         $contextid = $params['context_id'];
         $itemid = $params['item_id'];
 
-        $isget = $response->get_request_method() === 'GET';
-        if ($isget) {
-            $contenttype = $response->get_accept();
-        } else {
-            $contenttype = $response->get_content_type();
-        }
+        $isget = $response->get_request_method() === self::HTTP_GET;
         // We will receive typeid when working with LTI 1.x, if not the we are in LTI 2.
-        $typeid = optional_param('type_id', null, PARAM_ALPHANUM);
-        if (is_null($typeid)) {
-            if (!$this->check_tool_proxy(null, $response->get_request_data())) {
-                $response->set_code(403);
-                $response->set_reason("Invalid tool proxy specified.");
-                return;
+        $typeid = optional_param('type_id', null, PARAM_INT);
+
+        $scope = gradebookservices::SCOPE_GRADEBOOKSERVICES_RESULT_READ;
+
+        try {
+            if (!$this->check_tool($typeid, $response->get_request_data(), array($scope))) {
+                throw new \Exception(null, 401);
             }
-        } else {
-            if (!$this->check_type($typeid, $contextid, 'Result.collection:get', $response->get_request_data())) {
-                $response->set_code(403);
-                $response->set_reason("This resource does not support GET requests.");
-                return;
+            $typeid = $this->get_service()->get_type()->id;
+            if (!($course = $DB->get_record('course', array('id' => $contextid), 'id', IGNORE_MISSING))) {
+                throw new \Exception("Not Found: Course {$contextid} doesn't exist", 404);
             }
-        }
-        if (empty($contextid) || (!empty($contenttype) && !in_array($contenttype, $this->formats))) {
-            $response->set_code(400);
-            $response->set_reason("Invalid request made.");
-            return;
-        }
-        if (!$DB->record_exists('course', array('id' => $contextid))) {
-            $response->set_code(404);
-            $response->set_reason("Not Found: Course $contextid doesn't exist.");
-            return;
-        }
-        if (!$DB->record_exists('grade_items', array('id' => $itemid))) {
-            $response->set_code(404);
-            $response->set_reason("Not Found: Grade item $itemid doesn't exist.");
-            return;
-        }
-        $item = $this->get_service()->get_lineitem($contextid, $itemid, $typeid);
-        if ($item === false) {
-            $response->set_code(403);
-            $response->set_reason("Line item does not exist.");
-            return;
-        }
-        $gbs = gradebookservices::find_ltiservice_gradebookservice_for_lineitem($itemid);
-        $ltilinkid = null;
-        if (isset($item->iteminstance)) {
-            $ltilinkid = $item->iteminstance;
-        } else if ($gbs && isset($gbs->ltilinkid)) {
-            $ltilinkid = $gbs->ltilinkid;
-        }
-        if ($ltilinkid != null) {
-            if (is_null($typeid)) {
-                if (isset($item->iteminstance) && (!gradebookservices::check_lti_id($ltilinkid, $item->courseid,
-                        $this->get_service()->get_tool_proxy()->id))) {
-                    $response->set_code(403);
-                    $response->set_reason("Invalid LTI id supplied.");
-                    return;
-                }
-            } else {
-                if (isset($item->iteminstance) && (!gradebookservices::check_lti_1x_id($ltilinkid, $item->courseid,
-                        $typeid))) {
-                    $response->set_code(403);
-                    $response->set_reason("Invalid LTI id supplied.");
-                    return;
+            if (!$this->get_service()->is_allowed_in_context($typeid, $course->id)) {
+                throw new \Exception('Not allowed in context', 403);
+            }
+            if (!$DB->record_exists('grade_items', array('id' => $itemid))) {
+                throw new \Exception("Not Found: Grade item {$itemid} doesn't exist", 404);
+            }
+            $item = $this->get_service()->get_lineitem($contextid, $itemid, $typeid);
+            if ($item === false) {
+                throw new \Exception('Line item does not exist', 404);
+            }
+            $gbs = gradebookservices::find_ltiservice_gradebookservice_for_lineitem($itemid);
+            $ltilinkid = null;
+            if (isset($item->iteminstance)) {
+                $ltilinkid = $item->iteminstance;
+            } else if ($gbs && isset($gbs->ltilinkid)) {
+                $ltilinkid = $gbs->ltilinkid;
+            }
+            if ($ltilinkid != null) {
+                if (is_null($typeid)) {
+                    if (isset($item->iteminstance) && (!gradebookservices::check_lti_id($ltilinkid, $item->courseid,
+                            $this->get_service()->get_tool_proxy()->id))) {
+                        $response->set_code(403);
+                        $response->set_reason("Invalid LTI id supplied.");
+                        return;
+                    }
+                } else {
+                    if (isset($item->iteminstance) && (!gradebookservices::check_lti_1x_id($ltilinkid, $item->courseid,
+                            $typeid))) {
+                        $response->set_code(403);
+                        $response->set_reason("Invalid LTI id supplied.");
+                        return;
+                    }
                 }
             }
+            require_once($CFG->libdir.'/gradelib.php');
+            switch ($response->get_request_method()) {
+                case 'GET':
+                    $useridfilter = optional_param('user_id', 0, PARAM_INT);
+                    $limitnum = optional_param('limit', 0, PARAM_INT);
+                    $limitfrom = optional_param('from', 0, PARAM_INT);
+                    $typeid = optional_param('type_id', null, PARAM_TEXT);
+                    $json = $this->get_json_for_get_request($item->id, $limitfrom, $limitnum,
+                            $useridfilter, $typeid, $response);
+                    $response->set_content_type($this->formats[0]);
+                    $response->set_body($json);
+                    break;
+                default:  // Should not be possible.
+                    $response->set_code(405);
+                    $response->set_reason("Invalid request method specified.");
+                    return;
+            }
+            $response->set_body($json);
+        } catch (\Exception $e) {
+            $response->set_code($e->getCode());
+            $response->set_reason($e->getMessage());
         }
-        require_once($CFG->libdir.'/gradelib.php');
-        switch ($response->get_request_method()) {
-            case 'GET':
-                $useridfilter = optional_param('user_id', 0, PARAM_INT);
-                $limitnum = optional_param('limit', 0, PARAM_INT);
-                $limitfrom = optional_param('from', 0, PARAM_INT);
-                $typeid = optional_param('type_id', null, PARAM_TEXT);
-                $json = $this->get_json_for_get_request($item->id, $limitfrom, $limitnum,
-                        $useridfilter, $typeid, $response);
-                $response->set_content_type($this->formats[0]);
-                $response->set_body($json);
-                break;
-            default:  // Should not be possible.
-                $response->set_code(405);
-                $response->set_reason("Invalid request method specified.");
-                return;
-        }
-        $response->set_body($json);
     }
 
     /**
@@ -253,24 +239,6 @@ class results extends resource_base {
             $response->add_additional_header($links);
         }
         return json_encode($jsonresults);
-    }
-
-    /**
-     * get permissions from the config of the tool for that resource
-     *
-     * @param int $typeid
-     *
-     * @return array with the permissions related to this resource by the $lti_type or null if none.
-     */
-    public function get_permissions($typeid) {
-        $tool = lti_get_type_type_config($typeid);
-        if ($tool->ltiservice_gradesynchronization == '1') {
-            return array('Result.collection:get');
-        } else if ($tool->ltiservice_gradesynchronization == '2') {
-            return array('Result.collection:get');
-        } else {
-            return array();
-        }
     }
 
     /**
