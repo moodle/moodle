@@ -63,25 +63,25 @@
             {{#pix}}t/add, moodle, {{#str}}addpurpose, tool_dataprivacy{{/str}}{{/pix}}
         </button>
     </div>
-    <table class="generaltable fullwidth">
+    <table class="table table-striped table-hover">
         <caption class="accesshide">{{#str}}purposeslist, tool_dataprivacy{{/str}}</caption>
         <thead>
             <tr>
-                <th scope="col" class="col-md-2">{{#str}}name{{/str}}</th>
-                <th scope="col" class="col-md-3">{{#str}}description{{/str}}</th>
-                <th scope="col" class="col-md-2">{{#str}}lawfulbases, tool_dataprivacy{{/str}}</th>
-                <th scope="col" class="col-md-2">{{#str}}sensitivedatareasons, tool_dataprivacy{{/str}}</th>
-                <th scope="col" class="col-md-1">{{#str}}retentionperiod, tool_dataprivacy{{/str}}</th>
-                <th scope="col" class="col-md-1">{{#str}}protected, tool_dataprivacy{{/str}}</th>
-                <th scope="col" class="col-md-1">{{#str}}actions{{/str}}</th>
+                <th scope="col" class="w-25">{{#str}}name{{/str}}</th>
+                <th scope="col" class="w-25">{{#str}}description{{/str}}</th>
+                <th scope="col">{{#str}}lawfulbases, tool_dataprivacy{{/str}}</th>
+                <th scope="col">{{#str}}sensitivedatareasons, tool_dataprivacy{{/str}}</th>
+                <th scope="col">{{#str}}retentionperiod, tool_dataprivacy{{/str}}</th>
+                <th scope="col">{{#str}}protected, tool_dataprivacy{{/str}}</th>
+                <th scope="col">{{#str}}actions{{/str}}</th>
             </tr>
         </thead>
         <tbody>
             {{#purposes}}
             <tr data-purposeid="{{id}}">
-                <td class="col-md-2">{{{name}}}</td>
-                <td class="col-md-3">{{{description}}}</td>
-                <td class="col-md-2">
+                <td>{{{name}}}</td>
+                <td>{{{description}}}</td>
+                <td>
                     <ul>
                         {{#formattedlawfulbases}}
                             <li>
@@ -90,7 +90,7 @@
                         {{/formattedlawfulbases}}
                     </ul>
                 </td>
-                <td class="col-md-2">
+                <td>
                     <ul>
                         {{#formattedsensitivedatareasons}}
                             <li>
@@ -99,8 +99,8 @@
                         {{/formattedsensitivedatareasons}}
                     </ul>
                 </td>
-                <td class="col-md-1">{{formattedretentionperiod}}</td>
-                <td class="col-md-1">
+                <td>{{formattedretentionperiod}}</td>
+                <td>
                     {{#protected}}
                         {{#pix}}i/checked, core, {{#str}}yes{{/str}}{{/pix}}
                     {{/protected}}
@@ -108,7 +108,7 @@
                         {{#str}}no{{/str}}
                     {{/protected}}
                 </td>
-                <td class="col-md-1">
+                <td>
                     {{#actions}}
                         {{> core/action_menu}}
                     {{/actions}}
