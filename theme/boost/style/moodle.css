@@ -11855,7 +11855,7 @@ table.calendartable caption {
   padding: 0; }
   .course-content ul.topics li.section,
   .course-content ul.weeks li.section {
-    padding-top: 1rem;
+    margin-top: 1rem;
     padding-bottom: 1rem; }
     .course-content ul.topics li.section .content,
     .course-content ul.weeks li.section .content {
@@ -12495,10 +12495,12 @@ span.editinstructions {
   font-size: 32px; }
 
 /* Anchor link offset fix. This makes hash links scroll 60px down to account for the fixed header. */
-:target {
-  padding-top: 80px !important;
-  /* stylelint-disable declaration-no-important */
-  margin-top: -50px !important;
+:target::before {
+  content: " ";
+  display: block;
+  height: 60px;
+  /* fixed header height*/
+  margin-top: -60px;
   /* negative fixed header height */ }
 
 .pagelayout-embedded :target {
