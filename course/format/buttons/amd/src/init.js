@@ -27,6 +27,8 @@ define(['jquery','format_buttons/slick'], function($, slick) {
     $('#section' + currentSection).toggleClass('d-none');
     initSlider($('#section'+currentSection+' .slider.labels'),0);
     labelsEvents(currentSection);
+    initPrevNextBtns(currentSection);
+    initPrevNextBtnsEvents();
   }
 
   function sectionsEvents(){
@@ -42,6 +44,7 @@ define(['jquery','format_buttons/slick'], function($, slick) {
         unslickLabels();
         initSlider($('#section' + this.dataset.section + ' .slider.labels'),0);
         labelsEvents(this.dataset.section);
+        initPrevNextBtns(this.dataset.section);
       });
     }
   }
@@ -57,6 +60,7 @@ define(['jquery','format_buttons/slick'], function($, slick) {
         var equils = $('[data-label-content="' + this.dataset.label + '"]');
         loop($('#section' + currentSection + ' .label-content'));
         $('[data-label-content="' + this.dataset.label + '"]').toggleClass('d-none');
+        initPrevNextBtns(currentSection);
       });
     }
     var checkLabel = document.querySelector('#section' + currentSection + ' .nav-item.active');
@@ -163,16 +167,52 @@ define(['jquery','format_buttons/slick'], function($, slick) {
     }
   }
 
+  function initPrevNextBtns(currentSection){
+    var active = $('#section'+currentSection+' .nav-item.active');
+
+    var current = $('.label-active');
+    var prevBtn = $('.label-prev');
+    var nextBtn = $('.label-next');
+
+    current.children().remove();
+    prevBtn.children().remove();
+    nextBtn.children().remove();
+    active.children().clone().appendTo(".label-active");
+    active.prev().children().clone().appendTo(".label-prev");
+    active.next().children().clone().appendTo(".label-next");
+  }
+
+  function initPrevNextBtnsEvents(){
+    var prevBtn = $('.label-prev');
+    var nextBtn = $('.label-next');
+    for (var i=0; i<prevBtn.length;i++){
+      var item = prevBtn[i];
+      item.addEventListener('click', function(){
+        active = $('#section'+localStorage.getItem('lastSection')+' .nav-item.active');
+        active.prev().trigger('click');
+      });
+    }
+    for (var i=0; i<nextBtn.length;i++){
+      var item = nextBtn[i];
+      item.addEventListener('click', function(){
+        active = $('#section'+localStorage.getItem('lastSection')+' .nav-item.active');
+        active.next().trigger('click');
+      });
+    }
+  }
+
   // bottom prev|next buttons for labels on xs breakpoint
-  // function xsButtons(){
-  //   var btns = '<button class="label-prev" onclick=""></button>';
-  //   var block = document.createElement('div');
-  // }
-  // function slideLabel(dir){
-  //   if (dir == 'prev'){
+  // function slideLabel(direction){
+  //   var labelSlider = $('.section-content.active .slider.labels');
+  //   var active = $('.section-content.active .nav-item.active');
+  //   console.log(active);
+  //   console.log(labelSlider);
+  //   if (direction == 'prev'){
   //     labelSlider.slick('slickPrev');
-  //   } else if (dir == 'next'){
+  //     active.prev().click();
+  //   } else if (direction == 'next'){
   //     labelSlider.slick('slickNext');
+  //     active.next().click();
   //   }
   // }
 

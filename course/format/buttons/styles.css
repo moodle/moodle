@@ -245,7 +245,7 @@
   border: 1px solid #ddd;
   margin-top: 1rem;
   padding: 10px;
-  height: 80vh; }
+  min-height: 80vh; }
 
 .slick-arrow {
   cursor: pointer; }
@@ -366,6 +366,60 @@
       border-right: 1px solid transparent;
       border-bottom: 1px solid #000;
       border-left: 1px solid #000; }
+
+.label-content-controls {
+  position: relative;
+  padding: 15px 0;
+  margin: 0;
+  text-overflow: ellipsis;
+  white-space: nowrap; }
+  .label-content-controls .label-prev {
+    position: relative;
+    border: 0;
+    background-color: inherit;
+    color: #000;
+    outline: none;
+    text-overflow: ellipsis;
+    white-space: nowrap; }
+    .label-content-controls .label-prev div:before {
+      content: '';
+      width: 1rem;
+      height: 1rem;
+      display: block;
+      position: absolute;
+      left: -1rem;
+      top: .5rem;
+      border-top: 1px solid transparent;
+      border-right: 1px solid transparent;
+      border-bottom: 1px solid #000;
+      border-left: 1px solid #000;
+      transform: rotate(45deg); }
+  .label-content-controls .label-active {
+    position: relative;
+    color: gold;
+    text-overflow: ellipsis;
+    white-space: nowrap; }
+  .label-content-controls .label-next {
+    position: relative;
+    border: 0;
+    background-color: inherit;
+    color: #000;
+    outline: none;
+    text-overflow: ellipsis;
+    white-space: nowrap; }
+    .label-content-controls .label-next div:before {
+      content: '';
+      width: 1rem;
+      height: 1rem;
+      display: block;
+      position: absolute;
+      right: -1rem;
+      top: .5rem;
+      border-top: 1px solid transparent;
+      border-right: 1px solid transparent;
+      border-bottom: 1px solid #000;
+      border-left: 1px solid #000;
+      transform: rotate(225deg); }
     @media screen and (min-width: 768px){
   html[dir='ltr'] .slider.sections.slick-slider .slick-arrow{
     margin-top: -1rem; }
@@ -457,5 +511,19 @@
   .sections-wrapper .slider.sections{
     width: 100%;
     padding: 0 5%; }
-  .slider.labels .nav-item{
+  .sections-wrapper .slider.sections .slick-arrow{
+    margin-top: -1rem; }
+  .sections-wrapper .slider.sections .slick-arrow.slick-prev{
+    left: 0;
+    top: 50%; }
+  .sections-wrapper .slider.sections .slick-arrow.slick-prev:before{
+    transform: rotate(45deg); }
+  .sections-wrapper .slider.sections .slick-arrow.slick-next{
+    right: 0;
+    top: 50%; }
+  .sections-wrapper .slider.sections .slick-arrow.slick-next:before{
+    transform: rotate(225deg); }
+  .sections-content-wrapper{
+    padding: 0 5%; }
+  .sections-content-wrapper .slider.labels .nav-item{
     width: 100%; } }

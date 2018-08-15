@@ -4,10 +4,30 @@
   .slider.sections{
     width:100%;
     padding: 0 5%;
+    .slick-arrow{
+      margin-top: -1rem;
+      &.slick-prev{
+        left:0;
+        top:50%;
+        &:before{
+          transform: rotate(45deg);
+        }
+      }
+      &.slick-next{
+        right:0;
+        top:50%;
+        &:before{
+          transform: rotate(225deg);
+        }
+      }
+    }
   }
 }
-.slider.labels{
-  .nav-item{
-    width:100%;
+.sections-content-wrapper{
+  padding:0 5%;
+  .slider.labels{
+    .nav-item{
+      width:100%;
+    }
   }
 }

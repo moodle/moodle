@@ -153,3 +153,62 @@
     // }
   }
 }
+.label-content-controls{
+  position: relative;
+  padding:15px 0;
+  margin:0;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  .label-prev{
+    position: relative;
+    border:0;
+    background-color: inherit;
+    color:#000;
+    outline:none;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    div:before{
+      content:'';
+      width: 1rem;
+      height:1rem;
+      display:block;
+      position: absolute;
+      left: -1rem;
+      top:.5rem;
+      border-top: 1px solid transparent;
+      border-right: 1px solid transparent;
+      border-bottom: 1px solid #000;
+      border-left: 1px solid #000;
+      transform: rotate(45deg);
+    }
+  }
+  .label-active{
+    position: relative;
+    color:gold;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .label-next{
+    position: relative;
+    border:0;
+    background-color: inherit;
+    color:#000;
+    outline:none;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    div:before{
+      content:'';
+      width: 1rem;
+      height:1rem;
+      display:block;
+      position: absolute;
+      right: -1rem;
+      top:.5rem;
+      border-top: 1px solid transparent;
+      border-right: 1px solid transparent;
+      border-bottom: 1px solid #000;
+      border-left: 1px solid #000;
+      transform: rotate(225deg);
+    }
+  }
+}

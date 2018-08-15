@@ -513,6 +513,11 @@ class format_buttons_renderer extends format_topics_renderer
                     $htmlsection[$section] .=  html_writer::start_tag('div',['class' => 'label-content-wrapper col-12 col-md-9 col-lg-10']);
                     $htmlsection[$section] .=  $this->labels_content($course, $thissection);
                     $htmlsection[$section] .=  html_writer::end_tag('div');
+                    $htmlsection[$section] .=  html_writer::start_tag('div',['class' => ' label-content-controls d-flex d-md-none d-lg-none']);
+                    $htmlsection[$section] .=  html_writer::tag('button', '', ['class' => ' p-2 col-4 label-prev']);
+                    $htmlsection[$section] .=  html_writer::tag('div', '', ['class' => ' p-2 col-4 label-active']);
+                    $htmlsection[$section] .=  html_writer::tag('button', '', ['class' => ' p-2 col-4 label-next']);
+                    $htmlsection[$section] .=  html_writer::end_tag('div');
                     $htmlsection[$section] .=  html_writer::end_tag('div');
                     $htmlsection[$section] .=  html_writer::end_tag('div');
 
