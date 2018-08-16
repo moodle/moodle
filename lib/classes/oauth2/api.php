@@ -43,10 +43,10 @@ use moodle_url;
 class api {
 
     /**
-     * Create a google ready OAuth 2 service.
+     * Build a google ready OAuth 2 service.
      * @return \core\oauth2\issuer
      */
-    private static function create_google() {
+    private static function init_google() {
         $record = (object) [
             'name' => 'Google',
             'image' => 'https://accounts.google.com/favicon.ico',
@@ -56,7 +56,17 @@ class api {
         ];
 
         $issuer = new issuer(0, $record);
-        $issuer->create();
+        return $issuer;
+    }
+
+    /**
+     * Create endpoints for google issuers.
+     * @param issuer $issuer issuer the endpoints should be created for.
+     * @return mixed
+     * @throws \coding_exception
+     * @throws \core\invalid_persistent_exception
+     */
+    private static function create_endpoints_for_google($issuer) {
 
         $record = (object) [
             'issuerid' => $issuer->get('id'),
@@ -69,10 +79,10 @@ class api {
     }
 
     /**
-     * Create a facebook ready OAuth 2 service.
+     * Build a facebook ready OAuth 2 service.
      * @return \core\oauth2\issuer
      */
-    private static function create_facebook() {
+    private static function init_facebook() {
         // Facebook is a custom setup.
         $record = (object) [
             'name' => 'Facebook',
@@ -84,8 +94,17 @@ class api {
         ];
 
         $issuer = new issuer(0, $record);
-        $issuer->create();
+        return $issuer;
+    }
 
+    /**
+     * Create endpoints for facebook issuers.
+     * @param issuer $issuer issuer the endpoints should be created for.
+     * @return mixed
+     * @throws \coding_exception
+     * @throws \core\invalid_persistent_exception
+     */
+    private static function create_endpoints_for_facebook($issuer) {
         // The Facebook API version.
         $apiversion = '2.12';
         // The Graph API URL.
@@ -138,10 +157,10 @@ class api {
     }
 
     /**
-     * Create a microsoft ready OAuth 2 service.
+     * Build a microsoft ready OAuth 2 service.
      * @return \core\oauth2\issuer
      */
-    private static function create_microsoft() {
+    private static function init_microsoft() {
         // Microsoft is a custom setup.
         $record = (object) [
             'name' => 'Microsoft',
@@ -153,7 +172,17 @@ class api {
         ];
 
         $issuer = new issuer(0, $record);
-        $issuer->create();
+        return $issuer;
+    }
+
+    /**
+     * Create endpoints for microsoft issuers.
+     * @param issuer $issuer issuer the endpoints should be created for.
+     * @return mixed
+     * @throws \coding_exception
+     * @throws \core\invalid_persistent_exception
+     */
+    private static function create_endpoints_for_microsoft($issuer) {
 
         $endpoints = [
             'authorization_endpoint' => 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize',
@@ -195,22 +224,67 @@ class api {
     }
 
     /**
-     * Create one of the standard issuers.
+     * Initializes a record for one of the standard issuers to be displayed in the settings.
+     * The issuer is not yet created in the database.
      * @param string $type One of google, facebook, microsoft
+     * @return \core\oauth2\issuer
+     */
+    public static function init_standard_issuer($type) {
+        require_capability('moodle/site:config', context_system::instance());
+        if ($type == 'google') {
+            return self::init_google();
+        } else if ($type == 'microsoft') {
+            return self::init_microsoft();
+        } else if ($type == 'facebook') {
+            return self::init_facebook();
+        } else {
+            throw new moodle_exception('OAuth 2 service type not recognised: ' . $type);
+        }
+    }
+
+    /**
+     * Create endpoints for standard issuers, based on the issuer created from submitted data.
+     * @param string $type One of google, facebook, microsoft
+     * @param issuer $issuer issuer the endpoints should be created for.
+     * @return \core\oauth2\issuer
+     */
+    public static function create_endpoints_for_standard_issuer($type, $issuer) {
+        require_capability('moodle/site:config', context_system::instance());
+        if ($type == 'google') {
+            return self::create_endpoints_for_google($issuer);
+        } else if ($type == 'microsoft') {
+            return self::create_endpoints_for_microsoft($issuer);
+        } else if ($type == 'facebook') {
+            return self::create_endpoints_for_facebook($issuer);
+        } else {
+            throw new moodle_exception('OAuth 2 service type not recognised: ' . $type);
+        }
+    }
+
+    /**
+     *     Create one of the standard issuers.
+     * @param string $type One of google, facebook, or microsoft
      * @return \core\oauth2\issuer
      */
     public static function create_standard_issuer($type) {
         require_capability('moodle/site:config', context_system::instance());
         if ($type == 'google') {
-            return self::create_google();
+            $issuer = self::init_google();
+            $issuer->create();
+            return self::create_endpoints_for_google($issuer);
         } else if ($type == 'microsoft') {
-            return self::create_microsoft();
+            $issuer = self::init_microsoft();
+            $issuer->create();
+            return self::create_endpoints_for_microsoft($issuer);
         } else if ($type == 'facebook') {
-            return self::create_facebook();
+            $issuer = self::init_facebook();
+            $issuer->create();
+            return self::create_endpoints_for_facebook($issuer);
         } else {
             throw new moodle_exception('OAuth 2 service type not recognised: ' . $type);
         }
     }
+
 
     /**
      * List all the issuers, ordered by the sortorder field
