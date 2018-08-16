@@ -251,7 +251,7 @@ class format_buttons_renderer extends format_topics_renderer
             $html .= html_writer::start_tag('li',['class' => 'nav-item mb-auto', 'data-section' => $section]);
             // $html .= html_writer::start_tag('a',['href' => "#section$section",'class' => "nav-link $class", 'aria-controls' => "section-$section"]);
             $html .= html_writer::start_tag('div',['class' => 'd-flex flex-row section-header justify-content-around align-items-center']);
-            $html .= html_writer::tag('span', '', ['class' => 'section-icon d-inline-flex p-2 justify-content-center align-items-center']);
+            $html .= html_writer::tag('span', '', ['class' => 'section-icon d-inline-flex p-3 justify-content-center align-items-center']);
             $html .= html_writer::start_tag('div',['class' => 'd-flex flex-column section-header']);
             $html .= html_writer::tag('span', get_section_name($course, $section), ['class' => ' section-title']);
             $html .= html_writer::tag('p', "$thissection->summary", ['class' => 'section-description']);
@@ -771,7 +771,7 @@ class format_buttons_renderer extends format_topics_renderer
             // $output .= html_writer::start_tag('a',['href' => "#label{$modnum}",'class' => "nav-link label-link", 'aria-controls' => "label{$modnum}"]);
             $output .= html_writer::tag('span', '', ['class' => 'label-icon d-inline-flex p-2 justify-content-center align-items-center', 'style' => "background: url({$licon}) no-repeat; background-size: contain;"]);
             $output .= html_writer::start_tag('div', ['class'=> 'd-flex flex-column']);
-            $output .= $content[1];
+            $output .= html_writer::tag('span', $content[1], ['class'=>'label-title']);
             $output .= html_writer::end_tag('div');
             // $output .= html_writer::end_tag('a');
             $output .= html_writer::end_tag('div');

@@ -4,9 +4,6 @@
 
 .labels-wrapper {
   .nav-item {
-    box-sizing: content-box;
-    font-size: 1.3rem;
-    line-height: 60px;
     cursor: pointer;
     background-color: #7af2ff;
     transition: all .3s ease-in-out;
@@ -26,12 +23,6 @@
       // transform: scale(1);
       transition: all .3s ease-in-out;
     }
-  }
-
-  .label-icon {
-    width: 40px;
-    height: 27px;
-    margin-left: 5px;
   }
 }
 

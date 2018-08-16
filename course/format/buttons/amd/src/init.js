@@ -52,28 +52,33 @@ define(['jquery','format_buttons/slick'], function($, slick) {
 
   function labelsEvents(currentSection){
     var labels = $('#section' + currentSection + ' .nav-item');
-    for (var i = 0; i < labels.length; i++) {
-      var item = labels[i];
-      item.addEventListener('click', function() {
-        addToStorage('lastLabel', this.dataset.label);
-        loopActive(labels, item);
-        $('[data-label="' + this.dataset.label + '"]').toggleClass('active');
-        var equils = $('[data-label-content="' + this.dataset.label + '"]');
+    if (labels.length == 0){
+      $('#section' + currentSection + ' .label-content-wrapper').children().remove();
+      $('#section' + currentSection + ' .label-content-wrapper').append('<div class="alert alert-danger" role="alert">Sorry, there is no labels in this topic.</div>');
+    } else {
+      for (var i = 0; i < labels.length; i++) {
+        var item = labels[i];
+        item.addEventListener('click', function() {
+          addToStorage('lastLabel', this.dataset.label);
+          loopActive(labels, item);
+          $('[data-label="' + this.dataset.label + '"]').toggleClass('active');
+          var equils = $('[data-label-content="' + this.dataset.label + '"]');
+          loop($('#section' + currentSection + ' .label-content'));
+          $('[data-label-content="' + this.dataset.label + '"]').toggleClass('d-none');
+          initPrevNextBtns(currentSection);
+          if (window.innerWidth < 767 && $('#section' + currentSection + ' .labels-wrapper').hasClass('expand')){
+            $('#section' + currentSection + ' .labels-wrapper').removeClass('expand');
+          }
+        });
+      }
+      var checkLabel = document.querySelector('#section' + currentSection + ' .nav-item.active');
+      if (checkLabel == null){
+        var check = document.querySelector('#section'+currentSection+' .label-item');
+        check.classList += ' active';
+        var equils = $('[data-label-content="' + check.dataset.label + '"]');
         loop($('#section' + currentSection + ' .label-content'));
-        $('[data-label-content="' + this.dataset.label + '"]').toggleClass('d-none');
-        initPrevNextBtns(currentSection);
-        if (window.innerWidth < 767 && $('#section' + currentSection + ' .labels-wrapper').hasClass('expand')){
-          $('#section' + currentSection + ' .labels-wrapper').removeClass('expand');
-        }
-      });
-    }
-    var checkLabel = document.querySelector('#section' + currentSection + ' .nav-item.active');
-    if (checkLabel == null){
-      var check = document.querySelector('#section'+currentSection+' .label-item');
-      check.classList += ' active';
-      var equils = $('[data-label-content="' + check.dataset.label + '"]');
-      loop($('#section' + currentSection + ' .label-content'));
-      $('[data-label-content="' + check.dataset.label + '"]').toggleClass('d-none');
+        $('[data-label-content="' + check.dataset.label + '"]').toggleClass('d-none');
+      }
     }
   }
 
