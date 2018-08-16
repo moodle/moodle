@@ -76,6 +76,16 @@ class metadata_registry {
                 if (isset($contributedplugins[$plugintype][$shortname])) {
                     $internaldata['external'] = true;
                 }
+
+                // Check if the interface is deprecated.
+                if (!$manager->is_empty_subsystem($component)) {
+                    $classname = $manager->get_provider_classname_for_component($component);
+                    $componentclass = new $classname();
+                    if ($componentclass instanceof \core_privacy\local\deprecated) {
+                        $internaldata['deprecated'] = true;
+                    }
+                }
+
                 return $internaldata;
             }, $leaves['plugins']);
             $fullyrichtree[$branch]['plugin_type_raw'] = $plugintype;
