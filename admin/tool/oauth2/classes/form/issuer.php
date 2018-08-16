@@ -139,6 +139,9 @@ class issuer extends persistent {
         $mform->addElement('text', 'baseurl', get_string('issuerbaseurl', 'tool_oauth2'));
         $mform->addRule('baseurl', get_string('maximumchars', '', 1024), 'maxlength', 1024, 'client');
         $mform->addHelpButton('baseurl', 'issuerbaseurl', 'tool_oauth2');
+        if ($this->type && $this->type == 'nextcloud') {
+            $mform->addRule('baseurl', null, 'required', null, 'client');
+        }
 
         // Allowed Domains.
         $mform->addElement('text', 'alloweddomains', get_string('issueralloweddomains', 'tool_oauth2'));

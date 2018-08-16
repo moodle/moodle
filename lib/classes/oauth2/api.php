@@ -50,7 +50,7 @@ class api {
         $record = (object) [
             'name' => 'Google',
             'image' => 'https://accounts.google.com/favicon.ico',
-            'baseurl' => 'http://accounts.google.com/',
+            'baseurl' => 'https://accounts.google.com/',
             'loginparamsoffline' => 'access_type=offline&prompt=consent',
             'showonloginpage' => true
         ];
@@ -224,9 +224,75 @@ class api {
     }
 
     /**
+     * Build a nextcloud ready OAuth 2 service.
+     * @return \core\oauth2\issuer
+     */
+    private static function init_nextcloud() {
+        // Nextcloud has a custom baseurl. Thus, the creation of endpoints has to be done later.
+        $record = (object) [
+            'name' => 'Nextcloud',
+            'image' => 'https://nextcloud.com/wp-content/themes/next/assets/img/common/favicon.png?x16328',
+            'basicauth' => 1,
+        ];
+
+        $issuer = new issuer(0, $record);
+
+        return $issuer;
+    }
+
+    /**
+     * Create endpoints for nextcloud issuers.
+     * @param issuer $issuer issuer the endpoints should be created for.
+     * @return mixed
+     * @throws \coding_exception
+     * @throws \core\invalid_persistent_exception
+     */
+    private static function create_endpoints_for_nextcloud($issuer) {
+        $baseurl = $issuer->get('baseurl');
+        // Add trailing slash to baseurl, if needed.
+        if (substr($baseurl, -1) !== '/') {
+            $baseurl .= '/';
+        }
+
+        $endpoints = [
+            // Baseurl will be prepended later.
+            'authorization_endpoint' => 'index.php/apps/oauth2/authorize',
+            'token_endpoint' => 'index.php/apps/oauth2/api/v1/token',
+            'userinfo_endpoint' => 'ocs/v2.php/cloud/user?format=json',
+            'webdav_endpoint' => 'remote.php/webdav/',
+            'ocs_endpoint' => 'ocs/v1.php/apps/files_sharing/api/v1/shares',
+        ];
+
+        foreach ($endpoints as $name => $url) {
+            $record = (object) [
+                'issuerid' => $issuer->get('id'),
+                'name' => $name,
+                'url' => $baseurl . $url,
+            ];
+            $endpoint = new \core\oauth2\endpoint(0, $record);
+            $endpoint->create();
+        }
+
+        // Create the field mappings.
+        $mapping = [
+            'ocs-data-email' => 'email',
+            'ocs-data-id' => 'username',
+        ];
+        foreach ($mapping as $external => $internal) {
+            $record = (object) [
+                'issuerid' => $issuer->get('id'),
+                'externalfield' => $external,
+                'internalfield' => $internal
+            ];
+            $userfieldmapping = new \core\oauth2\user_field_mapping(0, $record);
+            $userfieldmapping->create();
+        }
+    }
+
+    /**
      * Initializes a record for one of the standard issuers to be displayed in the settings.
      * The issuer is not yet created in the database.
-     * @param string $type One of google, facebook, microsoft
+     * @param string $type One of google, facebook, microsoft, nextcloud
      * @return \core\oauth2\issuer
      */
     public static function init_standard_issuer($type) {
@@ -237,6 +303,8 @@ class api {
             return self::init_microsoft();
         } else if ($type == 'facebook') {
             return self::init_facebook();
+        } else if ($type == 'nextcloud') {
+            return self::init_nextcloud();
         } else {
             throw new moodle_exception('OAuth 2 service type not recognised: ' . $type);
         }
@@ -244,7 +312,7 @@ class api {
 
     /**
      * Create endpoints for standard issuers, based on the issuer created from submitted data.
-     * @param string $type One of google, facebook, microsoft
+     * @param string $type One of google, facebook, microsoft, nextcloud
      * @param issuer $issuer issuer the endpoints should be created for.
      * @return \core\oauth2\issuer
      */
@@ -256,17 +324,20 @@ class api {
             return self::create_endpoints_for_microsoft($issuer);
         } else if ($type == 'facebook') {
             return self::create_endpoints_for_facebook($issuer);
+        } else if ($type == 'nextcloud') {
+            return self::create_endpoints_for_nextcloud($issuer);
         } else {
             throw new moodle_exception('OAuth 2 service type not recognised: ' . $type);
         }
     }
 
     /**
-     *     Create one of the standard issuers.
-     * @param string $type One of google, facebook, or microsoft
+     * Create one of the standard issuers.
+     * @param string $type One of google, facebook, microsoft, or nextcloud
+     * @param string|false $baseurl Baseurl (only required for nextcloud)
      * @return \core\oauth2\issuer
      */
-    public static function create_standard_issuer($type) {
+    public static function create_standard_issuer($type, $baseurl = false) {
         require_capability('moodle/site:config', context_system::instance());
         if ($type == 'google') {
             $issuer = self::init_google();
@@ -280,6 +351,14 @@ class api {
             $issuer = self::init_facebook();
             $issuer->create();
             return self::create_endpoints_for_facebook($issuer);
+        } else if ($type == 'nextcloud') {
+            if (!$baseurl) {
+                throw new moodle_exception('Nextcloud service type requires the baseurl parameter.');
+            }
+            $issuer = self::init_nextcloud();
+            $issuer->set('baseurl', $baseurl);
+            $issuer->create();
+            return self::create_endpoints_for_nextcloud($issuer);
         } else {
             throw new moodle_exception('OAuth 2 service type not recognised: ' . $type);
         }

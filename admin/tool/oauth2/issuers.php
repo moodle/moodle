@@ -192,6 +192,11 @@ if ($mform && $mform->is_cancelled()) {
     $addurl = new moodle_url('/admin/tool/oauth2/issuers.php', $params);
     echo $renderer->single_button($addurl, get_string('createnewfacebookissuer', 'tool_oauth2'));
     $addurl = new moodle_url('/admin/tool/oauth2/issuers.php', ['action' => 'edit']);
+    $docs = 'admin/tool/oauth2/issuers/nextcloud';
+    $params = ['action' => 'edittemplate', 'type' => 'nextcloud', 'sesskey' => sesskey(), 'docslink' => $docs];
+    $addurl = new moodle_url('/admin/tool/oauth2/issuers.php', $params);
+    echo $renderer->single_button($addurl, get_string('createnewnextcloudissuer', 'tool_oauth2'));
+    $addurl = new moodle_url('/admin/tool/oauth2/issuers.php', ['action' => 'edit']);
     echo $renderer->single_button($addurl, get_string('createnewissuer', 'tool_oauth2'));
     echo $OUTPUT->footer();
 
