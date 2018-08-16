@@ -45,6 +45,7 @@ define(['jquery','format_buttons/slick'], function($, slick) {
         initSlider($('#section' + this.dataset.section + ' .slider.labels'),0);
         labelsEvents(this.dataset.section);
         initPrevNextBtns(this.dataset.section);
+        xsDropdown(this.dataset.section);
       });
     }
   }
@@ -61,6 +62,9 @@ define(['jquery','format_buttons/slick'], function($, slick) {
         loop($('#section' + currentSection + ' .label-content'));
         $('[data-label-content="' + this.dataset.label + '"]').toggleClass('d-none');
         initPrevNextBtns(currentSection);
+        if (window.innerWidth < 767 && $('#section' + currentSection + ' .labels-wrapper').hasClass('expand')){
+          $('#section' + currentSection + ' .labels-wrapper').removeClass('expand');
+        }
       });
     }
     var checkLabel = document.querySelector('#section' + currentSection + ' .nav-item.active');
@@ -75,13 +79,13 @@ define(['jquery','format_buttons/slick'], function($, slick) {
 
   // if elem only - horizontal, 2 attr - vertical;
   function initSlider(elem, vert){
-    var dir, resp=[], brakepoints= [1200, 992, 540], brp, slides=4;
+    var dir, resp=[], brakepoints= [1200, 992, 768], brp, slides=4;
     (document.dir == "rtl")?dir = true:dir = false;
-    (vert !== undefined)?vert = true:vert = false;
+    if (vert !== undefined){vert = true; dir = false}else{vert = false;}
     // responsiveness / dropdown on xs vert
     if (vert){
       for (var i=0; i<brakepoints.length; i++){
-        if (brakepoints[i] == 540){
+        if (brakepoints[i] == 768){
           // add dropdown touch event
           brp = {
             breakpoint: brakepoints[i],
@@ -94,6 +98,7 @@ define(['jquery','format_buttons/slick'], function($, slick) {
             settings: {
               slidesToShow: slides,
               slidesToScroll: 1,
+              rtl:false,
             }
           };
           resp.push(brp);
@@ -106,6 +111,7 @@ define(['jquery','format_buttons/slick'], function($, slick) {
           settings: {
             slidesToShow: --slides,
             slidesToScroll: 1,
+            rtl: dir,
           }
         };
         resp.push(brp);
@@ -118,7 +124,7 @@ define(['jquery','format_buttons/slick'], function($, slick) {
       arrows: true,
       vertical: vert,
       verticalSwiping: vert,
-      rtl: dir,
+      rtl:dir,
       slidesToShow: 4,
       slidesToScroll: 1,
       responsive:resp,
@@ -167,6 +173,12 @@ define(['jquery','format_buttons/slick'], function($, slick) {
     }
   }
 
+  function xsDropdown(currentSection){
+    if (window.innerWidth < 767){
+      $('#section' + currentSection + ' .labels-wrapper').toggleClass('expand');
+    }
+  }
+
   function initPrevNextBtns(currentSection){
     var active = $('#section'+currentSection+' .nav-item.active');
 
@@ -200,22 +212,6 @@ define(['jquery','format_buttons/slick'], function($, slick) {
       });
     }
   }
-
-  // bottom prev|next buttons for labels on xs breakpoint
-  // function slideLabel(direction){
-  //   var labelSlider = $('.section-content.active .slider.labels');
-  //   var active = $('.section-content.active .nav-item.active');
-  //   console.log(active);
-  //   console.log(labelSlider);
-  //   if (direction == 'prev'){
-  //     labelSlider.slick('slickPrev');
-  //     active.prev().click();
-  //   } else if (direction == 'next'){
-  //     labelSlider.slick('slickNext');
-  //     active.next().click();
-  //   }
-  // }
-
 
     return {
         init: function() {

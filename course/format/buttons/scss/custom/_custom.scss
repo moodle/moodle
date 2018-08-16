@@ -2,17 +2,18 @@
   display: flex;
   flex: 1;
   .slider.sections{
+    max-width:100%;
     &.slick-slider{
       .slick-arrow{
         width:2rem;
         height:2rem;
         margin-top: -1rem;
         &.slick-prev{
-          left:0;
+          left:-1.5rem;
           top:50%;
         }
         &.slick-next{
-          right:0;
+          right:-1.5rem;
           top:50%;
         }
       }
@@ -173,7 +174,7 @@
       height:1rem;
       display:block;
       position: absolute;
-      left: -1rem;
+      left: -1.5rem;
       top:.5rem;
       border-top: 1px solid transparent;
       border-right: 1px solid transparent;
@@ -202,7 +203,7 @@
       height:1rem;
       display:block;
       position: absolute;
-      right: -1rem;
+      right: -1.5rem;
       top:.5rem;
       border-top: 1px solid transparent;
       border-right: 1px solid transparent;

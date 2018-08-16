@@ -100,6 +100,12 @@ html[dir='rtl']{
     padding: 0 5%;
   }
 }
+.sections-content-wrapper{
+  .labels-wrapper{
+    height:auto;
+    overflow:visible;
+  }
+}
 .slider.labels{
   max-height: 80vh;
   padding: 3vh 0;
