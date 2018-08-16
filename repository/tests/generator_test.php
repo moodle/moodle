@@ -46,7 +46,7 @@ class core_repository_generator_testcase extends advanced_testcase {
 
         // All the repository types.
         $all = array('boxnet', 'coursefiles', 'dropbox', 'equella', 'filesystem', 'flickr',
-            'flickr_public', 'googledocs', 'local', 'merlot', 'picasa', 'recent', 's3', 'upload', 'url',
+            'flickr_public', 'googledocs', 'local', 'nextcloud', 'merlot', 'picasa', 'recent', 's3', 'upload', 'url',
             'user', 'webdav', 'wikimedia', 'youtube');
 
         // The ones enabled during installation.
