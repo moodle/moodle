@@ -220,6 +220,7 @@ class data_requests_table extends table_sql {
         $actionsmenu->set_menu_trigger(get_string('actions'));
         $actionsmenu->set_owner_selector('request-actions-' . $requestid);
         $actionsmenu->set_alignment(\action_menu::TL, \action_menu::BL);
+        $actionsmenu->set_constraint('[data-region=data-requests-table] > .no-overflow');
 
         return $OUTPUT->render($actionsmenu);
     }
