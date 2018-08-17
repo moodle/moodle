@@ -30,22 +30,20 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['cannotcreatedboninstall'] = '<p>Αδυναμία δημιουργίας βάσης δεδομένων.</p>
-<p>Η βάση δεδομένων που προσδιορίστηκε δεν υπάρχει και ο χρήστης που δόθηκε δεν έχει δικαίωμα να δημιουργήσει την βάση δεδομένων.</p>
-<p>Ο διαχειριστής του ιστοτόπου πρέπει να επαληθεύσει την ρύθμιση της βάσης δεδομένων.</p>';
+$string['cannotcreatedboninstall'] = '<p>Αδυναμία δημιουργίας βάσης δεδομένων.</p> <p>Η βάση δεδομένων που προσδιορίστηκε δεν υπάρχει και ο χρήστης που δώθηκε δεν έχει δικαίωμα να δημιουργήσει την βάση δεδομένων.</p> <p>Ο διαχειριστής του ιστοτόπου πρέπει να επαληθεύσει την ρύθμιση της βάσης δεδομένων.</p>';
 $string['cannotcreatelangdir'] = 'Δε δημιουργήθηκε φάκελος γλώσσας.';
-$string['cannotcreatetempdir'] = 'Δε δημιουργήθηκε φάκελος temp.';
-$string['cannotdownloadcomponents'] = 'Δεν κατέβηκαν τα τμήματα.';
-$string['cannotdownloadzipfile'] = 'Δεν κατέβηκε το αρχείο ZIP.';
-$string['cannotfindcomponent'] = 'Δεν βρέθηκε το τμήμα.';
-$string['cannotsavemd5file'] = 'Δεν αποθηκεύτηκε το αρχείο md5.';
-$string['cannotsavezipfile'] = 'Δεν αποθηκεύτηκε το αρχείο ZIP.';
-$string['cannotunzipfile'] = 'Δεν έγινε αποσυμπίεση του αρχείου.';
-$string['componentisuptodate'] = 'Το τμήμα είναι ενημερωμένο.';
-$string['downloadedfilecheckfailed'] = 'Το κατέβασμα ελέγχου αρχείου απέτυχε.';
+$string['cannotcreatetempdir'] = 'Αδυναμία δημιουργίας προσωρινού φακέλου';
+$string['cannotdownloadcomponents'] = 'Δεν μπορεί να γίνει λήψη των στοιχείων λογισμικού';
+$string['cannotdownloadzipfile'] = 'Δεν μπορεί να γίνει λήψη του αρχείου ZIP.';
+$string['cannotfindcomponent'] = 'Δεν βρέθηκε το στοιχείο λογισμικού.';
+$string['cannotsavemd5file'] = 'Αδυναμία αποθήκευσης αρχείου md5.';
+$string['cannotsavezipfile'] = 'Αδυναμία αποθήκευσης συμπιεσμένου αρχείου';
+$string['cannotunzipfile'] = 'Αδυναμία αποσυμπίεσης αρχείου';
+$string['componentisuptodate'] = 'Το στοιχείο λογισμικού είναι ενημερωμένο.';
+$string['downloadedfilecheckfailed'] = 'Ο έλεγχος του ληφθέντος αρχείου απέτυχε.';
 $string['invalidmd5'] = 'Μη έγκυρο md5';
 $string['missingrequiredfield'] = 'Κάποιο απαιτούμενο πεδίο λείπει';
-$string['remotedownloaderror'] = 'Απέτυχε η λήψη του τμήματος στο διακομιστή σας, παρακαλώ επιβεβαιώστε τις ρυθμίσεις του διακομιστή proxy, η επέκταση PHP cURL συνιστάται θερμά.<br /><br />Πρέπει να κατεβάσετε το <a href="{$a->url}">{$a->url}</a> χειροκίνητα, να το αντιγράψετε στο "{$a->dest}" στο διακομιστή σας και να το αποσυμπιέσετε εκεί.';
-$string['wrongdestpath'] = 'Λανθασμένη διαδρομή προορισμού.';
+$string['remotedownloaderror'] = '<p>Απέτυχε η λήψη του τμήματος στον εξυπηρετητή σας. Παρακαλούμε επιβεβαιώστε τις ρυθμίσεις του διακομιστή μεσολάβησης (proxy)· η επέκταση PHP cURL συνιστάται θερμά.</p> <p>Πρέπει να κατεβάσετε το <a href="{$a->url}">{$a->url}</a> χειροκίνητα, να το αντιγράψετε στο "{$a->dest}" στον εξυπηρετητή σας και να το αποσυμπιέσετε εκεί.</p>';
+$string['wrongdestpath'] = 'Λανθασμένη διαδρομή προορισμού (πλήρες όνομα).';
 $string['wrongsourcebase'] = 'Λανθασμένη βάση πηγής URL.';
 $string['wrongzipfilename'] = 'Λανθασμένo όνομα αρχείου ZIP.';
