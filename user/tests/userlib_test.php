@@ -242,6 +242,55 @@ class core_userliblib_testcase extends advanced_testcase {
     }
 
     /**
+     * Test that {@link user_create_user()} throws exception when invalid username is provided.
+     *
+     * @dataProvider data_create_user_invalid_username
+     * @param string $username Invalid username
+     * @param string $expectmessage Expected exception message
+     */
+    public function test_create_user_invalid_username($username, $expectmessage) {
+        global $CFG;
+
+        $this->resetAfterTest();
+        $CFG->extendedusernamechars = false;
+
+        $user = [
+            'username' => $username,
+        ];
+
+        $this->expectException('moodle_exception');
+        $this->expectExceptionMessage($expectmessage);
+
+        user_create_user($user);
+    }
+
+    /**
+     * Data provider for {@link self::test_create_user_invalid_username()}.
+     *
+     * @return array
+     */
+    public function data_create_user_invalid_username() {
+        return [
+            'empty_string' => [
+                '',
+                'The username cannot be blank',
+            ],
+            'only_whitespace' => [
+                "\t\t  \t\n ",
+                'The username cannot be blank',
+            ],
+            'lower_case' => [
+                'Mudrd8mz',
+                'The username must be in lower case',
+            ],
+            'extended_chars' => [
+                'dmudrák',
+                'The given username contains invalid characters',
+            ],
+        ];
+    }
+
+    /**
      * Test function user_count_login_failures().
      */
     public function test_user_count_login_failures() {
