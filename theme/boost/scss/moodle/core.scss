@@ -286,8 +286,10 @@ form.popupform div {
     overflow: auto;
 }
 
+// Minimum height required for a menu in a table inside a scrollable div.
 .no-overflow > .generaltable {
     margin-bottom: 0;
+    min-height: 10em;
 }
 // Accessibility features
 

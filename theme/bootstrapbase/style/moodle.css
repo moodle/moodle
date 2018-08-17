@@ -2678,6 +2678,7 @@ form.popupform div {
 }
 .no-overflow > .generaltable {
   margin-bottom: 0;
+  min-height: 10em;
 }
 .accesshide {
   position: absolute;
