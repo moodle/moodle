@@ -1012,6 +1012,19 @@ function choice_print_overview($courses, &$htmlarray) {
 
 
 /**
+ * Get responses of a given user on a given choice.
+ *
+ * @param stdClass $choice Choice record
+ * @param int $userid User id
+ * @return array of choice answers records
+ * @since  Moodle 3.6
+ */
+function choice_get_user_response($choice, $userid) {
+    global $DB;
+    return $DB->get_records('choice_answers', array('choiceid' => $choice->id, 'userid' => $userid), 'optionid');
+}
+
+/**
  * Get my responses on a given choice.
  *
  * @param stdClass $choice Choice record
@@ -1019,8 +1032,8 @@ function choice_print_overview($courses, &$htmlarray) {
  * @since  Moodle 3.0
  */
 function choice_get_my_response($choice) {
-    global $DB, $USER;
-    return $DB->get_records('choice_answers', array('choiceid' => $choice->id, 'userid' => $USER->id), 'optionid');
+    global $USER;
+    return choice_get_user_response($choice, $USER->id);
 }
 
 
