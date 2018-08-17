@@ -157,6 +157,13 @@ class core_user_external extends external_api {
         $userids = array();
         $createpassword = false;
         foreach ($params['users'] as $user) {
+            // Make sure that the username, firstname and lastname are not blank.
+            foreach (array('username', 'firstname', 'lastname') as $fieldname) {
+                if (trim($user[$fieldname]) === '') {
+                    throw new invalid_parameter_exception('The field '.$fieldname.' cannot be blank');
+                }
+            }
+
             // Make sure that the username doesn't already exist.
             if ($DB->record_exists('user', array('username' => $user['username'], 'mnethostid' => $CFG->mnet_localhost_id))) {
                 throw new invalid_parameter_exception('Username already exists: '.$user['username']);
