@@ -35,6 +35,7 @@
     position: absolute;
     overflow: auto;
     background-color: #ccc;
+    touch-action: none;
 }
 
 .assignfeedback_editpdf_widget {

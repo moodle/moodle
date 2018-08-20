@@ -228,6 +228,14 @@ EDITOR.prototype = {
     collapsecomments: true,
 
     /**
+     * Check if passive option is supported
+     * @property isPassiveSupported
+     * @type Boolean
+     * @public
+     */
+    isPassiveSupported : false,
+
+    /**
      * Called during the initialisation process of the object.
      * @method initializer
      */
@@ -773,6 +781,9 @@ EDITOR.prototype = {
         if (this.get('readonly')) {
             return;
         }
+        // Check if passive option is supported for event listener
+        this.check_passive_supported();
+
         // Setup the tool buttons.
         Y.each(TOOLSELECTOR, function(selector, tool) {
             toolnode = this.get_dialogue_element(selector);
@@ -866,6 +877,16 @@ EDITOR.prototype = {
         if (tool !== "comment" && tool !== "select" && tool !== "drag" && tool !== "stamp") {
             this.lastannotationtool = tool;
         }
+
+        var useragent = navigator.userAgent;
+        if (useragent.includes("Safari")) {
+            if (tool === "drag") {
+                this.enable_touch_scroll();
+            } else {
+                this.disable_touch_scroll();
+            }
+        }
+
         this.refresh_button_state();
     },
 
@@ -1410,6 +1431,56 @@ EDITOR.prototype = {
         for (i = 0; i < this.drawables.length; i++) {
             this.drawables[i].scroll_update(x, y);
         }
+    },
+
+    /**
+     * Check if Passive option is support
+     */
+    check_passive_supported : function() {
+        try {
+            var options = Object.defineProperty && Object.defineProperty({}, 'passive', {
+                get: function() {
+                    this.isPassiveSupported = true;
+                }.bind(this)
+            });
+
+            document.addEventListener('touchmove', options, options);
+            document.removeEventListener('touchmove', options, options);
+
+        } catch (err) {
+            this.isPassiveSupported = false;
+        }
+    },
+
+    /**
+     * Disable Touch Move scrolling
+     */
+    disable_touch_scroll : function() {
+        var drawingregion = this.get_dialogue_element(SELECTOR.DRAWINGREGION);
+        drawingregion.setStyle('overflow', 'hidden');
+        if (this.isPassiveSupported) {
+            document.addEventListener('touchmove', this.stop_touch_scroll, {passive: false});
+        }
+    },
+
+    /**
+     * Enable Touch Move scrolling
+     */
+    enable_touch_scroll : function() {
+        var drawingregion = this.get_dialogue_element(SELECTOR.DRAWINGREGION);
+        drawingregion.setStyle('overflow', 'auto');
+        if (this.isPassiveSupported) {
+            document.removeEventListener('touchmove', this.stop_touch_scroll, {passive: false});
+        }
+    },
+
+    /**
+     * Stop Touch Scrolling
+     * @param {Object} e
+     */
+    stop_touch_scroll : function(e) {
+        e.stopPropagation();
+        e.preventDefault();
     }
 
 };
