@@ -30,7 +30,7 @@
       * has_action - boolean
       * action - string
       * get_title - string
-      * text - HTML
+      * get_content - string
 
     Example context (json):
     {
@@ -39,21 +39,21 @@
                 "has_action": true,
                 "action": "#",
                 "get_title": "Test title",
-                "text": "First & fresh"
+                "get_content": "First & fresh"
             },
             {
                 "has_action": true,
                 "action": "#",
                 "get_title": "Second item & a title",
-                "text": "Second item"
+                "get_content": "Second item"
             },
             {
                 "has_action": false,
-                "text": "Third item"
+                "get_content": "Third item"
             },
             {
                 "has_action": false,
-                "text": "Fourth & last"
+                "get_content": "Fourth & last"
             }
         ]
     }
@@ -62,7 +62,7 @@
     <ol class="breadcrumb">
         {{#get_items}}
             {{#has_action}}
-                <li class="breadcrumb-item"><a href="{{{action}}}" {{#get_title}}title="{{get_title}}"{{/get_title}}>{{{text}}}</a></li>
+                <li class="breadcrumb-item"><a href="{{{action}}}" {{#get_title}}title="{{get_title}}"{{/get_title}}>{{{get_content}}}</a></li>
             {{/has_action}}
             {{^has_action}}
                 <li class="breadcrumb-item">{{{text}}}</li>
