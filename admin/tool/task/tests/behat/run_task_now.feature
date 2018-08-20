@@ -6,7 +6,7 @@ Feature: Run tasks from web interface
 
   Scenario: Run a task
     Given I log in as "admin"
-    When I navigate to "Scheduled tasks" node in "Site administration > Server"
+    When I navigate to "Server > Scheduled tasks" in site administration
     Then I should see "Never" in the "Log table cleanup" "table_row"
 
     And I click on "Run now" "text" in the "Log table cleanup" "table_row"
@@ -21,7 +21,7 @@ Feature: Run tasks from web interface
 
   Scenario: Cancel running a task
     Given I log in as "admin"
-    When I navigate to "Scheduled tasks" node in "Site administration > Server"
+    When I navigate to "Server > Scheduled tasks" in site administration
     And I click on "Run now" "text" in the "Log table cleanup" "table_row"
     And I press "Cancel"
     # Confirm we're back on the scheduled tasks page by looking for the table.
@@ -31,5 +31,5 @@ Feature: Run tasks from web interface
     Given the following config values are set as admin:
       | enablerunnow | 0 | tool_task |
     When I log in as "admin"
-    And I navigate to "Scheduled tasks" node in "Site administration > Server"
+    And I navigate to "Server > Scheduled tasks" in site administration
     Then I should not see "Run now"

@@ -18,7 +18,7 @@ Feature: Test all the basic functionality of this question type
   Scenario: Create, edit then preview a gapselect question.
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I navigate to "Question bank" node in "Course administration"
+    And I navigate to "Question bank" in current page administration
 
     # Create a new question.
     And I add a "Select missing words" question filling the form with:
@@ -129,7 +129,7 @@ Feature: Test all the basic functionality of this question type
     When I restore "test_backup.mbz" backup into a new course using this options:
       | Schema | Course name | Course 2 |
     Then I should see "Course 2"
-    When I navigate to "Question bank" node in "Course administration"
+    When I navigate to "Question bank" in current page administration
     Then I should see "Select missing words 001"
 
     # Edit the copy and verify the form field contents.

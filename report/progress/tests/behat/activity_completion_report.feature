@@ -41,7 +41,7 @@ Feature: Teacher can view and override users' activity completion data via the p
     # Teacher overrides the activity completion statuses to incomplete.
     When I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I navigate to "Activity completion" node in "Course administration > Reports"
+    And I navigate to "Reports > Activity completion" in current page administration
     And "Student One, my assignment: Completed" "icon" should exist in the "Student One" "table_row"
     And "Student One, my assignment 2: Completed" "icon" should exist in the "Student One" "table_row"
     And I click on "my assignment" "link" in the "Student One" "table_row"
@@ -65,7 +65,7 @@ Feature: Teacher can view and override users' activity completion data via the p
     # And the activity completion report should show the same.
     When I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I navigate to "Activity completion" node in "Course administration > Reports"
+    And I navigate to "Reports > Activity completion" in current page administration
     And "Student One, my assignment: Completed" "icon" should exist in the "Student One" "table_row"
     And "Student One, my assignment 2: Completed" "icon" should exist in the "Student One" "table_row"
 
@@ -77,7 +77,7 @@ Feature: Teacher can view and override users' activity completion data via the p
     # When the teacher overrides the activity completion statuses to complete.
     When I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I navigate to "Activity completion" node in "Course administration > Reports"
+    And I navigate to "Reports > Activity completion" in current page administration
     And "Student One, my assignment: Not completed" "icon" should exist in the "Student One" "table_row"
     And "Student One, my assignment 3: Not completed" "icon" should exist in the "Student One" "table_row"
     And I click on "my assignment" "link" in the "Student One" "table_row"

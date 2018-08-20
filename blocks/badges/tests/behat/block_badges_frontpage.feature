@@ -16,13 +16,13 @@ Feature: Enable Block Badges on the frontpage and view awarded badges
       | teacher1 | C1 | editingteacher |
     And I log in as "admin"
     And I am on site homepage
-    And I navigate to "Turn editing on" node in "Front page settings"
+    And I navigate to "Turn editing on" in current page administration
     And I add the "Latest badges" block
     And I log out
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
     # Issue badge 1 of 2
-    And I navigate to "Add a new badge" node in "Course administration > Badges"
+    And I navigate to "Badges > Add a new badge" in current page administration
     And I set the following fields to these values:
       | id_name | Badge 1 |
       | id_description | Badge 1 |

@@ -27,14 +27,18 @@ Feature: Users can flag tags and manager can reset flags
     And I press "Customise this page"
     # TODO MDL-57120 site "Tags" link not accessible without navigation block.
     And I add the "Navigation" block if not present
-    And I navigate to "Tags" node in "Site pages"
+    And I click on "Site pages" "list_item" in the "Navigation" "block"
+    And I click on "Tags" "link" in the "Navigation" "block"
     And I follow "Nicetag"
     And I follow "User 1"
     And I follow "Badtag"
     And I follow "Flag as inappropriate"
     And I should see "The person responsible will be notified"
     And I am on homepage
-    And I navigate to "Tags" node in "Site pages"
+    # TODO MDL-57120 site "Tags" link not accessible without navigation block.
+    And I add the "Navigation" block if not present
+    And I click on "Site pages" "list_item" in the "Navigation" "block"
+    And I click on "Tags" "link" in the "Navigation" "block"
     And I follow "Nicetag"
     And I follow "User 1"
     And I follow "Sweartag"
@@ -45,7 +49,8 @@ Feature: Users can flag tags and manager can reset flags
     And I press "Customise this page"
     # TODO MDL-57120 site "Tags" link not accessible without navigation block.
     And I add the "Navigation" block if not present
-    And I navigate to "Tags" node in "Site pages"
+    And I click on "Site pages" "list_item" in the "Navigation" "block"
+    And I click on "Tags" "link" in the "Navigation" "block"
     And I follow "Nicetag"
     And I follow "User 1"
     And I follow "Sweartag"
@@ -56,7 +61,7 @@ Feature: Users can flag tags and manager can reset flags
   @javascript
   Scenario: Managing tag flags
     When I log in as "manager1"
-    And I navigate to "Manage tags" node in "Site administration > Appearance"
+    And I navigate to "Appearance > Manage tags" in site administration
     And I follow "Default collection"
     Then "Sweartag" "link" should appear before "Badtag" "link"
     And "Badtag" "link" should appear before "Nicetag" "link"

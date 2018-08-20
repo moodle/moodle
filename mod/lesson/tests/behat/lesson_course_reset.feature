@@ -59,7 +59,8 @@ Feature: Lesson reset
     And I follow "Test lesson name"
     And I navigate to "Reports > Overview" in current page administration
     And I should see "Sam1 Student1"
-    And I navigate to "Reset" node in "Course administration"
+    And I am on "Course 1" course homepage
+    And I navigate to "Reset" in current page administration
     And I set the following fields to these values:
         | Delete all lesson attempts | 1  |
     And I press "Reset course"
@@ -79,7 +80,8 @@ Feature: Lesson reset
         | Re-takes allowed | 1 |
     And I press "Save"
     And I should see "Sam1 Student1"
-    And I navigate to "Reset" node in "Course administration"
+    And I am on "Course 1" course homepage
+    And I navigate to "Reset" in current page administration
     And I set the following fields to these values:
         | Delete all user overrides | 1  |
     And I press "Reset course"
@@ -98,7 +100,8 @@ Feature: Lesson reset
         | Re-takes allowed | 1 |
     And I press "Save"
     And I should see "Group 1"
-    And I navigate to "Reset" node in "Course administration"
+    And I am on "Course 1" course homepage
+    And I navigate to "Reset" in current page administration
     And I set the following fields to these values:
         | Delete all group overrides | 1  |
     And I press "Reset course"

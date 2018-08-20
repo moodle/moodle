@@ -16,7 +16,7 @@ Feature: Restoring Moodle 2 backup restores LTI configuration
 
   Scenario: Backup and restore course with preconfigured site LTI tool on the same site
     When I log in as "admin"
-    And I navigate to "Manage tools" node in "Site administration > Plugins > Activity modules > External tool"
+    And I navigate to "Plugins > Activity modules > External tool > Manage tools" in site administration
     And I follow "Manage preconfigured tools"
     And I follow "Add preconfigured tool"
     And I set the following fields to these values:
@@ -24,7 +24,7 @@ Feature: Restoring Moodle 2 backup restores LTI configuration
       | Tool URL | https://www.moodle.org |
       | lti_coursevisible | 1 |
     And I press "Save changes"
-    And I navigate to "Manage tools" node in "Site administration > Plugins > Activity modules > External tool"
+    And I navigate to "Plugins > Activity modules > External tool > Manage tools" in site administration
     And "This tool has not yet been used" "text" should exist in the "//div[contains(@id,'tool-card-container') and contains(., 'My site tool')]" "xpath_element"
     And I am on site homepage
     And I follow "Course 1"
@@ -43,7 +43,7 @@ Feature: Restoring Moodle 2 backup restores LTI configuration
     And I open "My LTI module" actions menu
     And I choose "Edit settings" in the open action menu
     Then the field "Preconfigured tool" matches value "My site tool"
-    And I navigate to "Manage tools" node in "Site administration > Plugins > Activity modules > External tool"
+    And I navigate to "Plugins > Activity modules > External tool > Manage tools" in site administration
     And "This tool is being used 2 times" "text" should exist in the "//div[contains(@id,'tool-card-container') and contains(., 'My site tool')]" "xpath_element"
 
   @javascript @_switch_window

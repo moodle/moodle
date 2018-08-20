@@ -22,7 +22,7 @@ Feature: A teacher can delete questions in the question bank
       | Test questions   | essay | Test question to be deleted | Write about whatever you want |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I navigate to "Questions" node in "Course administration > Question bank"
+    And I navigate to "Question bank > Questions" in current page administration
 
   @javascript
   Scenario: A question not used anywhere can really be deleted
@@ -45,7 +45,8 @@ Feature: A teacher can delete questions in the question bank
     And I add a "True/False" question to the "Test quiz" quiz with:
       | Question name | Test used question to be deleted |
       | Question text | Write about whatever you want    |
-    And I navigate to "Questions" node in "Course administration > Question bank"
+    And I am on "Course 1" course homepage
+    And I navigate to "Question bank > Questions" in current page administration
     When I click on "Delete" "link" in the "Test used question to be deleted" "table_row"
     And I press "Delete"
     Then I should not see "Test used question to be deleted"

@@ -67,7 +67,11 @@ Feature: Course Category Events
   @javascript
   Scenario: Manager of a Category can see all child and parent events in their category
     Given I log in as "managera"
-    When I navigate to "Calendar" node in "Site pages"
+    And I press "Customise this page"
+    # TODO MDL-57120 site "Tags" link not accessible without navigation block.
+    When I add the "Navigation" block if not present
+    And I click on "Site pages" "list_item" in the "Navigation" "block"
+    And I click on "Calendar" "link" in the "Navigation" "block"
     Then I should see "FA event"
     And  I should see "DA1 event"
     And  I should see "DA2 event"
@@ -76,7 +80,11 @@ Feature: Course Category Events
     And  I should not see "DB2 event"
     And  I log out
     Given I log in as "managerb"
-    When I navigate to "Calendar" node in "Site pages"
+    And I press "Customise this page"
+    # TODO MDL-57120 site "Tags" link not accessible without navigation block.
+    When I add the "Navigation" block if not present
+    And I click on "Site pages" "list_item" in the "Navigation" "block"
+    And I click on "Calendar" "link" in the "Navigation" "block"
     Then I should see "FB event"
     And  I should see "DB1 event"
     And  I should see "DB2 event"
@@ -87,7 +95,11 @@ Feature: Course Category Events
   @javascript
   Scenario: Users enrolled in a course can see all child and parent events in their category
     Given I log in as "student1"
-    When I navigate to "Calendar" node in "Site pages"
+    And I press "Customise this page"
+    # TODO MDL-57120 site "Tags" link not accessible without navigation block.
+    When I add the "Navigation" block if not present
+    And I click on "Site pages" "list_item" in the "Navigation" "block"
+    And I click on "Calendar" "link" in the "Navigation" "block"
     Then I should see "FA event"
     And  I should see "DA1 event"
     And  I should see "DA2 event"

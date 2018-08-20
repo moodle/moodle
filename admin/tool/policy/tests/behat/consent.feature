@@ -364,7 +364,7 @@ Feature: User must accept policy managed by this plugin when logging in and sign
     And I log out
     # Create new policy document.
     And I log in as "admin"
-    And I navigate to "Manage policies" node in "Site administration > Users > Privacy and policies"
+    And I navigate to "Users > Privacy and policies > Manage policies" in site administration
     And I should see "Policies and agreements"
     And I should see "New policy"
     And I follow "New policy"
@@ -419,7 +419,7 @@ Feature: User must accept policy managed by this plugin when logging in and sign
     And I log out
     # Create new version of the policy document.
     And I log in as "admin"
-    And I navigate to "Manage policies" node in "Site administration > Users > Privacy and policies"
+    And I navigate to "Users > Privacy and policies > Manage policies" in site administration
     When I follow "Actions"
     Then I should see "View"
     And I should see "Edit"

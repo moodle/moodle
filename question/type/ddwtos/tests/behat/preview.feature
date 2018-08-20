@@ -22,7 +22,7 @@ Feature: Preview a drag-drop into text question
       | Test questions   | ddwtos | Drag to text | fox      |
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I navigate to "Question bank" node in "Course administration"
+    And I navigate to "Question bank" in current page administration
 
   @javascript @_bug_phantomjs
   Scenario: Preview a question using the mouse.

@@ -17,7 +17,7 @@ Feature: Grade item validation
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
     And I log in as "admin"
-    And I navigate to "Scales" node in "Site administration > Grades"
+    And I navigate to "Grades > Scales" in site administration
     And I press "Add a new scale"
     And I set the following fields to these values:
       | Name  | ABCDEF |

@@ -72,11 +72,11 @@ Feature: Access to full profiles of users
   @javascript
   Scenario: Viewing full profiles of someone with the course contact role
     Given I log in as "admin"
-    And I navigate to "Courses" node in "Site administration > Appearance"
+    And I navigate to "Appearance > Courses" in site administration
     And I set the following fields to these values:
       | Course creator | 1 |
     And I press "Save changes"
-    And I navigate to "Assign system roles" node in "Site administration > Users > Permissions"
+    And I navigate to "Users > Permissions > Assign system roles" in site administration
     And I follow "Course creator"
     And I click on "//div[@class='userselector']/descendant::option[contains(., 'Student 3')]" "xpath_element"
     And I press "Add"
@@ -90,7 +90,7 @@ Feature: Access to full profiles of users
   Scenario: View full profiles of someone in the same group in a course with separate groups.
     Given I log in as "admin"
     And I am on "Course 1" course homepage
-    And I navigate to "Edit settings" node in "Course administration"
+    And I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
       | Group mode | Separate groups |
       | Force group mode | Yes |

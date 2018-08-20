@@ -12,7 +12,7 @@ Feature: Add cohorts of users
       | user3 | Third | User | third@example.com |
       | user4 | Forth | User | forth@example.com |
     And I log in as "admin"
-    And I navigate to "Cohorts" node in "Site administration > Users > Accounts"
+    And I navigate to "Users > Accounts >Cohorts" in site administration
     And I follow "Add new cohort"
     And I set the following fields to these values:
       | Name | Test cohort name |

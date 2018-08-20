@@ -24,7 +24,7 @@ Feature: The questions in the question bank can be sorted in various ways
       | Test questions   | numerical | C question 3 name | teacher1 | Question 3 text |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I navigate to "Questions" node in "Course administration > Question bank"
+    And I navigate to "Question bank > Questions" in current page administration
 
   @javascript
   Scenario: The questions are sorted by type by default

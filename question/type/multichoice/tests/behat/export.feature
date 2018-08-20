@@ -25,7 +25,7 @@ Feature: Test exporting Multiple choice questions
     And I am on "Course 1" course homepage
 
   Scenario: Export a Multiple choice question
-    When I navigate to "Export" node in "Course administration > Question bank"
+    When I navigate to "Question bank > Export" in current page administration
     And I set the field "id_format_xml" to "1"
     And I press "Export questions to file"
     Then following "click here" should download between "3700" and "3800" bytes

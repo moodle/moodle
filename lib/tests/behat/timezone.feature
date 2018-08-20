@@ -6,6 +6,6 @@ Feature: View timezone defaults
 
   Scenario: Admin sees default timezone Australia/Perth
     When I log in as "admin"
-    And I navigate to "Location settings" node in "Site administration > Location"
+    And I navigate to "Location > Location settings" in site administration
     Then I should see "Default: Australia/Perth"
     And the field "Default timezone" matches value "Australia/Perth"

@@ -36,5 +36,4 @@ Feature: Allow students to manually mark an activity as complete
     And I log out
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I navigate to "Reports > Activity completion" in current page administration
     And "Student First" user has completed "Test forum name" activity

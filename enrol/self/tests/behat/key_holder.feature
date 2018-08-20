@@ -13,7 +13,7 @@ Feature: Users can be defined as key holders in courses where self enrolment is 
       | fullname | shortname | format |
       | Course 1 | C1 | topics |
     And I log in as "admin"
-    And I navigate to "Define roles" node in "Site administration > Users > Permissions"
+    And I navigate to "Users > Permissions > Define roles" in site administration
     And I click on "Add a new role" "button"
     And I click on "Continue" "button"
     And I set the following fields to these values:
@@ -22,7 +22,7 @@ Feature: Users can be defined as key holders in courses where self enrolment is 
       | contextlevel50 | 1 |
       | enrol/self:holdkey | 1 |
     And I click on "Create this role" "button"
-    And I navigate to "Courses" node in "Site administration > Appearance"
+    And I navigate to "Appearance > Courses" in site administration
     And I set the following fields to these values:
       | Key holder | 1 |
     And I press "Save changes"

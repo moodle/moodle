@@ -32,7 +32,7 @@ Feature: Test duplicating a quiz containing an Assay question
       | Confirmation | Filename | test_backup.mbz |
     And I restore "test_backup.mbz" backup into a new course using this options:
       | Schema | Course name | Course 2 |
-    And I navigate to "Question bank" node in "Course administration"
+    And I navigate to "Question bank" in current page administration
     And I should see "essay-001"
     And I should see "essay-002"
     And I should see "essay-003"

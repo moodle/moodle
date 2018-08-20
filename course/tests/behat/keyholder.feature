@@ -8,7 +8,7 @@ Feature: Keyholder role is listed as course contact
     And the following "categories" exist:
       | name | category | idnumber |
       | Cat 1 | 0 | CAT1 |
-    And I navigate to "Define roles" node in "Site administration > Users > Permissions"
+    And I navigate to "Users > Permissions > Define roles" in site administration
     And I click on "Add a new role" "button"
     And I click on "Continue" "button"
     And I set the following fields to these values:
@@ -18,7 +18,7 @@ Feature: Keyholder role is listed as course contact
     | contextlevel50 | 1 |
     | enrol/self:holdkey | 1 |
     And I click on "Create this role" "button"
-    And I navigate to "Courses" node in "Site administration > Appearance"
+    And I navigate to "Appearance > Courses" in site administration
     And I click on "Keyholder" "checkbox"
     And I press "Save changes"
     And the following "users" exist:

@@ -51,7 +51,7 @@ Feature: Both first name and surname are always available for every user
       | username | firstname | lastname | email       |
       | foobar   | Foo       | Bar      | foo@bar.com |
     And I log in as "admin"
-    And I navigate to "Browse list of users" node in "Site administration > Users > Accounts"
+    And I navigate to "Users > Accounts > Browse list of users" in site administration
     And I follow "Foo Bar"
     And I click on "Edit profile" "link" in the "region-main" "region"
     When I set the field "First name" to " "

@@ -14,7 +14,7 @@ Feature: A privileged user can create cohorts using a CSV file
   @javascript
   Scenario: Upload cohorts with default System context as admin
     When I log in as "admin"
-    And I navigate to "Cohorts" node in "Site administration > Users > Accounts"
+    And I navigate to "Users > Accounts >Cohorts" in site administration
     And I follow "Upload cohorts"
     And I upload "cohort/tests/fixtures/uploadcohorts1.csv" file to "File" filemanager
     And I click on "Preview" "button"
@@ -53,7 +53,7 @@ Feature: A privileged user can create cohorts using a CSV file
   @javascript @_file_upload
   Scenario: Upload cohorts with default category context as admin
     When I log in as "admin"
-    And I navigate to "Cohorts" node in "Site administration > Users > Accounts"
+    And I navigate to "Users > Accounts >Cohorts" in site administration
     And I follow "Upload cohorts"
     And I upload "cohort/tests/fixtures/uploadcohorts1.csv" file to "File" filemanager
     And I set the field "Default context" to "Cat 1 / Cat 3"
@@ -70,7 +70,7 @@ Feature: A privileged user can create cohorts using a CSV file
     And I should see "Uploaded 6 cohorts"
     And I press "Continue"
     And I should see "Category: Cat 3: available cohorts (3)"
-    And I navigate to "Cohorts" node in "Site administration > Users > Accounts"
+    And I navigate to "Users > Accounts >Cohorts" in site administration
     And I follow "All cohorts"
     And the following should exist in the "cohorts" table:
       | Category      | Name          | Cohort ID | Description       | Cohort size | Source           |
@@ -113,7 +113,7 @@ Feature: A privileged user can create cohorts using a CSV file
       | name   | idnumber  |
       | Cohort | cohortid2 |
     When I log in as "admin"
-    And I navigate to "Cohorts" node in "Site administration > Users > Accounts"
+    And I navigate to "Users > Accounts >Cohorts" in site administration
     And I follow "Upload cohorts"
     And I upload "cohort/tests/fixtures/uploadcohorts1.csv" file to "File" filemanager
     And I click on "Preview" "button"
@@ -131,7 +131,7 @@ Feature: A privileged user can create cohorts using a CSV file
   @javascript @_file_upload
   Scenario: Upload cohorts with different ways of specifying context
     When I log in as "admin"
-    And I navigate to "Cohorts" node in "Site administration > Users > Accounts"
+    And I navigate to "Users > Accounts >Cohorts" in site administration
     And I follow "Upload cohorts"
     And I upload "cohort/tests/fixtures/uploadcohorts2.csv" file to "File" filemanager
     And I click on "Preview" "button"
@@ -165,7 +165,7 @@ Feature: A privileged user can create cohorts using a CSV file
   @javascript @_file_upload
   Scenario: Upload cohorts with theme
     When I log in as "admin"
-    And I navigate to "Cohorts" node in "Site administration > Users > Accounts"
+    And I navigate to "Users > Accounts >Cohorts" in site administration
     And I follow "Upload cohorts"
     And I upload "cohort/tests/fixtures/uploadcohorts4.csv" file to "File" filemanager
     And I click on "Preview" "button"

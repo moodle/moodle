@@ -109,7 +109,7 @@ Feature: Edit quiz page - adding things
 
     # Create a couple of sub categories.
     And I am on "Course 1" course homepage
-    And I navigate to "Categories" node in "Course administration > Question bank"
+    And I navigate to "Question bank > Categories" in current page administration
     Then I should see "Add category"
     Then I set the field "Parent category" to "Default for C1"
     And I set the field "Name" to "Subcat 1"
@@ -123,7 +123,7 @@ Feature: Edit quiz page - adding things
     Then I press "id_submitbutton"
     And I should see "Subcat 2"
 
-    And I navigate to "Questions" node in "Course administration > Question bank"
+    And I follow "Question bank"
     Then I should see "Question bank"
     And I should see "Select a category"
 

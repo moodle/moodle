@@ -26,7 +26,7 @@ Feature: Rename roles in a course
       | Your word for 'Teacher' | Lecturer |
       | Your word for 'Student' | Learner  |
     And I press "Save and display"
-    And I navigate to "Enrolled users" node in "Course administration > Users"
+    And I navigate to "Users > Enrolled users" in current page administration
     Then I should see "Lecturer" in the "Teacher 1" "table_row"
     And I should see "Learner" in the "Student 1" "table_row"
 
