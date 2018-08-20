@@ -105,18 +105,14 @@ class api {
     }
 
     /**
-     * Check's whether the current user has the capability to manage data requests.
+     * Checks whether the current user has the capability to manage data requests.
      *
      * @param int $userid The user ID.
      * @return bool
-     * @throws coding_exception
-     * @throws dml_exception
      */
     public static function can_manage_data_requests($userid) {
-        $context = context_system::instance();
-
-        // A user can manage data requests if he/she has the site DPO role and has the capability to manage data requests.
-        return self::is_site_dpo($userid) && has_capability('tool/dataprivacy:managedatarequests', $context, $userid);
+        // Privacy officers can manage data requests.
+        return self::is_site_dpo($userid);
     }
 
     /**
@@ -137,6 +133,31 @@ class api {
     }
 
     /**
+     * Fetches the list of configured privacy officer roles.
+     *
+     * Every time this function is called, it checks each role if they have the 'managedatarequests' capability and removes
+     * any role that doesn't have the required capability anymore.
+     *
+     * @return int[]
+     * @throws dml_exception
+     */
+    public static function get_assigned_privacy_officer_roles() {
+        $roleids = [];
+
+        // Get roles from config.
+        $configroleids = explode(',', str_replace(' ', '', get_config('tool_dataprivacy', 'dporoles')));
+        if (!empty($configroleids)) {
+            // Fetch roles that have the capability to manage data requests.
+            $capableroles = array_keys(get_roles_with_capability('tool/dataprivacy:managedatarequests'));
+
+            // Extract the configured roles that have the capability from the list of capable roles.
+            $roleids = array_intersect($capableroles, $configroleids);
+        }
+
+        return $roleids;
+    }
+
+    /**
      * Fetches the role shortnames of Data Protection Officer roles.
      *
      * @return array An array of the DPO role shortnames
@@ -144,7 +165,7 @@ class api {
     public static function get_dpo_role_names() {
         global $DB;
 
-        $dporoleids = explode(',', str_replace(' ', '', get_config('tool_dataprivacy', 'dporoles')));
+        $dporoleids = self::get_assigned_privacy_officer_roles();
         $dponames = array();
 
         if (!empty($dporoleids)) {
@@ -156,20 +177,15 @@ class api {
     }
 
     /**
-     * Fetches the list of users with the Data Protection Officer role.
-     *
-     * @throws dml_exception
+     * Fetches the list of users with the Privacy Officer role.
      */
     public static function get_site_dpos() {
         // Get role(s) that can manage data requests.
-        $dporoles = explode(',', get_config('tool_dataprivacy', 'dporoles'));
+        $dporoles = self::get_assigned_privacy_officer_roles();
 
         $dpos = [];
         $context = context_system::instance();
         foreach ($dporoles as $roleid) {
-            if (empty($roleid)) {
-                continue;
-            }
             $allnames = get_all_user_name_fields(true, 'u');
             $fields = 'u.id, u.confirmed, u.username, '. $allnames . ', ' .
                       'u.maildisplay, u.mailformat, u.maildigest, u.email, u.emailstop, u.city, '.
@@ -189,15 +205,14 @@ class api {
     }
 
     /**
-     * Checks whether a given user is a site DPO.
+     * Checks whether a given user is a site Privacy Officer.
      *
      * @param int $userid The user ID.
      * @return bool
-     * @throws dml_exception
      */
     public static function is_site_dpo($userid) {
         $dpos = self::get_site_dpos();
-        return array_key_exists($userid, $dpos);
+        return array_key_exists($userid, $dpos) || is_siteadmin();
     }
 
     /**
