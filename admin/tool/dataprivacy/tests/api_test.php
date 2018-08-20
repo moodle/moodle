@@ -125,6 +125,47 @@ class tool_dataprivacy_api_testcase extends advanced_testcase {
     }
 
     /**
+     * Test for \tool_dataprivacy\api::get_assigned_privacy_officer_roles().
+     */
+    public function test_get_assigned_privacy_officer_roles() {
+        global $DB;
+
+        // Erroneously set the manager roles as the PO, even if it doesn't have the managedatarequests capability yet.
+        $managerroleid = $DB->get_field('role', 'id', array('shortname' => 'manager'));
+        set_config('dporoles', $managerroleid, 'tool_dataprivacy');
+        // Get the assigned PO roles when nothing has been set yet.
+        $roleids = api::get_assigned_privacy_officer_roles();
+        // Confirm that the returned list is empty.
+        $this->assertEmpty($roleids);
+
+        $context = context_system::instance();
+
+        // Give the manager role with the capability to manage data requests.
+        assign_capability('tool/dataprivacy:managedatarequests', CAP_ALLOW, $managerroleid, $context->id, true);
+
+        // Give the editing teacher role with the capability to manage data requests.
+        $editingteacherroleid = $DB->get_field('role', 'id', array('shortname' => 'editingteacher'));
+        assign_capability('tool/dataprivacy:managedatarequests', CAP_ALLOW, $editingteacherroleid, $context->id, true);
+
+        // Get the non-editing teacher role ID.
+        $teacherroleid = $DB->get_field('role', 'id', array('shortname' => 'teacher'));
+
+        // Erroneously map the manager and the non-editing teacher roles to the PO role.
+        $badconfig = $managerroleid . ',' . $teacherroleid;
+        set_config('dporoles', $badconfig, 'tool_dataprivacy');
+
+        // Get the assigned PO roles.
+        $roleids = api::get_assigned_privacy_officer_roles();
+
+        // There should only be one PO role.
+        $this->assertCount(1, $roleids);
+        // Confirm it contains the manager role.
+        $this->assertContains($managerroleid, $roleids);
+        // And it does not contain the editing teacher role.
+        $this->assertNotContains($editingteacherroleid, $roleids);
+    }
+
+    /**
      * Test for api::approve_data_request().
      */
     public function test_approve_data_request() {
