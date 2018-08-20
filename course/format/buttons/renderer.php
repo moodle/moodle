@@ -247,6 +247,9 @@ class format_buttons_renderer extends format_topics_renderer
             if ($PAGE->user_is_editing()) {
                 $onclick = false;
             }
+            if(empty($this->get_section_labels($course, $section))){
+              continue;
+            }
 
             $html .= html_writer::start_tag('li',['class' => 'nav-item mb-auto', 'data-section' => $section]);
             // $html .= html_writer::start_tag('a',['href' => "#section$section",'class' => "nav-link $class", 'aria-controls' => "section-$section"]);
