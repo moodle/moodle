@@ -23,7 +23,6 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-use tool_dataprivacy\api;
 
 /**
  * Function to upgrade auth_cas.
@@ -163,7 +162,7 @@ function xmldb_tool_dataprivacy_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2017111305, 'tool', 'dataprivacy');
     }
 
-    if ($oldversion < 2018051406) {
+    if ($oldversion < 2017111315) {
         // Update completed delete requests to new delete status.
         $query = "UPDATE {tool_dataprivacy_request}
                      SET status = :setstatus
@@ -186,7 +185,7 @@ function xmldb_tool_dataprivacy_upgrade($oldversion) {
 
         $DB->execute($query, $params);
 
-        upgrade_plugin_savepoint(true, 2018051406, 'tool', 'dataprivacy');
+        upgrade_plugin_savepoint(true, 2017111315, 'tool', 'dataprivacy');
     }
 
     return true;
