@@ -69,6 +69,7 @@ html[dir='rtl']{
       transition: all .3s ease-in-out;
     }
     .slider.labels{
+      overflow-y: scroll;
       .nav-item{
         width:100%;
       }

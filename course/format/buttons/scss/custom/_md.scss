@@ -2,16 +2,15 @@ html[dir='ltr']{
   .slider.sections{
     &.slick-slider{
       .slick-arrow{
-        margin-top: -1rem;
         &.slick-prev{
-          left:0;
+          left:-1.5rem;
           top:50%;
           &:before{
             transform: rotate(45deg);
           }
         }
         &.slick-next{
-          right:0;
+          right:-1.5rem;
           top:50%;
           &:before{
             transform: rotate(225deg);
@@ -22,23 +21,29 @@ html[dir='ltr']{
   }
   .slider.labels{
     .nav-item{
-      // float: right;
+      min-height: 80px;
+      &.active{
+        padding:0 0 0 12px;
+      }
+      &:hover{
+        padding:0 0 0 12px;
+      }
     }
     &.slick-slider{
       .slick-arrow{
-        margin-top: -1rem;
+        margin-top: -2rem;
         &.slick-prev{
           left:0;
           top:0;
           &:before{
-            transform: rotate(135deg);
+            transform: rotate(135deg) translateY(-1rem);
           }
         }
         &.slick-next{
           left:0;
           bottom:0;
           &:before{
-            transform: rotate(-45deg);
+            transform: rotate(-45deg) translateY(1rem);
           }
         }
       }
@@ -49,16 +54,15 @@ html[dir='rtl']{
   .slider.sections{
     &.slick-slider{
       .slick-arrow{
-        margin-top: -1rem;
         &.slick-prev{
-          left:0;
+          left:-1.5rem;
           top:50%;
           &:before{
             transform: rotate(-45deg);
           }
         }
         &.slick-next{
-          right:0;
+          right:-1.5rem;
           top:50%;
           &:before{
             transform: rotate(135deg);
@@ -69,23 +73,29 @@ html[dir='rtl']{
   }
   .slider.labels{
     .nav-item{
-      // float: left;
+      min-height: 80px;
+      &.active{
+        padding:0 0 0 12px;
+      }
+      &:hover{
+        padding:0 0 0 12px;
+      }
     }
     &.slick-slider{
       .slick-arrow{
-        margin-top: -1rem;
+        margin-top: -2rem;
         &.slick-prev{
           left:0;
           top:0;
           &:before{
-            transform: rotate(225deg);
+            transform: rotate(225deg) translateY(-1rem);
           }
         }
         &.slick-next{
           right:0;
           bottom:0;
           &:before{
-            transform: rotate(45deg);
+            transform: rotate(45deg) translateY(1rem);
           }
         }
       }
@@ -97,7 +107,7 @@ html[dir='rtl']{
   flex: 1;
   .slider.sections{
     width:75%;
-    padding: 0 5%;
+    padding:0;
   }
 }
 .sections-content-wrapper{
@@ -107,27 +117,29 @@ html[dir='rtl']{
   }
 }
 .slider.labels{
-  max-height: 80vh;
-  padding: 3vh 0;
+  // height: 60vh;
+  padding: 0;
+  margin-top:24px;
   &.slick-slider{
     .nav-item{
       box-sizing: content-box;
       float: right;
       max-width: 90%;
       padding:0;
-      &.active{
-        padding: 0 12px;
-      }
-      &:hover{
-        padding: 0 12px;
-      }
     }
     .slick-arrow{
       &.slick-prev{
-        top:-1rem;
+        top:-24px;
+        &:after{
+          left:-1rem;
+        }
       }
       &.slick-next{
-        bottom:0;
+        min-height: 40px;
+        // bottom:-18px;
+        &:after{
+          left:-1rem;
+        }
       }
     }
   }

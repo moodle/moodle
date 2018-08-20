@@ -29,6 +29,7 @@ define(['jquery','format_buttons/slick'], function($, slick) {
     labelsEvents(currentSection);
     initPrevNextBtns(currentSection);
     initPrevNextBtnsEvents();
+    tooltipEvents();
   }
 
   function sectionsEvents(){
@@ -46,6 +47,16 @@ define(['jquery','format_buttons/slick'], function($, slick) {
         labelsEvents(this.dataset.section);
         initPrevNextBtns(this.dataset.section);
         xsDropdown(this.dataset.section);
+      });
+    }
+  }
+
+  function tooltipEvents() {
+    var tooltips = $('.section-tooltip');
+    for(var i=0; i<tooltips.length; i++){
+      var item = tooltips[i];
+      item.addEventListener('click', function(){
+        $('#section' + this.dataset.section + ' .label-content-wrapper').prepend('<div class="alert alert-success alert-dismissible"><button type="button" class="close" data-dismiss="alert">&times;</button><strong>Section tooltip: </strong>'+this.dataset.info+'</div>');
       });
     }
   }
@@ -84,11 +95,12 @@ define(['jquery','format_buttons/slick'], function($, slick) {
 
   // if elem only - horizontal, 2 attr - vertical;
   function initSlider(elem, vert){
-    var dir, resp=[], brakepoints= [1200, 992, 768], brp, slides=4;
+    var dir, resp=[], brakepoints= [1200, 992, 768], brp, slides;
     (document.dir == "rtl")?dir = true:dir = false;
     if (vert !== undefined){vert = true; dir = false}else{vert = false;}
     // responsiveness / dropdown on xs vert
     if (vert){
+      slides = 5;
       for (var i=0; i<brakepoints.length; i++){
         if (brakepoints[i] == 768){
           // add dropdown touch event
@@ -110,11 +122,12 @@ define(['jquery','format_buttons/slick'], function($, slick) {
         }
       }
     } else {
+      slides = 4;
       for (var i=0; i<brakepoints.length; i++){
         brp = {
           breakpoint: brakepoints[i],
           settings: {
-            slidesToShow: --slides,
+            slidesToShow: slides-i-1,
             slidesToScroll: 1,
             rtl: dir,
           }
@@ -122,7 +135,6 @@ define(['jquery','format_buttons/slick'], function($, slick) {
         resp.push(brp);
       }
     }
-
     var slickConfig = {
       dots: false,
       autoplay: false,
@@ -130,7 +142,7 @@ define(['jquery','format_buttons/slick'], function($, slick) {
       vertical: vert,
       verticalSwiping: vert,
       rtl:dir,
-      slidesToShow: 4,
+      slidesToShow: slides,
       slidesToScroll: 1,
       responsive:resp,
     };

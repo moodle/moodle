@@ -11,7 +11,6 @@ ul.buttons{
       .slick-arrow{
         width:2rem;
         height:2rem;
-        margin-top: -1rem;
         &.slick-prev{
           left:-1.5rem;
           top:50%;
@@ -22,100 +21,113 @@ ul.buttons{
         }
       }
       .nav-item{
-      box-sizing: border-box;
-      border: 1px solid transparent;
-      margin-top:12px;
-      background-color: #ddd;
-      transition: all .3s ease-in-out;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      .section-header{
-        max-width: 100%;
-        margin-top: 12px;
-        div{
-          max-width: 60%;
-        }
-        .section-title {
-          font-size: 1.15rem;
-          line-height: 1.5rem;
-          text-overflow: ellipsis;
-          white-space: nowrap;
-          overflow: hidden;
+        box-sizing: border-box;
+        border: 1px solid transparent;
+        margin-top:12px;
+        background-color: #ddd;
+        transition: all .3s ease-in-out;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        .section-header{
           max-width: 100%;
-        }
-        .section-description{
-          min-height: 1.375rem;
-          opacity:1;
-          transition: all .3s ease-in-out;
-          text-overflow: ellipsis;
-          white-space: nowrap;
-          overflow: hidden;
-          max-width: 100%;
-        }
-      }
-      .section-icon{
-        opacity:1;
-        background-color: #7af2ff;
-        transition: all .3s ease-in-out;
-      }
-      .section-tooltip{
-        font-family: --font-family-sans-serif;
-        font-size: 2rem;
-        font-weight: bold;
-        color:#7bc0de;
-        opacity:0;
-        transition: all .3s ease-in-out;
-      }
-      &:hover{
-        margin-top: 0;
-        padding: 12px 0 0 0;
-        background-color: #b7b7b7;
-        transition: all .3s ease-in-out;
-        .section-description{
-          opacity: 1;
-          transition: all .3s ease-in-out;
+          margin-top: 12px;
+          div{
+            max-width: 132px;
+          }
+          .section-title {
+            font-size: 1.15rem;
+            line-height: 1.5rem;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+            max-width: 100%;
+          }
+          .section-description{
+            min-height: 1.375rem;
+            opacity:1;
+            transition: all .3s ease-in-out;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+            max-width: 100%;
+          }
         }
         .section-icon{
+          margin:10px;
           opacity:1;
-          background-color: #5bc0de;
-          transition: all .3s ease-in-out;
-        }
-      }
-      &.active {
-        background-color: #fff;
-        margin-top: 0;
-        padding: 12px 0 0 0;
-        border:1px solid #b7b7b7;
-        border-bottom-color: transparent;
-        transition: all .3s ease-in-out;
-        .section-icon{
-          opacity:1;
-          background-color: #5bc0de;
+          background-color: #7af2ff;
           transition: all .3s ease-in-out;
         }
         .section-tooltip{
-          opacity:1;
+          box-sizing: content-box;
+          font-family: --font-family-sans-serif;
+          font-size: 2rem;
+          font-weight: bold;
+          color:#7bc0de;
+          opacity:0;
+          padding:0.25rem;
+          margin:0.25rem;
+          border: 3px solid transparent;
+          border-radius: 50%;
+          width:1.5rem;
+          height:1.5rem;
+          text-align: center;
           transition: all .3s ease-in-out;
         }
-        .section-description{
-          opacity: 1;
+        &:hover{
+          margin-top: 0;
+          padding: 12px 0 0 0;
+          background-color: #b7b7b7;
           transition: all .3s ease-in-out;
+          .section-description{
+            opacity: 1;
+            transition: all .3s ease-in-out;
+          }
+          .section-icon{
+            opacity:1;
+            background-color: #5bc0de;
+            transition: all .3s ease-in-out;
+          }
+        }
+        &.active {
+          background-color: #fff;
+          margin-top: 0;
+          padding: 12px 0 0 0;
+          border:1px solid #b7b7b7;
+          border-bottom-color: transparent;
+          transition: all .3s ease-in-out;
+          .section-icon{
+            opacity:1;
+            // background-color: #5bc0de;
+            transition: all .3s ease-in-out;
+          }
+          .section-tooltip{
+            opacity:1;
+            transition: all .3s ease-in-out;
+            &:hover{
+              border-color: #7bc0de;
+            }
+          }
+          .section-description{
+            opacity: 1;
+            transition: all .3s ease-in-out;
+          }
         }
       }
-    }
     }
   }
 }
 .labels-wrapper{
   .slider.labels{
-      .nav-item{
+    .nav-item{
         font-size: 1.15rem;
         line-height: 1.375rem;
         .label-header{
           max-width:100%;
-          padding:1.375rem 5px;
+          // padding:1.375rem 5px;
+          margin:30px 12px;
           div{
-            max-width: 90%;
+            max-width: 80px;
             .label-title{
               box-sizing: border-box;
               max-width: 100%;
@@ -125,11 +137,12 @@ ul.buttons{
             }
           }
           .label-icon{
-            margin:0 5px;
+            padding:14px;
+            margin:0 0 0 8px;
           }
         }
-      }
-      .slick-arrow{
+    }
+    .slick-arrow{
         width:100%;
         height:2rem;
         padding-left: 50%;
@@ -140,23 +153,21 @@ ul.buttons{
           }
         }
         &.slick-next{
-          background: linear-gradient(to bottom, transparent 0%, #fff 50%, #fff 100%);
+          background: linear-gradient(to bottom, transparent 0%, #fff 25%, #fff 100%);
           bottom:0;
           &:before{
             margin-left:-1rem;
           }
         }
-      }
+    }
   }
 }
 .slick-slider{
   text-overflow: ellipsis;
   white-space: nowrap;
-  // overflow: hidden;
   .slick-slide{
     cursor: pointer;
-    margin-left: 5px;
-    margin-right: 5px;
+    margin:0 1px;
     transition: all .3s ease-in-out;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -167,36 +178,45 @@ ul.buttons{
     background-color: transparent;
     outline: 0;
     color: transparent;
+    cursor: pointer;
     &:focus{
       outline: 0;
     }
     &.slick-prev:before{
       content: '';
       display: block;
-      width:1.5rem;
-      height:1.5rem;
+      width:12px;
+      height:12px;
       border-top: 1px solid transparent;
       border-right: 1px solid transparent;
-      border-bottom: 1px solid #000;
-      border-left: 1px solid #000;
+      border-bottom: 3px solid #5bc0de;
+      border-left: 3px solid #5bc0de;
+      border-radius: 3px;
     }
     &.slick-next:before{
       content: '';
       display: block;
-      width:1.5rem;
-      height:1.5rem;
+      width:12px;
+      height:12px;
       border-top: 1px solid transparent;
       border-right: 1px solid transparent;
-      border-bottom: 1px solid #000;
-      border-left: 1px solid #000;
+      border-bottom: 3px solid #5bc0de;
+      border-left: 3px solid #5bc0de;
+      border-radius: 3px;
     }
     // &.slick-disabled:before{
     //   opacity: 0;
     // }
   }
 }
+.label-content-wrapper {
+  box-sizing: border-box;
+  border: 1px solid #ddd;
+  margin: 24px 1px;
+  padding: 1vh;
+}
 .label-content{
-  height:80vh;
+  height:58vh;
   overflow-y: scroll;
   overflow-x: hidden;
   img{

@@ -7,32 +7,13 @@
     cursor: pointer;
     background-color: #7af2ff;
     transition: all .3s ease-in-out;
-    // transform: scale(.9);
-    // padding:0;
     &:hover {
-      // margin:0;
-      // padding: 0 12px;
       background-color: #7af2ff;
-      // transform: scale(1);
       transition: all .3s ease-in-out;
     }
     &.active{
       background-color: #85c7ce;
-      // margin: 0;
-      // padding: 0 12px;
-      // transform: scale(1);
       transition: all .3s ease-in-out;
     }
   }
-}
-
-.label-content-wrapper {
-  border: 1px solid #ddd;
-  margin-top: 1rem;
-  padding: 10px;
-  min-height: 80vh;
-}
-
-.slick-arrow {
-  cursor: pointer;
 }

@@ -2,7 +2,6 @@ html[dir='rtl']{
   .slider.sections{
     &.slick-slider{
       .slick-arrow{
-        margin-top: -1rem;
         &.slick-prev{
           left:-2rem;
           top:50%;
@@ -40,7 +39,6 @@ html[dir='rtl']{
     width:100%;
     padding: 0 5%;
     .slick-arrow{
-      margin-top: -1rem;
       &.slick-prev{
         left:-1.5rem;
         top:50%;
