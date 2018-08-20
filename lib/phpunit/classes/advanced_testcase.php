@@ -695,15 +695,6 @@ abstract class advanced_testcase extends base_testcase {
             // We do not lock the tasks.
             $task = \core\task\manager::adhoc_task_from_record($record);
 
-            $user = null;
-            if ($userid = $task->get_userid()) {
-                // This task has a userid specified.
-                $user = \core_user::get_user($userid);
-
-                // User found. Check that they are suitable.
-                \core_user::require_active_user($user, true, true);
-            }
-
             $task->set_lock($lock);
             if (!$task->is_blocking()) {
                 $cronlock->release();
@@ -712,7 +703,6 @@ abstract class advanced_testcase extends base_testcase {
             }
 
             cron_prepare_core_renderer();
-            $this->setUser($user);
 
             $task->execute();
             \core\task\manager::adhoc_task_complete($task);
