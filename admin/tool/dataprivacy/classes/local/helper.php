@@ -117,6 +117,7 @@ class helper {
         if (!isset($statuses[$status])) {
             throw new moodle_exception('errorinvalidrequeststatus', 'tool_dataprivacy');
         }
+
         return $statuses[$status];
     }
 
@@ -133,8 +134,11 @@ class helper {
             api::DATAREQUEST_STATUS_APPROVED => get_string('statusapproved', 'tool_dataprivacy'),
             api::DATAREQUEST_STATUS_PROCESSING => get_string('statusprocessing', 'tool_dataprivacy'),
             api::DATAREQUEST_STATUS_COMPLETE => get_string('statuscomplete', 'tool_dataprivacy'),
+            api::DATAREQUEST_STATUS_DOWNLOAD_READY => get_string('statusready', 'tool_dataprivacy'),
+            api::DATAREQUEST_STATUS_EXPIRED => get_string('statusexpired', 'tool_dataprivacy'),
             api::DATAREQUEST_STATUS_CANCELLED => get_string('statuscancelled', 'tool_dataprivacy'),
             api::DATAREQUEST_STATUS_REJECTED => get_string('statusrejected', 'tool_dataprivacy'),
+            api::DATAREQUEST_STATUS_DELETED => get_string('statusdeleted', 'tool_dataprivacy'),
         ];
     }
 

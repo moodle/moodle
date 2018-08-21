@@ -145,5 +145,31 @@ function xmldb_tool_dataprivacy_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2018051405, 'tool', 'dataprivacy');
     }
 
+    if ($oldversion < 2018051406) {
+        // Update completed delete requests to new delete status.
+        $query = "UPDATE {tool_dataprivacy_request}
+                     SET status = :setstatus
+                   WHERE type = :type
+                         AND status = :wherestatus";
+        $params = array(
+            'setstatus' => 10, // Request deleted.
+            'type' => 2, // Delete type.
+            'wherestatus' => 5, // Request completed.
+        );
+
+        $DB->execute($query, $params);
+
+        // Update completed data export requests to new download ready status.
+        $params = array(
+            'setstatus' => 8, // Request download ready.
+            'type' => 1, // export type.
+            'wherestatus' => 5, // Request completed.
+        );
+
+        $DB->execute($query, $params);
+
+        upgrade_plugin_savepoint(true, 2018051406, 'tool', 'dataprivacy');
+    }
+
     return true;
 }
