@@ -57,10 +57,6 @@ $blocks-plus-gutter: $blocks-column-width + ( $grid-gutter-width / 2 );
 }
 
 // Required for IE11 to prevent blocks being pushed under the content.
-#region-main {
-    float: left;
-    width: 100%;
-}
 #region-main-settings-menu.has-blocks,
 #region-main.has-blocks {
     display: inline-block;

@@ -8790,10 +8790,11 @@ input[disabled] {
 }
 */
 /* core.less */
-#region-main > .card, #page-enrol-users #region-main > #filterform, .que #region-main > .history, .userprofile .profile_tree #region-main > section, #region-main > .groupinfobox, #region-main > .well {
+#region-main {
   overflow-x: auto;
   overflow-y: visible;
-  min-height: 45rem; }
+  border: 1px solid rgba(0, 0, 0, 0.125);
+  padding: 1.25rem; }
 
 .context-header-settings-menu,
 .region-main-settings-menu {
@@ -11020,10 +11021,6 @@ div.editor_atto_toolbar button .icon {
   margin-bottom: 0.625rem;
   border-bottom-left-radius: 0.5rem;
   float: right; }
-
-#region-main {
-  float: left;
-  width: 100%; }
 
 #region-main-settings-menu.has-blocks,
 #region-main.has-blocks {
@@ -16490,18 +16487,17 @@ body {
   height: 100%; }
 
 #page-wrapper {
-  min-height: 100%;
-  padding-bottom: 1rem;
-  margin-bottom: -130px; }
-
-#page-wrapper::after {
-  content: "";
-  display: block;
-  min-height: 130px; }
-
-#page-footer {
-  min-height: 130px;
-  text-align: left; }
+  height: 100%;
+  display: flex;
+  flex-direction: column; }
+  #page-wrapper #page {
+    flex: 1 0 auto;
+    display: flex;
+    flex-direction: column; }
+    #page-wrapper #page #page-content {
+      flex: 1 0 auto; }
+  #page-wrapper #page-footer {
+    flex-shrink: 0; }
 
 .popover-region {
   float: right;
