@@ -6,7 +6,7 @@ Feature: Add customised file types
 
   Scenario: Add a new file type
     Given I log in as "admin"
-    And I navigate to "File types" node in "Site administration > Server"
+    And I navigate to "Server > File types" in site administration
     And I press "Add"
     # Try setting all the form fields, not just the optional ones.
     And I set the following fields to these values:
@@ -24,7 +24,7 @@ Feature: Add customised file types
 
   Scenario: Update an existing file type
     Given I log in as "admin"
-    And I navigate to "File types" node in "Site administration > Server"
+    And I navigate to "Server > File types" in site administration
     When I click on "Edit 7z" "link"
     And I set the following fields to these values:
       | Extension | doc |
@@ -37,7 +37,7 @@ Feature: Add customised file types
 
   Scenario: Change the text option (was buggy)
     Given I log in as "admin"
-    And I navigate to "File types" node in "Site administration > Server"
+    And I navigate to "Server > File types" in site administration
     When I click on "Edit 7z" "link"
     And I set the following fields to these values:
       | Description type   | Custom description specified in this form |
@@ -51,7 +51,7 @@ Feature: Add customised file types
 
   Scenario: Try to select a text option without entering a value.
     Given I log in as "admin"
-    And I navigate to "File types" node in "Site administration > Server"
+    And I navigate to "Server > File types" in site administration
     When I click on "Edit dmg" "link"
     And I set the field "Description type" to "Custom description"
     And I press "Save changes"
@@ -66,7 +66,7 @@ Feature: Add customised file types
 
   Scenario: Delete an existing file type
     Given I log in as "admin"
-    And I navigate to "File types" node in "Site administration > Server"
+    And I navigate to "Server > File types" in site administration
     When I click on "Delete 7z" "link"
     Then I should see "Are you absolutely sure you want to remove .7z?"
     And I press "Yes"
@@ -74,7 +74,7 @@ Feature: Add customised file types
 
   Scenario: Delete a custom file type
     Given I log in as "admin"
-    And I navigate to "File types" node in "Site administration > Server"
+    And I navigate to "Server > File types" in site administration
     And I press "Add"
     And I set the following fields to these values:
       | Extension                  | frog                                      |
@@ -86,7 +86,7 @@ Feature: Add customised file types
 
   Scenario: Revert changes to deleted file type
     Given I log in as "admin"
-    And I navigate to "File types" node in "Site administration > Server"
+    And I navigate to "Server > File types" in site administration
     When I click on "Delete 7z" "link"
     And I press "Yes"
     And I follow "Restore 7z to Moodle defaults"
@@ -95,7 +95,7 @@ Feature: Add customised file types
 
   Scenario: Revert changes to updated file type
     Given I log in as "admin"
-    And I navigate to "File types" node in "Site administration > Server"
+    And I navigate to "Server > File types" in site administration
     And I click on "Edit 7z" "link"
     And I set the following fields to these values:
       | Type groups | document |
@@ -110,7 +110,7 @@ Feature: Add customised file types
       | fullname | shortname |
       | Course 1 | C1        |
     And I log in as "admin"
-    And I navigate to "File types" node in "Site administration > Server"
+    And I navigate to "Server > File types" in site administration
     And I press "Add"
     And I set the following fields to these values:
       | Extension          | frog                                      |

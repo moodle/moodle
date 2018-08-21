@@ -19,7 +19,7 @@ Feature: Test importing questions from Moodle XML format.
 
   @javascript @_file_upload
   Scenario: import some true/false questions from Moodle XML format
-    When I navigate to "Import" node in "Course administration > Question bank"
+    When I navigate to "Question bank > Import" in current page administration
     And I set the field "id_format_xml" to "1"
     And I upload "question/format/xml/tests/fixtures/truefalse.xml" file to "Import" filemanager
     And I press "id_submitbutton"
@@ -32,7 +32,7 @@ Feature: Test importing questions from Moodle XML format.
     Then I should see "Moodle acronym (True)"
 
     # Now export again.
-    And I navigate to "Export" node in "Course administration > Question bank"
+    And I follow "Export"
     And I set the field "id_format_xml" to "1"
     And I set the field "Export category" to "TrueFalse"
     And I press "Export questions to file"
@@ -40,7 +40,7 @@ Feature: Test importing questions from Moodle XML format.
 
   @javascript @_file_upload
   Scenario: import some multiple choice questions from Moodle XML format
-    When I navigate to "Import" node in "Course administration > Question bank"
+    When I navigate to "Question bank > Import" in current page administration
     And I set the field "id_format_xml" to "1"
     And I upload "question/format/xml/tests/fixtures/multichoice.xml" file to "Import" filemanager
     And I press "id_submitbutton"
@@ -52,7 +52,7 @@ Feature: Test importing questions from Moodle XML format.
 
   @javascript @_file_upload
   Scenario: import some multi-answer questions from Moodle XML format
-    When I navigate to "Import" node in "Course administration > Question bank"
+    When I navigate to "Question bank > Import" in current page administration
     And I set the field "id_format_xml" to "1"
     And I upload "question/format/xml/tests/fixtures/multianswer.xml" file to "Import" filemanager
     And I press "id_submitbutton"
@@ -64,7 +64,7 @@ Feature: Test importing questions from Moodle XML format.
 
   @javascript @_file_upload
   Scenario: import some questions with legacy-style images from Moodle XML format
-    When I navigate to "Import" node in "Course administration > Question bank"
+    When I navigate to "Question bank > Import" in current page administration
     And I set the field "id_format_xml" to "1"
     And I upload "question/format/xml/tests/fixtures/sample_questions_with_old_image_tag.xml" file to "Import" filemanager
     And I press "id_submitbutton"

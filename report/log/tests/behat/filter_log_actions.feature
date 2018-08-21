@@ -27,7 +27,7 @@ Feature: In a report, admin can filter log data by action
 
   Scenario: View only create actions.
     Given I log in as "admin"
-    When I navigate to "Logs" node in "Site administration > Reports"
+    When I navigate to "Reports > Logs" in site administration
     And I set the field "menumodaction" to "Create"
     And I press "Get these logs"
     Then I should see "Course module created"
@@ -37,7 +37,7 @@ Feature: In a report, admin can filter log data by action
 
   Scenario: View only update actions.
     Given I log in as "admin"
-    When I navigate to "Logs" node in "Site administration > Reports"
+    When I navigate to "Reports > Logs" in site administration
     And I set the field "menumodaction" to "Update"
     And I press "Get these logs"
     Then I should see "Course module updated"
@@ -47,7 +47,7 @@ Feature: In a report, admin can filter log data by action
 
   Scenario: View only view actions.
     Given I log in as "admin"
-    When I navigate to "Logs" node in "Site administration > Reports"
+    When I navigate to "Reports > Logs" in site administration
     And I set the field "menumodaction" to "View"
     And I press "Get these logs"
     Then I should see "The status of the submission has been viewed."
@@ -57,7 +57,7 @@ Feature: In a report, admin can filter log data by action
 
   Scenario: View only delete actions.
     Given I log in as "admin"
-    When I navigate to "Logs" node in "Site administration > Reports"
+    When I navigate to "Reports > Logs" in site administration
     And I set the field "menumodaction" to "Delete"
     And I press "Get these logs"
     Then I should see "Course module deleted"
@@ -67,7 +67,7 @@ Feature: In a report, admin can filter log data by action
 
   Scenario: View only changes.
     Given I log in as "admin"
-    When I navigate to "Logs" node in "Site administration > Reports"
+    When I navigate to "Reports > Logs" in site administration
     And I set the field "menumodaction" to "All changes"
     And I press "Get these logs"
     Then I should see "Course module deleted"
@@ -77,7 +77,7 @@ Feature: In a report, admin can filter log data by action
 
   Scenario: View all actions.
     Given I log in as "admin"
-    When I navigate to "Logs" node in "Site administration > Reports"
+    When I navigate to "Reports > Logs" in site administration
     And I set the field "menumodaction" to "All actions"
     And I press "Get these logs"
     Then I should see "Course module deleted"

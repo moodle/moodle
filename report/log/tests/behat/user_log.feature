@@ -46,7 +46,7 @@ Feature: User can view activity log.
 
   Scenario: No log reader enabled should be visible when no log store enabled.
     Given I log in as "admin"
-    And I navigate to "Manage log stores" node in "Site administration > Plugins > Logging"
+    And I navigate to "Plugins > Logging > Manage log stores" in site administration
     And I click on "Disable" "link" in the "Standard log" "table_row"
     And I log out
     And I log in as "teacher1"

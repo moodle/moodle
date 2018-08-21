@@ -22,7 +22,7 @@ Feature: Viewing the list of cohorts to enrol in a course
       | capability           | permission |
       | moodle/cohort:manage | Prohibit |
       | moodle/cohort:view   | Prohibit |
-    And I navigate to "Cohorts" node in "Site administration > Users > Accounts"
+    And I navigate to "Users > Accounts >Cohorts" in site administration
     And I follow "Add new cohort"
     And I set the following fields to these values:
       | Name        | Test cohort name        |
@@ -41,7 +41,7 @@ Feature: Viewing the list of cohorts to enrol in a course
   @javascript
   Scenario: Check we show the cohorts field if there are some present
     Given I log in as "admin"
-    And I navigate to "Cohorts" node in "Site administration > Users > Accounts"
+    And I navigate to "Users > Accounts >Cohorts" in site administration
     And I follow "Add new cohort"
     And I set the following fields to these values:
       | Name        | Test cohort name        |

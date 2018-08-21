@@ -259,7 +259,7 @@ class behat_mod_quiz extends behat_question_base {
 
         $this->execute('behat_general::click_link', $quizname);
 
-        $this->execute("behat_navigation::i_navigate_to_node_in", array($editquiz, $quizadmin));
+        $this->execute("behat_navigation::i_navigate_to_in_current_page_administration", $editquiz);
 
         $this->execute("behat_general::i_click_on", array($menuxpath, "xpath_element"));
         $this->execute("behat_general::i_click_on", array($itemxpath, "xpath_element"));

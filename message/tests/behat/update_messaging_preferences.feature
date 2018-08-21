@@ -6,7 +6,7 @@ Feature: Messaging preferences
 
   Background:
     Given I log in as "admin"
-    And I navigate to "Manage message outputs" node in "Site administration > Plugins > Message outputs"
+    And I navigate to "Plugins > Message outputs > Manage message outputs" in site administration
     And I click on "//table[contains(@class, 'admintable')]/tbody/tr/td[contains(text(), 'Email')]/following-sibling::td[1]/a" "xpath_element"
 
   Scenario: Alter my message preferences
@@ -22,7 +22,7 @@ Feature: Messaging preferences
     Given the following "users" exist:
       | username | firstname | lastname | email            |
       | user1    | User      | 1        | user1@example.com    |
-    And I navigate to "Browse list of users" node in "Site administration > Users > Accounts"
+    And I navigate to "Users > Accounts > Browse list of users" in site administration
     And I click on "User 1" "link"
     And I click on "Preferences" "link" in the ".profile_tree" "css_element"
     And I click on "Message preferences" "link" in the "region-main" "region"

@@ -6,7 +6,7 @@ Feature: Manage scheduled tasks
 
   Background:
     Given I log in as "admin"
-    And I navigate to "Scheduled tasks" node in "Site administration > Server"
+    And I navigate to "Server > Scheduled tasks" in site administration
 
   Scenario: Disable scheduled task
     When I click on "Edit task schedule: Log table cleanup" "link" in the "Log table cleanup" "table_row"

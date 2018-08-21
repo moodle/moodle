@@ -20,7 +20,7 @@ Feature: Enable Block Completion in a course
   Scenario: Add the block to a the course where completion is disabled
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
-    And I navigate to "Edit settings" node in "Course administration"
+    And I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
       | Enable completion tracking | No |
     And I press "Save and display"
@@ -46,7 +46,7 @@ Feature: Enable Block Completion in a course
       | Require view | 1 |
     And I press "Save and return to course"
     When I add the "Course completion status" block
-    And I navigate to "Course completion" node in "Course administration"
+    And I navigate to "Course completion" in current page administration
     And I expand all fieldsets
     And I set the following fields to these values:
       | Test page name | 1 |

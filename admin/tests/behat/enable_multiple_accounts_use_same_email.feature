@@ -10,7 +10,7 @@ Feature: Enable multiple accounts to have the same email address
   Scenario: Enable registration of multiple accounts with the same email address
     Given the following config values are set as admin:
       | allowaccountssameemail | 1 |
-    When I navigate to "Add a new user" node in "Site administration>Users>Accounts"
+    When I navigate to "Users > Accounts > Add a new user" in site administration
     And I set the following fields to these values:
       | Username                        | testmultiemailuser1             |
       | Choose an authentication method | Manual accounts                 |
@@ -35,7 +35,7 @@ Feature: Enable multiple accounts to have the same email address
   Scenario: Disable registration of multiple accounts with the same email address
     Given the following config values are set as admin:
       | allowaccountssameemail | 0 |
-    When I navigate to "Add a new user" node in "Site administration>Users>Accounts"
+    When I navigate to "Users > Accounts > Add a new user" in site administration
     And I set the following fields to these values:
       | Username                        | testmultiemailuser1             |
       | Choose an authentication method | Manual accounts                 |

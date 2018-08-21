@@ -19,7 +19,7 @@ Feature: Managers can create and manage tag collections
       | Tag2 | 1          |
       | Tag3 | 1          |
     And I log in as "manager1"
-    And I navigate to "Manage tags" node in "Site administration > Appearance"
+    And I navigate to "Appearance > Manage tags" in site administration
     And I follow "Add tag collection"
     And I set the following fields to these values:
       | Name | Hobbies |
@@ -89,7 +89,7 @@ Feature: Managers can create and manage tag collections
     And I expand all fieldsets
     And I set the field "List of interests" to "Swimming, Tag0, Tag3"
     And I press "Update profile"
-    And I navigate to "Manage tags" node in "Site administration > Appearance"
+    And I navigate to "Appearance > Manage tags" in site administration
     When I click on "Change tag collection" "link" in the "//table[contains(@class,'tag-areas-table')]//tr[contains(.,'User interests')]" "xpath_element"
     And I set the field "Change tag collection of area User interests" to "Hobbies"
     And I follow "Hobbies"
@@ -119,12 +119,14 @@ Feature: Managers can create and manage tag collections
     And I press "Blocks editing on"
     # TODO MDL-57120 "Tags" link not accessible without navigation block.
     And I add the "Navigation" block if not present
-    And I navigate to "Tags" node in "Site pages"
+    And I click on "Site pages" "list_item" in the "Navigation" "block"
+    And I click on "Tags" "link" in the "Navigation" "block"
     Then the "Select tag collection" select box should contain "Default collection"
     And the "Select tag collection" select box should contain "Hobbies"
     And the "Select tag collection" select box should not contain "Hiddencoll"
-    And I navigate to "Manage tags" node in "Site administration > Appearance"
+    And I navigate to "Appearance > Manage tags" in site administration
     And I click on "Change searchable" "link" in the "Hobbies" "table_row"
-    And I navigate to "Tags" node in "Site pages"
+    And I click on "Site pages" "list_item" in the "Navigation" "block"
+    And I click on "Tags" "link" in the "Navigation" "block"
     And "Select tag collection" "select" should not exist
     And I log out

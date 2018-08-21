@@ -8,7 +8,7 @@ Feature: Edit activities in main menu block
   Scenario: Edit name of acitivity in-place in site main menu block
     Given I log in as "admin"
     And I am on site homepage
-    And I navigate to "Turn editing on" node in "Front page settings"
+    And I navigate to "Turn editing on" in current page administration
     And I add the "Main menu" block
     When I add a "Forum" to section "0" and I fill the form with:
       | Forum name | My forum name |
@@ -27,7 +27,7 @@ Feature: Edit activities in main menu block
     And I set the following administration settings values:
       | allowstealth | 1 |
     And I am on site homepage
-    And I navigate to "Turn editing on" node in "Front page settings"
+    And I navigate to "Turn editing on" in current page administration
     And I add the "Main menu" block
     When I add a "Forum" to section "0" and I fill the form with:
       | Forum name | Visible forum |
@@ -60,7 +60,7 @@ Feature: Edit activities in main menu block
     And the field "Availability" matches value "Make available but not shown on course page"
     And I press "Save and return to course"
     And "My forum name" activity in site main menu block should be available but hidden from course page
-    And I navigate to "Turn editing off" node in "Front page settings"
+    And I navigate to "Turn editing off" in current page administration
     And "My forum name" activity in site main menu block should be available but hidden from course page
     And I log out
     And I should not see "My forum name" in the "Main menu" "block"

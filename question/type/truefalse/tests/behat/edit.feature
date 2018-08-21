@@ -22,7 +22,7 @@ Feature: Test editing a True/False question
       | Test questions   | truefalse | true-false-001 | true     |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I navigate to "Question bank" node in "Course administration"
+    And I navigate to "Question bank" in current page administration
 
   Scenario: Edit a True/False question
     When I click on "Edit" "link" in the "true-false-001" "table_row"

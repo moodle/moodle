@@ -286,7 +286,7 @@ Feature: Set up contextual data for tests
       | student1 | CHSB   |
       | student1 | CHC    |
     When I log in as "admin"
-    And I navigate to "Cohorts" node in "Site administration > Users > Accounts"
+    And I navigate to "Users > Accounts > Cohorts" in site administration
     Then the following should exist in the "cohorts" table:
       | Name            | Cohort size |
       | System cohort A | 1           |

@@ -35,9 +35,9 @@ Feature: Student and teacher's view of aggregated grade items is consistent when
     And I press "Save changes"
     And I set "=[[a4]]/2" calculation for grade item "calculated" with idnumbers:
       | Sub category 1 | sub1 |
-    And I navigate to "Overview report" node in "Site administration > Grades > Report settings"
+    And I navigate to "Grades > Report settings > Overview report" in site administration
     And I set the field "s__grade_report_overview_showtotalsifcontainhidden" to "Show totals excluding hidden items"
-    And I navigate to "User report" node in "Site administration > Grades > Report settings"
+    And I navigate to "Grades > Report settings > User report" in site administration
     And I set the field "s__grade_report_user_showtotalsifcontainhidden" to "Show totals excluding hidden items"
     And I press "Save changes"
     When I log out

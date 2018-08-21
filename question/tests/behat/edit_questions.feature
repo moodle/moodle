@@ -22,7 +22,7 @@ Feature: A teacher can edit questions in the question bank
       | Test questions   | essay | Test question to be edited | Write about whatever you want |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I navigate to "Questions" node in "Course administration > Question bank"
+    And I navigate to "Question bank > Questions" in current page administration
 
   @javascript
   Scenario: Edit a previously created question

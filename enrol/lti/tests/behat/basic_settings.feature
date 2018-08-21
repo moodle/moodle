@@ -16,9 +16,9 @@ Feature: Check that settings are adhered to when creating an enrolment plugin
       | user | course | role |
       | teacher1 | C1 | editingteacher |
     And I log in as "admin"
-    And I navigate to "Manage enrol plugins" node in "Site administration > Plugins > Enrolments"
+    And I navigate to "Plugins > Enrolments > Manage enrol plugins" in site administration
     And I click on "Enable" "link" in the "Publish as LTI tool" "table_row"
-    And I navigate to "Publish as LTI tool" node in "Site administration > Plugins > Enrolments"
+    And I navigate to "Plugins > Enrolments > Publish as LTI tool" in site administration
     And I set the following fields to these values:
       | Email display       | Allow everyone to see my email address |
       | City/town           | Perth                                  |
@@ -31,7 +31,7 @@ Feature: Check that settings are adhered to when creating an enrolment plugin
   Scenario: As an admin set site-wide settings for the enrolment plugin and ensure they are used
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I navigate to "Enrolment methods" node in "Course administration > Users"
+    And I navigate to "Users > Enrolment methods" in current page administration
     And I select "Publish as LTI tool" from the "Add method" singleselect
     When I expand all fieldsets
     Then the field "Email display" matches value "Allow everyone to see my email address"

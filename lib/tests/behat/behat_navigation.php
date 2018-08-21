@@ -221,29 +221,6 @@ class behat_navigation extends behat_base {
     }
 
     /**
-     * Click link in navigation tree that matches the text in parentnode/s (seperated using greater-than character if more than one)
-     *
-     * @Given /^I navigate to "(?P<nodetext_string>(?:[^"]|\\")*)" node in "(?P<parentnodes_string>(?:[^"]|\\")*)"$/
-     *
-     * @todo MDL-57281 deprecate in Moodle 3.1
-     *
-     * @throws ExpectationException
-     * @param string $nodetext navigation node to click.
-     * @param string $parentnodes comma seperated list of parent nodes.
-     * @return void
-     */
-    public function i_navigate_to_node_in($nodetext, $parentnodes) {
-        // This step needs to be deprecated and replaced with one of:
-        // - I navigate to "PATH" in current page administration
-        // - I navigate to "PATH" in site administration
-        // - I navigate to course participants
-        // - I navigate to "PATH" in the course gradebook
-        // - I click on "LINK" "link" in the "Navigation" "block" .
-        $parentnodes = array_map('trim', explode('>', $parentnodes));
-        $this->select_node_in_navigation($nodetext, $parentnodes);
-    }
-
-    /**
      * Finds a node in the Navigation or Administration tree
      *
      * @param string $nodetext
@@ -324,7 +301,6 @@ class behat_navigation extends behat_base {
             throw new ExpectationException('Navigation node "' . $nodetext . '" not found under "' .
                 implode($parentnodes, ' > ') . '"', $this->getSession());
         }
-
         $nodetoclick->click();
     }
 

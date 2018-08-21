@@ -30,7 +30,7 @@ Feature: Enable Block Completion in a course using activity completion
       | Require view | 1 |
     And I press "Save and return to course"
     And I add the "Course completion status" block
-    And I navigate to "Course completion" node in "Course administration"
+    And I navigate to "Course completion" in current page administration
     And I expand all fieldsets
     And I set the following fields to these values:
       | Test page name | 1 |
@@ -51,7 +51,7 @@ Feature: Enable Block Completion in a course using activity completion
       | Require view | 1 |
     And I press "Save and return to course"
     And I add the "Course completion status" block
-    And I navigate to "Course completion" node in "Course administration"
+    And I navigate to "Course completion" in current page administration
     And I expand all fieldsets
     And I set the following fields to these values:
       | Test page name | 1 |

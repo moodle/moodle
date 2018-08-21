@@ -22,7 +22,7 @@ Feature: A teacher can preview questions in the question bank
       | Test questions   | numerical | Test question to be previewed |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I navigate to "Questions" node in "Course administration > Question bank"
+    And I navigate to "Question bank > Questions" in current page administration
     When I click on "Preview" "link" in the "Test question to be previewed" "table_row"
     And I switch to "questionpreview" window
 

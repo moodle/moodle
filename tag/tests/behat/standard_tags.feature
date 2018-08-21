@@ -22,7 +22,7 @@ Feature: Manager can add standard tags and change the tag type of existing tags
   @javascript
   Scenario: Adding standard tags
     When I log in as "manager1"
-    And I navigate to "Manage tags" node in "Site administration > Appearance"
+    And I navigate to "Appearance > Manage tags" in site administration
     And I follow "Default collection"
     Then "Make standard" "link" should exist in the "Tag0" "table_row"
     And "Make standard" "link" should exist in the "Tag1" "table_row"
@@ -49,7 +49,7 @@ Feature: Manager can add standard tags and change the tag type of existing tags
   @javascript
   Scenario: Changing tag isstandard
     When I log in as "manager1"
-    And I navigate to "Manage tags" node in "Site administration > Appearance"
+    And I navigate to "Appearance > Manage tags" in site administration
     And I follow "Default collection"
     And I click on "Make standard" "link" in the "Tag0" "table_row"
     And I click on "Make standard" "link" in the "Tag1" "table_row"
@@ -72,7 +72,7 @@ Feature: Manager can add standard tags and change the tag type of existing tags
 
   Scenario: Changing tag isstandard in edit form
     When I log in as "manager1"
-    And I navigate to "Manage tags" node in "Site administration > Appearance"
+    And I navigate to "Appearance > Manage tags" in site administration
     And I follow "Default collection"
     And I click on "Edit this tag" "link" in the "Tag1" "table_row"
     And I set the following fields to these values:
@@ -95,14 +95,14 @@ Feature: Manager can add standard tags and change the tag type of existing tags
     And I set the following fields to these values:
       | List of interests | Tag3 , Tag2 |
     And I press "Update profile"
-    And I navigate to "Manage tags" node in "Site administration > Appearance"
+    And I navigate to "Appearance > Manage tags" in site administration
     And I click on "Change standard tag usage" "link" in the "//table[contains(@class,'tag-areas-table')]//tr[contains(.,'User interests')]" "xpath_element"
     And the field "Change showing standard tags in area User interests" matches value "Don't suggest"
     And I set the field "Change showing standard tags in area User interests" to "Suggest"
     And I open my profile in edit mode
     And I expand all fieldsets
     And I should see "Manage standard tags"
-    And I navigate to "Manage tags" node in "Site administration > Appearance"
+    And I navigate to "Appearance > Manage tags" in site administration
     And I click on "Change standard tag usage" "link" in the "//table[contains(@class,'tag-areas-table')]//tr[contains(.,'User interests')]" "xpath_element"
     And the field "Change showing standard tags in area User interests" matches value "Suggest"
     And I set the field "Change showing standard tags in area User interests" to "Force"

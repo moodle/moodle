@@ -26,7 +26,7 @@ Feature: Test exporting Essay questions
     And I am on "Course 1" course homepage
 
   Scenario: Export 3 Essay questions
-    When I navigate to "Export" node in "Course administration > Question bank"
+    When I navigate to "Question bank > Export" in current page administration
     And I set the field "id_format_xml" to "1"
     And I press "Export questions to file"
     Then following "click here" should download between "2600" and "2700" bytes

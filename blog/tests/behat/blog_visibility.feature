@@ -18,7 +18,7 @@ Feature: Blogs can be set to be only visible by the author.
       | testuser2 | C1     | student |
     And I log in as "admin"
     And I am on site homepage
-    And I navigate to "Blog" node in "Site administration > Appearance"
+    And I navigate to "Appearance > Blog" in site administration
     And I set the following fields to these values:
       | Blog visibility | Users can only see their own blog |
     And I press "Save changes"

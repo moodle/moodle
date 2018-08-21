@@ -20,7 +20,7 @@ Feature: Add and configure blocks throughout the site
       | manager1 | Acceptance test site | manager |
     # Allow at least one role assignment in the block context:
     And I log in as "admin"
-    And I navigate to "Define roles" node in "Site administration > Users > Permissions"
+    And I navigate to "Users > Permissions > Define roles" in site administration
     And I follow "Edit Non-editing teacher role"
     And I set the following fields to these values:
       | Block | 1 |

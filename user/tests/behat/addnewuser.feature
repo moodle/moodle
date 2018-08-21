@@ -7,7 +7,7 @@ Feature: Create manually an user.
   @javascript
   Scenario: Change default language for a new user
     Given I log in as "admin"
-    When I navigate to "Add a new user" node in "Site administration > Users > Accounts"
+    When I navigate to "Users > Accounts > Add a new user" in site administration
     Then I should see "Preferred language"
 
   @javascript
@@ -16,7 +16,7 @@ Feature: Create manually an user.
       | username  | firstname | lastname | email                 |
       | student1  | Student   | 1        | student1@example.com  |
     When I log in as "admin"
-    And I navigate to "Browse list of users" node in "Site administration > Users > Accounts"
+    And I navigate to "Users > Accounts > Browse list of users" in site administration
     And I follow "Student 1"
     And I follow "Edit profile"
     Then I should not see "Preferred language"

@@ -10,7 +10,7 @@ Feature: People Block used on frontpage
       | student1    | Sam       | Student  | student1@example.com |
     And I log in as "admin"
     And I am on site homepage
-    And I navigate to "Turn editing on" node in "Front page settings"
+    And I navigate to "Turn editing on" in current page administration
     And I add the "People" block
     And I log out
 

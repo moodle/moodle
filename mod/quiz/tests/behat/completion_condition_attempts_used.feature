@@ -52,5 +52,5 @@ Feature: Set a quiz to be marked complete when the student uses all attempts all
     And I log out
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I navigate to "Activity completion" node in "Course administration > Reports"
+    And I navigate to "Reports > Activity completion" in current page administration
     And "Completed" "icon" should exist in the "Student 1" "table_row"

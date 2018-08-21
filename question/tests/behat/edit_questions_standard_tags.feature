@@ -22,7 +22,7 @@ Feature: The questions can be tagged
   Scenario: The tags autocomplete should include standard tags
     When I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I navigate to "Questions" node in "Course administration > Question bank"
+    And I navigate to "Question bank > Questions" in current page administration
     And I press "Create a new question ..."
     And I set the field "item_qtype_truefalse" to "1"
     And I press "Add"

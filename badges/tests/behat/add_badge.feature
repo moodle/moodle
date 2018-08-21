@@ -10,7 +10,7 @@ Feature: Add badges to the system
 
   @javascript
   Scenario: Setting badges settings
-    Given I navigate to "Badges settings" node in "Site administration > Badges"
+    Given I navigate to "Badges > Badges settings" in site administration
     And I set the field "Default badge issuer name" to "Test Badge Site"
     And I set the field "Default badge issuer contact details" to "testuser@example.com"
     And I press "Save changes"
@@ -24,12 +24,13 @@ Feature: Add badges to the system
     And I press "Customise this page"
    # TODO MDL-57120 site "Badges" link not accessible without navigation block.
     And I add the "Navigation" block if not present
-    Given I navigate to "Site badges" node in "Site pages"
+    And I click on "Site pages" "list_item" in the "Navigation" "block"
+    Given I click on "Site badges" "link" in the "Navigation" "block"
     Then I should see "There are no badges available."
 
   @javascript @_file_upload
   Scenario: Add a badge
-    Given I navigate to "Add a new badge" node in "Site administration > Badges"
+    Given I navigate to "Badges > Add a new badge" in site administration
     And I set the following fields to these values:
       | Name | Test badge with 'apostrophe' and other friends (<>&@#) |
       | Description | Test badge description |
