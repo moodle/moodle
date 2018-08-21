@@ -347,8 +347,11 @@ ul.buttons {
         white-space: nowrap;
         overflow: hidden; }
     .labels-wrapper .slider.labels .nav-item .label-header .label-icon {
-      padding: 14px;
-      margin: 0 0 0 8px; }
+      margin: 0 8px; }
+      .labels-wrapper .slider.labels .nav-item .label-header .label-icon:before {
+        box-sizing: border-box;
+        width: 28px;
+        height: 28px; }
 
 .labels-wrapper .slider.labels .slick-arrow {
   width: 100%;
@@ -662,6 +665,14 @@ ul.buttons {
         left: -1rem; } }
 
 @media screen and (min-width: 992px) {
+  .sections-wrapper {
+    display: flex;
+    flex: 1; }
+    .sections-wrapper .slider.sections {
+      width: 75%;
+      padding: 0; } }
+
+@media screen and (min-width: 1200px) {
   .sections-wrapper {
     display: flex;
     flex: 1; }

@@ -137,8 +137,14 @@ ul.buttons{
             }
           }
           .label-icon{
-            padding:14px;
-            margin:0 0 0 8px;
+            // padding:14px;
+            margin:0 8px;
+            &:before{
+              box-sizing: border-box;
+              // font-size: 14px;
+              width:28px;
+              height:28px;
+            }
           }
         }
     }

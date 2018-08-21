@@ -508,12 +508,12 @@ class format_buttons_renderer extends format_topics_renderer
 
                     $htmlsection[$section] .=  html_writer::start_tag('div',['id' => "section$section",'class' => "section-content d-none  $currentsectionclass", 'role' => 'section content' ]);
                     $htmlsection[$section] .=  html_writer::start_tag('div',['class' => 'd-flex flex-column flex-md-row']);
-                    $htmlsection[$section] .=  html_writer::start_tag('div',['class' => 'col-12 col-md-3 col-lg-2 labels-wrapper']);
+                    $htmlsection[$section] .=  html_writer::start_tag('div',['class' => 'col-12 col-md-3 col-lg-3 col-xl-2 labels-wrapper']);
                     $htmlsection[$section] .=  html_writer::start_tag('ul',['class' => 'nav flex-column flex-nowrap align-content-end justify-content-end slider labels', 'role' => 'labels list']);
                     $htmlsection[$section] .=  $this->labels_list($course, $thissection);
                     $htmlsection[$section] .=  html_writer::end_tag('ul');
                     $htmlsection[$section] .=  html_writer::end_tag('div');
-                    $htmlsection[$section] .=  html_writer::start_tag('div',['class' => 'label-content-wrapper col-12 col-md-9 col-lg-10']);
+                    $htmlsection[$section] .=  html_writer::start_tag('div',['class' => 'label-content-wrapper col-12 col-md-9 col-lg-9 col-xl-10']);
                     $htmlsection[$section] .=  $this->labels_content($course, $thissection);
                     $htmlsection[$section] .=  html_writer::end_tag('div');
                     $htmlsection[$section] .=  html_writer::start_tag('div',['class' => ' label-content-controls d-flex d-md-none d-lg-none']);
@@ -738,8 +738,10 @@ class format_buttons_renderer extends format_topics_renderer
                     if ($modulehtml =  $mod->get_formatted_content(array('noclean' => true))) {
 
                         $reg = '/<h\d>(.*)<\/h\d>.*?\s*(<pre>(.*)<\/pre>)?\s*(.*)<\/div>/sm'; // Regex for <h></h>, <pre></pre> and others. Last <div> is to close no-owerflow div
-                        $reg = '/#name(.*)%name.*?\s*#icon(.*)%icon?\s*(.*)<\/div>/im';
+                        $reg = '/\#name(.*?\s)\#icon(.*?\s.*?)\#content(.*?\s.*?)<\/div>/mix';
+                        // $reg = '/#name(.*)%name.*?\s*#icon(.*)%icon?\s*(.*)<\/div>/im';
                         preg_match($reg, $modulehtml, $content);
+                        // preg_split($reg, $modulehtml, $content);
 
                         $lables[$modnumber] = $content;
                     }
@@ -763,16 +765,24 @@ class format_buttons_renderer extends format_topics_renderer
 
             // here we fetch icon url or set default one
             if (empty($content[2])) {
-                $licon = $this->courserenderer->image_url('label-default', 'format_buttons');
+                $liconStyle = 'background: url('.$this->courserenderer->image_url('label-default', 'format_buttons').') no-repeat; background-size: cover; padding:14px;';
+                $liconClass = '';
             } else {
-                $licon = $this->courserenderer->image_url($content[2], 'format_buttons');
+              if(preg_match('/fa-/im', $content[2]) === 1) {
+                // $licon = $this->render_fontawesome($content[2]);
+                $liconStyle = 'font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;';
+                $liconClass = $content[2];
+              } else {
+                $liconStyle = 'background: url('.$this->courserenderer->image_url($content[2], 'format_buttons').') no-repeat; background-size: cover; padding:14px;';
+                $liconClass = '';
+              }
             }
 
             // kadima render
             $output .=  html_writer::start_tag('li',['class' => 'nav-item label-item', 'data-label'=>$modnum]);
             $output .= html_writer::start_tag('div', ['class'=> 'd-flex flex-row label-header align-items-center']);
             // $output .= html_writer::start_tag('a',['href' => "#label{$modnum}",'class' => "nav-link label-link", 'aria-controls' => "label{$modnum}"]);
-            $output .= html_writer::tag('span', '', ['class' => 'label-icon d-inline-flex justify-content-center align-items-center', 'style' => "background: url({$licon}) no-repeat; background-size: cover;"]);
+            $output .= html_writer::tag('span', '', ['class' => 'label-icon d-inline-flex justify-content-center align-items-center'.$liconClass, 'style' => $liconStyle]);
             $output .= html_writer::start_tag('div', ['class'=> 'd-flex flex-column']);
             $output .= html_writer::tag('span', $content[1], ['class'=>'label-title']);
             $output .= html_writer::end_tag('div');
