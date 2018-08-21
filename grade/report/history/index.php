@@ -51,6 +51,9 @@ $USER->grade_last_report[$course->id] = 'history';
 
 $select = "itemtype <> 'course' AND courseid = :courseid AND " . $DB->sql_isnotempty('grade_items', 'itemname', true, true);
 $itemids = $DB->get_records_select_menu('grade_items', $select, array('courseid' => $course->id), 'itemname ASC', 'id, itemname');
+foreach ($itemids as $itemid => $itemname) {
+    $itemids[$itemid] = format_string($itemname, false, array("context" => $context));
+}
 $itemids = array(0 => get_string('allgradeitems', 'gradereport_history')) + $itemids;
 
 $output = $PAGE->get_renderer('gradereport_history');
