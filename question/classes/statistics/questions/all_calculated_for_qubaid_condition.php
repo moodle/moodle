@@ -430,7 +430,7 @@ class all_calculated_for_qubaid_condition {
                 }
 
                 foreach ($toreturn as $index => $calculated) {
-                    $calculated->subqdisplayorder = $index + 1;
+                    $calculated->subqdisplayorder = $index;
                 }
             } else {
                 $displaynumber = 1;
