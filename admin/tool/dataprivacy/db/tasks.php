@@ -42,5 +42,13 @@ $tasks = array(
         'day' => '*',
         'dayofweek' => '*',
         'month' => '*'
+    ), array(
+        'classname' => 'tool_dataprivacy\task\delete_expired_requests',
+        'blocking' => 0,
+        'minute' => 'R',
+        'hour' => 'R',
+        'day' => '*',
+        'dayofweek' => '*',
+        'month' => '*'
     ),
 );
