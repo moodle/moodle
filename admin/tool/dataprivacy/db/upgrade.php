@@ -188,5 +188,18 @@ function xmldb_tool_dataprivacy_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2017111315, 'tool', 'dataprivacy');
     }
 
+    if ($oldversion < 2017111316) {
+
+        // Changing precision of field status on table tool_dataprivacy_request to (2).
+        $table = new xmldb_table('tool_dataprivacy_request');
+        $field = new xmldb_field('status', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, '0', 'requestedby');
+
+        // Launch change of precision for field status.
+        $dbman->change_field_precision($table, $field);
+
+        // Dataprivacy savepoint reached.
+        upgrade_plugin_savepoint(true, 2017111316, 'tool', 'dataprivacy');
+    }
+
     return true;
 }
