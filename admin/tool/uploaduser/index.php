@@ -71,6 +71,8 @@ $struserauthunsupported     = get_string('userauthunsupported', 'error');
 $stremailduplicate          = get_string('useremailduplicate', 'error');
 
 $strinvalidpasswordpolicy   = get_string('invalidpasswordpolicy', 'error');
+$strinvalidtheme            = get_string('invalidtheme', 'error');
+
 $errorstr                   = get_string('error');
 
 $stryes                     = get_string('yes');
@@ -93,6 +95,7 @@ $STD_FIELDS = array('id', 'username', 'email',
         'auth',        // watch out when changing auth type or using external auth plugins!
         'oldusername', // use when renaming users - this is the original username
         'suspended',   // 1 means suspend user account, 0 means activate user account, nothing means keep as is for existing users
+        'theme',       // Define a theme for user when 'allowuserthemes' is enabled.
         'deleted',     // 1 means delete user
         'mnethostid',  // Can not be used for adding, updating or deleting of users - only for enrolments, groups, cohorts and suspending.
         'interests',
@@ -207,6 +210,8 @@ if ($formdata = $mform2->is_cancelled()) {
     // init csv import helper
     $cir->init();
     $linenum = 1; //column header is first line
+
+    $themes = get_list_of_themes();
 
     // init upload progress tracker
     $upt = new uu_progress_tracker();
@@ -353,6 +358,24 @@ if ($formdata = $mform2->is_cancelled()) {
             $upt->track('username', s($originalusername).'-->'.s($user->username), 'info');
         } else {
             $upt->track('username', s($user->username), 'normal', false);
+        }
+
+        // Validate theme.
+        if (!$CFG->allowuserthemes) {
+            $upt->track('status', get_string('invalidtheme', 'error', 'theme'), 'error');
+            $upt->track('theme', $errorstr, 'error');
+            $userserrors++;
+            continue;
+        }
+
+        if (isset($user->theme)) {
+            if (!isset($themes[$user->theme])) {
+                $user->theme = '';
+                $upt->track('status', get_string('invalidfieldvalue', 'error', 'theme'), 'error');
+                $upt->track('theme', $errorstr, 'error');
+                $userserrors++;
+                continue;
+            }
         }
 
         // add default values for remaining fields
@@ -1243,4 +1266,3 @@ if ($noerror) {
 }
 echo $OUTPUT->footer();
 die;
-
