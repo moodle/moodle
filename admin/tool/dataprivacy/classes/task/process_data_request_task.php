@@ -81,6 +81,7 @@ class process_data_request_task extends adhoc_task {
         // Update the status of this request as pre-processing.
         mtrace('Processing request...');
         api::update_request_status($requestid, api::DATAREQUEST_STATUS_PROCESSING);
+        $completestatus = api::DATAREQUEST_STATUS_COMPLETE;
 
         if ($request->type == api::DATAREQUEST_TYPE_EXPORT) {
             // Get the collection of approved_contextlist objects needed for core_privacy data export.
@@ -105,7 +106,7 @@ class process_data_request_task extends adhoc_task {
             $filerecord->author    = fullname($foruser);
             // Save somewhere.
             $thing = $fs->create_file_from_pathname($filerecord, $exportedcontent);
-
+            $completestatus = api::DATAREQUEST_STATUS_DOWNLOAD_READY;
         } else if ($request->type == api::DATAREQUEST_TYPE_DELETE) {
             // Get the collection of approved_contextlist objects needed for core_privacy data deletion.
             $approvedclcollection = api::get_approved_contextlist_collection_for_request($requestpersistent);
@@ -115,10 +116,11 @@ class process_data_request_task extends adhoc_task {
             $manager->set_observer(new \tool_dataprivacy\manager_observer());
 
             $manager->delete_data_for_user($approvedclcollection);
+            $completestatus = api::DATAREQUEST_STATUS_DELETED;
         }
 
         // When the preparation of the metadata finishes, update the request status to awaiting approval.
-        api::update_request_status($requestid, api::DATAREQUEST_STATUS_COMPLETE);
+        api::update_request_status($requestid, $completestatus);
         mtrace('The processing of the user data request has been completed...');
 
         // Create message to notify the user regarding the processing results.

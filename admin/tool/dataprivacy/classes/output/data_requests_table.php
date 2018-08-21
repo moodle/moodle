@@ -59,7 +59,7 @@ class data_requests_table extends table_sql {
     /** @var bool Whether this table is being rendered for managing data requests. */
     protected $manage = false;
 
-    /** @var stdClass[] Array of data request persistents. */
+    /** @var \tool_dataprivacy\data_request[] Array of data request persistents. */
     protected $datarequests = [];
 
     /**
@@ -206,14 +206,14 @@ class data_requests_table extends table_sql {
                 $actiontext = get_string('denyrequest', 'tool_dataprivacy');
                 $actions[] = new action_menu_link_secondary($actionurl, null, $actiontext, $actiondata);
                 break;
-        }
-
-        if ($status == api::DATAREQUEST_STATUS_COMPLETE) {
-            $userid = $data->foruser->id;
-            $usercontext = \context_user::instance($userid, IGNORE_MISSING);
-            if ($usercontext && api::can_download_data_request_for_user($userid, $data->requestedbyuser->id)) {
-                $actions[] = api::get_download_link($usercontext, $requestid);
-            }
+            case api::DATAREQUEST_STATUS_DOWNLOAD_READY:
+                $userid = $data->foruser->id;
+                $usercontext = \context_user::instance($userid, IGNORE_MISSING);
+                // If user has permission to view download link, show relevant action item.
+                if ($usercontext && api::can_download_data_request_for_user($userid, $data->requestedbyuser->id)) {
+                    $actions[] = api::get_download_link($usercontext, $requestid);
+                }
+                break;
         }
 
         $actionsmenu = new action_menu($actions);
@@ -236,19 +236,25 @@ class data_requests_table extends table_sql {
     public function query_db($pagesize, $useinitialsbar = true) {
         global $PAGE;
 
-        // Count data requests from the given conditions.
-        $total = api::get_data_requests_count($this->userid, $this->statuses, $this->types);
-        $this->pagesize($pagesize, $total);
+        // Set dummy page total until we fetch full result set.
+        $this->pagesize($pagesize, $pagesize + 1);
 
         $sort = $this->get_sql_sort();
 
         // Get data requests from the given conditions.
         $datarequests = api::get_data_requests($this->userid, $this->statuses, $this->types, $sort,
                 $this->get_page_start(), $this->get_page_size());
+
+        // Count data requests from the given conditions.
+        $total = api::get_data_requests_count($this->userid, $this->statuses, $this->types);
+        $this->pagesize($pagesize, $total);
+
         $this->rawdata = [];
         $context = \context_system::instance();
         $renderer = $PAGE->get_renderer('tool_dataprivacy');
+
         foreach ($datarequests as $persistent) {
+            $this->datarequests[$persistent->get('id')] = $persistent;
             $exporter = new data_request_exporter($persistent, ['context' => $context]);
             $this->rawdata[] = $exporter->export($renderer);
         }

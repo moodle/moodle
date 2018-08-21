@@ -34,6 +34,12 @@ if ($hassiteconfig) {
                 new lang_string('contactdataprotectionofficer_desc', 'tool_dataprivacy'), 0)
         );
 
+        // Set days approved data requests will be accessible. 1 week default.
+        $privacysettings->add(new admin_setting_configduration('tool_dataprivacy/privacyrequestexpiry',
+                new lang_string('privacyrequestexpiry', 'tool_dataprivacy'),
+                new lang_string('privacyrequestexpiry_desc', 'tool_dataprivacy'),
+                WEEKSECS, 1));
+
         // Fetch roles that are assignable.
         $assignableroles = get_assignable_roles(context_system::instance());
 
