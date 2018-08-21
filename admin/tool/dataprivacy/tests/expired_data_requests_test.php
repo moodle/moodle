@@ -115,11 +115,11 @@ class tool_dataprivacy_expired_data_requests_testcase extends data_privacy_testc
     }
 
 
-   /**
-    * Test for \tool_dataprivacy\data_request::is_expired()
-    * Tests for the expected request status to protect from false positive/negative,
-    * then tests is_expired() is returning the expected response.
-    */
+    /**
+     * Test for \tool_dataprivacy\data_request::is_expired()
+     * Tests for the expected request status to protect from false positive/negative,
+     * then tests is_expired() is returning the expected response.
+     */
     public function test_is_expired() {
         $this->resetAfterTest();
         \core_privacy\local\request\writer::setup_real_writer_instance();
