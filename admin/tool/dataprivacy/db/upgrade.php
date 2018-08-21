@@ -23,7 +23,6 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-use tool_dataprivacy\api;
 
 /**
  * Function to upgrade tool_dataprivacy.

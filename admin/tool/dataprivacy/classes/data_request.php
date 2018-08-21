@@ -158,7 +158,7 @@ class data_request extends persistent {
 
         $expiryseconds = get_config('tool_dataprivacy', 'privacyrequestexpiry');
         $expirytime = strtotime("-{$expiryseconds} second");
-        $table = data_request::TABLE;
+        $table = self::TABLE;
         $sqlwhere = 'type = :export_type AND status = :completestatus AND timemodified <= :expirytime';
         $params = array(
             'export_type' => api::DATAREQUEST_TYPE_EXPORT,
@@ -196,7 +196,7 @@ class data_request extends persistent {
             $initialparams = array(api::DATAREQUEST_STATUS_EXPIRED, time());
             $params = array_merge($initialparams, $inparams);
 
-            $update = "UPDATE {" . data_request::TABLE . "}
+            $update = "UPDATE {" . self::TABLE . "}
                           SET status = ?, timemodified = ?
                         WHERE id $insql";
 
