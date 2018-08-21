@@ -2309,10 +2309,10 @@ class grade_category extends grade_object {
         // For a course category, we return the course name if the fullname is set to '?' in the DB (empty in the category edit form)
         if (empty($this->parent) && $this->fullname == '?') {
             $course = $DB->get_record('course', array('id'=> $this->courseid));
-            return format_string($course->fullname);
+            return format_string($course->fullname, false, array("context" => context_course::instance($this->courseid)));
 
         } else {
-            return $this->fullname;
+            return format_string($this->fullname, false, array("context" => context_course::instance($this->courseid)));
         }
     }
 
