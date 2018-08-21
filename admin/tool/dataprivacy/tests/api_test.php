@@ -66,12 +66,12 @@ class tool_dataprivacy_api_testcase extends advanced_testcase {
         $requestid = $datarequest->get('id');
 
         // Update with a valid status.
-        $result = api::update_request_status($requestid, api::DATAREQUEST_STATUS_COMPLETE);
+        $result = api::update_request_status($requestid, api::DATAREQUEST_STATUS_DOWNLOAD_READY);
         $this->assertTrue($result);
 
         // Fetch the request record again.
         $datarequest = new data_request($requestid);
-        $this->assertEquals(api::DATAREQUEST_STATUS_COMPLETE, $datarequest->get('status'));
+        $this->assertEquals(api::DATAREQUEST_STATUS_DOWNLOAD_READY, $datarequest->get('status'));
 
         // Update with an invalid status.
         $this->expectException(invalid_persistent_exception::class);
@@ -468,8 +468,8 @@ class tool_dataprivacy_api_testcase extends advanced_testcase {
      * @return array
      */
     public function get_data_requests_provider() {
-        $completeonly = [api::DATAREQUEST_STATUS_COMPLETE];
-        $completeandcancelled = [api::DATAREQUEST_STATUS_COMPLETE, api::DATAREQUEST_STATUS_CANCELLED];
+        $completeonly = [api::DATAREQUEST_STATUS_COMPLETE, api::DATAREQUEST_STATUS_DOWNLOAD_READY, api::DATAREQUEST_STATUS_DELETED];
+        $completeandcancelled = array_merge($completeonly, [api::DATAREQUEST_STATUS_CANCELLED]);
 
         return [
             // Own data requests.
@@ -612,6 +612,9 @@ class tool_dataprivacy_api_testcase extends advanced_testcase {
             [api::DATAREQUEST_STATUS_COMPLETE, false],
             [api::DATAREQUEST_STATUS_CANCELLED, false],
             [api::DATAREQUEST_STATUS_REJECTED, false],
+            [api::DATAREQUEST_STATUS_DOWNLOAD_READY, false],
+            [api::DATAREQUEST_STATUS_EXPIRED, false],
+            [api::DATAREQUEST_STATUS_DELETED, false],
         ];
     }
 

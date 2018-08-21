@@ -663,4 +663,52 @@ abstract class advanced_testcase extends base_testcase {
             usleep(50000);
         }
     }
+
+    /**
+     * Run adhoc tasks, optionally matching the specified classname.
+     *
+     * @param   string  $matchclass The name of the class to match on.
+     * @param   int     $matchuserid The userid to match.
+     */
+    protected function runAdhocTasks($matchclass = '', $matchuserid = null) {
+        global $CFG, $DB;
+        require_once($CFG->libdir.'/cronlib.php');
+
+        $params = [];
+        if (!empty($matchclass)) {
+            if (strpos($matchclass, '\\') !== 0) {
+                $matchclass = '\\' . $matchclass;
+            }
+            $params['classname'] = $matchclass;
+        }
+
+        if (!empty($matchuserid)) {
+            $params['userid'] = $matchuserid;
+        }
+
+        $lock = $this->createMock(\core\lock\lock::class);
+        $cronlock = $this->createMock(\core\lock\lock::class);
+
+        $tasks = $DB->get_recordset('task_adhoc', $params);
+        foreach ($tasks as $record) {
+            // Note: This is for cron only.
+            // We do not lock the tasks.
+            $task = \core\task\manager::adhoc_task_from_record($record);
+
+            $task->set_lock($lock);
+            if (!$task->is_blocking()) {
+                $cronlock->release();
+            } else {
+                $task->set_cron_lock($cronlock);
+            }
+
+            cron_prepare_core_renderer();
+
+            $task->execute();
+            \core\task\manager::adhoc_task_complete($task);
+
+            unset($task);
+        }
+        $tasks->close();
+    }
 }
