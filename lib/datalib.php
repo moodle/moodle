@@ -1177,8 +1177,12 @@ function get_scales_menu($courseid=0) {
              WHERE courseid = 0 or courseid = ?
           ORDER BY courseid ASC, name ASC";
     $params = array($courseid);
-
-    return $scales = $DB->get_records_sql_menu($sql, $params);
+    $scales = array();
+    $results = $DB->get_records_sql_menu($sql, $params);
+    foreach ($results as $i => $scalename) {
+        $scales[$i] = format_string($scalename, false, array("context" => context_course::instance($courseid)));
+    }
+    return $scales;
 }
 
 /**
