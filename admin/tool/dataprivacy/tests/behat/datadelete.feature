@@ -83,6 +83,7 @@ Feature: Data delete from the privacy API
     And I should see "Invalid login"
 
     And I log in as "admin"
+    And I am on site homepage
     And I navigate to "Users > Privacy and policies > Data requests" in site administration
     And I should see "Deleted"
 
