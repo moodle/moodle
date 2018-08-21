@@ -290,6 +290,10 @@ abstract class moodleform_mod extends moodleform {
                 if ($mform->elementExists('groupingid')) {
                     $mform->removeElement('groupingid');
                 }
+                // Nor does the group restrictions button.
+                if ($mform->elementExists('restrictgroupbutton')) {
+                    $mform->removeElement('restrictgroupbutton');
+                }
             }
         }
 
