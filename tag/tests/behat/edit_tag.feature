@@ -94,7 +94,6 @@ Feature: Users can edit tags to add description or rename
     And I press "Customise this page"
       # TODO MDL-57120 site "Tags" link not accessible without navigation block.
     And I add the "Navigation" block if not present
-    And I click on "Site pages" "list_item" in the "Navigation" "block"
     And I click on "Tags" "link" in the "Navigation" "block"
     And I follow "Turtle"
     And I follow "User 1"

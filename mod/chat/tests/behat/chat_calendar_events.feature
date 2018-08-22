@@ -25,7 +25,6 @@ Feature: Chat calendar entries
     And I am on "Course 1" course homepage with editing mode on
    # TODO MDL-57120 site "Calendar" link not accessible without navigation block.
     And I add the "Navigation" block if not present
-    And I click on "Site pages" "list_item" in the "Navigation" "block"
     Given I click on "Calendar" "link" in the "Navigation" "block"
     Then I should not see "Test chat name"
 
@@ -37,6 +36,5 @@ Feature: Chat calendar entries
     And I am on "Course 1" course homepage with editing mode on
    # TODO MDL-57120 site "Calendar" link not accessible without navigation block.
     And I add the "Navigation" block if not present
-    And I click on "Site pages" "list_item" in the "Navigation" "block"
     Given I click on "Calendar" "link" in the "Navigation" "block"
     Then I should see "Test chat name"

@@ -25,7 +25,6 @@ Feature: Browsing tagged items
     And I press "Customise this page"
     # TODO MDL-57120 "Tags" link not accessible without navigation block.
     And I add the "Navigation" block if not present
-    And I click on "Site pages" "list_item" in the "Navigation" "block"
     And I click on "Tags" "link" in the "Navigation" "block"
     And I follow "Cat"
     Then I should see "Courses" in the ".tag-index-items h3" "css_element"
