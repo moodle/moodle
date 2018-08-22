@@ -214,7 +214,9 @@ class grade_scale extends grade_object {
      * @return string name
      */
     public function get_name() {
-        return format_string($this->name);
+        // Grade scales can be created at site or course context, so set the filter context appropriately.
+        $context = empty($this->courseid) ? context_system::instance() : context_course::instance($this->courseid);
+        return format_string($this->name, false, ['context' => $context]);
     }
 
     /**
