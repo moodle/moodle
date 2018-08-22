@@ -1172,16 +1172,18 @@ function get_my_remotehosts() {
 function get_scales_menu($courseid=0) {
     global $DB;
 
-    $sql = "SELECT id, name
+    $sql = "SELECT id, name, courseid
               FROM {scale}
              WHERE courseid = 0 or courseid = ?
           ORDER BY courseid ASC, name ASC";
     $params = array($courseid);
     $scales = array();
-    $results = $DB->get_records_sql_menu($sql, $params);
-    foreach ($results as $i => $scalename) {
-        $scales[$i] = format_string($scalename, false, array("context" => context_course::instance($courseid)));
+    $results = $DB->get_records_sql($sql, $params);
+    foreach ($results as $index => $record) {
+        $context = empty($record->courseid) ? context_system::instance() : context_course::instance($record->courseid);
+        $scales[$index] = format_string($record->name, false, ["context" => $context]);
     }
+    // Format: [id => 'scale name'].
     return $scales;
 }
 
