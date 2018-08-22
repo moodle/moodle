@@ -2107,6 +2107,74 @@ class admin_setting_heading extends admin_setting {
     }
 }
 
+/**
+ * No setting - just name and description in same row.
+ *
+ * @copyright 2018 onwards Amaia Anabitarte
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class admin_setting_description extends admin_setting {
+
+    /**
+     * Not a setting, just text
+     *
+     * @param string $name
+     * @param string $visiblename
+     * @param string $description
+     */
+    public function __construct($name, $visiblename, $description) {
+        $this->nosave = true;
+        parent::__construct($name, $visiblename, $description, '');
+    }
+
+    /**
+     * Always returns true
+     *
+     * @return bool Always returns true
+     */
+    public function get_setting() {
+        return true;
+    }
+
+    /**
+     * Always returns true
+     *
+     * @return bool Always returns true
+     */
+    public function get_defaultsetting() {
+        return true;
+    }
+
+    /**
+     * Never write settings
+     *
+     * @param mixed $data Gets converted to str for comparison against yes value
+     * @return string Always returns an empty string
+     */
+    public function write_setting($data) {
+        // Do not write any setting.
+        return '';
+    }
+
+    /**
+     * Returns an HTML string
+     *
+     * @param string $data
+     * @param string $query
+     * @return string Returns an HTML string
+     */
+    public function output_html($data, $query='') {
+        global $OUTPUT;
+
+        $context = new stdClass();
+        $context->title = $this->visiblename;
+        $context->description = $this->description;
+
+        return $OUTPUT->render_from_template('core_admin/setting_description', $context);
+    }
+}
+
+
 
 /**
  * The most flexible setting, the user enters text.
@@ -8198,6 +8266,7 @@ function admin_search_settings_html($query) {
                 if (array_key_exists($fullname, $adminroot->errors)) {
                     $data = $adminroot->errors[$fullname]->data;
                 } else {
+                    $data = $setting->get_setting();
                     $data = $setting->get_setting();
                 // do not use defaults if settings not available - upgradesettings handles the defaults!
                 }
