@@ -2312,6 +2312,8 @@ class grade_category extends grade_object {
             return format_string($course->fullname, false, array("context" => context_course::instance($this->courseid)));
 
         } else {
+            // Grade categories can't be set up at system context (unlike scales and outcomes)
+            // We therefore must have a courseid, and don't need to handle system contexts when filtering.
             return format_string($this->fullname, false, array("context" => context_course::instance($this->courseid)));
         }
     }
