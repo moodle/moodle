@@ -31,6 +31,8 @@ Feature: Check that the page listing the shared external tools is functioning as
       | Custom instance name | Assignment - LTI |
       | Tool to be published | Test assignment name |
     And I press "Add method"
+    And I am on "Course 1" course homepage
+    And I navigate to "Published as LTI tools" in current page administration
     And I should see "Assignment - LTI" in the ".generaltable" "css_element"
     When I click on "Disable" "link" in the "Assignment - LTI" "table_row"
     Then ".dimmed_text" "css_element" should exist in the "Assignment - LTI" "table_row"
